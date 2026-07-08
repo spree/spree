@@ -40,7 +40,8 @@ describe Spree::UserIdentity, type: :model do
       it 'allows same uid for different user types' do
         stub_const('Spree::AdminUser', Class.new(Spree.user_class))
 
-        different_user_type = build(:user_identity, user_type: 'Spree::AdminUser', user_id: user.id, provider: 'email', uid: '12345')
+        different_user_type = build(:user_identity, user_type: 'Spree::AdminUser', user_id: user.id, provider: 'email',
+                                                    uid: '12345')
         expect(different_user_type).to be_valid
       end
     end
@@ -191,6 +192,36 @@ describe Spree::UserIdentity, type: :model do
         expect(identity.info).to include('email' => 'new@example.com', 'first_name' => 'Jane')
       end
     end
+
+    context 'when a concurrent request creates the identity during the race window' do
+      let!(:winner) { create(:user, email: 'winner@example.com') }
+      let!(:winning_identity) do
+        create(:user_identity, user: winner, provider: provider, uid: uid)
+      end
+
+      before do
+        allow(described_class).to receive(:find_by).and_call_original
+        allow(described_class).to receive(:find_by)
+          .with(provider: provider, uid: uid, user_type: Spree.user_class.name)
+          .and_return(nil)
+        allow(described_class).to receive(:create_user_from_oauth)
+          .and_raise(ActiveRecord::RecordNotUnique)
+      end
+
+      it 'recovers by returning the winner instead of raising error' do
+        result = nil
+        expect do
+          result = described_class.find_or_create_from_oauth(
+            provider: provider,
+            uid: uid,
+            info: info,
+            tokens: tokens
+          )
+        end.not_to raise_error
+
+        expect(result).to eq(winner)
+      end
+    end
   end
 
   describe '.create_user_from_oauth' do
@@ -205,6 +236,28 @@ describe Spree::UserIdentity, type: :model do
       expect(user.persisted?).to be_truthy
       expect(user.valid?).to be_truthy
       expect(user.password).to be_present
+    end
+
+    context 'when the identity insert fails' do
+      subject do
+        described_class.create_user_from_oauth(
+          provider: 'email',
+          uid: 'dup',
+          info: { email: 'test@example.com' },
+          tokens: {}
+        )
+      end
+
+      before do
+        allow_any_instance_of(Spree.user_class).to receive(:identities)
+          .and_raise(ActiveRecord::RecordNotUnique)
+      end
+
+      it 'rolls back the user' do
+        expect do
+          expect { subject }.to raise_error(ActiveRecord::RecordNotUnique)
+        end.not_to change(Spree.user_class, :count)
+      end
     end
   end
 

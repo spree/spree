@@ -45,28 +45,32 @@ module Spree
           user_class: user_class
         )
       end
+    rescue ActiveRecord::RecordNotUnique
+      find_by!(provider: provider, uid: uid, user_type: user_type).user
     end
 
     def self.create_user_from_oauth(provider:, uid:, info:, tokens: {}, user_class: nil)
       user_class ||= Spree.user_class
 
-      user = user_class.create!(
-        email: info[:email] || generate_temp_email(provider, uid),
-        password: SecureRandom.hex(32), # Random password for OAuth users
-        first_name: info[:first_name],
-        last_name: info[:last_name]
-      )
+      transaction do
+        user = user_class.create!(
+          email: info[:email] || generate_temp_email(provider, uid),
+          password: SecureRandom.hex(32), # Random password for OAuth users
+          first_name: info[:first_name],
+          last_name: info[:last_name]
+        )
 
-      user.identities.create!(
-        provider: provider,
-        uid: uid,
-        info: info,
-        access_token: tokens[:access_token],
-        refresh_token: tokens[:refresh_token],
-        expires_at: tokens[:expires_at]
-      )
+        user.identities.create!(
+          provider: provider,
+          uid: uid,
+          info: info,
+          access_token: tokens[:access_token],
+          refresh_token: tokens[:refresh_token],
+          expires_at: tokens[:expires_at]
+        )
 
-      user
+        user
+      end
     end
 
     def self.generate_temp_email(provider, uid)
