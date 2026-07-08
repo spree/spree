@@ -18,6 +18,13 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
     user
   end
 
+  # A second store admin so removing `staff_member`'s role assignment below
+  # doesn't trip the last-admin lockout guard (F14) — the store must always
+  # keep at least one admin.
+  let!(:second_admin) do
+    create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: admin_role, resource: store) }
+  end
+
   path '/api/v3/admin/admin_users' do
     get 'List staff' do
       tags 'Staff'
