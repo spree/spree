@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionsController, type: :control
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:promotion) { create(:promotion, stores: [store]) }
+  let!(:promotion) { create(:promotion, store: store) }
 
   before { request.headers.merge!(headers) }
 

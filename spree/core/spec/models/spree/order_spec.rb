@@ -862,8 +862,8 @@ describe Spree::Order, type: :model do
 
   # Regression test for #4199
   describe '#collect_frontend_payment_methods' do
-    let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, stores: [store] }
-    let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, stores: [store] }
+    let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, store: store }
+    let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, store: store }
     let(:methods) { [ok_method, no_method] }
     let(:store_2) { create(:store) }
     let(:order_from_different_store) { create(:order, user: user, store: store_2) }
