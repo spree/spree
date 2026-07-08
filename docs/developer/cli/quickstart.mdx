@@ -141,6 +141,15 @@ Open a Rails console.
 spree console
 ```
 
+### `spree shell`
+
+Open an interactive bash shell inside the web container — the system-shell sibling of `spree console` (Rails) and `spree db:console` (psql). If the web container is down, it starts a one-off container against the same volumes instead. For one-off non-interactive commands, use `spree exec`.
+
+```bash
+spree shell
+spree bash    # alias
+```
+
 ### `spree open`
 
 Open the admin dashboard in the browser.

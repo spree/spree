@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.3.9
+
+### Patch Changes
+
+- Add `spree shell` (alias: `spree bash`) — open an interactive bash shell inside the web container, the system-shell sibling of `spree console` (Rails) and `spree db:console` (psql). When the web container is down — a crash-looping stack is exactly when a shell is most useful — it falls back to a one-off container against the same volumes, with postgres cold-started and health-waited first.
+
 ## 2.3.8
 
 ### Patch Changes
