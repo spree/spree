@@ -20,25 +20,51 @@ Każdy audyt (cały panel albo jeden obszar) sprawdza te same trzy rzeczy:
 
 Legenda: ✅ sprawdzone i czyste (albo naprawione) · ⚠️ sprawdzone, są znaleziska nienaprawione (patrz link) · ⬜ nietknięte.
 
-| Obszar | Wzorzec 1 (symetria) | Wzorzec 2 (martwe endpointy) | Wzorzec 3 (ciche błędy) | Data / źródło |
-|---|---|---|---|---|
-| Zamówienia (orders, fulfillments, płatności, zwroty) | ✅ | ⚠️ `resume`/`split` bez UI | ✅ naprawione | 2026-07-07, F12 |
-| Klienci (customers) | ✅ (martwe `avatar`/`selected_locale`, nieszkodliwe) | — | ✅ naprawione | 2026-07-07, F12 |
-| Media wariantów | — | — | ✅ naprawione | 2026-07-07, F12 |
-| Promocje (promotions) | ✅ | — | ✅ czyste | 2026-07-07, F12 |
-| Cenniki (price lists) | — | ⚠️ `#prices` bez trasy w ogóle | — | 2026-07-07, F12 |
-| Metody płatności | ✅ | — | ✅ czyste | 2026-07-07, F12 |
-| Lokalizacje magazynowe | ✅ (w tym `pickup_*`) | — | ✅ czyste | 2026-07-07, F12 |
-| Kanały dystrybucji (channels) | — | ⚠️ zero UI do przypisania produktów | — | 2026-07-07, F12 |
-| Ustawienia sklepu — logo | ✅ naprawione (F10) | ✅ naprawione (F10) | — | 2026-07-07, F10 |
-| Produkty — gotowość do sprzedaży | — | ✅ naprawione (F3, wcześniej) | — | 2026-07-07, F3 |
-| Produkty, warianty, opcje, taksonomie/kategorie (pełny przegląd) | ⬜ | ⬜ | ⬜ | — |
-| Wysyłka, strefy, podatki, transfery magazynowe | ⬜ | ⬜ | ⬜ | — |
-| Użytkownicy admina, role, uprawnienia, klucze API, zaproszenia | ⬜ | ⬜ | ⬜ | — |
-| Karty podarunkowe, kredyt sklepowy, zwroty (głębiej), listy życzeń, pobrania cyfrowe | ⬜ | ⬜ | ⬜ | — |
-| Webhooks, custom fields, tłumaczenia, feedy danych, rynki (głębiej) | ⬜ | ⬜ | ⬜ | — |
+| Obszar                                                                               | Wzorzec 1 (symetria)                                 | Wzorzec 2 (martwe endpointy)                        | Wzorzec 3 (ciche błędy) | Data / źródło   |
+| ------------------------------------------------------------------------------------ | ---------------------------------------------------- | --------------------------------------------------- | ----------------------- | --------------- |
+| Zamówienia (orders, fulfillments, płatności, zwroty)                                 | ✅                                                   | ⚠️ `resume`/`split` bez UI                          | ✅ naprawione           | 2026-07-07, F12 |
+| Klienci (customers)                                                                  | ✅ (martwe `avatar`/`selected_locale`, nieszkodliwe) | —                                                   | ✅ naprawione           | 2026-07-07, F12 |
+| Media wariantów                                                                      | —                                                    | —                                                   | ✅ naprawione           | 2026-07-07, F12 |
+| Promocje (promotions)                                                                | ✅                                                   | —                                                   | ✅ czyste               | 2026-07-07, F12 |
+| Cenniki (price lists)                                                                | —                                                    | ⚠️ `#prices` bez trasy w ogóle                      | —                       | 2026-07-07, F12 |
+| Metody płatności                                                                     | ✅                                                   | —                                                   | ✅ czyste               | 2026-07-07, F12 |
+| Lokalizacje magazynowe                                                               | ✅ (w tym `pickup_*`)                                | —                                                   | ✅ czyste               | 2026-07-07, F12 |
+| Kanały dystrybucji (channels)                                                        | —                                                    | ⚠️ zero UI do przypisania produktów                 | —                       | 2026-07-07, F12 |
+| Ustawienia sklepu — logo                                                             | ✅ naprawione (F10)                                  | ✅ naprawione (F10)                                 | —                       | 2026-07-07, F10 |
+| Produkty — gotowość do sprzedaży                                                     | —                                                    | ✅ naprawione (F3, wcześniej)                       | —                       | 2026-07-07, F3  |
+| Produkty, warianty, opcje, taksonomie/kategorie (pełny przegląd)                     | ⚠️ pola operacyjne bez UI (F13)                      | ⚠️ tylko `/variants` top-level bez konsumenta (F13) | ✅ czyste               | 2026-07-08, F13 |
+| Wysyłka, strefy, podatki, transfery magazynowe                                       | ⬜                                                   | ⬜                                                  | ⬜                      | —               |
+| Użytkownicy admina, role, uprawnienia, klucze API, zaproszenia                       | ⬜                                                   | ⬜                                                  | ⬜                      | —               |
+| Karty podarunkowe, kredyt sklepowy, zwroty (głębiej), listy życzeń, pobrania cyfrowe | ⬜                                                   | ⬜                                                  | ⬜                      | —               |
+| Webhooks, custom fields, tłumaczenia, feedy danych, rynki (głębiej)                  | ⬜                                                   | ⬜                                                  | ⬜                      | —               |
 
 **Zasada aktualizacji:** po każdym audycie — zmień ⬜/⚠️ na ✅ albo ⚠️ z linkiem do konkretnego znaleziska (numer zadania w `roadmap.md` albo numer PR-a), dopisz datę. Nie usuwaj wierszy nawet w pełni domkniętych — to jest historia pokrycia, nie tylko dzisiejszy stan.
+
+## Wyniki audytów obszarowych
+
+### 2026-07-08 — F13, prompt 1: katalog produktów, wariantów, opcji i kategorii
+
+**Zakres:** `Spree::Product`, `Spree::Variant`, `Spree::OptionType`/`OptionValue`, `Spree::Category`/taxony oraz media produktów/wariantów w Admin API i dashboardzie. Audyt wykonano według trzech wzorców z playbooka, bez zmian core i bez zmian kontraktu Store API.
+
+**Wzorzec 1 — read/write symmetry.** Wynik: **⚠️ sprawdzone, są świadome luki UI/operacyjne; brak małej bezpiecznej poprawki do zrobienia bez decyzji produktowej.**
+
+- Produkty mają poprawną ścieżkę zapisu dla głównych pól katalogowych: `name`, `description`, `slug`, `status`, SEO, `tax_category_id`, `tags`, `category_ids`, `media`, `variants`, `product_publications` i `custom_fields` są permitowane przez `ProductsController#permitted_params`, a formularz produktu posiada odpowiadające im sekcje lub wyspecjalizowane komponenty. Pola `available_on`, `promotionable`, `digital` i `meta_keywords` są permitowane/serializowane, ale panel nie wystawia ich jako inputów. To nie jest bug zapisu API, tylko brak decyzji UI: czy merchant ma ręcznie sterować datą dostępności, wyłączeniem promocji, cyfrowością produktu i słowami kluczowymi, czy te pola zostają ukryte pod MVP.
+- Warianty mają kompletne API dla pól handlowych (`sku`, `barcode`, wymiary, waga, jednostki, ceny, stock, `track_inventory`, preorder, backorder, kategoria podatkowa, pozycja, media), a formularz produktu obsługuje warianty inline. Pola admin-only `cost_price`/`cost_currency` są serializowane i permitowane, ale dashboard nie ma inputów kosztu własnego. To kandydat do osobnej decyzji: marża/raportowanie vs prostszy MVP.
+- `OptionType`/`OptionValue`: nazwa, label, typ/kind, `filterable`, wartości, sortowanie i media wartości opcji są obsłużone w panelu. Serializer admina eksponuje `metadata`, ale kontroler opcji nie permituje `metadata`, a UI go nie pokazuje. To nieszkodliwa asymetria techniczna, dopóki nie ma ogólnego edytora metadanych.
+- Kategorie mają formularz dla nazwy, parenta, opisu, permalinku, obrazów, SEO title/description i custom fields; endpoint obsługuje też `meta_keywords` i `hide_from_nav`, których panel nie wystawia. `pretty_name`, `lft`/`rgt`, `products_count`, `children_count` i flagi drzewa są polami odczytowymi — prawidłowo bez inputów.
+
+**Wzorzec 2 — martwe endpointy.** Wynik: **⚠️ jedno realne znalezisko, pozostałe endpointy katalogowe mają konsumentów.**
+
+- `products#clone`, `products#readiness`, bulk status/kategorie/kanały/tagi/destroy, media produktów, media wariantów, CRUD opcji, CRUD/reposition kategorii i membership produktów w kategorii mają referencje w `packages/` przez `@spree/admin-sdk`, hooki i/lub trasy dashboardu.
+- Top-level `Admin::VariantsController` (`/api/v3/admin/variants`) istnieje jako globalny endpoint listy/CRUD wariantów, ale dashboard używa wariantów przez `products.get(... expand: variants...)`, inline `products/:id` payload oraz zagnieżdżone `products/:product_id/variants/:variant_id/media`. Nie znaleziono realnego UI ani hooka korzystającego z globalnego `adminClient.variants.*`. To większa decyzja produktowa: albo zbudować globalny widok/SKU inventory wariantów, albo usunąć/ukryć endpoint z SDK jeśli nie jest częścią docelowego panelu.
+
+**Wzorzec 3 — ciche błędy mutacji.** Wynik: **✅ czyste w audytowanym obszarze.**
+
+- Tworzenie/edycja produktu i kategorii używają `try/catch` z `mapSpreeErrorsToForm` oraz toastem fallbackowym.
+- Mutacje bulk na liście produktów idą przez wspólny mechanizm bulk actions z komunikatami sukcesu/błędu.
+- Mutacje opcji, mediów produktu/wariantu i przypisań produktów do kategorii korzystają z `useResourceMutation` albo lokalnego `try/catch` z toastem. Miejsca z `.catch(() => undefined)` w tym obszarze są owinięte hookiem, który sam wyświetla `errorMessage`, więc nie są cichym błędem w sensie F12.
+
+**Rekomendacja:** nie naprawiano nic automatycznie, bo znalezione luki dotyczą decyzji produktowej/UI, nie oczywistej awarii. Najpilniejsze potencjalne prace następcze: (1) zdecydować, czy product form ma wystawiać `available_on`, `promotionable`, `digital`, `meta_keywords`; (2) zdecydować, czy dashboard ma pokazywać koszt własny wariantu; (3) zdecydować, czy globalny endpoint/lista wariantów jest potrzebna jako widok SKU/inventory; (4) dopiero przy potrzebie edycji surowych metadanych dodać spójny edytor `metadata`, zamiast pojedynczo odkrywać pola techniczne.
 
 ## Jak odpalić kolejny audyt
 
