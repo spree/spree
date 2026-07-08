@@ -53,7 +53,8 @@ TODO
 brakeman-*.*
 */app/assets/builds
 .claude/worktrees
-server/
+server/*
+!server/Dockerfile
 **/node_modules
 package-lock.json
 packages/*/package-lock.json

@@ -1,0 +1,111 @@
+name: Deploy to Oracle Cloud
+
+on:
+  push:
+    branches:
+      - main
+      - claude/spree-fork-audits-review-4uj976
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/spree-backend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image-url: ${{ steps.image.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./server/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
+
+      - name: Set image URL output
+        id: image
+        run: echo "url=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" >> $GITHUB_OUTPUT
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ORACLE_SSH_KEY }}" > ~/.ssh/oracle_key
+          chmod 600 ~/.ssh/oracle_key
+          ssh-keyscan -H ${{ secrets.ORACLE_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Deploy to Oracle Cloud
+        env:
+          SSH_KEY: ~/.ssh/oracle_key
+          ORACLE_USER: ubuntu
+          ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
+          IMAGE_URL: ${{ needs.build.outputs.image-url }}
+        run: |
+          ssh -i $SSH_KEY $ORACLE_USER@$ORACLE_HOST << 'DEPLOY_EOF'
+          set -e
+
+          # Navigate to app directory
+          cd ~/sklepik
+
+          # Pull latest code
+          git fetch origin
+          git checkout main
+          git reset --hard origin/main
+
+          # Update .env with new image
+          export IMAGE_URL="${{ needs.build.outputs.image-url }}"
+
+          # Pull latest Docker image
+          docker-compose pull web sidekiq
+
+          # Restart services
+          docker-compose up -d --no-deps --build web sidekiq nginx
+
+          # Copy engine migrations into the host app, then migrate
+          docker-compose exec -T web bundle exec rake spree:install:migrations
+          docker-compose exec -T web bundle exec rake db:migrate
+          docker-compose exec -T web bundle exec rake spree:role_users:backfill_store_ids
+
+          # Clear cache if needed
+          docker-compose exec -T web bundle exec rake cache:clear
+
+          # Health check
+          sleep 5
+          curl -f http://localhost:3000/up || exit 1
+
+          echo "✓ Deployment successful"
+          DEPLOY_EOF
+
+      - name: Notify Slack (optional)
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✓ Deploy to Oracle Cloud successful"
+          else
+            echo "✗ Deploy to Oracle Cloud failed"
+          fi
