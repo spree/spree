@@ -26,6 +26,7 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
+  ErrorState,
   Pagination,
   type PaginationMeta,
   Table,
@@ -253,7 +254,7 @@ export function ResourceTable<T extends Record<string, any>>({
   const userPrefix = Array.isArray(queryKey) ? queryKey : [queryKey]
   const queryKeyPrefix = withStoreScope(userPrefix, storeId)
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: [
       ...queryKeyPrefix,
       { page, limit, sort: sortString, search: deferredSearch, filters },
@@ -460,7 +461,11 @@ export function ResourceTable<T extends Record<string, any>>({
                   </tr>
                 </TableHeader>
                 <TableBody>
-                  {isLoading ? (
+                  {isError ? (
+                    <TableEmpty colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}>
+                      <ErrorState error={error as Error} onRetry={() => refetch()} />
+                    </TableEmpty>
+                  ) : isLoading ? (
                     <TableEmpty colSpan={visibleColumns.length + 1 + (rowActionsEnabled ? 1 : 0)}>
                       {t('admin.common.loading')}
                     </TableEmpty>
@@ -523,7 +528,15 @@ export function ResourceTable<T extends Record<string, any>>({
               </tr>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
+              {isError ? (
+                <TableEmpty
+                  colSpan={
+                    visibleColumns.length + (selectionEnabled ? 1 : 0) + (rowActionsEnabled ? 1 : 0)
+                  }
+                >
+                  <ErrorState error={error as Error} onRetry={() => refetch()} />
+                </TableEmpty>
+              ) : isLoading ? (
                 <TableEmpty
                   colSpan={
                     visibleColumns.length + (selectionEnabled ? 1 : 0) + (rowActionsEnabled ? 1 : 0)
