@@ -20,25 +20,148 @@ Każdy audyt (cały panel albo jeden obszar) sprawdza te same trzy rzeczy:
 
 Legenda: ✅ sprawdzone i czyste (albo naprawione) · ⚠️ sprawdzone, są znaleziska nienaprawione (patrz link) · ⬜ nietknięte.
 
-| Obszar | Wzorzec 1 (symetria) | Wzorzec 2 (martwe endpointy) | Wzorzec 3 (ciche błędy) | Data / źródło |
-|---|---|---|---|---|
-| Zamówienia (orders, fulfillments, płatności, zwroty) | ✅ | ⚠️ `resume`/`split` bez UI | ✅ naprawione | 2026-07-07, F12 |
-| Klienci (customers) | ✅ (martwe `avatar`/`selected_locale`, nieszkodliwe) | — | ✅ naprawione | 2026-07-07, F12 |
-| Media wariantów | — | — | ✅ naprawione | 2026-07-07, F12 |
-| Promocje (promotions) | ✅ | — | ✅ czyste | 2026-07-07, F12 |
-| Cenniki (price lists) | — | ⚠️ `#prices` bez trasy w ogóle | — | 2026-07-07, F12 |
-| Metody płatności | ✅ | — | ✅ czyste | 2026-07-07, F12 |
-| Lokalizacje magazynowe | ✅ (w tym `pickup_*`) | — | ✅ czyste | 2026-07-07, F12 |
-| Kanały dystrybucji (channels) | — | ⚠️ zero UI do przypisania produktów | — | 2026-07-07, F12 |
-| Ustawienia sklepu — logo | ✅ naprawione (F10) | ✅ naprawione (F10) | — | 2026-07-07, F10 |
-| Produkty — gotowość do sprzedaży | — | ✅ naprawione (F3, wcześniej) | — | 2026-07-07, F3 |
-| Produkty, warianty, opcje, taksonomie/kategorie (pełny przegląd) | ⬜ | ⬜ | ⬜ | — |
-| Wysyłka, strefy, podatki, transfery magazynowe | ⬜ | ⬜ | ⬜ | — |
-| Użytkownicy admina, role, uprawnienia, klucze API, zaproszenia | ⬜ | ⬜ | ⬜ | — |
-| Karty podarunkowe, kredyt sklepowy, zwroty (głębiej), listy życzeń, pobrania cyfrowe | ⬜ | ⬜ | ⬜ | — |
-| Webhooks, custom fields, tłumaczenia, feedy danych, rynki (głębiej) | ⬜ | ⬜ | ⬜ | — |
+| Obszar                                                                               | Wzorzec 1 (symetria)                                         | Wzorzec 2 (martwe endpointy)             | Wzorzec 3 (ciche błędy)               | Data / źródło   |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------- | ------------------------------------- | --------------- |
+| Zamówienia (orders, fulfillments, płatności, zwroty)                                 | ✅                                                           | ⚠️ `resume`/`split` bez UI               | ✅ naprawione                         | 2026-07-07, F12 |
+| Klienci (customers)                                                                  | ✅ (martwe `avatar`/`selected_locale`, nieszkodliwe)         | —                                        | ✅ naprawione                         | 2026-07-07, F12 |
+| Media wariantów                                                                      | —                                                            | —                                        | ✅ naprawione                         | 2026-07-07, F12 |
+| Promocje (promotions)                                                                | ✅                                                           | —                                        | ✅ czyste                             | 2026-07-07, F12 |
+| Cenniki (price lists)                                                                | —                                                            | ⚠️ `#prices` bez trasy w ogóle           | —                                     | 2026-07-07, F12 |
+| Metody płatności                                                                     | ✅                                                           | —                                        | ✅ czyste                             | 2026-07-07, F12 |
+| Lokalizacje magazynowe                                                               | ✅ (w tym `pickup_*`)                                        | —                                        | ✅ czyste                             | 2026-07-07, F12 |
+| Kanały dystrybucji (channels)                                                        | —                                                            | ⚠️ zero UI do przypisania produktów      | —                                     | 2026-07-07, F12 |
+| Ustawienia sklepu — logo                                                             | ✅ naprawione (F10)                                          | ✅ naprawione (F10)                      | —                                     | 2026-07-07, F10 |
+| Produkty — gotowość do sprzedaży                                                     | —                                                            | ✅ naprawione (F3, wcześniej)            | —                                     | 2026-07-07, F3  |
+| Produkty, warianty, opcje, taksonomie/kategorie (pełny przegląd)                     | ⚠️ pola operacyjne bez UI (F13)                              | ✅ istniejące endpointy mają konsumentów | ✅ czyste                             | 2026-07-08, F13 |
+| Wysyłka, strefy, podatki, transfery magazynowe                                       | ⚠️ brak API/UI dla shipping/zone/tax rates (F13)             | ✅ istniejące endpointy użyte            | ✅ czyste                             | 2026-07-08, F13 |
+| Użytkownicy admina, role, uprawnienia, klucze API, zaproszenia                       | ⚠️ self/last-admin lockout risk (F13)                        | ✅ istniejące endpointy użyte            | ✅ czyste                             | 2026-07-08, F13 |
+| Karty podarunkowe, kredyt sklepowy, zwroty (głębiej), listy życzeń, pobrania cyfrowe | ⚠️ refundy/zwroty/wishlisty/digital bez pełnego admina (F13) | ⚠️ wishlist/digital bez Admin API/UI     | ✅ naprawiono store-credit toast      | 2026-07-08, F13 |
+| Webhooks, custom fields, tłumaczenia, feedy danych, rynki (głębiej)                  | ⚠️ brak rotacji sekretu webhooka / decyzje feedów (F13)      | ⚠️ data feeds bez Admin API/UI           | ⚠️ tłumaczenia pokazują błąd batchowo | 2026-07-08, F13 |
 
 **Zasada aktualizacji:** po każdym audycie — zmień ⬜/⚠️ na ✅ albo ⚠️ z linkiem do konkretnego znaleziska (numer zadania w `roadmap.md` albo numer PR-a), dopisz datę. Nie usuwaj wierszy nawet w pełni domkniętych — to jest historia pokrycia, nie tylko dzisiejszy stan.
+
+## Wyniki audytów obszarowych
+
+### 2026-07-08 — F13, prompt 1: katalog produktów, wariantów, opcji i kategorii
+
+**Zakres:** `Spree::Product`, `Spree::Variant`, `Spree::OptionType`/`OptionValue`, `Spree::Category`/taxony oraz media produktów/wariantów w Admin API i dashboardzie. Audyt wykonano według trzech wzorców z playbooka, bez zmian core i bez zmian kontraktu Store API.
+
+**Wzorzec 1 — read/write symmetry.** Wynik: **⚠️ sprawdzone, są świadome luki UI/operacyjne; brak małej bezpiecznej poprawki do zrobienia bez decyzji produktowej.**
+
+- Produkty mają poprawną ścieżkę zapisu dla głównych pól katalogowych: `name`, `description`, `slug`, `status`, SEO, `tax_category_id`, `tags`, `category_ids`, `media`, `variants`, `product_publications` i `custom_fields` są permitowane przez `ProductsController#permitted_params`, a formularz produktu posiada odpowiadające im sekcje lub wyspecjalizowane komponenty. Pola `available_on`, `promotionable`, `digital` i `meta_keywords` są permitowane/serializowane, ale panel nie wystawia ich jako inputów. To nie jest bug zapisu API, tylko brak decyzji UI: czy merchant ma ręcznie sterować datą dostępności, wyłączeniem promocji, cyfrowością produktu i słowami kluczowymi, czy te pola zostają ukryte pod MVP.
+- Warianty mają kompletne API dla pól handlowych (`sku`, `barcode`, wymiary, waga, jednostki, ceny, stock, `track_inventory`, preorder, backorder, kategoria podatkowa, pozycja, media), a formularz produktu obsługuje warianty inline. Pola admin-only `cost_price`/`cost_currency` są serializowane i permitowane, ale dashboard nie ma inputów kosztu własnego. To kandydat do osobnej decyzji: marża/raportowanie vs prostszy MVP.
+- `OptionType`/`OptionValue`: nazwa, label, typ/kind, `filterable`, wartości, sortowanie i media wartości opcji są obsłużone w panelu. Serializer admina eksponuje `metadata`, ale kontroler opcji nie permituje `metadata`, a UI go nie pokazuje. To nieszkodliwa asymetria techniczna, dopóki nie ma ogólnego edytora metadanych.
+- Kategorie mają formularz dla nazwy, parenta, opisu, permalinku, obrazów, SEO title/description i custom fields; endpoint obsługuje też `meta_keywords` i `hide_from_nav`, których panel nie wystawia. `pretty_name`, `lft`/`rgt`, `products_count`, `children_count` i flagi drzewa są polami odczytowymi — prawidłowo bez inputów.
+
+**Wzorzec 2 — martwe endpointy.** Wynik: **✅ istniejące endpointy katalogowe mają konsumentów.**
+
+- `products#clone`, `products#readiness`, bulk status/kategorie/kanały/tagi/destroy, media produktów, media wariantów, CRUD opcji, CRUD/reposition kategorii i membership produktów w kategorii mają referencje w `packages/` przez `@spree/admin-sdk`, hooki i/lub trasy dashboardu.
+- Top-level `Admin::VariantsController` (`/api/v3/admin/variants`) też ma realnego konsumenta: kreator transferu magazynowego wyszukuje warianty przez `adminClient.variants.list(...)`, więc endpoint nie jest martwy. Ewentualny pełny globalny widok SKU/inventory pozostaje decyzją produktową, ale nie jest blokującą luką w dostępności endpointu.
+
+**Wzorzec 3 — ciche błędy mutacji.** Wynik: **✅ czyste w audytowanym obszarze.**
+
+- Tworzenie/edycja produktu i kategorii używają `try/catch` z `mapSpreeErrorsToForm` oraz toastem fallbackowym.
+- Mutacje bulk na liście produktów idą przez wspólny mechanizm bulk actions z komunikatami sukcesu/błędu.
+- Mutacje opcji, mediów produktu/wariantu i przypisań produktów do kategorii korzystają z `useResourceMutation` albo lokalnego `try/catch` z toastem. Miejsca z `.catch(() => undefined)` w tym obszarze są owinięte hookiem, który sam wyświetla `errorMessage`, więc nie są cichym błędem w sensie F12.
+
+**Rekomendacja:** nie naprawiano nic automatycznie, bo znalezione luki dotyczą decyzji produktowej/UI, nie oczywistej awarii. Najpilniejsze potencjalne prace następcze: (1) zdecydować, czy product form ma wystawiać `available_on`, `promotionable`, `digital`, `meta_keywords`; (2) zdecydować, czy dashboard ma pokazywać koszt własny wariantu; (3) dopiero przy potrzebie edycji surowych metadanych dodać spójny edytor `metadata`, zamiast pojedynczo odkrywać pola techniczne.
+
+### 2026-07-08 — F13, prompt 2: wysyłka, strefy, podatki i transfery magazynowe
+
+**Zakres:** `Spree::ShippingMethod`, `Spree::ShippingCategory`, `Spree::Zone`, `Spree::TaxCategory`, `Spree::TaxRate`, kraje/stany pomocnicze oraz `Spree::StockTransfer`. W kodzie Admin API v3 znaleziono faktyczne zasoby panelowe tylko dla `tax_categories`, `stock_transfers`, `stock_locations` (sprawdzone wcześniej w F12) oraz read-only `countries`/`states`. Nie znaleziono kontrolerów/tras/SDK/UI dla `shipping_methods`, `shipping_categories`, `zones` ani `tax_rates` w Admin API v3.
+
+**Wzorzec 1 — read/write symmetry.** Wynik: **⚠️ money-critical luka funkcjonalna: konfiguracja wysyłki, stref i stawek podatkowych nie jest wystawiona w panelu ani w Admin API v3.**
+
+- `TaxCategory` jest symetryczne: serializer zwraca `name`, `tax_code`, `description`, `is_default`, a dashboard ma formularz z tymi polami. To jednak tylko klasyfikacja podatkowa produktu, nie konfiguracja stawek.
+- `StockTransfer` ma działającą ścieżkę tworzenia dla `source_location_id`, `destination_location_id`, `reference` i listy wariantów z ilościami; transfery są celowo niemutowalne po utworzeniu. Serializer zwraca także `metadata`, ale kontroler nie przyjmuje metadanych — techniczna asymetria bez UI, do ruszenia dopiero przy ogólnym edytorze metadanych.
+- Brak panelowej/API ścieżki dla metod wysyłki, kategorii wysyłki, stref i stawek podatkowych oznacza, że merchant nie skonfiguruje z dashboardu ani realnego kosztu dostawy, ani stawek VAT/reguł podatkowych. Dla MVP kakao to ryzyko biznesowe większe niż brak wygody: może skutkować błędną kwotą checkoutu albo brakiem możliwości wysłania zamówienia.
+
+**Wzorzec 2 — martwe endpointy.** Wynik: **✅ istniejące endpointy w tym obszarze mają konsumentów; większy problem to brak endpointów dla shipping/tax rates/zones.**
+
+- `tax_categories` mają SDK, hooki, tabelę i route `settings/tax-categories`.
+- `stock_transfers` mają SDK, hooki, tabelę i route `products/transfers`. Kreator transferu używa top-level `adminClient.variants.list(...)` do wyszukiwania SKU oraz `stock_locations` do wyboru źródła/celu.
+- `countries`/`states` są read-only i używane pomocniczo przez formularze adresów/lokalizacji, ale nie zastępują brakujących `zones`.
+
+**Wzorzec 3 — ciche błędy mutacji.** Wynik: **✅ czyste w istniejących ekranach.**
+
+- Mutacje tax categories używają `try/catch`, `mapSpreeErrorsToForm` i hooków `useResourceMutation` z komunikatami błędów.
+- Usuwanie tax category i stock transfer korzysta z hooków z `errorMessage`; lokalne `.catch(() => undefined)` nie jest ciche, bo hook sam emituje toast błędu.
+- Tworzenie stock transferu nie ma lokalnego `try/catch`, ale `useCreateStockTransfer` ma `errorMessage`, więc błąd zapisu jest widoczny i arkusz nie zamyka się po odrzuconym `await`.
+
+**Rekomendacja:** nie implementować „na ślepo” konfiguracji wysyłki/podatków. To money-critical obszar wymagający osobnego zadania projektowego: dodać Admin API v3 i UI dla metod wysyłki, kategorii wysyłki, stref oraz stawek podatkowych/kalkulatorów, albo świadomie udokumentować tymczasową konfigurację poza dashboardem przed startem sprzedaży.
+
+### 2026-07-08 — F13, prompt 3: bezpieczeństwo panelu — użytkownicy, role, klucze API i zaproszenia
+
+**Zakres:** `Spree::AdminUser`, `Spree::Role`, `Spree::RoleUser`, role/permission sets/CanCanCan, `Spree::ApiKey`, zaproszenia i publiczna akceptacja zaproszeń. Audyt był traktowany jako security-critical; zgodnie z promptem nie zmieniano logiki autoryzacji automatycznie.
+
+**Najważniejsze ryzyko:** **⚠️ panel/API pozwalają spróbować usunąć siebie albo ostatniego administratora ze store przez staff management.** `AdminUsersController#destroy` usuwa store-scoped `RoleUser` targetu, a `#update` może zastąpić `role_ids`; UI pokazuje akcję remove/edit dla każdego wiersza bez widocznej ochrony self/last-admin. Błędy są toastowane, ale nie znaleziono twardej reguły domenowej „nie odbieraj ostatniego admina / nie odbieraj sobie ostatniej roli administracyjnej”. To trzeba rozwiązać świadomie w backendzie, nie tylko ukryciem przycisku.
+
+**Wzorzec 1 — read/write symmetry.** Wynik: **⚠️ podstawowe pola są symetryczne, ale jest ryzyko lockoutu przy zarządzaniu rolami.**
+
+- Staff: serializer zwraca `email`, `first_name`, `last_name`, `full_name`, `selected_locale`, `avatar_url`, `roles`. Endpoint pozwala edytować `first_name`, `last_name` i pełną listę `role_ids`; UI ma pola imienia/nazwiska oraz checkboxy ról. `email`, `selected_locale` i `avatar_url` są w tym ekranie odczytowe/poza zakresem staff management.
+- Role: endpoint jest read-only i służy do pickerów; brak CRUD ról jest świadomym ograniczeniem, bo role są globalne i permission sets nie mają jeszcze panelowego modelu edycji.
+- API keys: serializer nie ujawnia sekretu poza jednorazowym `plaintext_token` na create; UI pozwala wybrać typ i zakresy przy tworzeniu, a przy edycji zmienić tylko nazwę. To zgadza się z modelem — zakresy są create-only i zmiana uprawnień wymaga nowego klucza + revoke starego.
+- Invitations: serializer i UI obsługują email, rolę, status, resend, revoke i link akceptacji. Zaproszenia są niemutowalne po utworzeniu; zmiana roli wymaga cofnięcia i wysłania nowego zaproszenia.
+
+**Wzorzec 2 — martwe endpointy.** Wynik: **✅ istniejące endpointy bezpieczeństwa mają konsumentów w SDK i/lub panelu.**
+
+- `admin_users` list/update/destroy, `roles` list, `invitations` list/create/destroy/resend, `api_keys` list/create/update/destroy/revoke oraz publiczne invitation lookup/accept są spięte przez `@spree/admin-sdk`, hooki i route `settings/staff`, `settings/api-keys`, `accept-invitation/$invitationId`.
+- `api_keys/current` ma konsumenta SDK/CLI, nie route dashboardu; to endpoint diagnostyczny dla secret-key principal, więc brak panelowego przycisku nie jest luką UI.
+
+**Wzorzec 3 — ciche błędy mutacji.** Wynik: **✅ czyste.**
+
+- Invite/resend/revoke, staff update/remove, API key create/update/revoke/delete oraz invitation accept mają lokalny `try/catch`, `mapSpreeErrorsToForm` i/lub toast/root form error.
+- Backend ma dodatkowe guardy przed eskalacją roli (`RoleGrantGuard`) i przed scope amplification przy tworzeniu secret key (`ApiKeysController#create`). To nie zastępuje brakującej reguły last-admin/self-lockout, ale ogranicza eskalację uprawnień.
+
+**Rekomendacja:** utworzyć osobne security zadanie przed produkcją: backendowy guard dla staff management, który blokuje usunięcie ostatniego store-admina oraz odebranie sobie ostatniej roli dającej dostęp do staff/API-key management; UI może dodatkowo ukrywać/disabledować akcje dla current user/last admin, ale tylko jako warstwa UX.
+
+### 2026-07-08 — F13, prompt 4: pieniądze klienta — karty podarunkowe, kredyt sklepowy, zwroty, listy życzeń i pobrania cyfrowe
+
+**Zakres:** `Spree::GiftCard`, `Spree::GiftCardBatch`, `Spree::StoreCredit`, `Spree::StoreCreditCategory`, order-level gift cards/store credits/refunds oraz istniejące powierzchnie Store API dla wishlist i cyfrowych pobrań. Audyt nie zmieniał kontraktu Store API; jedyna mała poprawka dotyczyła widoczności błędów w panelu.
+
+**Wzorzec 1 — read/write symmetry.** Wynik: **⚠️ gift cards i customer store credits są spięte, ale zwroty/returns, wishlisty i digital downloads nie mają pełnego admin-side modelu zarządzania.**
+
+- Karty podarunkowe mają sensowną ścieżkę admina: top-level CRUD `gift_cards`, tworzenie batchy, widok listy, edycję/usuwanie i order-level zastosowanie/usunięcie karty. Sekret/kod karty nie jest problemem symetrii — UI traktuje go jako jawny input tylko tam, gdzie merchant faktycznie wydaje lub aplikuje kartę.
+- Kredyt sklepowy klienta ma top-level ścieżkę w detalu klienta: endpoint `customers/:customer_id/store_credits` przyjmuje `amount`, `currency`, `memo`, `category_id`, `created_by_id`, `invalidated_at`, a panel pozwala dodawać, edytować i usuwać kredyty oraz wybiera kategorię. Kategorie kredytu są tylko read-only (`store_credit_categories#index/show`), więc jeśli merchant ma sam zarządzać typami kredytu, potrzebne będzie osobne CRUD/API/UI; dla seedowanych kategorii to akceptowalne ograniczenie.
+- Refundy są dostępne głównie jako order-level create/list (`orders/:order_id/refunds`) i jako embed przy płatnościach/zamówieniach. Nie znaleziono pełnego Admin API/UI dla `reimbursement_types`, `refund_reasons`, `return_authorization_reasons`, `customer_returns` ani głębszego lifecycle'u zwrotu/reimbursement. To nie jest mała poprawka UI, tylko osobny obszar operacyjny przed sprzedażą.
+- Wishlisty i cyfrowe pobrania istnieją po stronie Store API (`wishlists`, `wishlist_items`, tokenized `digitals/:token`), ale nie mają odpowiadających kontrolerów Admin API v3, metod SDK ani route dashboardu. Merchant nie ma więc w panelu widoczności/zarządzania listami życzeń ani plikami/linkami cyfrowymi.
+
+**Wzorzec 2 — martwe endpointy.** Wynik: **⚠️ istniejące admin endpointy gift/store-credit mają konsumentów; luki dotyczą braku admin endpointów dla wishlist/digital oraz niepełnego panelu zwrotów.**
+
+- `gift_cards`, `gift_card_batches`, `customers/:customer_id/store_credits`, `store_credit_categories` oraz order-level `gift_cards`, `store_credits`, `refunds` są spięte przez `@spree/admin-sdk`, hooki i/lub ekrany dashboardu.
+- Store-only `wishlists` i `digitals/:token` są świadomie poza dashboardem klienta, ale dla panelu administracyjnego to martwa strefa operacyjna: brak list, wyszukiwania, podglądu i akcji moderatora/merchant-a.
+
+**Wzorzec 3 — ciche błędy mutacji.** Wynik: **✅ jedna mała luka naprawiona; reszta audytowanego obszaru używa hooków/toastów.**
+
+- Hooki tworzenia, aktualizacji i usuwania store credit klienta dostały jawne `errorMessage`, żeby lokalne `mutateAsync`/`mutate` nie kończyły się route-boundary albo brakiem toastu przy błędzie serwera.
+- Mutacje gift cards, batchy, order-level gift cards/store credits i refundów korzystają z istniejących hooków z `errorMessage` albo lokalnego `try/catch`, więc błędy są widoczne.
+
+**Rekomendacja:** przed startem sprzedaży zaplanować oddzielny pakiet „post-sale money operations”: pełny lifecycle zwrotów/returns/reimbursements z powodami, decyzję czy kategorie store credit są seedowane czy edytowalne, oraz decyzję czy wishlisty i cyfrowe pobrania mają mieć admin-side widoczność/zarządzanie.
+
+### 2026-07-08 — F13, prompt 5: konfiguracja i integracje — webhooks, custom fields, tłumaczenia, feedy danych i rynki
+
+**Zakres:** webhook endpoints/deliveries, custom field definitions i wartości custom fields, resource translations/batch translations, allowed origins, exports, markets oraz Store API data feeds.
+
+**Wzorzec 1 — read/write symmetry.** Wynik: **⚠️ większość konfiguracji jest spięta, ale brakuje rotacji sekretu webhooka, admina dla data feeds i lepszego modelu błędów tłumaczeń.**
+
+- Webhook endpoints mają CRUD, enable/disable, send test, deliveries list/show/redeliver oraz UI dla listy i detalu. Serializer pokazuje `secret_key` tylko w jednorazowym flow po utworzeniu, co jest poprawne, ale nie znaleziono endpointu/UI do rotacji sekretu istniejącego endpointu. Jeśli sekret wycieknie, obecna ścieżka operacyjna to stworzenie nowego endpointu i wyłączenie starego.
+- Custom field definitions mają CRUD w Admin API, SDK, hookach i panelu; wartości custom fields są wystawione przez zasoby `custom_fieldable` i edytowane inline na obsługiwanych zasobach. To wygląda spójnie z obecnym modelem.
+- Tłumaczenia mają read-only macierze pod zasobami translatable i atomiczny `POST /translations/batch`. Backend zwraca szczegóły walidacji per wpis (`details.translations[index]`), ale UI pokazuje błąd batchowo w jednym toaście, bez przypięcia błędu do konkretnego rekordu/wiersza. To nie jest cichy błąd, ale obniża diagnozowalność częściowej walidacji.
+- Markets mają Admin API i ekran ustawień dla nazwy, waluty, locale, krajów, tax inclusive/default i pozycji. W audycie kodowym potwierdzono, że formularz rynku używa pełnego selecta walut i comboboxa krajów, ale zgłoszonego wcześniej pustego przełącznika kraju/waluty w działającym panelu nie zamykamy bez manualnej reprodukcji w przeglądarce.
+- Data feeds istnieją jako Store API (`/feeds/:slug`) i model runtime, ale nie znaleziono Admin API v3/SDK/dashboard do tworzenia, aktywowania ani edycji feedów.
+
+**Wzorzec 2 — martwe endpointy.** Wynik: **⚠️ webhooks/custom fields/markets/allowed origins/exports mają konsumentów; Store API data feeds nie mają panelowej konfiguracji.**
+
+- Webhooks, webhook deliveries, custom field definitions, nested custom fields, translations, markets, allowed origins i exports są referencjonowane z `packages/` przez admin SDK, hooki, komponenty lub route dashboardu.
+- `exports` nie mają osobnego ekranu listy, ale są używane przez `ExportButton` dla produktów, klientów i zamówień oraz przez eksport kuponów w formularzu promocji; to nie jest martwy endpoint.
+- `data_feeds` po stronie Store API są użyteczne tylko wtedy, gdy rekordy feedów są tworzone/utrzymywane poza panelem. Brak adminowej konfiguracji traktujemy jako lukę funkcjonalną, nie jako martwy kod.
+
+**Wzorzec 3 — ciche błędy mutacji.** Wynik: **⚠️ brak cichych sukcesów, ale tłumaczenia nadal potrzebują lepszej prezentacji błędów per rekord.**
+
+- Mutacje webhooków, deliveries, custom field definitions, allowed origins i markets korzystają z `useResourceMutation` z `errorMessage` lub lokalnego `try/catch`.
+- `ResourceTranslationsDialog` łapie błąd batch save i pokazuje `SpreeError.message` albo fallbackowy toast. Użytkownik wie, że zapis się nie udał, ale nie widzi od razu, który wiersz/wartość była problemem mimo że backend zwraca szczegóły.
+
+**Rekomendacja:** trzy dalsze zadania: (1) dodać rotację sekretu webhook endpointu jako backendowy endpoint + UI z jednorazowym reveal; (2) zdecydować, czy `Spree::DataFeed` ma być konfigurowany w dashboardzie, a jeśli tak dodać Admin API/SDK/UI; (3) rozbudować editor tłumaczeń o mapowanie `details.translations[index]` na konkretne wiersze gridu.
 
 ## Jak odpalić kolejny audyt
 
@@ -345,4 +468,73 @@ link to what you found/fixed.
 
 Deliverable: structured report per pattern (findings, fixed-or-not,
 recommendation), confirmation the coverage table is updated.
+```
+
+### 6. System-wide production readiness — storefront, checkout, payments, infra, security, ops
+
+```
+Audytujesz system e-commerce „Kakałowy Sklepik”. To nie jest szybka checklista. Działaj jak bardzo mocny senior production-readiness auditor dla backendu, Store API, panelu admina, storefrontu, konfiguracji infrastruktury, płatności, bezpieczeństwa, jobów, danych, observability oraz gotowości prawno-operacyjnej.
+
+Poprzednie audyty F12/F13 sprawdzały części backendu, Admin API i dashboardu, zwłaszcza API/UI wiring, martwe endpointy i ciche błędy mutacji. Traktuj je tylko jako kontekst. Nie udawaj, że te ograniczone audyty oznaczają gotowość produkcyjną całego systemu.
+
+Repozytoria / obszary do sprawdzenia:
+
+- backend / Admin API / Store API / dashboard: zwykle `/workspace/sklepik` albo `/home/user/sklepik`,
+- storefront klienta: zwykle sibling repo `sklepikFront`; zlokalizuj je, jeśli jest dostępne,
+- konfiguracja deploy/runtime: Render, Vercel, env examples, CI, Sidekiq/jobs, storage/media, Stripe/payment, webhooks.
+
+Przed audytem:
+
+1. Przeczytaj `CLAUDE.md`, `docs/audit-playbook.md`, `docs/stan-projektu.md`, `docs/roadmap.md`, README i env example files, jeśli istnieją.
+2. Ustal, co F12/F13 już pokryły, i nie powtarzaj ich płytko.
+3. Utwórz nowy plik audytu, nie nadpisuj playbooka: `docs/audits/YYYY-MM-DD-system-wide-production-readiness-audit.md`.
+
+Zakres obowiązkowy:
+
+1. Storefront `sklepikFront` end-to-end: katalog, PDP, search/filter/sort, cart, checkout entry, SEO metadata, canonicale, structured data, cache/revalidation, market/language switcher, currency/locale, images, empty/error/loading states, Vercel/env risks, behavior when backend is down/misconfigured.
+2. Pełny checkout: cart → shipping rates → taxes → payment selection → authorization/capture → order completion → confirmation e-mail/webhooks → admin order visibility → fulfillment.
+3. Stripe/payment readiness: provider config, webhook signature, idempotency, capture/void/refund, failures, reconciliation, test/live separation, secrets, operational visibility.
+4. Store API contract stability: serializers, pagination, cache headers, market/currency/locale, product availability, prices, stock, publication/deleted/unpublished edge cases, generated/storefront types.
+5. Performance/N+1: admin lists, Store API catalog, PDP, cart/checkout, order detail, webhooks, exports, translations, media variants.
+6. Permissions/roles in depth: role → endpoint → action, role → UI, destructive actions, API keys, staff, cross-store access, privilege escalation, hidden UI vs API.
+7. Security poza staff/API keys: rate limiting, brute force, password reset, invitations, CORS/allowed origins, session/JWT refresh, CSRF, public Store API exposure, logs, secrets, frontend env leakage, webhook signatures, file upload safety, IDOR, multi-store isolation.
+8. Background jobs/Sidekiq/exports/webhooks runtime: worker config, queues, retries, idempotency, dead jobs, crash/restart resilience, CSV memory, webhook/email retry, timeouts, observability.
+9. Post-sale business operations: returns, customer returns, reimbursements, reasons, refunds, exchanges, admin visibility, payment refund integration, notifications, inventory/accounting/VAT.
+10. Data/seeds/migrations: idempotency, demo cleanup, production defaults, multi-store/market assumptions, tax/shipping/payment seeds, consistency, rollback, constraints/indexes.
+11. Observability/incident response: logs, structured logging, error monitoring, metrics, alerting, payment failures, webhook/e-mail tracking, job dashboards, empty catalog/missing images/no shipping rates/payment failed runbooks.
+12. GDPR/legal/operational readiness: data export/deletion/anonymization, retention, marketing consent, transactional vs marketing e-mails, privacy/terms/returns policies, invoices/VAT, cookies, processors, PII in logs.
+13. Accessibility/responsiveness dashboardu: WCAG basics, keyboard, focus, dialogs/sheets, forms/labels, errors, tables, mobile/tablet, loading/empty/error states, destructive confirmations.
+14. SDK/OpenAPI/type drift: serializers, controllers, OpenAPI, generated SDK/types, dashboard payloads, storefront payloads, tests/fixtures.
+15. Media/R2/Active Storage pipeline: uploads, direct uploads, signed URLs, public/private access, variants, cache/CDN, R2 config, cold starts, retries, file size/type limits, cleanup unattached blobs.
+16. Admin list loading failures: all ResourceTable/list screens, query error handling, empty vs error state, retry, stale data, pagination/filter/search failure, bulk actions after failed loads.
+
+Jakość raportu:
+
+- Każda ważna konkluzja musi wskazywać konkretne pliki/funkcje/trasy/configi/testy albo brak artefaktu.
+- Dla każdego findingu użyj pól: severity, area, status, evidence, impact, recommended fix, verification.
+- Rozróżniaj: confirmed bug, confirmed missing feature, production-readiness risk, configuration risk, unknown-needs-runtime-verification.
+- Jeśli statycznie nie da się czegoś potwierdzić, napisz dokładnie, jaki test staging/production jest potrzebny.
+- Nie zmieniaj zachowania produktu/security. To audyt: twórz/aktualizuj tylko dokument audytu i ewentualnie indeks/playbook/status dokumentacji.
+
+Wymagana struktura pliku:
+
+# System-wide production readiness audit — YYYY-MM-DD
+
+## Executive summary
+- Overall readiness verdict: `Not production-ready` / `Conditionally production-ready` / `Mostly ready` / `Ready`
+- Top 5 blockers
+- Top 5 non-blocking risks
+- Areas that could not be verified and why
+
+## Scope and method
+## Severity model
+## Findings
+## Flow audit: customer checkout
+## Permission matrix summary
+## Store API contract risks
+## Production operations checklist
+## Recommended roadmap
+## Appendix
+
+Na końcu odpowiedzi na czacie podaj: ścieżkę pliku, liczbę findings P0/P1/P2/P3 oraz top 5 następnych akcji.
 ```
