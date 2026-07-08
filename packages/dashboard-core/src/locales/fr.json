@@ -171,7 +171,31 @@
         "title": "Bon retour",
         "subtitle": "Connectez-vous à votre compte administrateur"
       },
-      "logout": "Se déconnecter"
+      "forgot_password": {
+        "link": "Mot de passe oublié ?",
+        "title": "Réinitialiser votre mot de passe",
+        "subtitle": "Saisissez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+        "submit": "Envoyer le lien de réinitialisation",
+        "sending": "Envoi…",
+        "sent_title": "Vérifiez vos e-mails",
+        "sent_subtitle": "Si un compte existe pour cet e-mail, un lien de réinitialisation du mot de passe est en route.",
+        "error": "Une erreur s'est produite. Veuillez réessayer."
+      },
+      "reset_password": {
+        "title": "Choisir un nouveau mot de passe",
+        "subtitle": "Saisissez un nouveau mot de passe pour votre compte administrateur.",
+        "new_password_label": "Nouveau mot de passe",
+        "confirm_password_label": "Confirmer le nouveau mot de passe",
+        "submit": "Réinitialiser le mot de passe",
+        "submitting": "Réinitialisation…",
+        "token_invalid": "Ce lien de réinitialisation est invalide ou a expiré. Demandez-en un nouveau.",
+        "error": "Une erreur s'est produite. Veuillez réessayer.",
+        "missing_token_title": "Lien de réinitialisation invalide",
+        "missing_token_message": "Il manque le jeton à ce lien de réinitialisation du mot de passe.",
+        "request_new_link": "Demander un nouveau lien de réinitialisation"
+      },
+      "logout": "Se déconnecter",
+      "back_to_login": "Retour à la connexion"
     },
     "fields": {
       "name": {

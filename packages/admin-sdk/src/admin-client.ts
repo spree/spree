@@ -117,6 +117,8 @@ import type {
   OrderCompleteParams,
   OrderCreateParams,
   OrderUpdateParams,
+  PasswordResetParams,
+  PasswordResetRequestParams,
   PaymentCreateParams,
   PaymentMethodCreateParams,
   PaymentMethodType,
@@ -420,6 +422,33 @@ export class AdminClient {
       this.request<AuthTokens>('POST', `/auth/invitations/${id}/accept`, {
         ...options,
         params: { token },
+        body: params,
+      }),
+
+    /**
+     * Public (unauthenticated) request for a password reset email. Always
+     * resolves (202) whether or not the email matches an account, to prevent
+     * enumeration. The emailed link points at `redirect_url` (validated against
+     * the store's allowed origins) with the reset token appended as `?token=`.
+     */
+    requestPasswordReset: (
+      params: PasswordResetRequestParams,
+      options?: RequestOptions,
+    ): Promise<void> =>
+      this.request<void>('POST', '/auth/password_resets', { ...options, body: params }),
+
+    /**
+     * Public (unauthenticated) consume of a password reset token: sets the new
+     * password and signs the admin in (JWT + refresh-token cookie, like `login`).
+     * The token is single-use — it invalidates as soon as the password changes.
+     */
+    resetPassword: (
+      token: string,
+      params: PasswordResetParams,
+      options?: RequestOptions,
+    ): Promise<AuthTokens> =>
+      this.request<AuthTokens>('PATCH', `/auth/password_resets/${encodeURIComponent(token)}`, {
+        ...options,
         body: params,
       }),
   }

@@ -1,0 +1,15 @@
+<%# Labelled line-items + totals section shared by the order-related emails.
+    Locals: heading, line_items, order, optional totals (default true — pass
+    false when line_items is a subset of the order, e.g. one shipment's items,
+    so whole-order amounts aren't shown next to a partial item list). %>
+<table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td>
+      <h3 class="f-fallback"><%= heading %></h3>
+      <%= render 'spree/shared/purchased_items_table',
+                 line_items: line_items,
+                 order: order,
+                 totals: local_assigns.fetch(:totals, true) %>
+    </td>
+  </tr>
+</table>

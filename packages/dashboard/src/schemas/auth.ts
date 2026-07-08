@@ -28,6 +28,24 @@ export const acceptInvitationSignInFormSchema = z.object({
 })
 export type AcceptInvitationSignInFormValues = z.infer<typeof acceptInvitationSignInFormSchema>
 
+/** Forgot-password request — just the email; the server never reveals whether it matched. */
+export const forgotPasswordFormSchema = z.object({
+  email: z.email(),
+})
+export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordFormSchema>
+
+/** Choosing a new password from a reset link — mirrors the server's strength rule. */
+export const resetPasswordFormSchema = z
+  .object({
+    password: z.string().min(8, { error: passwordMinLength }),
+    password_confirmation: z.string(),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    error: passwordsDontMatch,
+    path: ['password_confirmation'],
+  })
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordFormSchema>
+
 /** New invitee creating an account inline — mirrors the server's `AdminUser` validations. */
 export const acceptInvitationSignUpFormSchema = z
   .object({

@@ -1,0 +1,7 @@
+<%# Rounded 80px product thumbnail linking to the product page, with a
+    no-image fallback. Locals: image, product_url, alt. %>
+<% if image.present? && image.attached? %>
+  <%= link_to spree_image_tag(image, variant: :small, alt: alt, width: 80, class: 'item_thumb'), product_url %>
+<% else %>
+  <%= link_to image_tag('noimage/small.png', alt: alt, width: 80, class: 'item_thumb'), product_url %>
+<% end %>

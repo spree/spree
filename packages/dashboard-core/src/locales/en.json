@@ -171,7 +171,31 @@
         "title": "Welcome back",
         "subtitle": "Sign in to your admin account"
       },
-      "logout": "Sign out"
+      "forgot_password": {
+        "link": "Forgot password?",
+        "title": "Reset your password",
+        "subtitle": "Enter your email and we'll send you a link to reset your password.",
+        "submit": "Send reset link",
+        "sending": "Sending…",
+        "sent_title": "Check your email",
+        "sent_subtitle": "If an account exists for that email, a password reset link is on its way.",
+        "error": "Something went wrong. Please try again."
+      },
+      "reset_password": {
+        "title": "Choose a new password",
+        "subtitle": "Enter a new password for your admin account.",
+        "new_password_label": "New password",
+        "confirm_password_label": "Confirm new password",
+        "submit": "Reset password",
+        "submitting": "Resetting…",
+        "token_invalid": "This reset link is invalid or has expired. Request a new one.",
+        "error": "Something went wrong. Please try again.",
+        "missing_token_title": "Invalid reset link",
+        "missing_token_message": "This password reset link is missing its token.",
+        "request_new_link": "Request a new reset link"
+      },
+      "logout": "Sign out",
+      "back_to_login": "Back to sign in"
     },
     "fields": {
       "name": {

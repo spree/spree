@@ -1,24 +1,19 @@
-<tr>
-  <td class="purchase_image">
-    <% image = line_item.variant.primary_media || line_item.product.primary_media %>
-    <% if image.present? && image.attached? %>
-      <%= link_to(spree_image_tag(image, variant: :mini, alt: line_item.name), spree_storefront_resource_url(line_item.product)) %>
-    <% else %>
-      <%= link_to(image_tag('noimage/small.png', alt: line_item.name), spree_storefront_resource_url(line_item.product)) %>
-    <% end %>
-  </td>
-  <td class="purchase_item">
-    <strong>
-      <span class="f-fallback">
-        <%= link_to line_item.name, spree_storefront_resource_url(line_item.product) %>
-      </span>
-    </strong>
-    <p class="purchase_item--additional"><%= line_item.variant.options_text -%></p>
-  </td>
-  <td class="align-right" width="30%">
-    <span class="f-fallback purchase_item_price">
-      <%= line_item.quantity %> x <%= line_item.single_money %><br>
-      <%= line_item.display_amount %>
-    </span>
-  </td>
-</tr>
+<table class="item" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td class="item_image" width="96" valign="middle">
+      <% image = line_item.variant.primary_media || line_item.product.primary_media %>
+      <% product_url = spree_storefront_resource_url(line_item.product) %>
+      <%= render 'spree/shared/item_thumbnail_link', image: image, product_url: product_url, alt: line_item.name %>
+    </td>
+    <td class="item_info" valign="middle">
+      <%= link_to line_item.name, product_url, class: 'f-fallback item_name' %>
+      <% if line_item.variant.options_text.present? %>
+        <p class="item_meta"><%= line_item.variant.options_text %></p>
+      <% end %>
+    </td>
+    <td class="item_amount" align="right" valign="middle">
+      <p class="item_qty f-fallback"><%= line_item.quantity %> x <%= line_item.single_money %></p>
+      <p class="item_price f-fallback"><%= line_item.display_amount %></p>
+    </td>
+  </tr>
+</table>

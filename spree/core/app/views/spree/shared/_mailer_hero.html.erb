@@ -1,0 +1,12 @@
+<%# Centered hero block every mailer template opens with.
+    Render as a layout so the template's headline/copy fills it:
+    render layout: 'spree/shared/mailer_hero' do ... end %>
+<table class="hero" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td align="center">
+      <div class="hero_content f-fallback">
+        <%= yield %>
+      </div>
+    </td>
+  </tr>
+</table>

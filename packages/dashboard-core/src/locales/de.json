@@ -171,7 +171,31 @@
         "title": "Willkommen zurück",
         "subtitle": "Melden Sie sich bei Ihrem Administratorkonto an"
       },
-      "logout": "Abmelden"
+      "forgot_password": {
+        "link": "Passwort vergessen?",
+        "title": "Passwort zurücksetzen",
+        "subtitle": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen Ihres Passworts.",
+        "submit": "Link zum Zurücksetzen senden",
+        "sending": "Wird gesendet…",
+        "sent_title": "Prüfen Sie Ihre E-Mails",
+        "sent_subtitle": "Falls ein Konto mit dieser E-Mail-Adresse existiert, ist ein Link zum Zurücksetzen des Passworts unterwegs.",
+        "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+      },
+      "reset_password": {
+        "title": "Neues Passwort wählen",
+        "subtitle": "Geben Sie ein neues Passwort für Ihr Administratorkonto ein.",
+        "new_password_label": "Neues Passwort",
+        "confirm_password_label": "Neues Passwort bestätigen",
+        "submit": "Passwort zurücksetzen",
+        "submitting": "Wird zurückgesetzt…",
+        "token_invalid": "Dieser Link zum Zurücksetzen ist ungültig oder abgelaufen. Fordern Sie einen neuen an.",
+        "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+        "missing_token_title": "Ungültiger Link zum Zurücksetzen",
+        "missing_token_message": "Diesem Link zum Zurücksetzen des Passworts fehlt der Token.",
+        "request_new_link": "Neuen Link zum Zurücksetzen anfordern"
+      },
+      "logout": "Abmelden",
+      "back_to_login": "Zurück zur Anmeldung"
     },
     "fields": {
       "name": {

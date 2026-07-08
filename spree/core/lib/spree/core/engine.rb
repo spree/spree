@@ -46,6 +46,14 @@ module Spree
       # Add app/subscribers to autoload paths
       config.paths.add 'app/subscribers', eager_load: true
 
+      # Register bundled ActionMailer previews so they show up at /rails/mailers
+      # without the host app having to copy any files.
+      initializer 'spree.mailer_previews' do |app|
+        if app.config.action_mailer.show_previews
+          app.config.action_mailer.preview_paths << File.expand_path('previews', __dir__)
+        end
+      end
+
       initializer 'spree.environment', before: :load_config_initializers do |app|
         app.config.spree = Environment.new(SpreeCalculators.new, SpreeValidators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
 
@@ -348,6 +356,7 @@ module Spree
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
+          Spree::AdminUserEmailSubscriber,
           Spree::ProductMetricsSubscriber
         ]
 

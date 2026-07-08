@@ -33,7 +33,7 @@ module Spree
 
               if user
                 token = user.generate_token_for(:password_reset)
-                event_payload = { reset_token: token, email: user.email }
+                event_payload = { reset_token: token, email: user.email, store_id: current_store.prefixed_id }
                 event_payload[:redirect_url] = redirect_url if redirect_url.present?
                 user.publish_event('customer.password_reset_requested', event_payload)
               end
@@ -56,6 +56,9 @@ module Spree
 
               if user.update(password: params[:password], password_confirmation: params[:password_confirmation])
                 jwt = generate_jwt(user)
+                # Kill every existing session before minting the new one —
+                # a stolen refresh token must not survive a password reset.
+                Spree::RefreshToken.revoke_all_for(user)
                 refresh_token = Spree::RefreshToken.create_for(user, request_env: { ip_address: request.remote_ip, user_agent: request.user_agent&.truncate(255) })
                 user.publish_event('customer.password_reset')
 

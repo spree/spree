@@ -11,6 +11,24 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
   describe '#invitation_email' do
     subject(:mail) { described_class.invitation_email(invitation) }
 
+    context 'for an invitation on a non-default store' do
+      let(:other_store) do
+        create(:store, name: 'Second Store', mail_from_address: 'hello@second.example.com',
+                       url: 'second.example.com')
+      end
+      let(:invitation) do
+        create(:invitation, email: 'invited@example.com', inviter: inviter, resource: other_store, skip_email: true)
+      end
+
+      # Regression: the shared header/footer and from address read
+      # current_store, which used to fall back to the default store when
+      # delivering from a background job.
+      it 'brands the email with the invitation store, not the default store' do
+        expect(mail.from).to eq(['hello@second.example.com'])
+        expect(mail.body.encoded).to include('Second Store')
+      end
+    end
+
     it 'renders the subject' do
       expect(mail.subject).to eq(
         Spree.t('invitation_mailer.invitation_email.subject', resource_name: store.name)

@@ -18,6 +18,18 @@ module Spree
     end
 
     describe '#handle' do
+      context 'with a non-deliverable auth event' do
+        let!(:webhook_endpoint) { create(:webhook_endpoint, store: store, subscriptions: ['*']) }
+        let(:event_name) { 'admin_user.password_reset_requested' }
+        let(:event_payload) { { reset_token: 'secret', email: 'admin@example.com' } }
+
+        it 'never delivers admin credentials, even to wildcard subscriptions' do
+          expect {
+            described_class.new.handle(event)
+          }.not_to change(Spree::WebhookDelivery, :count)
+        end
+      end
+
       context 'when webhooks are enabled' do
         it 'creates a webhook delivery record' do
           expect {

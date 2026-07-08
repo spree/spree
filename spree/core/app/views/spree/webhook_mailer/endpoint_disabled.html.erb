@@ -1,26 +1,51 @@
-<h1><%= Spree.t('webhook_mailer.endpoint_disabled.heading') %></h1>
+<%= render 'spree/shared/purchased_items_styles' %>
 
-<p><%= Spree.t('webhook_mailer.endpoint_disabled.message', endpoint_name: @endpoint.name || @endpoint.url) %></p>
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('webhook_mailer.endpoint_disabled.heading') %></h1>
+  <p><%= Spree.t('webhook_mailer.endpoint_disabled.message', endpoint_name: @endpoint.name || @endpoint.url) %></p>
+<% end %>
 
-<table role="presentation" style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+<table class="section summary" width="100%" cellpadding="0" cellspacing="0" role="presentation">
   <tr>
-    <td style="padding: 8px 0; color: #6b7280;"><strong><%= Spree.t('webhook_mailer.endpoint_disabled.url_label') %></strong></td>
-    <td style="padding: 8px 0;"><%= @endpoint.url %></td>
+    <td valign="top">
+      <span class="f-fallback"><%= Spree.t('webhook_mailer.endpoint_disabled.url_label') %></span>
+    </td>
+    <td class="summary_value summary_strong" align="right" valign="top">
+      <span class="f-fallback"><%= @endpoint.url %></span>
+    </td>
   </tr>
   <% if @endpoint.name.present? %>
-  <tr>
-    <td style="padding: 8px 0; color: #6b7280;"><strong><%= Spree.t('webhook_mailer.endpoint_disabled.name_label') %></strong></td>
-    <td style="padding: 8px 0;"><%= @endpoint.name %></td>
-  </tr>
+    <tr>
+      <td valign="top">
+        <span class="f-fallback"><%= Spree.t('webhook_mailer.endpoint_disabled.name_label') %></span>
+      </td>
+      <td class="summary_value summary_strong" align="right" valign="top">
+        <span class="f-fallback"><%= @endpoint.name %></span>
+      </td>
+    </tr>
   <% end %>
   <tr>
-    <td style="padding: 8px 0; color: #6b7280;"><strong><%= Spree.t('webhook_mailer.endpoint_disabled.reason_label') %></strong></td>
-    <td style="padding: 8px 0;"><%= @endpoint.disabled_reason %></td>
+    <td valign="top">
+      <span class="f-fallback"><%= Spree.t('webhook_mailer.endpoint_disabled.reason_label') %></span>
+    </td>
+    <td class="summary_value summary_strong" align="right" valign="top">
+      <span class="f-fallback"><%= @endpoint.disabled_reason %></span>
+    </td>
   </tr>
   <tr>
-    <td style="padding: 8px 0; color: #6b7280;"><strong><%= Spree.t('webhook_mailer.endpoint_disabled.disabled_at_label') %></strong></td>
-    <td style="padding: 8px 0;"><%= @endpoint.disabled_at&.strftime('%Y-%m-%d %H:%M %Z') %></td>
+    <td valign="top">
+      <span class="f-fallback"><%= Spree.t('webhook_mailer.endpoint_disabled.disabled_at_label') %></span>
+    </td>
+    <td class="summary_value summary_strong" align="right" valign="top">
+      <span class="f-fallback"><%= @endpoint.disabled_at&.strftime('%Y-%m-%d %H:%M %Z') %></span>
+    </td>
   </tr>
 </table>
 
-<p><%= Spree.t('webhook_mailer.endpoint_disabled.instructions') %></p>
+<table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td>
+      <p class="f-fallback"><%= Spree.t('webhook_mailer.endpoint_disabled.instructions') %></p>
+    </td>
+  </tr>
+</table>

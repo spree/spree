@@ -602,6 +602,23 @@ export interface InvitationAcceptParams {
   last_name?: string
 }
 
+/** Body for requesting a password reset email. */
+export interface PasswordResetRequestParams {
+  email: string
+  /**
+   * Page the emailed reset link should point at (the reset token is appended
+   * as a `token` query param). Must match one of the store's allowed origins,
+   * otherwise it is ignored and the server-side default is used.
+   */
+  redirect_url?: string
+}
+
+/** Body for consuming a password reset token and setting the new password. */
+export interface PasswordResetParams {
+  password: string
+  password_confirmation: string
+}
+
 export interface AdminUserUpdateParams {
   first_name?: string
   last_name?: string
