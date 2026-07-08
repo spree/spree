@@ -44,8 +44,11 @@
 
       <div class="dropdown-divider"></div>
 
-        <%= button_to spree_admin_logout_path, class: 'dropdown-item text-danger hover:bg-red-100 mb-0', method: :delete do %>
-          <%= icon('logout', class: "icon icon-logout")  %>
+        <%# Turbo is disabled so the browser follows the sign-out redirect
+            natively — apps may redirect to a different host (e.g. multi-tenant
+            setups), which Turbo's fetch cannot follow cross-origin. %>
+        <%= button_to spree_admin_logout_path, class: 'dropdown-item text-danger hover:bg-red-100 mb-0', method: :delete, form: { data: { turbo: false } } do %>
+          <%= icon('logout', class: "icon icon-logout") %>
           <%= Spree.t(:logout) %>
         <% end if defined?(spree_admin_logout_path) %>
       <% end %>
