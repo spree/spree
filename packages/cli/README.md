@@ -88,6 +88,15 @@ Open an interactive Rails console inside the running container.
 spree console
 ```
 
+### `spree shell`
+
+Open an interactive bash shell inside the web container. If the container is down, a one-off container is started against the same volumes instead.
+
+```bash
+spree shell
+spree bash    # alias
+```
+
 ### `spree rspec`
 
 Run the RSpec test suite inside the web container with `RAILS_ENV=test`. Everything after `rspec` is passed through to RSpec.

@@ -23,6 +23,7 @@ import { registerRoutesCommand } from './commands/routes.js'
 import { registerRspecCommand } from './commands/rspec.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
 import { registerSeedCommand } from './commands/seed.js'
+import { registerShellCommand } from './commands/shell.js'
 import { registerStopCommand } from './commands/stop.js'
 import { registerTaskCommand } from './commands/task.js'
 import { registerUpdateCommand } from './commands/update.js'
@@ -83,6 +84,7 @@ registerRakeCommand(program)
 registerTaskCommand(program)
 registerRspecCommand(program)
 registerConsoleCommand(program)
+registerShellCommand(program)
 
 // Spree-specific helpers
 registerUserCommand(program)
