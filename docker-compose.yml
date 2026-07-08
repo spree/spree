@@ -40,7 +40,7 @@ services:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/spree_production
       REDIS_URL: redis://redis:6379/1
       CDN_HOST: ${CDN_HOST}
-      SPREE_PATH: /spree
+      SPREE_PATH: /workspace
     expose:
       - "3000"
     restart: unless-stopped
@@ -61,7 +61,7 @@ services:
       RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/spree_production
       REDIS_URL: redis://redis:6379/1
-      SPREE_PATH: /spree
+      SPREE_PATH: /workspace
     restart: unless-stopped
 
   nginx:
