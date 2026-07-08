@@ -287,4 +287,60 @@ docker-compose up -d
 
 ---
 
+## Automatyzacja: Jak to działa na przyszłość
+
+Po skonfigurowaniu powyższego, **deployment jest całkowicie zautomatyzowany**. Nie musisz już nic robić ręcznie.
+
+### Jak działa na przyszłość?
+
+```
+Ty robisz zmianę w kodzie
+    ↓
+git push origin main
+    ↓
+GitHub Actions uruchamia się AUTOMATYCZNIE
+    ↓
+1. Builduje Docker image
+2. Pushuje do GitHub Container Registry (GHCR)
+3. SSH się do Oracle VPS
+4. Pulluje obraz i uruchamia docker-compose up
+5. Migruje bazę danych
+6. Health check
+    ↓
+✓ Aplikacja wdrażana — ty nic nie robisz
+```
+
+### Bezpieczeństwo kluczy SSH
+
+**Klucze SSH NIGDY nie są w repozytorium:**
+- Klucz prywatny (`ssh-key-2026-07-08.key`) — trzymasz u siebie lokalnie w `~/.ssh/`
+- GitHub ma kopię w **Secrets** (Ustawienia → Secrets) — niedostępne publicznie
+- GitHub Actions automatycznie używa `ORACLE_SSH_KEY` do SSH na Oracle
+
+**Nie udostępniaj klucza nikomu.**
+
+### Monitoring deployów
+
+Możesz obserwować deployment w:
+```
+https://github.com/pawelekbyra/sklepik/actions
+```
+
+Tam widzisz:
+- ✓ Build succeeded
+- ✓ Push to registry successful
+- ✓ Deploy to Oracle successful
+- Lub ✗ błędy (jeśli coś poszło nie tak)
+
+### Następny deploy — co robisz:
+
+1. Robisz zmianę w kodzie
+2. Commitasz i pushasz do `main`
+3. GitHub Actions robi resztę — **siedź i czekaj**
+4. Sprawdzisz w Actions tab czy deployment się powiódł
+
+**To tyle. Nic więcej nie musisz robić.**
+
+---
+
 **Pytania?** Sprawdź `docs/deployment-oracle.md` dla więcej szczegółów na temat architektury.
