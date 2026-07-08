@@ -14,6 +14,7 @@ export function useCreateCustomerStoreCredit(customerId: string) {
       adminClient.customers.storeCredits.create(customerId, params),
     invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.store_credit_saved'),
+    errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
 }
 
@@ -23,6 +24,7 @@ export function useUpdateCustomerStoreCredit(customerId: string, creditId: strin
       adminClient.customers.storeCredits.update(customerId, creditId, params),
     invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.store_credit_saved'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
 }
 
@@ -31,5 +33,6 @@ export function useDeleteCustomerStoreCredit(customerId: string) {
     mutationFn: (id: string) => adminClient.customers.storeCredits.delete(customerId, id),
     invalidate: [['customers', customerId]],
     successMessage: i18n.t('admin.messages.store_credit_removed'),
+    errorMessage: i18n.t('admin.errors.failed_to_delete'),
   })
 }
