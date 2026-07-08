@@ -264,6 +264,19 @@ spree routes -c Spree::Api::V3::Store::ProductsController   # Filter by controll
 spree routes --expanded
 ```
 
+### `spree rspec`
+
+Run the RSpec test suite inside the web container with `RAILS_ENV=test`, so tests hit the `spree_test` database — never your development data. Everything after `rspec` passes through, so file paths, line numbers, and flags work as usual.
+
+```bash
+spree rspec                                      # full suite
+spree rspec spec/models/spree/brand_spec.rb      # one file
+spree rspec spec/models/spree/brand_spec.rb:15   # one example
+spree rspec --format documentation
+```
+
+Before the first run, create the test database with `spree rails db:test:prepare`. See the [Testing tutorial](/developer/tutorial/testing) for writing specs.
+
 ## Running things inside the container
 
 These are passthrough commands — anything after the subcommand reaches the inner Rails/Bundle/Rake invocation as-is. Useful for ad-hoc commands that don't have a dedicated wrapper.
