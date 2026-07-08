@@ -40,8 +40,7 @@ describe Spree::UserIdentity, type: :model do
       it 'allows same uid for different user types' do
         stub_const('Spree::AdminUser', Class.new(Spree.user_class))
 
-        different_user_type = build(:user_identity, user_type: 'Spree::AdminUser', user_id: user.id, provider: 'email',
-                                                    uid: '12345')
+        different_user_type = build(:user_identity, user_type: 'Spree::AdminUser', user_id: user.id, provider: 'email', uid: '12345')
         expect(different_user_type).to be_valid
       end
     end
