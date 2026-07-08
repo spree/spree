@@ -30,7 +30,7 @@ ENV SPREE_PATH=/workspace
 ENV BUNDLE_IGNORE_CONFIG=1
 ENV SECRET_KEY_BASE_DUMMY=1
 
-RUN bundle lock && bundle install --without development test && bundle check
+RUN bundle lock && bundle install --without development test && bundle check --without development test
 
 RUN bundle exec rails assets:precompile
 
