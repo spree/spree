@@ -68,9 +68,13 @@ _Wzorzec 2 (martwe endpointy), znaleziska nie naprawione — wymagają decyzji p
   _Metodologia i mapa pokrycia (jednorazowy przebieg vs cały panel):_ [`docs/audit-playbook.md`](audit-playbook.md) — zapisany jako powtarzalny proces, nie jednorazowa notatka. Pięć gotowych do wklejenia promptów na kolejne rundy audytu (katalog, wysyłka/podatki, bezpieczeństwo panelu, pieniądze klienta, konfiguracja/integracje) czeka tam na odpalenie — patrz **F13**.
 
 **F13. Kolejne rundy audytu panelu (kontynuacja F12)** — `sklepik` (`packages/dashboard*`, `spree/api`) — `[częściowo zamknięte 2026-07-08]`
-F12 sprawdził punktowo priorytetowe zasoby (zamówienia, klienci, promocje, ceny, płatności, magazyny). 2026-07-08 zrealizowano pierwszy gotowy prompt z `docs/audit-playbook.md`: pełny katalog produktów/wariantów/opcji/kategorii/media. Wynik: brak dodatkowych cichych błędów mutacji; większość endpointów katalogowych ma konsumentów w SDK/hookach/routes; znaleziska wymagające decyzji UI/produktu, nie automatycznej naprawy, to: ukryte w panelu pola produktowe (`available_on`, `promotionable`, `digital`, `meta_keywords`), brak inputów `cost_price`/`cost_currency` wariantu, techniczne `metadata` opcji bez ścieżki zapisu/UI oraz top-level `/api/v3/admin/variants` bez realnego konsumenta panelowego. Szczegółowy raport jest w [`docs/audit-playbook.md`](audit-playbook.md).
+F12 sprawdził punktowo priorytetowe zasoby (zamówienia, klienci, promocje, ceny, płatności, magazyny). 2026-07-08 zrealizowano trzy pierwsze gotowe prompty z `docs/audit-playbook.md`:
 
-Pozostałe promptowane obszary nadal otwarte: wysyłka/podatki/strefy/transfery, bezpieczeństwo panelu (użytkownicy/role/klucze API), admin-side pieniądze klienta (karty podarunkowe/kredyt/zwroty/listy życzeń/pobrania), konfiguracja/integracje.
+1. **Katalog produktów/wariantów/opcji/kategorii/media:** brak dodatkowych cichych błędów mutacji; istniejące endpointy katalogowe mają konsumentów (korekta: top-level `/api/v3/admin/variants` jest używany przez kreator transferów magazynowych); znaleziska wymagające decyzji UI/produktu to ukryte pola produktowe (`available_on`, `promotionable`, `digital`, `meta_keywords`), brak inputów `cost_price`/`cost_currency` wariantu i techniczne `metadata` opcji bez ścieżki zapisu/UI.
+2. **Wysyłka/podatki/strefy/transfery:** tax categories i stock transfers są spięte i błędy mutacji są widoczne, ale Admin API v3/panel nie mają konfiguracji shipping methods, shipping categories, zones ani tax rates — money-critical luka przed sprzedażą.
+3. **Bezpieczeństwo panelu:** staff, role pickery, zaproszenia i API keys są spięte, błędy są widoczne, ale staff management wymaga backendowego guardu przed usunięciem siebie albo ostatniego administratora sklepu.
+
+Pozostałe promptowane obszary nadal otwarte: admin-side pieniądze klienta (karty podarunkowe/kredyt/zwroty/listy życzeń/pobrania) oraz konfiguracja/integracje. Szczegółowe raporty są w [`docs/audit-playbook.md`](audit-playbook.md).
 _Zamknięte gdy:_ mapa pokrycia w `audit-playbook.md` nie ma już żadnego ⬜ dla priorytetowych obszarów, a wiersze ⚠️ mają osobne decyzje lub zadania.
 
 ### P3 — siatka bezpieczeństwa
