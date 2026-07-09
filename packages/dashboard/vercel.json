@@ -1,10 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://kakaowy-sklepik.onrender.com/api/:path*" },
+    { "source": "/api/:path*", "destination": "https://141.253.103.172/api/:path*" },
     {
       "source": "/rails/:path*",
-      "destination": "https://kakaowy-sklepik.onrender.com/rails/:path*"
+      "destination": "https://141.253.103.172/rails/:path*"
     },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
