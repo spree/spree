@@ -110,28 +110,20 @@ Docker + Docker Compose
 
 Panel admina i storefront zostają na Vercelu, więc po cutoverze trzeba zaktualizować ich konfigurację tak, aby wskazywały na nowy backend/API zamiast Rendera.
 
-## SSL Certificate — Tymczasowe vs. docelowe
+## SSL Certificate
 
-**Tymczasowe (2026-07-09 — teraz):**
-- Self-signed certificate (OpenSSL) do wewnętrznych testów
-- API dostępna po HTTPS (self-signed, niezaufany)
-- Vercel storefront/admin korzystają z HTTP zamiast HTTPS dla zgodności z build timerem (self-signed cert odrzucane przez Node.js)
-- `SPREE_API_URL=http://141.253.103.172` (bez SSL dla development/testing)
+**Rozwiązane (2026-07-09):** Zamiast kupować domenę użyto darmowego `nip.io` — usługi wildcard DNS, która rozwiązuje `<ip-z-myślnikami>.nip.io` na dany adres IP bez żadnej rejestracji. Dla tego serwera to `141-253-103-172.nip.io` → `141.253.103.172`.
 
-**Docelowe (po setup domeny):**
-- Kupić/przydzielić domenę (np. `api.kakaowy-sklepik.com` lub `backend.kakaowy-sklepik.pl`)
-- Wskazać domenę DNS na IP `141.253.103.172`
-- Uruchomić `certbot` na Oracle VM z Let's Encrypt:
-  ```bash
-  sudo certbot certonly --standalone -d api.kakaowy-sklepik.pl
-  ```
-- Zaktualizować Nginx aby używał certyfikatu Let's Encrypt
-- Zmienić na Vercelu:
-  ```
-  SPREE_API_URL=https://api.kakaowy-sklepik.pl
-  ```
+Ponieważ to prawdziwy, publiczny wpis DNS, Let's Encrypt mógł wystawić dla niego normalny, zaufany certyfikat (`certbot certonly --standalone -d 141-253-103-172.nip.io`), bez kupowania domeny.
 
-Na razie HTTP jest OK dla testów, ale trzeba przejść na HTTPS + Let's Encrypt do produkcji.
+Stan obecny:
+- Certyfikat Let's Encrypt dla `141-253-103-172.nip.io`, ważny do 2026-10-07, auto-renewal przez `certbot renew` (systemd timer) z hookami w `/etc/letsencrypt/renewal-hooks/{pre,post}/`, które zatrzymują/startują kontener `nginx` (musi zwolnić port 80 na czas walidacji) i kopiują świeże pliki do `sklepik/ssl/{cert,key}.pem`
+- Nginx: `server_name 141-253-103-172.nip.io`, przekierowanie HTTP→HTTPS włączone (`return 301 https://...`)
+- `SPREE_API_URL=https://141-253-103-172.nip.io` na Vercelu (storefront + admin)
+
+Uwaga dla kolejnych agentów: firewall hosta (`iptables`) domyślnie przepuszczał tylko port 22 — porty 80/443 działały wcześniej tylko przez Docker NAT (który omija `INPUT` chain), ale bezpośrednie połączenia na hoście (np. certbot standalone) były odrzucane. Dodano jawne `ACCEPT` dla portów 80 i 443 w `iptables INPUT` (nie jest to trwałe po reboocie — brak `iptables-persistent`; jeśli serwer kiedyś się zrestartuje, trzeba dodać te reguły ponownie albo zainstalować `iptables-persistent`).
+
+Jeśli w przyszłości pojawi się prawdziwa domena, można ją dopiąć tak samo (`certbot certonly --standalone -d twoja-domena.pl`, podmiana `server_name` i `SPREE_API_URL`) — `nip.io` przestanie być potrzebne.
 
 ## Render flow, który trzeba odtworzyć lub świadomie zastąpić
 
