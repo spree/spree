@@ -52,25 +52,14 @@ module Spree
       end
 
       # A storefront counts as set up once an active publishable key has actually
-      # authenticated a Store API request and a storefront is connected.
+      # authenticated a Store API request and the merchant has saved the
+      # storefront URL (entered manually or backfilled by the Vercel callback).
       def storefront_setup?
-        storefront_publishable_key_used? && storefront_connected?
+        storefront_publishable_key_used? && preferred_storefront_url.present?
       end
 
       def storefront_publishable_key_used?
         api_keys.active.publishable.where.not(last_used_at: nil).exists?
-      end
-
-      # A non-loopback allowed origin (web storefronts) or an explicit storefront
-      # URL (mobile apps and other clients that don't need CORS) both count as a
-      # connected storefront; the `http://localhost` origin seeded on install
-      # doesn't.
-      def storefront_connected?
-        storefront_origin_added? || preferred_storefront_url.present?
-      end
-
-      def storefront_origin_added?
-        allowed_origins.reject(&:loopback?).any?
       end
     end
   end

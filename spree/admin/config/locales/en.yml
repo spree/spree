@@ -555,7 +555,8 @@ en:
         connect_title: Connect your storefront
         connected_title: Connected storefronts
         deploy_button: Deploy to Vercel
-        deploy_copy: Don't have a storefront yet? The fastest way to launch is the official open-source Next.js storefront. Deploying clones it to your Git account and builds it on Vercel with your credentials prefilled — once it finishes, you'll be redirected back here to complete the setup.
+        deploy_copy: Don't have a storefront yet? The fastest way to launch is the official open-source Next.js storefront. Deploying clones it to your Git account and builds it on Vercel with your credentials prefilled.
+        deploy_finish_hint: Once the deployment finishes, copy your storefront's URL from Vercel into the Storefront URL field below and save it to finish the setup.
         deploy_title: 'Recommended: deploy the official Next.js storefront'
         deployed_copy: It's now live at
         deployed_title: Your storefront has been deployed!
