@@ -17,6 +17,9 @@ module Spree
         can :manage, Spree::Taxon
         can :manage, Spree::Taxonomy
         can :manage, Spree::Classification
+        can :manage, Spree::Collection
+        can :manage, Spree::ProductCollection
+        can :manage, Spree::CollectionRule
         can :manage, Spree::Price
         can :manage, Spree::PriceList
         can :manage, Spree::PriceRule

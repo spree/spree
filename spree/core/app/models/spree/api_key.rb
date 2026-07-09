@@ -21,6 +21,7 @@ module Spree
       read_store_credits write_store_credits
       read_stock write_stock
       read_categories write_categories
+      read_collections write_collections
       read_settings write_settings
       read_webhooks write_webhooks
       read_api_keys write_api_keys

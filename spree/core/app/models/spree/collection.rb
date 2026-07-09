@@ -46,11 +46,10 @@ module Spree
     has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :collection
     has_many :products, through: :product_collections
 
-    has_many :collection_rules, class_name: 'Spree::CollectionRule', dependent: :destroy, inverse_of: :collection
-    accepts_nested_attributes_for :collection_rules, allow_destroy: true, reject_if: proc { |attributes|
+    has_many :rules, class_name: 'Spree::CollectionRule', dependent: :destroy, inverse_of: :collection
+    accepts_nested_attributes_for :rules, allow_destroy: true, reject_if: proc { |attributes|
       attributes['value'].blank?
     }
-    alias rules collection_rules
 
     #
     # Attachments
@@ -139,6 +138,44 @@ module Spree
       end
 
       products
+    end
+
+    # Syncs automatic rules from an array of attribute hashes by mutating the
+    # in-memory `rules` association: hashes with an id update the matching rule
+    # (accepting the prefixed `crule_` id), hashes without an id build a new
+    # rule (the STI `type` selects the subclass), and any existing rule absent
+    # from the payload is destroyed. Autosave persists the whole set in the
+    # parent's save transaction. Mirrors Spree::OptionType#option_values= so the
+    # Admin API can send the full desired rule set and have it round-trip.
+    #
+    # Falls back to the association writer when given CollectionRule records
+    # (non-API callers / accepts_nested_attributes_for).
+    #
+    # @param rules_params [Array<Hash>] array of rule attribute hashes
+    # @return [void]
+    def rules=(rules_params)
+      return super if rules_params.blank? || rules_params.first.is_a?(Spree::CollectionRule)
+
+      existing_by_id = rules.to_a.index_by(&:id)
+      retained_ids = []
+
+      rules_params.each do |rule_data|
+        data = rule_data.to_h.with_indifferent_access
+        rule_id = data.delete(:id)
+
+        record = if rule_id.present?
+                   existing_by_id[Spree::PrefixedId.decode_prefixed_id(rule_id) || rule_id] ||
+                     raise(ActiveRecord::RecordNotFound.new("Couldn't find Spree::CollectionRule with param=#{rule_id}", 'Spree::CollectionRule'))
+                 else
+                   rules.build(data)
+                 end
+        record.assign_attributes(data) if rule_id.present?
+        retained_ids << record.id if record.persisted?
+      end
+
+      existing_by_id.each_value do |existing|
+        existing.mark_for_destruction unless retained_ids.include?(existing.id)
+      end
     end
 
     # Slug generation, flat (no parent hierarchy). Mirrors Spree::Taxon's dual set_permalink:

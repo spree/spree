@@ -15,7 +15,7 @@ module Spree
         collections_to_add = []
 
         # existing memberships that no longer match (tags/prices changed)
-        product.collections.automatic.includes(:collection_rules).each do |collection|
+        product.collections.automatic.includes(:rules).each do |collection|
           collections_to_remove << collection unless collection.products_matching_rules.ids.include?(product.id)
         end
 
@@ -24,7 +24,7 @@ module Spree
         end
 
         # automatic collections in the product's store that it now matches
-        Spree::Collection.automatic.where(store_id: product.store_id).includes(:collection_rules, :products).each do |collection|
+        Spree::Collection.automatic.where(store_id: product.store_id).includes(:rules, :products).each do |collection|
           collections_to_add << collection if collection.products.exclude?(product) && collection.products_matching_rules.ids.include?(product.id)
         end
 

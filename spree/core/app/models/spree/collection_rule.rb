@@ -6,7 +6,7 @@ module Spree
 
     MATCH_POLICIES = %w[is_equal_to is_not_equal_to contains does_not_contain].freeze
 
-    belongs_to :collection, class_name: 'Spree::Collection', inverse_of: :collection_rules, touch: true
+    belongs_to :collection, class_name: 'Spree::Collection', inverse_of: :rules, touch: true
 
     validates :collection, :type, :value, presence: true
     validates :match_policy, inclusion: { in: MATCH_POLICIES }, presence: true
