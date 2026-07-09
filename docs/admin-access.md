@@ -20,7 +20,7 @@ sklepik / packages/dashboard (Vercel: sklepik-gamma.vercel.app)
   zamówienia, płatności, wysyłka, podatki
 → rozmawia z Admin API przez @spree/admin-sdk (JWT; proxy /api/* → Render)
 
-sklepik / backend (Render: kakaowy-sklepik.onrender.com)
+sklepik / backend (Oracle Cloud: 141.253.103.172)
 → Store API + Admin API v3, baza, Redis, media (R2)
 ```
 

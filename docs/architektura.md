@@ -19,18 +19,18 @@ Jedyna mapa systemu Kakałowy Sklepik. Jeśli infrastruktura się zmienia, aktua
           ▼                                ▼
 ┌──────────────────────────────────────────────────────┐
 │  Backend Rails (fork Spree) — repo: sklepik           │
-│  PRODUKCJA TERAZ: Render, kakaowy-sklepik-backend     │
-│  kakaowy-sklepik.onrender.com                         │
-│  ├── Postgres: kakaowy-sklepik-db (Render, free)      │
-│  ├── Redis:    kakaowy-sklepik-redis (Render, free)   │
+│  PRODUKCJA: Oracle Cloud VPS (od 2026-07-09)          │
+│  141.253.103.172 (IP; docelowo domena)                │
+│  ├── Postgres + Redis (Docker na tej samej VM)        │
+│  ├── Rails/Puma/Sidekiq (Docker)                      │
 │  └── Media:    Cloudflare R2, bucket                  │
 │                kakaowy-sklepik-media (Active Storage) │
 └──────────────────────────────────────────────────────┘
 ```
 
-Migracja backendu z Rendera na Oracle Cloud jest w toku. Do momentu faktycznego cutoveru i zmiany URL-i w Vercel produkcyjny backend nadal jest Render. Docelowy Oracle VPS ma przejąć backend Rails/API, Postgres, Redis, Sidekiq, Nginx i SSL; storefront oraz panel admina zostają na Vercelu.
+Migracja backendu z Rendera na Oracle Cloud **zakończona 2026-07-09** (F8). Backend Rails/API + Postgres + Redis + Sidekiq + Nginx/SSL działają w Docker Compose na Oracle VPS (`VM.Standard.E4.Flex`, 1 OCPU, 8 GB RAM, Ubuntu 22.04, region Paris). Storefront i panel admina zostały zaktualizowane (rewrite URL-i w Vercelu) i wskazują teraz na nowy Oracle backend. R2 pozostaje zewnętrznym storage'iem.
 
-Uwaga na mylącą nazwę: projekt Vercel `sklepik_back` to **panel administracyjny (React SPA)**, nie backend Rails. Backend Rails działa teraz na Renderze, a docelowo ma zostać przeniesiony na Oracle Cloud.
+Uwaga na mylącą nazwę: projekt Vercel `sklepik_back` to **panel administracyjny (React SPA)**, nie backend Rails. Backend Rails działa teraz na Oracle Cloud (był na Renderze).
 
 ## Repozytoria
 
@@ -51,10 +51,10 @@ Uwaga na mylącą nazwę: projekt Vercel `sklepik_back` to **panel administracyj
 
 | Gdzie | Kluczowe zmienne |
 |---|---|
-| Render (backend — produkcja do cutoveru) | `DATABASE_URL`, `REDIS_URL`, `SECRET_KEY_BASE`, `SPREE_PATH` (gemy z tego forka), `CDN_HOST`, dane R2 (w dashboardzie Render, nie w repo) |
-| Oracle Cloud (backend — migracja w toku) | Docelowo odpowiedniki `DATABASE_URL`, `REDIS_URL`, `SECRET_KEY_BASE`, `RAILS_MASTER_KEY`, `SPREE_PATH`, `CDN_HOST`, R2 credentials; sekrety wyłącznie na serwerze/OCI, nigdy w repo. Wybrany fallback VM: `VM.Standard.E4.Flex`, 1 OCPU, 8 GB RAM, Ubuntu 22.04, VCN `sklepik-vcn`, public subnet. Szczegóły: [`deployment-oracle.md`](deployment-oracle.md). |
-| Vercel `sklepik_front` | `SPREE_API_URL`, `SPREE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_DEFAULT_LOCALE=pl` — pełna lista: `sklepikFront/docs/deployment-vercel.md` |
-| Vercel `sklepik_back` | Root Directory `packages/dashboard`; backend URL wpisany w `packages/dashboard/vercel.json` (rewrites), do zmiany z Rendera na Oracle dopiero po testach nowego backendu |
+| Oracle Cloud (backend — produkcja od 2026-07-09) | `.env` na serwerze: `DATABASE_URL`, `REDIS_URL`, `SECRET_KEY_BASE`, `RAILS_MASTER_KEY`, `SPREE_PATH` (gemy z tego forka), `CDN_HOST=https://141.253.103.172` (tymczasowo IP, docelowo domena). R2 credentials w envie wewnątrz `web` kontenera; wszystkie sekrety wyłącznie na serwerze, nigdy w repo. VM: `VM.Standard.E4.Flex`, 1 OCPU, 8 GB RAM, Ubuntu 22.04, VCN `sklepik-vcn`, public subnet. Szczegóły: [`deployment-oracle.md`](deployment-oracle.md). |
+| Render (legacy — wycofany) | Był używany do 2026-07-09. |
+| Vercel `sklepik_front` | `SPREE_API_URL=https://141.253.103.172`, `SPREE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_DEFAULT_LOCALE=pl` — pełna lista: `sklepikFront/docs/deployment-vercel.md` |
+| Vercel `sklepik_back` | Root Directory `packages/dashboard`; backend URL w `packages/dashboard/vercel.json` (rewrites) zmieniony z Rendera na Oracle (2026-07-09) |
 
 Sekrety trzymamy wyłącznie w dashboardach hostingów albo na serwerze. Nigdy w repo.
 
