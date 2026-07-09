@@ -266,6 +266,7 @@ module Spree
           Spree::OptionType,
           Spree::OptionValue,
           Spree::Product,
+          Spree::Collection,
           Spree::Taxon,
           Spree::Taxonomy,
           Spree::Store,
@@ -296,6 +297,7 @@ module Spree
         Rails.application.config.spree.metafields.enabled_resources = [
           Spree::Address,
           Spree::Asset,
+          Spree::Collection,
           Spree::CreditCard,
           Spree::CustomerReturn,
           Spree::GiftCard,
