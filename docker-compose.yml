@@ -27,7 +27,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: server/Dockerfile
+      dockerfile: Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
@@ -48,7 +48,7 @@ services:
   sidekiq:
     build:
       context: .
-      dockerfile: server/Dockerfile
+      dockerfile: Dockerfile
     command: bundle exec sidekiq -c ${SIDEKIQ_CONCURRENCY:-5}
     depends_on:
       postgres:
