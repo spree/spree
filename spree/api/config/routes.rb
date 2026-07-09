@@ -226,6 +226,18 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # Collections (flat, merchandising). Reordering the collection itself is a
+        # plain `position` update (acts_as_list reorders on save), so there is no
+        # top-level reposition action — only the nested membership has one.
+        resources :collections, concerns: [:custom_fieldable, :translatable] do
+          # Manual product membership + ordering within the collection.
+          resources :products, controller: 'collections/products', only: [:index, :create, :destroy] do
+            member do
+              patch :reposition
+            end
+          end
+        end
+
         # Option Types (with nested option_values in payload)
         resources :option_types, concerns: [:custom_fieldable, :translatable]
 

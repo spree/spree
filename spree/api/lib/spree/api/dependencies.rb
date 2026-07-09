@@ -172,6 +172,8 @@ module Spree
         admin_custom_field_serializer: 'Spree::Api::V3::Admin::CustomFieldSerializer',
         admin_custom_field_definition_serializer: 'Spree::Api::V3::Admin::CustomFieldDefinitionSerializer',
         admin_category_serializer: 'Spree::Api::V3::Admin::CategorySerializer',
+        admin_collection_serializer: 'Spree::Api::V3::Admin::CollectionSerializer',
+        admin_collection_rule_serializer: 'Spree::Api::V3::Admin::CollectionRuleSerializer',
         admin_line_item_serializer: 'Spree::Api::V3::Admin::LineItemSerializer',
         admin_option_type_serializer: 'Spree::Api::V3::Admin::OptionTypeSerializer',
         admin_option_value_serializer: 'Spree::Api::V3::Admin::OptionValueSerializer',
