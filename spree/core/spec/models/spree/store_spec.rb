@@ -960,9 +960,8 @@ describe Spree::Store, type: :model, without_global_store: true do
     describe '#storefront_setup?' do
       subject { store.storefront_setup? }
 
-      context 'with a used publishable key and a saved storefront URL' do
+      context 'with a saved storefront URL' do
         before do
-          create(:api_key, store: store, last_used_at: 1.hour.ago)
           store.update!(preferred_storefront_url: 'https://shop.example.com')
         end
 
@@ -973,27 +972,8 @@ describe Spree::Store, type: :model, without_global_store: true do
         end
       end
 
-      context 'when the publishable key has never been used' do
-        before do
-          create(:api_key, store: store)
-          store.update!(preferred_storefront_url: 'https://shop.example.com')
-        end
-
-        it { is_expected.to be false }
-      end
-
-      context 'when the used publishable key is revoked' do
-        before do
-          create(:api_key, :revoked, store: store, last_used_at: 1.hour.ago)
-          store.update!(preferred_storefront_url: 'https://shop.example.com')
-        end
-
-        it { is_expected.to be false }
-      end
-
       context 'without a saved storefront URL' do
         before do
-          create(:api_key, store: store, last_used_at: 1.hour.ago)
           create(:allowed_origin, store: store, origin: 'https://shop.example.com')
         end
 

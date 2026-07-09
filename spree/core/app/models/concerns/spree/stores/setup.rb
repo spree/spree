@@ -51,15 +51,10 @@ module Spree
         payment_methods.active.where.not(type: Spree::PaymentMethod::StoreCredit.to_s).any?
       end
 
-      # A storefront counts as set up once an active publishable key has actually
-      # authenticated a Store API request and the merchant has saved the
-      # storefront URL (entered manually or backfilled by the Vercel callback).
+      # A storefront counts as set up once the merchant has saved the storefront
+      # URL (entered manually or backfilled by the Vercel callback).
       def storefront_setup?
-        storefront_publishable_key_used? && preferred_storefront_url.present?
-      end
-
-      def storefront_publishable_key_used?
-        api_keys.active.publishable.where.not(last_used_at: nil).exists?
+        preferred_storefront_url.present?
       end
     end
   end
