@@ -33,6 +33,7 @@ module Spree
       def filters(scope:, query: nil, filters: {})
         filters = filters.is_a?(Hash) ? filters.dup : {}
         category = filters.delete('_category') || filters.delete(:_category)
+        collection = filters.delete('_collection') || filters.delete(:_collection)
         option_value_ids = Array(filters.delete('with_option_value_ids') || filters.delete(:with_option_value_ids))
 
         # Apply text search + ransack filters (without option values)
@@ -45,7 +46,7 @@ module Spree
                                scope_before_options
                              end
 
-        filter_facets = build_facets(scope_with_options, category: category, option_value_ids: option_value_ids, scope_before_options: scope_before_options)
+        filter_facets = build_facets(scope_with_options, category: category, sort_order: collection&.sort_order, option_value_ids: option_value_ids, scope_before_options: scope_before_options)
 
         FiltersResult.new(
           filters: filter_facets[:filters],
@@ -73,13 +74,14 @@ module Spree
         Pagy::Offset.new(count: count, page: page, limit: limit)
       end
 
-      def build_facets(scope, category: nil, option_value_ids: [], scope_before_options: nil)
+      def build_facets(scope, category: nil, sort_order: nil, option_value_ids: [], scope_before_options: nil)
         return { filters: [], sort_options: available_sort_options, default_sort: 'manual', total_count: scope.distinct.count } unless defined?(Spree::Api::V3::FiltersAggregator)
 
         Spree::Api::V3::FiltersAggregator.new(
           scope: scope,
           currency: currency,
           category: category,
+          sort_order: sort_order,
           option_value_ids: option_value_ids,
           scope_before_options: scope_before_options || scope
         ).call
@@ -89,7 +91,7 @@ module Spree
         return {} if filters.blank?
 
         filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
-        filters.except('search', :search, '_category', :_category, 'with_option_value_ids', :with_option_value_ids)
+        filters.except('search', :search, '_category', :_category, '_collection', :_collection, 'with_option_value_ids', :with_option_value_ids)
       end
 
       def apply_sort(scope, sort)

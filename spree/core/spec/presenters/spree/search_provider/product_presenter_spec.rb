@@ -82,6 +82,18 @@ module Spree
         end
       end
 
+      context 'with collections' do
+        let(:collection) { create(:collection, store: store) }
+
+        before { Spree::ProductCollection.create!(collection: collection, product: product) }
+
+        it 'indexes collection_ids as flat prefixed IDs (no ancestors)' do
+          doc = documents.first
+          expect(doc[:collection_ids]).to eq([collection.prefixed_id])
+          expect(doc[:collection_ids].first).to start_with('coll_')
+        end
+      end
+
       context 'with multiple markets' do
         let!(:us_market) { create(:market, store: store, name: 'US', currency: 'USD', default_locale: 'en') }
         let!(:eu_market) { create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de', supported_locales: 'de,fr') }

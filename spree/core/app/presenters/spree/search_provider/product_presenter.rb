@@ -66,6 +66,7 @@ module Spree
           discontinue_on: product.discontinue_on&.to_i || 0,
           category_ids: category_ids_with_ancestors,
           category_names: product.taxons.map { |t| translated(t, :name, fallback_locale) },
+          collection_ids: product.collections.map(&:prefixed_id),
           option_type_ids: product.option_types.map(&:prefixed_id),
           option_type_names: product.option_types.map { |ot| translated(ot, :presentation, fallback_locale) },
           option_value_ids: variant_option_value_ids,

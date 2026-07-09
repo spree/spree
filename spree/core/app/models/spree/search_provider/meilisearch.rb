@@ -46,13 +46,16 @@ module Spree
       end
 
       def filters(scope:, query: nil, filters: {})
+        collection = filters.is_a?(Hash) ? (filters['_collection'] || filters[:_collection]) : nil
+        default_sort = collection ? to_api_sort(collection.sort_order) : 'manual'
+
         ms_result, facet_distribution = execute_search(query: query, filters: filters, sort: nil, page: 1, limit: 0, return_facets: true)
 
         unless ms_result
           return FiltersResult.new(
             filters: [],
             sort_options: available_sort_options.map { |id| { id: id } },
-            default_sort: 'manual',
+            default_sort: default_sort,
             total_count: 0
           )
         end
@@ -60,7 +63,7 @@ module Spree
         FiltersResult.new(
           filters: build_facet_response(facet_distribution),
           sort_options: available_sort_options.map { |id| { id: id } },
-          default_sort: 'manual',
+          default_sort: default_sort,
           total_count: ms_result['estimatedTotalHits'] || 0
         )
       end
@@ -244,7 +247,7 @@ module Spree
       end
 
       def filterable_attributes
-        %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids tags option_value_ids]
+        %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids tags option_value_ids]
       end
 
       def sortable_attributes
@@ -257,6 +260,14 @@ module Spree
 
       def available_sort_options
         %w[price -price name -name -available_on available_on best_selling]
+      end
+
+      # Converts internal sort format ('price asc') to API format ('price', '-price').
+      def to_api_sort(sort_value)
+        return sort_value unless sort_value.to_s.include?(' ')
+
+        field, direction = sort_value.split(' ', 2)
+        direction == 'desc' ? "-#{field}" : field
       end
 
       # Build Meilisearch filter conditions from API params.
@@ -328,6 +339,8 @@ module Spree
         when 'in_categories'
           parts = Array(value).filter_map { |id| "category_ids = '#{sanitize_prefixed_id(id)}'" if valid_prefixed_id?(id) }
           parts.length > 1 ? "(#{parts.join(' OR ')})" : parts.first
+        when 'in_collection'
+          "collection_ids = '#{sanitize_prefixed_id(value)}'" if valid_prefixed_id?(value)
         when 'with_option_value_ids'
           # Handled by grouped option conditions in search_and_filter — skip here
           nil
