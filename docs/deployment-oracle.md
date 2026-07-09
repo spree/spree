@@ -110,6 +110,29 @@ Docker + Docker Compose
 
 Panel admina i storefront zostają na Vercelu, więc po cutoverze trzeba zaktualizować ich konfigurację tak, aby wskazywały na nowy backend/API zamiast Rendera.
 
+## SSL Certificate — Tymczasowe vs. docelowe
+
+**Tymczasowe (2026-07-09 — teraz):**
+- Self-signed certificate (OpenSSL) do wewnętrznych testów
+- API dostępna po HTTPS (self-signed, niezaufany)
+- Vercel storefront/admin korzystają z HTTP zamiast HTTPS dla zgodności z build timerem (self-signed cert odrzucane przez Node.js)
+- `SPREE_API_URL=http://141.253.103.172` (bez SSL dla development/testing)
+
+**Docelowe (po setup domeny):**
+- Kupić/przydzielić domenę (np. `api.kakaowy-sklepik.com` lub `backend.kakaowy-sklepik.pl`)
+- Wskazać domenę DNS na IP `141.253.103.172`
+- Uruchomić `certbot` na Oracle VM z Let's Encrypt:
+  ```bash
+  sudo certbot certonly --standalone -d api.kakaowy-sklepik.pl
+  ```
+- Zaktualizować Nginx aby używał certyfikatu Let's Encrypt
+- Zmienić na Vercelu:
+  ```
+  SPREE_API_URL=https://api.kakaowy-sklepik.pl
+  ```
+
+Na razie HTTP jest OK dla testów, ale trzeba przejść na HTTPS + Let's Encrypt do produkcji.
+
 ## Render flow, który trzeba odtworzyć lub świadomie zastąpić
 
 Obecny Render deployment robi kilka istotnych rzeczy:
