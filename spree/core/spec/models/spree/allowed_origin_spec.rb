@@ -80,6 +80,17 @@ RSpec.describe Spree::AllowedOrigin, type: :model do
     end
   end
 
+  describe '#loopback?' do
+    it 'is true for loopback hosts regardless of port' do
+      expect(build(:allowed_origin, store: store, origin: 'http://localhost').loopback?).to be true
+      expect(build(:allowed_origin, store: store, origin: 'http://127.0.0.1:3000').loopback?).to be true
+    end
+
+    it 'is false for public hosts' do
+      expect(build(:allowed_origin, store: store, origin: 'https://myshop.com').loopback?).to be false
+    end
+  end
+
   describe '#matches?' do
     subject(:allowed_origin) { build(:allowed_origin, store: store, origin: stored) }
 

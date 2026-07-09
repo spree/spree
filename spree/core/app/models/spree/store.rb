@@ -51,6 +51,9 @@ module Spree
     preference :guest_checkout, :boolean, default: true
     # Store-level fallback for the channel-owned `storefront_access` posture.
     preference :storefront_access, :string, default: 'public'
+    # Canonical storefront origin used in customer-facing emails and links,
+    # e.g. "https://myshop.com" — see #storefront_url for the fallback chain.
+    preference :storefront_url, :string
     preference :special_instructions_enabled, :boolean, default: false
     preference :stock_reservation_ttl_minutes, :integer, default: 10
     # Address preferences
@@ -281,11 +284,15 @@ module Spree
     end
 
     # Returns the storefront origin URL for use in customer-facing emails and links.
-    # Uses the first allowed origin if configured, otherwise falls back to formatted_url.
+    # Uses the `storefront_url` preference when set, then the oldest non-loopback
+    # allowed origin (the `http://localhost` origin seeded on install must never
+    # leak into customer emails), otherwise falls back to formatted_url.
     #
     # @return [String] e.g. "https://myshop.com"
     def storefront_url
-      allowed_origins.order(:created_at).pick(:origin) || formatted_url
+      preferred_storefront_url.presence ||
+        allowed_origins.order(:created_at).reject(&:loopback?).first&.origin ||
+        formatted_url
     end
 
     # Returns true if the given URL's origin matches one of the store's allowed origins.

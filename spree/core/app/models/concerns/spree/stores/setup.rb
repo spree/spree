@@ -13,6 +13,8 @@ module Spree
           products.any?
         when :set_customer_support_email
           customer_support_email.present?
+        when :setup_storefront
+          storefront_setup?
         end
       end
 
@@ -28,6 +30,7 @@ module Spree
         @setup_tasks_list << :add_products
         @setup_tasks_list << :set_customer_support_email
         @setup_tasks_list << :setup_taxes_collection
+        @setup_tasks_list << :setup_storefront
 
         @setup_tasks_list
       end
@@ -46,6 +49,28 @@ module Spree
 
       def payment_method_setup?
         payment_methods.active.where.not(type: Spree::PaymentMethod::StoreCredit.to_s).any?
+      end
+
+      # A storefront counts as set up once an active publishable key has actually
+      # authenticated a Store API request and a storefront is connected.
+      def storefront_setup?
+        storefront_publishable_key_used? && storefront_connected?
+      end
+
+      def storefront_publishable_key_used?
+        api_keys.active.publishable.where.not(last_used_at: nil).exists?
+      end
+
+      # A non-loopback allowed origin (web storefronts) or an explicit storefront
+      # URL (mobile apps and other clients that don't need CORS) both count as a
+      # connected storefront; the `http://localhost` origin seeded on install
+      # doesn't.
+      def storefront_connected?
+        storefront_origin_added? || preferred_storefront_url.present?
+      end
+
+      def storefront_origin_added?
+        allowed_origins.reject(&:loopback?).any?
       end
     end
   end
