@@ -548,14 +548,14 @@ en:
           setup: Setup Tax Rates
       storefront: Storefront
       storefront_setup:
-        add_allowed_origin_label: Also add this URL as an allowed origin — required for browser-based storefronts to call the Store API
         allow_origin_button: Allow this origin & finish setup
         api_url_label: Store API URL
         connect_copy: 'Use these credentials in any client that talks to the Store API — a web storefront, a mobile app, or anything else:'
         connect_title: Connect your storefront
         connected_title: Connected storefronts
         deploy_button: Deploy to Vercel
-        deploy_copy: Don't have a storefront yet? The fastest way to launch is the official open-source Next.js storefront. Deploying clones it to your Git account and builds it on Vercel with your credentials prefilled — once it finishes, you'll be redirected back here to complete the setup.
+        deploy_copy: Don't have a storefront yet? The fastest way to launch is the official open-source Next.js storefront. Deploying clones it to your Git account and builds it on Vercel with your credentials prefilled.
+        deploy_finish_hint: Once the deployment finishes, copy your storefront's URL from Vercel into the Storefront URL field below and save it to finish the setup.
         deploy_title: 'Recommended: deploy the official Next.js storefront'
         deployed_copy: It's now live at
         deployed_title: Your storefront has been deployed!
@@ -570,7 +570,7 @@ en:
         origin_allowed: "%{origin} can now access your Store API."
         publishable_key_label: Publishable API key
         see_online_demo: See online demo
-        storefront_url_help: The URL customers use to reach your storefront. It becomes the base for links in customer emails — mobile-only setups can point it at their landing page.
+        storefront_url_help: The URL customers use to reach your storefront. It becomes the base for links in customer emails and is automatically added as an allowed origin so browser-based storefronts can call the Store API.
         storefront_url_label: Storefront URL
         storefront_url_saved: 'Storefront URL saved: %{url}'
         title: Setup Storefront
