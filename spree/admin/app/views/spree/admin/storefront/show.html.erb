@@ -121,12 +121,6 @@
                    placeholder="https://myshop.com" value="<%= current_store.preferred_storefront_url %>">
             <p class="text-gray-500 text-sm mt-1 mb-0"><%= Spree.t('admin.storefront_setup.storefront_url_help') %></p>
           </div>
-          <div class="form-checkbox">
-            <%= check_box_tag :add_allowed_origin, '1', true, class: 'custom-control-input' %>
-            <label class="custom-control-label" for="add_allowed_origin">
-              <%= Spree.t('admin.storefront_setup.add_allowed_origin_label') %>
-            </label>
-          </div>
           <div>
             <button type="submit" class="btn btn-primary"><%= Spree.t('actions.save') %></button>
           </div>

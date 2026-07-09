@@ -20,15 +20,15 @@ module Spree
       # PATCH /admin/storefront
       #
       # Saves the storefront URL preference (used as the base for links in
-      # customer emails and as the "connected" signal for non-web storefronts),
-      # optionally adding it as an allowed origin for browser-based storefronts.
+      # customer emails and as the setup-task completion signal) and adds it
+      # as an allowed origin so browser-based storefronts can call the Store API.
       def update
         origin = normalize_origin(params[:storefront_url])
 
         if origin.nil?
           flash[:error] = Spree.t('admin.storefront_setup.invalid_origin')
         elsif current_store.update(preferred_storefront_url: origin)
-          current_store.allowed_origins.find_or_create_by(origin: origin) if params[:add_allowed_origin] == '1'
+          current_store.allowed_origins.find_or_create_by(origin: origin)
           flash[:success] = Spree.t('admin.storefront_setup.storefront_url_saved', url: origin)
         else
           flash[:error] = current_store.errors.full_messages.to_sentence
