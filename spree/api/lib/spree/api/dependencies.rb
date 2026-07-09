@@ -127,6 +127,7 @@ module Spree
         delivery_rate_serializer: 'Spree::Api::V3::DeliveryRateSerializer',
         stock_location_serializer: 'Spree::Api::V3::StockLocationSerializer',
         category_serializer: 'Spree::Api::V3::CategorySerializer',
+        collection_serializer: 'Spree::Api::V3::CollectionSerializer',
         discount_serializer: 'Spree::Api::V3::DiscountSerializer',
         digital_link_serializer: 'Spree::Api::V3::DigitalLinkSerializer',
         gift_card_serializer: 'Spree::Api::V3::GiftCardSerializer',

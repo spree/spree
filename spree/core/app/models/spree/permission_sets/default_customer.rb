@@ -11,6 +11,7 @@ module Spree
     class DefaultCustomer < Base
       def activate!
         # Read-only access to catalog
+        can :read, Spree::Collection
         can :read, Spree::Country
         can :read, Spree::OptionType
         can :read, Spree::OptionValue

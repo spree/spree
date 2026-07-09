@@ -15,6 +15,7 @@ module Spree
         can [:read, :admin], Spree::OptionType
         can [:read, :admin], Spree::OptionValue
         can [:read, :admin], Spree::Metafield
+        can [:read, :admin], Spree::Collection
         can [:read, :admin], Spree::Taxon
         can [:read, :admin], Spree::Taxonomy
         can [:read, :admin], Spree::Classification
