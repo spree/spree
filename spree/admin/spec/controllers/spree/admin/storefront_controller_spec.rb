@@ -102,7 +102,7 @@ RSpec.describe Spree::Admin::StorefrontController, type: :controller do
   describe 'PATCH #update' do
     subject(:update_storefront) { patch :update, params: params }
 
-    let(:params) { { storefront_url: 'myshop.com', add_allowed_origin: '1' } }
+    let(:params) { { storefront_url: 'myshop.com' } }
 
     it 'saves the normalized storefront url and allows the origin' do
       expect { update_storefront }.to change { store.allowed_origins.count }.by(1)
@@ -113,13 +113,13 @@ RSpec.describe Spree::Admin::StorefrontController, type: :controller do
       expect(response).to redirect_to(spree.admin_storefront_path)
     end
 
-    context 'without the add_allowed_origin flag' do
-      let(:params) { { storefront_url: 'https://app.myshop.com' } }
+    context 'when the origin is already allowed' do
+      before { create(:allowed_origin, store: store, origin: 'https://myshop.com') }
 
-      it 'only saves the preference' do
+      it 'does not duplicate it' do
         expect { update_storefront }.not_to change(Spree::AllowedOrigin, :count)
 
-        expect(store.reload.preferred_storefront_url).to eq('https://app.myshop.com')
+        expect(store.reload.preferred_storefront_url).to eq('https://myshop.com')
       end
     end
 
