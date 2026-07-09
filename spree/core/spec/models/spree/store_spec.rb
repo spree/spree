@@ -925,6 +925,22 @@ describe Spree::Store, type: :model, without_global_store: true do
 
         expect(store.storefront_url).to eq('https://shop.example.com')
       end
+
+      it 'skips loopback origins even when they are oldest' do
+        create(:allowed_origin, store: store, origin: 'http://localhost:3001', created_at: 1.week.ago)
+
+        expect(store.storefront_url).to eq('https://shop.example.com')
+      end
+    end
+
+    context 'when only loopback origins exist' do
+      before do
+        create(:allowed_origin, store: store, origin: 'http://localhost:3001')
+      end
+
+      it 'falls back to formatted_url' do
+        expect(store.storefront_url).to eq(store.formatted_url)
+      end
     end
 
     context 'when no allowed origins exist' do

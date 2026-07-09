@@ -27,10 +27,11 @@ module Spree
 
         if origin.nil?
           flash[:error] = Spree.t('admin.storefront_setup.invalid_origin')
-        else
-          current_store.update!(preferred_storefront_url: origin)
+        elsif current_store.update(preferred_storefront_url: origin)
           current_store.allowed_origins.find_or_create_by(origin: origin) if params[:add_allowed_origin] == '1'
           flash[:success] = Spree.t('admin.storefront_setup.storefront_url_saved', url: origin)
+        else
+          flash[:error] = current_store.errors.full_messages.to_sentence
         end
 
         redirect_to spree.admin_storefront_path, status: :see_other
