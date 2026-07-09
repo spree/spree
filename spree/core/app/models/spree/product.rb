@@ -145,6 +145,7 @@ module Spree
     after_touch :touch_taxons
 
     after_commit :auto_match_taxons, if: :eligible_for_taxon_matching?
+    after_commit :auto_match_collections, if: :eligible_for_taxon_matching?
 
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
@@ -225,6 +226,17 @@ module Spree
       self.taxon_ids = Spree::Taxon.for_store(assignable_store).where(id: decoded_ids).ids
     end
 
+    # Accepts both prefixed IDs and raw integer IDs. Only collections belonging
+    # to the product's own store are assigned. `collections` is a direct
+    # has_many :through, so this overrides the generated setter and calls super
+    # (unlike #category_ids=, which writes through to the sibling taxon_ids).
+    def collection_ids=(ids)
+      decoded_ids = Array(ids).filter_map do |id|
+        id.to_s.include?('_') ? Spree::Collection.decode_prefixed_id(id) : id
+      end
+      super(Spree::Collection.for_store(assignable_store).where(id: decoded_ids).ids)
+    end
+
     # Sync media inline. Entries with `id` patch the existing asset
     # (alt/position/variant_ids); entries with `signed_id` create + attach a
     # fresh upload; missing items are left alone (delete still goes through
@@ -269,9 +281,9 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
-    self.whitelisted_ransackable_associations = %w[taxons categories store channels variants_including_master master variants tags labels
+    self.whitelisted_ransackable_associations = %w[taxons categories collections store channels variants_including_master master variants tags labels
                                                    shipping_category classifications option_types]
-    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories price_between
+    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories in_collection price_between
                                              price_lte price_gte
                                              search multi_search in_stock out_of_stock with_option_value_ids
 
@@ -629,6 +641,13 @@ module Spree
       @main_taxon ||= taxons.first
     end
 
+    # First category (the main_taxon -> primary_category rename). main_taxon is
+    # retained until the Phase 4 taxon->category sweep — reports and CSV
+    # presenters still call it.
+    def primary_category
+      @primary_category ||= categories.first
+    end
+
     def taxons_for_store(store)
       return if classification_count.zero?
 
@@ -658,6 +677,14 @@ module Spree
       return if store.nil? || store.taxons.automatic.none?
 
       Spree::Products::AutoMatchTaxonsJob.set(wait: 30.seconds).perform_later(id)
+    end
+
+    def auto_match_collections
+      return if deleted?
+      return if archived?
+      return if store.nil? || store.collections.automatic.none?
+
+      Spree::Products::AutoMatchCollectionsJob.set(wait: 30.seconds).perform_later(id)
     end
 
     def to_csv(store = nil)

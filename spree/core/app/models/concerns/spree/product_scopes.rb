@@ -174,6 +174,15 @@ module Spree
         joins(:classifications).where(Classification.table_name => { taxon_id: taxon_ids }).distinct
       end
 
+      # Products in a collection (flat — collections have no hierarchy).
+      # Accepts a Collection record or a prefixed ID string (e.g. 'coll_xxx').
+      def self.in_collection(collection_or_id)
+        collection = collection_or_id.is_a?(String) ? Spree::Collection.find_by_prefix_id(collection_or_id) : collection_or_id
+        return none unless collection
+
+        joins(:product_collections).where(Spree::ProductCollection.table_name => { collection_id: collection.id }).distinct
+      end
+
       # Deprecated — remove in 6.0. Use in_taxon instead.
       def self.in_taxons(*taxons)
         Spree::Deprecation.warn('in_taxons is deprecated and will be removed in Spree 6.0. Use in_taxon instead.')

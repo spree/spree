@@ -1128,6 +1128,64 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe '#collection_ids=' do
+    let(:product) { create(:product, store: store) }
+    let(:collection) { create(:collection, store: store) }
+
+    it 'assigns collections belonging to the product store' do
+      product.update!(collection_ids: [collection.prefixed_id])
+      expect(product.reload.collections).to include(collection)
+    end
+
+    it 'ignores collections from another store' do
+      foreign = create(:collection, store: create(:store))
+
+      product.update!(collection_ids: [collection.prefixed_id, foreign.prefixed_id])
+
+      expect(product.reload.collections).to include(collection)
+      expect(product.reload.collections).not_to include(foreign)
+    end
+  end
+
+  describe '#primary_category' do
+    let(:product) { create(:product, store: store) }
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let(:category) { create(:taxon, taxonomy: taxonomy) }
+
+    it 'returns the first assigned category' do
+      product.update!(category_ids: [category.prefixed_id])
+      # categories are read back as Spree::Category (scoped subclass), so match by id
+      expect(product.reload.primary_category.id).to eq(category.id)
+    end
+
+    it 'is nil when the product has no categories' do
+      expect(product.primary_category).to be_nil
+    end
+  end
+
+  describe 'after_commit :auto_match_collections' do
+    it 'is invoked on an eligible save' do
+      expect_any_instance_of(described_class).to receive(:auto_match_collections).at_least(:once)
+      create(:product, store: store)
+    end
+  end
+
+  describe '#auto_match_collections' do
+    let!(:product) { create(:product, store: store) }
+
+    it 'enqueues AutoMatchCollectionsJob when the store has automatic collections' do
+      create(:automatic_collection, store: store)
+
+      expect { product.auto_match_collections }.
+        to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).with(product.id)
+    end
+
+    it 'does not enqueue when the store has no automatic collections' do
+      expect { product.auto_match_collections }.
+        not_to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+    end
+  end
+
   describe '#any_variant_in_stock_or_backorderable?' do
     subject { product.any_variant_in_stock_or_backorderable? }
 

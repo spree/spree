@@ -98,6 +98,7 @@ module Spree
     has_many :taxonomies, class_name: 'Spree::Taxonomy'
     has_many :taxons, class_name: 'Spree::Taxon'
     has_many :categories, class_name: 'Spree::Category'
+    has_many :collections, class_name: 'Spree::Collection', dependent: :destroy_async
 
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
