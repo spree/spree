@@ -960,10 +960,10 @@ describe Spree::Store, type: :model, without_global_store: true do
     describe '#storefront_setup?' do
       subject { store.storefront_setup? }
 
-      context 'with a used publishable key and a non-loopback allowed origin' do
+      context 'with a used publishable key and a saved storefront URL' do
         before do
           create(:api_key, store: store, last_used_at: 1.hour.ago)
-          create(:allowed_origin, store: store, origin: 'https://shop.example.com')
+          store.update!(preferred_storefront_url: 'https://shop.example.com')
         end
 
         it { is_expected.to be true }
@@ -976,7 +976,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       context 'when the publishable key has never been used' do
         before do
           create(:api_key, store: store)
-          create(:allowed_origin, store: store, origin: 'https://shop.example.com')
+          store.update!(preferred_storefront_url: 'https://shop.example.com')
         end
 
         it { is_expected.to be false }
@@ -985,28 +985,21 @@ describe Spree::Store, type: :model, without_global_store: true do
       context 'when the used publishable key is revoked' do
         before do
           create(:api_key, :revoked, store: store, last_used_at: 1.hour.ago)
+          store.update!(preferred_storefront_url: 'https://shop.example.com')
+        end
+
+        it { is_expected.to be false }
+      end
+
+      context 'without a saved storefront URL' do
+        before do
+          create(:api_key, store: store, last_used_at: 1.hour.ago)
           create(:allowed_origin, store: store, origin: 'https://shop.example.com')
         end
 
-        it { is_expected.to be false }
-      end
-
-      context 'when only a loopback origin exists' do
-        before do
-          create(:api_key, store: store, last_used_at: 1.hour.ago)
-          create(:allowed_origin, store: store, origin: 'http://localhost')
+        it 'stays pending even when an allowed origin exists' do
+          expect(subject).to be false
         end
-
-        it { is_expected.to be false }
-      end
-
-      context 'when connected via the storefront_url preference only' do
-        before do
-          create(:api_key, store: store, last_used_at: 1.hour.ago)
-          store.update!(preferred_storefront_url: 'https://app.example.com')
-        end
-
-        it { is_expected.to be true }
       end
     end
   end
