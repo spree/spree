@@ -74,6 +74,9 @@ module Spree
     has_many :categories, through: :classifications, class_name: 'Spree::Category', source: :taxon
     has_many :taxonomies, through: :taxons
 
+    has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :product
+    has_many :collections, through: :product_collections
+
     has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
     has_many :promotion_rules, through: :product_promotion_rules, class_name: 'Spree::PromotionRule'
 

@@ -104,6 +104,7 @@ module Spree
       reports: :default,
       variants: :default,
       taxons: :default,
+      collections: :default,
       stock_location_stock_items: :default,
       coupon_codes: :default,
       themes: :default,

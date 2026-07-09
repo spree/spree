@@ -19,6 +19,8 @@ module Spree
                                :export_types,
                                :import_types,
                                :taxon_rules,
+                               :collection_rules,
+                               :time_based_collection_rules,
                                :themes,
                                :theme_layout_sections,
                                :pages,
@@ -238,6 +240,21 @@ module Spree
           Spree::TaxonRules::Tag,
           Spree::TaxonRules::AvailableOn,
           Spree::TaxonRules::Sale,
+        ]
+
+        # Mirrors config.spree.taxon_rules above. AvailableOn ships with an interim
+        # legacy-column implementation; its channel-aware rewrite is a later phase
+        # (see docs/plans/6.0-replace-taxons-with-categories.md → Migration Phase 5).
+        Rails.application.config.spree.collection_rules = [
+          Spree::CollectionRules::Tag,
+          Spree::CollectionRules::AvailableOn,
+          Spree::CollectionRules::Sale,
+        ]
+
+        # Net-new (no taxon_rules equivalent — taxons ship no scheduled refresh).
+        # Drives Spree::Collections::RegenerateTimeBasedJob.
+        Rails.application.config.spree.time_based_collection_rules = [
+          Spree::CollectionRules::AvailableOn,
         ]
 
         Rails.application.config.spree.reports = [
