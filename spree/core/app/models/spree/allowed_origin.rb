@@ -32,6 +32,15 @@ module Spree
       nil
     end
 
+    # Whether this origin points at a loopback/development host ({LOOPBACK_HOSTS}),
+    # e.g. the `http://localhost` origin seeded on install. Loopback origins are
+    # ignored when deciding if a real storefront has been connected to the store.
+    #
+    # @return [Boolean]
+    def loopback?
+      LOOPBACK_HOSTS.include?(self.class.parse_origin(origin)&.dig(:host))
+    end
+
     # Returns true if the given URL's origin matches this stored origin.
     #
     # Scheme and host must match exactly (host comparison is case- and trailing-dot-

@@ -85,6 +85,7 @@ Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web + w
 | What changed | What to run |
 |---|---|
 | Ruby code in `spree/*` gems | Nothing — bind-mounted, reloads on next request |
+| Tailwind classes in `spree/admin` templates/helpers/JS | Nothing — a watcher in the web container polls and rebuilds the admin CSS within ~15s (or one-shot: `cd server && pnpm exec spree rails spree:admin:tailwindcss:build`). If rebuilt CSS still doesn't reach the browser, a stray `assets:precompile` left `server/public/assets/.manifest.json` behind — its presence flips Propshaft to a frozen static resolver. The next `pnpm server:dev` boot removes it automatically; mid-session, delete it and restart web. |
 | New migration in a gem | Nothing — the next `pnpm server:dev` boot runs `spree:install:migrations db:prepare` (or `cd server && pnpm exec spree migrate` while running) |
 | Gem dependencies (gemspec / Gemfile / starter `Gemfile.lock` drift after a pull) | Nothing — the next `pnpm server:dev` boot self-heals (`bundle check || bundle install` into the `bundle_cache` volume); while running: `cd server && pnpm exec spree bundle install` |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates web + worker) |

@@ -251,6 +251,15 @@ Rails.application.config.after_initialize do
           active: -> { controller_name == 'policies' },
           if: -> { can?(:manage, Spree::Policy) }
 
+  # Storefront setup
+  settings_nav.add :storefront,
+          label: 'admin.storefront',
+          url: :admin_storefront_path,
+          icon: 'building-store',
+          position: 60,
+          active: -> { controller_name == 'storefront' },
+          if: -> { can?(:update, current_store) }
+
   # Channels
   settings_nav.add :channels,
           label: :channels,

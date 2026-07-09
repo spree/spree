@@ -1,0 +1,155 @@
+<div class="grid grid-cols-12 gap-6 pt-6">
+  <div class="col-span-12 lg:col-span-8 lg:col-start-3 mb-6">
+    <h2 class="page-header-title">
+      <%= onboarding_check_circle(current_store.storefront_setup?) %>
+      <%= Spree.t('admin.storefront_setup.title') %>
+    </h2>
+    <p class="mb-4">
+      <%= Spree.t('admin.storefront_setup.description') %>
+    </p>
+
+    <% if @deployment_origin.present? %>
+      <div class="card mb-6">
+        <div class="card-body flex flex-col gap-3">
+          <% if @deployment_origin_allowed %>
+            <div class="flex items-center gap-2">
+              <%= onboarding_check_circle(true) %>
+              <span>
+                <%= Spree.t('admin.storefront_setup.deployment_already_allowed') %>
+                <%= link_to @deployment_origin, @deployment_origin, target: :_blank, rel: 'noopener', class: 'font-medium' %>
+              </span>
+            </div>
+          <% else %>
+            <h5 class="font-medium">
+              🎉 <%= Spree.t('admin.storefront_setup.deployed_title') %>
+            </h5>
+            <p>
+              <%= Spree.t('admin.storefront_setup.deployed_copy') %>
+              <%= link_to @deployment_origin, @deployment_origin, target: :_blank, rel: 'noopener', class: 'font-medium' %>
+            </p>
+            <div class="flex items-center gap-2">
+              <%= form_with url: spree.admin_storefront_allow_origin_path, method: :post, data: { turbo: false } do %>
+                <%= hidden_field_tag :origin, @deployment_origin %>
+                <button type="submit" class="btn btn-primary">
+                  <%= Spree.t('admin.storefront_setup.allow_origin_button') %>
+                </button>
+              <% end %>
+              <% if @vercel_dashboard_url.present? %>
+                <%= link_to @vercel_dashboard_url, target: :_blank, rel: 'noopener', class: 'btn btn-light' do %>
+                  <%= icon('external-link') %>
+                  <%= Spree.t('admin.storefront_setup.view_on_vercel') %>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if current_store.storefront_setup? %>
+      <div class="alert alert-success mb-6">
+        <%= Spree.t('admin.storefront_setup.done') %>
+        <%= link_to current_store.storefront_url, current_store.storefront_url, target: :_blank, rel: 'noopener', class: 'font-medium' %>
+      </div>
+    <% end %>
+
+    <div class="card mb-6">
+      <div class="card-header flex justify-between">
+        <h5 class="card-title"><%= Spree.t('admin.storefront_setup.deploy_title') %></h5>
+
+        <%= external_link_to Spree.t('admin.storefront_setup.see_online_demo'), 'https://demo.spreecommerce.org' %>
+      </div>
+      <div class="card-body">
+        <p class="mb-3"><%= Spree.t('admin.storefront_setup.deploy_copy') %></p>
+        <div class="mb-2">
+          <% if store_url_loopback?(current_store) %>
+            <div class="cursor-not-allowed flex gap-2 items-center">
+              <%= image_tag 'vercel-deploy-button.svg', alt: Spree.t('admin.storefront_setup.deploy_button'), height: 32, class: 'disabled opacity-25' %>
+              <span data-controller="tooltip">
+                <%= icon('alert-circle', class: 'text-yellow-500') %>
+                <%= tooltip(Spree.t('admin.storefront_setup.loopback_warning')) %>
+              </span>
+            </div>
+          <% else %>
+            <%= link_to vercel_deploy_url(current_store, @publishable_key) do %>
+              <%= image_tag 'vercel-deploy-button.svg', alt: Spree.t('admin.storefront_setup.deploy_button'), height: 32 %>
+            <% end %>
+          <% end %>
+        </div>
+        <%= external_link_to Spree.t('admin.storefront_setup.local_installation_instructions'), 'https://spreecommerce.org/docs/developer/storefront/nextjs/quickstart' %>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t('admin.storefront_setup.connect_title') %></h5>
+      </div>
+      <div class="card-body flex flex-col gap-3">
+        <p><%= Spree.t('admin.storefront_setup.connect_copy') %></p>
+
+        <div class="form-group mb-0">
+          <label><%= Spree.t('admin.storefront_setup.api_url_label') %></label>
+          <div class="input-group gap-0 pr-1">
+            <input type="text" class="grow text-truncate" spellcheck="false" value="<%= current_store.formatted_url %>" readonly>
+            <%= clipboard_component(current_store.formatted_url,
+                  button_class: 'btn hover:bg-gray-100 p-1 rounded',
+                  icon_class: 'mr-0') %>
+          </div>
+        </div>
+
+        <div class="form-group mb-0">
+          <label><%= Spree.t('admin.storefront_setup.publishable_key_label') %></label>
+          <div data-controller="password-visibility" class="input-group gap-0 pr-1">
+            <input type="password" class="grow text-truncate" data-password-visibility-target="input" spellcheck="false" value="<%= @publishable_key.token %>" readonly>
+
+            <button type="button" class="btn hover:bg-gray-100 p-1 mr-1 rounded" data-action="password-visibility#toggle">
+              <span data-password-visibility-target="icon"><%= icon 'eye', class: 'mr-0' %></span>
+              <span data-password-visibility-target="icon" class="hidden"><%= icon 'eye-off', class: 'mr-0' %></span>
+            </button>
+
+            <%= clipboard_component(@publishable_key.token,
+                  button_class: 'btn hover:bg-gray-100 p-1 rounded',
+                  icon_class: 'mr-0') %>
+          </div>
+        </div>
+
+        <%= form_with url: spree.admin_storefront_path, method: :patch, data: { turbo: false }, class: 'flex flex-col gap-3 mt-2' do %>
+          <div class="form-group mb-0">
+            <label for="storefront_url"><%= Spree.t('admin.storefront_setup.storefront_url_label') %></label>
+            <input type="text" name="storefront_url" id="storefront_url" class="form-input" spellcheck="false"
+                   placeholder="https://myshop.com" value="<%= current_store.preferred_storefront_url %>">
+            <p class="text-gray-500 text-sm mt-1 mb-0"><%= Spree.t('admin.storefront_setup.storefront_url_help') %></p>
+          </div>
+          <div class="form-checkbox">
+            <%= check_box_tag :add_allowed_origin, '1', true, class: 'custom-control-input' %>
+            <label class="custom-control-label" for="add_allowed_origin">
+              <%= Spree.t('admin.storefront_setup.add_allowed_origin_label') %>
+            </label>
+          </div>
+          <div>
+            <button type="submit" class="btn btn-primary"><%= Spree.t('actions.save') %></button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <% if @storefront_origins.any? %>
+      <div class="card mb-6">
+        <div class="card-header">
+          <h5 class="card-title"><%= Spree.t('admin.storefront_setup.connected_title') %></h5>
+        </div>
+        <div class="card-body flex flex-col gap-2">
+          <% @storefront_origins.each do |allowed_origin| %>
+            <div class="flex items-center gap-2">
+              <%= icon('world', class: 'text-gray-500') %>
+              <%= link_to allowed_origin.origin, allowed_origin.origin, target: :_blank, rel: 'noopener' %>
+            </div>
+          <% end %>
+          <p class="text-gray-500 text-sm mb-0 mt-2">
+            <%= link_to Spree.t('admin.storefront_setup.manage_allowed_origins'), spree.admin_allowed_origins_path %>
+          </p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -900,6 +900,17 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#storefront_url' do
     let(:store) { create(:store, url: 'backend.example.com') }
 
+    context 'when the storefront_url preference is set' do
+      before do
+        store.update!(preferred_storefront_url: 'https://preferred.example.com')
+        create(:allowed_origin, store: store, origin: 'https://shop.example.com', created_at: 1.day.ago)
+      end
+
+      it 'returns the preference over allowed origins' do
+        expect(store.storefront_url).to eq('https://preferred.example.com')
+      end
+    end
+
     context 'when allowed origins exist' do
       before do
         create(:allowed_origin, store: store, origin: 'https://shop.example.com', created_at: 1.day.ago)
@@ -919,6 +930,67 @@ describe Spree::Store, type: :model, without_global_store: true do
     context 'when no allowed origins exist' do
       it 'falls back to formatted_url' do
         expect(store.storefront_url).to eq(store.formatted_url)
+      end
+    end
+  end
+
+  describe 'storefront setup task' do
+    let(:store) { create(:store) }
+
+    it 'is included in the setup tasks list' do
+      expect(store.setup_tasks_list).to include(:setup_storefront)
+    end
+
+    describe '#storefront_setup?' do
+      subject { store.storefront_setup? }
+
+      context 'with a used publishable key and a non-loopback allowed origin' do
+        before do
+          create(:api_key, store: store, last_used_at: 1.hour.ago)
+          create(:allowed_origin, store: store, origin: 'https://shop.example.com')
+        end
+
+        it { is_expected.to be true }
+
+        it 'marks the setup task as done' do
+          expect(store.setup_task_done?(:setup_storefront)).to be true
+        end
+      end
+
+      context 'when the publishable key has never been used' do
+        before do
+          create(:api_key, store: store)
+          create(:allowed_origin, store: store, origin: 'https://shop.example.com')
+        end
+
+        it { is_expected.to be false }
+      end
+
+      context 'when the used publishable key is revoked' do
+        before do
+          create(:api_key, :revoked, store: store, last_used_at: 1.hour.ago)
+          create(:allowed_origin, store: store, origin: 'https://shop.example.com')
+        end
+
+        it { is_expected.to be false }
+      end
+
+      context 'when only a loopback origin exists' do
+        before do
+          create(:api_key, store: store, last_used_at: 1.hour.ago)
+          create(:allowed_origin, store: store, origin: 'http://localhost')
+        end
+
+        it { is_expected.to be false }
+      end
+
+      context 'when connected via the storefront_url preference only' do
+        before do
+          create(:api_key, store: store, last_used_at: 1.hour.ago)
+          store.update!(preferred_storefront_url: 'https://app.example.com')
+        end
+
+        it { is_expected.to be true }
       end
     end
   end

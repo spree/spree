@@ -38,10 +38,23 @@ services:
     # or 500 on ActiveRecord::PendingMigrationError after every such pull.
     # `bundle check` is sub-second when clean; the rails invocation is one
     # boot (~5s) that no-ops when nothing changed.
+    #
+    # The backgrounded tailwindcss:watch recompiles the admin CSS when
+    # templates in the mounted monorepo gems change (it polls mtimes — FS
+    # events don't cross the bind mount). `spree dev` starts the same watcher
+    # via a detached exec, but this compose flow never goes through the CLI,
+    # so the watcher must ride the web container's boot command. The one-shot
+    # build stays in the foreground chain so a broken build still fails the
+    # boot loudly instead of only warning in the watcher's log.
+    # rm -f of the propshaft manifest: if public/assets/.manifest.json exists
+    # (left behind by any assets:precompile — image builds, test prep, a
+    # one-off rake run), Propshaft silently switches to its static resolver
+    # and serves that frozen snapshot instead of app/assets/builds, so admin
+    # CSS rebuilds never reach the browser. Dev must always resolve live.
     command:
       [
         "sh", "-c",
-        "(bundle check || bundle install) && bin/rails spree:install:migrations db:prepare && bin/rails spree:admin:tailwindcss:build && exec bin/rails server -b 0.0.0.0 -p 3000"
+        "(bundle check || bundle install) && rm -f public/assets/.manifest.json && bin/rails spree:install:migrations db:prepare && bin/rails spree:admin:tailwindcss:build && (bin/rails spree:admin:tailwindcss:watch &) && exec bin/rails server -b 0.0.0.0 -p 3000"
       ]
 
   worker:

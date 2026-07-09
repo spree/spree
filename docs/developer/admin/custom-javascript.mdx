@@ -109,9 +109,9 @@ If you need to add a small piece of JavaScript code (eg. tracking, marketing, an
       </Tab>
     </Tabs>
 
-2. Creating a new file in the `app/views/spree/admin/shared/my_tracking_code.html.erb`, where you can add your tracking code, eg.
+2. Creating a new partial file `app/views/spree/admin/shared/_my_tracking_code.html.erb` (note the leading underscore — it's rendered as a partial), where you can add your tracking code, eg.
 
-    ```erb
+    ```erb app/views/spree/admin/shared/_my_tracking_code.html.erb
     <script>
       console.log("I'm a spy!");
     </script>

@@ -45,6 +45,11 @@ describe Spree::Admin::DashboardController, type: :controller do
       get :getting_started
       expect(response).to render_template(:getting_started)
     end
+
+    it 'renders the storefront setup task' do
+      get :getting_started
+      expect(response.body).to include('Setup Storefront')
+    end
   end
 
   describe '#dismiss_enterprise_edition_notice' do

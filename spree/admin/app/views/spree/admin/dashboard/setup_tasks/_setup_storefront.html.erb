@@ -1,0 +1,18 @@
+<% if done %>
+  <p>
+    <%= Spree.t('admin.store_setup_tasks.storefront.done') %>
+    <%= link_to current_store.storefront_url, current_store.storefront_url, target: :_blank, rel: 'noopener', class: 'font-medium' %>
+  </p>
+  <% if can?(:update, current_store) %>
+    <div>
+      <%= link_to Spree.t('admin.store_setup_tasks.storefront.manage'), spree.admin_storefront_path, class: 'btn btn-light', data: { turbo_frame: '_top' } %>
+    </div>
+  <% end %>
+<% else %>
+  <p><%= Spree.t('admin.store_setup_tasks.storefront.copy') %></p>
+  <% if can?(:update, current_store) %>
+    <div>
+      <%= link_to Spree.t('admin.store_setup_tasks.storefront.setup'), spree.admin_storefront_path, class: 'btn btn-primary', data: { turbo_frame: '_top' } %>
+    </div>
+  <% end %>
+<% end %>
