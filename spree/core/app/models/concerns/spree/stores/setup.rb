@@ -3,40 +3,43 @@ module Spree
     module Setup
       extend ActiveSupport::Concern
 
-      def setup_task_done?(task)
-        Spree.store_setup_tasks.find(task)&.done?(self)
-      end
-
       # The evaluated Getting Started checklist for this store, in display
-      # order — what the Admin API serializes.
+      # order — what the Admin API serializes and every other setup method
+      # derives from. Memoized per instance: the dashboard evaluates the
+      # checklist several times per render (sidebar badge, progress bar, task
+      # list) and each done-check costs a query.
       #
       # @return [Array<Spree::SetupTask>]
       def setup_tasks
-        Spree.store_setup_tasks.for(self).map do |task|
-          Spree::SetupTask.new(name: task.key.to_s, done: task.done?(self))
+        return [] if deleted?
+
+        @setup_tasks ||= Spree.store_setup_tasks.for(self).map do |definition|
+          Spree::SetupTask.new(name: definition.key.to_s, done: definition.done?(self))
         end
       end
 
-      def setup_tasks_total
-        @setup_tasks_total = setup_tasks_list.count
+      def setup_task_done?(task)
+        setup_tasks.find { |t| t.name == task.to_s }&.done
       end
 
       def setup_tasks_list
-        return [] if deleted?
+        setup_tasks.map { |task| task.name.to_sym }
+      end
 
-        Spree.store_setup_tasks.for(self).map(&:key)
+      def setup_tasks_total
+        setup_tasks.size
       end
 
       def setup_tasks_done
-        @setup_tasks_done = setup_tasks_list.select { |task| setup_task_done?(task) }.count
+        setup_tasks.count(&:done)
       end
 
       def setup_completed?
-        @setup_completed ||= setup_tasks_done == setup_tasks_total
+        setup_tasks_done == setup_tasks_total
       end
 
       def setup_percentage
-        @setup_percentage ||= (setup_tasks_done / setup_tasks_total.to_f * 100).to_i
+        (setup_tasks_done / setup_tasks_total.to_f * 100).to_i
       end
 
       def payment_method_setup?

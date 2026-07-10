@@ -10,21 +10,24 @@ import {
 } from '@spree/dashboard-ui'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { CheckCircle2Icon, ChevronDownIcon, CircleIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   normalizeOrigin,
   StorefrontConnectSheet,
 } from '@/components/spree/storefront-connect-sheet'
 
-// Route targets for the built-in tasks. Extension-registered tasks without an
-// entry here render without a CTA (their copy comes from the same i18n
-// convention, so extensions ship keys + optionally patch this map via a PR).
-const TASK_LINKS: Record<string, string> = {
-  setup_payment_method: '/$storeId/settings/payment-methods',
-  add_products: '/$storeId/products',
-  set_customer_support_email: '/$storeId/settings/emails',
-  setup_taxes_collection: '/$storeId/settings/tax-categories',
+// CTA behavior for the built-in tasks — a settings deep-link or the
+// storefront-connect sheet. Extension-registered tasks without an entry
+// render without a CTA (their copy comes from the same i18n convention).
+type TaskAction = { link: string } | { sheet: true }
+
+const TASK_ACTIONS: Record<string, TaskAction> = {
+  setup_payment_method: { link: '/$storeId/settings/payment-methods' },
+  add_products: { link: '/$storeId/products' },
+  set_customer_support_email: { link: '/$storeId/settings/emails' },
+  setup_taxes_collection: { link: '/$storeId/settings/tax-categories' },
+  setup_storefront: { sheet: true },
 }
 
 export const Route = createFileRoute('/_authenticated/$storeId/getting-started')({
@@ -41,18 +44,9 @@ export const Route = createFileRoute('/_authenticated/$storeId/getting-started')
 
 function GettingStartedPage() {
   const { t, i18n } = useTranslation()
-  const { store, storeId, refetch } = useStore()
+  const { store, storeId } = useStore()
   const { 'deployment-url': deploymentUrl } = Route.useSearch()
 
-  // The provider's store snapshot goes stale while the merchant completes
-  // tasks on other pages (e.g. adds a payment method) — refresh it whenever
-  // they come back so the checklist and the nav badge reflect reality.
-  useEffect(() => {
-    void refetch()
-  }, [refetch])
-  // '' means the user explicitly collapsed everything; null means "no choice
-  // yet", which falls back to the first pending task.
-  const [expanded, setExpanded] = useState<string | null>(null)
   // Coming back from a Vercel deploy opens the sheet with the deployed URL
   // prefilled — one click left to finish the setup.
   const deployedOrigin = deploymentUrl ? normalizeOrigin(deploymentUrl) : null
@@ -70,8 +64,7 @@ function GettingStartedPage() {
 
   const tasks = store.setup_tasks ?? []
   const doneCount = tasks.filter((task) => task.done).length
-  const firstPending = tasks.find((task) => !task.done)?.name ?? ''
-  const expandedTask = expanded ?? firstPending
+  const firstPending = tasks.find((task) => !task.done)?.name
 
   const taskCopy = (task: SetupTask, facet: 'title' | 'description' | 'cta') => {
     const key = `admin.getting_started.tasks.${task.name}.${facet}`
@@ -102,47 +95,39 @@ function GettingStartedPage() {
 
       <div className="flex flex-col gap-4">
         {tasks.map((task) => {
-          const link = TASK_LINKS[task.name]
+          const action = TASK_ACTIONS[task.name]
           const description = taskCopy(task, 'description')
           const cta = taskCopy(task, 'cta')
-          const isOpen = expandedTask === task.name
 
           return (
             <Card key={task.name} className="overflow-hidden py-0">
-              <Collapsible open={isOpen}>
-                <CollapsibleTrigger
-                  className="flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-muted/50"
-                  onClick={() => setExpanded(isOpen ? '' : task.name)}
-                >
+              <Collapsible defaultOpen={task.name === firstPending}>
+                <CollapsibleTrigger className="group flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-muted/50">
                   {task.done ? (
                     <CheckCircle2Icon className="size-5 shrink-0 text-green-600" />
                   ) : (
                     <CircleIcon className="size-5 shrink-0 text-muted-foreground" />
                   )}
                   <span className="grow font-medium capitalize">{taskCopy(task, 'title')}</span>
-                  <ChevronDownIcon
-                    className={`size-4 shrink-0 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`}
-                  />
+                  <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[panel-open]:rotate-180" />
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <div className="flex flex-col items-start gap-3 border-t px-4 py-4 pl-12">
                     {description && <p className="text-sm text-muted-foreground">{description}</p>}
-                    {task.name === 'setup_storefront' ? (
+                    {action && cta && (
                       <Button
+                        asChild={'link' in action}
                         variant={task.done ? 'outline' : 'default'}
-                        onClick={() => setSheetOpen(true)}
+                        onClick={'sheet' in action ? () => setSheetOpen(true) : undefined}
                       >
-                        {cta}
-                      </Button>
-                    ) : (
-                      link &&
-                      cta && (
-                        <Button asChild variant={task.done ? 'outline' : 'default'}>
-                          <Link to={link} params={{ storeId }}>
+                        {'link' in action ? (
+                          <Link to={action.link} params={{ storeId }}>
                             {cta}
                           </Link>
-                        </Button>
-                      )
+                        ) : (
+                          cta
+                        )}
+                      </Button>
                     )}
                   </div>
                 </CollapsibleContent>
@@ -153,6 +138,7 @@ function GettingStartedPage() {
       </div>
 
       <StorefrontConnectSheet
+        store={store}
         open={sheetOpen}
         onOpenChange={setSheetOpen}
         initialUrl={deployedOrigin ?? undefined}

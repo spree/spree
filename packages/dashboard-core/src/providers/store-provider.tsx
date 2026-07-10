@@ -1,6 +1,6 @@
 import type { Store } from '@spree/admin-sdk'
 import { useQuery } from '@tanstack/react-query'
-import { createContext, type ReactNode, useCallback, useContext, useEffect, useRef } from 'react'
+import { createContext, type ReactNode, useContext, useEffect, useRef } from 'react'
 import { adminClient } from '../client'
 import { useAuth } from '../hooks/use-auth'
 import { coreLocaleCodes, reconcileStoreDefaultLocale } from '../lib/i18n'
@@ -31,7 +31,7 @@ interface StoreContextValue {
   /** IANA timezone for the store (e.g. `Europe/Berlin`). Falls back to the
    *  browser's resolved timezone when the store hasn't loaded yet. */
   timezone: string
-  refetch: () => Promise<void>
+  refetch: () => Promise<unknown>
 }
 
 const StoreContext = createContext<StoreContextValue | null>(null)
@@ -43,12 +43,13 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   // every auth update) doesn't re-trigger the locale-fallback effect below.
   const accountLocaleRef = useRef<string | null>(user?.selected_locale ?? null)
   accountLocaleRef.current = user?.selected_locale ?? null
-  // Run the store-default fallback only on the FIRST store load. A later refetch
-  // (e.g. after saving store settings) must not re-apply it: that path already
-  // owns the locale via `switchAdminLocale`, and re-applying would race that
-  // PATCH and could reload before it lands. Re-armed per store (effect below) so
-  // a multi-store admin still inherits each store's preferred_admin_locale.
-  const localeFallbackDoneRef = useRef(false)
+  // Run the store-default fallback only on the FIRST load of each store. A
+  // later refetch (e.g. after saving store settings) must not re-apply it:
+  // that path already owns the locale via `switchAdminLocale`, and re-applying
+  // would race that PATCH and could reload before it lands. Tracking the
+  // storeId it last ran for re-arms it per store, so a multi-store admin still
+  // inherits each store's preferred_admin_locale.
+  const localeFallbackStoreRef = useRef<string | null>(null)
 
   const query = useQuery({
     // Keyed per store, so a slow in-flight fetch for a store the route already
@@ -58,19 +59,13 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
   })
   const store = query.data ?? null
 
-  // Re-arm the one-shot fallback for each store the admin switches into.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: re-arm on store boundary only
-  useEffect(() => {
-    localeFallbackDoneRef.current = false
-  }, [storeId])
-
   // Reconcile the admin language against this store's default — adopting it,
   // or dropping a now-stale auto-applied default — only when no account locale
   // or genuine personal choice owns it (legacy base_controller parity).
   useEffect(() => {
-    if (!store || localeFallbackDoneRef.current) return
+    if (!store || localeFallbackStoreRef.current === storeId) return
 
-    localeFallbackDoneRef.current = true
+    localeFallbackStoreRef.current = storeId
     reconcileStoreDefaultLocale(
       store.preferred_admin_locale,
       storeId,
@@ -78,11 +73,6 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
       coreLocaleCodes(),
     )
   }, [store, storeId])
-
-  const queryRefetch = query.refetch
-  const refetch = useCallback(async () => {
-    await queryRefetch()
-  }, [queryRefetch])
 
   const currencies = store?.supported_currencies ?? []
   const locales = store?.supported_locales ?? []
@@ -104,7 +94,7 @@ export function StoreProvider({ storeId, children }: { storeId: string; children
         defaultCurrency,
         defaultLocale,
         timezone,
-        refetch,
+        refetch: query.refetch,
       }}
     >
       {children}

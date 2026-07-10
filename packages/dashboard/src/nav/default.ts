@@ -1,3 +1,4 @@
+import type { Store } from '@spree/admin-sdk'
 import { i18n, nav, Subject } from '@spree/dashboard-core'
 import {
   BarChart3Icon,
@@ -17,6 +18,9 @@ nav.add({
   path: '/getting-started',
   icon: MapIcon,
   position: 50,
+  subject: Subject.Store,
+  // Legacy-admin parity: the entry disappears once every setup task is done.
+  if: ({ store }) => !!(store as Store | null)?.setup_tasks?.some((task) => !task.done),
   badge: GettingStartedNavBadge,
 })
 

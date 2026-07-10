@@ -78,20 +78,12 @@ module Spree
           )
       end
 
-      # Normalizes user or Vercel-callback input (possibly a bare host like
-      # my-shop.vercel.app) to a canonical origin string (scheme://host[:port]),
-      # or nil when it's not a valid http(s) URL.
+      # Normalizes user or Vercel-callback input to a canonical origin string,
+      # or nil when it's not a valid http(s) URL — pre-normalized here (rather
+      # than leaning on the Store validation) so invalid input gets the
+      # dedicated invalid_origin flash.
       def normalize_origin(raw)
-        raw = raw.to_s.strip
-        return if raw.blank?
-
-        candidate = raw.match?(%r{\Ahttps?://}i) ? raw : "https://#{raw}"
-        parsed = Spree::AllowedOrigin.parse_origin(candidate)
-        return if parsed.nil?
-
-        origin = "#{parsed[:scheme]}://#{parsed[:host]}"
-        origin += ":#{parsed[:port]}" unless [80, 443].include?(parsed[:port])
-        origin
+        Spree::AllowedOrigin.normalize_origin(raw)
       end
 
       # Only link back to the Vercel dashboard when the callback param actually

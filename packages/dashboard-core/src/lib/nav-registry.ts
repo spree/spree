@@ -8,6 +8,13 @@ import type { SubjectName } from './permissions'
 
 export type NavSection = 'main' | 'bottom'
 
+/** Ambient context passed to `NavEntry.if` — mirrors `SlotAmbientContext`. */
+export interface NavVisibilityContext {
+  permissions?: unknown
+  store?: unknown
+  user?: unknown
+}
+
 export interface NavEntry {
   /** Stable identifier — used for register/remove/update and as the React key. */
   key: string
@@ -26,6 +33,12 @@ export interface NavEntry {
   position?: number
   /** CanCanCan subject required to see this item. Omit for always-visible. */
   subject?: SubjectName
+  /**
+   * State-based visibility gate evaluated at render (top-level entries only),
+   * e.g. hide Getting Started once the store's setup tasks are all done.
+   * Combines with `subject` — both must pass.
+   */
+  if?: (ctx: NavVisibilityContext) => boolean
   /**
    * Rendered after the label (e.g. a count). A component — not an element —
    * so it can call hooks like useStore and return null to hide itself.

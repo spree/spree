@@ -24,13 +24,13 @@ module Spree
     class Definition
       attr_reader :key, :position
 
-      def initialize(key, position:, done:, if: nil)
+      def initialize(key, position:, done:, **options)
         raise ArgumentError, "done: must respond to #call" unless done.respond_to?(:call)
 
         @key = key.to_sym
         @position = position
         @done = done
-        @if = binding.local_variable_get(:if)
+        @if = options[:if]
       end
 
       # @param subject [Object] the record the checklist belongs to (e.g. a store)
@@ -70,10 +70,6 @@ module Spree
 
     def find(key)
       @tasks[key.to_sym]
-    end
-
-    def exists?(key)
-      @tasks.key?(key.to_sym)
     end
 
     # @return [Array<Definition>] all tasks sorted by position

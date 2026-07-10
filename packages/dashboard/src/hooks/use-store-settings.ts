@@ -24,3 +24,26 @@ export function useUpdateStoreSettings() {
     errorMessage: false,
   })
 }
+
+/**
+ * Saves the storefront URL and allows its origin in one step — the action
+ * that completes the `setup_storefront` task. The origin registration is
+ * best-effort: it may already be allowed, and the URL preference is what
+ * completes setup.
+ */
+export function useConnectStorefront() {
+  return useResourceMutation<string, Error, string>({
+    mutationFn: async (origin) => {
+      await adminClient.store.update({ preferred_storefront_url: origin })
+      try {
+        await adminClient.allowedOrigins.create({ origin })
+      } catch {
+        // duplicate origin — already allowed
+      }
+      return origin
+    },
+    invalidate: [[STORE_QUERY_RESOURCE], ['allowed-origins']],
+    successMessage: false,
+    errorMessage: false,
+  })
+}

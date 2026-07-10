@@ -1,6 +1,7 @@
 import type { Product, ProductCreateParams, ProductUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
+  STORE_QUERY_RESOURCE,
   useResourceKey,
   useResourceKeyBuilder,
   useResourceMutation,
@@ -36,8 +37,8 @@ export function useProduct(id: string) {
 export function useCreateProduct() {
   return useResourceMutation<Product, Error, ProductCreateParams>({
     mutationFn: (params) => adminClient.products.create(params),
-    // ['store'] refreshes the setup-task state (Getting Started + nav badge).
-    invalidate: [['products'], ['store']],
+    // STORE_QUERY_RESOURCE refreshes the setup-task state (Getting Started + nav badge).
+    invalidate: [['products'], [STORE_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
   })
@@ -64,7 +65,7 @@ export function useDeleteProduct() {
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.products.delete(id),
-    invalidate: [['products'], ['store']],
+    invalidate: [['products'], [STORE_QUERY_RESOURCE]],
     successMessage: false,
     errorMessage: false,
     onSuccess: (_data, id) => {

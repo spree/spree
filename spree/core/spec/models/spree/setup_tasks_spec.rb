@@ -9,7 +9,6 @@ describe Spree::SetupTasks do
     it 'registers a task retrievable by key' do
       registry.add :connect_erp, position: 10, done: ->(_store) { true }
 
-      expect(registry.exists?(:connect_erp)).to be true
       expect(registry.find(:connect_erp).key).to eq(:connect_erp)
     end
 
@@ -31,7 +30,7 @@ describe Spree::SetupTasks do
       registry.add :connect_erp, position: 10, done: ->(_store) { true }
       registry.remove :connect_erp
 
-      expect(registry.exists?(:connect_erp)).to be false
+      expect(registry.find(:connect_erp)).to be_nil
     end
   end
 

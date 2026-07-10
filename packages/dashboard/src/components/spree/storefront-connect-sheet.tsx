@@ -1,7 +1,7 @@
-import type { ApiKey, Store } from '@spree/admin-sdk'
-import { adminClient, useResourceKey, useStore } from '@spree/dashboard-core'
+import type { Store } from '@spree/admin-sdk'
 import {
   Button,
+  CopyToClipboardButton,
   Input,
   Label,
   Sheet,
@@ -11,11 +11,12 @@ import {
   SheetTitle,
   Skeleton,
 } from '@spree/dashboard-ui'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CheckIcon, CopyIcon, ExternalLinkIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
+import { ExternalLinkIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { useStorefrontPublishableKey } from '@/hooks/use-api-keys'
+import { useConnectStorefront } from '@/hooks/use-store-settings'
 
 const STOREFRONT_REPOSITORY_URL = 'https://github.com/spree/storefront'
 const STOREFRONT_DEMO_URL = 'https://demo.spreecommerce.org'
@@ -78,26 +79,9 @@ function VercelMark() {
   )
 }
 
-function CopyButton({ value }: { value: string }) {
-  const [copied, setCopied] = useState(false)
-
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      onClick={async () => {
-        await navigator.clipboard.writeText(value)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 1500)
-      }}
-    >
-      {copied ? <CheckIcon className="size-4 text-green-600" /> : <CopyIcon className="size-4" />}
-    </Button>
-  )
-}
-
 interface StorefrontConnectSheetProps {
+  /** The current store — the caller guards loading, so this is always present. */
+  store: Store
   open: boolean
   onOpenChange: (open: boolean) => void
   /** Prefill for the storefront URL field — e.g. the Vercel callback's deployment-url. */
@@ -105,60 +89,39 @@ interface StorefrontConnectSheetProps {
 }
 
 export function StorefrontConnectSheet({
+  store,
   open,
   onOpenChange,
   initialUrl,
 }: StorefrontConnectSheetProps) {
   const { t } = useTranslation()
-  const { store, refetch } = useStore()
-  const queryClient = useQueryClient()
-  const [url, setUrl] = useState(() => initialUrl ?? store?.preferred_storefront_url ?? '')
+  const [url, setUrl] = useState(() => initialUrl ?? store.preferred_storefront_url ?? '')
   const [showKey, setShowKey] = useState(false)
 
-  const keysQueryKey = useResourceKey('storefront-publishable-key')
-  const { data: publishableKey, isLoading: keyLoading } = useQuery({
-    queryKey: keysQueryKey,
+  const { data: publishableKey, isLoading: keyLoading } = useStorefrontPublishableKey({
     enabled: open,
-    queryFn: async () => {
-      // Reuse the oldest active publishable key; mint one for stores that have
-      // none — same behavior as the legacy admin storefront page.
-      const { data: keys } = await adminClient.apiKeys.list({ per_page: 100 })
-      const existing = keys.find((key: ApiKey) => key.key_type === 'publishable' && !key.revoked_at)
-      if (existing) return existing
-
-      return adminClient.apiKeys.create({ name: 'Storefront', key_type: 'publishable' })
-    },
   })
-
   const token = publishableKey?.plaintext_token ?? ''
 
-  const saveUrl = useMutation({
-    mutationFn: async (rawUrl: string) => {
-      const origin = normalizeOrigin(rawUrl)
-      if (!origin) throw new Error(t('admin.getting_started.storefront_sheet.invalid_url'))
+  const connect = useConnectStorefront()
 
-      await adminClient.store.update({ preferred_storefront_url: origin })
-      try {
-        // Best-effort: the origin may already be allowed (duplicate), which
-        // must not fail the save — the URL preference is what completes setup.
-        await adminClient.allowedOrigins.create({ origin })
-      } catch {
-        // already allowed or rejected as duplicate
-      }
-      return origin
-    },
-    onSuccess: async (origin) => {
-      await refetch()
-      await queryClient.invalidateQueries({ queryKey: keysQueryKey })
-      toast.success(t('admin.getting_started.storefront_sheet.saved', { url: origin }))
-      onOpenChange(false)
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : String(error))
-    },
-  })
+  const handleSave = () => {
+    const origin = normalizeOrigin(url)
+    if (!origin) {
+      toast.error(t('admin.getting_started.storefront_sheet.invalid_url'))
+      return
+    }
 
-  if (!store) return null
+    connect.mutate(origin, {
+      onSuccess: () => {
+        toast.success(t('admin.getting_started.storefront_sheet.saved', { url: origin }))
+        onOpenChange(false)
+      },
+      onError: (error) => {
+        toast.error(error instanceof Error ? error.message : String(error))
+      },
+    })
+  }
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -175,7 +138,12 @@ export function StorefrontConnectSheet({
             <Label>{t('admin.getting_started.storefront_sheet.api_url_label')}</Label>
             <div className="flex items-center gap-1">
               <Input readOnly value={store.api_url} spellCheck={false} />
-              <CopyButton value={store.api_url} />
+              <CopyToClipboardButton
+                value={store.api_url}
+                aria-label={t('admin.common.copy')}
+                variant="ghost"
+                size="icon"
+              />
             </div>
           </div>
 
@@ -199,7 +167,12 @@ export function StorefrontConnectSheet({
                 >
                   {showKey ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
                 </Button>
-                <CopyButton value={token} />
+                <CopyToClipboardButton
+                  value={token}
+                  aria-label={t('admin.common.copy')}
+                  variant="ghost"
+                  size="icon"
+                />
               </div>
             )}
           </div>
@@ -251,7 +224,7 @@ export function StorefrontConnectSheet({
             className="flex flex-col gap-3"
             onSubmit={(event) => {
               event.preventDefault()
-              saveUrl.mutate(url)
+              handleSave()
             }}
           >
             <div className="flex flex-col gap-2">
@@ -270,7 +243,7 @@ export function StorefrontConnectSheet({
               </p>
             </div>
             <div>
-              <Button type="submit" disabled={!url.trim() || saveUrl.isPending}>
+              <Button type="submit" disabled={!url.trim() || connect.isPending}>
                 {t('admin.getting_started.storefront_sheet.save')}
               </Button>
             </div>

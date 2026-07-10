@@ -5,6 +5,7 @@ import type {
 } from '@spree/admin-sdk'
 import {
   adminClient,
+  STORE_QUERY_RESOURCE,
   useResourceKey,
   useResourceKeyBuilder,
   useResourceMutation,
@@ -48,8 +49,8 @@ export function useCreatePaymentMethod() {
   // providers, so the picker should drop the just-added one.
   return useResourceMutation<PaymentMethod, Error, PaymentMethodCreateParams>({
     mutationFn: (params) => adminClient.paymentMethods.create(params),
-    // ['store'] refreshes the setup-task state (Getting Started + nav badge).
-    invalidate: [['payment-methods'], ['payment-methods', 'types'], ['store']],
+    // STORE_QUERY_RESOURCE refreshes the setup-task state (Getting Started + nav badge).
+    invalidate: [['payment-methods'], ['payment-methods', 'types'], [STORE_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.payment_methods.messages.created'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
@@ -58,7 +59,7 @@ export function useCreatePaymentMethod() {
 export function useUpdatePaymentMethod(id: string) {
   return useResourceMutation<PaymentMethod, Error, PaymentMethodUpdateParams>({
     mutationFn: (params) => adminClient.paymentMethods.update(id, params),
-    invalidate: [['payment-methods'], ['payment-methods', id], ['store']],
+    invalidate: [['payment-methods'], ['payment-methods', id], [STORE_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.payment_methods.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
@@ -70,7 +71,7 @@ export function useDeletePaymentMethod() {
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.paymentMethods.delete(id),
-    invalidate: [['payment-methods'], ['payment-methods', 'types'], ['store']],
+    invalidate: [['payment-methods'], ['payment-methods', 'types'], [STORE_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.payment_methods.messages.deleted'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
     onSuccess: (_data, id) => {

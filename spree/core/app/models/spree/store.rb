@@ -141,6 +141,7 @@ module Spree
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
+    validate :preferred_storefront_url_is_an_origin
     validates :mail_from_address, email: { allow_blank: false }
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
@@ -160,6 +161,7 @@ module Spree
     #
     # Callbacks
     before_validation :set_default_code, on: :create
+    before_validation :normalize_preferred_storefront_url
     before_save :ensure_default_exists_and_is_unique
     after_create :create_default_policies
 
@@ -423,6 +425,27 @@ module Spree
 
     def set_default_code
       self.code = 'default' if code.blank?
+    end
+
+    # The storefront URL preference must always hold a canonical origin — it
+    # becomes the base for customer-email links and completes the storefront
+    # setup task, and the v3 Admin API writes it without any controller-side
+    # normalization. Parseable input is canonicalized here; garbage is left
+    # in place for the validation below to reject.
+    def normalize_preferred_storefront_url
+      raw = preferred_storefront_url
+      return if raw.blank?
+
+      normalized = Spree::AllowedOrigin.normalize_origin(raw)
+      self.preferred_storefront_url = normalized if normalized
+    end
+
+    def preferred_storefront_url_is_an_origin
+      raw = preferred_storefront_url
+      return if raw.blank?
+      return if Spree::AllowedOrigin.normalize_origin(raw)
+
+      errors.add(:preferred_storefront_url, :invalid)
     end
   end
 end

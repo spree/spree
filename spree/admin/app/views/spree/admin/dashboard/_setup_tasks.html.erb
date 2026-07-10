@@ -1,8 +1,8 @@
 <div id="setup_tasks" class="flex flex-col gap-4">
   <% task_in_progress = nil %>
-  <% Spree.store_setup_tasks.for(current_store).each do |item| %>
-    <% task = item.key %>
-    <% done = current_store.setup_task_done?(task) %>
+  <% current_store.setup_tasks.each do |item| %>
+    <% task = item.name %>
+    <% done = item.done %>
     <% unless done %>
       <% task_in_progress ||= task %>
     <% end %>
