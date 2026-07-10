@@ -1,5 +1,5 @@
 import type { SetupTask } from '@spree/admin-sdk'
-import { PageHeader, useStore } from '@spree/dashboard-core'
+import { PageHeader, Slot, useStore } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -10,47 +10,27 @@ import {
 } from '@spree/dashboard-ui'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { CheckCircle2Icon, ChevronDownIcon, CircleIcon } from 'lucide-react'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  normalizeOrigin,
-  StorefrontConnectSheet,
-} from '@/components/spree/storefront-connect-sheet'
+import '@/components/spree/setup-tasks/register'
+import { setupTaskSlot } from '@/components/spree/setup-tasks/types'
 
-// CTA behavior for the built-in tasks — a settings deep-link or the
-// storefront-connect sheet. Extension-registered tasks without an entry
-// render without a CTA (their copy comes from the same i18n convention).
-type TaskAction = { link: string } | { sheet: true }
-
-const TASK_ACTIONS: Record<string, TaskAction> = {
-  setup_payment_method: { link: '/$storeId/settings/payment-methods' },
-  add_products: { link: '/$storeId/products' },
-  set_customer_support_email: { link: '/$storeId/settings/emails' },
-  setup_taxes_collection: { link: '/$storeId/settings/tax-categories' },
-  setup_storefront: { sheet: true },
+// Settings deep-links for the tasks whose default card body (copy + CTA
+// button) suffices. Tasks needing real UI register a slot component under
+// `getting-started.task.<name>` instead — see setup-tasks/register.ts.
+const TASK_LINKS: Record<string, string> = {
+  setup_payment_method: '/$storeId/settings/payment-methods',
+  add_products: '/$storeId/products',
+  set_customer_support_email: '/$storeId/settings/emails',
+  setup_taxes_collection: '/$storeId/settings/tax-categories',
 }
 
 export const Route = createFileRoute('/_authenticated/$storeId/getting-started')({
   component: GettingStartedPage,
-  // Vercel's deploy button appends callback params to its redirect-url —
-  // deployment-url carries the deployed storefront's host.
-  validateSearch: (search: Record<string, unknown>) => ({
-    'deployment-url':
-      typeof search['deployment-url'] === 'string'
-        ? (search['deployment-url'] as string)
-        : undefined,
-  }),
 })
 
 function GettingStartedPage() {
   const { t, i18n } = useTranslation()
   const { store, storeId } = useStore()
-  const { 'deployment-url': deploymentUrl } = Route.useSearch()
-
-  // Coming back from a Vercel deploy opens the sheet with the deployed URL
-  // prefilled — one click left to finish the setup.
-  const deployedOrigin = deploymentUrl ? normalizeOrigin(deploymentUrl) : null
-  const [sheetOpen, setSheetOpen] = useState(deployedOrigin != null)
 
   if (!store) {
     return (
@@ -95,7 +75,7 @@ function GettingStartedPage() {
 
       <div className="flex flex-col gap-4">
         {tasks.map((task) => {
-          const action = TASK_ACTIONS[task.name]
+          const link = TASK_LINKS[task.name]
           const description = taskCopy(task, 'description')
           const cta = taskCopy(task, 'cta')
 
@@ -111,24 +91,29 @@ function GettingStartedPage() {
                   <span className="grow font-medium capitalize">{taskCopy(task, 'title')}</span>
                   <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[panel-open]:rotate-180" />
                 </CollapsibleTrigger>
-                <CollapsibleContent>
+                {/* keepMounted so slot components mount even while their card is
+                    collapsed — the storefront task auto-opens its sheet from the
+                    Vercel callback param, which requires being mounted. */}
+                <CollapsibleContent keepMounted>
                   <div className="flex flex-col items-start gap-3 border-t px-4 py-4 pl-12">
-                    {description && <p className="text-sm text-muted-foreground">{description}</p>}
-                    {action && cta && (
-                      <Button
-                        asChild={'link' in action}
-                        variant={task.done ? 'outline' : 'default'}
-                        onClick={'sheet' in action ? () => setSheetOpen(true) : undefined}
-                      >
-                        {'link' in action ? (
-                          <Link to={action.link} params={{ storeId }}>
-                            {cta}
-                          </Link>
-                        ) : (
-                          cta
-                        )}
-                      </Button>
-                    )}
+                    <Slot
+                      name={setupTaskSlot(task.name)}
+                      context={{ task, store, storeId }}
+                      fallback={
+                        <>
+                          {description && (
+                            <p className="text-muted-foreground text-sm">{description}</p>
+                          )}
+                          {link && cta && (
+                            <Button asChild variant={task.done ? 'outline' : 'default'}>
+                              <Link to={link} params={{ storeId }}>
+                                {cta}
+                              </Link>
+                            </Button>
+                          )}
+                        </>
+                      }
+                    />
                   </div>
                 </CollapsibleContent>
               </Collapsible>
@@ -136,13 +121,6 @@ function GettingStartedPage() {
           )
         })}
       </div>
-
-      <StorefrontConnectSheet
-        store={store}
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        initialUrl={deployedOrigin ?? undefined}
-      />
     </div>
   )
 }
