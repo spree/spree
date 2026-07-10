@@ -2,13 +2,6 @@ import type { Import, ImportType } from '@spree/admin-sdk'
 import {
   Button,
   cn,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Field,
   FieldLabel,
   Select,
@@ -16,6 +9,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
 } from '@spree/dashboard-ui'
 import { DownloadIcon, FileSpreadsheetIcon, UploadIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -43,12 +42,21 @@ interface ImportButtonProps {
    * scope model. Purely UX; the backend authorizes every request.
    */
   subject: SubjectName
-  /** Receives the created import (in `mapping` state); the app navigates to the wizard. */
+  /**
+   * Receives the created import (in `mapping` state). The consumer opens the
+   * wizard — typically a full-window dialog driven by an `?import=` search
+   * param.
+   */
   onCreated: (imp: Import) => void
   /** Label shown on the button. Defaults to the translated "Import" action. */
   label?: string
 }
 
+/**
+ * Toolbar entry point for CSV imports: opens a Sheet with the upload form
+ * (file, delimiter, template download). On success the sheet closes and the
+ * created import is handed to `onCreated`.
+ */
 export function ImportButton({ type, subject, onCreated, label }: ImportButtonProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
@@ -113,19 +121,19 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
         {label ?? t('admin.actions.import')}
       </Button>
 
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('admin.components.import_button.title')}</DialogTitle>
-            <DialogDescription>{t('admin.components.import_button.description')}</DialogDescription>
-          </DialogHeader>
+      <Sheet open={open} onOpenChange={handleOpenChange}>
+        <SheetContent className="sm:max-w-xl">
+          <SheetHeader>
+            <SheetTitle>{t('admin.components.import_button.title')}</SheetTitle>
+            <SheetDescription>{t('admin.components.import_button.description')}</SheetDescription>
+          </SheetHeader>
 
-          <DialogBody className="flex flex-col gap-4">
+          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
             {/* A <label> wrapping the file input: clicking anywhere opens the
                 picker natively, no JS forwarding needed. */}
             <label
               className={cn(
-                'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed bg-muted/40 px-4 py-8 text-center transition-colors hover:bg-muted',
+                'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed bg-muted/40 px-4 py-10 text-center transition-colors hover:bg-muted',
                 file && 'border-solid',
               )}
               onDragOver={(e) => e.preventDefault()}
@@ -189,20 +197,30 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
               <DownloadIcon className="size-4" />
               {t('admin.components.import_button.download_template')}
             </Button>
-          </DialogBody>
+          </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => handleOpenChange(false)}>
+          <SheetFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleOpenChange(false)}
+            >
               {t('admin.actions.cancel')}
             </Button>
-            <Button onClick={handleSubmit} disabled={!file || createImport.isPending}>
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleSubmit}
+              disabled={!file || createImport.isPending}
+            >
               {createImport.isPending
                 ? t('admin.components.import_button.uploading')
                 : t('admin.components.import_button.submit')}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </Can>
   )
 }

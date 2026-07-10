@@ -11,7 +11,7 @@ function csvFile(rows: string[]) {
   }
 }
 
-async function openImportDialog(page: Page, storeId: string) {
+async function openImportSheet(page: Page, storeId: string) {
   await page.goto(PRODUCTS_PATH(storeId))
   await page.getByRole('button', { name: /^import$/i }).click()
   await expect(page.getByRole('heading', { name: /import from csv/i })).toBeVisible()
@@ -28,7 +28,7 @@ test.describe('csv import', () => {
     const suffix = Date.now()
     const goodName = `E2E Imported Product ${suffix}`
 
-    await openImportDialog(page, creds.store_id)
+    await openImportSheet(page, creds.store_id)
 
     // Row 2 has no name and no price — guaranteed row-level failure that
     // feeds the failed-rows report without failing the whole import.
@@ -84,7 +84,7 @@ test.describe('csv import', () => {
     const creds = await login(page)
     const suffix = Date.now()
 
-    await openImportDialog(page, creds.store_id)
+    await openImportSheet(page, creds.store_id)
 
     // No `price` column at all — a required schema field stays unmapped.
     await page
@@ -102,8 +102,14 @@ test.describe('csv import', () => {
     await expect(page.getByRole('button', { name: /start import/i })).toBeDisabled()
     await expect(page.getByText(/map the required fields to continue/i)).toBeVisible()
 
-    // The import history lists the abandoned mapping-state import too.
+    // The import history lists the abandoned mapping-state import too, and a
+    // row click re-opens the wizard dialog right where the user left off.
     await page.goto(`/${creds.store_id}/settings/imports`)
     await expect(page.getByText(/^IM\d+/).first()).toBeVisible({ timeout: 15_000 })
+    await page
+      .getByText(/^IM\d+/)
+      .first()
+      .click()
+    await expect(page.getByText('Map columns')).toBeVisible({ timeout: 15_000 })
   })
 })

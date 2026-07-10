@@ -37,6 +37,8 @@ import {
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { z } from 'zod/v4'
+import { ImportWizardDialog } from '@/components/spree/imports/import-wizard-dialog'
 import { categoryAutocompleteProps, useCategories } from '@/hooks/use-categories'
 import { channelAutocompleteProps, useChannels } from '@/hooks/use-channels'
 import { useDeleteProduct } from '@/hooks/use-product'
@@ -53,8 +55,14 @@ import {
 } from '@/hooks/use-products'
 import '@/tables/products'
 
+// `import` carries the prefixed id of the import whose wizard dialog is open
+// over the table — deep-linkable and refresh-safe.
+const productsSearchSchema = resourceSearchSchema.extend({
+  import: z.string().optional(),
+})
+
 export const Route = createFileRoute('/_authenticated/$storeId/products/')({
-  validateSearch: resourceSearchSchema,
+  validateSearch: productsSearchSchema,
   component: ProductsPage,
 })
 
@@ -67,8 +75,19 @@ type TagsFormValues = { tags: string[] }
 function ProductsPage() {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
-  const searchParams = Route.useSearch()
+  const searchParams = Route.useSearch() as z.infer<typeof productsSearchSchema>
   const navigate = useNavigate()
+
+  const openImportWizard = (id: string) =>
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, import: id }) as never })
+
+  const closeImportWizard = () =>
+    navigate({
+      search: (prev: Record<string, unknown>) => {
+        const { import: _i, ...rest } = prev
+        return rest as never
+      },
+    })
 
   const bulkStatus = useBulkProductStatusUpdate()
   const bulkAddCategories = useBulkAddProductsToCategories()
@@ -255,38 +274,36 @@ function ProductsPage() {
   )
 
   return (
-    <ResourceTable
-      tableKey="products"
-      queryKey="products"
-      queryFn={(params) => adminClient.products.list(params)}
-      defaultParams={{ expand: ['channels'] }}
-      searchParams={searchParams}
-      bulkActions={bulkActions}
-      rowActions={renderRowActions}
-      actions={(ctx) => (
-        <>
-          <ImportButton
-            type="Spree::Imports::Products"
-            subject={Subject.Product}
-            onCreated={(imp) =>
-              navigate({
-                to: '/$storeId/settings/imports/$importId',
-                params: { storeId, importId: imp.id },
-              })
-            }
-          />
-          <ExportButton type="Spree::Exports::Products" {...ctx} />
-          <Button
-            size="sm"
-            className="h-[2.125rem]"
-            onClick={() => navigate({ to: '/$storeId/products/new', params: { storeId } })}
-          >
-            <PlusIcon className="size-4" />
-            {t('admin.pages.products.add_cta')}
-          </Button>
-        </>
-      )}
-    />
+    <>
+      <ResourceTable
+        tableKey="products"
+        queryKey="products"
+        queryFn={(params) => adminClient.products.list(params)}
+        defaultParams={{ expand: ['channels'] }}
+        searchParams={searchParams}
+        bulkActions={bulkActions}
+        rowActions={renderRowActions}
+        actions={(ctx) => (
+          <>
+            <ImportButton
+              type="Spree::Imports::Products"
+              subject={Subject.Product}
+              onCreated={(imp) => openImportWizard(imp.id)}
+            />
+            <ExportButton type="Spree::Exports::Products" {...ctx} />
+            <Button
+              size="sm"
+              className="h-[2.125rem]"
+              onClick={() => navigate({ to: '/$storeId/products/new', params: { storeId } })}
+            >
+              <PlusIcon className="size-4" />
+              {t('admin.pages.products.add_cta')}
+            </Button>
+          </>
+        )}
+      />
+      <ImportWizardDialog importId={searchParams.import ?? null} onClose={closeImportWizard} />
+    </>
   )
 }
 

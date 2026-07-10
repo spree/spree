@@ -1,5 +1,4 @@
 import type { Import, ImportRow } from '@spree/admin-sdk'
-import { PageHeader } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -8,6 +7,11 @@ import {
   CardHeader,
   CardTitle,
   cn,
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -22,64 +26,106 @@ import {
   TableHeader,
   TableRow,
 } from '@spree/dashboard-ui'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import {
   AlertTriangleIcon,
   CheckCircle2Icon,
   ChevronLeftIcon,
   ChevronRightIcon,
   RotateCcwIcon,
+  XIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  isImportActive,
   useCompleteMapping,
   useImport,
   useImportRows,
   useRetryFailedRows,
 } from '@/hooks/use-imports'
-import { importTypeIndexPath, importTypeLabel } from '@/lib/import-types'
-
-export const Route = createFileRoute('/_authenticated/$storeId/settings/imports/$importId')({
-  component: ImportWizardPage,
-})
+import { importTypeIndexPath, importTypeLabel, isImportActive } from '@/lib/import-types'
 
 const NOT_MAPPED = '__not_mapped__'
 
-function ImportWizardPage() {
+interface ImportWizardDialogProps {
+  /** Prefixed id of the import to drive; `null` keeps the dialog closed. */
+  importId: string | null
+  onClose: () => void
+}
+
+/**
+ * Full-window wizard for one import — mapping → progress → results as states
+ * of a single edge-to-edge dialog (same shell as the bulk price editor).
+ * "Deeper into this thing", not "leave this thing": the page behind keeps its
+ * state, and closing mid-processing is safe — the import continues server-side
+ * and reopens from the history page (or the same `?import=` URL).
+ */
+export function ImportWizardDialog({ importId, onClose }: ImportWizardDialogProps) {
+  return (
+    <Dialog open={!!importId} onOpenChange={(next) => !next && onClose()} modal>
+      <DialogContent
+        // Edge-to-edge minus a 3-unit gutter — see BulkPriceEditorDialog for
+        // why every inset/translate/max is overridden.
+        className="!inset-3 !w-auto !max-w-none !translate-x-0 !translate-y-0 flex flex-col p-0"
+        style={{ maxHeight: 'none' }}
+        showCloseButton={false}
+      >
+        {importId && <ImportWizard importId={importId} onClose={onClose} />}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function ImportWizard({ importId, onClose }: { importId: string; onClose: () => void }) {
   const { t } = useTranslation()
-  const { importId, storeId } = Route.useParams()
   const { data: imp, isLoading } = useImport(importId)
 
-  if (isLoading || !imp) {
-    return (
-      <div className="flex flex-col gap-4 p-4 md:p-6">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-40 w-full" />
-      </div>
-    )
-  }
-
   const showFailedRows =
-    imp.failed_rows_count > 0 && (isImportActive(imp.status) || imp.status === 'completed')
+    !!imp && imp.failed_rows_count > 0 && (isImportActive(imp.status) || imp.status === 'completed')
 
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6">
-      <PageHeader
-        title={`${importTypeLabel(imp.type)} · ${imp.number}`}
-        backTo={`/${storeId}/settings/imports`}
-        badges={<StatusBadge status={imp.status} label={t(`admin.imports.status.${imp.status}`)} />}
-      />
+    <>
+      <DialogHeader className="flex flex-row items-center justify-between gap-3 space-y-0 border-b p-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <DialogTitle className="truncate">
+            {imp ? `${importTypeLabel(imp.type)} · ${imp.number}` : t('admin.imports.wizard_title')}
+          </DialogTitle>
+          {imp && (
+            <StatusBadge status={imp.status} label={t(`admin.imports.status.${imp.status}`)} />
+          )}
+        </div>
+        <Button
+          type="button"
+          size="icon-sm"
+          variant="ghost"
+          onClick={onClose}
+          aria-label={t('admin.actions.close')}
+        >
+          <XIcon />
+        </Button>
+      </DialogHeader>
 
-      <StepIndicator status={imp.status} />
+      <DialogBody className="min-h-0 flex-1 overflow-y-auto p-4">
+        <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
+          {isLoading || !imp ? (
+            <>
+              <Skeleton className="h-6 w-64" />
+              <Skeleton className="h-40 w-full" />
+            </>
+          ) : (
+            <>
+              <StepIndicator status={imp.status} />
 
-      {imp.status === 'mapping' && <MappingStep imp={imp} />}
-      {isImportActive(imp.status) && <ProcessingCard imp={imp} />}
-      {imp.status === 'completed' && <ResultsCard imp={imp} storeId={storeId} />}
-      {imp.status === 'failed' && <FailedCard imp={imp} />}
-      {showFailedRows && <FailedRowsCard imp={imp} />}
-    </div>
+              {imp.status === 'mapping' && <MappingStep imp={imp} />}
+              {isImportActive(imp.status) && <ProcessingCard imp={imp} />}
+              {imp.status === 'completed' && <ResultsCard imp={imp} onClose={onClose} />}
+              {imp.status === 'failed' && <FailedCard imp={imp} />}
+              {showFailedRows && <FailedRowsCard imp={imp} />}
+            </>
+          )}
+        </div>
+      </DialogBody>
+    </>
   )
 }
 
@@ -101,8 +147,7 @@ function StepIndicator({ status }: { status: string }) {
           <span
             className={cn(
               'flex size-5 items-center justify-center rounded-full text-xs',
-              index < activeIndex && 'bg-primary text-primary-foreground',
-              index === activeIndex && 'bg-primary text-primary-foreground',
+              index <= activeIndex && 'bg-primary text-primary-foreground',
               index > activeIndex && 'bg-muted text-muted-foreground',
             )}
           >
@@ -326,7 +371,7 @@ function ProcessingCard({ imp }: { imp: Import }) {
 // Results / file-level failure
 // ---------------------------------------------------------------------------
 
-function ResultsCard({ imp, storeId }: { imp: Import; storeId: string }) {
+function ResultsCard({ imp, onClose }: { imp: Import; onClose: () => void }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const retryMutation = useRetryFailedRows(imp.id)
@@ -356,7 +401,10 @@ function ResultsCard({ imp, storeId }: { imp: Import; storeId: string }) {
             </Button>
           )}
           <Button
-            onClick={() => navigate({ to: importTypeIndexPath(imp.type), params: { storeId } })}
+            onClick={() => {
+              onClose()
+              navigate({ to: importTypeIndexPath(imp.type) })
+            }}
           >
             {t('admin.imports.results.view_records', { type: importTypeLabel(imp.type) })}
           </Button>
