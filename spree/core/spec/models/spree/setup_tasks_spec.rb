@@ -53,7 +53,7 @@ describe Spree::SetupTasks do
     end
   end
 
-  describe 'Task' do
+  describe 'Definition' do
     it 'evaluates done? against the given store' do
       task = registry.add :named, position: 10, done: ->(s) { s.name == 'Ready' }
 

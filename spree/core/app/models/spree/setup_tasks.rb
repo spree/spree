@@ -21,7 +21,7 @@ module Spree
   # paths, so extensions ship theirs by convention), and the React dashboard
   # consumes tasks as {Spree::SetupTask} records via the Admin API.
   class SetupTasks
-    class Task
+    class Definition
       attr_reader :key, :position
 
       def initialize(key, position:, done:, if: nil)
@@ -56,14 +56,14 @@ module Spree
     # @param position [Integer] sort order in the checklist
     # @param done [#call] receives the subject, returns whether the task is complete
     # @param options [Hash] optional :if (per-subject visibility callable)
-    # @return [Task]
+    # @return [Definition]
     def add(key, position:, done:, **options)
       key = key.to_sym
-      @tasks[key] = Task.new(key, position: position, done: done, **options)
+      @tasks[key] = Definition.new(key, position: position, done: done, **options)
     end
 
     # @param key [Symbol]
-    # @return [Task, nil] the removed task
+    # @return [Definition, nil] the removed task
     def remove(key)
       @tasks.delete(key.to_sym)
     end
@@ -76,13 +76,13 @@ module Spree
       @tasks.key?(key.to_sym)
     end
 
-    # @return [Array<Task>] all tasks sorted by position
+    # @return [Array<Definition>] all tasks sorted by position
     def tasks
       @tasks.values.sort_by(&:position)
     end
 
     # @param subject [Object] the record the checklist belongs to (e.g. a store)
-    # @return [Array<Task>] the tasks applicable to the given subject, sorted by position
+    # @return [Array<Definition>] the tasks applicable to the given subject, sorted by position
     def for(subject)
       tasks.select { |task| task.available?(subject) }
     end
