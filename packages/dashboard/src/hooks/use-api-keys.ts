@@ -9,6 +9,33 @@ export function useApiKeys() {
   })
 }
 
+/**
+ * The publishable key the storefront-connect flow displays — the oldest
+ * active one, minted on first use for stores that have none (same policy as
+ * the legacy admin storefront page).
+ *
+ * Lives under the `api-keys` namespace so key mutations elsewhere (create,
+ * revoke on the API Keys settings page) invalidate it via their existing
+ * `[['api-keys']]` prefix. `staleTime: Infinity` + `retry: false` because the
+ * queryFn can mint a key — it must run once per cache lifetime, never repeat
+ * on its own.
+ */
+export function useStorefrontPublishableKey({ enabled = true }: { enabled?: boolean } = {}) {
+  return useQuery({
+    queryKey: useResourceKey('api-keys', 'storefront-publishable'),
+    enabled,
+    staleTime: Number.POSITIVE_INFINITY,
+    retry: false,
+    queryFn: async () => {
+      const { data: keys } = await adminClient.apiKeys.list({ limit: 100 })
+      const existing = keys.find((key) => key.key_type === 'publishable' && !key.revoked_at)
+      if (existing) return existing
+
+      return adminClient.apiKeys.create({ name: 'Storefront', key_type: 'publishable' })
+    },
+  })
+}
+
 export function useCreateApiKey() {
   return useResourceMutation<ApiKey, Error, ApiKeyCreateParams>({
     mutationFn: (params) => adminClient.apiKeys.create(params),

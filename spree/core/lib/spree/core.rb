@@ -321,6 +321,14 @@ module Spree
     Rails.application.config.spree.reports = value
   end
 
+  # Registry of the Getting Started onboarding tasks shown on the admin
+  # dashboard. See {Spree::SetupTasks} for the extension API.
+  #
+  # @return [Spree::SetupTasks]
+  def self.store_setup_tasks
+    @store_setup_tasks ||= Spree::SetupTasks.new
+  end
+
   def self.translatable_resources
     Rails.application.config.spree.translatable_resources
   end

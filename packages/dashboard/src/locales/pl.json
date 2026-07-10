@@ -56,7 +56,8 @@
       "promotions": "Promocje",
       "gift_cards": "Karty podarunkowe",
       "reports": "Raporty",
-      "settings": "Ustawienia"
+      "settings": "Ustawienia",
+      "getting_started": "Pierwsze kroki"
     },
     "settings_nav": {
       "groups": {
@@ -1637,6 +1638,57 @@
         "subtitle": "Zarządzaj swoimi danymi osobowymi i językiem administratora.",
         "personal_details": "Dane osobowe",
         "load_failed_title": "Nie udało się załadować Twojego profilu"
+      },
+      "getting_started": {
+        "title": "Pierwsze kroki",
+        "description": "Ukończ te kroki, aby uruchomić swój sklep.",
+        "progress": "{{done}} z {{total}} ukończone",
+        "tasks": {
+          "setup_payment_method": {
+            "title": "Skonfiguruj metody płatności",
+            "description": "Aby przyjmować płatności, skonfiguruj co najmniej jednego dostawcę płatności online.",
+            "cta": "Skonfiguruj płatności"
+          },
+          "add_products": {
+            "title": "Dodaj produkty",
+            "description": "Dodaj produkty do swojego sklepu — własne lub zaproś zewnętrznych sprzedawców do wspólnej sprzedaży.",
+            "cta": "Dodaj produkty"
+          },
+          "set_customer_support_email": {
+            "title": "Ustaw e-mail obsługi klienta",
+            "description": "Wyświetlany w Twoim sklepie jako punkt kontaktowy dla pytań i wsparcia klientów.",
+            "cta": "Ustawienia e-mail"
+          },
+          "setup_taxes_collection": {
+            "title": "Skonfiguruj pobieranie podatków",
+            "description": "Aby pobierać podatki, skonfiguruj stawki podatkowe.",
+            "cta": "Ustawienia podatków"
+          },
+          "setup_storefront": {
+            "title": "Skonfiguruj sklep",
+            "description": "Połącz swój sklep internetowy lub aplikację mobilną za pomocą danych uwierzytelniających Store API i zapisz adres URL sklepu.",
+            "cta": "Połącz sklep"
+          }
+        },
+        "storefront_sheet": {
+          "title": "Połącz swój sklep",
+          "description": "Użyj tych danych uwierzytelniających w dowolnym kliencie łączącym się ze Store API — sklepie internetowym, aplikacji mobilnej lub czymkolwiek innym.",
+          "api_url_label": "Adres URL Store API",
+          "publishable_key_label": "Publiczny klucz API",
+          "deploy_title": "Zalecane: wdróż oficjalny sklep Next.js",
+          "deploy_copy": "Wdrożenie klonuje sklep open-source na Twoje konto Git i buduje go na Vercel z wypełnionymi danymi uwierzytelniającymi. Po zakończeniu skopiuj jego adres URL do pola poniżej.",
+          "deploy_button": "Wdróż na Vercel",
+          "env_description": "Adres URL Store API oraz publiczny klucz API Twojego Spree. Oba są wstępnie wypełnione — w razie potrzeby dostosuj je przed wdrożeniem.",
+          "storefront_url_label": "Adres URL sklepu",
+          "storefront_url_help": "Adres URL, którego klienci używają, aby dotrzeć do Twojego sklepu. Staje się podstawą linków w wiadomościach e-mail i jest automatycznie dodawany jako dozwolone źródło, aby sklepy przeglądarkowe mogły korzystać ze Store API.",
+          "save": "Zapisz i zakończ konfigurację",
+          "saved": "Adres URL sklepu zapisany: {{url}}",
+          "invalid_url": "To nie wygląda na prawidłowy adres URL sklepu.",
+          "see_online_demo": "Zobacz demo online",
+          "local_installation_instructions": "Instrukcje instalacji lokalnej",
+          "key_error": "Nie udało się załadować publicznego klucza API.",
+          "storefront_url_placeholder": "https://myshop.com"
+        }
       }
     },
     "invitation": {

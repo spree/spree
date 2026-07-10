@@ -104,7 +104,8 @@
       "promotions": "促销",
       "gift_cards": "礼品卡",
       "reports": "报表",
-      "settings": "设置"
+      "settings": "设置",
+      "getting_started": "快速入门"
     },
     "settings_nav": {
       "groups": {
@@ -1665,6 +1666,57 @@
         "subtitle": "管理您的个人详细信息和管理后台语言。",
         "personal_details": "个人详细信息",
         "load_failed_title": "无法加载您的个人资料"
+      },
+      "getting_started": {
+        "title": "快速入门",
+        "description": "完成这些步骤即可上线您的店铺。",
+        "progress": "已完成 {{done}}/{{total}}",
+        "tasks": {
+          "setup_payment_method": {
+            "title": "设置支付方式",
+            "description": "要收款，请至少设置一个在线支付服务商。",
+            "cta": "设置支付方式"
+          },
+          "add_products": {
+            "title": "添加商品",
+            "description": "为您的店铺添加商品——您自己的商品，或邀请第三方卖家共同销售。",
+            "cta": "添加商品"
+          },
+          "set_customer_support_email": {
+            "title": "设置客服邮箱",
+            "description": "显示在店铺前台，作为客户咨询和支持的联系方式。",
+            "cta": "邮件设置"
+          },
+          "setup_taxes_collection": {
+            "title": "设置税费",
+            "description": "要收取税费，请设置您的税率。",
+            "cta": "税费设置"
+          },
+          "setup_storefront": {
+            "title": "设置店铺前台",
+            "description": "使用 Store API 凭据连接您的网页店铺前台或移动应用，并保存店铺前台 URL。",
+            "cta": "连接店铺前台"
+          }
+        },
+        "storefront_sheet": {
+          "title": "连接您的店铺前台",
+          "description": "在任何与 Store API 通信的客户端中使用这些凭据——网页店铺前台、移动应用或其他任何客户端。",
+          "api_url_label": "Store API URL",
+          "publishable_key_label": "可发布 API 密钥",
+          "deploy_title": "推荐：部署官方 Next.js 店铺前台",
+          "deploy_copy": "部署会将开源店铺前台克隆到您的 Git 账户，并在 Vercel 上使用预填的凭据构建。完成后，将其 URL 复制到下方字段。",
+          "deploy_button": "部署到 Vercel",
+          "env_description": "您的 Spree Store API URL 和可发布密钥。两者均已从您的店铺预填——如有需要，请在部署前调整。",
+          "storefront_url_label": "店铺前台 URL",
+          "storefront_url_help": "客户访问您店铺前台所用的 URL。它将成为客户邮件中链接的基础，并自动添加为允许的来源，以便基于浏览器的店铺前台调用 Store API。",
+          "save": "保存并完成设置",
+          "saved": "店铺前台 URL 已保存：{{url}}",
+          "invalid_url": "这看起来不是有效的店铺前台 URL。",
+          "see_online_demo": "查看在线演示",
+          "local_installation_instructions": "本地安装说明",
+          "key_error": "无法加载您的可发布 API 密钥。",
+          "storefront_url_placeholder": "https://myshop.com"
+        }
       }
     },
     "invitation": {

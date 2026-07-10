@@ -968,6 +968,23 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe 'preferred_storefront_url normalization' do
+    let(:store) { create(:store) }
+
+    it 'normalizes free-form input to a canonical origin' do
+      store.update!(preferred_storefront_url: 'MyShop.example.com/checkout?x=1')
+
+      expect(store.preferred_storefront_url).to eq('https://myshop.example.com')
+    end
+
+    it 'rejects unparseable input' do
+      store.preferred_storefront_url = 'not a url'
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_storefront_url]).to be_present
+    end
+  end
+
   describe 'storefront setup task' do
     let(:store) { create(:store) }
 
@@ -999,6 +1016,14 @@ describe Spree::Store, type: :model, without_global_store: true do
           expect(subject).to be false
         end
       end
+    end
+
+    it 'drops the memoized checklist on reload' do
+      expect(store.setup_tasks.find { |t| t.name == 'setup_storefront' }.done).to be false
+
+      store.update!(preferred_storefront_url: 'https://shop.example.com')
+
+      expect(store.reload.setup_tasks.find { |t| t.name == 'setup_storefront' }.done).to be true
     end
   end
 end

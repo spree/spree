@@ -1,13 +1,28 @@
+import type { Store } from '@spree/admin-sdk'
 import { i18n, nav, Subject } from '@spree/dashboard-core'
 import {
   BarChart3Icon,
   HomeIcon,
   InboxIcon,
+  MapIcon,
   PackageIcon,
   SettingsIcon,
   TagIcon,
   UsersIcon,
 } from 'lucide-react'
+import { GettingStartedNavBadge } from '@/components/spree/getting-started-nav-badge'
+
+nav.add({
+  key: 'getting-started',
+  label: i18n.t('admin.nav.getting_started'),
+  path: '/getting-started',
+  icon: MapIcon,
+  position: 50,
+  subject: Subject.Store,
+  // Legacy-admin parity: the entry disappears once every setup task is done.
+  if: ({ store }) => !!(store as Store | null)?.setup_tasks?.some((task) => !task.done),
+  badge: GettingStartedNavBadge,
+})
 
 nav.add({
   key: 'home',

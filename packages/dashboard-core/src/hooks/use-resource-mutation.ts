@@ -17,6 +17,10 @@ interface UseResourceMutationOptions<TData, TError, TVariables>
    * storeId (e.g. `[['channels'], ['channels', id]]`) — the hook injects the
    * current storeId at position 1 automatically so invalidation matches the
    * store-scoped keys used by `ResourceTable` and other queries.
+   *
+   * Mutations that change setup-task state (see `Spree.store_setup_tasks` on
+   * the backend) must also invalidate `[STORE_QUERY_RESOURCE]` so the Getting
+   * Started checklist and the nav progress badge stay live.
    */
   invalidate?: QueryKey[]
   /** Toast on success. Pass `false` to disable. Default `'Saved'`. */

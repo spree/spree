@@ -80,6 +80,24 @@ RSpec.describe Spree::AllowedOrigin, type: :model do
     end
   end
 
+  describe '.normalize_origin' do
+    it 'normalizes bare hosts to https origins' do
+      expect(described_class.normalize_origin('MyShop.example.com/checkout?x=1')).to eq('https://myshop.example.com')
+    end
+
+    it 'strips only the scheme default port' do
+      expect(described_class.normalize_origin('https://shop.example.com:443')).to eq('https://shop.example.com')
+      expect(described_class.normalize_origin('http://shop.example.com:80')).to eq('http://shop.example.com')
+      expect(described_class.normalize_origin('https://shop.example.com:80')).to eq('https://shop.example.com:80')
+      expect(described_class.normalize_origin('http://shop.example.com:443')).to eq('http://shop.example.com:443')
+    end
+
+    it 'returns nil for unparseable input' do
+      expect(described_class.normalize_origin('not a url')).to be_nil
+      expect(described_class.normalize_origin('')).to be_nil
+    end
+  end
+
   describe '#loopback?' do
     it 'is true for loopback hosts regardless of port' do
       expect(build(:allowed_origin, store: store, origin: 'http://localhost').loopback?).to be true

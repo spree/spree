@@ -56,7 +56,8 @@
       "promotions": "Aktionen",
       "gift_cards": "Geschenkkarten",
       "reports": "Berichte",
-      "settings": "Einstellungen"
+      "settings": "Einstellungen",
+      "getting_started": "Erste Schritte"
     },
     "settings_nav": {
       "groups": {
@@ -1617,6 +1618,57 @@
         "subtitle": "Verwalten Sie Ihre persönlichen Daten und Ihre Admin-Sprache.",
         "personal_details": "Persönliche Daten",
         "load_failed_title": "Ihr Profil konnte nicht geladen werden"
+      },
+      "getting_started": {
+        "title": "Erste Schritte",
+        "description": "Schließen Sie diese Schritte ab, um Ihren Shop zu starten.",
+        "progress": "{{done}} von {{total}} erledigt",
+        "tasks": {
+          "setup_payment_method": {
+            "title": "Zahlungsmethoden einrichten",
+            "description": "Um Zahlungen zu empfangen, richten Sie mindestens einen Online-Zahlungsanbieter ein.",
+            "cta": "Zahlungsmethoden einrichten"
+          },
+          "add_products": {
+            "title": "Produkte hinzufügen",
+            "description": "Fügen Sie Ihrem Shop Produkte hinzu — eigene oder laden Sie Drittanbieter ein, gemeinsam zu verkaufen.",
+            "cta": "Produkte hinzufügen"
+          },
+          "set_customer_support_email": {
+            "title": "Kundensupport-E-Mail festlegen",
+            "description": "Wird in Ihrem Storefront als Kontaktpunkt für Kundenfragen und Support angezeigt.",
+            "cta": "E-Mail-Einstellungen"
+          },
+          "setup_taxes_collection": {
+            "title": "Steuererhebung einrichten",
+            "description": "Um Steuern zu erheben, richten Sie Ihre Steuersätze ein.",
+            "cta": "Steuereinstellungen"
+          },
+          "setup_storefront": {
+            "title": "Storefront einrichten",
+            "description": "Verbinden Sie Ihr Web-Storefront oder Ihre mobile App mit Ihren Store-API-Zugangsdaten und speichern Sie Ihre Storefront-URL.",
+            "cta": "Storefront verbinden"
+          }
+        },
+        "storefront_sheet": {
+          "title": "Storefront verbinden",
+          "description": "Verwenden Sie diese Zugangsdaten in jedem Client, der mit der Store API kommuniziert — Web-Storefront, mobile App oder anderes.",
+          "api_url_label": "Store API URL",
+          "publishable_key_label": "Publishable API-Schlüssel",
+          "deploy_title": "Empfohlen: das offizielle Next.js-Storefront bereitstellen",
+          "deploy_copy": "Die Bereitstellung klont das Open-Source-Storefront in Ihr Git-Konto und baut es auf Vercel mit vorausgefüllten Zugangsdaten. Kopieren Sie anschließend dessen URL in das Feld unten.",
+          "deploy_button": "Auf Vercel bereitstellen",
+          "env_description": "Ihre Spree Store API URL und Ihr Publishable Key. Beide sind aus Ihrem Store vorausgefüllt — passen Sie sie bei Bedarf vor der Bereitstellung an.",
+          "storefront_url_label": "Storefront-URL",
+          "storefront_url_help": "Die URL, über die Kunden Ihr Storefront erreichen. Sie wird zur Basis für Links in Kunden-E-Mails und automatisch als zugelassener Origin hinzugefügt, damit browserbasierte Storefronts die Store API aufrufen können.",
+          "save": "Speichern & Einrichtung abschließen",
+          "saved": "Storefront-URL gespeichert: {{url}}",
+          "invalid_url": "Das sieht nicht nach einer gültigen Storefront-URL aus.",
+          "see_online_demo": "Online-Demo ansehen",
+          "local_installation_instructions": "Anleitung zur lokalen Installation",
+          "key_error": "Ihr Publishable API-Schlüssel konnte nicht geladen werden.",
+          "storefront_url_placeholder": "https://myshop.com"
+        }
       }
     },
     "invitation": {

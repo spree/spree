@@ -18,6 +18,7 @@ import { Route as AcceptInvitationInvitationIdRouteImport } from './routes/accep
 import { Route as AuthenticatedStoreIdRouteImport } from './routes/_authenticated/$storeId'
 import { Route as AuthenticatedStoreIdIndexRouteImport } from './routes/_authenticated/$storeId/index'
 import { Route as AuthenticatedStoreIdSettingsRouteImport } from './routes/_authenticated/$storeId/settings'
+import { Route as AuthenticatedStoreIdGettingStartedRouteImport } from './routes/_authenticated/$storeId/getting-started'
 import { Route as AuthenticatedStoreIdSettingsIndexRouteImport } from './routes/_authenticated/$storeId/settings/index'
 import { Route as AuthenticatedStoreIdPromotionsIndexRouteImport } from './routes/_authenticated/$storeId/promotions/index'
 import { Route as AuthenticatedStoreIdProductsIndexRouteImport } from './routes/_authenticated/$storeId/products/index'
@@ -101,6 +102,12 @@ const AuthenticatedStoreIdSettingsRoute =
   AuthenticatedStoreIdSettingsRouteImport.update({
     id: '/settings',
     path: '/settings',
+    getParentRoute: () => AuthenticatedStoreIdRoute,
+  } as any)
+const AuthenticatedStoreIdGettingStartedRoute =
+  AuthenticatedStoreIdGettingStartedRouteImport.update({
+    id: '/getting-started',
+    path: '/getting-started',
     getParentRoute: () => AuthenticatedStoreIdRoute,
   } as any)
 const AuthenticatedStoreIdSettingsIndexRoute =
@@ -333,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/$storeId': typeof AuthenticatedStoreIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof AcceptInvitationInvitationIdRoute
+  '/$storeId/getting-started': typeof AuthenticatedStoreIdGettingStartedRoute
   '/$storeId/settings': typeof AuthenticatedStoreIdSettingsRouteWithChildren
   '/$storeId/': typeof AuthenticatedStoreIdIndexRoute
   '/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
@@ -379,6 +387,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/accept-invitation/$invitationId': typeof AcceptInvitationInvitationIdRoute
   '/': typeof AuthenticatedIndexRoute
+  '/$storeId/getting-started': typeof AuthenticatedStoreIdGettingStartedRoute
   '/$storeId': typeof AuthenticatedStoreIdIndexRoute
   '/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
   '/$storeId/customers/groups': typeof AuthenticatedStoreIdCustomersGroupsRoute
@@ -427,6 +436,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId': typeof AuthenticatedStoreIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof AcceptInvitationInvitationIdRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/$storeId/getting-started': typeof AuthenticatedStoreIdGettingStartedRoute
   '/_authenticated/$storeId/settings': typeof AuthenticatedStoreIdSettingsRouteWithChildren
   '/_authenticated/$storeId/': typeof AuthenticatedStoreIdIndexRoute
   '/_authenticated/$storeId/customers/$customerId': typeof AuthenticatedStoreIdCustomersCustomerIdRoute
@@ -476,6 +486,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/$storeId'
     | '/accept-invitation/$invitationId'
+    | '/$storeId/getting-started'
     | '/$storeId/settings'
     | '/$storeId/'
     | '/$storeId/customers/$customerId'
@@ -522,6 +533,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/accept-invitation/$invitationId'
     | '/'
+    | '/$storeId/getting-started'
     | '/$storeId'
     | '/$storeId/customers/$customerId'
     | '/$storeId/customers/groups'
@@ -569,6 +581,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId'
     | '/accept-invitation/$invitationId'
     | '/_authenticated/'
+    | '/_authenticated/$storeId/getting-started'
     | '/_authenticated/$storeId/settings'
     | '/_authenticated/$storeId/'
     | '/_authenticated/$storeId/customers/$customerId'
@@ -681,6 +694,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/$storeId/settings'
       preLoaderRoute: typeof AuthenticatedStoreIdSettingsRouteImport
+      parentRoute: typeof AuthenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/getting-started': {
+      id: '/_authenticated/$storeId/getting-started'
+      path: '/getting-started'
+      fullPath: '/$storeId/getting-started'
+      preLoaderRoute: typeof AuthenticatedStoreIdGettingStartedRouteImport
       parentRoute: typeof AuthenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/settings/': {
@@ -1003,6 +1023,7 @@ const AuthenticatedStoreIdSettingsRouteWithChildren =
   )
 
 interface AuthenticatedStoreIdRouteChildren {
+  AuthenticatedStoreIdGettingStartedRoute: typeof AuthenticatedStoreIdGettingStartedRoute
   AuthenticatedStoreIdSettingsRoute: typeof AuthenticatedStoreIdSettingsRouteWithChildren
   AuthenticatedStoreIdIndexRoute: typeof AuthenticatedStoreIdIndexRoute
   AuthenticatedStoreIdCustomersCustomerIdRoute: typeof AuthenticatedStoreIdCustomersCustomerIdRoute
@@ -1030,6 +1051,8 @@ interface AuthenticatedStoreIdRouteChildren {
 }
 
 const AuthenticatedStoreIdRouteChildren: AuthenticatedStoreIdRouteChildren = {
+  AuthenticatedStoreIdGettingStartedRoute:
+    AuthenticatedStoreIdGettingStartedRoute,
   AuthenticatedStoreIdSettingsRoute:
     AuthenticatedStoreIdSettingsRouteWithChildren,
   AuthenticatedStoreIdIndexRoute: AuthenticatedStoreIdIndexRoute,
