@@ -108,11 +108,17 @@ export function ResourceTranslationsDialog({
   const [locale, setLocale] = useState('')
   const [edits, setEdits] = useState<EditMap>(() => new Map())
   const [saving, setSaving] = useState(false)
+  // resourceId → error message for the entry that failed the last batch save.
+  // Atomic batches roll back entirely on any failure, so edits are never
+  // cleared here — only the offending row is flagged so the admin can see
+  // which one to fix without losing the rest of their work.
+  const [rowErrors, setRowErrors] = useState<Map<string, string>>(() => new Map())
 
   useEffect(() => {
     if (open) {
       setEdits(new Map())
       setLocale('')
+      setRowErrors(new Map())
     }
   }, [open])
 
@@ -146,6 +152,8 @@ export function ResourceTranslationsDialog({
   async function handleSave() {
     if (edits.size === 0) return
     // Group flat edits into one batch entry per (resourceType, resourceId).
+    // Map iteration order is insertion order, so this array's index lines up
+    // with the entry index the server reports in a validation error.
     const rowById = new Map(rows.map((r) => [r.resourceId, r]))
     const byResource = new Map<string, TranslationBatchEntry>()
     for (const [key, value] of edits) {
@@ -160,17 +168,46 @@ export function ResourceTranslationsDialog({
       entry.values[loc] ??= {}
       entry.values[loc][field] = value
     }
+    const resourceIdsInOrder = Array.from(byResource.keys())
 
     setSaving(true)
+    setRowErrors(new Map())
     try {
       await adminClient.translations.batch(Array.from(byResource.values()))
       toast.success(t('admin.translations.saved'))
       setEdits(new Map())
       refetch()
     } catch (err) {
-      // The grid has no form to render inline errors onto, so surface the
-      // server's validation message (if any) in the toast rather than the
-      // generic fallback.
+      // The batch is atomic — one bad entry rolls back the whole write and
+      // the server reports its index via `details.translations.<index>`.
+      // Map that back to the resourceId so only the offending row is
+      // flagged; edits are kept so the admin can fix it in place and retry.
+      //
+      // `SpreeError.details` is typed `Record<string, string[]>` for the
+      // common flat-field-error shape, but this endpoint nests one level
+      // deeper (`{ translations: { "<index>": [message] } }`) — cast to the
+      // actual runtime shape rather than fight the shared type.
+      const translationsDetail = err instanceof SpreeError
+        ? (err.details as unknown as { translations?: Record<string, string[]> } | undefined)
+            ?.translations
+        : undefined
+      if (translationsDetail) {
+        const nextRowErrors = new Map<string, string>()
+        for (const [indexStr, messages] of Object.entries(translationsDetail)) {
+          const resourceId = resourceIdsInOrder[Number(indexStr)]
+          if (resourceId) {
+            nextRowErrors.set(
+              resourceId,
+              Array.isArray(messages) ? messages.join(', ') : String(messages),
+            )
+          }
+        }
+        if (nextRowErrors.size > 0) {
+          setRowErrors(nextRowErrors)
+          toast.error(t('admin.translations.save_error_row'))
+          return
+        }
+      }
       const message = err instanceof SpreeError ? err.message : undefined
       toast.error(message || t('admin.translations.save_error'))
     } finally {
@@ -266,6 +303,8 @@ export function ResourceTranslationsDialog({
                 fieldLabel={(rt, field) => fieldLabel(t, rt, field)}
                 edits={edits}
                 setEdits={setEdits}
+                rowErrors={rowErrors}
+                setRowErrors={setRowErrors}
               />
             )
           )}
@@ -282,6 +321,8 @@ function TranslationGrid({
   fieldLabel,
   edits,
   setEdits,
+  rowErrors,
+  setRowErrors,
 }: {
   rows: TranslationRow[]
   locale: string
@@ -289,6 +330,8 @@ function TranslationGrid({
   fieldLabel: (resourceType: string, field: TranslatableField) => string
   edits: EditMap
   setEdits: React.Dispatch<React.SetStateAction<EditMap>>
+  rowErrors: Map<string, string>
+  setRowErrors: React.Dispatch<React.SetStateAction<Map<string, string>>>
 }) {
   const { t } = useTranslation()
 
@@ -314,8 +357,17 @@ function TranslationGrid({
         else out.set(key, next)
         return out
       })
+      // Editing a row the server flagged clears its error — the admin is
+      // actively fixing it, and the stale message shouldn't persist through
+      // the next attempt (a fresh Save will re-flag it if still invalid).
+      setRowErrors((prev) => {
+        if (!prev.has(row.resourceId)) return prev
+        const out = new Map(prev)
+        out.delete(row.resourceId)
+        return out
+      })
     },
-    [setEdits, locale],
+    [setEdits, setRowErrors, locale],
   )
 
   return (
@@ -335,20 +387,36 @@ function TranslationGrid({
         </tr>
       </thead>
       <tbody>
-        {rows.flatMap((row) =>
-          row.fields.map((field) => {
+        {rows.flatMap((row) => {
+          const rowError = rowErrors.get(row.resourceId)
+          return row.fields.map((field, fieldIndex) => {
             // Stable cell identifier for aria-label / testid. Root rows are
             // identified by the field key (`name`); child rows (whose field key
             // repeats, e.g. `label`) by their source label so each is unique.
             const cellName =
               row.indent === 0 ? field.key : (row.rowLabel ?? field.source ?? field.key)
+            // A resource can have multiple field rows (multiple <tr>s share the
+            // same resourceId) — show the server's error message once, on the
+            // first field row, and flag every field row of that resource so
+            // the whole entry reads as "needs attention".
             return (
-              <tr key={`${row.resourceId}.${field.key}`}>
+              <tr
+                key={`${row.resourceId}.${field.key}`}
+                className={cn(rowError && 'bg-destructive/5')}
+              >
                 <th
-                  className="border-b border-r px-3 py-2 text-left align-top font-medium"
+                  className={cn(
+                    'border-b border-r px-3 py-2 text-left align-top font-medium',
+                    rowError && 'border-l-2 border-l-destructive',
+                  )}
                   style={{ paddingLeft: `${0.75 + row.indent * 1}rem` }}
                 >
                   {row.rowLabel ?? fieldLabel(row.resourceType, field)}
+                  {rowError && fieldIndex === 0 && (
+                    <p className="mt-1 text-xs font-normal text-destructive" role="alert">
+                      {rowError}
+                    </p>
+                  )}
                 </th>
                 <td
                   className="border-b border-r px-3 py-2 align-top text-muted-foreground"
@@ -381,8 +449,8 @@ function TranslationGrid({
                 </td>
               </tr>
             )
-          }),
-        )}
+          })
+        })}
       </tbody>
     </table>
   )

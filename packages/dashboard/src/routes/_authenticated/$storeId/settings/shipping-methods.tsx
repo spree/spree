@@ -1,10 +1,31 @@
-import { adminClient, Can, ResourceTable, Subject, useStore } from '@spree/dashboard-core'
-import { Button, RowActions, Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, useConfirm } from '@spree/dashboard-ui'
+import { adminClient, Can, mapSpreeErrorsToForm, ResourceTable, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  Button,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  RowActions,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  useConfirm,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon, MoreVerticalIcon } from 'lucide-react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { PlusIcon } from 'lucide-react'
+import { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import {
@@ -32,15 +53,13 @@ function ShippingMethodsPage() {
   const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof shippingMethodsSearchSchema>
   const navigate = useNavigate()
-  const { storeId } = Route.useParams()
   const queryClient = useQueryClient()
   const confirm = useConfirm()
   const deleteMutation = useDeleteShippingMethod()
+  const { permissions } = usePermissions()
 
   const editId = search.edit
   const isCreating = !!search.new
-  const resource = useShippingMethod(editId, !editId)
-  const { data, isLoading } = useShippingMethods()
 
   const closeSheet = () =>
     navigate({
@@ -56,123 +75,244 @@ function ShippingMethodsPage() {
   const openEdit = (id: string) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
 
-  return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{t('admin.shipping_methods.title', 'Shipping Methods')}</h1>
-        <Can do="create" on={Subject.ShippingMethod}>
-          <Button onClick={openCreate} size="sm" variant="default">
-            <PlusIcon className="w-4 h-4 mr-2" />
-            {t('admin.actions.new')}
-          </Button>
-        </Can>
-      </div>
+  useRowClickBridge('data-shipping-method-id', openEdit)
 
+  async function handleDelete(method: { id: string; name: string }) {
+    const ok = await confirm({
+      title: t('admin.shipping_methods.delete_confirm.title'),
+      message: t('admin.shipping_methods.delete_confirm.message', { name: method.name }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    await deleteMutation.mutateAsync(method.id).catch(() => undefined)
+  }
+
+  return (
+    <>
       <ResourceTable
-        name="shipping-methods"
-        columns={[
-          { key: 'name', label: t('admin.shipping_methods.name') },
-          { key: 'display_on', label: t('admin.shipping_methods.display_on') },
-          {
-            key: 'actions',
-            label: t('admin.actions.title'),
-            Cell: ({ row }) => (
-              <RowActions>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => openEdit(row.id)}
-                >
-                  {t('admin.actions.edit')}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={async () => {
-                    const ok = await confirm({
-                      title: t('admin.shipping_methods.delete_confirm.title'),
-                      message: t('admin.shipping_methods.delete_confirm.message', { name: row.name }),
-                      variant: 'destructive',
-                    })
-                    if (ok) {
-                      deleteMutation.mutate({ id: row.id, storeId }, {
-                        onSuccess: () => queryClient.invalidateQueries(),
-                      })
-                    }
-                  }}
-                >
-                  {t('admin.actions.delete')}
-                </Button>
-              </RowActions>
-            ),
-          },
-        ]}
-        data={data?.data || []}
-        isLoading={isLoading}
-        resourceName="shipping-methods"
+        tableKey="shipping-methods"
+        queryKey="shipping-methods"
+        queryFn={(params) => adminClient.request('GET', '/shipping_methods', { params: { ...params, per_page: 100 } })}
+        searchParams={search}
+        rowActions={(method) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(method.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.ShippingMethod),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(method),
+              },
+            ]}
+          />
+        )}
+        actions={
+          <Can I="create" a={Subject.ShippingMethod}>
+            <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
+              <PlusIcon className="size-4" />
+              {t('admin.shipping_methods.add_cta', 'New Shipping Method')}
+            </Button>
+          </Can>
+        }
       />
 
-      <Sheet open={isCreating || !!editId} onOpenChange={closeSheet}>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>
-              {isCreating ? t('admin.shipping_methods.new') : t('admin.shipping_methods.edit')}
-            </SheetTitle>
-          </SheetHeader>
-          {(isCreating || resource.data) && (
-            <ShippingMethodForm
-              mode={isCreating ? 'create' : 'edit'}
-              shippingMethod={resource.data}
-              onSuccess={() => {
-                closeSheet()
-                queryClient.invalidateQueries()
-              }}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
-    </div>
+      {isCreating && <CreateShippingMethodSheet open onOpenChange={(o) => !o && closeSheet()} />}
+      {editId && <EditShippingMethodSheet id={editId} open onOpenChange={(o) => !o && closeSheet()} />}
+    </>
   )
 }
 
-function ShippingMethodForm({ mode, shippingMethod, onSuccess }) {
+function CreateShippingMethodSheet({
+  open,
+  onOpenChange,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
   const { t } = useTranslation()
   const createMutation = useCreateShippingMethod()
-  const updateMutation = useUpdateShippingMethod()
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: shippingMethod || {
-      name: '',
-      display_on: 1,
-    },
+  const form = useForm({
+    defaultValues: { name: '', display_on: '1' },
   })
 
-  const onSubmit = (data) => {
-    if (mode === 'create') {
-      createMutation.mutate(data, { onSuccess })
-    } else {
-      updateMutation.mutate({ id: shippingMethod.id, ...data }, { onSuccess })
+  async function onSubmit(values: Record<string, unknown>) {
+    try {
+      await createMutation.mutateAsync(values)
+      form.reset()
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <label>{t('admin.shipping_methods.name')}</label>
-        <input {...register('name', { required: true })} className="w-full px-2 py-1 border rounded" />
-        {errors.name && <span className="text-red-500">{t('admin.errors.required')}</span>}
-      </div>
-      <div>
-        <label>{t('admin.shipping_methods.display_on')}</label>
-        <select {...register('display_on')} className="w-full px-2 py-1 border rounded">
-          <option value={1}>{t('admin.shipping_methods.display_on_frontend')}</option>
-          <option value={2}>{t('admin.shipping_methods.display_on_backend')}</option>
-        </select>
-      </div>
-      <SheetFooter>
-        <Button type="submit" variant="default" disabled={createMutation.isPending || updateMutation.isPending}>
-          {t('admin.actions.save')}
-        </Button>
-      </SheetFooter>
-    </form>
+    <Sheet
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) form.reset()
+        onOpenChange(next)
+      }}
+    >
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{t('admin.shipping_methods.new', 'New Shipping Method')}</SheetTitle>
+        </SheetHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="name">{t('admin.shipping_methods.name', 'Name')}</FieldLabel>
+                <Input id="name" autoFocus {...form.register('name', { required: true })} />
+                <FieldError errors={[form.formState.errors.name]} />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="display_on">{t('admin.shipping_methods.display_on', 'Display On')}</FieldLabel>
+                <Controller
+                  name="display_on"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger id="display_on" className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">{t('admin.shipping_methods.display_on_frontend', 'Frontend')}</SelectItem>
+                        <SelectItem value="2">{t('admin.shipping_methods.display_on_backend', 'Backend')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </Field>
+            </FieldGroup>
+          </div>
+          <SheetFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+              disabled={form.formState.isSubmitting}
+            >
+              {t('admin.actions.cancel')}
+            </Button>
+            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? t('admin.actions.creating') : t('admin.actions.save')}
+            </Button>
+          </SheetFooter>
+        </form>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+function EditShippingMethodSheet({
+  id,
+  open,
+  onOpenChange,
+}: {
+  id: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const { data: method, isLoading } = useShippingMethod(id)
+  const updateMutation = useUpdateShippingMethod()
+  const form = useForm({
+    defaultValues: { name: '', display_on: '1' },
+  })
+
+  useEffect(() => {
+    if (method) {
+      form.reset({
+        name: method.name,
+        display_on: String(method.display_on),
+      })
+    }
+  }, [method, form])
+
+  async function onSubmit(values: Record<string, unknown>) {
+    try {
+      await updateMutation.mutateAsync({ id, ...values })
+      form.reset(values)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{method?.name ?? t('admin.shipping_methods.edit', 'Edit Shipping Method')}</SheetTitle>
+        </SheetHeader>
+        {isLoading ? (
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+        ) : (
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+              {form.formState.errors.root?.message && (
+                <p className="text-sm text-destructive" role="alert">
+                  {form.formState.errors.root.message}
+                </p>
+              )}
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="name">{t('admin.shipping_methods.name', 'Name')}</FieldLabel>
+                  <Input id="name" {...form.register('name', { required: true })} />
+                  <FieldError errors={[form.formState.errors.name]} />
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="display_on">{t('admin.shipping_methods.display_on', 'Display On')}</FieldLabel>
+                  <Controller
+                    name="display_on"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger id="display_on" className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">{t('admin.shipping_methods.display_on_frontend', 'Frontend')}</SelectItem>
+                          <SelectItem value="2">{t('admin.shipping_methods.display_on_backend', 'Backend')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </Field>
+              </FieldGroup>
+            </div>
+            <SheetFooter>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onOpenChange(false)}
+                disabled={form.formState.isSubmitting}
+              >
+                {t('admin.actions.cancel')}
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={form.formState.isSubmitting || !form.formState.isDirty}
+              >
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
+              </Button>
+            </SheetFooter>
+          </form>
+        )}
+      </SheetContent>
+    </Sheet>
   )
 }

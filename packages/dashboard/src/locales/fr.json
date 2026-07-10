@@ -2472,6 +2472,7 @@
       "save": "Enregistrer les traductions",
       "saved": "Traductions enregistrées",
       "save_error": "Impossible d enregistrer les traductions",
+      "save_error_row": "Échec de l'enregistrement — voir la ligne surlignée ci-dessous",
       "no_locales": "Ajoutez d autres langues à votre boutique pour traduire ce produit.",
       "manage": "Gérer les traductions",
       "field": "Champ",

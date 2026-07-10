@@ -6,9 +6,14 @@ const client = createAdminClient({
 })
 
 // region:example
-const fulfillment = await client.orders.fulfillments.split('or_UkLWZg9DAJ', 'ful_UkLWZg9DAJ', {
-  quantity: 1,
-})
+const { data: fulfillments } = await client.orders.fulfillments.split(
+  'or_UkLWZg9DAJ',
+  'ful_UkLWZg9DAJ',
+  {
+    variant_id: 'var_UkLWZg9DAJ',
+    quantity: 1,
+  },
+)
 // endregion:example
 
-export { fulfillment }
+export { fulfillments }

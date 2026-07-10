@@ -1,9 +1,27 @@
-import { Can, ResourceTable, Subject } from '@spree/dashboard-core'
-import { Button, RowActions, Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, useConfirm } from '@spree/dashboard-ui'
+import { adminClient, Can, mapSpreeErrorsToForm, ResourceTable, Subject, usePermissions } from '@spree/dashboard-core'
+import {
+  Button,
+  Checkbox,
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  RowActions,
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  Textarea,
+  useConfirm,
+  useRowClickBridge,
+} from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import {
@@ -35,11 +53,10 @@ function ZonesPage() {
   const queryClient = useQueryClient()
   const confirm = useConfirm()
   const deleteMutation = useDeleteZone()
+  const { permissions } = usePermissions()
 
   const editId = search.edit
   const isCreating = !!search.new
-  const resource = useZone(editId, !editId)
-  const { data, isLoading } = useZones()
 
   const closeSheet = () =>
     navigate({
@@ -55,108 +72,256 @@ function ZonesPage() {
   const openEdit = (id: string) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
 
-  return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{t('admin.zones.title', 'Zones')}</h1>
-        <Can do="create" on={Subject.Zone}>
-          <Button onClick={openCreate} size="sm" variant="default">
-            <PlusIcon className="w-4 h-4 mr-2" />
-            {t('admin.actions.new')}
-          </Button>
-        </Can>
-      </div>
+  useRowClickBridge('data-zone-id', openEdit)
 
+  async function handleDelete(zone: { id: string; name: string }) {
+    const ok = await confirm({
+      title: t('admin.zones.delete_confirm.title'),
+      message: t('admin.zones.delete_confirm.message', { name: zone.name }),
+      variant: 'destructive',
+      confirmLabel: t('admin.actions.delete'),
+    })
+    if (!ok) return
+    await deleteMutation.mutateAsync(zone.id).catch(() => undefined)
+  }
+
+  return (
+    <>
       <ResourceTable
-        name="zones"
-        columns={[
-          { key: 'name', label: t('admin.zones.name') },
-          { key: 'description', label: t('admin.zones.description') },
-          {
-            key: 'actions',
-            label: t('admin.actions.title'),
-            Cell: ({ row }) => (
-              <RowActions>
-                <Button variant="ghost" size="sm" onClick={() => openEdit(row.id)}>
-                  {t('admin.actions.edit')}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={async () => {
-                    const ok = await confirm({
-                      title: t('admin.zones.delete_confirm.title'),
-                      message: t('admin.zones.delete_confirm.message', { name: row.name }),
-                      variant: 'destructive',
-                    })
-                    if (ok) {
-                      deleteMutation.mutate({ id: row.id }, { onSuccess: () => queryClient.invalidateQueries() })
-                    }
-                  }}
-                >
-                  {t('admin.actions.delete')}
-                </Button>
-              </RowActions>
-            ),
-          },
-        ]}
-        data={data?.data || []}
-        isLoading={isLoading}
-        resourceName="zones"
+        tableKey="zones"
+        queryKey="zones"
+        queryFn={(params) => adminClient.request('GET', '/zones', { params: { ...params, per_page: 100 } })}
+        searchParams={search}
+        rowActions={(zone) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(zone.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.Zone),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(zone),
+              },
+            ]}
+          />
+        )}
+        actions={
+          <Can I="create" a={Subject.Zone}>
+            <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
+              <PlusIcon className="size-4" />
+              {t('admin.zones.add_cta', 'New Zone')}
+            </Button>
+          </Can>
+        }
       />
 
-      <Sheet open={isCreating || !!editId} onOpenChange={closeSheet}>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>{isCreating ? t('admin.zones.new') : t('admin.zones.edit')}</SheetTitle>
-          </SheetHeader>
-          {(isCreating || resource.data) && (
-            <ZoneForm mode={isCreating ? 'create' : 'edit'} zone={resource.data} onSuccess={closeSheet} />
-          )}
-        </SheetContent>
-      </Sheet>
-    </div>
+      {isCreating && <CreateZoneSheet open onOpenChange={(o) => !o && closeSheet()} />}
+      {editId && <EditZoneSheet id={editId} open onOpenChange={(o) => !o && closeSheet()} />}
+    </>
   )
 }
 
-function ZoneForm({ mode, zone, onSuccess }) {
+function CreateZoneSheet({
+  open,
+  onOpenChange,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
   const { t } = useTranslation()
   const createMutation = useCreateZone()
-  const updateMutation = useUpdateZone()
-  const { data: countries } = useCountries()
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: zone || { name: '', description: '', default_tax: false },
+  const { data: countriesResponse } = useCountries()
+  const countries = countriesResponse?.data ?? []
+  const form = useForm({
+    defaultValues: { name: '', description: '', default_tax: false },
   })
 
-  const onSubmit = (data) => {
-    if (mode === 'create') {
-      createMutation.mutate(data, { onSuccess })
-    } else {
-      updateMutation.mutate({ id: zone.id, ...data }, { onSuccess })
+  async function onSubmit(values: Record<string, unknown>) {
+    try {
+      await createMutation.mutateAsync(values)
+      form.reset()
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
     }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <label>{t('admin.zones.name')}</label>
-        <input {...register('name', { required: true })} className="w-full px-2 py-1 border rounded" />
-      </div>
-      <div>
-        <label>{t('admin.zones.description')}</label>
-        <textarea {...register('description')} className="w-full px-2 py-1 border rounded" />
-      </div>
-      <div>
-        <label>
-          <input type="checkbox" {...register('default_tax')} />
-          {t('admin.zones.default_tax')}
-        </label>
-      </div>
-      <SheetFooter>
-        <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-          {t('admin.actions.save')}
-        </Button>
-      </SheetFooter>
-    </form>
+    <Sheet
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) form.reset()
+        onOpenChange(next)
+      }}
+    >
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{t('admin.zones.new', 'New Zone')}</SheetTitle>
+        </SheetHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+            {form.formState.errors.root?.message && (
+              <p className="text-sm text-destructive" role="alert">
+                {form.formState.errors.root.message}
+              </p>
+            )}
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="name">{t('admin.zones.name', 'Name')}</FieldLabel>
+                <Input id="name" autoFocus {...form.register('name', { required: true })} />
+                <FieldError errors={[form.formState.errors.name]} />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="description">{t('admin.zones.description', 'Description')}</FieldLabel>
+                <Textarea id="description" {...form.register('description')} />
+                <FieldError errors={[form.formState.errors.description]} />
+              </Field>
+
+              <Field>
+                <div className="flex items-center gap-2">
+                  <Controller
+                    name="default_tax"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Checkbox id="default_tax" checked={!!field.value} onCheckedChange={field.onChange} />
+                    )}
+                  />
+                  <FieldLabel htmlFor="default_tax" className="cursor-pointer mb-0">
+                    {t('admin.zones.default_tax', 'Default Tax Zone')}
+                  </FieldLabel>
+                </div>
+              </Field>
+            </FieldGroup>
+          </div>
+          <SheetFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+              disabled={form.formState.isSubmitting}
+            >
+              {t('admin.actions.cancel')}
+            </Button>
+            <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? t('admin.actions.creating') : t('admin.actions.save')}
+            </Button>
+          </SheetFooter>
+        </form>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+function EditZoneSheet({
+  id,
+  open,
+  onOpenChange,
+}: {
+  id: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const { data: zone, isLoading } = useZone(id)
+  const updateMutation = useUpdateZone()
+  const { data: countriesResponse } = useCountries()
+  const countries = countriesResponse?.data ?? []
+  const form = useForm({
+    defaultValues: { name: '', description: '', default_tax: false },
+  })
+
+  useEffect(() => {
+    if (zone) {
+      form.reset({
+        name: zone.name,
+        description: zone.description,
+        default_tax: zone.default_tax,
+      })
+    }
+  }, [zone, form])
+
+  async function onSubmit(values: Record<string, unknown>) {
+    try {
+      await updateMutation.mutateAsync({
+        id,
+        ...values,
+      })
+      form.reset(values)
+      onOpenChange(false)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{zone?.name ?? t('admin.zones.edit', 'Edit Zone')}</SheetTitle>
+        </SheetHeader>
+        {isLoading ? (
+          <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
+        ) : (
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
+              {form.formState.errors.root?.message && (
+                <p className="text-sm text-destructive" role="alert">
+                  {form.formState.errors.root.message}
+                </p>
+              )}
+              <FieldGroup>
+                <Field>
+                  <FieldLabel htmlFor="name">{t('admin.zones.name', 'Name')}</FieldLabel>
+                  <Input id="name" {...form.register('name', { required: true })} />
+                  <FieldError errors={[form.formState.errors.name]} />
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="description">{t('admin.zones.description', 'Description')}</FieldLabel>
+                  <Textarea id="description" {...form.register('description')} />
+                  <FieldError errors={[form.formState.errors.description]} />
+                </Field>
+
+                <Field>
+                  <div className="flex items-center gap-2">
+                    <Controller
+                      name="default_tax"
+                      control={form.control}
+                      render={({ field }) => (
+                        <Checkbox id="default_tax" checked={!!field.value} onCheckedChange={field.onChange} />
+                      )}
+                    />
+                    <FieldLabel htmlFor="default_tax" className="cursor-pointer mb-0">
+                      {t('admin.zones.default_tax', 'Default Tax Zone')}
+                    </FieldLabel>
+                  </div>
+                </Field>
+              </FieldGroup>
+            </div>
+            <SheetFooter>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onOpenChange(false)}
+                disabled={form.formState.isSubmitting}
+              >
+                {t('admin.actions.cancel')}
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={form.formState.isSubmitting || !form.formState.isDirty}
+              >
+                {form.formState.isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
+              </Button>
+            </SheetFooter>
+          </form>
+        )}
+      </SheetContent>
+    </Sheet>
   )
 }

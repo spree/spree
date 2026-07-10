@@ -2471,6 +2471,7 @@
       "save": "Save translations",
       "saved": "Translations saved",
       "save_error": "Could not save translations",
+      "save_error_row": "Could not save — see the highlighted row below",
       "no_locales": "Add more locales to your store to translate this product.",
       "manage": "Manage translations",
       "field": "Field",
