@@ -2503,6 +2503,7 @@
       "save": "Zapisz tłumaczenia",
       "saved": "Tłumaczenia zapisane",
       "save_error": "Nie można zapisać tłumaczeń",
+      "save_error_row": "Nie udało się zapisać — zobacz podświetlony wiersz poniżej",
       "no_locales": "Dodaj więcej języków do swojego sklepu, aby przetłumaczyć ten produkt.",
       "manage": "Zarządzaj tłumaczeniami",
       "field": "Pole",

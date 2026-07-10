@@ -936,16 +936,24 @@ export class AdminClient {
       resume: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/resume`, options),
 
+      // Moves `quantity` units of `variant_id` out of this fulfillment into a
+      // new one (optionally at a different `stock_location_id`). Returns
+      // every fulfillment on the order post-split, not just this one — the
+      // caller should refetch/replace its fulfillments list from the response.
       split: (
         orderId: string,
         id: string,
-        params: { quantity: number; line_item_id?: string },
+        params: { variant_id: string; quantity: number; stock_location_id?: string },
         options?: RequestOptions,
-      ): Promise<Fulfillment> =>
-        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/split`, {
-          ...options,
-          body: params,
-        }),
+      ): Promise<{ data: Fulfillment[] }> =>
+        this.request<{ data: Fulfillment[] }>(
+          'PATCH',
+          `/orders/${orderId}/fulfillments/${id}/split`,
+          {
+            ...options,
+            body: params,
+          },
+        ),
     },
 
     payments: {

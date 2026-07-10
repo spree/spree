@@ -2472,6 +2472,7 @@
       "save": "Übersetzungen speichern",
       "saved": "Übersetzungen gespeichert",
       "save_error": "Übersetzungen konnten nicht gespeichert werden",
+      "save_error_row": "Speichern fehlgeschlagen — siehe hervorgehobene Zeile unten",
       "no_locales": "Fügen Sie Ihrem Shop weitere Sprachen hinzu, um dieses Produkt zu übersetzen.",
       "manage": "Übersetzungen verwalten",
       "field": "Feld",

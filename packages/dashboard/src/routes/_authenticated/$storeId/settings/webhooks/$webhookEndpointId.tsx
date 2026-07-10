@@ -38,8 +38,8 @@ import {
   useRowClickBridge,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { AlertTriangleIcon, PencilIcon, PlayIcon, RotateCcwIcon } from 'lucide-react'
-import { lazy, Suspense } from 'react'
+import { AlertTriangleIcon, PencilIcon, PlayIcon, RotateCcwIcon, RefreshCcwIcon } from 'lucide-react'
+import { lazy, Suspense, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -48,6 +48,7 @@ import { WebhookEndpointFormFields } from '@/components/spree/webhook-endpoint-f
 import {
   useDeleteWebhookEndpoint,
   useRedeliverWebhookDelivery,
+  useRotateWebhookSecret,
   useSendTestWebhook,
   useToggleWebhookEndpoint,
   useUpdateWebhookEndpoint,
@@ -116,6 +117,10 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
   const deleteMutation = useDeleteWebhookEndpoint()
   const toggleMutation = useToggleWebhookEndpoint()
   const sendTestMutation = useSendTestWebhook()
+  const rotateSecretMutation = useRotateWebhookSecret()
+
+  const [rotatedSecret, setRotatedSecret] = useState<string | null>(null)
+  const rotateSecretSheetOpen = !!rotatedSecret
 
   // ---- Form (Edit card) -------------------------------------------------
   const form = useForm<WebhookEndpointFormValues>({
@@ -171,6 +176,30 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
         err instanceof Error
           ? err.message
           : t('admin.pages.settings.webhooks.deliveries.test_failed'),
+      )
+    }
+  }
+
+  async function handleRotateSecret() {
+    const ok = await confirm({
+      title: t('admin.pages.settings.webhooks.rotate_secret.confirm.title', 'Rotate Secret?'),
+      message: t(
+        'admin.pages.settings.webhooks.rotate_secret.confirm.message',
+        'A new secret key will be generated. Make sure to update your endpoint with the new key.',
+      ),
+      confirmLabel: t('admin.pages.settings.webhooks.rotate_secret.confirm.rotate', 'Rotate'),
+    })
+    if (!ok) return
+    try {
+      const result = await rotateSecretMutation.mutateAsync(endpoint.id)
+      if (result && 'secret_key' in result && result.secret_key) {
+        setRotatedSecret(result.secret_key)
+      }
+    } catch (err) {
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : t('admin.errors.failed_to_update'),
       )
     }
   }
@@ -239,6 +268,15 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
                   <PlayIcon className="size-4" />
                   {t('admin.pages.settings.webhooks.actions.send_test')}
                 </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleRotateSecret}
+                  disabled={rotateSecretMutation.isPending}
+                >
+                  <RefreshCcwIcon className="size-4" />
+                  {t('admin.pages.settings.webhooks.actions.rotate_secret', 'Rotate Secret')}
+                </Button>
                 <Button size="sm" variant="outline" onClick={openEdit}>
                   <PencilIcon className="size-4" />
                   {t('admin.actions.edit')}
@@ -284,6 +322,11 @@ function WebhookEndpointDetailBody({ endpoint }: { endpoint: WebhookEndpoint }) 
           onOpenChange={(o) => !o && closeDelivery()}
         />
       )}
+      <RotatedSecretSheet
+        secret={rotatedSecret}
+        open={rotateSecretSheetOpen}
+        onOpenChange={(o) => !o && setRotatedSecret(null)}
+      />
     </>
   )
 }
@@ -744,6 +787,70 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
       <dt className="text-sm text-muted-foreground">{label}</dt>
       <dd className="max-w-full text-right text-sm">{value}</dd>
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Rotate Secret sheet — displays newly rotated secret key
+// ---------------------------------------------------------------------------
+
+function RotatedSecretSheet({
+  secret,
+  open,
+  onOpenChange,
+}: {
+  secret: string | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>{t('admin.pages.settings.webhooks.rotate_secret.title', 'New Secret Key')}</SheetTitle>
+          <SheetDescription>
+            {t(
+              'admin.pages.settings.webhooks.rotate_secret.description',
+              'Save this key in a secure location. You will not be able to see it again.',
+            )}
+          </SheetDescription>
+        </SheetHeader>
+        <div className="flex flex-col gap-4 p-4">
+          {secret && (
+            <div className="rounded-md border border-border bg-muted/40 p-4">
+              <code className="block break-all font-mono text-xs leading-relaxed text-foreground">
+                {secret}
+              </code>
+            </div>
+          )}
+          <div className="text-sm text-muted-foreground">
+            {t(
+              'admin.pages.settings.webhooks.rotate_secret.warning',
+              'The previous secret key is no longer valid.',
+            )}
+          </div>
+        </div>
+        <SheetFooter>
+          <CopyToClipboardButton
+            value={secret ?? ''}
+            aria-label={t(
+              'admin.pages.settings.webhooks.rotate_secret.copy_aria',
+              'Copy secret key',
+            )}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onOpenChange(false)}
+          >
+            {t('admin.actions.close')}
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }
 
