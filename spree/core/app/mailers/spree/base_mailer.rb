@@ -2,7 +2,7 @@ module Spree
   class BaseMailer < ActionMailer::Base
     helper Spree::ImagesHelper
 
-    default reply_to: -> { reply_to_address }
+    default from: -> { from_address }, reply_to: -> { reply_to_address }
 
     def current_store
       @current_store ||= @order&.store.presence || Spree::Store.current || Spree::Store.default

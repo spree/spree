@@ -12,7 +12,6 @@ module Spree
       with_store_locale(store) do
         mail(
           to: user.email,
-          from: from_address,
           subject: "#{store.name} #{Spree.t('customer_mailer.password_reset_email.subject')}",
           store_url: store.storefront_url
         )

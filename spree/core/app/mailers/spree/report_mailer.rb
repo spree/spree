@@ -6,8 +6,7 @@ module Spree
       with_store_locale(@report.store) do
         mail(
           to: @report.user.email,
-          subject: Spree.t('report_mailer.report_done.subject', report_name: @report.human_name).to_s,
-          from: from_address
+          subject: Spree.t('report_mailer.report_done.subject', report_name: @report.human_name).to_s
         )
       end
     end
