@@ -1,6 +1,7 @@
 <div id="setup_tasks" class="flex flex-col gap-4">
   <% task_in_progress = nil %>
-  <% current_store.setup_tasks_list.each_with_index do |task, index| %>
+  <% Spree.store_setup_tasks.for(current_store).each do |item| %>
+    <% task = item.key %>
     <% done = current_store.setup_task_done?(task) %>
     <% unless done %>
       <% task_in_progress ||= task %>
@@ -13,13 +14,13 @@
            tabindex="0"
            data-action="click->reveal#toggle keydown.enter->reveal#toggle keydown.space->reveal#toggle">
         <%= onboarding_check_circle(done) %>
-        <span class="ml-6 font-medium"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
+        <span class="ml-6 font-medium"><%= Spree.t(item.label_key) %></span>
         <%= icon('chevron-right', class: 'arrow ms-auto transition-transform duration-200') %>
       </div>
       <div data-reveal-target="item" class="collapsible-content <%= 'is-collapsed' unless is_expanded %>">
         <div>
           <div class="card-body flex flex-col gap-3">
-            <%= render "spree/admin/dashboard/setup_tasks/#{task}", done: done %>
+            <%= render item.partial, done: done %>
           </div>
         </div>
       </div>

@@ -4,18 +4,7 @@ module Spree
       extend ActiveSupport::Concern
 
       def setup_task_done?(task)
-        case task
-        when :setup_payment_method
-          payment_method_setup?
-        when :setup_taxes_collection
-          Spree::TaxRate.any?
-        when :add_products
-          products.any?
-        when :set_customer_support_email
-          customer_support_email.present?
-        when :setup_storefront
-          storefront_setup?
-        end
+        Spree.store_setup_tasks.find(task)&.done?(self)
       end
 
       def setup_tasks_total
@@ -25,14 +14,7 @@ module Spree
       def setup_tasks_list
         return [] if deleted?
 
-        @setup_tasks_list = []
-        @setup_tasks_list << :setup_payment_method
-        @setup_tasks_list << :add_products
-        @setup_tasks_list << :set_customer_support_email
-        @setup_tasks_list << :setup_taxes_collection
-        @setup_tasks_list << :setup_storefront
-
-        @setup_tasks_list
+        Spree.store_setup_tasks.for(self).map(&:key)
       end
 
       def setup_tasks_done
