@@ -9,7 +9,6 @@ module Spree
       @current_store = invitation.store
       with_store_locale(invitation.store) do
         mail(to: invitation.email,
-             from: from_address,
              subject: Spree.t('invitation_mailer.invitation_email.subject',
                               resource_name: invitation.resource&.name))
       end
@@ -21,7 +20,6 @@ module Spree
       @current_store = invitation.store
       with_store_locale(invitation.store) do
         mail(to: invitation.inviter.email,
-             from: from_address,
              subject: Spree.t('invitation_mailer.invitation_accepted.subject',
                               invitee_name: invitation.invitee&.name,
                               resource_name: invitation.resource&.name))

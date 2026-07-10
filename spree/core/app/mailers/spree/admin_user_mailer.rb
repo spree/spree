@@ -11,7 +11,6 @@ module Spree
       with_store_locale(store, preferred_locale(admin_user, store)) do
         mail(
           to: admin_user.email,
-          from: from_address,
           subject: "#{store.name} #{Spree.t('admin_user_mailer.password_reset_email.subject')}",
           store_url: store.formatted_url
         )
@@ -26,7 +25,6 @@ module Spree
       with_store_locale(store, preferred_locale(admin_user, store)) do
         mail(
           to: admin_user.email,
-          from: from_address,
           subject: "#{store.name} #{Spree.t('admin_user_mailer.confirmation_email.subject')}",
           store_url: store.formatted_url
         )

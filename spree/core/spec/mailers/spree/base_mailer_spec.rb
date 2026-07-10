@@ -6,6 +6,12 @@ class ReplyToProbeMailer < Spree::BaseMailer
   end
 end
 
+class FromProbeMailer < Spree::BaseMailer
+  def sample
+    mail(to: 'probe@example.com', subject: 'probe', body: 'body')
+  end
+end
+
 describe Spree::BaseMailer, type: :mailer do
   let!(:store) { @default_store }
 
@@ -31,6 +37,18 @@ describe Spree::BaseMailer, type: :mailer do
     end
   end
 
+  describe '#from_address' do
+    subject(:mailer) { described_class.new }
+
+    before { allow(mailer).to receive(:current_store).and_return(store) }
+
+    let(:store) { create(:store, mail_from_address: 'no-reply@example.com') }
+
+    it 'returns the store mail from address' do
+      expect(mailer.from_address).to eq('no-reply@example.com')
+    end
+  end
+
   describe '#reply_to_address' do
     subject(:mailer) { described_class.new }
 
@@ -50,6 +68,14 @@ describe Spree::BaseMailer, type: :mailer do
       it 'falls back to the mail from address' do
         expect(mailer.reply_to_address).to eq('no-reply@example.com')
       end
+    end
+  end
+
+  describe 'default From header' do
+    let!(:store) { @default_store }
+
+    it 'is applied without the mailer passing from explicitly' do
+      expect(FromProbeMailer.sample.from).to eq([store.mail_from_address])
     end
   end
 
