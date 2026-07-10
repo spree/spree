@@ -51,6 +51,20 @@ module Spree
             render json: serialize_resource(@resource)
           end
 
+          # PATCH /api/v3/admin/webhook_endpoints/:id/rotate_secret
+          #
+          # Rotate the webhook endpoint secret key. Returns the new plaintext
+          # secret for display (shown only in this response, encrypted at rest).
+          #
+          # @return [Hash] the serialized {Spree::WebhookEndpoint} with secret_key_for_response.
+          def rotate_secret
+            @resource = find_resource
+            authorize!(:update, @resource)
+
+            @resource.rotate_secret!
+            render json: serialize_resource(@resource)
+          end
+
           protected
 
           def model_class
