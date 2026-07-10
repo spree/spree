@@ -16,6 +16,7 @@
       "discard": "放弃",
       "discard_changes": "放弃更改",
       "edit": "编辑",
+      "view": "查看",
       "generate": "生成",
       "remove": "移除",
       "save": "保存",
@@ -466,6 +467,24 @@
         "downloaded": "导出已下载",
         "email_fallback": "仍在处理中 — 完成后我们会通过邮件发送链接。",
         "failed": "导出失败：{{message}}"
+      },
+      "import_button": {
+        "title": "从 CSV 导入",
+        "description": "上传 CSV 文件。下一步将文件列与字段进行匹配。",
+        "drop_label": "将 CSV 文件拖放到此处，或点击浏览",
+        "browse": "浏览文件",
+        "delimiter_label": "列分隔符",
+        "delimiters": {
+          "comma": "逗号 (,)",
+          "semicolon": "分号 (;)",
+          "pipe": "竖线 (|)",
+          "tab": "制表符"
+        },
+        "download_template": "下载 CSV 模板",
+        "template_failed": "模板下载失败：{{message}}",
+        "submit": "上传并继续",
+        "uploading": "正在上传…",
+        "failed": "导入失败：{{message}}"
       },
       "metadata_card": {
         "title": "元数据",

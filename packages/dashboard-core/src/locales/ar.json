@@ -16,6 +16,7 @@
       "discard": "تجاهل",
       "discard_changes": "تجاهل التغييرات",
       "edit": "تعديل",
+      "view": "عرض",
       "generate": "إنشاء",
       "remove": "إزالة",
       "save": "حفظ",
@@ -466,6 +467,24 @@
         "downloaded": "تم تنزيل التصدير",
         "email_fallback": "لا يزال قيد المعالجة — سنرسل لك رابطًا بالبريد عند الجاهزية.",
         "failed": "فشل التصدير: {{message}}"
+      },
+      "import_button": {
+        "title": "استيراد من CSV",
+        "description": "قم برفع ملف CSV. ستقوم بمطابقة أعمدته مع الحقول في الخطوة التالية.",
+        "drop_label": "أسقط ملف CSV هنا، أو انقر للاستعراض",
+        "browse": "استعراض الملفات",
+        "delimiter_label": "فاصل الأعمدة",
+        "delimiters": {
+          "comma": "فاصلة (,)",
+          "semicolon": "فاصلة منقوطة (;)",
+          "pipe": "خط عمودي (|)",
+          "tab": "مسافة جدولة"
+        },
+        "download_template": "تنزيل قالب CSV",
+        "template_failed": "فشل تنزيل القالب: {{message}}",
+        "submit": "رفع ومتابعة",
+        "uploading": "جارٍ الرفع…",
+        "failed": "فشل الاستيراد: {{message}}"
       },
       "metadata_card": {
         "title": "البيانات الوصفية",

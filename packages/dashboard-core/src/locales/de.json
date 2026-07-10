@@ -16,6 +16,7 @@
       "discard": "Verwerfen",
       "discard_changes": "Änderungen verwerfen",
       "edit": "Bearbeiten",
+      "view": "Anzeigen",
       "generate": "Generieren",
       "remove": "Entfernen",
       "save": "Speichern",
@@ -466,6 +467,24 @@
         "downloaded": "Export heruntergeladen",
         "email_fallback": "Noch in Bearbeitung — wir senden Ihnen einen Link per E-Mail, sobald er fertig ist.",
         "failed": "Export fehlgeschlagen: {{message}}"
+      },
+      "import_button": {
+        "title": "Aus CSV importieren",
+        "description": "Laden Sie eine CSV-Datei hoch. Im nächsten Schritt ordnen Sie ihre Spalten den Feldern zu.",
+        "drop_label": "CSV-Datei hier ablegen oder klicken zum Auswählen",
+        "browse": "Dateien durchsuchen",
+        "delimiter_label": "Spaltentrennzeichen",
+        "delimiters": {
+          "comma": "Komma (,)",
+          "semicolon": "Semikolon (;)",
+          "pipe": "Pipe (|)",
+          "tab": "Tabulator"
+        },
+        "download_template": "CSV-Vorlage herunterladen",
+        "template_failed": "Vorlagen-Download fehlgeschlagen: {{message}}",
+        "submit": "Hochladen & weiter",
+        "uploading": "Wird hochgeladen…",
+        "failed": "Import fehlgeschlagen: {{message}}"
       },
       "metadata_card": {
         "title": "Metadaten",

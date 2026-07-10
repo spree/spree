@@ -16,6 +16,7 @@
       "discard": "Odrzuć",
       "discard_changes": "Odrzuć zmiany",
       "edit": "Edytuj",
+      "view": "Zobacz",
       "generate": "Generuj",
       "remove": "Usuń",
       "save": "Zapisz",
@@ -466,6 +467,24 @@
         "downloaded": "Eksport pobrany",
         "email_fallback": "Nadal przetwarzamy — wyślemy link e-mailem, gdy będzie gotowy.",
         "failed": "Eksport nie powiódł się: {{message}}"
+      },
+      "import_button": {
+        "title": "Importuj z pliku CSV",
+        "description": "Prześlij plik CSV. W następnym kroku dopasujesz jego kolumny do pól.",
+        "drop_label": "Upuść plik CSV tutaj lub kliknij, aby przeglądać",
+        "browse": "Przeglądaj pliki",
+        "delimiter_label": "Separator kolumn",
+        "delimiters": {
+          "comma": "Przecinek (,)",
+          "semicolon": "Średnik (;)",
+          "pipe": "Kreska pionowa (|)",
+          "tab": "Tabulator"
+        },
+        "download_template": "Pobierz szablon CSV",
+        "template_failed": "Pobieranie szablonu nie powiodło się: {{message}}",
+        "submit": "Prześlij i kontynuuj",
+        "uploading": "Przesyłanie…",
+        "failed": "Import nie powiódł się: {{message}}"
       },
       "metadata_card": {
         "title": "Metadane",
