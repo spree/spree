@@ -76,8 +76,12 @@ module Spree
       basis / (1 + included)
     end
 
+    # Memoized per tax category: tax rate and zone rows are configuration,
+    # invariant within a recalculation pass.
     def included_rates_amount(item)
-      Spree::TaxRate.included_tax_amount_for(tax_zone: rate.zone, tax_category: item.tax_category)
+      @included_rates_amount ||= {}
+      @included_rates_amount[item.tax_category_id] ||=
+        Spree::TaxRate.included_tax_amount_for(tax_zone: rate.zone, tax_category: item.tax_category)
     end
   end
 end

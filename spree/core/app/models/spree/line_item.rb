@@ -163,7 +163,7 @@ module Spree
       # of all line items, not a possibly stale cached association
       items_total = order.line_items.reorder(nil).pick(
         Arel.sql('COALESCE(SUM(price * quantity + taxable_adjustment_total), 0)')
-      ) || BigDecimal(0)
+      )
       return basis if items_total <= 0
 
       [basis + (order_discount * basis / items_total), BigDecimal(0)].max
