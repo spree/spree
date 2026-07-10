@@ -2566,8 +2566,23 @@
         "setup_storefront": {
           "title": "Configurer la boutique",
           "description": "Connectez votre boutique web ou votre application mobile avec vos identifiants Store API et enregistrez l'URL de votre boutique.",
-          "cta": "Paramètres de la boutique"
+          "cta": "Connecter la boutique"
         }
+      },
+      "storefront_sheet": {
+        "title": "Connecter votre boutique",
+        "description": "Utilisez ces identifiants dans tout client qui communique avec la Store API — boutique web, application mobile ou autre.",
+        "api_url_label": "URL de la Store API",
+        "publishable_key_label": "Clé API publiable",
+        "deploy_title": "Recommandé : déployer la boutique Next.js officielle",
+        "deploy_copy": "Le déploiement clone la boutique open-source sur votre compte Git et la construit sur Vercel avec vos identifiants préremplis. Une fois terminé, copiez son URL dans le champ ci-dessous.",
+        "deploy_button": "Déployer sur Vercel",
+        "env_description": "Votre URL de Store API Spree et votre clé publiable. Les deux sont préremplies depuis votre boutique — ajustez-les avant le déploiement si nécessaire.",
+        "storefront_url_label": "URL de la boutique",
+        "storefront_url_help": "L'URL que vos clients utilisent pour accéder à votre boutique. Elle sert de base aux liens dans les e-mails clients et est automatiquement ajoutée comme origine autorisée pour que les boutiques web puissent appeler la Store API.",
+        "save": "Enregistrer et terminer",
+        "saved": "URL de la boutique enregistrée : {{url}}",
+        "invalid_url": "Cela ne ressemble pas à une URL de boutique valide."
       }
     }
   }

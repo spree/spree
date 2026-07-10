@@ -2598,8 +2598,23 @@
         "setup_storefront": {
           "title": "Skonfiguruj sklep",
           "description": "Połącz swój sklep internetowy lub aplikację mobilną za pomocą danych uwierzytelniających Store API i zapisz adres URL sklepu.",
-          "cta": "Ustawienia sklepu"
+          "cta": "Połącz sklep"
         }
+      },
+      "storefront_sheet": {
+        "title": "Połącz swój sklep",
+        "description": "Użyj tych danych uwierzytelniających w dowolnym kliencie łączącym się ze Store API — sklepie internetowym, aplikacji mobilnej lub czymkolwiek innym.",
+        "api_url_label": "Adres URL Store API",
+        "publishable_key_label": "Publiczny klucz API",
+        "deploy_title": "Zalecane: wdróż oficjalny sklep Next.js",
+        "deploy_copy": "Wdrożenie klonuje sklep open-source na Twoje konto Git i buduje go na Vercel z wypełnionymi danymi uwierzytelniającymi. Po zakończeniu skopiuj jego adres URL do pola poniżej.",
+        "deploy_button": "Wdróż na Vercel",
+        "env_description": "Adres URL Store API oraz publiczny klucz API Twojego Spree. Oba są wstępnie wypełnione — w razie potrzeby dostosuj je przed wdrożeniem.",
+        "storefront_url_label": "Adres URL sklepu",
+        "storefront_url_help": "Adres URL, którego klienci używają, aby dotrzeć do Twojego sklepu. Staje się podstawą linków w wiadomościach e-mail i jest automatycznie dodawany jako dozwolone źródło, aby sklepy przeglądarkowe mogły korzystać ze Store API.",
+        "save": "Zapisz i zakończ konfigurację",
+        "saved": "Adres URL sklepu zapisany: {{url}}",
+        "invalid_url": "To nie wygląda na prawidłowy adres URL sklepu."
       }
     }
   }

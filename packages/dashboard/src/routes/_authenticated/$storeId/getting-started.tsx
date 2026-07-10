@@ -12,6 +12,10 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { CheckCircle2Icon, ChevronDownIcon, CircleIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import {
+  normalizeOrigin,
+  StorefrontConnectSheet,
+} from '@/components/spree/storefront-connect-sheet'
 
 // Route targets for the built-in tasks. Extension-registered tasks without an
 // entry here render without a CTA (their copy comes from the same i18n
@@ -21,19 +25,31 @@ const TASK_LINKS: Record<string, string> = {
   add_products: '/$storeId/products',
   set_customer_support_email: '/$storeId/settings/emails',
   setup_taxes_collection: '/$storeId/settings/tax-categories',
-  setup_storefront: '/$storeId/settings/store',
 }
 
 export const Route = createFileRoute('/_authenticated/$storeId/getting-started')({
   component: GettingStartedPage,
+  // Vercel's deploy button appends callback params to its redirect-url —
+  // deployment-url carries the deployed storefront's host.
+  validateSearch: (search: Record<string, unknown>) => ({
+    'deployment-url':
+      typeof search['deployment-url'] === 'string'
+        ? (search['deployment-url'] as string)
+        : undefined,
+  }),
 })
 
 function GettingStartedPage() {
   const { t, i18n } = useTranslation()
   const { store, storeId } = useStore()
+  const { 'deployment-url': deploymentUrl } = Route.useSearch()
   // '' means the user explicitly collapsed everything; null means "no choice
   // yet", which falls back to the first pending task.
   const [expanded, setExpanded] = useState<string | null>(null)
+  // Coming back from a Vercel deploy opens the sheet with the deployed URL
+  // prefilled — one click left to finish the setup.
+  const deployedOrigin = deploymentUrl ? normalizeOrigin(deploymentUrl) : null
+  const [sheetOpen, setSheetOpen] = useState(deployedOrigin != null)
 
   if (!store) {
     return (
@@ -104,12 +120,22 @@ function GettingStartedPage() {
                 <CollapsibleContent>
                   <div className="flex flex-col items-start gap-3 border-t px-4 py-4 pl-12">
                     {description && <p className="text-sm text-muted-foreground">{description}</p>}
-                    {link && cta && (
-                      <Button asChild variant={task.done ? 'outline' : 'default'}>
-                        <Link to={link} params={{ storeId }}>
-                          {cta}
-                        </Link>
+                    {task.name === 'setup_storefront' ? (
+                      <Button
+                        variant={task.done ? 'outline' : 'default'}
+                        onClick={() => setSheetOpen(true)}
+                      >
+                        {cta}
                       </Button>
+                    ) : (
+                      link &&
+                      cta && (
+                        <Button asChild variant={task.done ? 'outline' : 'default'}>
+                          <Link to={link} params={{ storeId }}>
+                            {cta}
+                          </Link>
+                        </Button>
+                      )
                     )}
                   </div>
                 </CollapsibleContent>
@@ -118,6 +144,12 @@ function GettingStartedPage() {
           )
         })}
       </div>
+
+      <StorefrontConnectSheet
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        initialUrl={deployedOrigin ?? undefined}
+      />
     </div>
   )
 }

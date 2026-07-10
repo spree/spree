@@ -2566,8 +2566,23 @@
         "setup_storefront": {
           "title": "Storefront einrichten",
           "description": "Verbinden Sie Ihr Web-Storefront oder Ihre mobile App mit Ihren Store-API-Zugangsdaten und speichern Sie Ihre Storefront-URL.",
-          "cta": "Shop-Einstellungen"
+          "cta": "Storefront verbinden"
         }
+      },
+      "storefront_sheet": {
+        "title": "Storefront verbinden",
+        "description": "Verwenden Sie diese Zugangsdaten in jedem Client, der mit der Store API kommuniziert — Web-Storefront, mobile App oder anderes.",
+        "api_url_label": "Store API URL",
+        "publishable_key_label": "Publishable API-Schlüssel",
+        "deploy_title": "Empfohlen: das offizielle Next.js-Storefront bereitstellen",
+        "deploy_copy": "Die Bereitstellung klont das Open-Source-Storefront in Ihr Git-Konto und baut es auf Vercel mit vorausgefüllten Zugangsdaten. Kopieren Sie anschließend dessen URL in das Feld unten.",
+        "deploy_button": "Auf Vercel bereitstellen",
+        "env_description": "Ihre Spree Store API URL und Ihr Publishable Key. Beide sind aus Ihrem Store vorausgefüllt — passen Sie sie bei Bedarf vor der Bereitstellung an.",
+        "storefront_url_label": "Storefront-URL",
+        "storefront_url_help": "Die URL, über die Kunden Ihr Storefront erreichen. Sie wird zur Basis für Links in Kunden-E-Mails und automatisch als zugelassener Origin hinzugefügt, damit browserbasierte Storefronts die Store API aufrufen können.",
+        "save": "Speichern & Einrichtung abschließen",
+        "saved": "Storefront-URL gespeichert: {{url}}",
+        "invalid_url": "Das sieht nicht nach einer gültigen Storefront-URL aus."
       }
     }
   }
