@@ -2,7 +2,7 @@
 
 **Żywy dokument.** Każdy agent po zakończeniu zadania aktualizuje ten plik tak, żeby odzwierciedlał rzeczywisty, bieżący stan systemu — nie dopisuje kolejnych wpisów dziennika, tylko poprawia treść. Historia jest w gicie.
 
-Ostatnia aktualizacja: 2026-07-09 (F8 — migracja backendu z Render na Oracle Cloud — **zakończona**). Backend Rails/API + Postgres + Redis + Sidekiq + Nginx/SSL działają w Docker Compose na Oracle VPS (`VM.Standard.E4.Flex`, 1 OCPU, 8 GB RAM, Ubuntu 22.04, Paris). Vercel (admin panel i storefront) zaktualizowany — API URL zmieniony z Rendera na Oracle (141.253.103.172). Razem z audytem F13 system ma werdykt: Not production-ready (główne blokery: checkout shipping/tax/payment, braki prawno-operacyjne). Domknięte F14 (lockout guard) i F5 (jawne błędy w ResourceTable).
+Ostatnia aktualizacja: 2026-07-10 (F21 & F17 frontend + dokumentacja — **zakończone**). Backend Rails/API + Postgres + Redis + Sidekiq + Nginx/SSL działają w Docker Compose na Oracle VPS (`VM.Standard.E4.Flex`, 1 OCPU, 8 GB RAM, Ubuntu 22.04, Paris). Vercel (admin panel i storefront) zaktualizowany — API URL zmieniony z Rendera na Oracle (141.253.103.172). Razem z audytem F13 system ma werdykt: Not production-ready (główne blokery: checkout payment, braki prawno-operacyjne). Domknięte F14 (lockout guard), F5 (jawne błędy w ResourceTable), F21 (shipping/tax/zones UI), F17 (webhook secret rotation).
 
 ## Co działa
 
@@ -33,10 +33,10 @@ Uporządkowane wg wagi — szczegóły i plan naprawy w [`roadmap.md`](roadmap.m
 
 - System-wide production readiness audit (2026-07-08) ma werdykt `Not production-ready`; szczegóły i priorytety napraw są w `docs/audits/2026-07-08-system-wide-production-readiness-audit.md`.
 
-- Konfiguracja wysyłki, stref i stawek podatkowych w Admin API v3/panelu — świadomie odłożone razem ze Stripe i stronami prawnymi (F21), wymaga osobnej decyzji projektowej przed startem sprzedaży.
+- Konfiguracja płatności (Stripe) i strony prawne — świadomie odłożone razem z F21, wymaga osobnej decyzji projektowej przed startem sprzedaży. F21 (Admin API/panel dla shipping methods/zones/tax rates) jest już **ukończona 2026-07-10**.
 - Pełny admin-side lifecycle zwrotów po sprzedaży: return authorizations, customer returns, reimbursement/refund reasons i reimbursement types, zamiast samego order-level tworzenia refundu — świadomie odłożone (F22).
 - Decyzja i ewentualny Admin API/UI dla wishlist, cyfrowych pobrań i data feeds; Store API istnieje, ale panel nie ma podglądu ani zarządzania — poza zakresem MVP na teraz (F23).
-- Audyt idempotentności migracji (F15), rate limiting logowania/resetu hasła (F16), rotacja sekretu webhook endpointu (F17), per-wierszowe błędy w edytorze tłumaczeń batch (F18), drobne luki katalogu/pieniędzy klienta (F19), hardening media/R2 bez pre-generowania w tle (F20), runbooki observability (F24) — zaplanowane w `roadmap.md`, jeszcze nieotwarte prace.
+- Audyt idempotentności migracji (F15), rate limiting logowania/resetu hasła (F16), per-wierszowe błędy w edytorze tłumaczeń batch (F18), drobne luki katalogu/pieniędzy klienta (F19), hardening media/R2 bez pre-generowania w tle (F20), runbooki observability (F24) — zaplanowane w `roadmap.md`, jeszcze nieotwarte prace. F17 (rotacja sekretu webhook) i F21 (shipping/tax/zones UI) są już **ukończone 2026-07-10**.
 - Weryfikacja, czy inwalidacja cache przy edycji samej ceny/rynku (bez zmiany pola produktu) działa niezawodnie (F4, reszta).
 - Trwała idempotencja webhooków e-mail (F6 — Redis lub Postgres trwały magazyn).
 - Worker Sidekiq w tle (F7 — wymaga płatnego planu; hosting migruje na Oracle Cloud, patrz punkt 5 wyżej i F8).

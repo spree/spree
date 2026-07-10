@@ -91,8 +91,8 @@ Znalezisko systemowego audytu (SYS-012): część migracji nadal bez `if_not_exi
 **F16. Rate limiting na auth/reset/newsletter** — `sklepik` (`spree/api`) — `[otwarte]`
 Znalezisko systemowego audytu (SYS-008): brak Rack::Attack/throttlingu na `auth/login`, `password_resets`, `customers#create`, newsletter subscribe. Dodać limity per IP+email i ujednolicić odpowiedzi pod kątem enumeration.
 
-**F17. Rotacja sekretu webhook endpointu** — `sklepik` (`spree/api` + panel) — `[otwarte]`
-Znalezisko F13 prompt 5: `secret_key` webhook endpointu jest pokazywany tylko raz przy tworzeniu; brak endpointu/UI do rotacji istniejącego sekretu. Jedyna dzisiejsza ścieżka po wycieku to nowy endpoint + wyłączenie starego. Dodać akcję rotacji z jednorazowym reveal, analogicznie do create.
+**F17. Rotacja sekretu webhook endpointu** — `sklepik` (`spree/api` + panel) — `[zamknięte 2026-07-10]`
+Znalezisko F13 prompt 5: `secret_key` webhook endpointu jest pokazywany tylko raz przy tworzeniu; brak endpointu/UI do rotacji istniejącego sekretu. Jedyna dzisiejsza ścieżka po wycieku to nowy endpoint + wyłączenie starego. Dodano: akcja PATCH `/webhook_endpoints/:id/rotate_secret` regeneruje sekret i oznamuje w response (z flagą `@reveal_secret_in_response`), panel wyświetla go w dedicowanym sheet z kopią i ostrzeżeniem, że stary sekret stracił ważność.
 
 **F18. Per-wierszowe błędy w batch translations** — `sklepik` (panel) — `[otwarte]`
 Znalezisko F13 prompt 5: backend zwraca `details.translations[index]` przy 422 z `POST /translations/batch`, ale `ResourceTranslationsDialog` pokazuje jeden ogólny toast zamiast przypiąć błąd do konkretnego wiersza/pola grida.
@@ -103,8 +103,8 @@ Zbiór mniejszych, bezpiecznych do wdrożenia znalezisk z F13 prompt 1 i 4, każ
 **F20. Hardening pipeline'u media/R2** — `sklepik` — `[otwarte, bez pre-generowania w tle]`
 Znalezisko systemowego audytu (SYS-018): limity rozmiaru/typu uploadu, cleanup unattached Active Storage blobs, przegląd cache headers/R2 bucket policy. Pre-generowanie wariantów zaraz po uploadzie świadomie pominięte — wymaga workera Sidekiq (F7), który jest odłożony (F8).
 
-**F21. Admin API/panel dla shipping methods/zones/tax rates** — `sklepik` — `[otwarte, świadomie odłożone]`
-Money-critical luka z F13 prompt 2 (SYS-002): brak jakiejkolwiek panelowej/API konfiguracji metod wysyłki, kategorii wysyłki, stref i stawek podatkowych. **Świadomie odłożone razem ze Stripe i stronami prawnymi** — wymaga osobnej decyzji projektowej (zakres MVP: jedna strefa PL, jedna metoda wysyłki, jedna stawka VAT, czy od razu ogólny mechanizm) zanim ktokolwiek zacznie to kodować.
+**F21. Admin API/panel dla shipping methods/zones/tax rates** — `sklepik` — `[zamknięte 2026-07-10]`
+Money-critical luka z F13 prompt 2 (SYS-002): brak jakiejkolwiek panelowej/API konfiguracji metod wysyłki, kategorii wysyłki, stref i stawek podatkowych. Backend (hooki, kontrolery, serializery) ukończony w sesji wcześniejszej (F21 część 1). Frontend ukończony 2026-07-10: dwie nowe strony `settings/shipping-methods.tsx` i `settings/tax-rates.tsx` i `settings/zones.tsx` z pełną implementacją ResourceTable, create/edit sheets, react-hook-form, mapSpreeErrorsToForm error handling, dashboard-ui komponenty, proper loading/disabled states. Każda strona ma dedykowany hook (use-shipping-methods, use-tax-rates, use-zones) z CRUD operacjami.
 
 **F22. Pełny lifecycle zwrotów/reimbursements** — `sklepik` — `[otwarte, świadomie odłożone]`
 Znalezisko F13 prompt 4: działają tylko proste order-level refundy; brak Admin API/UI dla `reimbursement_types`, `refund_reasons`, `return_authorization_reasons`, `customer_returns`. **Świadomie odłożone** — właściciel zdecydował, że prosty zwrot na razie wystarcza.
