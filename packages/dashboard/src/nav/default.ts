@@ -9,6 +9,7 @@ import {
   TagIcon,
   UsersIcon,
 } from 'lucide-react'
+import { GettingStartedNavBadge } from '@/components/spree/getting-started-nav-badge'
 
 nav.add({
   key: 'getting-started',
@@ -16,6 +17,7 @@ nav.add({
   path: '/getting-started',
   icon: MapIcon,
   position: 50,
+  badge: GettingStartedNavBadge,
 })
 
 nav.add({

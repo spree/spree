@@ -12,6 +12,8 @@ export interface StoreUpdateParams {
    * `login_required`. Channels fall back to this when they don't set their own.
    */
   preferred_storefront_access?: string
+  /** The storefront's public URL — base for customer-email links; saving it also completes the storefront setup task. */
+  preferred_storefront_url?: string | null
   /** Store-wide default for guest checkout. Channels fall back to this. */
   preferred_guest_checkout?: boolean
   /** Sender address used on all transactional emails (required by the model). */

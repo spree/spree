@@ -14,7 +14,7 @@ import {
 } from '@spree/dashboard-ui'
 import { Link, useRouterState } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
-import { useState } from 'react'
+import { type ComponentType, useState } from 'react'
 import type { SubjectName } from '../lib/permissions'
 
 export type NavItem = {
@@ -23,6 +23,8 @@ export type NavItem = {
   icon: LucideIcon
   /** CanCanCan subject required to see this item. If omitted, item is always visible. */
   subject?: SubjectName
+  /** Component rendered after the label (e.g. a count badge). May return null. */
+  badge?: ComponentType
   items?: { title: string; url: string; subject?: SubjectName }[]
 }
 
@@ -101,6 +103,11 @@ function NavItemContent({
       <Link to={item.url}>
         <NavIcon icon={item.icon} isActive={itemIsActive} />
         <span>{item.title}</span>
+        {item.badge && (
+          <span className="ml-auto">
+            <item.badge />
+          </span>
+        )}
       </Link>
     </SidebarMenuButton>
   )

@@ -15,6 +15,7 @@ function entryToNavItem(entry: NavEntry, storeId: string): NavItem {
     url: pathFor(entry.path),
     icon: entry.icon ?? PackageIcon,
     subject: entry.subject,
+    badge: entry.badge,
     items: entry.children?.map((child) => ({
       title: child.label,
       url: pathFor(child.path),

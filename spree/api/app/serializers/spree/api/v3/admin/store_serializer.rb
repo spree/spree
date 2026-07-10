@@ -3,7 +3,8 @@ module Spree
     module V3
       module Admin
         class StoreSerializer < V3::BaseSerializer
-          typelize name: :string, url: :string,
+          typelize name: :string, url: :string, code: :string, api_url: :string,
+                   preferred_storefront_url: [:string, nullable: true],
                    default_currency: :string, default_locale: :string,
                    supported_currencies: [:string, multi: true],
                    supported_locales: [:string, multi: true],
@@ -24,6 +25,8 @@ module Spree
 
           attributes :metadata,
                      :name,
+                     :code,
+                     :preferred_storefront_url,
                      :default_currency,
                      :default_locale,
                      :mail_from_address,
@@ -39,6 +42,10 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :url, &:storefront_url
+
+          # The backend's own public URL — what a headless client sets as its
+          # Store API endpoint (distinct from `url`, the storefront's URL).
+          attribute :api_url, &:formatted_url
 
           # The Getting Started checklist in display order. Task names map to
           # frontend copy/components by convention.

@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { useSyncExternalStore } from 'react'
+import { type ComponentType, useSyncExternalStore } from 'react'
 import type { SubjectName } from './permissions'
 
 // ============================================================================
@@ -26,6 +26,11 @@ export interface NavEntry {
   position?: number
   /** CanCanCan subject required to see this item. Omit for always-visible. */
   subject?: SubjectName
+  /**
+   * Rendered after the label (e.g. a count). A component — not an element —
+   * so it can call hooks like useStore and return null to hide itself.
+   */
+  badge?: ComponentType
   /** Nested children. Children inherit nothing — they declare their own subject + position. */
   children?: NavEntry[]
 }
