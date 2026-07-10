@@ -2,9 +2,6 @@ module Spree
   class BaseMailer < ActionMailer::Base
     helper Spree::ImagesHelper
 
-    # Apply Reply-To to every mailer so subclasses don't need to pass
-    # `reply_to: reply_to_address` on each `mail` call. Passing `reply_to:`
-    # explicitly still overrides this default.
     default reply_to: -> { reply_to_address }
 
     def current_store

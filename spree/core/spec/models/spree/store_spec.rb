@@ -266,6 +266,24 @@ describe Spree::Store, type: :model, without_global_store: true do
         expect(store.code).to eq('default')
       end
     end
+
+    describe '#customer_support_email' do
+      it 'is valid when blank' do
+        store = build(:store, customer_support_email: '')
+        expect(store).to be_valid
+      end
+
+      it 'is valid with a properly formatted email' do
+        store = build(:store, customer_support_email: 'support@example.com')
+        expect(store).to be_valid
+      end
+
+      it 'is invalid with a malformed email' do
+        store = build(:store, customer_support_email: 'not-an-email')
+        expect(store).not_to be_valid
+        expect(store.errors[:customer_support_email]).to be_present
+      end
+    end
   end
 
   context 'Translations' do

@@ -142,6 +142,7 @@ module Spree
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
     validates :mail_from_address, email: { allow_blank: false }
+    validates :customer_support_email, email: { allow_blank: true }
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
        connected? &&
