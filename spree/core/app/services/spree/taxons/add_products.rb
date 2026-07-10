@@ -13,11 +13,11 @@ module Spree
 
         # build the params for the insert_all
         classifications_params = taxons.pluck(:id).flat_map do |taxon_id|
-          position = Spree::Classification.where(taxon_id: taxon_id).count
+          position = Spree::Classification.where(category_id: taxon_id).count
 
           products.pluck(:id).map do |product_id|
             {
-              taxon_id: taxon_id,
+              category_id: taxon_id,
               product_id: product_id,
               position: (position += 1),
               created_at: Time.current,
@@ -31,7 +31,6 @@ module Spree
         # update counter caches
         taxon_ids = taxons.pluck(:id)
         product_ids = products.pluck(:id)
-        taxon_ids.each { |id| Spree::Taxon.reset_counters(id, :classifications) }
         product_ids.each { |id| Spree::Product.reset_counters(id, :classifications) }
         # Recompute the descendant-inclusive products_count for the taxons and
         # their ancestors (bulk insert skips Classification callbacks).

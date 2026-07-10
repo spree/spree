@@ -142,7 +142,7 @@ module Spree
       def by_taxons(products)
         return products unless taxons?
 
-        products.joins(:classifications).where(Classification.table_name => { taxon_id: taxons })
+        products.joins(:classifications).where(Classification.table_name => { category_id: taxons })
       end
 
       def by_concat_taxons(products)
@@ -150,7 +150,7 @@ module Spree
 
         product_ids = Spree::Product.
                       joins(:classifications).
-                      where(Classification.table_name => { taxon_id: concat_taxons }).
+                      where(Classification.table_name => { category_id: concat_taxons }).
                       group("#{Spree::Product.table_name}.id").
                       having("COUNT(#{Spree::Product.table_name}.id) = ?", concat_taxons.length).
                       ids
@@ -165,7 +165,7 @@ module Spree
 
         return products if taxon_groups.empty?
 
-        taxonomies_products = products.joins(:classifications).where(Classification.table_name => { taxon_id: taxon_groups.flatten.uniq })
+        taxonomies_products = products.joins(:classifications).where(Classification.table_name => { category_id: taxon_groups.flatten.uniq })
 
         # No need to filter if there is only one taxonomy
         return taxonomies_products if taxonomies.size == 1

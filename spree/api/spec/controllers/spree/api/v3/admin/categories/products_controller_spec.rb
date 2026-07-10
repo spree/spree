@@ -10,7 +10,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
   before { request.headers.merge!(headers) }
 
   def classified_ids
-    Spree::Classification.where(taxon_id: category.id).order(:position).pluck(:product_id)
+    Spree::Classification.where(category_id: category.id).order(:position).pluck(:product_id)
   end
 
   describe 'GET #index' do

@@ -144,8 +144,7 @@ module Spree
     after_save :reset_nested_changes
     after_touch :touch_taxons
 
-    after_commit :auto_match_taxons, if: :eligible_for_taxon_matching?
-    after_commit :auto_match_collections, if: :eligible_for_taxon_matching?
+    after_commit :auto_match_collections, if: :eligible_for_collection_matching?
 
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
@@ -327,16 +326,16 @@ module Spree
       after_transition to: :draft, do: [:after_draft, :send_product_drafted_webhook]
     end
 
-    def self.bulk_auto_match_taxons(store, product_ids)
-      return if store.taxons.automatic.none?
+    def self.bulk_auto_match_collections(store, product_ids)
+      return if store.collections.automatic.none?
 
       products_to_auto_match_ids = store.products.not_deleted.not_archived.where(id: product_ids).ids
 
-      auto_match_taxons_jobs = products_to_auto_match_ids.map do |product_id|
-        Spree::Products::AutoMatchTaxonsJob.new(product_id).tap { |job| job.scheduled_at = 30.seconds.from_now }
+      auto_match_collections_jobs = products_to_auto_match_ids.map do |product_id|
+        Spree::Products::AutoMatchCollectionsJob.new(product_id).tap { |job| job.scheduled_at = 30.seconds.from_now }
       end
 
-      ActiveJob.perform_all_later(auto_match_taxons_jobs)
+      ActiveJob.perform_all_later(auto_match_collections_jobs)
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
@@ -616,7 +615,7 @@ module Spree
     # Returns the brand taxon for the product
     # @return [Spree::Taxon]
     def brand_taxon
-      @brand_taxon ||= if classification_count.zero?
+      @brand_taxon ||= if categories_count.zero?
                          nil
                        elsif Spree.use_translations?
                          taxons.joins(:taxonomy).
@@ -636,7 +635,7 @@ module Spree
     end
 
     def main_taxon
-      return if classification_count.zero?
+      return if categories_count.zero?
 
       @main_taxon ||= taxons.first
     end
@@ -649,7 +648,7 @@ module Spree
     end
 
     def taxons_for_store(store)
-      return if classification_count.zero?
+      return if categories_count.zero?
 
       taxons.loaded? ? taxons.find_all { |taxon| taxon.taxonomy.store_id == store.id } : taxons.for_store(store)
     end
@@ -669,14 +668,6 @@ module Spree
     # @return [Boolean]
     def digital?
       @digital ||= shipping_category&.includes_digital_shipping_method?
-    end
-
-    def auto_match_taxons
-      return if deleted?
-      return if archived?
-      return if store.nil? || store.taxons.automatic.none?
-
-      Spree::Products::AutoMatchTaxonsJob.set(wait: 30.seconds).perform_later(id)
     end
 
     def auto_match_collections
@@ -1024,7 +1015,7 @@ module Spree
       true
     end
 
-    def eligible_for_taxon_matching?
+    def eligible_for_collection_matching?
       previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
     end
 

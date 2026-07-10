@@ -1427,55 +1427,6 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(category.reload.updated_at).to be > category_old_updated_at
     end
 
-    # Legacy spec coverage: `bulk_auto_match_taxons` only enqueues jobs for
-    # products that are non-deleted and non-archived. Two active products
-    # should fire two jobs; archived + soft-deleted siblings are skipped.
-    describe 'auto matching taxons' do
-      let!(:active_a) { create(:product, status: :active) }
-      let!(:active_b) { create(:product, status: :active) }
-      let!(:archived) { create(:product, status: :archived) }
-      let!(:soft_deleted) { create(:product, status: :draft, deleted_at: Time.current) }
-
-      let(:bulk_ids) do
-        [active_a, active_b, archived, soft_deleted].map(&:prefixed_id)
-      end
-
-      before { Spree::Taxon.delete_all }
-
-      context 'on a store with automatic taxons' do
-        let!(:auto_taxon) { create(:automatic_taxon) }
-        let!(:plain_taxon) { create(:taxon) }
-
-        it 'auto matches taxons in bulk only for live active products' do
-          expect do
-            post :bulk_add_to_categories, params: {
-              ids: bulk_ids,
-              category_ids: [plain_taxon.prefixed_id]
-            }, as: :json
-          end.to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
-            .on_queue(Spree.queues.taxons)
-            .exactly(:twice)
-
-          jobs = Spree::Products::AutoMatchTaxonsJob.queue_adapter.enqueued_jobs.last(2)
-          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
-            [active_a.id], [active_b.id]
-          )
-        end
-      end
-
-      context 'on a store without any automatic taxons' do
-        let!(:plain_taxon) { create(:taxon) }
-
-        it 'skips auto matching taxons' do
-          expect do
-            post :bulk_add_to_categories, params: {
-              ids: bulk_ids,
-              category_ids: [plain_taxon.prefixed_id]
-            }, as: :json
-          end.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
-        end
-      end
-    end
   end
 
   describe 'POST #bulk_remove_from_categories' do
@@ -1565,52 +1516,6 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(positions).to eq([1, 2])
     end
 
-    describe 'auto matching taxons' do
-      let!(:active_a) { create(:product, status: :active) }
-      let!(:active_b) { create(:product, status: :active) }
-      let!(:archived) { create(:product, status: :archived) }
-      let!(:soft_deleted) { create(:product, status: :draft, deleted_at: Time.current) }
-
-      let(:bulk_ids) do
-        [active_a, active_b, archived, soft_deleted].map(&:prefixed_id)
-      end
-
-      before { Spree::Taxon.delete_all }
-
-      context 'on a store with automatic taxons' do
-        let!(:auto_taxon) { create(:automatic_taxon) }
-        let!(:plain_taxon) { create(:taxon) }
-
-        it 'auto matches taxons in bulk only for live active products' do
-          expect do
-            post :bulk_remove_from_categories, params: {
-              ids: bulk_ids,
-              category_ids: [plain_taxon.prefixed_id]
-            }, as: :json
-          end.to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
-            .on_queue(Spree.queues.taxons)
-            .exactly(:twice)
-
-          jobs = Spree::Products::AutoMatchTaxonsJob.queue_adapter.enqueued_jobs.last(2)
-          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
-            [active_a.id], [active_b.id]
-          )
-        end
-      end
-
-      context 'on a store without any automatic taxons' do
-        let!(:plain_taxon) { create(:taxon) }
-
-        it 'skips auto matching taxons' do
-          expect do
-            post :bulk_remove_from_categories, params: {
-              ids: bulk_ids,
-              category_ids: [plain_taxon.prefixed_id]
-            }, as: :json
-          end.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
-        end
-      end
-    end
   end
 
   describe 'POST #bulk_add_to_channels' do
@@ -1705,6 +1610,43 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     let!(:second_product) { create(:product) }
 
     before { request.headers.merge!(headers) }
+
+    # Tag changes flip automatic-collection matches; after_bulk_tags_change kicks
+    # bulk_auto_match_collections, which enqueues one job per live (non-deleted,
+    # non-archived) product, and only when the store has automatic collections.
+    describe 'auto matching collections' do
+      let!(:active_a) { create(:product, status: :active) }
+      let!(:active_b) { create(:product, status: :active) }
+      let!(:archived) { create(:product, status: :archived) }
+      let!(:soft_deleted) { create(:product, status: :draft, deleted_at: Time.current) }
+
+      let(:bulk_ids) { [active_a, active_b, archived, soft_deleted].map(&:prefixed_id) }
+
+      context 'on a store with automatic collections' do
+        let!(:auto_collection) { create(:automatic_collection, store: store) }
+
+        it 'auto matches collections in bulk only for live active products' do
+          expect do
+            post :bulk_add_tags, params: { ids: bulk_ids, tags: ['summer'] }, as: :json
+          end.to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+            .on_queue(Spree.queues.collections)
+            .exactly(:twice)
+
+          jobs = Spree::Products::AutoMatchCollectionsJob.queue_adapter.enqueued_jobs.last(2)
+          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
+            [active_a.id], [active_b.id]
+          )
+        end
+      end
+
+      context 'on a store without any automatic collections' do
+        it 'skips auto matching collections' do
+          expect do
+            post :bulk_add_tags, params: { ids: bulk_ids, tags: ['summer'] }, as: :json
+          end.not_to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+        end
+      end
+    end
 
     it 'adds the listed tags to every listed product' do
       post :bulk_add_tags, params: {

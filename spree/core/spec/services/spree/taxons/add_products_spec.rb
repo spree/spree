@@ -38,14 +38,14 @@ module Spree
         expect(subject.value).to eq true
       end
 
-      it 'updates classification_count on taxons' do
-        expect { subject }.to change { taxons.first.reload.classification_count }.from(0).to(products.size)
-          .and change { taxons.second.reload.classification_count }.from(0).to(products.size)
+      it 'updates products_count on taxons' do
+        expect { subject }.to change { taxons.first.reload.products_count }.from(0).to(products.size)
+          .and change { taxons.second.reload.products_count }.from(0).to(products.size)
       end
 
-      it 'updates classification_count on products' do
-        expect { subject }.to change { products.first.reload.classification_count }.from(0).to(taxons.size)
-          .and change { products.second.reload.classification_count }.from(0).to(taxons.size)
+      it 'updates categories_count on products' do
+        expect { subject }.to change { products.first.reload.categories_count }.from(0).to(taxons.size)
+          .and change { products.second.reload.categories_count }.from(0).to(taxons.size)
       end
     end
   end

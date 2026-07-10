@@ -57,7 +57,7 @@ module Spree
             def scope
               product_scope.
                 joins(:classifications).
-                where(Spree::Classification.table_name => { taxon_id: @category.id }).
+                where(Spree::Classification.table_name => { category_id: @category.id }).
                 order(Spree::Classification.table_name => { position: :asc })
             end
 
@@ -88,7 +88,7 @@ module Spree
             end
 
             def classification_for(product)
-              Spree::Classification.find_by(taxon_id: @category.id, product_id: product.id)
+              Spree::Classification.find_by(category_id: @category.id, product_id: product.id)
             end
           end
         end

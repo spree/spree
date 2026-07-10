@@ -144,7 +144,7 @@ module Spree
       #   Spree::Product.in_taxon(taxon).count(distinct: true)
       scope :in_taxon, ->(taxon) {
         joins(:classifications).
-          where("#{Classification.table_name}.taxon_id" => taxon.cached_self_and_descendants_ids).distinct
+          where("#{Classification.table_name}.category_id" => taxon.cached_self_and_descendants_ids).distinct
       }
 
       # Products in a category AND all its descendants.
@@ -171,7 +171,7 @@ module Spree
 
         taxon_ids = records.flat_map(&:cached_self_and_descendants_ids).uniq
 
-        joins(:classifications).where(Classification.table_name => { taxon_id: taxon_ids }).distinct
+        joins(:classifications).where(Classification.table_name => { category_id: taxon_ids }).distinct
       end
 
       # Products in a collection (flat — collections have no hierarchy).
@@ -194,7 +194,7 @@ module Spree
         min_position_sql = "MIN(#{Classification.table_name}.position)"
 
         joins(:classifications).
-          where(Classification.table_name => { taxon_id: taxon_ids }).
+          where(Classification.table_name => { category_id: taxon_ids }).
           select("#{Product.table_name}.*", "#{min_position_sql} AS min_taxon_position").
           group("#{Product.table_name}.id").
           order(Arel.sql("#{min_position_sql} ASC"))
@@ -441,7 +441,7 @@ module Spree
       # specifically avoid having an order for taxon search (conflicts with main order)
       def self.prepare_taxon_conditions(taxons)
         ids = taxons.map(&:cached_self_and_descendants_ids).flatten.uniq
-        joins(:classifications).where(Classification.table_name => { taxon_id: ids })
+        joins(:classifications).where(Classification.table_name => { category_id: ids })
       end
       private_class_method :prepare_taxon_conditions
 

@@ -170,7 +170,7 @@ RSpec.describe Spree::Category, type: :model do
       add(create(:product, stores: [store]), phones)
 
       expect(phones.reload.products_count).to eq(1)
-      expect(phones.reload.classification_count).to eq(1)
+      expect(phones.classifications.count).to eq(1) # direct
     end
 
     it 'rolls subcategory products up to ancestors' do
@@ -178,7 +178,7 @@ RSpec.describe Spree::Category, type: :model do
       add(create(:product, stores: [store]), laptops)
 
       expect(electronics.reload.products_count).to eq(2) # inclusive
-      expect(electronics.reload.classification_count).to eq(0) # nothing direct
+      expect(electronics.classifications.count).to eq(0) # nothing direct
       expect(phones.reload.products_count).to eq(1)
       expect(laptops.reload.products_count).to eq(1)
     end

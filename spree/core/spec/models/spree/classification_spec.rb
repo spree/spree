@@ -95,45 +95,49 @@ module Spree
       let(:taxon) { create(:taxon) }
       let(:product) { create(:product) }
 
-      describe 'classification_count on taxon' do
+      # The direct taxon-side classification_count was dropped in 6.0; the taxon
+      # now tracks membership via the descendant-inclusive products_count, kept in
+      # sync by the Classification create/destroy callbacks (a leaf taxon's
+      # products_count equals its direct count).
+      describe 'products_count on taxon' do
         it 'increments when a classification is created' do
           expect {
             create(:classification, taxon: taxon, product: product)
-          }.to change { taxon.reload.classification_count }.from(0).to(1)
+          }.to change { taxon.reload.products_count }.from(0).to(1)
         end
 
         it 'decrements when a classification is destroyed' do
           classification = create(:classification, taxon: taxon, product: product)
           expect {
             classification.destroy
-          }.to change { taxon.reload.classification_count }.from(1).to(0)
+          }.to change { taxon.reload.products_count }.from(1).to(0)
         end
 
         it 'correctly counts multiple classifications' do
           products = create_list(:product, 3)
           products.each { |p| create(:classification, taxon: taxon, product: p) }
-          expect(taxon.reload.classification_count).to eq(3)
+          expect(taxon.reload.products_count).to eq(3)
         end
       end
 
-      describe 'classification_count on product' do
+      describe 'categories_count on product' do
         it 'increments when a classification is created' do
           expect {
             create(:classification, taxon: taxon, product: product)
-          }.to change { product.reload.classification_count }.from(0).to(1)
+          }.to change { product.reload.categories_count }.from(0).to(1)
         end
 
         it 'decrements when a classification is destroyed' do
           classification = create(:classification, taxon: taxon, product: product)
           expect {
             classification.destroy
-          }.to change { product.reload.classification_count }.from(1).to(0)
+          }.to change { product.reload.categories_count }.from(1).to(0)
         end
 
         it 'correctly counts multiple classifications' do
           taxons = create_list(:taxon, 3)
           taxons.each { |t| create(:classification, taxon: t, product: product) }
-          expect(product.reload.classification_count).to eq(3)
+          expect(product.reload.categories_count).to eq(3)
         end
       end
     end

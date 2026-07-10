@@ -4,6 +4,11 @@ require 'stringex'
 
 module Spree
   class Taxon < Spree.base_class
+    # Phase 2 transitional: the table was renamed to spree_categories (the class
+    # rename to Spree::Category is Phase 4). Point the model at the renamed table
+    # so the app and the Phase 3 data migration work in the interim state.
+    self.table_name = 'spree_categories'
+
     include Spree::SingleStoreResource
 
     has_prefix_id :ctg
@@ -149,14 +154,18 @@ module Spree
     #
     self.whitelisted_ransackable_associations = %w[taxonomy parent]
     self.whitelisted_ransackable_attributes = %w[name permalink automatic depth is_root children_count
-                                                 classification_count products_count pretty_name hide_from_nav parent_id]
+                                                 products_count pretty_name hide_from_nav parent_id]
 
     #
     # Translations
     #
     TRANSLATABLE_FIELDS = %i[name pretty_name description permalink].freeze
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+    # Phase 2 transitional: table_name is now spree_categories, but the Mobility
+    # translation table + FK are NOT renamed until Phase 4. Pin them so Mobility
+    # doesn't derive spree_category_translations/spree_category_id from table_name.
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?,
+               table_name: 'spree_taxon_translations', foreign_key: 'spree_taxon_id')
 
     #
     # Action Text
@@ -175,9 +184,6 @@ module Spree
 
     scope :manual, -> { where.not(automatic: true) }
     scope :automatic, -> { where(automatic: true) }
-
-    after_commit :regenerate_taxon_products, on: [:update], if: -> { automatic? && saved_change_to_rules_match_policy? }
-    attribute :marked_for_regenerate_taxon_products, :boolean, default: true
 
     def manual?
       !automatic?
@@ -205,7 +211,7 @@ module Spree
                                                  .active
                                                  .where(
                                                    Spree::Classification.table_name => {
-                                                     taxon_id: descendants.ids + [id]
+                                                     category_id: descendants.ids + [id]
                                                    }
                                                  )
     end
@@ -224,7 +230,7 @@ module Spree
       affected = changed.flat_map { |taxon| taxon.self_and_ancestors.to_a }.uniq(&:id)
 
       affected.each do |taxon|
-        count = Spree::Classification.where(taxon_id: taxon.self_and_descendants.select(:id))
+        count = Spree::Classification.where(category_id: taxon.self_and_descendants.select(:id))
                                      .distinct.count(:product_id)
         taxon.update_column(:products_count, count) if taxon.products_count != count
       end
@@ -263,16 +269,6 @@ module Spree
       end
 
       products
-    end
-
-    # we need to create a new taxon product (classification) record for each product that matches the rules
-    # so we can later use them for product filtering and so on
-    # if we want to fire the service once during object lifecycle - pass only_once: true
-    def regenerate_taxon_products(only_once: false)
-      return unless marked_for_regenerate_taxon_products?
-
-      Spree::Taxons::RegenerateProducts.call(taxon: self)
-      self.marked_for_regenerate_taxon_products = false if !frozen? && only_once
     end
 
     def slug
@@ -474,7 +470,7 @@ module Spree
       doomed_ids = self_and_descendants.ids
       ancestors.each do |ancestor|
         remaining = Spree::Classification.
-                    where(taxon_id: ancestor.self_and_descendants.where.not(id: doomed_ids).select(:id)).
+                    where(category_id: ancestor.self_and_descendants.where.not(id: doomed_ids).select(:id)).
                     distinct.count(:product_id)
         ancestor.update_column(:products_count, remaining) if ancestor.products_count != remaining
       end

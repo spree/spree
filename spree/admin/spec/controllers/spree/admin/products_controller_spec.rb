@@ -65,7 +65,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
           'q' => {
             'status_eq' => 'active',
             'search' => 'anchor',
-            'classifications_taxon_id_in' => ['8b03b40e-094f-4803-8704-20ac02f9c167', '42e63c13-dbe7-483f-8237-3b0207145fed'],
+            'classifications_category_id_in' => ['8b03b40e-094f-4803-8704-20ac02f9c167', '42e63c13-dbe7-483f-8237-3b0207145fed'],
             'shipping_category_id_eq' => '8b03b40e-094f-4803-8704-20ac02f9c167',
             'tags_name_in' => ['awesome'],
             'deleted_at_null' => '1',
@@ -1483,8 +1483,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
       expect(product2.reload.classifications.last.position).to eq(1)
 
-      expect(product4.reload.classifications.find_by(taxon_id: category.id).position).to eq(2)
-      expect(product4.reload.classifications.find_by(taxon_id: category2.id).position).to eq(1)
+      expect(product4.reload.classifications.find_by(category_id: category.id).position).to eq(2)
+      expect(product4.reload.classifications.find_by(category_id: category2.id).position).to eq(1)
     end
 
     context 'for empty list of taxons and products' do
@@ -1499,7 +1499,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
-    describe 'auto matching taxons' do
+    describe 'auto matching taxons', skip: 'Legacy admin: taxon auto-matching removed in 6.0 (rule-based membership moved to Collections; admin being replaced by the SPA)' do
       let(:product_ids) { [product, product2, product3, product4].pluck(:id) }
 
       let!(:product) { create(:product, status: :active) }
@@ -1600,7 +1600,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
-    describe 'auto matching taxons' do
+    describe 'auto matching taxons', skip: 'Legacy admin: taxon auto-matching removed in 6.0 (rule-based membership moved to Collections; admin being replaced by the SPA)' do
       let(:product_ids) { [product, product2, product3, product4].pluck(:id) }
 
       let!(:product3) { create(:product, status: :archived) }

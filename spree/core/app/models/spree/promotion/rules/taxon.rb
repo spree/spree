@@ -76,7 +76,7 @@ module Spree
         end
 
         def actionable?(line_item)
-          Spree::Classification.where(taxon_id: eligible_taxon_ids_including_children, product_id: line_item.product_id).exists?
+          Spree::Classification.where(category_id: eligible_taxon_ids_including_children, product_id: line_item.product_id).exists?
         end
 
         def taxon_ids_string
@@ -108,7 +108,7 @@ module Spree
         # IDs of taxons in order that match rule taxons (or their children), plus all ancestors
         def taxon_ids_in_order_including_ancestors(order)
           # Get taxon IDs from order products that are within rule taxons or their children
-          order_taxon_ids = Spree::Classification.where(product_id: order.product_ids, taxon_id: eligible_taxon_ids_including_children).pluck(:taxon_id).uniq
+          order_taxon_ids = Spree::Classification.where(product_id: order.product_ids, category_id: eligible_taxon_ids_including_children).pluck(:category_id).uniq
 
           return [] if order_taxon_ids.empty?
 

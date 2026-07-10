@@ -16,16 +16,16 @@ module Spree
 
         ApplicationRecord.transaction do
           taxon_ids.each do |taxon_id|
-            Spree::Classification.where(taxon_id: taxon_id, product_id: product_ids).delete_all
+            Spree::Classification.where(category_id: taxon_id, product_id: product_ids).delete_all
           end
 
           classifications_params = taxon_ids.flat_map do |taxon_id|
             position = 0
-            existing_product_ids = Spree::Classification.where(taxon_id: taxon_id).pluck(:product_id)
+            existing_product_ids = Spree::Classification.where(category_id: taxon_id).pluck(:product_id)
 
             existing_product_ids.map do |product_id|
               {
-                taxon_id: taxon_id,
+                category_id: taxon_id,
                 product_id: product_id,
                 position: (position += 1),
                 created_at: Time.current,
@@ -36,7 +36,7 @@ module Spree
 
           if classifications_params.any?
             opts = {}
-            opts[:unique_by] = :index_spree_products_taxons_on_product_id_and_taxon_id unless mysql_adapter?
+            opts[:unique_by] = %i[product_id category_id] unless mysql_adapter?
 
             Spree::Classification.upsert_all(
               classifications_params,
@@ -46,7 +46,6 @@ module Spree
         end
 
         # update counter caches
-        taxon_ids.each { |id| Spree::Taxon.reset_counters(id, :classifications) }
         product_ids.each { |id| Spree::Product.reset_counters(id, :classifications) }
         # Recompute the descendant-inclusive products_count for the taxons and
         # their ancestors (delete_all skips Classification callbacks).

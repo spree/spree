@@ -201,12 +201,11 @@ module Spree
             @search_provider ||= Spree::SearchProvider::Database.new(current_store)
           end
 
-          # Mirrors `Spree::Admin::ProductsController#after_bulk_tags_change`:
-          # tag changes can flip automatic-taxon matches, and `Tags::Bulk*`
+          # Tag changes can flip automatic-collection matches, and `Tags::Bulk*`
           # touch records via `touch_all` (which skips `after_commit`), so the
           # search index needs an explicit kick.
           def after_bulk_tags_change
-            Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
+            Spree::Product.bulk_auto_match_collections(current_store, bulk_collection.ids)
             bulk_collection.each(&:enqueue_search_index)
           end
 
@@ -222,7 +221,6 @@ module Spree
                          accessible_by(current_ability, :update).where(id: category_ids)
 
             service.call(taxons: categories, products: bulk_collection)
-            Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
 
             render json: { product_count: bulk_collection.size, category_count: categories.size }
           end

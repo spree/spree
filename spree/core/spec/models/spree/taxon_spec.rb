@@ -162,52 +162,6 @@ describe Spree::Taxon, type: :model do
     end
   end
 
-  describe 'callbacks' do
-    describe 'regenerate_taxon_products' do
-      let!(:taxon) { create(:automatic_taxon) }
-
-      before { taxon.reload }
-
-      context "when taxon's rules_match_policy changes" do
-        it 'calls #regenerate_taxon_products' do
-          expect(taxon).to receive(:regenerate_taxon_products).and_call_original
-
-          taxon.update!(rules_match_policy: :any)
-        end
-      end
-
-      context 'when taxon\'s rule changes' do
-        let!(:tag_rule) { create(:tag_taxon_rule, taxon: taxon, value: 'tag') }
-
-        it 'calls #regenerate_taxon_products' do
-          tag_rule.reload
-          expect(tag_rule).to receive(:regenerate_taxon_products).and_call_original
-
-          tag_rule.update!(value: 'new tag')
-        end
-      end
-
-      context 'when rule is destroyed' do
-        let!(:tag_rule) { create(:tag_taxon_rule, taxon: taxon, value: 'tag') }
-
-        it 'calls #regenerate_taxon_products' do
-          tag_rule.reload
-          expect(tag_rule).to receive(:regenerate_taxon_products).and_call_original
-
-          tag_rule.destroy!
-        end
-      end
-
-      context 'when rule is created' do
-        it 'calls #regenerate_taxon_products' do
-          expect(taxon).to receive(:regenerate_taxon_products).and_call_original
-
-          create(:tag_taxon_rule, taxon: taxon, value: 'tag')
-        end
-      end
-    end
-  end
-
   context 'when using another locale' do
     before do
       root_taxon = taxon.taxonomy.root
