@@ -12,7 +12,6 @@ module Spree
         mail(
           to: admin_user.email,
           from: from_address,
-          reply_to: reply_to_address,
           subject: "#{store.name} #{Spree.t('admin_user_mailer.password_reset_email.subject')}",
           store_url: store.formatted_url
         )
@@ -28,7 +27,6 @@ module Spree
         mail(
           to: admin_user.email,
           from: from_address,
-          reply_to: reply_to_address,
           subject: "#{store.name} #{Spree.t('admin_user_mailer.confirmation_email.subject')}",
           store_url: store.formatted_url
         )

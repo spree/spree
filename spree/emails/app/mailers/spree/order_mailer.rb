@@ -7,7 +7,7 @@ module Spree
       current_store = @order.store
       with_store_locale(current_store, @order.locale) do
         subject = order_email_subject(current_store, Spree.t('order_mailer.confirm_email.subject'), @order.number, resend: resend)
-        mail(to: @order.email, from: from_address, subject: subject, store_url: current_store.storefront_url, reply_to: reply_to_address)
+        mail(to: @order.email, from: from_address, subject: subject, store_url: current_store.storefront_url)
       end
     end
 
@@ -16,7 +16,7 @@ module Spree
       current_store = @order.store
       with_store_locale(current_store) do
         subject = Spree.t('order_mailer.store_owner_notification_email.subject', store_name: current_store.name)
-        mail(to: current_store.new_order_notifications_email, from: from_address, subject: subject, store_url: current_store.storefront_url, reply_to: reply_to_address)
+        mail(to: current_store.new_order_notifications_email, from: from_address, subject: subject, store_url: current_store.storefront_url)
       end
     end
 
@@ -25,7 +25,7 @@ module Spree
       current_store = @order.store
       with_store_locale(current_store, @order.locale) do
         subject = order_email_subject(current_store, Spree.t('order_mailer.cancel_email.subject'), @order.number, resend: resend)
-        mail(to: @order.email, from: from_address, subject: subject, store_url: current_store.storefront_url, reply_to: reply_to_address)
+        mail(to: @order.email, from: from_address, subject: subject, store_url: current_store.storefront_url)
       end
     end
 
@@ -36,7 +36,7 @@ module Spree
 
       with_store_locale(@current_store, @order.locale) do
         mail(to: @order.email, from: from_address, subject: Spree.t('order_mailer.payment_link_email.subject', number: @order.number),
-             store_url: @current_store.storefront_url, reply_to: reply_to_address)
+             store_url: @current_store.storefront_url)
       end
     end
   end

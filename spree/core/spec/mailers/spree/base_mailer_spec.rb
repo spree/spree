@@ -1,5 +1,11 @@
 require 'spec_helper'
 
+class ReplyToProbeMailer < Spree::BaseMailer
+  def sample
+    mail(to: 'probe@example.com', from: 'from@example.com', subject: 'probe', body: 'body')
+  end
+end
+
 describe Spree::BaseMailer, type: :mailer do
   let!(:store) { @default_store }
 
@@ -22,6 +28,36 @@ describe Spree::BaseMailer, type: :mailer do
       I18n.locale = :en
       mailer.set_email_locale
       expect(I18n.locale).to eq(:de)
+    end
+  end
+
+  describe '#reply_to_address' do
+    subject(:mailer) { described_class.new }
+
+    before { allow(mailer).to receive(:current_store).and_return(store) }
+
+    context 'when the store has a customer support email' do
+      let(:store) { create(:store, customer_support_email: 'support@example.com', mail_from_address: 'no-reply@example.com') }
+
+      it 'returns the customer support email' do
+        expect(mailer.reply_to_address).to eq('support@example.com')
+      end
+    end
+
+    context 'when the customer support email is blank' do
+      let(:store) { create(:store, customer_support_email: '', mail_from_address: 'no-reply@example.com') }
+
+      it 'falls back to the mail from address' do
+        expect(mailer.reply_to_address).to eq('no-reply@example.com')
+      end
+    end
+  end
+
+  describe 'default Reply-To header' do
+    let!(:store) { @default_store }
+
+    it 'is applied without the mailer passing reply_to explicitly' do
+      expect(ReplyToProbeMailer.sample.reply_to).to eq([store.customer_support_email])
     end
   end
 

@@ -41,11 +41,11 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   context ':reply_to not set explicitly' do
-    it 'uses store mail from address' do
+    it 'uses store customer support email' do
       message = described_class.confirm_email(order)
-      expect(message.reply_to).to eq([store.mail_from_address])
+      expect(message.reply_to).to eq([store.customer_support_email])
       message = described_class.cancel_email(order)
-      expect(message.reply_to).to eq([store.mail_from_address])
+      expect(message.reply_to).to eq([store.customer_support_email])
     end
   end
 

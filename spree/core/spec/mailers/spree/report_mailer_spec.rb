@@ -27,8 +27,8 @@ RSpec.describe Spree::ReportMailer, type: :mailer do
       expect(mail.from).to eq([store.mail_from_address])
     end
 
-    it 'sets reply-to as the store mail from address' do
-      expect(mail.reply_to).to eq([store.mail_from_address])
+    it 'sets reply-to as the store customer support email' do
+      expect(mail.reply_to).to eq([store.customer_support_email])
     end
 
     it 'includes download link in the body' do

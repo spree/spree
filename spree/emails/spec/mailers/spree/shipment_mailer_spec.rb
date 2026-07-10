@@ -22,9 +22,9 @@ describe Spree::ShipmentMailer, type: :mailer do
   end
 
   context ':reply_to not set explicitly' do
-    it 'falls back to store mail from address' do
+    it 'uses store customer support email' do
       message = described_class.shipped_email(shipment)
-      expect(message.reply_to).to eq([store.mail_from_address])
+      expect(message.reply_to).to eq([store.customer_support_email])
     end
   end
 
