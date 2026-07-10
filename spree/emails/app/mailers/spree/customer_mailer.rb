@@ -13,7 +13,6 @@ module Spree
         mail(
           to: user.email,
           from: from_address,
-          reply_to: reply_to_address,
           subject: "#{store.name} #{Spree.t('customer_mailer.password_reset_email.subject')}",
           store_url: store.storefront_url
         )
