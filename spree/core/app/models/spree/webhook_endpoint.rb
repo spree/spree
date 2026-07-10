@@ -117,6 +117,16 @@ module Spree
       disabled_at.present?
     end
 
+    # Rotate the secret key and return the new plaintext secret for display.
+    #
+    # @return [String] the new plaintext secret key
+    def rotate_secret!
+      regenerate_secret_key
+      @reveal_secret_in_response = true
+      save!
+      secret_key
+    end
+
     # Check if auto-disable threshold has been reached
     # and disable if so.
     def check_auto_disable!
@@ -143,6 +153,10 @@ module Spree
 
     def generate_secret_key
       self.secret_key ||= SecureRandom.hex(32)
+    end
+
+    def regenerate_secret_key
+      self.secret_key = SecureRandom.hex(32)
     end
 
     def clear_disabled_state_when_reactivated

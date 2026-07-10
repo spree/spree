@@ -63,6 +63,20 @@ IPv6: OFF
 
 Wygenerowano parę kluczy SSH w Oracle. Prywatny klucz ma pozostać wyłącznie lokalnie u właściciela — nie wolno go commitować, wklejać do chatu ani przekazywać agentom.
 
+## Dostęp SSH do serwera
+
+```text
+Host: 141.253.103.172
+User: ubuntu
+```
+
+Serwer stoi pod tym stałym publicznym IP (Oracle, region Paris, zob. wyżej). Adres jest tu udokumentowany, bo jest publiczny i tak wystarczy pingnąć/zeskanować, żeby go poznać — nie jest to sekret.
+
+Bezpieczeństwo dostępu opiera się wyłącznie na kluczu prywatnym SSH, nie na ukrywaniu IP:
+- Prywatny klucz **nigdy** nie trafia do repo, na czat ani do żadnego agenta w treści wiadomości.
+- Klucz jest przekazywany indywidualnie, lokalnie, wyłącznie wybranym, zaufanym osobom (i narzędziom działającym w ich imieniu na ich maszynie).
+- Jeśli klucz wycieknie lub trzeba komuś odebrać dostęp: wygenerować nową parę kluczy w Oracle Console, zaktualizować `~/.ssh/authorized_keys` na serwerze i unieważnić stary klucz.
+
 ## Decyzja o shape VM
 
 Pierwotny plan zakładał darmowy Oracle Always Free Ampere A1:

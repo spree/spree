@@ -171,6 +171,7 @@ Spree::Core::Engine.add_routes do
             post :send_test
             patch :enable
             patch :disable
+            patch :rotate_secret
           end
           resources :deliveries, controller: 'webhook_deliveries', only: [:index, :show] do
             member do
@@ -232,6 +233,11 @@ Spree::Core::Engine.add_routes do
 
         # Tax Categories
         resources :tax_categories
+
+        # Shipping & Tax Configuration
+        resources :shipping_methods
+        resources :tax_rates
+        resources :zones
 
         # Markets
         resources :markets

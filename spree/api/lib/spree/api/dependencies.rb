@@ -194,7 +194,7 @@ module Spree
         admin_channel_serializer: 'Spree::Api::V3::Admin::ChannelSerializer',
         admin_product_publication_serializer: 'Spree::Api::V3::Admin::ProductPublicationSerializer',
         admin_market_serializer: 'Spree::Api::V3::Admin::MarketSerializer',
-        admin_shipping_method_serializer: 'Spree::Api::V3::Admin::DeliveryMethodSerializer',
+        admin_shipping_method_serializer: 'Spree::Api::V3::Admin::ShippingMethodSerializer',
         admin_delivery_method_serializer: 'Spree::Api::V3::Admin::DeliveryMethodSerializer',
         admin_stock_location_serializer: 'Spree::Api::V3::Admin::StockLocationSerializer',
         admin_stock_reservation_serializer: 'Spree::Api::V3::Admin::StockReservationSerializer',
@@ -222,6 +222,8 @@ module Spree
         admin_price_list_serializer: 'Spree::Api::V3::Admin::PriceListSerializer',
         admin_price_rule_serializer: 'Spree::Api::V3::Admin::PriceRuleSerializer',
         admin_resource_translations_serializer: 'Spree::Api::V3::Admin::ResourceTranslationsSerializer',
+        admin_tax_rate_serializer: 'Spree::Api::V3::Admin::TaxRateSerializer',
+        admin_zone_serializer: 'Spree::Api::V3::Admin::ZoneSerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

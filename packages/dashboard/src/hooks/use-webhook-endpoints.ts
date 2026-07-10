@@ -120,3 +120,13 @@ export function useRedeliverWebhookDelivery(endpointId: string) {
     errorMessage: i18n.t('admin.settings.webhooks.errors.redeliver_failed'),
   })
 }
+
+export function useRotateWebhookSecret() {
+  return useResourceMutation<WebhookEndpoint, Error, string>({
+    mutationFn: (id) =>
+      adminClient.request('PATCH', `/webhook_endpoints/${id}/rotate_secret`),
+    invalidate: [['webhook-endpoints']],
+    successMessage: i18n.t('admin.settings.webhooks.messages.secret_rotated'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}

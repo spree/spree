@@ -26,6 +26,8 @@ export const Subject = {
   CustomFieldDefinition: 'Spree::MetafieldDefinition',
   PaymentMethod: 'Spree::PaymentMethod',
   ShippingMethod: 'Spree::ShippingMethod',
+  TaxRate: 'Spree::TaxRate',
+  Zone: 'Spree::Zone',
   StockLocation: 'Spree::StockLocation',
   StockItem: 'Spree::StockItem',
   StockTransfer: 'Spree::StockTransfer',

@@ -126,4 +126,27 @@ nav.add({
   subject: Subject.Store,
   section: 'bottom',
   position: 100,
+  children: [
+    {
+      key: 'settings.shipping-methods',
+      label: i18n.t('admin.nav.shipping_methods'),
+      path: '/settings/shipping-methods',
+      subject: Subject.ShippingMethod,
+      position: 100,
+    },
+    {
+      key: 'settings.tax-rates',
+      label: i18n.t('admin.nav.tax_rates'),
+      path: '/settings/tax-rates',
+      subject: Subject.TaxRate,
+      position: 200,
+    },
+    {
+      key: 'settings.zones',
+      label: i18n.t('admin.nav.zones'),
+      path: '/settings/zones',
+      subject: Subject.Zone,
+      position: 300,
+    },
+  ],
 })
