@@ -322,11 +322,11 @@ module Spree
   end
 
   # Registry of the Getting Started onboarding tasks shown on the admin
-  # dashboard. See {Spree::Stores::SetupTasks} for the extension API.
+  # dashboard. See {Spree::SetupTasks} for the extension API.
   #
-  # @return [Spree::Stores::SetupTasks]
+  # @return [Spree::SetupTasks]
   def self.store_setup_tasks
-    @store_setup_tasks ||= Spree::Stores::SetupTasks.new
+    @store_setup_tasks ||= Spree::SetupTasks.new
   end
 
   def self.translatable_resources

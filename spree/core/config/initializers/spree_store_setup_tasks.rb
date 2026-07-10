@@ -1,5 +1,5 @@
 # Default Getting Started tasks shown on the admin dashboard.
-# See Spree::Stores::SetupTasks for how to add or remove tasks.
+# See Spree::SetupTasks for how to add or remove tasks.
 Rails.application.config.after_initialize do
   Spree.store_setup_tasks.add :setup_payment_method,
     position: 10,

@@ -7,6 +7,16 @@ module Spree
         Spree.store_setup_tasks.find(task)&.done?(self)
       end
 
+      # The evaluated Getting Started checklist for this store, in display
+      # order — what the Admin API serializes.
+      #
+      # @return [Array<Spree::SetupTask>]
+      def setup_tasks
+        Spree.store_setup_tasks.for(self).map do |task|
+          Spree::SetupTask.new(name: task.key.to_s, done: task.done?(self))
+        end
+      end
+
       def setup_tasks_total
         @setup_tasks_total = setup_tasks_list.count
       end

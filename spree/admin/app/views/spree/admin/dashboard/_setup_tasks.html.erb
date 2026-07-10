@@ -14,13 +14,13 @@
            tabindex="0"
            data-action="click->reveal#toggle keydown.enter->reveal#toggle keydown.space->reveal#toggle">
         <%= onboarding_check_circle(done) %>
-        <span class="ml-6 font-medium"><%= Spree.t(item.label_key) %></span>
+        <span class="ml-6 font-medium"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
         <%= icon('chevron-right', class: 'arrow ms-auto transition-transform duration-200') %>
       </div>
       <div data-reveal-target="item" class="collapsible-content <%= 'is-collapsed' unless is_expanded %>">
         <div>
           <div class="card-body flex flex-col gap-3">
-            <%= render item.partial, done: done %>
+            <%= render "spree/admin/dashboard/setup_tasks/#{task}", done: done %>
           </div>
         </div>
       </div>

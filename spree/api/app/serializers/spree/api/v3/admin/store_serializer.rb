@@ -40,6 +40,11 @@ module Spree
 
           attribute :url, &:storefront_url
 
+          # The Getting Started checklist in display order. Task names map to
+          # frontend copy/components by convention.
+          many :setup_tasks,
+               resource: proc { Spree.api.admin_setup_task_serializer }
+
           attribute :supported_currencies do |store|
             store.supported_currencies_list.map(&:iso_code)
           end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Stores::SetupTasks do
+describe Spree::SetupTasks do
   subject(:registry) { described_class.new }
 
   let(:store) { build(:store) }
@@ -54,21 +54,6 @@ describe Spree::Stores::SetupTasks do
   end
 
   describe 'Task' do
-    it 'defaults the partial and label to the key conventions' do
-      task = registry.add :connect_erp, position: 10, done: ->(_store) { true }
-
-      expect(task.partial).to eq('spree/admin/dashboard/setup_tasks/connect_erp')
-      expect(task.label_key).to eq('admin.store_setup_tasks.connect_erp')
-    end
-
-    it 'honors partial and label overrides' do
-      task = registry.add :connect_erp, position: 10, done: ->(_store) { true },
-                          partial: 'my_app/tasks/erp', label: 'my_app.tasks.erp'
-
-      expect(task.partial).to eq('my_app/tasks/erp')
-      expect(task.label_key).to eq('my_app.tasks.erp')
-    end
-
     it 'evaluates done? against the given store' do
       task = registry.add :named, position: 10, done: ->(s) { s.name == 'Ready' }
 
