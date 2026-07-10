@@ -206,6 +206,9 @@ module Spree
       cost + promo_total
     end
     alias discounted_amount discounted_cost
+    # whole-order promotions are not allocated to shipments; the taxable
+    # basis of a shipment is simply its discounted cost
+    alias taxable_basis discounted_cost
 
     def final_price
       cost + adjustment_total
