@@ -1,4 +1,4 @@
-import type { StoreUpdateParams } from '@spree/admin-sdk'
+import { SpreeError, type StoreUpdateParams } from '@spree/admin-sdk'
 import {
   adminClient,
   STORE_QUERY_RESOURCE,
@@ -27,9 +27,7 @@ export function useUpdateStoreSettings() {
 
 /**
  * Saves the storefront URL and allows its origin in one step — the action
- * that completes the `setup_storefront` task. The origin registration is
- * best-effort: it may already be allowed, and the URL preference is what
- * completes setup.
+ * that completes the `setup_storefront` task.
  */
 export function useConnectStorefront() {
   return useResourceMutation<string, Error, string>({
@@ -37,8 +35,11 @@ export function useConnectStorefront() {
       await adminClient.store.update({ preferred_storefront_url: origin })
       try {
         await adminClient.allowedOrigins.create({ origin })
-      } catch {
-        // duplicate origin — already allowed
+      } catch (error) {
+        // A 422 means the origin is already allowed — fine. Anything else
+        // (network, permissions, 5xx) must surface: the setup would look
+        // complete while browser storefronts still can't call the Store API.
+        if (!(error instanceof SpreeError) || error.status !== 422) throw error
       }
       return origin
     },

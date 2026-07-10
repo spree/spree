@@ -21,7 +21,9 @@ const TASK_LINKS: Record<string, string> = {
   setup_payment_method: '/$storeId/settings/payment-methods',
   add_products: '/$storeId/products',
   set_customer_support_email: '/$storeId/settings/emails',
-  setup_taxes_collection: '/$storeId/settings/tax-categories',
+  // setup_taxes_collection has no CTA yet: the task completes on a TaxRate
+  // existing, and the dashboard has no tax-rates surface to deep-link — add
+  // one here when that settings page lands.
 }
 
 export const Route = createFileRoute('/_authenticated/$storeId/getting-started')({
