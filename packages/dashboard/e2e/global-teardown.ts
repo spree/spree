@@ -1,7 +1,13 @@
 import { readFileSync, unlinkSync } from 'node:fs'
-import { RAILS_PID_FILE } from './paths'
+import { ASYNC_JOBS_INITIALIZER, RAILS_PID_FILE } from './paths'
 
 export default async function globalTeardown() {
+  try {
+    unlinkSync(ASYNC_JOBS_INITIALIZER)
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e
+  }
+
   let pid: number
   try {
     pid = Number.parseInt(readFileSync(RAILS_PID_FILE, 'utf-8'), 10)
