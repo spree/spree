@@ -56,7 +56,8 @@
       "promotions": "Promotions",
       "gift_cards": "Cartes cadeaux",
       "reports": "Rapports",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "getting_started": "Premiers pas"
     },
     "settings_nav": {
       "groups": {
@@ -2536,6 +2537,38 @@
         "no_matches": "Aucun produit ne correspond au filtre."
       },
       "load_failed": "Échec du chargement des catégories. Veuillez réessayer."
+    },
+    "getting_started": {
+      "title": "Premiers pas",
+      "description": "Terminez ces étapes pour lancer votre boutique.",
+      "progress": "{{done}} sur {{total}} terminées",
+      "tasks": {
+        "setup_payment_method": {
+          "title": "Configurer les moyens de paiement",
+          "description": "Pour encaisser des paiements, configurez au moins un prestataire de paiement en ligne.",
+          "cta": "Configurer les paiements"
+        },
+        "add_products": {
+          "title": "Ajouter des produits",
+          "description": "Ajoutez des produits à votre boutique — les vôtres, ou invitez des vendeurs tiers à vendre avec vous.",
+          "cta": "Ajouter des produits"
+        },
+        "set_customer_support_email": {
+          "title": "Définir l'e-mail du support client",
+          "description": "Affiché sur votre boutique comme point de contact pour les questions et le support client.",
+          "cta": "Paramètres e-mail"
+        },
+        "setup_taxes_collection": {
+          "title": "Configurer la collecte des taxes",
+          "description": "Pour collecter les taxes, configurez vos taux de taxe.",
+          "cta": "Paramètres des taxes"
+        },
+        "setup_storefront": {
+          "title": "Configurer la boutique",
+          "description": "Connectez votre boutique web ou votre application mobile avec vos identifiants Store API et enregistrez l'URL de votre boutique.",
+          "cta": "Paramètres de la boutique"
+        }
+      }
     }
   }
 }

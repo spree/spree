@@ -3,11 +3,20 @@ import {
   BarChart3Icon,
   HomeIcon,
   InboxIcon,
+  MapIcon,
   PackageIcon,
   SettingsIcon,
   TagIcon,
   UsersIcon,
 } from 'lucide-react'
+
+nav.add({
+  key: 'getting-started',
+  label: i18n.t('admin.nav.getting_started'),
+  path: '/getting-started',
+  icon: MapIcon,
+  position: 50,
+})
 
 nav.add({
   key: 'home',

@@ -104,7 +104,8 @@
       "promotions": "Promotions",
       "gift_cards": "Gift Cards",
       "reports": "Reports",
-      "settings": "Settings"
+      "settings": "Settings",
+      "getting_started": "Getting Started"
     },
     "settings_nav": {
       "groups": {
@@ -2536,6 +2537,38 @@
         "no_matches": "No products match your filter."
       },
       "load_failed": "Failed to load categories. Please try again."
+    },
+    "getting_started": {
+      "title": "Getting Started",
+      "description": "Finish these steps to launch your store.",
+      "progress": "{{done}} of {{total}} completed",
+      "tasks": {
+        "setup_payment_method": {
+          "title": "Set up payment methods",
+          "description": "To collect payments, set up at least one online payment provider.",
+          "cta": "Set up payment methods"
+        },
+        "add_products": {
+          "title": "Add products",
+          "description": "Add products to your store — your own, or invite third-party vendors to sell together.",
+          "cta": "Add products"
+        },
+        "set_customer_support_email": {
+          "title": "Set customer support email",
+          "description": "Shown on your storefront as the contact point for customer questions and support.",
+          "cta": "Email settings"
+        },
+        "setup_taxes_collection": {
+          "title": "Set up taxes collection",
+          "description": "To collect taxes, set up your tax rates.",
+          "cta": "Tax settings"
+        },
+        "setup_storefront": {
+          "title": "Set up storefront",
+          "description": "Connect your web storefront or mobile app with your Store API credentials, and save your storefront URL.",
+          "cta": "Store settings"
+        }
+      }
     }
   }
 }

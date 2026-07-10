@@ -104,7 +104,8 @@
       "promotions": "促销",
       "gift_cards": "礼品卡",
       "reports": "报表",
-      "settings": "设置"
+      "settings": "设置",
+      "getting_started": "快速入门"
     },
     "settings_nav": {
       "groups": {
@@ -2536,6 +2537,38 @@
         "no_matches": "没有商品匹配筛选条件。"
       },
       "load_failed": "加载分类失败。请重试。"
+    },
+    "getting_started": {
+      "title": "快速入门",
+      "description": "完成这些步骤即可上线您的店铺。",
+      "progress": "已完成 {{done}}/{{total}}",
+      "tasks": {
+        "setup_payment_method": {
+          "title": "设置支付方式",
+          "description": "要收款，请至少设置一个在线支付服务商。",
+          "cta": "设置支付方式"
+        },
+        "add_products": {
+          "title": "添加商品",
+          "description": "为您的店铺添加商品——您自己的商品，或邀请第三方卖家共同销售。",
+          "cta": "添加商品"
+        },
+        "set_customer_support_email": {
+          "title": "设置客服邮箱",
+          "description": "显示在店铺前台，作为客户咨询和支持的联系方式。",
+          "cta": "邮件设置"
+        },
+        "setup_taxes_collection": {
+          "title": "设置税费",
+          "description": "要收取税费，请设置您的税率。",
+          "cta": "税费设置"
+        },
+        "setup_storefront": {
+          "title": "设置店铺前台",
+          "description": "使用 Store API 凭据连接您的网页店铺前台或移动应用，并保存店铺前台 URL。",
+          "cta": "店铺设置"
+        }
+      }
     }
   }
 }
