@@ -999,5 +999,13 @@ describe Spree::Store, type: :model, without_global_store: true do
         end
       end
     end
+
+    it 'drops the memoized checklist on reload' do
+      expect(store.setup_tasks.find { |t| t.name == 'setup_storefront' }.done).to be false
+
+      store.update!(preferred_storefront_url: 'https://shop.example.com')
+
+      expect(store.reload.setup_tasks.find { |t| t.name == 'setup_storefront' }.done).to be true
+    end
   end
 end

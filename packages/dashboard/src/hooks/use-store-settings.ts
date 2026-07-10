@@ -32,15 +32,16 @@ export function useUpdateStoreSettings() {
 export function useConnectStorefront() {
   return useResourceMutation<string, Error, string>({
     mutationFn: async (origin) => {
-      await adminClient.store.update({ preferred_storefront_url: origin })
+      // Origin first: it's idempotent (a 422 means already allowed), and if
+      // it fails hard nothing has been persisted yet — whereas saving the URL
+      // first and failing here would complete the setup task without CORS
+      // access AND skip the invalidation of the already-changed store.
       try {
         await adminClient.allowedOrigins.create({ origin })
       } catch (error) {
-        // A 422 means the origin is already allowed — fine. Anything else
-        // (network, permissions, 5xx) must surface: the setup would look
-        // complete while browser storefronts still can't call the Store API.
         if (!(error instanceof SpreeError) || error.status !== 422) throw error
       }
+      await adminClient.store.update({ preferred_storefront_url: origin })
       return origin
     },
     invalidate: [[STORE_QUERY_RESOURCE], ['allowed-origins']],

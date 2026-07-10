@@ -18,6 +18,14 @@ module Spree
         end
       end
 
+      # Drop the memoized checklist with the rest of the instance's state, so
+      # a mutate-then-rerender flow (e.g. a Turbo Stream update) can re-read
+      # completion within one request.
+      def reload(options = nil)
+        @setup_tasks = nil
+        super
+      end
+
       def setup_task_done?(task)
         setup_tasks.find { |t| t.name == task.to_s }&.done
       end
