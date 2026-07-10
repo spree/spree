@@ -21,7 +21,9 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     csv_row_headers.index_with { |header| attrs[header] }
   end
 
-  context 'when importing a master variant product row' do
+  context 'when importing a product row' do
+    let(:product) { subject.process! }
+
     let(:row_data) do
       csv_row_hash(
         'slug' => 'denim-shirt',
@@ -38,7 +40,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     it 'creates a product and sets correct attributes' do
-      product = variant.product
+      default_variant = product.default_variant
 
       expect(product).to be_persisted
       expect(product.slug).to eq 'denim-shirt'
@@ -46,13 +48,12 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(product.status).to eq 'draft'
       expect(product.description).to eq row_data['description']
       expect(product.store).to eq(store)
-      expect(product.master).to eq variant
-      expect(variant.sku).to be_blank
-      expect(variant.price_in('USD').amount.to_f).to eq 62.99
-      expect(variant.weight.to_f).to eq 0.0
-      expect(variant.stock_items.first.count_on_hand).to eq 100
-      expect(variant.stock_items.first.backorderable).to eq true
-      expect(variant.stock_items.first.stock_location).to eq store.default_stock_location
+      expect(default_variant.sku).to be_blank
+      expect(default_variant.price_in('USD').amount.to_f).to eq 62.99
+      expect(default_variant.weight.to_f).to eq 0.0
+      expect(default_variant.stock_items.first.count_on_hand).to eq 100
+      expect(default_variant.stock_items.first.backorderable).to eq true
+      expect(default_variant.stock_items.first.stock_location).to eq store.default_stock_location
     end
 
     it 'enqueues AssignTagsJob' do
@@ -64,8 +65,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     it 'publishes the product to the store default channel' do
-      product = variant.product
-
       expect(product.channels).to contain_exactly(store.default_channel)
     end
 
@@ -75,25 +74,23 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       before { store.channels.delete_all }
 
       it 'imports the product without publishing it to any channel' do
-        product = variant.product
-
         expect(product).to be_persisted
         expect(product.channels).to be_empty
       end
     end
 
-    context 'when updating an existing master variant' do
+    context 'when updating an existing product' do
       let!(:existing_product) { create(:product, slug: 'denim-shirt', name: 'Old Name') }
 
       before do
-        stock_item = existing_product.master.stock_items.find_or_initialize_by(stock_location: store.default_stock_location)
+        stock_item = existing_product.default_variant.stock_items.find_or_initialize_by(stock_location: store.default_stock_location)
         stock_item.count_on_hand = 50
         stock_item.backorderable = false
         stock_item.save!
       end
 
       it 'updates inventory_count and inventory_backorderable' do
-        stock_item = existing_product.master.stock_items.find_by(stock_location: store.default_stock_location)
+        stock_item = existing_product.default_variant.stock_items.find_by(stock_location: store.default_stock_location)
         expect(stock_item.count_on_hand).to eq 50
         expect(stock_item.backorderable).to eq false
 
@@ -389,7 +386,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
-  context 'with images on a master variant row (no options)' do
+  context 'with images on a product row (no options)' do
     let!(:product) do
       create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
     end
@@ -412,7 +409,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
-  context 'with images on a non-master variant row' do
+  context 'with images on a variant row' do
     let!(:product) do
       create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
     end
@@ -436,7 +433,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         .to have_enqueued_job(Spree::Images::SaveFromUrlJob).exactly(1).times
 
       created_variant = result
-      expect(created_variant).not_to be_is_master
+      expect(created_variant.option_values.map(&:presentation)).to contain_exactly('Blue')
       expect(Spree::Images::SaveFromUrlJob).to have_been_enqueued
         .with(product.id, 'Spree::Product', row_data['image1_src'], nil, nil, created_variant.id)
     end
@@ -507,7 +504,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
   context 'when importing a variant with all option columns empty' do
     let!(:product) do
-      create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt', sku: 'DENIM-SHIRT-PLAIN')
     end
 
     let(:row_data) do
@@ -519,8 +516,25 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       )
     end
 
-    it 'does not create a variant' do
-      expect { subject.process! }.to raise_error(ActiveRecord::RecordInvalid)
+    it 'updates the default variant instead of creating a new one' do
+      expect { subject.process! }.not_to change { product.reload.variants.count }
+      expect(product.default_variant.price_in('USD').amount).to eq(62.99)
+    end
+  end
+
+  context 'when importing a row with no sku and no options' do
+    let!(:product) { create(:product, slug: 'plain-tee', name: 'Plain Tee') }
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'plain-tee',
+        'weight' => '2.5'
+      )
+    end
+
+    it 'updates the default variant without creating a new one' do
+      expect { subject.process! }.not_to change { product.reload.variants.count }
+      expect(product.default_variant.reload.weight).to eq(2.5)
     end
   end
 
@@ -574,14 +588,12 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       )
     end
 
-    it 'creates a new product and assigns the variant as its master if no option1_name given' do
-      variant = subject.process!
-      product = variant.product
+    it 'creates a new product and assigns the SKU to its default variant if no option1_name given' do
+      product = subject.process!
 
       expect(product).to be_persisted
       expect(product.slug).to eq 'new-missing-shirt'
-      expect(product.master).to eq variant
-      expect(variant.sku).to eq 'NEW-MISSING-SHIRT-SKU'
+      expect(product.default_variant.sku).to eq 'NEW-MISSING-SHIRT-SKU'
     end
   end
 
@@ -624,6 +636,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       import.create_mappings
     end
 
+    let(:product) { subject.process! }
+
     it 'creates mappings for metafields automatically' do
       expect(import.mappings.where(schema_field: 'metafield.custom.brand').exists?).to be true
       expect(import.mappings.where(schema_field: 'metafield.custom.material').exists?).to be true
@@ -643,8 +657,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     it 'sets metafields on the product' do
-      product = variant.product
-
       expect(product).to be_persisted
       expect(product.has_metafield?('custom.brand')).to be true
       expect(product.has_metafield?('custom.material')).to be true
@@ -661,8 +673,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'updates existing metafields' do
-        product = variant.product
-
         expect(product.id).to eq existing_product.id
         expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
         expect(product.get_metafield('custom.material').value).to eq 'Cotton'
@@ -685,8 +695,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'skips blank metafield values' do
-        product = variant.product
-
         expect(product.has_metafield?('custom.brand')).to be true
         expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
         expect(product.has_metafield?('custom.material')).to be false
@@ -718,8 +726,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       it 'removes existing metafield when empty value is uploaded' do
         expect(existing_product.metafields.count).to eq 2
 
-        product = variant.product
-
         expect(product.id).to eq existing_product.id
         expect(product.has_metafield?('custom.brand')).to be true
         expect(product.get_metafield('custom.brand').value).to eq 'New Brand'
@@ -745,8 +751,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         it 'removes all existing metafields' do
           expect(existing_product.metafields.count).to eq 2
 
-          product = variant.product
-
           expect(product.id).to eq existing_product.id
           expect(product.has_metafield?('custom.brand')).to be false
           expect(product.has_metafield?('custom.material')).to be false
@@ -755,7 +759,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
     end
 
-    context 'when processing a non-master variant row' do
+    context 'when processing a variant row' do
       let!(:existing_product) do
         p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
         p.set_metafield('custom.brand', 'Awesome Brand')
@@ -794,6 +798,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
   end
 
   context 'when importing with shipping_category' do
+    let(:product) { subject.process! }
+
     context 'when shipping_category exists' do
       let!(:digital_category) { create(:shipping_category, name: 'Digital') }
 
@@ -809,7 +815,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'assigns the shipping category to the product' do
-        product = variant.product
         expect(product.shipping_category).to eq digital_category
       end
     end
@@ -827,7 +832,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'assigns the default shipping category' do
-        product = variant.product
         expect(product.shipping_category).to be_present
         expect(product.shipping_category.name).to eq 'Default'
       end
@@ -852,8 +856,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'updates the shipping category' do
-        product = variant.product
-
         expect(product.id).to eq existing_product.id
         expect(product.shipping_category).to eq digital_category
       end
@@ -871,8 +873,6 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'assigns the default shipping category' do
-        product = variant.product
-
         expect(product.shipping_category).to be_present
         expect(product.shipping_category.name).to eq 'Default'
       end
@@ -880,6 +880,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
   end
 
   context 'when importing with tax_category' do
+    let(:product) { subject.process! }
+
     context 'when tax_category exists' do
       let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
 
@@ -894,8 +896,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'assigns the tax category to the variant' do
-        expect(variant.tax_category).to eq clothing_tax
+      it 'assigns the tax category to the default variant' do
+        expect(product.default_variant.tax_category).to eq clothing_tax
       end
     end
 
@@ -912,7 +914,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'does not assign a tax category' do
-        expect(variant.tax_category).to be_nil
+        expect(product.default_variant.tax_category).to be_nil
       end
     end
 
@@ -921,7 +923,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
       let!(:existing_product) do
         p = create(:product, slug: 'product-to-update', name: 'Product')
-        p.master.update(tax_category: standard_tax)
+        p.default_variant.update(tax_category: standard_tax)
         p
       end
 
@@ -937,10 +939,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'updates the tax category' do
-        product = variant.product
-
         expect(product.id).to eq existing_product.id
-        expect(variant.tax_category).to eq clothing_tax
+        expect(product.default_variant.tax_category).to eq clothing_tax
       end
     end
 
@@ -956,11 +956,11 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'does not assign a tax category' do
-        expect(variant.tax_category).to be_nil
+        expect(product.default_variant.tax_category).to be_nil
       end
     end
 
-    context 'when importing a non-master variant with tax_category' do
+    context 'when importing an option variant with tax_category' do
       let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
       let!(:product) do
         p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
@@ -981,8 +981,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'assigns tax category to the non-master variant' do
-        expect(variant.is_master?).to be false
+      it 'assigns the tax category to the option variant' do
+        expect(variant.option_values.map(&:presentation)).to contain_exactly('Blue')
         expect(variant.tax_category).to eq clothing_tax
       end
     end

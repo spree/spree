@@ -21,7 +21,7 @@ describe 'spree:media:migrate_master_images_to_product_media' do
     let!(:product_with_variant_image) { create(:product) }
     let!(:variant)                    { create(:variant, product: product_with_variant_image) }
     let!(:clean_product)              { create(:product) }
-    let!(:master_image)  { create(:image, viewable: product_with_master_image.master) }
+    let!(:master_image)  { create(:image, viewable: product_with_master_image.default_variant) }
     let!(:variant_image) { create(:image, viewable: variant) }
 
     it 'enqueues a job for each product with variant-pinned assets' do

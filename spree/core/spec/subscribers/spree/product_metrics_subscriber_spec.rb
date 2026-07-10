@@ -25,8 +25,8 @@ RSpec.describe Spree::ProductMetricsSubscriber do
 
     let(:order) do
       create(:completed_order_with_totals, store: store).tap do |o|
-        o.line_items.first.update!(product: product_1, variant: product_1.master)
-        create(:line_item, order: o, product: product_2, variant: product_2.master)
+        o.line_items.first.update!(product: product_1, variant: product_1.default_variant)
+        create(:line_item, order: o, product: product_2, variant: product_2.default_variant)
       end
     end
 
@@ -100,8 +100,8 @@ RSpec.describe Spree::ProductMetricsSubscriber do
     context 'when order has duplicate products' do
       let(:order_with_duplicates) do
         create(:completed_order_with_totals, store: store).tap do |o|
-          o.line_items.first.update!(product: product_1, variant: product_1.master)
-          create(:line_item, order: o, product: product_1, variant: product_1.master)
+          o.line_items.first.update!(product: product_1, variant: product_1.default_variant)
+          create(:line_item, order: o, product: product_1, variant: product_1.default_variant)
         end
       end
 

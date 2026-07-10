@@ -1,0 +1,35 @@
+# Spree 5.6 → 6.0 upgrade manifest.
+#
+# Lists ONLY the version-specific rake tasks that perform data backfills.
+# Universal upgrade steps (bundle update, db:migrate, scheduling cron jobs,
+# reviewing breaking changes) are NOT in this file:
+#
+#   - `bundle update` + `db:migrate` are handled by your deploy pipeline
+#     (Heroku release phase, K8s init container, Render auto-migrate,
+#     Capistrano deploy hook, etc.) and by the @spree/cli's `spree upgrade`
+#     wrapper for local development.
+#   - Cron scheduling, optional tunings, and human-readable behavior changes
+#     live in the upgrade doc at docs/developer/upgrades/5.6-to-6.0.mdx.
+#
+# This manifest is the machine-runnable shape — what `bin/rake spree:upgrade`
+# (in production) and `spree upgrade` (in dev) execute. Every step must be a
+# rake task and must be idempotent. Re-running the full manifest is safe.
+---
+from: "5.6"
+to: "6.0"
+docs: "https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0"
+
+steps:
+  - id: remove_master_variant
+    name: "Migrate products off the master variant"
+    task: "spree:remove_master_variant"
+    notes: |
+      Backfills spree_products.default_variant_id and retires the hidden master
+      variant: simple products' masters become regular variants, ghost masters
+      on products with variants are deleted (or kept as regular variants when
+      they still carry line items), and variant_count is recomputed to the real
+      count. Until this runs, products have a NULL default_variant_id.
+
+      Run spree:media:migrate_master_images_to_product_media first and let its
+      jobs finish, so no master-pinned media is lost when ghost masters are
+      deleted.

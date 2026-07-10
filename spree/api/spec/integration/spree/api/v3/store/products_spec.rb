@@ -165,7 +165,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         before do
           # Set up price history on all variant prices to ensure the
           # default_variant's price has history regardless of which variant is selected
-          product.variants_including_master.each do |v|
+          product.variants.each do |v|
             v.prices.base_prices.each do |price|
               price.price_histories.delete_all
               create(:price_history, price: price, variant: v, amount: 25.0, currency: price.currency, recorded_at: 1.day.ago)

@@ -824,7 +824,7 @@ describe Spree::Taxon, type: :model do
         end
 
         context 'when the rule is a sale rule' do
-          let!(:product_with_master_on_sale) { create(:product, price: 10, compare_at_price: 12) }
+          let!(:product_with_default_variant_on_sale) { create(:product, price: 10, compare_at_price: 12) }
           let!(:product_with_one_variant_on_sale) do
             create(:product).tap do |p|
               create(:variant, product: p, price: 10, compare_at_price: 12)
@@ -833,7 +833,7 @@ describe Spree::Taxon, type: :model do
           end
           let!(:product_on_sale_with_different_currency) do
             create(:product, price: 10).tap do |p|
-              p.master.prices.create(amount: 10, compare_at_amount: 12, currency: 'PLN')
+              p.default_variant.prices.create(amount: 10, compare_at_amount: 12, currency: 'PLN')
             end
           end
           let!(:product_not_on_sale) { create(:product, price: 10) }
@@ -842,7 +842,7 @@ describe Spree::Taxon, type: :model do
             it 'matches products that are on sale in store\'s currency' do
               create(:sale_taxon_rule, taxon: taxon)
 
-              expect(taxon.reload.products_matching_rules).to contain_exactly(product_with_master_on_sale, product_with_one_variant_on_sale)
+              expect(taxon.reload.products_matching_rules).to contain_exactly(product_with_default_variant_on_sale, product_with_one_variant_on_sale)
             end
           end
 

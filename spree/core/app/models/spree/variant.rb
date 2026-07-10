@@ -77,8 +77,6 @@ module Spree
 
     validate :check_price, if: -> { Spree::Config.enable_legacy_default_price }
 
-    validates :option_value_variants, presence: true, unless: :is_master?
-
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :price, numericality: { greater_than_or_equal_to: 0, allow_nil: true },
                       if: -> { Spree::Config.enable_legacy_default_price }
@@ -91,28 +89,19 @@ module Spree
     validates :backorder_limit, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }
 
     after_create :create_stock_items
-    after_create :set_master_out_of_stock, unless: :is_master?
     after_commit :clear_line_items_cache, on: :update
 
     after_save :create_default_stock_item, unless: :track_inventory?
     after_update_commit :handle_track_inventory_change
 
-    after_commit :remove_prices_from_master_variant, on: [:create, :update], unless: :is_master?
-    after_commit :remove_stock_items_from_master_variant, on: :create, unless: :is_master?
-    after_create :increment_product_variant_count, unless: :is_master?
-    after_destroy :decrement_product_variant_count, unless: :is_master?
+    after_create :increment_product_variant_count
+    after_destroy :decrement_product_variant_count
 
     scope :in_stock, -> { left_joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand > ?", false, 0) }
     scope :backorderable, -> { left_joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
-    scope :eligible, lambda {
-      joins(:product).where(
-        arel_table[:is_master].eq(false).or(
-          Spree::Product.arel_table[:variant_count].eq(0)
-        )
-      )
-    }
+    scope :eligible, -> { all }
 
     scope :not_discontinued, lambda {
       where(
@@ -198,7 +187,7 @@ module Spree
     )
 
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
-    self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory
+    self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on cost_price cost_currency track_inventory
                                                  deleted_at product_id]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
 
@@ -296,13 +285,13 @@ module Spree
     # Returns the exchange name of the variant.
     # @return [String] the exchange name of the variant
     def exchange_name
-      is_master? ? name : options_text
+      option_values.any? ? options_text : name
     end
 
     # Returns the descriptive name of the variant.
     # @return [String] the descriptive name of the variant
     def descriptive_name
-      is_master? ? name + ' - Master' : name + ' - ' + options_text
+      option_values.any? ? "#{name} - #{options_text}" : name
     end
 
     # Returns the variant's media gallery.
@@ -408,9 +397,6 @@ module Spree
     # @param opt_type_position [Integer] the position of the option type
     # @return [void]
     def set_option_value(opt_name, opt_value, opt_type_position = nil)
-      # no option values on master
-      return if is_master
-
       option_type = Spree::OptionType.where(name: opt_name.parameterize).first_or_initialize do |o|
         o.name = o.presentation = opt_name
         o.save!
@@ -754,14 +740,7 @@ module Spree
       Spree::Stock::Quantifier.new(self)
     end
 
-    def set_master_out_of_stock
-      if product.master&.in_stock?
-        product.master.stock_items.update_all(backorderable: false)
-        product.master.stock_items.each(&:reduce_count_on_hand_to_zero)
-      end
-    end
-
-    # Ensures a new variant takes the product master price when price is not supplied
+    # Ensures a new variant takes the product's default variant price when price is not supplied
     def check_price
       return if prices.any?
 
@@ -773,9 +752,9 @@ module Spree
       current_price = price_in(default_currency).amount
 
       if current_price.nil?
-        return errors.add(:base, :no_master_variant_found_to_infer_price) unless product&.master
+        return errors.add(:base, :no_default_variant_found_to_infer_price) unless product&.default_variant
 
-        # At this point, master can have or have no price, so let's use price from the default variant
+        # The default variant may or may not have a price yet; use it when present.
         inferred_price = product.default_variant.price_in(default_currency).amount
         set_price(default_currency, inferred_price) if inferred_price.present?
       end
@@ -810,14 +789,6 @@ module Spree
       return if track_inventory
 
       stock_items.update_all(count_on_hand: 0, updated_at: Time.current)
-    end
-
-    def remove_prices_from_master_variant
-      product.master.prices.delete_all if prices.exists?
-    end
-
-    def remove_stock_items_from_master_variant
-      product.master.stock_items.delete_all
     end
 
     def increment_product_variant_count

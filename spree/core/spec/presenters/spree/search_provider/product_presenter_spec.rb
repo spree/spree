@@ -89,7 +89,7 @@ module Spree
         # Product with prices in both currencies
         let(:product) do
           p = create(:product, name: 'Test Shirt')
-          create(:price, variant: p.master, amount: 29.99, currency: 'EUR')
+          create(:price, variant: p.default_variant, amount: 29.99, currency: 'EUR')
           p
         end
 
@@ -162,7 +162,7 @@ module Spree
 
         let(:product) do
           p = create(:product, name: 'English Name')
-          create(:price, variant: p.master, amount: 19.99, currency: 'EUR')
+          create(:price, variant: p.default_variant, amount: 19.99, currency: 'EUR')
           p
         end
 

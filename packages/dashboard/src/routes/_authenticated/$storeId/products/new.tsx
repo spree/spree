@@ -78,26 +78,26 @@ function NewProductPage() {
     }
 
     // For simple products (single variant with no options) the merchant
-    // doesn't realise the master variant exists. Two routes:
+    // doesn't realise a default variant is auto-created server-side. Two routes:
     //
     // - Prices only (no SKU/weight/dimensions/stock/track_inventory edits):
     //   lift to the product-level `prices` key. `Spree::Product#prices=`
-    //   forwards to the master. Shipping a no-options variant inline
-    //   alongside the auto-created master would create a duplicate
-    //   non-master variant (apply_variants always builds a fresh variant
+    //   forwards to the default variant. Shipping a no-options variant inline
+    //   alongside the auto-created default variant would create a duplicate
+    //   variant (apply_variants always builds a fresh variant
     //   for entries without an id).
     //
     // - Any variant-only data: ship the variant inline. The backend's
-    //   `Product#variants=` builds a non-master variant carrying every
+    //   `Product#variants=` builds the variant carrying every
     //   field — including prices — so we MUST NOT also ship top-level
-    //   `prices` (would double-record the price on both master and the
-    //   inline variant).
+    //   `prices` (would double-record the price on both the default variant
+    //   and the inline variant).
     const isSingleOptionlessVariant = meaningful.length === 1 && meaningful[0].options.length === 0
     if (isSingleOptionlessVariant) {
       const v = meaningful[0]
       // Mirrors isPlaceholderDefaultVariant — any variant-only field the
       // merchant edited should ride inline so the backend's apply_variants
-      // upserts onto the master rather than leaving the field at its
+      // upserts onto the default variant rather than leaving the field at its
       // default.
       const hasVariantOnlyData =
         v.sku != null ||

@@ -4,18 +4,12 @@
 # Products properties include description, permalink, availability,
 #   shipping category, etc. that do not change by variant.
 #
-# MASTER VARIANT
-# Every product has one master variant, which stores master price and sku, size and weight, etc.
-# The master variant does not have option values associated with it.
-# Price, SKU, size, weight, etc. are all delegated to the master variant.
-# Contains on_hand inventory levels only when there are no variants for the product.
-#
 # VARIANTS
-# All variants can access the product properties directly (via reverse delegation).
-# Inventory units are tied to Variant.
-# The master variant can have inventory units, but not option values.
-# All other variants have option values and may have inventory units.
-# Sum of on_hand each variant's inventory level determine "on_hand" level for the product.
+# Every product has at least one variant. Simple products have a single variant
+# with no option values; products with options have one variant per combination.
+# `default_variant` is the "face" of the product — price, SKU, size, weight, etc.
+# are delegated to it. Inventory units are tied to Variant; the sum of each
+# variant's on_hand determines the product's "on_hand" level.
 #
 
 module Spree
@@ -87,58 +81,47 @@ module Spree
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
     has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::ShippingMethod'
 
-    has_one :master,
-            -> { where is_master: true },
-            inverse_of: :product,
-            class_name: 'Spree::Variant'
-
+    # Every product has at least one variant. `default_variant` is the "face" of
+    # the product (price display, default add-to-cart, property delegation).
     has_many :variants,
-             -> { where(is_master: false).order(:position) },
-             inverse_of: :product,
-             class_name: 'Spree::Variant'
-
-    has_many :variants_including_master,
              -> { order(:position) },
              inverse_of: :product,
              class_name: 'Spree::Variant',
              dependent: :destroy
 
-    has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
+    belongs_to :default_variant, class_name: 'Spree::Variant', optional: true, autosave: true
 
-    has_many :stock_items, through: :variants_including_master
+    has_many :prices, through: :variants
 
-    has_many :line_items, through: :variants_including_master
+    has_many :stock_items, through: :variants
+
+    has_many :line_items, through: :variants
     has_many :orders, through: :line_items
     has_many :completed_orders, -> { reorder(nil).distinct.complete }, through: :line_items, source: :order
 
     has_many :media, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Asset'
 
-    has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
-    has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
+    has_many :variant_images, -> { order(:position) }, source: :images, through: :variants
 
     belongs_to :primary_media, class_name: 'Spree::Asset', optional: true, foreign_key: :primary_media_id
 
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
     has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
 
-    has_many :prices_including_master, -> { non_zero }, through: :variants_including_master, source: :prices
+    has_many :digitals, through: :variants
 
-    has_many :digitals, through: :variants_including_master
-
-    after_initialize :ensure_master
     after_initialize :assign_default_tax_category
 
-    before_validation :validate_master
     before_validation :ensure_default_shipping_category
 
     after_create :add_associations_from_prototype
-    after_create :build_variants_from_option_values_hash, if: :option_values_hash
     after_create :apply_pending_variants, if: :pending_variants?
+    after_create :ensure_default_variant
+    after_create :set_default_variant
     after_save :apply_pending_media, if: :pending_media?
 
-    after_save :save_master
-    after_save :run_touch_callbacks, if: :anything_changed?
-    after_save :reset_nested_changes
+    after_save :auto_promote_default_variant
+    after_save :run_touch_callbacks, if: :saved_changes?
     after_touch :touch_taxons
 
     after_commit :auto_match_taxons, if: :eligible_for_taxon_matching?
@@ -150,8 +133,11 @@ module Spree
     with_options presence: true do
       validates :name
       validates :shipping_category, if: :requires_shipping_category?
-      validates :price, if: :requires_price?
     end
+
+    # Every persisted product must keep a default variant. It's assigned on
+    # create by +set_default_variant+, so only enforce it on update.
+    validates :default_variant, presence: true, on: :update
 
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
@@ -161,7 +147,8 @@ module Spree
     scope :not_archived, -> { where.not(status: 'archived') }
     scope :on_sale, lambda { |currency = nil|
                       currency ||= Spree::Store.default.default_currency
-                      joins(:prices_including_master).with_currency(currency).
+                      with_currency(currency).
+                        where.not(spree_prices: { amount: 0 }).
                         where.not(spree_prices: { compare_at_amount: [nil, 0] }).
                         where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
                     }
@@ -181,8 +168,6 @@ module Spree
     scope :paused, -> { where(status: 'paused') }
     scope :published, -> { where(status: 'active') }
 
-    attr_accessor :option_values_hash
-
     accepts_nested_attributes_for(
       :variants,
       allow_destroy: true,
@@ -190,7 +175,6 @@ module Spree
         v[:option_value_variants_attributes].blank? && v[:stock_items_attributes].blank? && v[:prices_attributes].blank?
       end
     )
-    accepts_nested_attributes_for :master, reject_if: :all_blank
     accepts_nested_attributes_for(
       :product_option_types,
       allow_destroy: true,
@@ -205,10 +189,10 @@ module Spree
       self.tag_list = tags
     end
 
-    # Sets prices on the master variant.
+    # Sets prices on the default variant.
     # Accepts array of { currency:, amount:, compare_at_amount: } hashes.
     def prices=(prices_params)
-      find_or_build_master.prices = prices_params
+      find_or_build_default_variant.prices = prices_params
     end
 
     # Maps 6.0 API name (category_ids) to model column (taxon_ids).
@@ -266,7 +250,7 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
-    self.whitelisted_ransackable_associations = %w[taxons categories store channels variants_including_master master variants tags labels
+    self.whitelisted_ransackable_associations = %w[taxons categories store channels variants default_variant tags labels
                                                    shipping_category classifications option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories price_between
                                              price_lte price_gte
@@ -274,26 +258,21 @@ module Spree
 
                                              ascend_by_price descend_by_price]
 
+    # All product-level convenience attributes delegate to the default variant —
+    # one target, no branching. Reads resolve the existing default variant
+    # (nil-safe) and never build one as a side effect; only setters build on
+    # demand, so `product.sku = ...` still works before the product is persisted.
     [
-      :sku, :barcode, :weight, :height, :width, :depth, :is_master, :dimensions_unit, :weight_unit
-    ].each do |method_name|
-      delegate method_name, :"#{method_name}=", to: :find_or_build_master
-    end
-
-    [
+      :sku, :barcode, :weight, :height, :width, :depth, :dimensions_unit, :weight_unit,
       :price, :price_in, :amount_in, :compare_at_price, :compare_at_amount_in,
       :currency, :cost_currency, :cost_price, :track_inventory
     ].each do |method_name|
-      delegate method_name, :"#{method_name}=", to: :default_variant
+      delegate method_name, to: :default_variant, allow_nil: true
+      delegate :"#{method_name}=", to: :find_or_build_default_variant
     end
 
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, to: :default_variant
-
-    # Rails doesn't provide _id methods for has_one associations by default
-    delegate :id, to: :master, prefix: true, allow_nil: true
-
-    alias master_images images
+             :display_compare_at_price, :images, to: :default_variant, allow_nil: true
 
     state_machine :status, initial: :draft do
       event :activate do
@@ -326,57 +305,44 @@ module Spree
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
-      @purchasable ||= default_variant.purchasable? || variants.any?(&:purchasable?)
+      @purchasable ||= variants.any?(&:purchasable?)
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
-      @in_stock ||= default_variant.in_stock? || variants.any?(&:in_stock?)
+      @in_stock ||= variants.any?(&:in_stock?)
     end
 
-    # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
-      default_variant.backorderable? || variants.any?(&:backorderable?)
+      variants.any?(&:backorderable?)
     end
 
     def on_sale?(currency)
-      prices_including_master.find_all { |p| p.currency == currency }.any?(&:discounted?)
+      prices.find_all { |p| p.currency == currency && p.non_zero? }.any?(&:discounted?)
     end
 
-    def find_or_build_master
-      master || build_master
-    end
-
-    # Checks if product has variants (non-master variants)
-    # Uses variant_count counter cache for performance
-    # @return [Boolean]
-    def has_variants?
-      return variants.size.positive? if variants.loaded?
-
-      variant_count.positive?
-    end
-
-    # Returns default Variant for Product
-    # If `track_inventory_levels` is enabled it will try to find the first Variant
-    # in stock or backorderable, if there's none it will return first Variant sorted
-    # by `position` attribute
-    # If `track_inventory_levels` is disabled it will return first Variant sorted
-    # by `position` attribute
-    #
+    # The default variant is a persisted FK, but before the product is saved (or
+    # if it somehow has no default set) fall back to the first variant —
+    # including one built in memory via the delegated setters.
     # @return [Spree::Variant]
     def default_variant
-      @default_variant ||= if Spree::Config[:track_inventory_levels] && has_variants? && available_variant = variants.detect(&:purchasable?)
-                             available_variant
-                           else
-                             has_variants? ? variants.first : find_or_build_master
-                           end
+      super || variants.first
     end
 
-    # Returns default Variant ID for Product
-    # @return [Integer]
-    def default_variant_id
-      @default_variant_id ||= default_variant.id
+    def find_or_build_default_variant
+      default_variant || variants.build
     end
+
+    # "Does this product have more than one variant (i.e. options to choose from)?"
+    # Uses the variant_count counter cache for performance.
+    # @return [Boolean]
+    def has_multiple_variants?
+      return variants.size > 1 if variants.loaded?
+
+      variant_count > 1
+    end
+    # @deprecated Use #has_multiple_variants? — will be removed in Spree 6.1.
+    alias has_variants? has_multiple_variants?
 
     # Returns the product's media gallery.
     # Uses product-level media if present, otherwise falls back to variant images.
@@ -400,7 +366,7 @@ module Spree
     alias has_variant_images? has_media?
 
     # Returns the variant that should be used for displaying images.
-    # Priority: master > default_variant > first variant with images
+    # Priority: default_variant > first variant with images
     # @return [Spree::Variant, nil]
     def variant_for_images
       @variant_for_images ||= find_variant_for_images
@@ -481,33 +447,17 @@ module Spree
     end
 
     def price_varies?(currency)
-      prices_including_master.find_all { |p| p.currency == currency && p.amount.present? }.map(&:amount).uniq.count > 1
+      prices.find_all { |p| p.currency == currency && p.non_zero? }.map(&:amount).uniq.count > 1
     end
 
     def any_variant_available?(currency)
-      if has_variants?
-        first_available_variant(currency).present?
-      else
-        master.purchasable? && master.price_in(currency).amount.present?
-      end
+      first_available_variant(currency).present?
     end
 
     # returns the lowest price for the product in the given currency
-    # prices_including_master are usually already loaded, so this should not trigger an extra query
+    # prices are usually already loaded, so this should not trigger an extra query
     def lowest_price(currency)
-      prices_including_master.find_all { |p| p.currency == currency }.min_by(&:amount)
-    end
-
-    # Ensures option_types and product_option_types exist for keys in option_values_hash
-    def ensure_option_types_exist_for_values_hash
-      return if option_values_hash.nil?
-
-      # we need to convert the keys to string to make it work with UUIDs
-      required_option_type_ids = option_values_hash.keys.map(&:to_s)
-      missing_option_type_ids = required_option_type_ids - option_type_ids.map(&:to_s)
-      missing_option_type_ids.each do |id|
-        product_option_types.create(option_type_id: id)
-      end
+      prices.find_all { |p| p.currency == currency && p.non_zero? }.min_by(&:amount)
     end
 
     # for adding products which are closely related to existing ones
@@ -553,14 +503,14 @@ module Spree
       !!discontinue_on && discontinue_on <= Time.current
     end
 
-    # determine if any variant (including master) can be supplied
+    # determine if any variant can be supplied
     def can_supply?
-      variants_including_master.any?(&:can_supply?)
+      variants.any?(&:can_supply?)
     end
 
-    # determine if any variant (including master) is out of stock and backorderable
+    # determine if any variant is out of stock and backorderable
     def backordered?
-      variants_including_master.any?(&:backordered?)
+      variants.any?(&:backordered?)
     end
 
     def self.like_any(fields, values)
@@ -583,19 +533,29 @@ module Spree
       @total_on_hand ||= if any_variants_not_track_inventory?
                            BigDecimal::INFINITY
                          else
-                           if variants_including_master.loaded?
-                             variants_including_master.sum(&:total_on_hand)
+                           if variants.loaded?
+                             variants.sum(&:total_on_hand)
                            else
                              stock_items.loaded? ? stock_items.sum(&:count_on_hand) : stock_items.sum(:count_on_hand)
                            end
                          end
     end
 
-    # Master variant may be deleted (i.e. when the product is deleted)
-    # which would make AR's default finder return nil.
-    # This is a stopgap for that little problem.
+    # @deprecated Use #default_variant — the master variant is being removed in Spree 6.1.
     def master
-      super || variants_including_master.with_deleted.find_by(is_master: true)
+      Spree::Deprecation.warn('Spree::Product#master is deprecated and will be removed in Spree 6.1. Use #default_variant instead.')
+      default_variant
+    end
+
+    # @deprecated Use #variants — will be removed in Spree 6.1.
+    def variants_including_master
+      Spree::Deprecation.warn('Spree::Product#variants_including_master is deprecated and will be removed in Spree 6.1. Use #variants instead.')
+      variants
+    end
+
+    # @deprecated Use #default_variant_id — will be removed in Spree 6.1.
+    def master_id
+      default_variant_id
     end
 
     # Returns the brand taxon for the product
@@ -634,9 +594,9 @@ module Spree
 
     def any_variant_in_stock_or_backorderable?
       if has_variants?
-        variants_including_master.in_stock_or_backorderable.exists?
+        variants.in_stock_or_backorderable.not_discontinued.exists?
       else
-        master.in_stock_or_backorderable?
+        default_variant.in_stock_or_backorderable?
       end
     end
 
@@ -676,7 +636,7 @@ module Spree
       taxons_for_csv.fill(nil, taxons_for_csv.size...3)
 
       csv_lines = []
-      all_variants = has_variants? ? variants_including_master.to_a : [master]
+      all_variants = variants.to_a
       default_currency = store.default_currency
       additional_currencies = store.supported_currencies_list.map(&:iso_code) - [default_currency]
 
@@ -713,10 +673,9 @@ module Spree
     private
 
     # Determines which variant should be used for displaying media.
-    # Priority: master > default_variant > first variant with media
+    # Priority: default_variant > first variant with media
     def find_variant_for_images
-      return master if master.has_media?
-      return default_variant if has_variants? && default_variant.has_media?
+      return default_variant if default_variant&.has_media?
       return find_variant_with_images if has_media?
 
       nil
@@ -780,44 +739,34 @@ module Spree
 
     def apply_variants(variants_params)
       variant_ids_in_payload = []
-      master_touched = false
       mutated = false
 
       variants_params.each do |variant_data|
         variant_data = variant_data.to_h.with_indifferent_access
         variant_id = variant_data.delete(:id)
-        options = variant_data[:options]
 
-        if variant_id.present?
-          variant = variants_including_master.find_by_param!(variant_id)
-          variant.update!(variant_data)
-          variant_ids_in_payload << variant.id
-          mutated = true
-        elsif options.blank? || (options.is_a?(Array) && options.empty?)
-          # An entry with no options addresses the master variant. Building a
-          # non-master here would create a phantom duplicate (the auto-built
-          # master already exists, and `variants` excludes it). Upsert onto
-          # the master instead — the merchant-visible "default variant" on a
-          # simple product IS the master.
-          variant_data = variant_data.except(:options)
-          target = find_or_build_master
-          target.assign_attributes(variant_data)
-          target.save!
-          master_touched = true
-          mutated = true
-        else
-          variant = variants.build
-          variant.assign_attributes(variant_data)
-          variant.save!
-          variant_ids_in_payload << variant.id
-          mutated = true
-        end
+        variant =
+          if variant_id.present?
+            variants.find_by_param!(variant_id)
+          elsif reuse_default_variant_for?(variant_data, variant_ids_in_payload)
+            # An id-less, option-less entry targets the product's existing
+            # option-less default variant (the simple-product case) — update it in
+            # place rather than building a new row, so its id, order-line
+            # references, and unspecified prices/stock survive.
+            default_variant
+          else
+            variants.build
+          end
+
+        variant.assign_attributes(variant_data)
+        variant.save!
+
+        variant_ids_in_payload << variant.id
+        mutated = true
       end
 
-      # Remove variants not in the payload (only non-master). If only the
-      # master was touched (simple product), leave existing non-master
-      # variants alone — the payload is partial, not a full replacement.
-      if variant_ids_in_payload.any? && !master_touched
+      # Full replacement: variants not in the payload are removed.
+      if variant_ids_in_payload.any?
         removed = variants.where.not(id: variant_ids_in_payload).destroy_all
         mutated ||= removed.any?
       end
@@ -825,25 +774,29 @@ module Spree
       sync_variant_state! if mutated
     end
 
+    # True when an id-less variant payload should update the product's existing
+    # option-less default variant instead of building a new one: the entry carries
+    # no options, a default variant exists and is itself option-less, and it hasn't
+    # already been claimed by an earlier entry in this payload.
+    def reuse_default_variant_for?(variant_data, consumed_ids)
+      variant_data[:options].blank? &&
+        variant_data[:option_value_variants_attributes].blank? &&
+        default_variant.present? &&
+        default_variant.option_values.empty? &&
+        consumed_ids.exclude?(default_variant.id)
+    end
+
     # Re-syncs the in-memory derived variant state after `apply_variants`
-    # mutates variants out-of-band (the variant counter is bumped via
-    # `Spree::Product.increment_counter` in a Variant callback, and
-    # `default_variant` is memoized). Without this, a freshly built/updated
-    # product serialized in the same request returns a stale `variant_count`
-    # and a stale `price` (delegated to the memoized `default_variant`).
-    #
-    # The `default_variant` memo reset here changes shape once master is
-    # removed (it becomes a `belongs_to` FK). See
-    # docs/plans/6.0-remove-master-variant.md (Phase 3).
+    # mutates variants out-of-band. `variant_count` is bumped via
+    # `Spree::Product.increment_counter` in a Variant callback, so the in-memory
+    # attribute is stale; the `default_variant` association is also cached.
+    # Without this, a freshly built/updated product serialized in the same
+    # request returns a stale `variant_count` and `price`.
     # @return [void]
     def sync_variant_state!
-      # `variant_count` is maintained by a direct counter update in a Variant
-      # callback, so the in-memory attribute is stale here — re-read it from the
-      # row without reloading the whole record.
       self[:variant_count] = self.class.where(id: id).pick(:variant_count)
       variants.reset
-      @default_variant = nil
-      @default_variant_id = nil
+      association(:default_variant).reset
     end
 
     def add_associations_from_prototype
@@ -856,89 +809,38 @@ module Spree
     def any_variants_not_track_inventory?
       return true unless Spree::Config.track_inventory_levels
 
-      if variants_including_master.loaded?
-        variants_including_master.any? { |v| !v.track_inventory? }
+      if variants.loaded?
+        variants.any? { |v| !v.track_inventory? }
       else
-        variants_including_master.where(track_inventory: false).exists?
+        variants.where(track_inventory: false).exists?
       end
     end
 
-    # Builds variants from a hash of option types & values
-    def build_variants_from_option_values_hash
-      Spree::Deprecation.warn('Spree::Product#build_variants_from_option_values_hash is deprecated and will be removed in Spree 6.0.')
-      ensure_option_types_exist_for_values_hash
-      values = option_values_hash.values
-      values = values.inject(values.shift) { |memo, value| memo.product(value).map(&:flatten) }
-
-      default_currency = store&.default_currency || Spree::Store.default.default_currency
-      master_price = master.price_in(default_currency).amount
-
-      values.each do |ids|
-        variant = variants.create!(option_value_ids: ids)
-        variant.set_price(default_currency, master_price) if master_price.present?
-      end
-      save
+    # Every product must have at least one variant. If none was built via the
+    # delegated setters or supplied as nested attributes, create an empty one.
+    def ensure_default_variant
+      variants.create! if variants.empty?
     end
 
-    def ensure_master
-      return unless new_record?
+    def set_default_variant
+      return if default_variant_id.present?
 
-      self.master ||= build_master
+      first_variant = variants.first
+      update_column(:default_variant_id, first_variant.id) if first_variant
+    end
+
+    # Re-point the default variant when the current one has been removed. Sticky
+    # otherwise — an in-stock change never re-points (see the plan's open question).
+    def auto_promote_default_variant
+      current = association(:default_variant).reader
+      return if current && current.deleted_at.nil?
+
+      next_variant = variants.reload.first
+      update_column(:default_variant_id, next_variant&.id) if next_variant && next_variant.id != default_variant_id
     end
 
     def assign_default_tax_category
       self.tax_category = Spree::TaxCategory.default if new_record? && self[:tax_category_id].blank?
-    end
-
-    def anything_changed?
-      saved_changes? || @nested_changes
-    end
-
-    def reset_nested_changes
-      @nested_changes = false
-    end
-
-    def master_updated?
-      master && (
-        master.new_record? ||
-        master.changed? ||
-        (
-          Spree::Config.enable_legacy_default_price &&
-          master.default_price &&
-          (
-            master.default_price.new_record? ||
-            master.default_price.changed?
-          )
-        )
-      )
-    end
-
-    # there's a weird quirk with the delegate stuff that does not automatically save the delegate object
-    # when saving so we force a save using a hook
-    # Fix for issue #5306
-    def save_master
-      if master_updated?
-        master.save!
-        @nested_changes = true
-      end
-    end
-
-    # If the master cannot be saved, the Product object will get its errors
-    # and will be destroyed
-    def validate_master
-      if Spree::Config.enable_legacy_default_price
-        # We call master.default_price here to ensure price is initialized.
-        # Required to avoid Variant#check_price validation failing on create.
-        master.default_price
-      end
-
-      unless master.valid?
-        master.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
-          next if err[:field].blank? || err[:message].blank?
-
-          errors.add(err[:field], err[:message])
-        end
-      end
     end
 
     def ensure_default_shipping_category
@@ -984,10 +886,6 @@ module Spree
       if discontinue_on < make_active_at
         errors.add(:discontinue_on, :invalid_date_range)
       end
-    end
-
-    def requires_price?
-      Spree::Config[:require_master_price]
     end
 
     def requires_shipping_category?

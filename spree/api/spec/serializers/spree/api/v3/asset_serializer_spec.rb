@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Spree::Api::V3::AssetSerializer do
   let(:store) { @default_store }
   let(:product) { create(:product) }
-  let(:asset) { create(:asset, viewable: product.master) }
+  let(:asset) { create(:asset, viewable: product.default_variant) }
   let(:base_params) { { store: store, currency: 'USD' } }
 
   subject { described_class.new(asset, params: base_params).to_h }
@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::AssetSerializer do
   end
 
   it 'returns prefixed viewable_id' do
-    expect(subject['viewable_id']).to eq(product.master.prefixed_id)
+    expect(subject['viewable_id']).to eq(product.default_variant.prefixed_id)
   end
 
   it 'returns viewable_type' do

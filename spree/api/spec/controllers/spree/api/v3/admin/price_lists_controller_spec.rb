@@ -53,7 +53,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
       # prices. Variants in `prices` implicitly become part of the list
       # via the unique-key upsert — no separate `product_ids` round trip.
       let(:product) { create(:product) }
-      let(:variant_a) { product.master }
+      let(:variant_a) { product.default_variant }
       let(:variant_b) { create(:variant, product: product) }
 
       it 'persists metadata, rules, and prices in one request' do
@@ -96,7 +96,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
     context 'cross-store IDOR — membership in another store' do
       let(:other_store) { create(:store) }
       let(:foreign_product) { create(:product, store: other_store) }
-      let(:foreign_variant) { foreign_product.master }
+      let(:foreign_variant) { foreign_product.default_variant }
 
       it 'ignores another store\'s product in product_ids' do
         post :create,
@@ -383,7 +383,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceListsController, type: :controller do
 
   describe 'PATCH #update — prices nullability contract' do
     let(:product) { create(:product) }
-    let(:variant) { product.master }
+    let(:variant) { product.default_variant }
     # Seed an existing override so we can prove it survives or gets
     # cleared depending on the request shape.
     let!(:price) do

@@ -3,7 +3,7 @@ module Spree
     class Products < Spree::Export
       # to avoid N+1 queries
       def scope_includes
-        includes = [:tax_category, :master, :option_types, { taxons: :taxonomy }, { variants_including_master: variant_includes }]
+        includes = [:tax_category, :option_types, { taxons: :taxonomy }, { variants: variant_includes }]
         includes << { metafields: :metafield_definition }
         includes
       end

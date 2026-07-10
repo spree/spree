@@ -129,9 +129,9 @@ module Spree
         variant_option_values_data.map(&:prefixed_id).uniq
       end
 
-      # Use variants_including_master (matches reindex preload) instead of variants.includes
+      # Use variants (matches reindex preload) instead of variants.includes
       def variant_option_values_data
-        @variant_option_values_data ||= product.variants_including_master.flat_map(&:option_values).uniq
+        @variant_option_values_data ||= product.variants.flat_map(&:option_values).uniq
       end
     end
   end
