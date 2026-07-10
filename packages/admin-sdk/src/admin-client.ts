@@ -101,6 +101,8 @@ import type {
   GiftCardBatchCreateParams,
   GiftCardCreateParams,
   GiftCardUpdateParams,
+  ImportCompleteMappingParams,
+  ImportCreateParams,
   InvitationAcceptParams,
   InvitationCreateParams,
   LineItemCreateParams,
@@ -171,6 +173,8 @@ import type {
   Fulfillment,
   GiftCard,
   GiftCardBatch,
+  Import,
+  ImportRow,
   Invitation,
   LineItem,
   Locale,
@@ -1555,6 +1559,66 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/exports/${id}`, options),
+  }
+
+  // ============================================
+  // Imports (CSV: products, customers, …)
+  // ============================================
+
+  /**
+   * Queues asynchronous CSV imports and drives the mapping flow. Upload the
+   * file via `directUploads.create()` first, then `create()` the import with
+   * the returned `signed_id` — the response is in the `mapping` state and
+   * carries `schema_fields`, `csv_headers`, a `sample_row` and the
+   * auto-assigned `mappings`. Adjust mappings if needed and call
+   * `completeMapping(id)` to start processing, then poll `get(id)` while
+   * `status` is `completed_mapping`/`processing` (`completed`/`failed` are
+   * terminal). Failed rows are listed via `rows.list(id, { q: { status_eq:
+   * 'failed' } })` and can be re-processed with `retryFailedRows(id)`.
+   */
+  readonly imports = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Import>> =>
+      this.request<PaginatedResponse<Import>>('GET', '/imports', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Import> =>
+      this.request<Import>('GET', `/imports/${id}`, options),
+
+    create: (params: ImportCreateParams, options?: RequestOptions): Promise<Import> =>
+      this.request<Import>('POST', '/imports', { ...options, body: params }),
+
+    completeMapping: (
+      id: string,
+      params?: ImportCompleteMappingParams,
+      options?: RequestOptions,
+    ): Promise<Import> =>
+      this.request<Import>('PATCH', `/imports/${id}/complete_mapping`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    retryFailedRows: (id: string, options?: RequestOptions): Promise<Import> =>
+      this.request<Import>('PATCH', `/imports/${id}/retry_failed_rows`, options),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/imports/${id}`, options),
+
+    rows: {
+      list: (
+        importId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<ImportRow>> =>
+        this.request<PaginatedResponse<ImportRow>>('GET', `/imports/${importId}/rows`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+    },
   }
 
   // ============================================

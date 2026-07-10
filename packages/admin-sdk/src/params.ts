@@ -1105,6 +1105,39 @@ export interface ExportCreateParams {
   record_selection?: 'filtered' | 'all'
 }
 
+export type ImportType =
+  | 'Spree::Imports::Products'
+  | 'Spree::Imports::Customers'
+  | 'Spree::Imports::ProductTranslations'
+  | (string & {})
+
+export interface ImportCreateParams {
+  /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
+  type: ImportType
+  /**
+   * ActiveStorage signed blob id of the uploaded CSV, obtained from
+   * `client.directUploads.create()` (or the `useDirectUpload` hook).
+   */
+  attachment: string
+  /** CSV column separator. Defaults to a comma on the server. */
+  preferred_delimiter?: ',' | ';' | '|' | '\t'
+}
+
+export interface ImportMappingParam {
+  /** Canonical schema field name (see `Import.schema_fields[].name`). */
+  schema_field: string
+  /** CSV header to read the field from; `null` unmaps the field. */
+  file_column: string | null
+}
+
+export interface ImportCompleteMappingParams {
+  /**
+   * Column assignments to apply before processing starts. Omit to accept
+   * the auto-assigned mappings from the create response.
+   */
+  mappings?: ImportMappingParam[]
+}
+
 /**
  * Owner type passed to the generic `client.customFields(ownerType, ownerId)`
  * escape hatch. The first-class six (products, variants, orders, customers,

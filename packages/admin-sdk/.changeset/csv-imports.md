@@ -1,0 +1,5 @@
+---
+"@spree/admin-sdk": minor
+---
+
+Add asynchronous CSV imports. `client.imports.create({ type, attachment })` queues an import from a direct-uploaded CSV (pass the `signed_id` from `client.directUploads.create()`); the response is in the `mapping` state and carries the type's `schema_fields`, the file's `csv_headers`, a `sample_row`, and auto-assigned column `mappings`. Adjust mappings if needed and call `client.imports.completeMapping(id, { mappings })` to start background processing, then poll `client.imports.get(id)` — `rows_count`, `completed_rows_count`, and `failed_rows_count` drive progress until the terminal `completed`/`failed` status. Failed rows (with the raw CSV `data` and per-row `validation_errors`) are listed via `client.imports.rows.list(id, { status_eq: 'failed' })` and can be re-processed with `client.imports.retryFailedRows(id)`. New `Import`, `ImportRow`, `ImportMapping`, `ImportType`, `ImportCreateParams`, and `ImportCompleteMappingParams` types describe these shapes.
