@@ -105,7 +105,7 @@ export function useBulkDestroyProducts() {
 export function useCloneProduct() {
   return useResourceMutation({
     mutationFn: (id: string) => adminClient.products.clone(id),
-    invalidate: [['products']],
+    invalidate: [['products'], ['store']],
     successMessage: i18n.t('admin.pages.products.clone_succeeded'),
     errorMessage: i18n.t('admin.pages.products.clone_failed'),
   })

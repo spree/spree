@@ -36,7 +36,8 @@ export function useProduct(id: string) {
 export function useCreateProduct() {
   return useResourceMutation<Product, Error, ProductCreateParams>({
     mutationFn: (params) => adminClient.products.create(params),
-    invalidate: [['products']],
+    // ['store'] refreshes the setup-task state (Getting Started + nav badge).
+    invalidate: [['products'], ['store']],
     successMessage: false,
     errorMessage: false,
   })
@@ -63,7 +64,7 @@ export function useDeleteProduct() {
 
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.products.delete(id),
-    invalidate: [['products']],
+    invalidate: [['products'], ['store']],
     successMessage: false,
     errorMessage: false,
     onSuccess: (_data, id) => {
