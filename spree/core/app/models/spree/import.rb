@@ -34,7 +34,12 @@ module Spree
     #
     # Ransack configuration
     #
-    self.whitelisted_ransackable_attributes = %w[number type]
+    self.whitelisted_ransackable_attributes = %w[number type status]
+
+    #
+    # Scopes
+    #
+    scope :for_store, ->(store) { where(owner: store) }
 
     #
     # Attachments
@@ -70,6 +75,13 @@ module Spree
       event :fail do
         transition to: :failed
       end
+
+      # Re-processes rows that failed: the dispatcher targets pending_and_failed
+      # rows, so retry is just a transition + re-dispatch.
+      event :retry_failed_rows do
+        transition from: :completed, to: :processing, if: ->(import) { import.rows.failed.exists? }
+      end
+      after_transition on: :retry_failed_rows, do: :process_rows_async
     end
 
     #
@@ -108,6 +120,32 @@ module Spree
     # @return [Boolean]
     def complete?
       status == 'completed'
+    end
+
+    # Imports are deletable only while no processing jobs can be in flight —
+    # CreateRowsJob/ProcessGroupJob re-load the record mid-run.
+    # @return [Boolean]
+    def can_be_deleted?
+      %w[pending mapping completed failed].include?(status)
+    end
+
+    # Per-status row counts for API status payloads, memoized so one request
+    # issues a single grouped COUNT instead of one per status.
+    # @return [Hash{String => Integer}]
+    def rows_status_counts
+      @rows_status_counts ||= rows.group(:status).count
+    end
+
+    # First data row as { header => value }, reading a single line of the
+    # attached CSV — used by the mapping UI to show example values.
+    # @return [Hash]
+    def sample_row
+      return {} if attachment_file_content.blank?
+
+      row = ::CSV.foreach(StringIO.new(attachment_file_content), headers: true, col_sep: preferred_delimiter).first
+      row&.to_h || {}
+    rescue ::CSV::MalformedCSVError, EncodingError
+      {}
     end
 
     # Returns the model class for the import
@@ -275,6 +313,20 @@ module Spree
       # @return [Class]
       def type_for_model(model)
         available_types.find { |type| type.model_class.to_s == model.to_s }
+      end
+
+      # Admin API scope family gating this import type — an import is a bulk
+      # write, so an API key needs `write_<required_scope>` to create and
+      # manage it. Derived from the class name (Spree::Imports::Customers =>
+      # :customers); override in subclasses gated by a different scope.
+      # Returns nil on the base class, so unmapped types are only accessible
+      # to write_all keys.
+      #
+      # @return [Symbol, nil]
+      def required_scope
+        return nil if self == Spree::Import
+
+        to_s.demodulize.underscore.to_sym
       end
 
       # eg. Spree::Imports::Orders => Spree::Order
