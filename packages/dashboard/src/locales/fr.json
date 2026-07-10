@@ -2582,7 +2582,9 @@
         "storefront_url_help": "L'URL que vos clients utilisent pour accéder à votre boutique. Elle sert de base aux liens dans les e-mails clients et est automatiquement ajoutée comme origine autorisée pour que les boutiques web puissent appeler la Store API.",
         "save": "Enregistrer et terminer",
         "saved": "URL de la boutique enregistrée : {{url}}",
-        "invalid_url": "Cela ne ressemble pas à une URL de boutique valide."
+        "invalid_url": "Cela ne ressemble pas à une URL de boutique valide.",
+        "see_online_demo": "Voir la démo en ligne",
+        "local_installation_instructions": "Instructions d'installation locale"
       }
     }
   }

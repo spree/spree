@@ -12,12 +12,28 @@ import {
   Skeleton,
 } from '@spree/dashboard-ui'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CheckIcon, CopyIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
-import { useState } from 'react'
+import { CheckIcon, CopyIcon, ExternalLinkIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
+import { type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 const STOREFRONT_REPOSITORY_URL = 'https://github.com/spree/storefront'
+const STOREFRONT_DEMO_URL = 'https://demo.spreecommerce.org'
+const STOREFRONT_DOCS_URL = 'https://spreecommerce.org/docs/developer/storefront/nextjs/quickstart'
+
+function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 text-primary text-sm hover:underline"
+    >
+      {children}
+      <ExternalLinkIcon className="size-3.5" />
+    </a>
+  )
+}
 
 // Mirrors Spree::Admin::StorefrontHelper#vercel_deploy_url: clone the official
 // Next.js storefront with the store's credentials prefilled, and come back to
@@ -220,6 +236,14 @@ export function StorefrontConnectSheet({
                   {t('admin.getting_started.storefront_sheet.deploy_button')}
                 </a>
               </Button>
+            </div>
+            <div className="mt-1 flex items-center gap-4">
+              <ExternalLink href={STOREFRONT_DEMO_URL}>
+                {t('admin.getting_started.storefront_sheet.see_online_demo')}
+              </ExternalLink>
+              <ExternalLink href={STOREFRONT_DOCS_URL}>
+                {t('admin.getting_started.storefront_sheet.local_installation_instructions')}
+              </ExternalLink>
             </div>
           </div>
 

@@ -2614,7 +2614,9 @@
         "storefront_url_help": "Adres URL, którego klienci używają, aby dotrzeć do Twojego sklepu. Staje się podstawą linków w wiadomościach e-mail i jest automatycznie dodawany jako dozwolone źródło, aby sklepy przeglądarkowe mogły korzystać ze Store API.",
         "save": "Zapisz i zakończ konfigurację",
         "saved": "Adres URL sklepu zapisany: {{url}}",
-        "invalid_url": "To nie wygląda na prawidłowy adres URL sklepu."
+        "invalid_url": "To nie wygląda na prawidłowy adres URL sklepu.",
+        "see_online_demo": "Zobacz demo online",
+        "local_installation_instructions": "Instrukcje instalacji lokalnej"
       }
     }
   }

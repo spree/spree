@@ -2582,7 +2582,9 @@
         "storefront_url_help": "客户访问您店铺前台所用的 URL。它将成为客户邮件中链接的基础，并自动添加为允许的来源，以便基于浏览器的店铺前台调用 Store API。",
         "save": "保存并完成设置",
         "saved": "店铺前台 URL 已保存：{{url}}",
-        "invalid_url": "这看起来不是有效的店铺前台 URL。"
+        "invalid_url": "这看起来不是有效的店铺前台 URL。",
+        "see_online_demo": "查看在线演示",
+        "local_installation_instructions": "本地安装说明"
       }
     }
   }

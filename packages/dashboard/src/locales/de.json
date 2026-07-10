@@ -2582,7 +2582,9 @@
         "storefront_url_help": "Die URL, über die Kunden Ihr Storefront erreichen. Sie wird zur Basis für Links in Kunden-E-Mails und automatisch als zugelassener Origin hinzugefügt, damit browserbasierte Storefronts die Store API aufrufen können.",
         "save": "Speichern & Einrichtung abschließen",
         "saved": "Storefront-URL gespeichert: {{url}}",
-        "invalid_url": "Das sieht nicht nach einer gültigen Storefront-URL aus."
+        "invalid_url": "Das sieht nicht nach einer gültigen Storefront-URL aus.",
+        "see_online_demo": "Online-Demo ansehen",
+        "local_installation_instructions": "Anleitung zur lokalen Installation"
       }
     }
   }

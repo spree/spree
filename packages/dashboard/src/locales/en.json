@@ -2582,7 +2582,9 @@
         "storefront_url_help": "The URL customers use to reach your storefront. It becomes the base for links in customer emails and is automatically added as an allowed origin so browser-based storefronts can call the Store API.",
         "save": "Save & finish setup",
         "saved": "Storefront URL saved: {{url}}",
-        "invalid_url": "This doesn't look like a valid storefront URL."
+        "invalid_url": "This doesn't look like a valid storefront URL.",
+        "see_online_demo": "See online demo",
+        "local_installation_instructions": "Local installation instructions"
       }
     }
   }
