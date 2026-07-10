@@ -1618,6 +1618,57 @@
         "subtitle": "Gérez vos informations personnelles et votre langue d'administration.",
         "personal_details": "Informations personnelles",
         "load_failed_title": "Impossible de charger votre profil"
+      },
+      "getting_started": {
+        "title": "Premiers pas",
+        "description": "Terminez ces étapes pour lancer votre boutique.",
+        "progress": "{{done}} sur {{total}} terminées",
+        "tasks": {
+          "setup_payment_method": {
+            "title": "Configurer les moyens de paiement",
+            "description": "Pour encaisser des paiements, configurez au moins un prestataire de paiement en ligne.",
+            "cta": "Configurer les paiements"
+          },
+          "add_products": {
+            "title": "Ajouter des produits",
+            "description": "Ajoutez des produits à votre boutique — les vôtres, ou invitez des vendeurs tiers à vendre avec vous.",
+            "cta": "Ajouter des produits"
+          },
+          "set_customer_support_email": {
+            "title": "Définir l'e-mail du support client",
+            "description": "Affiché sur votre boutique comme point de contact pour les questions et le support client.",
+            "cta": "Paramètres e-mail"
+          },
+          "setup_taxes_collection": {
+            "title": "Configurer la collecte des taxes",
+            "description": "Pour collecter les taxes, configurez vos taux de taxe.",
+            "cta": "Paramètres des taxes"
+          },
+          "setup_storefront": {
+            "title": "Configurer la boutique",
+            "description": "Connectez votre boutique web ou votre application mobile avec vos identifiants Store API et enregistrez l'URL de votre boutique.",
+            "cta": "Connecter la boutique"
+          }
+        },
+        "storefront_sheet": {
+          "title": "Connecter votre boutique",
+          "description": "Utilisez ces identifiants dans tout client qui communique avec la Store API — boutique web, application mobile ou autre.",
+          "api_url_label": "URL de la Store API",
+          "publishable_key_label": "Clé API publiable",
+          "deploy_title": "Recommandé : déployer la boutique Next.js officielle",
+          "deploy_copy": "Le déploiement clone la boutique open-source sur votre compte Git et la construit sur Vercel avec vos identifiants préremplis. Une fois terminé, copiez son URL dans le champ ci-dessous.",
+          "deploy_button": "Déployer sur Vercel",
+          "env_description": "Votre URL de Store API Spree et votre clé publiable. Les deux sont préremplies depuis votre boutique — ajustez-les avant le déploiement si nécessaire.",
+          "storefront_url_label": "URL de la boutique",
+          "storefront_url_help": "L'URL que vos clients utilisent pour accéder à votre boutique. Elle sert de base aux liens dans les e-mails clients et est automatiquement ajoutée comme origine autorisée pour que les boutiques web puissent appeler la Store API.",
+          "save": "Enregistrer et terminer",
+          "saved": "URL de la boutique enregistrée : {{url}}",
+          "invalid_url": "Cela ne ressemble pas à une URL de boutique valide.",
+          "see_online_demo": "Voir la démo en ligne",
+          "local_installation_instructions": "Instructions d'installation locale",
+          "key_error": "Impossible de charger votre clé API publiable.",
+          "storefront_url_placeholder": "https://myshop.com"
+        }
       }
     },
     "invitation": {
@@ -2537,57 +2588,6 @@
         "no_matches": "Aucun produit ne correspond au filtre."
       },
       "load_failed": "Échec du chargement des catégories. Veuillez réessayer."
-    },
-    "getting_started": {
-      "title": "Premiers pas",
-      "description": "Terminez ces étapes pour lancer votre boutique.",
-      "progress": "{{done}} sur {{total}} terminées",
-      "tasks": {
-        "setup_payment_method": {
-          "title": "Configurer les moyens de paiement",
-          "description": "Pour encaisser des paiements, configurez au moins un prestataire de paiement en ligne.",
-          "cta": "Configurer les paiements"
-        },
-        "add_products": {
-          "title": "Ajouter des produits",
-          "description": "Ajoutez des produits à votre boutique — les vôtres, ou invitez des vendeurs tiers à vendre avec vous.",
-          "cta": "Ajouter des produits"
-        },
-        "set_customer_support_email": {
-          "title": "Définir l'e-mail du support client",
-          "description": "Affiché sur votre boutique comme point de contact pour les questions et le support client.",
-          "cta": "Paramètres e-mail"
-        },
-        "setup_taxes_collection": {
-          "title": "Configurer la collecte des taxes",
-          "description": "Pour collecter les taxes, configurez vos taux de taxe.",
-          "cta": "Paramètres des taxes"
-        },
-        "setup_storefront": {
-          "title": "Configurer la boutique",
-          "description": "Connectez votre boutique web ou votre application mobile avec vos identifiants Store API et enregistrez l'URL de votre boutique.",
-          "cta": "Connecter la boutique"
-        }
-      },
-      "storefront_sheet": {
-        "title": "Connecter votre boutique",
-        "description": "Utilisez ces identifiants dans tout client qui communique avec la Store API — boutique web, application mobile ou autre.",
-        "api_url_label": "URL de la Store API",
-        "publishable_key_label": "Clé API publiable",
-        "deploy_title": "Recommandé : déployer la boutique Next.js officielle",
-        "deploy_copy": "Le déploiement clone la boutique open-source sur votre compte Git et la construit sur Vercel avec vos identifiants préremplis. Une fois terminé, copiez son URL dans le champ ci-dessous.",
-        "deploy_button": "Déployer sur Vercel",
-        "env_description": "Votre URL de Store API Spree et votre clé publiable. Les deux sont préremplies depuis votre boutique — ajustez-les avant le déploiement si nécessaire.",
-        "storefront_url_label": "URL de la boutique",
-        "storefront_url_help": "L'URL que vos clients utilisent pour accéder à votre boutique. Elle sert de base aux liens dans les e-mails clients et est automatiquement ajoutée comme origine autorisée pour que les boutiques web puissent appeler la Store API.",
-        "save": "Enregistrer et terminer",
-        "saved": "URL de la boutique enregistrée : {{url}}",
-        "invalid_url": "Cela ne ressemble pas à une URL de boutique valide.",
-        "see_online_demo": "Voir la démo en ligne",
-        "local_installation_instructions": "Instructions d'installation locale",
-        "key_error": "Impossible de charger votre clé API publiable.",
-        "storefront_url_placeholder": "https://myshop.com"
-      }
     }
   }
 }

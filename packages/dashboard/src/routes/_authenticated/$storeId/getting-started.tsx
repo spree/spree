@@ -54,15 +54,16 @@ function GettingStartedPage() {
     const humanized = task.name.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())
     const fallback = facet === 'title' ? humanized : ''
     return (
-      t(`admin.getting_started.tasks.${task.name}.${facet}`, { defaultValue: fallback }) || null
+      t(`admin.pages.getting_started.tasks.${task.name}.${facet}`, { defaultValue: fallback }) ||
+      null
     )
   }
 
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
-        title={t('admin.getting_started.title')}
-        subtitle={t('admin.getting_started.description')}
+        title={t('admin.pages.getting_started.title')}
+        subtitle={t('admin.pages.getting_started.description')}
       />
 
       <div className="flex items-center gap-3">
@@ -73,7 +74,7 @@ function GettingStartedPage() {
           />
         </div>
         <span className="shrink-0 text-sm text-muted-foreground">
-          {t('admin.getting_started.progress', { done: doneCount, total: tasks.length })}
+          {t('admin.pages.getting_started.progress', { done: doneCount, total: tasks.length })}
         </span>
       </div>
 

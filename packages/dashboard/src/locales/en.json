@@ -1666,6 +1666,57 @@
         "subtitle": "Manage your personal details and admin language.",
         "personal_details": "Personal Details",
         "load_failed_title": "Couldn't load your profile"
+      },
+      "getting_started": {
+        "title": "Getting Started",
+        "description": "Finish these steps to launch your store.",
+        "progress": "{{done}} of {{total}} completed",
+        "tasks": {
+          "setup_payment_method": {
+            "title": "Set up payment methods",
+            "description": "To collect payments, set up at least one online payment provider.",
+            "cta": "Set up payment methods"
+          },
+          "add_products": {
+            "title": "Add products",
+            "description": "Add products to your store — your own, or invite third-party vendors to sell together.",
+            "cta": "Add products"
+          },
+          "set_customer_support_email": {
+            "title": "Set customer support email",
+            "description": "Shown on your storefront as the contact point for customer questions and support.",
+            "cta": "Email settings"
+          },
+          "setup_taxes_collection": {
+            "title": "Set up taxes collection",
+            "description": "To collect taxes, set up your tax rates.",
+            "cta": "Tax settings"
+          },
+          "setup_storefront": {
+            "title": "Set up storefront",
+            "description": "Connect your web storefront or mobile app with your Store API credentials, and save your storefront URL.",
+            "cta": "Connect storefront"
+          }
+        },
+        "storefront_sheet": {
+          "title": "Connect your storefront",
+          "description": "Use these credentials in any client that talks to the Store API — a web storefront, a mobile app, or anything else.",
+          "api_url_label": "Store API URL",
+          "publishable_key_label": "Publishable API key",
+          "deploy_title": "Recommended: deploy the official Next.js storefront",
+          "deploy_copy": "Deploying clones the open-source storefront to your Git account and builds it on Vercel with your credentials prefilled. Once it finishes, copy its URL into the field below.",
+          "deploy_button": "Deploy to Vercel",
+          "env_description": "Your Spree Store API URL and publishable key. Both are prefilled from your store — adjust them before deploying if needed.",
+          "storefront_url_label": "Storefront URL",
+          "storefront_url_help": "The URL customers use to reach your storefront. It becomes the base for links in customer emails and is automatically added as an allowed origin so browser-based storefronts can call the Store API.",
+          "save": "Save & finish setup",
+          "saved": "Storefront URL saved: {{url}}",
+          "invalid_url": "This doesn't look like a valid storefront URL.",
+          "see_online_demo": "See online demo",
+          "local_installation_instructions": "Local installation instructions",
+          "key_error": "Couldn't load your publishable API key.",
+          "storefront_url_placeholder": "https://myshop.com"
+        }
       }
     },
     "invitation": {
@@ -2537,57 +2588,6 @@
         "no_matches": "No products match your filter."
       },
       "load_failed": "Failed to load categories. Please try again."
-    },
-    "getting_started": {
-      "title": "Getting Started",
-      "description": "Finish these steps to launch your store.",
-      "progress": "{{done}} of {{total}} completed",
-      "tasks": {
-        "setup_payment_method": {
-          "title": "Set up payment methods",
-          "description": "To collect payments, set up at least one online payment provider.",
-          "cta": "Set up payment methods"
-        },
-        "add_products": {
-          "title": "Add products",
-          "description": "Add products to your store — your own, or invite third-party vendors to sell together.",
-          "cta": "Add products"
-        },
-        "set_customer_support_email": {
-          "title": "Set customer support email",
-          "description": "Shown on your storefront as the contact point for customer questions and support.",
-          "cta": "Email settings"
-        },
-        "setup_taxes_collection": {
-          "title": "Set up taxes collection",
-          "description": "To collect taxes, set up your tax rates.",
-          "cta": "Tax settings"
-        },
-        "setup_storefront": {
-          "title": "Set up storefront",
-          "description": "Connect your web storefront or mobile app with your Store API credentials, and save your storefront URL.",
-          "cta": "Connect storefront"
-        }
-      },
-      "storefront_sheet": {
-        "title": "Connect your storefront",
-        "description": "Use these credentials in any client that talks to the Store API — a web storefront, a mobile app, or anything else.",
-        "api_url_label": "Store API URL",
-        "publishable_key_label": "Publishable API key",
-        "deploy_title": "Recommended: deploy the official Next.js storefront",
-        "deploy_copy": "Deploying clones the open-source storefront to your Git account and builds it on Vercel with your credentials prefilled. Once it finishes, copy its URL into the field below.",
-        "deploy_button": "Deploy to Vercel",
-        "env_description": "Your Spree Store API URL and publishable key. Both are prefilled from your store — adjust them before deploying if needed.",
-        "storefront_url_label": "Storefront URL",
-        "storefront_url_help": "The URL customers use to reach your storefront. It becomes the base for links in customer emails and is automatically added as an allowed origin so browser-based storefronts can call the Store API.",
-        "save": "Save & finish setup",
-        "saved": "Storefront URL saved: {{url}}",
-        "invalid_url": "This doesn't look like a valid storefront URL.",
-        "see_online_demo": "See online demo",
-        "local_installation_instructions": "Local installation instructions",
-        "key_error": "Couldn't load your publishable API key.",
-        "storefront_url_placeholder": "https://myshop.com"
-      }
     }
   }
 }

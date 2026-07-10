@@ -21,10 +21,10 @@ export function StorefrontConnectTask({ task, store }: SetupTaskSlotContext) {
   return (
     <>
       <p className="text-muted-foreground text-sm">
-        {t('admin.getting_started.tasks.setup_storefront.description')}
+        {t('admin.pages.getting_started.tasks.setup_storefront.description')}
       </p>
       <Button variant={task.done ? 'outline' : 'default'} onClick={() => setSheetOpen(true)}>
-        {t('admin.getting_started.tasks.setup_storefront.cta')}
+        {t('admin.pages.getting_started.tasks.setup_storefront.cta')}
       </Button>
       <StorefrontConnectSheet
         store={store}

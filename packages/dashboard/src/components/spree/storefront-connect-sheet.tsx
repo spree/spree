@@ -111,13 +111,13 @@ export function StorefrontConnectSheet({
   const handleSave = () => {
     const origin = normalizeOrigin(url)
     if (!origin) {
-      toast.error(t('admin.getting_started.storefront_sheet.invalid_url'))
+      toast.error(t('admin.pages.getting_started.storefront_sheet.invalid_url'))
       return
     }
 
     connect.mutate(origin, {
       onSuccess: () => {
-        toast.success(t('admin.getting_started.storefront_sheet.saved', { url: origin }))
+        toast.success(t('admin.pages.getting_started.storefront_sheet.saved', { url: origin }))
         onOpenChange(false)
       },
       onError: (error) => {
@@ -130,15 +130,15 @@ export function StorefrontConnectSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="flex w-full flex-col gap-6 overflow-y-auto sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle>{t('admin.getting_started.storefront_sheet.title')}</SheetTitle>
+          <SheetTitle>{t('admin.pages.getting_started.storefront_sheet.title')}</SheetTitle>
           <SheetDescription>
-            {t('admin.getting_started.storefront_sheet.description')}
+            {t('admin.pages.getting_started.storefront_sheet.description')}
           </SheetDescription>
         </SheetHeader>
 
         <div className="flex flex-col gap-6 px-4">
           <div className="flex flex-col gap-2">
-            <Label>{t('admin.getting_started.storefront_sheet.api_url_label')}</Label>
+            <Label>{t('admin.pages.getting_started.storefront_sheet.api_url_label')}</Label>
             <div className="flex items-center gap-1">
               <Input readOnly value={store.api_url} spellCheck={false} />
               <CopyToClipboardButton
@@ -151,13 +151,13 @@ export function StorefrontConnectSheet({
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label>{t('admin.getting_started.storefront_sheet.publishable_key_label')}</Label>
+            <Label>{t('admin.pages.getting_started.storefront_sheet.publishable_key_label')}</Label>
             {keyLoading ? (
               <Skeleton className="h-9" />
             ) : keyError ? (
               <div className="flex items-center gap-3">
                 <p className="text-destructive text-sm">
-                  {t('admin.getting_started.storefront_sheet.key_error')}
+                  {t('admin.pages.getting_started.storefront_sheet.key_error')}
                 </p>
                 <Button type="button" variant="outline" size="sm" onClick={() => refetchKey()}>
                   {t('admin.components.error_state.retry')}
@@ -192,10 +192,10 @@ export function StorefrontConnectSheet({
 
           <div className="flex flex-col gap-2 rounded-lg border p-4">
             <p className="font-medium text-sm">
-              {t('admin.getting_started.storefront_sheet.deploy_title')}
+              {t('admin.pages.getting_started.storefront_sheet.deploy_title')}
             </p>
             <p className="text-muted-foreground text-sm">
-              {t('admin.getting_started.storefront_sheet.deploy_copy')}
+              {t('admin.pages.getting_started.storefront_sheet.deploy_copy')}
             </p>
             <div>
               {/* Vercel's brand deploy button: black with the triangle mark
@@ -211,7 +211,7 @@ export function StorefrontConnectSheet({
                       ? vercelDeployUrl(
                           store,
                           token,
-                          t('admin.getting_started.storefront_sheet.env_description'),
+                          t('admin.pages.getting_started.storefront_sheet.env_description'),
                         )
                       : undefined
                   }
@@ -219,16 +219,16 @@ export function StorefrontConnectSheet({
                   rel="noopener noreferrer"
                 >
                   <VercelMark />
-                  {t('admin.getting_started.storefront_sheet.deploy_button')}
+                  {t('admin.pages.getting_started.storefront_sheet.deploy_button')}
                 </a>
               </Button>
             </div>
             <div className="mt-1 flex items-center gap-4">
               <ExternalLink href={STOREFRONT_DEMO_URL}>
-                {t('admin.getting_started.storefront_sheet.see_online_demo')}
+                {t('admin.pages.getting_started.storefront_sheet.see_online_demo')}
               </ExternalLink>
               <ExternalLink href={STOREFRONT_DOCS_URL}>
-                {t('admin.getting_started.storefront_sheet.local_installation_instructions')}
+                {t('admin.pages.getting_started.storefront_sheet.local_installation_instructions')}
               </ExternalLink>
             </div>
           </div>
@@ -242,22 +242,24 @@ export function StorefrontConnectSheet({
           >
             <div className="flex flex-col gap-2">
               <Label htmlFor="storefront-url">
-                {t('admin.getting_started.storefront_sheet.storefront_url_label')}
+                {t('admin.pages.getting_started.storefront_sheet.storefront_url_label')}
               </Label>
               <Input
                 id="storefront-url"
                 value={url}
                 onChange={(event) => setUrl(event.target.value)}
-                placeholder={t('admin.getting_started.storefront_sheet.storefront_url_placeholder')}
+                placeholder={t(
+                  'admin.pages.getting_started.storefront_sheet.storefront_url_placeholder',
+                )}
                 spellCheck={false}
               />
               <p className="text-muted-foreground text-sm">
-                {t('admin.getting_started.storefront_sheet.storefront_url_help')}
+                {t('admin.pages.getting_started.storefront_sheet.storefront_url_help')}
               </p>
             </div>
             <div>
               <Button type="submit" disabled={!url.trim() || connect.isPending}>
-                {t('admin.getting_started.storefront_sheet.save')}
+                {t('admin.pages.getting_started.storefront_sheet.save')}
               </Button>
             </div>
           </form>
