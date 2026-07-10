@@ -10,7 +10,7 @@ import {
 } from '@spree/dashboard-ui'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { CheckCircle2Icon, ChevronDownIcon, CircleIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   normalizeOrigin,
@@ -41,8 +41,15 @@ export const Route = createFileRoute('/_authenticated/$storeId/getting-started')
 
 function GettingStartedPage() {
   const { t, i18n } = useTranslation()
-  const { store, storeId } = useStore()
+  const { store, storeId, refetch } = useStore()
   const { 'deployment-url': deploymentUrl } = Route.useSearch()
+
+  // The provider's store snapshot goes stale while the merchant completes
+  // tasks on other pages (e.g. adds a payment method) — refresh it whenever
+  // they come back so the checklist and the nav badge reflect reality.
+  useEffect(() => {
+    void refetch()
+  }, [refetch])
   // '' means the user explicitly collapsed everything; null means "no choice
   // yet", which falls back to the first pending task.
   const [expanded, setExpanded] = useState<string | null>(null)

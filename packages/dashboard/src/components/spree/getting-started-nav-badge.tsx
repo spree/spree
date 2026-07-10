@@ -11,8 +11,9 @@ export function GettingStartedNavBadge() {
   if (tasks.length === 0 || done === tasks.length) return null
 
   return (
-    <Badge variant="info" className="rounded-lg">
-      {done} <span className="opacity-50">/{tasks.length}</span>
+    <Badge variant="outline" className="rounded-lg mr-1 flex items-center gap-0">
+      <span>{done}</span>
+      <span className="opacity-50">/{tasks.length}</span>
     </Badge>
   )
 }
