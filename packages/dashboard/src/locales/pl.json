@@ -2616,7 +2616,9 @@
         "saved": "Adres URL sklepu zapisany: {{url}}",
         "invalid_url": "To nie wygląda na prawidłowy adres URL sklepu.",
         "see_online_demo": "Zobacz demo online",
-        "local_installation_instructions": "Instrukcje instalacji lokalnej"
+        "local_installation_instructions": "Instrukcje instalacji lokalnej",
+        "key_error": "Nie udało się załadować publicznego klucza API.",
+        "storefront_url_placeholder": "https://myshop.com"
       }
     }
   }

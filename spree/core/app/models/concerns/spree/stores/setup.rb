@@ -39,6 +39,8 @@ module Spree
       end
 
       def setup_percentage
+        return 0 if setup_tasks_total.zero?
+
         (setup_tasks_done / setup_tasks_total.to_f * 100).to_i
       end
 

@@ -2584,7 +2584,9 @@
         "saved": "Storefront-URL gespeichert: {{url}}",
         "invalid_url": "Das sieht nicht nach einer gültigen Storefront-URL aus.",
         "see_online_demo": "Online-Demo ansehen",
-        "local_installation_instructions": "Anleitung zur lokalen Installation"
+        "local_installation_instructions": "Anleitung zur lokalen Installation",
+        "key_error": "Ihr Publishable API-Schlüssel konnte nicht geladen werden.",
+        "storefront_url_placeholder": "https://myshop.com"
       }
     }
   }

@@ -29,7 +29,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/getting-started')
 })
 
 function GettingStartedPage() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { store, storeId } = useStore()
 
   if (!store) {
@@ -47,11 +47,15 @@ function GettingStartedPage() {
   const firstPending = tasks.find((task) => !task.done)?.name
 
   const taskCopy = (task: SetupTask, facet: 'title' | 'description' | 'cta') => {
-    const key = `admin.getting_started.tasks.${task.name}.${facet}`
-    if (i18n.exists(key)) return t(key)
-    // Extension task without registered copy — humanize the name for the
-    // title, skip the other facets.
-    return facet === 'title' ? task.name.replace(/_/g, ' ') : null
+    // Extension tasks without registered copy fall back to a humanized name
+    // for the title and render no description/CTA. Going through defaultValue
+    // keeps the lookup inside i18next, so copy registered later (e.g. by a
+    // plugin locale bundle) wins without a code change.
+    const humanized = task.name.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())
+    const fallback = facet === 'title' ? humanized : ''
+    return (
+      t(`admin.getting_started.tasks.${task.name}.${facet}`, { defaultValue: fallback }) || null
+    )
   }
 
   return (
@@ -88,7 +92,7 @@ function GettingStartedPage() {
                   ) : (
                     <CircleIcon className="size-5 shrink-0 text-muted-foreground" />
                   )}
-                  <span className="grow font-medium capitalize">{taskCopy(task, 'title')}</span>
+                  <span className="grow font-medium">{taskCopy(task, 'title')}</span>
                   <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-data-[panel-open]:rotate-180" />
                 </CollapsibleTrigger>
                 {/* keepMounted so slot components mount even while their card is

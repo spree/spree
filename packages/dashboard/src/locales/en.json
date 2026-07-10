@@ -2584,7 +2584,9 @@
         "saved": "Storefront URL saved: {{url}}",
         "invalid_url": "This doesn't look like a valid storefront URL.",
         "see_online_demo": "See online demo",
-        "local_installation_instructions": "Local installation instructions"
+        "local_installation_instructions": "Local installation instructions",
+        "key_error": "Couldn't load your publishable API key.",
+        "storefront_url_placeholder": "https://myshop.com"
       }
     }
   }

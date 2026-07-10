@@ -2584,7 +2584,9 @@
         "saved": "店铺前台 URL 已保存：{{url}}",
         "invalid_url": "这看起来不是有效的店铺前台 URL。",
         "see_online_demo": "查看在线演示",
-        "local_installation_instructions": "本地安装说明"
+        "local_installation_instructions": "本地安装说明",
+        "key_error": "无法加载您的可发布 API 密钥。",
+        "storefront_url_placeholder": "https://myshop.com"
       }
     }
   }

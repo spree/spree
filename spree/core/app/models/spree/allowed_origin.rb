@@ -33,8 +33,8 @@ module Spree
     end
 
     # Normalizes free-form input (possibly a bare host like `my-shop.vercel.app`)
-    # to a canonical origin string (`scheme://host[:port]`, default ports
-    # stripped), or nil when it's not a valid http(s) URL.
+    # to a canonical origin string (`scheme://host[:port]`, the scheme's default
+    # port stripped), or nil when it's not a valid http(s) URL.
     #
     # @param raw [String, nil]
     # @return [String, nil]
@@ -47,7 +47,10 @@ module Spree
       return if parsed.nil?
 
       origin = "#{parsed[:scheme]}://#{parsed[:host]}"
-      origin += ":#{parsed[:port]}" unless [80, 443].include?(parsed[:port])
+      # Strip only the scheme's own default — https://host:80 must keep its
+      # port, or the normalized origin would silently mean a different one.
+      default_port = parsed[:scheme] == 'https' ? 443 : 80
+      origin += ":#{parsed[:port]}" unless parsed[:port] == default_port
       origin
     end
 

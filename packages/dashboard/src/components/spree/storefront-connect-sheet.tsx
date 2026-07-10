@@ -98,9 +98,12 @@ export function StorefrontConnectSheet({
   const [url, setUrl] = useState(() => initialUrl ?? store.preferred_storefront_url ?? '')
   const [showKey, setShowKey] = useState(false)
 
-  const { data: publishableKey, isLoading: keyLoading } = useStorefrontPublishableKey({
-    enabled: open,
-  })
+  const {
+    data: publishableKey,
+    isLoading: keyLoading,
+    isError: keyError,
+    refetch: refetchKey,
+  } = useStorefrontPublishableKey({ enabled: open })
   const token = publishableKey?.plaintext_token ?? ''
 
   const connect = useConnectStorefront()
@@ -140,7 +143,7 @@ export function StorefrontConnectSheet({
               <Input readOnly value={store.api_url} spellCheck={false} />
               <CopyToClipboardButton
                 value={store.api_url}
-                aria-label={t('admin.common.copy')}
+                aria-label={t('admin.actions.copy')}
                 variant="ghost"
                 size="icon"
               />
@@ -151,6 +154,15 @@ export function StorefrontConnectSheet({
             <Label>{t('admin.getting_started.storefront_sheet.publishable_key_label')}</Label>
             {keyLoading ? (
               <Skeleton className="h-9" />
+            ) : keyError ? (
+              <div className="flex items-center gap-3">
+                <p className="text-destructive text-sm">
+                  {t('admin.getting_started.storefront_sheet.key_error')}
+                </p>
+                <Button type="button" variant="outline" size="sm" onClick={() => refetchKey()}>
+                  {t('admin.components.error_state.retry')}
+                </Button>
+              </div>
             ) : (
               <div className="flex items-center gap-1">
                 <Input
@@ -163,13 +175,14 @@ export function StorefrontConnectSheet({
                   type="button"
                   variant="ghost"
                   size="icon"
+                  aria-label={showKey ? t('admin.actions.hide') : t('admin.actions.show')}
                   onClick={() => setShowKey((visible) => !visible)}
                 >
                   {showKey ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
                 </Button>
                 <CopyToClipboardButton
                   value={token}
-                  aria-label={t('admin.common.copy')}
+                  aria-label={t('admin.actions.copy')}
                   variant="ghost"
                   size="icon"
                 />
@@ -235,7 +248,7 @@ export function StorefrontConnectSheet({
                 id="storefront-url"
                 value={url}
                 onChange={(event) => setUrl(event.target.value)}
-                placeholder="https://myshop.com"
+                placeholder={t('admin.getting_started.storefront_sheet.storefront_url_placeholder')}
                 spellCheck={false}
               />
               <p className="text-muted-foreground text-sm">

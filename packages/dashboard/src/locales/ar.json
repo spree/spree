@@ -2584,7 +2584,9 @@
         "saved": "تم حفظ عنوان URL للمتجر: {{url}}",
         "invalid_url": "لا يبدو هذا عنوان URL صالحًا للمتجر.",
         "see_online_demo": "شاهد العرض التوضيحي عبر الإنترنت",
-        "local_installation_instructions": "تعليمات التثبيت المحلي"
+        "local_installation_instructions": "تعليمات التثبيت المحلي",
+        "key_error": "تعذر تحميل مفتاح API القابل للنشر.",
+        "storefront_url_placeholder": "https://myshop.com"
       }
     }
   }

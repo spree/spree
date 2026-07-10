@@ -2584,7 +2584,9 @@
         "saved": "URL de la boutique enregistrée : {{url}}",
         "invalid_url": "Cela ne ressemble pas à une URL de boutique valide.",
         "see_online_demo": "Voir la démo en ligne",
-        "local_installation_instructions": "Instructions d'installation locale"
+        "local_installation_instructions": "Instructions d'installation locale",
+        "key_error": "Impossible de charger votre clé API publiable.",
+        "storefront_url_placeholder": "https://myshop.com"
       }
     }
   }
