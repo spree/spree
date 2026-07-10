@@ -86,11 +86,11 @@ function GettingStartedPage() {
 
           return (
             <Card key={task.name} className="overflow-hidden py-0">
-              <Collapsible
-                open={isOpen}
-                onOpenChange={(open) => setExpanded(open ? task.name : '')}
-              >
-                <CollapsibleTrigger className="flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-muted/50">
+              <Collapsible open={isOpen}>
+                <CollapsibleTrigger
+                  className="flex w-full cursor-pointer items-center gap-3 p-4 text-left hover:bg-muted/50"
+                  onClick={() => setExpanded(isOpen ? '' : task.name)}
+                >
                   {task.done ? (
                     <CheckCircle2Icon className="size-5 shrink-0 text-green-600" />
                   ) : (
