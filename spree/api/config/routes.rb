@@ -199,6 +199,8 @@ Spree::Core::Engine.add_routes do
             post :bulk_status_update
             post :bulk_add_to_categories
             post :bulk_remove_from_categories
+            post :bulk_add_to_collections
+            post :bulk_remove_from_collections
             post :bulk_add_to_channels
             post :bulk_remove_from_channels
             post :bulk_add_tags

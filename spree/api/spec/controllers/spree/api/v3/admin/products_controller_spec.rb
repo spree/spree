@@ -1291,6 +1291,80 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
   end
 
+  describe 'POST #bulk_add_to_collections' do
+    let!(:collection) { create(:collection, store: store) }
+    let!(:other_collection) { create(:collection, store: store) }
+    let!(:second_product) { create(:product) }
+
+    before { request.headers.merge!(headers) }
+
+    it 'adds every product to every collection' do
+      post :bulk_add_to_collections, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        collection_ids: [collection.prefixed_id, other_collection.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'collection_count' => 2)
+      expect(product.reload.collections).to include(collection, other_collection)
+      expect(second_product.reload.collections).to include(collection, other_collection)
+    end
+
+    it 'silently ignores collections from other stores' do
+      foreign_collection = create(:collection, store: create(:store))
+
+      post :bulk_add_to_collections, params: {
+        ids: [product.prefixed_id],
+        collection_ids: [collection.prefixed_id, foreign_collection.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['collection_count']).to eq(1)
+      expect(product.reload.collections).to include(collection)
+      expect(product.reload.collections).not_to include(foreign_collection)
+    end
+
+    it 'silently drops products from other stores' do
+      other_store_product = create(:product, store: create(:store))
+
+      post :bulk_add_to_collections, params: {
+        ids: [product.prefixed_id, other_store_product.prefixed_id],
+        collection_ids: [collection.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_count']).to eq(1)
+      expect(other_store_product.reload.collections).to be_empty
+    end
+
+    it 'returns 422 when ids is missing' do
+      post :bulk_add_to_collections, params: { collection_ids: [collection.prefixed_id] }, as: :json
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
+  describe 'POST #bulk_remove_from_collections' do
+    let!(:collection) { create(:collection, store: store) }
+    let!(:second_product) { create(:product) }
+
+    before do
+      request.headers.merge!(headers)
+      Spree::Collections::AddProducts.call(collections: [collection], products: [product, second_product])
+    end
+
+    it 'removes every product from every collection' do
+      post :bulk_remove_from_collections, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        collection_ids: [collection.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'collection_count' => 1)
+      expect(product.reload.collections).not_to include(collection)
+      expect(second_product.reload.collections).not_to include(collection)
+    end
+  end
+
   describe 'POST #bulk_add_to_categories' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let(:category) { create(:taxon, taxonomy: taxonomy) }

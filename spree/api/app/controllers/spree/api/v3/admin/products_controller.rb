@@ -11,6 +11,8 @@ module Spree
             :bulk_status_update,
             :bulk_add_to_categories,
             :bulk_remove_from_categories,
+            :bulk_add_to_collections,
+            :bulk_remove_from_collections,
             :bulk_add_to_channels,
             :bulk_remove_from_channels,
             :bulk_destroy
@@ -59,6 +61,18 @@ module Spree
           # Body: { ids: [...], category_ids: [...] }
           def bulk_remove_from_categories
             apply_categories(Spree::Taxons::RemoveProducts)
+          end
+
+          # POST /api/v3/admin/products/bulk_add_to_collections
+          # Body: { ids: [...], collection_ids: [...] }
+          def bulk_add_to_collections
+            apply_collections(Spree::Collections::AddProducts)
+          end
+
+          # POST /api/v3/admin/products/bulk_remove_from_collections
+          # Body: { ids: [...], collection_ids: [...] }
+          def bulk_remove_from_collections
+            apply_collections(Spree::Collections::RemoveProducts)
           end
 
           # POST /api/v3/admin/products/bulk_add_to_channels
@@ -223,6 +237,18 @@ module Spree
             service.call(taxons: categories, products: bulk_collection)
 
             render json: { product_count: bulk_collection.size, category_count: categories.size }
+          end
+
+          def apply_collections(service)
+            authorize! :update, model_class
+
+            collection_ids = decode_ids(params[:collection_ids])
+            collections = current_store.collections.
+                          accessible_by(current_ability, :update).where(id: collection_ids)
+
+            service.call(collections: collections, products: bulk_collection)
+
+            render json: { product_count: bulk_collection.size, collection_count: collections.size }
           end
 
           def scoped_channels
