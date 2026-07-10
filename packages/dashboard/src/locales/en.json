@@ -112,7 +112,8 @@
         "store": "Store",
         "payments": "Payments & taxes",
         "fulfillment": "Fulfillment",
-        "team": "Team & access"
+        "team": "Team & access",
+        "audit": "Audit"
       },
       "items": {
         "store": "Store",
@@ -127,7 +128,8 @@
         "api_keys": "API keys",
         "webhooks": "Webhooks",
         "allowed_origins": "Allowed origins",
-        "profile": "Profile"
+        "profile": "Profile",
+        "imports": "Imports"
       }
     },
     "fields": {
@@ -1614,6 +1616,22 @@
         "allowed_origins": {
           "add_sheet_title": "Add allowed origin",
           "edit_sheet_title": "Edit allowed origin"
+        },
+        "imports": {
+          "title": "Imports",
+          "search_placeholder": "Search by number…",
+          "empty_title": "No imports yet",
+          "table": {
+            "number": "Number",
+            "type": "Type",
+            "status": "Status",
+            "rows": "Rows",
+            "failed_count": "{{failed}} failed"
+          },
+          "delete_confirm": {
+            "title": "Delete import?",
+            "message": "This removes {{number}}, its rows and the uploaded file."
+          }
         }
       },
       "promotions": {
@@ -2588,6 +2606,64 @@
         "no_matches": "No products match your filter."
       },
       "load_failed": "Failed to load categories. Please try again."
+    },
+    "imports": {
+      "steps": {
+        "map_fields": "Map fields",
+        "process_rows": "Process rows",
+        "complete": "Complete"
+      },
+      "status": {
+        "pending": "Pending",
+        "mapping": "Mapping",
+        "completed_mapping": "Queued",
+        "processing": "Processing",
+        "completed": "Completed",
+        "failed": "Failed"
+      },
+      "types": {
+        "products": "Products",
+        "customers": "Customers",
+        "product_translations": "Product translations"
+      },
+      "mapping": {
+        "title": "Map columns",
+        "description": "Match the columns from your file to {{type}} fields.",
+        "field": "Field",
+        "file_column": "File column",
+        "sample": "Example",
+        "not_mapped": "Not mapped",
+        "required": "Required",
+        "missing_required": "Map the required fields to continue: {{fields}}",
+        "start": "Start import",
+        "starting": "Starting…"
+      },
+      "processing": {
+        "title": "Processing rows",
+        "preparing": "Preparing rows…",
+        "progress": "{{processed}} of {{total}} rows processed",
+        "failed_count": "{{failed}} failed",
+        "retrying": "Retrying failed rows · {{remaining}} remaining",
+        "note": "You can leave this page — the import continues in the background."
+      },
+      "results": {
+        "completed_title": "Import completed",
+        "summary": "{{completed}} rows imported · {{failed}} failed",
+        "retry_failed": "Retry failed rows ({{failed}})",
+        "retrying": "Retrying…",
+        "view_records": "View {{type}}"
+      },
+      "failed": {
+        "title": "Import failed",
+        "description": "The file could not be processed."
+      },
+      "failed_rows": {
+        "title": "Failed rows",
+        "row_number": "Row",
+        "error": "Error",
+        "view_data": "View row data",
+        "hide_data": "Hide row data"
+      }
     }
   }
 }

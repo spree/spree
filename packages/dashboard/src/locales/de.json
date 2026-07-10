@@ -64,7 +64,8 @@
         "store": "Shop",
         "payments": "Zahlungen & Steuern",
         "fulfillment": "Fulfillment",
-        "team": "Team & Zugriff"
+        "team": "Team & Zugriff",
+        "audit": "Audit"
       },
       "items": {
         "store": "Shop",
@@ -79,7 +80,8 @@
         "api_keys": "API-Schlüssel",
         "webhooks": "Webhooks",
         "allowed_origins": "Zugelassene Ursprünge",
-        "profile": "Profil"
+        "profile": "Profil",
+        "imports": "Importe"
       }
     },
     "fields": {
@@ -1566,6 +1568,22 @@
         "allowed_origins": {
           "add_sheet_title": "Erlaubten Ursprung hinzufügen",
           "edit_sheet_title": "Erlaubten Ursprung bearbeiten"
+        },
+        "imports": {
+          "title": "Importe",
+          "search_placeholder": "Nach Nummer suchen…",
+          "empty_title": "Noch keine Importe",
+          "table": {
+            "number": "Nummer",
+            "type": "Typ",
+            "status": "Status",
+            "rows": "Zeilen",
+            "failed_count": "{{failed}} fehlgeschlagen"
+          },
+          "delete_confirm": {
+            "title": "Import löschen?",
+            "message": "Dies entfernt {{number}}, seine Zeilen und die hochgeladene Datei."
+          }
         }
       },
       "promotions": {
@@ -2588,6 +2606,64 @@
         "no_matches": "Keine Produkte entsprechen dem Filter."
       },
       "load_failed": "Kategorien konnten nicht geladen werden. Bitte erneut versuchen."
+    },
+    "imports": {
+      "steps": {
+        "map_fields": "Felder zuordnen",
+        "process_rows": "Zeilen verarbeiten",
+        "complete": "Fertig"
+      },
+      "status": {
+        "pending": "Ausstehend",
+        "mapping": "Zuordnung",
+        "completed_mapping": "In Warteschlange",
+        "processing": "In Bearbeitung",
+        "completed": "Abgeschlossen",
+        "failed": "Fehlgeschlagen"
+      },
+      "types": {
+        "products": "Produkte",
+        "customers": "Kunden",
+        "product_translations": "Produktübersetzungen"
+      },
+      "mapping": {
+        "title": "Spalten zuordnen",
+        "description": "Ordnen Sie die Spalten Ihrer Datei den Feldern für {{type}} zu.",
+        "field": "Feld",
+        "file_column": "Dateispalte",
+        "sample": "Beispiel",
+        "not_mapped": "Nicht zugeordnet",
+        "required": "Erforderlich",
+        "missing_required": "Ordnen Sie die erforderlichen Felder zu, um fortzufahren: {{fields}}",
+        "start": "Import starten",
+        "starting": "Wird gestartet…"
+      },
+      "processing": {
+        "title": "Zeilen werden verarbeitet",
+        "preparing": "Zeilen werden vorbereitet…",
+        "progress": "{{processed}} von {{total}} Zeilen verarbeitet",
+        "failed_count": "{{failed}} fehlgeschlagen",
+        "retrying": "Fehlgeschlagene Zeilen werden wiederholt · {{remaining}} verbleibend",
+        "note": "Sie können diese Seite verlassen — der Import läuft im Hintergrund weiter."
+      },
+      "results": {
+        "completed_title": "Import abgeschlossen",
+        "summary": "{{completed}} Zeilen importiert · {{failed}} fehlgeschlagen",
+        "retry_failed": "Fehlgeschlagene Zeilen wiederholen ({{failed}})",
+        "retrying": "Wird wiederholt…",
+        "view_records": "{{type}} anzeigen"
+      },
+      "failed": {
+        "title": "Import fehlgeschlagen",
+        "description": "Die Datei konnte nicht verarbeitet werden."
+      },
+      "failed_rows": {
+        "title": "Fehlgeschlagene Zeilen",
+        "row_number": "Zeile",
+        "error": "Fehler",
+        "view_data": "Zeilendaten anzeigen",
+        "hide_data": "Zeilendaten ausblenden"
+      }
     }
   }
 }

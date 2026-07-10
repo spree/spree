@@ -64,7 +64,8 @@
         "store": "Boutique",
         "payments": "Paiements et taxes",
         "fulfillment": "Traitement des commandes",
-        "team": "Équipe et accès"
+        "team": "Équipe et accès",
+        "audit": "Audit"
       },
       "items": {
         "store": "Boutique",
@@ -79,7 +80,8 @@
         "api_keys": "Clés API",
         "webhooks": "Webhooks",
         "allowed_origins": "Origines autorisées",
-        "profile": "Profil"
+        "profile": "Profil",
+        "imports": "Imports"
       }
     },
     "fields": {
@@ -1566,6 +1568,22 @@
         "allowed_origins": {
           "add_sheet_title": "Ajouter une origine autorisée",
           "edit_sheet_title": "Modifier l'origine autorisée"
+        },
+        "imports": {
+          "title": "Imports",
+          "search_placeholder": "Rechercher par numéro…",
+          "empty_title": "Aucun import pour l'instant",
+          "table": {
+            "number": "Numéro",
+            "type": "Type",
+            "status": "Statut",
+            "rows": "Lignes",
+            "failed_count": "{{failed}} en échec"
+          },
+          "delete_confirm": {
+            "title": "Supprimer l'import ?",
+            "message": "Cela supprime {{number}}, ses lignes et le fichier téléversé."
+          }
         }
       },
       "promotions": {
@@ -2588,6 +2606,64 @@
         "no_matches": "Aucun produit ne correspond au filtre."
       },
       "load_failed": "Échec du chargement des catégories. Veuillez réessayer."
+    },
+    "imports": {
+      "steps": {
+        "map_fields": "Associer les champs",
+        "process_rows": "Traiter les lignes",
+        "complete": "Terminé"
+      },
+      "status": {
+        "pending": "En attente",
+        "mapping": "Association",
+        "completed_mapping": "En file",
+        "processing": "En cours",
+        "completed": "Terminé",
+        "failed": "Échoué"
+      },
+      "types": {
+        "products": "Produits",
+        "customers": "Clients",
+        "product_translations": "Traductions de produits"
+      },
+      "mapping": {
+        "title": "Associer les colonnes",
+        "description": "Associez les colonnes de votre fichier aux champs {{type}}.",
+        "field": "Champ",
+        "file_column": "Colonne du fichier",
+        "sample": "Exemple",
+        "not_mapped": "Non associée",
+        "required": "Requis",
+        "missing_required": "Associez les champs requis pour continuer : {{fields}}",
+        "start": "Lancer l'import",
+        "starting": "Lancement…"
+      },
+      "processing": {
+        "title": "Traitement des lignes",
+        "preparing": "Préparation des lignes…",
+        "progress": "{{processed}} lignes traitées sur {{total}}",
+        "failed_count": "{{failed}} en échec",
+        "retrying": "Nouvelle tentative des lignes en échec · {{remaining}} restantes",
+        "note": "Vous pouvez quitter cette page — l'import continue en arrière-plan."
+      },
+      "results": {
+        "completed_title": "Import terminé",
+        "summary": "{{completed}} lignes importées · {{failed}} en échec",
+        "retry_failed": "Réessayer les lignes en échec ({{failed}})",
+        "retrying": "Nouvelle tentative…",
+        "view_records": "Voir {{type}}"
+      },
+      "failed": {
+        "title": "Échec de l'import",
+        "description": "Le fichier n'a pas pu être traité."
+      },
+      "failed_rows": {
+        "title": "Lignes en échec",
+        "row_number": "Ligne",
+        "error": "Erreur",
+        "view_data": "Voir les données",
+        "hide_data": "Masquer les données"
+      }
     }
   }
 }

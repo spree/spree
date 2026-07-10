@@ -4,6 +4,7 @@ import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
 import {
   adminClient,
   ExportButton,
+  ImportButton,
   mapSpreeErrorsToForm,
   ResourceMultiAutocomplete,
   ResourceTable,
@@ -197,6 +198,16 @@ function CustomersPage() {
         rowActions={(customer) => <CustomerRowActions customer={customer} storeId={storeId} />}
         actions={(ctx) => (
           <>
+            <ImportButton
+              type="Spree::Imports::Customers"
+              subject={Subject.Customer}
+              onCreated={(imp) =>
+                navigate({
+                  to: '/$storeId/settings/imports/$importId',
+                  params: { storeId, importId: imp.id },
+                })
+              }
+            />
             <ExportButton type="Spree::Exports::Customers" {...ctx} />
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />

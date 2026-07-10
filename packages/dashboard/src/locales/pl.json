@@ -64,7 +64,8 @@
         "store": "Sklep",
         "payments": "Płatności i podatki",
         "fulfillment": "Realizacja zamówień",
-        "team": "Zespół i dostęp"
+        "team": "Zespół i dostęp",
+        "audit": "Audyt"
       },
       "items": {
         "store": "Sklep",
@@ -79,7 +80,8 @@
         "api_keys": "Klucze API",
         "webhooks": "Webhooki",
         "allowed_origins": "Dozwolone źródła",
-        "profile": "Profil"
+        "profile": "Profil",
+        "imports": "Importy"
       }
     },
     "fields": {
@@ -1586,6 +1588,22 @@
         "allowed_origins": {
           "add_sheet_title": "Dodaj dozwolone źródło",
           "edit_sheet_title": "Edytuj dozwolone źródło"
+        },
+        "imports": {
+          "title": "Importy",
+          "search_placeholder": "Szukaj po numerze…",
+          "empty_title": "Brak importów",
+          "table": {
+            "number": "Numer",
+            "type": "Typ",
+            "status": "Status",
+            "rows": "Wiersze",
+            "failed_count": "{{failed}} nieudanych"
+          },
+          "delete_confirm": {
+            "title": "Usunąć import?",
+            "message": "Spowoduje to usunięcie {{number}}, jego wierszy i przesłanego pliku."
+          }
         }
       },
       "promotions": {
@@ -2620,6 +2638,64 @@
         "no_matches": "Żaden produkt nie pasuje do filtra."
       },
       "load_failed": "Nie udało się załadować kategorii. Spróbuj ponownie."
+    },
+    "imports": {
+      "steps": {
+        "map_fields": "Dopasuj pola",
+        "process_rows": "Przetwórz wiersze",
+        "complete": "Gotowe"
+      },
+      "status": {
+        "pending": "Oczekujący",
+        "mapping": "Dopasowywanie",
+        "completed_mapping": "W kolejce",
+        "processing": "Przetwarzanie",
+        "completed": "Zakończony",
+        "failed": "Nieudany"
+      },
+      "types": {
+        "products": "Produkty",
+        "customers": "Klienci",
+        "product_translations": "Tłumaczenia produktów"
+      },
+      "mapping": {
+        "title": "Dopasuj kolumny",
+        "description": "Dopasuj kolumny z pliku do pól: {{type}}.",
+        "field": "Pole",
+        "file_column": "Kolumna pliku",
+        "sample": "Przykład",
+        "not_mapped": "Niedopasowane",
+        "required": "Wymagane",
+        "missing_required": "Aby kontynuować, dopasuj wymagane pola: {{fields}}",
+        "start": "Rozpocznij import",
+        "starting": "Rozpoczynanie…"
+      },
+      "processing": {
+        "title": "Przetwarzanie wierszy",
+        "preparing": "Przygotowywanie wierszy…",
+        "progress": "Przetworzono {{processed}} z {{total}} wierszy",
+        "failed_count": "{{failed}} nieudanych",
+        "retrying": "Ponawianie nieudanych wierszy · pozostało {{remaining}}",
+        "note": "Możesz opuścić tę stronę — import będzie kontynuowany w tle."
+      },
+      "results": {
+        "completed_title": "Import zakończony",
+        "summary": "Zaimportowano {{completed}} wierszy · {{failed}} nieudanych",
+        "retry_failed": "Ponów nieudane wiersze ({{failed}})",
+        "retrying": "Ponawianie…",
+        "view_records": "Zobacz: {{type}}"
+      },
+      "failed": {
+        "title": "Import nieudany",
+        "description": "Nie udało się przetworzyć pliku."
+      },
+      "failed_rows": {
+        "title": "Nieudane wiersze",
+        "row_number": "Wiersz",
+        "error": "Błąd",
+        "view_data": "Pokaż dane wiersza",
+        "hide_data": "Ukryj dane wiersza"
+      }
     }
   }
 }

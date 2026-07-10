@@ -3,6 +3,7 @@ import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
 import {
   adminClient,
   ExportButton,
+  ImportButton,
   ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
@@ -264,6 +265,16 @@ function ProductsPage() {
       rowActions={renderRowActions}
       actions={(ctx) => (
         <>
+          <ImportButton
+            type="Spree::Imports::Products"
+            subject={Subject.Product}
+            onCreated={(imp) =>
+              navigate({
+                to: '/$storeId/settings/imports/$importId',
+                params: { storeId, importId: imp.id },
+              })
+            }
+          />
           <ExportButton type="Spree::Exports::Products" {...ctx} />
           <Button
             size="sm"
