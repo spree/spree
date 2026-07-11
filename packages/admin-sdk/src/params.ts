@@ -1121,6 +1121,12 @@ export interface ImportCreateParams {
   attachment: string
   /** CSV column separator. Defaults to a comma on the server. */
   preferred_delimiter?: ',' | ';' | '|' | '\t'
+  /**
+   * Absolute URL of the dashboard's imports view; the import-done email
+   * links back to it with `?import=<id>` appended. Only honored when it
+   * matches one of the store's configured allowed origins.
+   */
+  results_url?: string
 }
 
 export interface ImportMappingParam {

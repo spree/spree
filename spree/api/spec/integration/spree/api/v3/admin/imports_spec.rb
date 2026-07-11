@@ -82,6 +82,13 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
             enum: [',', ';', '|', "\t"],
             description: 'CSV column separator. Defaults to a comma.',
             example: ','
+          },
+          results_url: {
+            type: :string,
+            description: 'Absolute URL of your admin imports view; the import-done email links back to it ' \
+                         'with `?import=<id>` appended. Only honored when it matches one of the store\'s ' \
+                         'configured allowed origins.',
+            example: 'https://admin.example.com/store_abc/settings/imports'
           }
         }
       }

@@ -109,6 +109,37 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       expect(json_response['csv_headers']).to eq(%w[slug sku name price])
     end
 
+    context 'with a results_url' do
+      it 'stores it when it matches an allowed origin' do
+        create(:allowed_origin, store: store, origin: 'https://admin.example.com')
+
+        post :create,
+             params: {
+               type: 'Spree::Imports::Products',
+               attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n"),
+               results_url: 'https://admin.example.com/store_abc/settings/imports'
+             },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::Import.find_by_prefix_id(json_response['id']).results_url)
+          .to eq('https://admin.example.com/store_abc/settings/imports')
+      end
+
+      it 'silently drops it when it does not match an allowed origin' do
+        post :create,
+             params: {
+               type: 'Spree::Imports::Products',
+               attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n"),
+               results_url: 'https://evil.example.com/phish'
+             },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::Import.find_by_prefix_id(json_response['id']).results_url).to be_nil
+      end
+    end
+
     it 'rejects unregistered import types' do
       post :create, params: { type: 'Spree::User', attachment: csv_signed_id("slug\nx\n") }, as: :json
 

@@ -1,6 +1,7 @@
 import type { Import, ImportCreateParams, ImportType } from '@spree/admin-sdk'
 import { useMutation } from '@tanstack/react-query'
 import { adminClient } from '../client'
+import { useStore } from '../providers/store-provider'
 import { useAuth } from './use-auth'
 import { useDirectUpload } from './use-direct-upload'
 
@@ -20,6 +21,7 @@ export interface CreateImportInput {
  */
 export function useCreateImport() {
   const directUpload = useDirectUpload()
+  const { storeId } = useStore()
 
   return useMutation({
     mutationFn: async ({ type, file, preferredDelimiter }: CreateImportInput): Promise<Import> => {
@@ -30,6 +32,10 @@ export function useCreateImport() {
         type,
         attachment: signedId,
         preferred_delimiter: preferredDelimiter,
+        // The import-done email deep-links back to the wizard (`?import=<id>`
+        // appended server-side). Only honored when this origin is on the
+        // store's allowed-origins list.
+        results_url: `${window.location.origin}/${storeId}/settings/imports`,
       })
     },
   })

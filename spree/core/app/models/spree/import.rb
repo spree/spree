@@ -88,6 +88,10 @@ module Spree
     # Preferences
     #
     preference :delimiter, :string, default: ','
+    # Absolute URL of the dashboard's imports view, captured at create and
+    # validated against the store's allowed origins — the import-done email
+    # links back to it. Blank for legacy-admin or app-created imports.
+    preference :results_url, :string, default: nil
 
     # Returns true if the import has more rows than the large import threshold.
     # Large imports skip per-row UI broadcasts and use bulk processing.
@@ -134,6 +138,33 @@ module Spree
     # @return [Hash{String => Integer}]
     def rows_status_counts
       @rows_status_counts ||= rows.group(:status).count
+    end
+
+    # Public API name for the +results_url+ preference (read/write symmetry).
+    # String preferences round-trip nil as "" — normalize blank to nil.
+    def results_url
+      preferred_results_url.presence
+    end
+
+    def results_url=(value)
+      self.preferred_results_url = value
+    end
+
+    # URL of the wizard/results view for this import — the dashboard-provided
+    # +results_url+ with the wizard's `?import=` param appended. Nil when the
+    # preference is absent (the mailer then falls back to the legacy admin
+    # route when mounted).
+    # @return [String, nil]
+    def results_page_url
+      return if preferred_results_url.blank?
+
+      uri = URI.parse(preferred_results_url)
+      params = URI.decode_www_form(uri.query.to_s)
+      params << ['import', prefixed_id]
+      uri.query = URI.encode_www_form(params)
+      uri.to_s
+    rescue URI::InvalidURIError
+      nil
     end
 
     # First data row as { header => value }, reading a single line of the
