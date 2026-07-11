@@ -361,6 +361,14 @@
       "channel_select": {
         "placeholder": "选择销售渠道"
       },
+      "file_upload": {
+        "attached": "已附加文件",
+        "browse": "浏览文件",
+        "drop_image_label": "将图片拖放到此处，或点击浏览",
+        "drop_label": "将文件拖放到此处，或点击浏览",
+        "upload_failed": "上传失败：{{message}}",
+        "uploading": "正在上传…"
+      },
       "locale_select": {
         "placeholder": "选择语言区域",
         "multi_placeholder": "添加语言区域…",
@@ -482,8 +490,7 @@
         },
         "download_template": "下载 CSV 模板",
         "template_failed": "模板下载失败：{{message}}",
-        "submit": "上传并继续",
-        "uploading": "正在上传…",
+        "submit": "继续",
         "failed": "导入失败：{{message}}"
       },
       "metadata_card": {

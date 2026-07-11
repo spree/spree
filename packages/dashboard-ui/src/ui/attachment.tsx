@@ -56,7 +56,9 @@ const attachmentMediaVariants = cva(
     variants: {
       variant: {
         icon: 'bg-muted text-muted-foreground',
-        image: '*:[img]:aspect-square *:[img]:w-full *:[img]:object-cover',
+        // Image fit is left to the caller's <img> classes — logos want
+        // `object-contain`, photos want `object-cover`.
+        image: 'bg-muted',
       },
     },
     defaultVariants: {

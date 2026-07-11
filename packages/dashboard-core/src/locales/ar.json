@@ -361,6 +361,14 @@
       "channel_select": {
         "placeholder": "اختر قناة مبيعات"
       },
+      "file_upload": {
+        "attached": "ملف مرفق",
+        "browse": "استعراض الملفات",
+        "drop_image_label": "أسقط صورة هنا، أو انقر للاستعراض",
+        "drop_label": "أسقط ملفًا هنا، أو انقر للاستعراض",
+        "upload_failed": "فشل الرفع: {{message}}",
+        "uploading": "جارٍ الرفع…"
+      },
       "locale_select": {
         "placeholder": "اختر لغة",
         "multi_placeholder": "إضافة لغات…",
@@ -482,8 +490,7 @@
         },
         "download_template": "تنزيل قالب CSV",
         "template_failed": "فشل تنزيل القالب: {{message}}",
-        "submit": "رفع ومتابعة",
-        "uploading": "جارٍ الرفع…",
+        "submit": "متابعة",
         "failed": "فشل الاستيراد: {{message}}"
       },
       "metadata_card": {

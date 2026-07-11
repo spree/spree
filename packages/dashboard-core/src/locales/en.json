@@ -361,6 +361,14 @@
       "channel_select": {
         "placeholder": "Select a sales channel"
       },
+      "file_upload": {
+        "attached": "Attached file",
+        "browse": "Browse files",
+        "drop_image_label": "Drop an image here, or click to browse",
+        "drop_label": "Drop a file here, or click to browse",
+        "upload_failed": "Upload failed: {{message}}",
+        "uploading": "Uploading…"
+      },
       "locale_select": {
         "placeholder": "Select a locale",
         "multi_placeholder": "Add locales…",
@@ -482,8 +490,7 @@
         },
         "download_template": "Download CSV template",
         "template_failed": "Template download failed: {{message}}",
-        "submit": "Upload & continue",
-        "uploading": "Uploading…",
+        "submit": "Continue",
         "failed": "Import failed: {{message}}"
       },
       "metadata_card": {

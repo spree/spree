@@ -361,6 +361,14 @@
       "channel_select": {
         "placeholder": "Sélectionner un canal de vente"
       },
+      "file_upload": {
+        "attached": "Fichier joint",
+        "browse": "Parcourir les fichiers",
+        "drop_image_label": "Déposez une image ici ou cliquez pour parcourir",
+        "drop_label": "Déposez un fichier ici ou cliquez pour parcourir",
+        "upload_failed": "Échec du téléversement : {{message}}",
+        "uploading": "Téléversement…"
+      },
       "locale_select": {
         "placeholder": "Sélectionner une langue",
         "multi_placeholder": "Ajouter des langues…",
@@ -482,8 +490,7 @@
         },
         "download_template": "Télécharger le modèle CSV",
         "template_failed": "Échec du téléchargement du modèle : {{message}}",
-        "submit": "Téléverser et continuer",
-        "uploading": "Téléversement…",
+        "submit": "Continuer",
         "failed": "Échec de l'import : {{message}}"
       },
       "metadata_card": {

@@ -361,6 +361,14 @@
       "channel_select": {
         "placeholder": "Wybierz kanał sprzedaży"
       },
+      "file_upload": {
+        "attached": "Załączony plik",
+        "browse": "Przeglądaj pliki",
+        "drop_image_label": "Upuść obraz tutaj lub kliknij, aby przeglądać",
+        "drop_label": "Upuść plik tutaj lub kliknij, aby przeglądać",
+        "upload_failed": "Przesyłanie nie powiodło się: {{message}}",
+        "uploading": "Przesyłanie…"
+      },
       "locale_select": {
         "placeholder": "Wybierz język",
         "multi_placeholder": "Dodaj języki…",
@@ -482,8 +490,7 @@
         },
         "download_template": "Pobierz szablon CSV",
         "template_failed": "Pobieranie szablonu nie powiodło się: {{message}}",
-        "submit": "Prześlij i kontynuuj",
-        "uploading": "Przesyłanie…",
+        "submit": "Kontynuuj",
         "failed": "Import nie powiódł się: {{message}}"
       },
       "metadata_card": {

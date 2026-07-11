@@ -42,7 +42,7 @@ test.describe('csv import', () => {
           `e2e-import-bad-${suffix},E2E-IMP-BAD-${suffix},,`,
         ]),
       )
-    await page.getByRole('button', { name: /upload & continue/i }).click()
+    await page.getByRole('button', { name: /^continue$/i }).click()
 
     // Mapping step — canonical headers auto-assign, so required fields are
     // already satisfied and the sample value from the file is shown.
@@ -96,7 +96,7 @@ test.describe('csv import', () => {
           `e2e-import-nomap-${suffix},E2E-IMP-NM-${suffix},No Price ${suffix}`,
         ]),
       )
-    await page.getByRole('button', { name: /upload & continue/i }).click()
+    await page.getByRole('button', { name: /^continue$/i }).click()
 
     await expect(page.getByText('Map columns')).toBeVisible({ timeout: 15_000 })
     await expect(page.getByRole('button', { name: /start import/i })).toBeDisabled()

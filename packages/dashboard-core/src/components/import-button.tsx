@@ -1,12 +1,5 @@
 import type { Import, ImportType } from '@spree/admin-sdk'
 import {
-  Attachment,
-  AttachmentAction,
-  AttachmentActions,
-  AttachmentContent,
-  AttachmentDescription,
-  AttachmentMedia,
-  AttachmentTitle,
   Button,
   Field,
   FieldLabel,
@@ -22,13 +15,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
-import { DownloadIcon, FileSpreadsheetIcon, UploadIcon, XIcon } from 'lucide-react'
+import { DownloadIcon, FileSpreadsheetIcon, UploadIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useCreateImport, useDownloadImportTemplate } from '../hooks/use-import'
 import type { SubjectName } from '../lib/permissions'
 import { Can } from './can'
+import { EMPTY_FILE_UPLOAD_VALUE, FileUploadField, type FileUploadValue } from './file-upload-field'
 
 const DELIMITERS = [
   { value: ',', labelKey: 'comma' },
@@ -38,12 +32,6 @@ const DELIMITERS = [
 ] as const
 
 type Delimiter = (typeof DELIMITERS)[number]['value']
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
 
 interface ImportButtonProps {
   /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
@@ -66,13 +54,14 @@ interface ImportButtonProps {
 
 /**
  * Toolbar entry point for CSV imports: opens a Sheet with the upload form
- * (file, delimiter, template download). On success the sheet closes and the
- * created import is handed to `onCreated`.
+ * (file, delimiter, template download). The CSV direct-uploads on pick via
+ * `FileUploadField`; submitting creates the import from the signed blob id
+ * and hands it to `onCreated`.
  */
 export function ImportButton({ type, subject, onCreated, label }: ImportButtonProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
-  const [file, setFile] = useState<File | null>(null)
+  const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
   const [delimiter, setDelimiter] = useState<Delimiter>(',')
   const createImport = useCreateImport()
   const downloadTemplate = useDownloadImportTemplate()
@@ -84,14 +73,14 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
 
   function handleOpenChange(next: boolean) {
     setOpen(next)
-    if (!next) setFile(null)
+    if (!next) setFile(EMPTY_FILE_UPLOAD_VALUE)
   }
 
   function handleSubmit() {
-    if (!file || createImport.isPending) return
+    if (!file.signedId || createImport.isPending) return
 
     createImport.mutate(
-      { type, file, preferredDelimiter: delimiter },
+      { type, signedId: file.signedId, preferredDelimiter: delimiter },
       {
         onSuccess: (imp) => {
           handleOpenChange(false)
@@ -141,60 +130,18 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
           </SheetHeader>
 
           <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
-            {/* A <label> wrapping the file input: clicking anywhere opens the
-                picker natively, no JS forwarding needed. */}
-            <label
-              className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed bg-muted/40 px-4 py-10 text-center transition-colors hover:bg-muted"
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault()
-                const dropped = e.dataTransfer.files?.[0]
-                if (dropped) setFile(dropped)
-              }}
-            >
-              <FileSpreadsheetIcon className="size-6 text-muted-foreground" />
-              <span className="text-muted-foreground text-sm">
-                {t('admin.components.import_button.drop_label')}
-              </span>
-              <span className="mt-1 inline-flex h-8 items-center rounded-md border border-border bg-background px-3 font-medium text-sm shadow-xs">
-                {t('admin.components.import_button.browse')}
-              </span>
-              <input
-                type="file"
-                accept=".csv,text/csv"
-                className="hidden"
-                onChange={(e) => {
-                  const picked = e.target.files?.[0]
-                  if (picked) setFile(picked)
-                  e.target.value = ''
-                }}
-              />
-            </label>
-
-            {file && (
-              <Attachment className="w-full" state={createImport.isPending ? 'uploading' : 'done'}>
-                <AttachmentMedia>
-                  <FileSpreadsheetIcon />
-                </AttachmentMedia>
-                <AttachmentContent>
-                  <AttachmentTitle>{file.name}</AttachmentTitle>
-                  <AttachmentDescription>
-                    {createImport.isPending
-                      ? t('admin.components.import_button.uploading')
-                      : formatFileSize(file.size)}
-                  </AttachmentDescription>
-                </AttachmentContent>
-                <AttachmentActions>
-                  <AttachmentAction
-                    aria-label={t('admin.actions.remove')}
-                    onClick={() => setFile(null)}
-                    disabled={createImport.isPending}
-                  >
-                    <XIcon />
-                  </AttachmentAction>
-                </AttachmentActions>
-              </Attachment>
-            )}
+            <FileUploadField
+              value={file}
+              onChange={setFile}
+              accept=".csv,text/csv"
+              variant="file"
+              icon={<FileSpreadsheetIcon />}
+              dropLabel={t('admin.components.import_button.drop_label')}
+              browseLabel={t('admin.components.import_button.browse')}
+              // Windows browsers report `.csv` as `application/vnd.ms-excel`,
+              // which the server's content-type validation rejects.
+              transformFile={(picked) => new File([picked], picked.name, { type: 'text/csv' })}
+            />
 
             <Field>
               <FieldLabel>{t('admin.components.import_button.delimiter_label')}</FieldLabel>
@@ -242,10 +189,10 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
               type="button"
               size="sm"
               onClick={handleSubmit}
-              disabled={!file || createImport.isPending}
+              disabled={!file.signedId || createImport.isPending}
             >
               {createImport.isPending
-                ? t('admin.components.import_button.uploading')
+                ? t('admin.actions.creating')
                 : t('admin.components.import_button.submit')}
             </Button>
           </SheetFooter>
