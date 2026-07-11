@@ -1698,7 +1698,8 @@
           "add_products": {
             "title": "添加商品",
             "description": "为您的店铺添加商品——您自己的商品，或邀请第三方卖家共同销售。",
-            "cta": "添加商品"
+            "cta": "添加商品",
+            "import_cta": "从 CSV 导入产品"
           },
           "set_customer_support_email": {
             "title": "设置客服邮箱",

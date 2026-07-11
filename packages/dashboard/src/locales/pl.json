@@ -1670,7 +1670,8 @@
           "add_products": {
             "title": "Dodaj produkty",
             "description": "Dodaj produkty do swojego sklepu — własne lub zaproś zewnętrznych sprzedawców do wspólnej sprzedaży.",
-            "cta": "Dodaj produkty"
+            "cta": "Dodaj produkty",
+            "import_cta": "Importuj produkty z pliku CSV"
           },
           "set_customer_support_email": {
             "title": "Ustaw e-mail obsługi klienta",

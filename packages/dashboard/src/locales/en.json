@@ -1698,7 +1698,8 @@
           "add_products": {
             "title": "Add products",
             "description": "Add products to your store — your own, or invite third-party vendors to sell together.",
-            "cta": "Add products"
+            "cta": "Add products",
+            "import_cta": "Import products from CSV"
           },
           "set_customer_support_email": {
             "title": "Set customer support email",

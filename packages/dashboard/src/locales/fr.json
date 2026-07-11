@@ -1650,7 +1650,8 @@
           "add_products": {
             "title": "Ajouter des produits",
             "description": "Ajoutez des produits à votre boutique — les vôtres, ou invitez des vendeurs tiers à vendre avec vous.",
-            "cta": "Ajouter des produits"
+            "cta": "Ajouter des produits",
+            "import_cta": "Importer des produits depuis un CSV"
           },
           "set_customer_support_email": {
             "title": "Définir l'e-mail du support client",
