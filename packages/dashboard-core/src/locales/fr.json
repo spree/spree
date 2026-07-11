@@ -481,7 +481,6 @@
         "title": "Importer depuis un CSV",
         "description": "Téléversez un fichier CSV. Vous associerez ses colonnes aux champs à l'étape suivante.",
         "drop_label": "Déposez un fichier CSV ici ou cliquez pour parcourir",
-        "browse": "Parcourir les fichiers",
         "delimiter_label": "Séparateur de colonnes",
         "delimiters": {
           "comma": "Virgule (,)",

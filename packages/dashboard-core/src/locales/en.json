@@ -481,7 +481,6 @@
         "title": "Import from CSV",
         "description": "Upload a CSV file. You'll match its columns to fields in the next step.",
         "drop_label": "Drop a CSV file here, or click to browse",
-        "browse": "Browse files",
         "delimiter_label": "Column separator",
         "delimiters": {
           "comma": "Comma (,)",

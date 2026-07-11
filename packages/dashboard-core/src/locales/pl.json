@@ -481,7 +481,6 @@
         "title": "Importuj z pliku CSV",
         "description": "Prześlij plik CSV. W następnym kroku dopasujesz jego kolumny do pól.",
         "drop_label": "Upuść plik CSV tutaj lub kliknij, aby przeglądać",
-        "browse": "Przeglądaj pliki",
         "delimiter_label": "Separator kolumn",
         "delimiters": {
           "comma": "Przecinek (,)",

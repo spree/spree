@@ -137,7 +137,6 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
               variant="file"
               icon={<FileSpreadsheetIcon />}
               dropLabel={t('admin.components.import_button.drop_label')}
-              browseLabel={t('admin.components.import_button.browse')}
               // Windows browsers report `.csv` as `application/vnd.ms-excel`,
               // which the server's content-type validation rejects.
               transformFile={(picked) => new File([picked], picked.name, { type: 'text/csv' })}

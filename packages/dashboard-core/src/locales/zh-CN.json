@@ -481,7 +481,6 @@
         "title": "从 CSV 导入",
         "description": "上传 CSV 文件。下一步将文件列与字段进行匹配。",
         "drop_label": "将 CSV 文件拖放到此处，或点击浏览",
-        "browse": "浏览文件",
         "delimiter_label": "列分隔符",
         "delimiters": {
           "comma": "逗号 (,)",

@@ -481,7 +481,6 @@
         "title": "Aus CSV importieren",
         "description": "Laden Sie eine CSV-Datei hoch. Im nächsten Schritt ordnen Sie ihre Spalten den Feldern zu.",
         "drop_label": "CSV-Datei hier ablegen oder klicken zum Auswählen",
-        "browse": "Dateien durchsuchen",
         "delimiter_label": "Spaltentrennzeichen",
         "delimiters": {
           "comma": "Komma (,)",

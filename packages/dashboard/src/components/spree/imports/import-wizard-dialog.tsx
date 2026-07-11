@@ -234,7 +234,7 @@ function MappingStep({ imp }: { imp: Import }) {
   }
 
   const headerOptions = (current: string | null) => [
-    { value: NOT_MAPPED, label: t('admin.imports.mapping.not_mapped') },
+    { value: NOT_MAPPED, label: t('admin.imports.mapping.not_mapped'), disabled: false },
     ...imp.csv_headers.map((header) => ({
       value: header,
       label: header,
@@ -297,7 +297,7 @@ function MappingStep({ imp }: { imp: Import }) {
                             <SelectItem
                               key={option.value}
                               value={option.value}
-                              disabled={'disabled' in option ? option.disabled : false}
+                              disabled={option.disabled}
                             >
                               {option.label}
                             </SelectItem>

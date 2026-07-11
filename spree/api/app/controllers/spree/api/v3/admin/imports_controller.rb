@@ -204,23 +204,13 @@ module Spree
               owner: current_store,
               user: acting_admin_user
             )
-            attrs[:results_url] = validated_results_url(attrs[:results_url])
+            # The done email links back to results_url — allowed origins only.
+            attrs[:results_url] = validated_allowed_origin_url(attrs[:results_url])
             klass.new(attrs)
           end
 
           def permitted_params
             params.permit(:type, :attachment, :preferred_delimiter, :results_url)
-          end
-
-          # The dashboard's results URL (the import-done email links back to
-          # it) is only honored when it matches a configured allowed origin —
-          # otherwise it is silently dropped and the done email renders no
-          # link. Mirrors PasswordResetsController#redirect_url.
-          def validated_results_url(url)
-            return if url.blank?
-            return unless current_store.allowed_origins.exists? && current_store.allowed_origin?(url)
-
-            url
           end
 
           # Returns the registered Import subclass matching `name`, or nil.

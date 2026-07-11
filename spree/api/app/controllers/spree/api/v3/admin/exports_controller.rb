@@ -87,7 +87,8 @@ module Spree
               store: current_store,
               user: try_spree_current_user
             )
-            attrs[:results_url] = validated_results_url(attrs[:results_url])
+            # The done email's download button target — allowed origins only.
+            attrs[:results_url] = validated_allowed_origin_url(attrs[:results_url])
             klass.new(attrs)
           end
 
@@ -101,17 +102,6 @@ module Spree
             raw = params[:search_params]
             attrs[:search_params] = raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h : raw if raw.present?
             attrs
-          end
-
-          # The export-done email links to this URL (typically the caller's
-          # own exports view). Only honored when it matches a configured
-          # allowed origin — otherwise silently dropped and the email renders
-          # no download button. Mirrors ImportsController#validated_results_url.
-          def validated_results_url(url)
-            return if url.blank?
-            return unless current_store.allowed_origins.exists? && current_store.allowed_origin?(url)
-
-            url
           end
 
           # Returns the registered Export subclass matching `name`, or nil.
