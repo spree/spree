@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  Progress,
   Select,
   SelectContent,
   SelectItem,
@@ -106,7 +107,7 @@ function ImportWizard({ importId, onClose }: { importId: string; onClose: () => 
       </DialogHeader>
 
       <DialogBody className="min-h-0 flex-1 overflow-y-auto p-4">
-        <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
+        <div className="mx-auto flex w-full flex-col gap-4">
           {isLoading || !imp ? (
             <>
               <Skeleton className="h-6 w-64" />
@@ -329,16 +330,8 @@ function ProcessingCard({ imp }: { imp: Import }) {
         <CardTitle>{t('admin.imports.processing.title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-          {preparing ? (
-            <div className="h-full w-1/3 animate-pulse rounded-full bg-primary" />
-          ) : (
-            <div
-              className="h-full rounded-full bg-primary transition-all"
-              style={{ width: `${percent}%` }}
-            />
-          )}
-        </div>
+        {/* value={null} = Base UI's indeterminate state while rows are created */}
+        <Progress value={preparing ? null : percent} />
 
         <p className="text-sm">
           {preparing ? (
@@ -456,10 +449,10 @@ function FailedRowsCard({ imp }: { imp: Import }) {
       <CardHeader>
         <CardTitle>{t('admin.imports.failed_rows.title')}</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col gap-3 p-0">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
+            <TableHeader className="border-b">
               <TableRow>
                 <TableHead className="w-16">{t('admin.imports.failed_rows.row_number')}</TableHead>
                 <TableHead>{t('admin.imports.failed_rows.error')}</TableHead>

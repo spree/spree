@@ -1,4 +1,4 @@
-import { CopyIcon, EllipsisVerticalIcon, PencilIcon, Trash2Icon } from 'lucide-react'
+import { CopyIcon, EllipsisVerticalIcon, EyeIcon, PencilIcon, Trash2Icon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
@@ -38,6 +38,7 @@ const BUILTIN_ICONS: Record<string, ReactNode> = {
   edit: <PencilIcon className="size-4" />,
   clone: <CopyIcon className="size-4" />,
   delete: <Trash2Icon className="size-4" />,
+  view: <EyeIcon className="size-4" />,
 }
 
 /**

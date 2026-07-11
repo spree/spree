@@ -1,7 +1,13 @@
 import type { Import, ImportType } from '@spree/admin-sdk'
 import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentMedia,
+  AttachmentTitle,
   Button,
-  cn,
   Field,
   FieldLabel,
   Select,
@@ -16,7 +22,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@spree/dashboard-ui'
-import { DownloadIcon, FileSpreadsheetIcon, UploadIcon } from 'lucide-react'
+import { DownloadIcon, FileSpreadsheetIcon, UploadIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -32,6 +38,12 @@ const DELIMITERS = [
 ] as const
 
 type Delimiter = (typeof DELIMITERS)[number]['value']
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
 interface ImportButtonProps {
   /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
@@ -132,10 +144,7 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
             {/* A <label> wrapping the file input: clicking anywhere opens the
                 picker natively, no JS forwarding needed. */}
             <label
-              className={cn(
-                'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed bg-muted/40 px-4 py-10 text-center transition-colors hover:bg-muted',
-                file && 'border-solid',
-              )}
+              className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed bg-muted/40 px-4 py-10 text-center transition-colors hover:bg-muted"
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => {
                 e.preventDefault()
@@ -144,13 +153,9 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
               }}
             >
               <FileSpreadsheetIcon className="size-6 text-muted-foreground" />
-              {file ? (
-                <span className="font-medium text-sm">{file.name}</span>
-              ) : (
-                <span className="text-muted-foreground text-sm">
-                  {t('admin.components.import_button.drop_label')}
-                </span>
-              )}
+              <span className="text-muted-foreground text-sm">
+                {t('admin.components.import_button.drop_label')}
+              </span>
               <span className="mt-1 inline-flex h-8 items-center rounded-md border border-border bg-background px-3 font-medium text-sm shadow-xs">
                 {t('admin.components.import_button.browse')}
               </span>
@@ -165,6 +170,31 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
                 }}
               />
             </label>
+
+            {file && (
+              <Attachment className="w-full" state={createImport.isPending ? 'uploading' : 'done'}>
+                <AttachmentMedia>
+                  <FileSpreadsheetIcon />
+                </AttachmentMedia>
+                <AttachmentContent>
+                  <AttachmentTitle>{file.name}</AttachmentTitle>
+                  <AttachmentDescription>
+                    {createImport.isPending
+                      ? t('admin.components.import_button.uploading')
+                      : formatFileSize(file.size)}
+                  </AttachmentDescription>
+                </AttachmentContent>
+                <AttachmentActions>
+                  <AttachmentAction
+                    aria-label={t('admin.actions.remove')}
+                    onClick={() => setFile(null)}
+                    disabled={createImport.isPending}
+                  >
+                    <XIcon />
+                  </AttachmentAction>
+                </AttachmentActions>
+              </Attachment>
+            )}
 
             <Field>
               <FieldLabel>{t('admin.components.import_button.delimiter_label')}</FieldLabel>
