@@ -1,7 +1,13 @@
 import type { Import } from '@spree/admin-sdk'
-import { adminClient, ResourceTable, resourceSearchSchema } from '@spree/dashboard-core'
+import {
+  adminClient,
+  ResourceTable,
+  resourceSearchSchema,
+  useDownloadImportOriginal,
+} from '@spree/dashboard-core'
 import { RowActions, useConfirm, useRowClickBridge } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { DownloadIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { ImportWizardDialog } from '@/components/spree/imports/import-wizard-dialog'
@@ -26,6 +32,7 @@ function ImportsPage() {
   const navigate = useNavigate()
   const confirm = useConfirm()
   const deleteMutation = useDeleteImport()
+  const downloadOriginal = useDownloadImportOriginal()
 
   const openWizard = (id: string) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, import: id }) as never })
@@ -65,6 +72,13 @@ function ImportsPage() {
                 key: 'view',
                 label: t('admin.actions.view'),
                 onSelect: () => openWizard(imp.id),
+              },
+              {
+                key: 'download_original',
+                label: t('admin.imports.download_original'),
+                icon: <DownloadIcon className="size-4" />,
+                disabled: downloadOriginal.isPending,
+                onSelect: () => downloadOriginal.mutate(imp),
               },
               {
                 key: 'delete',

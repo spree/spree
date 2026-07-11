@@ -2640,6 +2640,7 @@
       "load_failed": "Nie udało się załadować kategorii. Spróbuj ponownie."
     },
     "imports": {
+      "download_original": "Pobierz oryginalny plik",
       "wizard_title": "Import",
       "steps": {
         "map_fields": "Dopasuj pola",

@@ -2608,6 +2608,7 @@
       "load_failed": "Échec du chargement des catégories. Veuillez réessayer."
     },
     "imports": {
+      "download_original": "Télécharger le fichier d'origine",
       "wizard_title": "Import",
       "steps": {
         "map_fields": "Associer les champs",

@@ -195,6 +195,35 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/admin/imports/{id}/download' do
+    let(:id) { product_import.prefixed_id }
+
+    get 'Download the originally uploaded file' do
+      tags 'Imports'
+      produces 'text/csv'
+      security [api_key: [], bearer_auth: []]
+      description 'Streams the CSV exactly as it was uploaded — the audit trail for what was ' \
+                  'imported. JWT/API-key protected; SPA clients fetch it with the Authorization ' \
+                  'header and trigger the browser download via a Blob URL.'
+      admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true
+
+      response '200', 'CSV file' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        schema type: :string, format: :binary
+
+        run_test! do |response|
+          expect(response.content_type).to include('text/csv')
+          expect(response.headers['Content-Disposition']).to include('attachment')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/imports/{id}/complete_mapping' do
     let(:import_in_mapping) do
       create(:product_import, owner: store, user: admin_user).tap(&:start_mapping!)

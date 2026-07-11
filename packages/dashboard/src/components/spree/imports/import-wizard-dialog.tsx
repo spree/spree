@@ -1,4 +1,5 @@
 import type { Import, ImportRow } from '@spree/admin-sdk'
+import { useDownloadImportOriginal } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -33,6 +34,7 @@ import {
   CheckCircle2Icon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  DownloadIcon,
   RotateCcwIcon,
   XIcon,
 } from 'lucide-react'
@@ -80,6 +82,7 @@ export function ImportWizardDialog({ importId, onClose }: ImportWizardDialogProp
 function ImportWizard({ importId, onClose }: { importId: string; onClose: () => void }) {
   const { t } = useTranslation()
   const { data: imp, isLoading } = useImport(importId)
+  const downloadOriginal = useDownloadImportOriginal()
 
   const showFailedRows =
     !!imp && imp.failed_rows_count > 0 && (isImportActive(imp.status) || imp.status === 'completed')
@@ -95,15 +98,29 @@ function ImportWizard({ importId, onClose }: { importId: string; onClose: () => 
             <StatusBadge status={imp.status} label={t(`admin.imports.status.${imp.status}`)} />
           )}
         </div>
-        <Button
-          type="button"
-          size="icon-sm"
-          variant="ghost"
-          onClick={onClose}
-          aria-label={t('admin.actions.close')}
-        >
-          <XIcon />
-        </Button>
+        <div className="flex items-center gap-1">
+          {imp?.original_file_url && (
+            <Button
+              type="button"
+              size="icon-sm"
+              variant="ghost"
+              onClick={() => downloadOriginal.mutate(imp)}
+              disabled={downloadOriginal.isPending}
+              aria-label={t('admin.imports.download_original')}
+            >
+              <DownloadIcon />
+            </Button>
+          )}
+          <Button
+            type="button"
+            size="icon-sm"
+            variant="ghost"
+            onClick={onClose}
+            aria-label={t('admin.actions.close')}
+          >
+            <XIcon />
+          </Button>
+        </div>
       </DialogHeader>
 
       <DialogBody className="min-h-0 flex-1 overflow-y-auto p-4">

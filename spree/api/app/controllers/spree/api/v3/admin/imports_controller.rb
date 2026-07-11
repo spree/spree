@@ -107,6 +107,33 @@ module Spree
             end
           end
 
+          # GET /api/v3/admin/imports/:id/download
+          #
+          # Streams the originally uploaded CSV — the audit trail for what
+          # was actually imported. Same inline-streaming rationale as
+          # ExportsController#download: a signed ActiveStorage URL neither
+          # survives the SPA's `/api/*`-only dev proxy nor carries the JWT.
+          def download
+            @resource = find_resource
+            authorize_resource!(@resource, :show)
+
+            attachment = @resource.attachment
+            unless attachment.attached?
+              return render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:validation_error],
+                message: 'Import has no attached file',
+                status: :unprocessable_content
+              )
+            end
+
+            send_data(
+              attachment.download,
+              filename: attachment.filename.to_s,
+              type: attachment.content_type || 'text/csv',
+              disposition: 'attachment'
+            )
+          end
+
           # GET /api/v3/admin/imports/template?type=Spree::Imports::Products
           #
           # CSV header row for the type's schema (including the metafield
@@ -141,7 +168,7 @@ module Spree
           end
 
           def scope_includes
-            [:user, :mappings]
+            [:user, :mappings, { attachment_attachment: :blob }]
           end
 
           def scope

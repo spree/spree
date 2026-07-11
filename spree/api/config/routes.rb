@@ -201,6 +201,7 @@ Spree::Core::Engine.add_routes do
           member do
             patch :complete_mapping
             patch :retry_failed_rows
+            get :download
           end
           resources :rows, only: [:index], controller: 'import_rows'
         end

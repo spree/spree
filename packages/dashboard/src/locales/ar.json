@@ -2608,6 +2608,7 @@
       "load_failed": "فشل تحميل الفئات. يرجى المحاولة مرة أخرى."
     },
     "imports": {
+      "download_original": "تنزيل الملف الأصلي",
       "wizard_title": "الاستيراد",
       "steps": {
         "map_fields": "مطابقة الحقول",

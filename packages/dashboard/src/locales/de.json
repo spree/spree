@@ -2608,6 +2608,7 @@
       "load_failed": "Kategorien konnten nicht geladen werden. Bitte erneut versuchen."
     },
     "imports": {
+      "download_original": "Originaldatei herunterladen",
       "wizard_title": "Import",
       "steps": {
         "map_fields": "Felder zuordnen",

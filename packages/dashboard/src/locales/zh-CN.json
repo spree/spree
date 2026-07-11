@@ -2608,6 +2608,7 @@
       "load_failed": "加载分类失败。请重试。"
     },
     "imports": {
+      "download_original": "下载原始文件",
       "wizard_title": "导入",
       "steps": {
         "map_fields": "匹配字段",

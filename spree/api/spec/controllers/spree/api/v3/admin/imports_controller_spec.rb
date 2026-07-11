@@ -50,6 +50,8 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(json_response['status']).to eq('processing')
+        expect(json_response['original_filename']).to eq('products_import.csv')
+        expect(json_response['original_file_url']).to include("/imports/#{product_import.prefixed_id}/download")
         expect(json_response['rows_count']).to eq(3)
         expect(json_response['completed_rows_count']).to eq(2)
         expect(json_response['failed_rows_count']).to eq(1)
@@ -274,6 +276,23 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(product_import.reload.status).to eq('completed')
+    end
+  end
+
+  describe 'GET #download' do
+    it 'streams the originally uploaded CSV for auditing' do
+      get :download, params: { id: product_import.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.content_type).to include('text/csv')
+      expect(response.headers['Content-Disposition']).to include('products_import.csv')
+      expect(response.body).to start_with('slug,')
+    end
+
+    it 'returns 404 for an unknown id' do
+      get :download, params: { id: 'imp_unknown' }
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
