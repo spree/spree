@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
   cn,
@@ -229,10 +230,10 @@ function MappingStep({ imp }: { imp: Import }) {
           {t('admin.imports.mapping.description', { type: importTypeLabel(imp.type) })}
         </p>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-4 p-0">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
+            <TableHeader className="border-b">
               <TableRow>
                 <TableHead>{t('admin.imports.mapping.field')}</TableHead>
                 <TableHead>{t('admin.imports.mapping.file_column')}</TableHead>
@@ -310,18 +311,18 @@ function MappingStep({ imp }: { imp: Import }) {
             </span>
           </div>
         )}
-
-        <div className="flex justify-end">
-          <Button
-            onClick={handleStart}
-            disabled={missingRequired.length > 0 || completeMapping.isPending}
-          >
-            {completeMapping.isPending
-              ? t('admin.imports.mapping.starting')
-              : t('admin.imports.mapping.start')}
-          </Button>
-        </div>
       </CardContent>
+      <CardFooter className="flex justify-end">
+        <Button
+          onClick={handleStart}
+          disabled={missingRequired.length > 0 || completeMapping.isPending}
+          className="m-4"
+        >
+          {completeMapping.isPending
+            ? t('admin.imports.mapping.starting')
+            : t('admin.imports.mapping.start')}
+        </Button>
+      </CardFooter>
     </Card>
   )
 }
