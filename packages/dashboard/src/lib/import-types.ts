@@ -3,6 +3,7 @@ import i18n from 'i18next'
 /** Statuses the wizard polls through — row creation and processing. */
 const ACTIVE_STATUSES = new Set(['completed_mapping', 'processing'])
 
+/** Whether the import's pipeline is still running (the poll's continue predicate). */
 export function isImportActive(status: string | undefined): boolean {
   return !!status && ACTIVE_STATUSES.has(status)
 }
@@ -21,6 +22,7 @@ export function importTypeKey(type: string | null): string {
   )
 }
 
+/** Translated display name for an import type (`admin.imports.types.<key>`). */
 export function importTypeLabel(type: string | null): string {
   const key = importTypeKey(type)
   return key ? i18n.t(`admin.imports.types.${key}`, { defaultValue: key }) : ''

@@ -366,6 +366,7 @@
         "browse": "浏览文件",
         "drop_image_label": "将图片拖放到此处，或点击浏览",
         "drop_label": "将文件拖放到此处，或点击浏览",
+        "invalid_type": "不接受此文件类型（应为：{{accept}}）",
         "upload_failed": "上传失败：{{message}}",
         "uploading": "正在上传…"
       },

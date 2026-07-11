@@ -2610,6 +2610,8 @@
     },
     "imports": {
       "download_original": "下载原始文件",
+      "load_failed": "无法加载导入。",
+      "try_again": "重试",
       "wizard_title": "导入",
       "steps": {
         "map_fields": "匹配字段",
@@ -2661,6 +2663,8 @@
         "description": "无法处理该文件。"
       },
       "failed_rows": {
+        "next_page": "下一页",
+        "prev_page": "上一页",
         "title": "失败的行",
         "row_number": "行号",
         "error": "错误",

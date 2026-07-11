@@ -366,6 +366,7 @@
         "browse": "Browse files",
         "drop_image_label": "Drop an image here, or click to browse",
         "drop_label": "Drop a file here, or click to browse",
+        "invalid_type": "This file type is not accepted (expected: {{accept}})",
         "upload_failed": "Upload failed: {{message}}",
         "uploading": "Uploading…"
       },

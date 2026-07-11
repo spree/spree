@@ -104,8 +104,31 @@ export function FileUploadField({
 
   const isImage = variant === 'image'
 
+  // The input's `accept` only hints the OS picker and does nothing for
+  // drag-and-drop — enforce it for both paths. Tokens are extensions
+  // (".csv"), exact MIME types ("text/csv") or wildcards ("image/*").
+  function matchesAccept(file: File): boolean {
+    const tokens = accept
+      .split(',')
+      .map((token) => token.trim().toLowerCase())
+      .filter(Boolean)
+    if (tokens.length === 0) return true
+
+    const name = file.name.toLowerCase()
+    const type = file.type.toLowerCase()
+    return tokens.some((token) => {
+      if (token.startsWith('.')) return name.endsWith(token)
+      if (token.endsWith('/*')) return type.startsWith(token.slice(0, -1))
+      return type === token
+    })
+  }
+
   async function handlePicked(picked: File) {
     if (disabled || pending) return
+    if (!matchesAccept(picked)) {
+      toast.error(t('admin.components.file_upload.invalid_type', { accept }))
+      return
+    }
 
     const file = transformFile ? transformFile(picked) : picked
     setPending(file)
@@ -163,10 +186,13 @@ export function FileUploadField({
       {label && <FieldLabel>{label}</FieldLabel>}
       <div className="flex flex-col gap-2">
         {/* A <label> wrapping the file input: clicking anywhere opens the
-            picker natively, no JS forwarding needed. */}
+            picker natively. The input is sr-only (not display:none) so it
+            stays in the tab order — keyboard users Tab to it and press
+            Enter/Space; the label paints a focus ring via has-[:focus-visible]. */}
         <label
           className={cn(
             'flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-border border-dashed bg-muted/40 px-4 py-8 text-center transition-colors hover:bg-muted',
+            'has-[:focus-visible]:border-ring has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50',
             (disabled || !!pending) && 'pointer-events-none opacity-60',
           )}
           onDragOver={(e) => e.preventDefault()}
@@ -186,7 +212,7 @@ export function FileUploadField({
           <input
             type="file"
             accept={accept}
-            className="hidden"
+            className="sr-only"
             disabled={disabled || !!pending}
             onChange={(e) => {
               const picked = e.target.files?.[0]

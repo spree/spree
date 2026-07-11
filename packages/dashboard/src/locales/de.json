@@ -2610,6 +2610,8 @@
     },
     "imports": {
       "download_original": "Originaldatei herunterladen",
+      "load_failed": "Der Import konnte nicht geladen werden.",
+      "try_again": "Erneut versuchen",
       "wizard_title": "Import",
       "steps": {
         "map_fields": "Felder zuordnen",
@@ -2661,6 +2663,8 @@
         "description": "Die Datei konnte nicht verarbeitet werden."
       },
       "failed_rows": {
+        "next_page": "Nächste Seite",
+        "prev_page": "Vorherige Seite",
         "title": "Fehlgeschlagene Zeilen",
         "row_number": "Zeile",
         "error": "Fehler",

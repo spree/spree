@@ -2610,6 +2610,8 @@
     },
     "imports": {
       "download_original": "Télécharger le fichier d'origine",
+      "load_failed": "Impossible de charger l'import.",
+      "try_again": "Réessayer",
       "wizard_title": "Import",
       "steps": {
         "map_fields": "Associer les champs",
@@ -2661,6 +2663,8 @@
         "description": "Le fichier n'a pas pu être traité."
       },
       "failed_rows": {
+        "next_page": "Page suivante",
+        "prev_page": "Page précédente",
         "title": "Lignes en échec",
         "row_number": "Ligne",
         "error": "Erreur",

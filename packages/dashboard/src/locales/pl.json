@@ -2642,6 +2642,8 @@
     },
     "imports": {
       "download_original": "Pobierz oryginalny plik",
+      "load_failed": "Nie udało się wczytać importu.",
+      "try_again": "Spróbuj ponownie",
       "wizard_title": "Import",
       "steps": {
         "map_fields": "Dopasuj pola",
@@ -2693,6 +2695,8 @@
         "description": "Nie udało się przetworzyć pliku."
       },
       "failed_rows": {
+        "next_page": "Następna strona",
+        "prev_page": "Poprzednia strona",
         "title": "Nieudane wiersze",
         "row_number": "Wiersz",
         "error": "Błąd",

@@ -2610,6 +2610,8 @@
     },
     "imports": {
       "download_original": "Download original file",
+      "load_failed": "Could not load the import.",
+      "try_again": "Try again",
       "wizard_title": "Import",
       "steps": {
         "map_fields": "Map fields",
@@ -2661,6 +2663,8 @@
         "description": "The file could not be processed."
       },
       "failed_rows": {
+        "next_page": "Next page",
+        "prev_page": "Previous page",
         "title": "Failed rows",
         "row_number": "Row",
         "error": "Error",

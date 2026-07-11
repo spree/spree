@@ -1,6 +1,7 @@
 import type { Import, ImportCompleteMappingParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { isImportActive } from '@/lib/import-types'
 
 export { isImportActive }
@@ -47,6 +48,8 @@ export function useCompleteMapping(id: string) {
       adminClient.imports.completeMapping(id, params),
     onSuccess: (imp) => {
       queryClient.setQueryData<Import>(buildKey('imports', id), imp)
+      // Keep the history table's status column in sync.
+      queryClient.invalidateQueries({ queryKey: buildKey('imports') })
     },
   })
 }
@@ -59,7 +62,10 @@ export function useRetryFailedRows(id: string) {
     mutationFn: () => adminClient.imports.retryFailedRows(id),
     onSuccess: (imp) => {
       queryClient.setQueryData<Import>(buildKey('imports', id), imp)
-      queryClient.invalidateQueries({ queryKey: buildKey('imports', id, 'rows') })
+      queryClient.invalidateQueries({ queryKey: buildKey('imports') })
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : String(err))
     },
   })
 }
@@ -73,6 +79,9 @@ export function useDeleteImport() {
     onSuccess: (_data, id) => {
       queryClient.removeQueries({ queryKey: buildKey('imports', id) })
       queryClient.invalidateQueries({ queryKey: buildKey('imports') })
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : String(err))
     },
   })
 }

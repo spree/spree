@@ -30,8 +30,15 @@ test.describe('csv import', () => {
 
     await openImportSheet(page, creds.store_id)
 
-    // Row 2 has no name and no price — guaranteed row-level failure that
-    // feeds the failed-rows report without failing the whole import.
+    // Rows without name/price are guaranteed row-level failures that feed the
+    // failed-rows report without failing the whole import. Thirty of them keep
+    // the retry pass long enough to observe its transient copy (a single row
+    // re-processes faster than the post-mutation refetch) and paginate the
+    // failure report (25 per page).
+    const badRows = Array.from({ length: 30 }, (_, i) => {
+      const n = String(i + 1).padStart(2, '0')
+      return `e2e-import-bad-${n}-${suffix},E2E-IMP-BAD-${n}-${suffix},,`
+    })
     await page
       .getByRole('dialog')
       .locator('input[type="file"]')
@@ -39,7 +46,7 @@ test.describe('csv import', () => {
         csvFile([
           'slug,sku,name,price',
           `e2e-import-ok-${suffix},E2E-IMP-OK-${suffix},${goodName},10.00`,
-          `e2e-import-bad-${suffix},E2E-IMP-BAD-${suffix},,`,
+          ...badRows,
         ]),
       )
     await page.getByRole('button', { name: /^continue$/i }).click()
@@ -54,16 +61,18 @@ test.describe('csv import', () => {
 
     // Progress → results, driven entirely by the 2s poll.
     await expect(page.getByText(/import completed/i)).toBeVisible({ timeout: 120_000 })
-    await expect(page.getByText(/1 failed/i).first()).toBeVisible()
+    await expect(page.getByText(/30 failed/i).first()).toBeVisible()
 
-    // Failure report: the broken row is listed and its raw data is inspectable.
-    // exact: true — "Retry failed rows (1)" would otherwise also match.
+    // Failure report: broken rows are listed (paginated — 30 rows, 2 pages)
+    // and their raw data is inspectable.
+    // exact: true — "Retry failed rows (30)" would otherwise also match.
     await expect(page.getByText('Failed rows', { exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: /next page/i })).toBeVisible()
     await page
       .getByRole('button', { name: /view row data/i })
       .first()
       .click()
-    await expect(page.getByText(`E2E-IMP-BAD-${suffix}`)).toBeVisible()
+    await expect(page.getByText(`E2E-IMP-BAD-01-${suffix}`)).toBeVisible()
 
     // Retry re-runs the still-broken row: the wizard flips back into the
     // processing state (retry-pass copy) and completes again with the

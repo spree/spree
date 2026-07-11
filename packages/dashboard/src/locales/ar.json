@@ -2610,6 +2610,8 @@
     },
     "imports": {
       "download_original": "تنزيل الملف الأصلي",
+      "load_failed": "تعذّر تحميل الاستيراد.",
+      "try_again": "حاول مرة أخرى",
       "wizard_title": "الاستيراد",
       "steps": {
         "map_fields": "مطابقة الحقول",
@@ -2661,6 +2663,8 @@
         "description": "تعذّرت معالجة الملف."
       },
       "failed_rows": {
+        "next_page": "الصفحة التالية",
+        "prev_page": "الصفحة السابقة",
         "title": "الصفوف الفاشلة",
         "row_number": "الصف",
         "error": "الخطأ",

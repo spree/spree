@@ -366,6 +366,7 @@
         "browse": "Parcourir les fichiers",
         "drop_image_label": "Déposez une image ici ou cliquez pour parcourir",
         "drop_label": "Déposez un fichier ici ou cliquez pour parcourir",
+        "invalid_type": "Ce type de fichier n'est pas accepté (attendu : {{accept}})",
         "upload_failed": "Échec du téléversement : {{message}}",
         "uploading": "Téléversement…"
       },

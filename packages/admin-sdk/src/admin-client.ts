@@ -1573,8 +1573,9 @@ export class AdminClient {
    * auto-assigned `mappings`. Adjust mappings if needed and call
    * `completeMapping(id)` to start processing, then poll `get(id)` while
    * `status` is `completed_mapping`/`processing` (`completed`/`failed` are
-   * terminal). Failed rows are listed via `rows.list(id, { q: { status_eq:
-   * 'failed' } })` and can be re-processed with `retryFailedRows(id)`.
+   * terminal). Failed rows are listed via `rows.list(id, { status_eq:
+   * 'failed' })` (flat Ransack predicates, wrapped into `q[...]` by
+   * `transformListParams`) and can be re-processed with `retryFailedRows(id)`.
    */
   readonly imports = {
     list: (

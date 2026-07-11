@@ -39,7 +39,7 @@ import {
   RotateCcwIcon,
   XIcon,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   useCompleteMapping,
@@ -82,8 +82,12 @@ export function ImportWizardDialog({ importId, onClose }: ImportWizardDialogProp
 
 function ImportWizard({ importId, onClose }: { importId: string; onClose: () => void }) {
   const { t } = useTranslation()
-  const { data: imp, isLoading } = useImport(importId)
+  const { data: imp, isLoading, isError, refetch } = useImport(importId)
   const downloadOriginal = useDownloadImportOriginal()
+  // Explicit retry marker: the processing card must not infer a retry pass
+  // from row totals (they look identical in the last poll tick of a first
+  // pass that ends with failures).
+  const [retryRequested, setRetryRequested] = useState(false)
 
   const showFailedRows =
     !!imp && imp.failed_rows_count > 0 && (isImportActive(imp.status) || imp.status === 'completed')
@@ -126,7 +130,15 @@ function ImportWizard({ importId, onClose }: { importId: string; onClose: () => 
 
       <DialogBody className="min-h-0 flex-1 overflow-y-auto p-4">
         <div className="mx-auto flex w-full flex-col gap-4">
-          {isLoading || !imp ? (
+          {isError ? (
+            <div className="flex flex-col items-center gap-3 py-12 text-center">
+              <AlertTriangleIcon className="size-8 text-destructive" />
+              <p className="text-muted-foreground text-sm">{t('admin.imports.load_failed')}</p>
+              <Button variant="outline" onClick={() => refetch()}>
+                {t('admin.imports.try_again')}
+              </Button>
+            </div>
+          ) : isLoading || !imp ? (
             <>
               <Skeleton className="h-6 w-64" />
               <Skeleton className="h-40 w-full" />
@@ -136,8 +148,16 @@ function ImportWizard({ importId, onClose }: { importId: string; onClose: () => 
               <StepIndicator status={imp.status} />
 
               {imp.status === 'mapping' && <MappingStep imp={imp} />}
-              {isImportActive(imp.status) && <ProcessingCard imp={imp} />}
-              {imp.status === 'completed' && <ResultsCard imp={imp} onClose={onClose} />}
+              {isImportActive(imp.status) && (
+                <ProcessingCard imp={imp} retryPass={retryRequested} />
+              )}
+              {imp.status === 'completed' && (
+                <ResultsCard
+                  imp={imp}
+                  onClose={onClose}
+                  onRetried={() => setRetryRequested(true)}
+                />
+              )}
               {imp.status === 'failed' && <FailedCard imp={imp} />}
               {showFailedRows && <FailedRowsCard imp={imp} />}
             </>
@@ -156,7 +176,9 @@ function ImportWizard({ importId, onClose }: { importId: string; onClose: () => 
 function StepIndicator({ status }: { status: string }) {
   const { t } = useTranslation()
 
-  const activeIndex = status === 'mapping' ? 0 : isImportActive(status) ? 1 : 2
+  // A failed import stays on the processing step — it never completed.
+  const activeIndex =
+    status === 'mapping' ? 0 : isImportActive(status) || status === 'failed' ? 1 : 2
   const steps = ['map_fields', 'process_rows', 'complete'] as const
 
   return (
@@ -331,15 +353,15 @@ function MappingStep({ imp }: { imp: Import }) {
 // Processing
 // ---------------------------------------------------------------------------
 
-function ProcessingCard({ imp }: { imp: Import }) {
+// `retryPass` is the wizard's explicit marker that the user triggered a
+// failed-rows retry: every row is already terminal then, so the bar would sit
+// at 100% — show the shrinking failed count instead.
+function ProcessingCard({ imp, retryPass }: { imp: Import; retryPass: boolean }) {
   const { t } = useTranslation()
 
   const total = imp.rows_count
   const processed = imp.completed_rows_count + imp.failed_rows_count
   const preparing = total === 0
-  // A retry pass re-processes failed rows, so every row is already terminal
-  // and the bar would sit at 100% — show the shrinking failed count instead.
-  const retryPass = !preparing && processed >= total && imp.failed_rows_count > 0
   const percent = preparing ? 0 : Math.min(100, Math.round((processed / total) * 100))
 
   return (
@@ -354,7 +376,7 @@ function ProcessingCard({ imp }: { imp: Import }) {
         <p className="text-sm">
           {preparing ? (
             t('admin.imports.processing.preparing')
-          ) : retryPass ? (
+          ) : retryPass && imp.failed_rows_count > 0 ? (
             t('admin.imports.processing.retrying', { remaining: imp.failed_rows_count })
           ) : (
             <>
@@ -382,7 +404,15 @@ function ProcessingCard({ imp }: { imp: Import }) {
 // Results / file-level failure
 // ---------------------------------------------------------------------------
 
-function ResultsCard({ imp, onClose }: { imp: Import; onClose: () => void }) {
+function ResultsCard({
+  imp,
+  onClose,
+  onRetried,
+}: {
+  imp: Import
+  onClose: () => void
+  onRetried: () => void
+}) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const retryMutation = useRetryFailedRows(imp.id)
@@ -402,7 +432,7 @@ function ResultsCard({ imp, onClose }: { imp: Import; onClose: () => void }) {
           {imp.failed_rows_count > 0 && (
             <Button
               variant="outline"
-              onClick={() => retryMutation.mutate()}
+              onClick={() => retryMutation.mutate(undefined, { onSuccess: onRetried })}
               disabled={retryMutation.isPending}
             >
               <RotateCcwIcon className="size-4" />
@@ -451,7 +481,7 @@ function FailedCard({ imp }: { imp: Import }) {
 function FailedRowsCard({ imp }: { imp: Import }) {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
-  const { data } = useImportRows(
+  const { data, isPending, isError, refetch } = useImportRows(
     imp.id,
     { status_eq: 'failed', sort: 'row_number', page },
     { poll: isImportActive(imp.status) },
@@ -460,7 +490,17 @@ function FailedRowsCard({ imp }: { imp: Import }) {
   const rows = data?.data ?? []
   const meta = data?.meta
 
-  if (rows.length === 0) return null
+  // Retrying shrinks the failure set — an out-of-range page would otherwise
+  // return an empty list with no way back.
+  useEffect(() => {
+    if (meta && page > Math.max(meta.pages, 1)) {
+      setPage(Math.max(meta.pages, 1))
+    }
+  }, [meta, page])
+
+  // Distinguish "nothing failed" (hide the card) from "couldn't load" and
+  // "still loading" — the report must not silently disappear.
+  if (!isPending && !isError && rows.length === 0) return null
 
   return (
     <Card>
@@ -468,45 +508,66 @@ function FailedRowsCard({ imp }: { imp: Import }) {
         <CardTitle>{t('admin.imports.failed_rows.title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 p-0">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="border-b">
-              <TableRow>
-                <TableHead className="w-16">{t('admin.imports.failed_rows.row_number')}</TableHead>
-                <TableHead>{t('admin.imports.failed_rows.error')}</TableHead>
-                <TableHead className="w-32" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((row) => (
-                <FailedRow key={row.id} row={row} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-
-        {meta && meta.pages > 1 && (
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            >
-              <ChevronLeftIcon className="size-4" />
-            </Button>
-            <span className="text-muted-foreground text-sm">
-              {page} / {meta.pages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page >= meta.pages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              <ChevronRightIcon className="size-4" />
+        {isError ? (
+          <div className="flex items-center gap-3 p-4">
+            <AlertTriangleIcon className="size-4 shrink-0 text-destructive" />
+            <span className="text-muted-foreground text-sm">{t('admin.imports.load_failed')}</span>
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              {t('admin.imports.try_again')}
             </Button>
           </div>
+        ) : isPending ? (
+          <div className="flex flex-col gap-2 p-4">
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-5 w-2/3" />
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="border-b">
+                  <TableRow>
+                    <TableHead className="w-16">
+                      {t('admin.imports.failed_rows.row_number')}
+                    </TableHead>
+                    <TableHead>{t('admin.imports.failed_rows.error')}</TableHead>
+                    <TableHead className="w-32" />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {rows.map((row) => (
+                    <FailedRow key={row.id} row={row} />
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+
+            {meta && meta.pages > 1 && (
+              <div className="flex items-center justify-end gap-2 px-4 pb-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  aria-label={t('admin.imports.failed_rows.prev_page')}
+                >
+                  <ChevronLeftIcon className="size-4" />
+                </Button>
+                <span className="text-muted-foreground text-sm">
+                  {page} / {meta.pages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page >= meta.pages}
+                  onClick={() => setPage((p) => p + 1)}
+                  aria-label={t('admin.imports.failed_rows.next_page')}
+                >
+                  <ChevronRightIcon className="size-4" />
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </CardContent>
     </Card>

@@ -366,6 +366,7 @@
         "browse": "Przeglądaj pliki",
         "drop_image_label": "Upuść obraz tutaj lub kliknij, aby przeglądać",
         "drop_label": "Upuść plik tutaj lub kliknij, aby przeglądać",
+        "invalid_type": "Ten typ pliku nie jest akceptowany (oczekiwano: {{accept}})",
         "upload_failed": "Przesyłanie nie powiodło się: {{message}}",
         "uploading": "Przesyłanie…"
       },

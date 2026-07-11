@@ -366,6 +366,7 @@
         "browse": "Dateien durchsuchen",
         "drop_image_label": "Bild hier ablegen oder klicken zum Auswählen",
         "drop_label": "Datei hier ablegen oder klicken zum Auswählen",
+        "invalid_type": "Dieser Dateityp wird nicht akzeptiert (erwartet: {{accept}})",
         "upload_failed": "Upload fehlgeschlagen: {{message}}",
         "uploading": "Wird hochgeladen…"
       },
