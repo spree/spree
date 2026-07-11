@@ -150,10 +150,10 @@ module Spree
       self.preferred_results_url = value
     end
 
-    # URL of the wizard/results view for this import — the dashboard-provided
-    # +results_url+ with the wizard's `?import=` param appended. Nil when the
-    # preference is absent (the mailer then falls back to the legacy admin
-    # route when mounted).
+    # URL of the wizard/results view for this import — the caller-provided
+    # +results_url+ with the wizard's `?import=` param appended (a no-op for
+    # the legacy admin's show URL, whose path already identifies the import).
+    # Nil when the preference is absent; the mailer then renders no link.
     # @return [String, nil]
     def results_page_url
       return if preferred_results_url.blank?

@@ -187,8 +187,8 @@ module Spree
 
           # The dashboard's results URL (the import-done email links back to
           # it) is only honored when it matches a configured allowed origin —
-          # otherwise it is silently dropped and the email falls back to the
-          # legacy admin route. Mirrors PasswordResetsController#redirect_url.
+          # otherwise it is silently dropped and the done email renders no
+          # link. Mirrors PasswordResetsController#redirect_url.
           def validated_results_url(url)
             return if url.blank?
             return unless current_store.allowed_origins.exists? && current_store.allowed_origin?(url)

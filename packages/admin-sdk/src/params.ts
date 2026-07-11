@@ -1103,6 +1103,12 @@ export interface ExportCreateParams {
    * server and exports every record in scope.
    */
   record_selection?: 'filtered' | 'all'
+  /**
+   * Absolute URL of your admin's exports view; the export-done email uses it
+   * as the download button target. Only honored when it matches one of the
+   * store's configured allowed origins.
+   */
+  results_url?: string
 }
 
 export type ImportType =

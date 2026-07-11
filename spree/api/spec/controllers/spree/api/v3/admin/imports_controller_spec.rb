@@ -110,6 +110,8 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
     end
 
     context 'with a results_url' do
+      # Same allowed-origins gate as ExportsController and the password-reset
+      # redirect_url — see validated_results_url.
       it 'stores it when it matches an allowed origin' do
         create(:allowed_origin, store: store, origin: 'https://admin.example.com')
 

@@ -4,7 +4,6 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
   let(:store) { @default_store }
   let(:user) { create(:admin_user) }
   let(:import) { create(:product_import, owner: store, user: user) }
-  let(:spree) { Spree::Core::Engine.routes.url_helpers }
 
   before do
     import.update_columns(status: 'completed')
@@ -55,13 +54,7 @@ RSpec.describe Spree::ImportMailer, type: :mailer do
     end
 
     context 'without a results_url' do
-      it 'falls back to the legacy admin route when mounted' do
-        allow(spree).to receive(:admin_import_url).and_return("http://test.com/admin/imports/#{import.id}")
-
-        expect(mail.body.encoded).to include("/admin/imports/#{import.id}")
-      end
-
-      it 'renders no results button when no route is available' do
+      it 'renders no results button' do
         expect(mail.body.encoded).not_to include(
           Spree.t('import_mailer.import_done.view_results')
         )
