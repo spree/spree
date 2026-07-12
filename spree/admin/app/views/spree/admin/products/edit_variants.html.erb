@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button(spree.edit_admin_product_path(@product)) %>
-  <span class="truncate text-lg md:text-2xl max-w-[200px] sm:max-w-md md:max-w-none block">
+  <span class="truncate max-w-[180px] sm:max-w-sm md:max-w-md lg:max-w-xl xl:max-w-none inline-block align-middle">
     <%= Spree.t(:bulk_edit_variants, default: 'Bulk Edit Variants') %> - <%= @product.name %>
   </span>
 <% end %>
@@ -9,46 +9,34 @@
   <%= turbo_save_button_tag Spree.t('actions.save'), form: "edit_product_variants_#{@product.id}" %>
 <% end %>
 
-<% @currency = params[:currency].presence || current_currency || 'USD' %>
-<% currency_obj = ::Money::Currency.find(@currency) || ::Money::Currency.find('USD') %>
+<% currency_obj = ::Money::Currency.find(@currency) %>
 <% decimal_separator = currency_obj.decimal_mark || '.' %>
 <% thousands_separator = currency_obj.thousands_separator || ',' %>
-<% @currency_symbol = currency_obj.symbol %>
-
-<% @stock_location = if params[:stock_location_id].present?
-                       Spree::StockLocation.find_by(id: params[:stock_location_id])
-                     else
-                       default_stock_location_for_product(@product)
-                     end %>
-
-<% cell_actions = "focus->bulk-editor#handleFocus mousedown->bulk-editor#handleMouseDown mouseenter->bulk-editor#handleMouseEnter contextmenu->bulk-editor#handleContextMenu paste->bulk-editor#handlePaste" %>
 
 <div class="card mb-6">
-  
-  <div class="card-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-gray-200">
+  <div class="card-header flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-gray-200">
     <div class="flex items-center gap-4">
       <h5 class="card-title mb-0"><%= Spree.t(:variants) %></h5>
     </div>
     
-    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto">
-      
+    <div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 w-full xl:w-auto">
       <div class="flex items-center gap-2 w-full sm:w-auto">
-        <label class="mb-0 text-sm font-medium shrink-0"><%= Spree.t(:currency) %></label>
+        <label for="currency" class="mb-0 text-sm font-medium shrink-0"><%= Spree.t(:currency) %></label>
         <%= select_tag :currency,
             options_for_select(current_store.supported_currencies_list, @currency),
             class: 'form-select form-select-sm w-full sm:w-auto',
-            onchange: "window.Turbo.visit('#{spree.edit_variants_admin_product_path(@product)}?currency=' + this.value + '&stock_location_id=#{@stock_location.id}')" %>
+            onchange: "let url = new URL(window.location.href); url.searchParams.set('currency', this.value); window.Turbo.visit(url.toString())" %>
       </div>
       
-      <div class="flex items-center gap-2 w-full sm:w-auto sm:border-l sm:pl-3 border-gray-200">
-        <label class="mb-0 text-sm font-medium shrink-0"><%= Spree.t(:stock_location) %></label>
+      <div class="flex items-center gap-2 w-full sm:w-auto sm:border-l sm:pl-4 border-gray-200">
+        <label for="stock_location_id" class="mb-0 text-sm font-medium shrink-0"><%= Spree.t(:stock_location) %></label>
         <%= select_tag :stock_location_id,
             options_from_collection_for_select(available_stock_locations_for_product(@product), :id, :name, @stock_location.id),
             class: 'form-select form-select-sm w-full sm:w-auto',
-            onchange: "window.Turbo.visit('#{spree.edit_variants_admin_product_path(@product)}?stock_location_id=' + this.value + '&currency=#{@currency}')" %>
+            onchange: "let url = new URL(window.location.href); url.searchParams.set('stock_location_id', this.value); window.Turbo.visit(url.toString())" %>
       </div>
 
-      <div data-controller="dialog" class="w-full sm:w-auto mt-2 sm:mt-0">
+      <div data-controller="dialog" class="w-full sm:w-auto mt-2 sm:mt-0 sm:border-l sm:pl-4 border-gray-200">
         <button type="button" class="btn btn-light btn-sm flex items-center justify-center gap-1 w-full sm:w-auto" data-action="dialog#open">
           <%= icon('filter', class: 'w-4 h-4') %>
           <span><%= Spree.t('admin.tables.filters') %></span>
@@ -59,30 +47,27 @@
 
         <%
           filter_fields = [
-            { key: 'sku', label: 'SKU', type: 'string', operators: ['eq', 'not_eq', 'cont', 'start', 'end'] },
-            { key: 'option_values_name', label: 'Option Value', type: 'string', operators: ['eq', 'not_eq', 'cont'] },
-            { key: 'price', label: 'Price', type: 'number', operators: ['eq', 'gt', 'lt'] }
+            { key: 'sku', label: Spree.t(:sku), type: 'string', operators: ['eq', 'not_eq', 'cont', 'start', 'end'] },
+            { key: 'option_values_name', label: Spree.t('admin.variants.option_value_filter', default: 'Option Value'), type: 'string', operators: ['eq', 'not_eq', 'cont'] },
+            { key: 'price', label: Spree.t(:price), type: 'number', operators: ['eq', 'gt', 'lt'] }
           ].to_json
 
           filter_operators = [
-            { value: 'eq', label: 'equals', no_value: false },
-            { value: 'not_eq', label: 'does not equal', no_value: false },
-            { value: 'cont', label: 'contains', no_value: false },
-            { value: 'not_cont', label: 'does not contain', no_value: false },
-            { value: 'start', label: 'starts with', no_value: false },
-            { value: 'end', label: 'ends with', no_value: false },
-            { value: 'gt', label: 'greater than', no_value: false },
-            { value: 'lt', label: 'less than', no_value: false },
-            { value: 'null', label: 'is empty', no_value: true },
-            { value: 'not_null', label: 'is not empty', no_value: true }
+            { value: 'eq', label: Spree.t('admin.tables.operators.equals'), no_value: false },
+            { value: 'not_eq', label: Spree.t('admin.tables.operators.does_not_equal'), no_value: false },
+            { value: 'cont', label: Spree.t('admin.tables.operators.contains'), no_value: false },
+            { value: 'not_cont', label: Spree.t('admin.tables.operators.does_not_contain'), no_value: false },
+            { value: 'start', label: Spree.t('admin.tables.operators.starts_with'), no_value: false },
+            { value: 'end', label: Spree.t('admin.tables.operators.ends_with'), no_value: false },
+            { value: 'gt', label: Spree.t('admin.tables.operators.greater_than'), no_value: false },
+            { value: 'lt', label: Spree.t('admin.tables.operators.less_than'), no_value: false },
+            { value: 'null', label: Spree.t('admin.tables.operators.is_empty'), no_value: true },
+            { value: 'not_null', label: Spree.t('admin.tables.operators.is_not_empty'), no_value: true }
           ].to_json
         %>
 
-        <dialog class="drawer" data-dialog-target="dialog" id="query-builder-drawer-product_variants">
-          <div class="drawer-header">
-            <h5 class="drawer-title"><%= Spree.t('admin.tables.filter_builder') %></h5>
-            <button name="button" type="button" class="btn-close" data-action="dialog#close" data-dismiss="dialog" aria-label="Close"></button>
-          </div>
+        <%= drawer(id: "query-builder-drawer-product_variants", controller_name: 'dialog') do %>
+          <%= drawer_header(Spree.t('admin.tables.filter_builder'), 'dialog') %>
 
           <div data-controller="query-builder" 
                data-query-builder-fields-value="<%= filter_fields %>" 
@@ -102,11 +87,11 @@
 
               <div class="drawer-body">
                 <div class="mb-4 flex items-center gap-2 flex-wrap">
-                  <span class="text-sm text-gray-600">Match</span>
+                  <span class="text-sm text-gray-600"><%= Spree.t('admin.tables.match') %></span>
                   <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" data-action="query-builder#toggleCombinator" data-query-builder-target="combinatorButton">
                     <span data-query-builder-target="combinatorLabel">AND</span>
                   </button>
-                  <span class="text-sm text-gray-600">of the following</span>
+                  <span class="text-sm text-gray-600"><%= Spree.t('admin.tables.of_the_following') %></span>
                 </div>
 
                 <div data-query-builder-target="filtersContainer" class="space-y-3 mb-4"></div>
@@ -114,10 +99,10 @@
 
                 <div class="flex gap-2">
                   <button type="button" class="btn btn-sm btn-light flex items-center gap-1" data-action="query-builder#addFilter">
-                    <%= icon('plus', class: 'w-4 h-4') %> Add filter
+                    <%= icon('plus', class: 'w-4 h-4') %> <%= Spree.t('admin.tables.add_filter') %>
                   </button>
                   <button type="button" class="btn btn-sm btn-light flex items-center gap-1" data-action="query-builder#addOrGroup">
-                    <%= icon('brackets', class: 'w-4 h-4') %> Add OR group
+                    <%= icon('brackets', class: 'w-4 h-4') %> <%= Spree.t('admin.tables.add_or_group') %>
                   </button>
                 </div>
 
@@ -125,24 +110,24 @@
               </div>
 
               <div class="drawer-footer">
-                <button type="button" class="btn btn-light" data-action="dialog#close" data-dismiss="dialog">Discard</button>
-                <button type="button" class="btn btn-light" data-action="query-builder#clear">Clear All</button>
-                <input type="submit" name="commit" value="Apply Filters" class="btn btn-primary cursor-pointer" data-disable-with="Apply Filters">
+                <%= drawer_discard_button('dialog') %>
+                <button type="button" class="btn btn-light" data-action="query-builder#clear"><%= Spree.t('admin.tables.clear_all') %></button>
+                <input type="submit" name="commit" value="<%= Spree.t('admin.tables.apply_filters') %>" class="btn btn-primary cursor-pointer" data-disable-with="<%= Spree.t('admin.tables.apply_filters') %>">
               </div>
             </form>
 
             <template data-query-builder-target="filterTemplate">
               <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg" data-filter-id="">
                 <select class="form-select flex-1 text-sm" data-field-select="" data-action="change->query-builder#onFieldChange">
-                  <option value="">Select field...</option>
+                  <option value=""><%= Spree.t('admin.tables.select_field') %></option>
                 </select>
                 <select class="form-select flex-shrink-0 w-[160px] text-sm" data-operator-select="" data-action="change->query-builder#onOperatorChange">
-                  <option value="eq">equals</option>
+                  <option value="eq"><%= Spree.t('admin.tables.operators.equals') %></option>
                 </select>
                 <div data-value-container="" class="flex-1">
-                  <input type="text" class="form-input text-sm" placeholder="Enter value..." data-value-input="" data-action="input->query-builder#onValueChange">
+                  <input type="text" class="form-input text-sm" placeholder="<%= Spree.t('admin.tables.enter_value') %>" data-value-input="" data-action="input->query-builder#onValueChange">
                 </div>
-                <button type="button" class="btn btn-sm btn-light text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5" data-action="query-builder#removeFilter" title="Remove">
+                <button type="button" class="btn btn-sm btn-light text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5" data-action="query-builder#removeFilter" title="<%= Spree.t(:remove) %>">
                   <%= icon('x', class: 'w-4 h-4') %>
                 </button>
               </div>
@@ -152,27 +137,28 @@
               <div class="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-white" data-group-id="" data-combinator="or">
                 <div class="flex items-center justify-between mb-3">
                   <div class="flex items-center gap-2">
-                    <span class="text-sm text-gray-600">Match</span>
+                    <span class="text-sm text-gray-600"><%= Spree.t('admin.tables.match') %></span>
                     <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" data-action="query-builder#toggleGroupCombinator">
                       <span data-group-combinator-label="">OR</span>
                     </button>
-                    <span class="text-sm text-gray-600">of the following</span>
+                    <span class="text-sm text-gray-600"><%= Spree.t('admin.tables.of_the_following') %></span>
                   </div>
-                  <button type="button" class="btn btn-sm btn-light text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5" data-action="query-builder#removeGroup" title="Remove">
+                  <button type="button" class="btn btn-sm btn-light text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5" data-action="query-builder#removeGroup" title="<%= Spree.t(:remove) %>">
                     <%= icon('x', class: 'w-4 h-4') %>
                   </button>
                 </div>
                 <div data-group-filters-container="" class="space-y-3 mb-3"></div>
                 <button type="button" class="btn btn-sm btn-light flex items-center gap-1" data-action="query-builder#addFilterToGroup">
-                  <%= icon('plus', class: 'w-4 h-4') %> Add filter
+                  <%= icon('plus', class: 'w-4 h-4') %> <%= Spree.t('admin.tables.add_filter') %>
                 </button>
               </div>
             </template>
           </div>
-        </dialog>
+        <% end %>
       </div>
     </div>
   </div>
+
   <%= form_with model: [:admin, @product],
                 url: spree.update_variants_admin_product_path(@product),
                 method: :patch,
@@ -186,12 +172,11 @@
                 } do |f| %>
 
     <div class="card-body p-0 overflow-x-auto">
-      
       <%= turbo_frame_tag "edit_product_variants_table" do %>
         <table class="table w-full text-left table-fixed" data-bulk-editor-target="table">
           <thead>
             <tr>
-              <th class="border-r rounded-none w-64"><%= Spree.t(:variant) %></th>
+              <th class="border-r rounded-none w-64"><%= Spree.t(:title) %></th>
               <th class="border-r w-48"><%= Spree.t(:sku) %></th>
               <th class="border-r w-32"><%= Spree.t(:price) %></th>
               <th class="border-r w-32"><%= Spree.t(:compare_at_price) %></th>
@@ -285,7 +270,7 @@
               <tr>
                 <td colspan="9" class="p-12 text-center text-gray-500">
                   <%= icon('filter-off', class: 'w-8 h-8 mb-3 mx-auto text-gray-400') %>
-                  <p class="mb-0">No variants found matching your filters.</p>
+                  <p class="mb-0"><%= Spree.t('admin.variants.no_variants_found_matching_filters', default: 'No variants found matching your filters.') %></p>
                 </td>
               </tr>
             <% end %>
@@ -302,5 +287,4 @@
       </div>
     </div>
   <% end %>
-
 </div>

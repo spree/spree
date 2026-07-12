@@ -20,6 +20,8 @@ Spree::Core::Engine.add_routes do
       end
       member do
         post :clone
+        get :edit_variants
+        patch :update_variants
       end
       resources :variants, only: [:edit, :update, :destroy]
       resources :digital_assets, except: [:show]
@@ -33,15 +35,6 @@ Spree::Core::Engine.add_routes do
     resources :stock_items, only: [:index, :update, :destroy]
     resources :stock_movements, only: [:index]
     resources :stock_transfers, except: [:edit, :update]
-    # bulk edit variants
-    namespace :admin, path: Spree.admin_path do
-      resources :products do
-        member do
-          get :edit_variants
-          patch :update_variants
-        end
-      end
-    end
     # price lists
     resources :price_lists do
       resources :price_rules, only: [:new, :create, :edit, :update, :destroy]
