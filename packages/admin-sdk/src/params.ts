@@ -1103,6 +1103,51 @@ export interface ExportCreateParams {
    * server and exports every record in scope.
    */
   record_selection?: 'filtered' | 'all'
+  /**
+   * Absolute URL of your admin's exports view; the export-done email uses it
+   * as the download button target. Only honored when it matches one of the
+   * store's configured allowed origins.
+   */
+  results_url?: string
+}
+
+export type ImportType =
+  | 'Spree::Imports::Products'
+  | 'Spree::Imports::Customers'
+  | 'Spree::Imports::ProductTranslations'
+  | (string & {})
+
+export interface ImportCreateParams {
+  /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
+  type: ImportType
+  /**
+   * ActiveStorage signed blob id of the uploaded CSV, obtained from
+   * `client.directUploads.create()` (or the `useDirectUpload` hook).
+   */
+  attachment: string
+  /** CSV column separator. Defaults to a comma on the server. */
+  preferred_delimiter?: ',' | ';' | '|' | '\t'
+  /**
+   * Absolute URL of the dashboard's imports view; the import-done email
+   * links back to it with `?import=<id>` appended. Only honored when it
+   * matches one of the store's configured allowed origins.
+   */
+  results_url?: string
+}
+
+export interface ImportMappingParam {
+  /** Canonical schema field name (see `Import.schema_fields[].name`). */
+  schema_field: string
+  /** CSV header to read the field from; `null` unmaps the field. */
+  file_column: string | null
+}
+
+export interface ImportCompleteMappingParams {
+  /**
+   * Column assignments to apply before processing starts. Omit to accept
+   * the auto-assigned mappings from the create response.
+   */
+  mappings?: ImportMappingParam[]
 }
 
 /**

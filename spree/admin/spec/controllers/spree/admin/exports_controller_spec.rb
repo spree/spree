@@ -63,6 +63,13 @@ describe Spree::Admin::ExportsController, type: :controller do
       expect(export.search_params).to eq({ 'name_cont' => 'Product' }.to_json)
     end
 
+    it 'remembers its own export page as the results url for the done email' do
+      subject
+
+      export = Spree::Exports::Products.last
+      expect(export.results_url).to eq(spree.admin_export_url(export, host: 'test.host'))
+    end
+
     it 'sets a flash message' do
       subject
       expect(flash[:success]).to eq('Your export was started. You will receive an email with a download link when it is ready!')

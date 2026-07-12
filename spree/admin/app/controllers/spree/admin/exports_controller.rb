@@ -7,6 +7,7 @@ module Spree
 
       new_action.before :assign_params
       create.before :set_user
+      create.after :remember_results_url
 
       def show
         redirect_to @object.attachment.url, status: :see_other, allow_other_host: true
@@ -28,6 +29,12 @@ module Spree
 
       def set_user
         @object.user = try_spree_current_user
+      end
+
+      # The export-done email links wherever the creating surface serves the
+      # file — for the legacy admin that is this export's download page.
+      def remember_results_url
+        @object.update!(results_url: spree.admin_export_url(@object))
       end
 
       def location_after_save

@@ -8,6 +8,7 @@ module Spree
       create.before :set_user
       create.before :set_owner
       create.after :start_mapping
+      create.after :remember_results_url
 
       # GET /admin/imports/:id
       def show
@@ -38,6 +39,13 @@ module Spree
 
       def start_mapping
         @object.start_mapping!
+      end
+
+      # The import-done email links wherever the creating surface shows
+      # results — for the legacy admin that is this import's page. The
+      # dashboard passes its own URL through the Admin API instead.
+      def remember_results_url
+        @object.update!(results_url: spree.admin_import_url(@object))
       end
 
       def location_after_save

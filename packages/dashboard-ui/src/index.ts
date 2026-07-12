@@ -60,6 +60,7 @@ export * from './spree/theme-toggle'
 // ---------------------------------------------------------------------------
 // UI primitives (shadcn) — see ./ui/*
 // ---------------------------------------------------------------------------
+export * from './ui/attachment'
 export * from './ui/avatar'
 export * from './ui/badge'
 export * from './ui/breadcrumb'
@@ -83,6 +84,7 @@ export * from './ui/input-group'
 export * from './ui/label'
 export * from './ui/pagination'
 export * from './ui/popover'
+export * from './ui/progress'
 export * from './ui/radio-group'
 export * from './ui/rich-text-editor'
 export * from './ui/select'

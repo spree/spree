@@ -87,6 +87,8 @@ module Spree
               store: current_store,
               user: try_spree_current_user
             )
+            # The done email's download button target — allowed origins only.
+            attrs[:results_url] = validated_allowed_origin_url(attrs[:results_url])
             klass.new(attrs)
           end
 
@@ -96,7 +98,7 @@ module Spree
           # is intentionally dropped — only CSV is supported and Rails' request
           # format would otherwise overwrite the model's enum.
           def permitted_params
-            attrs = params.permit(:type, :record_selection)
+            attrs = params.permit(:type, :record_selection, :results_url)
             raw = params[:search_params]
             attrs[:search_params] = raw.respond_to?(:to_unsafe_h) ? raw.to_unsafe_h : raw if raw.present?
             attrs

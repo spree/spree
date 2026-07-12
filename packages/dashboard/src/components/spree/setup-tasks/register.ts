@@ -1,4 +1,5 @@
 import { registerSlot } from '@spree/dashboard-core'
+import { AddProductsTask } from './add-products-task'
 import { StorefrontConnectTask } from './storefront-connect-task'
 import { type SetupTaskSlotContext, setupTaskSlot } from './types'
 
@@ -13,4 +14,9 @@ import { type SetupTaskSlotContext, setupTaskSlot } from './types'
 registerSlot<SetupTaskSlotContext>(setupTaskSlot('setup_storefront'), {
   id: 'builtin',
   component: StorefrontConnectTask,
+})
+
+registerSlot<SetupTaskSlotContext>(setupTaskSlot('add_products'), {
+  id: 'builtin',
+  component: AddProductsTask,
 })

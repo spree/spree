@@ -193,6 +193,19 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # CSV Imports — see docs/plans/5.6-admin-spa-csv-import.md
+        resources :imports, only: [:index, :show, :create, :destroy] do
+          collection do
+            get :template
+          end
+          member do
+            patch :complete_mapping
+            patch :retry_failed_rows
+            get :download
+          end
+          resources :rows, only: [:index], controller: 'import_rows'
+        end
+
         # Products
         resources :products, concerns: [:custom_fieldable, :translatable] do
           member do

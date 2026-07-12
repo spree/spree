@@ -16,6 +16,7 @@
       "discard": "Discard",
       "discard_changes": "Discard changes",
       "edit": "Edit",
+      "view": "View",
       "generate": "Generate",
       "remove": "Remove",
       "save": "Save",
@@ -360,6 +361,15 @@
       "channel_select": {
         "placeholder": "Select a sales channel"
       },
+      "file_upload": {
+        "attached": "Attached file",
+        "browse": "Browse files",
+        "drop_image_label": "Drop an image here, or click to browse",
+        "drop_label": "Drop a file here, or click to browse",
+        "invalid_type": "This file type is not accepted (expected: {{accept}})",
+        "upload_failed": "Upload failed: {{message}}",
+        "uploading": "Uploading…"
+      },
       "locale_select": {
         "placeholder": "Select a locale",
         "multi_placeholder": "Add locales…",
@@ -466,6 +476,22 @@
         "downloaded": "Export downloaded",
         "email_fallback": "Still processing — we'll email you a link when it's ready.",
         "failed": "Export failed: {{message}}"
+      },
+      "import_button": {
+        "title": "Import from CSV",
+        "description": "Upload a CSV file. You'll match its columns to fields in the next step.",
+        "drop_label": "Drop a CSV file here, or click to browse",
+        "delimiter_label": "Column separator",
+        "delimiters": {
+          "comma": "Comma (,)",
+          "semicolon": "Semicolon (;)",
+          "pipe": "Pipe (|)",
+          "tab": "Tab"
+        },
+        "download_template": "Download CSV template",
+        "template_failed": "Template download failed: {{message}}",
+        "submit": "Continue",
+        "failed": "Import failed: {{message}}"
       },
       "metadata_card": {
         "title": "Metadata",

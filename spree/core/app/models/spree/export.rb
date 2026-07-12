@@ -44,6 +44,15 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[number type format vendor_id]
 
     #
+    # Preferences
+    #
+    # Absolute URL of the admin view for this export, captured at create by
+    # the caller (legacy admin passes its export page; see the import
+    # counterpart for the dashboard mechanics) — the export-done email links
+    # back to it. No URL, no button.
+    preference :results_url, :string, default: nil
+
+    #
     # Attachments
     #
     has_one_attached :attachment, service: Spree.private_storage_service_name
@@ -203,6 +212,16 @@ module Spree
 
     def export_tmp_file_path
       Rails.root.join('tmp', export_file_name)
+    end
+
+    # Public API name for the +results_url+ preference (read/write symmetry).
+    # String preferences round-trip nil as "" — normalize blank to nil.
+    def results_url
+      preferred_results_url.presence
+    end
+
+    def results_url=(value)
+      self.preferred_results_url = value
     end
 
     def send_export_done_email

@@ -106,6 +106,16 @@ module Spree
               },
               required: %w[user permissions]
             },
+            ImportSchemaField: {
+              type: :object,
+              description: 'A canonical column of an import type, including per-store custom field columns',
+              properties: {
+                name: { type: :string, description: 'Canonical field name used in mappings', example: 'slug' },
+                label: { type: :string, description: 'Human-readable label', example: 'Slug' },
+                required: { type: :boolean, description: 'Whether the field must be mapped before processing' }
+              },
+              required: %w[name label required]
+            },
             CheckoutRequirement: {
               type: :object,
               properties: {
@@ -230,7 +240,26 @@ module Spree
             patch_promotion_rule_schema(schemas)
             patch_promotion_action_schema(schemas)
             patch_price_rule_schema(schemas)
+            patch_import_schema(schemas)
             schemas
+          end
+        end
+
+        # Same Array<{...}> issue as cart/fulfillment — patch Import#schema_fields
+        # to reference the ImportSchemaField component schema.
+        def patch_import_schema(schemas)
+          import = schemas['Import'] || schemas[:Import]
+          return unless import
+
+          props = import[:properties]
+          return unless props
+
+          fields_key = props.key?('schema_fields') ? 'schema_fields' : :schema_fields
+          if props[fields_key]
+            props[fields_key] = {
+              type: :array,
+              items: { '$ref' => '#/components/schemas/ImportSchemaField' }
+            }
           end
         end
 

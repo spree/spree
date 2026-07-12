@@ -117,6 +117,35 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
       expect(Spree::Export.find_by_prefix_id(json_response['id'])).to be_a(Spree::Exports::Customers)
     end
 
+    context 'with a results_url' do
+      it 'stores it when it matches an allowed origin' do
+        create(:allowed_origin, store: store, origin: 'https://admin.example.com')
+
+        post :create,
+             params: {
+               type: 'Spree::Exports::Products',
+               results_url: 'https://admin.example.com/store_abc/exports'
+             },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::Export.find_by_prefix_id(json_response['id']).results_url)
+          .to eq('https://admin.example.com/store_abc/exports')
+      end
+
+      it 'silently drops it when it does not match an allowed origin' do
+        post :create,
+             params: {
+               type: 'Spree::Exports::Products',
+               results_url: 'https://evil.example.com/phish'
+             },
+             as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::Export.find_by_prefix_id(json_response['id']).results_url).to be_nil
+      end
+    end
+
     it 'clears search_params when record_selection is "all"' do
       post :create,
            params: {

@@ -112,7 +112,8 @@
         "store": "المتجر",
         "payments": "المدفوعات والضرائب",
         "fulfillment": "التنفيذ",
-        "team": "الفريق والوصول"
+        "team": "الفريق والوصول",
+        "audit": "التدقيق"
       },
       "items": {
         "store": "المتجر",
@@ -127,7 +128,8 @@
         "api_keys": "مفاتيح API",
         "webhooks": "Webhooks",
         "allowed_origins": "المصادر المسموح بها",
-        "profile": "الملف الشخصي"
+        "profile": "الملف الشخصي",
+        "imports": "عمليات الاستيراد"
       }
     },
     "fields": {
@@ -1614,6 +1616,22 @@
         "allowed_origins": {
           "add_sheet_title": "أضف الأصل المسموح به",
           "edit_sheet_title": "تحرير الأصل المسموح به"
+        },
+        "imports": {
+          "title": "عمليات الاستيراد",
+          "search_placeholder": "البحث بالرقم…",
+          "empty_title": "لا توجد عمليات استيراد بعد",
+          "table": {
+            "number": "الرقم",
+            "type": "النوع",
+            "status": "الحالة",
+            "rows": "الصفوف",
+            "failed_count": "{{failed}} فشلت"
+          },
+          "delete_confirm": {
+            "title": "حذف الاستيراد؟",
+            "message": "سيؤدي هذا إلى إزالة {{number}} وصفوفه والملف المرفوع."
+          }
         }
       },
       "promotions": {
@@ -1680,7 +1698,8 @@
           "add_products": {
             "title": "إضافة المنتجات",
             "description": "أضف منتجات إلى متجرك — منتجاتك الخاصة أو ادعُ بائعين خارجيين للبيع معًا.",
-            "cta": "إضافة المنتجات"
+            "cta": "إضافة المنتجات",
+            "import_cta": "استيراد المنتجات من CSV"
           },
           "set_customer_support_email": {
             "title": "تعيين البريد الإلكتروني لدعم العملاء",
@@ -2588,6 +2607,70 @@
         "no_matches": "لا توجد منتجات تطابق عامل التصفية."
       },
       "load_failed": "فشل تحميل الفئات. يرجى المحاولة مرة أخرى."
+    },
+    "imports": {
+      "download_original": "تنزيل الملف الأصلي",
+      "load_failed": "تعذّر تحميل الاستيراد.",
+      "try_again": "حاول مرة أخرى",
+      "wizard_title": "الاستيراد",
+      "steps": {
+        "map_fields": "مطابقة الحقول",
+        "process_rows": "معالجة الصفوف",
+        "complete": "اكتمل"
+      },
+      "status": {
+        "pending": "قيد الانتظار",
+        "mapping": "المطابقة",
+        "completed_mapping": "في قائمة الانتظار",
+        "processing": "قيد المعالجة",
+        "completed": "مكتمل",
+        "failed": "فشل"
+      },
+      "types": {
+        "products": "المنتجات",
+        "customers": "العملاء",
+        "product_translations": "ترجمات المنتجات"
+      },
+      "mapping": {
+        "title": "مطابقة الأعمدة",
+        "description": "طابق أعمدة ملفك مع حقول {{type}}.",
+        "field": "الحقل",
+        "file_column": "عمود الملف",
+        "sample": "مثال",
+        "not_mapped": "غير مطابق",
+        "required": "مطلوب",
+        "missing_required": "طابق الحقول المطلوبة للمتابعة: {{fields}}",
+        "start": "بدء الاستيراد",
+        "starting": "جارٍ البدء…"
+      },
+      "processing": {
+        "title": "جارٍ معالجة الصفوف",
+        "preparing": "جارٍ تجهيز الصفوف…",
+        "progress": "تمت معالجة {{processed}} من {{total}} صفًا",
+        "failed_count": "{{failed}} فشلت",
+        "retrying": "إعادة محاولة الصفوف الفاشلة · {{remaining}} متبقية",
+        "note": "يمكنك مغادرة هذه الصفحة — سيستمر الاستيراد في الخلفية."
+      },
+      "results": {
+        "completed_title": "اكتمل الاستيراد",
+        "summary": "تم استيراد {{completed}} صفًا · {{failed}} فشلت",
+        "retry_failed": "إعادة محاولة الصفوف الفاشلة ({{failed}})",
+        "retrying": "جارٍ إعادة المحاولة…",
+        "view_records": "عرض {{type}}"
+      },
+      "failed": {
+        "title": "فشل الاستيراد",
+        "description": "تعذّرت معالجة الملف."
+      },
+      "failed_rows": {
+        "next_page": "الصفحة التالية",
+        "prev_page": "الصفحة السابقة",
+        "title": "الصفوف الفاشلة",
+        "row_number": "الصف",
+        "error": "الخطأ",
+        "view_data": "عرض بيانات الصف",
+        "hide_data": "إخفاء بيانات الصف"
+      }
     }
   }
 }

@@ -16,6 +16,7 @@
       "discard": "Odrzuć",
       "discard_changes": "Odrzuć zmiany",
       "edit": "Edytuj",
+      "view": "Zobacz",
       "generate": "Generuj",
       "remove": "Usuń",
       "save": "Zapisz",
@@ -360,6 +361,15 @@
       "channel_select": {
         "placeholder": "Wybierz kanał sprzedaży"
       },
+      "file_upload": {
+        "attached": "Załączony plik",
+        "browse": "Przeglądaj pliki",
+        "drop_image_label": "Upuść obraz tutaj lub kliknij, aby przeglądać",
+        "drop_label": "Upuść plik tutaj lub kliknij, aby przeglądać",
+        "invalid_type": "Ten typ pliku nie jest akceptowany (oczekiwano: {{accept}})",
+        "upload_failed": "Przesyłanie nie powiodło się: {{message}}",
+        "uploading": "Przesyłanie…"
+      },
       "locale_select": {
         "placeholder": "Wybierz język",
         "multi_placeholder": "Dodaj języki…",
@@ -466,6 +476,22 @@
         "downloaded": "Eksport pobrany",
         "email_fallback": "Nadal przetwarzamy — wyślemy link e-mailem, gdy będzie gotowy.",
         "failed": "Eksport nie powiódł się: {{message}}"
+      },
+      "import_button": {
+        "title": "Importuj z pliku CSV",
+        "description": "Prześlij plik CSV. W następnym kroku dopasujesz jego kolumny do pól.",
+        "drop_label": "Upuść plik CSV tutaj lub kliknij, aby przeglądać",
+        "delimiter_label": "Separator kolumn",
+        "delimiters": {
+          "comma": "Przecinek (,)",
+          "semicolon": "Średnik (;)",
+          "pipe": "Kreska pionowa (|)",
+          "tab": "Tabulator"
+        },
+        "download_template": "Pobierz szablon CSV",
+        "template_failed": "Pobieranie szablonu nie powiodło się: {{message}}",
+        "submit": "Kontynuuj",
+        "failed": "Import nie powiódł się: {{message}}"
       },
       "metadata_card": {
         "title": "Metadane",

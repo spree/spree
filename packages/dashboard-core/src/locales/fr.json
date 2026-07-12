@@ -16,6 +16,7 @@
       "discard": "Abandonner",
       "discard_changes": "Abandonner les modifications",
       "edit": "Modifier",
+      "view": "Afficher",
       "generate": "Générer",
       "remove": "Retirer",
       "save": "Enregistrer",
@@ -360,6 +361,15 @@
       "channel_select": {
         "placeholder": "Sélectionner un canal de vente"
       },
+      "file_upload": {
+        "attached": "Fichier joint",
+        "browse": "Parcourir les fichiers",
+        "drop_image_label": "Déposez une image ici ou cliquez pour parcourir",
+        "drop_label": "Déposez un fichier ici ou cliquez pour parcourir",
+        "invalid_type": "Ce type de fichier n'est pas accepté (attendu : {{accept}})",
+        "upload_failed": "Échec du téléversement : {{message}}",
+        "uploading": "Téléversement…"
+      },
       "locale_select": {
         "placeholder": "Sélectionner une langue",
         "multi_placeholder": "Ajouter des langues…",
@@ -466,6 +476,22 @@
         "downloaded": "Export téléchargé",
         "email_fallback": "Toujours en cours — nous vous enverrons un lien par e-mail dès qu’il sera prêt.",
         "failed": "Échec de l’export : {{message}}"
+      },
+      "import_button": {
+        "title": "Importer depuis un CSV",
+        "description": "Téléversez un fichier CSV. Vous associerez ses colonnes aux champs à l'étape suivante.",
+        "drop_label": "Déposez un fichier CSV ici ou cliquez pour parcourir",
+        "delimiter_label": "Séparateur de colonnes",
+        "delimiters": {
+          "comma": "Virgule (,)",
+          "semicolon": "Point-virgule (;)",
+          "pipe": "Barre verticale (|)",
+          "tab": "Tabulation"
+        },
+        "download_template": "Télécharger le modèle CSV",
+        "template_failed": "Échec du téléchargement du modèle : {{message}}",
+        "submit": "Continuer",
+        "failed": "Échec de l'import : {{message}}"
       },
       "metadata_card": {
         "title": "Métadonnées",
