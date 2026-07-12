@@ -46,8 +46,8 @@ import {
   useImport,
   useImportRows,
   useRetryFailedRows,
-} from '@/hooks/use-imports'
-import { importTypeIndexPath, importTypeLabel, isImportActive } from '@/lib/import-types'
+} from '../../../hooks/use-imports'
+import { importTypeIndexPath, importTypeLabel, isImportActive } from '../../../lib/import-types'
 
 const NOT_MAPPED = '__not_mapped__'
 

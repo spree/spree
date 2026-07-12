@@ -41,7 +41,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
-import { customerGroupAutocompleteProps, useCustomerGroups } from '../../../../hooks/use-customer-groups'
+import {
+  customerGroupAutocompleteProps,
+  useCustomerGroups,
+} from '../../../../hooks/use-customer-groups'
 import {
   useBulkAddCustomersToGroups,
   useBulkAddCustomerTags,

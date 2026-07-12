@@ -10,7 +10,7 @@ import {
   TagIcon,
   UsersIcon,
 } from 'lucide-react'
-import { GettingStartedNavBadge } from '@/components/spree/getting-started-nav-badge'
+import { GettingStartedNavBadge } from '../components/spree/getting-started-nav-badge'
 
 nav.add({
   key: 'getting-started',

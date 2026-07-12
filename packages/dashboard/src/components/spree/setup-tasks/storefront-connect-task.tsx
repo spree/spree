@@ -2,10 +2,7 @@ import { Button } from '@spree/dashboard-ui'
 import { useSearch } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  normalizeOrigin,
-  StorefrontConnectSheet,
-} from '@/components/spree/storefront-connect-sheet'
+import { normalizeOrigin, StorefrontConnectSheet } from '../storefront-connect-sheet'
 import type { SetupTaskSlotContext } from './types'
 
 // Card body for the setup_storefront task: opens the storefront-connect

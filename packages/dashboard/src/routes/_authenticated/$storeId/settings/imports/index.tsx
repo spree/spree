@@ -10,9 +10,9 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { DownloadIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { ImportWizardDialog } from '@/components/spree/imports/import-wizard-dialog'
-import { isImportActive, useDeleteImport } from '@/hooks/use-imports'
-import '@/tables/imports'
+import { ImportWizardDialog } from '../../../../../components/spree/imports/import-wizard-dialog'
+import { isImportActive, useDeleteImport } from '../../../../../hooks/use-imports'
+import '../../../../../tables/imports'
 
 // `import` carries the prefixed id of the import whose wizard dialog is open,
 // so the flow is deep-linkable and survives refresh (same pattern as the

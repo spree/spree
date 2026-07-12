@@ -11,8 +11,8 @@ import {
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { CheckCircle2Icon, ChevronDownIcon, CircleIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import '@/components/spree/setup-tasks/register'
-import { setupTaskSlot } from '@/components/spree/setup-tasks/types'
+import '../../../components/spree/setup-tasks/register'
+import { setupTaskSlot } from '../../../components/spree/setup-tasks/types'
 
 // Settings deep-links for the tasks whose default card body (copy + CTA
 // button) suffices. Tasks needing real UI register a slot component under
