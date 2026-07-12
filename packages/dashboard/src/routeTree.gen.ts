@@ -9,13 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as resetPasswordRouteImport } from './routes/reset-password'
 import { Route as loginRouteImport } from './routes/login'
+import { Route as forgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as authenticatedRouteImport } from './routes/_authenticated'
 import { Route as authenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as acceptInvitationDotinvitationIdRouteImport } from './routes/accept-invitation.$invitationId'
 import { Route as authenticatedStoreIdRouteImport } from './routes/_authenticated/$storeId'
 import { Route as IndexRouteImport } from './routes/_authenticated/$storeId/index'
 import { Route as SettingsRouteImport } from './routes/_authenticated/$storeId/settings'
+import { Route as GettingStartedRouteImport } from './routes/_authenticated/$storeId/getting-started'
 import { Route as SplatRouteImport } from './routes/_authenticated/$storeId/$'
 import { Route as SettingsIndexRouteImport } from './routes/_authenticated/$storeId/settings/index'
 import { Route as PromotionsIndexRouteImport } from './routes/_authenticated/$storeId/promotions/index'
@@ -47,6 +50,7 @@ import { Route as OrdersOrderIdRouteImport } from './routes/_authenticated/$stor
 import { Route as CustomersGroupsRouteImport } from './routes/_authenticated/$storeId/customers/groups'
 import { Route as CustomersCustomerIdRouteImport } from './routes/_authenticated/$storeId/customers/$customerId'
 import { Route as SettingsWebhooksIndexRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/index'
+import { Route as SettingsImportsIndexRouteImport } from './routes/_authenticated/$storeId/settings/imports/index'
 import { Route as ProductsPriceListsIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/index'
 import { Route as ProductsCategoriesIndexRouteImport } from './routes/_authenticated/$storeId/products/categories/index'
 import { Route as SettingsWebhooksWebhookEndpointIdRouteImport } from './routes/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
@@ -55,9 +59,19 @@ import { Route as ProductsCategoriesNewRouteImport } from './routes/_authenticat
 import { Route as ProductsCategoriesCategoryIdRouteImport } from './routes/_authenticated/$storeId/products/categories/$categoryId'
 import { Route as ProductsPriceListsPriceListIdIndexRouteImport } from './routes/_authenticated/$storeId/products/price-lists/$priceListId/index'
 
+const resetPasswordRoute = resetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const loginRoute = loginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const forgotPasswordRoute = forgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authenticatedRoute = authenticatedRouteImport.update({
@@ -88,6 +102,11 @@ const IndexRoute = IndexRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const GettingStartedRoute = GettingStartedRouteImport.update({
+  id: '/getting-started',
+  path: '/getting-started',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const SplatRoute = SplatRouteImport.update({
@@ -246,6 +265,11 @@ const SettingsWebhooksIndexRoute = SettingsWebhooksIndexRouteImport.update({
   path: '/webhooks/',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsImportsIndexRoute = SettingsImportsIndexRouteImport.update({
+  id: '/imports/',
+  path: '/imports/',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const ProductsPriceListsIndexRoute = ProductsPriceListsIndexRouteImport.update({
   id: '/products/price-lists/',
   path: '/products/price-lists/',
@@ -287,10 +311,13 @@ const ProductsPriceListsPriceListIdIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof authenticatedIndexRoute
+  '/forgot-password': typeof forgotPasswordRoute
   '/login': typeof loginRoute
+  '/reset-password': typeof resetPasswordRoute
   '/$storeId': typeof authenticatedStoreIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/$storeId/$': typeof SplatRoute
+  '/$storeId/getting-started': typeof GettingStartedRoute
   '/$storeId/settings': typeof SettingsRouteWithChildren
   '/$storeId/': typeof IndexRoute
   '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
@@ -328,14 +355,18 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/products/categories/': typeof ProductsCategoriesIndexRoute
   '/$storeId/products/price-lists/': typeof ProductsPriceListsIndexRoute
+  '/$storeId/settings/imports/': typeof SettingsImportsIndexRoute
   '/$storeId/settings/webhooks/': typeof SettingsWebhooksIndexRoute
   '/$storeId/products/price-lists/$priceListId/': typeof ProductsPriceListsPriceListIdIndexRoute
 }
 export interface FileRoutesByTo {
+  '/forgot-password': typeof forgotPasswordRoute
   '/login': typeof loginRoute
+  '/reset-password': typeof resetPasswordRoute
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/': typeof authenticatedIndexRoute
   '/$storeId/$': typeof SplatRoute
+  '/$storeId/getting-started': typeof GettingStartedRoute
   '/$storeId': typeof IndexRoute
   '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
   '/$storeId/customers/groups': typeof CustomersGroupsRoute
@@ -372,17 +403,21 @@ export interface FileRoutesByTo {
   '/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/$storeId/products/categories': typeof ProductsCategoriesIndexRoute
   '/$storeId/products/price-lists': typeof ProductsPriceListsIndexRoute
+  '/$storeId/settings/imports': typeof SettingsImportsIndexRoute
   '/$storeId/settings/webhooks': typeof SettingsWebhooksIndexRoute
   '/$storeId/products/price-lists/$priceListId': typeof ProductsPriceListsPriceListIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof authenticatedRouteWithChildren
+  '/forgot-password': typeof forgotPasswordRoute
   '/login': typeof loginRoute
+  '/reset-password': typeof resetPasswordRoute
   '/_authenticated/$storeId': typeof authenticatedStoreIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/_authenticated/': typeof authenticatedIndexRoute
   '/_authenticated/$storeId/$': typeof SplatRoute
+  '/_authenticated/$storeId/getting-started': typeof GettingStartedRoute
   '/_authenticated/$storeId/settings': typeof SettingsRouteWithChildren
   '/_authenticated/$storeId/': typeof IndexRoute
   '/_authenticated/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
@@ -420,6 +455,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId': typeof SettingsWebhooksWebhookEndpointIdRoute
   '/_authenticated/$storeId/products/categories/': typeof ProductsCategoriesIndexRoute
   '/_authenticated/$storeId/products/price-lists/': typeof ProductsPriceListsIndexRoute
+  '/_authenticated/$storeId/settings/imports/': typeof SettingsImportsIndexRoute
   '/_authenticated/$storeId/settings/webhooks/': typeof SettingsWebhooksIndexRoute
   '/_authenticated/$storeId/products/price-lists/$priceListId/': typeof ProductsPriceListsPriceListIdIndexRoute
 }
@@ -427,10 +463,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/$storeId'
     | '/accept-invitation/$invitationId'
     | '/$storeId/$'
+    | '/$storeId/getting-started'
     | '/$storeId/settings'
     | '/$storeId/'
     | '/$storeId/customers/$customerId'
@@ -468,14 +507,18 @@ export interface FileRouteTypes {
     | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/products/categories/'
     | '/$storeId/products/price-lists/'
+    | '/$storeId/settings/imports/'
     | '/$storeId/settings/webhooks/'
     | '/$storeId/products/price-lists/$priceListId/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/accept-invitation/$invitationId'
     | '/'
     | '/$storeId/$'
+    | '/$storeId/getting-started'
     | '/$storeId'
     | '/$storeId/customers/$customerId'
     | '/$storeId/customers/groups'
@@ -512,16 +555,20 @@ export interface FileRouteTypes {
     | '/$storeId/settings/webhooks/$webhookEndpointId'
     | '/$storeId/products/categories'
     | '/$storeId/products/price-lists'
+    | '/$storeId/settings/imports'
     | '/$storeId/settings/webhooks'
     | '/$storeId/products/price-lists/$priceListId'
   id:
     | '__root__'
     | '/_authenticated'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/_authenticated/$storeId'
     | '/accept-invitation/$invitationId'
     | '/_authenticated/'
     | '/_authenticated/$storeId/$'
+    | '/_authenticated/$storeId/getting-started'
     | '/_authenticated/$storeId/settings'
     | '/_authenticated/$storeId/'
     | '/_authenticated/$storeId/customers/$customerId'
@@ -559,23 +606,40 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/webhooks/$webhookEndpointId'
     | '/_authenticated/$storeId/products/categories/'
     | '/_authenticated/$storeId/products/price-lists/'
+    | '/_authenticated/$storeId/settings/imports/'
     | '/_authenticated/$storeId/settings/webhooks/'
     | '/_authenticated/$storeId/products/price-lists/$priceListId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   authenticatedRoute: typeof authenticatedRouteWithChildren
+  forgotPasswordRoute: typeof forgotPasswordRoute
   loginRoute: typeof loginRoute
+  resetPasswordRoute: typeof resetPasswordRoute
   acceptInvitationDotinvitationIdRoute: typeof acceptInvitationDotinvitationIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof resetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof loginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof forgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -618,6 +682,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/$storeId/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/getting-started': {
+      id: '/_authenticated/$storeId/getting-started'
+      path: '/getting-started'
+      fullPath: '/$storeId/getting-started'
+      preLoaderRoute: typeof GettingStartedRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/$': {
@@ -837,6 +908,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsWebhooksIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/imports/': {
+      id: '/_authenticated/$storeId/settings/imports/'
+      path: '/imports'
+      fullPath: '/$storeId/settings/imports/'
+      preLoaderRoute: typeof SettingsImportsIndexRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/products/price-lists/': {
       id: '/_authenticated/$storeId/products/price-lists/'
       path: '/products/price-lists'
@@ -904,6 +982,7 @@ interface SettingsRouteChildren {
   SettingsTaxCategoriesRoute: typeof SettingsTaxCategoriesRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   SettingsWebhooksWebhookEndpointIdRoute: typeof SettingsWebhooksWebhookEndpointIdRoute
+  SettingsImportsIndexRoute: typeof SettingsImportsIndexRoute
   SettingsWebhooksIndexRoute: typeof SettingsWebhooksIndexRoute
 }
 
@@ -923,6 +1002,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsIndexRoute: SettingsIndexRoute,
   SettingsWebhooksWebhookEndpointIdRoute:
     SettingsWebhooksWebhookEndpointIdRoute,
+  SettingsImportsIndexRoute: SettingsImportsIndexRoute,
   SettingsWebhooksIndexRoute: SettingsWebhooksIndexRoute,
 }
 
@@ -932,6 +1012,7 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 
 interface authenticatedStoreIdRouteChildren {
   SplatRoute: typeof SplatRoute
+  GettingStartedRoute: typeof GettingStartedRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   IndexRoute: typeof IndexRoute
   CustomersCustomerIdRoute: typeof CustomersCustomerIdRoute
@@ -960,6 +1041,7 @@ interface authenticatedStoreIdRouteChildren {
 
 const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   SplatRoute: SplatRoute,
+  GettingStartedRoute: GettingStartedRoute,
   SettingsRoute: SettingsRouteWithChildren,
   IndexRoute: IndexRoute,
   CustomersCustomerIdRoute: CustomersCustomerIdRoute,
@@ -1006,7 +1088,9 @@ const authenticatedRouteWithChildren = authenticatedRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   authenticatedRoute: authenticatedRouteWithChildren,
+  forgotPasswordRoute: forgotPasswordRoute,
   loginRoute: loginRoute,
+  resetPasswordRoute: resetPasswordRoute,
   acceptInvitationDotinvitationIdRoute: acceptInvitationDotinvitationIdRoute,
 }
 export const routeTree = rootRouteImport

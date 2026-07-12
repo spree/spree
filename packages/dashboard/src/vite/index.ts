@@ -94,6 +94,8 @@ function dashboardRouterPlugin(hostRoot: string, options: SpreeDashboardPluginOp
 
   const virtualRouteConfig = rootRoute('__root.tsx', [
     route('/login', 'login.tsx'),
+    route('/forgot-password', 'forgot-password.tsx'),
+    route('/reset-password', 'reset-password.tsx'),
     route('/accept-invitation/$invitationId', 'accept-invitation.$invitationId.tsx'),
     layout('_authenticated.tsx', [
       index('_authenticated/index.tsx'),
