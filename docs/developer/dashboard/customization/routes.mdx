@@ -63,6 +63,10 @@ Route "/_authenticated/$storeId/brands/" is declared by more than one package:
 
 Rename one of the routes, or drop the plugin that shouldn't own it. (Duplicate paths *within* a single package are reported by the TanStack generator instead — that's an authoring bug in one package.)
 
+<Warning>
+The collision check only sees **file routes**. If a runtime-registry route (below) uses the same URL as a compiled file route, there's no build error — the file route silently wins on every navigation, because the registry's catch-all is the lowest-priority match. If a page you registered at runtime never renders, check whether an installed plugin claims the same path.
+</Warning>
+
 ## Runtime route registry (in-app & dynamic)
 
 Register from your host app's `plugins.ts` (or a plugin that genuinely needs runtime registration):
@@ -136,6 +140,8 @@ routes: [{
 ```
 
 Always pair this with a matching `subject` on the **nav entry** so users without permission never see the link in the first place. The route subject is the defensive layer for direct URLs.
+
+`subject` is a **registry-route** feature — the dispatcher applies it before rendering. File routes don't pass through the dispatcher, so they gate themselves: check permissions inside the component with `<Can>` or `usePermissions()` from `@spree/dashboard-core` and render a fallback. Either way, this is UX only — the backend still authorizes every API call.
 
 ## Layout
 

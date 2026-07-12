@@ -452,7 +452,10 @@ function printNextSteps(answers: Answers, dst: string, installed: boolean): void
     lines.push('')
     lines.push(pc.bold('Dashboard plugin'))
     lines.push(
-      `  Edit ${pc.cyan('packages/dashboard/src/index.tsx')} to wire your nav/route/slot extensions.`,
+      `  Edit ${pc.cyan('packages/dashboard/src/index.tsx')} to register nav entries and slot widgets.`,
+    )
+    lines.push(
+      `  Add pages as file routes in ${pc.cyan('packages/dashboard/src/routes/')} — compiled into the host's typed route tree.`,
     )
     lines.push(
       `  See ${pc.cyan('https://spreecommerce.org/docs/developer/dashboard/plugins/overview')}`,

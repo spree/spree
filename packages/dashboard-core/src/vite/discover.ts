@@ -63,7 +63,8 @@ export function discoverDashboardPluginManifests(
     let pkg: PluginManifest
     try {
       pkg = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as PluginManifest
-    } catch {
+    } catch (err) {
+      onWarn?.(`Could not parse ${manifestPath}: ${(err as Error).message}`)
       manifests.push({ name })
       continue
     }

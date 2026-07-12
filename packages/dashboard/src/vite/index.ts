@@ -88,8 +88,10 @@ function dashboardRouterPlugin(hostRoot: string, options: SpreeDashboardPluginOp
   ]
   assertNoRouteCollisions(sources)
 
+  // POSIX-normalize: the generator expects forward slashes; path.relative
+  // emits backslashes on Windows.
   const pluginMounts = routedPlugins.map((m) =>
-    physical('', path.relative(shellRoutesDir, m.routesDir)),
+    physical('', path.relative(shellRoutesDir, m.routesDir).split(path.sep).join('/')),
   )
 
   const virtualRouteConfig = rootRoute('__root.tsx', [
