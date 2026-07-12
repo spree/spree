@@ -75,13 +75,13 @@ val checkoutConfiguration = CheckoutConfiguration(
 	    dropIn {
 	        setEnableRemovingStoredPaymentMethods(true)
 	    }
-	 
+
 	    // Optional: add or change default configuration for the card payment method.
 	    card {
 	        setHolderNameRequired(true)
 	        setShopperReference("...")
 	    }
-	 
+
 	    // Optional: change configuration for 3D Secure 2.
 	    adyen3DS2 {
 	        setThreeDSRequestorAppURL("...")
@@ -99,7 +99,7 @@ see also: https://docs.adyen.com/online-payments/build-your-integration/sessions
 ```kotlin
 	// Create an object for the checkout session.
 	val result = CheckoutSessionProvider.createSession(sessionModel, dropInConfiguration)
-	 
+
 	// If the payment session is successful, handle the result.
 	// If the payment session encounters an error, handle the error.
 	when (result) {
@@ -138,11 +138,11 @@ Example:
 ```kotlin
 	import com.adyen.checkout.dropin.compose.startPayment
 	import com.adyen.checkout.dropin.compose.rememberLauncherForDropInResult
-	 
+
 	@Composable
 	private fun ComposableDropIn() {
 	    val dropInLauncher = rememberLauncherForDropInResult(sessionDropInCallback)
-	 
+
 	    DropIn.startPayment(dropInLauncher, checkoutSession, dropInConfiguration)
 	}
 ```
@@ -156,7 +156,7 @@ Example:
 
 backend will change the state of `payment_session` to one of the following state
 
-- `pending` - chosen payment method can take a while to complete 
+- `pending` - chosen payment method can take a while to complete
 - `completed` - payment resulted in success, order completed
 - `canceled` - payment canceled, payment is `void`
 - `refused` - payment failed

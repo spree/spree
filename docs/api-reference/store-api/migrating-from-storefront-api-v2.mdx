@@ -285,7 +285,7 @@ The tables below cover every public path in `/api/v2/storefront/*` and where to 
 | `GET /taxons/:id` | `GET /categories/:id_or_permalink` | Permalinks containing slashes (`clothing/shirts`) work as-is. |
 | *(new)* | `GET /products/filters` | Returns price range, in-stock toggle, option values, and category facets with counts — designed for filter sidebars. |
 
-This is an area where API v3 has the biggest performance advantage over v2. `GET /products` by default will expose `default_variant_id`, `thumbnail_url` and `price` which are essential for building product lists. You don't need to expand `variants` or `media` (images) like with API v2. 
+This is an area where API v3 has the biggest performance advantage over v2. `GET /products` by default will expose `default_variant_id`, `thumbnail_url` and `price` which are essential for building product lists. You don't need to expand `variants` or `media` (images) like with API v2.
 
 ### Cart and checkout
 
@@ -385,7 +385,7 @@ API v2 exposed a singleton `/account` endpoint with OAuth tokens minted at `/spr
 | `POST /wishlists/:token/add_item` | `POST /wishlists/:wishlist_id/items` |
 | `PATCH /wishlists/:token/set_item_quantity/:id` | `PATCH /wishlists/:wishlist_id/items/:id` |
 | `DELETE /wishlists/:token/remove_item/:id` | `DELETE /wishlists/:wishlist_id/items/:id` |
-| `POST /wishlists/:token/add_items` | Iterate `POST /wishlists/:wishlist_id/items` | 
+| `POST /wishlists/:token/add_items` | Iterate `POST /wishlists/:wishlist_id/items` |
 | `DELETE /wishlists/:token/remove_items` | Iterate `DELETE /wishlists/:wishlist_id/items/:id` |
 
 ### Digital downloads

@@ -110,10 +110,10 @@ dropInConfiguration.card.showsHolderNameField = true
 let dropInComponent = DropInComponent(paymentMethods: session.sessionContext.paymentMethods,
                                       context: adyenContext,
                                       configuration: dropInConfiguration)
-  
+
 // Keep the instance of Drop-in to so that it doesn't get destroyed after the function is executed.
 self.dropInComponent = dropInComponent
-  
+
 // Set the session as the delegate.
 dropInComponent.delegate = session
 // If you support gift cards, set the session as the partial payment delegate.
