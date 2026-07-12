@@ -235,7 +235,10 @@ describe('scaffold (no-start)', () => {
       port: 4567,
     })
 
-    expect(scaffoldDashboard).toHaveBeenCalledWith(projectDir, { install: true })
+    expect(scaffoldDashboard).toHaveBeenCalledWith(projectDir, {
+      install: true,
+      packageManager: 'npm',
+    })
     expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).toContain(
       'React Dashboard',
     )

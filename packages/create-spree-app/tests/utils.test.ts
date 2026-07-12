@@ -13,24 +13,27 @@ describe('detectPackageManager', () => {
     process.env.npm_config_user_agent = originalEnv
   })
 
-  it('detects yarn', () => {
+  it('respects an explicit yarn agent', async () => {
     process.env.npm_config_user_agent = 'yarn/1.22.0 npm/? node/v20.0.0'
-    expect(detectPackageManager()).toBe('yarn')
+    await expect(detectPackageManager()).resolves.toBe('yarn')
   })
 
-  it('detects pnpm', () => {
+  it('respects an explicit pnpm agent', async () => {
     process.env.npm_config_user_agent = 'pnpm/8.0.0 npm/? node/v20.0.0'
-    expect(detectPackageManager()).toBe('pnpm')
+    await expect(detectPackageManager()).resolves.toBe('pnpm')
   })
 
-  it('defaults to npm', () => {
+  // An npm agent is the default runner (`npx create-spree-app`), not a
+  // choice — prefer pnpm when installed. These tests run under the pnpm
+  // workspace, so pnpm is always on PATH here.
+  it('prefers pnpm over an npm agent when pnpm is installed', async () => {
     process.env.npm_config_user_agent = 'npm/10.0.0 node/v20.0.0'
-    expect(detectPackageManager()).toBe('npm')
+    await expect(detectPackageManager()).resolves.toBe('pnpm')
   })
 
-  it('defaults to npm when env var is missing', () => {
+  it('prefers pnpm when the agent is unknown', async () => {
     delete process.env.npm_config_user_agent
-    expect(detectPackageManager()).toBe('npm')
+    await expect(detectPackageManager()).resolves.toBe('pnpm')
   })
 })
 

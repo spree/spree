@@ -23,10 +23,15 @@ const program = new Command()
   .action(async (directory: string | undefined, flags: Record<string, unknown>) => {
     p.intro(pc.bold('Create Spree App'))
 
-    let packageManager: PackageManager = detectPackageManager()
+    let packageManager: PackageManager = await detectPackageManager()
     if (flags.useNpm) packageManager = 'npm'
     if (flags.useYarn) packageManager = 'yarn'
     if (flags.usePnpm) packageManager = 'pnpm'
+    if (packageManager === 'npm' && !flags.useNpm) {
+      p.log.info(
+        `Using npm (pnpm not found — run ${pc.cyan('corepack enable')} to get pnpm, which Spree recommends).`,
+      )
+    }
 
     try {
       const options = await runPrompts({

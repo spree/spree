@@ -134,6 +134,15 @@ describe('readmeContent', () => {
     expect(content).toContain('npm install -g @spree/cli')
   })
 
+  it('renders commands for the chosen package manager', () => {
+    const content = readmeContent('my-store', true, 3000, true, 'pnpm')
+    expect(content).toContain('pnpm spree dev')
+    expect(content).toContain('pnpm run dev')
+    expect(content).toContain('pnpm add -g @spree/cli')
+    expect(content).not.toContain('npx')
+    expect(content).not.toMatch(/\bnpm /)
+  })
+
   it('includes the React Dashboard section when included', () => {
     const content = readmeContent('my-store', true, 3000, true)
     expect(content).toContain('### Start the React Dashboard (Developer Preview)')
@@ -152,6 +161,13 @@ describe('rootClaudeMdContent', () => {
     const content = rootClaudeMdContent(true, true)
     expect(content).toContain('`apps/dashboard/`')
     expect(content).toContain('docs/developer/dashboard')
+  })
+
+  it('renders commands for the chosen package manager', () => {
+    const content = rootClaudeMdContent(true, true, 'pnpm')
+    expect(content).toContain('pnpm run dev')
+    expect(content).toContain('pnpm spree api get products')
+    expect(content).not.toContain('npx spree')
   })
 
   it('omits apps/dashboard by default', () => {

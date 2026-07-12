@@ -1,3 +1,6 @@
+import type { PackageManager } from '../types.js'
+import { runCommand } from '../utils.js'
+
 export function agentsMdContent(): string {
   return `# Agent Instructions
 
@@ -19,7 +22,12 @@ full skill list.
 `
 }
 
-export function rootClaudeMdContent(hasStorefront: boolean, hasDashboard = false): string {
+export function rootClaudeMdContent(
+  hasStorefront: boolean,
+  hasDashboard = false,
+  pm: PackageManager = 'npm',
+): string {
+  const run = runCommand(pm)
   const lines = [
     '# Spree Commerce Application',
     '',
@@ -90,25 +98,25 @@ export function rootClaudeMdContent(hasStorefront: boolean, hasDashboard = false
     'inspect live data instead of guessing at the schema:',
     '',
     '```bash',
-    'npx spree api get products                      # list products',
-    'npx spree api get "orders?q[state_eq]=complete" # Ransack filters',
-    'npx spree api endpoints                         # every endpoint + its required scope',
-    'npx spree api schema "POST /products"           # request/response schema for an operation',
+    `${run} spree api get products                      # list products`,
+    `${run} spree api get "orders?q[state_eq]=complete" # Ransack filters`,
+    `${run} spree api endpoints                         # every endpoint + its required scope`,
+    `${run} spree api schema "POST /products"           # request/response schema for an operation`,
     '```',
     '',
     'The default key is read-only. For writes, create a scoped key and pass it via',
-    '`SPREE_API_KEY`: `npx spree api-key create --scopes write_products`, then',
-    '`SPREE_API_KEY=sk_... npx spree api post products --data \'{"name":"New product","prices":[{"currency":"USD","amount":"29.99"}]}\'`.',
+    `\`SPREE_API_KEY\`: \`${run} spree api-key create --scopes write_products\`, then`,
+    `\`SPREE_API_KEY=sk_... ${run} spree api post products --data '{"name":"New product","prices":[{"currency":"USD","amount":"29.99"}]}'\`.`,
     '',
     '## Common Commands',
     '',
     '```bash',
-    'npm run dev              # Start backend (Docker)',
-    'npm run stop             # Stop services',
-    'npm run console          # Rails console',
-    'npm run logs             # Backend logs',
-    'npx spree api get products  # Query the Admin API (read-only key preconfigured)',
-    'npx spree eject          # Switch to local backend builds',
+    `${pm} run dev              # Start backend (Docker)`,
+    `${pm} run stop             # Stop services`,
+    `${pm} run console          # Rails console`,
+    `${pm} run logs             # Backend logs`,
+    `${run} spree api get products  # Query the Admin API (read-only key preconfigured)`,
+    `${run} spree eject          # Switch to local backend builds`,
     '```',
     '',
   )

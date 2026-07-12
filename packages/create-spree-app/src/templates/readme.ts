@@ -4,13 +4,17 @@ import {
   DEFAULT_ADMIN_PASSWORD,
   STOREFRONT_PORT,
 } from '../constants.js'
+import type { PackageManager } from '../types.js'
+import { globalAddCommand, runCommand } from '../utils.js'
 
 export function readmeContent(
   name: string,
   hasStorefront: boolean,
   port: number,
   hasDashboard = false,
+  pm: PackageManager = 'npm',
 ): string {
+  const run = runCommand(pm)
   let content = `# ${name}
 
 A [Spree Commerce](https://spreecommerce.org) project.
@@ -25,7 +29,7 @@ A [Spree Commerce](https://spreecommerce.org) project.
 
 \`\`\`bash
 cd ${name}
-npx spree dev
+${run} spree dev
 \`\`\`
 
 Wait for the services to be healthy, then open:
@@ -44,7 +48,7 @@ Dependencies are already installed during setup — just start it:
 
 \`\`\`bash
 cd apps/storefront
-npm run dev
+${pm} run dev
 \`\`\`
 
 Open http://localhost:${STOREFRONT_PORT}
@@ -64,7 +68,7 @@ Dependencies are already installed during setup — just start it:
 
 \`\`\`bash
 cd apps/dashboard
-npm run dev
+${pm} run dev
 \`\`\`
 
 Open http://localhost:${DASHBOARD_PORT} and sign in with the admin email and password above.
@@ -80,7 +84,7 @@ To learn how to add pages, tweak tables, or build plugins, see the
 The \`backend/\` directory contains a full Rails application with Spree installed. By default, the project uses a prebuilt Docker image. To switch to building from your local backend:
 
 \`\`\`bash
-npx spree eject
+${run} spree eject
 \`\`\`
 
 This rebuilds the Docker image from \`backend/\` and restarts services. You can then:
@@ -136,17 +140,17 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 Project setup mints a read-only secret key into \`.spree/credentials.json\` (gitignored), so the Admin API client works out of the box. If you skipped the setup step, \`spree api\` mints the key on first use instead:
 
 \`\`\`bash
-npx spree api get products
-npx spree api get "orders?q[state_eq]=complete"
-npx spree api endpoints          # list endpoints + required scopes
-npx spree api status             # show resolved credentials + server reachability
+${run} spree api get products
+${run} spree api get "orders?q[state_eq]=complete"
+${run} spree api endpoints          # list endpoints + required scopes
+${run} spree api status             # show resolved credentials + server reachability
 \`\`\`
 
 The pre-configured key is read-only. To write, create a scoped secret key and pass it via \`SPREE_API_KEY\`:
 
 \`\`\`bash
-npx spree api-key create --scopes write_products
-SPREE_API_KEY=sk_... npx spree api post products --data '{"name":"New product","prices":[{"currency":"USD","amount":"29.99"}]}'
+${run} spree api-key create --scopes write_products
+SPREE_API_KEY=sk_... ${run} spree api post products --data '{"name":"New product","prices":[{"currency":"USD","amount":"29.99"}]}'
 \`\`\`
 
 | Command | Description |
@@ -155,10 +159,10 @@ SPREE_API_KEY=sk_... npx spree api post products --data '{"name":"New product","
 | \`spree api endpoints\` | List Admin API endpoints with required scopes |
 | \`spree auth login --profile <name>\` | Save named credentials for a remote store |
 
-> **Running \`spree\` directly.** The commands above use \`npx\` because \`@spree/cli\` is a local project dependency. You can also run any of the package scripts (e.g. \`npm run api -- get products\`), or install the CLI globally for a bare \`spree\` command:
+> **Running \`spree\` directly.** The commands above use \`${run}\` because \`@spree/cli\` is a local project dependency. You can also run any of the package scripts (e.g. \`${pm} run api -- get products\`), or install the CLI globally for a bare \`spree\` command:
 >
 > \`\`\`bash
-> npm install -g @spree/cli
+> ${globalAddCommand(pm)} @spree/cli
 > spree api get products
 > \`\`\`
 
