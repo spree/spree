@@ -87,7 +87,7 @@ Every `key` must be unique, including against the built-ins (`getting-started`, 
 
 ## What just happened
 
-`defineDashboardPlugin` registers extensions against the dashboard's shared registries: `nav`, `routes`, `slots`, `tables`, and `settingsNav`. Your `src/plugins.ts` runs when the app boots (the starter's `main.tsx` imports it), so everything is registered before the first render. These are the exact same APIs distributable plugins use — the only difference is packaging.
+`defineDashboardPlugin` registers extensions against the dashboard's shared registries: `nav`, `routes`, `slots`, `tables`, `settingsNav`, `formFields`, and `customFieldComponents`. Your `src/plugins.ts` runs when the app boots (the starter's `main.tsx` imports it), so everything is registered before the first render. These are the exact same APIs distributable plugins use — the only difference is packaging.
 
 The custom route mounts under `/<store id>/analytics`. Routes registered this way are matched at navigation time, so they can even be registered lazily after boot.
 

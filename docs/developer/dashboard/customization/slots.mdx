@@ -74,6 +74,21 @@ function AdminOnlyMenuItem() {
 
 The entry-level `if` predicate also exists, but it only receives the slot's own context (the same props your component gets) — use it to skip an entry based on the host page's data, e.g. `if: ({ product }) => !!product.brand_id`. When it returns `false`, the entry is skipped entirely (no DOM nodes mounted).
 
+## Binding to the host form
+
+Slots on form pages (product, category, store settings — see the [slots catalog](/developer/dashboard/slots-catalog#detail-page-form-slots) for which) render **inside the page's `<form>`** and expose its react-hook-form instance. A widget can register inputs against it with `useHostForm()` — they hydrate from the API, flip the Save button on change, and persist in the page's own save, with no save logic in the widget:
+
+```tsx
+import { useHostForm } from '@spree/dashboard-core'
+
+function TechSpecsCard() {
+  const form = useHostForm<{ tech_specs: string }>()
+  return <Textarea {...form.register('tech_specs')} />
+}
+```
+
+Pair it with a `formFields` registration so the field hydrates and ships in the payload — the full walkthrough is the [custom form field recipe](/developer/dashboard/recipes/custom-form-field). Never render your own `<form>` inside a slot on these pages: HTML forbids nested forms, and the host form already owns submission. On pages without a host form (orders, customers), `useHostForm()` throws — use `useOptionalHostForm()` and fall back to your own state + API save.
+
 ## Position
 
 `position` controls render order within the slot. Built-in entries (when the dashboard ships any) use 100/200/300 to leave gaps. Default is 100, so two entries with no explicit position render in registration order.

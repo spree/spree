@@ -16,7 +16,7 @@ Default-import surface for plugins and customizations.
 import { defineDashboardPlugin } from '@spree/dashboard-core'
 ```
 
-Single declarative entry-point for all five registries. See [Customization Quickstart](/developer/dashboard/customization/quickstart) for the full shape.
+Single declarative entry-point for every registry. See [Customization Quickstart](/developer/dashboard/customization/quickstart) for the full shape.
 
 ### Registries
 
@@ -35,10 +35,14 @@ import {
   useSlotEntries,
   // table registry
   tables,
+  // extension fields on built-in forms (hydrate + save with the host form)
+  formFields,
+  // input components for specific custom field definitions
+  customFieldComponents,
 } from '@spree/dashboard-core'
 ```
 
-Each registry exposes `add`/`remove`/`update`/`insertBefore`/`insertAfter` mutators. See the per-feature pages for examples.
+Each registry exposes `add`/`remove`/`update`-style mutators. See the per-feature pages for examples — form fields and custom field components are covered in the [custom form field recipe](/developer/dashboard/recipes/custom-form-field).
 
 ### Components
 
@@ -89,6 +93,8 @@ import {
   useDirectUpload,    // ActiveStorage direct uploads
   useExport,          // CSV export job lifecycle
   useResourceMutation, // useMutation wrapper with 422 handling
+  useHostForm,        // the built-in form a slot widget renders inside (throws when absent)
+  useOptionalHostForm, // same, but null when the page has no host form
 } from '@spree/dashboard-core'
 ```
 

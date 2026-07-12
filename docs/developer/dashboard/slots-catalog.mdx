@@ -43,9 +43,11 @@ Rendered by `<PageHeader>` (`@spree/dashboard-core/components/page-header.tsx`) 
 | Use | Add menu items (`<DropdownMenuItem>`) for secondary actions |
 | Context | `{ resource, ...slotContext }` — same as `page.actions` |
 
-## Detail-page sidebar slots
+## Detail-page form slots
 
-The product, order, and customer detail pages each render a slot at the bottom of their right-hand sidebar, below the built-in cards. The context key matches the resource name.
+The resource detail pages each render a slot below their built-in cards. The context key matches the resource name.
+
+**Host form:** on pages marked *host form: yes*, the slot renders inside the page's own `<form>` and the form context is exposed — widgets can bind inputs via [`useHostForm()`](/developer/dashboard/recipes/custom-form-field) that hydrate, dirty-track, and save with the page's Save button. On pages without one, widgets own their persistence (use `useOptionalHostForm()` to adapt).
 
 ### `product.form_sidebar`
 
@@ -53,6 +55,23 @@ The product, order, and customer detail pages each render a slot at the bottom o
 |---|---|
 | Use | Add a card scoped to the product being edited (e.g., a "Brand" picker, wishlist stats, sync status from an external system) |
 | Context | `{ product }` — the full `Product` record from the Admin API |
+| Host form | **Yes** — form key `product` |
+
+### `category.form_sidebar`
+
+| Where | Category detail page (`products/categories/$categoryId`), end of the sidebar column |
+|---|---|
+| Use | Category-scoped cards — merchandising rules, feed settings, external sync state |
+| Context | `{ category }` — the `Category` record (may be briefly `undefined` while refetching) |
+| Host form | **Yes** — form key `category` |
+
+### `store.form_main`
+
+| Where | Store settings page (`settings/store`), end of the main column |
+|---|---|
+| Use | Store-level settings a plugin owns — integration toggles, account linking |
+| Context | `{ store }` — the full `Store` record |
+| Host form | **Yes** — form key `store` |
 
 ### `order.form_sidebar`
 
@@ -60,6 +79,7 @@ The product, order, and customer detail pages each render a slot at the bottom o
 |---|---|
 | Use | Fraud-check status, shipping-integration state, loyalty points earned |
 | Context | `{ order }` — the full `Order` record |
+| Host form | No — widgets save via their own API calls |
 
 ### `customer.form_sidebar`
 
@@ -67,6 +87,7 @@ The product, order, and customer detail pages each render a slot at the bottom o
 |---|---|
 | Use | Loyalty status, support-ticket summary, external CRM links |
 | Context | `{ customer }` — the full `Customer` record |
+| Host form | No — the page edits through sheets; widgets save via their own API calls |
 
 ## Page tabs slot
 
