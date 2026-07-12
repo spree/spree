@@ -1,6 +1,6 @@
 # Spree Dashboard Starter
 
-The host app for the [Spree React Dashboard](https://docs.spreecommerce.org/developer/dashboard/overview) — the admin for your Spree store. `@spree/dashboard` is the actual app shell (routes, chrome, resource pages); this project is your customization point: plugins, your own pages, theming, and deployment config.
+The host app for the [Spree React Dashboard](https://spreecommerce.org/docs/developer/dashboard/overview) — the admin for your Spree store. `@spree/dashboard` is the actual app shell (routes, chrome, resource pages); this project is your customization point: plugins, your own pages, theming, and deployment config.
 
 > **Monorepo note.** The canonical source of this template lives at `packages/dashboard-starter` in [spree/spree](https://github.com/spree/spree), where its Spree dependencies resolve via the pnpm workspace and `@spree/dashboard-plugin-example` is installed as a devDependency — booting it here doubles as the end-to-end test for the plugin pipeline. A release job syncs it to the `spree/dashboard-starter` template repo with published package versions, which is what `create-spree-app` and `spree add dashboard` clone.
 
@@ -25,7 +25,7 @@ That's the whole install. `spreeDashboardPlugin()` (see `vite.config.ts`) discov
 
 ## Customize
 
-`src/plugins.ts` is yours — register nav entries, routes, slot widgets, and table columns with `defineDashboardPlugin` from `@spree/dashboard-core`. Same API the distributed plugins use; see the [customization quickstart](https://docs.spreecommerce.org/developer/dashboard/customization/quickstart).
+`src/plugins.ts` is yours — register nav entries, routes, slot widgets, and table columns with `defineDashboardPlugin` from `@spree/dashboard-core`. Same API the distributed plugins use; see the [customization quickstart](https://spreecommerce.org/docs/developer/dashboard/customization/quickstart).
 
 ## Build & deploy
 

@@ -4,7 +4,7 @@
  * (route pages, slot widgets) never call `request` directly — they import
  * from here, which makes it easy to swap implementations or rename paths.
  *
- * See https://docs.spreecommerce.org/developer/sdk/admin/extending for the
+ * See https://spreecommerce.org/docs/developer/sdk/admin/extending for the
  * underlying `request` API.
  */
 import type { PaginatedResponse } from '@spree/admin-sdk'

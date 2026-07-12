@@ -40,12 +40,12 @@ If you'd rather opt out of auto-discovery and register manually, pass an explici
 
 ## Documentation
 
-- [Dashboard overview](https://docs.spreecommerce.org/developer/dashboard/overview) — three-package split + when to plug-in vs. customize in-app
-- [Customization quickstart](https://docs.spreecommerce.org/developer/dashboard/customization/quickstart) — the registries this plugin uses
-- [Plugin overview](https://docs.spreecommerce.org/developer/dashboard/plugins/overview) — packaging + publishing your plugin to npm
-- [Slots catalog](https://docs.spreecommerce.org/developer/dashboard/slots-catalog) — every named slot the dashboard exposes
-- [Custom Admin Endpoints](https://docs.spreecommerce.org/developer/sdk/admin/extending) — adding your own API endpoints
-- [Spree Extensions guide](https://docs.spreecommerce.org/developer/customization/extensions) — the Rails-engine side
+- [Dashboard overview](https://spreecommerce.org/docs/developer/dashboard/overview) — three-package split + when to plug-in vs. customize in-app
+- [Customization quickstart](https://spreecommerce.org/docs/developer/dashboard/customization/quickstart) — the registries this plugin uses
+- [Plugin overview](https://spreecommerce.org/docs/developer/dashboard/plugins/overview) — packaging + publishing your plugin to npm
+- [Slots catalog](https://spreecommerce.org/docs/developer/dashboard/slots-catalog) — every named slot the dashboard exposes
+- [Custom Admin Endpoints](https://spreecommerce.org/docs/developer/sdk/admin/extending) — adding your own API endpoints
+- [Spree Extensions guide](https://spreecommerce.org/docs/developer/customization/extensions) — the Rails-engine side
 
 ## License
 

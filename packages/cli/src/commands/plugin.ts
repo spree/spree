@@ -455,7 +455,7 @@ function printNextSteps(answers: Answers, dst: string, installed: boolean): void
       `  Edit ${pc.cyan('packages/dashboard/src/index.tsx')} to wire your nav/route/slot extensions.`,
     )
     lines.push(
-      `  See ${pc.cyan('https://docs.spreecommerce.org/developer/dashboard/plugins/overview')}`,
+      `  See ${pc.cyan('https://spreecommerce.org/docs/developer/dashboard/plugins/overview')}`,
     )
   }
   if (answers.includeEngine) {
@@ -465,7 +465,7 @@ function printNextSteps(answers: Answers, dst: string, installed: boolean): void
       `  Edit ${pc.cyan(`engine/app/controllers/spree/api/v3/admin/${answers.rubyName}_controller.rb`)}`,
     )
     lines.push(
-      `  See ${pc.cyan('https://docs.spreecommerce.org/developer/customization/extensions')}`,
+      `  See ${pc.cyan('https://spreecommerce.org/docs/developer/contributing/creating-an-extension')}`,
     )
   }
   lines.push('')

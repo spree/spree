@@ -7,7 +7,7 @@ description: Add your first customization to the Spree dashboard in under 5 minu
 This guide assumes two things are running:
 
 1. A Spree API server (your Spree store's backend).
-2. Your dashboard app — the small Vite project that renders the admin. In a `create-spree-app` project it lives at `apps/dashboard/`; it can also be a standalone clone of the [dashboard starter](https://github.com/spree/dashboard-starter). Start it with `pnpm dev`.
+2. Your dashboard app — the small Vite project that renders the admin. In a `create-spree-app` project it lives at `apps/dashboard/` (add it to an existing project with `npx spree add dashboard`); it can also be a standalone clone of the [dashboard starter](https://github.com/spree/dashboard-starter). Start it with `pnpm dev`.
 
 All customizations in this guide are edits to your dashboard app's own code. **You don't need to scaffold a plugin** — plugins are for [distributing features to other stores](/developer/dashboard/plugins/overview).
 
@@ -82,7 +82,7 @@ defineDashboardPlugin({
 Save. Click "Analytics" — your page renders inside the dashboard chrome, at `/<store id>/analytics`.
 
 <Warning>
-Every `key` must be unique, including against the built-ins (`home`, `orders`, `products`, `customers`, `promotions`, `reports`, `settings`). Registering a duplicate key throws at boot with a message naming the conflict.
+Every `key` must be unique, including against the built-ins (`getting-started`, `home`, `orders`, `products`, `customers`, `promotions`, `reports`, `settings`). Registering a duplicate key throws at boot with a message naming the conflict.
 </Warning>
 
 ## What just happened

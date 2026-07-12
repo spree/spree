@@ -8,7 +8,7 @@ description: How the React Dashboard is structured, how to customize existing sc
 The React Dashboard is a Developer Preview — APIs may still change between releases. In Spree 6 it becomes the default admin interface.
 </Info>
 
-The React Dashboard is a single-page application (SPA) using Spree Admin API and built on three packages:
+The React Dashboard is a single-page application (SPA) that talks to the Spree Admin API and is built on three packages:
 
 | Package | What it contains | When you touch it |
 |---|---|---|
@@ -17,6 +17,15 @@ The React Dashboard is a single-page application (SPA) using Spree Admin API and
 | `@spree/dashboard` | The deployable SPA: routes, resource hooks, schemas, locale strings, app shell | Replacing or restyling specific routes (rare) |
 
 Most customization happens via `@spree/dashboard-core`. You import its registries from your own host-app code (or from a separate plugin package) to add nav entries, routes, slot widgets, table columns, and translations.
+
+## Get the dashboard
+
+Your copy of the dashboard is a small Vite app (the "host app") that imports `<Dashboard />` from `@spree/dashboard` — you own its `package.json`, Vite config, and a `src/plugins.ts` for customizations. Two ways to get one:
+
+- **New project:** `npx create-spree-app my-store` — answer **Yes** to "Include React Dashboard?" and it lands in `apps/dashboard/`, pointed at your API.
+- **Existing project:** run `npx spree add dashboard` from your project root — same result.
+
+Either way: `cd apps/dashboard && npm run dev`, open http://localhost:5173, and sign in with your admin email and password. No API keys to configure — admins authenticate interactively.
 
 ## Choose your path
 

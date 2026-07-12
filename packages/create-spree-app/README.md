@@ -118,7 +118,7 @@ npx spree api-key list         # List API keys
 
 ## Learn More
 
-- [Spree Documentation](https://docs.spreecommerce.org)
+- [Spree Documentation](https://spreecommerce.org/docs)
 
 ## License
 

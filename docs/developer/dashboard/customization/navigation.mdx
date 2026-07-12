@@ -24,7 +24,7 @@ nav.add({
 })
 ```
 
-`position` controls ordering — built-ins use 100–600 (Home 100, Orders 200, Products 300, Customers 400, Promotions 500, Reports 600), leaving gaps to slot into. The default is 100. Keys must be unique, including against those built-in keys — duplicates throw at boot.
+`position` controls ordering — built-ins use 100–600 (Home 100, Orders 200, Products 300, Customers 400, Promotions 500, Reports 600; a conditional Getting Started entry sits at 50), leaving gaps to slot into. The default is 100. Keys must be unique, including against the built-in keys (`getting-started`, `home`, `orders`, `products`, `customers`, `promotions`, `reports`, `settings`) — duplicates throw at boot.
 
 ### Add via `defineDashboardPlugin`
 
@@ -130,6 +130,24 @@ nav.add({
   section: 'bottom',
 })
 ```
+
+### Conditional visibility and badges
+
+Beyond permission gating with `subject`, a top-level entry can hide itself based on app state (`if`) and render a component after its label (`badge`):
+
+```tsx
+nav.add({
+  key: 'onboarding',
+  label: 'Onboarding',
+  path: '/onboarding',
+  // Receives the current store/user/permissions; return false to hide.
+  if: ({ store }) => !storeFullyConfigured(store),
+  // A component, not an element — it can call hooks and return null.
+  badge: PendingTasksBadge,
+})
+```
+
+The built-in Getting Started entry works exactly this way: it shows a remaining-tasks count and disappears once every setup task is done. `if` combines with `subject` — both must pass.
 
 ## Settings sub-nav (`settingsNav`)
 

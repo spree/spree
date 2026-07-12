@@ -2,9 +2,9 @@
 
 Spree Dashboard design system. Shadcn primitives + headless composed components + design tokens.
 
-> **Phase 0 placeholder.** The package is scaffolded with its target structure, but the components haven't been extracted yet. See `docs/plans/6.0-admin-spa.md` → "Package Split" for the phased plan.
+> **Developer Preview.** APIs may change between 0.x releases. Docs: [React Dashboard](https://spreecommerce.org/docs/developer/dashboard/overview).
 
-## What goes here
+## What's inside
 
 - `src/ui/` — shadcn primitives (Button, Input, Dialog, Sheet, Table, …). Copy-paste owned: fork into your own project as needed.
 - `src/spree/` — composed components built on the primitives (PageHeader, ResourceTable, AppSidebar, …). **All headless: data and callbacks come in via props.** No provider imports, no hook calls, no SDK access.
@@ -15,11 +15,11 @@ The headless rule is what makes the components composable from outside `@spree/d
 
 ## Source-only package
 
-This package ships **TypeScript source**, not a compiled bundle. Consumers compile it through their own Vite + Tailwind setup. This is required because Tailwind v4 scans source files in the consuming app for utility classes; a pre-compiled CSS bundle would miss classes only used by source-imported components.
+This package ships **TypeScript source**, not a compiled bundle. Consumers compile it through their own Vite + Tailwind setup. This is required because Tailwind v4 scans source files in the consuming app for utility classes; a pre-compiled CSS bundle would miss classes only used by source-imported components. The `spreeDashboardPlugin` from `@spree/dashboard-core/vite` wires the scanning up for you.
 
 ## Peer dependencies
 
-`react` and `react-dom` are peer deps. The consumer provides them.
+The consuming app provides `react`, `react-dom`, `@tanstack/react-router`, `@tanstack/react-hotkeys`, `react-hook-form`, `i18next`, and `react-i18next` — see `peerDependencies` in `package.json` for the exact ranges.
 
 ## What's NOT here
 

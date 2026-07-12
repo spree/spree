@@ -354,7 +354,7 @@ registerSlot<{ product: { id: string; wishlist_count: number } }>('product.form_
 })
 ```
 
-Built-in slot names match the legacy Rails admin's `render_admin_partials` mental model (e.g. `product.form_sidebar`, `order.page_body`, `product.actions`). The full list is documented per route in `@spree/dashboard`.
+Built-in slot names follow a `resource.location` convention (e.g. `product.form_sidebar`, `order.page_body`, `product.actions`). The full list lives in the [slots catalog](https://spreecommerce.org/docs/developer/dashboard/slots-catalog).
 
 ### `tables` — list-view column extensions
 
