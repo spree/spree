@@ -4,37 +4,39 @@ sidebarTitle: Translations
 description: Add your own i18n strings to the dashboard so labels, validation messages, and notifications respect the admin's chosen locale.
 ---
 
-The dashboard uses [i18next](https://www.i18next.com/) with the `react-i18next` bindings. The base bundle ships in `@spree/dashboard` under the `admin` namespace. You add your strings to the same `admin` namespace so they look and feel native — same `admin.fields.<resource>.<attribute>.{label,placeholder,help}` convention, same fallback chain.
+The dashboard uses [i18next](https://www.i18next.com/) with the `react-i18next` bindings. All strings live in i18next's default `translation` namespace, with every key under a top-level `admin.` prefix (`admin.nav.orders`, `admin.fields.<resource>.<attribute>.label`, …). You register your strings into the same namespace with the same prefix so they look and feel native.
 
 ## Add translations
 
 ```ts
-import i18n from 'i18next'
+import { i18n } from '@spree/dashboard-core'
 
-i18n.addResourceBundle('en', 'admin', {
-  reports: {
-    title: 'Reports',
-    empty: 'No reports yet.',
-  },
-  fields: {
-    report: {
-      name: { label: 'Report name', placeholder: 'e.g. Q4 sales by region' },
+i18n.addResourceBundle('en', 'translation', {
+  admin: {
+    reports: {
+      title: 'Reports',
+      empty: 'No reports yet.',
+    },
+    fields: {
+      report: {
+        name: { label: 'Report name', placeholder: 'e.g. Q4 sales by region' },
+      },
     },
   },
-}, /* deep */ true, /* overwrite */ false)
+}, /* deep */ true, /* overwrite */ true)
 ```
 
-`addResourceBundle` is additive when `deep: true, overwrite: false` — your keys merge into the existing `admin` namespace without clobbering the dashboard's defaults.
+With `deep: true` your keys merge into the existing tree instead of replacing it; `overwrite: true` lets your bundle win where a key genuinely collides (this is what the framework and the official plugins use). Note the `admin` wrapper is part of the **bundle contents** — the namespace argument stays `'translation'`.
 
 Repeat per locale:
 
 ```ts
+import de from './locales/de.json'
 import en from './locales/en.json'
 import fr from './locales/fr.json'
-import de from './locales/de.json'
 
 for (const [locale, bundle] of Object.entries({ en, fr, de })) {
-  i18n.addResourceBundle(locale, 'admin', bundle, true, false)
+  i18n.addResourceBundle(locale, 'translation', bundle, true, true)
 }
 ```
 
@@ -63,30 +65,18 @@ Note: `i18n.t` resolves at the call site, so the label is a snapshot taken at re
 
 ## Field-key convention
 
-Form labels, placeholders, and help text resolve via this fallback chain (defined in `@spree/dashboard-core`):
+Form labels, placeholders, and help text follow a two-level key convention:
 
-1. `admin.fields.<resource>.<attribute>.<facet>` — e.g., `admin.fields.report.name.label`
-2. `admin.fields.<attribute>.<facet>` — e.g., `admin.fields.name.label`
+1. `admin.fields.<resource>.<attribute>.<facet>` — resource-specific, e.g. `admin.fields.report.name.label`
+2. `admin.fields.<attribute>.<facet>` — cross-resource defaults, e.g. `admin.fields.name.label`
 
-The form helpers (`<Field>`, `<Input>`, `<FieldError>`) walk this chain automatically — you only pass the attribute name. Define keys under `fields.<resource>` for resource-specific labels and rely on `fields.<attribute>` shared defaults for everything else (`name`, `email`, `created_at`, …).
+Components call `t()` with these keys explicitly — pick the resource-scoped form for labels that differ per resource, and reuse the shared `admin.fields.<attribute>.<facet>` keys the framework already ships for common attributes (`name`, `email`, `created_at`, `storefront_visible`, …).
 
-In dev mode, missing keys log to the console with the chain that was tried.
+In dev mode, missing keys log to the console (in production a missing key falls back to a humanized version of the attribute name).
 
-## Server-side error mapping
+## Server-side error messages
 
-The dashboard's `mapSpreeErrorsToForm` helper translates 422 responses onto `form.formState.errors`. Backend `errors` come back as `{ "name": ["can't be blank"] }`, and the helper sets the field error using the **translated** version of the same key chain:
-
-```ts
-// Spree returns:
-// { "errors": { "name": ["can't be blank"] } }
-
-// The helper looks up these keys in order, taking the first one that resolves:
-// 1. admin.errors.report.name.cant_be_blank
-// 2. admin.errors.name.cant_be_blank
-// 3. The raw server string "can't be blank"
-```
-
-Provide the localised string in `admin.errors.<resource>.<attribute>.<message_key>` if you want the user to see something other than the raw English message.
+The `mapSpreeErrorsToForm` helper routes 422 responses onto `form.formState.errors`, but the messages themselves are the **server's strings, verbatim** — `{ "name": ["can't be blank"] }` becomes a field error reading "can't be blank". To localize validation messages, configure the locale on the backend (Rails i18n translates ActiveRecord error messages); the dashboard displays whatever the API returns.
 
 ## Order of operations
 
@@ -97,7 +87,7 @@ Register translations **before** any code that calls `i18n.t()` at module-load t
 import { defineDashboardPlugin, i18n } from '@spree/dashboard-core'
 import en from './locales/en.json'
 
-i18n.addResourceBundle('en', 'admin', en, true, false)  // ① translations first
+i18n.addResourceBundle('en', 'translation', en, true, true)  // ① translations first
 
 defineDashboardPlugin({ /* ② registrations may now use i18n.t(...) */ })
 ```

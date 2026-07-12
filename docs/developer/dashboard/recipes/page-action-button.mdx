@@ -11,29 +11,30 @@ Two slots cover the surface:
 - `page.actions` — the right-aligned action zone (buttons, badges)
 - `page.actions_dropdown` — the dropdown menu
 
-This recipe shows both — and how to gate them by permission + resource state.
+This recipe shows both — and how to gate them by permission + resource state. (Strings are hardcoded for brevity; real buttons should go through i18n — see [Translations](/developer/dashboard/customization/translations).)
 
 ## A button in the actions row
 
 ```tsx
 // src/actions/send-invoice-button.tsx
+import { adminClient, usePermissions, useResourceMutation } from '@spree/dashboard-core'
 import { Button } from '@spree/dashboard-ui'
 import { Send } from 'lucide-react'
-import { useResourceMutation } from '@spree/dashboard-core'
-import { adminClient } from '@spree/dashboard-core'
 
 interface Props {
   resource: { id: string; state: string }  // Order
 }
 
 export function SendInvoiceButton({ resource }: Props) {
+  const { permissions } = usePermissions()
   const mutation = useResourceMutation({
     mutationFn: () =>
       adminClient.request('POST', `/orders/${resource.id}/send_invoice`),
     successMessage: 'Invoice sent',
   })
 
-  // Only show on completed orders.
+  // Only show to users who can act, and only on completed orders.
+  if (!permissions.can('update', 'Spree::Order')) return null
   if (resource.state !== 'complete') return null
 
   return (
@@ -63,21 +64,17 @@ defineDashboardPlugin({
       id: 'send-invoice',
       component: SendInvoiceButton as never,
       position: 50,
-      // Permission gate at the slot level — the button is also hidden by
-      // its own `state !== 'complete'` check, but the slot gate runs first
-      // and avoids mounting at all when the user can't trigger the action.
-      if: ({ permissions }) => permissions.can('update', 'Spree::Order'),
     }],
   },
 })
 ```
 
-Two layers of gating:
+Two layers of gating, both inside the component:
 
-1. **Slot `if`** — coarse permission check; component never mounts if the user can't act.
-2. **In-component `return null`** — fine-grained state check; the user *can* send invoices, but this specific order isn't ready yet.
+1. **Permission check** — `usePermissions()`; render `null` when the user can't act.
+2. **Resource-state check** — the user *can* send invoices, but this specific order isn't ready yet.
 
-Keep both. The `if` check is cheap; the resource-state check needs the actual record.
+(The slot entry's `if` predicate receives only the slot's own context — `{ resource }` here — so use it for resource-state conditions, and keep permission checks in the component. See [Slots](/developer/dashboard/customization/slots).)
 
 ## A dropdown menu item
 
@@ -85,19 +82,22 @@ For secondary actions, use `page.actions_dropdown` and render `<DropdownMenuItem
 
 ```tsx
 // src/actions/sync-to-erp-item.tsx
+import { adminClient, usePermissions, useResourceMutation } from '@spree/dashboard-core'
 import { DropdownMenuItem } from '@spree/dashboard-ui'
 import { RefreshCw } from 'lucide-react'
-import { useResourceMutation, adminClient } from '@spree/dashboard-core'
 
 interface Props {
   resource: { id: string }
 }
 
 export function SyncToErpItem({ resource }: Props) {
+  const { permissions } = usePermissions()
   const mutation = useResourceMutation({
     mutationFn: () => adminClient.request('POST', `/orders/${resource.id}/sync_to_erp`),
     successMessage: 'Synced',
   })
+
+  if (!permissions.can('manage', 'Spree::Order')) return null
 
   return (
     <DropdownMenuItem
@@ -121,7 +121,6 @@ defineDashboardPlugin({
       id: 'sync-to-erp',
       component: SyncToErpItem as never,
       position: 50,
-      if: ({ permissions }) => permissions.can('manage', 'Spree::Order'),
     }],
   },
 })
@@ -179,13 +178,9 @@ export function ResetCartItem({ resource }: { resource: { id: string } }) {
 
 ## Context
 
-The `resource` prop is whatever the host page passed to `<PageHeader resource={…} />`. On the order detail page it's an `Order`; on a product page it's an `Product`. The slot doesn't statically know which — see [Slots](/developer/dashboard/customization/slots) for the typing escape hatches.
+The `resource` prop is whatever the host page passed to `<PageHeader resource={…} />`. On the order detail page it's an `Order`; on a product page it's a `Product`. The slot doesn't statically know which — see [Slots](/developer/dashboard/customization/slots) for the typing escape hatches.
 
-If you need the current store/user/permissions, they're also merged into the props bag:
-
-```tsx
-export function MyButton({ resource, permissions, store, user }: Props) { … }
-```
+For the current store, user, or permissions, call the hooks inside your component — `useStore()`, `useAuth()`, `usePermissions()` from `@spree/dashboard-core`.
 
 ## Reference
 

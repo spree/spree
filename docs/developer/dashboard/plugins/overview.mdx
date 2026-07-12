@@ -14,8 +14,8 @@ A dashboard plugin is:
 
 1. **An npm package** — published, versioned, installed via `pnpm add @your-scope/your-plugin`.
 2. **One side-effecting entry-point** — `import '@your-scope/your-plugin'` calls `defineDashboardPlugin({ ... })` at module-load time, which registers nav entries, routes, slots, columns, etc.
-3. **Tailwind-aware** — the host's `vite.config.ts` lists your package name in the `spreeDashboardPlugin` plugins array; the dashboard's Tailwind config picks up your class names without you having to ship pre-built CSS.
-4. **Translations-aware** — your bundle ships JSON locale files and calls `i18n.addResourceBundle('en', 'admin', bundle, true, false)` on import.
+3. **Auto-discovered** — the `"spree": { "dashboard": { "plugin": true } }` marker in your package.json is all the host needs; `spreeDashboardPlugin()` finds every installed dependency carrying it, activates the entry-point, and scans your source for Tailwind classes so you never ship pre-built CSS. (Hosts can pass an explicit `plugins: [...]` array to opt out of discovery and whitelist instead.)
+4. **Translations-aware** — your bundle ships JSON locale files and calls `i18n.addResourceBundle('en', 'translation', bundle, true, true)` on import (keys nested under a top-level `admin` object).
 5. **Possibly Rails-aware** — many plugins also ship a Rails engine alongside the dashboard package (new models, new API endpoints) so the dashboard has something to talk to.
 
 That's it. **Plugins use the exact same registries as in-app customizations.** Everything you can do in `src/plugins.ts` you can also do from inside a plugin entry-point. The split between "in-app" and "plugin" is about packaging and distribution, not capability.

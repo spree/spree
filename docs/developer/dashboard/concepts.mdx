@@ -87,7 +87,7 @@ This is why links work, deep-links restore filter state, and the browser back bu
 The dashboard ships with English, German, French, Polish, Arabic, and Simplified Chinese out of the box. Every label, placeholder, error message goes through `i18n.t()`. When you add a feature:
 
 1. Add the keys to your customization's `locales/en.json`
-2. Register the bundle: `i18n.addResourceBundle('en', 'admin', bundle, true, false)`
+2. Register the bundle: `i18n.addResourceBundle('en', 'translation', bundle, true, true)`
 3. Use `useTranslation()` in components and `i18n.t()` at registration sites
 
 [Translations](/developer/dashboard/customization/translations) covers the field-key convention.

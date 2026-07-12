@@ -82,20 +82,27 @@ You now have a buildable plugin. The next page covers what to put in `package.js
 
 ## What the entry-point looks like
 
-`packages/dashboard/src/index.tsx` is where everything starts. The generated version:
+`packages/dashboard/src/index.tsx` is where everything starts. The generated version, trimmed:
 
 ```tsx
-import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { defineDashboardPlugin, defineTable, i18n } from '@spree/dashboard-core'
 import { PackageIcon } from 'lucide-react'
-import i18n from 'i18next'
 import en from './locales/en.json'
 import { MyPluginCard } from './slots/product-my-plugin-card'
 
-i18n.addResourceBundle('en', 'admin', en, true, false)
+// 1. Translations — merge our keys into the shared bundle.
+i18n.addResourceBundle('en', 'translation', en, true, true)
 
-// Routes are NOT registered here — they ship as file routes in src/routes/
-// (declared via the package.json marker) and compile into the host's typed
-// route tree. See the routes guide.
+// 2. Declare the table our list page renders with <ResourceTable>.
+defineTable('my-plugin', {
+  title: i18n.t('admin.my_plugin.table.title'),
+  defaultSort: { field: 'name', direction: 'asc' },
+  columns: [/* … */],
+})
+
+// 3. Registry extensions. Routes are NOT registered here — they ship as
+// file routes in src/routes/ (declared via the package.json marker) and
+// compile into the host's typed route tree. See the routes guide.
 defineDashboardPlugin({
   nav: [{
     key: 'my-plugin',
@@ -118,7 +125,7 @@ That's the whole entry-point. Edit it to register what your plugin needs and rem
 
 ## The example endpoints
 
-The generated `client.ts` calls `adminClient.request()` against `/api/v3/admin/<name>s` — those endpoints don't exist by default. You'd add them on the Rails side (a `BrandsController`, a Brand model, etc.) for the plugin to do anything end-to-end. The CLI doesn't scaffold the Rails engine today; for now, write that part by hand using the [backend customization docs](/developer/dashboard/customization/backend).
+The generated `client.ts` calls `adminClient.request()` against `/<name>` (relative to `/api/v3/admin`) — those endpoints don't exist by default. You'd add them on the Rails side (a controller, a model, a serializer) for the plugin to do anything end-to-end. The CLI doesn't scaffold the Rails engine today; for now, write that part by hand using the [backend integration docs](/developer/dashboard/customization/backend).
 
 ## Reference
 

@@ -8,19 +8,19 @@ The dashboard never reaches into Rails models or fetches HTML. All data flows th
 
 ## The `adminClient`
 
-The SPA boots a single `adminClient` instance and exposes it from `@spree/dashboard`. Resource methods follow `client.<resource>.<verb>()`:
+The SPA boots a single `adminClient` instance and exposes it from `@spree/dashboard-core`. Resource methods follow `client.<resource>.<verb>()`:
 
 ```ts
-import { adminClient } from '@spree/dashboard'
+import { adminClient } from '@spree/dashboard-core'
 
 await adminClient.products.list({ filter: { name_cont: 'shirt' } })
-await adminClient.products.show('prod_86Rf07xd4z', { include: ['variants'] })
+await adminClient.products.get('prod_86Rf07xd4z', { expand: ['variants'] })
 await adminClient.products.create({ name: 'New product' })
 await adminClient.products.update('prod_86Rf07xd4z', { name: 'Renamed' })
-await adminClient.products.destroy('prod_86Rf07xd4z')
+await adminClient.products.delete('prod_86Rf07xd4z')
 ```
 
-All IDs are [prefixed](/developer/api-reference/admin/overview#prefixed-ids) — pass them in, get them out. The SDK never coerces to integers.
+All IDs are [prefixed](/api-reference/admin-api/querying) — pass them in, get them out. The SDK never coerces to integers.
 
 ## Custom endpoints
 
@@ -50,8 +50,8 @@ Resource methods are just `request<T>()` calls with the right path + types pre-b
 The dashboard's data layer is React-Query — every `useFoo` hook is `useQuery({ queryKey, queryFn })` over an SDK call. Follow the same pattern for your own data:
 
 ```ts
+import { adminClient } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
-import { adminClient } from '@spree/dashboard'
 import type { AdminBrand } from './types'
 
 export function useBrands(params?: { search?: string }) {
@@ -73,12 +73,12 @@ export function useUpdateBrand(id: string) {
   return useResourceMutation({
     mutationFn: (body: Partial<AdminBrand>) =>
       adminClient.request<{ data: AdminBrand }>('PATCH', `/brands/${id}`, { body }),
-    invalidateQueries: [['brands'], ['brand', id]],
+    invalidate: [['brands'], ['brand', id]],
   })
 }
 ```
 
-The `invalidateQueries` array refetches dependent queries on success.
+The `invalidate` array refetches dependent queries on success.
 
 ## Error handling
 
@@ -100,7 +100,7 @@ try {
 In a React Hook Form submit handler, prefer the higher-level helper:
 
 ```tsx
-import { mapSpreeErrorsToForm } from '@/lib/form-errors'
+import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
 
 async function handleSubmit(values: FormValues) {
   try {
@@ -123,4 +123,4 @@ Pretty much always, for anything non-trivial. If you're filtering, sorting, or a
 - [`AdminClient.request`](https://github.com/spree/spree/blob/main/packages/admin-sdk/src/admin-client.ts) — full type
 - [`SpreeError`](https://github.com/spree/spree/blob/main/packages/sdk-core/src/errors.ts)
 - [`useResourceMutation`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/hooks/use-resource-mutation.ts)
-- [`mapSpreeErrorsToForm`](https://github.com/spree/spree/blob/main/packages/dashboard/src/lib/form-errors.ts)
+- [`mapSpreeErrorsToForm`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/form-errors.ts)

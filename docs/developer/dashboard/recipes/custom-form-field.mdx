@@ -1,10 +1,14 @@
 ---
-title: Add a custom form field
+title: Add a custom field to the product page
 sidebarTitle: Custom form field
-description: Add a field to the product (or any built-in) form, validate it client-side and server-side, and persist via the Admin API.
+description: Surface a custom product attribute on the product detail page — edit it in a sidebar card, validate it, and persist via the Admin API.
 ---
 
-The dashboard's product form lives in `@spree/dashboard` and renders core attributes (name, description, price, …). When you've added a custom column to `spree_products` or a custom field through a [metafield definition](/developer/customization/metadata), you'll want it to surface in the same form. This recipe walks the four pieces end-to-end.
+The dashboard's product form lives in `@spree/dashboard` and renders core attributes (name, description, price, …). When you've added a custom column to `spree_products` or a custom field through a [metafield definition](/developer/customization/metadata), you'll want to edit it on the same page. This recipe adds a **self-contained editor card** to the product page's sidebar: it owns its own small form and saves through the Admin API.
+
+<Note>
+Slot widgets are additive — the built-in product form doesn't expose its internal form instance to slots, so your card manages its own state and its own save. That's a feature: your field can't break the core form, and it works identically from a host app or a distributed plugin.
+</Note>
 
 ## Backend prerequisites
 
@@ -19,22 +23,22 @@ class AddTechSpecsToSpreeProducts < ActiveRecord::Migration[7.2]
 end
 ```
 
-And declared it as a permitted attribute on the Admin API serializer + controller (see [Admin API conventions](/developer/dashboard/customization/backend)).
+And declared it as a permitted attribute on the Admin API serializer + controller (see [Backend integration](/developer/dashboard/customization/backend)).
 
-## 1. Register the field
+## 1. Register the card
 
-Use a slot to inject your field into the product form's sidebar:
+Inject it into the product form's sidebar via a slot:
 
 ```tsx
 // src/plugins.ts (in your dashboard app)
 import { defineDashboardPlugin } from '@spree/dashboard-core'
-import { TechSpecsField } from './fields/tech-specs-field'
+import { TechSpecsCard } from './fields/tech-specs-card'
 
 defineDashboardPlugin({
   slots: {
     'product.form_sidebar': [{
       id: 'tech-specs',
-      component: TechSpecsField as never,
+      component: TechSpecsCard as never,
       position: 80,
     }],
   },
@@ -43,25 +47,48 @@ defineDashboardPlugin({
 
 If you don't see a slot at the right spot in the form, see [Slots catalog](/developer/dashboard/slots-catalog) — if one's missing, open a PR adding it.
 
-## 2. Build the field component
+## 2. Build the card
 
-The slot's context provides the React Hook Form instance for the page's form. Register your input against it:
+The slot's context is `{ product }` — the product being edited. The card seeds its own React Hook Form instance from it and saves with its own button:
 
 ```tsx
-// src/fields/tech-specs-field.tsx
+// src/fields/tech-specs-card.tsx
+import { adminClient, mapSpreeErrorsToForm, useResourceMutation } from '@spree/dashboard-core'
 import {
-  Card, CardContent, CardHeader, CardTitle,
+  Button,
+  Card, CardContent, CardFooter, CardHeader, CardTitle,
   Field, FieldError, FieldLabel, Textarea,
 } from '@spree/dashboard-ui'
+import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import type { UseFormReturn } from 'react-hook-form'
 
 interface Props {
-  form: UseFormReturn<{ tech_specs: string }>
+  product: { id: string; tech_specs?: string }
 }
 
-export function TechSpecsField({ form }: Props) {
+interface FormValues {
+  tech_specs: string
+}
+
+export function TechSpecsCard({ product }: Props) {
   const { t } = useTranslation()
+  const form = useForm<FormValues>({
+    defaultValues: { tech_specs: product.tech_specs ?? '' },
+  })
+
+  const update = useResourceMutation({
+    mutationFn: (values: FormValues) => adminClient.products.update(product.id, values),
+    invalidate: [['products']],
+  })
+
+  async function onSubmit(values: FormValues) {
+    try {
+      await update.mutateAsync(values)
+    } catch (err) {
+      if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+    }
+  }
+
   const error = form.formState.errors.tech_specs?.message
 
   return (
@@ -69,23 +96,30 @@ export function TechSpecsField({ form }: Props) {
       <CardHeader>
         <CardTitle>{t('admin.fields.product.tech_specs.label')}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <Field>
-          <FieldLabel className="sr-only" htmlFor="tech_specs">
-            {t('admin.fields.product.tech_specs.label')}
-          </FieldLabel>
-          <Textarea
-            id="tech_specs"
-            rows={6}
-            placeholder={t('admin.fields.product.tech_specs.placeholder')}
-            aria-invalid={Boolean(error)}
-            {...form.register('tech_specs', {
-              maxLength: { value: 5000, message: 'Too long' },
-            })}
-          />
-          {error && <FieldError>{error}</FieldError>}
-        </Field>
-      </CardContent>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <CardContent>
+          <Field>
+            <FieldLabel className="sr-only" htmlFor="tech_specs">
+              {t('admin.fields.product.tech_specs.label')}
+            </FieldLabel>
+            <Textarea
+              id="tech_specs"
+              rows={6}
+              placeholder={t('admin.fields.product.tech_specs.placeholder')}
+              aria-invalid={Boolean(error)}
+              {...form.register('tech_specs', {
+                maxLength: { value: 5000, message: t('admin.fields.product.tech_specs.too_long') },
+              })}
+            />
+            {error && <FieldError>{error}</FieldError>}
+          </Field>
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" size="sm" disabled={update.isPending || !form.formState.isDirty}>
+            {t('admin.common.save')}
+          </Button>
+        </CardFooter>
+      </form>
     </Card>
   )
 }
@@ -93,54 +127,50 @@ export function TechSpecsField({ form }: Props) {
 
 A few patterns worth flagging:
 
-- **Use `form.register('tech_specs')`** — the parent form's `defaultValues` already includes `tech_specs` from the API response, so RHF wires up the initial value.
-- **Use the field-key i18n convention** — `admin.fields.product.tech_specs.{label,placeholder}` falls back to `admin.fields.tech_specs.*` if you want to share the label across resources.
+- **`invalidate: [['products']]`** refetches the product queries after a save, so the page (and list views) pick up the new value.
+- **`mapSpreeErrorsToForm`** routes a 422 (e.g. a server-side length validation) onto the field as an inline error; `useResourceMutation` already suppresses its toast for validation failures.
+- **Disable save until dirty** — `form.formState.isDirty` keeps the button inert when nothing changed.
+- **Use the field-key i18n convention** — `admin.fields.product.tech_specs.{label,placeholder}`; see [Translations](/developer/dashboard/customization/translations#field-key-convention).
 - **Apply `aria-invalid`** when the field has an error so screen readers announce it.
 
-## 3. Extend the Zod schema (optional)
-
-If your customization adds client-side validation, extend the product form schema in the host app:
-
-```ts
-// src/schemas/product.ts
-import { z } from 'zod'
-
-export const productFormSchema = z
-  .object({
-    name: z.string().min(1),
-    // …existing core fields…
-    tech_specs: z.string().max(5000).default(''),
-  })
-```
-
-The form already uses `zodResolver(productFormSchema)`, so adding the key automatically runs validation. If the field has no client-side constraints, skip this step — server-side validation will round-trip through `mapSpreeErrorsToForm`.
-
-## 4. Translations
+## 3. Translations
 
 ```json
-// src/locales/en.json
+// src/locales/en.json — note the top-level "admin" wrapper
 {
-  "fields": {
-    "product": {
-      "tech_specs": {
-        "label": "Technical specifications",
-        "placeholder": "RAM, CPU, dimensions, weight…"
+  "admin": {
+    "fields": {
+      "product": {
+        "tech_specs": {
+          "label": "Technical specifications",
+          "placeholder": "RAM, CPU, dimensions, weight…",
+          "too_long": "Keep it under 5000 characters"
+        }
       }
     }
   }
 }
 ```
 
-i18next merges this into the existing `admin` namespace. See [Translations](/developer/dashboard/customization/translations) for the field-key fallback chain.
+```ts
+// src/plugins.ts — before the defineDashboardPlugin call
+import { i18n } from '@spree/dashboard-core'
+import en from './locales/en.json'
+
+i18n.addResourceBundle('en', 'translation', en, true, true)
+```
+
+See [Translations](/developer/dashboard/customization/translations) for locales beyond English.
 
 ## What you should *not* do
 
-- **Don't add a separate `useState` for the value.** The form's RHF instance owns it; a duplicate state goes out of sync on submit/reset.
-- **Don't call `adminClient.products.update()` from inside the field.** The parent form's submit handler already does that — your job is to register the value.
-- **Don't add a `useEffect` that copies `props.product.tech_specs` to local state.** RHF's `defaultValues` from the parent already handles the initial value.
+- **Don't mirror the value into `useState` alongside RHF.** The card's form instance owns it; duplicate state goes out of sync after a save or reset.
+- **Don't write to the core form's fields from your card.** The built-in form saves core attributes; your card saves yours. Two independent submits can't clobber each other.
+- **Don't skip the server-side validation.** The client-side `maxLength` is UX; the Rails validation is the contract.
 
 ## Reference
 
-- [React Hook Form `register`](https://react-hook-form.com/docs/useform/register)
+- [React Hook Form `useForm`](https://react-hook-form.com/docs/useform)
 - [`mapSpreeErrorsToForm`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/form-errors.ts) — wires 422 responses to field errors
+- [`useResourceMutation`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/hooks/use-resource-mutation.ts)
 - [Field-key i18n convention](/developer/dashboard/customization/translations#field-key-convention)

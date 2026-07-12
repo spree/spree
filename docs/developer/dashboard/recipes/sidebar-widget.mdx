@@ -15,8 +15,10 @@ This recipe builds a "Loyalty status" card for the customer detail page: read-on
 import { useQuery } from '@tanstack/react-query'
 import { adminClient, usePermissions, useStore } from '@spree/dashboard-core'
 import {
+  Badge,
   Card, CardContent, CardHeader, CardTitle,
-  Skeleton, Badge, EmptyState,
+  Empty, EmptyDescription,
+  Skeleton,
 } from '@spree/dashboard-ui'
 import { Trophy } from 'lucide-react'
 
@@ -62,7 +64,9 @@ export function LoyaltyStatusCard({ customer }: Props) {
         {isLoading ? (
           <Skeleton className="h-8 w-32" />
         ) : !data?.data ? (
-          <EmptyState size="sm" title="No loyalty record" />
+          <Empty>
+            <EmptyDescription>No loyalty record</EmptyDescription>
+          </Empty>
         ) : (
           <div className="space-y-2">
             <Badge variant={tierVariant(data.data.tier)}>{data.data.tier}</Badge>
@@ -83,7 +87,8 @@ Worth noting:
 
 - **`storeId` in the query key.** The dashboard is multi-store; without this, switching stores leaves stale data on screen.
 - **`staleTime: 30_000`** keeps the data fresh enough for a sidebar widget without re-fetching on every focus event.
-- **Three states.** Loading (`<Skeleton>`), empty (`<EmptyState>`), and loaded. Skipping the empty state ships a card that says "0 points" when really the customer has never been enrolled — different meaning, different UX.
+- **Three states.** Loading (`<Skeleton>`), empty (`<Empty>`), and loaded. Skipping the empty state ships a card that says "0 points" when really the customer has never been enrolled — different meaning, different UX.
+- **Strings are hardcoded for brevity.** Real widgets should go through i18n — see [Translations](/developer/dashboard/customization/translations).
 
 ## Register the widget
 
@@ -101,9 +106,9 @@ defineDashboardPlugin({
     }],
   },
 })
+```
 
 The permission gate lives *inside* the component (`usePermissions`) rather than in an `if` predicate on the entry — the predicate only receives the slot context today, not ambient permissions (see the [slots catalog](/developer/dashboard/slots-catalog#ambient-context)).
-```
 
 `position: 50` puts the card near the top of the sidebar (built-in cards typically use 100/200/300). Pick a number based on whether your widget is more or less important than the others — for a "status" card, near the top is right.
 
@@ -139,4 +144,4 @@ if (!customer) return null  // or a <Skeleton> to reserve layout space
 
 - [Slots catalog → form sidebars](/developer/dashboard/slots-catalog) — every page-level sidebar slot
 - [`useQuery`](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery) — query key conventions
-- [Memory: query keys are store-scoped](https://github.com/spree/spree/blob/main/packages/dashboard/README.md) — why `storeId` belongs in the key
+- [`@spree/dashboard` README](https://github.com/spree/spree/blob/main/packages/dashboard/README.md) — the multi-store model and why `storeId` belongs in the key

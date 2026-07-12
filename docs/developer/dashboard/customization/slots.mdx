@@ -34,12 +34,9 @@ defineDashboardPlugin({
 
 ## Slot context
 
-The component receives two pieces of context merged into a single props object:
+The component receives the **slot-specific context** as props — whatever the host page passes via `<Slot name="..." context={{ product, /* etc */ }} />`. The shape varies per slot: `page.actions_dropdown` passes `{ resource }`, `product.form_sidebar` passes `{ product }`, and so on. Each slot's shape is documented in the [Slots catalog](/developer/dashboard/slots-catalog).
 
-1. **Slot-specific context** — what the host page passes via `<Slot name="..." context={{ product, /* etc */ }} />`. The shape varies per slot — `page.actions_dropdown` passes `{ resource }`, the order-detail page might pass `{ order }`, and so on.
-2. **Ambient context** — `{ permissions, store, user }` injected by the providers, available to every slot. Useful for the `if` predicate and for components that only need the current user.
-
-Both shapes are documented per slot in the [Slots catalog](/developer/dashboard/slots-catalog).
+For anything beyond the slot's own context — permissions, the current store, the signed-in user — call the hooks inside your component: `usePermissions()`, `useStore()`, `useAuth()` from `@spree/dashboard-core`. (A future release may inject these as ambient props, but today the hooks are the way.)
 
 ### Why `as never`?
 
@@ -56,29 +53,26 @@ interface ProductSlotContext {
 
 registerSlot<ProductSlotContext>('product.form_sidebar', {
   id: 'brand-card',
-  component: ({ product, permissions }) => {
-    if (!permissions?.can('read', 'Spree::Brand')) return null
-    return <BrandCard productId={product.id} brandId={product.brand_id} />
-  },
+  component: ({ product }) => <BrandCard productId={product.id} brandId={product.brand_id} />,
   position: 50,
 })
 ```
 
 ## Permission gating
 
-The `if` predicate runs on every render with the merged context:
+Gate inside the component with `usePermissions()` — return `null` when the user lacks access:
 
 ```tsx
-slots: {
-  'page.actions_dropdown': [{
-    id: 'admin-only-thing',
-    component: AdminOnlyMenuItem as never,
-    if: (ctx) => ctx.permissions?.can('manage', 'Spree::User') ?? false,
-  }],
+import { usePermissions } from '@spree/dashboard-core'
+
+function AdminOnlyMenuItem() {
+  const { permissions } = usePermissions()
+  if (!permissions.can('manage', 'Spree::User')) return null
+  return <DropdownMenuItem>…</DropdownMenuItem>
 }
 ```
 
-When it returns `false`, the entry is skipped entirely (no DOM nodes mounted). Useful for entries that should depend on dynamic state — feature flags, A/B buckets, or context the user can change without reloading.
+The entry-level `if` predicate also exists, but it only receives the slot's own context (the same props your component gets) — use it to skip an entry based on the host page's data, e.g. `if: ({ product }) => !!product.brand_id`. When it returns `false`, the entry is skipped entirely (no DOM nodes mounted).
 
 ## Position
 

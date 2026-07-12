@@ -96,16 +96,17 @@ import {
 
 ```ts
 import {
-  filtersToRansack,   // converts table filter state → Ransack params
+  filtersToRansack,     // converts table filter state → Ransack params
   mapSpreeErrorsToForm, // 422 response → form.setError
   // formatters
-  formatMoney,
-  formatDate,
-  formatRelativeTime,
+  formatPrice,          // Price object → display string
+  formatStoreDateTime,  // ISO string → wall-clock in the store's timezone
+  getInitials,          // full name → avatar initials
   // i18n
-  i18n,               // configured instance
-  // form mappers
-  mapFormErrors,
+  i18n,                 // configured instance
+  // form mappers — normalize optional text inputs before submitting
+  blankToNull,
+  blankToUndefined,
 } from '@spree/dashboard-core'
 ```
 
@@ -159,11 +160,11 @@ import {
   Avatar,
   Skeleton,
   Tooltip, TooltipTrigger, TooltipContent,
-  Tabs, TabsList, TabsTrigger, TabsContent,
-  Alert, AlertTitle, AlertDescription,
-  Toaster, toast,
+  Toaster,
 } from '@spree/dashboard-ui'
 ```
+
+Toast *notifications* come from [sonner](https://sonner.emilkowal.ski/) directly — `import { toast } from 'sonner'` — while `<Toaster>` (the mount point, already rendered by the app shell) is the only part re-exported here.
 
 ### Composed components
 
@@ -172,11 +173,13 @@ Higher-level pieces that bundle multiple primitives but still take data via prop
 ```ts
 import {
   ResourceLayout,     // header + main + sidebar grid
-  EmptyState,
+  Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent,
   ColorPicker,
   // …more land here as we extract from @spree/dashboard
 } from '@spree/dashboard-ui'
 ```
+
+`Empty*` composes via children (icon in `<EmptyMedia>`, actions in `<EmptyContent>`) rather than taking `title`/`description` props.
 
 ### Utilities
 
