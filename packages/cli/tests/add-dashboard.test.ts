@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { addDashboard } from '../src/commands/add.js'
+import { addDashboard, ensureRenderBlueprintService } from '../src/commands/add.js'
 import type { ProjectContext } from '../src/types.js'
 
 /**
@@ -74,5 +74,64 @@ describe('addDashboard', () => {
 
     await addDashboard(ctx(), { template: templateDir, install: false })
     expect(fs.readFileSync(envPath, 'utf-8')).toContain('http://localhost:3999')
+  })
+
+  describe('Render Blueprint registration', () => {
+    const BLUEPRINT = `services:
+  - type: web
+    name: spree
+    runtime: ruby
+    rootDir: backend
+
+  - type: redis
+    name: spree-redis
+
+databases:
+  - name: spree-db
+`
+
+    it('adds a static-site service inside the services array', async () => {
+      fs.writeFileSync(path.join(projectDir, 'render.yaml'), BLUEPRINT)
+
+      await addDashboard(ctx(), { template: templateDir, install: false })
+
+      const content = fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')
+      expect(content).toContain('name: spree-dashboard')
+      expect(content).toContain('runtime: static')
+      expect(content).toContain('rootDir: apps/dashboard')
+      expect(content).toContain('staticPublishPath: dist')
+      expect(content).toContain('destination: /index.html')
+      expect(content).toContain('sync: false')
+      // Stays inside the services array — before the top-level databases key.
+      expect(content.indexOf('spree-dashboard')).toBeLessThan(content.indexOf('databases:'))
+    })
+
+    it('is idempotent and picks the build command from the project lockfile', async () => {
+      fs.writeFileSync(path.join(projectDir, 'render.yaml'), BLUEPRINT)
+      fs.writeFileSync(path.join(projectDir, 'package-lock.json'), '{}')
+
+      expect(ensureRenderBlueprintService(projectDir, 'npm')).toBe('added')
+      const once = fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')
+      expect(once).toContain('buildCommand: npm install && npm run build')
+
+      expect(ensureRenderBlueprintService(projectDir, 'npm')).toBe('present')
+      expect(fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')).toBe(once)
+    })
+
+    it('does nothing when the project has no Blueprint', async () => {
+      expect(ensureRenderBlueprintService(projectDir, 'pnpm')).toBe('no-blueprint')
+      expect(fs.existsSync(path.join(projectDir, 'render.yaml'))).toBe(false)
+    })
+
+    it('appends at the end when there is no databases key', () => {
+      fs.writeFileSync(
+        path.join(projectDir, 'render.yaml'),
+        'services:\n  - type: web\n    name: spree\n',
+      )
+      expect(ensureRenderBlueprintService(projectDir, 'pnpm')).toBe('added')
+      const content = fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')
+      expect(content).toContain('name: spree-dashboard')
+      expect(content).toContain('corepack enable pnpm && pnpm install && pnpm build')
+    })
   })
 })

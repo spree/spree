@@ -67,6 +67,7 @@ export async function addDashboard(ctx: ProjectContext, opts: AddDashboardOption
     }
     // Recovery: directory present but env missing (interrupted earlier run).
     writeDashboardEnv(envPath, ctx.port)
+    ensureRenderBlueprintService(ctx.projectDir, detectPackageManager(ctx.projectDir, dashboardDir))
     p.log.info(`Wrote missing ${pc.bold('apps/dashboard/.env.local')}. Nothing else to do.`)
     return
   }
@@ -85,8 +86,16 @@ export async function addDashboard(ctx: ProjectContext, opts: AddDashboardOption
 
   writeDashboardEnv(envPath, ctx.port)
 
+  const pm = detectPackageManager(ctx.projectDir, dashboardDir)
+  if (ensureRenderBlueprintService(ctx.projectDir, pm) === 'added') {
+    p.log.info(
+      `Added a static-site service to ${pc.bold('render.yaml')}. At deploy, set ` +
+        `${pc.cyan('VITE_SPREE_API_URL')} to the backend's public URL and add the ` +
+        `dashboard's URL to Allowed Origins in the Spree admin.`,
+    )
+  }
+
   if (opts.install) {
-    const pm = detectPackageManager(ctx.projectDir, dashboardDir)
     s.start(`Installing dependencies with ${pm}...`)
     try {
       await execa(pm, ['install'], { cwd: dashboardDir })
@@ -135,6 +144,67 @@ function resolveBundledTemplate(): string {
       'or pass --template <path|git-url>.\n',
   )
   process.exit(1)
+}
+
+/**
+ * Register the dashboard as a static-site service in the project's Render
+ * Blueprint, when one exists (create-spree-app relocates spree-starter's
+ * render.yaml to the project root). Static sites on Render are CDN-served
+ * with SPA rewrites, which is exactly the dashboard's production shape:
+ * `vite build` → `dist/`, no Node server. Two things stay manual by design:
+ * `VITE_SPREE_API_URL` (`sync: false` makes Render prompt — the backend's
+ * public URL isn't knowable here) and the Allowed Origins entry on the
+ * Spree side (the API rejects cross-origin calls until the merchant adds
+ * the dashboard's URL).
+ *
+ * Idempotent: an existing `spree-dashboard` service is left untouched.
+ */
+export function ensureRenderBlueprintService(
+  projectDir: string,
+  pm: string,
+): 'added' | 'present' | 'no-blueprint' {
+  const renderYamlPath = path.join(projectDir, 'render.yaml')
+  if (!fs.existsSync(renderYamlPath)) return 'no-blueprint'
+
+  const content = fs.readFileSync(renderYamlPath, 'utf-8')
+  if (content.includes('name: spree-dashboard')) return 'present'
+
+  const buildCommand =
+    pm === 'pnpm'
+      ? 'corepack enable pnpm && pnpm install && pnpm build'
+      : pm === 'yarn'
+        ? 'yarn install && yarn build'
+        : 'npm install && npm run build'
+
+  const service = `
+  # React Dashboard (Developer Preview) — a static site built from
+  # apps/dashboard. After the first deploy:
+  #   1. Set VITE_SPREE_API_URL to the backend's public URL (Render prompts).
+  #   2. Add the dashboard's URL to Allowed Origins in the Spree admin so the
+  #      API accepts its cross-origin requests and auth cookies.
+  - type: web
+    name: spree-dashboard
+    runtime: static
+    rootDir: apps/dashboard
+    buildCommand: ${buildCommand}
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_SPREE_API_URL
+        sync: false
+`
+
+  // Keep the service inside the `services:` array: insert before the
+  // top-level `databases:` key when present, else append.
+  const databasesMatch = /^databases:/m.exec(content)
+  const next = databasesMatch
+    ? `${content.slice(0, databasesMatch.index)}${service}\n${content.slice(databasesMatch.index)}`
+    : `${content.trimEnd()}\n${service}`
+  fs.writeFileSync(renderYamlPath, next)
+  return 'added'
 }
 
 /**

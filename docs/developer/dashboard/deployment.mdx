@@ -1,0 +1,65 @@
+---
+title: Deploying the dashboard
+sidebarTitle: Deployment
+description: Ship the React Dashboard to production — a static build served from a CDN or reverse proxy, with the API's CORS and cookie settings to match.
+---
+
+The dashboard deploys as **static files**. `pnpm build` produces `dist/` — HTML, JS, CSS — and any static host can serve it; there is no Node server in production. The API URL is baked in at build time:
+
+```bash
+cd apps/dashboard
+VITE_SPREE_API_URL=https://api.mystore.com pnpm build
+```
+
+<Warning>
+`VITE_`-prefixed values are compiled into the client bundle — never put credentials in them. The dashboard authenticates admins interactively (JWT in memory + an httpOnly refresh cookie); no API keys are involved.
+</Warning>
+
+## Pick a topology
+
+**Cross-origin (dashboard and API on different domains)** — the default for static hosts (Render, Cloudflare Pages, Netlify, S3+CloudFront). Three requirements:
+
+1. **HTTPS on both sides.** The refresh cookie is issued with `SameSite=None; Secure` in production, and browsers drop `Secure` cookies over HTTP. There is no insecure-production mode.
+2. **Allowed Origins.** Add the dashboard's URL (e.g. `https://dashboard.mystore.com`) to **Settings → Allowed Origins** in the Spree admin — the API rejects cross-origin requests until then.
+3. **SPA fallback.** Every path must rewrite to `index.html` so the router owns the URL (`/* → /index.html` on your host).
+
+**Same-origin (one domain, reverse proxy)** — serve `dist/` and proxy `/api/*` and `/rails/*` to the Rails server from the same origin, mirroring what the Vite dev proxy does. No CORS entries, `SameSite=Lax` cookies, one certificate — the simpler security posture if you already run nginx/Caddy or an ingress.
+
+## Render
+
+If your project deploys to Render via the Blueprint that `create-spree-app` places at the project root, `spree add dashboard` registers the dashboard automatically — it appends a static-site service to `render.yaml`:
+
+```yaml
+- type: web
+  name: spree-dashboard
+  runtime: static
+  rootDir: apps/dashboard
+  buildCommand: corepack enable pnpm && pnpm install && pnpm build
+  staticPublishPath: dist
+  routes:
+    - type: rewrite
+      source: /*
+      destination: /index.html
+  envVars:
+    - key: VITE_SPREE_API_URL
+      sync: false
+```
+
+Static sites on Render are CDN-served with the SPA rewrite built in, so only the two cross-origin steps remain manual:
+
+1. **Set `VITE_SPREE_API_URL`** when Render prompts for it (that's what `sync: false` does) — the backend's public URL, e.g. `https://spree-abc123.onrender.com` or your custom API domain.
+2. **Add the dashboard's Render URL to Allowed Origins** in the Spree admin after the first deploy.
+
+Redeploys rebuild automatically on push, and each Render environment (staging, production) builds its own bundle with its own API URL.
+
+## Any other static host
+
+The same three ingredients, by hand: build with `VITE_SPREE_API_URL` set, upload `dist/`, configure the `/* → /index.html` rewrite (`_redirects` on Netlify, `vercel.json` rewrites on Vercel, `try_files $uri /index.html;` on nginx). Then add the origin to Allowed Origins.
+
+## Checklist
+
+- [ ] `VITE_SPREE_API_URL` points at the production API (baked at build time — one build per environment)
+- [ ] HTTPS on the dashboard *and* the API
+- [ ] Dashboard origin added to **Settings → Allowed Origins**
+- [ ] All paths rewrite to `index.html`
+- [ ] No secrets in any `VITE_` variable

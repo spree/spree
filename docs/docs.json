@@ -433,6 +433,12 @@
                 ]
               },
               {
+                "group": "Deployment",
+                "pages": [
+                  "developer/dashboard/deployment"
+                ]
+              },
+              {
                 "group": "Slots Catalog",
                 "pages": [
                   "developer/dashboard/slots-catalog"
