@@ -1,9 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError, type Store } from '@spree/admin-sdk'
 import {
+  extensionFormValues,
+  extensionSubmitValues,
   mapSpreeErrorsToForm,
   PageHeader,
   reconcileStoreDefaultLocale,
+  Slot,
   useAuth,
   useStore,
   useSwitchAdminLocale,
@@ -37,6 +40,7 @@ import {
   Controller,
   type FieldPath,
   type FieldValues,
+  FormProvider,
   useForm,
 } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -128,7 +132,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
   const form = useForm<StoreSettingsFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(storeSettingsFormSchema) as any,
-    defaultValues: storeToFormValues(store),
+    defaultValues: { ...storeToFormValues(store), ...extensionFormValues('store', store) },
   })
 
   // When unit_system flips, reset weight_unit to the first valid option for
@@ -149,6 +153,9 @@ function StoreSettingsForm({ store }: { store: Store }) {
     // (name, timezone, units) must not touch the admin's UI language.
     const code = values.preferred_admin_locale
     const localeChanged = (code ?? '') !== (store.preferred_admin_locale ?? '')
+    // Extension fields come from live form state — the Zod parse behind
+    // `values` strips keys the first-party schema doesn't know.
+    const extensionValues = extensionSubmitValues('store', form)
     try {
       await updateMutation.mutateAsync({
         name: values.name,
@@ -158,12 +165,13 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_weight_unit: values.preferred_weight_unit,
         preferred_storefront_access: values.preferred_storefront_access,
         preferred_guest_checkout: values.preferred_guest_checkout,
+        ...extensionValues,
       })
       toast.success(t('admin.messages.store_settings_updated'))
       // Reset FIRST so the form is no longer dirty — otherwise the language
       // switch below reloads the page while the `beforeunload` dirty-guard is
       // still armed, triggering the browser's "unsaved changes" prompt.
-      form.reset(values)
+      form.reset({ ...values, ...extensionValues })
       // When the admin language was actually changed:
       //  - a concrete value → adopt it as this admin's own UI language and switch
       //    the dashboard into it immediately (same as the profile / top-bar);
@@ -230,127 +238,130 @@ function StoreSettingsForm({ store }: { store: Store }) {
   const { errors } = form.formState
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      <ResourceLayout
-        header={
-          <PageHeader
-            title={t('admin.pages.settings.store.title')}
-            subtitle={t('admin.pages.settings.store.subtitle')}
-            actions={<FormActions form={form} />}
-          />
-        }
-        main={
-          <>
-            {errors.root?.message && (
-              <p className="text-sm text-destructive" role="alert">
-                {errors.root.message}
-              </p>
-            )}
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('admin.pages.settings.store.tab_general')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FieldGroup>
-                  <Field>
-                    <FieldLabel htmlFor="store-name">
-                      {t('admin.fields.store.name.label')}
-                    </FieldLabel>
-                    <Input
-                      id="store-name"
-                      aria-invalid={!!errors.name || undefined}
-                      {...form.register('name')}
-                    />
-                    <FieldError errors={[errors.name]} />
-                  </Field>
-                </FieldGroup>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('admin.pages.settings.store.tab_standards')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FieldGroup>
-                  <SelectField
-                    id="store-admin-locale"
-                    label={t('admin.fields.store.preferred_admin_locale.label')}
-                    placeholder={t('admin.fields.store.preferred_admin_locale.placeholder')}
-                    name="preferred_admin_locale"
-                    control={form.control}
-                    options={adminLocaleOptions}
-                  />
-                  <SelectField
-                    id="store-timezone"
-                    label={t('admin.fields.store.preferred_timezone.label')}
-                    placeholder={t('admin.fields.store.preferred_timezone.placeholder')}
-                    name="preferred_timezone"
-                    control={form.control}
-                    options={timezoneOptions}
-                  />
-                  <SelectField
-                    id="store-unit-system"
-                    label={t('admin.fields.store.preferred_unit_system.label')}
-                    name="preferred_unit_system"
-                    control={form.control}
-                    options={unitSystemOptions}
-                  />
-                  <SelectField
-                    id="store-weight-unit"
-                    label={t('admin.fields.store.preferred_weight_unit.label')}
-                    name="preferred_weight_unit"
-                    control={form.control}
-                    options={weightOptions}
-                  />
-                </FieldGroup>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('admin.pages.settings.store.tab_storefront_access')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FieldGroup>
-                  <SelectField
-                    id="store-storefront-access"
-                    label={t('admin.fields.store.storefront_access.label')}
-                    name="preferred_storefront_access"
-                    control={form.control}
-                    options={storefrontAccessOptions}
-                    help={t('admin.fields.store.storefront_access.help')}
-                  />
-                  <Field>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex flex-col">
-                        <FieldLabel htmlFor="store-guest-checkout" className="cursor-pointer">
-                          {t('admin.fields.store.guest_checkout.label')}
-                        </FieldLabel>
-                        <span className="text-xs text-muted-foreground">
-                          {t('admin.fields.store.guest_checkout.help')}
-                        </span>
-                      </div>
-                      <Controller
-                        name="preferred_guest_checkout"
-                        control={form.control}
-                        render={({ field }) => (
-                          <Switch
-                            id="store-guest-checkout"
-                            checked={!!field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        )}
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={t('admin.pages.settings.store.title')}
+              subtitle={t('admin.pages.settings.store.subtitle')}
+              actions={<FormActions form={form} />}
+            />
+          }
+          main={
+            <>
+              {errors.root?.message && (
+                <p className="text-sm text-destructive" role="alert">
+                  {errors.root.message}
+                </p>
+              )}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_general')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="store-name">
+                        {t('admin.fields.store.name.label')}
+                      </FieldLabel>
+                      <Input
+                        id="store-name"
+                        aria-invalid={!!errors.name || undefined}
+                        {...form.register('name')}
                       />
-                    </div>
-                  </Field>
-                </FieldGroup>
-              </CardContent>
-            </Card>
-          </>
-        }
-      />
-    </form>
+                      <FieldError errors={[errors.name]} />
+                    </Field>
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_standards')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SelectField
+                      id="store-admin-locale"
+                      label={t('admin.fields.store.preferred_admin_locale.label')}
+                      placeholder={t('admin.fields.store.preferred_admin_locale.placeholder')}
+                      name="preferred_admin_locale"
+                      control={form.control}
+                      options={adminLocaleOptions}
+                    />
+                    <SelectField
+                      id="store-timezone"
+                      label={t('admin.fields.store.preferred_timezone.label')}
+                      placeholder={t('admin.fields.store.preferred_timezone.placeholder')}
+                      name="preferred_timezone"
+                      control={form.control}
+                      options={timezoneOptions}
+                    />
+                    <SelectField
+                      id="store-unit-system"
+                      label={t('admin.fields.store.preferred_unit_system.label')}
+                      name="preferred_unit_system"
+                      control={form.control}
+                      options={unitSystemOptions}
+                    />
+                    <SelectField
+                      id="store-weight-unit"
+                      label={t('admin.fields.store.preferred_weight_unit.label')}
+                      name="preferred_weight_unit"
+                      control={form.control}
+                      options={weightOptions}
+                    />
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_storefront_access')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <SelectField
+                      id="store-storefront-access"
+                      label={t('admin.fields.store.storefront_access.label')}
+                      name="preferred_storefront_access"
+                      control={form.control}
+                      options={storefrontAccessOptions}
+                      help={t('admin.fields.store.storefront_access.help')}
+                    />
+                    <Field>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col">
+                          <FieldLabel htmlFor="store-guest-checkout" className="cursor-pointer">
+                            {t('admin.fields.store.guest_checkout.label')}
+                          </FieldLabel>
+                          <span className="text-xs text-muted-foreground">
+                            {t('admin.fields.store.guest_checkout.help')}
+                          </span>
+                        </div>
+                        <Controller
+                          name="preferred_guest_checkout"
+                          control={form.control}
+                          render={({ field }) => (
+                            <Switch
+                              id="store-guest-checkout"
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          )}
+                        />
+                      </div>
+                    </Field>
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+              <Slot name="store.form_main" context={{ store }} />
+            </>
+          }
+        />
+      </form>
+    </FormProvider>
   )
 }
 

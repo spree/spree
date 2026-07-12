@@ -12,7 +12,7 @@ pnpm add @spree/dashboard-core @spree/dashboard-ui
 
 Peer dependencies that the consuming app provides: `react`, `react-dom`, `@spree/admin-sdk`, `@spree/dashboard-ui`, `@tanstack/react-query`, `@tanstack/react-router`, `@tanstack/react-hotkeys`, `react-hook-form`, `react-i18next`, `i18next`, `sonner`.
 
-**Why peer deps:** the four registries (nav, slot, table, settings-nav) are module singletons. If your plugin bundles its own copy of `@spree/dashboard-core`, `registerSlot` writes to a different Map than the app's `<Slot>` reads — silent no-op. Same applies to React, the query client, the router instance, and the i18n singleton. pnpm dedupes these to a single instance as long as they're peers.
+**Why peer deps:** the registries (nav, slot, table, settings-nav, form fields, custom field components) are module singletons. If your plugin bundles its own copy of `@spree/dashboard-core`, `registerSlot` writes to a different Map than the app's `<Slot>` reads — silent no-op. Same applies to React, the query client, the router instance, and the i18n singleton. pnpm dedupes these to a single instance as long as they're peers.
 
 ## What's in the box
 
@@ -294,7 +294,7 @@ i18n.addResourceBundle('fr', 'translation', fr, true, true)
 
 The framework currently ships English only; once Spree's locale list grows the same `addResourceBundle` pattern applies.
 
-## Extension surface — the four registries
+## Extension surface — the registries
 
 ### `nav` — main sidebar items
 
@@ -375,7 +375,7 @@ tables.products.updateColumn('total', { label: 'Net total' })
 
 ## `defineDashboardPlugin` — one-call facade
 
-All four registries in a single declarative config:
+Every registry in a single declarative config:
 
 ```ts
 import { defineDashboardPlugin } from '@spree/dashboard-core/plugin'
@@ -392,6 +392,14 @@ defineDashboardPlugin({
       update: { total: { label: 'Net total' } },
     },
   },
+  // Extension fields on built-in forms — hydrate from the fetched resource,
+  // persist through the form's own Save. Render the input from a slot widget
+  // bound via useHostForm().
+  formFields: {
+    product: [{ name: 'tech_specs', from: (product) => product?.tech_specs ?? '' }],
+  },
+  // Replace the input widget for a specific custom field definition.
+  customFieldComponents: { 'specs.color': ColorPicker },
 })
 ```
 

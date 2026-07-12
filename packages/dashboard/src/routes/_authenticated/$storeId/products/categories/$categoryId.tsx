@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SpreeError } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  adminClient,
+  extensionFormValues,
+  extensionSubmitValues,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  Slot,
+} from '@spree/dashboard-core'
 import {
   ErrorState,
   FormActions,
@@ -11,7 +18,7 @@ import {
 } from '@spree/dashboard-ui'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
@@ -64,24 +71,28 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
-    defaultValues: CATEGORY_DEFAULTS,
+    defaultValues: { ...CATEGORY_DEFAULTS, ...extensionFormValues('category', null) },
   })
 
   // Hydrate (and re-baseline after save) from the source row, unless the
   // merchant has unsaved edits in flight.
   useEffect(() => {
     if (!category || form.formState.isDirty) return
-    form.reset(categoryToForm(category))
+    form.reset({ ...categoryToForm(category), ...extensionFormValues('category', category) })
   }, [category, form])
 
   const onSubmit = async (values: CategoryFormValues) => {
+    // Read before any reset — extension values live in raw form state (the
+    // Zod parse behind `values` strips keys the schema doesn't know).
+    const extensionValues = extensionSubmitValues('category', form)
     try {
-      await updateCategory.mutateAsync(categoryToParams(values))
+      await updateCategory.mutateAsync({ ...categoryToParams(values), ...extensionValues })
       // Re-baseline so isDirty flips false before the refetch lands; drop the
       // consumed signed_ids + clear flags so a second save can't re-send a
       // stale upload/purge (the refetch hydrates the persisted image state).
       form.reset({
         ...values,
+        ...extensionValues,
         image_signed_id: null,
         image_cleared: false,
         square_image_signed_id: null,
@@ -112,32 +123,39 @@ function CategoryDetail({ categoryId, storeId }: { categoryId: string; storeId: 
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      {form.formState.errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
-          {form.formState.errors.root.message}
-        </p>
-      )}
-      <ResourceLayout
-        header={
-          <PageHeader
-            title={category?.name ?? ''}
-            backTo="products/categories"
-            actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
-            resource={category ? { id: category.id } : undefined}
-            onDelete={handleDelete}
-            deleteLabel={t('admin.categories.delete_label')}
-            jsonPreview={{
-              title: `Category ${category?.name ?? ''}`,
-              fetch: () => adminClient.categories.get(categoryId),
-              endpoint: `/api/v3/admin/categories/${categoryId}`,
-            }}
-          />
-        }
-        main={<CategoryMain form={form} category={category} />}
-        sidebar={<CategorySidebar form={form} category={category} />}
-      />
-    </form>
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {form.formState.errors.root?.message && (
+          <p className="text-sm text-destructive" role="alert">
+            {form.formState.errors.root.message}
+          </p>
+        )}
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={category?.name ?? ''}
+              backTo="products/categories"
+              actions={<FormActions form={form} saveLabel={t('admin.actions.save')} />}
+              resource={category ? { id: category.id } : undefined}
+              onDelete={handleDelete}
+              deleteLabel={t('admin.categories.delete_label')}
+              jsonPreview={{
+                title: `Category ${category?.name ?? ''}`,
+                fetch: () => adminClient.categories.get(categoryId),
+                endpoint: `/api/v3/admin/categories/${categoryId}`,
+              }}
+            />
+          }
+          main={<CategoryMain form={form} category={category} />}
+          sidebar={
+            <>
+              <CategorySidebar form={form} category={category} />
+              <Slot name="category.form_sidebar" context={{ category }} />
+            </>
+          }
+        />
+      </form>
+    </FormProvider>
   )
 }
 

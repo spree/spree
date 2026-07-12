@@ -31,6 +31,10 @@
 //       ],
 //     })
 
+import type { CustomFieldComponent } from './lib/custom-field-components'
+import { customFieldComponents } from './lib/custom-field-components'
+import type { FormFieldRegistration } from './lib/form-fields-registry'
+import { formFields } from './lib/form-fields-registry'
 import type { NavEntry } from './lib/nav-registry'
 import { nav } from './lib/nav-registry'
 import type { RouteEntry } from './lib/route-registry'
@@ -108,6 +112,20 @@ export interface DashboardPluginConfig {
    * `useParams()` for path params.
    */
   routes?: RouteEntry[]
+  /**
+   * Extension fields on built-in resource forms, keyed by form key (e.g.
+   * `'product'`). Each field hydrates from the fetched resource via `from`
+   * and persists through the form's own Save — render its input from a slot
+   * widget bound via `useHostForm()`.
+   */
+  formFields?: Record<string, FormFieldRegistration[]>
+  /**
+   * Input components for specific custom field definitions, keyed by the
+   * definition's `namespace.key` (e.g. `'specs.color'`). Replaces the
+   * default widget for that definition's `field_type` wherever the
+   * custom-fields card renders it.
+   */
+  customFieldComponents?: Record<string, CustomFieldComponent>
 }
 
 /**
@@ -183,6 +201,18 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
 
   if (config.routes) {
     for (const entry of config.routes) safely(pluginRoutes.add, entry)
+  }
+
+  if (config.formFields) {
+    for (const [formKey, fields] of Object.entries(config.formFields)) {
+      for (const field of fields) safely(formFields.register, formKey, field)
+    }
+  }
+
+  if (config.customFieldComponents) {
+    for (const [key, component] of Object.entries(config.customFieldComponents)) {
+      safely(customFieldComponents.register, key, component)
+    }
   }
 
   if (errors.length === 1) throw errors[0]

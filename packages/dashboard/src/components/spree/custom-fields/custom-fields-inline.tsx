@@ -24,6 +24,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomField, CustomFieldDefinition, CustomFieldOwnerType } from '@spree/admin-sdk'
 import {
+  customFieldComponents,
   mapSpreeErrorsToForm,
   useCreateCustomField,
   useCreateCustomFieldDefinition,
@@ -743,7 +744,20 @@ function CustomFieldRow({ definition, value, onChange }: CustomFieldRowProps) {
   // label, not rendered as inline copy.
   const technicalKey = `${definition.namespace}.${definition.key}`
 
-  const widget = (
+  // A plugin can replace the input for this specific definition
+  // (customFieldComponents.register('specs.color', ColorPicker)); the default
+  // field_type widget renders otherwise. Same controlled contract either way
+  // — persistence stays with the card's provider.
+  const CustomComponent = customFieldComponents.get(technicalKey)
+  const widget = CustomComponent ? (
+    <CustomComponent
+      id={inputId}
+      ariaLabel={friendlyLabel}
+      value={value}
+      onChange={onChange}
+      definition={definition}
+    />
+  ) : (
     <CustomFieldWidget
       id={inputId}
       ariaLabel={friendlyLabel}
