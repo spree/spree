@@ -1,6 +1,16 @@
-import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD, STOREFRONT_PORT } from '../constants.js'
+import {
+  DASHBOARD_PORT,
+  DEFAULT_ADMIN_EMAIL,
+  DEFAULT_ADMIN_PASSWORD,
+  STOREFRONT_PORT,
+} from '../constants.js'
 
-export function readmeContent(name: string, hasStorefront: boolean, port: number): string {
+export function readmeContent(
+  name: string,
+  hasStorefront: boolean,
+  port: number,
+  hasDashboard = false,
+): string {
   let content = `# ${name}
 
 A [Spree Commerce](https://spreecommerce.org) project.
@@ -38,6 +48,29 @@ npm run dev
 \`\`\`
 
 Open http://localhost:${STOREFRONT_PORT}
+`
+  }
+
+  if (hasDashboard) {
+    content += `
+### Start the React Dashboard (Developer Preview)
+
+The React Dashboard in \`apps/dashboard/\` is the next generation of the Spree
+admin — a customizable React SPA you can extend with your own pages and
+plugins. It's a Developer Preview: the classic admin at
+http://localhost:${port}/admin remains the stable default.
+
+Dependencies are already installed during setup — just start it:
+
+\`\`\`bash
+cd apps/dashboard
+npm run dev
+\`\`\`
+
+Open http://localhost:${DASHBOARD_PORT} and sign in with the admin email and password above.
+
+To learn how to add pages, tweak tables, or build plugins, see the
+[React Dashboard docs](https://spreecommerce.org/docs/developer/dashboard/overview).
 `
   }
 

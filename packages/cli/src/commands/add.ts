@@ -119,7 +119,7 @@ async function fetchTemplate(template: string, dst: string): Promise<void> {
     return
   }
 
-  await execa('git', ['clone', '--depth', '1', template, dst])
+  await execa('git', ['clone', '--depth', '1', '--', template, dst])
   fs.rmSync(path.join(dst, '.git'), { recursive: true, force: true })
 }
 

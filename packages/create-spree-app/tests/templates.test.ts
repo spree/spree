@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
+import { rootClaudeMdContent } from '../src/templates/claude-md'
 import { dependabotContent } from '../src/templates/dependabot'
-import { envContent, storefrontEnvContent } from '../src/templates/env'
+import { dashboardEnvContent, envContent, storefrontEnvContent } from '../src/templates/env'
 import { gitignoreContent } from '../src/templates/gitignore'
 import { rootPackageJsonContent } from '../src/templates/package-json'
 import { readmeContent } from '../src/templates/readme'
@@ -41,6 +42,17 @@ describe('storefrontEnvContent', () => {
   it('uses custom port in API URL', () => {
     const content = storefrontEnvContent(4567)
     expect(content).toContain('SPREE_API_URL=http://localhost:4567')
+  })
+})
+
+describe('dashboardEnvContent', () => {
+  it('points VITE_SPREE_API_URL at the given port', () => {
+    expect(dashboardEnvContent(4567)).toContain('VITE_SPREE_API_URL=http://localhost:4567')
+  })
+
+  it('contains no credentials — VITE_ values ship to every browser', () => {
+    const content = dashboardEnvContent(3000)
+    expect(content).not.toMatch(/pk_|sk_|KEY=(?!http)/)
   })
 })
 
@@ -132,6 +144,30 @@ describe('readmeContent', () => {
     expect(content).toContain('.spree/credentials.json')
     expect(content).toContain('npm install -g @spree/cli')
   })
+
+  it('includes the React Dashboard section when included', () => {
+    const content = readmeContent('my-store', true, 3000, true)
+    expect(content).toContain('### Start the React Dashboard (Developer Preview)')
+    expect(content).toContain('http://localhost:5173')
+    expect(content).toContain('docs/developer/dashboard')
+  })
+
+  it('omits the React Dashboard section by default', () => {
+    const content = readmeContent('my-store', true, 3000)
+    expect(content).not.toContain('React Dashboard')
+  })
+})
+
+describe('rootClaudeMdContent', () => {
+  it('lists apps/dashboard when the dashboard is included', () => {
+    const content = rootClaudeMdContent(true, true)
+    expect(content).toContain('`apps/dashboard/`')
+    expect(content).toContain('docs/developer/dashboard')
+  })
+
+  it('omits apps/dashboard by default', () => {
+    expect(rootClaudeMdContent(true)).not.toContain('apps/dashboard')
+  })
 })
 
 describe('gitignoreContent', () => {
@@ -168,6 +204,16 @@ describe('dependabotContent', () => {
   it('adds the storefront npm ecosystem when the storefront is included', () => {
     const content = dependabotContent(true)
     expect(content).toContain('package-ecosystem: npm\n    directory: "/apps/storefront"')
+  })
+
+  it('adds the dashboard npm ecosystem when the dashboard is included', () => {
+    const content = dependabotContent(true, true)
+    expect(content).toContain('package-ecosystem: npm\n    directory: "/apps/dashboard"')
+    expect(content).toContain('dashboard-security:')
+  })
+
+  it('omits the dashboard ecosystem by default', () => {
+    expect(dependabotContent(true)).not.toContain('/apps/dashboard')
   })
 
   it('groups security and version updates separately for each ecosystem', () => {

@@ -4,7 +4,8 @@ import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
 import { downloadBackend } from './backend.js'
-import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
+import { DASHBOARD_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
+import { downloadDashboard, installDashboardDeps, writeDashboardEnv } from './dashboard.js'
 import {
   downloadStorefront,
   installRootDeps,
@@ -23,7 +24,7 @@ import { generateSecretKeyBase, isDockerRunning } from './utils.js'
 export async function scaffold(options: ScaffoldOptions): Promise<void> {
   const projectDir = path.resolve(options.directory)
   const projectName = path.basename(projectDir)
-  const { port, storefront } = options
+  const { port, storefront, dashboard } = options
 
   // Pre-flight checks
   if (options.start) {
@@ -79,14 +80,17 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
   fs.writeFileSync(path.join(projectDir, '.env'), envContent(generateSecretKeyBase(), port))
   fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
-  fs.writeFileSync(path.join(projectDir, 'README.md'), readmeContent(projectName, storefront, port))
+  fs.writeFileSync(
+    path.join(projectDir, 'README.md'),
+    readmeContent(projectName, storefront, port, dashboard),
+  )
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
-  fs.writeFileSync(path.join(projectDir, 'CLAUDE.md'), rootClaudeMdContent(storefront))
+  fs.writeFileSync(path.join(projectDir, 'CLAUDE.md'), rootClaudeMdContent(storefront, dashboard))
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
 
   const githubDir = path.join(projectDir, '.github')
   fs.mkdirSync(githubDir, { recursive: true })
-  fs.writeFileSync(path.join(githubDir, 'dependabot.yml'), dependabotContent(storefront))
+  fs.writeFileSync(path.join(githubDir, 'dependabot.yml'), dependabotContent(storefront, dashboard))
 
   s.stop('Project structure created.')
 
@@ -108,6 +112,19 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     s.stop('Storefront dependencies installed.')
   }
 
+  // Phase 3b: React Dashboard (optional, Developer Preview)
+  if (dashboard) {
+    s.start('Downloading dashboard starter...')
+    await downloadDashboard(projectDir)
+    s.stop('Dashboard starter downloaded.')
+
+    writeDashboardEnv(projectDir, port)
+
+    s.start('Installing dashboard dependencies...')
+    await installDashboardDeps(projectDir, options.packageManager)
+    s.stop('Dashboard dependencies installed.')
+  }
+
   // Phase 4: Initialize and start services
   if (options.start) {
     const initArgs = ['spree', 'init']
@@ -123,14 +140,20 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
         `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && npm run dev`)}`,
       )
     }
+    if (dashboard) {
+      p.log.info(
+        `${pc.bold('React Dashboard')}: ${pc.cyan(`cd ${projectName}/apps/dashboard && npm run dev`)} → http://localhost:${DASHBOARD_PORT}`,
+      )
+    }
   } else {
-    printSuccessWithoutDocker(projectName, storefront, port)
+    printSuccessWithoutDocker(projectName, storefront, dashboard, port)
   }
 }
 
 function printSuccessWithoutDocker(
   projectName: string,
   hasStorefront: boolean,
+  hasDashboard: boolean,
   port: number,
 ): void {
   const lines: string[] = [
@@ -145,6 +168,16 @@ function printSuccessWithoutDocker(
       '',
       `  ${pc.dim('# In another terminal:')}`,
       `  cd ${projectName}/apps/storefront`,
+      `  npm install`,
+      `  npm run dev`,
+    )
+  }
+
+  if (hasDashboard) {
+    lines.push(
+      '',
+      `  ${pc.dim('# React Dashboard (Developer Preview), in another terminal:')}`,
+      `  cd ${projectName}/apps/dashboard`,
       `  npm install`,
       `  npm run dev`,
     )

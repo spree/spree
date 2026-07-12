@@ -69,6 +69,19 @@ vi.mock('../src/storefront', async (importOriginal) => {
   }
 })
 
+vi.mock('../src/dashboard', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('../src/dashboard')>()
+  return {
+    ...mod,
+    // Simulate the clone so the real writeDashboardEnv has a directory to
+    // write into.
+    downloadDashboard: vi.fn(async (projectDir: string) => {
+      fs.mkdirSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true })
+    }),
+    installDashboardDeps: vi.fn(),
+  }
+})
+
 vi.mock('../src/backend', () => ({
   downloadBackend: vi.fn(async (projectDir: string) => {
     // Simulate what downloadBackend does: create backend/ with compose files
@@ -106,6 +119,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -126,6 +140,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -143,6 +158,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -160,6 +176,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -179,6 +196,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -196,6 +214,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -206,6 +225,46 @@ describe('scaffold (no-start)', () => {
     const pkg = JSON.parse(content)
     expect(pkg.name).toBe('my-store')
     expect(pkg.scripts.eject).toBe('spree eject')
+  })
+
+  it('writes the dashboard env when the dashboard is included', async () => {
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: false,
+      dashboard: true,
+      sampleData: false,
+      start: false,
+      packageManager: 'npm',
+      port: 4567,
+    })
+
+    const envPath = path.join(projectDir, 'apps', 'dashboard', '.env.local')
+    const env = fs.readFileSync(envPath, 'utf-8')
+    expect(env).toContain('VITE_SPREE_API_URL=http://localhost:4567')
+    expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).toContain(
+      'React Dashboard',
+    )
+  })
+
+  it('skips the dashboard by default', async () => {
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: false,
+      dashboard: false,
+      sampleData: false,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    expect(fs.existsSync(path.join(projectDir, 'apps', 'dashboard'))).toBe(false)
+    expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).not.toContain(
+      'React Dashboard',
+    )
   })
 
   it('rejects non-empty directory', async () => {

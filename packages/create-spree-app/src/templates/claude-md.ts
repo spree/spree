@@ -19,7 +19,7 @@ full skill list.
 `
 }
 
-export function rootClaudeMdContent(hasStorefront: boolean): string {
+export function rootClaudeMdContent(hasStorefront: boolean, hasDashboard = false): string {
   const lines = [
     '# Spree Commerce Application',
     '',
@@ -34,6 +34,10 @@ export function rootClaudeMdContent(hasStorefront: boolean): string {
     lines.push('| `apps/storefront/` | Next.js storefront |')
   }
 
+  if (hasDashboard) {
+    lines.push('| `apps/dashboard/` | React Dashboard — admin SPA (Developer Preview) |')
+  }
+
   lines.push(
     '',
     '## Agent Instructions',
@@ -44,6 +48,13 @@ export function rootClaudeMdContent(hasStorefront: boolean): string {
   if (hasStorefront) {
     lines.push(
       '- **Storefront work** (Next.js, React, TypeScript): See `apps/storefront/CLAUDE.md`',
+    )
+  }
+
+  if (hasDashboard) {
+    lines.push(
+      '- **React Dashboard work** (admin SPA, React, TypeScript): See `apps/dashboard/README.md`',
+      '  and https://spreecommerce.org/docs/developer/dashboard/overview',
     )
   }
 
