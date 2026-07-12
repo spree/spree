@@ -58,6 +58,7 @@ server/
 package-lock.json
 packages/*/package-lock.json
 .turbo
+.tanstack
 packages/*/dist
 .claude/worktrees
 *.tsbuildinfo

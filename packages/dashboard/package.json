@@ -1,8 +1,23 @@
 {
   "name": "@spree/dashboard",
-  "private": true,
   "license": "MIT",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Spree Dashboard app shell — the next-gen React admin for Spree Commerce. Routes, resource hooks, schemas, locales, and the <Dashboard /> component. Source-only package; hosts compile it via @spree/dashboard/vite. Developer Preview.",
+  "author": "Vendo Connect Inc.",
+  "homepage": "https://spreecommerce.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/dashboard"
+  },
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "admin",
+    "dashboard",
+    "react"
+  ],
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -13,7 +28,8 @@
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "dev": "vite",

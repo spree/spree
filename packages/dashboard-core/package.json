@@ -1,9 +1,24 @@
 {
   "name": "@spree/dashboard-core",
-  "private": true,
   "license": "MIT",
-  "version": "0.0.0",
-  "description": "Spree Dashboard framework — registries (table, nav, slot, settings-nav), providers (auth, permission, store), admin SDK client, generic infra hooks, and the defineDashboardPlugin extension API.",
+  "version": "0.1.0",
+  "description": "Spree Dashboard framework — registries (table, nav, slot, settings-nav), providers (auth, permission, store), admin SDK client, generic infra hooks, and the defineDashboardPlugin extension API. Developer Preview.",
+  "author": "Vendo Connect Inc.",
+  "homepage": "https://spreecommerce.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/dashboard-core"
+  },
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "admin",
+    "dashboard",
+    "react",
+    "plugin"
+  ],
   "type": "module",
   "main": "./src/index.ts",
   "module": "./src/index.ts",
@@ -21,7 +36,8 @@
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "lint": "biome check src",

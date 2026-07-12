@@ -362,6 +362,119 @@ jobs:
         if: steps.check.outputs.published == 'false'
         run: pnpm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }} --no-git-checks
 
+  # The dashboard packages are source-only (they ship src/, no build step) and
+  # depend on each other via workspace:^, which `pnpm publish` rewrites to the
+  # concrete ^x.y.z while packing — so they publish in dependency order from a
+  # single job. Pre-1.0 Developer Preview versions ship under the `next` tag,
+  # matching @spree/admin-sdk.
+  release-dashboard:
+    name: "Dashboard packages - Release"
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
+      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
+      # npm's own files in place and the in-flight install can't find
+      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
+      # to a separate prefix and prepend to PATH instead.
+      - name: Upgrade npm for Trusted Publishing support
+        run: |
+          npm install -g npm@latest --prefix="$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+
+      - name: Publish unpublished versions (dependency order)
+        run: |
+          set -euo pipefail
+          for pkg in dashboard-ui dashboard-core dashboard; do
+            cd "packages/$pkg"
+            NAME=$(node -p "require('./package.json').name")
+            VERSION=$(node -p "require('./package.json').version")
+            if npm view "$NAME@$VERSION" version 2>/dev/null; then
+              echo "$NAME@$VERSION already published — skipping."
+            else
+              if echo "$VERSION" | grep -qE '^0\.'; then TAG=next
+              elif echo "$VERSION" | grep -qE '[-]'; then TAG=beta
+              else TAG=latest
+              fi
+              echo "Publishing $NAME@$VERSION with tag $TAG..."
+              pnpm publish --provenance --access public --tag "$TAG" --no-git-checks
+            fi
+            cd ../..
+          done
+
+  # Push the monorepo-canonical packages/dashboard-starter out to the
+  # spree/dashboard-starter template repo (what `spree add dashboard` and
+  # create-spree-app clone). Runs after release-dashboard so the rewritten
+  # `^x.y.z` pins always reference versions that exist on npm. Requires the
+  # DASHBOARD_STARTER_SYNC_TOKEN secret: a fine-grained PAT with contents
+  # write on spree/dashboard-starter.
+  sync-dashboard-starter:
+    name: "dashboard-starter - Sync template repo"
+    needs: release-dashboard
+    if: github.repository == 'spree/spree' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check sync token
+        id: token
+        env:
+          SYNC_TOKEN: ${{ secrets.DASHBOARD_STARTER_SYNC_TOKEN }}
+        run: |
+          if [ -z "$SYNC_TOKEN" ]; then
+            echo "DASHBOARD_STARTER_SYNC_TOKEN is not configured — skipping sync."
+            echo "present=false" >> $GITHUB_OUTPUT
+          else
+            echo "present=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Clone template repo
+        if: steps.token.outputs.present == 'true'
+        env:
+          SYNC_TOKEN: ${{ secrets.DASHBOARD_STARTER_SYNC_TOKEN }}
+        run: git clone "https://x-access-token:${SYNC_TOKEN}@github.com/spree/dashboard-starter.git" /tmp/dashboard-starter
+
+      - name: Sync starter into the template working tree
+        if: steps.token.outputs.present == 'true'
+        run: node scripts/sync-dashboard-starter.mjs /tmp/dashboard-starter
+
+      - name: Commit and push
+        if: steps.token.outputs.present == 'true'
+        working-directory: /tmp/dashboard-starter
+        run: |
+          git config user.name "spree-releases"
+          git config user.email "releases@spreecommerce.org"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Template repo already up to date."
+            exit 0
+          fi
+          git commit -m "Sync from spree/spree@${{ github.sha }}"
+          git push origin HEAD:main
+
   release-create-spree-app:
     name: "create-spree-app - Release"
     needs: check

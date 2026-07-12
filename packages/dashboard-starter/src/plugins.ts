@@ -14,6 +14,6 @@
 //     routes: [{ key: 'analytics', path: '/analytics', component: AnalyticsPage }],
 //   })
 //
-// Docs: https://docs.spreecommerce.org/developer/dashboard/customization/quickstart
+// Docs: https://spreecommerce.org/docs/developer/dashboard/customization/quickstart
 
 export {}

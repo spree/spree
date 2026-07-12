@@ -6,9 +6,10 @@ export default defineConfig({
   // spreeDashboardPlugin bundles Tailwind, injects @source directives for
   // every Spree dashboard package, auto-discovers installed dashboard
   // plugins (package.json deps carrying the `spree.dashboard.plugin`
-  // marker), and serves the `virtual:spree-dashboard-plugins` module that
-  // src/main.tsx imports to activate them. No TanStack Router plugin needed:
-  // the route tree ships pre-generated inside @spree/dashboard.
+  // marker), serves the `virtual:spree-dashboard-plugins` module that
+  // src/main.tsx imports to activate them, and composes the shell's and
+  // every plugin's file routes into src/routeTree.gen.ts on each dev
+  // start/build — commit that file; its diff shows what an upgrade added.
   plugins: [spreeDashboardPlugin(), react()],
   // Proxy /api to the Rails server so the SPA is same-origin with the API in
   // dev — keeps the refresh-token cookie working under SameSite=Lax without
