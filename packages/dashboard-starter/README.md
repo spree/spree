@@ -2,7 +2,7 @@
 
 The host app for the [Spree React Dashboard](https://spreecommerce.org/docs/developer/dashboard/overview) — the admin for your Spree store. `@spree/dashboard` is the actual app shell (routes, chrome, resource pages); this project is your customization point: plugins, your own pages, theming, and deployment config.
 
-> **Monorepo note.** The canonical source of this template lives at `packages/dashboard-starter` in [spree/spree](https://github.com/spree/spree), where its Spree dependencies resolve via the pnpm workspace and `@spree/dashboard-plugin-example` is installed as a devDependency — booting it here doubles as the end-to-end test for the plugin pipeline. A release job syncs it to the `spree/dashboard-starter` template repo with published package versions, which is what `create-spree-app` and `spree add dashboard` clone.
+> **Monorepo note.** The canonical source of this template lives at `packages/dashboard-starter` in [spree/spree](https://github.com/spree/spree), where its Spree dependencies resolve via the pnpm workspace and `@spree/dashboard-plugin-example` is installed as a devDependency — booting it here doubles as the end-to-end test for the plugin pipeline. At build time, `@spree/cli` and `create-spree-app` embed a standalone rendering of it (workspace deps rewritten to the published versions — see `scripts/sync-dashboard-starter.mjs`), which is what `spree add dashboard` and the create-spree-app dashboard prompt scaffold from.
 
 ## Develop
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Sync packages/dashboard-starter (the monorepo-canonical source) into a
-// working clone of the spree/dashboard-starter template repo, rewriting the
-// bits that only make sense inside the monorepo:
+// Render packages/dashboard-starter (the monorepo-canonical source, which
+// doubles as the plugin pipeline's CI consumer test) into a standalone
+// template, rewriting the bits that only make sense inside the monorepo:
 //
 //   - `workspace:^` dependency ranges → `^<version>` of the published packages
 //   - monorepo-only devDependencies dropped (the example plugin isn't on npm)
@@ -10,6 +10,13 @@
 //
 // Everything else copies verbatim, including src/routeTree.gen.ts (committed
 // by design — its diff on upgrade shows which admin pages changed).
+//
+// Runs at build time in @spree/cli and create-spree-app, targeting their
+// `templates/dashboard-starter/` (gitignored; shipped inside the tarball via
+// the dist copy). `prepublishOnly` rebuilds on publish, so the version pins
+// are always stamped from the versions being released — Vendure-style
+// lockstep, no template repo to keep in sync. (A public template repo can
+// reuse this script as a second target later.)
 //
 // Usage: node scripts/sync-dashboard-starter.mjs <target-dir>
 import fs from 'node:fs'
@@ -25,10 +32,7 @@ if (!target) {
   process.exit(2)
 }
 const targetDir = path.resolve(target)
-if (!fs.existsSync(targetDir)) {
-  console.error(`Target directory does not exist: ${targetDir}`)
-  process.exit(2)
-}
+fs.mkdirSync(targetDir, { recursive: true })
 
 const EXCLUDE = new Set(['node_modules', 'dist', '.turbo', '.tanstack'])
 const MONOREPO_ONLY_DEV_DEPS = new Set(['@spree/dashboard-plugin-example'])
@@ -44,6 +48,13 @@ fs.cpSync(starterDir, targetDir, {
   recursive: true,
   filter: (src) => !EXCLUDE.has(path.basename(src)),
 })
+
+// npm never packs `.gitignore` files (at any depth), so an embedded template
+// would silently lose it and scaffolded apps would commit node_modules. Ship
+// it as `gitignore.template`; the scaffolders rename it back after copying.
+if (fs.existsSync(path.join(targetDir, '.gitignore'))) {
+  fs.renameSync(path.join(targetDir, '.gitignore'), path.join(targetDir, 'gitignore.template'))
+}
 
 // --- package.json: pin published versions -----------------------------------
 

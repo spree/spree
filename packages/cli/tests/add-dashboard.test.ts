@@ -26,6 +26,9 @@ describe('addDashboard', () => {
     fs.writeFileSync(path.join(templateDir, 'package.json'), '{"name":"starter"}\n')
     fs.mkdirSync(path.join(templateDir, 'src'))
     fs.writeFileSync(path.join(templateDir, 'src', 'main.tsx'), '// entry\n')
+    // The bundled template ships its .gitignore under this name (npm never
+    // packs .gitignore files) — the scaffolder must restore the real name.
+    fs.writeFileSync(path.join(templateDir, 'gitignore.template'), 'node_modules/\n')
     // Junk that must not be copied into the project
     fs.mkdirSync(path.join(templateDir, 'node_modules', 'leftover'), { recursive: true })
     fs.mkdirSync(path.join(templateDir, 'dist'))
@@ -49,6 +52,10 @@ describe('addDashboard', () => {
     const env = fs.readFileSync(path.join(dashboardDir, '.env.local'), 'utf-8')
     expect(env).toContain('VITE_SPREE_API_URL=http://localhost:3999')
     expect(env).not.toMatch(/sk_/)
+
+    // gitignore.template restored to its real name
+    expect(fs.existsSync(path.join(dashboardDir, '.gitignore'))).toBe(true)
+    expect(fs.existsSync(path.join(dashboardDir, 'gitignore.template'))).toBe(false)
   })
 
   it('is a no-op when apps/dashboard already exists', async () => {

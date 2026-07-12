@@ -69,18 +69,12 @@ vi.mock('../src/storefront', async (importOriginal) => {
   }
 })
 
-vi.mock('../src/dashboard', async (importOriginal) => {
-  const mod = await importOriginal<typeof import('../src/dashboard')>()
-  return {
-    ...mod,
-    // Simulate the clone so the real writeDashboardEnv has a directory to
-    // write into.
-    downloadDashboard: vi.fn(async (projectDir: string) => {
-      fs.mkdirSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true })
-    }),
-    installDashboardDeps: vi.fn(),
-  }
-})
+vi.mock('../src/dashboard', () => ({
+  // The real implementation shells out to the project-local
+  // `npx spree add dashboard` — its behavior is covered by @spree/cli's own
+  // tests. Here we only assert the delegation happens (or doesn't).
+  scaffoldDashboard: vi.fn(),
+}))
 
 vi.mock('../src/backend', () => ({
   downloadBackend: vi.fn(async (projectDir: string) => {
@@ -227,7 +221,8 @@ describe('scaffold (no-start)', () => {
     expect(pkg.scripts.eject).toBe('spree eject')
   })
 
-  it('writes the dashboard env when the dashboard is included', async () => {
+  it('delegates dashboard scaffolding to the project-local CLI when included', async () => {
+    const { scaffoldDashboard } = await import('../src/dashboard')
     const projectDir = getTempProjectDir()
 
     await scaffold({
@@ -240,15 +235,15 @@ describe('scaffold (no-start)', () => {
       port: 4567,
     })
 
-    const envPath = path.join(projectDir, 'apps', 'dashboard', '.env.local')
-    const env = fs.readFileSync(envPath, 'utf-8')
-    expect(env).toContain('VITE_SPREE_API_URL=http://localhost:4567')
+    expect(scaffoldDashboard).toHaveBeenCalledWith(projectDir, { install: true })
     expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).toContain(
       'React Dashboard',
     )
   })
 
-  it('skips the dashboard by default', async () => {
+  it('skips the dashboard when not included', async () => {
+    const { scaffoldDashboard } = await import('../src/dashboard')
+    vi.mocked(scaffoldDashboard).mockClear()
     const projectDir = getTempProjectDir()
 
     await scaffold({
@@ -261,7 +256,7 @@ describe('scaffold (no-start)', () => {
       port: 3000,
     })
 
-    expect(fs.existsSync(path.join(projectDir, 'apps', 'dashboard'))).toBe(false)
+    expect(scaffoldDashboard).not.toHaveBeenCalled()
     expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).not.toContain(
       'React Dashboard',
     )

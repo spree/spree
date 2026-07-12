@@ -419,61 +419,11 @@ jobs:
             cd ../..
           done
 
-  # Push the monorepo-canonical packages/dashboard-starter out to the
-  # spree/dashboard-starter template repo (what `spree add dashboard` and
-  # create-spree-app clone). Runs after release-dashboard so the rewritten
-  # `^x.y.z` pins always reference versions that exist on npm. Requires the
-  # DASHBOARD_STARTER_SYNC_TOKEN secret: a fine-grained PAT with contents
-  # write on spree/dashboard-starter.
-  sync-dashboard-starter:
-    name: "dashboard-starter - Sync template repo"
-    needs: release-dashboard
-    if: github.repository == 'spree/spree' && github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Check sync token
-        id: token
-        env:
-          SYNC_TOKEN: ${{ secrets.DASHBOARD_STARTER_SYNC_TOKEN }}
-        run: |
-          if [ -z "$SYNC_TOKEN" ]; then
-            echo "DASHBOARD_STARTER_SYNC_TOKEN is not configured — skipping sync."
-            echo "present=false" >> $GITHUB_OUTPUT
-          else
-            echo "present=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Clone template repo
-        if: steps.token.outputs.present == 'true'
-        env:
-          SYNC_TOKEN: ${{ secrets.DASHBOARD_STARTER_SYNC_TOKEN }}
-        run: git clone "https://x-access-token:${SYNC_TOKEN}@github.com/spree/dashboard-starter.git" /tmp/dashboard-starter
-
-      - name: Sync starter into the template working tree
-        if: steps.token.outputs.present == 'true'
-        run: node scripts/sync-dashboard-starter.mjs /tmp/dashboard-starter
-
-      - name: Commit and push
-        if: steps.token.outputs.present == 'true'
-        working-directory: /tmp/dashboard-starter
-        run: |
-          git config user.name "spree-releases"
-          git config user.email "releases@spreecommerce.org"
-          git add -A
-          if git diff --cached --quiet; then
-            echo "Template repo already up to date."
-            exit 0
-          fi
-          git commit -m "Sync from spree/spree@${{ github.sha }}"
-          git push origin HEAD:main
+  # The dashboard-starter template is NOT distributed via a template repo:
+  # `@spree/cli` and `create-spree-app` embed it at build time
+  # (scripts/sync-dashboard-starter.mjs renders packages/dashboard-starter
+  # with published version pins into their templates/ dir), so the template
+  # and the released package versions are in lockstep by construction.
 
   release-create-spree-app:
     name: "create-spree-app - Release"

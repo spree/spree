@@ -1,26 +1,19 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import { execa } from 'execa'
-import { DASHBOARD_REPO } from './constants.js'
-import { dashboardEnvContent } from './templates/env.js'
-import type { PackageManager } from './types.js'
-import { installCommand } from './utils.js'
 
-export async function downloadDashboard(projectDir: string): Promise<void> {
-  const dashboardDir = path.join(projectDir, 'apps', 'dashboard')
-  await execa('git', ['clone', '--depth', '1', '--', DASHBOARD_REPO, dashboardDir], {
-    stdio: 'ignore',
-  })
-  fs.rmSync(path.join(dashboardDir, '.git'), { recursive: true, force: true })
-}
-
-export async function installDashboardDeps(projectDir: string, pm: PackageManager): Promise<void> {
-  const dashboardDir = path.join(projectDir, 'apps', 'dashboard')
-  const [cmd, ...args] = installCommand(pm).split(' ')
-  await execa(cmd, args, { cwd: dashboardDir, stdio: 'ignore' })
-}
-
-export function writeDashboardEnv(projectDir: string, port: number): void {
-  const envPath = path.join(projectDir, 'apps', 'dashboard', '.env.local')
-  fs.writeFileSync(envPath, dashboardEnvContent(port))
+/**
+ * Scaffold the React Dashboard into `apps/dashboard/` by delegating to the
+ * project-local CLI: `npx spree add dashboard`. The generated project already
+ * depends on `@spree/cli` (installed with the root deps, before this phase),
+ * and the CLI bundles the dashboard-starter template with version pins
+ * matching its release — one template source, no copy in this package. The
+ * command reads the API port from the project's `.env` and writes
+ * `apps/dashboard/.env.local` itself (API URL only — never credentials).
+ */
+export async function scaffoldDashboard(
+  projectDir: string,
+  opts: { install: boolean },
+): Promise<void> {
+  const args = ['spree', 'add', 'dashboard']
+  if (!opts.install) args.push('--no-install')
+  await execa('npx', args, { cwd: projectDir, stdio: 'inherit' })
 }

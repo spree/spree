@@ -10,10 +10,3 @@ export function storefrontEnvContent(port: number, apiKey?: string): string {
 SPREE_PUBLISHABLE_KEY=${apiKey ?? 'pk_REPLACE_ME_AFTER_DOCKER_START'}
 `
 }
-
-export function dashboardEnvContent(port: number): string {
-  return `# URL of your Spree API server. No credentials belong in this file —
-# every VITE_-prefixed value is compiled into the client bundle.
-VITE_SPREE_API_URL=http://localhost:${port}
-`
-}

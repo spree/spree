@@ -5,7 +5,7 @@ import { execa } from 'execa'
 import pc from 'picocolors'
 import { downloadBackend } from './backend.js'
 import { DASHBOARD_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
-import { downloadDashboard, installDashboardDeps, writeDashboardEnv } from './dashboard.js'
+import { scaffoldDashboard } from './dashboard.js'
 import {
   downloadStorefront,
   installRootDeps,
@@ -112,17 +112,12 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     s.stop('Storefront dependencies installed.')
   }
 
-  // Phase 3b: React Dashboard (optional, Developer Preview)
+  // Phase 3b: React Dashboard (optional, Developer Preview). Delegates to the
+  // project-local `npx spree add dashboard` — @spree/cli is already installed
+  // (root deps, above) and bundles the dashboard-starter template. It reads
+  // the port from the project's .env and prints its own progress.
   if (dashboard) {
-    s.start('Downloading dashboard starter...')
-    await downloadDashboard(projectDir)
-    s.stop('Dashboard starter downloaded.')
-
-    writeDashboardEnv(projectDir, port)
-
-    s.start('Installing dashboard dependencies...')
-    await installDashboardDeps(projectDir, options.packageManager)
-    s.stop('Dashboard dependencies installed.')
+    await scaffoldDashboard(projectDir, { install: true })
   }
 
   // Phase 4: Initialize and start services

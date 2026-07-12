@@ -4,9 +4,6 @@ export const DASHBOARD_PORT = 5173
 
 export const STOREFRONT_REPO = 'https://github.com/spree/storefront.git'
 export const BACKEND_REPO = 'https://github.com/spree/spree-starter.git'
-// Canonical source lives at packages/dashboard-starter in the spree/spree
-// monorepo; a release job syncs it out with published package versions.
-export const DASHBOARD_REPO = 'https://github.com/spree/dashboard-starter.git'
 
 export const DEFAULT_ADMIN_EMAIL = 'spree@example.com'
 export const DEFAULT_ADMIN_PASSWORD = 'spree123'

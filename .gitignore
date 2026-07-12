@@ -60,6 +60,9 @@ packages/*/package-lock.json
 .turbo
 .tanstack
 packages/*/dist
+# Build-time-generated dashboard-starter template embed (see
+# scripts/sync-dashboard-starter.mjs)
+packages/cli/templates/dashboard-starter
 .claude/worktrees
 *.tsbuildinfo
 .claude/scheduled_tasks.lock

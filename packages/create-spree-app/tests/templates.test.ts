@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { rootClaudeMdContent } from '../src/templates/claude-md'
 import { dependabotContent } from '../src/templates/dependabot'
-import { dashboardEnvContent, envContent, storefrontEnvContent } from '../src/templates/env'
+import { envContent, storefrontEnvContent } from '../src/templates/env'
 import { gitignoreContent } from '../src/templates/gitignore'
 import { rootPackageJsonContent } from '../src/templates/package-json'
 import { readmeContent } from '../src/templates/readme'
@@ -42,17 +42,6 @@ describe('storefrontEnvContent', () => {
   it('uses custom port in API URL', () => {
     const content = storefrontEnvContent(4567)
     expect(content).toContain('SPREE_API_URL=http://localhost:4567')
-  })
-})
-
-describe('dashboardEnvContent', () => {
-  it('points VITE_SPREE_API_URL at the given port', () => {
-    expect(dashboardEnvContent(4567)).toContain('VITE_SPREE_API_URL=http://localhost:4567')
-  })
-
-  it('contains no credentials — VITE_ values ship to every browser', () => {
-    const content = dashboardEnvContent(3000)
-    expect(content).not.toMatch(/pk_|sk_|KEY=(?!http)/)
   })
 })
 
