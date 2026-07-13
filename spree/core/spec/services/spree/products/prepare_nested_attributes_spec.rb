@@ -313,6 +313,10 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
           removed = prepared_params[:variants_attributes]&.values&.find { |v| v[:id] == variant.id.to_s }
           expect(removed).to be_nil
         end
+
+        it 'still clears the option types' do
+          expect(prepared_params[:option_type_ids]).to eq([])
+        end
       end
     end
 

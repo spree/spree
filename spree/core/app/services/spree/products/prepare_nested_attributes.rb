@@ -84,11 +84,14 @@ module Spree
         # The variants matrix was emptied: no variant rows re-submitted, removals sent instead.
         # Option types are detached only when the removal list covers every variant, so a
         # partial (possibly broken) submission never turns the product into a simple one.
-        if params[:variants_attributes].blank? && variants_to_remove.any?
+        # Variants kept alive by discontinuation still count as removed from the matrix,
+        # so the detachment can't hinge on any of them yielding a `_destroy` row.
+        if params[:variants_attributes].blank? && variants_to_remove.any? && can_remove_variants?
           attributes = removed_variants_attributes
 
+          params[:option_type_ids] = [] if removing_all_variants? && !params.key?(:option_type_ids)
+
           if attributes.any?
-            params[:option_type_ids] = [] if removing_all_variants? && !params.key?(:option_type_ids)
             params[:variants_attributes] = attributes
             params[:variants_attributes].permit!
           end
