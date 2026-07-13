@@ -43,6 +43,12 @@ module Spree
       preference :company, :boolean, default: false, deprecated: 'Use the company_field_enabled preference in the Spree::Store model' # Request company field for billing and shipping addr
       preference :currency, :string, default: 'USD', deprecated: true
       preference :credit_to_new_allocation, :boolean, default: false
+      # Directory holding a built React Dashboard (`vite build` output). When
+      # set (or via the SPREE_DASHBOARD_DIST_PATH env var, which the official
+      # Docker image uses), the app serves the SPA at /dashboard — the
+      # single-node topology: same origin as the Admin API, so no CORS or
+      # cookie configuration. Unset, /dashboard 404s.
+      preference :dashboard_dist_path, :string, default: nil
       preference :disable_migration_check, :boolean, default: false # when turned on disables the startup warning about missing engine migrations
       preference :enable_legacy_default_price, :boolean, default: false # when enabled, keeps the legacy DefaultPrice concern active (has_one :default_price, variant.price= delegation, check_price validation). Disable (default) to use set_price exclusively.
       preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation

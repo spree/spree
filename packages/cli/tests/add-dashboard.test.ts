@@ -76,12 +76,21 @@ describe('addDashboard', () => {
     expect(fs.readFileSync(envPath, 'utf-8')).toContain('http://localhost:3999')
   })
 
-  describe('Render Blueprint registration', () => {
+  describe('Render Blueprint single-node amendment', () => {
+    // The starter Blueprint shape after create-spree-app relocates it.
     const BLUEPRINT = `services:
   - type: web
     name: spree
     runtime: ruby
     rootDir: backend
+    plan: free
+    buildCommand: bundle install && bundle exec rails assets:precompile && bundle exec rails db:prepare
+    startCommand: bundle exec puma -C config/puma.rb
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: spree-db
+          property: connectionString
 
   - type: redis
     name: spree-redis
@@ -90,29 +99,35 @@ databases:
   - name: spree-db
 `
 
-    it('adds a static-site service inside the services array', async () => {
+    it('extends the backend service to build and serve the dashboard', async () => {
       fs.writeFileSync(path.join(projectDir, 'render.yaml'), BLUEPRINT)
 
       await addDashboard(ctx(), { template: templateDir, install: false })
 
       const content = fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')
-      expect(content).toContain('name: spree-dashboard')
-      expect(content).toContain('runtime: static')
-      expect(content).toContain('rootDir: apps/dashboard')
-      expect(content).toContain('staticPublishPath: dist')
-      expect(content).toContain('destination: /index.html')
-      expect(content).toContain('sync: false')
-      // Stays inside the services array — before the top-level databases key.
-      expect(content.indexOf('spree-dashboard')).toBeLessThan(content.indexOf('databases:'))
+      // Build step appended to the Rails buildCommand, dashboard built with
+      // the sub-path base and no absolute API URL (origin-relative).
+      expect(content).toContain(
+        'bundle exec rails db:prepare && (cd ../apps/dashboard && corepack enable pnpm && pnpm install && VITE_BASE_PATH=/dashboard/ pnpm build)',
+      )
+      // Served by the same service — env var inside the backend's envVars.
+      expect(content).toContain('- key: SPREE_DASHBOARD_DIST_PATH')
+      expect(content).toContain('value: ../apps/dashboard/dist')
+      expect(content.indexOf('SPREE_DASHBOARD_DIST_PATH')).toBeLessThan(
+        content.indexOf('DATABASE_URL'),
+      )
+      // No cross-origin machinery: no static site, no VITE_SPREE_API_URL.
+      expect(content).not.toContain('VITE_SPREE_API_URL')
+      expect(content).not.toContain('runtime: static')
     })
 
     it('is idempotent and picks the build command from the project lockfile', async () => {
       fs.writeFileSync(path.join(projectDir, 'render.yaml'), BLUEPRINT)
       fs.writeFileSync(path.join(projectDir, 'package-lock.json'), '{}')
 
-      expect(ensureRenderBlueprintService(projectDir, 'npm')).toBe('added')
+      expect(ensureRenderBlueprintService(projectDir, 'npm')).toBe('amended')
       const once = fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')
-      expect(once).toContain('buildCommand: npm install && npm run build')
+      expect(once).toContain('npm install && VITE_BASE_PATH=/dashboard/ npm run build')
 
       expect(ensureRenderBlueprintService(projectDir, 'npm')).toBe('present')
       expect(fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')).toBe(once)
@@ -123,15 +138,12 @@ databases:
       expect(fs.existsSync(path.join(projectDir, 'render.yaml'))).toBe(false)
     })
 
-    it('appends at the end when there is no databases key', () => {
-      fs.writeFileSync(
-        path.join(projectDir, 'render.yaml'),
-        'services:\n  - type: web\n    name: spree\n',
-      )
-      expect(ensureRenderBlueprintService(projectDir, 'pnpm')).toBe('added')
-      const content = fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')
-      expect(content).toContain('name: spree-dashboard')
-      expect(content).toContain('corepack enable pnpm && pnpm install && pnpm build')
+    it('leaves an unrecognized Blueprint untouched', () => {
+      const custom = 'services:\n  - type: web\n    name: my-thing\n    runtime: docker\n'
+      fs.writeFileSync(path.join(projectDir, 'render.yaml'), custom)
+
+      expect(ensureRenderBlueprintService(projectDir, 'pnpm')).toBe('unrecognized')
+      expect(fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')).toBe(custom)
     })
   })
 })

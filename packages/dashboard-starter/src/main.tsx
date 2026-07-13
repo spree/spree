@@ -15,7 +15,9 @@ import './styles.css'
 // it — its diff on upgrades shows exactly which admin pages changed.
 import { routeTree } from './routeTree.gen'
 
-const router = createDashboardRouter(routeTree)
+// basepath mirrors Vite's `base` so sub-path mounts (/dashboard on the
+// single-node topology) route correctly; '/' in dev and root deploys.
+const router = createDashboardRouter(routeTree, { basepath: import.meta.env.BASE_URL })
 
 // Registers the composed router program-wide so <Link> and navigation are
 // type-checked against the real route tree — shell, host, and plugin routes.

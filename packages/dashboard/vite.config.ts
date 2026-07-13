@@ -9,6 +9,10 @@ import { defineConfig } from 'vite'
 import { spreeDashboardPlugin } from './src/vite'
 
 export default defineConfig({
+  // Sub-path mounting for the single-node topology: the official Docker image
+  // builds with VITE_BASE_PATH=/dashboard/ so asset URLs resolve under the
+  // Rails-served mount. Unset (dev, CDN root deploys) Vite defaults to '/'.
+  base: process.env.VITE_BASE_PATH,
   // The plugin bundles `@tailwindcss/vite`, so we don't register it separately.
   // `cssEntry` defaults to `./src/styles.css`, which matches our entry — pass
   // it here only as a hint for readers of this config.

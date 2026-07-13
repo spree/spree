@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  // Sub-path mounting for the single-node topology (Rails serves the build at
+  // /dashboard): build with VITE_BASE_PATH=/dashboard/ so asset URLs resolve.
+  // Unset (dev, CDN root deploys) Vite defaults to '/'.
+  base: process.env.VITE_BASE_PATH,
   // spreeDashboardPlugin bundles Tailwind, injects @source directives for
   // every Spree dashboard package, auto-discovers installed dashboard
   // plugins (package.json deps carrying the `spree.dashboard.plugin`

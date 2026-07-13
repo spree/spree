@@ -12,7 +12,9 @@ import 'virtual:spree-dashboard-plugins'
 import './styles.css'
 import { routeTree } from './routeTree.gen'
 
-const router = createDashboardRouter(routeTree)
+// basepath mirrors Vite's `base` so sub-path mounts (/dashboard on the
+// single-node topology) route correctly; '/' in dev and root deploys.
+const router = createDashboardRouter(routeTree, { basepath: import.meta.env.BASE_URL })
 
 declare module '@tanstack/react-router' {
   interface Register {

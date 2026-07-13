@@ -87,11 +87,16 @@ export async function addDashboard(ctx: ProjectContext, opts: AddDashboardOption
   writeDashboardEnv(envPath, ctx.port)
 
   const pm = detectPackageManager(ctx.projectDir, dashboardDir)
-  if (ensureRenderBlueprintService(ctx.projectDir, pm) === 'added') {
+  const blueprint = ensureRenderBlueprintService(ctx.projectDir, pm)
+  if (blueprint === 'amended') {
     p.log.info(
-      `Added a static-site service to ${pc.bold('render.yaml')}. At deploy, set ` +
-        `${pc.cyan('VITE_SPREE_API_URL')} to the backend's public URL and add the ` +
-        `dashboard's URL to Allowed Origins in the Spree admin.`,
+      `Amended ${pc.bold('render.yaml')}: the backend service now builds the dashboard ` +
+        `and serves it at ${pc.cyan('/dashboard')} — same origin, nothing else to configure.`,
+    )
+  } else if (blueprint === 'unrecognized') {
+    p.log.warn(
+      `${pc.bold('render.yaml')} exists but doesn't match the starter Blueprint — ` +
+        `left untouched. See the dashboard deployment docs to wire it up manually.`,
     )
   }
 
@@ -147,64 +152,65 @@ function resolveBundledTemplate(): string {
 }
 
 /**
- * Register the dashboard as a static-site service in the project's Render
- * Blueprint, when one exists (create-spree-app relocates spree-starter's
- * render.yaml to the project root). Static sites on Render are CDN-served
- * with SPA rewrites, which is exactly the dashboard's production shape:
- * `vite build` → `dist/`, no Node server. Two things stay manual by design:
- * `VITE_SPREE_API_URL` (`sync: false` makes Render prompt — the backend's
- * public URL isn't knowable here) and the Allowed Origins entry on the
- * Spree side (the API rejects cross-origin calls until the merchant adds
- * the dashboard's URL).
+ * Fold the dashboard into the project's Render Blueprint as **single node**:
+ * the backend web service builds `apps/dashboard` in its own build step
+ * (Render's Ruby runtime includes Node; the repo is fully cloned even with
+ * `rootDir: backend`, so `../apps/dashboard` is reachable) and serves it at
+ * /dashboard via `SPREE_DASHBOARD_DIST_PATH`. Same origin as the API — no
+ * CORS entries, no `VITE_SPREE_API_URL`, nothing manual after deploy.
  *
- * Idempotent: an existing `spree-dashboard` service is left untouched.
+ * The amendment anchors on the starter Blueprint's shape (a `buildCommand:`
+ * running `bundle install`, followed by that service's `envVars:`). A
+ * hand-customized Blueprint where those anchors are missing is left
+ * untouched — returns 'unrecognized' so the caller can point at the
+ * deployment docs instead of guessing.
+ *
+ * Idempotent: a Blueprint already carrying SPREE_DASHBOARD_DIST_PATH is
+ * left as-is.
  */
 export function ensureRenderBlueprintService(
   projectDir: string,
   pm: string,
-): 'added' | 'present' | 'no-blueprint' {
+): 'amended' | 'present' | 'no-blueprint' | 'unrecognized' {
   const renderYamlPath = path.join(projectDir, 'render.yaml')
   if (!fs.existsSync(renderYamlPath)) return 'no-blueprint'
 
   const content = fs.readFileSync(renderYamlPath, 'utf-8')
-  if (content.includes('name: spree-dashboard')) return 'present'
+  if (content.includes('SPREE_DASHBOARD_DIST_PATH')) return 'present'
 
-  const buildCommand =
+  const dashboardBuild =
     pm === 'pnpm'
-      ? 'corepack enable pnpm && pnpm install && pnpm build'
+      ? 'corepack enable pnpm && pnpm install && VITE_BASE_PATH=/dashboard/ pnpm build'
       : pm === 'yarn'
-        ? 'yarn install && yarn build'
-        : 'npm install && npm run build'
+        ? 'yarn install && VITE_BASE_PATH=/dashboard/ yarn build'
+        : 'npm install && VITE_BASE_PATH=/dashboard/ npm run build'
 
-  const service = `
-  # React Dashboard (Developer Preview) — a static site built from
-  # apps/dashboard. After the first deploy:
-  #   1. Set VITE_SPREE_API_URL to the backend's public URL (Render prompts).
-  #   2. Add the dashboard's URL to Allowed Origins in the Spree admin so the
-  #      API accepts its cross-origin requests and auth cookies.
-  - type: web
-    name: spree-dashboard
-    runtime: static
-    rootDir: apps/dashboard
-    buildCommand: ${buildCommand}
-    staticPublishPath: dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: VITE_SPREE_API_URL
-        sync: false
-`
+  // 1. Extend the Rails build to also build the dashboard (subshell keeps the
+  //    working directory intact for any commands appended later).
+  const buildCommandRe = /^([ \t]*)buildCommand:.*bundle install.*$/m
+  const buildMatch = buildCommandRe.exec(content)
+  if (!buildMatch) return 'unrecognized'
 
-  // Keep the service inside the `services:` array: insert before the
-  // top-level `databases:` key when present, else append.
-  const databasesMatch = /^databases:/m.exec(content)
-  const next = databasesMatch
-    ? `${content.slice(0, databasesMatch.index)}${service}\n${content.slice(databasesMatch.index)}`
-    : `${content.trimEnd()}\n${service}`
+  let next = content.replace(
+    buildCommandRe,
+    (line) => `${line} && (cd ../apps/dashboard && ${dashboardBuild})`,
+  )
+
+  // 2. Point the server at the built dist. Anchor on the first `envVars:`
+  //    after the build command — the same service's env block. The path is
+  //    resolved relative to the service's working directory (rootDir).
+  const envVarsRe = /^([ \t]*)envVars:[ \t]*$/m
+  const afterBuild = next.slice(next.indexOf('buildCommand:'))
+  const envMatch = envVarsRe.exec(afterBuild)
+  if (!envMatch) return 'unrecognized'
+
+  const envIndent = `${envMatch[1]}  `
+  const envEntry = `${envIndent}# Serve the dashboard built above at /dashboard (single node — same\n${envIndent}# origin as the API, so no CORS or cookie configuration).\n${envIndent}- key: SPREE_DASHBOARD_DIST_PATH\n${envIndent}  value: ../apps/dashboard/dist\n`
+  const envVarsIndex = next.indexOf('buildCommand:') + envMatch.index + envMatch[0].length
+  next = `${next.slice(0, envVarsIndex)}\n${envEntry.replace(/\n$/, '')}${next.slice(envVarsIndex)}`
+
   fs.writeFileSync(renderYamlPath, next)
-  return 'added'
+  return 'amended'
 }
 
 /**

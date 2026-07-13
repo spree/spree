@@ -26,11 +26,23 @@ import {
  * augmentations merge program-wide, so the shell declaring its own would
  * conflict with the host's composed tree.
  */
-export function createDashboardRouter<TRouteTree extends AnyRoute>(routeTree: TRouteTree) {
+export interface DashboardRouterOptions {
+  /**
+   * Path prefix when the dashboard is served from a sub-path (the single-node
+   * topology mounts it at `/dashboard`). Pass `import.meta.env.BASE_URL` so it
+   * always matches the Vite `base` the app was built with.
+   */
+  basepath?: string
+}
+
+export function createDashboardRouter<TRouteTree extends AnyRoute>(
+  routeTree: TRouteTree,
+  { basepath }: DashboardRouterOptions = {},
+) {
   // Cast because the shell's root route requires no router context, which
   // TypeScript cannot prove through the generic tree parameter. The return
   // type stays parameterized by TRouteTree — that's what makes links typed.
-  const options = { routeTree } as RouterConstructorOptions<
+  const options = { routeTree, basepath } as RouterConstructorOptions<
     TRouteTree,
     'never',
     false,
