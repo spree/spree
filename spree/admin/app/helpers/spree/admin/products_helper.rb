@@ -68,7 +68,7 @@ module Spree
       def map_categories(product)
         category_tree = ['n/a', 'n/a']
 
-        category = product.main_taxon&.pretty_name.to_s
+        category = product.primary_category&.pretty_name.to_s
         return category_tree if category.blank?
 
         category.split('->').map(&:strip).map.with_index { |c, index| category_tree[index] = c }

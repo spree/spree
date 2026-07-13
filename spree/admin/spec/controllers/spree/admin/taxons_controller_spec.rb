@@ -39,9 +39,9 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
               ]
             }
           }
-        }.to change(Spree::Taxon, :count).by(1).and change(Spree::TaxonRule, :count).by(1)
+        }.to change(Spree::Category, :count).by(1).and change(Spree::TaxonRule, :count).by(1)
 
-        taxon = Spree::Taxon.last
+        taxon = Spree::Category.last
         expect(taxon.automatic).to be_truthy
         expect(taxon.taxon_rules.count).to eq(1)
         expect(taxon.taxon_rules.first.type).to eq('Spree::TaxonRules::AvailableOn')
@@ -147,13 +147,13 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
     it 'removes the taxon from the database' do
-      expect { delete :destroy, params: { taxonomy_id: taxonomy.to_param, id: taxon.to_param }, format: :turbo_stream }.to change(Spree::Taxon, :count).by(-1)
+      expect { delete :destroy, params: { taxonomy_id: taxonomy.to_param, id: taxon.to_param }, format: :turbo_stream }.to change(Spree::Category, :count).by(-1)
     end
   end
 
   describe 'GET #select_options' do
     before do
-      Spree::Taxon.delete_all
+      Spree::Category.delete_all
     end
 
     context 'with automatic taxons param' do

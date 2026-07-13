@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :classification, class: Spree::Classification do
+  factory :classification, class: Spree::ProductCategory do
     product
     taxon
 

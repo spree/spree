@@ -45,7 +45,7 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
       it 'reuses existing taxonomies and taxons' do
         expect {
           described_class.perform_now(product.id, store.id, ['Men -> Clothing -> Shirts'])
-        }.not_to change { Spree::Taxon.count }
+        }.not_to change { Spree::Category.count }
 
         expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
           'Men -> Clothing -> Shirts'

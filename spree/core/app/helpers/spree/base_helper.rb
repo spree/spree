@@ -27,7 +27,7 @@ module Spree
     end
 
     # returns the URL of an object on the storefront
-    # @param resource [Spree::Product, Spree::Taxon, Spree::Page] the resource to get the URL for
+    # @param resource [Spree::Product, Spree::Category, Spree::Page] the resource to get the URL for
     # @param options [Hash] the options for the URL
     # @option options [String] :locale the locale of the resource, defaults to I18n.locale
     # @option options [String] :store the store of the resource, defaults to current_store
@@ -61,7 +61,7 @@ module Spree
         params = "?#{params}" if params.present?
 
         "#{base_url + localize}/products/#{resource.slug}#{params}"
-      elsif resource.is_a?(Spree::Taxon)
+      elsif resource.is_a?(Spree::Category)
         "#{base_url + localize}/t/#{resource.permalink}"
       elsif defined?(Spree::Page) && (resource.is_a?(Spree::Page) || resource.is_a?(Spree::Policy))
         "#{base_url + localize}#{resource.page_builder_url}"

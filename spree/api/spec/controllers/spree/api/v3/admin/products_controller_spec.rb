@@ -1467,8 +1467,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       }, as: :json
 
       positions = [
-        product.reload.classifications.find_by(taxon: category).position,
-        second_product.reload.classifications.find_by(taxon: category).position
+        product.reload.classifications.find_by(category: category).position,
+        second_product.reload.classifications.find_by(category: category).position
       ]
       expect(positions).to contain_exactly(1, 2)
     end
@@ -1583,8 +1583,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       }, as: :json
 
       positions = [
-        survivor.reload.classifications.find_by(taxon: category)&.position,
-        latecomer.reload.classifications.find_by(taxon: category)&.position
+        survivor.reload.classifications.find_by(category: category)&.position,
+        latecomer.reload.classifications.find_by(category: category)&.position
       ].compact.sort
 
       expect(positions).to eq([1, 2])

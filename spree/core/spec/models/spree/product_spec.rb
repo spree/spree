@@ -547,14 +547,14 @@ describe Spree::Product, type: :model do
   end
 
   # Regression tests for #2352
-  context 'classifications and taxons' do
-    it 'is joined through classifications' do
-      reflection = Spree::Product.reflect_on_association(:taxons)
-      expect(reflection.options[:through]).to eq(:classifications)
+  context 'product_categories and categories' do
+    it 'is joined through product_categories' do
+      reflection = Spree::Product.reflect_on_association(:categories)
+      expect(reflection.options[:through]).to eq(:product_categories)
     end
 
-    it 'will delete all classifications' do
-      reflection = Spree::Product.reflect_on_association(:classifications)
+    it 'will delete all product_categories' do
+      reflection = Spree::Product.reflect_on_association(:product_categories)
       expect(reflection.options[:dependent]).to eq(:delete_all)
     end
   end
@@ -631,24 +631,6 @@ describe Spree::Product, type: :model do
 
     it 'is true' do
       expect(product_discontinued.discontinued?).to be(true)
-    end
-  end
-
-  describe '#brand_taxon' do
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) || create(:taxonomy, name: Spree.t(:taxonomy_brands_name), store: store) }
-    let(:product) { create(:product, taxons: [taxonomy.taxons.first]) }
-
-    it 'fetches Brand Taxon' do
-      expect(product.brand_taxon).to eql(taxonomy.taxons.first)
-    end
-  end
-
-  describe '#brand_name' do
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) || create(:taxonomy, name: Spree.t(:taxonomy_brands_name), store: store) }
-    let(:product) { create(:product, taxons: [taxonomy.taxons.first]) }
-
-    it 'returns the brand taxon name' do
-      expect(product.brand_name).to eql(taxonomy.taxons.first.name)
     end
   end
 
@@ -1090,21 +1072,6 @@ describe Spree::Product, type: :model do
       it 'uses the passed store' do
         expect(product.store).to eq(store)
       end
-    end
-  end
-
-  describe '#taxons_for_store' do
-    let(:product) { create(:product, store: store, taxons: [taxon]) }
-    let(:taxonomy) { create(:taxonomy, store: store) }
-    let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-
-    it 'returns product taxons for the matching store' do
-      expect(product.taxons_for_store(store)).to eq([taxon])
-    end
-
-    it 'returns an empty relation for an unrelated store' do
-      other_store = create(:store)
-      expect(product.taxons_for_store(other_store)).to be_empty
     end
   end
 
@@ -1819,7 +1786,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe 'after_touch :touch_taxons' do
+  describe 'after_touch :touch_categories' do
     subject { product.touch }
 
     let!(:product) { create(:product, taxons: taxons) }
@@ -1828,7 +1795,7 @@ describe Spree::Product, type: :model do
       let(:taxons) { [] }
 
       it 'skips enqueuing a job for touching the taxons' do
-        expect { subject }.not_to have_enqueued_job(Spree::Products::TouchTaxonsJob)
+        expect { subject }.not_to have_enqueued_job(Spree::Products::TouchCategoriesJob)
       end
     end
 
@@ -1841,7 +1808,7 @@ describe Spree::Product, type: :model do
       let(:taxonomy) { create(:taxonomy) }
 
       it 'enqueues a job for touching the taxons' do
-        expect { subject }.to have_enqueued_job(Spree::Products::TouchTaxonsJob).with(
+        expect { subject }.to have_enqueued_job(Spree::Products::TouchCategoriesJob).with(
           [taxonomy.root.id, taxon_1.id, taxon_2.id],
           [taxonomy.id]
         )

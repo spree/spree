@@ -9,9 +9,18 @@ module Spree
     has_prefix_id :coll
 
     RULES_MATCH_POLICIES = %w[all any].freeze
-    # Same values/format as Spree::Taxon::SORT_ORDERS — required by the search sort
-    # pipeline (FiltersAggregator#to_api_sort splits on a space; apply_sort maps to 'price'/etc.).
-    SORT_ORDERS = Spree::Taxon::SORT_ORDERS
+    # Space format (e.g. 'price asc') is required by the search sort pipeline:
+    # FiltersAggregator#to_api_sort splits on a space, and apply_sort maps to 'price'/etc.
+    SORT_ORDERS = [
+      'manual',
+      'best_selling',
+      'price asc',
+      'price desc',
+      'available_on desc',
+      'available_on asc',
+      'name asc',
+      'name desc'
+    ].freeze
 
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug
@@ -19,7 +28,7 @@ module Spree
     include Spree::Metadata
 
     #
-    # Slug / permalink — FriendlyId with history (mirrors Spree::Taxon; flat, no hierarchy).
+    # Slug / permalink — FriendlyId with history (mirrors Spree::Category; flat, no hierarchy).
     # `use: :history` keeps old permalinks resolving via the shared friendly_id_slugs table
     # after a rename. Declared before `translates` (as in Taxon). Within-store uniqueness is
     # still enforced by the validation + DB index below — a collision errors (as in Taxon),
@@ -34,7 +43,7 @@ module Spree
     #
     # Action Text
     #
-    # Interim: description via ActionText (mirrors Spree::Taxon). 6.0-rich-text-descriptions.md
+    # Interim: description via ActionText (mirrors Spree::Category). 6.0-rich-text-descriptions.md
     # migrates both Category and Collection off ActionText later.
     translates :description, backend: :action_text
 
@@ -113,7 +122,7 @@ module Spree
       self.marked_for_regenerate_products = false if !frozen? && only_once
     end
 
-    # Products matching the automatic rules (mirrors Spree::Taxon#products_matching_rules).
+    # Products matching the automatic rules (mirrors Spree::Category#products_matching_rules).
     #
     # @return [ActiveRecord::Relation]
     def products_matching_rules(opts = {})
@@ -178,7 +187,7 @@ module Spree
       end
     end
 
-    # Slug generation, flat (no parent hierarchy). Mirrors Spree::Taxon's dual set_permalink:
+    # Slug generation, flat (no parent hierarchy). Mirrors Spree::Category's dual set_permalink:
     # with translations off, the model writes the base permalink column directly (which
     # column_fallback routes the default locale to, bypassing the Translation before_save);
     # with translations on, each Translation generates its own. An existing permalink is

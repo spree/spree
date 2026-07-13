@@ -1,12 +1,8 @@
 module Spree
   module Products
-    class TouchTaxonsJob < ::Spree::BaseJob
-      queue_as Spree.queues.taxons
-
-      def perform(taxon_ids, taxonomy_ids)
-        Spree::Taxon.where(id: taxon_ids).update_all(updated_at: Time.current)
-        Spree::Taxonomy.where(id: taxonomy_ids).update_all(updated_at: Time.current)
-      end
-    end
+    # Deprecation alias for Spree::Products::TouchCategoriesJob, renamed in 6.0.
+    # Kept so any job enqueued under the old class name before the deploy still
+    # deserializes; removed in 6.1.
+    TouchTaxonsJob = TouchCategoriesJob
   end
 end

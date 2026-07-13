@@ -38,7 +38,7 @@ module Spree
         end
 
         def sort_options
-          Spree::Taxon::SORT_ORDERS.map { |id| { id: to_api_sort(id) } }
+          Spree::Collection::SORT_ORDERS.map { |id| { id: to_api_sort(id) } }
         end
 
         # Converts internal sort format ('price asc') to API format ('price', '-price')

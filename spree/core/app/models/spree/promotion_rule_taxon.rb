@@ -1,9 +1,7 @@
-module Spree
-  class PromotionRuleTaxon < Spree.base_class
-    belongs_to :promotion_rule, class_name: 'Spree::PromotionRule'
-    belongs_to :taxon, class_name: 'Spree::Taxon'
+# frozen_string_literal: true
 
-    validates :promotion_rule, :taxon, presence: true
-    validates :promotion_rule_id, uniqueness: { scope: :taxon_id }, allow_nil: true
-  end
+module Spree
+  # Deprecation alias for Spree::PromotionRuleCategory, renamed from
+  # Spree::PromotionRuleTaxon in 6.0. Kept for one release; removed in 6.1.
+  PromotionRuleTaxon = PromotionRuleCategory
 end

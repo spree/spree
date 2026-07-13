@@ -19,7 +19,7 @@ module Spree
             # Body: { product_id: 'prod_…' }
             def create
               product = product_scope.find_by_prefix_id!(params[:product_id])
-              Spree::Taxons::AddProducts.call(taxons: [@category], products: [product])
+              Spree::Categories::AddProducts.call(categories: [@category], products: [product])
               render json: serialize_resource(product), status: :created
             end
 
@@ -27,7 +27,7 @@ module Spree
             # Bulk removal goes through the existing
             # POST /products/bulk_remove_from_categories ({ ids, category_ids }).
             def destroy
-              Spree::Taxons::RemoveProducts.call(taxons: [@category], products: [@product])
+              Spree::Categories::RemoveProducts.call(categories: [@category], products: [@product])
               head :no_content
             end
 
@@ -56,9 +56,9 @@ module Spree
             # The category's products, ordered by classification position.
             def scope
               product_scope.
-                joins(:classifications).
-                where(Spree::Classification.table_name => { category_id: @category.id }).
-                order(Spree::Classification.table_name => { position: :asc })
+                joins(:product_categories).
+                where(Spree::ProductCategory.table_name => { category_id: @category.id }).
+                order(Spree::ProductCategory.table_name => { position: :asc })
             end
 
             # A product is classified at most once per taxon (unique [taxon_id,
@@ -88,7 +88,7 @@ module Spree
             end
 
             def classification_for(product)
-              Spree::Classification.find_by(category_id: @category.id, product_id: product.id)
+              Spree::ProductCategory.find_by(category_id: @category.id, product_id: product.id)
             end
           end
         end

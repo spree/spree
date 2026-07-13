@@ -50,7 +50,7 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
     subject { post :create, params: { taxon_id: taxon.to_param, ids: [product1.id, product2.id], format: :turbo_stream } }
 
     it 'creates classifications' do
-      expect { subject }.to change(Spree::Classification, :count).by(2)
+      expect { subject }.to change(Spree::ProductCategory, :count).by(2)
     end
 
     it 'returns a successful response' do
@@ -80,7 +80,7 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
     subject { delete :destroy, params: { taxon_id: taxon.to_param, id: classification.to_param, format: :turbo_stream } }
 
     it 'destroys the classification' do
-      expect { subject }.to change(Spree::Classification, :count).by(-1)
+      expect { subject }.to change(Spree::ProductCategory, :count).by(-1)
     end
 
     it 'returns a successful response' do

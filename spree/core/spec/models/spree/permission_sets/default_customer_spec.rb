@@ -24,7 +24,7 @@ RSpec.describe Spree::PermissionSets::DefaultCustomer do
       end
 
       it 'grants read access to Taxon' do
-        expect(ability.can?(:read, Spree::Taxon)).to be true
+        expect(ability.can?(:read, Spree::Category)).to be true
       end
 
       it 'grants read access to Store' do

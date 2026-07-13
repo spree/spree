@@ -9,7 +9,9 @@ module Spree
       does_not_contain
     ].freeze
 
-    belongs_to :taxon, class_name: 'Spree::Taxon', inverse_of: :taxon_rules, touch: true
+    # Category no longer declares the has_many :taxon_rules inverse (categories are
+    # manual in 6.0), so this is a plain belongs_to. Data-only until 6.1.
+    belongs_to :taxon, class_name: 'Spree::Category', touch: true
 
     validates :taxon, :type, :value, presence: true
     validates :match_policy, inclusion: { in: MATCH_POLICIES }, presence: true

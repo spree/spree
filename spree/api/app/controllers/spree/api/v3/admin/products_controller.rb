@@ -54,13 +54,13 @@ module Spree
           # POST /api/v3/admin/products/bulk_add_to_categories
           # Body: { ids: [...], category_ids: [...] }
           def bulk_add_to_categories
-            apply_categories(Spree::Taxons::AddProducts)
+            apply_categories(Spree::Categories::AddProducts)
           end
 
           # POST /api/v3/admin/products/bulk_remove_from_categories
           # Body: { ids: [...], category_ids: [...] }
           def bulk_remove_from_categories
-            apply_categories(Spree::Taxons::RemoveProducts)
+            apply_categories(Spree::Categories::RemoveProducts)
           end
 
           # POST /api/v3/admin/products/bulk_add_to_collections
@@ -234,7 +234,7 @@ module Spree
             categories = current_store.categories.
                          accessible_by(current_ability, :update).where(id: category_ids)
 
-            service.call(taxons: categories, products: bulk_collection)
+            service.call(categories: categories, products: bulk_collection)
 
             render json: { product_count: bulk_collection.size, category_count: categories.size }
           end

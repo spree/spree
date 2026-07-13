@@ -16,9 +16,9 @@ module Spree
         can [:read, :admin], Spree::OptionValue
         can [:read, :admin], Spree::Metafield
         can [:read, :admin], Spree::Collection
-        can [:read, :admin], Spree::Taxon
+        can [:read, :admin], Spree::Category
         can [:read, :admin], Spree::Taxonomy
-        can [:read, :admin], Spree::Classification
+        can [:read, :admin], Spree::ProductCategory
         can [:read, :admin], Spree::Price
         can [:read, :admin], Spree::PriceList
         can [:read, :admin], Spree::PriceRule

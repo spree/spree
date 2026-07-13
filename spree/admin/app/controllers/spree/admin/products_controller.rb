@@ -103,14 +103,14 @@ module Spree
 
       def bulk_remove_from_taxons
         taxons = current_store.taxons.accessible_by(current_ability, :manage).where(id: params[:taxon_ids])
-        Spree::Taxons::RemoveProducts.call(taxons: taxons, products: bulk_collection)
+        Spree::Categories::RemoveProducts.call(categories: taxons, products: bulk_collection)
 
         handle_bulk_operation_response
       end
 
       def bulk_add_to_taxons
         taxons = current_store.taxons.accessible_by(current_ability, :manage).where(id: params[:taxon_ids])
-        Spree::Taxons::AddProducts.call(taxons: taxons, products: bulk_collection)
+        Spree::Categories::AddProducts.call(categories: taxons, products: bulk_collection)
 
         handle_bulk_operation_response
       end

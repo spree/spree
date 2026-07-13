@@ -174,7 +174,7 @@ describe Spree::Ability, type: :model do
     end
 
     context 'for Taxons' do
-      let(:resource) { Spree::Taxon.new }
+      let(:resource) { Spree::Category.new }
 
       context 'requested by any user' do
         it_behaves_like 'read only'

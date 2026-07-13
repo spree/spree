@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Taxon, type: :model do
+describe Spree::Category, type: :model do
   let(:store) { @default_store }
   let(:taxonomy) { store.taxonomies.first || create(:taxonomy, store: store) }
   let(:taxon) { build(:taxon, name: 'Ruby on Rails', parent: nil) }
@@ -42,16 +42,15 @@ describe Spree::Taxon, type: :model do
 
   context 'Store ownership' do
     describe '#requires_taxonomy?' do
-      it 'is true for a legacy taxon' do
-        expect(described_class.new.requires_taxonomy?).to be(true)
+      it 'is false — a Category is owned via store_id, not a taxonomy' do
+        expect(described_class.new.requires_taxonomy?).to be(false)
       end
     end
 
     describe 'taxonomy presence' do
-      it 'requires a taxonomy' do
-        legacy = described_class.new(name: 'Legacy')
-        expect(legacy).not_to be_valid
-        expect(legacy.errors[:taxonomy]).to be_present
+      it 'is valid without a taxonomy when store-owned' do
+        category = described_class.new(name: 'Standalone', store: store)
+        expect(category).to be_valid
       end
     end
 
@@ -680,135 +679,4 @@ describe Spree::Taxon, type: :model do
     end
   end
 
-  describe '#products_matching_rules' do
-    context 'when the taxon is manual' do
-      let(:taxon) { create(:taxon) }
-
-      it 'returns an empty taxon' do
-        expect(taxon.reload.products_matching_rules).to be_empty
-      end
-    end
-
-    context 'when the taxon is automatic' do
-      let(:taxon) { create(:automatic_taxon) }
-
-      context 'when the taxon has no rules' do
-        it 'returns an empty taxon' do
-          expect(taxon.reload.products_matching_rules).to be_empty
-        end
-      end
-
-      context 'when the taxon has rules' do
-        context 'when the rule is a tag rule' do
-          let(:cruelty_free_tag) { ActsAsTaggableOn::Tag.create(name: 'cruelty-free') }
-          let(:discounted_tag) { ActsAsTaggableOn::Tag.create(name: 'discounted') }
-          let(:other_tag) { ActsAsTaggableOn::Tag.create(name: 'other') }
-          let!(:cruelty_free_product) { create(:product, tags: [cruelty_free_tag]) }
-          let!(:discounted_product) { create(:product, tags: [discounted_tag]) }
-          let!(:both_tags_product) { create(:product, tags: [cruelty_free_tag, discounted_tag]) }
-          let!(:other_product) { create(:product, tags: [other_tag]) }
-
-          context 'when the match policy is is_equal_to' do
-            it 'returns products that match cruelty-free tag' do
-              create(:tag_taxon_rule, taxon: taxon, value: cruelty_free_tag.name)
-
-              expect(taxon.reload.products_matching_rules).to contain_exactly(cruelty_free_product, both_tags_product)
-            end
-
-            it 'returns products that match discounted tag' do
-              create(:tag_taxon_rule, taxon: taxon, value: discounted_tag.name)
-
-              expect(taxon.reload.products_matching_rules).to contain_exactly(discounted_product, both_tags_product)
-            end
-
-            context 'with all rules match policy' do
-              it 'returns products that match both tags' do
-                create(:tag_taxon_rule, taxon: taxon, value: cruelty_free_tag.name)
-                create(:tag_taxon_rule, taxon: taxon, value: discounted_tag.name)
-
-                expect(taxon.reload.products_matching_rules).to contain_exactly(both_tags_product)
-              end
-            end
-
-            context 'with any rules match policy' do
-              let(:taxon) { create(:automatic_taxon, :any_match_policy) }
-
-              it 'returns products that match any tag' do
-                create(:tag_taxon_rule, taxon: taxon, value: cruelty_free_tag.name)
-                create(:tag_taxon_rule, taxon: taxon, value: discounted_tag.name)
-
-                expect(taxon.reload.products_matching_rules).to contain_exactly(cruelty_free_product, discounted_product, both_tags_product)
-              end
-            end
-          end
-
-          context 'when the match policy is is_not_equal_to' do
-            it 'returns products that do not match cruelty-free tag' do
-              create(:tag_taxon_rule, :is_not_equal_to, taxon: taxon, value: cruelty_free_tag.name)
-
-              expect(taxon.reload.products_matching_rules).to contain_exactly(discounted_product, other_product)
-            end
-
-            it 'returns products that do not match discounted tag' do
-              create(:tag_taxon_rule, :is_not_equal_to, taxon: taxon, value: discounted_tag.name)
-
-              expect(taxon.reload.products_matching_rules).to contain_exactly(cruelty_free_product, other_product)
-            end
-
-            context 'with all rules match policy' do
-              it 'returns products that do not match both tags' do
-                create(:tag_taxon_rule, :is_not_equal_to, taxon: taxon, value: cruelty_free_tag.name)
-                create(:tag_taxon_rule, :is_not_equal_to, taxon: taxon, value: discounted_tag.name)
-
-                expect(taxon.reload.products_matching_rules).to contain_exactly(other_product)
-              end
-            end
-
-            context 'with any rules match policy' do
-              let(:taxon) { create(:automatic_taxon, :any_match_policy) }
-
-              it 'returns products that do not match any tag' do
-                create(:tag_taxon_rule, :is_not_equal_to, taxon: taxon, value: cruelty_free_tag.name)
-                create(:tag_taxon_rule, :is_not_equal_to, taxon: taxon, value: discounted_tag.name)
-
-                expect(taxon.reload.products_matching_rules).to contain_exactly(cruelty_free_product, discounted_product, other_product)
-              end
-            end
-          end
-        end
-
-        context 'when the rule is a sale rule' do
-          let!(:product_with_master_on_sale) { create(:product, price: 10, compare_at_price: 12) }
-          let!(:product_with_one_variant_on_sale) do
-            create(:product).tap do |p|
-              create(:variant, product: p, price: 10, compare_at_price: 12)
-              create(:variant, product: p, price: 10)
-            end
-          end
-          let!(:product_on_sale_with_different_currency) do
-            create(:product, price: 10).tap do |p|
-              p.master.prices.create(amount: 10, compare_at_amount: 12, currency: 'PLN')
-            end
-          end
-          let!(:product_not_on_sale) { create(:product, price: 10) }
-
-          context 'when the match policy is is_equal_to' do
-            it 'matches products that are on sale in store\'s currency' do
-              create(:sale_taxon_rule, taxon: taxon)
-
-              expect(taxon.reload.products_matching_rules).to contain_exactly(product_with_master_on_sale, product_with_one_variant_on_sale)
-            end
-          end
-
-          context 'when the match policy is in_not_equal_to' do
-            it 'matches products that aren\'t on sale and have price in store\'s currency' do
-              create(:sale_taxon_rule, :is_not_equal_to, taxon: taxon)
-
-              expect(taxon.reload.products_matching_rules).to contain_exactly(product_not_on_sale, product_on_sale_with_different_currency)
-            end
-          end
-        end
-      end
-    end
-  end
 end

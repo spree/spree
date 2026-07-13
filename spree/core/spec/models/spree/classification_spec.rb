@@ -28,7 +28,7 @@ module Spree
 
     it 'has a valid fixtures' do
       expect positions_to_be_valid(taxon_with_5_products)
-      expect(Spree::Classification.count).to eq 5
+      expect(Spree::ProductCategory.count).to eq 5
     end
 
     context 'removing product from taxon' do
@@ -142,7 +142,7 @@ module Spree
       end
     end
 
-    describe '.grouped_taxon_ids_for_products' do
+    describe '.grouped_category_ids_for_products' do
       let(:taxon1) { create(:taxon) }
       let(:taxon2) { create(:taxon) }
       let(:taxon3) { create(:taxon) }
@@ -156,14 +156,14 @@ module Spree
       let(:taxon_groups) { [taxon1.id, taxon2.id, taxon3.id] }
 
       it 'returns the correct taxon ids' do
-        expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq(expected_result)
+        expect(described_class.grouped_category_ids_for_products(product_ids, taxon_groups)).to eq(expected_result)
       end
 
       context 'when empty taxon groups' do
         let(:taxon_groups) { [] }
 
         it 'returns an empty array' do
-          expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq([])
+          expect(described_class.grouped_category_ids_for_products(product_ids, taxon_groups)).to eq([])
         end
       end
 
@@ -171,7 +171,7 @@ module Spree
         let(:product_ids) { [] }
 
         it 'returns an empty array' do
-          expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq([])
+          expect(described_class.grouped_category_ids_for_products(product_ids, taxon_groups)).to eq([])
         end
       end
     end

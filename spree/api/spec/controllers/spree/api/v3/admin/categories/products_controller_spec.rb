@@ -10,7 +10,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
   before { request.headers.merge!(headers) }
 
   def classified_ids
-    Spree::Classification.where(category_id: category.id).order(:position).pluck(:product_id)
+    Spree::ProductCategory.where(category_id: category.id).order(:position).pluck(:product_id)
   end
 
   describe 'GET #index' do
@@ -21,11 +21,11 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
     let!(:other_category) { Spree::Category.create!(name: 'Other', store: store) }
 
     before do
-      Spree::Classification.create!(taxon: category, product: product_b, position: 1)
-      Spree::Classification.create!(taxon: category, product: product_a, position: 2)
-      Spree::Classification.create!(taxon: category, product: product_c, position: 3)
+      Spree::ProductCategory.create!(taxon: category, product: product_b, position: 1)
+      Spree::ProductCategory.create!(taxon: category, product: product_a, position: 2)
+      Spree::ProductCategory.create!(taxon: category, product: product_c, position: 3)
       # A product in a different category must not leak into this list.
-      Spree::Classification.create!(taxon: other_category, product: other_category_product, position: 1)
+      Spree::ProductCategory.create!(taxon: other_category, product: other_category_product, position: 1)
     end
 
     it 'lists only the category products, ordered by classification position' do
@@ -69,7 +69,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
   describe 'DELETE #destroy' do
     let!(:product) { create(:product, stores: [store]) }
 
-    before { Spree::Classification.create!(taxon: category, product: product, position: 1) }
+    before { Spree::ProductCategory.create!(taxon: category, product: product, position: 1) }
 
     it 'removes the product from the category' do
       delete :destroy, params: { category_id: category.prefixed_id, id: product.prefixed_id }, as: :json
@@ -92,9 +92,9 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
     let!(:third)  { create(:product, stores: [store]) }
 
     before do
-      Spree::Classification.create!(taxon: category, product: first, position: 1)
-      Spree::Classification.create!(taxon: category, product: second, position: 2)
-      Spree::Classification.create!(taxon: category, product: third, position: 3)
+      Spree::ProductCategory.create!(taxon: category, product: first, position: 1)
+      Spree::ProductCategory.create!(taxon: category, product: second, position: 2)
+      Spree::ProductCategory.create!(taxon: category, product: third, position: 3)
     end
 
     it 'moves a product to the requested index' do

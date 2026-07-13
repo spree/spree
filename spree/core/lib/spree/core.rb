@@ -103,7 +103,7 @@ module Spree
       products: :default,
       reports: :default,
       variants: :default,
-      taxons: :default,
+      categories: :default,
       collections: :default,
       stock_location_stock_items: :default,
       coupon_codes: :default,

@@ -42,9 +42,9 @@ module Spree
 
     publishes_lifecycle_events
 
-    MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors
+    MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids category_and_ancestors
                           default_variant_id tax_category default_variant variant_for_images
-                          brand_taxon main_taxon
+                          primary_category
                           purchasable? in_stock? backorderable? digital?]
 
     STATUSES = %w[draft active archived].freeze
@@ -69,10 +69,34 @@ module Spree
 
     has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
-    has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
-    has_many :taxons, through: :classifications, before_remove: :remove_taxon
-    has_many :categories, through: :classifications, class_name: 'Spree::Category', source: :taxon
-    has_many :taxonomies, through: :taxons
+    has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory', dependent: :delete_all, inverse_of: :product
+    has_many :categories, -> { manual }, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
+    has_many :taxonomies, through: :categories
+
+    # @deprecated The classification_count column was renamed to categories_count in 6.0.
+    alias_attribute :classification_count, :categories_count
+
+    # @deprecated Use #product_categories; removed in 6.1.
+    def classifications
+      product_categories
+    end
+
+    # @deprecated Use #categories / #category_ids; removed in 6.1.
+    def taxons
+      categories
+    end
+
+    def taxons=(value)
+      self.categories = value
+    end
+
+    def taxon_ids
+      category_ids
+    end
+
+    def taxon_ids=(ids)
+      self.category_ids = ids
+    end
 
     has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :product
     has_many :collections, through: :product_collections
@@ -142,7 +166,7 @@ module Spree
     after_save :save_master
     after_save :run_touch_callbacks, if: :anything_changed?
     after_save :reset_nested_changes
-    after_touch :touch_taxons
+    after_touch :touch_categories
 
     after_commit :auto_match_collections, if: :eligible_for_collection_matching?
 
@@ -214,21 +238,20 @@ module Spree
       find_or_build_master.prices = prices_params
     end
 
-    # Maps 6.0 API name (category_ids) to model column (taxon_ids).
-    # Accepts both prefixed IDs and raw integer IDs. Only taxons belonging to
-    # the product's own store are assigned — ids from another store's
-    # taxonomies are dropped, preventing cross-store category attachment.
+    # Accepts both prefixed IDs and raw integer IDs. Only categories belonging to
+    # the product's own store are assigned — ids from another store are dropped,
+    # preventing cross-store category attachment. Decodes prefixed IDs, then calls
+    # the generated setter via super.
     def category_ids=(ids)
       decoded_ids = Array(ids).filter_map do |id|
-        id.to_s.include?('_') ? Spree::Taxon.decode_prefixed_id(id) : id
+        id.to_s.include?('_') ? Spree::Category.decode_prefixed_id(id) : id
       end
-      self.taxon_ids = Spree::Taxon.for_store(assignable_store).where(id: decoded_ids).ids
+      super(Spree::Category.for_store(assignable_store).where(id: decoded_ids).ids)
     end
 
     # Accepts both prefixed IDs and raw integer IDs. Only collections belonging
-    # to the product's own store are assigned. `collections` is a direct
-    # has_many :through, so this overrides the generated setter and calls super
-    # (unlike #category_ids=, which writes through to the sibling taxon_ids).
+    # to the product's own store are assigned; this overrides the generated setter
+    # and calls super.
     def collection_ids=(ids)
       decoded_ids = Array(ids).filter_map do |id|
         id.to_s.include?('_') ? Spree::Collection.decode_prefixed_id(id) : id
@@ -280,8 +303,8 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
-    self.whitelisted_ransackable_associations = %w[taxons categories collections store channels variants_including_master master variants tags labels
-                                                   shipping_category classifications option_types]
+    self.whitelisted_ransackable_associations = %w[categories collections store channels variants_including_master master variants tags labels
+                                                   shipping_category product_categories option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories in_collection price_between
                                              price_lte price_gte
                                              search multi_search in_stock out_of_stock with_option_value_ids
@@ -612,45 +635,17 @@ module Spree
       super || variants_including_master.with_deleted.find_by(is_master: true)
     end
 
-    # Returns the brand taxon for the product
-    # @return [Spree::Taxon]
-    def brand_taxon
-      @brand_taxon ||= if categories_count.zero?
-                         nil
-                       elsif Spree.use_translations?
-                         taxons.joins(:taxonomy).
-                           join_translation_table(Taxonomy).
-                           find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
-                       elsif taxons.loaded?
-                         taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
-                       else
-                         taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
-                       end
-    end
-
-    # Returns the brand name for the product
-    # @return [String]
-    def brand_name
-      brand_taxon&.name
-    end
-
-    def main_taxon
+    # The product's primary category — the first manually-assigned category.
+    # Renamed from #main_taxon in 6.0.
+    def primary_category
       return if categories_count.zero?
 
-      @main_taxon ||= taxons.first
-    end
-
-    # First category (the main_taxon -> primary_category rename). main_taxon is
-    # retained until the Phase 4 taxon->category sweep — reports and CSV
-    # presenters still call it.
-    def primary_category
       @primary_category ||= categories.first
     end
 
-    def taxons_for_store(store)
-      return if categories_count.zero?
-
-      taxons.loaded? ? taxons.find_all { |taxon| taxon.taxonomy.store_id == store.id } : taxons.for_store(store)
+    # @deprecated Use {#primary_category}.
+    def main_taxon
+      primary_category
     end
 
     def any_variant_in_stock_or_backorderable?
@@ -693,8 +688,8 @@ module Spree
       metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
         metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
       end
-      taxons_for_csv ||= taxons.manual.reorder(depth: :desc).first(3).pluck(:pretty_name)
-      taxons_for_csv.fill(nil, taxons_for_csv.size...3)
+      categories_for_csv ||= categories.reorder(depth: :desc).first(3).pluck(:pretty_name)
+      categories_for_csv.fill(nil, categories_for_csv.size...3)
 
       csv_lines = []
       all_variants = has_variants? ? variants_including_master.to_a : [master]
@@ -703,7 +698,7 @@ module Spree
 
       # Primary rows in the store's default currency
       all_variants.each_with_index do |variant, index|
-        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store,
+        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, categories_for_csv, store,
                                                              metafields_for_csv).call
       end
 
@@ -870,7 +865,7 @@ module Spree
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
         self.option_types = prototype.option_types
-        self.taxons = prototype.taxons
+        self.categories = prototype.taxons
       end
     end
 
@@ -975,16 +970,16 @@ module Spree
       run_callbacks(:touch)
     end
 
-    def taxon_and_ancestors
-      @taxon_and_ancestors ||= taxons.map(&:self_and_ancestors).flatten.uniq
+    def category_and_ancestors
+      @category_and_ancestors ||= categories.map(&:self_and_ancestors).flatten.uniq
     end
 
-    # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
-    def touch_taxons
-      if taxons.any?
-        Spree::Products::TouchTaxonsJob.
+    # Iterate through this product's categories and taxonomies and touch their timestamps in a batch
+    def touch_categories
+      if categories.any?
+        Spree::Products::TouchCategoriesJob.
           set(wait: 5.seconds).
-          perform_later(taxon_and_ancestors.map(&:id), taxonomy_ids.uniq)
+          perform_later(category_and_ancestors.map(&:id), taxonomy_ids.uniq)
       end
     end
 
@@ -995,9 +990,9 @@ module Spree
       end
     end
 
-    def remove_taxon(taxon)
-      removed_classifications = classifications.where(taxon: taxon)
-      removed_classifications.each(&:remove_from_list)
+    def remove_category(category)
+      removed_product_categories = product_categories.where(category: category)
+      removed_product_categories.each(&:remove_from_list)
     end
 
     def discontinue_on_must_be_later_than_make_active_at

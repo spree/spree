@@ -8,7 +8,7 @@ module Spree
     has_many :option_types, through: :option_type_prototypes, class_name: 'Spree::OptionType'
 
     has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon'
-    has_many :taxons, through: :prototype_taxons, class_name: 'Spree::Taxon'
+    has_many :taxons, through: :prototype_taxons, class_name: 'Spree::Category'
 
     validates :name, presence: true
   end

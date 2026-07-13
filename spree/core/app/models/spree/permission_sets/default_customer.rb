@@ -18,7 +18,7 @@ module Spree
         can :read, Spree::Product
         can :read, Spree::State
         can :read, Spree::Store
-        can :read, Spree::Taxon
+        can :read, Spree::Category
         can :read, Spree::Taxonomy
         can :read, Spree::Variant
         can :read, Spree::Zone

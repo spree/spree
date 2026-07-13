@@ -1,4 +1,7 @@
 module Spree
+  # @deprecated Taxonomy is retained in 6.0 only to back not-yet-migrated
+  #   categories (the taxonomy_id fallback). Categories are now store-owned via
+  #   store_id; Taxonomy and the spree_taxonomies table are dropped in 6.1.
   class Taxonomy < Spree.base_class
     has_prefix_id :txnmy  # Spree-specific: taxonomy
 
@@ -15,8 +18,8 @@ module Spree
     validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :store_id }
     validates :store, presence: true
 
-    has_many :taxons, inverse_of: :taxonomy
-    has_one :root, -> { where parent_id: nil }, class_name: 'Spree::Taxon', dependent: :destroy
+    has_many :taxons, class_name: 'Spree::Category', inverse_of: :taxonomy
+    has_one :root, -> { where parent_id: nil }, class_name: 'Spree::Category', dependent: :destroy
     belongs_to :store, class_name: 'Spree::Store'
 
     after_create :set_root

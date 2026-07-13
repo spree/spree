@@ -4,7 +4,6 @@ module Spree
       attribute :sku, :string
       attribute :name, :string
       attribute :vendor, :string
-      attribute :brand, :string
       attribute :category_lvl0, :string
       attribute :category_lvl1, :string
       attribute :category_lvl2, :string
@@ -20,10 +19,6 @@ module Spree
 
       def vendor
         record.try(:vendor_name)
-      end
-
-      def brand
-        record.try(:brand_name)
       end
 
       def category_lvl0
@@ -69,7 +64,7 @@ module Spree
       end
 
       def mapped_categories
-        @mapped_categories ||= record.main_taxon&.pretty_name&.split('->')&.map(&:strip)
+        @mapped_categories ||= record.primary_category&.pretty_name&.split('->')&.map(&:strip)
       end
     end
   end

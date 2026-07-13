@@ -56,14 +56,14 @@ module Spree
           end
 
           # Translatable by class hierarchy, not strict equality, so a subclass
-          # instance (e.g. Spree::Category < Spree::Taxon) passes when its base
+          # instance (e.g. Spree::Category < Spree::Category) passes when its base
           # is registered.
           def ensure_translatable!
             # Compare by class NAME, not object identity: in dev the registry is
             # populated at boot, but the model constants are reloaded on edits,
             # so `is_a?(registered_class)` fails against a stale class object even
             # when @parent's live class (or an ancestor) matches by name. Walk the
-            # ancestor names so a subclass (Spree::Category < Spree::Taxon) passes.
+            # ancestor names so a subclass (Spree::Category < Spree::Category) passes.
             registered = Spree.translatable_resources.map(&:name).to_set
             translatable = @parent.class.ancestors.any? { |ancestor| registered.include?(ancestor.name) }
             raise ActiveRecord::RecordNotFound unless translatable
@@ -78,7 +78,7 @@ module Spree
           def parent_route_map
             @parent_route_map ||= Spree.translatable_resources.each_with_object({}) do |klass, m|
               m[klass.model_name.element.to_s] = klass.name
-            end.merge('category' => 'Spree::Taxon')
+            end.merge('category' => 'Spree::Category')
           end
 
           def parent_lookup

@@ -190,7 +190,7 @@ module Spree
           Spree::Promotion::Rules::FirstOrder,
           Spree::Promotion::Rules::UserLoggedIn,
           Spree::Promotion::Rules::OneUsePerUser,
-          Spree::Promotion::Rules::Taxon,
+          Spree::Promotion::Rules::Category,
           Spree::Promotion::Rules::OptionValue,
         ]
 
@@ -267,7 +267,7 @@ module Spree
           Spree::OptionValue,
           Spree::Product,
           Spree::Collection,
-          Spree::Taxon,
+          Spree::Category,
           Spree::Taxonomy,
           Spree::Store,
           Spree::Policy
@@ -320,7 +320,7 @@ module Spree
           Spree::Store,
           Spree::StoreCredit,
           Spree::TaxRate,
-          Spree::Taxon,
+          Spree::Category,
           Spree::Taxonomy,
           Spree::Variant,
           Spree.user_class

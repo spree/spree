@@ -9,7 +9,7 @@ namespace :spree do
 
         product.update_columns(
           variant_count: product.variants.count,
-          categories_count: product.classifications.count,
+          categories_count: product.product_categories.count,
           media_count: total_media,
           updated_at: Time.current
         )

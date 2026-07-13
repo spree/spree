@@ -464,8 +464,8 @@ module Spree
 
       def build_category_facet(distribution)
         prefixed_ids = distribution.keys
-        raw_ids = prefixed_ids.filter_map { |pid| Spree::Taxon.decode_prefixed_id(pid) }
-        categories = Spree::Taxon.where(id: raw_ids).index_by(&:prefixed_id)
+        raw_ids = prefixed_ids.filter_map { |pid| Spree::Category.decode_prefixed_id(pid) }
+        categories = Spree::Category.where(id: raw_ids).index_by(&:prefixed_id)
 
         {
           id: 'categories',

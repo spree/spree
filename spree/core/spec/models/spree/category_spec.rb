@@ -24,7 +24,7 @@ RSpec.describe Spree::Category, type: :model do
     it 'decrements ancestors when a subcategory is destroyed' do
       parent = described_class.create!(name: 'Electronics', store: store)
       child = described_class.create!(name: 'Phones', parent: parent)
-      Spree::Classification.create!(taxon: child, product: create(:product, stores: [store]))
+      Spree::ProductCategory.create!(taxon: child, product: create(:product, stores: [store]))
       expect(parent.reload.products_count).to eq(1)
 
       child.destroy
@@ -36,8 +36,8 @@ RSpec.describe Spree::Category, type: :model do
       parent = described_class.create!(name: 'Electronics', store: store)
       phones = described_class.create!(name: 'Phones', parent: parent)
       laptops = described_class.create!(name: 'Laptops', parent: parent)
-      Spree::Classification.create!(taxon: phones, product: create(:product, stores: [store]))
-      Spree::Classification.create!(taxon: laptops, product: create(:product, stores: [store]))
+      Spree::ProductCategory.create!(taxon: phones, product: create(:product, stores: [store]))
+      Spree::ProductCategory.create!(taxon: laptops, product: create(:product, stores: [store]))
       expect(parent.reload.products_count).to eq(2)
 
       phones.destroy
@@ -49,7 +49,7 @@ RSpec.describe Spree::Category, type: :model do
       root = described_class.create!(name: 'Root', store: store)
       mid = described_class.create!(name: 'Mid', parent: root)
       leaf = described_class.create!(name: 'Leaf', parent: mid)
-      Spree::Classification.create!(taxon: leaf, product: create(:product, stores: [store]))
+      Spree::ProductCategory.create!(taxon: leaf, product: create(:product, stores: [store]))
       expect(root.reload.products_count).to eq(1)
 
       mid.destroy # removes the mid + leaf subtree
@@ -62,8 +62,8 @@ RSpec.describe Spree::Category, type: :model do
       a = described_class.create!(name: 'A', parent: root)
       b = described_class.create!(name: 'B', parent: root)
       product = create(:product, stores: [store])
-      Spree::Classification.create!(taxon: a, product: product)
-      Spree::Classification.create!(taxon: b, product: product)
+      Spree::ProductCategory.create!(taxon: a, product: product)
+      Spree::ProductCategory.create!(taxon: b, product: product)
       expect(root.reload.products_count).to eq(1)
 
       a.destroy
@@ -163,7 +163,7 @@ RSpec.describe Spree::Category, type: :model do
     let(:laptops) { described_class.create!(name: 'Laptops', parent: electronics) }
 
     def add(product, category)
-      Spree::Taxons::AddProducts.call(taxons: [category], products: [product])
+      Spree::Categories::AddProducts.call(categories: [category], products: [product])
     end
 
     it 'counts a directly-assigned product on the category' do
@@ -196,7 +196,7 @@ RSpec.describe Spree::Category, type: :model do
       add(product, phones)
       expect(electronics.reload.products_count).to eq(1)
 
-      Spree::Taxons::RemoveProducts.call(taxons: [phones], products: [product])
+      Spree::Categories::RemoveProducts.call(categories: [phones], products: [product])
 
       expect(electronics.reload.products_count).to eq(0)
       expect(phones.reload.products_count).to eq(0)
@@ -204,7 +204,7 @@ RSpec.describe Spree::Category, type: :model do
 
     it 'maintains the count on a direct Classification create/destroy' do
       product = create(:product, stores: [store])
-      classification = Spree::Classification.create!(taxon: phones, product: product)
+      classification = Spree::ProductCategory.create!(taxon: phones, product: product)
       expect(electronics.reload.products_count).to eq(1)
 
       classification.destroy

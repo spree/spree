@@ -171,7 +171,7 @@ Rails.application.config.after_initialize do
                                                     body: 'admin.bulk_ops.products.body.add_to_taxons',
                                                     form_partial: 'spree/admin/bulk_operations/forms/taxon_picker',
                                                     position: 40,
-                                                    condition: -> { can?(:manage, Spree::Classification) }
+                                                    condition: -> { can?(:manage, Spree::ProductCategory) }
 
   Spree.admin.tables.products.add_bulk_action :remove_from_taxons,
                                                     label: 'admin.bulk_ops.products.title.remove_from_taxons',
@@ -180,7 +180,7 @@ Rails.application.config.after_initialize do
                                                     body: 'admin.bulk_ops.products.body.remove_from_taxons',
                                                     form_partial: 'spree/admin/bulk_operations/forms/taxon_picker',
                                                     position: 50,
-                                                    condition: -> { can?(:manage, Spree::Classification) }
+                                                    condition: -> { can?(:manage, Spree::ProductCategory) }
 
   Spree.admin.tables.products.add_bulk_action :add_tags,
                                                     label: 'admin.bulk_ops.products.title.add_tags',

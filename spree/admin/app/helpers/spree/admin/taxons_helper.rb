@@ -15,7 +15,7 @@ module Spree
       end
 
       def taxon_sort_options_for_select
-        @taxon_sort_options_for_select ||= Spree::Taxon::SORT_ORDERS.map do |sort_order|
+        @taxon_sort_options_for_select ||= Spree::Category::SORT_ORDERS.map do |sort_order|
           [
             Spree.t("products_sort_options.#{sort_order.underscore}"),
             sort_order

@@ -1,4 +1,4 @@
-<% if can?(:manage, Spree::Classification) || can?(:manage, ActsAsTaggableOn::Tag) %>
+<% if can?(:manage, Spree::ProductCategory) || can?(:manage, ActsAsTaggableOn::Tag) %>
   <div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title">
@@ -7,7 +7,7 @@
     </div>
     <div class="card-body">
       <div class="form-group">
-        <% if can? :manage, Spree::Classification %>
+        <% if can? :manage, Spree::ProductCategory %>
           <%= f.label :taxon_ids, Spree.t(:taxonomies) %>
 
           <%= tom_select_tag 'product[taxon_ids]',
