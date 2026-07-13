@@ -4,7 +4,7 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :channel, :market, :currency, :locale, :zone, :default_tax_zone, :price_lists, :global_pricing_context
+    attribute :store, :channel, :market, :currency, :locale, :content_locale, :zone, :default_tax_zone, :price_lists, :global_pricing_context
 
     resets { @default_tax_zone_loaded = false }
 
@@ -36,6 +36,17 @@ module Spree
     # @return [String] locale code, e.g. +"en"+, +"de"+
     def locale
       super || market&.default_locale.presence || store&.default_locale.presence || I18n.default_locale.to_s
+    end
+
+    # Returns the locale that base (untranslated) record columns are authored
+    # in for the current request — the current store's default locale. It is
+    # assigned per request alongside +I18n.locale+ and must never be written
+    # to the process-global +I18n.default_locale+, which every thread in the
+    # server process shares. Outside a request it falls back to the
+    # application default locale.
+    # @return [String] locale code, e.g. +"en"+, +"de"+
+    def content_locale
+      super.presence || I18n.default_locale.name
     end
 
     # Returns the current tax zone.

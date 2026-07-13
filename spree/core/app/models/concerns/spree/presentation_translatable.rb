@@ -11,7 +11,7 @@ module Spree
     TRANSLATABLE_FIELDS = %i[presentation].freeze
 
     included do
-      translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+      translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
       self::Translation.class_eval do
         normalizes :presentation, with: ->(value) { value&.to_s&.squish&.presence }

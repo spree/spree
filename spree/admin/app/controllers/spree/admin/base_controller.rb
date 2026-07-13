@@ -88,16 +88,12 @@ module Spree
       end
 
       # Set the UI language (`I18n.locale`, via super) while keeping content
-      # reads on the store's locale — see Spree::Admin::LocaleConcern.
-      #
-      # `super` derives `I18n.default_locale` from the overridden `default_locale`
-      # (the admin UI language), but `I18n.default_locale` must track the store's
-      # *content* locale so it matches `Mobility.locale`; otherwise Mobility JOINs
-      # the translations table instead of the base column and ordered + `DISTINCT`
-      # listings raise. Re-align it immediately after `super`.
+      # reads on the store's locale — see Spree::Admin::LocaleConcern. `super`
+      # records the content locale in `Spree::Current` (the admin overrides
+      # `default_locale` to the UI language, but `content_locale` stays on the
+      # store's default), and `pin_content_locale!` aligns Mobility with it.
       def set_locale
         super
-        align_i18n_default_locale_to_content!
         pin_content_locale!
         sync_pagy_locale!
       end

@@ -28,7 +28,7 @@ module Spree
     #
     TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title customer_support_email
                              address contact_phone].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
     self::Translation.class_eval do
       acts_as_paranoid
       # deleted translation values still need to be accessible - remove deleted_at scope

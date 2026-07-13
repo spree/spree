@@ -65,6 +65,18 @@ module Spree
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
       end
 
+      # I18n's config lives in fiber/thread-local storage that survives across
+      # requests on reused server threads, so a request that never assigns its
+      # own locale would render in whatever locale the previous request on the
+      # same thread set. The i18n gem ships a middleware that resets it after
+      # every request; Rails does not install it by default. Mobility's request
+      # state needs no counterpart here — Mobility.locale and Spree's
+      # Mobility.store_based_fallbacks live in RequestStore, which is cleared
+      # per request by request_store's own middleware.
+      initializer 'spree.locale_state_reset' do |app|
+        app.middleware.use ::I18n::Middleware
+      end
+
       initializer 'spree.register.subscribers', before: :load_config_initializers do |app|
         # Initialize subscribers array early so engines can add subscribers via initializers
         app.config.spree.subscribers = []
