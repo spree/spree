@@ -7,7 +7,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
 
   let!(:order) { create(:order, store: store, user: user) }
   let!(:product) { create(:product) }
-  let!(:variant) { product.master }
+  let!(:variant) { product.default_variant }
   let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
   let(:cart_id) { order.prefixed_id }
 
@@ -41,7 +41,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
 
       response '201', 'item added, returns updated cart' do
         let(:new_product) { create(:product) }
-        let(:new_variant) { new_product.master }
+        let(:new_variant) { new_product.default_variant }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { variant_id: new_variant.prefixed_id, quantity: 2 } }
@@ -58,7 +58,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
 
       response '201', 'item added with metadata' do
         let(:new_product) { create(:product) }
-        let(:new_variant) { new_product.master }
+        let(:new_variant) { new_product.default_variant }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { variant_id: new_variant.prefixed_id, quantity: 1, metadata: { gift_message: 'Happy Birthday!' } } }

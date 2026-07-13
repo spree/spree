@@ -52,7 +52,7 @@ module Spree
       def by_price(scope)
         return scope unless (value = sort_by?('price'))
 
-        scope.joins(product: { variants_including_master: :prices }).
+        scope.joins(product: { variants: :prices }).
           select("#{Spree::ProductCategory.table_name}.*, min(#{Spree::Price.table_name}.amount)").
           distinct.
           where(spree_prices: { currency: currency }).

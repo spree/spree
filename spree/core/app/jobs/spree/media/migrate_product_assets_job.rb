@@ -5,13 +5,12 @@ module Spree
       queue_as Spree.queues.images
 
       def perform(product_id)
-        product = Spree::Product.includes(:master, :variants).find_by(id: product_id)
+        product = Spree::Product.includes(:variants).find_by(id: product_id)
         return unless product
 
-        # One query for all variant-pinned assets on the product (master +
-        # non-master). Grouping by viewable_id avoids N queries per variant.
+        # One query for all variant-pinned assets on the product. Grouping by
+        # viewable_id avoids N queries per variant.
         viewable_ids = product.variants.map(&:id)
-        viewable_ids << product.master.id if product.master
         return if viewable_ids.empty?
 
         assets_by_variant = Spree::Asset
@@ -21,7 +20,6 @@ module Spree
                               .transform_values { |rows| rows.map(&:first) }
         return if assets_by_variant.empty?
 
-        master_id = product.master&.id
         touched_variants = []
 
         product.variants.each do |variant|
@@ -29,13 +27,12 @@ module Spree
           next if asset_ids.blank?
 
           move_assets_to_product(asset_ids, product)
-          link_assets_to_variant(asset_ids, variant.id)
+          # The default variant's assets stay product-level (no back-link). This
+          # only applies once default_variant_id is populated; during the one-time
+          # legacy migration it's still NULL (the backfill runs later in
+          # spree:remove_master_variant), so every migrated variant gets linked then.
+          link_assets_to_variant(asset_ids, variant.id) unless variant.id == product.default_variant_id
           touched_variants << variant
-        end
-
-        if master_id && (master_asset_ids = assets_by_variant[master_id]).present?
-          move_assets_to_product(master_asset_ids, product)
-          touched_variants << product.master
         end
 
         # update_all + upsert_all skip callbacks, so refresh thumbnails by hand.

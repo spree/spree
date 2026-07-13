@@ -75,6 +75,10 @@ RSpec.describe Spree::Asset, type: :model do
     let!(:variant_a) { create(:variant, product: product) }
     let!(:variant_b) { create(:variant, product: product) }
 
+    # variant_a/b are created after create(:product) cached the variants
+    # association; reload so variant_ids= resolution sees them.
+    before { product.reload }
+
     it 'creates links for newly-picked variants' do
       expect {
         product_asset.variant_ids = [variant_a.to_param]

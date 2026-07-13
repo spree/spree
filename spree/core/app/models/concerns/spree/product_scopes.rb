@@ -18,20 +18,8 @@ module Spree
       scope :ascend_by_name, -> { order("#{Product.quoted_table_name}.name ASC") }
       scope :descend_by_name, -> { order("#{Product.quoted_table_name}.name DESC") }
 
-      # Deprecated — master variant being removed in 6.0. Use ascend_by_price / descend_by_price instead.
-      def self.ascend_by_master_price
-        Spree::Deprecation.warn('ascend_by_master_price is deprecated and will be removed in Spree 6.0. Use ascend_by_price instead.')
-        order(price_table_name => { amount: :asc })
-      end
-
-      # Deprecated — master variant being removed in 6.0. Use ascend_by_price / descend_by_price instead.
-      def self.descend_by_master_price
-        Spree::Deprecation.warn('descend_by_master_price is deprecated and will be removed in Spree 6.0. Use descend_by_price instead.')
-        order(price_table_name => { amount: :desc })
-      end
-
       # Price sorting scopes that use a derived table JOIN to get prices across all variants.
-      # These ensure products with only variant prices (no master price) are included in results.
+      # These ensure products are matched on any of their variants' prices.
       #
       # Uses Arel::Nodes::As for select expressions so that:
       # - PG allows ORDER BY with DISTINCT (expressions must appear in SELECT list)
@@ -67,18 +55,6 @@ module Spree
       scope :price_between, ->(low, high) {
         where(Price.table_name => { amount: low..high })
       }
-
-      # Deprecated — master variant being removed in 6.0. Use price_lte / price_gte instead.
-      def self.master_price_lte(price)
-        Spree::Deprecation.warn('master_price_lte is deprecated and will be removed in Spree 6.0. Use price_lte instead.')
-        where(Price.table_name => { amount: ..price })
-      end
-
-      # Deprecated — master variant being removed in 6.0. Use price_lte / price_gte instead.
-      def self.master_price_gte(price)
-        Spree::Deprecation.warn('master_price_gte is deprecated and will be removed in Spree 6.0. Use price_gte instead.')
-        where(Price.table_name => { amount: price.. })
-      end
 
       # Joins spree_variants and spree_stock_items directly (without association
       # aliases) so that the table names stay as-is. This avoids alias conflicts
@@ -297,7 +273,7 @@ module Spree
       end
 
       def self.with_currency(currency)
-        joins(variants_including_master: :prices).
+        joins(variants: :prices).
           where(Price.table_name => { currency: currency.upcase }).
           where.not(Price.table_name => { amount: nil }).
           distinct
@@ -386,26 +362,6 @@ module Spree
           order(units_expr.send(order_dir)).
           order(revenue_expr.send(order_dir))
       }
-
-      # Deprecated — remove in 6.0. Use by_best_selling instead.
-      def self.descend_by_popularity
-        Spree::Deprecation.warn('descend_by_popularity is deprecated and will be removed in Spree 6.0. Use by_best_selling instead.')
-        joins(:master).
-          order(%Q{
-             COALESCE((
-               SELECT
-                 COUNT(#{LineItem.quoted_table_name}.id)
-               FROM
-                 #{LineItem.quoted_table_name}
-               JOIN
-                 #{Variant.quoted_table_name} AS popular_variants
-               ON
-                 popular_variants.id = #{LineItem.quoted_table_name}.variant_id
-               WHERE
-                 popular_variants.product_id = #{Product.quoted_table_name}.id
-             ), 0) DESC
-          })
-      end
 
       # .search_by_name — simple ILIKE on product name
       def self.search_by_name(query)

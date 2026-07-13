@@ -484,10 +484,10 @@ describe Spree::StockItem, type: :model do
       let(:product_in_other_store) { create(:product, store: other_store) }
 
       let!(:in_store_item) do
-        create(:stock_item, variant: product_in_store.master, stock_location: stock_location)
+        create(:stock_item, variant: product_in_store.default_variant, stock_location: stock_location)
       end
       let!(:other_store_item) do
-        create(:stock_item, variant: product_in_other_store.master, stock_location: stock_location)
+        create(:stock_item, variant: product_in_other_store.default_variant, stock_location: stock_location)
       end
 
       it 'returns stock items for variants of products owned by the store' do

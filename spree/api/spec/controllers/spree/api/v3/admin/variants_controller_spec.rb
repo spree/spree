@@ -20,11 +20,10 @@ RSpec.describe Spree::Api::V3::Admin::VariantsController, type: :controller do
       expect(json_response['data'].map { |v| v['id'] }).to include(variant.prefixed_id)
     end
 
-    it 'excludes master variants' do
+    it 'includes the default variant' do
       subject
-      master_ids = product.master.prefixed_id
       returned_ids = json_response['data'].map { |v| v['id'] }
-      expect(returned_ids).not_to include(master_ids)
+      expect(returned_ids).to include(product.default_variant.prefixed_id)
     end
 
     it 'returns pagination metadata' do

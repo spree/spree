@@ -26,11 +26,13 @@ describe Spree::Admin::DashboardController, type: :controller do
         end
 
         it 'renders analytics' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           get :analytics
           expect(response).to render_template(:analytics)
         end
 
         it 'renders top products' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           get :analytics
           expect(assigns(:top_products)).to be_present
           expect(response.body).to include('Top products')

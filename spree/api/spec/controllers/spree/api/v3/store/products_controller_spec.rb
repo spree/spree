@@ -74,8 +74,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     context 'currency scoping' do
       let!(:eur_only_product) do
         create(:product, status: 'active').tap do |p|
-          p.master.prices.delete_all
-          p.master.set_price('EUR', 20.0)
+          p.default_variant.prices.delete_all
+          p.default_variant.set_price('EUR', 20.0)
         end
       end
 
@@ -190,13 +190,13 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     context 'sorting' do
       let!(:cheap_product) do
         create(:product, status: 'active', name: 'Cheap').tap do |p|
-          p.master.prices.first.update!(amount: 10.0)
+          p.default_variant.prices.first.update!(amount: 10.0)
         end
       end
 
       let!(:expensive_product) do
         create(:product, status: 'active', name: 'Expensive').tap do |p|
-          p.master.prices.first.update!(amount: 100.0)
+          p.default_variant.prices.first.update!(amount: 100.0)
         end
       end
 

@@ -22,7 +22,7 @@ module Spree
             end
 
             def parent_association
-              :variants_including_master
+              :variants
             end
 
             def scope_includes

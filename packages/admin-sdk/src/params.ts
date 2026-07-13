@@ -375,11 +375,9 @@ export interface ProductUpdateParams {
 /**
  * A variant entry nested inside a product create/update payload.
  *
- * Unlike the standalone `POST /products/:id/variants` endpoint (see
- * `VariantCreateParams`, where `options` is required because the variant is
- * always non-master), a nested entry may omit `options`: an options-less
- * entry upserts onto the product's default (master) variant — the simple,
- * no-options product case. Pass `id` to update an existing variant.
+ * A nested entry may omit `options`: an options-less entry upserts onto the
+ * product's default variant — the simple, no-options product case. Pass `id`
+ * to update an existing variant.
  */
 export interface ProductVariantInput {
   id?: string
@@ -501,11 +499,9 @@ export interface VariantCreateParams {
   position?: number
   barcode?: string
   /**
-   * Required on create — a variant created via this endpoint is always
-   * non-master, so it must declare at least one option pair (e.g. size +
-   * color) or creation fails with 422. The non-empty tuple type enforces
-   * this at compile time. Option types and values are auto-created if
-   * missing.
+   * The variant's option pairs (e.g. size + color). The non-empty tuple type
+   * requires at least one at compile time. Option types and values are
+   * auto-created if missing.
    */
   options: [VariantOptionPair, ...VariantOptionPair[]]
   /** Per-currency prices. Upserted by currency. */

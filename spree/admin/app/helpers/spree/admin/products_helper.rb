@@ -42,7 +42,7 @@ module Spree
       end
 
       def product_currencies(product)
-        product_currencies = product.prices_including_master.map(&:currency).compact.uniq.map do |currency|
+        product_currencies = product.prices.non_zero.map(&:currency).compact.uniq.map do |currency|
           ::Money::Currency.find(currency)
         end
 

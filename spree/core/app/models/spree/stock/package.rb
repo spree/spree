@@ -71,7 +71,7 @@ module Spree
       end
 
       def shipping_categories
-        Spree::ShippingCategory.joins(products: :variants_including_master).
+        Spree::ShippingCategory.joins(products: :variants).
           where(spree_variants: { id: variant_ids }).distinct
       end
 

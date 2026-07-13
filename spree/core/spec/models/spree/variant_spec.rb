@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Spree::Variant, type: :model do
   let(:store) { @default_store }
   let(:variant) { create(:variant, product: create(:base_product)) }
-  let(:master_variant) { create(:master_variant) }
 
   it_behaves_like 'default_price'
   it_behaves_like 'metadata'
@@ -129,24 +128,9 @@ describe Spree::Variant, type: :model do
       end
     end
 
-    describe 'mark_master_out_of_stock' do
-      before do
-        product.master.stock_items.first.set_count_on_hand(5)
-      end
-
-      context 'when product is created without variants but with stock' do
-        it { expect(product.master).to be_in_stock }
-      end
-
-      context 'when a variant is created' do
-        let!(:new_variant) { create(:variant, product: product) }
-
-        it { expect(product.master).not_to be_in_stock }
-      end
-    end
 
     describe '#create_default_stock_item' do
-      let(:new_variant) { product.variants.create(track_inventory: track_inventory, is_master: true) }
+      let(:new_variant) { product.variants.create(track_inventory: track_inventory) }
 
       context 'when not tracking inventory' do
         let(:track_inventory) { false }
@@ -163,7 +147,6 @@ describe Spree::Variant, type: :model do
           let(:new_variant) do
             product.variants.create(
               track_inventory: track_inventory,
-              is_master: true,
               stock_items_attributes: {
                 '0' => {
                   stock_location_id: create(:stock_location).id,
@@ -234,57 +217,14 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe 'after_commit :remove_prices_from_master_variant' do
-    let(:variant) { build(:variant, product: product) }
-    let(:product) { create(:product) }
-
-    let(:master) { product.master }
-
-    it 'removes prices from master when variant with price is created' do
-      expect(product.master.prices.count).to eq(1)
-      variant.save!
-      variant.set_price(store.default_currency, 19.99)
-      expect(product.master.prices.reload.count).to eq(0)
-    end
-  end
-
-  describe 'after_commit :remove_stock_items_from_master_variant' do
-    let(:variant) { build(:variant, product: product) }
-    let(:product) { create(:product) }
-
-    let(:master) { product.master }
-
-    before do
-      master.stock_items << create(:stock_item, variant: master)
-      expect(master.stock_items.reload.count).to be >= 1
-    end
-
-    it 'removes stock items from master when variant is created' do
-      variant.save!
-      expect(product.master.stock_items.reload.count).to eq(0)
-    end
-  end
-
   describe 'scope' do
     describe '.eligible' do
-      context 'when only master variants' do
-        let!(:product_1) { create(:product) }
-        let!(:product_2) { create(:product) }
+      it 'returns every variant' do
+        product_1 = create(:product)
+        product_2 = create(:product)
+        variant = create(:variant, product: product_1)
 
-        it 'returns all of them' do
-          expect(Spree::Variant.eligible).to include(product_1.master)
-          expect(Spree::Variant.eligible).to include(product_2.master)
-        end
-      end
-
-      context 'when product has more than 1 variant' do
-        let!(:product) { create(:product) }
-        let!(:variant) { create(:variant, product: product) }
-
-        it 'filters master variant out' do
-          expect(Spree::Variant.eligible).to include(variant)
-          expect(Spree::Variant.eligible).not_to include(product.master)
-        end
+        expect(Spree::Variant.eligible).to include(product_1.default_variant, product_2.default_variant, variant)
       end
     end
 
@@ -888,47 +828,22 @@ describe Spree::Variant, type: :model do
   end
 
   describe 'exchange_name' do
+    let!(:no_options_variant) { build(:variant, option_values: []) }
     let!(:variant) { build(:variant, option_values: []) }
-    let!(:master) { create(:master_variant) }
 
     before do
-      variant.option_values << create(:option_value,                                                      name: 'Foo',
-                                                                                                          presentation: 'Foo',
-                                                                                                          option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
+      variant.option_values << create(:option_value, name: 'Foo', presentation: 'Foo',
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
       variant.save
     end
 
-    context 'master variant' do
+    context 'without option values' do
       it 'returns name' do
-        expect(master.exchange_name).to eql master.name
+        expect(no_options_variant.exchange_name).to eql no_options_variant.name
       end
     end
 
-    context 'variant' do
-      it 'returns options text' do
-        expect(variant.exchange_name).to eql 'Foo Type: Foo'
-      end
-    end
-  end
-
-  describe 'exchange_name' do
-    let!(:variant) { build(:variant, option_values: []) }
-    let!(:master) { create(:master_variant) }
-
-    before do
-      variant.option_values << create(:option_value,                                                      name: 'Foo',
-                                                                                                          presentation: 'Foo',
-                                                                                                          option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
-      variant.save
-    end
-
-    context 'master variant' do
-      it 'returns name' do
-        expect(master.exchange_name).to eql master.name
-      end
-    end
-
-    context 'variant' do
+    context 'with option values' do
       it 'returns options text' do
         expect(variant.exchange_name).to eql 'Foo Type: Foo'
       end
@@ -936,23 +851,22 @@ describe Spree::Variant, type: :model do
   end
 
   describe 'descriptive_name' do
+    let!(:no_options_variant) { build(:variant, option_values: []) }
     let!(:variant) { build(:variant, option_values: []) }
-    let!(:master) { create(:master_variant) }
 
     before do
-      variant.option_values << create(:option_value,                                                      name: 'Foo',
-                                                                                                          presentation: 'Foo',
-                                                                                                          option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
+      variant.option_values << create(:option_value, name: 'Foo', presentation: 'Foo',
+                                                     option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
       variant.save
     end
 
-    context 'master variant' do
-      it 'returns name with Master identifier' do
-        expect(master.descriptive_name).to eql master.name + ' - Master'
+    context 'without option values' do
+      it 'returns name' do
+        expect(no_options_variant.descriptive_name).to eql no_options_variant.name
       end
     end
 
-    context 'variant' do
+    context 'with option values' do
       it 'returns options text with name' do
         expect(variant.descriptive_name).to eql variant.name + ' - Foo Type: Foo'
       end
@@ -1376,7 +1290,7 @@ describe Spree::Variant, type: :model do
           it 'adds an error' do
             expect(subject).to be(false)
             expect(variant.errors[:base]).to contain_exactly(
-              I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
+              I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_default_variant_found_to_infer_price')
             )
           end
         end
@@ -1399,7 +1313,7 @@ describe Spree::Variant, type: :model do
         it 'adds an error' do
           expect(subject).to be(false)
           expect(variant.errors[:base]).to contain_exactly(
-            I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
+            I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_default_variant_found_to_infer_price')
           )
         end
       end
@@ -1574,27 +1488,26 @@ describe Spree::Variant, type: :model do
     let(:product) { create(:product) }
 
     describe 'variant_count on product' do
+      it 'counts the default variant' do
+        expect(product.reload.variant_count).to eq(1)
+      end
+
       it 'increments when a variant is created' do
         expect {
           create(:variant, product: product)
-        }.to change { product.reload.variant_count }.from(0).to(1)
+        }.to change { product.reload.variant_count }.from(1).to(2)
       end
 
       it 'decrements when a variant is destroyed' do
         variant = create(:variant, product: product)
         expect {
           variant.destroy
-        }.to change { product.reload.variant_count }.from(1).to(0)
-      end
-
-      it 'does not count master variant' do
-        expect(product.variant_count).to eq(0)
-        expect(product.master).to be_present
+        }.to change { product.reload.variant_count }.from(2).to(1)
       end
 
       it 'correctly counts multiple variants' do
         create_list(:variant, 3, product: product)
-        expect(product.reload.variant_count).to eq(3)
+        expect(product.reload.variant_count).to eq(4)
       end
     end
   end

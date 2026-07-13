@@ -119,8 +119,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(ids).not_to include(non_matching_product.prefixed_id)
       end
 
-      it 'matches by master variant SKU' do
-        matching_product.master.update!(sku: 'ESPRESSO-PRO-2026')
+      it 'matches by default variant SKU' do
+        matching_product.default_variant.update!(sku: 'ESPRESSO-PRO-2026')
 
         get :index, params: { q: { search: 'ESPRESSO-PRO' } }, as: :json
 
@@ -158,13 +158,13 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       context 'by price' do
         let!(:cheap_product) do
           create(:product, name: 'Cheap').tap do |p|
-            p.master.prices.first.update!(amount: 10.0)
+            p.default_variant.prices.first.update!(amount: 10.0)
           end
         end
 
         let!(:expensive_product) do
           create(:product, name: 'Expensive').tap do |p|
-            p.master.prices.first.update!(amount: 100.0)
+            p.default_variant.prices.first.update!(amount: 100.0)
           end
         end
 
@@ -318,7 +318,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect {
           post :create, params: product_params, as: :json
         }.to change(Spree::Product, :count).by(1)
-                          .and change(Spree::Variant, :count).by(4) # master (auto-created until 6.0 master removal) + 3 variants
+                          .and change(Spree::Variant, :count).by(3) # 3 option variants
 
         expect(response).to have_http_status(:created)
 
@@ -334,7 +334,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(created.tag_list).to match_array(['premium', 'cotton', 'summer'])
         expect(created.taxons).to match_array([category1, category2])
 
-        # Cost price now lives on the variant, not the master delegate.
+        # Cost price now lives on the variant, not delegated from the product.
         small_variant = created.variants.find_by(sku: 'PREM-TEE-S')
         expect(small_variant.cost_price.to_f).to eq(8.50)
 
@@ -494,7 +494,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         # Mirrors the exact wire shape the dashboard ships from
         # `new.tsx` for a simple product with media + inventory:
         # - status, channels, custom_fields, media, variants[] with empty
-        #   options + stock_items routed to the master via apply_variants.
+        #   options + stock_items routed to the default variant via apply_variants.
         blob1 = ActiveStorage::Blob.create_and_upload!(
           io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
           filename: 'one.jpg',
@@ -530,9 +530,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(response).to have_http_status(:created)
         created = Spree::Product.find_by(name: 'test product')
         expect(created.media.count).to eq(2)
-        expect(created.master.stock_items.find_by(stock_location: location).count_on_hand).to eq(10)
-        # No phantom non-master variant.
-        expect(created.variants.count).to eq(0)
+        expect(created.default_variant.stock_items.find_by(stock_location: location).count_on_hand).to eq(10)
+        # Simple product has exactly one variant — the default variant.
+        expect(created.variants.count).to eq(1)
       end
 
       it 'returns 422 with field-level details for an unknown custom_field_definition_id' do
@@ -552,7 +552,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     context 'with top-level prices (simple-product flow)' do
-      it 'forwards prices to the auto-created master variant' do
+      it 'forwards prices to the auto-created default variant' do
         post :create, params: {
           name: 'Simple Product',
           prices: [
@@ -563,8 +563,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         created = Spree::Product.find_by(name: 'Simple Product')
-        usd = created.master.prices.find_by(currency: 'USD')
-        eur = created.master.prices.find_by(currency: 'EUR')
+        usd = created.default_variant.prices.find_by(currency: 'USD')
+        eur = created.default_variant.prices.find_by(currency: 'EUR')
         expect(usd.amount).to eq(12.50)
         expect(eur.amount).to eq(11.00)
         expect(eur.compare_at_amount).to eq(13.99)
@@ -586,7 +586,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:created)
-        price = Spree::Product.find_by(name: 'String Price Product').master.prices.find_by(currency: 'USD')
+        price = Spree::Product.find_by(name: 'String Price Product').default_variant.prices.find_by(currency: 'USD')
         expect(price.amount).to eq(29.99)
         expect(price.compare_at_amount).to eq(39.99)
       end
@@ -658,7 +658,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     context 'with full payload: name, description, status, categories, tags, SEO, variants with multi-currency prices' do
       let!(:product_to_update) do
         create(:product_with_option_types).tap do |p|
-          p.master.update!(sku: 'OLD-SKU')
+          p.default_variant.update!(sku: 'OLD-SKU')
         end
       end
 

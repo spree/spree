@@ -156,7 +156,7 @@ module Spree
             :stock_locations,
             { option_values: :option_type },
             { stock_items: :stock_location },
-            { product: :master }
+            { product: :default_variant }
           ]
           variant_includes << :default_price if Spree::Config.enable_legacy_default_price
 

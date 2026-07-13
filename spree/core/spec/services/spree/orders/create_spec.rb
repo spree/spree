@@ -206,7 +206,7 @@ module Spree
         # fires and UpsertItems returns a failing line_item.
         let(:out_of_stock_product) do
           create(:product).tap do |p|
-            p.master.stock_items.update_all(count_on_hand: 0, backorderable: false)
+            p.default_variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
           end
         end
         let(:params) do

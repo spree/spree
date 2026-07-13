@@ -96,8 +96,8 @@ describe Spree::Promotion::Rules::Product, type: :model do
 
     let(:rule_product) { create(:product) }
     let(:other_product) { create(:product) }
-    let(:rule_line_item) { build(:line_item, variant: rule_product.master) }
-    let(:other_line_item) { build(:line_item, variant: other_product.master) }
+    let(:rule_line_item) { build(:line_item, variant: rule_product.default_variant) }
+    let(:other_line_item) { build(:line_item, variant: other_product.default_variant) }
 
     before do
       allow(rule).to receive(:eligible_product_ids).and_return([rule_product.id])

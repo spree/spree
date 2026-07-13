@@ -20,7 +20,7 @@ describe Spree::Store, type: :model, without_global_store: true do
         let!(:variant) { create(:variant, product: product) }
         let!(:variant_2) { create(:variant, product: product_2) }
 
-        it { expect(subject.variants).to eq([product.master, variant]) }
+        it { expect(subject.variants).to eq([product.default_variant, variant]) }
 
         describe '#stock_items' do
           let!(:stock_items) { product.stock_items }
@@ -79,8 +79,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       describe '#inventory_units' do
         let(:product) { create(:product, store: subject) }
         let(:product_2) { create(:product, store: other_store) }
-        let!(:inventory_unit) { create(:inventory_unit, variant: product.master, order: order) }
-        let!(:inventory_unit_2) { create(:inventory_unit, variant: product_2.master, order: order_2) }
+        let!(:inventory_unit) { create(:inventory_unit, variant: product.default_variant, order: order) }
+        let!(:inventory_unit_2) { create(:inventory_unit, variant: product_2.default_variant, order: order_2) }
 
         it { expect(subject.inventory_units).to eq([inventory_unit]) }
       end

@@ -33,6 +33,11 @@ describe Spree::Variants::OptionTypesPresenter do
     before { variant_0.stock_items.first.update(backorderable: false, count_on_hand: 0) }
 
     context 'default variant of product' do
+      before do
+        product.variants.where.missing(:option_value_variants).destroy_all
+        product.update_column(:default_variant_id, variant_0.id)
+      end
+
       context 'backorderable' do
         before { variant_0.stock_items.first.update(backorderable: true) }
 
@@ -88,6 +93,11 @@ describe Spree::Variants::OptionTypesPresenter do
 
   describe '#options' do
     subject(:options) { described_class.new(option_types, variants, product).options }
+
+    before do
+      product.variants.where.missing(:option_value_variants).destroy_all
+      product.update_column(:default_variant_id, variant_0.id)
+    end
 
     it 'returns serialized options for Option Types and Option Values' do
       expect(options).to eq(

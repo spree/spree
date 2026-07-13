@@ -76,7 +76,7 @@ module Spree
 
     context 'multiple shipments' do
       let(:product_2) { create(:product_in_stock, shipping_category: shipping_category) }
-      let!(:line_item) { create(:line_item, variant: product_2.master, order: order) }
+      let!(:line_item) { create(:line_item, variant: product_2.default_variant, order: order) }
 
       let(:shipment) { order.shipments.first }
       let(:shipment_2) { order.shipments.last }

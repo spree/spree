@@ -143,7 +143,7 @@ describe Spree::Reimbursement, type: :model do
     context 'when exchange is required' do
       # we need to have a variant that will pass eligibility checks
       # so it needs to be a variant of the same product
-      let!(:exchange_variant) { create(:variant, is_master: true, product: inventory_unit.variant.product) }
+      let!(:exchange_variant) { create(:variant, product: inventory_unit.variant.product) }
 
       before { return_item.exchange_variant = exchange_variant }
 

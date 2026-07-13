@@ -31,8 +31,8 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
 
     row.reload
     expect(row.status).to eq('completed')
-    expect(row.item).to be_a(Spree::Variant)
-    expect(row.item.product.name).to eq('Test Product')
+    expect(row.item).to be_a(Spree::Product)
+    expect(row.item.name).to eq('Test Product')
     expect(row.item.sku).to eq('SKU1')
 
     import.reload
@@ -165,7 +165,7 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
       expect(row.reload.status).to eq('completed')
       expect(variant_row.reload.status).to eq('completed')
 
-      product = row.item.product
+      product = row.item
       expect(product.name).to eq('Test Product')
       expect(variant_row.item).to be_a(Spree::Variant)
       expect(variant_row.item.product).to eq(product)
@@ -185,8 +185,8 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
 
       row.reload
       expect(row.status).to eq('completed')
-      expect(row.item).to be_a(Spree::Variant)
-      expect(row.item.product.name).to eq('Test Product')
+      expect(row.item).to be_a(Spree::Product)
+      expect(row.item.name).to eq('Test Product')
       expect(row.item.sku).to eq('SKU1')
     end
 
@@ -206,14 +206,14 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
         expect {
           described_class.perform_now(import.id, [row.id, variant_row.id])
         }.to change(Spree::Product, :count).by(1)
-         .and change(Spree::Variant, :count).by(2) # master + variant
+         .and change(Spree::Variant, :count).by(1)
 
         row.reload
         variant_row.reload
         expect(row.status).to eq('completed')
         expect(variant_row.status).to eq('completed')
 
-        product = row.item.product
+        product = row.item
         expect(product.name).to eq('Test Product')
         expect(variant_row.item.product).to eq(product)
         expect(variant_row.item.sku).to eq('SKU2')

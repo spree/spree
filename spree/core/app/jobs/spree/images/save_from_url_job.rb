@@ -90,8 +90,8 @@ module Spree
         image.persisted? && image.attachment.attached? && image.external_url.present? && external_url == image.external_url
       end
 
-      # `Product#images` delegates to the master variant (legacy alias) — use
-      # `Product#media` so 5.5 product-level uploads don't get re-pinned to master.
+      # `Product#images` delegates to the default variant — use `Product#media`
+      # so 5.5 product-level uploads don't get re-pinned to that variant.
       def viewable_assets(viewable)
         viewable.is_a?(Spree::Product) ? viewable.media : viewable.images
       end

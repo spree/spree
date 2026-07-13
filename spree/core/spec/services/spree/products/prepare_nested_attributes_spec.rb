@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Products::PrepareNestedAttributes do
-  let(:service) { described_class.new(product, store, params, ability) }
+  let(:service) { described_class.new(product.persisted? ? product.reload : product, store, params, ability) }
   subject(:prepared_params) { service.call }
 
   let(:ability) { Spree::Ability.new(nil) }
@@ -42,7 +42,7 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
   end
 
   describe 'prices_attributes handling' do
-    let(:variant) { product.master }
+    let(:variant) { product.default_variant }
 
     context 'when user cannot update prices' do
       before do
@@ -65,22 +65,6 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
 
         it 'removes prices_attributes from variants' do
           expect(prepared_params[:variants_attributes]['0']).not_to have_key(:prices_attributes)
-        end
-      end
-
-      context 'with master_attributes' do
-        let(:raw_params) do
-          {
-            master_attributes: {
-              prices_attributes: {
-                '0' => { amount: '10.00' }
-              }
-            }
-          }
-        end
-
-        it 'removes prices_attributes from master' do
-          expect(prepared_params[:master_attributes]).not_to have_key(:prices_attributes)
         end
       end
     end
@@ -270,7 +254,7 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
   end
 
   describe 'stock_items_attributes handling' do
-    let(:variant) { product.master }
+    let(:variant) { product.default_variant }
 
     context 'when user cannot update stock items' do
       before do
@@ -293,22 +277,6 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
 
         it 'removes stock_items_attributes from variants' do
           expect(prepared_params[:variants_attributes]['0']).not_to have_key(:stock_items_attributes)
-        end
-      end
-
-      context 'with master_attributes' do
-        let(:raw_params) do
-          {
-            master_attributes: {
-              stock_items_attributes: {
-                '0' => { count_on_hand: 10 }
-              }
-            }
-          }
-        end
-
-        it 'removes stock_items_attributes from master' do
-          expect(prepared_params[:master_attributes]).not_to have_key(:stock_items_attributes)
         end
       end
     end

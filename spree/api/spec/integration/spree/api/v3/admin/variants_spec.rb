@@ -14,7 +14,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       tags 'Variants'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns a paginated list of variants for a product, including the master variant.'
+      description 'Returns a paginated list of variants for a product, including the default variant.'
       admin_scope :read, :products
 
       admin_sdk_example 'variants/list'
@@ -62,7 +62,6 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       parameter name: :product_id, in: :path, type: :string, required: true, description: 'Product ID'
       parameter name: :body, in: :body, schema: {
         type: :object,
-        required: %w[options],
         properties: {
           sku: { type: :string, example: 'SKU-001' },
           cost_price: { type: :string, example: '10.00' },
@@ -77,7 +76,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
           tax_category_id: { type: :string },
           options: {
             type: :array,
-            description: 'Required. A variant created here is always non-master, so it must declare at least one option pair (e.g. size + color) or creation fails with 422. One pair per option type the variant participates in. Option types and values are auto-created if missing.',
+            description: 'A variant on a product with option types should declare its option pairs (e.g. size + color) — one per option type it participates in. Option types and values are auto-created if missing.',
             items: {
               type: :object,
               required: %w[name value],
@@ -129,12 +128,11 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
         end
       end
 
-      # A variant created here is always non-master, so omitting `options`
-      # leaves it with no option values and fails validation.
+      # Reusing an existing variant's SKU violates the uniqueness validation.
       response '422', 'validation error' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:product_id) { product.prefixed_id }
-        let(:body) { { sku: 'NO-OPTS-001', prices: [{ currency: 'USD', amount: '9.99' }] } }
+        let(:body) { { sku: variant.sku, prices: [{ currency: 'USD', amount: '9.99' }] } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

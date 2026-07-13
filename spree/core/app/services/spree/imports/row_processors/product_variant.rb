@@ -13,14 +13,12 @@ module Spree
         attr_reader :product, :store
 
         def process!
-          variant_scope = options.empty? ? product.variants_including_master : product.variants
-
           variant = if attributes['sku'].present?
-                      variant_scope.where(
+                      product.variants.where(
                         Spree::Variant.arel_table[:sku].lower.eq(attributes['sku'].strip.downcase)
                       ).first || product.variants.new
                     elsif options.empty?
-                      product.master
+                      product.default_variant
                     else
                       product.variants.new
                     end
@@ -52,14 +50,32 @@ module Spree
 
           handle_images(variant)
 
-          variant
+          remove_placeholder_default_variant if options.any?
+
+          # A row that resolves to a real option variant owns that Variant; a
+          # product/header row resolves to the option-less default (a placeholder
+          # that may later be removed), so it owns the Product instead — keeping the
+          # import row linked to a record that always survives.
+          variant.option_values.any? ? variant : product
         end
 
         private
 
+        # A product-header (options-empty) row creates an option-less default
+        # variant to hold product-level attributes. Once an option-bearing
+        # variant exists, that placeholder is a leftover — remove it and
+        # re-point the default so the product has exactly its option variants.
+        def remove_placeholder_default_variant
+          placeholders = product.variants.where.missing(:option_value_variants)
+          return if placeholders.empty?
+
+          placeholders.destroy_all
+          product.update_column(:default_variant_id, product.variants.reload.first&.id)
+        end
+
         def ensure_product_exists
           if options.empty?
-            # For master variants, create or update the product
+            # For product/header rows (no options), create or update the product
             product = Spree::Product.new
             if attributes['slug'].present?
               existing_product = product_scope.find_by(slug: attributes['slug'].strip.downcase)
@@ -80,7 +96,7 @@ module Spree
 
             product
           else
-            # For non-master variants, only look up the product
+            # For variant rows (with options), only look up the product
             if attributes['slug'].present?
               product_scope.find_by!(slug: attributes['slug'].strip.downcase)
             else
@@ -94,7 +110,7 @@ module Spree
         end
 
         def assign_attributes_to_product(product)
-          # setting SKU for master variant so it will be picked up in process! and won't try to create a non-master variant
+          # set the SKU on a product/header row so process! updates the default variant instead of creating a new one
           if product.new_record?
             product.slug = attributes['slug']
             product.sku = attributes['sku'] if attributes['sku'].present? && options.empty?
@@ -210,9 +226,10 @@ module Spree
           return if image_urls.empty?
 
           # Always attach to the product so blobs aren't duplicated across
-          # variants. For non-master rows, pass the variant id so the job links
-          # the resulting product-level asset to that variant via VariantMedia.
-          link_variant_id = variant.is_master? ? nil : variant.id
+          # variants. For option rows, pass the variant id so the job links the
+          # resulting product-level asset to that variant via VariantMedia; a
+          # simple product's default variant keeps images product-level.
+          link_variant_id = options.empty? ? nil : variant.id
 
           image_urls.each do |image_url|
             Spree::Images::SaveFromUrlJob.perform_later(
