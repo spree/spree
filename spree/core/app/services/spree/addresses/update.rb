@@ -7,6 +7,14 @@ module Spree
       attr_accessor :country
 
       def call(address:, address_params:, **opts)
+        ApplicationRecord.transaction do
+          perform(address: address, address_params: address_params, **opts)
+        end
+      end
+
+      private
+
+      def perform(address:, address_params:, **opts)
         order = opts[:order]
         default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, false)
         default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, false)
@@ -78,8 +86,6 @@ module Spree
           failure(new_address)
         end
       end
-
-      private
 
       def prepare_address_params!(address, address_params)
         address_params[:user_id] = address&.user_id
