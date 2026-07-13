@@ -14,7 +14,7 @@ The dashboard deploys as **static files**. `vite build` produces `dist/` — HTM
 
 The Spree server serves the dashboard itself at **`/dashboard`**: one container, one origin, zero CORS or cookie configuration. The official Spree Docker image ships with the stock dashboard baked in — deploy the image anywhere Docker runs (Render, Railway, AWS, Azure, your own host) and `https://your-api-host/dashboard` just works.
 
-Under the hood: `Spree::Config.dashboard_dist_path` (or the `SPREE_DASHBOARD_DIST_PATH` env var) points at a built `dist/` directory, and Spree serves it with SPA semantics — every dashboard route falls back to `index.html`, hashed assets get immutable caching. The bundle is built with a **relative API base** (`VITE_SPREE_API_URL` unset) and `base: /dashboard/`, so the same image works on every host and environment with no rebuild.
+Under the hood, the **`spree_dashboard` gem** (in the Gemfile of the starter and the official image) serves the directory in `Spree::Dashboard.dist_path` — or the `SPREE_DASHBOARD_DIST_PATH` env var — with SPA semantics: every dashboard route falls back to `index.html`, hashed assets get immutable caching. The bundle is built with a **relative API base** (`VITE_SPREE_API_URL` unset) and `base: /dashboard/`, so the same image works on every host and environment with no rebuild. API-only deployments simply omit the gem.
 
 ### Custom dashboard, single node
 

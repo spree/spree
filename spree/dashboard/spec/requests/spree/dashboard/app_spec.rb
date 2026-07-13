@@ -12,18 +12,18 @@ RSpec.describe 'Hosted React Dashboard', type: :request do
 
   after do
     FileUtils.remove_entry(dist)
-    Spree::Config.dashboard_dist_path = nil
+    Spree::Dashboard.dist_path = nil
   end
 
-  context 'when dashboard_dist_path is not configured' do
+  context 'when dist_path is not configured' do
     it 'returns 404' do
       get '/dashboard'
       expect(response).to have_http_status(:not_found)
     end
   end
 
-  context 'when dashboard_dist_path is configured' do
-    before { Spree::Config.dashboard_dist_path = dist }
+  context 'when dist_path is configured' do
+    before { Spree::Dashboard.dist_path = dist }
 
     it 'serves index.html at the root with no-cache' do
       get '/dashboard'
@@ -62,15 +62,26 @@ RSpec.describe 'Hosted React Dashboard', type: :request do
       secret = File.expand_path(File.join(dist, '..', "spree-secret-#{Process.pid}.txt"))
       File.write(secret, 'top secret')
 
-      get '/dashboard/%2e%2e/' + File.basename(secret)
+      get "/dashboard/%2e%2e/#{File.basename(secret)}"
 
       expect(response.body).not_to include('top secret')
     ensure
       FileUtils.rm_f(secret)
     end
 
+    it 'reads the dist path from the environment when unset' do
+      Spree::Dashboard.dist_path = nil
+      ENV['SPREE_DASHBOARD_DIST_PATH'] = dist
+
+      get '/dashboard'
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('dashboard shell')
+    ensure
+      ENV.delete('SPREE_DASHBOARD_DIST_PATH')
+    end
+
     it 'returns 404 when the configured directory does not exist' do
-      Spree::Config.dashboard_dist_path = File.join(dist, 'missing')
+      Spree::Dashboard.dist_path = File.join(dist, 'missing')
 
       get '/dashboard'
       expect(response).to have_http_status(:not_found)

@@ -1,17 +1,17 @@
 module Spree
-  module Api
+  module Dashboard
     # Serves a built React Dashboard (`vite build` output) at /dashboard — the
     # single-node topology: the SPA and the Admin API share one origin, so no
     # CORS entries and Lax cookies. The dist directory comes from
-    # `Spree::Config.dashboard_dist_path` (the official Docker image sets it
-    # via SPREE_DASHBOARD_DIST_PATH); when unset, /dashboard 404s.
+    # `Spree::Dashboard.dist_path` (the official Docker image sets it via
+    # SPREE_DASHBOARD_DIST_PATH); when unset, /dashboard 404s.
     #
     # SPA semantics: real files are served with long-lived caching (Vite's
     # `assets/` are content-hashed, so they're immutable); every other path
     # falls back to index.html with no-cache so deploys take effect on the
     # next navigation. No authentication — the bundle is public client code;
     # the SPA authenticates its API calls itself.
-    class DashboardAppController < ActionController::API
+    class AppController < ActionController::API
       def show
         root = dist_root
         return head :not_found unless root
@@ -30,7 +30,7 @@ module Spree
       private
 
       def dist_root
-        path = Spree::Config.dashboard_dist_path.presence || ENV.fetch('SPREE_DASHBOARD_DIST_PATH', nil)
+        path = Spree::Dashboard.dist_path
         return if path.blank?
 
         root = Pathname.new(path).expand_path

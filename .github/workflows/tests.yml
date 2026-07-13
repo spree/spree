@@ -56,7 +56,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api admin emails; do
+          for project in core api admin emails dashboard; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -101,7 +101,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api admin emails; do
+          for project in core api admin emails dashboard; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -131,6 +131,8 @@ jobs:
           - { project: admin, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs (tiny suite)
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
+          # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
+          - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
       postgres:
         image: postgres:16
@@ -273,6 +275,8 @@ jobs:
           - { project: admin, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
+          # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
+          - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
       mysql:
         image: mysql:8.0
