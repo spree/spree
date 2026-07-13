@@ -7,6 +7,12 @@ module Spree
     # from other stores are preserved. This prevents accidental data loss when a store
     # admin updates product categories in their store without affecting other stores.
     #
+    # Variant removal is opt-in: only variants explicitly listed in the
+    # `removed_variant_ids` param are marked for destruction (or collected for
+    # discontinuation when they have completed orders). Variants merely absent from
+    # `variants_attributes` are left untouched, so a partially rendered or broken
+    # form can never silently mass-delete variants.
+    #
     # @example
     #   service = Spree::Products::PrepareNestedAttributes.new(
     #     product,
@@ -28,10 +34,13 @@ module Spree
       end
 
       def call
+        extract_removed_variant_ids
+
         if params[:variants_attributes]
           params[:variants_attributes].each do |key, variant_params|
             existing_variant = variant_params[:id].presence && @product.variants.find_by(id: variant_params[:id])
-            variants_to_remove.delete(variant_params[:id]) if variant_params[:id].present?
+            # a re-submitted variant always wins over a removal request
+            variants_to_remove.delete(variant_params[:id].to_s) if variant_params[:id].present?
 
             variant_params.delete(:price) # remove legacy price param
 
@@ -72,17 +81,17 @@ module Spree
         # ensure the product is owned by a store
         params[:store_id] = store.id if params[:store_id].blank? && product.store_id.blank?
 
-        # Add empty list for option_type_ids and mark variants as removed if there are no variants and options
-        if params[:variants_attributes].blank? && variants_to_remove.any? && !params.key?(:option_type_ids)
-          params[:option_type_ids] = []
-          params[:variants_attributes] = {}
+        # The variants matrix was emptied: no variant rows re-submitted, removals sent instead.
+        # Option types are detached only when the removal list covers every variant, so a
+        # partial (possibly broken) submission never turns the product into a simple one.
+        if params[:variants_attributes].blank? && variants_to_remove.any?
+          attributes = removed_variants_attributes
 
-          populate_variants_to_discontinue
-          variant_ids_to_destroy.each_with_index do |variant_id, index|
-            params[:variants_attributes][index.to_s] = { id: variant_id, _destroy: '1' }
+          if attributes.any?
+            params[:option_type_ids] = [] if removing_all_variants? && !params.key?(:option_type_ids)
+            params[:variants_attributes] = attributes
+            params[:variants_attributes].permit!
           end
-
-          params[:variants_attributes].permit!
         end
 
         params
@@ -116,8 +125,24 @@ module Spree
         @product_option_types_to_remove ||= product.product_option_type_ids
       end
 
+      # Pulls `removed_variant_ids` out of the params so it never reaches Product#update.
+      # Must run before any `variants_to_remove` access.
+      def extract_removed_variant_ids
+        @removed_variant_ids = Array(params.delete(:removed_variant_ids)).map(&:to_s)
+      end
+
+      # Only variants the client explicitly asked to remove, and only ones that
+      # actually belong to this product.
       def variants_to_remove
-        @variants_to_remove ||= product.variant_ids.map(&:to_s)
+        @variants_to_remove ||= (@removed_variant_ids || []).uniq & all_variant_ids
+      end
+
+      def all_variant_ids
+        @all_variant_ids ||= product.variant_ids.map(&:to_s)
+      end
+
+      def removing_all_variants?
+        (all_variant_ids - variants_to_remove).empty?
       end
 
       def can_update_prices?
@@ -142,7 +167,7 @@ module Spree
         populate_variants_to_discontinue
 
         attributes = {}
-        last_index = params[:variants_attributes].keys.map(&:to_i).max
+        last_index = params[:variants_attributes].presence&.keys&.map(&:to_i)&.max || -1
         variant_ids_to_destroy.each_with_index do |variant_id, index|
           attributes[(last_index + 1 + index).to_s] = { id: variant_id, _destroy: '1' }
         end
