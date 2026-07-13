@@ -22,7 +22,7 @@ module Spree
     #
     TRANSLATABLE_FIELDS = %i[name body].freeze
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[body].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     #
     # ActionText

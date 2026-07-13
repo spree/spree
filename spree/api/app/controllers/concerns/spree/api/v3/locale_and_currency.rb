@@ -114,9 +114,12 @@ module Spree
 
         private
 
-        # Sets +I18n.locale+ and +Spree::Current.locale+ from the resolved locale.
+        # Sets +I18n.locale+ and +Spree::Current.locale+ from the resolved
+        # locale, and records the request's content locale — the store's
+        # default locale, in which base (untranslated) columns are authored.
         def set_locale
           Spree::Current.locale = current_locale
+          Spree::Current.content_locale = current_store&.default_locale
           I18n.locale = current_locale
         end
 

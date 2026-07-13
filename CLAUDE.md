@@ -616,6 +616,7 @@ Re-run `parallel_setup` after schema changes.
 - Prefer `build` over `create` for speed
 - Factories live in `lib/spree/testing_support/factories/`
 - ALWAYS use factories in tests, never call `Model#create` directly
+- ALWAYS run parallel tests if running full test suite, if there are any failures repeat the failed examples seperately and confirm they really fail before investigating
 - Pragmatic — no tests for standard Rails validations, only custom ones
 - Controller specs: always add `render_views`, use `stub_authorization!` for auth
 - Use controller specs for testing edge cases, API integration tests are only for happy path/simple 422 failures to generate OpenAPI examples; otherwise they get too brittle and high-maintenance
