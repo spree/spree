@@ -105,6 +105,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 | \`spree stop\` | Stop backend services |
 | \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
 | \`spree eject\` | Switch from prebuilt image to building from \`backend/\` |
+| \`spree build --production\` | Build the production image — includes \`apps/dashboard\` when present |
 | \`spree logs\` | View web server logs |
 | \`spree logs worker\` | View background jobs logs |
 | \`spree console\` | Open Rails console |

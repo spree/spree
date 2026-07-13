@@ -18,21 +18,22 @@ Under the hood, the **`spree_dashboard` gem** (in the Gemfile of the starter and
 
 ### Custom dashboard, single node
 
-The official image contains the *stock* dashboard. Once you've customized yours (`spree eject` + your own pages/plugins in `apps/dashboard/`), bake your build into your own image with a multi-stage Dockerfile — the Node toolchain lives only in the build stage:
+The official image contains the *stock* dashboard. Once you've customized yours (your own pages/plugins in `apps/dashboard/`), bake your build into your own image:
 
-```dockerfile
-FROM node:22-slim AS dashboard
-WORKDIR /dashboard
-COPY apps/dashboard/ .
-RUN corepack enable pnpm && pnpm install \
- && VITE_BASE_PATH=/dashboard/ pnpm build
-
-# …in the final Rails stage:
-COPY --from=dashboard /dashboard/dist /rails/dashboard
-ENV SPREE_DASHBOARD_DIST_PATH=/rails/dashboard
+```bash
+spree build --production            # optionally --tag registry/repo:tag
 ```
 
-`VITE_BASE_PATH=/dashboard/` makes asset URLs resolve under the mount; leave `VITE_SPREE_API_URL` unset so API calls stay origin-relative.
+The command detects `apps/dashboard/`, selects the Dockerfile's `custom` dashboard stage (`--build-arg DASHBOARD_SOURCE=custom`), and passes your app as a named build context — the Node toolchain lives only in that throw-away stage, and the final image is Rails plus your built `dist/` served at `/dashboard`. Without the CLI, the equivalent is:
+
+```bash
+docker build backend/ -f backend/Dockerfile \
+  --build-arg DASHBOARD_SOURCE=custom \
+  --build-context dashboard-src=./apps/dashboard \
+  -t my-shop-spree:latest
+```
+
+Inside the stage the build runs with `VITE_BASE_PATH=/dashboard/` (asset URLs resolve under the mount) and `VITE_SPREE_API_URL` unset (API calls stay origin-relative). Projects **without** `apps/dashboard/` build exactly what plain `docker build backend/` produces — and if your `backend/Dockerfile` predates dashboard support, the command warns instead of silently shipping the stock dashboard over your customized one.
 
 ## Static host / CDN — the alternative
 
