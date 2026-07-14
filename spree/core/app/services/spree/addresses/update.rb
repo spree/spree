@@ -10,6 +10,8 @@ module Spree
         ApplicationRecord.transaction do
           perform(address: address, address_params: address_params, **opts)
         end
+      rescue ActiveRecord::RecordInvalid => e
+        failure(e.record)
       end
 
       private

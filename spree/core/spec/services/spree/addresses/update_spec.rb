@@ -259,6 +259,18 @@ RSpec.describe Spree::Addresses::Update do
             expect(completed_order.bill_address_id).to eq(address.id)
             expect(address.reload.deleted_at).to be_present
           end
+
+          context 'when repointing the incomplete order fails' do
+            before do
+              allow_any_instance_of(Spree::Order).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new(incomplete_order))
+            end
+
+            it 'rolls back the address replacement and returns a failure' do
+              expect { result }.not_to change(Spree::Address.unscoped, :count)
+              expect(result).to be_failure
+              expect(address.reload.deleted_at).to be_nil
+            end
+          end
         end
 
         it_behaves_like 'updating with same params'
