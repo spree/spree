@@ -174,6 +174,18 @@ RSpec.describe Spree::Collection, type: :model do
 
         expect(collection.reload.products_matching_rules).to contain_exactly(on_sale)
       end
+
+      it 'treats contains like is_equal_to (on sale)' do
+        create(:sale_collection_rule, :contains, collection: collection)
+
+        expect(collection.reload.products_matching_rules).to contain_exactly(on_sale)
+      end
+
+      it 'treats does_not_contain like is_not_equal_to (not on sale)' do
+        create(:sale_collection_rule, :does_not_contain, collection: collection)
+
+        expect(collection.reload.products_matching_rules).to contain_exactly(not_on_sale)
+      end
     end
   end
 end
