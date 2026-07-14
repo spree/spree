@@ -50,10 +50,6 @@ module Spree
         []
       end
 
-      def location_after_save
-        spree.admin_user_url(@address.user)
-      end
-
       def collection_url
         if @address.user.present?
           spree.admin_user_url(@address.user)

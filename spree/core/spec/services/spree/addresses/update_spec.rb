@@ -327,6 +327,16 @@ RSpec.describe Spree::Addresses::Update do
         messages = result.error.value.messages
         expect(messages).to eq( zipcode: ["can't be blank"])
       end
+
+      context 'when the address is uneditable' do
+        let!(:completed_order) { create(:completed_order_with_totals, user: user, ship_address: address, bill_address: address) }
+
+        it 'returns a failure and leaves the original address intact' do
+          expect { result }.not_to change(Spree::Address, :count)
+          expect(result).to be_failure
+          expect(address.reload.deleted_at).to be_nil
+        end
+      end
     end
   end
 end
