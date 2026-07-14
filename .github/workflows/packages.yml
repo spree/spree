@@ -436,7 +436,12 @@ jobs:
 
   release-create-spree-app:
     name: "create-spree-app - Release"
-    needs: check
+    # Gated on release-cli: the dashboard scaffold phase delegates to the
+    # project-local `spree add dashboard`, so a create-spree-app that offers
+    # the dashboard must not publish before the CLI implementing that command
+    # (with the embedded starter) is on npm. Completes the release chain:
+    # admin-sdk → dashboard → cli → create-spree-app.
+    needs: [check, release-cli]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
