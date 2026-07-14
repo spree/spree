@@ -95,13 +95,13 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "ee3a8b8b2f5f3c94db405aa73fec5cf247392037b3e61804771a41e2a5d07702",
+      "fingerprint": "e38f4caceac1e798b1c497572cef81ea40d057d8dd3516bbf08a5bc7ce115fd3",
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/sorters/spree/classifications/sort.rb",
       "line": 59,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "scope.joins(:product => ({ :variants => :prices })).select(\"#{Spree::Classification.table_name}.*, min(#{Spree::Price.table_name}.amount)\").distinct.where(:spree_prices => ({ :currency => currency })).order(\"min(#{Spree::Price.table_name}.amount) #{sort_by?(\"price\")[1]}\")",
+      "code": "scope.joins(:product => ({ :variants => :prices })).select(\"#{Spree::ProductCategory.table_name}.*, min(#{Spree::Price.table_name}.amount)\").distinct.where(:spree_prices => ({ :currency => currency })).order(\"min(#{Spree::Price.table_name}.amount) #{sort_by?(\"price\")[1]}\")",
       "render_path": null,
       "location": {
         "type": "method",
