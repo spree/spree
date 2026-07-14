@@ -287,6 +287,29 @@ RSpec.describe Spree::Addresses::Update do
 
         it_behaves_like 'updating with same params'
       end
+
+      context 'when a guest cart shares an immutable address' do
+        let(:address) { create(:address) }
+        let!(:completed_guest_order) do
+          create(:order, user: nil, email: 'guest-complete@example.com', completed_at: Time.current,
+                         ship_address: address, bill_address: address)
+        end
+        let!(:guest_cart) do
+          create(:order, user: nil, email: 'guest-cart@example.com', ship_address: address, bill_address: address)
+        end
+
+        it 'repoints the guest cart to the copy and keeps the completed order on the original' do
+          expect(result).to be_success
+          expect(value.id).not_to eq(address.id)
+          expect(address.reload.deleted_at).to be_present
+
+          expect(guest_cart.reload.ship_address_id).to eq(value.id)
+          expect(guest_cart.bill_address_id).to eq(value.id)
+          expect(guest_cart.state).to eq('address')
+
+          expect(completed_guest_order.reload.ship_address_id).to eq(address.id)
+        end
+      end
     end
 
     context 'with invalid params' do

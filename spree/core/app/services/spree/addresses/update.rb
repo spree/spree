@@ -53,9 +53,9 @@ module Spree
               default_billing: default_billing,
               default_shipping: default_shipping
             )
-
-            reassign_incomplete_orders(address.user, address.id, address)
           end
+
+          reassign_incomplete_orders(address.id, address)
 
           success(address)
         elsif new_address(address_params).valid?
@@ -72,9 +72,9 @@ module Spree
               default_billing: default_billing,
               default_shipping: default_shipping
             )
-
-            reassign_incomplete_orders(new_address.user, old_address_id, new_address)
           end
+
+          reassign_incomplete_orders(old_address_id, new_address)
 
           success(new_address)
         else
@@ -89,8 +89,8 @@ module Spree
         address_params.transform_values!(&:presence)
       end
 
-      def reassign_incomplete_orders(user, old_address_id, new_address)
-        orders = user.orders.incomplete.where('ship_address_id = :id OR bill_address_id = :id', id: old_address_id)
+      def reassign_incomplete_orders(old_address_id, new_address)
+        orders = Spree::Order.incomplete.where('ship_address_id = :id OR bill_address_id = :id', id: old_address_id)
 
         orders.find_each do |incomplete_order|
           incomplete_order.ship_address = new_address if incomplete_order.ship_address_id == old_address_id
