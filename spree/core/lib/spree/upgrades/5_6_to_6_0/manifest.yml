@@ -33,3 +33,22 @@ steps:
       Run spree:media:migrate_master_images_to_product_media first and let its
       jobs finish, so no master-pinned media is lost when ghost masters are
       deleted.
+
+  - id: migrate_taxons_to_categories_and_collections
+    name: "Migrate taxons to categories and collections"
+    task: "spree:migrate_taxons_to_categories_and_collections"
+    notes: |
+      Migrates rule-based (automatic) taxons into Spree::Collection — copying
+      their rules, product membership and translations, and moving the ActionText
+      description, images, custom fields and slugs onto the new collection — then
+      deletes the migrated automatic taxon. Manual taxons stay as categories.
+
+      Severs the taxonomy structure: backfills store_id from the taxonomy, drops
+      taxonomy roots left childless, and nulls taxonomy_id on the survivors
+      (categories are store-owned in 6.0). Finally backfills the renamed
+      class-name strings ('Spree::Taxon*' -> 'Spree::Category*') across the
+      metafield, attachment, ActionText, friendly_id slug and promotion-rule
+      columns.
+
+      Idempotent. Multi-tenant installs run the per-tenant override shipped by
+      spree_multi_tenant.
