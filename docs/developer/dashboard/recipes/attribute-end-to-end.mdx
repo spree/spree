@@ -21,8 +21,7 @@ Graduate to a real database column only when the attribute needs **list operatio
 | You need… | Custom field | Real column |
 |---|---|---|
 | Editing on the product form | ✅ zero code | ✅ this recipe |
-| Filtering / sorting the products list | ❌ | ✅ via Ransack |
-| A database index, Rails validations, queries in Ruby | ❌ | ✅ |
+| Filtering / sorting the products list in Admin | ❌ | ✅ via Ransack |
 | Merchants defining the field themselves at runtime | ✅ | ❌ |
 
 Lead time is a column because its whole point is the query: *"show me everything that ships slow, slowest first."*
@@ -45,30 +44,36 @@ end
 **The serializer** — makes the attribute *readable* (hydrates the form, renders the table cell):
 
 ```ruby
-# app/serializers/my_plugin/product_serializer.rb
-module MyPlugin
+# app/serializers/admin/product_serializer.rb
+module Admin
   class ProductSerializer < Spree::Api::V3::Admin::ProductSerializer
-    typelize lead_time_days: 'number | null'
     attributes :lead_time_days
   end
 end
 
 # config/initializers/spree.rb
-Spree.api.admin_product_serializer = 'MyPlugin::ProductSerializer'
+Spree.api.admin_product_serializer = 'Admin::ProductSerializer'
 ```
 
 **The permitted param** — makes it *writable* (the form's Save ships it in the same PATCH as core fields). The read and write names must match:
 
 ```ruby
-# app/controllers/my_plugin/products_controller_decorator.rb
-module MyPlugin
-  module ProductsControllerDecorator
-    def permitted_params
-      super.merge(params.permit(:lead_time_days))
+# app/controllers/spree/api/v3/admin/products_controller_decorator.rb
+module Spree
+  module Api
+    module V3
+      module Admin
+        module ProductsControllerDecorator
+          def permitted_params
+            super.merge(params.permit(:lead_time_days))
+          end
+        end
+
+        ProductsController.prepend(ProductsControllerDecorator)
+      end
     end
   end
 end
-Spree::Api::V3::Admin::ProductsController.prepend(MyPlugin::ProductsControllerDecorator)
 ```
 
 **The Ransack allowlist** — makes it *filterable and sortable*. Both the list's sort param and every filter predicate go through Ransack, and Ransack refuses attributes that aren't allowlisted:

@@ -11,7 +11,16 @@ module Spree
     # falls back to index.html with no-cache so deploys take effect on the
     # next navigation. No authentication — the bundle is public client code;
     # the SPA authenticates its API calls itself.
-    class AppController < ActionController::API
+    class AppController < ActionController::Base
+      # GET-only file serving mutates nothing, but enable forgery protection
+      # anyway so the controller stays safe if an action is ever added.
+      protect_from_forgery with: :exception
+      # `verify_same_origin_request` blocks JavaScript responses to plain GET
+      # requests — protection against JSONP-style data leaks from dynamically
+      # generated JS. The Vite bundle is static public code that the SPA's own
+      # <script> tags must load, which is exactly that request shape.
+      skip_after_action :verify_same_origin_request
+
       def show
         root = dist_root
         return head :not_found unless root
@@ -37,13 +46,21 @@ module Spree
         root if root.directory?
       end
 
-      # Resolve a request path to a real file inside the dist directory,
-      # rejecting anything that escapes it (`..`, absolute paths, symlinks
-      # pointing outside are covered by the expanded-path prefix check).
+      # Resolve a request path to a real file inside the dist directory.
+      # Defense in depth against traversal: reject null bytes, absolute
+      # paths, and any `.`/`..` segment before touching the filesystem, then
+      # verify the expanded path still lives under the dist root (which also
+      # covers symlinks pointing outside it).
       def resolve_file(root, relative_path)
-        return if relative_path.blank?
+        return if relative_path.blank? || relative_path.include?("\0")
 
-        candidate = root.join(relative_path).expand_path
+        relative = Pathname.new(relative_path)
+        return if relative.absolute?
+
+        segments = relative.each_filename.to_a
+        return if segments.empty? || segments.any? { |segment| segment == '.' || segment == '..' }
+
+        candidate = root.join(*segments).expand_path
         return unless candidate.to_s.start_with?("#{root}#{File::SEPARATOR}")
 
         candidate if candidate.file?

@@ -366,7 +366,7 @@ Endpoints marked — are exempt from scope checks (authentication and session en
 
 | Method | Path | Required scope | Summary |
 |---|---|---|---|
-| `POST` | `/translations/batch` | *write_<resource> for every resource type in the batch (for API-key authentication)* | Batch upsert translations |
+| `POST` | `/translations/batch` | `write_*` (eg. `write_products`) for every resource type in the batch (for API-key authentication) | Batch upsert translations |
 
 ## Webhook endpoints
 

@@ -40,6 +40,9 @@
     "react-i18next": "^17.0.8"
   },
   "devDependencies": {
+    "@spree/admin-sdk": "workspace:^",
+    "@spree/dashboard-core": "workspace:^",
+    "@spree/dashboard-ui": "workspace:^",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "~6.0.3",

@@ -281,7 +281,7 @@
           {
             "item": "Extending",
             "icon": "puzzle",
-            "description": "Customize admin, models, and business logic",
+            "description": "Customize admin panel, API, and business logic",
             "groups": [
               {
                 "group": "Tutorial",
@@ -298,8 +298,8 @@
                 ]
               },
               {
-                "group": "Classic Admin",
-                "icon": "ruby",
+                "group": "Admin Panel",
+                "icon": "gauge",
                 "pages": [
                   "developer/admin/admin",
                   "developer/admin/extending-ui",
@@ -392,6 +392,7 @@
             "item": "Dashboard",
             "icon": "gauge",
             "description": "React dashboard",
+            "hidden": true,
             "groups": [
               {
                 "group": "Overview",

@@ -401,15 +401,6 @@ importers:
 
   packages/dashboard-plugin-example:
     dependencies:
-      '@spree/admin-sdk':
-        specifier: workspace:^
-        version: link:../admin-sdk
-      '@spree/dashboard-core':
-        specifier: workspace:^
-        version: link:../dashboard-core
-      '@spree/dashboard-ui':
-        specifier: workspace:^
-        version: link:../dashboard-ui
       '@tanstack/react-query':
         specifier: ^5.100.9
         version: 5.100.9(react@19.2.6)
@@ -432,6 +423,15 @@ importers:
         specifier: ^17.0.8
         version: 17.0.8(i18next@26.2.0(typescript@6.0.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@6.0.3)
     devDependencies:
+      '@spree/admin-sdk':
+        specifier: workspace:^
+        version: link:../admin-sdk
+      '@spree/dashboard-core':
+        specifier: workspace:^
+        version: link:../dashboard-core
+      '@spree/dashboard-ui':
+        specifier: workspace:^
+        version: link:../dashboard-ui
       '@types/react':
         specifier: ^19.2.14
         version: 19.2.14
