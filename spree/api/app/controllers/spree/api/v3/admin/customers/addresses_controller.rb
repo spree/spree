@@ -7,7 +7,7 @@ module Spree
 
             # POST /api/v3/admin/customers/:customer_id/addresses
             def create
-              authorize_resource!(@parent.addresses.new, :create)
+              authorize_resource!(Spree::Address.new(user_id: @parent.id), :create)
 
               result = Spree.address_create_service.call(
                 address_params: address_attrs,

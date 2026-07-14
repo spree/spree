@@ -10,7 +10,7 @@ module Spree
         ApplicationRecord.transaction do
           perform(address: address, address_params: address_params, **opts)
         end
-      rescue ActiveRecord::RecordInvalid => e
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotDestroyed => e
         failure(e.record)
       end
 
@@ -62,7 +62,7 @@ module Spree
           end
         elsif new_address(address_params).valid?
           old_address_id = address.id
-          address.destroy
+          address.destroy!
 
           if new_address.user.present?
             default_billing = address.user_default_billing? || default_billing

@@ -273,6 +273,18 @@ RSpec.describe Spree::Addresses::Update do
           end
         end
 
+        context 'when soft-deleting the previous address fails' do
+          before do
+            allow(address).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed.new('failed', address))
+          end
+
+          it 'rolls back the address replacement and returns a failure' do
+            expect { result }.not_to change(Spree::Address.unscoped, :count)
+            expect(result).to be_failure
+            expect(result.value).to eq(address)
+          end
+        end
+
         it_behaves_like 'updating with same params'
       end
     end
