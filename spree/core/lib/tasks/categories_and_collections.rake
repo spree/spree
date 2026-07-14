@@ -152,6 +152,9 @@ namespace :spree do
       [Spree::Metafield, :resource_type, 'Spree::Taxon', 'Spree::Category'],
       [Spree::MetafieldDefinition, :resource_type, 'Spree::Taxon', 'Spree::Category'],
       [ActiveStorage::Attachment, :record_type, 'Spree::Taxon', 'Spree::Category'],
+      # description is an ActionText field (translates :description, backend: :action_text);
+      # surviving categories keep their rich-text description without this.
+      [ActionText::RichText, :record_type, 'Spree::Taxon', 'Spree::Category'],
       [FriendlyId::Slug, :sluggable_type, 'Spree::Taxon', 'Spree::Category'],
       [Spree::PromotionRule, :type, 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::Category']
     ].each do |model, column, from, to|

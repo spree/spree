@@ -94,6 +94,23 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
     end
   end
 
+  describe 'ActionText descriptions on surviving categories' do
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let!(:category) do
+      create(:taxon, taxonomy: taxonomy, store: store).tap do |c|
+        c.update!(description: '<div>Kept description</div>')
+        # simulate a pre-6.0 row still typed as Spree::Taxon
+        ActionText::RichText.where(record_id: c.id, name: 'description').update_all(record_type: 'Spree::Taxon')
+      end
+    end
+
+    it 'backfills record_type so the rich-text description survives the rename' do
+      subject.invoke
+
+      expect(category.reload.description.to_plain_text).to eq('Kept description')
+    end
+  end
+
   describe 'idempotency' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let!(:category) { create(:automatic_taxon, taxonomy: taxonomy, store: store) }
