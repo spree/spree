@@ -373,7 +373,12 @@ jobs:
   # matching @spree/admin-sdk.
   release-dashboard:
     name: "Dashboard packages - Release"
-    needs: check
+    # Gated on release-admin-sdk: the dashboard packages' workspace:^ ranges
+    # are rewritten to concrete ^x.y.z of @spree/admin-sdk while packing — a
+    # same-push admin-sdk version bump must land on npm first, or installs of
+    # the just-published dashboard packages fail until it does. (release-cli
+    # waits on this job, completing the admin-sdk → dashboard → cli chain.)
+    needs: [check, release-admin-sdk]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
