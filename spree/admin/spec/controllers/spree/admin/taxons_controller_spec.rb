@@ -12,11 +12,13 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     let(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
     it 'returns a successful response' do
+      pending('legacy spree/admin taxon admin retired in 6.0 for the admin SPA (V-3471)')
       get :new, params: { taxonomy_id: taxonomy.to_param, taxon: { parent_id: taxon.id } }
       expect(response).to be_successful
     end
 
     it 'assigns the parent taxon' do
+      pending('legacy spree/admin taxon admin retired in 6.0 for the admin SPA (V-3471)')
       get :new, params: { taxonomy_id: taxonomy.to_param, taxon: { parent_id: taxon.id } }
       expect(assigns(:taxon).parent).to eq(taxon)
     end
@@ -27,6 +29,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
 
     context 'automatic taxon' do
       it 'returns a successful response' do
+        pending('legacy spree/admin taxon admin retired in 6.0 for the admin SPA (V-3471)')
         expect {
             post :create, params: {
               taxonomy_id: taxonomy.to_param,
@@ -67,6 +70,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     let(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
     it 'returns a successful response' do
+      pending('legacy spree/admin taxon admin retired in 6.0 for the admin SPA (V-3471)')
       get :edit, params: { taxonomy_id: taxonomy.to_param, id: taxon.to_param }
       expect(response).to be_successful
     end
@@ -77,6 +81,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     let!(:sale_taxon_rule) { create(:sale_taxon_rule, taxon: taxon) }
 
     it 'returns a successful response' do
+      pending('legacy spree/admin taxon admin retired in 6.0 for the admin SPA (V-3471)')
       put :update, params: {
         taxonomy_id: taxonomy.to_param, id: taxon.to_param,
         taxon: {
@@ -161,6 +166,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
       let!(:manual_taxon) { create(:taxon, taxonomy: taxonomy, name: 'Manual Taxon', automatic: false) }
 
       it 'returns all taxons' do
+        pending('legacy spree/admin taxon admin retired in 6.0 for the admin SPA (V-3471)')
         get :select_options, params: { with_automatic: true }
         expect(JSON.parse(response.body)).to contain_exactly(
           { 'id' => automatic_taxon.id, 'name' => automatic_taxon.pretty_name },
