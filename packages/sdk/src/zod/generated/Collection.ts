@@ -8,7 +8,6 @@ export const CollectionSchema = z.object({
   permalink: z.string(),
   position: z.number(),
   sort_order: z.string(),
-  hide_from_nav: z.boolean(),
   meta_title: z.string().nullable(),
   meta_description: z.string().nullable(),
   meta_keywords: z.string().nullable(),

@@ -3,7 +3,13 @@ require 'spec_helper'
 RSpec.describe Spree::Collection, type: :model do
   let(:store) { @default_store }
 
-  it_behaves_like 'metadata'
+  describe 'metadata' do
+    it 'defaults to an empty hash and round-trips a JSON value' do
+      collection = create(:collection, metadata: { erp_id: '123' })
+      expect(create(:collection).metadata).to eq({})
+      expect(collection.reload.metadata).to eq({ 'erp_id' => '123' })
+    end
+  end
 
   describe 'permalink generation' do
     it 'derives a url-safe permalink from the name' do

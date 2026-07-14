@@ -6,13 +6,13 @@ module Spree
       # back-office state exposed only by the Admin serializer.
       class CollectionSerializer < BaseSerializer
         typelize name: :string, permalink: :string, position: :number,
-                 sort_order: :string, hide_from_nav: :boolean,
+                 sort_order: :string,
                  meta_title: [:string, nullable: true], meta_description: [:string, nullable: true], meta_keywords: [:string, nullable: true],
                  description: :string, description_html: :string,
                  image_url: [:string, nullable: true], square_image_url: [:string, nullable: true],
                  products_count: :number
 
-        attributes :name, :permalink, :position, :sort_order, :hide_from_nav,
+        attributes :name, :permalink, :position, :sort_order,
                    :meta_title, :meta_description, :meta_keywords, :products_count
 
         attribute :description do |collection|

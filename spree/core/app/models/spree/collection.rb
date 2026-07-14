@@ -25,7 +25,11 @@ module Spree
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug
     include Spree::Metafields
-    include Spree::Metadata
+
+    # Single consolidated metadata JSON column (drops public_metadata; see
+    # docs/plans/decisions.md 2026-03-16 "Consolidate metadata"). Write-only
+    # developer escape hatch — never exposed in the Store API.
+    attribute :metadata, default: -> { {} }
 
     #
     # Slug / permalink — FriendlyId with history (mirrors Spree::Category; flat, no hierarchy).
@@ -78,7 +82,6 @@ module Spree
     validates :permalink, uniqueness: { scope: :store_id, case_sensitive: false, allow_blank: true }
     validates :rules_match_policy, inclusion: { in: RULES_MATCH_POLICIES }, presence: true
     validates :sort_order, inclusion: { in: SORT_ORDERS }, presence: true
-    validates :hide_from_nav, inclusion: { in: [true, false] }
 
     before_validation :set_permalink, if: :name
 
@@ -91,7 +94,7 @@ module Spree
     #
     # Automatic (rule-based) membership
     #
-    after_commit :regenerate_products, on: [:update], if: -> { automatic? && saved_change_to_rules_match_policy? }
+    after_commit :regenerate_products, on: [:update], if: -> { automatic? && (saved_change_to_automatic? || saved_change_to_rules_match_policy?) }
     attribute :marked_for_regenerate_products, :boolean, default: true
 
     def manual?

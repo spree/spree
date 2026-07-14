@@ -34,7 +34,7 @@ module Spree
             params.permit(
               :name, :description, :permalink, :position,
               :meta_title, :meta_description, :meta_keywords,
-              :hide_from_nav, :image, :square_image,
+              :image, :square_image,
               :automatic, :rules_match_policy, :sort_order,
               rules: [:id, :type, :value, :match_policy],
               # Inline custom field values keyed by definition id (see

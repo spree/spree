@@ -47,14 +47,12 @@ namespace :spree do
           automatic: true,
           rules_match_policy: category.rules_match_policy,
           sort_order: category.sort_order,
-          hide_from_nav: category.hide_from_nav,
           position: category.position,
           store_id: store_id,
           meta_title: category[:meta_title],
           meta_description: category[:meta_description],
           meta_keywords: category[:meta_keywords],
-          public_metadata: category.public_metadata,
-          private_metadata: category.private_metadata
+          metadata: category.metadata
         )
         # Membership is copied verbatim below, so don't rebuild it from the rules.
         collection.marked_for_regenerate_products = false

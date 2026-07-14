@@ -49,6 +49,7 @@ module Spree
           affected_ids = all_affected.pluck(:id)
           Spree::Collection.where(id: affected_ids).touch_all
           product.touch
+          product.enqueue_search_index
 
           # counter caches — bulk insert/delete bypass the counter_cache callbacks
           affected_ids.each { |id| Spree::Collection.reset_counters(id, :product_collections) }

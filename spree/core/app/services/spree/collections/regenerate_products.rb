@@ -34,12 +34,13 @@ module Spree
           end
 
           Spree::ProductCollection.insert_all(records_to_insert)
-
-          # expire product cache + reindex
-          products = Spree::Product.where(id: (previous_products_ids + product_ids_to_insert).uniq)
-          products.touch_all
-          products.each(&:enqueue_search_index)
         end
+
+        # Expire cache + reindex the union of previous and new members, so products
+        # dropped when the match set empties also refresh their stale collection_ids.
+        products = Spree::Product.where(id: (previous_products_ids + product_ids_to_insert).uniq)
+        products.touch_all
+        products.each(&:enqueue_search_index)
 
         # counter caches — bulk insert/delete bypass the ProductCollection counter_cache callbacks
         Spree::Collection.reset_counters(collection.id, :product_collections)

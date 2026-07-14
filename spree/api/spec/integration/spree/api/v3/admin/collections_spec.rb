@@ -59,7 +59,6 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
           meta_title: { type: :string },
           meta_description: { type: :string },
           meta_keywords: { type: :string },
-          hide_from_nav: { type: :boolean, example: false },
           rules: {
             type: :array,
             description: 'Full desired rule set. Entries with an id update, id-less entries create, omitted rules are removed.',
@@ -166,7 +165,6 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
           meta_title: { type: :string },
           meta_description: { type: :string },
           meta_keywords: { type: :string },
-          hide_from_nav: { type: :boolean },
           sort_order: { type: :string },
           automatic: { type: :boolean },
           rules_match_policy: { type: :string, enum: %w[all any] },

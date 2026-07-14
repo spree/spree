@@ -6,7 +6,6 @@ class CreateSpreeCollections < ActiveRecord::Migration[7.2]
       t.boolean :automatic, null: false, default: false
       t.string :rules_match_policy, null: false, default: 'all'
       t.string :sort_order, null: false, default: 'manual'
-      t.boolean :hide_from_nav, null: false, default: false
       t.integer :position
       t.integer :products_count, null: false, default: 0
       t.references :store, null: false, index: true
@@ -15,11 +14,9 @@ class CreateSpreeCollections < ActiveRecord::Migration[7.2]
       t.string :meta_keywords
 
       if t.respond_to?(:jsonb)
-        t.jsonb :public_metadata
-        t.jsonb :private_metadata
+        t.jsonb :metadata
       else
-        t.json :public_metadata
-        t.json :private_metadata
+        t.json :metadata
       end
 
       t.timestamps
