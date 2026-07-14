@@ -44,22 +44,20 @@ module Spree
         return success(address) unless address_changed
 
         if address.editable?
-          if address.update(address_params)
-            if address.user.present?
-              assign_to_user_as_default(
-                user: address.user,
-                address_id: address.id,
-                default_billing: default_billing,
-                default_shipping: default_shipping
-              )
+          address.update!(address_params)
 
-              reassign_incomplete_orders(address.user, address.id, address)
-            end
+          if address.user.present?
+            assign_to_user_as_default(
+              user: address.user,
+              address_id: address.id,
+              default_billing: default_billing,
+              default_shipping: default_shipping
+            )
 
-            success(address)
-          else
-            failure(address)
+            reassign_incomplete_orders(address.user, address.id, address)
           end
+
+          success(address)
         elsif new_address(address_params).valid?
           old_address_id = address.id
           address.destroy!
