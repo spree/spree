@@ -15,7 +15,6 @@ module Spree
       private
 
       def perform(address:, address_params:, **opts)
-        order = opts[:order]
         default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, false)
         default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, false)
         address_changes_except = opts.fetch(:address_changes_except, [])
@@ -51,15 +50,16 @@ module Spree
                 default_billing: default_billing,
                 default_shipping: default_shipping
               )
-            end
 
-            order.update(state: 'address') if order.present?
+              reassign_incomplete_orders(address.user, address.id, address)
+            end
 
             success(address)
           else
             failure(address)
           end
         elsif new_address(address_params).valid?
+          old_address_id = address.id
           address.destroy
 
           if new_address.user.present?
@@ -72,13 +72,8 @@ module Spree
               default_billing: default_billing,
               default_shipping: default_shipping
             )
-          end
 
-          if order.present?
-            order.ship_address = new_address if order.ship_address_id == address.id
-            order.bill_address = new_address if order.bill_address_id == address.id
-            order.state = 'address'
-            order.save
+            reassign_incomplete_orders(new_address.user, old_address_id, new_address)
           end
 
           success(new_address)
@@ -92,6 +87,17 @@ module Spree
         address_params[:country_id] ||= address.country_id
         address_params = fill_country_and_state_ids(address_params)
         address_params.transform_values!(&:presence)
+      end
+
+      def reassign_incomplete_orders(user, old_address_id, new_address)
+        orders = user.orders.incomplete.where('ship_address_id = :id OR bill_address_id = :id', id: old_address_id)
+
+        orders.find_each do |incomplete_order|
+          incomplete_order.ship_address = new_address if incomplete_order.ship_address_id == old_address_id
+          incomplete_order.bill_address = new_address if incomplete_order.bill_address_id == old_address_id
+          incomplete_order.state = 'address'
+          incomplete_order.save!
+        end
       end
 
       def defaults_changed?(address, default_billing, default_shipping)

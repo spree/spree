@@ -241,6 +241,26 @@ RSpec.describe Spree::Addresses::Update do
           end
         end
 
+        context 'when a separate incomplete order shares the address' do
+          let!(:incomplete_order) { create(:order, user: user, ship_address: address, bill_address: address) }
+
+          it 'repoints the incomplete order to the new address and moves it to the address step' do
+            result
+
+            expect(incomplete_order.reload.ship_address_id).to eq(value.id)
+            expect(incomplete_order.bill_address_id).to eq(value.id)
+            expect(incomplete_order.state).to eq('address')
+          end
+
+          it 'keeps the completed order on the original, soft-deleted address' do
+            result
+
+            expect(completed_order.reload.ship_address_id).to eq(address.id)
+            expect(completed_order.bill_address_id).to eq(address.id)
+            expect(address.reload.deleted_at).to be_present
+          end
+        end
+
         it_behaves_like 'updating with same params'
       end
     end
