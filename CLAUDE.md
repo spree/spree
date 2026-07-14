@@ -90,6 +90,7 @@ Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web + w
 | What changed | What to run |
 |---|---|
 | Ruby code in `spree/*` gems | Nothing — bind-mounted, reloads on next request |
+| Hosted React Dashboard at `/dashboard` (single-node test) | `pnpm server:dashboard` — rebuilds `packages/dashboard-starter/dist` with `VITE_BASE_PATH=/dashboard/`; served immediately through the monorepo mount (no restart). For dashboard *development* keep using Vite on :5173 (`cd packages/dashboard && pnpm dev`). |
 | Tailwind classes in `spree/admin` templates/helpers/JS | Nothing — a watcher in the web container rebuilds the admin CSS within ~15s. If changes still don't reach the browser, delete `server/public/assets/.manifest.json` (stale precompile output that freezes asset serving) and restart web — `pnpm server:dev` boots handle this automatically. |
 | New migration in a gem | Nothing — the next `pnpm server:dev` boot runs `spree:install:migrations db:prepare` (or `cd server && pnpm exec spree migrate` while running) |
 | Gem dependencies (gemspec / Gemfile / starter `Gemfile.lock` drift after a pull) | Nothing — the next `pnpm server:dev` boot self-heals (`bundle check || bundle install` into the `bundle_cache` volume); while running: `cd server && pnpm exec spree bundle install` |
@@ -98,7 +99,7 @@ Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web + w
 | Meilisearch image bump ("database version … is incompatible") | `docker compose -p server rm -sf meilisearch && docker volume rm server_meilisearch_data`, boot, then `cd server && pnpm exec spree rake spree:search:reindex` |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes DB + volumes) |
 
-Backend: http://localhost:3000, admin at `/admin` (`spree@example.com` / `spree123`). Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.
+Backend: http://localhost:3000, admin at `/admin`, hosted React Dashboard at `/dashboard` (`spree@example.com` / `spree123`). Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.
 
 ---
 
