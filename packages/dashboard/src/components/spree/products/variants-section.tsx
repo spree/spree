@@ -35,8 +35,8 @@ import { PencilIcon, XIcon } from 'lucide-react'
 import { type CSSProperties, useMemo, useState } from 'react'
 import { type UseFormReturn, useFieldArray, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useOptionTypes } from '@/hooks/use-option-types'
-import type { ProductFormValues, VariantFormValues } from '@/schemas/product'
+import { useOptionTypes } from '../../../hooks/use-option-types'
+import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
 import { VariantEditSheet } from './variant-edit-sheet'
 import {
   generateVariantCombinations,

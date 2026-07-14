@@ -39,14 +39,19 @@ import { useEffect, useMemo } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { useCreateMarket, useDeleteMarket, useMarket, useUpdateMarket } from '@/hooks/use-markets'
+import {
+  useCreateMarket,
+  useDeleteMarket,
+  useMarket,
+  useUpdateMarket,
+} from '../../../../hooks/use-markets'
 import {
   MARKET_DEFAULTS,
   type MarketFormValues,
   marketFormSchema,
   marketValuesToParams,
-} from '@/schemas/market'
-import '@/tables/markets'
+} from '../../../../schemas/market'
+import '../../../../tables/markets'
 
 const marketsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),

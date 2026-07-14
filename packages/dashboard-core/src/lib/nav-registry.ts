@@ -56,6 +56,17 @@ interface NavMutator {
   insertBefore(targetKey: string, entry: NavEntry): void
   /** Insert a new entry immediately after `targetKey`. Throws if the target is missing. */
   insertAfter(targetKey: string, entry: NavEntry): void
+  /**
+   * Append a child under an existing top-level entry (e.g. nest a plugin page
+   * under the built-in `products` menu). Preserves the parent's existing
+   * children — unlike `update(parent, { children })`, which replaces them.
+   * Throws if the parent is missing or the child key already exists there.
+   */
+  addChild(parentKey: string, child: NavEntry): void
+  /** Remove a child by key from a parent. No-op when either is absent. */
+  removeChild(parentKey: string, childKey: string): void
+  /** Patch a child of `parentKey`. Throws if the parent or child is missing. */
+  updateChild(parentKey: string, childKey: string, patch: Partial<Omit<NavEntry, 'key'>>): void
 }
 
 // ============================================================================
@@ -128,6 +139,44 @@ export const nav: NavMutator = {
     entries.splice(i + 1, 0, adjusted)
     notify()
   },
+  addChild(parentKey, child) {
+    const parent = requireEntry(parentKey)
+    if (parent.children?.some((c) => c.key === child.key)) {
+      throw new Error(
+        `Nav child "${child.key}" already exists under "${parentKey}". Use nav.updateChild().`,
+      )
+    }
+    parent.children = [...(parent.children ?? []), child]
+    notify()
+  },
+  removeChild(parentKey, childKey) {
+    const parent = entries.find((e) => e.key === parentKey)
+    if (!parent?.children) return
+    const next = parent.children.filter((c) => c.key !== childKey)
+    if (next.length === parent.children.length) return
+    parent.children = next
+    notify()
+  },
+  updateChild(parentKey, childKey, patch) {
+    const parent = requireEntry(parentKey)
+    const idx = parent.children?.findIndex((c) => c.key === childKey) ?? -1
+    if (idx === -1 || !parent.children) {
+      throw new Error(`Nav child "${childKey}" not found under "${parentKey}".`)
+    }
+    // Replace both the child and the array so the patched entry gets a fresh
+    // reference in the next snapshot — in-place mutation would defeat any
+    // reference-equality memoization on the item component.
+    const next = [...parent.children]
+    next[idx] = { ...next[idx], ...patch }
+    parent.children = next
+    notify()
+  },
+}
+
+function requireEntry(key: string): NavEntry {
+  const entry = entries.find((e) => e.key === key)
+  if (!entry) throw new Error(`Nav entry "${key}" not found.`)
+  return entry
 }
 
 function subscribe(listener: () => void): () => void {
@@ -167,4 +216,9 @@ export function useNavEntries() {
 export function __resetNavRegistry(): void {
   entries.length = 0
   notify()
+}
+
+/** Test-only: raw entries in registration order (unsorted, unsectioned). */
+export function __getNavEntries(): readonly NavEntry[] {
+  return entries
 }

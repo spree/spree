@@ -1,0 +1,114 @@
+---
+title: Slots
+sidebarTitle: Slots
+description: Inject your own widgets into existing dashboard pages without forking them. Slots are named injection points the dashboard exposes on built-in pages.
+---
+
+A slot is a named injection point in a built-in page. Components registered against a slot render inside it, sorted by `position`, gated by an optional `if` predicate. The host page knows nothing about your widget — it just renders `<Slot name="..." context={...} />` and the slot registry handles the rest.
+
+## Quick example
+
+Render a card with the current user's email in every page's actions dropdown:
+
+```tsx
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { DropdownMenuItem } from '@spree/dashboard-ui'
+
+function UserBadge({ user }: { user?: { email: string } }) {
+  if (!user) return null
+  return <DropdownMenuItem>{user.email}</DropdownMenuItem>
+}
+
+defineDashboardPlugin({
+  slots: {
+    'page.actions_dropdown': [{
+      id: 'my-user-badge',
+      component: UserBadge as never,
+      position: 50,
+    }],
+  },
+})
+```
+
+`page.actions_dropdown` is one of the slots exposed by `<PageHeader>`. See the [Slots catalog](/developer/dashboard/slots-catalog) for the full list and the context shape each slot provides.
+
+## Slot context
+
+The component receives the **slot-specific context** as props — whatever the host page passes via `<Slot name="..." context={{ product, /* etc */ }} />`. The shape varies per slot: `page.actions_dropdown` passes `{ resource }`, `product.form_sidebar` passes `{ product }`, and so on. Each slot's shape is documented in the [Slots catalog](/developer/dashboard/slots-catalog).
+
+For anything beyond the slot's own context — permissions, the current store, the signed-in user — call the hooks inside your component: `usePermissions()`, `useStore()`, `useAuth()` from `@spree/dashboard-core`. (A future release may inject these as ambient props, but today the hooks are the way.)
+
+### Why `as never`?
+
+`defineDashboardPlugin`'s `slots` field is typed as a generic-erased `Record<string, SlotEntry[]>` — the facade can't statically know your slot's context shape, only the host page does. Cast your component to `as never` to satisfy the registry's signature. Your component still receives the right props at runtime; the cast only suppresses the type-system noise.
+
+If you'd rather have full type safety, call `registerSlot` directly with the explicit type parameter:
+
+```tsx
+import { registerSlot } from '@spree/dashboard-core'
+
+interface ProductSlotContext {
+  product: { id: string; brand_id?: string | null }
+}
+
+registerSlot<ProductSlotContext>('product.form_sidebar', {
+  id: 'brand-card',
+  component: ({ product }) => <BrandCard productId={product.id} brandId={product.brand_id} />,
+  position: 50,
+})
+```
+
+## Permission gating
+
+Gate inside the component with `usePermissions()` — return `null` when the user lacks access:
+
+```tsx
+import { usePermissions } from '@spree/dashboard-core'
+
+function AdminOnlyMenuItem() {
+  const { permissions } = usePermissions()
+  if (!permissions.can('manage', 'Spree::User')) return null
+  return <DropdownMenuItem>…</DropdownMenuItem>
+}
+```
+
+The entry-level `if` predicate also exists, but it only receives the slot's own context (the same props your component gets) — use it to skip an entry based on the host page's data, e.g. `if: ({ product }) => !!product.brand_id`. When it returns `false`, the entry is skipped entirely (no DOM nodes mounted).
+
+## Binding to the host form
+
+Slots on form pages (product, category, store settings — see the [slots catalog](/developer/dashboard/slots-catalog#detail-page-form-slots) for which) render **inside the page's `<form>`** and expose its react-hook-form instance. A widget can register inputs against it with `useHostForm()` — they hydrate from the API, flip the Save button on change, and persist in the page's own save, with no save logic in the widget:
+
+```tsx
+import { useHostForm } from '@spree/dashboard-core'
+
+function TechSpecsCard() {
+  const form = useHostForm<{ tech_specs: string }>()
+  return <Textarea {...form.register('tech_specs')} />
+}
+```
+
+Pair it with a `formFields` registration so the field hydrates and ships in the payload — the full walkthrough is the [custom form field recipe](/developer/dashboard/recipes/custom-form-field). Never render your own `<form>` inside a slot on these pages: HTML forbids nested forms, and the host form already owns submission. On pages without a host form (orders, customers), `useHostForm()` throws — use `useOptionalHostForm()` and fall back to your own state + API save.
+
+## Position
+
+`position` controls render order within the slot. Built-in entries (when the dashboard ships any) use 100/200/300 to leave gaps. Default is 100, so two entries with no explicit position render in registration order.
+
+## Removing or updating an entry
+
+```ts
+import { removeSlot, updateSlot } from '@spree/dashboard-core'
+
+removeSlot('product.form_sidebar', 'brand-card')
+updateSlot('product.form_sidebar', 'brand-card', { position: 999 })
+```
+
+These mirror the registry's mutator pattern — useful for development-mode toggles, or for unregistering a third-party slot entry from your host.
+
+## Order of operations
+
+Like nav, slot entries register at module-load time and the `<Slot>` consumer re-renders via `useSyncExternalStore` when entries change. Late registration works; the slot just lights up the next render.
+
+## Reference
+
+- [Slots catalog](/developer/dashboard/slots-catalog) — every named slot the dashboard exposes
+- [`SlotEntry`, `SlotAmbientContext`, `registerSlot`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/slot-registry.ts) — full registry source

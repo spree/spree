@@ -13,7 +13,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { typeLabel } from '@/lib/type-labels'
+import { typeLabel } from '../../../lib/type-labels'
 import { EditorShell } from './editor-shell'
 import type { PromotionActionEditorContext } from './types'
 

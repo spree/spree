@@ -32,7 +32,7 @@ import {
   type TranslatableResourceType,
   useLocales,
   useResourceTranslations,
-} from '@/hooks/use-translations'
+} from '../../../hooks/use-translations'
 
 /**
  * Universal field-label resolver. The matrix carries each row's public

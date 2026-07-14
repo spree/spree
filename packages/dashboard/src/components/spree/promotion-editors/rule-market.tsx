@@ -2,7 +2,7 @@ import type { Market } from '@spree/admin-sdk'
 import { MarketMultiCombobox, useTranslation } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useMemo, useState } from 'react'
-import { useAllMarkets } from '@/hooks/use-markets'
+import { useAllMarkets } from '../../../hooks/use-markets'
 import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 

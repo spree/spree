@@ -5,7 +5,7 @@
 // (no React) so they can evolve independently of the UI shell.
 
 import type { OptionType } from '@spree/admin-sdk'
-import type { VariantFormValues } from '@/schemas/product'
+import type { VariantFormValues } from '../../../schemas/product'
 
 export interface SelectedOptionValue {
   name: string

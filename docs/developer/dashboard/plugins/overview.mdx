@@ -1,0 +1,46 @@
+---
+title: Plugin overview
+sidebarTitle: Overview
+description: Package dashboard customizations as a redistributable npm plugin. Read this if you're shipping a feature for *other* people's Spree projects — not your own.
+---
+
+If you're customizing the dashboard for your own project, you don't need a plugin. Drop the same code into `src/plugins.ts` in your dashboard app and skip this section entirely — start with the [Customization](/developer/dashboard/customization/quickstart) docs.
+
+This section is for the ~10% of cases where you want to **distribute** dashboard extensions: as an open-source integration, an internal package shared across multiple host apps, or a SaaS-style commercial add-on.
+
+## What "plugin" means here
+
+A dashboard plugin is:
+
+1. **An npm package** — published, versioned, installed via `pnpm add @your-scope/your-plugin`.
+2. **One side-effecting entry-point** — `import '@your-scope/your-plugin'` calls `defineDashboardPlugin({ ... })` at module-load time, which registers nav entries, routes, slots, columns, etc.
+3. **Auto-discovered** — the `"spree": { "dashboard": { "plugin": true } }` marker in your package.json is all the host needs; `spreeDashboardPlugin()` finds every installed dependency carrying it, activates the entry-point, and scans your source for Tailwind classes so you never ship pre-built CSS. (Hosts can pass an explicit `plugins: [...]` array to opt out of discovery and whitelist instead.)
+4. **Translations-aware** — your bundle ships JSON locale files and calls `i18n.addResourceBundle('en', 'translation', bundle, true, true)` on import (keys nested under a top-level `admin` object).
+5. **Possibly Rails-aware** — many plugins also ship a Rails engine alongside the dashboard package (new models, new API endpoints) so the dashboard has something to talk to.
+
+That's it. **Plugins use the exact same registries as in-app customizations.** Everything you can do in `src/plugins.ts` you can also do from inside a plugin entry-point. The split between "in-app" and "plugin" is about packaging and distribution, not capability.
+
+## When to choose plugin over in-app
+
+| Scenario | Approach |
+|---|---|
+| Single project, your own team | In-app customization |
+| Two-three internal projects sharing the same extension | Internal npm package (still a plugin) |
+| Open-source integration distributed via npm | Plugin |
+| Commercial add-on with versioning + changelog | Plugin |
+| One-off prototype, even at a client | In-app (you can extract later) |
+
+If you're not sure: start in-app. Lifting `src/plugins.ts` into a plugin package later is a half-hour refactor — moving in the other direction is more painful.
+
+## What's in this section
+
+- [Scaffolding](/developer/dashboard/plugins/scaffolding) — `spree plugin new <name>` generates the monorepo
+- [Publishing](/developer/dashboard/plugins/publishing) — package metadata, semver, the npm bits
+- [Distributing](/developer/dashboard/plugins/distributing) — what consumers do to install it
+
+If you haven't yet, read the [Customization](/developer/dashboard/customization/quickstart) section first. It's where the registry API is documented; the plugin pages mostly cover *packaging* concerns.
+
+## Reference
+
+- [Reference: Plugin example (`brands` repo)](https://github.com/spree/spree/tree/main/packages/dashboard-plugin-example) — vendored reference implementation
+- [`defineDashboardPlugin` source](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/plugin.ts)

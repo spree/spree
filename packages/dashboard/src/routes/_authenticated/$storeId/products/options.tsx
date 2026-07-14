@@ -84,13 +84,13 @@ import {
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { ResourceTranslationsDialog } from '@/components/spree/translations/resource-translations-dialog'
+import { ResourceTranslationsDialog } from '../../../../components/spree/translations/resource-translations-dialog'
 import {
   useCreateOptionType,
   useDeleteOptionType,
   useOptionType,
   useUpdateOptionType,
-} from '@/hooks/use-option-types'
+} from '../../../../hooks/use-option-types'
 import {
   OPTION_TYPE_DEFAULTS,
   OPTION_TYPE_KINDS,
@@ -99,8 +99,8 @@ import {
   optionTypeFormSchema,
   optionValueToFormRow,
   valueToParam,
-} from '@/schemas/option-type'
-import '@/tables/option-types'
+} from '../../../../schemas/option-type'
+import '../../../../tables/option-types'
 
 const optionTypesSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),

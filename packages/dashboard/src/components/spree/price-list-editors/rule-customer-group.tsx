@@ -3,8 +3,11 @@ import { ResourceMultiAutocomplete } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
-import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
+import {
+  customerGroupAutocompleteProps,
+  useCustomerGroups,
+} from '../../../hooks/use-customer-groups'
+import { EditorShell } from '../promotion-editors/editor-shell'
 import type { PriceRuleEditorContext } from './types'
 
 export function CustomerGroupRuleEditor({ draft, onSave, onClose }: PriceRuleEditorContext) {

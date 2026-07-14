@@ -38,10 +38,10 @@ import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { ImportWizardDialog } from '@/components/spree/imports/import-wizard-dialog'
-import { categoryAutocompleteProps, useCategories } from '@/hooks/use-categories'
-import { channelAutocompleteProps, useChannels } from '@/hooks/use-channels'
-import { useDeleteProduct } from '@/hooks/use-product'
+import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
+import { categoryAutocompleteProps, useCategories } from '../../../../hooks/use-categories'
+import { channelAutocompleteProps, useChannels } from '../../../../hooks/use-channels'
+import { useDeleteProduct } from '../../../../hooks/use-product'
 import {
   useBulkAddProductsToCategories,
   useBulkAddProductsToChannels,
@@ -52,8 +52,8 @@ import {
   useBulkRemoveProductsFromChannels,
   useBulkRemoveProductTags,
   useCloneProduct,
-} from '@/hooks/use-products'
-import '@/tables/products'
+} from '../../../../hooks/use-products'
+import '../../../../tables/products'
 
 // `import` carries the prefixed id of the import whose wizard dialog is open
 // over the table — deep-linkable and refresh-safe.

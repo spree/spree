@@ -44,6 +44,10 @@
       "destination": "/developer/customization/permissions"
     },
     {
+      "source": "/developer/customization/dashboard-plugins",
+      "destination": "/developer/dashboard/plugins/overview"
+    },
+    {
       "source": "/developer/customization/event-subscribers",
       "destination": "/developer/core-concepts/events"
     },
@@ -277,7 +281,7 @@
           {
             "item": "Extending",
             "icon": "puzzle",
-            "description": "Customize admin, models, and business logic",
+            "description": "Customize admin panel, API, and business logic",
             "groups": [
               {
                 "group": "Tutorial",
@@ -294,7 +298,7 @@
                 ]
               },
               {
-                "group": "Admin Dashboard",
+                "group": "Admin Panel",
                 "icon": "gauge",
                 "pages": [
                   "developer/admin/admin",
@@ -380,6 +384,65 @@
                 "icon": "key",
                 "pages": [
                   "developer/how-to/custom-api-authentication"
+                ]
+              }
+            ]
+          },
+          {
+            "item": "Dashboard",
+            "icon": "gauge",
+            "description": "React dashboard",
+            "hidden": true,
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "developer/dashboard/overview",
+                  "developer/dashboard/concepts",
+                  "developer/dashboard/public-api"
+                ]
+              },
+              {
+                "group": "Customization",
+                "pages": [
+                  "developer/dashboard/customization/quickstart",
+                  "developer/dashboard/customization/navigation",
+                  "developer/dashboard/customization/routes",
+                  "developer/dashboard/customization/slots",
+                  "developer/dashboard/customization/tables",
+                  "developer/dashboard/customization/translations",
+                  "developer/dashboard/customization/permissions",
+                  "developer/dashboard/customization/backend"
+                ]
+              },
+              {
+                "group": "Recipes",
+                "pages": [
+                  "developer/dashboard/recipes/attribute-end-to-end",
+                  "developer/dashboard/recipes/custom-form-field",
+                  "developer/dashboard/recipes/page-action-button",
+                  "developer/dashboard/recipes/sidebar-widget"
+                ]
+              },
+              {
+                "group": "Plugins",
+                "pages": [
+                  "developer/dashboard/plugins/overview",
+                  "developer/dashboard/plugins/scaffolding",
+                  "developer/dashboard/plugins/publishing",
+                  "developer/dashboard/plugins/distributing"
+                ]
+              },
+              {
+                "group": "Deployment",
+                "pages": [
+                  "developer/dashboard/deployment"
+                ]
+              },
+              {
+                "group": "Slots Catalog",
+                "pages": [
+                  "developer/dashboard/slots-catalog"
                 ]
               }
             ]
@@ -506,7 +569,8 @@
                   "developer/sdk/admin/quickstart",
                   "developer/sdk/admin/authentication",
                   "developer/sdk/admin/resources",
-                  "developer/sdk/admin/querying-and-errors"
+                  "developer/sdk/admin/querying-and-errors",
+                  "developer/sdk/admin/extending"
                 ]
               }
             ]

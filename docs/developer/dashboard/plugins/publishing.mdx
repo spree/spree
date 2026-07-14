@@ -1,0 +1,142 @@
+---
+title: Publishing
+sidebarTitle: Publishing
+description: Get a dashboard plugin onto npm — package metadata, peer dependencies, TypeScript builds, versioning with Changesets.
+---
+
+`@spree/cli plugin new` scaffolds the npm package shape, but you still need to fill in publishing-specific metadata before `pnpm publish`. This page covers what to set and why.
+
+## Set the right `peerDependencies`
+
+Your plugin imports React, the dashboard, Tailwind, i18next, etc., but **you don't bundle them** — the host app has those, and bundling them twice causes either duplicate module instances or a tree-shaken nightmare. Use `peerDependencies`:
+
+```json
+{
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19",
+    "@spree/dashboard-core": "^0.1.0",
+    "@spree/dashboard-ui": "^0.1.0",
+    "@spree/admin-sdk": "^0.5.0",
+    "i18next": "^26",
+    "react-i18next": "^17",
+    "@tanstack/react-query": "^5",
+    "@tanstack/react-router": "^1",
+    "lucide-react": "^1"
+  }
+}
+```
+
+Use ranges, not exact versions — pin too tightly and consumers can't upgrade the dashboard without you cutting a release. One Developer Preview caveat: for `0.x` versions, `^` only allows patch-level drift (`^0.1.0` matches `0.1.x`, not `0.2.0`), so expect to bump your `@spree/dashboard-*` peers alongside dashboard releases until 1.0. `spree plugin new` scaffolds these ranges for you, matched to the current release.
+
+`dependencies` is for things your plugin *uses* that the host *doesn't* — small utilities (e.g., `clsx`, `date-fns` if you need a specific version, your own helper packages). When in doubt, peer-dep it. The trade-off is "user has to install one more thing" vs. "user has two copies of React" — always pay the first cost.
+
+## Choose what to publish
+
+The scaffold's `package.json` ships TS source by default. Two options:
+
+### Option A — Ship pre-built JS
+
+Run `tsup` on publish, ship `dist/`:
+
+```json
+{
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "src/locales"],
+  "scripts": {
+    "build": "tsup src/index.tsx --format cjs,esm --dts --external react",
+    "prepublishOnly": "pnpm build"
+  }
+}
+```
+
+Pre-built JS is friendlier to consumers using non-Vite bundlers and means your code runs regardless of the host's TS config.
+
+### Option B — Ship source
+
+```json
+{
+  "main": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "files": ["src"]
+}
+```
+
+Vite + tsup can consume TSX directly. Simpler builds, hot reload across the boundary in dev, but only works for Vite-host consumers. Spree dashboards always use Vite, so this is safe in practice.
+
+Pick A if you're going to npm in earnest. Pick B for internal-only packages used inside a known-Vite setup.
+
+## Side-effects flag
+
+The plugin's whole purpose is side effects (`defineDashboardPlugin` registers stuff at module-load time). **Tell bundlers not to tree-shake it:**
+
+```json
+{
+  "sideEffects": ["./src/index.tsx", "./dist/index.js", "./dist/index.cjs"]
+}
+```
+
+Without this, a bundler can decide that `import '@your-scope/your-plugin'` does nothing useful and drop it. The list is what's allowed to have effects; everything else still tree-shakes.
+
+## Tell the Vite plugin where to find you
+
+Declare your package as a dashboard plugin in its own `package.json`:
+
+```json
+{
+  "spree": {
+    "dashboard": {
+      "plugin": true,
+      "routes": "./src/routes"
+    }
+  }
+}
+```
+
+`routes` (optional) points at your TanStack file-routes directory; the host build compiles it into its typed route tree — see the [routes guide](/developer/dashboard/customization/routes).
+
+This marker is what powers **auto-discovery**: when a host calls `spreeDashboardPlugin()` without an explicit `plugins` array (the default), the Vite plugin walks the host's `package.json` deps + devDeps, reads each one's manifest, and picks up anything with `spree.dashboard.plugin: true`. The host doesn't have to know your plugin's name — `pnpm add @your-scope/your-plugin` is the entire installation step.
+
+The CLI scaffold (`spree plugin new`) writes this field for you. If you're hand-rolling a plugin, add it before publishing — without it, hosts that rely on auto-discovery won't find your plugin and Tailwind won't pick up your class names.
+
+## Export the Tailwind source
+
+`spreeDashboardPlugin` uses `require.resolve(...)` to find your package, then walks `src/` for Tailwind class scanning. As long as you ship `src/`, it works — Tailwind picks up `className="..."` strings from your built code without you publishing CSS.
+
+If you only ship `dist/` and your built code mangles class names (Tailwind can't see `text-${variant}-500`), use static class names or expose a `tailwind.config.js` content array.
+
+## Versioning with Changesets
+
+Spree's own packages are versioned with [Changesets](https://github.com/changesets/changesets); plugin authors don't have to use it, but it pairs well with peer-dep ranges. Workflow:
+
+```bash
+pnpm changeset           # describe what changed → writes a markdown file
+git commit -am "feat: x"
+pnpm changeset version   # bumps package versions + writes CHANGELOG
+pnpm install             # resolve workspace versions
+git commit -am "Release"
+pnpm publish -r          # publish updated packages
+```
+
+Standalone plugin repos can run Changesets the same way; the CLI scaffold doesn't pre-configure it.
+
+## Publishing the npm package
+
+```bash
+pnpm build
+pnpm publish --access public
+```
+
+Set `"private": false` and remove the `"publishConfig.access": "restricted"` if your scaffold has it.
+
+## Avoiding lock-step releases
+
+Your plugin should compile against a **range** of dashboard versions. Run the build against the lowest supported version locally (`pnpm add -D @spree/dashboard-core@6.0.0`) and add a CI matrix job that bumps to the next minor and rebuilds. That's the cheapest way to catch "I depended on something that doesn't exist in 6.0.0".
+
+## Reference
+
+- [npm `peerDependencies` docs](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#peerdependencies)
+- [Changesets](https://github.com/changesets/changesets)
+- [tsup docs](https://tsup.egoist.dev/)

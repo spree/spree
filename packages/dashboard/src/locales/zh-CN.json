@@ -89,6 +89,13 @@
       "app_name": "Spree 管理后台",
       "powered_by": "由 Spree Commerce 提供支持"
     },
+    "errors": {
+      "not_found_title": "页面未找到",
+      "not_found_description": "您访问的页面不存在。",
+      "forbidden_title": "未授权",
+      "forbidden_description": "您没有权限查看此页面。",
+      "plugin_route_title": "此页面渲染失败"
+    },
     "nav": {
       "home": "首页",
       "account": "账户",

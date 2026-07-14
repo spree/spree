@@ -69,6 +69,13 @@ vi.mock('../src/storefront', async (importOriginal) => {
   }
 })
 
+vi.mock('../src/dashboard', () => ({
+  // The real implementation shells out to the project-local
+  // `npx spree add dashboard` — its behavior is covered by @spree/cli's own
+  // tests. Here we only assert the delegation happens (or doesn't).
+  scaffoldDashboard: vi.fn(),
+}))
+
 vi.mock('../src/backend', () => ({
   downloadBackend: vi.fn(async (projectDir: string) => {
     // Simulate what downloadBackend does: create backend/ with compose files
@@ -106,6 +113,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -126,6 +134,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -143,6 +152,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -160,6 +170,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -179,6 +190,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -196,6 +208,7 @@ describe('scaffold (no-start)', () => {
     await scaffold({
       directory: projectDir,
       storefront: true,
+      dashboard: false,
       sampleData: false,
       start: false,
       packageManager: 'npm',
@@ -206,6 +219,50 @@ describe('scaffold (no-start)', () => {
     const pkg = JSON.parse(content)
     expect(pkg.name).toBe('my-store')
     expect(pkg.scripts.eject).toBe('spree eject')
+  })
+
+  it('delegates dashboard scaffolding to the project-local CLI when included', async () => {
+    const { scaffoldDashboard } = await import('../src/dashboard')
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: false,
+      dashboard: true,
+      sampleData: false,
+      start: false,
+      packageManager: 'npm',
+      port: 4567,
+    })
+
+    expect(scaffoldDashboard).toHaveBeenCalledWith(projectDir, {
+      install: true,
+      packageManager: 'npm',
+    })
+    expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).toContain(
+      'React Dashboard',
+    )
+  })
+
+  it('skips the dashboard when not included', async () => {
+    const { scaffoldDashboard } = await import('../src/dashboard')
+    vi.mocked(scaffoldDashboard).mockClear()
+    const projectDir = getTempProjectDir()
+
+    await scaffold({
+      directory: projectDir,
+      storefront: false,
+      dashboard: false,
+      sampleData: false,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+
+    expect(scaffoldDashboard).not.toHaveBeenCalled()
+    expect(fs.readFileSync(path.join(projectDir, 'README.md'), 'utf-8')).not.toContain(
+      'React Dashboard',
+    )
   })
 
   it('rejects non-empty directory', async () => {

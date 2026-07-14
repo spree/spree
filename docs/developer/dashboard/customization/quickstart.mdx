@@ -1,0 +1,102 @@
+---
+title: Quickstart
+sidebarTitle: Quickstart
+description: Add your first customization to the Spree dashboard in under 5 minutes — no npm publishing, no build configuration, just one file in your dashboard app.
+---
+
+This guide assumes two things are running:
+
+1. A Spree API server (your Spree store's backend).
+2. Your dashboard app — the small Vite project that renders the admin. In a `create-spree-app` project it lives at `apps/dashboard/`; add it to an existing project with `npx spree add dashboard`, or scaffold it anywhere with `npx spree add dashboard --template` pointing at your own copy. Start it with `pnpm dev`.
+
+All customizations in this guide are edits to your dashboard app's own code. **You don't need to scaffold a plugin** — plugins are for [distributing features to other stores](/developer/dashboard/plugins/overview).
+
+## The 30-second example
+
+Add an "Analytics" item to the dashboard sidebar.
+
+**Step 1.** Open `src/plugins.ts` — the starter ships this file already wired up — and register a nav entry:
+
+```tsx
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { BarChartIcon } from 'lucide-react'
+
+defineDashboardPlugin({
+  nav: [{
+    key: 'analytics',
+    label: 'Analytics',
+    path: '/analytics',
+    icon: BarChartIcon,
+    // Built-in entries use positions 100–600 (Home … Reports).
+    // 650 places Analytics after Reports, at the end.
+    position: 650,
+  }],
+})
+```
+
+**Step 2.** Save. The dev server hot-reloads and the sidebar now shows "Analytics".
+
+Clicking it lands on a "Page not found" screen — we registered the nav entry but no page. Let's fix that.
+
+## Add the page
+
+**Step 3.** Create the page component at `src/pages/analytics.tsx`:
+
+```tsx
+import { PageHeader } from '@spree/dashboard-core'
+import { ResourceLayout } from '@spree/dashboard-ui'
+
+export function AnalyticsPage() {
+  return (
+    <ResourceLayout
+      header={<PageHeader title="Analytics" subtitle="Store performance over time" />}
+      main={<p>Coming soon.</p>}
+    />
+  )
+}
+```
+
+**Step 4.** Register the route in `src/plugins.ts`:
+
+```tsx
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { BarChartIcon } from 'lucide-react'
+import { AnalyticsPage } from './pages/analytics'
+
+defineDashboardPlugin({
+  nav: [{
+    key: 'analytics',
+    label: 'Analytics',
+    path: '/analytics',
+    icon: BarChartIcon,
+    position: 650,
+  }],
+  routes: [{
+    key: 'analytics',
+    path: '/analytics',
+    component: AnalyticsPage,
+  }],
+})
+```
+
+Save. Click "Analytics" — your page renders inside the dashboard chrome, at `/<store id>/analytics`.
+
+<Warning>
+Every `key` must be unique, including against the built-ins (`getting-started`, `home`, `orders`, `products`, `customers`, `promotions`, `reports`, `settings`). Registering a duplicate key throws at boot with a message naming the conflict.
+</Warning>
+
+## What just happened
+
+`defineDashboardPlugin` registers extensions against the dashboard's shared registries: `nav`, `routes`, `slots`, `tables`, `settingsNav`, `formFields`, and `customFieldComponents`. Your `src/plugins.ts` runs when the app boots (the starter's `main.tsx` imports it), so everything is registered before the first render. These are the exact same APIs distributable plugins use — the only difference is packaging.
+
+The custom route mounts under `/<store id>/analytics`. Routes registered this way are matched at navigation time, so they can even be registered lazily after boot.
+
+Building a **distributable plugin** rather than customizing your own app? Ship pages as [file routes](/developer/dashboard/customization/routes) instead — they compile into the app's route tree, so links to them are type-checked. The registry form shown here is for in-app customization.
+
+## Next steps
+
+- [Navigation](/developer/dashboard/customization/navigation) — sidebar entries, nesting under built-in menus, settings sub-nav, permission gating
+- [Routes](/developer/dashboard/customization/routes) — path patterns, params, permission fallback
+- [Slots](/developer/dashboard/customization/slots) — inject widgets into built-in pages without forking them
+- [Tables](/developer/dashboard/customization/tables) — define your own list page or extend built-in tables
+- [Translations](/developer/dashboard/customization/translations) — add i18n keys without colliding with the framework

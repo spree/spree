@@ -12,7 +12,10 @@ import {
 import { useState } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { WEBHOOK_EVENT_GROUPS, type WebhookEndpointFormValues } from '@/schemas/webhook-endpoint'
+import {
+  WEBHOOK_EVENT_GROUPS,
+  type WebhookEndpointFormValues,
+} from '../../schemas/webhook-endpoint'
 
 /**
  * The webhook endpoint form fields — Name / URL / Active toggle / Events

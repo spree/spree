@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PromotionForm } from '@/components/spree/promotion-editors/promotion-form'
-import { useCreatePromotion } from '@/hooks/use-promotions'
+import { PromotionForm } from '../../../../components/spree/promotion-editors/promotion-form'
+import { useCreatePromotion } from '../../../../hooks/use-promotions'
 
 export const Route = createFileRoute('/_authenticated/$storeId/promotions/new')({
   component: NewPromotionPage,

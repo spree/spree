@@ -9,8 +9,8 @@ import {
 import { SidebarInset, SidebarProvider } from '@spree/dashboard-ui'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { CommandPalette } from '@/components/spree/command-palette/command-palette'
-import { getAvailableUiLocales } from '@/i18n-setup'
+import { CommandPalette } from '../../components/spree/command-palette/command-palette'
+import { getAvailableUiLocales } from '../../i18n-setup'
 
 // Derived once from the shipped locale bundles — stable for the app lifetime.
 const UI_LOCALES = getAvailableUiLocales()

@@ -1,0 +1,211 @@
+---
+title: Navigation
+sidebarTitle: Navigation
+description: Add, modify, and remove items from the dashboard's main sidebar and settings sub-nav.
+---
+
+The dashboard has two navigation registries: **main sidebar** (`nav`) and **settings sub-shell** (`settingsNav`). Both are module singletons exposed from `@spree/dashboard-core` and consumed by `<AppSidebar>` and `<SettingsSidebar>` via `useSyncExternalStore`, so late registration re-renders the sidebars automatically.
+
+## Main sidebar (`nav`)
+
+### Add an entry
+
+```ts
+import { nav } from '@spree/dashboard-core'
+import { BarChartIcon } from 'lucide-react'
+
+nav.add({
+  key: 'analytics',
+  label: 'Analytics',
+  path: '/analytics',      // prefixed with /$storeId at render time
+  icon: BarChartIcon,
+  position: 650,
+  subject: 'Spree::Order', // optional CanCanCan subject — hides item without read permission
+})
+```
+
+`position` controls ordering — built-ins use 100–600 (Home 100, Orders 200, Products 300, Customers 400, Promotions 500, Reports 600; a conditional Getting Started entry sits at 50), leaving gaps to slot into. The default is 100. Keys must be unique, including against the built-in keys (`getting-started`, `home`, `orders`, `products`, `customers`, `promotions`, `reports`, `settings`) — duplicates throw at boot.
+
+### Add via `defineDashboardPlugin`
+
+The facade groups multiple registry calls:
+
+```ts
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+
+defineDashboardPlugin({
+  nav: [
+    { key: 'analytics', label: 'Analytics', path: '/analytics', icon: BarChartIcon, position: 650 },
+    { key: 'segments', label: 'Segments', path: '/segments', icon: UsersIcon, position: 660 },
+  ],
+})
+```
+
+### Nest children under a parent
+
+```ts
+nav.add({
+  key: 'analytics',
+  label: 'Analytics',
+  icon: BarChartIcon,
+  position: 650,
+  children: [
+    { key: 'analytics.sales', label: 'Sales', path: '/analytics/sales' },
+    { key: 'analytics.traffic', label: 'Traffic', path: '/analytics/traffic' },
+  ],
+})
+```
+
+Children declare their own `subject` independently — the parent doesn't auto-gate them.
+
+### Nest under an existing (built-in) parent
+
+To add an item **inside** a menu you don't own — e.g. a "Brands" page under the built-in **Products** menu — use `addChild`, which preserves the parent's existing children. (`nav.update('products', { children: [...] })` would *replace* them, dropping the built-ins.)
+
+```ts
+nav.addChild('products', {
+  key: 'products.brands',
+  label: 'Brands',
+  path: '/products/brands',
+  subject: 'Spree::Brand',
+})
+```
+
+Or declaratively, keyed by parent:
+
+```ts
+defineDashboardPlugin({
+  nav: {
+    addChildren: {
+      products: [{ key: 'products.brands', label: 'Brands', path: '/products/brands' }],
+    },
+  },
+})
+```
+
+Nesting under a missing parent throws; a duplicate child key throws (`updateChild` / `removeChild` mutate an existing one). Built-in parents (`products`, `orders`, `customers`, `promotions`) register during app bootstrap, before any plugin runs, so they're always available to nest into.
+
+### Insert relative to an existing entry
+
+```ts
+nav.insertBefore('customers', { key: 'segments', label: 'Segments', path: '/segments' })
+nav.insertAfter('orders', { key: 'returns', label: 'Returns', path: '/returns' })
+```
+
+The new entry inherits the target's `position` ± 1 unless you specify your own.
+
+### Modify or remove
+
+Imperatively:
+
+```ts
+nav.update('orders', { label: 'All orders' })
+nav.remove('legacy-thing')
+```
+
+Or declaratively in `defineDashboardPlugin` — the `nav` object form adds, removes, and patches in one config (built-in entries included; they register before any plugin runs):
+
+```ts
+defineDashboardPlugin({
+  nav: {
+    add: [{ key: 'reviews', label: 'Reviews', path: '/reviews', position: 650 }],
+    remove: ['promotions'],
+    update: { products: { label: 'Catalog', position: 150 } },
+  },
+})
+```
+
+The array form (`nav: [...]`) remains the shorthand for `{ add: [...] }`. The object form also takes `addChildren` (see [Nest under an existing parent](#nest-under-an-existing-built-in-parent)). `remove` of an unknown key is a no-op; `update` of an unknown key throws. `settingsNav` accepts the same object form (minus `addChildren` — settings entries are flat).
+
+### Bottom-pinned entries
+
+`section: 'bottom'` pins to the sidebar footer (where "Settings" lives by default):
+
+```ts
+nav.add({
+  key: 'help',
+  label: 'Help',
+  path: '/help',
+  icon: HelpCircleIcon,
+  section: 'bottom',
+})
+```
+
+### Conditional visibility and badges
+
+Beyond permission gating with `subject`, a top-level entry can hide itself based on app state (`if`) and render a component after its label (`badge`):
+
+```tsx
+nav.add({
+  key: 'onboarding',
+  label: 'Onboarding',
+  path: '/onboarding',
+  // Receives the current store/user/permissions; return false to hide.
+  if: ({ store }) => !storeFullyConfigured(store),
+  // A component, not an element — it can call hooks and return null.
+  badge: PendingTasksBadge,
+})
+```
+
+The built-in Getting Started entry works exactly this way: it shows a remaining-tasks count and disappears once every setup task is done. `if` combines with `subject` — both must pass.
+
+## Settings sub-nav (`settingsNav`)
+
+The settings page has its own sub-shell sidebar with grouped entries (Store, Localization, Team & Access, …). Entries cluster under groups defined separately.
+
+### Register a group
+
+```ts
+import { settingsNav } from '@spree/dashboard-core'
+
+settingsNav.addGroup({
+  key: 'integrations',
+  label: 'Integrations',
+  position: 500,
+})
+```
+
+### Add entries to a group
+
+```ts
+settingsNav.add({
+  key: 'stripe-tax',
+  label: 'Stripe Tax',
+  path: '/integrations/stripe-tax',  // prefixed with /$storeId/settings
+  group: 'integrations',
+  position: 100,
+  subject: 'Spree::TaxRate',
+})
+```
+
+### `comingSoon` badge
+
+Disabled entries with a "Soon" badge — useful for staging the rollout:
+
+```ts
+settingsNav.add({
+  key: 'reports',
+  label: 'Reports',
+  path: '/reports',
+  group: 'analytics',
+  comingSoon: true,
+})
+```
+
+## Permission gating
+
+`subject` on a nav entry checks `permissions.can('read', subject)` — when it fails, the sidebar item is hidden. **This is UX, not authorization.** The backend still enforces CanCanCan via `authorize!` on every API call. Hiding the link is a hint, not a security boundary.
+
+## Order of operations
+
+Nav registrations run at module-load time. The sidebar reads via `useSyncExternalStore`, so:
+
+- Registering before the sidebar mounts: works (the snapshot picks it up on first render)
+- Registering after the sidebar mounts: also works (the store notifies subscribers)
+
+The only ordering rule is **i18n**: if you use `i18n.t('admin.foo.label')` for `label`, your translation bundle must be registered first. The framework's own translations load before `src/plugins.ts` runs, so the rule reduces to: put your `i18n.addResourceBundle(...)` call at the top of `plugins.ts`, above the registrations that use it. See [Translations](/developer/dashboard/customization/translations).
+
+## Reference
+
+- [`NavEntry`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/nav-registry.ts) — the full shape including types for `children`, `position`, `subject`, `section`
+- [`SettingsNavEntry`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/settings-nav-registry.ts) — settings sub-nav types

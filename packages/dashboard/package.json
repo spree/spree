@@ -1,16 +1,35 @@
 {
   "name": "@spree/dashboard",
-  "private": true,
   "license": "MIT",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Spree Dashboard app shell — the next-gen React admin for Spree Commerce. Routes, resource hooks, schemas, locales, and the <Dashboard /> component. Source-only package; hosts compile it via @spree/dashboard/vite. Developer Preview.",
+  "author": "Vendo Connect Inc.",
+  "homepage": "https://spreecommerce.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/dashboard"
+  },
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "admin",
+    "dashboard",
+    "react"
+  ],
   "type": "module",
   "exports": {
+    ".": "./src/index.ts",
     "./styles.css": "./src/styles.css",
-    "./vite": "./src/vite/index.ts"
+    "./vite": "./src/vite/index.ts",
+    "./vite/route-collisions": "./src/vite/route-collisions.ts",
+    "./components/spree/payment-method-editors/types": "./src/components/spree/payment-method-editors/types.ts"
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "dev": "vite",
@@ -38,8 +57,9 @@
     "@spree/dashboard-ui": "workspace:^",
     "@tanstack/react-hotkeys": "^0.10.0",
     "@tanstack/react-query": "^5.100.9",
-    "@tanstack/react-router": "^1.169.2",
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/router-plugin": "^1.167.35",
+    "@tanstack/virtual-file-routes": "^1.162.0",
     "@tiptap/extension-link": "^3.22.5",
     "@tiptap/extension-placeholder": "^3.22.5",
     "@tiptap/react": "^3.22.5",
@@ -70,7 +90,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
-    "@tanstack/router-plugin": "^1.167.35",
+    "@spree/dashboard-plugin-example": "workspace:^",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -85,5 +105,8 @@
     "overrides": {
       "vite": "^8.0.16"
     }
+  },
+  "peerDependencies": {
+    "@tanstack/react-router": "^1.169.2"
   }
 }

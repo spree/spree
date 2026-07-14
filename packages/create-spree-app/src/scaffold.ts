@@ -4,7 +4,8 @@ import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
 import { downloadBackend } from './backend.js'
-import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
+import { DASHBOARD_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
+import { scaffoldDashboard } from './dashboard.js'
 import {
   downloadStorefront,
   installRootDeps,
@@ -17,13 +18,19 @@ import { envContent } from './templates/env.js'
 import { gitignoreContent } from './templates/gitignore.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
-import type { ScaffoldOptions } from './types.js'
-import { generateSecretKeyBase, isDockerRunning } from './utils.js'
+import type { PackageManager, ScaffoldOptions } from './types.js'
+import {
+  dlxCommand,
+  generateSecretKeyBase,
+  installCommand,
+  isDockerRunning,
+  runCommand,
+} from './utils.js'
 
 export async function scaffold(options: ScaffoldOptions): Promise<void> {
   const projectDir = path.resolve(options.directory)
   const projectName = path.basename(projectDir)
-  const { port, storefront } = options
+  const { port, storefront, dashboard } = options
 
   // Pre-flight checks
   if (options.start) {
@@ -79,14 +86,20 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
   fs.writeFileSync(path.join(projectDir, '.env'), envContent(generateSecretKeyBase(), port))
   fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
-  fs.writeFileSync(path.join(projectDir, 'README.md'), readmeContent(projectName, storefront, port))
+  fs.writeFileSync(
+    path.join(projectDir, 'README.md'),
+    readmeContent(projectName, storefront, port, dashboard, options.packageManager),
+  )
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
-  fs.writeFileSync(path.join(projectDir, 'CLAUDE.md'), rootClaudeMdContent(storefront))
+  fs.writeFileSync(
+    path.join(projectDir, 'CLAUDE.md'),
+    rootClaudeMdContent(storefront, dashboard, options.packageManager),
+  )
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
 
   const githubDir = path.join(projectDir, '.github')
   fs.mkdirSync(githubDir, { recursive: true })
-  fs.writeFileSync(path.join(githubDir, 'dependabot.yml'), dependabotContent(storefront))
+  fs.writeFileSync(path.join(githubDir, 'dependabot.yml'), dependabotContent(storefront, dashboard))
 
   s.stop('Project structure created.')
 
@@ -108,36 +121,52 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     s.stop('Storefront dependencies installed.')
   }
 
+  // Phase 3b: React Dashboard (optional, Developer Preview). Delegates to the
+  // project-local `npx spree add dashboard` — @spree/cli is already installed
+  // (root deps, above) and bundles the dashboard-starter template. It reads
+  // the port from the project's .env and prints its own progress.
+  if (dashboard) {
+    await scaffoldDashboard(projectDir, { install: true, packageManager: options.packageManager })
+  }
+
   // Phase 4: Initialize and start services
   if (options.start) {
     const initArgs = ['spree', 'init']
     if (!options.sampleData) initArgs.push('--no-sample-data')
 
-    await execa('npx', initArgs, {
+    await execa(runCommand(options.packageManager), initArgs, {
       cwd: projectDir,
       stdio: 'inherit',
     })
 
     if (storefront) {
       p.log.info(
-        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && npm run dev`)}`,
+        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${options.packageManager} run dev`)}`,
+      )
+    }
+    if (dashboard) {
+      p.log.info(
+        `${pc.bold('React Dashboard')}: ${pc.cyan(`cd ${projectName}/apps/dashboard && ${options.packageManager} run dev`)} → http://localhost:${DASHBOARD_PORT}`,
       )
     }
   } else {
-    printSuccessWithoutDocker(projectName, storefront, port)
+    printSuccessWithoutDocker(projectName, storefront, dashboard, port, options.packageManager)
   }
 }
 
 function printSuccessWithoutDocker(
   projectName: string,
   hasStorefront: boolean,
+  hasDashboard: boolean,
   port: number,
+  pm: PackageManager,
 ): void {
+  const run = runCommand(pm)
   const lines: string[] = [
     '',
     `${pc.bold('Next steps:')}`,
     `  cd ${projectName}`,
-    `  npx spree dev`,
+    `  ${run} spree dev`,
   ]
 
   if (hasStorefront) {
@@ -145,8 +174,18 @@ function printSuccessWithoutDocker(
       '',
       `  ${pc.dim('# In another terminal:')}`,
       `  cd ${projectName}/apps/storefront`,
-      `  npm install`,
-      `  npm run dev`,
+      `  ${installCommand(pm)}`,
+      `  ${pm} run dev`,
+    )
+  }
+
+  if (hasDashboard) {
+    lines.push(
+      '',
+      `  ${pc.dim('# React Dashboard (Developer Preview), in another terminal:')}`,
+      `  cd ${projectName}/apps/dashboard`,
+      `  ${installCommand(pm)}`,
+      `  ${pm} run dev`,
     )
   }
 
@@ -158,11 +197,11 @@ function printSuccessWithoutDocker(
     `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
     '',
     `${pc.bold('Customize the backend')}`,
-    `  npx spree eject`,
+    `  ${run} spree eject`,
     `  ${pc.dim('# Then edit backend/Gemfile, backend/app/, backend/config/')}`,
     '',
     `${pc.bold('Agent skills (optional)')}`,
-    `  npx skills add spree/agent-skills`,
+    `  ${dlxCommand(pm)} skills add spree/agent-skills`,
     `  ${pc.dim('# Adds 23 Spree skills to whichever AI agent(s) you use')}`,
     `  ${pc.dim('# (Claude Code, Codex, Cursor, Copilot, Cline, Aider, +60 others)')}`,
     '',

@@ -1,0 +1,8 @@
+/* CSS entry. The Spree stylesheet chain provides Tailwind v4 layers, design
+ * tokens, and base styles; `spreeDashboardPlugin()` appends `@source`
+ * directives here at build time so Tailwind scans every Spree dashboard
+ * package and installed plugin for class usage.
+ *
+ * Add your own styles below the import. */
+
+@import "@spree/dashboard/styles.css";

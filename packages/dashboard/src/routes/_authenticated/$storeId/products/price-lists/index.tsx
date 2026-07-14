@@ -12,8 +12,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useDeletePriceList } from '@/hooks/use-price-lists'
-import '@/tables/price-lists'
+import { useDeletePriceList } from '../../../../../hooks/use-price-lists'
+import '../../../../../tables/price-lists'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/price-lists/')({
   validateSearch: resourceSearchSchema,

@@ -1,0 +1,133 @@
+---
+title: Scaffolding
+sidebarTitle: Scaffolding
+description: Generate a new dashboard plugin monorepo with `@spree/cli` in one command. Includes TypeScript, biome, tsup, a working example entry-point, and translations.
+---
+
+`@spree/cli` ships a `plugin new` command that scaffolds the whole plugin monorepo for you. Generated layout:
+
+```
+your-plugin/
+├── package.json            # workspace root
+├── pnpm-workspace.yaml
+├── LICENSE
+├── README.md
+├── .gitignore
+└── packages/
+    └── dashboard/
+        ├── package.json    # @your-scope/dashboard-your-plugin
+        ├── tsconfig.json
+        ├── biome.json
+        └── src/
+            ├── index.tsx   # defineDashboardPlugin entry
+            ├── client.ts   # adminClient request wrappers
+            ├── types.ts    # plugin-specific TS types
+            ├── pages/
+            │   └── <name>-list.tsx
+            ├── routes/     # TanStack file routes, compiled into the host's typed route tree
+            │   └── <name>.index.tsx
+            ├── slots/
+            │   └── product-<name>-card.tsx
+            └── locales/
+                └── en.json
+```
+
+You get a working "Brands"-style plugin out of the box: nav entry, a list page wired through React Query, a product-detail slot card, and English translations.
+
+## Run it
+
+```bash
+npx @spree/cli plugin new my-plugin
+```
+
+The CLI prompts for:
+
+- **Plugin name** — slug (kebab-case), used for package names and i18n keys
+- **Ruby gem name** — only matters if you later add a Rails engine
+- **Module name** — PascalCase, used as the React component prefix (`MyPluginCard`)
+- **npm scope** — e.g., `@acme`
+- **Author + email** — for `package.json` and `LICENSE`; prefilled from `git config user.name` / `user.email`
+- **License** — MIT, Apache-2.0, or BSD-3-Clause (MIT by default); the CLI fills in the standard text
+
+Every prompt has a matching flag:
+
+```bash
+npx @spree/cli plugin new my-plugin \
+  --ruby-name spree_my_plugin \
+  --module-name MyPlugin \
+  --npm-scope @acme \
+  --author "Ada Lovelace" \
+  --author-email "ada@example.com" \
+  --license MIT \
+  --no-install        # skip pnpm install
+```
+
+For CI and scripted use, `-y` / `--yes` accepts the default for anything the flags leave unanswered — author and email come from your git config, everything else derives from the plugin name:
+
+```bash
+npx @spree/cli plugin new my-plugin -y
+```
+
+`--force` overwrites an existing directory. `--no-dashboard` skips the dashboard package (Rails-engine-only plugins). `--no-engine` is reserved — engine scaffolding lands later.
+
+## After scaffolding
+
+```bash
+cd my-plugin
+pnpm install          # runs by default unless --no-install
+pnpm build
+```
+
+You now have a buildable plugin. The next page covers what to put in `package.json` for publishing — but if you're using it internally and importing by path, you can stop here and skip [Publishing](/developer/dashboard/plugins/publishing).
+
+## What the entry-point looks like
+
+`packages/dashboard/src/index.tsx` is where everything starts. The generated version, trimmed:
+
+```tsx
+import { defineDashboardPlugin, defineTable, i18n } from '@spree/dashboard-core'
+import { PackageIcon } from 'lucide-react'
+import en from './locales/en.json'
+import { MyPluginCard } from './slots/product-my-plugin-card'
+
+// 1. Translations — merge our keys into the shared bundle.
+i18n.addResourceBundle('en', 'translation', en, true, true)
+
+// 2. Declare the table our list page renders with <ResourceTable>.
+defineTable('my-plugin', {
+  title: i18n.t('admin.my_plugin.table.title'),
+  defaultSort: { field: 'name', direction: 'asc' },
+  columns: [/* … */],
+})
+
+// 3. Registry extensions. Routes are NOT registered here — they ship as
+// file routes in src/routes/ (declared via the package.json marker) and
+// compile into the host's typed route tree. See the routes guide.
+defineDashboardPlugin({
+  nav: [{
+    key: 'my-plugin',
+    label: i18n.t('admin.my_plugin.title'),
+    path: '/my-plugin',
+    icon: PackageIcon,
+    position: 250,
+  }],
+  slots: {
+    'product.form_sidebar': [{
+      id: 'my-plugin-card',
+      component: MyPluginCard as never,
+      position: 50,
+    }],
+  },
+})
+```
+
+That's the whole entry-point. Edit it to register what your plugin needs and remove what it doesn't.
+
+## The example endpoints
+
+The generated `client.ts` calls `adminClient.request()` against `/<name>` (relative to `/api/v3/admin`) — those endpoints don't exist by default. You'd add them on the Rails side (a controller, a model, a serializer) for the plugin to do anything end-to-end. The CLI doesn't scaffold the Rails engine today; for now, write that part by hand using the [backend integration docs](/developer/dashboard/customization/backend).
+
+## Reference
+
+- [`@spree/cli` source](https://github.com/spree/spree/tree/main/packages/cli)
+- [Template tree](https://github.com/spree/spree/tree/main/packages/cli/templates/plugin) — what gets copied (`.tt` files are template-substituted)

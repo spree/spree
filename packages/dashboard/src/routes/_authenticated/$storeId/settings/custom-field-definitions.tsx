@@ -31,15 +31,15 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { DefinitionFormFields } from '@/components/spree/custom-fields/definition-form'
+import { DefinitionFormFields } from '../../../../components/spree/custom-fields/definition-form'
 import {
   CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,
   customFieldDefinitionSchema,
   customFieldDefinitionValuesToCreateParams,
   customFieldDefinitionValuesToUpdateParams,
-} from '@/schemas/custom-field-definition'
-import '@/tables/custom-field-definitions'
+} from '../../../../schemas/custom-field-definition'
+import '../../../../tables/custom-field-definitions'
 
 const searchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),

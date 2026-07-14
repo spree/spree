@@ -1,10 +1,10 @@
 # @spree/dashboard
 
-The Spree Commerce admin dashboard — a React single-page application that replaces the legacy Rails `spree/admin` engine entirely. Built on the [Admin API](https://spreecommerce.org/docs/api-reference/admin-api/introduction) via `@spree/admin-sdk`, with a modern extension model (table registry, navigation registry, component injection) for plugin authors.
+The Spree Commerce admin dashboard (the "React Dashboard") — a React single-page application that replaces the Classic Admin (the server-rendered Rails engine). Built on the [Admin API](https://spreecommerce.org/docs/api-reference/admin-api/introduction) via `@spree/admin-sdk`, with an extension model (table registry, navigation registry, slots, typed plugin routes) for plugin authors.
 
-Part of the three-package dashboard stack — see [`packages/README.md`](../README.md) for how `@spree/dashboard`, `@spree/dashboard-ui`, and `@spree/dashboard-core` fit together.
+Part of the three-package dashboard stack with [`@spree/dashboard-core`](https://github.com/spree/spree/tree/main/packages/dashboard-core) (the framework and extension API) and [`@spree/dashboard-ui`](https://github.com/spree/spree/tree/main/packages/dashboard-ui) (the design system).
 
-> **Developer Preview.** The Admin SPA is in active development for Spree 6.0. Some routes still fall back to the Rails admin while feature parity is being reached. See [`docs/plans/6.0-admin-spa.md`](../../docs/plans/6.0-admin-spa.md) for the current scope.
+> **Developer Preview.** APIs may change between 0.x releases; in Spree 6 the React Dashboard becomes the default admin. Docs: [React Dashboard](https://spreecommerce.org/docs/developer/dashboard/overview).
 
 ## Tech stack
 
@@ -131,7 +131,7 @@ src/
 
 ### Authentication
 
-JWT access token in memory + refresh token in an HttpOnly signed cookie. See `docs/plans/5.5-admin-auth-cookie-refresh.md` for the full design.
+JWT access token in memory + refresh token in an HttpOnly signed cookie.
 
 - Login → `POST /api/v3/admin/auth/login` returns `{ token, user }`. The server also sets `spree_admin_refresh_token` — an HttpOnly signed cookie scoped to `/api/v3/admin/auth`, invisible to JS.
 - Access token stays in React state only — **no `localStorage`**, no `sessionStorage`.
@@ -141,7 +141,7 @@ JWT access token in memory + refresh token in an HttpOnly signed cookie. See `do
 - Logout → `POST /api/v3/admin/auth/logout` destroys the refresh-token row server-side and clears the cookie. The in-memory state is cleared regardless of whether the network call succeeds.
 - Concurrent refresh attempts are serialized to prevent double-rotation under StrictMode/HMR.
 
-CSRF defense comes from the cookie's `SameSite` attribute combined with the `Spree::AllowedOrigin` allowlist enforced via `Rack::Cors`. There is no double-submit CSRF token — see the plan doc for the reasoning.
+CSRF defense comes from the cookie's `SameSite` attribute combined with the `Spree::AllowedOrigin` allowlist enforced via `Rack::Cors`. There is no double-submit CSRF token.
 
 Public routes (login) sit at the root; everything else is gated by `routes/_authenticated.tsx`.
 
@@ -152,8 +152,7 @@ In dev, `vite.config.ts` proxies `/api/*` → `http://localhost:3000` so the SPA
 Permissions are **server-driven**. On login, `GET /api/v3/admin/me` returns the user's CanCanCan abilities serialized as JSON. The SPA mirrors them via:
 
 ```tsx
-import { Can } from '@/components/can'
-import { usePermissions } from '@/providers/permission-provider'
+import { Can, usePermissions } from '@spree/dashboard-core'
 
 // Declarative
 <Can I="update" a="Order"><EditButton /></Can>
@@ -171,11 +170,12 @@ All authenticated routes include a `$storeId` segment (e.g. `/store_abc/orders`)
 
 ### Extension points
 
-Three extension points are designed for plugin authors (full design in [`docs/plans/6.0-admin-spa.md`](../../docs/plans/6.0-admin-spa.md)):
+Extension points for plugin authors (see the [customization docs](https://spreecommerce.org/docs/developer/dashboard/customization/quickstart)):
 
 1. **Table registry** — register columns/filters/actions for any list view
-2. **Navigation registry** — inject sidebar menu items
-3. **Component injection** — slot points in core pages (e.g., extra cards on the order detail)
+2. **Navigation registry** — inject sidebar menu items, including under built-in menus
+3. **Slots** — inject components into core pages (e.g., extra cards on the order detail)
+4. **Typed file routes** — plugin pages compiled into the host's route tree with type-checked links
 
 The shadcn copy-paste model means UI components in `src/components/ui/` are owned by this project, not a component library. Extensions can copy-and-modify rather than fighting library abstractions.
 
@@ -189,16 +189,16 @@ Components land in `src/components/ui/`. Customize freely.
 
 ## Working with @spree/admin-sdk
 
-All API calls go through the SDK instance configured in `src/client.ts`. Wrap calls in custom hooks under `src/hooks/`:
+All API calls go through the `adminClient` singleton from `@spree/dashboard-core`. Wrap calls in custom hooks under `src/hooks/`:
 
 ```ts
 // src/hooks/use-orders.ts
+import { adminClient, useResourceKey } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
-import { adminClient } from '@/client'
 
 export function useOrders(params: ListOrdersParams) {
   return useQuery({
-    queryKey: ['orders', params],
+    queryKey: useResourceKey('orders', params),
     queryFn: () => adminClient.orders.list(params),
   })
 }
@@ -208,7 +208,7 @@ Mutations follow the same pattern with `useMutation` and `queryClient.invalidate
 
 ## End-to-end tests
 
-The `e2e/` folder holds [Playwright](https://playwright.dev/) specs that drive the SPA against a real Rails backend — no API mocks. CI runs the same suite via the `admin-e2e` job in `.github/workflows/packages.yml`; locally, `pnpm test:e2e` mirrors what CI does.
+The `e2e/` folder holds [Playwright](https://playwright.dev/) specs that drive the SPA against a real Rails backend — no API mocks. CI runs the same suite via the `dashboard-e2e` job in `.github/workflows/packages.yml`; locally, `pnpm test:e2e` mirrors what CI does.
 
 What the suite boots:
 
@@ -263,7 +263,7 @@ Specs live next to the existing ones in `e2e/`. Use `getCredentials()` from `e2e
 
 ## Contributing
 
-This package is private and ships as part of the Spree 6.0 release. Architecture decisions live in `docs/plans/6.0-admin-spa.md` — please read that before proposing significant changes.
+Development happens in the [spree/spree](https://github.com/spree/spree) monorepo under `packages/dashboard`. Architecture decisions live in `docs/plans/6.0-admin-spa.md` there — please read that before proposing significant changes.
 
 When changing API contracts, also update the upstream serializers in `spree/api` and regenerate types:
 

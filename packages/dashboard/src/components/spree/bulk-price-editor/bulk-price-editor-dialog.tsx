@@ -17,10 +17,7 @@ import {
 import { XIcon } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  BulkPriceEditor,
-  type BulkPriceEditorState,
-} from '@/components/spree/bulk-price-editor/bulk-price-editor'
+import { BulkPriceEditor, type BulkPriceEditorState } from './bulk-price-editor'
 
 interface BulkPriceEditorDialogProps {
   open: boolean

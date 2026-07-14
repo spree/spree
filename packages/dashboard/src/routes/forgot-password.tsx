@@ -14,8 +14,8 @@ import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { AuthShell } from '@/components/spree/auth-shell'
-import { type ForgotPasswordFormValues, forgotPasswordFormSchema } from '@/schemas/auth'
+import { AuthShell } from '../components/spree/auth-shell'
+import { type ForgotPasswordFormValues, forgotPasswordFormSchema } from '../schemas/auth'
 
 export const Route = createFileRoute('/forgot-password')({
   component: ForgotPasswordPage,

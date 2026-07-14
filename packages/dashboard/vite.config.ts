@@ -1,14 +1,35 @@
 import path from 'node:path'
-import { spreeDashboardPlugin } from '@spree/dashboard-core/vite'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+// Self-import of the shell's own Vite integration — the same composition
+// hosts get from `@spree/dashboard/vite`. It wraps the TanStack Router
+// generator, so the shell's committed routeTree.gen.ts is produced by the
+// exact machinery hosts use (with VITE_EXAMPLE_PLUGIN=true, including the
+// example plugin's file routes).
+import { spreeDashboardPlugin } from './src/vite'
 
 export default defineConfig({
+  // Sub-path mounting for the single-node topology: the official Docker image
+  // builds with VITE_BASE_PATH=/dashboard/ so asset URLs resolve under the
+  // Rails-served mount. Unset (dev, CDN root deploys) Vite defaults to '/'.
+  base: process.env.VITE_BASE_PATH,
   // The plugin bundles `@tailwindcss/vite`, so we don't register it separately.
   // `cssEntry` defaults to `./src/styles.css`, which matches our entry — pass
   // it here only as a hint for readers of this config.
-  plugins: [spreeDashboardPlugin({ cssEntry: './src/styles.css' }), TanStackRouterVite(), react()],
+  //
+  // Plugin selection: hosts normally omit `plugins` so auto-discovery picks up
+  // every dep with the `spree.dashboard.plugin` marker. This monorepo copy
+  // defaults to an explicit empty whitelist because our only marked dep is the
+  // reference plugin (@spree/dashboard-plugin-example, a devDependency) —
+  // opt in with VITE_EXAMPLE_PLUGIN=true to exercise the real discovery +
+  // activation path end-to-end.
+  plugins: [
+    spreeDashboardPlugin({
+      cssEntry: './src/styles.css',
+      plugins: process.env.VITE_EXAMPLE_PLUGIN === 'true' ? undefined : [],
+    }),
+    react(),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

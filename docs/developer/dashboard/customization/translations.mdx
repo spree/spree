@@ -1,0 +1,98 @@
+---
+title: Translations
+sidebarTitle: Translations
+description: Add your own i18n strings to the dashboard so labels, validation messages, and notifications respect the admin's chosen locale.
+---
+
+The dashboard uses [i18next](https://www.i18next.com/) with the `react-i18next` bindings. All strings live in i18next's default `translation` namespace, with every key under a top-level `admin.` prefix (`admin.nav.orders`, `admin.fields.<resource>.<attribute>.label`, …). You register your strings into the same namespace with the same prefix so they look and feel native.
+
+## Add translations
+
+```ts
+import { i18n } from '@spree/dashboard-core'
+
+i18n.addResourceBundle('en', 'translation', {
+  admin: {
+    reports: {
+      title: 'Reports',
+      empty: 'No reports yet.',
+    },
+    fields: {
+      report: {
+        name: { label: 'Report name', placeholder: 'e.g. Q4 sales by region' },
+      },
+    },
+  },
+}, /* deep */ true, /* overwrite */ true)
+```
+
+With `deep: true` your keys merge into the existing tree instead of replacing it; `overwrite: true` lets your bundle win where a key genuinely collides (this is what the framework and the official plugins use). Note the `admin` wrapper is part of the **bundle contents** — the namespace argument stays `'translation'`.
+
+Repeat per locale:
+
+```ts
+import de from './locales/de.json'
+import en from './locales/en.json'
+import fr from './locales/fr.json'
+
+for (const [locale, bundle] of Object.entries({ en, fr, de })) {
+  i18n.addResourceBundle(locale, 'translation', bundle, true, true)
+}
+```
+
+## Use them
+
+```tsx
+import { useTranslation } from 'react-i18next'
+
+function ReportsHeader() {
+  const { t } = useTranslation()
+  return <h1>{t('admin.reports.title')}</h1>
+}
+```
+
+In a registry entry, pass the key directly:
+
+```ts
+nav.add({
+  key: 'reports',
+  label: i18n.t('admin.reports.title'),
+  path: '/reports',
+})
+```
+
+Note: `i18n.t` resolves at the call site, so the label is a snapshot taken at registration time. Registry entries store plain strings — if the user switches language without a reload, registered labels keep their old language until re-registered. Components that call `useTranslation()` re-render on locale change; registry labels don't. If that matters for your entry, re-register it on the i18n `languageChanged` event.
+
+## Field-key convention
+
+Form labels, placeholders, and help text follow a two-level key convention:
+
+1. `admin.fields.<resource>.<attribute>.<facet>` — resource-specific, e.g. `admin.fields.report.name.label`
+2. `admin.fields.<attribute>.<facet>` — cross-resource defaults, e.g. `admin.fields.name.label`
+
+Components call `t()` with these keys explicitly — pick the resource-scoped form for labels that differ per resource, and reuse the shared `admin.fields.<attribute>.<facet>` keys the framework already ships for common attributes (`name`, `email`, `created_at`, `storefront_visible`, …).
+
+In dev mode, missing keys log to the console (in production a missing key falls back to a humanized version of the attribute name).
+
+## Server-side error messages
+
+The `mapSpreeErrorsToForm` helper routes 422 responses onto `form.formState.errors`, but the messages themselves are the **server's strings, verbatim** — `{ "name": ["can't be blank"] }` becomes a field error reading "can't be blank". To localize validation messages, configure the locale on the backend (Rails i18n translates ActiveRecord error messages); the dashboard displays whatever the API returns.
+
+## Order of operations
+
+Register translations **before** any code that calls `i18n.t()` at module-load time (registry labels, table titles, etc.). The framework's own bundles are loaded before your code runs, so the pattern is simply — top of the file:
+
+```tsx
+// src/plugins.ts (same pattern in a plugin package's entry module)
+import { defineDashboardPlugin, i18n } from '@spree/dashboard-core'
+import en from './locales/en.json'
+
+i18n.addResourceBundle('en', 'translation', en, true, true)  // ① translations first
+
+defineDashboardPlugin({ /* ② registrations may now use i18n.t(...) */ })
+```
+
+## Reference
+
+- [i18next docs](https://www.i18next.com/) — full API
+- The dashboard's own bundle: [`packages/dashboard/src/locales/en.json`](https://github.com/spree/spree/blob/main/packages/dashboard/src/locales/en.json) — copy keys for forms, status badges, validation messages, etc.

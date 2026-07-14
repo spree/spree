@@ -1,0 +1,103 @@
+---
+title: Concepts
+sidebarTitle: Concepts
+description: The mental model — what the dashboard is built on, how the pieces fit together, and what you need to know about each layer before you start customizing.
+---
+
+This page is a five-minute orientation for the dashboard's technology choices and how they cooperate. If you're already familiar with React + TanStack + Tailwind, skim it for the Spree-specific bits and move on.
+
+## Tech stack at a glance
+
+| Layer | What we use | Why it matters |
+|---|---|---|
+| Build | [Vite](https://vitejs.dev/) | Fast HMR, dev server, source consumption of TS/TSX |
+| UI runtime | [React 19](https://react.dev/) | Components, hooks, suspense |
+| Routing | [TanStack Router](https://tanstack.com/router) (file-based) | Type-safe URLs, nested layouts, search params |
+| Data | [TanStack Query v5](https://tanstack.com/query) | Caching, refetch, mutation tracking |
+| Forms | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) | Uncontrolled inputs + schema validation |
+| Styling | [Tailwind v4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) + [Base UI](https://base-ui.com/) | Utility classes + headless primitives |
+| i18n | [i18next](https://www.i18next.com/) | Translations, fallback chains |
+| Lint/format | [Biome](https://biomejs.dev/) | ESLint + Prettier in one tool |
+| HTTP | [`@spree/admin-sdk`](https://www.npmjs.com/package/@spree/admin-sdk) | Typed Admin API client |
+
+The dashboard is a **Single Page Application**: one HTML page, all routing client-side. No Rails views, no Turbo, no server-rendered partials. Everything the user sees comes from React components fetching JSON from `/api/v3/admin/*`.
+
+## The three-package split
+
+```
+@spree/dashboard-ui   ─ design system: shadcn primitives + headless compounds + tokens
+@spree/dashboard-core ─ framework: registries + providers + hooks + SDK client + plugin facade
+@spree/dashboard      ─ app shell: routes, resource hooks, locales, vite config
+```
+
+[Overview](/developer/dashboard/overview) covers the split in more detail. The short version: **`-ui`** has no providers or hooks (data comes via props); **`-core`** is the extension API and runtime services; **`-dashboard`** is the deployable app shell. Plugins and customizations consume `-core` and `-ui`, never the app shell.
+
+## How customization plugs in
+
+Five global, in-memory registries hold the things you add or modify:
+
+| Registry | Adds | Surfaced by |
+|---|---|---|
+| `nav` | Sidebar entries | `<AppSidebar>` |
+| `settingsNav` | Settings sub-shell entries | `<SettingsSidebar>` |
+| Route registry | Custom pages mounted under `/$storeId/*` | Catch-all dispatcher route |
+| Slot registry | Components injected into named slots in built-in pages | `<Slot name="...">` |
+| Table registry | Columns (and their filters) on built-in list tables | `<ResourceTable>` |
+
+Each is a module singleton with mutators to add, remove, and patch entries (nav can also insert relative to an existing entry or nest children under one). The consumer components subscribe to changes, so registering late still updates the UI on the next render.
+
+The facade `defineDashboardPlugin({ nav, routes, slots, … })` groups all five into one declarative call — convenient for plugins, optional for in-app customizations (you can call `nav.add()` directly).
+
+## Auth, context, providers
+
+The signed-in admin's identity and abilities are exposed via three providers wrapping the app:
+
+- `<AuthProvider>` — the current admin user; `useAuth()` returns `{ user, signIn, signOut, … }`
+- `<PermissionProvider>` — CanCanCan abilities; `usePermissions()` returns `{ can, cannot }`
+- `<StoreProvider>` — current store + timezone + currency; `useStore()` returns `{ storeId, store, … }`
+
+When you write a custom page or hook, pull from these. **Never reach into local state for identity** — it changes on store switch or session refresh, and the providers wire all that for you.
+
+## Data fetching
+
+Every screen in the dashboard follows the same pattern:
+
+```
+adminClient (SDK)
+   ↓ called inside
+useFoo (custom hook wrapping useQuery)
+   ↓ consumed by
+<FooList /> (component renders cached data, owns no fetching logic)
+```
+
+Wrap SDK calls in custom hooks under `src/hooks/`, never call `adminClient` directly from components. See [Backend integration](/developer/dashboard/customization/backend) for the full pattern, error mapping, and the `useResourceMutation` helper that wires up 422 handling.
+
+## URL = state
+
+The dashboard treats the URL as the single source of truth for page state:
+
+- Filters, sort, page number → URL search params
+- Selected row → URL path param
+- "Sheet open?" → URL search param (`?edit=prod_xxx`)
+
+This is why links work, deep-links restore filter state, and the browser back button does the right thing. When you build a custom page, follow the same rule — don't stash filter state in React state where it's invisible to bookmarks and analytics.
+
+## i18n is not optional
+
+The dashboard ships with English, German, French, Polish, Arabic, and Simplified Chinese out of the box. Every label, placeholder, error message goes through `i18n.t()`. When you add a feature:
+
+1. Add the keys to your customization's `locales/en.json`
+2. Register the bundle: `i18n.addResourceBundle('en', 'translation', bundle, true, true)`
+3. Use `useTranslation()` in components and `i18n.t()` at registration sites
+
+[Translations](/developer/dashboard/customization/translations) covers the field-key convention.
+
+## Prefixed IDs everywhere
+
+The Admin API uses [Stripe-style prefixed IDs](/api-reference/admin-api/introduction): `prod_86Rf07xd4z`, `cust_k5nR8xLq`. The dashboard does too — URLs, hook params, table rows, SDK calls. Never coerce IDs to integers. Never strip the prefix. Pass them around as opaque strings.
+
+## Where to go next
+
+- [Public API](/developer/dashboard/public-api) — what's importable from `@spree/dashboard-core` / `-ui` / `-dashboard`
+- [Customization Quickstart](/developer/dashboard/customization/quickstart) — first nav entry in 30 seconds
+- [Recipes](/developer/dashboard/recipes/custom-form-field) — focused walkthroughs for common extension shapes

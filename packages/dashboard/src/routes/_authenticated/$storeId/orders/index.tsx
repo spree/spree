@@ -7,7 +7,7 @@ import {
 import { Button } from '@spree/dashboard-ui'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
-import '@/tables/orders'
+import '../../../../tables/orders'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/')({
   validateSearch: resourceSearchSchema,

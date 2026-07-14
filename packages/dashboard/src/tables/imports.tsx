@@ -3,7 +3,7 @@ import { defineTable } from '@spree/dashboard-core'
 import { RelativeTime, ResourceNameCell, StatusBadge } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { UploadIcon } from 'lucide-react'
-import { importTypeLabel } from '@/lib/import-types'
+import { importTypeLabel } from '../lib/import-types'
 
 defineTable<Import>('imports', {
   title: i18n.t('admin.pages.settings.imports.title'),

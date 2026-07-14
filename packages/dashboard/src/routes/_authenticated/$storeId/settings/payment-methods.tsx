@@ -30,15 +30,15 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { PaymentMethodForm } from '@/components/spree/payment-method-editors/payment-method-form'
-import type { PaymentMethodFormValues } from '@/components/spree/payment-method-editors/types'
+import { PaymentMethodForm } from '../../../../components/spree/payment-method-editors/payment-method-form'
+import type { PaymentMethodFormValues } from '../../../../components/spree/payment-method-editors/types'
 import {
   useCreatePaymentMethod,
   useDeletePaymentMethod,
   usePaymentMethod,
   usePaymentMethodTypes,
   useUpdatePaymentMethod,
-} from '@/hooks/use-payment-methods'
+} from '../../../../hooks/use-payment-methods'
 import {
   PAYMENT_METHOD_BASE_DEFAULTS,
   PAYMENT_METHOD_CREATE_DEFAULTS,
@@ -46,8 +46,8 @@ import {
   paymentMethodCreateFormSchema,
   paymentMethodValuesToCreateParams,
   paymentMethodValuesToUpdateParams,
-} from '@/schemas/payment-method'
-import '@/tables/payment-methods'
+} from '../../../../schemas/payment-method'
+import '../../../../tables/payment-methods'
 
 const paymentMethodsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),

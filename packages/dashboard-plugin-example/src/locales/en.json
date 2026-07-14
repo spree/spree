@@ -1,0 +1,34 @@
+{
+  "admin": {
+    "brands_plugin": {
+      "nav": "Brands",
+      "page": {
+        "title": "Brands",
+        "subtitle": "Manage product brands",
+        "new_cta": "New brand"
+      },
+      "table": {
+        "title": "Brands",
+        "search_placeholder": "Search by name…",
+        "empty": "No brands yet"
+      },
+      "fields": {
+        "name": "Name",
+        "slug": "Slug",
+        "products_count": "Products",
+        "created_at": "Created"
+      },
+      "products_column": {
+        "label": "Brand"
+      },
+      "product_card": {
+        "title": "Brand",
+        "empty": "No brand assigned."
+      },
+      "detail": {
+        "about": "About this brand",
+        "no_description": "No description yet."
+      }
+    }
+  }
+}

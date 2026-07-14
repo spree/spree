@@ -41,6 +41,13 @@
       "app_name": "Panel administracyjny Spree",
       "powered_by": "Obsługiwane przez Spree Commerce"
     },
+    "errors": {
+      "not_found_title": "Nie znaleziono strony",
+      "not_found_description": "Strona, której szukasz, nie istnieje.",
+      "forbidden_title": "Brak uprawnień",
+      "forbidden_description": "Nie masz uprawnień do wyświetlenia tej strony.",
+      "plugin_route_title": "Nie udało się wyświetlić tej strony"
+    },
     "nav": {
       "home": "Strona główna",
       "account": "Konto",

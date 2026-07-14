@@ -1,0 +1,29 @@
+/**
+ * Typed wrappers around `adminClient.request` for the {{name}} endpoints
+ * shipped by the engine. Keeping the wrappers in one file means consumers
+ * (route pages, slot widgets) never call `request` directly — they import
+ * from here, which makes it easy to swap implementations or rename paths.
+ *
+ * See https://spreecommerce.org/docs/developer/sdk/admin/extending for the
+ * underlying `request` API.
+ */
+import type { PaginatedResponse } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard-core'
+import type { {{module_name}}, {{module_name}}CreateParams, {{module_name}}UpdateParams } from './types'
+
+type ListParams = Record<string, string | number | boolean | (string | number)[] | undefined>
+
+export const {{module_name}}Client = {
+  list: (params?: ListParams) =>
+    adminClient.request<PaginatedResponse<{{module_name}}>>('GET', '/{{name}}', { params }),
+
+  get: (id: string) => adminClient.request<{{module_name}}>('GET', `/{{name}}/${id}`),
+
+  create: (body: {{module_name}}CreateParams) =>
+    adminClient.request<{{module_name}}>('POST', '/{{name}}', { body }),
+
+  update: (id: string, body: {{module_name}}UpdateParams) =>
+    adminClient.request<{{module_name}}>('PATCH', `/{{name}}/${id}`, { body }),
+
+  delete: (id: string) => adminClient.request<void>('DELETE', `/{{name}}/${id}`),
+}

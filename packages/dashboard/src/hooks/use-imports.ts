@@ -2,7 +2,7 @@ import type { Import, ImportCompleteMappingParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { isImportActive } from '@/lib/import-types'
+import { isImportActive } from '../lib/import-types'
 
 export { isImportActive }
 

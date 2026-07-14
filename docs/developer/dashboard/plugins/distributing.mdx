@@ -1,0 +1,137 @@
+---
+title: Distributing
+sidebarTitle: Distributing
+description: What consumers do to install your plugin — the wiring on the host side, what to document, and how to keep upgrades painless.
+---
+
+This page is the *consumer's* perspective on installing your plugin. Cover it in your README so users have a one-page reference.
+
+## The two steps
+
+A consumer installing your plugin needs to:
+
+1. **Install the npm package** — `pnpm add @your-scope/your-plugin`, then restart the dev server
+2. **Apply any backend changes** — usually adding a Rails gem, running migrations
+
+```bash
+pnpm add @your-scope/your-plugin
+
+# Rails side, if your plugin has a backend
+bundle add your_plugin
+bin/rails generate your_plugin:install
+bin/rails db:migrate
+```
+
+**No host-code edit.** As long as your plugin's `package.json` declares the `spree.dashboard.plugin` marker (the CLI scaffold does this for you — see [Publishing](/developer/dashboard/plugins/publishing#tell-the-vite-plugin-where-to-find-you)), `spreeDashboardPlugin()` walks the host's dependencies at build time and finds it automatically. Discovery feeds two things:
+
+- **Activation** — the app entry imports `virtual:spree-dashboard-plugins` (the dashboard app shell and the starter template already do), a module the Vite plugin synthesizes with one side-effect import per discovered plugin. Your `defineDashboardPlugin` call runs before first render without the host touching `main.tsx`.
+- **Tailwind scanning** — your plugin's class names compile without any extra wiring.
+
+Installing a package activating its code in the admin is the same trust model as adding a gem to a Rails `Gemfile` — vet your dependencies. Hosts that want explicit control use the whitelist below.
+
+Plugins that take configuration (the `definePlugin(config)` factory pattern — see below) are the exception: the factory call is host code, so the host imports and invokes it in `main.tsx` themselves.
+
+### Manual whitelist (advanced)
+
+For tightly controlled environments (a host that wants explicit allowlist semantics, or a plugin you want to load conditionally), pass the names explicitly:
+
+```ts
+// vite.config.ts (your dashboard app)
+spreeDashboardPlugin({
+  plugins: ['@your-scope/your-plugin'],  // disables auto-discovery
+})
+```
+
+Passing `plugins: []` disables auto-discovery entirely — useful if you want to ship a vanilla dashboard with zero third-party Tailwind sources.
+
+## Dev-mode banner
+
+If the consumer registers your plugin explicitly but it's not installed (or the spelling is off), `@spree/dashboard-core/vite` shows a Vite error overlay during dev with the package name and a fix-it checklist. The same overlay fires if a discovered plugin can't be resolved on disk. That replaces the older silent-failure mode where missing plugins emitted unstyled HTML.
+
+## What to put in your README
+
+A README that gets users to "working in five minutes" has:
+
+- A one-paragraph "what this does"
+- Screenshots or a short clip of the dashboard UI it adds
+- The four install steps (literally copy-paste blocks)
+- A "configuration" section if the plugin has runtime config
+- A "compatibility" table (`@spree/dashboard >=6.0.0`, `Spree >=6.0.0`, etc.)
+- Links to the source for slots/components the plugin overrides
+
+Skip the "philosophy" and the "alternative approaches" sections. Get users to working in minutes.
+
+## Configuration patterns
+
+Plugins occasionally need runtime config — API endpoints, feature toggles, custom permissions. Two patterns:
+
+### Module-level `configure` call
+
+```ts
+// in your plugin
+let _config = { endpoint: '/default' }
+export function configure(opts: { endpoint?: string }) {
+  _config = { ..._config, ...opts }
+}
+export function getConfig() { return _config }
+```
+
+```ts
+// consumer
+import { configure } from '@your-scope/your-plugin'
+configure({ endpoint: '/custom' })
+```
+
+Simple, no dependencies — but mind the timing: ES module imports are hoisted, so the plugin module (including any top-level `defineDashboardPlugin` call) always executes **before** your `configure(...)` line runs. This pattern therefore only works for values the plugin reads lazily — at render or fetch time, like an API endpoint — never for anything its import-time registration depends on. If config shapes what gets registered (which nav entries, which routes), use the factory pattern below instead.
+
+### `definePlugin(config)` factory
+
+```ts
+// in your plugin
+export function definePlugin(config: PluginConfig) {
+  // call defineDashboardPlugin inside, closing over config
+}
+```
+
+```ts
+// consumer
+import { definePlugin } from '@your-scope/your-plugin'
+definePlugin({ endpoint: '/custom' })
+```
+
+A bit more boilerplate but easier to test, and the order is unambiguous — no side-effect-at-import-time. If you go this route, drop the auto-registering entry-point and document `definePlugin` as *the* way to install.
+
+## Upgrades
+
+When you cut a major version of your plugin, the breaking-changes section of your changelog needs to call out:
+
+- Renamed registry keys (`nav.add({ key: ... })` changes are user-visible — their URLs depend on it)
+- Locale-key renames (consumers may have overrides keyed off old names)
+- Slot ID changes (consumers extending your slots break)
+- `peerDependencies` range bumps (consumers may need to upgrade Spree first)
+
+Treat the plugin's public surface as: nav keys, route paths, slot IDs, locale keys, and the exported `configure` / `definePlugin` API. Everything else is internal.
+
+## Coexistence with other plugins
+
+The registries are global singletons, so a key collision is the consumer's problem to debug. Mitigations:
+
+- **Namespace your keys** — `key: 'acme-brands'` not `key: 'brands'`.
+- **Namespace locale keys** — `admin.acme_brands.title` not `admin.brands.title`.
+- **Namespace API paths** — your Rails engine should mount under `/api/v3/admin/acme/...`, not `/api/v3/admin/brands` (which collides with core Brands if it ever ships).
+
+The dashboard logs a warning in dev mode when two registry entries share a key. That's the consumer's signal that two plugins are stepping on each other — and it falls back to "last-registered wins", which is rarely what either plugin wanted.
+
+## Distribution channels
+
+- **npm public** — what most plugins want. `pnpm publish --access public`.
+- **npm private (paid)** — for commercial plugins; combine with a license key checked at runtime.
+- **GitHub Package Registry** — internal-only; consumers add `@your-scope:registry=https://npm.pkg.github.com` to `.npmrc`.
+- **Git tarball** — `pnpm add github:your-org/your-plugin#main` works for unpublished plugins, useful while iterating against a single consumer.
+
+For pre-1.0 plugins, ship under the `next` dist-tag (`pnpm publish --tag next`) so `pnpm add @your-scope/your-plugin` resolves to the stable line and `pnpm add @your-scope/your-plugin@next` opts in.
+
+## Reference
+
+- [Example consumer wiring](https://github.com/spree/spree/blob/main/packages/dashboard/vite.config.ts) — what `spreeDashboardPlugin` looks like in production
+- [Plugins reference (`brands` example)](https://github.com/spree/spree/tree/main/packages/dashboard-plugin-example) — what a finished plugin looks like end-to-end

@@ -13,8 +13,8 @@ import {
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { AuthShell } from '@/components/spree/auth-shell'
-import { type LoginFormValues, loginFormSchema } from '@/schemas/auth'
+import { AuthShell } from '../components/spree/auth-shell'
+import { type LoginFormValues, loginFormSchema } from '../schemas/auth'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,

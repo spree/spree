@@ -1,0 +1,189 @@
+---
+title: Routes
+sidebarTitle: Routes
+description: Mount custom pages under your dashboard's `/$storeId/...` path. Supports path params, permission gating, and works alongside the dashboard's built-in routes.
+---
+
+The dashboard's first-party routes (`customers/`, `orders/`, `products/`, …) are file-based via TanStack Router and live in `@spree/dashboard/src/routes/`. Custom pages have two mechanisms:
+
+1. **File routes** (packaged plugins — preferred): the plugin ships ordinary TanStack route files, and the host build compiles them into its typed route tree. Typed `<Link>`s with no casts, route-level code splitting, `validateSearch`, loaders — full router citizenship.
+2. **Route registry** (in-app & dynamic): `defineDashboardPlugin({ routes })` entries matched at navigation time by a catch-all dispatcher at `/_authenticated/$storeId/$`. Use for host-app customizations (`plugins.ts`) and anything registered conditionally at runtime. File routes always win over the registry — the catch-all is the lowest-priority match.
+
+## File routes (packaged plugins)
+
+Declare a routes directory in your plugin's marker and put TanStack route files in it:
+
+```jsonc
+// package.json
+"spree": { "dashboard": { "plugin": true, "routes": "./src/routes" } }
+```
+
+```
+src/
+├── pages/                     # page components
+└── routes/
+    ├── brands.index.tsx       # → /$storeId/brands
+    └── brands.$brandId.tsx    # → /$storeId/brands/br_123
+```
+
+```tsx
+// src/routes/brands.index.tsx
+import { resourceSearchSchema } from '@spree/dashboard-core'
+import { createFileRoute } from '@tanstack/react-router'
+import { BrandsListPage } from '../pages/brands-list'
+
+export const Route = createFileRoute('/_authenticated/$storeId/brands/')({
+  validateSearch: resourceSearchSchema,
+  component: () => <BrandsListPage searchParams={Route.useSearch()} />,
+})
+```
+
+Rules that make this work:
+
+- **Commit the final composed path literal.** Plugin routes mount under the dashboard's `_authenticated/$storeId` layout; the route generator verifies the literal (and would rewrite a wrong one).
+- **The host regenerates its `routeTree.gen.ts` on every dev start and build** from installed package versions — updating your plugin picks up new routes automatically (dev servers need a restart, same as installing a plugin).
+- **Exclude `src/routes` from your package's standalone `tsc`** — `createFileRoute` paths only type-check against a generated tree, which exists in host programs. Develop against a dashboard host (the scaffold's tsconfig ships this exclusion).
+
+Links to file routes are fully typed — no casts:
+
+```tsx
+<Link to="/$storeId/brands/$brandId" params={{ brandId: brand.id }}>view</Link>
+```
+
+### Route collisions
+
+Two packages can't own the same route path. If a plugin declares a path that another plugin — or a built-in dashboard page — already claims, the build fails before generating the tree with an error naming both **packages**, the path, and each file:
+
+```
+Dashboard route collision.
+Route "/_authenticated/$storeId/brands/" is declared by more than one package:
+  - @acme/brands (…/node_modules/@acme/brands/src/routes/brands.index.tsx)
+  - @other/brands (…/node_modules/@other/brands/src/routes/brands.index.tsx)
+```
+
+Rename one of the routes, or drop the plugin that shouldn't own it. (Duplicate paths *within* a single package are reported by the TanStack generator instead — that's an authoring bug in one package.)
+
+<Warning>
+The collision check only sees **file routes**. If a runtime-registry route (below) uses the same URL as a compiled file route, there's no build error — the file route silently wins on every navigation, because the registry's catch-all is the lowest-priority match. If a page you registered at runtime never renders, check whether an installed plugin claims the same path.
+</Warning>
+
+## Runtime route registry (in-app & dynamic)
+
+Register from your host app's `plugins.ts` (or a plugin that genuinely needs runtime registration):
+
+```tsx
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { ReportsPage } from './pages/reports'
+
+defineDashboardPlugin({
+  routes: [{
+    key: 'reports',
+    path: '/reports',
+    component: ReportsPage,
+  }],
+})
+```
+
+`path` is **relative** to `/$storeId` — the dispatcher prepends the prefix at match time. So `/reports` matches the URL `/store_xyz/reports`. The leading `/` is required.
+
+## Path parameters
+
+TanStack-Router-style `$name` tokens match a single non-empty segment:
+
+```tsx
+routes: [
+  { key: 'report-detail', path: '/reports/$reportId', component: ReportDetailPage },
+  { key: 'report-export', path: '/reports/$reportId/export', component: ReportExportPage },
+],
+```
+
+## Receiving params
+
+Your component receives three props from the dispatcher:
+
+```tsx
+interface PluginRouteProps {
+  /** Path params extracted from the URL. Keys match the `$name` tokens in your path. */
+  params: Record<string, string>
+  /** Always set — every route is scoped to a store. */
+  storeId: string
+  /** URL search-state. Pass to `<ResourceTable searchParams={searchParams} />` so filters
+   *  round-trip through the URL. */
+  searchParams: Record<string, unknown>
+}
+
+function ReportDetailPage({ params, storeId, searchParams }: PluginRouteProps) {
+  const reportId = params.reportId
+  // ...
+}
+```
+
+`searchParams` is typed as `Record<string, unknown>` because the dispatcher can't statically know your page's shape. If you're handing it to `<ResourceTable>`, cast to `ResourceSearch`:
+
+```tsx
+import type { ResourceSearch } from '@spree/dashboard-core'
+
+<ResourceTable searchParams={searchParams as ResourceSearch} ... />
+```
+
+## Permission gating
+
+A `subject` on the route entry renders a 403 fallback (instead of the page) when the user lacks `read` permission:
+
+```tsx
+routes: [{
+  key: 'reports',
+  path: '/reports',
+  component: ReportsPage,
+  subject: 'Spree::Order',
+}],
+```
+
+Always pair this with a matching `subject` on the **nav entry** so users without permission never see the link in the first place. The route subject is the defensive layer for direct URLs.
+
+`subject` is a **registry-route** feature — the dispatcher applies it before rendering. File routes don't pass through the dispatcher, so they gate themselves: check permissions inside the component with `<Can>` or `usePermissions()` from `@spree/dashboard-core` and render a fallback. Either way, this is UX only — the backend still authorizes every API call.
+
+## Layout
+
+Custom routes inherit the dashboard's `_authenticated` + `$storeId` layout (auth guard, sidebar, top bar, etc.) — your component renders inside the `<Outlet />`. Use `<ResourceLayout>` from `@spree/dashboard-ui` to get the same header/main/sidebar grid as core pages:
+
+```tsx
+import { PageHeader } from '@spree/dashboard-core'
+import { ResourceLayout } from '@spree/dashboard-ui'
+
+function ReportsPage() {
+  return (
+    <ResourceLayout
+      header={<PageHeader title="Reports" backTo="dashboard" />}
+      main={<ReportsList />}
+      sidebar={<ReportsFilters />}
+    />
+  )
+}
+```
+
+## Linking to a registry route
+
+Registry routes aren't in the generated route tree, so links to them bypass static checking:
+
+```tsx
+import { Link } from '@tanstack/react-router'
+
+<Link
+  to={'/$storeId/reports/$reportId' as string}
+  params={{ storeId, reportId } as never}
+>
+  View report
+</Link>
+```
+
+The casts bypass TanStack Router's static type-checking (custom routes aren't in the generated route tree, so neither the path nor its params exist as types). Params are passed as a keyed object — each key fills the matching `$name` token.
+
+## Order of operations
+
+Routes register at module-load time. The dispatcher reads from the registry on **every navigation**, so route registration is much more forgiving than nav: even a route registered after first render works as soon as the user navigates to it. The only ordering rule is the usual i18n one — register your translation bundle above any registration that calls `i18n.t(...)` (see [Translations](/developer/dashboard/customization/translations)).
+
+## Reference
+
+- [`RouteEntry`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/route-registry.ts) — full type
+- [Catch-all dispatcher source](https://github.com/spree/spree/blob/main/packages/dashboard/src/routes/_authenticated/$storeId/$.tsx) — see how matching works

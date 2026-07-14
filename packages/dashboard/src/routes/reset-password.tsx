@@ -15,8 +15,8 @@ import { createFileRoute, Link, Navigate, useNavigate } from '@tanstack/react-ro
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { AuthShell } from '@/components/spree/auth-shell'
-import { type ResetPasswordFormValues, resetPasswordFormSchema } from '@/schemas/auth'
+import { AuthShell } from '../components/spree/auth-shell'
+import { type ResetPasswordFormValues, resetPasswordFormSchema } from '../schemas/auth'
 
 const resetSearchSchema = z.object({
   token: z.string().min(1).optional(),

@@ -23,8 +23,16 @@ services:
     # path we mirror-mount. The starter's .env may carry a different
     # SPREE_PATH (e.g. `..` for the native bin/dev flow); the overlay-set
     # value here wins because `environment:` beats `env_file:` in Compose.
+    #
+    # SPREE_DASHBOARD_DIST_PATH: the monorepo mount already contains the
+    # dashboard-starter's build output, so the spree_dashboard gem serves it
+    # at /dashboard (single-node topology) with zero copying — run
+    # `pnpm server:dashboard` to (re)build the dist; changes are served
+    # immediately (the gem reads files per request, no restart). Until a
+    # build exists the directory is absent and /dashboard responds 404.
     environment:
       SPREE_PATH: ${SPREE_PATH}
+      SPREE_DASHBOARD_DIST_PATH: ${SPREE_PATH}/packages/dashboard-starter/dist
     volumes:
       - ${SPREE_PATH}:${SPREE_PATH}
     # Hard-bypass the starter's bin/docker-entrypoint, which auto-runs

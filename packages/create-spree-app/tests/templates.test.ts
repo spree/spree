@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { rootClaudeMdContent } from '../src/templates/claude-md'
 import { dependabotContent } from '../src/templates/dependabot'
 import { envContent, storefrontEnvContent } from '../src/templates/env'
 import { gitignoreContent } from '../src/templates/gitignore'
@@ -132,6 +133,46 @@ describe('readmeContent', () => {
     expect(content).toContain('.spree/credentials.json')
     expect(content).toContain('npm install -g @spree/cli')
   })
+
+  it('renders commands for the chosen package manager', () => {
+    const content = readmeContent('my-store', true, 3000, true, 'pnpm')
+    expect(content).toContain('pnpm spree dev')
+    expect(content).toContain('pnpm run dev')
+    expect(content).toContain('pnpm add -g @spree/cli')
+    expect(content).not.toContain('npx')
+    expect(content).not.toMatch(/\bnpm /)
+  })
+
+  it('includes the React Dashboard section when included', () => {
+    const content = readmeContent('my-store', true, 3000, true)
+    expect(content).toContain('### Start the React Dashboard (Developer Preview)')
+    expect(content).toContain('http://localhost:5173')
+    expect(content).toContain('docs/developer/dashboard')
+  })
+
+  it('omits the React Dashboard section by default', () => {
+    const content = readmeContent('my-store', true, 3000)
+    expect(content).not.toContain('React Dashboard')
+  })
+})
+
+describe('rootClaudeMdContent', () => {
+  it('lists apps/dashboard when the dashboard is included', () => {
+    const content = rootClaudeMdContent(true, true)
+    expect(content).toContain('`apps/dashboard/`')
+    expect(content).toContain('docs/developer/dashboard')
+  })
+
+  it('renders commands for the chosen package manager', () => {
+    const content = rootClaudeMdContent(true, true, 'pnpm')
+    expect(content).toContain('pnpm run dev')
+    expect(content).toContain('pnpm spree api get products')
+    expect(content).not.toContain('npx spree')
+  })
+
+  it('omits apps/dashboard by default', () => {
+    expect(rootClaudeMdContent(true)).not.toContain('apps/dashboard')
+  })
 })
 
 describe('gitignoreContent', () => {
@@ -168,6 +209,16 @@ describe('dependabotContent', () => {
   it('adds the storefront npm ecosystem when the storefront is included', () => {
     const content = dependabotContent(true)
     expect(content).toContain('package-ecosystem: npm\n    directory: "/apps/storefront"')
+  })
+
+  it('adds the dashboard npm ecosystem when the dashboard is included', () => {
+    const content = dependabotContent(true, true)
+    expect(content).toContain('package-ecosystem: npm\n    directory: "/apps/dashboard"')
+    expect(content).toContain('dashboard-security:')
+  })
+
+  it('omits the dashboard ecosystem by default', () => {
+    expect(dependabotContent(true)).not.toContain('/apps/dashboard')
   })
 
   it('groups security and version updates separately for each ecosystem', () => {

@@ -1,0 +1,123 @@
+---
+title: Permissions
+sidebarTitle: Permissions
+description: How to hide UI behind CanCanCan permissions in your customisations — and why hiding is never the same as authorising.
+---
+
+The dashboard exposes the current admin's CanCanCan abilities to every component via the `usePermissions()` hook. The registry surfaces — nav entries, settings entries, custom routes — also accept a `subject` shortcut, and nav entries take a generic `if` predicate that reads from `permissions`.
+
+## Two layers
+
+UI gating is for **UX**. Backend authorization is for **security**. They are not the same:
+
+| Layer | Where | What it does |
+|---|---|---|
+| UI gating | Dashboard registries (`subject`, `if`) | Hides menu items, columns, buttons — keeps the interface tidy |
+| Authorization | Rails API controllers (CanCanCan, scopes) | Refuses the request when the user doesn't have permission |
+
+**Always rely on the backend for security.** Hiding a button is a hint to the user, not a wall. A user with browser dev tools (or the API token) can always hit the endpoint directly — your `authorize!` call is what stops them.
+
+## The `permissions` object
+
+```ts
+interface Permissions {
+  can(action: ActionName, subject: SubjectName): boolean
+  cannot(action: ActionName, subject: SubjectName): boolean
+  /** True when the matching rule has per-record conditions — expect possible 403s. */
+  isConditional(action: ActionName, subject: SubjectName): boolean
+}
+```
+
+It mirrors the backend ability at the **class level**:
+
+```ts
+permissions.can('read', 'Spree::Order')
+```
+
+Subjects are strings (`'Spree::Order'`, `'Spree::Product'`, or your own `'MyApp::Report'`). There is no client-side record-level check — when a rule is conditional on record attributes, `isConditional` returns `true` and the API is the arbiter: render the control and handle a possible 403.
+
+## `subject` shortcut
+
+Available on `NavEntry`, `SettingsNavEntry`, and `RouteEntry`. It hides the entry unless the user can `read` the subject:
+
+```ts
+nav.add({
+  key: 'reports',
+  label: 'Reports',
+  path: '/reports',
+  subject: 'Spree::Order',  // hides nav item without read:Spree::Order
+})
+```
+
+For routes, `subject` also renders a 403 page if the user navigates directly:
+
+```ts
+routes: [{
+  key: 'reports',
+  path: '/reports',
+  component: ReportsPage,
+  subject: 'Spree::Order',
+}],
+```
+
+Use `subject` whenever you want a "user can read this resource" check. For anything else, use `if`.
+
+## `if` predicate (nav entries)
+
+`if` on a nav entry is the escape hatch. It runs at render with `{ permissions, store, user }` and returns a boolean:
+
+```tsx
+import type { Store } from '@spree/admin-sdk'
+
+nav.add({
+  key: 'reports',
+  label: 'Reports',
+  path: '/reports',
+  if: ({ permissions, store }) =>
+    permissions.can('read', 'Spree::Order') &&
+    !!(store as Store | null)?.setup_tasks?.every((task) => task.done),
+})
+```
+
+(The `if` context types `store` loosely — cast to the SDK's `Store` for typed access, the same way the built-in Getting Started entry does.)
+
+Use it for combined checks (permission + store state), feature flags, multi-action checks (`can(update) && can(read)`), or anything the `subject` shortcut can't express in one string. It combines with `subject` — both must pass. (Slot entries have an `if` too, but it receives only the slot's own context — see [Slots](/developer/dashboard/customization/slots).)
+
+## Inside components
+
+Use the `usePermissions()` hook — it returns `{ permissions, rules, isLoading }`:
+
+```tsx
+import { usePermissions } from '@spree/dashboard-core'
+
+function ReportsPage() {
+  const { permissions } = usePermissions()
+  if (!permissions.can('read', 'Spree::Order')) {
+    return <Forbidden />
+  }
+  return <ReportsList />
+}
+```
+
+The same `permissions` object backs the nav registry's `if` predicate, so you can move logic between the two without changing behaviour. For declarative gating, `<Can I="update" a="Spree::Order">…</Can>` (also from `@spree/dashboard-core`) renders children only when the check passes.
+
+## Custom abilities
+
+If your customization introduces a new model on the backend, extend the CanCanCan ability there (typically a decorator on `Spree::PermissionSets::DefaultCustomer` or `Spree::PermissionSets::DashboardManagement`):
+
+```ruby
+# config/initializers/spree.rb (host app)
+Spree::PermissionSets::DashboardManagement.class_eval do
+  def activate!
+    super
+    can :manage, MyApp::Report
+  end
+end
+```
+
+After that, `permissions.can('read', 'MyApp::Report')` resolves in the dashboard exactly like a first-party check — the abilities ship to the dashboard with the current-user response (`GET /api/v3/admin/me`) at sign-in.
+
+## Reference
+
+- [`Permissions` interface](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/providers/permission-provider.tsx)
+- [CanCanCan docs](https://github.com/CanCanCommunity/cancancan) — the Ruby ability definition language

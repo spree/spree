@@ -17,13 +17,13 @@ import {
 import type { UseFormReturn } from 'react-hook-form'
 import { Controller } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { categoryAutocompleteProps } from '../../../hooks/use-categories'
+import type { CategoryFormValues } from '../../../schemas/category'
 import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
-} from '@/components/spree/custom-fields/custom-fields-inline'
-import { ResourceTranslationsCard } from '@/components/spree/translations/resource-translations-card'
-import { categoryAutocompleteProps } from '@/hooks/use-categories'
-import type { CategoryFormValues } from '@/schemas/category'
+} from '../custom-fields/custom-fields-inline'
+import { ResourceTranslationsCard } from '../translations/resource-translations-card'
 import { CategoryImageField } from './category-image-field'
 import { CategoryProductsCard } from './category-products-card'
 
