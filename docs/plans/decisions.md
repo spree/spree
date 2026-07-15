@@ -52,12 +52,14 @@ release. Rationale: a crowded 6.0 dilutes the launch; one sharp headline per rel
 earns more buzz, and the B2B Phase 2 work is plan-only (not started), so deferring
 it frees capacity for the multi-vendor open-sourcing rather than parking finished code.
 
-Multi-vendor OSS/Enterprise boundary is frozen by #13323: core ships Vendor identity,
-order splitting, the commission engine (with EU commission taxation), the payout
-ledger (`Spree::VendorPayout` — records what's owed, provider-agnostic), vendor
-dashboard, CSV import/export, and Vendors API; Enterprise keeps Stripe Connect/KYC and
-the *execution* of payouts (a `PayoutProvider::StripeConnect` strategy), payout reports,
-Shopify/WooCommerce sales-channel apps, and the category mapper. New plan:
+Multi-vendor OSS/Enterprise boundary per #13323 as of this date (**superseded in
+part by 2026-07-15 above** — basic Stripe Connect execution later moved to OSS):
+core ships Vendor identity, order splitting, the commission engine (with EU
+commission taxation), the payout ledger (`Spree::VendorPayout` — records what's
+owed, provider-agnostic), vendor dashboard, CSV import/export, and Vendors API;
+Enterprise keeps Stripe Connect/KYC and the *execution* of payouts (a
+`PayoutProvider::StripeConnect` strategy), payout reports, Shopify/WooCommerce
+sales-channel apps, and the category mapper. New plan:
 `6.0-multi-vendor-marketplace.md`. The legacy Enterprise multi-vendor module is
 rebuilt as native core models on top of the 6.0 Cart/Order split.
 
