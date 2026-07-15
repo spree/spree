@@ -105,7 +105,7 @@ describe Spree::Product, type: :model do
 
     describe '#duplicate' do
       before do
-        allow(product).to receive_messages taxons: [build(:taxon)], store: store
+        allow(product).to receive_messages categories: [build(:category)], store: store
       end
 
       it 'duplicates product' do
@@ -116,7 +116,7 @@ describe Spree::Product, type: :model do
         expect(clone.name).to eq("COPY OF #{product.name}")
         expect(clone.slug).to eq("copy-of-#{product.slug}")
         expect(clone.default_variant.sku).to eq("COPY OF #{product.default_variant.sku}")
-        expect(clone.taxons).to eq(product.taxons)
+        expect(clone.categories).to eq(product.categories)
         expect(clone.store).to eq(product.store)
         expect(clone.images.size).to eq(product.images.size)
       end
