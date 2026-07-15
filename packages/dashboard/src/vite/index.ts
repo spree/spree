@@ -15,10 +15,6 @@
  */
 import { createRequire } from 'node:module'
 import path from 'node:path'
-// Self-referencing package import (not a relative path): Node loads this
-// module raw when a host's vite.config.ts imports `@spree/dashboard/vite`,
-// and TS type-stripping can't resolve extensionless relative specifiers.
-import { assertNoRouteCollisions, type RouteSource } from '@spree/dashboard/vite/route-collisions'
 import {
   type SpreeDashboardPluginOptions as CoreOptions,
   spreeDashboardPlugin as spreeDashboardCorePlugin,
@@ -27,6 +23,10 @@ import { discoverDashboardPluginManifests } from '@spree/dashboard-core/vite/dis
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { index, layout, physical, rootRoute, route } from '@tanstack/virtual-file-routes'
 import type { PluginOption } from 'vite'
+// Explicit .js extension: this entry ships compiled (dist/vite-plugin), where
+// the specifier must name the real emitted file — tsup transpiles 1:1 without
+// rewriting import paths. Bundlers map .js back to the .ts source.
+import { assertNoRouteCollisions, type RouteSource } from './route-collisions.js'
 
 export interface SpreeDashboardPluginOptions extends CoreOptions {
   /**

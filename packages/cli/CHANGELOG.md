@@ -1,5 +1,18 @@
 # @spree/cli
 
+## 2.4.1
+
+### Patch Changes
+
+- Re-embed the dashboard-starter template against `@spree/dashboard` 0.10.1
+and `@spree/admin-sdk` ^0.6.0. 0.10.1 ships the Vite integration compiled to
+JS — registry installs of 0.10.0 failed the host build with
+`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` when `vite.config.ts` imported
+`@spree/dashboard/vite` — and admin-sdk 0.5.0 lacks the Admin API endpoints
+and types the dashboard consumes (the 0.x caret in the previous template pin
+never resolves to 0.6.0). The `spree dashboard plugin` scaffold now pins
+`@spree/admin-sdk` ^0.6.0 as well.
+
 ## 2.4.0
 
 ### Minor Changes

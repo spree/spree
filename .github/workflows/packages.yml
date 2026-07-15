@@ -122,9 +122,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       # The admin SPA imports built dist from the SDKs (per the workspace
-      # convention) — build them first so Vite resolves the workspace deps.
+      # convention), and its vite.config resolves dashboard-core's compiled
+      # Vite entry (dist/vite) — build them first so Vite resolves the
+      # workspace deps.
       - name: Build SDK dependencies
-        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/admin-sdk
+        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/admin-sdk --filter=@spree/dashboard-core
 
       - name: Setup dummy Rails app
         working-directory: spree/api
@@ -366,10 +368,12 @@ jobs:
         if: steps.check.outputs.published == 'false'
         run: pnpm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }} --no-git-checks
 
-  # The dashboard packages are source-only (they ship src/, no build step) and
-  # depend on each other via workspace:^, which `pnpm publish` rewrites to the
-  # concrete ^x.y.z while packing — so they publish in dependency order from a
-  # single job. Pre-1.0 Developer Preview versions ship under the `next` tag,
+  # The dashboard packages are source-only for everything the host's Vite
+  # compiles, but their Node-side Vite-plugin entries are compiled to JS by a
+  # per-package prepublishOnly hook (Node refuses to type-strip .ts under
+  # node_modules). They depend on each other via workspace:^, which
+  # `pnpm publish` rewrites to the concrete ^x.y.z while packing — so they
+  # publish in dependency order from a single job. Pre-1.0 Developer Preview versions ship under the `next` tag,
   # matching @spree/admin-sdk.
   release-dashboard:
     name: "Dashboard packages - Release"
