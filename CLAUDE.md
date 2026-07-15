@@ -69,7 +69,7 @@ Shipped plans:
 |---|---|
 | `spree/core` | Ruby gem — models, services, business logic (`spree_core`) |
 | `spree/api` | Ruby gem — Store & Admin REST APIs (`spree_api`) |
-| `spree/emails` | Ruby gem — transactional emails (optional). Deprecated in 6.0 — Next.js storefront handles consumer emails via webhooks. |
+| `spree/emails` | Ruby gem — transactional emails (optional). Rebuilt + modernized in 5.6. The default email stack for installations without a storefront app (e.g. mobile apps); headless storefronts may instead own consumer emails via webhooks. |
 | `spree/dashboard` | Ruby gem (`spree_dashboard`, optional) — hosts a built React Dashboard at `/dashboard` from `Spree::Dashboard.dist_path` / `SPREE_DASHBOARD_DIST_PATH` (single-node topology). Successor slot to `spree_admin` at 6.0. |
 | `packages/dashboard` | `@spree/dashboard` — React SPA admin dashboard (Spree 6.0, replaces `spree/admin`). The deployable app shell, routes, schemas, resource hooks, locales. |
 | `packages/dashboard-ui` | `@spree/dashboard-ui` — design system. Shadcn primitives + headless composed components + tokens. Source-only; consumer compiles via Vite/Tailwind. **Components are headless: data comes via props, no provider/hook imports.** |
