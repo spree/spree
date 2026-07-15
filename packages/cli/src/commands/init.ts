@@ -25,11 +25,13 @@ export function registerInitCommand(program: Command): void {
     })
 }
 
-// The whole first-run flow, callable outside the `init` command: `spree dev`
-// delegates here when it detects a project that has never been set up, so
-// create-spree-app's contract — the app just works — holds on every path
-// (--no-start, an interrupted scaffold, a fresh clone) without anyone having
-// to know `spree init` exists.
+/**
+ * The whole first-run flow, callable outside the `init` command: `spree dev`
+ * delegates here when it detects a project that has never been set up, so
+ * create-spree-app's contract — the app just works — holds on every path
+ * (--no-start, an interrupted scaffold, a fresh clone) without anyone having
+ * to know `spree init` exists.
+ */
 export async function runFirstRunSetup(flags: {
   sampleData: boolean
   open: boolean
@@ -40,7 +42,7 @@ export async function runFirstRunSetup(flags: {
   // persisted in .env decides, so a deferred first run keeps the answer the
   // operator gave at scaffold time. Load sample data later any time with
   // `spree sample-data`.
-  const sampleData = flags.sampleData && readSampleDataFromEnv(ctx.projectDir)
+  const sampleData = flags.sampleData && (readSampleDataFromEnv(ctx.projectDir) ?? true)
 
   p.log.step('Pulling latest images...')
   await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })

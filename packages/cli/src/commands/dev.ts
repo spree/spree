@@ -5,7 +5,12 @@ import type { Command } from 'commander'
 import pc from 'picocolors'
 import { projectCredentialsPath } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
-import { detectProject, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
+import {
+  detectProject,
+  hasMonorepoSpreePath,
+  isEjectedProject,
+  readSampleDataFromEnv,
+} from '../context.js'
 import {
   buildAdminStylesheets,
   dockerCompose,
@@ -39,21 +44,28 @@ export function registerDevCommand(program: Command): void {
       // mint API keys. This keeps create-spree-app's contract — the app just
       // works — on every path to a first boot (--no-start, an interrupted
       // scaffold, a fresh clone) without requiring anyone to run `spree init`.
-      // "Never set up" = init never minted credentials AND compose never
-      // created a container, so a torn-down (`docker compose down`) but
-      // initialized project boots normally. Ejected projects build the image
+      // Setup is complete once init minted credentials. When they're missing:
+      // a project whose .env declares SPREE_SAMPLE_DATA was scaffolded by a
+      // create-spree-app that persists setup state, so missing credentials
+      // alone means setup never finished — even if an interrupted init already
+      // created containers. For older projects the only safe signal is
+      // "compose never created a container": an initialized
+      // pre-credentials-era project must not be re-set-up (that would load
+      // sample data into a real store). Ejected projects build the image
       // locally and manage their own lifecycle.
       if (
         !isEjectedProject(ctx.projectDir) &&
         !fs.existsSync(projectCredentialsPath(ctx.projectDir))
       ) {
-        let neverBooted = false
-        try {
-          neverBooted = !(await hasProjectContainers(ctx.projectDir))
-        } catch {
-          // Daemon trouble surfaces with compose's own error on the up below.
+        let neverSetUp = readSampleDataFromEnv(ctx.projectDir) !== undefined
+        if (!neverSetUp) {
+          try {
+            neverSetUp = !(await hasProjectContainers(ctx.projectDir))
+          } catch {
+            // Daemon trouble surfaces with compose's own error on the up below.
+          }
         }
-        if (neverBooted) {
+        if (neverSetUp) {
           p.log.info('First run detected — completing setup automatically.')
           await runFirstRunSetup({ sampleData: true, open: true })
           return

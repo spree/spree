@@ -94,20 +94,8 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     envContent(generateSecretKeyBase(), port, options.sampleData),
   )
   fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
-  fs.writeFileSync(
-    path.join(projectDir, 'README.md'),
-    readmeContent(projectName, storefront, port, dashboard, options.packageManager),
-  )
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
-  fs.writeFileSync(
-    path.join(projectDir, 'CLAUDE.md'),
-    rootClaudeMdContent(storefront, dashboard, options.packageManager),
-  )
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
-
-  const githubDir = path.join(projectDir, '.github')
-  fs.mkdirSync(githubDir, { recursive: true })
-  fs.writeFileSync(path.join(githubDir, 'dependabot.yml'), dependabotContent(storefront, dashboard))
 
   s.stop('Project structure created.')
 
@@ -137,6 +125,9 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     } catch (err) {
       storefrontReady = false
       s.stop('Storefront setup failed.')
+      // Remove the partial checkout so the recovery command (a fresh clone)
+      // actually works instead of failing on a non-empty directory.
+      fs.rmSync(path.join(projectDir, 'apps', 'storefront'), { recursive: true, force: true })
       p.log.warn(
         `Continuing without the storefront — add it later by cloning ${STOREFRONT_REPO} into apps/storefront.\n${errorMessage(err)}`,
       )
@@ -153,11 +144,32 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       await scaffoldDashboard(projectDir, { install: true, packageManager: options.packageManager })
     } catch (err) {
       dashboardReady = false
+      // Remove the partial scaffold so the recovery command (`spree add
+      // dashboard`, which expects the directory to be absent) actually works.
+      fs.rmSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true, force: true })
       p.log.warn(
         `Continuing without the React Dashboard — add it later with ${pc.bold(`${runCommand(options.packageManager)} spree add dashboard`)}.\n${errorMessage(err)}`,
       )
     }
   }
+
+  // Project docs are generated only now, from the phases' actual outcomes —
+  // a README written up front from the requested flags would document apps
+  // whose setup failed.
+  fs.writeFileSync(
+    path.join(projectDir, 'README.md'),
+    readmeContent(projectName, storefrontReady, port, dashboardReady, options.packageManager),
+  )
+  fs.writeFileSync(
+    path.join(projectDir, 'CLAUDE.md'),
+    rootClaudeMdContent(storefrontReady, dashboardReady, options.packageManager),
+  )
+  const githubDir = path.join(projectDir, '.github')
+  fs.mkdirSync(githubDir, { recursive: true })
+  fs.writeFileSync(
+    path.join(githubDir, 'dependabot.yml'),
+    dependabotContent(storefrontReady, dashboardReady),
+  )
 
   // Phase 4: Initialize and start services
   if (options.start) {

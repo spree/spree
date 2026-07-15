@@ -60,14 +60,14 @@ describe('readSampleDataFromEnv', () => {
     tempDirs.length = 0
   })
 
-  it('defaults to true when .env is missing', () => {
-    expect(readSampleDataFromEnv(makeTempDir())).toBe(true)
+  it('returns undefined when .env is missing', () => {
+    expect(readSampleDataFromEnv(makeTempDir())).toBeUndefined()
   })
 
-  it('defaults to true when the flag is absent', () => {
+  it('returns undefined when the flag is absent', () => {
     const dir = makeTempDir()
     fs.writeFileSync(path.join(dir, '.env'), 'SPREE_PORT=3000\n')
-    expect(readSampleDataFromEnv(dir)).toBe(true)
+    expect(readSampleDataFromEnv(dir)).toBeUndefined()
   })
 
   it('honors an opt-out persisted by create-spree-app', () => {

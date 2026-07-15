@@ -65,8 +65,10 @@ export async function rakeTask(
     .trim()
 }
 
-// Whether compose has ever created a container (any state, including exited)
-// for this project.
+/**
+ * Whether compose has ever created a container (any state, including exited)
+ * for this project.
+ */
 export async function hasProjectContainers(projectDir: string): Promise<boolean> {
   const { stdout } = await execa('docker', ['compose', 'ps', '-a', '-q'], { cwd: projectDir })
   return stdout.trim().length > 0
