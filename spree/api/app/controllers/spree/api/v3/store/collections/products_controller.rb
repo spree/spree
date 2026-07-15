@@ -38,14 +38,16 @@ module Spree
               direction == 'desc' ? "-#{field}" : field
             end
 
-            # Resolve by permalink or prefixed ID, mirroring CollectionsController#find_resource.
+            # Resolve by permalink or prefixed ID, mirroring CollectionsController#find_resource
+            # (including the default-locale fallback so a non-default-locale permalink still
+            # resolves the PLP the collection detail page can load).
             def current_collection
               @current_collection ||= begin
                 id = params[:collection_id]
                 if id.to_s.start_with?('coll_')
                   current_store.collections.find_by_prefix_id!(id)
                 else
-                  current_store.collections.i18n.find_by!(permalink: id)
+                  find_with_fallback_default_locale { current_store.collections.i18n.find_by!(permalink: id) }
                 end
               end
             end

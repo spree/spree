@@ -70,8 +70,12 @@ module Spree
             end
 
             # Loads the parent category (runs before the base set_resource).
+            # Scoped to +manual+ so automatic (rule-based) rows — hidden by the
+            # categories CRUD controller and migrating to Spree::Collection — can't
+            # have their membership listed or mutated through this endpoint.
             def set_parent
-              @category = Spree::Category.accessible_by(current_ability, :update).
+              @category = Spree::Category.manual.
+                          accessible_by(current_ability, :update).
                           for_store(current_store).
                           find_by_prefix_id!(params[:category_id])
               authorize_parent!(@category)

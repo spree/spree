@@ -48,6 +48,25 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
     end
   end
 
+  # Automatic (rule-based) rows are hidden by the categories CRUD controller and
+  # migrate to Spree::Collection; membership can't be read or mutated here either.
+  describe 'automatic (rule-based) categories' do
+    let!(:automatic_category) { Spree::Category.create!(name: 'On Sale', store: store, automatic: true) }
+    let!(:product) { create(:product, stores: [store]) }
+
+    it 'are not listable through the nested products endpoint' do
+      get :index, params: { category_id: automatic_category.prefixed_id }, as: :json
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'do not accept product membership' do
+      post :create, params: { category_id: automatic_category.prefixed_id, product_id: product.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(Spree::ProductCategory.where(category_id: automatic_category.id)).to be_empty
+    end
+  end
+
   describe 'POST #create' do
     let!(:product) { create(:product, stores: [store]) }
 
