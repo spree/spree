@@ -2,11 +2,14 @@
 
 spree/spree#13323 originally kept "Stripe Connect onboarding, KYC, automatic
 payouts" in Enterprise. Amended by the issue author: the **basic** Stripe Connect
-path ships **open-source** in the `spree_stripe` extension, registering
+path ships **open-source in the monorepo**, registering
 `Spree::PayoutProvider::StripeConnect` — Express-account onboarding (hosted link +
 `account.updated` status webhook) and on-fulfillment `Stripe::Transfer` execution
 (`source_transaction`-tied), plus mapping the vendor payout schedule onto Stripe's
-native schedule.
+native schedule. It lands alongside the Stripe core gateway being pulled into the
+monorepo from the standalone `spree_stripe` repo — only the payment-sessions-API
+gateway classes come over (likely into `spree/core`); the legacy v2-API/storefront
+code in that repo stays behind.
 
 Rationale: the closest OSS competitor ships baseline Stripe transfers free —
 "money moves automatically" is the demo that sells — and transfers are inseparable
