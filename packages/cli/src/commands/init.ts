@@ -20,76 +20,88 @@ export function registerInitCommand(program: Command): void {
     .option('--no-sample-data', 'skip loading sample data')
     .option('--no-open', 'skip opening browser')
     .action(async (flags: { sampleData: boolean; open: boolean }) => {
-      const ctx = detectProject()
-
-      p.log.step('Pulling latest images...')
-      await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })
-
-      const s = p.spinner()
-      s.start('Starting Docker services...')
-      // Prime the shared bundle_cache volume with web alone so the up below
-      // doesn't race the cold-volume copy-up. stdio: 'ignore' keeps the spinner
-      // clean — the inherited `pull` above already showed image progress.
-      await primeBundleVolume(ctx.projectDir, { stdio: 'ignore' })
-      await dockerCompose(['up', '-d'], ctx.projectDir)
-      s.stop('Docker services started.')
-
-      s.start('Waiting for Spree to be ready...')
-      await waitForHealthy(ctx.port)
-      s.stop('Spree is ready.')
-
-      s.start('Seeding database...')
-      await rakeTask('db:seed', ctx.projectDir)
-      s.stop('Database seeded.')
-
-      s.start('Configuring API keys...')
-      // Sequential, not Promise.all: finish the publishable key (and its
-      // storefront env write) before minting the secret, so a failure on the
-      // first step never leaves a freshly minted secret stranded on disk while
-      // init aborts.
-      const publishableKey = await fetchApiKey(ctx.projectDir)
-      updateStorefrontEnv(ctx.projectDir, publishableKey)
-      const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
-      s.stop('API keys configured.')
-
-      if (flags.sampleData) {
-        s.start('Loading sample data...')
-        await rakeTask('spree:load_sample_data', ctx.projectDir)
-        s.stop('Sample data loaded.')
-      }
-
-      s.start('Indexing products for search...')
-      await rakeTask('spree:search:reindex', ctx.projectDir)
-      s.stop('Search index ready.')
-
-      p.note(
-        [
-          '',
-          pc.bold('Admin Dashboard'),
-          `  ${pc.cyan(`http://localhost:${ctx.port}/admin`)}`,
-          `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-          `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
-          '',
-          pc.bold('Store API'),
-          `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/store`)}`,
-          `  Publishable key: ${pc.cyan(publishableKey)}`,
-          '',
-          pc.bold('Admin API'),
-          `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/admin`)}`,
-          `  Secret key:      ${pc.cyan(secretKey)}`,
-          `  ${pc.dim('Saved to .spree/credentials.json')}`,
-          '',
-        ].join('\n'),
-        'Your Spree store is ready!',
-      )
-
-      if (flags.open) {
-        await openBrowser(`http://localhost:${ctx.port}/admin`)
-      }
-
-      p.log.info('Streaming logs (Ctrl+C to stop)...\n')
-      await streamLogs('web', ctx.projectDir)
+      await runFirstRunSetup(flags)
     })
+}
+
+// The whole first-run flow, callable outside the `init` command: `spree dev`
+// delegates here when it detects a project that has never been set up, so
+// create-spree-app's contract — the app just works — holds on every path
+// (--no-start, an interrupted scaffold, a fresh clone) without anyone having
+// to know `spree init` exists.
+export async function runFirstRunSetup(flags: {
+  sampleData: boolean
+  open: boolean
+}): Promise<void> {
+  const ctx = detectProject()
+
+  p.log.step('Pulling latest images...')
+  await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })
+
+  const s = p.spinner()
+  s.start('Starting Docker services...')
+  // Prime the shared bundle_cache volume with web alone so the up below
+  // doesn't race the cold-volume copy-up. stdio: 'ignore' keeps the spinner
+  // clean — the inherited `pull` above already showed image progress.
+  await primeBundleVolume(ctx.projectDir, { stdio: 'ignore' })
+  await dockerCompose(['up', '-d'], ctx.projectDir)
+  s.stop('Docker services started.')
+
+  s.start('Waiting for Spree to be ready...')
+  await waitForHealthy(ctx.port)
+  s.stop('Spree is ready.')
+
+  s.start('Seeding database...')
+  await rakeTask('db:seed', ctx.projectDir)
+  s.stop('Database seeded.')
+
+  s.start('Configuring API keys...')
+  // Sequential, not Promise.all: finish the publishable key (and its
+  // storefront env write) before minting the secret, so a failure on the
+  // first step never leaves a freshly minted secret stranded on disk while
+  // init aborts.
+  const publishableKey = await fetchApiKey(ctx.projectDir)
+  updateStorefrontEnv(ctx.projectDir, publishableKey)
+  const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
+  s.stop('API keys configured.')
+
+  if (flags.sampleData) {
+    s.start('Loading sample data...')
+    await rakeTask('spree:load_sample_data', ctx.projectDir)
+    s.stop('Sample data loaded.')
+  }
+
+  s.start('Indexing products for search...')
+  await rakeTask('spree:search:reindex', ctx.projectDir)
+  s.stop('Search index ready.')
+
+  p.note(
+    [
+      '',
+      pc.bold('Admin Dashboard'),
+      `  ${pc.cyan(`http://localhost:${ctx.port}/admin`)}`,
+      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      '',
+      pc.bold('Store API'),
+      `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/store`)}`,
+      `  Publishable key: ${pc.cyan(publishableKey)}`,
+      '',
+      pc.bold('Admin API'),
+      `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/admin`)}`,
+      `  Secret key:      ${pc.cyan(secretKey)}`,
+      `  ${pc.dim('Saved to .spree/credentials.json')}`,
+      '',
+    ].join('\n'),
+    'Your Spree store is ready!',
+  )
+
+  if (flags.open) {
+    await openBrowser(`http://localhost:${ctx.port}/admin`)
+  }
+
+  p.log.info('Streaming logs (Ctrl+C to stop)...\n')
+  await streamLogs('web', ctx.projectDir)
 }
 
 async function waitForHealthy(port: number): Promise<void> {

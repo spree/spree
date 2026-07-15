@@ -3,14 +3,17 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
+import { projectCredentialsPath } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
 import {
   buildAdminStylesheets,
   dockerCompose,
+  hasProjectContainers,
   primeBundleVolume,
   watchAdminStylesheets,
 } from '../docker.js'
+import { runFirstRunSetup } from './init.js'
 
 export function registerDevCommand(program: Command): void {
   program
@@ -28,6 +31,33 @@ export function registerDevCommand(program: Command): void {
           ].join('\n'),
         )
         process.exit(1)
+      }
+
+      // A project that was never set up gets the full first-run flow instead
+      // of a bare `up`: pull a fresh image (a mutable tag cached weeks ago by
+      // another project would otherwise boot an old Spree), seed the database,
+      // mint API keys. This keeps create-spree-app's contract — the app just
+      // works — on every path to a first boot (--no-start, an interrupted
+      // scaffold, a fresh clone) without requiring anyone to run `spree init`.
+      // "Never set up" = init never minted credentials AND compose never
+      // created a container, so a torn-down (`docker compose down`) but
+      // initialized project boots normally. Ejected projects build the image
+      // locally and manage their own lifecycle.
+      if (
+        !isEjectedProject(ctx.projectDir) &&
+        !fs.existsSync(projectCredentialsPath(ctx.projectDir))
+      ) {
+        let neverBooted = false
+        try {
+          neverBooted = !(await hasProjectContainers(ctx.projectDir))
+        } catch {
+          // Daemon trouble surfaces with compose's own error on the up below.
+        }
+        if (neverBooted) {
+          p.log.info('First run detected — completing setup automatically.')
+          await runFirstRunSetup({ sampleData: true, open: true })
+          return
+        }
       }
 
       p.note(

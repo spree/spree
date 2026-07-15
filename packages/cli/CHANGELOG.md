@@ -1,5 +1,19 @@
 # @spree/cli
 
+## 2.4.2
+
+### Patch Changes
+
+- `spree dev` on a project that was never set up now runs the full first-run
+flow automatically (pull fresh images, start services, seed the database,
+configure API keys) instead of a bare `docker compose up`. A bare `up` never
+pulls, so a mutable tag (`latest`) cached weeks ago by another project
+silently booted an old Spree whenever the first boot happened through
+`spree dev` — a `--no-start` scaffold, an interrupted create-spree-app run,
+or a fresh clone. Already-initialized projects are untouched: later boots
+never pull, dev stays offline-friendly, and upgrades stay explicit via
+`spree update`.
+
 ## 2.4.1
 
 ### Patch Changes
