@@ -3,12 +3,13 @@ import { platform } from 'node:os'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execaCommand } from 'execa'
+import { execa, execaCommand } from 'execa'
 import pc from 'picocolors'
 import { mintProjectCredentials } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject, readSampleDataFromEnv } from '../context.js'
 import { dockerCompose, primeBundleVolume, rakeTask, streamLogs } from '../docker.js'
+import { detectPackageManager } from './add.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
 const HEALTH_CHECK_TIMEOUT_MS = 120_000
@@ -71,6 +72,9 @@ export async function runFirstRunSetup(flags: {
   const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
   s.stop('API keys configured.')
 
+  await installAppDeps(ctx.projectDir, 'storefront')
+  await installAppDeps(ctx.projectDir, 'dashboard')
+
   if (sampleData) {
     s.start('Loading sample data...')
     await rakeTask('spree:load_sample_data', ctx.projectDir)
@@ -98,6 +102,13 @@ export async function runFirstRunSetup(flags: {
       `  Secret key:      ${pc.cyan(secretKey)}`,
       `  ${pc.dim('Saved to .spree/credentials.json')}`,
       '',
+      ...(fs.existsSync(path.join(ctx.projectDir, 'apps', 'dashboard', 'package.json'))
+        ? [
+            pc.bold('React Dashboard (Developer Preview)'),
+            `  ${pc.cyan('cd apps/dashboard && pnpm dev')}`,
+            '',
+          ]
+        : []),
     ].join('\n'),
     'Your Spree store is ready!',
   )
@@ -108,6 +119,28 @@ export async function runFirstRunSetup(flags: {
 
   p.log.info('Streaming logs (Ctrl+C to stop)...\n')
   await streamLogs('web', ctx.projectDir)
+}
+
+// Install an optional app's dependencies when they're missing — a fresh
+// clone, or a scaffold whose install step failed — mirroring
+// create-spree-app's per-app install steps, so first-run setup leaves every
+// app runnable with `pnpm dev`. Best-effort: a registry hiccup shouldn't
+// fail backend setup.
+async function installAppDeps(projectDir: string, app: 'storefront' | 'dashboard'): Promise<void> {
+  const appDir = path.join(projectDir, 'apps', app)
+  if (!fs.existsSync(path.join(appDir, 'package.json'))) return
+  if (fs.existsSync(path.join(appDir, 'node_modules'))) return
+
+  const pm = detectPackageManager(projectDir, appDir)
+  const s = p.spinner()
+  s.start(`Installing ${app} dependencies with ${pm}...`)
+  try {
+    await execa(pm, ['install'], { cwd: appDir })
+    s.stop(`${app === 'dashboard' ? 'Dashboard' : 'Storefront'} dependencies installed.`)
+  } catch (err) {
+    s.stop(pc.yellow(`${pm} install failed — run it manually in apps/${app}/.`))
+    p.log.warn(err instanceof Error ? err.message : String(err))
+  }
 }
 
 async function waitForHealthy(port: number): Promise<void> {
