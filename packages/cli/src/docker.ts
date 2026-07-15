@@ -65,6 +65,15 @@ export async function rakeTask(
     .trim()
 }
 
+/**
+ * Whether compose has ever created a container (any state, including exited)
+ * for this project.
+ */
+export async function hasProjectContainers(projectDir: string): Promise<boolean> {
+  const { stdout } = await execa('docker', ['compose', 'ps', '-a', '-q'], { cwd: projectDir })
+  return stdout.trim().length > 0
+}
+
 // Whether a compose service has a running container — used by commands that
 // can fall back to `compose run` when the stack is down. A defined service
 // with no containers exits 0 with empty output (the legitimate false case);

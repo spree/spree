@@ -252,7 +252,7 @@ function writeDashboardEnv(envPath: string, port: number): void {
 }
 
 /** Prefer the project's own package manager (by lockfile); default to pnpm. */
-function detectPackageManager(projectDir: string, dashboardDir: string): string {
+export function detectPackageManager(projectDir: string, dashboardDir: string): string {
   for (const dir of [dashboardDir, projectDir]) {
     if (fs.existsSync(path.join(dir, 'pnpm-lock.yaml'))) return 'pnpm'
     if (fs.existsSync(path.join(dir, 'yarn.lock'))) return 'yarn'
