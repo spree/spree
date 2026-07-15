@@ -487,10 +487,11 @@ The split lets plugin authors register UI via `defineDashboardPlugin` from `@spr
 pnpm server:setup       # one-time bootstrap (see "Development Server" above)
 pnpm server:dev         # foreground; streams logs — Rails on http://localhost:3000
 
-# 2. Boot the admin (separate terminal)
-cd packages/dashboard
-pnpm dev                # http://localhost:5173 (proxies /api/* to :3000)
+# 2. Boot the admin (separate terminal, from monorepo root)
+pnpm turbo dev --filter=@spree/dashboard-starter   # http://localhost:5173 (proxies /api/* to :3000)
 ```
+
+The starter is the canonical host — the same app `spree add dashboard` scaffolds — so local dev exercises the real consumer path (shell + plugin pipeline) while still hot-reloading `@spree/dashboard`/`-core`/`-ui` source through the workspace. `turbo dev` (not a bare `pnpm dev` inside the package) matters on a fresh clone: the starter's `vite.config.ts` resolves the compiled Node-side Vite entries (`@spree/dashboard/vite`, `@spree/dashboard-core/vite`) from `dist/`, and turbo's `^build` dependency produces them. After any full `pnpm build`, `cd packages/dashboard-starter && pnpm dev` works too.
 
 `VITE_SPREE_API_URL` overrides the backend URL (default `http://localhost:3000`). Sign in with the seed admin user (`spree@example.com` / `spree123` — override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD`; see `spree/core/app/services/spree/seeds/admin_user.rb`).
 

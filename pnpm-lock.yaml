@@ -304,6 +304,9 @@ importers:
       tailwindcss:
         specifier: ^4.2.4
         version: 4.2.4
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.21.0)(typescript@6.0.3)(yaml@2.8.4)
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
@@ -389,6 +392,9 @@ importers:
       '@types/spark-md5':
         specifier: ^3.0.5
         version: 3.0.5
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.21.0)(typescript@6.0.3)(yaml@2.8.4)
       typescript:
         specifier: ~6.0.3
         version: 6.0.3

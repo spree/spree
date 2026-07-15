@@ -1,8 +1,8 @@
 {
   "name": "@spree/dashboard",
   "license": "MIT",
-  "version": "0.10.0",
-  "description": "Spree Dashboard app shell — the next-gen React admin for Spree Commerce. Routes, resource hooks, schemas, locales, and the <Dashboard /> component. Source-only package; hosts compile it via @spree/dashboard/vite. Developer Preview.",
+  "version": "0.10.1",
+  "description": "Spree Dashboard app shell \u2014 the next-gen React admin for Spree Commerce. Routes, resource hooks, schemas, locales, and the <Dashboard /> component. Source-only package; hosts compile it via @spree/dashboard/vite. Developer Preview.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
   "repository": {
@@ -22,18 +22,25 @@
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles.css",
-    "./vite": "./src/vite/index.ts",
-    "./vite/route-collisions": "./src/vite/route-collisions.ts",
+    "./vite": {
+      "types": "./src/vite/index.ts",
+      "default": "./dist/vite-plugin/index.js"
+    },
+    "./vite/route-collisions": {
+      "types": "./src/vite/route-collisions.ts",
+      "default": "./dist/vite-plugin/route-collisions.js"
+    },
     "./components/spree/payment-method-editors/types": "./src/components/spree/payment-method-editors/types.ts"
   },
   "files": [
     "src",
+    "dist/vite-plugin",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && tsup",
     "lint": "biome check .",
     "lint:fix": "biome check --fix .",
     "format": "biome format --write .",
@@ -42,7 +49,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:install": "playwright install chromium"
+    "test:e2e:install": "playwright install chromium",
+    "prepublishOnly": "tsup"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -97,6 +105,7 @@
     "@types/spark-md5": "^3.0.5",
     "@vitejs/plugin-react": "^6.0.1",
     "tailwindcss": "^4.2.4",
+    "tsup": "^8.5.1",
     "typescript": "~6.0.3",
     "vite": "^8.0.16",
     "vitest": "^4.1.5"

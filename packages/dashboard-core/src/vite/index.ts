@@ -2,13 +2,12 @@ import fs from 'node:fs'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-// Self-referencing package import (not a relative path): this entry is loaded
-// raw by Node when a host's vite.config.ts imports `@spree/dashboard-core/vite`,
-// and Node's TS type-stripping can't resolve extensionless relative specifiers.
-// The exports-map path resolves to the real file name everywhere.
-import { discoverDashboardPlugins } from '@spree/dashboard-core/vite/discover'
 import tailwindcss from '@tailwindcss/vite'
 import type { Plugin, PluginOption } from 'vite'
+// Explicit .js extension: this entry ships compiled (dist/vite), where the
+// specifier must name the real emitted file — tsup transpiles 1:1 without
+// rewriting import paths. Bundlers map .js back to the .ts source.
+import { discoverDashboardPlugins } from './discover.js'
 
 export interface SpreeDashboardPluginOptions {
   /**
