@@ -58,7 +58,7 @@ ledger (`Spree::VendorPayout` — records what's owed, provider-agnostic), vendo
 dashboard, CSV import/export, and Vendors API; Enterprise keeps Stripe Connect/KYC and
 the *execution* of payouts (a `PayoutProvider::StripeConnect` strategy), payout reports,
 Shopify/WooCommerce sales-channel apps, and the category mapper. New plan:
-`6.0-multi-vendor-marketplace.md`. The legacy `spree_multi_vendor` decorator gem is
+`6.0-multi-vendor-marketplace.md`. The legacy Enterprise multi-vendor module is
 rebuilt as native core models on top of the 6.0 Cart/Order split.
 
 ## 2026-03-17: Rename StockItem → StockLevel
