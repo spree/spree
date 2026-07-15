@@ -32,6 +32,9 @@ cd ${name}
 ${run} spree dev
 \`\`\`
 
+The first run completes setup automatically — it pulls the latest Spree image,
+seeds the database, and configures API keys.
+
 Wait for the services to be healthy, then open:
 
 - **Admin Dashboard:** http://localhost:${port}/admin
@@ -101,7 +104,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 
 | Command | Description |
 |---------|-------------|
-| \`spree dev\` | Run the backend in the foreground — streams logs, Ctrl+C stops it |
+| \`spree dev\` | Run the backend in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically |
 | \`spree stop\` | Stop backend services |
 | \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
 | \`spree eject\` | Switch from prebuilt image to building from \`backend/\` |

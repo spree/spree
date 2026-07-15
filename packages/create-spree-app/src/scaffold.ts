@@ -4,7 +4,12 @@ import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
 import { downloadBackend } from './backend.js'
-import { DASHBOARD_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
+import {
+  DASHBOARD_PORT,
+  DEFAULT_ADMIN_EMAIL,
+  DEFAULT_ADMIN_PASSWORD,
+  STOREFRONT_REPO,
+} from './constants.js'
 import { scaffoldDashboard } from './dashboard.js'
 import {
   downloadStorefront,
@@ -108,25 +113,47 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   await installRootDeps(projectDir, options.packageManager)
   s.stop('Dependencies installed.')
 
+  // Phases 3/3b are optional apps — their failures warn and continue. They
+  // must never abort the scaffold before Phase 4: `spree init` is what
+  // guarantees a fresh Spree image (skipping it leaves a stale local `latest`
+  // to boot) and a seeded, credentialed backend.
+
   // Phase 3: Storefront (optional)
+  let storefrontReady = storefront
   if (storefront) {
-    s.start('Downloading storefront template...')
-    await downloadStorefront(projectDir)
-    s.stop('Storefront template downloaded.')
+    try {
+      s.start('Downloading storefront template...')
+      await downloadStorefront(projectDir)
+      s.stop('Storefront template downloaded.')
 
-    writeStorefrontEnv(projectDir, port)
+      writeStorefrontEnv(projectDir, port)
 
-    s.start('Installing storefront dependencies...')
-    await installStorefrontDeps(projectDir, options.packageManager)
-    s.stop('Storefront dependencies installed.')
+      s.start('Installing storefront dependencies...')
+      await installStorefrontDeps(projectDir, options.packageManager)
+      s.stop('Storefront dependencies installed.')
+    } catch (err) {
+      storefrontReady = false
+      s.stop('Storefront setup failed.')
+      p.log.warn(
+        `Continuing without the storefront — add it later by cloning ${STOREFRONT_REPO} into apps/storefront.\n${errorMessage(err)}`,
+      )
+    }
   }
 
   // Phase 3b: React Dashboard (optional, Developer Preview). Delegates to the
   // project-local `npx spree add dashboard` — @spree/cli is already installed
   // (root deps, above) and bundles the dashboard-starter template. It reads
   // the port from the project's .env and prints its own progress.
+  let dashboardReady = dashboard
   if (dashboard) {
-    await scaffoldDashboard(projectDir, { install: true, packageManager: options.packageManager })
+    try {
+      await scaffoldDashboard(projectDir, { install: true, packageManager: options.packageManager })
+    } catch (err) {
+      dashboardReady = false
+      p.log.warn(
+        `Continuing without the React Dashboard — add it later with ${pc.bold(`${runCommand(options.packageManager)} spree add dashboard`)}.\n${errorMessage(err)}`,
+      )
+    }
   }
 
   // Phase 4: Initialize and start services
@@ -134,23 +161,37 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     const initArgs = ['spree', 'init']
     if (!options.sampleData) initArgs.push('--no-sample-data')
 
-    await execa(runCommand(options.packageManager), initArgs, {
-      cwd: projectDir,
-      stdio: 'inherit',
-    })
+    try {
+      await execa(runCommand(options.packageManager), initArgs, {
+        cwd: projectDir,
+        stdio: 'inherit',
+      })
+    } catch {
+      // init streams its own output, so the underlying failure is already on
+      // screen — what the operator needs from us is the recovery command.
+      throw new Error(
+        `Setup did not finish. Start your app with: cd ${projectName} && ${options.packageManager} run dev — the first run completes setup automatically.`,
+      )
+    }
 
-    if (storefront) {
+    if (storefrontReady) {
       p.log.info(
         `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${options.packageManager} run dev`)}`,
       )
     }
-    if (dashboard) {
+    if (dashboardReady) {
       p.log.info(
         `${pc.bold('React Dashboard')}: ${pc.cyan(`cd ${projectName}/apps/dashboard && ${options.packageManager} run dev`)} → http://localhost:${DASHBOARD_PORT}`,
       )
     }
   } else {
-    printSuccessWithoutDocker(projectName, storefront, dashboard, port, options.packageManager)
+    printSuccessWithoutDocker(
+      projectName,
+      storefrontReady,
+      dashboardReady,
+      port,
+      options.packageManager,
+    )
   }
 }
 
@@ -167,6 +208,7 @@ function printSuccessWithoutDocker(
     `${pc.bold('Next steps:')}`,
     `  cd ${projectName}`,
     `  ${run} spree dev`,
+    `  ${pc.dim('# First run completes setup automatically — pulls the latest image, seeds data, configures API keys.')}`,
   ]
 
   if (hasStorefront) {
@@ -213,4 +255,8 @@ function printSuccessWithoutDocker(
   )
 
   p.note(lines.join('\n'), 'Project created!')
+}
+
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err)
 }
