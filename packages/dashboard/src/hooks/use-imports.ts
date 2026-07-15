@@ -62,7 +62,14 @@ export function useRetryFailedRows(id: string) {
     mutationFn: () => adminClient.imports.retryFailedRows(id),
     onSuccess: (imp) => {
       queryClient.setQueryData<Import>(buildKey('imports', id), imp)
-      queryClient.invalidateQueries({ queryKey: buildKey('imports') })
+      // `refetchType: 'none'` refreshes the history list on its next mount
+      // without refetching the active wizard detail query: the retry response
+      // already carried the fresh `processing` status we just cached, and an
+      // immediate refetch would race the (fast) background retry job — often
+      // returning `completed` before the "Retrying failed rows" state is ever
+      // rendered. Marking stale keeps the poll as the single source of the
+      // completion transition.
+      queryClient.invalidateQueries({ queryKey: buildKey('imports'), refetchType: 'none' })
     },
     onError: (err) => {
       toast.error(err instanceof Error ? err.message : String(err))
