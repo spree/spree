@@ -2,7 +2,11 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { addDashboard, ensureRenderBlueprintService } from '../src/commands/add.js'
+import {
+  addDashboard,
+  ensureDashboardDevEnv,
+  ensureRenderBlueprintService,
+} from '../src/commands/add.js'
 import type { ProjectContext } from '../src/types.js'
 
 /**
@@ -50,7 +54,10 @@ describe('addDashboard', () => {
     expect(fs.existsSync(path.join(dashboardDir, 'dist'))).toBe(false)
 
     const env = fs.readFileSync(path.join(dashboardDir, '.env.local'), 'utf-8')
-    expect(env).toContain('VITE_SPREE_API_URL=http://localhost:3999')
+    expect(env).toContain('VITE_API_PROXY_TARGET=http://localhost:3999')
+    // Never the SDK's absolute-URL switch — that bypasses the dev proxy and
+    // breaks on CORS and the SameSite=Lax auth cookie.
+    expect(env).not.toMatch(/^VITE_SPREE_API_URL=/m)
     expect(env).not.toMatch(/sk_/)
 
     // gitignore.template restored to its real name
@@ -145,5 +152,52 @@ databases:
       expect(ensureRenderBlueprintService(projectDir, 'pnpm')).toBe('unrecognized')
       expect(fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')).toBe(custom)
     })
+  })
+})
+
+describe('ensureDashboardDevEnv', () => {
+  let projectDir: string
+
+  beforeEach(() => {
+    projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-env-repair-'))
+    fs.mkdirSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true })
+    fs.writeFileSync(
+      path.join(projectDir, 'apps', 'dashboard', 'package.json'),
+      '{"name":"dashboard"}\n',
+    )
+  })
+
+  afterEach(() => {
+    fs.rmSync(projectDir, { recursive: true, force: true })
+  })
+
+  const envPath = () => path.join(projectDir, 'apps', 'dashboard', '.env.local')
+
+  it('writes .env.local when missing (fresh clone)', () => {
+    ensureDashboardDevEnv(projectDir, 3999)
+    expect(fs.readFileSync(envPath(), 'utf-8')).toContain(
+      'VITE_API_PROXY_TARGET=http://localhost:3999',
+    )
+  })
+
+  it('repairs the old scaffold output that broke dev on CORS', () => {
+    fs.writeFileSync(envPath(), 'VITE_SPREE_API_URL=http://localhost:3000\n')
+    ensureDashboardDevEnv(projectDir, 3999)
+    const env = fs.readFileSync(envPath(), 'utf-8')
+    expect(env).toContain('VITE_API_PROXY_TARGET=http://localhost:3999')
+    expect(env).not.toMatch(/^VITE_SPREE_API_URL=/m)
+  })
+
+  it('leaves user-managed content untouched', () => {
+    const custom = 'VITE_SPREE_API_URL=https://api.mystore.com\nVITE_MY_FLAG=1\n'
+    fs.writeFileSync(envPath(), custom)
+    ensureDashboardDevEnv(projectDir, 3999)
+    expect(fs.readFileSync(envPath(), 'utf-8')).toBe(custom)
+  })
+
+  it('does nothing without an apps/dashboard app', () => {
+    fs.rmSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true })
+    ensureDashboardDevEnv(projectDir, 3999)
+    expect(fs.existsSync(envPath())).toBe(false)
   })
 })

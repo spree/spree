@@ -22,6 +22,19 @@ install steps — so every app is runnable with `pnpm dev` right after.
 Already-initialized projects are untouched: later boots never pull, dev
 stays offline-friendly, and upgrades stay explicit via `spree update`.
 
+- Fix dashboard logins dying on CORS in scaffolded apps. `spree add
+dashboard` wrote `VITE_SPREE_API_URL=http://localhost:<port>` into
+`apps/dashboard/.env.local` — but that variable is the SDK's switch to
+absolute cross-origin URLs (meant for production deploys on a different
+origin), so requests bypassed the Vite dev proxy and the browser blocked
+them (`localhost:5173` → `localhost:3000` is cross-origin; the auth cookie
+is `SameSite=Lax` on top). The scaffold now writes `VITE_API_PROXY_TARGET`
+(the proxy target — the SPA stays same-origin, the SDK stays on relative
+URLs), the dashboard template's Vite config reads it, and first-run setup
+writes or repairs `.env.local` automatically — covering fresh clones (the
+file is gitignored) and projects scaffolded by older CLI versions.
+Hand-customized files are left untouched.
+
 ## 2.4.1
 
 ### Patch Changes

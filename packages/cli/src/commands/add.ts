@@ -114,7 +114,7 @@ export async function addDashboard(ctx: ProjectContext, opts: AddDashboardOption
   p.note(
     [
       `Start it with:`,
-      `  ${pc.cyan('cd apps/dashboard && ' + (opts.install ? '' : 'pnpm install && ') + 'pnpm dev')}`,
+      `  ${pc.cyan(`cd apps/dashboard && ${opts.install ? '' : 'pnpm install && '}pnpm dev`)}`,
       '',
       `Then open ${pc.bold(`http://localhost:${DASHBOARD_PORT}`)} and sign in`,
       `with your admin email and password.`,
@@ -239,13 +239,50 @@ async function fetchTemplate(template: string, dst: string): Promise<void> {
   fs.rmSync(path.join(dst, '.git'), { recursive: true, force: true })
 }
 
+/**
+ * Writes or repairs `apps/dashboard/.env.local` so dashboard dev works out of
+ * the box — called from `spree add dashboard` and from first-run setup
+ * (`spree init` / the first `spree dev`), which covers fresh clones (the file
+ * is gitignored) and projects scaffolded by older CLIs that wrote
+ * `VITE_SPREE_API_URL=http://localhost:…`. That value switches the SDK to
+ * absolute cross-origin URLs, bypassing the dev proxy — logins die on CORS
+ * and the SameSite=Lax cookie. Anything else in the file is user-managed and
+ * left untouched.
+ */
+export function ensureDashboardDevEnv(projectDir: string, port: number): void {
+  const dashboardDir = path.join(projectDir, 'apps', 'dashboard')
+  if (!fs.existsSync(path.join(dashboardDir, 'package.json'))) return
+
+  const envPath = path.join(dashboardDir, '.env.local')
+  let existing: string | null = null
+  try {
+    existing = fs.readFileSync(envPath, 'utf-8')
+  } catch {
+    // missing — write fresh below
+  }
+  const brokenScaffoldOutput =
+    existing !== null && /^VITE_SPREE_API_URL=https?:\/\/localhost\b/m.test(existing)
+  if (existing === null || brokenScaffoldOutput) {
+    writeDashboardEnv(envPath, port)
+  }
+}
+
 function writeDashboardEnv(envPath: string, port: number): void {
   fs.writeFileSync(
     envPath,
     [
-      '# URL of your Spree API server. No credentials belong in this file —',
-      '# every VITE_-prefixed value is compiled into the client bundle.',
-      `VITE_SPREE_API_URL=http://localhost:${port}`,
+      '# Dev-server proxy target — where Vite forwards /api and /rails (your',
+      '# Rails backend, `spree dev`). The SPA stays same-origin with the API:',
+      '# the SDK uses relative URLs and the proxy bridges the port gap.',
+      '#',
+      '# Do NOT set VITE_SPREE_API_URL for local dev — it switches the SDK to',
+      '# absolute cross-origin URLs, which breaks on CORS and the SameSite=Lax',
+      '# auth cookie. It exists only for production deploys where the dashboard',
+      '# is hosted on a different origin than the API.',
+      '#',
+      '# No credentials belong in this file — every VITE_-prefixed value is',
+      '# compiled into the client bundle.',
+      `VITE_API_PROXY_TARGET=http://localhost:${port}`,
       '',
     ].join('\n'),
   )

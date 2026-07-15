@@ -8,9 +8,11 @@ The host app for the [Spree React Dashboard](https://spreecommerce.org/docs/deve
 
 ```bash
 pnpm install
-cp .env.example .env.local   # point VITE_SPREE_API_URL at your Spree API
+cp .env.example .env.local   # optional — VITE_API_PROXY_TARGET if your API isn't on :3000
 pnpm dev                     # http://localhost:5173
 ```
+
+The dev server proxies `/api` to your Rails backend so the SPA stays same-origin — don't set `VITE_SPREE_API_URL` in dev (it switches the SDK to absolute cross-origin URLs, which breaks on CORS and the auth cookie).
 
 Sign in with an admin account — authentication is interactive (JWT + refresh cookie). No API keys belong in `.env.local`: every `VITE_`-prefixed value is compiled into the client bundle.
 

@@ -18,14 +18,19 @@ export default defineConfig({
   // Proxy /api to the Rails server so the SPA is same-origin with the API in
   // dev — keeps the refresh-token cookie working under SameSite=Lax without
   // HTTPS. /rails covers Active Storage's Disk-service presigned URLs.
+  //
+  // VITE_API_PROXY_TARGET is deliberately NOT VITE_SPREE_API_URL: the latter
+  // switches the SDK to absolute cross-origin URLs (for production deploys on
+  // a different origin than the API) — setting it in dev bypasses this proxy
+  // and breaks on CORS and the SameSite=Lax cookie.
   server: {
     proxy: {
       '/api': {
-        target: process.env.VITE_SPREE_API_URL || 'http://localhost:3000',
+        target: process.env.VITE_API_PROXY_TARGET || 'http://localhost:3000',
         changeOrigin: true,
       },
       '/rails': {
-        target: process.env.VITE_SPREE_API_URL || 'http://localhost:3000',
+        target: process.env.VITE_API_PROXY_TARGET || 'http://localhost:3000',
         changeOrigin: true,
       },
     },

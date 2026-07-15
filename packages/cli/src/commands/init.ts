@@ -9,7 +9,7 @@ import { mintProjectCredentials, writeProjectSetupMarker } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject, readSampleDataFromEnv } from '../context.js'
 import { dockerCompose, primeBundleVolume, rakeTask, streamLogs } from '../docker.js'
-import { detectPackageManager } from './add.js'
+import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
 const HEALTH_CHECK_TIMEOUT_MS = 120_000
@@ -76,6 +76,7 @@ export async function runFirstRunSetup(flags: {
 
   await installAppDeps(ctx.projectDir, 'storefront')
   await installAppDeps(ctx.projectDir, 'dashboard')
+  ensureDashboardDevEnv(ctx.projectDir, ctx.port)
 
   if (sampleData) {
     s.start('Loading sample data...')
