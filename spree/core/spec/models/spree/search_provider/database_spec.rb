@@ -194,6 +194,76 @@ module Spree
           expect(result.products).not_to include(product_3)
         end
       end
+
+      context "with 'manual' sort by category" do
+        let(:taxonomy) { create(:taxonomy, store: store) }
+        let(:parent_category) { create(:taxon, taxonomy: taxonomy, name: 'Clothing') }
+        let(:child_category) { create(:taxon, taxonomy: taxonomy, parent: parent_category, name: 'Shirts') }
+
+        before do
+          # Positions deliberately differ from id/creation order so the assertion
+          # proves position ordering (not incidental default order). Positions span
+          # the parent AND its descendant — manual sort collapses the subtree by MIN.
+          Spree::ProductCategory.create!(category: parent_category, product: product_2).update_column(:position, 1)
+          Spree::ProductCategory.create!(category: child_category,  product: product_1).update_column(:position, 2)
+          Spree::ProductCategory.create!(category: parent_category, product: product_3).update_column(:position, 3)
+        end
+
+        it 'orders products by their manual position within the category and its descendants' do
+          result = provider.search_and_filter(scope: scope, filters: { 'in_category' => parent_category.prefixed_id }, sort: 'manual')
+          expect(result.products.to_a).to eq([product_2, product_1, product_3])
+        end
+      end
+
+      context "with 'manual' sort by collection" do
+        let(:collection) { create(:collection, store: store) }
+
+        before do
+          Spree::ProductCollection.create!(collection: collection, product: product_3).update_column(:position, 1)
+          Spree::ProductCollection.create!(collection: collection, product: product_1).update_column(:position, 2)
+          Spree::ProductCollection.create!(collection: collection, product: product_2).update_column(:position, 3)
+        end
+
+        it 'orders products by their manual position within the collection' do
+          result = provider.search_and_filter(scope: scope, filters: { 'in_collection' => collection.prefixed_id }, sort: 'manual')
+          expect(result.products.to_a).to eq([product_3, product_1, product_2])
+        end
+      end
+
+      context 'with no sort param on a category page' do
+        let(:taxonomy) { create(:taxonomy, store: store) }
+        let(:category) { create(:taxon, taxonomy: taxonomy, name: 'Clothing') }
+
+        before do
+          Spree::ProductCategory.create!(category: category, product: product_2).update_column(:position, 1)
+          Spree::ProductCategory.create!(category: category, product: product_1).update_column(:position, 2)
+        end
+
+        it 'defaults to the merchant manual (position) order' do
+          result = provider.search_and_filter(scope: scope, filters: { 'in_category' => category.prefixed_id })
+          expect(result.products.to_a).to eq([product_2, product_1])
+        end
+      end
+
+      context "with 'manual' sort and no category/collection filter" do
+        subject(:result) { provider.search_and_filter(scope: scope, sort: 'manual') }
+
+        it 'falls back to the default order without raising' do
+          expect { result.products.to_a }.not_to raise_error
+          expect(result.products).to include(product_1, product_2, product_3)
+          expect(result.total_count).to eq(3)
+        end
+      end
+
+      context "with 'manual' sort and a non-grouping filter" do
+        subject(:result) { provider.search_and_filter(scope: scope, sort: 'manual', filters: { 'name_cont' => 'Blue' }) }
+
+        it 'applies the filter and falls back to the default order' do
+          expect(result.products).to include(product_1, product_3)
+          expect(result.products).not_to include(product_2)
+          expect(result.total_count).to eq(2)
+        end
+      end
     end
 
     describe '#filters' do
