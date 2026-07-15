@@ -10,14 +10,17 @@ configure API keys) instead of a bare `docker compose up`. A bare `up` never
 pulls, so a mutable tag (`latest`) cached weeks ago by another project
 silently booted an old Spree whenever the first boot happened through
 `spree dev` — a `--no-start` scaffold, an interrupted create-spree-app run,
-or a fresh clone. The sample-data choice create-spree-app persists in `.env`
+or a fresh clone. A setup that was itself interrupted partway (e.g. Ctrl+C
+during the first image pull) is also detected and completed on the next
+`spree dev`, for projects scaffolded by create-spree-app 1.1.1+. The
+sample-data choice create-spree-app persists in `.env`
 (`SPREE_SAMPLE_DATA`) is honored, so a deferred first run keeps the answer
 given at scaffold time. Setup also installs `apps/storefront` and
 `apps/dashboard` dependencies when they're missing (a fresh clone, or a
 scaffold whose install step failed) — mirroring create-spree-app's per-app
-install steps — so every app is runnable with `pnpm dev` right after. Already-initialized projects are untouched: later
-boots never pull, dev stays offline-friendly, and upgrades stay explicit via
-`spree update`.
+install steps — so every app is runnable with `pnpm dev` right after.
+Already-initialized projects are untouched: later boots never pull, dev
+stays offline-friendly, and upgrades stay explicit via `spree update`.
 
 ## 2.4.1
 
