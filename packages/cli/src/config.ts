@@ -131,6 +131,25 @@ export function projectCredentialsPath(projectDir: string): string {
   return path.join(projectDir, '.spree', 'credentials.json')
 }
 
+/**
+ * Marker written when first-run setup completes on this machine. Kept
+ * separate from credentials.json, which `spree auth logout` removes — losing
+ * auth must not make `spree dev` mistake an initialized project for a fresh
+ * one and re-run setup against its database. Lives in the fully gitignored
+ * `.spree/`, so a teammate's clone correctly reads as not-set-up.
+ */
+export function projectSetupMarkerPath(projectDir: string): string {
+  return path.join(projectDir, '.spree', 'setup-complete')
+}
+
+/** Records completed first-run setup — see {@link projectSetupMarkerPath}. */
+export function writeProjectSetupMarker(projectDir: string): void {
+  const file = projectSetupMarkerPath(projectDir)
+  fs.mkdirSync(path.dirname(file), { recursive: true, mode: 0o700 })
+  ensureGitignoreCatchAll(path.join(path.dirname(file), '.gitignore'))
+  fs.writeFileSync(file, `${new Date().toISOString()}\n`)
+}
+
 export function readProjectCredentials(projectDir: string): ProjectCredentials | null {
   let raw: string
   try {

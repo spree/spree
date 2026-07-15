@@ -5,7 +5,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa, execaCommand } from 'execa'
 import pc from 'picocolors'
-import { mintProjectCredentials } from '../config.js'
+import { mintProjectCredentials, writeProjectSetupMarker } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject, readSampleDataFromEnv } from '../context.js'
 import { dockerCompose, primeBundleVolume, rakeTask, streamLogs } from '../docker.js'
@@ -87,6 +87,11 @@ export async function runFirstRunSetup(flags: {
   await rakeTask('spree:search:reindex', ctx.projectDir)
   s.stop('Search index ready.')
 
+  writeProjectSetupMarker(ctx.projectDir)
+
+  const dashboardDir = path.join(ctx.projectDir, 'apps', 'dashboard')
+  const dashboardPm = detectPackageManager(ctx.projectDir, dashboardDir)
+
   p.note(
     [
       '',
@@ -104,10 +109,10 @@ export async function runFirstRunSetup(flags: {
       `  Secret key:      ${pc.cyan(secretKey)}`,
       `  ${pc.dim('Saved to .spree/credentials.json')}`,
       '',
-      ...(fs.existsSync(path.join(ctx.projectDir, 'apps', 'dashboard', 'package.json'))
+      ...(fs.existsSync(path.join(dashboardDir, 'package.json'))
         ? [
             pc.bold('React Dashboard (Developer Preview)'),
-            `  ${pc.cyan('cd apps/dashboard && pnpm dev')}`,
+            `  ${pc.cyan(`cd apps/dashboard && ${dashboardPm} run dev`)}`,
             '',
           ]
         : []),

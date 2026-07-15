@@ -3,7 +3,7 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
-import { projectCredentialsPath } from '../config.js'
+import { projectCredentialsPath, projectSetupMarkerPath } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import {
   detectProject,
@@ -44,17 +44,21 @@ export function registerDevCommand(program: Command): void {
       // mint API keys. This keeps create-spree-app's contract — the app just
       // works — on every path to a first boot (--no-start, an interrupted
       // scaffold, a fresh clone) without requiring anyone to run `spree init`.
-      // Setup is complete once init minted credentials. When they're missing:
-      // a project whose .env declares SPREE_SAMPLE_DATA was scaffolded by a
-      // create-spree-app that persists setup state, so missing credentials
-      // alone means setup never finished — even if an interrupted init already
-      // created containers. For older projects the only safe signal is
-      // "compose never created a container": an initialized
+      // Completed setup writes a marker (separate from credentials.json,
+      // which `spree auth logout` deletes — losing auth must not look like a
+      // fresh project). Credentials still count as "set up" for projects
+      // initialized by older CLIs that minted them without a marker. When
+      // both are missing: a project whose .env declares SPREE_SAMPLE_DATA was
+      // scaffolded by a create-spree-app that persists setup state, so that
+      // alone means setup never finished — even if an interrupted init
+      // already created containers. For older projects the only safe signal
+      // is "compose never created a container": an initialized
       // pre-credentials-era project must not be re-set-up (that would load
       // sample data into a real store). Ejected projects build the image
       // locally and manage their own lifecycle.
       if (
         !isEjectedProject(ctx.projectDir) &&
+        !fs.existsSync(projectSetupMarkerPath(ctx.projectDir)) &&
         !fs.existsSync(projectCredentialsPath(ctx.projectDir))
       ) {
         let neverSetUp = readSampleDataFromEnv(ctx.projectDir) !== undefined
