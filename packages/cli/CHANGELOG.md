@@ -10,8 +10,10 @@ configure API keys) instead of a bare `docker compose up`. A bare `up` never
 pulls, so a mutable tag (`latest`) cached weeks ago by another project
 silently booted an old Spree whenever the first boot happened through
 `spree dev` — a `--no-start` scaffold, an interrupted create-spree-app run,
-or a fresh clone. Already-initialized projects are untouched: later boots
-never pull, dev stays offline-friendly, and upgrades stay explicit via
+or a fresh clone. The sample-data choice create-spree-app persists in `.env`
+(`SPREE_SAMPLE_DATA`) is honored, so a deferred first run keeps the answer
+given at scaffold time. Already-initialized projects are untouched: later
+boots never pull, dev stays offline-friendly, and upgrades stay explicit via
 `spree update`.
 
 ## 2.4.1

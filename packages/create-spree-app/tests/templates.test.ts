@@ -8,18 +8,23 @@ import { readmeContent } from '../src/templates/readme'
 
 describe('envContent', () => {
   it('includes the provided secret key', () => {
-    const content = envContent('my-secret-123', 3000)
+    const content = envContent('my-secret-123', 3000, true)
     expect(content).toContain('SECRET_KEY_BASE=my-secret-123')
   })
 
   it('includes SPREE_PORT', () => {
-    const content = envContent('any', 3000)
+    const content = envContent('any', 3000, true)
     expect(content).toContain('SPREE_PORT=3000')
   })
 
   it('uses custom port value', () => {
-    const content = envContent('any', 4567)
+    const content = envContent('any', 4567, true)
     expect(content).toContain('SPREE_PORT=4567')
+  })
+
+  it('persists the sample-data choice', () => {
+    expect(envContent('any', 3000, true)).toContain('SPREE_SAMPLE_DATA=true')
+    expect(envContent('any', 3000, false)).toContain('SPREE_SAMPLE_DATA=false')
   })
 })
 

@@ -12,8 +12,9 @@ first boot silently started a stale, locally cached Spree image. Those
 phases now warn and continue with a recovery command, so setup always runs.
 When services can't start during scaffolding (`--no-start`, Docker off), the
 first `spree dev` completes setup automatically (requires `@spree/cli`
-2.4.2), and the printed next steps plus the generated README reflect that —
-nobody has to know `spree init` exists.
+2.4.2), honoring the sample-data choice now persisted in `.env`
+(`SPREE_SAMPLE_DATA`), and the printed next steps plus the generated README
+reflect that — nobody has to know `spree init` exists.
 
 ## 1.1.0
 

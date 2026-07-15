@@ -1,7 +1,9 @@
-export function envContent(secretKeyBase: string, port: number): string {
+export function envContent(secretKeyBase: string, port: number, sampleData: boolean): string {
   return `SECRET_KEY_BASE=${secretKeyBase}
 SPREE_PORT=${port}
 SPREE_VERSION_TAG=latest
+# Whether first-run setup loads demo products and orders.
+SPREE_SAMPLE_DATA=${sampleData}
 `
 }
 

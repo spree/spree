@@ -7,7 +7,7 @@ import { execaCommand } from 'execa'
 import pc from 'picocolors'
 import { mintProjectCredentials } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
-import { detectProject } from '../context.js'
+import { detectProject, readSampleDataFromEnv } from '../context.js'
 import { dockerCompose, primeBundleVolume, rakeTask, streamLogs } from '../docker.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
@@ -34,6 +34,12 @@ export async function runFirstRunSetup(flags: {
   open: boolean
 }): Promise<void> {
   const ctx = detectProject()
+
+  // `--no-sample-data` always wins; otherwise the choice create-spree-app
+  // persisted in .env decides, so a deferred first run keeps the answer the
+  // operator gave at scaffold time. Load sample data later any time with
+  // `spree sample-data`.
+  const sampleData = flags.sampleData && readSampleDataFromEnv(ctx.projectDir)
 
   p.log.step('Pulling latest images...')
   await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })
@@ -65,7 +71,7 @@ export async function runFirstRunSetup(flags: {
   const secretKey = await mintCliCredentials(ctx.projectDir, ctx.port)
   s.stop('API keys configured.')
 
-  if (flags.sampleData) {
+  if (sampleData) {
     s.start('Loading sample data...')
     await rakeTask('spree:load_sample_data', ctx.projectDir)
     s.stop('Sample data loaded.')

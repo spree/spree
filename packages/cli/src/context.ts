@@ -91,6 +91,18 @@ export function isEjectedProject(projectDir: string): boolean {
   }
 }
 
+// Whether first-run setup should load sample data. create-spree-app persists
+// the operator's choice in .env so a deferred first run (through `spree dev`)
+// still honors it. Absent (older projects, hand-rolled .env) defaults to
+// true, matching `spree init`.
+export function readSampleDataFromEnv(projectDir: string): boolean {
+  const envPath = path.join(projectDir, '.env')
+  if (!fs.existsSync(envPath)) return true
+
+  const content = fs.readFileSync(envPath, 'utf-8')
+  return !/^SPREE_SAMPLE_DATA=false\b/m.test(content)
+}
+
 export function readPortFromEnv(projectDir: string): number {
   const envPath = path.join(projectDir, '.env')
 

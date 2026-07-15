@@ -89,7 +89,10 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   fs.rmSync(path.join(backendDir, 'docker-compose.yml'), { force: true })
   fs.rmSync(path.join(backendDir, 'docker-compose.dev.yml'), { force: true })
 
-  fs.writeFileSync(path.join(projectDir, '.env'), envContent(generateSecretKeyBase(), port))
+  fs.writeFileSync(
+    path.join(projectDir, '.env'),
+    envContent(generateSecretKeyBase(), port, options.sampleData),
+  )
   fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
   fs.writeFileSync(
     path.join(projectDir, 'README.md'),
