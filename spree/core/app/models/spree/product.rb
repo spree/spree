@@ -72,23 +72,28 @@ module Spree
 
     # @deprecated Use #product_categories; removed in 6.1.
     def classifications
+      Spree::Deprecation.warn('Spree::Product#classifications is deprecated and will be removed in Spree 6.1. Use #product_categories instead.')
       product_categories
     end
 
     # @deprecated Use #categories / #category_ids; removed in 6.1.
     def taxons
+      Spree::Deprecation.warn('Spree::Product#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')
       categories
     end
 
     def taxons=(value)
+      Spree::Deprecation.warn('Spree::Product#taxons= is deprecated and will be removed in Spree 6.1. Use #categories= instead.')
       self.categories = value
     end
 
     def taxon_ids
+      Spree::Deprecation.warn('Spree::Product#taxon_ids is deprecated and will be removed in Spree 6.1. Use #category_ids instead.')
       category_ids
     end
 
     def taxon_ids=(ids)
+      Spree::Deprecation.warn('Spree::Product#taxon_ids= is deprecated and will be removed in Spree 6.1. Use #category_ids= instead.')
       self.category_ids = ids
     end
 
@@ -605,6 +610,7 @@ module Spree
 
     # @deprecated Use {#primary_category}.
     def main_taxon
+      Spree::Deprecation.warn('Spree::Product#main_taxon is deprecated and will be removed in Spree 6.1. Use #primary_category instead.')
       primary_category
     end
 

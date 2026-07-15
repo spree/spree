@@ -82,47 +82,52 @@ module Spree
         #
         # @deprecated Use #categories.
         def taxons
+          Spree::Deprecation.warn('Spree::Promotion::Rules::Category#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')
           categories
         end
 
         # @deprecated Use #categories=.
         def taxons=(value)
+          Spree::Deprecation.warn('Spree::Promotion::Rules::Category#taxons= is deprecated and will be removed in Spree 6.1. Use #categories= instead.')
           self.categories = value
         end
 
         # @deprecated Use #category_ids.
         def taxon_ids
+          Spree::Deprecation.warn('Spree::Promotion::Rules::Category#taxon_ids is deprecated and will be removed in Spree 6.1. Use #category_ids instead.')
           category_ids
         end
 
         # @deprecated Use #category_ids=.
         def taxon_ids=(ids)
+          Spree::Deprecation.warn('Spree::Promotion::Rules::Category#taxon_ids= is deprecated and will be removed in Spree 6.1. Use #category_ids= instead.')
           self.category_ids = ids
         end
 
         # @deprecated Use #eligible_category_ids.
-        alias eligible_taxon_ids eligible_category_ids
+        def eligible_taxon_ids
+          Spree::Deprecation.warn('Spree::Promotion::Rules::Category#eligible_taxon_ids is deprecated and will be removed in Spree 6.1. Use #eligible_category_ids instead.')
+          eligible_category_ids
+        end
 
         # @deprecated Use #category_ids_to_add.
         def taxon_ids_to_add
+          Spree::Deprecation.warn('Spree::Promotion::Rules::Category#taxon_ids_to_add is deprecated and will be removed in Spree 6.1. Use #category_ids_to_add instead.')
           category_ids_to_add
         end
 
         def taxon_ids_to_add=(ids)
+          Spree::Deprecation.warn('Spree::Promotion::Rules::Category#taxon_ids_to_add= is deprecated and will be removed in Spree 6.1. Use #category_ids_to_add= instead.')
           self.category_ids_to_add = ids
         end
 
         def taxon_ids_string
-          ActiveSupport::Deprecation.warn(
-            'Please use `category_ids=` instead.'
-          )
+          Spree::Deprecation.warn('Spree::Promotion::Rules::Category#taxon_ids_string is deprecated and will be removed in Spree 6.1. Use #category_ids instead.')
           categories.pluck(:id).join(',')
         end
 
         def taxon_ids_string=(s)
-          ActiveSupport::Deprecation.warn(
-            'Please use `category_ids=` instead.'
-          )
+          Spree::Deprecation.warn('Spree::Promotion::Rules::Category#taxon_ids_string= is deprecated and will be removed in Spree 6.1. Use #category_ids= instead.')
           ids = s.to_s.split(',').map(&:strip)
           self.categories = Spree::Category.for_stores(stores).find(ids)
         end

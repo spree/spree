@@ -103,10 +103,12 @@ module Spree
 
     # @deprecated Use #categories; removed in 6.1.
     def taxons
+      Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')
       categories
     end
 
     def taxons=(value)
+      Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.1. Use #categories= instead.')
       self.categories = value
     end
 

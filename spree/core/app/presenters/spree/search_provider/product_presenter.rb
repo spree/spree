@@ -65,7 +65,7 @@ module Spree
           channel_ids: channel_ids_for_store,
           discontinue_on: product.discontinue_on&.to_i || 0,
           category_ids: category_ids_with_ancestors,
-          category_names: product.taxons.map { |t| translated(t, :name, fallback_locale) },
+          category_names: product.categories.map { |t| translated(t, :name, fallback_locale) },
           collection_ids: product.collections.map(&:prefixed_id),
           option_type_ids: product.option_types.map(&:prefixed_id),
           option_type_names: product.option_types.map { |ot| translated(ot, :presentation, fallback_locale) },
@@ -121,7 +121,7 @@ module Spree
       end
 
       def category_ids_with_ancestors
-        @category_ids_with_ancestors ||= product.taxons.flat_map { |t|
+        @category_ids_with_ancestors ||= product.categories.flat_map { |t|
           t.self_and_ancestors.map(&:prefixed_id)
         }.uniq
       end
