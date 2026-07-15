@@ -31,10 +31,9 @@ test.describe('csv import', () => {
     await openImportSheet(page, creds.store_id)
 
     // Rows without name/price are guaranteed row-level failures that feed the
-    // failed-rows report without failing the whole import. Thirty of them keep
-    // the retry pass long enough to observe its transient copy (a single row
-    // re-processes faster than the post-mutation refetch) and paginate the
-    // failure report (25 per page).
+    // failed-rows report without failing the whole import. Thirty of them
+    // paginate the failure report (25 per page) so the "next page" control has
+    // something to page through.
     const badRows = Array.from({ length: 30 }, (_, i) => {
       const n = String(i + 1).padStart(2, '0')
       return `e2e-import-bad-${n}-${suffix},E2E-IMP-BAD-${n}-${suffix},,`
