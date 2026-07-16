@@ -151,7 +151,9 @@ describe('readmeContent', () => {
   it('includes the React Dashboard section when included', () => {
     const content = readmeContent('my-store', true, 3000, true)
     expect(content).toContain('### Start the React Dashboard (Developer Preview)')
+    // The dashboard's dev server IS the admin; the classic admin is a pointer.
     expect(content).toContain('http://localhost:5173')
+    expect(content).toContain('Classic admin: http://localhost:3000/admin')
     expect(content).toContain('docs/developer/dashboard')
   })
 

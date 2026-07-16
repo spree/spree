@@ -15,7 +15,9 @@ export async function scaffoldDashboard(
   projectDir: string,
   opts: { install: boolean; packageManager: PackageManager },
 ): Promise<void> {
-  const args = ['spree', 'add', 'dashboard']
+  // --quiet: the scaffold's own summary cards cover the dashboard — the
+  // command's "Dashboard added!" note would just duplicate them.
+  const args = ['spree', 'add', 'dashboard', '--quiet']
   if (!opts.install) args.push('--no-install')
   await execa(runCommand(opts.packageManager), args, { cwd: projectDir, stdio: 'inherit' })
 }

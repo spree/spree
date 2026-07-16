@@ -1,5 +1,18 @@
 # create-spree-app
 
+## 1.1.2
+
+### Patch Changes
+
+- Cut the duplicate output when scaffolding with the React Dashboard: the
+delegated `spree add dashboard` summary card is suppressed (its content
+lives in the main card), and the success card plus generated README present
+the dashboard's dev server as THE admin — the `cd apps/dashboard &&
+pnpm dev` command with the admin credentials and a dim classic-admin
+pointer — instead of two admins where only the classic one carried
+credentials. Projects scaffolded without the dashboard keep the classic
+`/admin` block exactly as before. Requires `@spree/cli` 2.4.4.
+
 ## 1.1.1
 
 ### Patch Changes

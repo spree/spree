@@ -194,11 +194,9 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
         `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${options.packageManager} run dev`)}`,
       )
     }
-    if (dashboardReady) {
-      p.log.info(
-        `${pc.bold('React Dashboard')}: ${pc.cyan(`cd ${projectName}/apps/dashboard && ${options.packageManager} run dev`)} → http://localhost:${DASHBOARD_PORT}`,
-      )
-    }
+    // No dashboard line here — with the dashboard chosen, `spree init`'s
+    // summary already leads with it (served at /dashboard, plus the
+    // customize command).
   } else {
     printSuccessWithoutDocker(
       projectName,
@@ -236,23 +234,32 @@ function printSuccessWithoutDocker(
     )
   }
 
+  // With the React Dashboard chosen, its dev server IS the admin — what the
+  // user customizes is what they use. One admin block; the classic admin
+  // gets a one-line pointer.
   if (hasDashboard) {
     lines.push(
       '',
-      `  ${pc.dim('# React Dashboard (Developer Preview), in another terminal:')}`,
-      `  cd ${projectName}/apps/dashboard`,
-      `  ${installCommand(pm)}`,
-      `  ${pm} run dev`,
+      `${pc.bold('Admin Dashboard (React, Developer Preview)')}`,
+      `  cd ${projectName}/apps/dashboard && ${pm} run dev`,
+      `  → http://localhost:${DASHBOARD_PORT}`,
+      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      `  ${pc.dim(`Classic admin: http://localhost:${port}/admin`)}`,
+      '',
+    )
+  } else {
+    lines.push(
+      '',
+      `${pc.bold('Admin Dashboard')}`,
+      `  http://localhost:${port}/admin`,
+      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      '',
     )
   }
 
   lines.push(
-    '',
-    `${pc.bold('Admin Dashboard')}`,
-    `  http://localhost:${port}/admin`,
-    `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-    `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
-    '',
     `${pc.bold('Customize the backend')}`,
     `  ${run} spree eject`,
     `  ${pc.dim('# Then edit backend/Gemfile, backend/app/, backend/config/')}`,

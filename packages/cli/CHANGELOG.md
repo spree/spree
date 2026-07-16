@@ -1,5 +1,19 @@
 # @spree/cli
 
+## 2.4.4
+
+### Patch Changes
+
+- Streamline the post-setup summary for projects with the React Dashboard.
+The dashboard's dev server is presented as THE admin — the
+`cd apps/dashboard && pnpm dev` command with the admin credentials and a
+dim pointer to the classic admin — instead of listing two admins where only
+the classic one carried credentials. The image-served `/dashboard` build
+stays a deployment detail in the docs. `spree add dashboard` gains
+`--quiet` to skip its summary note when a wrapping tool (create-spree-app)
+prints its own. Projects without the dashboard keep the classic summary
+unchanged.
+
 ## 2.4.3
 
 ### Patch Changes

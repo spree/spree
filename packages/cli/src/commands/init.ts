@@ -6,7 +6,7 @@ import type { Command } from 'commander'
 import { execa, execaCommand } from 'execa'
 import pc from 'picocolors'
 import { mintProjectCredentials, writeProjectSetupMarker } from '../config.js'
-import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
+import { DASHBOARD_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject, readSampleDataFromEnv } from '../context.js'
 import { dockerCompose, primeBundleVolume, rakeTask, streamLogs } from '../docker.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
@@ -91,15 +91,31 @@ export async function runFirstRunSetup(flags: {
   writeProjectSetupMarker(ctx.projectDir)
 
   const dashboardDir = path.join(ctx.projectDir, 'apps', 'dashboard')
-  const dashboardPm = detectPackageManager(ctx.projectDir, dashboardDir)
+  const hasDashboard = fs.existsSync(path.join(dashboardDir, 'package.json'))
+  // With the React Dashboard chosen, its dev server IS the admin — what the
+  // user customizes is what they use. One admin block; the classic admin
+  // gets a one-line pointer. (The production image serves the built
+  // dashboard at /dashboard — a deployment detail, not a dev-flow concept.)
+  const adminBlock = hasDashboard
+    ? [
+        pc.bold('Admin Dashboard (React, Developer Preview)'),
+        `  ${pc.cyan(`cd apps/dashboard && ${detectPackageManager(ctx.projectDir, dashboardDir)} run dev`)}`,
+        `  → ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
+        `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+        `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+        `  ${pc.dim(`Classic admin: http://localhost:${ctx.port}/admin`)}`,
+      ]
+    : [
+        pc.bold('Admin Dashboard'),
+        `  ${pc.cyan(`http://localhost:${ctx.port}/admin`)}`,
+        `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+        `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      ]
 
   p.note(
     [
       '',
-      pc.bold('Admin Dashboard'),
-      `  ${pc.cyan(`http://localhost:${ctx.port}/admin`)}`,
-      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      ...adminBlock,
       '',
       pc.bold('Store API'),
       `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/store`)}`,
@@ -110,18 +126,13 @@ export async function runFirstRunSetup(flags: {
       `  Secret key:      ${pc.cyan(secretKey)}`,
       `  ${pc.dim('Saved to .spree/credentials.json')}`,
       '',
-      ...(fs.existsSync(path.join(dashboardDir, 'package.json'))
-        ? [
-            pc.bold('React Dashboard (Developer Preview)'),
-            `  ${pc.cyan(`cd apps/dashboard && ${dashboardPm} run dev`)}`,
-            '',
-          ]
-        : []),
     ].join('\n'),
     'Your Spree store is ready!',
   )
 
-  if (flags.open) {
+  // With the dashboard, the admin is the dev server the user starts next —
+  // nothing useful to auto-open yet.
+  if (flags.open && !hasDashboard) {
     await openBrowser(`http://localhost:${ctx.port}/admin`)
   }
 
