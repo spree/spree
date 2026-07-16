@@ -9,7 +9,12 @@ The dashboard's dev server is presented as THE admin — the
 `cd apps/dashboard && pnpm dev` command with the admin credentials and a
 dim pointer to the classic admin — instead of listing two admins where only
 the classic one carried credentials. The image-served `/dashboard` build
-stays a deployment detail in the docs. `spree add dashboard` gains
+stays a deployment detail in the docs. `spree dev` (and first-run setup)
+now co-runs the dashboard's Vite dev server with the Docker stack — one
+command brings up the whole dev environment, its output joins the stream
+with a `dashboard |` prefix, Ctrl+C stops everything, a dashboard crash
+warns without taking the API down, and `--open` waits for Vite and opens
+the URL it actually reports (ports auto-bump when 5173 is taken). `spree add dashboard` gains
 `--quiet` to skip its summary note when a wrapping tool (create-spree-app)
 prints its own. Projects without the dashboard keep the classic summary
 unchanged.

@@ -8,6 +8,7 @@ import pc from 'picocolors'
 import { mintProjectCredentials, writeProjectSetupMarker } from '../config.js'
 import { DASHBOARD_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import { detectProject, readSampleDataFromEnv } from '../context.js'
+import { hasDashboardApp, startDashboardDevServer } from '../dashboard-server.js'
 import { dockerCompose, primeBundleVolume, rakeTask, streamLogs } from '../docker.js'
 import { detectPackageManager, ensureDashboardDevEnv } from './add.js'
 
@@ -90,20 +91,19 @@ export async function runFirstRunSetup(flags: {
 
   writeProjectSetupMarker(ctx.projectDir)
 
-  const dashboardDir = path.join(ctx.projectDir, 'apps', 'dashboard')
-  const hasDashboard = fs.existsSync(path.join(dashboardDir, 'package.json'))
-  // With the React Dashboard chosen, its dev server IS the admin — what the
-  // user customizes is what they use. One admin block; the classic admin
-  // gets a one-line pointer. (The production image serves the built
-  // dashboard at /dashboard — a deployment detail, not a dev-flow concept.)
+  const hasDashboard = hasDashboardApp(ctx.projectDir)
+  // With the React Dashboard chosen, its dev server IS the admin — started
+  // below alongside the stack, so what the user customizes is what they use.
+  // One admin block; the classic admin gets a one-line pointer. (The
+  // production image serves the built dashboard at /dashboard — a deployment
+  // detail, not a dev-flow concept.)
   const adminBlock = hasDashboard
     ? [
         pc.bold('Admin Dashboard (React, Developer Preview)'),
-        `  ${pc.cyan(`cd apps/dashboard && ${detectPackageManager(ctx.projectDir, dashboardDir)} run dev`)}`,
-        `  → ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
+        `  ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
         `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
         `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
-        `  ${pc.dim(`Classic admin: http://localhost:${ctx.port}/admin`)}`,
+        `  ${pc.dim(`Live-reloading from apps/dashboard/ — classic admin: http://localhost:${ctx.port}/admin`)}`,
       ]
     : [
         pc.bold('Admin Dashboard'),
@@ -130,14 +130,21 @@ export async function runFirstRunSetup(flags: {
     'Your Spree store is ready!',
   )
 
-  // With the dashboard, the admin is the dev server the user starts next —
-  // nothing useful to auto-open yet.
-  if (flags.open && !hasDashboard) {
-    await openBrowser(`http://localhost:${ctx.port}/admin`)
+  // Co-run the dashboard's Vite dev server so the admin the card names is
+  // actually running. Spawned after the card so its prefixed output doesn't
+  // tear through the box; the terminal's Ctrl+C reaches it alongside the log
+  // stream, and stop() covers non-signal exits.
+  const dashboard = hasDashboard ? startDashboardDevServer(ctx.projectDir) : null
+
+  if (flags.open) {
+    // With the dashboard, wait for Vite to report ready (it auto-bumps the
+    // port when 5173 is taken) so the browser opens the real URL.
+    await openBrowser(dashboard ? await dashboard.url : `http://localhost:${ctx.port}/admin`)
   }
 
   p.log.info('Streaming logs (Ctrl+C to stop)...\n')
   await streamLogs('web', ctx.projectDir)
+  dashboard?.stop()
 }
 
 // Install an optional app's dependencies when they're missing — a fresh

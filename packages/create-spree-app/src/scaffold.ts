@@ -234,15 +234,15 @@ function printSuccessWithoutDocker(
     )
   }
 
-  // With the React Dashboard chosen, its dev server IS the admin — what the
-  // user customizes is what they use. One admin block; the classic admin
-  // gets a one-line pointer.
+  // With the React Dashboard chosen, its dev server IS the admin — and
+  // `spree dev` co-runs it with the API, so the URL is live the moment the
+  // stack is up. One admin block; the classic admin gets a one-line pointer.
   if (hasDashboard) {
     lines.push(
       '',
       `${pc.bold('Admin Dashboard (React, Developer Preview)')}`,
-      `  cd ${projectName}/apps/dashboard && ${pm} run dev`,
-      `  → http://localhost:${DASHBOARD_PORT}`,
+      `  http://localhost:${DASHBOARD_PORT}`,
+      `  ${pc.dim('# started automatically by `spree dev`, live-reloading from apps/dashboard/')}`,
       `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
       `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
       `  ${pc.dim(`Classic admin: http://localhost:${port}/admin`)}`,

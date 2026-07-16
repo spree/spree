@@ -39,7 +39,7 @@ Wait for the services to be healthy, then open:
 
 ${
   hasDashboard
-    ? `- **Admin Dashboard (React, Developer Preview):** \`cd apps/dashboard && ${pm} run dev\` → http://localhost:${DASHBOARD_PORT}
+    ? `- **Admin Dashboard (React, Developer Preview):** http://localhost:${DASHBOARD_PORT} — started automatically by \`spree dev\`
   - Email: \`${DEFAULT_ADMIN_EMAIL}\`
   - Password: \`${DEFAULT_ADMIN_PASSWORD}\`
   - Classic admin: http://localhost:${port}/admin (same credentials)`
@@ -67,11 +67,11 @@ Open http://localhost:${STOREFRONT_PORT}
 
   if (hasDashboard) {
     content += `
-### Start the React Dashboard (Developer Preview)
+### The React Dashboard (Developer Preview)
 
 \`apps/dashboard/\` is your admin — a customizable React SPA (plugins, your
-own pages, table tweaks) with live reload. Dependencies are already installed
-during setup:
+own pages, table tweaks) with live reload. \`spree dev\` starts it
+automatically alongside the API; to run it on its own:
 
 \`\`\`bash
 cd apps/dashboard
@@ -112,7 +112,7 @@ This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/
 
 | Command | Description |
 |---------|-------------|
-| \`spree dev\` | Run the Spree API in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically |
+| \`spree dev\` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically |
 | \`spree stop\` | Stop the API services |
 | \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
 | \`spree eject\` | Switch from prebuilt image to building from \`backend/\` |

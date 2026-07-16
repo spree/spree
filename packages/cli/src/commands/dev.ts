@@ -4,13 +4,14 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { projectCredentialsPath, projectSetupMarkerPath } from '../config.js'
-import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
+import { DASHBOARD_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 import {
   detectProject,
   hasMonorepoSpreePath,
   isEjectedProject,
   readSampleDataFromEnv,
 } from '../context.js'
+import { hasDashboardApp, startDashboardDevServer } from '../dashboard-server.js'
 import {
   buildAdminStylesheets,
   dockerCompose,
@@ -24,7 +25,9 @@ import { runFirstRunSetup } from './init.js'
 export function registerDevCommand(program: Command): void {
   program
     .command('dev')
-    .description('Run the app in the foreground — streams web + worker logs; Ctrl+C stops them')
+    .description(
+      'Run the app in the foreground — the API, plus the React Dashboard dev server when apps/dashboard exists; Ctrl+C stops them',
+    )
     .action(async () => {
       const ctx = detectProject()
 
@@ -83,13 +86,24 @@ export function registerDevCommand(program: Command): void {
         }
       }
 
+      const withDashboard = hasDashboardApp(ctx.projectDir)
       p.note(
         [
           '',
-          pc.bold('Admin Dashboard'),
-          `  ${pc.cyan(`http://localhost:${ctx.port}/admin`)}`,
-          `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-          `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+          ...(withDashboard
+            ? [
+                pc.bold('Admin Dashboard (React, Developer Preview)'),
+                `  ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
+                `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+                `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+                `  ${pc.dim(`Live-reloading from apps/dashboard/ — classic admin: http://localhost:${ctx.port}/admin`)}`,
+              ]
+            : [
+                pc.bold('Admin Dashboard'),
+                `  ${pc.cyan(`http://localhost:${ctx.port}/admin`)}`,
+                `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+                `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+              ]),
           '',
           pc.bold('Store API'),
           `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/store`)}`,
@@ -99,7 +113,8 @@ export function registerDevCommand(program: Command): void {
       )
 
       p.log.info(
-        `Starting services — web + worker logs stream below. ${pc.bold('Ctrl+C')} stops them ` +
+        `Starting services — ${withDashboard ? 'API + dashboard logs' : 'web + worker logs'} stream below. ` +
+          `${pc.bold('Ctrl+C')} stops them ` +
           `(databases keep running; ${pc.bold('spree stop')} shuts everything down).\n`,
       )
 
@@ -111,6 +126,7 @@ export function registerDevCommand(program: Command): void {
       const ignoreSigint = () => {}
       process.on('SIGINT', ignoreSigint)
       let result: { exitCode?: number }
+      let dashboard: ReturnType<typeof startDashboardDevServer> = null
       try {
         // Prime the shared bundle_cache volume with web alone first so the
         // foreground `up web worker` below doesn't race the cold-volume
@@ -161,11 +177,19 @@ export function registerDevCommand(program: Command): void {
           }
         }
 
+        // Co-run the dashboard's Vite dev server with the Docker stack — one
+        // command, the whole dev environment. Its output joins the stream
+        // below with a `dashboard |` prefix; the terminal's Ctrl+C reaches it
+        // alongside compose (same foreground process group), and stop() in
+        // the finally covers non-signal exits.
+        dashboard = withDashboard ? startDashboardDevServer(ctx.projectDir) : null
+
         result = await dockerCompose(['up', 'web', 'worker'], ctx.projectDir, {
           stdio: 'inherit',
           reject: false,
         })
       } finally {
+        dashboard?.stop()
         process.off('SIGINT', ignoreSigint)
       }
 
@@ -179,7 +203,7 @@ export function registerDevCommand(program: Command): void {
       }
 
       p.outro(
-        `Web + worker stopped. Databases keep running — ${pc.bold('spree stop')} shuts everything down.`,
+        `${withDashboard ? 'API + dashboard' : 'Web + worker'} stopped. Databases keep running — ${pc.bold('spree stop')} shuts everything down.`,
       )
     })
 }
