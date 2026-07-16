@@ -61,6 +61,18 @@ describe('rootPackageJsonContent', () => {
     expect(pkg.name).toBe('my-store')
   })
 
+  it('SPREE_CLI_VERSION overrides the @spree/cli spec (unreleased-CLI testing)', () => {
+    process.env.SPREE_CLI_VERSION = 'file:/tmp/spree-cli-local.tgz'
+    try {
+      const pkg = JSON.parse(rootPackageJsonContent('my-store'))
+      expect(pkg.dependencies['@spree/cli']).toBe('file:/tmp/spree-cli-local.tgz')
+    } finally {
+      delete process.env.SPREE_CLI_VERSION
+    }
+    const pkg = JSON.parse(rootPackageJsonContent('my-store'))
+    expect(pkg.dependencies['@spree/cli']).toBe('^2.0.0')
+  })
+
   it('includes convenience scripts using spree cli', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     expect(pkg.scripts.dev).toBe('spree dev')
