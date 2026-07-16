@@ -11,7 +11,12 @@ import {
   isEjectedProject,
   readSampleDataFromEnv,
 } from '../context.js'
-import { hasDashboardApp, startDashboardDevServer } from '../dashboard-server.js'
+import {
+  dashboardDevRunnable,
+  hasDashboardApp,
+  startDashboardDevServer,
+  warnDashboardNotRunnable,
+} from '../dashboard-server.js'
 import {
   buildAdminStylesheets,
   dockerCompose,
@@ -86,7 +91,12 @@ export function registerDevCommand(program: Command): void {
         }
       }
 
-      const withDashboard = hasDashboardApp(ctx.projectDir)
+      // The summary and the spawn key off the same runnable check so the
+      // card never advertises a dev server that can't start (deps missing).
+      const withDashboard = hasDashboardApp(ctx.projectDir) && dashboardDevRunnable(ctx.projectDir)
+      if (hasDashboardApp(ctx.projectDir) && !withDashboard) {
+        warnDashboardNotRunnable(ctx.projectDir)
+      }
       p.note(
         [
           '',

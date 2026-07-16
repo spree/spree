@@ -19,7 +19,9 @@ credentials. `spree dev` co-runs that dev server with the API (one command,
 whole environment), so the printed URL is live as soon as the stack is up.
 For testing unreleased CLIs, the `SPREE_CLI_VERSION` env var overrides the
 scaffolded `@spree/cli` dependency spec (a range or a `file:` tarball path
-— same name as the starter Dockerfile's ARG). Projects scaffolded without the dashboard keep the classic
+— same name as the starter Dockerfile's ARG). The scaffolded pin's floor is
+now `^2.4.4` — the CLI behavior the scaffold relies on; an older resolve
+would reject the new flags and silently drop the dashboard phase. Projects scaffolded without the dashboard keep the classic
 `/admin` block exactly as before. User-facing wording now calls the Rails
 app what it is to a storefront/dashboard developer — the Spree API
 ("Customize the Spree API", "Start the Spree API") — ahead of the planned

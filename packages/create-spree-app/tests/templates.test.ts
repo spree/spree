@@ -70,7 +70,7 @@ describe('rootPackageJsonContent', () => {
       delete process.env.SPREE_CLI_VERSION
     }
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
-    expect(pkg.dependencies['@spree/cli']).toBe('^2.0.0')
+    expect(pkg.dependencies['@spree/cli']).toBe('^2.4.4')
   })
 
   it('includes convenience scripts using spree cli', () => {
