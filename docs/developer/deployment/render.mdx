@@ -57,6 +57,8 @@ Default credentials are created during `db:seed`. Change them immediately after 
 
 Render sets `DATABASE_URL`, `REDIS_URL`, and `SECRET_KEY_BASE` automatically from the blueprint. For additional configuration (SMTP, file storage, Sentry, etc.), see [Environment Variables](/developer/deployment/environment_variables).
 
+Generated URLs (images and attachments in API responses, email links) automatically use Render's `RENDER_EXTERNAL_HOSTNAME` (`<your-app-name>.onrender.com`). When you attach a custom domain, set [`RAILS_HOST`](/developer/deployment/environment_variables#urls-and-hosts) to it — it takes precedence.
+
 ## Production Sizing
 
 The free/starter plans work for trying Spree. For production workloads, we recommend:
