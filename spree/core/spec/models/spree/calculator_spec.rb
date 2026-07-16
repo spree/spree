@@ -64,4 +64,31 @@ describe Spree::Calculator, type: :model do
       end
     end
   end
+
+  describe '.default_currency' do
+    # The default is evaluated for every new calculator (including during
+    # seeding, before a store exists), so it must not go through the
+    # deprecated Spree::Store.default fallback.
+    it 'does not use the deprecated Spree::Store.default fallback' do
+      expect(Spree::Store).not_to receive(:default)
+
+      described_class.default_currency
+    end
+
+    context 'with a default store' do
+      let!(:store) { create(:store, default: true, default_currency: 'EUR') }
+
+      it "returns the store's default currency" do
+        expect(described_class.default_currency).to eq('EUR')
+      end
+    end
+
+    context 'without a default store', without_global_store: true do
+      before { Spree::Store.where(default: true).delete_all }
+
+      it 'returns nil' do
+        expect(described_class.default_currency).to be_nil
+      end
+    end
+  end
 end

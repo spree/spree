@@ -31,6 +31,15 @@ module Spree
       Spree.calculators
     end
 
+    # Default currency for calculator +currency+ preferences. Resolves to the
+    # default store's currency while tolerating the absence of a persisted
+    # default store (e.g. during seeding, before the store is created), so it
+    # does not go through the deprecated +Spree::Store.default+ fallback.
+    # @return [String, nil]
+    def self.default_currency
+      Spree::Store.where(default: true).first&.default_currency
+    end
+
     def to_s
       self.class.name.titleize.gsub("Calculator\/", '')
     end

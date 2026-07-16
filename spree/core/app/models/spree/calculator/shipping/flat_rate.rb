@@ -4,7 +4,7 @@ module Spree
   module Calculator::Shipping
     class FlatRate < ShippingCalculator
       preference :amount, :decimal, default: 0
-      preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+      preference :currency, :string, default: -> { Spree::Calculator.default_currency }
 
       preference :minimum_item_total, :decimal, default: nil, nullable: true
       preference :maximum_item_total, :decimal, default: nil, nullable: true

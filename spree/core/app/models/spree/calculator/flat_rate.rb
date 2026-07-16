@@ -3,7 +3,7 @@ require_dependency 'spree/calculator'
 module Spree
   class Calculator::FlatRate < Calculator
     preference :amount, :decimal, default: 0
-    preference :currency, :string, default: -> { Spree::Store.default.default_currency }
+    preference :currency, :string, default: -> { Spree::Calculator.default_currency }
     preference :apply_only_on_full_priced_items, :boolean, default: false
 
     def self.description
