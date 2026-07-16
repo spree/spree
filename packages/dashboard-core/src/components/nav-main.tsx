@@ -102,9 +102,12 @@ function NavItemContent({
     >
       <Link to={item.url}>
         <NavIcon icon={item.icon} isActive={itemIsActive} />
-        <span>{item.title}</span>
+        {/* Explicitly hide in collapsed icon mode: a trailing badge span would
+            otherwise steal the `span:last-child` position the base button style
+            relies on to hide the label, leaving the title visible. */}
+        <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
         {item.badge && (
-          <span className="ml-auto">
+          <span className="ml-auto group-data-[collapsible=icon]:hidden">
             <item.badge />
           </span>
         )}
