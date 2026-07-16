@@ -279,7 +279,29 @@ export function ensureDashboardDevEnv(
     envPath,
     existing.replace(BROKEN_SCAFFOLD_ENV, `VITE_API_PROXY_TARGET=http://localhost:${port}`),
   )
+  warnIfViteConfigPredatesProxyTarget(dashboardDir, port)
   return 'repaired'
+}
+
+// Old scaffolds also ship a vite.config.ts that can't read the proxy target
+// (it references VITE_SPREE_API_URL via process.env, which Vite never
+// populates from .env files) — its proxy is hardwired to :3000. The env
+// repair alone completes the fix on the default port; on a custom port the
+// user-owned config needs a hand-edit we won't do for them, so say so.
+function warnIfViteConfigPredatesProxyTarget(dashboardDir: string, port: number): void {
+  if (port === 3000) return
+  let viteConfig: string
+  try {
+    viteConfig = fs.readFileSync(path.join(dashboardDir, 'vite.config.ts'), 'utf-8')
+  } catch {
+    return
+  }
+  if (viteConfig.includes('VITE_API_PROXY_TARGET')) return
+  p.log.warn(
+    `${pc.bold('apps/dashboard/vite.config.ts')} predates the proxy-target fix and can't read ` +
+      `.env.local, so its dev proxy stays on :3000 while your API runs on :${port}. ` +
+      `Update it from the current template: https://github.com/spree/spree/blob/main/packages/dashboard-starter/vite.config.ts`,
+  )
 }
 
 function writeDashboardEnv(envPath: string, port: number): void {
