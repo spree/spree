@@ -125,7 +125,11 @@ export async function addDashboard(ctx: ProjectContext, opts: AddDashboardOption
   p.note(
     [
       `Start it with:`,
-      `  ${pc.cyan(`cd apps/dashboard && ${opts.install ? '' : 'pnpm install && '}pnpm dev`)}`,
+      `  ${pc.cyan(`${pm === 'npm' ? 'npx' : pm} spree dev`)}`,
+      `  ${pc.dim('# runs the API and the dashboard together')}`,
+      ...(opts.install
+        ? []
+        : [`  ${pc.dim(`# install dependencies first: cd apps/dashboard && ${pm} install`)}`]),
       '',
       `Then open ${pc.bold(`http://localhost:${DASHBOARD_PORT}`)} and sign in`,
       `with your admin email and password.`,
