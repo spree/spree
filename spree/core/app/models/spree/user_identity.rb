@@ -5,10 +5,10 @@ module Spree
     belongs_to :user, polymorphic: true, optional: false
 
     validates :provider, presence: true
-    validates :uid, presence: true, uniqueness: { scope: [:provider, :user_type] }
+    validates :uid, presence: true, uniqueness: { scope: %i[provider user_type] }
 
     validates :provider, inclusion: {
-      in: ->(_record) {
+      in: lambda { |_record|
         (Spree.store_authentication_strategies.keys + Spree.admin_authentication_strategies.keys).uniq.map(&:to_s)
       }
     }
@@ -27,14 +27,7 @@ module Spree
       identity = find_by(provider: provider, uid: uid, user_type: user_type)
 
       if identity
-        # Update existing identity with fresh tokens
-        identity.update(
-          info: info,
-          access_token: tokens[:access_token],
-          refresh_token: tokens[:refresh_token],
-          expires_at: tokens[:expires_at]
-        )
-        identity.user
+        refresh_identity(identity, info: info, tokens: tokens).user
       else
         # Create new user and identity
         create_user_from_oauth(
@@ -45,28 +38,46 @@ module Spree
           user_class: user_class
         )
       end
+    rescue ActiveRecord::RecordNotUnique
+      refresh_identity(
+        find_by!(provider: provider, uid: uid, user_type: user_type),
+        info: info,
+        tokens: tokens
+      ).user
     end
 
-    def self.create_user_from_oauth(provider:, uid:, info:, tokens: {}, user_class: nil)
-      user_class ||= Spree.user_class
-
-      user = user_class.create!(
-        email: info[:email] || generate_temp_email(provider, uid),
-        password: SecureRandom.hex(32), # Random password for OAuth users
-        first_name: info[:first_name],
-        last_name: info[:last_name]
-      )
-
-      user.identities.create!(
-        provider: provider,
-        uid: uid,
+    def self.refresh_identity(identity, info:, tokens: {})
+      identity.update(
         info: info,
         access_token: tokens[:access_token],
         refresh_token: tokens[:refresh_token],
         expires_at: tokens[:expires_at]
       )
+      identity
+    end
 
-      user
+    def self.create_user_from_oauth(provider:, uid:, info:, tokens: {}, user_class: nil)
+      user_class ||= Spree.user_class
+
+      transaction do
+        user = user_class.create!(
+          email: info[:email] || generate_temp_email(provider, uid),
+          password: SecureRandom.hex(32), # Random password for OAuth users
+          first_name: info[:first_name],
+          last_name: info[:last_name]
+        )
+
+        user.identities.create!(
+          provider: provider,
+          uid: uid,
+          info: info,
+          access_token: tokens[:access_token],
+          refresh_token: tokens[:refresh_token],
+          expires_at: tokens[:expires_at]
+        )
+
+        user
+      end
     end
 
     def self.generate_temp_email(provider, uid)
