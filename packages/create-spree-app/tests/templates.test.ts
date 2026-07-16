@@ -61,6 +61,18 @@ describe('rootPackageJsonContent', () => {
     expect(pkg.name).toBe('my-store')
   })
 
+  it('SPREE_CLI_VERSION overrides the @spree/cli spec (unreleased-CLI testing)', () => {
+    process.env.SPREE_CLI_VERSION = 'file:/tmp/spree-cli-local.tgz'
+    try {
+      const pkg = JSON.parse(rootPackageJsonContent('my-store'))
+      expect(pkg.dependencies['@spree/cli']).toBe('file:/tmp/spree-cli-local.tgz')
+    } finally {
+      delete process.env.SPREE_CLI_VERSION
+    }
+    const pkg = JSON.parse(rootPackageJsonContent('my-store'))
+    expect(pkg.dependencies['@spree/cli']).toBe('^2.4.4')
+  })
+
   it('includes convenience scripts using spree cli', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     expect(pkg.scripts.dev).toBe('spree dev')
@@ -150,8 +162,10 @@ describe('readmeContent', () => {
 
   it('includes the React Dashboard section when included', () => {
     const content = readmeContent('my-store', true, 3000, true)
-    expect(content).toContain('### Start the React Dashboard (Developer Preview)')
+    expect(content).toContain('### The React Dashboard (Developer Preview)')
+    // The dashboard's dev server IS the admin; the classic admin is a pointer.
     expect(content).toContain('http://localhost:5173')
+    expect(content).toContain('Classic admin: http://localhost:3000/admin')
     expect(content).toContain('docs/developer/dashboard')
   })
 

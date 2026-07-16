@@ -1,5 +1,32 @@
 # create-spree-app
 
+## 1.1.2
+
+### Patch Changes
+
+- The React Dashboard is no longer prompted for — it's a work-in-progress
+Developer Preview, and a yes/no prompt reads as a recommendation. Include it
+with the new `--react-dashboard` flag (or later via `spree add dashboard`);
+the `--no-dashboard` flag is gone with the prompt.
+
+- Cut the duplicate output when scaffolding with the React Dashboard: the
+delegated `spree add dashboard` summary card is suppressed (its content
+lives in the main card), and the success card plus generated README present
+the dashboard's dev server as THE admin — the `cd apps/dashboard &&
+pnpm dev` command with the admin credentials and a dim classic-admin
+pointer — instead of two admins where only the classic one carried
+credentials. `spree dev` co-runs that dev server with the API (one command,
+whole environment), so the printed URL is live as soon as the stack is up.
+For testing unreleased CLIs, the `SPREE_CLI_VERSION` env var overrides the
+scaffolded `@spree/cli` dependency spec (a range or a `file:` tarball path
+— same name as the starter Dockerfile's ARG). The scaffolded pin's floor is
+now `^2.4.4` — the CLI behavior the scaffold relies on; an older resolve
+would reject the new flags and silently drop the dashboard phase. Projects scaffolded without the dashboard keep the classic
+`/admin` block exactly as before. User-facing wording now calls the Rails
+app what it is to a storefront/dashboard developer — the Spree API
+("Customize the Spree API", "Start the Spree API") — ahead of the planned
+`backend/` → `api/` directory rename. Requires `@spree/cli` 2.4.4.
+
 ## 1.1.1
 
 ### Patch Changes

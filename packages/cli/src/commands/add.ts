@@ -15,6 +15,8 @@ interface AddDashboardOptions {
   template: string
   /** Run the package-manager install after scaffolding. */
   install: boolean
+  /** Skip the final summary note — create-spree-app prints its own. */
+  quiet?: boolean
 }
 
 // `spree add <thing>` — bolt an optional component onto an existing project.
@@ -30,21 +32,25 @@ export function registerAddCommand(program: Command) {
       'Starter template: git URL or local path (default: the template bundled with the CLI; env SPREE_DASHBOARD_TEMPLATE overrides)',
     )
     .option('--no-install', 'Skip dependency install')
-    .action(async (thing: string, flags: { template?: string; install: boolean }) => {
-      if (thing !== 'dashboard') {
-        console.error(`\n${pc.red('Error:')} Unknown component: ${thing}. Try: dashboard\n`)
-        process.exit(2)
-      }
+    .option('--quiet', 'Skip the final summary note (for wrapping tools that print their own)')
+    .action(
+      async (thing: string, flags: { template?: string; install: boolean; quiet?: boolean }) => {
+        if (thing !== 'dashboard') {
+          console.error(`\n${pc.red('Error:')} Unknown component: ${thing}. Try: dashboard\n`)
+          process.exit(2)
+        }
 
-      p.intro(pc.bgCyan(pc.black(' Spree Dashboard ')))
-      const ctx = detectProject()
-      await addDashboard(ctx, {
-        template:
-          flags.template ?? process.env.SPREE_DASHBOARD_TEMPLATE ?? resolveBundledTemplate(),
-        install: flags.install,
-      })
-      p.outro('Done!')
-    })
+        p.intro(pc.bgCyan(pc.black(' Spree Dashboard ')))
+        const ctx = detectProject()
+        await addDashboard(ctx, {
+          template:
+            flags.template ?? process.env.SPREE_DASHBOARD_TEMPLATE ?? resolveBundledTemplate(),
+          install: flags.install,
+          quiet: flags.quiet,
+        })
+        p.outro('Done!')
+      },
+    )
 }
 
 /**
@@ -115,10 +121,15 @@ export async function addDashboard(ctx: ProjectContext, opts: AddDashboardOption
     }
   }
 
+  if (opts.quiet) return
   p.note(
     [
       `Start it with:`,
-      `  ${pc.cyan(`cd apps/dashboard && ${opts.install ? '' : 'pnpm install && '}pnpm dev`)}`,
+      `  ${pc.cyan(`${pm === 'npm' ? 'npx' : pm} spree dev`)}`,
+      `  ${pc.dim('# runs the API and the dashboard together')}`,
+      ...(opts.install
+        ? []
+        : [`  ${pc.dim(`# install dependencies first: cd apps/dashboard && ${pm} install`)}`]),
       '',
       `Then open ${pc.bold(`http://localhost:${DASHBOARD_PORT}`)} and sign in`,
       `with your admin email and password.`,

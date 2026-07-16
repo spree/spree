@@ -194,11 +194,9 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
         `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${options.packageManager} run dev`)}`,
       )
     }
-    if (dashboardReady) {
-      p.log.info(
-        `${pc.bold('React Dashboard')}: ${pc.cyan(`cd ${projectName}/apps/dashboard && ${options.packageManager} run dev`)} → http://localhost:${DASHBOARD_PORT}`,
-      )
-    }
+    // No dashboard line here — with the dashboard chosen, `spree init`'s
+    // summary already leads with it (served at /dashboard, plus the
+    // customize command).
   } else {
     printSuccessWithoutDocker(
       projectName,
@@ -236,26 +234,35 @@ function printSuccessWithoutDocker(
     )
   }
 
+  // With the React Dashboard chosen, its dev server IS the admin — and
+  // `spree dev` co-runs it with the API, so the URL is live the moment the
+  // stack is up. One admin block; the classic admin gets a one-line pointer.
   if (hasDashboard) {
     lines.push(
       '',
-      `  ${pc.dim('# React Dashboard (Developer Preview), in another terminal:')}`,
-      `  cd ${projectName}/apps/dashboard`,
-      `  ${installCommand(pm)}`,
-      `  ${pm} run dev`,
+      `${pc.bold('Admin Dashboard (React, Developer Preview)')}`,
+      `  http://localhost:${DASHBOARD_PORT}`,
+      `  ${pc.dim('# started automatically by `spree dev`, live-reloading from apps/dashboard/')}`,
+      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      `  ${pc.dim(`Classic admin: http://localhost:${port}/admin`)}`,
+      '',
+    )
+  } else {
+    lines.push(
+      '',
+      `${pc.bold('Admin Dashboard')}`,
+      `  http://localhost:${port}/admin`,
+      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      '',
     )
   }
 
   lines.push(
-    '',
-    `${pc.bold('Admin Dashboard')}`,
-    `  http://localhost:${port}/admin`,
-    `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-    `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
-    '',
-    `${pc.bold('Customize the backend')}`,
+    `${pc.bold('Customize the Spree API')}`,
     `  ${run} spree eject`,
-    `  ${pc.dim('# Then edit backend/Gemfile, backend/app/, backend/config/')}`,
+    `  ${pc.dim('# Then edit backend/ — the Rails API app (Gemfile, app/, config/)')}`,
     '',
     `${pc.bold('Agent skills (optional)')}`,
     `  ${dlxCommand(pm)} skills add spree/agent-skills`,
