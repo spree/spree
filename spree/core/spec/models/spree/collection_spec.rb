@@ -188,4 +188,114 @@ RSpec.describe Spree::Collection, type: :model do
       end
     end
   end
+
+  describe '#slug / #slug=' do
+    it 'reads the permalink' do
+      expect(create(:collection, name: 'Summer Sale').slug).to eq('summer-sale')
+    end
+
+    it 'writes through to the permalink' do
+      collection = build(:collection)
+      collection.slug = 'custom-slug'
+
+      expect(collection.permalink).to eq('custom-slug')
+    end
+  end
+
+  describe '#regenerate_products' do
+    let(:collection) { create(:automatic_collection) }
+    let!(:sale_product) { create(:product, tag_list: 'sale') }
+
+    before do
+      create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'sale')
+      Spree::ProductCollection.where(collection_id: collection.id).delete_all
+    end
+
+    subject(:reloaded_collection) { Spree::Collection.find(collection.id) }
+
+    def membership_product_ids
+      Spree::ProductCollection.where(collection_id: collection.id).pluck(:product_id)
+    end
+
+    it 'rebuilds the materialized membership from the rules' do
+      reloaded_collection.regenerate_products
+
+      expect(membership_product_ids).to contain_exactly(sale_product.id)
+    end
+
+    it 'clears the flag and no-ops on a second only_once call' do
+      reloaded_collection.regenerate_products(only_once: true)
+
+      expect(reloaded_collection.marked_for_regenerate_products?).to be(false)
+      expect(membership_product_ids).to contain_exactly(sale_product.id)
+
+      Spree::ProductCollection.where(collection_id: collection.id).delete_all
+      reloaded_collection.regenerate_products(only_once: true)
+
+      expect(membership_product_ids).to be_empty
+    end
+
+    it 'does nothing when not marked for regeneration' do
+      reloaded_collection.marked_for_regenerate_products = false
+      reloaded_collection.regenerate_products
+
+      expect(membership_product_ids).to be_empty
+    end
+  end
+
+  # The Admin API sends the full desired rule set; #rules= syncs it (build/update/destroy)
+  # like Spree::OptionType#option_values=. Operate on a freshly-loaded record (as the
+  # controller does via find_resource + scope_includes [:rules]) so the in-memory rule
+  # set reflects current DB state.
+  describe '#rules= (sync setter)' do
+    let(:collection) { create(:automatic_collection) }
+
+    subject(:reloaded_collection) { Spree::Collection.find(collection.id) }
+
+    it 'builds new rules from attribute hashes, selecting the STI subclass by type' do
+      reloaded_collection.rules = [{ type: 'Spree::CollectionRules::Tag', value: 'sale', match_policy: 'is_equal_to' }]
+      reloaded_collection.save!
+
+      rule = reloaded_collection.reload.rules.first
+      expect(reloaded_collection.rules.size).to eq(1)
+      expect(rule).to be_a(Spree::CollectionRules::Tag)
+      expect(rule.value).to eq('sale')
+      expect(rule.match_policy).to eq('is_equal_to')
+    end
+
+    it 'updates an existing rule matched by its prefixed id' do
+      rule = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'sale')
+
+      reloaded_collection.rules = [{ id: rule.prefixed_id, value: 'clearance', match_policy: 'contains' }]
+      reloaded_collection.save!
+
+      expect(rule.reload.value).to eq('clearance')
+      expect(rule.match_policy).to eq('contains')
+    end
+
+    it 'destroys rules omitted from the payload' do
+      keep = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'sale')
+      drop = create(:tag_collection_rule, :is_equal_to, collection: collection, value: 'new')
+
+      reloaded_collection.rules = [{ id: keep.prefixed_id, value: 'sale', match_policy: 'is_equal_to' }]
+      reloaded_collection.save!
+
+      expect(reloaded_collection.reload.rules).to contain_exactly(keep)
+      expect { drop.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'raises RecordNotFound for an unknown rule id' do
+      expect {
+        reloaded_collection.rules = [{ id: 'crule_nonexistent', value: 'x', match_policy: 'is_equal_to' }]
+      }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'falls back to the association writer when given CollectionRule records' do
+      rule = build(:tag_collection_rule, :is_equal_to, value: 'sale')
+
+      reloaded_collection.rules = [rule]
+
+      expect(reloaded_collection.rules).to contain_exactly(rule)
+    end
+  end
 end

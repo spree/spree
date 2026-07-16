@@ -53,11 +53,11 @@ module Spree
         return scope unless (value = sort_by?('price'))
 
         scope.joins(product: { variants: :prices }).
-          select("#{Spree::ProductCategory.table_name}.*, min(#{Spree::Price.table_name}.amount)").
+          select("#{Spree::Classification.table_name}.*, min(#{Spree::Price.table_name}.amount)").
           distinct.
           where(spree_prices: { currency: currency }).
           order("min(#{Spree::Price.table_name}.amount) #{value[1]}").
-          group("#{Spree::ProductCategory.table_name}.id")
+          group("#{Spree::Classification.table_name}.id")
       end
 
       def sort_by?(field)

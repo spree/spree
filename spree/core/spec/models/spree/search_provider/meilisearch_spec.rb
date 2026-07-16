@@ -93,6 +93,26 @@ module Spree
         end
       end
 
+      context 'with in_collection filter' do
+        let(:collection) { create(:collection) }
+
+        it 'passes the collection_ids filter to Meilisearch' do
+          expect(mock_index).to receive(:search).with(anything, hash_including(
+            filter: include("collection_ids = '#{collection.prefixed_id}'")
+          )).and_return(ms_response)
+
+          provider.search_and_filter(scope: store.products, filters: { 'in_collection' => collection.prefixed_id })
+        end
+
+        it 'ignores a value that is not a prefixed id' do
+          expect(mock_index).to receive(:search).with(anything, satisfy { |params|
+            params[:filter].none? { |c| c.to_s.include?('collection_ids') }
+          }).and_return(ms_response)
+
+          provider.search_and_filter(scope: store.products, filters: { 'in_collection' => '123' })
+        end
+      end
+
       context 'with sort' do
         it 'passes price sort to Meilisearch' do
           expect(mock_index).to receive(:search).with(anything, hash_including(
@@ -277,6 +297,29 @@ module Spree
           result = provider.filters(scope: store.products, query: 'shirt')
           expect(result.filters).to eq([])
           expect(result.total_count).to eq(0)
+        end
+      end
+
+      # default_sort comes from the collection's sort_order (a collection PLP page),
+      # rendered in API format; it falls back to 'manual' with no collection.
+      context 'default_sort' do
+        it 'defaults to manual when no collection is provided' do
+          result = provider.filters(scope: store.products, query: 'shirt')
+          expect(result.default_sort).to eq('manual')
+        end
+
+        it "reflects the collection's sort_order (space format rendered as API format)" do
+          collection = create(:collection, sort_order: 'price asc')
+
+          result = provider.filters(scope: store.products, filters: { '_collection' => collection })
+          expect(result.default_sort).to eq('price')
+        end
+
+        it 'stays manual for a manual-sorted collection' do
+          collection = create(:collection, sort_order: 'manual')
+
+          result = provider.filters(scope: store.products, filters: { '_collection' => collection })
+          expect(result.default_sort).to eq('manual')
         end
       end
     end
