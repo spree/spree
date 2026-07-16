@@ -2276,7 +2276,8 @@ paths:
         bearer_auth: []
       description: |
         Associates a guest cart with the currently authenticated user.
-        Requires JWT authentication. The cart must not belong to another user.
+        Requires JWT authentication and possession of the cart's token
+        (x-spree-token) — the token authorizes claiming the cart.
       x-codeSamples:
       - lang: javascript
         label: Spree SDK
@@ -2300,6 +2301,12 @@ paths:
       - name: Authorization
         in: header
         required: true
+        schema:
+          type: string
+      - name: x-spree-token
+        in: header
+        required: true
+        description: Cart token
         schema:
           type: string
       - name: id
@@ -2495,6 +2502,16 @@ paths:
                 error:
                   code: authentication_required
                   message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '403':
+          description: forbidden - cart token missing or does not match
+          content:
+            application/json:
+              example:
+                error:
+                  code: access_denied
+                  message: You are not authorized to access this page.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/carts/{id}/complete":
