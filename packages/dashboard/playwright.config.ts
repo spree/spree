@@ -35,8 +35,7 @@ export default defineConfig({
   webServer: [
     {
       // Vite dev — proxies `/api/*` to the test Rails per `vite.config.ts`,
-      // overridden via `VITE_SPREE_API_URL` so the proxy targets the test
-      // Rails port instead of the dev default.
+      // aimed at the test Rails port via `VITE_API_PROXY_TARGET` below.
       command: `pnpm dev --port ${VITE_PORT}`,
       url: `http://localhost:${VITE_PORT}`,
       reuseExistingServer: false,

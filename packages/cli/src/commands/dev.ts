@@ -18,6 +18,7 @@ import {
   primeBundleVolume,
   watchAdminStylesheets,
 } from '../docker.js'
+import { ensureDashboardDevEnv } from './add.js'
 import { runFirstRunSetup } from './init.js'
 
 export function registerDevCommand(program: Command): void {
@@ -37,6 +38,12 @@ export function registerDevCommand(program: Command): void {
         )
         process.exit(1)
       }
+
+      // Every boot, not just first run: cheap and idempotent, and it's how
+      // projects scaffolded by older CLIs (broken .env.local) get repaired —
+      // they already completed setup, so the first-run path below never
+      // reaches them.
+      ensureDashboardDevEnv(ctx.projectDir, ctx.port)
 
       // A project that was never set up gets the full first-run flow instead
       // of a bare `up`: pull a fresh image (a mutable tag cached weeks ago by

@@ -1,5 +1,25 @@
 # @spree/cli
 
+## 2.4.3
+
+### Patch Changes
+
+- Fix dashboard logins dying on CORS in scaffolded apps. `spree add
+dashboard` wrote `VITE_SPREE_API_URL=http://localhost:<port>` into
+`apps/dashboard/.env.local` — but that variable is the SDK's switch to
+absolute cross-origin URLs (meant for production deploys on a different
+origin), so requests bypassed the Vite dev proxy and the browser blocked
+them (`localhost:5173` → `localhost:3000` is cross-origin; the auth cookie
+is `SameSite=Lax` on top). The scaffold now writes `VITE_API_PROXY_TARGET`
+(the proxy target — the SPA stays same-origin, the SDK stays on relative
+URLs), the dashboard template's Vite config reads it (via `loadEnv` — Vite
+doesn't load `.env` files into `process.env` for configs), and the CLI
+writes or repairs `.env.local` automatically: on scaffold, on every
+`spree dev` boot, and on a `spree add dashboard` re-run — covering fresh
+clones (the file is gitignored) and projects scaffolded by older CLI
+versions. Repair rewrites only the broken line; everything else in the
+file is preserved.
+
 ## 2.4.2
 
 ### Patch Changes
