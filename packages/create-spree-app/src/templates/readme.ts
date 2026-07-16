@@ -25,7 +25,7 @@ A [Spree Commerce](https://spreecommerce.org) project.
 
 - [Docker](https://docs.docker.com/get-docker/) installed and running
 
-### Start the backend
+### Start the Spree API
 
 \`\`\`bash
 cd ${name}
@@ -90,9 +90,9 @@ To learn how to add pages, tweak tables, or build plugins, see the
   }
 
   content += `
-## Customizing the Backend
+## Customizing the Spree API
 
-The \`backend/\` directory contains a full Rails application with Spree installed. By default, the project uses a prebuilt Docker image. To switch to building from your local backend:
+The \`backend/\` directory is the Spree API — a full Rails application serving the Store and Admin APIs (plus background jobs and transactional emails) that your storefront and dashboard talk to. By default, the project runs it from a prebuilt Docker image. To switch to building from your local copy:
 
 \`\`\`bash
 ${run} spree eject
@@ -100,20 +100,20 @@ ${run} spree eject
 
 This rebuilds the Docker image from \`backend/\` and restarts services. You can then:
 
-- **Customize the backend** by editing the files in \`backend/\`
+- **Customize the API** by editing the files in \`backend/\`
 - **Add gems** to \`backend/Gemfile\`
 - **Add new resources** with \`spree generate model <name> <attributes>\`
 
 ## Spree CLI
 
-This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/quickstart) to manage the backend.
+This project uses [\`@spree/cli\`](https://spreecommerce.org/docs/developer/cli/quickstart) to manage the Spree API.
 
 ### Services
 
 | Command | Description |
 |---------|-------------|
-| \`spree dev\` | Run the backend in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically |
-| \`spree stop\` | Stop backend services |
+| \`spree dev\` | Run the Spree API in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically |
+| \`spree stop\` | Stop the API services |
 | \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
 | \`spree eject\` | Switch from prebuilt image to building from \`backend/\` |
 | \`spree build --production\` | Build the production image — includes \`apps/dashboard\` when present |

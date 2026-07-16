@@ -260,9 +260,9 @@ function printSuccessWithoutDocker(
   }
 
   lines.push(
-    `${pc.bold('Customize the backend')}`,
+    `${pc.bold('Customize the Spree API')}`,
     `  ${run} spree eject`,
-    `  ${pc.dim('# Then edit backend/Gemfile, backend/app/, backend/config/')}`,
+    `  ${pc.dim('# Then edit backend/ — the Rails API app (Gemfile, app/, config/)')}`,
     '',
     `${pc.bold('Agent skills (optional)')}`,
     `  ${dlxCommand(pm)} skills add spree/agent-skills`,

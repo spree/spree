@@ -11,7 +11,10 @@ the dashboard's dev server as THE admin — the `cd apps/dashboard &&
 pnpm dev` command with the admin credentials and a dim classic-admin
 pointer — instead of two admins where only the classic one carried
 credentials. Projects scaffolded without the dashboard keep the classic
-`/admin` block exactly as before. Requires `@spree/cli` 2.4.4.
+`/admin` block exactly as before. User-facing wording now calls the Rails
+app what it is to a storefront/dashboard developer — the Spree API
+("Customize the Spree API", "Start the Spree API") — ahead of the planned
+`backend/` → `api/` directory rename. Requires `@spree/cli` 2.4.4.
 
 ## 1.1.1
 
