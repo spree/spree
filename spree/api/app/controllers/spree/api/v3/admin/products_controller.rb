@@ -242,8 +242,11 @@ module Spree
           def apply_collections(service)
             authorize! :update, model_class
 
+            # Only manual collections accept curation — automatic membership is
+            # rebuilt from rules, so a manual add/remove would be lost on the next
+            # regeneration (mirrors apply_categories, whose association is manual).
             collection_ids = decode_ids(params[:collection_ids])
-            collections = current_store.collections.
+            collections = current_store.collections.manual.
                           accessible_by(current_ability, :update).where(id: collection_ids)
 
             service.call(collections: collections, products: bulk_collection)

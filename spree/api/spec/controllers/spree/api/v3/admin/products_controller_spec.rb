@@ -1324,6 +1324,20 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(product.reload.collections).not_to include(foreign_collection)
     end
 
+    it 'silently ignores automatic collections (curation is manual-only)' do
+      automatic = create(:automatic_collection, store: store)
+
+      post :bulk_add_to_collections, params: {
+        ids: [product.prefixed_id],
+        collection_ids: [collection.prefixed_id, automatic.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['collection_count']).to eq(1)
+      expect(product.reload.collections).to include(collection)
+      expect(product.reload.collections).not_to include(automatic)
+    end
+
     it 'silently drops products from other stores' do
       other_store_product = create(:product, store: create(:store))
 

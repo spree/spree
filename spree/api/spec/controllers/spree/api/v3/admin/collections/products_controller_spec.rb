@@ -44,6 +44,13 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
       expect(response).to have_http_status(:ok)
       expect(json_response['data']).to eq([])
     end
+
+    it '404s for an automatic collection (curation is manual-only)' do
+      automatic = create(:automatic_collection, store: store)
+      get :index, params: { collection_id: automatic.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   describe 'POST #create' do
@@ -59,6 +66,13 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
     it '404s for a product outside the store' do
       other = create(:product, stores: [create(:store)])
       post :create, params: { collection_id: collection.prefixed_id, product_id: other.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it '404s for an automatic collection (membership is rule-managed, not curated)' do
+      automatic = create(:automatic_collection, store: store)
+      post :create, params: { collection_id: automatic.prefixed_id, product_id: product.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:not_found)
     end

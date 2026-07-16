@@ -68,8 +68,13 @@ module Spree
             end
 
             # Loads the parent collection (runs before the base set_resource).
+            # Scoped to +manual+ so automatic (rule-based) collections — whose
+            # membership is materialized by RegenerateProducts and would drop any
+            # manual add on the next regeneration — can't have their membership
+            # listed or mutated through this endpoint (mirrors the categories API).
             def set_parent
-              @parent_collection = Spree::Collection.accessible_by(current_ability, :update).
+              @parent_collection = Spree::Collection.manual.
+                            accessible_by(current_ability, :update).
                             for_store(current_store).
                             find_by_prefix_id!(params[:collection_id])
               authorize_parent!(@parent_collection)
