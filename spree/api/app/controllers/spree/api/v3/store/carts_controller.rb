@@ -82,10 +82,15 @@ module Spree
           end
 
           # PATCH /api/v3/store/carts/:id/associate
-          # Associates a guest cart with the currently authenticated user
-          # Requires: JWT authentication + cart ID in URL
+          # Associates a guest cart with the currently authenticated user.
+          # Requires: JWT authentication + cart ID in URL + possession of the
+          # cart's token (x-spree-token). The token is the credential that
+          # authorizes claiming the cart, so it is required even when the cart
+          # is already the caller's own.
           def associate
             @cart = find_cart_for_association
+            authorize!(:update, @cart, cart_token)
+            require_cart_token!
 
             result = Spree.cart_associate_service.call(guest_order: @cart, user: current_user, guest_only: true)
 
@@ -171,6 +176,14 @@ module Spree
           # Only finds guest carts (no user) or carts already owned by current user (idempotent).
           def find_cart_for_association
             current_store.carts.where(user: [nil, current_user]).find_by_prefix_id!(params[:id])
+          end
+
+          # Claiming a cart requires presenting its token, even when the caller
+          # already owns it — the token, not ownership, is the claim credential.
+          def require_cart_token!
+            valid = cart_token.present? && cart_token == @cart.token
+
+            raise CanCan::AccessDenied.new(nil, :update, @cart) unless valid
           end
         end
       end

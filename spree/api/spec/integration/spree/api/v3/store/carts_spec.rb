@@ -308,7 +308,8 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Associates a guest cart with the currently authenticated user.
-        Requires JWT authentication. The cart must not belong to another user.
+        Requires JWT authentication and possession of the cart's token
+        (x-spree-token) — the token authorizes claiming the cart.
       DESC
 
       sdk_example <<~JS
@@ -319,12 +320,14 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
+      parameter name: 'x-spree-token', in: :header, type: :string, required: true, description: 'Cart token'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
 
       response '200', 'cart associated successfully' do
         let(:guest_cart) { create(:order_with_line_items, store: store, user: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:'x-spree-token') { guest_cart.token }
         let(:id) { guest_cart.prefixed_id }
 
         schema '$ref' => '#/components/schemas/Cart'
@@ -340,6 +343,19 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
         let(:guest_cart) { create(:order_with_line_items, store: store, user: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { '' }
+        let(:'x-spree-token') { guest_cart.token }
+        let(:id) { guest_cart.prefixed_id }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '403', 'forbidden - cart token missing or does not match' do
+        let(:guest_cart) { create(:order_with_line_items, store: store, user: nil) }
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:'x-spree-token') { 'does-not-match' }
         let(:id) { guest_cart.prefixed_id }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
