@@ -80,7 +80,7 @@ Set the following environment variables on the **Spree backend** to enable syste
 | `SMTP_USERNAME` | — | SMTP auth username |
 | `SMTP_PASSWORD` | — | SMTP auth password |
 | `SMTP_FROM_ADDRESS` | — | Default "from" email address (e.g., `admin@mystore.com`) |
-| `RAILS_HOST` | `example.com` | Public host used in email links (and all other [generated URLs](/developer/deployment/environment_variables#urls-and-hosts)) |
+| `RAILS_HOST` | `example.com` | Public host used in email links and other [generated URLs](/developer/deployment/environment_variables#urls-and-hosts) — image/attachment URLs use `CDN_HOST` instead when set |
 
 When `SMTP_HOST` is not set, emails are printed to the Rails log instead of being sent.
 

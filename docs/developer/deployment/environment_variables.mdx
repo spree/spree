@@ -18,10 +18,10 @@ These variables are required to run Spree in production.
 
 ## URLs and Hosts
 
-`RAILS_HOST` is the canonical public host of your deployment. It is used for every URL Spree generates outside of a request context — image and attachment URLs in API responses, links in emails, and webhook payloads.
+`RAILS_HOST` is the canonical public host of your deployment. URLs Spree generates outside a request context use it — links in emails, webhook payloads, and image/attachment URLs in API responses (for the latter, `CDN_HOST` takes precedence when set).
 
 <Warning>
-Without `RAILS_HOST`, generated URLs fall back to the store's URL setting, which is `localhost` on a fresh install — API responses will contain `https://localhost/...` attachment URLs.
+When neither `RAILS_HOST` nor `CDN_HOST` is configured, image and attachment URLs fall back to the store's URL setting, which is `localhost` on a fresh install — API responses will contain `https://localhost/...` URLs.
 </Warning>
 
 | Variable | Default | Description |
