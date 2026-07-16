@@ -62,6 +62,9 @@ services:
       SECRET_KEY_BASE: change-me-to-a-real-secret
       RAILS_FORCE_SSL: "false"
       RAILS_ASSUME_SSL: "false"
+      # Public host used in generated URLs (images/attachments in API
+      # responses, email links) — set to your domain or IP in production.
+      RAILS_HOST: localhost:3000
     ports:
       - "3000:3000"
     healthcheck:
@@ -80,6 +83,7 @@ services:
       DATABASE_URL: postgres://postgres@postgres:5432/spree_production
       REDIS_URL: redis://redis:6379/0
       SECRET_KEY_BASE: change-me-to-a-real-secret
+      RAILS_HOST: localhost:3000
     command: bundle exec sidekiq
 
 volumes:
@@ -106,6 +110,7 @@ Use [create-spree-app](/developer/create-spree-app/quickstart) for a fully scaff
 | `DATABASE_URL` | PostgreSQL connection URL | `postgres://user:pass@host:5432/spree` |
 | `REDIS_URL` | Redis URL for jobs, caching, and Action Cable | `redis://redis:6379/0` |
 | `SECRET_KEY_BASE` | Secret key for session encryption | Generate with `bin/rails secret` |
+| `RAILS_HOST` | Public host used in generated URLs — image/attachment URLs in API responses, email links. Without it they fall back to the store's URL setting (`localhost` on a fresh install) | `store.example.com` |
 
 See [Environment Variables](/developer/deployment/environment_variables) for the full list.
 

@@ -37,3 +37,13 @@ Now scroll down and set the settings as below:
 ![Cloudflare Cache Rule Settings](/images/developer/deployment/cloudflare_cache_rule_2.png)
 
 Finally, click on "Deploy" and you are done!
+
+## Dedicated CDN Host
+
+The setup above caches on your primary domain and needs no extra configuration. If you instead serve assets and images from a separate CDN hostname (e.g. a CloudFront or Fastly distribution at `cdn.example.com` with your app as the origin), set the `CDN_HOST` environment variable:
+
+```bash
+CDN_HOST=cdn.example.com
+```
+
+Static asset URLs and image/attachment URLs (including those in API responses) will then use this host instead of [`RAILS_HOST`](/developer/deployment/environment_variables#urls-and-hosts). Host only, no protocol — URLs keep the scheme of your primary host.
