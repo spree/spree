@@ -4,7 +4,7 @@ import type { PackageManager, ScaffoldOptions } from './types.js'
 interface PromptFlags {
   directory?: string
   noStorefront?: boolean
-  noDashboard?: boolean
+  reactDashboard?: boolean
   noSampleData?: boolean
   noStart?: boolean
   packageManager?: PackageManager
@@ -44,21 +44,11 @@ export async function runPrompts(flags: PromptFlags): Promise<Omit<ScaffoldOptio
     storefront = storefrontResult
   }
 
-  let dashboard: boolean
-  if (flags.noDashboard !== undefined) {
-    dashboard = !flags.noDashboard
-  } else {
-    const dashboardResult = await p.confirm({
-      message: 'Include React Dashboard? (Developer Preview of the next-gen admin)',
-      initialValue: true,
-    })
-
-    if (p.isCancel(dashboardResult)) {
-      p.cancel('Setup cancelled.')
-      process.exit(0)
-    }
-    dashboard = dashboardResult
-  }
+  // Deliberately not prompted: the React Dashboard is a work-in-progress
+  // Developer Preview, and a yes/no prompt reads as a recommendation. It's
+  // opt-in via --react-dashboard (or later via `spree add dashboard`) until
+  // it's ready for prime time.
+  const dashboard = flags.reactDashboard ?? false
 
   let sampleData: boolean
   if (flags.noSampleData !== undefined) {

@@ -4,6 +4,11 @@
 
 ### Patch Changes
 
+- The React Dashboard is no longer prompted for — it's a work-in-progress
+Developer Preview, and a yes/no prompt reads as a recommendation. Include it
+with the new `--react-dashboard` flag (or later via `spree add dashboard`);
+the `--no-dashboard` flag is gone with the prompt.
+
 - Cut the duplicate output when scaffolding with the React Dashboard: the
 delegated `spree add dashboard` summary card is suppressed (its content
 lives in the main card), and the success card plus generated README present
