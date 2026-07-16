@@ -37,6 +37,21 @@ RSpec.describe Spree::Api::V3::Store::Collections::ProductsController, type: :co
       expect(response).to have_http_status(:not_found)
     end
 
+    # When `sort` is omitted, the collection's sort_order drives the default,
+    # rendered from the internal space format ('price asc') to the API sort ('price').
+    it "defaults to the collection's sort_order when the request omits sort" do
+      cheap = create(:product, status: 'active', price: 5)
+      pricey = create(:product, status: 'active', price: 50)
+      sorted = create(:collection, store: store, sort_order: 'price asc')
+      Spree::ProductCollection.create!(collection: sorted, product: pricey, position: 1)
+      Spree::ProductCollection.create!(collection: sorted, product: cheap, position: 2)
+
+      get :index, params: { collection_id: sorted.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].pluck('id')).to eq([cheap.prefixed_id, pricey.prefixed_id])
+    end
+
     # Mirrors Store::CollectionsController#find_resource: a permalink that only
     # exists in the default locale must still resolve the PLP on a non-default
     # locale, so the detail page and its product listing stay in sync.

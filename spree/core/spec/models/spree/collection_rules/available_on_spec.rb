@@ -18,5 +18,13 @@ RSpec.describe Spree::CollectionRules::AvailableOn, type: :model do
       expect(result).to include(recent_product)
       expect(result).not_to include(old_product)
     end
+
+    it 'returns the scope unchanged for an unhandled match policy' do
+      rule = build(:available_on_collection_rule, collection: collection, value: 30, match_policy: 'is_not_equal_to')
+
+      result = rule.apply(store.products.not_archived)
+
+      expect(result).to include(recent_product, old_product)
+    end
   end
 end
