@@ -39,6 +39,10 @@ flags:
     paths:
       - spree/emails/
     carryforward: true
+  dashboard:
+    paths:
+      - spree/dashboard/
+    carryforward: true
 
 component_management:
   individual_components:
@@ -62,6 +66,11 @@ component_management:
       paths:
         - spree/emails/app/**
         - spree/emails/lib/**
+    - component_id: dashboard
+      name: Dashboard
+      paths:
+        - spree/dashboard/app/**
+        - spree/dashboard/lib/**
 
 ignore:
   - "docs/**"
