@@ -1,20 +1,46 @@
 {
   "name": "@spree/dashboard",
-  "private": true,
   "license": "MIT",
-  "version": "0.0.0",
+  "version": "0.10.1",
+  "description": "Spree Dashboard app shell \u2014 the next-gen React admin for Spree Commerce. Routes, resource hooks, schemas, locales, and the <Dashboard /> component. Source-only package; hosts compile it via @spree/dashboard/vite. Developer Preview.",
+  "author": "Vendo Connect Inc.",
+  "homepage": "https://spreecommerce.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/dashboard"
+  },
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "admin",
+    "dashboard",
+    "react"
+  ],
   "type": "module",
   "exports": {
+    ".": "./src/index.ts",
     "./styles.css": "./src/styles.css",
-    "./vite": "./src/vite/index.ts"
+    "./vite": {
+      "types": "./src/vite/index.ts",
+      "default": "./dist/vite-plugin/index.js"
+    },
+    "./vite/route-collisions": {
+      "types": "./src/vite/route-collisions.ts",
+      "default": "./dist/vite-plugin/route-collisions.js"
+    },
+    "./components/spree/payment-method-editors/types": "./src/components/spree/payment-method-editors/types.ts"
   },
   "files": [
     "src",
-    "README.md"
+    "dist/vite-plugin",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && tsup",
     "lint": "biome check .",
     "lint:fix": "biome check --fix .",
     "format": "biome format --write .",
@@ -23,7 +49,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:install": "playwright install chromium"
+    "test:e2e:install": "playwright install chromium",
+    "prepublishOnly": "tsup"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -38,8 +65,9 @@
     "@spree/dashboard-ui": "workspace:^",
     "@tanstack/react-hotkeys": "^0.10.0",
     "@tanstack/react-query": "^5.100.9",
-    "@tanstack/react-router": "^1.169.2",
     "@tanstack/react-table": "^8.21.3",
+    "@tanstack/router-plugin": "^1.167.35",
+    "@tanstack/virtual-file-routes": "^1.162.0",
     "@tiptap/extension-link": "^3.22.5",
     "@tiptap/extension-placeholder": "^3.22.5",
     "@tiptap/react": "^3.22.5",
@@ -70,13 +98,14 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
-    "@tanstack/router-plugin": "^1.167.35",
+    "@spree/dashboard-plugin-example": "workspace:^",
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/spark-md5": "^3.0.5",
     "@vitejs/plugin-react": "^6.0.1",
     "tailwindcss": "^4.2.4",
+    "tsup": "^8.5.1",
     "typescript": "~6.0.3",
     "vite": "^8.0.16",
     "vitest": "^4.1.5"
@@ -85,5 +114,8 @@
     "overrides": {
       "vite": "^8.0.16"
     }
+  },
+  "peerDependencies": {
+    "@tanstack/react-router": "^1.169.2"
   }
 }

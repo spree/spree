@@ -1,25 +1,12 @@
-<h1>
-  <%= Spree.t('invitation_mailer.greeting', user_name: @invitation.invitee&.first_name || @invitation.email) %>
-</h1>
-<p>
-  <%= Spree.t('invitation_mailer.invitation_email.body', inviter_name: @invitation.inviter.name, resource_name: @invitation.resource.name) %>
-</p>
-<p>
-  <%= Spree.t('invitation_mailer.invitation_email.link_description') %>
-</p>
-
-<% if spree.respond_to?(:admin_invitation_url) %>
-  <p>
-    <%= link_to Spree.t(:accept), spree.admin_invitation_url(@invitation, token: @invitation.token, host: @invitation.store.formatted_url) %>
-  </p>
-<% else %>
-  <p>
-    <%= link_to Spree.t(:accept), main_app.admin_invitation_acceptance_url(@invitation) %>
-  </p>
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('invitation_mailer.invitation_email.subject', resource_name: @invitation.resource.name) %></h1>
+  <p class="greeting"><%= Spree.t('invitation_mailer.greeting', user_name: @invitation.invitee&.first_name || @invitation.email) %></p>
+  <p><%= Spree.t('invitation_mailer.invitation_email.body', inviter_name: @invitation.inviter.name, resource_name: @invitation.resource.name) %></p>
+  <p><%= Spree.t('invitation_mailer.invitation_email.link_description') %></p>
+  <% accept_url = if spree.respond_to?(:admin_invitation_url)
+                    spree.admin_invitation_url(@invitation, token: @invitation.token, host: @invitation.store.formatted_url)
+                  else
+                    main_app.admin_invitation_acceptance_url(@invitation)
+                  end %>
+  <%= render 'spree/shared/mailer_button', url: accept_url, label: Spree.t(:accept) %>
 <% end %>
-
-<p>
-  <%= Spree.t('invitation_mailer.thanks') %><br />
-  <%= current_store.name %>
-</p>
-

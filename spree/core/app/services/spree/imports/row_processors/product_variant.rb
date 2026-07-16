@@ -123,12 +123,16 @@ module Spree
 
         def prepare_shipping_category
           shipping_category_name = attributes['shipping_category'].strip
-          Spree::ShippingCategory.find_by(name: shipping_category_name)
+          cached_lookup(:shipping_category, shipping_category_name) do
+            Spree::ShippingCategory.find_by(name: shipping_category_name)
+          end
         end
 
         def prepare_tax_category
           tax_category_name = attributes['tax_category'].strip
-          Spree::TaxCategory.find_by(name: tax_category_name)
+          cached_lookup(:tax_category, tax_category_name) do
+            Spree::TaxCategory.find_by(name: tax_category_name)
+          end
         end
 
         def prepare_option_value_variants
@@ -171,27 +175,39 @@ module Spree
         # surfaces via the DB unique index (RecordNotUnique) or the AR uniqueness
         # validator (RecordInvalid with a :taken error on the relevant attribute).
         def find_or_create_option_type!(presentation)
-          Spree::OptionType.search_by_name(presentation).first || Spree::OptionType.create!(presentation: presentation)
-        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-          raise unless uniqueness_conflict?(e, :name)
+          cached_lookup(:option_type, presentation) do
+            begin
+              Spree::OptionType.search_by_name(presentation).first || Spree::OptionType.create!(presentation: presentation)
+            rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+              raise unless uniqueness_conflict?(e, :name)
 
-          Spree::OptionType.search_by_name(presentation).first!
+              Spree::OptionType.search_by_name(presentation).first!
+            end
+          end
         end
 
         def find_or_create_option_value!(option_type, presentation)
-          option_type.option_values.search_by_name(presentation).first || option_type.option_values.create!(presentation: presentation)
-        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-          raise unless uniqueness_conflict?(e, :name)
+          cached_lookup(:option_value, option_type.id, presentation) do
+            begin
+              option_type.option_values.search_by_name(presentation).first || option_type.option_values.create!(presentation: presentation)
+            rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+              raise unless uniqueness_conflict?(e, :name)
 
-          option_type.option_values.search_by_name(presentation).first!
+              option_type.option_values.search_by_name(presentation).first!
+            end
+          end
         end
 
         def find_or_create_product_option_type!(option_type)
-          Spree::ProductOptionType.find_or_create_by!(product: product, option_type: option_type)
-        rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
-          raise unless uniqueness_conflict?(e, :product_id)
+          cached_lookup(:product_option_type, product.id, option_type.id) do
+            begin
+              Spree::ProductOptionType.find_or_create_by!(product: product, option_type: option_type)
+            rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
+              raise unless uniqueness_conflict?(e, :product_id)
 
-          Spree::ProductOptionType.find_by!(product: product, option_type: option_type)
+              Spree::ProductOptionType.find_by!(product: product, option_type: option_type)
+            end
+          end
         end
 
         # RecordNotUnique is always a uniqueness conflict; RecordInvalid only when the
@@ -245,11 +261,13 @@ module Spree
             namespace, key = product.extract_namespace_and_key(full_key)
 
             # Find or initialize metafield definition
-            metafield_definition = Spree::MetafieldDefinition.find_by(
-              namespace: namespace,
-              key: key,
-              resource_type: product.class.name
-            )
+            metafield_definition = cached_lookup(:metafield_definition, namespace, key, product.class.name) do
+              Spree::MetafieldDefinition.find_by(
+                namespace: namespace,
+                key: key,
+                resource_type: product.class.name
+              )
+            end
 
             next unless metafield_definition
 

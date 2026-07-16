@@ -1128,9 +1128,10 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         end
       end
 
-      context 'when variant is no longer present in the params' do
+      context 'when variant is explicitly removed' do
         before do
           product_params[:variants_attributes].delete('0')
+          product_params[:removed_variant_ids] = [variant1.id.to_s]
         end
 
         it 'removes the variant' do
@@ -1140,16 +1141,42 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         end
       end
 
-      context 'when all variants are removed' do
+      context 'when variant is no longer present in the params but not explicitly removed' do
         before do
-          product_params.delete(:variants_attributes)
+          product_params[:variants_attributes].delete('0')
         end
 
-        it 'removes the product variants' do
+        it 'keeps the variant' do
+          send_request
+
+          expect(product.reload.variant_ids).to match_array([variant1.id, variant2.id, variant3.id])
+        end
+      end
+
+      context 'when all variants are explicitly removed' do
+        before do
+          product_params.delete(:variants_attributes)
+          product_params[:removed_variant_ids] = [variant1.id.to_s, variant2.id.to_s, variant3.id.to_s]
+        end
+
+        it 'removes the product variants and option types' do
           send_request
 
           expect(product.reload.variant_ids).to be_empty
           expect(product.option_types).to be_empty
+        end
+      end
+
+      context 'when variants_attributes are missing without explicit removals' do
+        before do
+          product_params.delete(:variants_attributes)
+        end
+
+        it 'keeps the product variants and option types' do
+          send_request
+
+          expect(product.reload.variant_ids).to match_array([variant1.id, variant2.id, variant3.id])
+          expect(product.option_types).not_to be_empty
         end
       end
     end

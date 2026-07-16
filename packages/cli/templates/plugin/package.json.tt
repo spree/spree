@@ -1,0 +1,19 @@
+{
+  "name": "{{npm_package_name}}",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Spree plugin: {{name}}",
+  "author": "{{author_name}} <{{author_email}}>",
+  "license": "{{license}}",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test"
+  },
+  "packageManager": "pnpm@11.1.1",
+  "engines": {
+    "node": ">=22"
+  }
+}

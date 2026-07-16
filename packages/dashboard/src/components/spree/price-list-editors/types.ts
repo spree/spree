@@ -1,4 +1,4 @@
-import type { PriceRuleFormDraft } from '@/schemas/price-list'
+import type { PriceRuleFormDraft } from '../../../schemas/price-list'
 
 /**
  * Slot context for a price rule editor. Editors mutate the draft

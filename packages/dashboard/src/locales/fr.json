@@ -41,6 +41,13 @@
       "app_name": "Administration Spree",
       "powered_by": "Propulsé par Spree Commerce"
     },
+    "errors": {
+      "not_found_title": "Page introuvable",
+      "not_found_description": "La page que vous recherchez n’existe pas.",
+      "forbidden_title": "Non autorisé",
+      "forbidden_description": "Vous n’avez pas la permission de voir cette page.",
+      "plugin_route_title": "Le rendu de cette page a échoué"
+    },
     "nav": {
       "home": "Accueil",
       "account": "Compte",
@@ -56,14 +63,16 @@
       "promotions": "Promotions",
       "gift_cards": "Cartes cadeaux",
       "reports": "Rapports",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "getting_started": "Premiers pas"
     },
     "settings_nav": {
       "groups": {
         "store": "Boutique",
         "payments": "Paiements et taxes",
         "fulfillment": "Traitement des commandes",
-        "team": "Équipe et accès"
+        "team": "Équipe et accès",
+        "audit": "Audit"
       },
       "items": {
         "store": "Boutique",
@@ -78,7 +87,8 @@
         "api_keys": "Clés API",
         "webhooks": "Webhooks",
         "allowed_origins": "Origines autorisées",
-        "profile": "Profil"
+        "profile": "Profil",
+        "imports": "Imports"
       }
     },
     "fields": {
@@ -1565,6 +1575,22 @@
         "allowed_origins": {
           "add_sheet_title": "Ajouter une origine autorisée",
           "edit_sheet_title": "Modifier l'origine autorisée"
+        },
+        "imports": {
+          "title": "Imports",
+          "search_placeholder": "Rechercher par numéro…",
+          "empty_title": "Aucun import pour l'instant",
+          "table": {
+            "number": "Numéro",
+            "type": "Type",
+            "status": "Statut",
+            "rows": "Lignes",
+            "failed_count": "{{failed}} en échec"
+          },
+          "delete_confirm": {
+            "title": "Supprimer l'import ?",
+            "message": "Cela supprime {{number}}, ses lignes et le fichier téléversé."
+          }
         }
       },
       "promotions": {
@@ -1617,6 +1643,58 @@
         "subtitle": "Gérez vos informations personnelles et votre langue d'administration.",
         "personal_details": "Informations personnelles",
         "load_failed_title": "Impossible de charger votre profil"
+      },
+      "getting_started": {
+        "title": "Premiers pas",
+        "description": "Terminez ces étapes pour lancer votre boutique.",
+        "progress": "{{done}} sur {{total}} terminées",
+        "tasks": {
+          "setup_payment_method": {
+            "title": "Configurer les moyens de paiement",
+            "description": "Pour encaisser des paiements, configurez au moins un prestataire de paiement en ligne.",
+            "cta": "Configurer les paiements"
+          },
+          "add_products": {
+            "title": "Ajouter des produits",
+            "description": "Ajoutez des produits à votre boutique — les vôtres, ou invitez des vendeurs tiers à vendre avec vous.",
+            "cta": "Ajouter des produits",
+            "import_cta": "Importer des produits depuis un CSV"
+          },
+          "set_customer_support_email": {
+            "title": "Définir l'e-mail du support client",
+            "description": "Affiché sur votre boutique comme point de contact pour les questions et le support client.",
+            "cta": "Paramètres e-mail"
+          },
+          "setup_taxes_collection": {
+            "title": "Configurer la collecte des taxes",
+            "description": "Pour collecter les taxes, configurez vos taux de taxe.",
+            "cta": "Paramètres des taxes"
+          },
+          "setup_storefront": {
+            "title": "Configurer la boutique",
+            "description": "Connectez votre boutique web ou votre application mobile avec vos identifiants Store API et enregistrez l'URL de votre boutique.",
+            "cta": "Connecter la boutique"
+          }
+        },
+        "storefront_sheet": {
+          "title": "Connecter votre boutique",
+          "description": "Utilisez ces identifiants dans tout client qui communique avec la Store API — boutique web, application mobile ou autre.",
+          "api_url_label": "URL de la Store API",
+          "publishable_key_label": "Clé API publiable",
+          "deploy_title": "Recommandé : déployer la boutique Next.js officielle",
+          "deploy_copy": "Le déploiement clone la boutique open-source sur votre compte Git et la construit sur Vercel avec vos identifiants préremplis. Une fois terminé, copiez son URL dans le champ ci-dessous.",
+          "deploy_button": "Déployer sur Vercel",
+          "env_description": "Votre URL de Store API Spree et votre clé publiable. Les deux sont préremplies depuis votre boutique — ajustez-les avant le déploiement si nécessaire.",
+          "storefront_url_label": "URL de la boutique",
+          "storefront_url_help": "L'URL que vos clients utilisent pour accéder à votre boutique. Elle sert de base aux liens dans les e-mails clients et est automatiquement ajoutée comme origine autorisée pour que les boutiques web puissent appeler la Store API.",
+          "save": "Enregistrer et terminer",
+          "saved": "URL de la boutique enregistrée : {{url}}",
+          "invalid_url": "Cela ne ressemble pas à une URL de boutique valide.",
+          "see_online_demo": "Voir la démo en ligne",
+          "local_installation_instructions": "Instructions d'installation locale",
+          "key_error": "Impossible de charger votre clé API publiable.",
+          "storefront_url_placeholder": "https://myshop.com"
+        }
       }
     },
     "invitation": {
@@ -2536,6 +2614,70 @@
         "no_matches": "Aucun produit ne correspond au filtre."
       },
       "load_failed": "Échec du chargement des catégories. Veuillez réessayer."
+    },
+    "imports": {
+      "download_original": "Télécharger le fichier d'origine",
+      "load_failed": "Impossible de charger l'import.",
+      "try_again": "Réessayer",
+      "wizard_title": "Import",
+      "steps": {
+        "map_fields": "Associer les champs",
+        "process_rows": "Traiter les lignes",
+        "complete": "Terminé"
+      },
+      "status": {
+        "pending": "En attente",
+        "mapping": "Association",
+        "completed_mapping": "En file",
+        "processing": "En cours",
+        "completed": "Terminé",
+        "failed": "Échoué"
+      },
+      "types": {
+        "products": "Produits",
+        "customers": "Clients",
+        "product_translations": "Traductions de produits"
+      },
+      "mapping": {
+        "title": "Associer les colonnes",
+        "description": "Associez les colonnes de votre fichier aux champs {{type}}.",
+        "field": "Champ",
+        "file_column": "Colonne du fichier",
+        "sample": "Exemple",
+        "not_mapped": "Non associée",
+        "required": "Requis",
+        "missing_required": "Associez les champs requis pour continuer : {{fields}}",
+        "start": "Lancer l'import",
+        "starting": "Lancement…"
+      },
+      "processing": {
+        "title": "Traitement des lignes",
+        "preparing": "Préparation des lignes…",
+        "progress": "{{processed}} lignes traitées sur {{total}}",
+        "failed_count": "{{failed}} en échec",
+        "retrying": "Nouvelle tentative des lignes en échec · {{remaining}} restantes",
+        "note": "Vous pouvez quitter cette page — l'import continue en arrière-plan."
+      },
+      "results": {
+        "completed_title": "Import terminé",
+        "summary": "{{completed}} lignes importées · {{failed}} en échec",
+        "retry_failed": "Réessayer les lignes en échec ({{failed}})",
+        "retrying": "Nouvelle tentative…",
+        "view_records": "Voir {{type}}"
+      },
+      "failed": {
+        "title": "Échec de l'import",
+        "description": "Le fichier n'a pas pu être traité."
+      },
+      "failed_rows": {
+        "next_page": "Page suivante",
+        "prev_page": "Page précédente",
+        "title": "Lignes en échec",
+        "row_number": "Ligne",
+        "error": "Erreur",
+        "view_data": "Voir les données",
+        "hide_data": "Masquer les données"
+      }
     }
   }
 }

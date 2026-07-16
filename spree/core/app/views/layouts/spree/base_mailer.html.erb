@@ -1,45 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="x-apple-disable-message-reformatting"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="color-scheme" content="light"/>
+    <meta name="supported-color-schemes" content="light"/>
 
     <%= render partial: 'spree/shared/base_mailer_stylesheets' %>
+    <%# Per-email styles — templates add their own via `content_for :head` %>
+    <%= yield :head %>
   </head>
-  <body>
-    <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <body class="email-bg" style="margin: 0; padding: 0; -webkit-text-size-adjust: none;" bgcolor="#FFFFFF">
+    <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="#FFFFFF">
       <tr>
         <td align="center">
           <table class="email-content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
-            <%= render partial: 'spree/shared/base_mailer_header' %>
             <!-- Email Body -->
             <tr>
-              <td class="email-body" width="570" cellpadding="0" cellspacing="0">
-                <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
-                  <!-- Body content -->
-                  <tbody>
+              <td class="email-card" bgcolor="#F6F6F6">
+                <%= render partial: 'spree/shared/base_mailer_header' %>
+                <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
                   <tr>
-                    <td class="content-cell">
-                      <div class="f-fallback">
-                        <%= yield %>
-                      </div>
+                    <td class="content-cell f-fallback" align="left">
+                      <%= yield %>
                     </td>
                   </tr>
-                  </tbody>
                 </table>
               </td>
             </tr>
+            <!-- Email Footer -->
             <tr>
-              <td>
+              <td class="email-footer" align="center">
                 <%= render partial: 'spree/shared/base_mailer_footer' %>
               </td>
             </tr>
           </table>
         </td>
-      </tr>
-      <tr>
-        <td height="60px">&nbsp;</td>
       </tr>
     </table>
   </body>

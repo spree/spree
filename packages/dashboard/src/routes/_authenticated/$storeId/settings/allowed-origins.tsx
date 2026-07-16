@@ -38,8 +38,8 @@ import {
   useCreateAllowedOrigin,
   useDeleteAllowedOrigin,
   useUpdateAllowedOrigin,
-} from '@/hooks/use-allowed-origins'
-import '@/tables/allowed-origins'
+} from '../../../../hooks/use-allowed-origins'
+import '../../../../tables/allowed-origins'
 
 // Block paths, queries, fragments, and trailing slashes — the backend rejects
 // them with `:must_be_origin_only`. Catching them client-side gives an

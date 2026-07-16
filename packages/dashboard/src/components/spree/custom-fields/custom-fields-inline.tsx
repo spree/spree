@@ -24,6 +24,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { CustomField, CustomFieldDefinition, CustomFieldOwnerType } from '@spree/admin-sdk'
 import {
+  customFieldComponents,
   mapSpreeErrorsToForm,
   useCreateCustomField,
   useCreateCustomFieldDefinition,
@@ -63,14 +64,14 @@ import { createContext, type ReactNode, useCallback, useContext, useMemo, useSta
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { DefinitionFormFields } from '@/components/spree/custom-fields/definition-form'
 import {
   CUSTOM_FIELD_DEFINITION_DEFAULTS,
   type CustomFieldDefinitionFormValues,
   customFieldDefinitionSchema,
   customFieldDefinitionValuesToCreateParams,
-} from '@/schemas/custom-field-definition'
-import type { CustomFieldFormValues } from '@/schemas/product'
+} from '../../../schemas/custom-field-definition'
+import type { CustomFieldFormValues } from '../../../schemas/product'
+import { DefinitionFormFields } from './definition-form'
 
 // ---------------------------------------------------------------------------
 // Generic context interface — providers implement this, the card consumes it.
@@ -743,7 +744,20 @@ function CustomFieldRow({ definition, value, onChange }: CustomFieldRowProps) {
   // label, not rendered as inline copy.
   const technicalKey = `${definition.namespace}.${definition.key}`
 
-  const widget = (
+  // A plugin can replace the input for this specific definition
+  // (customFieldComponents.register('specs.color', ColorPicker)); the default
+  // field_type widget renders otherwise. Same controlled contract either way
+  // — persistence stays with the card's provider.
+  const CustomComponent = customFieldComponents.get(technicalKey)
+  const widget = CustomComponent ? (
+    <CustomComponent
+      id={inputId}
+      ariaLabel={friendlyLabel}
+      value={value}
+      onChange={onChange}
+      definition={definition}
+    />
+  ) : (
     <CustomFieldWidget
       id={inputId}
       ariaLabel={friendlyLabel}

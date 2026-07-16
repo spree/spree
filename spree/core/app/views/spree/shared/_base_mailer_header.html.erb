@@ -1,6 +1,8 @@
 <!-- You can override this template to design your own header. -->
-<tr>
-  <td class="email-masthead">
-    <%= render 'spree/shared/mailer_logo', logo: current_store.mailer_logo.attached? ? current_store.mailer_logo : current_store.logo %>
-  </td>
-</tr>
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td class="email-masthead" align="center">
+      <%= render 'spree/shared/mailer_logo', logo: current_store.mailer_logo.attached? ? current_store.mailer_logo : current_store.logo, height: 32 %>
+    </td>
+  </tr>
+</table>

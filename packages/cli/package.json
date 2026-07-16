@@ -1,6 +1,6 @@
 {
   "name": "@spree/cli",
-  "version": "2.3.7",
+  "version": "2.4.3",
   "description": "CLI for managing Spree Commerce projects",
   "type": "module",
   "bin": {
@@ -12,7 +12,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "node scripts/bundle-spec.mjs && tsup",
+    "build": "node scripts/bundle-spec.mjs && node ../../scripts/sync-dashboard-starter.mjs templates/dashboard-starter && tsup",
     "dev": "tsup --watch",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",

@@ -122,9 +122,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       # The admin SPA imports built dist from the SDKs (per the workspace
-      # convention) — build them first so Vite resolves the workspace deps.
+      # convention), and its vite.config resolves dashboard-core's compiled
+      # Vite entry (dist/vite) — build them first so Vite resolves the
+      # workspace deps.
       - name: Build SDK dependencies
-        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/admin-sdk
+        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/admin-sdk --filter=@spree/dashboard-core
 
       - name: Setup dummy Rails app
         working-directory: spree/api
@@ -289,7 +291,11 @@ jobs:
 
   release-cli:
     name: "CLI - Release"
-    needs: check
+    # Gated on release-dashboard: the CLI tarball embeds the dashboard-starter
+    # template with ^x.y.z pins for @spree/dashboard{,-ui,-core} — publishing
+    # it before those versions exist on npm would ship a scaffold whose
+    # install fails until the dashboard release lands.
+    needs: [check, release-dashboard]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -362,9 +368,84 @@ jobs:
         if: steps.check.outputs.published == 'false'
         run: pnpm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }} --no-git-checks
 
+  # The dashboard packages are source-only for everything the host's Vite
+  # compiles, but their Node-side Vite-plugin entries are compiled to JS by a
+  # per-package prepublishOnly hook (Node refuses to type-strip .ts under
+  # node_modules). They depend on each other via workspace:^, which
+  # `pnpm publish` rewrites to the concrete ^x.y.z while packing — so they
+  # publish in dependency order from a single job. Pre-1.0 Developer Preview versions ship under the `next` tag,
+  # matching @spree/admin-sdk.
+  release-dashboard:
+    name: "Dashboard packages - Release"
+    # Gated on release-admin-sdk: the dashboard packages' workspace:^ ranges
+    # are rewritten to concrete ^x.y.z of @spree/admin-sdk while packing — a
+    # same-push admin-sdk version bump must land on npm first, or installs of
+    # the just-published dashboard packages fail until it does. (release-cli
+    # waits on this job, completing the admin-sdk → dashboard → cli chain.)
+    needs: [check, release-admin-sdk]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      # Trusted Publishing requires npm >= 11.5.1, but the bundled npm
+      # on Node 22 is 10.9.7. A plain `npm install -g npm@latest` swaps
+      # npm's own files in place and the in-flight install can't find
+      # its own dependencies (MODULE_NOT_FOUND: promise-retry). Install
+      # to a separate prefix and prepend to PATH instead.
+      - name: Upgrade npm for Trusted Publishing support
+        run: |
+          npm install -g npm@latest --prefix="$HOME/.npm-global"
+          echo "$HOME/.npm-global/bin" >> "$GITHUB_PATH"
+
+      - name: Publish unpublished versions (dependency order)
+        run: |
+          set -euo pipefail
+          for pkg in dashboard-ui dashboard-core dashboard; do
+            cd "packages/$pkg"
+            NAME=$(node -p "require('./package.json').name")
+            VERSION=$(node -p "require('./package.json').version")
+            if npm view "$NAME@$VERSION" version 2>/dev/null; then
+              echo "$NAME@$VERSION already published — skipping."
+            else
+              if echo "$VERSION" | grep -qE '^0\.'; then TAG=next
+              elif echo "$VERSION" | grep -qE '[-]'; then TAG=beta
+              else TAG=latest
+              fi
+              echo "Publishing $NAME@$VERSION with tag $TAG..."
+              pnpm publish --provenance --access public --tag "$TAG" --no-git-checks
+            fi
+            cd ../..
+          done
+
+  # The dashboard-starter template is NOT distributed via a template repo:
+  # `@spree/cli` and `create-spree-app` embed it at build time
+  # (scripts/sync-dashboard-starter.mjs renders packages/dashboard-starter
+  # with published version pins into their templates/ dir), so the template
+  # and the released package versions are in lockstep by construction.
+
   release-create-spree-app:
     name: "create-spree-app - Release"
-    needs: check
+    # Gated on release-cli: the dashboard scaffold phase delegates to the
+    # project-local `spree add dashboard`, so a create-spree-app that offers
+    # the dashboard must not publish before the CLI implementing that command
+    # (with the embedded starter) is on npm. Completes the release chain:
+    # admin-sdk → dashboard → cli → create-spree-app.
+    needs: [check, release-cli]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:

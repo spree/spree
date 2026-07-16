@@ -101,6 +101,8 @@ import type {
   GiftCardBatchCreateParams,
   GiftCardCreateParams,
   GiftCardUpdateParams,
+  ImportCompleteMappingParams,
+  ImportCreateParams,
   InvitationAcceptParams,
   InvitationCreateParams,
   LineItemCreateParams,
@@ -117,6 +119,8 @@ import type {
   OrderCompleteParams,
   OrderCreateParams,
   OrderUpdateParams,
+  PasswordResetParams,
+  PasswordResetRequestParams,
   PaymentCreateParams,
   PaymentMethodCreateParams,
   PaymentMethodType,
@@ -169,6 +173,8 @@ import type {
   Fulfillment,
   GiftCard,
   GiftCardBatch,
+  Import,
+  ImportRow,
   Invitation,
   LineItem,
   Locale,
@@ -223,7 +229,28 @@ const CUSTOM_FIELD_OWNER_PATHS = {
 } as const satisfies Record<Exclude<CustomFieldOwnerType, string & {}>, string>
 
 export class AdminClient {
-  /** @internal */
+  /**
+   * Low-level request function for calling custom Admin API endpoints —
+   * e.g. ones added by a Spree extension gem that doesn't ship its own
+   * client.
+   *
+   * Uses the same auth headers (secret API key or JWT, whichever was
+   * configured), retry logic, and base URL as the built-in resources.
+   * Paths are relative to `/api/v3/admin`.
+   *
+   * @example
+   * ```ts
+   * import { createAdminClient } from '@spree/admin-sdk'
+   * import type { PaginatedResponse } from '@spree/admin-sdk'
+   *
+   * interface Brand { id: string; name: string; slug: string }
+   *
+   * const client = createAdminClient({ baseUrl: 'https://api.shop.com', token: '...' })
+   *
+   * const brands = await client.request<PaginatedResponse<Brand>>('GET', '/brands')
+   * const brand = await client.request<Brand>('GET', '/brands/brand_2X9aQf7kEw')
+   * ```
+   */
   readonly request: RequestFn
 
   constructor(request: RequestFn) {
@@ -420,6 +447,33 @@ export class AdminClient {
       this.request<AuthTokens>('POST', `/auth/invitations/${id}/accept`, {
         ...options,
         params: { token },
+        body: params,
+      }),
+
+    /**
+     * Public (unauthenticated) request for a password reset email. Always
+     * resolves (202) whether or not the email matches an account, to prevent
+     * enumeration. The emailed link points at `redirect_url` (validated against
+     * the store's allowed origins) with the reset token appended as `?token=`.
+     */
+    requestPasswordReset: (
+      params: PasswordResetRequestParams,
+      options?: RequestOptions,
+    ): Promise<void> =>
+      this.request<void>('POST', '/auth/password_resets', { ...options, body: params }),
+
+    /**
+     * Public (unauthenticated) consume of a password reset token: sets the new
+     * password and signs the admin in (JWT + refresh-token cookie, like `login`).
+     * The token is single-use — it invalidates as soon as the password changes.
+     */
+    resetPassword: (
+      token: string,
+      params: PasswordResetParams,
+      options?: RequestOptions,
+    ): Promise<AuthTokens> =>
+      this.request<AuthTokens>('PATCH', `/auth/password_resets/${encodeURIComponent(token)}`, {
+        ...options,
         body: params,
       }),
   }
@@ -1526,6 +1580,67 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/exports/${id}`, options),
+  }
+
+  // ============================================
+  // Imports (CSV: products, customers, …)
+  // ============================================
+
+  /**
+   * Queues asynchronous CSV imports and drives the mapping flow. Upload the
+   * file via `directUploads.create()` first, then `create()` the import with
+   * the returned `signed_id` — the response is in the `mapping` state and
+   * carries `schema_fields`, `csv_headers`, a `sample_row` and the
+   * auto-assigned `mappings`. Adjust mappings if needed and call
+   * `completeMapping(id)` to start processing, then poll `get(id)` while
+   * `status` is `completed_mapping`/`processing` (`completed`/`failed` are
+   * terminal). Failed rows are listed via `rows.list(id, { status_eq:
+   * 'failed' })` (flat Ransack predicates, wrapped into `q[...]` by
+   * `transformListParams`) and can be re-processed with `retryFailedRows(id)`.
+   */
+  readonly imports = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Import>> =>
+      this.request<PaginatedResponse<Import>>('GET', '/imports', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Import> =>
+      this.request<Import>('GET', `/imports/${id}`, options),
+
+    create: (params: ImportCreateParams, options?: RequestOptions): Promise<Import> =>
+      this.request<Import>('POST', '/imports', { ...options, body: params }),
+
+    completeMapping: (
+      id: string,
+      params?: ImportCompleteMappingParams,
+      options?: RequestOptions,
+    ): Promise<Import> =>
+      this.request<Import>('PATCH', `/imports/${id}/complete_mapping`, {
+        ...options,
+        body: params ?? {},
+      }),
+
+    retryFailedRows: (id: string, options?: RequestOptions): Promise<Import> =>
+      this.request<Import>('PATCH', `/imports/${id}/retry_failed_rows`, options),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/imports/${id}`, options),
+
+    rows: {
+      list: (
+        importId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<ImportRow>> =>
+        this.request<PaginatedResponse<ImportRow>>('GET', `/imports/${importId}/rows`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+    },
   }
 
   // ============================================

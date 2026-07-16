@@ -188,23 +188,15 @@ bundle remove spree_emails
 
 If you prefer to use a third-party email service like Klaviyo for transactional emails, you can use the [spree_klaviyo](https://github.com/spree/spree_klaviyo) extension. This allows you to leverage Klaviyo's email marketing platform for order confirmations, shipment notifications, and other transactional emails.
 
+## Previewing emails
+
+[ActionMailer previews](https://guides.rubyonrails.org/action_mailer_basics.html#previewing-and-testing-mailers) for every transactional email ship with this gem and are served automatically in development — no setup required. With a seeded development database, start the server and visit:
+
+`http://localhost:3000/rails/mailers`
+
+for example `http://localhost:3000/rails/mailers/spree/order/confirm_email`.
+
 ## Testing
-
-Preview emails in development:
-
-```ruby
-# test/mailers/previews/spree/order_mailer_preview.rb
-module Spree
-  class OrderMailerPreview < ActionMailer::Preview
-    def confirm_email
-      order = Spree::Order.complete.last
-      Spree::OrderMailer.confirm_email(order)
-    end
-  end
-end
-```
-
-Visit `http://localhost:3000/rails/mailers/spree/order_mailer/confirm_email`
 
 Run the test suite:
 

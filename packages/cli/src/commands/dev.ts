@@ -3,14 +3,23 @@ import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
+import { projectCredentialsPath, projectSetupMarkerPath } from '../config.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
-import { detectProject, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
+import {
+  detectProject,
+  hasMonorepoSpreePath,
+  isEjectedProject,
+  readSampleDataFromEnv,
+} from '../context.js'
 import {
   buildAdminStylesheets,
   dockerCompose,
+  hasProjectContainers,
   primeBundleVolume,
   watchAdminStylesheets,
 } from '../docker.js'
+import { ensureDashboardDevEnv } from './add.js'
+import { runFirstRunSetup } from './init.js'
 
 export function registerDevCommand(program: Command): void {
   program
@@ -28,6 +37,50 @@ export function registerDevCommand(program: Command): void {
           ].join('\n'),
         )
         process.exit(1)
+      }
+
+      // Every boot, not just first run: cheap and idempotent, and it's how
+      // projects scaffolded by older CLIs (broken .env.local) get repaired —
+      // they already completed setup, so the first-run path below never
+      // reaches them.
+      ensureDashboardDevEnv(ctx.projectDir, ctx.port)
+
+      // A project that was never set up gets the full first-run flow instead
+      // of a bare `up`: pull a fresh image (a mutable tag cached weeks ago by
+      // another project would otherwise boot an old Spree), seed the database,
+      // mint API keys. This keeps create-spree-app's contract — the app just
+      // works — on every path to a first boot (--no-start, an interrupted
+      // scaffold, a fresh clone) without requiring anyone to run `spree init`.
+      // Completed setup writes a marker (separate from credentials.json,
+      // which `spree auth logout` deletes — losing auth must not look like a
+      // fresh project). Credentials still count as "set up" for projects
+      // initialized by older CLIs that minted them without a marker. When
+      // both are missing: a project whose .env declares SPREE_SAMPLE_DATA was
+      // scaffolded by a create-spree-app that persists setup state, so that
+      // alone means setup never finished — even if an interrupted init
+      // already created containers. For older projects the only safe signal
+      // is "compose never created a container": an initialized
+      // pre-credentials-era project must not be re-set-up (that would load
+      // sample data into a real store). Ejected projects build the image
+      // locally and manage their own lifecycle.
+      if (
+        !isEjectedProject(ctx.projectDir) &&
+        !fs.existsSync(projectSetupMarkerPath(ctx.projectDir)) &&
+        !fs.existsSync(projectCredentialsPath(ctx.projectDir))
+      ) {
+        let neverSetUp = readSampleDataFromEnv(ctx.projectDir) !== undefined
+        if (!neverSetUp) {
+          try {
+            neverSetUp = !(await hasProjectContainers(ctx.projectDir))
+          } catch {
+            // Daemon trouble surfaces with compose's own error on the up below.
+          }
+        }
+        if (neverSetUp) {
+          p.log.info('First run detected — completing setup automatically.')
+          await runFirstRunSetup({ sampleData: true, open: true })
+          return
+        }
       }
 
       p.note(

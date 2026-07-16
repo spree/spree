@@ -280,6 +280,11 @@ Spree::Core::Engine.add_routes do
     end
     resources :allowed_origins, except: :show
 
+    # storefront setup
+    get '/storefront', to: 'storefront#show', as: :storefront
+    patch '/storefront', to: 'storefront#update'
+    post '/storefront/allow_origin', to: 'storefront#allow_origin', as: :storefront_allow_origin
+
     # errors
     get '/forbidden', to: 'errors#show', code: 403, as: :forbidden
     if Rails.env.test?

@@ -8,7 +8,7 @@ rescue LoadError
 end
 
 SPREE_CORE_GEMS = %w(core api).freeze
-SPREE_OPTIONAL_GEMS = %w(emails admin).freeze
+SPREE_OPTIONAL_GEMS = %w(emails admin dashboard).freeze
 
 task default: :test
 

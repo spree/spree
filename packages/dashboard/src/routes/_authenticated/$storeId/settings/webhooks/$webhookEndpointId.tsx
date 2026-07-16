@@ -44,7 +44,7 @@ import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
-import { WebhookEndpointFormFields } from '@/components/spree/webhook-endpoint-form'
+import { WebhookEndpointFormFields } from '../../../../../components/spree/webhook-endpoint-form'
 import {
   useDeleteWebhookEndpoint,
   useRedeliverWebhookDelivery,
@@ -53,14 +53,14 @@ import {
   useUpdateWebhookEndpoint,
   useWebhookDelivery,
   useWebhookEndpoint,
-} from '@/hooks/use-webhook-endpoints'
-import { webhookEndpointHealth, webhookHealthBadgeVariant } from '@/lib/webhook-health'
+} from '../../../../../hooks/use-webhook-endpoints'
+import { webhookEndpointHealth, webhookHealthBadgeVariant } from '../../../../../lib/webhook-health'
 import {
   DEFAULT_WEBHOOK_ENDPOINT_VALUES,
   type WebhookEndpointFormValues,
   webhookEndpointFormSchema,
-} from '@/schemas/webhook-endpoint'
-import '@/tables/webhook-deliveries'
+} from '../../../../../schemas/webhook-endpoint'
+import '../../../../../tables/webhook-deliveries'
 
 // `<JsonValueView>` pulls in `@uiw/react-json-view` (~30 KB gzip). Lazy-loading
 // it keeps the route's entry chunk small — the renderer only matters when an

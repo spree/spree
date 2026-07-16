@@ -16,6 +16,7 @@
       "discard": "Odrzuć",
       "discard_changes": "Odrzuć zmiany",
       "edit": "Edytuj",
+      "view": "Zobacz",
       "generate": "Generuj",
       "remove": "Usuń",
       "save": "Zapisz",
@@ -171,7 +172,31 @@
         "title": "Witaj ponownie",
         "subtitle": "Zaloguj się do swojego konta administratora"
       },
-      "logout": "Wyloguj się"
+      "forgot_password": {
+        "link": "Nie pamiętasz hasła?",
+        "title": "Zresetuj hasło",
+        "subtitle": "Podaj swój adres e-mail, a wyślemy Ci link do zresetowania hasła.",
+        "submit": "Wyślij link resetujący",
+        "sending": "Wysyłanie…",
+        "sent_title": "Sprawdź swoją skrzynkę",
+        "sent_subtitle": "Jeśli konto dla tego adresu e-mail istnieje, link do zresetowania hasła jest już w drodze.",
+        "error": "Coś poszło nie tak. Spróbuj ponownie."
+      },
+      "reset_password": {
+        "title": "Wybierz nowe hasło",
+        "subtitle": "Wprowadź nowe hasło do swojego konta administratora.",
+        "new_password_label": "Nowe hasło",
+        "confirm_password_label": "Potwierdź nowe hasło",
+        "submit": "Zresetuj hasło",
+        "submitting": "Resetowanie…",
+        "token_invalid": "Ten link resetujący jest nieprawidłowy lub wygasł. Poproś o nowy.",
+        "error": "Coś poszło nie tak. Spróbuj ponownie.",
+        "missing_token_title": "Nieprawidłowy link resetujący",
+        "missing_token_message": "W tym linku do resetowania hasła brakuje tokenu.",
+        "request_new_link": "Poproś o nowy link resetujący"
+      },
+      "logout": "Wyloguj się",
+      "back_to_login": "Powrót do logowania"
     },
     "fields": {
       "name": {
@@ -336,6 +361,15 @@
       "channel_select": {
         "placeholder": "Wybierz kanał sprzedaży"
       },
+      "file_upload": {
+        "attached": "Załączony plik",
+        "browse": "Przeglądaj pliki",
+        "drop_image_label": "Upuść obraz tutaj lub kliknij, aby przeglądać",
+        "drop_label": "Upuść plik tutaj lub kliknij, aby przeglądać",
+        "invalid_type": "Ten typ pliku nie jest akceptowany (oczekiwano: {{accept}})",
+        "upload_failed": "Przesyłanie nie powiodło się: {{message}}",
+        "uploading": "Przesyłanie…"
+      },
       "locale_select": {
         "placeholder": "Wybierz język",
         "multi_placeholder": "Dodaj języki…",
@@ -442,6 +476,22 @@
         "downloaded": "Eksport pobrany",
         "email_fallback": "Nadal przetwarzamy — wyślemy link e-mailem, gdy będzie gotowy.",
         "failed": "Eksport nie powiódł się: {{message}}"
+      },
+      "import_button": {
+        "title": "Importuj z pliku CSV",
+        "description": "Prześlij plik CSV. W następnym kroku dopasujesz jego kolumny do pól.",
+        "drop_label": "Upuść plik CSV tutaj lub kliknij, aby przeglądać",
+        "delimiter_label": "Separator kolumn",
+        "delimiters": {
+          "comma": "Przecinek (,)",
+          "semicolon": "Średnik (;)",
+          "pipe": "Kreska pionowa (|)",
+          "tab": "Tabulator"
+        },
+        "download_template": "Pobierz szablon CSV",
+        "template_failed": "Pobieranie szablonu nie powiodło się: {{message}}",
+        "submit": "Kontynuuj",
+        "failed": "Import nie powiódł się: {{message}}"
       },
       "metadata_card": {
         "title": "Metadane",

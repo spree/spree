@@ -16,6 +16,7 @@
       "discard": "放弃",
       "discard_changes": "放弃更改",
       "edit": "编辑",
+      "view": "查看",
       "generate": "生成",
       "remove": "移除",
       "save": "保存",
@@ -171,7 +172,31 @@
         "title": "欢迎回来",
         "subtitle": "登录您的管理员账户"
       },
-      "logout": "退出登录"
+      "forgot_password": {
+        "link": "忘记密码？",
+        "title": "重置密码",
+        "subtitle": "输入您的邮箱，我们将向您发送重置密码的链接。",
+        "submit": "发送重置链接",
+        "sending": "发送中…",
+        "sent_title": "请查收邮件",
+        "sent_subtitle": "如果该邮箱对应的账户存在，重置密码的链接即将送达。",
+        "error": "出了点问题，请重试。"
+      },
+      "reset_password": {
+        "title": "设置新密码",
+        "subtitle": "为您的管理员账户输入新密码。",
+        "new_password_label": "新密码",
+        "confirm_password_label": "确认新密码",
+        "submit": "重置密码",
+        "submitting": "重置中…",
+        "token_invalid": "此重置链接无效或已过期，请重新申请。",
+        "error": "出了点问题，请重试。",
+        "missing_token_title": "重置链接无效",
+        "missing_token_message": "此密码重置链接缺少令牌。",
+        "request_new_link": "申请新的重置链接"
+      },
+      "logout": "退出登录",
+      "back_to_login": "返回登录"
     },
     "fields": {
       "name": {
@@ -336,6 +361,15 @@
       "channel_select": {
         "placeholder": "选择销售渠道"
       },
+      "file_upload": {
+        "attached": "已附加文件",
+        "browse": "浏览文件",
+        "drop_image_label": "将图片拖放到此处，或点击浏览",
+        "drop_label": "将文件拖放到此处，或点击浏览",
+        "invalid_type": "不接受此文件类型（应为：{{accept}}）",
+        "upload_failed": "上传失败：{{message}}",
+        "uploading": "正在上传…"
+      },
       "locale_select": {
         "placeholder": "选择语言区域",
         "multi_placeholder": "添加语言区域…",
@@ -442,6 +476,22 @@
         "downloaded": "导出已下载",
         "email_fallback": "仍在处理中 — 完成后我们会通过邮件发送链接。",
         "failed": "导出失败：{{message}}"
+      },
+      "import_button": {
+        "title": "从 CSV 导入",
+        "description": "上传 CSV 文件。下一步将文件列与字段进行匹配。",
+        "drop_label": "将 CSV 文件拖放到此处，或点击浏览",
+        "delimiter_label": "列分隔符",
+        "delimiters": {
+          "comma": "逗号 (,)",
+          "semicolon": "分号 (;)",
+          "pipe": "竖线 (|)",
+          "tab": "制表符"
+        },
+        "download_template": "下载 CSV 模板",
+        "template_failed": "模板下载失败：{{message}}",
+        "submit": "继续",
+        "failed": "导入失败：{{message}}"
       },
       "metadata_card": {
         "title": "元数据",

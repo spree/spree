@@ -28,4 +28,32 @@ test.describe('admin authentication', () => {
     await expect(page.getByText(/invalid email or password/i)).toBeVisible()
     expect(page.url()).toContain('/login')
   })
+
+  test('reaches the forgot-password page from the login form', async ({ page }) => {
+    await page.goto('/login')
+    await page.getByRole('link', { name: /forgot password/i }).click()
+
+    await expect(page).toHaveURL(/\/forgot-password/)
+    await expect(page.getByText('Reset your password', { exact: true })).toBeVisible()
+  })
+
+  test('confirms the reset request without revealing whether the email exists', async ({
+    page,
+  }) => {
+    // Same confirmation for a real and an unknown email — no account enumeration.
+    for (const email of ['admin@example.com', 'nobody@example.com']) {
+      await page.goto('/forgot-password')
+      await page.getByLabel(/email/i).fill(email)
+      await page.getByRole('button', { name: /send reset link/i }).click()
+
+      await expect(page.getByText(/check your email/i)).toBeVisible({ timeout: 15_000 })
+    }
+  })
+
+  test('shows an invalid-link message when the reset token is missing', async ({ page }) => {
+    await page.goto('/reset-password')
+
+    await expect(page.getByText(/invalid reset link/i)).toBeVisible()
+    await expect(page.getByRole('link', { name: /request a new reset link/i })).toBeVisible()
+  })
 })

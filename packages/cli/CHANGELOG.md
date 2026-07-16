@@ -1,5 +1,84 @@
 # @spree/cli
 
+## 2.4.3
+
+### Patch Changes
+
+- Fix dashboard logins dying on CORS in scaffolded apps. `spree add
+dashboard` wrote `VITE_SPREE_API_URL=http://localhost:<port>` into
+`apps/dashboard/.env.local` — but that variable is the SDK's switch to
+absolute cross-origin URLs (meant for production deploys on a different
+origin), so requests bypassed the Vite dev proxy and the browser blocked
+them (`localhost:5173` → `localhost:3000` is cross-origin; the auth cookie
+is `SameSite=Lax` on top). The scaffold now writes `VITE_API_PROXY_TARGET`
+(the proxy target — the SPA stays same-origin, the SDK stays on relative
+URLs), the dashboard template's Vite config reads it (via `loadEnv` — Vite
+doesn't load `.env` files into `process.env` for configs), and the CLI
+writes or repairs `.env.local` automatically: on scaffold, on every
+`spree dev` boot, and on a `spree add dashboard` re-run — covering fresh
+clones (the file is gitignored) and projects scaffolded by older CLI
+versions. Repair rewrites only the broken line; everything else in the
+file is preserved.
+
+## 2.4.2
+
+### Patch Changes
+
+- `spree dev` on a project that was never set up now runs the full first-run
+flow automatically (pull fresh images, start services, seed the database,
+configure API keys) instead of a bare `docker compose up`. A bare `up` never
+pulls, so a mutable tag (`latest`) cached weeks ago by another project
+silently booted an old Spree whenever the first boot happened through
+`spree dev` — a `--no-start` scaffold, an interrupted create-spree-app run,
+or a fresh clone. A setup that was itself interrupted partway (e.g. Ctrl+C
+during the first image pull) is also detected and completed on the next
+`spree dev`, for projects scaffolded by create-spree-app 1.1.1+. The
+sample-data choice create-spree-app persists in `.env`
+(`SPREE_SAMPLE_DATA`) is honored, so a deferred first run keeps the answer
+given at scaffold time. Setup also installs `apps/storefront` and
+`apps/dashboard` dependencies when they're missing (a fresh clone, or a
+scaffold whose install step failed) — mirroring create-spree-app's per-app
+install steps — so every app is runnable with `pnpm dev` right after.
+Already-initialized projects are untouched: later boots never pull, dev
+stays offline-friendly, and upgrades stay explicit via `spree update`.
+
+## 2.4.1
+
+### Patch Changes
+
+- Re-embed the dashboard-starter template against `@spree/dashboard` 0.10.1
+and `@spree/admin-sdk` ^0.6.0. 0.10.1 ships the Vite integration compiled to
+JS — registry installs of 0.10.0 failed the host build with
+`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` when `vite.config.ts` imported
+`@spree/dashboard/vite` — and admin-sdk 0.5.0 lacks the Admin API endpoints
+and types the dashboard consumes (the 0.x caret in the previous template pin
+never resolves to 0.6.0). The `spree dashboard plugin` scaffold now pins
+`@spree/admin-sdk` ^0.6.0 as well.
+
+## 2.4.0
+
+### Minor Changes
+
+- Add `spree add dashboard` — scaffolds the React Dashboard starter (Developer
+Preview), bundled inside the CLI with version pins matching the release, into
+`apps/dashboard/` of an existing project and points it at the project's API
+(`--template <path|git-url>` overrides the bundled copy). Also make
+`spree plugin new` fully non-interactive: every prompt has a flag
+(`--ruby-name`, `--module-name`, `--npm-scope`, `--author`, `--author-email`,
+`--license`, `-y`), with author details defaulting from git config.
+
+## 2.3.9
+
+### Patch Changes
+
+- Add `spree shell` (alias: `spree bash`) — open an interactive bash shell inside the web container, the system-shell sibling of `spree console` (Rails) and `spree db:console` (psql). When the web container is down — a crash-looping stack is exactly when a shell is most useful — it falls back to a one-off container against the same volumes, with postgres cold-started and health-waited first.
+
+## 2.3.8
+
+### Patch Changes
+
+- Add `spree rspec` — run the RSpec suite inside the web container without spelling out `spree bundle exec rspec`. Everything after `rspec` is forwarded verbatim (`spree rspec spec/models/spree/brand_spec.rb:15`, `spree rspec --format documentation`), `RAILS_ENV=test` is forced so tests always hit the test database, and when the stack is down the command falls back to a one-off container that cold-starts postgres first.
+
 ## 2.3.7
 
 ### Patch Changes

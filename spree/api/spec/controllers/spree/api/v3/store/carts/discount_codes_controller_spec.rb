@@ -78,7 +78,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
 
     context 'with expired promotion' do
       let!(:promotion) do
-        create(:promotion_with_item_adjustment, code: 'EXPIRED', stores: [store],
+        create(:promotion_with_item_adjustment, code: 'EXPIRED', store: store,
                starts_at: 1.month.ago, expires_at: 1.day.ago)
       end
 

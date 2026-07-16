@@ -1,12 +1,19 @@
-<!-- You can override this template to design your own footer.
-<table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
+<!-- You can override this template to design your own footer. -->
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation">
   <tr>
-    <td class="content-cell" align="center">
-      <p class="f-fallback sub align-center">
-        <a href="#">Terms</a> | <a href="#">Privacy</a> |
-        <a href="#">Unsubscribe</a>
-      </p>
+    <td align="center">
+      <div class="footer_content f-fallback">
+        <p class="footer_brand">
+          <%= link_to current_store.name, current_store.storefront_url %>
+        </p>
+        <% if current_store.address.present? %>
+          <p class="footer_meta"><%= current_store.address %></p>
+        <% end %>
+        <% if current_store.customer_support_email.present? %>
+          <p class="footer_meta"><%= mail_to current_store.customer_support_email %></p>
+        <% end %>
+        <p class="footer_note">&copy; <%= Time.current.year %> <%= current_store.name %></p>
+      </div>
     </td>
   </tr>
 </table>
--->

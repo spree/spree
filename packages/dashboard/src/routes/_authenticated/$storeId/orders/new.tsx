@@ -28,10 +28,14 @@ import { TrashIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { ChannelSelect } from '@/components/spree/channel-select'
-import { useChannels } from '@/hooks/use-channels'
-import { customerAutocompleteProps } from '@/hooks/use-customers'
-import { NEW_ORDER_DEFAULTS, type NewOrderFormValues, newOrderFormSchema } from '@/schemas/order'
+import { ChannelSelect } from '../../../../components/spree/channel-select'
+import { useChannels } from '../../../../hooks/use-channels'
+import { customerAutocompleteProps } from '../../../../hooks/use-customers'
+import {
+  NEW_ORDER_DEFAULTS,
+  type NewOrderFormValues,
+  newOrderFormSchema,
+} from '../../../../schemas/order'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/new')({
   component: NewOrderPage,

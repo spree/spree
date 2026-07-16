@@ -35,7 +35,7 @@ import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { customerAutocompleteProps } from '@/hooks/use-customers'
+import { customerAutocompleteProps } from '../../../../hooks/use-customers'
 import {
   listGiftCards,
   useCreateGiftCard,
@@ -43,7 +43,7 @@ import {
   useDeleteGiftCard,
   useGiftCard,
   useUpdateGiftCard,
-} from '@/hooks/use-gift-cards'
+} from '../../../../hooks/use-gift-cards'
 import {
   BATCH_LIMIT,
   type GiftCardCreateFormValues,
@@ -53,8 +53,8 @@ import {
   giftCardEditFormSchema,
   giftCardEditValuesToParams,
   giftCardSingleValuesToParams,
-} from '@/schemas/gift-card'
-import '@/tables/gift-cards'
+} from '../../../../schemas/gift-card'
+import '../../../../tables/gift-cards'
 
 const giftCardsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),

@@ -27,8 +27,10 @@ export async function downloadBackend(projectDir: string): Promise<void> {
 
 /**
  * Tidy the freshly-cloned starter for the nested `backend/` layout: drop files
- * the wrapper project supplies itself, and relocate the CI workflow to the repo
- * root (where GitHub Actions runs it) adapted to run against backend/.
+ * the wrapper project supplies itself, relocate the CI workflow to the repo
+ * root (where GitHub Actions runs it) adapted to run against backend/, and
+ * relocate the Render Blueprint likewise (adapted so each service builds from
+ * backend/).
  */
 export function prepareBackendTemplate(projectDir: string): void {
   const backendDir = path.join(projectDir, 'backend')
@@ -52,6 +54,18 @@ export function prepareBackendTemplate(projectDir: string): void {
     // replaces with its own root .github/dependabot.yml (covering /, /backend,
     // and the storefront). Keeping it would leave a stale, duplicate config.
     fs.rmSync(path.join(backendDir, '.github'), { recursive: true, force: true })
+  }
+
+  // Render reads a single Blueprint from the repository root. The starter ships
+  // render.yaml authored for a repo where the Rails app *is* the root; left in
+  // backend/ it is invisible to Render, and even at the root its services would
+  // build from the wrong directory. Relocate it to the project root with
+  // `rootDir: backend` on every buildable service.
+  const srcRenderYaml = path.join(backendDir, 'render.yaml')
+  if (fs.existsSync(srcRenderYaml)) {
+    const content = fs.readFileSync(srcRenderYaml, 'utf-8')
+    fs.writeFileSync(path.join(projectDir, 'render.yaml'), adaptRenderYamlForNestedBackend(content))
+    fs.rmSync(srcRenderYaml, { force: true })
   }
 }
 
@@ -85,4 +99,24 @@ export function adaptWorkflowForNestedBackend(content: string): string {
   )
 
   return result
+}
+
+/**
+ * Rewrite the starter's Render Blueprint so each service that builds from source
+ * deploys the `backend/` subdirectory instead of the repo root. The starter
+ * authors render.yaml for a repo where the Rails app *is* the root; in the
+ * wrapper project the app lives under backend/, so without `rootDir: backend`
+ * Render runs `bundle install` at the root (no Gemfile) and the build fails.
+ *
+ * `rootDir` is added after every `runtime:` line — the marker of a
+ * build-from-source service (web, worker) — while managed services (redis,
+ * databases) have no runtime and are left untouched. The commented-out worker
+ * template is handled too: its `runtime:` line keeps its `#` prefix, so
+ * uncommenting the block yields a correctly-rooted worker.
+ */
+export function adaptRenderYamlForNestedBackend(content: string): string {
+  return content.replace(
+    /^([ \t]*(?:#[ \t]*)?)runtime:.*$/gm,
+    (line, prefix) => `${line}\n${prefix}rootDir: backend`,
+  )
 }

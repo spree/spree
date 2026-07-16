@@ -46,7 +46,7 @@ import {
   useRemoveCategoryProduct,
   useRemoveCategoryProducts,
   useRepositionCategoryProduct,
-} from '@/hooks/use-categories'
+} from '../../../hooks/use-categories'
 
 /**
  * Manual product membership + ordering for a category — the SPA equivalent of

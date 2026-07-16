@@ -1,5 +1,49 @@
 # create-spree-app
 
+## 1.1.1
+
+### Patch Changes
+
+- A finished `create-spree-app` run now always means a working app. The
+optional storefront and React Dashboard phases used to abort the whole
+scaffold on failure — before the final setup phase (`spree init`: fresh
+image pull, seeded database, API keys) ever ran — leaving a project whose
+first boot silently started a stale, locally cached Spree image. Those
+phases now warn and continue with a recovery command, cleaning up their
+partial `apps/` directory so the recovery command actually works, and setup
+always runs. Project docs (README.md, CLAUDE.md, dependabot.yml) are
+generated after those phases from their actual outcomes, so they never
+document an app whose setup failed. When services can't start during
+scaffolding (`--no-start`, Docker off), the first `spree dev` completes
+setup automatically (requires `@spree/cli` 2.4.2), honoring the sample-data
+choice now persisted in `.env` (`SPREE_SAMPLE_DATA`), and the printed next
+steps plus the generated README reflect that — nobody has to know
+`spree init` exists.
+
+## 1.1.0
+
+### Minor Changes
+
+- Offer the React Dashboard (Developer Preview) as an optional component: a new
+prompt (and `--no-dashboard` flag) scaffolds it into `apps/dashboard/` by
+delegating to the project-local `spree add dashboard` (the CLI bundles the
+starter template with version pins matching its release), and wires the
+README, CLAUDE.md, and Dependabot config.
+
+New projects now default to **pnpm** when it's installed — it's what the
+Spree packages and docs are built around. An explicit invoking agent
+(`pnpm create spree-app`, `yarn create spree-app`) and the
+`--use-npm`/`--use-yarn`/`--use-pnpm` flags still win, and npm remains the
+fallback when pnpm is absent. The generated README, CLAUDE.md, and next-steps
+output now render commands for the chosen package manager instead of
+hardcoding npm.
+
+## 1.0.8
+
+### Patch Changes
+
+- Relocate the generated project's Render Blueprint (`render.yaml`) to the repository root and add `rootDir: backend` to every buildable service. In the wrapper layout the Rails app lives under `backend/`, so a Blueprint left in that subdirectory is invisible to Render and, without `rootDir`, its services build from the wrong directory — the deploy fails. The commented-out worker template is adjusted too, so uncommenting it still deploys correctly. Managed services (Redis, database) are left untouched.
+
 ## 1.0.7
 
 ### Patch Changes

@@ -5,7 +5,7 @@ module Spree
     module V3
       class ImportRowSerializer < BaseSerializer
         typelize import_id: [:string, nullable: true], row_number: :number,
-                 status: :string, validation_errors: 'unknown',
+                 status: :string, validation_errors: [:string, nullable: true],
                  item_type: [:string, nullable: true], item_id: [:string, nullable: true]
 
         attributes :row_number, :status, :validation_errors, :item_type,

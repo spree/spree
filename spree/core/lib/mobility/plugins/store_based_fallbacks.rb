@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'concurrent'
 require 'mobility'
 
 # The default implementation in the Mobility gem requires fallbacks to be defined when booting the application.
@@ -8,15 +7,18 @@ require 'mobility'
 # The implementation is based on the default fallbacks plugin, with some changes around fetching the list of fallbacks to be used.
 # https://github.com/shioyama/mobility/blob/master/lib/mobility/plugins/fallbacks.rb
 module Mobility
-  @store_based_fallbacks = Concurrent::ThreadLocalVar.new(I18n::Locale::Fallbacks.new)
-
   class << self
+    # Request-scoped via RequestStore (like Mobility.locale), so one request's
+    # store fallbacks can't leak into the next request served by the same
+    # thread. Outside a request RequestStore degrades to plain per-thread
+    # storage; Spree::BaseMailer#with_store_locale restores the previous value
+    # around mail rendering.
     def store_based_fallbacks
-      @store_based_fallbacks.value
+      RequestStore.store[:mobility_store_based_fallbacks] ||= I18n::Locale::Fallbacks.new
     end
 
     def store_based_fallbacks=(value)
-      @store_based_fallbacks.value = value
+      RequestStore.store[:mobility_store_based_fallbacks] = value
     end
   end
 

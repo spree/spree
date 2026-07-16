@@ -1,0 +1,12 @@
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('import_mailer.greeting', user_name: @import.user&.first_name) %></h1>
+  <p><%= Spree.t('import_mailer.import_done.message', completed_count: @import.rows_status_counts['completed'] || 0) %></p>
+  <% failed_count = @import.rows_status_counts['failed'] || 0 %>
+  <% if failed_count > 0 %>
+    <p><strong><%= Spree.t('import_mailer.import_done.failed_message', failed_count: failed_count) %></strong></p>
+  <% end %>
+  <% results_url = @import.results_page_url %>
+  <% if results_url.present? %>
+    <%= render 'spree/shared/mailer_button', url: results_url, label: Spree.t('import_mailer.import_done.view_results') %>
+  <% end %>
+<% end %>

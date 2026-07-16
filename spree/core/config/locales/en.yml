@@ -666,6 +666,20 @@ en:
     adjustments: Adjustments
     adjustments_deleted: Adjustments Deleted
     admin_locale: Admin locale
+    admin_user_mailer:
+      confirmation_email:
+        action: Confirm Email
+        greeting: Hi %{name},
+        ignore_notice: If you did not create this account, you can safely ignore this email.
+        instructions: Please confirm the email address for your %{store_name} admin account by clicking the button below.
+        subject: Email Confirmation Instructions
+      password_reset_email:
+        action: Reset Password
+        expiry_notice: This password reset link will expire shortly. If you did not request this, no action is needed.
+        greeting: Hi %{name},
+        ignore_notice: If you did not request a password reset, you can safely ignore this email. Your password will not be changed.
+        instructions: We received a request to reset the password for your %{store_name} admin account. Click the button below to choose a new password.
+        subject: Password Reset Instructions
     administration: Administration
     advertise: Advertise
     all: All
@@ -820,6 +834,7 @@ en:
         greeting: Hi %{name},
         ignore_notice: If you did not request a password reset, you can safely ignore this email. Your password will not be changed.
         instructions: We received a request to reset your password. Click the button below to choose a new password.
+        subject: Password Reset Instructions
     customer_return: Customer Return
     customer_returns: Customer Returns
     customer_support_email: Customer Support Email
@@ -988,6 +1003,13 @@ en:
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
     implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
     import: Import
+    import_mailer:
+      greeting: Hi %{user_name},
+      import_done:
+        failed_message: "%{failed_count} rows could not be imported — review and retry them from the import report."
+        message: Your import has finished. %{completed_count} rows were imported successfully.
+        subject: Your import %{import_number} has finished processing
+        view_results: View import report
     in_stock: In Stock
     inactive: Inactive
     incl: incl.

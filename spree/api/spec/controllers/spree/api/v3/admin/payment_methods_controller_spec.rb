@@ -31,10 +31,10 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
 
     context 'when filtering by storefront_visible' do
       let!(:storefront_visible_method) do
-        create(:check_payment_method, stores: [store], display_on: 'both')
+        create(:check_payment_method, store: store, display_on: 'both')
       end
       let!(:admin_only_method) do
-        create(:check_payment_method, stores: [store], display_on: 'back_end')
+        create(:check_payment_method, store: store, display_on: 'back_end')
       end
 
       it 'returns only storefront-visible methods when q[storefront_visible_eq]=true' do

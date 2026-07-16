@@ -141,6 +141,15 @@ Open a Rails console.
 spree console
 ```
 
+### `spree shell`
+
+Open an interactive bash shell inside the web container — the system-shell sibling of `spree console` (Rails) and `spree db:console` (psql). If the web container is down, it starts a one-off container against the same volumes instead. For one-off non-interactive commands, use `spree exec`.
+
+```bash
+spree shell
+spree bash    # alias
+```
+
 ### `spree open`
 
 Open the admin dashboard in the browser.
@@ -263,6 +272,19 @@ spree routes -g products                                 # Filter by pattern
 spree routes -c Spree::Api::V3::Store::ProductsController   # Filter by controller
 spree routes --expanded
 ```
+
+### `spree rspec`
+
+Run the RSpec test suite inside the web container with `RAILS_ENV=test`, so tests hit the `spree_test` database — never your development data. Everything after `rspec` passes through, so file paths, line numbers, and flags work as usual.
+
+```bash
+spree rspec                                      # full suite
+spree rspec spec/models/spree/brand_spec.rb      # one file
+spree rspec spec/models/spree/brand_spec.rb:15   # one example
+spree rspec --format documentation
+```
+
+Before the first run, create the test database with `spree rails db:test:prepare`. See the [Testing tutorial](/developer/tutorial/testing) for writing specs.
 
 ## Running things inside the container
 

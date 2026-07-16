@@ -33,6 +33,7 @@ module Spree
 
         def permitted_product_attributes
           permitted_attributes.product_attributes + [
+            removed_variant_ids: [],
             variants_attributes: permitted_variant_attributes + ['id', :_destroy],
             master_attributes: permitted_variant_attributes + ['id']
           ]

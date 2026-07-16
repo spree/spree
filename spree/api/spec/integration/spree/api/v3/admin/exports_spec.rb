@@ -83,6 +83,13 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
             description: 'Ransack query hash. Same predicates accepted by the list endpoint.',
             example: { name_cont: 'shirt' },
             additionalProperties: true
+          },
+          results_url: {
+            type: :string,
+            description: 'Absolute URL of your admin exports view; the export-done email uses it as the ' \
+                         "download button target. Only honored when it matches one of the store's " \
+                         'configured allowed origins.',
+            example: 'https://admin.example.com/store_abc/exports'
           }
         }
       }

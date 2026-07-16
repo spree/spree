@@ -4,6 +4,7 @@ import type { PackageManager, ScaffoldOptions } from './types.js'
 interface PromptFlags {
   directory?: string
   noStorefront?: boolean
+  noDashboard?: boolean
   noSampleData?: boolean
   noStart?: boolean
   packageManager?: PackageManager
@@ -43,6 +44,22 @@ export async function runPrompts(flags: PromptFlags): Promise<Omit<ScaffoldOptio
     storefront = storefrontResult
   }
 
+  let dashboard: boolean
+  if (flags.noDashboard !== undefined) {
+    dashboard = !flags.noDashboard
+  } else {
+    const dashboardResult = await p.confirm({
+      message: 'Include React Dashboard? (Developer Preview of the next-gen admin)',
+      initialValue: true,
+    })
+
+    if (p.isCancel(dashboardResult)) {
+      p.cancel('Setup cancelled.')
+      process.exit(0)
+    }
+    dashboard = dashboardResult
+  }
+
   let sampleData: boolean
   if (flags.noSampleData !== undefined) {
     sampleData = !flags.noSampleData
@@ -78,6 +95,7 @@ export async function runPrompts(flags: PromptFlags): Promise<Omit<ScaffoldOptio
   return {
     directory,
     storefront,
+    dashboard,
     sampleData,
     start,
     packageManager: flags.packageManager ?? 'npm',

@@ -72,6 +72,10 @@ export default class extends CheckboxSelectAll {
     }
 
     this.inventoryFormTarget = document.querySelector('.inventory-form');
+
+    // Drop stale removal inputs (e.g. restored from the Turbo cache) so a fresh
+    // session never re-submits removals the user didn't make in it.
+    this.syncRemovedVariantIdInputs()
   }
 
   toggleQuantityTracked() {
@@ -119,6 +123,37 @@ export default class extends CheckboxSelectAll {
     }
   }
 
+  // The set of persisted variant ids the user removed from the matrix. Submitted as
+  // `product[removed_variant_ids][]` — the server only ever destroys ids listed there,
+  // never variants that are merely missing from the re-submitted form.
+  get removedVariantIds() {
+    if (!this._removedVariantIds) this._removedVariantIds = new Set()
+
+    return this._removedVariantIds
+  }
+
+  markVariantRemoved(internalName) {
+    const variantId = this.variantIdsValue[internalName]
+    if (variantId) this.removedVariantIds.add(String(variantId))
+  }
+
+  markVariantKept(internalName) {
+    const variantId = this.variantIdsValue[internalName]
+    if (variantId) this.removedVariantIds.delete(String(variantId))
+  }
+
+  syncRemovedVariantIdInputs() {
+    this.element.querySelectorAll('input[name="product[removed_variant_ids][]"]').forEach((input) => input.remove())
+
+    this.removedVariantIds.forEach((variantId) => {
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = 'product[removed_variant_ids][]'
+      input.value = variantId
+      this.element.appendChild(input)
+    })
+  }
+
   deleteSelected() {
     const newStockValue = this.stockValue
     const newPricesValue = this.pricesValue
@@ -126,6 +161,7 @@ export default class extends CheckboxSelectAll {
       const internalName = checkbox.value
 
       this.ignoredVariants.add(internalName)
+      this.markVariantRemoved(internalName)
       const variant = this.variantsContainerTarget.querySelector(`[data-variant-name="${internalName}"]`)
 
       const nestingLevel = internalName.split('/').length
@@ -157,7 +193,8 @@ export default class extends CheckboxSelectAll {
 
       delete newStockValue[internalName]
       delete newPricesValue[internalName]
-      variant.remove()
+      // the row may already be gone when deleting an option value re-rendered the matrix
+      variant?.remove()
     })
 
     this.stockValue = newStockValue
@@ -166,6 +203,7 @@ export default class extends CheckboxSelectAll {
     this.checkboxAllTarget.checked = false
     this.refresh()
     this.refreshParentInputs()
+    this.syncRemovedVariantIdInputs()
   }
 
   reorderOptions(event) {
@@ -498,6 +536,14 @@ export default class extends CheckboxSelectAll {
           }
           currentVariants.add(internalName)
 
+          // Reconcile the removal ledger with what this render keeps: leaf rows
+          // re-submit their variant id, parent (grouping) rows never do.
+          if (i === nestingLevel - 1) {
+            this.markVariantKept(internalName)
+          } else if (i === 0 && nestingLevel > 1) {
+            this.markVariantRemoved(internalName)
+          }
+
           const existingVariant = this.variantsContainerTarget.querySelector(`[data-variant-name="${internalName}"]`)
           if (existingVariant) {
             if (i === 0) {
@@ -599,6 +645,7 @@ export default class extends CheckboxSelectAll {
     this.variantsContainerTarget.querySelectorAll('[data-variants-form-target="variant"]').forEach((variant) => {
       const variantName = variant.dataset.variantName
       if (!currentVariants.has(variantName)) {
+        this.markVariantRemoved(variantName)
         variant.remove()
       }
     })
@@ -609,6 +656,7 @@ export default class extends CheckboxSelectAll {
     }
 
     this.refreshParentInputs()
+    this.syncRemovedVariantIdInputs()
   }
 
   refreshParentInputs() {

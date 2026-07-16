@@ -11,9 +11,9 @@ import { ExternalLinkIcon } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useOptionTypes } from '@/hooks/use-option-types'
-import { useStockLocations } from '@/hooks/use-stock-locations'
-import type { ProductFormValues, StockItemFormValues } from '@/schemas/product'
+import { useOptionTypes } from '../../../hooks/use-option-types'
+import { useStockLocations } from '../../../hooks/use-stock-locations'
+import type { ProductFormValues, StockItemFormValues } from '../../../schemas/product'
 import { composeOptionsText } from './variants-matrix'
 
 interface InventoryRow {

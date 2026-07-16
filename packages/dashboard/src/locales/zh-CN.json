@@ -89,6 +89,13 @@
       "app_name": "Spree 管理后台",
       "powered_by": "由 Spree Commerce 提供支持"
     },
+    "errors": {
+      "not_found_title": "页面未找到",
+      "not_found_description": "您访问的页面不存在。",
+      "forbidden_title": "未授权",
+      "forbidden_description": "您没有权限查看此页面。",
+      "plugin_route_title": "此页面渲染失败"
+    },
     "nav": {
       "home": "首页",
       "account": "账户",
@@ -104,14 +111,16 @@
       "promotions": "促销",
       "gift_cards": "礼品卡",
       "reports": "报表",
-      "settings": "设置"
+      "settings": "设置",
+      "getting_started": "快速入门"
     },
     "settings_nav": {
       "groups": {
         "store": "店铺",
         "payments": "支付与税务",
         "fulfillment": "履约",
-        "team": "团队与权限"
+        "team": "团队与权限",
+        "audit": "审计"
       },
       "items": {
         "store": "店铺",
@@ -126,7 +135,8 @@
         "api_keys": "API 密钥",
         "webhooks": "Webhooks",
         "allowed_origins": "允许的来源",
-        "profile": "个人资料"
+        "profile": "个人资料",
+        "imports": "导入"
       }
     },
     "fields": {
@@ -1613,6 +1623,22 @@
         "allowed_origins": {
           "add_sheet_title": "添加允许的来源",
           "edit_sheet_title": "编辑允许的来源"
+        },
+        "imports": {
+          "title": "导入",
+          "search_placeholder": "按编号搜索…",
+          "empty_title": "暂无导入",
+          "table": {
+            "number": "编号",
+            "type": "类型",
+            "status": "状态",
+            "rows": "行数",
+            "failed_count": "{{failed}} 条失败"
+          },
+          "delete_confirm": {
+            "title": "删除导入？",
+            "message": "这将删除 {{number}} 及其行数据和上传的文件。"
+          }
         }
       },
       "promotions": {
@@ -1665,6 +1691,58 @@
         "subtitle": "管理您的个人详细信息和管理后台语言。",
         "personal_details": "个人详细信息",
         "load_failed_title": "无法加载您的个人资料"
+      },
+      "getting_started": {
+        "title": "快速入门",
+        "description": "完成这些步骤即可上线您的店铺。",
+        "progress": "已完成 {{done}}/{{total}}",
+        "tasks": {
+          "setup_payment_method": {
+            "title": "设置支付方式",
+            "description": "要收款，请至少设置一个在线支付服务商。",
+            "cta": "设置支付方式"
+          },
+          "add_products": {
+            "title": "添加商品",
+            "description": "为您的店铺添加商品——您自己的商品，或邀请第三方卖家共同销售。",
+            "cta": "添加商品",
+            "import_cta": "从 CSV 导入产品"
+          },
+          "set_customer_support_email": {
+            "title": "设置客服邮箱",
+            "description": "显示在店铺前台，作为客户咨询和支持的联系方式。",
+            "cta": "邮件设置"
+          },
+          "setup_taxes_collection": {
+            "title": "设置税费",
+            "description": "要收取税费，请设置您的税率。",
+            "cta": "税费设置"
+          },
+          "setup_storefront": {
+            "title": "设置店铺前台",
+            "description": "使用 Store API 凭据连接您的网页店铺前台或移动应用，并保存店铺前台 URL。",
+            "cta": "连接店铺前台"
+          }
+        },
+        "storefront_sheet": {
+          "title": "连接您的店铺前台",
+          "description": "在任何与 Store API 通信的客户端中使用这些凭据——网页店铺前台、移动应用或其他任何客户端。",
+          "api_url_label": "Store API URL",
+          "publishable_key_label": "可发布 API 密钥",
+          "deploy_title": "推荐：部署官方 Next.js 店铺前台",
+          "deploy_copy": "部署会将开源店铺前台克隆到您的 Git 账户，并在 Vercel 上使用预填的凭据构建。完成后，将其 URL 复制到下方字段。",
+          "deploy_button": "部署到 Vercel",
+          "env_description": "您的 Spree Store API URL 和可发布密钥。两者均已从您的店铺预填——如有需要，请在部署前调整。",
+          "storefront_url_label": "店铺前台 URL",
+          "storefront_url_help": "客户访问您店铺前台所用的 URL。它将成为客户邮件中链接的基础，并自动添加为允许的来源，以便基于浏览器的店铺前台调用 Store API。",
+          "save": "保存并完成设置",
+          "saved": "店铺前台 URL 已保存：{{url}}",
+          "invalid_url": "这看起来不是有效的店铺前台 URL。",
+          "see_online_demo": "查看在线演示",
+          "local_installation_instructions": "本地安装说明",
+          "key_error": "无法加载您的可发布 API 密钥。",
+          "storefront_url_placeholder": "https://myshop.com"
+        }
       }
     },
     "invitation": {
@@ -2536,6 +2614,70 @@
         "no_matches": "没有商品匹配筛选条件。"
       },
       "load_failed": "加载分类失败。请重试。"
+    },
+    "imports": {
+      "download_original": "下载原始文件",
+      "load_failed": "无法加载导入。",
+      "try_again": "重试",
+      "wizard_title": "导入",
+      "steps": {
+        "map_fields": "匹配字段",
+        "process_rows": "处理行",
+        "complete": "完成"
+      },
+      "status": {
+        "pending": "待处理",
+        "mapping": "匹配中",
+        "completed_mapping": "已排队",
+        "processing": "处理中",
+        "completed": "已完成",
+        "failed": "失败"
+      },
+      "types": {
+        "products": "产品",
+        "customers": "客户",
+        "product_translations": "产品翻译"
+      },
+      "mapping": {
+        "title": "匹配列",
+        "description": "将文件中的列与{{type}}字段进行匹配。",
+        "field": "字段",
+        "file_column": "文件列",
+        "sample": "示例",
+        "not_mapped": "未匹配",
+        "required": "必填",
+        "missing_required": "请先匹配必填字段：{{fields}}",
+        "start": "开始导入",
+        "starting": "正在开始…"
+      },
+      "processing": {
+        "title": "正在处理行",
+        "preparing": "正在准备行…",
+        "progress": "已处理 {{processed}} / {{total}} 行",
+        "failed_count": "{{failed}} 条失败",
+        "retrying": "正在重试失败的行 · 剩余 {{remaining}} 条",
+        "note": "您可以离开此页面——导入将在后台继续进行。"
+      },
+      "results": {
+        "completed_title": "导入完成",
+        "summary": "已导入 {{completed}} 行 · {{failed}} 条失败",
+        "retry_failed": "重试失败的行（{{failed}}）",
+        "retrying": "正在重试…",
+        "view_records": "查看{{type}}"
+      },
+      "failed": {
+        "title": "导入失败",
+        "description": "无法处理该文件。"
+      },
+      "failed_rows": {
+        "next_page": "下一页",
+        "prev_page": "上一页",
+        "title": "失败的行",
+        "row_number": "行号",
+        "error": "错误",
+        "view_data": "查看行数据",
+        "hide_data": "隐藏行数据"
+      }
     }
   }
 }

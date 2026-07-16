@@ -7,14 +7,14 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  cn,
   Input,
   Label,
 } from '@spree/dashboard-ui'
-import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { type LoginFormValues, loginFormSchema } from '@/schemas/auth'
+import { AuthShell } from '../components/spree/auth-shell'
+import { type LoginFormValues, loginFormSchema } from '../schemas/auth'
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
@@ -28,6 +28,7 @@ function LoginPage() {
     resolver: zodResolver(loginFormSchema),
     defaultValues: { email: '', password: '' },
   })
+  const { errors } = form.formState
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
@@ -40,35 +41,7 @@ function LoginPage() {
   if (isAuthenticated) return <Navigate to="/" replace />
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
-      <div className="flex w-full max-w-sm flex-col gap-6">
-        <a href="/" className="flex items-center gap-2 self-center font-medium">
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <GalleryVerticalEnd className="size-4" />
-          </div>
-          {t('admin.branding.app_name')}
-        </a>
-        <LoginFormCard form={form} onSubmit={onSubmit} isLoading={isLoading} />
-      </div>
-    </div>
-  )
-}
-
-function LoginFormCard({
-  form,
-  onSubmit,
-  isLoading,
-  className,
-}: {
-  form: ReturnType<typeof useForm<LoginFormValues>>
-  onSubmit: (data: LoginFormValues) => Promise<void>
-  isLoading: boolean
-  className?: string
-}) {
-  const { t } = useTranslation()
-  const { errors } = form.formState
-  return (
-    <div className={cn('flex flex-col gap-6', className)}>
+    <AuthShell>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">{t('admin.auth.login.title')}</CardTitle>
@@ -96,7 +69,15 @@ function LoginFormCard({
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">{t('admin.fields.password.label')}</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">{t('admin.fields.password.label')}</Label>
+                    <Link
+                      to="/forgot-password"
+                      className="text-sm underline-offset-4 hover:underline"
+                    >
+                      {t('admin.auth.forgot_password.link')}
+                    </Link>
+                  </div>
                   <Input
                     id="password"
                     type="password"
@@ -115,38 +96,6 @@ function LoginFormCard({
           </form>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground">
-        <a
-          href="https://spreecommerce.org"
-          className="underline underline-offset-4 hover:text-primary"
-          target="_blank"
-          rel="noreferrer"
-        >
-          {t('admin.branding.powered_by')}
-        </a>
-      </div>
-    </div>
-  )
-}
-
-function GalleryVerticalEnd(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M7 2h10" />
-      <path d="M5 6h14" />
-      <rect width="18" height="12" x="3" y="10" rx="2" />
-    </svg>
+    </AuthShell>
   )
 }

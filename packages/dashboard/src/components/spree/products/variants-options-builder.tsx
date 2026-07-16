@@ -15,7 +15,11 @@ import { CheckIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useCreateOptionType, useOptionTypes, useUpdateOptionType } from '@/hooks/use-option-types'
+import {
+  useCreateOptionType,
+  useOptionTypes,
+  useUpdateOptionType,
+} from '../../../hooks/use-option-types'
 import type { SelectedOptionType } from './variants-matrix'
 
 interface Props {

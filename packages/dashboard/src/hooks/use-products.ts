@@ -1,5 +1,11 @@
 import type { FilterRule } from '@spree/dashboard-core'
-import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
+import {
+  adminClient,
+  STORE_QUERY_RESOURCE,
+  useResourceKey,
+  useResourceMutation,
+} from '@spree/dashboard-core'
+import type { QueryKey } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
 
@@ -51,9 +57,11 @@ type BulkDestroyParams = Parameters<typeof adminClient.products.bulkDestroy>[0]
 
 function useBulkProductMutation<TData, TVariables>(
   mutationFn: (params: TVariables) => Promise<TData>,
+  invalidate?: QueryKey[],
 ) {
   return useResourceMutation<TData, Error, TVariables>({
     mutationFn,
+    invalidate,
     successMessage: false,
     errorMessage: false,
   })
@@ -96,7 +104,10 @@ export function useBulkRemoveProductTags() {
 }
 
 export function useBulkDestroyProducts() {
-  return useBulkProductMutation((p: BulkDestroyParams) => adminClient.products.bulkDestroy(p))
+  return useBulkProductMutation(
+    (p: BulkDestroyParams) => adminClient.products.bulkDestroy(p),
+    [[STORE_QUERY_RESOURCE]],
+  )
 }
 
 // Single-row clone — drives the row-action menu's "Duplicate" item. The
@@ -105,7 +116,7 @@ export function useBulkDestroyProducts() {
 export function useCloneProduct() {
   return useResourceMutation({
     mutationFn: (id: string) => adminClient.products.clone(id),
-    invalidate: [['products']],
+    invalidate: [['products'], [STORE_QUERY_RESOURCE]],
     successMessage: i18n.t('admin.pages.products.clone_succeeded'),
     errorMessage: i18n.t('admin.pages.products.clone_failed'),
   })

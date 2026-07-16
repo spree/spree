@@ -57,7 +57,7 @@ module Spree
 
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_title].freeze
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     self::Translation.class_eval do
       normalizes :name, :meta_title, with: ->(value) { value&.to_s&.squish&.presence }

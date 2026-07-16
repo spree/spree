@@ -13,15 +13,15 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, SearchIcon } from 'lucide-react'
 import { useDeferredValue, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CategoryList } from '@/components/spree/categories/category-list'
-import { CategoryTree } from '@/components/spree/categories/category-tree'
-import { ResourceTranslationsDialog } from '@/components/spree/translations/resource-translations-dialog'
+import { CategoryList } from '../../../../../components/spree/categories/category-list'
+import { CategoryTree } from '../../../../../components/spree/categories/category-tree'
+import { ResourceTranslationsDialog } from '../../../../../components/spree/translations/resource-translations-dialog'
 import {
   useCategories,
   useCategorySearch,
   useDeleteCategory,
   useRepositionCategory,
-} from '@/hooks/use-categories'
+} from '../../../../../hooks/use-categories'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/categories/')({
   component: CategoriesPage,

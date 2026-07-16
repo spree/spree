@@ -266,6 +266,24 @@ describe Spree::Store, type: :model, without_global_store: true do
         expect(store.code).to eq('default')
       end
     end
+
+    describe '#customer_support_email' do
+      it 'is valid when blank' do
+        store = build(:store, customer_support_email: '')
+        expect(store).to be_valid
+      end
+
+      it 'is valid with a properly formatted email' do
+        store = build(:store, customer_support_email: 'support@example.com')
+        expect(store).to be_valid
+      end
+
+      it 'is invalid with a malformed email' do
+        store = build(:store, customer_support_email: 'not-an-email')
+        expect(store).not_to be_valid
+        expect(store.errors[:customer_support_email]).to be_present
+      end
+    end
   end
 
   context 'Translations' do
@@ -900,6 +918,17 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#storefront_url' do
     let(:store) { create(:store, url: 'backend.example.com') }
 
+    context 'when the storefront_url preference is set' do
+      before do
+        store.update!(preferred_storefront_url: 'https://preferred.example.com')
+        create(:allowed_origin, store: store, origin: 'https://shop.example.com', created_at: 1.day.ago)
+      end
+
+      it 'returns the preference over allowed origins' do
+        expect(store.storefront_url).to eq('https://preferred.example.com')
+      end
+    end
+
     context 'when allowed origins exist' do
       before do
         create(:allowed_origin, store: store, origin: 'https://shop.example.com', created_at: 1.day.ago)
@@ -914,12 +943,87 @@ describe Spree::Store, type: :model, without_global_store: true do
 
         expect(store.storefront_url).to eq('https://shop.example.com')
       end
+
+      it 'skips loopback origins even when they are oldest' do
+        create(:allowed_origin, store: store, origin: 'http://localhost:3001', created_at: 1.week.ago)
+
+        expect(store.storefront_url).to eq('https://shop.example.com')
+      end
+    end
+
+    context 'when only loopback origins exist' do
+      before do
+        create(:allowed_origin, store: store, origin: 'http://localhost:3001')
+      end
+
+      it 'falls back to formatted_url' do
+        expect(store.storefront_url).to eq(store.formatted_url)
+      end
     end
 
     context 'when no allowed origins exist' do
       it 'falls back to formatted_url' do
         expect(store.storefront_url).to eq(store.formatted_url)
       end
+    end
+  end
+
+  describe 'preferred_storefront_url normalization' do
+    let(:store) { create(:store) }
+
+    it 'normalizes free-form input to a canonical origin' do
+      store.update!(preferred_storefront_url: 'MyShop.example.com/checkout?x=1')
+
+      expect(store.preferred_storefront_url).to eq('https://myshop.example.com')
+    end
+
+    it 'rejects unparseable input' do
+      store.preferred_storefront_url = 'not a url'
+
+      expect(store).not_to be_valid
+      expect(store.errors[:preferred_storefront_url]).to be_present
+    end
+  end
+
+  describe 'storefront setup task' do
+    let(:store) { create(:store) }
+
+    it 'is included in the setup tasks list' do
+      expect(store.setup_tasks_list).to include(:setup_storefront)
+    end
+
+    describe '#storefront_setup?' do
+      subject { store.storefront_setup? }
+
+      context 'with a saved storefront URL' do
+        before do
+          store.update!(preferred_storefront_url: 'https://shop.example.com')
+        end
+
+        it { is_expected.to be true }
+
+        it 'marks the setup task as done' do
+          expect(store.setup_task_done?(:setup_storefront)).to be true
+        end
+      end
+
+      context 'without a saved storefront URL' do
+        before do
+          create(:allowed_origin, store: store, origin: 'https://shop.example.com')
+        end
+
+        it 'stays pending even when an allowed origin exists' do
+          expect(subject).to be false
+        end
+      end
+    end
+
+    it 'drops the memoized checklist on reload' do
+      expect(store.setup_tasks.find { |t| t.name == 'setup_storefront' }.done).to be false
+
+      store.update!(preferred_storefront_url: 'https://shop.example.com')
+
+      expect(store.reload.setup_tasks.find { |t| t.name == 'setup_storefront' }.done).to be true
     end
   end
 end

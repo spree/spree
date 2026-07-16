@@ -76,4 +76,15 @@ describe Spree::Admin::UserSessionsController, type: :controller do
       expect(ui_locale).to eq('fr')
     end
   end
+
+  context 'with no param and no cookie' do
+    it 'renders the application default locale even when the thread carries a stale one' do
+      # Server threads are reused across requests; without an explicit
+      # assignment the login screen would render in whatever locale the
+      # previous request on this thread happened to set.
+      I18n.locale = :fr
+      get :show
+      expect(ui_locale).to eq(I18n.default_locale.to_s)
+    end
+  end
 end

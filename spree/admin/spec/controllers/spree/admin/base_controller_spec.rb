@@ -40,21 +40,14 @@ describe Spree::Admin::BaseController, type: :controller do
         expect(I18n.locale).to eq(:de)
       end
 
-      it 'keeps I18n.default_locale on the content locale, not the admin UI locale' do
-        # `I18n.default_locale` must track the store content locale so it matches
-        # `Mobility.locale`; binding it to the admin UI language desyncs Mobility
-        # and breaks ordered + DISTINCT listings.
-        get :index
-        expect(I18n.default_locale.to_s).to eq(store.default_locale)
-      end
-    end
-
-    context 'when preferred_admin_locale is not set' do
-      before { allow(store).to receive(:preferred_admin_locale).and_return(nil) }
-
-      it 'falls back to store default_locale' do
-        get :index
-        expect(I18n.default_locale.to_s).to eq(store.default_locale)
+      it 'keeps the content locale on the store locale, not the admin UI locale' do
+        # `Spree::Current.content_locale` must track the store content locale so
+        # it matches `Mobility.locale`; binding it to the admin UI language
+        # desyncs Mobility and breaks ordered + DISTINCT listings.
+        # (Direct call: the test-request executor resets Spree::Current before
+        # a post-`get` assertion could see it.)
+        controller.send(:set_locale)
+        expect(Spree::Current.content_locale).to eq(store.default_locale)
       end
     end
 
@@ -69,9 +62,9 @@ describe Spree::Admin::BaseController, type: :controller do
         expect(I18n.locale).to eq(:en)
       end
 
-      it 'keeps I18n.default_locale on the market/content locale' do
-        get :index
-        expect(I18n.default_locale).to eq(:fr)
+      it 'keeps the content locale on the store locale' do
+        controller.send(:set_locale)
+        expect(Spree::Current.content_locale).to eq('fr')
       end
     end
   end
@@ -170,13 +163,17 @@ describe Spree::Admin::BaseController, type: :controller do
       expect(Mobility.locale).to eq(:fr)
     end
 
-    it 'keeps I18n.default_locale aligned with Mobility (the content locale)' do
+    it 'keeps the request content locale aligned with Mobility' do
       # Mobility's column_fallback reads the base column only when the locale
-      # equals I18n.default_locale; if they diverge, translated listings JOIN the
-      # translations table and ordered + DISTINCT queries raise.
-      get :index
-      expect(I18n.default_locale).to eq(:fr)
-      expect(I18n.default_locale).to eq(Mobility.locale)
+      # equals the request's content locale; if they diverge, translated
+      # listings JOIN the translations table and ordered + DISTINCT queries raise.
+      controller.send(:set_locale)
+      expect(Spree::Current.content_locale).to eq('fr')
+      expect(Mobility.locale).to eq(:fr)
+    end
+
+    it 'leaves the process-global I18n.default_locale untouched' do
+      expect { get :index }.not_to change(I18n, :default_locale)
     end
   end
 

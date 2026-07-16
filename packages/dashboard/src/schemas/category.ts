@@ -1,7 +1,7 @@
 import type { Category } from '@spree/admin-sdk'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
-import { customFieldFormSchema } from '@/schemas/product'
+import { customFieldFormSchema } from './product'
 
 // Each image field is a small state machine: untouched (omit on save),
 // uploaded (send signed_id), or cleared (send null to purge). `*_signed_id`

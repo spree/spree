@@ -2,7 +2,6 @@ class CreateSpreeAdminUsers < ActiveRecord::Migration<%= migration_version %>
   def change
     create_table :spree_admin_users do |t|
       t.string :encrypted_password, limit: 128
-      t.string :password_salt, limit: 128
       t.string :email
       t.string :remember_token
       t.string :persistence_token

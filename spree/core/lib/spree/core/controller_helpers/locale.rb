@@ -19,7 +19,10 @@ module Spree
         end
 
         def set_locale
-          I18n.default_locale = default_locale unless Spree.always_use_translations?
+          # Request-local content locale — the fallback for storeless hosts
+          # lives in the Spree::Current#content_locale reader; never write the
+          # process-global I18n.default_locale, which all threads share.
+          Spree::Current.content_locale = current_store&.default_locale
           I18n.locale = current_locale
         end
 

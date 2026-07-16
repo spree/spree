@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PriceListForm } from '@/components/spree/price-list-editors/price-list-form'
-import { useCreatePriceList } from '@/hooks/use-price-lists'
+import { PriceListForm } from '../../../../../components/spree/price-list-editors/price-list-form'
+import { useCreatePriceList } from '../../../../../hooks/use-price-lists'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/price-lists/new')({
   component: NewPriceListPage,

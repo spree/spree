@@ -10,8 +10,8 @@ import {
 import { CheckIcon, ImagePlusIcon, Loader2Icon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useProductMedia, useUpdateProductMedia } from '@/hooks/use-product-media'
-import { useVariantMedia } from '@/hooks/use-variant-media'
+import { useProductMedia, useUpdateProductMedia } from '../../../hooks/use-product-media'
+import { useVariantMedia } from '../../../hooks/use-variant-media'
 
 type Props = {
   productId: string

@@ -17,9 +17,15 @@ module Spree
   class WebhookEventSubscriber < Spree::Subscriber
     subscribes_to '*'
 
+    # Admin auth events carry live credentials (password reset tokens) and have
+    # no legitimate external consumer — core delivers those emails itself.
+    # Never forward them to webhook endpoints, including '*' subscriptions.
+    NON_DELIVERABLE_EVENTS = %w[admin_user.password_reset_requested].freeze
+
     def handle(event)
       return unless Spree::Api::Config.webhooks_enabled
       return if event.store_id.blank?
+      return if NON_DELIVERABLE_EVENTS.include?(event.name)
 
       # Only load the columns we need for matching and delivery
       endpoints = Spree::WebhookEndpoint

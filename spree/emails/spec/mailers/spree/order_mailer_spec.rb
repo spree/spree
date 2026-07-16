@@ -41,11 +41,11 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   context ':reply_to not set explicitly' do
-    it 'uses store mail from address' do
+    it 'uses store customer support email' do
       message = described_class.confirm_email(order)
-      expect(message.reply_to).to eq([store.mail_from_address])
+      expect(message.reply_to).to eq([store.customer_support_email])
       message = described_class.cancel_email(order)
-      expect(message.reply_to).to eq([store.mail_from_address])
+      expect(message.reply_to).to eq([store.customer_support_email])
     end
   end
 
@@ -271,6 +271,28 @@ describe Spree::OrderMailer, type: :mailer do
     it 'sends cancel_email in order locale' do
       cancel_email = described_class.cancel_email(order)
       expect(cancel_email).to have_body_text('Resumo da Pedido [CANCELADA]')
+    end
+
+    it 'translates the subject in the order locale' do
+      I18n.backend.store_translations :'pt-BR', {
+        spree: { order_mailer: { confirm_email: { subject: 'Confirmação do Pedido' } } }
+      }
+      confirmation_email = described_class.confirm_email(order)
+      expect(confirmation_email.subject).to include('Confirmação do Pedido')
+    end
+  end
+
+  context 'locale is not leaked after sending' do
+    before do
+      I18n.enforce_available_locales = false
+      order.update_column(:locale, 'pt-BR')
+    end
+
+    after { I18n.enforce_available_locales = true }
+
+    it 'restores the previous I18n.locale' do
+      I18n.locale = :en
+      expect { described_class.confirm_email(order).message }.not_to change(I18n, :locale).from(:en)
     end
   end
 

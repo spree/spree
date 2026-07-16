@@ -16,6 +16,12 @@ module Spree
       def self.model_class
         Spree::Product
       end
+
+      # Translation imports write products, so they share the products scope
+      # (mirrors Spree::Exports::ProductTranslations.required_scope).
+      def self.required_scope
+        :products
+      end
     end
   end
 end

@@ -19,6 +19,15 @@ require 'spree/admin/engine'
 require 'spree/core/partials'
 
 require 'oembed'
+# tinymce-rails only registers its Propshaft integration when Propshaft is
+# already loaded at require time. Host apps commonly list `gem 'propshaft'`
+# after the Spree gems, so load it first — otherwise TinyMCE's lazily-loaded
+# plugins/themes/icons (requested without a digest) 404 in development.
+begin
+  require 'propshaft'
+rescue LoadError
+  # Propshaft is not in the host app's bundle (e.g. Sprockets is used instead)
+end
 require 'tinymce-rails'
 require 'pagy'
 

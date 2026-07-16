@@ -3,7 +3,7 @@ import { defineTable } from '@spree/dashboard-core'
 import { ResourceNameCell } from '@spree/dashboard-ui'
 import i18n from 'i18next'
 import { TagsIcon } from 'lucide-react'
-import { PriceListStatusBadge } from '@/components/spree/price-list-editors/status-badge'
+import { PriceListStatusBadge } from '../components/spree/price-list-editors/status-badge'
 
 defineTable<PriceList>('price-lists', {
   title: i18n.t('admin.nav.price_lists'),

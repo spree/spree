@@ -1,0 +1,33 @@
+/**
+ * Sidebar widget rendered on the product detail page via the
+ * `product.form_sidebar` slot. Demonstrates the slot extension pattern:
+ * the host page knows nothing about {{name}}; the plugin contributes
+ * this card via the slot registry.
+ *
+ * The slot's context (typed by the dashboard's slot catalogue as
+ * `{ product }`) gives us the product being edited.
+ */
+import { Card, CardContent, CardHeader, CardTitle } from '@spree/dashboard-ui'
+import { useTranslation } from 'react-i18next'
+
+interface {{module_name}}CardProps {
+  product: { id: string }
+}
+
+export function {{module_name}}Card({ product }: {{module_name}}CardProps) {
+  const { t } = useTranslation()
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.{{name}}_plugin.product_card.title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">
+          {t('admin.{{name}}_plugin.product_card.placeholder')}
+        </p>
+        <p className="mt-2 text-xs font-mono text-muted-foreground">{product.id}</p>
+      </CardContent>
+    </Card>
+  )
+}

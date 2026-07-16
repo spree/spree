@@ -165,7 +165,19 @@ module Spree
   end
 
   def self.use_translations?
-    Spree::Config.always_use_translations || I18n.default_locale != I18n.locale
+    Spree::Config.always_use_translations || Spree::Current.content_locale != I18n.locale.name
+  end
+
+  # Mobility +column_fallback+ option shared by every translatable model:
+  # read, write and query the base (untranslated) column when the target
+  # locale is the request's content locale — see Spree::Current#content_locale.
+  # Evaluated on every translated attribute read, so it must stay
+  # allocation-free and must not touch the database (Symbol#name returns the
+  # frozen interned string; Mobility always passes Symbol locales).
+  def self.mobility_column_fallback
+    return false if always_use_translations?
+
+    ->(locale) { locale.name == Spree::Current.content_locale }
   end
 
   # Used to configure Spree.
@@ -319,6 +331,14 @@ module Spree
 
   def self.reports=(value)
     Rails.application.config.spree.reports = value
+  end
+
+  # Registry of the Getting Started onboarding tasks shown on the admin
+  # dashboard. See {Spree::SetupTasks} for the extension API.
+  #
+  # @return [Spree::SetupTasks]
+  def self.store_setup_tasks
+    @store_setup_tasks ||= Spree::SetupTasks.new
   end
 
   def self.translatable_resources

@@ -46,6 +46,14 @@ module Spree
       # Add app/subscribers to autoload paths
       config.paths.add 'app/subscribers', eager_load: true
 
+      # Register bundled ActionMailer previews so they show up at /rails/mailers
+      # without the host app having to copy any files.
+      initializer 'spree.mailer_previews' do |app|
+        if app.config.action_mailer.show_previews
+          app.config.action_mailer.preview_paths << File.expand_path('previews', __dir__)
+        end
+      end
+
       initializer 'spree.environment', before: :load_config_initializers do |app|
         app.config.spree = Environment.new(SpreeCalculators.new, SpreeValidators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
 
@@ -55,6 +63,18 @@ module Spree
         Spree::RuntimeConfig = app.config.spree.preferences # for compatibility
         Spree::Dependencies = app.config.spree.dependencies
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
+      end
+
+      # I18n's config lives in fiber/thread-local storage that survives across
+      # requests on reused server threads, so a request that never assigns its
+      # own locale would render in whatever locale the previous request on the
+      # same thread set. The i18n gem ships a middleware that resets it after
+      # every request; Rails does not install it by default. Mobility's request
+      # state needs no counterpart here — Mobility.locale and Spree's
+      # Mobility.store_based_fallbacks live in RequestStore, which is cleared
+      # per request by request_store's own middleware.
+      initializer 'spree.locale_state_reset' do |app|
+        app.middleware.use ::I18n::Middleware
       end
 
       initializer 'spree.register.subscribers', before: :load_config_initializers do |app|
@@ -348,6 +368,7 @@ module Spree
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
+          Spree::AdminUserEmailSubscriber,
           Spree::ProductMetricsSubscriber
         ]
 
