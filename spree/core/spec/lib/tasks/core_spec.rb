@@ -37,6 +37,8 @@ end
 describe 'core:migrate_newsletter_subscribers' do
   include_context 'rake'
 
+  before { allow_any_instance_of(Spree.user_class).to receive(:sync_newsletter_subscription_with_marketing_consent) }
+
   let!(:user) { create(:user, accepts_email_marketing: true) }
   let(:conflicted_user) { create(:user, accepts_email_marketing: true) }
 

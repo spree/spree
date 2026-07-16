@@ -39,6 +39,7 @@ module Spree
           id: subscriber.prefixed_id,
           email: subscriber.email,
           verification_token: subscriber.verification_token,
+          unsubscribe_token: subscriber.generate_token_for(:unsubscribe),
           store_id: current_store.prefixed_id,
           customer_id: subscriber.user&.prefixed_id
         }

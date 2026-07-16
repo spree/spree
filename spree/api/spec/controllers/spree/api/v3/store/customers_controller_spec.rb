@@ -160,6 +160,30 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       expect(json_response).to include('id', 'email', 'first_name', 'last_name', 'phone', 'accepts_email_marketing')
     end
 
+    context 'newsletter subscriber' do
+      it 'exposes the current store subscriber' do
+        subscriber = create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store)
+
+        get :show
+
+        expect(json_response['newsletter_subscriber']['id']).to eq(subscriber.prefixed_id)
+      end
+
+      it 'is null when the customer has no subscriber' do
+        get :show
+
+        expect(json_response['newsletter_subscriber']).to be_nil
+      end
+
+      it 'is null when the only subscriber is on a different store' do
+        create(:newsletter_subscriber, :verified, user: user, email: user.email, store: create(:store))
+
+        get :show
+
+        expect(json_response['newsletter_subscriber']).to be_nil
+      end
+    end
+
     context 'without authentication' do
       before { request.headers['Authorization'] = nil }
 
