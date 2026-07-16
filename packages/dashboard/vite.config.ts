@@ -39,17 +39,15 @@ export default defineConfig({
   // Same-origin keeps the refresh-token cookie working under SameSite=Lax without
   // needing HTTPS (production cross-origin uses SameSite=None; Secure).
   //
-  // `VITE_API_PROXY_TARGET` is the proxy *target* — kept distinct from
-  // `VITE_SPREE_API_URL` (which the SDK reads at build time to switch to
-  // absolute URLs) so the E2E suite can keep dev's same-origin path even when
-  // pointing at a different Rails port.
+  // `VITE_API_PROXY_TARGET` is the proxy *target* — deliberately distinct
+  // from `VITE_SPREE_API_URL` (the SDK's build-time switch to absolute URLs,
+  // for deploys on a different origin): setting that in dev would bypass
+  // this proxy and break on CORS and the SameSite=Lax cookie. The E2E suite
+  // uses the proxy target to point at the test Rails port.
   server: {
     proxy: {
       '/api': {
-        target:
-          process.env.VITE_API_PROXY_TARGET ||
-          process.env.VITE_SPREE_API_URL ||
-          'http://localhost:3000',
+        target: process.env.VITE_API_PROXY_TARGET || 'http://localhost:3000',
         changeOrigin: true,
       },
       // Active Storage's Disk service issues presigned URLs against `/rails/active_storage/...`
@@ -57,10 +55,7 @@ export default defineConfig({
       // cross-origin and the browser blocks it ("Failed to fetch") because
       // ActiveStorage::DiskController doesn't speak CORS. Proxying keeps it same-origin.
       '/rails': {
-        target:
-          process.env.VITE_API_PROXY_TARGET ||
-          process.env.VITE_SPREE_API_URL ||
-          'http://localhost:3000',
+        target: process.env.VITE_API_PROXY_TARGET || 'http://localhost:3000',
         changeOrigin: true,
       },
     },

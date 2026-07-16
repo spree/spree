@@ -77,7 +77,7 @@ export function configPath(): string {
 }
 
 /** True when a thrown fs error is "no such file" (vs a permission/IO fault). */
-function isNotFound(error: unknown): boolean {
+export function isNotFound(error: unknown): boolean {
   return (error as NodeJS.ErrnoException)?.code === 'ENOENT'
 }
 

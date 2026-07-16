@@ -12,10 +12,13 @@ origin), so requests bypassed the Vite dev proxy and the browser blocked
 them (`localhost:5173` → `localhost:3000` is cross-origin; the auth cookie
 is `SameSite=Lax` on top). The scaffold now writes `VITE_API_PROXY_TARGET`
 (the proxy target — the SPA stays same-origin, the SDK stays on relative
-URLs), the dashboard template's Vite config reads it, and first-run setup
-writes or repairs `.env.local` automatically — covering fresh clones (the
-file is gitignored) and projects scaffolded by older CLI versions.
-Hand-customized files are left untouched.
+URLs), the dashboard template's Vite config reads it (via `loadEnv` — Vite
+doesn't load `.env` files into `process.env` for configs), and the CLI
+writes or repairs `.env.local` automatically: on scaffold, on every
+`spree dev` boot, and on a `spree add dashboard` re-run — covering fresh
+clones (the file is gitignored) and projects scaffolded by older CLI
+versions. Repair rewrites only the broken line; everything else in the
+file is preserved.
 
 ## 2.4.2
 
@@ -38,7 +41,6 @@ scaffold whose install step failed) — mirroring create-spree-app's per-app
 install steps — so every app is runnable with `pnpm dev` right after.
 Already-initialized projects are untouched: later boots never pull, dev
 stays offline-friendly, and upgrades stay explicit via `spree update`.
-
 
 ## 2.4.1
 

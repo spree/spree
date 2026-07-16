@@ -55,8 +55,6 @@ describe('addDashboard', () => {
 
     const env = fs.readFileSync(path.join(dashboardDir, '.env.local'), 'utf-8')
     expect(env).toContain('VITE_API_PROXY_TARGET=http://localhost:3999')
-    // Never the SDK's absolute-URL switch — that bypasses the dev proxy and
-    // breaks on CORS and the SameSite=Lax auth cookie.
     expect(env).not.toMatch(/^VITE_SPREE_API_URL=/m)
     expect(env).not.toMatch(/sk_/)
 
@@ -174,30 +172,35 @@ describe('ensureDashboardDevEnv', () => {
   const envPath = () => path.join(projectDir, 'apps', 'dashboard', '.env.local')
 
   it('writes .env.local when missing (fresh clone)', () => {
-    ensureDashboardDevEnv(projectDir, 3999)
+    expect(ensureDashboardDevEnv(projectDir, 3999)).toBe('written')
     expect(fs.readFileSync(envPath(), 'utf-8')).toContain(
       'VITE_API_PROXY_TARGET=http://localhost:3999',
     )
   })
 
-  it('repairs the old scaffold output that broke dev on CORS', () => {
-    fs.writeFileSync(envPath(), 'VITE_SPREE_API_URL=http://localhost:3000\n')
-    ensureDashboardDevEnv(projectDir, 3999)
+  it('repairs only the broken line, preserving user additions', () => {
+    fs.writeFileSync(
+      envPath(),
+      '# my notes\nVITE_SPREE_API_URL=http://localhost:3000\nVITE_MY_FLAG=1\n',
+    )
+    expect(ensureDashboardDevEnv(projectDir, 3999)).toBe('repaired')
     const env = fs.readFileSync(envPath(), 'utf-8')
+    expect(env).toContain('# my notes')
     expect(env).toContain('VITE_API_PROXY_TARGET=http://localhost:3999')
+    expect(env).toContain('VITE_MY_FLAG=1')
     expect(env).not.toMatch(/^VITE_SPREE_API_URL=/m)
   })
 
-  it('leaves user-managed content untouched', () => {
+  it('leaves a non-localhost VITE_SPREE_API_URL (real deploy config) untouched', () => {
     const custom = 'VITE_SPREE_API_URL=https://api.mystore.com\nVITE_MY_FLAG=1\n'
     fs.writeFileSync(envPath(), custom)
-    ensureDashboardDevEnv(projectDir, 3999)
+    expect(ensureDashboardDevEnv(projectDir, 3999)).toBe('untouched')
     expect(fs.readFileSync(envPath(), 'utf-8')).toBe(custom)
   })
 
   it('does nothing without an apps/dashboard app', () => {
     fs.rmSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true })
-    ensureDashboardDevEnv(projectDir, 3999)
+    expect(ensureDashboardDevEnv(projectDir, 3999)).toBe('untouched')
     expect(fs.existsSync(envPath())).toBe(false)
   })
 })

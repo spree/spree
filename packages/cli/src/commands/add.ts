@@ -5,6 +5,7 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
+import { isNotFound } from '../config.js'
 import { DASHBOARD_PORT } from '../constants.js'
 import { detectProject } from '../context.js'
 import type { ProjectContext } from '../types.js'
@@ -61,14 +62,17 @@ export async function addDashboard(ctx: ProjectContext, opts: AddDashboardOption
   const envPath = path.join(dashboardDir, '.env.local')
 
   if (fs.existsSync(dashboardDir)) {
-    if (fs.existsSync(envPath)) {
+    // Recovery: write a missing .env.local (interrupted earlier run) or
+    // repair a broken one (old scaffold output) — one gatekeeper for both.
+    const env = ensureDashboardDevEnv(ctx.projectDir, ctx.port)
+    if (env === 'untouched') {
       p.log.warn(`${pc.bold('apps/dashboard/')} already exists. Nothing to do.`)
       return
     }
-    // Recovery: directory present but env missing (interrupted earlier run).
-    writeDashboardEnv(envPath, ctx.port)
     ensureRenderBlueprintService(ctx.projectDir, detectPackageManager(ctx.projectDir, dashboardDir))
-    p.log.info(`Wrote missing ${pc.bold('apps/dashboard/.env.local')}. Nothing else to do.`)
+    p.log.info(
+      `${env === 'written' ? 'Wrote missing' : 'Repaired'} ${pc.bold('apps/dashboard/.env.local')}. Nothing else to do.`,
+    )
     return
   }
 
@@ -239,32 +243,43 @@ async function fetchTemplate(template: string, dst: string): Promise<void> {
   fs.rmSync(path.join(dst, '.git'), { recursive: true, force: true })
 }
 
+// Old scaffolds wrote the SDK's absolute-URL switch pointed at localhost —
+// requests then bypassed the dev proxy and died on CORS + the SameSite=Lax
+// cookie. A localhost value can only be that scaffold output, never a real
+// cross-origin production URL, so it's safe to migrate in place.
+const BROKEN_SCAFFOLD_ENV = /^VITE_SPREE_API_URL=(https?:\/\/localhost\S*)$/m
+
 /**
- * Writes or repairs `apps/dashboard/.env.local` so dashboard dev works out of
- * the box — called from `spree add dashboard` and from first-run setup
- * (`spree init` / the first `spree dev`), which covers fresh clones (the file
- * is gitignored) and projects scaffolded by older CLIs that wrote
- * `VITE_SPREE_API_URL=http://localhost:…`. That value switches the SDK to
- * absolute cross-origin URLs, bypassing the dev proxy — logins die on CORS
- * and the SameSite=Lax cookie. Anything else in the file is user-managed and
- * left untouched.
+ * Writes or repairs `apps/dashboard/.env.local` so dashboard dev works out
+ * of the box. Idempotent and cheap — called from `spree add dashboard`,
+ * first-run setup, and every `spree dev` boot, covering fresh clones (the
+ * file is gitignored) and old scaffolds (see {@link BROKEN_SCAFFOLD_ENV};
+ * only that line is rewritten — everything else in the file is user-managed
+ * and preserved).
  */
-export function ensureDashboardDevEnv(projectDir: string, port: number): void {
+export function ensureDashboardDevEnv(
+  projectDir: string,
+  port: number,
+): 'written' | 'repaired' | 'untouched' {
   const dashboardDir = path.join(projectDir, 'apps', 'dashboard')
-  if (!fs.existsSync(path.join(dashboardDir, 'package.json'))) return
+  if (!fs.existsSync(path.join(dashboardDir, 'package.json'))) return 'untouched'
 
   const envPath = path.join(dashboardDir, '.env.local')
-  let existing: string | null = null
+  let existing: string
   try {
     existing = fs.readFileSync(envPath, 'utf-8')
-  } catch {
-    // missing — write fresh below
-  }
-  const brokenScaffoldOutput =
-    existing !== null && /^VITE_SPREE_API_URL=https?:\/\/localhost\b/m.test(existing)
-  if (existing === null || brokenScaffoldOutput) {
+  } catch (error) {
+    if (!isNotFound(error)) throw error // unreadable ≠ missing — never clobber
     writeDashboardEnv(envPath, port)
+    return 'written'
   }
+
+  if (!BROKEN_SCAFFOLD_ENV.test(existing)) return 'untouched'
+  fs.writeFileSync(
+    envPath,
+    existing.replace(BROKEN_SCAFFOLD_ENV, `VITE_API_PROXY_TARGET=http://localhost:${port}`),
+  )
+  return 'repaired'
 }
 
 function writeDashboardEnv(envPath: string, port: number): void {
@@ -272,13 +287,13 @@ function writeDashboardEnv(envPath: string, port: number): void {
     envPath,
     [
       '# Dev-server proxy target — where Vite forwards /api and /rails (your',
-      '# Rails backend, `spree dev`). The SPA stays same-origin with the API:',
-      '# the SDK uses relative URLs and the proxy bridges the port gap.',
+      '# Rails backend). The SPA stays same-origin with the API: the SDK uses',
+      '# relative URLs and the proxy bridges the port gap.',
       '#',
       '# Do NOT set VITE_SPREE_API_URL for local dev — it switches the SDK to',
       '# absolute cross-origin URLs, which breaks on CORS and the SameSite=Lax',
-      '# auth cookie. It exists only for production deploys where the dashboard',
-      '# is hosted on a different origin than the API.',
+      '# auth cookie. Set it only when building for a deploy where the',
+      '# dashboard is hosted on a different origin than the API.',
       '#',
       '# No credentials belong in this file — every VITE_-prefixed value is',
       '# compiled into the client bundle.',
