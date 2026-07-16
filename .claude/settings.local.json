@@ -23,7 +23,8 @@
       "mcp__scout-apm__get_app_trace",
       "mcp__scout-apm__get_app_insights",
       "mcp__scout-apm__get_app_error_groups",
-      "mcp__scout-apm__get_app_anomaly_events"
+      "mcp__scout-apm__get_app_anomaly_events",
+      "mcp__claude_ai_Spree_Commerce_Docs_MCP__query_docs_filesystem_spree_commerce_documentation"
     ],
     "deny": [
       "Bash(sudo *)",

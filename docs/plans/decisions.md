@@ -1,3 +1,71 @@
+## 2026-07-15: Basic Stripe Connect payouts move to OSS; Enterprise repositions on money operations
+
+spree/spree#13323 originally kept "Stripe Connect onboarding, KYC, automatic
+payouts" in Enterprise. Amended by the issue author: the **basic** Stripe Connect
+path ships **open-source in the monorepo**, registering
+`Spree::PayoutProvider::StripeConnect` — Express-account onboarding (hosted link +
+`account.updated` status webhook) and on-fulfillment `Stripe::Transfer` execution
+(`source_transaction`-tied), plus mapping the vendor payout schedule onto Stripe's
+native schedule. It lands alongside the Stripe core gateway being pulled into the
+monorepo from the standalone `spree_stripe` repo — only the payment-sessions-API
+gateway classes come over (likely into `spree/core`); the legacy v2-API/storefront
+code in that repo stays behind.
+
+Rationale: the closest OSS competitor ships baseline Stripe transfers free —
+"money moves automatically" is the demo that sells — and transfers are inseparable
+from basic onboarding (a `Stripe::Transfer` requires a connected account), so a
+transfers-only OSS cut was never buildable.
+
+Enterprise keeps the money **operations**: automatic refund clawbacks (prorated
+transfer reversals + negative-balance netting), KYC/account-health workflows beyond
+hosted onboarding, ledger⇄Stripe reconciliation, payout reports incl. DAC7,
+marketplace-facilitator taxes, and the Shopify/WooCommerce vendor apps. Ledger
+correctness (reversal rows) stays OSS in every mode — only pullback execution is
+paid. "Core runs the happy path; Enterprise operates the unhappy paths and
+compliance at scale." #13323 to be updated accordingly.
+Plan: `6.0-multi-vendor-marketplace.md`.
+
+## 2026-07-14: `Spree::Vendor` = marketplace seller; procurement source renamed `Spree::Supplier`
+
+Two 6.0 plans introduced a `Spree::Vendor`: the marketplace seller
+(`6.0-multi-vendor-marketplace.md`, prefix `ven_`) and the purchase-order
+procurement source (`6.0-inventory-operations.md`, prefix `vnd_`). Same class
+name, same `spree_vendors` table, different domains — a hard collision.
+
+Resolution: **the marketplace owns the `Vendor` name.** It is locked publicly
+(spree/spree#13323, the user docs' "Vendors" area, the legacy Enterprise gem's
+`ven_` prefix and its production data). The inventory-operations model is renamed
+**`Spree::Supplier`** (`spree_suppliers`, prefix `sup_`, `/api/v3/admin/suppliers`) —
+matching Shopify's purchase-order vocabulary and standard ERP terminology. They
+are different lifecycles: a supplier is an address-book entry the merchant buys
+stock from; a vendor is an onboarded selling party with users, commission, and
+payouts.
+
+Hybrid marketplaces (operator buys wholesale from a marketplace seller and
+resells first-party) can later bridge the two with an optional
+`Spree::Supplier#vendor_id` link — not scoped for 6.0.
+
+## 2026-06-16: Split 6.0 into Marketplace, defer B2B to 6.1
+
+6.0 is themed as the **Marketplace release**, headlined by open-sourcing the
+multi-vendor marketplace (per spree/spree#13323) alongside React dashboard GA and
+the architecture/rename wave. B2B (Catalog + Company/CompanyLocation/CompanyContact
+from `6.0-channels-catalogs-b2b.md` Phase 2) moves to **6.1**, marketed as the B2B
+release. Rationale: a crowded 6.0 dilutes the launch; one sharp headline per release
+earns more buzz, and the B2B Phase 2 work is plan-only (not started), so deferring
+it frees capacity for the multi-vendor open-sourcing rather than parking finished code.
+
+Multi-vendor OSS/Enterprise boundary per #13323 as of this date (**superseded in
+part by 2026-07-15 above** — basic Stripe Connect execution later moved to OSS):
+core ships Vendor identity, order splitting, the commission engine (with EU
+commission taxation), the payout ledger (`Spree::VendorPayout` — records what's
+owed, provider-agnostic), vendor dashboard, CSV import/export, and Vendors API;
+Enterprise keeps Stripe Connect/KYC and the *execution* of payouts (a
+`PayoutProvider::StripeConnect` strategy), payout reports, Shopify/WooCommerce
+sales-channel apps, and the category mapper. New plan:
+`6.0-multi-vendor-marketplace.md`. The legacy Enterprise multi-vendor module is
+rebuilt as native core models on top of the 6.0 Cart/Order split.
+
 ## 2026-03-17: Rename StockItem → StockLevel
 `Spree::StockItem` → `Spree::StockLevel`, `spree_stock_items` → `spree_stock_levels`.
 Prefix ID: `si_` → `sl_`.
