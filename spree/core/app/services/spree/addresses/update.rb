@@ -90,14 +90,9 @@ module Spree
       end
 
       def reassign_incomplete_orders(old_address_id, new_address)
-        orders = Spree::Order.incomplete.where('ship_address_id = :id OR bill_address_id = :id', id: old_address_id)
-
-        orders.find_each do |incomplete_order|
-          incomplete_order.ship_address = new_address if incomplete_order.ship_address_id == old_address_id
-          incomplete_order.bill_address = new_address if incomplete_order.bill_address_id == old_address_id
-          incomplete_order.state = 'address'
-          incomplete_order.save!
-        end
+        orders = Spree::Order.incomplete.where(user_id: new_address.user_id)
+        orders.where(ship_address_id: old_address_id).update_all(ship_address_id: new_address.id, state: 'address', updated_at: Time.current)
+        orders.where(bill_address_id: old_address_id).update_all(bill_address_id: new_address.id, state: 'address', updated_at: Time.current)
       end
 
       def defaults_changed?(address, default_billing, default_shipping)

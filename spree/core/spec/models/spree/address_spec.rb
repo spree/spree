@@ -583,6 +583,16 @@ describe Spree::Address, type: :model do
         expect(Spree::Address.where(id: address.id)).to be_empty
       end
 
+      it "leaves another user's order referencing the same address untouched" do
+        other_order = create(:order, user: create(:user), bill_address: address, ship_address: address, state: 'delivery')
+
+        address.destroy
+
+        expect(other_order.reload.ship_address_id).to eq(address.id)
+        expect(other_order.bill_address_id).to eq(address.id)
+        expect(other_order.state).to eq('delivery')
+      end
+
       context 'when the address is also used by a completed order' do
         let!(:completed_order) do
           create(:completed_order_with_totals, bill_address: address, ship_address: address)
