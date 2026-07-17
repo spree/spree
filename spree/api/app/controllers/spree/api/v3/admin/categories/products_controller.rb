@@ -40,6 +40,9 @@ module Spree
               return render_invalid_position if position.nil?
 
               classification_for(@product).insert_at(position + 1)
+              # insert_at shifts sibling positions, so refresh every product in the
+              # category (manual sort reads position from the search index).
+              @category.products.find_each(&:enqueue_search_index)
               head :no_content
             end
 

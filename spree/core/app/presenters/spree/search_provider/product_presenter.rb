@@ -8,8 +8,12 @@ module Spree
         @store = store
       end
 
-      # Returns an array of documents — one per market × locale combination.
-      # Each document has flat name, description, price fields (no dynamic suffixes).
+      # Returns an array of documents. For each (market × locale) the product is
+      # priced in, one BASE document plus one MEMBERSHIP document per grouping the
+      # product belongs to (each collection + each category ancestor-or-self),
+      # carrying a scalar grouping_id + position so Meilisearch can sort a grouping
+      # page by the merchant's hand-set position. Each document has flat name,
+      # description, price fields (no dynamic suffixes).
       def call
         documents = []
 
@@ -18,7 +22,9 @@ module Spree
           next unless lowest_price(market.currency)
 
           Mobility.with_locale(locale) do
-            documents << build_document(locale, market.currency, default_locale)
+            base = build_document(locale, market.currency, default_locale)
+            documents << base
+            documents.concat(membership_documents(base, locale, market.currency))
           end
         end
 
@@ -26,7 +32,9 @@ module Spree
         if documents.empty?
           fallback_currency = store.default_market&.currency || store.supported_currencies_list.first&.iso_code
           if fallback_currency && lowest_price(fallback_currency)
-            documents << build_document(default_locale, fallback_currency, default_locale)
+            base = build_document(default_locale, fallback_currency, default_locale)
+            documents << base
+            documents.concat(membership_documents(base, default_locale, fallback_currency))
           end
         end
 
@@ -124,6 +132,55 @@ module Spree
         @category_ids_with_ancestors ||= product.categories.flat_map { |t|
           t.self_and_ancestors.map(&:prefixed_id)
         }.uniq
+      end
+
+      # One membership document per grouping (each collection + each category
+      # ancestor-or-self) the product belongs to: the full base payload plus a
+      # scalar grouping_id and position, with a distinct composite id. A manual-
+      # sorted grouping page filters grouping_id and sorts by position.
+      def membership_documents(base, locale, currency)
+        grouping_positions.map do |grouping_id, position|
+          base.merge(
+            id: "#{product.prefixed_id}__#{grouping_id}_#{locale}_#{currency}",
+            grouping_id: grouping_id,
+            position: position
+          )
+        end
+      end
+
+      # { grouping_prefixed_id => position }, merged across collections (flat) and
+      # categories (subtree-MIN). Prefixes (coll_/ctg_) keep the keys disjoint.
+      def grouping_positions
+        @grouping_positions ||= collection_positions.merge(category_positions)
+      end
+
+      # Flat: one entry per collection with the product's ProductCollection.position.
+      def collection_positions
+        @collection_positions ||= product.product_collections.pluck(:collection_id, :position).each_with_object({}) do |(cid, pos), acc|
+          acc[prefixed_id_for(Spree::Collection, cid)] = pos
+        end
+      end
+
+      # Subtree-MIN: a product under a category AND its descendants contributes its
+      # position to every ancestor-or-self, folded to the minimum — mirrors the DB
+      # provider's MIN(position)/GROUP BY and category_ids_with_ancestors.
+      def category_positions
+        @category_positions ||= begin
+          positions_by_category_id = product.product_categories.pluck(:category_id, :position).to_h
+          product.categories.each_with_object({}) do |category, acc|
+            position = positions_by_category_id[category.id]
+            category.self_and_ancestors.each do |ancestor|
+              key = ancestor.prefixed_id
+              acc[key] = [acc[key], position].compact.min
+            end
+          end
+        end
+      end
+
+      # Encode a raw primary key into a model's prefixed id without loading the
+      # record (mirrors Spree::PrefixedId#prefixed_id).
+      def prefixed_id_for(klass, raw_id)
+        "#{klass._prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([raw_id])}"
       end
 
       def variant_option_value_ids

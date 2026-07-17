@@ -17,6 +17,8 @@ module Spree
       allow(mock_index).to receive(:update_filterable_attributes)
       allow(mock_index).to receive(:update_sortable_attributes)
       allow(mock_index).to receive(:update_searchable_attributes)
+      allow(mock_index).to receive(:update_distinct_attribute)
+      allow(mock_index).to receive(:delete_documents)
     end
 
     describe '#search_and_filter' do
@@ -26,7 +28,7 @@ module Spree
             { 'product_id' => product_1.prefixed_id },
             { 'product_id' => product_2.prefixed_id }
           ],
-          'estimatedTotalHits' => 2,
+          'totalHits' => 2,
           'facetDistribution' => {
             'in_stock' => { 'true' => 2 },
             'price' => { '19.99' => 1, '29.99' => 1 }
@@ -44,7 +46,7 @@ module Spree
       end
 
       it 'queries Meilisearch with the search term' do
-        expect(mock_index).to receive(:search).with('shirt', hash_including(:limit, :offset))
+        expect(mock_index).to receive(:search).with('shirt', hash_including(:page, :hitsPerPage))
         provider.search_and_filter(scope: store.products, query: 'shirt')
       end
 
@@ -63,8 +65,25 @@ module Spree
         provider.search_and_filter(scope: store.products, query: 'shirt')
       end
 
+      context 'listing all products (no query, no filters)' do
+        it 'searches an empty query with only system conditions and no facets' do
+          expect(mock_index).to receive(:search).with('', satisfy { |p|
+            p[:filter].include?("status = 'active'") && !p.key?(:facets)
+          }).and_return(ms_response)
+
+          provider.search_and_filter(scope: store.products)
+        end
+
+        it 'returns the products and total' do
+          result = provider.search_and_filter(scope: store.products)
+
+          expect(result.products).to include(product_1, product_2)
+          expect(result.total_count).to eq(2)
+        end
+      end
+
       context 'with no results' do
-        let(:ms_response) { { 'hits' => [], 'estimatedTotalHits' => 0, 'facetDistribution' => {} } }
+        let(:ms_response) { { 'hits' => [], 'totalHits' => 0, 'facetDistribution' => {} } }
 
         it 'returns empty relation' do
           result = provider.search_and_filter(scope: store.products, query: 'nonexistent')
@@ -96,12 +115,14 @@ module Spree
       context 'with in_collection filter' do
         let(:collection) { create(:collection) }
 
-        it 'passes the collection_ids filter to Meilisearch' do
+        it 'passes the collection_ids filter to Meilisearch (non-manual sort)' do
           expect(mock_index).to receive(:search).with(anything, hash_including(
             filter: include("collection_ids = '#{collection.prefixed_id}'")
           )).and_return(ms_response)
 
-          provider.search_and_filter(scope: store.products, filters: { 'in_collection' => collection.prefixed_id })
+          # A non-manual sort keeps the collection_ids filter; a blank/manual sort
+          # instead routes to the grouping_id membership docs (covered below).
+          provider.search_and_filter(scope: store.products, sort: 'price', filters: { 'in_collection' => collection.prefixed_id })
         end
 
         it 'ignores a value that is not a prefixed id' do
@@ -132,12 +153,62 @@ module Spree
       end
 
       context 'with pagination' do
-        it 'passes offset and limit' do
+        it 'passes page and hitsPerPage (exhaustive mode so distinct counts are exact)' do
           expect(mock_index).to receive(:search).with(anything, hash_including(
-            offset: 25, limit: 25
+            page: 2, hitsPerPage: 25
           )).and_return(ms_response)
 
           provider.search_and_filter(scope: store.products, page: 2, limit: 25)
+        end
+      end
+
+      context 'pagination result (pagy built from totalHits)' do
+        let(:ms_response) do
+          { 'hits' => [{ 'product_id' => product_1.prefixed_id }], 'totalHits' => 50, 'facetDistribution' => {} }
+        end
+
+        it 'builds a pagy spanning all pages with a next page' do
+          result = provider.search_and_filter(scope: store.products, page: 1, limit: 25)
+
+          expect(result.total_count).to eq(50)
+          expect(result.pagy.count).to eq(50)
+          expect(result.pagy.pages).to eq(2)
+          expect(result.pagy.page).to eq(1)
+          expect(result.pagy.next).to eq(2)
+        end
+      end
+
+      context 'with manual (position) sort on a grouping' do
+        it 'queries the grouping_id membership docs sorted by position (collection)' do
+          expect(mock_index).to receive(:search).with(anything, satisfy { |p|
+            p[:filter].include?("grouping_id = 'coll_Manual1'") &&
+              p[:filter].none? { |c| c.to_s.include?('collection_ids') } &&
+              p[:sort] == ['position:asc']
+          }).and_return(ms_response)
+
+          provider.search_and_filter(scope: store.products, sort: 'manual', filters: { 'in_collection' => 'coll_Manual1' })
+        end
+
+        it 'defaults a grouping page with no sort param to manual' do
+          expect(mock_index).to receive(:search).with(anything, satisfy { |p|
+            p[:filter].include?("grouping_id = 'coll_Manual1'") && p[:sort] == ['position:asc']
+          }).and_return(ms_response)
+
+          provider.search_and_filter(scope: store.products, filters: { 'in_collection' => 'coll_Manual1' })
+        end
+
+        it 'works for a category grouping' do
+          expect(mock_index).to receive(:search).with(anything, satisfy { |p|
+            p[:filter].include?("grouping_id = 'ctg_Manual1'") && p[:sort] == ['position:asc']
+          }).and_return(ms_response)
+
+          provider.search_and_filter(scope: store.products, sort: 'manual', filters: { 'in_category' => 'ctg_Manual1' })
+        end
+
+        it 'ignores manual sort without a grouping (falls back to default ranking)' do
+          expect(mock_index).to receive(:search).with(anything, satisfy { |p| p[:sort].nil? }).and_return(ms_response)
+
+          provider.search_and_filter(scope: store.products, sort: 'manual')
         end
       end
 
@@ -148,7 +219,7 @@ module Spree
               { 'product_id' => product_2.prefixed_id },
               { 'product_id' => product_1.prefixed_id }
             ],
-            'estimatedTotalHits' => 2,
+            'totalHits' => 2,
             'facetDistribution' => {}
           }
           allow(mock_index).to receive(:search).and_return(reversed_response)
@@ -199,7 +270,7 @@ module Spree
       let(:ms_response) do
         {
           'hits' => [],
-          'estimatedTotalHits' => 2,
+          'totalHits' => 2,
           'processingTimeMs' => 1,
           'facetDistribution' => {
             'in_stock' => { 'true' => 2 },
@@ -251,7 +322,7 @@ module Spree
         let(:ms_response) do
           {
             'hits' => [],
-            'estimatedTotalHits' => 1,
+            'totalHits' => 1,
             'processingTimeMs' => 1,
             'facetDistribution' => {
               'option_value_ids' => {
@@ -322,6 +393,11 @@ module Spree
           expect(result.default_sort).to eq('manual')
         end
       end
+
+      it 'advertises manual in the sort options (sourced from Collection::SORT_ORDERS)' do
+        result = provider.filters(scope: store.products, query: '')
+        expect(result.sort_options.map { |o| o[:id] }).to include('manual')
+      end
     end
 
     describe '#index' do
@@ -338,6 +414,12 @@ module Spree
         presenter = instance_double(SearchProvider::ProductPresenter, call: docs)
         allow(SearchProvider::ProductPresenter).to receive(:new).with(product_1, store).and_return(presenter)
         expect(mock_index).to receive(:add_documents).with(docs, 'id')
+        provider.index(product_1)
+      end
+
+      it 'deletes the product existing docs before adding (purges stale membership docs)' do
+        expect(mock_index).to receive(:delete_documents).with(filter: "product_id = '#{product_1.prefixed_id}'").ordered
+        expect(mock_index).to receive(:add_documents).ordered
         provider.index(product_1)
       end
     end
@@ -375,6 +457,29 @@ module Spree
       it 'indexes all products in batches' do
         expect(mock_index).to receive(:add_documents).at_least(:once)
         provider.reindex(store.products)
+      end
+
+      it 'clears the index before a full (unscoped) reindex' do
+        expect(mock_index).to receive(:delete_all_documents)
+        allow(mock_index).to receive(:add_documents)
+        provider.reindex
+      end
+
+      it 'does not clear the index for a scoped reindex' do
+        expect(mock_index).not_to receive(:delete_all_documents)
+        allow(mock_index).to receive(:add_documents)
+        provider.reindex(store.products)
+      end
+    end
+
+    describe '#ensure_index_settings!' do
+      it 'declares grouping_id filterable, position sortable, and product_id distinct' do
+        expect(mock_index).to receive(:update_filterable_attributes).with(include('grouping_id'))
+        expect(mock_index).to receive(:update_sortable_attributes).with(include('position'))
+        expect(mock_index).to receive(:update_distinct_attribute).with('product_id')
+        allow(mock_index).to receive(:update_searchable_attributes)
+
+        provider.ensure_index_settings!
       end
     end
   end

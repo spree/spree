@@ -94,6 +94,9 @@ module Spree
     # Capture the old parent before the move; recompute both chains after.
     before_move :capture_parent_before_move
     after_move :recalculate_products_count_after_move
+    # A move changes the subtree's ancestor set (indexed category_ids) and its
+    # per-grouping positions, so refresh the moved subtree's products in search.
+    after_move :reindex_products_after_move
     # Destroying a category drops its subtree's products from every ancestor's
     # inclusive count. Recompute the ancestors here (while the doomed subtree's
     # rows still exist) excluding that subtree, since the ProductCategory destroy
@@ -379,6 +382,20 @@ module Spree
 
     def should_regenerate_pretty_name_and_permalink?
       saved_changes.key?(:name) || saved_changes.key?(:permalink)
+    end
+
+    # Refresh the moved subtree's products in the search index (their ancestor
+    # category_ids + per-grouping positions changed). Guarded so DB-provider stores
+    # (no indexing) skip the query entirely; enqueue_search_index self-guards too.
+    def reindex_products_after_move
+      return unless Spree.search_provider.constantize.indexing_required?
+
+      Spree::Product.joins(:product_categories).
+        where(Spree::ProductCategory.table_name => { category_id: self_and_descendants.select(:id) }).
+        distinct.
+        find_each(&:enqueue_search_index)
+    rescue NameError
+      nil
     end
 
     def sync_taxonomy_name
