@@ -233,6 +233,7 @@ module Spree
       assign_new_default_address_to_user
 
       if can_be_deleted?
+        unassign_from_incomplete_orders
         super
       else
         update_column :deleted_at, Time.current
@@ -363,6 +364,19 @@ module Spree
 
     def assign_new_default_address_to_user_scope
       user.addresses.not_quick_checkout.reorder(created_at: :desc)
+    end
+
+    # Prevents dangling address references on active carts when the row is hard-deleted.
+    # can_be_deleted? only guards completed orders, so incomplete orders must be detached here.
+    def unassign_from_incomplete_orders
+      orders = Spree::Order.incomplete.where('ship_address_id = :id OR bill_address_id = :id', id: id)
+
+      orders.find_each do |order|
+        order.ship_address_id = nil if order.ship_address_id == id
+        order.bill_address_id = nil if order.bill_address_id == id
+        order.state = 'address'
+        order.save!
+      end
     end
   end
 end
