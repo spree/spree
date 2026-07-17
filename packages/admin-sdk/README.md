@@ -43,7 +43,7 @@ The full guides live on the docs site — this README intentionally stays short:
 - [Resources](https://spreecommerce.org/docs/developer/sdk/admin/resources) — every resource client and its methods
 - [Querying & errors](https://spreecommerce.org/docs/developer/sdk/admin/querying-and-errors) — filtering, sorting, pagination, `SpreeError`
 - [Extending the client](https://spreecommerce.org/docs/developer/sdk/admin/extending) — custom endpoints
-- [Admin API reference](https://spreecommerce.org/docs/api-reference)
+- [Admin API reference](https://spreecommerce.org/docs/api-reference/admin-api/introduction)
 
 ## Contributing
 

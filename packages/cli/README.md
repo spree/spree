@@ -35,7 +35,7 @@ The full command reference lives on the docs site — this README intentionally 
 - [CLI quickstart](https://spreecommerce.org/docs/developer/cli/quickstart)
 - [Admin API from the CLI](https://spreecommerce.org/docs/developer/cli/admin-api) — credentials, scopes, profiles
 - [create-spree-app](https://spreecommerce.org/docs/developer/create-spree-app/quickstart)
-- [Deployment](https://spreecommerce.org/docs/developer/deployment)
+- [Deployment](https://spreecommerce.org/docs/developer/deployment/docker)
 
 ## License
 

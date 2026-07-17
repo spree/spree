@@ -23,7 +23,7 @@ The full guide — generated project structure, customization, deployment — li
 
 - [create-spree-app quickstart](https://spreecommerce.org/docs/developer/create-spree-app/quickstart)
 - [Spree CLI](https://spreecommerce.org/docs/developer/cli/quickstart)
-- [Deployment](https://spreecommerce.org/docs/developer/deployment)
+- [Deployment](https://spreecommerce.org/docs/developer/deployment/docker)
 
 Just evaluating Spree? Skip self-hosting and use a [hosted sandbox](https://spreecommerce.org).
 

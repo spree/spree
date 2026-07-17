@@ -39,7 +39,7 @@ The full guides live on the docs site — this README intentionally stays short:
 - [Configuration](https://spreecommerce.org/docs/developer/sdk/configuration) — retries, custom fetch, error handling
 - [Store resources](https://spreecommerce.org/docs/developer/sdk/store/products) — products, cart & checkout, payments, account, wishlists, markets
 - [Extending the client](https://spreecommerce.org/docs/developer/sdk/extending) — custom endpoints
-- [Store API reference](https://spreecommerce.org/docs/api-reference)
+- [Store API reference](https://spreecommerce.org/docs/api-reference/store-api/introduction)
 
 ## License
 
