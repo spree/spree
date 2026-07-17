@@ -367,14 +367,8 @@ module Spree
     end
 
     def unassign_from_incomplete_orders
-      orders = Spree::Order.incomplete.where('ship_address_id = :id OR bill_address_id = :id', id: id)
-
-      orders.find_each do |order|
-        order.ship_address_id = nil if order.ship_address_id == id
-        order.bill_address_id = nil if order.bill_address_id == id
-        order.state = 'address'
-        order.save!
-      end
+      Spree::Order.incomplete.where(ship_address_id: id).update_all(ship_address_id: nil, state: 'address', updated_at: Time.current)
+      Spree::Order.incomplete.where(bill_address_id: id).update_all(bill_address_id: nil, state: 'address', updated_at: Time.current)
     end
   end
 end
