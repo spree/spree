@@ -6,11 +6,20 @@ export const PRODUCTS_PATH = (storeId: string) => `/${storeId}/products`
 export const OPTIONS_PATH = (storeId: string) => `/${storeId}/products/options`
 
 /**
+ * Focus the product form's description field and type `text`. The field is a
+ * tiptap `RichTextEditor` (contenteditable), not a textarea, so `.fill()` is
+ * wrong; we click to focus and `keyboard.type` instead, which presses Enter
+ * for each `\n` — splitting the text into separate paragraphs.
+ */
+export async function typeDescription(page: Page, text: string): Promise<void> {
+  await page.getByLabel(/^description$/i).click()
+  await page.keyboard.type(text)
+}
+
+/**
  * Drive the New Product form and land on the edit page. The minimum input the
  * form accepts is a name — pass a `description` when the spec specifically
- * verifies how rich-text data round-trips. The description field is a tiptap
- * `RichTextEditor` (contenteditable), not a textarea, so `.fill()` is wrong;
- * we click to focus and `keyboard.type` instead.
+ * verifies how rich-text data round-trips.
  */
 export async function createProduct(
   page: Page,
@@ -22,11 +31,7 @@ export async function createProduct(
   await page.getByRole('button', { name: /add product/i }).click()
   await expect(page.getByRole('heading', { name: /^new product$/i })).toBeVisible()
   await page.getByLabel(/^name$/i).fill(name)
-  if (description) {
-    const editor = page.getByLabel(/^description$/i)
-    await editor.click()
-    await page.keyboard.type(description)
-  }
+  if (description) await typeDescription(page, description)
   await page.getByRole('button', { name: /^create product$/i }).click()
   // Lands on `/$storeId/products/$productId` (not `/new`).
   await expect(page).toHaveURL(new RegExp(`/${storeId}/products/prod_[^/]+$`), { timeout: 15_000 })
