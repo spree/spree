@@ -59,7 +59,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
     end
 
     it '404s for a product outside the store' do
-      other = create(:product, stores: [create(:store)])
+      other = create(:product, store: create(:store))
       post :create, params: { category_id: category.prefixed_id, product_id: other.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:not_found)

@@ -20,7 +20,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
 
     context 'when payment method belongs to a different store' do
       let!(:other_store) { create(:store) }
-      let!(:other_payment_method) { create(:check_payment_method, stores: [other_store]) }
+      let!(:other_payment_method) { create(:check_payment_method, store: other_store) }
 
       it 'is not returned' do
         get :index, as: :json
@@ -117,7 +117,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(json_response['name']).to eq('Check on delivery')
 
       created = Spree::PaymentMethod.find_by_prefix_id(json_response['id'])
-      expect(created.stores).to include(store)
+      expect(created.store).to eq(store)
     end
 
     it 'rejects an unknown subclass' do

@@ -604,7 +604,7 @@ describe Spree::Order, type: :model do
 
   describe '#amount_due' do
     let(:store_credit) { create(:store_credit, amount: 200, store: order.store, user: order.user) }
-    let(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [order.store]) }
+    let(:store_credit_payment_method) { create(:store_credit_payment_method, store: order.store) }
 
     before { order.update_columns(total: 100, payment_total: 0) }
 
@@ -2585,7 +2585,7 @@ describe Spree::Order, type: :model do
 
       context 'when order is fully paid by store credit' do
         before do
-          create(:store_credit_payment_method, stores: [order.store])
+          create(:store_credit_payment_method, store: order.store)
           create(:store_credit_payment, amount: order.total, order: order)
         end
 

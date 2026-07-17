@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionsController, type: :control
     end
 
     it "404s for a promotion that belongs to another store" do
-      foreign_promotion = create(:promotion, stores: [create(:store)])
+      foreign_promotion = create(:promotion, store: create(:store))
 
       post :create, params: {
         promotion_id: foreign_promotion.prefixed_id,
@@ -36,7 +36,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionsController, type: :control
 
   describe 'GET #index' do
     it "404s when listing actions of another store's promotion" do
-      foreign_promotion = create(:promotion, stores: [create(:store)])
+      foreign_promotion = create(:promotion, store: create(:store))
       create(:promotion_action_create_adjustment, promotion: foreign_promotion)
 
       get :index, params: { promotion_id: foreign_promotion.prefixed_id }, as: :json

@@ -51,7 +51,7 @@ RSpec.describe Spree::PrefixedId do
 
     context 'with non-FK columns ending in _id' do
       it 'preserves string values that look like prefixed IDs' do
-        payment_method = create(:bogus_payment_method, stores: [Spree::Store.default])
+        payment_method = create(:bogus_payment_method, store: Spree::Store.default)
         session = build(:payment_setup_session, payment_method: payment_method)
         session.assign_attributes(external_id: 'seti_123abc')
 
@@ -70,7 +70,7 @@ RSpec.describe Spree::PrefixedId do
       end
 
       it 'passes through values for non-existent associations' do
-        payment_method = create(:bogus_payment_method, stores: [Spree::Store.default])
+        payment_method = create(:bogus_payment_method, store: Spree::Store.default)
         session = build(:payment_setup_session, payment_method: payment_method)
 
         # external_ids doesn't map to any association — values should pass through unchanged

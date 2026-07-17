@@ -64,7 +64,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
     context 'when payment_method belongs to a different store' do
       let(:other_store) { create(:store) }
       let(:other_store_payment_method) do
-        create(:check_payment_method, stores: [other_store])
+        create(:check_payment_method, store: other_store)
       end
 
       it 'returns 404 and does not attach the cross-store method' do

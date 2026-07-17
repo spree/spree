@@ -91,7 +91,7 @@ describe Spree::Admin::NavigationHelper, type: :helper do
 
   describe '#external_page_preview_link' do
     let(:current_store) { create(:store) }
-    let(:product) { create(:product, stores: [current_store]) }
+    let(:product) { create(:product, store: current_store) }
 
     def spree_storefront_resource_url(*_args); end
     def button_link_to(*_args); end

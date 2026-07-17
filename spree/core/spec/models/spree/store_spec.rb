@@ -34,8 +34,8 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
 
     describe '#payment_methods' do
-      let!(:payment_method) { create(:payment_method, stores: [subject]) }
-      let!(:payment_method_2) { create(:payment_method, stores: [create(:store)]) }
+      let!(:payment_method) { create(:payment_method, store: subject) }
+      let!(:payment_method_2) { create(:payment_method, store: create(:store)) }
 
       it { expect(subject.payment_methods).to eq([payment_method]) }
     end
@@ -103,8 +103,8 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
 
     describe '#promotions' do
-      let!(:promotion) { create(:promotion, stores: [subject, create(:store)]) }
-      let!(:promotion_2) { create(:promotion, stores: [create(:store)]) }
+      let!(:promotion) { create(:promotion, store: subject) }
+      let!(:promotion_2) { create(:promotion, store: create(:store)) }
 
       it { expect(subject.promotions).to eq([promotion]) }
     end
