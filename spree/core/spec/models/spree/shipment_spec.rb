@@ -283,6 +283,20 @@ describe Spree::Shipment, type: :model do
     expect(shipment.discounted_cost).to eq(9)
   end
 
+  describe '#taxable_basis' do
+    let(:shipment) { create(:shipment).tap { |s| s.cost = 10 } }
+
+    it 'is the discounted cost' do
+      shipment.promo_total = -1
+      expect(shipment.taxable_basis).to eq(9)
+    end
+
+    it 'never goes below zero when discounts exceed the cost' do
+      shipment.promo_total = -15
+      expect(shipment.taxable_basis).to eq(0)
+    end
+  end
+
   it '#tax_total with included taxes' do
     shipment = Spree::Shipment.new
     expect(shipment.tax_total).to eq(0)

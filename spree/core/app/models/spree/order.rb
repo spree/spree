@@ -360,6 +360,16 @@ module Spree
       line_items.sum(:pre_tax_amount)
     end
 
+    # Sum of the eligible promotion adjustments applied to the order itself
+    # (whole-order discounts created by Promotion::Actions::CreateAdjustment),
+    # as opposed to promotions applied to individual line items or shipments.
+    # Zero or negative.
+    #
+    # @return [BigDecimal]
+    def order_level_promo_total
+      adjustments.promotion.eligible.sum(:amount)
+    end
+
     # Sum of all line item and shipment pre-tax
     def pre_tax_total
       pre_tax_item_amount + shipments.sum(:pre_tax_amount)

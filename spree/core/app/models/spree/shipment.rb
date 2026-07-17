@@ -207,6 +207,15 @@ module Spree
     end
     alias discounted_amount discounted_cost
 
+    # Returns the amount this shipment is taxed on: its discounted cost,
+    # never negative (stacked shipping promotions can push discounted_cost
+    # below zero). Whole-order promotions are not allocated to shipments.
+    #
+    # @return [BigDecimal]
+    def taxable_basis
+      [discounted_cost, BigDecimal(0)].max
+    end
+
     def final_price
       cost + adjustment_total
     end
