@@ -19,7 +19,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
            advertise: true,
            path: 'test1',
            promotion_category: promo_category,
-           stores: [store, store_2])
+           store: store)
   end
 
   before do

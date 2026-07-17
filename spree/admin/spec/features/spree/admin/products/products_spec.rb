@@ -130,7 +130,7 @@ describe 'Products', type: :feature do
     end
 
     context 'updating a product' do
-      let(:product) { create(:product, stores: Spree::Store.all) }
+      let(:product) { create(:product) }
 
       let(:prototype) do
         size = build_option_type_with_values('size', %w(Small Medium Large))

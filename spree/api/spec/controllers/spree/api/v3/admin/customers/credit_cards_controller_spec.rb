@@ -85,7 +85,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::CreditCardsController, type: :c
 
   describe 'cross-store isolation' do
     let(:other_store) { create(:store) }
-    let(:other_payment_method) { create(:credit_card_payment_method, stores: [other_store]) }
+    let(:other_payment_method) { create(:credit_card_payment_method, store: other_store) }
     let!(:foreign_card) { create(:credit_card, user: customer, payment_method: other_payment_method) }
 
     it 'excludes cards from other stores in the index' do
