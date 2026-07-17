@@ -1,5 +1,16 @@
 # create-spree-app
 
+## 1.1.3
+
+### Patch Changes
+
+- Single-node deployment out of the box: the relocated `render.yaml` now
+deploys the backend as a Docker service built from the repo root (verbatim
+from the starter — no more `rootDir` rewriting), so the ejected backend and
+your customized `apps/dashboard` ship in one image with the dashboard
+served same-origin at `/dashboard`. New projects also get a root
+`.dockerignore` keeping that build context to sources.
+
 ## 1.1.2
 
 ### Patch Changes

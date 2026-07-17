@@ -2,11 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import {
-  adaptRenderYamlForNestedBackend,
-  adaptWorkflowForNestedBackend,
-  prepareBackendTemplate,
-} from '../src/backend'
+import { adaptWorkflowForNestedBackend, prepareBackendTemplate } from '../src/backend'
 
 // Mirrors spree-starter's .github/workflows/backend-ci.yml (the workflow that
 // create-spree-app relocates to the generated project root).
@@ -115,26 +111,6 @@ describe('adaptWorkflowForNestedBackend', () => {
   })
 })
 
-describe('adaptRenderYamlForNestedBackend', () => {
-  it('adds rootDir: backend to the buildable web service', () => {
-    const result = adaptRenderYamlForNestedBackend(RENDER_YAML)
-    expect(result).toContain('    runtime: ruby\n    rootDir: backend\n')
-  })
-
-  it('adds a commented rootDir to the commented worker so uncommenting still deploys', () => {
-    const result = adaptRenderYamlForNestedBackend(RENDER_YAML)
-    expect(result).toContain('  #   runtime: ruby\n  #   rootDir: backend\n')
-  })
-
-  it('leaves managed services (no runtime) untouched', () => {
-    const result = adaptRenderYamlForNestedBackend(RENDER_YAML)
-    // Only web + the commented worker have a runtime, so exactly two rootDirs;
-    // redis has none and is left verbatim.
-    expect(result.match(/rootDir: backend/g)).toHaveLength(2)
-    expect(result).toContain('  - type: redis\n    name: spree-redis\n    plan: free')
-  })
-})
-
 describe('prepareBackendTemplate', () => {
   const tempDirs: string[] = []
 
@@ -181,13 +157,14 @@ describe('prepareBackendTemplate', () => {
     expect(fs.existsSync(path.join(projectDir, 'backend', 'README.md'))).toBe(false)
   })
 
-  it('relocates render.yaml to the project root with rootDir: backend', () => {
+  it('relocates render.yaml to the project root verbatim', () => {
     const projectDir = seedClonedBackend()
     prepareBackendTemplate(projectDir)
 
     const moved = path.join(projectDir, 'render.yaml')
     expect(fs.existsSync(moved)).toBe(true)
-    expect(fs.readFileSync(moved, 'utf-8')).toContain('    runtime: ruby\n    rootDir: backend\n')
+    // Authored by the starter for exactly this layout — no rewriting.
+    expect(fs.readFileSync(moved, 'utf-8')).toBe(RENDER_YAML)
     // The original in backend/ is removed so Render never reads a stale copy.
     expect(fs.existsSync(path.join(projectDir, 'backend', 'render.yaml'))).toBe(false)
   })

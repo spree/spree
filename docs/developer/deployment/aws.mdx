@@ -15,7 +15,7 @@ To fully run your Spree application on AWS, you will need the following services
 |---------|-------------|
 | [AWS ECS Fargate](https://aws.amazon.com/fargate/) | Fully managed container orchestration — run and scale containers without managing infrastructure. |
 | [AWS RDS](https://aws.amazon.com/rds/) | Managed relational database. Spree works with [Aurora PostgreSQL](https://aws.amazon.com/rds/aurora/), [Aurora MySQL](https://aws.amazon.com/rds/aurora/), [RDS PostgreSQL](https://aws.amazon.com/rds/postgresql/), [RDS MySQL](https://aws.amazon.com/rds/mysql/), and [RDS MariaDB](https://aws.amazon.com/rds/mariadb/). |
-| [AWS ElastiCache](https://aws.amazon.com/elasticache/) | Valkey or Redis for background jobs (Sidekiq), [caching](/developer/deployment/caching), and Action Cable. We recommend separate instances for jobs and cache. |
+| [AWS ElastiCache](https://aws.amazon.com/elasticache/) | Optional — background jobs and caching use PostgreSQL by default. Add Valkey or Redis only for [high-traffic caching](/developer/deployment/caching). |
 | [AWS S3](https://aws.amazon.com/s3/) | Object storage for uploaded files (product images, etc.). [More information](/developer/deployment/assets#aws-s3). |
 | [AWS CloudFront](https://aws.amazon.com/cloudfront/) | CDN for asset delivery (images, stylesheets, JavaScript). |
 | [AWS Route 53](https://aws.amazon.com/route53/) | DNS service for domain name management. |
@@ -24,7 +24,7 @@ To fully run your Spree application on AWS, you will need the following services
 
 ## Docker Image
 
-You can use the [official Docker image](/developer/deployment/docker) (`ghcr.io/spree/spree`) directly, or build your own from your Rails application's Dockerfile.
+Build [your project's image](/developer/deployment/docker) with `spree build --production`, or use the stock `ghcr.io/spree/spree` image for deployments without customizations.
 
 To build and deploy a custom image to AWS ECR via GitHub Actions:
 
@@ -216,8 +216,6 @@ Create the following secrets in AWS Secrets Manager:
 | Secret Name | Variable | Description |
 |---|---|---|
 | `spree/database-url` | `DATABASE_URL` | PostgreSQL connection URL |
-| `spree/redis-url` | `REDIS_URL` | Redis URL for background jobs and Action Cable |
-| `spree/redis-cache-url` | `REDIS_CACHE_URL` | Redis URL for caching (separate instance recommended) |
 | `spree/secret-key-base` | `SECRET_KEY_BASE` | Generate with `bin/rails secret` |
 
 Optional secrets for email delivery, file storage, and error tracking:
@@ -233,7 +231,7 @@ Optional secrets for email delivery, file storage, and error tracking:
 
 ## ECS Task Definitions
 
-You will need two ECS task definitions: one for the web service and one for the worker service. Save these as `.aws/web-task-definition.json` and `.aws/worker-task-definition.json` in your repository.
+One task definition runs the whole app — the web server also runs background jobs in-process. Save it as `.aws/web-task-definition.json`. The worker task definition is an optional scale-out step — skip it (and the `deploy-worker` job in the workflow above) until job load deserves its own service.
 
 ### Web Service
 
@@ -289,14 +287,6 @@ You will need two ECS task definitions: one for the web service and one for the 
           "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/database-url"
         },
         {
-          "name": "REDIS_URL",
-          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/redis-url"
-        },
-        {
-          "name": "REDIS_CACHE_URL",
-          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/redis-cache-url"
-        },
-        {
           "name": "SECRET_KEY_BASE",
           "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/secret-key-base"
         }
@@ -321,7 +311,9 @@ You will need two ECS task definitions: one for the web service and one for the 
 }
 ```
 
-### Worker Service
+### Worker Service (optional scale-out)
+
+Splits background jobs into a dedicated service — same image, no rebuild. When you deploy it, set `SOLID_QUEUE_IN_PUMA=false` in the web task's `environment` so the web container stops running jobs. Save as `.aws/worker-task-definition.json`:
 
 ```json
 {
@@ -336,7 +328,7 @@ You will need two ECS task definitions: one for the web service and one for the 
     {
       "name": "worker",
       "image": "${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}",
-      "command": ["bundle", "exec", "sidekiq"],
+      "command": ["bin/jobs"],
       "essential": true,
       "environment": [
         {
@@ -354,10 +346,6 @@ You will need two ECS task definitions: one for the web service and one for the 
           "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/database-url"
         },
         {
-          "name": "REDIS_URL",
-          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/redis-url"
-        },
-        {
           "name": "SECRET_KEY_BASE",
           "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/secret-key-base"
         }
@@ -371,7 +359,7 @@ You will need two ECS task definitions: one for the web service and one for the 
         }
       },
       "healthCheck": {
-        "command": ["CMD-SHELL", "pgrep -f sidekiq || exit 1"],
+        "command": ["CMD-SHELL", "pgrep -f solid_queue || exit 1"],
         "interval": 30,
         "timeout": 5,
         "retries": 3,
@@ -389,10 +377,10 @@ The task definitions above are sized for production. Here is a summary and scali
 | Service | Fargate CPU | Fargate Memory | Instances |
 |---|---|---|---|
 | **Web** | 1 vCPU | 4 GB | 2+ (use ECS Service Auto Scaling) |
-| **Worker** | 0.5 vCPU | 2 GB | 1+ |
-| **RDS (PostgreSQL)** | — | `db.r6g.large` (2 vCPU, 16 GB) | 1 primary + read replica |
-| **ElastiCache (jobs)** | — | `cache.r6g.large` (13 GB) | 1 |
-| **ElastiCache (cache)** | — | `cache.r6g.large` (13 GB) | 1 |
+| **Worker** (optional split) | 0.5 vCPU | 2 GB | 1+ |
+| **RDS (PostgreSQL)** | — | `db.r6g.large` (2 vCPU, 16 GB) | 1 |
+
+The database also stores background jobs and cache — the sizing above accounts for it. Scaling the web service to multiple instances is safe with in-process jobs: instances coordinate through the database. Add ElastiCache (Valkey or Redis) only for [high-traffic caching](/developer/deployment/caching).
 
 ### Auto Scaling
 
@@ -426,7 +414,7 @@ aws application-autoscaling put-scaling-policy \
 
 ## After Deployment
 
-### Admin Dashboard
+### Admin
 
 Access your admin panel at:
 
@@ -464,5 +452,5 @@ aws ecs run-task \
 
 - [Asset Storage](/developer/deployment/assets) — configure S3 for product images and uploads
 - [Configure CDN](/developer/deployment/cdn) — set up CloudFront for asset delivery
-- [Configure caching](/developer/deployment/caching) — use ElastiCache for application caching
+- [Configure caching](/developer/deployment/caching) — works out of the box; add ElastiCache for high-traffic installs
 - [Set environment variables](/developer/deployment/environment_variables) — SMTP, Sentry, SSL, etc.

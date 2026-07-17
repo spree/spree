@@ -1,19 +1,27 @@
 ---
 title: Caching
-description: Configure Redis-backed caching for your Spree application to speed up database queries and template renders, with tips for cache keys and invalidation.
+description: Spree's cache lives in Postgres by default (Solid Cache) — nothing extra to run, with a one-line Redis/Valkey swap for high-traffic installs.
 ---
 
-Caching improves performance by storing the results of expensive database queries and template renders in memory.
+Caching improves performance by storing the results of expensive computations. Spree's headless API caches sparingly — small memoized values (geo data, settings, taxonomy lookups) and the API's rate-limit counters — so the default store needs no dedicated service.
 
-## Setting up Redis as Cache Store
+## Solid Cache — the default
 
-Spree comes pre-configured to use Redis for caching in production. Just set the `REDIS_URL` environment variable — no gem installation or code changes needed.
+Production uses [Solid Cache](https://github.com/rails/solid_cache): the cache lives in your PostgreSQL database alongside everything else. There is nothing to configure, provision, or monitor — it works out of the box in every deployment.
 
-```bash
-REDIS_URL=redis://localhost:6379/0
+## Swapping to Redis or Valkey
+
+For high-traffic installs that want an in-memory cache, the swap is one line in `config/environments/production.rb` plus the gem:
+
+```ruby
+# Gemfile
+gem "redis"
+
+# config/environments/production.rb
+config.cache_store = :redis_cache_store, { url: ENV["REDIS_URL"] }
 ```
 
-When `REDIS_URL` is set, Spree automatically uses it for caching. When not set, it falls back to an in-memory cache store.
+Works identically with Redis or Valkey (the Linux Foundation fork most hosting platforms now provision).
 
 ## Testing Locally
 

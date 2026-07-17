@@ -57,15 +57,13 @@ export function prepareBackendTemplate(projectDir: string): void {
   }
 
   // Render reads a single Blueprint from the repository root. The starter ships
-  // render.yaml authored for a repo where the Rails app *is* the root; left in
-  // backend/ it is invisible to Render, and even at the root its services would
-  // build from the wrong directory. Relocate it to the project root with
-  // `rootDir: backend` on every buildable service.
+  // The starter authors render.yaml for exactly this project layout (Docker
+  // runtime, backend/Dockerfile built with the repo root as context, so the
+  // ejected backend and apps/dashboard ship in one image) — Render just needs
+  // it at the repo root where Blueprints are read.
   const srcRenderYaml = path.join(backendDir, 'render.yaml')
   if (fs.existsSync(srcRenderYaml)) {
-    const content = fs.readFileSync(srcRenderYaml, 'utf-8')
-    fs.writeFileSync(path.join(projectDir, 'render.yaml'), adaptRenderYamlForNestedBackend(content))
-    fs.rmSync(srcRenderYaml, { force: true })
+    fs.renameSync(srcRenderYaml, path.join(projectDir, 'render.yaml'))
   }
 }
 
@@ -99,24 +97,4 @@ export function adaptWorkflowForNestedBackend(content: string): string {
   )
 
   return result
-}
-
-/**
- * Rewrite the starter's Render Blueprint so each service that builds from source
- * deploys the `backend/` subdirectory instead of the repo root. The starter
- * authors render.yaml for a repo where the Rails app *is* the root; in the
- * wrapper project the app lives under backend/, so without `rootDir: backend`
- * Render runs `bundle install` at the root (no Gemfile) and the build fails.
- *
- * `rootDir` is added after every `runtime:` line — the marker of a
- * build-from-source service (web, worker) — while managed services (redis,
- * databases) have no runtime and are left untouched. The commented-out worker
- * template is handled too: its `runtime:` line keeps its `#` prefix, so
- * uncommenting the block yields a correctly-rooted worker.
- */
-export function adaptRenderYamlForNestedBackend(content: string): string {
-  return content.replace(
-    /^([ \t]*(?:#[ \t]*)?)runtime:.*$/gm,
-    (line, prefix) => `${line}\n${prefix}rootDir: backend`,
-  )
 }

@@ -70,7 +70,7 @@ fi
 step "Starting the edge stack"
 # Detached on purpose — `pnpm server:dev` runs the stack in the foreground
 # (streaming logs, Ctrl+C to stop); setup needs to continue past the boot.
-SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" up -d --force-recreate web worker
+SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" up -d --force-recreate web
 
 step "Waiting for the stack to finish booting"
 # The edge web boot runs bundle install + spree:install:migrations +

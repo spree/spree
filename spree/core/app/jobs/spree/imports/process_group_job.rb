@@ -1,6 +1,22 @@
 module Spree
   module Imports
     class ProcessGroupJob < Spree::Imports::BaseJob
+      # A large import fans out into many group jobs; without a cap they
+      # occupy every worker thread as one frees up, starving checkout-critical
+      # queues that share the pool. Cap concurrent groups per import at 75%
+      # of JOB_THREADS (at least 1), or SPREE_IMPORT_JOB_CONCURRENCY when set
+      # (0 disables the cap) — excess jobs wait as blocked executions, not in
+      # worker threads. Both values are read by the process enqueueing the
+      # import, so on a split web/worker deployment set the explicit override
+      # on the web service. The semaphore duration must outlive the slowest
+      # group; expiry just lifts the cap, it doesn't lose jobs. Solid
+      # Queue-specific (no-op on other adapters).
+      import_concurrency = ENV['SPREE_IMPORT_JOB_CONCURRENCY'].presence&.to_i ||
+        [Integer(ENV.fetch('JOB_THREADS', 3)) * 3 / 4, 1].max
+      if import_concurrency.positive? && respond_to?(:limits_concurrency)
+        limits_concurrency to: import_concurrency, key: ->(import_id, _row_ids) { import_id }, duration: 30.minutes
+      end
+
       # Rows are loaded in slices so a large group never holds every ImportRow
       # (and its raw CSV data) in memory for the whole job.
       ROWS_BATCH_SIZE = 100

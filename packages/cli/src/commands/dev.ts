@@ -18,6 +18,7 @@ import {
   warnDashboardNotRunnable,
 } from '../dashboard-server.js'
 import {
+  appServices,
   buildAdminStylesheets,
   dockerCompose,
   hasProjectContainers,
@@ -123,7 +124,7 @@ export function registerDevCommand(program: Command): void {
       )
 
       p.log.info(
-        `Starting services — ${withDashboard ? 'API + dashboard logs' : 'web + worker logs'} stream below. ` +
+        `Starting services — ${withDashboard ? 'API + dashboard logs' : 'API logs'} stream below. ` +
           `${pc.bold('Ctrl+C')} stops them ` +
           `(databases keep running; ${pc.bold('spree stop')} shuts everything down).\n`,
       )
@@ -194,10 +195,14 @@ export function registerDevCommand(program: Command): void {
         // the finally covers non-signal exits.
         dashboard = withDashboard ? startDashboardDevServer(ctx.projectDir) : null
 
-        result = await dockerCompose(['up', 'web', 'worker'], ctx.projectDir, {
-          stdio: 'inherit',
-          reject: false,
-        })
+        result = await dockerCompose(
+          ['up', ...(await appServices(ctx.projectDir))],
+          ctx.projectDir,
+          {
+            stdio: 'inherit',
+            reject: false,
+          },
+        )
       } finally {
         dashboard?.stop()
         process.off('SIGINT', ignoreSigint)
@@ -213,7 +218,7 @@ export function registerDevCommand(program: Command): void {
       }
 
       p.outro(
-        `${withDashboard ? 'API + dashboard' : 'Web + worker'} stopped. Databases keep running — ${pc.bold('spree stop')} shuts everything down.`,
+        `${withDashboard ? 'API + dashboard' : 'API'} stopped. Databases keep running — ${pc.bold('spree stop')} shuts everything down.`,
       )
     })
 }
