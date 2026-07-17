@@ -497,6 +497,84 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
     end
   end
 
+  path '/api/v3/admin/products/bulk_add_to_collections' do
+    post 'Bulk-add products to collections' do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description <<~DESC
+        Attaches each product in `ids` to every manual collection in `collection_ids`.
+        Automatic (rule-based) and sibling-store collections are silently ignored.
+      DESC
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids collection_ids],
+        properties: {
+          ids: { type: :array, items: { type: :string } },
+          collection_ids: { type: :array, items: { type: :string } }
+        }
+      }
+
+      response '200', 'products added to collections' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:collection) { create(:collection, store: store) }
+        let(:body) { { ids: [product.prefixed_id], collection_ids: [collection.prefixed_id] } }
+
+        schema type: :object, properties: {
+          product_count: { type: :integer },
+          collection_count: { type: :integer }
+        }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('product_count' => 1, 'collection_count' => 1)
+          expect(product.reload.collections).to include(collection)
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/products/bulk_remove_from_collections' do
+    post 'Bulk-remove products from collections' do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Detaches each product in `ids` from every collection in `collection_ids`.'
+      admin_scope :write, :products
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        required: %w[ids collection_ids],
+        properties: {
+          ids: { type: :array, items: { type: :string } },
+          collection_ids: { type: :array, items: { type: :string } }
+        }
+      }
+
+      response '200', 'products removed from collections' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:collection) { create(:collection, store: store) }
+        let(:body) { { ids: [product.prefixed_id], collection_ids: [collection.prefixed_id] } }
+
+        before { Spree::Collections::AddProducts.call(collections: [collection], products: [product]) }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to eq('product_count' => 1, 'collection_count' => 1)
+          expect(product.reload.collections).not_to include(collection)
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/products/bulk_add_to_channels' do
     post 'Bulk-add products to channels' do
       tags 'Products'

@@ -272,6 +272,33 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
     end
   end
 
+  path '/api/v3/admin/categories/{category_id}/products/{id}' do
+    delete 'Remove a product from a category' do
+      tags 'Categories'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Removes a product from the category\'s manual classification.'
+      admin_scope :write, :categories
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :category_id, in: :path, type: :string, required: true, description: 'Category ID'
+      parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
+
+      response '204', 'product removed' do
+        let!(:product) { create(:product, stores: [store]) }
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:category_id) { category.prefixed_id }
+        let(:id) { product.prefixed_id }
+
+        before { Spree::ProductCategory.create!(taxon: category, product: product, position: 1) }
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/categories/{category_id}/products/{id}/reposition' do
     patch 'Reposition a category product' do
       tags 'Categories'
