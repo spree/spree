@@ -132,7 +132,11 @@ function productToFormValues(
 
   return {
     name: product.name,
-    description: product.description ?? '',
+    // Hydrate the Tiptap editor from the HTML field, not `description` — the
+    // serializer squishes that one to tag-stripped plain text, which would
+    // collapse paragraphs/line breaks on every reload. Write still goes back
+    // through the `description` param (the API accepts HTML there).
+    description: product.description_html ?? '',
     status: (product.status as ProductFormValues['status']) ?? 'draft',
     category_ids: product.categories?.map((t) => t.id) ?? [],
     tags: product.tags ?? [],

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { FIXTURE_BULK_CHANNEL_NAME, login } from './helpers'
-import { createProduct, publishingCard } from './products-helpers'
+import { createProduct, publishingCard, typeDescription } from './products-helpers'
 
 test.describe('product edit', () => {
   test('creates a product and lands on the edit page', async ({ page }) => {
@@ -11,6 +11,32 @@ test.describe('product edit', () => {
 
     // The Name input on the edit page mirrors the saved name.
     await expect(page.getByLabel(/^name$/i)).toHaveValue(name)
+  })
+
+  test('preserves multi-paragraph description formatting across reload', async ({ page }) => {
+    const creds = await login(page)
+    const name = `E2E Product Rich Text ${Date.now()}`
+
+    await createProduct(page, creds.store_id, name)
+
+    // Type two paragraphs on the edit page so the save goes through the
+    // update path (the reported bug scenario), not create.
+    await typeDescription(page, 'First paragraph\nSecond paragraph')
+
+    await page.getByRole('button', { name: /save product/i }).click()
+    await expect(page.getByRole('button', { name: /save product/i })).toBeDisabled({
+      timeout: 15_000,
+    })
+
+    await page.reload()
+
+    // The saved HTML must round-trip as two separate paragraphs. Before the
+    // fix the form hydrated from the tag-stripped, whitespace-squished
+    // plain-text `description`, collapsing both lines into a single block.
+    const description = page.locator('#product-description')
+    await expect(description.locator('p')).toHaveCount(2)
+    await expect(description.locator('p').first()).toHaveText('First paragraph')
+    await expect(description.locator('p').nth(1)).toHaveText('Second paragraph')
   })
 
   test('updates name on an existing product', async ({ page }) => {
