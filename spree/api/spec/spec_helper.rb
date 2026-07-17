@@ -4,15 +4,15 @@ if ENV['COVERAGE']
   SimpleCov.root(ENV.fetch('GITHUB_WORKSPACE', File.expand_path('../../..', __dir__)))
   SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
   SimpleCov.start 'rails' do
-    group 'Serializers', 'app/serializers'
-    group 'Libraries', 'lib/spree'
+    add_group 'Serializers', 'app/serializers'
+    add_group 'Libraries', 'lib/spree'
 
-    skip '/bin/'
-    skip '/config/'
-    skip '/db/'
-    skip '/lib/spree/api/testing_support/'
-    skip '/script/'
-    skip '/spec/'
+    add_filter '/bin/'
+    add_filter '/config/'
+    add_filter '/db/'
+    add_filter '/lib/spree/api/testing_support/'
+    add_filter '/script/'
+    add_filter '/spec/'
 
     suffix = [ENV.fetch('CI_SHARD', '1'), ENV['TEST_ENV_NUMBER']].compact.reject(&:empty?).join('_')
     if ENV['COVERAGE_DIR']
