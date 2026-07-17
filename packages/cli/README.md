@@ -2,7 +2,7 @@
 
 CLI for managing [Spree Commerce](https://spreecommerce.org) projects — Docker-based dev stack, generators, API keys, and a gh-style Admin API client.
 
-Automatically included in projects created with [`create-spree-app`](https://www.npmjs.com/package/create-spree-app). Can also be installed standalone:
+Automatically included in projects created with [`create-spree-app`](https://spreecommerce.org/docs/developer/create-spree-app/quickstart). Can also be installed standalone:
 
 ```bash
 npm install -g @spree/cli
