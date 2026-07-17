@@ -45,11 +45,15 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
       expect(json_response['data']).to eq([])
     end
 
-    it '404s for an automatic collection (curation is manual-only)' do
+    it 'lists the rule-materialized products of an automatic collection' do
       automatic = create(:automatic_collection, store: store)
+      member = create(:product, stores: [store])
+      Spree::ProductCollection.create!(collection: automatic, product: member, position: 1)
+
       get :index, params: { collection_id: automatic.prefixed_id }, as: :json
 
-      expect(response).to have_http_status(:not_found)
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |p| p['id'] }).to include(member.prefixed_id)
     end
   end
 
@@ -70,11 +74,14 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
       expect(response).to have_http_status(:not_found)
     end
 
-    it '404s for an automatic collection (membership is rule-managed, not curated)' do
+    it 'rejects adding to an automatic collection (rule-managed, not curated)' do
       automatic = create(:automatic_collection, store: store)
       post :create, params: { collection_id: automatic.prefixed_id, product_id: product.prefixed_id }, as: :json
 
-      expect(response).to have_http_status(:not_found)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+      expect(json_response['error']['message']).to eq(Spree.t('api.errors.automatic_collection_curation'))
+      expect(member_ids).not_to include(product.id)
     end
   end
 
@@ -95,6 +102,15 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
       delete :destroy, params: { collection_id: collection.prefixed_id, id: stray.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    it 'rejects removing from an automatic collection before looking up the product' do
+      automatic = create(:automatic_collection, store: store)
+      delete :destroy, params: { collection_id: automatic.prefixed_id, id: product.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+      expect(json_response['error']['message']).to eq(Spree.t('api.errors.automatic_collection_curation'))
     end
   end
 

@@ -14,6 +14,7 @@ module Spree
             # Skip the base single-resource load — membership actions resolve
             # the product against the collection's scope themselves (set_product).
             skip_before_action :set_resource
+            before_action :ensure_manual_collection, only: [:create, :destroy, :reposition]
             before_action :set_product, only: [:destroy, :reposition]
 
             # POST /api/v3/admin/collections/:collection_id/products
@@ -68,12 +69,11 @@ module Spree
             end
 
             # Loads the parent collection (runs before the base set_resource).
-            # Scoped to +manual+ so automatic (rule-based) collections — whose
-            # membership is materialized by RegenerateProducts and would drop any
-            # manual add on the next regeneration — can't have their membership
-            # listed or mutated through this endpoint (mirrors the categories API).
+            # Any collection resolves — listing (index) an automatic collection's
+            # rule-materialized membership is valid. Manual-only curation is enforced
+            # separately by +ensure_manual_collection+ on the write actions.
             def set_parent
-              @parent_collection = Spree::Collection.manual.
+              @parent_collection = Spree::Collection.
                             accessible_by(current_ability, :update).
                             for_store(current_store).
                             find_by_prefix_id!(params[:collection_id])
@@ -81,6 +81,21 @@ module Spree
             end
 
             private
+
+            # Manual curation (add/remove/reposition) is invalid on automatic
+            # collections: their membership is materialized from rules by
+            # RegenerateProducts, so a manual change would be wiped on the next
+            # regeneration. Listing (index) the materialized membership is fine.
+            def ensure_manual_collection
+              return if @parent_collection.manual?
+
+              render_error(
+                code: ERROR_CODES[:validation_error],
+                message: Spree.t('api.errors.automatic_collection_curation',
+                                 default: "Products of an automatic collection are managed by its rules and can't be curated manually"),
+                status: :unprocessable_content
+              )
+            end
 
             def set_product
               @product = scope.find_by_prefix_id!(params[:id])
