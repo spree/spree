@@ -10,7 +10,7 @@ module Spree
         # CSRF protection:
         #   We deliberately do NOT use a CSRF token here. The threat model is fully
         #   covered by the combination of:
-        #     - SameSite=Lax (dev) / SameSite=None; Secure (prod) on the refresh cookie
+        #     - SameSite=Lax (http) / SameSite=None; Secure (https) on the refresh cookie
         #     - Spree::AllowedOrigin allowlist enforced via Rack::Cors with credentials: true
         #     - CORS preflight blocking cross-origin requests from non-allowlisted Origins
         #   A double-submit CSRF token would only add value if the AllowedOrigin allowlist
@@ -48,8 +48,14 @@ module Spree
             cookies.signed[REFRESH_COOKIE_NAME].presence
           end
 
+          # Keyed off the request scheme, not the Rails env: Rails silently refuses to
+          # write a Secure cookie on a non-SSL request, so a production app served over
+          # plain http (local Docker image, http-only intranet) would never get the
+          # refresh cookie at all. SameSite=None requires Secure, so http falls back to
+          # Lax — fine for same-site setups (ports don't factor into site identity);
+          # cross-site dashboards need https anyway.
           def base_cookie_attributes
-            if Rails.env.production?
+            if request.ssl?
               { secure: true, same_site: :none }
             else
               { secure: false, same_site: :lax }
