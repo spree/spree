@@ -46,9 +46,19 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         expect(line).to be_present
         expect(line).to include('httponly')
         expect(line).to include('path=/api/v3/admin/auth')
-        # In dev/test env (non-production), SameSite=Lax and no Secure flag
+        # Over plain http, SameSite=Lax and no Secure flag
         expect(line).to include('samesite=lax')
         expect(line).not_to match(/;\s*secure/i)
+      end
+
+      it 'sets a Secure SameSite=None refresh cookie on https requests' do
+        request.env['HTTPS'] = 'on'
+        post :create, params: { email: existing_admin.email, password: 'password123' }
+
+        line = set_cookie_for('spree_admin_refresh_token')
+        expect(line).to be_present
+        expect(line).to include('samesite=none')
+        expect(line).to match(/;\s*secure/i)
       end
 
       it 'creates a RefreshToken row matching the signed cookie value' do
