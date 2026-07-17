@@ -16,7 +16,7 @@ FactoryBot.define do
     end
 
     factory :custom_payment, class: Spree::Payment do
-      payment_method { create(:custom_payment_method, stores: [order.store]) }
+      payment_method { create(:custom_payment_method, store: order.store) }
       source { create(:payment_source, user: order.user, payment_method: payment_method) }
     end
   end

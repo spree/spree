@@ -7,7 +7,6 @@ describe Spree::PromotionHandler::PromotionDuplicator do
   let!(:calculator) { create(:calculator) }
 
   let(:store) { @default_store }
-  let(:store_2) { create(:store) }
   let!(:promotion) do
     create(:promotion_with_item_total_rule,
            description: 'Test description',
@@ -73,8 +72,8 @@ describe Spree::PromotionHandler::PromotionDuplicator do
         expect(promotion.promotion_actions.size).to eq new_promotion.promotion_actions.size
       end
 
-      it 'copies promotion stores' do
-        expect(promotion.store_ids).to eq new_promotion.store_ids
+      it 'copies promotion store' do
+        expect(promotion.store_id).to eq new_promotion.store_id
       end
 
       it "promotion action's fields (except promotion_id) are the same" do

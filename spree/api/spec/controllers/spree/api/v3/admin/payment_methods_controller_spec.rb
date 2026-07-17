@@ -117,7 +117,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       expect(json_response['name']).to eq('Check on delivery')
 
       created = Spree::PaymentMethod.find_by_prefix_id(json_response['id'])
-      expect(created.stores).to include(store)
+      expect(created.store).to eq(store)
     end
 
     it 'rejects an unknown subclass' do
