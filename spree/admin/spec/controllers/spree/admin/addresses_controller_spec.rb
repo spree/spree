@@ -130,4 +130,33 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
       end
     end
   end
+
+  describe 'DELETE #destroy' do
+    context 'when the address is not referenced by an order' do
+      let!(:address) { create(:address, user: user) }
+
+      it 'hard-deletes the address' do
+        expect { delete :destroy, params: { id: address.to_param } }.to change(Spree::Address, :count).by(-1)
+      end
+    end
+
+    context 'when the address is referenced by a completed order' do
+      let!(:address) { create(:address, user: user) }
+      let!(:order) { create(:completed_order_with_totals, user: user, ship_address: address, bill_address: address) }
+
+      it 'soft-deletes the address, keeping the row for the order' do
+        expect { delete :destroy, params: { id: address.to_param } }.not_to change(Spree::Address, :count)
+
+        expect(address.reload.deleted_at).to be_present
+      end
+    end
+
+    context 'when the address has no user' do
+      let!(:address) { create(:address, user: nil) }
+
+      it 'hard-deletes the address' do
+        expect { delete :destroy, params: { id: address.to_param } }.to change(Spree::Address, :count).by(-1)
+      end
+    end
+  end
 end

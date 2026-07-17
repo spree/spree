@@ -20,12 +20,9 @@ module Spree
       end
 
       def update
-        order = address_user_current_order
-
         result = update_service.call(
           address: @address,
           address_params: permitted_resource_params,
-          order: order,
           address_changes_except: address_update_address_changes_except
         )
 
@@ -51,15 +48,6 @@ module Spree
 
       def address_update_address_changes_except
         []
-      end
-
-      def address_user_current_order
-        incomplete_orders = @address.user.orders.incomplete
-        incomplete_orders.where(ship_address: @address).or(incomplete_orders.where(bill_address: @address)).first
-      end
-
-      def location_after_save
-        spree.admin_user_url(@address.user)
       end
 
       def collection_url

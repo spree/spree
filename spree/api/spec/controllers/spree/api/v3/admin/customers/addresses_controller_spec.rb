@@ -105,6 +105,40 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
       expect(response).to have_http_status(:ok)
       expect(customer.reload.bill_address_id).to eq(target_id)
     end
+
+    context 'when the address is referenced by a completed order' do
+      let!(:order) { create(:completed_order_with_totals, user: customer, ship_address: address) }
+
+      it 'edits a copy instead of mutating the historical order address in place' do
+        original_id = address.id
+        original_city = address.city
+
+        patch :update, params: {
+          customer_id: customer.prefixed_id,
+          id: address.prefixed_id,
+          firstname: address.firstname,
+          lastname: address.lastname,
+          address1: address.address1,
+          city: 'NewCity',
+          zipcode: address.zipcode,
+          phone: address.phone,
+          country_id: address.country_id,
+          state_id: address.state_id
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['city']).to eq('NewCity')
+
+        # a new address backs the edit; the original is soft-deleted but unchanged
+        expect(Spree::Address.find_by_prefix_id(json_response['id']).id).not_to eq(original_id)
+        expect(address.reload.city).to eq(original_city)
+        expect(address.deleted_at).to be_present
+
+        # the completed order still points at the original, historical address
+        expect(order.reload.ship_address_id).to eq(original_id)
+        expect(order.ship_address.city).to eq(original_city)
+      end
+    end
   end
 
   describe 'DELETE #destroy' do
@@ -113,6 +147,46 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
 
       expect(response).to have_http_status(:no_content)
       expect(Spree::Address.where(id: address.id)).to be_empty
+    end
+
+    context 'when the address is referenced by a shipment' do
+      let!(:shipment) { create(:shipment, address: address) }
+
+      it 'soft-deletes the address, keeping the shipment association intact' do
+        expect {
+          delete :destroy, params: { customer_id: customer.prefixed_id, id: address.prefixed_id }, as: :json
+        }.to change { customer.addresses.count }.by(-1)
+
+        expect(response).to have_http_status(:no_content)
+        expect(address.reload.deleted_at).to be_present
+        expect(shipment.reload.address).to eq(address)
+      end
+    end
+
+    context 'when the address is referenced by a completed order' do
+      shared_examples 'soft-deletes the referenced address' do |association|
+        it 'soft-deletes the address, keeping the order association intact' do
+          expect {
+            delete :destroy, params: { customer_id: customer.prefixed_id, id: address.prefixed_id }, as: :json
+          }.to change { customer.addresses.count }.by(-1)
+
+          expect(response).to have_http_status(:no_content)
+          expect(address.reload.deleted_at).to be_present
+          expect(order.reload.public_send(association)).to eq(address)
+        end
+      end
+
+      context 'as the ship address' do
+        let!(:order) { create(:completed_order_with_totals, user: customer, ship_address: address) }
+
+        it_behaves_like 'soft-deletes the referenced address', :ship_address
+      end
+
+      context 'as the bill address' do
+        let!(:order) { create(:completed_order_with_totals, user: customer, bill_address: address) }
+
+        it_behaves_like 'soft-deletes the referenced address', :bill_address
+      end
     end
   end
 end

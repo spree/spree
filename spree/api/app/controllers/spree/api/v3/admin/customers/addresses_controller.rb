@@ -7,17 +7,19 @@ module Spree
 
             # POST /api/v3/admin/customers/:customer_id/addresses
             def create
-              @resource = @parent.addresses.new(address_attrs)
-              authorize_resource!(@resource, :create)
+              authorize_resource!(Spree::Address.new(user_id: @parent.id), :create)
 
-              ApplicationRecord.transaction do
-                if @resource.save
-                  apply_default_flags(@resource)
-                  render json: serialize_resource(@resource.reload), status: :created
-                else
-                  render_validation_error(@resource.errors)
-                  raise ActiveRecord::Rollback
-                end
+              result = Spree.address_create_service.call(
+                address_params: address_attrs,
+                user: @parent,
+                default_billing: default_billing_flag,
+                default_shipping: default_shipping_flag
+              )
+
+              if result.success?
+                render json: serialize_resource(result.value), status: :created
+              else
+                render_validation_error(result.value.errors)
               end
             end
 
@@ -25,14 +27,17 @@ module Spree
             def update
               authorize_resource!(@resource)
 
-              ApplicationRecord.transaction do
-                if @resource.update(address_attrs)
-                  apply_default_flags(@resource)
-                  render json: serialize_resource(@resource.reload)
-                else
-                  render_validation_error(@resource.errors)
-                  raise ActiveRecord::Rollback
-                end
+              result = Spree.address_update_service.call(
+                address: @resource,
+                address_params: address_attrs,
+                default_billing: default_billing_flag,
+                default_shipping: default_shipping_flag
+              )
+
+              if result.success?
+                render json: serialize_resource(result.value)
+              else
+                render_validation_error(result.value.errors)
               end
             end
 
@@ -69,11 +74,12 @@ module Spree
               )
             end
 
-            def apply_default_flags(address)
-              updates = {}
-              updates[:bill_address_id] = address.id if ActiveModel::Type::Boolean.new.cast(params[:is_default_billing])
-              updates[:ship_address_id] = address.id if ActiveModel::Type::Boolean.new.cast(params[:is_default_shipping])
-              @parent.update!(updates) if updates.any?
+            def default_billing_flag
+              ActiveModel::Type::Boolean.new.cast(params[:is_default_billing])
+            end
+
+            def default_shipping_flag
+              ActiveModel::Type::Boolean.new.cast(params[:is_default_shipping])
             end
           end
         end
