@@ -83,8 +83,11 @@ test.describe('csv import', () => {
       timeout: 15_000,
     })
 
-    // The good row became a real product.
-    await page.goto(PRODUCTS_PATH(creds.store_id))
+    // The good row became a real product, visible through in-app navigation:
+    // completion invalidates the products cache, so the list mounted under
+    // the wizard is already fresh. (A full-page goto would reset the query
+    // cache and mask a stale list.)
+    await page.getByRole('button', { name: /view products/i }).click()
     await expect(page.getByText(goodName)).toBeVisible({ timeout: 15_000 })
   })
 
