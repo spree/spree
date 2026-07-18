@@ -16,12 +16,20 @@ pnpm add @spree/dashboard-core @spree/dashboard-ui
 
 ```ts
 import { defineDashboardPlugin } from '@spree/dashboard-core/plugin'
+import { PackageIcon } from 'lucide-react'
+import { WishlistCard } from './wishlist-card'
 
 defineDashboardPlugin({
-  nav: [...],
-  settingsNav: [...],
-  slots: { 'product.form_sidebar': [...] },
-  tables: { products: { add: [...], remove: ['legacy_column'] } },
+  nav: [{ key: 'wishlists', label: 'Wishlists', path: '/wishlists', icon: PackageIcon }],
+  slots: {
+    'product.form_sidebar': [{ id: 'wishlist-count', component: WishlistCard }],
+  },
+  tables: {
+    products: {
+      add: [{ key: 'wishlist_count', label: 'Wishlists', render: (p) => p.wishlist_count }],
+      remove: ['legacy_column'],
+    },
+  },
   formFields: { product: [{ name: 'tech_specs', from: (p) => p?.tech_specs ?? '' }] },
 })
 ```

@@ -13,7 +13,7 @@ npx create-spree-app my-store
 | `--react-dashboard` | Include the React Dashboard (Developer Preview — also available later via `spree add dashboard`) |
 | `--no-storefront` | Skip Next.js storefront setup |
 | `--no-sample-data` | Skip loading sample products |
-| `--no-start` | Don't start Docker services (the first `pnpm dev` completes setup instead) |
+| `--no-start` | Don't start Docker services (the first `dev` run completes setup instead) |
 | `--port <number>` | Port for the Spree backend (default: `3000`) |
 | `--use-npm` / `--use-yarn` / `--use-pnpm` | Package manager (auto-detected from how you run the command) |
 
