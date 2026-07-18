@@ -1,6 +1,7 @@
 import type { Import, ImportCompleteMappingParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { isImportActive } from '../lib/import-types'
 
@@ -9,19 +10,48 @@ export { isImportActive }
 const IMPORT_POLL_INTERVAL_MS = 2000
 const ROWS_POLL_INTERVAL_MS = 5000
 
+// Caches any import may have written to, plus `imports` itself (history table
+// status column). Deliberately not per-type — imports are rare, so a few
+// extra refetches beat maintaining a type → resource map (product rows alone
+// fan out to option types/values and categories created on the fly).
+const IMPORT_TOUCHED_RESOURCES = ['products', 'option-types', 'categories', 'customers', 'imports']
+
 /**
  * Single import, polled every 2s while the pipeline is running. `mapping`
  * (user-driven) and terminal statuses don't poll — a mapping-state refetch
  * would re-read the attached CSV server-side on every tick.
+ *
+ * A finished import (completed, or failed — earlier rows may still have been
+ * written) invalidates every cache imports can touch: the pipeline writes
+ * records server-side, outside any tracked mutation, so nothing else ever
+ * marks those lists stale and "View products" would keep serving the
+ * pre-import cache.
  */
 export function useImport(id: string) {
-  return useQuery({
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+
+  const query = useQuery({
     queryKey: useResourceKey('imports', id),
     queryFn: () => adminClient.imports.get(id),
     enabled: !!id,
     refetchInterval: (query) =>
       isImportActive(query.state.data?.status) ? IMPORT_POLL_INTERVAL_MS : false,
   })
+
+  // Fires when the poll lands on a finished status — including again after
+  // each retry pass (`finished` flips false → true anew). Reopening an
+  // already-finished import refires it; harmless, invalidation is idempotent.
+  const status = query.data?.status
+  const finished = status === 'completed' || status === 'failed'
+  useEffect(() => {
+    if (!finished) return
+    for (const resource of IMPORT_TOUCHED_RESOURCES) {
+      queryClient.invalidateQueries({ queryKey: buildKey(resource) })
+    }
+  }, [finished, queryClient, buildKey])
+
+  return query
 }
 
 /** Rows of an import (the failure report), optionally polled while processing. */
