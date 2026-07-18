@@ -75,6 +75,7 @@ development:
 test:
   adapter: sqlite3
   database: db/spree_test<%%= ENV['TEST_ENV_NUMBER'] %>.sqlite3
+  timeout: 10000
 production:
   adapter: sqlite3
   database: db/spree_production.sqlite3
