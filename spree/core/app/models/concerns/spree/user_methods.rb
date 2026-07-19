@@ -91,6 +91,16 @@ module Spree
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
+      # Group memberships scoped to the current store — what customer-facing
+      # surfaces (Store API serializer) should read instead of the unscoped
+      # +customer_groups+, so sibling stores' memberships never leak.
+      # @return [ActiveRecord::Relation<Spree::CustomerGroup>]
+      def store_customer_groups(store = Spree::Current.store)
+        return Spree::CustomerGroup.none if store.nil?
+
+        customer_groups.for_store(store)
+      end
+
       # Replaces the customer's group membership. Accepts both prefixed IDs and
       # raw integer IDs. Only groups belonging to the current store are
       # assigned — ids from another store are dropped, preventing cross-store

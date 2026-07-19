@@ -257,6 +257,47 @@ RSpec.describe Spree::ApiKey, type: :model do
     end
   end
 
+  describe 'channel binding' do
+    let(:channel) { create(:channel, store: store) }
+
+    it 'allows a publishable key bound to a channel of its store' do
+      key = build(:api_key, :publishable, store: store, channel: channel)
+      expect(key).to be_valid
+    end
+
+    it 'allows an unbound key' do
+      key = build(:api_key, :publishable, store: store)
+      expect(key).to be_valid
+    end
+
+    it 'rejects a channel on secret keys' do
+      key = build(:api_key, :secret, store: store, channel: channel)
+      expect(key).not_to be_valid
+      expect(key.errors[:channel]).to be_present
+    end
+
+    it 'rejects a channel belonging to another store' do
+      other_store_channel = create(:channel, store: create(:store))
+      key = build(:api_key, :publishable, store: store, channel: other_store_channel)
+      expect(key).not_to be_valid
+      expect(key.errors[:channel]).to be_present
+    end
+
+    it 'is immutable once the key is created' do
+      key = create(:api_key, :publishable, store: store, channel: channel)
+      key.channel = create(:channel, store: store)
+      expect(key).not_to be_valid
+      expect(key.errors[:channel]).to be_present
+    end
+
+    it 'cannot be bound after creation' do
+      key = create(:api_key, :publishable, store: store)
+      key.channel = channel
+      expect(key).not_to be_valid
+      expect(key.errors[:channel]).to be_present
+    end
+  end
+
   describe 'scopes (Admin API authorization)' do
     describe 'validation' do
       it 'requires scopes for secret keys' do

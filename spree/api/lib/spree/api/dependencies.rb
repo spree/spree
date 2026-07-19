@@ -112,6 +112,7 @@ module Spree
         fulfillment_serializer: 'Spree::Api::V3::FulfillmentSerializer',
         address_serializer: 'Spree::Api::V3::AddressSerializer',
         customer_serializer: 'Spree::Api::V3::CustomerSerializer',
+        customer_group_serializer: 'Spree::Api::V3::CustomerGroupSerializer',
         country_serializer: 'Spree::Api::V3::CountrySerializer',
         channel_serializer: 'Spree::Api::V3::ChannelSerializer',
         product_publication_serializer: 'Spree::Api::V3::ProductPublicationSerializer',

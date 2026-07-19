@@ -22,6 +22,7 @@ module Spree
     has_many :order_routing_rules, class_name: 'Spree::OrderRoutingRule', dependent: :destroy
     has_many :publications, class_name: 'Spree::ProductPublication', dependent: :destroy
     has_many :products, through: :publications, class_name: 'Spree::Product'
+    has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :nullify
 
     attribute :active, :boolean, default: true
 

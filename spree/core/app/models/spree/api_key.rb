@@ -46,6 +46,11 @@ module Spree
     end
 
     belongs_to :store, class_name: 'Spree::Store'
+    # Optional single-channel binding for publishable keys. A bound key
+    # server-assigns the request's channel (see Api::V3::ChannelResolution),
+    # making channel identity unforgeable instead of client-asserted via the
+    # X-Spree-Channel header. See docs/plans/5.6-store-channel-context-and-key-binding.md.
+    belongs_to :channel, class_name: 'Spree::Channel', optional: true
     belongs_to :created_by, polymorphic: true, optional: true
     belongs_to :revoked_by, polymorphic: true, optional: true
 
@@ -64,6 +69,11 @@ module Spree
     # guard is at the model so every entry point (API, legacy admin, rake tasks)
     # is covered uniformly.
     validate :scopes_immutable, if: -> { secret? && persisted? && scopes_changed? }
+    validate :channel_binding_valid, if: -> { channel_id.present? }
+    # Like scopes, the binding is fixed for the life of the key — rebinding a
+    # live credential to a different channel would silently repoint every
+    # client holding it; mint a new key instead.
+    validate :channel_immutable, if: -> { persisted? && channel_id_changed? }
 
     before_validation :generate_token, on: :create
 
@@ -154,6 +164,18 @@ module Spree
 
     def scopes_immutable
       errors.add(:scopes, Spree.t(:api_key_scopes_immutable))
+    end
+
+    def channel_binding_valid
+      if secret?
+        errors.add(:channel, Spree.t(:api_key_channel_publishable_only))
+      elsif channel && channel.store_id != store_id
+        errors.add(:channel, Spree.t(:api_key_channel_must_belong_to_store))
+      end
+    end
+
+    def channel_immutable
+      errors.add(:channel, Spree.t(:api_key_channel_immutable))
     end
 
     # Generates the token on creation. For publishable keys, stores the raw token

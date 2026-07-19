@@ -87,14 +87,14 @@ module Spree
             end
           end
 
-          # `key_type` and `scopes` are create-only (scope immutability lives on
-          # Spree::ApiKey); update is limited to the human-facing `name`. Stripping
-          # them here keeps them out of mass assignment so a rename returns 200
-          # rather than 422.
+          # `key_type`, `scopes`, and `channel_id` are create-only (immutability
+          # lives on Spree::ApiKey); update is limited to the human-facing `name`.
+          # Stripping them here keeps them out of mass assignment so a rename
+          # returns 200 rather than 422.
           def permitted_params
             return params.permit(:name) if action_name == 'update'
 
-            params.permit(:name, :key_type, scopes: [])
+            params.permit(:name, :key_type, :channel_id, scopes: [])
           end
 
           private

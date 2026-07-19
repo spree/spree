@@ -20,6 +20,9 @@ Spree::Core::Engine.add_routes do
         resources :currencies, only: [:index]
         resources :locales, only: [:index]
 
+        # Current channel context (never a list — see Store::ChannelController)
+        resource :channel, only: [:show], controller: 'channel'
+
         # Catalog
         resources :products, only: [:index, :show] do
           collection do
