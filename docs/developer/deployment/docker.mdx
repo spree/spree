@@ -1,34 +1,41 @@
 ---
 title: Docker
-description: Run the official Spree Docker image or build your own.
+description: Build a production Docker image of your Spree project, or run the official prebuilt image.
 ---
 
-## Official Docker Image
+## Building Your Project's Image
 
-Spree publishes multi-arch Docker images (`linux/amd64` and `linux/arm64`) to the GitHub Container Registry on every release.
+Every [create-spree-app](/developer/create-spree-app/quickstart) project builds into a single production image: the web server and background jobs run in one container, and the only dependency is a PostgreSQL database (the [single-node topology](/developer/deployment/quickstart#single-node-vs-distributed)).
+
+If you haven't ejected yet, do that first:
 
 ```bash
-docker pull ghcr.io/spree/spree:latest
+spree eject
 ```
 
-### Available Tags
+This generates the app source — including its production `Dockerfile` — in `backend/`. Make your customizations, then build:
 
-| Tag | Description |
-|-----|-------------|
-| `latest` | Latest stable release |
-| `5.4.0` | Specific version |
-| `5.4` | Latest patch for a minor version |
+```bash
+spree build --production                                  # → <project>-spree:latest
+spree build --production --tag registry.example.com/my-store:v42
+```
 
-Browse all tags on the [GitHub Packages page](https://github.com/spree/spree/pkgs/container/spree).
+Or with plain Docker, from the project root:
 
-### Running the Image
+```bash
+docker build . -f backend/Dockerfile -t my-store
+```
 
-The image runs a Puma web server on port 3000. You also need a worker container for background jobs (Sidekiq):
+Both produce the same image — and it's exactly what Render and Railway build from your repository. Migrations run automatically on boot.
+
+## Running the Image
+
+One app container plus Postgres is a complete deployment:
 
 ```yaml docker-compose.yml
 services:
   postgres:
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
@@ -39,26 +46,13 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:7-alpine
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: redis-cli ping
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   web:
-    image: ghcr.io/spree/spree:latest
+    image: my-store   # or ghcr.io/spree/spree:latest for the stock image
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_healthy
     environment:
       DATABASE_URL: postgres://postgres@postgres:5432/spree_production
-      REDIS_URL: redis://redis:6379/0
       SECRET_KEY_BASE: change-me-to-a-real-secret
       RAILS_FORCE_SSL: "false"
       RAILS_ASSUME_SSL: "false"
@@ -74,21 +68,8 @@ services:
       retries: 10
       start_period: 30s
 
-  worker:
-    image: ghcr.io/spree/spree:latest
-    depends_on:
-      web:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
-      REDIS_URL: redis://redis:6379/0
-      SECRET_KEY_BASE: change-me-to-a-real-secret
-      RAILS_HOST: localhost:3000
-    command: bundle exec sidekiq
-
 volumes:
   postgres_data:
-  redis_data:
 ```
 
 Start everything:
@@ -97,41 +78,48 @@ Start everything:
 docker compose up -d
 ```
 
-The database is automatically created and migrated on first boot. The app is available at [http://localhost:3000](http://localhost:3000).
+The database is created and migrated on first boot. The app is available at [http://localhost:3000](http://localhost:3000).
 
-<Tip>
-Use [create-spree-app](/developer/create-spree-app/quickstart) for a fully scaffolded Docker setup with `.env` files, health checks, and optional Next.js storefront — all configured automatically.
-</Tip>
+### Scaling out the worker
+
+Background jobs run inside the web container by default. When job load deserves its own process, split it out — same image, no rebuild: set `SOLID_QUEUE_IN_PUMA: "false"` on `web` and add a worker service:
+
+```yaml
+  worker:
+    image: my-store
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+      SECRET_KEY_BASE: change-me-to-a-real-secret
+      RAILS_HOST: localhost:3000
+    command: bin/jobs
+```
 
 ### Required Environment Variables
 
 | Variable | Description | Example |
 | --- | --- | --- |
 | `DATABASE_URL` | PostgreSQL connection URL | `postgres://user:pass@host:5432/spree` |
-| `REDIS_URL` | Redis URL for jobs, caching, and Action Cable | `redis://redis:6379/0` |
 | `SECRET_KEY_BASE` | Secret key for session encryption | Generate with `bin/rails secret` |
-| `RAILS_HOST` | Public host used in generated URLs — image/attachment URLs in API responses, email links. Without it they fall back to the store's URL setting (`localhost` on a fresh install) | `store.example.com` |
+| `RAILS_HOST` | Public host used in generated URLs — image/attachment URLs in API responses, email links | `store.example.com` |
+| `SOLID_QUEUE_IN_PUMA` | Run background jobs inside the web container (default `true`); set `false` when running a dedicated worker | `true` |
 
 See [Environment Variables](/developer/deployment/environment_variables) for the full list.
 
-## Building Your Own Image
+## Official Docker Image
 
-If you have your own Rails application with Spree installed, build a Docker image from your app's Dockerfile:
-
-```bash
-docker build -t my-spree .
-```
-
-Then use your custom image in place of `ghcr.io/spree/spree`:
+To run Spree without any customizations, pull the prebuilt multi-arch image (`linux/amd64` and `linux/arm64`) published to the GitHub Container Registry on every release:
 
 ```bash
-docker run -p 3000:3000 \
-  -e DATABASE_URL=postgres://user:pass@host:5432/spree \
-  -e REDIS_URL=redis://localhost:6379/0 \
-  -e SECRET_KEY_BASE=your-secret \
-  my-spree
+docker pull ghcr.io/spree/spree:latest
 ```
 
-<Tip>
-When creating a new Rails app with Spree via `rails new -m`, a production-ready Dockerfile is generated automatically by Rails.
-</Tip>
+| Tag | Description |
+|-----|-------------|
+| `latest` | Latest stable release |
+| `5.4.0` | Specific version |
+| `5.4` | Latest patch for a minor version |
+
+Browse all tags on the [GitHub Packages page](https://github.com/spree/spree/pkgs/container/spree). The image drops into the compose file above in place of your custom tag.

@@ -86,7 +86,7 @@ Shipped plans:
 
 One-time bootstrap (Docker required, no host Ruby): `pnpm install && pnpm server:setup`. It clones spree-starter into `server/`, boots the edge stack (monorepo gems bind-mounted via a compose overlay), and prepares + seeds the DB. Idempotent — but re-running it is a **full reset** that wipes the DB and volumes.
 
-Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web + worker logs, Ctrl+C stops them; postgres/redis stay warm) / `server:stop` (full teardown) / `server:restart` / `server:logs` / `server:console` / `server:seed` / `server:load_sample_data`. CLI commands run from `server/`: `pnpm exec spree <cmd>` (`spree migrate`, `spree console`, `spree generate model …`). `spree dev` and `spree build` refuse to run in `server/` (SPREE_PATH guard) — use the `pnpm server:*` scripts instead.
+Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web logs; jobs run in-process via Solid Queue; Ctrl+C stops it, postgres stays warm) / `server:stop` (full teardown) / `server:restart` / `server:logs` / `server:console` / `server:seed` / `server:load_sample_data`. CLI commands run from `server/`: `pnpm exec spree <cmd>` (`spree migrate`, `spree console`, `spree generate model …`). `spree dev` and `spree build` refuse to run in `server/` (SPREE_PATH guard) — use the `pnpm server:*` scripts instead.
 
 | What changed | What to run |
 |---|---|

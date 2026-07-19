@@ -39,6 +39,18 @@ module Spree
     included do
       class_attribute :publish_events, default: true
       class_attribute :lifecycle_events_enabled, default: false
+
+      after_update :mark_real_update_for_events
+    end
+
+    # A bare `touch` (variant → product, price → variant, asset → variants)
+    # writes no attribute changes — the resulting update event would carry
+    # nothing subscribers haven't already been told. Track it here so the
+    # commit callback can tell a touch-only commit from a real update;
+    # `saved_changes` can't (a touch replays the previous save's changeset).
+    def touch(*names, time: nil)
+      @_spree_touched_for_events = true
+      super
     end
 
     class_methods do
@@ -228,7 +240,21 @@ module Spree
     end
 
     def should_publish_events?
-      self.class.publish_events && Spree::Events.enabled?
+      self.class.publish_events && Spree::Events.lifecycle_enabled?
+    end
+
+    # True when this commit was caused only by `touch` — no real save ran
+    # (`after_update` fires for saves, never for touches). Flags reset every
+    # commit so a later genuine update publishes normally.
+    def touch_only_update?
+      touched = @_spree_touched_for_events
+      updated = @_spree_updated_for_events
+      @_spree_touched_for_events = @_spree_updated_for_events = nil
+      touched && !updated
+    end
+
+    def mark_real_update_for_events
+      @_spree_updated_for_events = true
     end
 
     def publish_create_event
@@ -236,6 +262,8 @@ module Spree
     end
 
     def publish_update_event
+      return if touch_only_update?
+
       publish_event("#{event_prefix}.updated")
     end
 

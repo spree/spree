@@ -7,7 +7,7 @@
 #
 #   SPREE_PATH=/absolute/host/path/to/spree-monorepo \
 #     docker compose -f docker-compose.dev.yml -f docker-compose.edge.yml \
-#     up -d --force-recreate web worker
+#     up -d --force-recreate web
 #
 # Without -f docker-compose.edge.yml, regular dev usage is unaffected:
 # no extra mounts, no SPREE_PATH dependency, runs identically on
@@ -42,7 +42,7 @@ services:
     entrypoint: []
     # Self-healing boot. Monorepo pulls and starter updates routinely drift
     # Gemfile.lock ahead of the bundle_cache volume and add new engine
-    # migrations — without this, web/worker crash-loop on Bundler::GemNotFound
+    # migrations — without this, web crash-loops on Bundler::GemNotFound
     # or 500 on ActiveRecord::PendingMigrationError after every such pull.
     # `bundle check` is sub-second when clean; the rails invocation is one
     # boot (~5s) that no-ops when nothing changed.
@@ -63,25 +63,4 @@ services:
       [
         "sh", "-c",
         "(bundle check || bundle install) && rm -f public/assets/.manifest.json && bin/rails spree:install:migrations db:prepare && bin/rails spree:admin:tailwindcss:build && (bin/rails spree:admin:tailwindcss:watch &) && exec bin/rails server -b 0.0.0.0 -p 3000"
-      ]
-
-  worker:
-    environment:
-      SPREE_PATH: ${SPREE_PATH}
-    volumes:
-      - ${SPREE_PATH}:${SPREE_PATH}
-    entrypoint: []
-    # Gate Sidekiq on web actually serving: the web boot chain starts Puma
-    # only after bundle install + spree:install:migrations + db:prepare have
-    # all succeeded, so "/up answers" covers everything the worker needs —
-    # a satisfied bundle (shared bundle_cache volume) AND a fully migrated,
-    # seeded database. Gating on `bundle check` alone raced the migrations:
-    # a clean bundle let Sidekiq run jobs against a half-prepared schema.
-    # The Host header matters: dev-mode HostAuthorization rejects the
-    # compose-internal hostname (`web`) with a 403, so curl presents an
-    # allowed host instead.
-    command:
-      [
-        "sh", "-c",
-        "i=0; until curl -fsS -o /dev/null -H 'Host: localhost' http://web:3000/up 2>/dev/null; do i=$$((i+1)); if [ \"$$i\" -ge 200 ]; then echo 'worker: web did not become ready within 10 minutes — inspect with: docker compose logs web' >&2; exit 1; fi; echo 'worker: waiting for web to finish booting (bundle + migrations + db:prepare)…'; sleep 3; done; exec bundle exec sidekiq"
       ]

@@ -20,7 +20,7 @@ import {
 import { agentsMdContent, rootClaudeMdContent } from './templates/claude-md.js'
 import { dependabotContent } from './templates/dependabot.js'
 import { envContent } from './templates/env.js'
-import { gitignoreContent } from './templates/gitignore.js'
+import { dockerignoreContent, gitignoreContent } from './templates/gitignore.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
 import type { PackageManager, ScaffoldOptions } from './types.js'
@@ -95,6 +95,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   )
   fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
+  fs.writeFileSync(path.join(projectDir, '.dockerignore'), dockerignoreContent())
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
 
   s.stop('Project structure created.')

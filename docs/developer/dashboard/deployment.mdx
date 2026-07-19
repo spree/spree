@@ -24,16 +24,13 @@ The official image contains the *stock* dashboard. Once you've customized yours 
 spree build --production            # optionally --tag registry/repo:tag
 ```
 
-The command detects `apps/dashboard/`, selects the Dockerfile's `custom` dashboard stage (`--build-arg DASHBOARD_SOURCE=custom`), and passes your app as a named build context — the Node toolchain lives only in that throw-away stage, and the final image is Rails plus your built `dist/` served at `/dashboard`. Without the CLI, the equivalent is:
+The Dockerfile normalizes its own build context: built from the project root it detects the layout (`backend/` = the Rails app, `apps/dashboard/` = your dashboard) and builds *your* dashboard into the image — no flags, no named contexts. Without the CLI, the equivalent is:
 
 ```bash
-docker build backend/ -f backend/Dockerfile \
-  --build-arg DASHBOARD_SOURCE=custom \
-  --build-context dashboard-src=./apps/dashboard \
-  -t my-shop-spree:latest
+docker build . -f backend/Dockerfile -t my-shop-spree:latest
 ```
 
-Inside the stage the build runs with `VITE_BASE_PATH=/dashboard/` (asset URLs resolve under the mount) and `VITE_SPREE_API_URL` unset (API calls stay origin-relative). Projects **without** `apps/dashboard/` build exactly what plain `docker build backend/` produces — and if your `backend/Dockerfile` predates dashboard support, the command warns instead of silently shipping the stock dashboard over your customized one.
+Inside the dashboard stage the build runs with `VITE_BASE_PATH=/dashboard/` (asset URLs resolve under the mount) and `VITE_SPREE_API_URL` unset (API calls stay origin-relative); the Node toolchain lives only in that throw-away stage. Projects **without** `apps/dashboard/` get the stock dashboard baked instead — and if your `backend/Dockerfile` predates this layout support, the command warns instead of silently shipping the stock dashboard over your customized one (update it from the spree-starter template).
 
 ## Static host / CDN — the alternative
 
@@ -54,16 +51,15 @@ A middle ground also works: serve `dist/` and proxy `/api/*` + `/rails/*` to Rai
 
 ## Render
 
-If your project deploys to Render via the Blueprint that `create-spree-app` places at the project root, `spree add dashboard` wires the single-node topology automatically: it extends the backend service's `buildCommand` to also build `apps/dashboard` (Render's Ruby runtime includes Node, and the full repo is available during the build) and adds one env var so the server serves the result:
+The Blueprint that `create-spree-app` places at the project root deploys the backend as a **Docker service** built from your repo — the same Dockerfile as everywhere else, with the repo root as context:
 
 ```yaml
-buildCommand: bundle install && … && (cd ../apps/dashboard && corepack enable pnpm && pnpm install && VITE_BASE_PATH=/dashboard/ pnpm build)
-envVars:
-  - key: SPREE_DASHBOARD_DIST_PATH
-    value: ../apps/dashboard/dist
+runtime: docker
+dockerfilePath: ./backend/Dockerfile
+dockerContext: .
 ```
 
-That's the whole setup — one service, one origin, **your customized dashboard** (it builds from your `apps/dashboard`, not the stock bundle) at `https://your-service.onrender.com/dashboard`. No `VITE_SPREE_API_URL`, no Allowed Origins entry, no extra service. Redeploys rebuild on every push.
+That's the whole setup — one service, one origin, **your customized dashboard** (it builds from your `apps/dashboard`, not the stock bundle) at `https://your-service.onrender.com/dashboard`. No `VITE_SPREE_API_URL`, no Allowed Origins entry, no extra service, no build commands to maintain — migrations run from the image entrypoint on boot. Redeploys rebuild on every push, and what Render builds is byte-for-byte what `spree build --production` builds locally.
 
 If you prefer the dashboard on Render's CDN instead, add a static-site service by hand using the cross-origin recipe above.
 

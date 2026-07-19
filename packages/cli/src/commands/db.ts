@@ -2,7 +2,13 @@ import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import pc from 'picocolors'
 import { detectProject, hasMonorepoSpreePath } from '../context.js'
-import { dockerCompose, dockerComposeExec, dockerComposeRun, isServiceRunning } from '../docker.js'
+import {
+  appServices,
+  dockerCompose,
+  dockerComposeExec,
+  dockerComposeRun,
+  isServiceRunning,
+} from '../docker.js'
 
 export const RESET_TASK = [
   'bin/rails',
@@ -59,12 +65,13 @@ export function registerDbCommand(program: Command): void {
       // RAILS_MAX_THREADS pooled connections), so we only need to know if either
       // is running; probe them concurrently.
       let stackUp: boolean
+      let services: string[]
       try {
-        const [webUp, workerUp] = await Promise.all([
-          isServiceRunning('web', ctx.projectDir),
-          isServiceRunning('worker', ctx.projectDir),
-        ])
-        stackUp = webUp || workerUp
+        services = await appServices(ctx.projectDir)
+        const running = await Promise.all(
+          services.map((service) => isServiceRunning(service, ctx.projectDir)),
+        )
+        stackUp = running.some(Boolean)
       } catch (err) {
         // `compose ps` itself failed: broken/stale compose, daemon down, unknown
         // service. Point home rather than dumping the raw env-file error (mirrors
@@ -81,9 +88,9 @@ export function registerDbCommand(program: Command): void {
 
       if (stackUp) {
         const s = p.spinner()
-        s.start('Stopping web + worker to release database connections...')
-        await dockerCompose(['stop', 'web', 'worker'], ctx.projectDir)
-        s.stop('Stopped web + worker.')
+        s.start('Stopping the app to release database connections...')
+        await dockerCompose(['stop', ...services], ctx.projectDir)
+        s.stop('App stopped.')
       }
 
       try {

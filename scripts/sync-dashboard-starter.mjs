@@ -37,6 +37,10 @@ fs.mkdirSync(targetDir, { recursive: true })
 const EXCLUDE = new Set(['node_modules', 'dist', '.turbo', '.tanstack'])
 const MONOREPO_ONLY_DEV_DEPS = new Set(['@spree/dashboard-plugin-example'])
 
+// Bump deliberately (with an image-build test) — pnpm majors have changed
+// install-policy behavior under existing lockfiles.
+const TEMPLATE_PNPM_VERSION = '11.13.1'
+
 // Clear the target working tree (keep .git) so deletions in the monorepo
 // propagate instead of accumulating stale files.
 for (const entry of fs.readdirSync(targetDir)) {
@@ -81,7 +85,37 @@ for (const section of ['dependencies', 'devDependencies']) {
     }
   }
 }
+// Pin the package manager so scaffolded apps (and the Docker image builds
+// that run `corepack enable pnpm` against them) use a known pnpm instead of
+// whatever is latest — pnpm 11 changed install-policy defaults under
+// existing lockfiles, which broke image rebuilds. Injected here rather than
+// in the monorepo source, where the workspace root's pin governs.
+pkg.packageManager = `pnpm@${TEMPLATE_PNPM_VERSION}`
 fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`)
+
+// --- pnpm-workspace.yaml: install policy for scaffolded apps -----------------
+// Standalone-only (the monorepo workspace root governs inside the repo).
+// trustLockfile: pnpm 11 re-applies minimumReleaseAge (default 24h) to every
+// lockfile entry, so an image rebuild whose committed lockfile references
+// day-old packages fails; the committed lockfile is the trust anchor.
+// The @spree/* exemption keeps Spree's own releases installable on day one.
+fs.writeFileSync(
+  path.join(targetDir, 'pnpm-workspace.yaml'),
+  [
+    'packages:',
+    "  - '.'",
+    '# Image rebuilds re-install the committed lockfile verbatim — without this,',
+    "# pnpm 11's supply-chain re-validation (minimumReleaseAge) fails any build",
+    '# whose lockfile references <24h-old packages you intentionally installed.',
+    '# Fresh resolution on your machine still honors the age gate.',
+    'trustLockfile: true',
+    "# Spree's own releases shouldn't wait out the age gate — an upgrade right",
+    '# after a Spree release would otherwise fail for a day.',
+    'minimumReleaseAgeExclude:',
+    "  - '@spree/*'",
+    '',
+  ].join('\n'),
+)
 
 // --- biome.json: inline the workspace root config ----------------------------
 

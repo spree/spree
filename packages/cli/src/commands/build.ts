@@ -1,12 +1,11 @@
 import fs from 'node:fs'
-import os from 'node:os'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
 import { execa } from 'execa'
 import pc from 'picocolors'
 import { detectProject, hasMonorepoSpreePath, isEjectedProject } from '../context.js'
-import { dockerCompose } from '../docker.js'
+import { appServices, dockerCompose } from '../docker.js'
 
 export function registerBuildCommand(program: Command): void {
   program
@@ -100,7 +99,7 @@ async function buildDevImage(flags: { resetBundle?: boolean; yes?: boolean }): P
   }
 
   console.log(`\n${pc.bold('Rebuilding dev image...')}\n`)
-  await dockerCompose(['build', 'web', 'worker'], ctx.projectDir, {
+  await dockerCompose(['build', ...(await appServices(ctx.projectDir))], ctx.projectDir, {
     stdio: 'inherit',
   })
 
@@ -119,13 +118,13 @@ async function buildDevImage(flags: { resetBundle?: boolean; yes?: boolean }): P
 
 /**
  * What `spree build --production` will run, computed without touching Docker
- * — exported for tests. When the project carries a customized dashboard
- * (`apps/dashboard`) AND the backend Dockerfile supports source selection
- * (the `DASHBOARD_SOURCE` build arg from spree-starter), the plan stages a
- * filtered copy of the app (no node_modules/build output — Docker named
- * contexts don't apply .dockerignore) and selects the `custom` dashboard
- * stage. Older projects hit neither branch and build exactly what
- * `docker build backend/` would — nothing changes for them.
+ * — exported for tests. The starter Dockerfile normalizes its own build
+ * context (backend/Gemfile marks the project layout; apps/dashboard marks a
+ * customized dashboard), so the plan is a plain `docker build` from the
+ * project root — the ejected backend and your dashboard ship in one image
+ * with zero flags, exactly what Render/Railway run from the repo. A
+ * Dockerfile predating the normalization builds from backend/ as before,
+ * with a warning when a dashboard would be silently left out.
  */
 export function planProductionBuild(
   projectDir: string,
@@ -134,7 +133,6 @@ export function planProductionBuild(
   args: string[]
   imageTag: string
   dashboard: 'custom' | 'stock-or-none' | 'unsupported-dockerfile'
-  stagedDashboardDir?: string
 } {
   const backendDir = path.join(projectDir, 'backend')
   const dockerfile = path.join(backendDir, 'Dockerfile')
@@ -149,28 +147,50 @@ export function planProductionBuild(
       .toLowerCase()
       .replace(/[^a-z0-9_-]/g, '')}-spree:latest`
 
-  const args = ['build', backendDir, '-f', dockerfile, '-t', imageTag]
+  const hasDashboard = fs.existsSync(path.join(projectDir, 'apps', 'dashboard', 'package.json'))
 
-  const dashboardDir = path.join(projectDir, 'apps', 'dashboard')
-  if (!fs.existsSync(path.join(dashboardDir, 'package.json'))) {
-    return { args, imageTag, dashboard: 'stock-or-none' }
+  // The layout-normalizing Dockerfile leaves a distinctive marker; without
+  // it, root context would break the build (the old file expects the Rails
+  // app at the context root), so fall back to the old backend/ context.
+  if (!fs.readFileSync(dockerfile, 'utf-8').includes('.spree-custom-dashboard')) {
+    return {
+      args: ['build', backendDir, '-f', dockerfile, '-t', imageTag],
+      imageTag,
+      dashboard: hasDashboard ? 'unsupported-dockerfile' : 'stock-or-none',
+    }
   }
 
-  if (!fs.readFileSync(dockerfile, 'utf-8').includes('DASHBOARD_SOURCE')) {
-    return { args, imageTag, dashboard: 'unsupported-dockerfile' }
+  ensureRootDockerignore(projectDir)
+  return {
+    args: ['build', projectDir, '-f', dockerfile, '-t', imageTag],
+    imageTag,
+    dashboard: hasDashboard ? 'custom' : 'stock-or-none',
   }
-
-  const staged = fs.mkdtempSync(path.join(os.tmpdir(), 'spree-dashboard-src-'))
-  fs.cpSync(dashboardDir, staged, {
-    recursive: true,
-    filter: (src) => {
-      const base = path.basename(src)
-      return base !== 'node_modules' && base !== 'dist' && base !== '.tanstack'
-    },
-  })
-  args.push('--build-arg', 'DASHBOARD_SOURCE=custom', '--build-context', `dashboard-src=${staged}`)
-  return { args, imageTag, dashboard: 'custom', stagedDashboardDir: staged }
 }
+
+/**
+ * A root-context build without a .dockerignore would upload node_modules and
+ * friends as build context — write the standard one when missing (projects
+ * scaffolded before it existed). Never overwrites.
+ */
+export function ensureRootDockerignore(projectDir: string): void {
+  const target = path.join(projectDir, '.dockerignore')
+  if (fs.existsSync(target)) return
+  fs.writeFileSync(target, ROOT_DOCKERIGNORE)
+}
+
+export const ROOT_DOCKERIGNORE = `# Build context for backend/Dockerfile (repo root): keep it to sources.
+**/node_modules
+**/.git
+.spree
+apps/storefront
+apps/dashboard/dist
+apps/dashboard/.tanstack
+backend/log
+backend/tmp
+backend/storage
+backend/.env*
+`
 
 /**
  * Build the production image (the Dockerfile's final stage) — the one you
@@ -191,26 +211,20 @@ async function buildProductionImage(projectDir: string, tag?: string): Promise<v
   } else if (plan.dashboard === 'unsupported-dockerfile') {
     p.log.warn(
       `${pc.bold('apps/dashboard/')} exists, but ${pc.bold('backend/Dockerfile')} predates ` +
-        `dashboard support (no DASHBOARD_SOURCE build arg) — the image will NOT include your ` +
-        `dashboard. Update the Dockerfile from the spree-starter template to bake it in.`,
+        `dashboard support — the image will NOT include your dashboard. Update the ` +
+        `Dockerfile from the spree-starter template to bake it in.`,
     )
   }
 
   console.log(`\n${pc.bold(`Building production image ${plan.imageTag}...`)}\n`)
-  try {
-    await execa('docker', plan.args, { cwd: projectDir, stdio: 'inherit' })
-  } finally {
-    if (plan.stagedDashboardDir) {
-      fs.rmSync(plan.stagedDashboardDir, { recursive: true, force: true })
-    }
-  }
+  await execa('docker', plan.args, { cwd: projectDir, stdio: 'inherit' })
 
   p.note(
     [
       `Run it:   ${pc.cyan(`docker run --rm -p 3000:3000 ${plan.imageTag}`)}`,
       `Push it:  ${pc.cyan(`docker tag ${plan.imageTag} <registry>/<repo> && docker push <registry>/<repo>`)}`,
       plan.dashboard !== 'unsupported-dockerfile'
-        ? `Dashboard: served at ${pc.bold('/dashboard')} when the image includes one.`
+        ? `Dashboard: served at ${pc.bold('/dashboard')} on the same origin as the API.`
         : '',
     ]
       .filter(Boolean)

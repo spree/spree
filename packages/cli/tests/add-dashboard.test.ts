@@ -2,11 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import {
-  addDashboard,
-  ensureDashboardDevEnv,
-  ensureRenderBlueprintService,
-} from '../src/commands/add.js'
+import { addDashboard, ensureDashboardDevEnv } from '../src/commands/add.js'
 import type { ProjectContext } from '../src/types.js'
 
 /**
@@ -79,77 +75,6 @@ describe('addDashboard', () => {
 
     await addDashboard(ctx(), { template: templateDir, install: false })
     expect(fs.readFileSync(envPath, 'utf-8')).toContain('http://localhost:3999')
-  })
-
-  describe('Render Blueprint single-node amendment', () => {
-    // The starter Blueprint shape after create-spree-app relocates it.
-    const BLUEPRINT = `services:
-  - type: web
-    name: spree
-    runtime: ruby
-    rootDir: backend
-    plan: free
-    buildCommand: bundle install && bundle exec rails assets:precompile && bundle exec rails db:prepare
-    startCommand: bundle exec puma -C config/puma.rb
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: spree-db
-          property: connectionString
-
-  - type: redis
-    name: spree-redis
-
-databases:
-  - name: spree-db
-`
-
-    it('extends the backend service to build and serve the dashboard', async () => {
-      fs.writeFileSync(path.join(projectDir, 'render.yaml'), BLUEPRINT)
-
-      await addDashboard(ctx(), { template: templateDir, install: false })
-
-      const content = fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')
-      // Build step appended to the Rails buildCommand, dashboard built with
-      // the sub-path base and no absolute API URL (origin-relative).
-      expect(content).toContain(
-        'bundle exec rails db:prepare && (cd ../apps/dashboard && corepack enable pnpm && pnpm install && VITE_BASE_PATH=/dashboard/ pnpm build)',
-      )
-      // Served by the same service — env var inside the backend's envVars.
-      expect(content).toContain('- key: SPREE_DASHBOARD_DIST_PATH')
-      expect(content).toContain('value: ../apps/dashboard/dist')
-      expect(content.indexOf('SPREE_DASHBOARD_DIST_PATH')).toBeLessThan(
-        content.indexOf('DATABASE_URL'),
-      )
-      // No cross-origin machinery: no static site, no VITE_SPREE_API_URL.
-      expect(content).not.toContain('VITE_SPREE_API_URL')
-      expect(content).not.toContain('runtime: static')
-    })
-
-    it('is idempotent and picks the build command from the project lockfile', async () => {
-      fs.writeFileSync(path.join(projectDir, 'render.yaml'), BLUEPRINT)
-      fs.writeFileSync(path.join(projectDir, 'package-lock.json'), '{}')
-
-      expect(ensureRenderBlueprintService(projectDir, 'npm')).toBe('amended')
-      const once = fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')
-      expect(once).toContain('npm install && VITE_BASE_PATH=/dashboard/ npm run build')
-
-      expect(ensureRenderBlueprintService(projectDir, 'npm')).toBe('present')
-      expect(fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')).toBe(once)
-    })
-
-    it('does nothing when the project has no Blueprint', async () => {
-      expect(ensureRenderBlueprintService(projectDir, 'pnpm')).toBe('no-blueprint')
-      expect(fs.existsSync(path.join(projectDir, 'render.yaml'))).toBe(false)
-    })
-
-    it('leaves an unrecognized Blueprint untouched', () => {
-      const custom = 'services:\n  - type: web\n    name: my-thing\n    runtime: docker\n'
-      fs.writeFileSync(path.join(projectDir, 'render.yaml'), custom)
-
-      expect(ensureRenderBlueprintService(projectDir, 'pnpm')).toBe('unrecognized')
-      expect(fs.readFileSync(path.join(projectDir, 'render.yaml'), 'utf-8')).toBe(custom)
-    })
   })
 })
 

@@ -1,5 +1,35 @@
 # @spree/cli
 
+## 2.4.5
+
+### Patch Changes
+
+- `spree build --production` is now a plain `docker build` from the project
+root: the updated spree-starter Dockerfile normalizes its own build context
+(detecting the `backend/` layout and a customized `apps/dashboard`), so the
+staged-copy and named-build-context machinery is gone, and what the CLI
+builds is byte-for-byte what Render/Railway build straight from the repo. A
+root `.dockerignore` is written when missing so the context stays lean.
+Pre-normalization Dockerfiles keep the old `backend/` context, with a
+warning when a dashboard would be left out.
+
+- Handle the Solid Queue single-container compose layout: new spree-starter
+projects have no `worker` or `redis` services (jobs run inside Puma, stored
+in Postgres), so `spree dev`, `restart`, `build`, and `db:reset` now target
+the services the compose file actually defines instead of hard-coding
+`web worker` — Sidekiq-era projects keep working unchanged. `spree logs
+worker` on a worker-less project explains the in-process model and streams
+web logs, pointing at the `/jobs` dashboard.
+
+- Removed the `render.yaml` amendment from `spree add dashboard` — the
+starter's Blueprint now deploys the backend as a Docker service built from
+the repo root, which bakes `apps/dashboard` into the image by itself. The
+scaffolded dashboard also pins its package manager (`packageManager` +
+`pnpm-workspace.yaml` with `trustLockfile`) so image rebuilds don't break
+when pnpm changes install-policy defaults — pnpm 11's `minimumReleaseAge`
+re-validation fails any rebuild whose lockfile references day-old packages,
+including every Spree release day (`@spree/*` is exempted from the gate).
+
 ## 2.4.4
 
 ### Patch Changes

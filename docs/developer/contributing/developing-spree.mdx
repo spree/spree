@@ -36,7 +36,7 @@ pnpm install        # workspace dependencies
 pnpm server:setup   # ~5–10 min on first run; idempotent
 ```
 
-`pnpm server:setup` clones [spree-starter](https://github.com/spree/spree-starter) into `./server/`, wires it to load Spree gems from the monorepo via a Docker compose overlay, builds the dev image, starts the stack (Postgres + Redis + Meilisearch + Rails `web` + Sidekiq `worker`), and prepares the database. The full sequence lives in `scripts/server-setup.sh`.
+`pnpm server:setup` clones [spree-starter](https://github.com/spree/spree-starter) into `./server/`, wires it to load Spree gems from the monorepo via a Docker compose overlay, builds the dev image, starts the stack (Postgres + Meilisearch + a single Rails `web` container — background jobs run in-process via Solid Queue), and prepares the database. The full sequence lives in `scripts/server-setup.sh`.
 
 When it's done, the backend is up at [http://localhost:3000](http://localhost:3000) and the admin is at [http://localhost:3000/admin](http://localhost:3000/admin). Sign in with the seed admin: **`spree@example.com`** / **`spree123`** (override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD` env vars — see `spree/core/app/services/spree/seeds/admin_user.rb`).
 
@@ -95,7 +95,7 @@ If you prefer the fastest possible inner loop and don't mind installing Ruby, Po
 pnpm server:create   # clones spree-starter, writes server/.env with SPREE_PATH=..
 cd server
 bin/setup            # installs Ruby (via mise), Postgres/Redis/Meilisearch (via brew bundle on macOS), gems, prepares the database
-bin/dev              # starts Rails + Sidekiq + CSS watchers via Foreman
+bin/dev              # starts Rails (jobs run in-process) + CSS watchers via Foreman
 ```
 
 This path is faster per request but means more on your host. It also runs against your installed system services, not a sandboxed Docker stack.

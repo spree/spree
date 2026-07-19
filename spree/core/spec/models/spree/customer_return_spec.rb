@@ -27,7 +27,9 @@ describe Spree::CustomerReturn, type: :model do
         expect(record).to receive(:publish_event).with('customer_return.updated')
         allow(record).to receive(:publish_event).with(anything)
 
-        record.touch
+        Timecop.travel(1.minute.from_now) do
+          record.update_attribute(:updated_at, Time.current)
+        end
       end
     end
 

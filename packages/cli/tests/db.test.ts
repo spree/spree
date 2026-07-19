@@ -12,6 +12,9 @@ vi.mock('../src/context', () => ({
 }))
 
 vi.mock('../src/docker', () => ({
+  // Sidekiq-era compose shape by default — these tests exercise the two-service
+  // path; the Solid Queue single-service shape drops 'worker' from this list.
+  appServices: vi.fn().mockResolvedValue(['web', 'worker']),
   dockerCompose: vi.fn().mockResolvedValue(undefined),
   dockerComposeExec: vi.fn().mockResolvedValue(undefined),
   dockerComposeRun: vi.fn().mockResolvedValue(undefined),

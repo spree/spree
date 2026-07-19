@@ -40,6 +40,48 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     expect(import.status).to eq('completed')
   end
 
+  context 'group-level events', events: true do
+    before do
+      Spree::Events.reset!
+    end
+
+    after do
+      Spree::Events.reset!
+    end
+
+    it 'publishes one product event per group instead of per-record lifecycle noise' do
+      published = Hash.new(0)
+      %w[product.created product.updated variant.created price.created].each do |name|
+        Spree::Events.subscribe(name, async: false) { published[name] += 1 }
+      end
+      Spree::Events.activate!
+
+      described_class.perform_now(import.id, [row.id])
+
+      expect(published['product.created']).to eq(1)
+      expect(published['variant.created']).to eq(0)
+      expect(published['price.created']).to eq(0)
+      expect(published['product.updated']).to eq(0)
+    end
+
+    it 'publishes product.updated when the product existed before this run' do
+      described_class.perform_now(import.id, [row.id])
+      row.reload.update_columns(status: 'pending')
+      import.update_columns(status: 'processing', completed_groups_count: 0)
+
+      published = Hash.new(0)
+      %w[product.created product.updated].each do |name|
+        Spree::Events.subscribe(name, async: false) { published[name] += 1 }
+      end
+      Spree::Events.activate!
+
+      described_class.perform_now(import.id, [row.id])
+
+      expect(published['product.created']).to eq(0)
+      expect(published['product.updated']).to eq(1)
+    end
+  end
+
   it 'does not complete import when other groups still have pending rows' do
     # A second group's rows exist but haven't been processed yet; this group finishing
     # its own rows must not flip the import to completed.

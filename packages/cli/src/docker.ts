@@ -66,6 +66,26 @@ export async function rakeTask(
 }
 
 /**
+ * The app services the project's compose file actually defines — ['web'] on
+ * the Solid Queue single-container layout (jobs run inside Puma), ['web',
+ * 'worker'] on Sidekiq-era projects. Commands target what exists instead of
+ * hard-coding the old two-service shape.
+ */
+export async function appServices(projectDir: string): Promise<string[]> {
+  try {
+    const { stdout } = await execa('docker', ['compose', 'config', '--services'], {
+      cwd: projectDir,
+    })
+    const services = stdout.split('\n').map((line) => line.trim())
+    const app = ['web', 'worker'].filter((name) => services.includes(name))
+    return app.length > 0 ? app : ['web']
+  } catch {
+    // A broken compose file surfaces on the real command that follows.
+    return ['web']
+  }
+}
+
+/**
  * Whether compose has ever created a container (any state, including exited)
  * for this project.
  */
