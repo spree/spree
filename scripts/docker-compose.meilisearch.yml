@@ -1,0 +1,39 @@
+# Optional Meilisearch overlay for monorepo server development. The starter
+# no longer provisions Meilisearch (the Database search provider is the
+# default), so provider work opts in here — this file lives in the monorepo
+# and survives `pnpm server:setup` resets, unlike edits to the server/ clone.
+#
+# The pnpm server:* scripts chain this file when SPREE_MEILISEARCH is set:
+#
+#   SPREE_MEILISEARCH=1 pnpm server:dev
+#   cd server && pnpm exec spree rake spree:search:reindex   # first boot only
+#
+# Dropping the flag on the next `pnpm server:dev` recreates web without
+# MEILISEARCH_URL (back to DB search) and removes the meilisearch container
+# (`--remove-orphans`); the index volume is kept until `docker volume rm
+# server_meilisearch_data`.
+
+services:
+  web:
+    environment:
+      MEILISEARCH_URL: http://meilisearch:7700
+    depends_on:
+      meilisearch:
+        condition: service_healthy
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    volumes:
+      - meilisearch_data:/meili_data
+    ports:
+      # Loopback-only: no API key is set in dev, and a 0.0.0.0 publish would
+      # bypass host firewalls on Linux (Docker inserts its NAT rules first).
+      - "127.0.0.1:${SPREE_MEILISEARCH_PORT:-7700}:7700"
+    healthcheck:
+      test: curl -f http://localhost:7700/health || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  meilisearch_data:

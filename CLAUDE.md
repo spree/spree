@@ -97,7 +97,7 @@ Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web log
 | Gem dependencies (gemspec / Gemfile / starter `Gemfile.lock` drift after a pull) | Nothing — the next `pnpm server:dev` boot self-heals (`bundle check || bundle install` into the `bundle_cache` volume); while running: `cd server && pnpm exec spree bundle install` |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates web + worker) |
 | `server/Dockerfile` / `.ruby-version` / starter update that breaks the image build (frozen-lockfile error) | `pnpm server:build`, then `pnpm server:dev` — the build script swaps the edge PATH lock for a RubyGems-resolved one and the next boot swaps it back |
-| Meilisearch image bump ("database version … is incompatible") | `docker compose -p server rm -sf meilisearch && docker volume rm server_meilisearch_data`, boot, then `cd server && pnpm exec spree rake spree:search:reindex` |
+| Working on the Meilisearch search provider | Off by default (DB provider) — `SPREE_MEILISEARCH=1 pnpm server:dev` chains `scripts/docker-compose.meilisearch.yml` (service + `MEILISEARCH_URL`), then `cd server && pnpm exec spree rake spree:search:reindex` once. Booting without the flag reverts web to DB search and removes the meilisearch container; the index volume stays. Image bump ("database version … is incompatible"): `pnpm server:stop && docker volume rm server_meilisearch_data`, flagged boot, reindex |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes DB + volumes) |
 
 Backend: http://localhost:3000, admin at `/admin`, hosted React Dashboard at `/dashboard` (`spree@example.com` / `spree123`). Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.

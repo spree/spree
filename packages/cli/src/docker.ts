@@ -187,7 +187,7 @@ export interface DockerComposeRunOptions {
 // Run a command in a one-off `compose run --rm` container — the twin of
 // dockerComposeExec for when the service's long-running container is NOT up.
 // Unlike `exec`, `run` builds a fresh container and (in Compose v2) starts the
-// service's depends_on (postgres/redis/meilisearch), honoring their
+// service's depends_on (postgres/mailpit), honoring their
 // `condition: service_healthy` healthchecks before the command runs — so it
 // works from a fully cold stack. We deliberately omit `--no-deps` (we WANT
 // those deps started + health-waited) and `--service-ports` (these callers
