@@ -178,6 +178,22 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
         expect(json_response['customer_groups']).to eq([])
       end
+
+      context 'when the request store is not the default store' do
+        let(:store) { create(:store) }
+
+        it 'reads memberships from the request store, not the default store' do
+          request_store_group = create(:customer_group, store: store, name: 'Wholesale')
+          request_store_group.add_customers([user.id])
+          default_store_group = create(:customer_group, store: Spree::Store.default, name: 'Default Store VIP')
+          default_store_group.add_customers([user.id])
+
+          get :show
+
+          names = json_response['customer_groups'].map { |g| g['name'] }
+          expect(names).to eq(['Wholesale'])
+        end
+      end
     end
 
     context 'newsletter subscriber' do

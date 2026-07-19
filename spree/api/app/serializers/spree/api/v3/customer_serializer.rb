@@ -39,8 +39,12 @@ module Spree
         end
 
         # Membership signal for storefront branching (e.g. wholesale approval);
-        # store-scoped via the model reader — sibling stores' groups never leak.
-        many :store_customer_groups, key: :customer_groups, resource: proc { Spree.api.customer_group_serializer }
+        # scoped to the request store (params first — Spree::Current.store falls
+        # back to the DEFAULT store, wrong on sibling stores' domains) so other
+        # stores' memberships never leak.
+        many :customer_groups,
+             proc { |groups, params| groups.for_store(params[:store] || Spree::Current.store) },
+             resource: proc { Spree.api.customer_group_serializer }
       end
     end
   end
