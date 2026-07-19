@@ -128,6 +128,27 @@ RSpec.describe Spree::Channel, type: :model do
     it 'allows destroying non-default channels' do
       expect { secondary.destroy! }.to change(described_class, :count).by(-1)
     end
+
+    context 'with bound API keys' do
+      let!(:bound_key) { create(:api_key, :publishable, store: fresh_store, channel: secondary) }
+
+      it 'is false while an active key is bound' do
+        expect(secondary.can_be_deleted?).to be false
+      end
+
+      it 'blocks +destroy+ and keeps the binding intact' do
+        expect(secondary.destroy).to be false
+        expect(secondary.errors[:base]).to include(/active API keys/i)
+        expect(bound_key.reload.channel_id).to eq(secondary.id)
+      end
+
+      it 'allows destroy once the key is revoked, nullifying the historical binding' do
+        bound_key.revoke!
+
+        expect { secondary.destroy! }.to change(described_class, :count).by(-1)
+        expect(bound_key.reload.channel_id).to be_nil
+      end
+    end
   end
 
   describe '#ensure_default_order_routing_rules' do
