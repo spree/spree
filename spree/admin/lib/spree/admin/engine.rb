@@ -125,6 +125,7 @@ module Spree
         :themes_actions_partials,
         :themes_header_partials,
         :user_dropdown_partials,
+        :user_page_sidebar_partials,
         :users_actions_partials,
         :users_filters_partials,
         :users_header_partials,
