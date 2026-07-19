@@ -1,5 +1,11 @@
 # @spree/dashboard
 
+## 0.10.3
+
+### Patch Changes
+
+- Refresh resource lists when a CSV import finishes. Imports create records server-side outside any tracked mutation, and the list under the import wizard stays mounted — so it kept serving the pre-import cache. The import's target resources (plus option types and categories for product imports) and the imports history are now invalidated whenever the poll observes the run finishing, including failed and retried runs.
+
 ## 0.10.2
 
 ### Patch Changes
