@@ -187,7 +187,7 @@ module Spree
       #
       # @return [Boolean]
       def enabled?
-        !@globally_disabled && !Thread.current[:spree_events_disabled]
+        !@globally_disabled && !RequestStore.store[:spree_events_disabled]
       end
 
       # Temporarily disable events within a block
@@ -202,11 +202,35 @@ module Spree
       #   end
       #
       def disable
-        previous = Thread.current[:spree_events_disabled]
-        Thread.current[:spree_events_disabled] = true
+        previous = RequestStore.store[:spree_events_disabled]
+        RequestStore.store[:spree_events_disabled] = true
         yield
       ensure
-        Thread.current[:spree_events_disabled] = previous
+        RequestStore.store[:spree_events_disabled] = previous
+      end
+
+      # Check if automatic lifecycle events (*.created/updated/deleted) are enabled
+      #
+      # @return [Boolean]
+      def lifecycle_enabled?
+        enabled? && !RequestStore.store[:spree_lifecycle_events_disabled]
+      end
+
+      # Temporarily disable automatic lifecycle events within a block
+      #
+      # Unlike {disable}, explicitly published events (`publish_event`) still
+      # flow — only the per-record *.created/updated/deleted callbacks are
+      # suppressed. Used by bulk operations that emit their own coarser events
+      # afterwards (e.g. one product event per imported group).
+      #
+      # @yield Block during which lifecycle events are disabled
+      # @return [Object] Return value of the block
+      def disable_lifecycle
+        previous = RequestStore.store[:spree_lifecycle_events_disabled]
+        RequestStore.store[:spree_lifecycle_events_disabled] = true
+        yield
+      ensure
+        RequestStore.store[:spree_lifecycle_events_disabled] = previous
       end
 
       # Globally disable events
@@ -233,13 +257,13 @@ module Spree
       #
       def enable
         previous_global = @globally_disabled
-        previous_thread = Thread.current[:spree_events_disabled]
+        previous_thread = RequestStore.store[:spree_events_disabled]
         @globally_disabled = false
-        Thread.current[:spree_events_disabled] = false
+        RequestStore.store[:spree_events_disabled] = false
         yield
       ensure
         @globally_disabled = previous_global
-        Thread.current[:spree_events_disabled] = previous_thread
+        RequestStore.store[:spree_events_disabled] = previous_thread
       end
 
       # Globally enable events

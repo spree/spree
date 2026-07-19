@@ -26,7 +26,9 @@ describe Spree::Wishlist, type: :model do
         expect(wishlist).to receive(:publish_event).with('wishlist.updated')
         allow(wishlist).to receive(:publish_event).with(anything)
 
-        wishlist.touch
+        Timecop.travel(1.minute.from_now) do
+          wishlist.update_attribute(:updated_at, Time.current)
+        end
       end
     end
 

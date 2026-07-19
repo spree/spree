@@ -21,6 +21,18 @@ shared_examples_for 'lifecycle events' do |factory: nil, event_prefix: nil|
         expect(record).to receive(:publish_event).with("#{lifecycle_event_prefix}.updated")
         allow(record).to receive(:publish_event).with(anything)
 
+        # update_attribute, not update!: Spree::Shipment#update! shadows the
+        # Active Record method with the legacy state-recalculation API.
+        Timecop.travel(1.minute.from_now) do
+          record.update_attribute(:updated_at, Time.current)
+        end
+      end
+
+      it 'does not publish updated event on a bare touch' do
+        record = create(lifecycle_factory)
+        expect(record).not_to receive(:publish_event).with("#{lifecycle_event_prefix}.updated")
+        allow(record).to receive(:publish_event).with(anything)
+
         record.touch
       end
     end

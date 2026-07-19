@@ -28,6 +28,9 @@ module Spree
         mappings = import.mappings.mapped.to_a
         schema_fields = import.schema_fields
         large = import.large_import?
+        grouped = import.group_column.present? && mappings.any? { |m| m.schema_field == import.group_column }
+        started_at = Time.current
+        processed_rows = []
 
         row_ids.each_slice(ROWS_BATCH_SIZE) do |ids|
           # Skip rows already completed on a prior attempt so retries don't double-process them.
@@ -41,17 +44,44 @@ module Spree
             Spree::Events.disable do
               rows.each { |row| row.bulk_process!(mappings: mappings, schema_fields: schema_fields) }
             end
+          elsif grouped
+            # A group is one product plus its variants: per-record lifecycle
+            # events (variant.created, price.created, product.updated per
+            # touch) are noise to subscribers — one product event is published
+            # for the whole group below. import_row.* events still flow.
+            Spree::Events.disable_lifecycle do
+              rows.each { |row| row.process!(mappings: mappings, schema_fields: schema_fields) }
+            end
           else
             rows.each do |row|
               row.process!(mappings: mappings, schema_fields: schema_fields)
             end
           end
+          processed_rows.concat(rows)
         end
 
+        publish_group_events(processed_rows, started_at) if grouped
         check_import_completion(import, large)
       end
 
       private
+
+      # One event per product touched by this group: `product.created` when the
+      # product came into existence during this run, `product.updated` otherwise
+      # (including retries of a group whose first attempt created it).
+      def publish_group_events(rows, started_at)
+        products = rows.select { |row| row.status == 'completed' }.filter_map do |row|
+          item = row.item
+          next item if item.is_a?(Spree::Product)
+
+          item.product if item.respond_to?(:product)
+        end.uniq
+
+        products.each do |product|
+          event = product.created_at >= started_at ? 'product.created' : 'product.updated'
+          product.publish_event(event)
+        end
+      end
 
       # Completion is row-state-derived so retry-induced over-increments of the counter
       # stay harmless. The counter pre-check just shortcuts the row scan for workers
