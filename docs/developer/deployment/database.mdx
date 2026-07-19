@@ -30,7 +30,7 @@ DATABASE_URL=sqlite3:db/production.sqlite3
 
 ### Using database.yml
 
-You can also configure the database in `config/database.yml`:
+You can also configure the database in `config/database.yml`. The connection pool is sized to cover web request threads plus [background job](/developer/deployment/background_jobs) threads, since jobs run inside the web container by default:
 
 <Tabs>
   <Tab title="PostgreSQL">
@@ -38,7 +38,7 @@ You can also configure the database in `config/database.yml`:
     default: &default
       adapter: postgresql
       encoding: unicode
-      pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+      pool: <%= Integer(ENV.fetch("RAILS_MAX_THREADS", 3)) + Integer(ENV.fetch("JOB_THREADS", 3)) + 3 %>
 
     development:
       <<: *default
@@ -55,7 +55,7 @@ You can also configure the database in `config/database.yml`:
     default: &default
       adapter: mysql2
       encoding: utf8mb4
-      pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+      pool: <%= Integer(ENV.fetch("RAILS_MAX_THREADS", 3)) + Integer(ENV.fetch("JOB_THREADS", 3)) + 3 %>
 
     development:
       <<: *default
@@ -71,7 +71,7 @@ You can also configure the database in `config/database.yml`:
     ```yaml
     default: &default
       adapter: sqlite3
-      pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+      pool: <%= Integer(ENV.fetch("RAILS_MAX_THREADS", 3)) + Integer(ENV.fetch("JOB_THREADS", 3)) + 3 %>
       timeout: 5000
 
     development:

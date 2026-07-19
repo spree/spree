@@ -5,7 +5,7 @@ description: Deploy your Spree project to Render — one Docker service, one Pos
 
 ## Overview
 
-Every [create-spree-app](/developer/create-spree-app/quickstart) project ships a ready Render Blueprint (`render.yaml` at the project root). It deploys the whole app as **one Docker service built straight from your repository** plus a managed PostgreSQL — nothing else:
+Every [create-spree-app](/developer/create-spree-app/quickstart) project ships a ready Render Blueprint (`render.yaml` at the project root). It deploys the whole app in the [single-node topology](/developer/deployment/quickstart#single-node-vs-distributed): **one Docker service built straight from your repository** plus a managed PostgreSQL — nothing else:
 
 - **Web** — one container running the Spree API and background jobs
 - **PostgreSQL** — the only backing service
@@ -45,7 +45,7 @@ Generated URLs (images and attachments in API responses, email links) automatica
 
 ## Scaling Out
 
-The Blueprint's commented **worker** block splits background jobs into a dedicated service — same image, no rebuild. Uncomment it and set `SOLID_QUEUE_IN_PUMA=false` on the web service so it stops running jobs.
+The Blueprint's commented **worker** block switches to [split mode](/developer/deployment/quickstart#web-and-worker): background jobs move into a dedicated service — same image, no rebuild. Uncomment it and set `SOLID_QUEUE_IN_PUMA=false` on the web service so it stops running jobs.
 
 For production workloads, we recommend:
 
@@ -81,3 +81,5 @@ Before going to production:
 - [Set environment variables](/developer/deployment/environment_variables) (SMTP, SSL, etc.)
 - [Configure CDN](/developer/deployment/cdn)
 - [Configure caching](/developer/deployment/caching)
+
+Deploying a storefront? The Next.js storefront ships separately — typically to Vercel. See [Storefront Deployment](/developer/storefront/nextjs/deployment).

@@ -1,0 +1,106 @@
+---
+title: Background Jobs
+description: Spree's background jobs live in your database by default (Solid Queue) — nothing extra to run, with a Sidekiq/Redis swap for very high volume.
+---
+
+Everything that doesn't happen during a request runs as a background job: sending emails, processing images, delivering webhooks, importing and exporting catalogs, releasing expired stock reservations. Spree uses Active Job (Rails' standard job interface), so the queue backend is swappable — but the default needs nothing beyond your database.
+
+## Solid Queue — the default
+
+Production uses [Solid Queue](https://github.com/rails/solid_queue) — the built-in background job processor: jobs are stored in your database alongside everything else. There is nothing extra to provision, and by default the job supervisor runs **inside the web container** — one container is the whole application ([combined mode](/developer/deployment/quickstart#web-and-worker)).
+
+When job volume grows, switch to split mode: run a dedicated worker from the same image with `bin/jobs`, and set `SOLID_QUEUE_IN_PUMA=false` on the web service. Multiple web instances and multiple workers are safe by default — they coordinate through the database.
+
+| Variable | Default | Description |
+|---|---|---|
+| `SOLID_QUEUE_IN_PUMA` | `true` | Run jobs inside the web container; set `false` when a dedicated worker runs |
+| `JOB_THREADS` | `3` | Worker thread count — raise it on a dedicated worker |
+| `JOB_CONCURRENCY` | `1` | Worker process count — the scaling knob for dedicated workers |
+
+## Job Dashboard
+
+Every deployment ships [Mission Control](https://github.com/rails/mission_control-jobs) — a web UI for background jobs — at `/jobs`: inspect, retry, and discard jobs from the browser. It's guarded by HTTP Basic auth: set `MISSION_CONTROL_USER` and `MISSION_CONTROL_PASSWORD` in production (without them the dashboard stays locked).
+
+## Recurring Jobs
+
+Scheduled work — releasing expired stock reservations, pruning price history, queue housekeeping — is defined in `config/recurring.yml`, Solid Queue's built-in cron. Add your own:
+
+```yaml config/recurring.yml
+production:
+  nightly_report:
+    class: MyReportJob
+    schedule: at 5am every day
+```
+
+## Queues
+
+`config/queue.yml` lists queues in polling order: checkout-critical and operator-facing work first, bulk catalog processing second, housekeeping last. A trailing `"*"` catches any queue added later. Large CSV imports are additionally capped so they can't occupy the whole worker pool — see [`SPREE_IMPORT_JOB_CONCURRENCY`](/developer/deployment/environment_variables).
+
+## Swapping to Sidekiq
+
+For very high job volume, Spree works with [Sidekiq](https://sidekiq.org/) on Redis or Valkey — like any Active Job backend. This is a bigger step than the [cache swap](/developer/deployment/caching); here is the full setup.
+
+Add the gems and switch the adapter:
+
+```ruby
+# Gemfile
+gem "sidekiq"
+gem "sidekiq-cron"      # recurring jobs (replaces config/recurring.yml)
+gem "sentry-sidekiq"    # only if you use Sentry
+
+# config/application.rb
+config.active_job.queue_adapter = :sidekiq
+```
+
+Configure the queues with weights — Sidekiq's equivalent of Solid Queue's polling order (checkout-critical work first, bulk catalog processing second, housekeeping last):
+
+```yaml config/sidekiq.yml
+:concurrency: <%= Integer(ENV.fetch('SIDEKIQ_CONCURRENCY', '10')) %>
+:queues:
+  - [default, 5]
+  - [spree_imports, 5]
+  - [spree_payment_webhooks, 5]
+  - [mailers, 5]
+  - [spree_events, 3]
+  - [spree_exports, 3]
+  - [spree_images, 3]
+  - [spree_products, 3]
+  - [spree_reports, 3]
+  - [spree_variants, 3]
+  - [spree_taxons, 3]
+  - [spree_stock_location_stock_items, 3]
+  - [spree_coupon_codes, 3]
+  - [spree_addresses, 3]
+  - [spree_gift_cards, 3]
+  - [spree_webhooks, 3]
+  - [spree_api_keys, 3]
+  - [spree_search, 3]
+  - [active_storage_transform, 3]
+  - [active_storage_analysis, 1]
+  - [active_storage_purge, 1]
+```
+
+Move the `config/recurring.yml` schedules to sidekiq-cron (it auto-loads `config/schedule.yml`):
+
+```yaml config/schedule.yml
+expire_stock_reservations:
+  cron: "* * * * *"
+  class: Spree::StockReservations::ExpireJob
+```
+
+The `/jobs` dashboard is Solid Queue-specific — mount [Sidekiq's Web UI](https://github.com/sidekiq/sidekiq/wiki/Monitoring) instead:
+
+```ruby
+# config/routes.rb
+require "sidekiq/web"
+
+Sidekiq::Web.use Rack::Auth::Basic do |user, password|
+  ActiveSupport::SecurityUtils.secure_compare(user, ENV["SIDEKIQ_USER"].to_s) &
+    ActiveSupport::SecurityUtils.secure_compare(password, ENV["SIDEKIQ_PASSWORD"].to_s)
+end
+mount Sidekiq::Web => "/sidekiq"
+```
+
+Finally: point Sidekiq at your Redis/Valkey via `REDIS_URL`, run `bundle exec sidekiq` as a dedicated worker service (set `RAILS_MAX_THREADS` to at least `SIDEKIQ_CONCURRENCY` there so the database pool covers every worker thread), and remove the `SOLID_QUEUE_IN_PUMA` setting — with Sidekiq, web and worker are always separate processes.
+
+Reach for this when a dedicated Solid Queue worker with raised `JOB_THREADS`/`JOB_CONCURRENCY` no longer keeps up — for most stores, that point never arrives.

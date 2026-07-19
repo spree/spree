@@ -1,23 +1,20 @@
 ---
 title: Environment Variables
-description: Reference for Spree deployment environment variables — database, background jobs, SMTP, web server, file storage, and application configuration settings.
+description: Reference for Spree deployment environment variables — database, web server, background jobs, SMTP, file storage, and application settings.
 ---
 
 Spree uses environment variables for all deployment configuration. No secrets or credentials are stored in the codebase.
 
 ## Required
 
-These variables are required to run Spree in production.
+These two variables are all a production deployment strictly needs:
 
 | Variable | Description | Example |
 | --- | --- | --- |
-| `DATABASE_URL` | PostgreSQL connection URL | `postgres://user:pass@localhost:5432/spree` |
-| `SOLID_QUEUE_IN_PUMA` | Run the Solid Queue job supervisor inside Puma (default `true` — one process serves web + jobs). Set `false` when a dedicated `bin/jobs` worker runs | `true` |
-| `JOB_THREADS` | Background job worker thread count (see `config/queue.yml`; the DB pool sizes itself from this) | `3` |
-| `JOB_CONCURRENCY` | Background job worker process count — the standard Rails knob for scaling a dedicated worker | `1` |
-| `SPREE_IMPORT_JOB_CONCURRENCY` | Max worker threads one CSV import may occupy at once (default: 75% of `JOB_THREADS`; `0` disables the cap) | `2` |
-| `MISSION_CONTROL_USER` / `MISSION_CONTROL_PASSWORD` | HTTP Basic auth for the `/jobs` dashboard. Required in production (the dashboard stays locked without them); dev defaults to the seed admin credentials | `jobs` |
-| `SECRET_KEY_BASE` | Secret key for session encryption. Generate with `bin/rails secret` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` |
+| `DATABASE_URL` | Database connection URL — see [Database Configuration](/developer/deployment/database) | `postgres://user:pass@localhost:5432/spree` |
+| `SECRET_KEY_BASE` | Secret used to encrypt sessions and cookies. Generate with `openssl rand -hex 64` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` |
+
+You'll almost always want to set [`RAILS_HOST`](#urls-and-hosts) too — without it, generated URLs point at `localhost`.
 
 ## URLs and Hosts
 
@@ -30,17 +27,37 @@ When neither `RAILS_HOST` nor `CDN_HOST` is configured, image and attachment URL
 | Variable | Default | Description |
 | --- | --- | --- |
 | `RAILS_HOST` | — | Public host, optionally with a port — e.g. `store.example.com` or `203.0.113.7:8080`. Host only, no protocol. On [Render](/developer/deployment/render), falls back to the platform-provided `RENDER_EXTERNAL_HOSTNAME`. |
-| `CDN_HOST` | — | Optional host for serving static assets and images, e.g. a CDN distribution in front of your app. Host only, no protocol. Falls back to `RAILS_HOST`. |
+| `CDN_HOST` | — | Optional host for serving static assets and images, e.g. a CDN distribution in front of your app — see [CDN](/developer/deployment/cdn). Host only, no protocol. Falls back to `RAILS_HOST`. |
 
 Generated URLs use `https` unless both `RAILS_FORCE_SSL` and `RAILS_ASSUME_SSL` are set to `false` (see [SSL](#ssl)).
+
+## Web Server
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PORT` | `3000` | Port the web server listens on |
+| `RAILS_MAX_THREADS` | `3` | Concurrent requests each web server process handles |
+| `WEB_CONCURRENCY` | `1` | Number of web server processes per container. Set to `auto` for one per CPU core — each process needs roughly 1 GB of RAM |
+
+## Background Jobs
+
+Background jobs (emails, image processing, webhooks, imports) run inside the web container by default — no extra service needed. See [Background Jobs](/developer/deployment/background_jobs) for how this works and when to split out a dedicated worker.
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `SOLID_QUEUE_IN_PUMA` | `true` | Run background jobs inside the web container. Set to `false` when you run a dedicated worker service (`bin/jobs`) |
+| `JOB_THREADS` | `3` | How many background jobs run concurrently. Raise it on a dedicated worker; the database connection pool sizes itself from this |
+| `JOB_CONCURRENCY` | `1` | Number of worker processes — the scaling knob for a dedicated worker |
+| `SPREE_IMPORT_JOB_CONCURRENCY` | 75% of `JOB_THREADS` | How much of the job capacity a single CSV import may occupy, so imports can't starve other work. `0` removes the cap |
+| `MISSION_CONTROL_USER` / `MISSION_CONTROL_PASSWORD` | — | Login for the `/jobs` dashboard (HTTP Basic auth). Required in production — the dashboard stays locked without them |
 
 ## Email (SMTP)
 
 <Tip>
-This configuration is used for system emails (e.g. staff invitations, report ready, export complete). Customer facing emails are handled by the [storefront via webhooks](/developer/storefront/nextjs/customization#transactional-emails).
+This configuration powers all emails Spree sends — customer transactional emails (order confirmation, shipping notification; on by default) and staff notifications. A storefront can optionally take over customer emails via webhooks — see [Emails](/developer/deployment/emails).
 </Tip>
 
-Spree works with any SMTP provider (Resend, Postmark, Mailgun, SendGrid, Amazon SES, etc.). Set `SMTP_HOST` to enable email delivery — when not set, no delivery method is configured and production email delivery fails (development opens emails in the browser via `letter_opener`).
+Spree works with any SMTP provider (Resend, Postmark, Mailgun, SendGrid, Amazon SES, etc.). Set `SMTP_HOST` to enable email delivery — when not set, production email delivery is disabled (in development, emails are captured by Mailpit at `http://localhost:8025` instead of being sent). See [Emails](/developer/deployment/emails) for the full guide.
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -52,24 +69,16 @@ Spree works with any SMTP provider (Resend, Postmark, Mailgun, SendGrid, Amazon 
 
 Links in emails use the host configured via [`RAILS_HOST`](#urls-and-hosts).
 
-## Web Server
-
-| Variable | Default | Description |
-| --- | --- | --- |
-| `PORT` | `3000` | Web server port |
-| `RAILS_MAX_THREADS` | `3` | Puma threads per worker |
-| `WEB_CONCURRENCY` | `1` | Number of Puma workers. Set to `auto` for one per CPU core |
-
 ## Application
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `RAILS_ENV` | `production` | Rails environment |
+| `RAILS_ENV` | `production` | Runtime environment — leave as `production` when deploying |
 | `RAILS_LOG_LEVEL` | `info` | Log level (`debug`, `info`, `warn`, `error`) |
 
 ## File Storage (S3 / Cloudflare R2)
 
-By default, uploaded files (product images, assets) are stored on the local filesystem. Set the appropriate credentials to use cloud storage instead. Spree auto-detects the provider based on which credentials are present.
+By default, uploaded files (product images, assets) are stored on the local filesystem. Set the appropriate credentials to use cloud storage instead — Spree auto-detects the provider based on which credentials are present. See [Asset Storage](/developer/deployment/assets) for the full guide.
 
 ### Amazon S3
 
@@ -125,11 +134,11 @@ bundle exec rake spree:search:reindex
 
 ## SSL
 
-By default, Spree assumes it runs behind an SSL-terminating reverse proxy. Set these to `false` if running without SSL (e.g., local development or behind a proxy that doesn't do SSL termination).
+By default, Spree assumes it runs behind an SSL-terminating reverse proxy or load balancer. Set these to `false` if running without SSL (e.g., local development or behind a proxy that doesn't do SSL termination).
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `RAILS_ASSUME_SSL` | `true` | Assume requests arrive via SSL (sets `X-Forwarded-Proto`) |
+| `RAILS_ASSUME_SSL` | `true` | Treat incoming requests as arriving over HTTPS (trust the proxy's forwarded headers) |
 | `RAILS_FORCE_SSL` | `true` | Redirect HTTP to HTTPS and use secure cookies |
 
 ## Local Development

@@ -456,15 +456,23 @@
                 "group": "Deployment",
                 "icon": "server",
                 "pages": [
+                  "developer/deployment/quickstart",
                   "developer/deployment/docker",
-                  "developer/deployment/render",
                   "developer/deployment/environment_variables",
-                  "developer/deployment/caching",
+                  {
+                    "group": "AWS",
+                    "pages": [
+                      "developer/deployment/aws",
+                      "developer/deployment/aws_ecs"
+                    ]
+                  },
+                  "developer/deployment/render",
                   "developer/deployment/assets",
-                  "developer/deployment/cdn",
                   "developer/deployment/emails",
-                  "developer/deployment/database",
-                  "developer/deployment/aws"
+                  "developer/deployment/cdn",
+                  "developer/deployment/background_jobs",
+                  "developer/deployment/caching",
+                  "developer/deployment/database"
                 ]
               },
               {

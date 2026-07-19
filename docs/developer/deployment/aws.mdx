@@ -1,456 +1,109 @@
 ---
-title: Amazon Web Services (AWS)
-description: Learn how to deploy your Spree application on Amazon Web Services (AWS).
+title: AWS — EC2 + RDS
+sidebarTitle: EC2 + RDS
+description: The simplest production Spree on AWS — one EC2 instance and a managed database.
 ---
 
-Amazon Web Services offers reliable, scalable, and inexpensive cloud computing services. AWS is also one of the most popular choices for hosting a Spree application.
+The simplest way to run Spree on AWS is the [single-node topology](/developer/deployment/quickstart#single-node-vs-distributed): **one EC2 instance running the Docker image, one RDS database**. No clusters, no load balancers, no task definitions — a complete production store for roughly the cost of a t3.small and a small RDS instance.
 
-We recommend using AWS ECS Fargate to host your Spree application via [Docker image](/developer/deployment/docker).
+Need auto-scaling, zero-downtime deploys, or CI/CD-driven infrastructure? That's the [ECS Fargate guide](/developer/deployment/aws_ecs) — it runs the same Docker image, so you can start here and graduate later without rework.
 
-## Required AWS Services
+## What You'll Create
 
-To fully run your Spree application on AWS, you will need the following services:
-
-| Service | Description |
-|---------|-------------|
-| [AWS ECS Fargate](https://aws.amazon.com/fargate/) | Fully managed container orchestration — run and scale containers without managing infrastructure. |
-| [AWS RDS](https://aws.amazon.com/rds/) | Managed relational database. Spree works with [Aurora PostgreSQL](https://aws.amazon.com/rds/aurora/), [Aurora MySQL](https://aws.amazon.com/rds/aurora/), [RDS PostgreSQL](https://aws.amazon.com/rds/postgresql/), [RDS MySQL](https://aws.amazon.com/rds/mysql/), and [RDS MariaDB](https://aws.amazon.com/rds/mariadb/). |
-| [AWS ElastiCache](https://aws.amazon.com/elasticache/) | Optional — background jobs and caching use PostgreSQL by default. Add Valkey or Redis only for [high-traffic caching](/developer/deployment/caching). |
-| [AWS S3](https://aws.amazon.com/s3/) | Object storage for uploaded files (product images, etc.). [More information](/developer/deployment/assets#aws-s3). |
-| [AWS CloudFront](https://aws.amazon.com/cloudfront/) | CDN for asset delivery (images, stylesheets, JavaScript). |
-| [AWS Route 53](https://aws.amazon.com/route53/) | DNS service for domain name management. |
-| [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/) | Free SSL/TLS certificates. Spree requires HTTPS in production. |
-| [AWS ECR](https://aws.amazon.com/ecr/) | Docker container registry for storing your application images. |
-
-## Docker Image
-
-Build [your project's image](/developer/deployment/docker) with `spree build --production`, or use the stock `ghcr.io/spree/spree` image for deployments without customizations.
-
-To build and deploy a custom image to AWS ECR via GitHub Actions:
-
-```yaml
-name: Deploy to AWS Fargate
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-env:
-  AWS_REGION: us-east-1
-  ECR_REPOSITORY: spree-starter
-  ECS_SERVICE_WEB: spree-web
-  ECS_SERVICE_WORKER: spree-worker
-  ECS_CLUSTER: spree-cluster
-  
-jobs:
-  build:
-    name: Build and Push to ECR
-    runs-on: ubuntu-latest
-    
-    outputs:
-      image: ${{ steps.build-image.outputs.image }}
-      image-tag: ${{ steps.build-image.outputs.image-tag }}
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
-    
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
-    
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        # Build a docker container and push it to ECR
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-        echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
-  
-  deploy-web:
-    name: Deploy Web Service
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
-    
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def-web
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      env:
-        ECR_REGISTRY: ${{ needs.build.outputs.image }}
-        IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
-        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-      with:
-        task-definition: .aws/web-task-definition.json
-        container-name: web
-        image: ${{ needs.build.outputs.image }}
-    
-    - name: Deploy Amazon ECS task definition for web
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def-web.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE_WEB }}
-        cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true
-  
-  deploy-worker:
-    name: Deploy Worker Service
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
-    
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def-worker
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      env:
-        ECR_REGISTRY: ${{ needs.build.outputs.image }}
-        IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
-        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-      with:
-        task-definition: .aws/worker-task-definition.json
-        container-name: worker
-        image: ${{ needs.build.outputs.image }}
-    
-    - name: Deploy Amazon ECS task definition for worker
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def-worker.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE_WORKER }}
-        cluster: ${{ env.ECS_CLUSTER }}
-        wait-for-service-stability: true
-
-  migrate:
-    name: Run Database Migrations
-    runs-on: ubuntu-latest
-    needs: [build, deploy-web]
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
-    
-    - name: Run database migrations
-      run: |
-        aws ecs run-task \
-          --cluster ${{ env.ECS_CLUSTER }} \
-          --task-definition spree-web \
-          --overrides '{
-            "containerOverrides": [{
-              "name": "web",
-              "command": ["bundle", "exec", "rails", "db:migrate"]
-            }]
-          }' \
-          --launch-type FARGATE \
-          --network-configuration '{
-            "awsvpcConfiguration": {
-              "subnets": ["'${{ secrets.SUBNET_ID_1 }}'", "'${{ secrets.SUBNET_ID_2 }}'"],
-              "securityGroups": ["'${{ secrets.SECURITY_GROUP_ID }}'"],
-              "assignPublicIp": "ENABLED"
-            }
-          }'
-```
-
-This action requires secrets to be set in your GitHub repository. You can find the full list of secrets in the [AWS ECS Deploy Task Definition](https://github.com/aws-actions/amazon-ecs-deploy-task-definition) GitHub Actions repository.
-
-| Secret | Description |
-|--------|-------------|
-| `AWS_ACCESS_KEY_ID` | AWS access key ID |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret access key |
-| `AWS_ACCOUNT_ID` | AWS account ID |
-| `SUBNET_ID_1` | First subnet ID |
-| `SUBNET_ID_2` | Second subnet ID |
-| `SECURITY_GROUP_ID` | Security group ID |
-
-## Environment Variables
-
-Store secrets in [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/) and reference them in your task definitions. Non-sensitive configuration goes in the `environment` array directly.
-
-For a full list of available variables, see [Environment Variables](/developer/deployment/environment_variables).
-
-### Secrets Manager
-
-Create the following secrets in AWS Secrets Manager:
-
-| Secret Name | Variable | Description |
+| Resource | Purpose | Starting size |
 |---|---|---|
-| `spree/database-url` | `DATABASE_URL` | PostgreSQL connection URL |
-| `spree/secret-key-base` | `SECRET_KEY_BASE` | Generate with `bin/rails secret` |
+| **EC2 instance** | Runs the Spree container (web + background jobs) | `t3.small` (2 GB) to start, `t3.medium` for comfort |
+| **RDS PostgreSQL** | The only backing service — data, jobs, cache | `db.t4g.small` |
+| **DNS record** | Your store's web address, e.g. `store.example.com`, pointing at the instance's Elastic IP (a free static IP — a plain EC2 IP changes on restart and would break the record) | — |
+| **S3 bucket** (recommended) | Uploaded files (product images) — they shouldn't live on the instance disk. See [Asset Storage](/developer/deployment/assets) | — |
 
-Optional secrets for email delivery, file storage, and error tracking:
+## 1. Create the Database (RDS)
 
-| Secret Name | Variable | Description |
-|---|---|---|
-| `spree/smtp-password` | `SMTP_PASSWORD` | SMTP auth password |
-| `spree/sentry-dsn` | `SENTRY_DSN` | Sentry DSN for error tracking |
+Create an **RDS PostgreSQL** instance in the AWS console:
 
-<Tip>
-  S3 file storage credentials are not needed as environment variables when your ECS task role has the appropriate S3 permissions. Use IAM roles instead of access keys when possible.
-</Tip>
+- Same VPC as your EC2 instance will use
+- **Public access: no** — instead, allow inbound port `5432` from the EC2 instance's security group
+- Note the endpoint, username, and password — they become your `DATABASE_URL`
 
-## ECS Task Definitions
+Spree also runs on RDS MySQL/MariaDB and both Aurora flavors — see [Database Configuration](/developer/deployment/database). RDS takes automated daily backups by default, so the database needs no extra care.
 
-One task definition runs the whole app — the web server also runs background jobs in-process. Save it as `.aws/web-task-definition.json`. The worker task definition is an optional scale-out step — skip it (and the `deploy-worker` job in the workflow above) until job load deserves its own service.
+## 2. Launch the Instance
 
-### Web Service
+Launch an EC2 instance (Ubuntu 24.04 or Amazon Linux 2023) and open ports `80` and `443` in its security group. Give it a stable web address: associate an Elastic IP (so the instance's IP survives restarts) and create a DNS record for your domain — e.g. an `A` record for `store.example.com` — pointing at it. HTTPS depends on this: Caddy can only obtain a certificate once the domain resolves to the instance.
 
-```json
-{
-  "family": "spree-web",
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
-  "cpu": "1024",
-  "memory": "4096",
-  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskRole",
-  "containerDefinitions": [
-    {
-      "name": "web",
-      "image": "${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}",
-      "portMappings": [
-        {
-          "containerPort": 3000,
-          "protocol": "tcp"
-        }
-      ],
-      "essential": true,
-      "environment": [
-        {
-          "name": "RAILS_ENV",
-          "value": "production"
-        },
-        {
-          "name": "PORT",
-          "value": "3000"
-        },
-        {
-          "name": "RAILS_MAX_THREADS",
-          "value": "3"
-        },
-        {
-          "name": "WEB_CONCURRENCY",
-          "value": "auto"
-        },
-        {
-          "name": "RAILS_LOG_LEVEL",
-          "value": "info"
-        },
-        {
-          "name": "AWS_BUCKET",
-          "value": "your-spree-bucket"
-        }
-      ],
-      "secrets": [
-        {
-          "name": "DATABASE_URL",
-          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/database-url"
-        },
-        {
-          "name": "SECRET_KEY_BASE",
-          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/secret-key-base"
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/spree-web",
-          "awslogs-region": "${AWS_REGION}",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
-      "healthCheck": {
-        "command": ["CMD-SHELL", "curl -f http://localhost:3000/up || exit 1"],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 60
-      }
-    }
-  ]
-}
-```
-
-### Worker Service (optional scale-out)
-
-Splits background jobs into a dedicated service — same image, no rebuild. When you deploy it, set `SOLID_QUEUE_IN_PUMA=false` in the web task's `environment` so the web container stops running jobs. Save as `.aws/worker-task-definition.json`:
-
-```json
-{
-  "family": "spree-worker",
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
-  "cpu": "512",
-  "memory": "2048",
-  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskRole",
-  "containerDefinitions": [
-    {
-      "name": "worker",
-      "image": "${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}",
-      "command": ["bin/jobs"],
-      "essential": true,
-      "environment": [
-        {
-          "name": "RAILS_ENV",
-          "value": "production"
-        },
-        {
-          "name": "RAILS_LOG_LEVEL",
-          "value": "info"
-        }
-      ],
-      "secrets": [
-        {
-          "name": "DATABASE_URL",
-          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/database-url"
-        },
-        {
-          "name": "SECRET_KEY_BASE",
-          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/secret-key-base"
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/spree-worker",
-          "awslogs-region": "${AWS_REGION}",
-          "awslogs-stream-prefix": "ecs"
-        }
-      },
-      "healthCheck": {
-        "command": ["CMD-SHELL", "pgrep -f solid_queue || exit 1"],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 60
-      }
-    }
-  ]
-}
-```
-
-## Production Sizing
-
-The task definitions above are sized for production. Here is a summary and scaling guidance:
-
-| Service | Fargate CPU | Fargate Memory | Instances |
-|---|---|---|---|
-| **Web** | 1 vCPU | 4 GB | 2+ (use ECS Service Auto Scaling) |
-| **Worker** (optional split) | 0.5 vCPU | 2 GB | 1+ |
-| **RDS (PostgreSQL)** | — | `db.r6g.large` (2 vCPU, 16 GB) | 1 |
-
-The database also stores background jobs and cache — the sizing above accounts for it. Scaling the web service to multiple instances is safe with in-process jobs: instances coordinate through the database. Add ElastiCache (Valkey or Redis) only for [high-traffic caching](/developer/deployment/caching).
-
-### Auto Scaling
-
-Use [ECS Service Auto Scaling](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html) to scale the web service based on CPU or memory utilization:
+Then install Docker:
 
 ```bash
-# Register a scalable target (min 2, max 6 tasks)
-aws application-autoscaling register-scalable-target \
-  --service-namespace ecs \
-  --resource-id service/spree-cluster/spree-web \
-  --scalable-dimension ecs:service:DesiredCount \
-  --min-capacity 2 \
-  --max-capacity 6
-
-# Scale based on average CPU utilization (target 70%)
-aws application-autoscaling put-scaling-policy \
-  --service-namespace ecs \
-  --resource-id service/spree-cluster/spree-web \
-  --scalable-dimension ecs:service:DesiredCount \
-  --policy-name spree-web-cpu-scaling \
-  --policy-type TargetTrackingScaling \
-  --target-tracking-scaling-policy-configuration '{
-    "TargetValue": 70.0,
-    "PredefinedMetricSpecification": {
-      "PredefinedMetricType": "ECSServiceAverageCPUUtilization"
-    },
-    "ScaleInCooldown": 300,
-    "ScaleOutCooldown": 60
-  }'
+curl -fsSL https://get.docker.com | sh
 ```
 
-## After Deployment
+## 3. Run Spree
 
-### Admin
+Build [your project's image](/developer/deployment/docker) and push it to a registry the instance can pull from (ECR or any other) — or use the stock `ghcr.io/spree/spree:latest` image to start. Then create a `docker-compose.yml` on the instance:
 
-Access your admin panel at:
+```yaml docker-compose.yml
+services:
+  web:
+    image: your-registry/my-store:latest   # or ghcr.io/spree/spree:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://spree:YOUR_PASSWORD@your-db.abc123.eu-west-1.rds.amazonaws.com:5432/spree_production
+      SECRET_KEY_BASE: generate-with-openssl-rand-hex-64
+      RAILS_HOST: store.example.com
+      # Uploads to S3 (recommended) — see /developer/deployment/assets
+      # AWS_REGION: eu-west-1
+      # AWS_BUCKET: my-store-uploads
+      # AWS_ACCESS_KEY_ID: ...
+      # AWS_SECRET_ACCESS_KEY: ...
+      # Email delivery — see /developer/deployment/emails
+      # SMTP_HOST: smtp.resend.com
+      # SMTP_USERNAME: resend
+      # SMTP_PASSWORD: ...
+      # SMTP_FROM_ADDRESS: orders@example.com
 
+  # Caddy terminates HTTPS with an automatic Let's Encrypt certificate
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    command: caddy reverse-proxy --from store.example.com --to web:3000
+    volumes:
+      - caddy_data:/data
+
+volumes:
+  caddy_data:
 ```
-https://<your-domain>/admin
-```
-
-Default credentials are created during `db:seed`. Change them immediately after first login.
-
-### Database Migrations
-
-The GitHub Actions workflow above runs migrations automatically on deploy. To run migrations manually:
 
 ```bash
-aws ecs run-task \
-  --cluster spree-cluster \
-  --task-definition spree-web \
-  --overrides '{
-    "containerOverrides": [{
-      "name": "web",
-      "command": ["bundle", "exec", "rails", "db:migrate"]
-    }]
-  }' \
-  --launch-type FARGATE \
-  --network-configuration '{
-    "awsvpcConfiguration": {
-      "subnets": ["subnet-xxx", "subnet-yyy"],
-      "securityGroups": ["sg-xxx"],
-      "assignPublicIp": "DISABLED"
-    }
-  }'
+docker compose up -d
 ```
+
+The database is migrated automatically on boot. Once DNS resolves, your store is live at `https://store.example.com` — admin at `/admin`, background jobs running inside the web container ([combined mode](/developer/deployment/quickstart#web-and-worker)).
+
+## Updating
+
+Deploying a new version is a pull and a restart:
+
+```bash
+docker compose pull && docker compose up -d
+```
+
+This restarts the container with a few seconds of downtime — the point at which that matters is a good signal to consider [ECS Fargate](/developer/deployment/aws_ecs) and its rolling deploys.
+
+## Scaling on One Box
+
+Before reaching for a cluster:
+
+- **Bigger instance** — a `t3.medium` or `t3.large` carries substantial traffic; resizing is a stop/start
+- **Split the worker** — add a second service to the compose file with `command: bin/jobs`, and set `SOLID_QUEUE_IN_PUMA: "false"` on `web` ([split mode](/developer/deployment/quickstart#web-and-worker))
+- **Scale the database** — RDS resizes independently, and read replicas are a console click
 
 ## Next Steps
 
-- [Asset Storage](/developer/deployment/assets) — configure S3 for product images and uploads
-- [Configure CDN](/developer/deployment/cdn) — set up CloudFront for asset delivery
-- [Configure caching](/developer/deployment/caching) — works out of the box; add ElastiCache for high-traffic installs
-- [Set environment variables](/developer/deployment/environment_variables) — SMTP, Sentry, SSL, etc.
+- [Asset Storage](/developer/deployment/assets) — store uploads in S3
+- [Set environment variables](/developer/deployment/environment_variables) — SMTP, Sentry, etc.
+- [Configure CDN](/developer/deployment/cdn) — CloudFront in front of your assets
+- [Deploy the storefront](/developer/storefront/nextjs/deployment) — the Next.js storefront ships separately, typically to Vercel
+- [ECS Fargate](/developer/deployment/aws_ecs) — when you outgrow one box
