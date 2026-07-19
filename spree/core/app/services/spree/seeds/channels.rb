@@ -10,15 +10,14 @@ module Spree
       WHOLESALE_CODE = 'wholesale'.freeze
 
       def call
-        store = Spree::Store.default
-        return unless store&.persisted?
+        Spree::Store.find_each do |store|
+          store.ensure_default_channel
 
-        store.ensure_default_channel
-
-        store.channels.find_or_create_by!(code: WHOLESALE_CODE) do |channel|
-          channel.name = 'Wholesale'
-          channel.preferred_storefront_access = 'login_required'
-          channel.preferred_guest_checkout = false
+          store.channels.find_or_create_by!(code: WHOLESALE_CODE) do |channel|
+            channel.name = 'Wholesale'
+            channel.preferred_storefront_access = 'login_required'
+            channel.preferred_guest_checkout = false
+          end
         end
       end
     end

@@ -9,10 +9,9 @@ module Spree
       WHOLESALE_NAME = 'Wholesale'.freeze
 
       def call
-        store = Spree::Store.default
-        return unless store&.persisted?
-
-        store.customer_groups.find_or_create_by!(name: WHOLESALE_NAME)
+        Spree::Store.find_each do |store|
+          store.customer_groups.find_or_create_by!(name: WHOLESALE_NAME)
+        end
       end
     end
   end

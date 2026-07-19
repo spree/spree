@@ -22,4 +22,12 @@ RSpec.describe Spree::Seeds::Channels do
 
     expect { subject }.not_to change { Spree::Channel.count }
   end
+
+  it 'seeds every store, not only the default' do
+    second_store = create(:store)
+
+    subject
+
+    expect(second_store.channels.find_by(code: 'wholesale')).to be_present
+  end
 end

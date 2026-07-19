@@ -27,6 +27,11 @@ module Spree
         CHANNEL_HEADER = 'X-Spree-Channel'.freeze
 
         included do
+          # Prepended: LocaleAndCurrency's set_locale/set_currency callbacks
+          # (registered up in V3::BaseController) consult Spree::Current's
+          # fallback chain, which must derive from the REQUEST's store — not
+          # the Store.default fallback — before they run.
+          prepend_before_action :set_current_store_context
           before_action :set_current_channel
         end
 
@@ -42,13 +47,11 @@ module Spree
         # specific channel. The store-default fallback is handled lazily by
         # +Spree::Current.channel+ itself, which avoids one query per
         # unbound, header-less API request.
-        def set_current_channel
-          # Anchor the lazy fallbacks in Spree::Current (channel →
-          # store.default_channel, market/currency/locale → store defaults) to
-          # the REQUEST's store. Without this, Spree::Current.store falls back
-          # to Store.default — the wrong store on sibling stores' domains.
+        def set_current_store_context
           Spree::Current.store = current_store
+        end
 
+        def set_current_channel
           bound = channel_from_api_key
 
           if bound

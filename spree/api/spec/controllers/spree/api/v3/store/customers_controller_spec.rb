@@ -180,7 +180,13 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       end
 
       context 'when the request store is not the default store' do
-        let(:store) { create(:store) }
+        let(:store) { create(:store, default_currency: 'EUR') }
+
+        it 'derives currency fallbacks from the request store, not the default store' do
+          get :show
+
+          expect(json_response['display_available_store_credit_total']).to start_with('€')
+        end
 
         it 'reads memberships from the request store, not the default store' do
           request_store_group = create(:customer_group, store: store, name: 'Wholesale')
