@@ -46,5 +46,18 @@ RSpec.describe Spree::Api::V3::Store::ChannelController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(wholesale.prefixed_id)
     end
+
+    context 'when the request store is not the default store' do
+      let!(:default_store) { @default_store || create(:store, default: true) }
+      let(:store) { create(:store) }
+
+      it 'falls back to the request store default channel, not the global default store channel' do
+        get :show
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['id']).to eq(store.default_channel.prefixed_id)
+        expect(json_response['id']).not_to eq(default_store.default_channel.prefixed_id)
+      end
+    end
   end
 end

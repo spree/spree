@@ -43,6 +43,12 @@ module Spree
         # +Spree::Current.channel+ itself, which avoids one query per
         # unbound, header-less API request.
         def set_current_channel
+          # Anchor the lazy fallbacks in Spree::Current (channel →
+          # store.default_channel, market/currency/locale → store defaults) to
+          # the REQUEST's store. Without this, Spree::Current.store falls back
+          # to Store.default — the wrong store on sibling stores' domains.
+          Spree::Current.store = current_store
+
           bound = channel_from_api_key
 
           if bound
