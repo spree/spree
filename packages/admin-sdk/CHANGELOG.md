@@ -1,5 +1,11 @@
 # @spree/admin-sdk
 
+## 0.6.1
+
+### Patch Changes
+
+- `Customer` supports the new `newsletter_subscriber` expand — pass `expand: ['newsletter_subscriber']` to `customers.get`/`customers.list` to include the customer's store-scoped newsletter subscription.
+
 ## 0.6.0
 
 This is the Admin API surface the 5.6 React Dashboard consumes — hosts installing `@spree/dashboard@0.10.x` from the registry need this version; 0.5.0 lacks exports the dashboard imports.
