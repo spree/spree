@@ -8,7 +8,7 @@ module Spree
           :shipments,
           { bill_address: [:state, :country] },
           { ship_address: [:state, :country] },
-          { line_items: { variant: { product: [:taxons] } } },
+          { line_items: { variant: { product: [:categories] } } },
           { metafields: :metafield_definition }
         ]
       end

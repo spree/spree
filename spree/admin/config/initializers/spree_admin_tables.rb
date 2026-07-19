@@ -112,7 +112,7 @@ Rails.application.config.after_initialize do
                                         ransack_attribute: 'taxons_id',
                                         operators: %i[in],
                                         search_url: ->(view_context) { view_context.spree.admin_taxons_select_options_path(format: :json) },
-                                        method: ->(product) { product.taxons.pluck(:pretty_name).to_sentence if product.classification_count.positive? }
+                                        method: ->(product) { product.taxons.pluck(:pretty_name).to_sentence if product.categories_count.positive? }
 
   # Tags - displayed as comma-separated list, filtered via autocomplete
   Spree.admin.tables.products.add :tags,
@@ -171,7 +171,7 @@ Rails.application.config.after_initialize do
                                                     body: 'admin.bulk_ops.products.body.add_to_taxons',
                                                     form_partial: 'spree/admin/bulk_operations/forms/taxon_picker',
                                                     position: 40,
-                                                    condition: -> { can?(:manage, Spree::Classification) }
+                                                    condition: -> { can?(:manage, Spree::ProductCategory) }
 
   Spree.admin.tables.products.add_bulk_action :remove_from_taxons,
                                                     label: 'admin.bulk_ops.products.title.remove_from_taxons',
@@ -180,7 +180,7 @@ Rails.application.config.after_initialize do
                                                     body: 'admin.bulk_ops.products.body.remove_from_taxons',
                                                     form_partial: 'spree/admin/bulk_operations/forms/taxon_picker',
                                                     position: 50,
-                                                    condition: -> { can?(:manage, Spree::Classification) }
+                                                    condition: -> { can?(:manage, Spree::ProductCategory) }
 
   Spree.admin.tables.products.add_bulk_action :add_tags,
                                                     label: 'admin.bulk_ops.products.title.add_tags',

@@ -70,9 +70,9 @@ module Spree
       where(variant_id: Spree::Variant.search(query).select(:id))
     }
 
-    attribute :eligible_for_taxon_matching, :boolean, default: false
-    before_validation -> { self.eligible_for_taxon_matching = new_record? ? discounted? : discounted? != was_discounted? }
-    after_commit -> { variant&.product&.auto_match_taxons }, if: -> { eligible_for_taxon_matching? }
+    attribute :eligible_for_collection_matching, :boolean, default: false
+    before_validation -> { self.eligible_for_collection_matching = new_record? ? discounted? : discounted? != was_discounted? }
+    after_commit -> { variant&.product&.auto_match_collections }, if: -> { eligible_for_collection_matching? }
 
     def money
       Spree::Money.new(amount || 0, currency: currency.upcase)

@@ -96,8 +96,21 @@ module Spree
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
     has_many :taxonomies, class_name: 'Spree::Taxonomy'
-    has_many :taxons, class_name: 'Spree::Taxon'
-    has_many :categories, class_name: 'Spree::Category'
+    # Category surfaces exclude automatic (rule-based) rows. The manual scope is a
+    # no-op once the Phase 4 migration moves them to Collections; removed in 6.1.
+    has_many :categories, -> { manual }, class_name: 'Spree::Category'
+    has_many :collections, class_name: 'Spree::Collection', dependent: :destroy_async
+
+    # @deprecated Use #categories; removed in 6.1.
+    def taxons
+      Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')
+      categories
+    end
+
+    def taxons=(value)
+      Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.1. Use #categories= instead.')
+      self.categories = value
+    end
 
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 

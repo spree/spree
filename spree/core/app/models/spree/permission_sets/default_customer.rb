@@ -11,13 +11,14 @@ module Spree
     class DefaultCustomer < Base
       def activate!
         # Read-only access to catalog
+        can :read, Spree::Collection
         can :read, Spree::Country
         can :read, Spree::OptionType
         can :read, Spree::OptionValue
         can :read, Spree::Product
         can :read, Spree::State
         can :read, Spree::Store
-        can :read, Spree::Taxon
+        can :read, Spree::Category
         can :read, Spree::Taxonomy
         can :read, Spree::Variant
         can :read, Spree::Zone

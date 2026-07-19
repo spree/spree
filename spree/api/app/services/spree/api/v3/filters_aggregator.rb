@@ -4,13 +4,15 @@ module Spree
       class FiltersAggregator
         # @param scope [ActiveRecord::Relation] Base product scope (fully filtered, including option values)
         # @param currency [String] Currency for price range
-        # @param category [Spree::Category, nil] Optional category for default_sort and category filtering context
+        # @param category [Spree::Category, nil] Optional category — drives the child-category facet only (NOT default_sort)
+        # @param sort_order [String, nil] Optional grouping sort_order (space format, e.g. a collection's 'price asc') that drives default_sort
         # @param option_value_ids [Array<String>] Currently selected option value prefixed IDs (for disjunctive facet counts)
         # @param scope_before_options [ActiveRecord::Relation] Scope before option value filters (for disjunctive counts)
-        def initialize(scope:, currency:, category: nil, option_value_ids: [], scope_before_options: nil)
+        def initialize(scope:, currency:, category: nil, sort_order: nil, option_value_ids: [], scope_before_options: nil)
           @scope = scope
           @currency = currency
           @category = category
+          @sort_order = sort_order
           @option_value_ids = option_value_ids
           @scope_before_options = scope_before_options || scope
         end
@@ -19,7 +21,7 @@ module Spree
           {
             filters: build_filters,
             sort_options: sort_options,
-            default_sort: to_api_sort(@category&.sort_order || 'manual'),
+            default_sort: to_api_sort(@sort_order || 'manual'),
             total_count: @scope.distinct.count
           }
         end
@@ -36,7 +38,7 @@ module Spree
         end
 
         def sort_options
-          Spree::Taxon::SORT_ORDERS.map { |id| { id: to_api_sort(id) } }
+          Spree::Collection::SORT_ORDERS.map { |id| { id: to_api_sort(id) } }
         end
 
         # Converts internal sort format ('price asc') to API format ('price', '-price')

@@ -11,7 +11,7 @@ module Spree
                 result = search_provider.filters(
                   scope: filters_scope,
                   query: search_query,
-                  filters: (search_filters || {}).merge('_category' => category)
+                  filters: (search_filters || {}).merge('_category' => category, '_collection' => collection)
                 )
 
                 {
@@ -40,6 +40,7 @@ module Spree
                 current_currency,
                 current_locale,
                 category&.cache_key_with_version,
+                collection&.cache_key_with_version,
                 search_query,
                 search_filters&.sort_by(&:first)&.to_json,
                 max_updated,
@@ -55,12 +56,18 @@ module Spree
               # included).
               scope = current_store.products.available(Time.current, current_currency, include_preorderable: true)
               scope = scope.in_category(category) if category.present?
+              scope = scope.in_collection(collection) if collection.present?
               scope.accessible_by(current_ability, :show)
             end
 
             def category
               category_id = params[:category_id]
               @category ||= category_id.present? ? current_store.categories.find_by_param(category_id) : nil
+            end
+
+            def collection
+              collection_id = params[:collection_id]
+              @collection ||= collection_id.present? ? current_store.collections.find_by_param(collection_id) : nil
             end
           end
         end

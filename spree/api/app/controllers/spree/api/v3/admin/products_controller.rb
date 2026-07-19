@@ -11,6 +11,8 @@ module Spree
             :bulk_status_update,
             :bulk_add_to_categories,
             :bulk_remove_from_categories,
+            :bulk_add_to_collections,
+            :bulk_remove_from_collections,
             :bulk_add_to_channels,
             :bulk_remove_from_channels,
             :bulk_destroy
@@ -52,13 +54,25 @@ module Spree
           # POST /api/v3/admin/products/bulk_add_to_categories
           # Body: { ids: [...], category_ids: [...] }
           def bulk_add_to_categories
-            apply_categories(Spree::Taxons::AddProducts)
+            apply_categories(Spree::Categories::AddProducts)
           end
 
           # POST /api/v3/admin/products/bulk_remove_from_categories
           # Body: { ids: [...], category_ids: [...] }
           def bulk_remove_from_categories
-            apply_categories(Spree::Taxons::RemoveProducts)
+            apply_categories(Spree::Categories::RemoveProducts)
+          end
+
+          # POST /api/v3/admin/products/bulk_add_to_collections
+          # Body: { ids: [...], collection_ids: [...] }
+          def bulk_add_to_collections
+            apply_collections(Spree::Collections::AddProducts)
+          end
+
+          # POST /api/v3/admin/products/bulk_remove_from_collections
+          # Body: { ids: [...], collection_ids: [...] }
+          def bulk_remove_from_collections
+            apply_collections(Spree::Collections::RemoveProducts)
           end
 
           # POST /api/v3/admin/products/bulk_add_to_channels
@@ -201,12 +215,11 @@ module Spree
             @search_provider ||= Spree::SearchProvider::Database.new(current_store)
           end
 
-          # Mirrors `Spree::Admin::ProductsController#after_bulk_tags_change`:
-          # tag changes can flip automatic-taxon matches, and `Tags::Bulk*`
+          # Tag changes can flip automatic-collection matches, and `Tags::Bulk*`
           # touch records via `touch_all` (which skips `after_commit`), so the
           # search index needs an explicit kick.
           def after_bulk_tags_change
-            Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
+            Spree::Product.bulk_auto_match_collections(current_store, bulk_collection.ids)
             bulk_collection.each(&:enqueue_search_index)
           end
 
@@ -221,10 +234,24 @@ module Spree
             categories = current_store.categories.
                          accessible_by(current_ability, :update).where(id: category_ids)
 
-            service.call(taxons: categories, products: bulk_collection)
-            Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
+            service.call(categories: categories, products: bulk_collection)
 
             render json: { product_count: bulk_collection.size, category_count: categories.size }
+          end
+
+          def apply_collections(service)
+            authorize! :update, model_class
+
+            # Only manual collections accept curation — automatic membership is
+            # rebuilt from rules, so a manual add/remove would be lost on the next
+            # regeneration (mirrors apply_categories, whose association is manual).
+            collection_ids = decode_ids(params[:collection_ids])
+            collections = current_store.collections.manual.
+                          accessible_by(current_ability, :update).where(id: collection_ids)
+
+            service.call(collections: collections, products: bulk_collection)
+
+            render json: { product_count: bulk_collection.size, collection_count: collections.size }
           end
 
           def scoped_channels

@@ -27,7 +27,7 @@ RSpec.describe Spree::Admin::MetafieldDefinitionsController, type: :controller d
 
   describe 'GET #index' do
     let!(:metafield_definitions) { create_list(:metafield_definition, 3) }
-    let!(:taxon_rich_text_field) { create(:metafield_definition, :rich_text_field, resource_type: 'Spree::Taxon') }
+    let!(:taxon_rich_text_field) { create(:metafield_definition, :rich_text_field, resource_type: 'Spree::Category') }
 
     it 'renders the index template' do
       get :index
@@ -38,7 +38,7 @@ RSpec.describe Spree::Admin::MetafieldDefinitionsController, type: :controller d
 
     context 'filtering by resource type' do
       it 'renders the index template' do
-        get :index, params: { q: { resource_type_eq: 'Spree::Taxon' } }
+        get :index, params: { q: { resource_type_eq: 'Spree::Category' } }
         expect(response).to render_template(:index)
         expect(assigns[:collection]).to eq([taxon_rich_text_field])
       end

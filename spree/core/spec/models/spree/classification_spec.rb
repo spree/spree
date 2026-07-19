@@ -28,7 +28,7 @@ module Spree
 
     it 'has a valid fixtures' do
       expect positions_to_be_valid(taxon_with_5_products)
-      expect(Spree::Classification.count).to eq 5
+      expect(Spree::ProductCategory.count).to eq 5
     end
 
     context 'removing product from taxon' do
@@ -95,50 +95,54 @@ module Spree
       let(:taxon) { create(:taxon) }
       let(:product) { create(:product) }
 
-      describe 'classification_count on taxon' do
+      # The direct taxon-side classification_count was dropped in 6.0; the taxon
+      # now tracks membership via the descendant-inclusive products_count, kept in
+      # sync by the Classification create/destroy callbacks (a leaf taxon's
+      # products_count equals its direct count).
+      describe 'products_count on taxon' do
         it 'increments when a classification is created' do
           expect {
             create(:classification, taxon: taxon, product: product)
-          }.to change { taxon.reload.classification_count }.from(0).to(1)
+          }.to change { taxon.reload.products_count }.from(0).to(1)
         end
 
         it 'decrements when a classification is destroyed' do
           classification = create(:classification, taxon: taxon, product: product)
           expect {
             classification.destroy
-          }.to change { taxon.reload.classification_count }.from(1).to(0)
+          }.to change { taxon.reload.products_count }.from(1).to(0)
         end
 
         it 'correctly counts multiple classifications' do
           products = create_list(:product, 3)
           products.each { |p| create(:classification, taxon: taxon, product: p) }
-          expect(taxon.reload.classification_count).to eq(3)
+          expect(taxon.reload.products_count).to eq(3)
         end
       end
 
-      describe 'classification_count on product' do
+      describe 'categories_count on product' do
         it 'increments when a classification is created' do
           expect {
             create(:classification, taxon: taxon, product: product)
-          }.to change { product.reload.classification_count }.from(0).to(1)
+          }.to change { product.reload.categories_count }.from(0).to(1)
         end
 
         it 'decrements when a classification is destroyed' do
           classification = create(:classification, taxon: taxon, product: product)
           expect {
             classification.destroy
-          }.to change { product.reload.classification_count }.from(1).to(0)
+          }.to change { product.reload.categories_count }.from(1).to(0)
         end
 
         it 'correctly counts multiple classifications' do
           taxons = create_list(:taxon, 3)
           taxons.each { |t| create(:classification, taxon: t, product: product) }
-          expect(product.reload.classification_count).to eq(3)
+          expect(product.reload.categories_count).to eq(3)
         end
       end
     end
 
-    describe '.grouped_taxon_ids_for_products' do
+    describe '.grouped_category_ids_for_products' do
       let(:taxon1) { create(:taxon) }
       let(:taxon2) { create(:taxon) }
       let(:taxon3) { create(:taxon) }
@@ -152,14 +156,14 @@ module Spree
       let(:taxon_groups) { [taxon1.id, taxon2.id, taxon3.id] }
 
       it 'returns the correct taxon ids' do
-        expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq(expected_result)
+        expect(described_class.grouped_category_ids_for_products(product_ids, taxon_groups)).to eq(expected_result)
       end
 
       context 'when empty taxon groups' do
         let(:taxon_groups) { [] }
 
         it 'returns an empty array' do
-          expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq([])
+          expect(described_class.grouped_category_ids_for_products(product_ids, taxon_groups)).to eq([])
         end
       end
 
@@ -167,7 +171,7 @@ module Spree
         let(:product_ids) { [] }
 
         it 'returns an empty array' do
-          expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq([])
+          expect(described_class.grouped_category_ids_for_products(product_ids, taxon_groups)).to eq([])
         end
       end
     end

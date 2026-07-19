@@ -106,7 +106,7 @@ module Spree
           def parent_route_map
             @parent_route_map ||= Spree.metafields.enabled_resources.each_with_object({}) do |klass, m|
               m[klass.model_name.element.to_s] = klass.name
-            end.merge('customer' => Spree.user_class.name, 'category' => 'Spree::Taxon')
+            end.merge('customer' => Spree.user_class.name, 'category' => 'Spree::Category')
           end
 
           # Returns the first segment whose `<segment>_id` is present in params,

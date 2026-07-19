@@ -142,15 +142,15 @@ module Spree
       def by_taxons(products)
         return products unless taxons?
 
-        products.joins(:classifications).where(Classification.table_name => { taxon_id: taxons })
+        products.joins(:product_categories).where(Spree::ProductCategory.table_name => { category_id: taxons })
       end
 
       def by_concat_taxons(products)
         return products unless concat_taxons?
 
         product_ids = Spree::Product.
-                      joins(:classifications).
-                      where(Classification.table_name => { taxon_id: concat_taxons }).
+                      joins(:product_categories).
+                      where(Spree::ProductCategory.table_name => { category_id: concat_taxons }).
                       group("#{Spree::Product.table_name}.id").
                       having("COUNT(#{Spree::Product.table_name}.id) = ?", concat_taxons.length).
                       ids
@@ -165,7 +165,7 @@ module Spree
 
         return products if taxon_groups.empty?
 
-        taxonomies_products = products.joins(:classifications).where(Classification.table_name => { taxon_id: taxon_groups.flatten.uniq })
+        taxonomies_products = products.joins(:product_categories).where(Spree::ProductCategory.table_name => { category_id: taxon_groups.flatten.uniq })
 
         # No need to filter if there is only one taxonomy
         return taxonomies_products if taxonomies.size == 1
@@ -296,7 +296,7 @@ module Spree
       def taxon_ids(taxons_ids)
         return if taxons_ids.nil? || taxons_ids.to_s.blank?
 
-        taxons = Spree::Taxon.for_store(store).where(id: taxons_ids.to_s.split(','))
+        taxons = Spree::Category.for_store(store).where(id: taxons_ids.to_s.split(','))
         taxons.map(&:cached_self_and_descendants_ids).flatten.compact.uniq.map(&:to_s)
       end
 
@@ -315,7 +315,7 @@ module Spree
       end
 
       def products_matching_all_taxonomies_ids(products_ids, taxon_groups)
-        classifications = Spree::Classification.grouped_taxon_ids_for_products(products_ids, taxon_groups.flatten)
+        classifications = Spree::ProductCategory.grouped_category_ids_for_products(products_ids, taxon_groups.flatten)
         classifications_hash = classifications.to_h.transform_values { |taxon_ids| taxon_ids.split(',') }
 
         # Find products ids that match all taxonomies to tighten filter results

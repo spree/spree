@@ -27,6 +27,9 @@ Spree::Core::Engine.add_routes do
           end
         end
         resources :categories, only: [:index, :show], id: /.+/
+        resources :collections, only: [:index, :show] do
+          resources :products, controller: 'collections/products', only: [:index]
+        end
 
         # Carts
         resources :carts, only: [:index, :show, :create, :update, :destroy] do
@@ -196,6 +199,8 @@ Spree::Core::Engine.add_routes do
             post :bulk_status_update
             post :bulk_add_to_categories
             post :bulk_remove_from_categories
+            post :bulk_add_to_collections
+            post :bulk_remove_from_collections
             post :bulk_add_to_channels
             post :bulk_remove_from_channels
             post :bulk_add_tags
@@ -217,6 +222,18 @@ Spree::Core::Engine.add_routes do
           # Manual product membership + ordering within the category.
           # (Bulk add/remove reuse POST /products/bulk_{add,remove}_*_categories.)
           resources :products, controller: 'categories/products', only: [:index, :create, :destroy] do
+            member do
+              patch :reposition
+            end
+          end
+        end
+
+        # Collections (flat, merchandising). Reordering the collection itself is a
+        # plain `position` update (acts_as_list reorders on save), so there is no
+        # top-level reposition action — only the nested membership has one.
+        resources :collections, concerns: [:custom_fieldable, :translatable] do
+          # Manual product membership + ordering within the collection.
+          resources :products, controller: 'collections/products', only: [:index, :create, :destroy] do
             member do
               patch :reposition
             end

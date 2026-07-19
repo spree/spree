@@ -124,10 +124,28 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
         expect(category_options.map { |t| t['name'] }).to include('Shirts', 'Pants')
       end
 
-      it 'returns default_sort from category' do
+      it 'defaults a category to manual sort (category does not drive default_sort in 6.0)' do
         taxon.update!(sort_order: 'price asc')
 
         get :index, params: { category_id: taxon.prefixed_id }
+
+        expect(json_response['default_sort']).to eq('manual')
+      end
+    end
+
+    context 'with collection_id parameter' do
+      let!(:collection) { create(:collection, store: store, sort_order: 'price asc') }
+
+      before { Spree::ProductCollection.create!(collection: collection, product: product1) }
+
+      it 'scopes filters to the collection' do
+        get :index, params: { collection_id: collection.prefixed_id }
+
+        expect(json_response['total_count']).to eq(1)
+      end
+
+      it 'returns default_sort from the collection' do
+        get :index, params: { collection_id: collection.prefixed_id }
 
         expect(json_response['default_sort']).to eq('price')
       end

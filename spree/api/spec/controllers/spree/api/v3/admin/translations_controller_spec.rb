@@ -57,7 +57,7 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsController, type: :controller 
     end
   end
 
-  context 'when the parent is a category (Spree::Category < Spree::Taxon)' do
+  context 'when the parent is a category (Spree::Category < Spree::Category)' do
     let!(:taxonomy) { create(:taxonomy, store: store) }
     let!(:category) { create(:taxon, name: 'Clothing', taxonomy: taxonomy, parent: taxonomy.root) }
 

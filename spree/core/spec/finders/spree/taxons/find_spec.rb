@@ -9,7 +9,7 @@ module Spree
     describe 'filtering by taxon property' do
       subject do
         described_class.new(
-          scope: Spree::Taxon.all,
+          scope: Spree::Category.all,
           params: params
         ).execute
       end

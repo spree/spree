@@ -24,7 +24,7 @@ module Spree
 
     # Handles the event
     # @param event_name [String] eg. 'order_completed'
-    # @param properties [Hash] eg. { product: Spree::Product, taxon: Spree::Taxon, query: String }
+    # @param properties [Hash] eg. { product: Spree::Product, taxon: Spree::Category, query: String }
     # rubocop:disable Lint/UnusedMethodArgument
     def handle_event(event_name, properties = {})
       raise NotImplementedError, 'Subclasses must implement the handle method'

@@ -105,7 +105,7 @@ describe Spree::Product, type: :model do
 
     describe '#duplicate' do
       before do
-        allow(product).to receive_messages taxons: [build(:taxon)], store: store
+        allow(product).to receive_messages categories: [build(:category)], store: store
       end
 
       it 'duplicates product' do
@@ -116,7 +116,7 @@ describe Spree::Product, type: :model do
         expect(clone.name).to eq("COPY OF #{product.name}")
         expect(clone.slug).to eq("copy-of-#{product.slug}")
         expect(clone.default_variant.sku).to eq("COPY OF #{product.default_variant.sku}")
-        expect(clone.taxons).to eq(product.taxons)
+        expect(clone.categories).to eq(product.categories)
         expect(clone.store).to eq(product.store)
         expect(clone.images.size).to eq(product.images.size)
       end
@@ -558,14 +558,14 @@ describe Spree::Product, type: :model do
   end
 
   # Regression tests for #2352
-  context 'classifications and taxons' do
-    it 'is joined through classifications' do
-      reflection = Spree::Product.reflect_on_association(:taxons)
-      expect(reflection.options[:through]).to eq(:classifications)
+  context 'product_categories and categories' do
+    it 'is joined through product_categories' do
+      reflection = Spree::Product.reflect_on_association(:categories)
+      expect(reflection.options[:through]).to eq(:product_categories)
     end
 
-    it 'will delete all classifications' do
-      reflection = Spree::Product.reflect_on_association(:classifications)
+    it 'will delete all product_categories' do
+      reflection = Spree::Product.reflect_on_association(:product_categories)
       expect(reflection.options[:dependent]).to eq(:delete_all)
     end
   end
@@ -637,24 +637,6 @@ describe Spree::Product, type: :model do
 
     it 'is true' do
       expect(product_discontinued.discontinued?).to be(true)
-    end
-  end
-
-  describe '#brand_taxon' do
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) || create(:taxonomy, name: Spree.t(:taxonomy_brands_name), store: store) }
-    let(:product) { create(:product, taxons: [taxonomy.taxons.first]) }
-
-    it 'fetches Brand Taxon' do
-      expect(product.brand_taxon).to eql(taxonomy.taxons.first)
-    end
-  end
-
-  describe '#brand_name' do
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) || create(:taxonomy, name: Spree.t(:taxonomy_brands_name), store: store) }
-    let(:product) { create(:product, taxons: [taxonomy.taxons.first]) }
-
-    it 'returns the brand taxon name' do
-      expect(product.brand_name).to eql(taxonomy.taxons.first.name)
     end
   end
 
@@ -1040,21 +1022,6 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#taxons_for_store' do
-    let(:product) { create(:product, store: store, taxons: [taxon]) }
-    let(:taxonomy) { create(:taxonomy, store: store) }
-    let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-
-    it 'returns product taxons for the matching store' do
-      expect(product.taxons_for_store(store)).to eq([taxon])
-    end
-
-    it 'returns an empty relation for an unrelated store' do
-      other_store = create(:store)
-      expect(product.taxons_for_store(other_store)).to be_empty
-    end
-  end
-
   describe '#category_ids=' do
     let(:product) { create(:product, store: store) }
     let(:taxonomy) { create(:taxonomy, store: store) }
@@ -1072,6 +1039,64 @@ describe Spree::Product, type: :model do
 
       expect(product.reload.taxons).to include(category)
       expect(product.reload.taxons).not_to include(foreign_taxon)
+    end
+  end
+
+  describe '#collection_ids=' do
+    let(:product) { create(:product, store: store) }
+    let(:collection) { create(:collection, store: store) }
+
+    it 'assigns collections belonging to the product store' do
+      product.update!(collection_ids: [collection.prefixed_id])
+      expect(product.reload.collections).to include(collection)
+    end
+
+    it 'ignores collections from another store' do
+      foreign = create(:collection, store: create(:store))
+
+      product.update!(collection_ids: [collection.prefixed_id, foreign.prefixed_id])
+
+      expect(product.reload.collections).to include(collection)
+      expect(product.reload.collections).not_to include(foreign)
+    end
+  end
+
+  describe '#primary_category' do
+    let(:product) { create(:product, store: store) }
+    let(:taxonomy) { create(:taxonomy, store: store) }
+    let(:category) { create(:taxon, taxonomy: taxonomy) }
+
+    it 'returns the first assigned category' do
+      product.update!(category_ids: [category.prefixed_id])
+      # categories are read back as Spree::Category (scoped subclass), so match by id
+      expect(product.reload.primary_category.id).to eq(category.id)
+    end
+
+    it 'is nil when the product has no categories' do
+      expect(product.primary_category).to be_nil
+    end
+  end
+
+  describe 'after_commit :auto_match_collections' do
+    it 'is invoked on an eligible save' do
+      expect_any_instance_of(described_class).to receive(:auto_match_collections).at_least(:once)
+      create(:product, store: store)
+    end
+  end
+
+  describe '#auto_match_collections' do
+    let!(:product) { create(:product, store: store) }
+
+    it 'enqueues AutoMatchCollectionsJob when the store has automatic collections' do
+      create(:automatic_collection, store: store)
+
+      expect { product.auto_match_collections }.
+        to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob).with(product.id)
+    end
+
+    it 'does not enqueue when the store has no automatic collections' do
+      expect { product.auto_match_collections }.
+        not_to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
     end
   end
 
@@ -1722,7 +1747,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe 'after_touch :touch_taxons' do
+  describe 'after_touch :touch_categories' do
     subject { product.touch }
 
     let!(:product) { create(:product, taxons: taxons) }
@@ -1731,7 +1756,7 @@ describe Spree::Product, type: :model do
       let(:taxons) { [] }
 
       it 'skips enqueuing a job for touching the taxons' do
-        expect { subject }.not_to have_enqueued_job(Spree::Products::TouchTaxonsJob)
+        expect { subject }.not_to have_enqueued_job(Spree::Products::TouchCategoriesJob)
       end
     end
 
@@ -1744,7 +1769,7 @@ describe Spree::Product, type: :model do
       let(:taxonomy) { create(:taxonomy) }
 
       it 'enqueues a job for touching the taxons' do
-        expect { subject }.to have_enqueued_job(Spree::Products::TouchTaxonsJob).with(
+        expect { subject }.to have_enqueued_job(Spree::Products::TouchCategoriesJob).with(
           [taxonomy.root.id, taxon_1.id, taxon_2.id],
           [taxonomy.id]
         )

@@ -103,7 +103,8 @@ module Spree
       products: :default,
       reports: :default,
       variants: :default,
-      taxons: :default,
+      categories: :default,
+      collections: :default,
       stock_location_stock_items: :default,
       coupon_codes: :default,
       themes: :default,
@@ -114,7 +115,13 @@ module Spree
       api_keys: :default,
       search: :default,
       stock_reservations: :default
-    )
+    ).tap do |queues|
+      # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
+      queues.define_singleton_method(:taxons) do
+        Spree::Deprecation.warn('Spree.queues.taxons is deprecated and will be removed in Spree 6.1. Use Spree.queues.categories instead.') if defined?(Spree::Deprecation)
+        categories
+      end
+    end
   end
 
   # @deprecated Spree.searcher_class is deprecated and will be removed in Spree 5.5. Use Spree.search_provider instead.

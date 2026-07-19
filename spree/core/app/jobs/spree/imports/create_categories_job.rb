@@ -9,9 +9,9 @@ module Spree
       def perform(product_id, store_id, taxon_pretty_names)
         product = Spree::Product.find(product_id)
         store = Spree::Store.find(store_id)
-        taxons = taxon_pretty_names.filter_map { |taxon_pretty_name| find_or_create_taxon(store, taxon_pretty_name) }
+        categories = taxon_pretty_names.filter_map { |taxon_pretty_name| find_or_create_taxon(store, taxon_pretty_name) }
 
-        product.taxons = taxons
+        product.categories = categories
       end
 
       private

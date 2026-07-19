@@ -21,6 +21,9 @@ module Spree
         page = [page.to_i, 1].max
         limit = limit.to_i.clamp(1, 100)
 
+        filters = normalize_filters(filters)
+        sort, filters = resolve_manual_sort(sort, filters)
+
         ms_result, _ = execute_search(query: query, filters: filters, sort: sort, page: page, limit: limit)
         return empty_result(scope, page, limit) unless ms_result
 
@@ -40,19 +43,22 @@ module Spree
 
         SearchResult.new(
           products: products,
-          total_count: ms_result['estimatedTotalHits'] || 0,
+          total_count: ms_result['totalHits'] || 0,
           pagy: pagy
         )
       end
 
       def filters(scope:, query: nil, filters: {})
+        collection = filters.is_a?(Hash) ? (filters['_collection'] || filters[:_collection]) : nil
+        default_sort = collection ? to_api_sort(collection.sort_order) : 'manual'
+
         ms_result, facet_distribution = execute_search(query: query, filters: filters, sort: nil, page: 1, limit: 0, return_facets: true)
 
         unless ms_result
           return FiltersResult.new(
             filters: [],
             sort_options: available_sort_options.map { |id| { id: id } },
-            default_sort: 'manual',
+            default_sort: default_sort,
             total_count: 0
           )
         end
@@ -60,14 +66,17 @@ module Spree
         FiltersResult.new(
           filters: build_facet_response(facet_distribution),
           sort_options: available_sort_options.map { |id| { id: id } },
-          default_sort: 'manual',
-          total_count: ms_result['estimatedTotalHits'] || 0
+          default_sort: default_sort,
+          total_count: ms_result['totalHits'] || 0
         )
       end
 
       def index(product)
         ensure_index_settings_once!
         documents = presenter_class.new(product, store).call
+        # Delete first: membership docs use grouping-specific ids, so a product
+        # that left a grouping would otherwise leave an orphaned stale doc.
+        remove_by_id(product.prefixed_id)
         client.index(index_name).add_documents(documents, 'id')
       end
 
@@ -90,8 +99,13 @@ module Spree
       end
 
       def reindex(scope = nil)
+        full_reindex = scope.nil?
         scope ||= store.products
         ensure_index_settings!
+
+        # On a full reindex, clear first so stale docs (e.g. membership docs for
+        # removed groupings) don't linger; a scoped reindex keeps upsert semantics.
+        client.index(index_name).delete_all_documents if full_reindex
 
         indexed = 0
         scope.reorder(id: :asc)
@@ -120,6 +134,7 @@ module Spree
         tasks << index.update_filterable_attributes(filterable_attributes)
         tasks << index.update_sortable_attributes(sortable_attributes)
         tasks << index.update_searchable_attributes(searchable_attributes)
+        tasks << index.update_distinct_attribute(distinct_attribute)
         tasks.each { |task| task&.await }
         @index_settings_configured = true
       end
@@ -135,6 +150,32 @@ module Spree
 
       private
 
+      # Normalize incoming filters to a plain, string-keyed Hash.
+      def normalize_filters(filters)
+        filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
+        (filters || {}).stringify_keys
+      end
+
+      # Manual/position sort. When a single grouping is being viewed (in_collection
+      # or in_category) and the effective sort is 'manual' — either requested, or
+      # the grouping-page default (blank ⇒ manual) — query the per-grouping
+      # membership docs: swap the membership filter for `grouping_id` and sort by
+      # the scalar `position`. Without a grouping, 'manual' has nothing to order by,
+      # so it falls back to Meilisearch default ranking.
+      def resolve_manual_sort(sort, filters)
+        grouping_id = filters['in_collection'] || filters['in_category']
+        grouping_id = nil unless valid_prefixed_id?(grouping_id)
+        sort = 'manual' if sort.blank? && grouping_id
+
+        if sort == 'manual' && grouping_id
+          filters = filters.except('in_collection', 'in_category').merge('grouping_id' => grouping_id)
+        elsif sort == 'manual'
+          sort = nil
+        end
+
+        [sort, filters]
+      end
+
       # Execute a Meilisearch query. Returns [ms_result, facet_distribution].
       # facet_distribution is empty when return_facets is false. Returns nil on API error.
       def execute_search(query:, filters:, sort:, page:, limit:, return_facets: false)
@@ -148,12 +189,16 @@ module Spree
         option_conditions = build_grouped_option_conditions(grouped_options)
         all_conditions = base_conditions + option_conditions
 
+        # Page-based (exhaustive) pagination — REQUIRED so `distinct` collapses
+        # totalHits and facetDistribution to per-product counts. The offset/limit
+        # ("estimatedTotalHits") mode does NOT apply distinct to the count or
+        # facets, which over-counts the duplicated per-grouping membership docs.
         search_params = {
           filter: all_conditions,
           facets: return_facets ? facet_attributes : nil,
           sort: build_sort(sort),
-          offset: (page - 1) * limit,
-          limit: limit
+          page: page,
+          hitsPerPage: limit
         }.compact
 
         Rails.logger.debug { "[Meilisearch] index=#{index_name} query=#{query.inspect} #{search_params.compact.inspect}" }
@@ -165,7 +210,7 @@ module Spree
             option_type_ids_ordered = grouped_options.keys
             option_type_ids_ordered.each do |option_type_id|
               without_this = build_grouped_option_conditions(grouped_options.except(option_type_id))
-              queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: ['option_value_ids'], limit: 0 }
+              queries << { indexUid: index_name, q: query.to_s, filter: base_conditions + without_this, facets: ['option_value_ids'], page: 1, hitsPerPage: 0 }
             end
 
             results = client.multi_search(queries)
@@ -191,7 +236,7 @@ module Spree
           return nil
         end
 
-        Rails.logger.debug { "[Meilisearch] #{ms_result['estimatedTotalHits']} hits in #{ms_result['processingTimeMs']}ms" }
+        Rails.logger.debug { "[Meilisearch] #{ms_result['totalHits']} hits in #{ms_result['processingTimeMs']}ms" }
 
         [ms_result, facet_distribution]
       end
@@ -244,19 +289,36 @@ module Spree
       end
 
       def filterable_attributes
-        %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids tags option_value_ids]
+        %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids]
       end
 
       def sortable_attributes
-        %w[name price created_at available_on units_sold_count]
+        %w[name price created_at available_on units_sold_count position]
       end
 
       def facet_attributes
         filterable_attributes
       end
 
+      # Collapses the per-grouping membership docs to one row per product on
+      # non-grouping queries (shop-all, search, non-manual sorts). Facet counts
+      # and totals honor distinct on Meilisearch >= 1.40.
+      def distinct_attribute
+        'product_id'
+      end
+
+      # Sourced from Spree::Collection::SORT_ORDERS (matching FiltersAggregator) so
+      # both providers advertise identical options — including 'manual'.
       def available_sort_options
-        %w[price -price name -name -available_on available_on best_selling]
+        Spree::Collection::SORT_ORDERS.map { |sort_order| to_api_sort(sort_order) }
+      end
+
+      # Converts internal sort format ('price asc') to API format ('price', '-price').
+      def to_api_sort(sort_value)
+        return sort_value unless sort_value.to_s.include?(' ')
+
+        field, direction = sort_value.split(' ', 2)
+        direction == 'desc' ? "-#{field}" : field
       end
 
       # Build Meilisearch filter conditions from API params.
@@ -328,6 +390,10 @@ module Spree
         when 'in_categories'
           parts = Array(value).filter_map { |id| "category_ids = '#{sanitize_prefixed_id(id)}'" if valid_prefixed_id?(id) }
           parts.length > 1 ? "(#{parts.join(' OR ')})" : parts.first
+        when 'in_collection'
+          "collection_ids = '#{sanitize_prefixed_id(value)}'" if valid_prefixed_id?(value)
+        when 'grouping_id'
+          "grouping_id = '#{sanitize_prefixed_id(value)}'" if valid_prefixed_id?(value)
         when 'with_option_value_ids'
           # Handled by grouped option conditions in search_and_filter — skip here
           nil
@@ -373,6 +439,7 @@ module Spree
       # Override in subclasses to add custom sorts — call super for built-in sorts.
       def sort_mapping(sort)
         case sort
+        when 'manual'        then ['position:asc']
         when 'price'         then ['price:asc']
         when '-price'        then ['price:desc']
         when 'name'          then ['name:asc']
@@ -451,8 +518,8 @@ module Spree
 
       def build_category_facet(distribution)
         prefixed_ids = distribution.keys
-        raw_ids = prefixed_ids.filter_map { |pid| Spree::Taxon.decode_prefixed_id(pid) }
-        categories = Spree::Taxon.where(id: raw_ids).index_by(&:prefixed_id)
+        raw_ids = prefixed_ids.filter_map { |pid| Spree::Category.decode_prefixed_id(pid) }
+        categories = Spree::Category.where(id: raw_ids).index_by(&:prefixed_id)
 
         {
           id: 'categories',
@@ -468,7 +535,7 @@ module Spree
 
       def build_pagy(ms_result, page, limit)
         fake_result = Struct.new(:raw_answer).new({
-          'totalHits' => ms_result['estimatedTotalHits'] || 0,
+          'totalHits' => ms_result['totalHits'] || 0,
           'hitsPerPage' => limit,
           'page' => page
         })

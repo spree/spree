@@ -404,9 +404,9 @@ module Spree
             product_3.taxons << child_taxon_2
 
             # swap products positions
-            product.classifications.find_by(taxon: child_taxon_1).update(position: 3)
-            product_3.classifications.find_by(taxon: child_taxon_2).update(position: 2)
-            product_2.classifications.find_by(taxon: child_taxon_1).update(position: 1)
+            product.classifications.find_by(category: child_taxon_1).update(position: 3)
+            product_3.classifications.find_by(category: child_taxon_2).update(position: 2)
+            product_2.classifications.find_by(category: child_taxon_1).update(position: 1)
           end
 
           it 'returns products ordered by associated taxon position' do

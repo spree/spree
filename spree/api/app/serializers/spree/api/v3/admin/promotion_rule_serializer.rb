@@ -45,7 +45,7 @@ module Spree
           end
 
           attribute :category_ids do |rule|
-            rule.taxons.map(&:prefixed_id) if rule.respond_to?(:taxons)
+            rule.categories.map(&:prefixed_id) if rule.respond_to?(:categories)
           end
 
           attribute :customer_ids do |rule|
@@ -61,10 +61,9 @@ module Spree
                resource: proc { Spree.api.admin_product_serializer },
                if: proc { |rule| rule.respond_to?(:products) }
 
-          many :taxons,
-               key: :categories,
+          many :categories,
                resource: proc { Spree.api.admin_category_serializer },
-               if: proc { |rule| rule.respond_to?(:taxons) }
+               if: proc { |rule| rule.respond_to?(:categories) }
 
           many :users,
                key: :customers,

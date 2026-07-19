@@ -38,28 +38,6 @@ describe 'Product scopes', type: :model do
     end
   end
 
-  describe '.for_filters' do
-    subject { Spree::Product.method(:for_filters) }
-
-    let(:taxon_1) { create(:taxon) }
-    let(:taxon_2) { create(:taxon) }
-
-    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1]) }
-    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2]) }
-
-    before do
-      create(:product, currency: 'USD', taxons: [create(:taxon)])
-    end
-
-    context 'when giving a taxon' do
-      it { expect(subject.call('GBP', taxon: taxon_1)).to contain_exactly(product_1) }
-    end
-
-    context 'when giving a currency with no products' do
-      it { expect(subject.call('PLN')).to be_empty }
-    end
-  end
-
   context 'A product assigned to parent and child taxons' do
     before do
       @taxonomy = create(:taxonomy)
@@ -92,6 +70,30 @@ describe 'Product scopes', type: :model do
         expect(Spree::Product.in_taxon(@child_taxon)).to include(product, product_2)
         expect(Spree::Product.in_taxon(other_taxon)).to include(product, product_2)
       end
+    end
+  end
+
+  describe '#in_collection (flat — no hierarchy)' do
+    let!(:collection_a) { create(:collection, store: store) }
+    let!(:collection_b) { create(:collection, store: store) }
+    let!(:product_a) { create(:product) }
+    let!(:product_b) { create(:product) }
+
+    before do
+      Spree::ProductCollection.create!(collection: collection_a, product: product_a)
+      Spree::ProductCollection.create!(collection: collection_b, product: product_b)
+    end
+
+    it 'returns only products directly in the collection' do
+      expect(Spree::Product.in_collection(collection_a)).to contain_exactly(product_a)
+    end
+
+    it 'accepts a prefixed id string' do
+      expect(Spree::Product.in_collection(collection_a.prefixed_id)).to contain_exactly(product_a)
+    end
+
+    it 'returns none for an unknown collection' do
+      expect(Spree::Product.in_collection('coll_nope')).to be_empty
     end
   end
 

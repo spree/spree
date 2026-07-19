@@ -49,11 +49,11 @@
           <h5 class="card-title">
             <%= Spree.t(:products) %>
             <span class="badge badge-info ml-2" id="product_count">
-              <%= @taxon.classification_count %>
+              <%= @taxon.classifications.count %>
             </span>
           </h5>
 
-          <% if @taxon.manual? && can?(:create, Spree::Classification) %>
+          <% if @taxon.manual? && can?(:create, Spree::ProductCategory) %>
             <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon), class: 'btn btn-secondary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
           <% end %>
         </div>

@@ -19,7 +19,7 @@ module Spree
             # Body: { product_id: 'prod_…' }
             def create
               product = product_scope.find_by_prefix_id!(params[:product_id])
-              Spree::Taxons::AddProducts.call(taxons: [@category], products: [product])
+              Spree::Categories::AddProducts.call(categories: [@category], products: [product])
               render json: serialize_resource(product), status: :created
             end
 
@@ -27,7 +27,7 @@ module Spree
             # Bulk removal goes through the existing
             # POST /products/bulk_remove_from_categories ({ ids, category_ids }).
             def destroy
-              Spree::Taxons::RemoveProducts.call(taxons: [@category], products: [@product])
+              Spree::Categories::RemoveProducts.call(categories: [@category], products: [@product])
               head :no_content
             end
 
@@ -40,6 +40,9 @@ module Spree
               return render_invalid_position if position.nil?
 
               classification_for(@product).insert_at(position + 1)
+              # insert_at shifts sibling positions, so refresh every product in the
+              # category (manual sort reads position from the search index).
+              @category.products.find_each(&:enqueue_search_index)
               head :no_content
             end
 
@@ -56,9 +59,9 @@ module Spree
             # The category's products, ordered by classification position.
             def scope
               product_scope.
-                joins(:classifications).
-                where(Spree::Classification.table_name => { taxon_id: @category.id }).
-                order(Spree::Classification.table_name => { position: :asc })
+                joins(:product_categories).
+                where(Spree::ProductCategory.table_name => { category_id: @category.id }).
+                order(Spree::ProductCategory.table_name => { position: :asc })
             end
 
             # A product is classified at most once per taxon (unique [taxon_id,
@@ -70,8 +73,12 @@ module Spree
             end
 
             # Loads the parent category (runs before the base set_resource).
+            # Scoped to +manual+ so automatic (rule-based) rows — hidden by the
+            # categories CRUD controller and migrating to Spree::Collection — can't
+            # have their membership listed or mutated through this endpoint.
             def set_parent
-              @category = Spree::Category.accessible_by(current_ability, :update).
+              @category = Spree::Category.manual.
+                          accessible_by(current_ability, :update).
                           for_store(current_store).
                           find_by_prefix_id!(params[:category_id])
               authorize_parent!(@category)
@@ -88,7 +95,7 @@ module Spree
             end
 
             def classification_for(product)
-              Spree::Classification.find_by(taxon_id: @category.id, product_id: product.id)
+              Spree::ProductCategory.find_by(category_id: @category.id, product_id: product.id)
             end
           end
         end

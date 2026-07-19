@@ -473,14 +473,14 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       it 'searches via Meilisearch when q[search] is present' do
         allow(mock_index).to receive(:search).and_return({
           'hits' => [{ 'product_id' => product.prefixed_id }],
-          'estimatedTotalHits' => 1,
+          'totalHits' => 1,
           'facetDistribution' => {}
         })
 
         get :index, params: { q: { search: 'shirt' } }
 
         expect(response).to have_http_status(:ok)
-        expect(mock_index).to have_received(:search).with('shirt', hash_including(:limit, :offset))
+        expect(mock_index).to have_received(:search).with('shirt', hash_including(:page, :hitsPerPage))
 
         ids = json_response['data'].map { |p| p['id'] }
         expect(ids).to include(product.prefixed_id)
@@ -490,7 +490,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       it 'respects AR scope visibility (does not return draft products from Meilisearch)' do
         allow(mock_index).to receive(:search).and_return({
           'hits' => [{ 'product_id' => product.prefixed_id }, { 'product_id' => draft_product.prefixed_id }],
-          'estimatedTotalHits' => 2,
+          'totalHits' => 2,
           'facetDistribution' => {}
         })
 
@@ -505,7 +505,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       it 'uses Meilisearch for browsing without search query' do
         allow(mock_index).to receive(:search).and_return({
           'hits' => [{ 'product_id' => product.prefixed_id }, { 'product_id' => product2.prefixed_id }],
-          'estimatedTotalHits' => 2,
+          'totalHits' => 2,
           'facetDistribution' => {}
         })
 
@@ -519,7 +519,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       it 'filters by current locale in Meilisearch' do
         allow(mock_index).to receive(:search).and_return({
           'hits' => [{ 'product_id' => product.prefixed_id }],
-          'estimatedTotalHits' => 1,
+          'totalHits' => 1,
           'facetDistribution' => {}
         })
 
@@ -534,7 +534,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       it 'filters by current currency in Meilisearch' do
         allow(mock_index).to receive(:search).and_return({
           'hits' => [{ 'product_id' => product.prefixed_id }],
-          'estimatedTotalHits' => 1,
+          'totalHits' => 1,
           'facetDistribution' => {}
         })
 
@@ -549,7 +549,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       it 'filters by store_id in Meilisearch' do
         allow(mock_index).to receive(:search).and_return({
           'hits' => [{ 'product_id' => product.prefixed_id }],
-          'estimatedTotalHits' => 1,
+          'totalHits' => 1,
           'facetDistribution' => {}
         })
 
@@ -564,7 +564,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       it 'always filters by active status in Meilisearch' do
         allow(mock_index).to receive(:search).and_return({
           'hits' => [{ 'product_id' => product.prefixed_id }],
-          'estimatedTotalHits' => 1,
+          'totalHits' => 1,
           'facetDistribution' => {}
         })
 
@@ -579,7 +579,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       it 'preserves Meilisearch sort order in the response' do
         allow(mock_index).to receive(:search).and_return({
           'hits' => [{ 'product_id' => product2.prefixed_id }, { 'product_id' => product.prefixed_id }],
-          'estimatedTotalHits' => 2,
+          'totalHits' => 2,
           'facetDistribution' => {}
         })
 

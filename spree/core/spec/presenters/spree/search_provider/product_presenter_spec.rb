@@ -82,6 +82,64 @@ module Spree
         end
       end
 
+      context 'with collections' do
+        let(:collection) { create(:collection, store: store) }
+
+        before { Spree::ProductCollection.create!(collection: collection, product: product) }
+
+        it 'indexes collection_ids as flat prefixed IDs (no ancestors)' do
+          doc = documents.first
+          expect(doc[:collection_ids]).to eq([collection.prefixed_id])
+          expect(doc[:collection_ids].first).to start_with('coll_')
+        end
+      end
+
+      context 'membership documents (manual sort)' do
+        let(:collection) { create(:collection, store: store) }
+
+        before { Spree::ProductCollection.create!(collection: collection, product: product, position: 4) }
+
+        it 'emits a collection membership doc carrying position + full base payload' do
+          member = documents.find { |d| d[:grouping_id] == collection.prefixed_id }
+
+          expect(member).to be_present
+          expect(member[:position]).to eq(4)
+          expect(member[:name]).to eq('Test Shirt')            # full base payload copied
+          expect(member[:product_id]).to eq(product.prefixed_id)
+          expect(member[:id]).to include(collection.prefixed_id)
+        end
+
+        it 'leaves base docs without a grouping_id/position' do
+          base = documents.reject { |d| d[:grouping_id] }
+
+          expect(base).not_to be_empty
+          base.each { |d| expect(d[:position]).to be_nil }
+        end
+      end
+
+      context 'category membership positions (subtree-MIN)' do
+        let(:taxonomy) { create(:taxonomy, store: store) }
+        let(:parent) { create(:taxon, taxonomy: taxonomy, name: 'Men') }
+        let(:jackets) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Jackets') }
+        let(:coats) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Coats') }
+        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], taxons: [jackets, coats]) }
+
+        before do
+          Spree::ProductCategory.where(product: product, category: jackets).update_all(position: 5)
+          Spree::ProductCategory.where(product: product, category: coats).update_all(position: 2)
+        end
+
+        it 'emits a membership doc per ancestor-or-self, folding parent to the subtree minimum' do
+          jackets_doc = documents.find { |d| d[:grouping_id] == jackets.prefixed_id }
+          coats_doc = documents.find { |d| d[:grouping_id] == coats.prefixed_id }
+          parent_doc = documents.find { |d| d[:grouping_id] == parent.prefixed_id }
+
+          expect(jackets_doc[:position]).to eq(5)
+          expect(coats_doc[:position]).to eq(2)
+          expect(parent_doc[:position]).to eq(2) # MIN(5, 2) across the subtree
+        end
+      end
+
       context 'with multiple markets' do
         let!(:us_market) { create(:market, store: store, name: 'US', currency: 'USD', default_locale: 'en') }
         let!(:eu_market) { create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de', supported_locales: 'de,fr') }

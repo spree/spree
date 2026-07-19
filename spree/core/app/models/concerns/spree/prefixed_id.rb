@@ -114,7 +114,7 @@ module Spree
       end
 
       # Resolve an array of prefixed IDs for a has_many _ids setter.
-      # Infers the target class from the association name (e.g., taxon_ids → taxons → Spree::Taxon).
+      # Infers the target class from the association name (e.g., taxon_ids → taxons → Spree::Category).
       # Only resolves when a matching association exists.
       def resolve_prefixed_ids_for_attribute(attribute_name, values)
         association_name = attribute_name.sub(/_ids$/, '').pluralize

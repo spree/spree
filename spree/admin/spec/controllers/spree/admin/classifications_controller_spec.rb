@@ -54,7 +54,7 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
 
     it 'creates classifications' do
       pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
-      expect { subject }.to change(Spree::Classification, :count).by(2)
+      expect { subject }.to change(Spree::ProductCategory, :count).by(2)
     end
 
     it 'returns a successful response' do
@@ -85,7 +85,7 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
     subject { delete :destroy, params: { taxon_id: taxon.to_param, id: classification.to_param, format: :turbo_stream } }
 
     it 'destroys the classification' do
-      expect { subject }.to change(Spree::Classification, :count).by(-1)
+      expect { subject }.to change(Spree::ProductCategory, :count).by(-1)
     end
 
     it 'returns a successful response' do

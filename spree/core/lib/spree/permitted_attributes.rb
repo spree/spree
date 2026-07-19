@@ -102,7 +102,7 @@ module Spree
     ]
 
     @@classification_attributes = [
-      :position, :taxon_id, :product_id
+      :position, :category_id, :product_id
     ]
 
     @@cms_page_attributes = [:title, :meta_title, :content, :meta_description, :visible, :slug, :locale]

@@ -6,8 +6,8 @@ module Spree
       # 1. **Prefixed ID resolution** — decodes Stripe-style prefixed IDs (e.g. "prod_86Rf07xd4z")
       #    to integer primary keys for any param ending in `_id` or `_ids`.
       #
-      # 2. **Nested attributes normalization** — converts flat arrays (e.g. `taxon_rules: [...]`)
-      #    to Rails `_attributes` format (e.g. `taxon_rules_attributes: [...]`) based on
+      # 2. **Nested attributes normalization** — converts flat arrays (e.g. `variants: [...]`)
+      #    to Rails `_attributes` format (e.g. `variants_attributes: [...]`) based on
       #    the model's `accepts_nested_attributes_for` declarations.
       #
       # Uses `prepend` so it always wraps `permitted_params` regardless of which

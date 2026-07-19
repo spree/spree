@@ -51,7 +51,7 @@ module Spree
     #
     # @return [String]
     def public_resource_type(klass)
-      return 'category' if klass <= Spree::Taxon
+      return 'category' if klass <= Spree::Category
 
       resource_type(klass)
     end

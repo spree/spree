@@ -28,7 +28,7 @@ module Spree
         product_scope = store.products
         product_scope = product_scope.where(vendor_id: vendor.id) if defined?(vendor) && vendor.present?
 
-        product_scope.includes(:taxons, :tax_category, variants: :prices).
+        product_scope.includes(:categories, :tax_category, variants: :prices).
                               joins("LEFT JOIN (#{line_items_sql}) AS line_items ON #{Spree::Product.table_name}.id = line_items.product_id").
                               select("
                                 spree_products.*,

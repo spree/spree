@@ -10,6 +10,11 @@ module Spree
       def search_and_filter(scope:, query: nil, filters: {}, sort: nil, page: 1, limit: 25)
         filters = filters.is_a?(Hash) ? filters.dup : {}
         option_value_ids = filters.delete('with_option_value_ids') || filters.delete(:with_option_value_ids)
+        # Which grouping a 'manual' (position) sort orders within. The in_category /
+        # in_collection filter (applied just below) already JOINs and scopes that
+        # grouping's position table, so we only need to know *which* grouping is
+        # active
+        grouping = manual_sort_grouping(filters)
 
         scope = apply_search_and_filters(scope, query: query, filters: filters)
         scope = scope.with_option_value_ids(Array(option_value_ids)) if option_value_ids.present?
@@ -18,7 +23,7 @@ module Spree
         total = scope.distinct.count
 
         # Sorting + pagination
-        scope = apply_sort(scope, sort)
+        scope = apply_sort(scope, sort, grouping: grouping)
         page = [page.to_i, 1].max
         limit = limit.to_i.clamp(1, 100)
         products = scope.offset((page - 1) * limit).limit(limit)
@@ -33,6 +38,7 @@ module Spree
       def filters(scope:, query: nil, filters: {})
         filters = filters.is_a?(Hash) ? filters.dup : {}
         category = filters.delete('_category') || filters.delete(:_category)
+        collection = filters.delete('_collection') || filters.delete(:_collection)
         option_value_ids = Array(filters.delete('with_option_value_ids') || filters.delete(:with_option_value_ids))
 
         # Apply text search + ransack filters (without option values)
@@ -45,7 +51,7 @@ module Spree
                                scope_before_options
                              end
 
-        filter_facets = build_facets(scope_with_options, category: category, option_value_ids: option_value_ids, scope_before_options: scope_before_options)
+        filter_facets = build_facets(scope_with_options, category: category, sort_order: collection&.sort_order, option_value_ids: option_value_ids, scope_before_options: scope_before_options)
 
         FiltersResult.new(
           filters: filter_facets[:filters],
@@ -73,13 +79,14 @@ module Spree
         Pagy::Offset.new(count: count, page: page, limit: limit)
       end
 
-      def build_facets(scope, category: nil, option_value_ids: [], scope_before_options: nil)
+      def build_facets(scope, category: nil, sort_order: nil, option_value_ids: [], scope_before_options: nil)
         return { filters: [], sort_options: available_sort_options, default_sort: 'manual', total_count: scope.distinct.count } unless defined?(Spree::Api::V3::FiltersAggregator)
 
         Spree::Api::V3::FiltersAggregator.new(
           scope: scope,
           currency: currency,
           category: category,
+          sort_order: sort_order,
           option_value_ids: option_value_ids,
           scope_before_options: scope_before_options || scope
         ).call
@@ -89,11 +96,17 @@ module Spree
         return {} if filters.blank?
 
         filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
-        filters.except('search', :search, '_category', :_category, 'with_option_value_ids', :with_option_value_ids)
+        filters.except('search', :search, '_category', :_category, '_collection', :_collection, 'with_option_value_ids', :with_option_value_ids)
       end
 
-      def apply_sort(scope, sort)
+      def apply_sort(scope, sort, grouping: nil)
+        # A category/collection page defaults to the merchant's manual (position)
+        # order when `sort` is omitted — matching the `default_sort: 'manual'` the
+        # filters endpoint advertises.
+        sort = 'manual' if sort.blank? && grouping.present?
         return scope if sort.blank?
+
+        return manual_sort(scope, grouping) if sort == 'manual'
 
         scope_method = CUSTOM_SORT_SCOPES[sort]
         if scope_method
@@ -109,6 +122,44 @@ module Spree
           }.join(',')
 
           scope.ransack(s: ransack_sort).result
+        end
+      end
+
+      # Which grouping a 'manual' sort orders within, inferred from the filter that
+      # was applied (and therefore joined its position table). Only single-grouping
+      # PLPs sort manually — in_categories (plural) has no single position axis.
+      def manual_sort_grouping(filters)
+        return :collection if filters.key?('in_collection') || filters.key?(:in_collection)
+        return :category if filters.key?('in_category') || filters.key?(:in_category)
+
+        nil
+      end
+
+      # 'manual' sort = the merchant's hand-set position within the grouping. The
+      # in_category / in_collection filter already joined and scoped the position
+      # table, so we just order by it — no re-resolution, no extra query. With no
+      # grouping, 'manual' falls back to the unsorted scope (nothing to order by).
+      def manual_sort(scope, grouping)
+        case grouping
+        when :collection
+          # Flat: one product_collections row per product, so order by its position.
+          # The filtered scope is DISTINCT and PostgreSQL requires ORDER BY columns
+          # in the SELECT list, so select the position too.
+          position = "#{Spree::ProductCollection.table_name}.position"
+          scope.reorder(nil).
+            select("#{Spree::Product.table_name}.*", position).
+            order(Arel.sql("#{position} ASC"))
+        when :category
+          # Hierarchical: a product under a category AND its descendants has several
+          # product_categories rows (in_category joins the whole subtree), so collapse
+          # to MIN(position) grouped by product.
+          position = "MIN(#{Spree::ProductCategory.table_name}.position)"
+          scope.reorder(nil).
+            select("#{Spree::Product.table_name}.*", "#{position} AS manual_position").
+            group("#{Spree::Product.table_name}.id").
+            order(Arel.sql("#{position} ASC"))
+        else
+          scope
         end
       end
 

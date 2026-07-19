@@ -22,40 +22,39 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[3]).to eq product.slug
       expect(subject[4]).to eq product.status
       expect(subject[5]).to eq product.try(:vendor_name)
-      expect(subject[6]).to eq product.brand_name
-      expect(subject[7]).to eq product.description&.html_safe
-      expect(subject[8]).to eq product.meta_title
-      expect(subject[9]).to eq product.meta_description
-      expect(subject[10]).to eq product.meta_keywords
-      expect(subject[11]).to eq product.tag_list.to_s
-      expect(subject[12]).to eq product.label_list.to_s
-      expect(subject[13]).to eq variant.amount_in(store.default_currency).to_f
-      expect(subject[14]).to eq variant.compare_at_amount_in(store.default_currency).to_f
-      expect(subject[15]).to eq store.default_currency
-      expect(subject[16]).to eq variant.width
-      expect(subject[17]).to eq variant.height
-      expect(subject[18]).to eq variant.depth
-      expect(subject[19]).to eq 'in'
-      expect(subject[20]).to eq variant.weight
-      expect(subject[21]).to eq 'lb'
-      expect(subject[22]).to eq default_publication.published_at&.strftime('%Y-%m-%d %H:%M:%S')
-      expect(subject[23]).to eq(
+      expect(subject[6]).to eq product.description&.html_safe
+      expect(subject[7]).to eq product.meta_title
+      expect(subject[8]).to eq product.meta_description
+      expect(subject[9]).to eq product.meta_keywords
+      expect(subject[10]).to eq product.tag_list.to_s
+      expect(subject[11]).to eq product.label_list.to_s
+      expect(subject[12]).to eq variant.amount_in(store.default_currency).to_f
+      expect(subject[13]).to eq variant.compare_at_amount_in(store.default_currency).to_f
+      expect(subject[14]).to eq store.default_currency
+      expect(subject[15]).to eq variant.width
+      expect(subject[16]).to eq variant.height
+      expect(subject[17]).to eq variant.depth
+      expect(subject[18]).to eq 'in'
+      expect(subject[19]).to eq variant.weight
+      expect(subject[20]).to eq 'lb'
+      expect(subject[21]).to eq default_publication.published_at&.strftime('%Y-%m-%d %H:%M:%S')
+      expect(subject[22]).to eq(
         (variant.discontinue_on || default_publication.unpublished_at)&.strftime('%Y-%m-%d %H:%M:%S')
       )
-      expect(subject[24]).to eq variant.track_inventory?
-      expect(subject[25]).to eq(variant.total_on_hand == BigDecimal::INFINITY ? '∞' : variant.total_on_hand)
-      expect(subject[26]).to eq variant.backorderable?
-      expect(subject[27]).to eq variant.tax_category&.name
-      expect(subject[28]).to eq product.shipping_category&.name
-      expect(subject[29]).to end_with(variant.images[0].filename.to_s)
-      expect(subject[30]).to end_with(variant.images[1].filename.to_s)
-      expect(subject[31]).to end_with(variant.images[2].filename.to_s)
+      expect(subject[23]).to eq variant.track_inventory?
+      expect(subject[24]).to eq(variant.total_on_hand == BigDecimal::INFINITY ? '∞' : variant.total_on_hand)
+      expect(subject[25]).to eq variant.backorderable?
+      expect(subject[26]).to eq variant.tax_category&.name
+      expect(subject[27]).to eq product.shipping_category&.name
+      expect(subject[28]).to end_with(variant.images[0].filename.to_s)
+      expect(subject[29]).to end_with(variant.images[1].filename.to_s)
+      expect(subject[30]).to end_with(variant.images[2].filename.to_s)
+      expect(subject[31]).to eq nil
       expect(subject[32]).to eq nil
       expect(subject[33]).to eq nil
       expect(subject[34]).to eq nil
       expect(subject[35]).to eq nil
       expect(subject[36]).to eq nil
-      expect(subject[37]).to eq nil
     end
 
     context 'when index is not zero' do
@@ -77,14 +76,14 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
 
       it 'returns variant specific fields' do
         expect(subject[1]).to eq variant.sku
-        expect(subject[13]).to eq variant.amount_in(store.default_currency).to_f
-        expect(subject[24]).to eq false
-        expect(subject[32]).to eq 'Color'
-        expect(subject[33]).to eq 'Red'
-        expect(subject[34]).to eq 'Size'
-        expect(subject[35]).to eq 'Small'
+        expect(subject[12]).to eq variant.amount_in(store.default_currency).to_f
+        expect(subject[23]).to eq false
+        expect(subject[31]).to eq 'Color'
+        expect(subject[32]).to eq 'Red'
+        expect(subject[33]).to eq 'Size'
+        expect(subject[34]).to eq 'Small'
+        expect(subject[35]).to eq nil
         expect(subject[36]).to eq nil
-        expect(subject[37]).to eq nil
       end
     end
 
@@ -95,9 +94,9 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
         end
 
         it 'returns images with default host' do
+          expect(subject[28]).to start_with('http://test.host')
           expect(subject[29]).to start_with('http://test.host')
           expect(subject[30]).to start_with('http://test.host')
-          expect(subject[31]).to start_with('http://test.host')
         end
       end
 
@@ -107,9 +106,9 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
         end
 
         it 'returns images with the store url' do
+          expect(subject[28]).to start_with("http://#{store.url}")
           expect(subject[29]).to start_with("http://#{store.url}")
           expect(subject[30]).to start_with("http://#{store.url}")
-          expect(subject[31]).to start_with("http://#{store.url}")
         end
 
       end
@@ -213,7 +212,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
 
       it 'exports shipping category name' do
         result = presenter.call
-        expect(result[28]).to eq 'Digital'
+        expect(result[27]).to eq 'Digital'
       end
     end
 
@@ -222,8 +221,8 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
 
       it 'exports the assigned shipping category' do
         result = presenter.call
-        expect(result[28]).to be_present
-        expect(result[28]).to eq product.shipping_category.name
+        expect(result[27]).to be_present
+        expect(result[27]).to eq product.shipping_category.name
       end
     end
   end

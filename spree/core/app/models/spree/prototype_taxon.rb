@@ -1,6 +1,6 @@
 module Spree
   class PrototypeTaxon < Spree.base_class
-    belongs_to :taxon, class_name: 'Spree::Taxon'
+    belongs_to :taxon, class_name: 'Spree::Category'
     belongs_to :prototype, class_name: 'Spree::Prototype'
 
     validates :prototype, :taxon, presence: true

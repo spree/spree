@@ -120,20 +120,20 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(imaged.reload.image).not_to be_attached
     end
 
-    # Category custom-field definitions are stored under Spree::Taxon (the
+    # Category custom-field definitions are stored under Spree::Category (the
     # category route maps to the Taxon class). The dashboard ships values inline
     # with the category form, persisted via Spree::Metafields#custom_fields=.
     context 'with inline custom fields' do
       let!(:fabric_definition) do
         create(:metafield_definition,
-               resource_type: 'Spree::Taxon',
+               resource_type: 'Spree::Category',
                namespace: 'category',
                key: 'fabric',
                metafield_type: 'Spree::Metafields::ShortText')
       end
       let!(:specs_definition) do
         create(:metafield_definition,
-               resource_type: 'Spree::Taxon',
+               resource_type: 'Spree::Category',
                namespace: 'category',
                key: 'specs',
                metafield_type: 'Spree::Metafields::Json')

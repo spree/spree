@@ -37,28 +37,34 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
     end
 
     describe 'sort options' do
+      def default_sort_for(sort_order)
+        described_class.new(scope: scope, currency: currency, sort_order: sort_order).call[:default_sort]
+      end
+
       it 'returns sort_options in API format' do
         sort_ids = result[:sort_options].map { |s| s[:id] }
         expect(sort_ids).to eq(%w[manual best_selling price -price -available_on available_on name -name])
       end
 
-      it 'converts ascending internal format to field name' do
+      it 'converts an ascending sort_order to a field name' do
+        expect(default_sort_for('price asc')).to eq('price')
+      end
+
+      it 'converts a descending sort_order to a -field' do
+        expect(default_sort_for('available_on desc')).to eq('-available_on')
+      end
+
+      it 'passes a directionless sort_order through unchanged' do
+        expect(default_sort_for('best_selling')).to eq('best_selling')
+      end
+
+      it 'defaults to manual with no sort_order' do
+        expect(default_sort_for(nil)).to eq('manual')
+      end
+
+      it "ignores the category's own sort_order (category does not drive default_sort in 6.0)" do
         taxon.update!(sort_order: 'price asc')
-        expect(result[:default_sort]).to eq('price')
-      end
-
-      it 'converts descending internal format to -field' do
-        taxon.update!(sort_order: 'available_on desc')
-        expect(result[:default_sort]).to eq('-available_on')
-      end
-
-      it 'passes through values without direction unchanged' do
-        taxon.update!(sort_order: 'best_selling')
-        expect(result[:default_sort]).to eq('best_selling')
-      end
-
-      it 'returns manual as default_sort when no taxon' do
-        aggregator = described_class.new(scope: scope, currency: currency, category: nil)
+        aggregator = described_class.new(scope: scope, currency: currency, category: taxon)
         expect(aggregator.call[:default_sort]).to eq('manual')
       end
     end

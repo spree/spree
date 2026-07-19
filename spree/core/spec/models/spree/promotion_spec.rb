@@ -1015,7 +1015,7 @@ describe Spree::Promotion, type: :model do
       promotion.reload
 
       rule = promotion.rules.first
-      expect(rule).to be_a(Spree::Promotion::Rules::Taxon)
+      expect(rule).to be_a(Spree::Promotion::Rules::Category)
       expect(rule.taxons).to contain_exactly(taxon)
     end
 
@@ -1029,7 +1029,7 @@ describe Spree::Promotion, type: :model do
       fresh.save!
 
       rule = fresh.reload.rules.first
-      expect(rule).to be_a(Spree::Promotion::Rules::Taxon)
+      expect(rule).to be_a(Spree::Promotion::Rules::Category)
       expect(rule.taxons).to contain_exactly(taxon)
     end
 
