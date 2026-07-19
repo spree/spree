@@ -24,7 +24,8 @@ RSpec.describe 'Channel API', type: :request, swagger_doc: 'api-reference/store.
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'X-Spree-Channel', in: :header, type: :string, required: false,
-                description: 'Channel code or prefixed ID to resolve; ignored when the API key is channel-bound.'
+                description: 'Channel code or prefixed ID to resolve. When the API key is channel-bound, a value ' \
+                             "naming a different channel is rejected with 422 channel_mismatch; a value matching the bound channel is accepted."
 
       response '200', 'channel found' do
         let(:'x-spree-api-key') { api_key.token }

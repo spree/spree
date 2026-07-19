@@ -43,7 +43,7 @@ module Spree
         # back to the DEFAULT store, wrong on sibling stores' domains) so other
         # stores' memberships never leak.
         many :customer_groups,
-             proc { |groups, params| groups.for_store(params[:store] || Spree::Current.store) },
+             proc { |groups, params| groups.for_store(params&.dig(:store) || Spree::Current.store) },
              resource: proc { Spree.api.customer_group_serializer }
       end
     end
