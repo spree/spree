@@ -1,5 +1,6 @@
 import { Command } from 'commander'
 import pc from 'picocolors'
+import { registerAddCommand } from './commands/add.js'
 import { registerApiCommand } from './commands/api.js'
 import { registerApiKeyCommand } from './commands/api-key.js'
 import { registerAuthCommand } from './commands/auth.js'
@@ -16,12 +17,15 @@ import { registerInitCommand } from './commands/init.js'
 import { registerLogsCommand } from './commands/logs.js'
 import { registerMigrateCommand } from './commands/migrate.js'
 import { registerOpenCommand } from './commands/open.js'
+import { registerPluginCommand } from './commands/plugin.js'
 import { registerRailsCommand } from './commands/rails.js'
 import { registerRakeCommand } from './commands/rake.js'
 import { registerRestartCommand } from './commands/restart.js'
 import { registerRoutesCommand } from './commands/routes.js'
+import { registerRspecCommand } from './commands/rspec.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
 import { registerSeedCommand } from './commands/seed.js'
+import { registerShellCommand } from './commands/shell.js'
 import { registerStopCommand } from './commands/stop.js'
 import { registerTaskCommand } from './commands/task.js'
 import { registerUpdateCommand } from './commands/update.js'
@@ -33,7 +37,7 @@ const program = new Command()
   .name('spree')
   .description('CLI for managing Spree Commerce projects')
   .version(VERSION)
-  // Required by passThroughOptions on subcommands (exec/rails/bundle/rake/task)
+  // Required by passThroughOptions on subcommands (exec/rails/bundle/rake/task/rspec)
   // so flags like `ls -la` or `bin/rails routes -g foo` reach the inner command
   // instead of being parsed as options of the spree subcommand.
   .enablePositionalOptions()
@@ -59,6 +63,7 @@ const program = new Command()
 
 // Lifecycle / setup
 registerInitCommand(program)
+registerAddCommand(program)
 registerDevCommand(program)
 registerStopCommand(program)
 registerRestartCommand(program)
@@ -80,7 +85,9 @@ registerRailsCommand(program)
 registerBundleCommand(program)
 registerRakeCommand(program)
 registerTaskCommand(program)
+registerRspecCommand(program)
 registerConsoleCommand(program)
+registerShellCommand(program)
 
 // Spree-specific helpers
 registerUserCommand(program)
@@ -88,6 +95,7 @@ registerApiKeyCommand(program)
 registerOpenCommand(program)
 registerSeedCommand(program)
 registerSampleDataCommand(program)
+registerPluginCommand(program)
 
 // Admin API access (works against any Spree 5.5+ instance, not just local projects)
 registerApiCommand(program)

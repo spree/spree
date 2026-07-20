@@ -48,7 +48,7 @@ module Spree
         attribute :description do |product|
           next if product.description.blank?
 
-          Nokogiri::HTML.fragment(product.description).text.squish
+          Spree::RichTextHelper.to_plain_text(product.description)
         end
 
         attribute :description_html do |product|

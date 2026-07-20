@@ -66,6 +66,32 @@ RSpec.describe Spree::Imports::ProcessRowsJob, type: :job do
         described_class.perform_now(import.id)
       end
     end
+
+    context 'with rows missing the group value' do
+      before { stub_const('Spree::Imports::ProcessRowsJob::BATCH_SIZE', 2) }
+
+      let!(:ungrouped_rows) do
+        3.times.map do |i|
+          create(:import_row, import: import, row_number: 4 + i, status: :pending,
+                 data: { 'sku' => "LONE#{i}", 'name' => "Lone #{i}", 'price' => '5.00' }.to_json)
+        end
+      end
+
+      it 'splits ungrouped rows into bounded batches instead of one unbounded job' do
+        expect(Spree::Imports::ProcessGroupJob).to receive(:perform_later)
+          .with(import.id, [product_row.id, variant_row.id])
+        expect(Spree::Imports::ProcessGroupJob).to receive(:perform_later)
+          .with(import.id, [other_product_row.id])
+        expect(Spree::Imports::ProcessGroupJob).to receive(:perform_later)
+          .with(import.id, ungrouped_rows.first(2).map(&:id))
+        expect(Spree::Imports::ProcessGroupJob).to receive(:perform_later)
+          .with(import.id, [ungrouped_rows.last.id])
+
+        described_class.perform_now(import.id)
+
+        expect(import.reload.processing_groups_count).to eq(4)
+      end
+    end
   end
 
   describe 'batched import (Customers — no group_column)' do

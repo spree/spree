@@ -1,0 +1,26 @@
+/**
+ * File route for the {{name}} list — compiled into the host's typed route
+ * tree by `spreeDashboardPlugin()`. This directory is declared via the
+ * package.json marker (`"spree": { "dashboard": { "routes": "./src/routes" } }`).
+ *
+ * The path literal is the FINAL composed path (plugin routes mount under the
+ * dashboard's `_authenticated/$storeId` layout) — commit it exactly; the
+ * route generator verifies it.
+ *
+ * Route files type-check through a host app's build (they need a generated
+ * route tree in the program), so they're excluded from this package's
+ * standalone `tsc` run — develop against a dashboard host.
+ */
+import { resourceSearchSchema } from '@spree/dashboard-core'
+import { createFileRoute } from '@tanstack/react-router'
+import { {{module_name}}ListPage } from '../pages/{{name}}-list'
+
+export const Route = createFileRoute('/_authenticated/$storeId/{{name}}/')({
+  validateSearch: resourceSearchSchema,
+  component: {{module_name}}Route,
+})
+
+function {{module_name}}Route() {
+  const searchParams = Route.useSearch()
+  return <{{module_name}}ListPage searchParams={searchParams} />
+}

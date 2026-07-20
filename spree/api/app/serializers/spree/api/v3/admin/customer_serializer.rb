@@ -85,6 +85,16 @@ module Spree
           one :bill_address, key: :default_billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('default_billing_address') }
           one :ship_address, key: :default_shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('default_shipping_address') }
 
+          # Override the inherited always-on store association to gate it behind
+          # expand? — the admin customers index serializes many rows and an
+          # always-on association would fire one query per row.
+          one :newsletter_subscriber,
+              resource: proc { Spree.api.admin_newsletter_subscriber_serializer },
+              if: proc { expand?('newsletter_subscriber') } do |user, params|
+            store = params&.dig(:store) || Spree::Current.store
+            user.newsletter_subscriber(store)
+          end
+
           many :orders,
                resource: proc { Spree.api.admin_order_serializer },
                if: proc { expand?('orders') }

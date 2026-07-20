@@ -6,9 +6,9 @@
 
 [Website](https://spreecommerce.org)
 ·
-[Next.js Storefront](https://github.com/spree/storefront)
+[Free Sandbox](https://console.spree.sh)
 ·
-[Demo](https://demo.spreecommerce.org/)
+[Next.js Storefront](https://github.com/spree/storefront)
 ·
 [Documentation](https://spreecommerce.org/docs/)
 ·
@@ -29,7 +29,9 @@ Everything you need to launch cross-border storefronts, B2B wholesale, or a cust
 
 ## Getting Started
 
-Copy and paste the following command to your terminal to set up Spree in 5 minutes:
+The fastest way to try Spree is to [create a free sandbox](https://console.spree.sh) — a hosted Spree store with the Admin Dashboard and storefront, nothing to install.
+
+To run Spree locally instead, copy and paste the following command to your terminal to set it up in 5 minutes:
 
 ```bash
 npx create-spree-app@latest my-store
@@ -86,12 +88,9 @@ Everything below ships in this repository under the BSD 3-Clause license.
 
 ## Deployment
 
-You can quickly deploy a Spree store with the button below, or follow our [deployment guide](https://spreecommerce.org/docs/developer/deployment/overview) for detailed instructions on deploying to various platforms.
+Spree backend can be deployed everywhere, on cloud, on prem or VPS. We provide official Docker images and Dockerfiles so you can use AWS, Azure, GCP, Render, Railway, Fly.io, Heroku, or any other Docker-compatible host. The Next.js storefront can be deployed to Vercel, Netlify, or any Node.js host. [See the Deployment Documentation](https://spreecommerce.org/docs/developer/deployment) for more details.
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/spree/spree-starter)
-
-> **Note**
-> This uses Render's free plan for quick evaluation. Free instances spin down after inactivity and may take 30-60s to wake up. For production, see [recommended sizing](https://spreecommerce.org/docs/developer/deployment/render#production-sizing).
+If you want to quickly evaluate Spree, you can use the [free sandbox](https://console.spree.sh) — a hosted Spree store with the Admin Dashboard and storefront, nothing to install.
 
 ## Screenshots
 

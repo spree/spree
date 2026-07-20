@@ -2,7 +2,10 @@ import type { CustomerGroup } from '@spree/admin-sdk'
 import { ResourceMultiAutocomplete, useTranslation } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
-import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
+import {
+  customerGroupAutocompleteProps,
+  useCustomerGroups,
+} from '../../../hooks/use-customer-groups'
 import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 

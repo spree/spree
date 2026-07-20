@@ -233,6 +233,7 @@ module Spree
       assign_new_default_address_to_user
 
       if can_be_deleted?
+        unassign_from_incomplete_orders
         super
       else
         update_column :deleted_at, Time.current
@@ -363,6 +364,12 @@ module Spree
 
     def assign_new_default_address_to_user_scope
       user.addresses.not_quick_checkout.reorder(created_at: :desc)
+    end
+
+    def unassign_from_incomplete_orders
+      orders = Spree::Order.incomplete.where(user_id: user_id)
+      orders.where(ship_address_id: id).update_all(ship_address_id: nil, state: 'address', updated_at: Time.current)
+      orders.where(bill_address_id: id).update_all(bill_address_id: nil, state: 'address', updated_at: Time.current)
     end
   end
 end

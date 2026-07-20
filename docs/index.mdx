@@ -114,7 +114,7 @@ export const CopyCommand = ({ command }) => {
   };
   return (
     <button onClick={handleCopy}
-      className="group/copy inline-flex items-center gap-3 rounded-lg bg-gray-950 dark:bg-zinc-800 pl-5 pr-3 py-3 font-mono text-sm text-gray-100 border-0 cursor-pointer hover:bg-gray-900 dark:hover:bg-zinc-700 transition-colors">
+      className="group/copy inline-flex items-center gap-3 rounded-lg bg-gray-950 dark:bg-zinc-800 pl-5 pr-3 py-3 h-12 font-mono text-sm text-gray-100 border-0 cursor-pointer hover:bg-gray-900 dark:hover:bg-zinc-700 transition-colors">
       <span className="text-gray-500 select-none">$</span>
       <span>{command}</span>
       <span className="ml-2 flex items-center justify-center w-8 h-8 rounded-md text-gray-400 hover:text-gray-200 transition-colors"
@@ -143,11 +143,24 @@ export const CopyCommand = ({ command }) => {
     <p className="max-w-2xl mx-auto mt-4 text-lg text-gray-500 dark:text-zinc-400">
       The open-source commerce engine that adapts to your stack, your business model, and your scale.
     </p>
-    <div className="mt-6 flex flex-col items-center gap-2">
-      <CopyCommand command="npx create-spree-app@latest my-store" />
-      <a href="/docs/developer/getting-started/quickstart" className="text-sm text-gray-600 dark:text-zinc-500 hover:text-blue-600 dark:hover:text-zinc-300 no-underline transition-colors">
-        More installation options →
-      </a>
+    <div className="mt-8 flex flex-col items-center gap-5">
+      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+        <div className="flex flex-col items-center gap-1.5">
+          <a href="https://console.spree.sh"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-6 py-4 text-base font-semibold text-white no-underline transition-colors h-12">
+            <SmallIcon><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" /></SmallIcon>
+            Launch a free sandbox
+          </a>
+          <span className="text-xs text-gray-400 dark:text-zinc-500">Hosted store — nothing to install</span>
+        </div>
+        <span className="text-sm text-gray-400 dark:text-zinc-500 select-none sm:pb-5">or</span>
+        <div className="flex flex-col items-center gap-1.5">
+          <CopyCommand command="npx create-spree-app@latest my-store" />
+          <span className="text-xs text-gray-400 dark:text-zinc-500">
+            Run locally with Docker · <a href="/docs/developer/getting-started/quickstart" className="text-gray-500 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-zinc-200 underline underline-offset-2 decoration-gray-300 dark:decoration-zinc-600 transition-colors">more options</a>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 

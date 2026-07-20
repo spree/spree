@@ -58,10 +58,19 @@ printf 'SPREE_PATH=..\nSECRET_KEY_BASE=%s\n' "$(openssl rand -hex 64)" > "$SERVE
 step "Building @spree/cli (so node ../packages/cli/dist/index.js works)"
 pnpm --filter @spree/cli build
 
+step "Building the React Dashboard (served at /dashboard via spree_dashboard)"
+# The edge overlay points SPREE_DASHBOARD_DIST_PATH at this build output
+# through the monorepo mount — no copying, and rebuilds (`pnpm
+# server:dashboard`) are served immediately. Non-fatal: the backend works
+# without it (/dashboard just 404s until a build exists).
+if ! VITE_BASE_PATH=/dashboard/ pnpm --dir "$ROOT/packages/dashboard-starter" build; then
+  echo "  ⚠ dashboard build failed — continuing; run 'pnpm server:dashboard' later."
+fi
+
 step "Starting the edge stack"
 # Detached on purpose — `pnpm server:dev` runs the stack in the foreground
 # (streaming logs, Ctrl+C to stop); setup needs to continue past the boot.
-SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" up -d --force-recreate web worker
+SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" up -d --force-recreate web
 
 step "Waiting for the stack to finish booting"
 # The edge web boot runs bundle install + spree:install:migrations +
@@ -86,4 +95,4 @@ until code="$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 http://localho
   elapsed=$((elapsed + 3))
 done
 
-printf '\nServer ready: http://localhost:3000\nAdmin:         http://localhost:3000/admin\n\n'
+printf '\nServer ready: http://localhost:3000\nAdmin:         http://localhost:3000/admin\nDashboard:     http://localhost:3000/dashboard\n\n'

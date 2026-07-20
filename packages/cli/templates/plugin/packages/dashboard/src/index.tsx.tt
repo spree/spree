@@ -1,0 +1,89 @@
+/**
+ * {{plugin_name}} — dashboard plugin entry.
+ *
+ * Wires nav + route + slot + table extensions via defineDashboardPlugin and
+ * merges plugin translations into the dashboard's i18next namespace.
+ *
+ * Activation is automatic: the package.json's `spree.dashboard.plugin`
+ * marker makes `spreeDashboardPlugin()` discover this package and import it
+ * through `virtual:spree-dashboard-plugins` in the host's app entry, running
+ * every defineDashboardPlugin and i18n.addResourceBundle call below before
+ * the router mounts. Hosts without the virtual import can side-effect-import
+ * '{{npm_dashboard_package}}' directly.
+ */
+import { defineDashboardPlugin, defineTable, i18n } from '@spree/dashboard-core'
+import { RelativeTime } from '@spree/dashboard-ui'
+import { PackageIcon } from 'lucide-react'
+import { {{module_name}}Client } from './client'
+import en from './locales/en.json'
+import { {{module_name}}Card } from './slots/product-{{name}}-card'
+import type { {{module_name}} } from './types'
+
+// ---------------------------------------------------------------------------
+// 1. Translations
+// ---------------------------------------------------------------------------
+// `deep: true` + `overwrite: true` merge our `admin.{{name}}_plugin.*` keys
+// into the framework's `admin.*` namespace without dropping base translations.
+i18n.addResourceBundle('en', 'translation', en, true, true)
+
+// ---------------------------------------------------------------------------
+// 2. Declare the table used by our list page
+// ---------------------------------------------------------------------------
+defineTable<{{module_name}}>('{{name}}', {
+  title: i18n.t('admin.{{name}}_plugin.table.title'),
+  searchParam: 'search',
+  searchPlaceholder: i18n.t('admin.{{name}}_plugin.table.search_placeholder'),
+  defaultSort: { field: 'name', direction: 'asc' },
+  emptyMessage: i18n.t('admin.{{name}}_plugin.table.empty'),
+  columns: [
+    {
+      key: 'name',
+      label: i18n.t('admin.{{name}}_plugin.fields.name'),
+      sortable: true,
+      filterable: true,
+      default: true,
+      // Add a detail route (path: '/{{name}}/$id') before linking here —
+      // see /developer/dashboard/customization/routes.
+      render: (record) => <span className="font-medium text-foreground">{record.name}</span>,
+    },
+    {
+      key: 'created_at',
+      label: i18n.t('admin.{{name}}_plugin.fields.created_at'),
+      sortable: true,
+      default: true,
+      render: (record) => <RelativeTime iso={record.created_at} />,
+    },
+  ],
+})
+
+// ---------------------------------------------------------------------------
+// 3. Register everything else
+// ---------------------------------------------------------------------------
+defineDashboardPlugin({
+  nav: [
+    {
+      key: '{{name}}',
+      label: i18n.t('admin.{{name}}_plugin.nav'),
+      path: '/{{name}}',
+      icon: PackageIcon,
+      position: 50,
+    },
+  ],
+  // Routes ship as file routes in src/routes/ (see the package.json marker)
+  // and are compiled into the host's typed route tree. The `routes:` registry
+  // option remains available for dynamic host-app cases.
+  slots: {
+    'product.form_sidebar': [
+      {
+        id: '{{name}}-card',
+        // dashboard-core types `slots` generically; the slot's context shape
+        // is documented in @spree/dashboard's source per slot name.
+        component: {{module_name}}Card as never,
+        position: 250,
+      },
+    ],
+  },
+})
+
+export { {{module_name}}Client } from './client'
+export type { {{module_name}} } from './types'

@@ -1,4 +1,9 @@
-import type { AdminUser, AuthTokens, InvitationAcceptParams } from '@spree/admin-sdk'
+import type {
+  AdminUser,
+  AuthTokens,
+  InvitationAcceptParams,
+  PasswordResetParams,
+} from '@spree/admin-sdk'
 import { createContext, type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { adminClient } from '../client'
 import { ADMIN_LOCALE_STORAGE_KEY, switchLocale } from '../lib/i18n'
@@ -12,6 +17,12 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   acceptInvitation: (id: string, token: string, params: InvitationAcceptParams) => Promise<void>
+  /**
+   * Consume a password reset token, set the new password, and sign in — the
+   * endpoint issues a session just like login. `requestPasswordReset` (the
+   * step that sends the email) is unauthenticated and lives on `adminClient`.
+   */
+  resetPassword: (token: string, params: PasswordResetParams) => Promise<void>
   /**
    * Merge updated fields into the authenticated user (e.g. after a profile
    * save) so context consumers like the top-bar reflect the change immediately
@@ -121,6 +132,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [establish],
   )
 
+  const resetPassword = useCallback(
+    (token: string, params: PasswordResetParams) =>
+      establish(adminClient.auth.resetPassword(token, params)),
+    [establish],
+  )
+
   const logout = useCallback(async () => {
     try {
       await adminClient.auth.logout()
@@ -161,6 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         acceptInvitation,
+        resetPassword,
         updateUser,
       }}
     >

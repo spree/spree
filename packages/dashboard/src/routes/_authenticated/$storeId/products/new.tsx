@@ -1,15 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type ProductCreateParams, SpreeError } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  extensionFormValues,
+  extensionSubmitValues,
+  mapSpreeErrorsToForm,
+  PageHeader,
+} from '@spree/dashboard-core'
 import { FormActions, ResourceLayout, useFormSubmitShortcut } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
-} from '@/components/spree/custom-fields/custom-fields-inline'
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 import {
   CategorizationCard,
   GeneralCard,
@@ -20,15 +25,15 @@ import {
   StatusCard,
   TaxCard,
   VariantsCard,
-} from '@/components/spree/products/product-form-cards'
-import { PublishingCard } from '@/components/spree/products/publishing-card'
-import { useCreateProduct } from '@/hooks/use-product'
+} from '../../../../components/spree/products/product-form-cards'
+import { PublishingCard } from '../../../../components/spree/products/publishing-card'
+import { useCreateProduct } from '../../../../hooks/use-product'
 import {
   isPlaceholderDefaultVariant,
   newProductFormDefaults,
   type ProductFormValues,
   productFormSchema,
-} from '@/schemas/product'
+} from '../../../../schemas/product'
 import { variantToWirePayload } from './$productId'
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/new')({
@@ -44,7 +49,8 @@ function NewProductPage() {
   const form = useForm<ProductFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productFormSchema) as any,
-    defaultValues: newProductFormDefaults(),
+    // Extension fields seed their blank value (`from(null)`) on create.
+    defaultValues: { ...newProductFormDefaults(), ...extensionFormValues('product', null) },
   })
 
   const onSubmit = async (data: ProductFormValues) => {
@@ -58,6 +64,9 @@ function NewProductPage() {
 
     const payload: ProductCreateParams = {
       ...(rest as ProductCreateParams),
+      // Extension fields come from live form state — the Zod parse behind
+      // `data` strips keys the first-party schema doesn't know.
+      ...extensionSubmitValues('product', form),
     }
     // Only ship custom_fields when there are some — empty arrays are noise
     // and Spree::Metafields#custom_fields= already no-ops on empty input.
@@ -148,50 +157,52 @@ function NewProductPage() {
   useFormSubmitShortcut(form, onSubmit)
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      {form.formState.errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
-          {form.formState.errors.root.message}
-        </p>
-      )}
-      <ResourceLayout
-        header={
-          <PageHeader
-            title={t('admin.pages.products.new.title')}
-            subtitle={t('admin.pages.products.new.description')}
-            backTo="products"
-            actions={
-              <FormActions form={form} saveLabel={t('admin.pages.products.new.save_label')} />
-            }
-          />
-        }
-        main={
-          <>
-            <GeneralCard form={form} />
-            <VariantsCard form={form} />
-            {/* Form-backed media uploader — files are uploaded to ActiveStorage
-                pre-save and their signed_ids ride the product POST. */}
-            <MediaCard form={form} />
-            <PricesCard
-              form={form}
-              productName={form.watch('name') || t('admin.pages.products.new.title')}
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {form.formState.errors.root?.message && (
+          <p className="text-sm text-destructive" role="alert">
+            {form.formState.errors.root.message}
+          </p>
+        )}
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={t('admin.pages.products.new.title')}
+              subtitle={t('admin.pages.products.new.description')}
+              backTo="products"
+              actions={
+                <FormActions form={form} saveLabel={t('admin.pages.products.new.save_label')} />
+              }
             />
-            <InventoryCard form={form} storeId={storeId} />
-            <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Product">
-              <CustomFieldsInlineCard />
-            </FormBackedCustomFieldsProvider>
-          </>
-        }
-        sidebar={
-          <>
-            <StatusCard form={form} />
-            <PublishingCard form={form} seedDefaultChannel />
-            <CategorizationCard form={form} />
-            <TaxCard form={form} />
-            <SEOCard form={form} />
-          </>
-        }
-      />
-    </form>
+          }
+          main={
+            <>
+              <GeneralCard form={form} />
+              <VariantsCard form={form} />
+              {/* Form-backed media uploader — files are uploaded to ActiveStorage
+                pre-save and their signed_ids ride the product POST. */}
+              <MediaCard form={form} />
+              <PricesCard
+                form={form}
+                productName={form.watch('name') || t('admin.pages.products.new.title')}
+              />
+              <InventoryCard form={form} storeId={storeId} />
+              <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Product">
+                <CustomFieldsInlineCard />
+              </FormBackedCustomFieldsProvider>
+            </>
+          }
+          sidebar={
+            <>
+              <StatusCard form={form} />
+              <PublishingCard form={form} seedDefaultChannel />
+              <CategorizationCard form={form} />
+              <TaxCard form={form} />
+              <SEOCard form={form} />
+            </>
+          }
+        />
+      </form>
+    </FormProvider>
   )
 }

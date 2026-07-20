@@ -1,53 +1,47 @@
-<h1>
-  <%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer', name: name_for(@order)) %>
-</h1>
-<p>
-  <%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %>
-</p>
-<p>
-  <%= Spree.t('reimbursement_mailer.reimbursement_email.refund_summary') %>
-</p>
-<p>
-  <%= Spree.t('reimbursement_mailer.reimbursement_email.total_refunded', total: @reimbursement.display_total) %>
-</p>
-<% if @reimbursement.return_items.exchange_requested.present? %>
-  <p>
-    <%= Spree.t('reimbursement_mailer.reimbursement_email.exchange_summary') %>
-  </p>
+<%= render 'spree/shared/purchased_items_styles' %>
 
-  <table class="purchase_content">
-    <% @reimbursement.return_items.exchange_requested.each do |return_item| %>
-      <tr>
-        <td class="purchase_image">
-          <% image = return_item.variant.primary_media || return_item.variant.product.primary_media %>
-          <% if image.present? && image.attached? %>
-            <%= link_to(spree_image_tag(image, variant: :mini, alt: return_item.variant.name), spree_storefront_resource_url(return_item.variant.product)) %>
-          <% else %>
-            <%= link_to(image_tag('noimage/small.png', alt: return_item.variant.name), spree_storefront_resource_url(return_item.variant.product)) %>
-          <% end %>
-        </td>
-        <td class="purchase_item">
-          <strong>
-            <span class="f-fallback">
-              <%= link_to return_item.variant.name, spree_storefront_resource_url(return_item.variant.product) %>
-            </span>
-          </strong>
-          <p class="purchase_item--additional">
-            <%= "(#{return_item.exchange_variant.options_text})" if return_item.exchange_variant.options_text.present? -%>
-          </p>
-        </td>
-      </tr>
-    <% end %>
-  </table>
-  <% if @reimbursement.return_items.awaiting_return.present? && Spree::Config[:expedited_exchanges] %>
-    <p>
-      <%= Spree.t('reimbursement_mailer.reimbursement_email.days_to_send', days: Spree::Config[:expedited_exchanges_days_window]) %>
-    </p>
-  <% end %>
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('reimbursement_mailer.reimbursement_email.subject') %></h1>
+  <p class="greeting"><%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer', name: name_for(@order)) %></p>
+  <p><%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %></p>
 <% end %>
 
-<p>
-  <%= Spree.t('reimbursement_mailer.reimbursement_email.thanks') %>
-  <br />
-  <%= Spree.t('reimbursement_mailer.reimbursement_email.store_team', store_name: current_store.name) %>
-</p>
+<table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td>
+      <h3 class="f-fallback"><%= Spree.t('reimbursement_mailer.reimbursement_email.refund_summary') %></h3>
+      <p class="strong f-fallback"><%= Spree.t('reimbursement_mailer.reimbursement_email.total_refunded', total: @reimbursement.display_total) %></p>
+    </td>
+  </tr>
+</table>
+
+<% exchange_items = @reimbursement.return_items.exchange_requested.to_a %>
+<% if exchange_items.any? %>
+  <table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+    <tr>
+      <td>
+        <h3 class="f-fallback"><%= Spree.t('reimbursement_mailer.reimbursement_email.exchange_summary') %></h3>
+        <% exchange_items.each do |return_item| %>
+          <% product_url = spree_storefront_resource_url(return_item.variant.product) %>
+          <table class="item" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+            <tr>
+              <td class="item_image" width="96" valign="middle">
+                <% image = return_item.variant.primary_media || return_item.variant.product.primary_media %>
+                <%= render 'spree/shared/item_thumbnail_link', image: image, product_url: product_url, alt: return_item.variant.name %>
+              </td>
+              <td class="item_info" valign="middle">
+                <%= link_to return_item.variant.name, product_url, class: 'f-fallback item_name' %>
+                <% if return_item.exchange_variant.options_text.present? %>
+                  <p class="item_meta"><%= return_item.exchange_variant.options_text %></p>
+                <% end %>
+              </td>
+            </tr>
+          </table>
+        <% end %>
+        <% if @reimbursement.return_items.awaiting_return.exists? && Spree::Config[:expedited_exchanges] %>
+          <p class="sub f-fallback"><%= Spree.t('reimbursement_mailer.reimbursement_email.days_to_send', days: Spree::Config[:expedited_exchanges_days_window]) %></p>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+<% end %>

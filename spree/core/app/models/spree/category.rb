@@ -158,7 +158,7 @@ module Spree
     #
     TRANSLATABLE_FIELDS = %i[name pretty_name description permalink].freeze
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     #
     # Action Text

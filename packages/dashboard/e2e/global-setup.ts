@@ -26,14 +26,14 @@ import {
   FIXTURE_PROMO_PRODUCT,
   FIXTURE_PROMO_TAXON,
 } from './helpers'
-import { CREDENTIALS_FILE, E2E_DIR, RAILS_PID_FILE } from './paths'
+import { ASYNC_JOBS_INITIALIZER, CREDENTIALS_FILE, E2E_DIR, RAILS_PID_FILE } from './paths'
 
 const API_GEM_DIR = resolve(E2E_DIR, '../../../spree/api')
 const PORT = process.env.E2E_RAILS_PORT || '3010'
 // Mirrors `spec/dummy/config/database.yml`.
 const TEST_SQLITE = resolve(API_GEM_DIR, 'spec/dummy/db/spree_test.sqlite3')
 
-const RAILS_ENV = { ...process.env, RAILS_ENV: 'test', PORT }
+const RAILS_ENV = { ...process.env, RAILS_ENV: 'test', PORT, DASHBOARD_E2E: '1' }
 
 // Customer's last name is derived from the full name so the seeder and the
 // matching `full_name` assertion in promotions.spec stay in sync.
@@ -135,6 +135,20 @@ let serverProcess: ChildProcess | null = null
 
 export default async function globalSetup() {
   rmIfExists(TEST_SQLITE)
+
+  // The dummy test env pins ActiveJob to the :test adapter (RSpec asserts on
+  // enqueues), but e2e flows like CSV import only progress when jobs actually
+  // run — execute them in-process for the e2e server only. Removed in
+  // global-teardown; the DASHBOARD_E2E guard keeps a leftover file inert for
+  // regular spec runs.
+  writeFileSync(
+    ASYNC_JOBS_INITIALIZER,
+    [
+      '# Written by packages/dashboard/e2e/global-setup.ts — safe to delete.',
+      "ActiveJob::Base.queue_adapter = :async if ENV['DASHBOARD_E2E'] == '1'",
+      '',
+    ].join('\n'),
+  )
 
   // Pass the script via argv to sidestep shell quoting (the Ruby contains
   // both single and double quotes).

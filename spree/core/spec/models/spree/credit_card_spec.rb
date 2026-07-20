@@ -146,6 +146,46 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
+  describe 'fingerprint uniqueness' do
+    let(:user) { create(:user) }
+    let(:payment_method) { create(:credit_card_payment_method) }
+    let!(:existing_card) do
+      create(:credit_card, user: user, payment_method: payment_method,
+                           fingerprint: 'FZqjhq46SWprIY8i', month: 11, year: 2030)
+    end
+
+    def build_duplicate(attributes = {})
+      build(
+        :credit_card,
+        { user: user, payment_method: payment_method, fingerprint: 'FZqjhq46SWprIY8i', month: 11, year: 2030 }.merge(attributes)
+      )
+    end
+
+    it 'rejects the same physical card for the same user, payment method and expiry' do
+      card = build_duplicate
+      expect(card).not_to be_valid
+      expect(card.errors[:fingerprint]).to be_present
+    end
+
+    it 'allows the same fingerprint with a different expiry' do
+      expect(build_duplicate(year: 2031)).to be_valid
+    end
+
+    it 'allows the same fingerprint under a different payment method' do
+      expect(build_duplicate(payment_method: create(:credit_card_payment_method))).to be_valid
+    end
+
+    it 'does not enforce uniqueness when the fingerprint is missing' do
+      create(:credit_card, user: user, payment_method: payment_method, fingerprint: nil, month: 11, year: 2030)
+      expect(build_duplicate(fingerprint: nil)).to be_valid
+    end
+
+    it 'ignores soft-deleted cards' do
+      existing_card.destroy
+      expect(build_duplicate).to be_valid
+    end
+  end
+
   describe '#save' do
     before do
       credit_card.attributes = valid_credit_card_attributes
@@ -394,6 +434,24 @@ describe Spree::CreditCard, type: :model do
 
       it 'does not include credit cards without profile or payment id' do
         expect(described_class.capturable).not_to include(credit_card_without_profile_or_payment_id)
+      end
+    end
+
+    describe '#by_fingerprint' do
+      let!(:match) { create(:credit_card, fingerprint: 'FZqjhq46SWprIY8i', month: 2, year: 2030) }
+      let!(:other_fingerprint) { create(:credit_card, fingerprint: 'differentFingerprint', month: 2, year: 2030) }
+      let!(:other_expiry) { create(:credit_card, fingerprint: 'FZqjhq46SWprIY8i', month: 12, year: 2031) }
+
+      it 'returns cards matching the fingerprint and expiry' do
+        expect(described_class.by_fingerprint('FZqjhq46SWprIY8i', 2, 2030)).to contain_exactly(match)
+      end
+
+      it 'matches when month and year are passed as strings' do
+        expect(described_class.by_fingerprint('FZqjhq46SWprIY8i', '2', '2030')).to contain_exactly(match)
+      end
+
+      it 'returns nothing when the expiry differs' do
+        expect(described_class.by_fingerprint('FZqjhq46SWprIY8i', 1, 2030)).to be_empty
       end
     end
   end

@@ -1,6 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type Product, SpreeError, type Variant } from '@spree/admin-sdk'
-import { adminClient, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import {
+  adminClient,
+  extensionFormValues,
+  extensionSubmitValues,
+  mapSpreeErrorsToForm,
+  PageHeader,
+  Slot,
+} from '@spree/dashboard-core'
 import {
   ErrorState,
   FormActions,
@@ -14,13 +21,13 @@ import {
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { useEffect } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
-} from '@/components/spree/custom-fields/custom-fields-inline'
+} from '../../../../components/spree/custom-fields/custom-fields-inline'
 import {
   CategorizationCard,
   GeneralCard,
@@ -31,17 +38,17 @@ import {
   StatusCard,
   TaxCard,
   VariantsCard,
-} from '@/components/spree/products/product-form-cards'
-import { PublishingCard } from '@/components/spree/products/publishing-card'
-import { ResourceTranslationsCard } from '@/components/spree/translations/resource-translations-card'
-import { useDeleteProduct, useProduct, useUpdateProduct } from '@/hooks/use-product'
-import { useProductMedia } from '@/hooks/use-product-media'
-import { spreeJsonLinkResolver } from '@/lib/json-link-resolver'
+} from '../../../../components/spree/products/product-form-cards'
+import { PublishingCard } from '../../../../components/spree/products/publishing-card'
+import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
+import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
+import { useProductMedia } from '../../../../hooks/use-product-media'
+import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   type ProductFormValues,
   productFormSchema,
   type VariantFormValues,
-} from '@/schemas/product'
+} from '../../../../schemas/product'
 
 // Purchasable attributes (sku, barcode, prices, weight, dimensions, stock,
 // track_inventory) live on variants in API v3. The product form no longer
@@ -125,7 +132,11 @@ function productToFormValues(
 
   return {
     name: product.name,
-    description: product.description ?? '',
+    // Hydrate the Tiptap editor from the HTML field, not `description` — the
+    // serializer squishes that one to tag-stripped plain text, which would
+    // collapse paragraphs/line breaks on every reload. Write still goes back
+    // through the `description` param (the API accepts HTML there).
+    description: product.description_html ?? '',
     status: (product.status as ProductFormValues['status']) ?? 'draft',
     category_ids: product.categories?.map((t) => t.id) ?? [],
     tags: product.tags ?? [],
@@ -250,7 +261,13 @@ function ProductForm({ product }: { product: Product }) {
   const form = useForm<ProductFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productFormSchema) as any,
-    defaultValues: productToFormValues(product, mediaItems),
+    // Extension form values ride along: fields registered via
+    // `formFields.register('product', …)` hydrate from the fetched product
+    // and flow into the PATCH payload through the loose schema.
+    defaultValues: {
+      ...productToFormValues(product, mediaItems),
+      ...extensionFormValues('product', product),
+    },
   })
 
   // Variants the MediaCard can assign uploaded images to. Only server-persisted
@@ -276,7 +293,10 @@ function ProductForm({ product }: { product: Product }) {
   // already cleared isDirty, so the post-save refetch still re-hydrates.
   useEffect(() => {
     if (form.formState.isDirty) return
-    form.reset(productToFormValues(product, mediaItems))
+    form.reset({
+      ...productToFormValues(product, mediaItems),
+      ...extensionFormValues('product', product),
+    })
   }, [product, mediaItems, form])
 
   // Media-only hydration that bypasses the isDirty guard for the
@@ -308,7 +328,10 @@ function ProductForm({ product }: { product: Product }) {
 
   const onSubmit = async (data: ProductFormValues) => {
     const { variants, media, ...rest } = data
-    const payload: Record<string, unknown> = { ...rest }
+    // Extension fields come from live form state: the Zod parse behind
+    // `data` strips keys the first-party schema doesn't know.
+    const extensionValues = extensionSubmitValues('product', form)
+    const payload: Record<string, unknown> = { ...rest, ...extensionValues }
 
     if (variants && variants.length > 0) {
       payload.variants = variants.map((v, i) => variantToWirePayload(v, i))
@@ -339,6 +362,9 @@ function ProductForm({ product }: { product: Product }) {
       // ids will hydrate on the next refetch.
       const baseline: ProductFormValues = {
         ...data,
+        // `data` is the parsed (extension-stripped) shape — put extension
+        // values back so the reset doesn't blank their inputs pre-refetch.
+        ...extensionValues,
         media: (data.media ?? []).map(
           ({ signed_id: _sid, previewUrl: _p, uploadId: _u, ...rest }) => rest,
         ),
@@ -375,60 +401,66 @@ function ProductForm({ product }: { product: Product }) {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
-      {form.formState.errors.root?.message && (
-        <p className="text-sm text-destructive" role="alert">
-          {form.formState.errors.root.message}
-        </p>
-      )}
-      <ResourceLayout
-        header={
-          <PageHeader
-            title={product.name}
-            backTo="products"
-            badges={<StatusBadge status={product.status} />}
-            actions={<FormActions form={form} saveLabel={t('admin.products.save_label')} />}
-            resource={{ id: product.id }}
-            onDelete={handleDelete}
-            deleteLabel={t('admin.products.delete_label')}
-            jsonPreview={{
-              title: `Product ${product.name}`,
-              fetch: () => adminClient.products.get(productId),
-              endpoint: `/api/v3/admin/products/${productId}`,
-              resolveLink: spreeJsonLinkResolver(storeId),
-            }}
-          />
-        }
-        main={
-          <>
-            <GeneralCard form={form} />
-            <VariantsCard form={form} />
-            <MediaCard productId={productId} variants={assignableVariants} form={form} />
-            <PricesCard form={form} productName={product.name} />
-            <InventoryCard form={form} storeId={storeId} />
-            <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Product">
-              <CustomFieldsInlineCard />
-            </FormBackedCustomFieldsProvider>
-            <ResourceTranslationsCard resourceType="product" resourceId={productId} />
-            <MetadataCard
-              metadata={product.metadata}
-              title={t('admin.components.metadata_card.title')}
-              emptyTitle={t('admin.components.metadata_card.empty_title')}
-              emptyDescription={t('admin.components.metadata_card.empty_description')}
+    // FormProvider exposes the form to slot widgets: a `product.form_sidebar`
+    // extension binds inputs via `useHostForm()` and they persist through
+    // this form's Save — no widget-owned save cycle.
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {form.formState.errors.root?.message && (
+          <p className="text-sm text-destructive" role="alert">
+            {form.formState.errors.root.message}
+          </p>
+        )}
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={product.name}
+              backTo="products"
+              badges={<StatusBadge status={product.status} />}
+              actions={<FormActions form={form} saveLabel={t('admin.products.save_label')} />}
+              resource={{ id: product.id }}
+              onDelete={handleDelete}
+              deleteLabel={t('admin.products.delete_label')}
+              jsonPreview={{
+                title: `Product ${product.name}`,
+                fetch: () => adminClient.products.get(productId),
+                endpoint: `/api/v3/admin/products/${productId}`,
+                resolveLink: spreeJsonLinkResolver(storeId),
+              }}
             />
-          </>
-        }
-        sidebar={
-          <>
-            <StatusCard form={form} />
-            <PublishingCard form={form} />
-            <CategorizationCard form={form} />
-            <TaxCard form={form} />
-            <SEOCard form={form} product={product} />
-          </>
-        }
-      />
-    </form>
+          }
+          main={
+            <>
+              <GeneralCard form={form} />
+              <VariantsCard form={form} />
+              <MediaCard productId={productId} variants={assignableVariants} form={form} />
+              <PricesCard form={form} productName={product.name} />
+              <InventoryCard form={form} storeId={storeId} />
+              <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Product">
+                <CustomFieldsInlineCard />
+              </FormBackedCustomFieldsProvider>
+              <ResourceTranslationsCard resourceType="product" resourceId={productId} />
+              <MetadataCard
+                metadata={product.metadata}
+                title={t('admin.components.metadata_card.title')}
+                emptyTitle={t('admin.components.metadata_card.empty_title')}
+                emptyDescription={t('admin.components.metadata_card.empty_description')}
+              />
+            </>
+          }
+          sidebar={
+            <>
+              <StatusCard form={form} />
+              <PublishingCard form={form} />
+              <CategorizationCard form={form} />
+              <TaxCard form={form} />
+              <SEOCard form={form} product={product} />
+              <Slot name="product.form_sidebar" context={{ product }} />
+            </>
+          }
+        />
+      </form>
+    </FormProvider>
   )
 }
 

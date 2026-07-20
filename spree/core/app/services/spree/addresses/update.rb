@@ -7,7 +7,16 @@ module Spree
       attr_accessor :country
 
       def call(address:, address_params:, **opts)
-        order = opts[:order]
+        ApplicationRecord.transaction do
+          perform(address: address, address_params: address_params, **opts)
+        end
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotDestroyed => e
+        failure(e.record)
+      end
+
+      private
+
+      def perform(address:, address_params:, **opts)
         default_billing = address_params.key?(:is_default_billing) ? address_params.delete(:is_default_billing) : opts.fetch(:default_billing, false)
         default_shipping = address_params.key?(:is_default_shipping) ? address_params.delete(:is_default_shipping) : opts.fetch(:default_shipping, false)
         address_changes_except = opts.fetch(:address_changes_except, [])
@@ -35,24 +44,23 @@ module Spree
         return success(address) unless address_changed
 
         if address.editable?
-          if address.update(address_params)
-            if address.user.present?
-              assign_to_user_as_default(
-                user: address.user,
-                address_id: address.id,
-                default_billing: default_billing,
-                default_shipping: default_shipping
-              )
-            end
+          address.update!(address_params)
 
-            order.update(state: 'address') if order.present?
-
-            success(address)
-          else
-            failure(address)
+          if address.user.present?
+            assign_to_user_as_default(
+              user: address.user,
+              address_id: address.id,
+              default_billing: default_billing,
+              default_shipping: default_shipping
+            )
           end
+
+          reassign_incomplete_orders(address.id, address)
+
+          success(address)
         elsif new_address(address_params).valid?
-          address.destroy
+          old_address_id = address.id
+          address.destroy!
 
           if new_address.user.present?
             default_billing = address.user_default_billing? || default_billing
@@ -66,12 +74,7 @@ module Spree
             )
           end
 
-          if order.present?
-            order.ship_address = new_address if order.ship_address_id == address.id
-            order.bill_address = new_address if order.bill_address_id == address.id
-            order.state = 'address'
-            order.save
-          end
+          reassign_incomplete_orders(old_address_id, new_address)
 
           success(new_address)
         else
@@ -79,13 +82,17 @@ module Spree
         end
       end
 
-      private
-
       def prepare_address_params!(address, address_params)
         address_params[:user_id] = address&.user_id
         address_params[:country_id] ||= address.country_id
         address_params = fill_country_and_state_ids(address_params)
         address_params.transform_values!(&:presence)
+      end
+
+      def reassign_incomplete_orders(old_address_id, new_address)
+        orders = Spree::Order.incomplete.where(user_id: new_address.user_id)
+        orders.where(ship_address_id: old_address_id).update_all(ship_address_id: new_address.id, state: 'address', updated_at: Time.current)
+        orders.where(bill_address_id: old_address_id).update_all(bill_address_id: new_address.id, state: 'address', updated_at: Time.current)
       end
 
       def defaults_changed?(address, default_billing, default_shipping)

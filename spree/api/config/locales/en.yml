@@ -14,6 +14,7 @@ en:
         guest_checkout_not_allowed: You must be signed in to complete checkout.
         storefront_login_required: Authentication required to access this store.
       negative_quantity: quantity is negative
+      newsletter_unsubscribe_token_invalid: Newsletter unsubscribe token is invalid or has expired.
       newsletter_verification_token_invalid: Newsletter verification token is invalid or has expired.
       order:
         could_not_transition: The order could not be transitioned. Please fix the errors and try again.

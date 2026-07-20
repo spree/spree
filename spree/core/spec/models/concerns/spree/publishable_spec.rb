@@ -302,6 +302,50 @@ RSpec.describe Spree::Publishable, events: true do
         expect(skipped_class.publish_events).to be false
       end
     end
+
+    context 'on touch' do
+      let!(:product) { create(:product) }
+
+      it 'does not publish an update event for a touch-only save' do
+        received = false
+        Spree::Events.subscribe('product.updated', async: false) { received = true }
+        Spree::Events.activate!
+
+        product.touch
+
+        expect(received).to be false
+      end
+
+      it 'still publishes an update event for a real attribute change' do
+        received = false
+        Spree::Events.subscribe('product.updated', async: false) { received = true }
+        Spree::Events.activate!
+
+        product.update!(name: 'Renamed')
+
+        expect(received).to be true
+      end
+    end
+
+    context 'within Spree::Events.disable_lifecycle' do
+      let(:product) { create(:product) }
+
+      it 'suppresses lifecycle events but lets explicit events through' do
+        lifecycle_received = false
+        explicit_received = false
+        Spree::Events.subscribe('product.updated', async: false) { lifecycle_received = true }
+        Spree::Events.subscribe('product.custom', async: false) { explicit_received = true }
+        Spree::Events.activate!
+
+        Spree::Events.disable_lifecycle do
+          product.update!(name: 'Renamed')
+          product.publish_event('product.custom')
+        end
+
+        expect(lifecycle_received).to be false
+        expect(explicit_received).to be true
+      end
+    end
   end
 
   describe '.event_prefix' do

@@ -20,9 +20,9 @@ import {
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useOptionTypes } from '@/hooks/use-option-types'
-import { useTaxCategories } from '@/hooks/use-tax-categories'
-import type { ProductFormValues, VariantFormValues } from '@/schemas/product'
+import { useOptionTypes } from '../../../hooks/use-option-types'
+import { useTaxCategories } from '../../../hooks/use-tax-categories'
+import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
 import { variantDisplayLabel } from './variants-matrix'
 
 const WEIGHT_UNITS = ['g', 'kg', 'lb', 'oz'] as const

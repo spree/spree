@@ -4,8 +4,8 @@ import { StatusBadge, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { PackageIcon } from 'lucide-react'
-import { categoryAutocompleteProps } from '@/hooks/use-categories'
-import { channelAutocompleteProps } from '@/hooks/use-channels'
+import { categoryAutocompleteProps } from '../hooks/use-categories'
+import { channelAutocompleteProps } from '../hooks/use-channels'
 
 defineTable('products', {
   title: i18n.t('admin.nav.products'),

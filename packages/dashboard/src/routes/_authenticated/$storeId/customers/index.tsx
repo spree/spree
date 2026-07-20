@@ -4,6 +4,7 @@ import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
 import {
   adminClient,
   ExportButton,
+  ImportButton,
   mapSpreeErrorsToForm,
   ResourceMultiAutocomplete,
   ResourceTable,
@@ -39,25 +40,31 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { customerGroupAutocompleteProps, useCustomerGroups } from '@/hooks/use-customer-groups'
+import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
+import {
+  customerGroupAutocompleteProps,
+  useCustomerGroups,
+} from '../../../../hooks/use-customer-groups'
 import {
   useBulkAddCustomersToGroups,
   useBulkAddCustomerTags,
   useBulkRemoveCustomersFromGroups,
   useBulkRemoveCustomerTags,
   useDeleteCustomer,
-} from '@/hooks/use-customers'
+} from '../../../../hooks/use-customers'
 import {
   NEW_CUSTOMER_DEFAULTS,
   type NewCustomerFormValues,
   newCustomerFormSchema,
-} from '@/schemas/customer'
-import '@/tables/customers'
+} from '../../../../schemas/customer'
+import '../../../../tables/customers'
 
 // Adds `?new=1` on top of the standard table search schema so the create sheet
-// is deep-linkable (`/customers?new=1`) and back-button friendly.
+// is deep-linkable (`/customers?new=1`) and back-button friendly. `import`
+// carries the prefixed id of the import wizard dialog open over the table.
 const customersSearchSchema = resourceSearchSchema.extend({
   new: z.coerce.boolean().optional(),
+  import: z.string().optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/$storeId/customers/')({
@@ -185,6 +192,19 @@ function CustomersPage() {
     })
   }
 
+  function openImportWizard(id: string) {
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, import: id }) as never })
+  }
+
+  function closeImportWizard() {
+    navigate({
+      search: (prev: Record<string, unknown>) => {
+        const { import: _i, ...rest } = prev
+        return rest as never
+      },
+    })
+  }
+
   return (
     <>
       <ResourceTable<Customer>
@@ -197,6 +217,11 @@ function CustomersPage() {
         rowActions={(customer) => <CustomerRowActions customer={customer} storeId={storeId} />}
         actions={(ctx) => (
           <>
+            <ImportButton
+              type="Spree::Imports::Customers"
+              subject={Subject.Customer}
+              onCreated={(imp) => openImportWizard(imp.id)}
+            />
             <ExportButton type="Spree::Exports::Customers" {...ctx} />
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
@@ -206,6 +231,7 @@ function CustomersPage() {
         )}
       />
       {isCreating && <NewCustomerSheet open onOpenChange={(o) => !o && closeSheet()} />}
+      <ImportWizardDialog importId={search.import ?? null} onClose={closeImportWizard} />
     </>
   )
 }

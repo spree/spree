@@ -8,19 +8,25 @@ Spree handles two categories of emails:
 
 | Category | Sent by | Examples |
 |----------|---------|----------|
-| **Customer-facing** | Storefront (via webhooks) | Order confirmation, shipping notification, password reset |
-| **System/admin** | Spree backend (Rails) | Staff invitation, report ready, export complete |
+| **Customer-facing** | Spree by default; optionally your storefront (via webhooks) | Order confirmation, shipping notification, password reset |
+| **System/admin** | Spree | Staff invitation, report ready, export complete |
 
-## Customer-Facing Emails (Headless)
+## Customer-Facing Emails
 
-In headless builds, customer-facing emails are rendered and sent by the **storefront**, not the backend. The Spree backend publishes webhook events, and the storefront receives them, renders React email templates, and sends via [Resend](https://resend.com) (or any provider).
+By default, **Spree sends all customer transactional emails itself** — the `spree_emails` gem ships installed in every deployment. This works for every client of the API: mobile apps, custom frontends, POS integrations — no storefront required. Delivery uses the same [SMTP configuration](#configuration) as system emails.
+
+Customer emails can be turned off in the admin under **Settings → Emails** — do this when your storefront takes over sending them (below), otherwise customers receive both.
+
+### Sending from the Storefront Instead
+
+With the Next.js storefront, you can let the storefront own the customer email experience: the Spree backend publishes webhook events, and the storefront receives them, renders React email templates, and sends via [Resend](https://resend.com) (or any provider).
 
 ```
 Spree Backend → Webhook POST → Storefront → render email → send via Resend
                 (HMAC signed)   (verified)    (react-email)
 ```
 
-### Setup
+#### Setup
 
 1. **Create a webhook endpoint** in Spree Admin → Settings → Developers → Webhooks:
    - **URL:** `https://your-storefront.com/api/webhooks/spree`
@@ -28,16 +34,18 @@ Spree Backend → Webhook POST → Storefront → render email → send via Rese
 
 2. **Configure the storefront** with the webhook secret and email provider:
 
-```env
-# .env.local (storefront)
-SPREE_WEBHOOK_SECRET=your_webhook_endpoint_secret_key
-RESEND_API_KEY=re_your_resend_api_key
-EMAIL_FROM=Your Store <orders@your-domain.com>
-```
+    ```env
+    # .env.local (storefront)
+    SPREE_WEBHOOK_SECRET=your_webhook_endpoint_secret_key
+    RESEND_API_KEY=re_your_resend_api_key
+    EMAIL_FROM=Your Store <orders@your-domain.com>
+    ```
 
 3. **The storefront handles everything else** — signature verification, event routing, email rendering, and delivery are built in. See the [Next.js storefront email docs](/developer/storefront/nextjs/customization#transactional-emails) for template customization.
 
-### Supported Events
+4. **Turn off Spree's own customer emails** under **Settings → Emails** in the admin, so customers don't receive duplicates.
+
+#### Supported Events
 
 | Event | Email |
 |-------|-------|
@@ -47,7 +55,7 @@ EMAIL_FROM=Your Store <orders@your-domain.com>
 | `customer.password_reset_requested` | Password reset link |
 | `newsletter_subscriber.subscription_requested` | Newsletter double opt-in confirmation link |
 
-### Custom Frameworks
+#### Custom Frameworks
 
 If you're not using the Next.js storefront, you can build your own webhook handler with any framework. Use `@spree/sdk/webhooks` for signature verification:
 
@@ -57,9 +65,9 @@ import { verifyWebhookSignature } from '@spree/sdk/webhooks'
 
 See [Webhooks documentation](/developer/core-concepts/webhooks) for the full payload format and verification details.
 
-## System Emails (Rails)
+## System Emails
 
-System emails are internal notifications sent to **store staff**, not customers. They are sent by the Spree backend via Rails ActionMailer.
+System emails are internal notifications sent to **store staff**, not customers. They are always sent by Spree itself and can't be taken over by a storefront.
 
 | Email | When |
 |-------|------|
@@ -71,7 +79,7 @@ System emails are internal notifications sent to **store staff**, not customers.
 
 ### Configuration
 
-Set the following environment variables on the **Spree backend** to enable system email delivery:
+Set the following environment variables on the **Spree backend** to enable email delivery — this configuration powers both customer transactional emails and system emails:
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -80,7 +88,7 @@ Set the following environment variables on the **Spree backend** to enable syste
 | `SMTP_USERNAME` | — | SMTP auth username |
 | `SMTP_PASSWORD` | — | SMTP auth password |
 | `SMTP_FROM_ADDRESS` | — | Default "from" email address (e.g., `admin@mystore.com`) |
-| `RAILS_HOST` | `example.com` | Host used in email URLs |
+| `RAILS_HOST` | `example.com` | Public host used in email links and other [generated URLs](/developer/deployment/environment_variables#urls-and-hosts) — image/attachment URLs use `CDN_HOST` instead when set |
 
 When `SMTP_HOST` is not set, emails are printed to the Rails log instead of being sent.
 
@@ -128,7 +136,7 @@ When `SMTP_HOST` is not set, emails are printed to the Rails log instead of bein
 
 ## Local Development
 
-### Customer-facing emails (storefront)
+### Storefront-sent emails
 
 In development, no email provider is needed. Emails are rendered to HTML files in `.next/emails/` with a clickable `file://` link in the console. To preview and design templates:
 
@@ -145,6 +153,6 @@ cloudflared tunnel --url http://localhost:3001
 
 Use the tunnel URL as the webhook endpoint URL in Spree Admin.
 
-### System emails (Rails)
+### Spree-sent emails
 
-System emails use [letter_opener](https://github.com/ryanb/letter_opener) in development — emails open automatically in your browser instead of being sent.
+In development, all emails Spree sends (customer and system alike) are captured by [Mailpit](https://mailpit.axllent.org/) — nothing is delivered externally. Open **http://localhost:8025** to read them. To deliver through a real provider instead, set `SMTP_HOST` (and friends) in `.env`.

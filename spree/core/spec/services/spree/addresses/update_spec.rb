@@ -241,7 +241,72 @@ RSpec.describe Spree::Addresses::Update do
           end
         end
 
+        context 'when a separate incomplete order shares the address' do
+          let!(:incomplete_order) { create(:order, user: user, ship_address: address, bill_address: address) }
+
+          it 'repoints the incomplete order to the new address and moves it to the address step' do
+            result
+
+            expect(incomplete_order.reload.ship_address_id).to eq(value.id)
+            expect(incomplete_order.bill_address_id).to eq(value.id)
+            expect(incomplete_order.state).to eq('address')
+          end
+
+          it 'keeps the completed order on the original, soft-deleted address' do
+            result
+
+            expect(completed_order.reload.ship_address_id).to eq(address.id)
+            expect(completed_order.bill_address_id).to eq(address.id)
+            expect(address.reload.deleted_at).to be_present
+          end
+
+          it "does not repoint another user's order sharing the address" do
+            other_order = create(:order, user: create(:user), ship_address: address, bill_address: address, state: 'delivery')
+
+            result
+
+            expect(other_order.reload.ship_address_id).to eq(address.id)
+            expect(other_order.bill_address_id).to eq(address.id)
+            expect(other_order.state).to eq('delivery')
+          end
+        end
+
+        context 'when soft-deleting the previous address fails' do
+          before do
+            allow(address).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed.new('failed', address))
+          end
+
+          it 'rolls back the address replacement and returns a failure' do
+            expect { result }.not_to change(Spree::Address.unscoped, :count)
+            expect(result).to be_failure
+            expect(result.value).to eq(address)
+          end
+        end
+
         it_behaves_like 'updating with same params'
+      end
+
+      context 'when a guest cart shares an immutable address' do
+        let(:address) { create(:address) }
+        let!(:completed_guest_order) do
+          create(:order, user: nil, email: 'guest-complete@example.com', completed_at: Time.current,
+                         ship_address: address, bill_address: address)
+        end
+        let!(:guest_cart) do
+          create(:order, user: nil, email: 'guest-cart@example.com', ship_address: address, bill_address: address)
+        end
+
+        it 'repoints the guest cart to the copy and keeps the completed order on the original' do
+          expect(result).to be_success
+          expect(value.id).not_to eq(address.id)
+          expect(address.reload.deleted_at).to be_present
+
+          expect(guest_cart.reload.ship_address_id).to eq(value.id)
+          expect(guest_cart.bill_address_id).to eq(value.id)
+          expect(guest_cart.state).to eq('address')
+
+          expect(completed_guest_order.reload.ship_address_id).to eq(address.id)
+        end
       end
     end
 
@@ -259,6 +324,16 @@ RSpec.describe Spree::Addresses::Update do
 
         messages = result.error.value.messages
         expect(messages).to eq( zipcode: ["can't be blank"])
+      end
+
+      context 'when the address is uneditable' do
+        let!(:completed_order) { create(:completed_order_with_totals, user: user, ship_address: address, bill_address: address) }
+
+        it 'returns a failure and leaves the original address intact' do
+          expect { result }.not_to change(Spree::Address, :count)
+          expect(result).to be_failure
+          expect(address.reload.deleted_at).to be_nil
+        end
       end
     end
   end

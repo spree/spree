@@ -22,12 +22,12 @@ import {
 import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { BulkPriceEditorDialog } from '@/components/spree/bulk-price-editor/bulk-price-editor-dialog'
-import { PriceListStatusBadge } from '@/components/spree/price-list-editors/status-badge'
+import { BulkPriceEditorDialog } from '../bulk-price-editor/bulk-price-editor-dialog'
+import { PriceListStatusBadge } from './status-badge'
 // Side-effect import — registers per-rule editors (customer, customer
 // group, …) into the slot registry. Must run before any RuleEditSheet
 // mounts.
-import '@/components/spree/price-list-editors/register'
+import './register'
 import { mapSpreeErrorsToForm, Slot, StoreDatePicker, Subject } from '@spree/dashboard-core'
 import {
   Button,
@@ -54,15 +54,10 @@ import {
   Textarea,
 } from '@spree/dashboard-ui'
 import {
-  type PriceRuleEditorContext,
-  ruleFormSlot,
-} from '@/components/spree/price-list-editors/types'
-import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
-import {
   useActivatePriceList,
   useDeactivatePriceList,
   usePriceRuleTypes,
-} from '@/hooks/use-price-lists'
+} from '../../../hooks/use-price-lists'
 import {
   MATCH_POLICIES,
   PRICE_LIST_DEFAULTS,
@@ -72,7 +67,9 @@ import {
   priceListValuesToParams,
   ruleDraftFromRule,
   ruleDraftFromType,
-} from '@/schemas/price-list'
+} from '../../../schemas/price-list'
+import { EditorShell } from '../promotion-editors/editor-shell'
+import { type PriceRuleEditorContext, ruleFormSlot } from './types'
 
 // =============================================================================
 // Public API

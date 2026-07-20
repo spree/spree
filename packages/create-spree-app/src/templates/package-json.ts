@@ -18,7 +18,13 @@ export function rootPackageJsonContent(name: string): string {
       'api-key': 'spree api-key',
     },
     dependencies: {
-      '@spree/cli': '^2.0.0',
+      // The floor matches the CLI behavior this scaffold relies on (the
+      // --quiet delegation, dev co-run, first-run setup) — an older resolve
+      // would reject the flags and silently drop the dashboard phase.
+      // SPREE_CLI_VERSION overrides the spec for testing unreleased CLIs —
+      // a range, or a `file:`/`link:` path to a packed tarball / checkout
+      // (mirrors the starter Dockerfile's ARG of the same name).
+      '@spree/cli': process.env.SPREE_CLI_VERSION ?? '^2.4.4',
       '@spree/docs': 'latest',
     },
   }

@@ -42,7 +42,7 @@ module Spree
     friendly_id :permalink, slug_column: :permalink, use: :history
 
     TRANSLATABLE_FIELDS = %i[name description permalink].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     #
     # Action Text

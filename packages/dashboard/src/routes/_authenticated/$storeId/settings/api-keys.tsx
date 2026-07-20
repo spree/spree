@@ -74,7 +74,7 @@ import {
   useDeleteApiKey,
   useRevokeApiKey,
   useUpdateApiKey,
-} from '@/hooks/use-api-keys'
+} from '../../../../hooks/use-api-keys'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys')({
   component: ApiKeysSettingsPage,

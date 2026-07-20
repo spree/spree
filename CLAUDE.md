@@ -12,6 +12,7 @@ When proposing significant architectural changes:
 Use `/project:create-plan` and `/project:update-plan` for plan management.
 
 Active plans (6.0 target, work pending):
+- `6.0-multi-vendor-marketplace.md` — Open-source the marketplace core (Vendor, OrderGroup-based order splitting, commission engine with EU commission taxation, `VendorTransfer`/`VendorPayout` ledger + pluggable `PayoutProvider`) per spree/spree#13323. 6.0 headline feature; rebuilds the legacy Enterprise multi-vendor module as native models on the Cart/Order split. Basic Stripe Connect payouts (Express onboarding + on-fulfillment transfers) ship OSS in the monorepo, alongside the Stripe core gateway pulled in from the standalone `spree_stripe` repo (payment-sessions classes only, likely `spree/core` — decisions.md 2026-07-15); Enterprise keeps refund clawbacks/netting, reconciliation, KYC ops, DAC7 payout reports, facilitator taxes + Shopify/WooCommerce vendor apps.
 - `6.0-cart-order-split.md` — Cart/Order model separation, polymorphic LineItem
 - `6.0-admin-api.md` — Admin REST API conventions, auth, endpoint list (~300 endpoints)
 - `6.0-admin-spa.md` — React admin architecture, extension points, table registry, i18n + server-error mapping
@@ -26,7 +27,7 @@ Active plans (6.0 target, work pending):
 - `6.0-tax-provider.md` — Per-Market TaxProvider, replaces TaxRate.adjust + Calculator, drop Zone model (TaxRate gets direct country/state FKs)
 - `6.0-delivery-rate-provider.md` — Per-DeliveryMethod DeliveryRateProvider, replaces Estimator + Calculator, DeliveryZone with postal code support
 - `6.0-rich-text-descriptions.md` — Drop ActionText storage, store HTML in text columns, sanitize on write, serve `description` + `description_html` in API (description_html serializer field shipped in 5.4)
-- `6.0-inventory-operations.md` — StockTransfer lifecycle (draft → ready_to_ship → in_transit → received with partial receive), new `Spree::PurchaseOrder` + `Spree::Vendor` replacing today's "external receive" hack, variant + stock-location stock history panels. Consumes the typed-movement primitives from `6.0-typed-stock-movements.md`.
+- `6.0-inventory-operations.md` — StockTransfer lifecycle (draft → ready_to_ship → in_transit → received with partial receive), new `Spree::PurchaseOrder` + `Spree::Supplier` (renamed from Vendor — `Spree::Vendor` is the marketplace seller, see decisions.md 2026-07-14) replacing today's "external receive" hack, variant + stock-location stock history panels. Consumes the typed-movement primitives from `6.0-typed-stock-movements.md`.
 - `6.0-replace-taxons-with-categories.md` — Split Taxon into Category (hierarchy) + Collection (flat/rule-based). Category surface shipped (5.5–5.6): `Spree::Category < Spree::Taxon` scoped subclass, direct `store_id` ownership + backfill, full Admin Categories API, counter caches (`products_count`), dashboard UI. Pending 6.0: table rename + inheritance flip, the `Collection` stack, model-level removal of automatic/rules from Category, and dropping `Taxonomy`. No brand feature in 6.0 — brands are modeled as a Category/Collection; `brand_taxon`/`brand_name` removed with `Taxonomy`.
 
 Multi-version plans (some phases shipped, some pending):
@@ -37,10 +38,13 @@ Multi-version plans (some phases shipped, some pending):
 - `5.5-6.0-order-cancellation-and-approval.md` — First-class `OrderCancellation` + `OrderApproval` models. 5.5 models + migrations shipped; 6.0 drops denormalized columns.
 - `5.5-6.0-display-on-to-boolean.md` — Collapse `display_on` tri-state to a single `storefront_visible` boolean. 5.5 bridge (`storefront_visible` accessor + Ransacker on `Spree::DisplayOn`) shipped; 6.0 schema rename pending.
 - `6.0-order-routing.md` — Two-tier extension: pluggable `Spree::OrderRouting::Strategy::Base` + STI subclasses of `Spree::OrderRoutingRule`. Phase 1 (5.5) shipped: `Channel`, `OrderRoutingRule`, strategy base + Rules + Reducer + Legacy, `preferred_stock_location_id` + `channel_id` on Order. Phase 2+ (6.0) layers Catalog/Company on top via `6.0-channels-catalogs-b2b.md`.
-- `6.0-channels-catalogs-b2b.md` — Channel + ProductPublication (replaces StoreProduct) + single-owner Product (`belongs_to :store`) + Publishing card (legacy admin + SPA) + `Channel#default` boolean shipped in 5.5. Channel-level gated storefront access (`storefront_access` enum + channel-owned `guest_checkout`, both with store fallback, enforced in the v3 Store API) targeted for 5.6. Catalog, Company/CompanyLocation/CompanyContact for B2B pending in 6.0. Multi-store catalogs (historic `Product has_many :stores`) move to the `spree_multi_store` extension.
+- `6.0-channels-catalogs-b2b.md` — Channel + ProductPublication (replaces StoreProduct) + single-owner Product (`belongs_to :store`) + Publishing card (legacy admin + SPA) + `Channel#default` boolean shipped in 5.5. Channel-level gated storefront access (`storefront_access` enum + channel-owned `guest_checkout`, both with store fallback, enforced in the v3 Store API) targeted for 5.6. Catalog, Company/CompanyLocation/CompanyContact for B2B **deferred to 6.1** (the B2B release — see `docs/plans/decisions.md` 2026-06-16; filename keeps `6.0-` prefix for stable cross-refs). Multi-store catalogs (historic `Product has_many :stores`) move to the `spree_multi_store` extension.
 - `5.6-6.0-single-store-promotions-payment-methods.md` — Migrate `Spree::Promotion` + `Spree::PaymentMethod` from multi-store (`has_many :stores` via `spree_promotions_stores` / `spree_payment_methods_stores` join tables) to single-owner `belongs_to :store`, mirroring the 5.5 single-owner Product migration. 5.6 (implemented): `store_id` FK + required-store presence via `Spree::SingleStoreResource`, backfill rake task (loud per-record deprecation on shared records), shared `LegacyMultiStoreSupport` deprecation bridge, deletes the `ResourceController` `store_ids=` seam, deprecates `StoreScopedResource`; multi-store sharing moves to the `spree_multi_store` extension (join tables left intact). 6.0 cleanup: enforce `null: false`, drop join tables + bridges. Paired with `6.0-channels-catalogs-b2b.md`.
+- `5.6-project-layout-and-dashboard.md` — React Dashboard Developer Preview packaging + `backend/` → `api/` project layout. Implemented: `<Dashboard />` shell export from `@spree/dashboard` (source-only, relative imports only), monorepo-canonical `packages/dashboard-starter` thin host (embedded standalone into the `@spree/cli` tarball at build time via `scripts/sync-dashboard-starter.mjs` — Vendure-style, no template repo; create-spree-app delegates to the project-local `spree add dashboard`), `spree add dashboard` + create-spree-app dashboard phase (opt-in via `--react-dashboard` while WIP — not prompted; env carries only `VITE_API_PROXY_TARGET` — never secret keys, and never `VITE_SPREE_API_URL`, which would flip the SDK to absolute cross-origin URLs and break dev on CORS), npm release job for `@spree/dashboard{,-ui,-core}` (0.x → `next` tag). Pending: layout rename + `detectApiDir` dual-layout CLI, `spree upgrade layout`; optional public template repo at 6.0 GA.
+- `5.6-dashboard-typed-plugin-routes.md` — Plugin file routes compiled into the host's TanStack route tree: `spree.dashboard.routes` marker + virtual-route-config composition in `@spree/dashboard/vite`, `createDashboardRouter` + `<Dashboard router>` ownership inversion, typed cast-free links, cross-package collision pre-flight with package-named errors. Runtime route registry stays for dynamic/in-app cases (catch-all is lowest priority). Implemented; published-tarball spike passed.
 
 Pending design work (drafts, no implementation yet):
+- `5.6-admin-spa-csv-import.md` — Universal dashboard CSV import over the existing `Spree::Import` pipeline (implemented). Admin API v3 surface (create via direct-upload signed blob, `complete_mapping`, `retry_failed_rows`, nested failed-rows index, write-scope gating), `client.imports` SDK resource, dashboard-core `ImportButton` (per-context `<Can>` gating, upload Sheet) + full-window wizard dialog driven by an `?import=` search param, with history under `/settings/imports` (new `audit` settings-nav group). Status via API polling — explicitly no ActionCable/Turbo Streams in the SPA; legacy per-row live feed replaced by polled counters + paginated failed-rows table.
 - `5.5-6.0-resource-translations-api.md` — Admin API v3 translation management + React dashboard for all `Spree.translatable_resources`. Hybrid: embedded `translations` object on resource update + generic dedicated `…/:id/translations` endpoint (one registry-driven controller), self-describing field discovery, advisory server-side staleness. Canonical `{ locale → { field → value } }` shape (consistent with metafield-translations). Cross-record bulk = CSV import/export generalized across the registry (NOT a JSON bulk endpoint — no competitor ships one). Phase 1 (5.5) API; Phase 2 (6.0) coverage read + CSV generalization + staleness + centralized SPA page; Phase 3 folds in metafields.
 - `5.4-centralized-translations-admin.md` — Centralized Translations admin page under Products, overview grid + bulk CSV import/export
 - `5.4-metafield-translations.md` — Translate MetafieldDefinition names + Metafield text values (ShortText, LongText, RichText) via Mobility translation tables
@@ -65,10 +69,12 @@ Shipped plans:
 |---|---|
 | `spree/core` | Ruby gem — models, services, business logic (`spree_core`) |
 | `spree/api` | Ruby gem — Store & Admin REST APIs (`spree_api`) |
-| `spree/emails` | Ruby gem — transactional emails (optional). Deprecated in 6.0 — Next.js storefront handles consumer emails via webhooks. |
+| `spree/emails` | Ruby gem — transactional emails (optional). Rebuilt + modernized in 5.6. The default email stack for installations without a storefront app (e.g. mobile apps); headless storefronts may instead own consumer emails via webhooks. |
+| `spree/dashboard` | Ruby gem (`spree_dashboard`, optional) — hosts a built React Dashboard at `/dashboard` from `Spree::Dashboard.dist_path` / `SPREE_DASHBOARD_DIST_PATH` (single-node topology). Successor slot to `spree_admin` at 6.0. |
 | `packages/dashboard` | `@spree/dashboard` — React SPA admin dashboard (Spree 6.0, replaces `spree/admin`). The deployable app shell, routes, schemas, resource hooks, locales. |
 | `packages/dashboard-ui` | `@spree/dashboard-ui` — design system. Shadcn primitives + headless composed components + tokens. Source-only; consumer compiles via Vite/Tailwind. **Components are headless: data comes via props, no provider/hook imports.** |
 | `packages/dashboard-core` | `@spree/dashboard-core` — framework. Registries (table, nav, slot, settings-nav), providers (auth, permission, store, theme), generic infra hooks, admin SDK client singleton, `defineDashboardPlugin` facade. The extension API for plugin authors. |
+| `packages/dashboard-starter` | `@spree/dashboard-starter` — thin host app consuming `<Dashboard />` from `@spree/dashboard`; canonical source of the `spree/dashboard-starter` template repo (synced on release). Doubles as the in-repo consumer test for the plugin pipeline. |
 | `packages/sdk` | `@spree/sdk` — TypeScript Store API client |
 | `packages/admin-sdk` | `@spree/admin-sdk` — TypeScript Admin API client (Developer Preview) |
 | `packages/sdk-core` | `@spree/sdk-core` — shared HTTP/retry/error layer (private internal) |
@@ -80,11 +86,13 @@ Shipped plans:
 
 One-time bootstrap (Docker required, no host Ruby): `pnpm install && pnpm server:setup`. It clones spree-starter into `server/`, boots the edge stack (monorepo gems bind-mounted via a compose overlay), and prepares + seeds the DB. Idempotent — but re-running it is a **full reset** that wipes the DB and volumes.
 
-Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web + worker logs, Ctrl+C stops them; postgres/redis stay warm) / `server:stop` (full teardown) / `server:restart` / `server:logs` / `server:console` / `server:seed` / `server:load_sample_data`. CLI commands run from `server/`: `pnpm exec spree <cmd>` (`spree migrate`, `spree console`, `spree generate model …`). `spree dev` and `spree build` refuse to run in `server/` (SPREE_PATH guard) — use the `pnpm server:*` scripts instead.
+Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web logs; jobs run in-process via Solid Queue; Ctrl+C stops it, postgres stays warm) / `server:stop` (full teardown) / `server:restart` / `server:logs` / `server:console` / `server:seed` / `server:load_sample_data`. CLI commands run from `server/`: `pnpm exec spree <cmd>` (`spree migrate`, `spree console`, `spree generate model …`). `spree dev` and `spree build` refuse to run in `server/` (SPREE_PATH guard) — use the `pnpm server:*` scripts instead.
 
 | What changed | What to run |
 |---|---|
 | Ruby code in `spree/*` gems | Nothing — bind-mounted, reloads on next request |
+| Hosted React Dashboard at `/dashboard` (single-node test) | `pnpm server:dashboard` — rebuilds `packages/dashboard-starter/dist` with `VITE_BASE_PATH=/dashboard/`; served immediately through the monorepo mount (no restart). For dashboard *development* keep using Vite on :5173 (`cd packages/dashboard && pnpm dev`). |
+| Tailwind classes in `spree/admin` templates/helpers/JS | Nothing — a watcher in the web container rebuilds the admin CSS within ~15s. If changes still don't reach the browser, delete `server/public/assets/.manifest.json` (stale precompile output that freezes asset serving) and restart web — `pnpm server:dev` boots handle this automatically. |
 | New migration in a gem | Nothing — the next `pnpm server:dev` boot runs `spree:install:migrations db:prepare` (or `cd server && pnpm exec spree migrate` while running) |
 | Gem dependencies (gemspec / Gemfile / starter `Gemfile.lock` drift after a pull) | Nothing — the next `pnpm server:dev` boot self-heals (`bundle check || bundle install` into the `bundle_cache` volume); while running: `cd server && pnpm exec spree bundle install` |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates web + worker) |
@@ -92,7 +100,7 @@ Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web + w
 | Meilisearch image bump ("database version … is incompatible") | `docker compose -p server rm -sf meilisearch && docker volume rm server_meilisearch_data`, boot, then `cd server && pnpm exec spree rake spree:search:reindex` |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes DB + volumes) |
 
-Backend: http://localhost:3000, admin at `/admin` (`spree@example.com` / `spree123`). Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.
+Backend: http://localhost:3000, admin at `/admin`, hosted React Dashboard at `/dashboard` (`spree@example.com` / `spree123`). Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.
 
 ---
 
@@ -102,6 +110,7 @@ Backend: http://localhost:3000, admin at `/admin` (`spree@example.com` / `spree1
 - Commit message body: be precise, DON'T include implementation detail, focus on the "what" and "why", not the "how"
 - If n-commits are needed for a single logical change, use `git commit --fixup` for the follow-ups and `git rebase -i --autosquash` to combine into a single commit before merging
 - Documentation also needs to follow the same principles — focus on the "what" and "why", not the "how". Don't include implementation details in docs. Docs should explain the feature, its purpose, and how to use it, but not how it's implemented internally.
+- NEVER commit anything to main branch, always use feature/fix/chore branches for development
 
 ## Backend (Ruby)
 
@@ -479,12 +488,13 @@ The split lets plugin authors register UI via `defineDashboardPlugin` from `@spr
 pnpm server:setup       # one-time bootstrap (see "Development Server" above)
 pnpm server:dev         # foreground; streams logs — Rails on http://localhost:3000
 
-# 2. Boot the admin (separate terminal)
-cd packages/dashboard
-pnpm dev                # http://localhost:5173 (proxies /api/* to :3000)
+# 2. Boot the admin (separate terminal, from monorepo root)
+pnpm turbo dev --filter=@spree/dashboard-starter   # http://localhost:5173 (proxies /api/* to :3000)
 ```
 
-`VITE_SPREE_API_URL` overrides the backend URL (default `http://localhost:3000`). Sign in with the seed admin user (`spree@example.com` / `spree123` — override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD`; see `spree/core/app/services/spree/seeds/admin_user.rb`).
+The starter is the canonical host — the same app `spree add dashboard` scaffolds — so local dev exercises the real consumer path (shell + plugin pipeline) while still hot-reloading `@spree/dashboard`/`-core`/`-ui` source through the workspace. `turbo dev` (not a bare `pnpm dev` inside the package) matters on a fresh clone: the starter's `vite.config.ts` resolves the compiled Node-side Vite entries (`@spree/dashboard/vite`, `@spree/dashboard-core/vite`) from `dist/`, and turbo's `^build` dependency produces them. After any full `pnpm build`, `cd packages/dashboard-starter && pnpm dev` works too.
+
+`VITE_API_PROXY_TARGET` overrides the backend the dev proxy targets (default `http://localhost:3000`); don't use `VITE_SPREE_API_URL` in dev — it flips the SDK to absolute cross-origin URLs, bypassing the proxy. Sign in with the seed admin user (`spree@example.com` / `spree123` — override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD`; see `spree/core/app/services/spree/seeds/admin_user.rb`).
 
 **When implementing a new admin feature:**
 
@@ -613,6 +623,7 @@ Re-run `parallel_setup` after schema changes.
 - Prefer `build` over `create` for speed
 - Factories live in `lib/spree/testing_support/factories/`
 - ALWAYS use factories in tests, never call `Model#create` directly
+- ALWAYS run parallel tests if running full test suite, if there are any failures repeat the failed examples seperately and confirm they really fail before investigating
 - Pragmatic — no tests for standard Rails validations, only custom ones
 - Controller specs: always add `render_views`, use `stub_authorization!` for auth
 - Use controller specs for testing edge cases, API integration tests are only for happy path/simple 422 failures to generate OpenAPI examples; otherwise they get too brittle and high-maintenance

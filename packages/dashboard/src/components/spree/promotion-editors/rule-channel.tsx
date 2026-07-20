@@ -2,7 +2,7 @@ import type { Channel } from '@spree/admin-sdk'
 import { ResourceMultiAutocomplete, useTranslation } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
-import { channelAutocompleteProps, useChannels } from '@/hooks/use-channels'
+import { channelAutocompleteProps, useChannels } from '../../../hooks/use-channels'
 import { EditorShell } from './editor-shell'
 import type { PromotionRuleEditorContext } from './types'
 

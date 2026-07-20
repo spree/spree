@@ -1,9 +1,24 @@
 {
   "name": "@spree/dashboard-core",
-  "private": true,
   "license": "MIT",
-  "version": "0.0.0",
-  "description": "Spree Dashboard framework — registries (table, nav, slot, settings-nav), providers (auth, permission, store), admin SDK client, generic infra hooks, and the defineDashboardPlugin extension API.",
+  "version": "0.10.2",
+  "description": "Spree Dashboard framework \u2014 registries (table, nav, slot, settings-nav), providers (auth, permission, store), admin SDK client, generic infra hooks, and the defineDashboardPlugin extension API. Developer Preview.",
+  "author": "Vendo Connect Inc.",
+  "homepage": "https://spreecommerce.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/dashboard-core"
+  },
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "admin",
+    "dashboard",
+    "react",
+    "plugin"
+  ],
   "type": "module",
   "main": "./src/index.ts",
   "module": "./src/index.ts",
@@ -11,7 +26,14 @@
   "exports": {
     ".": "./src/index.ts",
     "./plugin": "./src/plugin.ts",
-    "./vite": "./src/vite/index.ts",
+    "./vite": {
+      "types": "./src/vite/index.ts",
+      "default": "./dist/vite/index.js"
+    },
+    "./vite/discover": {
+      "types": "./src/vite/discover.ts",
+      "default": "./dist/vite/discover.js"
+    },
     "./providers/*": "./src/providers/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
     "./hooks/use-command-palette": "./src/hooks/use-command-palette.tsx",
@@ -20,13 +42,18 @@
   },
   "files": [
     "src",
-    "README.md"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "lint": "biome check src",
     "lint:fix": "biome check --fix src",
     "format": "biome format --write src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsup",
+    "prepublishOnly": "tsup"
   },
   "peerDependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -59,7 +86,9 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/spark-md5": "^3.0.5",
+    "tsup": "^8.5.1",
     "typescript": "~6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "vitest": "^4.1.5"
   }
 }

@@ -564,6 +564,51 @@ describe Spree::Address, type: :model do
       expect(Spree::Address.not_deleted.where(['id = (?)', address2.id])).to be_empty
     end
 
+    context 'when an incomplete order references the address' do
+      let!(:incomplete_order) do
+        create(:order, user: user, bill_address: address, ship_address: address, state: 'delivery')
+      end
+
+      it 'detaches the address from the order and resets it to the address step' do
+        address.destroy
+
+        incomplete_order.reload
+        expect(incomplete_order.bill_address_id).to be_nil
+        expect(incomplete_order.ship_address_id).to be_nil
+        expect(incomplete_order.state).to eq('address')
+      end
+
+      it 'still hard-deletes the address' do
+        address.destroy
+        expect(Spree::Address.where(id: address.id)).to be_empty
+      end
+
+      it "leaves another user's order referencing the same address untouched" do
+        other_order = create(:order, user: create(:user), bill_address: address, ship_address: address, state: 'delivery')
+
+        address.destroy
+
+        expect(other_order.reload.ship_address_id).to eq(address.id)
+        expect(other_order.bill_address_id).to eq(address.id)
+        expect(other_order.state).to eq('delivery')
+      end
+
+      context 'when the address is also used by a completed order' do
+        let!(:completed_order) do
+          create(:completed_order_with_totals, bill_address: address, ship_address: address)
+        end
+
+        it 'soft-deletes the address and keeps it associated to all orders' do
+          address.destroy
+
+          expect(address.reload.deleted_at).to be_present
+          expect(incomplete_order.reload.bill_address_id).to eq(address.id)
+          expect(incomplete_order.ship_address_id).to eq(address.id)
+          expect(completed_order.reload.bill_address_id).to eq(address.id)
+        end
+      end
+    end
+
     context 'when saving user raises error' do
       before do
         user.update(ship_address: address2, bill_address: address2)

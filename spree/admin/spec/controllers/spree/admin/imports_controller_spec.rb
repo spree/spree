@@ -48,6 +48,13 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
       expect(import.attachment.filename.to_s).to eq('products_import.csv')
     end
 
+    it 'remembers its own import page as the results url for the done email' do
+      post :create, params: { import: import_params }
+
+      import = Spree::Import.last
+      expect(import.results_url).to eq(spree.admin_import_url(import, host: 'test.host'))
+    end
+
     context 'with preferences' do
       let(:import_params) { { type: Spree::Import.available_types.first.to_s, attachment: attachment, preferred_delimiter: ';' } }
 

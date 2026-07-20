@@ -57,6 +57,17 @@ spree auth status
 spree auth logout --profile prod
 ```
 
+### Use with a sandbox
+
+A [free sandbox](https://console.spree.sh) works like any remote store. Create a secret key in the sandbox admin under **Settings → API Keys**, then save it as a profile:
+
+```bash
+spree auth login --profile sandbox --base-url https://your-store.spree.sh
+spree api get /products --profile sandbox
+```
+
+No local project or Docker needed — the CLI (`npm install -g @spree/cli`) plus a sandbox is a complete environment for exploring the Admin API.
+
 ## Reading data
 
 `-q` takes [Ransack](/api-reference/admin-api/querying) predicates as repeatable `key=value` pairs; sorting, pagination, and shaping flags pass through under the Admin API conventions:

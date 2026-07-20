@@ -1,0 +1,85 @@
+---
+title: Deployment Overview
+sidebarTitle: Quickstart
+description: Run Spree anywhere — any cloud, any database, from a single container to a globally distributed stack.
+---
+
+Spree is open source and self-hosted: you own the entire stack, end to end. There is no proprietary software in the runtime, no required third-party service, and no per-order fees. The same application runs on a $10 VPS, a managed cloud platform, a Kubernetes cluster, or a server in your own data center — and moving between them is a redeploy, not a migration.
+
+## Run It Anywhere
+
+Spree ships as a standard [Docker image](/developer/deployment/docker), which means it runs wherever containers run:
+
+- **Public cloud** — AWS, Google Cloud, Azure, or any provider with container hosting
+- **Platform-as-a-Service** — Render, Railway, Fly.io, and similar platforms; deploy from your repository with a Blueprint or a few clicks
+- **VPS or bare metal** — a single machine with Docker installed is a complete production environment
+- **Kubernetes** — the image is stateless and horizontally scalable, so it drops into any cluster
+- **On-premise and intranet** — Spree has no phone-home dependencies, so it runs in private networks and air-gapped environments where SaaS commerce platforms simply can't
+
+The minimum footprint is deliberately small: **one application container and one database**. Background jobs, caching, and real-time updates all run inside that container and store their data in the database — no Redis, no message broker, no extra services to provision or monitor. A store starts comfortably on 1 GB of RAM.
+
+When you need more, every piece scales independently: add web instances behind a load balancer, split job processing into dedicated workers, add a read replica, swap the cache to Redis or Valkey, add Meilisearch for search. Each step is configuration, not rearchitecting.
+
+## Any Database
+
+Spree runs on all major relational databases, including the managed and serverless flavors cloud providers offer:
+
+| Database | Managed options |
+|----------|-----------------|
+| **PostgreSQL** (recommended) | Amazon RDS, Aurora PostgreSQL, Google Cloud SQL, Azure Database, Neon, Supabase |
+| **MySQL / MariaDB** | Amazon RDS, Aurora MySQL, Google Cloud SQL, Azure Database |
+| **SQLite** | ideal for development, evaluation, and small stores |
+
+See [Database Configuration](/developer/deployment/database) for details.
+
+## Web and Worker
+
+A Spree deployment has two kinds of work: serving requests (the **web** process) and everything that happens in the background — sending emails, processing images, delivering webhooks, importing catalogs (the **worker**).
+
+You can run them in two modes:
+
+- **Combined (the default)** — the web container also processes background jobs. One container is the whole application. This is how every fresh deployment starts, and it comfortably serves most stores.
+- **Split** — when job volume grows, move background processing into a dedicated worker service. It's the same docker image with a different start command and one environment variable (`SOLID_QUEUE_IN_PUMA=false` on web) — no rebuild, no code changes. Recommended for high volume retailers, multi-tenant apps and marketplaces with a lot of vendors using our Shopify sync.
+
+Jobs live in the database, so scaling to multiple web instances or multiple workers is safe by default — they coordinate through it. For demanding workloads, you can also [swap the job backend to Sidekiq](/developer/deployment/background_jobs#swapping-to-sidekiq) on Redis or Valkey. See [Background Jobs](/developer/deployment/background_jobs) for the full picture.
+
+## Single-Node vs Distributed
+
+Spree is API-first, which gives you a real choice of shape:
+
+**Single-node** — one container serves the API, the admin dashboard, and background jobs, with one database behind it. Simplest to operate, cheapest to run, and what [create-spree-app](/developer/create-spree-app/quickstart) projects deploy by default. For headless setups with a mobile app or a custom frontend, this is often all the infrastructure you ever need.
+
+**Distributed** — because the storefront and admin talk to Spree exclusively through its APIs, each surface can be deployed and scaled on its own:
+
+- The **API** scales horizontally behind a load balancer
+- The **admin dashboard** is a static React app that can be served from the API container or any static host
+- **Workers** scale independently of web traffic
+- The **storefront** (Next.js) deploys to Vercel or any Node.js host, rendering at the edge close to your customers
+
+You don't choose upfront. Start single-node, and split surfaces out when traffic or team structure calls for it — the API boundary is already there. Storefront is fully optional, you can use our Next.js reference implementation, or build your own with any framework, build a mobile app, or even a native desktop app. Spree is the backend for all of them.
+
+## Storefront Deployment
+
+The Next.js storefront is a separate application with its own deployment lifecycle — typically on Vercel, but any Node.js host or Docker environment works. It connects to your Spree API with a publishable key and can be redeployed independently of the backend.
+
+See [Storefront Deployment](/developer/storefront/nextjs/deployment) for the full guide.
+
+## Provider Guides
+
+Step-by-step guides for specific platforms:
+
+<CardGroup cols={2}>
+  <Card title="AWS" icon="aws" href="/developer/deployment/aws">
+    A single EC2 instance + RDS to start, or ECS Fargate with CI/CD and auto-scaling — same image, either way.
+  </Card>
+
+  <Card title="Render" icon="server" href="/developer/deployment/render">
+    One-click Blueprint: a Docker web service and managed PostgreSQL, built straight from your repository.
+  </Card>
+
+  <Card title="Railway (coming soon)">
+    A one-click Railway template is on the way.
+  </Card>
+</CardGroup>
+
+For any other platform, the [Docker guide](/developer/deployment/docker) covers building and running your project's image — which is all any container host needs.

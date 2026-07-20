@@ -604,7 +604,7 @@ describe Spree::Order, type: :model do
 
   describe '#amount_due' do
     let(:store_credit) { create(:store_credit, amount: 200, store: order.store, user: order.user) }
-    let(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [order.store]) }
+    let(:store_credit_payment_method) { create(:store_credit_payment_method, store: order.store) }
 
     before { order.update_columns(total: 100, payment_total: 0) }
 
@@ -862,8 +862,8 @@ describe Spree::Order, type: :model do
 
   # Regression test for #4199
   describe '#collect_frontend_payment_methods' do
-    let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, stores: [store] }
-    let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, stores: [store] }
+    let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, store: store }
+    let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, store: store }
     let(:methods) { [ok_method, no_method] }
     let(:store_2) { create(:store) }
     let(:order_from_different_store) { create(:order, user: user, store: store_2) }
@@ -2585,7 +2585,7 @@ describe Spree::Order, type: :model do
 
       context 'when order is fully paid by store credit' do
         before do
-          create(:store_credit_payment_method, stores: [order.store])
+          create(:store_credit_payment_method, store: order.store)
           create(:store_credit_payment, amount: order.total, order: order)
         end
 

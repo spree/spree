@@ -635,4 +635,14 @@ export const handlers = [
       verified_at: '2026-01-02T00:00:00Z',
     }),
   ),
+
+  http.post(
+    `${API_PREFIX}/newsletter_subscribers/request_unsubscribe`,
+    () => new HttpResponse(null, { status: 202 }),
+  ),
+
+  http.delete(
+    `${API_PREFIX}/newsletter_subscribers/:id`,
+    () => new HttpResponse(null, { status: 204 }),
+  ),
 ]

@@ -260,7 +260,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       }
 
       response '201', 'product added' do
-        let!(:product) { create(:product, stores: [store]) }
+        let!(:product) { create(:product, store: store) }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:category_id) { category.prefixed_id }
         let(:body) { { product_id: product.prefixed_id } }
@@ -320,7 +320,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       }
 
       response '204', 'product repositioned' do
-        let!(:product) { create(:product, stores: [store]) }
+        let!(:product) { create(:product, store: store) }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:category_id) { category.prefixed_id }
         let(:id) { product.prefixed_id }

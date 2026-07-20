@@ -3,7 +3,7 @@ import { ActiveBadge, Badge, RelativeTime, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { UsersIcon } from 'lucide-react'
-import { customerGroupAutocompleteProps } from '@/hooks/use-customer-groups'
+import { customerGroupAutocompleteProps } from '../hooks/use-customer-groups'
 
 defineTable('customers', {
   title: i18n.t('admin.nav.customers'),

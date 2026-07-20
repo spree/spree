@@ -41,13 +41,13 @@ import { ArrowLeftRightIcon, EyeIcon, PlusIcon, TrashIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { useStockLocations } from '@/hooks/use-stock-locations'
+import { useStockLocations } from '../../../../hooks/use-stock-locations'
 import {
   useCreateStockTransfer,
   useDeleteStockTransfer,
   useStockTransfer,
-} from '@/hooks/use-stock-transfers'
-import '@/tables/stock-transfers'
+} from '../../../../hooks/use-stock-transfers'
+import '../../../../tables/stock-transfers'
 
 const stockTransfersSearchSchema = resourceSearchSchema.extend({
   view: z.string().optional(),

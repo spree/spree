@@ -1,5 +1,87 @@
 # create-spree-app
 
+## 1.1.3
+
+### Patch Changes
+
+- Single-node deployment out of the box: the relocated `render.yaml` now
+deploys the backend as a Docker service built from the repo root (verbatim
+from the starter — no more `rootDir` rewriting), so the ejected backend and
+your customized `apps/dashboard` ship in one image with the dashboard
+served same-origin at `/dashboard`. New projects also get a root
+`.dockerignore` keeping that build context to sources.
+
+## 1.1.2
+
+### Patch Changes
+
+- The React Dashboard is no longer prompted for — it's a work-in-progress
+Developer Preview, and a yes/no prompt reads as a recommendation. Include it
+with the new `--react-dashboard` flag (or later via `spree add dashboard`);
+the `--no-dashboard` flag is gone with the prompt.
+
+- Cut the duplicate output when scaffolding with the React Dashboard: the
+delegated `spree add dashboard` summary card is suppressed (its content
+lives in the main card), and the success card plus generated README present
+the dashboard's dev server as THE admin — the `cd apps/dashboard &&
+pnpm dev` command with the admin credentials and a dim classic-admin
+pointer — instead of two admins where only the classic one carried
+credentials. `spree dev` co-runs that dev server with the API (one command,
+whole environment), so the printed URL is live as soon as the stack is up.
+For testing unreleased CLIs, the `SPREE_CLI_VERSION` env var overrides the
+scaffolded `@spree/cli` dependency spec (a range or a `file:` tarball path
+— same name as the starter Dockerfile's ARG). The scaffolded pin's floor is
+now `^2.4.4` — the CLI behavior the scaffold relies on; an older resolve
+would reject the new flags and silently drop the dashboard phase. Projects scaffolded without the dashboard keep the classic
+`/admin` block exactly as before. User-facing wording now calls the Rails
+app what it is to a storefront/dashboard developer — the Spree API
+("Customize the Spree API", "Start the Spree API") — ahead of the planned
+`backend/` → `api/` directory rename. Requires `@spree/cli` 2.4.4.
+
+## 1.1.1
+
+### Patch Changes
+
+- A finished `create-spree-app` run now always means a working app. The
+optional storefront and React Dashboard phases used to abort the whole
+scaffold on failure — before the final setup phase (`spree init`: fresh
+image pull, seeded database, API keys) ever ran — leaving a project whose
+first boot silently started a stale, locally cached Spree image. Those
+phases now warn and continue with a recovery command, cleaning up their
+partial `apps/` directory so the recovery command actually works, and setup
+always runs. Project docs (README.md, CLAUDE.md, dependabot.yml) are
+generated after those phases from their actual outcomes, so they never
+document an app whose setup failed. When services can't start during
+scaffolding (`--no-start`, Docker off), the first `spree dev` completes
+setup automatically (requires `@spree/cli` 2.4.2), honoring the sample-data
+choice now persisted in `.env` (`SPREE_SAMPLE_DATA`), and the printed next
+steps plus the generated README reflect that — nobody has to know
+`spree init` exists.
+
+## 1.1.0
+
+### Minor Changes
+
+- Offer the React Dashboard (Developer Preview) as an optional component: a new
+prompt (and `--no-dashboard` flag) scaffolds it into `apps/dashboard/` by
+delegating to the project-local `spree add dashboard` (the CLI bundles the
+starter template with version pins matching its release), and wires the
+README, CLAUDE.md, and Dependabot config.
+
+New projects now default to **pnpm** when it's installed — it's what the
+Spree packages and docs are built around. An explicit invoking agent
+(`pnpm create spree-app`, `yarn create spree-app`) and the
+`--use-npm`/`--use-yarn`/`--use-pnpm` flags still win, and npm remains the
+fallback when pnpm is absent. The generated README, CLAUDE.md, and next-steps
+output now render commands for the chosen package manager instead of
+hardcoding npm.
+
+## 1.0.8
+
+### Patch Changes
+
+- Relocate the generated project's Render Blueprint (`render.yaml`) to the repository root and add `rootDir: backend` to every buildable service. In the wrapper layout the Rails app lives under `backend/`, so a Blueprint left in that subdirectory is invisible to Render and, without `rootDir`, its services build from the wrong directory — the deploy fails. The commented-out worker template is adjusted too, so uncommenting it still deploys correctly. Managed services (Redis, database) are left untouched.
+
 ## 1.0.7
 
 ### Patch Changes

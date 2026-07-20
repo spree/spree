@@ -43,7 +43,7 @@ import {
   useCreateChannel,
   useDeleteChannel,
   useUpdateChannel,
-} from '@/hooks/use-channels'
+} from '../../../../hooks/use-channels'
 import {
   CHANNEL_DEFAULTS,
   type ChannelFormValues,
@@ -52,8 +52,8 @@ import {
   GUEST_CHECKOUT_VALUES,
   ORDER_ROUTING_STRATEGY_VALUES,
   STOREFRONT_ACCESS_VALUES,
-} from '@/schemas/channel'
-import '@/tables/channels'
+} from '../../../../schemas/channel'
+import '../../../../tables/channels'
 
 const channelsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),

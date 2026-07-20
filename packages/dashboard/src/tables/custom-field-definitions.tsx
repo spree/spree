@@ -7,7 +7,7 @@ import {
   FIELD_TYPES,
   fieldTypeLabel,
   resourceTypeLabel,
-} from '@/schemas/custom-field-definition'
+} from '../schemas/custom-field-definition'
 
 const t = (key: string) => i18n.t(key)
 

@@ -175,12 +175,12 @@ RSpec.describe Spree::GiftCards::Apply do
       expect(subject).to be_success
 
       payment_method = order.payments.store_credits.last.payment_method
-      expect(payment_method.stores).to contain_exactly(other_store)
+      expect(payment_method.store).to eq(other_store)
       expect(payment_method.available_for_store?(other_store)).to be true
     end
 
     context 'when a StoreCredit payment method already exists for the order store' do
-      let!(:existing_payment_method) { create(:store_credit_payment_method, stores: [other_store]) }
+      let!(:existing_payment_method) { create(:store_credit_payment_method, store: other_store) }
 
       it 'reuses the existing payment method without creating a duplicate' do
         expect { subject }.not_to change(Spree::PaymentMethod::StoreCredit, :count)

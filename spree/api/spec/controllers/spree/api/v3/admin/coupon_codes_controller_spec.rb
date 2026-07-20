@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::CouponCodesController, type: :controller d
   include_context 'API v3 Admin authenticated'
 
   def multi_code_promotion(promo_store)
-    create(:promotion, stores: [promo_store], multi_codes: true, number_of_codes: 2, code_prefix: 'SAVE')
+    create(:promotion, store: promo_store, multi_codes: true, number_of_codes: 2, code_prefix: 'SAVE')
   end
 
   let!(:promotion) { multi_code_promotion(store) }

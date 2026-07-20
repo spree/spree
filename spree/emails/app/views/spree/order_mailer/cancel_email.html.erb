@@ -1,24 +1,12 @@
-<h1>
-  <%= Spree.t('order_mailer.cancel_email.dear_customer', name: name_for(@order)) %>
-</h1>
-<p>
-  <%= Spree.t('order_mailer.cancel_email.instructions') %>
-</p>
+<%= render 'spree/shared/purchased_items_styles' %>
 
-<table class="purchase" role="presentation">
-  <tr>
-    <td>
-      <h3> <%= Spree.t('order_mailer.cancel_email.order_summary_canceled', number: @order.number) %></h3>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <%= render 'spree/shared/purchased_items_table', line_items: @order.line_items, order: @order %>
-    </td>
-  </tr>
-</table>
-<p>
-  <%= Spree.t('order_mailer.cancel_email.thanks') %>
-  <br />
-  <%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
-</p>
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('order_mailer.cancel_email.subject') %></h1>
+  <p class="greeting"><%= Spree.t('order_mailer.cancel_email.dear_customer', name: name_for(@order)) %></p>
+  <p><%= Spree.t('order_mailer.cancel_email.instructions') %></p>
+<% end %>
+
+<%= render 'spree/shared/order_summary_section',
+           heading: Spree.t('order_mailer.cancel_email.order_summary_canceled', number: @order.number),
+           line_items: @order.line_items,
+           order: @order %>

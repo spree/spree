@@ -15,9 +15,9 @@ describe Spree::ReimbursementMailer, type: :mailer do
   end
 
   context ':reply_to not set explicitly' do
-    it 'uses store mail from address' do
+    it 'uses store customer support email' do
       message = Spree::ReimbursementMailer.reimbursement_email(reimbursement)
-      expect(message.reply_to).to eq [@default_store.mail_from_address]
+      expect(message.reply_to).to eq [@default_store.customer_support_email]
     end
   end
 

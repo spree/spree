@@ -54,6 +54,13 @@ module Spree
     # Pre-tax amounts must be stored so that we can calculate
     # correct rate amounts in the future. For example:
     # https://github.com/spree/spree/issues/4318#issuecomment-34723428
+    #
+    # NOTE: this deliberately excludes the item's share of whole-order
+    # promotions and is therefore NOT the basis tax is computed on (that is
+    # LineItem#taxable_basis / Shipment#taxable_basis). Refund and reporting
+    # code (e.g. Calculator::Returns::DefaultRefundAmount) weighs order-level
+    # adjustments separately on top of this column, so allocating them here
+    # would double-count discounts.
     def self.store_pre_tax_amount(item, rates)
       pre_tax_amount = case item.class.to_s
                        when 'Spree::LineItem' then item.discounted_amount

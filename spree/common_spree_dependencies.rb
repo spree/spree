@@ -34,7 +34,10 @@ group :test do
   gem 'rspec_junit_formatter'
   gem 'rswag-specs'
   gem 'jsonapi-rspec'
-  gem 'simplecov'
+  # Pinned to 0.x: SimpleCov 1.0 changed how parallel/sharded coverage results
+  # merge, dropping covered files from the report (e.g. a tested helper shown at
+  # 0%) and deflating the reported total. Stay on 0.x until that's resolved.
+  gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-cobertura'
   gem 'stackprof'
   gem 'webmock'

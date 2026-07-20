@@ -16,12 +16,14 @@ The CLI walks you through an interactive setup:
 2. Optionally load **sample data** (products, categories, images)
 3. Optionally **start Docker services** immediately
 
-Once complete, your store is running at [http://localhost:3000](http://localhost:3000).
+Once complete, your store is running at [http://localhost:3000](http://localhost:3000) — setup pulls the latest Spree image, seeds the database, and configures API keys, then prints a summary with your admin credentials and keys. If you skipped starting services, the first `pnpm dev` completes setup automatically.
+
+The **React Dashboard** (Developer Preview of the next-generation admin) is available with the `--react-dashboard` flag, or later via `spree add dashboard`.
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) 20 or later
-- [Docker](https://docs.docker.com/get-docker/) (for running the Spree backend, PostgreSQL, Redis, and Meilisearch)
+- [Docker](https://docs.docker.com/get-docker/) (for running the Spree backend, PostgreSQL, and Meilisearch)
 
 ## CLI Flags
 
@@ -33,6 +35,7 @@ npx create-spree-app@latest my-store --no-storefront --no-sample-data --no-start
 
 | Flag | Description |
 |------|-------------|
+| `--react-dashboard` | Include the React Dashboard (Developer Preview — also available later via `spree add dashboard`) |
 | `--no-storefront` | Skip Next.js storefront setup |
 | `--no-sample-data` | Skip loading sample products and categories |
 | `--no-start` | Don't start Docker services after scaffolding |
@@ -53,35 +56,39 @@ npx create-spree-app@latest my-store --no-storefront --no-sample-data --no-start
 
 ```text
 my-store/
-├── docker-compose.yml        # Spree backend (prebuilt image) + Postgres + Redis + Meilisearch
+├── docker-compose.yml        # Spree backend (prebuilt image) + Postgres + Meilisearch
 ├── docker-compose.dev.yml    # Alternative: build from local backend/
-├── .env                      # SECRET_KEY_BASE, SPREE_PORT, SPREE_VERSION_TAG
+├── render.yaml               # Render Blueprint — one Docker service built from this repo
+├── .env                      # SECRET_KEY_BASE, SPREE_PORT, SPREE_VERSION_TAG, SPREE_SAMPLE_DATA
+├── .dockerignore             # Keeps the production build context to sources
 ├── .gitignore
 ├── package.json              # Convenience scripts
 ├── README.md
-├── backend/                  # Full Rails app (from spree/spree-starter)
+├── backend/                  # Full Rails app — the Spree API (from spree/spree-starter)
 │   ├── Gemfile
-│   ├── Dockerfile
+│   ├── Dockerfile            # Also builds the production image (API + dashboard)
 │   ├── config/
 │   ├── app/
 │   └── ...
 └── apps/
-    └── storefront/           # Next.js storefront (unless --no-storefront)
-        ├── .env.local        # API URL + API key
+    ├── storefront/           # Next.js storefront (unless --no-storefront)
+    │   ├── .env.local        # API URL + API key
+    │   └── ...
+    └── dashboard/            # React Dashboard (with --react-dashboard)
+        ├── .env.local        # Dev proxy target — no credentials
         └── ...
 ```
 
 ### What's in docker-compose.yml
 
-- **Spree** — `web` (Rails) + `worker` (Sidekiq) running the `ghcr.io/spree/spree:latest` image on the configured port (default `3000`)
+- **Spree** — one `web` container running the `ghcr.io/spree/spree:latest` image on the configured port (default `3000`); background jobs run in-process via Solid Queue (stored in Postgres — job dashboard at `/jobs`)
 - **PostgreSQL 18** — database with persistent volume
-- **Redis 7** — caching, background jobs, and Action Cable
 - **Meilisearch** — search engine
-- Health checks on postgres, redis, meilisearch, and web
+- Health checks on postgres, meilisearch, and web
 
-## Customizing the Backend
+## Customizing the Spree API
 
-The `backend/` directory contains a full Rails application with Spree installed (cloned from [spree-starter](https://github.com/spree/spree-starter)). By default, the project uses a prebuilt Docker image. To switch to building from your local backend:
+The `backend/` directory is the Spree API — a full Rails application with Spree installed (cloned from [spree-starter](https://github.com/spree/spree-starter)) serving the Store and Admin APIs your storefront and dashboard talk to, plus background jobs and transactional emails. By default, the project runs it from a prebuilt Docker image. To switch to building from your local copy:
 
 ```bash
 npx spree eject
@@ -103,10 +110,12 @@ The project includes [@spree/cli](/developer/cli/quickstart) for managing your S
 
 | Command | Description |
 |---------|-------------|
-| `spree dev` | Run the backend in the foreground — streams logs, Ctrl+C stops it |
+| `spree dev` | Run the app in the foreground — streams logs, Ctrl+C stops it. First run completes setup automatically; co-runs the React Dashboard dev server when `apps/dashboard` exists |
 | `spree stop` | Stop backend services |
 | `spree update` | Pull latest Spree image and restart (runs migrations automatically) |
 | `spree eject` | Switch from prebuilt image to building from `backend/` |
+| `spree add dashboard` | Add the React Dashboard to an existing project |
+| `spree build --production` | Build the production image — the Spree API plus your dashboard, in one |
 | `spree logs` | View backend logs |
 | `spree logs worker` | View background jobs logs |
 | `spree console` | Rails console |
@@ -121,6 +130,8 @@ Open [http://localhost:3000/admin](http://localhost:3000/admin) and log in with:
 |---|---|
 | **Email** | `spree@example.com` |
 | **Password** | `spree123` |
+
+With `--react-dashboard`, the React Dashboard's dev server is the admin instead: `spree dev` starts it alongside the API at [http://localhost:5173](http://localhost:5173) — same credentials, live-reloading from `apps/dashboard/` (the classic admin remains at `/admin`). See the [React Dashboard docs](/developer/dashboard/overview).
 
 ### Store API
 
@@ -152,6 +163,15 @@ To pin a specific version, edit `SPREE_VERSION_TAG` in `.env`:
 ```
 SPREE_VERSION_TAG=5.4
 ```
+
+## Deployment
+
+The project deploys as **one image**: `backend/Dockerfile` builds the Spree API together with your React Dashboard (when `apps/dashboard` exists), served same-origin at `/dashboard` — no CORS, no cookie configuration, no second service.
+
+- **Render** — the `render.yaml` at the project root is a ready Blueprint: one Docker service built straight from your repo, migrations run on boot.
+- **Anywhere else** — `spree build --production` builds the same image locally; push it to a registry and run it on any Docker host.
+
+See the [Deployment Guide](/developer/deployment) and the [dashboard deployment docs](/developer/dashboard/deployment).
 
 ## Next Steps
 

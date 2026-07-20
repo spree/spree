@@ -13,6 +13,10 @@ const program = new Command()
   .description('Create a new Spree Commerce project')
   .argument('[directory]', 'project directory')
   .option('--no-storefront', 'skip Next.js storefront setup')
+  .option(
+    '--react-dashboard',
+    'include the React Dashboard (Developer Preview — work in progress; also available later via `spree add dashboard`)',
+  )
   .option('--no-sample-data', 'skip loading sample data')
   .option('--no-start', 'do not start Docker services')
   .option('--port <number>', 'port for the Spree backend', String(DEFAULT_SPREE_PORT))
@@ -22,15 +26,21 @@ const program = new Command()
   .action(async (directory: string | undefined, flags: Record<string, unknown>) => {
     p.intro(pc.bold('Create Spree App'))
 
-    let packageManager: PackageManager = detectPackageManager()
+    let packageManager: PackageManager = await detectPackageManager()
     if (flags.useNpm) packageManager = 'npm'
     if (flags.useYarn) packageManager = 'yarn'
     if (flags.usePnpm) packageManager = 'pnpm'
+    if (packageManager === 'npm' && !flags.useNpm) {
+      p.log.info(
+        `Using npm (pnpm not found — run ${pc.cyan('corepack enable')} to get pnpm, which Spree recommends).`,
+      )
+    }
 
     try {
       const options = await runPrompts({
         directory,
         noStorefront: flags.storefront === false ? true : undefined,
+        reactDashboard: flags.reactDashboard === true,
         noSampleData: flags.sampleData === false ? true : undefined,
         noStart: flags.start === false ? true : undefined,
         packageManager,

@@ -23,8 +23,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useStoreSettings, useUpdateStoreSettings } from '@/hooks/use-store-settings'
-import { type StoreEmailsFormValues, storeEmailsFormSchema } from '@/schemas/store-emails'
+import { useStoreSettings, useUpdateStoreSettings } from '../../../../hooks/use-store-settings'
+import { type StoreEmailsFormValues, storeEmailsFormSchema } from '../../../../schemas/store-emails'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/emails')({
   component: EmailSettingsPage,

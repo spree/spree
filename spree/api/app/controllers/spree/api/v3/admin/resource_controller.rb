@@ -40,6 +40,20 @@ module Spree
             end
           end
 
+          # Returns +url+ only when it matches one of the store's configured
+          # allowed origins — the gate for caller-provided URLs that later
+          # surface outside the request (e.g. the results_url the import/export
+          # done emails link back to). Anything else is silently dropped,
+          # mirroring the password-reset redirect_url behavior: no configured
+          # origins means no caller URLs are honored.
+          # @return [String, nil]
+          def validated_allowed_origin_url(url)
+            return if url.blank?
+            return unless current_store.allowed_origin?(url)
+
+            url
+          end
+
           # Parses a strictly-integer param, returning nil for missing/blank/
           # non-integer values (so callers can reject rather than coerce to 0).
           # @return [Integer, nil]

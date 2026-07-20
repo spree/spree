@@ -1,14 +1,14 @@
 import { useConfirm } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { PromotionForm } from '@/components/spree/promotion-editors/promotion-form'
+import { PromotionForm } from '../../../../components/spree/promotion-editors/promotion-form'
 import {
   useDeletePromotion,
   usePromotion,
   usePromotionActions,
   usePromotionRules,
   useUpdatePromotion,
-} from '@/hooks/use-promotions'
+} from '../../../../hooks/use-promotions'
 
 export const Route = createFileRoute('/_authenticated/$storeId/promotions/$promotionId')({
   component: EditPromotionPage,

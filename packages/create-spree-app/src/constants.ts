@@ -1,5 +1,6 @@
 export const DEFAULT_SPREE_PORT = 3000
 export const STOREFRONT_PORT = 3001
+export const DASHBOARD_PORT = 5173
 
 export const STOREFRONT_REPO = 'https://github.com/spree/storefront.git'
 export const BACKEND_REPO = 'https://github.com/spree/spree-starter.git'

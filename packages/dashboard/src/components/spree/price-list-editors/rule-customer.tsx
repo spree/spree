@@ -3,8 +3,8 @@ import { ResourceMultiAutocomplete } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { EditorShell } from '@/components/spree/promotion-editors/editor-shell'
-import { customerAutocompleteProps } from '@/hooks/use-customers'
+import { customerAutocompleteProps } from '../../../hooks/use-customers'
+import { EditorShell } from '../promotion-editors/editor-shell'
 import type { PriceRuleEditorContext } from './types'
 
 /**

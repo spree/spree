@@ -40,6 +40,7 @@ module Spree
               :preferred_weight_unit,
               :preferred_unit_system,
               :preferred_storefront_access,
+              :preferred_storefront_url,
               :preferred_guest_checkout,
               :mail_from_address,
               :customer_support_email,

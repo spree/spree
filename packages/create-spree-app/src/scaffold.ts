@@ -4,7 +4,13 @@ import * as p from '@clack/prompts'
 import { execa } from 'execa'
 import pc from 'picocolors'
 import { downloadBackend } from './backend.js'
-import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
+import {
+  DASHBOARD_PORT,
+  DEFAULT_ADMIN_EMAIL,
+  DEFAULT_ADMIN_PASSWORD,
+  STOREFRONT_REPO,
+} from './constants.js'
+import { scaffoldDashboard } from './dashboard.js'
 import {
   downloadStorefront,
   installRootDeps,
@@ -14,16 +20,22 @@ import {
 import { agentsMdContent, rootClaudeMdContent } from './templates/claude-md.js'
 import { dependabotContent } from './templates/dependabot.js'
 import { envContent } from './templates/env.js'
-import { gitignoreContent } from './templates/gitignore.js'
+import { dockerignoreContent, gitignoreContent } from './templates/gitignore.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
-import type { ScaffoldOptions } from './types.js'
-import { generateSecretKeyBase, isDockerRunning } from './utils.js'
+import type { PackageManager, ScaffoldOptions } from './types.js'
+import {
+  dlxCommand,
+  generateSecretKeyBase,
+  installCommand,
+  isDockerRunning,
+  runCommand,
+} from './utils.js'
 
 export async function scaffold(options: ScaffoldOptions): Promise<void> {
   const projectDir = path.resolve(options.directory)
   const projectName = path.basename(projectDir)
-  const { port, storefront } = options
+  const { port, storefront, dashboard } = options
 
   // Pre-flight checks
   if (options.start) {
@@ -77,16 +89,14 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   fs.rmSync(path.join(backendDir, 'docker-compose.yml'), { force: true })
   fs.rmSync(path.join(backendDir, 'docker-compose.dev.yml'), { force: true })
 
-  fs.writeFileSync(path.join(projectDir, '.env'), envContent(generateSecretKeyBase(), port))
+  fs.writeFileSync(
+    path.join(projectDir, '.env'),
+    envContent(generateSecretKeyBase(), port, options.sampleData),
+  )
   fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
-  fs.writeFileSync(path.join(projectDir, 'README.md'), readmeContent(projectName, storefront, port))
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
-  fs.writeFileSync(path.join(projectDir, 'CLAUDE.md'), rootClaudeMdContent(storefront))
+  fs.writeFileSync(path.join(projectDir, '.dockerignore'), dockerignoreContent())
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
-
-  const githubDir = path.join(projectDir, '.github')
-  fs.mkdirSync(githubDir, { recursive: true })
-  fs.writeFileSync(path.join(githubDir, 'dependabot.yml'), dependabotContent(storefront))
 
   s.stop('Project structure created.')
 
@@ -95,49 +105,124 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   await installRootDeps(projectDir, options.packageManager)
   s.stop('Dependencies installed.')
 
+  // Phases 3/3b are optional apps — their failures warn and continue. They
+  // must never abort the scaffold before Phase 4: `spree init` is what
+  // guarantees a fresh Spree image (skipping it leaves a stale local `latest`
+  // to boot) and a seeded, credentialed backend.
+
   // Phase 3: Storefront (optional)
+  let storefrontReady = storefront
   if (storefront) {
-    s.start('Downloading storefront template...')
-    await downloadStorefront(projectDir)
-    s.stop('Storefront template downloaded.')
+    try {
+      s.start('Downloading storefront template...')
+      await downloadStorefront(projectDir)
+      s.stop('Storefront template downloaded.')
 
-    writeStorefrontEnv(projectDir, port)
+      writeStorefrontEnv(projectDir, port)
 
-    s.start('Installing storefront dependencies...')
-    await installStorefrontDeps(projectDir, options.packageManager)
-    s.stop('Storefront dependencies installed.')
+      s.start('Installing storefront dependencies...')
+      await installStorefrontDeps(projectDir, options.packageManager)
+      s.stop('Storefront dependencies installed.')
+    } catch (err) {
+      storefrontReady = false
+      s.stop('Storefront setup failed.')
+      // Remove the partial checkout so the recovery command (a fresh clone)
+      // actually works instead of failing on a non-empty directory.
+      fs.rmSync(path.join(projectDir, 'apps', 'storefront'), { recursive: true, force: true })
+      p.log.warn(
+        `Continuing without the storefront — add it later by cloning ${STOREFRONT_REPO} into apps/storefront.\n${errorMessage(err)}`,
+      )
+    }
   }
+
+  // Phase 3b: React Dashboard (optional, Developer Preview). Delegates to the
+  // project-local `npx spree add dashboard` — @spree/cli is already installed
+  // (root deps, above) and bundles the dashboard-starter template. It reads
+  // the port from the project's .env and prints its own progress.
+  let dashboardReady = dashboard
+  if (dashboard) {
+    try {
+      await scaffoldDashboard(projectDir, { install: true, packageManager: options.packageManager })
+    } catch (err) {
+      dashboardReady = false
+      // Remove the partial scaffold so the recovery command (`spree add
+      // dashboard`, which expects the directory to be absent) actually works.
+      fs.rmSync(path.join(projectDir, 'apps', 'dashboard'), { recursive: true, force: true })
+      p.log.warn(
+        `Continuing without the React Dashboard — add it later with ${pc.bold(`${runCommand(options.packageManager)} spree add dashboard`)}.\n${errorMessage(err)}`,
+      )
+    }
+  }
+
+  // Project docs are generated only now, from the phases' actual outcomes —
+  // a README written up front from the requested flags would document apps
+  // whose setup failed.
+  fs.writeFileSync(
+    path.join(projectDir, 'README.md'),
+    readmeContent(projectName, storefrontReady, port, dashboardReady, options.packageManager),
+  )
+  fs.writeFileSync(
+    path.join(projectDir, 'CLAUDE.md'),
+    rootClaudeMdContent(storefrontReady, dashboardReady, options.packageManager),
+  )
+  const githubDir = path.join(projectDir, '.github')
+  fs.mkdirSync(githubDir, { recursive: true })
+  fs.writeFileSync(
+    path.join(githubDir, 'dependabot.yml'),
+    dependabotContent(storefrontReady, dashboardReady),
+  )
 
   // Phase 4: Initialize and start services
   if (options.start) {
     const initArgs = ['spree', 'init']
     if (!options.sampleData) initArgs.push('--no-sample-data')
 
-    await execa('npx', initArgs, {
-      cwd: projectDir,
-      stdio: 'inherit',
-    })
-
-    if (storefront) {
-      p.log.info(
-        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && npm run dev`)}`,
+    try {
+      await execa(runCommand(options.packageManager), initArgs, {
+        cwd: projectDir,
+        stdio: 'inherit',
+      })
+    } catch {
+      // init streams its own output, so the underlying failure is already on
+      // screen — what the operator needs from us is the recovery command.
+      throw new Error(
+        `Setup did not finish. Start your app with: cd ${projectName} && ${options.packageManager} run dev — the first run completes setup automatically.`,
       )
     }
+
+    if (storefrontReady) {
+      p.log.info(
+        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${options.packageManager} run dev`)}`,
+      )
+    }
+    // No dashboard line here — with the dashboard chosen, `spree init`'s
+    // summary already leads with it (served at /dashboard, plus the
+    // customize command).
   } else {
-    printSuccessWithoutDocker(projectName, storefront, port)
+    printSuccessWithoutDocker(
+      projectName,
+      storefrontReady,
+      dashboardReady,
+      port,
+      options.packageManager,
+    )
   }
 }
 
 function printSuccessWithoutDocker(
   projectName: string,
   hasStorefront: boolean,
+  hasDashboard: boolean,
   port: number,
+  pm: PackageManager,
 ): void {
+  const run = runCommand(pm)
   const lines: string[] = [
     '',
     `${pc.bold('Next steps:')}`,
     `  cd ${projectName}`,
-    `  npx spree dev`,
+    `  ${run} spree dev`,
+    `  ${pc.dim('# First run completes setup automatically — pulls the latest image, seeds data, configures API keys.')}`,
   ]
 
   if (hasStorefront) {
@@ -145,24 +230,43 @@ function printSuccessWithoutDocker(
       '',
       `  ${pc.dim('# In another terminal:')}`,
       `  cd ${projectName}/apps/storefront`,
-      `  npm install`,
-      `  npm run dev`,
+      `  ${installCommand(pm)}`,
+      `  ${pm} run dev`,
+    )
+  }
+
+  // With the React Dashboard chosen, its dev server IS the admin — and
+  // `spree dev` co-runs it with the API, so the URL is live the moment the
+  // stack is up. One admin block; the classic admin gets a one-line pointer.
+  if (hasDashboard) {
+    lines.push(
+      '',
+      `${pc.bold('Admin Dashboard (React, Developer Preview)')}`,
+      `  http://localhost:${DASHBOARD_PORT}`,
+      `  ${pc.dim('# started automatically by `spree dev`, live-reloading from apps/dashboard/')}`,
+      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      `  ${pc.dim(`Classic admin: http://localhost:${port}/admin`)}`,
+      '',
+    )
+  } else {
+    lines.push(
+      '',
+      `${pc.bold('Admin Dashboard')}`,
+      `  http://localhost:${port}/admin`,
+      `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
+      `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
+      '',
     )
   }
 
   lines.push(
-    '',
-    `${pc.bold('Admin Dashboard')}`,
-    `  http://localhost:${port}/admin`,
-    `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-    `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
-    '',
-    `${pc.bold('Customize the backend')}`,
-    `  npx spree eject`,
-    `  ${pc.dim('# Then edit backend/Gemfile, backend/app/, backend/config/')}`,
+    `${pc.bold('Customize the Spree API')}`,
+    `  ${run} spree eject`,
+    `  ${pc.dim('# Then edit backend/ — the Rails API app (Gemfile, app/, config/)')}`,
     '',
     `${pc.bold('Agent skills (optional)')}`,
-    `  npx skills add spree/agent-skills`,
+    `  ${dlxCommand(pm)} skills add spree/agent-skills`,
     `  ${pc.dim('# Adds 23 Spree skills to whichever AI agent(s) you use')}`,
     `  ${pc.dim('# (Claude Code, Codex, Cursor, Copilot, Cline, Aider, +60 others)')}`,
     '',
@@ -174,4 +278,8 @@ function printSuccessWithoutDocker(
   )
 
   p.note(lines.join('\n'), 'Project created!')
+}
+
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err)
 }

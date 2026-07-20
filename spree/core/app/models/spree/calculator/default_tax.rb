@@ -24,11 +24,21 @@ module Spree
     end
 
     # When it comes to computing shipments or line items: same same.
+    #
+    # Both tax modes are computed from the item's live taxable basis, which
+    # follows every discount: item-level promotions and the item's share of
+    # whole-order promotions (see LineItem#taxable_basis). Included
+    # (VAT-style) tax intentionally does not read the stored pre_tax_amount
+    # column — that column is only refreshed by Spree::TaxRate.adjust on
+    # checkout transitions, so it goes stale the moment a promotion is
+    # applied or removed.
     def compute_shipment_or_line_item(item)
+      basis = item.taxable_basis
+
       if rate.included_in_price
-        deduced_total_by_rate(item.pre_tax_amount, rate)
+        deduced_total_by_rate(net_basis(item, basis), rate)
       else
-        round_to_two_places(item.discounted_amount * rate.amount)
+        round_to_two_places(basis * rate.amount)
       end
     end
 
@@ -53,6 +63,25 @@ module Spree
 
     def deduced_total_by_rate(pre_tax_amount, rate)
       round_to_two_places(pre_tax_amount * rate.amount)
+    end
+
+    # Backs all included-in-price rates out of the gross basis, mirroring
+    # Spree::TaxRate.store_pre_tax_amount (several rates can share a tax
+    # category, e.g. MOSS VAT). Falls back to this rate's amount when no
+    # rate matches the item, e.g. in bare setups without matching zones.
+    def net_basis(item, basis)
+      included = included_rates_amount(item)
+      included = rate.amount if included.zero?
+
+      basis / (1 + included)
+    end
+
+    # Memoized per tax category: tax rate and zone rows are configuration,
+    # invariant within a recalculation pass.
+    def included_rates_amount(item)
+      @included_rates_amount ||= {}
+      @included_rates_amount[item.tax_category_id] ||=
+        Spree::TaxRate.included_tax_amount_for(tax_zone: rate.zone, tax_category: item.tax_category)
     end
   end
 end

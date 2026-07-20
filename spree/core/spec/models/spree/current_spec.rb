@@ -148,6 +148,30 @@ RSpec.describe Spree::Current do
     end
   end
 
+  describe '#content_locale' do
+    context 'when content_locale is set' do
+      before { described_class.content_locale = 'de' }
+
+      it 'returns the set content locale' do
+        expect(described_class.content_locale).to eq('de')
+      end
+    end
+
+    context 'when content_locale is not set' do
+      it 'falls back to the application default locale' do
+        expect(described_class.content_locale).to eq(I18n.default_locale.to_s)
+      end
+
+      it 'does not fall back to the store default locale' do
+        # Outside a request nothing assigns the content locale; deriving it
+        # from the store would silently change how jobs and rake tasks read
+        # translated attributes.
+        create(:store, default: true, default_locale: 'de')
+        expect(described_class.content_locale).to eq(I18n.default_locale.to_s)
+      end
+    end
+  end
+
   describe '#market' do
     context 'when market is set' do
       let(:market) { create(:market) }

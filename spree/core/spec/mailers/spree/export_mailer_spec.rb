@@ -4,12 +4,10 @@ RSpec.describe Spree::ExportMailer, type: :mailer do
   let(:store) { @default_store }
   let(:user) { create(:admin_user) }
   let(:export) { create(:product_export, store: store, user: user) }
-  let(:spree) { Spree::Core::Engine.routes.url_helpers }
 
   before do
     export.generate
     export.reload
-    allow(spree).to receive(:admin_export_url).and_return("http://test.com/admin/exports/#{export.id}")
   end
 
   describe '#export_done' do
@@ -25,12 +23,24 @@ RSpec.describe Spree::ExportMailer, type: :mailer do
       expect(mail.to).to eq([user.email])
     end
 
-    it 'includes export attachment filename' do
-      expect(mail.body.encoded).to include(export.attachment.filename.to_s)
+    context 'when the creating surface provided a results_url' do
+      before do
+        export.update!(results_url: "http://test.com/admin/exports/#{export.id}")
+      end
+
+      it 'includes export attachment filename' do
+        expect(mail.body.encoded).to include(export.attachment.filename.to_s)
+      end
+
+      it 'includes the download link in the body' do
+        expect(mail.body.encoded).to include("/admin/exports/#{export.id}")
+      end
     end
 
-    it 'includes download link in the body' do
-      expect(mail.body.encoded).to include("/admin/exports/#{export.id}")
+    context 'without a results_url' do
+      it 'renders no download button' do
+        expect(mail.body.encoded).not_to include(export.attachment.filename.to_s)
+      end
     end
   end
 end

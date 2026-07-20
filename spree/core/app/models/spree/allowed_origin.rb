@@ -32,6 +32,37 @@ module Spree
       nil
     end
 
+    # Normalizes free-form input (possibly a bare host like `my-shop.vercel.app`)
+    # to a canonical origin string (`scheme://host[:port]`, the scheme's default
+    # port stripped), or nil when it's not a valid http(s) URL.
+    #
+    # @param raw [String, nil]
+    # @return [String, nil]
+    def self.normalize_origin(raw)
+      raw = raw.to_s.strip
+      return if raw.blank?
+
+      candidate = raw.match?(%r{\Ahttps?://}i) ? raw : "https://#{raw}"
+      parsed = parse_origin(candidate)
+      return if parsed.nil?
+
+      origin = "#{parsed[:scheme]}://#{parsed[:host]}"
+      # Strip only the scheme's own default — https://host:80 must keep its
+      # port, or the normalized origin would silently mean a different one.
+      default_port = parsed[:scheme] == 'https' ? 443 : 80
+      origin += ":#{parsed[:port]}" unless parsed[:port] == default_port
+      origin
+    end
+
+    # Whether this origin points at a loopback/development host ({LOOPBACK_HOSTS}),
+    # e.g. the `http://localhost` origin seeded on install. Loopback origins are
+    # ignored when deciding if a real storefront has been connected to the store.
+    #
+    # @return [Boolean]
+    def loopback?
+      LOOPBACK_HOSTS.include?(self.class.parse_origin(origin)&.dig(:host))
+    end
+
     # Returns true if the given URL's origin matches this stored origin.
     #
     # Scheme and host must match exactly (host comparison is case- and trailing-dot-

@@ -11,7 +11,7 @@ module Spree
     include Spree::SingleStoreResource
 
     TRANSLATABLE_FIELDS = %i[name].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     acts_as_list
 

@@ -5,7 +5,7 @@ FactoryBot.define do
     state         { 'checkout' }
     response_code { "BGS-#{SecureRandom.hex(6)}" }
 
-    payment_method { create(:credit_card_payment_method, stores: [order.store]) }
+    payment_method { create(:credit_card_payment_method, store: order.store) }
     association(:source, factory: :credit_card)
 
     factory :payment_with_refund do
@@ -16,7 +16,7 @@ FactoryBot.define do
     end
 
     factory :custom_payment, class: Spree::Payment do
-      payment_method { create(:custom_payment_method, stores: [order.store]) }
+      payment_method { create(:custom_payment_method, store: order.store) }
       source { create(:payment_source, user: order.user, payment_method: payment_method) }
     end
   end
@@ -29,7 +29,7 @@ FactoryBot.define do
   end
 
   factory :store_credit_payment, class: Spree::Payment, parent: :payment do
-    payment_method { create(:store_credit_payment_method, stores: [order.store]) }
+    payment_method { create(:store_credit_payment_method, store: order.store) }
     source { create(:store_credit, store: order.store, user: order.user) }
   end
 end

@@ -20,6 +20,15 @@ module Spree
 
         private
 
+        # Memoizes a shared-record lookup (including nil misses) in the import's
+        # per-job cache so repeated rows don't re-run the same query.
+        def cached_lookup(*key)
+          cache = import.row_lookup_cache
+          return cache[key] if cache.key?(key)
+
+          cache[key] = yield
+        end
+
         def build_schema_hash(row, mappings, schema_fields)
           attributes = {}
           schema_fields.each do |field|

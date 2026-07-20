@@ -7,7 +7,7 @@
 #
 #   SPREE_PATH=/absolute/host/path/to/spree-monorepo \
 #     docker compose -f docker-compose.dev.yml -f docker-compose.edge.yml \
-#     up -d --force-recreate web worker
+#     up -d --force-recreate web
 #
 # Without -f docker-compose.edge.yml, regular dev usage is unaffected:
 # no extra mounts, no SPREE_PATH dependency, runs identically on
@@ -23,8 +23,16 @@ services:
     # path we mirror-mount. The starter's .env may carry a different
     # SPREE_PATH (e.g. `..` for the native bin/dev flow); the overlay-set
     # value here wins because `environment:` beats `env_file:` in Compose.
+    #
+    # SPREE_DASHBOARD_DIST_PATH: the monorepo mount already contains the
+    # dashboard-starter's build output, so the spree_dashboard gem serves it
+    # at /dashboard (single-node topology) with zero copying — run
+    # `pnpm server:dashboard` to (re)build the dist; changes are served
+    # immediately (the gem reads files per request, no restart). Until a
+    # build exists the directory is absent and /dashboard responds 404.
     environment:
       SPREE_PATH: ${SPREE_PATH}
+      SPREE_DASHBOARD_DIST_PATH: ${SPREE_PATH}/packages/dashboard-starter/dist
     volumes:
       - ${SPREE_PATH}:${SPREE_PATH}
     # Hard-bypass the starter's bin/docker-entrypoint, which auto-runs
@@ -34,33 +42,25 @@ services:
     entrypoint: []
     # Self-healing boot. Monorepo pulls and starter updates routinely drift
     # Gemfile.lock ahead of the bundle_cache volume and add new engine
-    # migrations — without this, web/worker crash-loop on Bundler::GemNotFound
+    # migrations — without this, web crash-loops on Bundler::GemNotFound
     # or 500 on ActiveRecord::PendingMigrationError after every such pull.
     # `bundle check` is sub-second when clean; the rails invocation is one
     # boot (~5s) that no-ops when nothing changed.
+    #
+    # The backgrounded tailwindcss:watch recompiles the admin CSS when
+    # templates in the mounted monorepo gems change (it polls mtimes — FS
+    # events don't cross the bind mount). `spree dev` starts the same watcher
+    # via a detached exec, but this compose flow never goes through the CLI,
+    # so the watcher must ride the web container's boot command. The one-shot
+    # build stays in the foreground chain so a broken build still fails the
+    # boot loudly instead of only warning in the watcher's log.
+    # rm -f of the propshaft manifest: if public/assets/.manifest.json exists
+    # (left behind by any assets:precompile — image builds, test prep, a
+    # one-off rake run), Propshaft silently switches to its static resolver
+    # and serves that frozen snapshot instead of app/assets/builds, so admin
+    # CSS rebuilds never reach the browser. Dev must always resolve live.
     command:
       [
         "sh", "-c",
-        "(bundle check || bundle install) && bin/rails spree:install:migrations db:prepare && bin/rails spree:admin:tailwindcss:build && exec bin/rails server -b 0.0.0.0 -p 3000"
-      ]
-
-  worker:
-    environment:
-      SPREE_PATH: ${SPREE_PATH}
-    volumes:
-      - ${SPREE_PATH}:${SPREE_PATH}
-    entrypoint: []
-    # Gate Sidekiq on web actually serving: the web boot chain starts Puma
-    # only after bundle install + spree:install:migrations + db:prepare have
-    # all succeeded, so "/up answers" covers everything the worker needs —
-    # a satisfied bundle (shared bundle_cache volume) AND a fully migrated,
-    # seeded database. Gating on `bundle check` alone raced the migrations:
-    # a clean bundle let Sidekiq run jobs against a half-prepared schema.
-    # The Host header matters: dev-mode HostAuthorization rejects the
-    # compose-internal hostname (`web`) with a 403, so curl presents an
-    # allowed host instead.
-    command:
-      [
-        "sh", "-c",
-        "i=0; until curl -fsS -o /dev/null -H 'Host: localhost' http://web:3000/up 2>/dev/null; do i=$$((i+1)); if [ \"$$i\" -ge 200 ]; then echo 'worker: web did not become ready within 10 minutes — inspect with: docker compose logs web' >&2; exit 1; fi; echo 'worker: waiting for web to finish booting (bundle + migrations + db:prepare)…'; sleep 3; done; exec bundle exec sidekiq"
+        "(bundle check || bundle install) && rm -f public/assets/.manifest.json && bin/rails spree:install:migrations db:prepare && bin/rails spree:admin:tailwindcss:build && (bin/rails spree:admin:tailwindcss:watch &) && exec bin/rails server -b 0.0.0.0 -p 3000"
       ]

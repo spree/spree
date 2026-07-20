@@ -19,6 +19,11 @@ module Spree
     validates :row_number, uniqueness: { scope: :import_id }, numericality: { only_integer: true, greater_than: 0 }, presence: true
 
     #
+    # Ransack configuration
+    #
+    self.whitelisted_ransackable_attributes = %w[status row_number]
+
+    #
     # State machine
     #
     state_machine initial: :pending, attribute: :status do
@@ -92,6 +97,7 @@ module Spree
     def process!(mappings: nil, schema_fields: nil)
       start_processing!
       self.item = import.row_processor_class.new(self, mappings: mappings, schema_fields: schema_fields).process!
+      self.validation_errors = nil # clear a stale error when a retried row succeeds
       complete!
     rescue StandardError => e
       Rails.error.report(e, handled: true, context: { import_row_id: id }, source: 'spree.core')
@@ -105,7 +111,7 @@ module Spree
       update_columns(status: 'processing', updated_at: Time.current)
       processor = import.row_processor_class.new(self, mappings: mappings, schema_fields: schema_fields)
       self.item = processor.process!
-      update_columns(status: 'completed', item_type: item.class.name, item_id: item.id, updated_at: Time.current)
+      update_columns(status: 'completed', item_type: item.class.name, item_id: item.id, validation_errors: nil, updated_at: Time.current)
     rescue StandardError => e
       Rails.error.report(e, handled: true, context: { import_row_id: id }, source: 'spree.core')
       update_columns(status: 'failed', validation_errors: e.message, updated_at: Time.current)

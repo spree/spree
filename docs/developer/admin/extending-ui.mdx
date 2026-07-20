@@ -425,6 +425,29 @@ Here's a list of all places you can inject your custom code:
     * Include `data: { filters_target: :input }` for proper integration with the Stimulus Filters controller
     </Tip>
   </Accordion>
+
+  <Accordion title="Customer Page Sidebar">
+    `user_page_sidebar`
+
+    #### Variables
+
+    <ParamField path="user" type="Spree.user_class">
+      The customer displayed on the page.
+    </ParamField>
+
+    Injects a section into the customer detail page sidebar. This partial has access to the `user` variable.
+
+    ```erb
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Account review</h5>
+      </div>
+      <div class="card-body">
+        <%= user.email %>
+      </div>
+    </div>
+    ```
+  </Accordion>
 </AccordionGroup>
 
 ### Stock Items

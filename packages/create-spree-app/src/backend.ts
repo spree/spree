@@ -27,8 +27,10 @@ export async function downloadBackend(projectDir: string): Promise<void> {
 
 /**
  * Tidy the freshly-cloned starter for the nested `backend/` layout: drop files
- * the wrapper project supplies itself, and relocate the CI workflow to the repo
- * root (where GitHub Actions runs it) adapted to run against backend/.
+ * the wrapper project supplies itself, relocate the CI workflow to the repo
+ * root (where GitHub Actions runs it) adapted to run against backend/, and
+ * relocate the Render Blueprint likewise (adapted so each service builds from
+ * backend/).
  */
 export function prepareBackendTemplate(projectDir: string): void {
   const backendDir = path.join(projectDir, 'backend')
@@ -52,6 +54,16 @@ export function prepareBackendTemplate(projectDir: string): void {
     // replaces with its own root .github/dependabot.yml (covering /, /backend,
     // and the storefront). Keeping it would leave a stale, duplicate config.
     fs.rmSync(path.join(backendDir, '.github'), { recursive: true, force: true })
+  }
+
+  // Render reads a single Blueprint from the repository root. The starter ships
+  // The starter authors render.yaml for exactly this project layout (Docker
+  // runtime, backend/Dockerfile built with the repo root as context, so the
+  // ejected backend and apps/dashboard ship in one image) — Render just needs
+  // it at the repo root where Blueprints are read.
+  const srcRenderYaml = path.join(backendDir, 'render.yaml')
+  if (fs.existsSync(srcRenderYaml)) {
+    fs.renameSync(srcRenderYaml, path.join(projectDir, 'render.yaml'))
   }
 }
 

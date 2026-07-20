@@ -1,0 +1,50 @@
+/**
+ * {{module_name}} list page. Mounted at `/$storeId/{{name}}` via the plugin's
+ * route registration in `index.tsx`. Uses `<ResourceTable>` for filtering,
+ * sorting, pagination — the same UX as core's Products/Customers/Orders.
+ *
+ * Plugin route components receive `{ params, storeId, searchParams }` from
+ * the dashboard's catch-all dispatcher. We forward `searchParams` to
+ * ResourceTable so filter/sort/pagination round-trip through the URL.
+ */
+import { PageHeader, type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
+import { Button, ResourceLayout } from '@spree/dashboard-ui'
+import { PlusIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { {{module_name}}Client } from '../client'
+import type { {{module_name}} } from '../types'
+
+interface {{module_name}}ListPageProps {
+  searchParams: Record<string, unknown>
+}
+
+export function {{module_name}}ListPage({ searchParams }: {{module_name}}ListPageProps) {
+  const { t } = useTranslation()
+
+  return (
+    <ResourceLayout
+      header={
+        <PageHeader
+          title={t('admin.{{name}}_plugin.page.title')}
+          subtitle={t('admin.{{name}}_plugin.page.subtitle')}
+          actions={
+            <Button size="sm">
+              <PlusIcon className="size-4" />
+              {t('admin.{{name}}_plugin.page.new_cta')}
+            </Button>
+          }
+        />
+      }
+      main={
+        <ResourceTable<{{module_name}}>
+          tableKey="{{name}}"
+          queryKey="{{name}}"
+          // ResourceTable hands `params` to queryFn as Record<string, unknown>;
+          // we narrow to our client's known param shape at the boundary.
+          queryFn={(params) => {{module_name}}Client.list(params as Record<string, never>)}
+          searchParams={searchParams as ResourceSearch}
+        />
+      }
+    />
+  )
+}

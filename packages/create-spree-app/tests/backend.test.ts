@@ -56,6 +56,23 @@ jobs:
           context: .
 `
 
+// A trimmed render.yaml covering the three shapes the transform distinguishes:
+// a buildable service (has `runtime:`), the commented-out worker template
+// (`runtime:` behind a `#`), and a managed service (no `runtime:`).
+const RENDER_YAML = `services:
+  - type: web
+    runtime: ruby
+    plan: free
+
+  # - type: worker
+  #   runtime: ruby
+  #   plan: standard
+
+  - type: redis
+    name: spree-redis
+    plan: free
+`
+
 describe('adaptWorkflowForNestedBackend', () => {
   it('points ruby/setup-ruby at the backend/ subdirectory', () => {
     const result = adaptWorkflowForNestedBackend(BACKEND_CI)
@@ -106,6 +123,7 @@ describe('prepareBackendTemplate', () => {
     fs.writeFileSync(path.join(workflows, 'backend-ci.yml'), BACKEND_CI)
     fs.writeFileSync(path.join(workflows, 'release.yml'), RELEASE)
     fs.writeFileSync(path.join(projectDir, 'backend', 'README.md'), '# Spree starter')
+    fs.writeFileSync(path.join(projectDir, 'backend', 'render.yaml'), RENDER_YAML)
 
     return projectDir
   }
@@ -137,5 +155,17 @@ describe('prepareBackendTemplate', () => {
     prepareBackendTemplate(projectDir)
 
     expect(fs.existsSync(path.join(projectDir, 'backend', 'README.md'))).toBe(false)
+  })
+
+  it('relocates render.yaml to the project root verbatim', () => {
+    const projectDir = seedClonedBackend()
+    prepareBackendTemplate(projectDir)
+
+    const moved = path.join(projectDir, 'render.yaml')
+    expect(fs.existsSync(moved)).toBe(true)
+    // Authored by the starter for exactly this layout — no rewriting.
+    expect(fs.readFileSync(moved, 'utf-8')).toBe(RENDER_YAML)
+    // The original in backend/ is removed so Render never reads a stale copy.
+    expect(fs.existsSync(path.join(projectDir, 'backend', 'render.yaml'))).toBe(false)
   })
 })

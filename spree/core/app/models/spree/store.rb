@@ -28,7 +28,7 @@ module Spree
     #
     TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title customer_support_email
                              address contact_phone].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
     self::Translation.class_eval do
       acts_as_paranoid
       # deleted translation values still need to be accessible - remove deleted_at scope
@@ -51,6 +51,9 @@ module Spree
     preference :guest_checkout, :boolean, default: true
     # Store-level fallback for the channel-owned `storefront_access` posture.
     preference :storefront_access, :string, default: 'public'
+    # Canonical storefront origin used in customer-facing emails and links,
+    # e.g. "https://myshop.com" — see #storefront_url for the fallback chain.
+    preference :storefront_url, :string
     preference :special_instructions_enabled, :boolean, default: false
     preference :stock_reservation_ttl_minutes, :integer, default: 10
     # Address preferences
@@ -151,7 +154,9 @@ module Spree
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_storefront_access, inclusion: { in: Spree::Channel::Gating::STOREFRONT_ACCESS }
+    validate :preferred_storefront_url_is_an_origin
     validates :mail_from_address, email: { allow_blank: false }
+    validates :customer_support_email, email: { allow_blank: true }
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
        connected? &&
@@ -170,6 +175,7 @@ module Spree
     #
     # Callbacks
     before_validation :set_default_code, on: :create
+    before_validation :normalize_preferred_storefront_url
     before_save :ensure_default_exists_and_is_unique
     after_create :create_default_policies
 
@@ -294,11 +300,15 @@ module Spree
     end
 
     # Returns the storefront origin URL for use in customer-facing emails and links.
-    # Uses the first allowed origin if configured, otherwise falls back to formatted_url.
+    # Uses the `storefront_url` preference when set, then the oldest non-loopback
+    # allowed origin (the `http://localhost` origin seeded on install must never
+    # leak into customer emails), otherwise falls back to formatted_url.
     #
     # @return [String] e.g. "https://myshop.com"
     def storefront_url
-      allowed_origins.order(:created_at).pick(:origin) || formatted_url
+      preferred_storefront_url.presence ||
+        allowed_origins.order(:created_at).reject(&:loopback?).first&.origin ||
+        formatted_url
     end
 
     # Returns true if the given URL's origin matches one of the store's allowed origins.
@@ -429,6 +439,27 @@ module Spree
 
     def set_default_code
       self.code = 'default' if code.blank?
+    end
+
+    # The storefront URL preference must always hold a canonical origin — it
+    # becomes the base for customer-email links and completes the storefront
+    # setup task, and the v3 Admin API writes it without any controller-side
+    # normalization. Parseable input is canonicalized here; garbage is left
+    # in place for the validation below to reject.
+    def normalize_preferred_storefront_url
+      raw = preferred_storefront_url
+      return if raw.blank?
+
+      normalized = Spree::AllowedOrigin.normalize_origin(raw)
+      self.preferred_storefront_url = normalized if normalized
+    end
+
+    def preferred_storefront_url_is_an_origin
+      raw = preferred_storefront_url
+      return if raw.blank?
+      return if Spree::AllowedOrigin.normalize_origin(raw)
+
+      errors.add(:preferred_storefront_url, :invalid)
     end
   end
 end

@@ -1,276 +1,39 @@
 # @spree/dashboard
 
-The Spree Commerce admin dashboard — a React single-page application that replaces the legacy Rails `spree/admin` engine entirely. Built on the [Admin API](https://spreecommerce.org/docs/api-reference/admin-api/introduction) via `@spree/admin-sdk`, with a modern extension model (table registry, navigation registry, component injection) for plugin authors.
+The Spree Commerce admin dashboard (the "React Dashboard") — a React single-page application that replaces the Classic Admin (the server-rendered Rails engine). Built on the [Admin API](https://spreecommerce.org/docs/api-reference/admin-api/introduction) via `@spree/admin-sdk`, with an extension model (nav, slots, tables, typed plugin routes) for plugin authors.
 
-Part of the three-package dashboard stack — see [`packages/README.md`](../README.md) for how `@spree/dashboard`, `@spree/dashboard-ui`, and `@spree/dashboard-core` fit together.
+Part of the three-package dashboard stack with [`@spree/dashboard-core`](https://github.com/spree/spree/tree/main/packages/dashboard-core) (the framework and extension API) and [`@spree/dashboard-ui`](https://github.com/spree/spree/tree/main/packages/dashboard-ui) (the design system).
 
-> **Developer Preview.** The Admin SPA is in active development for Spree 6.0. Some routes still fall back to the Rails admin while feature parity is being reached. See [`docs/plans/6.0-admin-spa.md`](../../docs/plans/6.0-admin-spa.md) for the current scope.
+> **Developer Preview.** APIs may change between 0.x releases; in Spree 6 the React Dashboard becomes the default admin.
 
 ## Tech stack
 
-| Layer | Choice |
-|---|---|
-| Build & dev | [Vite](https://vitejs.dev/) |
-| Routing | [TanStack Router](https://tanstack.com/router) (file-based, type-safe) |
-| Data fetching | [TanStack Query](https://tanstack.com/query) |
-| Forms | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) |
-| UI primitives | [shadcn/ui](https://ui.shadcn.com/) + [Base UI](https://base-ui.com/) + [Tailwind CSS](https://tailwindcss.com/) |
-| Icons | [lucide-react](https://lucide.dev/) |
-| Charts | [Recharts](https://recharts.org/) |
-| Rich text | [Tiptap](https://tiptap.dev/) |
-| Notifications | [Sonner](https://sonner.emilkowal.ski/) |
-| Lint & format | [Biome](https://biomejs.dev/) |
+Vite · TanStack Router (file-based, type-safe) · TanStack Query · React Hook Form + Zod · shadcn/ui + Base UI + Tailwind CSS · lucide-react · Recharts · Tiptap · Sonner · Biome.
 
-## Host integration
+## Using it
 
-Host apps consume the dashboard by installing all three packages and wiring our Vite plugin into their build:
-
-```ts
-// host vite.config.ts
-import { spreeDashboardPlugin } from '@spree/dashboard/vite'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
-
-export default defineConfig({
-  plugins: [
-    spreeDashboardPlugin({
-      plugins: [
-        '@my-store/orders-dashboard-plugin',
-        '@my-store/wishlists-dashboard-plugin',
-      ],
-    }),
-    TanStackRouterVite(),
-    react(),
-  ],
-})
-```
-
-```css
-/* host src/styles.css */
-@import "@spree/dashboard/styles.css";
-```
-
-```ts
-// host src/main.tsx
-import '@my-store/orders-dashboard-plugin'    // side-effect: defineDashboardPlugin()
-import '@my-store/wishlists-dashboard-plugin'
-import './styles.css'
-// … mount the app
-```
-
-The Vite plugin bundles `@tailwindcss/vite` and injects `@source` directives for every Spree dashboard package and every host-named plugin, so hosts don't configure Tailwind directly. `@spree/dashboard/vite` is a thin re-export of [`@spree/dashboard-core/vite`](../dashboard-core/README.md#vite-integration) — that's where the plugin lives and where the full options reference (custom dashboards, plugin authoring, `cssEntry`, etc.) is documented.
-
-## Getting started
-
-The admin needs a running Spree backend exposing the Admin API. The simplest setup:
+Don't wire this package by hand — scaffold a host app, which pins the stack and configures the Vite integration (`@spree/dashboard/vite`) for you:
 
 ```bash
-# 1. Boot a Spree server (from the monorepo root)
-pnpm server:setup   # one-time bootstrap: clones spree-starter into ./server, boots the stack, prepares the DB
-pnpm server:dev     # foreground; streams logs — Rails on http://localhost:3000 (Ctrl+C stops it)
-
-# 2. In a separate terminal, run the admin dev server
-cd packages/dashboard
-pnpm dev            # http://localhost:5173
+# in a create-spree-app project (or pass --react-dashboard at create time)
+spree add dashboard
 ```
 
-Vite proxies `/api/*` to `http://localhost:3000`. The first time you load the admin, sign in with the seed admin user (default: `spree@example.com` / `spree123` — override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD`; see `spree/core/app/services/spree/seeds/admin_user.rb`). If you need to reset an admin password, run `pnpm server:console` and update the user from the Rails console.
+The host consumes the exported `<Dashboard />` shell and `createDashboardRouter`, activates any installed dashboard plugins through auto-discovery, and composes their file routes into one typed route tree.
 
-### Configuration
+## Documentation
 
-The dev server reads its API base URL from `VITE_SPREE_API_URL` (defaults to `http://localhost:3000`). For a custom backend:
+The full guides live on the docs site — this README intentionally stays short:
 
-```bash
-VITE_SPREE_API_URL=https://my-spree.example.com pnpm dev
-```
-
-For production builds, set the same env var at build time:
-
-```bash
-VITE_SPREE_API_URL=https://api.mystore.com pnpm build
-```
-
-## Scripts
-
-| Command | Description |
-|---|---|
-| `pnpm dev` | Start Vite dev server with HMR on port 5173 |
-| `pnpm build` | Type-check and build the SPA into `dist/` |
-| `pnpm preview` | Serve the production build locally |
-| `pnpm lint` | Lint with Biome |
-| `pnpm lint:fix` | Lint and auto-fix with Biome |
-| `pnpm format` | Format source with Biome |
-| `pnpm test:e2e` | Run the Playwright E2E suite against a real Rails backend |
-| `pnpm test:e2e:ui` | Run the E2E suite in Playwright's interactive UI for debugging |
-| `pnpm test:e2e:install` | One-time: install the Chromium build Playwright drives |
-
-## Project structure
-
-```
-src/
-├── client.ts               # adminClient instance (configures @spree/admin-sdk)
-├── main.tsx                # app entry, providers
-├── router.tsx              # TanStack Router configuration
-├── routeTree.gen.ts        # generated by @tanstack/router-plugin (do not edit)
-├── routes/                 # file-based routes
-│   ├── __root.tsx          # router context (auth, permissions)
-│   ├── login.tsx           # public login page
-│   └── _authenticated/     # auth-guarded routes
-│       └── $storeId/       # multi-store routes (orders, products, customers, ...)
-├── components/             # app-level components
-│   └── ui/                 # shadcn/ui primitives
-├── hooks/                  # data hooks built on @spree/admin-sdk
-├── providers/              # AuthProvider, PermissionProvider, StoreProvider
-├── tables/                 # table definitions for the registry
-├── schemas/                # Zod form schemas
-└── lib/                    # utilities, query client, table registry
-```
-
-## Architecture notes
-
-### Authentication
-
-JWT access token in memory + refresh token in an HttpOnly signed cookie. See `docs/plans/5.5-admin-auth-cookie-refresh.md` for the full design.
-
-- Login → `POST /api/v3/admin/auth/login` returns `{ token, user }`. The server also sets `spree_admin_refresh_token` — an HttpOnly signed cookie scoped to `/api/v3/admin/auth`, invisible to JS.
-- Access token stays in React state only — **no `localStorage`**, no `sessionStorage`.
-- On cold load, the SPA calls `POST /api/v3/admin/auth/refresh` (cookie-driven) to bootstrap. Routes wait for `auth.isInitializing === false` before redirecting.
-- Background refresh every 58 minutes (the JWT defaults to a 1-hour TTL).
-- 401 responses trigger an automatic refresh via the SDK's `onUnauthorized` hook, then retry the original request.
-- Logout → `POST /api/v3/admin/auth/logout` destroys the refresh-token row server-side and clears the cookie. The in-memory state is cleared regardless of whether the network call succeeds.
-- Concurrent refresh attempts are serialized to prevent double-rotation under StrictMode/HMR.
-
-CSRF defense comes from the cookie's `SameSite` attribute combined with the `Spree::AllowedOrigin` allowlist enforced via `Rack::Cors`. There is no double-submit CSRF token — see the plan doc for the reasoning.
-
-Public routes (login) sit at the root; everything else is gated by `routes/_authenticated.tsx`.
-
-In dev, `vite.config.ts` proxies `/api/*` → `http://localhost:3000` so the SPA is same-origin with the Rails API and `SameSite=Lax` cookies work without HTTPS. In production, set `VITE_SPREE_API_URL` to the absolute API origin — the backend issues `SameSite=None; Secure` automatically when `Rails.env.production?`.
-
-### Permissions
-
-Permissions are **server-driven**. On login, `GET /api/v3/admin/me` returns the user's CanCanCan abilities serialized as JSON. The SPA mirrors them via:
-
-```tsx
-import { Can } from '@/components/can'
-import { usePermissions } from '@/providers/permission-provider'
-
-// Declarative
-<Can I="update" a="Order"><EditButton /></Can>
-
-// Imperative
-const { can } = usePermissions()
-if (can('destroy', 'Product')) { /* ... */ }
-```
-
-The server still enforces `authorize!` on every request — the SPA is UX only.
-
-### Multi-store
-
-All authenticated routes include a `$storeId` segment (e.g. `/store_abc/orders`). The `StoreProvider` configures the SDK with the active store and exposes `useStore()` to read the current store's currency, locale, and metadata. The root authenticated route redirects to the user's default store.
-
-### Extension points
-
-Three extension points are designed for plugin authors (full design in [`docs/plans/6.0-admin-spa.md`](../../docs/plans/6.0-admin-spa.md)):
-
-1. **Table registry** — register columns/filters/actions for any list view
-2. **Navigation registry** — inject sidebar menu items
-3. **Component injection** — slot points in core pages (e.g., extra cards on the order detail)
-
-The shadcn copy-paste model means UI components in `src/components/ui/` are owned by this project, not a component library. Extensions can copy-and-modify rather than fighting library abstractions.
-
-## Adding a shadcn/ui component
-
-```bash
-pnpm dlx shadcn@latest add <component-name>
-```
-
-Components land in `src/components/ui/`. Customize freely.
-
-## Working with @spree/admin-sdk
-
-All API calls go through the SDK instance configured in `src/client.ts`. Wrap calls in custom hooks under `src/hooks/`:
-
-```ts
-// src/hooks/use-orders.ts
-import { useQuery } from '@tanstack/react-query'
-import { adminClient } from '@/client'
-
-export function useOrders(params: ListOrdersParams) {
-  return useQuery({
-    queryKey: ['orders', params],
-    queryFn: () => adminClient.orders.list(params),
-  })
-}
-```
-
-Mutations follow the same pattern with `useMutation` and `queryClient.invalidateQueries(...)` to refresh affected views.
-
-## End-to-end tests
-
-The `e2e/` folder holds [Playwright](https://playwright.dev/) specs that drive the SPA against a real Rails backend — no API mocks. CI runs the same suite via the `admin-e2e` job in `.github/workflows/packages.yml`; locally, `pnpm test:e2e` mirrors what CI does.
-
-What the suite boots:
-
-- **Rails** on `:3010` — the dummy app at `spree/api/spec/dummy`, with a fresh SQLite DB seeded via `Spree::Seeds::All` on every run.
-- **Vite dev server** on `:5174` — proxies `/api/*` to the test Rails so the SPA stays same-origin (matches dev's cookie posture exactly).
-- **Playwright** drives Chromium and tears both down at the end.
-
-Currently covered:
-
-- `e2e/auth.spec.ts` — login form happy path + invalid-credentials error
-- `e2e/invitation-acceptance.spec.ts` — full staff-onboarding lifecycle: admin signs in → opens Settings → Staff → invites a teammate → logs out → invitee opens the link in a fresh browser context → completes signup → lands authenticated
-
-### Running locally
-
-One-time prerequisites: a built dummy Rails app and the Chromium browser bundle.
-
-```bash
-# From the repo root, build the dummy Rails app once.
-cd spree/api
-bundle install
-bundle exec rake test_app
-
-# From this package, install Playwright's Chromium once per machine.
-cd ../../packages/dashboard
-pnpm test:e2e:install
-```
-
-Then run the suite:
-
-```bash
-pnpm test:e2e                       # full suite
-pnpm test:e2e e2e/auth.spec.ts      # one file
-pnpm test:e2e -g "invites a teammate"  # filter by test name
-pnpm test:e2e:ui                    # interactive debugger (time-travel, DOM inspector)
-```
-
-`pnpm test:e2e` is safe to re-run: each run resets the SQLite DB before seeding, so tests start from a known state.
-
-### Debugging failures
-
-On failure, Playwright drops three artifacts in `test-results/<spec>/`:
-
-- `test-failed-1.png` — screenshot at the moment of failure
-- `video.webm` — the full run
-- `error-context.md` — DOM snapshot + the failing locator (usually enough to fix selector issues without re-running)
-
-CI uploads these as a `playwright-report` artifact (14-day retention) on failed runs.
-
-### Adding a spec
-
-Specs live next to the existing ones in `e2e/`. Use `getCredentials()` from `e2e/fixtures.ts` for the seeded admin email/password and store ID — anything else, drive through the UI like a user would. Avoid hitting the Admin API directly from a spec unless the flow you're testing requires backend setup that has no UI path; the value of these tests is exercising the full layer cake.
+- [Overview](https://spreecommerce.org/docs/developer/dashboard/overview) & [concepts](https://spreecommerce.org/docs/developer/dashboard/concepts) — architecture, auth, permissions, multi-store
+- [Customization](https://spreecommerce.org/docs/developer/dashboard/customization/quickstart) — your pages, nav, slots, tables, translations
+- [Plugins](https://spreecommerce.org/docs/developer/dashboard/plugins/overview) — build and distribute dashboard extensions
+- [Deployment](https://spreecommerce.org/docs/developer/dashboard/deployment) — served by the Spree server at `/dashboard` (default) or a CDN
+- [Public API](https://spreecommerce.org/docs/developer/dashboard/public-api)
 
 ## Contributing
 
-This package is private and ships as part of the Spree 6.0 release. Architecture decisions live in `docs/plans/6.0-admin-spa.md` — please read that before proposing significant changes.
-
-When changing API contracts, also update the upstream serializers in `spree/api` and regenerate types:
-
-```bash
-cd spree/api && bundle exec rake typelizer:generate
-cd packages/admin-sdk && pnpm build
-```
+The dashboard lives in the [spree/spree monorepo](https://github.com/spree/spree) under `packages/dashboard` — see the repository docs (`CLAUDE.md`) for local development against a Spree backend and the Playwright E2E suite.
 
 ## License
 

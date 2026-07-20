@@ -48,13 +48,19 @@ module Spree
       # Token auto-invalidates when password changes (salt changes)
       # Expiration is configurable via Spree::Config.customer_password_reset_expires_in (in minutes)
       generates_token_for :password_reset, expires_in: Spree::Config.customer_password_reset_expires_in.minutes do
-        password_salt&.last(10) || encrypted_password&.last(10)
+        # `try` rather than `&.`: models without a password_salt method or
+        # column at all (modern Devise) must fall through to encrypted_password
+        # — a bare call would raise NameError before the fallback.
+        try(:password_salt)&.last(10) || encrypted_password&.last(10)
       end
 
       # we need to have this callback before any dependent: :destroy associations
       # https://github.com/rails/rails/issues/3458
       before_validation :clone_billing_address, if: :use_billing?
       before_destroy :check_completed_orders
+
+      after_save_commit :sync_newsletter_subscription_with_marketing_consent,
+                        if: :saved_change_to_accepts_email_marketing?
 
       attr_accessor :use_billing
 
@@ -278,6 +284,14 @@ module Spree
       end
     end
 
+    # @param store [Spree::Store] store to scope the lookup to; defaults to the current store
+    # @return [Spree::NewsletterSubscriber, nil] this user's newsletter subscriber for the given store
+    def newsletter_subscriber(store = Spree::Current.store)
+      return unless store
+
+      Spree::NewsletterSubscriber.for_store(store).find_by(user_id: id)
+    end
+
     private
 
     def check_completed_orders
@@ -304,6 +318,15 @@ module Spree
       self.last_name = 'User'
       self.login = email
       save
+    end
+
+    def sync_newsletter_subscription_with_marketing_consent
+      if accepts_email_marketing?
+        Spree::NewsletterSubscriber.subscribe(email: email, user: self)
+      else
+        # Only remove the subscriber for the current store, mirroring the store-scoped subscribe path.
+        newsletter_subscriber&.destroy
+      end
     end
   end
 end

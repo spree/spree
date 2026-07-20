@@ -184,4 +184,98 @@ describe Spree::UserMethods do
       expect(subject).to be(false)
     end
   end
+
+  describe 'syncing accepts_email_marketing with newsletter subscription' do
+    let(:user) { create(:user, accepts_email_marketing: false) }
+
+    around do |example|
+      Spree::Current.with(store: current_store) { example.run }
+    end
+
+    context 'when flag flips from false to true' do
+      it 'creates a verified newsletter subscriber for the current store' do
+        expect {
+          user.update!(accepts_email_marketing: true)
+        }.to change { Spree::NewsletterSubscriber.where(user_id: user.id, store: current_store).count }.from(0).to(1)
+
+        subscriber = Spree::NewsletterSubscriber.find_by!(user_id: user.id, store: current_store)
+        expect(subscriber).to be_verified
+        expect(subscriber.email).to eq(user.email)
+      end
+    end
+
+    context 'when a user is created with the flag already set to true' do
+      let(:new_user) { Spree.user_class.last }
+
+      it 'creates a verified newsletter subscriber for the current store' do
+        expect {
+          create(:user, accepts_email_marketing: true)
+        }.to change { Spree::NewsletterSubscriber.where(store: current_store).count }.by(1)
+
+        subscriber = Spree::NewsletterSubscriber.find_by!(user_id: new_user.id, store: current_store)
+        expect(subscriber).to be_verified
+        expect(subscriber.email).to eq(new_user.email)
+      end
+    end
+
+    context 'when flag flips from true to false' do
+      let(:other_store) { create(:store) }
+
+      before do
+        user.update!(accepts_email_marketing: true)
+        # Subscriber on another store proves the removal is scoped to the current store only.
+        create(:newsletter_subscriber, user: user, email: user.email, store: other_store)
+      end
+
+      it 'destroys only the current store subscriber, leaving other stores intact' do
+        expect(Spree::NewsletterSubscriber.where(user_id: user.id).count).to eq(2)
+
+        user.update!(accepts_email_marketing: false)
+
+        remaining = Spree::NewsletterSubscriber.where(user_id: user.id)
+        expect(remaining.pluck(:store_id)).to contain_exactly(other_store.id)
+      end
+    end
+
+    context 'when updating other fields without touching the flag' do
+      let(:existing_subscriber) { Spree::NewsletterSubscriber.find_by!(user_id: user.id, store: current_store) }
+
+      before { user.update!(accepts_email_marketing: true) }
+
+      it 'does not churn the subscriber rows' do
+        expect { user.update!(first_name: 'New Name') }.not_to change { Spree::NewsletterSubscriber.count }
+
+        expect(existing_subscriber.reload).to be_present
+      end
+    end
+  end
+
+  describe '#newsletter_subscriber' do
+    let(:user) { create(:user, accepts_email_marketing: false) }
+    let(:other_store) { create(:store) }
+
+    it 'returns the subscriber for the given store' do
+      subscriber = create(:newsletter_subscriber, user: user, email: user.email, store: current_store)
+
+      expect(user.newsletter_subscriber(current_store)).to eq(subscriber)
+    end
+
+    it 'defaults to the current store' do
+      subscriber = create(:newsletter_subscriber, user: user, email: user.email, store: current_store)
+
+      Spree::Current.with(store: current_store) do
+        expect(user.newsletter_subscriber).to eq(subscriber)
+      end
+    end
+
+    it 'returns nil when the user has no subscriber on the store' do
+      expect(user.newsletter_subscriber(current_store)).to be_nil
+    end
+
+    it 'ignores subscribers on other stores' do
+      create(:newsletter_subscriber, user: user, email: user.email, store: other_store)
+
+      expect(user.newsletter_subscriber(current_store)).to be_nil
+    end
+  end
 end

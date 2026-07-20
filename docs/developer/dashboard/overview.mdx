@@ -1,0 +1,107 @@
+---
+title: React Dashboard Overview
+sidebarTitle: Overview
+description: Learn about the Spree React Dashboard architecture and how to customize it and extend it
+---
+
+<Info>
+The React Dashboard is currently a **Developer Preview** — APIs may still change between releases. 
+In Spree 6 it will become the default Admin interface replacing the Spree 5 admin.
+</Info>
+
+The React Dashboard is a React single-page application (SPA) that talks to the [Spree Admin API](/api-reference/admin-api). It can be distributed with the Spree API or as a standalone npm package, and it can be extended with plugins. The dashboard is built with modern React libraries and patterns, including:
+
+| Layer | Choice |
+|---|---|
+| Build & dev | [Vite](https://vitejs.dev/) |
+| Routing | [TanStack Router](https://tanstack.com/router) (file-based, type-safe) |
+| Data fetching | [TanStack Query](https://tanstack.com/query) |
+| Forms | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) |
+| UI primitives | [shadcn/ui](https://ui.shadcn.com/) + [Base UI](https://base-ui.com/) + [Tailwind CSS](https://tailwindcss.com/) |
+| Icons | [lucide-react](https://lucide.dev/) |
+| Charts | [Recharts](https://recharts.org/) |
+| Rich text | [Tiptap](https://tiptap.dev/) |
+| Notifications | [Sonner](https://sonner.emilkowal.ski/) |
+| Lint & format | [Biome](https://biomejs.dev/) |
+
+### Packages
+
+Dashboard consinsts of 3 NPM packages, each with a different purpose. You can import any of them in your host app or plugin package.
+
+| Package | What it contains | When you touch it |
+|---|---|---|
+| `@spree/dashboard-ui` | Design system: [shadcn](https://ui.shadcn.com/) primitives + headless composed components (`PageHeader`, `ResourceLayout`, `ResourceTable`'s rendering layer, etc.) + design tokens | Building custom UI — primitives + compounds you can drop anywhere |
+| `@spree/dashboard-core` | Framework: registries (nav, route, slot, table, settings-nav), providers (auth, permission, store), admin SDK client, infra hooks, the `defineDashboardPlugin` API | Extending the admin — every customization API lives here |
+| `@spree/dashboard` | The deployable SPA: routes, resource hooks, schemas, locale strings, app shell | Replacing or restyling specific routes (rare) |
+
+Most customization happens via `@spree/dashboard-core`. You import its registries from your own host-app code (or from a separate plugin package) to add nav entries, routes, slot widgets, table columns, and translations.
+
+You can also built your own dashboard using `@spree/dashboard-ui` primitives and `@spree/dashboard-core` registries, if you want to replace the default dashboard entirely. This is rare — most teams just add a few pages or cards to the existing dashboard.
+
+## Get the dashboard
+
+Your copy of the dashboard is a small Vite app (the "host app") that imports `<Dashboard />` from `@spree/dashboard` — you own its `package.json`, Vite config, and a `src/plugins.ts` for customizations. Two ways to get one:
+
+- **New project:** `npx create-spree-app my-store` — answer **Yes** to "Include React Dashboard?" and it lands in `apps/dashboard/`, pointed at your API.
+- **Existing project:** run `npx spree add dashboard` from your project root — same result.
+
+Either way: `cd apps/dashboard && npm run dev`, open http://localhost:5173, and sign in with your admin email and password. No API keys to configure — admins authenticate interactively.
+
+## Choose your path
+
+There are two ways to customize the dashboard. **Both use the same APIs** — the only difference is packaging.
+
+### 1. Customize in your host app (Recommended)
+
+You're building a Spree store and want a "Featured products" page or a custom card on every product detail. Edit your dashboard app directly — it ships a `src/plugins.ts` file for exactly this (in a `create-spree-app` project the dashboard app lives at `apps/dashboard/`):
+
+```tsx
+// src/plugins.ts — already imported by the app; just add your registrations
+import { defineDashboardPlugin } from '@spree/dashboard-core'
+import { MyAnalyticsPage } from './pages/analytics'
+
+defineDashboardPlugin({
+  nav: [{ key: 'analytics', label: 'Analytics', path: '/analytics', position: 650 }],
+  routes: [{ key: 'analytics', path: '/analytics', component: MyAnalyticsPage }],
+})
+```
+
+That's the entire setup. No npm publishing, no peer dependencies, no build configuration — you're inside the app's own build, so styling and hot reload just work. Most teams stop here.
+
+→ Start at the [**customization quickstart**](/developer/dashboard/customization/quickstart).
+
+### 2. Ship a redistributable plugin
+
+You're building a feature that multiple Spree stores will install — a Brands gem, a Wishlists integration, a Stripe Tax connector. Package the customization as an npm module so any host app can install it with a single `pnpm add my-plugin`.
+
+This adds three concerns on top of in-app customization:
+
+- **Peer-dependency rules** so your plugin's `@spree/dashboard-core` resolves to the host's instance (registries are module singletons — see [Publishing](/developer/dashboard/plugins/publishing))
+- **Auto-discovery** — the dashboard's build finds every installed dependency carrying the `spree.dashboard.plugin` marker, activates it, and wires up its styling. Installing a plugin is `pnpm add` + a dev-server restart; nothing to edit. See [Distributing](/developer/dashboard/plugins/distributing) for how it works and the explicit-whitelist escape hatch.
+- **File routes** — a plugin ships its pages as TanStack file routes that get compiled into the app's route tree, so links to plugin pages are fully type-checked. See [Routes](/developer/dashboard/customization/routes). (In-app customizations use the simpler `routes:` registry instead, as above.)
+- **A backend half** — a Rails extension gem that ships the API endpoints your dashboard plugin calls
+
+The `@spree/cli` scaffolds the dashboard half for you:
+
+```bash
+npx @spree/cli plugin new my-feature
+```
+
+→ Start at the [**plugin scaffolding guide**](/developer/dashboard/plugins/scaffolding).
+
+## Which one should I pick?
+
+Use this rule of thumb:
+
+- **Customize in-app** if the feature is store-specific (your branding, your team's workflow, your custom domain logic) or you don't yet know whether others would want it. The cost to "promote" it to a plugin later is small.
+- **Ship a plugin** if you're certain others will install it (you're publishing to the marketplace, your agency is rolling it out across clients, the feature has a clear standalone identity).
+
+When in doubt, customize in-app first. The migration path to a plugin is mechanical — same APIs, just wrapped in their own package.
+
+## Reference
+
+- [Customization quickstart](/developer/dashboard/customization/quickstart)
+- [Plugin scaffolding](/developer/dashboard/plugins/scaffolding)
+- [Slots catalog](/developer/dashboard/slots-catalog) — every named slot the dashboard exposes
+- [`@spree/dashboard-core` README](https://github.com/spree/spree/tree/main/packages/dashboard-core) — full extension API reference
+- [Classic Admin extension model](/developer/admin/extending-ui) — for Spree 5.x

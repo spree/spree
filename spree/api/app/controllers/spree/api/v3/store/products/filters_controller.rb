@@ -14,15 +14,16 @@ module Spree
                   filters: (search_filters || {}).merge('_category' => category, '_collection' => collection)
                 )
 
-                {
-                  filters: result.filters,
-                  sort_options: result.sort_options,
-                  default_sort: result.default_sort,
-                  total_count: result.total_count
-                }
+                serialize_resource(result)
               end
 
               render json: json
+            end
+
+            protected
+
+            def serializer_class
+              Spree.api.product_filters_serializer
             end
 
             private

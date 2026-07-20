@@ -2,18 +2,46 @@ module Spree
   class BaseMailer < ActionMailer::Base
     helper Spree::ImagesHelper
 
+    default from: -> { from_address }, reply_to: -> { reply_to_address }
+
     def current_store
       @current_store ||= @order&.store.presence || Spree::Store.current || Spree::Store.default
     end
 
     helper_method :current_store
 
+    # Render an email in the given locale, with the store's translation fallbacks
+    # active, and restore both afterwards. Controllers set these fallbacks per
+    # request via `set_fallback_locale`, but mailers run in background jobs where
+    # that never happens — so without this, translatable attributes (store name,
+    # product names, taxon names, …) return nil under a non-default locale and
+    # leave e.g. the footer blank. Setting the fallbacks here mirrors a request,
+    # so reads fall back to the store's default-locale value.
+    #
+    # @param store [Spree::Store]
+    # @param locale [String, Symbol, nil] defaults to the store's default locale
+    def with_store_locale(store, locale = nil, &block)
+      locale = locale.presence || store&.default_locale
+      return yield if locale.blank?
+
+      previous_fallbacks = Mobility.store_based_fallbacks
+      previously_active = @_store_locale_active
+      @_store_locale_active = true
+      begin
+        Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) if store
+        I18n.with_locale(locale, &block)
+      ensure
+        @_store_locale_active = previously_active
+        Mobility.store_based_fallbacks = previous_fallbacks
+      end
+    end
+
     def from_address
       current_store.mail_from_address
     end
 
     def reply_to_address
-      current_store.mail_from_address
+      current_store.customer_support_email.presence || current_store.mail_from_address
     end
 
     def money(amount, currency = nil)
@@ -29,8 +57,50 @@ module Spree
 
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host(headers[:store_url])
-      set_email_locale
-      super if Spree::Config[:send_core_emails]
+      return unless Spree::Config[:send_core_emails]
+
+      if @_store_locale_active
+        super
+      else
+        # Subclasses that call `mail` without wrapping their action in
+        # `with_store_locale` (e.g. Devise mailers, extensions) still get the
+        # store default locale, as `mail` applied before Spree 5.6.
+        with_store_locale(current_store) { super }
+      end
+    end
+
+    # @deprecated Each mailer action now wraps its body in {#with_store_locale},
+    #   which also activates the store's translation fallbacks and restores the
+    #   previous locale afterwards. This method mutates `I18n.locale` for the rest
+    #   of the thread without restoring it. Will be removed in Spree 6.0.
+    def set_email_locale
+      Spree::Deprecation.warn(
+        'Spree::BaseMailer#set_email_locale is deprecated and will be removed in Spree 6.0. ' \
+        'Wrap the mailer action body in `with_store_locale(store, locale) { ... }` instead.'
+      )
+      locale = @order&.locale.presence || @order&.store&.default_locale || current_store&.default_locale
+      I18n.locale = locale if locale.present?
+    end
+
+    protected
+
+    # The "<store> <subject> #<number>" subject line shared by customer-facing
+    # order emails, with the optional [RESEND] prefix.
+    def order_email_subject(store, subject, number, resend: false)
+      "#{resend ? "[#{Spree.t(:resend).upcase}] " : ''}#{store.name} #{subject} ##{number}"
+    end
+
+    # URI-based merge preserves existing query params and fragments so the token
+    # doesn't get swallowed by a `#section` or clobber an existing `?source=`.
+    def append_token(url, token)
+      uri = URI.parse(url.to_s)
+      params = URI.decode_www_form(uri.query || '')
+      params << ['token', token.to_s]
+      uri.query = URI.encode_www_form(params)
+      uri.to_s
+    rescue URI::InvalidURIError
+      separator = url.include?('?') ? '&' : '?'
+      "#{url}#{separator}token=#{CGI.escape(token.to_s)}"
     end
 
     private
@@ -45,14 +115,6 @@ module Spree
 
       ActionMailer::Base.default_url_options ||= {}
       ActionMailer::Base.default_url_options[:host] = host_url
-    end
-
-    # Sets the I18n locale for the email.
-    # Prefers the order's locale (the language the customer used),
-    # falls back to the store's default locale.
-    def set_email_locale
-      locale = @order&.locale.presence || @order&.store&.default_locale || current_store&.default_locale
-      I18n.locale = locale if locale.present?
     end
   end
 end

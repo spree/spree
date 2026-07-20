@@ -35,6 +35,14 @@ module Spree
               end
             end
 
+            # DELETE /api/v3/store/customers/me/addresses/:id
+            def destroy
+              @resource.destroy!
+              head :no_content
+            rescue ActiveRecord::RecordNotDestroyed => e
+              render_validation_error(e.record.errors.presence || e.message)
+            end
+
             protected
 
             def set_parent

@@ -2,8 +2,11 @@ import { Button, Card, CardContent, CardHeader, CardTitle } from '@spree/dashboa
 import { LanguagesIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ResourceTranslationsDialog } from '@/components/spree/translations/resource-translations-dialog'
-import { type TranslatableResourceType, useResourceTranslations } from '@/hooks/use-translations'
+import {
+  type TranslatableResourceType,
+  useResourceTranslations,
+} from '../../../hooks/use-translations'
+import { ResourceTranslationsDialog } from './resource-translations-dialog'
 
 interface ResourceTranslationsCardProps {
   /** Public resource token, e.g. `product`, `category`, `option_type`. */

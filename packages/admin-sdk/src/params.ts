@@ -12,6 +12,8 @@ export interface StoreUpdateParams {
    * `login_required`. Channels fall back to this when they don't set their own.
    */
   preferred_storefront_access?: string
+  /** The storefront's public URL — base for customer-email links; saving it also completes the storefront setup task. */
+  preferred_storefront_url?: string | null
   /** Store-wide default for guest checkout. Channels fall back to this. */
   preferred_guest_checkout?: boolean
   /** Sender address used on all transactional emails (required by the model). */
@@ -93,7 +95,11 @@ export interface RefundCreateParams {
 export interface FulfillmentCreateParams {
   /** Stock location the fulfillment ships from */
   stock_location_id: string
-  /** Carrier tracking number */
+  /**
+   * Carrier tracking number, or a full `https://` tracking link — a full URL
+   * is served back as `tracking_url` unchanged instead of being templated
+   * into the delivery method's tracking URL.
+   */
   tracking?: string
   /**
    * Delivery method (carrier) attached as the selected rate. Defaults to the
@@ -118,6 +124,7 @@ export interface FulfillmentCreateParams {
 }
 
 export interface FulfillmentUpdateParams {
+  /** Carrier tracking number or a full `https://` tracking link; see {@link FulfillmentCreateParams.tracking} */
   tracking?: string
   selected_delivery_rate_id?: string
 }
@@ -591,6 +598,23 @@ export interface InvitationAcceptParams {
   password_confirmation?: string
   first_name?: string
   last_name?: string
+}
+
+/** Body for requesting a password reset email. */
+export interface PasswordResetRequestParams {
+  email: string
+  /**
+   * Page the emailed reset link should point at (the reset token is appended
+   * as a `token` query param). Must match one of the store's allowed origins,
+   * otherwise it is ignored and the server-side default is used.
+   */
+  redirect_url?: string
+}
+
+/** Body for consuming a password reset token and setting the new password. */
+export interface PasswordResetParams {
+  password: string
+  password_confirmation: string
 }
 
 export interface AdminUserUpdateParams {
@@ -1075,6 +1099,51 @@ export interface ExportCreateParams {
    * server and exports every record in scope.
    */
   record_selection?: 'filtered' | 'all'
+  /**
+   * Absolute URL of your admin's exports view; the export-done email uses it
+   * as the download button target. Only honored when it matches one of the
+   * store's configured allowed origins.
+   */
+  results_url?: string
+}
+
+export type ImportType =
+  | 'Spree::Imports::Products'
+  | 'Spree::Imports::Customers'
+  | 'Spree::Imports::ProductTranslations'
+  | (string & {})
+
+export interface ImportCreateParams {
+  /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
+  type: ImportType
+  /**
+   * ActiveStorage signed blob id of the uploaded CSV, obtained from
+   * `client.directUploads.create()` (or the `useDirectUpload` hook).
+   */
+  attachment: string
+  /** CSV column separator. Defaults to a comma on the server. */
+  preferred_delimiter?: ',' | ';' | '|' | '\t'
+  /**
+   * Absolute URL of the dashboard's imports view; the import-done email
+   * links back to it with `?import=<id>` appended. Only honored when it
+   * matches one of the store's configured allowed origins.
+   */
+  results_url?: string
+}
+
+export interface ImportMappingParam {
+  /** Canonical schema field name (see `Import.schema_fields[].name`). */
+  schema_field: string
+  /** CSV header to read the field from; `null` unmaps the field. */
+  file_column: string | null
+}
+
+export interface ImportCompleteMappingParams {
+  /**
+   * Column assignments to apply before processing starts. Omit to accept
+   * the auto-assigned mappings from the create response.
+   */
+  mappings?: ImportMappingParam[]
 }
 
 /**

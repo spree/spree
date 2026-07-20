@@ -1,73 +1,59 @@
 ---
 title: Render
-description: Deploy Spree to Render with one click.
+description: Deploy your Spree project to Render — one Docker service, one Postgres.
 ---
 
-## One-Click Deploy
+## Overview
 
-The fastest way to get Spree running on Render:
+Every [create-spree-app](/developer/create-spree-app/quickstart) project ships a ready Render Blueprint (`render.yaml` at the project root). It deploys the whole app in the [single-node topology](/developer/deployment/quickstart#single-node-vs-distributed): **one Docker service built straight from your repository** plus a managed PostgreSQL — nothing else:
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/spree/spree-starter)
+- **Web** — one container running the Spree API and background jobs
+- **PostgreSQL** — the only backing service
 
-This creates all required services automatically:
+Migrations run automatically on boot. Render builds the same image `spree build --production` builds locally.
 
-- **Web** — Rails app serving the API and admin panel
-- **Worker** — Sidekiq for background jobs
-- **PostgreSQL** — database
-- **Redis** — caching, jobs, Action Cable
+<Tip>
+Just evaluating Spree? Skip self-hosting entirely and use a hosted sandbox at [spreecommerce.org](https://spreecommerce.org).
+</Tip>
 
-The database is seeded on first deploy. Your store is ready in a few minutes.
+## Deploying
 
-## Prerequisites
+1. Push your create-spree-app project to GitHub
+2. In the Render dashboard, click **New** → **Blueprint** and select your repository
+3. Render reads `render.yaml` and creates the services. Review and click **Deploy Blueprint**.
 
-- [Render account](https://render.com) with a credit card on file
-- [GitHub account](https://github.com)
-
-## Custom Deployment
-
-If you need to customize the backend (add gems, models, etc.), start from the [Spree Starter](https://github.com/spree/spree-starter) template:
-
-1. Go to [spree/spree-starter](https://github.com/spree/spree-starter) and click **Use this template** > **Create a new repository**
-
-2. Clone your new repository and make your changes
-
-3. In the Render dashboard, click **New** > **Blueprint** and select your repository
-
-4. Render reads the `render.yaml` from your repo and creates all services. Review and click **Deploy Blueprint**.
-
-The included [`render.yaml`](https://github.com/spree/spree-starter/blob/main/render.yaml) handles:
-- Build: `bundle install`, asset precompilation, `db:prepare`, `db:seed`
-- Web: Puma with health check on `/up`
-- Worker: Sidekiq with shared `SECRET_KEY_BASE`
-- PostgreSQL 18 and Redis
+The database is seeded on first boot. Your store is ready in a few minutes — including any customizations, since the image builds from your repository.
 
 ## After Deployment
 
-### Admin Dashboard
-
-Access your admin panel at:
+### Admin
 
 ```
-https://<your-app-name>.onrender.com/admin
+https://<your-app-name>.onrender.com/admin        # admin panel
+https://<your-app-name>.onrender.com/jobs         # background jobs dashboard
 ```
 
-Default credentials are created during `db:seed`. Change them immediately after first login.
+Default credentials are created during seeding. Change them immediately after first login.
+
+The `/jobs` dashboard uses HTTP Basic auth: user `jobs`, with a password the Blueprint generates — read it in the Render dashboard under the web service's **Environment** tab (`MISSION_CONTROL_PASSWORD`).
 
 ### Environment Variables
 
-Render sets `DATABASE_URL`, `REDIS_URL`, and `SECRET_KEY_BASE` automatically from the blueprint. For additional configuration (SMTP, file storage, Sentry, etc.), see [Environment Variables](/developer/deployment/environment_variables).
+Render sets `DATABASE_URL` and `SECRET_KEY_BASE` automatically from the Blueprint. For additional configuration (SMTP, file storage, Sentry, etc.), see [Environment Variables](/developer/deployment/environment_variables).
 
-## Production Sizing
+Generated URLs (images and attachments in API responses, email links) automatically use Render's `RENDER_EXTERNAL_HOSTNAME` (`<your-app-name>.onrender.com`). When you attach a custom domain, set [`RAILS_HOST`](/developer/deployment/environment_variables#urls-and-hosts) to it — it takes precedence.
 
-The free/starter plans work for trying Spree. For production workloads, we recommend:
+## Scaling Out
+
+The Blueprint's commented **worker** block switches to [split mode](/developer/deployment/quickstart#web-and-worker): background jobs move into a dedicated service — same image, no rebuild. Uncomment it and set `SOLID_QUEUE_IN_PUMA=false` on the web service so it stops running jobs.
+
+For production workloads, we recommend:
 
 | Service | Plan | Resources | Auto-scaling |
 |---|---|---|---|
 | **Web** | Pro | 4 GB RAM, 2 CPU | 1–2 instances |
-| **Worker** | Standard | 2 GB RAM, 1 CPU | — |
+| **Worker** (optional split) | Standard | 2 GB RAM, 1 CPU | — |
 | **PostgreSQL** | Pro 4 GB | 4 GB RAM, 1 CPU | — |
-| **Redis** (jobs) | Standard | 1 GB RAM | — |
-| **Redis** (cache) | Standard | 1 GB RAM | — |
 
 To enable auto-scaling, add this to the web service in your `render.yaml`:
 
@@ -82,6 +68,8 @@ To enable auto-scaling, add this to the web service in your `render.yaml`:
     targetCPUPercent: 80
 ```
 
+High-traffic installs can additionally swap [caching](/developer/deployment/caching) to a managed Redis/Valkey — the default needs no extra service.
+
 ## Next Steps
 
 Render provides ephemeral storage — uploaded files (product images, etc.) won't persist across deploys. Set up cloud storage:
@@ -93,3 +81,5 @@ Before going to production:
 - [Set environment variables](/developer/deployment/environment_variables) (SMTP, SSL, etc.)
 - [Configure CDN](/developer/deployment/cdn)
 - [Configure caching](/developer/deployment/caching)
+
+Deploying a storefront? The Next.js storefront ships separately — typically to Vercel. See [Storefront Deployment](/developer/storefront/nextjs/deployment).

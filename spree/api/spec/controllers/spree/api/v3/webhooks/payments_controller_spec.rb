@@ -55,7 +55,7 @@ RSpec.describe Spree::Api::V3::Webhooks::PaymentsController, type: :controller d
 
     context 'when payment method belongs to a different store' do
       let(:other_store) { create(:store) }
-      let(:other_payment_method) { create(:bogus_payment_method, stores: [other_store]) }
+      let(:other_payment_method) { create(:bogus_payment_method, store: other_store) }
 
       it 'returns not found' do
         post :create, params: { payment_method_id: other_payment_method.prefixed_id }

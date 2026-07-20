@@ -110,4 +110,69 @@ describe('newsletterSubscribers', () => {
       expect(capturedBody.token).toBe('verify-token-xyz')
     })
   })
+
+  describe('requestUnsubscribe', () => {
+    it('resolves on the always-202 response', async () => {
+      await expect(
+        client.newsletterSubscribers.requestUnsubscribe({ email: 'subscriber@example.com' }),
+      ).resolves.toBeUndefined()
+    })
+
+    it('sends the email and redirect_url in the request body', async () => {
+      let capturedBody: Record<string, unknown> = {}
+      server.use(
+        http.post(
+          `${API_PREFIX}/newsletter_subscribers/request_unsubscribe`,
+          async ({ request }) => {
+            capturedBody = (await request.json()) as Record<string, unknown>
+            return new HttpResponse(null, { status: 202 })
+          },
+        ),
+      )
+
+      await client.newsletterSubscribers.requestUnsubscribe({
+        email: 'subscriber@example.com',
+        redirect_url: 'https://storefront.example.com/newsletter/unsubscribed',
+      })
+
+      expect(capturedBody.email).toBe('subscriber@example.com')
+      expect(capturedBody.redirect_url).toBe(
+        'https://storefront.example.com/newsletter/unsubscribed',
+      )
+    })
+  })
+
+  describe('delete', () => {
+    it('unsubscribes with an unsubscribe token as a query param', async () => {
+      let capturedUrl: URL | null = null
+      server.use(
+        http.delete(`${API_PREFIX}/newsletter_subscribers/:id`, ({ request }) => {
+          capturedUrl = new URL(request.url)
+          return new HttpResponse(null, { status: 204 })
+        }),
+      )
+
+      await client.newsletterSubscribers.delete('sub_1', { token: 'unsubscribe-token-xyz' })
+
+      expect(capturedUrl?.pathname).toBe('/api/v3/store/newsletter_subscribers/sub_1')
+      expect(capturedUrl?.searchParams.get('token')).toBe('unsubscribe-token-xyz')
+    })
+
+    it('unsubscribes an authenticated customer via JWT without a token param', async () => {
+      let capturedAuth: string | null = null
+      let capturedUrl: URL | null = null
+      server.use(
+        http.delete(`${API_PREFIX}/newsletter_subscribers/:id`, ({ request }) => {
+          capturedAuth = request.headers.get('Authorization')
+          capturedUrl = new URL(request.url)
+          return new HttpResponse(null, { status: 204 })
+        }),
+      )
+
+      await client.newsletterSubscribers.delete('sub_1', undefined, { token: 'user-jwt' })
+
+      expect(capturedAuth).toBe('Bearer user-jwt')
+      expect(capturedUrl?.searchParams.has('token')).toBe(false)
+    })
+  })
 })

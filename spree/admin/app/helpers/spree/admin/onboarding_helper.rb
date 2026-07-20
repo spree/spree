@@ -10,7 +10,7 @@ module Spree
         if condition == true
           icon('check', class: 'rounded-full inline-flex items-center bg-green-200 text-green-600 border-green-200 p-1')
         else
-          icon('check', class: 'rounded-full inline-flex items-center border-dashed text-gray-300 p-1')
+          icon('circle-dashed-check', class: 'rounded-full inline-flex items-center border-dashed text-gray-300 p-1')
         end.html_safe
       end
     end

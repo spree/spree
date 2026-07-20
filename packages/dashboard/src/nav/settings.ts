@@ -9,6 +9,7 @@ import {
   RadioTowerIcon,
   StoreIcon,
   TagIcon,
+  UploadIcon,
   UsersRoundIcon,
   WarehouseIcon,
   WebhookIcon,
@@ -29,6 +30,7 @@ settingsNav.addGroup({
   labelKey: 'admin.settings_nav.groups.fulfillment',
   position: 200,
 })
+settingsNav.addGroup({ key: 'audit', labelKey: 'admin.settings_nav.groups.audit', position: 250 })
 settingsNav.addGroup({ key: 'team', labelKey: 'admin.settings_nav.groups.team', position: 300 })
 
 settingsNav.add({
@@ -149,4 +151,15 @@ settingsNav.add({
   group: 'team',
   position: 300,
   subject: Subject.AllowedOrigin,
+})
+
+// No `subject`: the page spans import types and the API already filters what
+// the caller can see.
+settingsNav.add({
+  key: 'settings.imports',
+  labelKey: 'admin.settings_nav.items.imports',
+  path: '/imports',
+  icon: UploadIcon,
+  group: 'audit',
+  position: 100,
 })

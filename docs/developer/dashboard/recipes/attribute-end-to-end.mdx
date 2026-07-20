@@ -1,0 +1,213 @@
+---
+title: "A product attribute, end to end: form, table, filters, sort"
+sidebarTitle: Attribute end-to-end
+description: Take one custom product attribute all the way — editable on the product form, visible as a table column, filterable and sortable in the products list.
+---
+
+This recipe adds a **supplier lead time** (`lead_time_days`, an integer) to products and wires it through every surface the dashboard has:
+
+- edited on the product form, saved by the form's own Save button
+- a column in the products table
+- a filter ("lead time > 7 days") and a sort ("slowest first") in the list toolbar
+
+It's the full version of the [custom form field recipe](/developer/dashboard/recipes/custom-form-field) — read that one first if you only need the form.
+
+## First: should this be a custom field instead?
+
+**Default to a [custom field definition](/developer/dashboard/recipes/custom-form-field#path-a-custom-field-definition--no-code).** It needs zero code — declare the field, and the product form renders and saves it. That covers most plugin data and everything merchants define themselves.
+
+Graduate to a real database column only when the attribute needs **list operations or database guarantees**:
+
+| You need… | Custom field | Real column |
+|---|---|---|
+| Editing on the product form | ✅ zero code | ✅ this recipe |
+| Filtering / sorting the products list in Admin | ❌ | ✅ via Ransack |
+| Merchants defining the field themselves at runtime | ✅ | ❌ |
+
+Lead time is a column because its whole point is the query: *"show me everything that ships slow, slowest first."*
+
+## 1. Backend
+
+Four small pieces — each one unlocks a specific frontend capability. In a host app these live in `backend/` (or `api/`); in a distributed plugin, in the Rails engine half.
+
+**The column** (with an index — you're adding it *because* it will be queried):
+
+```ruby
+class AddLeadTimeDaysToSpreeProducts < ActiveRecord::Migration[7.2]
+  def change
+    add_column :spree_products, :lead_time_days, :integer
+    add_index :spree_products, :lead_time_days
+  end
+end
+```
+
+**The serializer** — makes the attribute *readable* (hydrates the form, renders the table cell):
+
+```ruby
+# app/serializers/admin/product_serializer.rb
+module Admin
+  class ProductSerializer < Spree::Api::V3::Admin::ProductSerializer
+    attributes :lead_time_days
+  end
+end
+
+# config/initializers/spree.rb
+Spree.api.admin_product_serializer = 'Admin::ProductSerializer'
+```
+
+**The permitted param** — makes it *writable* (the form's Save ships it in the same PATCH as core fields). The read and write names must match:
+
+```ruby
+# app/controllers/spree/api/v3/admin/products_controller_decorator.rb
+module Spree
+  module Api
+    module V3
+      module Admin
+        module ProductsControllerDecorator
+          def permitted_params
+            super.merge(params.permit(:lead_time_days))
+          end
+        end
+
+        ProductsController.prepend(ProductsControllerDecorator)
+      end
+    end
+  end
+end
+```
+
+**The Ransack allowlist** — makes it *filterable and sortable*. Both the list's sort param and every filter predicate go through Ransack, and Ransack refuses attributes that aren't allowlisted:
+
+```ruby
+# config/initializers/spree.rb
+Spree::Product.whitelisted_ransackable_attributes |= %w[lead_time_days]
+```
+
+Add a Rails validation while you're here (`validates :lead_time_days, numericality: { greater_than_or_equal_to: 0, allow_nil: true }`) — it's the authoritative validation, and the dashboard renders its 422 message inline on the field automatically.
+
+## 2. Frontend — one declaration
+
+```tsx
+// src/plugins.ts (or a plugin's entry module)
+import { defineDashboardPlugin, i18n } from '@spree/dashboard-core'
+import { LeadTimeCard } from './fields/lead-time-card'
+import en from './locales/en.json'
+
+i18n.addResourceBundle('en', 'translation', en, true, true)
+
+defineDashboardPlugin({
+  // Form: hydrate from the fetched product, save with the form's own Save.
+  formFields: {
+    product: [{ name: 'lead_time_days', from: (p) => p?.lead_time_days ?? null }],
+  },
+  slots: {
+    'product.form_sidebar': [{ id: 'lead-time', component: LeadTimeCard as never, position: 60 }],
+  },
+
+  // Table: column + filter + sort in one ColumnDef.
+  tables: {
+    products: {
+      add: [{
+        key: 'lead_time_days',
+        label: i18n.t('admin.fields.product.lead_time_days.label'),
+        sortable: true,       // header click → server-side sort via Ransack
+        filterable: true,     // appears in the filter panel
+        filterType: 'number', // numeric operator set: =, ≠, >, <, ranges
+        default: true,        // visible out of the box (false = opt-in via column picker)
+        render: (product) => (product.lead_time_days != null ? `${product.lead_time_days} d` : '—'),
+      }],
+    },
+  },
+})
+```
+
+The form widget binds to the host form — no `<form>` of its own, no save button:
+
+```tsx
+// src/fields/lead-time-card.tsx
+import { useHostForm } from '@spree/dashboard-core'
+import { Card, CardContent, CardHeader, CardTitle, Field, FieldError, FieldLabel, Input } from '@spree/dashboard-ui'
+import { useTranslation } from 'react-i18next'
+
+export function LeadTimeCard() {
+  const { t } = useTranslation()
+  const form = useHostForm<{ lead_time_days: number | null }>()
+  const error = form.formState.errors.lead_time_days?.message
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.fields.product.lead_time_days.label')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Field>
+          <FieldLabel className="sr-only" htmlFor="lead_time_days">
+            {t('admin.fields.product.lead_time_days.label')}
+          </FieldLabel>
+          <Input
+            id="lead_time_days"
+            type="number"
+            min={0}
+            placeholder={t('admin.fields.product.lead_time_days.placeholder')}
+            aria-invalid={Boolean(error)}
+            {...form.register('lead_time_days', {
+              // Empty input → null (not NaN, not "") so the API gets a clean value.
+              setValueAs: (v) => (v === '' || v == null ? null : Number(v)),
+            })}
+          />
+          {error && <FieldError>{error as string}</FieldError>}
+        </Field>
+      </CardContent>
+    </Card>
+  )
+}
+```
+
+```json
+// src/locales/en.json — note the top-level "admin" wrapper
+{
+  "admin": {
+    "fields": {
+      "product": {
+        "lead_time_days": {
+          "label": "Lead time (days)",
+          "placeholder": "e.g. 14"
+        }
+      }
+    }
+  }
+}
+```
+
+## 3. Verify it
+
+API first — the fastest way to confirm the backend pieces:
+
+```bash
+# write (permitted param + validation)
+npx spree api patch products/prod_xxx --data '{"lead_time_days": 14}'
+
+# filter + sort (Ransack allowlist)
+npx spree api get "products?q[lead_time_days_gt]=7&sort=-lead_time_days"
+```
+
+Then the UI: open a product — the Lead time card sits in the sidebar; edit it and the page's Save button arms; save and reload. On the products list the column renders, the header sorts, and the filter panel offers the numeric operators. Filters and sort round-trip through the URL — a filtered view is shareable — and a CSV export of the filtered list respects your filter, because the export stores the same Ransack predicate hash.
+
+## How the pieces map
+
+| Frontend behavior | Made possible by |
+|---|---|
+| Form input hydrates + saves with the page | serializer attribute + permitted param + `formFields`/`useHostForm` |
+| Table cell renders | serializer attribute + `ColumnDef.render` |
+| Header sort works | `sortable: true` + Ransack allowlist |
+| Filter panel entry works | `filterable: true` + `filterType` + Ransack allowlist |
+| Inline validation message | the Rails validation (422 → mapped onto the field) |
+
+Two `ColumnDef` extras worth knowing: `ransackAttribute` points the predicate somewhere other than the column key (the built-in `sku` column filters through `master_sku`), and `displayable: false` makes a filter-only field that never renders as a column.
+
+## Reference
+
+- [Custom form field recipe](/developer/dashboard/recipes/custom-form-field) — the form layer in isolation, and the custom-field-definition path
+- [Tables](/developer/dashboard/customization/tables) — the full `ColumnDef` and table registry API
+- [Backend integration](/developer/dashboard/customization/backend) — serializers, permitted params, error mapping
+- [Decorators](/developer/customization/decorators) — the `prepend` pattern used for the controller

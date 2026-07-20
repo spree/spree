@@ -3,7 +3,7 @@ import { RelativeTime, StatusBadge, TagList } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { ShoppingCartIcon } from 'lucide-react'
-import { channelAutocompleteProps } from '@/hooks/use-channels'
+import { channelAutocompleteProps } from '../hooks/use-channels'
 
 /**
  * Localized label for an order status code, resolved from the given namespace

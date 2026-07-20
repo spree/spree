@@ -631,6 +631,34 @@ export class StoreClient {
         ...options,
         body: params,
       }),
+
+    /**
+     * Request an unsubscribe link for an email address. When a subscriber
+     * exists, a `newsletter_subscriber.unsubscribe_requested` webhook event
+     * fires carrying the unsubscribe token; the response is always 202 to
+     * prevent email enumeration. `redirect_url` is dropped from the webhook
+     * payload when it's not in the store's allowed origins.
+     */
+    requestUnsubscribe: (
+      params: { email: string; redirect_url?: string },
+      options?: RequestOptions,
+    ): Promise<void> =>
+      this.request<void>('POST', '/newsletter_subscribers/request_unsubscribe', {
+        ...options,
+        body: params,
+      }),
+
+    /**
+     * Unsubscribe from the newsletter. Pass a JWT via `options.token` for a
+     * signed-in customer removing their own subscription (its id comes from
+     * `customer.newsletter_subscriber` on GET /customers/me), or
+     * `params.token` with the unsubscribe token from an email link.
+     */
+    delete: (id: string, params?: { token?: string }, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/newsletter_subscribers/${id}`, {
+        ...options,
+        params: params?.token ? { token: params.token } : undefined,
+      }),
   }
 
   readonly customer = {

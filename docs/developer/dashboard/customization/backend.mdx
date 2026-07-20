@@ -1,0 +1,126 @@
+---
+title: Backend integration
+sidebarTitle: Backend integration
+description: Talk to your own (or Spree's) Admin API from the dashboard — typed SDK calls, custom endpoints, prefixed IDs, error handling, and React-Query hooks.
+---
+
+The dashboard never reaches into Rails models or fetches HTML. All data flows through `@spree/admin-sdk` — a typed Admin API client. This page covers the patterns: calling existing endpoints, adding new ones, handling errors, and wrapping it all in React-Query hooks for caching.
+
+## The `adminClient`
+
+The SPA boots a single `adminClient` instance and exposes it from `@spree/dashboard-core`. Resource methods follow `client.<resource>.<verb>()`:
+
+```ts
+import { adminClient } from '@spree/dashboard-core'
+
+await adminClient.products.list({ filter: { name_cont: 'shirt' } })
+await adminClient.products.get('prod_86Rf07xd4z', { expand: ['variants'] })
+await adminClient.products.create({ name: 'New product' })
+await adminClient.products.update('prod_86Rf07xd4z', { name: 'Renamed' })
+await adminClient.products.delete('prod_86Rf07xd4z')
+```
+
+All IDs are [prefixed](/api-reference/admin-api/querying) — pass them in, get them out. The SDK never coerces to integers.
+
+## Custom endpoints
+
+When you've added an endpoint to `spree/api` that the SDK doesn't model yet (host-app routes, an in-development feature, a custom controller), use the public `request<T>()` escape hatch:
+
+```ts
+import type { AdminBrand } from './types'
+
+const data = await adminClient.request<{ data: AdminBrand[] }>(
+  'GET',
+  '/brands',
+  { params: { 'filter[name_cont]': 'nike' } },
+)
+```
+
+It accepts:
+
+- `method` — `'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'`
+- `path` — relative to `/api/v3/admin` (so `/brands` hits `/api/v3/admin/brands`)
+- `body` — JSON-stringified for non-GET requests
+- `params` — query string
+
+Resource methods are just `request<T>()` calls with the right path + types pre-bound. When you publish your customization or generate types from your serializer, you can promote the inline call to a typed wrapper.
+
+## React-Query hooks
+
+The dashboard's data layer is React-Query — every `useFoo` hook is `useQuery({ queryKey, queryFn })` over an SDK call. Follow the same pattern for your own data:
+
+```ts
+import { adminClient } from '@spree/dashboard-core'
+import { useQuery } from '@tanstack/react-query'
+import type { AdminBrand } from './types'
+
+export function useBrands(params?: { search?: string }) {
+  return useQuery({
+    queryKey: ['brands', params],
+    queryFn: () =>
+      adminClient.request<{ data: AdminBrand[] }>('GET', '/brands', { params }),
+    staleTime: 30_000,
+  })
+}
+```
+
+For mutations, prefer the existing `useResourceMutation` helper — it wires up the SDK's error shape, the 422 silencer, and the toast for non-validation errors:
+
+```ts
+import { useResourceMutation } from '@spree/dashboard-core'
+
+export function useUpdateBrand(id: string) {
+  return useResourceMutation({
+    mutationFn: (body: Partial<AdminBrand>) =>
+      adminClient.request<{ data: AdminBrand }>('PATCH', `/brands/${id}`, { body }),
+    invalidate: [['brands'], ['brand', id]],
+  })
+}
+```
+
+The `invalidate` array refetches dependent queries on success.
+
+## Error handling
+
+The SDK throws `SpreeError` for non-2xx responses. The error carries `status`, `code`, and `details` — the last contains the Rails error hash for 422s.
+
+```ts
+import { SpreeError } from '@spree/admin-sdk'
+
+try {
+  await adminClient.products.update(id, payload)
+} catch (err) {
+  if (err instanceof SpreeError && err.status === 422) {
+    console.log(err.details) // { name: ["can't be blank"] }
+  }
+  throw err
+}
+```
+
+In a React Hook Form submit handler, prefer the higher-level helper:
+
+```tsx
+import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
+
+async function handleSubmit(values: FormValues) {
+  try {
+    await mutation.mutateAsync(values)
+  } catch (err) {
+    if (!mapSpreeErrorsToForm(err, form.setError)) throw err
+  }
+}
+```
+
+`mapSpreeErrorsToForm` routes flat field errors onto `aria-invalid` `<FieldError>` blocks and `:base` errors onto `errors.root.message` for a destructive banner. Returns `true` if it handled the error; otherwise re-throw so the global toast catches it.
+
+## When to add a new endpoint
+
+Pretty much always, for anything non-trivial. If you're filtering, sorting, or aggregating across multiple resources, do it on the backend — the API can join, scope, and serialize correctly in one round-trip, whereas the dashboard would have to fan out N requests and stitch them together. See the backend customization docs for adding controllers, serializers, and authorization.
+
+## Reference
+
+- [Admin API reference](/api-reference/admin-api/introduction) — auth, querying, errors, and every endpoint
+- [`AdminClient.request`](https://github.com/spree/spree/blob/main/packages/admin-sdk/src/admin-client.ts) — full type
+- [`SpreeError`](https://github.com/spree/spree/blob/main/packages/sdk-core/src/errors.ts)
+- [`useResourceMutation`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/hooks/use-resource-mutation.ts)
+- [`mapSpreeErrorsToForm`](https://github.com/spree/spree/blob/main/packages/dashboard-core/src/lib/form-errors.ts)

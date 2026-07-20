@@ -146,6 +146,29 @@ module Spree
     alias discounted_money display_discounted_amount
     alias discounted_amount taxable_amount
 
+    # Returns the amount this line item is taxed on: the discounted amount
+    # reduced further by the line item's proportional share of any
+    # whole-order promotions, which are adjustments on the order itself and
+    # therefore not part of +taxable_adjustment_total+. Never negative.
+    #
+    # @return [BigDecimal]
+    def taxable_basis
+      basis = taxable_amount
+      return basis if basis <= 0
+
+      order_discount = order.order_level_promo_total
+      return basis if order_discount.zero?
+
+      # summed in SQL so the allocation uses the persisted adjustment totals
+      # of all line items, not a possibly stale cached association
+      items_total = order.line_items.reorder(nil).pick(
+        Arel.sql('COALESCE(SUM(price * quantity + taxable_adjustment_total), 0)')
+      )
+      return basis if items_total <= 0
+
+      [basis + (order_discount * basis / items_total), BigDecimal(0)].max
+    end
+
     # Returns the final amount of the line item
     #
     # @return [BigDecimal]

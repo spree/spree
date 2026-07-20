@@ -1,6 +1,6 @@
 import type { PaymentMethod, PreferenceField } from '@spree/admin-sdk'
 import type { UseFormReturn } from 'react-hook-form'
-import type { PaymentMethodFormValues } from '@/schemas/payment-method'
+import type { PaymentMethodFormValues } from '../../../schemas/payment-method'
 
 /**
  * Form-state row for a payment method — the in-flight values an editor

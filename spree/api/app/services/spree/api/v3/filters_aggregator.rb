@@ -89,9 +89,9 @@ module Spree
           type_ids = option_types.map(&:id)
 
           # Pluck only the columns we need — avoids instantiating thousands of AR models.
-          # Force default locale so Mobility returns column values (not translations);
+          # Force the content locale so Mobility returns column values (not translations);
           # translated labels are overlaid separately via load_option_value_translations.
-          ov_rows = Mobility.with_locale(I18n.default_locale) do
+          ov_rows = Mobility.with_locale(Spree::Current.content_locale) do
             Spree::OptionValue
               .where(option_type_id: type_ids)
               .order(:position)
@@ -146,10 +146,10 @@ module Spree
         end
 
         # Load translated presentations for option values.
-        # Returns { option_value_id => translated_presentation } or empty hash when using the default locale.
+        # Returns { option_value_id => translated_presentation } or empty hash when using the content locale.
         def load_option_value_translations(ov_ids)
           locale = Spree::Current.locale || I18n.locale.to_s
-          return {} if locale.to_s == I18n.default_locale.to_s
+          return {} if locale.to_s == Spree::Current.content_locale
 
           Spree::OptionValue::Translation
             .where(spree_option_value_id: ov_ids, locale: locale)

@@ -31,8 +31,14 @@
 //       ],
 //     })
 
+import type { CustomFieldComponent } from './lib/custom-field-components'
+import { customFieldComponents } from './lib/custom-field-components'
+import type { FormFieldRegistration } from './lib/form-fields-registry'
+import { formFields } from './lib/form-fields-registry'
 import type { NavEntry } from './lib/nav-registry'
 import { nav } from './lib/nav-registry'
+import type { RouteEntry } from './lib/route-registry'
+import { pluginRoutes } from './lib/route-registry'
 import type { SettingsNavEntry, SettingsNavGroup } from './lib/settings-nav-registry'
 import { settingsNav } from './lib/settings-nav-registry'
 import type { SlotEntry } from './lib/slot-registry'
@@ -49,23 +55,84 @@ export interface TableMutations {
   update?: Record<string, Partial<ColumnDef>>
 }
 
+export interface NavMutations {
+  /** Sidebar entries to add. Each must have a unique `key`. */
+  add?: NavEntry[]
+  /** Entry keys to remove — built-in or plugin. No-op when already gone. */
+  remove?: string[]
+  /**
+   * Patches keyed by entry key — reorder via `position`, rename via `label`,
+   * gate via `subject`. Throws when the key isn't registered, so patch only
+   * entries you know exist (built-ins register before any plugin runs).
+   */
+  update?: Record<string, Partial<Omit<NavEntry, 'key'>>>
+  /**
+   * Children to append under existing top-level entries, keyed by parent key
+   * — e.g. `{ products: [{ key: 'products.brands', … }] }` nests an item in
+   * the built-in Products menu. Preserves the parent's existing children.
+   * Throws when the parent is missing or a child key already exists there.
+   */
+  addChildren?: Record<string, NavEntry[]>
+}
+
+export interface SettingsNavMutations {
+  /** Settings sub-shell entries to add. */
+  add?: SettingsNavEntry[]
+  /** Entry keys to remove. No-op when already gone. */
+  remove?: string[]
+  /** Patches keyed by entry key. Throws when the key isn't registered. */
+  update?: Record<string, Partial<Omit<SettingsNavEntry, 'key'>>>
+}
+
 export interface DashboardPluginConfig {
-  /** Sidebar entries. Each must have a unique `key`. */
-  nav?: NavEntry[]
+  /**
+   * Sidebar entries. The array form adds entries; the object form also
+   * removes or patches existing ones (built-ins included):
+   *
+   *     nav: {
+   *       add: [{ key: 'reviews', label: 'Reviews', path: '/reviews' }],
+   *       remove: ['gift-cards'],
+   *       update: { products: { position: 10 } },
+   *     }
+   */
+  nav?: NavEntry[] | NavMutations
   /** Settings sub-shell groups (defined before any entry that uses the group key). */
   settingsNavGroups?: SettingsNavGroup[]
-  /** Settings sub-shell entries. */
-  settingsNav?: SettingsNavEntry[]
+  /** Settings sub-shell entries — array adds; object form also removes/patches. */
+  settingsNav?: SettingsNavEntry[] | SettingsNavMutations
   /** Slot extensions keyed by slot name. Each entry must have a unique `id`. */
   slots?: Record<string, SlotEntry[]>
   /** Table mutations keyed by table key (see `defineTable`). */
   tables?: Record<string, TableMutations>
+  /**
+   * Custom routes mounted under `/$storeId/`. Each entry's `path` is relative
+   * (e.g. `/brands`, `/brands/$brandId`). The dashboard's catch-all route at
+   * `/$storeId/*` dispatches based on the splat — your `component` renders
+   * exactly like any first-party route, including TanStack Router's
+   * `useParams()` for path params.
+   */
+  routes?: RouteEntry[]
+  /**
+   * Extension fields on built-in resource forms, keyed by form key (e.g.
+   * `'product'`). Each field hydrates from the fetched resource via `from`
+   * and persists through the form's own Save — render its input from a slot
+   * widget bound via `useHostForm()`.
+   */
+  formFields?: Record<string, FormFieldRegistration[]>
+  /**
+   * Input components for specific custom field definitions, keyed by the
+   * definition's `namespace.key` (e.g. `'specs.color'`). Replaces the
+   * default widget for that definition's `field_type` wherever the
+   * custom-fields card renders it.
+   */
+  customFieldComponents?: Record<string, CustomFieldComponent>
 }
 
 /**
  * Register all the extensions in `config` against the dashboard's registries.
- * Safe to call multiple times — each registry enforces uniqueness on its own
- * keys, so a duplicate `key`/`id` throws with a useful message.
+ * Call it once per plugin entry module — each registry enforces uniqueness on
+ * its keys, so re-running the same config (or colliding with another plugin's
+ * `key`/`id`) throws with a useful message rather than double-registering.
  *
  * Plugins typically call this once from their entry module (e.g.
  * `src/index.ts`). The dashboard app imports plugin entries during bootstrap.
@@ -90,7 +157,14 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
   }
 
   if (config.nav) {
-    for (const entry of config.nav) safely(nav.add, entry)
+    const m: NavMutations = Array.isArray(config.nav) ? { add: config.nav } : config.nav
+    // add before addChildren so a plugin can add a parent then nest under it.
+    for (const entry of m.add ?? []) safely(nav.add, entry)
+    for (const [parentKey, children] of Object.entries(m.addChildren ?? {})) {
+      for (const child of children) safely(nav.addChild, parentKey, child)
+    }
+    for (const key of m.remove ?? []) safely(nav.remove, key)
+    for (const [key, patch] of Object.entries(m.update ?? {})) safely(nav.update, key, patch)
   }
 
   if (config.settingsNavGroups) {
@@ -98,7 +172,14 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
   }
 
   if (config.settingsNav) {
-    for (const entry of config.settingsNav) safely(settingsNav.add, entry)
+    const m: SettingsNavMutations = Array.isArray(config.settingsNav)
+      ? { add: config.settingsNav }
+      : config.settingsNav
+    for (const entry of m.add ?? []) safely(settingsNav.add, entry)
+    for (const key of m.remove ?? []) safely(settingsNav.remove, key)
+    for (const [key, patch] of Object.entries(m.update ?? {})) {
+      safely(settingsNav.update, key, patch)
+    }
   }
 
   if (config.slots) {
@@ -115,6 +196,22 @@ export function defineDashboardPlugin(config: DashboardPluginConfig): void {
       for (const [key, patch] of Object.entries(mutations.update ?? {})) {
         safely(mutator.updateColumn, key, patch)
       }
+    }
+  }
+
+  if (config.routes) {
+    for (const entry of config.routes) safely(pluginRoutes.add, entry)
+  }
+
+  if (config.formFields) {
+    for (const [formKey, fields] of Object.entries(config.formFields)) {
+      for (const field of fields) safely(formFields.register, formKey, field)
+    }
+  }
+
+  if (config.customFieldComponents) {
+    for (const [key, component] of Object.entries(config.customFieldComponents)) {
+      safely(customFieldComponents.register, key, component)
     }
   }
 

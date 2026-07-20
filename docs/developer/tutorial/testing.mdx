@@ -589,25 +589,36 @@ expect(page).to have_content('Success!')
 
 ## Running Tests
 
-In the Docker flow the container's `DATABASE_URL` points at the development database, so tests need two overrides: a dedicated test database, and DatabaseCleaner's opt-in for non-localhost database hosts (its safeguard against cleaning a database it doesn't own). One-time test database setup:
+### Prepare the test database
 
-```bash Spree CLI (Docker) — one-time setup
-spree exec env RAILS_ENV=test DATABASE_URL=postgres://postgres@postgres:5432/spree_test bin/rails db:prepare
-```
-
-Then run tests:
+Tests run against a dedicated `spree_test` database, so your development data is never touched. Create it and load the schema once:
 
 <CodeGroup>
 
 ```bash Spree CLI (Docker)
-# Define once per shell (or add as an alias):
-alias spree-rspec='spree exec env RAILS_ENV=test DATABASE_URL=postgres://postgres@postgres:5432/spree_test DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL=true bundle exec rspec'
+spree rails db:test:prepare
+```
 
-spree-rspec                                      # all tests
-spree-rspec spec/models/spree/brand_spec.rb      # specific file
-spree-rspec spec/models/spree/brand_spec.rb:15   # specific test
-spree-rspec --format documentation               # documentation format
-spree-rspec spec/features/                       # only feature tests
+```bash Without Spree CLI
+bin/rails db:test:prepare
+```
+
+</CodeGroup>
+
+You rarely need to run this again — `rails_helper.rb` re-syncs the test schema automatically when you add migrations. It's the command to reach for when the test database gets into a broken or out-of-sync state.
+
+### Run the suite
+
+`spree rspec` runs `bundle exec rspec` inside the web container with `RAILS_ENV=test`. Everything after `rspec` is passed through, so file paths, line numbers, and flags work as usual:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rspec                                      # all tests
+spree rspec spec/models/spree/brand_spec.rb      # specific file
+spree rspec spec/models/spree/brand_spec.rb:15   # specific test
+spree rspec --format documentation               # documentation format
+spree rspec spec/features/                       # only feature tests
 ```
 
 ```bash Without Spree CLI
@@ -619,6 +630,27 @@ bundle exec rspec spec/features/                       # only feature tests
 ```
 
 </CodeGroup>
+
+<Accordion title="Troubleshooting: DatabaseCleaner refuses a remote database URL, or tests hit the development database">
+
+Projects scaffolded before July 2026 set `DATABASE_URL` in `docker-compose.dev.yml`. A URL overrides `config/database.yml` for **every** Rails environment, so in-container tests pointed at the development database and tripped DatabaseCleaner's remote-URL safeguard. Two small changes bring an older project up to date:
+
+1. In `docker-compose.dev.yml`, replace the `DATABASE_URL` entry under `environment:` with host/username parts, so each Rails environment resolves its own database from `database.yml`:
+
+```yaml
+    DATABASE_HOST: postgres
+    DATABASE_USERNAME: postgres
+```
+
+2. In `spec/rails_helper.rb`, force the test environment — the dev container bakes in `RAILS_ENV=development`:
+
+```ruby
+ENV['RAILS_ENV'] = 'test'
+```
+
+Then restart the stack (`Ctrl+C` and `spree dev`) so the container picks up the new environment.
+
+</Accordion>
 
 ## Best Practices
 
@@ -689,6 +721,7 @@ spec/
 * [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface
 * [Extending Core Models](/developer/tutorial/extending-models) - Connecting Brands to Products
 * [API Tutorial](/developer/tutorial/api) - Creating Brand API endpoints
+* [Spree CLI](/developer/cli/quickstart) - `spree rspec` and the other dev workflow commands
 * [RSpec Documentation](https://rspec.info/documentation/) - Official RSpec docs
 * [Factory Bot Documentation](https://github.com/thoughtbot/factory_bot/blob/main/GETTING_STARTED.md) - Factory Bot guide
 

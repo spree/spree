@@ -96,22 +96,86 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
 
   describe 'variant removal handling' do
     let(:option_type) { create(:option_type) }
-    let(:option_value) { create(:option_value, option_type: option_type) }
     let(:variant) { create(:variant, product: product) }
 
-    context 'when variant has completed orders' do
-      before do
-        create(:completed_order_with_totals, variants: [variant])
+    let(:new_option_value) { create(:option_value, option_type: option_type) }
+    let(:new_variant) { create(:variant, product: product) }
+    let(:variants_attributes) do
+      {
+        '0' => {
+          id: new_variant.id.to_s,
+          options: [
+            {
+              id: option_type.id,
+              name: option_type.name,
+              position: '0',
+              option_value_name: new_option_value.name,
+              option_value_presentation: new_option_value.presentation
+            }
+          ]
+        }
+      }
+    end
+
+    context 'when a variant is only omitted from variants_attributes' do
+      before { variant } # ensure variant exists before service runs
+
+      let(:raw_params) { { variants_attributes: variants_attributes } }
+
+      it 'does not mark the omitted variant for destruction' do
+        removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s }
+        expect(removed).to be_nil
       end
 
-      context 'via variants_attributes' do
-        let(:new_option_value) { create(:option_value, option_type: option_type) }
-        let(:new_variant) { create(:variant, product: product) }
+      it 'does not collect the omitted variant for discontinuation' do
+        prepared_params
+        expect(service.variants_to_discontinue).to be_empty
+      end
+    end
+
+    context 'when no variants_attributes and no removals are submitted' do
+      before { variant } # ensure variant exists before service runs
+
+      let(:raw_params) { { name: 'Updated Product' } }
+
+      it 'leaves the variants untouched' do
+        expect(prepared_params[:variants_attributes]).to be_nil
+      end
+
+      it 'does not clear the option types' do
+        expect(prepared_params).not_to have_key(:option_type_ids)
+      end
+    end
+
+    context 'when a variant is explicitly removed' do
+      let(:raw_params) do
+        {
+          removed_variant_ids: [variant.id.to_s],
+          variants_attributes: variants_attributes
+        }
+      end
+
+      it 'marks the variant for destruction' do
+        removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s }
+        expect(removed[:_destroy]).to eq('1')
+      end
+
+      it 'does not collect the variant for discontinuation' do
+        prepared_params
+        expect(service.variants_to_discontinue).not_to include(variant)
+      end
+
+      it 'consumes the removed_variant_ids param' do
+        expect(prepared_params).not_to have_key(:removed_variant_ids)
+      end
+
+      context 'when the variant is also re-submitted in variants_attributes' do
         let(:raw_params) do
           {
-            variants_attributes: {
-              '0' => {
-                id: new_variant.id.to_s,
+            removed_variant_ids: [variant.id.to_s],
+            variants_attributes: variants_attributes.merge(
+              '1' => {
+                id: variant.id.to_s,
                 options: [
                   {
                     id: option_type.id,
@@ -122,7 +186,91 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
                   }
                 ]
               }
-            }
+            )
+          }
+        end
+
+        it 'keeps the variant' do
+          removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s && v[:_destroy].present? }
+          expect(removed).to be_nil
+        end
+      end
+
+      context 'when the user cannot destroy variants' do
+        before do
+          ability.cannot :destroy, Spree::Variant
+        end
+
+        it 'ignores the removals' do
+          removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s }
+          expect(removed).to be_nil
+        end
+      end
+    end
+
+    context 'when a removed variant belongs to another product' do
+      let(:other_variant) { create(:variant) }
+      let(:raw_params) do
+        {
+          removed_variant_ids: [other_variant.id.to_s],
+          variants_attributes: variants_attributes
+        }
+      end
+
+      it 'ignores the foreign variant id' do
+        removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == other_variant.id.to_s }
+        expect(removed).to be_nil
+      end
+    end
+
+    context 'when all variants are removed without variants_attributes' do
+      let(:raw_params) { { name: 'Updated Product', removed_variant_ids: [variant.id.to_s] } }
+
+      it 'marks the variant for destruction' do
+        removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s }
+        expect(removed[:_destroy]).to eq('1')
+      end
+
+      it 'clears the option types' do
+        expect(prepared_params[:option_type_ids]).to eq([])
+      end
+
+      context 'when the user cannot destroy variants' do
+        before do
+          ability.cannot :destroy, Spree::Variant
+        end
+
+        it 'ignores the removals and keeps the option types' do
+          expect(prepared_params[:variants_attributes]).to be_nil
+          expect(prepared_params).not_to have_key(:option_type_ids)
+        end
+      end
+    end
+
+    context 'when only some variants are removed without variants_attributes' do
+      before { new_variant } # ensure the second variant exists before service runs
+
+      let(:raw_params) { { name: 'Updated Product', removed_variant_ids: [variant.id.to_s] } }
+
+      it 'marks only the removed variant for destruction' do
+        expect(prepared_params[:variants_attributes].values.map { |v| v[:id] }).to eq([variant.id.to_s])
+      end
+
+      it 'does not clear the option types' do
+        expect(prepared_params).not_to have_key(:option_type_ids)
+      end
+    end
+
+    context 'when a removed variant has completed orders' do
+      before do
+        create(:completed_order_with_totals, variants: [variant])
+      end
+
+      context 'via variants_attributes' do
+        let(:raw_params) do
+          {
+            removed_variant_ids: [variant.id.to_s],
+            variants_attributes: variants_attributes
           }
         end
 
@@ -137,8 +285,8 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
         end
       end
 
-      context 'via fallback removal (no variants_attributes)' do
-        let(:raw_params) { { name: 'Updated Product' } }
+      context 'without variants_attributes' do
+        let(:raw_params) { { name: 'Updated Product', removed_variant_ids: [variant.id.to_s] } }
 
         it 'collects the variant for discontinuation' do
           prepared_params
@@ -149,65 +297,27 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
           removed = prepared_params[:variants_attributes]&.values&.find { |v| v[:id] == variant.id.to_s }
           expect(removed).to be_nil
         end
-      end
-    end
 
-    context 'when variant has no completed orders' do
-      before { variant } # ensure variant exists before service runs
-
-      context 'via variants_attributes' do
-        let(:new_option_value) { create(:option_value, option_type: option_type) }
-        let(:new_variant) { create(:variant, product: product) }
-        let(:raw_params) do
-          {
-            variants_attributes: {
-              '0' => {
-                id: new_variant.id.to_s,
-                options: [
-                  {
-                    id: option_type.id,
-                    name: option_type.name,
-                    position: '0',
-                    option_value_name: new_option_value.name,
-                    option_value_presentation: new_option_value.presentation
-                  }
-                ]
-              }
-            }
-          }
-        end
-
-        it 'marks the variant for destruction' do
-          removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s }
-          expect(removed[:_destroy]).to eq('1')
-        end
-
-        it 'does not collect the variant for discontinuation' do
-          prepared_params
-          expect(service.variants_to_discontinue).not_to include(variant)
-        end
-      end
-
-      context 'via fallback removal (no variants_attributes)' do
-        let(:raw_params) { { name: 'Updated Product' } }
-
-        it 'marks the variant for destruction' do
-          removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s }
-          expect(removed[:_destroy]).to eq('1')
+        it 'still clears the option types' do
+          expect(prepared_params[:option_type_ids]).to eq([])
         end
       end
     end
 
-    context 'when product has mix of variants with and without completed orders' do
+    context 'when removing a mix of variants with and without completed orders' do
       let(:variant_with_order) { create(:variant, product: product) }
       let(:variant_without_order) { create(:variant, product: product) }
 
       before do
-        variant_without_order # ensure variant exists before service runs
         create(:completed_order_with_totals, variants: [variant_with_order])
       end
 
-      let(:raw_params) { { name: 'Updated Product' } }
+      let(:raw_params) do
+        {
+          name: 'Updated Product',
+          removed_variant_ids: [variant_with_order.id.to_s, variant_without_order.id.to_s]
+        }
+      end
 
       it 'collects the variant with completed orders for discontinuation' do
         prepared_params

@@ -18,7 +18,7 @@ import {
   FIELD_TYPES,
   fieldTypeLabel,
   resourceTypeLabel,
-} from '@/schemas/custom-field-definition'
+} from '../../../schemas/custom-field-definition'
 
 interface DefinitionFormFieldsProps {
   form: UseFormReturn<CustomFieldDefinitionFormValues>
