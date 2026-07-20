@@ -25,9 +25,14 @@ module Spree
 
           attributes :event_name, :event_id, :response_code, :execution_time,
                      :error_type, :request_errors, :response_body, :success,
-                     :payload,
                      created_at: :iso8601, updated_at: :iso8601,
                      delivered_at: :iso8601
+
+          # Redacted again on read: deliveries written before payload redaction
+          # shipped still hold live credentials in the column.
+          attribute :payload do |delivery|
+            Spree::WebhookPayloadRedaction.split(delivery.payload).first
+          end
 
           attribute :webhook_endpoint_id do |delivery|
             delivery.webhook_endpoint&.prefixed_id

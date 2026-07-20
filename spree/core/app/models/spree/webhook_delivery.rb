@@ -7,6 +7,11 @@ module Spree
     belongs_to :webhook_endpoint, class_name: 'Spree::WebhookEndpoint'
     delegate :url, to: :webhook_endpoint
 
+    # Credentials stripped from the persisted payload. Never written to the
+    # database — held in memory on a single delivery instance, assigned by
+    # WebhookDeliveryJob when it runs. See {Spree::WebhookPayloadRedaction}.
+    attr_accessor :payload_secrets
+
     validates :event_name, presence: true
     validates :payload, presence: true
 
@@ -62,6 +67,23 @@ module Spree
       )
 
       webhook_endpoint.check_auto_disable! unless is_success
+    end
+
+    # Payload as it should be sent over the wire.
+    #
+    # Re-attaches any credentials withheld from the persisted column. Once this
+    # record has been reloaded from the database those secrets are gone for
+    # good, so a redelivery sends the redacted placeholder — single-use tokens
+    # are not replayable anyway.
+    #
+    # This is deliberate: keeping a recoverable copy would put the credential
+    # back at rest, which is what redaction exists to prevent. If a delivery is
+    # lost (worker crash between creation and delivery), the customer requests
+    # a new reset, which mints a fresh token.
+    #
+    # @return [Hash]
+    def deliverable_payload
+      Spree::WebhookPayloadRedaction.merge(payload, payload_secrets)
     end
 
     # Create a new delivery with the same payload and queue it.
