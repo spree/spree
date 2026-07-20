@@ -21,11 +21,15 @@
     "server:console": "cd server && spree console",
     "server:logs": "cd server && spree logs",
     "server:seed": "cd server && spree rails db:seed",
-    "server:load_sample_data": "cd server && spree task load_sample_data"
+    "server:load_sample_data": "cd server && spree task load_sample_data",
+    "changeset": "changeset",
+    "version:preview": "changeset version --ignore @spree/sdk"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
-    "turbo": "^2.9.14"
+    "turbo": "^2.9.14",
+    "@changesets/cli": "^2.31.0",
+    "@changesets/changelog-github": "^0.7.0"
   },
   "packageManager": "pnpm@11.1.1",
   "engines": {

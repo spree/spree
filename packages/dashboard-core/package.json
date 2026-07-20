@@ -2,7 +2,7 @@
   "name": "@spree/dashboard-core",
   "license": "MIT",
   "version": "0.10.2",
-  "description": "Spree Dashboard framework \u2014 registries (table, nav, slot, settings-nav), providers (auth, permission, store), admin SDK client, generic infra hooks, and the defineDashboardPlugin extension API. Developer Preview.",
+  "description": "Spree Dashboard framework — registries (table, nav, slot, settings-nav), providers (auth, permission, store), admin SDK client, generic infra hooks, and the defineDashboardPlugin extension API. Developer Preview.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
   "repository": {
@@ -57,8 +57,8 @@
   },
   "peerDependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@spree/admin-sdk": "workspace:^",
-    "@spree/dashboard-ui": "workspace:^",
+    "@spree/admin-sdk": ">=0.7.0 <2",
+    "@spree/dashboard-ui": ">=0.10.0 <2",
     "@tanstack/react-hotkeys": "^0.10.0",
     "@tanstack/react-query": "^5.100.9",
     "@tanstack/react-router": "^1.169.2",

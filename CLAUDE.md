@@ -581,7 +581,7 @@ A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schema
 
 ### Changesets & Versioning
 
-Published packages use **Changesets** for versioning. Place changeset files in the package's `.changeset/` directory.
+Published packages use **Changesets** for versioning — one workspace-wide instance. Place changeset files in the root `.changeset/` directory (`pnpm changeset`), never in per-package directories. The dashboard packages (`@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`) are a `fixed` group and always release together under one version; `@spree/admin-sdk` versions independently. Two release trains: `pnpm version:preview` cuts the Developer Preview packages while holding back `@spree/sdk` (stable, tracks Spree releases); a plain `changeset version` includes it. `--ignore` defers changesets, it never discards them.
 
 ---
 

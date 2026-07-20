@@ -28,18 +28,18 @@ importers:
       '@biomejs/biome':
         specifier: ^2.4.14
         version: 2.4.14
-      turbo:
-        specifier: ^2.9.14
-        version: 2.9.18
-
-  packages/admin-sdk:
-    devDependencies:
       '@changesets/changelog-github':
         specifier: ^0.7.0
         version: 0.7.0
       '@changesets/cli':
         specifier: ^2.31.0
         version: 2.31.0(@types/node@25.6.0)
+      turbo:
+        specifier: ^2.9.14
+        version: 2.9.18
+
+  packages/admin-sdk:
+    devDependencies:
       '@spree/sdk-core':
         specifier: workspace:*
         version: link:../sdk-core
@@ -129,12 +129,6 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
     devDependencies:
-      '@changesets/changelog-github':
-        specifier: ^0.7.0
-        version: 0.7.0
-      '@changesets/cli':
-        specifier: ^2.31.0
-        version: 2.31.0(@types/node@25.6.0)
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -459,12 +453,6 @@ importers:
       '@spree/dashboard':
         specifier: workspace:^
         version: link:../dashboard
-      '@spree/dashboard-core':
-        specifier: workspace:^
-        version: link:../dashboard-core
-      '@spree/dashboard-ui':
-        specifier: workspace:^
-        version: link:../dashboard-ui
       '@tanstack/react-query':
         specifier: ^5.100.9
         version: 5.100.9(react@19.2.6)
@@ -620,12 +608,6 @@ importers:
 
   packages/sdk:
     devDependencies:
-      '@changesets/changelog-github':
-        specifier: ^0.7.0
-        version: 0.7.0
-      '@changesets/cli':
-        specifier: ^2.31.0
-        version: 2.31.0(@types/node@25.6.0)
       '@spree/sdk-core':
         specifier: workspace:*
         version: link:../sdk-core
