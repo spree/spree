@@ -7,6 +7,8 @@ export const ChannelSchema = z.object({
   code: z.string(),
   active: z.boolean(),
   default: z.boolean(),
+  storefront_access: z.string(),
+  guest_checkout: z.boolean(),
 });
 
 export type Channel = z.infer<typeof ChannelSchema>;

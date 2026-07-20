@@ -5,7 +5,7 @@ module Spree
       # Pre-purchase cart data with checkout progression info
       class CartSerializer < BaseSerializer
         typelize number: :string, current_step: :string, completed_steps: 'string[]', token: :string, email: [:string, nullable: true],
-                 customer_note: [:string, nullable: true], market_id: [:string, nullable: true],
+                 customer_note: [:string, nullable: true], market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  requirements: 'Array<{step: string, field: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
@@ -32,6 +32,13 @@ module Spree
 
         attribute :market_id do |order|
           order.market&.prefixed_id
+        end
+
+        # Which surface this cart belongs to — lets a multi-channel storefront
+        # verify a cookie-persisted cart against its own channel before
+        # adopting it (see the wholesale reference storefront's cart guard).
+        attribute :channel_id do |order|
+          order.channel&.prefixed_id
         end
 
         attributes :number, :token, :email, :customer_note,

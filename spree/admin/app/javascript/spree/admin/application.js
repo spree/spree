@@ -47,6 +47,7 @@ import AutocompleteSelectController from 'spree/admin/controllers/autocomplete_s
 import AutoScrollController from 'spree/admin/controllers/auto_scroll_controller'
 import BetterSliderController from 'spree/admin/controllers/better_slider_controller'
 import BlockFormController from 'spree/admin/controllers/block_form_controller'
+import ApiKeyFormController from 'spree/admin/controllers/api_key_form_controller'
 import BulkOperationController from 'spree/admin/controllers/bulk_operation_controller'
 import CalculatorFieldsController from 'spree/admin/controllers/calculator_fields_controller'
 import CalendarRangeController from 'spree/admin/controllers/calendar_range_controller'
@@ -103,6 +104,7 @@ import EnableButtonController from 'spree/core/controllers/enable_button_control
 
 application.register('active-storage-upload', ActiveStorageUpload)
 application.register('address-autocomplete', AddressAutocompleteController)
+application.register('api-key-form', ApiKeyFormController)
 application.register('address-form', AddressFormController)
 application.register('admin', AdminController)
 application.register('asset-uploader', AssetUploaderController)

@@ -56,7 +56,7 @@ module Spree
           'X-Spree-Webhook-Timestamp' => webhook_timestamp.to_s,
           'X-Spree-Webhook-Event' => @delivery.event_name
         }
-        body = @delivery.payload.to_json
+        body = payload_json
         http_options = { open_timeout: TIMEOUT, read_timeout: TIMEOUT, verify_mode: ssl_verify_mode }
 
         # SSRF protection is disabled in development so webhooks can reach
@@ -77,8 +77,12 @@ module Spree
       end
 
       def generate_signature
-        payload_json = @delivery.payload.to_json
         OpenSSL::HMAC.hexdigest('SHA256', @secret_key, "#{webhook_timestamp}.#{payload_json}")
+      end
+
+      # Memoized so the signature is computed over exactly the bytes sent.
+      def payload_json
+        @payload_json ||= @delivery.deliverable_payload.to_json
       end
 
       def webhook_timestamp

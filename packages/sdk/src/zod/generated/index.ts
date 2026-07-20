@@ -10,6 +10,7 @@ export { CreditCardSchema, type CreditCard } from './CreditCard';
 export { CurrencySchema, type Currency } from './Currency';
 export { CustomFieldSchema, type CustomField } from './CustomField';
 export { CustomerSchema, type Customer } from './Customer';
+export { CustomerGroupSchema, type CustomerGroup } from './CustomerGroup';
 export { DeliveryMethodSchema, type DeliveryMethod } from './DeliveryMethod';
 export { DeliveryRateSchema, type DeliveryRate } from './DeliveryRate';
 export { DigitalSchema, type Digital } from './Digital';

@@ -11,6 +11,8 @@ en:
       must_specify_api_key: You must specify an API key.
       errors:
         automatic_collection_curation: Products of an automatic collection are managed by its rules and can't be curated manually
+        channel_inactive: The channel this API key is bound to is not active.
+        channel_mismatch: The requested channel does not match the channel this API key is bound to.
         guest_checkout_not_allowed: You must be signed in to complete checkout.
         storefront_login_required: Authentication required to access this store.
       negative_quantity: quantity is negative

@@ -37,6 +37,14 @@ module Spree
           store = params&.dig(:store) || Spree::Current.store
           user.newsletter_subscriber(store)
         end
+
+        # Membership signal for storefront branching (e.g. wholesale approval);
+        # scoped to the request store (params first — Spree::Current.store falls
+        # back to the DEFAULT store, wrong on sibling stores' domains) so other
+        # stores' memberships never leak.
+        many :customer_groups,
+             proc { |groups, params| groups.for_store(params&.dig(:store) || Spree::Current.store) },
+             resource: proc { Spree.api.customer_group_serializer }
       end
     end
   end

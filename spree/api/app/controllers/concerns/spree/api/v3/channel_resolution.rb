@@ -6,39 +6,85 @@ module Spree
       # read channel context without threading it through method args.
       #
       # Resolution order:
-      # 1. +X-Spree-Channel+ header value matched against +channels.code+ —
+      # 1. The authenticated publishable key's channel binding
+      #    (+Spree::ApiKey#channel+) — server-assigned, cannot be overridden;
+      #    a +X-Spree-Channel+ header naming a different channel is a 422
+      # 2. +X-Spree-Channel+ header value matched against +channels.code+ —
       #    or, if it looks like a prefixed ID (+ch_…+), against +channels.id+
       #    — scoped to the current store
-      # 2. +current_store.default_channel+
+      # 3. +current_store.default_channel+
       #
       # The concern is a no-op if no channel matches — callers fall back to
       # +Spree::Current.channel+'s store-default behavior.
+      #
+      # IMPORTANT: key-bound resolution requires +authenticate_api_key!+ to run
+      # BEFORE +set_current_channel+ — both Store API branches order their
+      # callbacks accordingly (prepended in Store::BaseController, inherited
+      # ahead of the include in Store::ResourceController).
       module ChannelResolution
         extend ActiveSupport::Concern
 
         CHANNEL_HEADER = 'X-Spree-Channel'.freeze
 
         included do
+          # Prepended: LocaleAndCurrency's set_locale/set_currency callbacks
+          # (registered up in V3::BaseController) consult Spree::Current's
+          # fallback chain, which must derive from the REQUEST's store — not
+          # the Store.default fallback — before they run.
+          prepend_before_action :set_current_store_context
           before_action :set_current_channel
         end
 
         protected
 
         def current_channel
-          @current_channel ||= channel_from_header || Spree::Current.channel
+          @current_channel ||= channel_from_api_key || channel_from_header || Spree::Current.channel
         end
 
         private
 
-        # Only write to Spree::Current when the header resolves a specific
-        # channel. The store-default fallback is handled lazily by
+        # Only write to Spree::Current when the key or header resolves a
+        # specific channel. The store-default fallback is handled lazily by
         # +Spree::Current.channel+ itself, which avoids one query per
-        # header-less API request.
+        # unbound, header-less API request.
+        def set_current_store_context
+          Spree::Current.store = current_store
+        end
+
         def set_current_channel
+          bound = channel_from_api_key
+
+          if bound
+            header = channel_from_header
+            if header && header.id != bound.id
+              render_error(
+                code: ErrorHandler::ERROR_CODES[:channel_mismatch],
+                message: Spree.t('api.errors.channel_mismatch', default: 'The requested channel does not match the channel this API key is bound to'),
+                status: :unprocessable_entity
+              )
+              return
+            end
+
+            unless bound.active?
+              render_error(
+                code: ErrorHandler::ERROR_CODES[:channel_inactive],
+                message: Spree.t('api.errors.channel_inactive', default: 'The channel this API key is bound to is not active'),
+                status: :forbidden
+              )
+              return
+            end
+          end
+
           # Memoize so a later +current_channel+ call (e.g. the storefront gate,
-          # serializer params) reuses this row instead of re-querying the header.
-          @current_channel = channel_from_header
+          # serializer params) reuses this row instead of re-querying.
+          @current_channel = bound || channel_from_header
           Spree::Current.channel = @current_channel if @current_channel
+        end
+
+        def channel_from_api_key
+          return nil unless respond_to?(:current_api_key, true)
+
+          current_api_key&.channel
         end
 
         def channel_from_header

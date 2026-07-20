@@ -160,6 +160,48 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       expect(json_response).to include('id', 'email', 'first_name', 'last_name', 'phone', 'accepts_email_marketing')
     end
 
+    context 'customer groups' do
+      it 'exposes current-store group memberships' do
+        wholesale_group = create(:customer_group, store: store, name: 'Wholesale')
+        wholesale_group.add_customers([user.id])
+        other_store_group = create(:customer_group, store: create(:store), name: 'Other Store VIP')
+        other_store_group.add_customers([user.id])
+
+        get :show
+
+        names = json_response['customer_groups'].map { |g| g['name'] }
+        expect(names).to eq(['Wholesale'])
+      end
+
+      it 'is empty when the customer belongs to no groups' do
+        get :show
+
+        expect(json_response['customer_groups']).to eq([])
+      end
+
+      context 'when the request store is not the default store' do
+        let(:store) { create(:store, default_currency: 'EUR') }
+
+        it 'derives currency fallbacks from the request store, not the default store' do
+          get :show
+
+          expect(json_response['display_available_store_credit_total']).to start_with('€')
+        end
+
+        it 'reads memberships from the request store, not the default store' do
+          request_store_group = create(:customer_group, store: store, name: 'Wholesale')
+          request_store_group.add_customers([user.id])
+          default_store_group = create(:customer_group, store: Spree::Store.default, name: 'Default Store VIP')
+          default_store_group.add_customers([user.id])
+
+          get :show
+
+          names = json_response['customer_groups'].map { |g| g['name'] }
+          expect(names).to eq(['Wholesale'])
+        end
+      end
+    end
+
     context 'newsletter subscriber' do
       it 'exposes the current store subscriber' do
         subscriber = create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store)

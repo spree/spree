@@ -39,6 +39,9 @@ module Spree
               puts 'Loading sample customers...'
               load_customers
 
+              puts 'Loading wholesale demo data...'
+              load_ruby_file('wholesale')
+
               puts 'Loading sample orders...'
               load_ruby_file('orders')
 
@@ -76,9 +79,13 @@ module Spree
         Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::Products)
       end
 
+      # Publishes the catalog to both surfaces: the public default channel and
+      # the gated wholesale channel (catalog parity; wholesale differentiation
+      # comes from the price list in +wholesale.rb+ and the channel's gate).
       def publish_sample_products
         store = Spree::Store.default
         store.default_channel.add_products(store.product_ids)
+        store.channels.find_by(code: Spree::Seeds::Channels::WHOLESALE_CODE)&.add_products(store.product_ids)
       end
 
       def load_categories

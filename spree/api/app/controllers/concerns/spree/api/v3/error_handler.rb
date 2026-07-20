@@ -21,6 +21,10 @@ module Spree
           record_not_found: 'record_not_found',
           resource_invalid: 'resource_invalid',
 
+          # Channel errors
+          channel_mismatch: 'channel_mismatch',
+          channel_inactive: 'channel_inactive',
+
           # Cart errors
           cart_not_found: 'cart_not_found',
           cart_cannot_transition: 'cart_cannot_transition',

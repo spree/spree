@@ -13,10 +13,15 @@ module Spree
 
     # Accept optional second argument for backward compatibility with jobs
     # enqueued before this change was deployed.
-    def perform(delivery_id, _deprecated_secret_key = nil)
+    #
+    # `payload_secrets` carries credentials withheld from the persisted payload
+    # so the outgoing request body stays complete. See
+    # {Spree::WebhookPayloadRedaction}.
+    def perform(delivery_id, _deprecated_secret_key = nil, payload_secrets: nil)
       delivery = Spree::WebhookDelivery.find_by(id: delivery_id)
       return if delivery.nil?
 
+      delivery.payload_secrets = payload_secrets
       secret_key = delivery.webhook_endpoint.secret_key
       Spree::Webhooks::DeliverWebhook.call(delivery: delivery, secret_key: secret_key)
     end

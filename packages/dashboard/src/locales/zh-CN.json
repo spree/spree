@@ -560,6 +560,11 @@
         },
         "scopes": {
           "label": "权限范围"
+        },
+        "channel": {
+          "label": "Channel",
+          "help": "Binding locks this key to one channel — a bound key rejects requests for other channels. Leave on 'All channels' for a store-wide key.",
+          "all_channels": "All channels"
         }
       },
       "store": {
@@ -1590,7 +1595,9 @@
           "table": {
             "key": "密钥",
             "scopes": "范围",
-            "last_used_at": "最近使用"
+            "last_used_at": "最近使用",
+            "channel": "Channel",
+            "all_channels": "All channels"
           },
           "save_secret_title": "保存您的私密密钥",
           "save_secret_description": "请立即复制此值 — 我们不会再次显示它。",

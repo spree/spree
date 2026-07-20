@@ -97,6 +97,23 @@ RSpec.describe Spree::Admin::ApiKeysController, type: :controller do
       expect(response).to redirect_to(spree.admin_api_key_path(Spree::ApiKey.last))
     end
 
+    context 'with a channel binding' do
+      let(:channel) { create(:channel, store: store, code: 'wholesale') }
+      let(:key_params) do
+        {
+          name: 'Wholesale storefront',
+          key_type: 'publishable',
+          channel_id: channel.id
+        }
+      end
+
+      it 'binds the publishable key to the channel' do
+        create_key
+
+        expect(Spree::ApiKey.last.channel).to eq(channel)
+      end
+    end
+
     context 'with secret key type' do
       let(:key_params) do
         {

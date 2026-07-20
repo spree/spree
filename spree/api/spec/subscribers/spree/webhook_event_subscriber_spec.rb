@@ -30,6 +30,32 @@ module Spree
         end
       end
 
+      context 'with an event carrying a live credential' do
+        let!(:webhook_endpoint) { create(:webhook_endpoint, store: store, subscriptions: ['*']) }
+        let(:event_name) { 'customer.password_reset_requested' }
+        let(:event_payload) { { reset_token: 'live-token', email: 'customer@example.com' } }
+
+        it 'keeps the token out of the persisted delivery log' do
+          described_class.new.handle(event)
+
+          payload = Spree::WebhookDelivery.last.reload.payload
+          expect(payload['data']['reset_token']).to eq(Spree::WebhookPayloadRedaction::REDACTION_PLACEHOLDER)
+          expect(payload['data']['email']).to eq('customer@example.com')
+        end
+
+        it 'still hands the live token to the delivery job' do
+          described_class.new.handle(event)
+
+          delivery = Spree::WebhookDelivery.last
+          expect(Spree::WebhookDeliveryJob).to have_been_enqueued.with(delivery.id, payload_secrets: anything)
+
+          # The secrets handed to the job must restore the payload the endpoint expects.
+          secrets = enqueued_jobs.last['arguments'].last.symbolize_keys[:payload_secrets]
+          delivery.payload_secrets = secrets
+          expect(delivery.deliverable_payload['data']['reset_token']).to eq('live-token')
+        end
+      end
+
       context 'when webhooks are enabled' do
         it 'creates a webhook delivery record' do
           expect {

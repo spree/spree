@@ -9,6 +9,10 @@ module Spree
         end
       end
 
+      def api_key_channel_options
+        current_store.channels.active.pluck(:name, :id)
+      end
+
       def api_key_status_badge(api_key)
         if api_key.active?
           content_tag(:span, icon('check') + Spree.t('admin.api_keys.statuses.active'), class: 'badge badge-success')

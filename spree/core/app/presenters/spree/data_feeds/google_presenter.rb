@@ -3,6 +3,22 @@ require 'nokogiri'
 module Spree
   module DataFeeds
     class GooglePresenter < BasePresenter
+      # Optional Google Merchant Center product attributes sourced from
+      # metafields. See https://support.google.com/merchants/answer/7052112
+      OPTIONAL_ATTRIBUTES = %w[
+        brand gtin mpn identifier_exists condition adult multipack is_bundle
+        age_group color gender material pattern size size_type size_system
+        product_length product_width product_height product_weight
+        google_product_category product_type sale_price sale_price_effective_date
+        cost_of_goods_sold unit_pricing_measure unit_pricing_base_measure
+        shipping shipping_label shipping_weight shipping_length shipping_width
+        shipping_height ships_from_country transit_time_label max_handling_time
+        min_handling_time tax tax_category energy_efficiency_class
+        min_energy_efficiency_class max_energy_efficiency_class
+        gtin_source expiration_date custom_label_0 custom_label_1 custom_label_2
+        custom_label_3 custom_label_4 mobile_link additional_image_link
+      ].freeze
+
       # @return [String] RSS XML feed for Google Merchant Center
       def call
         builder = Nokogiri::XML::Builder.new do |xml|
@@ -57,8 +73,19 @@ module Spree
 
       def build_optional_attributes(xml, product)
         product.public_metafields.each do |metafield|
-          xml['g'].send(metafield.metafield_definition.key.parameterize.underscore, metafield.value)
+          key = metafield.metafield_definition.key.parameterize.underscore
+          next unless OPTIONAL_ATTRIBUTES.include?(key)
+
+          append_g_element(xml, key, metafield.value)
         end
+      end
+
+      def append_g_element(xml, name, value)
+        parent = xml.parent
+        node = Nokogiri::XML::Node.new(name, parent.document)
+        node.namespace = parent.namespace_scopes.find { |ns| ns.prefix == 'g' }
+        node.content = value
+        parent << node
       end
 
       def format_title(product, variant)

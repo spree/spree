@@ -14,6 +14,7 @@ import type {
   Cart,
   Category,
   CategoryListParams,
+  Channel,
   CompletePaymentSessionParams,
   CompletePaymentSetupSessionParams,
   Country,
@@ -211,6 +212,18 @@ export class StoreClient {
      */
     list: (options?: RequestOptions): Promise<ListResponse<Locale>> =>
       this.request<ListResponse<Locale>>('GET', '/locales', options),
+  }
+
+  readonly channel = {
+    /**
+     * Get the channel this client's requests resolve to (API-key binding →
+     * `channel` client option → store default), including the resolved
+     * `storefront_access` posture (`public` | `prices_hidden` |
+     * `login_required`) and whether guest checkout is allowed. Reachable
+     * before authentication so gated storefronts can render a sign-in wall.
+     */
+    get: (options?: RequestOptions): Promise<Channel> =>
+      this.request<Channel>('GET', '/channel', options),
   }
 
   // ============================================
