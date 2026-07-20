@@ -129,8 +129,13 @@ module Spree
         @variants_to_remove ||= (@removed_variant_ids || []).uniq & all_variant_ids
       end
 
+      # The default_variant is the product's always-present base — the successor to
+      # the retired hidden master variant. Like master before it, it is never a
+      # removal candidate and never counts toward "all variants removed", so
+      # removing every option-bearing variant collapses the product back to a
+      # simple one (and clears its option types).
       def all_variant_ids
-        @all_variant_ids ||= product.variant_ids.map(&:to_s)
+        @all_variant_ids ||= product.variant_ids.map(&:to_s) - [product.default_variant&.id.to_s]
       end
 
       def removing_all_variants?
