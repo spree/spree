@@ -25,6 +25,26 @@ Also decided: no company row in the legacy Rails admin customer view. Metadata
 is exposed by the Admin API v3 customer serializer (React dashboard shows it);
 the legacy admin renders customer metadata nowhere and stays that way.
 
+## 2026-07-19: Database search provider is the out-of-the-box default; Meilisearch becomes opt-in
+
+spree-starter and create-spree-app no longer provision Meilisearch. The Docker
+compose files stop running the `meilisearch` service and stop hardcoding
+`MEILISEARCH_URL`, so `Spree::SearchProvider::Database` — already the core
+default and already the effective default on the native (no-Docker) path — is
+now the default on every install path. One less always-on container (image
+pull, RAM, volume) for the common case; `Spree::SearchProvider::IndexJob` /
+`RemoveJob` never enqueue under the DB provider (`indexing_required?` is
+false), so the default stack also stops paying per-save indexing jobs.
+
+Opt-in stays config-only: commented service/depends_on/env/volume blocks in
+both compose files + `MEILISEARCH_URL`, then `spree:search:reindex`. The
+`meilisearch` gem stays in the starter Gemfile so the prebuilt
+`ghcr.io/spree/spree` image retains the capability — enabling Meilisearch on
+the quick-start compose must not require a custom image build. Docs continue
+to recommend Meilisearch for production-scale catalogs (see
+`5.4-search-provider.md`); this changes what's provisioned by default, not the
+recommendation.
+
 ## 2026-07-15: Basic Stripe Connect payouts move to OSS; Enterprise repositions on money operations
 
 spree/spree#13323 originally kept "Stripe Connect onboarding, KYC, automatic
