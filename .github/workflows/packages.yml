@@ -292,9 +292,10 @@ jobs:
   release-cli:
     name: "CLI - Release"
     # Gated on release-dashboard: the CLI tarball embeds the dashboard-starter
-    # template with ^x.y.z pins for @spree/dashboard{,-ui,-core} — publishing
-    # it before those versions exist on npm would ship a scaffold whose
-    # install fails until the dashboard release lands.
+    # template with floating ranges floored at the @spree/dashboard{,-ui,-core}
+    # versions being released — publishing it before those versions exist on
+    # npm would ship a scaffold whose install fails until the dashboard
+    # release lands.
     needs: [check, release-dashboard]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -435,8 +436,10 @@ jobs:
   # The dashboard-starter template is NOT distributed via a template repo:
   # `@spree/cli` and `create-spree-app` embed it at build time
   # (scripts/sync-dashboard-starter.mjs renders packages/dashboard-starter
-  # with published version pins into their templates/ dir), so the template
-  # and the released package versions are in lockstep by construction.
+  # with floating ranges floored at the released versions into their
+  # templates/ dir), so scaffolds install the newest dashboard release even
+  # from an older CLI, and never anything older than the template was built
+  # against.
 
   release-create-spree-app:
     name: "create-spree-app - Release"
