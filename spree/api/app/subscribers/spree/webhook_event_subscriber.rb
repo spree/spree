@@ -50,13 +50,16 @@ module Spree
         )
       end
 
+      # Live credentials go over the wire but never into the delivery log.
+      persisted_payload, secrets = Spree::WebhookPayloadRedaction.split(payload)
+
       delivery = endpoint.webhook_deliveries.create!(
         event_name: event.name,
         event_id: event.id,
-        payload: payload
+        payload: persisted_payload
       )
 
-      Spree::WebhookDeliveryJob.perform_later(delivery.id)
+      Spree::WebhookDeliveryJob.perform_later(delivery.id, payload_secrets: secrets)
     rescue ActiveRecord::RecordNotUnique
       # Race condition: another thread already created this delivery — safe to ignore
     rescue StandardError => e
