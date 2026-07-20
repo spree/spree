@@ -32,11 +32,11 @@
          data-api-key-form-target="section" data-show-when-key-type="secret">
       <div class="card-header">
         <h5 class="card-title"><%= Spree.t('admin.api_keys.scopes') %></h5>
-        <p class="text-sm text-gray-500 mt-1">
-          <%= Spree.t('admin.api_keys.scopes_description') %>
-        </p>
       </div>
       <div class="card-body">
+        <p class="text-sm text-gray-500 mb-4">
+          <%= Spree.t('admin.api_keys.scopes_description') %>
+        </p>
         <% Spree::ApiKey::SCOPES.each do |scope| %>
           <div class="custom-control form-checkbox mb-1">
             <%= f.check_box :scopes, { multiple: true, class: 'custom-control-input', id: "api_key_scopes_#{scope}" }, scope, nil %>
@@ -51,11 +51,11 @@
          data-api-key-form-target="section" data-show-when-key-type="publishable">
       <div class="card-header">
         <h5 class="card-title"><%= Spree.t('admin.api_keys.channel') %></h5>
-        <p class="text-sm text-gray-500 mt-1">
-          <%= Spree.t('admin.api_keys.channel_description') %>
-        </p>
       </div>
       <div class="card-body">
+        <p class="text-sm text-gray-500 mb-4">
+          <%= Spree.t('admin.api_keys.channel_description') %>
+        </p>
         <%= f.spree_select :channel_id, api_key_channel_options,
               { include_blank: Spree.t('admin.api_keys.all_channels'), label: false } %>
       </div>
@@ -63,14 +63,12 @@
   <% elsif f.object.secret? %>
     <div class="card mb-6">
       <div class="card-header">
-        <div>
-          <h5 class="card-title"><%= Spree.t('admin.api_keys.scopes') %></h5>
-          <p class="text-sm text-gray-500 mt-1 mb-0">
-            <%= Spree.t('admin.api_keys.scopes_immutable') %>
-          </p>
-        </div>
+        <h5 class="card-title"><%= Spree.t('admin.api_keys.scopes') %></h5>
       </div>
       <div class="card-body">
+        <p class="text-sm text-gray-500 mb-4">
+          <%= Spree.t('admin.api_keys.scopes_immutable') %>
+        </p>
         <% f.object.scopes.each do |scope| %>
           <span class="badge badge-light font-mono text-sm me-1 mb-1"><%= scope %></span>
         <% end %>
@@ -79,14 +77,12 @@
   <% elsif f.object.channel.present? %>
     <div class="card mb-6">
       <div class="card-header">
-        <div>
-          <h5 class="card-title"><%= Spree.t('admin.api_keys.channel') %></h5>
-          <p class="text-sm text-gray-500 mt-1 mb-0">
-            <%= Spree.t('admin.api_keys.channel_immutable') %>
-          </p>
-        </div>
+        <h5 class="card-title"><%= Spree.t('admin.api_keys.channel') %></h5>
       </div>
       <div class="card-body">
+        <p class="text-sm text-gray-500 mb-4">
+          <%= Spree.t('admin.api_keys.channel_immutable') %>
+        </p>
         <span class="badge badge-light"><%= f.object.channel.name %></span>
       </div>
     </div>
