@@ -139,6 +139,17 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
     end
 
+    context 'metafield whose key matches a required attribute' do
+      let(:product) { create(:product) }
+      let(:metafield_definition) { create(:metafield_definition, name: 'Item Group', key: 'item_group_id') }
+      let!(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'injected') }
+
+      it 'does not emit the metafield value, only the required item_group_id' do
+        expect(xml).to include("<g:item_group_id>#{product.id}</g:item_group_id>")
+        expect(xml).not_to include('<g:item_group_id>injected</g:item_group_id>')
+      end
+    end
+
     context 'title generation does not mutate product name' do
       it 'generates independent titles for multiple variants' do
         option_type = create(:option_type)

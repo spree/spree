@@ -8,7 +8,7 @@ module Spree
       OPTIONAL_ATTRIBUTES = %w[
         brand gtin mpn identifier_exists condition adult multipack is_bundle
         age_group color gender material pattern size size_type size_system
-        item_group_id product_length product_width product_height product_weight
+        product_length product_width product_height product_weight
         google_product_category product_type sale_price sale_price_effective_date
         cost_of_goods_sold unit_pricing_measure unit_pricing_base_measure
         shipping shipping_label shipping_weight shipping_length shipping_width
