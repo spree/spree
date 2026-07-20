@@ -576,6 +576,12 @@ export interface ApiKeyCreateParams {
   key_type: 'publishable' | 'secret'
   /** Required for `key_type: 'secret'`. See `Spree::ApiKey::SCOPES` for the full list. */
   scopes?: string[]
+  /**
+   * Prefixed channel ID (`ch_…`) to bind a **publishable** key to a single
+   * channel of the same store. Create-only and immutable afterwards; a bound
+   * key rejects requests for other channels. Omit for a store-wide key.
+   */
+  channel_id?: string
 }
 
 export interface ApiKeyUpdateParams {

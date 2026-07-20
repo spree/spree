@@ -560,6 +560,11 @@
         },
         "scopes": {
           "label": "权限范围"
+        },
+        "channel": {
+          "label": "Channel",
+          "help": "Binding locks this key to one channel — a bound key rejects requests for other channels. Leave on 'All channels' for a store-wide key.",
+          "all_channels": "All channels"
         }
       },
       "store": {
