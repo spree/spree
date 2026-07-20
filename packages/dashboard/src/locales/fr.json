@@ -512,6 +512,11 @@
         },
         "scopes": {
           "label": "Portées"
+        },
+        "channel": {
+          "label": "Channel",
+          "help": "Binding locks this key to one channel — a bound key rejects requests for other channels. Leave on 'All channels' for a store-wide key.",
+          "all_channels": "All channels"
         }
       },
       "store": {
@@ -1542,7 +1547,9 @@
           "table": {
             "key": "Clé",
             "scopes": "Portées",
-            "last_used_at": "Dernière utilisation"
+            "last_used_at": "Dernière utilisation",
+            "channel": "Channel",
+            "all_channels": "All channels"
           },
           "save_secret_title": "Enregistrez votre clé secrète",
           "save_secret_description": "Copiez cette valeur maintenant — nous ne l'afficherons plus.",

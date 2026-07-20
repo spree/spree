@@ -35,6 +35,22 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(numbers).to include(user_cart1.number, user_cart2.number)
       end
 
+      it 'scopes carts to the request channel — other channels never leak into a surface' do
+        wholesale = create(:channel, store: store, code: 'wholesale')
+        wholesale_cart = create(:order, user: user, store: store, channel: wholesale)
+
+        get :index
+
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).not_to include(wholesale_cart.number)
+
+        request.headers['X-Spree-Channel'] = 'wholesale'
+        get :index
+
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).to eq([wholesale_cart.number])
+      end
+
       it 'returns carts ordered by updated_at desc' do
         user_cart1.update_column(:updated_at, 1.hour.ago)
         user_cart2.update_column(:updated_at, Time.current)

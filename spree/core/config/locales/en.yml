@@ -691,6 +691,9 @@ en:
     analytics: Analytics
     and: and
     api_key: API Key
+    api_key_channel_immutable: cannot be changed after the key is created; create a new key bound to the channel you need and revoke this one
+    api_key_channel_must_belong_to_store: must belong to the same store as the key
+    api_key_channel_publishable_only: can only be set on publishable keys
     api_key_no_current_key: No API key authenticated this request
     api_key_scopes_immutable: cannot be changed after the key is created; create a new key with the scopes you need and revoke this one
     api_keys: API Keys
@@ -913,6 +916,7 @@ en:
     error_user_does_not_have_any_store_credits: User does not have any Store Credits available
     errors:
       messages:
+        cannot_delete_channel_with_active_api_keys: Channel cannot be deleted while active API keys are bound to it. Revoke those keys first.
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
         channel_store_mismatch: must belong to the same store
         invalid_order_routing_rule: is not a registered order routing rule

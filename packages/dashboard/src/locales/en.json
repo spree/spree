@@ -563,6 +563,11 @@
         },
         "scopes": {
           "label": "Scopes"
+        },
+        "channel": {
+          "label": "Channel",
+          "help": "Binding locks this key to one channel — a bound key rejects requests for other channels. Leave on 'All channels' for a store-wide key.",
+          "all_channels": "All channels"
         }
       },
       "store": {
@@ -1590,7 +1595,9 @@
           "table": {
             "key": "Key",
             "scopes": "Scopes",
-            "last_used_at": "Last used"
+            "last_used_at": "Last used",
+            "channel": "Channel",
+            "all_channels": "All channels"
           },
           "save_secret_title": "Save your secret key",
           "save_secret_description": "Copy this value now — we won't show it again.",

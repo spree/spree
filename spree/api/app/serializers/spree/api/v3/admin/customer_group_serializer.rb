@@ -5,12 +5,11 @@ module Spree
         # Serializes Spree::CustomerGroup for the admin pickers
         # (e.g. promotion rule, customer-group filters). Surfaces only
         # what the admin UI needs to display + select rows.
-        class CustomerGroupSerializer < V3::BaseSerializer
-          typelize name: :string,
-                   description: 'string | null',
+        class CustomerGroupSerializer < V3::CustomerGroupSerializer
+          typelize description: 'string | null',
                    customers_count: :number
 
-          attributes :name, :description, :customers_count,
+          attributes :description, :customers_count,
                      created_at: :iso8601, updated_at: :iso8601
 
           # Members are paginated separately via `/customers?customer_group_id_in=…`

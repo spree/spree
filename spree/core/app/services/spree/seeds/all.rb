@@ -23,11 +23,13 @@ module Spree
 
             # store & stock location
             Stores.call
+            Channels.call
             StockLocations.call
             AdminUser.call
 
             # add store resources
             PaymentMethods.call
+            CustomerGroups.call
             ApiKeys.call
             AllowedOrigins.call
           end

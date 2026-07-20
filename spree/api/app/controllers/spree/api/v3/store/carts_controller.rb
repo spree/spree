@@ -141,8 +141,13 @@ module Spree
             Spree.api.cart_serializer
           end
 
+          # Channel-scoped: a storefront surface lists only its own channel's
+          # carts — without this, a blended DTC + wholesale storefront leaks
+          # the user's wholesale cart into the DTC surface (and vice versa).
+          # Explicit by-ID lookups (show/update) stay cross-channel so a shared
+          # checkout can load any cart the caller is authorized for.
           def scope
-            current_store.carts.where(user: current_user).order(updated_at: :desc)
+            current_store.carts.where(user: current_user, channel: current_channel).order(updated_at: :desc)
           end
 
           private

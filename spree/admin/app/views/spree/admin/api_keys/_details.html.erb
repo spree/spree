@@ -14,6 +14,13 @@
         <dd class="mt-1"><%= api_key_type_badge(@api_key) %></dd>
       </div>
 
+      <% if @api_key.channel.present? %>
+        <div>
+          <dt class="text-sm text-gray-500"><%= Spree.t('admin.api_keys.channel') %></dt>
+          <dd class="mt-1"><span class="badge badge-light"><%= @api_key.channel.name %></span></dd>
+        </div>
+      <% end %>
+
       <div>
         <dt class="text-sm text-gray-500"><%= Spree.t(:created_at) %></dt>
         <dd class="mt-1"><%= l(@api_key.created_at, format: :long) %></dd>

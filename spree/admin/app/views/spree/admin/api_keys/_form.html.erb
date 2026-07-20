@@ -1,60 +1,90 @@
-<div class="card mb-6">
-  <div class="card-body">
-    <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record?,
-          placeholder: Spree.t('admin.api_keys.name_placeholder') %>
-
-    <% if f.object.new_record? %>
-      <%= f.spree_select :key_type, api_key_type_options,
-            { prompt: Spree.t(:select_key_type), label: Spree.t(:type) },
-            { required: true } %>
-      <p class="text-sm text-gray-500 mt-2">
-        <strong><%= Spree.t('admin.api_keys.key_types.publishable') %>:</strong>
-        <%= Spree.t('admin.api_keys.key_type_descriptions.publishable') %>
-        <br>
-        <strong><%= Spree.t('admin.api_keys.key_types.secret') %>:</strong>
-        <%= Spree.t('admin.api_keys.key_type_descriptions.secret') %>
-      </p>
-    <% else %>
-      <div class="form-group">
-        <label class="form-label"><%= Spree.t(:type) %></label>
-        <div class="form-control-plaintext">
-          <%= api_key_type_badge(@api_key) %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-<% if f.object.new_record? %>
-  <div class="card mb-6" id="api-key-scopes" data-secret-only data-show-when-key-type="secret">
-    <div class="card-header">
-      <h5 class="card-title"><%= Spree.t('admin.api_keys.scopes', default: 'Scopes') %></h5>
-      <p class="text-sm text-gray-500 mt-1">
-        <%= Spree.t('admin.api_keys.scopes_description', default: 'Required for secret keys. Pick the narrowest set of scopes your integration needs.') %>
-      </p>
-    </div>
-    <div class="card-body">
-      <% Spree::ApiKey::SCOPES.each do |scope| %>
-        <div class="custom-control form-checkbox mb-1">
-          <%= f.check_box :scopes, { multiple: true, class: 'custom-control-input', id: "api_key_scopes_#{scope}" }, scope, nil %>
-          <%= f.label "scopes_#{scope}", scope, class: 'custom-control-label font-mono text-sm' %>
-        </div>
-      <% end %>
-      <%= f.hidden_field :scopes, value: '', multiple: true %>
-    </div>
-  </div>
-<% elsif f.object.secret? %>
+<div data-controller="api-key-form">
   <div class="card mb-6">
-    <div class="card-header">
-      <h5 class="card-title"><%= Spree.t('admin.api_keys.scopes', default: 'Scopes') %></h5>
-      <p class="text-sm text-gray-500 mt-1">
-        <%= Spree.t('admin.api_keys.scopes_immutable', default: 'Scopes are fixed when the key is created. To change them, create a new key with the scopes you need and revoke this one.') %>
-      </p>
-    </div>
     <div class="card-body">
-      <% f.object.scopes.each do |scope| %>
-        <span class="badge badge-light font-mono text-sm me-1 mb-1"><%= scope %></span>
+      <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record?,
+            placeholder: Spree.t('admin.api_keys.name_placeholder') %>
+
+      <% if f.object.new_record? %>
+        <%= f.spree_select :key_type, api_key_type_options,
+              { prompt: Spree.t(:select_key_type), label: Spree.t(:type) },
+              { required: true,
+                data: { api_key_form_target: 'typeSelect', action: 'change->api-key-form#toggle' } } %>
+        <p class="text-sm text-gray-500 mt-2">
+          <strong><%= Spree.t('admin.api_keys.key_types.publishable') %>:</strong>
+          <%= Spree.t('admin.api_keys.key_type_descriptions.publishable') %>
+          <br>
+          <strong><%= Spree.t('admin.api_keys.key_types.secret') %>:</strong>
+          <%= Spree.t('admin.api_keys.key_type_descriptions.secret') %>
+        </p>
+      <% else %>
+        <div class="form-group">
+          <label class="form-label"><%= Spree.t(:type) %></label>
+          <div class="form-control-plaintext">
+            <%= api_key_type_badge(@api_key) %>
+          </div>
+        </div>
       <% end %>
     </div>
   </div>
-<% end %>
+
+  <% if f.object.new_record? %>
+    <div class="card mb-6" id="api-key-scopes" hidden
+         data-api-key-form-target="section" data-show-when-key-type="secret">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t('admin.api_keys.scopes') %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-sm text-gray-500 mb-4">
+          <%= Spree.t('admin.api_keys.scopes_description') %>
+        </p>
+        <% Spree::ApiKey::SCOPES.each do |scope| %>
+          <div class="custom-control form-checkbox mb-1">
+            <%= f.check_box :scopes, { multiple: true, class: 'custom-control-input', id: "api_key_scopes_#{scope}" }, scope, nil %>
+            <%= f.label "scopes_#{scope}", scope, class: 'custom-control-label font-mono text-sm' %>
+          </div>
+        <% end %>
+        <%= f.hidden_field :scopes, value: '', multiple: true %>
+      </div>
+    </div>
+
+    <div class="card mb-6" id="api-key-channel" hidden
+         data-api-key-form-target="section" data-show-when-key-type="publishable">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t('admin.api_keys.channel') %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-sm text-gray-500 mb-4">
+          <%= Spree.t('admin.api_keys.channel_description') %>
+        </p>
+        <%= f.spree_select :channel_id, api_key_channel_options,
+              { include_blank: Spree.t('admin.api_keys.all_channels'), label: false } %>
+      </div>
+    </div>
+  <% elsif f.object.secret? %>
+    <div class="card mb-6">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t('admin.api_keys.scopes') %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-sm text-gray-500 mb-4">
+          <%= Spree.t('admin.api_keys.scopes_immutable') %>
+        </p>
+        <% f.object.scopes.each do |scope| %>
+          <span class="badge badge-light font-mono text-sm me-1 mb-1"><%= scope %></span>
+        <% end %>
+      </div>
+    </div>
+  <% elsif f.object.channel.present? %>
+    <div class="card mb-6">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t('admin.api_keys.channel') %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-sm text-gray-500 mb-4">
+          <%= Spree.t('admin.api_keys.channel_immutable') %>
+        </p>
+        <span class="badge badge-light"><%= f.object.channel.name %></span>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -36,6 +36,11 @@ import {
   RadioGroupItem,
   RelativeTime,
   RowActions,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -75,6 +80,7 @@ import {
   useRevokeApiKey,
   useUpdateApiKey,
 } from '../../../../hooks/use-api-keys'
+import { useChannels } from '../../../../hooks/use-channels'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys')({
   component: ApiKeysSettingsPage,
@@ -110,6 +116,7 @@ const SCOPE_GROUPS: Array<{ resource: string; readOnly?: boolean }> = [
 function ApiKeysSettingsPage() {
   const { t } = useTranslation()
   const { data, isLoading } = useApiKeys()
+  const { data: channelsData } = useChannels()
   const [createOpen, setCreateOpen] = useState(false)
   const [tokenReveal, setTokenReveal] = useState<ApiKey | null>(null)
   const [editKey, setEditKey] = useState<ApiKey | null>(null)
@@ -117,6 +124,12 @@ function ApiKeysSettingsPage() {
   const keys = data?.data ?? []
   const publishable = keys.filter((k) => k.key_type === 'publishable')
   const secret = keys.filter((k) => k.key_type === 'secret')
+
+  // Resolve `channel_id → name` for the bound-channel badge on publishable
+  // rows. The list is already cached by `useChannels` (shared with the create
+  // form), so this is a cheap in-memory lookup.
+  const channelName = (channelId: string | null): string | undefined =>
+    channelId ? channelsData?.data.find((c) => c.id === channelId)?.name : undefined
 
   return (
     <div className="flex flex-col gap-6">
@@ -137,8 +150,10 @@ function ApiKeysSettingsPage() {
         keys={publishable}
         loading={isLoading}
         showScopes={false}
+        showChannel
         emptyMessage={t('admin.pages.settings.api_keys.empty_publishable')}
         onEdit={setEditKey}
+        channelName={channelName}
       />
 
       <ApiKeyTable
@@ -192,16 +207,20 @@ function ApiKeyTable({
   keys,
   loading,
   showScopes,
+  showChannel = false,
   emptyMessage,
   onEdit,
+  channelName,
 }: {
   title: string
   description: string
   keys: ApiKey[]
   loading: boolean
   showScopes: boolean
+  showChannel?: boolean
   emptyMessage: string
   onEdit: (key: ApiKey) => void
+  channelName?: (channelId: string | null) => string | undefined
 }) {
   const { t } = useTranslation()
   return (
@@ -227,12 +246,15 @@ function ApiKeyTable({
           </Empty>
         ) : (
           <Table>
-            <TableHeader>
+            <TableHeader className="border-b">
               <TableRow>
                 <TableHead>{t('admin.fields.name.label')}</TableHead>
                 <TableHead>{t('admin.pages.settings.api_keys.table.key')}</TableHead>
                 {showScopes && (
                   <TableHead>{t('admin.pages.settings.api_keys.table.scopes')}</TableHead>
+                )}
+                {showChannel && (
+                  <TableHead>{t('admin.pages.settings.api_keys.table.channel')}</TableHead>
                 )}
                 <TableHead>{t('admin.pages.settings.api_keys.table.last_used_at')}</TableHead>
                 <TableHead>{t('admin.fields.created_at.label')}</TableHead>
@@ -241,7 +263,14 @@ function ApiKeyTable({
             </TableHeader>
             <TableBody>
               {keys.map((key) => (
-                <ApiKeyRow key={key.id} apiKey={key} showScopes={showScopes} onEdit={onEdit} />
+                <ApiKeyRow
+                  key={key.id}
+                  apiKey={key}
+                  showScopes={showScopes}
+                  showChannel={showChannel}
+                  onEdit={onEdit}
+                  channelName={channelName}
+                />
               ))}
             </TableBody>
           </Table>
@@ -255,10 +284,14 @@ function ApiKeyRow({
   apiKey,
   showScopes,
   onEdit,
+  showChannel,
+  channelName,
 }: {
   apiKey: ApiKey
   showScopes: boolean
+  showChannel: boolean
   onEdit: (key: ApiKey) => void
+  channelName?: (channelId: string | null) => string | undefined
 }) {
   const { t } = useTranslation()
   const revokeMutation = useRevokeApiKey()
@@ -271,6 +304,9 @@ function ApiKeyRow({
   // exposed); secret keys only return `token_prefix` after the one-shot
   // create response.
   const visibleToken = apiKey.plaintext_token ?? apiKey.token_prefix ?? ''
+  // Bound publishable keys show their channel; the name may not have loaded yet
+  // (channels query pending) — fall back to nothing rather than the raw ID.
+  const boundChannelName = channelName?.(apiKey.channel_id)
 
   async function handleRevoke() {
     const ok = await confirm({
@@ -332,6 +368,15 @@ function ApiKeyRow({
       {showScopes && (
         <TableCell>
           <ScopeList scopes={apiKey.scopes} />
+        </TableCell>
+      )}
+      {showChannel && (
+        <TableCell className="text-sm whitespace-nowrap">
+          {boundChannelName ?? (
+            <span className="text-muted-foreground">
+              {t('admin.pages.settings.api_keys.table.all_channels')}
+            </span>
+          )}
         </TableCell>
       )}
       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
@@ -486,12 +531,17 @@ function FormErrorBanner({ message }: { message?: string }) {
 // Create dialog
 // ---------------------------------------------------------------------------
 
+// `channel_id` holds the raw channel selection: `''` means "All channels"
+// (store-wide) and is dropped on submit; a prefixed `ch_…` binds a publishable
+// key to that channel. Only publishable keys can bind — the value is ignored
+// (and never sent) for secret keys.
 const buildCreateSchema = (t: TFunction) =>
   z
     .object({
       name: z.string().min(1, t('admin.fields.api_key.name.required')),
       key_type: z.enum(['publishable', 'secret']),
       scopes: z.array(z.string()),
+      channel_id: z.string(),
     })
     .refine((v) => v.key_type !== 'secret' || v.scopes.length > 0, {
       message: t('admin.api_keys.validation.scope_required'),
@@ -517,21 +567,25 @@ function CreateApiKeyDialog({
 
   const form = useForm<CreateFormValues>({
     resolver: zodResolver(buildCreateSchema(t)),
-    defaultValues: { name: '', key_type: 'secret', scopes: [] },
+    defaultValues: { name: '', key_type: 'secret', scopes: [], channel_id: '' },
   })
 
   const keyType = form.watch('key_type')
 
   async function onSubmit(values: CreateFormValues) {
+    const isPublishable = values.key_type === 'publishable'
     const params: ApiKeyCreateParams = {
       name: values.name,
       key_type: values.key_type,
-      scopes: values.key_type === 'secret' ? values.scopes : undefined,
+      scopes: isPublishable ? undefined : values.scopes,
+      // Channel binding is publishable-only; omit for secret keys and for the
+      // "All channels" default (empty string) so the key stays store-wide.
+      channel_id: isPublishable && values.channel_id ? values.channel_id : undefined,
     }
     try {
       const key = await createMutation.mutateAsync(params)
       toast.success(t('admin.messages.key_created'))
-      form.reset({ name: '', key_type: 'secret', scopes: [] })
+      form.reset({ name: '', key_type: 'secret', scopes: [], channel_id: '' })
       onCreated(key)
     } catch (err) {
       if (mapSpreeErrorsToForm(err, form.setError)) return
@@ -544,7 +598,7 @@ function CreateApiKeyDialog({
     <Sheet
       open={open}
       onOpenChange={(next) => {
-        if (!next) form.reset({ name: '', key_type: 'secret', scopes: [] })
+        if (!next) form.reset({ name: '', key_type: 'secret', scopes: [], channel_id: '' })
         onOpenChange(next)
       }}
     >
@@ -585,6 +639,28 @@ function CreateApiKeyDialog({
                 )}
               />
             </Field>
+
+            {keyType === 'publishable' && (
+              <Field>
+                <FieldLabel htmlFor="api-key-channel">
+                  {t('admin.fields.api_key.channel.label')}
+                </FieldLabel>
+                <Controller
+                  name="channel_id"
+                  control={form.control}
+                  render={({ field }) => (
+                    <ChannelBindingSelect
+                      id="api-key-channel"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+                <p className="text-xs text-muted-foreground">
+                  {t('admin.fields.api_key.channel.help')}
+                </p>
+              </Field>
+            )}
 
             {keyType === 'secret' && (
               <Field>
@@ -715,6 +791,60 @@ function EditApiKeyDialog({
         </form>
       </SheetContent>
     </Sheet>
+  )
+}
+
+// Sentinel for the "All channels" (store-wide) option. Base UI's `<Select>`
+// treats an empty string value as "no selection" and shows the placeholder, so
+// the store-wide choice carries this non-empty value and is mapped back to `''`
+// (the schema's store-wide value) at the boundary.
+const ALL_CHANNELS = '__all__'
+
+// Channel binding picker for publishable keys. Unlike the shared
+// `<ChannelSelect>`, the first option is "All channels" (store-wide) so a key
+// can be left unbound, which is the default. Emits `''` for store-wide and a
+// prefixed `ch_…` for a bound channel.
+function ChannelBindingSelect({
+  id,
+  value,
+  onChange,
+}: {
+  id: string
+  value: string
+  onChange: (channelId: string) => void
+}) {
+  const { t } = useTranslation()
+  const { data } = useChannels()
+  const channels = data?.data ?? []
+
+  const allChannelsLabel = t('admin.fields.api_key.channel.all_channels')
+
+  return (
+    <Select
+      value={value === '' ? ALL_CHANNELS : value}
+      onValueChange={(v) => onChange(v === ALL_CHANNELS ? '' : v)}
+    >
+      <SelectTrigger id={id}>
+        {/* Base UI's `<SelectValue>` renders the raw value (the prefixed ID);
+            the children render-prop resolves the channel name from the cached
+            list so the trigger matches the selected item. */}
+        <SelectValue>
+          {(v) =>
+            v === ALL_CHANNELS
+              ? allChannelsLabel
+              : (channels.find((c) => c.id === v)?.name ?? allChannelsLabel)
+          }
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value={ALL_CHANNELS}>{allChannelsLabel}</SelectItem>
+        {channels.map((c) => (
+          <SelectItem key={c.id} value={c.id}>
+            {c.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }
 

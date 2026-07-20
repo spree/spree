@@ -18,11 +18,16 @@ module Spree
                    scopes: [:string, multi: true],
                    revoked_at: [:string, nullable: true],
                    last_used_at: [:string, nullable: true],
-                   created_by_email: [:string, nullable: true]
+                   created_by_email: [:string, nullable: true],
+                   channel_id: [:string, nullable: true]
 
           attributes :name, :key_type, :token_prefix, :scopes,
                      created_at: :iso8601, updated_at: :iso8601,
                      revoked_at: :iso8601, last_used_at: :iso8601
+
+          attribute :channel_id do |key|
+            key.channel&.prefixed_id
+          end
 
           # Returned only on the create response — `plaintext_token` is held in
           # memory on the model after `generate_token` and is never persisted

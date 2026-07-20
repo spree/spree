@@ -22,6 +22,7 @@ module Spree
     has_many :order_routing_rules, class_name: 'Spree::OrderRoutingRule', dependent: :destroy
     has_many :publications, class_name: 'Spree::ProductPublication', dependent: :destroy
     has_many :products, through: :publications, class_name: 'Spree::Product'
+    has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :nullify
 
     attribute :active, :boolean, default: true
 
@@ -40,6 +41,10 @@ module Spree
     # arrives at a single default without relying on DB constraints.
     before_save :demote_other_defaults, if: -> { default? && will_save_change_to_default? }
     before_destroy :ensure_not_default
+    # prepend: the +dependent: :nullify+ on +api_keys+ registers its own
+    # before_destroy at association-declaration time; without prepend it would
+    # clear every binding before this guard could see them.
+    before_destroy :ensure_no_active_bound_api_keys, prepend: true
     after_create :ensure_default_order_routing_rules
 
     scope :active, -> { where(active: true) }
@@ -115,16 +120,29 @@ module Spree
 
     # @return [Boolean]
     def can_be_deleted?
-      !default?
+      !default? && !api_keys.active.exists?
     end
 
     private
 
     def ensure_not_default
-      return if can_be_deleted?
+      return unless default?
       return if destroyed_by_association.present?
 
       errors.add(:base, Spree.t('errors.messages.cannot_delete_default_channel'))
+      throw :abort
+    end
+
+    # Fail closed: deleting a channel must not silently convert its bound
+    # publishable keys into unbound (store-wide) credentials via the
+    # +dependent: :nullify+ above. Active keys block deletion — revoke or
+    # rebind them first; revoked keys are historical and nullify freely.
+    # Store-cascade deletes skip the guard (the keys die with the store).
+    def ensure_no_active_bound_api_keys
+      return unless api_keys.active.exists?
+      return if destroyed_by_association.present?
+
+      errors.add(:base, Spree.t('errors.messages.cannot_delete_channel_with_active_api_keys'))
       throw :abort
     end
 

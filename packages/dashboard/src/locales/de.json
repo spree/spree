@@ -512,6 +512,11 @@
         },
         "scopes": {
           "label": "Geltungsbereiche"
+        },
+        "channel": {
+          "label": "Channel",
+          "help": "Binding locks this key to one channel — a bound key rejects requests for other channels. Leave on 'All channels' for a store-wide key.",
+          "all_channels": "All channels"
         }
       },
       "store": {
@@ -1542,7 +1547,9 @@
           "table": {
             "key": "Schlüssel",
             "scopes": "Berechtigungen",
-            "last_used_at": "Zuletzt verwendet"
+            "last_used_at": "Zuletzt verwendet",
+            "channel": "Channel",
+            "all_channels": "All channels"
           },
           "save_secret_title": "Speichern Sie Ihren geheimen Schlüssel",
           "save_secret_description": "Kopieren Sie diesen Wert jetzt — wir zeigen ihn nicht erneut an.",

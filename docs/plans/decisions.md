@@ -1,3 +1,30 @@
+## 2026-07-20: Wholesale applicant company name stays in metadata until 6.1 Company accounts
+
+The gated wholesale portal's apply form collects a company name. Considered
+promoting it to a nullable `company` column on `spree_users` as a pre-6.1
+stepping stone — mechanically fine (core already migrates that app-owned table:
+`add_phone_to_spree_users`, `add_first_name_and_last_name_to_spree_users`), and
+it would buy Ransack searchability and first-class serializer/export support.
+
+**Rejected for now.** Free-text company on the customer becomes a second source
+of truth the moment `Spree::Company` lands in 6.1, and free text doesn't dedupe
+("Acme" / "Acme Ltd" / "ACME Limited"), so the backfill into real Company
+records is messy and the column lingers as a deprecated shadow. Applicant
+company is stored in customer `metadata` (`{ company: "…" }`) instead — already
+supported end-to-end by `RegisterParams` + the Store customers controller, no
+migration, no invented field.
+
+The proper implementation is the Company → CompanyLocation → CompanyContact
+tree in `6.0-channels-catalogs-b2b.md` Phase 2 (**6.1**). Note that plan's
+decision 7: approval workflows, role-based permissions, purchase limits, and
+invoice management are deferred to a dedicated B2B plan **after** 6.1 — so the
+demo's manual "admin adds the customer to the Wholesale group" approval step is
+intentional and survives past 6.1 until that plan exists.
+
+Also decided: no company row in the legacy Rails admin customer view. Metadata
+is exposed by the Admin API v3 customer serializer (React dashboard shows it);
+the legacy admin renders customer metadata nowhere and stays that way.
+
 ## 2026-07-15: Basic Stripe Connect payouts move to OSS; Enterprise repositions on money operations
 
 spree/spree#13323 originally kept "Stripe Connect onboarding, KYC, automatic

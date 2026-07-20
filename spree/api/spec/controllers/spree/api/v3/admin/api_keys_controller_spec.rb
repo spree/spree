@@ -131,5 +131,41 @@ RSpec.describe Spree::Api::V3::Admin::ApiKeysController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(key.reload.key_type).to eq('secret')
     end
+
+    it 'ignores channel_id — the binding is fixed for the life of a key' do
+      channel = create(:channel, store: store)
+      patch :update, params: { id: key.prefixed_id, name: 'Unbound', channel_id: channel.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(key.reload.channel_id).to be_nil
+    end
+  end
+
+  describe 'POST #create — channel binding' do
+    let(:headers) { bearer_headers }
+    let(:channel) { create(:channel, store: store, code: 'wholesale') }
+
+    it 'binds a publishable key to a channel via its prefixed ID' do
+      post :create, params: { name: 'Wholesale storefront', key_type: 'publishable', channel_id: channel.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['channel_id']).to eq(channel.prefixed_id)
+      expect(Spree::ApiKey.find_by_prefix_id(json_response['id']).channel).to eq(channel)
+    end
+
+    it 'rejects a channel belonging to another store' do
+      other = create(:channel, store: create(:store))
+
+      post :create, params: { name: 'Cross-store', key_type: 'publishable', channel_id: other.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(Spree::ApiKey.publishable.where.not(channel_id: nil)).to be_empty
+    end
+
+    it 'rejects a channel on a secret key' do
+      post :create, params: { name: 'Secret bound', key_type: 'secret', scopes: ['read_orders'], channel_id: channel.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 end
