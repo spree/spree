@@ -11,6 +11,50 @@ module Spree
       let(:secret_key) { webhook_endpoint.secret_key }
 
       describe '.call' do
+        context 'when the payload had credentials withheld from the log' do
+          let(:delivery) do
+            create(
+              :webhook_delivery, :pending,
+              webhook_endpoint: webhook_endpoint,
+              event_name: 'customer.password_reset_requested',
+              payload: { 'name' => 'customer.password_reset_requested',
+                         'data' => { 'email' => 'customer@example.com',
+                                     'reset_token' => Spree::WebhookPayloadRedaction::REDACTION_PLACEHOLDER } }
+            )
+          end
+
+          before do
+            delivery.payload_secrets = { 'reset_token' => 'live-token' }
+            stub_request(:post, delivery.url).to_return(status: 200, body: '{}')
+          end
+
+          it 'sends the live token to the endpoint' do
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(WebMock).to have_requested(:post, delivery.url).with { |req|
+              JSON.parse(req.body)['data']['reset_token'] == 'live-token'
+            }
+          end
+
+          it 'signs the body that was actually sent' do
+            Timecop.freeze do
+              described_class.call(delivery: delivery, secret_key: secret_key)
+
+              expect(WebMock).to have_requested(:post, delivery.url).with { |req|
+                expected = OpenSSL::HMAC.hexdigest('SHA256', secret_key, "#{Time.current.to_i}.#{req.body}")
+                req.headers['X-Spree-Webhook-Signature'] == expected
+              }
+            end
+          end
+
+          it 'leaves the persisted payload redacted after delivery' do
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            expect(delivery.reload.payload['data']['reset_token']).
+              to eq(Spree::WebhookPayloadRedaction::REDACTION_PLACEHOLDER)
+          end
+        end
+
         context 'with successful response' do
           before do
             stub_request(:post, delivery.url)
