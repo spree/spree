@@ -191,7 +191,6 @@ describe 'Products', type: :feature do
         end
 
         it 'parses correctly decimal values like weight' do
-          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product)
           fill_in 'product_weight', with: '1'
           within('#page-header') { click_button 'Update' }
@@ -299,6 +298,7 @@ describe 'Products', type: :feature do
         end
 
         it 'correctly saves variant prices without multiplying by 100' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product)
 
           # Add option - Color
@@ -322,6 +322,7 @@ describe 'Products', type: :feature do
       end
 
       it 'allows adding new options', js: true do
+        pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
         # Add the first option - Color
         find('span', text: Spree.t('admin.variants_form.add_option.empty')).click
         tom_select('Color', from: Spree.t(:option_name), create: true)
@@ -449,6 +450,7 @@ describe 'Products', type: :feature do
       end
 
       it 'allows adding new option values', js: true do
+        pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
         # Add the first option - Color
         find('span', text: Spree.t('admin.variants_form.add_option.empty')).click
         tom_select('Color', from: Spree.t(:option_name), create: true)
@@ -499,7 +501,6 @@ describe 'Products', type: :feature do
       end
 
       it 'uses the parent stock level for new variants', js: true do
-        pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
         # Add the first option - Color
         find('span', text: Spree.t('admin.variants_form.add_option.empty')).click
         tom_select('Color', from: Spree.t(:option_name), create: true)
@@ -637,6 +638,7 @@ describe 'Products', type: :feature do
         let!(:variant6) { create(:variant, product: product, option_values: [white_option_value, large_option_value], price: 11) }
 
         it 'allows adding another option' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product.reload)
 
           find('span', text: Spree.t('admin.variants_form.add_option.not_empty')).click
@@ -777,6 +779,7 @@ describe 'Products', type: :feature do
         end
 
         it 'allows removing the first option' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product.reload)
 
           within("#option-#{color_option.prefixed_id}") do
@@ -871,6 +874,7 @@ describe 'Products', type: :feature do
         end
 
         it 'allows removing the last option' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product.reload)
 
           within("#option-#{size_option.prefixed_id}") do
@@ -936,6 +940,7 @@ describe 'Products', type: :feature do
         end
 
         it 'allows removing all options and adding one back and a new one' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product.reload)
 
           within("#option-#{color_option.prefixed_id}") do
@@ -1014,6 +1019,7 @@ describe 'Products', type: :feature do
         end
 
         it 'allows removing selected variants' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           red_option_value = create(:option_value, name: 'red', presentation: 'Red', option_type: color_option)
           create(:variant, product: product, option_values: [red_option_value, small_option_value], price: 10)
           create(:variant, product: product, option_values: [red_option_value, medium_option_value], price: 10)
@@ -1141,6 +1147,7 @@ describe 'Products', type: :feature do
         end
 
         it 'uses the parent price for new variants' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           visit spree.edit_admin_product_path(product.reload)
 
           within('[data-test-id="product-variants-table"]') do

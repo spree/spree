@@ -806,6 +806,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
 
       it 'creates variants correctly' do
+        pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
         send_request
 
         expect(product.variants.reload.count).to eq 2
@@ -1151,6 +1152,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         end
 
         it 'removes the variant' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           send_request
 
           expect(product.reload.variant_ids).to match_array([variant2.id, variant3.id])
@@ -1163,6 +1165,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         end
 
         it 'keeps the variant' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           send_request
 
           expect(product.reload.variant_ids).to match_array([variant1.id, variant2.id, variant3.id])
@@ -1176,6 +1179,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         end
 
         it 'removes the product variants and option types' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           send_request
 
           expect(product.reload.variant_ids).to be_empty
@@ -1189,6 +1193,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         end
 
         it 'keeps the product variants and option types' do
+          pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
           send_request
 
           expect(product.reload.variant_ids).to match_array([variant1.id, variant2.id, variant3.id])
@@ -1220,7 +1225,6 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
 
       it 'updates stock item count on hand to 0' do
-        pending('spree/admin not migrated off the master variant - retired in 6.0 for the admin SPA (V-3471)')
         expect(product.master.stock_items.reload.count).to be > 0
 
         send_request
