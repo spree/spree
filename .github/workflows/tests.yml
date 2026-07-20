@@ -56,7 +56,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api admin emails dashboard; do
+          for project in core api emails dashboard; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -101,7 +101,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api admin emails dashboard; do
+          for project in core api emails dashboard; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -127,8 +127,6 @@ jobs:
           - { project: core, shard: 3, total_shards: 3, procs: 4 }
           # api: 1 runner × 4 procs
           - { project: api, shard: 1, total_shards: 1, procs: 4 }
-          # admin: 1 runner × 4 procs (feature specs are browser-driven; keep modest)
-          - { project: admin, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs (tiny suite)
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
@@ -271,8 +269,6 @@ jobs:
           - { project: core, shard: 3, total_shards: 3, procs: 4 }
           # api: 1 runner × 4 procs
           - { project: api, shard: 1, total_shards: 1, procs: 4 }
-          # admin: 1 runner × 4 procs
-          - { project: admin, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
@@ -405,7 +401,7 @@ jobs:
       - name: Run Brakeman
         working-directory: spree
         run: |
-          for project in core api admin; do
+          for project in core api; do
             echo "--- Running Brakeman on $project ---"
             bundle exec brakeman --ensure-latest -p $project
           done
