@@ -2,7 +2,7 @@ name: Packages
 
 on:
   push:
-    branches: [main]
+    branches: [main, '6-0-dev']
     paths:
       - "packages/**"
       - "spree/api/app/**"
