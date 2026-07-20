@@ -17,7 +17,7 @@ Active plans (6.0 target, work pending):
 - `6.0-admin-api.md` — Admin REST API conventions, auth, endpoint list (~300 endpoints)
 - `6.0-admin-spa.md` — React admin architecture, extension points, table registry, i18n + server-error mapping
 - `6.0-product-types.md` — Prototype → ProductType rename, MetafieldDefinition schema enforcement
-- `6.0-remove-master-variant.md` — Eliminate is_master, add default_variant_id FK on Product
+- `6.0-remove-master-variant.md` — Eliminate is_master, add default_variant_id FK on Product. **Shipped to 6-0-dev (PR #14265):** is_master removed from all models, default_variant_id + `spree:remove_master_variant` data-migration rake landed; only the physical is_master column drop remains (6.1 cleanup).
 - `6.0-split-adjustments.md` — Replace polymorphic Adjustment with TaxLine, Discount, Fee
 - `6.0-typed-stock-movements.md` — Replace generic StockMovement with typed kinds + concrete FKs
 - `6.0-normalize-state-to-status.md` — Rename state → status on Payment, Shipment, InventoryUnit, ReturnAuthorization, GiftCard
@@ -28,7 +28,7 @@ Active plans (6.0 target, work pending):
 - `6.0-delivery-rate-provider.md` — Per-DeliveryMethod DeliveryRateProvider, replaces Estimator + Calculator, DeliveryZone with postal code support
 - `6.0-rich-text-descriptions.md` — Drop ActionText storage, store HTML in text columns, sanitize on write, serve `description` + `description_html` in API (description_html serializer field shipped in 5.4)
 - `6.0-inventory-operations.md` — StockTransfer lifecycle (draft → ready_to_ship → in_transit → received with partial receive), new `Spree::PurchaseOrder` + `Spree::Supplier` (renamed from Vendor — `Spree::Vendor` is the marketplace seller, see decisions.md 2026-07-14) replacing today's "external receive" hack, variant + stock-location stock history panels. Consumes the typed-movement primitives from `6.0-typed-stock-movements.md`.
-- `6.0-replace-taxons-with-categories.md` — Split Taxon into Category (hierarchy) + Collection (flat/rule-based). Category surface shipped (5.5–5.6): `Spree::Category < Spree::Taxon` scoped subclass, direct `store_id` ownership + backfill, full Admin Categories API, counter caches (`products_count`), dashboard UI. Pending 6.0: table rename + inheritance flip, the `Collection` stack, model-level removal of automatic/rules from Category, and dropping `Taxonomy`. No brand feature in 6.0 — brands are modeled as a Category/Collection; `brand_taxon`/`brand_name` removed with `Taxonomy`.
+- `6.0-replace-taxons-with-categories.md` — Split Taxon into Category (hierarchy) + Collection (flat/rule-based). **Shipped to 6-0-dev (PR #14302):** the Category surface (5.5–5.6) plus the 6.0 core — `spree_taxons`→`spree_categories` table rename + inheritance flip (`Spree::Category < Spree.base_class`, `Spree::Taxon` alias kept), the full `Collection` stack (model + rules + DB/Meilisearch manual sort + API), the taxon→category/collection data migration, and de-ruling Category. Pending (all 6.1): channel-aware `CollectionRules::AvailableOn` (ships interim now, rides with channels) + dropping `spree_taxon_rules`/`Taxonomy`. No brand feature in 6.0 — brands are modeled as a Category/Collection; `brand_taxon`/`brand_name` removed with `Taxonomy`.
 
 Multi-version plans (some phases shipped, some pending):
 - `5.4-store-api-naming-standardization.md` — Standardize API naming against industry (address fields, discounts, customer_note, label, brand/last4, etc.). 5.4 model/API aliases shipped; 6.0 column/table renames pending.
