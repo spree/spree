@@ -10,7 +10,7 @@ module Spree
       end
 
       def api_key_channel_options
-        current_store.channels.active.map { |channel| [channel.name, channel.id] }
+        current_store.channels.active.pluck(:name, :id)
       end
 
       def api_key_status_badge(api_key)
