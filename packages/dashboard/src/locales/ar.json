@@ -1595,7 +1595,9 @@
           "table": {
             "key": "Key",
             "scopes": "Scopes",
-            "last_used_at": "آخر استخدام"
+            "last_used_at": "آخر استخدام",
+            "channel": "Channel",
+            "all_channels": "All channels"
           },
           "save_secret_title": "احفظ مفتاحك السري",
           "save_secret_description": "انسخ هذه القيمة الآن، ولن نعرضها مرة أخرى.",

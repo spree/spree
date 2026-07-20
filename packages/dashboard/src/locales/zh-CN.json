@@ -1595,7 +1595,9 @@
           "table": {
             "key": "密钥",
             "scopes": "范围",
-            "last_used_at": "最近使用"
+            "last_used_at": "最近使用",
+            "channel": "Channel",
+            "all_channels": "All channels"
           },
           "save_secret_title": "保存您的私密密钥",
           "save_secret_description": "请立即复制此值 — 我们不会再次显示它。",

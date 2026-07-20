@@ -1595,7 +1595,9 @@
           "table": {
             "key": "Key",
             "scopes": "Scopes",
-            "last_used_at": "Last used"
+            "last_used_at": "Last used",
+            "channel": "Channel",
+            "all_channels": "All channels"
           },
           "save_secret_title": "Save your secret key",
           "save_secret_description": "Copy this value now — we won't show it again.",

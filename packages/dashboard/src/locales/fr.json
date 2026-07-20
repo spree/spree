@@ -1547,7 +1547,9 @@
           "table": {
             "key": "Clé",
             "scopes": "Portées",
-            "last_used_at": "Dernière utilisation"
+            "last_used_at": "Dernière utilisation",
+            "channel": "Channel",
+            "all_channels": "All channels"
           },
           "save_secret_title": "Enregistrez votre clé secrète",
           "save_secret_description": "Copiez cette valeur maintenant — nous ne l'afficherons plus.",

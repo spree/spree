@@ -1567,7 +1567,9 @@
           "table": {
             "key": "Klucz",
             "scopes": "Zakresy",
-            "last_used_at": "Ostatnio użyto"
+            "last_used_at": "Ostatnio użyto",
+            "channel": "Channel",
+            "all_channels": "All channels"
           },
           "save_secret_title": "Zapisz swój klucz tajny",
           "save_secret_description": "Skopiuj tę wartość teraz — nie pokażemy jej ponownie.",

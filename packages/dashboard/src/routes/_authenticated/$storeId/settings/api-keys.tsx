@@ -150,6 +150,7 @@ function ApiKeysSettingsPage() {
         keys={publishable}
         loading={isLoading}
         showScopes={false}
+        showChannel
         emptyMessage={t('admin.pages.settings.api_keys.empty_publishable')}
         onEdit={setEditKey}
         channelName={channelName}
@@ -206,6 +207,7 @@ function ApiKeyTable({
   keys,
   loading,
   showScopes,
+  showChannel = false,
   emptyMessage,
   onEdit,
   channelName,
@@ -215,6 +217,7 @@ function ApiKeyTable({
   keys: ApiKey[]
   loading: boolean
   showScopes: boolean
+  showChannel?: boolean
   emptyMessage: string
   onEdit: (key: ApiKey) => void
   channelName?: (channelId: string | null) => string | undefined
@@ -243,12 +246,15 @@ function ApiKeyTable({
           </Empty>
         ) : (
           <Table>
-            <TableHeader>
+            <TableHeader className="border-b">
               <TableRow>
                 <TableHead>{t('admin.fields.name.label')}</TableHead>
                 <TableHead>{t('admin.pages.settings.api_keys.table.key')}</TableHead>
                 {showScopes && (
                   <TableHead>{t('admin.pages.settings.api_keys.table.scopes')}</TableHead>
+                )}
+                {showChannel && (
+                  <TableHead>{t('admin.pages.settings.api_keys.table.channel')}</TableHead>
                 )}
                 <TableHead>{t('admin.pages.settings.api_keys.table.last_used_at')}</TableHead>
                 <TableHead>{t('admin.fields.created_at.label')}</TableHead>
@@ -261,6 +267,7 @@ function ApiKeyTable({
                   key={key.id}
                   apiKey={key}
                   showScopes={showScopes}
+                  showChannel={showChannel}
                   onEdit={onEdit}
                   channelName={channelName}
                 />
@@ -277,10 +284,12 @@ function ApiKeyRow({
   apiKey,
   showScopes,
   onEdit,
+  showChannel,
   channelName,
 }: {
   apiKey: ApiKey
   showScopes: boolean
+  showChannel: boolean
   onEdit: (key: ApiKey) => void
   channelName?: (channelId: string | null) => string | undefined
 }) {
@@ -338,7 +347,6 @@ function ApiKeyRow({
       <TableCell>
         <div className="flex items-center gap-2">
           <span className="font-medium">{apiKey.name}</span>
-          {boundChannelName && <Badge variant="secondary">{boundChannelName}</Badge>}
           {isRevoked && <Badge variant="destructive">{t('admin.api_keys.badge.revoked')}</Badge>}
         </div>
       </TableCell>
@@ -360,6 +368,15 @@ function ApiKeyRow({
       {showScopes && (
         <TableCell>
           <ScopeList scopes={apiKey.scopes} />
+        </TableCell>
+      )}
+      {showChannel && (
+        <TableCell className="text-sm whitespace-nowrap">
+          {boundChannelName ?? (
+            <span className="text-muted-foreground">
+              {t('admin.pages.settings.api_keys.table.all_channels')}
+            </span>
+          )}
         </TableCell>
       )}
       <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
