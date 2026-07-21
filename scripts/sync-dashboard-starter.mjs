@@ -3,7 +3,9 @@
 // doubles as the plugin pipeline's CI consumer test) into a standalone
 // template, rewriting the bits that only make sense inside the monorepo:
 //
-//   - `workspace:^` dependency ranges → `^<version>` of the published packages
+//   - `workspace:^` dependency ranges → floating ranges on the published
+//     packages (newest release through 1.x, floored at the version being
+//     released)
 //   - monorepo-only devDependencies dropped (the example plugin isn't on npm)
 //   - biome.json extends the workspace root config → replaced with a
 //     self-contained equivalent
@@ -13,10 +15,10 @@
 //
 // Runs at build time in @spree/cli and create-spree-app, targeting their
 // `templates/dashboard-starter/` (gitignored; shipped inside the tarball via
-// the dist copy). `prepublishOnly` rebuilds on publish, so the version pins
-// are always stamped from the versions being released — Vendure-style
-// lockstep, no template repo to keep in sync. (A public template repo can
-// reuse this script as a second target later.)
+// the dist copy). `prepublishOnly` rebuilds on publish, so the floor is
+// always stamped from the versions being released — no template repo to keep
+// in sync. (A public template repo can reuse this script as a second target
+// later.)
 //
 // Usage: node scripts/sync-dashboard-starter.mjs <target-dir>
 import fs from 'node:fs'
@@ -69,7 +71,14 @@ function publishedRange(name) {
   if (manifest.private) {
     throw new Error(`${name} is private — it can't be a dependency of the synced template`)
   }
-  return `^${manifest.version}`
+  // On 0.x, `^` never crosses a minor, so scaffolds stay frozen on whatever
+  // minor the CLI happened to be published against — a dashboard release
+  // without a CLI release in the same train would never reach users. Float
+  // instead, floored at the version this template was built against, through
+  // all of 0.x AND into 1.x so preview-era apps migrate to stable on their
+  // own. After 1.0, `^` floats within the major on its own.
+  const { version } = manifest
+  return version.startsWith('0.') ? `>=${version} <2.0.0` : `^${version}`
 }
 
 const pkgPath = path.join(targetDir, 'package.json')
