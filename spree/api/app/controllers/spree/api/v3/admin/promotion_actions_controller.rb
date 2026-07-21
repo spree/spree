@@ -55,6 +55,11 @@ module Spree
             params.permit(:type, preferences: {})
           end
 
+          # `types`/`calculators` are read-only discovery — read scope + :show ability.
+          def read_actions
+            super + %w[types calculators]
+          end
+
           def set_parent
             return if %w[types calculators].include?(action_name)
 

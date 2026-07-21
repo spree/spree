@@ -119,5 +119,22 @@ RSpec.describe Spree::Api::V3::Admin::OrderRoutingRulesController, type: :contro
       expect(entry[:description]).to be_present
       expect(entry[:preference_schema]).to eq([])
     end
+
+    context 'with a read-only secret API key and no JWT' do
+      let(:headers) { api_key_headers }
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: ['read_settings']) }
+
+      it 'maps type discovery to the read scope' do
+        get :types, as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'still requires the write scope for mutations' do
+        post :create, params: { channel_id: channel.prefixed_id, type: 'default_location' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
   end
 end

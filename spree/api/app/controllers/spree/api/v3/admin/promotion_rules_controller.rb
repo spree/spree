@@ -33,6 +33,11 @@ module Spree
             params.permit(:type, preferences: {})
           end
 
+          # `types` is read-only discovery — maps to the read scope + :show ability.
+          def read_actions
+            super + %w[types]
+          end
+
           def set_parent
             return if action_name == 'types'
 

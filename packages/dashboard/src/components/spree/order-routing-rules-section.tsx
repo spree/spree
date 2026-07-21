@@ -80,13 +80,18 @@ export function OrderRoutingRulesSection({ channelId }: { channelId: string }) {
 
     // Reorder the cache first so the row doesn't snap back while the PATCH
     // runs; the mutation's invalidation then restores canonical positions.
+    // On failure, restore the pre-drag snapshot — success-only invalidation
+    // would otherwise leave the never-persisted order on screen.
+    const listKey = buildKey('channels', channelId, 'order-routing-rules')
+    const snapshot = queryClient.getQueryData<PaginatedResponse<OrderRoutingRule>>(listKey)
     const next = arrayMove(rules, fromIndex, toIndex).map((r, i) => ({ ...r, position: i + 1 }))
-    queryClient.setQueryData(
-      buildKey('channels', channelId, 'order-routing-rules'),
-      (prev: PaginatedResponse<OrderRoutingRule> | undefined) =>
-        prev ? { ...prev, data: next } : prev,
+    queryClient.setQueryData(listKey, (prev: PaginatedResponse<OrderRoutingRule> | undefined) =>
+      prev ? { ...prev, data: next } : prev,
     )
-    updateMutation.mutate({ id: String(active.id), params: { position: toIndex + 1 } })
+    updateMutation.mutate(
+      { id: String(active.id), params: { position: toIndex + 1 } },
+      { onError: () => queryClient.setQueryData(listKey, snapshot) },
+    )
   }
 
   async function handleDelete(rule: OrderRoutingRule) {
