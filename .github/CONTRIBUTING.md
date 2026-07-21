@@ -372,7 +372,7 @@ pnpm changeset    # from the repo root; select the affected package(s)
 
 This creates a changeset file describing your changes. Commit it with your PR. The dashboard packages (`@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`) are a fixed group and always release together under one version — a changeset naming any of them bumps all three. See `.changeset/README.md` for the release trains.
 
-Releasing is a two-step flow: a maintainer consumes the pending changesets (`pnpm version:preview` for the Developer Preview train, plain `changeset version` to include `@spree/sdk` — writes the CHANGELOGs and bumps `package.json`) and merges that bump to `main`; the release jobs in `.github/workflows/packages.yml` then detect the unpublished versions and publish with npm provenance via Trusted Publishing. Packages on a 0.x Developer Preview line (`@spree/admin-sdk`, the dashboard packages) publish under the `next` dist-tag; the others ship as `latest` (prereleases go to `beta`).
+Releasing is a two-step flow: a maintainer consumes the pending changesets (`pnpm version:preview` for the Developer Preview train, plain `changeset version` to include `@spree/sdk` — writes the CHANGELOGs and bumps `package.json`) and merges that bump to `main`; the release jobs in `.github/workflows/packages.yml` then detect the unpublished versions and publish with npm provenance via Trusted Publishing. Dist-tags follow the version, matching the rule in the release jobs: `0.x` versions (the Developer Preview line) publish under `next`, prerelease versions under `beta`, and stable versions as `latest`.
 
 Private packages (`@spree/dashboard-starter`, `@spree/dashboard-plugin-example`, `@spree/sdk-core`) are never published and don't need changesets.
 
