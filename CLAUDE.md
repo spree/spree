@@ -638,12 +638,14 @@ cd packages/sdk && pnpm test       # SDK tests (uses MSW for HTTP mocking)
 
 ### Admin SPA E2E (Playwright)
 
-End-to-end tests for `packages/dashboard` live in `packages/dashboard/e2e/`. The global setup boots a real Rails test server (port 3010) + Vite dev (port 5174) once and seeds the DB; specs then exercise the SPA through a browser against that stack.
+End-to-end tests for `packages/dashboard` live in `packages/dashboard/e2e/`. The global setup boots a real Rails test server (port 3010) + Vite (port 5174) once and seeds the DB; specs then exercise the SPA through a browser against that stack. Locally Vite runs in dev mode; CI builds first and serves the bundle (`E2E_PREVIEW=1` → `vite preview`) because every test's fresh browser context re-downloads all dev-mode modules. CI also splits the suite across shard jobs (`--shard=n/m`), each with its own isolated Rails + SQLite + Vite stack — specs must stay self-contained (seed via global-setup fixtures or create your own records) and must not depend on records another spec file leaves behind.
 
 ```bash
 cd packages/dashboard && pnpm test:e2e          # full suite
 cd packages/dashboard && pnpm test:e2e:ui       # Playwright UI mode (debug)
 ```
+
+The `login(page)` helper authenticates through the API (one POST plants the refresh cookie; the SPA's boot-time silent refresh does the rest) — only `auth.spec.ts` drives the login form itself.
 
 **Write UI-only assertions, like Capybara.** Drive the test through user-visible actions (fill labels, click buttons, find by role) and assert on visible UI. **Do not** reach for `page.waitForResponse(/api/...)` to wait for backend completion — it leaks API shape into tests and makes refactors painful. Playwright's `await expect(...).toBeVisible()` auto-polls until the condition is met (same as Capybara's `default_max_wait_time`), which covers virtually all cases.
 
