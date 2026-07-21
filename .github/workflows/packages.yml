@@ -98,8 +98,16 @@ jobs:
         run: pnpm test:integration
 
   dashboard-e2e:
-    name: "Dashboard - E2E"
+    name: "Dashboard - E2E (${{ matrix.shard }}/4)"
     runs-on: ubuntu-latest
+    # Each shard is a full isolated stack (own Rails + SQLite + Vite), so
+    # shards can't interfere through shared server state the way parallel
+    # workers against one backend would. Playwright distributes spec files
+    # across shards; within a shard the suite stays serial (workers: 1).
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     env:
       RAILS_ENV: test
       DB: sqlite3
@@ -119,14 +127,25 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      # Same Turbo cache as the check job — unchanged packages restore their
+      # build outputs instead of rebuilding per shard.
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
       - run: pnpm install --frozen-lockfile
 
-      # The admin SPA imports built dist from the SDKs (per the workspace
-      # convention), and its vite.config resolves dashboard-core's compiled
-      # Vite entry (dist/vite) — build them first so Vite resolves the
-      # workspace deps.
-      - name: Build SDK dependencies
-        run: pnpm turbo build --filter=@spree/sdk-core --filter=@spree/admin-sdk --filter=@spree/dashboard-core
+      # Build the dashboard and its workspace deps (sdk-core, admin-sdk,
+      # dashboard-core/-ui via ^build). The E2E suite runs against the built
+      # SPA (`vite preview`, E2E_PREVIEW below): fresh browser contexts have
+      # empty caches, so the dev server would re-serve hundreds of on-demand
+      # modules on every page load in every test.
+      - name: Build dashboard packages
+        run: pnpm turbo build --filter=@spree/dashboard --cache-dir=.turbo
 
       - name: Setup dummy Rails app
         working-directory: spree/api
@@ -161,17 +180,35 @@ jobs:
 
       - name: Run dashboard E2E tests
         working-directory: packages/dashboard
-        run: pnpm test:e2e
+        env:
+          E2E_PREVIEW: "1"
+        run: pnpm test:e2e --shard=${{ matrix.shard }}/4
 
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-shard-${{ matrix.shard }}
           path: |
             packages/dashboard/playwright-report/
             packages/dashboard/test-results/
           retention-days: 14
+
+  # Stable single-status roll-up of the shard matrix, keeping the check name
+  # branch-protection rules and status badges can pin against.
+  dashboard-e2e-result:
+    name: "Dashboard - E2E"
+    needs: dashboard-e2e
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check shard results
+        run: |
+          if [ "${{ needs.dashboard-e2e.result }}" != "success" ]; then
+            echo "One or more E2E shards did not succeed: ${{ needs.dashboard-e2e.result }}"
+            exit 1
+          fi
+          echo "All E2E shards passed."
 
   release-sdk:
     name: "SDK - Release"

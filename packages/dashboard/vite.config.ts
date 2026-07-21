@@ -62,5 +62,14 @@ export default defineConfig(({ mode }) => {
         '/rails': { target: proxyTarget, changeOrigin: true },
       },
     },
+    // `vite preview` inherits `server.proxy` by default, and the E2E suite
+    // depends on that when it serves the built SPA on CI — pin the proxy
+    // explicitly so a future `preview` block can't silently drop it.
+    preview: {
+      proxy: {
+        '/api': { target: proxyTarget, changeOrigin: true },
+        '/rails': { target: proxyTarget, changeOrigin: true },
+      },
+    },
   }
 })
