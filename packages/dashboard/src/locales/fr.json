@@ -1075,6 +1075,19 @@
           "title": "Supprimer le canal de vente ?",
           "message": "{{name}} sera supprimé. Les produits et commandes qui y sont rattachés perdront leur référence de canal de vente."
         },
+        "order_routing_rules": {
+          "title": "Règles de routage des commandes",
+          "help": "Avec la stratégie de routage « Règles (ordonnées) », les règles sont évaluées de haut en bas — la première règle qui désigne un seul lieu de stock l'emporte ; en cas d'égalité, la règle suivante départage.",
+          "empty": "Aucune règle de routage — les commandes utilisent le lieu de stock par défaut.",
+          "add_cta": "Ajouter une règle",
+          "picker_title": "Ajouter une règle de routage",
+          "edit_preferences": "Modifier les paramètres de la règle",
+          "active_toggle": "Règle active",
+          "delete_confirm": {
+            "title": "Supprimer la règle de routage ?",
+            "message": "{{name}} sera retirée de l'ordre de routage de ce canal."
+          }
+        },
         "search_placeholder": "Rechercher des canaux de vente…",
         "no_channels_found": "Aucun canal de vente trouvé",
         "validation": {
@@ -2507,6 +2520,26 @@
         "created": "Canal créé",
         "updated": "Canal mis à jour",
         "deleted": "Canal supprimé"
+      }
+    },
+    "order_routing_rules": {
+      "messages": {
+        "created": "Règle de routage ajoutée",
+        "deleted": "Règle de routage supprimée"
+      },
+      "types": {
+        "preferred_location": {
+          "name": "Lieu de stock préféré",
+          "description": "Expédier depuis le lieu épinglé sur la commande, s'il est défini"
+        },
+        "minimize_splits": {
+          "name": "Minimiser les envois fractionnés",
+          "description": "Privilégie le lieu capable d'expédier le plus d'articles à lui seul, évitant les envois fractionnés"
+        },
+        "default_location": {
+          "name": "Lieu de stock par défaut",
+          "description": "Privilégie le lieu de stock marqué comme défaut"
+        }
       }
     },
     "customer_groups": {

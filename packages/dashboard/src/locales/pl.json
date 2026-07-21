@@ -1075,6 +1075,19 @@
           "title": "Usunąć kanał sprzedaży?",
           "message": "{{name}} zostanie usunięty. Produkty i zamówienia z nim powiązane stracą odniesienie do kanału sprzedaży."
         },
+        "order_routing_rules": {
+          "title": "Reguły routingu zamówień",
+          "help": "Przy strategii routingu „Reguły (uporządkowane)” reguły są oceniane od góry do dołu — wygrywa pierwsza reguła, która jednoznacznie wskaże lokalizację magazynową; przy remisie decyduje kolejna reguła.",
+          "empty": "Brak reguł routingu — zamówienia trafiają do domyślnej lokalizacji magazynowej.",
+          "add_cta": "Dodaj regułę",
+          "picker_title": "Dodaj regułę routingu",
+          "edit_preferences": "Edytuj ustawienia reguły",
+          "active_toggle": "Reguła aktywna",
+          "delete_confirm": {
+            "title": "Usunąć regułę routingu?",
+            "message": "{{name}} zostanie usunięta z kolejności routingu tego kanału."
+          }
+        },
         "search_placeholder": "Szukaj kanałów sprzedaży…",
         "no_channels_found": "Nie znaleziono kanałów sprzedaży",
         "validation": {
@@ -2539,6 +2552,26 @@
         "created": "Kanał utworzony",
         "updated": "Kanał zaktualizowany",
         "deleted": "Kanał usunięty"
+      }
+    },
+    "order_routing_rules": {
+      "messages": {
+        "created": "Dodano regułę routingu",
+        "deleted": "Usunięto regułę routingu"
+      },
+      "types": {
+        "preferred_location": {
+          "name": "Preferowana lokalizacja",
+          "description": "Realizuj z lokalizacji przypiętej do zamówienia, jeśli została ustawiona"
+        },
+        "minimize_splits": {
+          "name": "Minimalizuj podziały",
+          "description": "Preferuje lokalizację, która samodzielnie zrealizuje najwięcej pozycji, unikając dzielenia przesyłek"
+        },
+        "default_location": {
+          "name": "Domyślna lokalizacja",
+          "description": "Preferuje lokalizację magazynową oznaczoną jako domyślna"
+        }
       }
     },
     "customer_groups": {

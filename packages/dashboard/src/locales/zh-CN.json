@@ -1123,6 +1123,19 @@
           "title": "删除销售渠道？",
           "message": "{{name}} 将被移除。关联到该渠道的商品和订单将失去其销售渠道引用。"
         },
+        "order_routing_rules": {
+          "title": "订单路由规则",
+          "help": "当路由策略为“规则（有序）”时，规则自上而下依次评估——第一个能唯一确定库存地点的规则胜出；平局则由下一条规则决定。",
+          "empty": "暂无路由规则——订单将使用默认库存地点。",
+          "add_cta": "添加规则",
+          "picker_title": "添加路由规则",
+          "edit_preferences": "编辑规则设置",
+          "active_toggle": "规则已启用",
+          "delete_confirm": {
+            "title": "删除路由规则？",
+            "message": "{{name}} 将从此渠道的路由顺序中移除。"
+          }
+        },
         "search_placeholder": "搜索销售渠道…",
         "no_channels_found": "未找到销售渠道",
         "validation": {
@@ -2507,6 +2520,26 @@
         "created": "渠道已创建",
         "updated": "渠道已更新",
         "deleted": "渠道已删除"
+      }
+    },
+    "order_routing_rules": {
+      "messages": {
+        "created": "已添加路由规则",
+        "deleted": "已移除路由规则"
+      },
+      "types": {
+        "preferred_location": {
+          "name": "首选库存地点",
+          "description": "如订单已指定库存地点，则从该地点发货"
+        },
+        "minimize_splits": {
+          "name": "减少拆单",
+          "description": "优先选择能独立满足最多商品的地点，避免拆分发货"
+        },
+        "default_location": {
+          "name": "默认库存地点",
+          "description": "优先选择标记为默认的库存地点"
+        }
       }
     },
     "customer_groups": {

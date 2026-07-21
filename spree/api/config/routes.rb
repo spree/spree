@@ -345,7 +345,14 @@ Spree::Core::Engine.add_routes do
             post :add_products
             post :remove_products
           end
+
+          resources :order_routing_rules, only: [:index, :show, :create, :update, :destroy]
         end
+
+        # Subclass discovery for the routing-rules editor, mirroring
+        # `/promotion_rules/types`. Top-level so the SPA can build the
+        # "Add rule" picker without a parent channel.
+        get 'order_routing_rules/types', to: 'order_routing_rules#types'
 
         # Variants (top-level, for search/autocomplete across all products)
         resources :variants, only: [:index, :show], concerns: :custom_fieldable

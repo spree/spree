@@ -1123,6 +1123,19 @@
           "title": "Delete sales channel?",
           "message": "{{name}} will be removed. Products and orders attached to it will lose their sales-channel reference."
         },
+        "order_routing_rules": {
+          "title": "Order routing rules",
+          "help": "When the routing strategy is Rules (ordered), rules are evaluated top to bottom — the first rule that singles out a stock location wins, and ties carry to the next rule.",
+          "empty": "No routing rules — orders fall back to the default stock location.",
+          "add_cta": "Add rule",
+          "picker_title": "Add a routing rule",
+          "edit_preferences": "Edit rule settings",
+          "active_toggle": "Rule active",
+          "delete_confirm": {
+            "title": "Delete routing rule?",
+            "message": "{{name}} will be removed from this channel's routing order."
+          }
+        },
         "search_placeholder": "Search sales channels…",
         "no_channels_found": "No sales channels found",
         "validation": {
@@ -2507,6 +2520,26 @@
         "created": "Channel created",
         "updated": "Channel updated",
         "deleted": "Channel deleted"
+      }
+    },
+    "order_routing_rules": {
+      "messages": {
+        "created": "Routing rule added",
+        "deleted": "Routing rule removed"
+      },
+      "types": {
+        "preferred_location": {
+          "name": "Preferred location",
+          "description": "Fulfill from the location pinned on the order, when one is set"
+        },
+        "minimize_splits": {
+          "name": "Minimize splits",
+          "description": "Prefer the location that can fulfill the most items on its own, avoiding split shipments"
+        },
+        "default_location": {
+          "name": "Default location",
+          "description": "Prefer the stock location marked as default"
+        }
       }
     },
     "customer_groups": {

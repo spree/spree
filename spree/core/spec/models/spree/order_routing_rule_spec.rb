@@ -18,6 +18,9 @@ RSpec.describe Spree::OrderRoutingRule, type: :model do
     end
 
     it 'is valid when instantiated as an STI subclass with a channel' do
+      # The seeded rule of the same kind must go first — `type` is unique per channel.
+      channel.order_routing_rules.find_by(type: 'Spree::OrderRouting::Rules::PreferredLocation').destroy!
+
       rule = Spree::OrderRouting::Rules::PreferredLocation.new(store: store, channel: channel, position: 1)
       expect(rule).to be_valid
     end
@@ -37,6 +40,31 @@ RSpec.describe Spree::OrderRoutingRule, type: :model do
       rule.type = 'Spree::OrderRoutingRule'
       expect(rule).not_to be_valid
       expect(rule.errors[:type]).to be_present
+    end
+
+    it 'defaults position to the end of the channel list when omitted' do
+      # Destroying the seeded rule compacts the list to positions 1-2
+      # (acts_as_list), so the re-created rule lands at 3.
+      channel.order_routing_rules.find_by(type: 'Spree::OrderRouting::Rules::PreferredLocation').destroy!
+
+      rule = Spree::OrderRouting::Rules::PreferredLocation.create!(store: store, channel: channel)
+      expect(rule.position).to eq(3)
+    end
+
+    it 'rejects a second rule of the same kind on a channel' do
+      rule = Spree::OrderRouting::Rules::PreferredLocation.new(store: store, channel: channel)
+      expect(rule).not_to be_valid
+      expect(rule.errors[:type]).to be_present
+    end
+  end
+
+  describe '.subclasses_with_preference_schema' do
+    it 'enumerates registered kinds with localized labels and descriptions' do
+      entry = described_class.subclasses_with_preference_schema.find { |e| e[:type] == 'default_location' }
+
+      expect(entry[:label]).to eq('Default location')
+      expect(entry[:description]).to be_present
+      expect(entry[:preference_schema]).to eq([])
     end
   end
 
@@ -89,7 +117,7 @@ RSpec.describe Spree::OrderRoutingRule, type: :model do
     let(:locations) { [create(:stock_location)] }
 
     it 'is implemented by subclasses' do
-      rule = Spree::OrderRouting::Rules::DefaultLocation.create!(store: store, channel: channel, position: 99)
+      rule = channel.order_routing_rules.find_by(type: 'Spree::OrderRouting::Rules::DefaultLocation')
       rankings = rule.rank(order, locations)
       expect(rankings).to all(be_a(Spree::OrderRoutingRule::LocationRanking))
     end

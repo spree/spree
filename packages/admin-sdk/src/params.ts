@@ -1309,6 +1309,22 @@ export interface PromotionActionUpdateParams {
   line_items?: PromotionActionLineItemParams[]
 }
 
+export interface OrderRoutingRuleCreateParams {
+  /** Wire shorthand for the rule subclass (e.g. `'preferred_location'`), from `GET /order_routing_rules/types`. */
+  type: string
+  active?: boolean
+  /** 1-based priority in the channel's rule list. Omit to append at the end. */
+  position?: number
+  preferences?: Record<string, unknown>
+}
+
+export interface OrderRoutingRuleUpdateParams {
+  active?: boolean
+  /** Assigning a new position reorders the rest of the channel's list around it. */
+  position?: number
+  preferences?: Record<string, unknown>
+}
+
 export interface PromotionRuleCreateParams {
   /** Wire shorthand for the rule subclass (e.g. `'currency'`, `'item_total'`). */
   type: string

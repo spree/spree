@@ -202,6 +202,7 @@ module Spree
         admin_admin_user_serializer: 'Spree::Api::V3::Admin::AdminUserSerializer',
         admin_address_serializer: 'Spree::Api::V3::Admin::AddressSerializer',
         admin_channel_serializer: 'Spree::Api::V3::Admin::ChannelSerializer',
+        admin_order_routing_rule_serializer: 'Spree::Api::V3::Admin::OrderRoutingRuleSerializer',
         admin_product_publication_serializer: 'Spree::Api::V3::Admin::ProductPublicationSerializer',
         admin_market_serializer: 'Spree::Api::V3::Admin::MarketSerializer',
         admin_shipping_method_serializer: 'Spree::Api::V3::Admin::DeliveryMethodSerializer',

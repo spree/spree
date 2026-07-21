@@ -1190,6 +1190,16 @@ en:
       strategies:
         legacy: Legacy
         rules: Rules (ordered)
+    order_routing_rule_types:
+      default_location:
+        description: Prefer the stock location marked as default
+        name: Default location
+      minimize_splits:
+        description: Prefer the location that can fulfill the most items on its own, avoiding split shipments
+        name: Minimize splits
+      preferred_location:
+        description: Fulfill from the location pinned on the order, when one is set
+        name: Preferred location
     order_summary: Order Summary
     order_total: Order Total
     orders: Orders
