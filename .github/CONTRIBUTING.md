@@ -364,18 +364,17 @@ bundle exec rake typelizer:generate
 
 ### Releasing packages
 
-Published packages use [Changesets](https://github.com/changesets/changesets) for version management. Each package owns its own `.changeset/` folder, so changesets must be created from inside the package directory:
+Published packages use [Changesets](https://github.com/changesets/changesets) for version management — one workspace-wide instance rooted at `.changeset/`:
 
 ```bash
-cd packages/sdk    # or packages/admin-sdk, packages/cli, packages/create-spree-app
-pnpm changeset
+pnpm changeset    # from the repo root; select the affected package(s)
 ```
 
-This creates a changeset file describing your changes. Commit it with your PR.
+This creates a changeset file describing your changes. Commit it with your PR. The dashboard packages (`@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`) are a fixed group and always release together under one version — a changeset naming any of them bumps all three. See `.changeset/README.md` for the release trains.
 
-Releasing is a two-step flow: a maintainer consumes the pending changesets (`changeset version` — writes the CHANGELOG and bumps `package.json`) and merges that bump to `main`; the release jobs in `.github/workflows/packages.yml` then detect the unpublished version and publish with npm provenance via Trusted Publishing. `@spree/admin-sdk` publishes under the `next` dist-tag while on the 0.x Developer Preview line; the others ship as `latest` (prereleases go to `beta`).
+Releasing is a two-step flow: a maintainer consumes the pending changesets (`pnpm version:preview` for the Developer Preview train, plain `changeset version` to include `@spree/sdk` — writes the CHANGELOGs and bumps `package.json`) and merges that bump to `main`; the release jobs in `.github/workflows/packages.yml` then detect the unpublished versions and publish with npm provenance via Trusted Publishing. Packages on a 0.x Developer Preview line (`@spree/admin-sdk`, the dashboard packages) publish under the `next` dist-tag; the others ship as `latest` (prereleases go to `beta`).
 
-Private packages (`@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`, `@spree/sdk-core`) don't need changesets.
+Private packages (`@spree/dashboard-starter`, `@spree/dashboard-plugin-example`, `@spree/sdk-core`) are never published and don't need changesets.
 
 ## Code Style
 
@@ -445,7 +444,7 @@ To help us review your PR quickly:
 - **Describe your changes.** Explain what you changed and why. Include screenshots for UI changes.
 - **Add tests.** All new features and bug fixes should include appropriate test coverage.
 - **Update documentation.** If your change affects user-facing behavior, update the relevant docs.
-- **Include a changeset** if your change affects a published TypeScript package (`@spree/sdk`, `@spree/admin-sdk`, `@spree/cli`, or `create-spree-app`). Run `pnpm changeset` from inside that package's directory — each package owns its own `.changeset/` folder.
+- **Include a changeset** if your change affects a published TypeScript package (`@spree/sdk`, `@spree/admin-sdk`, `@spree/cli`, `create-spree-app`, or the dashboard packages). Run `pnpm changeset` from the repo root and select the affected package(s).
 - **Ensure CI passes.** PRs with failing CI will not be reviewed.
 
 ## Reporting Bugs
