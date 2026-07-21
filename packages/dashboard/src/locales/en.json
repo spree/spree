@@ -377,6 +377,12 @@
         "channels": {
           "label": "Sales channels",
           "help": "Leave empty to apply this rule on every sales channel."
+        },
+        "min_quantity": {
+          "help": "This price applies only when a customer orders at least this many of a single item."
+        },
+        "max_quantity": {
+          "help": "Leave empty for no upper limit."
         }
       },
       "stock_location": {
@@ -2500,7 +2506,9 @@
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "preferred_amount": "Amount",
-      "preferred_percent": "Percent"
+      "preferred_percent": "Percent",
+      "min_quantity": "Minimum quantity",
+      "max_quantity": "Maximum quantity"
     },
     "channels": {
       "messages": {

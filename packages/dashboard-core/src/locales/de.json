@@ -406,7 +406,8 @@
           "empty": "Noch keine Stufen. Der Basissatz gilt, bis Sie eine Stufe hinzufügen.",
           "add_tier": "Stufe hinzufügen",
           "remove_tier": "Stufe entfernen"
-        }
+        },
+        "unlimited": "Unlimited"
       },
       "confirm_dialog": {
         "title": "Sind Sie sicher?"

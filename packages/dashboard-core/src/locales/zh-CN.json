@@ -406,7 +406,8 @@
           "empty": "暂无层级。在添加层级之前，将应用基础费率。",
           "add_tier": "添加层级",
           "remove_tier": "移除层级"
-        }
+        },
+        "unlimited": "Unlimited"
       },
       "confirm_dialog": {
         "title": "确定吗？"

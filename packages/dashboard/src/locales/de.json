@@ -326,6 +326,12 @@
         "channels": {
           "label": "Vertriebskanäle",
           "help": "Leer lassen, um diese Regel auf jeden Vertriebskanal anzuwenden."
+        },
+        "min_quantity": {
+          "help": "This price applies only when a customer orders at least this many of a single item."
+        },
+        "max_quantity": {
+          "help": "Leave empty for no upper limit."
         }
       },
       "stock_location": {
@@ -2500,7 +2506,9 @@
       "base_amount": "Grundbetrag",
       "base_percent": "Grundprozentsatz",
       "preferred_amount": "Betrag",
-      "preferred_percent": "Prozent"
+      "preferred_percent": "Prozent",
+      "min_quantity": "Minimum quantity",
+      "max_quantity": "Maximum quantity"
     },
     "channels": {
       "messages": {

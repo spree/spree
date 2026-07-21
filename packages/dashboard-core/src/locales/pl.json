@@ -406,7 +406,8 @@
           "empty": "Brak progów. Do momentu dodania progu obowiązuje stawka podstawowa.",
           "add_tier": "Dodaj próg",
           "remove_tier": "Usuń próg"
-        }
+        },
+        "unlimited": "Unlimited"
       },
       "confirm_dialog": {
         "title": "Czy na pewno?"

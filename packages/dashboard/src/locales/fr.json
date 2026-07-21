@@ -326,6 +326,12 @@
         "channels": {
           "label": "Canaux de vente",
           "help": "Laissez vide pour appliquer cette règle à tous les canaux de vente."
+        },
+        "min_quantity": {
+          "help": "This price applies only when a customer orders at least this many of a single item."
+        },
+        "max_quantity": {
+          "help": "Leave empty for no upper limit."
         }
       },
       "stock_location": {
@@ -2500,7 +2506,9 @@
       "base_amount": "Montant de base",
       "base_percent": "Pourcentage de base",
       "preferred_amount": "Montant",
-      "preferred_percent": "Pourcentage"
+      "preferred_percent": "Pourcentage",
+      "min_quantity": "Minimum quantity",
+      "max_quantity": "Maximum quantity"
     },
     "channels": {
       "messages": {
