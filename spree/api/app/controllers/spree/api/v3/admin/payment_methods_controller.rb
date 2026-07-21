@@ -51,6 +51,11 @@ module Spree
             params.permit(:name, :description, :active, :storefront_visible, :auto_capture, :position, metadata: {}, preferences: {})
           end
 
+          # `types` is read-only discovery — maps to the read scope + :show ability.
+          def read_actions
+            super + %w[types]
+          end
+
           private
 
           # New payment methods are created through the current store.

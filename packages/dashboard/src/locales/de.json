@@ -1081,6 +1081,19 @@
           "title": "Verkaufskanal löschen?",
           "message": "{{name}} wird entfernt. Damit verknüpfte Produkte und Bestellungen verlieren ihre Verkaufskanal-Referenz."
         },
+        "order_routing_rules": {
+          "title": "Auftragsrouting-Regeln",
+          "help": "Bei der Routing-Strategie „Regeln (geordnet)“ werden die Regeln von oben nach unten ausgewertet – die erste Regel, die einen Lagerort eindeutig bestimmt, gewinnt; bei Gleichstand entscheidet die nächste Regel.",
+          "empty": "Keine Routing-Regeln – Bestellungen verwenden den Standard-Lagerort.",
+          "add_cta": "Regel hinzufügen",
+          "picker_title": "Routing-Regel hinzufügen",
+          "edit_preferences": "Regel-Einstellungen bearbeiten",
+          "active_toggle": "Regel aktiv",
+          "delete_confirm": {
+            "title": "Routing-Regel löschen?",
+            "message": "{{name}} wird aus der Routing-Reihenfolge dieses Kanals entfernt."
+          }
+        },
         "search_placeholder": "Verkaufskanäle suchen…",
         "no_channels_found": "Keine Verkaufskanäle gefunden",
         "validation": {
@@ -2515,6 +2528,26 @@
         "created": "Kanal erstellt",
         "updated": "Kanal aktualisiert",
         "deleted": "Kanal gelöscht"
+      }
+    },
+    "order_routing_rules": {
+      "messages": {
+        "created": "Routing-Regel hinzugefügt",
+        "deleted": "Routing-Regel entfernt"
+      },
+      "types": {
+        "preferred_location": {
+          "name": "Bevorzugter Lagerort",
+          "description": "Versand vom am Auftrag hinterlegten Lagerort, sofern gesetzt"
+        },
+        "minimize_splits": {
+          "name": "Teillieferungen minimieren",
+          "description": "Bevorzugt den Lagerort, der die meisten Artikel allein liefern kann, und vermeidet Teillieferungen"
+        },
+        "default_location": {
+          "name": "Standard-Lagerort",
+          "description": "Bevorzugt den als Standard markierten Lagerort"
+        }
       }
     },
     "customer_groups": {

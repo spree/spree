@@ -86,10 +86,15 @@ module Spree
           self.class._scoped_resource
         end
 
-        # Override in controllers with non-REST custom actions (e.g. dashboard
-        # `analytics` should map to a read).
+        # Maps the action to the scope kind. Consults the controller's
+        # `read_actions` (ResourceController's overridable list) when defined,
+        # so declaring a custom read-only action once — e.g. `types` — fixes
+        # both the CanCanCan action mapping and the required scope kind.
+        # Controllers outside the ResourceController hierarchy can still
+        # override `action_kind` directly (e.g. dashboard `analytics`).
         def action_kind
-          READ_ACTIONS.include?(action_name) ? 'read' : 'write'
+          read = respond_to?(:read_actions, true) ? read_actions : READ_ACTIONS
+          read.include?(action_name) ? 'read' : 'write'
         end
 
         # True when authorization derives from the API key's scopes rather

@@ -1,3 +1,18 @@
+## 2026-07-21: Order routing rules get admin management in the React dashboard only
+
+Per-channel `Spree::OrderRoutingRule` management (the Phase 2 "Admin API + SPA
+settings page" slice of `6.0-order-routing.md`) ships ahead of the rest of
+Phase 2: Admin API v3 CRUD nested under channels
+(`/channels/:channel_id/order_routing_rules`) + top-level
+`/order_routing_rules/types` discovery, `@spree/admin-sdk` resource, and a
+routing-rules editor inside the dashboard's channel edit sheet (drag-to-reorder,
+active toggles, schema-driven preference forms via `PreferencesForm`).
+
+**No legacy Rails admin UI** — routing rules are managed exclusively in the
+React dashboard. The legacy admin's channel form keeps only the strategy
+override select it already had. New admin surfaces target the SPA; the legacy
+admin is in maintenance mode for 6.0.
+
 ## 2026-07-20: Wholesale applicant company name stays in metadata until 6.1 Company accounts
 
 The gated wholesale portal's apply form collects a company name. Considered

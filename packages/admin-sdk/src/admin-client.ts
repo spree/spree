@@ -118,6 +118,8 @@ import type {
   OrderCancelParams,
   OrderCompleteParams,
   OrderCreateParams,
+  OrderRoutingRuleCreateParams,
+  OrderRoutingRuleUpdateParams,
   OrderUpdateParams,
   PasswordResetParams,
   PasswordResetRequestParams,
@@ -182,6 +184,7 @@ import type {
   Media,
   OptionType,
   Order,
+  OrderRoutingRule,
   Payment,
   PaymentMethod,
   Price,
@@ -2051,6 +2054,65 @@ export class AdminClient {
         ...options,
         body: params,
       }),
+
+    /**
+     * Order routing rules — the channel's prioritized list of signals the
+     * `Rules` routing strategy walks when choosing fulfillment locations.
+     * Rule kinds are discovered via `client.orderRoutingRules.types()`.
+     */
+    orderRoutingRules: {
+      list: (
+        channelId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<OrderRoutingRule>> =>
+        this.request<PaginatedResponse<OrderRoutingRule>>(
+          'GET',
+          `/channels/${channelId}/order_routing_rules`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      get: (channelId: string, id: string, options?: RequestOptions): Promise<OrderRoutingRule> =>
+        this.request<OrderRoutingRule>(
+          'GET',
+          `/channels/${channelId}/order_routing_rules/${id}`,
+          options,
+        ),
+
+      create: (
+        channelId: string,
+        params: OrderRoutingRuleCreateParams,
+        options?: RequestOptions,
+      ): Promise<OrderRoutingRule> =>
+        this.request<OrderRoutingRule>('POST', `/channels/${channelId}/order_routing_rules`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        channelId: string,
+        id: string,
+        params: OrderRoutingRuleUpdateParams,
+        options?: RequestOptions,
+      ): Promise<OrderRoutingRule> =>
+        this.request<OrderRoutingRule>(
+          'PATCH',
+          `/channels/${channelId}/order_routing_rules/${id}`,
+          { ...options, body: params },
+        ),
+
+      delete: (channelId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/channels/${channelId}/order_routing_rules/${id}`, options),
+    },
+  }
+
+  readonly orderRoutingRules = {
+    types: (options?: RequestOptions): Promise<{ data: ResourceTypeDefinition[] }> =>
+      this.request<{ data: ResourceTypeDefinition[] }>(
+        'GET',
+        '/order_routing_rules/types',
+        options,
+      ),
   }
 
   // ============================================
