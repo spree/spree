@@ -328,10 +328,10 @@
           "help": "Pozostaw puste, aby zastosować tę regułę do każdego kanału sprzedaży."
         },
         "min_quantity": {
-          "help": "This price applies only when a customer orders at least this many of a single item."
+          "help": "Ta cena obowiązuje tylko wtedy, gdy klient zamówi co najmniej tyle sztuk jednego produktu."
         },
         "max_quantity": {
-          "help": "Leave empty for no upper limit."
+          "help": "Pozostaw puste, aby nie ustawiać górnego limitu."
         }
       },
       "stock_location": {
@@ -2539,8 +2539,8 @@
       "base_percent": "Procent podstawowy",
       "preferred_amount": "Kwota",
       "preferred_percent": "Procent",
-      "min_quantity": "Minimum quantity",
-      "max_quantity": "Maximum quantity"
+      "min_quantity": "Minimalna ilość",
+      "max_quantity": "Maksymalna ilość"
     },
     "channels": {
       "messages": {

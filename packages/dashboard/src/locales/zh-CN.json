@@ -376,10 +376,10 @@
           "help": "留空则此规则适用于所有销售渠道。"
         },
         "min_quantity": {
-          "help": "This price applies only when a customer orders at least this many of a single item."
+          "help": "仅当客户订购单个商品达到此数量时，才应用此价格。"
         },
         "max_quantity": {
-          "help": "Leave empty for no upper limit."
+          "help": "留空表示没有上限。"
         }
       },
       "stock_location": {
@@ -2507,8 +2507,8 @@
       "base_percent": "基础百分比",
       "preferred_amount": "金额",
       "preferred_percent": "百分比",
-      "min_quantity": "Minimum quantity",
-      "max_quantity": "Maximum quantity"
+      "min_quantity": "最小数量",
+      "max_quantity": "最大数量"
     },
     "channels": {
       "messages": {

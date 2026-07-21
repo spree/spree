@@ -407,7 +407,7 @@
           "add_tier": "添加层级",
           "remove_tier": "移除层级"
         },
-        "unlimited": "Unlimited"
+        "unlimited": "无限制"
       },
       "confirm_dialog": {
         "title": "确定吗？"
