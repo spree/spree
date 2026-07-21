@@ -1,53 +1,59 @@
 # @spree/cli
 
+## 2.4.6
+
+### Patch Changes
+
+- [#14339](https://github.com/spree/spree/pull/14339) [`b71e613`](https://github.com/spree/spree/commit/b71e61326289d7ef4038a4bd55f353569a242d52) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The embedded dashboard-starter template now floats its `@spree/*` dependency ranges to the newest published release (floored at the versions the template was built against) instead of pinning the minor — scaffolded apps pick up new dashboard releases without waiting for a CLI release. The template also slims to `@spree/dashboard` + `@spree/admin-sdk`: `defineDashboardPlugin` is re-exported from `@spree/dashboard`, and `@spree/dashboard-core` / `@spree/dashboard-ui` are added by the app only when building custom pages.
+
 ## 2.4.5
 
 ### Patch Changes
 
 - `spree build --production` is now a plain `docker build` from the project
-root: the updated spree-starter Dockerfile normalizes its own build context
-(detecting the `backend/` layout and a customized `apps/dashboard`), so the
-staged-copy and named-build-context machinery is gone, and what the CLI
-builds is byte-for-byte what Render/Railway build straight from the repo. A
-root `.dockerignore` is written when missing so the context stays lean.
-Pre-normalization Dockerfiles keep the old `backend/` context, with a
-warning when a dashboard would be left out.
+  root: the updated spree-starter Dockerfile normalizes its own build context
+  (detecting the `backend/` layout and a customized `apps/dashboard`), so the
+  staged-copy and named-build-context machinery is gone, and what the CLI
+  builds is byte-for-byte what Render/Railway build straight from the repo. A
+  root `.dockerignore` is written when missing so the context stays lean.
+  Pre-normalization Dockerfiles keep the old `backend/` context, with a
+  warning when a dashboard would be left out.
 
 - Handle the Solid Queue single-container compose layout: new spree-starter
-projects have no `worker` or `redis` services (jobs run inside Puma, stored
-in Postgres), so `spree dev`, `restart`, `build`, and `db:reset` now target
-the services the compose file actually defines instead of hard-coding
-`web worker` — Sidekiq-era projects keep working unchanged. `spree logs
+  projects have no `worker` or `redis` services (jobs run inside Puma, stored
+  in Postgres), so `spree dev`, `restart`, `build`, and `db:reset` now target
+  the services the compose file actually defines instead of hard-coding
+  `web worker` — Sidekiq-era projects keep working unchanged. `spree logs
 worker` on a worker-less project explains the in-process model and streams
-web logs, pointing at the `/jobs` dashboard.
+  web logs, pointing at the `/jobs` dashboard.
 
 - Removed the `render.yaml` amendment from `spree add dashboard` — the
-starter's Blueprint now deploys the backend as a Docker service built from
-the repo root, which bakes `apps/dashboard` into the image by itself. The
-scaffolded dashboard also pins its package manager (`packageManager` +
-`pnpm-workspace.yaml` with `trustLockfile`) so image rebuilds don't break
-when pnpm changes install-policy defaults — pnpm 11's `minimumReleaseAge`
-re-validation fails any rebuild whose lockfile references day-old packages,
-including every Spree release day (`@spree/*` is exempted from the gate).
+  starter's Blueprint now deploys the backend as a Docker service built from
+  the repo root, which bakes `apps/dashboard` into the image by itself. The
+  scaffolded dashboard also pins its package manager (`packageManager` +
+  `pnpm-workspace.yaml` with `trustLockfile`) so image rebuilds don't break
+  when pnpm changes install-policy defaults — pnpm 11's `minimumReleaseAge`
+  re-validation fails any rebuild whose lockfile references day-old packages,
+  including every Spree release day (`@spree/*` is exempted from the gate).
 
 ## 2.4.4
 
 ### Patch Changes
 
 - Streamline the post-setup summary for projects with the React Dashboard.
-The dashboard's dev server is presented as THE admin — the
-`cd apps/dashboard && pnpm dev` command with the admin credentials and a
-dim pointer to the classic admin — instead of listing two admins where only
-the classic one carried credentials. The image-served `/dashboard` build
-stays a deployment detail in the docs. `spree dev` (and first-run setup)
-now co-runs the dashboard's Vite dev server with the Docker stack — one
-command brings up the whole dev environment, its output joins the stream
-with a `dashboard |` prefix, Ctrl+C stops everything, a dashboard crash
-warns without taking the API down, and `--open` waits for Vite and opens
-the URL it actually reports (ports auto-bump when 5173 is taken). `spree add dashboard` gains
-`--quiet` to skip its summary note when a wrapping tool (create-spree-app)
-prints its own. Projects without the dashboard keep the classic summary
-unchanged.
+  The dashboard's dev server is presented as THE admin — the
+  `cd apps/dashboard && pnpm dev` command with the admin credentials and a
+  dim pointer to the classic admin — instead of listing two admins where only
+  the classic one carried credentials. The image-served `/dashboard` build
+  stays a deployment detail in the docs. `spree dev` (and first-run setup)
+  now co-runs the dashboard's Vite dev server with the Docker stack — one
+  command brings up the whole dev environment, its output joins the stream
+  with a `dashboard |` prefix, Ctrl+C stops everything, a dashboard crash
+  warns without taking the API down, and `--open` waits for Vite and opens
+  the URL it actually reports (ports auto-bump when 5173 is taken). `spree add dashboard` gains
+  `--quiet` to skip its summary note when a wrapping tool (create-spree-app)
+  prints its own. Projects without the dashboard keep the classic summary
+  unchanged.
 
 ## 2.4.3
 
@@ -55,66 +61,66 @@ unchanged.
 
 - Fix dashboard logins dying on CORS in scaffolded apps. `spree add
 dashboard` wrote `VITE_SPREE_API_URL=http://localhost:<port>` into
-`apps/dashboard/.env.local` — but that variable is the SDK's switch to
-absolute cross-origin URLs (meant for production deploys on a different
-origin), so requests bypassed the Vite dev proxy and the browser blocked
-them (`localhost:5173` → `localhost:3000` is cross-origin; the auth cookie
-is `SameSite=Lax` on top). The scaffold now writes `VITE_API_PROXY_TARGET`
-(the proxy target — the SPA stays same-origin, the SDK stays on relative
-URLs), the dashboard template's Vite config reads it (via `loadEnv` — Vite
-doesn't load `.env` files into `process.env` for configs), and the CLI
-writes or repairs `.env.local` automatically: on scaffold, on every
-`spree dev` boot, and on a `spree add dashboard` re-run — covering fresh
-clones (the file is gitignored) and projects scaffolded by older CLI
-versions. Repair rewrites only the broken line; everything else in the
-file is preserved.
+  `apps/dashboard/.env.local` — but that variable is the SDK's switch to
+  absolute cross-origin URLs (meant for production deploys on a different
+  origin), so requests bypassed the Vite dev proxy and the browser blocked
+  them (`localhost:5173` → `localhost:3000` is cross-origin; the auth cookie
+  is `SameSite=Lax` on top). The scaffold now writes `VITE_API_PROXY_TARGET`
+  (the proxy target — the SPA stays same-origin, the SDK stays on relative
+  URLs), the dashboard template's Vite config reads it (via `loadEnv` — Vite
+  doesn't load `.env` files into `process.env` for configs), and the CLI
+  writes or repairs `.env.local` automatically: on scaffold, on every
+  `spree dev` boot, and on a `spree add dashboard` re-run — covering fresh
+  clones (the file is gitignored) and projects scaffolded by older CLI
+  versions. Repair rewrites only the broken line; everything else in the
+  file is preserved.
 
 ## 2.4.2
 
 ### Patch Changes
 
 - `spree dev` on a project that was never set up now runs the full first-run
-flow automatically (pull fresh images, start services, seed the database,
-configure API keys) instead of a bare `docker compose up`. A bare `up` never
-pulls, so a mutable tag (`latest`) cached weeks ago by another project
-silently booted an old Spree whenever the first boot happened through
-`spree dev` — a `--no-start` scaffold, an interrupted create-spree-app run,
-or a fresh clone. A setup that was itself interrupted partway (e.g. Ctrl+C
-during the first image pull) is also detected and completed on the next
-`spree dev`, for projects scaffolded by create-spree-app 1.1.1+. The
-sample-data choice create-spree-app persists in `.env`
-(`SPREE_SAMPLE_DATA`) is honored, so a deferred first run keeps the answer
-given at scaffold time. Setup also installs `apps/storefront` and
-`apps/dashboard` dependencies when they're missing (a fresh clone, or a
-scaffold whose install step failed) — mirroring create-spree-app's per-app
-install steps — so every app is runnable with `pnpm dev` right after.
-Already-initialized projects are untouched: later boots never pull, dev
-stays offline-friendly, and upgrades stay explicit via `spree update`.
+  flow automatically (pull fresh images, start services, seed the database,
+  configure API keys) instead of a bare `docker compose up`. A bare `up` never
+  pulls, so a mutable tag (`latest`) cached weeks ago by another project
+  silently booted an old Spree whenever the first boot happened through
+  `spree dev` — a `--no-start` scaffold, an interrupted create-spree-app run,
+  or a fresh clone. A setup that was itself interrupted partway (e.g. Ctrl+C
+  during the first image pull) is also detected and completed on the next
+  `spree dev`, for projects scaffolded by create-spree-app 1.1.1+. The
+  sample-data choice create-spree-app persists in `.env`
+  (`SPREE_SAMPLE_DATA`) is honored, so a deferred first run keeps the answer
+  given at scaffold time. Setup also installs `apps/storefront` and
+  `apps/dashboard` dependencies when they're missing (a fresh clone, or a
+  scaffold whose install step failed) — mirroring create-spree-app's per-app
+  install steps — so every app is runnable with `pnpm dev` right after.
+  Already-initialized projects are untouched: later boots never pull, dev
+  stays offline-friendly, and upgrades stay explicit via `spree update`.
 
 ## 2.4.1
 
 ### Patch Changes
 
 - Re-embed the dashboard-starter template against `@spree/dashboard` 0.10.1
-and `@spree/admin-sdk` ^0.6.0. 0.10.1 ships the Vite integration compiled to
-JS — registry installs of 0.10.0 failed the host build with
-`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` when `vite.config.ts` imported
-`@spree/dashboard/vite` — and admin-sdk 0.5.0 lacks the Admin API endpoints
-and types the dashboard consumes (the 0.x caret in the previous template pin
-never resolves to 0.6.0). The `spree dashboard plugin` scaffold now pins
-`@spree/admin-sdk` ^0.6.0 as well.
+  and `@spree/admin-sdk` ^0.6.0. 0.10.1 ships the Vite integration compiled to
+  JS — registry installs of 0.10.0 failed the host build with
+  `ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` when `vite.config.ts` imported
+  `@spree/dashboard/vite` — and admin-sdk 0.5.0 lacks the Admin API endpoints
+  and types the dashboard consumes (the 0.x caret in the previous template pin
+  never resolves to 0.6.0). The `spree dashboard plugin` scaffold now pins
+  `@spree/admin-sdk` ^0.6.0 as well.
 
 ## 2.4.0
 
 ### Minor Changes
 
 - Add `spree add dashboard` — scaffolds the React Dashboard starter (Developer
-Preview), bundled inside the CLI with version pins matching the release, into
-`apps/dashboard/` of an existing project and points it at the project's API
-(`--template <path|git-url>` overrides the bundled copy). Also make
-`spree plugin new` fully non-interactive: every prompt has a flag
-(`--ruby-name`, `--module-name`, `--npm-scope`, `--author`, `--author-email`,
-`--license`, `-y`), with author details defaulting from git config.
+  Preview), bundled inside the CLI with version pins matching the release, into
+  `apps/dashboard/` of an existing project and points it at the project's API
+  (`--template <path|git-url>` overrides the bundled copy). Also make
+  `spree plugin new` fully non-interactive: every prompt has a flag
+  (`--ruby-name`, `--module-name`, `--npm-scope`, `--author`, `--author-email`,
+  `--license`, `-y`), with author details defaulting from git config.
 
 ## 2.3.9
 

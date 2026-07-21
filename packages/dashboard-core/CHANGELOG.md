@@ -1,5 +1,7 @@
 # @spree/dashboard-core
 
+## 0.12.0
+
 ## 0.10.2
 
 ### Patch Changes
