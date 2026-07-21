@@ -1,5 +1,17 @@
 # @spree/dashboard
 
+## 0.12.0
+
+### Minor Changes
+
+- [#14339](https://github.com/spree/spree/pull/14339) [`b71e613`](https://github.com/spree/spree/commit/b71e61326289d7ef4038a4bd55f353569a242d52) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Re-export the plugin facade (`defineDashboardPlugin` and its types) from `@spree/dashboard`, so host apps can register in-app customizations without declaring `@spree/dashboard-core` as a direct dependency. Distributed plugins keep importing from `@spree/dashboard-core/plugin`.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @spree/dashboard-core@0.12.0
+  - @spree/dashboard-ui@0.12.0
+
 ## 0.11.0
 
 ### Minor Changes
