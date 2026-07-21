@@ -47,12 +47,19 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
       expect(group.customers).to include(buyer)
     end
 
-    it 'creates an active wholesale price list keyed to the group' do
+    it 'creates an active wholesale price list keyed to the group with a case-pack minimum' do
       price_list = store.price_lists.find_by(name: 'Wholesale')
 
       expect(price_list.status).to eq('active')
-      expect(price_list.price_rules.first).to be_a(Spree::PriceRules::CustomerGroupRule)
+      expect(price_list.price_rules.map(&:class)).to include(
+        Spree::PriceRules::CustomerGroupRule,
+        Spree::PriceRules::VolumeRule
+      )
+      expect(price_list.match_policy).to eq('all')
       expect(price_list.prices.count).to be > 50
+
+      volume_rule = price_list.price_rules.find { |rule| rule.is_a?(Spree::PriceRules::VolumeRule) }
+      expect(volume_rule.preferred_min_quantity).to eq(10)
     end
 
     it 'mints a wholesale-bound publishable key' do

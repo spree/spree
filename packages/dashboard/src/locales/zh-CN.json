@@ -374,6 +374,12 @@
         "channels": {
           "label": "销售渠道",
           "help": "留空则此规则适用于所有销售渠道。"
+        },
+        "min_quantity": {
+          "help": "仅当客户订购单个商品达到此数量时，才应用此价格。"
+        },
+        "max_quantity": {
+          "help": "留空表示没有上限。"
         }
       },
       "stock_location": {
@@ -2500,7 +2506,9 @@
       "base_amount": "基础金额",
       "base_percent": "基础百分比",
       "preferred_amount": "金额",
-      "preferred_percent": "百分比"
+      "preferred_percent": "百分比",
+      "min_quantity": "最小数量",
+      "max_quantity": "最大数量"
     },
     "channels": {
       "messages": {

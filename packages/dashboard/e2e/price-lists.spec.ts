@@ -142,7 +142,7 @@ test.describe('price lists', () => {
     })
     await page
       .getByRole('dialog')
-      .getByLabel(/min quantity/i)
+      .getByLabel(/minimum quantity/i)
       .fill('10')
     await saveEditor(page)
 
@@ -260,7 +260,7 @@ test.describe('price lists', () => {
     await pickRule(page, /^volume rule\b/i)
     await page
       .getByRole('dialog')
-      .getByLabel(/min quantity/i)
+      .getByLabel(/minimum quantity/i)
       .fill('5')
     await saveEditor(page)
     await saveForm(page)

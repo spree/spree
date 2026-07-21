@@ -406,7 +406,8 @@
           "empty": "No tiers yet. The base rate applies until you add a tier.",
           "add_tier": "Add tier",
           "remove_tier": "Remove tier"
-        }
+        },
+        "unlimited": "Unlimited"
       },
       "confirm_dialog": {
         "title": "Are you sure?"

@@ -374,6 +374,12 @@
         "channels": {
           "label": "قنوات البيع",
           "help": "اتركه فارغًا لتطبيق هذه القاعدة على كل قناة بيع."
+        },
+        "min_quantity": {
+          "help": "يُطبَّق هذا السعر فقط عندما يطلب العميل هذا العدد على الأقل من صنف واحد."
+        },
+        "max_quantity": {
+          "help": "اتركه فارغًا لعدم وجود حد أقصى."
         }
       },
       "stock_location": {
@@ -2500,7 +2506,9 @@
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "preferred_amount": "كمية",
-      "preferred_percent": "نسبة مئوية"
+      "preferred_percent": "نسبة مئوية",
+      "min_quantity": "الحد الأدنى للكمية",
+      "max_quantity": "الحد الأقصى للكمية"
     },
     "channels": {
       "messages": {

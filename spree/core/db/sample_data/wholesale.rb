@@ -20,7 +20,19 @@ end
 wholesale_group.add_customers([buyer.id])
 
 price_list = store.price_lists.find_or_create_by!(name: 'Wholesale') do |list|
-  list.description = 'Wholesale pricing for approved B2B buyers (40% off retail)'
+  list.description = 'Wholesale pricing for approved B2B buyers (40% off retail) on orders of 10+ per item'
+end
+
+# Case-pack minimum: the trade price applies only when a buyer orders at least
+# WHOLESALE_MIN_QUANTITY of a single item (VolumeRule matches per line item, not
+# per order). Below the threshold the buyer falls back to the retail price — no
+# hard checkout block. This is what makes the demo feel like real wholesale.
+wholesale_min_quantity = 10
+
+unless price_list.price_rules.any? { |rule| rule.is_a?(Spree::PriceRules::VolumeRule) }
+  volume_rule = Spree::PriceRules::VolumeRule.new(price_list: price_list)
+  volume_rule.preferred_min_quantity = wholesale_min_quantity
+  volume_rule.save!
 end
 
 unless price_list.price_rules.any? { |rule| rule.is_a?(Spree::PriceRules::CustomerGroupRule) }
