@@ -37,6 +37,18 @@ describe Spree::Order, type: :model do
       it { expect(Spree::Order.not_canceled).not_to include canceled_order }
     end
 
+    describe 'ransack status aliases' do
+      let!(:ready_order) { create(:order, shipment_state: 'ready', payment_state: 'balance_due') }
+      let!(:shipped_order) { create(:order, shipment_state: 'shipped', payment_state: 'paid') }
+
+      it 'resolves the public API v3 attribute names to the legacy state columns' do
+        expect(described_class.ransack(fulfillment_status_in: %w[ready pending]).result).
+          to contain_exactly(ready_order)
+        expect(described_class.ransack(payment_status_eq: 'balance_due').result).
+          to contain_exactly(ready_order)
+      end
+    end
+
     describe '.search' do
       let!(:order_1) { create(:order, number: 'R100', user: create(:user, email: 'don.roe@example.com'), bill_address: create(:address, first_name: 'Don', last_name: 'Roe')) }
       let!(:order_2) { create(:order, number: 'R101', user: create(:user, email: 'jane.gone@example.com'), bill_address: create(:address, first_name: 'Jane', last_name: 'Gone')) }

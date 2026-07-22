@@ -115,6 +115,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[shipments user created_by approver canceler promotions bill_address ship_address line_items store channel tags]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number state status payment_state shipment_state
+      payment_status fulfillment_status
       total item_total item_count considered_risky channel_id currency
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
@@ -212,6 +213,10 @@ module Spree
     alias display_delivery_total display_shipment_total
     alias_attribute :fulfillment_status, :shipment_state
     alias_attribute :payment_status, :payment_state
+    # Let API v3 clients filter by the public attribute names (read/write
+    # symmetry with the serializers, which expose *_status).
+    ransack_alias :fulfillment_status, :shipment_state
+    ransack_alias :payment_status, :payment_state
 
     delegate :has_markets?, to: :store, prefix: true
 
