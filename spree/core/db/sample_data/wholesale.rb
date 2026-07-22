@@ -43,18 +43,22 @@ unless price_list.price_rules.any? { |rule| rule.is_a?(Spree::PriceRules::Custom
   rule.save!
 end
 
-if price_list.prices.none?
-  # Same paths the admin UI uses: add_products materializes a blank row per
-  # variant × supported currency, then trade prices (40% off that currency's
-  # own retail price) fill in wherever a base price exists — rows without one
-  # stay blank, exactly as if an admin had added the products by hand.
-  price_list.add_products(store.products.ids)
+# Same paths the admin UI uses: add_products materializes a blank row per
+# variant × supported currency (skipping rows that already exist), then trade
+# prices (40% off that currency's own retail price) fill in wherever a base
+# price exists and the row is still blank. Both steps are idempotent, so
+# re-running sample data converges partial state — new products, newly
+# supported currencies, or a previously interrupted run — without clobbering
+# hand-edited amounts.
+price_list.add_products(store.products.ids)
 
-  base_amounts = Spree::Price.where(price_list_id: nil, variant_id: price_list.prices.select(:variant_id))
+blank_prices = price_list.prices.where(amount: nil).pluck(:id, :variant_id, :currency)
+if blank_prices.any?
+  base_amounts = Spree::Price.where(price_list_id: nil, variant_id: blank_prices.map { |_, variant_id, _| variant_id }.uniq)
                              .pluck(:variant_id, :currency, :amount)
                              .each_with_object({}) { |(variant_id, currency, amount), memo| memo[[variant_id, currency]] = amount }
 
-  rows = price_list.prices.pluck(:id, :variant_id, :currency).filter_map do |id, variant_id, currency|
+  rows = blank_prices.filter_map do |id, variant_id, currency|
     amount = base_amounts[[variant_id, currency]]
     next if amount.blank?
 
