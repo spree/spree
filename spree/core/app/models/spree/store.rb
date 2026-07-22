@@ -74,6 +74,7 @@ module Spree
     has_many :carts, -> { incomplete }, class_name: 'Spree::Order', inverse_of: :store
     has_many :checkouts, -> { incomplete }, class_name: 'Spree::Order', inverse_of: :store
     has_many :orders, class_name: 'Spree::Order'
+    has_many :customers, through: :orders, source: :user
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
     has_many :digital_links, through: :line_items, class_name: 'Spree::DigitalLink'
     has_many :shipments, through: :orders, class_name: 'Spree::Shipment'

@@ -48,6 +48,22 @@ test.describe('home dashboard', () => {
     await page.getByRole('button', { name: /^customers$/i }).click()
   })
 
+  test('scopes metrics by channel via the switcher', async ({ page }) => {
+    const creds = await login(page)
+    await page.goto(HOME_PATH(creds.store_id))
+
+    // Defaults to all channels
+    const switcher = page.getByRole('combobox').filter({ hasText: /all channels/i })
+    await expect(switcher).toBeVisible({ timeout: 15_000 })
+
+    await switcher.click()
+    await page.getByRole('option', { name: /wholesale/i }).click()
+
+    await expect(page.getByRole('combobox').filter({ hasText: /wholesale/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /total sales/i })).toBeVisible()
+    await expect(page.getByText(/orders to fulfill/i)).toBeVisible()
+  })
+
   test('orders to fulfill links to the filtered orders list', async ({ page }) => {
     const creds = await login(page)
     await page.goto(HOME_PATH(creds.store_id))

@@ -1,4 +1,9 @@
-import type { DashboardAnalytics, DashboardOperations, DashboardRankings } from '@spree/admin-sdk'
+import type {
+  Channel,
+  DashboardAnalytics,
+  DashboardOperations,
+  DashboardRankings,
+} from '@spree/admin-sdk'
 import { adminClient } from '@spree/dashboard-core'
 import {
   Badge,
@@ -13,6 +18,11 @@ import {
   ChartTooltipContent,
   type DateRange,
   DateRangePicker,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Skeleton,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
@@ -33,6 +43,7 @@ import {
 import { Fragment, type ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, CartesianGrid, ComposedChart, Line, XAxis } from 'recharts'
+import { useChannels } from '../../../hooks/use-channels'
 
 export const Route = createFileRoute('/_authenticated/$storeId/')({
   component: DashboardPage,
@@ -42,36 +53,47 @@ type ChartMetric = 'sales' | 'orders' | 'avg_order_value' | 'units' | 'customers
 
 const CHART_METRICS: ChartMetric[] = ['sales', 'orders', 'avg_order_value', 'units', 'customers']
 
+// Sentinel for the channel switcher's unscoped state — never sent to the API.
+const ALL_CHANNELS = 'all'
+
 function DashboardPage() {
   const { t } = useTranslation()
   const [dateRange, setDateRange] = useState<DateRange>({
     from: subDays(new Date(), 30),
     to: new Date(),
   })
+  const [channelId, setChannelId] = useState<string>(ALL_CHANNELS)
+
+  const { data: channelsData } = useChannels()
+  const channels = channelsData?.data ?? []
+  const channelParam = channelId === ALL_CHANNELS ? undefined : channelId
 
   const rangeParams = {
     date_from: dateRange.from.toISOString(),
     date_to: dateRange.to.toISOString(),
+    ...(channelParam ? { channel_id: channelParam } : {}),
   }
 
   const { data: analytics } = useQuery({
-    queryKey: ['dashboard', 'analytics', rangeParams.date_from, rangeParams.date_to],
+    queryKey: ['dashboard', 'analytics', rangeParams.date_from, rangeParams.date_to, channelId],
     queryFn: () => adminClient.dashboard.analytics(rangeParams),
     staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   })
 
   const { data: rankings } = useQuery({
-    queryKey: ['dashboard', 'rankings', rangeParams.date_from, rangeParams.date_to],
+    queryKey: ['dashboard', 'rankings', rangeParams.date_from, rangeParams.date_to, channelId],
     queryFn: () => adminClient.dashboard.rankings(rangeParams),
     staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   })
 
   const { data: operations } = useQuery({
-    queryKey: ['dashboard', 'operations'],
-    queryFn: () => adminClient.dashboard.operations(),
+    queryKey: ['dashboard', 'operations', channelId],
+    queryFn: () =>
+      adminClient.dashboard.operations(channelParam ? { channel_id: channelParam } : undefined),
     staleTime: 5 * 60 * 1000,
+    placeholderData: (previousData) => previousData,
   })
 
   if (!analytics) {
@@ -80,12 +102,15 @@ function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">{t('admin.pages.home.title')}</h1>
           <p className="text-muted-foreground">{t('admin.pages.home.subtitle')}</p>
         </div>
-        <DateRangePicker value={dateRange} onChange={setDateRange} />
+        <div className="flex items-center gap-2">
+          <ChannelSwitcher channels={channels} value={channelId} onChange={setChannelId} />
+          <DateRangePicker value={dateRange} onChange={setDateRange} />
+        </div>
       </div>
       <AnalyticsChart data={analytics} />
       <div className="grid gap-6 lg:grid-cols-5">
@@ -94,6 +119,45 @@ function DashboardPage() {
       </div>
       <TopProducts products={analytics.top_products} />
     </div>
+  )
+}
+
+/**
+ * Scopes every home metric to one sales channel. Defaults to "All channels";
+ * stock-level operations counts stay store-wide regardless of the selection.
+ */
+function ChannelSwitcher({
+  channels,
+  value,
+  onChange,
+}: {
+  channels: Channel[]
+  value: string
+  onChange: (value: string) => void
+}) {
+  const { t } = useTranslation()
+  const allLabel = t('admin.pages.home.all_channels')
+
+  return (
+    <Select value={value} onValueChange={(v) => onChange(v as string)}>
+      <SelectTrigger className="min-w-40">
+        {/* Base UI's `<SelectValue>` renders the raw value (the prefixed id);
+            resolve the channel name via the render-prop. */}
+        <SelectValue>
+          {(v) =>
+            v === ALL_CHANNELS ? allLabel : (channels.find((c) => c.id === v)?.name ?? allLabel)
+          }
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value={ALL_CHANNELS}>{allLabel}</SelectItem>
+        {channels.map((channel) => (
+          <SelectItem key={channel.id} value={channel.id}>
+            {channel.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }
 
@@ -270,7 +334,7 @@ function OperationsCard({ data }: { data: DashboardOperations | undefined }) {
 
   const rowClass = `${OPERATIONS_ROW_CLASS} hover:bg-muted/25`
   const rows: Array<{
-    key: keyof Omit<DashboardOperations, 'low_stock_threshold'>
+    key: keyof Omit<DashboardOperations, 'low_stock_threshold' | 'channel_id'>
     icon: typeof PackageIcon
     wrap?: (children: ReactNode) => ReactNode
   }> = [

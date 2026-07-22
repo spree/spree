@@ -1071,7 +1071,8 @@
           "units_count_one": "{{count}} unité",
           "units_count_other": "{{count}} unités",
           "empty": "Pas encore de données pour cette période."
-        }
+        },
+        "all_channels": "Tous les canaux"
       },
       "staff": {
         "title": "Équipe",

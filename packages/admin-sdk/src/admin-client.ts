@@ -11,6 +11,8 @@ import { getParams, transformListParams } from '@spree/sdk-core'
 
 export interface DashboardAnalytics {
   currency: string
+  /** Prefixed channel id the metrics are scoped to; null means all channels. */
+  channel_id: string | null
   date_from: string
   date_to: string
   previous_date_from: string
@@ -59,6 +61,8 @@ export interface DashboardAnalytics {
 
 export interface DashboardRankings {
   currency: string
+  /** Prefixed channel id the rankings are scoped to; null means all channels. */
+  channel_id: string | null
   date_from: string
   date_to: string
   customers: Array<{
@@ -80,6 +84,8 @@ export interface DashboardRankings {
 }
 
 export interface DashboardOperations {
+  /** Prefixed channel id the order-based counts are scoped to; null means all channels. Stock counts are always store-wide. */
+  channel_id: string | null
   low_stock_threshold: number
   orders_to_fulfill: number
   payments_to_collect: number
@@ -549,7 +555,7 @@ export class AdminClient {
 
   readonly dashboard = {
     analytics: (
-      params?: { date_from?: string; date_to?: string; currency?: string },
+      params?: { date_from?: string; date_to?: string; currency?: string; channel_id?: string },
       options?: RequestOptions,
     ): Promise<DashboardAnalytics> =>
       this.request<DashboardAnalytics>('GET', '/dashboard/analytics', {
@@ -558,7 +564,13 @@ export class AdminClient {
       }),
 
     rankings: (
-      params?: { date_from?: string; date_to?: string; currency?: string; limit?: number },
+      params?: {
+        date_from?: string
+        date_to?: string
+        currency?: string
+        channel_id?: string
+        limit?: number
+      },
       options?: RequestOptions,
     ): Promise<DashboardRankings> =>
       this.request<DashboardRankings>('GET', '/dashboard/rankings', {
@@ -567,7 +579,7 @@ export class AdminClient {
       }),
 
     operations: (
-      params?: { low_stock_threshold?: number },
+      params?: { low_stock_threshold?: number; channel_id?: string },
       options?: RequestOptions,
     ): Promise<DashboardOperations> =>
       this.request<DashboardOperations>('GET', '/dashboard/operations', {

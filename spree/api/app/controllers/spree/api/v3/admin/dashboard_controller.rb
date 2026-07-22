@@ -11,6 +11,7 @@ module Spree
               store: current_store,
               currency: requested_currency,
               time_range: requested_time_range,
+              channel: requested_channel,
               params: serializer_params
             )
 
@@ -23,6 +24,7 @@ module Spree
               store: current_store,
               currency: requested_currency,
               time_range: requested_time_range,
+              channel: requested_channel,
               limit: params.fetch(:limit, DashboardRankingsSerializer::DEFAULT_LIMIT)
             )
 
@@ -35,6 +37,7 @@ module Spree
 
             serializer = DashboardOperationsSerializer.new(
               store: current_store,
+              channel: requested_channel,
               low_stock_threshold: threshold.to_i.clamp(1, 1000)
             )
 
@@ -56,6 +59,13 @@ module Spree
 
           def requested_currency
             params[:currency] || current_store.default_currency
+          end
+
+          # Optional channel scoping — omitted means all channels.
+          def requested_channel
+            return if params[:channel_id].blank?
+
+            current_store.channels.find_by_prefix_id!(params[:channel_id])
           end
 
           def serializer_params

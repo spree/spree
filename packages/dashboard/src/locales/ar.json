@@ -1127,7 +1127,8 @@
           "units_count_many": "{{count}} وحدة",
           "units_count_other": "{{count}} وحدة",
           "empty": "لا توجد بيانات لهذه الفترة بعد."
-        }
+        },
+        "all_channels": "جميع القنوات"
       },
       "staff": {
         "title": "طاقم عمل",

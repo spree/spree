@@ -8,18 +8,20 @@ module Spree
           DEFAULT_LIMIT = 5
           MAX_LIMIT = 10
 
-          attr_reader :store, :currency, :time_range, :limit
+          attr_reader :store, :currency, :time_range, :channel, :limit
 
-          def initialize(store:, currency:, time_range:, limit: DEFAULT_LIMIT)
+          def initialize(store:, currency:, time_range:, channel: nil, limit: DEFAULT_LIMIT)
             @store = store
             @currency = currency
             @time_range = time_range
+            @channel = channel
             @limit = limit.to_i.clamp(1, MAX_LIMIT)
           end
 
           def to_h
             {
               currency: currency,
+              channel_id: channel&.prefixed_id,
               date_from: time_range.first.iso8601,
               date_to: time_range.last.iso8601,
               customers: customers,
@@ -30,7 +32,11 @@ module Spree
           private
 
           def orders
-            @orders ||= store.orders.complete.where(currency: currency, completed_at: time_range)
+            @orders ||= begin
+              scope = store.orders.complete.where(currency: currency, completed_at: time_range)
+              scope = scope.where(channel_id: channel.id) if channel
+              scope
+            end
           end
 
           def customers
@@ -40,7 +46,7 @@ module Spree
               .limit(limit)
               .pluck(Arel.sql('email, SUM(total), COUNT(*), MAX(user_id)'))
 
-            users = Spree.user_class.where(id: rows.map(&:last).compact).index_by(&:id)
+            users = store.customers.distinct.where(id: rows.map(&:last).compact).index_by(&:id)
 
             rows.map do |email, amount, orders_count, user_id|
               user = users[user_id]
@@ -55,24 +61,26 @@ module Spree
             end
           end
 
+          # Revenue = the persisted `pre_tax_amount` (discounted, net of
+          # included taxes) — see DashboardAnalyticsSerializer#product_revenue.
           def categories
-            rows = Spree::LineItem
+            rows = store.line_items
               .joins(variant: { product: :classifications })
               .where(order: orders)
               .group("#{Spree::Classification.table_name}.taxon_id")
-              .order(Arel.sql("SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price) DESC"))
+              .order(Arel.sql("SUM(#{Spree::LineItem.table_name}.pre_tax_amount) DESC"))
               .limit(limit)
-              .pluck(Arel.sql("#{Spree::Classification.table_name}.taxon_id, SUM(#{Spree::LineItem.table_name}.quantity), SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price)"))
+              .pluck(Arel.sql("#{Spree::Classification.table_name}.taxon_id, SUM(#{Spree::LineItem.table_name}.quantity), SUM(#{Spree::LineItem.table_name}.pre_tax_amount)"))
 
-            taxons = Spree::Taxon.where(id: rows.map(&:first)).index_by(&:id)
+            categories = store.categories.where(id: rows.map(&:first)).index_by(&:id)
 
-            rows.filter_map do |taxon_id, quantity, amount|
-              taxon = taxons[taxon_id]
-              next unless taxon
+            rows.filter_map do |category_id, quantity, amount|
+              category = categories[category_id]
+              next unless category
 
               {
-                id: taxon.prefixed_id,
-                name: taxon.name,
+                id: category.prefixed_id,
+                name: category.name,
                 quantity: quantity.to_i,
                 amount: amount.to_f.round(2),
                 display_amount: money(amount)

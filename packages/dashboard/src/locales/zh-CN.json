@@ -1117,7 +1117,8 @@
           "orders_count_other": "{{count}} 笔订单",
           "units_count_other": "{{count}} 件",
           "empty": "该时间段暂无数据。"
-        }
+        },
+        "all_channels": "全部渠道"
       },
       "staff": {
         "title": "员工",

@@ -1075,7 +1075,8 @@
           "units_count_many": "{{count}} sztuk",
           "units_count_other": "{{count}} sztuki",
           "empty": "Brak danych dla tego okresu."
-        }
+        },
+        "all_channels": "Wszystkie kanały"
       },
       "staff": {
         "title": "Zespół",

@@ -4,18 +4,22 @@ module Spree
       module Admin
         # Builds the home dashboard operations payload: counts of things that
         # need back-office attention right now (not scoped to a date range).
+        # A channel narrows the order-derived counts; stock counts stay
+        # store-wide since inventory is channel-agnostic.
         class DashboardOperationsSerializer
           DEFAULT_LOW_STOCK_THRESHOLD = 5
 
-          attr_reader :store, :low_stock_threshold
+          attr_reader :store, :channel, :low_stock_threshold
 
-          def initialize(store:, low_stock_threshold: DEFAULT_LOW_STOCK_THRESHOLD)
+          def initialize(store:, channel: nil, low_stock_threshold: DEFAULT_LOW_STOCK_THRESHOLD)
             @store = store
+            @channel = channel
             @low_stock_threshold = low_stock_threshold
           end
 
           def to_h
             {
+              channel_id: channel&.prefixed_id,
               low_stock_threshold: low_stock_threshold,
               orders_to_fulfill: orders_to_fulfill,
               payments_to_collect: payments_to_collect,
@@ -28,7 +32,9 @@ module Spree
           private
 
           def actionable_orders
-            store.orders.complete.not_canceled
+            scope = store.orders.complete.not_canceled
+            scope = scope.where(channel_id: channel.id) if channel
+            scope
           end
 
           def orders_to_fulfill
@@ -40,11 +46,9 @@ module Spree
           end
 
           def open_returns
-            Spree::ReturnAuthorization
-              .where(state: 'authorized')
-              .joins(:order)
-              .where(Spree::Order.table_name => { store_id: store.id })
-              .count
+            scope = store.return_authorizations.where(state: 'authorized')
+            scope = scope.where(Spree::Order.table_name => { channel_id: channel.id }) if channel
+            scope.count
           end
 
           def low_stock_items
@@ -61,12 +65,12 @@ module Spree
               .count(:variant_id)
           end
 
+          # `store.stock_items` walks products → variants, so paranoia default
+          # scopes already exclude deleted products/variants.
           def tracked_stock_items
-            Spree::StockItem
-              .for_store(store)
+            store.stock_items
               .with_active_stock_location
-              .where(Spree::Variant.table_name => { deleted_at: nil, track_inventory: true })
-              .where(Spree::Product.table_name => { deleted_at: nil })
+              .where(Spree::Variant.table_name => { track_inventory: true })
           end
         end
       end

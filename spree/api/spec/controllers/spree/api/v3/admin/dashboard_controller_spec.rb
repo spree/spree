@@ -119,6 +119,36 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       end
     end
 
+    context 'with a channel filter' do
+      let(:channel) { create(:channel, store: store) }
+      let(:other_channel) { create(:channel, store: store) }
+      let!(:channel_order) do
+        create(:completed_order_with_totals, store: store, channel: channel, completed_at: 5.days.ago)
+      end
+      let!(:other_order) do
+        create(:completed_order_with_totals, store: store, channel: other_channel, completed_at: 5.days.ago)
+      end
+
+      it 'scopes metrics to the requested channel' do
+        get :analytics, params: { channel_id: channel.prefixed_id }, as: :json
+        expect(json_response['channel_id']).to eq(channel.prefixed_id)
+        expect(json_response['summary']['orders_count']).to eq(1)
+        expect(json_response['summary']['sales_total']).to eq(channel_order.total.to_f.round(2))
+      end
+
+      it 'includes all channels when the param is omitted' do
+        subject
+        expect(json_response['channel_id']).to be_nil
+        expect(json_response['summary']['orders_count']).to eq(2)
+      end
+
+      it 'returns 404 for a channel from another store' do
+        foreign_channel = create(:channel, store: create(:store))
+        get :analytics, params: { channel_id: foreign_channel.prefixed_id }, as: :json
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context 'with growth rate calculation' do
       let!(:recent_order) { create(:completed_order_with_totals, store: store, completed_at: 5.days.ago) }
       let!(:older_order) { create(:completed_order_with_totals, store: store, completed_at: 35.days.ago) }
@@ -203,6 +233,21 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       end
     end
 
+    context 'with a channel filter' do
+      let(:channel) { create(:channel, store: store) }
+      let!(:channel_order) do
+        create(:completed_order_with_totals, store: store, channel: channel, completed_at: 5.days.ago)
+      end
+      let!(:other_order) { create(:completed_order_with_totals, store: store, completed_at: 5.days.ago) }
+
+      it 'ranks only the requested channel' do
+        get :rankings, params: { channel_id: channel.prefixed_id }, as: :json
+        expect(json_response['channel_id']).to eq(channel.prefixed_id)
+        expect(json_response['customers'].length).to eq(1)
+        expect(json_response['customers'].first['email']).to eq(channel_order.email)
+      end
+    end
+
     context 'without authentication' do
       let(:headers) { {} }
 
@@ -235,6 +280,16 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
         subject
         expect(json_response['orders_to_fulfill']).to eq(1)
         expect(json_response['payments_to_collect']).to eq(1)
+      end
+
+      it 'scopes order counts to the requested channel' do
+        channel = create(:channel, store: store)
+        create(:order_ready_to_ship, store: store, channel: channel)
+
+        get :operations, params: { channel_id: channel.prefixed_id }, as: :json
+        expect(json_response['channel_id']).to eq(channel.prefixed_id)
+        expect(json_response['orders_to_fulfill']).to eq(1)
+        expect(json_response['payments_to_collect']).to eq(0)
       end
     end
 

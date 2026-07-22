@@ -9,18 +9,20 @@ module Spree
         class DashboardAnalyticsSerializer
           TOP_PRODUCTS_LIMIT = 5
 
-          attr_reader :store, :currency, :time_range, :params
+          attr_reader :store, :currency, :time_range, :channel, :params
 
-          def initialize(store:, currency:, time_range:, params: {})
+          def initialize(store:, currency:, time_range:, channel: nil, params: {})
             @store = store
             @currency = currency
             @time_range = time_range
+            @channel = channel
             @params = params
           end
 
           def to_h
             {
               currency: currency,
+              channel_id: channel&.prefixed_id,
               date_from: time_range.first.iso8601,
               date_to: time_range.last.iso8601,
               previous_date_from: previous_time_range.first.iso8601,
@@ -33,12 +35,18 @@ module Spree
 
           private
 
+          def base_orders
+            scope = store.orders.complete.where(currency: currency)
+            scope = scope.where(channel_id: channel.id) if channel
+            scope
+          end
+
           def orders
-            @orders ||= store.orders.complete.where(currency: currency, completed_at: time_range)
+            @orders ||= base_orders.where(completed_at: time_range)
           end
 
           def prev_orders
-            @prev_orders ||= store.orders.complete.where(currency: currency, completed_at: previous_time_range)
+            @prev_orders ||= base_orders.where(completed_at: previous_time_range)
           end
 
           def previous_time_range
@@ -60,7 +68,7 @@ module Spree
             prev_sales = prev_orders.sum(:total).to_f
             prev_count = prev_orders.count
             prev_avg = prev_count > 0 ? (prev_sales / prev_count).round(2) : 0.0
-            prev_units = Spree::LineItem.where(order: prev_orders).sum(:quantity)
+            prev_units = store.line_items.where(order: prev_orders).sum(:quantity)
             prev_customers = prev_orders.distinct.count(:email)
 
             {
@@ -88,7 +96,7 @@ module Spree
           end
 
           def units_sold
-            @units_sold ||= Spree::LineItem.where(order: orders).sum(:quantity)
+            @units_sold ||= store.line_items.where(order: orders).sum(:quantity)
           end
 
           def customers_count
@@ -135,9 +143,10 @@ module Spree
               .index_by { |r| r.day.to_s }
           end
 
+          # `store.line_items` goes through `orders`, so `spree_orders` is
+          # already joined and referencable in the GROUP BY.
           def daily_unit_sums(order_scope)
-            Spree::LineItem
-              .joins(:order)
+            store.line_items
               .where(order: order_scope)
               .group(Arel.sql("DATE(#{Spree::Order.table_name}.completed_at)"))
               .sum(:quantity)
@@ -160,14 +169,14 @@ module Spree
 
           def top_products
             rows = product_revenue(orders).limit(TOP_PRODUCTS_LIMIT)
-              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, SUM(#{Spree::LineItem.table_name}.quantity), SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price)"))
+              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, SUM(#{Spree::LineItem.table_name}.quantity), SUM(#{Spree::LineItem.table_name}.pre_tax_amount)"))
 
             product_ids = rows.map(&:first).compact
             return [] if product_ids.empty?
 
             prev_amounts = product_revenue(prev_orders)
               .where(Spree::Variant.table_name => { product_id: product_ids })
-              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price)"))
+              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, SUM(#{Spree::LineItem.table_name}.pre_tax_amount)"))
               .to_h
 
             products = store.products.with_deleted.includes(:primary_media).where(id: product_ids)
@@ -192,12 +201,15 @@ module Spree
             end
           end
 
+          # Revenue = the persisted `pre_tax_amount` (discounted, net of
+          # included taxes), not `quantity * price` — so rankings reflect what
+          # was actually earned after promotions and VAT.
           def product_revenue(order_scope)
-            Spree::LineItem
+            store.line_items
               .joins(:variant)
               .where(order: order_scope)
               .group("#{Spree::Variant.table_name}.product_id")
-              .order(Arel.sql("SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price) DESC"))
+              .order(Arel.sql("SUM(#{Spree::LineItem.table_name}.pre_tax_amount) DESC"))
           end
 
           # ---- Helpers ----
