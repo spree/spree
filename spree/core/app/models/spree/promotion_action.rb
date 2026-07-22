@@ -8,6 +8,8 @@ module Spree
 
     belongs_to :promotion, class_name: 'Spree::Promotion', touch: true
 
+    has_many :discount_lines, class_name: 'Spree::DiscountLine', inverse_of: :promotion_action
+
     validates :promotion, :type, presence: true
 
     scope :of_type, ->(t) { where(type: t) }

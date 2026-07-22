@@ -33,6 +33,16 @@ module Spree
     end
     has_many :shipping_methods, through: :shipping_rates
     has_many :variants, through: :inventory_units
+
+    # Typed adjustment lines (replace polymorphic adjustments). The FK is
+    # fulfillment_id — these associations survive the Shipment→Fulfillment
+    # rename untouched.
+    has_many :tax_lines, class_name: 'Spree::TaxLine', foreign_key: :fulfillment_id,
+                         dependent: :destroy, inverse_of: :fulfillment
+    has_many :discount_lines, class_name: 'Spree::DiscountLine', foreign_key: :fulfillment_id,
+                              dependent: :destroy, inverse_of: :fulfillment
+    has_many :fees, class_name: 'Spree::Fee', foreign_key: :fulfillment_id,
+                    dependent: :destroy, inverse_of: :fulfillment
     has_one :selected_shipping_rate, -> { where(selected: true).order(:cost) }, class_name: Spree::ShippingRate.to_s
 
     after_save :update_adjustments

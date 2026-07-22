@@ -54,7 +54,7 @@ module Spree
                   :included_tax_total,  :additional_tax_total, :tax_total,
                   :shipment_total,      :promo_total,          :total,
                   :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total,
-                  :payment_total,       :amount_due
+                  :payment_total,       :amount_due,           :fee_total
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
@@ -195,6 +195,11 @@ module Spree
              dependent: :destroy,
              inverse_of: :order
 
+    # Typed adjustment lines (replace polymorphic adjustments)
+    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    has_many :discount_lines, class_name: 'Spree::DiscountLine', dependent: :destroy, inverse_of: :order
+    has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :order
+
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
 
@@ -204,6 +209,11 @@ module Spree
       end
     end
     has_many :shipment_adjustments, through: :shipments, source: :adjustments
+
+    has_many :line_item_tax_lines, through: :line_items, source: :tax_lines
+    has_many :line_item_discount_lines, through: :line_items, source: :discount_lines
+    has_many :fulfillment_tax_lines, through: :shipments, source: :tax_lines
+    has_many :fulfillment_discount_lines, through: :shipments, source: :discount_lines
 
     alias items line_items
     alias discounts order_promotions

@@ -15,6 +15,11 @@ module Spree
                  class_name: 'Spree::TaxCategory'
     end
 
+    # No dependent option: tax lines outlive a (soft-)deleted rate — completed
+    # orders keep their frozen lines; incomplete orders shed them on the next
+    # recalculation when the rate stops matching.
+    has_many :tax_lines, class_name: 'Spree::TaxLine', inverse_of: :tax_rate
+
     with_options presence: true do
       validates :amount, numericality: { allow_nil: true }
       validates :tax_category, :name

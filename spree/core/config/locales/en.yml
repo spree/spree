@@ -915,6 +915,7 @@ en:
     error_user_does_not_have_any_store_credits: User does not have any Store Credits available
     errors:
       messages:
+        cannot_belong_to_both_adjustables: cannot belong to both a line item and a fulfillment
         cannot_delete_channel_with_active_api_keys: Channel cannot be deleted while active API keys are bound to it. Revoke those keys first.
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
         channel_store_mismatch: must belong to the same store
@@ -922,6 +923,7 @@ en:
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_storefront_access: is not a valid storefront access level
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
+        must_belong_to_line_item_or_fulfillment: must belong to a line item or a fulfillment
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
       services:
