@@ -26,6 +26,12 @@
         <a class="nav-link" id="pills-store-credits-tab" data-tabs-target="tab" data-action="click->tabs#select" role="tab" aria-controls="pills-store-credits" aria-selected="false"><%= Spree.t(:store_credits) %></a>
       </li>
     <% end %>
+
+    <% if can?(:read, Spree::Address) %>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="pills-addresses-tab" data-tabs-target="tab" data-action="click->tabs#select" role="tab" aria-controls="pills-addresses" aria-selected="false"><%= Spree.t(:addresses) %></a>
+      </li>
+    <% end %>
   </ul>
 
   <% if spree.respond_to?(:admin_user_visits_path) %>
@@ -63,6 +69,14 @@
           <%= render 'spree/admin/shared/spinner' %>
         <% end %>
       </div>
+    </div>
+  <% end %>
+
+  <% if can?(:read, Spree::Address) %>
+    <div data-tabs-target="panel" id="pills-addresses" role="tabpanel" aria-labelledby="pills-addresses" hidden class="animate-fade-in">
+      <%= turbo_frame_tag :addresses, src: spree.admin_user_addresses_path(@user), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
+        <%= render 'spree/admin/shared/spinner' %>
+      <% end %>
     </div>
   <% end %>
 </div>

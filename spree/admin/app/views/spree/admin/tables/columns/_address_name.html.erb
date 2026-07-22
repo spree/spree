@@ -1,0 +1,8 @@
+<%# locals: (record:, column:, value:) %>
+<%= record.full_name %>
+<% if @user && record == @user.billing_address %>
+  <span class="badge badge-info"><%= Spree.t(:default_billing_address) %></span>
+<% end %>
+<% if @user && record == @user.shipping_address %>
+  <span class="badge badge-info"><%= Spree.t(:default_shipping_address) %></span>
+<% end %>
