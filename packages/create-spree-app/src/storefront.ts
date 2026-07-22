@@ -27,14 +27,14 @@ const PROJECT_SPREE_IMAGE = 'project-spree:e2e'
  */
 export function prepareStorefrontTemplate(projectDir: string): void {
   const storefrontDir = path.join(projectDir, 'apps', 'storefront')
-  const srcWorkflows = path.join(storefrontDir, '.github', 'workflows')
-  if (!fs.existsSync(srcWorkflows)) return
+  const srcGithub = path.join(storefrontDir, '.github')
 
-  const destWorkflows = path.join(projectDir, '.github', 'workflows')
-  fs.mkdirSync(destWorkflows, { recursive: true })
-
-  const ci = path.join(srcWorkflows, 'ci.yml')
+  // Relocate the CI workflow only when it exists — and create the destination
+  // dir only then, so we never leave an empty root workflows/ behind.
+  const ci = path.join(srcGithub, 'workflows', 'ci.yml')
   if (fs.existsSync(ci)) {
+    const destWorkflows = path.join(projectDir, '.github', 'workflows')
+    fs.mkdirSync(destWorkflows, { recursive: true })
     const content = fs.readFileSync(ci, 'utf-8')
     // Renamed so it doesn't collide with the backend's relocated `ci.yml`.
     fs.writeFileSync(
@@ -43,9 +43,10 @@ export function prepareStorefrontTemplate(projectDir: string): void {
     )
   }
 
-  // The storefront's other workflows aren't meaningful at the wrapper root;
-  // drop the whole `.github` so no stale, non-running copy is left behind.
-  fs.rmSync(path.join(storefrontDir, '.github'), { recursive: true, force: true })
+  // The storefront's `.github` isn't meaningful at the wrapper root; always
+  // drop it so no stale, non-running copy is left behind (rmSync with force
+  // is a no-op when it's absent).
+  fs.rmSync(srcGithub, { recursive: true, force: true })
 }
 
 /**

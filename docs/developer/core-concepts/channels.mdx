@@ -102,7 +102,7 @@ A channel's `storefront_access` decides what an **anonymous** visitor — a requ
 
 | Mode | Guest sees catalog | Guest sees prices | Use case |
 |---|---|---|---|
-| `public` | Yes | Yes | The default. An open storefront — anyone can browse and buy. |
+| `public` | Yes | Yes | The default. An open storefront — anyone can browse; guests can also check out when `guest_checkout` is enabled. |
 | `prices_hidden` | Yes | No — prices come back `null` | A catalog you want discoverable, with pricing revealed only after sign-in (e.g. a trade catalog for lead generation). |
 | `login_required` | No — reads rejected with `401` | No | A fully gated surface — a guest can't read the catalog at all (e.g. a members-only or B2B wholesale portal). |
 

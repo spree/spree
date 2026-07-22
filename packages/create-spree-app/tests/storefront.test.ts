@@ -127,4 +127,20 @@ describe('prepareStorefrontTemplate', () => {
     expect(() => prepareStorefrontTemplate(projectDir)).not.toThrow()
     expect(fs.existsSync(path.join(projectDir, '.github'))).toBe(false)
   })
+
+  it('removes a nested .github even when it has no ci.yml, without creating an empty root workflows dir', () => {
+    const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'create-spree-app-storefront-'))
+    tempDirs.push(projectDir)
+    // .github present but no workflows/ci.yml — e.g. only issue templates.
+    const github = path.join(projectDir, 'apps', 'storefront', '.github')
+    fs.mkdirSync(github, { recursive: true })
+    fs.writeFileSync(path.join(github, 'FUNDING.yml'), 'github: [spree]\n')
+
+    prepareStorefrontTemplate(projectDir)
+
+    // Nested metadata is gone …
+    expect(fs.existsSync(github)).toBe(false)
+    // … and no empty root workflows directory was created.
+    expect(fs.existsSync(path.join(projectDir, '.github', 'workflows'))).toBe(false)
+  })
 })
