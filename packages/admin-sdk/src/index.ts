@@ -5,12 +5,16 @@ export type { RequestOptions, RetryConfig } from '@spree/sdk-core'
 export { SpreeError } from '@spree/sdk-core'
 export type {
   AuthTokens,
-  DashboardAnalytics,
   DashboardOperations,
-  DashboardRankings,
   LoginCredentials,
   MeResponse,
   PermissionRule,
+  ReportingDimensionValue,
+  ReportingMetricValue,
+  ReportingQuery,
+  ReportingResult,
+  ReportingRow,
+  ReportingSchema,
 } from './admin-client'
 // Admin client class (for advanced use / subclassing)
 export { AdminClient } from './admin-client'

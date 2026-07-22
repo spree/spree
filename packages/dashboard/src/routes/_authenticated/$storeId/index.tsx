@@ -1,4 +1,9 @@
-import type { DashboardAnalytics, DashboardOperations, DashboardRankings } from '@spree/admin-sdk'
+import type {
+  DashboardOperations,
+  ReportingDimensionValue,
+  ReportingQuery,
+  ReportingResult,
+} from '@spree/admin-sdk'
 import { adminClient } from '@spree/dashboard-core'
 import {
   Badge,
@@ -34,14 +39,22 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, CartesianGrid, ComposedChart, Line, XAxis } from 'recharts'
 import { ALL_CHANNELS, ChannelSelect } from '../../../components/spree/channel-select'
+import { useReportingQuery } from '../../../hooks/use-reporting'
 
 export const Route = createFileRoute('/_authenticated/$storeId/')({
   component: DashboardPage,
 })
 
-type ChartMetric = 'sales' | 'orders' | 'avg_order_value' | 'units' | 'customers'
+// UI metric keys (stable i18n keys) → registered reporting metric names.
+const CHART_METRICS = {
+  sales: 'gross_revenue',
+  orders: 'orders_count',
+  avg_order_value: 'aov',
+  units: 'units_sold',
+  customers: 'customers_count',
+} as const
 
-const CHART_METRICS: ChartMetric[] = ['sales', 'orders', 'avg_order_value', 'units', 'customers']
+type ChartMetric = keyof typeof CHART_METRICS
 
 function DashboardPage() {
   const { t } = useTranslation()
@@ -52,24 +65,19 @@ function DashboardPage() {
   const [channelId, setChannelId] = useState<string>(ALL_CHANNELS)
 
   const channelParam = channelId === ALL_CHANNELS ? undefined : channelId
-  const rangeParams = {
-    date_from: dateRange.from.toISOString(),
-    date_to: dateRange.to.toISOString(),
-    channel_id: channelParam,
+  // Shared by every widget query — the switcher and date range scope the whole screen.
+  const scope: Pick<ReportingQuery, 'time_range' | 'filters'> = {
+    time_range: { since: dateRange.from.toISOString(), until: dateRange.to.toISOString() },
+    ...(channelParam
+      ? { filters: [{ dimension: 'channel', op: 'eq' as const, value: channelParam }] }
+      : {}),
   }
 
-  const { data: analytics } = useQuery({
-    queryKey: ['dashboard', 'analytics', rangeParams],
-    queryFn: () => adminClient.dashboard.analytics(rangeParams),
-    staleTime: 5 * 60 * 1000,
-    placeholderData: (previousData) => previousData,
-  })
-
-  const { data: rankings } = useQuery({
-    queryKey: ['dashboard', 'rankings', rangeParams],
-    queryFn: () => adminClient.dashboard.rankings(rangeParams),
-    staleTime: 5 * 60 * 1000,
-    placeholderData: (previousData) => previousData,
+  const { data: overview } = useReportingQuery({
+    metrics: Object.values(CHART_METRICS),
+    dimensions: [{ name: 'completed_at', grain: 'day' }],
+    compare: 'previous_period',
+    ...scope,
   })
 
   const { data: operations } = useQuery({
@@ -79,7 +87,7 @@ function DashboardPage() {
     placeholderData: (previousData) => previousData,
   })
 
-  if (!analytics) {
+  if (!overview) {
     return <DashboardSkeleton />
   }
 
@@ -101,12 +109,12 @@ function DashboardPage() {
           <DateRangePicker value={dateRange} onChange={setDateRange} />
         </div>
       </div>
-      <AnalyticsChart data={analytics} />
+      <AnalyticsChart data={overview} />
       <div className="grid gap-6 lg:grid-cols-5">
         <OperationsCard data={operations} />
-        <RankingsCard data={rankings} />
+        <RankingsCard scope={scope} />
       </div>
-      <TopProducts products={analytics.top_products} />
+      <TopProducts scope={scope} />
     </div>
   )
 }
@@ -116,10 +124,10 @@ function DashboardPage() {
  * neutral dash at 0, and a "New" badge when there is no previous-period
  * baseline (`growth === null`).
  */
-function GrowthBadge({ growth }: { growth: number | null }) {
+function GrowthBadge({ growth }: { growth: number | null | undefined }) {
   const { t } = useTranslation()
 
-  if (growth === null) {
+  if (growth === null || growth === undefined) {
     return (
       <Badge variant="secondary" title={t('admin.pages.home.growth.vs_previous')}>
         {t('admin.pages.home.growth.new')}
@@ -154,33 +162,31 @@ function GrowthBadge({ growth }: { growth: number | null }) {
   )
 }
 
-function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
+function AnalyticsChart({ data }: { data: ReportingResult }) {
   const { t, i18n } = useTranslation()
   const locale = i18n.language
   const [activeMetric, setActiveMetric] = useState<ChartMetric>('sales')
 
-  const summaryValues: Record<ChartMetric, string> = {
-    sales: data.summary.display_sales_total,
-    orders: data.summary.orders_count.toLocaleString(),
-    avg_order_value: data.summary.display_avg_order_value,
-    units: data.summary.units_sold.toLocaleString(),
-    customers: data.summary.customers_count.toLocaleString(),
+  const totalFor = (uiKey: ChartMetric) => data.totals[CHART_METRICS[uiKey]]
+  const displayFor = (uiKey: ChartMetric) => {
+    const total = totalFor(uiKey)
+    return total?.display ?? (total?.value ?? 0).toLocaleString()
   }
 
-  const growthValues: Record<ChartMetric, number | null> = {
-    sales: data.summary.sales_growth,
-    orders: data.summary.orders_growth,
-    avg_order_value: data.summary.avg_order_value_growth,
-    units: data.summary.units_growth,
-    customers: data.summary.customers_growth,
-  }
+  // One reporting query feeds both series: `value` is the current period,
+  // `previous` the aligned bucket from the comparison period.
+  const chartData = data.rows.map((row) => ({
+    date: row.dimensions.completed_at as string,
+    current: row.metrics[CHART_METRICS[activeMetric]]?.value ?? 0,
+    previous: row.metrics[CHART_METRICS[activeMetric]]?.previous ?? 0,
+  }))
 
   const chartConfig: ChartConfig = {
-    [activeMetric]: {
+    current: {
       label: t(`admin.pages.home.metric_short.${activeMetric}`),
       color: 'var(--chart-2)',
     },
-    [`previous_${activeMetric}`]: {
+    previous: {
       label: t('admin.pages.home.legend.previous'),
       color: 'var(--muted-foreground)',
     },
@@ -192,7 +198,7 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
   return (
     <Card>
       <CardHeader className="grid h-auto grid-cols-2 gap-0 border-b p-0 sm:grid-cols-3 lg:grid-cols-5">
-        {CHART_METRICS.map((metric) => (
+        {(Object.keys(CHART_METRICS) as ChartMetric[]).map((metric) => (
           <button
             key={metric}
             type="button"
@@ -205,8 +211,8 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
               {t(`admin.pages.home.metrics.${metric}`)}
             </span>
             <span className="flex items-center gap-2">
-              <span className="text-lg font-bold leading-none">{summaryValues[metric]}</span>
-              <GrowthBadge growth={growthValues[metric]} />
+              <span className="text-lg font-bold leading-none">{displayFor(metric)}</span>
+              <GrowthBadge growth={totalFor(metric)?.growth} />
             </span>
             {activeMetric === metric && (
               <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />
@@ -216,7 +222,7 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-          <ComposedChart data={data.chart_data}>
+          <ComposedChart data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="date"
@@ -241,15 +247,15 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
               }
             />
             <Bar
-              dataKey={activeMetric}
-              fill={`var(--color-${activeMetric})`}
+              dataKey="current"
+              fill="var(--color-current)"
               opacity={0.8}
               activeBar={{ opacity: 1 }}
               radius={[4, 4, 0, 0]}
             />
             <Line
-              dataKey={`previous_${activeMetric}`}
-              stroke={`var(--color-previous_${activeMetric})`}
+              dataKey="previous"
+              stroke="var(--color-previous)"
               strokeWidth={2}
               strokeDasharray="4 4"
               strokeOpacity={0.7}
@@ -381,62 +387,60 @@ function OperationsCard({ data }: { data: DashboardOperations | undefined }) {
 
 type RankingTab = 'customers' | 'categories'
 
-function RankingsCard({ data }: { data: DashboardRankings | undefined }) {
+// Each tab is one contract query; the revenue metric doubles as the share bar.
+const RANKING_QUERIES: Record<
+  RankingTab,
+  {
+    query: Omit<ReportingQuery, 'time_range' | 'filters'>
+    revenueMetric: string
+    countMetric: string
+  }
+> = {
+  customers: {
+    query: {
+      metrics: ['gross_revenue', 'orders_count'],
+      dimensions: ['customer'],
+      sort: '-gross_revenue',
+      limit: 5,
+    },
+    revenueMetric: 'gross_revenue',
+    countMetric: 'orders_count',
+  },
+  categories: {
+    query: {
+      metrics: ['net_revenue', 'units_sold'],
+      dimensions: ['category'],
+      sort: '-net_revenue',
+      limit: 5,
+    },
+    revenueMetric: 'net_revenue',
+    countMetric: 'units_sold',
+  },
+}
+
+function RankingsCard({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'filters'> }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
   const [tab, setTab] = useState<RankingTab>('customers')
 
-  const nameBlock = (name: string, sub?: string) => (
-    <span className="min-w-0">
-      <span className="block truncate font-medium">{name}</span>
-      {sub && <span className="block truncate text-xs text-muted-foreground">{sub}</span>}
-    </span>
-  )
+  const { query, revenueMetric, countMetric } = RANKING_QUERIES[tab]
+  const { data } = useReportingQuery({ ...query, ...scope })
 
-  // Normalize both ranking shapes into one row view-model so the list below
-  // renders a single branch-free loop.
-  const rows =
-    data === undefined
-      ? undefined
-      : tab === 'customers'
-        ? data.customers.map((customer) => ({
-            key: customer.id ?? customer.email,
-            amount: customer.amount,
-            displayAmount: customer.display_amount,
-            meta: t('admin.pages.home.rankings.orders_count', { count: customer.orders_count }),
-            nameNode: customer.id ? (
-              <Link
-                to="/$storeId/customers/$customerId"
-                params={{ storeId, customerId: customer.id }}
-                className="min-w-0 hover:underline"
-              >
-                {nameBlock(
-                  customer.name,
-                  customer.name !== customer.email ? customer.email : undefined,
-                )}
-              </Link>
-            ) : (
-              nameBlock(
-                customer.name,
-                customer.name !== customer.email ? customer.email : undefined,
-              )
-            ),
-          }))
-        : data.categories.map((category) => ({
-            key: category.id,
-            amount: category.amount,
-            displayAmount: category.display_amount,
-            meta: t('admin.pages.home.rankings.units_count', { count: category.quantity }),
-            nameNode: (
-              <Link
-                to="/$storeId/products/categories/$categoryId"
-                params={{ storeId, categoryId: category.id }}
-                className="min-w-0 hover:underline"
-              >
-                {nameBlock(category.name)}
-              </Link>
-            ),
-          }))
+  const rows = data?.rows.map((row) => {
+    const dimension = Object.values(row.dimensions)[0] as ReportingDimensionValue
+    const amount = row.metrics[revenueMetric]
+    const count = row.metrics[countMetric]?.value ?? 0
+    return {
+      key: dimension.id ?? dimension.label,
+      dimension,
+      amount: amount?.value ?? 0,
+      display: amount?.display ?? String(amount?.value ?? 0),
+      meta:
+        tab === 'customers'
+          ? t('admin.pages.home.rankings.orders_count', { count })
+          : t('admin.pages.home.rankings.units_count', { count }),
+    }
+  })
 
   const maxAmount = rows?.length ? Math.max(...rows.map((row) => row.amount)) : 0
 
@@ -478,12 +482,10 @@ function RankingsCard({ data }: { data: DashboardRankings | undefined }) {
                     <span className="w-5 shrink-0 text-muted-foreground tabular-nums">
                       {index + 1}.
                     </span>
-                    {row.nameNode}
+                    <RankingName tab={tab} storeId={storeId} dimension={row.dimension} />
                   </span>
                   <span className="shrink-0 text-right">
-                    <span className="block text-sm font-medium tabular-nums">
-                      {row.displayAmount}
-                    </span>
+                    <span className="block text-sm font-medium tabular-nums">{row.display}</span>
                     <span className="block text-xs text-muted-foreground">{row.meta}</span>
                   </span>
                 </div>
@@ -505,6 +507,52 @@ function RankingsCard({ data }: { data: DashboardRankings | undefined }) {
   )
 }
 
+function RankingName({
+  tab,
+  storeId,
+  dimension,
+}: {
+  tab: RankingTab
+  storeId: string
+  dimension: ReportingDimensionValue
+}) {
+  const email = typeof dimension.meta?.email === 'string' ? dimension.meta.email : undefined
+  const label = (
+    <span className="min-w-0">
+      <span className="block truncate font-medium">{dimension.label}</span>
+      {email && email !== dimension.label && (
+        <span className="block truncate text-xs text-muted-foreground">{email}</span>
+      )}
+    </span>
+  )
+
+  if (!dimension.id) {
+    return label
+  }
+
+  if (tab === 'customers') {
+    return (
+      <Link
+        to="/$storeId/customers/$customerId"
+        params={{ storeId, customerId: dimension.id }}
+        className="min-w-0 hover:underline"
+      >
+        {label}
+      </Link>
+    )
+  }
+
+  return (
+    <Link
+      to="/$storeId/products/categories/$categoryId"
+      params={{ storeId, categoryId: dimension.id }}
+      className="min-w-0 hover:underline"
+    >
+      {label}
+    </Link>
+  )
+}
+
 function RankingRowsSkeleton() {
   return (
     <div className="flex flex-col">
@@ -521,9 +569,19 @@ function RankingRowsSkeleton() {
   )
 }
 
-function TopProducts({ products }: { products: DashboardAnalytics['top_products'] }) {
+function TopProducts({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'filters'> }) {
   const { t } = useTranslation()
-  if (products.length === 0) {
+
+  const { data } = useReportingQuery({
+    metrics: ['net_revenue', 'units_sold'],
+    dimensions: ['product'],
+    compare: 'previous_period',
+    sort: '-net_revenue',
+    limit: 5,
+    ...scope,
+  })
+
+  if (!data || data.rows.length === 0) {
     return null
   }
 
@@ -551,45 +609,61 @@ function TopProducts({ products }: { products: DashboardAnalytics['top_products'
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
-              <tr key={product.id} className="border-b last:border-0">
-                <td className="px-4 py-3">
-                  <Link
-                    to="/$storeId/products/$productId"
-                    params={(prev) => ({
-                      storeId: prev.storeId!,
-                      productId: product.id,
-                    })}
-                    className="flex items-center gap-3 hover:underline"
-                  >
-                    {product.image_url ? (
-                      <img
-                        src={product.image_url}
-                        alt={product.name}
-                        className="size-10 rounded-md border object-cover"
-                      />
+            {data.rows.map((row) => {
+              const product = row.dimensions.product as ReportingDimensionValue
+              const revenue = row.metrics.net_revenue
+              const thumbnail =
+                typeof product.meta?.thumbnail_url === 'string' ? product.meta.thumbnail_url : null
+              const price = typeof product.meta?.price === 'string' ? product.meta.price : null
+
+              return (
+                <tr key={product.id ?? product.label} className="border-b last:border-0">
+                  <td className="px-4 py-3">
+                    {product.id ? (
+                      <Link
+                        to="/$storeId/products/$productId"
+                        params={(prev) => ({
+                          storeId: prev.storeId!,
+                          productId: product.id as string,
+                        })}
+                        className="flex items-center gap-3 hover:underline"
+                      >
+                        <ProductThumbnail thumbnail={thumbnail} label={product.label} />
+                        <span className="font-medium">{product.label}</span>
+                      </Link>
                     ) : (
-                      <div className="flex size-10 items-center justify-center rounded-md border bg-muted">
-                        <PackageIcon className="size-4 text-muted-foreground" />
-                      </div>
+                      <span className="flex items-center gap-3">
+                        <ProductThumbnail thumbnail={thumbnail} label={product.label} />
+                        <span className="font-medium">{product.label}</span>
+                      </span>
                     )}
-                    <span className="font-medium">{product.name}</span>
-                  </Link>
-                </td>
-                <td className="px-4 py-3 text-right text-muted-foreground">
-                  {product.price ?? '-'}
-                </td>
-                <td className="px-4 py-3 text-right">{product.quantity}</td>
-                <td className="px-4 py-3 text-right font-medium">{product.total}</td>
-                <td className="px-4 py-3 text-right">
-                  <GrowthBadge growth={product.growth} />
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="px-4 py-3 text-right text-muted-foreground">{price ?? '-'}</td>
+                  <td className="px-4 py-3 text-right">{row.metrics.units_sold?.value ?? 0}</td>
+                  <td className="px-4 py-3 text-right font-medium">
+                    {revenue?.display ?? revenue?.value}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <GrowthBadge growth={revenue?.growth} />
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </CardContent>
     </Card>
+  )
+}
+
+function ProductThumbnail({ thumbnail, label }: { thumbnail: string | null; label: string }) {
+  if (thumbnail) {
+    return <img src={thumbnail} alt={label} className="size-10 rounded-md border object-cover" />
+  }
+  return (
+    <div className="flex size-10 items-center justify-center rounded-md border bg-muted">
+      <PackageIcon className="size-4 text-muted-foreground" />
+    </div>
   )
 }
 

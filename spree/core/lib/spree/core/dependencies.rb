@@ -7,6 +7,9 @@ module Spree
         # ability
         ability_class: 'Spree::Ability',
 
+        # reporting (see docs/plans/6.0-analytics-semantic-layer.md)
+        reporting_adapter: 'Spree::Reporting::Adapters::Live',
+
         # cart
         cart_compare_line_items_service: 'Spree::CompareLineItems',
         cart_create_service: 'Spree::Cart::Create',

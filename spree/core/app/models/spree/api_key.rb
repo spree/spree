@@ -25,6 +25,7 @@ module Spree
       read_webhooks write_webhooks
       read_api_keys write_api_keys
       read_dashboard
+      read_reports
       read_all write_all
     ].freeze
 
