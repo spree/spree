@@ -245,8 +245,13 @@
                 "pages": [
                   "developer/storefront/nextjs/quickstart",
                   "developer/storefront/nextjs/architecture",
+                  "developer/storefront/nextjs/multi-region",
                   "developer/storefront/nextjs/customization",
+                  "developer/storefront/nextjs/emails",
                   "developer/storefront/nextjs/wholesale",
+                  "developer/storefront/nextjs/wallet-payments",
+                  "developer/storefront/nextjs/testing",
+                  "developer/storefront/nextjs/environment-variables",
                   "developer/storefront/nextjs/deployment"
                 ]
               }

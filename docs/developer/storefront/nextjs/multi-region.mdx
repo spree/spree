@@ -1,0 +1,75 @@
+---
+title: Multi-Region
+description: How the Spree Next.js Storefront serves multiple countries, currencies, and languages from a single deployment via URL segments and edge middleware
+---
+
+The storefront serves multiple countries, currencies, and languages from a single deployment. Region is encoded in the URL, detected automatically for first-time visitors by middleware, and mapped to a [Spree Market](/developer/core-concepts/markets) — the model that bundles a country, currency, and locale — so every server-side fetch resolves prices and content for the right region.
+
+## URL structure
+
+Every route is prefixed with a country and locale segment:
+
+```
+/us/en/products          # US market, English
+/de/de/products          # German market, German
+/uk/en/products          # UK market, English
+```
+
+The `[country]` and `[locale]` segments are the first two dynamic params of the App Router tree (`src/app/[country]/[locale]/…`). Because region lives in the path, every URL is shareable and independently cacheable, and search engines index each region separately.
+
+## The middleware
+
+A visitor who lands on a bare path (no region prefix) is redirected to the correct `/{country}/{locale}/…` URL by an edge middleware. It's wired in `src/proxy.ts`:
+
+```typescript
+import { createSpreeMiddleware } from '@/lib/spree/middleware'
+import { getDefaultCountry, getDefaultLocale } from '@/lib/store'
+
+export const proxy = createSpreeMiddleware({
+  defaultCountry: getDefaultCountry(),
+  defaultLocale: getDefaultLocale(),
+})
+
+export const config = {
+  matcher: ['/((?!api/|_next/static|_next/image|favicon.ico|.*\\..*$).*)'],
+}
+```
+
+`createSpreeMiddleware` (from `src/lib/spree`) does three things:
+
+- **Redirects** bare paths to `/{country}/{locale}/…`.
+- **Detects** the visitor's country and locale (see below).
+- **Syncs** `spree_country` and `spree_locale` cookies with the URL segments, so server-side fetches via `getLocaleOptions()` resolve the same market the URL asks for.
+
+Requests that already carry a `/{country}/{locale}` prefix pass through untouched — the middleware only refreshes the cookies to match.
+
+### Detection chain
+
+For a request without a region prefix, each value is resolved from the first source that has it:
+
+| Value | Resolution order |
+|-------|------------------|
+| **Country** | `spree_country` cookie → `x-vercel-ip-country` / `cf-ipcountry` geo header → default |
+| **Locale** | `spree_locale` cookie → `Accept-Language` header (primary tag) → default |
+
+Geo headers are set by the hosting edge — `x-vercel-ip-country` on Vercel, `cf-ipcountry` behind Cloudflare. On a host that provides neither, detection falls back to `Accept-Language` for locale and the configured default for country. A returning visitor's cookie always wins, so a manual region change sticks.
+
+### Configuration
+
+`createSpreeMiddleware` accepts:
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `defaultCountry` | Fallback country ISO when nothing else matches | `us` |
+| `defaultLocale` | Fallback locale when nothing else matches | `en` |
+| `staticRoutes` | Path prefixes to skip | `['/_next', '/api', '/dev', '/favicon.ico']` |
+
+In the storefront these defaults come from `NEXT_PUBLIC_DEFAULT_COUNTRY` and `NEXT_PUBLIC_DEFAULT_LOCALE` (see [Environment Variables](/developer/storefront/nextjs/environment-variables)). The `matcher` in `proxy.ts` additionally excludes API routes, Next.js internals, and any path with a file extension, so the middleware only runs on page navigations.
+
+## Switching regions
+
+The `CountrySwitcher` component (in `src/components/layout/`) lets a visitor change region manually. Selecting a new region navigates to the matching URL prefix; the middleware then updates the `spree_country` / `spree_locale` cookies so the choice persists across future visits.
+
+## How region reaches the data layer
+
+Region-aware reads don't take a country/locale argument — they call `getLocaleOptions()` from `src/lib/spree`, which reads the `spree_country` / `spree_locale` cookies the middleware keeps in sync with the URL. That value is passed to `@spree/sdk`, which sends it to the Store API so prices, currency, and translated content come back for the right [market](/developer/core-concepts/markets). See [Architecture](/developer/storefront/nextjs/architecture) for the wider server-first data flow.

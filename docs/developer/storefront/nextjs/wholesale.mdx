@@ -1,0 +1,84 @@
+---
+title: Wholesale Portal
+description: The opt-in B2B wholesale surface and how channel-backed surfaces work
+---
+
+## What the Wholesale Portal Is
+
+The storefront ships an optional **wholesale portal** at `/wholesale` — a gated B2B surface for approved trade buyers. It runs on a separate Spree sales channel but shares the same storefront app and Spree backend as the public direct-to-consumer (DTC) store, so a single deployment serves both audiences: the open catalog for shoppers and a login-gated trade catalog with volume pricing for wholesale buyers.
+
+The portal is an **opt-in addon**. It is off by default; a DTC-only storefront never renders any wholesale UI.
+
+<Note>
+The wholesale portal is a **reference implementation**, not a fixed feature. It demonstrates one shape — a gated B2B surface running *alongside* an open DTC store — but the same building blocks (channels, [surfaces](#surfaces-and-channel-switching), and [access gating](#gating-modes)) support the whole spectrum. You can invert the default and make the storefront closed or limited: gate the *primary* DTC channel with `login_required` or `prices_hidden` for a members-only or invite-only shop, drop the public catalog entirely and ship a login-first B2B storefront, or run several gated channels with no open surface at all. Treat this page as a worked example to adapt, not a prescription — the storefront is yours to reshape.
+</Note>
+
+## Surfaces and Channel Switching
+
+A **surface** is a distinct sales context backed by its own Spree [channel](/developer/core-concepts/channels). The storefront models two out of the box — `dtc` (the public storefront) and `wholesale` (the trade portal) — but the mechanism is general: any channel on your backend can back its own surface.
+
+The surface selects which SDK client a request goes through. A channel-bound client sends the channel code on every request via the `X-Spree-Channel` header, and the Store API [resolves the request against that channel](/developer/core-concepts/channels#resolution-at-request-time) — its catalog, pricing, and access rules. In the SDK this is the `channel` client option:
+
+```ts
+import { createClient } from '@spree/sdk'
+
+const wholesaleClient = createClient({
+  baseUrl: process.env.SPREE_API_URL,
+  publishableKey: process.env.SPREE_PUBLISHABLE_KEY,
+  channel: 'wholesale', // sent as X-Spree-Channel on every request
+})
+```
+
+Alternatively, a **channel-bound publishable key** carries the channel server-side: when a key is scoped to a channel on the backend, the API assigns that channel to the request without needing the header. Either path works; the header is the simplest and is what the storefront uses by default.
+
+Because each surface has its own client, cart cookies, and cache keys, a customer can hold an open DTC cart and an open wholesale cart at the same time without them mixing. The customer session (JWT) is shared — it's the same person signing in — so only the cart splits, never the auth.
+
+To add your own channel-backed surface, follow the same pattern: create the channel on the backend, add a client bound to its code, and thread the surface through the routes that should target it.
+
+## Enabling Wholesale
+
+Wholesale turns on through a single environment variable:
+
+- **`SPREE_WHOLESALE_CHANNEL`** — the enable switch. Set it to the code of a gated channel on your backend (e.g. `wholesale`). There is **no default**: when it is unset, the storefront runs DTC-only — the wholesale nav link, footer link, and homepage section are hidden, and every `/wholesale` route returns 404.
+- **`SPREE_WHOLESALE_PUBLISHABLE_KEY`** — optional. The channel header alone selects the channel, so this falls back to `SPREE_PUBLISHABLE_KEY`. Set it only to bind a channel-scoped publishable key.
+
+The backend must have a [channel](/developer/core-concepts/channels) whose code matches `SPREE_WHOLESALE_CHANNEL`. Its [`storefront_access`](/developer/core-concepts/channels#storefront-access-gating) posture decides how much a guest can see — the portal supports both `login_required` (guests are walled off entirely) and `prices_hidden` (guests browse the catalog but not prices). See [Gating Modes](#gating-modes) below. Spree installs seed a `login_required` wholesale channel by default; switching to `prices_hidden` is a single flag on that same channel — no new channel or seed data.
+
+## How Gating Works End to End
+
+Two independent checks gate the portal — one at the **channel** (how much of the catalog a guest may see), one at the **customer** (whether a buyer may transact at trade pricing). The channel check is set by the channel's [gating mode](#gating-modes); the customer check is always the same.
+
+**Channel access** is enforced by the Store API, not the storefront — the storefront can't loosen it. Depending on the channel's `storefront_access` posture, a guest is either rejected outright (`login_required`) or served the catalog with money fields returned as `null` (`prices_hidden`). This is a general channel feature; see [Channels → Storefront Access Gating](/developer/core-concepts/channels#storefront-access-gating) for how it's resolved and enforced.
+
+**Buyer approval.** Being logged in isn't enough; a buyer must be *approved*. Approval is membership in the **Wholesale** [customer group](/developer/core-concepts/pricing#customer-group-rule) — an admin adds an applicant to the group to approve them. The storefront reads `customer_groups` on `customers/me` and branches accordingly:
+
+- **Guest** — sees the sign-in / apply wall (`login_required`), or the read-only catalog with sign-in-for-pricing prompts (`prices_hidden`).
+- **Signed in, not in the group** — sees an application-pending state. Signing in never skips approval: an authenticated but unapproved buyer cannot transact under either mode.
+- **Signed in and in the group** — gets the full portal: trade catalog, quick order, and the wholesale cart.
+
+**Trade pricing** is unlocked by volume. The seeded model grants a trade price once a line reaches a minimum quantity of the same item (10 or more per item in the sample data). The applicable volume rule lives on a backend [Price List](/developer/core-concepts/pricing#price-lists); the storefront surfaces the trade price the API returns for a qualifying quantity.
+
+## Gating Modes
+
+A channel's `storefront_access` posture is one of three values. The wholesale portal supports the two gated modes; the third describes a fully public channel like DTC.
+
+| Mode | Guest sees catalog | Guest sees prices | Guest can order |
+|---|---|---|---|
+| `login_required` | No — hard `401`, sign-in wall | No | No |
+| `prices_hidden` | Yes — read-only | No — "sign in for pricing" | No — "sign in to order" |
+| `public` | Yes | Yes | Yes (subject to guest checkout) |
+
+**`login_required`** is the strictest posture and the seeded default. The Store API rejects any unauthenticated request to the channel with `401`, so a guest can't read wholesale catalog or pricing at all. The storefront shows the sign-in / apply wall in place of every gated page.
+
+**`prices_hidden`** opens the catalog to guests while keeping pricing private. The channel doesn't reject unauthenticated requests, but the API serializes every money field as `null` for a guest. In the portal, a guest browses the catalog and product pages read-only: each price renders a **"sign in for pricing"** prompt, and add-to-cart becomes **"sign in to order."** Ordering surfaces (cart, quick order) still require sign-in — a guest is redirected to the sign-in flow rather than shown an empty wholesale cart. Approval is unchanged: signing in reveals list prices, and joining the Wholesale group unlocks trade pricing. This mode suits a trade catalog you want discoverable (for SEO or lead generation) without exposing negotiated pricing.
+
+**`public`** is an ungated channel — the posture the DTC store runs on. It's listed here for completeness; a wholesale channel would not normally use it.
+
+Switching a wholesale channel between the two supported modes is a single change to [`storefront_access`](/developer/core-concepts/channels#storefront-access-gating) on the backend — set on the channel, or inherited from the [store's default](/developer/core-concepts/stores#storefront-access-defaults). Nothing in the storefront needs redeploying — the portal reads the channel's posture at request time and adapts. Login and signup always run through the same approval flow regardless of mode.
+
+## Related Documentation
+
+- [Channels](/developer/core-concepts/channels) — The sales channel that backs the wholesale surface, and the general [Storefront Access Gating](/developer/core-concepts/channels#storefront-access-gating) mechanism the portal builds on
+- [Stores](/developer/core-concepts/stores) — Store-level [defaults](/developer/core-concepts/stores#storefront-access-defaults) that channels inherit
+- [Pricing](/developer/core-concepts/pricing) — [Price Lists](/developer/core-concepts/pricing#price-lists) and the [Customer Group Rule](/developer/core-concepts/pricing#customer-group-rule) behind approval and trade pricing
+- [Store SDK: Configuration](/developer/sdk/configuration) — `setChannel` and the channel client option used to bind a surface

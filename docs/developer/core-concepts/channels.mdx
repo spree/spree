@@ -21,6 +21,8 @@ Every store ships with one default channel named *Online Store*. You can add mor
 | `code` | URL-safe slug, stable identifier sent via the `X-Spree-Channel` header | `pos` |
 | `active` | When `false`, the channel stops accepting orders | `true` |
 | `default` | Exactly one channel per store is the default. Used as a fallback when no channel header is present and as the auto-publish target for new products | `true` |
+| `storefront_access` | Controls what an anonymous visitor may see: `public`, `prices_hidden`, or `login_required`. Unset inherits the store's setting. See [Storefront Access Gating](#storefront-access-gating) | `login_required` |
+| `guest_checkout` | Whether an order may be placed without an account on this channel. Unset inherits the store's setting | `false` |
 | `preferred_order_routing_strategy` | Optional per-channel override of the store's [Order Routing](/developer/core-concepts/shipments#order-routing) strategy | `Spree::OrderRouting::Strategy::Rules` |
 
 `code` is normalized to a URL-safe slug on save — `POS` becomes `pos`, `Point of Sale!` becomes `point-of-sale`. Leaving `code` blank derives it from `name`.
@@ -91,6 +93,55 @@ Product status (`draft` / `active` / `archived`) is the **outer gate**: a Draft 
 Every order is attributed to one channel. The channel is set from the `X-Spree-Channel` header on cart creation, from the merchant's selection on the "New order" form, or defaults to the store's primary channel.
 
 This attribution drives reporting (best-selling by channel, revenue per channel) and per-channel order routing — see [Order Routing](/developer/core-concepts/shipments#order-routing).
+
+### Storefront Access Gating
+
+<Since version="5.6" />
+
+A channel's `storefront_access` decides what an **anonymous** visitor — a request with no authenticated customer — may see. Logged-in customers are never gated. The posture is one of three values:
+
+| Mode | Guest sees catalog | Guest sees prices | Use case |
+|---|---|---|---|
+| `public` | Yes | Yes | The default. An open storefront — anyone can browse and buy. |
+| `prices_hidden` | Yes | No — prices come back `null` | A catalog you want discoverable, with pricing revealed only after sign-in (e.g. a trade catalog for lead generation). |
+| `login_required` | No — reads rejected with `401` | No | A fully gated surface — a guest can't read the catalog at all (e.g. a members-only or B2B wholesale portal). |
+
+The gate is enforced by the **Store API**, not the storefront, so a storefront app can't loosen it:
+
+- **`login_required`** — every gated read returns `401` for an unauthenticated request. Endpoints that must stay reachable before sign-in (authentication, password reset, reference data like countries and currencies) are exempt.
+- **`prices_hidden`** — reads succeed, but every money field is serialized as `null` for a guest. The storefront renders these as a sign-in prompt rather than a price.
+
+A companion control, **`guest_checkout`**, decides whether an order can be placed without an account on the channel. It's independent of `storefront_access` — a `public` channel can still require accounts, and the two are resolved separately.
+
+#### Store fallback
+
+Both controls fall back to the owning [Store](/developer/core-concepts/stores) when the channel's own value is unset — the same inheritance pattern as the channel's order-routing strategy. `storefront_access` resolves to the channel value, then the store value, and finally `public` when neither is set. This lets you set a store-wide default (e.g. "all channels require login") and override per channel where needed.
+
+<CodeGroup>
+
+```typescript Admin SDK
+// Gate a channel behind sign-in, and require accounts at checkout
+await adminClient.channels.update('ch_wholesale', {
+  storefront_access: 'login_required',
+  guest_checkout: false,
+})
+
+// Clear the channel value to inherit the store's default
+await adminClient.channels.update('ch_wholesale', {
+  storefront_access: null,
+})
+```
+
+```bash cURL
+curl -X PATCH 'https://api.mystore.com/api/v3/admin/channels/ch_wholesale' \
+  -H 'X-Spree-API-Key: sk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{ "storefront_access": "login_required", "guest_checkout": false }'
+```
+
+</CodeGroup>
+
+Switching a channel between modes takes effect immediately — the posture is resolved per request, so no cache warm-up or redeploy is needed. The Next.js storefront's [wholesale portal](/developer/storefront/nextjs/wholesale) is a worked example of a `login_required` / `prices_hidden` channel driving the UI.
 
 ## Publishing Products on Channels
 
@@ -179,3 +230,4 @@ The write contract is **full-set**: the array represents the complete desired st
 - [Order Routing](/developer/core-concepts/shipments#order-routing) — Channels can override the store's routing strategy
 - [Store SDK: Products](/developer/sdk/store/products) — Channel-scoped product listing and filtering
 - [Admin SDK: Resources](/developer/sdk/admin/resources) — How `adminClient.channels.addProducts` and other resource methods are structured
+- [Wholesale Portal](/developer/storefront/nextjs/wholesale) — A gated channel driving the Next.js storefront's B2B surface

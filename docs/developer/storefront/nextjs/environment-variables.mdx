@@ -1,0 +1,92 @@
+---
+title: Environment Variables
+description: Every environment variable the Spree Next.js Storefront reads, with defaults and when to set it
+---
+
+Configuration lives in `.env.local` (copy `.env.example` to start). Variables **without** a `NEXT_PUBLIC_` prefix are server-side only and never reach the browser; `NEXT_PUBLIC_` variables are inlined into the client bundle at build time, so only put non-secret values there.
+
+## Required
+
+| Variable | Description |
+|----------|-------------|
+| `SPREE_API_URL` | Your Spree API endpoint (e.g. `http://localhost:3000` in dev, `https://api.mystore.com` in production) |
+| `SPREE_PUBLISHABLE_KEY` | Publishable API key from your Spree admin |
+
+<Note>
+  In a Docker build these two are also required at **build time** — the storefront prerenders pages against the Spree API. See [Deployment](/developer/storefront/nextjs/deployment).
+</Note>
+
+## Store defaults
+
+Used by the middleware for initial redirects before API data loads, and as build-time fallbacks for sitemap/SEO generation.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_DEFAULT_COUNTRY` | Default country ISO code — should match your store's `default_country_iso` | `us` |
+| `NEXT_PUBLIC_DEFAULT_LOCALE` | Default locale code — should match your store's `default_locale` | `en` |
+| `NEXT_PUBLIC_SITE_URL` | Public site URL, used for sitemap and `robots.txt` generation (e.g. `https://mystore.com`) | _(required for sitemap)_ |
+| `NEXT_PUBLIC_STORE_NAME` | Store name used in metadata fallbacks | `Spree Store` |
+| `NEXT_PUBLIC_STORE_DESCRIPTION` | Store description used in metadata fallbacks | _(sample text)_ |
+
+## SEO & social
+
+Optional overrides for site metadata and the Organization JSON-LD. When unset, values fall back to store settings from the Spree API.
+
+| Variable | Description |
+|----------|-------------|
+| `STORE_SEO_TITLE` | Default `<title>` |
+| `STORE_META_DESCRIPTION` | Default meta description |
+| `STORE_META_KEYWORDS` | Default meta keywords |
+| `STORE_TWITTER` | Twitter/X handle or URL |
+| `STORE_FACEBOOK` | Facebook page URL |
+| `STORE_INSTAGRAM` | Instagram URL |
+| `STORE_LOGO_URL` | Logo URL for Organization JSON-LD |
+| `STORE_SUPPORT_EMAIL` | Customer support email |
+
+## Wholesale B2B portal
+
+The [wholesale portal](/developer/storefront/nextjs/wholesale) is an opt-in addon, off by default.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SPREE_WHOLESALE_CHANNEL` | Enable switch — the code of a gated Spree channel to bind the `/wholesale` surface to. Unset means DTC-only: every wholesale entry point is hidden and the routes 404 | _(disabled)_ |
+| `SPREE_WHOLESALE_PUBLISHABLE_KEY` | Channel-scoped publishable key for the wholesale surface. Optional — the channel header selects the channel, so this falls back to `SPREE_PUBLISHABLE_KEY` | _(falls back to `SPREE_PUBLISHABLE_KEY`)_ |
+
+## Transactional emails
+
+See the [Transactional Emails](/developer/storefront/nextjs/emails) guide for the full setup.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SPREE_WEBHOOK_SECRET` | Webhook endpoint secret key that signs incoming Spree webhooks | _(disabled)_ |
+| `RESEND_API_KEY` | [Resend](https://resend.com) API key for sending emails in production | _(dev: writes to disk)_ |
+| `EMAIL_FROM` | "From" address for transactional emails (e.g. `Store <orders@mystore.com>`) | `orders@example.com` |
+
+## Payments
+
+Publishable keys for client-side payment SDKs, read when the matching gateway is enabled. Set the key for whichever provider(s) you use.
+
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key (`pk_…`) |
+
+## Analytics
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `GTM_ID` | Google Tag Manager container ID (e.g. `GTM-XXXXXXX`). Leave empty to disable | _(disabled)_ |
+
+## Error tracking (Sentry)
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SENTRY_DSN` | Sentry DSN — set to enable error tracking (e.g. `https://key@o0.ingest.sentry.io/0`) | _(disabled)_ |
+| `SENTRY_ORG` | Sentry organization slug (for source map uploads) | _(none)_ |
+| `SENTRY_PROJECT` | Sentry project slug (for source map uploads) | _(none)_ |
+| `SENTRY_AUTH_TOKEN` | Sentry auth token (for source map uploads in CI) | _(none)_ |
+| `SENTRY_SEND_DEFAULT_PII` | Send PII (IP addresses, cookies, user data) to Sentry server-side | `false` |
+| `NEXT_PUBLIC_SENTRY_SEND_DEFAULT_PII` | Send PII to Sentry client-side | `false` |
+
+<Warning>
+  PII collection is disabled by default. Only set the `SENTRY_SEND_DEFAULT_PII` variables to `true` if you have appropriate user consent or a privacy policy covering this data.
+</Warning>

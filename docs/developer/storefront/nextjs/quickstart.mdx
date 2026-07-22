@@ -34,25 +34,27 @@ The [Spree Storefront](https://github.com/spree/storefront) is a production-read
 
 ## Installation
 
-### Option 1: Fork the Repository (Recommended)
+### Recommended: create-spree-app
 
-Fork the repository on GitHub, then clone your fork:
+The fastest way to get a full project — Spree backend, this Next.js storefront, and the `spree` CLI, wired together — is [`create-spree-app`](/developer/create-spree-app/quickstart):
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/storefront.git
-cd storefront
-npm install
+npx create-spree-app my-store
 ```
 
-This gives you a full copy you can customize freely while still being able to pull upstream updates.
+The storefront is included by default (pass `--no-storefront` to skip it). It's scaffolded into `apps/storefront/` with its `.env.local` already pointing at the backend, so it boots against real data with no manual key wiring.
 
-### Option 2: Clone Directly
+### Standalone
+
+To run the storefront on its own — against an existing Spree backend, or to work on the storefront repo directly — clone it and install:
 
 ```bash
 git clone https://github.com/spree/storefront.git
 cd storefront
 npm install
 ```
+
+Then follow [Configuration](#configuration) to point it at your Spree API. If you plan to customize and track upstream changes, [fork first](/developer/storefront/nextjs/customization#tracking-upstream-updates).
 
 ## Configuration
 
@@ -82,6 +84,10 @@ npm run dev
 ```
 
 Open [http://localhost:3001](http://localhost:3001) in your browser.
+
+<Note>
+  Testing Apple Pay / Google Pay locally needs a public HTTPS URL. See [Wallet Payments in Development](/developer/storefront/nextjs/wallet-payments).
+</Note>
 
 ## Production Build
 
