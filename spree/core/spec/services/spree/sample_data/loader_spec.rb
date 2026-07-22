@@ -62,6 +62,14 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
       expect(volume_rule.preferred_min_quantity).to eq(10)
     end
 
+    it 'seeds wholesale prices for every supported currency' do
+      price_list = store.price_lists.find_by(name: 'Wholesale')
+      supported = store.supported_currencies_list.map(&:iso_code)
+
+      expect(price_list.prices.distinct.pluck(:currency)).to match_array(supported)
+      expect(price_list.prices.where(currency: 'EUR').where.not(amount: nil)).to exist
+    end
+
     it 'mints a wholesale-bound publishable key' do
       expect(store.api_keys.active.publishable.where(channel: wholesale)).to exist
     end

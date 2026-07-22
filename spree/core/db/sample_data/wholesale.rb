@@ -44,28 +44,24 @@ unless price_list.price_rules.any? { |rule| rule.is_a?(Spree::PriceRules::Custom
 end
 
 if price_list.prices.none?
-  currency = store.default_currency
-  now = Time.current
-  rows = Spree::Variant.joins(:product)
-                       .where(spree_products: { store_id: store.id })
-                       .joins(:prices)
-                       .where(spree_prices: { currency: currency, price_list_id: nil })
-                       .pluck(:id, Spree::Price.arel_table[:amount])
-                       .to_h # one row per variant — last base price wins
-                       .filter_map do |variant_id, amount|
+  # Same paths the admin UI uses: add_products materializes a blank row per
+  # variant × supported currency, then trade prices (40% off that currency's
+  # own retail price) fill in wherever a base price exists — rows without one
+  # stay blank, exactly as if an admin had added the products by hand.
+  price_list.add_products(store.products.ids)
+
+  base_amounts = Spree::Price.where(price_list_id: nil, variant_id: price_list.prices.select(:variant_id))
+                             .pluck(:variant_id, :currency, :amount)
+                             .each_with_object({}) { |(variant_id, currency, amount), memo| memo[[variant_id, currency]] = amount }
+
+  rows = price_list.prices.pluck(:id, :variant_id, :currency).filter_map do |id, variant_id, currency|
+    amount = base_amounts[[variant_id, currency]]
     next if amount.blank?
 
-    {
-      variant_id: variant_id,
-      price_list_id: price_list.id,
-      amount: (amount * 0.6).round(2),
-      currency: currency,
-      created_at: now,
-      updated_at: now
-    }
+    { id: id, variant_id: variant_id, currency: currency, amount: (amount * 0.6).round(2) }
   end
 
-  Spree::Price.insert_all(rows) if rows.any?
+  price_list.bulk_update_prices(rows) if rows.any?
 end
 
 price_list.activate if price_list.can_activate?
