@@ -1,5 +1,19 @@
 # @spree/sdk
 
+## 1.2.0
+
+### Minor Changes
+
+- [#14339](https://github.com/spree/spree/pull/14339) [`b71e613`](https://github.com/spree/spree/commit/b71e61326289d7ef4038a4bd55f353569a242d52) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Add newsletter unsubscribe endpoints. `newsletterSubscribers.requestUnsubscribe({ email })` asks the store to fire a `newsletter_subscriber.unsubscribe_requested` webhook event carrying an unsubscribe token (always 202, so email existence is never revealed). `newsletterSubscribers.delete(id, { token })` removes a subscription using that token from an email link, or — with a customer JWT instead of the token — removes the signed-in customer's own subscription. `Customer` now exposes the store-scoped `newsletter_subscriber` on `GET /customers/me`, which is where a signed-in customer reads the subscription id.
+
+- [#14339](https://github.com/spree/spree/pull/14339) [`b71e613`](https://github.com/spree/spree/commit/b71e61326289d7ef4038a4bd55f353569a242d52) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Money fields are now typed `string | null` across Cart, Order, LineItem, Payment, Fulfillment, GiftCard, and Discount (Zod schemas accept `null` accordingly). On a gated channel (`prices_hidden`), the Store API returns `null` for every monetary amount — including those on records nested inside a cart or order — so anonymous visitors cannot recover hidden prices. Handle `null` before formatting or doing arithmetic on these fields.
+
+- [#14339](https://github.com/spree/spree/pull/14339) [`b71e613`](https://github.com/spree/spree/commit/b71e61326289d7ef4038a4bd55f353569a242d52) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Surface pre-order status on the Store API types. `Variant`, `Product`, and `LineItem` now expose `preorder` (whether the item is currently sold as a pre-order) and `preorder_ships_at` (the customer-facing "ships by" promise, `null` unless it's a live pre-order), so storefronts can render a "Pre-order — ships by …" badge. Both fields are included in the generated Zod schemas.
+
+- [#14339](https://github.com/spree/spree/pull/14339) [`b71e613`](https://github.com/spree/spree/commit/b71e61326289d7ef4038a4bd55f353569a242d52) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Add `client.channel.get()` — returns the channel the client's requests resolve to (API-key binding → `channel` option → store default), including the resolved `storefront_access` posture (`public` | `prices_hidden` | `login_required`) and `guest_checkout`. Gated storefronts can call it before authentication to decide whether to render a sign-in wall. Also exports the `Channel` and `CustomerGroup` types; `customers/me` now includes store-scoped `customer_groups`; and `Cart` carries `channel_id`, so a storefront serving several channels can verify a persisted cart belongs to the surface loading it.
+
+- [#14339](https://github.com/spree/spree/pull/14339) [`b71e613`](https://github.com/spree/spree/commit/b71e61326289d7ef4038a4bd55f353569a242d52) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Support gated storefronts in the Store API. A channel (or its store) can now hide prices from anonymous visitors or require a login to browse: when prices are hidden, monetary fields on products, carts, and orders return `null` for guests, and `login_required` channels reject unauthenticated requests with `401`. Guest checkout can likewise be disallowed per channel, in which case completing a cart without a signed-in customer returns `401`.
+
 ## 1.1.0
 
 ### Minor Changes
