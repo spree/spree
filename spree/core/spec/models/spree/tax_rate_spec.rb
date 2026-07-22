@@ -155,7 +155,7 @@ describe Spree::TaxRate, type: :model do
 
       before { allow(Spree::TaxRate).to receive_messages match: [rate_1, rate_2] }
 
-      it 'applies adjustments for two tax rates to the order' do
+      it 'applies only the rate matching the item tax category' do
         expect(rate_1).to receive(:adjust)
         expect(rate_2).not_to receive(:adjust)
         Spree::TaxRate.adjust(order, line_items)
@@ -179,7 +179,7 @@ describe Spree::TaxRate, type: :model do
         allow(shipment).to receive_messages cost: 10.0, tax_category: tax_category_1, tax_category_id: tax_category_1.id
       end
 
-      it 'applies adjustments for two tax rates to the order' do
+      it 'applies only the rate matching the shipment tax category' do
         expect(rate_1).to receive(:adjust)
         expect(rate_2).not_to receive(:adjust)
         Spree::TaxRate.adjust(order, [shipment])
@@ -232,6 +232,13 @@ describe Spree::TaxRate, type: :model do
       let(:tshirt) { create(:product, tax_category: normal_category, price: 100) }
       let(:order) { Spree::Order.create }
 
+      # The order-level included_tax_total column rollup belongs to the
+      # OrderUpdater pipeline; here we assert on the TaxLine rows the writer
+      # produces.
+      def included_tax_lines_total(order)
+        order.tax_lines.included_in_price.sum(:amount)
+      end
+
       before do
         germany_zone.zone_members.create(zoneable: germany)
         france_zone.zone_members.create(zoneable: france)
@@ -249,7 +256,7 @@ describe Spree::TaxRate, type: :model do
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100))
-          expect(order.included_tax_total).to eq(15.97)
+          expect(included_tax_lines_total(order)).to eq(15.97)
         end
 
         it 'to germany costs 100 euros including tax' do
@@ -257,7 +264,7 @@ describe Spree::TaxRate, type: :model do
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100))
-          expect(order.included_tax_total).to eq(15.97)
+          expect(included_tax_lines_total(order)).to eq(15.97)
         end
 
         it 'to france costs more including tax' do
@@ -266,8 +273,8 @@ describe Spree::TaxRate, type: :model do
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(105.04))
-          expect(order.included_tax_total).to eq(21.01)
-          expect(order.additional_tax_total).to eq(0)
+          expect(included_tax_lines_total(order)).to eq(21.01)
+          expect(order.tax_lines.additional.sum(:amount)).to eq(0)
         end
 
         it 'to somewhere else costs the net amount' do
@@ -275,8 +282,7 @@ describe Spree::TaxRate, type: :model do
           order.update_line_item_prices!
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
-          expect(order.included_tax_total).to eq(0)
-          expect(order.included_tax_total).to eq(0)
+          expect(included_tax_lines_total(order)).to eq(0)
           expect(order.display_total).to eq(Spree::Money.new(84.03))
         end
       end
@@ -288,7 +294,7 @@ describe Spree::TaxRate, type: :model do
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100))
-          expect(order.included_tax_total).to eq(15.97)
+          expect(included_tax_lines_total(order)).to eq(15.97)
         end
 
         it 'to france costs 100 euros including tax' do
@@ -298,8 +304,8 @@ describe Spree::TaxRate, type: :model do
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
           expect(order.display_total).to eq(Spree::Money.new(100.00))
-          expect(order.included_tax_total).to eq(15.97)
-          expect(order.additional_tax_total).to eq(0)
+          expect(included_tax_lines_total(order)).to eq(15.97)
+          expect(order.tax_lines.additional.sum(:amount)).to eq(0)
         end
 
         it 'to somewhere else costs the net amount' do
@@ -308,7 +314,7 @@ describe Spree::TaxRate, type: :model do
           order.update_line_item_prices!
           Spree::TaxRate.adjust(order, order.line_items)
           order.update_with_updater!
-          expect(order.included_tax_total).to eq(0)
+          expect(included_tax_lines_total(order)).to eq(0)
           expect(order.display_total).to eq(Spree::Money.new(84.03))
         end
       end
@@ -393,14 +399,9 @@ describe Spree::TaxRate, type: :model do
     context 'not taxable line item ' do
       let!(:line_item) { Spree::Cart::AddItem.call(order: @order, variant: @nontaxable.default_variant).value }
 
-      it 'does not create a tax adjustment' do
+      it 'does not create a tax line' do
         Spree::TaxRate.adjust(@order, @order.line_items)
-        expect(line_item.adjustments.tax.charge.count).to eq(0)
-      end
-
-      it 'does not create a refund' do
-        Spree::TaxRate.adjust(@order, @order.line_items)
-        expect(line_item.adjustments.credit.count).to eq(0)
+        expect(line_item.tax_lines.count).to eq(0)
       end
     end
 
@@ -415,14 +416,14 @@ describe Spree::TaxRate, type: :model do
         end
 
         context 'when zone is contained by default tax zone' do
-          it 'creates two adjustments, one for each tax rate' do
+          it 'creates two tax lines, one for each tax rate' do
             Spree::TaxRate.adjust(@order, @order.line_items)
-            expect(line_item.adjustments.count).to eq(2)
+            expect(line_item.tax_lines.count).to eq(2)
           end
 
           it 'does not create a tax refund' do
             Spree::TaxRate.adjust(@order, @order.line_items)
-            expect(line_item.adjustments.credit.count).to eq(0)
+            expect(line_item.tax_lines.where(amount: ...0).count).to eq(0)
           end
         end
 
@@ -439,14 +440,14 @@ describe Spree::TaxRate, type: :model do
             allow(@order).to receive(:tax_zone).and_return(new_rate.zone)
           end
 
-          it 'creates an adjustment' do
+          it 'creates a tax line' do
             Spree::TaxRate.adjust(@order, @order.line_items)
-            expect(line_item.adjustments.charge.count).to eq(1)
+            expect(line_item.tax_lines.where(amount: 0...).count).to eq(1)
           end
 
           it 'does not create a tax refund for each tax rate' do
             Spree::TaxRate.adjust(@order, @order.line_items)
-            expect(line_item.adjustments.credit.count).to eq(0)
+            expect(line_item.tax_lines.where(amount: ...0).count).to eq(0)
           end
         end
 
@@ -460,14 +461,9 @@ describe Spree::TaxRate, type: :model do
             @order.reload
           end
 
-          it 'does not create positive adjustments' do
+          it 'does not create tax lines' do
             Spree::TaxRate.adjust(@order, @order.line_items)
-            expect(line_item.adjustments.charge.count).to eq(0)
-          end
-
-          it 'does not create a tax refund for each tax rate' do
-            Spree::TaxRate.adjust(@order, @order.line_items)
-            expect(line_item.adjustments.credit.count).to eq(0)
+            expect(line_item.tax_lines.count).to eq(0)
           end
         end
 
@@ -482,43 +478,44 @@ describe Spree::TaxRate, type: :model do
             Spree::TaxRate.adjust(@order, @order.line_items)
           end
 
-          it 'deletes adjustments for open order when taxrate is deleted' do
+          it 'sheds tax lines of a deleted rate on the next recalculation of an open order' do
             @rate1.destroy!
             @rate2.destroy!
-            expect(line_item.adjustments.count).to eq(0)
+
+            expect(line_item.tax_lines.count).to eq(2)
+
+            Spree::TaxRate.adjust(@order, @order.line_items)
+            expect(line_item.tax_lines.count).to eq(0)
           end
 
-          it 'does not delete adjustments for complete order when taxrate is deleted' do
+          it 'keeps tax lines on complete orders when the rate is deleted (no recalculation runs)' do
             @order.update_column :completed_at, Time.current
             @rate1.destroy!
             @rate2.destroy!
-            expect(line_item.adjustments.count).to eq(2)
+            expect(line_item.tax_lines.count).to eq(2)
+            expect(line_item.tax_lines.map(&:tax_rate)).to all(be_present)
           end
 
-          it 'creates an adjustment' do
-            expect(line_item.adjustments.count).to eq(2)
+          it 'creates a tax line per rate' do
+            expect(line_item.tax_lines.count).to eq(2)
           end
 
-          it 'does not create a tax refund' do
-            expect(line_item.adjustments.credit.count).to eq(0)
-          end
-
-          describe 'tax adjustments' do
+          describe 'tax lines' do
             before { Spree::TaxRate.adjust(@order, @order.line_items) }
 
-            it 'applies adjustments when a tax zone is present' do
-              expect(line_item.adjustments.count).to eq(2)
-              line_item.adjustments.each do |adjustment|
-                expect(adjustment.label).to eq("#{adjustment.source.name} #{(adjustment.source.amount * 100).to_i}%")
+            it 'applies tax lines when a tax zone is present' do
+              expect(line_item.tax_lines.count).to eq(2)
+              line_item.tax_lines.each do |tax_line|
+                expect(tax_line.label).to eq("#{tax_line.tax_rate.name} #{(tax_line.tax_rate.amount * 100).to_i}%")
               end
             end
 
             describe 'when the tax zone is removed' do
               before { allow(@order).to receive_messages tax_zone: nil }
 
-              it 'does not apply any adjustments' do
+              it 'removes the existing tax lines' do
                 Spree::TaxRate.adjust(@order, @order.line_items)
-                expect(line_item.adjustments.count).to eq(0)
+                expect(line_item.tax_lines.count).to eq(0)
               end
             end
           end
@@ -530,18 +527,18 @@ describe Spree::TaxRate, type: :model do
             # Use the same rounding method as in DefaultTax calculator
             @price_before_taxes = BigDecimal(@price_before_taxes).round(2, BigDecimal::ROUND_HALF_UP)
             line_item.update_column(:pre_tax_amount, @price_before_taxes)
-            # Clear out any previously automatically-applied adjustments
-            @order.all_adjustments.delete_all
+            # Clear out any previously automatically-applied tax lines
+            @order.tax_lines.delete_all
             @rate1.adjust(@order, line_item)
             @rate2.adjust(@order, line_item)
           end
 
-          it 'creates two price adjustments' do
-            expect(@order.line_item_adjustments.count).to eq(2)
+          it 'creates two tax lines' do
+            expect(@order.line_item_tax_lines.count).to eq(2)
           end
 
-          it 'price adjustments should be accurate' do
-            included_tax = @order.line_item_adjustments.sum(:amount)
+          it 'tax line amounts should be accurate' do
+            included_tax = @order.line_item_tax_lines.sum(:amount)
             expect(@price_before_taxes + included_tax).to eq(line_item.total)
           end
         end

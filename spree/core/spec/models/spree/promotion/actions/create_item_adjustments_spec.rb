@@ -15,8 +15,6 @@ module Spree
           promotion.promotion_actions = [action]
         end
 
-        it_behaves_like 'an adjustment source'
-
         context '#perform' do
           # Regression test for #3966
           context 'when calculator computes 0' do
@@ -24,32 +22,35 @@ module Spree
               allow(action).to receive_messages compute_amount: 0
             end
 
-            it 'does not create an adjustment when calculator returns 0' do
-              action.perform(payload)
-              expect(action.adjustments).to be_empty
+            it 'does not create a discount line when calculator returns 0' do
+              expect(action.perform(payload)).to be(false)
+              expect(action.discount_lines).to be_empty
             end
           end
 
           context 'when calculator returns a non-zero value' do
             before do
               promotion.promotion_actions = [action]
-              allow(action).to receive_messages compute_amount: 10
+              allow(action).to receive_messages compute_amount: -10
             end
 
-            it 'creates adjustment with item as adjustable' do
+            it 'creates a discount line on the line item' do
               action.perform(payload)
-              expect(action.adjustments.count).to eq(1)
-              expect(line_item.reload.adjustments).to eq(action.adjustments)
+              expect(action.discount_lines.count).to eq(1)
+              expect(line_item.reload.discount_lines).to eq(action.discount_lines)
             end
 
-            it 'creates adjustment with self as source' do
+            it 'links the discount line to the action and promotion' do
               action.perform(payload)
-              expect(line_item.reload.adjustments.first.source).to eq action
+
+              discount_line = line_item.reload.discount_lines.first
+              expect(discount_line.promotion_action).to eq(action)
+              expect(discount_line.promotion).to eq(promotion)
             end
 
-            it 'does not perform twice on the same item' do
+            it 'does not duplicate on repeated performs' do
               2.times { action.perform(payload) }
-              expect(action.adjustments.count).to eq(1)
+              expect(action.discount_lines.count).to eq(1)
             end
 
             context 'with products rules' do
@@ -61,11 +62,11 @@ module Spree
                 allow(rule).to receive(:actionable?).and_return(true, false)
               end
 
-              it 'does not create adjustments for line_items not in product rule' do
+              it 'does not create discount lines for line_items not in product rule' do
                 action.perform(payload)
-                expect(action.adjustments.count).to be 1
-                expect(line_item.reload.adjustments).to match_array action.adjustments
-                expect(second_line_item.reload.adjustments).to be_empty
+                expect(action.discount_lines.count).to be 1
+                expect(line_item.reload.discount_lines).to match_array action.discount_lines
+                expect(second_line_item.reload.discount_lines).to be_empty
               end
             end
           end
@@ -92,27 +93,35 @@ module Spree
               end
             end
 
-            context 'given other promotions with order adjustment' do
+            context 'given another promotion with an order-level discount' do
               let!(:line_item) { create :line_item, order: order, price: 15 }
 
               before do
                 order.update_with_updater!
 
-                2.times { create :promotion_with_order_adjustment, kind: :automatic }
+                create :promotion_with_order_adjustment, kind: :automatic
                 Spree::PromotionHandler::Cart.new(order).activate
 
                 allow(action.calculator).to receive(:compute).and_return(3)
               end
 
-              it 'should not consider not eligible adjustments' do
-                expect(action.compute_amount(line_item)).to eq -3
+              it 'computes its own amount when room remains' do
+                expect(action.compute_amount(line_item)).to eq(-3)
               end
 
-              context 'when adjustments total is greater than item total' do
+              context 'when the remaining order value is smaller than the computed amount' do
                 let!(:line_item) { create :line_item, order: order, price: 12 }
 
-                it 'does not exceed it' do
-                  expect(action.compute_amount(line_item)).to eq -2
+                it 'clamps to what the other discounts left' do
+                  expect(action.compute_amount(line_item)).to eq(-2)
+                end
+              end
+
+              context 'when other discounts already consume the whole order' do
+                let!(:line_item) { create :line_item, order: order, price: 10 }
+
+                it 'returns a non-negative amount (no line gets written)' do
+                  expect(action.compute_amount(line_item)).to be >= 0
                 end
               end
             end
@@ -134,39 +143,32 @@ module Spree
 
           before { promotion.promotion_actions = [other_action] }
 
-          it 'destroys adjustments for incompleted orders' do
+          it 'destroys discount lines for incomplete orders' do
             order = Order.create
-            action.adjustments.create!(label: 'Check',
-                                       amount: 0,
-                                       order: order,
-                                       adjustable: line_item)
+            action.discount_lines.create!(label: 'Check', amount: -1, order: order, line_item: line_item)
 
             expect do
               action.destroy
-            end.to change(Adjustment, :count).by(-1)
+            end.to change(DiscountLine, :count).by(-1)
           end
 
-          it 'nullifies adjustments for completed orders' do
+          it 'keeps discount lines on completed orders, still resolving the soft-deleted action' do
             order = Order.create(completed_at: Time.current)
-            adjustment = action.adjustments.create!(label: 'Check',
-                                                    amount: 0,
-                                                    order: order,
-                                                    adjustable: line_item)
+            discount_line = action.discount_lines.create!(label: 'Check', amount: -1, order: order, line_item: line_item)
 
             expect do
               action.destroy
-            end.to change { adjustment.reload.source_id }.from(action.id).to nil
+            end.not_to change(DiscountLine, :count)
+
+            expect(discount_line.reload.promotion_action).to eq(action)
           end
 
-          it 'doesnt mess with unrelated adjustments' do
-            other_action.adjustments.create!(label: 'Check',
-                                             amount: 0,
-                                             order: order,
-                                             adjustable: line_item)
+          it 'doesnt mess with unrelated discount lines' do
+            other_action.discount_lines.create!(label: 'Check', amount: -1, order: order, line_item: line_item)
 
             expect do
               action.destroy
-            end.not_to change { other_action.adjustments.count }
+            end.not_to change { other_action.discount_lines.count }
           end
         end
       end

@@ -10,6 +10,11 @@ module Spree
 
     has_many :discount_lines, class_name: 'Spree::DiscountLine', inverse_of: :promotion_action
 
+    # Destroying an action (including a paranoia soft-destroy) takes its
+    # discount lines on in-progress orders with it; completed orders keep
+    # their frozen lines, resolved via the with_deleted belongs_to.
+    before_destroy :destroy_discount_lines_on_incomplete_orders
+
     validates :promotion, :type, presence: true
 
     scope :of_type, ->(t) { where(type: t) }
@@ -60,6 +65,35 @@ module Spree
 
     def label
       Spree.t(:promotion_label, name: promotion.name)
+    end
+
+    # Upserts this action's DiscountLine on the adjustable. A non-negative
+    # amount removes the line instead — DiscountLine amounts are strictly
+    # negative, zero results are never stored.
+    #
+    # @param order [Spree::Order]
+    # @param adjustable [Spree::LineItem, Spree::Shipment]
+    # @param amount [BigDecimal]
+    # @return [Boolean] whether a line was written
+    def upsert_discount_line(order, adjustable, amount)
+      discount_line = adjustable.discount_lines.find_or_initialize_by(promotion_action: self, order: order)
+
+      if amount >= 0
+        discount_line.destroy! if discount_line.persisted?
+        return false
+      end
+
+      discount_line.promotion = promotion
+      discount_line.label = label
+      discount_line.amount = amount
+      discount_line.save!
+      true
+    end
+
+    private
+
+    def destroy_discount_lines_on_incomplete_orders
+      discount_lines.joins(:order).merge(Spree::Order.incomplete).destroy_all
     end
   end
 end
