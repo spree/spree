@@ -1,7 +1,7 @@
 {
   "name": "@spree/dashboard-core",
   "license": "MIT",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Spree Dashboard framework — registries (table, nav, slot, settings-nav), providers (auth, permission, store), admin SDK client, generic infra hooks, and the defineDashboardPlugin extension API. Developer Preview.",
   "author": "Vendo Connect Inc.",
   "homepage": "https://spreecommerce.org",
