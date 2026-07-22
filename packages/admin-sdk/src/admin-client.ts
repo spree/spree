@@ -558,10 +558,7 @@ export class AdminClient {
       params?: { date_from?: string; date_to?: string; currency?: string; channel_id?: string },
       options?: RequestOptions,
     ): Promise<DashboardAnalytics> =>
-      this.request<DashboardAnalytics>('GET', '/dashboard/analytics', {
-        ...options,
-        params: params as Record<string, string>,
-      }),
+      this.request<DashboardAnalytics>('GET', '/dashboard/analytics', { ...options, params }),
 
     rankings: (
       params?: {
@@ -573,19 +570,13 @@ export class AdminClient {
       },
       options?: RequestOptions,
     ): Promise<DashboardRankings> =>
-      this.request<DashboardRankings>('GET', '/dashboard/rankings', {
-        ...options,
-        params: params as unknown as Record<string, string>,
-      }),
+      this.request<DashboardRankings>('GET', '/dashboard/rankings', { ...options, params }),
 
     operations: (
       params?: { low_stock_threshold?: number; channel_id?: string },
       options?: RequestOptions,
     ): Promise<DashboardOperations> =>
-      this.request<DashboardOperations>('GET', '/dashboard/operations', {
-        ...options,
-        params: params as unknown as Record<string, string>,
-      }),
+      this.request<DashboardOperations>('GET', '/dashboard/operations', { ...options, params }),
   }
 
   // ============================================

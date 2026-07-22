@@ -359,7 +359,8 @@
         "empty": "لم يتم العثور على عملات"
       },
       "channel_select": {
-        "placeholder": "اختر قناة مبيعات"
+        "placeholder": "اختر قناة مبيعات",
+        "all_channels": "جميع القنوات"
       },
       "file_upload": {
         "attached": "ملف مرفق",

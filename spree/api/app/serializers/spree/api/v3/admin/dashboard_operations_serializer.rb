@@ -32,9 +32,7 @@ module Spree
           private
 
           def actionable_orders
-            scope = store.orders.complete.not_canceled
-            scope = scope.where(channel_id: channel.id) if channel
-            scope
+            store.orders.complete.not_canceled.for_channel(channel)
           end
 
           def orders_to_fulfill
@@ -46,9 +44,10 @@ module Spree
           end
 
           def open_returns
-            scope = store.return_authorizations.where(state: 'authorized')
-            scope = scope.where(Spree::Order.table_name => { channel_id: channel.id }) if channel
-            scope.count
+            store.return_authorizations
+              .where(state: 'authorized')
+              .merge(Spree::Order.for_channel(channel))
+              .count
           end
 
           def low_stock_items

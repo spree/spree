@@ -359,7 +359,8 @@
         "empty": "未找到货币"
       },
       "channel_select": {
-        "placeholder": "选择销售渠道"
+        "placeholder": "选择销售渠道",
+        "all_channels": "全部渠道"
       },
       "file_upload": {
         "attached": "已附加文件",

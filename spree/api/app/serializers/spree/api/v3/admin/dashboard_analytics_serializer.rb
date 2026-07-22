@@ -7,6 +7,8 @@ module Spree
         # preceding period of equal length, plus top products with
         # period-over-period growth.
         class DashboardAnalyticsSerializer
+          include DashboardSerializerHelpers
+
           TOP_PRODUCTS_LIMIT = 5
 
           attr_reader :store, :currency, :time_range, :channel, :params
@@ -36,9 +38,7 @@ module Spree
           private
 
           def base_orders
-            scope = store.orders.complete.where(currency: currency)
-            scope = scope.where(channel_id: channel.id) if channel
-            scope
+            store.orders.complete.where(currency: currency).for_channel(channel)
           end
 
           def orders
@@ -59,17 +59,12 @@ module Spree
           # ---- Summary ----
 
           def summary
-            sales = sales_total
-            count = orders_count
+            sales, count, customers = period_totals(orders)
+            prev_sales, prev_count, prev_customers = period_totals(prev_orders)
             avg = count > 0 ? (sales / count).round(2) : 0.0
-            units = units_sold
-            customers = customers_count
-
-            prev_sales = prev_orders.sum(:total).to_f
-            prev_count = prev_orders.count
             prev_avg = prev_count > 0 ? (prev_sales / prev_count).round(2) : 0.0
+            units = store.line_items.where(order: orders).sum(:quantity)
             prev_units = store.line_items.where(order: prev_orders).sum(:quantity)
-            prev_customers = prev_orders.distinct.count(:email)
 
             {
               sales_total: sales.round(2),
@@ -87,20 +82,12 @@ module Spree
             }
           end
 
-          def sales_total
-            @sales_total ||= orders.sum(:total).to_f
-          end
+          # One aggregate pass per period: sales total, order count, distinct
+          # customers.
+          def period_totals(scope)
+            sales, count, customers = scope.pick(Arel.sql('SUM(total), COUNT(*), COUNT(DISTINCT email)'))
 
-          def orders_count
-            @orders_count ||= orders.count
-          end
-
-          def units_sold
-            @units_sold ||= store.line_items.where(order: orders).sum(:quantity)
-          end
-
-          def customers_count
-            @customers_count ||= orders.distinct.count(:email)
+            [sales.to_f, count.to_i, customers.to_i]
           end
 
           # ---- Chart data ----
@@ -169,14 +156,14 @@ module Spree
 
           def top_products
             rows = product_revenue(orders).limit(TOP_PRODUCTS_LIMIT)
-              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, SUM(#{Spree::LineItem.table_name}.quantity), SUM(#{Spree::LineItem.table_name}.pre_tax_amount)"))
+              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, SUM(#{Spree::LineItem.table_name}.quantity), #{revenue_sum_sql}"))
 
             product_ids = rows.map(&:first).compact
             return [] if product_ids.empty?
 
             prev_amounts = product_revenue(prev_orders)
               .where(Spree::Variant.table_name => { product_id: product_ids })
-              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, SUM(#{Spree::LineItem.table_name}.pre_tax_amount)"))
+              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, #{revenue_sum_sql}"))
               .to_h
 
             products = store.products.with_deleted.includes(:primary_media).where(id: product_ids)
@@ -201,22 +188,15 @@ module Spree
             end
           end
 
-          # Revenue = the persisted `pre_tax_amount` (discounted, net of
-          # included taxes), not `quantity * price` — so rankings reflect what
-          # was actually earned after promotions and VAT.
           def product_revenue(order_scope)
             store.line_items
               .joins(:variant)
               .where(order: order_scope)
               .group("#{Spree::Variant.table_name}.product_id")
-              .order(Arel.sql("SUM(#{Spree::LineItem.table_name}.pre_tax_amount) DESC"))
+              .order(Arel.sql("#{revenue_sum_sql} DESC"))
           end
 
           # ---- Helpers ----
-
-          def money(amount)
-            Spree::Money.new(amount, currency: currency).to_s
-          end
 
           # Percentage change vs the previous period. Returns nil when there is
           # no previous-period baseline (previous == 0 with current activity) so

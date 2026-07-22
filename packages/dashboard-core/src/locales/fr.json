@@ -359,7 +359,8 @@
         "empty": "Aucune devise trouvée"
       },
       "channel_select": {
-        "placeholder": "Sélectionner un canal de vente"
+        "placeholder": "Sélectionner un canal de vente",
+        "all_channels": "Tous les canaux"
       },
       "file_upload": {
         "attached": "Fichier joint",

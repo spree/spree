@@ -1119,8 +1119,7 @@
           "units_count_one": "{{count}} unit",
           "units_count_other": "{{count}} units",
           "empty": "No data for this period yet."
-        },
-        "all_channels": "All channels"
+        }
       },
       "staff": {
         "title": "Staff",

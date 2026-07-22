@@ -5,6 +5,8 @@ module Spree
         # Builds the home dashboard rankings payload: top customers and top
         # categories by revenue for a time range.
         class DashboardRankingsSerializer
+          include DashboardSerializerHelpers
+
           DEFAULT_LIMIT = 5
           MAX_LIMIT = 10
 
@@ -32,11 +34,9 @@ module Spree
           private
 
           def orders
-            @orders ||= begin
-              scope = store.orders.complete.where(currency: currency, completed_at: time_range)
-              scope = scope.where(channel_id: channel.id) if channel
-              scope
-            end
+            @orders ||= store.orders.complete
+              .where(currency: currency, completed_at: time_range)
+              .for_channel(channel)
           end
 
           def customers
@@ -61,16 +61,14 @@ module Spree
             end
           end
 
-          # Revenue = the persisted `pre_tax_amount` (discounted, net of
-          # included taxes) — see DashboardAnalyticsSerializer#product_revenue.
           def categories
             rows = store.line_items
               .joins(variant: { product: :classifications })
               .where(order: orders)
               .group("#{Spree::Classification.table_name}.taxon_id")
-              .order(Arel.sql("SUM(#{Spree::LineItem.table_name}.pre_tax_amount) DESC"))
+              .order(Arel.sql("#{revenue_sum_sql} DESC"))
               .limit(limit)
-              .pluck(Arel.sql("#{Spree::Classification.table_name}.taxon_id, SUM(#{Spree::LineItem.table_name}.quantity), SUM(#{Spree::LineItem.table_name}.pre_tax_amount)"))
+              .pluck(Arel.sql("#{Spree::Classification.table_name}.taxon_id, SUM(#{Spree::LineItem.table_name}.quantity), #{revenue_sum_sql}"))
 
             categories = store.categories.where(id: rows.map(&:first)).index_by(&:id)
 
@@ -86,10 +84,6 @@ module Spree
                 display_amount: money(amount)
               }
             end
-          end
-
-          def money(amount)
-            Spree::Money.new(amount, currency: currency).to_s
           end
         end
       end

@@ -37,6 +37,16 @@ describe Spree::Order, type: :model do
       it { expect(Spree::Order.not_canceled).not_to include canceled_order }
     end
 
+    describe '.for_channel' do
+      let!(:channel) { create(:channel) }
+      let!(:channeled_order) { create(:order, user: user, channel: channel) }
+
+      it 'filters by the given channel and returns all orders for nil' do
+        expect(described_class.for_channel(channel)).to contain_exactly(channeled_order)
+        expect(described_class.for_channel(nil)).to include(channeled_order, completed_order)
+      end
+    end
+
     describe 'ransack status aliases' do
       let!(:ready_order) { create(:order, shipment_state: 'ready', payment_state: 'balance_due') }
       let!(:shipped_order) { create(:order, shipment_state: 'shipped', payment_state: 'paid') }

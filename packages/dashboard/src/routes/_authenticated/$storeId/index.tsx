@@ -1,9 +1,4 @@
-import type {
-  Channel,
-  DashboardAnalytics,
-  DashboardOperations,
-  DashboardRankings,
-} from '@spree/admin-sdk'
+import type { DashboardAnalytics, DashboardOperations, DashboardRankings } from '@spree/admin-sdk'
 import { adminClient } from '@spree/dashboard-core'
 import {
   Badge,
@@ -18,11 +13,6 @@ import {
   ChartTooltipContent,
   type DateRange,
   DateRangePicker,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Skeleton,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
@@ -40,10 +30,10 @@ import {
   TriangleAlertIcon,
   TruckIcon,
 } from 'lucide-react'
-import { Fragment, type ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, CartesianGrid, ComposedChart, Line, XAxis } from 'recharts'
-import { useChannels } from '../../../hooks/use-channels'
+import { ALL_CHANNELS, ChannelSelect } from '../../../components/spree/channel-select'
 
 export const Route = createFileRoute('/_authenticated/$storeId/')({
   component: DashboardPage,
@@ -53,9 +43,6 @@ type ChartMetric = 'sales' | 'orders' | 'avg_order_value' | 'units' | 'customers
 
 const CHART_METRICS: ChartMetric[] = ['sales', 'orders', 'avg_order_value', 'units', 'customers']
 
-// Sentinel for the channel switcher's unscoped state — never sent to the API.
-const ALL_CHANNELS = 'all'
-
 function DashboardPage() {
   const { t } = useTranslation()
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -64,25 +51,22 @@ function DashboardPage() {
   })
   const [channelId, setChannelId] = useState<string>(ALL_CHANNELS)
 
-  const { data: channelsData } = useChannels()
-  const channels = channelsData?.data ?? []
   const channelParam = channelId === ALL_CHANNELS ? undefined : channelId
-
   const rangeParams = {
     date_from: dateRange.from.toISOString(),
     date_to: dateRange.to.toISOString(),
-    ...(channelParam ? { channel_id: channelParam } : {}),
+    channel_id: channelParam,
   }
 
   const { data: analytics } = useQuery({
-    queryKey: ['dashboard', 'analytics', rangeParams.date_from, rangeParams.date_to, channelId],
+    queryKey: ['dashboard', 'analytics', rangeParams],
     queryFn: () => adminClient.dashboard.analytics(rangeParams),
     staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   })
 
   const { data: rankings } = useQuery({
-    queryKey: ['dashboard', 'rankings', rangeParams.date_from, rangeParams.date_to, channelId],
+    queryKey: ['dashboard', 'rankings', rangeParams],
     queryFn: () => adminClient.dashboard.rankings(rangeParams),
     staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
@@ -90,8 +74,7 @@ function DashboardPage() {
 
   const { data: operations } = useQuery({
     queryKey: ['dashboard', 'operations', channelId],
-    queryFn: () =>
-      adminClient.dashboard.operations(channelParam ? { channel_id: channelParam } : undefined),
+    queryFn: () => adminClient.dashboard.operations({ channel_id: channelParam }),
     staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   })
@@ -108,7 +91,13 @@ function DashboardPage() {
           <p className="text-muted-foreground">{t('admin.pages.home.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
-          <ChannelSwitcher channels={channels} value={channelId} onChange={setChannelId} />
+          {/* Scopes order-derived metrics to one channel; stock counts stay store-wide. */}
+          <ChannelSelect
+            allOption
+            triggerClassName="min-w-40"
+            value={channelId}
+            onChange={setChannelId}
+          />
           <DateRangePicker value={dateRange} onChange={setDateRange} />
         </div>
       </div>
@@ -119,45 +108,6 @@ function DashboardPage() {
       </div>
       <TopProducts products={analytics.top_products} />
     </div>
-  )
-}
-
-/**
- * Scopes every home metric to one sales channel. Defaults to "All channels";
- * stock-level operations counts stay store-wide regardless of the selection.
- */
-function ChannelSwitcher({
-  channels,
-  value,
-  onChange,
-}: {
-  channels: Channel[]
-  value: string
-  onChange: (value: string) => void
-}) {
-  const { t } = useTranslation()
-  const allLabel = t('admin.pages.home.all_channels')
-
-  return (
-    <Select value={value} onValueChange={(v) => onChange(v as string)}>
-      <SelectTrigger className="min-w-40">
-        {/* Base UI's `<SelectValue>` renders the raw value (the prefixed id);
-            resolve the channel name via the render-prop. */}
-        <SelectValue>
-          {(v) =>
-            v === ALL_CHANNELS ? allLabel : (channels.find((c) => c.id === v)?.name ?? allLabel)
-          }
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value={ALL_CHANNELS}>{allLabel}</SelectItem>
-        {channels.map((channel) => (
-          <SelectItem key={channel.id} value={channel.id}>
-            {channel.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
   )
 }
 
@@ -328,76 +278,49 @@ function AnalyticsChart({ data }: { data: DashboardAnalytics }) {
 
 const OPERATIONS_ROW_CLASS = 'flex items-center gap-3 border-b px-4 py-3 last:border-0'
 
+type OperationsFilter = { id: string; field: string; operator: string; value: string }
+
+const OPERATIONS_ROWS: Array<{
+  key: keyof Omit<DashboardOperations, 'low_stock_threshold' | 'channel_id'>
+  icon: typeof PackageIcon
+  link?: { to: '/$storeId/orders' | '/$storeId/products'; filters: OperationsFilter[] }
+}> = [
+  {
+    key: 'orders_to_fulfill',
+    icon: TruckIcon,
+    link: {
+      to: '/$storeId/orders',
+      filters: [
+        // Mirrors the `ready_to_ship` scope backing the count.
+        { id: 'home-fulfill', field: 'fulfillment_status', operator: 'in', value: 'ready,pending' },
+      ],
+    },
+  },
+  {
+    key: 'payments_to_collect',
+    icon: CreditCardIcon,
+    link: {
+      to: '/$storeId/orders',
+      filters: [
+        { id: 'home-collect', field: 'payment_status', operator: 'eq', value: 'balance_due' },
+      ],
+    },
+  },
+  { key: 'open_returns', icon: RotateCcwIcon },
+  { key: 'low_stock_items', icon: TriangleAlertIcon },
+  {
+    key: 'out_of_stock_items',
+    icon: PackageXIcon,
+    link: {
+      to: '/$storeId/products',
+      filters: [{ id: 'home-oos', field: 'in_stock', operator: 'eq', value: 'false' }],
+    },
+  },
+]
+
 function OperationsCard({ data }: { data: DashboardOperations | undefined }) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
-
-  const rowClass = `${OPERATIONS_ROW_CLASS} hover:bg-muted/25`
-  const rows: Array<{
-    key: keyof Omit<DashboardOperations, 'low_stock_threshold' | 'channel_id'>
-    icon: typeof PackageIcon
-    wrap?: (children: ReactNode) => ReactNode
-  }> = [
-    {
-      key: 'orders_to_fulfill',
-      icon: TruckIcon,
-      wrap: (children) => (
-        <Link
-          to="/$storeId/orders"
-          params={{ storeId }}
-          search={{
-            filters: [
-              {
-                id: 'home-fulfill',
-                field: 'fulfillment_status',
-                operator: 'in',
-                value: 'ready,pending',
-              },
-            ],
-          }}
-          className={rowClass}
-        >
-          {children}
-        </Link>
-      ),
-    },
-    {
-      key: 'payments_to_collect',
-      icon: CreditCardIcon,
-      wrap: (children) => (
-        <Link
-          to="/$storeId/orders"
-          params={{ storeId }}
-          search={{
-            filters: [
-              { id: 'home-collect', field: 'payment_status', operator: 'eq', value: 'balance_due' },
-            ],
-          }}
-          className={rowClass}
-        >
-          {children}
-        </Link>
-      ),
-    },
-    { key: 'open_returns', icon: RotateCcwIcon },
-    { key: 'low_stock_items', icon: TriangleAlertIcon },
-    {
-      key: 'out_of_stock_items',
-      icon: PackageXIcon,
-      wrap: (children) => (
-        <Link
-          to="/$storeId/products"
-          params={{ storeId }}
-          search={{
-            filters: [{ id: 'home-oos', field: 'in_stock', operator: 'eq', value: 'false' }],
-          }}
-          className={rowClass}
-        >
-          {children}
-        </Link>
-      ),
-    },
-  ]
 
   return (
     <Card className="lg:col-span-2">
@@ -407,7 +330,7 @@ function OperationsCard({ data }: { data: DashboardOperations | undefined }) {
       </CardHeader>
       <CardContent className="p-0">
         <div className="flex flex-col">
-          {rows.map(({ key, icon: Icon, wrap }) => {
+          {OPERATIONS_ROWS.map(({ key, icon: Icon, link }) => {
             const count = data?.[key]
             const content = (
               <>
@@ -426,12 +349,22 @@ function OperationsCard({ data }: { data: DashboardOperations | undefined }) {
                     {count.toLocaleString()}
                   </span>
                 )}
-                {wrap && <ChevronRightIcon className="size-4 text-muted-foreground" />}
+                {link && <ChevronRightIcon className="size-4 text-muted-foreground" />}
               </>
             )
 
-            if (wrap) {
-              return <Fragment key={key}>{wrap(content)}</Fragment>
+            if (link) {
+              return (
+                <Link
+                  key={key}
+                  to={link.to}
+                  params={{ storeId }}
+                  search={{ filters: link.filters }}
+                  className={`${OPERATIONS_ROW_CLASS} hover:bg-muted/25`}
+                >
+                  {content}
+                </Link>
+              )
             }
 
             return (
@@ -450,10 +383,62 @@ type RankingTab = 'customers' | 'categories'
 
 function RankingsCard({ data }: { data: DashboardRankings | undefined }) {
   const { t } = useTranslation()
+  const { storeId } = Route.useParams()
   const [tab, setTab] = useState<RankingTab>('customers')
 
-  const items = data?.[tab]
-  const maxAmount = items?.length ? Math.max(...items.map((item) => item.amount)) : 0
+  const nameBlock = (name: string, sub?: string) => (
+    <span className="min-w-0">
+      <span className="block truncate font-medium">{name}</span>
+      {sub && <span className="block truncate text-xs text-muted-foreground">{sub}</span>}
+    </span>
+  )
+
+  // Normalize both ranking shapes into one row view-model so the list below
+  // renders a single branch-free loop.
+  const rows =
+    data === undefined
+      ? undefined
+      : tab === 'customers'
+        ? data.customers.map((customer) => ({
+            key: customer.id ?? customer.email,
+            amount: customer.amount,
+            displayAmount: customer.display_amount,
+            meta: t('admin.pages.home.rankings.orders_count', { count: customer.orders_count }),
+            nameNode: customer.id ? (
+              <Link
+                to="/$storeId/customers/$customerId"
+                params={{ storeId, customerId: customer.id }}
+                className="min-w-0 hover:underline"
+              >
+                {nameBlock(
+                  customer.name,
+                  customer.name !== customer.email ? customer.email : undefined,
+                )}
+              </Link>
+            ) : (
+              nameBlock(
+                customer.name,
+                customer.name !== customer.email ? customer.email : undefined,
+              )
+            ),
+          }))
+        : data.categories.map((category) => ({
+            key: category.id,
+            amount: category.amount,
+            displayAmount: category.display_amount,
+            meta: t('admin.pages.home.rankings.units_count', { count: category.quantity }),
+            nameNode: (
+              <Link
+                to="/$storeId/products/categories/$categoryId"
+                params={{ storeId, categoryId: category.id }}
+                className="min-w-0 hover:underline"
+              >
+                {nameBlock(category.name)}
+              </Link>
+            ),
+          }))
+
+  const maxAmount = rows?.length ? Math.max(...rows.map((row) => row.amount)) : 0
 
   return (
     <Card className="lg:col-span-3">
@@ -478,36 +463,28 @@ function RankingsCard({ data }: { data: DashboardRankings | undefined }) {
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        {items === undefined ? (
+        {rows === undefined ? (
           <RankingRowsSkeleton />
-        ) : items.length === 0 ? (
+        ) : rows.length === 0 ? (
           <p className="px-4 pb-6 pt-2 text-sm text-muted-foreground">
             {t('admin.pages.home.rankings.empty')}
           </p>
         ) : (
           <div className="flex flex-col">
-            {items.map((item, index) => (
-              <div key={`${tab}-${item.id ?? index}`} className="border-b px-4 py-3 last:border-0">
+            {rows.map((row, index) => (
+              <div key={`${tab}-${row.key}`} className="border-b px-4 py-3 last:border-0">
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="flex min-w-0 items-baseline gap-2 text-sm">
                     <span className="w-5 shrink-0 text-muted-foreground tabular-nums">
                       {index + 1}.
                     </span>
-                    <RankingName tab={tab} item={item} />
+                    {row.nameNode}
                   </span>
                   <span className="shrink-0 text-right">
                     <span className="block text-sm font-medium tabular-nums">
-                      {item.display_amount}
+                      {row.displayAmount}
                     </span>
-                    <span className="block text-xs text-muted-foreground">
-                      {tab === 'customers'
-                        ? t('admin.pages.home.rankings.orders_count', {
-                            count: (item as DashboardRankings['customers'][number]).orders_count,
-                          })
-                        : t('admin.pages.home.rankings.units_count', {
-                            count: (item as DashboardRankings['categories'][number]).quantity,
-                          })}
-                    </span>
+                    <span className="block text-xs text-muted-foreground">{row.meta}</span>
                   </span>
                 </div>
                 <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-muted">
@@ -515,7 +492,7 @@ function RankingsCard({ data }: { data: DashboardRankings | undefined }) {
                     className="h-full rounded-full"
                     style={{
                       background: 'var(--chart-2)',
-                      width: `${maxAmount > 0 ? Math.max((item.amount / maxAmount) * 100, 2) : 0}%`,
+                      width: `${maxAmount > 0 ? Math.max((row.amount / maxAmount) * 100, 2) : 0}%`,
                     }}
                   />
                 </div>
@@ -525,51 +502,6 @@ function RankingsCard({ data }: { data: DashboardRankings | undefined }) {
         )}
       </CardContent>
     </Card>
-  )
-}
-
-function RankingName({
-  tab,
-  item,
-}: {
-  tab: RankingTab
-  item: DashboardRankings['customers'][number] | DashboardRankings['categories'][number]
-}) {
-  const { storeId } = Route.useParams()
-
-  if (tab === 'customers') {
-    const customer = item as DashboardRankings['customers'][number]
-    const label = (
-      <span className="min-w-0">
-        <span className="block truncate font-medium">{customer.name}</span>
-        {customer.name !== customer.email && (
-          <span className="block truncate text-xs text-muted-foreground">{customer.email}</span>
-        )}
-      </span>
-    )
-    if (customer.id) {
-      return (
-        <Link
-          to="/$storeId/customers/$customerId"
-          params={{ storeId, customerId: customer.id }}
-          className="min-w-0 hover:underline"
-        >
-          {label}
-        </Link>
-      )
-    }
-    return label
-  }
-
-  const category = item as DashboardRankings['categories'][number]
-  return (
-    <Link
-      to="/$storeId/products/categories/$categoryId"
-      params={{ storeId, categoryId: category.id }}
-      className="min-w-0 truncate font-medium hover:underline"
-    >
-      {category.name}
-    </Link>
   )
 }
 
@@ -693,7 +625,7 @@ function DashboardSkeleton() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="flex flex-col">
-              {['op-1', 'op-2', 'op-3', 'op-4', 'op-5', 'op-6'].map((key) => (
+              {['op-1', 'op-2', 'op-3', 'op-4', 'op-5'].map((key) => (
                 <div key={key} className="flex items-center gap-3 border-b px-4 py-3 last:border-0">
                   <Skeleton className="size-8 rounded-md" />
                   <Skeleton className="h-4 w-32 flex-1" />

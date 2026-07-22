@@ -278,6 +278,8 @@ module Spree
     scope :incomplete, -> { where(completed_at: nil) }
     scope :canceled, -> { where(state: %w[canceled partially_canceled]) }
     scope :not_canceled, -> { where.not(state: %w[canceled partially_canceled]) }
+    # Nil-tolerant channel filter for optional scoping (nil means all channels).
+    scope :for_channel, ->(channel) { channel ? where(channel_id: channel.id) : all }
     scope :ready_to_ship, -> { where(shipment_state: %w[ready pending]) }
     scope :partially_shipped, -> { where(shipment_state: %w[partial]) }
     scope :not_shipped, -> { where(shipment_state: %w[ready pending partial]) }

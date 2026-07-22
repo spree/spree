@@ -359,7 +359,8 @@
         "empty": "Nie znaleziono walut"
       },
       "channel_select": {
-        "placeholder": "Wybierz kanał sprzedaży"
+        "placeholder": "Wybierz kanał sprzedaży",
+        "all_channels": "Wszystkie kanały"
       },
       "file_upload": {
         "attached": "Załączony plik",
