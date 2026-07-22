@@ -59,10 +59,18 @@ module Spree
       # consumer — API controller, saved reports, agent tools — must ensure
       # `:read` on each before executing.
       def required_subjects
-        member_subjects = (dimensions.map { |d| d[:dimension] } + filters.map { |f| f[:dimension] })
-          .filter_map(&:subject)
+        ([Spree::Order] + referenced_dimensions.filter_map(&:subject).map(&:call)).uniq
+      end
 
-        ([Spree::Order] + member_subjects.map(&:call)).uniq
+      # API-key scopes required beyond `read_reports` (which gates the
+      # endpoint and covers the order-data floor): the `key_scope` of every
+      # referenced member with an authorization subject.
+      def required_key_scopes
+        referenced_dimensions.filter_map(&:key_scope).uniq
+      end
+
+      def referenced_dimensions
+        (dimensions.map { |d| d[:dimension] } + filters.map { |f| f[:dimension] }).uniq
       end
 
       # The immediately preceding period of equal length.

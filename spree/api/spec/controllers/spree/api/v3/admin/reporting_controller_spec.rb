@@ -116,6 +116,31 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
     end
   end
 
+  describe 'secret key member scopes' do
+    let(:headers) { { 'x-spree-api-key' => reports_key.plaintext_token } }
+    let(:reports_key) { create(:api_key, :secret, store: store, scopes: %w[read_reports]) }
+
+    it 'allows order-data queries with read_reports alone' do
+      post :query, params: { metrics: %w[gross_revenue orders_count] }, as: :json
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'forbids members whose key_scope the key lacks' do
+      post :query, params: { metrics: %w[net_revenue], dimensions: %w[product] }, as: :json
+
+      expect(response).to have_http_status(:forbidden)
+      expect(json_response['error']['details']['required_scopes']).to eq(%w[read_products])
+    end
+
+    it 'allows members once the key carries their scope' do
+      key = create(:api_key, :secret, store: store, scopes: %w[read_reports read_products])
+      request.headers['x-spree-api-key'] = key.plaintext_token
+
+      post :query, params: { metrics: %w[net_revenue], dimensions: %w[product] }, as: :json
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe 'member-level permissions' do
     include_context 'API v3 Admin with custom permissions'
 

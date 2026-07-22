@@ -24,6 +24,12 @@ RSpec.describe Spree::Reporting::Registry do
       registry.dimension :warehouse, base: :orders, column: :stock_location_id
       expect(registry.dimension!(:warehouse).time?).to be false
     end
+
+    it 'requires a key_scope whenever a subject is declared' do
+      expect do
+        registry.dimension :vendor, base: :orders, column: :vendor_id, subject: -> { Spree::Order }
+      end.to raise_error(ArgumentError, /key_scope/)
+    end
   end
 
   describe 'unknown members' do

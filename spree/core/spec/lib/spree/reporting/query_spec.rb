@@ -57,6 +57,20 @@ RSpec.describe Spree::Reporting::Query do
     end
   end
 
+  describe '#required_key_scopes' do
+    it 'collects the key scopes of referenced members, including filters' do
+      query = described_class.new(store: store, params: {
+        metrics: %w[net_revenue],
+        dimensions: %w[product],
+        filters: [{ dimension: 'category', op: 'eq', value: 'ctg_x' }]
+      })
+      expect(query.required_key_scopes).to contain_exactly('read_products', 'read_categories')
+
+      query = described_class.new(store: store, params: { metrics: %w[orders_count], dimensions: %w[channel] })
+      expect(query.required_key_scopes).to be_empty
+    end
+  end
+
   describe 'execution' do
     context 'with no orders' do
       it 'returns zero totals and zero-filled day rows' do

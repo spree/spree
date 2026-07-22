@@ -16,6 +16,8 @@ module Spree
           def query
             reporting_query = Spree::Reporting::Query.new(store: current_store, params: query_params)
             authorize_reporting_members!(reporting_query)
+            return if performed?
+
             result = reporting_query.execute
 
             render json: ReportingResultSerializer.new(
@@ -43,14 +45,25 @@ module Spree
             params.to_unsafe_h.slice(*QUERY_KEYS)
           end
 
-          # JWT admins are authorized per referenced member via CanCanCan —
-          # a staff role without product access cannot query the product
-          # dimension. Secret-key requests are gated by the `read_reports`
-          # scope instead (checked by ScopedAuthorization).
+          # Both credential types are authorized per referenced member:
+          # JWT admins via CanCanCan (`required_subjects`), secret keys via
+          # their scopes (`required_key_scopes` on top of the `read_reports`
+          # endpoint gate) — a key without `read_products` cannot query the
+          # product dimension any more than a limited staff role can.
           def authorize_reporting_members!(reporting_query)
-            return if current_api_key.present?
+            if current_api_key.present?
+              missing = reporting_query.required_key_scopes.reject { |scope| current_api_key.has_scope?(scope) }
+              return if missing.empty?
 
-            reporting_query.required_subjects.each { |subject| authorize!(:read, subject) }
+              render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+                message: "API key lacks scope: #{missing.join(', ')}",
+                status: :forbidden,
+                details: { required_scopes: missing }
+              )
+            else
+              reporting_query.required_subjects.each { |subject| authorize!(:read, subject) }
+            end
           end
 
           def render_invalid_query(error)

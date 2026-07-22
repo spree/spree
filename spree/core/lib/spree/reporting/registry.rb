@@ -43,8 +43,12 @@ module Spree
     #   able to `:read` the class to reference the member; order data itself
     #   is covered by the base Spree::Order check. Lazy so registration never
     #   autoloads models.
+    # @!attribute key_scope
+    #   API-key scope (e.g. 'read_products') required alongside `read_reports`
+    #   for secret keys to reference the member. Mandatory whenever `subject`
+    #   is declared, so key access is decided at registration, never skipped.
     Dimension = Struct.new(:name, :base, :column, :joins, :type, :grains, :lookup,
-                           :resolve, :hydrate, :subject, keyword_init: true) do
+                           :resolve, :hydrate, :subject, :key_scope, keyword_init: true) do
       def time? = type == :time
     end
 
@@ -70,6 +74,9 @@ module Spree
       def dimension(name, replace: false, **opts)
         name = name.to_sym
         raise ArgumentError, "dimension #{name} already registered (pass replace: true to override)" if @dimensions.key?(name) && !replace
+        if opts[:subject] && opts[:key_scope].blank?
+          raise ArgumentError, "dimension #{name} declares a subject and must also declare its key_scope"
+        end
 
         opts[:type] ||= :value
         @dimensions[name] = Dimension.new(name: name, **opts)

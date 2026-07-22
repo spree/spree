@@ -32,7 +32,7 @@ module Spree
           # Keys are order emails, so guests rank too; the id/profile link is
           # only present when a registered customer matches.
           dimension :customer, base: :orders, column: :email, lookup: :customer,
-                    subject: -> { Spree.user_class },
+                    subject: -> { Spree.user_class }, key_scope: 'read_customers',
                     hydrate: lambda { |store, emails, _params|
                       users = store.customers.distinct.where(email: emails).index_by(&:email)
                       emails.to_h do |email|
@@ -43,7 +43,7 @@ module Spree
 
           dimension :category, base: :line_items, column: '%{classifications}.taxon_id',
                     joins: [{ variant: { product: :classifications } }], lookup: :category,
-                    subject: -> { Spree::Taxon },
+                    subject: -> { Spree::Taxon }, key_scope: 'read_categories',
                     resolve: ->(store, value) { store.categories.find_by_prefix_id!(value).id },
                     hydrate: lambda { |store, ids, _params|
                       store.categories.where(id: ids).to_h do |category|
@@ -55,7 +55,7 @@ module Spree
           # rest of the Admin API; the lambda only runs inside API requests.
           dimension :product, base: :line_items, column: '%{variants}.product_id', joins: [:variant],
                     lookup: :product,
-                    subject: -> { Spree::Product },
+                    subject: -> { Spree::Product }, key_scope: 'read_products',
                     resolve: ->(store, value) { store.products.with_deleted.find_by_prefix_id!(value).id },
                     hydrate: lambda { |store, ids, params|
                       serializer = Spree.api.admin_product_serializer
