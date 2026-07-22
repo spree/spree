@@ -1,0 +1,85 @@
+---
+title: Testing
+description: Run the Spree Next.js Storefront's unit tests with Vitest and its end-to-end suite with Playwright against a real Spree backend
+---
+
+The storefront ships two test layers: fast unit/integration tests with Vitest, and a browser end-to-end suite with Playwright that runs against a real Spree backend booted in Docker.
+
+## Unit & integration (Vitest)
+
+```bash
+npm test            # one-shot
+npm run test:watch  # watch mode
+```
+
+## End-to-end (Playwright)
+
+The E2E suite drives a browser against a real Spree backend. `npm run e2e:up` boots the backend — Postgres, Redis, and the official `ghcr.io/spree/spree:latest` image from `e2e-backend/docker-compose.yml` — then seeds it and mints an API key through the official [`@spree/cli`](/developer/cli/quickstart) (`spree seed`, `spree sample-data`, `spree api-key create`), installed as a dev dependency. No `create-spree-app` setup is required.
+
+```bash
+# 1. Export a Stripe test-mode key pair from your own Stripe sandbox.
+#    Both keys must belong to the same account — Stripe no longer
+#    publishes a working sample secret key, and a mismatched pair makes
+#    the checkout payment step fail.
+export STRIPE_PUBLISHABLE_KEY=pk_test_…
+export STRIPE_SECRET_KEY=sk_test_…
+
+# 2. Boot Spree + Postgres + Redis, seed sample data, register a Stripe
+#    payment gateway, mint a publishable key, and write .env.e2e.
+npm run e2e:up
+
+# 3. Run the suite. Playwright boots `next dev` against .env.e2e.
+npm run test:e2e
+
+# Optional: interactive UI mode.
+npm run test:e2e:ui
+
+# Tear everything down.
+npm run e2e:down
+```
+
+The checkout test pays with card `4242 4242 4242 4242` through Stripe's [test mode](https://docs.stripe.com/keys). PaymentIntents land in whichever Stripe test account owns the keys you exported.
+
+### CI
+
+In CI, set `STRIPE_SECRET_KEY` as a repository secret and `STRIPE_PUBLISHABLE_KEY` as a repository variable (**Settings → Secrets and variables → Actions**). The E2E job skips itself on fork PRs, where GitHub never exposes repository secrets.
+
+## Testing against a customized backend
+
+<Note>
+  By default the E2E suite runs against the stock official Spree image (`ghcr.io/spree/spree:latest`), so it verifies the storefront against a **vanilla Spree** — not a backend with your own extensions, serializers, or seed data.
+</Note>
+
+The E2E stack reads a `SPREE_IMAGE` env var and falls back to the stock image when it's unset. Set it to any image that exposes the Store API on the container's port `3000`, and the suite runs against that backend instead.
+
+### Your own Spree image
+
+If you already publish a customized Spree image:
+
+```bash
+SPREE_IMAGE=ghcr.io/your-org/your-spree:latest npm run e2e:up
+npm run test:e2e
+```
+
+### A `create-spree-app` project's backend
+
+A project scaffolded with [`create-spree-app`](/developer/create-spree-app/quickstart) has its customizable Spree in `backend/` (built from `backend/Dockerfile`) and this storefront in `apps/storefront/`. Build that backend into a local image and point the suite at it — this is what tests the storefront against the **exact Spree you deploy**, extensions and all:
+
+```bash
+# From the project root — build the customized backend image
+docker build -t project-spree:e2e ./backend
+
+# From apps/storefront — run E2E against it
+cd apps/storefront
+SPREE_IMAGE=project-spree:e2e npm run e2e:up
+npm run test:e2e
+npm run e2e:down
+```
+
+<Note>
+  New `create-spree-app` projects wire this into the generated storefront CI workflow automatically — the workflow builds `backend/Dockerfile` and runs the storefront E2E against that image rather than stock Spree.
+</Note>
+
+### Interactive / manual
+
+To click through the storefront against a running backend (no E2E harness), point it there directly: set `SPREE_API_URL` and `SPREE_PUBLISHABLE_KEY` in `.env.local` (see [Environment Variables](/developer/storefront/nextjs/environment-variables)) and run `npm run dev`.

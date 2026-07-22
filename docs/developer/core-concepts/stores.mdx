@@ -5,7 +5,9 @@ description: Understand Spree Stores — the top-level tenant boundary that scop
 
 ## Overview
 
-The StThe Store is the top-level tenant in Spree. Every resource — products, orders, channels, markets, taxonomies — belongs to exactly one store. A store owns its [channels](/developer/core-concepts/channels) (online, POS, wholesale, …), its [markets](/developer/core-concepts/markets) (region/currency/locale), and its [product catalog](/developer/core-concepts/products).tore Attributes
+The Store is the top-level tenant in Spree. Every resource — products, orders, channels, markets, taxonomies — belongs to exactly one store. A store owns its [channels](/developer/core-concepts/channels) (online, POS, wholesale, …), its [markets](/developer/core-concepts/markets) (region/currency/locale), and its [product catalog](/developer/core-concepts/products).
+
+## Store Attributes
 
 | Attribute | Description |
 |-----------|-------------|
@@ -19,6 +21,8 @@ The StThe Store is the top-level tenant in Spree. Every resource — products, o
 | `mail_from_address` | Sender address for transactional emails |
 | `logo_url` | URL to the store's logo |
 | `facebook`, `twitter`, `instagram` | Social media links |
+| `storefront_access` | Store-wide default for anonymous [storefront access gating](/developer/core-concepts/channels#storefront-access-gating) (`public`, `prices_hidden`, `login_required`). Each channel can override it |
+| `guest_checkout` | Store-wide default for whether orders can be placed without an account. Each channel can override it |
 
 ## Fetching Store Information
 
@@ -56,6 +60,10 @@ Two different ways to split a store, often confused:
 
 A single Online Store channel can serve multiple markets (one storefront → many regions). Conversely, POS and Online channels can share the same market (same currency/locale, different selling surfaces).
 
+### Storefront access defaults
+
+The store sets the fallback for **storefront access gating** — whether anonymous visitors may browse, see prices, or must sign in first — via `storefront_access` (`public`, `prices_hidden`, `login_required`) and the companion `guest_checkout` control. Each channel inherits these unless it sets its own value, so you can gate a whole store or just one channel (e.g. a `login_required` wholesale channel on an otherwise `public` store). The full behavior of each mode and how the Store API enforces it lives in [Channels → Storefront Access Gating](/developer/core-concepts/channels#storefront-access-gating).
+
 ## Store Resources
 
 Each store owns its own resources. Products, orders, channels, markets, and taxonomies in one store are independent from another.
@@ -66,7 +74,7 @@ Each store owns its own resources. Products, orders, channels, markets, and taxo
 | [**Markets**](/developer/core-concepts/markets) | A store has many markets, each defining a geographic region with its own currency and locale |
 | [**Orders**](/developer/core-concepts/orders) | An order belongs to one store and one channel |
 | [**Products**](/developer/core-concepts/products) | A product belongs to one store. Its visibility across channels is controlled by [publications](/developer/core-concepts/channels#publishing-products-on-channels). |
-| [**Taxonomies**](/developer/core-concepts/products#categories) | A taxonomy belongs to one store |
+| [**Categories**](/developer/core-concepts/products#categories) | A category belongs to one store |
 | [**Payment Methods**](/developer/core-concepts/payments) | A payment method belongs to one store |
 | [**Shipping Methods**](/developer/core-concepts/shipments) | A shipping method belongs to one store |
 | [**Promotions**](/developer/core-concepts/promotions) | A promotion belongs to one store |
@@ -84,4 +92,5 @@ If you need one Spree backend to serve **multiple distinct merchant brands** —
 - [Markets](/developer/core-concepts/markets) — Multi-region commerce within a store
 - [Products](/developer/core-concepts/products) — Product catalog
 - [Orders](/developer/core-concepts/orders) — Order management and checkout
+- [Wholesale Portal](/developer/storefront/nextjs/wholesale) — A gated B2B storefront surface built on channel access gating
 - [Admin SDK](/developer/sdk/admin/quickstart) — TypeScript client for the Admin API used to read and update store configuration

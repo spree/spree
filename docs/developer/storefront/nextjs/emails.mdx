@@ -1,0 +1,86 @@
+---
+title: Transactional Emails
+description: Render and send order, shipment, and account emails from the Spree Next.js Storefront with react-email, Resend, and Spree webhooks
+---
+
+The storefront can own its customer-facing transactional emails instead of the Spree backend. Emails are rendered with [react-email](https://react.email) and sent via [Resend](https://resend.com); the Spree backend delivers order, shipment, and account events to the storefront over [webhooks](/developer/core-concepts/webhooks).
+
+```
+Spree Backend → Webhook POST → /api/webhooks/spree → render email → send via Resend
+(signed HMAC)                  (signature verified)  (react-email)  (or write to disk in dev)
+```
+
+## Templates
+
+Email templates are React components in `src/lib/emails/`:
+
+| File | Event | Description |
+|------|-------|-------------|
+| `order-confirmation.tsx` | `order.completed` | Items, totals, addresses, delivery method |
+| `order-canceled.tsx` | `order.canceled` | Cancellation notice with items |
+| `shipment-shipped.tsx` | `order.shipped` | Tracking number and link |
+| `password-reset.tsx` | `customer.password_reset_requested` | Reset button and fallback link |
+
+Customize a template by editing its file directly — they use `@react-email/components` for email-safe layout primitives.
+
+## Previewing
+
+Run the storefront in development and open [http://localhost:3001/dev/emails](http://localhost:3001/dev/emails):
+
+```bash
+npm run dev
+```
+
+Each template renders with sample data via `@react-email/render`. The route is gated to non-production environments.
+
+## Configuration
+
+Add these to `.env.local`:
+
+```env
+SPREE_WEBHOOK_SECRET=your_webhook_endpoint_secret_key
+RESEND_API_KEY=re_your_resend_api_key            # production only
+EMAIL_FROM=Your Store <orders@your-domain.com>   # production only
+```
+
+In development no `RESEND_API_KEY` is needed — emails are written to `.next/emails/` as HTML files with a `file://` link logged to the console.
+
+## Webhook Handler
+
+The webhook route (`src/app/api/webhooks/spree/route.ts`) wires events to handlers with `createWebhookHandler` from `src/lib/spree/webhooks`. Signature verification and event routing are handled for you:
+
+```typescript
+import { createWebhookHandler } from '@/lib/spree/webhooks'
+
+const handler = createWebhookHandler({
+  secret: process.env.SPREE_WEBHOOK_SECRET!,
+  handlers: {
+    'order.completed': handleOrderCompleted,
+    'order.canceled': handleOrderCanceled,
+    'order.shipped': handleOrderShipped,
+    'customer.password_reset_requested': handlePasswordReset,
+  },
+})
+```
+
+To add a new email type:
+
+1. Create a template in `src/lib/emails/`.
+2. Add a handler function in `src/lib/webhooks/handlers.ts`.
+3. Register the event in `route.ts`.
+4. Subscribe to the event in **Spree Admin → Settings → Developers → Webhooks**.
+
+## Setup
+
+1. **Create a webhook endpoint** in Spree Admin → Settings → Developers → Webhooks. Subscribe to `order.completed`, `order.canceled`, `order.shipped`, and `customer.password_reset_requested`, and copy the secret key into `SPREE_WEBHOOK_SECRET`.
+
+2. **Receive webhooks locally.** Expose the storefront with a public URL so Spree can reach it — the simplest option is a [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/):
+
+   ```bash
+   brew install cloudflared
+   cloudflared tunnel --url http://localhost:3001
+   ```
+
+   Use the tunnel URL as the webhook endpoint URL in Spree Admin.
+
+For the backend perspective on delivering these events, see [Sending out Emails](/developer/deployment/emails).
