@@ -17,20 +17,22 @@ vi.mock('@clack/prompts', () => ({
 import { execa } from 'execa'
 import {
   buildAdminStylesheets,
+  dockerComposeCapture,
   dockerComposeExecOrRun,
   dockerComposeRun,
+  rakeTask,
   watchAdminStylesheets,
 } from '../src/docker'
 
 const mockExeca = vi.mocked(execa)
 
-// `dockerComposeExecOrRun` makes several `execa` calls (the `compose ps` probe,
+// The exec-or-run helpers make several `execa` calls (the `compose ps` probe,
 // then `exec`/`run`). Route by args: the probe contains `ps`, everything else
 // is the command itself. Lets a single mock drive web-up vs web-down.
-function routeExeca(webUp: boolean): void {
+function routeExeca(webUp: boolean, commandStdout = ''): void {
   mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
     if (args.includes('ps')) return { stdout: webUp ? 'running' : '' }
-    return { stdout: '' }
+    return { stdout: commandStdout }
   }) as never)
 }
 
@@ -217,5 +219,106 @@ describe('dockerComposeExecOrRun', () => {
 
     const [message] = cancelMock.mock.calls[0] as [string]
     expect(message).toContain('the edge stack heals gem drift on boot')
+  })
+})
+
+describe('dockerComposeCapture', () => {
+  class ExitError extends Error {
+    constructor(public code: number) {
+      super(`process.exit(${code})`)
+    }
+  }
+
+  beforeEach(() => {
+    monorepoEdge = false
+    cancelMock.mockClear()
+    logInfoMock.mockClear()
+    mockExeca.mockReset()
+    vi.spyOn(process, 'exit').mockImplementation((code?: number) => {
+      throw new ExitError(code ?? 0)
+    })
+  })
+
+  afterEach(() => vi.restoreAllMocks())
+
+  it('captures stdout via a non-interactive exec when the service is up', async () => {
+    routeExeca(true, 'spree\nspree_core\n')
+
+    await expect(dockerComposeCapture(['bundle', 'list', '--name-only'], '/proj')).resolves.toBe(
+      'spree\nspree_core\n',
+    )
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'exec', '-T', 'web', 'bundle', 'list', '--name-only'],
+      { cwd: '/proj' },
+    )
+  })
+
+  it('falls back to a one-off `run --rm -T` container when the service is down', async () => {
+    routeExeca(false, 'output')
+
+    await expect(dockerComposeCapture(['bin/rails', 'db:seed'], '/proj')).resolves.toBe('output')
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'run', '--rm', '-T', 'web', 'bin/rails', 'db:seed'],
+      { cwd: '/proj' },
+    )
+    expect(logInfoMock).toHaveBeenCalled()
+  })
+
+  it('threads -e KEY=VALUE pairs before the service', async () => {
+    routeExeca(true)
+
+    await dockerComposeCapture(['bin/rails', 'spree:cli:create_admin'], '/proj', {
+      env: { EMAIL: 'a@b.c' },
+    })
+
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'exec', '-T', '-e', 'EMAIL=a@b.c', 'web', 'bin/rails', 'spree:cli:create_admin'],
+      { cwd: '/proj' },
+    )
+  })
+
+  it('refuses the one-off fallback in a monorepo edge project', async () => {
+    routeExeca(false)
+    monorepoEdge = true
+
+    await expect(dockerComposeCapture(['bin/rails', 'db:seed'], '/proj')).rejects.toMatchObject({
+      code: 1,
+    })
+    expect(cancelMock).toHaveBeenCalled()
+  })
+})
+
+describe('rakeTask', () => {
+  beforeEach(() => {
+    monorepoEdge = false
+    logInfoMock.mockClear()
+    mockExeca.mockReset()
+  })
+
+  afterEach(() => vi.restoreAllMocks())
+
+  it('strips Rails boot noise from the captured output', async () => {
+    routeExeca(true, '[Spree Events] subscribers loaded\napi_key_abc\n')
+
+    await expect(rakeTask('spree:cli:ensure_api_key', '/proj')).resolves.toBe('api_key_abc')
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'exec', '-T', 'web', 'bin/rails', 'spree:cli:ensure_api_key'],
+      { cwd: '/proj' },
+    )
+  })
+
+  it('falls back to a one-off container when web is down', async () => {
+    routeExeca(false, 'seeded')
+
+    await expect(rakeTask('db:seed', '/proj')).resolves.toBe('seeded')
+    expect(mockExeca).toHaveBeenCalledWith(
+      'docker',
+      ['compose', 'run', '--rm', '-T', 'web', 'bin/rails', 'db:seed'],
+      { cwd: '/proj' },
+    )
   })
 })

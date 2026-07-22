@@ -1,6 +1,6 @@
 import type { Command } from 'commander'
 import { detectProject } from '../context.js'
-import { dockerComposeExec } from '../docker.js'
+import { dockerComposeExecOrRun } from '../docker.js'
 
 // Shortcut for `spree rake spree:<name>` — most rake tasks a Spree dev runs
 // are in the `spree:` namespace, so this saves the prefix.
@@ -17,6 +17,6 @@ export function registerTaskCommand(program: Command): void {
     .passThroughOptions(true)
     .action(async (name: string, args: string[]) => {
       const ctx = detectProject()
-      await dockerComposeExec(['bin/rake', `spree:${name}`, ...args], ctx.projectDir)
+      await dockerComposeExecOrRun(['bin/rake', `spree:${name}`, ...args], ctx.projectDir)
     })
 }

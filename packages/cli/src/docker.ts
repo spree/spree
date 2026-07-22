@@ -45,17 +45,7 @@ export async function rakeTask(
   projectDir: string,
   env?: Record<string, string>,
 ): Promise<string> {
-  const args = ['compose', 'exec', '-T']
-
-  if (env) {
-    for (const [key, value] of Object.entries(env)) {
-      args.push('-e', `${key}=${value}`)
-    }
-  }
-
-  args.push('web', 'bin/rails', task)
-
-  const { stdout } = await execa('docker', args, { cwd: projectDir })
+  const stdout = await dockerComposeCapture(['bin/rails', task], projectDir, { env })
 
   // Rails boot prints noise to stdout (e.g. "[Spree Events] ...") — strip it
   return stdout
@@ -229,24 +219,18 @@ export interface DockerComposeExecOrRunOptions {
   edgeHint?: string
 }
 
-// Run a command in the service's container, transparently falling back to a
-// one-off `compose run` when the long-running container is down. This is the
-// shared shape behind `spree bundle` and `spree console`: exec into the live
-// container if it's up, otherwise boot a fresh one-off against the same warm
-// DB/volumes. A monorepo edge project (SPREE_PATH in .env) is refused, because
+// The single gate every app-facing command goes through: `exec` into the
+// service's running container, or fall back to a one-off `compose run` when
+// it's down. A monorepo edge project (SPREE_PATH in .env) is refused, because
 // `run` materializes the project-local compose, which is not the running edge
 // config — there the operator must use `pnpm server:*` from the monorepo root.
-export async function dockerComposeExecOrRun(
-  argv: string[],
+async function resolveComposeMode(
   projectDir: string,
   options: DockerComposeExecOrRunOptions = {},
-): Promise<void> {
-  const { service = 'web', env, edgeHint } = options
+): Promise<'exec' | 'run'> {
+  const { service = 'web', edgeHint } = options
 
-  if (await isServiceRunning(service, projectDir)) {
-    await dockerComposeExec(argv, projectDir, { service, env })
-    return
-  }
+  if (await isServiceRunning(service, projectDir)) return 'exec'
 
   if (hasMonorepoSpreePath(projectDir)) {
     p.cancel(
@@ -261,7 +245,52 @@ export async function dockerComposeExecOrRun(
   p.log.info(
     `${service} container is not running — using a one-off container (\`docker compose run\`) instead.`,
   )
-  await dockerComposeRun(argv, projectDir, { service, env })
+  return 'run'
+}
+
+// Run a command in the service's container, transparently falling back to a
+// one-off `compose run` when the long-running container is down. This is the
+// shared shape behind every app-facing command (`spree migrate`, `spree
+// bundle`, `spree console`, `spree rake`, …): exec into the live container if
+// it's up, otherwise boot a fresh one-off against the same warm DB/volumes.
+export async function dockerComposeExecOrRun(
+  argv: string[],
+  projectDir: string,
+  options: DockerComposeExecOrRunOptions = {},
+): Promise<void> {
+  const { service = 'web', env } = options
+
+  if ((await resolveComposeMode(projectDir, options)) === 'exec') {
+    await dockerComposeExec(argv, projectDir, { service, env })
+  } else {
+    await dockerComposeRun(argv, projectDir, { service, env })
+  }
+}
+
+// Captured-output twin of dockerComposeExecOrRun, for callers that parse
+// stdout (rakeTask, `bundle list`). Non-interactive (`-T`) so a TTY never
+// mangles the captured stream; compose's own progress noise goes to stderr,
+// which stays off stdout and is buffered onto ExecaError for failure paths.
+export async function dockerComposeCapture(
+  argv: string[],
+  projectDir: string,
+  options: DockerComposeExecOrRunOptions = {},
+): Promise<string> {
+  const { service = 'web', env } = options
+  const mode = await resolveComposeMode(projectDir, options)
+
+  const args = ['compose', mode]
+  if (mode === 'run') args.push('--rm')
+  args.push('-T')
+  if (env) {
+    for (const [key, value] of Object.entries(env)) {
+      args.push('-e', `${key}=${value}`)
+    }
+  }
+  args.push(service, ...argv)
+
+  const { stdout } = await execa('docker', args, { cwd: projectDir })
+  return stdout
 }
 
 export async function streamLogs(service: string, projectDir: string): Promise<void> {
