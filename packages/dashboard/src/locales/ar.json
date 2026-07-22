@@ -1073,17 +1073,60 @@
         "metrics": {
           "sales": "إجمالي المبيعات",
           "orders": "إجمالي الطلبات",
-          "avg_order_value": "متوسط ​​قيمة الطلب"
+          "avg_order_value": "متوسط ​​قيمة الطلب",
+          "units": "الوحدات المباعة",
+          "customers": "العملاء"
         },
         "metric_short": {
           "sales": "مبيعات",
           "orders": "طلبات",
-          "avg_order_value": "AOV"
+          "avg_order_value": "AOV",
+          "units": "وحدات",
+          "customers": "عملاء"
         },
         "columns": {
           "product": "منتج",
           "price": "سعر",
-          "sold": "مُباع"
+          "sold": "مُباع",
+          "trend": "الاتجاه"
+        },
+        "legend": {
+          "current": "الفترة الحالية",
+          "previous": "الفترة السابقة"
+        },
+        "growth": {
+          "new": "جديد",
+          "vs_previous": "مقارنة بالفترة السابقة"
+        },
+        "operations": {
+          "title": "العمليات",
+          "subtitle": "ما يتطلب انتباهك الآن.",
+          "orders_to_fulfill": "طلبات بانتظار الشحن",
+          "payments_to_collect": "مدفوعات مستحقة التحصيل",
+          "open_returns": "مرتجعات مفتوحة",
+          "low_stock_items": "متغيرات ذات مخزون منخفض",
+          "out_of_stock_items": "متغيرات نفد مخزونها"
+        },
+        "rankings": {
+          "title": "التصنيفات",
+          "subtitle": "الأفضل أداءً في الفترة المحددة.",
+          "tabs": {
+            "customers": "العملاء",
+            "categories": "الفئات"
+          },
+          "orders_count_zero": "لا طلبات",
+          "orders_count_one": "طلب واحد",
+          "orders_count_two": "طلبان",
+          "orders_count_few": "{{count}} طلبات",
+          "orders_count_many": "{{count}} طلبًا",
+          "orders_count_other": "{{count}} طلب",
+          "units_count_zero": "لا وحدات",
+          "units_count_one": "وحدة واحدة",
+          "units_count_two": "وحدتان",
+          "units_count_few": "{{count}} وحدات",
+          "units_count_many": "{{count}} وحدة",
+          "units_count_other": "{{count}} وحدة",
+          "empty": "لا توجد بيانات لهذه الفترة بعد."
         }
       },
       "staff": {

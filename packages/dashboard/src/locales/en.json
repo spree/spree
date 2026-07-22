@@ -1073,17 +1073,52 @@
         "metrics": {
           "sales": "Total Sales",
           "orders": "Total Orders",
-          "avg_order_value": "Avg Order Value"
+          "avg_order_value": "Avg Order Value",
+          "units": "Units Sold",
+          "customers": "Customers"
         },
         "metric_short": {
           "sales": "Sales",
           "orders": "Orders",
-          "avg_order_value": "AOV"
+          "avg_order_value": "AOV",
+          "units": "Units",
+          "customers": "Customers"
         },
         "columns": {
           "product": "Product",
           "price": "Price",
-          "sold": "Sold"
+          "sold": "Sold",
+          "trend": "Trend"
+        },
+        "legend": {
+          "current": "This period",
+          "previous": "Previous period"
+        },
+        "growth": {
+          "new": "New",
+          "vs_previous": "vs previous period"
+        },
+        "operations": {
+          "title": "Operations",
+          "subtitle": "What needs your attention right now.",
+          "orders_to_fulfill": "Orders to fulfill",
+          "payments_to_collect": "Payments to collect",
+          "open_returns": "Open returns",
+          "low_stock_items": "Low stock variants",
+          "out_of_stock_items": "Out of stock variants"
+        },
+        "rankings": {
+          "title": "Rankings",
+          "subtitle": "Top performers in the selected period.",
+          "tabs": {
+            "customers": "Customers",
+            "categories": "Categories"
+          },
+          "orders_count_one": "{{count}} order",
+          "orders_count_other": "{{count}} orders",
+          "units_count_one": "{{count}} unit",
+          "units_count_other": "{{count}} units",
+          "empty": "No data for this period yet."
         }
       },
       "staff": {

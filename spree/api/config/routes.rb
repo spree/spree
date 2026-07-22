@@ -151,6 +151,8 @@ Spree::Core::Engine.add_routes do
         # Dashboard
         namespace :dashboard do
           get :analytics
+          get :rankings
+          get :operations
         end
 
         # Current admin user + permissions (for UI permission checks)

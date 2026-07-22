@@ -2,7 +2,13 @@ module Spree
   module Api
     module V3
       module Admin
+        # Builds the home dashboard analytics payload: KPI summary and daily
+        # chart series for a time range, each compared against the immediately
+        # preceding period of equal length, plus top products with
+        # period-over-period growth.
         class DashboardAnalyticsSerializer
+          TOP_PRODUCTS_LIMIT = 5
+
           attr_reader :store, :currency, :time_range, :params
 
           def initialize(store:, currency:, time_range:, params: {})
@@ -17,6 +23,8 @@ module Spree
               currency: currency,
               date_from: time_range.first.iso8601,
               date_to: time_range.last.iso8601,
+              previous_date_from: previous_time_range.first.iso8601,
+              previous_date_to: previous_time_range.last.iso8601,
               summary: summary,
               chart_data: chart_data,
               top_products: top_products
@@ -34,8 +42,10 @@ module Spree
           end
 
           def previous_time_range
-            duration = time_range.last - time_range.first
-            (time_range.first - duration)..(time_range.last - duration)
+            @previous_time_range ||= begin
+              duration = time_range.last - time_range.first
+              (time_range.first - duration)..(time_range.last - duration)
+            end
           end
 
           # ---- Summary ----
@@ -44,10 +54,14 @@ module Spree
             sales = sales_total
             count = orders_count
             avg = count > 0 ? (sales / count).round(2) : 0.0
+            units = units_sold
+            customers = customers_count
 
             prev_sales = prev_orders.sum(:total).to_f
             prev_count = prev_orders.count
             prev_avg = prev_count > 0 ? (prev_sales / prev_count).round(2) : 0.0
+            prev_units = Spree::LineItem.where(order: prev_orders).sum(:quantity)
+            prev_customers = prev_orders.distinct.count(:email)
 
             {
               sales_total: sales.round(2),
@@ -57,7 +71,11 @@ module Spree
               orders_growth: growth_rate(count, prev_count),
               avg_order_value: avg,
               display_avg_order_value: money(avg),
-              avg_order_value_growth: growth_rate(avg, prev_avg)
+              avg_order_value_growth: growth_rate(avg, prev_avg),
+              units_sold: units,
+              units_growth: growth_rate(units, prev_units),
+              customers_count: customers,
+              customers_growth: growth_rate(customers, prev_customers)
             }
           end
 
@@ -69,42 +87,88 @@ module Spree
             @orders_count ||= orders.count
           end
 
+          def units_sold
+            @units_sold ||= Spree::LineItem.where(order: orders).sum(:quantity)
+          end
+
+          def customers_count
+            @customers_count ||= orders.distinct.count(:email)
+          end
+
           # ---- Chart data ----
 
+          # Each entry carries the current day's metrics plus the metrics of the
+          # matching day in the previous period (same offset from the range
+          # start), so the chart can overlay both series point-for-point.
           def chart_data
-            daily = orders
-              .select("DATE(completed_at) AS day, SUM(total) AS day_total, COUNT(*) AS day_count")
-              .group("DATE(completed_at)")
-              .order("day")
-              .index_by { |r| r.day.to_s }
+            daily = daily_metrics(orders)
+            prev_daily = daily_metrics(prev_orders)
+            daily_units = daily_unit_sums(orders)
+            prev_daily_units = daily_unit_sums(prev_orders)
+            span = (time_range.last.to_date - time_range.first.to_date).to_i + 1
 
             (time_range.first.to_date..time_range.last.to_date).map do |date|
-              key = date.to_s
-              row = daily[key]
-              total = row&.day_total.to_f
-              count = row&.day_count.to_i || 0
+              prev_date = date - span
+              current = day_metrics(daily[date.to_s], daily_units[date.to_s])
+              previous = day_metrics(prev_daily[prev_date.to_s], prev_daily_units[prev_date.to_s])
               {
-                date: key,
-                sales: total.round(2),
-                orders: count,
-                avg_order_value: count > 0 ? (total / count).round(2) : 0.0
+                date: date.to_s,
+                previous_date: prev_date.to_s,
+                sales: current[:sales],
+                orders: current[:orders],
+                avg_order_value: current[:avg_order_value],
+                units: current[:units],
+                customers: current[:customers],
+                previous_sales: previous[:sales],
+                previous_orders: previous[:orders],
+                previous_avg_order_value: previous[:avg_order_value],
+                previous_units: previous[:units],
+                previous_customers: previous[:customers]
               }
             end
+          end
+
+          def daily_metrics(scope)
+            scope
+              .select('DATE(completed_at) AS day, SUM(total) AS day_total, COUNT(*) AS day_count, COUNT(DISTINCT email) AS day_customers')
+              .group('DATE(completed_at)')
+              .index_by { |r| r.day.to_s }
+          end
+
+          def daily_unit_sums(order_scope)
+            Spree::LineItem
+              .joins(:order)
+              .where(order: order_scope)
+              .group(Arel.sql("DATE(#{Spree::Order.table_name}.completed_at)"))
+              .sum(:quantity)
+              .transform_keys(&:to_s)
+          end
+
+          def day_metrics(row, units)
+            total = row&.day_total.to_f
+            count = row&.day_count.to_i || 0
+            {
+              sales: total.round(2),
+              orders: count,
+              avg_order_value: count > 0 ? (total / count).round(2) : 0.0,
+              units: units.to_i,
+              customers: row&.day_customers.to_i || 0
+            }
           end
 
           # ---- Top products ----
 
           def top_products
-            rows = Spree::LineItem
-              .joins(:variant)
-              .where(order: orders)
-              .group('spree_variants.product_id')
-              .order(Arel.sql('SUM(spree_line_items.quantity * spree_line_items.price) DESC'))
-              .limit(5)
-              .pluck(Arel.sql('spree_variants.product_id, SUM(spree_line_items.quantity), SUM(spree_line_items.quantity * spree_line_items.price)'))
+            rows = product_revenue(orders).limit(TOP_PRODUCTS_LIMIT)
+              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, SUM(#{Spree::LineItem.table_name}.quantity), SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price)"))
 
             product_ids = rows.map(&:first).compact
             return [] if product_ids.empty?
+
+            prev_amounts = product_revenue(prev_orders)
+              .where(Spree::Variant.table_name => { product_id: product_ids })
+              .pluck(Arel.sql("#{Spree::Variant.table_name}.product_id, SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price)"))
+              .to_h
 
             products = store.products.with_deleted.includes(:primary_media).where(id: product_ids)
             product_serializer = Spree.api.admin_product_serializer
@@ -121,9 +185,19 @@ module Spree
                 image_url: serialized['thumbnail_url'],
                 price: serialized.dig('price', 'display_amount'),
                 quantity: quantity.to_i,
-                total: money(amount)
+                amount: amount.to_f.round(2),
+                total: money(amount),
+                growth: growth_rate(amount.to_f, prev_amounts[product_id].to_f)
               }
             end
+          end
+
+          def product_revenue(order_scope)
+            Spree::LineItem
+              .joins(:variant)
+              .where(order: order_scope)
+              .group("#{Spree::Variant.table_name}.product_id")
+              .order(Arel.sql("SUM(#{Spree::LineItem.table_name}.quantity * #{Spree::LineItem.table_name}.price) DESC"))
           end
 
           # ---- Helpers ----
@@ -132,8 +206,16 @@ module Spree
             Spree::Money.new(amount, currency: currency).to_s
           end
 
+          # Percentage change vs the previous period. Returns nil when there is
+          # no previous-period baseline (previous == 0 with current activity) so
+          # clients can render "new" instead of a misleading 0%.
           def growth_rate(current, previous)
-            return 0.0 if previous.zero?
+            if previous.zero?
+              return 0.0 if current.zero?
+
+              return nil
+            end
+
             (((current - previous) / previous.to_f) * 100).round(1)
           end
         end

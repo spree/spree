@@ -1025,17 +1025,52 @@
         "metrics": {
           "sales": "Ventes totales",
           "orders": "Commandes totales",
-          "avg_order_value": "Panier moyen"
+          "avg_order_value": "Panier moyen",
+          "units": "Unités vendues",
+          "customers": "Clients"
         },
         "metric_short": {
           "sales": "Ventes",
           "orders": "Commandes",
-          "avg_order_value": "Panier moy."
+          "avg_order_value": "Panier moy.",
+          "units": "Unités",
+          "customers": "Clients"
         },
         "columns": {
           "product": "Produit",
           "price": "Prix",
-          "sold": "Vendu"
+          "sold": "Vendu",
+          "trend": "Tendance"
+        },
+        "legend": {
+          "current": "Période actuelle",
+          "previous": "Période précédente"
+        },
+        "growth": {
+          "new": "Nouveau",
+          "vs_previous": "vs période précédente"
+        },
+        "operations": {
+          "title": "Opérations",
+          "subtitle": "Ce qui demande votre attention en ce moment.",
+          "orders_to_fulfill": "Commandes à expédier",
+          "payments_to_collect": "Paiements à encaisser",
+          "open_returns": "Retours ouverts",
+          "low_stock_items": "Variantes en stock faible",
+          "out_of_stock_items": "Variantes en rupture de stock"
+        },
+        "rankings": {
+          "title": "Classements",
+          "subtitle": "Meilleures performances sur la période sélectionnée.",
+          "tabs": {
+            "customers": "Clients",
+            "categories": "Catégories"
+          },
+          "orders_count_one": "{{count}} commande",
+          "orders_count_other": "{{count}} commandes",
+          "units_count_one": "{{count}} unité",
+          "units_count_other": "{{count}} unités",
+          "empty": "Pas encore de données pour cette période."
         }
       },
       "staff": {

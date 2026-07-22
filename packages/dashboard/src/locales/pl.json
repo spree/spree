@@ -1025,17 +1025,56 @@
         "metrics": {
           "sales": "Łączna sprzedaż",
           "orders": "Łączna liczba zamówień",
-          "avg_order_value": "Śr. wartość zamówienia"
+          "avg_order_value": "Śr. wartość zamówienia",
+          "units": "Sprzedane sztuki",
+          "customers": "Klienci"
         },
         "metric_short": {
           "sales": "Sprzedaż",
           "orders": "Zamówienia",
-          "avg_order_value": "Śr. wart."
+          "avg_order_value": "Śr. wart.",
+          "units": "Sztuki",
+          "customers": "Klienci"
         },
         "columns": {
           "product": "Produkt",
           "price": "Cena",
-          "sold": "Sprzedano"
+          "sold": "Sprzedano",
+          "trend": "Trend"
+        },
+        "legend": {
+          "current": "Bieżący okres",
+          "previous": "Poprzedni okres"
+        },
+        "growth": {
+          "new": "Nowość",
+          "vs_previous": "względem poprzedniego okresu"
+        },
+        "operations": {
+          "title": "Operacje",
+          "subtitle": "Co teraz wymaga Twojej uwagi.",
+          "orders_to_fulfill": "Zamówienia do wysłania",
+          "payments_to_collect": "Płatności do pobrania",
+          "open_returns": "Otwarte zwroty",
+          "low_stock_items": "Warianty z niskim stanem magazynowym",
+          "out_of_stock_items": "Warianty niedostępne"
+        },
+        "rankings": {
+          "title": "Rankingi",
+          "subtitle": "Najlepsze wyniki w wybranym okresie.",
+          "tabs": {
+            "customers": "Klienci",
+            "categories": "Kategorie"
+          },
+          "orders_count_one": "{{count}} zamówienie",
+          "orders_count_few": "{{count}} zamówienia",
+          "orders_count_many": "{{count}} zamówień",
+          "orders_count_other": "{{count}} zamówienia",
+          "units_count_one": "{{count}} sztuka",
+          "units_count_few": "{{count}} sztuki",
+          "units_count_many": "{{count}} sztuk",
+          "units_count_other": "{{count}} sztuki",
+          "empty": "Brak danych dla tego okresu."
         }
       },
       "staff": {

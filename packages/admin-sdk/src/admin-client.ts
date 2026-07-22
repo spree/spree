@@ -13,21 +13,36 @@ export interface DashboardAnalytics {
   currency: string
   date_from: string
   date_to: string
+  previous_date_from: string
+  previous_date_to: string
   summary: {
     sales_total: number
     display_sales_total: string
-    sales_growth: number
+    /** Percentage change vs the previous period; null when there is no previous-period baseline. */
+    sales_growth: number | null
     orders_count: number
-    orders_growth: number
+    orders_growth: number | null
     avg_order_value: number
     display_avg_order_value: string
-    avg_order_value_growth: number
+    avg_order_value_growth: number | null
+    units_sold: number
+    units_growth: number | null
+    customers_count: number
+    customers_growth: number | null
   }
   chart_data: Array<{
     date: string
+    previous_date: string
     sales: number
     orders: number
     avg_order_value: number
+    units: number
+    customers: number
+    previous_sales: number
+    previous_orders: number
+    previous_avg_order_value: number
+    previous_units: number
+    previous_customers: number
   }>
   top_products: Array<{
     id: string
@@ -36,8 +51,41 @@ export interface DashboardAnalytics {
     image_url: string | null
     price: string | null
     quantity: number
+    amount: number
     total: string
+    growth: number | null
   }>
+}
+
+export interface DashboardRankings {
+  currency: string
+  date_from: string
+  date_to: string
+  customers: Array<{
+    /** Prefixed customer id (`cus_…`); null for guest checkouts. */
+    id: string | null
+    email: string
+    name: string
+    orders_count: number
+    amount: number
+    display_amount: string
+  }>
+  categories: Array<{
+    id: string
+    name: string
+    quantity: number
+    amount: number
+    display_amount: string
+  }>
+}
+
+export interface DashboardOperations {
+  low_stock_threshold: number
+  orders_to_fulfill: number
+  payments_to_collect: number
+  open_returns: number
+  low_stock_items: number
+  out_of_stock_items: number
 }
 
 export interface AuthTokens {
@@ -507,6 +555,24 @@ export class AdminClient {
       this.request<DashboardAnalytics>('GET', '/dashboard/analytics', {
         ...options,
         params: params as Record<string, string>,
+      }),
+
+    rankings: (
+      params?: { date_from?: string; date_to?: string; currency?: string; limit?: number },
+      options?: RequestOptions,
+    ): Promise<DashboardRankings> =>
+      this.request<DashboardRankings>('GET', '/dashboard/rankings', {
+        ...options,
+        params: params as unknown as Record<string, string>,
+      }),
+
+    operations: (
+      params?: { low_stock_threshold?: number },
+      options?: RequestOptions,
+    ): Promise<DashboardOperations> =>
+      this.request<DashboardOperations>('GET', '/dashboard/operations', {
+        ...options,
+        params: params as unknown as Record<string, string>,
       }),
   }
 

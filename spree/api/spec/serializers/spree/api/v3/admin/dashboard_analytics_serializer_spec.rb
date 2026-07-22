@@ -20,17 +20,21 @@ RSpec.describe Spree::Api::V3::Admin::DashboardAnalyticsSerializer do
   describe '#to_h' do
     let(:result) { subject.to_h }
 
-    it 'returns currency and date range' do
+    it 'returns currency and both date ranges' do
       expect(result[:currency]).to eq(currency)
       expect(result[:date_from]).to be_present
       expect(result[:date_to]).to be_present
+      expect(result[:previous_date_from]).to be_present
+      expect(result[:previous_date_to]).to be_present
     end
 
     it 'returns summary with all expected keys' do
       expect(result[:summary]).to include(
         :sales_total, :display_sales_total, :sales_growth,
         :orders_count, :orders_growth,
-        :avg_order_value, :display_avg_order_value, :avg_order_value_growth
+        :avg_order_value, :display_avg_order_value, :avg_order_value_growth,
+        :units_sold, :units_growth,
+        :customers_count, :customers_growth
       )
     end
 
@@ -41,7 +45,10 @@ RSpec.describe Spree::Api::V3::Admin::DashboardAnalyticsSerializer do
 
     it 'returns chart_data entries with correct keys' do
       entry = result[:chart_data].first
-      expect(entry.keys).to match_array(%i[date sales orders avg_order_value])
+      expect(entry.keys).to match_array(
+        %i[date previous_date sales orders avg_order_value units customers
+           previous_sales previous_orders previous_avg_order_value previous_units previous_customers]
+      )
     end
 
     it 'returns top_products as an array' do
@@ -96,6 +103,13 @@ RSpec.describe Spree::Api::V3::Admin::DashboardAnalyticsSerializer do
         day = result[:chart_data].find { |d| d[:date] == 5.days.ago.to_date.to_s }
         expect(day[:orders]).to be >= 1
         expect(day[:sales]).to be > 0
+        expect(day[:units]).to be > 0
+        expect(day[:customers]).to be >= 1
+      end
+
+      it 'returns nil growth without a previous-period baseline' do
+        expect(result[:summary][:sales_growth]).to be_nil
+        expect(result[:summary][:orders_growth]).to be_nil
       end
 
       it 'returns top products with serialized fields' do
@@ -104,7 +118,9 @@ RSpec.describe Spree::Api::V3::Admin::DashboardAnalyticsSerializer do
         expect(top[:id]).to start_with('prod_').or be_present
         expect(top[:name]).to be_present
         expect(top[:quantity]).to be > 0
+        expect(top[:amount]).to be > 0
         expect(top[:total]).to include('$')
+        expect(top).to have_key(:growth)
       end
     end
 

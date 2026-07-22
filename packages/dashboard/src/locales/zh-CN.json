@@ -1073,17 +1073,50 @@
         "metrics": {
           "sales": "总销售额",
           "orders": "总订单数",
-          "avg_order_value": "平均订单金额"
+          "avg_order_value": "平均订单金额",
+          "units": "已售件数",
+          "customers": "客户数"
         },
         "metric_short": {
           "sales": "销售额",
           "orders": "订单数",
-          "avg_order_value": "客单价"
+          "avg_order_value": "客单价",
+          "units": "件数",
+          "customers": "客户"
         },
         "columns": {
           "product": "商品",
           "price": "价格",
-          "sold": "已售"
+          "sold": "已售",
+          "trend": "趋势"
+        },
+        "legend": {
+          "current": "本期",
+          "previous": "上一期"
+        },
+        "growth": {
+          "new": "新增",
+          "vs_previous": "对比上一期"
+        },
+        "operations": {
+          "title": "运营事项",
+          "subtitle": "当前需要您处理的事项。",
+          "orders_to_fulfill": "待发货订单",
+          "payments_to_collect": "待收款订单",
+          "open_returns": "未处理退货",
+          "low_stock_items": "低库存款式",
+          "out_of_stock_items": "缺货款式"
+        },
+        "rankings": {
+          "title": "排行榜",
+          "subtitle": "所选时间段内表现最佳。",
+          "tabs": {
+            "customers": "客户",
+            "categories": "类目"
+          },
+          "orders_count_other": "{{count}} 笔订单",
+          "units_count_other": "{{count}} 件",
+          "empty": "该时间段暂无数据。"
         }
       },
       "staff": {

@@ -1025,17 +1025,52 @@
         "metrics": {
           "sales": "Gesamtumsatz",
           "orders": "Bestellungen gesamt",
-          "avg_order_value": "Ø Bestellwert"
+          "avg_order_value": "Ø Bestellwert",
+          "units": "Verkaufte Stück",
+          "customers": "Kunden"
         },
         "metric_short": {
           "sales": "Umsatz",
           "orders": "Bestellungen",
-          "avg_order_value": "Ø-Wert"
+          "avg_order_value": "Ø-Wert",
+          "units": "Stück",
+          "customers": "Kunden"
         },
         "columns": {
           "product": "Produkt",
           "price": "Preis",
-          "sold": "Verkauft"
+          "sold": "Verkauft",
+          "trend": "Trend"
+        },
+        "legend": {
+          "current": "Dieser Zeitraum",
+          "previous": "Vorheriger Zeitraum"
+        },
+        "growth": {
+          "new": "Neu",
+          "vs_previous": "vs. vorheriger Zeitraum"
+        },
+        "operations": {
+          "title": "Aufgaben",
+          "subtitle": "Was gerade Ihre Aufmerksamkeit braucht.",
+          "orders_to_fulfill": "Zu versendende Bestellungen",
+          "payments_to_collect": "Ausstehende Zahlungen",
+          "open_returns": "Offene Retouren",
+          "low_stock_items": "Varianten mit niedrigem Bestand",
+          "out_of_stock_items": "Nicht vorrätige Varianten"
+        },
+        "rankings": {
+          "title": "Rangliste",
+          "subtitle": "Top-Performer im ausgewählten Zeitraum.",
+          "tabs": {
+            "customers": "Kunden",
+            "categories": "Kategorien"
+          },
+          "orders_count_one": "{{count}} Bestellung",
+          "orders_count_other": "{{count}} Bestellungen",
+          "units_count_one": "{{count}} Stück",
+          "units_count_other": "{{count}} Stück",
+          "empty": "Noch keine Daten für diesen Zeitraum."
         }
       },
       "staff": {
