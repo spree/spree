@@ -1,3 +1,25 @@
+## 2026-07-22: Analytics semantic layer ships live-OLTP-first; fact tables are a later adapter
+
+`6.0-analytics-semantic-layer.md` deliberately inverts the "fact tables as the
+default substrate" instinct: Phase 1 ships the metric/dimension registry, the
+query contract, and a live-OLTP adapter compiling through store associations —
+zero new infra, correct on SQLite dev installs, proven viable at typical scale
+by the 5.6 Pulse dashboard queries. Because every consumer speaks the contract,
+storage swaps (incremental fact tables in 6.1, ClickHouse for Enterprise)
+without touching consumers. This gets the developer extension point — the
+actual replacement for `Spree::Report` authoring — out a release earlier and
+keeps the hard restatement problems (refunds restating the original day, order
+edits, timezone-of-record) off Phase 1's critical path.
+
+Also decided: forced scopes (store, one-currency-per-money-query, vendor) are
+compiler-enforced below every consumer including the future AI layer; unknown
+query members 422 rather than being silently dropped (the Ransack
+silently-dropped-predicate bug from 2026-07-22 is the cautionary tale); and
+`ankane/rollup` / `ankane/blazer` are design references, not dependencies
+(float-only values + PG-only dimensions, and a raw-SQL trust model with no
+store scoping, respectively). Until Phase 1 lands: no new hand-rolled
+aggregate endpoints anywhere in `spree/api`.
+
 ## 2026-07-21: Order routing rules get admin management in the React dashboard only
 
 Per-channel `Spree::OrderRoutingRule` management (the Phase 2 "Admin API + SPA
