@@ -21,6 +21,11 @@ module Spree
     has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
+
+    # Typed adjustment lines (replace polymorphic adjustments)
+    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :line_item
+    has_many :discount_lines, class_name: 'Spree::DiscountLine', dependent: :destroy, inverse_of: :line_item
+    has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :line_item
     has_many :inventory_units, class_name: 'Spree::InventoryUnit', inverse_of: :line_item, dependent: :destroy
     has_many :shipments, through: :inventory_units, source: :shipment
     has_many :digital_links, dependent: :destroy

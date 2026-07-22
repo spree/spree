@@ -39,6 +39,7 @@ module Spree
     has_many :coupon_codes, -> { order(created_at: :asc) }, dependent: :destroy, class_name: 'Spree::CouponCode'
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
+    has_many :discount_lines, class_name: 'Spree::DiscountLine', inverse_of: :promotion
     belongs_to :store, class_name: 'Spree::Store'
 
     after_save :apply_pending_rules_and_actions, if: :pending_rules_or_actions?
