@@ -937,7 +937,7 @@ en:
     order_email_resent_error: Order confirmation mail can only be sent for completed orders
     order_line_items: Order Line Items
     overview: Overview
-    package_from: package from
+    package_from: Package from
     page_not_found: Sorry! Page you are looking can’t be found.
     page_not_found_message: This page just doesn't exist.
     paste: Paste
