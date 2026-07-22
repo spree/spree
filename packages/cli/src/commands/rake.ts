@@ -1,6 +1,6 @@
 import type { Command } from 'commander'
 import { detectProject } from '../context.js'
-import { dockerComposeExec } from '../docker.js'
+import { dockerComposeExecOrRun } from '../docker.js'
 
 // Run a rake task inside the web container. Variadic: anything after the
 // task name is forwarded verbatim, including `KEY=value` rake args and flags.
@@ -16,6 +16,6 @@ export function registerRakeCommand(program: Command): void {
     .passThroughOptions(true)
     .action(async (args: string[]) => {
       const ctx = detectProject()
-      await dockerComposeExec(['bin/rake', ...args], ctx.projectDir)
+      await dockerComposeExecOrRun(['bin/rake', ...args], ctx.projectDir)
     })
 }

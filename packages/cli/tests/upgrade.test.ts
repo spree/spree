@@ -75,32 +75,42 @@ describe('detectSpreeGems', () => {
   const mockExeca = vi.mocked(execa)
   afterEach(() => mockExeca.mockReset())
 
+  // detectSpreeGems goes through dockerComposeCapture, which probes the web
+  // container first (`compose ps`) — route the probe to "running" so the
+  // command call itself drives each scenario.
+  function routeBundleList(command: () => Promise<{ stdout: string }>): void {
+    mockExeca.mockImplementation((async (_cmd: string, args: string[]) => {
+      if (args.includes('ps')) return { stdout: 'running' }
+      return command()
+    }) as never)
+  }
+
   it('parses spree gem names from bundle list output', async () => {
-    mockExeca.mockResolvedValue({ stdout: 'spree\nspree_core\nspree_api\nrails\n' } as never)
+    routeBundleList(async () => ({ stdout: 'spree\nspree_core\nspree_api\nrails\n' }))
     await expect(detectSpreeGems('/proj')).resolves.toEqual(['spree', 'spree_core', 'spree_api'])
   })
 
-  it('returns [] when bundle is healthy but resolves no spree gems (grep rc=1, empty stderr)', async () => {
-    mockExeca.mockRejectedValue(Object.assign(new Error('x'), { exitCode: 1, stderr: '' }) as never)
+  it('returns [] when bundle is healthy but resolves no spree gems', async () => {
+    routeBundleList(async () => ({ stdout: 'rails\npg\n' }))
     await expect(detectSpreeGems('/proj')).resolves.toEqual([])
   })
 
-  it('throws a bundle-install hint when bundler itself errors (rc=1, real stderr)', async () => {
-    mockExeca.mockRejectedValue(
-      Object.assign(new Error('x'), {
+  it('throws a bundle-install hint when bundler itself errors', async () => {
+    routeBundleList(async () => {
+      throw Object.assign(new Error('x'), {
         exitCode: 1,
         stderr:
           'The git source https://github.com/spree/spree.git is not yet checked out. Please run bundle install',
-      }) as never,
-    )
+      })
+    })
     await expect(detectSpreeGems('/proj')).rejects.toThrow(/spree bundle install/)
     await expect(detectSpreeGems('/proj')).rejects.toThrow(/not yet checked out/)
   })
 
-  it('re-throws non-grep failures (stack down, exitCode 255) with the bundle hint', async () => {
-    mockExeca.mockRejectedValue(
-      Object.assign(new Error('x'), { exitCode: 255, stderr: 'no such service: web' }) as never,
-    )
+  it('wraps daemon-level failures (exitCode 255) with the bundle hint', async () => {
+    routeBundleList(async () => {
+      throw Object.assign(new Error('x'), { exitCode: 255, stderr: 'no such service: web' })
+    })
     await expect(detectSpreeGems('/proj')).rejects.toThrow(
       /bundle looks out of sync|no such service/,
     )
