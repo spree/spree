@@ -873,6 +873,56 @@ describe Spree::Promotion, type: :model do
     end
   end
 
+  describe 'promotion stacking' do
+    let(:order) { create(:order_with_line_items, line_items_count: 1, store: store) }
+
+    context 'with an item promotion and a free shipping promotion' do
+      let!(:item_promo) do
+        create(:promotion_with_item_adjustment, adjustment_rate: 5, store: store, kind: :automatic, code: nil)
+      end
+      let!(:free_shipping_promo) do
+        create(:free_shipping_promotion, store: store, kind: :automatic, code: nil)
+      end
+
+      it 'applies both promotions to the same order' do
+        Spree::PromotionHandler::Cart.new(order).activate
+        order.apply_free_shipping_promotions
+        order.reload
+
+        line_item = order.line_items.first
+        shipment = order.shipments.first
+
+        expect(line_item.adjustments.promotion.eligible.count).to eq(1)
+        expect(shipment.adjustments.promotion.eligible.count).to eq(1)
+
+        expect(line_item.promo_total).to eq(-5)
+        expect(shipment.promo_total).to eq(-shipment.cost)
+        expect(order.promo_total).to eq(-5 - shipment.cost)
+      end
+    end
+
+    context 'with two item promotions competing on the same line item' do
+      let!(:smaller_promo) do
+        create(:promotion_with_item_adjustment, adjustment_rate: 5, store: store, kind: :automatic, code: nil)
+      end
+      let!(:bigger_promo) do
+        create(:promotion_with_item_adjustment, adjustment_rate: 10, store: store, kind: :automatic, code: nil)
+      end
+
+      it 'applies only the best discount' do
+        Spree::PromotionHandler::Cart.new(order).activate
+        order.update_with_updater!
+        order.reload
+
+        line_item = order.line_items.first
+
+        expect(line_item.adjustments.promotion.eligible.count).to eq(1)
+        expect(line_item.promo_total).to eq(-10)
+        expect(order.promo_total).to eq(-10)
+      end
+    end
+  end
+
   # this is a legacy method
   describe '#generate_code' do
     let(:promotion) { create(:promotion, code: 'spree123') }

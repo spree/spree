@@ -1,3 +1,44 @@
+## 2026-07-22: Typed discount rows are `Spree::DiscountLine`; "discounts" stays the applied-promotions surface
+
+The split-adjustments typed model for discount amounts is `Spree::DiscountLine`
+(table `spree_discount_lines`, prefix `dl_`, `order.discount_lines`), **not**
+`Spree::Discount`. "Discount" is already a public concept owned by the
+`OrderPromotion` join: `Order#discounts` aliases `order_promotions`,
+`OrderPromotion` has `has_prefix_id :discount`, and the Store/Admin API
+`discounts` arrays serialize that join (one entry per applied promotion, with
+`code`/`name`/per-promotion `amount`). Reusing the name would break the Store
+API or silently flip `order.discounts`' meaning at 6.0, and would leave the
+Admin API's embedded `discounts` field and planned `/orders/:id/discounts`
+endpoint meaning different things on one resource.
+
+Division of concepts: **discounts** = which promotions are applied
+(`OrderPromotion`); **discount_lines** = where the money landed, line by line
+(parallel to `TaxLine`). The 6.0 admin endpoint is
+`/api/v3/admin/orders/:id/discount_lines` (`6.0-admin-api.md` updated).
+Also supersedes the table name in the 2026-07-20 entry below:
+`spree_discounts` → `spree_discount_lines`.
+
+## 2026-07-20: Typed adjustment tables pre-adopt `fulfillment_id`; retire taxable/non_taxable adjustment totals
+
+Two decisions from reconciling `6.0-split-adjustments.md` against 6-0-dev:
+
+**`spree_tax_lines` / `spree_discounts` / `spree_fees` use `fulfillment_id`
+from day one**, targeting `spree_shipments` via
+`belongs_to :fulfillment, class_name: 'Spree::Shipment'`. Brand-new 6.0 tables
+shouldn't be born with a `shipment_id` column already scheduled for rename in
+the same release (`6.0-fulfillment-and-delivery.md`), and API v3 already
+serializes shipments as fulfillments (`FulfillmentSerializer`, `/fulfillments`
+routes, `delivery_method` keys). When the model rename lands, only `class_name`
+strings change — the typed tables need no migration.
+
+**`taxable_adjustment_total` / `non_taxable_adjustment_total` are retired.**
+Their only consumer is the adjuster `@totals` bookkeeping that split-adjustments
+removes, and since #14295 the VAT basis is computed live (`taxable_basis`).
+6.0 stops writing them; the physical columns on `spree_orders`,
+`spree_line_items`, `spree_shipments` drop in 6.1 (same deprecation treatment
+as `is_master`). The other four denormalized totals (`adjustment_total`,
+`included_tax_total`, `additional_tax_total`, `promo_total`) stay.
+
 ## 2026-07-20: Wholesale applicant company name stays in metadata until 6.1 Company accounts
 
 The gated wholesale portal's apply form collects a company name. Considered
