@@ -4,7 +4,7 @@ import type {
   ReportingQuery,
   ReportingResult,
 } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
+import { adminClient, Can, Subject, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
   Card,
@@ -63,11 +63,20 @@ type ChartMetric = keyof typeof CHART_METRICS
 
 function DashboardPage() {
   const { t } = useTranslation()
+  const { permissions } = usePermissions()
   const [dateRange, setDateRange] = useState<DateRange>({
     from: subDays(new Date(), 30),
     to: new Date(),
   })
   const [channelId, setChannelId] = useState<string>(ALL_CHANNELS)
+
+  // Mirror the server's member-level authorization (Query#required_subjects):
+  // widgets whose dimensions the role cannot read are hidden instead of
+  // rendering 403-fed skeletons. UX only — the API enforces regardless.
+  const rankingTabs: RankingTab[] = [
+    ...(permissions.can('read', Subject.Customer) ? (['customers'] as const) : []),
+    ...(permissions.can('read', Subject.Category) ? (['categories'] as const) : []),
+  ]
 
   const channelParam = channelId === ALL_CHANNELS ? undefined : channelId
   // Shared by every widget query — the switcher and date range scope the whole screen.
@@ -116,10 +125,15 @@ function DashboardPage() {
       </div>
       <AnalyticsChart data={overview} />
       <div className="grid gap-6 lg:grid-cols-5">
-        <OperationsCard data={operations} />
-        <RankingsCard scope={scope} />
+        <OperationsCard
+          data={operations}
+          className={rankingTabs.length > 0 ? 'lg:col-span-2' : 'lg:col-span-5'}
+        />
+        {rankingTabs.length > 0 && <RankingsCard scope={scope} tabs={rankingTabs} />}
       </div>
-      <TopProducts scope={scope} />
+      <Can I="read" a={Subject.Product}>
+        <TopProducts scope={scope} />
+      </Can>
     </div>
   )
 }
@@ -329,12 +343,18 @@ const OPERATIONS_ROWS: Array<{
   },
 ]
 
-function OperationsCard({ data }: { data: DashboardOperations | undefined }) {
+function OperationsCard({
+  data,
+  className,
+}: {
+  data: DashboardOperations | undefined
+  className: string
+}) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
 
   return (
-    <Card className="lg:col-span-2">
+    <Card className={className}>
       <CardHeader>
         <CardTitle>{t('admin.pages.home.operations.title')}</CardTitle>
         <CardDescription>{t('admin.pages.home.operations.subtitle')}</CardDescription>
@@ -423,10 +443,17 @@ const RANKING_QUERIES: Record<
   },
 }
 
-function RankingsCard({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'filters'> }) {
+function RankingsCard({
+  scope,
+  tabs,
+}: {
+  scope: Pick<ReportingQuery, 'time_range' | 'filters'>
+  /** Permission-filtered, non-empty — the parent hides the card otherwise. */
+  tabs: RankingTab[]
+}) {
   const { t } = useTranslation()
   const { storeId } = Route.useParams()
-  const [tab, setTab] = useState<RankingTab>('customers')
+  const [tab, setTab] = useState<RankingTab>(tabs[0])
 
   const { query, revenueMetric, countMetric } = RANKING_QUERIES[tab]
   const { data } = useReportingQuery({ ...query, ...scope })
@@ -457,7 +484,7 @@ function RankingsCard({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'f
           <CardDescription>{t('admin.pages.home.rankings.subtitle')}</CardDescription>
         </div>
         <div className="flex rounded-lg border p-0.5">
-          {(['customers', 'categories'] as RankingTab[]).map((value) => (
+          {tabs.map((value) => (
             <button
               key={value}
               type="button"
