@@ -2,29 +2,22 @@ module Spree
   class Promotion
     module Actions
       class FreeShipping < Spree::PromotionAction
-        include Spree::AdjustmentSource
-
         def perform(payload = {})
           order = payload[:order]
+          return false if order.shipments.empty?
 
-          create_unique_adjustments(order, order.shipments)
+          order.shipments.each do |shipment|
+            upsert_discount_line(order, shipment, compute_amount(shipment))
+          end
+
+          # The promotion counts as activated (order join + coupon
+          # registration) even when shipping currently costs 0 — the discount
+          # line materializes once a paid delivery rate is selected.
+          true
         end
 
         def compute_amount(shipment)
           shipment.cost * -1
-        end
-
-        # we need to persist 0 amount adjustment
-        def create_adjustment(order, adjustable, included = false)
-          amount = compute_amount(adjustable)
-
-          adjustable.adjustments.new(
-            amount: amount,
-            included: included,
-            label: label,
-            order: order,
-            source: self
-          ).save
         end
       end
     end

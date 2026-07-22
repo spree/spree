@@ -5,7 +5,6 @@ module Spree
     acts_as_paranoid
 
     include Spree::CalculatedAdjustments
-    include Spree::AdjustmentSource
     include Spree::Metafields
     include Spree::Metadata
 
@@ -80,39 +79,35 @@ module Spree
       item.update_column(:pre_tax_amount, pre_tax_amount)
     end
 
-    # Deletes all tax adjustments, then applies all applicable rates
-    # to relevant items.
+    # Refreshes the items' TaxLine rows from the rates matching the order's
+    # tax zone: upserts a line per applicable rate, drops lines whose rate no
+    # longer applies (zone change, category change, zeroed amount). Interim
+    # entry point — 6.0-tax-provider.md replaces it with the provider.
     def self.adjust(order, items)
       return if items.none?
 
       rates = match(order.tax_zone)
       tax_category_ids = rates.map(&:tax_category_id)
 
-      # using destroy_all to ensure adjustment destroy callback fires.
-      Spree::Adjustment.where(adjustable: items).tax.destroy_all
-
-      relevant_items = if tax_category_ids.any?
-                          items.select do |item|
-                            tax_category_ids.include?(item.tax_category_id)
-                          end
-                        else
-                          []
-                        end
+      relevant_items = items.select do |item|
+        tax_category_ids.include?(item.tax_category_id)
+      end
 
       relevant_items.each do |item|
         relevant_rates = rates.select do |rate|
           rate.tax_category_id == item.tax_category_id
         end
         store_pre_tax_amount(item, relevant_rates)
+        item.tax_lines.where.not(tax_rate_id: relevant_rates.map(&:id)).destroy_all
         relevant_rates.each do |rate|
           rate.adjust(order, item)
         end
       end
 
-      # updates pre_tax for items without any tax rates
-      remaining_items = items - relevant_items
-      remaining_items.each do |item|
+      # items without any applicable rate shed their tax lines and reset pre_tax
+      (items - relevant_items).each do |item|
         store_pre_tax_amount(item, [])
+        item.tax_lines.destroy_all
       end
     end
 
@@ -125,8 +120,21 @@ module Spree
         sum(:amount)
     end
 
+    # Upserts this rate's TaxLine on the item; a zero amount removes the line
+    # instead — tax lines only exist while tax is owed.
     def adjust(order, item)
-      create_adjustment(order, item, included_in_price)
+      amount = compute_amount(item)
+      tax_line = item.tax_lines.find_or_initialize_by(tax_rate: self, order: order)
+
+      if amount.zero?
+        tax_line.destroy! if tax_line.persisted?
+        return
+      end
+
+      tax_line.amount = amount
+      tax_line.included = included_in_price
+      tax_line.label = label
+      tax_line.save!
     end
 
     def compute_amount(item)

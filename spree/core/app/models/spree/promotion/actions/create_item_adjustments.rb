@@ -3,7 +3,6 @@ module Spree
     module Actions
       class CreateItemAdjustments < PromotionAction
         include Spree::CalculatedAdjustments
-        include Spree::AdjustmentSource
 
         before_validation -> { self.calculator ||= Calculator::PercentOnLineItem.new }
 
@@ -11,13 +10,19 @@ module Spree
           [calculator: [:type, { preferences: {} }]]
         end
 
+        # Writes candidate discount lines per actionable line item;
+        # best-promo selection happens in Adjusters::Promotion.
         def perform(options = {})
           order     = options[:order]
           promotion = options[:promotion]
 
-          create_unique_adjustments(order, order.line_items) do |line_item|
-            promotion.line_item_actionable?(order, line_item)
+          results = order.line_items.map do |line_item|
+            next false unless promotion.line_item_actionable?(order, line_item)
+
+            upsert_discount_line(order, line_item, compute_amount(line_item))
           end
+
+          results.include?(true)
         end
 
         def compute_amount(line_item)
@@ -26,8 +31,9 @@ module Spree
           amounts = [line_item.amount, compute(line_item)]
           order   = line_item.order
 
-          # Prevent negative order totals
-          amounts << order.amount - order.adjustments.eligible.sum(:amount).abs if order.adjustments.eligible.any?
+          # Prevent negative order totals: clamp to what other discounts left
+          other_discounts = order.discount_lines.where.not(promotion_action_id: id).sum(:amount)
+          amounts << order.amount + other_discounts if other_discounts.negative?
 
           amounts.min * -1
         end

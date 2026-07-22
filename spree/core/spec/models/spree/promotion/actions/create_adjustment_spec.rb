@@ -1,113 +1,180 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
-  let(:order) { create(:order_with_line_items, line_items_count: 1) }
-  let(:promotion) { create(:promotion) }
-  let(:action) { Spree::Promotion::Actions::CreateAdjustment.new(promotion: promotion) }
-  let(:payload) { { order: order } }
+  let(:order) { create(:order) }
+  let(:promotion) { create(:promotion, kind: :automatic) }
+  let(:action) { described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 10)) }
+  let(:payload) { { order: order, promotion: promotion } }
 
-  it_behaves_like 'an adjustment source'
+  describe '#perform' do
+    let!(:line_item) { create(:line_item, order: order, price: 30, quantity: 1) }
 
-  describe '#compute_amount' do
-    subject { described_class.new }
+    before { order.update_with_updater! }
 
-    let(:shipping_discount) { 10 }
-    let(:order) do
-      double(:order, item_total: 30, ship_total: 10, shipping_discount: shipping_discount)
+    it 'does not write a discount line if the amount is 0' do
+      action.calculator.preferred_amount = 0
+
+      expect(action.perform(payload)).to be(false)
+      expect(order.discount_lines).to be_empty
     end
 
-    context 'when shipping_discount is applied' do
-      context 'and total is less than discount' do
-        it 'returns discount amount eq to total' do
-          allow(subject).to receive(:compute).with(order).and_return(100)
+    it 'distributes the discount to line items with a negative amount' do
+      expect(action.perform(payload)).to be(true)
 
-          expect(subject.compute_amount(order)).to eq(-30)
-        end
+      expect(order.discount_lines.count).to eq(1)
+      expect(order.discount_lines.first.amount).to eq(-10)
+      expect(order.discount_lines.first.line_item).to eq(line_item)
+      expect(order.discount_lines.first.promotion).to eq(promotion)
+    end
+
+    it 'is idempotent — a second perform updates rather than duplicates' do
+      action.perform(payload)
+      action.perform(payload)
+
+      expect(order.discount_lines.count).to eq(1)
+    end
+
+    it 'clamps the discount to the order total' do
+      action.calculator.preferred_amount = 100
+
+      action.perform(payload)
+
+      expect(order.discount_lines.sum(:amount)).to eq(-30)
+    end
+  end
+
+  describe 'proportional distribution' do
+    let!(:small_item) { create(:line_item, order: order, price: 10, quantity: 1) }
+    let!(:big_item) { create(:line_item, order: order, price: 20, quantity: 1) }
+
+    before { order.update_with_updater! }
+
+    it 'splits by line item amount, remainder to the largest fraction' do
+      action.perform(payload)
+
+      expect(small_item.discount_lines.sum(:amount)).to eq(BigDecimal('-3.33'))
+      expect(big_item.discount_lines.sum(:amount)).to eq(BigDecimal('-6.67'))
+      expect(order.discount_lines.sum(:amount)).to eq(-10)
+    end
+
+    it 'always sums exactly to the promotion amount across equal thirds' do
+      thirds_order = create(:order)
+      3.times { create(:line_item, order: thirds_order, price: 10, quantity: 1) }
+      thirds_order.update_with_updater!
+
+      action.perform(order: thirds_order, promotion: promotion)
+
+      shares = thirds_order.discount_lines.order(:line_item_id).pluck(:amount)
+      expect(shares.sum).to eq(-10)
+      expect(shares).to contain_exactly(BigDecimal('-3.33'), BigDecimal('-3.33'), BigDecimal('-3.34'))
+    end
+
+    it 'splits sevenths deterministically — remainder cents go to the lowest line item ids' do
+      sevenths_order = create(:order)
+      7.times { create(:line_item, order: sevenths_order, price: 10, quantity: 1) }
+      sevenths_order.update_with_updater!
+
+      action.perform(order: sevenths_order, promotion: promotion)
+
+      # -1000 cents / 7 = -142.857… each: all fractional remainders are equal,
+      # so the 6 leftover cents land on the 6 lowest ids (tie-break)
+      shares = sevenths_order.discount_lines.order(:line_item_id).pluck(:amount)
+      expect(shares.sum).to eq(-10)
+      expect(shares).to eq([BigDecimal('-1.43')] * 6 + [BigDecimal('-1.42')])
+    end
+
+    it 'stays exact and proportional on an irregular cart' do
+      irregular_order = create(:order)
+      [[19.99, 1], [7.77, 3], [3.33, 1], [42.00, 2], [0.99, 5], [13.13, 1], [5.55, 2]].each do |price, quantity|
+        create(:line_item, order: irregular_order, price: price, quantity: quantity)
       end
+      irregular_order.update_with_updater!
+      action.calculator.preferred_amount = 17.53
 
-      context 'and total is equal to discount' do
-        it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(30)
+      action.perform(order: irregular_order, promotion: promotion)
 
-          expect(subject.compute_amount(order)).to eq(-30)
-        end
-      end
+      lines = irregular_order.discount_lines.includes(:line_item)
+      item_total = irregular_order.line_items.sum(&:amount)
 
-      context 'and total is greater than discount' do
-        it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(10)
-
-          expect(subject.compute_amount(order)).to eq(-10)
-        end
+      expect(lines.sum(:amount)).to eq(BigDecimal('-17.53'))
+      lines.each do |line|
+        exact_share = BigDecimal('-17.53') * line.line_item.amount / item_total
+        expect(line.amount).to be_negative
+        expect((line.amount - exact_share).abs).to be < BigDecimal('0.01')
+        expect(action.compute_amount(line.line_item)).to eq(line.amount)
       end
     end
 
-    context 'when shipping_discount is not applied' do
-      let(:shipping_discount) { 0 }
+    it 'distributes even a single cent' do
+      action.calculator.preferred_amount = 0.01
 
-      context 'and total is less than discount' do
-        it 'returns discount amount eq to total' do
-          allow(subject).to receive(:compute).with(order).and_return(100)
+      action.perform(payload)
 
-          expect(subject.compute_amount(order)).to eq(-40)
-        end
-      end
+      expect(order.discount_lines.sum(:amount)).to eq(BigDecimal('-0.01'))
+      expect(order.discount_lines.count).to eq(1)
+    end
 
-      context 'and total is equal to discount' do
-        it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(40)
+    it 'reproduces the same share at recomputation time' do
+      action.perform(payload)
 
-          expect(subject.compute_amount(order)).to eq(-40)
-        end
-      end
-
-      context 'and total is greater than discount' do
-        it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(10)
-
-          expect(subject.compute_amount(order)).to eq(-10)
-        end
+      order.discount_lines.each do |line|
+        expect(action.compute_amount(line.line_item)).to eq(line.amount)
       end
     end
   end
 
-  # From promotion spec:
-  context '#perform' do
-    before do
-      action.calculator = Spree::Calculator::FlatRate.new(preferred_amount: 10)
-      promotion.promotion_actions = [action]
-      allow(action).to receive_messages(promotion: promotion)
+  describe '#compute_amount' do
+    let!(:line_item) { create(:line_item, order: order, price: 30, quantity: 1) }
+
+    before { order.update_with_updater! }
+
+    it 'returns the full discount when the order has a single line item' do
+      expect(action.compute_amount(line_item.reload)).to eq(-10)
     end
 
-    # Regression test for #3966
-    it 'does not apply an adjustment if the amount is 0' do
-      action.calculator.preferred_amount = 0
-      action.perform(payload)
-      expect(promotion.credits_count).to eq(0)
-      expect(order.adjustments.count).to eq(0)
+    it 'caps the discount at the order total' do
+      action.calculator.preferred_amount = 100
+
+      expect(action.compute_amount(line_item.reload)).to eq(-30)
     end
 
-    it 'creates a discount with correct negative amount' do
-      order.shipments.create!(cost: 10, stock_location: create(:stock_location))
+    it 'returns 0 for a line item without a computable share' do
+      other_order_item = create(:line_item, price: 0, quantity: 1)
 
+      expect(action.compute_amount(other_order_item)).to eq(0)
+    end
+  end
+
+  describe '#order_total' do
+    it 'sums item and shipping totals net of shipping discounts' do
+      order = double(:order, item_total: 30, ship_total: 10, shipping_discount: 10)
+
+      expect(described_class.new.order_total(order)).to eq(30)
+    end
+  end
+
+  describe 'destroying the action' do
+    let!(:line_item) { create(:line_item, order: order, price: 30, quantity: 1) }
+
+    before { order.update_with_updater! }
+
+    it 'removes its discount lines from incomplete orders' do
       action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
-      expect(order.adjustments.count).to eq(1)
-      expect(order.adjustments.first.amount.to_i).to eq(-10)
+      expect(order.discount_lines.count).to eq(1)
+
+      action.destroy!
+
+      expect(order.discount_lines.reload).to be_empty
     end
 
-    it 'creates a discount accessible through both order_id and adjustable_id' do
+    it 'keeps discount lines on completed orders' do
       action.perform(payload)
-      expect(order.adjustments.count).to eq(1)
-      expect(order.all_adjustments.count).to eq(1)
-    end
+      order.update_columns(completed_at: Time.current, state: 'complete')
 
-    it 'does not create a discount when order already has one from this promotion' do
-      order.shipments.create!(cost: 10, stock_location: create(:stock_location))
+      action.destroy!
 
-      action.perform(payload)
-      action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
+      expect(order.discount_lines.reload.count).to eq(1)
+      expect(order.discount_lines.first.promotion_action).to eq(action)
     end
   end
 end
