@@ -14,14 +14,6 @@ module Spree
       COMPARE_MODES = %w[previous_period].freeze
       RELATIVE_RANGE = /\A-(\d+)d\z/
 
-      # Resolves prefixed-id filter values for lookup-backed dimensions,
-      # always through store-scoped collections (foreign ids 404).
-      FILTER_VALUE_RESOLVERS = {
-        channel: ->(store, value) { store.channels.find_by_prefix_id!(value).id },
-        category: ->(store, value) { store.categories.find_by_prefix_id!(value).id },
-        product: ->(store, value) { store.products.with_deleted.find_by_prefix_id!(value).id }
-      }.freeze
-
       attr_reader :store, :registry, :currency, :metrics, :dimensions, :filters,
                   :time_range, :compare, :sort, :limit
 
@@ -62,8 +54,15 @@ module Spree
         dimensions.find { |d| d[:dimension].time? }
       end
 
-      def value_dimensions
-        dimensions.reject { |d| d[:dimension].time? }
+      # Authorization subjects for this query: order data (the floor for all
+      # reporting) plus every referenced member's declared subject. Every
+      # consumer — API controller, saved reports, agent tools — must ensure
+      # `:read` on each before executing.
+      def required_subjects
+        member_subjects = (dimensions.map { |d| d[:dimension] } + filters.map { |f| f[:dimension] })
+          .filter_map(&:subject)
+
+        ([Spree::Order] + member_subjects.map(&:call)).uniq
       end
 
       # The immediately preceding period of equal length.
@@ -127,8 +126,7 @@ module Spree
       end
 
       def resolve_filter_value(dimension, value)
-        resolver = dimension.lookup && FILTER_VALUE_RESOLVERS[dimension.lookup]
-        resolver ? resolver.call(store, value) : value
+        dimension.resolve ? dimension.resolve.call(store, value) : value
       end
 
       def normalize_time_range(range)

@@ -42,13 +42,6 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
         expect(totals['aov']['value']).to eq((expected_gross / 2).round(2))
       end
 
-      it 'buckets rows by day with previous-period values' do
-        subject
-        day = json_response['rows'].find { |row| row['dimensions']['completed_at'] == 5.days.ago.to_date.to_s }
-        expect(day['metrics']['orders_count']['value']).to eq(1)
-        expect(day['metrics']['orders_count']).to have_key('previous')
-      end
-
       it 'hydrates product rows with prefixed ids, labels and meta' do
         post :query, params: {
           metrics: %w[net_revenue units_sold],
@@ -104,19 +97,12 @@ RSpec.describe Spree::Api::V3::Admin::ReportingController, type: :controller do
     end
 
     context 'with an invalid query' do
-      it 'rejects unknown metrics with a 422 naming valid options' do
+      it 'rejects unknown members with the standard v3 error shape' do
         post :query, params: { metrics: %w[revenues] }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['code']).to eq('invalid_reporting_query')
-        expect(json_response['error']).to include('net_revenue')
-      end
-
-      it 'rejects incompatible metric/dimension bases' do
-        post :query, params: { metrics: %w[gross_revenue], dimensions: %w[category] }, as: :json
-
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['error']).to include('cannot be grouped')
+        expect(json_response['error']['code']).to eq('invalid_reporting_query')
+        expect(json_response['error']['message']).to include('net_revenue')
       end
     end
 

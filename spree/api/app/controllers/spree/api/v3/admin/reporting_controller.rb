@@ -10,17 +10,7 @@ module Spree
 
           rescue_from Spree::Reporting::UnknownMember, Spree::Reporting::InvalidQuery, with: :render_invalid_query
 
-          # Authorization subjects referenced by registry members (`subject:`).
-          # Every reporting query is order data, so `:read Spree::Order` is the
-          # floor; members that expose other resources (product names, customer
-          # identities) additionally require read on that subject.
-          SUBJECT_CLASSES = {
-            order: -> { Spree::Order },
-            product: -> { Spree::Product },
-            category: -> { Spree::Taxon },
-            customer: -> { Spree.user_class },
-            channel: -> { Spree::Channel }
-          }.freeze
+          QUERY_KEYS = %w[metrics dimensions filters time_range compare sort limit currency].freeze
 
           # POST /api/v3/admin/reporting/query
           def query
@@ -46,6 +36,13 @@ module Spree
             'read'
           end
 
+          # The contract owns shape validation (registry allowlist, loud
+          # rejection of unknown members) — nothing here is mass-assigned to a
+          # model, so strong-params filtering would only duplicate it.
+          def query_params
+            params.to_unsafe_h.slice(*QUERY_KEYS)
+          end
+
           # JWT admins are authorized per referenced member via CanCanCan —
           # a staff role without product access cannot query the product
           # dimension. Secret-key requests are gated by the `read_reports`
@@ -53,45 +50,11 @@ module Spree
           def authorize_reporting_members!(reporting_query)
             return if current_api_key.present?
 
-            subjects = [:order]
-            subjects += reporting_query.metrics.map(&:subject)
-            subjects += (reporting_query.dimensions.map { |d| d[:dimension] } +
-                         reporting_query.filters.map { |f| f[:dimension] }).map(&:subject)
-
-            subjects.compact.uniq.each do |subject|
-              resolver = SUBJECT_CLASSES[subject]
-              authorize!(:read, resolver.call) if resolver
-            end
-          end
-
-          def query_params
-            params.permit(
-              :compare, :sort, :limit, :currency,
-              metrics: [],
-              dimensions: [:name, :grain],
-              filters: [:dimension, :op, :value, { value: [] }],
-              time_range: [:since, :until]
-            ).to_h.tap do |permitted|
-              # `dimensions` accepts plain names or { name:, grain: } objects.
-              permitted[:dimensions] = Array(params[:dimensions]).map do |dim|
-                dim.is_a?(String) ? dim : dim.permit(:name, :grain).to_h
-              end if params[:dimensions].present?
-            end
+            reporting_query.required_subjects.each { |subject| authorize!(:read, subject) }
           end
 
           def render_invalid_query(error)
-            render json: { error: error.message, code: 'invalid_reporting_query' }, status: :unprocessable_content
-          end
-
-          def serializer_params
-            {
-              store: current_store,
-              locale: current_locale,
-              currency: current_currency,
-              user: current_user,
-              includes: [],
-              expand: []
-            }
+            render_error(code: 'invalid_reporting_query', message: error.message, status: :unprocessable_content)
           end
         end
       end

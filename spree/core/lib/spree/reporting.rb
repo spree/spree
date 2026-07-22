@@ -1,4 +1,5 @@
 require 'spree/reporting/registry'
+require 'spree/reporting/default_vocabulary'
 require 'spree/reporting/query'
 require 'spree/reporting/result'
 require 'spree/reporting/adapters/base'

@@ -119,27 +119,7 @@ module Spree
       # config/initializers (see docs/plans/6.0-analytics-semantic-layer.md).
       initializer 'spree.register.reporting', before: :load_config_initializers do |app|
         app.config.spree.reporting = Spree::Reporting::Registry.new
-
-        # SQL fragments use %{table} placeholders (resolved to Model.table_name
-        # by the adapter at query time) — model classes must not autoload here.
-        app.config.spree.reporting.instance_eval do
-          metric :gross_revenue, sql: 'SUM(%{orders}.total)', base: :orders, format: :money
-          metric :net_revenue, sql: 'SUM(%{line_items}.pre_tax_amount)', base: :line_items, format: :money
-          metric :orders_count, sql: 'COUNT(*)', base: :orders, format: :integer
-          metric :units_sold, sql: 'SUM(%{line_items}.quantity)', base: :line_items, format: :integer
-          metric :customers_count, sql: 'COUNT(DISTINCT %{orders}.email)', base: :orders, format: :integer
-          metric :aov, ratio: %i[gross_revenue orders_count], format: :money
-
-          dimension :completed_at, base: :orders, column: :completed_at, type: :time, grains: %i[day month]
-          dimension :channel, base: :orders, column: :channel_id, lookup: :channel
-          dimension :customer, base: :orders, column: :email, lookup: :customer, subject: :customer
-          dimension :payment_status, base: :orders, column: :payment_state
-          dimension :fulfillment_status, base: :orders, column: :shipment_state
-          dimension :product, base: :line_items, column: '%{variants}.product_id', joins: [:variant],
-                              lookup: :product, subject: :product
-          dimension :category, base: :line_items, column: '%{classifications}.taxon_id',
-                               joins: [{ variant: { product: :classifications } }], lookup: :category, subject: :category
-        end
+        Spree::Reporting::DefaultVocabulary.install(app.config.spree.reporting)
       end
 
       # We need to define promotions rules here so extensions and existing apps

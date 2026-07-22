@@ -11,16 +11,14 @@ module Spree
     # @!attribute ratio
     #   Derived metrics: [numerator_metric, denominator_metric], computed
     #   post-aggregation per row and for totals.
-    # @!attribute subject
-    #   Optional authorization subject key (e.g. :product). JWT admin sessions
-    #   must be able to `:read` the resolved subject class to reference the
-    #   member; order data itself is covered by the base Spree::Order check.
-    Metric = Struct.new(:name, :sql, :base, :format, :ratio, :subject, keyword_init: true) do
+    Metric = Struct.new(:name, :sql, :base, :format, :ratio, keyword_init: true) do
       def derived? = ratio.present?
       def money? = format == :money
     end
 
-    # A dimension groups rows.
+    # A dimension groups rows. The definition owns every behavior keyed off
+    # it, so an extension-registered dimension works end-to-end (filtering,
+    # hydration, authorization) without touching core.
     #
     # @!attribute base
     #   The finest base able to express this grouping (:orders groupings are
@@ -32,9 +30,21 @@ module Spree
     # @!attribute type
     #   :value | :time — :time dimensions take a grain and zero-fill buckets.
     # @!attribute lookup
-    #   Registered hydration key (e.g. :channel, :product) the API layer uses
-    #   to resolve raw keys into { id, label, meta } display payloads.
-    Dimension = Struct.new(:name, :base, :column, :joins, :type, :grains, :lookup, :subject, keyword_init: true) do
+    #   Schema tag naming what the dimension's keys identify (e.g. :product) —
+    #   set alongside +hydrate+ so clients know display payloads are coming.
+    # @!attribute resolve
+    #   ->(store, value) resolving filter values (prefixed ids) to raw keys,
+    #   always through store-scoped collections. Omitted = values pass through.
+    # @!attribute hydrate
+    #   ->(store, keys, params) returning { raw_key => { id:, label:, meta: } }
+    #   display payloads for the API layer. Omitted = raw keys on the wire.
+    # @!attribute subject
+    #   -> { SomeClass } authorization subject. JWT admin sessions must be
+    #   able to `:read` the class to reference the member; order data itself
+    #   is covered by the base Spree::Order check. Lazy so registration never
+    #   autoloads models.
+    Dimension = Struct.new(:name, :base, :column, :joins, :type, :grains, :lookup,
+                           :resolve, :hydrate, :subject, keyword_init: true) do
       def time? = type == :time
     end
 

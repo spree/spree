@@ -7,14 +7,16 @@ module Spree
       # Metrics aggregate on their own base relation (:orders or :line_items);
       # one grouped SQL query runs per base per period and the row sets merge
       # on dimension keys. Time buckets resolve in the store's timezone and
-      # zero-fill across the requested range.
+      # zero-fill across the requested range. Ranked value-dimension queries
+      # push ORDER BY/LIMIT into SQL, and their comparison period only
+      # aggregates the surviving keys.
       class Live < Base
         def execute(query)
           @query = query
           @store = query.store
 
-          current = period_data(query.time_range)
-          previous = query.compare? ? period_data(query.previous_time_range) : nil
+          current = period_data(query.time_range, push_sort: sql_sortable?)
+          previous = query.compare? ? period_data(query.previous_time_range, key_filter: compare_key_filter(current)) : nil
 
           Result.new(
             meta: {
@@ -31,21 +33,21 @@ module Spree
 
         private
 
-        attr_reader :query, :store
+        attr_reader :store
 
         # ---- period execution ----
 
-        def period_data(range)
+        def period_data(range, push_sort: false, key_filter: nil)
           {
             range: range,
             totals: aggregate(range, grouped: false),
-            groups: query.dimensions.any? ? aggregate(range, grouped: true) : {}
+            groups: query.dimensions.any? ? aggregate(range, grouped: true, push_sort: push_sort, key_filter: key_filter) : {}
           }
         end
 
         # Runs one SQL query per metric base; returns { key_tuple => { metric => value } }.
         # Ungrouped aggregates use the single [] key.
-        def aggregate(range, grouped:)
+        def aggregate(range, grouped:, push_sort: false, key_filter: nil)
           rows = Hash.new { |h, k| h[k] = {} }
 
           query.aggregated_metrics.group_by(&:base).each do |base, metrics|
@@ -57,6 +59,8 @@ module Spree
                 "#{dimension_expression(d, base)} AS #{dimension_alias(d)}"
               end
               scope = scope.group(query.dimensions.map { |d| Arel.sql(dimension_expression(d, base)) })
+              scope = apply_key_filter(scope, base, key_filter) if key_filter
+              scope = apply_sql_sort(scope, metrics) if push_sort
               selects = dimension_selects + selects
             end
 
@@ -90,19 +94,15 @@ module Spree
           apply_filters(scope, base)
         end
 
-        def apply_dimension_joins(scope, base)
-          query.dimensions.each do |d|
-            joins = d[:dimension].joins
-            scope = scope.joins(joins) if joins.present? && d[:dimension].base == base_for_joins(base)
-          end
-          scope
-        end
-
         # Dimension joins are declared from their own base; they only apply
         # when the executing scope is that base (an :orders-based metric never
         # joins line-item tables — validate_bases! guarantees compatibility).
-        def base_for_joins(base)
-          base
+        def apply_dimension_joins(scope, base)
+          query.dimensions.each do |d|
+            joins = d[:dimension].joins
+            scope = scope.joins(joins) if joins.present? && d[:dimension].base == base
+          end
+          scope
         end
 
         def apply_filters(scope, base)
@@ -112,6 +112,43 @@ module Spree
             scope = scope.where("#{column} IN (?)", filter[:values])
           end
           scope
+        end
+
+        # ---- sorted/limited rankings ----
+
+        # ORDER BY + LIMIT can move into SQL when one base group carries every
+        # aggregated metric (so the sort metric and the limit apply to the
+        # same query) and the grouping is by value, not time buckets.
+        def sql_sortable?
+          query.sort && query.limit && query.time_dimension.nil? && query.dimensions.any? &&
+            !sort_metric.derived? && query.aggregated_metrics.map(&:base).uniq.one?
+        end
+
+        def sort_metric
+          query.registry.metric!(query.sort[:metric])
+        end
+
+        def apply_sql_sort(scope, metrics)
+          return scope unless metrics.any? { |m| m.name == sort_metric.name }
+
+          scope.order(Arel.sql("#{resolve_sql(sort_metric.sql)} #{query.sort[:direction] == :desc ? 'DESC' : 'ASC'}"))
+            .limit(query.limit)
+        end
+
+        # The comparison period of a ranked value-dimension query only needs
+        # the keys that made the current ranking — not every group in the
+        # store's history. Only kicks in when SQL limited the current period,
+        # so the IN clause is never larger than the limit.
+        def compare_key_filter(current)
+          return unless sql_sortable? && query.dimensions.size == 1
+
+          keys = current[:groups].keys.flatten
+          keys if keys.any?
+        end
+
+        def apply_key_filter(scope, base, keys)
+          dim = query.dimensions.first
+          scope.where("#{dimension_expression(dim, base)} IN (?)", keys)
         end
 
         # ---- SQL expressions ----
@@ -185,7 +222,7 @@ module Spree
         end
 
         def utc_offset
-          store_time_zone.now.utc_offset
+          @utc_offset ||= store_time_zone.now.utc_offset
         end
 
         def format_offset(seconds)
@@ -197,8 +234,8 @@ module Spree
 
         def build_totals(current, previous)
           query.metrics.to_h do |metric|
-            value = current[:totals][[]][metric.name] || zero_for(metric)
-            prev = previous && (previous[:totals][[]][metric.name] || zero_for(metric))
+            value = current[:totals].fetch([], {})[metric.name] || zero_for(metric)
+            prev = previous && (previous[:totals].fetch([], {})[metric.name] || zero_for(metric))
             [metric.name, metric_payload(value, prev)]
           end
         end
@@ -265,8 +302,6 @@ module Spree
             prev = time_dim[:grain] == :day ? date - span : date << span
             [key, [prev.to_s]]
           end
-        rescue Date::Error
-          {}
         end
 
         def offset_span(grain)
@@ -279,6 +314,8 @@ module Spree
           end
         end
 
+        # SQL already ordered/limited the pushdown case; this re-sort is a
+        # no-op there and covers the multi-base fallback.
         def sort_rows(rows)
           if query.sort
             metric = query.sort[:metric]
@@ -287,49 +324,6 @@ module Spree
           end
           rows = rows.first(query.limit) if query.limit
           rows
-        end
-
-        # ---- metric math ----
-
-        def apply_derived(metrics)
-          query.metrics.select(&:derived?).each do |metric|
-            numerator, denominator = metric.ratio.map { |name| metrics[name] || 0 }
-            metrics[metric.name] = denominator.to_f.zero? ? 0.0 : (numerator / denominator.to_f).round(2)
-          end
-        end
-
-        def metric_payload(value, previous)
-          payload = { value: value }
-          if query.compare?
-            payload[:previous] = previous
-            payload[:growth] = growth_rate(value, previous)
-          end
-          payload
-        end
-
-        def cast_value(metric, raw)
-          case metric.format
-          when :money, :decimal then raw.to_f.round(2)
-          else raw.to_i
-          end
-        end
-
-        def zero_for(metric)
-          metric.format == :integer ? 0 : 0.0
-        end
-
-        # Percentage change vs the previous period. nil when there is no
-        # previous-period baseline (previous == 0 with current activity) so
-        # clients can render "new" instead of a misleading 0%.
-        def growth_rate(current, previous)
-          return nil if previous.nil?
-          if previous.zero?
-            return 0.0 if current.zero?
-
-            return nil
-          end
-
-          (((current - previous) / previous.to_f) * 100).round(1)
         end
 
         def connection

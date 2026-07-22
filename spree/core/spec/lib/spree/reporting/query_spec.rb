@@ -47,6 +47,16 @@ RSpec.describe Spree::Reporting::Query do
     end
   end
 
+  describe '#required_subjects' do
+    it 'includes order data plus every referenced member subject' do
+      query = described_class.new(store: store, params: { metrics: %w[net_revenue], dimensions: %w[product] })
+      expect(query.required_subjects).to contain_exactly(Spree::Order, Spree::Product)
+
+      query = described_class.new(store: store, params: { metrics: %w[orders_count] })
+      expect(query.required_subjects).to contain_exactly(Spree::Order)
+    end
+  end
+
   describe 'execution' do
     context 'with no orders' do
       it 'returns zero totals and zero-filled day rows' do
@@ -61,7 +71,8 @@ RSpec.describe Spree::Reporting::Query do
     end
 
     context 'with completed orders' do
-      let!(:order1) { create(:completed_order_with_totals, store: store, completed_at: 5.days.ago) }
+      # Distinct line item prices keep ranking expectations deterministic.
+      let!(:order1) { create(:completed_order_with_totals, store: store, completed_at: 5.days.ago, line_items_price: 25) }
       let!(:order2) { create(:completed_order_with_totals, store: store, completed_at: 2.days.ago) }
 
       it 'computes whole-period totals' do

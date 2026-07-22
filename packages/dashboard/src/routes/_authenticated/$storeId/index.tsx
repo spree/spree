@@ -39,7 +39,12 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Bar, CartesianGrid, ComposedChart, Line, XAxis } from 'recharts'
 import { ALL_CHANNELS, ChannelSelect } from '../../../components/spree/channel-select'
-import { useReportingQuery } from '../../../hooks/use-reporting'
+import {
+  entityDimension,
+  metaString,
+  rawDimension,
+  useReportingQuery,
+} from '../../../hooks/use-reporting'
 
 export const Route = createFileRoute('/_authenticated/$storeId/')({
   component: DashboardPage,
@@ -176,7 +181,7 @@ function AnalyticsChart({ data }: { data: ReportingResult }) {
   // One reporting query feeds both series: `value` is the current period,
   // `previous` the aligned bucket from the comparison period.
   const chartData = data.rows.map((row) => ({
-    date: row.dimensions.completed_at as string,
+    date: rawDimension(row, 'completed_at'),
     current: row.metrics[CHART_METRICS[activeMetric]]?.value ?? 0,
     previous: row.metrics[CHART_METRICS[activeMetric]]?.previous ?? 0,
   }))
@@ -427,7 +432,7 @@ function RankingsCard({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'f
   const { data } = useReportingQuery({ ...query, ...scope })
 
   const rows = data?.rows.map((row) => {
-    const dimension = Object.values(row.dimensions)[0] as ReportingDimensionValue
+    const dimension = entityDimension(row, tab === 'customers' ? 'customer' : 'category')
     const amount = row.metrics[revenueMetric]
     const count = row.metrics[countMetric]?.value ?? 0
     return {
@@ -516,7 +521,7 @@ function RankingName({
   storeId: string
   dimension: ReportingDimensionValue
 }) {
-  const email = typeof dimension.meta?.email === 'string' ? dimension.meta.email : undefined
+  const email = metaString(dimension, 'email')
   const label = (
     <span className="min-w-0">
       <span className="block truncate font-medium">{dimension.label}</span>
@@ -571,6 +576,7 @@ function RankingRowsSkeleton() {
 
 function TopProducts({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'filters'> }) {
   const { t } = useTranslation()
+  const { storeId } = Route.useParams()
 
   const { data } = useReportingQuery({
     metrics: ['net_revenue', 'units_sold'],
@@ -610,22 +616,19 @@ function TopProducts({ scope }: { scope: Pick<ReportingQuery, 'time_range' | 'fi
           </thead>
           <tbody>
             {data.rows.map((row) => {
-              const product = row.dimensions.product as ReportingDimensionValue
+              const product = entityDimension(row, 'product')
+              const productId = product.id
               const revenue = row.metrics.net_revenue
-              const thumbnail =
-                typeof product.meta?.thumbnail_url === 'string' ? product.meta.thumbnail_url : null
-              const price = typeof product.meta?.price === 'string' ? product.meta.price : null
+              const thumbnail = metaString(product, 'thumbnail_url') ?? null
+              const price = metaString(product, 'price')
 
               return (
-                <tr key={product.id ?? product.label} className="border-b last:border-0">
+                <tr key={productId ?? product.label} className="border-b last:border-0">
                   <td className="px-4 py-3">
-                    {product.id ? (
+                    {productId ? (
                       <Link
                         to="/$storeId/products/$productId"
-                        params={(prev) => ({
-                          storeId: prev.storeId!,
-                          productId: product.id as string,
-                        })}
+                        params={{ storeId, productId }}
                         className="flex items-center gap-3 hover:underline"
                       >
                         <ProductThumbnail thumbnail={thumbnail} label={product.label} />
