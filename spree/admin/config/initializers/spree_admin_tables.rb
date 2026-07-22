@@ -405,6 +405,19 @@ Rails.application.config.after_initialize do
                                         partial: 'spree/admin/orders/customer_summary',
                                         partial_locals: ->(record) { { order: record } }
 
+  Spree.admin.tables.checkouts.add :channel,
+                                        label: :channel,
+                                        type: :association,
+                                        filter_type: :select,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 35,
+                                        ransack_attribute: 'channel_id',
+                                        operators: %i[eq not_eq in not_in],
+                                        value_options: -> { Spree::Current.store&.channels&.order(:name)&.pluck(:name, :id)&.map { |name, id| { value: id, label: name } } || [] },
+                                        method: ->(order) { order.channel&.name }
+
   Spree.admin.tables.checkouts.add :state,
                                         label: :state,
                                         type: :status,

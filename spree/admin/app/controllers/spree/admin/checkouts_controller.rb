@@ -25,7 +25,7 @@ module Spree
       end
 
       def collection_includes
-        { user: [] }
+        { user: [], channel: [] }
       end
 
       def edit_object_url(object, options = {})
