@@ -573,6 +573,20 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       expect(response).to render_template(:edit)
     end
 
+    context 'when admin locale differs from default store locale' do
+      before do
+        store.update!(default_locale: 'en', supported_locales: 'en,da')
+        allow(controller).to receive(:add_breadcrumb_for_product)
+      end
+
+      it 'falls back to default locale when product slug is not translated' do
+        slug = Mobility.with_locale('en') { product.slug }
+        allow(controller).to receive(:current_locale).and_return('da')
+        get :edit, params: { id: slug }
+        expect(assigns(:product)).to eq(product)
+      end
+    end
+
     context 'with variants' do
       let!(:variant) { create(:variant, product: product) }
 
