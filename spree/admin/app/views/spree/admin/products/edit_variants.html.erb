@@ -1,0 +1,290 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button(spree.edit_admin_product_path(@product)) %>
+  <span class="truncate max-w-[180px] sm:max-w-sm md:max-w-md lg:max-w-xl xl:max-w-none inline-block align-middle">
+    <%= Spree.t(:bulk_edit_variants, default: 'Bulk Edit Variants') %> - <%= @product.name %>
+  </span>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= turbo_save_button_tag Spree.t('actions.save'), form: "edit_product_variants_#{@product.id}" %>
+<% end %>
+
+<% currency_obj = ::Money::Currency.find(@currency) %>
+<% decimal_separator = currency_obj.decimal_mark || '.' %>
+<% thousands_separator = currency_obj.thousands_separator || ',' %>
+
+<div class="card mb-6">
+  <div class="card-header flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-gray-200">
+    <div class="flex items-center gap-4">
+      <h5 class="card-title mb-0"><%= Spree.t(:variants) %></h5>
+    </div>
+    
+    <div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 w-full xl:w-auto">
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <label for="currency" class="mb-0 text-sm font-medium shrink-0"><%= Spree.t(:currency) %></label>
+        <%= select_tag :currency,
+            options_for_select(current_store.supported_currencies_list, @currency),
+            class: 'form-select form-select-sm w-full sm:w-auto',
+            onchange: "let url = new URL(window.location.href); url.searchParams.set('currency', this.value); window.Turbo.visit(url.toString())" %>
+      </div>
+      
+      <div class="flex items-center gap-2 w-full sm:w-auto sm:border-l sm:pl-4 border-gray-200">
+        <label for="stock_location_id" class="mb-0 text-sm font-medium shrink-0"><%= Spree.t(:stock_location) %></label>
+        <%= select_tag :stock_location_id,
+            options_from_collection_for_select(available_stock_locations_for_product(@product), :id, :name, @stock_location.id),
+            class: 'form-select form-select-sm w-full sm:w-auto',
+            onchange: "let url = new URL(window.location.href); url.searchParams.set('stock_location_id', this.value); window.Turbo.visit(url.toString())" %>
+      </div>
+
+      <div data-controller="dialog" class="w-full sm:w-auto mt-2 sm:mt-0 sm:border-l sm:pl-4 border-gray-200">
+        <button type="button" class="btn btn-light btn-sm flex items-center justify-center gap-1 w-full sm:w-auto" data-action="dialog#open">
+          <%= icon('filter', class: 'w-4 h-4') %>
+          <span><%= Spree.t('admin.tables.filters') %></span>
+          <% if params[:q].present? %>
+            <span class="badge badge-primary ml-1"><%= params[:q].keys.count %></span>
+          <% end %>
+        </button>
+
+        <%
+          filter_fields = [
+            { key: 'sku', label: Spree.t(:sku), type: 'string', operators: ['eq', 'not_eq', 'cont', 'start', 'end'] },
+            { key: 'option_values_name', label: Spree.t('admin.variants.option_value_filter', default: 'Option Value'), type: 'string', operators: ['eq', 'not_eq', 'cont'] },
+            { key: 'price', label: Spree.t(:price), type: 'number', operators: ['eq', 'gt', 'lt'] }
+          ].to_json
+
+          filter_operators = [
+            { value: 'eq', label: Spree.t('admin.tables.operators.equals'), no_value: false },
+            { value: 'not_eq', label: Spree.t('admin.tables.operators.does_not_equal'), no_value: false },
+            { value: 'cont', label: Spree.t('admin.tables.operators.contains'), no_value: false },
+            { value: 'not_cont', label: Spree.t('admin.tables.operators.does_not_contain'), no_value: false },
+            { value: 'start', label: Spree.t('admin.tables.operators.starts_with'), no_value: false },
+            { value: 'end', label: Spree.t('admin.tables.operators.ends_with'), no_value: false },
+            { value: 'gt', label: Spree.t('admin.tables.operators.greater_than'), no_value: false },
+            { value: 'lt', label: Spree.t('admin.tables.operators.less_than'), no_value: false },
+            { value: 'null', label: Spree.t('admin.tables.operators.is_empty'), no_value: true },
+            { value: 'not_null', label: Spree.t('admin.tables.operators.is_not_empty'), no_value: true }
+          ].to_json
+        %>
+
+        <%= drawer(id: "query-builder-drawer-product_variants", controller_name: 'dialog') do %>
+          <%= drawer_header(Spree.t('admin.tables.filter_builder'), 'dialog') %>
+
+          <div data-controller="query-builder" 
+               data-query-builder-fields-value="<%= filter_fields %>" 
+               data-query-builder-operators-value="<%= filter_operators %>" 
+               class="grow flex flex-col justify-between">
+
+            <form data-turbo-frame="edit_product_variants_table" 
+                  data-turbo-action="advance" 
+                  data-query-builder-target="form" 
+                  data-action="submit->query-builder#submitForm" 
+                  class="grow flex flex-col justify-between" 
+                  action="<%= spree.edit_variants_admin_product_path(@product) %>" 
+                  method="get">
+              
+              <%= hidden_field_tag :currency, @currency %>
+              <%= hidden_field_tag :stock_location_id, @stock_location.id %>
+
+              <div class="drawer-body">
+                <div class="mb-4 flex items-center gap-2 flex-wrap">
+                  <span class="text-sm text-gray-600"><%= Spree.t('admin.tables.match') %></span>
+                  <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" data-action="query-builder#toggleCombinator" data-query-builder-target="combinatorButton">
+                    <span data-query-builder-target="combinatorLabel">AND</span>
+                  </button>
+                  <span class="text-sm text-gray-600"><%= Spree.t('admin.tables.of_the_following') %></span>
+                </div>
+
+                <div data-query-builder-target="filtersContainer" class="space-y-3 mb-4"></div>
+                <div data-query-builder-target="groupsContainer" class="space-y-3 mb-4"></div>
+
+                <div class="flex gap-2">
+                  <button type="button" class="btn btn-sm btn-light flex items-center gap-1" data-action="query-builder#addFilter">
+                    <%= icon('plus', class: 'w-4 h-4') %> <%= Spree.t('admin.tables.add_filter') %>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-light flex items-center gap-1" data-action="query-builder#addOrGroup">
+                    <%= icon('brackets', class: 'w-4 h-4') %> <%= Spree.t('admin.tables.add_or_group') %>
+                  </button>
+                </div>
+
+                <input type="hidden" name="query_state" data-query-builder-target="hiddenInput" value="<%= params[:query_state] || '{"id":"root","combinator":"and","filters":[],"groups":[]}' %>">
+              </div>
+
+              <div class="drawer-footer">
+                <%= drawer_discard_button('dialog') %>
+                <button type="button" class="btn btn-light" data-action="query-builder#clear"><%= Spree.t('admin.tables.clear_all') %></button>
+                <input type="submit" name="commit" value="<%= Spree.t('admin.tables.apply_filters') %>" class="btn btn-primary cursor-pointer" data-disable-with="<%= Spree.t('admin.tables.apply_filters') %>">
+              </div>
+            </form>
+
+            <template data-query-builder-target="filterTemplate">
+              <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg" data-filter-id="">
+                <select class="form-select flex-1 text-sm" data-field-select="" data-action="change->query-builder#onFieldChange">
+                  <option value=""><%= Spree.t('admin.tables.select_field') %></option>
+                </select>
+                <select class="form-select flex-shrink-0 w-[160px] text-sm" data-operator-select="" data-action="change->query-builder#onOperatorChange">
+                  <option value="eq"><%= Spree.t('admin.tables.operators.equals') %></option>
+                </select>
+                <div data-value-container="" class="flex-1">
+                  <input type="text" class="form-input text-sm" placeholder="<%= Spree.t('admin.tables.enter_value') %>" data-value-input="" data-action="input->query-builder#onValueChange">
+                </div>
+                <button type="button" class="btn btn-sm btn-light text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5" data-action="query-builder#removeFilter" title="<%= Spree.t(:remove) %>">
+                  <%= icon('x', class: 'w-4 h-4') %>
+                </button>
+              </div>
+            </template>
+
+            <template data-query-builder-target="groupTemplate">
+              <div class="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-white" data-group-id="" data-combinator="or">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm text-gray-600"><%= Spree.t('admin.tables.match') %></span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary px-2 py-1" data-action="query-builder#toggleGroupCombinator">
+                      <span data-group-combinator-label="">OR</span>
+                    </button>
+                    <span class="text-sm text-gray-600"><%= Spree.t('admin.tables.of_the_following') %></span>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-light text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5" data-action="query-builder#removeGroup" title="<%= Spree.t(:remove) %>">
+                    <%= icon('x', class: 'w-4 h-4') %>
+                  </button>
+                </div>
+                <div data-group-filters-container="" class="space-y-3 mb-3"></div>
+                <button type="button" class="btn btn-sm btn-light flex items-center gap-1" data-action="query-builder#addFilterToGroup">
+                  <%= icon('plus', class: 'w-4 h-4') %> <%= Spree.t('admin.tables.add_filter') %>
+                </button>
+              </div>
+            </template>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%= form_with model: [:admin, @product],
+                url: spree.update_variants_admin_product_path(@product),
+                method: :patch,
+                html: { class: 'relative m-0', id: "edit_product_variants_#{@product.id}" },
+                data: {
+                  controller: 'bulk-editor',
+                  action: 'keydown.ctrl+a->bulk-editor#selectAll keydown.meta+a->bulk-editor#selectAll',
+                  bulk_editor_locale_value: I18n.locale,
+                  bulk_editor_decimal_separator_value: decimal_separator,
+                  bulk_editor_thousands_separator_value: thousands_separator
+                } do |f| %>
+
+    <div class="card-body p-0 overflow-x-auto">
+      <%= turbo_frame_tag "edit_product_variants_table" do %>
+        <table class="table w-full text-left table-fixed" data-bulk-editor-target="table">
+          <thead>
+            <tr>
+              <th class="border-r rounded-none w-64"><%= Spree.t(:title) %></th>
+              <th class="border-r w-48"><%= Spree.t(:sku) %></th>
+              <th class="border-r w-32"><%= Spree.t(:price) %></th>
+              <th class="border-r w-32"><%= Spree.t(:compare_at_price) %></th>
+              <th class="border-r w-24"><%= Spree.t(:count_on_hand) %></th>
+              <th class="border-r w-24"><%= Spree.t(:width) %></th>
+              <th class="border-r w-24"><%= Spree.t(:height) %></th>
+              <th class="border-r w-24"><%= Spree.t(:depth) %></th>
+              <th class="rounded-none w-24"><%= Spree.t(:weight) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @variants.any? %>
+              <% row_index = 0 %>
+              <%= f.fields_for :variants, @variants do |vf| %>
+                <% variant = vf.object %>
+                <% price = variant.price_in(@currency) || variant.prices.build(currency: @currency) %>
+                <% stock_item = variant.stock_items.find_by(stock_location: @stock_location) || variant.stock_items.build(stock_location: @stock_location) %>
+                
+                <tr data-bulk-editor-target="row" class="bg-white hover:bg-gray-50">
+                  <td class="pl-4 pr-4 py-2 text-sm text-gray-600 border-r w-64 truncate">
+                    <%= variant.options_text.presence || Spree.t(:master) %>
+                  </td>
+                  
+                  <td class="p-0 border-r w-48 bulk-editor-cell">
+                    <label class="flex items-center cursor-cell m-0 h-full">
+                      <%= vf.text_field :sku, value: variant.sku, placeholder: "", class: 'w-full px-3 py-2 border-0 shadow-none outline-none font-mono text-sm bg-transparent',
+                          data: { bulk_editor_target: 'cell', row: row_index, col: 0, action: bulk_editor_cell_actions, original_value: variant.sku } %>
+                    </label>
+                  </td>
+                  
+                  <%= vf.fields_for :prices, price do |pf| %>
+                    <%= pf.hidden_field :id %>
+                    <%= pf.hidden_field :currency %>
+                    <td class="p-0 border-r w-32 bulk-editor-cell relative">
+                      <label class="flex items-center cursor-cell m-0 h-full">
+                        <span class="pl-3 text-gray-500 pointer-events-none absolute"><%= @currency_symbol %></span>
+                        <% formatted_amount = price.amount.present? ? format('%.2f', price.amount).tr('.', decimal_separator) : '' %>
+                        <%= pf.text_field :amount, value: formatted_amount, placeholder: "", inputmode: 'decimal', class: 'w-full pl-8 pr-3 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                            data: { bulk_editor_target: 'cell', row: row_index, col: 1, action: bulk_editor_cell_actions, original_value: formatted_amount } %>
+                      </label>
+                    </td>
+                    <td class="p-0 border-r w-32 bulk-editor-cell relative">
+                      <label class="flex items-center cursor-cell m-0 h-full">
+                        <span class="pl-3 text-gray-500 pointer-events-none absolute"><%= @currency_symbol %></span>
+                        <% formatted_compare = price.compare_at_amount.present? ? format('%.2f', price.compare_at_amount).tr('.', decimal_separator) : '' %>
+                        <%= pf.text_field :compare_at_amount, value: formatted_compare, placeholder: "", inputmode: 'decimal', class: 'w-full pl-8 pr-3 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                            data: { bulk_editor_target: 'cell', row: row_index, col: 2, action: bulk_editor_cell_actions, original_value: formatted_compare } %>
+                      </label>
+                    </td>
+                  <% end %>
+
+                  <%= vf.fields_for :stock_items, stock_item do |sif| %>
+                    <%= sif.hidden_field :id %>
+                    <%= sif.hidden_field :stock_location_id %>
+                    <td class="p-0 border-r w-24 bulk-editor-cell">
+                      <label class="flex items-center cursor-cell m-0 h-full">
+                        <%= sif.number_field :count_on_hand, placeholder: "", class: 'w-full px-3 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                            data: { bulk_editor_target: 'cell', row: row_index, col: 3, action: bulk_editor_cell_actions, original_value: stock_item.count_on_hand } %>
+                      </label>
+                    </td>
+                  <% end %>
+
+                  <td class="p-0 border-r w-24 bulk-editor-cell">
+                    <label class="flex items-center cursor-cell m-0 h-full">
+                      <%= vf.text_field :width, inputmode: 'decimal', placeholder: "", class: 'w-full px-3 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                          data: { bulk_editor_target: 'cell', row: row_index, col: 4, action: bulk_editor_cell_actions, original_value: variant.width } %>
+                    </label>
+                  </td>
+                  <td class="p-0 border-r w-24 bulk-editor-cell">
+                    <label class="flex items-center cursor-cell m-0 h-full">
+                      <%= vf.text_field :height, inputmode: 'decimal', placeholder: "", class: 'w-full px-3 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                          data: { bulk_editor_target: 'cell', row: row_index, col: 5, action: bulk_editor_cell_actions, original_value: variant.height } %>
+                    </label>
+                  </td>
+                  <td class="p-0 border-r w-24 bulk-editor-cell">
+                    <label class="flex items-center cursor-cell m-0 h-full">
+                      <%= vf.text_field :depth, inputmode: 'decimal', placeholder: "", class: 'w-full px-3 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                          data: { bulk_editor_target: 'cell', row: row_index, col: 6, action: bulk_editor_cell_actions, original_value: variant.depth } %>
+                    </label>
+                  </td>
+                  <td class="p-0 w-24 bulk-editor-cell">
+                    <label class="flex items-center cursor-cell m-0 h-full">
+                      <%= vf.text_field :weight, inputmode: 'decimal', placeholder: "", class: 'w-full px-3 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                          data: { bulk_editor_target: 'cell', row: row_index, col: 7, action: bulk_editor_cell_actions, original_value: variant.weight } %>
+                    </label>
+                  </td>
+                </tr>
+                <% row_index += 1 %>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="9" class="p-12 text-center text-gray-500">
+                  <%= icon('filter-off', class: 'w-8 h-8 mb-3 mx-auto text-gray-400') %>
+                  <p class="mb-0"><%= Spree.t('admin.variants.no_variants_found_matching_filters', default: 'No variants found matching your filters.') %></p>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+    </div>
+
+    <div class="card-footer flex justify-between items-center bg-gray-50 border-t border-gray-200">
+      <span class="text-sm text-gray-500 font-medium" data-bulk-editor-target="statusBar"></span>
+      <div class="flex gap-3 ml-auto">
+        <%= link_to Spree.t('actions.discard'), spree.edit_admin_product_path(@product), class: 'btn btn-light' %>
+        <%= f.submit Spree.t('actions.save'), class: 'btn btn-primary', data: { bulk_editor_target: 'saveButton' } %>
+      </div>
+    </div>
+  <% end %>
+</div>

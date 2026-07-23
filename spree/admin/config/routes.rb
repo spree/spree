@@ -20,6 +20,8 @@ Spree::Core::Engine.add_routes do
       end
       member do
         post :clone
+        get :edit_variants
+        patch :update_variants
       end
       resources :variants, only: [:edit, :update, :destroy]
       resources :digital_assets, except: [:show]
