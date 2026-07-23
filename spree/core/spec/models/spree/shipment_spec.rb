@@ -286,13 +286,15 @@ describe Spree::Shipment, type: :model do
   describe '#taxable_basis' do
     let(:shipment) { create(:shipment).tap { |s| s.cost = 10 } }
 
-    it 'is the discounted cost' do
-      shipment.promo_total = -1
+    it 'is the cost net of the current discount lines' do
+      create(:discount_line, fulfillment: shipment, line_item: nil, amount: -1, order: shipment.order)
+
       expect(shipment.taxable_basis).to eq(9)
     end
 
     it 'never goes below zero when discounts exceed the cost' do
-      shipment.promo_total = -15
+      create(:discount_line, fulfillment: shipment, line_item: nil, amount: -15, order: shipment.order)
+
       expect(shipment.taxable_basis).to eq(0)
     end
   end
@@ -878,16 +880,10 @@ describe Spree::Shipment, type: :model do
       expect(shipment.reload.cost).to eq(5)
     end
 
-    it 'factors in additional adjustments to adjustment total' do
-      shipment.adjustments.create!(
-        order: order,
-        label: 'Additional',
-        amount: 5,
-        included: false,
-        state: 'closed'
-      )
-      shipment.update_amounts
-      expect(shipment.reload.adjustment_total).to eq(5)
+    it 'leaves the adjustment totals to the recalculation pipeline' do
+      create(:discount_line, fulfillment: shipment, line_item: nil, amount: -5, order: shipment.order)
+
+      expect { shipment.update_amounts }.not_to change { shipment.reload.adjustment_total }
     end
 
     it 'does not factor in included adjustments to adjustment total' do
@@ -1008,28 +1004,12 @@ describe Spree::Shipment, type: :model do
   end
 
   context 'after_save' do
-    context 'line item changes' do
-      before do
-        shipment.cost = shipment.cost + 10
-      end
+    it 'does not recalculate adjustments as a save side effect' do
+      # recalculation runs only in the OrderUpdater pipeline
+      expect(Spree::Adjusters::Promotion).not_to receive(:adjust_all)
 
-      it 'triggers adjustment total recalculation' do
-        expect(shipment).to receive(:recalculate_adjustments)
-        shipment.save
-      end
-
-      it 'does not trigger adjustment recalculation if shipment has shipped' do
-        shipment.state = 'shipped'
-        expect(shipment).not_to receive(:recalculate_adjustments)
-        shipment.save
-      end
-    end
-
-    context 'line item does not change' do
-      it 'does not trigger adjustment total recalculation' do
-        expect(shipment).not_to receive(:recalculate_adjustments)
-        shipment.save
-      end
+      shipment.cost = shipment.cost + 10
+      shipment.save
     end
   end
 

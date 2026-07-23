@@ -6,6 +6,49 @@ module Spree
     let(:order) { create(:order) }
     let(:updater) { order.updater }
 
+    describe 'recalculation pipeline' do
+      before do
+        create_list(:line_item, 2, order: order, price: 10)
+        order.reload
+      end
+
+      it 'runs a registered custom fee adjuster and rolls its fees into the totals' do
+        gift_wrap_adjuster = Class.new(Spree::Adjusters::Base) do
+          def update
+            return unless adjustable.is_a?(Spree::LineItem)
+
+            adjustable.fees.find_or_initialize_by(kind: 'gift_wrap', order: order).tap do |fee|
+              fee.amount = 5
+              fee.label = 'Gift wrapping'
+              fee.save!
+            end
+          end
+        end
+
+        original_adjusters = Spree.adjusters
+        begin
+          Spree.adjusters = original_adjusters + [gift_wrap_adjuster]
+          updater.update
+        ensure
+          Spree.adjusters = original_adjusters
+        end
+
+        expect(order.fee_total).to eq(10)
+        expect(order.line_items.sum(:adjustment_total)).to eq(10)
+        expect(order.total).to eq(order.item_total + order.shipment_total + order.adjustment_total)
+      end
+
+      it 'never recalculates completed orders — their adjustment lines are frozen' do
+        discount_line = create(:discount_line, line_item: order.line_items.first, order: order, amount: -5)
+        order.update_columns(state: 'complete', completed_at: Time.current)
+
+        expect(Spree::TaxRate).not_to receive(:adjust)
+        updater.update
+
+        expect(discount_line.reload).to be_persisted
+      end
+    end
+
     context 'order totals' do
       before do
         create_list(:line_item, 2, order: order, price: 10)
@@ -42,9 +85,13 @@ module Spree
 
         before do
           updater.update
-          create(:adjustment, source: promotion_action, adjustable: order, order: order)
+          promotion_action.perform(order: order, promotion: promotion)
           create(:line_item, order: order, price: 10) # in addition to the two already created
           order.reload
+          # cart mutations re-activate promotions before recalculating
+          # (Cart::Recalculate does exactly this), redistributing the
+          # whole-order discount over the new line item set
+          promotion_action.perform(order: order, promotion: promotion)
           updater.update
         end
 
@@ -54,15 +101,22 @@ module Spree
       end
 
       it 'update order adjustments' do
-        # A line item will not have both additional and included tax,
-        # so please just humour me for now.
-        order.line_items.first.update_columns(adjustment_total: 10.05,
-                                              additional_tax_total: 0.05,
-                                              included_tax_total: 0.05)
+        # The typed adjustment lines are the source of truth; the denormalized
+        # columns are recomputed from them. A line item will not have both
+        # additional and included tax, so please just humour me for now.
+        line_item = order.line_items.first
+        create(:fee, line_item: line_item, order: order, amount: 10)
+        create(:tax_line, line_item: line_item, order: order, amount: 0.05, included: false)
+        create(:tax_line, line_item: line_item, order: order, amount: 0.05, included: true)
+        # the rollup is under test here, not tax computation — keep the tax
+        # pass from pruning the hand-placed lines (no rates match this order)
+        allow(Spree::TaxRate).to receive(:adjust)
+
         updater.update_adjustment_total
         expect(order.adjustment_total).to eq(10.05)
         expect(order.additional_tax_total).to eq(0.05)
         expect(order.included_tax_total).to eq(0.05)
+        expect(order.fee_total).to eq(10)
       end
     end
 

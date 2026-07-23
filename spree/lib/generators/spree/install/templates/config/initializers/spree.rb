@@ -66,7 +66,7 @@ Rails.application.config.after_initialize do
 
   # Stock splitters and adjusters
   # Spree.stock_splitters << Spree::Stock::Splitters::SecretLogicSplitter
-  # Spree.adjusters << Spree::Adjustable::Adjuster::TaxTheRich
+  # Spree.adjusters << Spree::Adjusters::TaxTheRich
 
   # Custom promotions
   # Spree.calculators.promotion_actions_create_adjustments << Spree::Calculators::PromotionActions::CreateAdjustments::AddDiscountForFriends

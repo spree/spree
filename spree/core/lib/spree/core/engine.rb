@@ -162,9 +162,13 @@ module Spree
           Spree::PaymentMethod::StoreCredit
         ]
 
+        # Within the :discount pass, OrderLevelPromotion must run before
+        # Promotion — the item-level clamp reads the surviving order-level
+        # discount lines.
         Rails.application.config.spree.adjusters = [
-          Spree::Adjustable::Adjuster::Promotion,
-          Spree::Adjustable::Adjuster::Tax
+          Spree::Adjusters::OrderLevelPromotion,
+          Spree::Adjusters::Promotion,
+          Spree::Adjusters::Tax
         ]
 
         # Selectable order routing strategies. The internal Reducer collaborator

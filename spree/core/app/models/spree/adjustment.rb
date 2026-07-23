@@ -44,10 +44,6 @@ module Spree
       end
     end
 
-    # FIXME: we should check if we also need to fire this action after update
-    after_create :update_adjustable_adjustment_total
-    after_destroy :update_adjustable_adjustment_total
-
     class_attribute :competing_promos_source_types
 
     self.competing_promos_source_types = ['Spree::PromotionAction']
@@ -118,13 +114,6 @@ module Spree
       end
 
       new_amount
-    end
-
-    private
-
-    def update_adjustable_adjustment_total
-      # Cause adjustable's total to be recalculated
-      Adjustable::AdjustmentsUpdater.update(adjustable)
     end
   end
 end

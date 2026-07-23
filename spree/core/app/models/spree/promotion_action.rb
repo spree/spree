@@ -43,6 +43,15 @@ module Spree
       type == 'Spree::Promotion::Actions::FreeShipping'
     end
 
+    # Whole-order actions (CreateAdjustment) return true: their distributed
+    # discount lines compete order-wide as groups during recalculation
+    # instead of per adjustable.
+    #
+    # @return [Boolean]
+    def order_level?
+      false
+    end
+
     def self.human_name
       Spree.t("promotion_action_types.#{api_type}.name", default: api_type.titleize)
     end

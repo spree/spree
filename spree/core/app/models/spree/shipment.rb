@@ -45,8 +45,6 @@ module Spree
                     dependent: :destroy, inverse_of: :fulfillment
     has_one :selected_shipping_rate, -> { where(selected: true).order(:cost) }, class_name: Spree::ShippingRate.to_s
 
-    after_save :update_adjustments
-
     before_validation :set_cost_zero_when_nil
 
     validates :stock_location, presence: true
@@ -217,13 +215,22 @@ module Spree
     end
     alias discounted_amount discounted_cost
 
-    # Returns the amount this shipment is taxed on: its discounted cost,
-    # never negative (stacked shipping promotions can push discounted_cost
-    # below zero). Whole-order promotions are not allocated to shipments.
+    # Returns the amount this shipment is taxed on: its cost net of current
+    # discount lines, never negative. Computed from the live rows rather
+    # than the denormalized promo_total column because tax runs inside the
+    # recalculation pipeline before the columns are persisted.
     #
     # @return [BigDecimal]
     def taxable_basis
-      [discounted_cost, BigDecimal(0)].max
+      [cost + current_discount_total, BigDecimal(0)].max
+    end
+
+    # Live sum of this shipment's discount lines — in memory when the
+    # association is preloaded (the recalculation pipeline preloads it).
+    #
+    # @return [BigDecimal]
+    def current_discount_total
+      discount_lines.reject(&:destroyed?).sum(&:amount)
     end
 
     def final_price
@@ -482,14 +489,17 @@ module Spree
                         end
     end
 
+    # Syncs the cost from the selected rate. The adjustment totals are NOT
+    # written here — the OrderUpdater recalculation pipeline is the single
+    # writer of the denormalized adjustment columns, and every update_amounts
+    # call site runs it right after.
     def update_amounts
-      if selected_shipping_rate
-        update_columns(
-          cost: selected_shipping_rate.cost,
-          adjustment_total: adjustments.additional.map(&:update!).compact.sum,
-          updated_at: Time.current
-        )
-      end
+      return unless selected_shipping_rate
+
+      update_columns(
+        cost: selected_shipping_rate.cost,
+        updated_at: Time.current
+      )
     end
 
     def update_attributes_and_order(params = {})
@@ -557,16 +567,8 @@ module Spree
       stock_location.unstock(item.variant, item.quantity, self) if item.variant.track_inventory?
     end
 
-    def recalculate_adjustments
-      Adjustable::AdjustmentsUpdater.update(self)
-    end
-
     def set_cost_zero_when_nil
       self.cost = 0 unless cost
-    end
-
-    def update_adjustments
-      recalculate_adjustments if saved_change_to_cost? && state != 'shipped'
     end
   end
 end
