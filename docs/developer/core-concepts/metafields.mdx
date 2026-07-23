@@ -34,6 +34,8 @@ erDiagram
         string metafield_type
         string resource_type
         string display_on
+        boolean searchable
+        boolean sortable
     }
 
     Metafield {
@@ -83,6 +85,17 @@ Metafields support two visibility levels via the `display_on` attribute:
 |------------|:---------:|:---------:|----------|
 | `both` | Yes | Yes | Public product specifications |
 | `back_end` | No | Yes | Internal notes, integration IDs |
+
+## Storefront search & sort
+
+Product metafield definitions can opt into storefront SearchProvider participation:
+
+| Flag | Effect | Allowed field types |
+|------|--------|---------------------|
+| `searchable` | Values are included in product text search | `short_text`, `long_text`, `number` |
+| `sortable` | Listings can sort with `sort=mf_{namespace.length}_{namespace}_{key}` (prefix `-` for descending), e.g. `mf_6_custom_label` | `short_text`, `number` |
+
+Both default to `false`. Set them on the definition (Admin UI, Admin API, or seeds). Changing flags clears the search registry and refreshes Meilisearch index settings asynchronously, for an existing catalog also run `rake spree:search:reindex` so product documents pick up new `mf_*` fields.
 
 ## Supported Resources
 

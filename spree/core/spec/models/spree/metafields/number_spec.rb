@@ -26,4 +26,11 @@ describe Spree::Metafields::Number, type: :model do
       expect(metafield.csv_value).to eq('123.0')
     end
   end
+
+  describe '.searchable? / .sortable?' do
+    it 'is searchable and sortable' do
+      expect(described_class.searchable?).to eq(true)
+      expect(described_class.sortable?).to eq(true)
+    end
+  end
 end

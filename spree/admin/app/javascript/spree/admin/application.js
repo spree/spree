@@ -63,6 +63,7 @@ import FontPickerController from 'spree/admin/controllers/font_picker_controller
 import HighlightController from 'spree/admin/controllers/highlight_controller'
 import ImportFormController from 'spree/admin/controllers/import_form_controller'
 import MediaFormController from 'spree/admin/controllers/media_form_controller'
+import MetafieldFormController from 'spree/admin/controllers/metafield_form_controller'
 import MoneyFieldController from 'spree/admin/controllers/money_field_controller'
 import MultiInputController from 'spree/admin/controllers/multi_input_controller'
 import MultiTomSelectController from 'spree/admin/controllers/multi_tom_select_controller'
@@ -135,6 +136,7 @@ application.register('font-picker', FontPickerController)
 application.register('highlight', HighlightController)
 application.register('import-form', ImportFormController)
 application.register('media-form', MediaFormController)
+application.register('metafield-form', MetafieldFormController)
 application.register('money-field', MoneyFieldController)
 application.register('multi-input', MultiInputController)
 application.register('multi-tom-select', MultiTomSelectController)

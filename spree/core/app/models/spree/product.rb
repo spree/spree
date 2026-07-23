@@ -171,7 +171,13 @@ module Spree
       next none if query.blank?
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
-      where(id: product_ids.uniq.compact)
+      term = "%#{sanitize_sql_like(query.to_s.downcase)}%"
+      metafield_ids = joins(metafields: :metafield_definition)
+        .merge(Spree::MetafieldDefinition.for_resource_type('Spree::Product').searchable)
+        .where(Spree::Metafield.arel_table[:value].lower.matches(term))
+        .unscope(:order).distinct.pluck(:id)
+
+      where(id: (product_ids + metafield_ids).uniq.compact)
     }
 
     # Backward compatibility alias — remove in Spree 6.0

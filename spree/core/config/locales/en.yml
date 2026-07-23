@@ -71,6 +71,8 @@ en:
         quantity: Quantity
       spree/metafield_definition:
         namespace: Namespace
+        searchable: Searchable
+        sortable: Sortable
       spree/option_type:
         filterable: Filterable
         kind: Kind
@@ -1479,7 +1481,11 @@ en:
     skus: SKUs
     slug: Slug
     social: Social
+    sort_a_to_z: A-Z
     sort_by: Sort by
+    sort_high_to_low: high-low
+    sort_low_to_high: low-high
+    sort_z_to_a: Z-A
     source: Source
     special_instructions: Special Instructions
     split: Split

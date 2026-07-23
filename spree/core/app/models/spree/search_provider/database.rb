@@ -46,6 +46,7 @@ module Spree
                              end
 
         filter_facets = build_facets(scope_with_options, category: category, option_value_ids: option_value_ids, scope_before_options: scope_before_options)
+        filter_facets[:sort_options] = filter_facets[:sort_options] + metafield_sort_options
 
         FiltersResult.new(
           filters: filter_facets[:filters],
@@ -56,6 +57,10 @@ module Spree
       end
 
       private
+
+      def metafield_attributes
+        Spree::Dependencies.search_metafield_attributes_class
+      end
 
       def apply_search_and_filters(scope, query: nil, filters: {})
         scope = scope.search(query) if query.present?
@@ -74,7 +79,7 @@ module Spree
       end
 
       def build_facets(scope, category: nil, option_value_ids: [], scope_before_options: nil)
-        return { filters: [], sort_options: available_sort_options, default_sort: 'manual', total_count: scope.distinct.count } unless defined?(Spree::Api::V3::FiltersAggregator)
+        return { filters: [], sort_options: built_in_sort_options, default_sort: 'manual', total_count: scope.distinct.count } unless defined?(Spree::Api::V3::FiltersAggregator)
 
         Spree::Api::V3::FiltersAggregator.new(
           scope: scope,
@@ -98,6 +103,8 @@ module Spree
         scope_method = CUSTOM_SORT_SCOPES[sort]
         if scope_method
           scope.reorder(nil).send(scope_method)
+        elsif (parsed = metafield_attributes.parse_sort(sort))
+          apply_metafield_sort(scope, parsed)
         else
           # Standard Ransack sort: 'name' → 'name asc', '-name' → 'name desc'
           ransack_sort = sort.split(',').map { |field|
@@ -112,8 +119,55 @@ module Spree
         end
       end
 
-      def available_sort_options
-        %w[price -price best_selling name -name -available_on available_on].map { |id| { id: id } }
+      # Project the ORDER BY expression into the SELECT list so PostgreSQL
+      # accepts it when DISTINCT is applied. Null-rank keeps products without
+      # the metafield last for both ASC and DESC.
+      def apply_metafield_sort(scope, parsed)
+        entry = metafield_attributes.entry_for(parsed[:attribute])
+        return scope unless entry
+
+        p_table = Spree::Product.quoted_table_name
+        mf_table = Spree::Metafield.quoted_table_name
+        connection = scope.klass.connection
+        adapter = connection.adapter_name
+
+        mf_join_alias = 'sort_mf'
+
+        sort_expr = Arel.sql(
+          metafield_attributes.sort_expression_sql(
+            field_type: entry[:field_type],
+            adapter_name: adapter
+          )
+        )
+        null_rank = Arel.sql(
+          metafield_attributes.sort_null_rank_sql(
+            field_type: entry[:field_type],
+            adapter_name: adapter
+          )
+        )
+
+        direction = parsed[:direction] == 'desc' ? :desc : :asc
+        def_id = connection.quote(entry[:id])
+
+        join_sql = "LEFT JOIN #{mf_table} AS #{mf_join_alias} " \
+                   "ON #{mf_join_alias}.resource_type = 'Spree::Product' " \
+                   "AND #{mf_join_alias}.resource_id = #{p_table}.id " \
+                   "AND #{mf_join_alias}.metafield_definition_id = #{def_id}"
+
+        scope
+          .joins(join_sql)
+          .select("#{p_table}.*")
+          .select(Arel::Nodes::As.new(sort_expr, Arel.sql('mf_sort_value')))
+          .select(Arel::Nodes::As.new(null_rank, Arel.sql('mf_sort_missing')))
+          .reorder(Arel.sql('mf_sort_missing ASC'), sort_expr.send(direction))
+      end
+
+      def built_in_sort_options
+        %w[price -price best_selling name -name -available_on available_on].map { |id| { id: id, label: nil } }
+      end
+
+      def metafield_sort_options
+        metafield_attributes.sort_options
       end
     end
   end

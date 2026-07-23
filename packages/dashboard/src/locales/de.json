@@ -191,6 +191,14 @@
         "storefront_visible": {
           "label": "Im Storefront sichtbar",
           "column_label": "Storefront"
+        },
+        "searchable": {
+          "label": "Durchsuchbar",
+          "help": "Werte in die Storefront-Produktsuche aufnehmen (nur Kurztext, Langtext und Zahl). Nach dem Aktivieren mit Meilisearch rake spree:search:reindex ausführen, damit bestehende Produkte aktualisiert werden."
+        },
+        "sortable": {
+          "label": "Sortierbar",
+          "help": "Storefront-Produktlisten nach diesem Feld sortieren lassen (nur Kurztext und Zahl). Nach dem Aktivieren mit Meilisearch rake spree:search:reindex ausführen, damit bestehende Produkte aktualisiert werden."
         }
       },
       "tax_category": {

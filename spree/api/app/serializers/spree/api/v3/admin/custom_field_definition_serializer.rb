@@ -10,9 +10,13 @@ module Spree
                    label: :string,
                    field_type: Spree::Metafield::FIELD_TYPE_TOKENS,
                    resource_type: :string,
-                   storefront_visible: :boolean
+                   storefront_visible: :boolean,
+                   searchable: :boolean,
+                   sortable: :boolean,
+                   search_key: :string
 
           attributes :namespace, :key, :label, :field_type, :resource_type, :storefront_visible,
+                     :searchable, :sortable, :search_key,
                      created_at: :iso8601, updated_at: :iso8601
         end
       end

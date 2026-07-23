@@ -1,4 +1,6 @@
-<div class="card mb-6">
+<div class="card mb-6"
+     data-controller="metafield-form"
+     data-action="change->metafield-form#typeChanged">
   <div class="card-body">
     <div class="form-group">
       <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
@@ -19,7 +21,10 @@
       </div>
 
       <div class="form-group">
-        <%= f.spree_select :metafield_type, metafield_definition_types, { include_blank: true, autocomplete: true, label: Spree.t(:type) }, { required: true } %>
+        <%= f.spree_select :metafield_type,
+              metafield_definition_types,
+              { include_blank: true, autocomplete: true, label: Spree.t(:type) },
+              { required: true, data: { metafield_form_target: 'metafieldType' } } %>
       </div>
     <% else %>
       <div class="alert alert-warning">
@@ -39,6 +44,18 @@
 
     <div class="form-group">
       <%= f.spree_select :display_on, display_on_options(Spree::MetafieldDefinition), { include_blank: true, autocomplete: true }, { required: true } %>
+    </div>
+
+    <div class="form-group">
+      <%= f.spree_check_box :searchable,
+            help: Spree.t('admin.metafield_definitions.searchable_help'),
+            data: { metafield_form_target: 'searchable' } %>
+    </div>
+
+    <div class="form-group">
+      <%= f.spree_check_box :sortable,
+            help: Spree.t('admin.metafield_definitions.sortable_help'),
+            data: { metafield_form_target: 'sortable' } %>
     </div>
   </div>
 </div>

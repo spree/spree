@@ -25,7 +25,8 @@ module Spree
           # API → DB column rename lands in 6.0 and this controller stays flat.
           def permitted_params
             params.permit(:namespace, :key, :label, :field_type,
-                          :resource_type, :storefront_visible)
+                          :resource_type, :storefront_visible,
+                          :searchable, :sortable)
           end
         end
       end
