@@ -30,6 +30,7 @@ import {
   installCommand,
   isDockerRunning,
   runCommand,
+  storefrontPm,
 } from './utils.js'
 
 export async function scaffold(options: ScaffoldOptions): Promise<void> {
@@ -93,7 +94,10 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     path.join(projectDir, '.env'),
     envContent(generateSecretKeyBase(), port, options.sampleData),
   )
-  fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
+  fs.writeFileSync(
+    path.join(projectDir, 'package.json'),
+    rootPackageJsonContent(projectName, options.packageManager),
+  )
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
   fs.writeFileSync(path.join(projectDir, '.dockerignore'), dockerignoreContent())
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())
@@ -192,7 +196,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
 
     if (storefrontReady) {
       p.log.info(
-        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${options.packageManager} run dev`)}`,
+        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${storefrontPm(options.packageManager)} run dev`)}`,
       )
     }
     // No dashboard line here — with the dashboard chosen, `spree init`'s
