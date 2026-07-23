@@ -25,43 +25,45 @@ module Spree
         import = Spree::Import.find(import_id)
         Spree::Current.store = import.store
 
-        mappings = import.mappings.mapped.to_a
-        schema_fields = import.schema_fields
-        large = import.large_import?
-        grouped = import.group_column.present? && mappings.any? { |m| m.schema_field == import.group_column }
-        started_at = Time.current
-        processed_rows = []
+        with_store_content_locale(import.store) do
+          mappings = import.mappings.mapped.to_a
+          schema_fields = import.schema_fields
+          large = import.large_import?
+          grouped = import.group_column.present? && mappings.any? { |m| m.schema_field == import.group_column }
+          started_at = Time.current
+          processed_rows = []
 
-        row_ids.each_slice(ROWS_BATCH_SIZE) do |ids|
-          # Skip rows already completed on a prior attempt so retries don't double-process them.
-          rows = import.rows.where(id: ids).pending_and_failed.order(:row_number).to_a
-          # Share the already-loaded import across rows: each row's processor reads
-          # `row.import` (store, ability, lookup cache), and without this every row
-          # lazily loads its own Import instance and rebuilds all of that per row.
-          rows.each { |row| row.association(:import).target = import }
+          row_ids.each_slice(ROWS_BATCH_SIZE) do |ids|
+            # Skip rows already completed on a prior attempt so retries don't double-process them.
+            rows = import.rows.where(id: ids).pending_and_failed.order(:row_number).to_a
+            # Share the already-loaded import across rows: each row's processor reads
+            # `row.import` (store, ability, lookup cache), and without this every row
+            # lazily loads its own Import instance and rebuilds all of that per row.
+            rows.each { |row| row.association(:import).target = import }
 
-          if large
-            Spree::Events.disable do
-              rows.each { |row| row.bulk_process!(mappings: mappings, schema_fields: schema_fields) }
+            if large
+              Spree::Events.disable do
+                rows.each { |row| row.bulk_process!(mappings: mappings, schema_fields: schema_fields) }
+              end
+            elsif grouped
+              # A group is one product plus its variants: per-record lifecycle
+              # events (variant.created, price.created, product.updated per
+              # touch) are noise to subscribers — one product event is published
+              # for the whole group below. import_row.* events still flow.
+              Spree::Events.disable_lifecycle do
+                rows.each { |row| row.process!(mappings: mappings, schema_fields: schema_fields) }
+              end
+            else
+              rows.each do |row|
+                row.process!(mappings: mappings, schema_fields: schema_fields)
+              end
             end
-          elsif grouped
-            # A group is one product plus its variants: per-record lifecycle
-            # events (variant.created, price.created, product.updated per
-            # touch) are noise to subscribers — one product event is published
-            # for the whole group below. import_row.* events still flow.
-            Spree::Events.disable_lifecycle do
-              rows.each { |row| row.process!(mappings: mappings, schema_fields: schema_fields) }
-            end
-          else
-            rows.each do |row|
-              row.process!(mappings: mappings, schema_fields: schema_fields)
-            end
+            processed_rows.concat(rows)
           end
-          processed_rows.concat(rows)
-        end
 
-        publish_group_events(processed_rows, started_at) if grouped
-        check_import_completion(import, large)
+          publish_group_events(processed_rows, started_at) if grouped
+          check_import_completion(import, large)
+        end
       end
 
       private
