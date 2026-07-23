@@ -2162,7 +2162,7 @@ Rails.application.config.after_initialize do
                                          position: 20
 
   # Register Addresses table (customer address book)
-  Spree.admin.tables.register(:addresses, model_class: Spree::Address, search_param: :firstname_or_lastname_or_city_or_zipcode_cont, row_actions: false, new_resource: false)
+  Spree.admin.tables.register(:addresses, model_class: Spree::Address, search_param: :firstname_or_lastname_or_address1_or_address2_or_city_or_zipcode_cont, row_actions: false, new_resource: false)
 
   Spree.admin.tables.addresses.add :name,
                                    label: :name,

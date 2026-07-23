@@ -4,7 +4,6 @@ module Spree
       use_table :addresses
 
       before_action :redirect_to_full_page, only: :index, unless: :turbo_frame_request?
-      skip_after_action :set_return_to, only: :index
 
       private
 
@@ -12,7 +11,6 @@ module Spree
         Spree::Address
       end
 
-      # Addresses have no standalone admin page, so rows are not clickable.
       def edit_object_url(_object, _options = {})
         nil
       end
