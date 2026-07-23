@@ -91,7 +91,7 @@ Sets `store_id` on `Spree::Promotion` and `Spree::PaymentMethod` from the legacy
   Until this runs, migrated rows have a NULL `store_id` and are hidden from store-scoped lookups — a payment method with no `store_id` is unavailable at checkout. Run it right after `db:migrate`.
 </Warning>
 
-Records shared across several stores keep **one** owner (promotions: the earliest `spree_promotions_stores` row by `created_at`, then lowest `store_id`; payment methods: the lowest `store_id`, since that join has no timestamps) unless [`spree_multi_store`](#multi-store-deployments) is installed. Each shared record is logged so the loss is visible.
+Records shared across several stores keep **one** owner (promotions: the earliest `spree_promotions_stores` row by `created_at`, then lowest `store_id`; payment methods: the lowest `store_id`, since that join has no timestamps). Each shared record is logged so the loss is visible.
 
 ### Backfill store ownership on taxons
 
@@ -176,7 +176,7 @@ store.payment_methods.create!(...)
 store.promotions.create!(...)
 ```
 
-A record built off the association but not yet saved is invisible to `available_for_store?` until persisted. The `store_ids=` writer that used to fan a record across stores is removed; multi-store sharing moves to the [`spree_multi_store`](#multi-store-deployments) extension. The `spree_promotions_stores` / `spree_payment_methods_stores` join tables are kept as legacy compat surface and dropped in a later release.
+A record built off the association but not yet saved is invisible to `available_for_store?` until persisted. The `store_ids=` writer that used to fan a record across stores is removed. The `spree_promotions_stores` / `spree_payment_methods_stores` join tables are kept as legacy compat surface and dropped in a later release.
 
 ### Admin roles resolve per store
 
@@ -185,9 +185,3 @@ With `store_id` on role assignments, an admin's abilities are scoped to the stor
 ### Product tag autocomplete is store-scoped
 
 The Admin API tag-autocomplete endpoint (`GET /api/v3/admin/tags`) now returns only tags used within the current store for store-owned taggables (products and orders). Customer tags remain global. If an integration relied on this endpoint returning tags across every store, that cross-store vocabulary is no longer exposed. Run [the tag-tenant backfill](#backfill-the-store-tenant-on-product-tags) so pre-upgrade product tags are included.
-
-## Multi-store deployments
-
-Sharing a single promotion, payment method, or product across multiple stores is no longer part of Spree core — 5.6 assigns each of these to one owning store. If you run several stores from one installation and need shared records, install the `spree_multi_store` extension **before** running the backfills; without it, the backfills assign each shared record to a single owner store and the others lose it (every such case is logged).
-
-For single-store deployments this is invisible — the backfills assign every record to your one store, and you can move on.
