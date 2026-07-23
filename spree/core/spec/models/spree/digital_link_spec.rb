@@ -214,5 +214,51 @@ describe Spree::DigitalLink, type: :model do
         end.not_to change { digital_link_expired.updated_at.to_s }
       end
     end
+
+    context 'when the access limit is reached' do
+      let(:limit) { store.preferred_digital_asset_authorized_clicks }
+      let!(:digital_link) { create(:digital_link, access_counter: limit - 1) }
+
+      after do
+        digital_link.update(access_counter: 2)
+        digital_link.save!
+        digital_link.reload
+      end
+
+      it 'allows exactly the configured number of downloads and denies the rest' do
+        expect(digital_link.authorize!).to be_truthy
+        expect(digital_link.reload.access_counter).to eq(limit)
+
+        expect(digital_link.authorize!).to be_falsey
+        expect(digital_link.reload.access_counter).to eq(limit)
+      end
+    end
+
+    # Proves the check-and-increment is atomic: two concurrent authorize! calls
+    # sharing the same token cannot both pass the cap. Requires a database with
+    # real concurrent connections and row-level locking (PostgreSQL).
+    context 'under concurrent access', if: ENV['DB'] == 'postgres' do
+      let(:limit) { store.preferred_digital_asset_authorized_clicks }
+      let!(:digital_link) { create(:digital_link, access_counter: limit - 1) }
+
+      after do
+        digital_link.update(access_counter: 2)
+        digital_link.save!
+        digital_link.reload
+      end
+
+      it 'never lets the counter exceed the limit' do
+        results = Array.new(5) do
+          Thread.new do
+            ActiveRecord::Base.connection_pool.with_connection do
+              Spree::DigitalLink.find(digital_link.id).authorize!
+            end
+          end
+        end.map(&:value)
+
+        expect(results.count { |granted| granted }).to eq(1)
+        expect(digital_link.reload.access_counter).to eq(limit)
+      end
+    end
   end
 end
