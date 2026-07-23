@@ -14,6 +14,9 @@ module Spree
         can :manage, Spree::Payment
         can :manage, Spree::Shipment
         can :manage, Spree::Adjustment
+        can :manage, Spree::TaxLine
+        can :manage, Spree::DiscountLine
+        can :manage, Spree::Fee
         can :manage, Spree::LineItem
         can :manage, Spree::ReturnAuthorization
         can :manage, Spree::CustomerReturn

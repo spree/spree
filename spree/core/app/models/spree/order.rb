@@ -218,6 +218,18 @@ module Spree
     alias items line_items
     alias discounts order_promotions
     alias fulfillments shipments
+
+    # Legacy polymorphic adjustment readers: rows are frozen (nothing writes
+    # them anymore), associations removed in 6.1 together with the table.
+    %i[adjustments all_adjustments line_item_adjustments shipment_adjustments].each do |legacy_reader|
+      define_method(legacy_reader) do |*args|
+        Spree::Deprecation.warn(
+          "Spree::Order##{legacy_reader} reads frozen legacy adjustment rows and will be removed in Spree 6.1. " \
+          'Use the typed adjustment lines instead (tax_lines, discount_lines, fees).'
+        )
+        super(*args)
+      end
+    end
     alias_attribute :delivery_total, :shipment_total
     alias display_delivery_total display_shipment_total
     alias_attribute :fulfillment_status, :shipment_state

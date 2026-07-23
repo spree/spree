@@ -592,9 +592,11 @@ describe Spree::Order, type: :model do
         order.empty!
       end
 
-      it 'clears out line items, adjustments and update totals' do
+      it 'clears out line items, adjustment lines and update totals' do
         expect(order.line_items.count).to be_zero
-        expect(order.adjustments.count).to be_zero
+        expect(order.discount_lines.count).to be_zero
+        expect(order.tax_lines.count).to be_zero
+        expect(order.fees.count).to be_zero
         expect(order.shipments.count).to be_zero
         expect(order.order_promotions.count).to be_zero
         expect(order.promo_total).to be_zero

@@ -3,13 +3,12 @@
 <% if local_assigns.fetch(:totals, true) %>
 <table class="summary purchase_content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
   <%= render 'spree/shared/purchased_items_table/subtotal', order: order %>
-  <% if order.line_item_adjustments.exists? %>
-    <% order.all_adjustments.promotion.eligible.to_a.group_by(&:label).each do |label, adjustments| %>
-      <%= render 'spree/shared/purchased_items_table/summary_row',
-                 label: Spree.t(:promotion),
-                 sub: label,
-                 value: Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %>
-    <% end %>
+  <% order.discounts.includes(:promotion).each do |discount| %>
+    <% next if discount.amount.zero? %>
+    <%= render 'spree/shared/purchased_items_table/summary_row',
+               label: Spree.t(:promotion),
+               sub: discount.promotion.name,
+               value: Spree::Money.new(discount.amount, currency: order.currency) %>
   <% end %>
   <% order.shipments.group_by { |s| s.selected_shipping_rate&.name }.each do |name, shipments| %>
     <%= render 'spree/shared/purchased_items_table/summary_row',
@@ -27,9 +26,8 @@
                label: Spree.t(:gift_card),
                value: safe_join(['-', order.display_gift_card_total.to_html]) %>
   <% end %>
-  <% order.adjustments.eligible.each do |adjustment| %>
-    <% next if (adjustment.source_type == 'Spree::TaxRate') || (adjustment.amount == 0) %>
-    <%= render 'spree/shared/purchased_items_table/adjustment', adjustment: adjustment, order: order %>
+  <% (order.discount_lines.manual + order.fees).each do |line| %>
+    <%= render 'spree/shared/purchased_items_table/adjustment', adjustment: line, order: order %>
   <% end %>
   <%= render 'spree/shared/purchased_items_table/total', order: order %>
 </table>

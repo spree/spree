@@ -24,7 +24,7 @@ module Spree
             return @current_order
           end
 
-          @current_order = find_order_by_token_or_user(options, false)
+          @current_order = find_order_by_token_or_user(options)
 
           if options[:create_order_if_necessary] && (@current_order.nil? || @current_order.completed?)
             @current_order = current_store.orders.create!(current_order_params.except(:token))
@@ -125,7 +125,7 @@ module Spree
           @current_order_params ||= { currency: current_currency, token: order_token, user_id: try_spree_current_user.try(:id) }
         end
 
-        def find_order_by_token_or_user(options = {}, with_adjustments = false)
+        def find_order_by_token_or_user(options = {})
           return nil if try_spree_current_user.nil? && order_token.blank?
 
           options[:lock] ||= false
@@ -136,11 +136,7 @@ module Spree
           incomplete_orders = current_store.orders.incomplete.not_canceled.includes(includes)
 
           token_order_params = current_order_params.except(:user_id)
-          order = if with_adjustments
-                    incomplete_orders.includes(:adjustments).lock(options[:lock]).find_by(token_order_params)
-                  else
-                    incomplete_orders.lock(options[:lock]).find_by(token_order_params)
-                  end
+          order = incomplete_orders.lock(options[:lock]).find_by(token_order_params)
 
           # Find any incomplete orders for the current user
           order = last_incomplete_order(includes) if order.nil? && try_spree_current_user

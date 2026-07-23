@@ -22,6 +22,15 @@ module Spree
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
 
+    # Legacy polymorphic adjustment reader: rows are frozen, removed in 6.1
+    def adjustments(*args)
+      Spree::Deprecation.warn(
+        'Spree::LineItem#adjustments reads frozen legacy adjustment rows and will be removed in Spree 6.1. ' \
+        'Use the typed adjustment lines instead (tax_lines, discount_lines, fees).'
+      )
+      super
+    end
+
     # Typed adjustment lines (replace polymorphic adjustments)
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :line_item
     has_many :discount_lines, class_name: 'Spree::DiscountLine', dependent: :destroy, inverse_of: :line_item

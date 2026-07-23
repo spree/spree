@@ -14,6 +14,9 @@ module Spree
         can [:read, :admin], Spree::Payment
         can [:read, :admin], Spree::Shipment
         can [:read, :admin], Spree::Adjustment
+        can [:read, :admin], Spree::TaxLine
+        can [:read, :admin], Spree::DiscountLine
+        can [:read, :admin], Spree::Fee
         can [:read, :admin], Spree::LineItem
         can [:read, :admin], Spree::ReturnAuthorization
         can [:read, :admin], Spree::CustomerReturn

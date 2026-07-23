@@ -636,9 +636,9 @@ describe Spree::Shipment, type: :model do
       end
 
       # Regression test for #4347
-      context 'with adjustments' do
+      context 'with discount lines' do
         before do
-          shipment.adjustments << Spree::Adjustment.create(order: order, label: 'Label', amount: 5)
+          create(:discount_line, fulfillment: shipment, line_item: nil, amount: -5, order: order)
         end
 
         it 'transitions to shipped' do
@@ -801,12 +801,6 @@ describe Spree::Shipment, type: :model do
           expect(shipment.shipped_at).not_to be_nil
         end
 
-        it 'finalizes adjustments' do
-          allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
-
-          expect(shipment.adjustments).to all(receive(:finalize!))
-          shipment.ship!
-        end
       end
     end
   end
@@ -887,17 +881,6 @@ describe Spree::Shipment, type: :model do
       expect { shipment.update_amounts }.not_to change { shipment.reload.adjustment_total }
     end
 
-    it 'does not factor in included adjustments to adjustment total' do
-      shipment.adjustments.create!(
-        order: order,
-        label: 'Included',
-        amount: 5,
-        included: true,
-        state: 'closed'
-      )
-      shipment.update_amounts
-      expect(shipment.reload.adjustment_total).to eq(0)
-    end
   end
 
   context 'changes shipping rate via general update' do
