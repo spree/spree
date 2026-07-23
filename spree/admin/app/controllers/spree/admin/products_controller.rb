@@ -1,3 +1,5 @@
+//controller: app/controllers/spree/admin/products_controller.rb
+// This controller manages the admin interface for products, including listing, creating, updating, and cloning products. It also handles bulk operations on products and searching for products via AJAX. The controller includes various before actions to load necessary data and prepare parameters for product creation and updates. It also defines custom actions for cloning products and bulk updating product statuses and variants.
 module Spree
   module Admin
     class ProductsController < ResourceController
@@ -99,6 +101,18 @@ module Spree
         invoke_callbacks(:bulk_status_update, :after)
 
         handle_bulk_operation_response
+      end
+
+      def bulk_update_variants
+        params[:variants].each do |id, data|
+          variant = @product.variants.find(id)
+          variant.update(sku: data[:sku])
+          
+          price = variant.prices.first
+          price.update(amount: data[:price])
+        end
+        
+        redirect_to edit_admin_product_path(@product), notice: "Updated"
       end
 
       def bulk_remove_from_taxons

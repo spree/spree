@@ -1,3 +1,4 @@
+//controller: app/javascript/spree/admin/controllers/variants_form_controller.js
 import CheckboxSelectAll from 'stimulus-checkbox-select-all'
 import { Sortable } from 'sortablejs'
 import { get } from '@rails/request.js'
@@ -508,6 +509,20 @@ export default class extends CheckboxSelectAll {
     parentStockEl.placeholder = String(sum)
     parentStockEl.value = null
   }
+  
+  updateSku(event) {
+    const input = event.target
+    const value = input.value
+    
+    const row = input.closest('[data-variants-form-target="variant"]')
+    const variantName = row.dataset.variantName
+    
+    if (!this.skuValue) {
+    this.skuValue = {}
+  }
+  
+  this.skuValue[variantName] = value
+}
 
   variantsValueChanged() {
     let keys = Object.keys(this.variantsValue[0] || {}).filter((key) => key !== 'internalName')
