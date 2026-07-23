@@ -198,5 +198,38 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+
+    # Regression: StoreController inherits from Admin::BaseController (the
+    # non-resource branch). Its scope guard once ran before authenticate_admin!
+    # resolved the API key, so it short-circuited on a nil key and every
+    # API-key caller could rewrite store settings without write_settings.
+    context 'authenticated with a secret API key' do
+      include_context 'API v3 Admin'
+
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: scopes) }
+      let(:headers) { api_key_headers }
+      let(:params) { { name: 'Renamed Store' } }
+
+      context 'lacking the write_settings scope' do
+        let(:scopes) { ['read_orders'] }
+
+        it 'denies the write with the required scope' do
+          subject
+          expect(response).to have_http_status(:forbidden)
+          expect(json_response['error']['details']['required_scope']).to eq('write_settings')
+          expect(store.reload.name).not_to eq('Renamed Store')
+        end
+      end
+
+      context 'carrying the write_settings scope' do
+        let(:scopes) { ['write_settings'] }
+
+        it 'allows the write' do
+          subject
+          expect(response).to have_http_status(:ok)
+          expect(store.reload.name).to eq('Renamed Store')
+        end
+      end
+    end
   end
 end

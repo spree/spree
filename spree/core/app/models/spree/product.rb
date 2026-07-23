@@ -24,6 +24,7 @@ module Spree
 
     acts_as_paranoid
     acts_as_taggable_on :tags, :labels
+    acts_as_taggable_tenant :store_id
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     include Spree::ProductScopes

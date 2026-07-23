@@ -7,6 +7,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
   let!(:product) { create(:product, status: 'active') }
   let!(:product2) { create(:product, status: 'active') }
+  let!(:pos_channel) { create(:channel, store: store, code: 'pos', name: 'POS') }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -18,7 +19,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         it 'sets Vary header for CDN caching' do
           get :index
 
-          expect(response.headers['Vary']).to eq('Accept, x-spree-currency, x-spree-locale')
+          expect(response.headers['Vary']).to eq('Accept, x-spree-currency, x-spree-locale, x-spree-channel')
         end
       end
 
@@ -136,6 +137,35 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
           expect(eur_etag).not_to eq(original_etag)
         end
+
+        # Publish the same products on both channels so the identical collection
+        # is served either way — isolating the channel as the sole cache
+        # dimension that differs (guards against a shared CDN cross-serving).
+        context 'when the same products are visible on two channels' do
+          before { pos_channel.add_products([product.id, product2.id]) }
+
+          it 'changes ETag when the resolved channel changes' do
+            get :index
+            default_channel_etag = response.headers['ETag']
+
+            request.headers['x-spree-channel'] = 'pos'
+            get :index
+            pos_channel_etag = response.headers['ETag']
+
+            expect(pos_channel_etag).not_to eq(default_channel_etag)
+          end
+
+          it 'does not serve a 304 across channels for the same fresh ETag' do
+            get :index
+            default_channel_etag = response.headers['ETag']
+
+            request.headers['x-spree-channel'] = 'pos'
+            request.headers['If-None-Match'] = default_channel_etag
+            get :index
+
+            expect(response).to have_http_status(:ok)
+          end
+        end
       end
 
       context 'for authenticated users' do
@@ -191,6 +221,34 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           get :show, params: { id: product.prefixed_id }
 
           expect(response).to have_http_status(:ok)
+        end
+
+        # Publish the same product on both channels so it resolves either way —
+        # isolating the channel as the sole cache dimension that differs.
+        context 'when the product is visible on two channels' do
+          before { pos_channel.add_products([product.id]) }
+
+          it 'changes ETag when the resolved channel changes' do
+            get :show, params: { id: product.prefixed_id }
+            default_channel_etag = response.headers['ETag']
+
+            request.headers['x-spree-channel'] = 'pos'
+            get :show, params: { id: product.prefixed_id }
+            pos_channel_etag = response.headers['ETag']
+
+            expect(pos_channel_etag).not_to eq(default_channel_etag)
+          end
+
+          it 'does not serve a 304 across channels for the same fresh ETag' do
+            get :show, params: { id: product.prefixed_id }
+            default_channel_etag = response.headers['ETag']
+
+            request.headers['x-spree-channel'] = 'pos'
+            request.headers['If-None-Match'] = default_channel_etag
+            get :show, params: { id: product.prefixed_id }
+
+            expect(response).to have_http_status(:ok)
+          end
         end
       end
 
