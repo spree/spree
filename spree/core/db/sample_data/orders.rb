@@ -80,19 +80,20 @@ orders.each(&:create_proposed_shipments)
 
 Spree::Order.where(id: orders.map(&:id)).update_all(state: :complete, status: 'placed', completed_at: Time.current - 1.day)
 
-# Adjustments (tax)
+# Tax lines
 tax_rate = Spree::TaxRate.find_by(name: 'California')
 
 if tax_rate
   orders.each do |order|
-    order.all_adjustments.where(
-      adjustable: order,
-      source: tax_rate,
-      label: 'Tax',
-      state: 'open',
-      mandatory: true
-    ).first_or_create! do |adj|
-      adj.amount = 0
+    order.line_items.each do |line_item|
+      amount = (tax_rate.amount * line_item.amount).round(2)
+      next if amount.zero?
+
+      line_item.tax_lines.where(order: order, tax_rate: tax_rate).first_or_create! do |tax_line|
+        tax_line.amount = amount
+        tax_line.label = tax_rate.name
+        tax_line.included = tax_rate.included_in_price
+      end
     end
   end
 end

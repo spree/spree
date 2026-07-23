@@ -54,4 +54,22 @@ describe Spree::Adjustment, type: :model do
       expect(described_class.non_tax).to include(manual_row)
     end
   end
+
+  describe 'deprecated association readers' do
+    it 'warns on the order readers' do
+      expect(Spree::Deprecation).to receive(:warn).with(/Spree::Order#adjustments/)
+      order.adjustments
+
+      expect(Spree::Deprecation).to receive(:warn).with(/Spree::Order#all_adjustments/)
+      order.all_adjustments
+    end
+
+    it 'warns on the line item and shipment readers' do
+      expect(Spree::Deprecation).to receive(:warn).with(/Spree::LineItem#adjustments/)
+      build(:line_item).adjustments
+
+      expect(Spree::Deprecation).to receive(:warn).with(/Spree::Shipment#adjustments/)
+      build(:shipment).adjustments
+    end
+  end
 end

@@ -34,6 +34,15 @@ module Spree
     has_many :shipping_methods, through: :shipping_rates
     has_many :variants, through: :inventory_units
 
+    # Legacy polymorphic adjustment reader: rows are frozen, removed in 6.1
+    def adjustments(*args)
+      Spree::Deprecation.warn(
+        'Spree::Shipment#adjustments reads frozen legacy adjustment rows and will be removed in Spree 6.1. ' \
+        'Use the typed adjustment lines instead (tax_lines, discount_lines, fees).'
+      )
+      super
+    end
+
     # Typed adjustment lines (replace polymorphic adjustments). The FK is
     # fulfillment_id — these associations survive the Shipment→Fulfillment
     # rename untouched.

@@ -371,7 +371,7 @@ module Spree
               expect(coupon_code.order).to be_nil
 
               expect(order.promotions).to be_empty
-              expect(order.line_item_adjustments).to be_empty
+              expect(order.discount_lines).to be_empty
             end
 
             it 'touches the promotion' do

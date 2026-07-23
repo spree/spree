@@ -200,11 +200,11 @@ describe Spree::LineItem, type: :model do
         expect(order.reload.tax_zone).to be_nil
       end
 
-      it 'does not create a tax adjustment' do
+      it 'does not create a tax line' do
         Spree::Cart::AddItem.call(order: order, variant: variant)
 
         line_item = order.find_line_item_by_variant(variant)
-        expect(line_item.adjustments.tax.count).to eq(0)
+        expect(line_item.tax_lines.count).to eq(0)
       end
     end
   end
