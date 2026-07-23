@@ -57,3 +57,13 @@ steps:
     notes: |
       Recomputes the descendant-inclusive products_count counter cache on every
       taxon in batches.
+
+  - id: product_tag_tenants
+    name: "Backfill tenant on product taggings"
+    task: "spree:upgrade:backfill_product_tag_tenants"
+    notes: |
+      Sets the tenant column on existing Spree::Product taggings from each
+      product's store_id, so product tag autocomplete is bounded to the owning
+      store (matching Spree::Order). New product taggings tenant themselves;
+      only rows created before the upgrade need this. Until it runs, older
+      product tags are hidden from the store-scoped tag vocabulary.

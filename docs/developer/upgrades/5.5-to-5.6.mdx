@@ -1,0 +1,193 @@
+---
+title: Upgrading to Spree 5.6
+description: Step-by-step guide to upgrading a Spree 5.5 application to Spree 5.6, including gem updates, migrations, data backfills, and breaking changes to review.
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 5.5](/developer/upgrades/5.4-to-5.5).
+</Info>
+
+The upgrade is usually completed in four steps:
+
+1. **Update the Ruby gems** which power Spree API
+2. **Run database migrations** — to migrate your existing schema to the new version
+3. **Run data backfills** — to move your existing data into the new schema and power new features
+4. Apply optional configuration and review behavior changes — to take advantage of new features and avoid surprises
+
+## How to upgrade
+
+For applications created via `create-spree-app` command we greatly recommend using the Spree CLI to perform the upgrade. It provides a guided experience with prompts and handles the first three steps for you. If you prefer to run the commands manually or not using docker for local development, you can follow the "Without Spree CLI" path.
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree upgrade
+```
+
+```bash Without Spree CLI
+# cd backend if you're in the monorepo root
+bundle update
+bundle exec rake spree:install:migrations && bin/rails db:migrate
+bundle exec rake spree:upgrade
+```
+
+</CodeGroup>
+
+The **Spree CLI** path runs all three commands for you with prompts. Recommended for local development. If you don't have the CLI yet, either install it globally or run it through `npx`:
+
+```bash
+# install once and use `spree …` everywhere
+npm install -g @spree/cli
+
+# or invoke without installing (each command runs through npx)
+npx @spree/cli upgrade
+```
+
+The **Without Spree CLI** path is the bare equivalent. Use this on production: `bundle update` and `db:migrate` are part of your existing deploy pipeline (Heroku release phase, K8s init container, Capistrano hook, Render auto-migrate). Once the 5.6 release is up, run `bundle exec rake spree:upgrade` from a one-off dyno / job container / `kubectl exec` to perform the data backfills.
+
+Skipping versions and re-running are both safe — `bundle exec rake spree:upgrade` figures out what still needs to happen and does nothing on data that's already migrated.
+
+## What the upgrade does
+
+This is reference material — what `bundle exec rake spree:upgrade` (and equivalently `spree upgrade`) actually executes on your data. Skip if you trust the tool; read on if something failed or you're curious. Every step is idempotent, so re-running the full manifest is safe.
+
+### Backfill store ownership on role assignments
+
+Spree 5.6 resolves admin roles per store. The migrations add `store_id` to `spree_role_users`, but existing assignments have a NULL value until backfilled:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:role_users:backfill_store_ids
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:role_users:backfill_store_ids
+```
+
+</CodeGroup>
+
+Sets `spree_role_users.store_id` from the store resource so `Spree::Ability` resolves roles by store. Store-scoped assignments only — extensions (e.g. `spree_multi_vendor`) backfill their own resource types. Until this runs, store admins stay authorized via the `spree_admin?` fallback.
+
+### Backfill store ownership on promotions and payment methods
+
+Spree 5.6 moves `Spree::Promotion` and `Spree::PaymentMethod` from multi-store sharing to single-owner `belongs_to :store`. The migrations add a `store_id` column to each; this task populates it:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:upgrade:populate_single_store_associations
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:upgrade:populate_single_store_associations
+```
+
+</CodeGroup>
+
+Sets `store_id` on `Spree::Promotion` and `Spree::PaymentMethod` from the legacy `spree_promotions_stores` / `spree_payment_methods_stores` join tables.
+
+<Warning>
+  Until this runs, migrated rows have a NULL `store_id` and are hidden from store-scoped lookups — a payment method with no `store_id` is unavailable at checkout. Run it right after `db:migrate`.
+</Warning>
+
+Records shared across several stores keep **one** owner (promotions: the earliest `spree_promotions_stores` row by `created_at`, then lowest `store_id`; payment methods: the lowest `store_id`, since that join has no timestamps) unless [`spree_multi_store`](#multi-store-deployments) is installed. Each shared record is logged so the loss is visible.
+
+### Backfill store ownership on taxons
+
+Categories carry a direct `store_id` in 5.6. The task sets it from each taxon's taxonomy, then resolves taxonomy-less rows through their parent chain:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:taxons:backfill_store_id
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:taxons:backfill_store_id
+```
+
+</CodeGroup>
+
+Until this runs, existing taxons keep resolving their store via the taxonomy join (`Taxon.for_store` fallback); taxonomy-less categories (`Spree::Category`) rely on the direct `store_id`, so the backfill is required for them.
+
+### Recompute taxon product counts
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:taxons:backfill_products_count
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:taxons:backfill_products_count
+```
+
+</CodeGroup>
+
+Recomputes the descendant-inclusive `products_count` counter cache on every taxon, in batches.
+
+### Backfill the store tenant on product tags
+
+Spree 5.6 bounds product tag autocomplete to the owning store. Product taggings now carry a store `tenant` (like order taggings already did); this task sets it on tags created before the upgrade:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:upgrade:backfill_product_tag_tenants
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:upgrade:backfill_product_tag_tenants
+```
+
+</CodeGroup>
+
+Sets the `tenant` column on existing `Spree::Product` taggings from each product's `store_id`. New product taggings tenant themselves automatically — only rows created before the upgrade need this. Until it runs, product tags created before the upgrade are hidden from the store's tag-autocomplete vocabulary (they reappear once it completes; storefront and admin tag *display* are unaffected).
+
+## Update the Spree SDK
+
+Spree 5.6 ships alongside `@spree/sdk` 1.2. The backend upgrade never touches your frontend source — bump the SDK in every JavaScript consumer of the Store API and take it through your normal PR/CI cycle:
+
+```bash
+# create-spree-app projects: the Next.js storefront
+cd apps/storefront
+npm install @spree/sdk@^1.2
+```
+
+If you maintain a separate storefront repo or other integrations, repeat there.
+
+| Spree backend | `@spree/sdk` |
+|---|---|
+| 5.4 | 1.0.x |
+| 5.5 | 1.1+ |
+| 5.6 | 1.2+ |
+
+## Behavior changes to review
+
+These don't require any rake task — but storefronts, integrations, and merchant-facing dashboards may need code changes to handle them correctly.
+
+### Promotions and payment methods belong to a single store
+
+`Spree::Promotion` and `Spree::PaymentMethod` are now single-owner (`belongs_to :store`). Create them through the store association so the owner is set:
+
+```ruby
+store.payment_methods.create!(...)
+store.promotions.create!(...)
+```
+
+A record built off the association but not yet saved is invisible to `available_for_store?` until persisted. The `store_ids=` writer that used to fan a record across stores is removed; multi-store sharing moves to the [`spree_multi_store`](#multi-store-deployments) extension. The `spree_promotions_stores` / `spree_payment_methods_stores` join tables are kept as legacy compat surface and dropped in a later release.
+
+### Admin roles resolve per store
+
+With `store_id` on role assignments, an admin's abilities are scoped to the store they're assigned to. Until [the role backfill](#backfill-store-ownership-on-role-assignments) runs, existing store admins remain authorized through the `spree_admin?` fallback, so there is no lockout — but run it so role resolution is correct going forward.
+
+### Product tag autocomplete is store-scoped
+
+The Admin API tag-autocomplete endpoint (`GET /api/v3/admin/tags`) now returns only tags used within the current store for store-owned taggables (products and orders). Customer tags remain global. If an integration relied on this endpoint returning tags across every store, that cross-store vocabulary is no longer exposed. Run [the tag-tenant backfill](#backfill-the-store-tenant-on-product-tags) so pre-upgrade product tags are included.
+
+## Multi-store deployments
+
+Sharing a single promotion, payment method, or product across multiple stores is no longer part of Spree core — 5.6 assigns each of these to one owning store. If you run several stores from one installation and need shared records, install the `spree_multi_store` extension **before** running the backfills; without it, the backfills assign each shared record to a single owner store and the others lose it (every such case is logged).
+
+For single-store deployments this is invisible — the backfills assign every record to your one store, and you can move on.
