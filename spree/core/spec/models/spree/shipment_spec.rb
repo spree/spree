@@ -956,6 +956,45 @@ describe Spree::Shipment, type: :model do
 
       expect(shipment.reload.cost).to eq(20)
     end
+
+    context 'with an active free-shipping promotion' do
+      let!(:promotion) { create(:free_shipping_promotion, kind: :automatic) }
+      let(:free_rate) { shipment.shipping_rates.find_by(shipping_method: shipping_method_1) }
+      let(:paid_rate) { shipment.shipping_rates.find_by(shipping_method: shipping_method_2) }
+
+      before do
+        shipment.shipping_rates.delete_all
+        create(:shipping_rate, shipment: shipment, shipping_method: shipping_method_1, cost: 0, selected: true)
+        create(:shipping_rate, shipment: shipment, shipping_method: shipping_method_2, cost: 20, selected: false)
+        shipment.reload
+        order.set_shipments_cost
+        # activates with the free rate selected: promotion is connected to the
+        # order but shipping costs 0, so no discount line exists yet
+        order.apply_free_shipping_promotions
+      end
+
+      it 'creates the discount line when switching to a paid rate' do
+        expect(shipment.discount_lines).to be_empty
+
+        shipment.selected_shipping_rate_id = paid_rate.id
+
+        expect(shipment.discount_lines.reload.count).to eq(1)
+        expect(shipment.discount_lines.first.amount).to eq(-20)
+        expect(shipment.reload.adjustment_total).to eq(-20)
+        expect(order.reload.shipment_total).to eq(20)
+        expect(order.total).to eq(order.item_total)
+      end
+
+      it 'destroys the discount line when switching back to a free rate' do
+        shipment.selected_shipping_rate_id = paid_rate.id
+        expect(shipment.discount_lines.reload.count).to eq(1)
+
+        shipment.selected_shipping_rate_id = free_rate.id
+
+        expect(shipment.discount_lines.reload).to be_empty
+        expect(shipment.reload.adjustment_total).to eq(0)
+      end
+    end
   end
 
   describe '#cost=' do

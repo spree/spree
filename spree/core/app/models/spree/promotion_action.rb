@@ -85,13 +85,13 @@ module Spree
     # @param amount [BigDecimal]
     # @return [Boolean] whether a line was written
     def upsert_discount_line(order, adjustable, amount)
-      discount_line = adjustable.discount_lines.find_or_initialize_by(promotion_action: self, order: order)
-
       if amount >= 0
-        discount_line.destroy! if discount_line.persisted?
+        discount_line = adjustable.discount_lines.find_by(promotion_action: self, order: order)
+        discount_line&.destroy!
         return false
       end
 
+      discount_line = adjustable.discount_lines.find_or_initialize_by(promotion_action: self, order: order)
       discount_line.promotion = promotion
       discount_line.label = label
       discount_line.amount = amount
