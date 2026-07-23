@@ -5,8 +5,14 @@ import {
   STOREFRONT_PORT,
 } from '../constants.js'
 import type { PackageManager } from '../types.js'
-import { globalAddCommand, runCommand } from '../utils.js'
+import { globalAddCommand, runCommand, storefrontPm } from '../utils.js'
 
+/**
+ * README for a generated project. Commands are rendered for the scaffold's
+ * package manager `pm` (default pnpm, matching detection) — except inside
+ * `apps/storefront/`, where the pnpm-pinned template forces pnpm for yarn
+ * scaffolds (see {@link storefrontPm}).
+ */
 export function readmeContent(
   name: string,
   hasStorefront: boolean,
@@ -58,7 +64,7 @@ Dependencies are already installed during setup — just start it:
 
 \`\`\`bash
 cd apps/storefront
-${pm} run dev
+${storefrontPm(pm)} run dev
 \`\`\`
 
 Open http://localhost:${STOREFRONT_PORT}

@@ -172,6 +172,12 @@ describe('readmeContent', () => {
     expect(content).not.toMatch(/\bnpm /)
   })
 
+  it('renders storefront commands with pnpm on yarn scaffolds (pnpm-pinned template)', () => {
+    const content = readmeContent('my-store', true, 3000, true, 'yarn')
+    expect(content).toContain('cd apps/storefront\npnpm run dev')
+    expect(content).toContain('cd apps/dashboard\nyarn run dev')
+  })
+
   it('includes the React Dashboard section when included', () => {
     const content = readmeContent('my-store', true, 3000, true)
     expect(content).toContain('### The React Dashboard (Developer Preview)')

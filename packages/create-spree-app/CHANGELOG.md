@@ -9,6 +9,7 @@
   - Stamp `packageManager` into the generated root package.json on pnpm scaffolds (steers corepack, and doubles as the pnpm version fallback for root-run workflows); omitted for npm/yarn scaffolds.
   - Install the cloned storefront with `--frozen-lockfile` under pnpm so template manifest/lockfile drift fails loudly instead of resolving silently to an untested tree.
   - Default the generated README/CLAUDE.md command examples to pnpm, matching the package-manager detection default.
+  - On yarn scaffolds, run storefront-scoped installs and command examples with pnpm — corepack-managed Yarn refuses to run inside the pnpm-pinned template, while the same corepack setup provisions the pinned pnpm on demand. npm scaffolds keep npm, which ignores the pin and keeps working.
 
 ## 1.1.4
 

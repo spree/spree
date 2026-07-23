@@ -45,6 +45,17 @@ export function installCommand(pm: PackageManager): string {
   return pm === 'yarn' ? 'yarn' : `${pm} install`
 }
 
+/**
+ * Package manager for commands run inside `apps/storefront/`. The storefront
+ * template pins pnpm via `packageManager`, which corepack-managed Yarn
+ * refuses to run against — and the same corepack setup provisions the pinned
+ * pnpm on demand, so yarn scaffolds use pnpm there. npm ignores the pin and
+ * keeps working (and `--use-npm` machines often have no pnpm to fall back to).
+ */
+export function storefrontPm(pm: PackageManager): PackageManager {
+  return pm === 'yarn' ? 'pnpm' : pm
+}
+
 /** Runner for a locally-installed bin (e.g. `npx spree`, `pnpm spree`). */
 export function runCommand(pm: PackageManager): string {
   if (pm === 'npm') return 'npx'

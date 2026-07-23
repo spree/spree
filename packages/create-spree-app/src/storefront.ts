@@ -4,7 +4,7 @@ import { execa } from 'execa'
 import { STOREFRONT_REPO } from './constants.js'
 import { storefrontEnvContent } from './templates/env.js'
 import type { PackageManager } from './types.js'
-import { installCommand } from './utils.js'
+import { installCommand, storefrontPm } from './utils.js'
 
 export async function downloadStorefront(projectDir: string): Promise<void> {
   const storefrontDir = path.join(projectDir, 'apps', 'storefront')
@@ -132,11 +132,14 @@ export async function installRootDeps(projectDir: string, pm: PackageManager): P
 
 export async function installStorefrontDeps(projectDir: string, pm: PackageManager): Promise<void> {
   const storefrontDir = path.join(projectDir, 'apps', 'storefront')
-  const [cmd, ...args] = installCommand(pm).split(' ')
+  // storefrontPm: never invoke yarn here — corepack-managed Yarn refuses to
+  // run inside the pnpm-pinned template.
+  const spm = storefrontPm(pm)
+  const [cmd, ...args] = installCommand(spm).split(' ')
   // Install exactly the tree the storefront's committed lockfile describes —
   // manifest/lockfile drift in the template should fail this (warn-and-
   // continue) phase loudly, not resolve silently to an untested tree.
-  if (pm === 'pnpm') args.push('--frozen-lockfile')
+  if (spm === 'pnpm') args.push('--frozen-lockfile')
   await execa(cmd, args, { cwd: storefrontDir, stdio: 'ignore' })
 }
 

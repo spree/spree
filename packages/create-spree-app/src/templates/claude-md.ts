@@ -22,6 +22,10 @@ full skill list.
 `
 }
 
+/**
+ * Root CLAUDE.md for a generated project. Command examples are rendered for
+ * the scaffold's package manager `pm` (default pnpm, matching detection).
+ */
 export function rootClaudeMdContent(
   hasStorefront: boolean,
   hasDashboard = false,
