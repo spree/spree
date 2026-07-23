@@ -13,6 +13,9 @@ RSpec.describe Spree::Reports::ProductsPerformance do
       before do
         order.update(completed_at: report.date_from + 1.day)
         line_item.save!
+        # written by the tax pass during recalculation; the order is already
+        # completed here, so set what the pipeline would have written
+        line_item.update_column(:pre_tax_amount, line_item.amount)
       end
 
       it 'includes products with sales data' do

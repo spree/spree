@@ -17,7 +17,7 @@ module Spree
         it 'recalculates order adjustments' do
           expect do
             Spree::Cart::AddItem.call(order: order, variant: shirt, quantity: 3)
-          end.to change { order.adjustments.eligible.pluck(:amount) }
+          end.to change { order.discount_lines.pluck(:amount) }
         end
       end
     end

@@ -370,14 +370,15 @@ module Spree
       line_items.sum(:pre_tax_amount)
     end
 
-    # Sum of the eligible promotion adjustments applied to the order itself
-    # (whole-order discounts created by Promotion::Actions::CreateAdjustment),
-    # as opposed to promotions applied to individual line items or shipments.
-    # Zero or negative.
+    # Sum of the distributed discount lines of whole-order promotions
+    # (Promotion::Actions::CreateAdjustment), as opposed to promotions
+    # targeting individual line items or fulfillments. Zero or negative.
     #
     # @return [BigDecimal]
     def order_level_promo_total
-      adjustments.promotion.eligible.sum(:amount)
+      discount_lines.joins(:promotion_action)
+                    .merge(Spree::PromotionAction.of_type('Spree::Promotion::Actions::CreateAdjustment'))
+                    .sum(:amount)
     end
 
     # Sum of all line item and shipment pre-tax
@@ -393,7 +394,7 @@ module Spree
     end
 
     def shipping_discount
-      shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
+      fulfillment_discount_lines.sum(:amount) * -1
     end
 
     def completed?
@@ -588,17 +589,6 @@ module Spree
       end
     end
 
-    # Creates new tax charges if there are any applicable rates. If prices already
-    # include taxes then price adjustments are created instead.
-    def create_tax_charge!
-      Spree::TaxRate.adjust(self, line_items)
-      Spree::TaxRate.adjust(self, shipments) if shipments.any?
-    end
-
-    def create_shipment_tax_charge!
-      Spree::TaxRate.adjust(self, shipments) if shipments.any?
-    end
-
     def update_line_item_prices!
       transaction do
         line_items.reload.each(&:update_price)
@@ -671,9 +661,6 @@ module Spree
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!
-      # lock all adjustments (coupon promotions, etc.)
-      all_adjustments.each(&:close)
-
       # update payment and shipment(s) states, and save
       updater.update_payment_state
       shipments.each do |shipment|
@@ -799,9 +786,14 @@ module Spree
     end
 
     def create_proposed_shipments
-      all_adjustments.shipping.delete_all
-
       shipment_ids = shipments.map(&:id)
+
+      # shipments are bulk-deleted below without destroy callbacks, so their
+      # typed adjustment lines must be dropped explicitly
+      Spree::TaxLine.where(fulfillment_id: shipment_ids).delete_all
+      Spree::DiscountLine.where(fulfillment_id: shipment_ids).delete_all
+      Spree::Fee.where(fulfillment_id: shipment_ids).delete_all
+
       StateChange.where(stateful_type: 'Spree::Shipment', stateful_id: shipment_ids).delete_all
       ShippingRate.where(shipment_id: shipment_ids).delete_all
 
@@ -1031,9 +1023,7 @@ module Spree
     # Returns the IDs of the valid promotions for the order
     # @return [Array<Integer>]
     def valid_promotion_ids
-      all_adjustments.eligible.nonzero.promotion.promotion.eligible.nonzero.promotion.
-        joins("INNER JOIN #{Spree::PromotionAction.table_name} ON #{Spree::PromotionAction.table_name}.id = #{Spree::Adjustment.table_name}.source_id").
-        pluck("#{Spree::PromotionAction.table_name}.promotion_id").compact.uniq
+      discount_lines.where.not(promotion_id: nil).distinct.pluck(:promotion_id)
     end
 
     # Returns the valid coupon promotions for the order
@@ -1045,19 +1035,16 @@ module Spree
     end
 
     # Returns item and whole order discount amount for Order
-    # without Shipment discounts (eg. Free Shipping)
+    # without fulfillment discounts (eg. Free Shipping)
     # @return [BigDecimal]
     def cart_promo_total
-      all_adjustments.eligible.nonzero.promotion.
-        where.not(adjustable_type: 'Spree::Shipment').
-        sum(:amount)
+      discount_lines.for_line_items.sum(:amount)
     end
 
     def has_free_shipping?
-      shipment_adjustments.
+      fulfillment_discount_lines.
         joins(:promotion_action).
-        where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
-              spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
+        where(Spree::PromotionAction.table_name => { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
     end
 
     def to_csv(_store = nil)

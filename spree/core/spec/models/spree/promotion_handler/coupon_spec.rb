@@ -84,14 +84,14 @@ module Spree
                 subject.apply
                 expect(subject.success).to be_present
                 order.line_items.each do |line_item|
-                  expect(line_item.adjustments.count).to eq(1)
+                  expect(line_item.discount_lines.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
                 expect(order.reload.total).to eq(100)
               end
 
               it 'calls update_with_updater!' do
-                expect(order).to receive(:update_with_updater!)
+                expect(order).to receive(:update_with_updater!).at_least(:once)
                 subject.apply
               end
 
@@ -112,7 +112,7 @@ module Spree
                 subject.apply
                 expect(subject.success).to be_present
                 order.line_items.each do |line_item|
-                  expect(line_item.adjustments.count).to eq(1)
+                  expect(line_item.discount_lines.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
                 expect(order.reload.total).to eq(100)
@@ -153,7 +153,7 @@ module Spree
               subject.apply
               expect(subject.success).to be_present
 
-              expect(order.shipment_adjustments.count).to eq(1)
+              expect(order.fulfillment_discount_lines.count).to eq(1)
             end
 
             it 'coupon already applied to the order' do
@@ -169,20 +169,21 @@ module Spree
           let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
           context 'right coupon given' do
-            let(:order) { create(:order, store: store) }
+            # Real line items: whole-order discounts distribute across them,
+            # and the amounts need to be big enough that the promotion "wins"
+            let(:order) { create(:order_with_line_items, line_items_count: 1, line_items_price: 50, store: store) }
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
             before do
-              allow(order).to receive_messages(coupon_code: '10off',
-                                               # These need to be here so that promotion adjustment "wins"
-                                               item_total: 50,
-                                               ship_total: 10)
+              allow(order).to receive_messages(coupon_code: '10off')
             end
 
             it 'successfully activates promo' do
               subject.apply
               expect(subject.success).to be_present
-              expect(order.adjustments.count).to eq(1)
+              # one distributed line from the whole-order action (the outer
+              # promotion also carries a line-item action, which stacks)
+              expect(order.discount_lines.where(promotion_action: action).count).to eq(1)
             end
 
             it 'coupon already applied to the order' do
@@ -203,7 +204,7 @@ module Spree
               subject.apply
               expect(subject.successful?).to be true
 
-              order_2 = create(:order, store: store)
+              order_2 = create(:order_with_line_items, line_items_count: 1, line_items_price: 50, store: store)
               allow(order_2).to receive_messages coupon_code: '10off'
               coupon = Coupon.new(order_2)
               coupon.apply
@@ -329,7 +330,7 @@ module Spree
             expect(coupon_code.order).to eq(order)
 
             order.line_items.each do |line_item|
-              expect(line_item.adjustments.count).to eq(1)
+              expect(line_item.discount_lines.count).to eq(1)
             end
             expect(order.reload.total).to eq(100)
           end

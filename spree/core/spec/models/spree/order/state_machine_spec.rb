@@ -58,17 +58,15 @@ describe Spree::Order, type: :model do
         order.state = 'delivery'
       end
 
-      it 'adjusts tax rates when transitioning to delivery' do
-        # Once for the line items
+      it 'adjusts tax rates via the recalculation pipeline' do
         expect(Spree::TaxRate).to receive(:adjust).once
         allow(order).to receive :set_shipments_cost
         order.next!
       end
 
-      it 'adjusts tax rates twice if there are any shipments' do
-        # Once for the line items, once for the shipments
-        order.shipments.build stock_location: create(:stock_location)
-        expect(Spree::TaxRate).to receive(:adjust).twice
+      it 'includes shipments in the tax adjustment if there are any' do
+        shipment = order.shipments.build stock_location: create(:stock_location)
+        expect(Spree::TaxRate).to receive(:adjust).with(order, [shipment]).once
         allow(order).to receive :set_shipments_cost
         order.next!
       end

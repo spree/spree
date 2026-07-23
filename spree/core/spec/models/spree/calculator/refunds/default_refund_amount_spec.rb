@@ -12,28 +12,29 @@ describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
   let(:return_item)     { build(:return_item, inventory_unit: inventory_unit) }
   let(:calculator)      { Spree::Calculator::Returns::DefaultRefundAmount.new }
 
-  before { order.line_items << line_item }
+  before do
+    order.line_items << line_item
+    # written by the tax pass (TaxRate.store_pre_tax_amount) during
+    # recalculation: the discounted amount, net of ALL discounts
+    line_item.update_column(:pre_tax_amount, pre_tax_amount)
+  end
 
   context 'not an exchange' do
     context 'no promotions or taxes' do
       it { is_expected.to eq pre_tax_amount / line_item_quantity }
     end
 
-    context 'order adjustments' do
-      let(:adjustment_amount) { -10.0 }
+    context 'with discounts' do
+      let(:discount_amount) { -10.0 }
+      # whole-order discounts are distributed to line items and included in
+      # pre_tax_amount — the refund needs no separate weighted share
+      let(:pre_tax_amount) { line_item_quantity * item_price + discount_amount }
 
-      before do
-        order.adjustments << create(:adjustment, order: order, amount: adjustment_amount, eligible: true, label: 'Adjustment', source_type: 'Spree::Order')
-        order.adjustments.first.update(amount: adjustment_amount)
-      end
-
-      it { is_expected.to eq (pre_tax_amount - adjustment_amount.abs) / line_item_quantity }
+      it { is_expected.to eq (line_item_quantity * item_price - discount_amount.abs) / line_item_quantity }
     end
 
-    context 'shipping adjustments' do
-      let(:adjustment_total) { -50.0 }
-
-      before { order.shipments << Spree::Shipment.new(adjustment_total: adjustment_total) }
+    context 'fulfillment discounts' do
+      before { order.shipments << Spree::Shipment.new(adjustment_total: -50.0) }
 
       it { is_expected.to eq pre_tax_amount / line_item_quantity }
     end

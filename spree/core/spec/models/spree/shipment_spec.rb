@@ -195,7 +195,8 @@ describe Spree::Shipment, type: :model do
       create_shipment(order, stock_location)
       create_shipment(order, stock_location)
 
-      create :tax_adjustment, adjustable: order.line_items.first, order: order
+      # tax as persisted by the recalculation pipeline
+      order.line_items.first.update_column(:adjustment_total, 2.0)
 
       expect(order.shipments.first.item_cost).to eq(11.0)
       expect(order.shipments.last.item_cost).to eq(11.0)
@@ -203,7 +204,7 @@ describe Spree::Shipment, type: :model do
 
     it 'equals line items final amount with tax' do
       shipment = create(:shipment, order: create(:order_with_line_item_quantity, line_items_quantity: 2))
-      create :tax_adjustment, adjustable: shipment.order.line_items.first, order: shipment.order
+      shipment.order.line_items.first.update_column(:adjustment_total, 2.0)
       expect(shipment.item_cost).to eq(22.0)
     end
   end

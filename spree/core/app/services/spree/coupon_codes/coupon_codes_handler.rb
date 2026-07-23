@@ -19,8 +19,7 @@ module Spree
       private
 
       def find_current_promotions_ids
-        order.all_adjustments.promotion.eligible.joins("INNER JOIN #{Spree::PromotionAction.table_name} ON #{Spree::PromotionAction.table_name}.id = #{Spree::Adjustment.table_name}.source_id").
-          pluck("#{Spree::PromotionAction.table_name}.promotion_id").compact.uniq
+        order.discount_lines.where.not(promotion_id: nil).distinct.pluck(:promotion_id)
       end
 
       def use_all_current(promotion_ids)

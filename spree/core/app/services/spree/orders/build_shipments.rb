@@ -18,7 +18,6 @@ module Spree
         return success(order) unless order.delivery_required?
 
         order.create_proposed_shipments
-        order.create_shipment_tax_charge!
         order.set_shipments_cost
         order.apply_free_shipping_promotions
 

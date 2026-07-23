@@ -49,11 +49,13 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'freezes all adjustments' do
-      adjustments = [double]
-      expect(order).to receive(:all_adjustments).and_return(adjustments)
-      expect(adjustments).to all(receive(:close))
+    it 'does not recalculate adjustment lines once completed' do
+      # completed orders are frozen by convention — finalize! has nothing to
+      # lock and the updater's recalculation pass skips them
       order.finalize!
+
+      expect(Spree::TaxRate).not_to receive(:adjust)
+      order.update_with_updater!
     end
 
     context 'order is considered risky' do

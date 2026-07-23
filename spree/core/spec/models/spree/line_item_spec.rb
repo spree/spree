@@ -155,16 +155,11 @@ describe Spree::LineItem, type: :model do
         line_item.quantity = line_item.quantity + 1
       end
 
-      it 'triggers adjustment total recalculation' do
-        expect(line_item).to receive(:update_tax_charge) # Regression test for https://github.com/spree/spree/issues/4671
-        expect(line_item).to receive(:recalculate_adjustments)
-        line_item.save
-      end
-    end
-
-    context 'line item does not change' do
-      it 'does not trigger adjustment total recalculation' do
-        expect(line_item).not_to receive(:recalculate_adjustments)
+      it 'does not recalculate adjustments as a save side effect' do
+        # recalculation runs only in the OrderUpdater pipeline, which the
+        # cart services invoke
+        expect(Spree::Adjusters::Promotion).not_to receive(:adjust_all)
+        expect(Spree::TaxRate).not_to receive(:adjust)
         line_item.save
       end
     end
@@ -190,10 +185,10 @@ describe Spree::LineItem, type: :model do
         expect(order.tax_zone).to be_present
       end
 
-      it 'creates a tax adjustment' do
+      it 'creates a tax line' do
         Spree::Cart::AddItem.call(order: order, variant: variant)
         line_item = order.find_line_item_by_variant(variant)
-        expect(line_item.adjustments.tax.count).to eq(1)
+        expect(line_item.tax_lines.count).to eq(1)
       end
     end
 
@@ -290,7 +285,7 @@ describe Spree::LineItem, type: :model do
     it 'returns the amount minus any discounts' do
       line_item.price = 10
       line_item.quantity = 2
-      line_item.taxable_adjustment_total = -5
+      line_item.promo_total = -5
       expect(line_item.discounted_amount).to eq(15)
     end
   end
