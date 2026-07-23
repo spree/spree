@@ -78,7 +78,7 @@ module Spree
 
         it 'creates valid discount on order' do
           subject.call(order: order, variant: variant, quantity: 1)
-          expect(order.adjustments.to_a.sum(&:amount)).not_to eq 0
+          expect(order.discount_lines.sum(:amount)).not_to eq 0
           expect(order.total).to eq 30
         end
       end
@@ -93,7 +93,7 @@ module Spree
 
         it 'creates valid discount on order' do
           subject.call(order: order, variant: variant, quantity: 1)
-          expect(order.line_item_adjustments.to_a.sum(&:amount)).not_to eq 0
+          expect(order.line_item_discount_lines.sum(:amount)).not_to eq 0
           expect(order.total).to eq 30
         end
       end
