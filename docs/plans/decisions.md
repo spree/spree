@@ -1,3 +1,33 @@
+## 2026-07-23: Payment-method eligibility rules + Channel→Markets allowlist target 5.7; multi-credential grooming deferred
+
+Merchant asks (wholesale net payment vs DTC Stripe, installments above an
+order-total threshold, market-bound payment methods, channels limited to
+certain markets) plus a four-platform review (Vendure channel-scoped
+PaymentMethods + `PaymentMethodEligibilityChecker`, Medusa region-scoped
+payment providers, Saleor per-channel payment apps, Shopify Payment
+Customization Functions + the May-2026 per-market multi-entity Shopify
+Payments) settled three things:
+
+1. **`5.7-payment-method-rules.md`** — `Spree::PaymentMethodRule` STI
+   (Channel / Market / OrderTotal / CustomerGroup rules), mirroring the
+   PromotionRule/PriceRule/OrderRoutingRule house pattern; enforced through
+   the single `Order#collect_frontend_payment_methods` seam; storefront-only
+   (admin/backoffice bypasses). Supersedes the "payment methods have no
+   distribution concept" rationale in
+   `5.6-6.0-single-store-promotions-payment-methods.md` — the single-store FK
+   stands, eligibility is layered on via rules.
+2. **`5.7-channel-markets.md`** — optional Channel→Markets allowlist
+   (`spree_channel_markets`, empty = all markets), enforced in market
+   resolution, the Store API markets reference endpoints, and order
+   validation. Composes with `MarketRule` above.
+3. **Deferred for grooming: multiple provider credentials / legal entities
+   in one store** (two Stripe accounts split by channel or market, Shopify's
+   multi-entity model). Candidate shapes — separate PaymentMethod records per
+   channel/market (Vendure/Medusa style; needs the Admin API `types`
+   "already installed" filter relaxed) vs per-channel credential mapping on
+   one record (Saleor style) — plus the legal-entity attribution question
+   (per-entity payouts, compliance, reporting). No plan yet; do not implement.
+
 ## 2026-07-21: Order routing rules get admin management in the React dashboard only
 
 Per-channel `Spree::OrderRoutingRule` management (the Phase 2 "Admin API + SPA
