@@ -5,7 +5,8 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { adaptStorefrontWorkflow, prepareStorefrontTemplate } from '../src/storefront'
 
 // Trimmed mirror of the storefront's .github/workflows/ci.yml: a multi-job
-// workflow named "CI" whose E2E job boots the stock Spree image via compose.
+// pnpm workflow named "CI" whose E2E job boots the stock Spree image via
+// compose.
 const STOREFRONT_CI = `name: CI
 
 on:
@@ -19,19 +20,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm ci
-      - run: npm run lint
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run check
 
   e2e:
     name: E2E (Playwright + Spree)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm ci
+      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - name: Boot Spree backend (Postgres + Redis + latest Spree)
         run: docker compose -f e2e-backend/docker-compose.yml up -d --wait
       - name: Run Playwright tests
-        run: npm run test:e2e
+        run: pnpm run test:e2e
 `
 
 describe('adaptStorefrontWorkflow', () => {
@@ -78,7 +89,35 @@ describe('adaptStorefrontWorkflow', () => {
 
   it('leaves the Playwright run command unchanged', () => {
     const result = adaptStorefrontWorkflow(STOREFRONT_CI)
-    expect(result).toContain('run: npm run test:e2e')
+    expect(result).toContain('run: pnpm run test:e2e')
+  })
+
+  it('points pnpm/action-setup at the storefront package.json', () => {
+    const result = adaptStorefrontWorkflow(STOREFRONT_CI)
+    const expected =
+      '      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9\n' +
+      '        with:\n' +
+      '          package_json_file: apps/storefront/package.json'
+    // Both jobs (lint + e2e) get the rewrite.
+    expect(result.split(expected).length - 1).toBe(2)
+  })
+
+  it('keys the setup-node cache on the storefront lockfile', () => {
+    const result = adaptStorefrontWorkflow(STOREFRONT_CI)
+    const expected =
+      '          cache: pnpm\n' + '          cache-dependency-path: apps/storefront/pnpm-lock.yaml'
+    expect(result.split(expected).length - 1).toBe(2)
+  })
+
+  it('keys npm caches on the storefront package-lock (pre-pnpm clones)', () => {
+    const legacy = [
+      '      - uses: actions/setup-node@v4',
+      '        with:',
+      '          cache: npm',
+    ].join('\n')
+    expect(adaptStorefrontWorkflow(legacy)).toContain(
+      '          cache: npm\n          cache-dependency-path: apps/storefront/package-lock.json',
+    )
   })
 })
 

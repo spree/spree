@@ -99,6 +99,18 @@ describe('rootPackageJsonContent', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     expect(pkg.private).toBe(true)
   })
+
+  it('pins pnpm via packageManager for pnpm scaffolds', () => {
+    const pkg = JSON.parse(rootPackageJsonContent('my-store', 'pnpm'))
+    expect(pkg.packageManager).toMatch(/^pnpm@\d+\.\d+\.\d+$/)
+  })
+
+  it('omits packageManager for npm and yarn scaffolds', () => {
+    for (const pm of ['npm', 'yarn'] as const) {
+      const pkg = JSON.parse(rootPackageJsonContent('my-store', pm))
+      expect(pkg.packageManager).toBeUndefined()
+    }
+  })
 })
 
 describe('readmeContent', () => {
@@ -116,7 +128,7 @@ describe('readmeContent', () => {
   it('includes storefront section', () => {
     const content = readmeContent('my-store', true, 3000)
     expect(content).toContain('storefront')
-    expect(content).toContain('npm run dev')
+    expect(content).toContain('pnpm run dev')
   })
 
   it('includes eject instructions', () => {
@@ -146,9 +158,9 @@ describe('readmeContent', () => {
   it('documents the Admin API and how to run the CLI directly', () => {
     const content = readmeContent('my-store', true, 3000)
     expect(content).toContain('### Admin API')
-    expect(content).toContain('npx spree api get products')
+    expect(content).toContain('pnpm spree api get products')
     expect(content).toContain('.spree/credentials.json')
-    expect(content).toContain('npm install -g @spree/cli')
+    expect(content).toContain('pnpm add -g @spree/cli')
   })
 
   it('renders commands for the chosen package manager', () => {

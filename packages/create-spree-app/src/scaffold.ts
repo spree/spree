@@ -93,7 +93,10 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     path.join(projectDir, '.env'),
     envContent(generateSecretKeyBase(), port, options.sampleData),
   )
-  fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
+  fs.writeFileSync(
+    path.join(projectDir, 'package.json'),
+    rootPackageJsonContent(projectName, options.packageManager),
+  )
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
   fs.writeFileSync(path.join(projectDir, '.dockerignore'), dockerignoreContent())
   fs.writeFileSync(path.join(projectDir, 'AGENTS.md'), agentsMdContent())

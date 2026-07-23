@@ -1,7 +1,14 @@
-export function rootPackageJsonContent(name: string): string {
+import { PNPM_VERSION } from '../constants.js'
+import type { PackageManager } from '../types.js'
+
+export function rootPackageJsonContent(name: string, pm: PackageManager = 'pnpm'): string {
   const pkg = {
     name,
     private: true,
+    // Steers corepack and doubles as the pnpm/action-setup fallback when a
+    // workflow runs from the root. Omitted for npm/yarn scaffolds — they
+    // don't read it, and a pnpm pin would make corepack block yarn outright.
+    ...(pm === 'pnpm' ? { packageManager: `pnpm@${PNPM_VERSION}` } : {}),
     scripts: {
       dev: 'spree dev',
       stop: 'spree stop',

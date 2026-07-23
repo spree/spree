@@ -12,7 +12,7 @@ export function readmeContent(
   hasStorefront: boolean,
   port: number,
   hasDashboard = false,
-  pm: PackageManager = 'npm',
+  pm: PackageManager = 'pnpm',
 ): string {
   const run = runCommand(pm)
   let content = `# ${name}

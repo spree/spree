@@ -23,6 +23,10 @@ const PROJECT_SPREE_IMAGE = 'project-spree:e2e'
  * apps/storefront, and to build the project's own `backend/` image for the E2E
  * suite instead of stock Spree), and drop the storefront's now-empty `.github`.
  *
+ * The clone is otherwise left as-is: its `pnpm-lock.yaml` and `packageManager`
+ * pin stay even on npm/yarn scaffolds, because the relocated CI is pnpm-based
+ * and installs against that lockfile.
+ *
  * @param projectDir absolute path to the wrapper project root
  */
 export function prepareStorefrontTemplate(projectDir: string): void {
@@ -54,6 +58,9 @@ export function prepareStorefrontTemplate(projectDir: string): void {
  *
  * - rename it (`CI` → `Storefront CI`) so it doesn't shadow the backend's check;
  * - run every job from `apps/storefront/` via a per-job default;
+ * - point `pnpm/action-setup` and setup-node's dependency cache at
+ *   `apps/storefront/` — both resolve from the repo root by default, where the
+ *   storefront's package.json and lockfile don't exist in this layout;
  * - in the E2E job, build the project's own `backend/Dockerfile` into a local
  *   image and boot the E2E stack against it (`SPREE_IMAGE`), so the storefront
  *   is tested against the customized backend the project deploys — not stock
@@ -71,6 +78,27 @@ export function adaptStorefrontWorkflow(content: string): string {
     /^([ \t]*)runs-on:.*$/gm,
     (line, indent) =>
       `${line}\n\n${indent}defaults:\n${indent}  run:\n${indent}    working-directory: apps/storefront`,
+  )
+
+  // pnpm/action-setup reads the pnpm version from `packageManager` in the
+  // repo-root package.json; the storefront's copy is the authoritative one
+  // here (the wrapper root's may be absent on npm/yarn scaffolds).
+  result = result.replace(
+    /^([ \t]*)- uses: pnpm\/action-setup@.*$/gm,
+    (line, indent) =>
+      `${line}\n${indent}  with:\n${indent}    package_json_file: apps/storefront/package.json`,
+  )
+
+  // setup-node's cache keys on a lockfile resolved from the repo root, where
+  // the storefront's doesn't live in this layout — the job fails outright
+  // when the root has no matching lockfile. Handles both the pnpm workflow
+  // and pre-pnpm clones still caching npm.
+  result = result.replace(
+    /^([ \t]*)cache: (npm|pnpm)[ \t]*$/gm,
+    (_line, indent, pm) =>
+      `${indent}cache: ${pm}\n${indent}cache-dependency-path: apps/storefront/${
+        pm === 'pnpm' ? 'pnpm-lock.yaml' : 'package-lock.json'
+      }`,
   )
 
   // The E2E "Boot Spree backend" step must run against the project's own
@@ -105,6 +133,10 @@ export async function installRootDeps(projectDir: string, pm: PackageManager): P
 export async function installStorefrontDeps(projectDir: string, pm: PackageManager): Promise<void> {
   const storefrontDir = path.join(projectDir, 'apps', 'storefront')
   const [cmd, ...args] = installCommand(pm).split(' ')
+  // Install exactly the tree the storefront's committed lockfile describes —
+  // manifest/lockfile drift in the template should fail this (warn-and-
+  // continue) phase loudly, not resolve silently to an untested tree.
+  if (pm === 'pnpm') args.push('--frozen-lockfile')
   await execa(cmd, args, { cwd: storefrontDir, stdio: 'ignore' })
 }
 

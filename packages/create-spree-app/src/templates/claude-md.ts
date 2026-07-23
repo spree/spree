@@ -25,7 +25,7 @@ full skill list.
 export function rootClaudeMdContent(
   hasStorefront: boolean,
   hasDashboard = false,
-  pm: PackageManager = 'npm',
+  pm: PackageManager = 'pnpm',
 ): string {
   const run = runCommand(pm)
   const lines = [
