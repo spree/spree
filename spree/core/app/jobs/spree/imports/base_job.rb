@@ -17,8 +17,11 @@ module Spree
         locale = store&.default_locale
         return yield if locale.blank?
 
+        previous_content_locale = Spree::Current.content_locale
         Spree::Current.content_locale = locale
         I18n.with_locale(locale, &block)
+      ensure
+        Spree::Current.content_locale = previous_content_locale unless locale.blank?
       end
     end
   end
