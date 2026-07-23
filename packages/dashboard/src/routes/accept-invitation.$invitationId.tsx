@@ -16,6 +16,7 @@ import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { AuthShell } from '../components/spree/auth-shell'
 import {
   type AcceptInvitationSignInFormValues,
   type AcceptInvitationSignUpFormValues,
@@ -42,19 +43,19 @@ function AcceptInvitationPage() {
 
   if (!token) {
     return (
-      <Shell>
+      <AuthShell>
         <ErrorCard
           title={t('admin.invitation.missing_token_title')}
           message={t('admin.invitation.missing_token_message')}
         />
-      </Shell>
+      </AuthShell>
     )
   }
 
   return (
-    <Shell>
+    <AuthShell>
       <InvitationLoader invitationId={invitationId} token={token} />
-    </Shell>
+    </AuthShell>
   )
 }
 
@@ -323,13 +324,5 @@ function ErrorCard({ title, message }: { title: string; message: string }) {
         <CardDescription>{message}</CardDescription>
       </CardHeader>
     </Card>
-  )
-}
-
-function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
-      <div className="flex w-full max-w-sm flex-col gap-6">{children}</div>
-    </div>
   )
 }
