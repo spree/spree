@@ -79,8 +79,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[variant_id order_id tax_category_id quantity
                                                  price cost_price cost_currency adjustment_total
                                                  additional_tax_total promo_total included_tax_total
-                                                 pre_tax_amount taxable_adjustment_total
-                                                 non_taxable_adjustment_total]
+                                                 pre_tax_amount]
 
     def copy_price
       if variant

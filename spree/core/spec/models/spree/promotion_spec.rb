@@ -383,25 +383,20 @@ describe Spree::Promotion, type: :model do
       action
     end
 
-    let!(:adjustment) do
-      order = create(:order)
-      Spree::Adjustment.create!(
-        order: order,
-        adjustable: order,
-        source: action,
-        amount: 10,
-        label: 'Promotional adjustment'
-      )
+    let(:order) { create(:order) }
+    let!(:discount_line) do
+      create(:discount_line, line_item: create(:line_item, order: order), order: order,
+                             promotion_action: action, promotion: promotion, kind: nil, amount: -10)
     end
 
-    it 'counts eligible adjustments' do
-      adjustment.update_column(:eligible, true)
+    it 'counts orders with discount lines from this promotion' do
       expect(promotion.credits_count).to eq(1)
     end
 
-    # Regression test for #4112
-    it 'does not count ineligible adjustments' do
-      adjustment.update_column(:eligible, false)
+    # Winner-only rows: a promotion that lost best-promo competition (or
+    # zeroed out) has no lines and consumes no usage
+    it 'does not count orders whose discount lines were removed' do
+      discount_line.destroy!
       expect(promotion.credits_count).to eq(0)
     end
 
@@ -415,19 +410,11 @@ describe Spree::Promotion, type: :model do
       end
 
       before do
-        order = adjustment.order
-        Spree::Adjustment.create!(
-          order: order,
-          adjustable: order,
-          source: second_action,
-          amount: -5,
-          label: 'Second promotional adjustment'
-        )
-        # mark both adjustments eligible
-        order.all_adjustments.update_all(eligible: true)
+        create(:discount_line, line_item: order.line_items.first, order: order,
+                               promotion_action: second_action, promotion: promotion, kind: nil, amount: -5)
       end
 
-      it 'counts unique orders, not individual adjustments' do
+      it 'counts unique orders, not individual discount lines' do
         expect(promotion.credits_count).to eq(1)
       end
     end
@@ -437,15 +424,8 @@ describe Spree::Promotion, type: :model do
       let!(:second_order) { create(:order) }
 
       before do
-        Spree::Adjustment.create!(
-          order: second_order,
-          adjustable: second_order,
-          source: action,
-          amount: 10,
-          label: 'Promotional adjustment'
-        )
-        adjustment.update_column(:eligible, true)
-        second_order.all_adjustments.update_all(eligible: true)
+        create(:discount_line, line_item: create(:line_item, order: second_order), order: second_order,
+                               promotion_action: action, promotion: promotion, kind: nil, amount: -10)
       end
 
       it 'counts each order separately' do
@@ -468,33 +448,23 @@ describe Spree::Promotion, type: :model do
       promotion.actions << action
       action
     end
-    let(:order_adjustment) do
-      Spree::Adjustment.create!(
-        source: order_action,
-        amount: 10,
-        adjustable: order,
-        order: order,
-        label: 'Promotional adjustment'
-      )
+    let(:order_discount_line) do
+      create(:discount_line, line_item: line_item, order: order,
+                             promotion_action: order_action, promotion: promotion, kind: nil, amount: -10)
     end
-    let(:item_adjustment) do
-      Spree::Adjustment.create!(
-        source: item_action,
-        amount: 10,
-        adjustable: line_item,
-        order: order,
-        label: 'Promotional adjustment'
-      )
+    let(:item_discount_line) do
+      create(:discount_line, line_item: line_item, order: order,
+                             promotion_action: item_action, promotion: promotion, kind: nil, amount: -10)
     end
 
-    it 'counts order level adjustments' do
-      expect(order_adjustment.adjustable).to eq(order)
+    it 'counts order level discount lines' do
+      expect(order_discount_line.adjustable).to eq(line_item)
       expect(promotion.credits_count).to eq(1)
       expect(promotion.adjusted_credits_count(order)).to eq(0)
     end
 
-    it 'counts item level adjustments' do
-      expect(item_adjustment.adjustable).to eq(line_item)
+    it 'counts item level discount lines' do
+      expect(item_discount_line.adjustable).to eq(line_item)
       expect(promotion.credits_count).to eq(1)
       expect(promotion.adjusted_credits_count(order)).to eq(0)
     end
@@ -818,12 +788,11 @@ describe Spree::Promotion, type: :model do
       context 'when the order is complete' do
         it { is_expected.to be true }
 
-        context 'when the promotion is not eligible' do
-          let(:adjustment) { order.adjustments.first }
-
+        context 'when the promotion produced no surviving discount lines' do
           before do
-            adjustment.eligible = false
-            adjustment.save!
+            # e.g. lost best-promo competition — losers are deleted, not
+            # flagged ineligible
+            order.discount_lines.where(promotion_id: promotion.id).destroy_all
           end
 
           it { is_expected.to be false }
@@ -927,8 +896,8 @@ describe Spree::Promotion, type: :model do
   # taxable-basis bug: applying any promotion must move the taxable basis, for
   # line-item and whole-order adjustments, percent and flat-rate calculators,
   # additional (US-style) and included (VAT-style) tax — and the corrected
-  # figures must survive the checkout tax rebuild (create_tax_charge!) that
-  # writes the totals persisted onto completed orders.
+  # figures must survive the tax rebuild the recalculation pipeline runs
+  # before completion, which writes the totals persisted onto completed orders.
   describe 'promotion discounts and the taxable basis' do
     let(:tax_category) { create(:tax_category) }
 
@@ -971,11 +940,10 @@ describe Spree::Promotion, type: :model do
       order.reload
     end
 
-    # The checkout state machine rebuilds all tax lines through
-    # Spree::TaxRate.adjust before payment; whatever it computes is what a
-    # completed order keeps.
+    # Every recalculation rebuilds all tax lines through Spree::TaxRate.adjust;
+    # whatever the last run before completion computes is what a completed
+    # order keeps.
     def rebuild_tax_like_checkout!
-      order.create_tax_charge!
       order.update_with_updater!
       order.reload
     end

@@ -88,6 +88,10 @@ RSpec.describe Spree::Reports::SalesTotal do
     before { order.update(completed_at: report.date_from + 1.day) }
 
     it 'returns line items' do
+      # the recalculation pipeline writes pre_tax_amount on its own preloaded
+      # copies — the memoized association instance is stale
+      line_item.reload
+
       expect(return_line_item).to be_a(Spree::ReportLineItems::SalesTotal)
 
       expect(return_line_item.date).to eq(order.completed_at.strftime('%Y-%m-%d'))

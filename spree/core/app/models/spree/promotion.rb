@@ -252,12 +252,14 @@ module Spree
     end
 
     def adjusted_credits_count(promotable)
-      adjustments = promotable.is_a?(Order) ? promotable.all_adjustments : promotable.adjustments
-      credits_count - adjustments.eligible.promotion.where(source_id: actions.pluck(:id)).select(:order_id).distinct.count
+      credits_count - promotable.discount_lines.where(promotion_action_id: actions.pluck(:id)).select(:order_id).distinct.count
     end
 
+    # Usage counts actual applications: an order consumes usage only while
+    # discount lines from this promotion's actions exist for it — being
+    # connected via OrderPromotion alone is not a use.
     def credits
-      Adjustment.eligible.promotion.where(source_id: actions.map(&:id))
+      Spree::DiscountLine.where(promotion_action_id: actions.ids)
     end
 
     def credits_count
@@ -280,10 +282,9 @@ module Spree
     end
 
     def used_by?(user, excluded_orders = [])
-      user.orders.complete.joins(:promotions).joins(:all_adjustments).
-        where.not(spree_orders: { id: excluded_orders.map(&:id) }).
-        where(spree_promotions: { id: id }).
-        where(spree_adjustments: { source_type: 'Spree::PromotionAction', eligible: true }).any?
+      user.orders.complete.joins(:discount_lines).
+        where.not(Spree::Order.table_name => { id: excluded_orders.pluck(:id) }).
+        where(Spree::DiscountLine.table_name => { promotion_id: id }).any?
     end
 
     def name_for_order(order)

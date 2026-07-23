@@ -59,6 +59,9 @@ module Spree
       else
         order.line_items << other_order_line_item
         other_order_line_item.adjustments.update_all(order_id: order.id)
+        other_order_line_item.tax_lines.update_all(order_id: order.id)
+        other_order_line_item.discount_lines.update_all(order_id: order.id)
+        other_order_line_item.fees.update_all(order_id: order.id)
         handle_error(other_order_line_item) unless other_order_line_item.save
       end
     end

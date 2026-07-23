@@ -18,9 +18,14 @@ module Spree
 
       def empty_order(order:)
         ActiveRecord::Base.transaction do
+          # line item and shipment destruction cascades their typed adjustment
+          # lines; the order-scoped deletes below catch any orphaned rows
           order.line_items.destroy_all
           order.updater.update_item_count
           order.adjustments.destroy_all
+          order.tax_lines.delete_all
+          order.discount_lines.delete_all
+          order.fees.delete_all
           order.shipments.destroy_all
           order.state_changes.destroy_all
           order.order_promotions.destroy_all

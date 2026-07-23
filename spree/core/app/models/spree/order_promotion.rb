@@ -14,8 +14,11 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :amount
 
+    # Winner-only discount lines make this reconcile with the order's
+    # discount_total by construction (losing candidates are deleted, not
+    # flagged ineligible as legacy adjustments were).
     def amount
-      order.all_adjustments.promotion.where(source: promotion.actions).sum(:amount)
+      order.discount_lines.where(promotion_id: promotion_id).sum(:amount)
     end
   end
 end

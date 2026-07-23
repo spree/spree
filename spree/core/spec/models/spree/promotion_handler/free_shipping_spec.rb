@@ -15,7 +15,7 @@ module Spree
         let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
 
         it 'creates the adjustment' do
-          expect { subject.activate }.to change { shipment.adjustments.count }.by(1)
+          expect { subject.activate }.to change { shipment.discount_lines.count }.by(1)
         end
       end
 
@@ -26,11 +26,11 @@ module Spree
         it 'does adjust the shipment when applied to order' do
           order.promotions << promotion
 
-          expect { subject.activate }.to change { shipment.adjustments.count }
+          expect { subject.activate }.to change { shipment.discount_lines.count }
         end
 
         it 'does not adjust the shipment when not applied to order' do
-          expect { subject.activate }.not_to change { shipment.adjustments.count }
+          expect { subject.activate }.not_to change { shipment.discount_lines.count }
         end
       end
 
@@ -41,11 +41,11 @@ module Spree
         it 'does adjust the shipment when applied to order' do
           order.promotions << promotion
 
-          expect { subject.activate }.to change { shipment.adjustments.count }
+          expect { subject.activate }.to change { shipment.discount_lines.count }
         end
 
         it 'does not adjust the shipment when not applied to order' do
-          expect { subject.activate }.not_to change { shipment.adjustments.count }
+          expect { subject.activate }.not_to change { shipment.discount_lines.count }
         end
       end
 
@@ -54,7 +54,7 @@ module Spree
         let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
 
         it 'does not adjust the shipment' do
-          expect { subject.activate }.not_to change { shipment.adjustments.count }
+          expect { subject.activate }.not_to change { shipment.discount_lines.count }
         end
       end
     end

@@ -10,7 +10,7 @@ describe Spree::OrderPromotion, type: :model do
     order.coupon_code = promotion.code
     Spree::PromotionHandler::Coupon.new(order).apply
     order.save!
-    order.all_adjustments.promotion.update_all(amount: -5.0)
+    order.discount_lines.update_all(amount: -5.0)
   end
 
   context '#name' do

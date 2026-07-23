@@ -80,7 +80,7 @@ describe Spree::OrderContents, type: :model do
 
         it 'creates valid discount on order' do
           subject.add(variant, 1)
-          expect(subject.order.adjustments.sum(:amount)).not_to eq 0
+          expect(subject.order.discount_lines.sum(:amount)).not_to eq 0
         end
 
         include_context 'discount changes order total'
@@ -91,7 +91,7 @@ describe Spree::OrderContents, type: :model do
 
         it 'creates valid discount on order' do
           subject.add(variant, 1)
-          expect(subject.order.line_item_adjustments.to_a.sum(&:amount)).not_to eq 0
+          expect(subject.order.discount_lines.for_line_items.sum(:amount)).not_to eq 0
         end
 
         include_context 'discount changes order total'

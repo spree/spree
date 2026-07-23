@@ -161,10 +161,10 @@ module Spree
           expect(order.shipments.size).to eq(1)
           expect(order.shipment_total).to eq(5)
 
-          # Promo created a -5 adjustment on the shipment
+          # Promo created a -5 discount line on the shipment
           shipment = order.shipments.first
           expect(shipment.adjustment_total).to eq(-5)
-          expect(shipment.adjustments.promotion.size).to eq(1)
+          expect(shipment.discount_lines.count).to eq(1)
           expect(order.shipping_discount).to eq(5)
 
           # Promotion is associated with the order

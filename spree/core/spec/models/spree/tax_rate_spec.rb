@@ -321,6 +321,48 @@ describe Spree::TaxRate, type: :model do
     end
   end
 
+  describe '.store_pre_tax_amount' do
+    let(:order) { create(:order) }
+    let(:tax_category) { create(:tax_category) }
+    let(:line_item) { create(:line_item, price: 10.0, quantity: 3, order: order, tax_category: tax_category) }
+
+    it 'stores the amount net of live discount lines, not the promo_total column' do
+      # mid-pipeline the column is stale — it persists only after the tax pass
+      line_item.update_column(:promo_total, -1)
+      create(:discount_line, line_item: line_item, order: order, amount: -6)
+
+      Spree::TaxRate.store_pre_tax_amount(line_item, [])
+
+      expect(line_item.reload.pre_tax_amount).to eq(24)
+    end
+
+    it 'divides included taxes out of the discounted basis' do
+      rate = create(:tax_rate, amount: 0.2, included_in_price: true, tax_category: tax_category)
+      create(:discount_line, line_item: line_item, order: order, amount: -6)
+
+      Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
+
+      expect(line_item.reload.pre_tax_amount).to eq(20)
+    end
+
+    it 'never stores a negative amount' do
+      create(:discount_line, line_item: line_item, order: order, amount: -40)
+
+      Spree::TaxRate.store_pre_tax_amount(line_item, [])
+
+      expect(line_item.reload.pre_tax_amount).to eq(0)
+    end
+
+    it 'stores the cost net of discount lines for a shipment' do
+      shipment = create(:shipment, order: order, cost: 10)
+      create(:discount_line, :for_fulfillment, fulfillment: shipment, order: order, amount: -4)
+
+      Spree::TaxRate.store_pre_tax_amount(shipment, [])
+
+      expect(shipment.reload.pre_tax_amount).to eq(6)
+    end
+  end
+
   describe '.included_tax_amount_for' do
     subject(:included_tax_amount) { Spree::TaxRate.included_tax_amount_for(price_options) }
 
