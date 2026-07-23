@@ -700,6 +700,12 @@ describe Spree::ReturnItem, type: :model do
       )
     end
 
+    before do
+      # written by the tax pass during recalculation; the bare factory order
+      # never runs the pipeline, so set what it would have written
+      inventory_unit.line_item.update_column(:pre_tax_amount, inventory_unit.line_item.amount)
+    end
+
     it 'includes included tax total' do
       expect(return_item.pre_tax_amount).to eq 10
       expect(return_item.included_tax_total).to eq 10
