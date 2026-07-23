@@ -37,6 +37,33 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
       expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly('Men -> Clothing')
     end
 
+    context "when the store's default locale differs from I18n.default_locale" do
+      before { store.update_columns(default_locale: 'de') }
+
+      it 'populates the NOT NULL base name columns instead of leaving them null' do
+        # Mimics the enqueue-time locale a non-en store's request captures into the job.
+        I18n.with_locale(:de) do
+          described_class.perform_now(product.id, store.id, ['Men -> Clothing'])
+        end
+
+        taxon = product.reload.taxons.first
+        expect(taxon).to be_present
+        # The raw NOT NULL base columns (not the translation) must be populated.
+        expect(taxon.read_attribute(:name)).to eq('Clothing')
+        expect(taxon.taxonomy.read_attribute(:name)).to eq('Men')
+      end
+
+      it "keeps Spree::Taxon's Mobility.with_locale(nil) permalink regeneration working" do
+        I18n.with_locale(:de) do
+          described_class.perform_now(product.id, store.id, ['Men -> Clothing'])
+        end
+
+        taxon = product.reload.taxons.first
+        expect(taxon.read_attribute(:permalink)).to eq('men/clothing')
+        expect(taxon.read_attribute(:pretty_name)).to eq('Men -> Clothing')
+      end
+    end
+
     context 'when taxonomies and taxons already exist' do
       let!(:men_taxonomy) { create(:taxonomy, name: 'Men', store: store) }
       let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }

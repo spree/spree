@@ -10,6 +10,16 @@ module Spree
     # taxon creation races).
     class BaseJob < Spree::BaseJob
       queue_as Spree.queues.imports
+
+      private
+
+      def with_store_content_locale(store, &block)
+        locale = store&.default_locale
+        return yield if locale.blank?
+
+        Spree::Current.content_locale = locale
+        I18n.with_locale(locale, &block)
+      end
     end
   end
 end
