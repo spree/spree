@@ -26,6 +26,22 @@ describe Spree::WebhookPayloadRedaction do
       expect(described_class.merge(payload, secrets)).to eq(original)
     end
 
+    # The newsletter double opt-in event carries a live has_secure_token that
+    # must never land in the persisted delivery log.
+    it 'redacts the newsletter verification_token and re-attaches it at send time' do
+      original = {
+        'name' => 'newsletter_subscriber.subscription_requested',
+        'data' => { 'email' => 'a@example.com', 'verification_token' => 'live-token' }
+      }
+
+      payload, secrets = described_class.split(original)
+
+      expect(payload['data']['verification_token']).to eq(placeholder)
+      expect(payload['data']['email']).to eq('a@example.com')
+      expect(secrets).to eq('verification_token' => 'live-token')
+      expect(described_class.merge(payload, secrets)).to eq(original)
+    end
+
     it 'returns the payload untouched when nothing is sensitive' do
       original = { 'data' => { 'number' => 'R123' } }
 

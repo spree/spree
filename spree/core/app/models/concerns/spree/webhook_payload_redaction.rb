@@ -17,7 +17,7 @@ module Spree
     extend ActiveSupport::Concern
 
     # Payload keys under `data` whose values are live credentials.
-    SENSITIVE_PAYLOAD_KEYS = %w[reset_token unsubscribe_token].freeze
+    SENSITIVE_PAYLOAD_KEYS = %w[reset_token unsubscribe_token verification_token].freeze
 
     REDACTION_PLACEHOLDER = '[REDACTED]'
 
