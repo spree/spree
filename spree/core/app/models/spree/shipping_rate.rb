@@ -93,7 +93,7 @@ module Spree
     private
 
     def discount_amount
-      shipment.adjustments.promotion.sum(:amount)
+      shipment.discount_lines.sum(:amount)
     end
   end
 end
