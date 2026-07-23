@@ -19,7 +19,7 @@ module Spree
           it 'creates the adjustment' do
             expect do
               subject.activate
-            end.to change { adjustable.adjustments.count }.by(1)
+            end.to change { adjustable.discount_lines.count }.by(1)
           end
         end
 
@@ -55,7 +55,7 @@ module Spree
           it 'creates the adjustment' do
             expect do
               subject.activate
-            end.to change { adjustable.adjustments.count }.by(1)
+            end.to change { adjustable.discount_lines.count }.by(1)
           end
         end
 
@@ -94,7 +94,7 @@ module Spree
         it 'creates the adjustment' do
           expect do
             subject.activate
-          end.to change { adjustable.adjustments.count }.by(1)
+          end.to change { adjustable.discount_lines.count }.by(1)
         end
       end
     end

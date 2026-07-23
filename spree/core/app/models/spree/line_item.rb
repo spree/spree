@@ -53,9 +53,11 @@ module Spree
     before_destroy :verify_order_inventory_before_destroy, if: -> { order.has_checkout_step?('delivery') }
 
     after_save :update_inventory
-    after_save :update_adjustments
-
-    after_create :update_tax_charge
+    # Adjustment/tax recalculation no longer happens as a line item save side
+    # effect — it runs in the OrderUpdater pipeline (update_with_updater!),
+    # which every cart service invokes. Only the price recalculation on
+    # quantity change survives as a callback.
+    after_save :recalculate_price, if: -> { saved_change_to_quantity? && should_update_price? && !previously_new_record? }
 
     delegate :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, :option_values, to: :variant
     delegate :name, :description, :brand, :category, to: :product
@@ -134,11 +136,12 @@ module Spree
 
     alias subtotal amount
 
-    # Returns the taxable amount (amount + taxable adjustment total) of the line item
+    # Returns the taxable amount of the line item: the amount net of its
+    # discounts (promo_total is negative)
     #
     # @return [BigDecimal]
     def taxable_amount
-      amount + taxable_adjustment_total
+      amount + promo_total
     end
 
     # returns the total tax amount
@@ -151,27 +154,23 @@ module Spree
     alias discounted_money display_discounted_amount
     alias discounted_amount taxable_amount
 
-    # Returns the amount this line item is taxed on: the discounted amount
-    # reduced further by the line item's proportional share of any
-    # whole-order promotions, which are adjustments on the order itself and
-    # therefore not part of +taxable_adjustment_total+. Never negative.
+    # Returns the amount this line item is taxed on: the amount net of all
+    # current discount lines (whole-order promotions are distributed here
+    # too), clamped at zero. Computed from the live rows rather than the
+    # denormalized promo_total column because tax runs inside the
+    # recalculation pipeline before the columns are persisted.
     #
     # @return [BigDecimal]
     def taxable_basis
-      basis = taxable_amount
-      return basis if basis <= 0
+      [amount + current_discount_total, BigDecimal(0)].max
+    end
 
-      order_discount = order.order_level_promo_total
-      return basis if order_discount.zero?
-
-      # summed in SQL so the allocation uses the persisted adjustment totals
-      # of all line items, not a possibly stale cached association
-      items_total = order.line_items.reorder(nil).pick(
-        Arel.sql('COALESCE(SUM(price * quantity + taxable_adjustment_total), 0)')
-      )
-      return basis if items_total <= 0
-
-      [basis + (order_discount * basis / items_total), BigDecimal(0)].max
+    # Live sum of this line item's discount lines — in memory when the
+    # association is preloaded (the recalculation pipeline preloads it).
+    #
+    # @return [BigDecimal]
+    def current_discount_total
+      discount_lines.reject(&:destroyed?).sum(&:amount)
     end
 
     # Returns the final amount of the line item
@@ -329,28 +328,12 @@ module Spree
       Spree::OrderInventory.new(order, self).verify(target_shipment, removing: true)
     end
 
-    def update_adjustments
-      if saved_change_to_quantity?
-        recalculate_price if should_update_price? && !previously_new_record?
-        recalculate_adjustments
-        update_tax_charge # Called to ensure pre_tax_amount is updated.
-      end
-    end
-
     # Returns true if the price should be updated when quantity changes
     # Override this method to customize when prices should be recalculated
     # By default, prices are not updated after an order is completed
     # @return [Boolean]
     def should_update_price?
       !order.completed?
-    end
-
-    def recalculate_adjustments
-      Spree::Adjustable::AdjustmentsUpdater.update(self)
-    end
-
-    def update_tax_charge
-      Spree::TaxRate.adjust(order, [self])
     end
 
     def ensure_proper_currency

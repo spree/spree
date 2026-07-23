@@ -31,10 +31,30 @@ module Spree
       update_hooks.each { |hook| order.send hook }
     end
 
+    # The recalculation pipeline: adjusters run partitioned by their declared
+    # type — discounts, then fees, then tax last (tax reads the discounted
+    # basis). Registration order in Spree.adjusters only matters within a
+    # type. One batched preload serves the whole run; adjusters mutate typed
+    # adjustment lines in memory and the per-adjustable totals are rolled up
+    # afterwards.
+    #
+    # Completed orders are never recalculated — their adjustment lines are
+    # immutable by convention (the replacement for the old open/closed
+    # adjustment state machine).
     def recalculate_adjustments
-      all_adjustments.includes(:adjustable).map(&:adjustable).uniq.each do |adjustable|
-        Adjustable::AdjustmentsUpdater.update(adjustable)
+      return if order.completed?
+
+      adjustables = order.line_items.includes(:fees, discount_lines: [:promotion, :promotion_action]).to_a +
+                    order.shipments.includes(:fees, discount_lines: [:promotion, :promotion_action]).to_a
+
+      discount_adjusters, fee_adjusters, tax_adjusters =
+        Spree.adjusters.group_by(&:type).values_at(:discount, :fee, :tax)
+
+      [*discount_adjusters, *fee_adjusters, *tax_adjusters].each do |adjuster|
+        adjuster.adjust_all(order, adjustables)
       end
+
+      persist_adjustable_totals(adjustables)
     end
 
     # Updates the following Order total values:
@@ -97,18 +117,47 @@ module Spree
         Arel.sql('COALESCE(SUM(promo_total), 0)')
       ) || [0, 0, 0, 0]
 
-      # Fetch order-level adjustment totals in a single query
-      order_adjustment_totals = adjustments.eligible.reorder(nil).pick(
-        Arel.sql('COALESCE(SUM(amount), 0)'),
-        Arel.sql("COALESCE(SUM(CASE WHEN source_type = 'Spree::PromotionAction' THEN amount ELSE 0 END), 0)")
-      ) || [0, 0]
-
-      order.adjustment_total = line_item_totals[0] + shipment_totals[0] + order_adjustment_totals[0]
+      # There are no order-level adjustment rows anymore: whole-order
+      # discounts are distributed to line items, fees and taxes are always
+      # line-item- or fulfillment-attached.
+      order.adjustment_total = line_item_totals[0] + shipment_totals[0]
       order.included_tax_total = line_item_totals[1] + shipment_totals[1]
       order.additional_tax_total = line_item_totals[2] + shipment_totals[2]
-      order.promo_total = line_item_totals[3] + shipment_totals[3] + order_adjustment_totals[1]
+      order.promo_total = line_item_totals[3] + shipment_totals[3]
+      order.fee_total = Spree::Fee.where(order_id: order.id).sum(:amount)
 
       update_order_total
+    end
+
+    # Rolls the typed adjustment lines up into each adjustable's denormalized
+    # total columns (four grouped aggregate queries for the whole order, then
+    # write-on-change). taxable_adjustment_total / non_taxable_adjustment_total
+    # are no longer written — retired, dropped in 6.1.
+    def persist_adjustable_totals(adjustables)
+      discount_sums = Spree::DiscountLine.where(order_id: order.id).group(:line_item_id, :fulfillment_id).sum(:amount)
+      fee_sums = Spree::Fee.where(order_id: order.id).group(:line_item_id, :fulfillment_id).sum(:amount)
+      included_tax_sums = Spree::TaxLine.where(order_id: order.id).included_in_price
+                                        .group(:line_item_id, :fulfillment_id).sum(:amount)
+      additional_tax_sums = Spree::TaxLine.where(order_id: order.id).additional
+                                          .group(:line_item_id, :fulfillment_id).sum(:amount)
+
+      adjustables.each do |adjustable|
+        key = adjustable.is_a?(Spree::LineItem) ? [adjustable.id, nil] : [nil, adjustable.id]
+
+        promo_total = discount_sums[key] || 0
+        additional_tax_total = additional_tax_sums[key] || 0
+        attributes = {
+          promo_total: promo_total,
+          included_tax_total: included_tax_sums[key] || 0,
+          additional_tax_total: additional_tax_total,
+          adjustment_total: promo_total + (fee_sums[key] || 0) + additional_tax_total
+        }
+
+        changed = attributes.reject { |attribute, value| adjustable.read_attribute(attribute) == value }
+        next if changed.empty?
+
+        adjustable.update_columns(changed.merge(updated_at: Time.current))
+      end
     end
 
     def update_item_count
@@ -132,6 +181,7 @@ module Spree
         payment_total: order.payment_total,
         shipment_total: order.shipment_total,
         promo_total: order.promo_total,
+        fee_total: order.fee_total,
         total: order.total,
         updated_at: Time.current
       )

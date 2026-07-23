@@ -45,8 +45,9 @@ describe Spree::DiscountLine, type: :model do
     end
   end
 
-  it 'resolves a soft-deleted promotion action' do
+  it 'resolves a soft-deleted promotion action on a completed order' do
     discount_line = create(:discount_line, :from_promotion)
+    discount_line.order.update_columns(state: 'complete', completed_at: Time.current)
     discount_line.promotion_action.destroy!
 
     expect(discount_line.reload.promotion_action).to be_present
