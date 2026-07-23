@@ -420,6 +420,12 @@ module Spree
 
       update_amounts
       reload # reload to pick up cost set by update_columns in update_amounts
+
+      # Activation creates, recalculation maintains: a free-shipping promotion
+      # activated while shipping cost 0 has no discount line yet, so re-run
+      # activation now that the selected rate changed the cost.
+      order.shipments.reset
+      Spree::PromotionHandler::FreeShipping.new(order).activate
       order.set_shipments_cost
     end
 

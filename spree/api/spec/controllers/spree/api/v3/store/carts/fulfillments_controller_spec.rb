@@ -48,6 +48,24 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
         order.reload
         expect(order.shipment_total).to eq(25)
       end
+
+      it 'activates a free-shipping promotion for the newly selected rate' do
+        create(:free_shipping_promotion, kind: :automatic, store: store)
+        expensive_rate = fulfillment.shipping_rates.find_by(shipping_method: expensive_shipping_method)
+
+        patch :update, params: {
+          cart_id: order.prefixed_id,
+          id: fulfillment.to_param,
+          selected_delivery_rate_id: expensive_rate.to_param
+        }
+
+        expect(response).to have_http_status(:ok)
+        order.reload
+        expect(order.shipment_total).to eq(25)
+        expect(fulfillment.reload.discount_lines.sum(:amount)).to eq(-25)
+        expect(order.shipping_discount).to eq(25)
+        expect(order.total).to eq(order.item_total)
+      end
     end
 
     context 'auto-advance after rate selection' do
