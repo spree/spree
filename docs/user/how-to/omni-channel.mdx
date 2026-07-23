@@ -1,0 +1,205 @@
+---
+title: "Set Up Omni-Channel Commerce"
+description: "Learn how to connect your online store, physical locations, and other selling surfaces in Spree Commerce for a seamless omni-channel experience."
+---
+
+Omni-channel commerce connects all your selling surfaces into a single, consistent experience. Whether a customer places an order online, walks into one of your stores, or shops through your mobile app, every transaction flows into one system — one admin dashboard, one product catalogue, and one customer record.
+
+In Spree, you achieve this using **Sales Channels**. Each selling surface — your online storefront, a physical POS terminal, a mobile app — becomes its own Sales Channel. Orders are automatically attributed to the channel they came through, giving you clean reporting and flexible fulfilment routing from a single back-office.
+
+This guide walks you through setting up a unified commerce configuration in Spree. Some steps — particularly connecting your POS system and other selling surfaces — require developer or integration work. Those points are clearly called out so you know where to loop in your technical team.
+
+### Example scenario used in this guide
+
+To make the setup concrete, this guide follows a retailer with three physical stores (London, Manchester, and Edinburgh), an online storefront, and an iOS app. By the end, their Spree setup will have five Sales Channels, a warehouse location plus one stock location per store, and a single shared product catalogue visible across all surfaces.
+
+Your own setup may have more or fewer channels, but the steps and principles are the same.
+
+## Prerequisites
+
+Before you start, make sure the following are in place:
+
+- Your products are set up in Spree with base prices. All channels share the same product catalogue, so products only need to be configured once.
+- Your stock locations are configured in **Settings → Locations**. Each physical location (warehouse, store) that will fulfil orders needs to exist here before you configure cross-channel fulfilment.
+- If you plan to sell across multiple markets or currencies, your Markets should be set up first. See [<u>Settings → Markets</u>](https://spreecommerce.org/docs/user/settings/markets).
+
+## 1. Create a Sales Channel for Each Selling Surface
+
+The first step is to create a Sales Channel in Spree for each surface you sell through.
+
+Navigate to **Settings → Sales Channels**. The overview lists all your existing channels.
+
+![The Sales Channels overview page in Spree Commerce](/docs/images/user/how-to/omni-channel/1-sales-channels-overview.png)
+
+Click **New Sales Channel** to open the creation form.
+
+![The sales channel creation form in Spree Commerce](/docs/images/user/how-to/omni-channel/2-new-sales-channel.png)
+
+For each channel, fill in the following fields:
+
+- **Name** — a clear internal label (e.g., `Online Store`, `POS – London`, `iOS App`)
+- **Code** — a short unique identifier used in API requests to attribute orders to this channel (e.g., `online`, `pos-london`, `ios-app`). This cannot be changed after creation, so choose carefully.
+- **Active** — leave checked to make the channel live
+- **Default** — check this for your primary online storefront only. The default channel handles orders placed without a specific channel identifier.
+- **Order Routing Strategy** — controls which stock location fulfils orders from this channel:
+  - **Inherit from store** — uses the same routing as your default channel. A good starting point for your online and mobile app channels.
+  - **Rules (ordered)** — lets you define custom routing rules. Recommended for POS channels — see below.
+  - **Legacy** — uses the original Spree fulfilment flow. Not recommended for new setups.
+
+Click **Create** to save each channel.
+
+For our example retailer, this means creating five channels:
+
+| Name | Code | Default | Routing Strategy |
+|---|---|---|---|
+| Online Store | `online` | Yes | Inherit from store |
+| POS – London | `pos-london` | No | Rules (ordered) |
+| POS – Manchester | `pos-manchester` | No | Rules (ordered) |
+| POS – Edinburgh | `pos-edinburgh` | No | Rules (ordered) |
+| iOS App | `ios-app` | No | Inherit from store |
+
+### Routing Strategy for POS Channels
+
+For POS channels, it is strongly recommended to use the **Rules (ordered)** strategy with a **Preferred Location** rule pointing to that store's stock location. This ensures that in-store orders always draw stock from the correct store, rather than routing to a warehouse or another location.
+
+Each store should have:
+- Its own dedicated Sales Channel (e.g., `POS – Manchester`, `POS – Edinburgh`)
+- Its own stock location in **Settings → Locations**
+- A **Preferred Location** rule on its Sales Channel pointing to that store's location
+
+This keeps stock accurate and order attribution clean across all of your locations.
+
+<Note>Routing rule configuration requires developer involvement. Share the Sales Channel code and the intended stock location for each store with your development team so they can set up the Preferred Location rule for each POS channel.</Note>
+
+## 2. Configure Stock Locations for Cross-Channel Fulfilment
+
+With your Sales Channels defined, the next step is to make sure your stock locations are correctly set up to support each fulfilment scenario. Everything else — shipping methods, catalogue assignment, and routing — depends on having the right locations in place.
+
+Navigate to **Settings → Locations** to review your configured locations.
+
+![The Locations overview in Spree Commerce showing configured stock locations](/docs/images/user/how-to/omni-channel/6-locations-overview.png)
+
+For a unified commerce setup, you typically need:
+
+- **One location per warehouse** — for standard online order fulfilment
+- **One location per physical store** — for in-store stock, POS orders, ship-from-store, and click & collect
+
+In our example, that means four stock locations: a central warehouse, plus dedicated locations for the London, Manchester, and Edinburgh stores. Each POS Sales Channel's Preferred Location rule points to its matching store location (see Step 1).
+
+### Assigning Stock to Each Location
+
+For order routing to work correctly, each stock location needs to have stock assigned to it. If a location has no stock recorded against a product, Spree cannot fulfil that product from that location — even if the routing strategy points to it.
+
+To assign stock, open a product and navigate to the **Stock** section. You'll see a row for each of your configured stock locations. Enter the on-hand quantity for each location that holds that product.
+
+![The stock management panel on a product showing quantities per location](/docs/images/user/how-to/omni-channel/10-product-stock-per-location.png)
+
+In our example, the warehouse holds the bulk stock for online and delivery orders, while each store location holds only the stock physically present in that store. Keeping these quantities accurate is especially important for POS channels — when an in-store sale is made, Spree decrements stock from the store's location. If stock levels aren't maintained, you risk overselling or routing failures.
+
+## 3. Set Up Shipping Methods
+
+Every order in Spree requires a shipping method — including orders placed through your POS. This means your shipping methods need to cover not just standard delivery, but also in-store scenarios.
+
+Navigate to **Settings → Shipping Methods** to review and create your shipping methods.
+
+![The Shipping Methods overview page in Spree Commerce](/docs/images/user/how-to/omni-channel/5-shipping-methods-overview.png)
+
+For a unified commerce setup, consider creating the following:
+
+- **Standard Delivery** — your regular home delivery option, shared across your online storefront, mobile app, and POS. No changes needed here if this is already in place — POS operators can select it at the point of sale for customers who want their purchase shipped to their home.
+- **In-Store Pickup** — used in two scenarios: when a customer buys online and collects in-store (click & collect / BOPIS), and when a POS order is created in-store and the customer takes their purchase with them immediately. Since every Spree order requires a fulfilment method, in-store transactions still need a shipping method assigned — In-Store Pickup serves this purpose.
+
+<Note>If you have multiple store locations, click & collect requires a way for customers to select their preferred pickup location at checkout. Spree does not include this out of the box — get in touch with us to discuss how this can be implemented for your setup.</Note>
+
+<Note>Shipping methods in Spree are currently shared across all Sales Channels — it is not yet possible to restrict a shipping method to a specific channel. Your storefront and POS integration can control which methods are presented to customers at checkout, but the methods themselves are configured centrally here.</Note>
+
+## 4. Assign Your Product Catalogue to Each Channel
+
+When a product is created in Spree, it is only assigned to the default channel. For your products to be available across all your unified commerce channels, you need to assign them to each additional channel.
+
+Open a product and locate the **Publishing** card.
+
+![The Publishing card on the product editor showing assigned sales channels](/docs/images/user/how-to/omni-channel/3-product-publishing-card.png)
+
+Click **Manage** to open the channel assignment panel, where you can add or remove the Sales Channels this product is available on.
+
+![The channel assignment panel for a product](/docs/images/user/how-to/omni-channel/4-manage-channels.png)
+
+In our example, all products would be assigned to the Online Store and iOS App channels. For the three POS channels, only assign products that are actually stocked at that location — there's no need to add a product to POS – Edinburgh if that store doesn't carry it. Once a channel is added, you can also set scheduling per channel — for example, making a product available in-store before it goes live online.
+
+<Warning>If a product has stock assigned to a location, it must also be assigned to the Sales Channel associated with that location. For example, if the London store holds stock for a product, that product must be assigned to the POS – London channel — otherwise it cannot be sold through that channel even though the stock is physically there.</Warning>
+
+<Note>If you have a large catalogue, assigning channels product by product may be time-consuming. Your developer can automate bulk channel assignments via the Admin API.</Note>
+
+## 5. Configure Returns Across Channels
+
+One of the most important parts of a unified commerce setup is enabling consistent returns regardless of where the original purchase was made. In Spree, returns are managed per order, so an online order can be returned in-store as long as your POS is integrated with Spree's returns flow.
+
+Navigate to **Settings → Returns** to review and configure your returns settings.
+
+![The Returns configuration page in Spree Commerce](/docs/images/user/how-to/omni-channel/7-returns-configuration.png)
+
+Here you can configure:
+
+- **Reimbursement Types** — the methods available when issuing a refund for an approved return (e.g., original payment method, store credit).
+- **Return Authorisation Reasons** — the reasons a customer service agent can select when approving a return request (e.g., wrong item, damaged, changed mind).
+- **Refund Reasons** — the reasons that can be recorded when a refund is issued against an order.
+
+See [<u>Settings → Returns</u>](https://spreecommerce.org/docs/user/settings/returns-configuration) for full details on configuring each of these.
+
+Spree's default returns flow is manual, meaning your customer service team reviews and approves return requests case by case. This gives you full control:
+
+- **Return window** — there is no automated return window setting. Your team can enforce a returns policy (e.g., 30 days) manually during the approval step.
+- **Restocking fees** — when creating a reimbursement for an approved return, the refund amount can be adjusted before issuing, allowing your team to apply a restocking fee where applicable.
+
+<Note>If you're interested in a more automated or self-service returns experience — for example, allowing customers to initiate returns online without contacting support — get in touch with us to discuss what's possible.</Note>
+
+<Note>For cross-channel returns to work in practice — for example, a customer returning an online purchase at the London or Manchester store — your POS system must be integrated with Spree's returns flow. Once set up, returns initiated in-store will appear in the Spree admin against the original order, regardless of which channel it came from.</Note>
+
+## 6. Connect Your Selling Surfaces
+
+The admin configuration above sets up the framework for unified commerce in Spree. The final step is connecting each physical or external selling surface to its corresponding Sales Channel. This requires your development or integration team.
+
+Below is a summary of what's involved per surface — so you know what to brief your team on.
+
+### POS System
+
+Your POS provider needs to be integrated with Spree via the API. When a sale is made in-store, the POS system creates an order in Spree attributed to the POS channel, draws down stock from the in-store location, and records payment against the order. No configuration for this is done in the Spree admin — it is handled at the integration layer.
+
+In our example, the integration covers all three stores — each transaction passes the channel code and stock location for the store it was made in (`pos-london`, `pos-manchester`, or `pos-edinburgh`), so orders are attributed and stock is decremented correctly per location.
+
+**What to give your developer:** the Sales Channel code for each POS channel and the stock location for each store (both found in the Spree admin), plus the shipping method to use for in-store transactions (e.g., In-Store Pickup).
+
+### iOS App
+
+Your mobile app communicates with Spree via the Storefront API, passing the Sales Channel code for the app channel in each request. Orders placed through the app are attributed to the iOS app channel automatically. Delivery methods are shared with the online storefront, so no additional shipping method setup is needed.
+
+**What to give your developer:** the Sales Channel code for the app channel (`ios-app` in our example).
+
+### Online Storefront
+
+Your main storefront is likely already connected to Spree. If it's not yet passing a Sales Channel code, your developer should configure it to pass the code for your `Online Store` channel in API requests. If no channel is passed, orders fall back to the default channel.
+
+<Note>Each Sales Channel's code is displayed in the **Settings → Sales Channels** table. Share these codes with your development team when briefing them on the integration work.</Note>
+
+## 7. Verify Your Setup
+
+Once your developer has connected your selling surfaces, verify that orders are flowing correctly into Spree.
+
+Navigate to **Orders** and check the **Channel** column. You should see each order attributed to the correct channel based on where it was placed. Use the **Channel** filter to narrow the list to a specific surface and confirm volumes look correct.
+
+![The Orders list in Spree Commerce showing the Channel column and channel filter](/docs/images/user/how-to/omni-channel/8-orders-list-channel-column.png)
+
+Opening an individual order shows the channel attribution in the order summary panel.
+
+![The order details page in Spree Commerce showing channel attribution in the order summary](/docs/images/user/how-to/omni-channel/9-order-details-channel.png)
+
+In our example, you'd expect to see orders spread across all five channels — `online`, `pos-london`, `pos-manchester`, `pos-edinburgh`, and `ios-app`. If orders are not being attributed to the right channel, check with your developer that the correct Sales Channel code is being passed in the API request for that surface.
+
+## Next Steps
+
+- [<u>Sales Channels</u>](https://spreecommerce.org/docs/user/settings/sales-channels) — full reference for creating and managing Sales Channels
+- [<u>Settings → Locations</u>](https://spreecommerce.org/docs/user/settings/locations) — configure your stock locations and warehouses
+- [<u>Settings → Shipping Methods</u>](https://spreecommerce.org/docs/user/settings/shipping-methods) — configure your shipping and fulfilment methods
+- [<u>Settings → Returns</u>](https://spreecommerce.org/docs/user/settings/returns-configuration) — configure reimbursement types and returns policy
+- [<u>Settings → Markets</u>](https://spreecommerce.org/docs/user/settings/markets) — set up markets if you sell across multiple regions or currencies
