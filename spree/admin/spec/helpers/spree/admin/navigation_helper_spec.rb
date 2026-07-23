@@ -262,6 +262,16 @@ describe Spree::Admin::NavigationHelper, type: :helper do
         expect(result).to have_selector('li.nav-section-header')
         expect(result).to include('Settings Section')
       end
+
+      it 'translates a symbol section label through Spree.t' do
+        nav.add :section, section_label: :'admin.settings_section'
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to have_selector('li.nav-section-header')
+        expect(result).to include(Spree.t(:'admin.settings_section'))
+      end
     end
 
     context 'with children' do
