@@ -68,41 +68,37 @@ function ForgotPasswordPage() {
 
   return (
     <AuthShell>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">{t('admin.auth.forgot_password.title')}</CardTitle>
-          <CardDescription>{t('admin.auth.forgot_password.subtitle')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-            {errors.root && (
-              <p className="text-center text-sm text-destructive">{errors.root.message}</p>
-            )}
-            <div className="grid gap-2">
-              <Label htmlFor="email">{t('admin.fields.email.label')}</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('admin.fields.login.email.placeholder')}
-                autoFocus
-                aria-invalid={!!errors.email || undefined}
-                {...form.register('email')}
-              />
-              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-            </div>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting
-                ? t('admin.auth.forgot_password.sending')
-                : t('admin.auth.forgot_password.submit')}
-            </Button>
-            <div className="text-center">
-              <Link to="/login" className="text-sm underline underline-offset-4 hover:text-primary">
-                {t('admin.auth.back_to_login')}
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-bold">{t('admin.auth.forgot_password.title')}</h1>
+        <p className="text-sm text-muted-foreground">{t('admin.auth.forgot_password.subtitle')}</p>
+      </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+        {errors.root && (
+          <p className="text-center text-sm text-destructive">{errors.root.message}</p>
+        )}
+        <div className="grid gap-2">
+          <Label htmlFor="email">{t('admin.fields.email.label')}</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder={t('admin.fields.login.email.placeholder')}
+            autoFocus
+            aria-invalid={!!errors.email || undefined}
+            {...form.register('email')}
+          />
+          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+        </div>
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting
+            ? t('admin.auth.forgot_password.sending')
+            : t('admin.auth.forgot_password.submit')}
+        </Button>
+        <div className="text-center">
+          <Link to="/login" className="text-sm underline underline-offset-4 hover:text-primary">
+            {t('admin.auth.back_to_login')}
+          </Link>
+        </div>
+      </form>
     </AuthShell>
   )
 }
