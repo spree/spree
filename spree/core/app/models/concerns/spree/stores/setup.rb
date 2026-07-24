@@ -52,8 +52,11 @@ module Spree
         (setup_tasks_done / setup_tasks_total.to_f * 100).to_i
       end
 
+      # Payments count as set up only once customers can actually pay at
+      # storefront checkout: admin-only (back_end) methods and store credit
+      # don't complete the task.
       def payment_method_setup?
-        payment_methods.active.where.not(type: Spree::PaymentMethod::StoreCredit.to_s).any?
+        payment_methods.active.storefront_visible.where.not(type: Spree::PaymentMethod::StoreCredit.to_s).any?
       end
 
       # A storefront counts as set up once the merchant has saved the storefront
