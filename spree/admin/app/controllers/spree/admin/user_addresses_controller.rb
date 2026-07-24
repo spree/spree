@@ -15,12 +15,9 @@ module Spree
         nil
       end
 
-      def parent_data
-        {
-          model_name: 'spree/user',
-          model_class: Spree.user_class,
-          find_by: :prefix_id
-        }
+      def parent
+        @parent ||= Spree.user_class.accessible_by(current_ability, :show).find_by_prefix_id!(params[:user_id])
+        @user = @parent
       end
 
       def scope
@@ -29,6 +26,10 @@ module Spree
 
       def collection_includes
         %i[country state]
+      end
+
+      def collection_url(_options = {})
+        spree.admin_users_path
       end
 
       def redirect_to_full_page

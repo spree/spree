@@ -1,9 +1,9 @@
 <div><%= record.full_name %></div>
 <div class="flex flex-col items-start gap-1 mt-1">
-  <% if @user && record == @user.billing_address %>
+  <% if record.is_default_billing? %>
     <span class="badge badge-info"><%= Spree.t(:default_billing_address) %></span>
   <% end %>
-  <% if @user && record == @user.shipping_address %>
+  <% if record.is_default_shipping? %>
     <span class="badge badge-info"><%= Spree.t(:default_shipping_address) %></span>
   <% end %>
 </div>
