@@ -1,3 +1,15 @@
+import { type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
+import { Button } from '@spree/dashboard-ui'
+import { PlusIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { type BrandsListParams, brandsClient } from '../client'
+import type { Brand } from '../types'
+
+interface BrandsListPageProps {
+  /** URL-driven table state (page, sort, search, filters), validated by the route via `resourceSearchSchema`. */
+  searchParams: ResourceSearch
+}
+
 /**
  * Brands index page, rendered by the `brands.index` file route. Uses the
  * dashboard's `<ResourceTable>` for filtering, sorting, pagination, and
@@ -9,17 +21,6 @@
  * in `../index.tsx` (alongside the plugin entry); ResourceTable reads from
  * that registry by tableKey.
  */
-import { type ResourceSearch, ResourceTable } from '@spree/dashboard-core'
-import { Button } from '@spree/dashboard-ui'
-import { PlusIcon } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import { brandsClient } from '../client'
-import type { Brand } from '../types'
-
-interface BrandsListPageProps {
-  searchParams: ResourceSearch
-}
-
 export function BrandsListPage({ searchParams }: BrandsListPageProps) {
   const { t } = useTranslation()
 
@@ -29,8 +30,8 @@ export function BrandsListPage({ searchParams }: BrandsListPageProps) {
       queryKey="brands"
       // ResourceTable hands `params` to queryFn as `Record<string, unknown>`
       // (its internal builder doesn't know what each table's API accepts).
-      // We narrow to our client's known param shape at the boundary.
-      queryFn={(params) => brandsClient.list(params as Record<string, never>)}
+      // We narrow to our client's accepted param shape at the boundary.
+      queryFn={(params) => brandsClient.list(params as BrandsListParams)}
       searchParams={searchParams}
       actions={
         <Button size="sm" className="h-[2.125rem]">
