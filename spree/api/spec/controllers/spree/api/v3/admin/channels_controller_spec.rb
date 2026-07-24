@@ -275,7 +275,9 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(channel.preferred_guest_checkout).to be_nil
     end
 
-    it 'rejects an invalid storefront access value with 422' do
+    it 'rejects an invalid storefront access value with 422 and keeps the existing override' do
+      channel.update!(preferred_storefront_access: 'prices_hidden')
+
       patch :update, params: {
         id: channel.prefixed_id,
         preferred_storefront_access: 'members_only'
@@ -283,7 +285,7 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('validation_error')
-      expect(channel.reload.preferred_storefront_access).to be_blank
+      expect(channel.reload.preferred_storefront_access).to eq('prices_hidden')
     end
   end
 
