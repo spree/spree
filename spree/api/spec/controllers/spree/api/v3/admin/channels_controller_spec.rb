@@ -193,6 +193,20 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(Spree::Channel.find_by(code: 'pos').default).to be false
       expect(previous_default.reload.default).to be true
     end
+
+    it 'persists the storefront gating preferences' do
+      post :create, params: {
+        name: 'B2B Portal', code: 'b2b',
+        preferred_storefront_access: 'login_required',
+        preferred_guest_checkout: false
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+
+      created = Spree::Channel.find_by(code: 'b2b')
+      expect(created.preferred_storefront_access).to eq('login_required')
+      expect(created.preferred_guest_checkout).to be(false)
+    end
   end
 
   describe 'PATCH #update' do
