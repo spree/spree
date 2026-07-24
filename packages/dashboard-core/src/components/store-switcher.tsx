@@ -13,6 +13,7 @@ import {
 } from '@spree/dashboard-ui'
 import { ChevronsUpDownIcon, ExternalLinkIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { storefrontHref } from '../lib/storefront'
 import { useStore } from '../providers/store-provider'
 
 export function StoreSwitcher() {
@@ -23,6 +24,8 @@ export function StoreSwitcher() {
   const { store, isLoading } = useStore()
 
   if (isLoading) return <Skeleton className="h-header-height w-full rounded-xl" />
+
+  const viewStoreHref = storefrontHref(store)
 
   const storeInitials = store?.name
     .split(' ')
@@ -58,10 +61,14 @@ export function StoreSwitcher() {
             align="start"
             sideOffset={8}
           >
-            <DropdownMenuItem>
-              <ExternalLinkIcon className="size-4" />
-              {t('admin.account.view_store')}
-            </DropdownMenuItem>
+            {viewStoreHref && (
+              <DropdownMenuItem asChild>
+                <a href={viewStoreHref} target="_blank" rel="noreferrer">
+                  <ExternalLinkIcon className="size-4" />
+                  {t('admin.account.view_store')}
+                </a>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

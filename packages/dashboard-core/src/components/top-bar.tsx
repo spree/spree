@@ -28,6 +28,7 @@ import { useCommandPalette } from '../hooks/use-command-palette'
 import { useSwitchAdminLocale } from '../hooks/use-switch-admin-locale'
 import { getInitials } from '../lib/formatters'
 import { i18n } from '../lib/i18n'
+import { storefrontHref } from '../lib/storefront'
 import { useStore } from '../providers/store-provider'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
@@ -96,13 +97,8 @@ function SearchTrigger() {
 function ViewStoreLink() {
   const { t } = useTranslation()
   const { store } = useStore()
-  // Only surface the link once a storefront URL is actually configured. The
-  // serialized `url` always resolves (it falls back to the store's formatted
-  // URL), so gate on the explicit `preferred_storefront_url` preference instead.
-  if (!store?.preferred_storefront_url) return null
-
-  // Best-effort: prefix with https if the URL is just a hostname.
-  const href = /^https?:\/\//.test(store.url) ? store.url : `https://${store.url}`
+  const href = storefrontHref(store)
+  if (!href) return null
 
   return (
     <Button asChild variant="ghost" size="sm">
