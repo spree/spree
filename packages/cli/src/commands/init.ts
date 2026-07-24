@@ -240,9 +240,13 @@ async function fetchApiKey(projectDir: string): Promise<string> {
 /** The channel code the storefront's wholesale portal is configured for, or null when disabled. */
 export function storefrontWholesaleChannel(projectDir: string): string | null {
   const envPath = path.join(projectDir, 'apps', 'storefront', '.env.local')
-  if (!fs.existsSync(envPath)) return null
-
-  return fs.readFileSync(envPath, 'utf-8').match(/^SPREE_WHOLESALE_CHANNEL=(\S+)/m)?.[1] ?? null
+  // Gates a summary hint only — a missing or unreadable env file must never
+  // fail setup reporting.
+  try {
+    return fs.readFileSync(envPath, 'utf-8').match(/^SPREE_WHOLESALE_CHANNEL=(\S+)/m)?.[1] ?? null
+  } catch {
+    return null
+  }
 }
 
 /**
