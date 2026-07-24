@@ -133,6 +133,7 @@ Spree::Core::Engine.add_routes do
       resources :store_credits
       resources :orders, only: [:index]
       resources :checkouts, only: [:index]
+      resources :addresses, only: [:index], controller: 'user_addresses'
       resources :gift_cards
 
       collection do
