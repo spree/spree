@@ -76,7 +76,8 @@
       "remove_value": "Retirer la valeur",
       "breadcrumb_more": "Plus",
       "sidebar": "Barre latérale",
-      "sidebar_description": "Affiche la barre latérale mobile."
+      "sidebar_description": "Affiche la barre latérale mobile.",
+      "store_switcher": "Changer de boutique"
     },
     "common": {
       "loading": "Chargement…",

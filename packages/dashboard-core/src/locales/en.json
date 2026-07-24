@@ -76,7 +76,8 @@
       "remove_value": "Remove value",
       "breadcrumb_more": "More",
       "sidebar": "Sidebar",
-      "sidebar_description": "Displays the mobile sidebar."
+      "sidebar_description": "Displays the mobile sidebar.",
+      "store_switcher": "Switch store"
     },
     "common": {
       "loading": "Loading…",
