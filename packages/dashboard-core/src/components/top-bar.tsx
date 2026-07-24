@@ -96,7 +96,10 @@ function SearchTrigger() {
 function ViewStoreLink() {
   const { t } = useTranslation()
   const { store } = useStore()
-  if (!store?.url) return null
+  // Only surface the link once a storefront URL is actually configured. The
+  // serialized `url` always resolves (it falls back to the store's formatted
+  // URL), so gate on the explicit `preferred_storefront_url` preference instead.
+  if (!store?.preferred_storefront_url) return null
 
   // Best-effort: prefix with https if the URL is just a hostname.
   const href = /^https?:\/\//.test(store.url) ? store.url : `https://${store.url}`
