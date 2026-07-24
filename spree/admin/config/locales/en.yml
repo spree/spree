@@ -258,6 +258,8 @@ en:
         supported_locales_hint: Comma-separated list of additional locale codes (e.g. fr,de,es)
       metafield_definitions:
         edit_warning: You can't change the resource type or metafield type after the definition has been used.
+        searchable_help: Include this field's values in storefront product text search (short text, long text, and number only). After enabling, run rake spree:search:reindex if using Meilisearch so existing products are updated.
+        sortable_help: Allow storefront product listings to sort by this field (short text and number only). After enabling, run rake spree:search:reindex if using Meilisearch so existing products are updated.
         used_in: Used in
       metafields:
         none_configured_for: No metafield definitions configured for %{resource}.

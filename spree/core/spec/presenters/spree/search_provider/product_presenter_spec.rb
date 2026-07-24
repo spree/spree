@@ -184,6 +184,34 @@ module Spree
           end
         end
       end
+
+      context 'with searchable / sortable metafields' do
+        let!(:searchable_def) do
+          create(:metafield_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'pinyin_name', name: 'Pinyin')
+        end
+        let!(:sortable_def) do
+          create(:metafield_definition, :number_field, :sortable,
+                 namespace: 'custom', key: 'priority', name: 'Priority')
+        end
+        let!(:ignored_def) do
+          create(:metafield_definition, :short_text_field,
+                 namespace: 'custom', key: 'internal_note', name: 'Note')
+        end
+
+        before do
+          product.set_metafield(searchable_def, 'mao-tai')
+          product.set_metafield(sortable_def, '10')
+          product.set_metafield(ignored_def, 'secret')
+        end
+
+        it 'indexes searchable and sortable metafield values as mf_* attributes' do
+          doc = documents.first
+          expect(doc['mf_6_custom_pinyin_name']).to eq('mao-tai')
+          expect(doc['mf_6_custom_priority']).to eq(10.0)
+          expect(doc).not_to have_key('mf_6_custom_internal_note')
+        end
+      end
     end
   end
 end

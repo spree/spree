@@ -239,6 +239,14 @@
         "storefront_visible": {
           "label": "مرئي في المتجر",
           "column_label": "المتجر"
+        },
+        "searchable": {
+          "label": "قابل للبحث",
+          "help": "تضمين القيم في بحث منتجات الواجهة (نص قصير ونص طويل ورقم فقط). بعد التفعيل مع Meilisearch، نفّذ rake spree:search:reindex لتحديث المنتجات الحالية."
+        },
+        "sortable": {
+          "label": "قابل للفرز",
+          "help": "السماح بفرز قوائم منتجات الواجهة حسب هذا الحقل (نص قصير ورقم فقط). بعد التفعيل مع Meilisearch، نفّذ rake spree:search:reindex لتحديث المنتجات الحالية."
         }
       },
       "tax_category": {

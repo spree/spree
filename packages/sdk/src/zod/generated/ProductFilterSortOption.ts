@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 export const ProductFilterSortOptionSchema = z.object({
   id: z.string(),
+  label: z.string().nullable(),
 });
 
 export type ProductFilterSortOption = z.infer<typeof ProductFilterSortOptionSchema>;

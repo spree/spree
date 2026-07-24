@@ -112,7 +112,8 @@ module Spree
         variant_finder: 'Spree::Variants::Find',
 
         # search
-        search_product_presenter: 'Spree::SearchProvider::ProductPresenter'
+        search_product_presenter: 'Spree::SearchProvider::ProductPresenter',
+        search_metafield_attributes: 'Spree::SearchProvider::MetafieldAttributes'
       }.freeze
 
       include Spree::DependenciesHelper

@@ -561,6 +561,18 @@ export interface CustomFieldDefinitionCreateParams {
   field_type: string
   resource_type: string
   storefront_visible?: boolean
+  /**
+   * Include values in storefront product text search. Supported
+   * `field_type`s: `short_text`, `long_text`, `number`. Other types are
+   * rejected by the API with 422.
+   */
+  searchable?: boolean
+  /**
+   * Allow storefront product listings to sort by this field
+   * (`sort=mf_{n}_{namespace}_{key}`). Supported `field_type`s:
+   * `short_text`, `number`. Other types are rejected by the API with 422.
+   */
+  sortable?: boolean
 }
 
 export interface CustomFieldDefinitionUpdateParams {
@@ -569,6 +581,18 @@ export interface CustomFieldDefinitionUpdateParams {
   label?: string
   field_type?: string
   storefront_visible?: boolean
+  /**
+   * Include values in storefront product text search. Supported
+   * `field_type`s: `short_text`, `long_text`, `number`. Other types are
+   * rejected by the API with 422.
+   */
+  searchable?: boolean
+  /**
+   * Allow storefront product listings to sort by this field
+   * (`sort=mf_{n}_{namespace}_{key}`). Supported `field_type`s:
+   * `short_text`, `number`. Other types are rejected by the API with 422.
+   */
+  sortable?: boolean
 }
 
 export interface ApiKeyCreateParams {

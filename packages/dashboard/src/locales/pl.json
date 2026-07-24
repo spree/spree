@@ -191,6 +191,14 @@
         "storefront_visible": {
           "label": "Widoczne w sklepie",
           "column_label": "Sklep"
+        },
+        "searchable": {
+          "label": "Przeszukiwalne",
+          "help": "Uwzględnij wartości w wyszukiwaniu produktów storefront (tylko krótki tekst, długi tekst i liczba). Po włączeniu z Meilisearch uruchom rake spree:search:reindex, aby zaktualizować istniejące produkty."
+        },
+        "sortable": {
+          "label": "Sortowalne",
+          "help": "Pozwól sortować listy produktów storefront według tego pola (tylko krótki tekst i liczba). Po włączeniu z Meilisearch uruchom rake spree:search:reindex, aby zaktualizować istniejące produkty."
         }
       },
       "tax_category": {

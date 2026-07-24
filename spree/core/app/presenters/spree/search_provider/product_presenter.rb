@@ -75,7 +75,7 @@ module Spree
           available_on: product.available_on&.iso8601,
           created_at: product.created_at&.iso8601,
           updated_at: product.updated_at&.iso8601
-        }
+        }.merge(Spree::Dependencies.search_metafield_attributes_class.document_attributes(product))
       end
 
       # Returns all market × locale pairs for this store

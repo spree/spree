@@ -191,6 +191,14 @@
         "storefront_visible": {
           "label": "Visible sur la boutique",
           "column_label": "Boutique"
+        },
+        "searchable": {
+          "label": "Recherchable",
+          "help": "Inclure les valeurs dans la recherche de produits de la boutique (texte court, texte long et nombre uniquement). Après activation avec Meilisearch, exécutez rake spree:search:reindex pour mettre à jour les produits existants."
+        },
+        "sortable": {
+          "label": "Triable",
+          "help": "Autoriser le tri des listes de produits de la boutique par ce champ (texte court et nombre uniquement). Après activation avec Meilisearch, exécutez rake spree:search:reindex pour mettre à jour les produits existants."
         }
       },
       "tax_category": {

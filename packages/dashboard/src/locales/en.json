@@ -242,6 +242,14 @@
         "storefront_visible": {
           "label": "Visible on storefront",
           "column_label": "Storefront"
+        },
+        "searchable": {
+          "label": "Searchable",
+          "help": "Include values in storefront product text search (short text, long text, and number only). After enabling with Meilisearch, run rake spree:search:reindex so existing products are updated."
+        },
+        "sortable": {
+          "label": "Sortable",
+          "help": "Allow storefront product listings to sort by this field (short text and number only). After enabling with Meilisearch, run rake spree:search:reindex so existing products are updated."
         }
       },
       "tax_category": {

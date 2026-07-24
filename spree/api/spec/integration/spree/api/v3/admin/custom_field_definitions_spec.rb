@@ -42,6 +42,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           expect(item['field_type']).to eq('short_text')
           expect(item['storefront_visible']).to eq(true)
           expect(item['resource_type']).to eq('Spree::Product')
+          expect(item['search_key']).to eq('mf_5_specs_fabric')
         end
       end
     end
@@ -75,6 +76,14 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           storefront_visible: {
             type: :boolean,
             description: 'When false, definition is admin-only (was `display_on: back_end`)'
+          },
+          searchable: {
+            type: :boolean,
+            description: 'When true, values are included in storefront product text search'
+          },
+          sortable: {
+            type: :boolean,
+            description: 'When true, storefront product listings can sort by this field'
           }
         }
       }
@@ -149,7 +158,9 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
         type: :object,
         properties: {
           label: { type: :string },
-          storefront_visible: { type: :boolean }
+          storefront_visible: { type: :boolean },
+          searchable: { type: :boolean },
+          sortable: { type: :boolean }
         }
       }
 

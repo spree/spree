@@ -194,6 +194,94 @@ module Spree
           expect(result.products).not_to include(product_3)
         end
       end
+
+      context 'with searchable metafields' do
+        let!(:definition) do
+          create(:metafield_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'label')
+        end
+
+        before do
+          product_2.set_metafield(definition, 'wool-blend')
+        end
+
+        it 'finds products by searchable metafield value' do
+          result = provider.search_and_filter(scope: scope, query: 'wool')
+          expect(result.products).to include(product_2)
+          expect(result.products).not_to include(product_1, product_3)
+        end
+      end
+
+      context 'with sortable metafields' do
+        let!(:definition) do
+          create(:metafield_definition, :short_text_field, :sortable,
+                 namespace: 'custom', key: 'label')
+        end
+
+        before do
+          product_1.set_metafield(definition, 'charlie')
+          product_2.set_metafield(definition, 'alpha')
+          product_3.set_metafield(definition, 'bravo')
+        end
+
+        it 'sorts ascending by mf_* attribute' do
+          result = provider.search_and_filter(scope: scope, sort: 'mf_6_custom_label')
+          expect(result.products.map(&:id)).to eq([product_2.id, product_3.id, product_1.id])
+        end
+
+        it 'sorts descending by -mf_* attribute' do
+          result = provider.search_and_filter(scope: scope, sort: '-mf_6_custom_label')
+          expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
+        end
+
+        it 'sorts with Ransack filters present (SELECT DISTINCT compatible)' do
+          result = provider.search_and_filter(
+            scope: scope,
+            filters: { 'name_cont' => 'Blue' },
+            sort: 'mf_6_custom_label'
+          )
+          expect(result.products.map(&:id)).to eq([product_3.id, product_1.id])
+        end
+
+        context 'with missing metafield values' do
+          before do
+            product_2.metafields.destroy_all
+          end
+
+          it 'keeps missing values last when sorting ascending' do
+            result = provider.search_and_filter(scope: scope, sort: 'mf_6_custom_label')
+            expect(result.products.map(&:id)).to eq([product_3.id, product_1.id, product_2.id])
+          end
+
+          it 'keeps missing values last when sorting descending' do
+            result = provider.search_and_filter(scope: scope, sort: '-mf_6_custom_label')
+            expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
+          end
+        end
+      end
+
+      context 'with sortable number metafields' do
+        let!(:definition) do
+          create(:metafield_definition, :number_field, :sortable,
+                 namespace: 'custom', key: 'weight')
+        end
+
+        before do
+          product_1.set_metafield(definition, '10')
+          product_2.set_metafield(definition, '2')
+          product_3.set_metafield(definition, '3')
+        end
+
+        it 'sorts ascending numerically rather than lexicographically' do
+          result = provider.search_and_filter(scope: scope, sort: 'mf_6_custom_weight')
+          expect(result.products.map(&:id)).to eq([product_2.id, product_3.id, product_1.id])
+        end
+
+        it 'sorts descending numerically' do
+          result = provider.search_and_filter(scope: scope, sort: '-mf_6_custom_weight')
+          expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
+        end
+      end
     end
 
     describe '#filters' do
@@ -209,6 +297,24 @@ module Spree
         expect(result.sort_options).to be_an(Array)
         ids = result.sort_options.map { |o| o[:id] }
         expect(ids).to include('price', '-price', 'best_selling')
+      end
+
+      context 'with sortable metafield definitions' do
+        let!(:definition) do
+          create(:metafield_definition, :short_text_field, :sortable,
+                 namespace: 'custom', key: 'label', name: 'Material')
+        end
+
+        it 'includes metafield sort options' do
+          ids = result.sort_options.map { |o| o[:id] }
+          expect(ids).to include('mf_6_custom_label', '-mf_6_custom_label')
+        end
+
+        it 'includes human-readable labels for metafield sort options' do
+          by_id = result.sort_options.index_by { |o| o[:id] }
+          expect(by_id['mf_6_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_a_to_z)})")
+          expect(by_id['-mf_6_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_z_to_a)})")
+        end
       end
 
       it 'returns total count' do

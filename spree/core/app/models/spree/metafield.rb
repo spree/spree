@@ -21,6 +21,17 @@ module Spree
     # in OpenAPI (string-array form was added in typelizer 0.10.0).
     FIELD_TYPE_TOKENS = TYPE_TOKENS.keys.freeze
 
+    # Whether MetafieldDefinition may enable `searchable` / `sortable` for this
+    # STI type. Used only by definition validations (not by SearchProvider
+    # indexing). Defaults to false; subclasses override (e.g. ShortText).
+    def self.searchable?
+      false
+    end
+
+    def self.sortable?
+      false
+    end
+
     has_prefix_id :cf
 
     #

@@ -239,6 +239,14 @@
         "storefront_visible": {
           "label": "在网店中显示",
           "column_label": "网店"
+        },
+        "searchable": {
+          "label": "可搜索",
+          "help": "将值纳入店面商品全文搜索（仅短文本、长文本和数字）。启用 Meilisearch 后请运行 rake spree:search:reindex，以便更新现有商品。"
+        },
+        "sortable": {
+          "label": "可排序",
+          "help": "允许店面商品列表按此字段排序（仅短文本和数字）。启用 Meilisearch 后请运行 rake spree:search:reindex，以便更新现有商品。"
         }
       },
       "tax_category": {

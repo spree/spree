@@ -51,7 +51,7 @@ module Spree
         unless ms_result
           return FiltersResult.new(
             filters: [],
-            sort_options: available_sort_options.map { |id| { id: id } },
+            sort_options: built_in_and_metafield_sort_options,
             default_sort: 'manual',
             total_count: 0
           )
@@ -59,7 +59,7 @@ module Spree
 
         FiltersResult.new(
           filters: build_facet_response(facet_distribution),
-          sort_options: available_sort_options.map { |id| { id: id } },
+          sort_options: built_in_and_metafield_sort_options,
           default_sort: 'manual',
           total_count: ms_result['estimatedTotalHits'] || 0
         )
@@ -180,7 +180,7 @@ module Spree
           # is referenced before the index settings were refreshed — otherwise
           # every search on an upgraded store returns empty until a reindex or
           # the next product write.
-          if e.code == 'invalid_search_filter' && !settings_refreshed
+          if %w[invalid_search_filter invalid_search_sort].include?(e.code) && !settings_refreshed
             settings_refreshed = true
             ensure_index_settings!
             retry
@@ -239,8 +239,12 @@ module Spree
         "#{store.code}_products"
       end
 
+      def metafield_attributes
+        Spree::Dependencies.search_metafield_attributes_class
+      end
+
       def searchable_attributes
-        %w[name description sku option_values category_names tags]
+        %w[name description sku option_values category_names tags] + metafield_attributes.searchable_attribute_keys
       end
 
       def filterable_attributes
@@ -248,7 +252,7 @@ module Spree
       end
 
       def sortable_attributes
-        %w[name price created_at available_on units_sold_count]
+        %w[name price created_at available_on units_sold_count] + metafield_attributes.sortable_attribute_keys
       end
 
       def facet_attributes
@@ -256,7 +260,12 @@ module Spree
       end
 
       def available_sort_options
-        %w[price -price name -name -available_on available_on best_selling]
+        %w[price -price name -name -available_on available_on best_selling] + metafield_attributes.sort_ids
+      end
+
+      def built_in_and_metafield_sort_options
+        %w[price -price name -name -available_on available_on best_selling].map { |id| { id: id, label: nil } } +
+          metafield_attributes.sort_options
       end
 
       # Build Meilisearch filter conditions from API params.
@@ -380,6 +389,9 @@ module Spree
         when '-available_on' then ['available_on:desc']
         when 'available_on'  then ['available_on:asc']
         when 'best_selling'  then ['units_sold_count:desc']
+        else
+          parsed = metafield_attributes.parse_sort(sort)
+          parsed && ["#{parsed[:attribute]}:#{parsed[:direction]}"]
         end
       end
 

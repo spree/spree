@@ -1,5 +1,5 @@
 import type { Product } from '@spree/admin-sdk'
-import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
+import type { BulkAction, BulkActionFormProps, ColumnDef } from '@spree/dashboard-core'
 import {
   adminClient,
   ExportButton,
@@ -9,6 +9,7 @@ import {
   resourceSearchSchema,
   Subject,
   TagCombobox,
+  useCustomFieldDefinitions,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
@@ -273,6 +274,18 @@ function ProductsPage() {
     [storeId],
   )
 
+  const { data: definitionsResponse } = useCustomFieldDefinitions('Spree::Product')
+  const metafieldSortColumns = useMemo<ColumnDef[]>(() => {
+    const definitions = definitionsResponse?.data ?? []
+    return definitions
+      .filter((definition) => definition.sortable && definition.search_key)
+      .map((definition) => ({
+        key: definition.search_key,
+        label: definition.label,
+        sortable: true,
+      }))
+  }, [definitionsResponse])
+
   return (
     <>
       <ResourceTable
@@ -283,6 +296,7 @@ function ProductsPage() {
         searchParams={searchParams}
         bulkActions={bulkActions}
         rowActions={renderRowActions}
+        metafieldSortColumns={metafieldSortColumns}
         actions={(ctx) => (
           <>
             <ImportButton
