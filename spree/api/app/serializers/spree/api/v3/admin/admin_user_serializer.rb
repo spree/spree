@@ -9,7 +9,8 @@ module Spree
                    full_name: [:string, nullable: true],
                    selected_locale: [:string, nullable: true],
                    avatar_url: [:string, nullable: true],
-                   roles: 'Array<{ id: string; name: string }>'
+                   roles: 'Array<{ id: string; name: string }>',
+                   stores: 'Array<{ id: string; name: string; code: string }>'
 
           attributes :email, :first_name, :last_name, :full_name, :selected_locale,
                      created_at: :iso8601, updated_at: :iso8601
@@ -29,6 +30,15 @@ module Spree
             scope = user.role_users
             scope = scope.where(resource: store) if store
             scope.includes(:role).map { |ru| { id: ru.role.prefixed_id, name: ru.role.name } }
+          end
+
+          # Every store this user holds a role on (via `Spree::RoleUser`) —
+          # unlike `roles`, deliberately NOT scoped to the current store, so
+          # the dashboard store switcher can offer all accessible stores.
+          attribute :stores do |user|
+            user.stores.distinct.order(:name).map do |store|
+              { id: store.prefixed_id, name: store.name, code: store.code }
+            end
           end
         end
       end

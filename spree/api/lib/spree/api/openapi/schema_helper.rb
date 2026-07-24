@@ -155,6 +155,16 @@ module Spree
               },
               required: %w[id name]
             },
+            AdminUserStore: {
+              type: :object,
+              description: 'A store the staff member can access through a role assignment',
+              properties: {
+                id: { type: :string, description: 'Prefixed store ID', example: 'store_abc123' },
+                name: { type: :string, description: 'Store name', example: 'My Store' },
+                code: { type: :string, description: 'Store code', example: 'my-store' }
+              },
+              required: %w[id name code]
+            },
             PreferenceField: {
               type: :object,
               description: 'A single configurable preference on a payment method, promotion rule/action, or calculator. The frontend uses `type` + `default` to render a sensible input.',
@@ -303,6 +313,14 @@ module Spree
             props[roles_key] = {
               type: :array,
               items: { '$ref' => '#/components/schemas/AdminUserRoleAssignment' }
+            }
+          end
+
+          stores_key = props.key?('stores') ? 'stores' : :stores
+          if props[stores_key]
+            props[stores_key] = {
+              type: :array,
+              items: { '$ref' => '#/components/schemas/AdminUserStore' }
             }
           end
         end
