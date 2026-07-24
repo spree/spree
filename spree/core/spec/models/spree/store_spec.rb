@@ -1026,4 +1026,47 @@ describe Spree::Store, type: :model, without_global_store: true do
       expect(store.reload.setup_tasks.find { |t| t.name == 'setup_storefront' }.done).to be true
     end
   end
+
+  describe '#payment_method_setup?' do
+    let(:store) { create(:store) }
+
+    subject { store.payment_method_setup? }
+
+    context 'with no payment methods' do
+      it { is_expected.to be false }
+    end
+
+    context 'with only a store credit payment method' do
+      before { create(:store_credit_payment_method, store: store) }
+
+      it { is_expected.to be false }
+    end
+
+    context 'when the only non-store-credit methods are admin-only' do
+      before do
+        create(:credit_card_payment_method, store: store, display_on: 'back_end')
+        create(:check_payment_method, store: store, display_on: 'back_end')
+      end
+
+      it 'stays pending' do
+        expect(subject).to be false
+        expect(store.setup_task_done?(:setup_payment_method)).to be false
+      end
+    end
+
+    context 'with an active storefront-visible payment method' do
+      before { create(:credit_card_payment_method, store: store) }
+
+      it 'marks the setup task as done' do
+        expect(subject).to be true
+        expect(store.setup_task_done?(:setup_payment_method)).to be true
+      end
+    end
+
+    context 'when the storefront-visible method is inactive' do
+      before { create(:credit_card_payment_method, store: store, active: false) }
+
+      it { is_expected.to be false }
+    end
+  end
 end
