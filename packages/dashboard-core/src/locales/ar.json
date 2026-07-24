@@ -76,7 +76,8 @@
       "remove_value": "إزالة القيمة",
       "breadcrumb_more": "المزيد",
       "sidebar": "الشريط الجانبي",
-      "sidebar_description": "يعرض الشريط الجانبي للجوال."
+      "sidebar_description": "يعرض الشريط الجانبي للجوال.",
+      "store_switcher": "تبديل المتجر"
     },
     "common": {
       "loading": "جارٍ التحميل…",

@@ -13,6 +13,7 @@ import {
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '../hooks/use-auth'
 import { useStore } from '../providers/store-provider'
 
@@ -23,6 +24,7 @@ import { useStore } from '../providers/store-provider'
  * or more to switch between.
  */
 export function StoreSwitcher() {
+  const { t } = useTranslation()
   const { isMobile, state } = useSidebar()
   const isCollapsed = state === 'collapsed'
 
@@ -69,6 +71,7 @@ export function StoreSwitcher() {
           <DropdownMenuTrigger asChild className="flex w-full items-center">
             <button
               type="button"
+              aria-label={t('admin.a11y.store_switcher')}
               className="rounded-xl outline-hidden transition-colors duration-100 hover:bg-sidebar-accent data-[state=open]:bg-sidebar-accent gap-2 p-1.5"
             >
               {header}
@@ -83,11 +86,15 @@ export function StoreSwitcher() {
             align="start"
             sideOffset={8}
           >
-            {stores.map((s) => (
-              <DropdownMenuItem key={s.id} asChild>
-                <Link to="/$storeId" params={{ storeId: s.id }} className="no-underline">
-                  <span className="flex-1 truncate">{s.name}</span>
-                  {s.id === store?.id && <CheckIcon className="size-4" />}
+            {stores.map((availableStore) => (
+              <DropdownMenuItem key={availableStore.id} asChild>
+                <Link
+                  to="/$storeId"
+                  params={{ storeId: availableStore.id }}
+                  className="no-underline"
+                >
+                  <span className="flex-1 truncate">{availableStore.name}</span>
+                  {availableStore.id === store?.id && <CheckIcon className="size-4" />}
                 </Link>
               </DropdownMenuItem>
             ))}

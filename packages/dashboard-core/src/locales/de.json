@@ -76,7 +76,8 @@
       "remove_value": "Wert entfernen",
       "breadcrumb_more": "Mehr",
       "sidebar": "Seitenleiste",
-      "sidebar_description": "Zeigt die mobile Seitenleiste an."
+      "sidebar_description": "Zeigt die mobile Seitenleiste an.",
+      "store_switcher": "Store wechseln"
     },
     "common": {
       "loading": "Wird geladen…",

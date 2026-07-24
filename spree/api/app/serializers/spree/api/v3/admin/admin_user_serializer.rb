@@ -35,8 +35,11 @@ module Spree
           # Every store this user holds a role on (via `Spree::RoleUser`) —
           # unlike `roles`, deliberately NOT scoped to the current store, so
           # the dashboard store switcher can offer all accessible stores.
+          # Dedupe/sort happen in Ruby (not `.distinct.order`) so the staff
+          # index's `collection_includes` preload is used instead of firing
+          # an extra query per user.
           attribute :stores do |user|
-            user.stores.distinct.order(:name).map do |store|
+            user.stores.uniq.sort_by(&:name).map do |store|
               { id: store.prefixed_id, name: store.name, code: store.code }
             end
           end
