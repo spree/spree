@@ -8,6 +8,7 @@ import {
   DASHBOARD_PORT,
   DEFAULT_ADMIN_EMAIL,
   DEFAULT_ADMIN_PASSWORD,
+  STOREFRONT_PORT,
   STOREFRONT_REPO,
 } from './constants.js'
 import { scaffoldDashboard } from './dashboard.js'
@@ -122,7 +123,10 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       await downloadStorefront(projectDir)
       s.stop('Storefront template downloaded.')
 
-      writeStorefrontEnv(projectDir, port)
+      // Sample data seeds the whole wholesale demo (gated channel, buyer,
+      // trade prices), so those scaffolds get the portal enabled up front —
+      // first-run setup fills in the channel-bound key.
+      writeStorefrontEnv(projectDir, port, options.sampleData)
 
       s.start('Installing storefront dependencies...')
       await installStorefrontDeps(projectDir, options.packageManager)
@@ -198,6 +202,11 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       p.log.info(
         `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && ${storefrontPm(options.packageManager)} run dev`)}`,
       )
+      if (options.sampleData) {
+        p.log.info(
+          `${pc.bold('Wholesale portal')}: ${pc.cyan(`http://localhost:${STOREFRONT_PORT}/wholesale`)} — register a buyer, then approve them in the admin (add to the ${pc.bold('Wholesale')} customer group)`,
+        )
+      }
     }
     // No dashboard line here — with the dashboard chosen, `spree init`'s
     // summary already leads with it (served at /dashboard, plus the
@@ -209,6 +218,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       dashboardReady,
       port,
       options.packageManager,
+      options.sampleData,
     )
   }
 }
@@ -219,6 +229,7 @@ function printSuccessWithoutDocker(
   hasDashboard: boolean,
   port: number,
   pm: PackageManager,
+  sampleData: boolean,
 ): void {
   const run = runCommand(pm)
   const lines: string[] = [
@@ -237,6 +248,11 @@ function printSuccessWithoutDocker(
       `  ${installCommand(pm)}`,
       `  ${pm} run dev`,
     )
+    if (sampleData) {
+      lines.push(
+        `  ${pc.dim(`# Wholesale B2B portal: http://localhost:${STOREFRONT_PORT}/wholesale (approve buyers via the "Wholesale" customer group)`)}`,
+      )
+    }
   }
 
   // With the React Dashboard chosen, its dev server IS the admin — and

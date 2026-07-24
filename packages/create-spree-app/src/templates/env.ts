@@ -12,8 +12,19 @@ SPREE_SAMPLE_DATA=${sampleData}
 `
 }
 
-export function storefrontEnvContent(port: number, apiKey?: string): string {
-  return `SPREE_API_URL=http://localhost:${port}
-SPREE_PUBLISHABLE_KEY=${apiKey ?? 'pk_REPLACE_ME_AFTER_DOCKER_START'}
+export function storefrontEnvContent(port: number, wholesale = false): string {
+  let content = `SPREE_API_URL=http://localhost:${port}
+SPREE_PUBLISHABLE_KEY=pk_REPLACE_ME_AFTER_DOCKER_START
 `
+  if (wholesale) {
+    content += `
+# Wholesale B2B portal (/wholesale) — the gated channel and trade price list
+# ship with sample data. Buyers self-register; approve one by adding them to
+# the "Wholesale" customer group in the admin. The portal uses
+# SPREE_PUBLISHABLE_KEY (the channel header selects the channel); set
+# SPREE_WHOLESALE_PUBLISHABLE_KEY only to pin a channel-bound key.
+SPREE_WHOLESALE_CHANNEL=wholesale
+`
+  }
+  return content
 }
