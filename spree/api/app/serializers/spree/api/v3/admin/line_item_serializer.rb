@@ -43,9 +43,17 @@ module Spree
               resource: proc { Spree.api.admin_tax_category_serializer },
               if: proc { expand?('tax_category') }
 
-          many :adjustments,
-               resource: proc { Spree.api.admin_adjustment_serializer },
-               if: proc { expand?('adjustments') }
+          many :tax_lines,
+               resource: proc { Spree.api.admin_tax_line_serializer },
+               if: proc { expand?('tax_lines') }
+
+          many :discount_lines,
+               resource: proc { Spree.api.admin_discount_line_serializer },
+               if: proc { expand?('discount_lines') }
+
+          many :fees,
+               resource: proc { Spree.api.admin_fee_serializer },
+               if: proc { expand?('fees') }
         end
       end
     end

@@ -61,9 +61,12 @@ describe('orders', () => {
       )
 
       // resume takes no params; the others accept an optional params arg.
-      await (createTestClient().orders as Record<string, (...args: unknown[]) => Promise<unknown>>)[
-        method
-      ]('order_abc123')
+      await (
+        createTestClient().orders as unknown as Record<
+          string,
+          (...args: unknown[]) => Promise<unknown>
+        >
+      )[method]('order_abc123')
       expect(hit).toBe(true)
     })
 
@@ -238,6 +241,43 @@ describe('orders', () => {
       })
 
       expect(body).toEqual({ payment_id: 'pay_1', amount: 10 })
+    })
+  })
+
+  describe('nested adjustment lines', () => {
+    const lineResources = [
+      ['taxLines', 'tax_lines', { id: 'tl_1', amount: '2.5', label: 'VAT', included: false }],
+      ['discountLines', 'discount_lines', { id: 'dl_1', amount: '-3.0', label: 'Promo' }],
+      ['fees', 'fees', { id: 'fee_1', amount: '5.99', label: 'Gift wrapping', kind: 'gift_wrap' }],
+    ] as const
+
+    it.each(
+      lineResources,
+    )('GETs /orders/:id/%s list with Ransack filters', async (resource, path, sample) => {
+      let url: URL | null = null
+      server.use(
+        http.get(`${API_PREFIX}/orders/order_abc123/${path}`, ({ request }) => {
+          url = new URL(request.url)
+          return HttpResponse.json(paginated([sample]))
+        }),
+      )
+
+      const res = await createTestClient().orders[resource].list('order_abc123', { amount_gt: 0 })
+
+      expect(res.data[0]?.id).toBe(sample.id)
+      expect(url!.searchParams.get('q[amount_gt]')).toBe('0')
+    })
+
+    it.each(lineResources)('GETs a single %s row', async (resource, path, sample) => {
+      server.use(
+        http.get(`${API_PREFIX}/orders/order_abc123/${path}/${sample.id}`, () =>
+          HttpResponse.json(sample),
+        ),
+      )
+
+      const res = await createTestClient().orders[resource].get('order_abc123', sample.id)
+
+      expect(res.id).toBe(sample.id)
     })
   })
 

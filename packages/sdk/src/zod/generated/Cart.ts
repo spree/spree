@@ -27,6 +27,8 @@ export const CartSchema = z.object({
   display_adjustment_total: z.string().nullable(),
   discount_total: z.string().nullable(),
   display_discount_total: z.string().nullable(),
+  fee_total: z.string().nullable(),
+  display_fee_total: z.string().nullable(),
   tax_total: z.string().nullable(),
   display_tax_total: z.string().nullable(),
   included_tax_total: z.string().nullable(),
