@@ -85,10 +85,6 @@
         "failed_to_delete": "Failed to delete market"
       }
     },
-    "branding": {
-      "app_name": "Spree Admin",
-      "powered_by": "Powered by Spree Commerce"
-    },
     "errors": {
       "not_found_title": "Page not found",
       "not_found_description": "The page you’re looking for doesn’t exist.",

@@ -37,10 +37,6 @@
         "empty": "Brak pasujących partii"
       }
     },
-    "branding": {
-      "app_name": "Panel administracyjny Spree",
-      "powered_by": "Obsługiwane przez Spree Commerce"
-    },
     "errors": {
       "not_found_title": "Nie znaleziono strony",
       "not_found_description": "Strona, której szukasz, nie istnieje.",

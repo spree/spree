@@ -85,10 +85,6 @@
         "failed_to_delete": "فشل حذف السوق"
       }
     },
-    "branding": {
-      "app_name": "Spree Admin",
-      "powered_by": "مدعوم من Spree Commerce"
-    },
     "errors": {
       "not_found_title": "الصفحة غير موجودة",
       "not_found_description": "الصفحة التي تبحث عنها غير موجودة.",
