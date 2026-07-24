@@ -228,6 +228,49 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(channel.reload.preferred_order_routing_strategy).to be_blank
     end
+
+    it 'persists the storefront gating preferences' do
+      patch :update, params: {
+        id: channel.prefixed_id,
+        preferred_storefront_access: 'prices_hidden',
+        preferred_guest_checkout: false
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['preferred_storefront_access']).to eq('prices_hidden')
+      expect(json_response['preferred_guest_checkout']).to be(false)
+
+      channel.reload
+      expect(channel.preferred_storefront_access).to eq('prices_hidden')
+      expect(channel.preferred_guest_checkout).to be(false)
+    end
+
+    it 'clears the gating overrides back to store inheritance when set to null' do
+      channel.update!(preferred_storefront_access: 'login_required', preferred_guest_checkout: false)
+
+      patch :update, params: {
+        id: channel.prefixed_id,
+        preferred_storefront_access: nil,
+        preferred_guest_checkout: nil
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+
+      channel.reload
+      expect(channel.preferred_storefront_access).to be_blank
+      expect(channel.preferred_guest_checkout).to be_nil
+    end
+
+    it 'rejects an invalid storefront access value with 422' do
+      patch :update, params: {
+        id: channel.prefixed_id,
+        preferred_storefront_access: 'members_only'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json_response['error']['code']).to eq('validation_error')
+      expect(channel.reload.preferred_storefront_access).to be_blank
+    end
   end
 
   describe 'DELETE #destroy' do
