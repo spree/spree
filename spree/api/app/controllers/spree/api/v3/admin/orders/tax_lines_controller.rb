@@ -3,19 +3,19 @@ module Spree
     module V3
       module Admin
         module Orders
-          class AdjustmentsController < BaseController
+          class TaxLinesController < BaseController
             protected
 
             def model_class
-              Spree::Adjustment
+              Spree::TaxLine
             end
 
             def serializer_class
-              Spree.api.admin_adjustment_serializer
+              Spree.api.admin_tax_line_serializer
             end
 
             def parent_association
-              :adjustments
+              :tax_lines
             end
           end
         end

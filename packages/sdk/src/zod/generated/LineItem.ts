@@ -1,7 +1,9 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { DigitalLinkSchema } from './DigitalLink';
+import { DiscountLineSchema } from './DiscountLine';
 import { OptionValueSchema } from './OptionValue';
+import { TaxLineSchema } from './TaxLine';
 
 export const LineItemSchema = z.object({
   id: z.string(),
@@ -34,6 +36,8 @@ export const LineItemSchema = z.object({
   thumbnail_url: z.string().nullable(),
   option_values: z.array(OptionValueSchema),
   digital_links: z.array(DigitalLinkSchema),
+  tax_lines: z.array(TaxLineSchema).optional(),
+  discount_lines: z.array(DiscountLineSchema).optional(),
 });
 
 export type LineItem = z.infer<typeof LineItemSchema>;

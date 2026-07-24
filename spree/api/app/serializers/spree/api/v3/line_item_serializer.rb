@@ -59,6 +59,15 @@ module Spree
 
         many :option_values, resource: proc { Spree.api.option_value_serializer }
         many :digital_links, resource: proc { Spree.api.digital_link_serializer }
+
+        # Hidden for gated (prices_hidden) guests — the lines are pure money
+        # and would leak what money_attributes above withholds.
+        many :tax_lines,
+             resource: proc { Spree.api.tax_line_serializer },
+             if: proc { !params[:hide_prices] }
+        many :discount_lines,
+             resource: proc { Spree.api.discount_line_serializer },
+             if: proc { !params[:hide_prices] }
       end
     end
   end

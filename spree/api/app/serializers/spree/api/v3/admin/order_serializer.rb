@@ -102,9 +102,17 @@ module Spree
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('created_by') }
 
-          many :adjustments,
-               resource: proc { Spree.api.admin_adjustment_serializer },
-               if: proc { expand?('adjustments') }
+          many :tax_lines,
+               resource: proc { Spree.api.admin_tax_line_serializer },
+               if: proc { expand?('tax_lines') }
+
+          many :discount_lines,
+               resource: proc { Spree.api.admin_discount_line_serializer },
+               if: proc { expand?('discount_lines') }
+
+          many :fees,
+               resource: proc { Spree.api.admin_fee_serializer },
+               if: proc { expand?('fees') }
 
           many :return_authorizations,
                resource: proc { Spree.api.admin_return_authorization_serializer },

@@ -53,6 +53,30 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
     end
   end
 
+  describe 'nested adjustment lines' do
+    let!(:tax_line) { create(:tax_line, line_item: line_item, order: order, amount: 2.0, label: 'VAT') }
+    let!(:discount_line) { create(:discount_line, line_item: line_item, order: order, amount: -1.5) }
+
+    it 'includes tax and discount lines' do
+      expect(subject['tax_lines'].sole).to include('amount' => '2.0', 'label' => 'VAT', 'included' => false)
+      expect(subject['discount_lines'].sole).to include('amount' => '-1.5')
+    end
+
+    it 'does not include line internals or timestamps' do
+      expect(subject['tax_lines'].sole).not_to have_key('created_at')
+      expect(subject['discount_lines'].sole).not_to have_key('promotion_action_id')
+    end
+
+    context 'when prices are hidden' do
+      let(:base_params) { { store: store, currency: 'USD', hide_prices: true } }
+
+      it 'omits the lines entirely' do
+        expect(subject).not_to have_key('tax_lines')
+        expect(subject).not_to have_key('discount_lines')
+      end
+    end
+  end
+
   describe 'thumbnail_url' do
     context 'when variant has an image' do
       let(:image) { create(:image) }

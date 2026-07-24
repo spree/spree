@@ -156,7 +156,6 @@ import type {
 } from './params'
 import type {
   Address,
-  Adjustment,
   AdminUser,
   AllowedOrigin,
   ApiKey,
@@ -169,7 +168,9 @@ import type {
   CustomerGroup,
   CustomField,
   CustomFieldDefinition,
+  DiscountLine,
   Export,
+  Fee,
   Fulfillment,
   GiftCard,
   GiftCardBatch,
@@ -201,6 +202,7 @@ import type {
   StoreCredit,
   StoreCreditCategory,
   TaxCategory,
+  TaxLine,
   TranslatableResource,
   TranslationBatchEntry,
   Variant,
@@ -1035,19 +1037,49 @@ export class AdminClient {
         this.request<Refund>('POST', `/orders/${orderId}/refunds`, { ...options, body: params }),
     },
 
-    adjustments: {
+    taxLines: {
       list: (
         orderId: string,
         params?: ListParams & Record<string, unknown>,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<Adjustment>> =>
-        this.request<PaginatedResponse<Adjustment>>('GET', `/orders/${orderId}/adjustments`, {
+      ): Promise<PaginatedResponse<TaxLine>> =>
+        this.request<PaginatedResponse<TaxLine>>('GET', `/orders/${orderId}/tax_lines`, {
           ...options,
           params: params ? transformListParams(params) : undefined,
         }),
 
-      get: (orderId: string, id: string, options?: RequestOptions): Promise<Adjustment> =>
-        this.request<Adjustment>('GET', `/orders/${orderId}/adjustments/${id}`, options),
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<TaxLine> =>
+        this.request<TaxLine>('GET', `/orders/${orderId}/tax_lines/${id}`, options),
+    },
+
+    discountLines: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DiscountLine>> =>
+        this.request<PaginatedResponse<DiscountLine>>('GET', `/orders/${orderId}/discount_lines`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<DiscountLine> =>
+        this.request<DiscountLine>('GET', `/orders/${orderId}/discount_lines/${id}`, options),
+    },
+
+    fees: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Fee>> =>
+        this.request<PaginatedResponse<Fee>>('GET', `/orders/${orderId}/fees`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Fee> =>
+        this.request<Fee>('GET', `/orders/${orderId}/fees/${id}`, options),
     },
 
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Order']),

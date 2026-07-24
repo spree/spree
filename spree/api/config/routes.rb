@@ -396,7 +396,9 @@ Spree::Core::Engine.add_routes do
             end
           end
           resources :refunds, controller: 'orders/refunds', only: [:index, :create]
-          resources :adjustments, controller: 'orders/adjustments', only: [:index, :show]
+          resources :tax_lines, controller: 'orders/tax_lines', only: [:index, :show]
+          resources :discount_lines, controller: 'orders/discount_lines', only: [:index, :show]
+          resources :fees, controller: 'orders/fees', only: [:index, :show]
           resources :gift_cards, controller: 'orders/gift_cards', only: [:create, :destroy]
           resource :store_credits, controller: 'orders/store_credits', only: [:create, :destroy]
         end

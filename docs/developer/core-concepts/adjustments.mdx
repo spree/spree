@@ -1,115 +1,161 @@
 ---
 title: Adjustments
-description: How Spree adjustments apply taxes, promotions, and other price modifications to orders, line items, and shipments, and how totals are recalculated.
+description: How Spree applies taxes, discounts, and fees to line items and fulfillments through typed adjustment lines, and how totals are recalculated.
 ---
 
 ## Overview
 
-An Adjustment modifies the price of an [Order](/developer/core-concepts/orders), a [Line Item](/developer/core-concepts/orders#line-items), or a [Shipment](/developer/core-concepts/shipments). Adjustments can be positive (charges) or negative (credits).
+Spree records every price modification as a typed adjustment line attached to a [Line Item](/developer/core-concepts/orders#line-items) or a [Fulfillment](/developer/core-concepts/shipments):
+
+- **TaxLine** — tax owed on an item, one line per applicable tax rate
+- **DiscountLine** — a credit (always negative), typically written by a promotion
+- **Fee** — a charge (never negative), e.g. gift wrapping or a service surcharge
+
+There are no order-level adjustment rows: whole-order discounts are distributed proportionally across the order's line items when the promotion applies. Every line belongs to exactly one item or fulfillment, so per-line tax and partial refunds always know the real discounted amount they operate on.
 
 ```mermaid
 erDiagram
-    Adjustment {
+    TaxLine {
         decimal amount
         string label
-        boolean eligible
-        boolean mandatory
-        string state
         boolean included
-        string source_type
-        string adjustable_type
+    }
+    DiscountLine {
+        decimal amount
+        string label
+        string kind
+    }
+    Fee {
+        decimal amount
+        string label
+        string kind
     }
 
-    Order ||--o{ Adjustment : "has many"
     Order ||--o{ LineItem : "has many"
-    Order ||--o{ Shipment : "has many"
-    LineItem ||--o{ Adjustment : "has many"
-    Shipment ||--o{ Adjustment : "has many"
-    TaxRate ||--o{ Adjustment : "creates"
-    PromotionAction ||--o{ Adjustment : "creates"
+    Order ||--o{ Fulfillment : "has many"
+    LineItem ||--o{ TaxLine : "has many"
+    LineItem ||--o{ DiscountLine : "has many"
+    LineItem ||--o{ Fee : "has many"
+    Fulfillment ||--o{ TaxLine : "has many"
+    Fulfillment ||--o{ DiscountLine : "has many"
+    Fulfillment ||--o{ Fee : "has many"
+    TaxRate ||--o{ TaxLine : "creates"
+    PromotionAction ||--o{ DiscountLine : "creates"
 ```
 
-**Key relationships:**
-- **Adjustment** modifies prices on orders, line items, or shipments
-- **Source** is where the adjustment comes from ([Tax Rate](/developer/core-concepts/taxes) or [Promotion Action](/developer/core-concepts/promotions))
-- **Adjustable** is what's being adjusted (Order, LineItem, or Shipment)
-- Positive amounts are charges, negative amounts are credits
+## Discounts vs Discount Lines
 
-## Adjustment Types
+Two related concepts share the "discount" name; they answer different questions:
 
-### Included vs Additional
+- **`discounts`** — *which promotions* are applied to the order; each entry carries the promotion's name, code, and its total contribution. This is what storefronts show next to the coupon field.
+- **`discount_lines`** — *where the money landed*, line by line. Each row belongs to one line item or fulfillment.
 
-- **Included** adjustments are part of the item's displayed price (e.g., VAT in European stores)
-- **Additional** adjustments are added on top of the item's price (e.g., US sales tax)
+The sum of `discounts[].amount` always equals `discount_total`.
 
-### Sources
+## Tax: Included vs Additional
 
-Adjustments are created by two sources:
+- **Included** tax lines are part of the item's displayed price (e.g., VAT in European stores)
+- **Additional** tax lines are added on top of the item's price (e.g., US sales tax)
 
-| Source | Example | Typical Amount |
-|--------|---------|----------------|
-| [Tax Rate](/developer/core-concepts/taxes) | Sales tax, VAT | Positive (charge) |
-| [Promotion Action](/developer/core-concepts/promotions) | Coupon discount, free shipping | Negative (credit) |
+Tax is always computed from the discounted basis: an item's tax lines reflect its price net of all discounts, including its share of whole-order promotions.
 
-## Adjustment Attributes
+## Recalculation
 
-| Attribute | Description | Example |
-|-----------|-------------|---------|
-| `amount` | The monetary value of the adjustment | `-10.00` |
-| `label` | Human-readable description | `10% off order` |
-| `eligible` | Whether the adjustment currently applies | `true` |
-| `mandatory` | If `true`, always applied regardless of eligibility rules | `false` |
-| `state` | `open` (auto-updated) or `closed` (locked) | `open` |
-| `included` | Whether the amount is included in the item's displayed price | `false` |
+Adjustment lines are maintained by the order's recalculation pipeline, which runs whenever the order is updated (items added or removed, address changed, delivery rate selected). Adjusters run in a fixed order — discounts, then fees, then tax last, so tax always sees the discounted basis.
 
-## Adjustment Lifecycle
+Two rules govern the lifecycle:
 
-- **Open** adjustments are recalculated whenever the order is updated (e.g., items added/removed, address changed)
-- **Closed** adjustments are locked and will not be automatically recalculated
-- When a promotion becomes ineligible (e.g., item removed from cart), its adjustments are automatically removed
+- **Lines follow the order.** Amounts refresh on every update; a line whose promotion no longer applies — or whose amount reaches zero — is removed. When two promotions compete for the same item, only the better discount is kept. Zero-amount lines are never stored.
+- **Completed orders are frozen.** After completion an order's adjustment lines are never recalculated — what the customer saw at checkout is what the order keeps.
+
+Manual discount lines and fees (`kind: 'manual'`) are never touched by the adjusters.
+
+## Custom Adjusters
+
+Custom charges and discounts register an adjuster and write typed lines:
+
+```ruby
+# config/initializers/spree.rb
+Spree.adjusters << MyApp::Adjusters::GiftWrap
+
+# app/models/my_app/adjusters/gift_wrap.rb
+class MyApp::Adjusters::GiftWrap < Spree::Adjusters::Base
+  # type defaults to :fee — runs after discounts, before tax
+
+  def update
+    return unless adjustable.respond_to?(:gift_wrap?) && adjustable.gift_wrap?
+
+    adjustable.fees.find_or_initialize_by(kind: 'gift_wrap', order: adjustable.order).tap do |fee|
+      fee.amount = 5.99
+      fee.label = 'Gift wrapping'
+      fee.save!
+    end
+  end
+end
+```
+
+Declare `self.type = :discount` to run in the discount pass and write `DiscountLine` rows instead (amounts must be negative).
 
 ## Store API
 
-Adjustments appear in order responses when you [`?expand=items,fulfillments`](/api-reference/store-api/relations) on the order. The response exposes the [`amount`, `adjustment_total`, and the tax totals](/api-reference/store-api/monetary-amounts) as money fields:
+Cart and order line items embed their tax and discount lines; totals are exposed as [money fields](/api-reference/store-api/monetary-amounts):
 
 <CodeGroup>
 
 ```typescript Store SDK
-const order = await client.orders.get('or_abc123', { expand: ['items', 'fulfillments'] }, {
-  spreeToken: '<token>',
+const cart = await client.carts.get('cart_abc123', { spreeToken: '<token>' })
+
+cart.items?.forEach(item => {
+  item.tax_lines       // [{ amount, label, included, tax_rate_id }]
+  item.discount_lines  // [{ amount, label, kind, promotion_id }]
+  item.adjustment_total
 })
 
-// Line item adjustments (promotions, taxes)
-order.items?.forEach(item => {
-  item.adjustment_total  // total adjustments on this item
-  item.additional_tax_total
-  item.included_tax_total
-})
-
-// Order-level totals
-order.adjustment_total       // total of all adjustments
-order.discount_total         // total promotional discounts
-order.display_discount_total // formatted promotional discounts
-order.additional_tax_total
-order.included_tax_total
-```
-
-```typescript Admin SDK
-const order = await adminClient.orders.get('or_abc123')
+cart.discounts        // applied promotions: [{ name, code, amount }]
+cart.discount_total   // equals the sum of discounts[].amount
+cart.additional_tax_total
+cart.included_tax_total
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/orders/or_abc123?expand=items,fulfillments' \
+curl 'https://api.mystore.com/api/v3/store/carts/cart_abc123' \
   -H 'X-Spree-API-Key: pk_xxx' \
   -H 'X-Spree-Token: <token>'
 ```
 
 </CodeGroup>
 
+## Admin API
+
+Each order exposes read-only collections of its lines — they are maintained by the pipeline and cannot be created or edited through the API:
+
+<CodeGroup>
+
+```typescript Admin SDK
+const { data: taxLines } = await adminClient.orders.taxLines.list('or_abc123')
+const { data: discountLines } = await adminClient.orders.discountLines.list('or_abc123')
+const { data: fees } = await adminClient.orders.fees.list('or_abc123')
+
+// or expand them on the order
+const order = await adminClient.orders.get('or_abc123', {
+  expand: ['tax_lines', 'discount_lines', 'fees'],
+})
+```
+
+```bash CLI
+spree api get /orders/or_abc123/discount_lines
+```
+
+</CodeGroup>
+
+## Upgrading from Spree 5
+
+Spree 5's polymorphic `Spree::Adjustment` is deprecated: nothing writes it anymore, and it is removed in 6.1. Run `rake spree:migrate_adjustments` once after upgrading — it converts completed orders' historical rows: tax adjustments become `TaxLine`s, promotion adjustments become `DiscountLine`s, and manual adjustments split by sign into `DiscountLine`s (credits) and `Fee`s (charges). In-flight carts need no migration; their lines are rebuilt on the next update.
+
 ## Related Documentation
 
-- [Promotions](/developer/core-concepts/promotions) — Promotion-based adjustments
-- [Taxes](/developer/core-concepts/taxes) — Tax adjustments
-- [Shipments](/developer/core-concepts/shipments) — Shipping adjustments
-- [Orders](/developer/core-concepts/orders) — How adjustments affect order totals
-- [Calculators](/developer/core-concepts/calculators) — How tax rate and promotion action amounts are computed
+- [Promotions](/developer/core-concepts/promotions) — how discount lines are created
+- [Taxes](/developer/core-concepts/taxes) — how tax lines are computed
+- [Shipments](/developer/core-concepts/shipments) — fulfillment-attached lines
+- [Orders](/developer/core-concepts/orders) — how adjustment lines roll up into totals
+- [Calculators](/developer/core-concepts/calculators) — how tax rate and promotion action amounts are computed
