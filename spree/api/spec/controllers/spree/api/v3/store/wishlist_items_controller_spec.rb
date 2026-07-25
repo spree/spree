@@ -26,6 +26,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
 
       expect(response).to have_http_status(:created)
       expect(json_response['variant_id']).to eq(new_variant.prefixed_id)
+      expect(json_response['product_id']).to eq(new_product.prefixed_id)
       expect(json_response['quantity']).to eq(3)
     end
 

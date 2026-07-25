@@ -6,11 +6,16 @@ const client = createClient({
 })
 
 // region:example
-const wishlist = await client.wishlists.get('wl_abc123', {
-  expand: ['wished_items'],
-}, {
-  token: '<token>',
-})
+const wishlist = await client.wishlists.get(
+  'wl_abc123',
+  {
+    expand: ['items.product'],
+  },
+  {
+    token: '<token>',
+  },
+)
+
 // endregion:example
 
 export { wishlist }
