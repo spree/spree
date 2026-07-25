@@ -55,6 +55,8 @@ module Spree
       # Payments count as set up only once customers can actually pay at
       # storefront checkout: admin-only (back_end) methods and store credit
       # don't complete the task.
+      #
+      # @return [Boolean]
       def payment_method_setup?
         payment_methods.active.storefront_visible.where.not(type: Spree::PaymentMethod::StoreCredit.to_s).any?
       end

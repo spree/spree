@@ -271,7 +271,7 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(response).to have_http_status(:ok)
 
       channel.reload
-      expect(channel.preferred_storefront_access).to be_blank
+      expect(channel.preferred_storefront_access).to be_nil
       expect(channel.preferred_guest_checkout).to be_nil
     end
 
