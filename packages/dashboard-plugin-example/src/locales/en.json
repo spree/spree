@@ -3,8 +3,6 @@
     "brands_plugin": {
       "nav": "Brands",
       "page": {
-        "title": "Brands",
-        "subtitle": "Manage product brands",
         "new_cta": "New brand"
       },
       "table": {
