@@ -150,9 +150,9 @@ module Spree
               )
             end
 
-            headers = klass.new.schema_fields.map { |field| field[:name] }
-            send_data ::CSV.generate_line(headers),
-                      filename: "#{klass.name.demodulize.underscore}_import_template.csv",
+            import = klass.new
+            send_data import.template_csv,
+                      filename: import.template_csv_filename,
                       type: 'text/csv',
                       disposition: 'attachment'
           end

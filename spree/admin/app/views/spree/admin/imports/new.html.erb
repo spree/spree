@@ -16,6 +16,19 @@
       </div>
 
       <%= f.spree_select :preferred_delimiter, options_for_select([',', ';', '|', '\t'], @import.preferred_delimiter) %>
+
+      <div class="flex flex-col items-start gap-2 mt-4">
+        <%# The schema is one CSV line, so it's inlined rather than fetched. %>
+        <%= link_to_with_icon 'download', Spree.t('admin.imports.download_template_csv'),
+                              "data:text/csv;charset=utf-8,#{ERB::Util.url_encode(@import.template_csv)}",
+                              download: @import.template_csv_filename, class: 'text-muted' %>
+
+        <%# The populated counterpart to the headers-only template above. %>
+        <% if (sample_csv_url = @import.sample_csv_url) %>
+          <%= link_to_with_icon 'download', Spree.t('admin.imports.download_example_csv'), sample_csv_url,
+                                target: '_blank', rel: 'noopener', class: 'text-muted' %>
+        <% end %>
+      </div>
     </div>
 
     <div class="drawer-footer">
