@@ -47,6 +47,28 @@ export function useDownloadImportTemplate() {
   })
 }
 
+/**
+ * Downloads the populated example CSV for an import type.
+ *
+ * Goes through the API rather than linking the file directly: the URL is pinned
+ * to the installed Spree version so a released install never links to a newer,
+ * incompatible schema — and that version is deliberately not exposed over the
+ * API, since it would fingerprint the deployment. Returns 404 for a type that
+ * ships no example file.
+ */
+export function useDownloadImportExample() {
+  const { token } = useAuth()
+
+  return useMutation({
+    mutationFn: (type: ImportType) =>
+      downloadFromApi(
+        token,
+        `/api/v3/admin/imports/example?type=${encodeURIComponent(type)}`,
+        `${type}.csv`,
+      ),
+  })
+}
+
 /** Downloads the originally uploaded CSV of an import — the audit trail. */
 export function useDownloadImportOriginal() {
   const { token } = useAuth()

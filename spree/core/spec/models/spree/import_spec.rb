@@ -424,9 +424,11 @@ RSpec.describe Spree::Import, :job, type: :model do
       expect(Spree::Imports::ProductTranslations.sample_csv_url).to end_with('/db/sample_data/product_translations.csv')
     end
 
-    it 'serves them from the sample data base url' do
+    # Pinned to the installed version, not `main` — the availability check reads
+    # the local db/sample_data, so the served file has to match that schema.
+    it 'pins the URL to the installed Spree version' do
       expect(Spree::Imports::Products.sample_csv_url).to eq(
-        "#{described_class::SAMPLE_DATA_BASE_URL}/products.csv"
+        "https://raw.githubusercontent.com/spree/spree/refs/tags/v#{Spree.version}/spree/core/db/sample_data/products.csv"
       )
     end
 

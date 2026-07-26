@@ -8,7 +8,13 @@ module Spree
     include Spree::Core::NumberGenerator.new(prefix: 'IM')
 
     # Where the downloadable example CSVs are served from — see `sample_csv_url`.
-    SAMPLE_DATA_BASE_URL = 'https://raw.githubusercontent.com/spree/spree/refs/heads/main/spree/core/db/sample_data'.freeze
+    #
+    # Pinned to the installed version's tag rather than `main`: whether a type
+    # *has* an example is answered by the local `db/sample_data`, so pointing
+    # elsewhere would let a released install link to a newer, incompatible
+    # schema (or a file that has since been removed).
+    SAMPLE_DATA_BASE_URL_TEMPLATE =
+      'https://raw.githubusercontent.com/spree/spree/refs/tags/v%<version>s/spree/core/db/sample_data'.freeze
 
     publishes_lifecycle_events
 
@@ -397,14 +403,21 @@ module Spree
       #
       # Whether a type *has* an example is answered by `db/sample_data` itself,
       # so adding or removing a CSV there needs no change here; a type with no
-      # sample file returns nil and the UI omits the link.
+      # sample file returns nil and the UI omits the link. The URL is pinned to
+      # the installed version's tag so the file served always matches the schema
+      # that check was made against.
       #
       # @return [String, nil]
       def sample_csv_url
         return nil if self == Spree::Import
         return nil unless Spree::Core::Engine.root.join('db', 'sample_data', sample_csv_filename).exist?
 
-        [SAMPLE_DATA_BASE_URL, sample_csv_filename].join('/')
+        [sample_data_base_url, sample_csv_filename].join('/')
+      end
+
+      # @return [String]
+      def sample_data_base_url
+        format(SAMPLE_DATA_BASE_URL_TEMPLATE, version: Spree.version)
       end
 
       # eg. Spree::Imports::ProductTranslations => "product_translations.csv"

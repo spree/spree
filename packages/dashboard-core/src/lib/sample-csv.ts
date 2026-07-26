@@ -1,23 +1,18 @@
 import type { ImportType } from '@spree/admin-sdk'
 
 /**
- * Example CSVs published from Spree's `core/db/sample_data`. These are the same
- * files `rake spree:load_sample_data` feeds through the import pipeline, so they
- * are working examples rather than hand-written samples that drift from the
- * schema.
+ * Import types that ship a populated example CSV in Spree's
+ * `core/db/sample_data`. Keyed by the API's type shorthand (`"products"`),
+ * which is also the CSV's filename stem.
  *
- * Keyed by the API's type shorthand (`"products"`), which is also the CSV's
- * filename stem — so this is just the set of types that have an example file.
+ * Only used to decide whether to render the download link — the file itself is
+ * served by `GET /api/v3/admin/imports/example`, which pins the URL to the
+ * installed Spree version. A type missing from this list simply hides the link;
+ * the endpoint is the authority and 404s for anything it has no example for.
  */
 const TYPES_WITH_SAMPLE_CSV = new Set(['products', 'customers', 'product_translations'])
 
-const SAMPLE_CSV_BASE_URL =
-  'https://raw.githubusercontent.com/spree/spree/refs/heads/main/spree/core/db/sample_data'
-
-/**
- * Public URL of the example CSV for an import type, or `null` for a type that
- * has no sample file — callers omit the link rather than render a 404.
- */
-export function sampleCsvUrl(type: ImportType): string | null {
-  return TYPES_WITH_SAMPLE_CSV.has(type) ? `${SAMPLE_CSV_BASE_URL}/${type}.csv` : null
+/** Whether an import type has an example CSV to offer. */
+export function hasSampleCsv(type: ImportType): boolean {
+  return TYPES_WITH_SAMPLE_CSV.has(type)
 }

@@ -330,6 +330,38 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
     end
   end
 
+  describe 'GET #example' do
+    # Redirected rather than linked client-side: the URL is pinned to the
+    # installed Spree version, which only the server knows.
+    it 'redirects to the example CSV for the installed version' do
+      get :example, params: { type: 'products' }
+
+      expect(response).to have_http_status(:found)
+      expect(response.location).to eq(Spree::Imports::Products.sample_csv_url)
+      expect(response.location).to include("v#{Spree.version}")
+    end
+
+    it 'accepts the fully-qualified class name' do
+      get :example, params: { type: 'Spree::Imports::Products' }
+
+      expect(response).to redirect_to(Spree::Imports::Products.sample_csv_url)
+    end
+
+    it 'returns 404 for a type with no example file' do
+      allow(Spree::Imports::Products).to receive(:sample_csv_url).and_return(nil)
+
+      get :example, params: { type: 'products' }
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'returns 404 for an unknown type' do
+      get :example, params: { type: 'Spree::User' }
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'DELETE #destroy' do
     it 'deletes a completed import' do
       product_import.update_columns(status: 'completed')

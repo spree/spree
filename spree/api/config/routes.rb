@@ -205,6 +205,7 @@ Spree::Core::Engine.add_routes do
         resources :imports, only: [:index, :show, :create, :destroy] do
           collection do
             get :template
+            get :example
           end
           member do
             patch :complete_mapping
