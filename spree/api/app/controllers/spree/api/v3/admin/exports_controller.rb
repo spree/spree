@@ -106,17 +106,19 @@ module Spree
 
           # Returns the registered Export subclass matching `name`, or nil.
           #
-          # The constantize target comes from `available_types` (a trusted
-          # in-process registry), not from the request — `name` is only used
-          # to *select* an entry in the allowlist. This keeps the data flow
-          # from user input → trusted-string → `constantize` legible to
-          # static analyzers (CodeQL otherwise flags the inverse pattern of
-          # gating user input with `include?` before calling `constantize`).
+          # Takes the API shorthand (`"products"`), the same value the
+          # serializer emits. The fully-qualified class name is also accepted so
+          # a `type` read back from the API round-trips either way.
+          #
+          # The class comes from `available_types` (a trusted in-process
+          # registry), not from the request — `name` is only used to *select* an
+          # entry in the allowlist, which also keeps the data flow legible to
+          # static analyzers (no `constantize` on user input at all).
           def resolve_export_type(name)
             return nil if name.blank?
 
-            target = Spree::Export.available_types.map(&:to_s).find { |t| t == name.to_s }
-            target&.constantize
+            name = name.to_s
+            Spree::Export.available_types.find { |type| type.api_type == name || type.to_s == name }
           end
 
           private

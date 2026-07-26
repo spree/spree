@@ -9,8 +9,12 @@ export function isImportActive(status: string | undefined): boolean {
 }
 
 /**
- * `Spree::Imports::Products` → `products`. Keys the per-type translations
+ * The API's type shorthand (`products`), which keys the per-type translations
  * (`admin.imports.types.<key>`) and the post-import destination below.
+ *
+ * Shorthand values pass through unchanged; the demodulizing is a fallback for
+ * `Spree::Imports::Products`-style values from an older server or a payload
+ * cached before the shorthand landed.
  */
 export function importTypeKey(type: string | null): string {
   return (

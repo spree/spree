@@ -24,7 +24,7 @@ export function AddProductsTask({ task, storeId }: SetupTaskSlotContext) {
           </Link>
         </Button>
         <ImportButton
-          type="Spree::Imports::Products"
+          type="products"
           subject={Subject.Product}
           label={t('admin.pages.getting_started.tasks.add_products.import_cta')}
           onCreated={(imp) =>

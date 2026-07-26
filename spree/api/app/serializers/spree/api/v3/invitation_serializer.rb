@@ -11,11 +11,24 @@ module Spree
                  role_id: [:string, nullable: true],
                  expires_at: [:string, nullable: true], accepted_at: [:string, nullable: true]
 
-        attributes :email, :resource_type, :inviter_type, :invitee_type,
+        attributes :email,
                    created_at: :iso8601, updated_at: :iso8601
 
         attribute :status do |invitation|
           invitation.status.to_s
+        end
+
+        # `"store"` / `"admin_user"`, not the polymorphic class names.
+        attribute :resource_type do |invitation|
+          Spree::Base.polymorphic_api_type(invitation.resource_type)
+        end
+
+        attribute :inviter_type do |invitation|
+          Spree::Base.polymorphic_api_type(invitation.inviter_type)
+        end
+
+        attribute :invitee_type do |invitation|
+          Spree::Base.polymorphic_api_type(invitation.invitee_type)
         end
 
         attribute :resource_id do |invitation|

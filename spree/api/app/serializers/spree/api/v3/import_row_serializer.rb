@@ -8,11 +8,16 @@ module Spree
                  status: :string, validation_errors: [:string, nullable: true],
                  item_type: [:string, nullable: true], item_id: [:string, nullable: true]
 
-        attributes :row_number, :status, :validation_errors, :item_type,
+        attributes :row_number, :status, :validation_errors,
                    created_at: :iso8601, updated_at: :iso8601
 
         attribute :import_id do |row|
           row.import&.prefixed_id
+        end
+
+        # `"product"` / `"variant"`, not the polymorphic class name.
+        attribute :item_type do |row|
+          Spree::Base.polymorphic_api_type(row.item_type)
         end
 
         attribute :item_id do |row|

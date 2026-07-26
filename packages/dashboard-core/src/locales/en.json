@@ -491,6 +491,7 @@
           "tab": "Tab"
         },
         "download_template": "Download CSV template",
+        "download_example": "Download an example CSV",
         "template_failed": "Template download failed: {{message}}",
         "submit": "Continue",
         "failed": "Import failed: {{message}}"

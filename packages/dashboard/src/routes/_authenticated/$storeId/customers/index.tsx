@@ -218,11 +218,11 @@ function CustomersPage() {
         actions={(ctx) => (
           <>
             <ImportButton
-              type="Spree::Imports::Customers"
+              type="customers"
               subject={Subject.Customer}
               onCreated={(imp) => openImportWizard(imp.id)}
             />
-            <ExportButton type="Spree::Exports::Customers" {...ctx} />
+            <ExportButton type="customers" {...ctx} />
             <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
               {t('admin.pages.customers.new_cta')}

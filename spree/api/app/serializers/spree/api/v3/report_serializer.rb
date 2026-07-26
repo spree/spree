@@ -9,7 +9,13 @@ module Spree
                  currency: [:string, nullable: true],
                  date_from: [:string, nullable: true], date_to: [:string, nullable: true]
 
-        attributes :type, :currency
+        attributes :currency
+
+        # Wire shorthand (`"sales_total"`), not the Ruby class name — clients
+        # shouldn't have to know or parse `Spree::Reports::SalesTotal`.
+        attribute :type do |report|
+          Spree::Report.api_type_for(report.type)
+        end
 
         attribute :user_id do |report|
           report.user&.prefixed_id

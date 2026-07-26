@@ -27,7 +27,7 @@ function OrdersPage() {
       defaultParams={{ complete: 1, expand: ['channel'] }}
       actions={(ctx) => (
         <>
-          <ExportButton type="Spree::Exports::Orders" {...ctx} />
+          <ExportButton type="orders" {...ctx} />
           <Button size="sm" className="h-[2.125rem]" asChild>
             <Link to="/$storeId/orders/new" params={{ storeId }}>
               <PlusIcon className="size-4" />

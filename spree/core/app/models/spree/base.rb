@@ -92,6 +92,41 @@ class Spree::Base < ApplicationRecord
     api_type
   end
 
+  # `.api_type` for an STI `type` column value, without instantiating the
+  # subclass — use this in serializers instead of `record.class.api_type`,
+  # which reports the *loaded* class and so returns the base type for a record
+  # read through the parent (a plain `Spree::Export` row, a factory that sets
+  # `type` as an attribute, a query on the base relation).
+  #
+  # Resolves against `available_types` where the class defines it, so an
+  # unrecognized column value passes through untouched rather than being
+  # constantized.
+  #
+  # @param type [String, nil] value of the STI `type` column
+  # @return [String]
+  def self.api_type_for(type)
+    return api_type if type.blank?
+
+    type = type.to_s
+    return type unless respond_to?(:available_types)
+
+    available_types.find { |klass| klass.to_s == type }&.api_type || type
+  end
+
+  # Shorthand for a *polymorphic* `*_type` column (`owner_type`,
+  # `viewable_type`, …), where the value names an arbitrary model rather than a
+  # subclass of the serialized one — so `api_type_for`'s registry lookup does
+  # not apply. Demodulizes and underscores the same way `api_type` does, giving
+  # `"Spree::Product"` => `"product"`.
+  #
+  # @param type [String, Class, nil] value of the polymorphic type column
+  # @return [String, nil]
+  def self.polymorphic_api_type(type)
+    return nil if type.blank?
+
+    type.to_s.demodulize.underscore
+  end
+
   def self.to_tom_select_json
     pluck(:name, :id).map do |name, id|
       {

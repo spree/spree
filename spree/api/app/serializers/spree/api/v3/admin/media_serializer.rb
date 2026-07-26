@@ -33,7 +33,12 @@ module Spree
             end
           end
 
-          attributes :metadata, :viewable_type
+          attributes :metadata
+
+          # `"product"` / `"variant"`, not the polymorphic class name.
+          attribute :viewable_type do |asset|
+            Spree::Base.polymorphic_api_type(asset.viewable_type)
+          end
         end
       end
     end
