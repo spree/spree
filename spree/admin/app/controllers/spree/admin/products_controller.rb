@@ -240,6 +240,7 @@ module Spree
         end
   
         def prepare_product_params
+          return unless defined?(Spree::Products::PrepareNestedAttributes)
           @prepare_params_service = Spree::Products::PrepareNestedAttributes.new(@product, current_store, permitted_resource_params, current_ability)
           params[:product] = @prepare_params_service.call
         end
