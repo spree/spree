@@ -218,6 +218,8 @@ en:
         usage: Usage
       imports:
         all_required_columns_mapped: Good job, all required columns are mapped!
+        download_example_csv: Download an example CSV file
+        download_template_csv: Download CSV template
         field_required: Field required
         import_done: All done!
         json: JSON

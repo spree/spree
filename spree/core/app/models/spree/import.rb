@@ -7,6 +7,15 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::Core::NumberGenerator.new(prefix: 'IM')
 
+    # Where the downloadable example CSVs are served from — see `sample_csv_url`.
+    #
+    # Pinned to the installed version's tag rather than `main`: whether a type
+    # *has* an example is answered by the local `db/sample_data`, so pointing
+    # elsewhere would let a released install link to a newer, incompatible
+    # schema (or a file that has since been removed).
+    SAMPLE_DATA_BASE_URL_TEMPLATE =
+      'https://raw.githubusercontent.com/spree/spree/refs/tags/v%<version>s/spree/core/db/sample_data'.freeze
+
     publishes_lifecycle_events
 
     # Set event prefix for all Import subclasses
@@ -92,6 +101,33 @@ module Spree
     # validated against the store's allowed origins — the import-done email
     # links back to it. Blank for legacy-admin or app-created imports.
     preference :results_url, :string, default: nil
+
+    # Publicly downloadable example CSV for this import's type, or nil when the
+    # type has no sample file. Resolved from the `type` column rather than the
+    # instance's class, so it works on a record built as the base
+    # `Spree::Import` with `type` assigned (which is how the admin's new-import
+    # form builds it).
+    #
+    # @return [String, nil]
+    def sample_csv_url
+      self.class.available_types.find { |klass| klass.to_s == type.to_s }&.sample_csv_url
+    end
+
+    # Header-only CSV for this import's schema — the blank counterpart to
+    # `sample_csv_url`. One line, so callers can inline it (e.g. as a `data:`
+    # URI) instead of round-tripping to the server for it.
+    #
+    # @return [String]
+    def template_csv
+      ::CSV.generate_line(schema_fields.map { |field| field[:name] })
+    end
+
+    # Suggested filename for `template_csv`, e.g. "products_import_template.csv".
+    #
+    # @return [String]
+    def template_csv_filename
+      "#{self.class.api_type_for(type)}_import_template.csv"
+    end
 
     # Returns true if the import has more rows than the large import threshold.
     # Large imports skip per-row UI broadcasts and use bulk processing.
@@ -358,6 +394,36 @@ module Spree
         return nil if self == Spree::Import
 
         to_s.demodulize.underscore.to_sym
+      end
+
+      # Publicly downloadable example CSV for this import type — the same file
+      # `rake spree:load_sample_data` feeds through this very pipeline, so it is
+      # a working example rather than a hand-maintained sample that can drift
+      # from the schema.
+      #
+      # Whether a type *has* an example is answered by `db/sample_data` itself,
+      # so adding or removing a CSV there needs no change here; a type with no
+      # sample file returns nil and the UI omits the link. The URL is pinned to
+      # the installed version's tag so the file served always matches the schema
+      # that check was made against.
+      #
+      # @return [String, nil]
+      def sample_csv_url
+        return nil if self == Spree::Import
+        return nil unless Spree::Core::Engine.root.join('db', 'sample_data', sample_csv_filename).exist?
+
+        [sample_data_base_url, sample_csv_filename].join('/')
+      end
+
+      # @return [String]
+      def sample_data_base_url
+        format(SAMPLE_DATA_BASE_URL_TEMPLATE, version: Spree.version)
+      end
+
+      # eg. Spree::Imports::ProductTranslations => "product_translations.csv"
+      # @return [String]
+      def sample_csv_filename
+        "#{api_type}.csv"
       end
 
       # eg. Spree::Imports::Orders => Spree::Order

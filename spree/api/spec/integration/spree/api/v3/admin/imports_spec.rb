@@ -148,6 +148,31 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
     end
   end
 
+  path '/api/v3/admin/imports/example' do
+    get 'Download an example import file' do
+      tags 'Imports'
+      security [api_key: [], bearer_auth: []]
+      description 'Redirects to a populated example CSV for the given import type — the same ' \
+                  'sample data `rake spree:load_sample_data` uses, pinned to the installed ' \
+                  'Spree version. Returns 404 for a type that ships no example file.'
+      admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :type, in: :query, type: :string, required: true,
+                description: 'Registered import type, e.g. products.'
+
+      response '302', 'Redirect to the example CSV' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:type) { 'products' }
+
+        run_test! do |response|
+          expect(response.headers['Location']).to include('sample_data/products.csv')
+        end
+      end
+    end
+  end
+
   path '/api/v3/admin/imports/{id}' do
     let(:id) { product_import.prefixed_id }
 

@@ -150,11 +150,35 @@ module Spree
               )
             end
 
-            headers = klass.new.schema_fields.map { |field| field[:name] }
-            send_data ::CSV.generate_line(headers),
-                      filename: "#{klass.name.demodulize.underscore}_import_template.csv",
+            import = klass.new
+            send_data import.template_csv,
+                      filename: import.template_csv_filename,
                       type: 'text/csv',
                       disposition: 'attachment'
+          end
+
+          # GET /api/v3/admin/imports/example?type=products
+          #
+          # Redirects to the populated example CSV for the type — the counterpart
+          # to `template` above. 404s for a type that ships no example file.
+          #
+          # The client can't build this URL itself: it is pinned to the
+          # installed Spree version, and exposing that version over the API
+          # would fingerprint the deployment for anyone matching CVEs. Resolving
+          # it here keeps the version server-side.
+          def example
+            klass = resolve_import_type(params[:type])
+            url = klass&.sample_csv_url
+
+            unless url
+              return render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:record_not_found],
+                message: 'No example CSV for this import type',
+                status: :not_found
+              )
+            end
+
+            redirect_to url, allow_other_host: true, status: :found
           end
 
           protected
@@ -245,7 +269,7 @@ module Spree
 
           def import_class
             case action_name
-            when 'create', 'template' then resolve_import_type(params[:type])
+            when 'create', 'template', 'example' then resolve_import_type(params[:type])
             else find_resource.class
             end
           end
