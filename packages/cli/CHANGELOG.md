@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.4.8
+
+### Patch Changes
+
+- [`61f85af`](https://github.com/spree/spree/commit/61f85af83531f3bf5f17aaf105f144b02336d73c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Auto-enable the storefront wholesale B2B portal on sample-data scaffolds: create-spree-app writes `SPREE_WHOLESALE_CHANNEL=wholesale` into the storefront `.env.local`, and setup output points at the portal (`/wholesale`) with the buyer-approval flow. The portal runs on the default publishable key — no extra key or backend changes involved.
+
 ## 2.4.7
 
 ### Patch Changes
@@ -199,7 +205,6 @@ dashboard` wrote `VITE_SPREE_API_URL=http://localhost:<port>` into
 ### Minor Changes
 
 - New `spree api` and `spree auth` command groups — a generic Admin API client (`get`/`post`/`patch`/`delete`) built into the CLI:
-
   - `spree api get|post|patch|delete <path>` — generic verbs with Ransack `-q` filters, `--sort`/`--page`/`--limit`/`--expand`/`--fields`, and JSON bodies from inline/`@file`/stdin
   - `spree api endpoints` / `spree api schema` — offline schema introspection over a bundled OpenAPI snapshot, including each endpoint's required scope
   - `spree api status` — resolved credentials + server reachability

@@ -23,7 +23,10 @@ import type { Brand, BrandCreateParams, BrandUpdateParams } from './types'
  * In practice, callers pass the same `{ page, limit, sort, search, … }`
  * keys built-in resources accept.
  */
-type BrandsListParams = Record<string, string | number | boolean | (string | number)[] | undefined>
+export type BrandsListParams = Record<
+  string,
+  string | number | boolean | (string | number)[] | undefined
+>
 
 export const brandsClient = {
   list: (params?: BrandsListParams) =>

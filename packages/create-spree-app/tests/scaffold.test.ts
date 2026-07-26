@@ -127,6 +127,32 @@ describe('scaffold (no-start)', () => {
     expect(fs.existsSync(path.join(projectDir, '.gitignore'))).toBe(true)
   })
 
+  it('enables the wholesale portal in the storefront env only with sample data', async () => {
+    const { writeStorefrontEnv } = await import('../src/storefront')
+
+    await scaffold({
+      directory: getTempProjectDir(),
+      storefront: true,
+      dashboard: false,
+      sampleData: true,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+    expect(writeStorefrontEnv).toHaveBeenLastCalledWith(expect.any(String), 3000, true)
+
+    await scaffold({
+      directory: getTempProjectDir(),
+      storefront: true,
+      dashboard: false,
+      sampleData: false,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+    expect(writeStorefrontEnv).toHaveBeenLastCalledWith(expect.any(String), 3000, false)
+  })
+
   it('copies docker-compose.yml from backend template', async () => {
     const projectDir = getTempProjectDir()
 

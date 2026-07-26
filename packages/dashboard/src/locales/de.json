@@ -37,10 +37,6 @@
         "empty": "Keine passenden Chargen"
       }
     },
-    "branding": {
-      "app_name": "Spree Admin",
-      "powered_by": "Bereitgestellt von Spree Commerce"
-    },
     "errors": {
       "not_found_title": "Seite nicht gefunden",
       "not_found_description": "Die gesuchte Seite existiert nicht.",

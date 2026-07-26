@@ -6,7 +6,12 @@ import type { Command } from 'commander'
 import { execa, execaCommand } from 'execa'
 import pc from 'picocolors'
 import { mintProjectCredentials, writeProjectSetupMarker } from '../config.js'
-import { DASHBOARD_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
+import {
+  DASHBOARD_PORT,
+  DEFAULT_ADMIN_EMAIL,
+  DEFAULT_ADMIN_PASSWORD,
+  STOREFRONT_PORT,
+} from '../constants.js'
 import { detectProject, readSampleDataFromEnv } from '../context.js'
 import {
   dashboardDevRunnable,
@@ -123,6 +128,19 @@ export async function runFirstRunSetup(flags: {
         `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
       ]
 
+  // The wholesale demo needs both the storefront env opt-in and the seeded
+  // group/prices (sampleData) to be walkable end to end. The portal runs on
+  // the default publishable key — the channel header selects the channel.
+  const wholesaleBlock =
+    sampleData && storefrontWholesaleChannel(ctx.projectDir)
+      ? [
+          pc.bold('Wholesale portal (B2B demo)'),
+          `  ${pc.cyan(`http://localhost:${STOREFRONT_PORT}/wholesale`)} ${pc.dim('— needs the storefront dev server running')}`,
+          `  ${pc.dim('Register a buyer, then approve them in the admin (add to the "Wholesale" customer group)')}`,
+          '',
+        ]
+      : []
+
   p.note(
     [
       '',
@@ -132,6 +150,7 @@ export async function runFirstRunSetup(flags: {
       `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/store`)}`,
       `  Publishable key: ${pc.cyan(publishableKey)}`,
       '',
+      ...wholesaleBlock,
       pc.bold('Admin API'),
       `  ${pc.cyan(`http://localhost:${ctx.port}/api/v3/admin`)}`,
       `  Secret key:      ${pc.cyan(secretKey)}`,
@@ -218,6 +237,18 @@ async function fetchApiKey(projectDir: string): Promise<string> {
   return match[0]
 }
 
+/** The channel code the storefront's wholesale portal is configured for, or null when disabled. */
+export function storefrontWholesaleChannel(projectDir: string): string | null {
+  const envPath = path.join(projectDir, 'apps', 'storefront', '.env.local')
+  // Gates a summary hint only — a missing or unreadable env file must never
+  // fail setup reporting.
+  try {
+    return fs.readFileSync(envPath, 'utf-8').match(/^SPREE_WHOLESALE_CHANNEL=(\S+)/m)?.[1] ?? null
+  } catch {
+    return null
+  }
+}
+
 /**
  * Mints a fresh read-only secret key into `.spree/credentials.json` so
  * `spree api` works without a first-use minting round-trip.
@@ -241,7 +272,7 @@ export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
   const content = fs.readFileSync(envPath, 'utf-8')
   fs.writeFileSync(
     envPath,
-    content.replace(/SPREE_PUBLISHABLE_KEY=.*/, `SPREE_PUBLISHABLE_KEY=${apiKey}`),
+    content.replace(/^SPREE_PUBLISHABLE_KEY=.*/m, `SPREE_PUBLISHABLE_KEY=${apiKey}`),
   )
 }
 

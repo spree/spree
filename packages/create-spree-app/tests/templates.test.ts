@@ -29,14 +29,9 @@ describe('envContent', () => {
 })
 
 describe('storefrontEnvContent', () => {
-  it('includes placeholder when no key provided', () => {
+  it('includes the key placeholder first-run setup replaces', () => {
     const content = storefrontEnvContent(3000)
-    expect(content).toContain('pk_REPLACE_ME_AFTER_DOCKER_START')
-  })
-
-  it('includes real key when provided', () => {
-    const content = storefrontEnvContent(3000, 'pk_test123')
-    expect(content).toContain('SPREE_PUBLISHABLE_KEY=pk_test123')
+    expect(content).toContain('SPREE_PUBLISHABLE_KEY=pk_REPLACE_ME_AFTER_DOCKER_START')
   })
 
   it('includes API URL with given port', () => {
@@ -47,6 +42,16 @@ describe('storefrontEnvContent', () => {
   it('uses custom port in API URL', () => {
     const content = storefrontEnvContent(4567)
     expect(content).toContain('SPREE_API_URL=http://localhost:4567')
+  })
+
+  it('omits the wholesale portal by default', () => {
+    const content = storefrontEnvContent(3000)
+    expect(content).not.toContain('SPREE_WHOLESALE_CHANNEL')
+  })
+
+  it('enables the wholesale portal when requested', () => {
+    const content = storefrontEnvContent(3000, true)
+    expect(content).toMatch(/^SPREE_WHOLESALE_CHANNEL=wholesale$/m)
   })
 })
 

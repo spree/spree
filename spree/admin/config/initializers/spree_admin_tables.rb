@@ -2173,4 +2173,67 @@ Rails.application.config.after_initialize do
                                          filterable: true,
                                          default: true,
                                          position: 20
+
+  # Register Addresses table (customer address book)
+  Spree.admin.tables.register(:addresses, model_class: Spree::Address, search_param: :firstname_or_lastname_or_address1_or_address2_or_city_or_zipcode_cont, row_actions: false, new_resource: false)
+
+  Spree.admin.tables.addresses.add :name,
+                                   label: :name,
+                                   type: :custom,
+                                   sortable: false,
+                                   filterable: false,
+                                   default: true,
+                                   position: 10,
+                                   partial: 'spree/admin/tables/columns/address_name'
+
+  Spree.admin.tables.addresses.add :address,
+                                   label: :address,
+                                   type: :string,
+                                   sortable: false,
+                                   filterable: false,
+                                   default: true,
+                                   position: 20,
+                                   method: ->(address) { [address.address1, address.address2].reject(&:blank?).join(', ') }
+
+  Spree.admin.tables.addresses.add :city,
+                                   label: :city,
+                                   type: :string,
+                                   sortable: true,
+                                   filterable: true,
+                                   default: true,
+                                   position: 30
+
+  Spree.admin.tables.addresses.add :state,
+                                   label: :state,
+                                   type: :string,
+                                   sortable: false,
+                                   filterable: false,
+                                   default: true,
+                                   position: 40,
+                                   method: ->(address) { address.state_text }
+
+  Spree.admin.tables.addresses.add :zipcode,
+                                   label: :zipcode,
+                                   type: :string,
+                                   sortable: true,
+                                   filterable: true,
+                                   default: true,
+                                   position: 50
+
+  Spree.admin.tables.addresses.add :country,
+                                   label: :country,
+                                   type: :string,
+                                   sortable: false,
+                                   filterable: false,
+                                   default: true,
+                                   position: 60,
+                                   method: ->(address) { localized_country_name(address.country) if address.country }
+
+  Spree.admin.tables.addresses.add :phone,
+                                   label: :phone,
+                                   type: :string,
+                                   sortable: false,
+                                   filterable: true,
+                                   default: true,
+                                   position: 70
 end

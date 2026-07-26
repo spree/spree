@@ -123,7 +123,13 @@ module Spree::Preferences::Preferable
   def convert_preference_value(value, type, nullable: false)
     case type
     when :string, :text
-      value.to_s
+      # A nullable string keeps "unset" (nil / empty string) as nil so it can
+      # fall back to another value, instead of collapsing it to "".
+      if nullable && (value.nil? || (value.respond_to?(:empty?) && value.empty?))
+        nil
+      else
+        value.to_s
+      end
     when :password
       value.to_s
     when :decimal

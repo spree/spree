@@ -37,10 +37,6 @@
         "empty": "Aucun lot correspondant"
       }
     },
-    "branding": {
-      "app_name": "Administration Spree",
-      "powered_by": "Propulsé par Spree Commerce"
-    },
     "errors": {
       "not_found_title": "Page introuvable",
       "not_found_description": "La page que vous recherchez n’existe pas.",

@@ -55,7 +55,14 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
         properties: {
           name: { type: :string, example: 'Point of Sale' },
           code: { type: :string, example: 'pos', description: 'Slug — auto-derived from `name` when blank.' },
-          active: { type: :boolean, default: true }
+          active: { type: :boolean, default: true },
+          default: { type: :boolean, default: false },
+          preferred_order_routing_strategy: { type: :string, nullable: true,
+                                              description: 'Routing strategy class name. `null` inherits the store setting.' },
+          preferred_storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
+                                         description: 'Anonymous-visitor access posture. `null` inherits the store setting.' },
+          preferred_guest_checkout: { type: :boolean, nullable: true,
+                                      description: 'Whether guests can check out without an account. `null` inherits the store setting.' }
         }
       }
 
@@ -110,17 +117,29 @@ RSpec.describe 'Admin Channels API', type: :request, swagger_doc: 'api-reference
         properties: {
           name: { type: :string },
           code: { type: :string },
-          active: { type: :boolean }
+          active: { type: :boolean },
+          default: { type: :boolean },
+          preferred_order_routing_strategy: { type: :string, nullable: true,
+                                              description: 'Routing strategy class name. `null` inherits the store setting.' },
+          preferred_storefront_access: { type: :string, nullable: true, enum: %w[public prices_hidden login_required],
+                                         description: 'Anonymous-visitor access posture. `null` inherits the store setting.' },
+          preferred_guest_checkout: { type: :boolean, nullable: true,
+                                      description: 'Whether guests can check out without an account. `null` inherits the store setting.' }
         }
       }
 
       response '200', 'channel updated' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { channel.prefixed_id }
-        let(:body) { { name: 'Wholesale (Updated)' } }
+        let(:body) do
+          { name: 'Wholesale (Updated)', preferred_storefront_access: 'login_required', preferred_guest_checkout: false }
+        end
 
         run_test! do |response|
-          expect(channel.reload.name).to eq('Wholesale (Updated)')
+          channel.reload
+          expect(channel.name).to eq('Wholesale (Updated)')
+          expect(channel.preferred_storefront_access).to eq('login_required')
+          expect(channel.preferred_guest_checkout).to be(false)
         end
       end
     end
