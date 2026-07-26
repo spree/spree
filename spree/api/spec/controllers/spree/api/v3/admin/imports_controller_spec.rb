@@ -72,7 +72,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       expect {
         post :create,
              params: {
-               type: 'Spree::Imports::Products',
+               type: 'products',
                attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
              },
              as: :json
@@ -80,7 +80,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
 
       expect(response).to have_http_status(:created)
       expect(json_response['status']).to eq('mapping')
-      expect(json_response['type']).to eq('Spree::Imports::Products')
+      expect(json_response['type']).to eq('products')
       expect(json_response['csv_headers']).to eq(%w[slug sku name price])
       expect(json_response['sample_row']).to eq(
         'slug' => 'widget', 'sku' => 'W-1', 'name' => 'Widget', 'price' => '10.00'
@@ -95,6 +95,23 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       created = Spree::Import.find_by_prefix_id(json_response['id'])
       expect(created.user).to eq(admin_user)
       expect(created.owner).to eq(store)
+    end
+
+    # A `type` read back from the API round-trips, and so does the underlying
+    # class name.
+    it 'also accepts the fully-qualified class name' do
+      expect {
+        post :create,
+             params: {
+               type: 'Spree::Imports::Products',
+               attachment: csv_signed_id("slug,sku,name,price\nwidget,W-1,Widget,10.00\n")
+             },
+             as: :json
+      }.to change(Spree::Import, :count).by(1)
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['type']).to eq('products')
+      expect(Spree::Import.last).to be_a(Spree::Imports::Products)
     end
 
     it 'accepts a preferred delimiter' do

@@ -23,7 +23,16 @@ RSpec.describe Spree::Api::V3::ExportSerializer do
     expect(subject['user_id']).to eq(export.user.prefixed_id)
   end
 
+  # The API shorthand, not the STI class name. Derived from the `type` column,
+  # so a row read through the base class still reports its real type — which is
+  # exactly what the `:export` factory builds.
   it 'returns the export type' do
-    expect(subject['type']).to eq('Spree::Exports::Products')
+    expect(subject['type']).to eq('products')
+  end
+
+  it 'returns the export type for a record loaded as its subclass' do
+    order_export = create(:order_export)
+
+    expect(described_class.new(order_export, params: base_params).to_h['type']).to eq('orders')
   end
 end

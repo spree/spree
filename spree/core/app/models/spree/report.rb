@@ -37,8 +37,18 @@ module Spree
       'Spree::Api::V3::ReportSerializer'.safe_constantize
     end
 
+    # Registered report subclasses, mirroring Spree::Export/Spree::Import so
+    # `api_type_for` can resolve an STI column value without constantizing it.
+    #
+    # @return [Array<Class>]
+    def self.available_types
+      Spree.reports
+    end
+
+    # @deprecated Use `.api_type` — identical derivation, consistent with the
+    #   rest of the API's `type` fields.
     def self.report_type
-      name.demodulize.underscore
+      api_type
     end
 
     # Returns a scope of records to be used for generating report lines

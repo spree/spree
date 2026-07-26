@@ -9,9 +9,11 @@ RSpec.describe Spree::Api::V3::StockTransferSerializer do
 
   subject { described_class.new(stock_transfer, params: base_params).to_h }
 
+  # No `type`: Spree::StockTransfer has no STI subclasses, so the column is a
+  # legacy vestige that is always nil.
   it 'includes all expected attributes' do
     expect(subject.keys).to match_array(%w[
-      id number type reference source_location_id destination_location_id created_at updated_at
+      id number reference source_location_id destination_location_id created_at updated_at
     ])
   end
 

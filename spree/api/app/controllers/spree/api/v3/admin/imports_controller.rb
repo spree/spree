@@ -215,15 +215,19 @@ module Spree
 
           # Returns the registered Import subclass matching `name`, or nil.
           #
-          # The constantize target comes from `available_types` (a trusted
-          # in-process registry), not from the request — `name` is only used
-          # to *select* an entry in the allowlist (same pattern as
+          # Takes the API shorthand (`"products"`), the same value the
+          # serializer emits. The fully-qualified class name is also accepted so
+          # a `type` read back from the API round-trips either way.
+          #
+          # The class comes from `available_types` (a trusted in-process
+          # registry), not from the request — `name` is only used to *select* an
+          # entry in the allowlist (same pattern as
           # ExportsController#resolve_export_type).
           def resolve_import_type(name)
             return nil if name.blank?
 
-            target = Spree::Import.available_types.map(&:to_s).find { |t| t == name.to_s }
-            target&.constantize
+            name = name.to_s
+            Spree::Import.available_types.find { |type| type.api_type == name || type.to_s == name }
           end
 
           private

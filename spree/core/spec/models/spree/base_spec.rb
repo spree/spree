@@ -51,6 +51,30 @@ describe Spree::Base do
     it { expect(Spree::Address.api_type).to eq('address') }
   end
 
+  describe '.api_type_for' do
+    # Serializers read the STI column rather than `record.class`, so a row
+    # loaded through the base class still reports its real type.
+    it 'resolves a registered STI type without instantiating it' do
+      expect(Spree::Export.api_type_for('Spree::Exports::Orders')).to eq('orders')
+      expect(Spree::Import.api_type_for('Spree::Imports::ProductTranslations')).to eq('product_translations')
+    end
+
+    it 'falls back to the class itself when the column is blank' do
+      expect(Spree::Export.api_type_for(nil)).to eq('export')
+      expect(Spree::Export.api_type_for('')).to eq('export')
+    end
+
+    # A row written by an extension that is no longer installed must not be
+    # constantized — it passes through as-is.
+    it 'passes an unregistered value through untouched' do
+      expect(Spree::Export.api_type_for('Spree::Exports::Gone')).to eq('Spree::Exports::Gone')
+    end
+
+    it 'passes through on a class with no type registry' do
+      expect(Spree::Address.api_type_for('Whatever')).to eq('Whatever')
+    end
+  end
+
   describe '.json_api_type' do
     # Backwards-compatible alias retained for extensions that still call
     # the old name; must delegate so subclass overrides (e.g.

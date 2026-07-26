@@ -66,11 +66,11 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
           type: {
             type: :string,
             enum: %w[
-              Spree::Imports::Products
-              Spree::Imports::Customers
-              Spree::Imports::ProductTranslations
+              products
+              customers
+              product_translations
             ],
-            example: 'Spree::Imports::Products'
+            example: 'products'
           },
           attachment: {
             type: :string,
@@ -97,13 +97,14 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) do
           {
-            type: 'Spree::Imports::Products',
+            type: 'products',
             attachment: csv_blob("slug,sku,name,price\nwidget,W-1,Widget,10.00\n").signed_id
           }
         end
 
         run_test! do |response|
           data = JSON.parse(response.body)
+          expect(data['type']).to eq('products')
           expect(data['status']).to eq('mapping')
           expect(data['csv_headers']).to eq(%w[slug sku name price])
           expect(data['mappings']).to be_an(Array)
@@ -131,11 +132,11 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :type, in: :query, type: :string, required: true,
-                description: 'Registered import type, e.g. Spree::Imports::Products.'
+                description: 'Registered import type, e.g. products.'
 
       response '200', 'CSV template' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:type) { 'Spree::Imports::Products' }
+        let(:type) { 'products' }
 
         schema type: :string, format: :binary
 

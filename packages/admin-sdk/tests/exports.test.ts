@@ -6,7 +6,7 @@ import { server } from './mocks/server'
 const sampleExport = {
   id: 'exp_abc123',
   number: 'EF000001',
-  type: 'Spree::Exports::Products',
+  type: 'products',
   format: 'csv',
   user_id: 'usr_admin',
   done: false,
@@ -46,6 +46,8 @@ describe('exports', () => {
       )
 
       const client = createTestClient()
+      // Ransack predicates match the database column, so `type_eq` takes the
+      // STI class name — unlike `type` on create/read, which is the shorthand.
       await client.exports.list({ type_eq: 'Spree::Exports::Products' })
 
       // transformListParams wraps free predicates in q[...]
@@ -85,12 +87,12 @@ describe('exports', () => {
 
       const client = createTestClient()
       const res = await client.exports.create({
-        type: 'Spree::Exports::Products',
+        type: 'products',
         search_params: { name_cont: 'shirt', price_gt: 10 },
       })
 
       expect(body).toEqual({
-        type: 'Spree::Exports::Products',
+        type: 'products',
         search_params: { name_cont: 'shirt', price_gt: 10 },
       })
       expect(res.id).toBe('exp_abc123')
@@ -107,12 +109,12 @@ describe('exports', () => {
 
       const client = createTestClient()
       await client.exports.create({
-        type: 'Spree::Exports::Orders',
+        type: 'orders',
         record_selection: 'all',
       })
 
       expect(body).toEqual({
-        type: 'Spree::Exports::Orders',
+        type: 'orders',
         record_selection: 'all',
       })
     })
