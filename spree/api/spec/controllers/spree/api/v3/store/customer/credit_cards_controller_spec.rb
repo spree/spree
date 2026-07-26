@@ -5,7 +5,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
 
   include_context 'API v3 Store'
 
-  let!(:credit_card) { create(:credit_card, user: user) }
+  let(:payment_method) { create(:credit_card_payment_method, store: store) }
+  let!(:credit_card) { create(:credit_card, user: user, payment_method: payment_method) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -29,7 +30,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
 
     it 'only returns credit cards belonging to the current user' do
       other_user = create(:user)
-      other_card = create(:credit_card, user: other_user)
+      other_card = create(:credit_card, user: other_user, payment_method: payment_method)
 
       get :index
 
@@ -59,7 +60,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
 
     context 'when credit card belongs to another user' do
       let(:other_user) { create(:user) }
-      let(:other_card) { create(:credit_card, user: other_user) }
+      let(:other_card) { create(:credit_card, user: other_user, payment_method: payment_method) }
 
       it 'returns not found' do
         get :show, params: { id: other_card.prefixed_id }
@@ -90,7 +91,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
 
     context 'when credit card belongs to another user' do
       let!(:other_user) { create(:user) }
-      let!(:other_card) { create(:credit_card, user: other_user) }
+      let!(:other_card) { create(:credit_card, user: other_user, payment_method: payment_method) }
 
       it 'returns not found' do
         expect {
@@ -109,6 +110,33 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
 
         expect(response).to have_http_status(:unauthorized)
       end
+    end
+  end
+
+  describe 'cross-store isolation' do
+    let(:other_store) { create(:store) }
+    let(:other_payment_method) { create(:credit_card_payment_method, store: other_store) }
+    let!(:foreign_card) { create(:credit_card, user: user, payment_method: other_payment_method) }
+
+    it 'excludes cards from other stores in the index' do
+      get :index
+
+      ids = json_response['data'].map { |card| card['id'] }
+      expect(ids).to include(credit_card.prefixed_id)
+      expect(ids).not_to include(foreign_card.prefixed_id)
+    end
+
+    it 'cannot show a card stored against another store' do
+      get :show, params: { id: foreign_card.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'cannot delete a card stored against another store' do
+      delete :destroy, params: { id: foreign_card.prefixed_id }
+
+      expect(response).to have_http_status(:not_found)
+      expect(Spree::CreditCard.exists?(foreign_card.id)).to be true
     end
   end
 end
