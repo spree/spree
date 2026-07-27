@@ -21,8 +21,9 @@ module Spree
       # (and its raw CSV data) in memory for the whole job.
       ROWS_BATCH_SIZE = 100
 
-      def perform(import_id, row_ids)
+      def perform(import_id, row_ids, inline: false)
         import = Spree::Import.find(import_id)
+        import.inline = inline
         Spree::Current.store = import.store
 
         with_store_content_locale(import.store) do

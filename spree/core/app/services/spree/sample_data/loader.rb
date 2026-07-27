@@ -2,11 +2,13 @@ module Spree
   module SampleData
     class Loader
       prepend Spree::ServiceModule::Base
+      include Spree::SampleData::Helper
 
       def call
         Spree::Events.disable do
           without_geocoding do
             ActiveRecord::Base.no_touching do
+              puts 'Running seeds first...' unless seeds_loaded?
               ensure_seeds_loaded
 
               puts 'Loading sample configuration data...'
@@ -28,10 +30,7 @@ module Spree
               load_products
 
               puts 'Publishing sample products on the default channel...'
-              publish_sample_products
-
-              puts 'Loading sample categories...'
-              load_categories
+              publish_sample_products(Spree::Store.default)
 
               puts 'Loading sample product translations...'
               load_product_translations
@@ -56,18 +55,6 @@ module Spree
 
       private
 
-      def ensure_seeds_loaded
-        us = Spree::Country.find_by(iso: 'US')
-        return if us&.states&.any? && Spree::Store.default&.persisted?
-
-        puts 'Running seeds first...'
-        Spree::Seeds::All.call
-      end
-
-      def sample_data_path
-        @sample_data_path ||= Spree::Core::Engine.root.join('db', 'sample_data')
-      end
-
       def load_configuration_data
         load_ruby_file('shipping_methods')
         load_ruby_file('payment_methods')
@@ -76,57 +63,19 @@ module Spree
 
       def load_products
         csv_path = sample_data_path.join('products.csv')
-        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::Products)
-      end
-
-      # Publishes the catalog to both surfaces: the public default channel and
-      # the gated wholesale channel (catalog parity; wholesale differentiation
-      # comes from the price list in +wholesale.rb+ and the channel's gate).
-      def publish_sample_products
-        store = Spree::Store.default
-        store.default_channel.add_products(store.product_ids)
-        store.channels.find_by(code: Spree::Seeds::Channels::WHOLESALE_CODE)&.add_products(store.product_ids)
-      end
-
-      def load_categories
-        store = Spree::Store.default
-        csv_path = sample_data_path.join('products.csv')
-
-        require 'csv'
-        ::CSV.foreach(csv_path, headers: true) do |row|
-          product = store.products.find_by(slug: row['slug'])
-          next unless product
-
-          categories = [row['category1'], row['category2'], row['category3']].compact_blank
-          next if categories.empty?
-
-          Spree::Imports::CreateCategoriesJob.perform_now(product.id, store.id, categories)
-        end
+        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::Products, inline: true)
       end
 
       def load_product_translations
         csv_path = sample_data_path.join('product_translations.csv')
         return unless csv_path.exist?
 
-        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::ProductTranslations)
+        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::ProductTranslations, inline: true)
       end
 
       def load_customers
         csv_path = sample_data_path.join('customers.csv')
-        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::Customers)
-      end
-
-      def load_ruby_file(name)
-        file = sample_data_path.join("#{name}.rb")
-        load file.to_s if file.exist?
-      end
-
-      def without_geocoding
-        previous = Spree::Config[:geocode_addresses]
-        Spree::Config[:geocode_addresses] = false
-        yield
-      ensure
-        Spree::Config[:geocode_addresses] = previous
+        Spree::SampleData::ImportRunner.call(csv_path: csv_path, import_class: Spree::Imports::Customers, inline: true)
       end
     end
   end
