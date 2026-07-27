@@ -230,6 +230,12 @@ Background jobs (`IndexJob`, `RemoveJob`) fire on `after_commit` when `indexing_
 
 Always use prefixed IDs (`ctg_abc`, `prod_xyz`, `optval_abc`) when indexing. Never use raw database IDs — Spree supports UUID primary keys.
 
+### Metafield search schema
+
+Product metafields marked `searchable` / `sortable` on `MetafieldDefinition` are projected through `Spree::SearchProvider::MetafieldSchema` — shared by providers and `ProductPresenter`. Toggle participation with definition flags; run `rake spree:search:reindex` after changes when using Meilisearch.
+
+Document shaping for `mf_*` fields stays on `search_product_presenter` — the only search-related dependency.
+
 ## Related Documentation
 
 - [Search & Filtering](/developer/core-concepts/search-filtering) — Store API search reference

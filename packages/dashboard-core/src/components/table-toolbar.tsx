@@ -65,6 +65,10 @@ interface TableToolbarProps {
   actions?: React.ReactNode
   /** Hide the sort dropdown — used when the table is drag-reorderable, where free sorting would defeat the drag. */
   hideSort?: boolean
+  /**
+   * Metafield sort fields for the Sort dropdown
+   */
+  metafieldSortColumns?: ColumnDef[]
 }
 
 // ============================================================================
@@ -149,6 +153,7 @@ export function TableToolbar({
   title,
   actions,
   hideSort = false,
+  metafieldSortColumns,
 }: TableToolbarProps) {
   const { t } = useTranslation()
   const [filterOpen, setFilterOpen] = useState(false)
@@ -158,7 +163,13 @@ export function TableToolbar({
   // Memoize so `FilterPanel`'s `useMemo` deps stay stable across parent
   // re-renders. Otherwise picking a filter value triggers an `items` change
   // in the field-picker Select, which Base UI re-emits as a state change.
-  const sortableColumns = useMemo(() => allCols.filter((c) => c.sortable), [allCols])
+  const sortableColumns = useMemo(
+    () => [
+      ...allCols.filter((c) => c.sortable),
+      ...(metafieldSortColumns ?? []).filter((c) => !!c.sortable),
+    ],
+    [allCols, metafieldSortColumns],
+  )
   const filterableColumns = useMemo(() => allCols.filter((c) => c.filterable), [allCols])
   const activeFilterCount = filters.length
 

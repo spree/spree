@@ -13,6 +13,11 @@ module Spree
         @store = store
       end
 
+      # @return [MetafieldSchema]
+      def metafield_schema
+        @metafield_schema ||= MetafieldSchema.new
+      end
+
       # Search and paginate products. Does NOT compute filter facets — use #filters for that.
       #
       # @param scope [ActiveRecord::Relation] base scope (store-scoped, visibility-filtered, authorized)

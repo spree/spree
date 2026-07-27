@@ -3,6 +3,7 @@ module Spree
     has_prefix_id :cfdef
 
     include Spree::DisplayOn
+    include Spree::MetafieldDefinition::SearchCapabilities
 
     DISPLAY = [:both, :back_end]
 
@@ -49,7 +50,7 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[key namespace name resource_type display_on]
+    self.whitelisted_ransackable_attributes = %w[key namespace name resource_type display_on searchable sortable]
     self.whitelisted_ransackable_scopes = %w[search multi_search]
 
     # API naming bridge — internal columns rename in 6.0. `label` matches

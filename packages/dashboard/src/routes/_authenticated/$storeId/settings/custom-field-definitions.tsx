@@ -237,6 +237,8 @@ function EditSheet({
         field_type: definition.field_type,
         resource_type: definition.resource_type,
         storefront_visible: definition.storefront_visible,
+        searchable: definition.searchable,
+        sortable: definition.sortable,
       })
     }
   }, [definition, form])

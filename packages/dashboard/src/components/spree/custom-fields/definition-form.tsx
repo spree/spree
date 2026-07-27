@@ -17,6 +17,8 @@ import {
   DEFAULT_RESOURCE_TYPES,
   FIELD_TYPES,
   fieldTypeLabel,
+  fieldTypeSupportsSearchable,
+  fieldTypeSupportsSortable,
   resourceTypeLabel,
 } from '../../../schemas/custom-field-definition'
 
@@ -58,6 +60,9 @@ export function DefinitionFormFields({
 }: DefinitionFormFieldsProps) {
   const { t } = useTranslation()
   const { errors } = form.formState
+  const fieldType = form.watch('field_type')
+  const searchableSupported = fieldTypeSupportsSearchable(fieldType)
+  const sortableSupported = fieldTypeSupportsSortable(fieldType)
 
   const fieldTypeItems = FIELD_TYPES.map((value) => ({
     value,
@@ -169,7 +174,17 @@ export function DefinitionFormFields({
             <Select
               items={fieldTypeItems}
               value={field.value}
-              onValueChange={field.onChange}
+              onValueChange={(value) => {
+                field.onChange(value)
+                const next = String(value)
+                if (!fieldTypeSupportsSearchable(next)) {
+                  form.setValue('searchable', false)
+                }
+                if (!fieldTypeSupportsSortable(next)) {
+                  form.setValue('sortable', false)
+                }
+                form.clearErrors(['searchable', 'sortable'])
+              }}
               disabled={fieldTypeReadOnly}
             >
               <SelectTrigger id="cfd-field-type" aria-invalid={!!errors.field_type || undefined}>
@@ -210,6 +225,58 @@ export function DefinitionFormFields({
             )}
           />
         </div>
+      </Field>
+
+      <Field>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <FieldLabel htmlFor="cfd-searchable" className="cursor-pointer">
+              {t('admin.fields.custom_field_definition.searchable.label')}
+            </FieldLabel>
+            <span className="text-xs text-muted-foreground">
+              {t('admin.fields.custom_field_definition.searchable.help')}
+            </span>
+          </div>
+          <Controller
+            name="searchable"
+            control={form.control}
+            render={({ field }) => (
+              <Switch
+                id="cfd-searchable"
+                checked={!!field.value}
+                onCheckedChange={field.onChange}
+                disabled={!searchableSupported}
+              />
+            )}
+          />
+        </div>
+        <FieldError errors={[errors.searchable]} />
+      </Field>
+
+      <Field>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col gap-1">
+            <FieldLabel htmlFor="cfd-sortable" className="cursor-pointer">
+              {t('admin.fields.custom_field_definition.sortable.label')}
+            </FieldLabel>
+            <span className="text-xs text-muted-foreground">
+              {t('admin.fields.custom_field_definition.sortable.help')}
+            </span>
+          </div>
+          <Controller
+            name="sortable"
+            control={form.control}
+            render={({ field }) => (
+              <Switch
+                id="cfd-sortable"
+                checked={!!field.value}
+                onCheckedChange={field.onChange}
+                disabled={!sortableSupported}
+              />
+            )}
+          />
+        </div>
+        <FieldError errors={[errors.sortable]} />
       </Field>
     </div>
   )

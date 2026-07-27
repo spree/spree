@@ -236,6 +236,99 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     end
   end
 
+  describe 'searchable / sortable metafields' do
+    let!(:label_definition) do
+      create(:metafield_definition, :short_text_field, :searchable, :sortable,
+             namespace: 'custom', key: 'label')
+    end
+    let!(:weight_definition) do
+      create(:metafield_definition, :number_field, :sortable,
+             namespace: 'custom', key: 'weight')
+    end
+    # Product with neither metafield — exercises missing-attribute sort placement.
+    let!(:missing_metafield_product) do
+      create(:product, name: 'Green Linen Shirt', status: 'active', store: store, taxons: [clothing_category])
+    end
+
+    before do
+      cheap_red_shirt.set_metafield(label_definition, 'Apple')
+      expensive_blue_shirt.set_metafield(label_definition, 'Cherry')
+      # blue_shoes left without label metafield
+
+      cheap_red_shirt.set_metafield(weight_definition, '10')
+      expensive_blue_shirt.set_metafield(weight_definition, '2')
+      blue_shoes.set_metafield(weight_definition, '3')
+
+      provider.reindex(store.products)
+      wait_for_meilisearch_indexing!
+    end
+
+    it 'includes metafield keys in searchable and sortable settings' do
+      settings = ::Meilisearch::Client.new(ENV['MEILISEARCH_URL']).index(index_name).get_settings
+      expect(settings['searchableAttributes']).to include('mf_6_custom_label')
+      expect(settings['sortableAttributes']).to include('mf_6_custom_label', 'mf_6_custom_weight')
+    end
+
+    it 'finds products by searchable metafield value' do
+      get :index, params: { q: { search: 'Apple' } }
+
+      expect(response).to have_http_status(:ok)
+      names = json_response['data'].map { |p| p['name'] }
+      expect(names).to include('Red Cotton Shirt')
+      expect(names).not_to include('Blue Silk Shirt')
+    end
+
+    it 'sorts by short_text metafield ascending and descending with missing values last' do
+      get :index, params: { sort: 'mf_6_custom_label' }
+      expect(response).to have_http_status(:ok)
+      asc_names = json_response['data'].map { |p| p['name'] }
+      expect(asc_names.first(2)).to eq(['Red Cotton Shirt', 'Blue Silk Shirt'])
+      expect(asc_names.last(2)).to match_array(['Green Linen Shirt', 'Blue Running Shoes'])
+
+      get :index, params: { sort: '-mf_6_custom_label' }
+      expect(response).to have_http_status(:ok)
+      desc_names = json_response['data'].map { |p| p['name'] }
+      expect(desc_names.first(2)).to eq(['Blue Silk Shirt', 'Red Cotton Shirt'])
+      expect(desc_names.last(2)).to match_array(['Green Linen Shirt', 'Blue Running Shoes'])
+    end
+
+    it 'sorts by number metafield numerically' do
+      get :index, params: { sort: 'mf_6_custom_weight' }
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |p| p['name'] }.first(3)).to eq(
+        ['Blue Silk Shirt', 'Blue Running Shoes', 'Red Cotton Shirt']
+      )
+
+      get :index, params: { sort: '-mf_6_custom_weight' }
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |p| p['name'] }.first(3)).to eq(
+        ['Red Cotton Shirt', 'Blue Running Shoes', 'Blue Silk Shirt']
+      )
+    end
+  end
+
+  describe 'sorting by a newly sortable metafield' do
+    it 'self-heals when the sort attribute is not yet configured on the index' do
+      definition = create(:metafield_definition, :short_text_field, :sortable,
+                          namespace: 'custom', key: 'label')
+      cheap_red_shirt.set_metafield(definition, 'aaa')
+      expensive_blue_shirt.set_metafield(definition, 'zzz')
+      provider.reindex(store.products)
+      wait_for_meilisearch_indexing!
+
+      # Strip the metafield from sortable attributes so the next sort request
+      # hits invalid_search_sort and must refresh settings + retry.
+      client = ::Meilisearch::Client.new(ENV['MEILISEARCH_URL'])
+      client.index(index_name).update_sortable_attributes(%w[name price created_at available_on units_sold_count]).await
+
+      get :index, params: { sort: definition.search_key }
+
+      expect(response).to have_http_status(:ok)
+      names = json_response['data'].map { |p| p['name'] }
+      expect(names.first).to eq('Red Cotton Shirt')
+    end
+  end
+
   describe 'pagination' do
     it 'paginates results' do
       get :index, params: { limit: 2, page: 1 }

@@ -20,6 +20,20 @@ export const FIELD_TYPES = [
 
 export type FieldType = (typeof FIELD_TYPES)[number]
 
+/** Field types that may set `searchable: true` (mirrors backend validation). */
+export const SEARCHABLE_FIELD_TYPES = ['short_text', 'long_text', 'number'] as const
+
+/** Field types that may set `sortable: true` (mirrors backend validation). */
+export const SORTABLE_FIELD_TYPES = ['short_text', 'number'] as const
+
+export function fieldTypeSupportsSearchable(fieldType: string): boolean {
+  return (SEARCHABLE_FIELD_TYPES as readonly string[]).includes(fieldType)
+}
+
+export function fieldTypeSupportsSortable(fieldType: string): boolean {
+  return (SORTABLE_FIELD_TYPES as readonly string[]).includes(fieldType)
+}
+
 export function fieldTypeLabel(value: string): string {
   return i18n.t(`admin.fields.custom_field_definition.field_type.options.${value}`, {
     defaultValue: value,
@@ -70,6 +84,8 @@ export const customFieldDefinitionSchema = z.object({
     .string()
     .min(1, { error: requiredMessage('custom_field_definition.resource_type') }),
   storefront_visible: z.boolean(),
+  searchable: z.boolean(),
+  sortable: z.boolean(),
 })
 
 export type CustomFieldDefinitionFormValues = z.infer<typeof customFieldDefinitionSchema>
@@ -81,6 +97,8 @@ export const CUSTOM_FIELD_DEFINITION_DEFAULTS: CustomFieldDefinitionFormValues =
   field_type: 'short_text',
   resource_type: 'Spree::Product',
   storefront_visible: false,
+  searchable: false,
+  sortable: false,
 }
 
 export function customFieldDefinitionValuesToCreateParams(
@@ -93,6 +111,8 @@ export function customFieldDefinitionValuesToCreateParams(
     field_type: v.field_type,
     resource_type: v.resource_type,
     storefront_visible: v.storefront_visible,
+    searchable: v.searchable,
+    sortable: v.sortable,
   }
 }
 
@@ -110,5 +130,7 @@ export function customFieldDefinitionValuesToUpdateParams(
     namespace: v.namespace,
     key: v.key,
     storefront_visible: v.storefront_visible,
+    searchable: v.searchable,
+    sortable: v.sortable,
   }
 }

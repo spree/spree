@@ -147,8 +147,8 @@ module Spree
         end
       end
 
-      # A newly added filterable attribute (e.g. `preorder`) referenced before
-      # the index settings were refreshed rejects the whole query on upgraded
+      # A newly added filterable or sortable attribute referenced before the
+      # index settings were refreshed rejects the whole query on upgraded
       # stores — the provider must push settings and retry instead of serving
       # an empty listing until a reindex.
       context 'when a filter attribute is not yet filterable' do
@@ -170,6 +170,29 @@ module Spree
           expect(mock_index).to receive(:update_filterable_attributes)
 
           result = provider.search_and_filter(scope: store.products, query: 'shirt')
+          expect(result.products).to include(product_1, product_2)
+        end
+      end
+
+      context 'when a sort attribute is not yet sortable' do
+        before do
+          error = ::Meilisearch::ApiError.new(
+            400, 'Bad Request',
+            { 'code' => 'invalid_search_sort', 'message' => 'Attribute `mf_6_custom_label` is not sortable.' }
+          )
+          calls = 0
+          allow(mock_index).to receive(:search) do
+            calls += 1
+            raise error if calls == 1
+
+            ms_response
+          end
+        end
+
+        it 'pushes index settings and retries the search once' do
+          expect(mock_index).to receive(:update_sortable_attributes)
+
+          result = provider.search_and_filter(scope: store.products, query: 'shirt', sort: 'mf_6_custom_label')
           expect(result.products).to include(product_1, product_2)
         end
       end
@@ -332,6 +355,27 @@ module Spree
       it 'indexes all products in batches' do
         expect(mock_index).to receive(:add_documents).at_least(:once)
         provider.reindex(store.products)
+      end
+    end
+
+    describe 'metafield searchable / sortable settings' do
+      let!(:definition) do
+        create(:metafield_definition, :short_text_field, :searchable, :sortable,
+               namespace: 'custom', key: 'label')
+      end
+
+      it 'includes mf_* in searchable and sortable attributes' do
+        expect(provider.send(:searchable_attributes)).to include('mf_6_custom_label')
+        expect(provider.send(:sortable_attributes)).to include('mf_6_custom_label')
+      end
+
+      it 'does not put mf_* on filterable attributes' do
+        expect(provider.send(:filterable_attributes)).not_to include('mf_6_custom_label')
+      end
+
+      it 'maps mf_* sort params without namespace resolution' do
+        expect(provider.send(:sort_mapping, 'mf_6_custom_label')).to eq(['mf_6_custom_label:asc'])
+        expect(provider.send(:sort_mapping, '-mf_6_custom_label')).to eq(['mf_6_custom_label:desc'])
       end
     end
   end

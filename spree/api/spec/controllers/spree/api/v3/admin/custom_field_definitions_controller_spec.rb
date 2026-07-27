@@ -37,7 +37,10 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       expect(item).to include(
         'namespace' => 'specs',
         'field_type' => 'short_text',
-        'storefront_visible' => true
+        'storefront_visible' => true,
+        'searchable' => false,
+        'sortable' => false,
+        'search_key' => 'mf_5_specs_fabric'
       )
     end
   end
@@ -63,6 +66,20 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       expect(json_response['label']).to eq('Country of Origin')
       expect(json_response['field_type']).to eq('short_text')
       expect(json_response['storefront_visible']).to eq(true)
+      expect(json_response['searchable']).to eq(false)
+      expect(json_response['sortable']).to eq(false)
+    end
+
+    it 'persists searchable and sortable flags' do
+      post :create, params: create_params.merge(searchable: true, sortable: true, key: 'material'), as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['searchable']).to eq(true)
+      expect(json_response['sortable']).to eq(true)
+
+      defn = Spree::CustomFieldDefinition.find_by_prefix_id(json_response['id'])
+      expect(defn.searchable).to eq(true)
+      expect(defn.sortable).to eq(true)
     end
 
     context 'with storefront_visible: false' do

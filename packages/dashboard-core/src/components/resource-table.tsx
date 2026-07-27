@@ -174,6 +174,10 @@ interface ResourceTableProps<T> {
    * menu on the trailing edge.
    */
   rowActions?: (row: T) => ReactNode
+  /**
+   * Metafield sort fields for the Sort dropdown
+   */
+  metafieldSortColumns?: ColumnDef[]
 }
 
 export interface ReorderConfig<T> {
@@ -197,6 +201,7 @@ export function ResourceTable<T extends Record<string, any>>({
   reorder,
   bulkActions,
   rowActions,
+  metafieldSortColumns,
 }: ResourceTableProps<T>) {
   const table = getTable<T>(tableKey)
   const { t } = useTranslation()
@@ -431,6 +436,7 @@ export function ResourceTable<T extends Record<string, any>>({
         title={title ?? table.title}
         actions={resolvedActions}
         hideSort={reorderActive}
+        metafieldSortColumns={metafieldSortColumns}
       />
       <CardContent className="p-0">
         {reorderActive ? (

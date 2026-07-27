@@ -9,11 +9,11 @@ import { Since } from '/snippets/since.mdx';
 
 Spree provides powerful search, filtering, and sorting capabilities for products and other resources. The Store API supports:
 
-- Full-text search across product names and SKUs
+- Full-text search across product names, SKUs, and searchable product metafields
 - Attribute-based filtering (price range, availability, stock status)
 - Category and taxon filtering
 - Faceted search with filter counts
-- Flexible sorting options
+- Flexible sorting options (including sortable product metafields via `sort=mf_{namespace.length}_{namespace}_{key}`)
 
 ## Product Search
 
@@ -167,6 +167,7 @@ const sorted = await client.products.list({
 
 // Available sort options (prefix '-' for descending; use '-available_on' for newest):
 // price, -price, name, -name, available_on, -available_on, best_selling
+// Plus any product metafield marked sortable, e.g. mf_6_custom_label / -mf_6_custom_label
 ```
 
 ```typescript Admin SDK

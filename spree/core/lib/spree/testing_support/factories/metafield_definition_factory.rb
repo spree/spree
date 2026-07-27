@@ -6,6 +6,8 @@ FactoryBot.define do
     metafield_type { 'Spree::Metafields::ShortText' }
     resource_type { 'Spree::Product' }
     display_on { 'both' }
+    searchable { false }
+    sortable { false }
 
     trait :front_end_only do
       display_on { 'front_end' }
@@ -49,6 +51,14 @@ FactoryBot.define do
       metafield_type { 'Spree::Metafields::Json' }
       key { 'metadata' }
       name { 'Metadata' }
+    end
+
+    trait :searchable do
+      searchable { true }
+    end
+
+    trait :sortable do
+      sortable { true }
     end
 
     trait :for_variant do
