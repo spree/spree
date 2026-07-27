@@ -70,7 +70,7 @@ describe('custom fields', () => {
     it('gets a definition', async () => {
       const defn = await client.customFieldDefinitions.get('cfdef_1')
       expect(defn.key).toBe('fabric')
-      expect(defn.search_key).toBe('mf_5_specs_fabric')
+      expect(defn.search_key).toBe('cf_5_specs_fabric')
     })
 
     it('creates a definition', async () => {

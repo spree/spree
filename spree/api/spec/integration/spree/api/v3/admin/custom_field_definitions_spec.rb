@@ -42,7 +42,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           expect(item['field_type']).to eq('short_text')
           expect(item['storefront_visible']).to eq(true)
           expect(item['resource_type']).to eq('Spree::Product')
-          expect(item['search_key']).to eq('mf_5_specs_fabric')
+          expect(item['search_key']).to eq('cf_5_specs_fabric')
         end
       end
     end

@@ -224,13 +224,13 @@ module Spree
           product_3.set_metafield(definition, 'bravo')
         end
 
-        it 'sorts ascending by mf_* attribute' do
-          result = provider.search_and_filter(scope: scope, sort: 'mf_6_custom_label')
+        it 'sorts ascending by cf_* attribute' do
+          result = provider.search_and_filter(scope: scope, sort: 'cf_6_custom_label')
           expect(result.products.map(&:id)).to eq([product_2.id, product_3.id, product_1.id])
         end
 
-        it 'sorts descending by -mf_* attribute' do
-          result = provider.search_and_filter(scope: scope, sort: '-mf_6_custom_label')
+        it 'sorts descending by -cf_* attribute' do
+          result = provider.search_and_filter(scope: scope, sort: '-cf_6_custom_label')
           expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
         end
 
@@ -238,7 +238,7 @@ module Spree
           result = provider.search_and_filter(
             scope: scope,
             filters: { 'name_cont' => 'Blue' },
-            sort: 'mf_6_custom_label'
+            sort: 'cf_6_custom_label'
           )
           expect(result.products.map(&:id)).to eq([product_3.id, product_1.id])
         end
@@ -249,12 +249,12 @@ module Spree
           end
 
           it 'keeps missing values last when sorting ascending' do
-            result = provider.search_and_filter(scope: scope, sort: 'mf_6_custom_label')
+            result = provider.search_and_filter(scope: scope, sort: 'cf_6_custom_label')
             expect(result.products.map(&:id)).to eq([product_3.id, product_1.id, product_2.id])
           end
 
           it 'keeps missing values last when sorting descending' do
-            result = provider.search_and_filter(scope: scope, sort: '-mf_6_custom_label')
+            result = provider.search_and_filter(scope: scope, sort: '-cf_6_custom_label')
             expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
           end
         end
@@ -273,12 +273,12 @@ module Spree
         end
 
         it 'sorts ascending numerically rather than lexicographically' do
-          result = provider.search_and_filter(scope: scope, sort: 'mf_6_custom_weight')
+          result = provider.search_and_filter(scope: scope, sort: 'cf_6_custom_weight')
           expect(result.products.map(&:id)).to eq([product_2.id, product_3.id, product_1.id])
         end
 
         it 'sorts descending numerically' do
-          result = provider.search_and_filter(scope: scope, sort: '-mf_6_custom_weight')
+          result = provider.search_and_filter(scope: scope, sort: '-cf_6_custom_weight')
           expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
         end
       end
@@ -307,13 +307,13 @@ module Spree
 
         it 'includes metafield sort options' do
           ids = result.sort_options.map { |o| o[:id] }
-          expect(ids).to include('mf_6_custom_label', '-mf_6_custom_label')
+          expect(ids).to include('cf_6_custom_label', '-cf_6_custom_label')
         end
 
         it 'includes human-readable labels for metafield sort options' do
           by_id = result.sort_options.index_by { |o| o[:id] }
-          expect(by_id['mf_6_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_a_to_z)})")
-          expect(by_id['-mf_6_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_z_to_a)})")
+          expect(by_id['cf_6_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_a_to_z)})")
+          expect(by_id['-cf_6_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_z_to_a)})")
         end
       end
 
@@ -356,15 +356,15 @@ module Spree
 
     describe 'metafield sort SQL helpers' do
       it 'casts numeric metafields per adapter' do
-        expect(provider.send(:metafield_sort_expression, 'number', 'PostgreSQL')).to eq('sort_mf.value::numeric')
-        expect(provider.send(:metafield_sort_expression, 'number', 'Mysql2')).to eq('CAST(sort_mf.value AS DECIMAL(30, 10))')
-        expect(provider.send(:metafield_sort_expression, 'number', 'SQLite')).to eq('CAST(sort_mf.value AS REAL)')
-        expect(provider.send(:metafield_sort_expression, 'short_text', 'PostgreSQL')).to eq('sort_mf.value')
+        expect(provider.send(:metafield_sort_expression, 'number', 'PostgreSQL')).to eq('sort_cf.value::numeric')
+        expect(provider.send(:metafield_sort_expression, 'number', 'Mysql2')).to eq('CAST(sort_cf.value AS DECIMAL(30, 10))')
+        expect(provider.send(:metafield_sort_expression, 'number', 'SQLite')).to eq('CAST(sort_cf.value AS REAL)')
+        expect(provider.send(:metafield_sort_expression, 'short_text', 'PostgreSQL')).to eq('sort_cf.value')
       end
 
       it 'builds a null-rank expression from the sort expression' do
-        expect(provider.send(:metafield_sort_null_rank, 'number', 'PostgreSQL')).to eq('(sort_mf.value::numeric IS NULL)')
-        expect(provider.send(:metafield_sort_null_rank, 'short_text', 'PostgreSQL')).to eq('(sort_mf.value IS NULL)')
+        expect(provider.send(:metafield_sort_null_rank, 'number', 'PostgreSQL')).to eq('(sort_cf.value::numeric IS NULL)')
+        expect(provider.send(:metafield_sort_null_rank, 'short_text', 'PostgreSQL')).to eq('(sort_cf.value IS NULL)')
       end
     end
   end

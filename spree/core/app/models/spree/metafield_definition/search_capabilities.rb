@@ -40,10 +40,10 @@ module Spree
       end
 
       # SearchProvider document key. Namespace is length-prefixed so
-      # (a_b, c) and (a, b_c) cannot collide as the same mf_* attribute.
-      # @return [String] e.g. +mf_6_custom_label+
+      # (a_b, c) and (a, b_c) cannot collide as the same cf_* attribute.
+      # @return [String] e.g. +cf_6_custom_label+
       def search_key
-        "mf_#{namespace.to_s.length}_#{namespace}_#{key}"
+        "cf_#{namespace.to_s.length}_#{namespace}_#{key}"
       end
 
       private

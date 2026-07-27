@@ -103,14 +103,14 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
     it 'invalidates cached sort options when a metafield definition becomes sortable' do
       get :index
-      expect(json_response['sort_options'].map { |s| s['id'] }).not_to include('mf_6_custom_weight')
+      expect(json_response['sort_options'].map { |s| s['id'] }).not_to include('cf_6_custom_weight')
 
       create(:metafield_definition, :number_field, :sortable,
              namespace: 'custom', key: 'weight', name: 'Weight')
 
       get :index
       expect(json_response['sort_options'].map { |s| s['id'] }).to include(
-        'mf_6_custom_weight', '-mf_6_custom_weight'
+        'cf_6_custom_weight', '-cf_6_custom_weight'
       )
     end
 

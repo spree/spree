@@ -178,7 +178,7 @@ module Spree
         before do
           error = ::Meilisearch::ApiError.new(
             400, 'Bad Request',
-            { 'code' => 'invalid_search_sort', 'message' => 'Attribute `mf_6_custom_label` is not sortable.' }
+            { 'code' => 'invalid_search_sort', 'message' => 'Attribute `cf_6_custom_label` is not sortable.' }
           )
           calls = 0
           allow(mock_index).to receive(:search) do
@@ -192,7 +192,7 @@ module Spree
         it 'pushes index settings and retries the search once' do
           expect(mock_index).to receive(:update_sortable_attributes)
 
-          result = provider.search_and_filter(scope: store.products, query: 'shirt', sort: 'mf_6_custom_label')
+          result = provider.search_and_filter(scope: store.products, query: 'shirt', sort: 'cf_6_custom_label')
           expect(result.products).to include(product_1, product_2)
         end
       end
@@ -364,18 +364,18 @@ module Spree
                namespace: 'custom', key: 'label')
       end
 
-      it 'includes mf_* in searchable and sortable attributes' do
-        expect(provider.send(:searchable_attributes)).to include('mf_6_custom_label')
-        expect(provider.send(:sortable_attributes)).to include('mf_6_custom_label')
+      it 'includes cf_* in searchable and sortable attributes' do
+        expect(provider.send(:searchable_attributes)).to include('cf_6_custom_label')
+        expect(provider.send(:sortable_attributes)).to include('cf_6_custom_label')
       end
 
-      it 'does not put mf_* on filterable attributes' do
-        expect(provider.send(:filterable_attributes)).not_to include('mf_6_custom_label')
+      it 'does not put cf_* on filterable attributes' do
+        expect(provider.send(:filterable_attributes)).not_to include('cf_6_custom_label')
       end
 
-      it 'maps mf_* sort params without namespace resolution' do
-        expect(provider.send(:sort_mapping, 'mf_6_custom_label')).to eq(['mf_6_custom_label:asc'])
-        expect(provider.send(:sort_mapping, '-mf_6_custom_label')).to eq(['mf_6_custom_label:desc'])
+      it 'maps cf_* sort params without namespace resolution' do
+        expect(provider.send(:sort_mapping, 'cf_6_custom_label')).to eq(['cf_6_custom_label:asc'])
+        expect(provider.send(:sort_mapping, '-cf_6_custom_label')).to eq(['cf_6_custom_label:desc'])
       end
     end
   end

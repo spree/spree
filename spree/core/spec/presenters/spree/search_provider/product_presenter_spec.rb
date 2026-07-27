@@ -205,14 +205,14 @@ module Spree
           product.set_metafield(ignored_def, 'secret')
         end
 
-        it 'indexes searchable and sortable metafield values as mf_* attributes' do
+        it 'indexes searchable and sortable metafield values as cf_* attributes' do
           doc = documents.first
-          expect(doc['mf_6_custom_pinyin_name']).to eq('mao-tai')
-          expect(doc['mf_6_custom_priority']).to eq(10.0)
-          expect(doc).not_to have_key('mf_6_custom_internal_note')
+          expect(doc['cf_6_custom_pinyin_name']).to eq('mao-tai')
+          expect(doc['cf_6_custom_priority']).to eq(10.0)
+          expect(doc).not_to have_key('cf_6_custom_internal_note')
         end
 
-        it 'uses the same mf_* attributes on every market/locale document' do
+        it 'uses the same cf_* attributes on every market/locale document' do
           create(:market, store: store, name: 'US', currency: 'USD', default_locale: 'en')
           create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de')
           create(:price, variant: product.master, amount: 9.99, currency: 'EUR')
@@ -220,9 +220,9 @@ module Spree
           docs = described_class.new(product.reload, store.reload).call
           expect(docs.size).to be > 1
 
-          mf_keys = docs.first.keys.grep(/\Amf_/)
+          cf_keys = docs.first.keys.grep(/\Acf_/)
           docs.each do |doc|
-            expect(doc.slice(*mf_keys)).to eq(docs.first.slice(*mf_keys))
+            expect(doc.slice(*cf_keys)).to eq(docs.first.slice(*cf_keys))
           end
         end
 
@@ -232,7 +232,7 @@ module Spree
           product.set_metafield(decimal_def, '42.5')
 
           doc = described_class.new(product.reload, store).call.first
-          expect(doc['mf_6_custom_rating']).to eq(42.5)
+          expect(doc['cf_6_custom_rating']).to eq(42.5)
         end
 
         it 'omits registered keys when the product has no value' do
@@ -240,14 +240,14 @@ module Spree
                  namespace: 'custom', key: 'origin', name: 'Origin')
 
           doc = described_class.new(product.reload, store).call.first
-          expect(doc).not_to have_key('mf_6_custom_origin')
+          expect(doc).not_to have_key('cf_6_custom_origin')
         end
 
-        it 'includes no mf_* attributes when no definitions are searchable or sortable' do
+        it 'includes no cf_* attributes when no definitions are searchable or sortable' do
           Spree::MetafieldDefinition.destroy_all
 
           doc = described_class.new(product.reload, store).call.first
-          expect(doc.keys.grep(/\Amf_/)).to be_empty
+          expect(doc.keys.grep(/\Acf_/)).to be_empty
         end
       end
     end

@@ -78,7 +78,7 @@ module Spree
         }.merge(metafield_document_attributes)
       end
 
-      # Flat mf_* hash for searchable ∪ sortable metafields (Meilisearch docs).
+      # Flat cf_* hash for searchable ∪ sortable metafields (Meilisearch docs).
       def metafield_document_attributes
         @metafield_document_attributes ||= product.metafields.filter_map do |metafield|
           definition = metafield.metafield_definition

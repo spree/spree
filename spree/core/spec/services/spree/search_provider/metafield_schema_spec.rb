@@ -6,15 +6,15 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
   subject(:schema) { described_class.new }
 
   describe 'accessors' do
-    it 'exposes definitions by mf_* key' do
+    it 'exposes definitions by cf_* key' do
       definition = create(:metafield_definition, :number_field, :sortable, :searchable,
                           namespace: 'custom', key: 'weight', name: 'Weight')
 
-      entry = schema.entry_for('mf_6_custom_weight')
+      entry = schema.entry_for('cf_6_custom_weight')
 
       expect(entry).to eq(definition)
-      expect(schema.searchable_attribute_keys).to include('mf_6_custom_weight')
-      expect(schema.sortable_attribute_keys).to include('mf_6_custom_weight')
+      expect(schema.searchable_attribute_keys).to include('cf_6_custom_weight')
+      expect(schema.sortable_attribute_keys).to include('cf_6_custom_weight')
     end
   end
 
@@ -24,8 +24,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
       priority = create(:metafield_definition, :number_field, :sortable, namespace: 'custom', key: 'priority')
 
       expect(schema.entries).to include(
-        'mf_6_custom_label' => label,
-        'mf_6_custom_priority' => priority
+        'cf_6_custom_label' => label,
+        'cf_6_custom_priority' => priority
       )
     end
   end
@@ -35,17 +35,17 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
       create(:metafield_definition, :short_text_field, :sortable, namespace: 'custom', key: 'name')
     end
 
-    it 'parses ascending and descending mf_* sorts' do
-      expect(schema.parse_sort('mf_6_custom_name')).to eq(attribute: 'mf_6_custom_name', direction: 'asc')
-      expect(schema.parse_sort('-mf_6_custom_name')).to eq(attribute: 'mf_6_custom_name', direction: 'desc')
+    it 'parses ascending and descending cf_* sorts' do
+      expect(schema.parse_sort('cf_6_custom_name')).to eq(attribute: 'cf_6_custom_name', direction: 'asc')
+      expect(schema.parse_sort('-cf_6_custom_name')).to eq(attribute: 'cf_6_custom_name', direction: 'desc')
     end
 
     it 'returns nil for unknown or non-sortable keys' do
       create(:metafield_definition, :short_text_field, :searchable, namespace: 'custom', key: 'notes')
 
-      expect(schema.parse_sort('mf_6_custom_unknown')).to be_nil
+      expect(schema.parse_sort('cf_6_custom_unknown')).to be_nil
       expect(schema.parse_sort('name')).to be_nil
-      expect(schema.parse_sort('mf_6_custom_notes')).to be_nil
+      expect(schema.parse_sort('cf_6_custom_notes')).to be_nil
     end
   end
 
@@ -57,8 +57,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
 
     it 'returns both ascending and descending variants' do
       expect(schema.sort_ids).to contain_exactly(
-        'mf_6_custom_color', '-mf_6_custom_color',
-        'mf_6_custom_weight', '-mf_6_custom_weight'
+        'cf_6_custom_color', '-cf_6_custom_color',
+        'cf_6_custom_weight', '-cf_6_custom_weight'
       )
     end
   end
@@ -69,8 +69,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
              namespace: 'custom', key: 'label', name: 'Material')
 
       expect(schema.sort_options).to include(
-        { id: 'mf_6_custom_label', label: "Material (#{Spree.t(:sort_a_to_z)})" },
-        { id: '-mf_6_custom_label', label: "Material (#{Spree.t(:sort_z_to_a)})" }
+        { id: 'cf_6_custom_label', label: "Material (#{Spree.t(:sort_a_to_z)})" },
+        { id: '-cf_6_custom_label', label: "Material (#{Spree.t(:sort_z_to_a)})" }
       )
     end
 
@@ -79,8 +79,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
              namespace: 'custom', key: 'weight', name: 'Weight')
 
       expect(schema.sort_options).to include(
-        { id: 'mf_6_custom_weight', label: "Weight (#{Spree.t(:sort_low_to_high)})" },
-        { id: '-mf_6_custom_weight', label: "Weight (#{Spree.t(:sort_high_to_low)})" }
+        { id: 'cf_6_custom_weight', label: "Weight (#{Spree.t(:sort_low_to_high)})" },
+        { id: '-cf_6_custom_weight', label: "Weight (#{Spree.t(:sort_high_to_low)})" }
       )
     end
 
@@ -97,8 +97,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
       Spree::Current.locale = 'pl'
       labels = schema.sort_options.index_by { |o| o[:id] }
 
-      expect(labels['mf_6_custom_weight'][:label]).to eq('Weight (od najniższej)')
-      expect(labels['-mf_6_custom_weight'][:label]).to eq('Weight (od najwyższej)')
+      expect(labels['cf_6_custom_weight'][:label]).to eq('Weight (od najniższej)')
+      expect(labels['-cf_6_custom_weight'][:label]).to eq('Weight (od najwyższej)')
     ensure
       I18n.locale = I18n.default_locale
       Spree::Current.locale = nil

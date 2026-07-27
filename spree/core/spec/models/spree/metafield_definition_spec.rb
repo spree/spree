@@ -119,15 +119,15 @@ RSpec.describe Spree::MetafieldDefinition, type: :model do
   describe '#search_key' do
     it 'returns the SearchProvider attribute key with a length-prefixed namespace' do
       metafield_definition = build(:metafield_definition, namespace: 'custom', key: 'material')
-      expect(metafield_definition.search_key).to eq('mf_6_custom_material')
+      expect(metafield_definition.search_key).to eq('cf_6_custom_material')
     end
 
     it 'produces distinct keys when namespace/key underscore boundaries differ' do
       left = build(:metafield_definition, namespace: 'a_b', key: 'c')
       right = build(:metafield_definition, namespace: 'a', key: 'b_c')
 
-      expect(left.search_key).to eq('mf_3_a_b_c')
-      expect(right.search_key).to eq('mf_1_a_b_c')
+      expect(left.search_key).to eq('cf_3_a_b_c')
+      expect(right.search_key).to eq('cf_1_a_b_c')
       expect(left.search_key).not_to eq(right.search_key)
     end
   end

@@ -123,11 +123,11 @@ module Spree
         return scope unless definition
 
         p_table = Spree::Product.quoted_table_name
-        mf_table = Spree::Metafield.quoted_table_name
+        cf_table = Spree::Metafield.quoted_table_name
         connection = scope.klass.connection
         adapter = connection.adapter_name
 
-        mf_join_alias = 'sort_mf'
+        cf_join_alias = 'sort_cf'
 
         sort_expr = Arel.sql(metafield_sort_expression(definition.field_type, adapter))
         null_rank = Arel.sql(metafield_sort_null_rank(definition.field_type, adapter))
@@ -135,22 +135,22 @@ module Spree
         direction = parsed[:direction] == 'desc' ? :desc : :asc
         def_id = connection.quote(definition.id)
 
-        join_sql = "LEFT JOIN #{mf_table} AS #{mf_join_alias} " \
-                   "ON #{mf_join_alias}.resource_type = 'Spree::Product' " \
-                   "AND #{mf_join_alias}.resource_id = #{p_table}.id " \
-                   "AND #{mf_join_alias}.metafield_definition_id = #{def_id}"
+        join_sql = "LEFT JOIN #{cf_table} AS #{cf_join_alias} " \
+                   "ON #{cf_join_alias}.resource_type = 'Spree::Product' " \
+                   "AND #{cf_join_alias}.resource_id = #{p_table}.id " \
+                   "AND #{cf_join_alias}.metafield_definition_id = #{def_id}"
 
         scope
           .joins(join_sql)
           .select("#{p_table}.*")
-          .select(Arel::Nodes::As.new(sort_expr, Arel.sql('mf_sort_value')))
-          .select(Arel::Nodes::As.new(null_rank, Arel.sql('mf_sort_missing')))
-          .reorder(Arel.sql('mf_sort_missing ASC'), sort_expr.send(direction))
+          .select(Arel::Nodes::As.new(sort_expr, Arel.sql('cf_sort_value')))
+          .select(Arel::Nodes::As.new(null_rank, Arel.sql('cf_sort_missing')))
+          .reorder(Arel.sql('cf_sort_missing ASC'), sort_expr.send(direction))
       end
 
-      # Type-cast sort_mf.value for numeric metafields across PostgreSQL / MySQL / SQLite.
+      # Type-cast sort_cf.value for numeric metafields across PostgreSQL / MySQL / SQLite.
       def metafield_sort_expression(field_type, adapter_name)
-        column = 'sort_mf.value'
+        column = 'sort_cf.value'
         return column unless field_type == 'number'
 
         case adapter_name
@@ -164,7 +164,7 @@ module Spree
       end
 
       # NULL-rank so products missing the metafield sort last (Meilisearch parity).
-      # Projected as mf_sort_missing because PostgreSQL rejects (alias IS NULL) in ORDER BY.
+      # Projected as cf_sort_missing because PostgreSQL rejects (alias IS NULL) in ORDER BY.
       def metafield_sort_null_rank(field_type, adapter_name)
         "(#{metafield_sort_expression(field_type, adapter_name)} IS NULL)"
       end
