@@ -38,6 +38,28 @@ RSpec.describe Spree::Api::V3::Store::Carts::ItemsController, type: :controller 
       expect(json_response['item_total'].to_f).to be > 0
     end
 
+    context 'when tax applies to the added item' do
+      let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+      let(:tax_category) { create(:tax_category) }
+      let!(:zone) { create(:zone, kind: 'country', default_tax: true, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
+      let!(:tax_rate) { create(:tax_rate, zone: zone, tax_category: tax_category, amount: 0.1, included_in_price: false) }
+      let(:product) { create(:product, tax_category: tax_category) }
+
+      # Regression: the mutating response must serialize the freshly persisted
+      # per-line totals, not the pre-recalculation cached instances — the
+      # denormalized column has to agree with the nested tax lines.
+      it 'returns line-item tax totals consistent with its tax lines' do
+        post :create, params: { cart_id: order.prefixed_id, variant_id: variant.prefixed_id, quantity: 2 }
+
+        item = json_response['items'].first
+        tax_lines_sum = item['tax_lines'].sum { |line| line['amount'].to_f }
+
+        expect(tax_lines_sum).to be > 0
+        expect(item['additional_tax_total'].to_f).to eq(tax_lines_sum)
+        expect(item['adjustment_total'].to_f).to eq(tax_lines_sum)
+      end
+    end
+
     context 'with metadata' do
       it 'adds a line item with metadata' do
         post :create, params: {

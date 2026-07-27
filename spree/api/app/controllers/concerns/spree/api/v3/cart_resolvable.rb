@@ -27,6 +27,13 @@ module Spree
         # Render the cart as JSON using the cart serializer.
         def render_cart(status: :ok)
           @cart = @cart.remove_out_of_stock_items!
+          # Recalculation persisted fresh line-item/fulfillment totals and tax /
+          # discount lines, but the cached associations may still hold the
+          # pre-recalculation instances from earlier in this request. Drop those
+          # caches so the serializer reads the persisted values (the order's
+          # transient state — e.g. warnings — is preserved, unlike a full reload).
+          @cart.line_items.reset
+          @cart.shipments.reset
           render json: Spree.api.cart_serializer.new(@cart, params: serializer_params).to_h, status: status
         end
 

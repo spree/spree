@@ -2,7 +2,9 @@
 import { z } from 'zod';
 import { DeliveryMethodSchema } from './DeliveryMethod';
 import { DeliveryRateSchema } from './DeliveryRate';
+import { DiscountLineSchema } from './DiscountLine';
 import { StockLocationSchema } from './StockLocation';
+import { TaxLineSchema } from './TaxLine';
 
 export const FulfillmentSchema = z.object({
   id: z.string(),
@@ -28,6 +30,8 @@ export const FulfillmentSchema = z.object({
   delivery_method: DeliveryMethodSchema,
   stock_location: StockLocationSchema,
   delivery_rates: z.array(DeliveryRateSchema),
+  tax_lines: z.array(TaxLineSchema).optional(),
+  discount_lines: z.array(DiscountLineSchema).optional(),
 });
 
 export type Fulfillment = z.infer<typeof FulfillmentSchema>;

@@ -70,4 +70,29 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
       expect(result['status']).to eq(shipment.state)
     end
   end
+
+  describe 'nested adjustment lines' do
+    let(:order) { create(:order_ready_to_ship, store: store) }
+    let(:shipment) { order.shipments.first }
+    let!(:tax_line) { create(:tax_line, line_item: nil, fulfillment: shipment, order: order, amount: 0.4, label: 'Sales Tax', included: false) }
+    let!(:discount_line) { create(:discount_line, line_item: nil, fulfillment: shipment, order: order, amount: -5.0, label: 'Free shipping') }
+
+    it 'embeds the fulfillment tax and discount lines' do
+      result = described_class.new(shipment, params: params).to_h
+
+      expect(result['tax_lines'].sole).to include('amount' => '0.4', 'label' => 'Sales Tax', 'included' => false)
+      expect(result['discount_lines'].sole).to include('amount' => '-5.0', 'label' => 'Free shipping')
+    end
+
+    context 'when prices are hidden' do
+      let(:params) { super().merge(hide_prices: true) }
+
+      it 'omits the lines entirely' do
+        result = described_class.new(shipment, params: params).to_h
+
+        expect(result).not_to have_key('tax_lines')
+        expect(result).not_to have_key('discount_lines')
+      end
+    end
+  end
 end

@@ -53,6 +53,15 @@ module Spree
         one :shipping_method, key: :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
         one :stock_location, resource: proc { Spree.api.stock_location_serializer }
         many :shipping_rates, key: :delivery_rates, resource: proc { Spree.api.delivery_rate_serializer }
+
+        # Hidden for gated (prices_hidden) guests — the lines are pure money and
+        # would leak the shipping/tax amounts money_attributes above withholds.
+        many :tax_lines,
+             resource: proc { Spree.api.tax_line_serializer },
+             if: proc { !params[:hide_prices] }
+        many :discount_lines,
+             resource: proc { Spree.api.discount_line_serializer },
+             if: proc { !params[:hide_prices] }
       end
     end
   end
