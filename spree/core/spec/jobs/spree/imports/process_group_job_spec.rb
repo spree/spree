@@ -64,6 +64,35 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
       expect(published['product.updated']).to eq(0)
     end
 
+    context 'when the import was created with skip_events' do
+      before { import.update!(preferred_skip_events: true) }
+
+      it 'suppresses the row-level product events' do
+        published = Hash.new(0)
+        %w[product.created product.updated].each do |name|
+          Spree::Events.subscribe(name, async: false) { published[name] += 1 }
+        end
+        Spree::Events.activate!
+
+        described_class.perform_now(import.id, [row.id])
+
+        expect(published['product.created']).to eq(0)
+        expect(published['product.updated']).to eq(0)
+        # The rows still process — only their events are silenced.
+        expect(row.reload.status).to eq('completed')
+      end
+
+      it 'still publishes the import lifecycle events' do
+        published = Hash.new(0)
+        Spree::Events.subscribe('import.completed', async: false) { published['import.completed'] += 1 }
+        Spree::Events.activate!
+
+        described_class.perform_now(import.id, [row.id])
+
+        expect(published['import.completed']).to eq(1)
+      end
+    end
+
     it 'publishes product.updated when the product existed before this run' do
       described_class.perform_now(import.id, [row.id])
       row.reload.update_columns(status: 'pending')

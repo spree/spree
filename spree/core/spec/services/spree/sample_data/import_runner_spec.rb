@@ -55,13 +55,9 @@ RSpec.describe Spree::SampleData::ImportRunner, type: :service do
   describe 'skip_events', :events do
     let(:csv_path) { Spree::Core::Engine.root.join('db', 'sample_data', 'products.csv') }
 
-    # NOTE: the actual suppression can't be asserted here. Product events fire
-    # from an `after_commit`, which never runs inside the test transaction, so
-    # both settings look identical. Verified manually outside a transaction:
-    # 36 product events with `skip_events: false`, 0 with `true`.
-    #
-    # What is asserted below: the flag reaches the processing jobs, and the
-    # import's own lifecycle events keep flowing either way.
+    # The suppression itself is asserted where the boundary lives — see
+    # ProcessGroupJob's specs. Here we only check that the flag survives the
+    # trip to the jobs and that the import's own lifecycle keeps flowing.
 
     # Only the rows go quiet — the import's own lifecycle stays observable, so
     # a dashboard or subscriber can still tell when seeding finished.
