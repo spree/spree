@@ -314,7 +314,7 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
       row.reload
       expect(row.status).to eq('completed')
       # The raw NOT NULL base column (not the translation) must be populated.
-      expect(row.item.product.read_attribute(:name)).to eq('Test Product')
+      expect(row.item.read_attribute(:name)).to eq('Test Product')
     end
   end
 
