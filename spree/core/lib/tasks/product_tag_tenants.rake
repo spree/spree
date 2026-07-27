@@ -14,11 +14,9 @@ namespace :spree do
     task backfill_product_tag_tenants: :environment do
       taggings = ActsAsTaggableOn::Tagging.arel_table.name
       products = Spree::Product.table_name
-
       updated = ActsAsTaggableOn::Tagging.
                 where(taggable_type: 'Spree::Product', tenant: nil).
-                joins("INNER JOIN #{products} ON #{products}.id = #{taggings}.taggable_id").
-                update_all("tenant = #{products}.store_id")
+                update_all("tenant = (SELECT store_id FROM #{products} WHERE #{products}.id = #{taggings}.taggable_id)")
 
       puts "  Backfilled tenant on #{updated} product tagging(s)."
     end
