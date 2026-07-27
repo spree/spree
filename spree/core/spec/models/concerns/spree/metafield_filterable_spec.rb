@@ -96,20 +96,30 @@ RSpec.describe Spree::MetafieldFilterable do
   end
 
   describe '.metafield_value_expression' do
+    let(:connection) { Spree::Product.connection }
+    # Identifier quoting differs per adapter (backticks on MySQL, double
+    # quotes elsewhere), so build the expected column reference from the
+    # connection rather than hardcoding either form.
+    let(:quoted_column) do
+      "#{connection.quote_table_name(Spree::Metafield.table_name)}.#{connection.quote_column_name('value')}"
+    end
+
     def to_sql(node)
-      Spree::Product.connection.visitor.compile(node, Arel::Collectors::SQLString.new)
+      connection.visitor.compile(node, Arel::Collectors::SQLString.new)
     end
 
     it 'casts numeric metafields for the current adapter' do
       expression = Spree::Product.metafield_value_expression(Spree::Metafield.arel_table[:value], 'number')
 
-      expect(to_sql(expression)).to match(/CAST\(.*"value".* AS .+\)|"value"::numeric/)
+      # PostgreSQL renders `CAST(x AS numeric)`, MySQL `CAST(x AS DECIMAL(30, 10))`,
+      # SQLite `CAST(x AS REAL)` — all wrap the column in a cast.
+      expect(to_sql(expression)).to match(/\ACAST\(#{Regexp.escape(quoted_column)} AS .+\)\z/)
     end
 
     it 'leaves text metafields uncast' do
       expression = Spree::Product.metafield_value_expression(Spree::Metafield.arel_table[:value], 'short_text')
 
-      expect(to_sql(expression)).to eq('"spree_metafields"."value"')
+      expect(to_sql(expression)).to eq(quoted_column)
     end
   end
 end
