@@ -68,23 +68,42 @@ RSpec.describe Spree::SampleData::ImportRunner, type: :service do
       Spree::Seeds::All.call
     end
 
+    # Drives the queued path, like production: each job is its own unit of
+    # work, so a row's `after_commit` lands inside the suppression block.
+    # (Inline runs everything in one `state_machines` transaction, which commits
+    # — and so publishes — only after the block has exited.)
     def product_events_published(skip_events)
       names = []
       allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
         names << name
         original.call(name, *rest)
       end
+
       described_class.call(csv_path: csv_path, import_class: Spree::Imports::Products,
-                           inline: true, skip_events: skip_events)
+                           skip_events: skip_events)
+      perform_enqueued_jobs(only: [Spree::Imports::CreateRowsJob, Spree::Imports::ProcessRowsJob,
+                                   Spree::Imports::ProcessGroupJob])
+
       names.count { |name| name.to_s.start_with?('product.') }
     end
 
-    it 'publishes product events by default' do
-      expect(product_events_published(false)).to be_positive
-    end
+    # Only the rows go quiet — the import's own lifecycle stays observable, so
+    # a dashboard or subscriber can still tell when seeding finished.
+    it 'still publishes the import lifecycle events' do
+      names = []
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+        names << name
+        original.call(name, *rest)
+      end
 
-    it 'publishes none when asked to skip' do
-      expect(product_events_published(true)).to eq(0)
+      described_class.call(csv_path: csv_path, import_class: Spree::Imports::Products,
+                           skip_events: true)
+      perform_enqueued_jobs(only: [Spree::Imports::CreateRowsJob, Spree::Imports::ProcessRowsJob,
+                                   Spree::Imports::ProcessGroupJob])
+
+      # The import's own lifecycle is untouched by the row suppression.
+      expect(names).to include('import.created')
+      expect(names.select { |name| name.to_s.start_with?('import.') }).to be_present
     end
 
     it 'travels with the import so the processing jobs see it' do

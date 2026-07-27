@@ -25,10 +25,6 @@ module Spree
         import = Spree::Import.find(import_id)
         Spree::Current.store = import.store
 
-        # Seeded catalogs (sample/demo data) shouldn't reach webhooks or
-        # analytics — suppress every event the rows would publish.
-        return Spree::Events.disable { process_group(import, row_ids) } if import.preferred_skip_events
-
         process_group(import, row_ids)
       end
 
@@ -43,37 +39,52 @@ module Spree
           started_at = Time.current
           processed_rows = []
 
-          row_ids.each_slice(ROWS_BATCH_SIZE) do |ids|
-            # Skip rows already completed on a prior attempt so retries don't double-process them.
-            rows = import.rows.where(id: ids).pending_and_failed.order(:row_number).to_a
-            # Share the already-loaded import across rows: each row's processor reads
-            # `row.import` (store, ability, lookup cache), and without this every row
-            # lazily loads its own Import instance and rebuilds all of that per row.
-            rows.each { |row| row.association(:import).target = import }
+          skipping_row_events(import) do
+            row_ids.each_slice(ROWS_BATCH_SIZE) do |ids|
+              # Skip rows already completed on a prior attempt so retries don't double-process them.
+              rows = import.rows.where(id: ids).pending_and_failed.order(:row_number).to_a
+              # Share the already-loaded import across rows: each row's processor reads
+              # `row.import` (store, ability, lookup cache), and without this every row
+              # lazily loads its own Import instance and rebuilds all of that per row.
+              rows.each { |row| row.association(:import).target = import }
 
-            if large
-              Spree::Events.disable do
-                rows.each { |row| row.bulk_process!(mappings: mappings, schema_fields: schema_fields) }
+              if large
+                Spree::Events.disable do
+                  rows.each { |row| row.bulk_process!(mappings: mappings, schema_fields: schema_fields) }
+                end
+              elsif grouped
+                # A group is one product plus its variants: per-record lifecycle
+                # events (variant.created, price.created, product.updated per
+                # touch) are noise to subscribers — one product event is published
+                # for the whole group below. import_row.* events still flow.
+                Spree::Events.disable_lifecycle do
+                  rows.each { |row| row.process!(mappings: mappings, schema_fields: schema_fields) }
+                end
+              else
+                rows.each do |row|
+                  row.process!(mappings: mappings, schema_fields: schema_fields)
+                end
               end
-            elsif grouped
-              # A group is one product plus its variants: per-record lifecycle
-              # events (variant.created, price.created, product.updated per
-              # touch) are noise to subscribers — one product event is published
-              # for the whole group below. import_row.* events still flow.
-              Spree::Events.disable_lifecycle do
-                rows.each { |row| row.process!(mappings: mappings, schema_fields: schema_fields) }
-              end
-            else
-              rows.each do |row|
-                row.process!(mappings: mappings, schema_fields: schema_fields)
-              end
+              processed_rows.concat(rows)
             end
-            processed_rows.concat(rows)
+
+            publish_group_events(processed_rows, started_at) if grouped
           end
 
-          publish_group_events(processed_rows, started_at) if grouped
+          # Outside `skipping_row_events` on purpose: the import's own
+          # lifecycle (`import.progress`, `import.completed`) is a handful of
+          # events per run and stays observable even for seeded data.
           check_import_completion(import, large)
         end
+      end
+
+      # Seeded catalogs (sample/demo data) shouldn't reach webhooks or
+      # analytics. Scoped to the rows: the import's own lifecycle events stay
+      # observable.
+      def skipping_row_events(import, &block)
+        return Spree::Events.disable(&block) if import.preferred_skip_events
+
+        block.call
       end
 
       # One event per product touched by this group: `product.created` when the
