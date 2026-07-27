@@ -116,19 +116,38 @@ RSpec.describe Spree::MetafieldDefinition, type: :model do
     end
   end
 
-  describe '#search_key' do
-    it 'returns the SearchProvider attribute key with a length-prefixed namespace' do
+  describe '#filter_key' do
+    it 'combines the namespace and key' do
       metafield_definition = build(:metafield_definition, namespace: 'custom', key: 'material')
-      expect(metafield_definition.search_key).to eq('cf_6_custom_material')
+
+      expect(metafield_definition.filter_key).to eq('cf_custom_material')
+    end
+  end
+
+  describe 'filter_key uniqueness' do
+    # (a_b, c) and (a, b_c) both flatten to `cf_a_b_c`, which would make one
+    # definition unreachable via sort/filter params.
+    it 'rejects a definition whose filter_key collides across a different namespace split' do
+      create(:metafield_definition, resource_type: 'Spree::Product', namespace: 'a_b', key: 'c')
+      colliding = build(:metafield_definition, resource_type: 'Spree::Product', namespace: 'a', key: 'b_c')
+
+      expect(colliding).not_to be_valid
+      expect(colliding.errors[:key]).to be_present
     end
 
-    it 'produces distinct keys when namespace/key underscore boundaries differ' do
-      left = build(:metafield_definition, namespace: 'a_b', key: 'c')
-      right = build(:metafield_definition, namespace: 'a', key: 'b_c')
+    it 'allows the same namespace/key split on a different resource type' do
+      create(:metafield_definition, resource_type: 'Spree::Product', namespace: 'a_b', key: 'c')
+      other_resource = build(:metafield_definition, resource_type: 'Spree::Variant', namespace: 'a', key: 'b_c')
 
-      expect(left.search_key).to eq('cf_3_a_b_c')
-      expect(right.search_key).to eq('cf_1_a_b_c')
-      expect(left.search_key).not_to eq(right.search_key)
+      expect(other_resource).to be_valid
+    end
+
+    it 'does not flag a persisted definition against itself' do
+      metafield_definition = create(:metafield_definition, namespace: 'custom', key: 'material')
+
+      metafield_definition.name = 'Renamed'
+
+      expect(metafield_definition).to be_valid
     end
   end
 

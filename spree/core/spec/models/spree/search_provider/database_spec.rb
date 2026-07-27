@@ -225,12 +225,12 @@ module Spree
         end
 
         it 'sorts ascending by cf_* attribute' do
-          result = provider.search_and_filter(scope: scope, sort: 'cf_6_custom_label')
+          result = provider.search_and_filter(scope: scope, sort: 'cf_custom_label')
           expect(result.products.map(&:id)).to eq([product_2.id, product_3.id, product_1.id])
         end
 
         it 'sorts descending by -cf_* attribute' do
-          result = provider.search_and_filter(scope: scope, sort: '-cf_6_custom_label')
+          result = provider.search_and_filter(scope: scope, sort: '-cf_custom_label')
           expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
         end
 
@@ -238,7 +238,7 @@ module Spree
           result = provider.search_and_filter(
             scope: scope,
             filters: { 'name_cont' => 'Blue' },
-            sort: 'cf_6_custom_label'
+            sort: 'cf_custom_label'
           )
           expect(result.products.map(&:id)).to eq([product_3.id, product_1.id])
         end
@@ -249,14 +249,105 @@ module Spree
           end
 
           it 'keeps missing values last when sorting ascending' do
-            result = provider.search_and_filter(scope: scope, sort: 'cf_6_custom_label')
+            result = provider.search_and_filter(scope: scope, sort: 'cf_custom_label')
             expect(result.products.map(&:id)).to eq([product_3.id, product_1.id, product_2.id])
           end
 
           it 'keeps missing values last when sorting descending' do
-            result = provider.search_and_filter(scope: scope, sort: '-cf_6_custom_label')
+            result = provider.search_and_filter(scope: scope, sort: '-cf_custom_label')
             expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
           end
+        end
+      end
+
+      context 'with metafield filters' do
+        let!(:material) do
+          create(:metafield_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'material')
+        end
+        let!(:weight) do
+          create(:metafield_definition, :number_field, :sortable,
+                 namespace: 'custom', key: 'weight')
+        end
+
+        before do
+          product_1.set_metafield(material, 'wool-blend')
+          product_2.set_metafield(material, 'cotton')
+          product_1.set_metafield(weight, '10')
+          product_2.set_metafield(weight, '2')
+          product_3.set_metafield(weight, '3.5')
+        end
+
+        it 'filters text values with cont' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_cont' => 'wool' })
+          expect(result.products).to contain_exactly(product_1)
+          expect(result.total_count).to eq(1)
+        end
+
+        it 'filters text values case-insensitively with i_cont' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_i_cont' => 'WOOL' })
+          expect(result.products).to contain_exactly(product_1)
+        end
+
+        it 'filters text values with eq' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_eq' => 'cotton' })
+          expect(result.products).to contain_exactly(product_2)
+        end
+
+        it 'filters text values with not_eq (value set and different)' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_not_eq' => 'cotton' })
+          expect(result.products).to contain_exactly(product_1)
+        end
+
+        it 'filters text values with start and end' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_start' => 'wool' })
+          expect(result.products).to contain_exactly(product_1)
+
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_end' => 'blend' })
+          expect(result.products).to contain_exactly(product_1)
+        end
+
+        it 'filters numerically rather than lexicographically' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_weight_gteq' => '3' })
+          expect(result.products).to contain_exactly(product_1, product_3)
+
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_weight_lt' => '3' })
+          expect(result.products).to contain_exactly(product_2)
+        end
+
+        it 'filters with present and blank' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_present' => '1' })
+          expect(result.products).to contain_exactly(product_1, product_2)
+
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_blank' => '1' })
+          expect(result.products).to contain_exactly(product_3)
+        end
+
+        it 'combines metafield and ransack filters' do
+          result = provider.search_and_filter(
+            scope: scope,
+            filters: { 'name_cont' => 'Blue', 'cf_custom_weight_gteq' => '5' }
+          )
+          expect(result.products).to contain_exactly(product_1)
+        end
+
+        it 'combines metafield filters with metafield sort' do
+          result = provider.search_and_filter(
+            scope: scope,
+            filters: { 'cf_custom_weight_gteq' => '3' },
+            sort: '-cf_custom_weight'
+          )
+          expect(result.products.map(&:id)).to eq([product_1.id, product_3.id])
+        end
+
+        it 'ignores non-numeric values on number predicates' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_weight_gteq' => 'abc' })
+          expect(result.total_count).to eq(3)
+        end
+
+        it 'ignores cf_ keys that match no definition' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_bogus_field_eq' => 'x' })
+          expect(result.total_count).to eq(3)
         end
       end
 
@@ -273,12 +364,12 @@ module Spree
         end
 
         it 'sorts ascending numerically rather than lexicographically' do
-          result = provider.search_and_filter(scope: scope, sort: 'cf_6_custom_weight')
+          result = provider.search_and_filter(scope: scope, sort: 'cf_custom_weight')
           expect(result.products.map(&:id)).to eq([product_2.id, product_3.id, product_1.id])
         end
 
         it 'sorts descending numerically' do
-          result = provider.search_and_filter(scope: scope, sort: '-cf_6_custom_weight')
+          result = provider.search_and_filter(scope: scope, sort: '-cf_custom_weight')
           expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
         end
       end
@@ -307,13 +398,13 @@ module Spree
 
         it 'includes metafield sort options' do
           ids = result.sort_options.map { |o| o[:id] }
-          expect(ids).to include('cf_6_custom_label', '-cf_6_custom_label')
+          expect(ids).to include('cf_custom_label', '-cf_custom_label')
         end
 
         it 'includes human-readable labels for metafield sort options' do
           by_id = result.sort_options.index_by { |o| o[:id] }
-          expect(by_id['cf_6_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_a_to_z)})")
-          expect(by_id['-cf_6_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_z_to_a)})")
+          expect(by_id['cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_a_to_z)})")
+          expect(by_id['-cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_z_to_a)})")
         end
       end
 
@@ -354,18 +445,5 @@ module Spree
       end
     end
 
-    describe 'metafield sort SQL helpers' do
-      it 'casts numeric metafields per adapter' do
-        expect(provider.send(:metafield_sort_expression, 'number', 'PostgreSQL')).to eq('sort_cf.value::numeric')
-        expect(provider.send(:metafield_sort_expression, 'number', 'Mysql2')).to eq('CAST(sort_cf.value AS DECIMAL(30, 10))')
-        expect(provider.send(:metafield_sort_expression, 'number', 'SQLite')).to eq('CAST(sort_cf.value AS REAL)')
-        expect(provider.send(:metafield_sort_expression, 'short_text', 'PostgreSQL')).to eq('sort_cf.value')
-      end
-
-      it 'builds a null-rank expression from the sort expression' do
-        expect(provider.send(:metafield_sort_null_rank, 'number', 'PostgreSQL')).to eq('(sort_cf.value::numeric IS NULL)')
-        expect(provider.send(:metafield_sort_null_rank, 'short_text', 'PostgreSQL')).to eq('(sort_cf.value IS NULL)')
-      end
-    end
   end
 end

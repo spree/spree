@@ -65,10 +65,6 @@ interface TableToolbarProps {
   actions?: React.ReactNode
   /** Hide the sort dropdown — used when the table is drag-reorderable, where free sorting would defeat the drag. */
   hideSort?: boolean
-  /**
-   * Metafield sort fields for the Sort dropdown
-   */
-  metafieldSortColumns?: ColumnDef[]
 }
 
 // ============================================================================
@@ -79,7 +75,9 @@ interface TableToolbarProps {
 // and resolved with `t()` at render time so they follow the active language.
 const operatorsByType: Record<string, { value: string; labelKey: string }[]> = {
   string: [
-    { value: 'cont', labelKey: 'admin.components.table_toolbar.operators.contains' },
+    // `i_cont` (case-insensitive) rather than `cont` — an admin typing
+    // "2 years" expects to match "2 Years".
+    { value: 'i_cont', labelKey: 'admin.components.table_toolbar.operators.contains' },
     { value: 'eq', labelKey: 'admin.components.table_toolbar.operators.equals' },
     { value: 'not_eq', labelKey: 'admin.components.table_toolbar.operators.does_not_equal' },
     { value: 'start', labelKey: 'admin.components.table_toolbar.operators.starts_with' },
@@ -132,6 +130,19 @@ function getOperators(type: string) {
   return operatorsByType[type] || operatorsByType.string
 }
 
+// Operators no longer offered in the picker but still resolvable for display,
+// so filters saved in older URLs keep a readable chip label.
+const legacyOperatorLabelKeys: Record<string, string> = {
+  cont: 'admin.components.table_toolbar.operators.contains',
+}
+
+function getOperatorLabelKey(type: string, operator: string) {
+  return (
+    getOperators(type).find((o) => o.value === operator)?.labelKey ??
+    legacyOperatorLabelKeys[operator]
+  )
+}
+
 const noValueOperators = ['present', 'blank']
 
 // ============================================================================
@@ -153,7 +164,6 @@ export function TableToolbar({
   title,
   actions,
   hideSort = false,
-  metafieldSortColumns,
 }: TableToolbarProps) {
   const { t } = useTranslation()
   const [filterOpen, setFilterOpen] = useState(false)
@@ -163,13 +173,7 @@ export function TableToolbar({
   // Memoize so `FilterPanel`'s `useMemo` deps stay stable across parent
   // re-renders. Otherwise picking a filter value triggers an `items` change
   // in the field-picker Select, which Base UI re-emits as a state change.
-  const sortableColumns = useMemo(
-    () => [
-      ...allCols.filter((c) => c.sortable),
-      ...(metafieldSortColumns ?? []).filter((c) => !!c.sortable),
-    ],
-    [allCols, metafieldSortColumns],
-  )
+  const sortableColumns = useMemo(() => allCols.filter((c) => c.sortable), [allCols])
   const filterableColumns = useMemo(() => allCols.filter((c) => c.filterable), [allCols])
   const activeFilterCount = filters.length
 
@@ -294,8 +298,7 @@ function FilterChip({
   onRemove: () => void
 }) {
   const { t } = useTranslation()
-  const ops = getOperators(col?.filterType ?? 'string')
-  const opLabelKey = ops.find((o) => o.value === filter.operator)?.labelKey
+  const opLabelKey = getOperatorLabelKey(col?.filterType ?? 'string', filter.operator)
   const opLabel = opLabelKey ? t(opLabelKey) : filter.operator
   const showValue = !noValueOperators.includes(filter.operator)
 

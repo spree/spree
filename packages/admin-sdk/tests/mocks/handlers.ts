@@ -26,7 +26,7 @@ export const fixtures = {
     storefront_visible: true,
     searchable: false,
     sortable: false,
-    search_key: 'cf_5_specs_fabric',
+    filter_key: 'cf_specs_fabric',
     created_at: '2026-05-01T00:00:00.000Z',
     updated_at: '2026-05-01T00:00:00.000Z',
   },

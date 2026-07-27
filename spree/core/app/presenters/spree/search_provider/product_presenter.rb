@@ -84,7 +84,7 @@ module Spree
           definition = metafield.metafield_definition
           next unless definition&.searchable? || definition&.sortable?
 
-          [definition.search_key, metafield_index_value(metafield, definition.field_type)]
+          [definition.filter_key, metafield_index_value(metafield, definition.field_type)]
         end.to_h
       end
 

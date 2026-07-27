@@ -114,6 +114,23 @@ RSpec.describe Spree::Export, :job, type: :model do
         expect(export.records_to_export).to match_array(targets)
       end
     end
+
+    # The dashboard builds export search_params from the same filter state as
+    # the products table, so a `cf_*` filter has to survive the round-trip —
+    # Ransack alone has no such attribute.
+    context 'with a custom field filter' do
+      let!(:definition) do
+        create(:metafield_definition, :short_text_field, :searchable, namespace: 'custom', key: 'material')
+      end
+      let(:target) { matching_products.first }
+      let(:search_params) { { cf_custom_material_i_cont: 'wool' }.to_json }
+
+      before { target.set_metafield(definition, 'Wool-Blend') }
+
+      it 'applies the custom field predicate' do
+        expect(export.records_to_export).to contain_exactly(target)
+      end
+    end
   end
 
   describe '#send_export_done_email' do

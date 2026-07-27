@@ -265,8 +265,8 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
 
     it 'includes metafield keys in searchable and sortable settings' do
       settings = ::Meilisearch::Client.new(ENV['MEILISEARCH_URL']).index(index_name).get_settings
-      expect(settings['searchableAttributes']).to include('cf_6_custom_label')
-      expect(settings['sortableAttributes']).to include('cf_6_custom_label', 'cf_6_custom_weight')
+      expect(settings['searchableAttributes']).to include('cf_custom_label')
+      expect(settings['sortableAttributes']).to include('cf_custom_label', 'cf_custom_weight')
     end
 
     it 'finds products by searchable metafield value' do
@@ -279,13 +279,13 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     end
 
     it 'sorts by short_text metafield ascending and descending with missing values last' do
-      get :index, params: { sort: 'cf_6_custom_label' }
+      get :index, params: { sort: 'cf_custom_label' }
       expect(response).to have_http_status(:ok)
       asc_names = json_response['data'].map { |p| p['name'] }
       expect(asc_names.first(2)).to eq(['Red Cotton Shirt', 'Blue Silk Shirt'])
       expect(asc_names.last(2)).to match_array(['Green Linen Shirt', 'Blue Running Shoes'])
 
-      get :index, params: { sort: '-cf_6_custom_label' }
+      get :index, params: { sort: '-cf_custom_label' }
       expect(response).to have_http_status(:ok)
       desc_names = json_response['data'].map { |p| p['name'] }
       expect(desc_names.first(2)).to eq(['Blue Silk Shirt', 'Red Cotton Shirt'])
@@ -293,13 +293,13 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     end
 
     it 'sorts by number metafield numerically' do
-      get :index, params: { sort: 'cf_6_custom_weight' }
+      get :index, params: { sort: 'cf_custom_weight' }
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |p| p['name'] }.first(3)).to eq(
         ['Blue Silk Shirt', 'Blue Running Shoes', 'Red Cotton Shirt']
       )
 
-      get :index, params: { sort: '-cf_6_custom_weight' }
+      get :index, params: { sort: '-cf_custom_weight' }
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |p| p['name'] }.first(3)).to eq(
         ['Red Cotton Shirt', 'Blue Running Shoes', 'Blue Silk Shirt']
@@ -321,7 +321,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
       client = ::Meilisearch::Client.new(ENV['MEILISEARCH_URL'])
       client.index(index_name).update_sortable_attributes(%w[name price created_at available_on units_sold_count]).await
 
-      get :index, params: { sort: definition.search_key }
+      get :index, params: { sort: definition.filter_key }
 
       expect(response).to have_http_status(:ok)
       names = json_response['data'].map { |p| p['name'] }

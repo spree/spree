@@ -40,7 +40,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
         'storefront_visible' => true,
         'searchable' => false,
         'sortable' => false,
-        'search_key' => 'cf_5_specs_fabric'
+        'filter_key' => 'cf_specs_fabric'
       )
     end
   end

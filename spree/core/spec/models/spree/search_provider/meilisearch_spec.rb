@@ -178,7 +178,7 @@ module Spree
         before do
           error = ::Meilisearch::ApiError.new(
             400, 'Bad Request',
-            { 'code' => 'invalid_search_sort', 'message' => 'Attribute `cf_6_custom_label` is not sortable.' }
+            { 'code' => 'invalid_search_sort', 'message' => 'Attribute `cf_custom_label` is not sortable.' }
           )
           calls = 0
           allow(mock_index).to receive(:search) do
@@ -192,7 +192,7 @@ module Spree
         it 'pushes index settings and retries the search once' do
           expect(mock_index).to receive(:update_sortable_attributes)
 
-          result = provider.search_and_filter(scope: store.products, query: 'shirt', sort: 'cf_6_custom_label')
+          result = provider.search_and_filter(scope: store.products, query: 'shirt', sort: 'cf_custom_label')
           expect(result.products).to include(product_1, product_2)
         end
       end
@@ -365,17 +365,69 @@ module Spree
       end
 
       it 'includes cf_* in searchable and sortable attributes' do
-        expect(provider.send(:searchable_attributes)).to include('cf_6_custom_label')
-        expect(provider.send(:sortable_attributes)).to include('cf_6_custom_label')
+        expect(provider.send(:searchable_attributes)).to include('cf_custom_label')
+        expect(provider.send(:sortable_attributes)).to include('cf_custom_label')
       end
 
-      it 'does not put cf_* on filterable attributes' do
-        expect(provider.send(:filterable_attributes)).not_to include('cf_6_custom_label')
+      it 'includes cf_* in filterable attributes but not in requested facets' do
+        expect(provider.send(:filterable_attributes)).to include('cf_custom_label')
+        expect(provider.send(:facet_attributes)).not_to include('cf_custom_label')
       end
 
       it 'maps cf_* sort params without namespace resolution' do
-        expect(provider.send(:sort_mapping, 'cf_6_custom_label')).to eq(['cf_6_custom_label:asc'])
-        expect(provider.send(:sort_mapping, '-cf_6_custom_label')).to eq(['cf_6_custom_label:desc'])
+        expect(provider.send(:sort_mapping, 'cf_custom_label')).to eq(['cf_custom_label:asc'])
+        expect(provider.send(:sort_mapping, '-cf_custom_label')).to eq(['cf_custom_label:desc'])
+      end
+    end
+
+    describe 'metafield filter conditions' do
+      let!(:label) do
+        create(:metafield_definition, :short_text_field, :searchable,
+               namespace: 'custom', key: 'label')
+      end
+      let!(:weight) do
+        create(:metafield_definition, :number_field, :sortable,
+               namespace: 'custom', key: 'weight')
+      end
+
+      it 'builds equality conditions for text metafields' do
+        expect(provider.send(:build_filter_condition, 'cf_custom_label_eq', 'wool')).to eq("cf_custom_label = 'wool'")
+        expect(provider.send(:build_filter_condition, 'cf_custom_label_not_eq', 'wool')).to eq("cf_custom_label != 'wool'")
+      end
+
+      it 'escapes quotes and backslashes in text values' do
+        expect(provider.send(:build_filter_condition, 'cf_custom_label_eq', "o'brien\\x")).to eq("cf_custom_label = 'o\\'brien\\\\x'")
+      end
+
+      it 'builds range conditions for number metafields' do
+        expect(provider.send(:build_filter_condition, 'cf_custom_weight_gteq', '3.5')).to eq('cf_custom_weight >= 3.5')
+        expect(provider.send(:build_filter_condition, 'cf_custom_weight_lt', '10')).to eq('cf_custom_weight < 10.0')
+      end
+
+      it 'builds EXISTS conditions for present and blank' do
+        expect(provider.send(:build_filter_condition, 'cf_custom_label_present', '1')).to eq('cf_custom_label EXISTS')
+        expect(provider.send(:build_filter_condition, 'cf_custom_label_blank', '1')).to eq('cf_custom_label NOT EXISTS')
+      end
+
+      it 'ignores substring predicates Meilisearch cannot filter on' do
+        expect(provider.send(:build_filter_condition, 'cf_custom_label_cont', 'wool')).to be_nil
+      end
+
+      it 'ignores non-numeric values on number predicates' do
+        expect(provider.send(:build_filter_condition, 'cf_custom_weight_gteq', 'abc')).to be_nil
+      end
+
+      it 'ignores unknown cf_ keys' do
+        expect(provider.send(:build_filter_condition, 'cf_bogus_field_eq', 'x')).to be_nil
+      end
+
+      it 'passes metafield conditions through to the Meilisearch query' do
+        ms_response = { 'hits' => [], 'estimatedTotalHits' => 0, 'facetDistribution' => {} }
+        expect(mock_index).to receive(:search).with(anything, hash_including(
+          filter: include('cf_custom_weight >= 3.5')
+        )).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, filters: { 'cf_custom_weight_gteq' => '3.5' })
       end
     end
   end

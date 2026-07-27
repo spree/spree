@@ -569,7 +569,7 @@ export interface CustomFieldDefinitionCreateParams {
   searchable?: boolean
   /**
    * Allow storefront product listings to sort by this field
-   * (`sort=cf_{n}_{namespace}_{key}`). Supported `field_type`s:
+   * (`sort=cf_{namespace}_{key}`). Supported `field_type`s:
    * `short_text`, `number`. Other types are rejected by the API with 422.
    */
   sortable?: boolean
@@ -589,7 +589,7 @@ export interface CustomFieldDefinitionUpdateParams {
   searchable?: boolean
   /**
    * Allow storefront product listings to sort by this field
-   * (`sort=cf_{n}_{namespace}_{key}`). Supported `field_type`s:
+   * (`sort=cf_{namespace}_{key}`). Supported `field_type`s:
    * `short_text`, `number`. Other types are rejected by the API with 422.
    */
   sortable?: boolean

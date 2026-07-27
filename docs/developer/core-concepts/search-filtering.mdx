@@ -13,7 +13,7 @@ Spree provides powerful search, filtering, and sorting capabilities for products
 - Attribute-based filtering (price range, availability, stock status)
 - Category and taxon filtering
 - Faceted search with filter counts
-- Flexible sorting options (including sortable product custom fields via `sort=cf_{namespace.length}_{namespace}_{key}`)
+- Flexible sorting options (including sortable product custom fields via `sort=cf_{namespace}_{key}`)
 
 ## Product Search
 
@@ -167,7 +167,7 @@ const sorted = await client.products.list({
 
 // Available sort options (prefix '-' for descending; use '-available_on' for newest):
 // price, -price, name, -name, available_on, -available_on, best_selling
-// Plus any product custom field marked sortable, e.g. cf_6_custom_label / -cf_6_custom_label
+// Plus any product custom field marked sortable, e.g. cf_custom_label / -cf_custom_label
 ```
 
 ```typescript Admin SDK

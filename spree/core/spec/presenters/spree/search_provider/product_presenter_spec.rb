@@ -207,9 +207,9 @@ module Spree
 
         it 'indexes searchable and sortable metafield values as cf_* attributes' do
           doc = documents.first
-          expect(doc['cf_6_custom_pinyin_name']).to eq('mao-tai')
-          expect(doc['cf_6_custom_priority']).to eq(10.0)
-          expect(doc).not_to have_key('cf_6_custom_internal_note')
+          expect(doc['cf_custom_pinyin_name']).to eq('mao-tai')
+          expect(doc['cf_custom_priority']).to eq(10.0)
+          expect(doc).not_to have_key('cf_custom_internal_note')
         end
 
         it 'uses the same cf_* attributes on every market/locale document' do
@@ -232,7 +232,7 @@ module Spree
           product.set_metafield(decimal_def, '42.5')
 
           doc = described_class.new(product.reload, store).call.first
-          expect(doc['cf_6_custom_rating']).to eq(42.5)
+          expect(doc['cf_custom_rating']).to eq(42.5)
         end
 
         it 'omits registered keys when the product has no value' do
@@ -240,7 +240,7 @@ module Spree
                  namespace: 'custom', key: 'origin', name: 'Origin')
 
           doc = described_class.new(product.reload, store).call.first
-          expect(doc).not_to have_key('cf_6_custom_origin')
+          expect(doc).not_to have_key('cf_custom_origin')
         end
 
         it 'includes no cf_* attributes when no definitions are searchable or sortable' do

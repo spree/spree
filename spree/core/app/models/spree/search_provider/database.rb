@@ -61,6 +61,9 @@ module Spree
       def apply_search_and_filters(scope, query: nil, filters: {})
         scope = scope.search(query) if query.present?
 
+        filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
+        scope, filters = scope.with_metafield_filters(filters, schema: metafield_schema)
+
         ransack_filters = sanitize_filters(filters)
         if ransack_filters.present?
           search = scope.ransack(ransack_filters)
@@ -122,51 +125,33 @@ module Spree
         definition = metafield_schema.entry_for(parsed[:attribute])
         return scope unless definition
 
-        p_table = Spree::Product.quoted_table_name
-        cf_table = Spree::Metafield.quoted_table_name
-        connection = scope.klass.connection
-        adapter = connection.adapter_name
+        products = Spree::Product.arel_table
+        # Aliased so this join can't collide with the `filter_cf` correlated
+        # subquery when a cf_* filter and a cf_* sort are combined.
+        metafields = Spree::Metafield.arel_table.alias('sort_cf')
 
-        cf_join_alias = 'sort_cf'
-
-        sort_expr = Arel.sql(metafield_sort_expression(definition.field_type, adapter))
-        null_rank = Arel.sql(metafield_sort_null_rank(definition.field_type, adapter))
+        sort_expr = Spree::Product.metafield_value_expression(metafields[:value], definition.field_type)
+        # NULL-rank so products missing the metafield sort last (Meilisearch parity).
+        # Projected as cf_sort_missing because PostgreSQL rejects (alias IS NULL) in ORDER BY.
+        null_rank = sort_expr.eq(nil)
 
         direction = parsed[:direction] == 'desc' ? :desc : :asc
-        def_id = connection.quote(definition.id)
 
-        join_sql = "LEFT JOIN #{cf_table} AS #{cf_join_alias} " \
-                   "ON #{cf_join_alias}.resource_type = 'Spree::Product' " \
-                   "AND #{cf_join_alias}.resource_id = #{p_table}.id " \
-                   "AND #{cf_join_alias}.metafield_definition_id = #{def_id}"
+        join = products.
+               outer_join(metafields).
+               on(
+                 metafields[:resource_type].eq('Spree::Product').
+                 and(metafields[:resource_id].eq(products[:id])).
+                 and(metafields[:metafield_definition_id].eq(definition.id))
+               ).
+               join_sources
 
-        scope
-          .joins(join_sql)
-          .select("#{p_table}.*")
-          .select(Arel::Nodes::As.new(sort_expr, Arel.sql('cf_sort_value')))
-          .select(Arel::Nodes::As.new(null_rank, Arel.sql('cf_sort_missing')))
-          .reorder(Arel.sql('cf_sort_missing ASC'), sort_expr.send(direction))
-      end
-
-      # Type-cast sort_cf.value for numeric metafields across PostgreSQL / MySQL / SQLite.
-      def metafield_sort_expression(field_type, adapter_name)
-        column = 'sort_cf.value'
-        return column unless field_type == 'number'
-
-        case adapter_name
-        when /PostgreSQL/i
-          "#{column}::numeric"
-        when /Mysql|Trilogy/i
-          "CAST(#{column} AS DECIMAL(30, 10))"
-        else
-          "CAST(#{column} AS REAL)"
-        end
-      end
-
-      # NULL-rank so products missing the metafield sort last (Meilisearch parity).
-      # Projected as cf_sort_missing because PostgreSQL rejects (alias IS NULL) in ORDER BY.
-      def metafield_sort_null_rank(field_type, adapter_name)
-        "(#{metafield_sort_expression(field_type, adapter_name)} IS NULL)"
+        scope.
+          joins(join).
+          select(products[Arel.star]).
+          select(Arel::Nodes::As.new(sort_expr, Arel.sql('cf_sort_value'))).
+          select(Arel::Nodes::As.new(null_rank, Arel.sql('cf_sort_missing'))).
+          reorder(Arel.sql('cf_sort_missing').asc, sort_expr.public_send(direction))
       end
 
       def built_in_sort_options

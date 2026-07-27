@@ -13,10 +13,10 @@ module Spree
                    storefront_visible: :boolean,
                    searchable: :boolean,
                    sortable: :boolean,
-                   search_key: :string
+                   filter_key: :string
 
           attributes :namespace, :key, :label, :field_type, :resource_type, :storefront_visible,
-                     :searchable, :sortable, :search_key,
+                     :searchable, :sortable, :filter_key,
                      created_at: :iso8601, updated_at: :iso8601
         end
       end

@@ -10,6 +10,7 @@ module Spree
         attribute :sortable, :boolean, default: false
 
         validate :search_sort_capabilities_compatible_with_type
+        validate :filter_key_must_be_unique
 
         scope :searchable, -> { where(searchable: true) }
         scope :sortable, -> { where(sortable: true) }
@@ -39,14 +40,38 @@ module Spree
         end
       end
 
-      # SearchProvider document key. Namespace is length-prefixed so
-      # (a_b, c) and (a, b_c) cannot collide as the same cf_* attribute.
-      # @return [String] e.g. +cf_6_custom_label+
-      def search_key
-        "cf_#{namespace.to_s.length}_#{namespace}_#{key}"
+      # Public identifier for sorting and filtering product listings by this
+      # custom field (+sort=cf_specs_material+,
+      # +q[cf_specs_material_i_cont]=wool+).
+      #
+      # @return [String] e.g. +cf_custom_label+
+      def filter_key
+        "cf_#{namespace}_#{key}"
       end
 
       private
+
+      # `key` is already unique per (resource_type, namespace), but both
+      # segments normalize to underscored slugs, so two different splits
+      # ("a_b"/"c" vs "a"/"b_c") flatten to one filter_key — which would make
+      # one of them unaddressable as a sort/filter param.
+      def filter_key_must_be_unique
+        return if namespace.blank? || key.blank? || resource_type.blank?
+        return unless new_record? || namespace_changed? || key_changed? || resource_type_changed?
+
+        table = self.class.arel_table
+        concatenated = Arel::Nodes::NamedFunction.new(
+          'CONCAT', [table[:namespace], Arel::Nodes.build_quoted('_'), table[:key]]
+        )
+
+        scope = self.class.
+                for_resource_type(resource_type).
+                where(concatenated.eq("#{namespace}_#{key}")).
+                where(self.class.spree_base_uniqueness_scope.index_with { |attr| public_send(attr) })
+        scope = scope.where.not(id: id) if persisted?
+
+        errors.add(:key, :taken) if scope.exists?
+      end
 
       def metafield_type_class
         metafield_type.presence&.safe_constantize

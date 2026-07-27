@@ -5,6 +5,8 @@ module Spree
     class Meilisearch < Base
       PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
       ALLOWED_STATUSES = %w[active draft archived paused].freeze
+      BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids tags option_value_ids].freeze
+      METAFIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
 
       def self.indexing_required?
         true
@@ -245,15 +247,17 @@ module Spree
       end
 
       def filterable_attributes
-        %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids tags option_value_ids]
+        BUILT_IN_FILTERABLE_ATTRIBUTES + metafield_schema.filterable_attribute_keys
       end
 
       def sortable_attributes
         %w[name price created_at available_on units_sold_count] + metafield_schema.sortable_attribute_keys
       end
 
+      # Facets stay built-in only — cf_* distributions aren't consumed by
+      # +build_facet_response+, so requesting them would be wasted work.
       def facet_attributes
-        filterable_attributes
+        BUILT_IN_FILTERABLE_ATTRIBUTES
       end
 
       def available_sort_options
@@ -337,7 +341,49 @@ module Spree
         when 'with_option_value_ids'
           # Handled by grouped option conditions in search_and_filter — skip here
           nil
+        else
+          metafield_filter_condition(key, value)
         end
+      end
+
+      # Meilisearch has stable filter operators for equality, ranges, and
+      # EXISTS — but no string contains/starts/ends (CONTAINS is still
+      # experimental), so those predicates are ignored here. The Database
+      # provider supports the full predicate set.
+      def metafield_filter_condition(key, value)
+        parsed = metafield_schema.parse_filter(key)
+        return nil unless parsed
+
+        attribute = parsed[:definition].filter_key
+        numeric = parsed[:definition].field_type == 'number'
+
+        case parsed[:predicate]
+        when 'present'
+          "#{attribute} EXISTS"
+        when 'blank'
+          "#{attribute} NOT EXISTS"
+        when 'eq', 'not_eq'
+          operator = parsed[:predicate] == 'eq' ? '=' : '!='
+          formatted = format_metafield_filter_value(value, numeric)
+          formatted && "#{attribute} #{operator} #{formatted}"
+        when *METAFIELD_RANGE_OPERATORS.keys
+          return nil unless numeric
+
+          formatted = format_metafield_filter_value(value, numeric)
+          formatted && "#{attribute} #{METAFIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
+        end
+      end
+
+      def format_metafield_filter_value(value, numeric)
+        if numeric
+          Float(value.to_s, exception: false)&.to_s
+        else
+          "'#{escape_filter_string(value)}'"
+        end
+      end
+
+      def escape_filter_string(value)
+        value.to_s.gsub('\\') { '\\\\' }.gsub("'") { "\\'" }
       end
 
       # Group prefixed option value IDs by option type (single DB query).
