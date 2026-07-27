@@ -50,6 +50,51 @@ RSpec.describe Spree::SampleData::ImportRunner, type: :service do
     end
   end
 
+  # Seeding a demo catalog shouldn't fan out a `product.created` per product to
+  # webhooks and analytics. The import's own `import.*` events still fire.
+  #
+  # Runs without the wrapping transaction: lifecycle events fire on
+  # `after_commit`, so inside one they'd all land after the suppression block
+  # has exited — which is not how the jobs behave in production.
+  describe 'skip_events', :events do
+    self.use_transactional_tests = false
+
+    let(:csv_path) { Spree::Core::Engine.root.join('db', 'sample_data', 'products.csv') }
+
+    # Truncating tears down the suite-wide store/admin the transactional
+    # examples share, so rebuild them for anything that runs afterwards.
+    after do
+      DatabaseCleaner.clean_with(:truncation)
+      Spree::Seeds::All.call
+    end
+
+    def product_events_published(skip_events)
+      names = []
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+        names << name
+        original.call(name, *rest)
+      end
+      described_class.call(csv_path: csv_path, import_class: Spree::Imports::Products,
+                           inline: true, skip_events: skip_events)
+      names.count { |name| name.to_s.start_with?('product.') }
+    end
+
+    it 'publishes product events by default' do
+      expect(product_events_published(false)).to be_positive
+    end
+
+    it 'publishes none when asked to skip' do
+      expect(product_events_published(true)).to eq(0)
+    end
+
+    it 'travels with the import so the processing jobs see it' do
+      import = described_class.call(csv_path: csv_path, import_class: Spree::Imports::Products,
+                                    skip_events: true).value
+
+      expect(Spree::Import.find(import.id).preferred_skip_events).to be true
+    end
+  end
+
   it 'runs as an admin of the target store' do
     expect(result.value.user).to eq(admin)
   end

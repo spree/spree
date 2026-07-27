@@ -21,11 +21,20 @@ module Spree
       # (and its raw CSV data) in memory for the whole job.
       ROWS_BATCH_SIZE = 100
 
-      def perform(import_id, row_ids, inline: false)
+      def perform(import_id, row_ids)
         import = Spree::Import.find(import_id)
-        import.inline = inline
         Spree::Current.store = import.store
 
+        # Seeded catalogs (sample/demo data) shouldn't reach webhooks or
+        # analytics — suppress every event the rows would publish.
+        return Spree::Events.disable { process_group(import, row_ids) } if import.preferred_skip_events
+
+        process_group(import, row_ids)
+      end
+
+      private
+
+      def process_group(import, row_ids)
         with_store_content_locale(import.store) do
           mappings = import.mappings.mapped.to_a
           schema_fields = import.schema_fields
@@ -66,8 +75,6 @@ module Spree
           check_import_completion(import, large)
         end
       end
-
-      private
 
       # One event per product touched by this group: `product.created` when the
       # product came into existence during this run, `product.updated` otherwise

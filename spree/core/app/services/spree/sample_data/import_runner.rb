@@ -14,13 +14,16 @@ module Spree
     class ImportRunner
       prepend Spree::ServiceModule::Base
 
+      # Pass `skip_events: true` when seeding demo data — subscribers would
+      # otherwise deliver webhooks and analytics for a catalog nobody created.
+      #
       # @return [Spree::ServiceModule::Result] wrapping the import — completed
       #   when inline, queued otherwise
-      def call(csv_path:, import_class:, store: nil, user: nil, inline: false)
+      def call(csv_path:, import_class:, store: nil, user: nil, inline: false, skip_events: false)
         import = Spree::SampleData::ImportBuilder.call(
-          csv_path: csv_path, import_class: import_class, store: store, user: user
+          csv_path: csv_path, import_class: import_class, store: store, user: user,
+          inline: inline, skip_events: skip_events
         )
-        import.inline = inline
 
         import.start_mapping
         import.complete_mapping
