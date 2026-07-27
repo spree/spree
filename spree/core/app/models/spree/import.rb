@@ -93,6 +93,15 @@ module Spree
       after_transition on: :retry_failed_rows, do: :process_rows_async
     end
 
+    # Run the pipeline in-process instead of enqueuing it. Virtual and not
+    # persisted — it describes how *this* caller wants the import driven, not
+    # anything about the record.
+    #
+    # For rake tasks, seeds and the console, where the caller needs the data to
+    # exist when the call returns and there may be no worker attached. Never set
+    # it from a request: a large CSV blocks for minutes.
+    attribute :inline, :boolean, default: false
+
     #
     # Preferences
     #
@@ -325,12 +334,18 @@ module Spree
     # Creates rows asynchronously
     # @return [void]
     def create_rows_async
+      # The 2s delay lets the attachment settle before the job reads it; running
+      # inline there is nothing to wait for.
+      return Spree::Imports::CreateRowsJob.perform_now(id, inline: true) if inline?
+
       Spree::Imports::CreateRowsJob.set(wait: 2.seconds).perform_later(id)
     end
 
     # Processes rows asynchronously
     # @return [void]
     def process_rows_async
+      return Spree::Imports::ProcessRowsJob.perform_now(id, inline: true) if inline?
+
       Spree::Imports::ProcessRowsJob.perform_later(id)
     end
 

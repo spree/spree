@@ -9,8 +9,12 @@ module Spree
 
       BATCH_SIZE = 1000
 
-      def perform(import_id)
+      # `inline` isn't persisted, so it has to be threaded through the chain —
+      # otherwise a caller that asked for a synchronous run would enqueue from
+      # here onwards.
+      def perform(import_id, inline: false)
         import = Spree::Import.find(import_id)
+        import.inline = inline
         import.start_processing! if import.status != 'processing'
 
         create_rows_sequentially(import)

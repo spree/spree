@@ -1,53 +1,31 @@
-require 'csv'
-
 module Spree
   module SampleData
+    # Runs a sample CSV through the regular import pipeline: `start_mapping`
+    # auto-assigns the column mappings from the CSV headers (the sample files
+    # use the canonical schema names, so every column maps) and
+    # `complete_mapping` kicks off row creation and processing.
+    #
+    # Enqueues by default, so row creation, batching and the per-import
+    # concurrency cap behave exactly as they do for a merchant-uploaded CSV.
+    # Pass `inline: true` for rake tasks, seeds and the console — where the data
+    # has to exist when the call returns and there may be no worker attached.
+    # Never inline from a request: `products.csv` alone is 211 rows, each
+    # downloading a remote image.
     class ImportRunner
       prepend Spree::ServiceModule::Base
 
-      def call(csv_path:, import_class:)
-        store = Spree::Store.default
-        admin = Spree.admin_user_class.first
-
-        raise 'No admin user found. Please run seeds first.' unless admin
-
-        import = import_class.new(
-          owner: store,
-          user: admin
+      # @return [Spree::ServiceModule::Result] wrapping the import — completed
+      #   when inline, queued otherwise
+      def call(csv_path:, import_class:, store: nil, user: nil, inline: false)
+        import = Spree::SampleData::ImportBuilder.call(
+          csv_path: csv_path, import_class: import_class, store: store, user: user
         )
-        import.number = import.generate_permalink(import_class)
-        import.attachment.attach(
-          io: File.open(csv_path),
-          filename: File.basename(csv_path),
-          content_type: 'text/csv'
-        )
-        import.save!(validate: false)
-        import.update_columns(status: 'processing')
-        import.create_mappings
+        import.inline = inline
 
-        row_number = 0
-        failed = 0
+        import.start_mapping
+        import.complete_mapping
 
-        ::CSV.foreach(csv_path, headers: true) do |csv_row|
-          row_number += 1
-          import_row = import.rows.create!(
-            row_number: row_number,
-            data: csv_row.to_h.to_json,
-            status: 'pending'
-          )
-
-          begin
-            import_row.process!
-          rescue StandardError => e
-            failed += 1
-            puts "\n  Warning: Row #{row_number} failed: #{e.message}"
-          end
-
-          print '.' if (row_number % 10).zero?
-        end
-
-        import.update!(status: 'completed')
-        puts "\n  Processed #{row_number} rows (#{failed} failed)"
+        success(import.reload)
       end
     end
   end
