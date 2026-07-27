@@ -4,9 +4,8 @@ module Spree
       BATCH_SIZE = 100
       UNGROUPED_KEY = '__ungrouped__'.freeze
 
-      def perform(import_id, inline: false)
+      def perform(import_id)
         import = Spree::Import.find(import_id)
-        import.inline = inline
         dispatch_groups(import)
       end
 
@@ -27,7 +26,7 @@ module Spree
       # Inline callers need the group finished before `perform` returns; the
       # group job's completion bookkeeping works either way.
       def dispatch_group(import, row_ids)
-        return ProcessGroupJob.perform_now(import.id, row_ids, inline: true) if import.inline?
+        return ProcessGroupJob.perform_now(import.id, row_ids) if import.preferred_inline
 
         ProcessGroupJob.perform_later(import.id, row_ids)
       end

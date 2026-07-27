@@ -50,6 +50,42 @@ RSpec.describe Spree::SampleData::ImportRunner, type: :service do
     end
   end
 
+  # Seeding a demo catalog shouldn't fan out a `product.created` per product to
+  # webhooks and analytics. The import's own `import.*` events still fire.
+  describe 'skip_events', :events do
+    let(:csv_path) { Spree::Core::Engine.root.join('db', 'sample_data', 'products.csv') }
+
+    # The suppression itself is asserted where the boundary lives — see
+    # ProcessGroupJob's specs. Here we only check that the flag survives the
+    # trip to the jobs and that the import's own lifecycle keeps flowing.
+
+    # Only the rows go quiet — the import's own lifecycle stays observable, so
+    # a dashboard or subscriber can still tell when seeding finished.
+    it 'still publishes the import lifecycle events' do
+      names = []
+      allow(Spree::Events).to receive(:publish).and_wrap_original do |original, name, *rest|
+        names << name
+        original.call(name, *rest)
+      end
+
+      described_class.call(csv_path: csv_path, import_class: Spree::Imports::Products,
+                           skip_events: true)
+      perform_enqueued_jobs(only: [Spree::Imports::CreateRowsJob, Spree::Imports::ProcessRowsJob,
+                                   Spree::Imports::ProcessGroupJob])
+
+      # The import's own lifecycle is untouched by the row suppression.
+      expect(names).to include('import.created')
+      expect(names.select { |name| name.to_s.start_with?('import.') }).to be_present
+    end
+
+    it 'travels with the import so the processing jobs see it' do
+      import = described_class.call(csv_path: csv_path, import_class: Spree::Imports::Products,
+                                    skip_events: true).value
+
+      expect(Spree::Import.find(import.id).preferred_skip_events).to be true
+    end
+  end
+
   it 'runs as an admin of the target store' do
     expect(result.value.user).to eq(admin)
   end

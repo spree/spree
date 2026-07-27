@@ -295,14 +295,14 @@ module Spree
         end
 
         def handle_tags(product)
-          return Spree::Imports::AssignTagsJob.perform_now(product.id, attributes['tags']) if import.inline?
+          return Spree::Imports::AssignTagsJob.perform_now(product.id, attributes['tags']) if import.preferred_inline
 
           Spree::Imports::AssignTagsJob.perform_later(product.id, attributes['tags'])
         end
 
         def handle_categories(product)
           names = prepare_taxon_pretty_names
-          return Spree::Imports::CreateCategoriesJob.perform_now(product.id, store.id, names) if import.inline?
+          return Spree::Imports::CreateCategoriesJob.perform_now(product.id, store.id, names) if import.preferred_inline
 
           Spree::Imports::CreateCategoriesJob.perform_later(product.id, store.id, names)
         end
