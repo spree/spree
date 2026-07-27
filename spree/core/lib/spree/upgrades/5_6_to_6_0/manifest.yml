@@ -52,3 +52,22 @@ steps:
 
       Idempotent. Multi-tenant installs run the per-tenant override shipped by
       spree_multi_tenant.
+
+  - id: migrate_adjustments
+    name: "Backfill typed adjustment lines from legacy adjustments"
+    task: "spree:migrate_adjustments"
+    notes: |
+      Converts each completed order's frozen spree_adjustments rows into the
+      typed lines that replace them: tax adjustments become TaxLines, eligible
+      negative promotion adjustments become DiscountLines (whole-order rows are
+      distributed across the line items with the same largest-remainder split
+      the runtime pipeline uses), and manual adjustments sign-split into
+      DiscountLines (credits) and Fees (charges). Best-promo losers, zero
+      amounts and return-authorization rows are skipped.
+
+      Additive and non-destructive: it only inserts typed rows, never deletes
+      spree_adjustments and never rewrites pre_tax_amount. Incomplete orders are
+      skipped — their next recalculation rebuilds typed rows from source.
+
+      Idempotent (orders that already have typed rows are skipped). Multi-tenant
+      installs run the per-tenant override shipped by spree_multi_tenant.
