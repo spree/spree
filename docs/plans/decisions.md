@@ -1,3 +1,48 @@
+## 2026-07-23: Payment-method eligibility rules + Channel→Markets allowlist target 5.7; multi-credential grooming deferred
+
+Merchant asks (wholesale net payment vs DTC Stripe, installments above an
+order-total threshold, market-bound payment methods, channels limited to
+certain markets) plus a four-platform review (Vendure channel-scoped
+PaymentMethods + `PaymentMethodEligibilityChecker`, Medusa region-scoped
+payment providers, Saleor per-channel payment apps, Shopify Payment
+Customization Functions + the May-2026 per-market multi-entity Shopify
+Payments) settled three things:
+
+1. **`5.7-payment-method-rules.md`** — `Spree::PaymentMethodRule` STI
+   (Channel / Market / OrderTotal / CustomerGroup rules), mirroring the
+   PromotionRule/PriceRule/OrderRoutingRule house pattern; enforced through
+   the single `Order#collect_frontend_payment_methods` seam; storefront-only
+   (admin/backoffice bypasses). Supersedes the "payment methods have no
+   distribution concept" rationale in
+   `5.6-6.0-single-store-promotions-payment-methods.md` — the single-store FK
+   stands, eligibility is layered on via rules.
+2. **`5.7-channel-markets.md`** — optional Channel→Markets allowlist
+   (`spree_channel_markets`, empty = all markets), enforced in market
+   resolution, the Store API markets reference endpoints, and order
+   validation. Composes with `MarketRule` above.
+3. **Deferred for grooming: multiple provider credentials / legal entities
+   in one store** (two Stripe accounts split by channel or market, Shopify's
+   multi-entity model). Candidate shapes — separate PaymentMethod records per
+   channel/market (Vendure/Medusa style; needs the Admin API `types`
+   "already installed" filter relaxed) vs per-channel credential mapping on
+   one record (Saleor style) — plus the legal-entity attribution question
+   (per-entity payouts, compliance, reporting). No plan yet; do not implement.
+
+## 2026-07-21: Order routing rules get admin management in the React dashboard only
+
+Per-channel `Spree::OrderRoutingRule` management (the Phase 2 "Admin API + SPA
+settings page" slice of `6.0-order-routing.md`) ships ahead of the rest of
+Phase 2: Admin API v3 CRUD nested under channels
+(`/channels/:channel_id/order_routing_rules`) + top-level
+`/order_routing_rules/types` discovery, `@spree/admin-sdk` resource, and a
+routing-rules editor inside the dashboard's channel edit sheet (drag-to-reorder,
+active toggles, schema-driven preference forms via `PreferencesForm`).
+
+**No legacy Rails admin UI** — routing rules are managed exclusively in the
+React dashboard. The legacy admin's channel form keeps only the strategy
+override select it already had. New admin surfaces target the SPA; the legacy
+admin is in maintenance mode for 6.0.
+
 ## 2026-07-20: Wholesale applicant company name stays in metadata until 6.1 Company accounts
 
 The gated wholesale portal's apply form collects a company name. Considered
@@ -24,6 +69,26 @@ intentional and survives past 6.1 until that plan exists.
 Also decided: no company row in the legacy Rails admin customer view. Metadata
 is exposed by the Admin API v3 customer serializer (React dashboard shows it);
 the legacy admin renders customer metadata nowhere and stays that way.
+
+## 2026-07-19: Database search provider is the out-of-the-box default; Meilisearch becomes opt-in
+
+spree-starter and create-spree-app no longer provision Meilisearch. The Docker
+compose files stop running the `meilisearch` service and stop hardcoding
+`MEILISEARCH_URL`, so `Spree::SearchProvider::Database` — already the core
+default and already the effective default on the native (no-Docker) path — is
+now the default on every install path. One less always-on container (image
+pull, RAM, volume) for the common case; `Spree::SearchProvider::IndexJob` /
+`RemoveJob` never enqueue under the DB provider (`indexing_required?` is
+false), so the default stack also stops paying per-save indexing jobs.
+
+Opt-in stays config-only: commented service/depends_on/env/volume blocks in
+both compose files + `MEILISEARCH_URL`, then `spree:search:reindex`. The
+`meilisearch` gem stays in the starter Gemfile so the prebuilt
+`ghcr.io/spree/spree` image retains the capability — enabling Meilisearch on
+the quick-start compose must not require a custom image build. Docs continue
+to recommend Meilisearch for production-scale catalogs (see
+`5.4-search-provider.md`); this changes what's provisioned by default, not the
+recommendation.
 
 ## 2026-07-15: Basic Stripe Connect payouts move to OSS; Enterprise repositions on money operations
 

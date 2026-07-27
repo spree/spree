@@ -1,7 +1,20 @@
-export function rootPackageJsonContent(name: string): string {
+import { PNPM_VERSION } from '../constants.js'
+import type { PackageManager } from '../types.js'
+
+/**
+ * Root package.json for a generated project: the `spree` convenience scripts
+ * plus `@spree/cli` / `@spree/docs` as dependencies. On pnpm scaffolds (the
+ * default, matching detection) it also pins `packageManager: pnpm@…`; omitted
+ * for npm/yarn, which don't read it and corepack would misfire on.
+ */
+export function rootPackageJsonContent(name: string, pm: PackageManager = 'pnpm'): string {
   const pkg = {
     name,
     private: true,
+    // Steers corepack and doubles as the pnpm/action-setup fallback when a
+    // workflow runs from the root. Omitted for npm/yarn scaffolds — they
+    // don't read it, and a pnpm pin would make corepack block yarn outright.
+    ...(pm === 'pnpm' ? { packageManager: `pnpm@${PNPM_VERSION}` } : {}),
     scripts: {
       dev: 'spree dev',
       stop: 'spree stop',

@@ -4,9 +4,11 @@ import i18n from 'i18next'
 import { z } from 'zod/v4'
 
 // Empty string clears the channel-level override → falls back to store.
+export const RULES_ORDER_ROUTING_STRATEGY = 'Spree::OrderRouting::Strategy::Rules'
+
 export const ORDER_ROUTING_STRATEGY_VALUES = [
   '',
-  'Spree::OrderRouting::Strategy::Rules',
+  RULES_ORDER_ROUTING_STRATEGY,
   'Spree::OrderRouting::Strategy::Legacy',
 ] as const
 

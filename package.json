@@ -14,18 +14,22 @@
     "server:create": "git clone --depth 1 https://github.com/spree/spree-starter.git server && rm -rf server/.git server/.gitignore && printf 'SPREE_PATH=..\\nSECRET_KEY_BASE=%s\\n' \"$(openssl rand -hex 64)\" > server/.env",
     "server:setup": "bash scripts/server-setup.sh",
     "server:dashboard": "turbo build --filter=@spree/dashboard && VITE_BASE_PATH=/dashboard/ pnpm --dir packages/dashboard-starter build",
-    "server:dev": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml up --force-recreate web",
+    "server:dev": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml ${SPREE_MEILISEARCH:+-f scripts/docker-compose.meilisearch.yml} up --force-recreate --remove-orphans web",
     "server:build": "bash scripts/server-build.sh",
     "server:restart": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml restart web",
-    "server:stop": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml down",
+    "server:stop": "SPREE_PATH=$PWD docker compose -f server/docker-compose.dev.yml -f scripts/docker-compose.edge.yml -f scripts/docker-compose.meilisearch.yml down",
     "server:console": "cd server && spree console",
     "server:logs": "cd server && spree logs",
     "server:seed": "cd server && spree rails db:seed",
-    "server:load_sample_data": "cd server && spree task load_sample_data"
+    "server:load_sample_data": "cd server && spree task load_sample_data",
+    "changeset": "changeset",
+    "version:preview": "changeset version --ignore @spree/sdk"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
-    "turbo": "^2.9.14"
+    "turbo": "^2.9.14",
+    "@changesets/cli": "^2.31.0",
+    "@changesets/changelog-github": "^0.7.0"
   },
   "packageManager": "pnpm@11.1.1",
   "engines": {

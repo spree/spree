@@ -79,18 +79,6 @@ RSpec.configure do |config|
         { name: 'Policies', description: 'Store policies (return policy, privacy policy, terms of service)' },
         { name: 'Digitals', description: 'Digital product downloads' }
       ],
-      'x-tagGroups': [
-        { name: 'Authentication', tags: ['Authentication'] },
-        { name: 'Product Catalog', tags: ['Product Catalog'] },
-        { name: 'Carts', tags: ['Carts'] },
-        { name: 'Orders', tags: ['Orders'] },
-        { name: 'Customers', tags: ['Customers'] },
-        { name: 'Markets', tags: ['Markets'] },
-        { name: 'Wishlists', tags: ['Wishlists'] },
-        { name: 'Newsletter Subscribers', tags: ['Newsletter Subscribers'] },
-        { name: 'Policies', tags: ['Policies'] },
-        { name: 'Digitals', tags: ['Digitals'] }
-      ],
       components: {
         securitySchemes: {
           api_key: {
@@ -165,17 +153,23 @@ RSpec.configure do |config|
           }
         }
       ],
+      # Authentication first, the rest alphabetical — Mintlify renders one
+      # sidebar group per tag in this order, and any operation tag missing
+      # from this list gets appended at the bottom of the sidebar. Keep every
+      # operation tag listed.
       tags: [
         { name: 'Authentication', description: 'Admin user login, logout, token refresh, and current user profile' },
         { name: 'Allowed Origins', description: 'CORS allowlist for storefront and admin client origins' },
         { name: 'API Keys', description: 'Secret and publishable API keys' },
-        { name: 'Channels', description: 'Sales channels and product publication across channels' },
+        { name: 'Categories', description: 'Hierarchical product categories — tree management, repositioning, and product assignments' },
+        { name: 'Channels', description: 'Sales channels, product publication across channels, and per-channel order routing rules' },
         { name: 'Custom Fields', description: 'Custom field definitions for products, variants, customers, and other resources' },
         { name: 'Customer Groups', description: 'Customer groups for segmenting customers (e.g. wholesale, VIP) used by pricing and promotions' },
         { name: 'Customers', description: 'Customer profiles, addresses, credit cards, and store credits' },
         { name: 'Exports', description: 'Async CSV exports of admin resources' },
         { name: 'Fulfillments', description: 'Order fulfillments — shipments, fulfill, cancel, resume, split' },
         { name: 'Gift Cards', description: 'Gift cards and gift card batches' },
+        { name: 'Imports', description: 'Async CSV imports of admin resources, with per-row status and failed-row retry' },
         { name: 'Markets', description: 'Markets — geographic groupings of countries used for pricing, tax, and fulfillment rules' },
         { name: 'Option Types', description: 'Option types and option values used to build product variants (e.g. Size, Color)' },
         { name: 'Orders', description: 'Orders, order items, applied gift cards, and applied store credits' },
@@ -190,16 +184,6 @@ RSpec.configure do |config|
         { name: 'Stock Locations', description: 'Warehouses and physical fulfillment locations' },
         { name: 'Variants', description: 'Product variants — the individual SKUs (size/color combinations) sold under a product' },
         { name: 'Webhooks', description: 'Webhook endpoints and webhook delivery history' }
-      ],
-      'x-tagGroups': [
-        { name: 'Authentication', tags: ['Authentication'] },
-        { name: 'Products & Catalog', tags: ['Products', 'Variants', 'Option Types', 'Custom Fields', 'Channels'] },
-        { name: 'Pricing', tags: ['Pricing', 'Markets'] },
-        { name: 'Orders & Fulfillment', tags: ['Orders', 'Payments', 'Fulfillments', 'Refunds'] },
-        { name: 'Customers', tags: ['Customers', 'Customer Groups'] },
-        { name: 'Promotions & Gift Cards', tags: ['Promotions', 'Gift Cards'] },
-        { name: 'Data', tags: ['Exports'] },
-        { name: 'Configuration', tags: ['Settings', 'Stock Locations', 'Payment Methods', 'Staff', 'API Keys', 'Allowed Origins', 'Webhooks'] }
       ],
       components: {
         securitySchemes: {

@@ -43,6 +43,22 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
       end
     end
 
+    context 'product tag vocabulary is store-scoped' do
+      let(:headers) { bearer_headers }
+
+      let(:other_store) { create(:store) }
+      let!(:own_product) { create(:product, store: store, tag_list: ['bestseller']) }
+      let!(:foreign_product) { create(:product, store: other_store, tag_list: ['clearance']) }
+
+      it 'excludes another store\'s product tags' do
+        get :index, params: { taggable_type: 'Spree::Product' }, as: :json
+
+        names = json_response['data'].map { |t| t['name'] }
+        expect(names).to include('bestseller')
+        expect(names).not_to include('clearance')
+      end
+    end
+
     describe 'API-key scope enforcement' do
       let(:headers) { { 'x-spree-api-key' => api_key.plaintext_token } }
       let!(:tagged_user) { create(:user, tag_list: ['vip']) }

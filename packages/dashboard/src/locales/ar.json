@@ -85,10 +85,6 @@
         "failed_to_delete": "فشل حذف السوق"
       }
     },
-    "branding": {
-      "app_name": "Spree Admin",
-      "powered_by": "مدعوم من Spree Commerce"
-    },
     "errors": {
       "not_found_title": "الصفحة غير موجودة",
       "not_found_description": "الصفحة التي تبحث عنها غير موجودة.",
@@ -374,6 +370,12 @@
         "channels": {
           "label": "قنوات البيع",
           "help": "اتركه فارغًا لتطبيق هذه القاعدة على كل قناة بيع."
+        },
+        "min_quantity": {
+          "help": "يُطبَّق هذا السعر فقط عندما يطلب العميل هذا العدد على الأقل من صنف واحد."
+        },
+        "max_quantity": {
+          "help": "اتركه فارغًا لعدم وجود حد أقصى."
         }
       },
       "stock_location": {
@@ -1122,6 +1124,19 @@
         "delete_confirm": {
           "title": "هل تريد حذف قناة المبيعات؟",
           "message": "ستتم إزالة {{name}}. ستفقد المنتجات والأوامر المرتبطة بها مرجع قناة المبيعات الخاصة بها."
+        },
+        "order_routing_rules": {
+          "title": "قواعد توجيه الطلبات",
+          "help": "عند استخدام استراتيجية التوجيه «قواعد (مرتبة)»، تُقيَّم القواعد من الأعلى إلى الأسفل — تفوز أول قاعدة تحدد موقع مخزون واحدًا، وعند التعادل تُحسم بالقاعدة التالية.",
+          "empty": "لا توجد قواعد توجيه — تُوجَّه الطلبات إلى موقع المخزون الافتراضي.",
+          "add_cta": "إضافة قاعدة",
+          "picker_title": "إضافة قاعدة توجيه",
+          "edit_preferences": "تعديل إعدادات القاعدة",
+          "active_toggle": "القاعدة مفعّلة",
+          "delete_confirm": {
+            "title": "حذف قاعدة التوجيه؟",
+            "message": "ستتم إزالة {{name}} من ترتيب التوجيه لهذه القناة."
+          }
         },
         "search_placeholder": "البحث في قنوات البيع…",
         "no_channels_found": "لم يتم العثور على قنوات البيع",
@@ -2500,13 +2515,35 @@
       "base_amount": "Base Amount",
       "base_percent": "Base Percent",
       "preferred_amount": "كمية",
-      "preferred_percent": "نسبة مئوية"
+      "preferred_percent": "نسبة مئوية",
+      "min_quantity": "الحد الأدنى للكمية",
+      "max_quantity": "الحد الأقصى للكمية"
     },
     "channels": {
       "messages": {
         "created": "تم إنشاء القناة",
         "updated": "تم تحديث القناة",
         "deleted": "تم حذف القناة"
+      }
+    },
+    "order_routing_rules": {
+      "messages": {
+        "created": "تمت إضافة قاعدة التوجيه",
+        "deleted": "تمت إزالة قاعدة التوجيه"
+      },
+      "types": {
+        "preferred_location": {
+          "name": "الموقع المفضل",
+          "description": "الشحن من الموقع المثبّت على الطلب إن وُجد"
+        },
+        "minimize_splits": {
+          "name": "تقليل تقسيم الشحنات",
+          "description": "يفضّل الموقع القادر على تلبية أكبر عدد من العناصر بمفرده لتجنّب تقسيم الشحنات"
+        },
+        "default_location": {
+          "name": "الموقع الافتراضي",
+          "description": "يفضّل موقع المخزون المحدد كافتراضي"
+        }
       }
     },
     "customer_groups": {

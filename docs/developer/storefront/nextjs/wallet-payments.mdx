@@ -1,0 +1,52 @@
+---
+title: Wallet Payments in Development
+description: Test Apple Pay and Google Pay against a local Spree Next.js Storefront using a public HTTPS URL
+---
+
+Apple Pay and Google Pay require HTTPS **and a publicly-reachable URL** — Stripe verifies the payment method domain from the internet, so `localhost` and locally-trusted certificates (e.g. `mkcert` + `lvh.me`) won't pass domain verification. The simplest way to expose your local storefront with a valid public HTTPS URL is [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/).
+
+## Setup
+
+1. Install `cloudflared`:
+
+   ```bash
+   brew install cloudflared
+   ```
+
+2. Start the dev server normally (HTTP on port 3001):
+
+   ```bash
+   npm run dev
+   ```
+
+3. In a second terminal, expose it through a quick tunnel:
+
+   ```bash
+   cloudflared tunnel --url http://localhost:3001
+   ```
+
+   The output will contain a URL like `https://<random-words>.trycloudflare.com`.
+
+4. Register that URL in your [Stripe Payment method domains](https://dashboard.stripe.com/settings/payment_methods/domains).
+
+5. Open the tunnel URL in your browser and test the Express Checkout buttons in the cart.
+
+## Stable tunnel URLs
+
+`next.config.ts` already allows `*.trycloudflare.com` via `allowedDevOrigins`, so quick tunnels work out of the box. Every time you restart `cloudflared tunnel --url ...` you get a new random subdomain — if you need a stable URL (to avoid re-registering in Stripe on each run), set up a [named tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/#using-named-tunnels) on your own domain.
+
+## The Spree backend must also be publicly reachable
+
+The storefront's server-side fetches go to `SPREE_API_URL`, but image URLs and a few other backend-served paths (e.g. the Apple Pay domain-verification file under `/.well-known/apple-developer-merchantid-domain-association`) are fetched by the browser directly and must resolve from the public internet.
+
+Point `SPREE_API_URL` at a hosted Spree (e.g. `*.spree.sh`, `*.vendo.dev`, your own staging) or expose your local Spree with another tunnel:
+
+```bash
+cloudflared tunnel --url http://localhost:3000
+```
+
+When tunneling a local Rails app, allow the tunnel host in the backend's `.env`:
+
+```env
+RAILS_DEVELOPMENT_HOSTS=.trycloudflare.com
+```

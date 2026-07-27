@@ -56,9 +56,33 @@ module Spree
         private
 
         def authorize_api_key_scope!
-          return unless current_api_key
+          # Endpoints explicitly exempt from the scope mechanism (auth, me, public
+          # invitation acceptance, per-type-filtered exports, etc.) opt out first,
+          # before any key resolution or enforcement.
           return if self.class._scope_check_skipped
           return if self.class._scope_check_skipped_actions&.include?(action_name)
+
+          # Fail CLOSED, not open. A nil `current_api_key` legitimately means a
+          # non-secret-key request (JWT admin / publishable) authorized by other
+          # means, which correctly skips scope checks. But it ALSO happens when
+          # this guard runs before authentication resolved the key: a bare
+          # `return unless current_api_key` would then skip scope enforcement for
+          # an attacker-supplied secret key. So resolve the secret key in place
+          # here — never rely on before_action ordering. Only truly non-secret-key
+          # requests (nothing to resolve) are waved through.
+          resolve_current_api_key_for_scope_check!
+
+          unless current_api_key
+            return unless secret_key_request?
+
+            # A secret-key token was presented but did not resolve to a live key
+            # for this store — reject rather than silently skip the scope check.
+            return render_error(
+              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_token],
+              message: 'Valid secret API key required',
+              status: :unauthorized
+            )
+          end
 
           resource = scoped_resource_name
           # Fail closed: a controller authenticated by API key MUST declare
@@ -77,6 +101,29 @@ module Spree
           )
         end
 
+        # True when the request presents a secret API key token (`sk_` prefix),
+        # regardless of whether authentication has resolved it into
+        # `current_api_key` yet. Used to keep the scope guard fail-closed even if
+        # it runs before the API key is loaded: a secret-key request whose key is
+        # still nil must be denied, never waved through.
+        def secret_key_request?
+          extract_api_key.to_s.start_with?(Spree::ApiKey::PREFIXES['secret'])
+        end
+
+        # Resolves the request's secret API key into `@current_api_key` if a
+        # secret-key token is present and it hasn't been resolved yet, so the scope
+        # check does not depend on `authenticate_admin!` having already run. Mirrors
+        # the secret-key resolution + store binding in AdminAuthentication, and is
+        # idempotent: when the key is already loaded (guard runs after auth) it does
+        # nothing.
+        def resolve_current_api_key_for_scope_check!
+          return if @current_api_key
+          return unless secret_key_request?
+
+          key = Spree::ApiKey.find_by_secret_token(extract_api_key)
+          @current_api_key = key if key && key.store_id == current_store.id
+        end
+
         # The resource name used in scope strings (`read_<name>` / `write_<name>`).
         # Defaults to the class-level `scoped_resource :name` declaration.
         # Override in controllers that resolve scope at request time (e.g. the
@@ -86,10 +133,15 @@ module Spree
           self.class._scoped_resource
         end
 
-        # Override in controllers with non-REST custom actions (e.g. dashboard
-        # `analytics` should map to a read).
+        # Maps the action to the scope kind. Consults the controller's
+        # `read_actions` (ResourceController's overridable list) when defined,
+        # so declaring a custom read-only action once — e.g. `types` — fixes
+        # both the CanCanCan action mapping and the required scope kind.
+        # Controllers outside the ResourceController hierarchy can still
+        # override `action_kind` directly (e.g. dashboard `analytics`).
         def action_kind
-          READ_ACTIONS.include?(action_name) ? 'read' : 'write'
+          read = respond_to?(:read_actions, true) ? read_actions : READ_ACTIONS
+          read.include?(action_name) ? 'read' : 'write'
         end
 
         # True when authorization derives from the API key's scopes rather

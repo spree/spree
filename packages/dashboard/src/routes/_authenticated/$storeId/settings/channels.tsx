@@ -8,6 +8,7 @@ import {
   resourceSearchSchema,
   Subject,
   usePermissions,
+  useStore,
 } from '@spree/dashboard-core'
 import {
   Button,
@@ -38,6 +39,7 @@ import { useEffect } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { OrderRoutingRulesSection } from '../../../../components/spree/order-routing-rules-section'
 import {
   useChannel,
   useCreateChannel,
@@ -51,6 +53,7 @@ import {
   channelValuesToParams,
   GUEST_CHECKOUT_VALUES,
   ORDER_ROUTING_STRATEGY_VALUES,
+  RULES_ORDER_ROUTING_STRATEGY,
   STOREFRONT_ACCESS_VALUES,
 } from '../../../../schemas/channel'
 import '../../../../tables/channels'
@@ -237,12 +240,20 @@ function EditChannelSheet({
   const { t } = useTranslation()
   const { data: channel, isLoading } = useChannel(id)
   const updateMutation = useUpdateChannel(id)
+  const { store } = useStore()
 
   const form = useForm<ChannelFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(channelFormSchema) as any,
     defaultValues: CHANNEL_DEFAULTS,
   })
+
+  // The rules editor only makes sense under the Rules strategy. Resolve the
+  // effective strategy live from the (unsaved) select value, falling back to
+  // the store-level preference for the "inherit" option.
+  const strategyOverride = form.watch('preferred_order_routing_strategy')
+  const effectiveStrategy =
+    strategyOverride || store?.preferred_order_routing_strategy || RULES_ORDER_ROUTING_STRATEGY
 
   useEffect(() => {
     if (channel) {
@@ -282,6 +293,9 @@ function EditChannelSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <ChannelFormFields form={form} />
+              {effectiveStrategy === RULES_ORDER_ROUTING_STRATEGY && (
+                <OrderRoutingRulesSection channelId={id} />
+              )}
             </div>
             <SheetFooter>
               <Button

@@ -14,7 +14,6 @@ const FAKE_COMPOSE = `x-app: &app
     DATABASE_URL: postgres://postgres@postgres:5432/spree_production
     REDIS_URL: redis://redis:6379/0
     SECRET_KEY_BASE: \${SECRET_KEY_BASE}
-    MEILISEARCH_URL: http://meilisearch:7700
 
 services:
   postgres:
@@ -128,6 +127,32 @@ describe('scaffold (no-start)', () => {
     expect(fs.existsSync(path.join(projectDir, '.gitignore'))).toBe(true)
   })
 
+  it('enables the wholesale portal in the storefront env only with sample data', async () => {
+    const { writeStorefrontEnv } = await import('../src/storefront')
+
+    await scaffold({
+      directory: getTempProjectDir(),
+      storefront: true,
+      dashboard: false,
+      sampleData: true,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+    expect(writeStorefrontEnv).toHaveBeenLastCalledWith(expect.any(String), 3000, true)
+
+    await scaffold({
+      directory: getTempProjectDir(),
+      storefront: true,
+      dashboard: false,
+      sampleData: false,
+      start: false,
+      packageManager: 'npm',
+      port: 3000,
+    })
+    expect(writeStorefrontEnv).toHaveBeenLastCalledWith(expect.any(String), 3000, false)
+  })
+
   it('copies docker-compose.yml from backend template', async () => {
     const projectDir = getTempProjectDir()
 
@@ -142,8 +167,9 @@ describe('scaffold (no-start)', () => {
     })
 
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.yml'), 'utf-8')
-    expect(compose).toContain('ghcr.io/spree/spree')
-    expect(compose).toContain('MEILISEARCH_URL')
+    // The quick-start compose is copied verbatim — only the dev compose gets
+    // path adjustments for the wrapper layout.
+    expect(compose).toBe(FAKE_COMPOSE)
   })
 
   it('adjusts docker-compose.dev.yml build context to ./backend', async () => {

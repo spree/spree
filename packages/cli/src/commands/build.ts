@@ -76,7 +76,7 @@ async function buildDevImage(flags: { resetBundle?: boolean; yes?: boolean }): P
     const s = p.spinner()
     s.start('Wiping bundle_cache volume...')
     try {
-      // `down` without -v preserves postgres/redis/meilisearch/storage volumes.
+      // `down` without -v preserves the postgres/storage volumes.
       await dockerCompose(['down'], ctx.projectDir, { stdio: 'ignore' })
       const projectName = await resolveComposeProjectName(ctx.projectDir)
       const volumeName = `${projectName}_bundle_cache`

@@ -62,19 +62,36 @@ export function getCredentials(): E2ECredentials {
 }
 
 /**
- * Drive the admin login flow as a precondition for any spec that needs an
- * authenticated session. Returns the credentials so callers can immediately
+ * Establish an authenticated admin session as a precondition for any spec
+ * that needs one. Returns the credentials so callers can immediately
  * navigate into a specific store (e.g. `/${creds.store_id}/products/options`).
  *
- * Not used by `auth.spec.ts` — that spec exercises the login flow itself.
+ * Logs in through the API rather than the login form: the POST plants the
+ * refresh-token cookie in this context's cookie jar (`page.request` shares
+ * it), and the SPA's boot-time silent refresh turns that into a session on
+ * the next navigation. This skips a full SPA boot + form roundtrip per test.
+ * A shared Playwright `storageState` can't do this cheaper — refresh tokens
+ * are single-use (rotated on every refresh), so each context needs its own.
+ *
+ * Not used by `auth.spec.ts` — that spec exercises the login form itself.
  */
 export async function login(page: Page): Promise<E2ECredentials> {
   const creds = getCredentials()
-  await page.goto('/login')
-  await page.getByLabel(/email/i).fill(creds.admin_email)
-  await page.getByLabel(/password/i).fill(creds.admin_password)
-  await page.getByRole('button', { name: /^sign in$/i }).click()
-  await expect(page).not.toHaveURL(/\/login/, { timeout: 15_000 })
+  const res = await page.request.post('/api/v3/admin/auth/login', {
+    data: { email: creds.admin_email, password: creds.admin_password },
+  })
+  if (!res.ok()) {
+    throw new Error(`API login failed with ${res.status()}: ${await res.text()}`)
+  }
+  await page.goto('/')
+  // Wait for the authenticated redirect to the store-scoped home — not just
+  // "left /login", which is trivially true at `/` while the boot refresh is
+  // still in flight. Returning early lets the spec's next `page.goto` boot a
+  // second SPA instance that refreshes with the same single-use cookie; the
+  // loser of that race gets a 401 that clears the cookie and bounces the
+  // page to /login. The redirect only fires after auth init settles, so it
+  // doubles as the refresh-complete barrier.
+  await expect(page).toHaveURL(new RegExp(`/${creds.store_id}`), { timeout: 15_000 })
   return creds
 }
 

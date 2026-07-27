@@ -286,11 +286,11 @@ function ProductsPage() {
         actions={(ctx) => (
           <>
             <ImportButton
-              type="Spree::Imports::Products"
+              type="products"
               subject={Subject.Product}
               onCreated={(imp) => openImportWizard(imp.id)}
             />
-            <ExportButton type="Spree::Exports::Products" {...ctx} />
+            <ExportButton type="products" {...ctx} />
             <Button
               size="sm"
               className="h-[2.125rem]"

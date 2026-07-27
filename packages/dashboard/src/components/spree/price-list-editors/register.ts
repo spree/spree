@@ -3,6 +3,7 @@ import { ChannelRuleEditor } from './rule-channel'
 import { CustomerRuleEditor } from './rule-customer'
 import { CustomerGroupRuleEditor } from './rule-customer-group'
 import { MarketRuleEditor } from './rule-market'
+import { VolumeRuleEditor } from './rule-volume'
 import { ruleFormSlot } from './types'
 
 /**
@@ -11,10 +12,6 @@ import { ruleFormSlot } from './types'
  * side effects from the price-list detail route — extensions can
  * call `removeSlot(name, 'builtin')` to replace any of these with
  * their own.
- *
- * VolumeRule's two integer preferences (`min_quantity`, `max_quantity`)
- * render fine via the generic `<PreferencesForm>` fallback, so it
- * doesn't need a custom editor here.
  */
 
 // `user_rule` is the legacy wire shorthand for Spree::PriceRules::UserRule —
@@ -38,4 +35,11 @@ registerSlot(ruleFormSlot('market_rule'), {
 registerSlot(ruleFormSlot('channel_rule'), {
   id: 'builtin',
   component: ChannelRuleEditor,
+})
+
+// Custom editor solely to fix field order: the preference registry serializes
+// max before min, and the generic form would render it that way.
+registerSlot(ruleFormSlot('volume_rule'), {
+  id: 'builtin',
+  component: VolumeRuleEditor,
 })

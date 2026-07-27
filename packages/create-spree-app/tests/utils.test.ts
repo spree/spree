@@ -4,6 +4,7 @@ import {
   generateSecretKeyBase,
   installCommand,
   runCommand,
+  storefrontPm,
 } from '../src/utils'
 
 describe('detectPackageManager', () => {
@@ -75,5 +76,16 @@ describe('runCommand', () => {
 
   it('returns "pnpm" for pnpm', () => {
     expect(runCommand('pnpm')).toBe('pnpm')
+  })
+})
+
+describe('storefrontPm', () => {
+  it('maps yarn to pnpm — corepack-managed yarn refuses the pnpm-pinned storefront', () => {
+    expect(storefrontPm('yarn')).toBe('pnpm')
+  })
+
+  it('keeps npm and pnpm as-is', () => {
+    expect(storefrontPm('npm')).toBe('npm')
+    expect(storefrontPm('pnpm')).toBe('pnpm')
   })
 })

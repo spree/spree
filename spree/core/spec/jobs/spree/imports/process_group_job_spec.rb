@@ -300,6 +300,24 @@ RSpec.describe Spree::Imports::ProcessGroupJob, type: :job do
     end
   end
 
+  context "when the store's default locale differs from I18n.default_locale" do
+    before { store.update_columns(default_locale: 'de') }
+
+    it 'authors the base columns in the store locale instead of leaving them null' do
+      # Mimics the enqueue-time locale a non-en store's request captures into the job.
+      I18n.with_locale(:de) do
+        expect {
+          described_class.perform_now(import.id, [row.id])
+        }.to change(Spree::Product, :count).by(1)
+      end
+
+      row.reload
+      expect(row.status).to eq('completed')
+      # The raw NOT NULL base column (not the translation) must be populated.
+      expect(row.item.product.read_attribute(:name)).to eq('Test Product')
+    end
+  end
+
   describe 'atomic completion tracking' do
     it 'uses atomic SQL increment for completed_groups_count' do
       # Leave another row pending so the import doesn't finalize on this run; we want

@@ -8,15 +8,24 @@ module Spree
                  owner_type: [:string, nullable: true], owner_id: [:string, nullable: true],
                  user_id: [:string, nullable: true], rows_count: :number
 
-        attributes :number, :type, :rows_count,
+        attributes :number, :rows_count,
                    created_at: :iso8601, updated_at: :iso8601
+
+        # Wire shorthand (`"products"`), not the Ruby class name — clients
+        # shouldn't have to know or parse `Spree::Imports::Products`. Read from
+        # the STI column rather than the instance's class so a record loaded as
+        # the base Spree::Import still reports its real type.
+        attribute :type do |import|
+          Spree::Import.api_type_for(import.type)
+        end
 
         attribute :status do |import|
           import.status.to_s
         end
 
+        # `"store"` / `"vendor"`, not the polymorphic class name.
         attribute :owner_type do |import|
-          import.owner_type
+          Spree::Base.polymorphic_api_type(import.owner_type)
         end
 
         attribute :owner_id do |import|

@@ -76,7 +76,8 @@
       "remove_value": "Remove value",
       "breadcrumb_more": "More",
       "sidebar": "Sidebar",
-      "sidebar_description": "Displays the mobile sidebar."
+      "sidebar_description": "Displays the mobile sidebar.",
+      "store_switcher": "Switch store"
     },
     "common": {
       "loading": "Loading…",
@@ -406,7 +407,8 @@
           "empty": "No tiers yet. The base rate applies until you add a tier.",
           "add_tier": "Add tier",
           "remove_tier": "Remove tier"
-        }
+        },
+        "unlimited": "Unlimited"
       },
       "confirm_dialog": {
         "title": "Are you sure?"
@@ -489,7 +491,9 @@
           "tab": "Tab"
         },
         "download_template": "Download CSV template",
+        "download_example": "Download an example CSV",
         "template_failed": "Template download failed: {{message}}",
+        "example_failed": "Example download failed: {{message}}",
         "submit": "Continue",
         "failed": "Import failed: {{message}}"
       },

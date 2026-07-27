@@ -1075,19 +1075,24 @@ export interface PaymentMethodUpdateParams {
 export type PaymentMethodType = ResourceTypeDefinition
 
 /**
- * Built-in `Spree::Export` subclasses. The server validates `type` against
- * the configured allowlist (`Spree::Export.available_types`); a plugin can
- * register additional types, which arrive here as the trailing `string & {}`
- * arm. Use one of the named constants for autocomplete.
+ * API shorthand for an export type (`Spree::Export.api_type`), not the Ruby
+ * class name. The server validates `type` against the configured allowlist
+ * (`Spree::Export.available_types`); a plugin can register additional types,
+ * which arrive here as the trailing `string & {}` arm.
+ *
+ * Creating an export still accepts the fully-qualified class name for
+ * backwards compatibility, but responses always use the shorthand. Note that
+ * Ransack filters (`type_eq`) match the database column, so those still take
+ * the class name.
  */
 export type ExportType =
-  | 'Spree::Exports::Products'
-  | 'Spree::Exports::Orders'
-  | 'Spree::Exports::Customers'
-  | 'Spree::Exports::ProductTranslations'
-  | 'Spree::Exports::GiftCards'
-  | 'Spree::Exports::CouponCodes'
-  | 'Spree::Exports::NewsletterSubscribers'
+  | 'products'
+  | 'orders'
+  | 'customers'
+  | 'product_translations'
+  | 'gift_cards'
+  | 'coupon_codes'
+  | 'newsletter_subscribers'
   | (string & {})
 
 export interface ExportCreateParams {
@@ -1113,11 +1118,12 @@ export interface ExportCreateParams {
   results_url?: string
 }
 
-export type ImportType =
-  | 'Spree::Imports::Products'
-  | 'Spree::Imports::Customers'
-  | 'Spree::Imports::ProductTranslations'
-  | (string & {})
+/**
+ * API shorthand for an import type (`Spree::Import.api_type`), not the Ruby
+ * class name. Creating an import still accepts the fully-qualified class name
+ * for backwards compatibility, but responses always use the shorthand.
+ */
+export type ImportType = 'products' | 'customers' | 'product_translations' | (string & {})
 
 export interface ImportCreateParams {
   /** Which dataset to import. Server validates against `Spree::Import.available_types`. */
@@ -1303,6 +1309,22 @@ export interface PromotionActionUpdateParams {
   preferences?: Record<string, unknown>
   calculator?: PromotionActionCalculatorParams
   line_items?: PromotionActionLineItemParams[]
+}
+
+export interface OrderRoutingRuleCreateParams {
+  /** Wire shorthand for the rule subclass (e.g. `'preferred_location'`), from `GET /order_routing_rules/types`. */
+  type: string
+  active?: boolean
+  /** 1-based priority in the channel's rule list. Omit to append at the end. */
+  position?: number
+  preferences?: Record<string, unknown>
+}
+
+export interface OrderRoutingRuleUpdateParams {
+  active?: boolean
+  /** Assigning a new position reorders the rest of the channel's list around it. */
+  position?: number
+  preferences?: Record<string, unknown>
 }
 
 export interface PromotionRuleCreateParams {

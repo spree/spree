@@ -132,3 +132,53 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
     end
   end
 end
+
+# Regression for the Admin::BaseController ordering bypass: on this branch the
+# `authorize_api_key_scope!` before_action runs BEFORE `authenticate_admin!`, so
+# `current_api_key` is nil at guard time. The guard must resolve the secret key
+# itself and fail CLOSED — never wave the request through — while still letting
+# JWT-authenticated admins (authorized by CanCanCan, no secret key) pass.
+RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
+  render_views
+  include_context 'API v3 Admin'
+
+  describe 'secret-key request reaching the guard before the key is resolved' do
+    let(:secret_key) { create(:api_key, :secret, store: store, created_by: admin_user, scopes: scopes) }
+
+    before { request.headers['X-Spree-Api-Key'] = secret_key.plaintext_token }
+
+    context 'with the required scope' do
+      let(:scopes) { ['read_dashboard'] }
+
+      it 'enforces the scope and allows the read' do
+        get :analytics, as: :json
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'without the required scope' do
+      let(:scopes) { ['read_orders'] }
+
+      it 'denies rather than silently skipping the scope check' do
+        get :analytics, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        body = JSON.parse(response.body)
+        expect(body['error']['code']).to eq('access_denied')
+        expect(body['error']['details']['required_scope']).to eq('read_dashboard')
+      end
+    end
+  end
+
+  describe 'JWT-authenticated admin (no secret key)' do
+    before do
+      request.headers['X-Spree-Api-Key'] = nil
+      request.headers['Authorization'] = "Bearer #{admin_jwt_token}"
+    end
+
+    it 'passes the scope guard (CanCanCan applies instead)' do
+      get :analytics, as: :json
+      expect(response).to have_http_status(:ok)
+    end
+  end
+end

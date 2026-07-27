@@ -29,7 +29,15 @@ module Spree
 
     attribute :active, :boolean, default: true
 
+    # acts_as_list only assigns bottom positions in before_create — too late
+    # for the presence validation below, so API creates without an explicit
+    # position would 422. Default to the end of the channel's list instead.
+    before_validation :set_position_to_end, on: :create, if: -> { position.blank? && channel.present? }
+
     validates :type, :channel, presence: true
+    # One instance of each rule kind per channel — a duplicate signal would
+    # either be a no-op or fight itself in the reducer walk.
+    validates :type, uniqueness: { scope: [:channel_id, *spree_base_uniqueness_scope] }
     validates :position, presence: true, numericality: { only_integer: true }
     validate :channel_belongs_to_store
 
@@ -43,6 +51,25 @@ module Spree
 
     validate :type_must_be_registered
 
+    # @return [String] localized display name for the rule kind, used by admin pickers
+    def self.human_name
+      Spree.t("order_routing_rule_types.#{api_type}.name", default: api_type.titleize)
+    end
+
+    # @return [String] localized description for the rule kind
+    def self.human_description
+      Spree.t("order_routing_rule_types.#{api_type}.description", default: '')
+    end
+
+    # Feeds the `description` field of `subclasses_with_preference_schema`
+    # (the `/types` discovery payload), which only reads `.description`.
+    def self.description
+      human_description
+    end
+
+    def human_name = self.class.human_name
+    def human_description = self.class.human_description
+
     # Subclasses override. Returns an Array<LocationRanking> — one per location,
     # with rank=nil to abstain.
     #
@@ -53,7 +80,23 @@ module Spree
       raise NotImplementedError, "#{self.class} must implement #rank(order, locations)"
     end
 
+    # Routes Spree::PreferenceSchema's subclass discovery
+    # (`subclasses_with_preference_schema`, `find_by_api_type`) to the
+    # order-routing rule registry.
+    module ClassMethods
+      private
+
+      def registered_subclasses
+        Spree.order_routing.rules
+      end
+    end
+    extend ClassMethods
+
     private
+
+    def set_position_to_end
+      self.position = bottom_position_in_list + 1
+    end
 
     # The +type+ presence validation already covers blank; here we only reject
     # a present-but-unregistered STI type so arbitrary class names can't be

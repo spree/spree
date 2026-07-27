@@ -6,7 +6,7 @@ import { server } from './mocks/server'
 const sampleImport = {
   id: 'imp_abc123',
   number: 'IM000001',
-  type: 'Spree::Imports::Products',
+  type: 'products',
   status: 'mapping',
   rows_count: 0,
   completed_rows_count: 0,
@@ -93,13 +93,13 @@ describe('imports', () => {
 
       const client = createTestClient()
       const res = await client.imports.create({
-        type: 'Spree::Imports::Products',
+        type: 'products',
         attachment: 'signed-blob-id',
         preferred_delimiter: ';',
       })
 
       expect(body).toEqual({
-        type: 'Spree::Imports::Products',
+        type: 'products',
         attachment: 'signed-blob-id',
         preferred_delimiter: ';',
       })

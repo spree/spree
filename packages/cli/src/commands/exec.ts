@@ -1,6 +1,6 @@
 import type { Command } from 'commander'
 import { detectProject } from '../context.js'
-import { dockerComposeExec } from '../docker.js'
+import { dockerComposeExecOrRun } from '../docker.js'
 
 // Universal escape hatch: run an arbitrary command inside the web container.
 // Anything not pre-wrapped by another `spree` command can be reached via this.
@@ -16,6 +16,6 @@ export function registerExecCommand(program: Command): void {
     .passThroughOptions(true)
     .action(async (command: string[]) => {
       const ctx = detectProject()
-      await dockerComposeExec(command, ctx.projectDir)
+      await dockerComposeExecOrRun(command, ctx.projectDir)
     })
 }

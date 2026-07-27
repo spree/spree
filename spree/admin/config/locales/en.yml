@@ -218,6 +218,8 @@ en:
         usage: Usage
       imports:
         all_required_columns_mapped: Good job, all required columns are mapped!
+        download_example_csv: Download an example CSV file
+        download_template_csv: Download CSV template
         field_required: Field required
         import_done: All done!
         json: JSON
@@ -937,7 +939,7 @@ en:
     order_email_resent_error: Order confirmation mail can only be sent for completed orders
     order_line_items: Order Line Items
     overview: Overview
-    package_from: package from
+    package_from: Package from
     page_not_found: Sorry! Page you are looking can’t be found.
     page_not_found_message: This page just doesn't exist.
     paste: Paste

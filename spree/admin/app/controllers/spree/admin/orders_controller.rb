@@ -97,7 +97,7 @@ module Spree
       end
 
       def collection_includes
-        { user: [], payments: [], refunds: [], shipments: :stock_location }
+        { user: [], channel: [], payments: [], refunds: [], shipments: :stock_location }
       end
 
       def order_params

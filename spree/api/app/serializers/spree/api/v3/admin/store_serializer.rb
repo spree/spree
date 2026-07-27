@@ -21,6 +21,7 @@ module Spree
                    preferred_unit_system: :string,
                    preferred_storefront_access: :string,
                    preferred_guest_checkout: :boolean,
+                   preferred_order_routing_strategy: :string,
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata,
@@ -39,6 +40,7 @@ module Spree
                      :preferred_unit_system,
                      :preferred_storefront_access,
                      :preferred_guest_checkout,
+                     :preferred_order_routing_strategy,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :url, &:storefront_url

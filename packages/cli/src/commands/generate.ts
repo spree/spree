@@ -1,6 +1,6 @@
 import type { Command } from 'commander'
 import { detectProject } from '../context.js'
-import { dockerComposeExec } from '../docker.js'
+import { dockerComposeExecOrRun } from '../docker.js'
 
 // Forwarded as-is so `spree generate migration AddX` hits Rails's own
 // generator instead of the non-existent `spree:migration`. `model` is
@@ -37,6 +37,6 @@ export function registerGenerateCommand(program: Command): void {
       const ctx = detectProject()
       const generator =
         name.includes(':') || RAILS_BUILTIN_GENERATORS.has(name) ? name : `spree:${name}`
-      await dockerComposeExec(['bin/rails', 'g', generator, ...args], ctx.projectDir)
+      await dockerComposeExecOrRun(['bin/rails', 'g', generator, ...args], ctx.projectDir)
     })
 }

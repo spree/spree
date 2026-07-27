@@ -5,14 +5,15 @@ require 'swagger_helper'
 RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:credit_card) { create(:credit_card, user: user) }
+  let(:payment_method) { create(:credit_card_payment_method, store: store) }
+  let!(:credit_card) { create(:credit_card, user: user, payment_method: payment_method) }
 
   path '/api/v3/store/customers/me/credit_cards' do
     get 'List saved credit cards' do
       tags 'Customers'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns all saved credit cards for the authenticated customer'
+      description "Returns the authenticated customer's saved credit cards for the current store's payment methods"
 
       sdk_example 'customer-credit-cards/list'
 

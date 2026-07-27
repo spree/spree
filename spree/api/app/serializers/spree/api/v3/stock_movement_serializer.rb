@@ -8,8 +8,13 @@ module Spree
                  originator_type: [:string, nullable: true], originator_id: [:string, nullable: true],
                  stock_item_id: [:string, nullable: true]
 
-        attributes :quantity, :action, :originator_type,
+        attributes :quantity, :action,
                    created_at: :iso8601, updated_at: :iso8601
+
+        # `"shipment"` / `"stock_transfer"`, not the polymorphic class name.
+        attribute :originator_type do |movement|
+          Spree::Base.polymorphic_api_type(movement.originator_type)
+        end
 
         attribute :originator_id do |movement|
           movement.originator&.prefixed_id

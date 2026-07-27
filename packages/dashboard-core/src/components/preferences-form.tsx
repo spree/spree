@@ -173,6 +173,11 @@ export function PreferenceField({
             id={id}
             type="number"
             step={field.type === 'integer' ? 1 : 'any'}
+            // An empty upper-bound field means "no limit" — surface that
+            // rather than leaving it looking like a required blank.
+            placeholder={
+              isMaxKey(field.key) ? t('admin.components.preferences_form.unlimited') : undefined
+            }
             value={value === null || value === undefined ? '' : String(value)}
             onChange={(e) => {
               const raw = e.target.value
@@ -245,6 +250,15 @@ function humanizeKey(key: string): string {
 
 function isCurrencyKey(key: string): boolean {
   return key === 'currency' || key.endsWith('_currency')
+}
+
+// Upper-bound preferences (`max_quantity`, `max_uses`, `usage_max`,
+// `maximum_amount`, …) read "Unlimited" when left blank. Matched on the key
+// name because the wire schema doesn't carry a nullable flag — safe since the
+// placeholder only shows for an empty value, and an empty max legitimately
+// means no ceiling.
+function isMaxKey(key: string): boolean {
+  return /(?:^|_)max(?:imum)?(?:_|$)/.test(key)
 }
 
 interface TierRowState {

@@ -70,7 +70,9 @@ fi
 step "Starting the edge stack"
 # Detached on purpose — `pnpm server:dev` runs the stack in the foreground
 # (streaming logs, Ctrl+C to stop); setup needs to continue past the boot.
-SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" up -d --force-recreate web
+# SPREE_MEILISEARCH opts into the Meilisearch search provider overlay, same
+# as `pnpm server:dev` (safe under set -u: :+ is exempt from nounset).
+SPREE_PATH="$ROOT" docker compose -f "$DEV_COMPOSE" -f "$EDGE_OVERLAY" ${SPREE_MEILISEARCH:+-f scripts/docker-compose.meilisearch.yml} up -d --force-recreate web
 
 step "Waiting for the stack to finish booting"
 # The edge web boot runs bundle install + spree:install:migrations +

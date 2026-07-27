@@ -131,7 +131,7 @@ export function registerDevCommand(program: Command): void {
 
       // Foreground `up`, like `vite dev`: Ctrl+C delivers SIGINT to compose,
       // which gracefully stops web + worker. Dependency services (postgres,
-      // redis, meilisearch) start via depends_on but stay up afterwards.
+      // mailpit) start via depends_on but stay up afterwards.
       // Ignore SIGINT in the CLI itself so compose owns the shutdown and we
       // live to print the outro.
       const ignoreSigint = () => {}

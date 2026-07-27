@@ -76,7 +76,8 @@
       "remove_value": "Wert entfernen",
       "breadcrumb_more": "Mehr",
       "sidebar": "Seitenleiste",
-      "sidebar_description": "Zeigt die mobile Seitenleiste an."
+      "sidebar_description": "Zeigt die mobile Seitenleiste an.",
+      "store_switcher": "Store wechseln"
     },
     "common": {
       "loading": "Wird geladen…",
@@ -406,7 +407,8 @@
           "empty": "Noch keine Stufen. Der Basissatz gilt, bis Sie eine Stufe hinzufügen.",
           "add_tier": "Stufe hinzufügen",
           "remove_tier": "Stufe entfernen"
-        }
+        },
+        "unlimited": "Unbegrenzt"
       },
       "confirm_dialog": {
         "title": "Sind Sie sicher?"

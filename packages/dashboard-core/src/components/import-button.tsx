@@ -19,8 +19,13 @@ import { DownloadIcon, FileSpreadsheetIcon, UploadIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useCreateImport, useDownloadImportTemplate } from '../hooks/use-import'
+import {
+  useCreateImport,
+  useDownloadImportExample,
+  useDownloadImportTemplate,
+} from '../hooks/use-import'
 import type { SubjectName } from '../lib/permissions'
+import { hasSampleCsv } from '../lib/sample-csv'
 import { Can } from './can'
 import { EMPTY_FILE_UPLOAD_VALUE, FileUploadField, type FileUploadValue } from './file-upload-field'
 
@@ -65,6 +70,8 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
   const [delimiter, setDelimiter] = useState<Delimiter>(',')
   const createImport = useCreateImport()
   const downloadTemplate = useDownloadImportTemplate()
+  const downloadExample = useDownloadImportExample()
+  const hasExample = hasSampleCsv(type)
 
   const delimiterOptions = DELIMITERS.map(({ value, labelKey }) => ({
     value,
@@ -102,6 +109,18 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
       onError: (err) => {
         toast.error(
           t('admin.components.import_button.template_failed', {
+            message: err instanceof Error ? err.message : String(err),
+          }),
+        )
+      },
+    })
+  }
+
+  function handleExampleDownload() {
+    downloadExample.mutate(type, {
+      onError: (err) => {
+        toast.error(
+          t('admin.components.import_button.example_failed', {
             message: err instanceof Error ? err.message : String(err),
           }),
         )
@@ -162,17 +181,34 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
               </Select>
             </Field>
 
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="self-start"
-              onClick={handleTemplateDownload}
-              disabled={downloadTemplate.isPending}
-            >
-              <DownloadIcon className="size-4" />
-              {t('admin.components.import_button.download_template')}
-            </Button>
+            <div className="flex flex-col items-start gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleTemplateDownload}
+                disabled={downloadTemplate.isPending}
+              >
+                <DownloadIcon className="size-4" />
+                {t('admin.components.import_button.download_template')}
+              </Button>
+
+              {/* The populated counterpart to the headers-only template above.
+                  Fetched through the API so the file matches the installed
+                  Spree version's schema. */}
+              {hasExample && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleExampleDownload}
+                  disabled={downloadExample.isPending}
+                >
+                  <FileSpreadsheetIcon className="size-4" />
+                  {t('admin.components.import_button.download_example')}
+                </Button>
+              )}
+            </div>
           </div>
 
           <SheetFooter>

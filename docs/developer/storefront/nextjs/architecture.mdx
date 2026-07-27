@@ -38,20 +38,29 @@ src/
 │       │   │   └── [slug]/          # Product details
 │       │   ├── t/[...permalink]/    # Category pages
 │       │   └── categories/          # Category overview
-│       └── (checkout)/              # Checkout layout (no header/footer)
-│           ├── checkout/[id]/       # Checkout flow
-│           └── order-placed/[id]/   # Order confirmation
+│       ├── (checkout)/              # Checkout layout (no header/footer)
+│       │   ├── checkout/[id]/       # Checkout flow
+│       │   └── order-placed/[id]/   # Order confirmation
+│       └── (wholesale)/             # Opt-in B2B portal (gated — see Wholesale guide)
+│           └── wholesale/
+│               ├── page.tsx         # Trade catalog
+│               ├── products/[slug]/ # Wholesale PDP
+│               ├── cart/            # Wholesale cart
+│               ├── quick-order/     # SKU quick-order form
+│               ├── apply/           # Trade-account application
+│               └── _components/     # Gate, header, sign-in wall, pending, guest browse
 ├── components/
 │   ├── cart/                        # CartDrawer
 │   ├── checkout/                    # AddressStep, DeliveryStep, PaymentStep, etc.
 │   ├── layout/                      # Header, Footer, CountrySwitcher
 │   ├── navigation/                  # Breadcrumbs
-│   ├── products/                    # ProductCard, ProductGrid, Filters, MediaGallery, VariantPicker
+│   ├── products/                    # ProductCard, ProductGrid, Filters, MediaGallery, HiddenPricePrompt
 │   └── search/                      # SearchBar
 ├── contexts/
 │   ├── AuthContext.tsx              # Auth state
 │   ├── CartContext.tsx              # Client-side cart state sync
 │   ├── CheckoutContext.tsx          # Checkout flow state
+│   ├── HiddenPricingContext.tsx     # Prices-hidden signal for wholesale guests
 │   └── StoreContext.tsx             # Store/locale/currency state
 ├── hooks/
 │   ├── useCarouselProducts.ts      # Product carousel data
@@ -72,7 +81,11 @@ src/
     │   ├── payment.ts               # Payment processing
     │   ├── products.ts              # Product queries
     │   ├── categories.ts            # Categories
-    │   └── utils.ts                 # Shared helpers (actionResult, withFallback)
+    │   ├── wholesale.ts             # Wholesale channel + catalog + quick-order
+    │   ├── utils.ts                 # Shared helpers (actionResult, withFallback)
+    │   └── …                        # One file per domain — see src/lib/data/
+    ├── spree/                       # Spree integration (client, cookies, auth refresh, middleware, surface)
+    ├── wholesale.ts                 # Approval check + volume-pricing helpers
     └── utils/                       # Client utilities
         ├── address.ts               # Address formatting
         ├── cookies.ts               # Cookie helpers
@@ -80,6 +93,8 @@ src/
         ├── path.ts                  # URL path helpers
         └── product-query.ts         # Product filter query builder
 ```
+
+The `(wholesale)` route group is an opt-in B2B portal, off unless a wholesale channel is configured. Its gating, surfaces, and pricing modes are covered in the [Wholesale Portal](/developer/storefront/nextjs/wholesale) guide.
 
 ## Authentication Flow
 
@@ -107,17 +122,9 @@ export async function getCustomer() {
 }
 ```
 
-## Multi-Region Support
+## Multi-Region
 
-The storefront supports multiple countries and currencies via URL segments:
-
-```
-/us/en/products          # US store, English
-/de/de/products          # German store, German
-/uk/en/products          # UK store, English
-```
-
-A middleware (`src/proxy.ts`) uses `createSpreeMiddleware` from `src/lib/spree` to detect the visitor's country and locale, then redirects to the correct URL prefix. The `CountrySwitcher` component lets users change regions manually.
+The storefront serves multiple countries, currencies, and languages from one deployment via `/{country}/{locale}` URL segments and an edge middleware that detects and persists the visitor's region. See the [Multi-Region](/developer/storefront/nextjs/multi-region) guide.
 
 ## Server Actions
 

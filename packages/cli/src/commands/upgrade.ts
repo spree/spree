@@ -2,10 +2,9 @@ import fs from 'node:fs'
 import path from 'node:path'
 import * as p from '@clack/prompts'
 import type { Command } from 'commander'
-import { execa } from 'execa'
 import pc from 'picocolors'
 import { detectProject, hasMonorepoSpreePath } from '../context.js'
-import { dockerComposeExec, isServiceRunning } from '../docker.js'
+import { dockerComposeCapture, dockerComposeExecOrRun, isServiceRunning } from '../docker.js'
 
 // Sequences bundle update + db:migrate + spree:upgrade rake. Flags map
 // to env vars on the inner rake task: --plan → DRY_RUN, --step → STEP,
@@ -39,9 +38,10 @@ export function registerUpgradeCommand(program: Command): void {
 }
 
 // Upgrade migrates the DB and runs spree:upgrade rake against the project's
-// REAL Postgres + warm bundle_cache. Unlike `spree bundle`, a one-off
-// `compose run` is wrong here (it would migrate an ephemeral DB), so we refuse
-// rather than fall back. Shared cheap pre-checks: monorepo-edge + web running.
+// REAL Postgres + warm bundle_cache. A one-off `compose run` reaches the same
+// named volumes (`run`'s depends_on cold-starts postgres, like db:reset), so
+// each step falls back to one when web is down. Cheap pre-checks: monorepo-edge
+// + the compose stack being inspectable at all.
 async function assertUpgradeable(projectDir: string): Promise<void> {
   const refuse = (lines: string[]): never => {
     p.cancel(lines.join('\n'))
@@ -56,28 +56,18 @@ async function assertUpgradeable(projectDir: string): Promise<void> {
     ])
   }
 
-  let running: boolean
   try {
-    running = await isServiceRunning('web', projectDir)
+    await isServiceRunning('web', projectDir)
   } catch (err) {
     // `compose ps` itself failed: broken/stale compose, daemon down, unknown
     // service. Point home instead of dumping the raw env-file error. (Backstop
     // for a stale backend/ that slipped past detectProject re-rooting.)
-    return refuse([
+    refuse([
       'Could not inspect the Docker stack from this directory.',
       `  ${pc.dim(String((err as Error).message).split('\n')[0])}`,
       '',
       `Run ${pc.bold('spree upgrade')} from your project root (the directory holding the`,
       '.env with SECRET_KEY_BASE), and make sure Docker is running.',
-    ])
-  }
-
-  if (!running) {
-    refuse([
-      'The web container is not running.',
-      `Upgrade runs migrations and the ${pc.bold('spree:upgrade')} rake against your live`,
-      `database, so the stack must be up. Start it with ${pc.bold('spree dev')}, then`,
-      're-run `spree upgrade`.',
     ])
   }
 }
@@ -108,31 +98,24 @@ async function runBundleUpdate(projectDir: string, flags: { yes?: boolean }): Pr
   }
 
   p.log.step(pc.bold(`bundle update ${spreeGems.join(' ')}`))
-  await dockerComposeExec(['bundle', 'update', ...spreeGems], projectDir)
+  await dockerComposeExecOrRun(['bundle', 'update', ...spreeGems], projectDir)
 }
 
 export async function detectSpreeGems(projectDir: string): Promise<string[]> {
   try {
-    // No `2>/dev/null` and no `|| true`: a bundler failure (out-of-sync
-    // lockfile, un-checked-out git source) must reach us as a nonzero exit
-    // with stderr intact, not get laundered into an empty list that becomes
-    // a misleading "No Spree gems detected".
-    const { stdout } = await execa(
-      'docker',
-      ['compose', 'exec', '-T', 'web', 'sh', '-c', "bundle list --name-only | grep '^spree'"],
-      { cwd: projectDir },
-    )
+    // Filter in JS rather than piping through grep: `bundle list` exits 0 even
+    // with zero spree gems, so a nonzero exit unambiguously means bundler
+    // itself errored (out-of-sync lockfile, un-checked-out git source) — no
+    // exit-code disambiguation against grep's "no match" needed.
+    const stdout = await dockerComposeCapture(['bundle', 'list', '--name-only'], projectDir)
     return stdout
       .split('\n')
       .map((line) => line.trim())
-      .filter((line) => line.length > 0 && line.startsWith('spree'))
+      .filter((line) => line.startsWith('spree'))
   } catch (err) {
-    const e = err as { exitCode?: number; stderr?: string }
-    // grep exits 1 with empty stderr ⇒ bundle is fine but resolves zero spree
-    // gems. Return [] so the caller prints the friendly "No Spree gems" message.
-    if (e.exitCode === 1 && !e.stderr?.trim()) return []
-    // Anything else: bundler itself errored (its stderr survives the pipe).
-    // Surface it + the real next step instead of the misleading gem message.
+    const e = err as { stderr?: string }
+    // Surface bundler's error + the real next step instead of laundering it
+    // into a misleading "No Spree gems detected".
     throw new Error(
       'Could not list gems in the web container — the bundle looks out of sync.\n' +
         'Run `spree bundle install` first, then re-run `spree upgrade`.' +
@@ -157,7 +140,7 @@ async function runMigrate(projectDir: string, flags: { yes?: boolean }): Promise
     }
   }
   p.log.step(pc.bold('spree:install:migrations + db:migrate'))
-  await dockerComposeExec(['bin/rails', 'spree:install:migrations', 'db:migrate'], projectDir)
+  await dockerComposeExecOrRun(['bin/rails', 'spree:install:migrations', 'db:migrate'], projectDir)
 }
 
 async function runRakeUpgrade(
@@ -171,7 +154,7 @@ async function runRakeUpgrade(
   if (flags.to) env.TO = flags.to
 
   p.log.step(pc.bold('spree:upgrade'))
-  await dockerComposeExec(['bin/rake', 'spree:upgrade'], projectDir, { env })
+  await dockerComposeExecOrRun(['bin/rake', 'spree:upgrade'], projectDir, { env })
 }
 
 // The backend upgrade never touches frontend source — SDK bumps go through

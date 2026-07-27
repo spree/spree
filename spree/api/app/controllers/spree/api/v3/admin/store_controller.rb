@@ -42,6 +42,7 @@ module Spree
               :preferred_storefront_access,
               :preferred_storefront_url,
               :preferred_guest_checkout,
+              :preferred_order_routing_strategy,
               :mail_from_address,
               :customer_support_email,
               :new_order_notifications_email,

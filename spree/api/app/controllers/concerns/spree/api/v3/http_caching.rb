@@ -22,10 +22,13 @@ module Spree
           current_user.nil?
         end
 
-        # Set Vary headers to ensure proper CDN caching by currency/locale
+        # Set Vary headers to ensure proper CDN caching by currency/locale/channel.
+        # X-Spree-Channel is included because the resolved channel changes the
+        # serialized body (price hiding + channel-scoped visibility), so a shared
+        # cache must not serve one channel's guest response to another channel.
         def set_vary_headers
           if guest_user?
-            response.headers['Vary'] = 'Accept, x-spree-currency, x-spree-locale'
+            response.headers['Vary'] = 'Accept, x-spree-currency, x-spree-locale, x-spree-channel'
           else
             response.headers['Cache-Control'] = 'private, no-store'
           end
@@ -67,14 +70,21 @@ module Spree
 
           expires_in expires_in, public: true
 
-          # Use Rails' stale? which handles ETag and Last-Modified
-          stale?(resource, public: true)
+          # Use Rails' stale? which handles ETag and Last-Modified. The channel
+          # is folded into the ETag so a shared cache never serves one channel's
+          # guest response to another; Last-Modified mirrors the resource's own
+          # timestamp as before.
+          stale?(
+            etag: [resource, cache_channel_fragment],
+            last_modified: resource.try(:updated_at),
+            public: true
+          )
         end
 
         private
 
         # Build a cache key for a collection
-        # Includes: latest updated_at, total count, query params, pagination, expand, currency, locale
+        # Includes: latest updated_at, total count, query params, pagination, expand, currency, locale, channel
         def collection_cache_key(collection)
           # For ActiveRecord collections use updated_at, for plain arrays use store's updated_at as proxy
           latest_updated_at = if collection.first&.respond_to?(:updated_at)
@@ -92,10 +102,21 @@ module Spree
             params[:page],
             params[:limit],
             current_currency,
-            current_locale
+            current_locale,
+            cache_channel_fragment
           ]
 
           parts.compact.join('/')
+        end
+
+        # Identifies the resolved channel for cache-key purposes. The channel
+        # changes the serialized body (price hiding + channel-scoped visibility),
+        # so it must be part of the guest cache identity. Uses the same
+        # +current_channel+ source of truth as serialization/gating.
+        def cache_channel_fragment
+          return nil unless respond_to?(:current_channel, true)
+
+          current_channel&.id
         end
       end
     end

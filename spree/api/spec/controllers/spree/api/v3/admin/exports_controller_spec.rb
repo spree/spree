@@ -35,7 +35,7 @@ RSpec.describe Spree::Api::V3::Admin::ExportsController, type: :controller do
       row = json_response['data'].find { |e| e['id'] == product_export.prefixed_id }
 
       expect(row).to include('done' => false, 'download_url' => nil)
-      expect(row['type']).to eq('Spree::Exports::Products')
+      expect(row['type']).to eq('products')
       expect(row['format']).to eq('csv')
     end
   end

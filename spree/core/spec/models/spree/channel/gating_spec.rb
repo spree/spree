@@ -24,6 +24,19 @@ RSpec.describe Spree::Channel::Gating, type: :model do
       channel.update!(preferred_storefront_access: 'public')
       expect(channel.resolved_storefront_access).to eq('public')
     end
+
+    it 'clears the override (restores inheritance) when written blank' do
+      store.update!(preferred_storefront_access: 'login_required')
+      channel.update!(preferred_storefront_access: 'public')
+      expect(channel.resolved_storefront_access).to eq('public')
+
+      # A plain string preference would coerce this to "", which is not a
+      # valid posture; the override must instead stay nil so the store value
+      # applies again.
+      channel.update!(preferred_storefront_access: '')
+      expect(channel.preferred_storefront_access).to be_nil
+      expect(channel.resolved_storefront_access).to eq('login_required')
+    end
   end
 
   describe '#resolved_guest_checkout' do

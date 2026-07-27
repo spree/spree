@@ -29,14 +29,9 @@ describe('envContent', () => {
 })
 
 describe('storefrontEnvContent', () => {
-  it('includes placeholder when no key provided', () => {
+  it('includes the key placeholder first-run setup replaces', () => {
     const content = storefrontEnvContent(3000)
-    expect(content).toContain('pk_REPLACE_ME_AFTER_DOCKER_START')
-  })
-
-  it('includes real key when provided', () => {
-    const content = storefrontEnvContent(3000, 'pk_test123')
-    expect(content).toContain('SPREE_PUBLISHABLE_KEY=pk_test123')
+    expect(content).toContain('SPREE_PUBLISHABLE_KEY=pk_REPLACE_ME_AFTER_DOCKER_START')
   })
 
   it('includes API URL with given port', () => {
@@ -47,6 +42,16 @@ describe('storefrontEnvContent', () => {
   it('uses custom port in API URL', () => {
     const content = storefrontEnvContent(4567)
     expect(content).toContain('SPREE_API_URL=http://localhost:4567')
+  })
+
+  it('omits the wholesale portal by default', () => {
+    const content = storefrontEnvContent(3000)
+    expect(content).not.toContain('SPREE_WHOLESALE_CHANNEL')
+  })
+
+  it('enables the wholesale portal when requested', () => {
+    const content = storefrontEnvContent(3000, true)
+    expect(content).toMatch(/^SPREE_WHOLESALE_CHANNEL=wholesale$/m)
   })
 })
 
@@ -99,6 +104,18 @@ describe('rootPackageJsonContent', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
     expect(pkg.private).toBe(true)
   })
+
+  it('pins pnpm via packageManager for pnpm scaffolds', () => {
+    const pkg = JSON.parse(rootPackageJsonContent('my-store', 'pnpm'))
+    expect(pkg.packageManager).toMatch(/^pnpm@\d+\.\d+\.\d+$/)
+  })
+
+  it('omits packageManager for npm and yarn scaffolds', () => {
+    for (const pm of ['npm', 'yarn'] as const) {
+      const pkg = JSON.parse(rootPackageJsonContent('my-store', pm))
+      expect(pkg.packageManager).toBeUndefined()
+    }
+  })
 })
 
 describe('readmeContent', () => {
@@ -116,7 +133,7 @@ describe('readmeContent', () => {
   it('includes storefront section', () => {
     const content = readmeContent('my-store', true, 3000)
     expect(content).toContain('storefront')
-    expect(content).toContain('npm run dev')
+    expect(content).toContain('pnpm run dev')
   })
 
   it('includes eject instructions', () => {
@@ -146,9 +163,9 @@ describe('readmeContent', () => {
   it('documents the Admin API and how to run the CLI directly', () => {
     const content = readmeContent('my-store', true, 3000)
     expect(content).toContain('### Admin API')
-    expect(content).toContain('npx spree api get products')
+    expect(content).toContain('pnpm spree api get products')
     expect(content).toContain('.spree/credentials.json')
-    expect(content).toContain('npm install -g @spree/cli')
+    expect(content).toContain('pnpm add -g @spree/cli')
   })
 
   it('renders commands for the chosen package manager', () => {
@@ -158,6 +175,12 @@ describe('readmeContent', () => {
     expect(content).toContain('pnpm add -g @spree/cli')
     expect(content).not.toContain('npx')
     expect(content).not.toMatch(/\bnpm /)
+  })
+
+  it('renders storefront commands with pnpm on yarn scaffolds (pnpm-pinned template)', () => {
+    const content = readmeContent('my-store', true, 3000, true, 'yarn')
+    expect(content).toContain('cd apps/storefront\npnpm run dev')
+    expect(content).toContain('cd apps/dashboard\nyarn run dev')
   })
 
   it('includes the React Dashboard section when included', () => {

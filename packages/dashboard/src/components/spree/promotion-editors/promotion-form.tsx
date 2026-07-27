@@ -1301,7 +1301,7 @@ function CouponCodesSheet({
   const exportMutation = useExport()
   function handleExport() {
     exportMutation.mutate({
-      type: 'Spree::Exports::CouponCodes',
+      type: 'coupon_codes',
       record_selection: 'filtered',
       search_params: { promotion_id_eq: promotionId },
     })

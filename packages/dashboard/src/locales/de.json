@@ -37,10 +37,6 @@
         "empty": "Keine passenden Chargen"
       }
     },
-    "branding": {
-      "app_name": "Spree Admin",
-      "powered_by": "Bereitgestellt von Spree Commerce"
-    },
     "errors": {
       "not_found_title": "Seite nicht gefunden",
       "not_found_description": "Die gesuchte Seite existiert nicht.",
@@ -326,6 +322,12 @@
         "channels": {
           "label": "Vertriebskanäle",
           "help": "Leer lassen, um diese Regel auf jeden Vertriebskanal anzuwenden."
+        },
+        "min_quantity": {
+          "help": "Dieser Preis gilt nur, wenn ein Kunde mindestens so viele Einheiten eines einzelnen Artikels bestellt."
+        },
+        "max_quantity": {
+          "help": "Leer lassen für keine Obergrenze."
         }
       },
       "stock_location": {
@@ -1074,6 +1076,19 @@
         "delete_confirm": {
           "title": "Verkaufskanal löschen?",
           "message": "{{name}} wird entfernt. Damit verknüpfte Produkte und Bestellungen verlieren ihre Verkaufskanal-Referenz."
+        },
+        "order_routing_rules": {
+          "title": "Auftragsrouting-Regeln",
+          "help": "Bei der Routing-Strategie „Regeln (geordnet)“ werden die Regeln von oben nach unten ausgewertet – die erste Regel, die einen Lagerort eindeutig bestimmt, gewinnt; bei Gleichstand entscheidet die nächste Regel.",
+          "empty": "Keine Routing-Regeln – Bestellungen verwenden den Standard-Lagerort.",
+          "add_cta": "Regel hinzufügen",
+          "picker_title": "Routing-Regel hinzufügen",
+          "edit_preferences": "Regel-Einstellungen bearbeiten",
+          "active_toggle": "Regel aktiv",
+          "delete_confirm": {
+            "title": "Routing-Regel löschen?",
+            "message": "{{name}} wird aus der Routing-Reihenfolge dieses Kanals entfernt."
+          }
         },
         "search_placeholder": "Verkaufskanäle suchen…",
         "no_channels_found": "Keine Verkaufskanäle gefunden",
@@ -2500,13 +2515,35 @@
       "base_amount": "Grundbetrag",
       "base_percent": "Grundprozentsatz",
       "preferred_amount": "Betrag",
-      "preferred_percent": "Prozent"
+      "preferred_percent": "Prozent",
+      "min_quantity": "Mindestmenge",
+      "max_quantity": "Höchstmenge"
     },
     "channels": {
       "messages": {
         "created": "Kanal erstellt",
         "updated": "Kanal aktualisiert",
         "deleted": "Kanal gelöscht"
+      }
+    },
+    "order_routing_rules": {
+      "messages": {
+        "created": "Routing-Regel hinzugefügt",
+        "deleted": "Routing-Regel entfernt"
+      },
+      "types": {
+        "preferred_location": {
+          "name": "Bevorzugter Lagerort",
+          "description": "Versand vom am Auftrag hinterlegten Lagerort, sofern gesetzt"
+        },
+        "minimize_splits": {
+          "name": "Teillieferungen minimieren",
+          "description": "Bevorzugt den Lagerort, der die meisten Artikel allein liefern kann, und vermeidet Teillieferungen"
+        },
+        "default_location": {
+          "name": "Standard-Lagerort",
+          "description": "Bevorzugt den als Standard markierten Lagerort"
+        }
       }
     },
     "customer_groups": {

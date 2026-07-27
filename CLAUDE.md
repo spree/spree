@@ -44,6 +44,8 @@ Multi-version plans (some phases shipped, some pending):
 - `5.6-dashboard-typed-plugin-routes.md` — Plugin file routes compiled into the host's TanStack route tree: `spree.dashboard.routes` marker + virtual-route-config composition in `@spree/dashboard/vite`, `createDashboardRouter` + `<Dashboard router>` ownership inversion, typed cast-free links, cross-package collision pre-flight with package-named errors. Runtime route registry stays for dynamic/in-app cases (catch-all is lowest priority). Implemented; published-tarball spike passed.
 
 Pending design work (drafts, no implementation yet):
+- `5.7-payment-method-rules.md` — `Spree::PaymentMethodRule` STI on PaymentMethod (Channel / Market / OrderTotal / CustomerGroup rules), mirroring the PromotionRule/PriceRule/OrderRoutingRule pattern. Enforced solely through `Order#collect_frontend_payment_methods` (listing + `Payments::Create` + payment sessions all flow through it); admin/backoffice bypasses; no rules = available everywhere. Dashboard-only management (nested Admin API CRUD + `/payment_method_rules/types` discovery). Supersedes the "no distribution concept" rationale in `5.6-6.0-single-store-promotions-payment-methods.md`; per-channel provider credentials (multiple Stripe accounts, Shopify-style multi-entity) explicitly deferred for grooming — see decisions.md 2026-07-23.
+- `5.7-channel-markets.md` — Optional Channel→Markets allowlist (`spree_channel_markets` join, empty = all markets). Enforced in market resolution (`set_market_from_country` + channel-aware `Spree::Current.market` fallback), channel-filtered Store API `/store/markets`, and order-level `market must be served by channel` validation. Composes with `MarketRule` from the payment-method-rules plan.
 - `5.6-admin-spa-csv-import.md` — Universal dashboard CSV import over the existing `Spree::Import` pipeline (implemented). Admin API v3 surface (create via direct-upload signed blob, `complete_mapping`, `retry_failed_rows`, nested failed-rows index, write-scope gating), `client.imports` SDK resource, dashboard-core `ImportButton` (per-context `<Can>` gating, upload Sheet) + full-window wizard dialog driven by an `?import=` search param, with history under `/settings/imports` (new `audit` settings-nav group). Status via API polling — explicitly no ActionCable/Turbo Streams in the SPA; legacy per-row live feed replaced by polled counters + paginated failed-rows table.
 - `5.5-6.0-resource-translations-api.md` — Admin API v3 translation management + React dashboard for all `Spree.translatable_resources`. Hybrid: embedded `translations` object on resource update + generic dedicated `…/:id/translations` endpoint (one registry-driven controller), self-describing field discovery, advisory server-side staleness. Canonical `{ locale → { field → value } }` shape (consistent with metafield-translations). Cross-record bulk = CSV import/export generalized across the registry (NOT a JSON bulk endpoint — no competitor ships one). Phase 1 (5.5) API; Phase 2 (6.0) coverage read + CSV generalization + staleness + centralized SPA page; Phase 3 folds in metafields.
 - `5.4-centralized-translations-admin.md` — Centralized Translations admin page under Products, overview grid + bulk CSV import/export
@@ -97,7 +99,7 @@ Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web log
 | Gem dependencies (gemspec / Gemfile / starter `Gemfile.lock` drift after a pull) | Nothing — the next `pnpm server:dev` boot self-heals (`bundle check || bundle install` into the `bundle_cache` volume); while running: `cd server && pnpm exec spree bundle install` |
 | Compose files / `server/.env` | `pnpm server:dev` (force-recreates web + worker) |
 | `server/Dockerfile` / `.ruby-version` / starter update that breaks the image build (frozen-lockfile error) | `pnpm server:build`, then `pnpm server:dev` — the build script swaps the edge PATH lock for a RubyGems-resolved one and the next boot swaps it back |
-| Meilisearch image bump ("database version … is incompatible") | `docker compose -p server rm -sf meilisearch && docker volume rm server_meilisearch_data`, boot, then `cd server && pnpm exec spree rake spree:search:reindex` |
+| Working on the Meilisearch search provider | Off by default (DB provider) — `SPREE_MEILISEARCH=1 pnpm server:dev` chains `scripts/docker-compose.meilisearch.yml` (service + `MEILISEARCH_URL`), then `cd server && pnpm exec spree rake spree:search:reindex` once. Booting without the flag reverts web to DB search and removes the meilisearch container; the index volume stays. Image bump ("database version … is incompatible"): `pnpm server:stop && docker volume rm server_meilisearch_data`, flagged boot, reindex |
 | Broken beyond repair | `pnpm server:setup` (full reset — wipes DB + volumes) |
 
 Backend: http://localhost:3000, admin at `/admin`, hosted React Dashboard at `/dashboard` (`spree@example.com` / `spree123`). Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.
@@ -581,7 +583,7 @@ A **Lefthook pre-commit hook** (`lefthook.yml`) regenerates types and Zod schema
 
 ### Changesets & Versioning
 
-Published packages use **Changesets** for versioning. Place changeset files in the package's `.changeset/` directory.
+Published packages use **Changesets** for versioning — one workspace-wide instance. Place changeset files in the root `.changeset/` directory (`pnpm changeset`), never in per-package directories. The dashboard packages (`@spree/dashboard`, `@spree/dashboard-core`, `@spree/dashboard-ui`) are a `fixed` group and always release together under one version; `@spree/admin-sdk` versions independently. Two release trains: `pnpm version:preview` cuts the Developer Preview packages while holding back `@spree/sdk` (stable, tracks Spree releases); `pnpm changeset version` includes it. `--ignore` defers changesets, it never discards them.
 
 ---
 
@@ -638,12 +640,14 @@ cd packages/sdk && pnpm test       # SDK tests (uses MSW for HTTP mocking)
 
 ### Admin SPA E2E (Playwright)
 
-End-to-end tests for `packages/dashboard` live in `packages/dashboard/e2e/`. The global setup boots a real Rails test server (port 3010) + Vite dev (port 5174) once and seeds the DB; specs then exercise the SPA through a browser against that stack.
+End-to-end tests for `packages/dashboard` live in `packages/dashboard/e2e/`. The global setup boots a real Rails test server (port 3010) + Vite (port 5174) once and seeds the DB; specs then exercise the SPA through a browser against that stack. Locally Vite runs in dev mode; CI builds first and serves the bundle (`E2E_PREVIEW=1` → `vite preview`) because every test's fresh browser context re-downloads all dev-mode modules. CI also splits the suite across shard jobs (`--shard=n/m`), each with its own isolated Rails + SQLite + Vite stack — specs must stay self-contained (seed via global-setup fixtures or create your own records) and must not depend on records another spec file leaves behind.
 
 ```bash
 cd packages/dashboard && pnpm test:e2e          # full suite
 cd packages/dashboard && pnpm test:e2e:ui       # Playwright UI mode (debug)
 ```
+
+The `login(page)` helper authenticates through the API (one POST plants the refresh cookie; the SPA's boot-time silent refresh does the rest) — only `auth.spec.ts` drives the login form itself.
 
 **Write UI-only assertions, like Capybara.** Drive the test through user-visible actions (fill labels, click buttons, find by role) and assert on visible UI. **Do not** reach for `page.waitForResponse(/api/...)` to wait for backend completion — it leaks API shape into tests and makes refactors painful. Playwright's `await expect(...).toBeVisible()` auto-polls until the condition is met (same as Capybara's `default_max_wait_time`), which covers virtually all cases.
 

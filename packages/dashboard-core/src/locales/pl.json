@@ -76,7 +76,8 @@
       "remove_value": "Usuń wartość",
       "breadcrumb_more": "Więcej",
       "sidebar": "Panel boczny",
-      "sidebar_description": "Wyświetla mobilny panel boczny."
+      "sidebar_description": "Wyświetla mobilny panel boczny.",
+      "store_switcher": "Przełącz sklep"
     },
     "common": {
       "loading": "Ładowanie…",
@@ -406,7 +407,8 @@
           "empty": "Brak progów. Do momentu dodania progu obowiązuje stawka podstawowa.",
           "add_tier": "Dodaj próg",
           "remove_tier": "Usuń próg"
-        }
+        },
+        "unlimited": "Bez limitu"
       },
       "confirm_dialog": {
         "title": "Czy na pewno?"

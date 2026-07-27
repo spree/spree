@@ -1,21 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Invitation, SpreeError } from '@spree/admin-sdk'
 import { adminClient, mapSpreeErrorsToForm, useAuth } from '@spree/dashboard-core'
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-  Label,
-} from '@spree/dashboard-ui'
+import { Button, Input, Label } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { AuthShell } from '../components/spree/auth-shell'
 import {
   type AcceptInvitationSignInFormValues,
   type AcceptInvitationSignUpFormValues,
@@ -42,19 +34,19 @@ function AcceptInvitationPage() {
 
   if (!token) {
     return (
-      <Shell>
+      <AuthShell>
         <ErrorCard
           title={t('admin.invitation.missing_token_title')}
           message={t('admin.invitation.missing_token_message')}
         />
-      </Shell>
+      </AuthShell>
     )
   }
 
   return (
-    <Shell>
+    <AuthShell>
       <InvitationLoader invitationId={invitationId} token={token} />
-    </Shell>
+    </AuthShell>
   )
 }
 
@@ -68,11 +60,7 @@ function InvitationLoader({ invitationId, token }: { invitationId: string; token
 
   if (lookup.isPending) {
     return (
-      <Card>
-        <CardContent className="py-12 text-center text-muted-foreground">
-          {t('admin.invitation.loading')}
-        </CardContent>
-      </Card>
+      <div className="py-12 text-center text-muted-foreground">{t('admin.invitation.loading')}</div>
     )
   }
 
@@ -157,43 +145,35 @@ function SignInForm({
   const actionPart = t('admin.invitation.sign_in_to_accept')
 
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl">
+    <>
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-bold">
           {t('admin.invitation.join_store', { store: invitation.store.name })}
-        </CardTitle>
-        <CardDescription>{`${invitedPart}${rolePart}${actionPart}`}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-          {errors.root && (
-            <p className="text-center text-sm text-destructive">{errors.root.message}</p>
-          )}
-          <div className="grid gap-2">
-            <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
-            <Input id="invitee-email" value={invitation.email} disabled />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">
-              {t('admin.fields.invitation_acceptance.password.label')}
-            </Label>
-            <Input
-              id="password"
-              type="password"
-              autoFocus
-              aria-invalid={!!errors.password || undefined}
-              {...form.register('password')}
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password.message}</p>
-            )}
-          </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.sign_in_and_accept')}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        </h1>
+        <p className="text-sm text-muted-foreground">{`${invitedPart}${rolePart}${actionPart}`}</p>
+      </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+        {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
+        <div className="grid gap-2">
+          <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
+          <Input id="invitee-email" value={invitation.email} disabled />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="password">{t('admin.fields.invitation_acceptance.password.label')}</Label>
+          <Input
+            id="password"
+            type="password"
+            autoFocus
+            aria-invalid={!!errors.password || undefined}
+            {...form.register('password')}
+          />
+          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+        </div>
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.sign_in_and_accept')}
+        </Button>
+      </form>
+    </>
   )
 }
 
@@ -237,99 +217,81 @@ function SignUpForm({
   const actionPart = t('admin.invitation.create_to_accept')
 
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl">
+    <>
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-bold">
           {t('admin.invitation.join_store', { store: invitation.store.name })}
-        </CardTitle>
-        <CardDescription>{`${invitedPart}${rolePart}${actionPart}`}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
-          {errors.root && (
-            <p className="text-center text-sm text-destructive">{errors.root.message}</p>
+        </h1>
+        <p className="text-sm text-muted-foreground">{`${invitedPart}${rolePart}${actionPart}`}</p>
+      </div>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-6">
+        {errors.root && <p className="text-sm text-destructive">{errors.root.message}</p>}
+        <div className="grid gap-2">
+          <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
+          <Input id="invitee-email" value={invitation.email} disabled />
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-2">
+            <Label htmlFor="first_name">{t('admin.fields.first_name.label')}</Label>
+            <Input
+              id="first_name"
+              autoFocus
+              aria-invalid={!!errors.first_name || undefined}
+              {...form.register('first_name')}
+            />
+            {errors.first_name && (
+              <p className="text-sm text-destructive">{errors.first_name.message}</p>
+            )}
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="last_name">{t('admin.fields.last_name.label')}</Label>
+            <Input
+              id="last_name"
+              aria-invalid={!!errors.last_name || undefined}
+              {...form.register('last_name')}
+            />
+            {errors.last_name && (
+              <p className="text-sm text-destructive">{errors.last_name.message}</p>
+            )}
+          </div>
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="password">{t('admin.fields.invitation_acceptance.password.label')}</Label>
+          <Input
+            id="password"
+            type="password"
+            aria-invalid={!!errors.password || undefined}
+            {...form.register('password')}
+          />
+          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="password_confirmation">
+            {t('admin.fields.invitation_acceptance.password_confirmation.label')}
+          </Label>
+          <Input
+            id="password_confirmation"
+            type="password"
+            aria-invalid={!!errors.password_confirmation || undefined}
+            {...form.register('password_confirmation')}
+          />
+          {errors.password_confirmation && (
+            <p className="text-sm text-destructive">{errors.password_confirmation.message}</p>
           )}
-          <div className="grid gap-2">
-            <Label htmlFor="invitee-email">{t('admin.fields.email.label')}</Label>
-            <Input id="invitee-email" value={invitation.email} disabled />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="grid gap-2">
-              <Label htmlFor="first_name">{t('admin.fields.first_name.label')}</Label>
-              <Input
-                id="first_name"
-                autoFocus
-                aria-invalid={!!errors.first_name || undefined}
-                {...form.register('first_name')}
-              />
-              {errors.first_name && (
-                <p className="text-sm text-destructive">{errors.first_name.message}</p>
-              )}
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="last_name">{t('admin.fields.last_name.label')}</Label>
-              <Input
-                id="last_name"
-                aria-invalid={!!errors.last_name || undefined}
-                {...form.register('last_name')}
-              />
-              {errors.last_name && (
-                <p className="text-sm text-destructive">{errors.last_name.message}</p>
-              )}
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">
-              {t('admin.fields.invitation_acceptance.password.label')}
-            </Label>
-            <Input
-              id="password"
-              type="password"
-              aria-invalid={!!errors.password || undefined}
-              {...form.register('password')}
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password.message}</p>
-            )}
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password_confirmation">
-              {t('admin.fields.invitation_acceptance.password_confirmation.label')}
-            </Label>
-            <Input
-              id="password_confirmation"
-              type="password"
-              aria-invalid={!!errors.password_confirmation || undefined}
-              {...form.register('password_confirmation')}
-            />
-            {errors.password_confirmation && (
-              <p className="text-sm text-destructive">{errors.password_confirmation.message}</p>
-            )}
-          </div>
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.create_and_accept')}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? t('admin.invitation.accepting') : t('admin.invitation.create_and_accept')}
+        </Button>
+      </form>
+    </>
   )
 }
 
 function ErrorCard({ title, message }: { title: string; message: string }) {
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl">{title}</CardTitle>
-        <CardDescription>{message}</CardDescription>
-      </CardHeader>
-    </Card>
-  )
-}
-
-function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
-      <div className="flex w-full max-w-sm flex-col gap-6">{children}</div>
+    <div className="flex flex-col gap-2">
+      <h1 className="text-2xl font-bold">{title}</h1>
+      <p className="text-sm text-muted-foreground">{message}</p>
     </div>
   )
 }

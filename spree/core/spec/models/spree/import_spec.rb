@@ -387,6 +387,68 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
   end
 
+  describe '#template_csv' do
+    it 'is the schema header row' do
+      import = Spree::Imports::Products.new
+
+      expect(import.template_csv.strip.split(',')).to include('slug', 'sku', 'name', 'price')
+      expect(import.template_csv.lines.size).to eq(1)
+    end
+
+    it 'names the file after the type' do
+      expect(Spree::Imports::Products.new.template_csv_filename).to eq('products_import_template.csv')
+    end
+
+    # The admin's new-import form builds a base Spree::Import with `type`
+    # assigned, so both helpers have to read the column.
+    it 'resolves from the type column on a base instance' do
+      import = described_class.new(type: 'Spree::Imports::Customers')
+
+      expect(import.template_csv_filename).to eq('customers_import_template.csv')
+      expect(import.template_csv.strip.split(',')).to include('email')
+    end
+  end
+
+  describe '#sample_csv_url' do
+    it 'resolves from the type column on a base instance' do
+      import = described_class.new(type: 'Spree::Imports::Products')
+
+      expect(import.sample_csv_url).to end_with('/db/sample_data/products.csv')
+    end
+  end
+
+  describe '.sample_csv_url' do
+    it 'points at the example CSV for the type' do
+      expect(Spree::Imports::Products.sample_csv_url).to end_with('/db/sample_data/products.csv')
+      expect(Spree::Imports::Customers.sample_csv_url).to end_with('/db/sample_data/customers.csv')
+      expect(Spree::Imports::ProductTranslations.sample_csv_url).to end_with('/db/sample_data/product_translations.csv')
+    end
+
+    # Pinned to the installed version, not `main` — the availability check reads
+    # the local db/sample_data, so the served file has to match that schema.
+    it 'pins the URL to the installed Spree version' do
+      expect(Spree::Imports::Products.sample_csv_url).to eq(
+        "https://raw.githubusercontent.com/spree/spree/refs/tags/v#{Spree.version}/spree/core/db/sample_data/products.csv"
+      )
+    end
+
+    it 'is nil on the base class' do
+      expect(described_class.sample_csv_url).to be_nil
+    end
+
+    # An import type whose example CSV was never added must not render a link
+    # that 404s — the answer comes from db/sample_data, not a hardcoded list.
+    it 'is nil for a type with no example file' do
+      klass = Class.new(described_class) do
+        def self.name
+          'Spree::Imports::Orders'
+        end
+      end
+
+      expect(klass.sample_csv_url).to be_nil
+    end
+  end
+
   describe 'custom events', :events do
     describe 'import.completed' do
       before do

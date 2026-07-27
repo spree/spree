@@ -62,15 +62,15 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
           type: {
             type: :string,
             enum: %w[
-              Spree::Exports::Products
-              Spree::Exports::Orders
-              Spree::Exports::Customers
-              Spree::Exports::ProductTranslations
-              Spree::Exports::GiftCards
-              Spree::Exports::CouponCodes
-              Spree::Exports::NewsletterSubscribers
+              products
+              orders
+              customers
+              product_translations
+              gift_cards
+              coupon_codes
+              newsletter_subscribers
             ],
-            example: 'Spree::Exports::Products'
+            example: 'products'
           },
           record_selection: {
             type: :string,
@@ -96,11 +96,11 @@ RSpec.describe 'Admin Exports API', type: :request, swagger_doc: 'api-reference/
 
       response '201', 'export queued' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { type: 'Spree::Exports::Products', search_params: { name_cont: 'shirt' } } }
+        let(:body) { { type: 'products', search_params: { name_cont: 'shirt' } } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['type']).to eq('Spree::Exports::Products')
+          expect(data['type']).to eq('products')
           expect(data['done']).to eq(false)
         end
       end

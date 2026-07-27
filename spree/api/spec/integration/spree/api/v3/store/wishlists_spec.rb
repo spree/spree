@@ -111,7 +111,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Expand wished_items'
+                description: 'Comma-separated associations to expand (eg items.product to get wishlist items with associated products)'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 

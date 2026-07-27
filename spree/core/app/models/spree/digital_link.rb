@@ -46,9 +46,15 @@ module Spree
 
     # This method should be called when a download is initiated.
     # It returns +true+ or +false+ depending on whether the authorization is granted.
+    #
+    # The access-limit check and the counter increment run inside a row lock so
+    # concurrent requests sharing the same token cannot each pass the cap before
+    # any of them increments the counter (TOCTOU race).
     def authorize!
       ActiveRecord::Base.connected_to(role: :writing) do
-        authorizable? && increment!(:access_counter, touch: true)
+        with_lock do
+          authorizable? && increment!(:access_counter, touch: true)
+        end
       end
     end
 

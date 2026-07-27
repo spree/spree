@@ -29,6 +29,26 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
         expect(assigns(:import).type).to eq('Spree::Imports::Products')
       end
     end
+
+    # The drawer builds a base Spree::Import with `type` assigned, so both
+    # links have to resolve from the column rather than the instance's class.
+    it 'offers the CSV template and the example file' do
+      get :new, params: { type: 'Spree::Imports::Products' }
+
+      expect(response.body).to include('data:text/csv')
+      expect(response.body).to include('products_import_template.csv')
+      expect(response.body).to include(Spree::Imports::Products.sample_csv_url)
+    end
+
+    it 'omits the example link for a type with no sample file' do
+      allow_any_instance_of(Spree::Import).to receive(:sample_csv_url).and_return(nil)
+
+      get :new, params: { type: 'Spree::Imports::Products' }
+
+      expect(response.body).not_to include('db/sample_data')
+      # The template link is schema-derived, so it is always available.
+      expect(response.body).to include('products_import_template.csv')
+    end
   end
 
   describe 'POST #create' do

@@ -1,6 +1,6 @@
 import type { Command } from 'commander'
 import { detectProject } from '../context.js'
-import { dockerComposeExec } from '../docker.js'
+import { dockerComposeExecOrRun } from '../docker.js'
 
 // Run any Rails command. Short for `spree exec bin/rails …`.
 //   spree rails runner 'puts Rails.env'
@@ -15,6 +15,6 @@ export function registerRailsCommand(program: Command): void {
     .passThroughOptions(true)
     .action(async (args: string[]) => {
       const ctx = detectProject()
-      await dockerComposeExec(['bin/rails', ...args], ctx.projectDir)
+      await dockerComposeExecOrRun(['bin/rails', ...args], ctx.projectDir)
     })
 }

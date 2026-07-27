@@ -66,11 +66,11 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
           type: {
             type: :string,
             enum: %w[
-              Spree::Imports::Products
-              Spree::Imports::Customers
-              Spree::Imports::ProductTranslations
+              products
+              customers
+              product_translations
             ],
-            example: 'Spree::Imports::Products'
+            example: 'products'
           },
           attachment: {
             type: :string,
@@ -97,13 +97,14 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) do
           {
-            type: 'Spree::Imports::Products',
+            type: 'products',
             attachment: csv_blob("slug,sku,name,price\nwidget,W-1,Widget,10.00\n").signed_id
           }
         end
 
         run_test! do |response|
           data = JSON.parse(response.body)
+          expect(data['type']).to eq('products')
           expect(data['status']).to eq('mapping')
           expect(data['csv_headers']).to eq(%w[slug sku name price])
           expect(data['mappings']).to be_an(Array)
@@ -131,17 +132,42 @@ RSpec.describe 'Admin Imports API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :type, in: :query, type: :string, required: true,
-                description: 'Registered import type, e.g. Spree::Imports::Products.'
+                description: 'Registered import type, e.g. products.'
 
       response '200', 'CSV template' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:type) { 'Spree::Imports::Products' }
+        let(:type) { 'products' }
 
         schema type: :string, format: :binary
 
         run_test! do |response|
           expect(response.content_type).to include('text/csv')
           expect(response.body).to start_with('slug,sku,name,price')
+        end
+      end
+    end
+  end
+
+  path '/api/v3/admin/imports/example' do
+    get 'Download an example import file' do
+      tags 'Imports'
+      security [api_key: [], bearer_auth: []]
+      description 'Redirects to a populated example CSV for the given import type — the same ' \
+                  'sample data `rake spree:load_sample_data` uses, pinned to the installed ' \
+                  'Spree version. Returns 404 for a type that ships no example file.'
+      admin_scope_note 'the write scope of the imported resource — `write_products` for product imports, `write_customers` for customer imports, etc.'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :type, in: :query, type: :string, required: true,
+                description: 'Registered import type, e.g. products.'
+
+      response '302', 'Redirect to the example CSV' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:type) { 'products' }
+
+        run_test! do |response|
+          expect(response.headers['Location']).to include('sample_data/products.csv')
         end
       end
     end

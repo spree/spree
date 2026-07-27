@@ -1,72 +1,100 @@
 # create-spree-app
 
+## 1.2.1
+
+### Patch Changes
+
+- [`61f85af`](https://github.com/spree/spree/commit/61f85af83531f3bf5f17aaf105f144b02336d73c) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Auto-enable the storefront wholesale B2B portal on sample-data scaffolds: create-spree-app writes `SPREE_WHOLESALE_CHANNEL=wholesale` into the storefront `.env.local`, and setup output points at the portal (`/wholesale`) with the buyer-approval flow. The portal runs on the default publishable key — no extra key or backend changes involved.
+
+## 1.2.0
+
+### Minor Changes
+
+- [`70ff9ac`](https://github.com/spree/spree/commit/70ff9ac7278a520521f4eeba9fd55f3802a4f6fb) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Support the pnpm-native storefront template (spree/storefront now ships a `pnpm-lock.yaml` and pins pnpm via `packageManager`):
+  - Point the relocated storefront CI's `pnpm/action-setup` and setup-node dependency cache at `apps/storefront/` — both resolve from the repo root by default, where the storefront's package.json and lockfile don't exist in the generated layout, failing the workflow outright on pnpm scaffolds.
+  - Stamp `packageManager` into the generated root package.json on pnpm scaffolds (steers corepack, and doubles as the pnpm version fallback for root-run workflows); omitted for npm/yarn scaffolds.
+  - Install the cloned storefront with `--frozen-lockfile` under pnpm so template manifest/lockfile drift fails loudly instead of resolving silently to an untested tree.
+  - Default the generated README/CLAUDE.md command examples to pnpm, matching the package-manager detection default.
+  - On yarn scaffolds, run storefront-scoped installs and command examples with pnpm — corepack-managed Yarn refuses to run inside the pnpm-pinned template, while the same corepack setup provisions the pinned pnpm on demand. npm scaffolds keep npm, which ignores the pin and keeps working.
+
+## 1.1.4
+
+### Patch Changes
+
+- Generated projects now test the storefront against their own customized
+  backend, not stock Spree. The storefront's CI workflow is relocated to the
+  project root (as `storefront-ci.yml`, renamed so it doesn't shadow the backend
+  check) and adapted to build `backend/Dockerfile` into a local image, which the
+  end-to-end suite boots via the new `SPREE_IMAGE` override — so E2E exercises the
+  exact Spree the project deploys, extensions and seed data included.
+
 ## 1.1.3
 
 ### Patch Changes
 
 - Single-node deployment out of the box: the relocated `render.yaml` now
-deploys the backend as a Docker service built from the repo root (verbatim
-from the starter — no more `rootDir` rewriting), so the ejected backend and
-your customized `apps/dashboard` ship in one image with the dashboard
-served same-origin at `/dashboard`. New projects also get a root
-`.dockerignore` keeping that build context to sources.
+  deploys the backend as a Docker service built from the repo root (verbatim
+  from the starter — no more `rootDir` rewriting), so the ejected backend and
+  your customized `apps/dashboard` ship in one image with the dashboard
+  served same-origin at `/dashboard`. New projects also get a root
+  `.dockerignore` keeping that build context to sources.
 
 ## 1.1.2
 
 ### Patch Changes
 
 - The React Dashboard is no longer prompted for — it's a work-in-progress
-Developer Preview, and a yes/no prompt reads as a recommendation. Include it
-with the new `--react-dashboard` flag (or later via `spree add dashboard`);
-the `--no-dashboard` flag is gone with the prompt.
+  Developer Preview, and a yes/no prompt reads as a recommendation. Include it
+  with the new `--react-dashboard` flag (or later via `spree add dashboard`);
+  the `--no-dashboard` flag is gone with the prompt.
 
 - Cut the duplicate output when scaffolding with the React Dashboard: the
-delegated `spree add dashboard` summary card is suppressed (its content
-lives in the main card), and the success card plus generated README present
-the dashboard's dev server as THE admin — the `cd apps/dashboard &&
+  delegated `spree add dashboard` summary card is suppressed (its content
+  lives in the main card), and the success card plus generated README present
+  the dashboard's dev server as THE admin — the `cd apps/dashboard &&
 pnpm dev` command with the admin credentials and a dim classic-admin
-pointer — instead of two admins where only the classic one carried
-credentials. `spree dev` co-runs that dev server with the API (one command,
-whole environment), so the printed URL is live as soon as the stack is up.
-For testing unreleased CLIs, the `SPREE_CLI_VERSION` env var overrides the
-scaffolded `@spree/cli` dependency spec (a range or a `file:` tarball path
-— same name as the starter Dockerfile's ARG). The scaffolded pin's floor is
-now `^2.4.4` — the CLI behavior the scaffold relies on; an older resolve
-would reject the new flags and silently drop the dashboard phase. Projects scaffolded without the dashboard keep the classic
-`/admin` block exactly as before. User-facing wording now calls the Rails
-app what it is to a storefront/dashboard developer — the Spree API
-("Customize the Spree API", "Start the Spree API") — ahead of the planned
-`backend/` → `api/` directory rename. Requires `@spree/cli` 2.4.4.
+  pointer — instead of two admins where only the classic one carried
+  credentials. `spree dev` co-runs that dev server with the API (one command,
+  whole environment), so the printed URL is live as soon as the stack is up.
+  For testing unreleased CLIs, the `SPREE_CLI_VERSION` env var overrides the
+  scaffolded `@spree/cli` dependency spec (a range or a `file:` tarball path
+  — same name as the starter Dockerfile's ARG). The scaffolded pin's floor is
+  now `^2.4.4` — the CLI behavior the scaffold relies on; an older resolve
+  would reject the new flags and silently drop the dashboard phase. Projects scaffolded without the dashboard keep the classic
+  `/admin` block exactly as before. User-facing wording now calls the Rails
+  app what it is to a storefront/dashboard developer — the Spree API
+  ("Customize the Spree API", "Start the Spree API") — ahead of the planned
+  `backend/` → `api/` directory rename. Requires `@spree/cli` 2.4.4.
 
 ## 1.1.1
 
 ### Patch Changes
 
 - A finished `create-spree-app` run now always means a working app. The
-optional storefront and React Dashboard phases used to abort the whole
-scaffold on failure — before the final setup phase (`spree init`: fresh
-image pull, seeded database, API keys) ever ran — leaving a project whose
-first boot silently started a stale, locally cached Spree image. Those
-phases now warn and continue with a recovery command, cleaning up their
-partial `apps/` directory so the recovery command actually works, and setup
-always runs. Project docs (README.md, CLAUDE.md, dependabot.yml) are
-generated after those phases from their actual outcomes, so they never
-document an app whose setup failed. When services can't start during
-scaffolding (`--no-start`, Docker off), the first `spree dev` completes
-setup automatically (requires `@spree/cli` 2.4.2), honoring the sample-data
-choice now persisted in `.env` (`SPREE_SAMPLE_DATA`), and the printed next
-steps plus the generated README reflect that — nobody has to know
-`spree init` exists.
+  optional storefront and React Dashboard phases used to abort the whole
+  scaffold on failure — before the final setup phase (`spree init`: fresh
+  image pull, seeded database, API keys) ever ran — leaving a project whose
+  first boot silently started a stale, locally cached Spree image. Those
+  phases now warn and continue with a recovery command, cleaning up their
+  partial `apps/` directory so the recovery command actually works, and setup
+  always runs. Project docs (README.md, CLAUDE.md, dependabot.yml) are
+  generated after those phases from their actual outcomes, so they never
+  document an app whose setup failed. When services can't start during
+  scaffolding (`--no-start`, Docker off), the first `spree dev` completes
+  setup automatically (requires `@spree/cli` 2.4.2), honoring the sample-data
+  choice now persisted in `.env` (`SPREE_SAMPLE_DATA`), and the printed next
+  steps plus the generated README reflect that — nobody has to know
+  `spree init` exists.
 
 ## 1.1.0
 
 ### Minor Changes
 
 - Offer the React Dashboard (Developer Preview) as an optional component: a new
-prompt (and `--no-dashboard` flag) scaffolds it into `apps/dashboard/` by
-delegating to the project-local `spree add dashboard` (the CLI bundles the
-starter template with version pins matching its release), and wires the
-README, CLAUDE.md, and Dependabot config.
+  prompt (and `--no-dashboard` flag) scaffolds it into `apps/dashboard/` by
+  delegating to the project-local `spree add dashboard` (the CLI bundles the
+  starter template with version pins matching its release), and wires the
+  README, CLAUDE.md, and Dependabot config.
 
 New projects now default to **pnpm** when it's installed — it's what the
 Spree packages and docs are built around. An explicit invoking agent

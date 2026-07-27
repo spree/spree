@@ -150,11 +150,35 @@ module Spree
               )
             end
 
-            headers = klass.new.schema_fields.map { |field| field[:name] }
-            send_data ::CSV.generate_line(headers),
-                      filename: "#{klass.name.demodulize.underscore}_import_template.csv",
+            import = klass.new
+            send_data import.template_csv,
+                      filename: import.template_csv_filename,
                       type: 'text/csv',
                       disposition: 'attachment'
+          end
+
+          # GET /api/v3/admin/imports/example?type=products
+          #
+          # Redirects to the populated example CSV for the type — the counterpart
+          # to `template` above. 404s for a type that ships no example file.
+          #
+          # The client can't build this URL itself: it is pinned to the
+          # installed Spree version, and exposing that version over the API
+          # would fingerprint the deployment for anyone matching CVEs. Resolving
+          # it here keeps the version server-side.
+          def example
+            klass = resolve_import_type(params[:type])
+            url = klass&.sample_csv_url
+
+            unless url
+              return render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:record_not_found],
+                message: 'No example CSV for this import type',
+                status: :not_found
+              )
+            end
+
+            redirect_to url, allow_other_host: true, status: :found
           end
 
           protected
@@ -215,15 +239,19 @@ module Spree
 
           # Returns the registered Import subclass matching `name`, or nil.
           #
-          # The constantize target comes from `available_types` (a trusted
-          # in-process registry), not from the request — `name` is only used
-          # to *select* an entry in the allowlist (same pattern as
+          # Takes the API shorthand (`"products"`), the same value the
+          # serializer emits. The fully-qualified class name is also accepted so
+          # a `type` read back from the API round-trips either way.
+          #
+          # The class comes from `available_types` (a trusted in-process
+          # registry), not from the request — `name` is only used to *select* an
+          # entry in the allowlist (same pattern as
           # ExportsController#resolve_export_type).
           def resolve_import_type(name)
             return nil if name.blank?
 
-            target = Spree::Import.available_types.map(&:to_s).find { |t| t == name.to_s }
-            target&.constantize
+            name = name.to_s
+            Spree::Import.available_types.find { |type| type.api_type == name || type.to_s == name }
           end
 
           private
@@ -241,7 +269,7 @@ module Spree
 
           def import_class
             case action_name
-            when 'create', 'template' then resolve_import_type(params[:type])
+            when 'create', 'template', 'example' then resolve_import_type(params[:type])
             else find_resource.class
             end
           end

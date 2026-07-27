@@ -76,7 +76,8 @@
       "remove_value": "Retirer la valeur",
       "breadcrumb_more": "Plus",
       "sidebar": "Barre latérale",
-      "sidebar_description": "Affiche la barre latérale mobile."
+      "sidebar_description": "Affiche la barre latérale mobile.",
+      "store_switcher": "Changer de boutique"
     },
     "common": {
       "loading": "Chargement…",
@@ -406,7 +407,8 @@
           "empty": "Aucun palier pour le moment. Le taux de base s’applique jusqu’à l’ajout d’un palier.",
           "add_tier": "Ajouter un palier",
           "remove_tier": "Supprimer le palier"
-        }
+        },
+        "unlimited": "Illimité"
       },
       "confirm_dialog": {
         "title": "Êtes-vous sûr ?"
