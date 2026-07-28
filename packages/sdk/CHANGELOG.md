@@ -1,5 +1,15 @@
 # @spree/sdk
 
+## 1.2.1
+
+### Patch Changes
+
+- [#14363](https://github.com/spree/spree/pull/14363) [`705e515`](https://github.com/spree/spree/commit/705e515ac881d071f45c768359380bd0ea5d23bd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `resource_type`, `inviter_type` and `invitee_type` on the `Invitation` type now return the API shorthand (`"store"`, `"admin_user"`) instead of the Ruby class name, matching how every other type field on the API is serialized. The TypeScript types are unchanged (`string | null`); only the values differ.
+
+- [#14361](https://github.com/spree/spree/pull/14361) [`f62ec82`](https://github.com/spree/spree/commit/f62ec82e4fff70653937e1b7a83fefce1c38f019) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - Expose product_id and Product at Wishlist Item
+
+- [#14353](https://github.com/spree/spree/pull/14353) [`8bf0dd0`](https://github.com/spree/spree/commit/8bf0dd070c9369549c54a9233bca97111d7aff11) Thanks [@ifizza](https://github.com/ifizza)! - `ProductFilterSortOption` now includes a `label` field — a human-readable name for custom-field-backed sort options (`cf_*` keys) returned by the product filters endpoint; `null` for built-in sort options.
+
 ## 1.2.0
 
 ### Minor Changes
