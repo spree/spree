@@ -145,6 +145,42 @@ bundle exec rake spree:upgrade:backfill_product_tag_tenants
 
 Sets the `tenant` column on existing `Spree::Product` taggings from each product's `store_id`. New product taggings tenant themselves automatically — only rows created before the upgrade need this. Until it runs, product tags created before the upgrade are hidden from the store's tag-autocomplete vocabulary (they reappear once it completes; storefront and admin tag *display* are unaffected).
 
+### Sanitize stored product descriptions (added in 5.6.2)
+
+Spree 5.6.2 sanitizes product description HTML on every write (`Spree::RichTextSanitizer` — strips `script` tags, event-handler attributes, and `javascript:` URLs; keeps tables, images, links, and safe inline styles). This task runs your **existing** descriptions and their translations through the same sanitizer:
+
+<CodeGroup>
+
+```bash Spree CLI (Docker)
+spree rake spree:sanitize_rich_text
+```
+
+```bash Without Spree CLI
+bundle exec rake spree:sanitize_rich_text
+```
+
+</CodeGroup>
+
+Idempotent — only rows whose sanitized output differs are rewritten, and a changed-row count is printed per model.
+
+<Note>
+**Already on 5.6.0 or 5.6.1?** This step was added to the manifest in 5.6.2, so a `spree:upgrade` you ran earlier did not include it. Re-run `spree:upgrade` after bumping (every step is idempotent, so the earlier steps are no-ops), or run just this one:
+
+```bash
+bundle exec rake spree:upgrade STEP=sanitize_rich_text
+```
+</Note>
+
+<Warning>
+`iframe` is stripped by default. If your descriptions embed videos or other iframes, permit the tag **before** running the task (and before saving products under 5.6.2):
+
+```ruby
+# config/initializers/spree.rb
+Spree::RichTextSanitizer.allowed_tags += %w[iframe]
+Spree::RichTextSanitizer.allowed_attributes += %w[allow allowfullscreen frameborder]
+```
+</Warning>
+
 ## Update the Spree SDK
 
 Spree 5.6 ships alongside `@spree/sdk` 1.2. The backend upgrade never touches your frontend source — bump the SDK in every JavaScript consumer of the Store API and take it through your normal PR/CI cycle:
@@ -185,3 +221,9 @@ With `store_id` on role assignments, an admin's abilities are scoped to the stor
 ### Product tag autocomplete is store-scoped
 
 The Admin API tag-autocomplete endpoint (`GET /api/v3/admin/tags`) now returns only tags used within the current store for store-owned taggables (products and orders). Customer tags remain global. If an integration relied on this endpoint returning tags across every store, that cross-store vocabulary is no longer exposed. Run [the tag-tenant backfill](#backfill-the-store-tenant-on-product-tags) so pre-upgrade product tags are included.
+
+### Product descriptions are sanitized on write (5.6.2)
+
+From 5.6.2, product description HTML is sanitized on save — Admin API writes, CSV imports, and translation writes all pass through `Spree::RichTextSanitizer`. `script`, event-handler attributes, and `javascript:` URLs are removed; tables, images, links, and safe inline CSS are preserved. The allowlist is configurable (`Spree::RichTextSanitizer.allowed_tags` / `.allowed_attributes`) — see [the sanitize task](#sanitize-stored-product-descriptions-added-in-562) for the iframe note. If an integration wrote raw `<script>` into descriptions for storefront injection, that pattern no longer works — move such code into your storefront theme.
+
+Sanitization runs in an ActiveRecord callback, so it covers writes that go through `save`/`update`. Callback-bypassing writes (`update_columns`, `update_all`, raw SQL) are not sanitized — if your code writes descriptions that way, call `Spree::RichTextSanitizer.sanitize` explicitly.
