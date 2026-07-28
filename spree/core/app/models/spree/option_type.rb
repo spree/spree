@@ -44,8 +44,8 @@ module Spree
       has_many :product_option_types
     end
     has_many :products, through: :product_option_types
-    has_many :option_type_prototypes, class_name: 'Spree::OptionTypePrototype'
-    has_many :prototypes, through: :option_type_prototypes, class_name: 'Spree::Prototype'
+    has_many :option_type_product_types, class_name: 'Spree::OptionTypeProductType', dependent: :destroy
+    has_many :product_types, through: :option_type_product_types, class_name: 'Spree::ProductType'
 
     # 5.5 API naming bridge (`label` → `presentation`) lives in
     # Spree::PresentationTranslatable.

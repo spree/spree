@@ -149,6 +149,8 @@ en:
         on_hand: On Hand
         shipping_category: Shipping Category
         tax_category: Tax Category
+      spree/product_type:
+        name: Name
       spree/promotion:
         advertise: Advertise
         code: Code
@@ -167,8 +169,6 @@ en:
       spree/property:
         name: Name
         presentation: Presentation
-      spree/prototype:
-        name: Name
       spree/return_authorization:
         amount: Amount
       spree/role:
@@ -473,6 +473,9 @@ en:
       spree/product:
         one: Product
         other: Products
+      spree/product_type:
+        one: Product Type
+        other: Product Types
       spree/promotion:
         one: Promotion
         other: Promotions
@@ -482,9 +485,6 @@ en:
       spree/property:
         one: Property
         other: Properties
-      spree/prototype:
-        one: Prototype
-        other: Prototypes
       spree/refund_reason:
         one: Refund Reason
         other: Refund Reasons
@@ -920,6 +920,11 @@ en:
         cannot_delete_channel_with_active_api_keys: Channel cannot be deleted while active API keys are bound to it. Revoke those keys first.
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
         channel_store_mismatch: must belong to the same store
+        delivery_zone_postal_definition_required: postal code member requires a prefix or a from/to range
+        delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
+        delivery_zone_range_inverted: must be greater than or equal to postal_code_from
+        delivery_zone_range_not_supported: postal code ranges are not supported for this country — use prefixes
+        exactly_one_of_cart_or_order: must belong to exactly one of cart or order
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_storefront_access: is not a valid storefront access level
@@ -1322,8 +1327,6 @@ en:
     propagate_all_variants: Propagate all variants
     properties: Properties
     property: Property
-    prototype: Prototype
-    prototypes: Prototypes
     provider: Provider
     published_at: Published at
     qty: Qty

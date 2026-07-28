@@ -40,10 +40,8 @@ module Spree
       product_categories
     end
 
-    # spree_prototype_taxons keeps its taxon_id column (the prototype join is
-    # renamed by 6.0-product-types), so pin the foreign key there.
-    has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon', foreign_key: :taxon_id, dependent: :destroy
-    has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::Prototype'
+    has_many :product_type_categories, class_name: 'Spree::ProductTypeCategory', foreign_key: :category_id, dependent: :destroy
+    has_many :product_types, through: :product_type_categories, class_name: 'Spree::ProductType'
 
     has_many :promotion_rule_categories, class_name: 'Spree::PromotionRuleCategory', dependent: :destroy
     has_many :promotion_rules, through: :promotion_rule_categories, class_name: 'Spree::PromotionRule'

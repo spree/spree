@@ -124,6 +124,7 @@ module Spree
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
+    belongs_to :product_type, class_name: 'Spree::ProductType', optional: true, counter_cache: :products_count
     has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::ShippingMethod'
 
     # Every product has at least one variant. `default_variant` is the "face" of
@@ -159,7 +160,7 @@ module Spree
 
     before_validation :ensure_default_shipping_category
 
-    after_create :add_associations_from_prototype
+    after_create :sync_associations_from_product_type
     after_create :apply_pending_variants, if: :pending_variants?
     after_create :ensure_default_variant
     after_create :set_default_variant
@@ -499,9 +500,6 @@ module Spree
     def tax_category
       @tax_category ||= super || TaxCategory.default
     end
-
-    # Adding properties and option types on creation based on a chosen prototype
-    attr_accessor :prototype_id
 
     def first_or_default_variant(currency)
       if !has_variants?
@@ -850,10 +848,16 @@ module Spree
       association(:default_variant).reset
     end
 
-    def add_associations_from_prototype
-      if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
-        self.option_types = prototype.option_types
-        self.categories = prototype.taxons
+    # Additive, unlike the legacy prototype callback which replaced both sets —
+    # the type is a floor the product builds on, never a ceiling.
+    def sync_associations_from_product_type
+      return unless product_type
+
+      product_type.option_types.each do |option_type|
+        option_types << option_type unless option_types.include?(option_type)
+      end
+      product_type.categories.each do |category|
+        categories << category unless categories.include?(category)
       end
     end
 

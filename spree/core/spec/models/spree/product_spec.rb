@@ -424,32 +424,52 @@ describe Spree::Product, type: :model do
   end
 
   describe '#create' do
-    let!(:prototype) { create(:prototype) }
-    let!(:product) { build(:product, name: 'Foo', price: 1.99, shipping_category: create(:shipping_category)) }
+    let!(:product_type) { create(:product_type) }
+    let!(:product) do
+      build(:product, name: 'Foo', price: 1.99, shipping_category: create(:shipping_category), product_type: product_type)
+    end
 
-    before { product.prototype_id = prototype.id }
-
-    context 'when prototype with option types is supplied' do
+    context 'when a product type with option types is supplied' do
       def build_option_type_with_values(name, values)
         values.each_with_object(create(:option_type, name: name)) do |val, ot|
           ot.option_values.create(name: val.downcase, presentation: val)
         end
       end
 
-      let(:prototype) do
+      let(:product_type) do
         size = build_option_type_with_values('size', %w(Small Medium Large))
-        create(:prototype, name: 'Size', option_types: [size])
+        create(:product_type, name: 'Size', option_types: [size])
       end
 
-      it 'creates option types based on the prototype' do
+      it 'adds the type option types to the product' do
         product.save
         expect(product.option_type_ids.length).to eq(1)
-        expect(product.option_type_ids).to eq(prototype.option_type_ids)
+        expect(product.option_type_ids).to eq(product_type.option_type_ids)
       end
 
-      it 'creates product option types based on the prototype' do
+      it 'creates product option types based on the product type' do
         product.save
-        expect(product.product_option_types.pluck(:option_type_id)).to eq(prototype.option_type_ids)
+        expect(product.product_option_types.pluck(:option_type_id)).to eq(product_type.option_type_ids)
+      end
+
+      it 'keeps option types the product already has (additive sync)' do
+        color = create(:option_type, name: 'color')
+        product.option_types = [color]
+
+        product.save
+
+        expect(product.option_type_ids).to match_array([color.id, *product_type.option_type_ids])
+      end
+    end
+
+    context 'when a product type with categories is supplied' do
+      let(:category) { create(:category) }
+
+      before { product_type.categories << category }
+
+      it 'adds the type categories to the product' do
+        product.save
+        expect(product.reload.categories).to include(category)
       end
     end
 
