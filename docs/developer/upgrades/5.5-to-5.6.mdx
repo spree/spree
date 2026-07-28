@@ -163,6 +163,14 @@ bundle exec rake spree:sanitize_rich_text
 
 Idempotent — only rows whose sanitized output differs are rewritten, and a changed-row count is printed per model.
 
+<Note>
+**Already on 5.6.0 or 5.6.1?** This step was added to the manifest in 5.6.2, so a `spree:upgrade` you ran earlier did not include it. Re-run `spree:upgrade` after bumping (every step is idempotent, so the earlier steps are no-ops), or run just this one:
+
+```bash
+bundle exec rake spree:upgrade STEP=sanitize_rich_text
+```
+</Note>
+
 <Warning>
 `iframe` is stripped by default. If your descriptions embed videos or other iframes, permit the tag **before** running the task (and before saving products under 5.6.2):
 
@@ -217,3 +225,5 @@ The Admin API tag-autocomplete endpoint (`GET /api/v3/admin/tags`) now returns o
 ### Product descriptions are sanitized on write (5.6.2)
 
 From 5.6.2, product description HTML is sanitized on save — Admin API writes, CSV imports, and translation writes all pass through `Spree::RichTextSanitizer`. `script`, event-handler attributes, and `javascript:` URLs are removed; tables, images, links, and safe inline CSS are preserved. The allowlist is configurable (`Spree::RichTextSanitizer.allowed_tags` / `.allowed_attributes`) — see [the sanitize task](#sanitize-stored-product-descriptions-added-in-562) for the iframe note. If an integration wrote raw `<script>` into descriptions for storefront injection, that pattern no longer works — move such code into your storefront theme.
+
+Sanitization runs in an ActiveRecord callback, so it covers writes that go through `save`/`update`. Callback-bypassing writes (`update_columns`, `update_all`, raw SQL) are not sanitized — if your code writes descriptions that way, call `Spree::RichTextSanitizer.sanitize` explicitly.

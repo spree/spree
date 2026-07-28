@@ -48,6 +48,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'nokogiri', '~> 1.18'
   s.add_dependency 'ostruct'
   s.add_dependency 'paranoia', '>= 2.4'
+  s.add_dependency 'rails-html-sanitizer', '~> 1.6'
   s.add_dependency 'ransack', '>= 4.1'
   s.add_dependency 'request_store', '~> 1.5'
   s.add_dependency 'rexml'

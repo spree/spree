@@ -81,3 +81,6 @@ steps:
       Spree::RichTextSanitizer.allowed_tags in an initializer BEFORE running.
       Idempotent; only rewrites rows whose sanitized output differs, and
       prints a changed-row count per model.
+      Added in 5.6.2: stores that already ran spree:upgrade on 5.6.0/5.6.1 did
+      not get this step — re-run spree:upgrade (earlier steps no-op) or run
+      `spree:upgrade STEP=sanitize_rich_text`.

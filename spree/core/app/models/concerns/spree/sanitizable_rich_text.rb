@@ -4,6 +4,10 @@ module Spree
   # Sanitizes rich text attributes through {Spree::RichTextSanitizer} before
   # they hit the database, covering every writer path that ends in a save
   # (Admin API, CSV import, console, translations upsert).
+  #
+  # Callback-bypassing writes — +update_columns+, +update_all+, raw SQL — are
+  # NOT covered by design; call {Spree::RichTextSanitizer.sanitize} explicitly
+  # when writing rich text through those paths.
   module SanitizableRichText
     extend ActiveSupport::Concern
 
