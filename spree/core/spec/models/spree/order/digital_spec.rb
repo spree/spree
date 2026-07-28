@@ -40,7 +40,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context 'Spree::Cart::AddItem.call' do
+  context 'Spree::Carts::AddItem.call' do
     it 'adds digital Variants of quantity 1 to an order' do
       order = create(:order)
       variants = 3.times.map { create(:variant, digitals: [create(:digital)], product: digital_product) }
@@ -122,6 +122,6 @@ describe Spree::Order, type: :model do
   end
 
   def add_line_item_to_order(order, variant, quantity)
-    Spree::Cart::AddItem.call(order: order, variant: variant, quantity: quantity)
+    Spree::Carts::AddItem.call(order: order, variant: variant, quantity: quantity)
   end
 end

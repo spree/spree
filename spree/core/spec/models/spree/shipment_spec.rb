@@ -376,7 +376,7 @@ describe Spree::Shipment, type: :model do
   context 'manifest' do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
-    let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: variant).value }
+    let!(:line_item) { Spree::Carts::AddItem.call(order: order, variant: variant).value }
     let!(:shipment) { order.create_proposed_shipments.first }
 
     it 'returns variant expected' do
@@ -697,10 +697,10 @@ describe Spree::Shipment, type: :model do
       let(:other_order) { create(:order) }
 
       before do
-        Spree::Cart::AddItem.call(order: order, variant: variant)
+        Spree::Carts::AddItem.call(order: order, variant: variant)
         order.create_proposed_shipments
 
-        Spree::Cart::AddItem.call(order: other_order, variant: variant)
+        Spree::Carts::AddItem.call(order: other_order, variant: variant)
         other_order.create_proposed_shipments
       end
 

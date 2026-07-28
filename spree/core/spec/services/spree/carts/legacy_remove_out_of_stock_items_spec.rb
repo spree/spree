@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Cart::RemoveOutOfStockItems do
+RSpec.describe Spree::Carts::RemoveOutOfStockItems do
   subject { described_class }
 
   let(:store) { @default_store }

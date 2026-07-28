@@ -1,5 +1,5 @@
 module Spree
-  module Cart
+  module Carts
     class RemoveLineItem
       prepend Spree::ServiceModule::Base
 

@@ -71,7 +71,7 @@ module Spree
     # would drop warnings already recorded upstream.
     def remove_out_of_stock_items!
       existing_warnings = warnings
-      result = Spree::Cart::RemoveOutOfStockItems.call(order: self)
+      result = Spree::Carts::RemoveOutOfStockItems.call(order: self)
       return self unless result.success?
 
       order, _messages, new_warnings = result.value
@@ -112,9 +112,14 @@ module Spree
       go_to_state :complete
     end
 
+    # lock_version (renamed from state_lock_version) drives the API's manual
+    # optimistic concurrency (compare client-sent version, 409 on mismatch) —
+    # Rails auto-locking must not raise on internal saves.
+    self.lock_optimistically = false
+
     self.whitelisted_ransackable_associations = %w[shipments user created_by approver canceler promotions bill_address ship_address line_items store channel tags]
     self.whitelisted_ransackable_attributes = %w[
-      completed_at email number state status payment_state shipment_state
+      completed_at email number state status payment_status payment_state shipment_state
       total item_total item_count considered_risky channel_id currency
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
@@ -149,6 +154,9 @@ module Spree
     alias_attribute :customer_id, :user_id
 
     belongs_to :user, class_name: "::#{Spree.user_class}", optional: true, autosave: true
+    # The cart this order was completed from (unique — the completion
+    # idempotency key). Backoffice draft orders have no cart.
+    belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :order
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
@@ -211,7 +219,8 @@ module Spree
     alias_attribute :delivery_total, :shipment_total
     alias display_delivery_total display_shipment_total
     alias_attribute :fulfillment_status, :shipment_state
-    alias_attribute :payment_status, :payment_state
+    # Deprecated alias — the column is payment_status since 6.0; remove in 6.1.
+    alias_attribute :payment_state, :payment_status
 
     delegate :has_markets?, to: :store, prefix: true
 
@@ -246,7 +255,7 @@ module Spree
       validates :currency
       validates :locale
     end
-    validates :payment_state,        inclusion:    { in: PAYMENT_STATES, allow_blank: true }
+    validates :payment_status,       inclusion:    { in: PAYMENT_STATES, allow_blank: true }
     validates :shipment_state,       inclusion:    { in: SHIPMENT_STATES, allow_blank: true }
     validates :item_total,           POSITIVE_MONEY_VALIDATION
     validates :adjustment_total,     MONEY_VALIDATION
@@ -551,7 +560,7 @@ module Spree
     end
 
     # Associates the specified user with the order.
-    # Delegates to {Spree::Cart::Associate} service.
+    # Delegates to {Spree::Carts::Associate} service.
     #
     # @param user [Spree.user_class] the user to associate with the order
     # @param override_email [Boolean] whether to override the order email with the user's email

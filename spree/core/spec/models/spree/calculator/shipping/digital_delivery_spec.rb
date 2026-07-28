@@ -76,6 +76,6 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
   end
 
   def add_line_item_to_order(order, variant, quantity)
-    Spree::Cart::AddItem.call(order: order, variant: variant, quantity: quantity)
+    Spree::Carts::AddItem.call(order: order, variant: variant, quantity: quantity)
   end
 end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Cart::AddItem do
+  describe Carts::AddItem do
     subject { described_class }
 
     let(:order) { create :order, total: 100 }

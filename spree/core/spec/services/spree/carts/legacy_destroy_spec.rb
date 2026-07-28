@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Cart::Destroy do
+  describe Carts::Destroy do
     subject { described_class.call order: order }
 
     context 'when order is given' do
@@ -95,7 +95,7 @@ module Spree
         end
 
         context 'when empty service is called first' do
-          before { Spree::Cart::Empty.call(order: order) }
+          before { Spree::Carts::Empty.call(order: order) }
 
           it 'destroys the order' do
             expect(order.destroyed?).not_to be true

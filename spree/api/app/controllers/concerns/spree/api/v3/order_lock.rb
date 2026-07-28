@@ -16,14 +16,14 @@ module Spree
 
           order.with_lock do
             # Persist increment within the transaction so reloads inside yield see the new version
-            new_version = order.state_lock_version + 1
-            order.update_column(:state_lock_version, new_version)
+            new_version = order.lock_version + 1
+            order.update_column(:lock_version, new_version)
 
             yield
 
             if performed? && response.status >= 400
               # Operation failed — revert the increment
-              order.update_column(:state_lock_version, new_version - 1)
+              order.update_column(:lock_version, new_version - 1)
             end
           end
         end

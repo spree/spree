@@ -139,7 +139,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
           msg = "Expected promo1 to be used (using sequence #{promo_sequence})"
           expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo1), msg
 
-          Spree::Cart::AddItem.call(order: order, variant: create(:variant, price: 10))
+          Spree::Carts::AddItem.call(order: order, variant: create(:variant, price: 10))
           order.save
 
           order.reload
@@ -172,7 +172,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
           msg = "Expected line_item_promo1 to be used (using sequence #{promo_sequence})"
           expect(order.all_adjustments.first.source.promotion).to eq(line_item_promo1), msg
 
-          Spree::Cart::AddItem.call(order: order, variant: create(:variant, price: 10))
+          Spree::Carts::AddItem.call(order: order, variant: create(:variant, price: 10))
           order.save
 
           order.reload

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Cart::SetQuantity do
+  describe Carts::SetQuantity do
     subject { described_class }
 
     let(:store) { @default_store }

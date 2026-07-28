@@ -1778,7 +1778,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'returns the same promotion code after line item removal' do
-          Spree::Cart::RemoveLineItem.call(order: order, line_item: order.line_items.first)
+          Spree::Carts::RemoveLineItem.call(order: order, line_item: order.line_items.first)
           expect(order.reload.promo_code).to eq(coupon_code.code)
         end
       end

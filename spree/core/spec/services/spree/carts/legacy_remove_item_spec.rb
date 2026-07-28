@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Cart::RemoveItem do
+  describe Carts::RemoveItem do
     subject { described_class }
 
     let(:order) { create :order, line_items: [line_item] }

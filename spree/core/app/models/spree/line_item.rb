@@ -12,7 +12,8 @@ module Spree
     before_validation :ensure_valid_quantity
 
     with_options inverse_of: :line_items do
-      belongs_to :order, class_name: 'Spree::Order', touch: true
+      belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
+      belongs_to :cart, class_name: 'Spree::Cart', touch: true, optional: true
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory'
@@ -29,7 +30,8 @@ module Spree
     before_validation :copy_price
     before_validation :copy_tax_category
 
-    validates :variant, :order, presence: true
+    validates :variant, presence: true
+    validate :exactly_one_owner
 
     DB_INTEGER_MAX = (2**31) - 1
 
@@ -43,9 +45,9 @@ module Spree
     validates :price, numericality: true
 
     validates_with Spree::Stock::AvailabilityValidator, if: -> { variant.present? }
-    validate :ensure_proper_currency, if: -> { order.present? }
+    validate :ensure_proper_currency, if: -> { owner.present? }
 
-    before_destroy :verify_order_inventory_before_destroy, if: -> { order.has_checkout_step?('delivery') }
+    before_destroy :verify_order_inventory_before_destroy, if: -> { order&.has_checkout_step?('delivery') }
 
     after_save :update_inventory
     after_save :update_adjustments
@@ -61,7 +63,7 @@ module Spree
     def thumbnail
       variant.primary_media || product.primary_media
     end
-    delegate :tax_zone, to: :order
+    delegate :tax_zone, to: :owner
     delegate :digital?, :can_supply?, to: :variant
 
     scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
@@ -75,16 +77,24 @@ module Spree
                                                  pre_tax_amount taxable_adjustment_total
                                                  non_taxable_adjustment_total]
 
+    # The exactly-one owner of this line item — the cart during checkout, the
+    # order after completion. New code must read +owner+, never assume +order+.
+    #
+    # @return [Spree::Cart, Spree::Order, nil]
+    def owner
+      order || cart
+    end
+
     def copy_price
       if variant
         update_price if price.nil?
         self.cost_price = variant.cost_price if cost_price.nil?
-        self.currency = order.currency if currency.nil?
+        self.currency = owner.currency if currency.nil? && owner
       end
     end
 
     def update_price
-      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      context = Spree::Pricing::Context.from_order(variant, owner, quantity: quantity)
       currency_price = variant.price_for(context)
 
       self.price = currency_price.price_including_vat_for(tax_zone: tax_zone) if currency_price.present?
@@ -156,12 +166,12 @@ module Spree
       basis = taxable_amount
       return basis if basis <= 0
 
-      order_discount = order.order_level_promo_total
+      order_discount = owner.order_level_promo_total
       return basis if order_discount.zero?
 
       # summed in SQL so the allocation uses the persisted adjustment totals
       # of all line items, not a possibly stale cached association
-      items_total = order.line_items.reorder(nil).pick(
+      items_total = owner.line_items.reorder(nil).pick(
         Arel.sql('COALESCE(SUM(price * quantity + taxable_adjustment_total), 0)')
       )
       return basis if items_total <= 0
@@ -250,7 +260,7 @@ module Spree
 
       opts = options.dup # we will be deleting from the hash, so leave the caller's copy intact
 
-      currency = opts.delete(:currency) || order.try(:currency)
+      currency = opts.delete(:currency) || owner&.currency
 
       update_price_from_modifier(currency, opts)
       assign_attributes opts
@@ -274,7 +284,7 @@ module Spree
     # This is used for volume-based pricing and other price list rules
     # @return [void]
     def recalculate_price
-      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      context = Spree::Pricing::Context.from_order(variant, owner, quantity: quantity)
       currency_price = variant.price_for(context)
 
       return unless currency_price.present?
@@ -311,7 +321,7 @@ module Spree
     end
 
     def update_inventory
-      if (saved_changes? || target_shipment.present?) && order.has_checkout_step?('delivery')
+      if (saved_changes? || target_shipment.present?) && order&.has_checkout_step?('delivery')
         verify_order_inventory
       end
     end
@@ -337,7 +347,7 @@ module Spree
     # By default, prices are not updated after an order is completed
     # @return [Boolean]
     def should_update_price?
-      !order.completed?
+      !owner.completed?
     end
 
     def recalculate_adjustments
@@ -345,13 +355,19 @@ module Spree
     end
 
     def update_tax_charge
+      return unless order
+
       Spree::TaxRate.adjust(order, [self])
     end
 
     def ensure_proper_currency
-      unless currency == order.currency
+      unless currency == owner.currency
         errors.add(:currency, :must_match_order_currency)
       end
+    end
+
+    def exactly_one_owner
+      errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
   end
 end

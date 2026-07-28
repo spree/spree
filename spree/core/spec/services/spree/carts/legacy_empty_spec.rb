@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Cart::Empty do
+  describe Carts::Empty do
     subject { described_class.call order: order }
 
     context 'when order is given' do

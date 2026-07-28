@@ -1,5 +1,5 @@
 module Spree
-  module Cart
+  module Carts
     class AddItem
       prepend Spree::ServiceModule::Base
 

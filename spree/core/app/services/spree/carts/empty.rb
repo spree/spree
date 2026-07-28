@@ -1,5 +1,5 @@
 module Spree
-  module Cart
+  module Carts
     class Empty
       prepend Spree::ServiceModule::Base
 

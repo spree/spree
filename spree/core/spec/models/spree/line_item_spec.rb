@@ -8,6 +8,33 @@ describe Spree::LineItem, type: :model do
   it_behaves_like 'metadata'
   it_behaves_like 'lifecycle events'
 
+  describe '#owner (cart/order split)' do
+    let(:cart) { create(:cart) }
+
+    it 'requires exactly one of cart or order' do
+      li = build(:line_item)
+      expect(li).to be_valid
+
+      li.cart = cart
+      expect(li).not_to be_valid
+
+      li.order = nil
+      li.currency = cart.currency
+      expect(li).to be_valid
+      expect(li.owner).to eq(cart)
+
+      li.cart = nil
+      expect(li).not_to be_valid
+    end
+
+    it 'copies the currency from a cart owner' do
+      li = create(:line_item, order: nil, cart: cart, currency: nil)
+
+      expect(li.currency).to eq(cart.currency)
+      expect(li.owner).to eq(cart)
+    end
+  end
+
   describe 'Validations' do
     describe 'ensure_proper_currency' do
       context 'order is present' do
@@ -191,7 +218,7 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'creates a tax adjustment' do
-        Spree::Cart::AddItem.call(order: order, variant: variant)
+        Spree::Carts::AddItem.call(order: order, variant: variant)
         line_item = order.find_line_item_by_variant(variant)
         expect(line_item.adjustments.tax.count).to eq(1)
       end
@@ -206,7 +233,7 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'does not create a tax adjustment' do
-        Spree::Cart::AddItem.call(order: order, variant: variant)
+        Spree::Carts::AddItem.call(order: order, variant: variant)
 
         line_item = order.find_line_item_by_variant(variant)
         expect(line_item.adjustments.tax.count).to eq(0)
@@ -336,7 +363,7 @@ describe Spree::LineItem, type: :model do
     context 'nothing left on stock' do
       before do
         variant.stock_items.update_all count_on_hand: 5, backorderable: false
-        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
+        Spree::Carts::AddItem.call(order: order, variant: variant, quantity: 5)
         order.create_proposed_shipments
         order.finalize!
         order.reload
@@ -365,7 +392,7 @@ describe Spree::LineItem, type: :model do
     context '2 items left on stock' do
       before do
         variant.stock_items.update_all count_on_hand: 7, backorderable: false
-        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
+        Spree::Carts::AddItem.call(order: order, variant: variant, quantity: 5)
         order.create_proposed_shipments
         order.finalize!
         order.reload
@@ -701,7 +728,7 @@ describe Spree::LineItem, type: :model do
       let!(:volume_price) { create(:price, variant: variant, currency: 'USD', amount: 7.00, price_list: price_list) }
 
       it 'applies volume price on initial creation' do
-        result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 15)
+        result = Spree::Carts::AddItem.call(order: order, variant: variant, quantity: 15)
         expect(result.success?).to be true
 
         new_line_item = order.line_items.find_by(variant: variant)
@@ -710,7 +737,7 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'does not apply volume price when quantity is below threshold' do
-        result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
+        result = Spree::Carts::AddItem.call(order: order, variant: variant, quantity: 5)
         expect(result.success?).to be true
 
         new_line_item = order.line_items.find_by(variant: variant)

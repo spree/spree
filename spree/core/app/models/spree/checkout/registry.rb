@@ -69,18 +69,28 @@ module Spree
           requirements.reject! { |r| r.step == step.to_s && r.field == field.to_s }
         end
 
-        # Returns steps sorted by +before+/+after+ constraints relative to the checkout flow.
+        # Canonical ordered list of built-in checkout step names, used to
+        # resolve +before:+/+after:+ anchors. The registry owns this list —
+        # installs that reorder or remove built-in steps set it directly
+        # (+base_step_names=+) instead of customizing the removed
+        # +checkout_flow+ state machine API.
         #
-        # The sort order is derived from {Spree::Order.checkout_step_names} so it
-        # stays in sync with any customizations to the checkout state machine.
-        # Steps with +before:+/+after:+ anchors are ordered by the anchor's position;
-        # steps without constraints are appended at the end.
+        # @return [Array<String>]
+        def base_step_names
+          @base_step_names ||= %w[address delivery payment confirm complete]
+        end
+
+        attr_writer :base_step_names
+
+        # Returns steps sorted by +before+/+after+ constraints relative to
+        # {base_step_names}. Steps with anchors are ordered by the anchor's
+        # position; steps without constraints are appended at the end.
         #
         # @return [Array<Step>] steps in display order
         def ordered_steps
           return steps if steps.empty?
 
-          step_order = Spree::Order.checkout_step_names.map(&:to_s)
+          step_order = base_step_names.map(&:to_s)
           positioned, unpositioned = steps.partition { |s| s.before || s.after }
 
           sorted = positioned.sort_by do |s|
@@ -105,6 +115,7 @@ module Spree
         def reset!
           @steps = []
           @requirements = []
+          @base_step_names = nil
         end
       end
     end

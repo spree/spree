@@ -7,21 +7,20 @@ module Spree
         # ability
         ability_class: 'Spree::Ability',
 
-        # cart
+        # cart — the legacy Spree::Cart::* namespace is gone (Spree::Cart is the
+        # cart model since 6.0); surviving services live under Spree::Carts::.
+        # cart_create/update/estimate_shipping_rates/change_currency service
+        # registrations were removed with their dead implementations.
         cart_compare_line_items_service: 'Spree::CompareLineItems',
-        cart_create_service: 'Spree::Cart::Create',
-        cart_add_item_service: 'Spree::Cart::AddItem',
-        cart_update_service: 'Spree::Cart::Update',
-        cart_recalculate_service: 'Spree::Cart::Recalculate',
-        cart_remove_item_service: 'Spree::Cart::RemoveItem',
-        cart_remove_line_item_service: 'Spree::Cart::RemoveLineItem',
-        cart_set_item_quantity_service: 'Spree::Cart::SetQuantity',
-        cart_estimate_shipping_rates_service: 'Spree::Cart::EstimateShippingRates',
-        cart_empty_service: 'Spree::Cart::Empty',
-        cart_destroy_service: 'Spree::Cart::Destroy',
-        cart_associate_service: 'Spree::Cart::Associate',
-        cart_change_currency_service: 'Spree::Cart::ChangeCurrency',
-        cart_remove_out_of_stock_items_service: 'Spree::Cart::RemoveOutOfStockItems',
+        cart_add_item_service: 'Spree::Carts::AddItem',
+        cart_recalculate_service: 'Spree::Carts::Recalculate',
+        cart_remove_item_service: 'Spree::Carts::RemoveItem',
+        cart_remove_line_item_service: 'Spree::Carts::RemoveLineItem',
+        cart_set_item_quantity_service: 'Spree::Carts::SetQuantity',
+        cart_empty_service: 'Spree::Carts::Empty',
+        cart_destroy_service: 'Spree::Carts::Destroy',
+        cart_associate_service: 'Spree::Carts::Associate',
+        cart_remove_out_of_stock_items_service: 'Spree::Carts::RemoveOutOfStockItems',
 
         # carts
         carts_complete_service: 'Spree::Carts::Complete',

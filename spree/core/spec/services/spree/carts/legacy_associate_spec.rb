@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Cart::Associate do
+  describe Carts::Associate do
     subject { described_class.call(guest_order: order, user: user) }
     let(:user) { create(:user) }
 

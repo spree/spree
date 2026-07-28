@@ -1,5 +1,5 @@
 module Spree
-  module Cart
+  module Carts
     class SetQuantity
       prepend Spree::ServiceModule::Base
 
