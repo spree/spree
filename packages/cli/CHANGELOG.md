@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.4.9
+
+### Patch Changes
+
+- [#14357](https://github.com/spree/spree/pull/14357) [`f811d1e`](https://github.com/spree/spree/commit/f811d1ee5f604e24f86aa59be3317f87627fe3c7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - The bundled offline Admin API spec now documents the `stores` array on admin user responses, and the `searchable`, `sortable`, and `filter_key` fields on custom field definitions.
+
 ## 2.4.8
 
 ### Patch Changes
@@ -205,6 +211,7 @@ dashboard` wrote `VITE_SPREE_API_URL=http://localhost:<port>` into
 ### Minor Changes
 
 - New `spree api` and `spree auth` command groups — a generic Admin API client (`get`/`post`/`patch`/`delete`) built into the CLI:
+
   - `spree api get|post|patch|delete <path>` — generic verbs with Ransack `-q` filters, `--sort`/`--page`/`--limit`/`--expand`/`--fields`, and JSON bodies from inline/`@file`/stdin
   - `spree api endpoints` / `spree api schema` — offline schema introspection over a bundled OpenAPI snapshot, including each endpoint's required scope
   - `spree api status` — resolved credentials + server reachability
