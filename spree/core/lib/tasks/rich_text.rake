@@ -4,10 +4,9 @@ namespace :spree do
     +Spree::RichTextSanitizer+ — +spree_products.description+ and its
     per-locale translations.
 
-    Never runs automatically: a minor release must not silently mutate merchant
-    content. Run it once after upgrading to Spree 5.6+, ideally after reviewing
-    the allowlist (+Spree::RichTextSanitizer.allowed_tags+ /
-    +allowed_attributes+) and re-permitting anything your content relies on,
+    Run through +spree:upgrade+ (or on its own) after upgrading to Spree 5.6.2+,
+    ideally after reviewing the allowlist (+Spree::RichTextSanitizer.allowed_tags+
+    / +allowed_attributes+) and re-permitting anything your content relies on,
     e.g. +iframe+ for embedded videos.
 
     Idempotent — rows whose sanitized output already matches what is stored are
@@ -15,23 +14,24 @@ namespace :spree do
     webhooks don't churn.
   DESC
   task sanitize_rich_text: :environment do
-    changed = Hash.new(0)
+    sanitize = lambda do |record|
+      sanitized = Spree::RichTextSanitizer.sanitize(record.description)
+      next false if sanitized == record.description
 
-    [Spree::Product.with_deleted, Spree::Product::Translation.all].each do |relation|
-      model = relation.model
-
-      relation.where.not(description: [nil, '']).in_batches do |batch|
-        batch.each do |record|
-          sanitized = Spree::RichTextSanitizer.sanitize(record.description)
-          next if sanitized == record.description
-
-          record.update_columns(description: sanitized)
-          changed[model.name] += 1
-        end
-      end
+      record.update_columns(description: sanitized)
+      true
     end
 
-    changed.each { |model_name, count| puts "  #{model_name}: sanitized #{count} description(s)." }
-    puts '  Nothing to sanitize — all stored descriptions already match the allowlist.' if changed.empty?
+    products = 0
+    Spree::Product.with_deleted.where.not(description: [nil, '']).find_each do |product|
+      products += 1 if sanitize.call(product)
+    end
+    puts "  Spree::Product: sanitized #{products} description(s)."
+
+    translations = 0
+    Spree::Product::Translation.where.not(description: [nil, '']).find_each do |translation|
+      translations += 1 if sanitize.call(translation)
+    end
+    puts "  Spree::Product::Translation: sanitized #{translations} description(s)."
   end
 end
