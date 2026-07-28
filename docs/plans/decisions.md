@@ -408,3 +408,36 @@ same format `has_secure_password` reads — so the rake task migrating
 spree-starter installs onto `spree_customers` copies it to `password_digest`
 and **no customer resets their password** (task aborts loudly if
 `Devise.pepper` is set).
+
+## 2026-07-28: Core-rewrite implementation decisions (cart/order split + fulfillment + split adjustments)
+
+Interactive review settled everything blocking implementation start; task
+sequencing lives in `docs/plans/6.0-core-rewrite-tasks.md` (7 waves, data
+rake tasks last).
+
+1. **ProductType prerequisite is the minimal Phase 1 slice** — rename +
+   store ownership + `fulfillment_types` + `Product#product_type_id`. The
+   rest of `6.0-product-types.md` (custom-field-definition join, live
+   template propagation, its API/dashboard) ships as its own effort.
+2. **`spree_admin` is dropped from the spree-starter Gemfile on the 6.0
+   line.** The legacy admin's adjustments/checkout screens hard-break when
+   `Spree::Adjustment` and the Order state machine are removed; rather than
+   limp on aliases, the dev server stops loading the gem — the React
+   dashboard is the only admin. The gem stays in the monorepo untouched
+   (it's already out of the CI matrix) until its 6.0 deletion; one-release
+   constant aliases (`Spree::Shipment = Spree::Fulfillment`, …) still ship
+   for extensions and the emails gem.
+3. **`checkout_flow`/`insert_checkout_step` are hard-removed in 6.0** — no
+   translation shim (machine transitions have no `Checkout::Registry`
+   equivalent); migration guide instead.
+4. **`DeliveryRate` carries no owner columns** — it derives `owner` through
+   its fulfillment. The dual-FK pattern covers LineItem, the typed money
+   lines, and Fulfillment; rates were never directly order-linked.
+5. **Cart reaper defaults: guest 30d, customer 90d, empty carts 48h**
+   (config preferences; carts with authorized/pending payment sessions are
+   never reaped, unconditionally).
+6. **`shipment.*` webhooks dual-emit for exactly one release**, dropped in 6.1.
+7. **`ready_for_pickup` is a first-class Store API status** (not mapped
+   onto `ready`); the order-level rollup still reports `ready`.
+8. **`partially_canceled` becomes a derived predicate** over child
+   cancellations, not a stored status value.
