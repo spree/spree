@@ -382,3 +382,29 @@ behavior), dashboard UI, API fields. Industry: the hosted market leader combines
 (merchant-controlled), OSS platform A stacks all valid with caps, OSS platform C stacks
 priority-ordered, OSS platform B winner-only — merchant control is the differentiated
 middle.
+
+## 2026-07-28: Customer/AdminUser models ship in the gem — no host-app model, no auth generators
+
+Review of `6.0-platform-auth.md` surfaced an unstated inversion: today's default
+production setup is a host-app-owned Devise `Spree::User` (scaffolded by the
+`spree/authentication/devise` generator), while the plan's gem-shipped
+`Spree::Customer`/`Spree::AdminUser` were only implicit. Made explicit:
+**default models live in `spree_core` like any other Spree model; the host app
+owns no auth code by default; both authentication generator directories
+(`devise/` AND `custom/`) are deleted.** The only historic reason for an
+app-local user model was Devise's `devise_for`/`devise :...` requirement —
+dropping Devise removes it.
+
+Rationale: auth is the worst place for generated-then-orphaned code (lockout,
+rate limiting, future MFA never reach a scaffolded model without hand-merges);
+matches the 6.0 strategy of customization via configuration over Rails code in
+the host app. Custom user classes stay fully supported via
+`Spree.customer_class` + a single `include Spree::CustomerMethods` (which
+absorbs `UserAddress` + `UserPaymentSource`) — a documented recipe, not a
+generator.
+
+Migration bonus: Devise's `encrypted_password` is a plain bcrypt digest — the
+same format `has_secure_password` reads — so the rake task migrating
+spree-starter installs onto `spree_customers` copies it to `password_digest`
+and **no customer resets their password** (task aborts loudly if
+`Devise.pepper` is set).
