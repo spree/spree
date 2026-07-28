@@ -255,6 +255,162 @@ module Spree
         end
       end
 
+      context 'with searchable metafields' do
+        let!(:definition) do
+          create(:metafield_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'label')
+        end
+
+        before do
+          product_2.set_metafield(definition, 'wool-blend')
+        end
+
+        it 'finds products by searchable metafield value' do
+          result = provider.search_and_filter(scope: scope, query: 'wool')
+          expect(result.products).to include(product_2)
+          expect(result.products).not_to include(product_1, product_3)
+        end
+      end
+
+      context 'with sortable metafields' do
+        let!(:definition) do
+          create(:metafield_definition, :short_text_field, :sortable,
+                 namespace: 'custom', key: 'label')
+        end
+
+        before do
+          product_1.set_metafield(definition, 'charlie')
+          product_2.set_metafield(definition, 'alpha')
+          product_3.set_metafield(definition, 'bravo')
+        end
+
+        it 'sorts ascending by cf_* attribute' do
+          result = provider.search_and_filter(scope: scope, sort: 'cf_custom_label')
+          expect(result.products.map(&:id)).to eq([product_2.id, product_3.id, product_1.id])
+        end
+
+        it 'sorts descending by -cf_* attribute' do
+          result = provider.search_and_filter(scope: scope, sort: '-cf_custom_label')
+          expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
+        end
+
+        it 'sorts with Ransack filters present (SELECT DISTINCT compatible)' do
+          result = provider.search_and_filter(
+            scope: scope,
+            filters: { 'name_cont' => 'Blue' },
+            sort: 'cf_custom_label'
+          )
+          expect(result.products.map(&:id)).to eq([product_3.id, product_1.id])
+        end
+
+        context 'with missing metafield values' do
+          before do
+            product_2.metafields.destroy_all
+          end
+
+          it 'keeps missing values last when sorting ascending' do
+            result = provider.search_and_filter(scope: scope, sort: 'cf_custom_label')
+            expect(result.products.map(&:id)).to eq([product_3.id, product_1.id, product_2.id])
+          end
+
+          it 'keeps missing values last when sorting descending' do
+            result = provider.search_and_filter(scope: scope, sort: '-cf_custom_label')
+            expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
+          end
+        end
+      end
+
+      context 'with metafield filters' do
+        let!(:material) do
+          create(:metafield_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'material')
+        end
+        let!(:weight) do
+          create(:metafield_definition, :number_field, :sortable,
+                 namespace: 'custom', key: 'weight')
+        end
+
+        before do
+          product_1.set_metafield(material, 'wool-blend')
+          product_2.set_metafield(material, 'cotton')
+          product_1.set_metafield(weight, '10')
+          product_2.set_metafield(weight, '2')
+          product_3.set_metafield(weight, '3.5')
+        end
+
+        it 'filters text values with cont' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_cont' => 'wool' })
+          expect(result.products).to contain_exactly(product_1)
+          expect(result.total_count).to eq(1)
+        end
+
+        it 'filters text values case-insensitively with i_cont' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_i_cont' => 'WOOL' })
+          expect(result.products).to contain_exactly(product_1)
+        end
+
+        it 'filters text values with eq' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_eq' => 'cotton' })
+          expect(result.products).to contain_exactly(product_2)
+        end
+
+        it 'filters text values with not_eq (value set and different)' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_not_eq' => 'cotton' })
+          expect(result.products).to contain_exactly(product_1)
+        end
+
+        it 'filters text values with start and end' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_start' => 'wool' })
+          expect(result.products).to contain_exactly(product_1)
+
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_end' => 'blend' })
+          expect(result.products).to contain_exactly(product_1)
+        end
+
+        it 'filters numerically rather than lexicographically' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_weight_gteq' => '3' })
+          expect(result.products).to contain_exactly(product_1, product_3)
+
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_weight_lt' => '3' })
+          expect(result.products).to contain_exactly(product_2)
+        end
+
+        it 'filters with present and blank' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_present' => '1' })
+          expect(result.products).to contain_exactly(product_1, product_2)
+
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_material_blank' => '1' })
+          expect(result.products).to contain_exactly(product_3)
+        end
+
+        it 'combines metafield and ransack filters' do
+          result = provider.search_and_filter(
+            scope: scope,
+            filters: { 'name_cont' => 'Blue', 'cf_custom_weight_gteq' => '5' }
+          )
+          expect(result.products).to contain_exactly(product_1)
+        end
+
+        it 'combines metafield filters with metafield sort' do
+          result = provider.search_and_filter(
+            scope: scope,
+            filters: { 'cf_custom_weight_gteq' => '3' },
+            sort: '-cf_custom_weight'
+          )
+          expect(result.products.map(&:id)).to eq([product_1.id, product_3.id])
+        end
+
+        it 'ignores non-numeric values on number predicates' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_custom_weight_gteq' => 'abc' })
+          expect(result.total_count).to eq(3)
+        end
+
+        it 'ignores cf_ keys that match no definition' do
+          result = provider.search_and_filter(scope: scope, filters: { 'cf_bogus_field_eq' => 'x' })
+          expect(result.total_count).to eq(3)
+        end
+      end
+
       context "with 'manual' sort and a non-grouping filter" do
         subject(:result) { provider.search_and_filter(scope: scope, sort: 'manual', filters: { 'name_cont' => 'Blue' }) }
 
@@ -262,6 +418,29 @@ module Spree
           expect(result.products).to include(product_1, product_3)
           expect(result.products).not_to include(product_2)
           expect(result.total_count).to eq(2)
+        end
+      end
+
+      context 'with sortable number metafields' do
+        let!(:definition) do
+          create(:metafield_definition, :number_field, :sortable,
+                 namespace: 'custom', key: 'weight')
+        end
+
+        before do
+          product_1.set_metafield(definition, '10')
+          product_2.set_metafield(definition, '2')
+          product_3.set_metafield(definition, '3')
+        end
+
+        it 'sorts ascending numerically rather than lexicographically' do
+          result = provider.search_and_filter(scope: scope, sort: 'cf_custom_weight')
+          expect(result.products.map(&:id)).to eq([product_2.id, product_3.id, product_1.id])
+        end
+
+        it 'sorts descending numerically' do
+          result = provider.search_and_filter(scope: scope, sort: '-cf_custom_weight')
+          expect(result.products.map(&:id)).to eq([product_1.id, product_3.id, product_2.id])
         end
       end
     end
@@ -279,6 +458,24 @@ module Spree
         expect(result.sort_options).to be_an(Array)
         ids = result.sort_options.map { |o| o[:id] }
         expect(ids).to include('price', '-price', 'best_selling')
+      end
+
+      context 'with sortable metafield definitions' do
+        let!(:definition) do
+          create(:metafield_definition, :short_text_field, :sortable,
+                 namespace: 'custom', key: 'label', name: 'Material')
+        end
+
+        it 'includes metafield sort options' do
+          ids = result.sort_options.map { |o| o[:id] }
+          expect(ids).to include('cf_custom_label', '-cf_custom_label')
+        end
+
+        it 'includes human-readable labels for metafield sort options' do
+          by_id = result.sort_options.index_by { |o| o[:id] }
+          expect(by_id['cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_a_to_z)})")
+          expect(by_id['-cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_z_to_a)})")
+        end
       end
 
       it 'returns total count' do
@@ -317,5 +514,6 @@ module Spree
         expect { provider.reindex(store.products) }.not_to raise_error
       end
     end
+
   end
 end

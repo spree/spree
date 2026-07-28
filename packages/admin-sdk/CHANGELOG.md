@@ -1,5 +1,19 @@
 # @spree/admin-sdk
 
+## 0.8.1
+
+### Patch Changes
+
+- [#14353](https://github.com/spree/spree/pull/14353) [`8bf0dd0`](https://github.com/spree/spree/commit/8bf0dd070c9369549c54a9233bca97111d7aff11) Thanks [@ifizza](https://github.com/ifizza)! - Custom field definitions now support storefront search, sort, and filtering: `CustomFieldDefinition` exposes `searchable`, `sortable`, and `filter_key`, and create/update params accept `searchable` (short*text, long_text, number) and `sortable` (short_text, number). Product list requests accept the resulting `cf*\*`keys as both`sort`values and Ransack filter predicates (e.g.`q[cf_custom_material_i_cont]`).
+
+- [#14357](https://github.com/spree/spree/pull/14357) [`f811d1e`](https://github.com/spree/spree/commit/f811d1ee5f604e24f86aa59be3317f87627fe3c7) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - `AdminUser` now includes a `stores` array — every store the user holds a role on (`{ id, name, code }` with prefixed IDs), powering the dashboard store switcher.
+
+- [#14363](https://github.com/spree/spree/pull/14363) [`705e515`](https://github.com/spree/spree/commit/705e515ac881d071f45c768359380bd0ea5d23bd) Thanks [@damianlegawiec](https://github.com/damianlegawiec)! - **Breaking (Admin API):** `type` on imports and exports is now the API shorthand (`"products"`, `"customers"`, `"product_translations"`, `"orders"`, `"gift_cards"`, `"coupon_codes"`, `"newsletter_subscribers"`) instead of the Ruby class name (`"Spree::Imports::Products"`). `ImportType` and `ExportType` are typed accordingly.
+
+  Creating an import or export accepts either form, so a `type` read back from the API round-trips. Ransack filters (`type_eq`) are unaffected — they match the database column and still take the class name.
+
+  Polymorphic type fields follow the same convention: `owner_type` on imports and `item_type` on import rows now return `"store"` / `"product"` rather than `"Spree::Store"` / `"Spree::Product"`.
+
 ## 0.8.0
 
 ### Minor Changes

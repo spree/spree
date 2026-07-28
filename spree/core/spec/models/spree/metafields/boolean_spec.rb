@@ -24,4 +24,11 @@ describe Spree::Metafields::Boolean, type: :model do
       expect(metafield.csv_value).to eq('Yes')
     end
   end
+
+  describe '.searchable? / .sortable?' do
+    it 'is neither searchable nor sortable (filterable in Phase 6)' do
+      expect(described_class.searchable?).to eq(false)
+      expect(described_class.sortable?).to eq(false)
+    end
+  end
 end

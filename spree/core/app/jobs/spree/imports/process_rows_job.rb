@@ -23,6 +23,14 @@ module Spree
         end
       end
 
+      # Inline callers need the group finished before `perform` returns; the
+      # group job's completion bookkeeping works either way.
+      def dispatch_group(import, row_ids)
+        return ProcessGroupJob.perform_now(import.id, row_ids) if import.preferred_inline
+
+        ProcessGroupJob.perform_later(import.id, row_ids)
+      end
+
       def dispatch_grouped(import, file_column)
         groups = Hash.new { |h, k| h[k] = [] }
 
@@ -48,7 +56,7 @@ module Spree
           updated_at: Time.current
         )
 
-        batches.each { |row_ids| ProcessGroupJob.perform_later(import.id, row_ids) }
+        batches.each { |row_ids| dispatch_group(import, row_ids) }
       end
 
       def dispatch_batched(import)
@@ -64,7 +72,7 @@ module Spree
           updated_at: Time.current
         )
 
-        row_id_batches.each { |row_ids| ProcessGroupJob.perform_later(import.id, row_ids) }
+        row_id_batches.each { |row_ids| dispatch_group(import, row_ids) }
       end
     end
   end

@@ -53,6 +53,41 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       expect(json_response['meta']['limit']).to eq(100)
     end
 
+    # The storefront accepts the same `cf_*` sort values and `q[...]` filter
+    # predicates as the Admin API — both route through the search provider.
+    context 'with custom field filtering and sorting' do
+      let!(:definition) do
+        create(:metafield_definition, :short_text_field, :searchable, :sortable,
+               namespace: 'custom', key: 'warranty')
+      end
+
+      before do
+        product.set_metafield(definition, '2 Years')
+        product2.set_metafield(definition, '90 Days')
+      end
+
+      it 'filters by a cf_* predicate' do
+        get :index, params: { q: { cf_custom_warranty_i_cont: '2 years' } }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].map { |p| p['id'] }).to eq([product.prefixed_id])
+      end
+
+      it 'sorts by a cf_* attribute' do
+        get :index, params: { sort: '-cf_custom_warranty' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].map { |p| p['id'] }).to eq([product2.prefixed_id, product.prefixed_id])
+      end
+
+      it 'ignores unknown cf_* predicates instead of erroring' do
+        get :index, params: { q: { cf_bogus_field_eq: 'x' } }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].size).to eq(2)
+      end
+    end
+
     context 'store scoping' do
       it 'does not return products from other stores' do
         get :index

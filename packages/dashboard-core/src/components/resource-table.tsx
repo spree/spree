@@ -57,7 +57,6 @@ import {
   type ColumnDef,
   type FilterRule,
   getDefaultColumnKeys,
-  getDisplayableColumns,
   getTable,
   type SortOption,
 } from '../lib/table-registry'
@@ -174,6 +173,14 @@ interface ResourceTableProps<T> {
    * menu on the trailing edge.
    */
   rowActions?: (row: T) => ReactNode
+  /**
+   * Dynamic per-store columns derived from custom field definitions,
+   * merged into the registry columns for display (column selector +
+   * cells), sorting, and filtering. Keys are the definitions'
+   * `filter_key` (`cf_*`), which the backend accepts as sort and
+   * filter attributes.
+   */
+  metafieldColumns?: ColumnDef<T>[]
 }
 
 export interface ReorderConfig<T> {
@@ -197,6 +204,7 @@ export function ResourceTable<T extends Record<string, any>>({
   reorder,
   bulkActions,
   rowActions,
+  metafieldColumns,
 }: ResourceTableProps<T>) {
   const table = getTable<T>(tableKey)
   const { t } = useTranslation()
@@ -236,11 +244,31 @@ export function ResourceTable<T extends Record<string, any>>({
   const [searchInput, setSearchInput] = useState(search ?? '')
   const deferredSearch = useDeferredValue(searchInput)
 
-  const displayableColumns = getDisplayableColumns(table)
+  // Registry columns + dynamic metafield columns. Memoized so the toolbar's
+  // internal memos (FilterPanel `items` stability) keep stable deps.
+  const allColumns = useMemo(
+    () => [...table.columns, ...(metafieldColumns ?? [])],
+    [table, metafieldColumns],
+  )
+  const displayableColumns = useMemo(
+    () => allColumns.filter((c) => c.displayable !== false),
+    [allColumns],
+  )
   const defaultColumnKeys = getDefaultColumnKeys(table)
   const visibleColumnKeys = urlColumns ?? defaultColumnKeys
 
-  const visibleColumns = displayableColumns.filter((c) => visibleColumnKeys.includes(c.key))
+  const visibleColumns = useMemo(
+    () => displayableColumns.filter((c) => visibleColumnKeys.includes(c.key)),
+    [displayableColumns, visibleColumnKeys],
+  )
+
+  // Expands requested by currently-visible columns (e.g. custom field
+  // columns need `expand=custom_fields` to render their values). Sorted so
+  // the query key stays stable regardless of column order.
+  const columnExpand = useMemo(
+    () => [...new Set(visibleColumns.flatMap((c) => (c.expand ? [c.expand] : [])))].sort(),
+    [visibleColumns],
+  )
 
   // Build API params
   const sortString = dir === 'desc' ? `-${sort}` : sort
@@ -256,7 +284,7 @@ export function ResourceTable<T extends Record<string, any>>({
   const { data, isLoading } = useQuery({
     queryKey: [
       ...queryKeyPrefix,
-      { page, limit, sort: sortString, search: deferredSearch, filters },
+      { page, limit, sort: sortString, search: deferredSearch, filters, expand: columnExpand },
     ],
     queryFn: () => {
       const params: Record<string, unknown> = {
@@ -269,12 +297,22 @@ export function ResourceTable<T extends Record<string, any>>({
         params.limit = limit
       }
 
+      if (columnExpand.length) {
+        const base = defaultParams?.expand
+        const baseList = Array.isArray(base)
+          ? base
+          : typeof base === 'string'
+            ? base.split(',')
+            : []
+        params.expand = [...new Set([...baseList, ...columnExpand])]
+      }
+
       if (deferredSearch) {
         const searchParam = table.searchParam ?? 'name_cont'
         params[searchParam] = deferredSearch
       }
 
-      Object.assign(params, filtersToRansack(filters as FilterRule[], table.columns))
+      Object.assign(params, filtersToRansack(filters as FilterRule[], allColumns))
 
       return queryFn(params)
     },
@@ -409,7 +447,7 @@ export function ResourceTable<T extends Record<string, any>>({
           filters: filters as FilterRule[],
           search: deferredSearch,
           searchParam: table.searchParam ?? 'name_cont',
-          columns: table.columns,
+          columns: allColumns,
           totalCount: meta?.count,
         })
       : actions
@@ -427,7 +465,7 @@ export function ResourceTable<T extends Record<string, any>>({
         onSortChange={handleSortChange}
         filters={filters as FilterRule[]}
         onFiltersChange={handleFiltersChange}
-        allColumns={table.columns}
+        allColumns={allColumns}
         title={title ?? table.title}
         actions={resolvedActions}
         hideSort={reorderActive}

@@ -35,6 +35,69 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(json_response['meta']).to include('page', 'limit', 'count', 'pages')
     end
 
+    context 'with custom field filtering and sorting' do
+      let!(:material) do
+        create(:metafield_definition, :short_text_field, :searchable,
+               namespace: 'custom', key: 'material')
+      end
+      let!(:weight) do
+        create(:metafield_definition, :number_field, :sortable,
+               namespace: 'custom', key: 'weight')
+      end
+      let!(:other_product) { create(:product, name: 'Unique Widget') }
+
+      before do
+        product.set_metafield(material, 'wool')
+        product.set_metafield(weight, '10')
+        other_product.set_metafield(material, 'cotton')
+        other_product.set_metafield(weight, '2')
+      end
+
+      it 'filters by a cf_* text predicate' do
+        get :index, params: { q: { cf_custom_material_cont: 'wool' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].map { |p| p['id'] }).to eq([product.prefixed_id])
+      end
+
+      it 'filters case-insensitively with the cf_* i_cont predicate' do
+        get :index, params: { q: { cf_custom_material_i_cont: 'WOOL' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].map { |p| p['id'] }).to eq([product.prefixed_id])
+      end
+
+      it 'filters by a cf_* numeric predicate' do
+        get :index, params: { q: { cf_custom_weight_lt: '5' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].map { |p| p['id'] }).to eq([other_product.prefixed_id])
+      end
+
+      it 'sorts by a cf_* attribute' do
+        get :index, params: { sort: '-cf_custom_weight' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].map { |p| p['id'] }).to eq([product.prefixed_id, other_product.prefixed_id])
+      end
+
+      it 'ignores unknown cf_* predicates instead of erroring' do
+        get :index, params: { q: { cf_bogus_field_eq: 'x' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].length).to eq(2)
+      end
+
+      it 'exposes custom field values when expanded' do
+        get :index, params: { expand: 'custom_fields' }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        data = json_response['data'].find { |p| p['id'] == product.prefixed_id }
+        values = data['custom_fields'].map { |f| f['value'].to_s }
+        expect(values).to include('wool')
+      end
+    end
+
     context 'with ransack filtering' do
       let!(:other_product) { create(:product, name: 'Unique Widget') }
 
@@ -44,6 +107,14 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].length).to eq(1)
         expect(json_response['data'].first['id']).to eq(other_product.prefixed_id)
+      end
+
+      # The dashboard's "contains" filter operator emits `i_cont`.
+      it 'filters by name case-insensitively with i_cont' do
+        get :index, params: { q: { name_i_cont: 'unique WIDGET' } }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].map { |p| p['id'] }).to eq([other_product.prefixed_id])
       end
 
       context 'filtering by channel via channels_id_in' do

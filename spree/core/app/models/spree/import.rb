@@ -97,6 +97,26 @@ module Spree
     # Preferences
     #
     preference :delimiter, :string, default: ','
+    # Run the pipeline in-process instead of enqueuing it. For rake tasks, seeds
+    # and the console, where the caller needs the data to exist when the call
+    # returns and there may be no worker attached. Never set it from a request:
+    # a large CSV blocks for minutes.
+    #
+    # A preference, not a virtual attribute, so it survives the `Import.find`
+    # each processing job does — otherwise every job would have to take (and
+    # forward) an `inline:` argument.
+    preference :inline, :boolean, default: false
+    # Suppress the events the *rows* publish — a `product.created` per imported
+    # product, plus `import_row.*`. The import's own `import.*` events still
+    # fire: a handful per import is useful, thousands from a seeded catalog are
+    # not.
+    #
+    # For seeding demo or sample data, where subscribers would otherwise deliver
+    # webhooks and analytics for a catalog nobody actually created. A preference
+    # rather than a virtual attribute because the processing jobs each reload
+    # the record, so it has to outlive the enqueue. Independent of `inline`: a
+    # background import can still be silent, and an inline one observed.
+    preference :skip_events, :boolean, default: false
     # Absolute URL of the dashboard's imports view, captured at create and
     # validated against the store's allowed origins — the import-done email
     # links back to it. Blank for legacy-admin or app-created imports.
@@ -325,12 +345,18 @@ module Spree
     # Creates rows asynchronously
     # @return [void]
     def create_rows_async
+      # The 2s delay lets the attachment settle before the job reads it; running
+      # inline there is nothing to wait for.
+      return Spree::Imports::CreateRowsJob.perform_now(id) if preferred_inline
+
       Spree::Imports::CreateRowsJob.set(wait: 2.seconds).perform_later(id)
     end
 
     # Processes rows asynchronously
     # @return [void]
     def process_rows_async
+      return Spree::Imports::ProcessRowsJob.perform_now(id) if preferred_inline
+
       Spree::Imports::ProcessRowsJob.perform_later(id)
     end
 

@@ -1,5 +1,5 @@
 import type { Product } from '@spree/admin-sdk'
-import type { BulkAction, BulkActionFormProps } from '@spree/dashboard-core'
+import type { BulkAction, BulkActionFormProps, ColumnDef } from '@spree/dashboard-core'
 import {
   adminClient,
   ExportButton,
@@ -9,6 +9,7 @@ import {
   resourceSearchSchema,
   Subject,
   TagCombobox,
+  useCustomFieldDefinitions,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
@@ -60,6 +61,14 @@ import '../../../../tables/products'
 const productsSearchSchema = resourceSearchSchema.extend({
   import: z.string().optional(),
 })
+
+// Custom field type → filter operator set. Anything unmapped filters as text.
+// Narrowed to the variants that need no companion field (`enum` needs
+// `filterOptions`, `tags` needs `taggableType`, and so on).
+const CUSTOM_FIELD_FILTER_TYPES: Record<string, 'string' | 'number' | 'boolean'> = {
+  number: 'number',
+  boolean: 'boolean',
+}
 
 export const Route = createFileRoute('/_authenticated/$storeId/products/')({
   validateSearch: productsSearchSchema,
@@ -273,6 +282,33 @@ function ProductsPage() {
     [storeId],
   )
 
+  const { data: definitionsResponse } = useCustomFieldDefinitions('Spree::Product')
+  // Searchable/sortable custom fields become full table columns: displayable
+  // (opt-in via the column selector), sortable when the definition allows it,
+  // and filterable with the operator set matching the field type.
+  const metafieldColumns = useMemo<ColumnDef<Product>[]>(() => {
+    const definitions = definitionsResponse?.data ?? []
+    return definitions
+      .filter(
+        (definition) => (definition.searchable || definition.sortable) && definition.filter_key,
+      )
+      .map((definition) => ({
+        key: definition.filter_key,
+        label: definition.label,
+        default: false,
+        sortable: definition.sortable,
+        filterable: true,
+        filterType: CUSTOM_FIELD_FILTER_TYPES[definition.field_type] ?? 'string',
+        expand: 'custom_fields',
+        render: (product: Product) => {
+          const value = product.custom_fields?.find(
+            (field) => field.custom_field_definition_id === definition.id,
+          )?.value
+          return value == null || value === '' ? '—' : String(value)
+        },
+      }))
+  }, [definitionsResponse])
+
   return (
     <>
       <ResourceTable
@@ -283,6 +319,7 @@ function ProductsPage() {
         searchParams={searchParams}
         bulkActions={bulkActions}
         rowActions={renderRowActions}
+        metafieldColumns={metafieldColumns}
         actions={(ctx) => (
           <>
             <ImportButton

@@ -16,6 +16,12 @@ interface ColumnDefBase<T = any> {
   ransackAttribute?: string
   /** Custom cell renderer. If omitted, renders `row[key]` as text. */
   render?: (row: T) => ReactNode
+  /**
+   * `expand` value the list request needs while this column is visible
+   * (e.g. `'custom_fields'`). ResourceTable unions the values across
+   * visible columns into the `expand` query param.
+   */
+  expand?: string
   /** Cell className */
   className?: string
   /** Whether this column is displayable in the table. Set to false for filter-only columns. */

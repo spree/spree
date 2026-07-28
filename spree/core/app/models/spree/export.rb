@@ -138,12 +138,20 @@ module Spree
     end
 
     def records_to_export
-      if search_params.present?
-        params = search_params.is_a?(String) ? JSON.parse(search_params.to_s).to_h : search_params
-        scope.ransack(decode_prefixed_id_filters(params))
-      else
-        scope.ransack
-      end.result
+      return scope.ransack.result if search_params.blank?
+
+      params = search_params.is_a?(String) ? JSON.parse(search_params.to_s).to_h : search_params
+      params = decode_prefixed_id_filters(params)
+
+      # `cf_*` custom-field predicates aren't Ransack attributes — resolve them
+      # first so an export of a filtered list matches what the admin sees.
+      filtered_scope, params = if scope.respond_to?(:with_metafield_filters)
+                                scope.with_metafield_filters(params)
+                              else
+                                [scope, params]
+                              end
+
+      filtered_scope.ransack(params).result
     end
 
     # Replace any prefixed IDs in `search_params` with their raw DB IDs so

@@ -9,6 +9,8 @@ RSpec.describe Spree::MetafieldDefinition, type: :model do
     let!(:back_end_definition) { create(:metafield_definition, :back_end_only) }
     let!(:product_definition) { create(:metafield_definition, resource_type: 'Spree::Product') }
     let!(:variant_definition) { create(:metafield_definition, :for_variant) }
+    let!(:searchable_definition) { create(:metafield_definition, :searchable, key: 'searchable_field') }
+    let!(:sortable_definition) { create(:metafield_definition, :sortable, key: 'sortable_field') }
 
     describe '.available' do
       it 'returns only both definitions (from DisplayOn concern)' do
@@ -40,6 +42,123 @@ RSpec.describe Spree::MetafieldDefinition, type: :model do
         expect(described_class.for_resource_type('Spree::Variant')).to include(variant_definition)
         expect(described_class.for_resource_type('Spree::Variant')).not_to include(product_definition)
       end
+    end
+
+    describe '.searchable' do
+      it 'returns only searchable definitions' do
+        expect(described_class.searchable).to include(searchable_definition)
+        expect(described_class.searchable).not_to include(product_definition)
+      end
+    end
+
+    describe '.sortable' do
+      it 'returns only sortable definitions' do
+        expect(described_class.sortable).to include(sortable_definition)
+        expect(described_class.sortable).not_to include(product_definition)
+      end
+    end
+  end
+
+  describe 'searchable / sortable validations' do
+    it 'allows searchable on short_text' do
+      definition = build(:metafield_definition, :short_text_field, searchable: true)
+      expect(definition).to be_valid
+    end
+
+    it 'allows searchable on long_text' do
+      definition = build(:metafield_definition, :long_text_field, searchable: true)
+      expect(definition).to be_valid
+    end
+
+    it 'rejects searchable on rich_text' do
+      definition = build(:metafield_definition, :rich_text_field, searchable: true)
+      expect(definition).not_to be_valid
+      expect(definition.errors[:searchable].first).to include('short text', 'long text', 'number')
+    end
+
+    it 'rejects searchable on boolean' do
+      definition = build(:metafield_definition, :boolean_field, searchable: true)
+      expect(definition).not_to be_valid
+      expect(definition.errors[:searchable]).to be_present
+    end
+
+    it 'allows sortable on short_text and number' do
+      expect(build(:metafield_definition, :short_text_field, sortable: true)).to be_valid
+      expect(build(:metafield_definition, :number_field, sortable: true)).to be_valid
+    end
+
+    it 'rejects sortable on long_text' do
+      definition = build(:metafield_definition, :long_text_field, sortable: true)
+      expect(definition).not_to be_valid
+      expect(definition.errors[:sortable].first).to include('short text', 'number')
+      expect(definition.errors[:sortable].first).not_to include('long text')
+    end
+
+    it 'rejects changing metafield_type to a non-searchable class while searchable stays true' do
+      definition = create(:metafield_definition, :short_text_field, searchable: true)
+      definition.field_type = 'boolean'
+      expect(definition).not_to be_valid
+      expect(definition.errors[:searchable]).to be_present
+    end
+
+    it 'rejects changing metafield_type to a non-sortable class while sortable stays true' do
+      definition = create(:metafield_definition, :short_text_field, sortable: true)
+      definition.field_type = 'long_text'
+      expect(definition).not_to be_valid
+      expect(definition.errors[:sortable]).to be_present
+    end
+  end
+
+  describe '.searchable_field_type_tokens / .sortable_field_type_tokens' do
+    it 'derives tokens from metafield type class capabilities' do
+      expect(described_class.searchable_field_type_tokens).to match_array(%w[short_text long_text number])
+      expect(described_class.sortable_field_type_tokens).to match_array(%w[short_text number])
+    end
+  end
+
+  describe '#filter_key' do
+    it 'combines the namespace and key' do
+      metafield_definition = build(:metafield_definition, namespace: 'custom', key: 'material')
+
+      expect(metafield_definition.filter_key).to eq('cf_custom_material')
+    end
+  end
+
+  describe 'filter_key uniqueness' do
+    # (a_b, c) and (a, b_c) both flatten to `cf_a_b_c`, which would make one
+    # definition unreachable via sort/filter params.
+    it 'rejects a definition whose filter_key collides across a different namespace split' do
+      create(:metafield_definition, resource_type: 'Spree::Product', namespace: 'a_b', key: 'c')
+      colliding = build(:metafield_definition, resource_type: 'Spree::Product', namespace: 'a', key: 'b_c')
+
+      expect(colliding).not_to be_valid
+      expect(colliding.errors[:key]).to be_present
+    end
+
+    it 'allows the same namespace/key split on a different resource type' do
+      create(:metafield_definition, resource_type: 'Spree::Product', namespace: 'a_b', key: 'c')
+      other_resource = build(:metafield_definition, resource_type: 'Spree::Variant', namespace: 'a', key: 'b_c')
+
+      expect(other_resource).to be_valid
+    end
+
+    it 'does not flag a persisted definition against itself' do
+      metafield_definition = create(:metafield_definition, namespace: 'custom', key: 'material')
+
+      metafield_definition.name = 'Renamed'
+
+      expect(metafield_definition).to be_valid
+    end
+  end
+
+  describe 'Ransack allowlist' do
+    it 'allows filtering by searchable and sortable' do
+      matching = create(:metafield_definition, :short_text_field, :searchable, :sortable, key: 'ransack_match')
+      create(:metafield_definition, :short_text_field, key: 'ransack_other')
+
+      result = described_class.ransack(searchable_eq: true, sortable_eq: true).result
+      expect(result).to include(matching)
+      expect(result.map(&:key)).not_to include('ransack_other')
     end
   end
 

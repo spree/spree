@@ -84,7 +84,27 @@ module Spree
           available_on: product.available_on&.iso8601,
           created_at: product.created_at&.iso8601,
           updated_at: product.updated_at&.iso8601
-        }
+        }.merge(metafield_document_attributes)
+      end
+
+      # Flat cf_* hash for searchable ∪ sortable metafields (Meilisearch docs).
+      def metafield_document_attributes
+        @metafield_document_attributes ||= product.metafields.filter_map do |metafield|
+          definition = metafield.metafield_definition
+          next unless definition&.searchable? || definition&.sortable?
+
+          [definition.filter_key, metafield_index_value(metafield, definition.field_type)]
+        end.to_h
+      end
+
+      def metafield_index_value(metafield, field_type)
+        serialized = metafield.serialize_value
+        case field_type
+        when 'number'
+          serialized.to_f
+        else
+          serialized.to_s
+        end
       end
 
       # Returns all market × locale pairs for this store
