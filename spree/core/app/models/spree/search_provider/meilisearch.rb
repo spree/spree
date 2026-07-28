@@ -5,6 +5,8 @@ module Spree
     class Meilisearch < Base
       PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
       ALLOWED_STATUSES = %w[active draft archived paused].freeze
+      BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids tags option_value_ids].freeze
+      METAFIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
 
       def self.indexing_required?
         true
@@ -51,7 +53,7 @@ module Spree
         unless ms_result
           return FiltersResult.new(
             filters: [],
-            sort_options: available_sort_options.map { |id| { id: id } },
+            sort_options: built_in_and_metafield_sort_options,
             default_sort: 'manual',
             total_count: 0
           )
@@ -59,7 +61,7 @@ module Spree
 
         FiltersResult.new(
           filters: build_facet_response(facet_distribution),
-          sort_options: available_sort_options.map { |id| { id: id } },
+          sort_options: built_in_and_metafield_sort_options,
           default_sort: 'manual',
           total_count: ms_result['estimatedTotalHits'] || 0
         )
@@ -91,6 +93,7 @@ module Spree
 
       def reindex(scope = nil)
         scope ||= store.products
+        @metafield_schema = MetafieldSchema.new
         ensure_index_settings!
 
         indexed = 0
@@ -180,7 +183,7 @@ module Spree
           # is referenced before the index settings were refreshed — otherwise
           # every search on an upgraded store returns empty until a reindex or
           # the next product write.
-          if e.code == 'invalid_search_filter' && !settings_refreshed
+          if %w[invalid_search_filter invalid_search_sort].include?(e.code) && !settings_refreshed
             settings_refreshed = true
             ensure_index_settings!
             retry
@@ -240,23 +243,30 @@ module Spree
       end
 
       def searchable_attributes
-        %w[name description sku option_values category_names tags]
+        %w[name description sku option_values category_names tags] + metafield_schema.searchable_attribute_keys
       end
 
       def filterable_attributes
-        %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids tags option_value_ids]
+        BUILT_IN_FILTERABLE_ATTRIBUTES + metafield_schema.filterable_attribute_keys
       end
 
       def sortable_attributes
-        %w[name price created_at available_on units_sold_count]
+        %w[name price created_at available_on units_sold_count] + metafield_schema.sortable_attribute_keys
       end
 
+      # Facets stay built-in only — cf_* distributions aren't consumed by
+      # +build_facet_response+, so requesting them would be wasted work.
       def facet_attributes
-        filterable_attributes
+        BUILT_IN_FILTERABLE_ATTRIBUTES
       end
 
       def available_sort_options
-        %w[price -price name -name -available_on available_on best_selling]
+        %w[price -price name -name -available_on available_on best_selling] + metafield_schema.sort_ids
+      end
+
+      def built_in_and_metafield_sort_options
+        %w[price -price name -name -available_on available_on best_selling].map { |id| { id: id, label: nil } } +
+          metafield_schema.sort_options
       end
 
       # Build Meilisearch filter conditions from API params.
@@ -331,7 +341,49 @@ module Spree
         when 'with_option_value_ids'
           # Handled by grouped option conditions in search_and_filter — skip here
           nil
+        else
+          metafield_filter_condition(key, value)
         end
+      end
+
+      # Meilisearch has stable filter operators for equality, ranges, and
+      # EXISTS — but no string contains/starts/ends (CONTAINS is still
+      # experimental), so those predicates are ignored here. The Database
+      # provider supports the full predicate set.
+      def metafield_filter_condition(key, value)
+        parsed = metafield_schema.parse_filter(key)
+        return nil unless parsed
+
+        attribute = parsed[:definition].filter_key
+        numeric = parsed[:definition].field_type == 'number'
+
+        case parsed[:predicate]
+        when 'present'
+          "#{attribute} EXISTS"
+        when 'blank'
+          "#{attribute} NOT EXISTS"
+        when 'eq', 'not_eq'
+          operator = parsed[:predicate] == 'eq' ? '=' : '!='
+          formatted = format_metafield_filter_value(value, numeric)
+          formatted && "#{attribute} #{operator} #{formatted}"
+        when *METAFIELD_RANGE_OPERATORS.keys
+          return nil unless numeric
+
+          formatted = format_metafield_filter_value(value, numeric)
+          formatted && "#{attribute} #{METAFIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
+        end
+      end
+
+      def format_metafield_filter_value(value, numeric)
+        if numeric
+          Float(value.to_s, exception: false)&.to_s
+        else
+          "'#{escape_filter_string(value)}'"
+        end
+      end
+
+      def escape_filter_string(value)
+        value.to_s.gsub('\\') { '\\\\' }.gsub("'") { "\\'" }
       end
 
       # Group prefixed option value IDs by option type (single DB query).
@@ -380,6 +432,9 @@ module Spree
         when '-available_on' then ['available_on:desc']
         when 'available_on'  then ['available_on:asc']
         when 'best_selling'  then ['units_sold_count:desc']
+        else
+          parsed = metafield_schema.parse_sort(sort)
+          parsed && ["#{parsed[:attribute]}:#{parsed[:direction]}"]
         end
       end
 

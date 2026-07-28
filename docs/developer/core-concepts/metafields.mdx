@@ -34,6 +34,8 @@ erDiagram
         string metafield_type
         string resource_type
         string display_on
+        boolean searchable
+        boolean sortable
     }
 
     Metafield {
@@ -83,6 +85,40 @@ Metafields support two visibility levels via the `display_on` attribute:
 |------------|:---------:|:---------:|----------|
 | `both` | Yes | Yes | Public product specifications |
 | `back_end` | No | Yes | Internal notes, integration IDs |
+
+## Search, sort & filter
+
+Product metafield definitions can opt into SearchProvider participation:
+
+| Flag | Effect | Allowed field types |
+|------|--------|---------------------|
+| `searchable` | Values are included in product text search | `short_text`, `long_text`, `number` |
+| `sortable` | Listings can sort with `sort=cf_{namespace}_{key}` (prefix `-` for descending), e.g. `cf_custom_label` | `short_text`, `number` |
+
+Both default to `false`. Set them on the definition (Admin UI, Admin API, or seeds). For an existing catalog with Meilisearch, run `rake spree:search:reindex` after toggling flags so index settings and product documents pick up new `cf_*` fields.
+
+### Filtering
+
+Any definition with either flag set also becomes filterable on product listings, using its `cf_*` key as a Ransack predicate. The Store and Admin APIs accept the same keys and the same `sort` values:
+
+```
+GET /api/v3/store/products?q[cf_custom_material_i_cont]=wool
+GET /api/v3/admin/products?q[cf_custom_weight_gteq]=3.5
+GET /api/v3/store/products?sort=-cf_custom_weight
+```
+
+| Field type | Predicates |
+|------------|------------|
+| `short_text`, `long_text` | `i_cont`, `cont`, `eq`, `not_eq`, `start`, `end`, `present`, `blank` |
+| `number` | `eq`, `gt`, `gteq`, `lt`, `lteq`, `present`, `blank` |
+
+Use `i_cont` for case-insensitive matching — plain `cont` is case-sensitive on PostgreSQL.
+
+Predicates that don't match the definition's field type are ignored rather than rejected, as are keys matching no definition. Meilisearch supports the equality, range, and `present`/`blank` predicates; substring predicates (`i_cont`, `cont`, `start`, `end`) apply only to the database provider.
+
+CSV exports honor the same predicates, so exporting a filtered product list matches what the admin sees.
+
+In the admin dashboard, these fields appear in the products table's column selector, Sort dropdown, and filter panel — hidden by default, so admins opt in per column.
 
 ## Supported Resources
 

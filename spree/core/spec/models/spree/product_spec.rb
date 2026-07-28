@@ -2260,4 +2260,23 @@ describe Spree::Product, type: :model do
       end
     end
   end
+
+  describe '.search' do
+    let!(:matching) { create(:product, name: 'Unrelated Name', store: store) }
+    let!(:other) { create(:product, name: 'Other Product', store: store) }
+    let!(:definition) do
+      create(:metafield_definition, :short_text_field, :searchable,
+             namespace: 'custom', key: 'pinyin_name')
+    end
+
+    before do
+      matching.set_metafield(definition, 'hong-ku-zi')
+      other.set_metafield(definition, 'something-else')
+    end
+
+    it 'finds products by searchable metafield value via plain SQL' do
+      expect(described_class.search('hong-ku')).to include(matching)
+      expect(described_class.search('hong-ku')).not_to include(other)
+    end
+  end
 end

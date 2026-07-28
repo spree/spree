@@ -29,6 +29,7 @@ Active plans (6.0 target, work pending):
 - `6.0-rich-text-descriptions.md` — Drop ActionText storage, store HTML in text columns, sanitize on write, serve `description` + `description_html` in API (description_html serializer field shipped in 5.4)
 - `6.0-inventory-operations.md` — StockTransfer lifecycle (draft → ready_to_ship → in_transit → received with partial receive), new `Spree::PurchaseOrder` + `Spree::Supplier` (renamed from Vendor — `Spree::Vendor` is the marketplace seller, see decisions.md 2026-07-14) replacing today's "external receive" hack, variant + stock-location stock history panels. Consumes the typed-movement primitives from `6.0-typed-stock-movements.md`.
 - `6.0-replace-taxons-with-categories.md` — Split Taxon into Category (hierarchy) + Collection (flat/rule-based). `Spree::Category < Spree::Taxon` alias + Category API surface shipped in 5.5; table rename + Collection pending.
+- `6.0-store-scoped-custom-field-definitions.md` — Add `store_id` + persisted `filter_key` to `Spree::MetafieldDefinition` (today global and computed), making uniqueness `(store_id, resource_type, filter_key)` with a DB index. Deferred from the 5.6 custom-field search/sort/filter work (schema change, not patch-safe). **Until then:** `filter_key` is a computed method — no Ransack predicates or `where`/`order` against it; definitions are global; uniqueness rests on a `CONCAT` validation with no index behind it.
 
 Multi-version plans (some phases shipped, some pending):
 - `5.4-store-api-naming-standardization.md` — Standardize API naming against industry (address fields, discounts, customer_note, label, brand/last4, etc.). 5.4 model/API aliases shipped; 6.0 column/table renames pending.
@@ -159,6 +160,7 @@ Per-request context available in models, controllers, jobs, and services:
 - If needed use paranoia gem for soft delete support (via `acts_as_paranoid`)
 - For configuration / options always use [Model Preferences](docs/developer/customization/model-preferences.mdx)
 - NEVER hardcode table names, always use `Model.table_name` in models, queries, scopes, etc.
+- ALWAYS use Arel, scopes and ActiveRecord helpers to build queries, only use raw SQL if cannot use Arel
 
 ```ruby
 class Spree::Product < Spree.base_class

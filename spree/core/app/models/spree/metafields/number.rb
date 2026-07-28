@@ -3,6 +3,14 @@ module Spree
     class Number < Spree::Metafield
       validates :value, numericality: true
 
+      def self.searchable?
+        true
+      end
+
+      def self.sortable?
+        true
+      end
+
       def serialize_value
         value.to_d
       end

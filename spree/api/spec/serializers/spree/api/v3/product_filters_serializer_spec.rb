@@ -45,7 +45,7 @@ RSpec.describe Spree::Api::V3::ProductFiltersSerializer do
           ]
         }
       ],
-      sort_options: [{ id: 'price' }, { id: '-price' }],
+      sort_options: [{ id: 'price', label: nil }, { id: '-price', label: nil }],
       default_sort: 'manual',
       total_count: 5
     )
@@ -99,7 +99,10 @@ RSpec.describe Spree::Api::V3::ProductFiltersSerializer do
           }
         ],
         'id' => nil,
-        'sort_options' => [{ 'id' => 'price' }, { 'id' => '-price' }],
+        'sort_options' => [
+          { 'id' => 'price', 'label' => nil },
+          { 'id' => '-price', 'label' => nil }
+        ],
         'default_sort' => 'manual',
         'total_count' => 5
       )

@@ -184,6 +184,72 @@ module Spree
           end
         end
       end
+
+      context 'with searchable / sortable metafields' do
+        let!(:searchable_def) do
+          create(:metafield_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'pinyin_name', name: 'Pinyin')
+        end
+        let!(:sortable_def) do
+          create(:metafield_definition, :number_field, :sortable,
+                 namespace: 'custom', key: 'priority', name: 'Priority')
+        end
+        let!(:ignored_def) do
+          create(:metafield_definition, :short_text_field,
+                 namespace: 'custom', key: 'internal_note', name: 'Note')
+        end
+
+        before do
+          product.set_metafield(searchable_def, 'mao-tai')
+          product.set_metafield(sortable_def, '10')
+          product.set_metafield(ignored_def, 'secret')
+        end
+
+        it 'indexes searchable and sortable metafield values as cf_* attributes' do
+          doc = documents.first
+          expect(doc['cf_custom_pinyin_name']).to eq('mao-tai')
+          expect(doc['cf_custom_priority']).to eq(10.0)
+          expect(doc).not_to have_key('cf_custom_internal_note')
+        end
+
+        it 'uses the same cf_* attributes on every market/locale document' do
+          create(:market, store: store, name: 'US', currency: 'USD', default_locale: 'en')
+          create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de')
+          create(:price, variant: product.master, amount: 9.99, currency: 'EUR')
+
+          docs = described_class.new(product.reload, store.reload).call
+          expect(docs.size).to be > 1
+
+          cf_keys = docs.first.keys.grep(/\Acf_/)
+          docs.each do |doc|
+            expect(doc.slice(*cf_keys)).to eq(docs.first.slice(*cf_keys))
+          end
+        end
+
+        it 'casts number metafield values to Float' do
+          decimal_def = create(:metafield_definition, :number_field, :sortable,
+                               namespace: 'custom', key: 'rating', name: 'Rating')
+          product.set_metafield(decimal_def, '42.5')
+
+          doc = described_class.new(product.reload, store).call.first
+          expect(doc['cf_custom_rating']).to eq(42.5)
+        end
+
+        it 'omits registered keys when the product has no value' do
+          create(:metafield_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'origin', name: 'Origin')
+
+          doc = described_class.new(product.reload, store).call.first
+          expect(doc).not_to have_key('cf_custom_origin')
+        end
+
+        it 'includes no cf_* attributes when no definitions are searchable or sortable' do
+          Spree::MetafieldDefinition.destroy_all
+
+          doc = described_class.new(product.reload, store).call.first
+          expect(doc.keys.grep(/\Acf_/)).to be_empty
+        end
+      end
     end
   end
 end

@@ -31,7 +31,9 @@ module Spree
     include Spree::TranslatableResource
     include Spree::MemoizedData
     include Spree::Metafields
+    include Spree::MetafieldFilterable
     include Spree::Metadata
+    include Spree::Searchable
     include Spree::Product::Webhooks
     include Spree::Product::Slugs
     include Spree::Product::Channels
@@ -171,7 +173,23 @@ module Spree
       next none if query.blank?
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
-      where(id: product_ids.uniq.compact)
+
+      searchable_definitions = Spree::MetafieldDefinition.
+                               for_resource_type('Spree::Product').
+                               searchable
+
+      # Only pay for the metafield scan when some definition opts into search;
+      # the leading-wildcard LIKE over spree_metafields can't use an index.
+      metafield_ids = if searchable_definitions.exists?
+                        joins(metafields: :metafield_definition).
+                          merge(searchable_definitions).
+                          where(search_condition(Spree::Metafield, :value, query)).
+                          unscope(:order).distinct.pluck(:id)
+                      else
+                        []
+                      end
+
+      where(id: (product_ids + metafield_ids).uniq.compact)
     }
 
     # Backward compatibility alias — remove in Spree 6.0
