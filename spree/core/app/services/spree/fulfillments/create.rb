@@ -59,7 +59,7 @@ module Spree
           requested = normalize_items(order, items, units_by_line_item)
           return requested if requested.is_a?(Spree::ServiceModule::Result)
 
-          fulfillment = order.shipments.new(
+          fulfillment = order.fulfillments.new(
             stock_location: stock_location,
             address_id: order.ship_address_id,
             tracking: tracking
@@ -91,12 +91,12 @@ module Spree
       # in one query, on-hand first so moved units stay shippable, grouped
       # by line item for both validation and moving.
       def fulfillable_units(order)
-        order.inventory_units.
+        order.fulfillment_items.
           on_hand_or_backordered.
-          joins(:shipment).
-          merge(Spree::Shipment.ready_or_pending).
-          preload(:shipment, :variant).
-          order(Arel.sql("CASE WHEN #{Spree::InventoryUnit.table_name}.state = 'on_hand' THEN 0 ELSE 1 END"), :id).
+          joins(:fulfillment).
+          merge(Spree::Fulfillment.ready_or_pending).
+          preload(:fulfillment, :variant).
+          order(Arel.sql("CASE WHEN #{Spree::FulfillmentItem.table_name}.status = 'on_hand' THEN 0 ELSE 1 END"), :id).
           group_by(&:line_item_id)
       end
 
@@ -159,11 +159,11 @@ module Spree
             break if remaining.zero?
 
             take = [unit.quantity, remaining].min
-            source_shipments << unit.shipment
-            stock_moves[[unit.shipment, unit.variant]] += take
+            source_shipments << unit.fulfillment
+            stock_moves[[unit.fulfillment, unit.variant]] += take
 
-            target = fulfillment.inventory_units.find_or_initialize_by(
-              state: unit.state,
+            target = fulfillment.fulfillment_items.find_or_initialize_by(
+              status: unit.status,
               variant_id: unit.variant_id,
               line_item_id: unit.line_item_id,
               order_id: order.id
@@ -206,7 +206,7 @@ module Spree
         inherited = { cost: 0, delivery_method: nil }
 
         source_shipments.each do |shipment|
-          next unless shipment.inventory_units.sum(:quantity).zero?
+          next unless shipment.fulfillment_items.sum(:quantity).zero?
 
           inherited[:cost] += shipment.cost
           inherited[:delivery_method] ||= shipment.shipping_method if capture_delivery_method
@@ -250,9 +250,9 @@ module Spree
       # (the external location evidently had the goods) and the paid-order
       # readiness gate is bypassed deliberately — the goods already left.
       def mark_shipped(fulfillment)
-        fulfillment.inventory_units.backordered.each(&:fill_backorder!)
-        fulfillment.update_columns(state: 'ready') unless fulfillment.ready?
-        fulfillment.reload.ship!
+        fulfillment.fulfillment_items.backordered.each(&:fill_backorder!)
+        fulfillment.update_columns(status: 'ready') unless fulfillment.ready?
+        fulfillment.reload.fulfill!
       end
     end
   end

@@ -121,7 +121,7 @@ module Spree
           index.zero? ? order.ship_address&.country&.name : nil,
           index.zero? ? order.ship_address&.phone : nil,
           index.zero? ? format_date(order.completed_at) : nil,
-          format_date(line_item.order.shipments.first&.shipped_at),
+          format_date(line_item.order.fulfillments.first&.fulfilled_at),
           index.zero? ? format_date(order.canceled_at) : nil,
           index.zero? ? order.canceler&.email : nil,
           index.zero? ? order.special_instructions : nil

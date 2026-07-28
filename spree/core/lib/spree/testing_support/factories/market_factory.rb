@@ -4,20 +4,13 @@ FactoryBot.define do
     currency { 'USD' }
     default_locale { 'en' }
     store
-    countries { [association(:country)] }
+    countries { [create(:country)] }
 
     after(:build) do |market|
-      if market.countries.any?
-        zone = Spree::Zone.find_or_create_by!(name: 'Test Shipping Zone') do |z|
-          z.kind = 'country'
-        end
-        market.countries.each do |country|
-          zone.zone_members.find_or_create_by!(zoneable: country)
-        end
-        if zone.shipping_methods.empty?
-          shipping_category = Spree::ShippingCategory.first || FactoryBot.create(:shipping_category)
-          FactoryBot.create(:shipping_method, zones: [zone], shipping_categories: [shipping_category])
-        end
+      # Delivery methods are worldwide by default (no zones), so serving the
+      # market's countries only requires that a method exists at all.
+      if market.countries.any? && !Spree::DeliveryMethod.where.missing(:delivery_method_zones).exists?
+        FactoryBot.create(:delivery_method)
       end
     end
 

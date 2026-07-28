@@ -123,9 +123,9 @@ module Spree
                                                              source: :promotion
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
-    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
+    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products, optional: true
     belongs_to :product_type, class_name: 'Spree::ProductType', optional: true, counter_cache: :products_count
-    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::ShippingMethod'
+    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::DeliveryMethod'
 
     # Every product has at least one variant. `default_variant` is the "face" of
     # the product (price display, default add-to-cart, property delegation).
@@ -158,8 +158,6 @@ module Spree
 
     after_initialize :assign_default_tax_category
 
-    before_validation :ensure_default_shipping_category
-
     after_create :sync_associations_from_product_type
     after_create :apply_pending_variants, if: :pending_variants?
     after_create :ensure_default_variant
@@ -178,7 +176,6 @@ module Spree
     end
     with_options presence: true do
       validates :name
-      validates :shipping_category, if: :requires_shipping_category?
     end
 
     # Every persisted product must keep a default variant. It's assigned on
@@ -655,7 +652,15 @@ module Spree
     #
     # @return [Boolean]
     def digital?
-      @digital ||= shipping_category&.includes_digital_shipping_method?
+      @digital ||= fulfillment_types == ['digital']
+    end
+
+    # The fulfillment types this product may be delivered by, from its
+    # ProductType; typeless products default to physical shipping.
+    #
+    # @return [Array<String>]
+    def fulfillment_types
+      product_type&.fulfillment_types.presence || ['shipping']
     end
 
     def auto_match_collections
@@ -898,15 +903,6 @@ module Spree
       self.tax_category = Spree::TaxCategory.default if new_record? && self[:tax_category_id].blank?
     end
 
-    def ensure_default_shipping_category
-      return if shipping_category.present?
-
-      if new_record?
-        name = I18n.t('spree.seed.shipping.categories.default')
-        self.shipping_category = Spree::ShippingCategory.find_or_create_by!(name: name)
-      end
-    end
-
     def run_touch_callbacks
       run_callbacks(:touch)
     end
@@ -941,10 +937,6 @@ module Spree
       if discontinue_on < make_active_at
         errors.add(:discontinue_on, :invalid_date_range)
       end
-    end
-
-    def requires_shipping_category?
-      true
     end
 
     def eligible_for_collection_matching?

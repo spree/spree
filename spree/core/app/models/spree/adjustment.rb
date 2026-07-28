@@ -60,7 +60,7 @@ module Spree
       where(source_type.not_eq('Spree::TaxRate').or(source_type.eq(nil)))
     end
     scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
-    scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
+    scope :shipping, -> { where(adjustable_type: %w[Spree::Shipment Spree::Fulfillment]) }
     scope :optional, -> { where(mandatory: false) }
     scope :eligible, -> { where(eligible: true) }
     scope :charge, -> { where("#{quoted_table_name}.amount >= 0") }

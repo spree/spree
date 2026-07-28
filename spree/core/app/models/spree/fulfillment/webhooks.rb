@@ -1,5 +1,5 @@
 module Spree
-  class Shipment < Spree.base_class
+  class Fulfillment < Spree.base_class
     module Webhooks
       extend ActiveSupport::Concern
 

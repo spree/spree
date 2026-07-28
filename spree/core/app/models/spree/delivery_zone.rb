@@ -7,6 +7,8 @@ module Spree
     attribute :metadata, default: -> { {} }
 
     has_many :members, class_name: 'Spree::DeliveryZoneMember', dependent: :destroy, inverse_of: :delivery_zone
+    has_many :delivery_method_zones, class_name: 'Spree::DeliveryMethodZone', dependent: :destroy, inverse_of: :delivery_zone
+    has_many :delivery_methods, through: :delivery_method_zones, class_name: 'Spree::DeliveryMethod'
 
     validates :name, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
 

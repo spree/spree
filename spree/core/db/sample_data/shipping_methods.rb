@@ -1,41 +1,52 @@
+# Delivery zones are built from the seeded (tax) zones' geography — the Zone
+# model itself no longer links to delivery methods.
+def delivery_zone_from(zone)
+  return nil if zone.nil?
+
+  delivery_zone = Spree::DeliveryZone.find_or_create_by!(name: zone.name) do |dz|
+    dz.description = zone.description
+  end
+  zone.countries.each { |country| delivery_zone.members.find_or_create_by!(member_type: 'country', country: country) }
+  zone.states.each { |state| delivery_zone.members.find_or_create_by!(member_type: 'state', state: state) }
+  delivery_zone
+end
+
 begin
-  north_america = Spree::Zone.find_by!(name: 'North America')
+  north_america = delivery_zone_from(Spree::Zone.find_by!(name: 'North America'))
 rescue ActiveRecord::RecordNotFound
   puts "Couldn't find 'North America' zone. Did you run `rake db:seed` first?"
   exit
 end
 
-europe_vat = Spree::Zone.find_by!(name: 'EU_VAT')
-central_america_and_caribbean = Spree::Zone.find_by(name: 'Central America and Caribbean')
-south_america = Spree::Zone.find_by(name: 'South America')
-middle_east = Spree::Zone.find_by(name: 'Middle East')
-africa = Spree::Zone.find_by(name: 'Africa')
-asia = Spree::Zone.find_by(name: 'Asia')
-australia_and_oceania = Spree::Zone.find_by(name: 'Australia and Oceania')
-shipping_category = Spree::ShippingCategory.find_or_create_by!(name: 'Default')
+europe_vat = delivery_zone_from(Spree::Zone.find_by!(name: 'EU_VAT'))
+central_america_and_caribbean = delivery_zone_from(Spree::Zone.find_by(name: 'Central America and Caribbean'))
+south_america = delivery_zone_from(Spree::Zone.find_by(name: 'South America'))
+middle_east = delivery_zone_from(Spree::Zone.find_by(name: 'Middle East'))
+africa = delivery_zone_from(Spree::Zone.find_by(name: 'Africa'))
+asia = delivery_zone_from(Spree::Zone.find_by(name: 'Asia'))
+australia_and_oceania = delivery_zone_from(Spree::Zone.find_by(name: 'Australia and Oceania'))
 
-shipping_methods = [
-  { name: 'UPS Ground (USD)', zones: [north_america], display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'UPS Two Day (USD)', zones: [north_america], display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'UPS One Day (USD)', zones: [north_america], display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'UPS Ground (EU)', zones: [europe_vat], display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'UPS Ground (EUR)', zones: [europe_vat], display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'DHL Standard (Central America and Caribbean)', zones: [central_america_and_caribbean].compact, display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'DHL Standard (South America)', zones: [south_america].compact, display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'DHL Standard (Middle East)', zones: [middle_east].compact, display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'DHL Standard (Africa)', zones: [africa].compact, display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'DHL Standard (Asia)', zones: [asia].compact, display_on: 'both', shipping_categories: [shipping_category] },
-  { name: 'DHL Standard (Australia and Oceania)', zones: [australia_and_oceania].compact, display_on: 'both', shipping_categories: [shipping_category] }
+delivery_methods = [
+  { name: 'UPS Ground (USD)', delivery_zones: [north_america], display_on: 'both' },
+  { name: 'UPS Two Day (USD)', delivery_zones: [north_america], display_on: 'both' },
+  { name: 'UPS One Day (USD)', delivery_zones: [north_america], display_on: 'both' },
+  { name: 'UPS Ground (EU)', delivery_zones: [europe_vat], display_on: 'both' },
+  { name: 'UPS Ground (EUR)', delivery_zones: [europe_vat], display_on: 'both' },
+  { name: 'DHL Standard (Central America and Caribbean)', delivery_zones: [central_america_and_caribbean].compact, display_on: 'both' },
+  { name: 'DHL Standard (South America)', delivery_zones: [south_america].compact, display_on: 'both' },
+  { name: 'DHL Standard (Middle East)', delivery_zones: [middle_east].compact, display_on: 'both' },
+  { name: 'DHL Standard (Africa)', delivery_zones: [africa].compact, display_on: 'both' },
+  { name: 'DHL Standard (Asia)', delivery_zones: [asia].compact, display_on: 'both' },
+  { name: 'DHL Standard (Australia and Oceania)', delivery_zones: [australia_and_oceania].compact, display_on: 'both' }
 ]
 
-shipping_methods.each do |attributes|
-  next if attributes[:zones].empty?
+delivery_methods.each do |attributes|
+  next if attributes[:delivery_zones].empty?
 
-  Spree::ShippingMethod.where(name: attributes[:name]).first_or_create! do |shipping_method|
-    shipping_method.calculator = Spree::Calculator::Shipping::FlatRate.create!
-    shipping_method.zones = attributes[:zones]
-    shipping_method.display_on = attributes[:display_on]
-    shipping_method.shipping_categories = attributes[:shipping_categories]
+  Spree::DeliveryMethod.where(name: attributes[:name]).first_or_create! do |delivery_method|
+    delivery_method.calculator = Spree::Calculator::Shipping::FlatRate.create!
+    delivery_method.delivery_zones = attributes[:delivery_zones]
+    delivery_method.display_on = attributes[:display_on]
   end
 end
 
@@ -51,11 +62,11 @@ end
   'DHL Standard (Africa)' => [25, 'USD'],
   'DHL Standard (Asia)' => [20, 'USD'],
   'DHL Standard (Australia and Oceania)' => [25, 'USD']
-}.each do |shipping_method_name, (price, currency)|
-  shipping_method = Spree::ShippingMethod.find_by(name: shipping_method_name)
-  next unless shipping_method
+}.each do |delivery_method_name, (price, currency)|
+  delivery_method = Spree::DeliveryMethod.find_by(name: delivery_method_name)
+  next unless delivery_method
 
-  shipping_method.calculator.preferences = { amount: price, currency: currency }
-  shipping_method.calculator.save!
-  shipping_method.save!
+  delivery_method.calculator.preferences = { amount: price, currency: currency }
+  delivery_method.calculator.save!
+  delivery_method.save!
 end

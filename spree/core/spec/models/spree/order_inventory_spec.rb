@@ -16,7 +16,7 @@ describe Spree::OrderInventory, type: :model do
   end
 
   context '#add_to_shipment' do
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
 
     context 'order is not completed' do
       before { allow(order).to receive_messages completed?: false }
@@ -206,8 +206,8 @@ describe Spree::OrderInventory, type: :model do
       end
 
       it 'destroys self if not inventory units remain' do
-        allow(shipment).to receive(:inventory_units).and_return(shipment.inventory_units)
-        allow(shipment.inventory_units).to receive_messages(sum: 0)
+        allow(shipment).to receive(:fulfillment_items).and_return(shipment.fulfillment_items)
+        allow(shipment.fulfillment_items).to receive_messages(sum: 0)
         expect(shipment).to receive(:destroy)
 
         expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
@@ -241,7 +241,7 @@ describe Spree::OrderInventory, type: :model do
   end
 
   context '#verify with removing: true' do
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
 
     context 'when the line item has no inventory units yet' do
       before { shipment.inventory_units.where(line_item_id: line_item.id).delete_all }

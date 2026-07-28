@@ -555,7 +555,7 @@ module Spree
         let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
         let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
-        let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
+        let!(:shipping_method) { create(:shipping_method) }
         let(:address_params) do
           {
             first_name: 'Buyer', last_name: 'McGee',
@@ -630,10 +630,11 @@ module Spree
       describe 'when the cart cannot be delivered' do
         let!(:order) { create(:order_with_line_items, user: user, store: store, state: 'address') }
         let(:params) { { email: 'buyer@example.com' } }
-        let(:unserved_category) { create(:shipping_category, name: 'Unserved') }
+        # no delivery method serves the pickup fulfillment type in this suite
+        let(:pickup_only_type) { create(:product_type, name: "Pickup #{SecureRandom.hex(4)}", fulfillment_types: ['pickup']) }
 
         before do
-          order.line_items.each { |line_item| line_item.variant.product.update!(shipping_category: unserved_category) }
+          order.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_only_type) }
           order.reload
         end
 

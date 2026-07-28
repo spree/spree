@@ -67,7 +67,7 @@ describe Spree::Order, type: :model do
 
       it 'adjusts tax rates twice if there are any shipments' do
         # Once for the line items, once for the shipments
-        order.shipments.build stock_location: create(:stock_location)
+        order.fulfillments.build stock_location: create(:stock_location)
         expect(Spree::TaxRate).to receive(:adjust).twice
         allow(order).to receive :set_shipments_cost
         order.next!

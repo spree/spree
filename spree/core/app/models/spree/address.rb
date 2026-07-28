@@ -44,7 +44,8 @@ module Spree
     # we need a safe operator here as Address is added to metafield_enabled_resources in Engine
     belongs_to :user, class_name: Spree.user_class&.name, optional: true, touch: true
 
-    has_many :shipments, inverse_of: :address
+    has_many :fulfillments, class_name: 'Spree::Fulfillment', inverse_of: :address
+    has_many :shipments, class_name: 'Spree::Fulfillment', foreign_key: :address_id, deprecated: true
 
     after_initialize :set_default_values, if: -> { new_record? && user.present? }
 

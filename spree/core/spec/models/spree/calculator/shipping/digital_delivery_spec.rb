@@ -23,7 +23,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
 
   describe '#available?' do
     let(:digital_shipping_method) { create(:digital_shipping_method) }
-    let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+    let(:digital_product) { create(:digital_product) }
 
     let(:digital_order) do
       order = create(:order)

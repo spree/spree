@@ -85,52 +85,6 @@ describe Spree::ShippingMethod, type: :model do
       expect(subject.errors.messages[:display_on].size).not_to be_zero
     end
 
-    context 'shipping category' do
-      context 'is required' do
-        before { subject.valid? }
-
-        it { expect(subject.errors.messages[:base].size).to eq(1) }
-        it 'adds error to base' do
-          expect(subject.errors.messages[:base]).to include(I18n.t(:required_shipping_category,
-                                                            scope: [
-                                                              :activerecord, :errors, :models,
-                                                              'spree/shipping_method', :attributes, :base
-                                                            ]))
-        end
-      end
-
-      context 'one associated' do
-        before { subject.shipping_categories.push(create(:shipping_category)) }
-
-        it { expect(subject.errors.messages[:base]).to be_empty }
-      end
-    end
-  end
-
-  context 'factory' do
-    it 'sets calculable correctly' do
-      expect(shipping_method.calculator.calculable).to eq(shipping_method)
-    end
-  end
-
-  describe '#build_tracking_url' do
-    context 'shipping method has a tracking URL mask on file' do
-      let(:tracking_url) { 'https://track-o-matic.com/:tracking' }
-
-      before { allow(subject).to receive(:tracking_url) { tracking_url } }
-
-      context 'tracking number has spaces' do
-        let(:tracking_numbers) { ['1234 5678 9012 3456', 'a bcdef'] }
-        let(:expectations) { %w[https://track-o-matic.com/1234%205678%209012%203456 https://track-o-matic.com/A%20BCDEF] }
-
-        it "returns a single URL with '%20' in lieu of spaces" do
-          tracking_numbers.each_with_index do |num, i|
-            expect(subject.build_tracking_url(num)).to eq(expectations[i])
-          end
-        end
-      end
-    end
-
     context 'shipping method does not have a tracking URL mask on file' do
       let(:usps_tracking_number) { '1Z879E930346834440' }
 

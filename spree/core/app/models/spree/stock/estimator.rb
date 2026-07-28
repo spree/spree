@@ -59,7 +59,7 @@ module Spree
       end
 
       def shipping_methods(package, display_filter)
-        package.shipping_methods.select do |ship_method|
+        package.eligible_delivery_methods.select do |ship_method|
           calculator = ship_method.calculator
 
           ship_method.available_to_display?(display_filter) &&

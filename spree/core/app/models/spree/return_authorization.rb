@@ -11,9 +11,10 @@ module Spree
 
     has_many :return_items, inverse_of: :return_authorization, dependent: :destroy
     with_options through: :return_items do
-      has_many :inventory_units
+      has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem'
       has_many :customer_returns
     end
+    has_many :inventory_units, through: :return_items, source: :fulfillment_item, deprecated: true
 
     has_many :reimbursements, through: :customer_returns
     has_many :refunds, through: :reimbursements

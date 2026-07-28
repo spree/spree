@@ -11,7 +11,7 @@ module Spree
     let!(:zone)   { create(:zone) }
     let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
     let!(:shipping_method) do
-      create(:shipping_method, zones: [zone]).tap do |sm|
+      create(:shipping_method).tap do |sm|
         sm.calculator.preferred_amount = 5
         sm.calculator.save
       end

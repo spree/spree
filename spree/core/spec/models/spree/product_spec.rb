@@ -35,36 +35,15 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe 'before_validation :ensure_default_shipping_category' do
-    subject { product.valid? }
+  describe 'shipping category' do
+    # ShippingCategory is retired from behavior in 6.0 (delivery eligibility
+    # comes from ProductType#fulfillment_types); the association is optional
+    # until the 6.1 column drop.
+    it 'is not required' do
+      product = build(:product, shipping_category: nil)
 
-    let(:product) { build(:product, shipping_category: nil) }
-
-    let!(:shipping_category_1) { create(:shipping_category, name:  I18n.t('spree.seed.shipping.categories.digital')) }
-    let!(:shipping_category_2) { create(:shipping_category, name:  I18n.t('spree.seed.shipping.categories.default')) }
-
-    it 'assigns the default shipping category' do
-      subject
-      expect(product.shipping_category).to eq(shipping_category_2)
-    end
-
-    context 'when product has a shipping category' do
-      let(:product) { build(:product, shipping_category: shipping_category_1) }
-
-      it 'keeps the assigned shipping category' do
-        subject
-        expect(product.shipping_category).to eq(shipping_category_1)
-      end
-    end
-
-    context 'when product is persisted' do
-      let(:product) { create(:product) }
-
-      it 'does not assign the default shipping category' do
-        product.update(shipping_category: nil)
-        expect(subject).to be(false)
-        expect(product.shipping_category).to be(nil)
-      end
+      expect(product).to be_valid
+      expect(product.shipping_category).to be_nil
     end
   end
 
@@ -1186,19 +1165,18 @@ describe Spree::Product, type: :model do
     end
 
     describe '#digital?' do
-      let(:product) { create(:product, shipping_category: shipping_category) }
-      let(:shipping_category) { create(:shipping_category) }
-
-      context 'when product has a shipping method with DigitalDelivery calculator' do
-        let!(:shipping_method) { create(:shipping_method, calculator: Spree::Calculator::Shipping::DigitalDelivery.new, shipping_categories: [shipping_category]) }
+      context 'when the product type is digital-only' do
+        let(:product) { create(:digital_product) }
 
         it { expect(product.digital?).to eq(true) }
+        it { expect(product.fulfillment_types).to eq(['digital']) }
       end
 
-      context 'when product does not have a shipping method with DigitalDelivery calculator' do
-        let!(:shipping_method) { create(:shipping_method, calculator: Spree::Calculator::Shipping::FlatRate.new, shipping_categories: [shipping_category]) }
+      context 'when the product has no type' do
+        let(:product) { create(:product) }
 
         it { expect(product.digital?).to eq(false) }
+        it { expect(product.fulfillment_types).to eq(['shipping']) }
       end
     end
   end

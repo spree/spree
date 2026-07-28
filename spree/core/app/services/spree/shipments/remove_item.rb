@@ -40,7 +40,7 @@ module Spree
 
           # `OrderInventory#remove_from_shipment` is called in `remove_item_service`
           # which will delete the shipment if all inventory units were removed
-          if shipment.inventory_units.any?
+          if shipment.fulfillment_items.any?
             success(shipment)
           else
             shipment.destroy!

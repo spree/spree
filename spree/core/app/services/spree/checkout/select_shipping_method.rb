@@ -14,7 +14,7 @@ module Spree
           caller_locations(2)
         )
         if params[:shipment_id].present?
-          shipment = order.shipments.valid.find_by(id: params[:shipment_id])
+          shipment = order.fulfillments.valid.find_by(id: params[:shipment_id])
           return failure(:shipment_not_found) if shipment.nil?
         end
 
@@ -28,7 +28,7 @@ module Spree
           return failure(result.value, result.error) unless result.success?
         else
           # set shipping method for all shipments
-          order.shipments.valid.each do |s|
+          order.fulfillments.valid.each do |s|
             result = set_shipping_rate_based_on_method(shipment: s, shipping_method: shipping_method)
 
             return failure(result.value, result.error) unless result.success?
@@ -44,7 +44,7 @@ module Spree
       end
 
       def set_shipping_rate_based_on_method(shipment:, shipping_method:)
-        selected_shipping_rate = shipment.shipping_rates.find_by(shipping_method: shipping_method)
+        selected_shipping_rate = shipment.delivery_rates.find_by(delivery_method: shipping_method)
 
         if selected_shipping_rate.nil?
           return failure(

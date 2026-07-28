@@ -213,7 +213,7 @@ describe Spree::Order, type: :model do
     context 'when all shipments are canceled or ready' do
       before do
         order.update_columns(state: 'complete', completed_at: Time.current)
-        order.shipments.delete_all
+        order.fulfillments.delete_all
 
         create(:shipment, order: order, state: 'canceled')
         create(:shipment, order: order, state: 'ready')
@@ -382,11 +382,11 @@ describe Spree::Order, type: :model do
     let(:shipment) { double }
 
     let(:order) { create(:order_with_line_items) }
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
 
     it 'update and persist totals' do
       expect(shipment).to receive :update_amounts
-      expect(order.updater).to receive :update_shipment_total
+      expect(order.updater).to receive :update_delivery_total
       expect(order.updater).to receive :persist_totals
 
       order.set_shipments_cost
@@ -905,7 +905,7 @@ describe Spree::Order, type: :model do
   describe '#apply_free_shipping_promotions' do
     it 'calls out to the FreeShipping promotion handler' do
       shipment = double('Shipment')
-      allow(order).to receive_messages shipments: [shipment]
+      allow(order).to receive_messages fulfillments: [shipment]
       expect(Spree::PromotionHandler::FreeShipping).to receive(:new).and_return(handler = double)
       expect(handler).to receive(:activate)
 
@@ -1350,7 +1350,7 @@ describe Spree::Order, type: :model do
     before do
       allow(shipments.first).to receive_messages(backordered?: true)
       allow(shipments.second).to receive_messages(backordered?: false)
-      allow(order).to receive_messages(shipments: shipments)
+      allow(order).to receive_messages(fulfillments: shipments)
     end
 
     it 'is backordered if one of the shipments is backordered' do
@@ -1562,7 +1562,7 @@ describe Spree::Order, type: :model do
       allow(subject).to receive(:order_routing_strategy).and_return(strategy)
 
       subject.create_proposed_shipments
-      expect(subject.shipments).to eq [shipment]
+      expect(subject.fulfillments).to eq [shipment]
     end
   end
 
@@ -1705,7 +1705,7 @@ describe Spree::Order, type: :model do
 
     before do
       allow(order).to receive(:line_items) { [line_item] }
-      allow(order).to receive(:shipments) { [shipment] }
+      allow(order).to receive(:fulfillments) { [shipment] }
       allow(order).to receive(:payments) { [payment] }
     end
 
@@ -1846,22 +1846,22 @@ describe Spree::Order, type: :model do
 
     context 'when order has shipments' do
       before do
-        allow(order).to receive(:shipments).and_return(order_shipments)
+        allow(order).to receive(:fulfillments).and_return(order_shipments)
         allow(order_shipments).to receive(:any?).and_return(true)
         allow(Spree::TaxRate).to receive(:adjust).with(order, order_shipments)
       end
 
       it { expect(order_shipments).to receive(:any?).and_return(true) }
-      it { expect(order).to receive(:shipments).and_return(order_shipments) }
+      it { expect(order).to receive(:fulfillments).and_return(order_shipments) }
       it { expect(Spree::TaxRate).to receive(:adjust).with(order, order_shipments) }
     end
 
     context 'when order has no shipments' do
       before do
-        allow(order).to receive_message_chain(:shipments, :any?).and_return(false)
+        allow(order).to receive_message_chain(:fulfillments, :any?).and_return(false)
       end
 
-      it { expect(order).to receive_message_chain(:shipments, :any?).and_return(false) }
+      it { expect(order).to receive_message_chain(:fulfillments, :any?).and_return(false) }
     end
   end
 
@@ -2695,7 +2695,7 @@ describe Spree::Order, type: :model do
 
     context 'when order has no shipments' do
       before do
-        order.shipments.delete_all
+        order.fulfillments.delete_all
       end
 
       it 'returns false and adds an error to the order' do
@@ -2758,8 +2758,7 @@ describe Spree::Order, type: :model do
   end
 
   context 'quick checkout' do
-    let(:digital_shipping_method) { create(:digital_shipping_method) }
-    let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+    let(:digital_product) { create(:digital_product) }
     let(:digital_variant) { create(:variant, product: digital_product, digitals: [create(:digital)]) }
     let(:digital_line_item) { create(:line_item, variant: digital_variant, quantity: 1, order: order) }
     let(:physical_line_item) { create(:line_item, quantity: 1, order: order) }

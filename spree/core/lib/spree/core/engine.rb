@@ -150,9 +150,8 @@ module Spree
         ]
 
         Rails.application.config.spree.stock_splitters = [
-          Spree::Stock::Splitter::ShippingCategory,
-          Spree::Stock::Splitter::Backordered,
-          Spree::Stock::Splitter::Digital
+          Spree::Stock::Splitter::FulfillmentType,
+          Spree::Stock::Splitter::Backordered
         ]
 
         Rails.application.config.spree.payment_methods = [
@@ -335,8 +334,8 @@ module Spree
           Spree::ProductType,
           Spree::Promotion,
           Spree::Refund,
-          Spree::Shipment,
-          Spree::ShippingMethod,
+          Spree::Fulfillment,
+          Spree::DeliveryMethod,
           Spree::StockItem,
           Spree::StockTransfer,
           Spree::Store,

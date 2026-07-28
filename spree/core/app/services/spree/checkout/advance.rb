@@ -25,7 +25,7 @@ module Spree
 
           if order.delivery? &&
               shipping_method_id.present? &&
-              order.shipments.count == 1 &&
+              order.fulfillments.count == 1 &&
               order.shipping_method.id != shipping_method_id
 
             result = Spree::Checkout::SelectShippingMethod.call(order: order, params: { shipping_method_id: shipping_method_id })
@@ -36,7 +36,7 @@ module Spree
         end
 
         if order.state != old_state && !order_updater_ran
-          order.updater.update_shipment_state
+          order.updater.update_fulfillment_status
           order.updater.update_payment_state
           order.save! if order.changed?
         end

@@ -487,7 +487,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
       let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
       let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
-      let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
+      let!(:shipping_method) { create(:shipping_method) }
 
       before do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
@@ -514,9 +514,9 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         cart.shipments.delete_all
         cart.update_column(:state, 'address')
 
-        # Move the products into a shipping category no shipping method serves.
-        unserved_category = create(:shipping_category, name: 'Unserved')
-        cart.line_items.each { |line_item| line_item.variant.product.update!(shipping_category: unserved_category) }
+        # Give the products a fulfillment type no delivery method serves.
+        unserved_type = create(:product_type, name: 'Pickup Only', fulfillment_types: ['pickup'])
+        cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: unserved_type) }
         cart.reload
 
         get :show, params: { id: cart.prefixed_id }
@@ -575,7 +575,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
     let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
     let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
-    let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
+    let!(:shipping_method) { create(:shipping_method) }
 
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
@@ -593,11 +593,11 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
     context 'when a line item cannot be delivered to the address' do
       let(:address) { user.addresses.first || create(:address, user: user, country: country, state: us_state) }
-      let(:unserved_category) { create(:shipping_category, name: 'Unserved') }
+      let(:unserved_type) { create(:product_type, name: 'Pickup Only', fulfillment_types: ['pickup']) }
 
       before do
         order.update!(email: 'customer@example.com')
-        order.line_items.each { |line_item| line_item.variant.product.update!(shipping_category: unserved_category) }
+        order.line_items.each { |line_item| line_item.variant.product.update!(product_type: unserved_type) }
       end
 
       it 'returns ok with a delivery_unavailable warning, an unmet delivery requirement, and no fulfillments' do

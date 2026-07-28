@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Order, type: :model do
   let(:digital_shipping_method) { create(:digital_shipping_method) }
-  let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+  let(:digital_product) { create(:digital_product) }
 
   context 'line_item analysis' do
     it 'understands that all products are digital' do

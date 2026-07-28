@@ -319,6 +319,11 @@ describe Spree::TaxRate, type: :model do
     subject(:included_tax_amount) { Spree::TaxRate.included_tax_amount_for(price_options) }
 
     let!(:order) { create :order_with_line_items }
+    let!(:default_tax_zone) do
+      create(:zone, default_tax: true, kind: 'country').tap do |zone|
+        zone.zone_members.create!(zoneable: order.tax_address.country)
+      end
+    end
     let!(:included_tax_rate) do
       create :tax_rate,
              included_in_price: true,

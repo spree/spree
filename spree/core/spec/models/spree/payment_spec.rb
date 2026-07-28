@@ -819,7 +819,7 @@ describe Spree::Payment, type: :model do
 
       it 'updates payment_state and shipments' do
         expect(order.updater).to receive(:update_payment_state)
-        expect(order.updater).to receive(:update_shipment_state)
+        expect(order.updater).to receive(:update_fulfillment_status)
         Spree::Payment.create(amount: 100, order: order, payment_method: gateway, source: card)
       end
     end

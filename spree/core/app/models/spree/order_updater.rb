@@ -1,7 +1,7 @@
 module Spree
   class OrderUpdater
     attr_reader :order
-    delegate :payments, :line_items, :adjustments, :all_adjustments, :shipments, :update_hooks, :quantity, to: :order
+    delegate :payments, :line_items, :adjustments, :all_adjustments, :fulfillments, :update_hooks, :quantity, to: :order
 
     def initialize(order)
       @order = order
@@ -19,9 +19,9 @@ module Spree
       update_totals
       if order.completed?
         update_payment_state
-        update_shipments
-        update_shipment_state
-        update_shipment_total
+        update_fulfillments
+        update_fulfillment_status
+        update_delivery_total
       end
       run_hooks
       persist_totals
@@ -51,11 +51,11 @@ module Spree
       update_adjustment_total
     end
 
-    # give each of the shipments a chance to update themselves
-    def update_shipments
-      shipping_method_filter = order.completed? ? ShippingMethod::DISPLAY_ON_BACK_END : ShippingMethod::DISPLAY_ON_FRONT_END
+    # give each of the fulfillments a chance to update themselves
+    def update_fulfillments
+      shipping_method_filter = order.completed? ? DeliveryMethod::DISPLAY_ON_BACK_END : DeliveryMethod::DISPLAY_ON_FRONT_END
 
-      shipments.each do |shipment|
+      fulfillments.each do |shipment|
         next unless shipment.persisted?
 
         shipment.update!(order)
@@ -68,13 +68,13 @@ module Spree
       order.payment_total = payments.completed.includes(:refunds).inject(0) { |sum, payment| sum + payment.amount - payment.refunds.sum(:amount) }
     end
 
-    def update_shipment_total
-      order.shipment_total = shipments.to_a.sum(&:cost)
+    def update_delivery_total
+      order.delivery_total = fulfillments.to_a.sum(&:cost)
       update_order_total
     end
 
     def update_order_total
-      order.total = order.item_total + order.shipment_total + order.adjustment_total
+      order.total = order.item_total + order.delivery_total + order.adjustment_total
     end
 
     def update_adjustment_total
@@ -90,7 +90,7 @@ module Spree
       ) || [0, 0, 0, 0]
 
       # Fetch all shipment totals in a single query
-      shipment_totals = shipments.reorder(nil).pick(
+      shipment_totals = fulfillments.reorder(nil).pick(
         Arel.sql('COALESCE(SUM(adjustment_total), 0)'),
         Arel.sql('COALESCE(SUM(included_tax_total), 0)'),
         Arel.sql('COALESCE(SUM(additional_tax_total), 0)'),
@@ -122,59 +122,72 @@ module Spree
 
     def persist_totals
       order.update_columns(
-        payment_state: order.payment_state,
-        shipment_state: order.shipment_state,
+        payment_status: order.payment_status,
+        fulfillment_status: order.fulfillment_status,
         item_total: order.item_total,
         item_count: order.item_count,
         adjustment_total: order.adjustment_total,
         included_tax_total: order.included_tax_total,
         additional_tax_total: order.additional_tax_total,
         payment_total: order.payment_total,
-        shipment_total: order.shipment_total,
+        delivery_total: order.delivery_total,
         promo_total: order.promo_total,
         total: order.total,
         updated_at: Time.current
       )
     end
 
-    # Updates the +shipment_state+ attribute according to the following logic:
+    # Updates the +fulfillment_status+ attribute according to the following logic:
     #
-    # shipped   when all Shipments are in the "shipped" state
-    # partial   when at least one Shipment has a state of "shipped" and there is another Shipment with a state other than "shipped"
-    #           or there are InventoryUnits associated with the order that have a state of "sold" but are not associated with a Shipment.
-    # ready     when all Shipments are in the "ready" state
+    # fulfilled when all Fulfillments are in the "fulfilled" status
+    # partial   when at least one Fulfillment is "fulfilled" and there is another
+    #           Fulfillment with a status other than "fulfilled"
+    # ready     when all Fulfillments are "ready" (ready_for_pickup rolls up as ready)
     # backorder when there is backordered inventory associated with an order
-    # pending   when all Shipments are in the "pending" state
+    # pending   when all Fulfillments are "pending"
     #
-    # The +shipment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
-    def update_shipment_state
+    # The +fulfillment_status+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
+    def update_fulfillment_status
       if order.backordered?
-        order.shipment_state = 'backorder'
+        order.fulfillment_status = 'backorder'
       else
-        # get all the shipment states for this order
-        shipment_states = shipments.states.uniq
+        # ready_for_pickup is customer-actionable on the fulfillment itself but
+        # rolls up as ready at the order level
+        statuses = fulfillments.states.uniq.map { |status| status == 'ready_for_pickup' ? 'ready' : status }.uniq
 
-        order.shipment_state = if shipment_states.size > 1
-                                 if shipment_states.include?('shipped')
-                                   'partial'
-                                 elsif shipment_states.include?('pending')
-                                   'pending'
-                                 else
-                                   'ready'
-                                 end
-                               else
-                                 # will return nil if no shipments are found
-                                 shipment_states.first
-                                 # TODO: inventory unit states?
-                                 # if order.shipment_state && order.inventory_units.where(shipment_id: nil).exists?
-                                 #   shipments exist but there are unassigned inventory units
-                                 #   order.shipment_state = 'partial'
-                                 # end
-                               end
+        order.fulfillment_status = if statuses.size > 1
+                                     if statuses.include?('fulfilled')
+                                       'partial'
+                                     elsif statuses.include?('pending')
+                                       'pending'
+                                     else
+                                       'ready'
+                                     end
+                                   else
+                                     # will return nil if no fulfillments are found
+                                     statuses.first
+                                   end
       end
 
       order.state_changed('shipment')
-      order.shipment_state
+      order.fulfillment_status
+    end
+    # @deprecated Use {#update_fulfillment_status}; removed in 6.1.
+    def update_shipment_state
+      Spree::Deprecation.warn('Spree::OrderUpdater#update_shipment_state is deprecated and will be removed in Spree 6.1. Use #update_fulfillment_status instead.')
+      update_fulfillment_status
+    end
+
+    # @deprecated Use {#update_delivery_total}; removed in 6.1.
+    def update_shipment_total
+      Spree::Deprecation.warn('Spree::OrderUpdater#update_shipment_total is deprecated and will be removed in Spree 6.1. Use #update_delivery_total instead.')
+      update_delivery_total
+    end
+
+    # @deprecated Use {#update_fulfillments}; removed in 6.1.
+    def update_shipments
+      Spree::Deprecation.warn('Spree::OrderUpdater#update_shipments is deprecated and will be removed in Spree 6.1. Use #update_fulfillments instead.')
+      update_fulfillments
     end
 
     # Updates the +payment_state+ attribute according to the following logic:

@@ -5,7 +5,7 @@ en:
       messages:
         blank: can't be blank
       models:
-        spree/fulfilment_changer:
+        spree/fulfillment_changer:
           attributes:
             current_shipment:
               can_not_have_backordered_inventory_units: has backordered inventory units

@@ -35,7 +35,7 @@ module Spree
       end
 
       def create_shipment(order:, stock_location:, variant:, quantity:)
-        shipment = order.shipments.create(
+        shipment = order.fulfillments.create(
           order_id: order.id,
           stock_location_id: stock_location.id
         )

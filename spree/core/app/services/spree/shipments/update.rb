@@ -17,7 +17,7 @@ module Spree
             # might change the Order#payment_state)
             shipment.update_amounts
 
-            order.updater.update_shipment_total
+            order.updater.update_delivery_total
             order.updater.update_payment_state
 
             # Update shipment state only after order total is updated because it
@@ -29,7 +29,7 @@ module Spree
 
             # And then it's time to update shipment states and finally persist
             # order changes
-            order.updater.update_shipment_state
+            order.updater.update_fulfillment_status
             order.updater.persist_totals
           end
         end

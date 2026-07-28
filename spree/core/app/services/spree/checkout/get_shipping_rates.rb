@@ -30,7 +30,7 @@ module Spree
       end
 
       def generate_or_return_shipping_rates(order:)
-        generate_shipping_rates(order: order) if order.shipments.empty?
+        generate_shipping_rates(order: order) if order.fulfillments.empty?
         return_shipments(order: order)
       end
 

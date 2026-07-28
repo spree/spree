@@ -48,7 +48,6 @@ describe Spree::Order do
     let!(:shipping_method) do
       sm = create(:shipping_method, tax_category: tax_category)
       sm.calculator.preferred_amount = 10
-      sm.zones = [zone]
       sm.save
       sm
     end

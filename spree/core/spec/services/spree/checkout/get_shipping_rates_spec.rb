@@ -17,7 +17,6 @@ module Spree
       create(:shipping_method).tap do |shipping_method|
         shipping_method.calculator.preferred_amount = 10
         shipping_method.calculator.save
-        shipping_method.zones = [zone]
       end
     end
     let!(:zone) { create(:zone) }

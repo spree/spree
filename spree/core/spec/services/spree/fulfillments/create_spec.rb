@@ -193,10 +193,10 @@ module Spree
 
       it 'registers the fulfillment as already shipped' do
         expect(execute.success?).to eq(true)
-        expect(fulfillment.state).to eq('shipped')
+        expect(fulfillment.status).to eq('fulfilled')
         expect(fulfillment.shipped_at).to be_present
-        expect(fulfillment.inventory_units.all? { |unit| unit.state == 'shipped' }).to eq(true)
-        expect(order.reload.shipment_state).to eq('shipped')
+        expect(fulfillment.fulfillment_items.all? { |unit| unit.status == 'shipped' }).to eq(true)
+        expect(order.reload.fulfillment_status).to eq('fulfilled')
       end
 
       it 'freezes the inherited cost and carrier, keeping the order total unchanged' do
@@ -220,10 +220,10 @@ module Spree
 
         it 'bypasses the paid-order readiness gate' do
           order.payments.delete_all
-          order.update_column(:payment_state, 'balance_due')
+          order.update_column(:payment_status, 'balance_due')
 
           expect(execute.success?).to eq(true)
-          expect(fulfillment.state).to eq('shipped')
+          expect(fulfillment.status).to eq('fulfilled')
         end
       end
 
@@ -234,8 +234,8 @@ module Spree
 
         it 'fills backorders before shipping' do
           expect(execute.success?).to eq(true)
-          expect(fulfillment.state).to eq('shipped')
-          expect(fulfillment.inventory_units.all? { |unit| unit.state == 'shipped' }).to eq(true)
+          expect(fulfillment.status).to eq('fulfilled')
+          expect(fulfillment.fulfillment_items.all? { |unit| unit.status == 'shipped' }).to eq(true)
         end
       end
     end

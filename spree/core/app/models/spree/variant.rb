@@ -35,10 +35,11 @@ module Spree
     include Spree::DefaultPrice
 
     with_options inverse_of: :variant do
-      has_many :inventory_units
+      has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem'
       has_many :line_items
       has_many :stock_items, dependent: :destroy, autosave: true
     end
+    has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :variant, deprecated: true
 
     has_many :orders, through: :line_items
     with_options through: :stock_items do

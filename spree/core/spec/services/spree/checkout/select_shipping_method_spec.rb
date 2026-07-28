@@ -19,21 +19,25 @@ module Spree
     let(:zone) { create(:zone_with_country) }
     let(:shipping_category) { order.products.first.shipping_category }
     let!(:shipping_method) do
-      create(:shipping_method, zones: [zone], shipping_categories: [shipping_category]) do |shipping_method|
+      create(:shipping_method, shipping_categories: [shipping_category]) do |shipping_method|
         shipping_method.calculator.preferred_amount = 10
         shipping_method.calculator.save
       end
     end
     let!(:shipping_method_2) do
-      create(:shipping_method, zones: [zone], shipping_categories: [shipping_category]) do |shipping_method|
+      create(:shipping_method, shipping_categories: [shipping_category]) do |shipping_method|
         shipping_method.calculator.preferred_amount = 15
         shipping_method.calculator.save
       end
     end
     let!(:shipping_method_3) do
-      create(:shipping_method, zones: [create(:zone)], shipping_categories: [shipping_category]) do |shipping_method|
+      create(:shipping_method, shipping_categories: [shipping_category]) do |shipping_method|
         shipping_method.calculator.preferred_amount = 5
         shipping_method.calculator.save
+        # scoped to an unrelated delivery zone so it never serves this order
+        elsewhere = create(:delivery_zone)
+        elsewhere.members.create!(member_type: 'country', country: create(:country))
+        shipping_method.delivery_zones = [elsewhere]
       end
     end
     let(:shipment) { order.shipments.last }

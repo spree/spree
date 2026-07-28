@@ -80,38 +80,44 @@ module Spree
     context 'updating shipment state' do
       before do
         allow(order).to receive_messages backordered?: false
-        allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0)
-        allow(order).to receive_message_chain(:shipments, :ready, :count).and_return(0)
-        allow(order).to receive_message_chain(:shipments, :pending, :count).and_return(0)
+        allow(order).to receive_message_chain(:fulfillments, :shipped, :count).and_return(0)
+        allow(order).to receive_message_chain(:fulfillments, :ready, :count).and_return(0)
+        allow(order).to receive_message_chain(:fulfillments, :pending, :count).and_return(0)
       end
 
       it 'is backordered' do
         allow(order).to receive_messages backordered?: true
-        updater.update_shipment_state
+        updater.update_fulfillment_status
 
-        expect(order.shipment_state).to eq('backorder')
+        expect(order.fulfillment_status).to eq('backorder')
       end
 
       it 'is nil' do
-        allow(order).to receive_message_chain(:shipments, :states).and_return([])
-        allow(order).to receive_message_chain(:shipments, :count).and_return(0)
+        allow(order).to receive_message_chain(:fulfillments, :states).and_return([])
+        allow(order).to receive_message_chain(:fulfillments, :count).and_return(0)
 
-        updater.update_shipment_state
-        expect(order.shipment_state).to be_nil
+        updater.update_fulfillment_status
+        expect(order.fulfillment_status).to be_nil
       end
 
-      ['shipped', 'ready', 'pending'].each do |state|
-        it "is #{state}" do
-          allow(order).to receive_message_chain(:shipments, :states).and_return([state])
-          updater.update_shipment_state
-          expect(order.shipment_state).to eq(state.to_s)
+      ['fulfilled', 'ready', 'pending'].each do |status|
+        it "is #{status}" do
+          allow(order).to receive_message_chain(:fulfillments, :states).and_return([status])
+          updater.update_fulfillment_status
+          expect(order.fulfillment_status).to eq(status.to_s)
         end
       end
 
+      it 'rolls ready_for_pickup up as ready' do
+        allow(order).to receive_message_chain(:fulfillments, :states).and_return(['ready_for_pickup'])
+        updater.update_fulfillment_status
+        expect(order.fulfillment_status).to eq('ready')
+      end
+
       it 'is partial' do
-        allow(order).to receive_message_chain(:shipments, :states).and_return(['pending', 'shipped'])
-        updater.update_shipment_state
-        expect(order.shipment_state).to eq('partial')
+        allow(order).to receive_message_chain(:fulfillments, :states).and_return(['pending', 'fulfilled'])
+        updater.update_fulfillment_status
+        expect(order.fulfillment_status).to eq('partial')
       end
     end
 
@@ -228,15 +234,15 @@ module Spree
           updater.update
         end
 
-        it 'updates shipment state' do
-          expect(updater).to receive(:update_shipment_state)
+        it 'updates fulfillment status' do
+          expect(updater).to receive(:update_fulfillment_status)
           updater.update
         end
 
-        it 'updates shipments total again after updating shipments' do
-          expect(updater).to receive(:update_shipment_total).ordered
-          expect(updater).to receive(:update_shipments).ordered
-          expect(updater).to receive(:update_shipment_total).ordered
+        it 'updates delivery total again after updating fulfillments' do
+          expect(updater).to receive(:update_delivery_total).ordered
+          expect(updater).to receive(:update_fulfillments).ordered
+          expect(updater).to receive(:update_delivery_total).ordered
           updater.update
         end
       end
@@ -246,28 +252,28 @@ module Spree
         let(:shipments) { [shipment] }
 
         it 'updates each shipment' do
-          allow(order).to receive_messages shipments: shipments
+          allow(order).to receive_messages fulfillments: shipments
           allow(shipments).to receive_messages states: []
           allow(shipments).to receive_messages ready: []
           allow(shipments).to receive_messages pending: []
           allow(shipments).to receive_messages shipped: []
 
           expect(shipment).to receive(:update!).with(order)
-          updater.update_shipments
+          updater.update_fulfillments
         end
 
         it 'refreshes shipment rates' do
-          allow(order).to receive_messages shipments: shipments
+          allow(order).to receive_messages fulfillments: shipments
 
           expect(shipment).to receive(:refresh_rates)
-          updater.update_shipments
+          updater.update_fulfillments
         end
 
         it 'updates the shipment amount' do
-          allow(order).to receive_messages shipments: shipments
+          allow(order).to receive_messages fulfillments: shipments
 
           expect(shipment).to receive(:update_amounts)
-          updater.update_shipments
+          updater.update_fulfillments
         end
 
         context 'refresh rates' do

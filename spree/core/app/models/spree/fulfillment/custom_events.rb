@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Spree
-  class Shipment < Spree.base_class
+  class Fulfillment < Spree.base_class
     # Publishes custom shipment events beyond basic lifecycle events.
     #
     # Events:

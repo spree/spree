@@ -209,10 +209,16 @@ describe Spree::LineItem, type: :model do
     let(:variant) { create(:variant) }
 
     before do
-      create(:tax_rate, zone: order.tax_zone, tax_category: variant.tax_category)
+      create(:tax_rate, zone: tax_rate_zone, tax_category: variant.tax_category)
     end
 
     context 'when order has a tax zone' do
+      let(:tax_rate_zone) do
+        create(:zone, default_tax: true, kind: 'country').tap do |zone|
+          zone.zone_members.create!(zoneable: order.tax_address.country)
+        end
+      end
+
       before do
         expect(order.tax_zone).to be_present
       end
@@ -225,6 +231,8 @@ describe Spree::LineItem, type: :model do
     end
 
     context 'when order does not have a tax zone' do
+      let(:tax_rate_zone) { create(:zone, kind: 'country') }
+
       before do
         order.bill_address = nil
         order.ship_address = nil

@@ -67,7 +67,7 @@ module Spree
       end
 
       def item_adjustments
-        adjustments.reject { |a| a.adjustable_type == 'Spree::Shipment' }
+        adjustments.reject { |a| a.adjustable_type.in?(%w[Spree::Shipment Spree::Fulfillment]) }
       end
 
       def where(array, opts = {})

@@ -225,9 +225,9 @@ describe Spree::Store, type: :model, without_global_store: true do
         let(:store) { build(:store) }
 
         before do
-          zone = create(:zone, name: 'Test Zone', kind: 'country')
-          zone.zone_members.create!(zoneable: country)
-          create(:shipping_method, zones: [zone])
+          zone = create(:delivery_zone)
+          zone.members.create!(member_type: 'country', country: country)
+          create(:shipping_method, delivery_zones: [zone])
           store.default_country_iso = country.iso
         end
 
@@ -762,12 +762,12 @@ describe Spree::Store, type: :model, without_global_store: true do
     context 'with country-type zones with shipping methods' do
       let(:country1) { create(:country) }
       let(:country2) { create(:country) }
-      let!(:zone) { create(:zone, kind: 'country') }
+      let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.zone_members.create!(zoneable: country1)
-        zone.zone_members.create!(zoneable: country2)
-        create(:shipping_method, zones: [zone])
+        zone.members.create!(member_type: 'country', country: country1)
+        zone.members.create!(member_type: 'country', country: country2)
+        create(:shipping_method, delivery_zones: [zone])
       end
 
       it 'returns countries from those zones' do
@@ -779,11 +779,11 @@ describe Spree::Store, type: :model, without_global_store: true do
     context 'with state-type zones with shipping methods' do
       let(:country) { create(:country) }
       let(:state) { create(:state, country: country) }
-      let!(:zone) { create(:zone, kind: 'state') }
+      let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.zone_members.create!(zoneable: state)
-        create(:shipping_method, zones: [zone])
+        zone.members.create!(member_type: 'state', state: state)
+        create(:shipping_method, delivery_zones: [zone])
       end
 
       it 'returns countries inferred from state-type zones' do
@@ -794,10 +794,10 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     context 'when zone has no shipping method' do
       let(:country) { create(:country) }
-      let!(:zone) { create(:zone, kind: 'country') }
+      let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.zone_members.create!(zoneable: country)
+        zone.members.create!(member_type: 'country', country: country)
       end
 
       it 'does not include countries from that zone' do
@@ -815,14 +815,14 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     context 'when country appears in multiple zones' do
       let(:country) { create(:country) }
-      let!(:zone1) { create(:zone, kind: 'country') }
-      let!(:zone2) { create(:zone, kind: 'country') }
+      let!(:zone1) { create(:delivery_zone) }
+      let!(:zone2) { create(:delivery_zone) }
 
       before do
-        zone1.zone_members.create!(zoneable: country)
-        zone2.zone_members.create!(zoneable: country)
-        create(:shipping_method, zones: [zone1])
-        create(:shipping_method, zones: [zone2])
+        zone1.members.create!(member_type: 'country', country: country)
+        zone2.members.create!(member_type: 'country', country: country)
+        create(:shipping_method, delivery_zones: [zone1])
+        create(:shipping_method, delivery_zones: [zone2])
       end
 
       it 'deduplicates countries' do

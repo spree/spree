@@ -371,8 +371,8 @@ module Spree
 
       if order.completed?
         order.updater.update_payment_state
-        order.updater.update_shipments
-        order.updater.update_shipment_state
+        order.updater.update_fulfillments
+        order.updater.update_fulfillment_status
       end
 
       order.persist_totals if completed? || order.completed?

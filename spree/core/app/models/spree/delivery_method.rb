@@ -1,0 +1,169 @@
+module Spree
+  class DeliveryMethod < Spree.base_class
+    has_prefix_id :dm
+
+    acts_as_paranoid
+    include Spree::CalculatedAdjustments
+    include Spree::Metafields
+    include Spree::Metadata
+    include Spree::DisplayOn
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
+    include Spree::MemoizedData
+
+    extend Spree::DisplayMoney
+
+    MEMOIZED_METHODS = %w[display_estimated_price]
+
+    # Used for #refresh_rates
+    DISPLAY_ON_FRONT_END = 1
+    DISPLAY_ON_BACK_END = 2
+
+    default_scope { where(deleted_at: nil) }
+
+    has_many :shipping_method_categories, foreign_key: :shipping_method_id, dependent: :destroy
+    has_many :shipping_categories, through: :shipping_method_categories
+    has_many :delivery_rates, class_name: 'Spree::DeliveryRate', inverse_of: :delivery_method
+    has_many :fulfillments, through: :delivery_rates, class_name: 'Spree::Fulfillment'
+
+    has_many :delivery_method_zones, class_name: 'Spree::DeliveryMethodZone',
+                                     foreign_key: 'delivery_method_id'
+    has_many :delivery_zones, through: :delivery_method_zones, class_name: 'Spree::DeliveryZone'
+
+    belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory', optional: true
+
+    attribute :fulfillment_type, :string, default: 'shipping'
+    attribute :fulfillment_provider, :string, default: 'Spree::FulfillmentProvider::Manual'
+
+    scope :by_fulfillment_type, ->(type) { where(fulfillment_type: type) }
+
+    # Legacy association names — removed in 6.1.
+    has_many :shipping_rates, class_name: 'Spree::DeliveryRate', foreign_key: :delivery_method_id, deprecated: true
+    has_many :shipments, through: :delivery_rates, source: :fulfillment, deprecated: true
+    has_many :zones, through: :delivery_method_zones, source: :delivery_zone, deprecated: true
+
+    validates :name, :display_on, :fulfillment_type, presence: true
+    validates :estimated_transit_business_days_min, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
+    validates :estimated_transit_business_days_max, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
+
+    scope :digital, -> { by_fulfillment_type('digital') }
+
+    scope :search_by_name, ->(query) { where(arel_table[:name].lower.matches("%#{query}%")) }
+
+    def include?(address)
+      return true unless requires_zone_check?
+      return false unless address
+      return true if delivery_zones.empty?
+
+      delivery_zones.includes(:members).any? do |zone|
+        zone.include?(address)
+      end
+    end
+
+    def requires_zone_check?
+      !digital? && !pickup?
+    end
+
+    def build_tracking_url(tracking)
+      return if tracking.blank?
+
+      tracking = tracking.upcase
+
+      # build tracking url automatically
+      if tracking_url.blank?
+        # use tracking number gem to build tracking url
+        # we need to upcase the tracking number
+        # https://github.com/jkeen/tracking_number/pull/85
+        tracking_number_service(tracking).tracking_url if tracking_number_service(tracking).valid?
+      else
+        # build tracking url manually
+        tracking_url.gsub(/:tracking/, ERB::Util.url_encode(tracking)) # :url_encode exists in 1.8.7 through 2.1.0
+      end
+    end
+
+    # your shipping method subclasses can override this method to provide a custom tracking number service
+    def tracking_number_service(tracking)
+      @tracking_number_service ||= Spree.tracking_number_service.new(tracking)
+    end
+
+    def pickup?
+      fulfillment_type == 'pickup'
+    end
+
+    def pickup_point?
+      fulfillment_type == 'pickup_point'
+    end
+
+    def requires_address?
+      !digital? && !pickup?
+    end
+
+    # The FulfillmentProvider strategy handling this method's fulfillments.
+    # Falls back to Manual for rows created before the 6.0 backfill ran.
+    def provider
+      @provider ||= (fulfillment_provider.presence || 'Spree::FulfillmentProvider::Manual').constantize.new
+    end
+
+    def self.calculators
+      # calculator registry key keeps its historical name
+      spree_calculators.shipping_methods.
+        select { |c| c.to_s.constantize < Spree::ShippingCalculator }
+    end
+
+    def available_to_display?(display_filter)
+      (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
+        (backend? && display_filter == DISPLAY_ON_BACK_END)
+    end
+
+    def delivery_range
+      return unless estimated_transit_business_days_min || estimated_transit_business_days_max
+
+      if estimated_transit_business_days_min == estimated_transit_business_days_max
+        estimated_transit_business_days_min.to_s
+      else
+        [estimated_transit_business_days_min, estimated_transit_business_days_max].compact.join("-")
+      end
+    end
+
+    def display_estimated_price
+      return unless calculator
+
+      @display_estimated_price ||= begin
+        calculator.description + ': ' +
+
+        if calculator.is_a?(Spree::Calculator::Shipping::FlatRate)
+          if calculator.preferred_amount == 0
+            Spree.t(:free)
+          else
+            Spree::Money.new(calculator.preferred_amount, { currency: calculator.preferred_currency }).to_s
+          end
+        elsif calculator.is_a?(Spree::Calculator::Shipping::FlexiRate)
+          Spree::Money.new(calculator.preferred_first_item, { currency: calculator.preferred_currency }).to_s
+        elsif calculator.is_a?(Spree::Calculator::Shipping::FlatPercentItemTotal)
+          ActionController::Base.helpers.number_to_percentage(calculator.preferred_flat_percent, precision: 2)
+        else
+          ''
+        end
+      end
+    end
+
+    # Returns true if the delivery method delivers digitally
+    #
+    # @return [Boolean]
+    def digital?
+      fulfillment_type == 'digital'
+    end
+
+    private
+
+    # Some shipping methods are only meant to be set via backend
+    def frontend?
+      display_on.in?(['both', 'front_end'])
+    end
+
+    def backend?
+      display_on.in?(['both', 'back_end'])
+    end
+  end
+end

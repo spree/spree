@@ -102,7 +102,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
           data = JSON.parse(response.body)
           expect(data['id']).to start_with('ful_')
           expect(data['tracking']).to eq('INPOST-12345')
-          expect(data['status']).to eq('shipped')
+          expect(data['status']).to eq('fulfilled')
         end
       end
 
@@ -222,7 +222,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['status']).to eq('shipped')
+          expect(data['status']).to eq('fulfilled')
         end
       end
     end

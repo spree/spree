@@ -64,7 +64,7 @@ module Spree
     def self.store_pre_tax_amount(item, rates)
       pre_tax_amount = case item.class.to_s
                        when 'Spree::LineItem' then item.discounted_amount
-                       when 'Spree::Shipment' then item.discounted_cost
+                       when 'Spree::Shipment', 'Spree::Fulfillment' then item.discounted_cost
                        end
 
       included_rates = rates.select(&:included_in_price)

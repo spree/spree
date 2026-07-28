@@ -116,13 +116,13 @@ FactoryBot.define do
           end
 
           factory :shipped_order do
-            shipment_state { 'shipped' }
+            shipment_state { 'fulfilled' }
 
             after(:create) do |order|
-              order.shipments.each do |shipment|
-                shipment.inventory_units.update_all state: 'shipped'
+              order.fulfillments.each do |shipment|
+                shipment.fulfillment_items.update_all status: 'shipped'
                 shipment.update_columns(
-                  state: 'shipped',
+                  status: 'fulfilled',
                   tracking: '1234567890'
                 )
               end

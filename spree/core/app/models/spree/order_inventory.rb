@@ -8,7 +8,13 @@ module Spree
       @variant = line_item.variant
     end
 
-    delegate :inventory_units, to: :line_item
+    delegate :fulfillment_items, to: :line_item
+
+    # @deprecated Use {#fulfillment_items}; removed in 6.1.
+    def inventory_units
+      Spree::Deprecation.warn('Spree::OrderInventory#inventory_units is deprecated and will be removed in Spree 6.1. Use #fulfillment_items instead.')
+      fulfillment_items
+    end
 
     # Only verify inventory for completed orders (as orders in frontend checkout
     # have inventory assigned via +order.create_proposed_shipment+) or when
@@ -20,13 +26,13 @@ module Spree
     def verify(shipment = nil, is_updated: false, removing: false)
       return unless order.completed? || shipment.present?
 
-      units_count = inventory_units.reload.sum(&:quantity)
+      units_count = fulfillment_items.reload.sum(&:quantity)
       line_item_changed = is_updated ? !line_item.saved_changes? : !line_item.changed?
 
       if removing
         # When the line item is being destroyed, only remove existing inventory.
         # Adding here would create units that the LineItem `dependent: :destroy`
-        # cascade can't see (set_up_inventory writes through shipment.inventory_units,
+        # cascade can't see (set_up_inventory writes through shipment.fulfillment_items,
         # leaving line_item.inventory_units stale), producing an orphaned unit.
         #
         # Bypass `remove` because it routes through `set_quantity_to_remove` which
@@ -51,7 +57,7 @@ module Spree
       if target_shipment.present?
         remove_from_shipment(target_shipment, quantity)
       else
-        order.shipments.each do |shipment|
+        order.fulfillments.each do |shipment|
           break if quantity.zero?
 
           quantity -= remove_from_shipment(shipment, quantity)
@@ -63,7 +69,7 @@ module Spree
       if target_shipment.present?
         remove_from_shipment(target_shipment, quantity)
       else
-        order.shipments.each do |shipment|
+        order.fulfillments.each do |shipment|
           break if quantity.zero?
 
           quantity -= remove_from_shipment(shipment, quantity)
@@ -84,11 +90,11 @@ module Spree
     # first unshipped that already includes this variant
     # first unshipped that's leaving from a stock_location that stocks this variant
     def determine_target_shipment
-      target_shipment = order.shipments.detect do |shipment|
+      target_shipment = order.fulfillments.detect do |shipment|
         shipment.ready_or_pending? && shipment.include?(variant)
       end
 
-      target_shipment || order.shipments.detect do |shipment|
+      target_shipment || order.fulfillments.detect do |shipment|
         shipment.ready_or_pending? && variant.stock_location_ids.include?(shipment.stock_location_id)
       end
     end
@@ -116,7 +122,7 @@ module Spree
     def remove_from_shipment(shipment, quantity)
       return 0 if quantity.zero? || shipment.shipped?
 
-      shipment_units = shipment.inventory_units_for_item(line_item, variant).reject(&:shipped?).sort_by(&:state)
+      shipment_units = shipment.inventory_units_for_item(line_item, variant).reject(&:shipped?).sort_by(&:status)
 
       removed_quantity = 0
       removed_backordered = 0
@@ -136,7 +142,7 @@ module Spree
         inventory_unit.save! if inventory_unit.persisted?
       end
 
-      shipment.destroy if shipment.inventory_units.sum(:quantity).zero?
+      shipment.destroy if shipment.fulfillment_items.sum(:quantity).zero?
 
       # removing this from shipment, and adding to stock_location
       if order.completed?

@@ -13,9 +13,6 @@ module Spree
       has_many :states, source_type: 'Spree::State'
     end
 
-    has_many :shipping_method_zones, class_name: 'Spree::ShippingMethodZone'
-    has_many :shipping_methods, through: :shipping_method_zones, class_name: 'Spree::ShippingMethod'
-
     scope :with_default_tax, -> { where(default_tax: true) }
 
     after_save :remove_defunct_members

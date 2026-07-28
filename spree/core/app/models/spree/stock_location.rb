@@ -21,7 +21,8 @@ module Spree
 
     acts_as_paranoid
 
-    has_many :shipments
+    has_many :fulfillments, class_name: 'Spree::Fulfillment'
+    has_many :shipments, class_name: 'Spree::Fulfillment', foreign_key: :stock_location_id, deprecated: true
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
     has_many :variants, through: :stock_items
     has_many :stock_movements, through: :stock_items

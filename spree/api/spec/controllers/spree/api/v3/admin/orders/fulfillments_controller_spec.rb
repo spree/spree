@@ -88,10 +88,10 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['status']).to eq('shipped')
+      expect(json_response['status']).to eq('fulfilled')
       expect(json_response['fulfilled_at']).to be_present
       expect(BigDecimal(json_response['cost'])).to eq(BigDecimal('7.42'))
-      expect(order.reload.shipment_state).to eq('shipped')
+      expect(order.reload.fulfillment_status).to eq('fulfilled')
     end
 
     it 'returns 422 for a non-completed order' do
@@ -183,7 +183,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       expect(response).to have_http_status(:ok)
       expect(shipment.reload.state).to eq(original_state)
-      expect(shipment.state).not_to eq('shipped')
+      expect(shipment.status).not_to eq('fulfilled')
     end
   end
 
@@ -197,7 +197,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['status']).to eq('shipped')
+      expect(json_response['status']).to eq('fulfilled')
     end
   end
 

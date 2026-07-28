@@ -21,7 +21,7 @@ module Spree
           order.line_items.destroy_all
           order.updater.update_item_count
           order.adjustments.destroy_all
-          order.shipments.destroy_all
+          order.fulfillments.destroy_all
           order.state_changes.destroy_all
           order.order_promotions.destroy_all
           order.update_totals

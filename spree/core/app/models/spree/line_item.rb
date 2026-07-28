@@ -22,8 +22,10 @@ module Spree
     has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
-    has_many :inventory_units, class_name: 'Spree::InventoryUnit', inverse_of: :line_item, dependent: :destroy
-    has_many :shipments, through: :inventory_units, source: :shipment
+    has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem', inverse_of: :line_item, dependent: :destroy
+    has_many :fulfillments, through: :fulfillment_items, source: :fulfillment
+    has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :line_item, deprecated: true
+    has_many :shipments, through: :fulfillment_items, source: :fulfillment, deprecated: true
     has_many :digital_links, dependent: :destroy
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :line_item, dependent: :destroy
 
@@ -218,21 +220,21 @@ module Spree
     #
     # @return [Boolean]
     def any_shipped?
-      inventory_units.any?(&:shipped?)
+      fulfillment_items.any?(&:shipped?)
     end
 
     # returns true if all of the inventory units are shipped
     #
     # @return [Boolean]
     def fully_shipped?
-      inventory_units.all?(&:shipped?)
+      fulfillment_items.all?(&:shipped?)
     end
 
     # Returns the shipping cost for the line item
     #
     # @return [BigDecimal]
     def shipping_cost
-      shipments.sum do |shipment|
+      fulfillments.sum do |shipment|
         # Skip cancelled shipments
         return BigDecimal('0') if shipment.canceled?
 
@@ -240,13 +242,13 @@ module Spree
         return BigDecimal('0') if shipment.cost.zero?
 
         # Get total inventory units in this shipment
-        total_units = shipment.inventory_units
+        total_units = shipment.fulfillment_items
 
         # Calculate proportional shipping cost
         return BigDecimal('0') if total_units.empty?
 
         # Get all inventory units in this shipment for this line item
-        line_item_units = shipment.inventory_units.find_all { |unit| unit.line_item_id == id }.count
+        line_item_units = shipment.fulfillment_items.find_all { |unit| unit.line_item_id == id }.count
 
         # Calculate proportional shipping cost
         return BigDecimal('0') if line_item_units.zero?

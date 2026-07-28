@@ -20,7 +20,7 @@ module Spree
       end
 
       def cancel_shipments(order:)
-        order.shipments.each(&:cancel)
+        order.fulfillments.each(&:cancel)
 
         success(order: order)
       end

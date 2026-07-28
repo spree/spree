@@ -15,7 +15,9 @@ module Spree
     self.ignored_columns += ['channel']
 
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
-    SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
+    FULFILLMENT_STATUSES = %w(backorder canceled partial pending ready fulfilled shipped)
+    # @deprecated legacy name — remove in 6.1 together with the 'shipped' value
+    SHIPMENT_STATES = FULFILLMENT_STATUSES
     LINE_ITEM_REMOVABLE_STATES = %w(cart address delivery payment confirm resumed)
 
     extend Spree::DisplayMoney
@@ -52,12 +54,12 @@ module Spree
 
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
-                  :shipment_total,      :promo_total,          :total,
+                  :delivery_total,      :promo_total,          :total,
                   :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total,
                   :payment_total,       :amount_due
 
-    alias display_ship_total display_shipment_total
-    alias_attribute :ship_total, :shipment_total
+    alias display_ship_total display_delivery_total
+    alias_attribute :ship_total, :delivery_total
     def amount_due
       [outstanding_balance - total_applied_store_credit, 0].max
     end
@@ -117,9 +119,9 @@ module Spree
     # Rails auto-locking must not raise on internal saves.
     self.lock_optimistically = false
 
-    self.whitelisted_ransackable_associations = %w[shipments user created_by approver canceler promotions bill_address ship_address line_items store channel tags]
+    self.whitelisted_ransackable_associations = %w[fulfillments shipments user created_by approver canceler promotions bill_address ship_address line_items store channel tags]
     self.whitelisted_ransackable_attributes = %w[
-      completed_at email number state status payment_status payment_state shipment_state
+      completed_at email number state status payment_status payment_state fulfillment_status shipment_state delivery_total
       total item_total item_count considered_risky channel_id currency
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
@@ -191,9 +193,10 @@ module Spree
     has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
     has_many :customer_returns, class_name: 'Spree::CustomerReturn', through: :return_authorizations
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
-    has_many :inventory_units, inverse_of: :order, class_name: 'Spree::InventoryUnit'
+    has_many :fulfillment_items, inverse_of: :order, class_name: 'Spree::FulfillmentItem'
+    has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :order, deprecated: true
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :order, dependent: :destroy
-    has_many :return_items, through: :inventory_units, class_name: 'Spree::ReturnItem'
+    has_many :return_items, through: :fulfillment_items, class_name: 'Spree::ReturnItem'
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :refunds, through: :payments
@@ -206,19 +209,21 @@ module Spree
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
 
-    has_many :shipments, class_name: 'Spree::Shipment', dependent: :destroy, inverse_of: :order do
+    has_many :fulfillments, class_name: 'Spree::Fulfillment', dependent: :destroy, inverse_of: :order do
       def states
-        pluck(:state).uniq
+        pluck(:status).uniq
       end
     end
-    has_many :shipment_adjustments, through: :shipments, source: :adjustments
+    has_many :shipment_adjustments, through: :fulfillments, source: :adjustments
 
     alias items line_items
     alias discounts order_promotions
-    alias fulfillments shipments
-    alias_attribute :delivery_total, :shipment_total
-    alias display_delivery_total display_shipment_total
-    alias_attribute :fulfillment_status, :shipment_state
+    # Legacy names — removed in 6.1 (real names: fulfillments, delivery_total,
+    # fulfillment_status since 6.0)
+    has_many :shipments, class_name: 'Spree::Fulfillment', inverse_of: :order, deprecated: true
+    alias_attribute :shipment_total, :delivery_total
+    alias display_shipment_total display_delivery_total
+    alias_attribute :shipment_state, :fulfillment_status
     # Deprecated alias — the column is payment_status since 6.0; remove in 6.1.
     alias_attribute :payment_state, :payment_status
 
@@ -230,7 +235,9 @@ module Spree
     alias shipping_address_attributes= ship_address_attributes=
     alias billing_address_attributes= bill_address_attributes=
     accepts_nested_attributes_for :payments, reject_if: :credit_card_nil_payment?
-    accepts_nested_attributes_for :shipments
+    accepts_nested_attributes_for :fulfillments
+    # @deprecated legacy writer — removed in 6.1
+    alias shipments_attributes= fulfillments_attributes=
 
     # Needs to happen before save_permalink is called
     before_validation :ensure_market_presence
@@ -256,13 +263,13 @@ module Spree
       validates :locale
     end
     validates :payment_status,       inclusion:    { in: PAYMENT_STATES, allow_blank: true }
-    validates :shipment_state,       inclusion:    { in: SHIPMENT_STATES, allow_blank: true }
+    validates :fulfillment_status,   inclusion:    { in: FULFILLMENT_STATUSES, allow_blank: true }
     validates :item_total,           POSITIVE_MONEY_VALIDATION
     validates :adjustment_total,     MONEY_VALIDATION
     validates :included_tax_total,   POSITIVE_MONEY_VALIDATION
     validates :additional_tax_total, POSITIVE_MONEY_VALIDATION
     validates :payment_total,        MONEY_VALIDATION
-    validates :shipment_total,       MONEY_VALIDATION
+    validates :delivery_total,       MONEY_VALIDATION
     validates :promo_total,          NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
     validates :market, presence: true, if: :store_has_markets?
@@ -282,10 +289,10 @@ module Spree
     scope :incomplete, -> { where(completed_at: nil) }
     scope :canceled, -> { where(state: %w[canceled partially_canceled]) }
     scope :not_canceled, -> { where.not(state: %w[canceled partially_canceled]) }
-    scope :ready_to_ship, -> { where(shipment_state: %w[ready pending]) }
-    scope :partially_shipped, -> { where(shipment_state: %w[partial]) }
-    scope :not_shipped, -> { where(shipment_state: %w[ready pending partial]) }
-    scope :shipped, -> { where(shipment_state: %w[shipped]) }
+    scope :ready_to_ship, -> { where(fulfillment_status: %w[ready pending]) }
+    scope :partially_shipped, -> { where(fulfillment_status: %w[partial]) }
+    scope :not_shipped, -> { where(fulfillment_status: %w[ready pending partial]) }
+    scope :shipped, -> { where(fulfillment_status: %w[fulfilled shipped]) }
     scope :refunded, lambda {
       joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) = #{Spree::Order.table_name}.total")
     }
@@ -381,7 +388,7 @@ module Spree
 
     # Sum of all line item and shipment pre-tax
     def pre_tax_total
-      pre_tax_item_amount + shipments.sum(:pre_tax_amount)
+      pre_tax_item_amount + fulfillments.sum(:pre_tax_amount)
     end
 
     # Returns the subtotal used for analytics integrations
@@ -469,7 +476,7 @@ module Spree
     end
 
     def backordered?
-      shipments.any?(&:backordered?)
+      fulfillments.any?(&:backordered?)
     end
 
     # Check if the shipping address is a quick checkout address
@@ -484,7 +491,7 @@ module Spree
     # Either fully digital or not digital at all
     # @return [Boolean]
     def quick_checkout_available?
-      payment_required? && shipments.count <= 1 && (digital? || !some_digital? || !delivery_required?)
+      payment_required? && fulfillments.count <= 1 && (digital? || !some_digital? || !delivery_required?)
     end
 
     # Check if quick checkout requires an address collection
@@ -552,7 +559,7 @@ module Spree
     def allow_cancel?
       return false if !completed? || canceled?
 
-      shipment_state.nil? || %w{ready backorder pending canceled}.include?(shipment_state)
+      fulfillment_status.nil? || %w{ready backorder pending canceled}.include?(fulfillment_status)
     end
 
     def all_inventory_units_returned?
@@ -591,11 +598,11 @@ module Spree
     # include taxes then price adjustments are created instead.
     def create_tax_charge!
       Spree::TaxRate.adjust(self, line_items)
-      Spree::TaxRate.adjust(self, shipments) if shipments.any?
+      Spree::TaxRate.adjust(self, fulfillments) if fulfillments.any?
     end
 
     def create_shipment_tax_charge!
-      Spree::TaxRate.adjust(self, shipments) if shipments.any?
+      Spree::TaxRate.adjust(self, fulfillments) if fulfillments.any?
     end
 
     def update_line_item_prices!
@@ -675,7 +682,7 @@ module Spree
 
       # update payment and shipment(s) states, and save
       updater.update_payment_state
-      shipments.each do |shipment|
+      fulfillments.each do |shipment|
         shipment.update!(self)
         shipment.finalize!
       end
@@ -695,7 +702,7 @@ module Spree
     end
 
     def fulfill!
-      shipments.each { |shipment| shipment.update!(self) if shipment.persisted? }
+      fulfillments.each { |shipment| shipment.update!(self) if shipment.persisted? }
       updater.update_shipment_state
       save!
     end
@@ -790,27 +797,27 @@ module Spree
     end
 
     def shipped?
-      %w(partial shipped).include?(shipment_state)
+      %w(partial shipped fulfilled).include?(fulfillment_status)
     end
 
     def fully_shipped?
-      shipments.shipped.size == shipments.size
+      fulfillments.fulfilled.size == fulfillments.size
     end
 
     def create_proposed_shipments
       all_adjustments.shipping.delete_all
 
-      shipment_ids = shipments.map(&:id)
-      StateChange.where(stateful_type: 'Spree::Shipment', stateful_id: shipment_ids).delete_all
-      ShippingRate.where(shipment_id: shipment_ids).delete_all
+      shipment_ids = fulfillments.map(&:id)
+      StateChange.where(stateful_type: %w[Spree::Shipment Spree::Fulfillment], stateful_id: shipment_ids).delete_all
+      DeliveryRate.where(fulfillment_id: shipment_ids).delete_all
 
-      shipments.delete_all
+      fulfillments.delete_all
 
       # Inventory Units which are not associated to any shipment (unshippable)
       # and are not returned or shipped should be deleted
-      inventory_units.on_hand_or_backordered.delete_all
+      fulfillment_items.on_hand_or_backordered.delete_all
 
-      self.shipments = order_routing_strategy.for_allocation.map do |package|
+      self.fulfillments = order_routing_strategy.for_allocation.map do |package|
         package.to_shipment.tap { |s| s.address_id = ship_address_id }
       end
     end
@@ -852,7 +859,7 @@ module Spree
     #
     # @return [Array<Spree::LineItem>]
     def line_items_without_shipping_rates
-      @line_items_without_shipping_rates ||= shipments.map do |shipment|
+      @line_items_without_shipping_rates ||= fulfillments.map do |shipment|
         shipment.manifest.map(&:line_item) if shipment.shipping_rates.blank?
       end.flatten.compact
     end
@@ -866,7 +873,7 @@ module Spree
 
     def apply_free_shipping_promotions
       Spree::PromotionHandler::FreeShipping.new(self).activate
-      shipments.each { |shipment| Spree::Adjustable::AdjustmentsUpdater.update(shipment) }
+      fulfillments.each { |shipment| Spree::Adjustable::AdjustmentsUpdater.update(shipment) }
       create_shipment_tax_charge!
       update_with_updater!
     end
@@ -882,9 +889,9 @@ module Spree
     # to delivery again so that proper updated shipments are created.
     # e.g. customer goes back from payment step and changes order items
     def ensure_updated_shipments
-      if shipments.any? && !completed?
-        shipments.destroy_all
-        update_column(:shipment_total, 0)
+      if fulfillments.any? && !completed?
+        fulfillments.destroy_all
+        update_column(:delivery_total, 0)
 
         # Manually publish update event since update_column bypasses callbacks
         publish_event('order.updated')
@@ -905,8 +912,8 @@ module Spree
       next! unless line_items.empty?
     end
 
-    def refresh_shipment_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
-      shipments.map { |s| s.refresh_rates(shipping_method_filter) }
+    def refresh_shipment_rates(shipping_method_filter = DeliveryMethod::DISPLAY_ON_FRONT_END)
+      fulfillments.map { |s| s.refresh_rates(shipping_method_filter) }
     end
 
     def shipping_eq_billing_address?
@@ -914,8 +921,8 @@ module Spree
     end
 
     def set_shipments_cost
-      shipments.each(&:update_amounts)
-      updater.update_shipment_total
+      fulfillments.each(&:update_amounts)
+      updater.update_delivery_total
       updater.update_adjustment_total
       persist_totals
     end
@@ -923,8 +930,8 @@ module Spree
     def shipping_method
       # This query will select the first available shipping method from the shipments.
       # It will use subquery to first select the shipping method id from the shipments' selected_shipping_rate.
-      Spree::ShippingMethod.
-        where(id: shipments.with_selected_shipping_method.limit(1).pluck(:shipping_method_id)).
+      Spree::DeliveryMethod.
+        where(id: fulfillments.with_selected_delivery_method.limit(1).pluck(:delivery_method_id)).
         limit(1).
         first
     end
@@ -1050,7 +1057,7 @@ module Spree
     # @return [BigDecimal]
     def cart_promo_total
       all_adjustments.eligible.nonzero.promotion.
-        where.not(adjustable_type: 'Spree::Shipment').
+        where.not(adjustable_type: %w[Spree::Shipment Spree::Fulfillment]).
         sum(:amount)
     end
 
@@ -1113,10 +1120,10 @@ module Spree
     end
 
     def ensure_available_shipping_rates
-      if shipments.empty? || line_items_without_shipping_rates.present?
+      if fulfillments.empty? || line_items_without_shipping_rates.present?
         # After this point, order redirects back to 'address' state and asks user to pick a proper address
         # Therefore, shipments are not necessary at this point.
-        shipments.destroy_all
+        fulfillments.destroy_all
 
         if line_items_without_shipping_rates.present?
           errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: line_items_without_shipping_rates.map(&:name).to_sentence))
@@ -1140,7 +1147,7 @@ module Spree
     def after_cancel
       update_column(:status, 'canceled')
 
-      shipments.each(&:cancel!)
+      fulfillments.each(&:cancel!)
 
       # payments fully covered by gift card won't be refunded
       # we want to only void the payment
@@ -1159,7 +1166,7 @@ module Spree
     def after_resume
       update_column(:status, 'placed')
 
-      shipments.each(&:resume!)
+      fulfillments.each(&:resume!)
       consider_risk
       send_order_resumed_webhook
       publish_order_resumed_event

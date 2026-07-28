@@ -831,9 +831,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'assigns the default shipping category' do
-        expect(product.shipping_category).to be_present
-        expect(product.shipping_category.name).to eq 'Default'
+      it 'leaves the shipping category unset' do
+        expect(product.shipping_category).to be_nil
       end
     end
 
@@ -872,9 +871,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'assigns the default shipping category' do
-        expect(product.shipping_category).to be_present
-        expect(product.shipping_category.name).to eq 'Default'
+      it 'leaves the shipping category unset' do
+        expect(product.shipping_category).to be_nil
       end
     end
   end
