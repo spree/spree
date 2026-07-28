@@ -1,12 +1,33 @@
+## 2026-07-27: One owner pattern for cart/order-scoped rows — dual concrete FKs, not polymorphic
+
+The cart-order-split stub's "polymorphic `LineItem#owner`" is superseded. Every
+cart-or-order-owned table uses the same shape: nullable `cart_id` + nullable
+`order_id` with an exactly-one validation, and `#owner` as a plain method
+(`order || cart`). Applies to `spree_line_items`, the typed money lines
+(TaxLine/Discount/Fee), and Fulfillment/DeliveryRate.
+
+Why: 6.0's design language is concrete FKs over polymorphic type strings
+(split-adjustments removes `adjustable_type`/`source_type`,
+typed-stock-movements removes `originator_type`) — reintroducing polymorphism
+on the schema's highest-traffic table in the same release would be incoherent.
+It's also the cheapest migration: `spree_line_items.order_id` already exists
+and stays permanently; only a nullable `cart_id` is added, and every existing
+`line_item.order` read keeps working for order-owned rows.
+
+Provenance ("which cart did this order row come from") needs no second FK on
+the row: `Order#cart_id` (unique — the completion idempotency key) links order
+to cart, and the retained cart keeps its own rows as the frozen at-checkout
+snapshot, so post-placement additions are distinguishable. Both-columns-set
+was considered and rejected — order-side copies carrying `cart_id` would
+collide with the cart's own rows in every `cart.line_items`-style association.
+
 ## 2026-07-23: Payment-method eligibility rules + Channel→Markets allowlist target 5.7; multi-credential grooming deferred
 
 Merchant asks (wholesale net payment vs DTC Stripe, installments above an
 order-total threshold, market-bound payment methods, channels limited to
-certain markets) plus a four-platform review (Vendure channel-scoped
-PaymentMethods + `PaymentMethodEligibilityChecker`, Medusa region-scoped
-payment providers, Saleor per-channel payment apps, Shopify Payment
-Customization Functions + the May-2026 per-market multi-entity Shopify
-Payments) settled three things:
+certain markets) plus a four-platform review (OSS platform C channel-scoped
+PaymentMethods + `PaymentMethodEligibilityChecker`, OSS platform A region-scoped
+payment providers, OSS platform B per-channel payment apps, the hosted leader's Payment Customization Functions + the May-2026 per-market multi-entity payments product) settled three things:
 
 1. **`5.7-payment-method-rules.md`** — `Spree::PaymentMethodRule` STI
    (Channel / Market / OrderTotal / CustomerGroup rules), mirroring the
@@ -21,11 +42,11 @@ Payments) settled three things:
    resolution, the Store API markets reference endpoints, and order
    validation. Composes with `MarketRule` above.
 3. **Deferred for grooming: multiple provider credentials / legal entities
-   in one store** (two Stripe accounts split by channel or market, Shopify's
+   in one store** (two Stripe accounts split by channel or market, the hosted leader's
    multi-entity model). Candidate shapes — separate PaymentMethod records per
-   channel/market (Vendure/Medusa style; needs the Admin API `types`
+   channel/market (OSS platform C/OSS platform A style; needs the Admin API `types`
    "already installed" filter relaxed) vs per-channel credential mapping on
-   one record (Saleor style) — plus the legal-entity attribution question
+   one record (OSS platform B style) — plus the legal-entity attribution question
    (per-entity payouts, compliance, reporting). No plan yet; do not implement.
 
 ## 2026-07-21: Order routing rules get admin management in the React dashboard only
@@ -128,7 +149,7 @@ Resolution: **the marketplace owns the `Vendor` name.** It is locked publicly
 (spree/spree#13323, the user docs' "Vendors" area, the legacy Enterprise gem's
 `ven_` prefix and its production data). The inventory-operations model is renamed
 **`Spree::Supplier`** (`spree_suppliers`, prefix `sup_`, `/api/v3/admin/suppliers`) —
-matching Shopify's purchase-order vocabulary and standard ERP terminology. They
+matching the hosted leader's purchase-order vocabulary and standard ERP terminology. They
 are different lifecycles: a supplier is an address-book entry the merchant buys
 stock from; a vendor is an onboarded selling party with users, commission, and
 payouts.
@@ -162,8 +183,8 @@ rebuilt as native core models on top of the 6.0 Cart/Order split.
 `Spree::StockItem` → `Spree::StockLevel`, `spree_stock_items` → `spree_stock_levels`.
 Prefix ID: `si_` → `sl_`.
 
-Every other platform uses "level" for this concept — Shopify (`InventoryLevel`),
-Medusa (`InventoryLevel`), Vendure (`StockLevel`), Saleor (`Stock`). "Item" sounds
+Every other platform uses "level" for this concept — the hosted market leader (`InventoryLevel`),
+OSS platform A (`InventoryLevel`), OSS platform C (`StockLevel`), OSS platform B (`Stock`). "Item" sounds
 like a physical object; "level" correctly describes "the quantity of a variant at
 a location."
 
@@ -200,20 +221,26 @@ Single migration renames all 11 columns. Model associations updated:
 `belongs_to :user` → `belongs_to :customer` with `class_name: Spree.customer_class`.
 
 ## 2026-03-16: PaymentMethod and DeliveryMethod become SingleStoreResource
-Both PaymentMethod and DeliveryMethod (renamed from ShippingMethod) switch from
-multi-store join tables (`StorePaymentMethod`, `StoreShippingMethod`) to
+Both PaymentMethod and DeliveryMethod (renamed from ShippingMethod) switch to
 `SingleStoreResource` with direct `belongs_to :store`.
 
 In practice, different stores have different currencies, zones, and provider
 accounts — sharing the same payment/delivery config across stores is rare.
 If a merchant wants the same config on two stores, they create two records.
 
-Changes:
-- Add `store_id` column to `spree_payment_methods` and `spree_delivery_methods`
-- Data migration: for each join record, set `store_id`; duplicate methods linked
-  to multiple stores
-- Drop `spree_store_payment_methods` and `spree_store_shipping_methods` join tables
-- Both models include `Spree::SingleStoreResource` concern
+**Corrected 2026-07-27:** the original entry claimed both models migrate away
+from multi-store join tables (`StorePaymentMethod`, `StoreShippingMethod`).
+That was only half true — `spree_store_shipping_methods` / a
+`StoreShippingMethod` model **never existed**; ShippingMethod has always been
+globally scoped (no store association of any kind). The PaymentMethod half was
+real and shipped in 5.6 (`5.6-6.0-single-store-promotions-payment-methods.md`).
+For ShippingMethod/DeliveryMethod, `store_id` is therefore a **greenfield
+addition with a derived backfill** (no join table to read from), owned by
+`6.0-delivery-rate-provider.md` Phase 1 — the provider needs the store to
+resolve `Spree::Integration` credentials. Backfill: `Store.default` for
+single-store installs; zone-overlap heuristic + loud logging for multi-store.
+Note this is a behavior change for multi-store installs (globally-visible
+methods become single-store), not a mechanical migration.
 
 ## 2026-03-16: Fix promotion rule/action STI namespacing
 Rename `Spree::Promotion::Rules::*` → `Spree::PromotionRules::*` and
@@ -269,7 +296,7 @@ This makes the two-system boundary razor-sharp:
 - Custom Fields (storefront_visible: false) = admin-only structured data
 - Metadata = private developer-owned data (never exposed)
 
-Matches Vendure (`public: boolean`) and Saleor (`visibleInStorefront: boolean`).
+Matches OSS platform C (`public: boolean`) and OSS platform B (`visibleInStorefront: boolean`).
 Ships with the 6.0 model rename wave. See `5.4-6.0-custom-fields-rename.md`.
 
 ## 2026-03-16: Consolidate metadata — drop public_metadata, keep metadata JSON column
@@ -297,3 +324,61 @@ Metadata for machines, metafields/custom fields for humans.
 Considered Action Text. Rejected for API-first performance —
 serializing rich text adds overhead for every product response.
 Also in the new Admin UI we will use TipTap for rich text editing.
+
+## 2026-07-27: Delivery rate provider wraps the Estimator — shipping calculators stay
+
+Reverses the original `6.0-delivery-rate-provider.md` key decision to delete
+`ShippingCalculator` + `Calculator::Shipping::*` in favor of a `pricing_type`
+enum. The enum cannot reach parity (FlexiRate/PriceSack inexpressible, FlatRate
+suppression thresholds and DigitalDelivery's `available?` predicate lost) and
+breaks every merchant calculator subclass with no migration path.
+
+Instead the provider is dispatched at the single point where `Stock::Estimator`
+calls `calculator.compute(package)`; the Estimator keeps method filtering, VAT
+gross-up, tax resolution, and default selection. `Internal` delegates to the
+calculator — zero behavior change is the acceptance criterion. All three
+Estimator entry points (Shipment#refresh_rates, OrderRouting::Strategy::Rules,
+Cart::EstimateShippingRates) get provider support with no per-site changes.
+Accepted asymmetry: the tax provider still removes its calculators — tax
+calculators were pure math with no merchant extension surface; shipping
+calculators are a documented extension point.
+
+## 2026-07-27: Zone → DeliveryZone ships in 6.0, owned by a dedicated plan
+
+A review found the old "drop Spree::Zone entirely" wording in the tax and
+delivery-rate plans had no owner for ~183 non-spec references
+(`Spree::Current.zone` / `default_tax_zone`, `Market#tax_zone`,
+`Order#tax_zone`, `VatPriceCalculation`, `Pricing::Context`, permission sets,
+admin Zone CRUD, and the `Zone.global` factory monkey-patch every
+`:shipping_method` factory depends on). Briefly scoped back the same day, then
+**reinstated for 6.0 by user decision — 6.0 is the one breaking-change window;
+big re-architecture does not wait for 6.1.**
+
+Final shape: tax decouples via `6.0-tax-provider.md` Phase 5 (TaxRate direct
+country/state FKs, tax readers rewritten onto `TaxRate.for_address` /
+`Spree::Current.tax_country`); everything else is owned by the new
+`6.0-delivery-zones.md` — `DeliveryZone` + typed members with country-scoped
+postal-code ranges/prefixes, admin CRUD swap, factories rework
+(worldwide-by-default methods, `Zone.global` retired), and the final
+`spree_zones`/`spree_zone_members` drop at end of 6.0.
+
+## 2026-07-27: Promotion stacking targets 6.1; 6.0 ships winner-only but stacking-ready
+
+Stacking is among the most-requested features. Initially slated for 6.0 (the
+discount engine is being rewritten there anyway), retargeted to 6.1 the same
+day: stacking is **purely additive** — no schema change, no breaking window
+needed — and 6.0 is already the heaviest release in Spree's history. Deferring
+costs nothing structurally because the expensive prerequisites ship in 6.0
+regardless (`6.0-split-adjustments.md`): typed Discount tables that permit
+multiple rows per adjustable, per-adjustable clamping, and
+prorate-over-the-remaining-discounted-base (needed for order-level
+distribution either way), with winner-only selection isolated in a single
+adjuster method.
+
+6.1 adds: hosted-leader-style `Promotion#combines_with` flags (per class —
+item/order/shipping; combining candidates all apply clamped, non-combining
+compete winner-takes-all, **default off** so migrated promotions keep today's
+behavior), dashboard UI, API fields. Industry: the hosted market leader combinesWith
+(merchant-controlled), OSS platform A stacks all valid with caps, OSS platform C stacks
+priority-ordered, OSS platform B winner-only — merchant control is the differentiated
+middle.
