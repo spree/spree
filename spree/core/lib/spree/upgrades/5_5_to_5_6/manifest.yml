@@ -67,3 +67,17 @@ steps:
       store (matching Spree::Order). New product taggings tenant themselves;
       only rows created before the upgrade need this. Until it runs, older
       product tags are hidden from the store-scoped tag vocabulary.
+
+  - id: sanitize_rich_text
+    name: "Sanitize stored product descriptions (XSS hardening — added in 5.6.2)"
+    task: "spree:sanitize_rich_text"
+    notes: |
+      Runs stored spree_products.description rows (and their translations)
+      through Spree::RichTextSanitizer, which also sanitizes all NEW writes
+      from 5.6.2 on. Strips script tags, event-handler attributes, and
+      javascript: URLs; keeps tables, images, links, and safe inline styles.
+      IMPORTANT: iframes (e.g. embedded videos) are stripped by default — if
+      your descriptions embed them, permit iframe via
+      Spree::RichTextSanitizer.allowed_tags in an initializer BEFORE running.
+      Idempotent; only rewrites rows whose sanitized output differs, and
+      prints a changed-row count per model.

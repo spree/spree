@@ -30,6 +30,7 @@ module Spree
     include Spree::ProductScopes
     include Spree::TranslatableResource
     include Spree::MemoizedData
+    include Spree::SanitizableRichText
     include Spree::Metafields
     include Spree::MetafieldFilterable
     include Spree::Metadata
@@ -62,8 +63,17 @@ module Spree
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
+    sanitizes_rich_text :description
+
+    # Translated descriptions live on the Mobility translation table, so writes
+    # through locale accessors or +upsert_translations+ never touch the base
+    # record's +description+ attribute — the translation model needs its own
+    # sanitization pass.
     self::Translation.class_eval do
+      include Spree::SanitizableRichText
+
       normalizes :name, :meta_title, with: ->(value) { value&.to_s&.squish&.presence }
+      sanitizes_rich_text :description
     end
 
     # we need to have this callback before any dependent: :destroy associations
