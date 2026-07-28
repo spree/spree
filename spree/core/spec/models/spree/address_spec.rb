@@ -712,6 +712,13 @@ describe Spree::Address, type: :model do
     end
   end
 
+  describe '#normalized_zipcode' do
+    it 'strips spaces and dashes and upcases' do
+      expect(build(:address, zipcode: ' sw1a 1-aa ').normalized_zipcode).to eq('SW1A1AA')
+      expect(build(:address, zipcode: nil).normalized_zipcode).to eq('')
+    end
+  end
+
   describe '#to_s' do
     let(:address) { create(:address) }
 

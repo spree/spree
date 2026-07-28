@@ -86,6 +86,19 @@ module Spree
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 
+    # The single home for postal-code normalization (delivery-zone matching) —
+    # don't scatter zipcode munging elsewhere.
+    # @param value [String, nil]
+    # @return [String] value with spaces/dashes stripped, upcased
+    def self.normalize_zipcode(value)
+      value.to_s.gsub(/[\s-]/, '').upcase
+    end
+
+    # @return [String] this address's zipcode, normalized via {.normalize_zipcode}
+    def normalized_zipcode
+      self.class.normalize_zipcode(zipcode)
+    end
+
     # Writer methods for API convenience - these set country/state from ISO/abbr codes
     # The reader methods (country_iso, state_abbr) are delegates to country.iso and state.abbr
     def country_iso=(value)
