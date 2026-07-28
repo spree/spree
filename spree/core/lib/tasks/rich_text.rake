@@ -10,16 +10,23 @@ namespace :spree do
     e.g. +iframe+ for embedded videos.
 
     Idempotent — rows whose sanitized output already matches what is stored are
-    left untouched, and +update_columns+ skips callbacks so timestamps and
-    webhooks don't churn.
+    left untouched, and writes go through +update_all+ so callbacks, timestamps
+    and webhooks don't churn. Each write is conditional on the row still holding
+    the value that was sanitized, so concurrent edits are never clobbered.
   DESC
   task sanitize_rich_text: :environment do
+    # Writes only when the row still holds the value we sanitized, so an edit
+    # landing between the read and the write is never clobbered by this batch.
     sanitize = lambda do |record|
-      sanitized = Spree::RichTextSanitizer.sanitize(record.description)
-      next false if sanitized == record.description
+      original = record.description
+      sanitized = Spree::RichTextSanitizer.sanitize(original)
+      next false if sanitized == original
 
-      record.update_columns(description: sanitized)
-      true
+      updated = record.class.unscoped.
+                where(id: record.id, description: original).
+                update_all(description: sanitized)
+
+      updated.positive?
     end
 
     products = 0

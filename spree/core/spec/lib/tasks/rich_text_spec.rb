@@ -38,4 +38,15 @@ describe 'spree:sanitize_rich_text' do
 
     expect { subject.invoke }.not_to change { clean.reload.updated_at }
   end
+
+  it 'does not clobber an edit made after the row was read' do
+    allow(Spree::RichTextSanitizer).to receive(:sanitize).and_wrap_original do |original, html|
+      product.update_columns(description: '<p>edited elsewhere</p>')
+      original.call(html)
+    end
+
+    subject.invoke
+
+    expect(product.reload.description).to eq('<p>edited elsewhere</p>')
+  end
 end
