@@ -77,6 +77,7 @@ module Spree
           one :billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('billing_address') }
           one :shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('shipping_address') }
           one :gift_card, resource: proc { Spree.api.admin_gift_card_serializer }
+          one :cart, resource: proc { Spree.api.admin_cart_serializer }, if: proc { expand?('cart') }
           one :market, resource: proc { Spree.api.admin_market_serializer }
           one :channel, resource: proc { Spree.api.admin_channel_serializer }, if: proc { expand?('channel') }
           one :preferred_stock_location,

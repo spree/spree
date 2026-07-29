@@ -117,6 +117,19 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
   end
 
   describe 'GET #show' do
+    it 'expands the originating cart on a placed order' do
+      cart = create(:cart_with_line_items, store: store)
+      cart.update_columns(completed_at: Time.current)
+      placed = create(:completed_order_with_totals, store: store, cart_id: cart.id)
+
+      get :show, params: { id: placed.prefixed_id, expand: 'cart' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['cart_id']).to eq(cart.prefixed_id)
+      expect(json_response['cart']['id']).to eq(cart.prefixed_id)
+      expect(json_response['cart']['completed_at']).to be_present
+    end
+
     subject { get :show, params: { id: order.prefixed_id }, as: :json }
 
     before { request.headers.merge!(headers) }
