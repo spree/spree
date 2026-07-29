@@ -1,3 +1,6 @@
+//view: app/views/spree/admin/products/form/_variants.html.erb
+<%# This partial renders the variants section of the product form, including the option types and values, as well as the variants table. It also sets up the necessary data attributes for the variants form Stimulus controller. %>
+
 <% if @product.has_variants? || can?(:manage_option_types, @product) %>
   <div class="card mb-6">
     <div class="card-header">
@@ -154,9 +157,12 @@
               <%= icon('trash') %> <%= Spree.t(:delete_selected) %>
             </button>
             </div>
-            <div class="variants-table__header__cell  column-price">
-              <%= Spree.t(:price) %>
-            </div>
+           <div class="variants-table__header__cell column-price">
+            <%= Spree.t(:price) %>
+          </div>
+          <div class="variants-table__header__cell column-sku">
+          <%= Spree.t(:sku) %>
+          </div>
             <div class="variants-table__header__cell column-quantity">
               <%= Spree.t(:quantity) %>
             </div>
