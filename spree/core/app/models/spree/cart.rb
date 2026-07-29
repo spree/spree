@@ -269,7 +269,7 @@ module Spree
     end
 
     # Idempotent delivery-proposal rebuild — replaces the destructive
-    # order-side create_proposed_shipments. Open fulfillments are rebuilt from
+    # order-side create_proposed_fulfillments. Open fulfillments are rebuilt from
     # the current items/address; nothing here touches a completed cart.
     def rebuild_fulfillments!
       return if completed?
@@ -326,7 +326,13 @@ module Spree
       updater.persist_totals
     end
     alias set_shipments_cost set_fulfillments_cost
-    alias create_proposed_shipments rebuild_fulfillments!
+    alias create_proposed_fulfillments rebuild_fulfillments!
+
+    # @deprecated Use {#create_proposed_fulfillments}; removed in 6.1.
+    def create_proposed_shipments
+      Spree::Deprecation.warn('Spree::Cart#create_proposed_shipments is deprecated and will be removed in Spree 6.1. Use #create_proposed_fulfillments instead.')
+      rebuild_fulfillments!
+    end
 
     def ensure_updated_shipments
       rebuild_fulfillments! unless completed?

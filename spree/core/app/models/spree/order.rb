@@ -834,7 +834,7 @@ module Spree
       fully_fulfilled?
     end
 
-    def create_proposed_shipments
+    def create_proposed_fulfillments
       discounts.for_fulfillments.delete_all
       tax_lines.for_fulfillments.delete_all
       fees.for_fulfillments.delete_all
@@ -852,6 +852,12 @@ module Spree
       self.fulfillments = order_routing_strategy.for_allocation.map do |package|
         package.to_shipment.tap { |s| s.address_id = ship_address_id }
       end
+    end
+
+    # @deprecated Use {#create_proposed_fulfillments}; removed in 6.1.
+    def create_proposed_shipments
+      Spree::Deprecation.warn('Spree::Order#create_proposed_shipments is deprecated and will be removed in Spree 6.1. Use #create_proposed_fulfillments instead.')
+      create_proposed_fulfillments
     end
 
     # Resolves the routing strategy from the channel override first, then the

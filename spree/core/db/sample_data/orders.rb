@@ -76,7 +76,7 @@ unless orders[1].line_items.any?
   ).save!
 end
 
-orders.each(&:create_proposed_shipments)
+orders.each(&:create_proposed_fulfillments)
 
 Spree::Order.where(id: orders.map(&:id)).update_all(status: 'placed', completed_at: Time.current - 1.day)
 

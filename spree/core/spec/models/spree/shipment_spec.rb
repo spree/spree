@@ -380,7 +380,7 @@ describe Spree::Shipment, type: :model do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
     let!(:line_item) { Spree::Carts::AddItem.call(order: order, variant: variant).value }
-    let!(:shipment) { order.create_proposed_shipments.first }
+    let!(:shipment) { order.create_proposed_fulfillments.first }
 
     it 'returns variant expected' do
       expect(shipment.manifest.first.variant).to eq variant
@@ -675,10 +675,10 @@ describe Spree::Shipment, type: :model do
 
       before do
         Spree::Carts::AddItem.call(order: order, variant: variant)
-        order.create_proposed_shipments
+        order.create_proposed_fulfillments
 
         Spree::Carts::AddItem.call(order: other_order, variant: variant)
-        other_order.create_proposed_shipments
+        other_order.create_proposed_fulfillments
       end
 
       it "doesn't fill backorders when restocking inventory units" do

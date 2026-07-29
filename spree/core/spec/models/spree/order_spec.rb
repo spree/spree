@@ -1119,7 +1119,7 @@ describe Spree::Order, type: :model do
 
     context 'when order has shipments and is not completed' do
       before do
-        order.create_proposed_shipments
+        order.create_proposed_fulfillments
       end
 
       it 'destroys all shipments' do
@@ -1405,7 +1405,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#create_proposed_shipments' do
+  describe '#create_proposed_fulfillments' do
     context 'has unassociated inventory units' do
       let!(:inventory_unit) { create(:inventory_unit, order: subject) }
 
@@ -1419,7 +1419,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'does not delete inventory_unit' do
-          subject.create_proposed_shipments
+          subject.create_proposed_fulfillments
           expect(inventory_unit.reload).to eq inventory_unit
         end
       end
@@ -1430,7 +1430,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'does not delete inventory_unit' do
-          subject.create_proposed_shipments
+          subject.create_proposed_fulfillments
           expect(inventory_unit.reload).to eq inventory_unit
         end
       end
@@ -1441,7 +1441,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'deletes inventory_unit' do
-          subject.create_proposed_shipments
+          subject.create_proposed_fulfillments
           expect { inventory_unit.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
@@ -1452,7 +1452,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'deletes inventory_unit' do
-          subject.create_proposed_shipments
+          subject.create_proposed_fulfillments
           expect { inventory_unit.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
@@ -1467,7 +1467,7 @@ describe Spree::Order, type: :model do
       allow(strategy).to receive(:for_allocation).and_return([package])
       allow(subject).to receive(:order_routing_strategy).and_return(strategy)
 
-      subject.create_proposed_shipments
+      subject.create_proposed_fulfillments
       expect(subject.fulfillments).to eq [shipment]
     end
   end
@@ -2280,6 +2280,17 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#create_proposed_shipments' do
+    it 'delegates to #create_proposed_fulfillments with a deprecation warning' do
+      order = create(:order)
+
+      expect(Spree::Deprecation).to receive(:warn).with(/create_proposed_fulfillments/)
+      expect(order).to receive(:create_proposed_fulfillments)
+
+      order.create_proposed_shipments
+    end
+  end
+
   describe '#fully_shipped?' do
     subject { order.fully_shipped? }
 
@@ -2676,7 +2687,7 @@ describe Spree::Order, type: :model do
         physical_line_item
         digital_line_item
         order.update_with_updater!
-        order.create_proposed_shipments
+        order.create_proposed_fulfillments
 
         expect(order.shipments.count).to eq(2)
 

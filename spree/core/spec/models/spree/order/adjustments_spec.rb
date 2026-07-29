@@ -14,7 +14,7 @@ describe Spree::Order do
     before do
       persisted_order.line_items << line_item
       persisted_order.update!(ship_address: create(:address))
-      persisted_order.create_proposed_shipments
+      persisted_order.create_proposed_fulfillments
       persisted_order.set_shipments_cost
       create(:discount, order: persisted_order, line_item: line_item, amount: -line_item.amount, label: 'Promotion', kind: 'manual')
       persisted_order.update_with_updater!
@@ -57,7 +57,7 @@ describe Spree::Order do
     before do
       order.line_items << line_item
       order.ship_address = address
-      order.create_proposed_shipments
+      order.create_proposed_fulfillments
       order.send :ensure_available_shipping_rates
       order.set_shipments_cost
       order.create_shipment_tax_charge!
