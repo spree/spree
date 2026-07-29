@@ -33,11 +33,9 @@ module Spree
         # checkout
         checkout_next_service: 'Spree::Checkout::Next',
         checkout_advance_service: 'Spree::Checkout::Advance',
-        checkout_update_service: 'Spree::Checkout::Update',
         checkout_complete_service: 'Spree::Checkout::Complete',
         checkout_add_store_credit_service: 'Spree::Checkout::AddStoreCredit',
         checkout_remove_store_credit_service: 'Spree::Checkout::RemoveStoreCredit',
-        checkout_get_shipping_rates_service: 'Spree::Checkout::GetShippingRates',
         checkout_select_shipping_method_service: 'Spree::Checkout::SelectShippingMethod',
 
         # gift cards
