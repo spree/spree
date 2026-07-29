@@ -137,7 +137,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
             ],
             actions: [
               {
-                type: 'create_item_adjustments',
+                type: 'create_item_discounts',
                 calculator: {
                   type: 'percent_on_line_item',
                   preferences: { percent: 25 }
@@ -153,19 +153,19 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
           promotion = Spree::Promotion.find_by_prefix_id(data['id'])
 
           expect(promotion.rules.map(&:class)).to contain_exactly(
-            Spree::Promotion::Rules::Currency,
-            Spree::Promotion::Rules::ItemTotal,
-            Spree::Promotion::Rules::Product
+            Spree::PromotionRules::Currency,
+            Spree::PromotionRules::ItemTotal,
+            Spree::PromotionRules::Product
           )
           expect(promotion.actions.map(&:class)).to contain_exactly(
-            Spree::Promotion::Actions::CreateItemAdjustments,
-            Spree::Promotion::Actions::FreeShipping
+            Spree::PromotionActions::CreateItemDiscounts,
+            Spree::PromotionActions::FreeShipping
           )
 
-          product_rule = promotion.rules.find { |r| r.is_a?(Spree::Promotion::Rules::Product) }
+          product_rule = promotion.rules.find { |r| r.is_a?(Spree::PromotionRules::Product) }
           expect(product_rule.product_ids).to contain_exactly(product_a.id, product_b.id)
 
-          adjustment_action = promotion.actions.find { |a| a.is_a?(Spree::Promotion::Actions::CreateItemAdjustments) }
+          adjustment_action = promotion.actions.find { |a| a.is_a?(Spree::PromotionActions::CreateItemDiscounts) }
           expect(adjustment_action.calculator).to be_a(Spree::Calculator::PercentOnLineItem)
           expect(adjustment_action.calculator.preferred_percent).to eq(25)
         end
@@ -284,13 +284,13 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
       response '200', 'rules and actions reconciled to desired set' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let!(:existing_rule) do
-          Spree::Promotion::Rules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
+          Spree::PromotionRules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
         end
         let!(:existing_action) do
           calc = Spree::Calculator::FlatRate.new(preferred_amount: 10)
-          Spree::Promotion::Actions::CreateItemAdjustments.create!(promotion: promotion, calculator: calc)
+          Spree::PromotionActions::CreateItemDiscounts.create!(promotion: promotion, calculator: calc)
         end
-        let!(:dropped_rule) { Spree::Promotion::Rules::FirstOrder.create!(promotion: promotion) }
+        let!(:dropped_rule) { Spree::PromotionRules::FirstOrder.create!(promotion: promotion) }
 
         let(:body) do
           {
@@ -313,7 +313,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
               # Swap calculator type on existing action
               {
                 id: existing_action.prefixed_id,
-                type: 'create_item_adjustments',
+                type: 'create_item_discounts',
                 calculator: {
                   type: 'percent_on_line_item',
                   preferences: { percent: 15 }
@@ -329,8 +329,8 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
 
           # Existing currency rule was updated, FirstOrder dropped, ItemTotal added
           expect(promotion.rules.map(&:class)).to contain_exactly(
-            Spree::Promotion::Rules::Currency,
-            Spree::Promotion::Rules::ItemTotal
+            Spree::PromotionRules::Currency,
+            Spree::PromotionRules::ItemTotal
           )
           expect(existing_rule.reload.preferred_currency).to eq('EUR')
           expect(Spree::PromotionRule.where(id: dropped_rule.id)).to be_empty
@@ -345,7 +345,7 @@ RSpec.describe 'Admin Promotions API', type: :request, swagger_doc: 'api-referen
       response '200', 'rules and actions cleared with empty arrays' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let!(:rule_to_drop) do
-          Spree::Promotion::Rules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
+          Spree::PromotionRules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
         end
         let(:body) { { rules: [], actions: [] } }
 

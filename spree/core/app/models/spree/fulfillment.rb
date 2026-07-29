@@ -23,14 +23,17 @@ module Spree
       belongs_to :address, class_name: 'Spree::Address'
       belongs_to :order, class_name: 'Spree::Order', touch: true
     end
+    belongs_to :cart, class_name: 'Spree::Cart', optional: true
     belongs_to :stock_location, -> { with_deleted }, class_name: 'Spree::StockLocation'
 
     with_options dependent: :delete_all do
-      has_many :adjustments, as: :adjustable
       has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem', inverse_of: :fulfillment
       has_many :delivery_rates, -> { order(:cost) }, class_name: 'Spree::DeliveryRate'
       has_many :state_changes, as: :stateful
     end
+    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :fulfillment
+    has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :fulfillment
+    has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :fulfillment
     has_many :delivery_methods, through: :delivery_rates
     has_many :variants, through: :fulfillment_items
     has_one :selected_delivery_rate, -> { where(selected: true).order(:cost) }, class_name: 'Spree::DeliveryRate'
@@ -69,6 +72,15 @@ module Spree
     scope :digital_delivery, -> { joins(:delivery_methods).merge(Spree::DeliveryMethod.digital) }
 
     delegate :store, :currency, to: :order
+
+    # The exactly-one owner of this fulfillment — the cart during checkout,
+    # the order after completion. New code must read +owner+, never assume
+    # +order+.
+    #
+    # @return [Spree::Cart, Spree::Order, nil]
+    def owner
+      order || cart
+    end
     delegate :amount_in_cents, to: :display_cost
 
     state_machine :status, initial: :pending, use_transactions: false do
@@ -285,8 +297,7 @@ module Spree
     #
     # @return [Boolean]
     def with_free_shipping_promotion?
-      adjustments.promotion.joins("INNER JOIN #{Spree::PromotionAction.table_name} ON #{Spree::PromotionAction.table_name}.id = #{Spree::Adjustment.table_name}.source_id").
-        where("#{Spree::PromotionAction.table_name}.type = 'Spree::Promotion::Actions::FreeShipping'").exists?
+      discounts.promotion.exists?
     end
 
     def finalize!
@@ -522,12 +533,9 @@ module Spree
     end
 
     def update_amounts
-      if selected_delivery_rate
-        update_columns(
-          cost: selected_delivery_rate.cost,
-          adjustment_total: adjustments.additional.map(&:update!).compact.sum,
-          updated_at: Time.current
-        )
+      if selected_delivery_rate && cost != selected_delivery_rate.cost
+        # Typed adjustment columns are refreshed by the order recalculation.
+        update_columns(cost: selected_delivery_rate.cost, updated_at: Time.current)
       end
     end
 
@@ -607,16 +615,18 @@ module Spree
       stock_location.unstock(item.variant, item.quantity, self) if item.variant.track_inventory?
     end
 
-    def recalculate_adjustments
-      Adjustable::AdjustmentsUpdater.update(self)
-    end
-
     def set_cost_zero_when_nil
       self.cost = 0 unless cost
     end
 
     def update_adjustments
-      recalculate_adjustments if saved_change_to_cost? && state != 'fulfilled'
+      # A cost change shifts discount and tax bases — rebuild through the
+      # order-level recalculation. Creation is excluded (the surrounding flow
+      # runs the updater itself; recursing mid-assignment breaks collection
+      # replacement) and completed orders are frozen.
+      return if previously_new_record?
+
+      order.update_with_updater! if saved_change_to_cost? && status != 'fulfilled' && order&.persisted? && !order.completed?
     end
   end
 end

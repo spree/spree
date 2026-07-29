@@ -25,8 +25,8 @@ module Spree
         end
 
         ::Spree::PromotionHandler::Cart.new(order, line_item).activate
-        ::Spree::Adjustable::AdjustmentsUpdater.update(line_item)
-        ::Spree::TaxRate.adjust(order, [line_item.reload]) if line_item_created
+        # Typed rows (discounts + tax) are rebuilt by the order-level
+        # recalculation inside the updater.
         order_updater.update
         success(line_item)
       end

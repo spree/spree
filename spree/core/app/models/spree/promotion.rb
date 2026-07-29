@@ -243,7 +243,7 @@ module Spree
     end
 
     def products
-      rules.where(type: 'Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
+      rules.where(type: %w[Spree::PromotionRules::Product Spree::Promotion::Rules::Product]).map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(promotable)
@@ -251,12 +251,16 @@ module Spree
     end
 
     def adjusted_credits_count(promotable)
-      adjustments = promotable.is_a?(Order) ? promotable.all_adjustments : promotable.adjustments
-      credits_count - adjustments.eligible.promotion.where(source_id: actions.pluck(:id)).select(:order_id).distinct.count
+      own_credits = if promotable.is_a?(Order)
+                      credits.where(order_id: promotable.id).select(:order_id).distinct.count
+                    else
+                      credits.where(line_item_id: promotable.id).select(:order_id).distinct.count
+                    end
+      credits_count - own_credits
     end
 
     def credits
-      Adjustment.eligible.promotion.where(source_id: actions.map(&:id))
+      Spree::Discount.promotion.where(promotion_action_id: actions.map(&:id))
     end
 
     def credits_count
@@ -279,10 +283,9 @@ module Spree
     end
 
     def used_by?(user, excluded_orders = [])
-      user.orders.complete.joins(:promotions).joins(:all_adjustments).
+      user.orders.complete.joins(:discounts).
         where.not(spree_orders: { id: excluded_orders.map(&:id) }).
-        where(spree_promotions: { id: id }).
-        where(spree_adjustments: { source_type: 'Spree::PromotionAction', eligible: true }).any?
+        where(Spree::Discount.table_name => { promotion_id: id, kind: 'promotion' }).any?
     end
 
     def name_for_order(order)

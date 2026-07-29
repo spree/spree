@@ -169,8 +169,8 @@ describe Spree::Promotion, type: :model do
     let(:promotion) { create(:promotion, name: 'delete me', kind: :automatic) }
 
     before do
-      promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
-      promotion.rules << Spree::Promotion::Rules::FirstOrder.new
+      promotion.actions << Spree::PromotionActions::CreateAdjustment.new
+      promotion.rules << Spree::PromotionRules::FirstOrder.new
       promotion.save!
     end
 
@@ -201,8 +201,8 @@ describe Spree::Promotion, type: :model do
     let(:promotion) { create(:promotion, name: 'delete me', kind: :automatic) }
 
     before do
-      promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
-      promotion.rules << Spree::Promotion::Rules::FirstOrder.new
+      promotion.actions << Spree::PromotionActions::CreateAdjustment.new
+      promotion.rules << Spree::PromotionRules::FirstOrder.new
       promotion.save!
     end
 
@@ -256,8 +256,8 @@ describe Spree::Promotion, type: :model do
   end
 
   describe '#activate' do
-    let(:action1) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion) }
-    let(:action2) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion) }
+    let(:action1) { Spree::PromotionActions::CreateAdjustment.create!(promotion: promotion) }
+    let(:action2) { Spree::PromotionActions::CreateAdjustment.create!(promotion: promotion) }
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:payload) { { order: order, user: user } }
@@ -377,31 +377,30 @@ describe Spree::Promotion, type: :model do
 
     let!(:action) do
       calculator = Spree::Calculator::FlatRate.new
-      action_params = { promotion: promotion, calculator: calculator }
-      action = Spree::Promotion::Actions::CreateAdjustment.create(action_params)
+      action = Spree::PromotionActions::CreateAdjustment.create(promotion: promotion, calculator: calculator)
       promotion.actions << action
       action
     end
 
-    let!(:adjustment) do
-      order = create(:order)
-      Spree::Adjustment.create!(
-        order: order,
-        adjustable: order,
-        source: action,
-        amount: 10,
-        label: 'Promotional adjustment'
-      )
+    let(:order) { create(:order_with_line_items, line_items_count: 1) }
+
+    let!(:discount) do
+      create(:discount,
+             order: order,
+             line_item: order.line_items.first,
+             promotion_action: action,
+             promotion: promotion,
+             kind: 'promotion',
+             amount: -10,
+             label: 'Promotional discount')
     end
 
-    it 'counts eligible adjustments' do
-      adjustment.update_column(:eligible, true)
+    it 'counts applied discounts' do
       expect(promotion.credits_count).to eq(1)
     end
 
-    # Regression test for #4112
-    it 'does not count ineligible adjustments' do
-      adjustment.update_column(:eligible, false)
+    it 'does not count manual discounts' do
+      discount.update!(kind: 'manual', promotion_action: nil, promotion: nil)
       expect(promotion.credits_count).to eq(0)
     end
 
@@ -409,43 +408,40 @@ describe Spree::Promotion, type: :model do
     context 'with multiple actions on the same order' do
       let!(:second_action) do
         calculator = Spree::Calculator::FlatRate.new
-        action = Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator)
+        action = Spree::PromotionActions::CreateAdjustment.create(promotion: promotion, calculator: calculator)
         promotion.actions << action
         action
       end
 
       before do
-        order = adjustment.order
-        Spree::Adjustment.create!(
-          order: order,
-          adjustable: order,
-          source: second_action,
-          amount: -5,
-          label: 'Second promotional adjustment'
-        )
-        # mark both adjustments eligible
-        order.all_adjustments.update_all(eligible: true)
+        create(:discount,
+               order: order,
+               line_item: order.line_items.first,
+               promotion_action: second_action,
+               promotion: promotion,
+               kind: 'promotion',
+               amount: -5,
+               label: 'Second promotional discount')
       end
 
-      it 'counts unique orders, not individual adjustments' do
+      it 'counts unique orders, not individual discounts' do
         expect(promotion.credits_count).to eq(1)
       end
     end
 
     # Regression test for #11879
     context 'with the same action applied to multiple orders' do
-      let!(:second_order) { create(:order) }
+      let!(:second_order) { create(:order_with_line_items, line_items_count: 1) }
 
       before do
-        Spree::Adjustment.create!(
-          order: second_order,
-          adjustable: second_order,
-          source: action,
-          amount: 10,
-          label: 'Promotional adjustment'
-        )
-        adjustment.update_column(:eligible, true)
-        second_order.all_adjustments.update_all(eligible: true)
+        create(:discount,
+               order: second_order,
+               line_item: second_order.line_items.first,
+               promotion_action: action,
+               promotion: promotion,
+               kind: 'promotion',
+               amount: -10,
+               label: 'Promotional discount')
       end
 
       it 'counts each order separately' do
@@ -459,42 +455,44 @@ describe Spree::Promotion, type: :model do
     let(:line_item) { create :line_item, order: order }
     let(:promotion) { create(:promotion, name: 'promo', code: '10off') }
     let(:order_action) do
-      action = Spree::Promotion::Actions::CreateAdjustment.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
+      action = Spree::PromotionActions::CreateAdjustment.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
       promotion.actions << action
       action
     end
     let(:item_action) do
-      action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
+      action = Spree::PromotionActions::CreateItemDiscounts.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
       promotion.actions << action
       action
     end
-    let(:order_adjustment) do
-      Spree::Adjustment.create!(
-        source: order_action,
-        amount: 10,
-        adjustable: order,
-        order: order,
-        label: 'Promotional adjustment'
-      )
+    let(:order_discount) do
+      create(:discount,
+             order: order,
+             line_item: line_item,
+             promotion_action: order_action,
+             promotion: promotion,
+             kind: 'promotion',
+             amount: -10,
+             label: 'Promotional discount')
     end
-    let(:item_adjustment) do
-      Spree::Adjustment.create!(
-        source: item_action,
-        amount: 10,
-        adjustable: line_item,
-        order: order,
-        label: 'Promotional adjustment'
-      )
+    let(:item_discount) do
+      create(:discount,
+             order: order,
+             line_item: line_item,
+             promotion_action: item_action,
+             promotion: promotion,
+             kind: 'promotion',
+             amount: -10,
+             label: 'Promotional discount')
     end
 
-    it 'counts order level adjustments' do
-      expect(order_adjustment.adjustable).to eq(order)
+    it 'does not count the current order against its own limit (order-level action)' do
+      expect(order_discount.order).to eq(order)
       expect(promotion.credits_count).to eq(1)
       expect(promotion.adjusted_credits_count(order)).to eq(0)
     end
 
-    it 'counts item level adjustments' do
-      expect(item_adjustment.adjustable).to eq(line_item)
+    it 'does not count the current order against its own limit (item-level action)' do
+      expect(item_discount.line_item).to eq(line_item)
       expect(promotion.credits_count).to eq(1)
       expect(promotion.adjusted_credits_count(order)).to eq(0)
     end
@@ -505,7 +503,7 @@ describe Spree::Promotion, type: :model do
     let(:promotion) { create(:promotion, kind: :automatic) }
 
     context 'when it has product rules with products associated' do
-      let(:promotion_rule) { create(:promotion_rule, promotion: promotion, type: 'Spree::Promotion::Rules::Product') }
+      let(:promotion_rule) { create(:promotion_rule, promotion: promotion, type: 'Spree::PromotionRules::Product') }
 
       before do
         promotion.promotion_rules << promotion_rule
@@ -606,8 +604,8 @@ describe Spree::Promotion, type: :model do
     context "with 'all' match policy" do
       # Two distinct STI subclasses — uniqueness scopes on `(promotion_id, type)`,
       # so re-using the abstract base would fail validation for the second row.
-      let(:promo1) { Spree::Promotion::Rules::FirstOrder.create!(promotion: promotion) }
-      let(:promo2) { Spree::Promotion::Rules::OneUsePerUser.create!(promotion: promotion) }
+      let(:promo1) { Spree::PromotionRules::FirstOrder.create!(promotion: promotion) }
+      let(:promo2) { Spree::PromotionRules::OneUsePerUser.create!(promotion: promotion) }
 
       before { promotion.match_policy = 'all' }
 
@@ -818,12 +816,9 @@ describe Spree::Promotion, type: :model do
       context 'when the order is complete' do
         it { is_expected.to be true }
 
-        context 'when the promotion is not eligible' do
-          let(:adjustment) { order.adjustments.first }
-
+        context 'when the promotion discount was removed' do
           before do
-            adjustment.eligible = false
-            adjustment.save!
+            order.discounts.destroy_all
           end
 
           it { is_expected.to be false }
@@ -855,20 +850,20 @@ describe Spree::Promotion, type: :model do
     let(:variant) { create :variant }
 
     it 'updates the promotions for new line items' do
-      expect(line_item.adjustments).to be_empty
+      expect(line_item.discounts).to be_empty
       expect(order.adjustment_total).to eq 0
 
       promo.activate(order: order)
       order.update_with_updater!
 
       line_item.reload
-      expect(line_item.adjustments.size).to eq(1)
+      expect(line_item.discounts.size).to eq(1)
       expect(order.adjustment_total).to eq(-5)
 
       other_line_item = Spree::Carts::AddItem.call(order: order, variant: variant, options: { currency: order.currency }).value
 
       expect(other_line_item).not_to eq line_item
-      expect(other_line_item.adjustments.size).to eq(1)
+      expect(other_line_item.discounts.size).to eq(1)
       expect(order.adjustment_total).to eq(-10)
     end
   end
@@ -933,12 +928,12 @@ describe Spree::Promotion, type: :model do
       promotion.reload
 
       expect(promotion.rules.size).to eq(1)
-      expect(promotion.rules.first).to be_a(Spree::Promotion::Rules::ItemTotal)
+      expect(promotion.rules.first).to be_a(Spree::PromotionRules::ItemTotal)
       expect(promotion.rules.first.preferred_amount_min).to eq(50)
     end
 
     it 'updates an existing rule when matched by id' do
-      existing = promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal', preferences: { amount_min: 10 })
+      existing = promotion.rules.create!(type: 'Spree::PromotionRules::ItemTotal', preferences: { amount_min: 10 })
 
       promotion.rules = [{ id: existing.id, type: 'item_total', preferences: { amount_min: 99 } }]
       promotion.reload
@@ -949,8 +944,8 @@ describe Spree::Promotion, type: :model do
     end
 
     it 'destroys rules omitted from the payload' do
-      kept = promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal', preferences: { amount_min: 10 })
-      removed = promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder')
+      kept = promotion.rules.create!(type: 'Spree::PromotionRules::ItemTotal', preferences: { amount_min: 10 })
+      removed = promotion.rules.create!(type: 'Spree::PromotionRules::FirstOrder')
 
       promotion.rules = [{ id: kept.id, type: 'item_total' }]
       promotion.reload
@@ -960,7 +955,7 @@ describe Spree::Promotion, type: :model do
     end
 
     it 'destroys all rules when given an empty array' do
-      promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal')
+      promotion.rules.create!(type: 'Spree::PromotionRules::ItemTotal')
 
       promotion.rules = []
       promotion.reload
@@ -972,8 +967,8 @@ describe Spree::Promotion, type: :model do
     # the in-memory collection WITHOUT a reload, since the admin serializer
     # renders `rule_ids` off the loaded association on the same object.
     it 'reflects a partial removal in the loaded collection without reload' do
-      kept = promotion.rules.create!(type: 'Spree::Promotion::Rules::ItemTotal', preferences: { amount_min: 10 })
-      removed = promotion.rules.create!(type: 'Spree::Promotion::Rules::FirstOrder')
+      kept = promotion.rules.create!(type: 'Spree::PromotionRules::ItemTotal', preferences: { amount_min: 10 })
+      removed = promotion.rules.create!(type: 'Spree::PromotionRules::FirstOrder')
 
       promotion.promotion_rules.load # eager-load, as the controller scope does
 
@@ -995,13 +990,13 @@ describe Spree::Promotion, type: :model do
       promotion.reload
 
       rule = promotion.rules.first
-      expect(rule).to be_a(Spree::Promotion::Rules::Product)
+      expect(rule).to be_a(Spree::PromotionRules::Product)
       expect(rule.products).to contain_exactly(product, other_product)
       expect(rule.preferred_match_policy).to eq('any')
     end
 
     it 'replaces product_ids on an existing Product rule' do
-      rule = promotion.rules.create!(type: 'Spree::Promotion::Rules::Product')
+      rule = promotion.rules.create!(type: 'Spree::PromotionRules::Product')
       rule.products = [product]
 
       promotion.rules = [{ id: rule.id, type: 'product', product_ids: [other_product.id] }]
@@ -1015,7 +1010,7 @@ describe Spree::Promotion, type: :model do
       promotion.reload
 
       rule = promotion.rules.first
-      expect(rule).to be_a(Spree::Promotion::Rules::Category)
+      expect(rule).to be_a(Spree::PromotionRules::Category)
       expect(rule.taxons).to contain_exactly(taxon)
     end
 
@@ -1029,7 +1024,7 @@ describe Spree::Promotion, type: :model do
       fresh.save!
 
       rule = fresh.reload.rules.first
-      expect(rule).to be_a(Spree::Promotion::Rules::Category)
+      expect(rule).to be_a(Spree::PromotionRules::Category)
       expect(rule.taxons).to contain_exactly(taxon)
     end
 
@@ -1055,7 +1050,7 @@ describe Spree::Promotion, type: :model do
     end
 
     it 'falls through to AR when assigned PromotionRule instances' do
-      rule = Spree::Promotion::Rules::FirstOrder.new
+      rule = Spree::PromotionRules::FirstOrder.new
       promotion.rules = [rule]
 
       expect(promotion.rules).to include(rule)
@@ -1076,7 +1071,7 @@ describe Spree::Promotion, type: :model do
       promotion.reload
 
       action = promotion.actions.first
-      expect(action).to be_a(Spree::Promotion::Actions::CreateAdjustment)
+      expect(action).to be_a(Spree::PromotionActions::CreateAdjustment)
       expect(action.calculator).to be_a(Spree::Calculator::FlatRate)
       expect(action.calculator.preferred_amount).to eq(7.5)
       expect(action.calculator.preferred_currency).to eq('USD')
@@ -1084,7 +1079,7 @@ describe Spree::Promotion, type: :model do
 
     it 'updates the calculator type on an existing action' do
       action = promotion.actions.create!(
-        type: 'Spree::Promotion::Actions::CreateAdjustment',
+        type: 'Spree::PromotionActions::CreateAdjustment',
         calculator: Spree::Calculator::FlatRate.new(preferred_amount: 5)
       )
 
@@ -1105,12 +1100,12 @@ describe Spree::Promotion, type: :model do
       promotion.actions = [{ type: 'free_shipping' }]
       promotion.reload
 
-      expect(promotion.actions.first).to be_a(Spree::Promotion::Actions::FreeShipping)
+      expect(promotion.actions.first).to be_a(Spree::PromotionActions::FreeShipping)
     end
 
     it 'destroys actions omitted from the payload' do
-      kept = promotion.actions.create!(type: 'Spree::Promotion::Actions::FreeShipping')
-      removed = promotion.actions.create!(type: 'Spree::Promotion::Actions::CreateAdjustment')
+      kept = promotion.actions.create!(type: 'Spree::PromotionActions::FreeShipping')
+      removed = promotion.actions.create!(type: 'Spree::PromotionActions::CreateAdjustment')
 
       promotion.actions = [{ id: kept.id, type: 'free_shipping' }]
       promotion.reload

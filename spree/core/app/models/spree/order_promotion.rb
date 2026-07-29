@@ -15,7 +15,7 @@ module Spree
     money_methods :amount
 
     def amount
-      order.all_adjustments.promotion.where(source: promotion.actions).sum(:amount)
+      order.discounts.promotion.where(promotion_action_id: promotion.actions.ids).sum(:amount)
     end
   end
 end

@@ -12,14 +12,14 @@ module Spree
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
       context 'activates in LineItem level' do
-        let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { PromotionActions::CreateItemDiscounts.create(promotion: promotion, calculator: calculator) }
         let(:adjustable) { line_item }
 
         shared_context 'creates the adjustment' do
           it 'creates the adjustment' do
             expect do
               subject.activate
-            end.to change { adjustable.adjustments.count }.by(1)
+            end.to change { adjustable.discounts.count }.by(1)
           end
         end
 
@@ -28,14 +28,14 @@ module Spree
         end
 
         context 'promotion includes item involved' do
-          let!(:rule) { Promotion::Rules::Product.create(products: [line_item.product], promotion: promotion) }
+          let!(:rule) { PromotionRules::Product.create(products: [line_item.product], promotion: promotion) }
 
           include_context 'creates the adjustment'
         end
 
         context 'promotion has item total rule' do
           let(:shirt) { create(:product, store: order.store) }
-          let!(:rule) { Promotion::Rules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
+          let!(:rule) { PromotionRules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
 
           before do
             # Makes the order eligible for this promotion
@@ -48,14 +48,14 @@ module Spree
       end
 
       context 'activates in Order level' do
-        let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { PromotionActions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
         let(:adjustable) { order }
 
         shared_context 'creates the adjustment' do
           it 'creates the adjustment' do
             expect do
               subject.activate
-            end.to change { adjustable.adjustments.count }.by(1)
+            end.to change { adjustable.discounts.count }.by(1)
           end
         end
 
@@ -71,7 +71,7 @@ module Spree
 
         context 'promotion has item total rule' do
           let(:shirt) { create(:product, store: order.store) }
-          let!(:rule) { Promotion::Rules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
+          let!(:rule) { PromotionRules::ItemTotal.create(preferred_operator_min: 'gt', preferred_amount_min: 50, preferred_operator_max: 'lt', preferred_amount_max: 150, promotion: promotion) }
 
           before do
             # Makes the order eligible for this promotion
@@ -94,7 +94,7 @@ module Spree
         it 'creates the adjustment' do
           expect do
             subject.activate
-          end.to change { adjustable.adjustments.count }.by(1)
+          end.to change { adjustable.discounts.count }.by(1)
         end
       end
     end

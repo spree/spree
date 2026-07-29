@@ -33,13 +33,13 @@ describe 'Promotion discounts and the taxable basis', type: :model do
 
   def line_item_promotion(calculator)
     create(:promotion, code: 'DISCOUNT', store: store).tap do |promotion|
-      Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator, promotion: promotion)
+      Spree::PromotionActions::CreateItemDiscounts.create!(calculator: calculator, promotion: promotion)
     end
   end
 
   def whole_order_promotion(calculator)
     create(:promotion, code: 'DISCOUNT', store: store).tap do |promotion|
-      Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator, promotion: promotion)
+      Spree::PromotionActions::CreateAdjustment.create!(calculator: calculator, promotion: promotion)
     end
   end
 

@@ -27,7 +27,7 @@ RSpec.describe 'Admin Promotion Rules API', type: :request, swagger_doc: 'api-re
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         before do
-          Spree::Promotion::Rules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
+          Spree::PromotionRules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
         end
 
         run_test! do |response|
@@ -86,7 +86,7 @@ RSpec.describe 'Admin Promotion Rules API', type: :request, swagger_doc: 'api-re
     parameter name: :promotion_id, in: :path, type: :string, required: true
     parameter name: :id, in: :path, type: :string, required: true
 
-    let(:rule) { Spree::Promotion::Rules::Currency.create!(promotion: promotion, preferred_currency: 'USD') }
+    let(:rule) { Spree::PromotionRules::Currency.create!(promotion: promotion, preferred_currency: 'USD') }
     let(:id) { rule.prefixed_id }
 
     patch 'Update a rule\'s preferences' do

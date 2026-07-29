@@ -182,16 +182,20 @@ describe Spree::LineItem, type: :model do
         line_item.quantity = line_item.quantity + 1
       end
 
-      it 'triggers adjustment total recalculation' do
-        expect(line_item).to receive(:update_tax_charge) # Regression test for https://github.com/spree/spree/issues/4671
-        expect(line_item).to receive(:recalculate_adjustments)
+      # Regression guard for #4671 — a quantity change must move the tax
+      # basis. Typed rows are rebuilt by the order-level recalculation that
+      # every cart/checkout flow runs after the save.
+      it 'refreshes tax through the order recalculation' do
         line_item.save
+        line_item.order.update_with_updater!
+
+        expect(line_item.reload.pre_tax_amount).to eq(line_item.price * line_item.quantity)
       end
     end
 
     context 'line item does not change' do
-      it 'does not trigger adjustment total recalculation' do
-        expect(line_item).not_to receive(:recalculate_adjustments)
+      it 'does not trigger price recalculation' do
+        expect(line_item).not_to receive(:recalculate_price)
         line_item.save
       end
     end
@@ -226,7 +230,7 @@ describe Spree::LineItem, type: :model do
       it 'creates a tax adjustment' do
         Spree::Carts::AddItem.call(order: order, variant: variant)
         line_item = order.find_line_item_by_variant(variant)
-        expect(line_item.adjustments.tax.count).to eq(1)
+        expect(line_item.tax_lines.count).to eq(1)
       end
     end
 
@@ -244,7 +248,7 @@ describe Spree::LineItem, type: :model do
         Spree::Carts::AddItem.call(order: order, variant: variant)
 
         line_item = order.find_line_item_by_variant(variant)
-        expect(line_item.adjustments.tax.count).to eq(0)
+        expect(line_item.tax_lines.count).to eq(0)
       end
     end
   end

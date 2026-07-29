@@ -19,23 +19,29 @@ describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
       it { is_expected.to eq pre_tax_amount / line_item_quantity }
     end
 
-    context 'order adjustments' do
-      let(:adjustment_amount) { -10.0 }
+    context 'with a discount on the line item' do
+      let(:discount_amount) { -10.0 }
 
       before do
-        order.adjustments << create(:adjustment, order: order, amount: adjustment_amount, eligible: true, label: 'Adjustment', source_type: 'Spree::Order')
-        order.adjustments.first.update(amount: adjustment_amount)
+        create(:discount, order: order, line_item: line_item, amount: discount_amount, label: 'Discount', kind: 'manual')
+        order.update_with_updater!
+        line_item.reload
       end
 
-      it { is_expected.to eq (pre_tax_amount - adjustment_amount.abs) / line_item_quantity }
+      it { is_expected.to eq (pre_tax_amount - discount_amount.abs) / line_item_quantity }
     end
 
-    context 'shipping adjustments' do
-      let(:adjustment_total) { -50.0 }
+    context 'with a fulfillment-level discount' do
+      let!(:shipment) { create(:shipment, order: order, cost: 50) }
 
-      before { order.shipments << Spree::Shipment.new(adjustment_total: adjustment_total) }
+      before do
+        create(:discount, order: order, fulfillment: shipment, amount: -50, label: 'Free shipping', kind: 'promotion')
+        order.update_with_updater!
+      end
 
-      it { is_expected.to eq pre_tax_amount / line_item_quantity }
+      it 'does not affect the line item refund' do
+        is_expected.to eq pre_tax_amount / line_item_quantity
+      end
     end
   end
 

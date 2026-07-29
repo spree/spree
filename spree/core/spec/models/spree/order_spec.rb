@@ -438,11 +438,10 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'freezes all adjustments' do
-      adjustments = [double]
-      expect(order).to receive(:all_adjustments).and_return(adjustments)
-      expect(adjustments).to all(receive(:close))
+    it 'freezes adjustment recalculation (order-level freeze)' do
       order.finalize!
+      expect(Spree::Adjusters::Promotion).not_to receive(:adjust)
+      order.update_with_updater!
     end
 
     context 'order is considered risky' do
@@ -592,7 +591,9 @@ describe Spree::Order, type: :model do
 
       it 'clears out line items, adjustments and update totals' do
         expect(order.line_items.count).to be_zero
-        expect(order.adjustments.count).to be_zero
+        expect(order.discounts.count).to be_zero
+        expect(order.tax_lines.count).to be_zero
+        expect(order.fees.count).to be_zero
         expect(order.shipments.count).to be_zero
         expect(order.order_promotions.count).to be_zero
         expect(order.promo_total).to be_zero
@@ -904,16 +905,10 @@ describe Spree::Order, type: :model do
 
   describe '#apply_free_shipping_promotions' do
     it 'calls out to the FreeShipping promotion handler' do
-      shipment = double('Shipment')
-      allow(order).to receive_messages fulfillments: [shipment]
       expect(Spree::PromotionHandler::FreeShipping).to receive(:new).and_return(handler = double)
       expect(handler).to receive(:activate)
+      expect(order).to receive(:update_with_updater!)
 
-      expect(Spree::Adjustable::AdjustmentsUpdater).to receive(:update).with(shipment)
-
-      expect(Spree::TaxRate).to receive(:adjust).with(order, [shipment])
-
-      expect(order.updater).to receive(:update)
       order.apply_free_shipping_promotions
     end
   end
@@ -1840,28 +1835,24 @@ describe Spree::Order, type: :model do
   end
 
   describe '#create_shipment_tax_charge!' do
-    let(:order_shipments) { double }
+    let(:provider) { instance_double(Spree::TaxProvider::Internal, estimate: nil) }
 
-    after { order.create_shipment_tax_charge! }
+    before { allow(Spree).to receive(:tax_provider).and_return(provider) }
 
     context 'when order has shipments' do
-      before do
-        allow(order).to receive(:fulfillments).and_return(order_shipments)
-        allow(order_shipments).to receive(:any?).and_return(true)
-        allow(Spree::TaxRate).to receive(:adjust).with(order, order_shipments)
-      end
+      let!(:shipment) { create(:shipment, order: order) }
 
-      it { expect(order_shipments).to receive(:any?).and_return(true) }
-      it { expect(order).to receive(:fulfillments).and_return(order_shipments) }
-      it { expect(Spree::TaxRate).to receive(:adjust).with(order, order_shipments) }
+      it 'estimates tax over the fulfillments' do
+        expect(provider).to receive(:estimate).with(order, [shipment])
+        order.create_shipment_tax_charge!
+      end
     end
 
     context 'when order has no shipments' do
-      before do
-        allow(order).to receive_message_chain(:fulfillments, :any?).and_return(false)
+      it 'does not call the provider' do
+        expect(provider).not_to receive(:estimate)
+        order.create_shipment_tax_charge!
       end
-
-      it { expect(order).to receive_message_chain(:fulfillments, :any?).and_return(false) }
     end
   end
 
@@ -1898,29 +1889,23 @@ describe Spree::Order, type: :model do
   end
 
   describe '#valid_promotions' do
-    def create_adjustment(label, order_or_line_item, amount, source)
-      create(:adjustment,
+    def create_discount(label, line_item, amount, action)
+      create(:discount,
              order: order,
-             adjustable: order_or_line_item,
-             source: source,
+             line_item: line_item,
+             promotion_action: action,
+             promotion: action.promotion,
              amount: amount,
-             state: 'closed',
              label: label,
-             mandatory: false)
+             kind: 'promotion')
     end
 
     let!(:order) { create(:order_with_line_items, line_items_count: 10) }
     let(:line_item) { order.line_items.first }
 
-    let(:zero_promo) { create :promotion_with_order_adjustment, weighted_order_adjustment_amount: 0, starts_at: Time.now, code: 'Zero', id: 1 }
-    let(:order_promo) { create :promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, starts_at: Time.now, code: 'Order1', id: 2 }
-    let(:line_item_promo) { create :promotion_with_item_adjustment, adjustment_rate: 10, starts_at: Time.now, code: 'LineItem', id: 3 }
-
-    let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
-    let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator, promotion_id: order_promo.id) }
-    let(:zero_calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 0) }
-    let(:zero_source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: zero_calculator, promotion_id: zero_promo.id }
-    let(:line_item_source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: calculator, promotion_id: line_item_promo.id }
+    let(:zero_promo) { create :promotion_with_order_adjustment, weighted_order_adjustment_amount: 0, starts_at: Time.now, code: 'Zero' }
+    let(:order_promo) { create :promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, starts_at: Time.now, code: 'Order1' }
+    let(:line_item_promo) { create :promotion_with_item_adjustment, adjustment_rate: 10, starts_at: Time.now, code: 'LineItem' }
 
     context 'without promotions' do
       it 'expect to return an empty array' do
@@ -1929,22 +1914,13 @@ describe Spree::Order, type: :model do
     end
 
     context 'with promotions' do
-      let!(:zero_adjustment) { create_adjustment('Zero adjustment', order, -0, zero_source) }
-      let!(:adjustment) { create_adjustment('Adjustment', order, -50, source) }
-      let!(:non_eligible_adjustment) { create_adjustment('Non Eligible Adjustment', order, -100, source) }
-      let!(:line_item_adjustment) { create_adjustment('Adjustment', line_item, -200, line_item_source) }
+      let!(:zero_discount) { create_discount('Zero discount', order.line_items.second, 0, zero_promo.actions.first) }
+      let!(:order_discount) { create_discount('Discount', line_item, -50, order_promo.actions.first) }
+      let!(:line_item_discount) { create_discount('Discount', order.line_items.third, -200, line_item_promo.actions.first) }
 
       before do
-        promotions = [zero_promo, order_promo, line_item_promo]
-        promotions.each do |promotion|
+        [zero_promo, order_promo, line_item_promo].each do |promotion|
           promotion.orders << order
-          promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
-          promotion.rules << Spree::Promotion::Rules::FirstOrder.new
-          promotion.save!
-        end
-
-        order.all_adjustments.where(amount: [0, -50, -200]).each do |adjustment|
-          adjustment.update_column(:eligible, true)
         end
       end
 
@@ -2028,8 +2004,11 @@ describe Spree::Order, type: :model do
           expect(order.promotions).to include(free_shipping_promotion, line_item_promotion, order_promotion)
         end
 
-        it 'returns -110.00' do
-          expect(subject).to eq(BigDecimal('-110.00'))
+        # The line-item promotion fully discounts every line, so the
+        # order-level promotion has no remaining base to distribute over —
+        # discounts are clamped so no line goes below zero (6.0 behavior).
+        it 'returns -100.00' do
+          expect(subject).to eq(BigDecimal('-100.00'))
         end
       end
     end

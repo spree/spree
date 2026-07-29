@@ -137,7 +137,7 @@ module Spree
 
           token_order_params = current_order_params.except(:user_id)
           order = if with_adjustments
-                    incomplete_orders.includes(:adjustments).lock(options[:lock]).find_by(token_order_params)
+                    incomplete_orders.includes(:discounts, :fees).lock(options[:lock]).find_by(token_order_params)
                   else
                     incomplete_orders.lock(options[:lock]).find_by(token_order_params)
                   end

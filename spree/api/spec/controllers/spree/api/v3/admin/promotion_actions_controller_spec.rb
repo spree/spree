@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionsController, type: :control
 
       expect(response).to have_http_status(:created)
       expect(promotion.reload.promotion_actions.map(&:type))
-        .to include('Spree::Promotion::Actions::CreateAdjustment')
+        .to include('Spree::PromotionActions::CreateAdjustment')
     end
 
     it "404s for a promotion that belongs to another store" do

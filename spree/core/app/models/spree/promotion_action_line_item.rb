@@ -1,6 +1,6 @@
 module Spree
   class PromotionActionLineItem < Spree.base_class
-    belongs_to :promotion_action, class_name: 'Spree::Promotion::Actions::CreateLineItems'
+    belongs_to :promotion_action, class_name: 'Spree::PromotionActions::CreateLineItems'
     belongs_to :variant, class_name: 'Spree::Variant'
 
     validates :promotion_action, :variant, :quantity, presence: true

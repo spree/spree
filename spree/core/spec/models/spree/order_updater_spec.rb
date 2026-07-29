@@ -36,13 +36,14 @@ module Spree
         let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
         let(:promotion_action) do
-          Promotion::Actions::CreateAdjustment.create!(calculator: calculator,
+          PromotionActions::CreateAdjustment.create!(calculator: calculator,
                                                        promotion: promotion)
         end
 
         before do
           updater.update
-          create(:adjustment, source: promotion_action, adjustable: order, order: order)
+          promotion_action
+          order.promotions << promotion
           create(:line_item, order: order, price: 10) # in addition to the two already created
           order.reload
           updater.update
@@ -54,15 +55,19 @@ module Spree
       end
 
       it 'update order adjustments' do
-        # A line item will not have both additional and included tax,
-        # so please just humour me for now.
-        order.line_items.first.update_columns(adjustment_total: 10.05,
-                                              additional_tax_total: 0.05,
-                                              included_tax_total: 0.05)
+        # Tax is provider-written; stub it out so the synthetic tax line survives.
+        allow(Spree).to receive(:tax_provider).and_return(instance_double(Spree::TaxProvider::Internal, estimate: nil))
+
+        line_item = order.line_items.first
+        create(:discount, order: order, line_item: line_item, amount: -2.50, kind: 'manual')
+        create(:fee, order: order, amount: 5, kind: 'handling')
+        create(:tax_line, order: order, line_item: line_item, amount: 0.05, included: false)
+
         updater.update_adjustment_total
-        expect(order.adjustment_total).to eq(10.05)
+        expect(order.adjustment_total).to eq(2.55)
         expect(order.additional_tax_total).to eq(0.05)
-        expect(order.included_tax_total).to eq(0.05)
+        expect(order.fee_total).to eq(5)
+        expect(order.promo_total).to eq(0)
       end
     end
 

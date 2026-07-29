@@ -186,13 +186,11 @@ module Spree
       has_many :payments, class_name: 'Spree::Payment'
       has_many :payment_sessions, inverse_of: :order, class_name: 'Spree::PaymentSession'
       has_many :return_authorizations, inverse_of: :order, class_name: 'Spree::ReturnAuthorization'
-      has_many :adjustments, -> { order(:created_at) }, as: :adjustable, class_name: 'Spree::Adjustment'
       has_many :cancellations, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderCancellation'
       has_many :approvals, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderApproval'
     end
     has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
     has_many :customer_returns, class_name: 'Spree::CustomerReturn', through: :return_authorizations
-    has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :fulfillment_items, inverse_of: :order, class_name: 'Spree::FulfillmentItem'
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :order, deprecated: true
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :order, dependent: :destroy
@@ -200,11 +198,15 @@ module Spree
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :refunds, through: :payments
-    has_many :all_adjustments,
-             class_name: 'Spree::Adjustment',
-             foreign_key: :order_id,
-             dependent: :destroy,
-             inverse_of: :order
+
+    # Typed adjustment rows owned by this order (line-, fulfillment- and
+    # order-level). See docs/plans/6.0-split-adjustments.md.
+    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :order
+    has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :order
+
+    has_many :line_item_tax_lines, through: :line_items, source: :tax_lines
+    has_many :line_item_discounts, through: :line_items, source: :discounts
 
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
@@ -214,10 +216,10 @@ module Spree
         pluck(:status).uniq
       end
     end
-    has_many :shipment_adjustments, through: :fulfillments, source: :adjustments
+    has_many :fulfillment_tax_lines, through: :fulfillments, source: :tax_lines
+    has_many :fulfillment_discounts, through: :fulfillments, source: :discounts
 
     alias items line_items
-    alias discounts order_promotions
     # Legacy names — removed in 6.1 (real names: fulfillments, delivery_total,
     # fulfillment_status since 6.0)
     has_many :shipments, class_name: 'Spree::Fulfillment', inverse_of: :order, deprecated: true
@@ -377,18 +379,25 @@ module Spree
     end
 
     # Sum of the eligible promotion adjustments applied to the order itself
-    # (whole-order discounts created by Promotion::Actions::CreateAdjustment),
-    # as opposed to promotions applied to individual line items or shipments.
-    # Zero or negative.
+    # (whole-order discounts created by PromotionActions::CreateAdjustment,
+    # distributed proportionally across line items), as opposed to promotions
+    # applied to individual line items or fulfillments. Zero or negative.
     #
     # @return [BigDecimal]
     def order_level_promo_total
-      adjustments.promotion.eligible.sum(:amount)
+      discounts.promotion.where(promotion_action_id: promotion_actions_of_scope(:order)).sum(:amount)
     end
 
     # Sum of all line item and shipment pre-tax
     def pre_tax_total
       pre_tax_item_amount + fulfillments.sum(:pre_tax_amount)
+    end
+
+    # Promotion actions of the given discount scope, covering both the 6.0
+    # class names and the legacy STI names still present in the type column
+    # until the 6.1 data migration.
+    def promotion_actions_of_scope(scope)
+      Spree::PromotionAction.where(type: Spree::PromotionAction.types_for_discount_scope(scope))
     end
 
     # Returns the subtotal used for analytics integrations
@@ -399,7 +408,7 @@ module Spree
     end
 
     def shipping_discount
-      shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
+      discounts.for_fulfillments.sum(:amount) * -1
     end
 
     def completed?
@@ -594,15 +603,14 @@ module Spree
       end
     end
 
-    # Creates new tax charges if there are any applicable rates. If prices already
-    # include taxes then price adjustments are created instead.
+    # Re-estimates tax through the configured provider (writes TaxLine rows
+    # with replace-all semantics).
     def create_tax_charge!
-      Spree::TaxRate.adjust(self, line_items)
-      Spree::TaxRate.adjust(self, fulfillments) if fulfillments.any?
+      Spree.tax_provider.estimate(self)
     end
 
     def create_shipment_tax_charge!
-      Spree::TaxRate.adjust(self, fulfillments) if fulfillments.any?
+      Spree.tax_provider.estimate(self, fulfillments.to_a) if fulfillments.any?
     end
 
     def update_line_item_prices!
@@ -677,8 +685,9 @@ module Spree
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!
-      # lock all adjustments (coupon promotions, etc.)
-      all_adjustments.each(&:close)
+      # Typed adjustment rows are frozen by the order-level recalculation
+      # freeze (OrderUpdater#recalculate_adjustments) once completed — no
+      # per-row locking needed.
 
       # update payment and shipment(s) states, and save
       updater.update_payment_state
@@ -687,7 +696,7 @@ module Spree
         shipment.finalize!
       end
 
-      updater.update_shipment_state
+      updater.update_fulfillment_status
       self.status = 'placed'
       save!
       updater.run_hooks
@@ -703,7 +712,7 @@ module Spree
 
     def fulfill!
       fulfillments.each { |shipment| shipment.update!(self) if shipment.persisted? }
-      updater.update_shipment_state
+      updater.update_fulfillment_status
       save!
     end
 
@@ -805,7 +814,9 @@ module Spree
     end
 
     def create_proposed_shipments
-      all_adjustments.shipping.delete_all
+      discounts.for_fulfillments.delete_all
+      tax_lines.for_fulfillments.delete_all
+      fees.for_fulfillments.delete_all
 
       shipment_ids = fulfillments.map(&:id)
       StateChange.where(stateful_type: %w[Spree::Shipment Spree::Fulfillment], stateful_id: shipment_ids).delete_all
@@ -873,8 +884,6 @@ module Spree
 
     def apply_free_shipping_promotions
       Spree::PromotionHandler::FreeShipping.new(self).activate
-      fulfillments.each { |shipment| Spree::Adjustable::AdjustmentsUpdater.update(shipment) }
-      create_shipment_tax_charge!
       update_with_updater!
     end
 
@@ -1039,9 +1048,7 @@ module Spree
     # Returns the IDs of the valid promotions for the order
     # @return [Array<Integer>]
     def valid_promotion_ids
-      all_adjustments.eligible.nonzero.promotion.promotion.eligible.nonzero.promotion.
-        joins("INNER JOIN #{Spree::PromotionAction.table_name} ON #{Spree::PromotionAction.table_name}.id = #{Spree::Adjustment.table_name}.source_id").
-        pluck("#{Spree::PromotionAction.table_name}.promotion_id").compact.uniq
+      discounts.promotion.nonzero.where.not(promotion_id: nil).distinct.pluck(:promotion_id)
     end
 
     # Returns the valid coupon promotions for the order
@@ -1053,19 +1060,14 @@ module Spree
     end
 
     # Returns item and whole order discount amount for Order
-    # without Shipment discounts (eg. Free Shipping)
+    # without fulfillment discounts (eg. Free Shipping)
     # @return [BigDecimal]
     def cart_promo_total
-      all_adjustments.eligible.nonzero.promotion.
-        where.not(adjustable_type: %w[Spree::Shipment Spree::Fulfillment]).
-        sum(:amount)
+      discounts.promotion.nonzero.for_line_items.sum(:amount)
     end
 
     def has_free_shipping?
-      shipment_adjustments.
-        joins(:promotion_action).
-        where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
-              spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
+      discounts.promotion.for_fulfillments.exists?
     end
 
     def to_csv(_store = nil)

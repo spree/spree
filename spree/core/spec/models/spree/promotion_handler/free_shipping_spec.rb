@@ -12,49 +12,49 @@ module Spree
 
       context 'activates in Shipment level' do
         let(:promotion) { create(:promotion, name: 'Free Shipping', store: order.store, kind: :automatic) }
-        let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
+        let!(:action) { PromotionActions::FreeShipping.create(promotion: promotion) }
 
         it 'creates the adjustment' do
-          expect { subject.activate }.to change { shipment.adjustments.count }.by(1)
+          expect { subject.activate }.to change { shipment.discounts.count }.by(1)
         end
       end
 
       context 'if promo has a code' do
         let(:promotion) { create(:promotion, name: 'Free Shipping', store: order.store, code: 'code') }
-        let!(:action) { Spree::Promotion::Actions::FreeShipping.create(promotion: promotion) }
+        let!(:action) { Spree::PromotionActions::FreeShipping.create(promotion: promotion) }
 
         it 'does adjust the shipment when applied to order' do
           order.promotions << promotion
 
-          expect { subject.activate }.to change { shipment.adjustments.count }
+          expect { subject.activate }.to change { shipment.discounts.count }
         end
 
         it 'does not adjust the shipment when not applied to order' do
-          expect { subject.activate }.not_to change { shipment.adjustments.count }
+          expect { subject.activate }.not_to change { shipment.discounts.count }
         end
       end
 
       context 'if promo has multiple codes' do
         let(:promotion) { create(:promotion, name: 'Free Shipping', store: order.store, multi_codes: true, number_of_codes: 1) }
-        let!(:action) { Spree::Promotion::Actions::FreeShipping.create(promotion: promotion) }
+        let!(:action) { Spree::PromotionActions::FreeShipping.create(promotion: promotion) }
 
         it 'does adjust the shipment when applied to order' do
           order.promotions << promotion
 
-          expect { subject.activate }.to change { shipment.adjustments.count }
+          expect { subject.activate }.to change { shipment.discounts.count }
         end
 
         it 'does not adjust the shipment when not applied to order' do
-          expect { subject.activate }.not_to change { shipment.adjustments.count }
+          expect { subject.activate }.not_to change { shipment.discounts.count }
         end
       end
 
       context 'if promo has a path' do
         let(:promotion) { create(:promotion, name: 'Free Shipping', store: order.store, kind: :automatic, path: 'path') }
-        let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
+        let!(:action) { PromotionActions::FreeShipping.create(promotion: promotion) }
 
         it 'does not adjust the shipment' do
-          expect { subject.activate }.not_to change { shipment.adjustments.count }
+          expect { subject.activate }.not_to change { shipment.discounts.count }
         end
       end
     end

@@ -58,17 +58,12 @@ describe Spree::Order, type: :model do
         order.state = 'delivery'
       end
 
-      it 'adjusts tax rates when transitioning to delivery' do
-        # Once for the line items
-        expect(Spree::TaxRate).to receive(:adjust).once
-        allow(order).to receive :set_shipments_cost
-        order.next!
-      end
+      it 'estimates tax when leaving delivery' do
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil)
+        allow(Spree).to receive(:tax_provider).and_return(provider)
 
-      it 'adjusts tax rates twice if there are any shipments' do
-        # Once for the line items, once for the shipments
-        order.fulfillments.build stock_location: create(:stock_location)
-        expect(Spree::TaxRate).to receive(:adjust).twice
+        # A single estimate covers line items, fulfillments and fees.
+        expect(provider).to receive(:estimate).at_least(:once)
         allow(order).to receive :set_shipments_cost
         order.next!
       end

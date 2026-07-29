@@ -51,12 +51,12 @@ describe Spree::ShippingMethod, type: :model do
       allow(Spree::ShippingMethod).to receive_message_chain(:spree_calculators, :shipping_methods).and_return([
                                                                                                                 Spree::Calculator::Shipping::FlatPercentItemTotal,
                                                                                                                 Spree::Calculator::Shipping::PriceSack,
-                                                                                                                Spree::Calculator::DefaultTax,
+                                                                                                                Spree::Calculator::FlatRate,
                                                                                                                 DummyShippingCalculator # included as regression test for https://github.com/spree/spree/issues/3109
                                                                                                               ])
 
       expect(Spree::ShippingMethod.calculators).to eq([Spree::Calculator::Shipping::FlatPercentItemTotal, Spree::Calculator::Shipping::PriceSack, DummyShippingCalculator])
-      expect(Spree::ShippingMethod.calculators).not_to eq([Spree::Calculator::DefaultTax])
+      expect(Spree::ShippingMethod.calculators).not_to eq([Spree::Calculator::FlatRate])
     end
   end
 

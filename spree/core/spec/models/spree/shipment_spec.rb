@@ -197,7 +197,8 @@ describe Spree::Shipment, type: :model do
       create_shipment(order, stock_location)
       create_shipment(order, stock_location)
 
-      create :tax_adjustment, adjustable: order.line_items.first, order: order
+      # 10% additional tax on the 20.00 line
+      order.line_items.first.update_columns(adjustment_total: 2.0, additional_tax_total: 2.0)
 
       expect(order.shipments.first.item_cost).to eq(11.0)
       expect(order.shipments.last.item_cost).to eq(11.0)
@@ -205,7 +206,7 @@ describe Spree::Shipment, type: :model do
 
     it 'equals line items final amount with tax' do
       shipment = create(:shipment, order: create(:order_with_line_item_quantity, line_items_quantity: 2))
-      create :tax_adjustment, adjustable: shipment.order.line_items.first, order: shipment.order
+      shipment.order.line_items.first.update_columns(adjustment_total: 2.0, additional_tax_total: 2.0)
       expect(shipment.item_cost).to eq(22.0)
     end
   end
@@ -609,14 +610,14 @@ describe Spree::Shipment, type: :model do
       end
 
       # Regression test for #4347
-      context 'with adjustments' do
+      context 'with fees' do
         before do
-          shipment.adjustments << Spree::Adjustment.create(order: order, label: 'Label', amount: 5)
+          create(:fee, order: order, fulfillment: shipment, label: 'Label', amount: 5)
         end
 
         it 'transitions to shipped' do
-          shipment.update_column(:state, 'ready')
-          expect { shipment.ship! }.not_to raise_error
+          shipment.update_column(:status, 'ready')
+          expect { shipment.fulfill! }.not_to raise_error
         end
       end
     end
@@ -772,11 +773,6 @@ describe Spree::Shipment, type: :model do
           expect(shipment.fulfilled_at).not_to be_nil
         end
 
-        it 'finalizes adjustments' do
-
-          expect(shipment.adjustments).to all(receive(:finalize!))
-          shipment.fulfill!
-        end
       end
     end
   end
@@ -851,28 +847,10 @@ describe Spree::Shipment, type: :model do
       expect(shipment.reload.cost).to eq(5)
     end
 
-    it 'factors in additional adjustments to adjustment total' do
-      shipment.adjustments.create!(
-        order: order,
-        label: 'Additional',
-        amount: 5,
-        included: false,
-        state: 'closed'
-      )
-      shipment.update_amounts
+    it 'leaves typed adjustment columns to the order recalculation' do
+      create(:fee, order: shipment.order, fulfillment: shipment, label: 'Additional', amount: 5)
+      shipment.order.update_with_updater!
       expect(shipment.reload.adjustment_total).to eq(5)
-    end
-
-    it 'does not factor in included adjustments to adjustment total' do
-      shipment.adjustments.create!(
-        order: order,
-        label: 'Included',
-        amount: 5,
-        included: true,
-        state: 'closed'
-      )
-      shipment.update_amounts
-      expect(shipment.reload.adjustment_total).to eq(0)
     end
   end
 
@@ -981,26 +959,28 @@ describe Spree::Shipment, type: :model do
   end
 
   context 'after_save' do
-    context 'line item changes' do
+    context 'cost changes' do
       before do
+        shipment.save!
         shipment.cost = shipment.cost + 10
       end
 
-      it 'triggers adjustment total recalculation' do
-        expect(shipment).to receive(:recalculate_adjustments)
+      it 'triggers the order recalculation' do
+        expect(shipment.order).to receive(:update_with_updater!)
         shipment.save
       end
 
-      it 'does not trigger adjustment recalculation if shipment has shipped' do
-        shipment.state = 'shipped'
-        expect(shipment).not_to receive(:recalculate_adjustments)
+      it 'does not trigger recalculation if shipment is fulfilled' do
+        shipment.status = 'fulfilled'
+        expect(shipment.order).not_to receive(:update_with_updater!)
         shipment.save
       end
     end
 
-    context 'line item does not change' do
-      it 'does not trigger adjustment total recalculation' do
-        expect(shipment).not_to receive(:recalculate_adjustments)
+    context 'cost does not change' do
+      it 'does not trigger the order recalculation' do
+        shipment.save!
+        expect(shipment.order).not_to receive(:update_with_updater!)
         shipment.save
       end
     end

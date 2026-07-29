@@ -10,6 +10,7 @@ module Spree
                                :dependencies,
                                :payment_methods,
                                :adjusters,
+                               :tax_provider,
                                :stock_splitters,
                                :order_routing,
                                :promotions,
@@ -36,7 +37,7 @@ module Spree
                                :subscribers,
                                :store_authentication_strategies,
                                :admin_authentication_strategies)
-      SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
+      SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_discounts, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       PricingEnvironment = Struct.new(:rules)
       OrderRoutingEnvironment = Struct.new(:strategies, :rules)
@@ -145,10 +146,6 @@ module Spree
           Spree::Calculator::Shipping::DigitalDelivery,
         ]
 
-        Rails.application.config.spree.calculators.tax_rates = [
-          Spree::Calculator::DefaultTax
-        ]
-
         Rails.application.config.spree.stock_splitters = [
           Spree::Stock::Splitter::FulfillmentType,
           Spree::Stock::Splitter::Backordered
@@ -162,9 +159,11 @@ module Spree
         ]
 
         Rails.application.config.spree.adjusters = [
-          Spree::Adjustable::Adjuster::Promotion,
-          Spree::Adjustable::Adjuster::Tax
+          Spree::Adjusters::Promotion
         ]
+
+        # The sanctioned TaxLine writer (see docs/plans/6.0-tax-provider.md).
+        Rails.application.config.spree.tax_provider = Spree::TaxProvider::Internal
 
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
@@ -191,26 +190,30 @@ module Spree
           Spree::Calculator::TieredFlatRate
         ]
 
-        Rails.application.config.spree.calculators.promotion_actions_create_item_adjustments = [
+        Rails.application.config.spree.calculators.promotion_actions_create_item_discounts = [
           Spree::Calculator::PercentOnLineItem,
           Spree::Calculator::FlatRate,
           Spree::Calculator::FlexiRate
         ]
+        # Legacy registry key — removed in 6.1. Kept so extensions appending
+        # to it keep working; CreateItemDiscounts reads the new key above.
+        Rails.application.config.spree.calculators.promotion_actions_create_item_adjustments =
+          Rails.application.config.spree.calculators.promotion_actions_create_item_discounts
 
         Rails.application.config.spree.promotions.rules.concat [
-          Spree::Promotion::Rules::Currency,
-          Spree::Promotion::Rules::Country,
-          Spree::Promotion::Rules::Channel,
-          Spree::Promotion::Rules::Market,
-          Spree::Promotion::Rules::ItemTotal,
-          Spree::Promotion::Rules::Product,
-          Spree::Promotion::Rules::User,
-          Spree::Promotion::Rules::CustomerGroup,
-          Spree::Promotion::Rules::FirstOrder,
-          Spree::Promotion::Rules::UserLoggedIn,
-          Spree::Promotion::Rules::OneUsePerUser,
-          Spree::Promotion::Rules::Category,
-          Spree::Promotion::Rules::OptionValue,
+          Spree::PromotionRules::Currency,
+          Spree::PromotionRules::Country,
+          Spree::PromotionRules::Channel,
+          Spree::PromotionRules::Market,
+          Spree::PromotionRules::ItemTotal,
+          Spree::PromotionRules::Product,
+          Spree::PromotionRules::User,
+          Spree::PromotionRules::CustomerGroup,
+          Spree::PromotionRules::FirstOrder,
+          Spree::PromotionRules::UserLoggedIn,
+          Spree::PromotionRules::OneUsePerUser,
+          Spree::PromotionRules::Category,
+          Spree::PromotionRules::OptionValue,
         ]
 
         # Default registry. MarketRule is included so existing installs
@@ -229,10 +232,10 @@ module Spree
         ]
 
         Rails.application.config.spree.promotions.actions = [
-          Promotion::Actions::CreateAdjustment,
-          Promotion::Actions::CreateItemAdjustments,
-          Promotion::Actions::CreateLineItems,
-          Promotion::Actions::FreeShipping
+          PromotionActions::CreateAdjustment,
+          PromotionActions::CreateItemDiscounts,
+          PromotionActions::CreateLineItems,
+          PromotionActions::FreeShipping
         ]
 
         Rails.application.config.spree.data_feed_types = [

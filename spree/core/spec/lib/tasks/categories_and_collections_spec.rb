@@ -83,14 +83,14 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
       create(:metafield).tap { |m| m.update_column(:resource_type, 'Spree::Taxon') }
     end
     let!(:promotion_rule) do
-      create(:promotion_rule_taxon).tap { |r| r.update_column(:type, 'Spree::Promotion::Rules::Taxon') }
+      create(:promotion_rule_taxon).tap { |r| r.update_column(:type, 'Spree::PromotionRules::Taxon') }
     end
 
     it 'rewrites Spree::Taxon* strings to Spree::Category*' do
       subject.invoke
 
       expect(metafield.reload.resource_type).to eq('Spree::Category')
-      expect(Spree::PromotionRule.where(id: promotion_rule.id).pick(:type)).to eq('Spree::Promotion::Rules::Category')
+      expect(Spree::PromotionRule.where(id: promotion_rule.id).pick(:type)).to eq('Spree::PromotionRules::Category')
     end
   end
 

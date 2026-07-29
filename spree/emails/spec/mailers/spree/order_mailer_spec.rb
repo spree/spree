@@ -123,21 +123,23 @@ describe Spree::OrderMailer, type: :mailer do
     end
   end
 
-  context 'only shows eligible adjustments in emails' do
+  context 'shows manual discounts and fees in emails' do
     before do
-      create(:adjustment, order: order, eligible: true, label: 'Eligible Adjustment')
-      create(:adjustment, order: order, eligible: false, label: 'Ineligible Adjustment')
+      line_item = order.line_items.first
+      order.discounts.create!(line_item: line_item, amount: -2, kind: 'manual', label: 'Loyal Customer Discount')
+      order.fees.create!(amount: 3, kind: 'handling', label: 'Handling Fee')
     end
 
     let!(:confirmation_email) { described_class.confirm_email(order) }
     let!(:cancel_email) { described_class.cancel_email(order) }
 
     specify do
-      expect(confirmation_email.body).not_to include('Ineligible Adjustment')
+      expect(confirmation_email).to have_body_text('Loyal Customer Discount')
+      expect(confirmation_email).to have_body_text('Handling Fee')
     end
 
     specify do
-      expect(cancel_email.body).not_to include('Ineligible Adjustment')
+      expect(cancel_email).to have_body_text('Loyal Customer Discount')
     end
   end
 

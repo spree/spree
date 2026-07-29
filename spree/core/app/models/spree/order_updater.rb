@@ -1,7 +1,7 @@
 module Spree
   class OrderUpdater
     attr_reader :order
-    delegate :payments, :line_items, :adjustments, :all_adjustments, :fulfillments, :update_hooks, :quantity, to: :order
+    delegate :payments, :line_items, :fulfillments, :update_hooks, :quantity, to: :order
 
     def initialize(order)
       @order = order
@@ -15,6 +15,11 @@ module Spree
     # object with callbacks (otherwise you will end up in an infinite recursion as the
     # associations try to save and then in turn try to call +update!+ again.)
     def update
+      # Drop possibly stale association caches — an earlier recalculation on
+      # this instance may have loaded them mid-mutation.
+      order.association(:line_items).reset if order.persisted?
+      order.association(:fulfillments).reset if order.persisted?
+
       update_item_count
       update_totals
       if order.completed?
@@ -31,23 +36,35 @@ module Spree
       update_hooks.each { |hook| order.send hook }
     end
 
+    # Rebuilds the typed adjustment rows (Discount/Fee via Spree.adjusters,
+    # TaxLine via Spree.tax_provider) and refreshes the denormalized columns
+    # on line items and fulfillments. Two-pass: adjusters persist the
+    # discounted taxable base first, then tax is estimated on it.
+    #
+    # Completed orders are frozen — recalculation refuses to touch them.
+    # Post-placement changes go through explicit admin actions that write
+    # typed rows directly and recompute totals via {#update}.
     def recalculate_adjustments
-      all_adjustments.includes(:adjustable).map(&:adjustable).uniq.each do |adjustable|
-        Adjustable::AdjustmentsUpdater.update(adjustable)
-      end
+      return if order.completed?
+
+      Spree.adjusters.each { |adjuster| adjuster.adjust(order) }
+      refresh_discount_and_fee_columns
+      Spree.tax_provider.estimate(order)
+      refresh_tax_columns
     end
 
     # Updates the following Order total values:
     #
     # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)
     # +item_total+         The total value of all LineItems
-    # +adjustment_total+   The total value of all adjustments (promotions, credits, etc.)
-    # +promo_total+        The total value of all promotion adjustments
-    # +total+              The so-called "order total."  This is equivalent to +item_total+ plus +shipment_total+ plus +adjustment_total+.
+    # +adjustment_total+   The total value of all typed adjustment rows (discounts, fees, additional tax)
+    # +promo_total+        The total value of all promotion discounts
+    # +fee_total+          The total value of all fees
+    # +total+              The so-called "order total." Equivalent to +item_total+ plus +delivery_total+ plus +adjustment_total+.
     def update_totals
       update_payment_total
       update_item_total
-      update_shipment_total
+      update_delivery_total
       update_adjustment_total
     end
 
@@ -55,12 +72,12 @@ module Spree
     def update_fulfillments
       shipping_method_filter = order.completed? ? DeliveryMethod::DISPLAY_ON_BACK_END : DeliveryMethod::DISPLAY_ON_FRONT_END
 
-      fulfillments.each do |shipment|
-        next unless shipment.persisted?
+      fulfillments.each do |fulfillment|
+        next unless fulfillment.persisted?
 
-        shipment.update!(order)
-        shipment.refresh_rates(shipping_method_filter)
-        shipment.update_amounts
+        fulfillment.update!(order)
+        fulfillment.refresh_rates(shipping_method_filter)
+        fulfillment.update_amounts
       end
     end
 
@@ -77,36 +94,31 @@ module Spree
       order.total = order.item_total + order.delivery_total + order.adjustment_total
     end
 
+    # Aggregates order totals from the typed tables. On completed orders the
+    # stored sums are left untouched (the recalculation freeze) — only the
+    # roll-up total is refreshed from its parts.
     def update_adjustment_total
+      if order.completed?
+        update_order_total
+        return
+      end
+
       recalculate_adjustments
 
-      # Fetch all line item totals in a single query
-      # Use reorder(nil) to remove default ordering which conflicts with aggregates in PostgreSQL
-      line_item_totals = line_items.reorder(nil).pick(
-        Arel.sql('COALESCE(SUM(adjustment_total), 0)'),
-        Arel.sql('COALESCE(SUM(included_tax_total), 0)'),
-        Arel.sql('COALESCE(SUM(additional_tax_total), 0)'),
-        Arel.sql('COALESCE(SUM(promo_total), 0)')
-      ) || [0, 0, 0, 0]
+      discounts_sum = order.discounts.reload.sum(&:amount)
+      fees = order.fees.reload.to_a
+      tax_sums = order.tax_lines.reload.group_by(&:included?).transform_values { |lines| lines.sum(&:amount) }
 
-      # Fetch all shipment totals in a single query
-      shipment_totals = fulfillments.reorder(nil).pick(
-        Arel.sql('COALESCE(SUM(adjustment_total), 0)'),
-        Arel.sql('COALESCE(SUM(included_tax_total), 0)'),
-        Arel.sql('COALESCE(SUM(additional_tax_total), 0)'),
-        Arel.sql('COALESCE(SUM(promo_total), 0)')
-      ) || [0, 0, 0, 0]
+      order.promo_total = order.discounts.select(&:promotion?).sum(&:amount)
+      order.fee_total = fees.sum(&:amount)
+      order.included_tax_total = tax_sums.fetch(true, 0)
+      order.additional_tax_total = tax_sums.fetch(false, 0)
+      order.adjustment_total = discounts_sum + order.fee_total + order.additional_tax_total
 
-      # Fetch order-level adjustment totals in a single query
-      order_adjustment_totals = adjustments.eligible.reorder(nil).pick(
-        Arel.sql('COALESCE(SUM(amount), 0)'),
-        Arel.sql("COALESCE(SUM(CASE WHEN source_type = 'Spree::PromotionAction' THEN amount ELSE 0 END), 0)")
-      ) || [0, 0]
-
-      order.adjustment_total = line_item_totals[0] + shipment_totals[0] + order_adjustment_totals[0]
-      order.included_tax_total = line_item_totals[1] + shipment_totals[1]
-      order.additional_tax_total = line_item_totals[2] + shipment_totals[2]
-      order.promo_total = line_item_totals[3] + shipment_totals[3] + order_adjustment_totals[1]
+      # The order's own adjustable columns cover order-level rows only:
+      # discounts distribute to line items, so fees are the only residents.
+      order.taxable_adjustment_total = 0
+      order.non_taxable_adjustment_total = fees.select(&:order_level?).sum(&:amount)
 
       update_order_total
     end
@@ -129,9 +141,12 @@ module Spree
         adjustment_total: order.adjustment_total,
         included_tax_total: order.included_tax_total,
         additional_tax_total: order.additional_tax_total,
+        taxable_adjustment_total: order.taxable_adjustment_total,
+        non_taxable_adjustment_total: order.non_taxable_adjustment_total,
         payment_total: order.payment_total,
         delivery_total: order.delivery_total,
         promo_total: order.promo_total,
+        fee_total: order.fee_total,
         total: order.total,
         updated_at: Time.current
       )
@@ -212,6 +227,58 @@ module Spree
       end
       order.state_changed('payment') if last_state != order.payment_state
       order.payment_state
+    end
+
+    private
+
+    # Pass one of the two-pass recalculation: persist per-adjustable discount
+    # and fee sums so the tax provider estimates on the discounted base.
+    def refresh_discount_and_fee_columns
+      discounts = order.discounts.reload.to_a
+      fees = order.fees.reload.to_a
+
+      each_adjustable do |adjustable, key|
+        rows = discounts.select { |row| row.public_send(key) == adjustable.id }
+        fee_rows = fees.select { |row| row.public_send(key) == adjustable.id }
+
+        update_adjustable_columns(
+          adjustable,
+          taxable_adjustment_total: rows.sum(&:amount),
+          non_taxable_adjustment_total: fee_rows.sum(&:amount),
+          promo_total: rows.select(&:promotion?).sum(&:amount)
+        )
+      end
+    end
+
+    # Pass two: fold the freshly estimated tax into the per-adjustable columns.
+    def refresh_tax_columns
+      tax_lines = order.tax_lines.reload.to_a
+
+      each_adjustable do |adjustable, key|
+        rows = tax_lines.select { |row| row.public_send(key) == adjustable.id }
+        included, additional = rows.partition(&:included?)
+
+        update_adjustable_columns(
+          adjustable,
+          included_tax_total: included.sum(&:amount),
+          additional_tax_total: additional.sum(&:amount),
+          adjustment_total: adjustable.taxable_adjustment_total +
+            adjustable.non_taxable_adjustment_total +
+            additional.sum(&:amount)
+        )
+      end
+    end
+
+    def each_adjustable
+      line_items.each { |line_item| yield line_item, :line_item_id }
+      fulfillments.each { |fulfillment| yield fulfillment, :fulfillment_id }
+    end
+
+    def update_adjustable_columns(adjustable, attributes)
+      return unless adjustable.persisted?
+      return if attributes.all? { |key, value| adjustable.public_send(key) == value }
+
+      adjustable.update_columns(attributes.merge(updated_at: Time.current))
     end
   end
 end

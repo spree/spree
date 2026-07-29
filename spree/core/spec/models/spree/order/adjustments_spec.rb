@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Order do
-  context 'when an order has an adjustment that zeroes the total, but another adjustment for shipping that raises it above zero' do
+  context 'when a discount zeroes the item total, but shipping raises the total above zero' do
     let!(:persisted_order) { create(:order) }
     let!(:line_item) { create(:line_item) }
     let!(:shipping_method) do
@@ -15,7 +15,8 @@ describe Spree::Order do
       # Don't care about available payment methods in this test
       allow(persisted_order).to receive_messages(has_available_payment: false)
       persisted_order.line_items << line_item
-      create(:adjustment, amount: -line_item.amount, label: 'Promotion', adjustable: line_item, order: persisted_order)
+      create(:discount, order: persisted_order, line_item: line_item, amount: -line_item.amount, label: 'Promotion', kind: 'manual')
+      persisted_order.update_with_updater!
       persisted_order.state = 'delivery'
       persisted_order.save # To ensure new state_change event
     end
@@ -65,13 +66,12 @@ describe Spree::Order do
       order.create_shipment_tax_charge!
     end
 
-    it 'removes the shipment tax adjustment' do
+    it 'removes the fulfillment tax lines' do
       order.coupon_code = free_shipping_promotion.code
       Spree::PromotionHandler::Coupon.new(order).apply
       order.apply_free_shipping_promotions
 
-      shipment_tax_adjustments = order.shipment_adjustments.where(source_type: 'Spree::TaxRate')
-      expect(shipment_tax_adjustments.blank?).to be true
+      expect(order.tax_lines.for_fulfillments).to be_blank
     end
   end
 end

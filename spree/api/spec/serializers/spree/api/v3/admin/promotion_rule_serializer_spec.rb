@@ -13,7 +13,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionRuleSerializer do
     # into its schema for the duration of the example so the masking
     # path can be asserted without a full new STI subclass.
     let(:rule) do
-      rule = Spree::Promotion::Rules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
+      rule = Spree::PromotionRules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
       rule.preferences[:api_secret] = 'sk_rule_super_secret_value'
 
       stubbed_schema = [

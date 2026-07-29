@@ -29,6 +29,9 @@ module Spree
     belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
     has_many :line_items, -> { order(:created_at) }, class_name: 'Spree::LineItem', inverse_of: :cart, dependent: :destroy
+    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :cart
+    has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :cart
+    has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :cart
     has_one :order, class_name: 'Spree::Order', inverse_of: :cart
 
     validates :store, :currency, presence: true
@@ -46,6 +49,19 @@ module Spree
     # @return [Boolean] whether a completion attempt currently holds this cart
     def completing?
       completing_at.present?
+    end
+
+    # The address tax is computed against, honoring the tax_using_ship_address
+    # preference (mirrors Spree::Order#tax_address).
+    #
+    # @return [Spree::Address, nil]
+    def tax_address
+      Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
+    end
+
+    # @return [Spree::Zone, nil]
+    def tax_zone
+      Spree::Zone.match(tax_address) || Spree::Zone.default_tax
     end
   end
 end

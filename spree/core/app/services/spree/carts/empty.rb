@@ -20,7 +20,9 @@ module Spree
         ActiveRecord::Base.transaction do
           order.line_items.destroy_all
           order.updater.update_item_count
-          order.adjustments.destroy_all
+          order.tax_lines.destroy_all
+          order.discounts.destroy_all
+          order.fees.destroy_all
           order.fulfillments.destroy_all
           order.state_changes.destroy_all
           order.order_promotions.destroy_all

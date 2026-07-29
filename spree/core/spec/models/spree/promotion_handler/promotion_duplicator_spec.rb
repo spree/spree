@@ -22,7 +22,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
   end
 
   before do
-    Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator, promotion: promotion)
+    Spree::PromotionActions::CreateItemDiscounts.create!(calculator: calculator, promotion: promotion)
   end
 
   describe '#duplicate' do

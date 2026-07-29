@@ -23,7 +23,7 @@ module Spree
 
       def promotions
         store.promotions.active.joins(:promotion_actions).
-          where(Spree::PromotionAction.table_name => { type: 'Spree::Promotion::Actions::FreeShipping' }, path: nil).distinct
+          where(Spree::PromotionAction.table_name => { type: Spree::PromotionAction.types_for_discount_scope(:fulfillment) }, path: nil).distinct
       end
     end
   end

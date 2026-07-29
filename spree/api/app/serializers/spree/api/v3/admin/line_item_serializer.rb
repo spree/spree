@@ -43,9 +43,6 @@ module Spree
               resource: proc { Spree.api.admin_tax_category_serializer },
               if: proc { expand?('tax_category') }
 
-          many :adjustments,
-               resource: proc { Spree.api.admin_adjustment_serializer },
-               if: proc { expand?('adjustments') }
         end
       end
     end

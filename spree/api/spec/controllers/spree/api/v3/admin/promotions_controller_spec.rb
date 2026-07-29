@@ -75,7 +75,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
         promotion = Spree::Promotion.find_by_prefix_id(json_response['id'])
         expect(promotion.rules.size).to eq(1)
         rule = promotion.rules.first
-        expect(rule).to be_a(Spree::Promotion::Rules::Currency)
+        expect(rule).to be_a(Spree::PromotionRules::Currency)
         expect(rule.preferred_currency).to eq('EUR')
       end
 
@@ -91,7 +91,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         rule = Spree::Promotion.find_by_prefix_id(json_response['id']).rules.first
-        expect(rule).to be_a(Spree::Promotion::Rules::ItemTotal)
+        expect(rule).to be_a(Spree::PromotionRules::ItemTotal)
         expect(rule.preferred_amount_min).to eq(50.0)
         expect(rule.preferred_operator_min).to eq('gte')
         expect(rule.preferred_amount_max).to eq(500.0)
@@ -115,7 +115,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
         expect(response).to have_http_status(:created)
         promotion = Spree::Promotion.find_by_prefix_id(json_response['id'])
         rule = promotion.rules.first
-        expect(rule).to be_a(Spree::Promotion::Rules::Product)
+        expect(rule).to be_a(Spree::PromotionRules::Product)
         expect(rule.product_ids).to contain_exactly(product_a.id, product_b.id)
         expect(rule.preferred_match_policy).to eq('any')
       end
@@ -135,7 +135,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         rule = Spree::Promotion.find_by_prefix_id(json_response['id']).rules.first
-        expect(rule).to be_a(Spree::Promotion::Rules::Category)
+        expect(rule).to be_a(Spree::PromotionRules::Category)
         expect(rule.taxon_ids).to eq([taxon.id])
       end
 
@@ -152,7 +152,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
         expect(response).to have_http_status(:created)
         promotion = Spree::Promotion.find_by_prefix_id(json_response['id'])
         types = promotion.rules.map(&:class)
-        expect(types).to contain_exactly(Spree::Promotion::Rules::Currency, Spree::Promotion::Rules::FirstOrder)
+        expect(types).to contain_exactly(Spree::PromotionRules::Currency, Spree::PromotionRules::FirstOrder)
       end
 
       it 'silently ignores rules with an unknown type' do
@@ -168,7 +168,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
         expect(response).to have_http_status(:created)
         promotion = Spree::Promotion.find_by_prefix_id(json_response['id'])
         expect(promotion.rules.size).to eq(1)
-        expect(promotion.rules.first).to be_a(Spree::Promotion::Rules::Currency)
+        expect(promotion.rules.first).to be_a(Spree::PromotionRules::Currency)
       end
     end
 
@@ -177,7 +177,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
         post :create,
              params: base_params.merge(
                actions: [{
-                 type: 'create_item_adjustments',
+                 type: 'create_item_discounts',
                  calculator: {
                    type: 'flat_rate',
                    preferences: { amount: '25.0', currency: 'USD' }
@@ -188,7 +188,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         action = Spree::Promotion.find_by_prefix_id(json_response['id']).actions.first
-        expect(action).to be_a(Spree::Promotion::Actions::CreateItemAdjustments)
+        expect(action).to be_a(Spree::PromotionActions::CreateItemDiscounts)
         expect(action.calculator).to be_a(Spree::Calculator::FlatRate)
         expect(action.calculator.preferred_amount).to eq(25.0)
         expect(action.calculator.preferred_currency).to eq('USD')
@@ -203,7 +203,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         action = Spree::Promotion.find_by_prefix_id(json_response['id']).actions.first
-        expect(action).to be_a(Spree::Promotion::Actions::FreeShipping)
+        expect(action).to be_a(Spree::PromotionActions::FreeShipping)
       end
 
       it 'creates a CreateAdjustment action with FlatPercentItemTotal calculator' do
@@ -232,7 +232,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
              params: base_params.merge(
                rules: [{ type: 'currency', preferences: { currency: 'USD' } }],
                actions: [{
-                 type: 'create_item_adjustments',
+                 type: 'create_item_discounts',
                  calculator: { type: 'flat_rate', preferences: { amount: '5.0' } }
                }]
              ),
@@ -255,7 +255,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         promotion = Spree::Promotion.find_by_prefix_id(json_response['id'])
-        expect(promotion.rules.first).to be_a(Spree::Promotion::Rules::Currency)
+        expect(promotion.rules.first).to be_a(Spree::PromotionRules::Currency)
         expect(promotion.rules.first.preferred_currency).to eq('EUR')
       end
 
@@ -271,7 +271,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         rule = Spree::Promotion.find_by_prefix_id(json_response['id']).rules.first
-        expect(rule).to be_a(Spree::Promotion::Rules::Category)
+        expect(rule).to be_a(Spree::PromotionRules::Category)
         expect(rule.taxon_ids).to eq([taxon.id])
       end
 
@@ -279,7 +279,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
         post :create,
              params: base_params.merge(
                actions: [{
-                 type: 'create_item_adjustments',
+                 type: 'create_item_discounts',
                  calculator: { type: 'flat_rate', preferences: { amount: '12.5' } }
                }]
              ),
@@ -287,7 +287,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         action = Spree::Promotion.find_by_prefix_id(json_response['id']).actions.first
-        expect(action).to be_a(Spree::Promotion::Actions::CreateItemAdjustments)
+        expect(action).to be_a(Spree::PromotionActions::CreateItemDiscounts)
         expect(action.calculator).to be_a(Spree::Calculator::FlatRate)
         expect(action.calculator.preferred_amount).to eq(12.5)
       end
@@ -346,8 +346,8 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       end
 
       it 'updates an existing rule by prefixed id' do
-        rule = create(:promotion_rule, promotion: promotion, type: 'Spree::Promotion::Rules::Currency')
-        rule.becomes(Spree::Promotion::Rules::Currency).update!(preferred_currency: 'USD')
+        rule = create(:promotion_rule, promotion: promotion, type: 'Spree::PromotionRules::Currency')
+        rule.becomes(Spree::PromotionRules::Currency).update!(preferred_currency: 'USD')
 
         patch :update,
               params: {
@@ -361,12 +361,12 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
               as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(rule.becomes(Spree::Promotion::Rules::Currency).reload.preferred_currency).to eq('CAD')
+        expect(rule.becomes(Spree::PromotionRules::Currency).reload.preferred_currency).to eq('CAD')
         expect(promotion.reload.rules.size).to eq(1)
       end
 
       it 'replaces product_ids on an existing Product rule' do
-        rule = Spree::Promotion::Rules::Product.create!(promotion: promotion)
+        rule = Spree::PromotionRules::Product.create!(promotion: promotion)
         product_a = create(:product)
         product_b = create(:product)
         rule.products = [product_a]
@@ -388,7 +388,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       end
 
       it 'destroys rules omitted from the payload' do
-        rule = Spree::Promotion::Rules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
+        rule = Spree::PromotionRules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
 
         patch :update, params: { id: promotion.prefixed_id, rules: [] }, as: :json
 
@@ -398,8 +398,8 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       end
 
       it 'destroys removed rules while keeping the ones explicitly passed' do
-        keep = Spree::Promotion::Rules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
-        drop = Spree::Promotion::Rules::FirstOrder.create!(promotion: promotion)
+        keep = Spree::PromotionRules::Currency.create!(promotion: promotion, preferred_currency: 'USD')
+        drop = Spree::PromotionRules::FirstOrder.create!(promotion: promotion)
 
         patch :update,
               params: {
@@ -469,7 +469,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         types = promotion.reload.actions.map(&:class)
-        expect(types).to include(Spree::Promotion::Actions::FreeShipping)
+        expect(types).to include(Spree::PromotionActions::FreeShipping)
       end
     end
   end

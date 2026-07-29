@@ -17,7 +17,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionRulesController, type: :controlle
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(promotion.reload.promotion_rules.map(&:type)).to include('Spree::Promotion::Rules::FirstOrder')
+      expect(promotion.reload.promotion_rules.map(&:type)).to include('Spree::PromotionRules::FirstOrder')
     end
 
     it 'creates a channel rule, storing the selected channel IDs in preferences' do
@@ -30,7 +30,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionRulesController, type: :controlle
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      rule = promotion.reload.promotion_rules.find { |r| r.is_a?(Spree::Promotion::Rules::Channel) }
+      rule = promotion.reload.promotion_rules.find { |r| r.is_a?(Spree::PromotionRules::Channel) }
       expect(rule).to be_present
       expect(rule.preferred_channel_ids.map(&:to_s)).to eq([channel.id.to_s])
     end
@@ -45,7 +45,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionRulesController, type: :controlle
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      rule = promotion.reload.promotion_rules.find { |r| r.is_a?(Spree::Promotion::Rules::Market) }
+      rule = promotion.reload.promotion_rules.find { |r| r.is_a?(Spree::PromotionRules::Market) }
       expect(rule).to be_present
       expect(rule.preferred_market_ids.map(&:to_s)).to eq([market.id.to_s])
     end

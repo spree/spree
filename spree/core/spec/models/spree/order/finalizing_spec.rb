@@ -49,11 +49,10 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'freezes all adjustments' do
-      adjustments = [double]
-      expect(order).to receive(:all_adjustments).and_return(adjustments)
-      expect(adjustments).to all(receive(:close))
+    it 'freezes adjustment recalculation (order-level freeze)' do
       order.finalize!
+      expect(Spree::Adjusters::Promotion).not_to receive(:adjust)
+      order.update_with_updater!
     end
 
     context 'order is considered risky' do

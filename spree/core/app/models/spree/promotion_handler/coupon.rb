@@ -101,13 +101,13 @@ module Spree
         ).with_coupon_code(order.coupon_code)
       end
 
-      # Returns the amount of adjustments for the promotion
+      # Returns the amount of discounts for the promotion
       #
       # @return [Numeric]
       def adjustments_amount
         @adjustments_amount ||=
-          @order.all_adjustments.promotion.eligible.
-          where(source: promotion&.actions).
+          @order.discounts.promotion.
+          where(promotion_action_id: promotion&.actions&.ids).
           sum(:amount)
       end
 
@@ -121,13 +121,12 @@ module Spree
       private
 
       def remove_promotion_adjustments(promotion)
-        promotion_actions_ids = promotion.actions.pluck(:id)
-        order.all_adjustments.where(source_id: promotion_actions_ids,
-                                    source_type: 'Spree::PromotionAction').destroy_all
+        order.discounts.where(promotion_action_id: promotion.actions.pluck(:id)).destroy_all
       end
 
       def remove_promotion_line_items(promotion)
-        create_line_item_actions_ids = promotion.actions.where(type: 'Spree::Promotion::Actions::CreateLineItems').pluck(:id)
+        create_line_item_actions_ids = promotion.actions.
+          where(type: %w[Spree::PromotionActions::CreateLineItems Spree::Promotion::Actions::CreateLineItems]).pluck(:id)
 
         Spree::PromotionActionLineItem.where(promotion_action: create_line_item_actions_ids).find_each do |item|
           line_item = order.find_line_item_by_variant(item.variant)
@@ -175,16 +174,16 @@ module Spree
       def determine_promotion_application_result
         coupon_code = order.coupon_code.downcase
 
-        # Check for applied adjustments.
-        discount = order.all_adjustments.promotion.eligible.detect do |p|
-          p.source.promotion.code.try(:downcase) == coupon_code ||
-            Spree::CouponCode.unused.where(promotion_id: p.source.promotion_id, code: coupon_code).exists?
+        # Check for applied discounts.
+        discount = order.discounts.promotion.includes(:promotion).detect do |row|
+          row.promotion&.code.try(:downcase) == coupon_code ||
+            Spree::CouponCode.unused.where(promotion_id: row.promotion_id, code: coupon_code).exists?
         end
 
         # Check for applied line items.
         created_line_items = promotion.actions.detect do |a|
           Object.const_get(a.type).ancestors.include?(
-            Spree::Promotion::Actions::CreateLineItems
+            Spree::PromotionActions::CreateLineItems
           )
         end
 
@@ -209,7 +208,7 @@ module Spree
       end
 
       def handle_coupon_code(discount, coupon_code)
-        Spree::CouponCode.unused.find_by(promotion_id: discount.source.promotion_id, code: coupon_code)&.apply_order!(order)
+        Spree::CouponCode.unused.find_by(promotion_id: discount.promotion_id, code: coupon_code)&.apply_order!(order)
       end
 
       # Whether the coupon handler should also handle gift card codes.

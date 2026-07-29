@@ -13,7 +13,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionSerializer do
     # of the example so the masking behaviour can be asserted without
     # needing a full new STI subclass + registry registration.
     let(:action) do
-      action = Spree::Promotion::Actions::FreeShipping.create!(promotion: promotion)
+      action = Spree::PromotionActions::FreeShipping.create!(promotion: promotion)
       action.preferences[:api_secret] = 'sk_action_super_secret_value'
       action.preferences[:webhook_url] = 'https://example.com/hook'
 
@@ -42,7 +42,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionActionSerializer do
 
   describe 'nested calculator preferences masking' do
     let(:action) do
-      Spree::Promotion::Actions::CreateAdjustment.create!(
+      Spree::PromotionActions::CreateAdjustment.create!(
         promotion: promotion,
         calculator: Spree::Calculator::FlatRate.new(preferred_amount: 5)
       )

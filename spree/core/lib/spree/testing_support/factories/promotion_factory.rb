@@ -30,7 +30,7 @@ FactoryBot.define do
       after(:create) do |promotion, evaluator|
         calculator = Spree::Calculator::FlatRate.new
         calculator.preferred_amount = evaluator.adjustment_rate
-        Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator, promotion: promotion)
+        Spree::PromotionActions::CreateItemDiscounts.create!(calculator: calculator, promotion: promotion)
       end
     end
 
@@ -52,7 +52,7 @@ FactoryBot.define do
       after(:create) do |promotion, evaluator|
         calculator = Spree::Calculator::FlatRate.new
         calculator.preferred_amount = evaluator.weighted_order_adjustment_amount
-        Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator, promotion: promotion)
+        Spree::PromotionActions::CreateAdjustment.create!(calculator: calculator, promotion: promotion)
       end
     end
 
@@ -63,7 +63,7 @@ FactoryBot.define do
       name { 'Free Shipping Promotion' }
 
       after(:create) do |promotion|
-        Spree::Promotion::Actions::FreeShipping.create!(promotion: promotion)
+        Spree::PromotionActions::FreeShipping.create!(promotion: promotion)
       end
 
       factory :free_shipping_promotion_with_item_total_rule, traits: [:with_item_total_rule]

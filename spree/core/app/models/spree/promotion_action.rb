@@ -29,11 +29,45 @@ module Spree
       raise 'perform should be implemented in a sub-class of PromotionAction'
     end
 
+    # Which competition group this action's discounts belong to
+    # (+:line_item+, +:fulfillment+, +:order+), or nil for actions that don't
+    # write Discount rows. Drives Spree::Adjusters::Promotion.
+    #
+    # @return [Symbol, nil]
+    def discount_scope
+      nil
+    end
+
+    # Whether this action's Discount rows persist at zero amount (only
+    # FreeShipping — row existence is the signal).
+    def persist_at_zero?
+      false
+    end
+
     # Returns true if the promotion action is a free shipping action
     #
     # @return [Boolean]
     def free_shipping?
-      type == 'Spree::Promotion::Actions::FreeShipping'
+      type.to_s.demodulize == 'FreeShipping'
+    end
+
+    # STI type names for a discount scope, covering both the 6.0 names and
+    # the legacy names still present in the type column until the 6.1 data
+    # migration.
+    #
+    # @param scope [Symbol] :line_item, :fulfillment or :order
+    # @return [Array<String>]
+    def self.types_for_discount_scope(scope)
+      case scope
+      when :line_item
+        %w[Spree::PromotionActions::CreateItemDiscounts Spree::Promotion::Actions::CreateItemAdjustments]
+      when :fulfillment
+        %w[Spree::PromotionActions::FreeShipping Spree::Promotion::Actions::FreeShipping]
+      when :order
+        %w[Spree::PromotionActions::CreateAdjustment Spree::Promotion::Actions::CreateAdjustment]
+      else
+        []
+      end
     end
 
     def self.human_name
@@ -55,6 +89,20 @@ module Spree
     end
 
     protected
+
+    # Shared perform for discount-writing actions: report whether this action
+    # currently yields a candidate (that connects the promotion to the order,
+    # so it keeps competing on later recalculations even if it loses now),
+    # then settle rows immediately.
+    def apply_via_adjuster(options)
+      order = options[:order]
+      promotion = options[:promotion] || self.promotion
+
+      adjuster = Spree::Adjusters::Promotion.new(order, extra_promotions: [promotion])
+      produced = adjuster.candidate_for?(self)
+      adjuster.update if produced
+      produced
+    end
 
     def label
       Spree.t(:promotion_label, name: promotion.name)

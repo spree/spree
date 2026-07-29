@@ -272,6 +272,19 @@ module Spree
     Rails.application.config.spree.adjusters = value
   end
 
+  # The configured tax provider instance — the only sanctioned writer of
+  # {Spree::TaxLine} rows. Global default is {Spree::TaxProvider::Internal};
+  # per-Market resolution arrives with docs/plans/6.0-tax-provider.md.
+  #
+  # @return [Spree::TaxProvider::Base]
+  def self.tax_provider
+    Rails.application.config.spree.tax_provider.new
+  end
+
+  def self.tax_provider=(value)
+    Rails.application.config.spree.tax_provider = value
+  end
+
   def self.stock_splitters
     Rails.application.config.spree.stock_splitters
   end

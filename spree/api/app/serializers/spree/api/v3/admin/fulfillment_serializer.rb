@@ -38,9 +38,6 @@ module Spree
               resource: proc { Spree.api.admin_order_serializer },
               if: proc { expand?('order') }
 
-          many :adjustments,
-               resource: proc { Spree.api.admin_adjustment_serializer },
-               if: proc { expand?('adjustments') }
         end
       end
     end

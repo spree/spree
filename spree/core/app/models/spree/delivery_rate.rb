@@ -42,11 +42,19 @@ module Spree
       final_price.zero?
     end
 
-    # Returns the tax amount for the shipping rate
+    # Returns the tax amount for the shipping rate, computed directly from
+    # the rate configuration (rates display estimated tax before a
+    # fulfillment exists, so this never reads TaxLine rows).
     #
     # @return [BigDecimal]
     def tax_amount
-      @tax_amount ||= tax_rate&.calculator&.compute_shipping_rate(self) || BigDecimal(0)
+      @tax_amount ||= if tax_rate.nil?
+                        BigDecimal(0)
+                      elsif tax_rate.included_in_price?
+                        (cost / (1 + tax_rate.amount) * tax_rate.amount).round(2)
+                      else
+                        (cost * tax_rate.amount).round(2)
+                      end
     end
 
     # Returns the additional tax total for the shipping rate
@@ -99,7 +107,7 @@ module Spree
     private
 
     def discount_amount
-      fulfillment.adjustments.promotion.sum(:amount)
+      fulfillment.discounts.promotion.sum(:amount)
     end
   end
 end

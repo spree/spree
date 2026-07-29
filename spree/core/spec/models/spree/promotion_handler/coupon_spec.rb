@@ -84,7 +84,7 @@ module Spree
                 subject.apply
                 expect(subject.success).to be_present
                 order.line_items.each do |line_item|
-                  expect(line_item.adjustments.count).to eq(1)
+                  expect(line_item.discounts.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
                 expect(order.reload.total).to eq(100)
@@ -112,7 +112,7 @@ module Spree
                 subject.apply
                 expect(subject.success).to be_present
                 order.line_items.each do |line_item|
-                  expect(line_item.adjustments.count).to eq(1)
+                  expect(line_item.discounts.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
                 expect(order.reload.total).to eq(100)
@@ -127,7 +127,7 @@ module Spree
               allow(order).to receive_messages coupon_code: '10off'
               calculator = Calculator::FlatRate.new(preferred_amount: 10)
               general_promo = create(:promotion, name: 'General Promo', store: order.store)
-              Promotion::Actions::CreateItemAdjustments.create(promotion: general_promo, calculator: calculator) # general_action
+              PromotionActions::CreateItemDiscounts.create(promotion: general_promo, calculator: calculator) # general_action
 
               Spree::Carts::AddItem.call(order: order, variant: create(:variant))
             end
@@ -141,7 +141,7 @@ module Spree
         end
 
         context 'with a free-shipping adjustment action' do
-          let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
+          let!(:action) { PromotionActions::FreeShipping.create(promotion: promotion) }
 
           context 'right coupon code given' do
             let(:order) { create(:order_with_line_items, line_items_count: 3, store: store) }
@@ -153,7 +153,7 @@ module Spree
               subject.apply
               expect(subject.success).to be_present
 
-              expect(order.shipment_adjustments.count).to eq(1)
+              expect(order.fulfillment_discounts.count).to eq(1)
             end
 
             it 'coupon already applied to the order' do
@@ -166,23 +166,21 @@ module Spree
         end
 
         context 'with a whole-order adjustment action' do
-          let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+          let!(:action) { PromotionActions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
           context 'right coupon given' do
-            let(:order) { create(:order, store: store) }
+            let(:order) { create(:order_with_line_items, store: store, line_items_count: 1) }
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
             before do
-              allow(order).to receive_messages(coupon_code: '10off',
-                                               # These need to be here so that promotion adjustment "wins"
-                                               item_total: 50,
-                                               ship_total: 10)
+              allow(order).to receive_messages(coupon_code: '10off')
             end
 
-            it 'successfully activates promo' do
+            it 'successfully activates promo and distributes the discount to line items' do
               subject.apply
               expect(subject.success).to be_present
-              expect(order.adjustments.count).to eq(1)
+              expect(order.discounts.count).to eq(1)
+              expect(order.discounts.sum(:amount)).to eq(-10)
             end
 
             it 'coupon already applied to the order' do
@@ -287,7 +285,7 @@ module Spree
 
         context 'with a CreateLineItems action' do
           let!(:variant) { create(:variant) }
-          let!(:action) { Promotion::Actions::CreateLineItems.create(promotion: promotion) }
+          let!(:action) { PromotionActions::CreateLineItems.create(promotion: promotion) }
           let(:order) { create(:order, store: store) }
 
           before do
@@ -315,7 +313,7 @@ module Spree
         end
         let!(:promotion) { create(:promotion, name: 'promo', code: nil, multi_codes: true, number_of_codes: 1) }
         let!(:coupon_code) { promotion.coupon_codes.first }
-        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion, calculator: calculator) }
 
         context 'valid coupon' do
           before { order.coupon_code = coupon_code.code }
@@ -329,7 +327,7 @@ module Spree
             expect(coupon_code.order).to eq(order)
 
             order.line_items.each do |line_item|
-              expect(line_item.adjustments.count).to eq(1)
+              expect(line_item.discounts.count).to eq(1)
             end
             expect(order.reload.total).to eq(100)
           end
@@ -370,7 +368,7 @@ module Spree
               expect(coupon_code.order).to be_nil
 
               expect(order.promotions).to be_empty
-              expect(order.line_item_adjustments).to be_empty
+              expect(order.line_item_discounts).to be_empty
             end
 
             it 'touches the promotion' do
@@ -389,7 +387,7 @@ module Spree
         context 'one common promotion code' do
           let!(:promotion) { create(:promotion, name: 'promo', code: '10off', usage_limit: 1) }
           let!(:action) do
-            Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion,
+            Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion,
                                                                     calculator: calculator)
           end
           let!(:order_2) { create(:order_with_line_items, line_items_count: 3, user: user) }
@@ -429,7 +427,7 @@ module Spree
           end
 
           let!(:action) do
-            Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion,
+            Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion,
                                                                     calculator: calculator)
           end
 

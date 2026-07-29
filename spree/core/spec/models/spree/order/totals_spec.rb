@@ -9,7 +9,7 @@ module Spree
     context 'adds item to cart and activates promo' do
       let(:promotion) { create(:promotion, name: 'Huhu', kind: :automatic) }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
-      let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+      let!(:action) { PromotionActions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
       before { Spree::Carts::AddItem.call(order: order, variant: shirt).value }
 
@@ -17,7 +17,7 @@ module Spree
         it 'recalculates order adjustments' do
           expect do
             Spree::Carts::AddItem.call(order: order, variant: shirt, quantity: 3)
-          end.to change { order.adjustments.eligible.pluck(:amount) }
+          end.to change { order.discounts.pluck(:amount) }
         end
       end
     end

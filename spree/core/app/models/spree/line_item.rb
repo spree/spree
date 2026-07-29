@@ -21,7 +21,9 @@ module Spree
 
     has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
-    has_many :adjustments, as: :adjustable, dependent: :destroy
+    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :line_item
+    has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :line_item
+    has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :line_item
     has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem', inverse_of: :line_item, dependent: :destroy
     has_many :fulfillments, through: :fulfillment_items, source: :fulfillment
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :line_item, deprecated: true
@@ -158,27 +160,13 @@ module Spree
     alias discounted_money display_discounted_amount
     alias discounted_amount taxable_amount
 
-    # Returns the amount this line item is taxed on: the discounted amount
-    # reduced further by the line item's proportional share of any
-    # whole-order promotions, which are adjustments on the order itself and
-    # therefore not part of +taxable_adjustment_total+. Never negative.
+    # Returns the amount this line item is taxed on. Whole-order promotions
+    # are distributed to line-item Discount rows at application time, so the
+    # discounted amount already carries the line's share. Never negative.
     #
     # @return [BigDecimal]
     def taxable_basis
-      basis = taxable_amount
-      return basis if basis <= 0
-
-      order_discount = owner.order_level_promo_total
-      return basis if order_discount.zero?
-
-      # summed in SQL so the allocation uses the persisted adjustment totals
-      # of all line items, not a possibly stale cached association
-      items_total = owner.line_items.reorder(nil).pick(
-        Arel.sql('COALESCE(SUM(price * quantity + taxable_adjustment_total), 0)')
-      )
-      return basis if items_total <= 0
-
-      [basis + (order_discount * basis / items_total), BigDecimal(0)].max
+      [taxable_amount, BigDecimal(0)].max
     end
 
     # Returns the final amount of the line item
@@ -337,10 +325,12 @@ module Spree
     end
 
     def update_adjustments
-      if saved_change_to_quantity?
+      # Typed rows (discounts + tax) are rebuilt by the order-level
+      # recalculation, which every cart/checkout flow runs after the save —
+      # recalculating from here would cache the owner's associations
+      # mid-mutation and hide later changes from that run.
+      if saved_change_to_quantity? && owner&.persisted? && !owner.completed?
         recalculate_price if should_update_price? && !previously_new_record?
-        recalculate_adjustments
-        update_tax_charge # Called to ensure pre_tax_amount is updated.
       end
     end
 
@@ -352,14 +342,10 @@ module Spree
       !owner.completed?
     end
 
-    def recalculate_adjustments
-      Spree::Adjustable::AdjustmentsUpdater.update(self)
-    end
-
     def update_tax_charge
-      return unless order
+      return unless owner
 
-      Spree::TaxRate.adjust(order, [self])
+      Spree.tax_provider.estimate(owner, [self])
     end
 
     def ensure_proper_currency

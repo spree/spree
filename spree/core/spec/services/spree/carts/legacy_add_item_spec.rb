@@ -69,7 +69,7 @@ module Spree
       let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
 
       context 'one active order promotion' do
-        let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::PromotionActions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
         before do
           subject.call(order: order, variant: variant, quantity: 1)
@@ -78,13 +78,13 @@ module Spree
 
         it 'creates valid discount on order' do
           subject.call(order: order, variant: variant, quantity: 1)
-          expect(order.adjustments.to_a.sum(&:amount)).not_to eq 0
+          expect(order.discounts.to_a.sum(&:amount)).not_to eq 0
           expect(order.total).to eq 30
         end
       end
 
       context 'one active line item promotion' do
-        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion, calculator: calculator) }
 
         before do
           subject.call(order: order, variant: variant, quantity: 1)
@@ -93,7 +93,7 @@ module Spree
 
         it 'creates valid discount on order' do
           subject.call(order: order, variant: variant, quantity: 1)
-          expect(order.line_item_adjustments.to_a.sum(&:amount)).not_to eq 0
+          expect(order.line_item_discounts.to_a.sum(&:amount)).not_to eq 0
           expect(order.total).to eq 30
         end
       end
@@ -105,14 +105,13 @@ module Spree
             name: 'Tax Rate 1',
             amount: 0.25,
             included_in_price: true,
-            calculator: Spree::Calculator::DefaultTax.create,
             tax_category: category,
             zone: create(:zone_with_country, default_tax: true)
           )
         end
         let(:variant) { create(:variant, price: 1000) }
         let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 50) }
-        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion, calculator: calculator) }
 
         it 'updates included_tax_total' do
           expect(order.included_tax_total.to_f).to eq(0.00)

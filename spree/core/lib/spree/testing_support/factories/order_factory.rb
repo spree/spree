@@ -67,7 +67,7 @@ FactoryBot.define do
 
         stock_location = order.line_items&.first&.variant&.stock_items&.first&.stock_location || create(:stock_location)
         create(:shipment, order: order, cost: evaluator.shipment_cost, stock_location: stock_location)
-        order.shipments.reload
+        order.fulfillments.reload
 
         order.update_with_updater!
       end
@@ -108,8 +108,8 @@ FactoryBot.define do
           after(:create) do |order, evaluator|
             create(:payment, amount: order.total, order: order, state: 'completed') if evaluator.with_payment
 
-            order.shipments.each do |shipment|
-              shipment.inventory_units.update_all state: 'on_hand'
+            order.fulfillments.each do |shipment|
+              shipment.fulfillment_items.update_all state: 'on_hand'
               shipment.update_column('state', 'ready')
             end
             order.reload

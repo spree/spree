@@ -924,6 +924,7 @@ en:
         delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
         delivery_zone_range_inverted: must be greater than or equal to postal_code_from
         delivery_zone_range_not_supported: postal code ranges are not supported for this country — use prefixes
+        exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy

@@ -11,7 +11,7 @@ describe Spree::OrderInventory, type: :model do
 
     it 'creates the proper number of inventory units' do
       subject.verify
-      expect(subject.inventory_units.reload.sum(&:quantity)).to eq 2
+      expect(subject.fulfillment_items.reload.sum(&:quantity)).to eq 2
     end
   end
 
@@ -28,7 +28,7 @@ describe Spree::OrderInventory, type: :model do
     end
 
     context 'inventory units state' do
-      before { shipment.inventory_units.delete_all }
+      before { shipment.fulfillment_items.delete_all }
 
       it 'sets inventory_units state as per stock location availability' do
         expect(shipment.stock_location).to receive(:fill_status).with(subject.variant, 5).and_return([3, 2])
@@ -97,15 +97,15 @@ describe Spree::OrderInventory, type: :model do
       allow(line_item).to receive(:changed?).and_return(true)
       subject.verify
 
-      order.shipments.create(stock_location_id: stock_location.id, cost: 5)
+      order.fulfillments.create(stock_location_id: stock_location.id, cost: 5)
 
-      shipped = order.shipments.create(stock_location_id: order.shipments.first.stock_location.id, cost: 10)
-      shipped.update_column(:state, 'shipped')
+      shipped = order.fulfillments.create(stock_location_id: order.fulfillments.first.stock_location.id, cost: 10)
+      shipped.update_column(:status, 'fulfilled')
     end
 
     it 'selects first non-shipped shipment that already contains given variant' do
       shipment = subject.send(:determine_target_shipment)
-      expect(shipment.shipped?).to be false
+      expect(shipment.fulfilled?).to be false
       expect(shipment.inventory_units_for(variant)).not_to be_empty
 
       expect(variant.stock_location_ids.include?(shipment.stock_location_id)).to be true
@@ -114,13 +114,13 @@ describe Spree::OrderInventory, type: :model do
     context 'when no shipments already contain this varint' do
       before do
         subject.line_item.reload
-        subject.inventory_units.delete_all
+        subject.fulfillment_items.delete_all
       end
 
       it 'selects first non-shipped shipment that leaves from same stock_location' do
         shipment = subject.send(:determine_target_shipment)
         shipment.reload
-        expect(shipment.shipped?).to be false
+        expect(shipment.fulfilled?).to be false
         expect(shipment.inventory_units_for(variant)).to be_empty
         expect(variant.stock_location_ids.include?(shipment.stock_location_id)).to be true
       end
@@ -137,17 +137,17 @@ describe Spree::OrderInventory, type: :model do
     end
 
     it 'is a messed up order' do
-      expect(order.shipments.first.inventory_units_for(line_item.variant).sum(&:quantity)).to eq(3)
+      expect(order.fulfillments.first.inventory_units_for(line_item.variant).sum(&:quantity)).to eq(3)
       expect(line_item.quantity).to eq(2)
     end
 
     it 'decreases the number of inventory units' do
       subject.verify
-      expect(subject.inventory_units.reload.sum(:quantity)).to eq 2
+      expect(subject.fulfillment_items.reload.sum(:quantity)).to eq 2
     end
 
     context '#remove_from_shipment' do
-      let!(:shipment) { order.shipments.first }
+      let!(:shipment) { order.fulfillments.first }
       let!(:variant) { subject.variant }
       let!(:inventory_units_for_item) do
         [
@@ -224,7 +224,7 @@ describe Spree::OrderInventory, type: :model do
           before { order.touch :completed_at }
 
           it 'removes only units that match both line item and variant' do
-            subject.send(:remove_from_shipment, shipment, shipment.inventory_units.sum(&:quantity))
+            subject.send(:remove_from_shipment, shipment, shipment.fulfillment_items.sum(&:quantity))
             expect(different_inventory.reload).to be_persisted
           end
         end
@@ -244,10 +244,10 @@ describe Spree::OrderInventory, type: :model do
     let(:shipment) { order.fulfillments.first }
 
     context 'when the line item has no inventory units yet' do
-      before { shipment.inventory_units.where(line_item_id: line_item.id).delete_all }
+      before { shipment.fulfillment_items.where(line_item_id: line_item.id).delete_all }
 
       it 'does not create new inventory units (which would be orphaned by the destroy cascade)' do
-        expect { subject.verify(nil, removing: true) }.not_to change { shipment.inventory_units.count }
+        expect { subject.verify(nil, removing: true) }.not_to change { shipment.fulfillment_items.count }
       end
     end
 

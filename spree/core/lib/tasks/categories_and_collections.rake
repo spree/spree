@@ -163,7 +163,8 @@ namespace :spree do
       # surviving categories keep their rich-text description without this.
       [ActionText::RichText, :record_type, 'Spree::Taxon', 'Spree::Category'],
       [FriendlyId::Slug, :sluggable_type, 'Spree::Taxon', 'Spree::Category'],
-      [Spree::PromotionRule, :type, 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::Category']
+      [Spree::PromotionRule, :type, 'Spree::Promotion::Rules::Taxon', 'Spree::Promotion::Rules::Category'],
+      [Spree::PromotionRule, :type, 'Spree::PromotionRules::Taxon', 'Spree::PromotionRules::Category']
     ].each do |model, column, from, to|
       count = model.where(column => from).update_all(column => to)
       puts "  #{model.table_name}.#{column}: #{count} rows #{from} -> #{to}"
