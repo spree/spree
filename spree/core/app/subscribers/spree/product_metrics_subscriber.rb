@@ -4,9 +4,9 @@ module Spree
   # Handles order completion events to update product metrics
   # (+units_sold_count+, +revenue+).
   class ProductMetricsSubscriber < Spree::Subscriber
-    subscribes_to 'order.completed'
+    subscribes_to 'order.placed'
 
-    on 'order.completed', :refresh_product_metrics
+    on 'order.placed', :refresh_product_metrics
 
     def refresh_product_metrics(event)
       order_id = event.payload['id']

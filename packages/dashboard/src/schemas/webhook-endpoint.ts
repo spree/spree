@@ -116,10 +116,10 @@ export const WEBHOOK_EVENT_GROUPS: readonly WebhookEventGroup[] = [
     events: [
       'order.approved',
       'order.canceled',
-      'order.completed',
       'order.created',
       'order.deleted',
       'order.paid',
+      'order.placed',
       'order.resumed',
       'order.shipped',
       'order.updated',

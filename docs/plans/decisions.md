@@ -591,3 +591,30 @@ promotion picker is sugar over the code path — picking a coupon promotion
 fills in its code; it is not a separate application mechanism. The coupon
 handler now always reports ineligibility with the retryable status code so
 endpoints can tell a not-yet-qualifying code from an invalid one.
+
+
+## 2026-07-29 — `order.placed` replaces `order.completed`; carts get their own events
+
+Competitor survey (Shopify, BigCommerce, Medusa v2, Saleor, Vendure): every
+platform with a separate cart entity namespaces its events (`carts/*`,
+`cart.*`, `CHECKOUT_*`), and "order created" then means *placed* only where
+drafts live in their own namespace (`draft_orders/*`, `DRAFT_ORDER_*`).
+Medusa — the same single-Order-model shape as ours — uses an explicit
+`order.placed`, and reserves `order.completed` for "fulfillment finished",
+a direct collision with our historical name.
+
+**Decisions:** carts publish `cart.created/updated/deleted` (5.x
+abandonment-signal parity). The placement event is renamed
+`order.completed` → **`order.placed`** — a deliberate 6.0 breaking change:
+newcomers are the primary audience and the old name misleads anyone
+arriving from Medusa; existing webhook consumers adjust one subscription
+on upgrade. `order.created` keeps meaning "order row exists" (admin drafts
+included). Admin confirmation resends publish the targeted
+`order.resend_confirmation_email` instead of re-blasting the placement
+event. Order payloads carry `cart_id` (BigCommerce `store/cart/converted`
+parity) so abandonment flows can cancel on conversion. Server-side
+abandonment detection (BigCommerce `store/cart/abandoned`) explicitly
+skipped. No separate draft-order entity and no `is_draft` boolean —
+`status = 'draft'` already encodes it (`cart_id` does NOT: the completion
+pipeline's draft copy has a cart_id while briefly draft; admin drafts
+have none).

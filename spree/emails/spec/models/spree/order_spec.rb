@@ -12,8 +12,8 @@ describe Spree::Order, type: :model do
       order.update_column :status, 'placed'
     end
 
-    it 'publishes order.completed event when finalizing', events: true do
-      expect(order).to receive(:publish_event).with('order.completed', hash_including(:notify_customer))
+    it 'publishes order.placed event when finalizing', events: true do
+      expect(order).to receive(:publish_event).with('order.placed', hash_including(:notify_customer))
       allow(order).to receive(:publish_event).with(anything)
       allow(order).to receive(:publish_event).with(anything, anything)
 

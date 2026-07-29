@@ -87,7 +87,7 @@ module Spree
 
           # POST /api/v3/admin/orders/:id/resend_confirmation
           def resend_confirmation
-            @resource.publish_event('order.completed')
+            @resource.publish_event('order.resend_confirmation_email')
             render json: serialize_resource(@resource)
           end
 

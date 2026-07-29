@@ -9,7 +9,7 @@ module Spree
   #
   # @example Basic subscriber
   #   class OrderCompletedNotifier < Spree::Subscriber
-  #     subscribes_to 'order.completed'
+  #     subscribes_to 'order.placed'
   #
   #     def call(event)
   #       order_id = event.payload['id']
@@ -19,7 +19,7 @@ module Spree
   #
   # @example Multi-event subscriber
   #   class OrderAuditLogger < Spree::Subscriber
-  #     subscribes_to 'order.completed', 'order.canceled', 'order.resumed'
+  #     subscribes_to 'order.placed', 'order.canceled', 'order.resumed'
   #
   #     def call(event)
   #       AuditLog.create!(
@@ -64,7 +64,7 @@ module Spree
   #
   # @example Synchronous subscriber (runs immediately, not via ActiveJob)
   #   class CriticalOrderHandler < Spree::Subscriber
-  #     subscribes_to 'order.completed', async: false
+  #     subscribes_to 'order.placed', async: false
   #
   #     def call(event)
   #       # This runs synchronously
@@ -81,10 +81,10 @@ module Spree
       # @return [void]
       #
       # @example
-      #   subscribes_to 'order.completed'
-      #   subscribes_to 'order.completed', 'order.canceled'
+      #   subscribes_to 'order.placed'
+      #   subscribes_to 'order.placed', 'order.canceled'
       #   subscribes_to 'order.*'
-      #   subscribes_to 'order.completed', async: false
+      #   subscribes_to 'order.placed', async: false
       #
       def subscribes_to(*patterns, **options)
         @subscription_patterns ||= []

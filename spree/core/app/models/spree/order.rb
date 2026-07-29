@@ -731,7 +731,7 @@ module Spree
 
       consider_risk
 
-      publish_order_completed_event
+      publish_order_placed_event
     end
 
     def fulfill!
@@ -1276,8 +1276,8 @@ module Spree
       end
     end
 
-    def publish_order_completed_event
-      publish_event('order.completed', event_payload.merge(notify_customer: notify_customer))
+    def publish_order_placed_event
+      publish_event('order.placed', event_payload.merge(notify_customer: notify_customer))
     end
 
     def publish_order_resumed_event
