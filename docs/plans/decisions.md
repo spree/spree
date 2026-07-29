@@ -408,3 +408,51 @@ same format `has_secure_password` reads — so the rake task migrating
 spree-starter installs onto `spree_customers` copies it to `password_digest`
 and **no customer resets their password** (task aborts loudly if
 `Devise.pepper` is set).
+
+## 2026-07-29: Phase 2 user→customer data migration — copy-preserving-id, in-place admins, single clash-aware migration
+
+Implementing Phase 2 of `6.0-platform-auth.md` settled several mechanics.
+
+**Customers are a row copy, admins are in place.** The 6.0 split is already
+two-table (`spree_users`=customers, `spree_admin_users`=admins; admin-ness is a
+polymorphic `spree_role_users.user_type`, not a table). So `spree_customers` is a
+**new** table and its data comes from copying `spree_users` — it cannot be a
+`rename_table` (the create migration always runs, so the target already exists;
+fresh installs have no `spree_users`; and `spree_users` carries Devise cruft).
+`spree_admin_users` keeps its table **and** its class name `Spree::AdminUser`, so
+admins never move — the task only backfills `password_digest` from the legacy
+`encrypted_password`.
+
+**Copy preserves primary keys** so the already-renamed `customer_id` FKs
+(2026-03-16 entry) still resolve with no id remap. This is the first repo task to
+insert explicit ids, so it also **resets the Postgres sequence** afterward
+(`reset_pk_sequence!`, guarded to PG) — no prior precedent because taxon→category
+preserved ids via `rename_table`. With ids preserved, the only polymorphic fixups
+are **`user_type` string re-points** `Spree::User` → `Spree.customer_class` on
+`spree_role_users`, `spree_refresh_tokens`, `spree_user_identities`, and
+`spree_api_keys` (`created_by_type` + `revoked_by_type`); admin-typed rows stay.
+The task reads the legacy table **by name only** (never `LegacyUser`, deleted once
+all phases ship together), aborts on `Devise.pepper`, skips blank-email rows, and
+leaves `spree_users` in place as a safety net.
+
+**Single clash-aware create migration.** The two Phase-1 create migrations merged
+into `20260728000000_create_spree_customers_and_admin_users` — a **non-colliding**
+name, because `install:migrations` de-dupes engine migrations by name and every
+existing app already has a `create_spree_admin_users`, so the gem's same-named
+migration is skipped and never runs on upgrades. The merged migration creates
+`spree_customers` cleanly and guards the admin side
+(`create … unless table_exists?`, `add_column :password_digest unless
+column_exists?`). `password_digest` is **added alongside** `encrypted_password`,
+never a rename — nothing is lost, and the backfill has both columns to read.
+
+**Path B is a recipe, not gem code.** Keeping a custom user model needs no new
+concern: on the app's own model, `include Spree::CustomerMethods` +
+`has_secure_password validations: false` + `alias_attribute :password_digest,
+:encrypted_password` (or a column rename). The alias must live on the app model —
+a blanket alias in `CustomerMethods` would shadow the default `Spree::Customer`'s
+real `password_digest` and break `has_secure_password` on it.
+
+The 5.6→6.0 upgrade guide (`docs/developer/upgrades/5.6-to-6.0.mdx`) doesn't exist
+yet (6.0 in-dev); Path A/B developer guidance currently lives in the task's `desc`,
+the `5_6_to_6_0` manifest notes, and this plan. It moves to the mdx when the full
+6.0 upgrade guide is authored.

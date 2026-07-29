@@ -52,3 +52,24 @@ steps:
 
       Idempotent. Multi-tenant installs run the per-tenant override shipped by
       spree_multi_tenant.
+
+  - id: migrate_users_to_customers
+    name: "Move users onto the gem-owned Customer/AdminUser models"
+    task: "spree:upgrade:migrate_users_to_customers"
+    notes: |
+      Copies the legacy Devise user table (default spree_users) into
+      spree_customers, preserving ids so the renamed customer_id foreign keys
+      still resolve and mapping encrypted_password -> password_digest, then
+      re-points every polymorphic user_type that named the old customer class
+      (default Spree::User) to Spree::Customer and backfills password_digest on
+      spree_admin_users.
+
+      Precondition: NO Devise pepper. encrypted_password is a plain bcrypt digest
+      that has_secure_password reads directly only when unpeppered; the task
+      aborts if Devise.pepper is set. Peppered / SSO / non-bcrypt installs keep a
+      custom customer_class instead (see the 5.6-to-6.0 upgrade guide) and skip
+      this step.
+
+      Idempotent. The source table is left in place as a safety net — drop it
+      manually once the migration is verified. Override the source with
+      SOURCE_USER_TABLE / SOURCE_USER_TYPE and batch size with BATCH_SIZE.

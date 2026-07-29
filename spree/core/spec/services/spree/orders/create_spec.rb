@@ -31,7 +31,7 @@ module Spree
     end
 
     describe '#call' do
-      subject { described_class.call(store: store, user: user, params: params) }
+      subject { described_class.call(store: store, customer: user, params: params) }
 
       context 'without a store' do
         it 'fails' do
