@@ -22,7 +22,7 @@ module Spree
     def persist_totals
       cart.update_columns(
         item_total: cart.item_total,
-        item_count: cart.item_count,
+        total_quantity: cart.total_quantity,
         adjustment_total: cart.adjustment_total,
         included_tax_total: cart.included_tax_total,
         additional_tax_total: cart.additional_tax_total,
@@ -30,7 +30,7 @@ module Spree
         non_taxable_adjustment_total: cart.non_taxable_adjustment_total,
         payment_total: cart.payment_total,
         delivery_total: cart.delivery_total,
-        promo_total: cart.promo_total,
+        discount_total: cart.discount_total,
         fee_total: cart.fee_total,
         total: cart.total,
         updated_at: Time.current
@@ -53,7 +53,7 @@ module Spree
       cart_fees = cart.fees.reload.to_a
       tax_sums = cart.tax_lines.reload.group_by(&:included?).transform_values { |lines| lines.sum(&:amount) }
 
-      cart.promo_total = cart.discounts.select(&:promotion?).sum(&:amount)
+      cart.discount_total = cart.discounts.select(&:promotion?).sum(&:amount)
       cart.fee_total = cart_fees.sum(&:amount)
       cart.included_tax_total = tax_sums.fetch(true, 0)
       cart.additional_tax_total = tax_sums.fetch(false, 0)

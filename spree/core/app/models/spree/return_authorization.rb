@@ -59,7 +59,7 @@ module Spree
     end
 
     def refundable_amount
-      order.pre_tax_item_amount + order.promo_total
+      order.pre_tax_item_amount + order.discount_total
     end
 
     def customer_returned_items?

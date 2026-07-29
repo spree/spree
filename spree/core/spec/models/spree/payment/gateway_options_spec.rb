@@ -30,7 +30,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
       ship_total: '12.44'.to_d,
       additional_tax_total: '1.53'.to_d,
       item_total: '15.11'.to_d,
-      promo_total: '2.57'.to_d,
+      discount_total: '2.57'.to_d,
       bill_address: bill_address,
       ship_address: ship_address
     )

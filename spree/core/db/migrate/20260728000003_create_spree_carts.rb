@@ -2,8 +2,8 @@ class CreateSpreeCarts < ActiveRecord::Migration[7.2]
   def change
     create_table :spree_carts do |t|
       t.references :store, null: false
-      t.references :market, null: true
-      t.references :channel, null: true
+      t.references :market, null: false
+      t.references :channel, null: false
       t.references :customer, null: true
       t.string :currency, null: false
       t.string :locale
@@ -14,9 +14,24 @@ class CreateSpreeCarts < ActiveRecord::Migration[7.2]
       t.text :special_instructions
       t.string :last_ip_address
       t.string :token, null: false
-      t.integer :lock_version
+      t.integer :lock_version, default: 0
       t.datetime :completed_at
       t.datetime :completing_at
+      t.string :coupon_code
+      t.references :gift_card, null: true
+
+      t.decimal :item_total, precision: 10, scale: 2, default: 0.0
+      t.decimal :adjustment_total, precision: 10, scale: 2, default: 0.0
+      t.decimal :included_tax_total, precision: 10, scale: 2, default: 0.0
+      t.decimal :additional_tax_total, precision: 10, scale: 2, default: 0.0
+      t.decimal :taxable_adjustment_total, precision: 10, scale: 2, default: 0.0
+      t.decimal :non_taxable_adjustment_total, precision: 10, scale: 2, default: 0.0
+      t.decimal :discount_total, precision: 10, scale: 2, default: 0.0
+      t.decimal :fee_total, precision: 10, scale: 2, default: 0.0
+      t.decimal :delivery_total, precision: 10, scale: 2, default: 0.0
+      t.decimal :total, precision: 10, scale: 2, default: 0.0
+      t.decimal :payment_total, precision: 10, scale: 2, default: 0.0
+      t.integer :total_quantity, default: 0
       if t.respond_to?(:jsonb)
         t.jsonb :metadata
       else

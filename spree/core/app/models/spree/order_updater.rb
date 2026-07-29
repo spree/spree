@@ -58,7 +58,7 @@ module Spree
     # +payment_total+      The total value of all finalized Payments (NOTE: non-finalized Payments are excluded)
     # +item_total+         The total value of all LineItems
     # +adjustment_total+   The total value of all typed adjustment rows (discounts, fees, additional tax)
-    # +promo_total+        The total value of all promotion discounts
+    # +discount_total+     The total value of all promotion discounts
     # +fee_total+          The total value of all fees
     # +total+              The so-called "order total." Equivalent to +item_total+ plus +delivery_total+ plus +adjustment_total+.
     def update_totals
@@ -125,7 +125,7 @@ module Spree
     end
 
     def update_item_count
-      order.item_count = quantity
+      order.total_quantity = quantity
     end
 
     def sum_typed_rows_into_order
@@ -133,7 +133,7 @@ module Spree
       fees = order.fees.reload.to_a
       tax_sums = order.tax_lines.reload.group_by(&:included?).transform_values { |lines| lines.sum(&:amount) }
 
-      order.promo_total = order.discounts.select(&:promotion?).sum(&:amount)
+      order.discount_total = order.discounts.select(&:promotion?).sum(&:amount)
       order.fee_total = fees.sum(&:amount)
       order.included_tax_total = tax_sums.fetch(true, 0)
       order.additional_tax_total = tax_sums.fetch(false, 0)
@@ -155,7 +155,7 @@ module Spree
         payment_status: order.payment_status,
         fulfillment_status: order.fulfillment_status,
         item_total: order.item_total,
-        item_count: order.item_count,
+        total_quantity: order.total_quantity,
         adjustment_total: order.adjustment_total,
         included_tax_total: order.included_tax_total,
         additional_tax_total: order.additional_tax_total,
@@ -163,7 +163,7 @@ module Spree
         non_taxable_adjustment_total: order.non_taxable_adjustment_total,
         payment_total: order.payment_total,
         delivery_total: order.delivery_total,
-        promo_total: order.promo_total,
+        discount_total: order.discount_total,
         fee_total: order.fee_total,
         total: order.total,
         updated_at: Time.current

@@ -5,7 +5,7 @@ module Spree
       #
       # @return [Boolean]
       def digital?
-        if item_count.zero? || line_items.empty?
+        if total_quantity.zero? || line_items.empty?
           false
         else
           line_items.includes(variant: :product).all?(&:digital?)
@@ -16,7 +16,7 @@ module Spree
       #
       # @return [Boolean]
       def some_digital?
-        if item_count.zero? || line_items.empty?
+        if total_quantity.zero? || line_items.empty?
           false
         else
           line_items.includes(variant: :product).any?(&:digital?)
@@ -27,7 +27,7 @@ module Spree
       #
       # @return [Boolean]
       def with_digital_assets?
-        if item_count.zero? || line_items.empty?
+        if total_quantity.zero? || line_items.empty?
           false
         else
           line_items.includes(:variant).any?(&:with_digital_assets?)

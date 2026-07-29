@@ -51,7 +51,7 @@ module Spree
       end
 
       def discount
-        order.promo_total * exchange_multiplier
+        order.discount_total * exchange_multiplier
       end
 
       def billing_address

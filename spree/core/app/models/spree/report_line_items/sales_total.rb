@@ -30,7 +30,7 @@ module Spree
       end
 
       def promo_total
-        record.display_promo_total
+        record.display_discount_total
       end
 
       def pre_tax_amount

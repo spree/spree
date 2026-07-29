@@ -7,7 +7,7 @@ module Spree
         @messages = []
         @warnings = []
 
-        return success([order, @messages, @warnings]) if order.item_count.zero? || order.line_items.none?
+        return success([order, @messages, @warnings]) if order.total_quantity.zero? || order.line_items.none?
 
         line_items = order.line_items.includes(variant: [:product, :stock_locations, { stock_items: [:stock_location, :active_stock_reservations] }])
 

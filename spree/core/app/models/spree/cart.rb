@@ -23,28 +23,15 @@ module Spree
     attribute :metadata, default: -> { {} }
     attribute :accept_marketing, :boolean, default: false
 
-    with_options default: 0.0 do
-      attribute :item_total, :decimal
-      attribute :adjustment_total, :decimal
-      attribute :included_tax_total, :decimal
-      attribute :additional_tax_total, :decimal
-      attribute :taxable_adjustment_total, :decimal
-      attribute :non_taxable_adjustment_total, :decimal
-      attribute :promo_total, :decimal
-      attribute :fee_total, :decimal
-      attribute :delivery_total, :decimal
-      attribute :total, :decimal
-      attribute :payment_total, :decimal
-    end
-    attribute :item_count, :integer, default: 0
-    attribute :lock_version, :integer, default: 0
-    alias_attribute :total_quantity, :item_count
-    alias_attribute :discount_total, :promo_total
+    # Standardized column names; legacy readers stay as aliases one release.
+    alias_attribute :item_count, :total_quantity
+    alias_attribute :promo_total, :discount_total
 
     extend Spree::DisplayMoney
     money_methods :item_total, :adjustment_total, :included_tax_total, :additional_tax_total,
-                  :promo_total, :fee_total, :delivery_total, :total, :payment_total, :outstanding_balance,
-                  :discount_total, :tax_total, :pre_tax_item_amount, :pre_tax_total, :amount_due
+                  :discount_total, :fee_total, :delivery_total, :total, :payment_total, :outstanding_balance,
+                  :tax_total, :pre_tax_item_amount, :pre_tax_total, :amount_due
+    alias display_promo_total display_discount_total
     alias display_ship_total display_delivery_total
     alias_attribute :ship_total, :delivery_total
 
@@ -55,6 +42,16 @@ module Spree
     belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     belongs_to :gift_card, class_name: 'Spree::GiftCard', optional: true
+    # Normalizes like the legacy Order writer so lookups stay case-insensitive.
+    def coupon_code=(code)
+      normalized = begin
+        code.strip.downcase
+      rescue StandardError
+        nil
+      end
+      super(normalized)
+    end
+
     # Pickup location choice is a preference (mirrors the admin-user
     # preference of the same name), copied to the order column at completion.
     preference :stock_location_id, :integer, nullable: true

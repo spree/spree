@@ -56,7 +56,7 @@ module Spree
 
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
-                  :delivery_total,      :promo_total,          :total,
+                  :delivery_total,      :discount_total,       :total,
                   :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total,
                   :payment_total,       :amount_due
 
@@ -83,11 +83,12 @@ module Spree
       order
     end
 
-    # 5.5 API naming bridges (DB columns rename in 6.0)
-    alias_attribute :discount_total, :promo_total
-    alias display_discount_total display_promo_total
+    # Standardized column names (renamed in 6.0); legacy readers stay as
+    # aliases one release.
+    alias_attribute :promo_total, :discount_total
+    alias display_promo_total display_discount_total
     alias_attribute :customer_note, :special_instructions
-    alias_attribute :total_quantity, :item_count
+    alias_attribute :item_count, :total_quantity
 
     MONEY_THRESHOLD  = 100_000_000
     MONEY_VALIDATION = {
@@ -116,11 +117,10 @@ module Spree
     self.whitelisted_ransackable_associations = %w[fulfillments shipments user created_by approver canceler promotions bill_address ship_address line_items store channel tags]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
-      total item_total item_count considered_risky channel_id currency
+      total item_total total_quantity considered_risky channel_id currency coupon_code
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
 
-    attr_reader :coupon_code
     attr_accessor :temporary_address
 
     # Set to false on admin-initiated flows to suppress customer-facing emails.
@@ -253,7 +253,7 @@ module Spree
       # we want to have this case_sentive: true as changing it to false causes all SQL to use LOWER(slug)
       # which is very costly and slow on large set of records
       validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
-      validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
+      validates :total_quantity, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
       validates :store
       validates :currency
       validates :locale
@@ -266,7 +266,7 @@ module Spree
     validates :additional_tax_total, POSITIVE_MONEY_VALIDATION
     validates :payment_total,        MONEY_VALIDATION
     validates :delivery_total,       MONEY_VALIDATION
-    validates :promo_total,          NEGATIVE_MONEY_VALIDATION
+    validates :discount_total,       NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
     validate :currency_must_be_supported_by_store
     validate :locale_must_be_supported_by_store
@@ -449,7 +449,7 @@ module Spree
     # Checks if the order is fully refunded
     # @return [Boolean]
     def order_refunded?
-      return false if item_count.zero?
+      return false if total_quantity.zero?
       return false if refunds_total.zero?
 
       payment_state.in?(%w[void failed]) || refunds_total == total_minus_store_credits - additional_tax_total.abs
@@ -462,7 +462,7 @@ module Spree
     # Checks if the order is partially refunded
     # @return [Boolean]
     def partially_refunded?
-      return false if item_count.zero?
+      return false if total_quantity.zero?
       return false if payment_state.in?(%w[void failed]) || refunds.empty?
 
       refunds_total < total_minus_store_credits - additional_tax_total.abs
@@ -806,11 +806,12 @@ module Spree
     end
 
     def coupon_code=(code)
-      @coupon_code = begin
+      normalized = begin
         code.strip.downcase
       rescue StandardError
         nil
       end
+      super(normalized)
     end
 
     def can_add_coupon?
