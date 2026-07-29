@@ -34,6 +34,8 @@ import { Route as SettingsProfileRouteImport } from './../../dashboard/src/route
 import { Route as SettingsPaymentMethodsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as SettingsMarketsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/markets'
 import { Route as SettingsEmailsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/emails'
+import { Route as SettingsDeliveryZonesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/delivery-zones'
+import { Route as SettingsDeliveryMethodsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/delivery-methods'
 import { Route as SettingsCustomFieldDefinitionsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/custom-field-definitions'
 import { Route as SettingsChannelsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/channels'
 import { Route as SettingsApiKeysRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/api-keys'
@@ -184,6 +186,16 @@ const SettingsMarketsRoute = SettingsMarketsRouteImport.update({
 const SettingsEmailsRoute = SettingsEmailsRouteImport.update({
   id: '/emails',
   path: '/emails',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsDeliveryZonesRoute = SettingsDeliveryZonesRouteImport.update({
+  id: '/delivery-zones',
+  path: '/delivery-zones',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsDeliveryMethodsRoute = SettingsDeliveryMethodsRouteImport.update({
+  id: '/delivery-methods',
+  path: '/delivery-methods',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsCustomFieldDefinitionsRoute =
@@ -349,6 +361,8 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
+  '/$storeId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
+  '/$storeId/settings/delivery-zones': typeof SettingsDeliveryZonesRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
@@ -399,6 +413,8 @@ export interface FileRoutesByTo {
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
+  '/$storeId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
+  '/$storeId/settings/delivery-zones': typeof SettingsDeliveryZonesRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
@@ -453,6 +469,8 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/_authenticated/$storeId/settings/channels': typeof SettingsChannelsRoute
   '/_authenticated/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
+  '/_authenticated/$storeId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
+  '/_authenticated/$storeId/settings/delivery-zones': typeof SettingsDeliveryZonesRoute
   '/_authenticated/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
@@ -507,6 +525,8 @@ export interface FileRouteTypes {
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
     | '/$storeId/settings/custom-field-definitions'
+    | '/$storeId/settings/delivery-methods'
+    | '/$storeId/settings/delivery-zones'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
@@ -557,6 +577,8 @@ export interface FileRouteTypes {
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
     | '/$storeId/settings/custom-field-definitions'
+    | '/$storeId/settings/delivery-methods'
+    | '/$storeId/settings/delivery-zones'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
@@ -610,6 +632,8 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/api-keys'
     | '/_authenticated/$storeId/settings/channels'
     | '/_authenticated/$storeId/settings/custom-field-definitions'
+    | '/_authenticated/$storeId/settings/delivery-methods'
+    | '/_authenticated/$storeId/settings/delivery-zones'
     | '/_authenticated/$storeId/settings/emails'
     | '/_authenticated/$storeId/settings/markets'
     | '/_authenticated/$storeId/settings/payment-methods'
@@ -820,6 +844,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsEmailsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/delivery-zones': {
+      id: '/_authenticated/$storeId/settings/delivery-zones'
+      path: '/delivery-zones'
+      fullPath: '/$storeId/settings/delivery-zones'
+      preLoaderRoute: typeof SettingsDeliveryZonesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/settings/delivery-methods': {
+      id: '/_authenticated/$storeId/settings/delivery-methods'
+      path: '/delivery-methods'
+      fullPath: '/$storeId/settings/delivery-methods'
+      preLoaderRoute: typeof SettingsDeliveryMethodsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/custom-field-definitions': {
       id: '/_authenticated/$storeId/settings/custom-field-definitions'
       path: '/custom-field-definitions'
@@ -1010,6 +1048,8 @@ interface SettingsRouteChildren {
   SettingsApiKeysRoute: typeof SettingsApiKeysRoute
   SettingsChannelsRoute: typeof SettingsChannelsRoute
   SettingsCustomFieldDefinitionsRoute: typeof SettingsCustomFieldDefinitionsRoute
+  SettingsDeliveryMethodsRoute: typeof SettingsDeliveryMethodsRoute
+  SettingsDeliveryZonesRoute: typeof SettingsDeliveryZonesRoute
   SettingsEmailsRoute: typeof SettingsEmailsRoute
   SettingsMarketsRoute: typeof SettingsMarketsRoute
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
@@ -1029,6 +1069,8 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsApiKeysRoute: SettingsApiKeysRoute,
   SettingsChannelsRoute: SettingsChannelsRoute,
   SettingsCustomFieldDefinitionsRoute: SettingsCustomFieldDefinitionsRoute,
+  SettingsDeliveryMethodsRoute: SettingsDeliveryMethodsRoute,
+  SettingsDeliveryZonesRoute: SettingsDeliveryZonesRoute,
   SettingsEmailsRoute: SettingsEmailsRoute,
   SettingsMarketsRoute: SettingsMarketsRoute,
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,

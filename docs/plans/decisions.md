@@ -452,3 +452,119 @@ rake tasks last).
    onto `ready`); the order-level rollup still reports `ready`.
 8. **`partially_canceled` becomes a derived predicate** over child
    cancellations, not a stored status value.
+
+## 2026-07-29: Delivery methods stay regional; a reference multi-carrier rate provider ships in the monorepo
+
+Question raised during 6.0 review: does one carrier method (e.g. UPS) need
+per-market rates/calculators, or is "UPS (Europe)" + "UPS (North America)" as
+separate `DeliveryMethod` rows a modeling smell?
+
+Competitor survey says the split IS the industry shape — every platform
+regionalizes the sellable method and shares only the carrier integration:
+
+- **Shopify**: rates live inside Shipping Zones (per profile); a zone rate is
+  a manual definition or a "participant" of a globally-registered
+  CarrierService. No cross-zone method entity exists.
+- **Medusa v2**: a Shipping Option belongs to exactly one Service Zone plus a
+  fulfillment provider module; flat prices come from the pricing module
+  (per currency/region), `calculated` delegates to the provider.
+- **Saleor**: Shipping Methods live inside Shipping Zones with per-channel
+  price listings; external carriers are Shipping Apps returning dynamic
+  methods per checkout.
+- **Vendure**: ShippingMethod is standalone (eligibility checker + calculator
+  strategies) but channel-scoped — idiomatically still one method per region.
+
+**Decision 1 — no cross-market method entity.** `DeliveryMethod` +
+`DeliveryZone` already matches the consensus: method rows are cheap and
+regional; carrier logic is shared one level down. Built-in calculators carry a
+single `preferred_currency`, so multi-currency stores need per-market methods
+regardless. Nothing to build.
+
+**Decision 2 — the monorepo ships one reference `DeliveryRateProvider`**
+backed by a multi-carrier aggregator (Shippo or EasyPost — pick pending API/
+pricing review), mirroring the Stripe reference-gateway decision (2026-07-15).
+One integration returns live UPS/FedEx/DHL/USPS rates, which dissolves the
+per-carrier-per-market method sprawl for the majority of installs: one
+"Carrier shipping" method per market, the provider returns whatever serves the
+address. It also makes the reference implementation the first real consumer of
+the `6.0-delivery-rate-provider.md` interface — validating the seam the way
+payment sessions were validated by Stripe. Built-in calculators remain the
+manual-rate path for the minority (2026-07-27 reversal unchanged).
+
+## 2026-07-29: Geo modeling — Markets, DeliveryZones and StockLocations stay disjoint
+
+Two follow-up questions from the same 6.0 review: should Markets link to
+DeliveryZones, and should StockLocations link to DeliveryZones? Competitor
+survey on both:
+
+**Markets ↔ delivery zones.** Shopify (Markets vs profile shipping zones) and
+Medusa (Regions vs service zones) keep them fully disjoint — independent
+country lists, merchant coordinates, and Shopify's "market country with no
+shipping coverage" dead-end is a known sore point of that camp. Saleor links
+shipping zones to *channels* (m:n + per-channel price listings); Vendure
+reuses one country-granular Zone entity as channel defaults for tax and
+shipping — the unified model, bought at the cost of country-only granularity.
+
+**Decision: stay disjoint.** Two structural reasons resist merging across
+every platform surveyed: granularity (markets are country-level commercial
+units; delivery coverage legitimately goes sub-country — states, postal
+prefixes/ranges, remote-island carve-outs) and cardinality (one EU market
+maps naturally onto several delivery zones — standard / remote / oversized).
+Spree already carries a stronger coordination guardrail than the disjoint
+camp: `MarketCountry#country_covered_by_shipping_zone` refuses market
+countries the store cannot deliver to. The channel axis heads the Saleor
+direction separately via `5.7-channel-markets.md`. If more convenience is
+ever wanted, it is a dashboard affordance ("create delivery zone from this
+market's countries"), never a schema link.
+
+**Stock locations ↔ delivery zones.** Here the industry splits 3–1 the other
+way: Shopify's delivery profiles nest location groups that each own their
+zones+rates; Medusa roots the whole hierarchy at the stock location
+(StockLocation → FulfillmentSet → ServiceZone → ShippingOption); Saleor links
+warehouses ↔ shipping zones m:n and allocates stock through that link. Only
+Vendure leaves origin/coverage coordination to code (allocation strategies).
+
+**Decision: no StockLocation↔DeliveryZone schema link — compose it at the
+method level.** Spree expresses per-origin coverage as
+DeliveryMethod↔StockLocation (the `spree_delivery_method_stock_locations`
+join shipped in the 6.0 rename migration, currently dormant/unwired) times
+DeliveryMethod↔DeliveryZone — "UPS EU ships from the Poland warehouse" is a
+method restricted to that location with EU zones. That is Shopify's
+location-group→zones expressiveness without a third geo entity. Wiring the
+dormant join (association + Estimator/Coordinator filtering + admin API
+exposure) is follow-up work on `6.0-fulfillment-and-delivery.md`, which
+already uses the table for pickup locations. The Medusa/Saleor-style
+allocation question — *choosing* the warehouse by destination — is the order
+routing seam (`6.0-order-routing.md` strategies), not geo schema.
+
+## 2026-07-29: Delivery-method eligibility moves out of calculators into DeliveryMethodRule
+
+Dashboard review surfaced min/max item-total and weight bounds rendering
+inside the rate-calculator preference form. They are eligibility, not
+pricing — and structurally worse than they look: the four bounds exist only
+on `Calculator::Shipping::FlatRate` (no other calculator has them), are
+enforced by `compute_package` returning nil rather than the
+`available?(package)` hook the Estimator consults, and would be silently
+LOST on provider-priced methods once `6.0-delivery-rate-provider.md` lands
+(the provider bypasses the calculator that carries them).
+
+Competitors uniformly separate the concerns: Shopify puts weight/price
+conditions on the zone rate, Saleor uses method columns (+ per-channel price
+bounds), Medusa v2 attaches typed ShippingOptionRule records, Vendure gives
+ShippingMethod an eligibility-checker strategy parallel to its calculator.
+
+**Decision:** `Spree::DeliveryMethodRule` STI on DeliveryMethod — the fifth
+instance of the house rule pattern and the symmetric sibling of
+`5.7-payment-method-rules.md` (ItemTotal + Weight first; Channel/Market/
+CustomerGroup later, in lockstep with the payment set). One enforcement
+seam: the Estimator's method filter, so calculator- and provider-priced
+methods obey the same eligibility; no admin-bypass concept (the Estimator is
+the only rate source, and these are logistics constraints). FlatRate's
+bound preferences become a one-release deprecation bridge with a data task.
+Plan: `6.0-delivery-method-rules.md` — targeted 6.0 directly; per the same
+review, the pending 5.7 plans are expected to retarget 6.0 (skipping a 5.7
+release for a faster 6.0 launch). Open questions resolved interactively the
+same day: WeightRule uses the store's implicit unit (raw-number comparison,
+legacy parity); rules are method-scoped only (no zone context — per-region
+bounds are separate methods); Phase 1 ships with the 6.0 core-rewrite
+finishing work, Channel/Market/CustomerGroup later with payment rules.
