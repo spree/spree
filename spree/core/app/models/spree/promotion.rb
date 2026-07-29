@@ -370,7 +370,7 @@ module Spree
       when Spree::LineItem
         !promotable.product.promotionable?
       when Spree::Order
-        (promotable.item_count.positive? || promotable.line_items.any?) &&
+        (promotable.total_quantity.positive? || promotable.line_items.any?) &&
           promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
       end
     end

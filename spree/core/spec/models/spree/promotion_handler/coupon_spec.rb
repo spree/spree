@@ -228,7 +228,6 @@ module Spree
           let!(:tax_category)  { create(:tax_category, name: 'Taxable Foo') }
           let!(:rate)          { create(:tax_rate, amount: 0.10, tax_category: tax_category, zone: zone) }
 
-          before { allow(order).to receive(:coupon_code).and_return '10off' }
 
           context 'and the product price is less than promo discount' do
             let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 9.0) }
@@ -238,6 +237,7 @@ module Spree
             it 'successfully applies the promo' do
               # 3 * (9 + 0.9)
               expect(order.total).to eq(29.7)
+              order.coupon_code = '10off'
               subject.apply
               expect(subject.success).to be_present
               # 3 * ((9 - [9,10].min) + 0)
@@ -254,6 +254,7 @@ module Spree
             it 'successfully applies the promo' do
               # 3 * (22 + 2.2)
               expect(order.total.to_f).to eq(72.6)
+              order.coupon_code = '10off'
               subject.apply
               expect(subject.success).to be_present
               # 3 * ( (22 - 10) + 1.2)
@@ -267,13 +268,13 @@ module Spree
             let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 10.0) }
 
             before do
-              allow(order).to receive(:coupon_code).and_return '20off'
               product_list.each { |item| Spree::Carts::AddItem.call(order: order, variant: item.default_variant, quantity: 2) }
             end
 
             it 'successfully applies the promo' do
               # 3 * ((2 * 10) + 2.0)
               expect(order.total.to_f).to eq(66)
+              order.coupon_code = '20off'
               subject.apply
               expect(subject.success).to be_present
               # 0

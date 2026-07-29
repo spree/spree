@@ -8,6 +8,7 @@ module Spree
                  customer_note: [:string, nullable: true],
                  market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
+                 coupon_code: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true], payment_status: [:string, nullable: true],
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -34,7 +35,7 @@ module Spree
         end
 
         attributes :number, :email, :customer_note,
-                   :currency, :locale, :total_quantity,
+                   :currency, :locale, :total_quantity, :coupon_code,
                    :fulfillment_status, :payment_status,
                    completed_at: :iso8601
 

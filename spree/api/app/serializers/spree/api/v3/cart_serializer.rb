@@ -7,6 +7,7 @@ module Spree
         typelize number: :string, current_step: :string, completed_steps: 'string[]', token: :string, email: [:string, nullable: true],
                  customer_note: [:string, nullable: true], market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
+                 coupon_code: [:string, nullable: true],
                  requirements: 'Array<{step: string, field: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -42,7 +43,7 @@ module Spree
         end
 
         attributes :number, :token, :email, :customer_note,
-                   :currency, :locale, :total_quantity, :warnings
+                   :currency, :locale, :total_quantity, :warnings, :coupon_code
 
         # Nulled for gated (prices_hidden) guests so the cart can't leak the
         # prices that product/variant serializers already withhold.

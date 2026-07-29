@@ -12,6 +12,9 @@ module Spree
 
       def apply
         if gift_cards_enabled? && load_gift_card_code
+          # The entered code is a gift card, not a coupon — drop the pending
+          # coupon_code assignment so locking flows don't see a dirty record.
+          order.restore_attributes([:coupon_code]) if order.has_attribute?(:coupon_code) && order.will_save_change_to_attribute?(:coupon_code)
 
           if @gift_card.expired?
             set_error_code :gift_card_expired
@@ -63,6 +66,7 @@ module Spree
         if promotion.present?
           # Order promotion has to be destroyed before line item removing
           order.promotions.delete(promotion)
+          clear_persisted_coupon_code(coupon_code)
 
           if promotion.multi_codes?
             coupon_code = promotion.coupon_codes.find_by(order: order)
@@ -119,6 +123,15 @@ module Spree
       end
 
       private
+
+      # Carts persist the entered code (adjuster candidacy) — removing the
+      # promotion must clear it or recalculation re-applies immediately.
+      def clear_persisted_coupon_code(code)
+        return unless order.has_attribute?(:coupon_code)
+        return unless order.read_attribute(:coupon_code).to_s.casecmp?(code.to_s.strip)
+
+        order.update_column(:coupon_code, nil)
+      end
 
       def remove_promotion_adjustments(promotion)
         order.discounts.where(promotion_action_id: promotion.actions.pluck(:id)).destroy_all

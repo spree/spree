@@ -110,6 +110,7 @@ module Spree
             user: cart.customer,
             token: cart.token,
             accept_marketing: cart.accept_marketing,
+            coupon_code: cart.read_attribute(:coupon_code),
             preferred_stock_location_id: cart.preferred_stock_location_id,
             special_instructions: cart.special_instructions,
             last_ip_address: cart.last_ip_address,
@@ -126,13 +127,13 @@ module Spree
 
           order.update_columns(
             item_total: cart.item_total,
-            item_count: cart.item_count,
+            total_quantity: cart.total_quantity,
             adjustment_total: cart.adjustment_total,
             included_tax_total: cart.included_tax_total,
             additional_tax_total: cart.additional_tax_total,
             taxable_adjustment_total: cart.taxable_adjustment_total,
             non_taxable_adjustment_total: cart.non_taxable_adjustment_total,
-            promo_total: cart.promo_total,
+            discount_total: cart.discount_total,
             fee_total: cart.fee_total,
             delivery_total: cart.delivery_total,
             total: cart.total,

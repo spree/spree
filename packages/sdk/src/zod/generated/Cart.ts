@@ -21,6 +21,7 @@ export const CartSchema = z.object({
   locale: z.string().nullable(),
   total_quantity: z.number(),
   warnings: z.array(z.any()),
+  coupon_code: z.string().nullable(),
   item_total: z.string().nullable(),
   display_item_total: z.string().nullable(),
   adjustment_total: z.string().nullable(),
