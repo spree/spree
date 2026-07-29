@@ -30,6 +30,11 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     expect(Spree::Order.complete.count).to be >= 2
   end
 
+  it 'derives payment and fulfillment statuses for the sample orders' do
+    statuses = Spree::Order.complete.pluck(:payment_status, :fulfillment_status).flatten
+    expect(statuses).to all(be_present)
+  end
+
   describe 'wholesale demo data' do
     let(:store) { Spree::Store.default }
     let(:wholesale) { store.channels.find_by(code: 'wholesale') }

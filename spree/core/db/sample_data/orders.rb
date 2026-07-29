@@ -130,6 +130,10 @@ if method
   end
 end
 
+# Statuses are derive-then-persist; the direct writes above bypass the
+# event subscribers, so recompute explicitly.
+orders.each { |order| Spree::Orders::RecomputeStatuses.call(order: order.reload) }
+
 # Reimbursement
 first_complete_order = Spree::Order.complete.first
 Spree::Reimbursement.create(order: first_complete_order) if first_complete_order
