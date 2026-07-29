@@ -26,11 +26,6 @@ module Spree
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
 
-        # Override ID to use cart_ prefix
-        attribute :id do |order|
-          "cart_#{Spree::PrefixedId::SQIDS.encode([order.id])}"
-        end
-
         attribute :market_id do |order|
           order.market&.prefixed_id
         end
