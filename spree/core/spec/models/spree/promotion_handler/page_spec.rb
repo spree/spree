@@ -9,7 +9,7 @@ module Spree
 
       before do
         calculator = Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10)
-        action = PromotionActions::CreateItemDiscounts.create(calculator: calculator)
+        action = Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)
         promotion.actions << action
       end
 

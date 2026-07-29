@@ -7,7 +7,7 @@
   <%= Spree.t(:promotion) %>: <%= label %> <%= Spree::Money.new(discounts.sum(&:amount), currency: order.currency) %>
 <% end %>
 
-<% order.shipments.group_by { |s| s.selected_shipping_rate.try(:name) }.each do |name, shipments| %>
+<% order.fulfillments.group_by { |f| f.selected_delivery_rate.try(:name) }.each do |name, shipments| %>
   <%= Spree.t(:shipping) %>: <%= name %> <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency) %>
 <% end %>
 

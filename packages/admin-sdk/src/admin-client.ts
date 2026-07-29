@@ -93,6 +93,8 @@ import type {
   CustomFieldDefinitionUpdateParams,
   CustomFieldOwnerType,
   CustomFieldUpdateParams,
+  DeliveryMethodParams,
+  DeliveryZoneParams,
   DirectUploadCreateParams,
   ExportCreateParams,
   FulfillmentCreateParams,
@@ -158,7 +160,6 @@ import type {
 } from './params'
 import type {
   Address,
-  Adjustment,
   AdminUser,
   AllowedOrigin,
   ApiKey,
@@ -171,7 +172,11 @@ import type {
   CustomerGroup,
   CustomField,
   CustomFieldDefinition,
+  DeliveryMethod,
+  DeliveryZone,
+  Discount,
   Export,
+  Fee,
   Fulfillment,
   GiftCard,
   GiftCardBatch,
@@ -204,6 +209,7 @@ import type {
   StoreCredit,
   StoreCreditCategory,
   TaxCategory,
+  TaxLine,
   TranslatableResource,
   TranslationBatchEntry,
   Variant,
@@ -1038,19 +1044,109 @@ export class AdminClient {
         this.request<Refund>('POST', `/orders/${orderId}/refunds`, { ...options, body: params }),
     },
 
-    adjustments: {
+    taxLines: {
       list: (
         orderId: string,
         params?: ListParams & Record<string, unknown>,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<Adjustment>> =>
-        this.request<PaginatedResponse<Adjustment>>('GET', `/orders/${orderId}/adjustments`, {
+      ): Promise<PaginatedResponse<TaxLine>> =>
+        this.request<PaginatedResponse<TaxLine>>('GET', `/orders/${orderId}/tax_lines`, {
           ...options,
           params: params ? transformListParams(params) : undefined,
         }),
 
-      get: (orderId: string, id: string, options?: RequestOptions): Promise<Adjustment> =>
-        this.request<Adjustment>('GET', `/orders/${orderId}/adjustments/${id}`, options),
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<TaxLine> =>
+        this.request<TaxLine>('GET', `/orders/${orderId}/tax_lines/${id}`, options),
+    },
+
+    discounts: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Discount>> =>
+        this.request<PaginatedResponse<Discount>>('GET', `/orders/${orderId}/discounts`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Discount> =>
+        this.request<Discount>('GET', `/orders/${orderId}/discounts/${id}`, options),
+
+      /**
+       * Creates a manual discount. With `line_item_id` a single row is
+       * created; without it the value is distributed across line items
+       * (largest remainder). Works on completed orders.
+       */
+      create: (
+        orderId: string,
+        params: {
+          label: string
+          value: string | number
+          value_type?: 'flat' | 'percent'
+          line_item_id?: string
+        },
+        options?: RequestOptions,
+      ): Promise<{ data: Discount[] }> =>
+        this.request<{ data: Discount[] }>('POST', `/orders/${orderId}/discounts`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Manual rows only — promotion-sourced rows respond 422 (`discount_not_editable`). */
+      update: (
+        orderId: string,
+        id: string,
+        params: { label?: string; amount?: string | number },
+        options?: RequestOptions,
+      ): Promise<Discount> =>
+        this.request<Discount>('PATCH', `/orders/${orderId}/discounts/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Manual rows only — promotion-sourced rows respond 422 (`discount_not_editable`). */
+      delete: (orderId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/orders/${orderId}/discounts/${id}`, options),
+    },
+
+    fees: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Fee>> =>
+        this.request<PaginatedResponse<Fee>>('GET', `/orders/${orderId}/fees`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Fee> =>
+        this.request<Fee>('GET', `/orders/${orderId}/fees/${id}`, options),
+
+      create: (
+        orderId: string,
+        params: {
+          label: string
+          amount: string | number
+          kind?: string
+          line_item_id?: string
+          fulfillment_id?: string
+        },
+        options?: RequestOptions,
+      ): Promise<Fee> =>
+        this.request<Fee>('POST', `/orders/${orderId}/fees`, { ...options, body: params }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: { label?: string; amount?: string | number; kind?: string },
+        options?: RequestOptions,
+      ): Promise<Fee> =>
+        this.request<Fee>('PATCH', `/orders/${orderId}/fees/${id}`, { ...options, body: params }),
+
+      delete: (orderId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/orders/${orderId}/fees/${id}`, options),
     },
 
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Order']),
@@ -1101,6 +1197,74 @@ export class AdminClient {
   // ============================================
   // Payment Methods
   // ============================================
+
+  readonly deliveryMethods = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryMethod>> =>
+      this.request<PaginatedResponse<DeliveryMethod>>('GET', '/delivery_methods', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('GET', `/delivery_methods/${id}`, options),
+
+    create: (params: DeliveryMethodParams, options?: RequestOptions): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('POST', '/delivery_methods', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: DeliveryMethodParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('PATCH', `/delivery_methods/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/delivery_methods/${id}`, options),
+
+    /** Registered delivery calculator classes with preference schemas. */
+    calculators: (
+      options?: RequestOptions,
+    ): Promise<{ data: Array<{ type: string; name: string; preference_schema: unknown[] }> }> =>
+      this.request<{ data: Array<{ type: string; name: string; preference_schema: unknown[] }> }>(
+        'GET',
+        '/delivery_methods/calculators',
+        options,
+      ),
+  }
+
+  readonly deliveryZones = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryZone>> =>
+      this.request<PaginatedResponse<DeliveryZone>>('GET', '/delivery_zones', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<DeliveryZone> =>
+      this.request<DeliveryZone>('GET', `/delivery_zones/${id}`, options),
+
+    create: (params: DeliveryZoneParams, options?: RequestOptions): Promise<DeliveryZone> =>
+      this.request<DeliveryZone>('POST', '/delivery_zones', { ...options, body: params }),
+
+    /** `members` replaces the zone's full member set atomically. */
+    update: (
+      id: string,
+      params: DeliveryZoneParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryZone> =>
+      this.request<DeliveryZone>('PATCH', `/delivery_zones/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/delivery_zones/${id}`, options),
+  }
 
   readonly paymentMethods = {
     list: (

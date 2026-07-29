@@ -110,6 +110,7 @@ module Spree
             user: cart.customer,
             token: cart.token,
             accept_marketing: cart.accept_marketing,
+            preferred_stock_location_id: cart.preferred_stock_location_id,
             special_instructions: cart.special_instructions,
             last_ip_address: cart.last_ip_address,
             ship_address: cart.ship_address&.dup,

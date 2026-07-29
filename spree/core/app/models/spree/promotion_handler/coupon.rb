@@ -126,7 +126,7 @@ module Spree
 
       def remove_promotion_line_items(promotion)
         create_line_item_actions_ids = promotion.actions.
-          where(type: %w[Spree::PromotionActions::CreateLineItems Spree::Promotion::Actions::CreateLineItems]).pluck(:id)
+          where(type: %w[Spree::Promotion::Actions::CreateLineItems Spree::Promotion::Actions::CreateLineItems]).pluck(:id)
 
         Spree::PromotionActionLineItem.where(promotion_action: create_line_item_actions_ids).find_each do |item|
           line_item = order.find_line_item_by_variant(item.variant)
@@ -183,7 +183,7 @@ module Spree
         # Check for applied line items.
         created_line_items = promotion.actions.detect do |a|
           Object.const_get(a.type).ancestors.include?(
-            Spree::PromotionActions::CreateLineItems
+            Spree::Promotion::Actions::CreateLineItems
           )
         end
 

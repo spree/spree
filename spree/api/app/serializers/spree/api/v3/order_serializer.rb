@@ -61,7 +61,7 @@ module Spree
           order.covered_by_store_credit?
         end
 
-        many :order_promotions, key: :discounts, resource: proc { Spree.api.discount_serializer }
+        many :order_promotions, key: :discounts, resource: proc { Spree.api.applied_promotion_serializer }
         many :line_items, key: :items, resource: proc { Spree.api.line_item_serializer }
         many :fulfillments, resource: proc { Spree.api.fulfillment_serializer }
         many :payments, resource: proc { Spree.api.payment_serializer }

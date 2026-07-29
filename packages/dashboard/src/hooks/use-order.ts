@@ -51,3 +51,44 @@ export function useOrderMutation<TParams>(
 export function orderQueryKey(orderId: string): QueryKey {
   return ['orders', orderId]
 }
+
+export function useOrderTaxLines(orderId: string) {
+  return useQuery({
+    queryKey: useResourceKey('orders', orderId, 'tax_lines'),
+    queryFn: () => adminClient.orders.taxLines.list(orderId),
+    enabled: !!orderId,
+  })
+}
+
+export function useOrderDiscounts(orderId: string) {
+  return useQuery({
+    queryKey: useResourceKey('orders', orderId, 'discounts'),
+    queryFn: () => adminClient.orders.discounts.list(orderId),
+    enabled: !!orderId,
+  })
+}
+
+export function useOrderFees(orderId: string) {
+  return useQuery({
+    queryKey: useResourceKey('orders', orderId, 'fees'),
+    queryFn: () => adminClient.orders.fees.list(orderId),
+    enabled: !!orderId,
+  })
+}
+
+/**
+ * Mutation for typed adjustment rows: invalidates the order detail AND the
+ * nested tax_lines/discounts/fees lists (totals change server-side on every
+ * row mutation).
+ */
+export function useOrderAdjustmentLinesMutation<TParams>(
+  orderId: string,
+  mutationFn: (params: TParams) => Promise<unknown>,
+) {
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+  return useMutation({
+    mutationFn,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) }),
+  })
+}

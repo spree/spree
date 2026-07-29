@@ -27,7 +27,7 @@ RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         before do
-          Spree::PromotionActions::FreeShipping.create!(promotion: promotion)
+          Spree::Promotion::Actions::FreeShipping.create!(promotion: promotion)
         end
 
         run_test! do |response|
@@ -44,7 +44,7 @@ RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-
       produces 'application/json'
       consumes 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Adds a new action to a promotion. The `type` is the wire shorthand from `GET /promotion_actions/types` (e.g. `free_shipping`, `create_item_discounts`). Fully-qualified Ruby class names are also accepted for backward compatibility.'
+      description 'Adds a new action to a promotion. The `type` is the wire shorthand from `GET /promotion_actions/types` (e.g. `free_shipping`, `create_item_adjustments`). Fully-qualified Ruby class names are also accepted for backward compatibility.'
       admin_scope :write, :promotions
 
       admin_sdk_example 'promotion-actions/create'
@@ -86,7 +86,7 @@ RSpec.describe 'Admin Promotion Actions API', type: :request, swagger_doc: 'api-
     parameter name: :promotion_id, in: :path, type: :string, required: true
     parameter name: :id, in: :path, type: :string, required: true
 
-    let(:action) { Spree::PromotionActions::FreeShipping.create!(promotion: promotion) }
+    let(:action) { Spree::Promotion::Actions::FreeShipping.create!(promotion: promotion) }
     let(:id) { action.prefixed_id }
 
     delete 'Delete an action from a promotion' do

@@ -134,7 +134,7 @@ module Spree
         return if bases_sum <= 0
 
         total_cents = [chosen[:amount].abs, bases_sum].min * 100
-        shares = largest_remainder_shares(total_cents.round, bases)
+        shares = Spree::Adjusters::LargestRemainder.largest_remainder_shares(total_cents.round, bases)
 
         line_items.each_with_index do |line_item, index|
           amount = -BigDecimal(shares[index]) / 100
@@ -142,17 +142,6 @@ module Spree
 
           persist_discount(line_item, chosen, amount)
         end
-      end
-
-      def largest_remainder_shares(total_cents, weights)
-        weights_sum = weights.sum
-        raw = weights.map { |weight| Rational(total_cents) * Rational(weight) / Rational(weights_sum) }
-        shares = raw.map(&:floor)
-        remainder = total_cents - shares.sum
-        raw.each_with_index.sort_by { |value, index| [shares[index] - value, index] }.first(remainder).each do |_, index|
-          shares[index] += 1
-        end
-        shares
       end
 
       # Combined discounts never push an adjustable's net below zero.

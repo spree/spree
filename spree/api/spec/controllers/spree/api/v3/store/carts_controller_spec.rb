@@ -611,7 +611,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     end
 
     context 'updating market' do
-      let!(:market) { create(:market, store: store, countries: [country]) }
+      let!(:market) { store.default_market }
 
       it 'updates the cart market' do
         patch :update, params: { id: order.prefixed_id, market_id: market.prefixed_id }
@@ -655,13 +655,16 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['market_id']).to eq(eu_market.prefixed_id)
       end
 
-      it 'returns validation error when no market exists for currency' do
+      it 'keeps the current market when no market exists for the currency' do
         order.update!(market: market)
 
         patch :update, params: { id: order.prefixed_id, currency: 'GBP' }
 
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['error']['code']).to eq('validation_error')
+        # GBP is store-supported via the legacy column; without a GBP market
+        # the cart keeps its current market.
+        expect(response).to have_http_status(:ok)
+        expect(json_response['currency']).to eq('GBP')
+        expect(json_response['market_id']).to eq(market.prefixed_id)
       end
     end
 

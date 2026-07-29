@@ -111,12 +111,33 @@ RSpec.describe 'v3 Store serializer price gating' do
       end
     end
 
-    describe Spree::Api::V3::DiscountSerializer do
-      # The record is a lightweight applied-discount presenter responding to the
-      # money methods; a struct keeps the gating assertion factory-free.
-      let(:discount) do
+    describe Spree::Api::V3::AppliedPromotionSerializer do
+      # The record is a lightweight applied-promotion presenter responding to
+      # the money methods; a struct keeps the gating assertion factory-free.
+      let(:applied_promotion) do
         Struct.new(:name, :description, :code, :amount, :display_amount, :promotion, keyword_init: true).new(
           name: 'Promo', description: nil, code: 'SAVE10', amount: '5.0', display_amount: '$5.00', promotion: nil
+        )
+      end
+
+      it 'nulls the amount for gated guests' do
+        hash = serialize(described_class, applied_promotion, hide: true)
+
+        expect(hash['amount']).to be_nil
+        expect(hash['display_amount']).to be_nil
+      end
+
+      it 'serializes the amount when not gated' do
+        expect(serialize(described_class, applied_promotion, hide: false)['amount']).to be_present
+      end
+    end
+
+    describe Spree::Api::V3::DiscountSerializer do
+      let(:discount) do
+        Struct.new(:label, :kind, :code, :value, :value_type, :amount, :display_amount,
+                   :promotion, :line_item, :fulfillment, keyword_init: true).new(
+          label: 'Promo', kind: 'promotion', code: 'SAVE10', value: '10.0', value_type: 'flat',
+          amount: '-5.0', display_amount: '-$5.00', promotion: nil, line_item: nil, fulfillment: nil
         )
       end
 

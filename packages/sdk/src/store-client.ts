@@ -25,6 +25,7 @@ import type {
   CreditCard,
   Currency,
   Customer,
+  DeliveryMethod,
   GiftCard,
   Locale,
   LoginCredentials,
@@ -43,6 +44,7 @@ import type {
   RegisterParams,
   RequestPasswordResetParams,
   ResetPasswordParams,
+  StockLocation,
   StoreCredit,
   UpdateCartParams,
   UpdateLineItemParams,
@@ -229,6 +231,54 @@ export class StoreClient {
   // ============================================
   // Policies
   // ============================================
+
+  readonly deliveryMethods = {
+    /**
+     * List storefront-visible delivery methods.
+     * Filter by fulfillment_type to discover pickup options.
+     */
+    list: (
+      params?: { fulfillment_type?: 'shipping' | 'digital' | 'pickup' | 'pickup_point' },
+      options?: RequestOptions,
+    ): Promise<ListResponse<DeliveryMethod>> =>
+      this.request<ListResponse<DeliveryMethod>>('GET', '/delivery_methods', {
+        ...options,
+        params: params,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('GET', `/delivery_methods/${id}`, options),
+
+    /**
+     * Pickup-enabled stock locations for a pickup delivery method.
+     * Pass cart_id to keep only locations able to fulfill the whole cart
+     * from local stock.
+     */
+    pickupLocations: (
+      id: string,
+      params?: { cart_id?: string },
+      options?: RequestOptions,
+    ): Promise<{ data: StockLocation[] }> =>
+      this.request<{ data: StockLocation[] }>('GET', `/delivery_methods/${id}/pickup_locations`, {
+        ...options,
+        params: params,
+      }),
+
+    /** Third-party pickup points near the customer (pickup_point methods). */
+    pickupPoints: (
+      id: string,
+      params: { latitude: number; longitude: number },
+      options?: RequestOptions,
+    ): Promise<{ data: Array<Record<string, unknown>> }> =>
+      this.request<{ data: Array<Record<string, unknown>> }>(
+        'GET',
+        `/delivery_methods/${id}/pickup_points`,
+        {
+          ...options,
+          params: params,
+        },
+      ),
+  }
 
   readonly policies = {
     /**

@@ -170,8 +170,8 @@ module Spree
     alias_attribute :shipping_address_id, :ship_address_id
 
     belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :market, class_name: 'Spree::Market', optional: true
-    belongs_to :channel, class_name: 'Spree::Channel', optional: true
+    belongs_to :market, class_name: 'Spree::Market'
+    belongs_to :channel, class_name: 'Spree::Channel'
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
 
     with_options dependent: :destroy do
@@ -268,7 +268,6 @@ module Spree
     validates :delivery_total,       MONEY_VALIDATION
     validates :promo_total,          NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
-    validates :market, presence: true, if: :store_has_markets?
     validate :currency_must_be_supported_by_store
     validate :locale_must_be_supported_by_store
 
@@ -373,7 +372,7 @@ module Spree
     end
 
     # Sum of the eligible promotion adjustments applied to the order itself
-    # (whole-order discounts created by PromotionActions::CreateAdjustment,
+    # (whole-order discounts created by Promotion::Actions::CreateAdjustment,
     # distributed proportionally across line items), as opposed to promotions
     # applied to individual line items or fulfillments. Zero or negative.
     #

@@ -243,6 +243,17 @@ Note this is a behavior change for multi-store installs (globally-visible
 methods become single-store), not a mechanical migration.
 
 ## 2026-03-16: Fix promotion rule/action STI namespacing
+**REVERSED 2026-07-29 (Damian, during Wave 6 of the core rewrite):** the rename
+shipped briefly on `feature/6-0-core-rewrite` and was rolled back — class-name
+churn wasn't required by any 6.0 feature, and it forced an STI `type`-column
+data migration plus extension breakage for a purely cosmetic consistency win.
+Promotion rules/actions stay `Spree::Promotion::Rules::*` /
+`Spree::Promotion::Actions::*` (incl. `CreateItemAdjustments`, which now writes
+typed `Spree::Discount` rows under its legacy name). The STI-namespace
+convention below still applies to NEW hierarchies; existing promotion classes
+are grandfathered.
+
+Original decision:
 Rename `Spree::Promotion::Rules::*` → `Spree::PromotionRules::*` and
 `Spree::Promotion::Actions::*` → `Spree::PromotionActions::*`.
 

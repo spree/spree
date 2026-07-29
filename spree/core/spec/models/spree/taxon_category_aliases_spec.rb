@@ -9,7 +9,7 @@ RSpec.describe 'Taxon -> Category deprecation aliases' do
       expect(Spree::Taxon).to equal(Spree::Category)
       expect(Spree::Classification).to equal(Spree::ProductCategory)
       expect(Spree::PromotionRuleTaxon).to equal(Spree::PromotionRuleCategory)
-      expect(Spree::PromotionRules::Taxon).to equal(Spree::PromotionRules::Category)
+      expect(Spree::Promotion::Rules::Taxon).to equal(Spree::Promotion::Rules::Category)
     end
   end
 

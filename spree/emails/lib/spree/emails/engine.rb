@@ -21,7 +21,7 @@ module Spree
       config.after_initialize do
         Spree.subscribers.concat [
           Spree::OrderEmailSubscriber,
-          Spree::ShipmentEmailSubscriber,
+          Spree::FulfillmentEmailSubscriber,
           Spree::ReimbursementEmailSubscriber,
           Spree::NewsletterSubscriberEmailSubscriber,
           Spree::CustomerEmailSubscriber

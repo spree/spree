@@ -1369,3 +1369,40 @@ export interface PromotionRuleUpdateParams {
   category_ids?: string[]
   customer_ids?: string[]
 }
+
+export interface DeliveryMethodParams {
+  name?: string
+  admin_name?: string | null
+  code?: string | null
+  /** One of `shipping`, `digital`, `pickup`, `pickup_point`. */
+  fulfillment_type?: string
+  fulfillment_provider?: string
+  pickup_point_provider?: string | null
+  storefront_visible?: boolean
+  tracking_url?: string | null
+  estimated_transit_business_days_min?: number | null
+  estimated_transit_business_days_max?: number | null
+  /** Prefixed tax category ID (`taxcat_...`), or null to clear. */
+  tax_category_id?: string | null
+  /** Delivery calculator class name (see `deliveryMethods.calculators()`). */
+  calculator_type?: string
+  calculator_preferences?: Record<string, unknown>
+  /** Prefixed delivery zone IDs (`dz_...`); replaces the full set. */
+  delivery_zone_ids?: string[]
+}
+
+export interface DeliveryZoneMemberParams {
+  member_type: 'country' | 'state' | 'postal_code'
+  country_iso?: string
+  state_abbr?: string
+  postal_code_prefix?: string
+  postal_code_from?: string
+  postal_code_to?: string
+}
+
+export interface DeliveryZoneParams {
+  name?: string
+  description?: string | null
+  /** Replaces the zone's full member set atomically. */
+  members?: DeliveryZoneMemberParams[]
+}

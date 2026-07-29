@@ -100,7 +100,7 @@ module Spree
                 fulfilment_changer = @resource.transfer_to_location(variant, quantity, stock_location)
 
                 if fulfilment_changer.run!
-                  fulfillments = @order.reload.shipments
+                  fulfillments = @order.reload.fulfillments
                   render json: {
                     data: fulfillments.map { |s| serialize_resource(s) }
                   }

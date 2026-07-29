@@ -17,8 +17,10 @@ module Spree
         can :manage, Spree::PaymentMethod
         can :manage, Spree::Gateway
 
-        # Shipping configuration
-        can :manage, Spree::ShippingMethod
+        # Delivery configuration
+        can :manage, Spree::DeliveryMethod
+        can :manage, Spree::DeliveryZone
+        can :manage, Spree::DeliveryZoneMember
         can :manage, Spree::ShippingCategory
         can :manage, Spree::Zone
         can :manage, Spree::ZoneMember

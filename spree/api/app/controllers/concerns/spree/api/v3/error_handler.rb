@@ -36,6 +36,7 @@ module Spree
           # Order errors
           order_not_found: 'order_not_found',
           order_cannot_complete: 'order_cannot_complete',
+          discount_not_editable: 'discount_not_editable',
 
           # Line item errors
           line_item_not_found: 'line_item_not_found',

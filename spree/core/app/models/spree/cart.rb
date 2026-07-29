@@ -49,12 +49,38 @@ module Spree
     alias_attribute :ship_total, :delivery_total
 
     belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :market, class_name: 'Spree::Market', optional: true
-    belongs_to :channel, class_name: 'Spree::Channel', optional: true
+    belongs_to :market, class_name: 'Spree::Market'
+    belongs_to :channel, class_name: 'Spree::Channel'
     belongs_to :customer, class_name: "::#{Spree.user_class}", optional: true
     belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     belongs_to :gift_card, class_name: 'Spree::GiftCard', optional: true
+    # Pickup location choice is a preference (mirrors the admin-user
+    # preference of the same name), copied to the order column at completion.
+    preference :stock_location_id, :integer, nullable: true
+    alias_method :assign_stock_location_id_preference, :preferred_stock_location_id=
+
+    # Accepts the public prefixed ID (+sloc_...+) or a raw ID; validates the
+    # location is pickup-enabled so the storefront can only select real
+    # pickup locations.
+    def preferred_stock_location_id=(value)
+      if value.blank?
+        assign_stock_location_id_preference(nil)
+        return
+      end
+
+      location = if Spree::PrefixedId.prefixed_id?(value)
+                   Spree::StockLocation.pickup_enabled.find_by_prefix_id!(value)
+                 else
+                   Spree::StockLocation.pickup_enabled.find(value)
+                 end
+      assign_stock_location_id_preference(location.id)
+    end
+
+    # @return [Spree::StockLocation, nil]
+    def preferred_stock_location
+      Spree::StockLocation.find_by(id: preferred_stock_location_id)
+    end
 
     alias_method :user, :customer
     alias_method :user=, :customer=
@@ -99,7 +125,6 @@ module Spree
     before_validation :ensure_channel_presence
 
     validates :store, :currency, presence: true
-    validates :market, presence: true, if: -> { store&.markets&.exists? }
     validate :currency_must_be_supported_by_store
 
     scope :complete, -> { where.not(completed_at: nil) }

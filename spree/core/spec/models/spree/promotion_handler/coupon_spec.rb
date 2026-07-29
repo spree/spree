@@ -127,7 +127,7 @@ module Spree
               allow(order).to receive_messages coupon_code: '10off'
               calculator = Calculator::FlatRate.new(preferred_amount: 10)
               general_promo = create(:promotion, name: 'General Promo', store: order.store)
-              PromotionActions::CreateItemDiscounts.create(promotion: general_promo, calculator: calculator) # general_action
+              Promotion::Actions::CreateItemAdjustments.create(promotion: general_promo, calculator: calculator) # general_action
 
               Spree::Carts::AddItem.call(order: order, variant: create(:variant))
             end
@@ -141,7 +141,7 @@ module Spree
         end
 
         context 'with a free-shipping adjustment action' do
-          let!(:action) { PromotionActions::FreeShipping.create(promotion: promotion) }
+          let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
 
           context 'right coupon code given' do
             let(:order) { create(:order_with_line_items, line_items_count: 3, store: store) }
@@ -166,7 +166,7 @@ module Spree
         end
 
         context 'with a whole-order adjustment action' do
-          let!(:action) { PromotionActions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+          let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
           context 'right coupon given' do
             let(:order) { create(:order_with_line_items, store: store, line_items_count: 1) }
@@ -285,7 +285,7 @@ module Spree
 
         context 'with a CreateLineItems action' do
           let!(:variant) { create(:variant) }
-          let!(:action) { PromotionActions::CreateLineItems.create(promotion: promotion) }
+          let!(:action) { Promotion::Actions::CreateLineItems.create(promotion: promotion) }
           let(:order) { create(:order, store: store) }
 
           before do
@@ -313,7 +313,7 @@ module Spree
         end
         let!(:promotion) { create(:promotion, name: 'promo', code: nil, multi_codes: true, number_of_codes: 1) }
         let!(:coupon_code) { promotion.coupon_codes.first }
-        let!(:action) { Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
         context 'valid coupon' do
           before { order.coupon_code = coupon_code.code }
@@ -387,7 +387,7 @@ module Spree
         context 'one common promotion code' do
           let!(:promotion) { create(:promotion, name: 'promo', code: '10off', usage_limit: 1) }
           let!(:action) do
-            Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion,
+            Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion,
                                                                     calculator: calculator)
           end
           let!(:order_2) { create(:order_with_line_items, line_items_count: 3, user: user) }
@@ -427,7 +427,7 @@ module Spree
           end
 
           let!(:action) do
-            Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion,
+            Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion,
                                                                     calculator: calculator)
           end
 

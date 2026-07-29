@@ -27,6 +27,11 @@ module Spree
     #
     # Callbacks
     #
+    # Set by Stores::Markets#ensure_default_market — the store-creation
+    # bootstrap market skips the shipping-coverage check (no delivery setup
+    # can exist for a store that is still being created).
+    attr_accessor :bootstrap_default
+
     before_save :ensure_single_default
     before_destroy :ensure_can_be_deleted
 
@@ -131,9 +136,19 @@ module Spree
       return unless default? && default_changed?
 
       self.class.where(store_id: store_id, default: true).where.not(id: id).update_all(default: false)
+
+      # The demotion happens via update_all — drop the owning store's cached
+      # associations so same-instance reads see the new default immediately.
+      if store && !store.destroyed?
+        store.association(:default_market).reset
+        store.association(:markets).reset if store.association_cached?(:markets)
+      end
     end
 
     def ensure_can_be_deleted
+      # Cascading from the store's own destruction — the default/last-market
+      # guards only protect live stores.
+      return if destroyed_by_association
       return if can_be_deleted?
 
       if default?

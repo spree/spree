@@ -26,6 +26,9 @@ export const Subject = {
   TaxCategory: 'Spree::TaxCategory',
   CustomFieldDefinition: 'Spree::MetafieldDefinition',
   PaymentMethod: 'Spree::PaymentMethod',
+  DeliveryMethod: 'Spree::DeliveryMethod',
+  DeliveryZone: 'Spree::DeliveryZone',
+  /** @deprecated Use Subject.DeliveryMethod — removed in Spree 6.1. */
   ShippingMethod: 'Spree::ShippingMethod',
   StockLocation: 'Spree::StockLocation',
   StockItem: 'Spree::StockItem',

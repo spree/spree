@@ -49,6 +49,7 @@ module Spree
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_service: 'Spree::Orders::Cancel',
         order_complete_service: 'Spree::Orders::Complete',
+        order_add_manual_discount_service: 'Spree::Orders::AddManualDiscount',
         order_create_service: 'Spree::Orders::Create',
         order_update_service: 'Spree::Orders::Update',
         order_updater: 'Spree::OrderUpdater',

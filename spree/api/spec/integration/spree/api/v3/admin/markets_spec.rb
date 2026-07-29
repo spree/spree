@@ -258,7 +258,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
 
       response '422', 'cannot delete default or last market' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:id) { market.prefixed_id }
+        let(:id) { store.default_market.prefixed_id }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

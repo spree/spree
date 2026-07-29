@@ -61,7 +61,7 @@ describe Spree::Adjusters::Promotion, type: :model do
 
   it 'clamps so a line never goes below zero' do
     promo = create(:promotion, kind: :automatic, code: nil, stores: [store])
-    action = Spree::PromotionActions::CreateItemDiscounts.create!(
+    action = Spree::Promotion::Actions::CreateItemAdjustments.create!(
       promotion: promo,
       calculator: Spree::Calculator::FlatRate.new(preferred_amount: 999)
     )

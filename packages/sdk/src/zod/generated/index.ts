@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 export { AddressSchema, type Address } from './Address';
+export { AppliedPromotionSchema, type AppliedPromotion } from './AppliedPromotion';
 export { BaseSchema, type Base } from './Base';
 export { CartSchema, type Cart } from './Cart';
 export { CategorySchema, type Category } from './Category';
@@ -13,9 +14,12 @@ export { CustomerSchema, type Customer } from './Customer';
 export { CustomerGroupSchema, type CustomerGroup } from './CustomerGroup';
 export { DeliveryMethodSchema, type DeliveryMethod } from './DeliveryMethod';
 export { DeliveryRateSchema, type DeliveryRate } from './DeliveryRate';
+export { DeliveryZoneSchema, type DeliveryZone } from './DeliveryZone';
+export { DeliveryZoneMemberSchema, type DeliveryZoneMember } from './DeliveryZoneMember';
 export { DigitalSchema, type Digital } from './Digital';
 export { DigitalLinkSchema, type DigitalLink } from './DigitalLink';
 export { DiscountSchema, type Discount } from './Discount';
+export { FeeSchema, type Fee } from './Fee';
 export { FulfillmentSchema, type Fulfillment } from './Fulfillment';
 export { GiftCardSchema, type GiftCard } from './GiftCard';
 export { GiftCardBatchSchema, type GiftCardBatch } from './GiftCardBatch';
@@ -55,6 +59,7 @@ export { StateSchema, type State } from './State';
 export { StockLocationSchema, type StockLocation } from './StockLocation';
 export { StockReservationSchema, type StockReservation } from './StockReservation';
 export { StoreCreditSchema, type StoreCredit } from './StoreCredit';
+export { TaxLineSchema, type TaxLine } from './TaxLine';
 export { VariantSchema, type Variant } from './Variant';
 export { WishlistSchema, type Wishlist } from './Wishlist';
 export { WishlistItemSchema, type WishlistItem } from './WishlistItem';

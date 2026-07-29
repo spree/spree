@@ -201,14 +201,15 @@ export const WEBHOOK_EVENT_GROUPS: readonly WebhookEventGroup[] = [
     ],
   },
   {
-    labelKey: 'admin.pages.settings.webhooks.event_groups.shipment',
+    labelKey: 'admin.pages.settings.webhooks.event_groups.fulfillment',
     events: [
-      'shipment.canceled',
-      'shipment.created',
-      'shipment.deleted',
-      'shipment.resumed',
-      'shipment.shipped',
-      'shipment.updated',
+      'fulfillment.canceled',
+      'fulfillment.created',
+      'fulfillment.deleted',
+      'fulfillment.fulfilled',
+      'fulfillment.ready',
+      'fulfillment.resumed',
+      'fulfillment.updated',
     ],
   },
   {

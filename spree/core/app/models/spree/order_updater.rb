@@ -108,7 +108,27 @@ module Spree
       end
 
       recalculate_adjustments
+      sum_typed_rows_into_order
+      update_order_total
+    end
 
+    # The sanctioned post-placement edit path: re-sums typed rows into order
+    # and per-adjustable totals WITHOUT re-running promotion competition or
+    # tax estimation (both stay frozen once completed). Called by the admin
+    # tax_lines/discounts/fees endpoints after writing rows directly.
+    def resum_typed_totals!
+      refresh_discount_and_fee_columns
+      refresh_tax_columns
+      sum_typed_rows_into_order
+      update_order_total
+      persist_totals
+    end
+
+    def update_item_count
+      order.item_count = quantity
+    end
+
+    def sum_typed_rows_into_order
       discounts_sum = order.discounts.reload.sum(&:amount)
       fees = order.fees.reload.to_a
       tax_sums = order.tax_lines.reload.group_by(&:included?).transform_values { |lines| lines.sum(&:amount) }
@@ -123,12 +143,6 @@ module Spree
       # discounts distribute to line items, so fees are the only residents.
       order.taxable_adjustment_total = 0
       order.non_taxable_adjustment_total = fees.select(&:order_level?).sum(&:amount)
-
-      update_order_total
-    end
-
-    def update_item_count
-      order.item_count = quantity
     end
 
     def update_item_total

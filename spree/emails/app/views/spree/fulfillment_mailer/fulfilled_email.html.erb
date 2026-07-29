@@ -1,0 +1,22 @@
+<%= render 'spree/shared/purchased_items_styles' %>
+
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('fulfillment_mailer.fulfilled_email.subject') %></h1>
+  <p class="greeting"><%= Spree.t('fulfillment_mailer.fulfilled_email.dear_customer', name: name_for(@fulfillment.order)) %></p>
+  <p><%= Spree.t('fulfillment_mailer.fulfilled_email.instructions', number: @fulfillment.order.number) %></p>
+  <% if @fulfillment.delivery_method %>
+    <p><%= Spree.t('fulfillment_mailer.fulfilled_email.delivery_method', delivery_method: @fulfillment.delivery_method.name) %></p>
+  <% end %>
+  <% if @fulfillment.tracking %>
+    <p><%= Spree.t('fulfillment_mailer.fulfilled_email.track_information', tracking: @fulfillment.tracking) %></p>
+  <% end %>
+  <% if @fulfillment.tracking_url %>
+    <p><%= Spree.t('fulfillment_mailer.fulfilled_email.track_link', url: fulfillment_tracking_link_to(fulfillment: @fulfillment)).html_safe %></p>
+  <% end %>
+<% end %>
+
+<%= render 'spree/shared/order_summary_section',
+           heading: Spree.t('fulfillment_mailer.fulfilled_email.fulfillment_summary'),
+           line_items: @fulfillment.manifest.map(&:line_item),
+           order: @fulfillment.order,
+           totals: false %>

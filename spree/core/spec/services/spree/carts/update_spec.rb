@@ -75,7 +75,7 @@ module Spree
         context 'auto-switches market to match currency' do
           let(:us_country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
           let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
-          let!(:us_market) { create(:market, store: store, countries: [us_country]) }
+          let!(:us_market) { store.default_market }
           let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
           let(:order) { create(:order_with_line_items, user: user, store: store, market: us_market, currency: 'USD') }
 
@@ -101,11 +101,13 @@ module Spree
             expect(order.reload.market).to eq(us_market)
           end
 
-          it 'returns failure when no market exists for currency' do
+          it 'keeps the current market when no market exists for the currency' do
+            # GBP is store-supported via the legacy column; without a GBP
+            # market the cart keeps its current market.
             result = described_class.call(cart: order, params: { currency: 'GBP' })
 
-            expect(result).to be_failure
-            expect(order.reload.currency).to eq('USD')
+            expect(result).to be_success
+            expect(order.reload.currency).to eq('GBP')
             expect(order.market).to eq(us_market)
           end
         end
@@ -114,7 +116,8 @@ module Spree
       describe 'updating market' do
         let(:us_country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
-        let!(:us_market) { create(:market, :default, store: store, countries: [us_country]) }
+        # The store's bootstrap market already owns the US country.
+        let!(:us_market) { store.default_market }
         let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
 
         context 'with valid market_id' do

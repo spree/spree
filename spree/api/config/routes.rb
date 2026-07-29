@@ -53,6 +53,14 @@ Spree::Core::Engine.add_routes do
           resource :store_credits, only: [:create, :destroy], controller: 'carts/store_credits'
         end
 
+        # Delivery methods (pickup discovery)
+        resources :delivery_methods, only: [:index, :show] do
+          member do
+            get :pickup_locations
+            get :pickup_points
+          end
+        end
+
         # Orders (single order lookup, guest-accessible via order token)
         resources :orders, only: [:show]
 
@@ -287,6 +295,13 @@ Spree::Core::Engine.add_routes do
         resources :stock_transfers, only: [:index, :show, :create, :destroy]
 
         # Payment Methods
+        resources :delivery_methods do
+          collection do
+            get :calculators
+          end
+        end
+        resources :delivery_zones
+
         resources :payment_methods do
           collection do
             get :types
@@ -404,6 +419,9 @@ Spree::Core::Engine.add_routes do
             end
           end
           resources :refunds, controller: 'orders/refunds', only: [:index, :create]
+          resources :tax_lines, controller: 'orders/tax_lines', only: [:index, :show]
+          resources :discounts, controller: 'orders/discounts', only: [:index, :show, :create, :update, :destroy]
+          resources :fees, controller: 'orders/fees', only: [:index, :show, :create, :update, :destroy]
           resources :gift_cards, controller: 'orders/gift_cards', only: [:create, :destroy]
           resource :store_credits, controller: 'orders/store_credits', only: [:create, :destroy]
         end

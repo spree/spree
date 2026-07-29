@@ -36,7 +36,7 @@ module Spree
         let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
         let(:promotion_action) do
-          PromotionActions::CreateAdjustment.create!(calculator: calculator,
+          Promotion::Actions::CreateAdjustment.create!(calculator: calculator,
                                                        promotion: promotion)
         end
 

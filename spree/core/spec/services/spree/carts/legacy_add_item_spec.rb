@@ -69,7 +69,7 @@ module Spree
       let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
 
       context 'one active order promotion' do
-        let!(:action) { Spree::PromotionActions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
         before do
           subject.call(order: order, variant: variant, quantity: 1)
@@ -84,7 +84,7 @@ module Spree
       end
 
       context 'one active line item promotion' do
-        let!(:action) { Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
         before do
           subject.call(order: order, variant: variant, quantity: 1)
@@ -111,7 +111,7 @@ module Spree
         end
         let(:variant) { create(:variant, price: 1000) }
         let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 50) }
-        let!(:action) { Spree::PromotionActions::CreateItemDiscounts.create(promotion: promotion, calculator: calculator) }
+        let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
         it 'updates included_tax_total' do
           expect(order.included_tax_total.to_f).to eq(0.00)

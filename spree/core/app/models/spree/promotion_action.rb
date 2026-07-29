@@ -60,11 +60,11 @@ module Spree
     def self.types_for_discount_scope(scope)
       case scope
       when :line_item
-        %w[Spree::PromotionActions::CreateItemDiscounts Spree::Promotion::Actions::CreateItemAdjustments]
+        %w[Spree::Promotion::Actions::CreateItemAdjustments Spree::Promotion::Actions::CreateItemAdjustments]
       when :fulfillment
-        %w[Spree::PromotionActions::FreeShipping Spree::Promotion::Actions::FreeShipping]
+        %w[Spree::Promotion::Actions::FreeShipping Spree::Promotion::Actions::FreeShipping]
       when :order
-        %w[Spree::PromotionActions::CreateAdjustment Spree::Promotion::Actions::CreateAdjustment]
+        %w[Spree::Promotion::Actions::CreateAdjustment Spree::Promotion::Actions::CreateAdjustment]
       else
         []
       end

@@ -1,2 +1,21 @@
-# Legacy constant path — removed in 6.1. Real class: Spree::PromotionRules::Currency.
-Spree::Promotion::Rules::Currency = Spree::PromotionRules::Currency
+# A rule to limit a promotion based on order currency.
+module Spree
+  class Promotion
+    module Rules
+      class Currency < Spree::PromotionRule
+        preference :currency, :string
+
+        def applicable?(promotable)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
+        end
+
+        def eligible?(order, options = {})
+          return true if order.currency == preferred_currency
+
+          eligibility_errors.add(:base, eligibility_error_message(:wrong_currency))
+          false
+        end
+      end
+    end
+  end
+end

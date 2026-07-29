@@ -9,7 +9,7 @@
                sub: label,
                value: Spree::Money.new(discounts.sum(&:amount), currency: order.currency) %>
   <% end %>
-  <% order.shipments.group_by { |s| s.selected_shipping_rate&.name }.each do |name, shipments| %>
+  <% order.fulfillments.group_by { |f| f.selected_delivery_rate&.name }.each do |name, shipments| %>
     <%= render 'spree/shared/purchased_items_table/summary_row',
                label: Spree.t(:shipping),
                sub: name,

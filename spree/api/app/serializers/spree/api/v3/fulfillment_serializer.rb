@@ -11,9 +11,11 @@ module Spree
                  additional_tax_total: [:string, nullable: true], display_additional_tax_total: [:string, nullable: true],
                  included_tax_total: [:string, nullable: true], display_included_tax_total: [:string, nullable: true],
                  tax_total: [:string, nullable: true], display_tax_total: [:string, nullable: true],
-                 items: 'Array<{ item_id: string; variant_id: string; quantity: number }>'
+                 items: 'Array<{ item_id: string; variant_id: string; quantity: number }>',
+                 pickup_point_data: ['Record<string, unknown>', nullable: true],
+                 selected_delivery_rate_id: [:string, nullable: true]
 
-        attributes :number, :tracking, :tracking_url
+        attributes :number, :tracking, :tracking_url, :pickup_point_data, :selected_delivery_rate_id
 
         # Nulled for gated (prices_hidden) guests so a fulfillment can't leak the
         # shipping/tax amounts the cart/order totals already withhold.
@@ -24,16 +26,16 @@ module Spree
                          :included_tax_total, :display_included_tax_total,
                          :tax_total, :display_tax_total
 
-        attribute :status do |shipment|
-          shipment.state
-        end
+        attributes :status
 
+        # Column-backed since 6.0; the fallback covers rows created before the
+        # fulfillment_type backfill ran.
         attribute :fulfillment_type do |shipment|
-          shipment.digital? ? 'digital' : 'shipping'
+          shipment.fulfillment_type.presence || (shipment.digital? ? 'digital' : 'shipping')
         end
 
         attribute :fulfilled_at do |shipment|
-          shipment.shipped_at&.iso8601
+          shipment.fulfilled_at&.iso8601
         end
 
         # Which items (and how many) are in this fulfillment.
@@ -50,9 +52,9 @@ module Spree
           end
         end
 
-        one :shipping_method, key: :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
+        one :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
         one :stock_location, resource: proc { Spree.api.stock_location_serializer }
-        many :shipping_rates, key: :delivery_rates, resource: proc { Spree.api.delivery_rate_serializer }
+        many :delivery_rates, resource: proc { Spree.api.delivery_rate_serializer }
       end
     end
   end

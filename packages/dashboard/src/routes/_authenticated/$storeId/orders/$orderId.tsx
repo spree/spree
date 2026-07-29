@@ -1,4 +1,4 @@
-import type { Order, Variant } from '@spree/admin-sdk'
+import type { Discount, Fee, Order, Variant } from '@spree/admin-sdk'
 import {
   AddressFormDialog,
   type AddressParams,
@@ -87,7 +87,15 @@ import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
 } from '../../../../components/spree/custom-fields/custom-fields-inline'
-import { orderQueryKey, useOrder, useOrderMutation } from '../../../../hooks/use-order'
+import {
+  orderQueryKey,
+  useOrder,
+  useOrderAdjustmentLinesMutation,
+  useOrderDiscounts,
+  useOrderFees,
+  useOrderMutation,
+  useOrderTaxLines,
+} from '../../../../hooks/use-order'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
@@ -138,6 +146,7 @@ function OrderDetailPage() {
           <LineItemsCard order={order} />
           <ShipmentsCard order={order} />
           <PaymentsCard order={order} />
+          <AdjustmentLinesCard order={order} />
           <OrderSummaryCard order={order} />
           <EditableApiCustomFieldsProvider
             ownerType="Spree::Order"
@@ -794,7 +803,7 @@ function ShipmentsCard({ order }: { order: Order }) {
         <CardHeader>
           <CardTitle>
             <TruckIcon className="size-4" />
-            {t('admin.pages.orders.detail.section_shipments')}
+            {t('admin.pages.orders.detail.section_fulfillments')}
             <Badge variant="outline">{fulfillments.length}</Badge>
           </CardTitle>
           <CardAction className="flex items-center gap-2">
@@ -1271,6 +1280,446 @@ function AddPaymentDialog({
               {mutation.isPending || captureMutation.isPending
                 ? t('admin.actions.saving')
                 : t('admin.actions.add')}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Adjustment lines: taxes, discounts & fees (typed rows)
+// ---------------------------------------------------------------------------
+
+function AdjustmentLineRow({
+  label,
+  meta,
+  amount,
+  onDelete,
+  deleting,
+}: {
+  label: ReactNode
+  meta?: ReactNode
+  amount: string
+  onDelete?: () => void
+  deleting?: boolean
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 px-5 py-2">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="truncate text-sm">{label}</span>
+        {meta}
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="text-sm tabular-nums">{amount}</span>
+        {onDelete && (
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={onDelete}
+            disabled={deleting}
+            aria-label={i18n.t('admin.actions.delete')}
+          >
+            <TrashIcon className="size-3.5" />
+          </Button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function AdjustmentLinesCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
+  const { orderId } = Route.useParams()
+  const confirm = useConfirm()
+  const [addDiscountOpen, setAddDiscountOpen] = useState(false)
+  const [addFeeOpen, setAddFeeOpen] = useState(false)
+
+  const { data: taxLines } = useOrderTaxLines(orderId)
+  const { data: discounts } = useOrderDiscounts(orderId)
+  const { data: fees } = useOrderFees(orderId)
+
+  const deleteDiscountMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
+    adminClient.orders.discounts.delete(orderId, id),
+  )
+  const deleteFeeMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
+    adminClient.orders.fees.delete(orderId, id),
+  )
+
+  const taxRows = taxLines?.data ?? []
+  const discountRows = discounts?.data ?? []
+  const feeRows = fees?.data ?? []
+
+  // Tax rows grouped by label so a rate charged on many lines reads as one row.
+  const taxGroups = new Map<string, { label: string; amount: number }>()
+  for (const row of taxRows) {
+    const existing = taxGroups.get(row.label)
+    if (existing) {
+      existing.amount += Number.parseFloat(row.amount)
+    } else {
+      taxGroups.set(row.label, { label: row.label, amount: Number.parseFloat(row.amount) })
+    }
+  }
+
+  async function handleDeleteDiscount(row: Discount) {
+    const confirmed = await confirm({
+      title: t('admin.orders.detail.adjustment_lines.delete_discount_title'),
+      message: t('admin.orders.detail.adjustment_lines.delete_discount_message', {
+        label: row.label,
+      }),
+      confirmLabel: t('admin.actions.delete'),
+      variant: 'destructive',
+    })
+    if (confirmed) deleteDiscountMutation.mutate(row.id)
+  }
+
+  async function handleDeleteFee(row: Fee) {
+    const confirmed = await confirm({
+      title: t('admin.orders.detail.adjustment_lines.delete_fee_title'),
+      message: t('admin.orders.detail.adjustment_lines.delete_fee_message', { label: row.label }),
+      confirmLabel: t('admin.actions.delete'),
+      variant: 'destructive',
+    })
+    if (confirmed) deleteFeeMutation.mutate(row.id)
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.orders.detail.adjustment_lines.title')}</CardTitle>
+        <CardAction>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setAddDiscountOpen(true)}>
+              <PlusIcon className="size-4" />
+              {t('admin.orders.detail.adjustment_lines.add_discount')}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setAddFeeOpen(true)}>
+              <PlusIcon className="size-4" />
+              {t('admin.orders.detail.adjustment_lines.add_fee')}
+            </Button>
+          </div>
+        </CardAction>
+      </CardHeader>
+
+      {taxRows.length === 0 && discountRows.length === 0 && feeRows.length === 0 ? (
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            {t('admin.orders.detail.adjustment_lines.empty')}
+          </p>
+        </CardContent>
+      ) : (
+        <div className="pb-2">
+          {taxGroups.size > 0 && (
+            <>
+              <p className="px-5 pt-1 pb-1 font-medium text-muted-foreground text-xs uppercase">
+                {t('admin.orders.detail.adjustment_lines.taxes')}
+              </p>
+              {[...taxGroups.values()].map((group) => (
+                <AdjustmentLineRow
+                  key={group.label}
+                  label={group.label}
+                  amount={formatPrice({
+                    amount: group.amount.toFixed(2),
+                    currency: order.currency,
+                    display_amount: null,
+                  })}
+                />
+              ))}
+            </>
+          )}
+
+          {discountRows.length > 0 && (
+            <>
+              <p className="px-5 pt-3 pb-1 font-medium text-muted-foreground text-xs uppercase">
+                {t('admin.orders.detail.adjustment_lines.discounts')}
+              </p>
+              {discountRows.map((row) => (
+                <AdjustmentLineRow
+                  key={row.id}
+                  label={row.label}
+                  meta={
+                    <>
+                      {row.code && <Badge variant="outline">{row.code}</Badge>}
+                      {row.kind === 'promotion' && (
+                        <Badge variant="secondary">
+                          {t('admin.orders.detail.adjustment_lines.kind_promotion')}
+                        </Badge>
+                      )}
+                    </>
+                  }
+                  amount={row.display_amount}
+                  onDelete={row.kind === 'manual' ? () => handleDeleteDiscount(row) : undefined}
+                  deleting={deleteDiscountMutation.isPending}
+                />
+              ))}
+            </>
+          )}
+
+          {feeRows.length > 0 && (
+            <>
+              <p className="px-5 pt-3 pb-1 font-medium text-muted-foreground text-xs uppercase">
+                {t('admin.orders.detail.adjustment_lines.fees')}
+              </p>
+              {feeRows.map((row) => (
+                <AdjustmentLineRow
+                  key={row.id}
+                  label={row.label}
+                  meta={row.kind ? <Badge variant="outline">{row.kind}</Badge> : undefined}
+                  amount={row.display_amount}
+                  onDelete={() => handleDeleteFee(row)}
+                  deleting={deleteFeeMutation.isPending}
+                />
+              ))}
+            </>
+          )}
+        </div>
+      )}
+
+      <AddDiscountDialog order={order} open={addDiscountOpen} onOpenChange={setAddDiscountOpen} />
+      <AddFeeDialog order={order} open={addFeeOpen} onOpenChange={setAddFeeOpen} />
+    </Card>
+  )
+}
+
+function AddDiscountDialog({
+  order,
+  open,
+  onOpenChange,
+}: {
+  order: Order
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const { orderId } = Route.useParams()
+  const [target, setTarget] = useState('order')
+  const [valueType, setValueType] = useState('flat')
+
+  const mutation = useOrderAdjustmentLinesMutation(
+    orderId,
+    (params: {
+      label: string
+      value: string
+      value_type: 'flat' | 'percent'
+      line_item_id?: string
+    }) => adminClient.orders.discounts.create(orderId, params),
+  )
+
+  const targetOptions = [
+    { value: 'order', label: t('admin.orders.detail.adjustment_lines.target_order') },
+    ...(order.items ?? []).map((item) => ({ value: item.id, label: item.name ?? item.id })),
+  ]
+  const valueTypeOptions = [
+    { value: 'flat', label: t('admin.orders.detail.adjustment_lines.value_type_flat') },
+    { value: 'percent', label: t('admin.orders.detail.adjustment_lines.value_type_percent') },
+  ]
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const fd = new FormData(e.currentTarget)
+    mutation.mutate(
+      {
+        label: fd.get('label') as string,
+        value: fd.get('value') as string,
+        value_type: valueType as 'flat' | 'percent',
+        ...(target !== 'order' ? { line_item_id: target } : {}),
+      },
+      { onSuccess: () => onOpenChange(false) },
+    )
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('admin.orders.detail.adjustment_lines.add_discount')}</DialogTitle>
+          <DialogDescription>
+            {t('admin.orders.detail.adjustment_lines.add_discount_description')}
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <DialogBody>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="discount-label">
+                  {t('admin.orders.detail.adjustment_lines.label_field')}
+                </FieldLabel>
+                <Input id="discount-label" name="label" required />
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field>
+                  <FieldLabel htmlFor="discount-value">
+                    {t('admin.orders.detail.adjustment_lines.value_field')}
+                  </FieldLabel>
+                  <Input
+                    id="discount-value"
+                    name="value"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel>
+                    {t('admin.orders.detail.adjustment_lines.value_type_field')}
+                  </FieldLabel>
+                  <Select
+                    items={valueTypeOptions}
+                    value={valueType}
+                    onValueChange={(v) => setValueType(v as string)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {valueTypeOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              </div>
+              <Field>
+                <FieldLabel>{t('admin.orders.detail.adjustment_lines.target_field')}</FieldLabel>
+                <Select
+                  items={targetOptions}
+                  value={target}
+                  onValueChange={(v) => setTarget(v as string)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {targetOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </FieldGroup>
+          </DialogBody>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              {t('admin.actions.cancel')}
+            </Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending
+                ? t('admin.actions.saving')
+                : t('admin.orders.detail.adjustment_lines.add_discount')}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function AddFeeDialog({
+  order,
+  open,
+  onOpenChange,
+}: {
+  order: Order
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const { orderId } = Route.useParams()
+  const [target, setTarget] = useState('order')
+
+  const mutation = useOrderAdjustmentLinesMutation(
+    orderId,
+    (params: { label: string; amount: string; kind?: string; line_item_id?: string }) =>
+      adminClient.orders.fees.create(orderId, params),
+  )
+
+  const targetOptions = [
+    { value: 'order', label: t('admin.orders.detail.adjustment_lines.target_order') },
+    ...(order.items ?? []).map((item) => ({ value: item.id, label: item.name ?? item.id })),
+  ]
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const fd = new FormData(e.currentTarget)
+    const kind = (fd.get('kind') as string).trim()
+    mutation.mutate(
+      {
+        label: fd.get('label') as string,
+        amount: fd.get('amount') as string,
+        ...(kind ? { kind } : {}),
+        ...(target !== 'order' ? { line_item_id: target } : {}),
+      },
+      { onSuccess: () => onOpenChange(false) },
+    )
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('admin.orders.detail.adjustment_lines.add_fee')}</DialogTitle>
+          <DialogDescription>
+            {t('admin.orders.detail.adjustment_lines.add_fee_description')}
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <DialogBody>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="fee-label">
+                  {t('admin.orders.detail.adjustment_lines.label_field')}
+                </FieldLabel>
+                <Input id="fee-label" name="label" required />
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field>
+                  <FieldLabel htmlFor="fee-amount">
+                    {t('admin.orders.detail.adjustment_lines.amount_field')}
+                  </FieldLabel>
+                  <Input id="fee-amount" name="amount" type="number" step="0.01" min="0" required />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="fee-kind">
+                    {t('admin.orders.detail.adjustment_lines.kind_field')}
+                  </FieldLabel>
+                  <Input id="fee-kind" name="kind" placeholder="surcharge" />
+                </Field>
+              </div>
+              <Field>
+                <FieldLabel>{t('admin.orders.detail.adjustment_lines.target_field')}</FieldLabel>
+                <Select
+                  items={targetOptions}
+                  value={target}
+                  onValueChange={(v) => setTarget(v as string)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {targetOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </FieldGroup>
+          </DialogBody>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              {t('admin.actions.cancel')}
+            </Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending
+                ? t('admin.actions.saving')
+                : t('admin.orders.detail.adjustment_lines.add_fee')}
             </Button>
           </DialogFooter>
         </form>

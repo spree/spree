@@ -1,0 +1,88 @@
+require 'spec_helper'
+
+RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller do
+  render_views
+
+  include_context 'API v3 Admin authenticated'
+
+  let!(:country) { Spree::Country.find_by(iso: 'US') || create(:country_us) }
+
+  before { request.headers.merge!(headers) }
+
+  describe 'GET #index' do
+    let!(:zone) { create(:delivery_zone, name: 'Domestic') }
+
+    it 'lists delivery zones' do
+      get :index, params: {}, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |z| z['name'] }).to include('Domestic')
+    end
+  end
+
+  describe 'POST #create' do
+    it 'creates a zone with typed members' do
+      post :create, params: {
+        name: 'US North-East',
+        members: [
+          { member_type: 'country', country_iso: 'US' },
+          { member_type: 'postal_code', country_iso: 'US', postal_code_prefix: '10' }
+        ]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['name']).to eq('US North-East')
+      expect(json_response['members'].length).to eq(2)
+      expect(json_response['members'].map { |m| m['member_type'] }).to contain_exactly('country', 'postal_code')
+      expect(json_response['members'].find { |m| m['member_type'] == 'postal_code' }['postal_code_prefix']).to eq('10')
+    end
+
+    it 'validates member shapes' do
+      post :create, params: {
+        name: 'Broken',
+        members: [{ member_type: 'postal_code' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
+  describe 'PATCH #update' do
+    let!(:zone) do
+      create(:delivery_zone, name: 'Domestic').tap do |z|
+        z.members.create!(member_type: 'country', country: country)
+      end
+    end
+
+    it 'replaces the member set atomically' do
+      patch :update, params: {
+        id: zone.prefixed_id,
+        name: 'Domestic v2',
+        members: [{ member_type: 'postal_code', country_iso: 'US', postal_code_from: '10000', postal_code_to: '19999' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(zone.reload.name).to eq('Domestic v2')
+      expect(zone.members.count).to eq(1)
+      expect(zone.members.first.member_type).to eq('postal_code')
+    end
+
+    it 'keeps members untouched when the payload has none' do
+      patch :update, params: { id: zone.prefixed_id, name: 'Renamed' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(zone.reload.members.count).to eq(1)
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    let!(:zone) { create(:delivery_zone) }
+
+    it 'deletes the zone' do
+      delete :destroy, params: { id: zone.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:no_content)
+      expect(Spree::DeliveryZone.exists?(zone.id)).to be(false)
+    end
+  end
+end

@@ -33,7 +33,12 @@ module Spree
 
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory', optional: true
 
+    attribute :display_on, :string, default: 'both'
     attribute :fulfillment_type, :string, default: 'shipping'
+
+    # Every method rates through a calculator; pickup/digital methods default
+    # to free so API/dashboard creation doesn't have to send one.
+    before_validation :ensure_calculator, on: :create
     attribute :fulfillment_provider, :string, default: 'Spree::FulfillmentProvider::Manual'
 
     scope :by_fulfillment_type, ->(type) { where(fulfillment_type: type) }
@@ -91,6 +96,10 @@ module Spree
       fulfillment_type == 'pickup'
     end
 
+    def ensure_calculator
+      self.calculator ||= Spree::Calculator::Shipping::FlatRate.new(preferred_amount: 0)
+    end
+
     def pickup_point?
       fulfillment_type == 'pickup_point'
     end
@@ -103,6 +112,13 @@ module Spree
     # Falls back to Manual for rows created before the 6.0 backfill ran.
     def provider
       @provider ||= (fulfillment_provider.presence || 'Spree::FulfillmentProvider::Manual').constantize.new
+    end
+
+    # The third-party pickup point network behind a pickup_point method.
+    #
+    # @return [Spree::PickupPointProvider::Base, nil]
+    def pickup_point_provider_instance
+      @pickup_point_provider_instance ||= pickup_point_provider.presence&.constantize&.new
     end
 
     def self.calculators

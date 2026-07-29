@@ -80,7 +80,10 @@ describe Spree::ShippingMethod, type: :model do
       expect(subject.errors.messages[:name].size).to eq(1)
     end
 
-    it 'validates presence of display_on' do
+    it 'defaults display_on and rejects explicit blank' do
+      expect(subject.display_on).to eq('both')
+
+      subject.display_on = nil
       subject.valid?
       expect(subject.errors.messages[:display_on].size).not_to be_zero
     end
