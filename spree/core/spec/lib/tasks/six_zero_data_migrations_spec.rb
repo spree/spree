@@ -1,0 +1,225 @@
+require 'spec_helper'
+require 'rake'
+
+describe '6.0 data migration tasks' do
+  before(:all) do
+    Rake::Task.define_task(:environment)
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'delivery_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'typed_adjustments_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'carts_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'products.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'order_market_backfill.rake')
+  end
+
+  let(:store) { @default_store }
+
+  def run_task(name)
+    task = Rake::Task[name]
+    task.reenable
+    silence_stream($stdout) { task.invoke }
+  end
+
+  def silence_stream(stream)
+    old = stream.dup
+    stream.reopen(File::NULL, 'w')
+    yield
+  ensure
+    stream.reopen(old)
+  end
+
+  describe 'spree:migrate_shipping_to_delivery' do
+    let!(:order) { create(:order_with_line_items, store: store) }
+    let(:fulfillment) { order.fulfillments.first }
+
+    it 'renames stored class-name strings and the shipped status' do
+      fulfillment.update_columns(status: 'shipped', fulfillment_type: nil)
+      Spree::StateChange.create!(stateful_type: 'Spree::Shipment', stateful_id: fulfillment.id,
+                                 name: 'shipment', previous_state: 'ready', next_state: 'shipped')
+
+      run_task('spree:migrate_shipping_to_delivery')
+
+      expect(fulfillment.reload.status).to eq('fulfilled')
+      expect(fulfillment.fulfillment_type).to eq('shipping')
+      change = Spree::StateChange.where(stateful_id: fulfillment.id).last
+      expect(change.stateful_type).to eq('Spree::Fulfillment')
+      expect(change.name).to eq('fulfillment')
+      expect(change.next_state).to eq('fulfilled')
+    end
+
+    it 'marks digital-delivery methods and converts display_on' do
+      digital_method = create(:shipping_method)
+      digital_method.calculator.destroy!
+      Spree::Calculator::Shipping::DigitalDelivery.create!(calculable: digital_method)
+      digital_method.update_columns(fulfillment_type: nil, fulfillment_provider: nil, storefront_visible: nil, display_on: 'back_end')
+
+      run_task('spree:migrate_shipping_to_delivery')
+
+      digital_method.reload
+      expect(digital_method.fulfillment_type).to eq('digital')
+      expect(digital_method.fulfillment_provider).to eq('Spree::FulfillmentProvider::Digital')
+      expect(digital_method.read_attribute(:storefront_visible)).to be(false)
+    end
+
+    it 'is idempotent' do
+      fulfillment.update_columns(status: 'shipped')
+      run_task('spree:migrate_shipping_to_delivery')
+      expect { run_task('spree:migrate_shipping_to_delivery') }.not_to raise_error
+      expect(fulfillment.reload.status).to eq('fulfilled')
+    end
+  end
+
+  describe 'spree:migrate_zones_to_delivery_zones' do
+    let!(:country) { Spree::Country.find_by(iso: 'US') || create(:country_us) }
+    let!(:zone) do
+      zone = Spree::Zone.create!(name: "Legacy Ship Zone #{Time.current.to_f}", kind: 'shipping')
+      zone.zone_members.create!(zoneable: country)
+      zone
+    end
+    let!(:delivery_method) { create(:shipping_method) }
+
+    before do
+      Spree::DeliveryMethodZone.create!(delivery_method_id: delivery_method.id, delivery_zone_id: zone.id)
+    end
+
+    it 'converts referenced zones into delivery zones and re-points the joins' do
+      run_task('spree:migrate_zones_to_delivery_zones')
+
+      delivery_zone = Spree::DeliveryZone.find_by(name: zone.name)
+      expect(delivery_zone).to be_present
+      expect(delivery_zone.metadata['migrated_from_zone_id']).to eq(zone.id)
+      expect(delivery_zone.members.pluck(:member_type, :country_id)).to eq([['country', country.id]])
+      expect(Spree::DeliveryMethodZone.where(delivery_method_id: delivery_method.id).pluck(:delivery_zone_id)).to eq([delivery_zone.id])
+    end
+
+    it 'is idempotent' do
+      run_task('spree:migrate_zones_to_delivery_zones')
+      expect { run_task('spree:migrate_zones_to_delivery_zones') }.not_to change(Spree::DeliveryZone, :count)
+    end
+  end
+
+  describe 'spree:migrate_adjustments_to_typed_rows' do
+    let!(:order) { create(:completed_order_with_totals, store: store) }
+    let(:line_item) { order.line_items.first }
+    let(:legacy) { Class.new(ActiveRecord::Base) { self.table_name = 'spree_adjustments' } }
+
+    before do
+      order.tax_lines.delete_all
+      order.discounts.delete_all
+      order.fees.delete_all
+    end
+
+    it 'maps tax, promotion and sourceless rows onto typed tables without touching totals' do
+      tax_rate = create(:tax_rate, amount: 0.1)
+      promotion = create(:promotion, name: 'Legacy promo', code: 'LEGACY')
+      action = Spree::Promotion::Actions::CreateItemAdjustments.create!(promotion: promotion)
+
+      legacy.create!(order_id: order.id, adjustable_type: 'Spree::LineItem', adjustable_id: line_item.id,
+                     source_type: 'Spree::TaxRate', source_id: tax_rate.id, amount: 1.5, label: 'Tax 10%',
+                     eligible: true, included: false)
+      legacy.create!(order_id: order.id, adjustable_type: 'Spree::LineItem', adjustable_id: line_item.id,
+                     source_type: 'Spree::PromotionAction', source_id: action.id, amount: -2, label: 'Promo',
+                     eligible: true, included: false)
+      legacy.create!(order_id: order.id, adjustable_type: 'Spree::Order', adjustable_id: order.id,
+                     source_type: nil, source_id: nil, amount: 3, label: 'Handling', eligible: true, included: false)
+
+      order.update_columns(discount_total: -2, additional_tax_total: 1.5)
+      totals_before = order.reload.attributes.slice('total', 'discount_total', 'additional_tax_total')
+
+      run_task('spree:migrate_adjustments_to_typed_rows')
+
+      tax_line = Spree::TaxLine.find_by(order_id: order.id)
+      expect(tax_line.amount).to eq(1.5)
+      expect(tax_line.rate).to eq(0.1)
+      expect(tax_line.line_item_id).to eq(line_item.id)
+
+      discount = Spree::Discount.find_by(order_id: order.id)
+      expect(discount.amount).to eq(-2)
+      expect(discount.kind).to eq('promotion')
+      expect(discount.code).to eq('legacy')
+
+      fee = Spree::Fee.find_by(order_id: order.id)
+      expect(fee.amount).to eq(3)
+      expect(fee.kind).to eq('surcharge')
+
+      expect(order.reload.attributes.slice('total', 'discount_total', 'additional_tax_total')).to eq(totals_before)
+      expect(order.private_metadata['typed_adjustments_frozen']).to be_nil
+    end
+
+    it 'freezes orders whose typed sums do not reconcile' do
+      legacy.create!(order_id: order.id, adjustable_type: 'Spree::LineItem', adjustable_id: line_item.id,
+                     source_type: 'Spree::PromotionAction', source_id: nil, amount: -2, label: 'Ghost promo',
+                     eligible: true, included: false)
+      order.update_columns(discount_total: -10)
+
+      run_task('spree:migrate_adjustments_to_typed_rows')
+
+      expect(order.reload.private_metadata['typed_adjustments_frozen']).to eq('totals_do_not_reconcile')
+    end
+
+    it 'skips orders that already carry typed rows' do
+      create(:fee, order: order, amount: 1, label: 'Existing')
+      legacy.create!(order_id: order.id, adjustable_type: 'Spree::Order', adjustable_id: order.id,
+                     source_type: nil, source_id: nil, amount: 3, label: 'Handling', eligible: true, included: false)
+
+      expect { run_task('spree:migrate_adjustments_to_typed_rows') }.not_to change { Spree::Fee.where(order_id: order.id).count }
+    end
+  end
+
+  describe 'spree:migrate_incomplete_orders_to_carts' do
+    let!(:incomplete_order) do
+      create(:order_with_line_items, store: store).tap do |order|
+        order.update_columns(completed_at: nil, status: 'draft')
+      end
+    end
+    let!(:completed_order) { create(:completed_order_with_totals, store: store) }
+
+    it 'converts incomplete orders into carts and re-owns their records' do
+      line_item_ids = incomplete_order.line_items.ids
+      token = incomplete_order.token
+      order_id = incomplete_order.id
+
+      run_task('spree:migrate_incomplete_orders_to_carts')
+
+      cart = Spree::Cart.find_by(token: token)
+      expect(cart).to be_present
+      expect(cart.store_id).to eq(store.id)
+      expect(cart.line_items.ids).to match_array(line_item_ids)
+      expect(Spree::LineItem.where(id: line_item_ids).pluck(:order_id).uniq).to eq([nil])
+      expect(Spree::Order.unscoped.exists?(order_id)).to be(false)
+    end
+
+    it 'leaves completed orders untouched' do
+      run_task('spree:migrate_incomplete_orders_to_carts')
+
+      expect(Spree::Order.unscoped.exists?(completed_order.id)).to be(true)
+      expect(completed_order.reload.completed_at).to be_present
+    end
+
+    it 'is idempotent' do
+      run_task('spree:migrate_incomplete_orders_to_carts')
+      expect { run_task('spree:migrate_incomplete_orders_to_carts') }.not_to change(Spree::Cart, :count)
+    end
+  end
+
+  describe 'spree:backfill_order_markets' do
+    it 'assigns the store default market to orders missing one' do
+      order = create(:order, store: store)
+      order.update_columns(market_id: nil)
+
+      run_task('spree:backfill_order_markets')
+
+      expect(order.reload.market_id).to eq(store.default_market.id)
+    end
+  end
+
+  describe 'spree:product_types:backfill' do
+    it 'assigns store-less product types to the default store' do
+      product_type = Spree::ProductType.create!(name: "Orphan #{Time.current.to_f}", fulfillment_types: ['shipping'])
+      product_type.update_columns(store_id: nil)
+
+      run_task('spree:product_types:backfill')
+
+      expect(product_type.reload.store_id).to eq(Spree::Store.default.id)
+    end
+  end
+end

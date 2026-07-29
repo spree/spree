@@ -1,4 +1,23 @@
 namespace :spree do
+  namespace :product_types do
+    desc 'Backfill store ownership on product types and clean orphaned joins'
+    task backfill: :environment do
+      default_store = Spree::Store.default
+      abort 'No default store found' unless default_store&.persisted?
+
+      count = Spree::ProductType.where(store_id: nil).update_all(store_id: default_store.id)
+      puts "product types assigned to #{default_store.code}: #{count}"
+
+      orphans = Spree::OptionTypeProductType.where.missing(:product_type)
+      puts "orphaned option-type joins removed: #{orphans.delete_all}"
+
+      Spree::ProductType.find_each do |product_type|
+        Spree::ProductType.reset_counters(product_type.id, :products)
+      end
+      puts 'product counters reset.'
+    end
+  end
+
   namespace :products do
     desc 'Reset counter caches (variant_count, categories_count, media_count) on products'
     task reset_counter_caches: :environment do |_t, _args|
