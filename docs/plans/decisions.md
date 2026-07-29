@@ -568,3 +568,26 @@ same day: WeightRule uses the store's implicit unit (raw-number comparison,
 legacy parity); rules are method-scoped only (no zone context — per-region
 bounds are separate methods); Phase 1 ships with the 6.0 core-rewrite
 finishing work, Channel/Market/CustomerGroup later with payment rules.
+
+
+## 2026-07-29 — Admin discount application follows the Saleor shape
+
+How should an admin apply a discount to an order in the dashboard? Competitor
+survey: Shopify draft orders take only **manual** discounts (order- or
+line-level custom amount/percent with a reason) — codes are a checkout
+concept the buyer redeems; Medusa admin drafts accept **promotion codes**
+directly; Saleor drafts take **both** a voucher code and a manual order
+discount stored as its own discount object.
+
+**Decision:** the Saleor shape, split by lifecycle. Draft orders accept
+discount codes post-creation via `POST /admin/orders/:id/discount_codes`
+(same `PromotionHandler::Coupon` path and pending semantics as the
+storefront cart endpoint — a real-but-not-yet-eligible code is stored and
+activates on recalculation); completed orders refuse codes (recalculation
+is frozen) and take **manual typed Discount rows** through the existing
+`/admin/orders/:id/discounts` CRUD (`Orders::AddManualDiscount`,
+largest-remainder distribution, `resum_typed_totals!`). The dashboard's
+promotion picker is sugar over the code path — picking a coupon promotion
+fills in its code; it is not a separate application mechanism. The coupon
+handler now always reports ineligibility with the retryable status code so
+endpoints can tell a not-yet-qualifying code from an invalid one.
