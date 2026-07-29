@@ -605,10 +605,12 @@ a direct collision with our historical name.
 
 **Decisions:** carts publish `cart.created/updated/deleted` (5.x
 abandonment-signal parity). The placement event is renamed
-`order.completed` → **`order.placed`** — a deliberate 6.0 breaking change:
-newcomers are the primary audience and the old name misleads anyone
-arriving from Medusa; existing webhook consumers adjust one subscription
-on upgrade. `order.created` keeps meaning "order row exists" (admin drafts
+`order.completed` → **`order.placed`** — newcomers are the primary
+audience and the old name misleads anyone arriving from Medusa. Per the
+one-release bridge convention, 6.0 dual-emits: `order.completed` still
+fires with an identical payload and `deprecated_alias_of: 'order.placed'`
+in the event metadata (wildcard subscribers dedupe on it); the alias is
+dropped in 6.1. The dashboard event picker offers only `order.placed`. `order.created` keeps meaning "order row exists" (admin drafts
 included). Admin confirmation resends publish the targeted
 `order.resend_confirmation_email` instead of re-blasting the placement
 event. Order payloads carry `cart_id` (BigCommerce `store/cart/converted`

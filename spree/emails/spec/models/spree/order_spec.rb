@@ -14,6 +14,7 @@ describe Spree::Order, type: :model do
 
     it 'publishes order.placed event when finalizing', events: true do
       expect(order).to receive(:publish_event).with('order.placed', hash_including(:notify_customer))
+      expect(order).to receive(:publish_event).with('order.completed', hash_including(:notify_customer), { deprecated_alias_of: 'order.placed' })
       allow(order).to receive(:publish_event).with(anything)
       allow(order).to receive(:publish_event).with(anything, anything)
 

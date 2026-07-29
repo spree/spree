@@ -1277,7 +1277,11 @@ module Spree
     end
 
     def publish_order_placed_event
-      publish_event('order.placed', event_payload.merge(notify_customer: notify_customer))
+      payload = event_payload.merge(notify_customer: notify_customer)
+      publish_event('order.placed', payload)
+      # One-release alias for 5.x webhook consumers; removed in 6.1.
+      # Wildcard subscribers dedupe on the metadata marker.
+      publish_event('order.completed', payload, { deprecated_alias_of: 'order.placed' })
     end
 
     def publish_order_resumed_event

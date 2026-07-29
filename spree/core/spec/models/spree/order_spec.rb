@@ -473,6 +473,7 @@ describe Spree::Order, type: :model do
 
       it 'publishes order.completed event' do
         expect(order).to receive(:publish_event).with('order.placed', hash_including(:notify_customer)).at_least(:once)
+        expect(order).to receive(:publish_event).with('order.completed', hash_including(:notify_customer), { deprecated_alias_of: 'order.placed' }).at_least(:once)
         allow(order).to receive(:publish_event).with(anything)
         allow(order).to receive(:publish_event).with(anything, anything)
         order.finalize!
