@@ -96,9 +96,9 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
     context 'off-session charge against a saved credit card (source_id)' do
       let(:customer) { create(:user) }
-      let(:order) { create(:completed_order_with_totals, store: store, user: customer) }
+      let(:order) { create(:completed_order_with_totals, store: store, customer: customer) }
       let(:credit_card_method) { create(:credit_card_payment_method) }
-      let(:saved_card) { create(:credit_card, user: customer, payment_method: credit_card_method) }
+      let(:saved_card) { create(:credit_card, customer: customer, payment_method: credit_card_method) }
 
       it 'attaches the saved card as the payment source' do
         post :create, params: {
@@ -116,7 +116,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::PaymentsController, type: :control
 
       context 'when source belongs to a different customer' do
         let(:other_customer) { create(:user) }
-        let(:other_card) { create(:credit_card, user: other_customer, payment_method: credit_card_method) }
+        let(:other_card) { create(:credit_card, customer: other_customer, payment_method: credit_card_method) }
 
         it 'returns 404 to prevent cross-customer use' do
           post :create, params: {

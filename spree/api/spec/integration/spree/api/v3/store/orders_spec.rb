@@ -29,7 +29,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
                 description: 'Comma-separated list of fields to include (e.g., total,amount_due,item_count). id is always included.'
 
       response '200', 'order found (authenticated)' do
-        let(:completed_order) { create(:completed_order_with_totals, store: store, user: user) }
+        let(:completed_order) { create(:completed_order_with_totals, store: store, customer: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { completed_order.to_param }
@@ -48,7 +48,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       end
 
       response '200', 'order found (guest via order token)' do
-        let(:guest_order) { create(:completed_order_with_totals, store: store, user: nil, email: 'guest@example.com') }
+        let(:guest_order) { create(:completed_order_with_totals, store: store, customer: nil, email: 'guest@example.com') }
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { guest_order.to_param }
         let(:'x-spree-token') { guest_order.token }
@@ -73,7 +73,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       end
 
       response '404', 'incomplete order not accessible' do
-        let(:incomplete_order) { create(:order_with_line_items, store: store, user: user) }
+        let(:incomplete_order) { create(:order_with_line_items, store: store, customer: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { incomplete_order.to_param }

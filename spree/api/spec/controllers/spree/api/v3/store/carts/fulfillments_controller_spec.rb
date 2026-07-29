@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
   include_context 'API v3 Store'
 
   let!(:order) do
-    create(:order_with_line_items, user: user, store: store, state: 'delivery').tap do |o|
+    create(:order_with_line_items, customer: user, store: store, state: 'delivery').tap do |o|
       o.create_proposed_shipments
       o.shipments.first.refresh_rates
       o.reload
@@ -82,7 +82,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
 
       it 'does not advance from payment to complete' do
         create(:store_credit_payment_method)
-        credit = create(:store_credit, user: order.user, store: store, amount: order.total)
+        credit = create(:store_credit, customer: order.user, store: store, amount: order.total)
         order.payments.create!(
           source: credit,
           payment_method: Spree::PaymentMethod::StoreCredit.first,

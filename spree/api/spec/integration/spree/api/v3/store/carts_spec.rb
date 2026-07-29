@@ -32,10 +32,10 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
                 description: 'Comma-separated list of fields to include (e.g., total,amount_due,item_count). id is always included.'
 
       response '200', 'carts listed' do
-        let!(:cart1) { create(:order_with_line_items, store: store, user: user) }
-        let!(:cart2) { create(:order_with_line_items, store: store, user: user) }
-        let!(:completed_order) { create(:completed_order_with_totals, store: store, user: user) }
-        let!(:other_user_cart) { create(:order_with_line_items, store: store, user: create(:user)) }
+        let!(:cart1) { create(:order_with_line_items, store: store, customer: user) }
+        let!(:cart2) { create(:order_with_line_items, store: store, customer: user) }
+        let!(:completed_order) { create(:completed_order_with_totals, store: store, customer: user) }
+        let!(:other_user_cart) { create(:order_with_line_items, store: store, customer: create(:user)) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
@@ -224,7 +224,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       }
 
       response '200', 'cart updated' do
-        let!(:order) { create(:order_with_line_items, store: store, user: user) }
+        let!(:order) { create(:order_with_line_items, store: store, customer: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { order.prefixed_id }
@@ -254,7 +254,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       parameter name: :id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
 
       response '204', 'cart deleted' do
-        let!(:cart) { create(:order_with_line_items, store: store, user: user) }
+        let!(:cart) { create(:order_with_line_items, store: store, customer: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { cart.prefixed_id }
@@ -283,7 +283,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       parameter name: :id, in: :path, type: :string, required: true, description: 'Cart prefixed ID'
 
       response '200', 'cart associated successfully' do
-        let(:guest_cart) { create(:order_with_line_items, store: store, user: nil) }
+        let(:guest_cart) { create(:order_with_line_items, store: store, customer: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:'x-spree-token') { guest_cart.token }
@@ -299,7 +299,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       end
 
       response '401', 'unauthorized - JWT required' do
-        let(:guest_cart) { create(:order_with_line_items, store: store, user: nil) }
+        let(:guest_cart) { create(:order_with_line_items, store: store, customer: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { '' }
         let(:'x-spree-token') { guest_cart.token }
@@ -311,7 +311,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       end
 
       response '403', 'forbidden - cart token missing or does not match' do
-        let(:guest_cart) { create(:order_with_line_items, store: store, user: nil) }
+        let(:guest_cart) { create(:order_with_line_items, store: store, customer: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:'x-spree-token') { 'does-not-match' }
@@ -340,7 +340,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
 
       response '200', 'cart completed' do
         let(:completable_order) do
-          order = create(:order_with_line_items, store: store, user: user)
+          order = create(:order_with_line_items, store: store, customer: user)
           Spree.checkout_advance_service.call(order: order)
           payment_method = create(:check_payment_method)
           create(:payment, order: order, amount: order.total, payment_method: payment_method, state: 'checkout')
@@ -361,7 +361,7 @@ RSpec.describe 'Carts API', type: :request, swagger_doc: 'api-reference/store.ya
       end
 
       response '422', 'cannot complete' do
-        let!(:order) { create(:order_with_line_items, store: store, user: user) }
+        let!(:order) { create(:order_with_line_items, store: store, customer: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { order.prefixed_id }

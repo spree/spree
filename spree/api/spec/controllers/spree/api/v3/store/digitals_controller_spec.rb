@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::DigitalsController, type: :controller do
 
   include_context 'API v3 Store'
 
-  let(:order) { create(:order_with_line_items, store: store, user: user) }
+  let(:order) { create(:order_with_line_items, store: store, customer: user) }
   let(:line_item) { order.line_items.first }
   let(:digital) { create(:digital, variant: line_item.variant) }
   let!(:digital_link) { create(:digital_link, digital: digital, line_item: line_item) }

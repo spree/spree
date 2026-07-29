@@ -67,7 +67,7 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
         let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_products']) }
 
         it 'forbids listing customer tags' do
-          get :index, params: { taggable_type: Spree.user_class.to_s }, as: :json
+          get :index, params: { taggable_type: Spree.customer_class.to_s }, as: :json
 
           expect(response).to have_http_status(:forbidden)
           expect(json_response['error']['details']['required_scope']).to eq('read_customers')
@@ -78,7 +78,7 @@ RSpec.describe Spree::Api::V3::Admin::TagsController, type: :controller do
         let(:api_key) { create(:api_key, :secret, store: store, scopes: ['read_customers']) }
 
         it 'allows listing customer tags' do
-          get :index, params: { taggable_type: Spree.user_class.to_s }, as: :json
+          get :index, params: { taggable_type: Spree.customer_class.to_s }, as: :json
 
           expect(response).to have_http_status(:ok)
           expect(json_response['data'].map { |t| t['name'] }).to include('vip')

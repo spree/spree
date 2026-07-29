@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Cart Fulfillments API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:order) { create(:order_with_line_items, store: store, user: user, state: 'delivery') }
+  let!(:order) { create(:order_with_line_items, store: store, customer: user, state: 'delivery') }
   let!(:fulfillment) { order.shipments.first }
   let(:cart_id) { order.prefixed_id }
 

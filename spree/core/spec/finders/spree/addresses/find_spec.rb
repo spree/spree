@@ -8,7 +8,7 @@ describe Spree::Addresses::Find do
   let!(:address4) { create(:address, customer: user, quick_checkout: true) }
 
   describe '#execute' do
-    let(:scope) { Spree::Address.where(user: user) }
+    let(:scope) { Spree::Address.where(customer: user) }
 
     context 'without any filter parameters' do
       let(:params) { {} }

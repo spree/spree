@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
     it 'creates a new user' do
       expect {
         post :create, params: valid_params
-      }.to change(Spree.user_class, :count).by(1)
+      }.to change(Spree.customer_class, :count).by(1)
 
       expect(response).to have_http_status(:created)
     end
@@ -43,7 +43,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       post :create, params: valid_params.merge(first_name: 'John', last_name: 'Doe')
 
       expect(response).to have_http_status(:created)
-      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      new_user = Spree.customer_class.find_by(email: 'newuser@example.com')
       expect(new_user.first_name).to eq('John')
       expect(new_user.last_name).to eq('Doe')
     end
@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       post :create, params: valid_params.merge(phone: '+1234567890')
 
       expect(response).to have_http_status(:created)
-      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      new_user = Spree.customer_class.find_by(email: 'newuser@example.com')
       expect(new_user.phone).to eq('+1234567890')
     end
 
@@ -60,7 +60,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       post :create, params: valid_params.merge(accepts_email_marketing: true)
 
       expect(response).to have_http_status(:created)
-      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      new_user = Spree.customer_class.find_by(email: 'newuser@example.com')
       expect(new_user.accepts_email_marketing).to eq(true)
     end
 
@@ -68,7 +68,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       post :create, params: valid_params.merge(metadata: { source: 'storefront' })
 
       expect(response).to have_http_status(:created)
-      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      new_user = Spree.customer_class.find_by(email: 'newuser@example.com')
       expect(new_user.metadata).to eq({ 'source' => 'storefront' })
     end
 
@@ -85,7 +85,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
         post :create, params: valid_params
 
         expect(response).to have_http_status(:created)
-        new_user = Spree.user_class.find_by(email: valid_params[:email])
+        new_user = Spree.customer_class.find_by(email: valid_params[:email])
         expect(subscriber.reload.user).to eq(new_user)
         expect(new_user.accepts_email_marketing).to eq(false)
       end
@@ -104,7 +104,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
         post :create, params: valid_params.merge(accepts_email_marketing: false)
 
         expect(response).to have_http_status(:created)
-        new_user = Spree.user_class.find_by(email: valid_params[:email])
+        new_user = Spree.customer_class.find_by(email: valid_params[:email])
         expect(subscriber.reload.user).to eq(new_user)
         expect(new_user.accepts_email_marketing).to eq(true)
         expect(json_response['user']['accepts_email_marketing']).to eq(true)
@@ -204,7 +204,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
     context 'newsletter subscriber' do
       it 'exposes the current store subscriber' do
-        subscriber = create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store)
+        subscriber = create(:newsletter_subscriber, :verified, customer: user, email: user.email, store: store)
 
         get :show
 
@@ -218,7 +218,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       end
 
       it 'is null when the only subscriber is on a different store' do
-        create(:newsletter_subscriber, :verified, user: user, email: user.email, store: create(:store))
+        create(:newsletter_subscriber, :verified, customer: user, email: user.email, store: create(:store))
 
         get :show
 

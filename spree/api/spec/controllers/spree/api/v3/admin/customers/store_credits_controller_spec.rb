@@ -7,7 +7,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
 
   let(:customer) { create(:user) }
   let(:category) { create(:store_credit_category) }
-  let!(:store_credit) { create(:store_credit, user: customer, store: store, amount: 50.00, category: category) }
+  let!(:store_credit) { create(:store_credit, customer: customer, store: store, amount: 50.00, category: category) }
 
   before { request.headers.merge!(headers) }
 
@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
     let(:custom_permission_set) do
       Class.new(Spree::PermissionSets::Base) do
         def activate!
-          can [:read, :admin], Spree.user_class
+          can [:read, :admin], Spree.customer_class
           can :manage, Spree::StoreCredit
         end
       end
@@ -184,7 +184,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
   describe 'cross-store isolation' do
     let(:other_store) { create(:store) }
     let!(:foreign_credit) do
-      create(:store_credit, user: customer, store: other_store, amount: 99.00, category: category)
+      create(:store_credit, customer: customer, store: other_store, amount: 99.00, category: category)
     end
 
     it 'excludes other stores\' credits from the index' do

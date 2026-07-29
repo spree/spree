@@ -6,7 +6,7 @@ RSpec.describe 'Admin Customer Addresses API', type: :request, swagger_doc: 'api
   include_context 'API v3 Admin'
 
   let!(:customer) { create(:user) }
-  let!(:address) { create(:address, user: customer) }
+  let!(:address) { create(:address, customer: customer) }
   let(:country) { address.country }
   let(:state) { address.state }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }

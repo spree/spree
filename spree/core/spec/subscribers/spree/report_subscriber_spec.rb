@@ -23,7 +23,7 @@ RSpec.describe Spree::ReportSubscriber do
     let(:report) do
       create(:report,
         store: store,
-        customer: user,
+        user: user,
         date_from: 1.month.ago,
         date_to: Time.current,
         currency: store.default_currency

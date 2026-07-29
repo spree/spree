@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::OrdersController, type: :control
 
   include_context 'API v3 Store'
 
-  let!(:order) { create(:completed_order_with_totals, user: user, store: store) }
+  let!(:order) { create(:completed_order_with_totals, customer: user, store: store) }
   let!(:other_user_order) { create(:completed_order_with_totals, store: store) }
 
   before do
@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::OrdersController, type: :control
 
     it 'does not return orders from other stores' do
       other_store = create(:store)
-      create(:completed_order_with_totals, user: user, store: other_store)
+      create(:completed_order_with_totals, customer: user, store: other_store)
 
       get :index
 

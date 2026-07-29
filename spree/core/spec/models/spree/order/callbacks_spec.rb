@@ -24,7 +24,7 @@ describe Spree::Order, type: :model do
       let(:user) { double(:user, email: 'test@example.com') }
 
       before do
-        allow(order).to receive_messages user: user
+        allow(order).to receive_messages customer: user
       end
 
       it 'assigns the email address of the user' do

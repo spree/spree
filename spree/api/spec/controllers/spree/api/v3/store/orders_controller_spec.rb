@@ -10,7 +10,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
   end
 
   describe 'GET #show' do
-    let(:order) { create(:completed_order_with_totals, user: user, store: store) }
+    let(:order) { create(:completed_order_with_totals, customer: user, store: store) }
 
     context 'authenticated user' do
       before do
@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
     end
 
     context 'with spree token' do
-      let(:guest_order) { create(:completed_order_with_totals, user: nil, store: store) }
+      let(:guest_order) { create(:completed_order_with_totals, customer: nil, store: store) }
 
       it 'returns the order for guest with valid token' do
         request.headers['x-spree-token'] = guest_order.token
@@ -76,7 +76,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'returns not found for incomplete orders' do
-        incomplete_order = create(:order_with_line_items, user: user, store: store)
+        incomplete_order = create(:order_with_line_items, customer: user, store: store)
         get :show, params: { id: incomplete_order.to_param }
 
         expect(response).to have_http_status(:not_found)

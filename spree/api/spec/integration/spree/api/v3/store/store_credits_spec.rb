@@ -6,7 +6,7 @@ RSpec.describe 'Cart Store Credits API', type: :request, swagger_doc: 'api-refer
   include_context 'API v3 Store'
 
   let(:user) { create(:user_with_addresses) }
-  let!(:order) { create(:order_with_line_items, store: store, user: user) }
+  let!(:order) { create(:order_with_line_items, store: store, customer: user) }
   let(:cart_id) { order.prefixed_id }
 
   path '/api/v3/store/carts/{cart_id}/store_credits' do
@@ -34,7 +34,7 @@ RSpec.describe 'Cart Store Credits API', type: :request, swagger_doc: 'api-refer
 
       response '200', 'store credit applied' do
         let(:store_credit_payment_method) { create(:store_credit_payment_method) }
-        let(:store_credit) { create(:store_credit, user: user, store: store, amount: 50) }
+        let(:store_credit) { create(:store_credit, customer: user, store: store, amount: 50) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { amount: 10 } }

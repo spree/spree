@@ -50,10 +50,10 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
   end
 
   # Simulates the dev-mode class-reload condition where
-  # `enabled_resources.include?(Spree.user_class)` returns false because the
+  # `enabled_resources.include?(Spree.customer_class)` returns false because the
   # cached class reference goes stale after Zeitwerk reloads. The customer
   # route must still resolve in that case.
-  describe 'when enabled_resources does not contain Spree.user_class' do
+  describe 'when enabled_resources does not contain Spree.customer_class' do
     let!(:parent) { create(:user) }
     let!(:definition) { create(:metafield_definition, :for_user) }
     let!(:custom_field) do
@@ -63,7 +63,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
 
     before do
       @original_resources = Rails.application.config.spree.metafields.enabled_resources
-      Rails.application.config.spree.metafields.enabled_resources = @original_resources - [Spree.user_class]
+      Rails.application.config.spree.metafields.enabled_resources = @original_resources - [Spree.customer_class]
     end
 
     after { Rails.application.config.spree.metafields.enabled_resources = @original_resources }

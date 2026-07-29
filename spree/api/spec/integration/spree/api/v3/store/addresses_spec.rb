@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:address) { create(:address, user: user) }
+  let!(:address) { create(:address, customer: user) }
   let(:country) { address.country }
   let(:state) { address.state }
 

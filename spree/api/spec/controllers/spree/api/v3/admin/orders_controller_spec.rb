@@ -74,10 +74,10 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       # callback resets `email` from `user.email`. Pass `user: nil` so our
       # explicit email sticks for the email-match assertion.
       let!(:matching_order) do
-        create(:order, store: store, state: 'cart', user: nil, email: 'jane.doe@example.com')
+        create(:order, store: store, state: 'cart', customer: nil, email: 'jane.doe@example.com')
       end
       let!(:non_matching_order) do
-        create(:order, store: store, state: 'cart', user: nil, email: 'someone-else@example.com')
+        create(:order, store: store, state: 'cart', customer: nil, email: 'someone-else@example.com')
       end
 
       it 'matches by order number substring' do
@@ -416,7 +416,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     context 'with customer reassignment via customer_id' do
       let(:original_customer) { create(:user) }
       let(:new_customer) { create(:user) }
-      let!(:order) { create(:order, store: store, state: 'cart', user: original_customer) }
+      let!(:order) { create(:order, store: store, state: 'cart', customer: original_customer) }
 
       it 'reassigns to the new customer' do
         patch :update, params: { id: order.prefixed_id, customer_id: new_customer.prefixed_id }, as: :json

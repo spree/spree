@@ -269,7 +269,7 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
       response '204', 'token path also flips the linked user\'s accepts_email_marketing flag' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { '' }
-        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, customer: user, email: user.email, store: store) }
         let(:id) { subscriber.prefixed_id }
         let(:token) { subscriber.generate_token_for(:unsubscribe) }
 
@@ -285,8 +285,8 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { '' }
         let(:other_store) { create(:store) }
-        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
-        let!(:other_subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: other_store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, customer: user, email: user.email, store: store) }
+        let!(:other_subscriber) { create(:newsletter_subscriber, :verified, customer: user, email: user.email, store: other_store) }
         let(:id) { subscriber.prefixed_id }
         let(:token) { subscriber.generate_token_for(:unsubscribe) }
 
@@ -302,7 +302,7 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
       response '204', 'unsubscribed via JWT (owner)' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, customer: user, email: user.email, store: store) }
         let(:id) { subscriber.prefixed_id }
         let(:token) { nil }
 
@@ -397,7 +397,7 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:other_user) { create(:user) }
-        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: other_user, email: other_user.email, store: store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, customer: other_user, email: other_user.email, store: store) }
         let(:id) { subscriber.prefixed_id }
         let(:token) { nil }
 
@@ -413,7 +413,7 @@ RSpec.describe 'Newsletter Subscribers API', type: :request, swagger_doc: 'api-r
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:other_store) { create(:store) }
-        let!(:subscriber) { create(:newsletter_subscriber, :verified, user: user, email: user.email, store: other_store) }
+        let!(:subscriber) { create(:newsletter_subscriber, :verified, customer: user, email: user.email, store: other_store) }
         let(:id) { subscriber.prefixed_id }
         let(:token) { nil }
 

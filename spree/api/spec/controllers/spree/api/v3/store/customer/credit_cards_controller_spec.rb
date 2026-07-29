@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
   include_context 'API v3 Store'
 
   let(:payment_method) { create(:credit_card_payment_method, store: store) }
-  let!(:credit_card) { create(:credit_card, user: user, payment_method: payment_method) }
+  let!(:credit_card) { create(:credit_card, customer: user, payment_method: payment_method) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -30,7 +30,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
 
     it 'only returns credit cards belonging to the current user' do
       other_user = create(:user)
-      other_card = create(:credit_card, user: other_user, payment_method: payment_method)
+      other_card = create(:credit_card, customer: other_user, payment_method: payment_method)
 
       get :index
 
@@ -60,7 +60,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
 
     context 'when credit card belongs to another user' do
       let(:other_user) { create(:user) }
-      let(:other_card) { create(:credit_card, user: other_user, payment_method: payment_method) }
+      let(:other_card) { create(:credit_card, customer: other_user, payment_method: payment_method) }
 
       it 'returns not found' do
         get :show, params: { id: other_card.prefixed_id }
@@ -91,7 +91,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
 
     context 'when credit card belongs to another user' do
       let!(:other_user) { create(:user) }
-      let!(:other_card) { create(:credit_card, user: other_user, payment_method: payment_method) }
+      let!(:other_card) { create(:credit_card, customer: other_user, payment_method: payment_method) }
 
       it 'returns not found' do
         expect {
@@ -116,7 +116,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
   describe 'cross-store isolation' do
     let(:other_store) { create(:store) }
     let(:other_payment_method) { create(:credit_card_payment_method, store: other_store) }
-    let!(:foreign_card) { create(:credit_card, user: user, payment_method: other_payment_method) }
+    let!(:foreign_card) { create(:credit_card, customer: user, payment_method: other_payment_method) }
 
     it 'excludes cards from other stores in the index' do
       get :index

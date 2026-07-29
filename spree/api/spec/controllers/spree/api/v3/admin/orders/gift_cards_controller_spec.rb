@@ -69,8 +69,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::GiftCardsController, type: :contro
 
     context 'when the order already has store credit applied (mutual exclusion)' do
       let(:customer) { create(:user) }
-      let!(:order) { create(:order_with_line_items, store: store, user: customer) }
-      let!(:store_credit) { create(:store_credit, store: store, user: customer, amount: 100) }
+      let!(:order) { create(:order_with_line_items, store: store, customer: customer) }
+      let!(:store_credit) { create(:store_credit, store: store, customer: customer, amount: 100) }
 
       before { Spree.checkout_add_store_credit_service.call(order: order) }
 
@@ -93,7 +93,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::GiftCardsController, type: :contro
 
     context 'when gift card is restricted to a specific user but order has none' do
       let(:gift_card_owner) { create(:user) }
-      let!(:gift_card) { create(:gift_card, store: store, user: gift_card_owner) }
+      let!(:gift_card) { create(:gift_card, store: store, customer: gift_card_owner) }
 
       it 'returns 422' do
         post :create, params: { order_id: order.prefixed_id, code: gift_card.code }, as: :json
@@ -105,8 +105,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::GiftCardsController, type: :contro
     context 'when gift card is restricted to a different user than the order' do
       let(:gift_card_owner) { create(:user) }
       let(:order_customer) { create(:user) }
-      let!(:order) { create(:order_with_line_items, store: store, user: order_customer) }
-      let!(:gift_card) { create(:gift_card, store: store, user: gift_card_owner) }
+      let!(:order) { create(:order_with_line_items, store: store, customer: order_customer) }
+      let!(:gift_card) { create(:gift_card, store: store, customer: gift_card_owner) }
 
       it 'returns 422' do
         post :create, params: { order_id: order.prefixed_id, code: gift_card.code }, as: :json
