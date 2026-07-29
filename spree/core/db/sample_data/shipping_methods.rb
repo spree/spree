@@ -3,7 +3,7 @@
 def delivery_zone_from(zone)
   return nil if zone.nil?
 
-  delivery_zone = Spree::DeliveryZone.find_or_create_by!(name: zone.name) do |dz|
+  delivery_zone = Spree::DeliveryZone.find_or_create_by!(name: zone.name, store: Spree::Store.default) do |dz|
     dz.description = zone.description
   end
   zone.countries.each { |country| delivery_zone.members.find_or_create_by!(member_type: 'country', country: country) }

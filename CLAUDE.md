@@ -152,6 +152,7 @@ Per-request context available in models, controllers, jobs, and services:
 ### Models
 
 - ALWAYS Inherit from `Spree.base_class`
+- New models carrying store-specific data (configuration, catalog, commerce records) ALWAYS `belongs_to :store` via `Spree::SingleStoreResource` — only genuinely global reference data (countries, states, roles) goes unscoped; multi-store sharing lives in the `spree_multi_store` extension
 - ALWAYS pass `class_name` and `dependent` on associations; use `dependent: :destroy_async` for high-fanout associations to offload deletion to a background job
 - Include `Spree::Metafields` for custom fields support (see docs/plans/5.4-6.0-custom-fields-rename.md)
 - Include `Spree::Metadata` for JSON metadata support

@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :delivery_zone, class: Spree::DeliveryZone do
     sequence(:name) { |n| "Delivery Zone ##{n}" }
+    store { Spree::Store.find_by(default: true) || association(:store) }
     description { generate(:random_string) }
 
     factory :delivery_zone_with_country do

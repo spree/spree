@@ -117,6 +117,7 @@ module Spree
       self.categories = value
     end
 
+    has_many :delivery_zones, class_name: 'Spree::DeliveryZone', dependent: :destroy
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :wishlists, class_name: 'Spree::Wishlist'

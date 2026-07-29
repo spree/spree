@@ -637,3 +637,23 @@ first, then take 6.0 — 5.6 remains the bridge release. CI: the MySQL
 lanes were the designated old-Rails coverage (`RAILS_VERSION: 7.2.0`) and
 could no longer bundle; they now run 8.1 like the rest — MySQL itself
 stays fully supported.
+
+
+## 2026-07-29 — Every major model carries a store_id; DeliveryZone bound now, StockLocation next
+
+Ratifies the principle already stated in `6.0-delivery-rate-provider.md`
+(DeliveryMethod gets `store_id` there) as a standing convention: new
+models carrying store-specific data always `belongs_to :store` through
+`Spree::SingleStoreResource`; only genuinely global reference data stays
+unscoped. Store binding also closes cross-store lookup holes structurally
+— admin controllers scope `current_store.<resources>` instead of relying
+on ability scoping alone (see the Strix findings on delivery-method
+bindings, 2026-07-29).
+
+Applied immediately to **DeliveryZone** — an unreleased 6.0 table, so the
+creation migration gained `store_id NOT NULL` + per-store name uniqueness
+in place, with zero bridge cost. **StockLocation** is a released table
+and follows as its own work item using the 5.6 single-store pattern
+(nullable `store_id` + backfill task + shared-row deprecation,
+`null: false` in 6.1), paired with ConfigurationManagement now granting
+stock-location management.

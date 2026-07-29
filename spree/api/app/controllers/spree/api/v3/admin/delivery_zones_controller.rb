@@ -50,7 +50,7 @@ module Spree
           end
 
           def scope
-            Spree::DeliveryZone.accessible_by(current_ability, :show)
+            current_store.delivery_zones.accessible_by(current_ability, :show)
           end
 
           def permitted_params
