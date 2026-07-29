@@ -56,8 +56,28 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
       end
     end
 
+    context 'with a cart the caller cannot access' do
+      let(:foreign_cart) { create(:cart_with_line_items, store: store, customer: create(:user)) }
+
+      it 'refuses instead of leaking coverage results' do
+        get :pickup_locations, params: { id: pickup_method.prefixed_id, cart_id: foreign_cart.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'allows access with the cart token' do
+        request.headers['x-spree-token'] = foreign_cart.token
+
+        get :pickup_locations, params: { id: pickup_method.prefixed_id, cart_id: foreign_cart.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
     context 'when the location pickup_stock_policy is any' do
       let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
+
+      before { request.headers['x-spree-token'] = cart.token }
 
       it 'keeps the location even without local stock' do
         pickup_location.update!(pickup_stock_policy: 'any')
@@ -72,6 +92,8 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
     context 'with a cart' do
       let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
       let(:variant) { cart.line_items.first.variant }
+
+      before { request.headers['x-spree-token'] = cart.token }
 
       it 'keeps locations that can fulfill the whole cart from local stock' do
         pickup_location.stock_item_or_create(variant).set_count_on_hand(10)

@@ -79,13 +79,13 @@ module Spree
           def assignable_params
             attributes = permitted_params.except(:tax_category_id, :delivery_zone_ids, :stock_location_ids, :calculator_type, :calculator_preferences)
             if params.key?(:tax_category_id)
-              attributes[:tax_category] = params[:tax_category_id].present? ? Spree::TaxCategory.find_by_prefix_id!(params[:tax_category_id]) : nil
+              attributes[:tax_category] = params[:tax_category_id].present? ? Spree::TaxCategory.accessible_by(current_ability, :show).find_by_prefix_id!(params[:tax_category_id]) : nil
             end
             if params.key?(:delivery_zone_ids)
-              attributes[:delivery_zones] = Array(params[:delivery_zone_ids]).map { |id| Spree::DeliveryZone.find_by_prefix_id!(id) }
+              attributes[:delivery_zones] = Array(params[:delivery_zone_ids]).map { |id| Spree::DeliveryZone.accessible_by(current_ability, :show).find_by_prefix_id!(id) }
             end
             if params.key?(:stock_location_ids)
-              attributes[:pickup_locations] = Array(params[:stock_location_ids]).map { |id| Spree::StockLocation.find_by_prefix_id!(id) }
+              attributes[:pickup_locations] = Array(params[:stock_location_ids]).map { |id| Spree::StockLocation.accessible_by(current_ability, :show).find_by_prefix_id!(id) }
             end
             attributes
           end

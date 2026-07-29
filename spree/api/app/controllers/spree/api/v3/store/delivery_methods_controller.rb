@@ -52,10 +52,16 @@ module Spree
 
           private
 
+          # Coverage results depend on the cart's contents — the caller must
+          # prove access to it (owner JWT or the cart token), like every
+          # other cart read.
           def pickup_cart
             return @pickup_cart if defined?(@pickup_cart)
+            return @pickup_cart = nil if params[:cart_id].blank?
 
-            @pickup_cart = params[:cart_id].present? ? current_store.carts.find_by_prefix_id!(params[:cart_id]) : nil
+            cart = current_store.carts.incomplete.find_by_prefix_id!(params[:cart_id])
+            authorize!(:show, cart, request.headers['x-spree-token'])
+            @pickup_cart = cart
           end
 
           # 'local' policy: every cart item must be on hand at the location.
