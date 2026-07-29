@@ -28,16 +28,25 @@ module Spree
         product_scope = store.products
         product_scope = product_scope.where(vendor_id: vendor.id) if defined?(vendor) && vendor.present?
 
+        product_table = Spree::Product.table_name
+
         product_scope.includes(:taxons, :tax_category, variants: :prices, master: :prices).
-                              joins("LEFT JOIN (#{line_items_sql}) AS line_items ON #{Spree::Product.table_name}.id = line_items.product_id").
+                              joins("LEFT JOIN (#{line_items_sql}) AS line_items ON #{product_table}.id = line_items.product_id").
                               select("
-                                spree_products.*,
+                                #{product_table}.*,
                                 COALESCE(SUM(line_items.pre_tax_amount), 0.0) AS pre_tax_amount,
                                 COALESCE(SUM(line_items.quantity), 0) AS quantity,
                                 COALESCE(SUM(line_items.promo_total), 0.0) AS promo_total,
                                 COALESCE(SUM(line_items.tax_total), 0.0) AS tax_total,
                                 COALESCE(SUM(line_items.total), 0.0) AS total
-                              ").group('spree_products.id')
+                              ").group("#{product_table}.id").
+                              order(
+                                Arel.sql(
+                                  'COALESCE(SUM(line_items.quantity), 0) DESC, ' \
+                                  'COALESCE(SUM(line_items.total), 0.0) DESC, ' \
+                                  "#{product_table}.id ASC"
+                                )
+                              )
       end
     end
   end
