@@ -66,6 +66,19 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(json_response['fulfillment_type']).to eq('pickup')
     end
 
+    it 'assigns configured pickup locations' do
+      location = create(:stock_location, pickup_enabled: true)
+
+      post :create, params: {
+        name: 'Counter pickup',
+        fulfillment_type: 'pickup',
+        stock_location_ids: [location.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['stock_location_ids']).to eq([location.prefixed_id])
+    end
+
     it 'rejects unknown calculator types' do
       post :create, params: {
         name: 'Sneaky',

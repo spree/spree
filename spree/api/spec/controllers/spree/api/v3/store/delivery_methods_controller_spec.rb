@@ -44,6 +44,31 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
       expect(names).not_to include('Warehouse')
     end
 
+    context 'when the method has configured pickup locations' do
+      let!(:uptown) { create(:stock_location, name: 'Uptown', pickup_enabled: true) }
+
+      it 'lists only the configured locations' do
+        pickup_method.pickup_locations << pickup_location
+
+        get :pickup_locations, params: { id: pickup_method.prefixed_id }, as: :json
+
+        expect(json_response['data'].map { |row| row['name'] }).to eq(['Downtown'])
+      end
+    end
+
+    context 'when the location pickup_stock_policy is any' do
+      let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
+
+      it 'keeps the location even without local stock' do
+        pickup_location.update!(pickup_stock_policy: 'any')
+        pickup_location.stock_item_or_create(cart.line_items.first.variant).set_count_on_hand(0)
+
+        get :pickup_locations, params: { id: pickup_method.prefixed_id, cart_id: cart.prefixed_id }, as: :json
+
+        expect(json_response['data'].map { |row| row['name'] }).to include('Downtown')
+      end
+    end
+
     context 'with a cart' do
       let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
       let(:variant) { cart.line_items.first.variant }

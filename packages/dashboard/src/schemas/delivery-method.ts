@@ -15,6 +15,7 @@ export const deliveryMethodFormSchema = z.object({
   calculator_type: z.string().optional(),
   calculator_preferences: z.record(z.string(), z.unknown()).optional(),
   delivery_zone_ids: z.array(z.string()),
+  stock_location_ids: z.array(z.string()),
 })
 
 export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormSchema>
@@ -32,6 +33,7 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   calculator_type: '',
   calculator_preferences: {},
   delivery_zone_ids: [],
+  stock_location_ids: [],
 }
 
 export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
@@ -54,5 +56,6 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
       ? { calculator_preferences: values.calculator_preferences }
       : {}),
     delivery_zone_ids: values.delivery_zone_ids,
+    stock_location_ids: values.stock_location_ids,
   }
 }

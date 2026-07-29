@@ -8,6 +8,7 @@ module Spree
                    storefront_visible: :boolean, tracking_url: [:string, nullable: true],
                    tax_category_id: [:string, nullable: true],
                    delivery_zone_ids: [:string, multi: true],
+                   stock_location_ids: [:string, multi: true],
                    calculator_type: [:string, nullable: true],
                    calculator_preferences: ['Record<string, unknown>', nullable: true]
 
@@ -21,6 +22,10 @@ module Spree
 
           attribute :delivery_zone_ids do |record|
             record.delivery_zones.map(&:prefixed_id)
+          end
+
+          attribute :stock_location_ids do |record|
+            record.pickup_locations.map(&:prefixed_id)
           end
 
           attribute :calculator_type do |record|

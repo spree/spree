@@ -11,7 +11,7 @@ module Spree
           # narrowed to locations that can fulfill the whole cart from local
           # stock (package-scoped availability).
           def pickup_locations
-            locations = Spree::StockLocation.active.pickup_enabled
+            locations = find_resource.available_pickup_locations
             locations = locations.select { |location| covers_cart?(location, pickup_cart) } if pickup_cart
 
             render json: { data: locations.map { |location| Spree.api.stock_location_serializer.new(location, params: serializer_params).to_h } }
@@ -58,9 +58,12 @@ module Spree
             @pickup_cart = params[:cart_id].present? ? current_store.carts.find_by_prefix_id!(params[:cart_id]) : nil
           end
 
-          # Every cart item must be on hand at the location (local stock only —
-          # a pickup location can't promise items it would need transferred).
+          # 'local' policy: every cart item must be on hand at the location.
+          # 'any' policy: the location offers pickup regardless of local stock
+          # (the merchant transfers goods in).
           def covers_cart?(location, cart)
+            return true if location.pickup_stock_policy == 'any'
+
             cart.line_items.includes(:variant).all? do |line_item|
               next true unless line_item.variant.should_track_inventory?
 

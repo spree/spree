@@ -144,7 +144,7 @@ function OrderDetailPage() {
       main={
         <>
           <LineItemsCard order={order} />
-          <ShipmentsCard order={order} />
+          <FulfillmentsCard order={order} />
           <PaymentsCard order={order} />
           <AdjustmentLinesCard order={order} />
           <OrderSummaryCard order={order} />
@@ -715,7 +715,7 @@ function LineItemsCard({ order }: { order: Order }) {
 }
 
 // ---------------------------------------------------------------------------
-// Shipments
+// Fulfillments
 // ---------------------------------------------------------------------------
 
 function EditTrackingDialog({
@@ -777,7 +777,7 @@ function EditTrackingDialog({
   )
 }
 
-function ShipmentsCard({ order }: { order: Order }) {
+function FulfillmentsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const confirm = useConfirm()
