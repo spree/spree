@@ -31,7 +31,7 @@ module Spree
 
         if payment_method&.source_required?
           if order.user.present? && params[:source_id].present?
-            source = payment_method.payment_source_class.find_by(id: params[:source_id], user: order.user)
+            source = payment_method.payment_source_class.find_by(id: params[:source_id], customer: order.customer)
 
             return failure(nil, :source_not_found) if source.nil?
           else

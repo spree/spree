@@ -104,7 +104,7 @@ module Spree
           when USER_TYPE_ADMIN
             Spree.admin_user_class.find(user_id)
           else
-            Spree.user_class.find(user_id)
+            Spree.customer_class.find(user_id)
           end
         end
 

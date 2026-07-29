@@ -43,13 +43,14 @@ module Spree
     # Associations
     #
     belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :user, class_name: Spree.user_class.to_s, optional: true
+    belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
+    include Spree::DeprecatedCustomerAlias
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
     belongs_to :batch, class_name: 'Spree::GiftCardBatch', optional: true, foreign_key: :gift_card_batch_id
 
     has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator
     has_many :orders, inverse_of: :gift_card, class_name: 'Spree::Order'
-    has_many :users, through: :orders, class_name: Spree.user_class.to_s
+    has_many :users, through: :orders, source: :customer
 
     #
     # Scopes
@@ -62,7 +63,7 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[code user_id state gift_card_batch_id created_by_id]
+    self.whitelisted_ransackable_attributes = %w[code customer_id user_id state gift_card_batch_id created_by_id]
     self.whitelisted_ransackable_associations = %w[users orders batch]
     self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
 
@@ -93,7 +94,7 @@ module Spree
       amount - amount_used - amount_authorized
     end
 
-    delegate :email, to: :user, prefix: true, allow_nil: true
+    delegate :email, to: :customer, prefix: true, allow_nil: true
 
     def self.json_api_columns
       %w[code amount expires_at]

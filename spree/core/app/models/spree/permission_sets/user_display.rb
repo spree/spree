@@ -10,7 +10,7 @@ module Spree
   module PermissionSets
     class UserDisplay < Base
       def activate!
-        can [:read, :admin, :index], Spree.user_class
+        can [:read, :admin, :index], Spree.customer_class
         can [:read, :admin], Spree::Address
         can [:read, :admin], Spree::CreditCard
       end

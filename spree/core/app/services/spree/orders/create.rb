@@ -14,7 +14,7 @@ module Spree
       attr_reader :discount_application_errors
 
       # @param store [Spree::Store]
-      # @param user [Object, nil] resolved customer (Spree.user_class instance)
+      # @param user [Object, nil] resolved customer (Spree.customer_class instance)
       # @param params [Hash] order params (see admin API docs)
       # @return [Spree::ServiceModule::Result]
       def call(store:, user: nil, params: {})

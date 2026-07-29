@@ -14,7 +14,7 @@ module Spree
           def create
             subscriber = Spree::NewsletterSubscriber.subscribe(
               email: params[:email],
-              user: current_user,
+              customer: current_user,
               store: current_store,
               redirect_url: validated_redirect_url
             )

@@ -13,7 +13,8 @@ module Spree
     acts_as_paranoid
 
     belongs_to :payment_method
-    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id', optional: true
+    belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
+    include Spree::DeprecatedCustomerAlias
     belongs_to :gateway_customer, class_name: 'Spree::GatewayCustomer', optional: true
 
     has_many :payments, as: :source

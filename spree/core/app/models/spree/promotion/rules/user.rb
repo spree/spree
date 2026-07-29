@@ -8,7 +8,7 @@ module Spree
         has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser',
                                         foreign_key: :promotion_rule_id,
                                         dependent: :destroy
-        has_many :users, through: :promotion_rule_users, class_name: "::#{Spree.user_class}"
+        has_many :users, through: :promotion_rule_users, source: :customer, class_name: "::#{Spree.customer_class}"
 
         # Customers, not admin users — the rule keys off `Spree::Order#user_id`.
         # The data layer keeps the `users` association (legacy column name);
@@ -46,7 +46,7 @@ module Spree
         end
 
         def eligible_user_ids
-          @eligible_user_ids ||= promotion_rule_users.pluck(:user_id)
+          @eligible_user_ids ||= promotion_rule_users.pluck(:customer_id)
         end
 
         def eligible?(order, _options = {})

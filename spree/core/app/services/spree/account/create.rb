@@ -4,7 +4,7 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(user_params: {})
-        user = Spree.user_class.new(user_params)
+        user = Spree.customer_class.new(user_params)
 
         if user.save
           success(user)

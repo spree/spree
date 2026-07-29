@@ -10,10 +10,10 @@ module Spree
           before_action :require_ids!, only: [:bulk_add_to_groups, :bulk_remove_from_groups]
 
           def create
-            @resource = Spree.user_class.new(permitted_params)
+            @resource = Spree.customer_class.new(permitted_params)
             # Admin-created customers don't pick a password upfront — they
             # claim the account via password reset later.
-            # `Spree::UserMethods` exposes `skip_password_validation` so
+            # `Spree::CustomerMethods` exposes `skip_password_validation` so
             # Devise's `:validatable` lets a nil credential through on this
             # code path. Storefront registration never sets the flag, so
             # customer self-signup still requires a password.
@@ -63,7 +63,7 @@ module Spree
           protected
 
           def model_class
-            Spree.user_class
+            Spree.customer_class
           end
 
           def serializer_class

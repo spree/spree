@@ -31,7 +31,7 @@ module Spree
         end
 
         def store_location_session_key
-          "#{Spree.user_class.model_name.singular_route_key.to_sym}_return_to"
+          "#{Spree.customer_class.model_name.singular_route_key.to_sym}_return_to"
         end
 
         # proxy method to *possible* spree_current_user method

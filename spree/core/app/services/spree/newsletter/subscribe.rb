@@ -59,7 +59,7 @@ module Spree
       end
 
       def known_user
-        @known_user ||= current_user || Spree.user_class.find_by(email: email)
+        @known_user ||= current_user || Spree.customer_class.find_by(email: email)
       end
     end
   end

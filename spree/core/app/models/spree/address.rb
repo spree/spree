@@ -26,7 +26,7 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id public_metadata private_metadata)
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label customer_id public_metadata private_metadata)
     if defined?(Spree::Security::Addresses)
       include Spree::Security::Addresses
     end
@@ -42,7 +42,8 @@ module Spree
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
     # we need a safe operator here as Address is added to metafield_enabled_resources in Engine
-    belongs_to :user, class_name: Spree.user_class&.name, optional: true, touch: true
+    belongs_to :customer, class_name: Spree.customer_class&.name, optional: true, touch: true
+    include Spree::DeprecatedCustomerAlias
 
     has_many :shipments, inverse_of: :address
 
@@ -68,7 +69,7 @@ module Spree
     validate :address_validators, on: [:create, :update]
 
     validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
-                                    scope: :user_id,
+                                    scope: :customer_id,
                                     case_sensitive: false,
                                     allow_blank: true,
                                     allow_nil: true }
@@ -97,7 +98,7 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
-    self.whitelisted_ransackable_associations = %w[country state user]
+    self.whitelisted_ransackable_associations = %w[country state customer]
 
     def self.required_fields
       Spree::Address.validators.map do |v|
@@ -367,7 +368,7 @@ module Spree
     end
 
     def unassign_from_incomplete_orders
-      orders = Spree::Order.incomplete.where(user_id: user_id)
+      orders = Spree::Order.incomplete.where(customer_id: customer_id)
       orders.where(ship_address_id: id).update_all(ship_address_id: nil, state: 'address', updated_at: Time.current)
       orders.where(bill_address_id: id).update_all(bill_address_id: nil, state: 'address', updated_at: Time.current)
     end

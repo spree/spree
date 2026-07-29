@@ -36,7 +36,7 @@ namespace :core do
 
   desc 'Migrate newsletter subscribers'
   task migrate_newsletter_subscribers: :environment do |_t, _args|
-    Spree.user_class.where(accepts_email_marketing: true).in_batches(of: 500) do |user_batch|
+    Spree.customer_class.where(accepts_email_marketing: true).in_batches(of: 500) do |user_batch|
       subscriber_attributes = user_batch.pluck(:id, :email, :updated_at).map do |id, email, updated_at|
         {
           email: Spree::NewsletterSubscriber.new(email: email).email, # normalized email

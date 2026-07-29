@@ -12,7 +12,8 @@ module Spree
       has_secure_token
     end
 
-    belongs_to :user, class_name: "::#{Spree.user_class}", touch: true
+    belongs_to :customer, class_name: "::#{Spree.customer_class}", touch: true
+    include Spree::DeprecatedCustomerAlias
     belongs_to :store, class_name: 'Spree::Store'
 
     has_many :wished_items, class_name: 'Spree::WishedItem', dependent: :destroy

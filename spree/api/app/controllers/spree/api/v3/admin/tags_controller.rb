@@ -19,7 +19,7 @@ module Spree
             {
               'Spree::Product' => 'read_products',
               'Spree::Order' => 'read_orders',
-              Spree.user_class.to_s => 'read_customers'
+              Spree.customer_class.to_s => 'read_customers'
             }
           end
 

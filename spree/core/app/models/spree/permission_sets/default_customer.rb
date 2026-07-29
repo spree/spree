@@ -47,8 +47,8 @@ module Spree
         end
 
         # User account management - available to all users (including guests for their own record)
-        can :create, Spree.user_class
-        can [:show, :update, :destroy], Spree.user_class, id: user.id
+        can :create, Spree.customer_class
+        can [:show, :update, :destroy], Spree.customer_class, id: user.id
 
         # Address management - only for persisted users with matching user_id
         can :manage, Spree::Address, user_id: user.id if user.persisted?

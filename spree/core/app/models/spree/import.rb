@@ -239,7 +239,7 @@ module Spree
     # @return [Class]
     def model_class
       if type == 'Spree::Imports::Customers'
-        Spree.user_class
+        Spree.customer_class
       else
         "Spree::#{type.demodulize.singularize}".safe_constantize
       end
@@ -454,7 +454,7 @@ module Spree
 
       # eg. Spree::Imports::Orders => Spree::Order
       def model_class
-        return Spree.user_class if to_s == 'Spree::Imports::Customers'
+        return Spree.customer_class if to_s == 'Spree::Imports::Customers'
 
         klass = "Spree::#{to_s.demodulize.singularize}".safe_constantize
 

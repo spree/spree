@@ -14,27 +14,27 @@ module Spree
     end
 
     def spree_current_user
-      send("current_#{Spree.user_class.model_name.singular_route_key}")
+      send("current_#{Spree.customer_class.model_name.singular_route_key}")
     end
 
     def spree_login_path(opts = {})
-      new_session_path(Spree.user_class.model_name.singular_route_key, opts)
+      new_session_path(Spree.customer_class.model_name.singular_route_key, opts)
     end
 
     def spree_signup_path(opts = {})
-      new_registration_path(Spree.user_class.model_name.singular_route_key, opts)
+      new_registration_path(Spree.customer_class.model_name.singular_route_key, opts)
     end
 
     def spree_logout_path(opts = {})
-      destroy_session_path(Spree.user_class.model_name.singular_route_key, opts)
+      destroy_session_path(Spree.customer_class.model_name.singular_route_key, opts)
     end
 
     def spree_forgot_password_path(opts = {})
-      new_password_path(Spree.user_class.model_name.singular_route_key, opts)
+      new_password_path(Spree.customer_class.model_name.singular_route_key, opts)
     end
 
     def spree_edit_password_path(opts = {})
-      edit_registration_path(Spree.user_class.model_name.singular_route_key, opts)
+      edit_registration_path(Spree.customer_class.model_name.singular_route_key, opts)
     end
 
     def spree_admin_login_path(opts = {})

@@ -133,7 +133,7 @@ module Spree
             customer_param = params[:customer_id].presence || params[:user_id].presence
             return unless customer_param
 
-            Spree.user_class.find_by_param!(customer_param)
+            Spree.customer_class.find_by_param!(customer_param)
           end
 
           def order_create_params

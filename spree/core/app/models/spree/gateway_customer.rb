@@ -3,7 +3,8 @@ module Spree
     has_prefix_id :gcus
 
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
-    belongs_to :user, class_name: Spree.user_class.to_s
+    belongs_to :customer, class_name: Spree.customer_class.to_s
+    include Spree::DeprecatedCustomerAlias
 
     validates :payment_method, presence: true
     validates :user, presence: true

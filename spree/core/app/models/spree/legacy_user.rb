@@ -5,7 +5,7 @@ module Spree
   class LegacyUser < Spree.base_class
     include Spree::UserAddress
     include Spree::UserPaymentSource
-    include Spree::UserMethods
+    include Spree::CustomerMethods
 
     self.table_name = 'spree_users'
 
@@ -17,7 +17,7 @@ module Spree
     before_save :encrypt_password, if: :password
 
     # Simple password validation for testing purposes
-    # In production, Spree.user_class should be overridden with a proper auth solution (e.g., Devise)
+    # In production, Spree.customer_class should be overridden with a proper auth solution (e.g., Devise)
     def valid_password?(check_password)
       return false if encrypted_password.blank?
 

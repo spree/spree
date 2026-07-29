@@ -43,7 +43,7 @@ module Spree
         protected
 
         # Override to use current_user from JWT authentication
-        # @return [Spree.user_class]
+        # @return [Spree.customer_class]
         def spree_current_user
           current_user
         end

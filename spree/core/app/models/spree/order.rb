@@ -112,7 +112,7 @@ module Spree
       go_to_state :complete
     end
 
-    self.whitelisted_ransackable_associations = %w[shipments user created_by approver canceler promotions bill_address ship_address line_items store channel tags]
+    self.whitelisted_ransackable_associations = %w[shipments customer created_by approver canceler promotions bill_address ship_address line_items store channel tags]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number state status payment_state shipment_state
       total item_total item_count considered_risky channel_id currency
@@ -143,12 +143,11 @@ module Spree
       self.tag_list = tags
     end
 
-    ASSOCIATED_USER_ATTRIBUTES = [:user_id, :email, :bill_address_id, :ship_address_id]
+    ASSOCIATED_USER_ATTRIBUTES = [:customer_id, :email, :bill_address_id, :ship_address_id]
 
-    # 6.0 forward-compat: User→Customer rename. Column stays user_id in 5.x.
-    alias_attribute :customer_id, :user_id
+    include Spree::DeprecatedCustomerAlias
 
-    belongs_to :user, class_name: "::#{Spree.user_class}", optional: true, autosave: true
+    belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true, autosave: true
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
@@ -553,7 +552,7 @@ module Spree
     # Associates the specified user with the order.
     # Delegates to {Spree::Cart::Associate} service.
     #
-    # @param user [Spree.user_class] the user to associate with the order
+    # @param user [Spree.customer_class] the user to associate with the order
     # @param override_email [Boolean] whether to override the order email with the user's email
     # @return [Spree::ServiceModule::Result]
     def associate_user!(user, override_email = true)
@@ -927,7 +926,7 @@ module Spree
     # Cancels the order and records the canceler.
     # Delegates to {Spree::Orders::Cancel} service.
     #
-    # @param user [Spree.user_class, nil] the user who canceled the order
+    # @param user [Spree.customer_class, nil] the user who canceled the order
     # @param canceled_at [Time, nil] the time of cancellation (defaults to current time)
     # @return [Spree::ServiceModule::Result]
     def canceled_by(user, canceled_at = nil)
@@ -937,7 +936,7 @@ module Spree
     # Approves the order and records the approver.
     # Delegates to {Spree::Orders::Approve} service.
     #
-    # @param user [Spree.user_class, nil] the user who approved the order
+    # @param user [Spree.customer_class, nil] the user who approved the order
     # @return [Spree::ServiceModule::Result]
     def approved_by(user = nil)
       Spree.order_approve_service.call(order: self, approver: user)

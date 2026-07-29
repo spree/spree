@@ -24,7 +24,7 @@ module Spree
     def initialize(user, options = {})
       alias_cancan_delete_action
 
-      @user = user || Spree.user_class.new
+      @user = user || Spree.customer_class.new
       @store = options[:store] || Spree::Current.store
 
       apply_permissions_from_sets

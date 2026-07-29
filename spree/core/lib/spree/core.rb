@@ -39,7 +39,7 @@ require 'sqids'
 StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
-  mattr_accessor :base_class, :user_class, :admin_user_class,
+  mattr_accessor :base_class, :customer_class, :admin_user_class,
                  :private_storage_service_name, :public_storage_service_name,
                  :cdn_host, :root_domain, :searcher_class, :events_adapter_class, :queues,
                  :google_places_api_key
@@ -53,12 +53,24 @@ module Spree
     end
   end
 
-  def self.user_class(constantize: true)
-    if @@user_class.is_a?(Class)
-      raise 'Spree.user_class MUST be a String or Symbol object, not a Class object.'
-    elsif @@user_class.is_a?(String) || @@user_class.is_a?(Symbol)
-      constantize ? @@user_class.to_s.constantize : @@user_class.to_s
+  def self.customer_class(constantize: true)
+    if @@customer_class.is_a?(Class)
+      raise 'Spree.customer_class MUST be a String or Symbol object, not a Class object.'
+    elsif @@customer_class.is_a?(String) || @@customer_class.is_a?(Symbol)
+      constantize ? @@customer_class.to_s.constantize : @@customer_class.to_s
     end
+  end
+
+  # @deprecated Spree.user_class was renamed to Spree.customer_class in 6.0; removed in 6.1.
+  def self.user_class(constantize: true)
+    Spree::Deprecation.warn('Spree.user_class is deprecated and will be removed in Spree 6.1. Use Spree.customer_class instead.') if defined?(Spree::Deprecation)
+    customer_class(constantize: constantize)
+  end
+
+  # @deprecated Spree.user_class= was renamed to Spree.customer_class= in 6.0; removed in 6.1.
+  def self.user_class=(value)
+    Spree::Deprecation.warn('Spree.user_class= is deprecated and will be removed in Spree 6.1. Use Spree.customer_class= instead.') if defined?(Spree::Deprecation)
+    self.customer_class = value
   end
 
   def self.admin_user_class(constantize: true)

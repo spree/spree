@@ -135,7 +135,7 @@ module Spree
           def subscribe_to_newsletter
             return unless accept_marketing?
 
-            Spree::NewsletterSubscriber.subscribe(email: email, user: user, store: store)
+            Spree::NewsletterSubscriber.subscribe(email: email, customer: customer, store: store)
           end
 
           def self.go_to_state(name, options = {})

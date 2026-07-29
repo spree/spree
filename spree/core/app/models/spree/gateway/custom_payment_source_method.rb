@@ -31,7 +31,7 @@ module Spree
 
     # simulate a 3rd party payment gateway api to fetch/or create a customer
     def find_or_create_customer(user)
-      gateway_customers.find_or_create_by!(user: user, profile_id: "CUSTOMER-#{user.id}")
+      gateway_customers.find_or_create_by!(customer: user, profile_id: "CUSTOMER-#{user.id}")
     end
   end
 end

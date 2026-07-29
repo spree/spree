@@ -132,8 +132,8 @@ module Spree
       end
 
       # Promotion rules need to be evaluated on after initialize otherwise
-      # Spree.user_class would be nil and users might experience errors related
-      # to malformed model associations (Spree.user_class is only defined on
+      # Spree.customer_class would be nil and users might experience errors related
+      # to malformed model associations (Spree.customer_class is only defined on
       # the app initializer)
       config.after_initialize do
         Rails.application.config.spree.calculators.shipping_methods = [
@@ -302,7 +302,7 @@ module Spree
         Rails.application.config.spree.taggable_types = [
           'Spree::Product',
           'Spree::Order',
-          Spree.user_class.to_s
+          Spree.customer_class.to_s
         ]
 
         Rails.application.config.spree.metafields.types = [
@@ -343,7 +343,7 @@ module Spree
           Spree::Category,
           Spree::Taxonomy,
           Spree::Variant,
-          Spree.user_class
+          Spree.customer_class
         ]
 
         Rails.application.config.spree.analytics_events = {

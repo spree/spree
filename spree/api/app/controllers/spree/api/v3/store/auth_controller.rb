@@ -119,7 +119,7 @@ module Spree
             strategy_class.new(
               params: params,
               request_env: request.headers.env,
-              user_class: Spree.user_class
+              user_class: Spree.customer_class
             )
           end
 

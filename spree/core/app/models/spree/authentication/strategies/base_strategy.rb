@@ -7,7 +7,7 @@ module Spree
         def initialize(params:, request_env:, user_class: nil)
           @params = params
           @request_env = request_env
-          @user_class = user_class || Spree.user_class
+          @user_class = user_class || Spree.customer_class
         end
 
         # Returns Result object with user on success

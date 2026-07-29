@@ -25,8 +25,8 @@ module Spree
     # A customer for previews of customer-facing account emails. Falls back to
     # an unsaved instance when the database has no users.
     def customer
-      Spree.user_class.first ||
-        Spree.user_class.new(email: 'customer@example.com').tap do |user|
+      Spree.customer_class.first ||
+        Spree.customer_class.new(email: 'customer@example.com').tap do |user|
           user.first_name = 'Alex' if user.respond_to?(:first_name=)
         end
     end

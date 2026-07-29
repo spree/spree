@@ -22,14 +22,14 @@ module Spree
             end\n}
         end
 
-        user_class_file = Rails.root.join('app', 'models', "#{Spree.user_class.name.underscore}.rb")
+        user_class_file = Rails.root.join('app', 'models', "#{Spree.customer_class.name.underscore}.rb")
 
         if File.exist?(user_class_file)
-          inject_into_file user_class_file, after: "class #{Spree.user_class.name} < ApplicationRecord\n" do
+          inject_into_file user_class_file, after: "class #{Spree.customer_class.name} < ApplicationRecord\n" do
             <<-RUBY
     # Spree modules
     include Spree::UserAddress
-    include Spree::UserMethods
+    include Spree::CustomerMethods
     include Spree::UserPaymentSource
             RUBY
           end
@@ -39,7 +39,7 @@ module Spree
           say <<~RUBY
             # Spree modules
             include Spree::UserAddress
-            include Spree::UserMethods
+            include Spree::CustomerMethods
             include Spree::UserPaymentSource
           RUBY
         end

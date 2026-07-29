@@ -208,7 +208,7 @@ storefront customer (not an admin user).
 - `spree_payment_sources.user_id` → `customer_id`
 - `spree_newsletter_subscribers.user_id` → `customer_id`
 - `spree_promotion_rule_users.user_id` → `customer_id`
-- `spree_customer_group_users.user_id` → `customer_id`
+- `spree_customer_group_users.user_id` → `customer_id` (polymorphic — `user_type` also renames to `customer_type` so `belongs_to :customer, polymorphic: true` resolves)
 
 **Keep as `user_id`** (5 models — FK references Spree.admin_user_class or is polymorphic):
 - `spree_imports.user_id` — admin who ran the import

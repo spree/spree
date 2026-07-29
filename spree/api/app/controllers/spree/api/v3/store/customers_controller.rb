@@ -11,7 +11,7 @@ module Spree
 
           # POST /api/v3/store/customers
           def create
-            user = Spree.user_class.new(permitted_params.except(:current_password))
+            user = Spree.customer_class.new(permitted_params.except(:current_password))
 
             if user.save
               link_matching_newsletter_subscriber!(user)
