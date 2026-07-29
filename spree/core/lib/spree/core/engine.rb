@@ -14,6 +14,7 @@ module Spree
                                :fulfillment_providers,
                                :fulfillment_types,
                                :stock_splitters,
+                               :delivery_method_rules,
                                :order_routing,
                                :promotions,
                                :pricing,
@@ -112,6 +113,12 @@ module Spree
         app.config.spree.order_routing.rules = []
       end
 
+      # Seeded early for the same reason as order routing: initializer files
+      # append custom rule kinds. Core defaults concatenate in after_initialize.
+      initializer 'spree.register.delivery_method_rules', before: :load_config_initializers do |app|
+        app.config.spree.delivery_method_rules = []
+      end
+
       initializer 'spree.register.metafields' do |app|
         app.config.spree.metafields = MetafieldsEnvironment.new
         app.config.spree.metafields.types = []
@@ -193,6 +200,12 @@ module Spree
           Spree::OrderRouting::Rules::PreferredLocation,
           Spree::OrderRouting::Rules::MinimizeSplits,
           Spree::OrderRouting::Rules::DefaultLocation
+        ]
+
+        # Delivery-method eligibility rule kinds (docs/plans/6.0-delivery-method-rules.md).
+        Rails.application.config.spree.delivery_method_rules.concat [
+          Spree::DeliveryMethodRules::ItemTotalRule,
+          Spree::DeliveryMethodRules::WeightRule
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [

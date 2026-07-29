@@ -358,6 +358,11 @@
     "delivery_methods": {
       "add_cta": "Ajouter une méthode",
       "add_sheet_title": "Nouvelle méthode de livraison",
+      "conditions": {
+        "add": "Ajouter une condition",
+        "empty": "Aucune condition — la méthode est proposée dès que ses zones correspondent.",
+        "title": "Conditions"
+      },
       "create_description": "Configurez comment les commandes parviennent aux clients : expédition, numérique ou retrait.",
       "create_label": "Créer la méthode",
       "delete_confirm": {
@@ -379,6 +384,7 @@
         "updated": "Méthode de livraison mise à jour"
       },
       "no_zones_hint": "Aucune zone définie — la méthode s’applique partout.",
+      "pickup_locations_hint": "Sans sélection, tous les entrepôts avec retrait activé sont proposés.",
       "search_placeholder": "Rechercher des méthodes…"
     },
     "delivery_zones": {
@@ -585,6 +591,9 @@
         },
         "fulfillment_type": {
           "label": "Type de traitement"
+        },
+        "pickup_locations": {
+          "label": "Points de retrait"
         },
         "storefront_visible": {
           "help": "Les clients peuvent choisir cette méthode au paiement."
@@ -2254,8 +2263,12 @@
       "flat_percent": "Pourcentage fixe",
       "max_items": "Nombre maximal d'articles",
       "max_quantity": "Quantité maximale",
+      "maximum_item_total": "Total articles maximal",
+      "maximum_weight": "Poids maximal",
       "min_quantity": "Quantité minimale",
       "minimal_amount": "Montant minimal",
+      "minimum_item_total": "Total articles minimal",
+      "minimum_weight": "Poids minimal",
       "normal_amount": "Montant normal",
       "percent": "Pourcentage",
       "preferred_amount": "Montant",

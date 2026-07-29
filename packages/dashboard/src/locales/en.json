@@ -358,6 +358,11 @@
     "delivery_methods": {
       "add_cta": "Add delivery method",
       "add_sheet_title": "New delivery method",
+      "conditions": {
+        "add": "Add condition",
+        "empty": "No conditions — this method is offered whenever its zones match.",
+        "title": "Conditions"
+      },
       "create_description": "Configure how orders reach customers: shipping, digital delivery or pickup.",
       "create_label": "Create delivery method",
       "delete_confirm": {
@@ -379,6 +384,7 @@
         "updated": "Delivery method updated"
       },
       "no_zones_hint": "No delivery zones defined yet — the method applies everywhere.",
+      "pickup_locations_hint": "No selection means every pickup-enabled stock location is offered.",
       "search_placeholder": "Search delivery methods…"
     },
     "delivery_zones": {
@@ -585,6 +591,9 @@
         },
         "fulfillment_type": {
           "label": "Fulfillment type"
+        },
+        "pickup_locations": {
+          "label": "Pickup locations"
         },
         "storefront_visible": {
           "help": "Customers can select this method at checkout."
@@ -2254,8 +2263,12 @@
       "flat_percent": "Flat Percent",
       "max_items": "Max Items",
       "max_quantity": "Maximum quantity",
+      "maximum_item_total": "Maximum item total",
+      "maximum_weight": "Maximum weight",
       "min_quantity": "Minimum quantity",
       "minimal_amount": "Minimal Amount",
+      "minimum_item_total": "Minimum item total",
+      "minimum_weight": "Minimum weight",
       "normal_amount": "Normal Amount",
       "percent": "Percent",
       "preferred_amount": "Amount",

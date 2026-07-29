@@ -56,3 +56,19 @@ export function useDeleteDeliveryMethod() {
     },
   })
 }
+
+export function useDeliveryMethodRules(deliveryMethodId: string | undefined) {
+  return useQuery({
+    queryKey: useResourceKey('delivery-methods', deliveryMethodId ?? 'noop', 'rules'),
+    queryFn: () => adminClient.deliveryMethods.rules.list(deliveryMethodId as string),
+    enabled: !!deliveryMethodId,
+  })
+}
+
+export function useDeliveryMethodRuleTypes() {
+  return useQuery({
+    queryKey: useResourceKey('delivery-method-rule-types'),
+    queryFn: () => adminClient.deliveryMethods.ruleTypes(),
+    staleTime: 1000 * 60 * 30,
+  })
+}

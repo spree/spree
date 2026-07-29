@@ -862,6 +862,13 @@ en:
     delete: Delete
     deleted: Deleted
     delivery: Delivery
+    delivery_method_rule_types:
+      item_total_rule:
+        description: Limits the delivery method to carts within an item total range
+        name: Item total
+      weight_rule:
+        description: Limits the delivery method to packages within a weight range
+        name: Weight
     depth: Depth
     description: Description
     destination: Destination
@@ -930,6 +937,7 @@ en:
         discount_value_type_invalid: value_type must be flat or percent
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
+        invalid_delivery_method_rule: is not a registered delivery method rule
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_storefront_access: is not a valid storefront access level

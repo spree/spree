@@ -19,6 +19,7 @@ module Spree
 
         # Delivery configuration
         can :manage, Spree::DeliveryMethod
+        can :manage, Spree::DeliveryMethodRule
         can :manage, Spree::DeliveryZone
         can :manage, Spree::DeliveryZoneMember
         can :manage, Spree::ShippingCategory

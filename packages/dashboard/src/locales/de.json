@@ -358,6 +358,11 @@
     "delivery_methods": {
       "add_cta": "Versandart hinzufügen",
       "add_sheet_title": "Neue Versandart",
+      "conditions": {
+        "add": "Bedingung hinzufügen",
+        "empty": "Keine Bedingungen — die Methode wird angeboten, sobald ihre Zonen passen.",
+        "title": "Bedingungen"
+      },
       "create_description": "Konfiguriere, wie Bestellungen die Kundschaft erreichen: Versand, digital oder Abholung.",
       "create_label": "Versandart erstellen",
       "delete_confirm": {
@@ -379,6 +384,7 @@
         "updated": "Versandart aktualisiert"
       },
       "no_zones_hint": "Noch keine Lieferzonen definiert — die Methode gilt überall.",
+      "pickup_locations_hint": "Ohne Auswahl werden alle abholfähigen Lagerorte angeboten.",
       "search_placeholder": "Versandarten durchsuchen…"
     },
     "delivery_zones": {
@@ -585,6 +591,9 @@
         },
         "fulfillment_type": {
           "label": "Fulfillment-Typ"
+        },
+        "pickup_locations": {
+          "label": "Abholorte"
         },
         "storefront_visible": {
           "help": "Kundschaft kann diese Methode im Checkout wählen."
@@ -2254,8 +2263,12 @@
       "flat_percent": "Fester Prozentsatz",
       "max_items": "Maximale Artikelanzahl",
       "max_quantity": "Höchstmenge",
+      "maximum_item_total": "Maximale Artikelsumme",
+      "maximum_weight": "Maximalgewicht",
       "min_quantity": "Mindestmenge",
       "minimal_amount": "Mindestbetrag",
+      "minimum_item_total": "Mindest-Artikelsumme",
+      "minimum_weight": "Mindestgewicht",
       "normal_amount": "Normalbetrag",
       "percent": "Prozent",
       "preferred_amount": "Betrag",

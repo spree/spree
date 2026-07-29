@@ -358,6 +358,11 @@
     "delivery_methods": {
       "add_cta": "إضافة طريقة توصيل",
       "add_sheet_title": "طريقة توصيل جديدة",
+      "conditions": {
+        "add": "إضافة شرط",
+        "empty": "لا توجد شروط — تُعرض الطريقة متى تطابقت مناطقها.",
+        "title": "الشروط"
+      },
       "create_description": "حدّد كيفية وصول الطلبات إلى العملاء: شحن أو تسليم رقمي أو استلام.",
       "create_label": "إنشاء طريقة التوصيل",
       "delete_confirm": {
@@ -379,6 +384,7 @@
         "updated": "تم تحديث طريقة التوصيل"
       },
       "no_zones_hint": "لا توجد مناطق توصيل بعد — تنطبق الطريقة في كل مكان.",
+      "pickup_locations_hint": "بدون اختيار، تُعرض جميع مواقع المخزون المفعّل فيها الاستلام.",
       "search_placeholder": "البحث في طرق التوصيل…"
     },
     "delivery_zones": {
@@ -585,6 +591,9 @@
         },
         "fulfillment_type": {
           "label": "نوع التنفيذ"
+        },
+        "pickup_locations": {
+          "label": "مواقع الاستلام"
         },
         "storefront_visible": {
           "help": "يمكن للعملاء اختيار هذه الطريقة عند الدفع."
@@ -2254,8 +2263,12 @@
       "flat_percent": "Flat Percent",
       "max_items": "Max Items",
       "max_quantity": "الحد الأقصى للكمية",
+      "maximum_item_total": "الحد الأقصى لإجمالي المنتجات",
+      "maximum_weight": "الحد الأقصى للوزن",
       "min_quantity": "الحد الأدنى للكمية",
       "minimal_amount": "Minimal Amount",
+      "minimum_item_total": "الحد الأدنى لإجمالي المنتجات",
+      "minimum_weight": "الحد الأدنى للوزن",
       "normal_amount": "Normal Amount",
       "percent": "نسبة مئوية",
       "preferred_amount": "كمية",

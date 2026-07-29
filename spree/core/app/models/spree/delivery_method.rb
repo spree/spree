@@ -27,6 +27,12 @@ module Spree
     has_many :delivery_rates, class_name: 'Spree::DeliveryRate', inverse_of: :delivery_method
     has_many :fulfillments, through: :delivery_rates, class_name: 'Spree::Fulfillment'
 
+    has_many :delivery_method_stock_locations, class_name: 'Spree::DeliveryMethodStockLocation',
+             dependent: :destroy, inverse_of: :delivery_method
+    has_many :delivery_method_rules, class_name: 'Spree::DeliveryMethodRule',
+             dependent: :destroy, inverse_of: :delivery_method
+    has_many :pickup_locations, through: :delivery_method_stock_locations, source: :stock_location
+
     has_many :delivery_method_zones, class_name: 'Spree::DeliveryMethodZone',
                                      foreign_key: 'delivery_method_id'
     has_many :delivery_zones, through: :delivery_method_zones, class_name: 'Spree::DeliveryZone'
@@ -112,6 +118,25 @@ module Spree
     # Falls back to Manual for rows created before the 6.0 backfill ran.
     def provider
       @provider ||= (fulfillment_provider.presence || 'Spree::FulfillmentProvider::Manual').constantize.new
+    end
+
+    # AND over the method's active rules; no rules = eligible everywhere.
+    # Evaluated in the Estimator's method filter — the single seam every rate
+    # consumer (checkout, routing, cart estimates) flows through.
+    #
+    # @param package [Spree::Stock::Package]
+    # @return [Boolean]
+    def eligible_for_package?(package)
+      delivery_method_rules.select(&:active).all? { |rule| rule.eligible?(package) }
+    end
+
+    # Stock locations this method can fulfill from. For pickup methods an
+    # empty set means every active pickup-enabled location qualifies.
+    #
+    # @return [ActiveRecord::Relation<Spree::StockLocation>]
+    def available_pickup_locations
+      configured = pickup_locations.merge(Spree::StockLocation.active)
+      configured.exists? ? configured : Spree::StockLocation.active.pickup_enabled
     end
 
     # The third-party pickup point network behind a pickup_point method.

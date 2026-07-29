@@ -362,6 +362,11 @@
     "delivery_methods": {
       "add_cta": "Dodaj metodę dostawy",
       "add_sheet_title": "Nowa metoda dostawy",
+      "conditions": {
+        "add": "Dodaj warunek",
+        "empty": "Brak warunków — metoda jest oferowana, gdy pasują jej strefy.",
+        "title": "Warunki"
+      },
       "create_description": "Skonfiguruj, jak zamówienia trafiają do klientów: wysyłka, dostawa cyfrowa lub odbiór.",
       "create_label": "Utwórz metodę dostawy",
       "delete_confirm": {
@@ -383,6 +388,7 @@
         "updated": "Zaktualizowano metodę dostawy"
       },
       "no_zones_hint": "Brak stref dostawy — metoda obowiązuje wszędzie.",
+      "pickup_locations_hint": "Brak wyboru oznacza, że oferowane są wszystkie lokalizacje z włączonym odbiorem.",
       "search_placeholder": "Szukaj metod dostawy…"
     },
     "delivery_zones": {
@@ -589,6 +595,9 @@
         },
         "fulfillment_type": {
           "label": "Typ realizacji"
+        },
+        "pickup_locations": {
+          "label": "Punkty odbioru"
         },
         "storefront_visible": {
           "help": "Klienci mogą wybrać tę metodę przy kasie."
@@ -2282,8 +2291,12 @@
       "flat_percent": "Stały procent",
       "max_items": "Maksymalna liczba pozycji",
       "max_quantity": "Maksymalna ilość",
+      "maximum_item_total": "Maksymalna wartość produktów",
+      "maximum_weight": "Maksymalna waga",
       "min_quantity": "Minimalna ilość",
       "minimal_amount": "Kwota minimalna",
+      "minimum_item_total": "Minimalna wartość produktów",
+      "minimum_weight": "Minimalna waga",
       "normal_amount": "Kwota normalna",
       "percent": "Procent",
       "preferred_amount": "Kwota",

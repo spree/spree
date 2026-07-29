@@ -129,6 +129,7 @@ import type {
   PaymentMethodCreateParams,
   PaymentMethodType,
   PaymentMethodUpdateParams,
+  PreferenceField,
   PriceBulkUpsertRow,
   PriceCreateParams,
   PriceListCreateParams,
@@ -173,6 +174,7 @@ import type {
   CustomField,
   CustomFieldDefinition,
   DeliveryMethod,
+  DeliveryMethodRule,
   DeliveryZone,
   Discount,
   Export,
@@ -1236,6 +1238,64 @@ export class AdminClient {
         '/delivery_methods/calculators',
         options,
       ),
+
+    /** Eligibility rules on a delivery method (item total / weight bounds, …). */
+    rules: {
+      list: (
+        deliveryMethodId: string,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DeliveryMethodRule>> =>
+        this.request<PaginatedResponse<DeliveryMethodRule>>(
+          'GET',
+          `/delivery_methods/${deliveryMethodId}/rules`,
+          options,
+        ),
+
+      create: (
+        deliveryMethodId: string,
+        params: { type: string; active?: boolean; preferences?: Record<string, unknown> },
+        options?: RequestOptions,
+      ): Promise<DeliveryMethodRule> =>
+        this.request<DeliveryMethodRule>('POST', `/delivery_methods/${deliveryMethodId}/rules`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        deliveryMethodId: string,
+        id: string,
+        params: { active?: boolean; preferences?: Record<string, unknown> },
+        options?: RequestOptions,
+      ): Promise<DeliveryMethodRule> =>
+        this.request<DeliveryMethodRule>(
+          'PATCH',
+          `/delivery_methods/${deliveryMethodId}/rules/${id}`,
+          { ...options, body: params },
+        ),
+
+      delete: (deliveryMethodId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/delivery_methods/${deliveryMethodId}/rules/${id}`, options),
+    },
+
+    /** Registered rule kinds with preference schemas for building pickers. */
+    ruleTypes: (
+      options?: RequestOptions,
+    ): Promise<{
+      data: Array<{
+        type: string
+        name: string
+        description: string
+        preference_schema: PreferenceField[]
+      }>
+    }> =>
+      this.request<{
+        data: Array<{
+          type: string
+          name: string
+          description: string
+          preference_schema: PreferenceField[]
+        }>
+      }>('GET', '/delivery_method_rules/types', options),
   }
 
   readonly deliveryZones = {

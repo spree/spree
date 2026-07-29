@@ -94,6 +94,7 @@ module Spree
         admin_discount_serializer: 'Spree::Api::V3::Admin::DiscountSerializer',
         admin_tax_line_serializer: 'Spree::Api::V3::Admin::TaxLineSerializer',
         admin_delivery_zone_serializer: 'Spree::Api::V3::Admin::DeliveryZoneSerializer',
+        admin_delivery_method_rule_serializer: 'Spree::Api::V3::Admin::DeliveryMethodRuleSerializer',
         admin_delivery_zone_member_serializer: 'Spree::Api::V3::Admin::DeliveryZoneMemberSerializer',
         admin_fee_serializer: 'Spree::Api::V3::Admin::FeeSerializer',
         admin_customer_serializer: 'Spree::Api::V3::Admin::CustomerSerializer',

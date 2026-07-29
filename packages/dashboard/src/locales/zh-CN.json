@@ -358,6 +358,11 @@
     "delivery_methods": {
       "add_cta": "添加配送方式",
       "add_sheet_title": "新建配送方式",
+      "conditions": {
+        "add": "添加条件",
+        "empty": "无条件——只要区域匹配即提供该方式。",
+        "title": "条件"
+      },
       "create_description": "配置订单送达客户的方式：物流、数字交付或自提。",
       "create_label": "创建配送方式",
       "delete_confirm": {
@@ -379,6 +384,7 @@
         "updated": "配送方式已更新"
       },
       "no_zones_hint": "尚未定义配送区域——该方式适用于所有地区。",
+      "pickup_locations_hint": "未选择时，将提供所有启用自提的库存地点。",
       "search_placeholder": "搜索配送方式…"
     },
     "delivery_zones": {
@@ -585,6 +591,9 @@
         },
         "fulfillment_type": {
           "label": "履约类型"
+        },
+        "pickup_locations": {
+          "label": "自提地点"
         },
         "storefront_visible": {
           "help": "客户可在结账时选择该方式。"
@@ -2254,8 +2263,12 @@
       "flat_percent": "固定百分比",
       "max_items": "最大件数",
       "max_quantity": "最大数量",
+      "maximum_item_total": "最高商品总额",
+      "maximum_weight": "最大重量",
       "min_quantity": "最小数量",
       "minimal_amount": "最小金额",
+      "minimum_item_total": "最低商品总额",
+      "minimum_weight": "最小重量",
       "normal_amount": "标准金额",
       "percent": "百分比",
       "preferred_amount": "金额",

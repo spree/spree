@@ -1,17 +1,23 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { DeliveryMethod } from '@spree/admin-sdk'
+import type { DeliveryMethod, DeliveryMethodRule, PreferenceField } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
   mapSpreeErrorsToForm,
+  PreferencesForm,
   ResourceTable,
   resourceSearchSchema,
   Subject,
   usePermissions,
+  useResourceKeyBuilder,
 } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   Field,
   FieldError,
   FieldGroup,
@@ -33,9 +39,10 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
-import { useEffect } from 'react'
+import { PlusIcon, Trash2Icon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
@@ -44,9 +51,12 @@ import {
   useDeleteDeliveryMethod,
   useDeliveryCalculators,
   useDeliveryMethod,
+  useDeliveryMethodRules,
+  useDeliveryMethodRuleTypes,
   useUpdateDeliveryMethod,
 } from '../../../../hooks/use-delivery-methods'
 import { useDeliveryZones } from '../../../../hooks/use-delivery-zones'
+import { useStockLocations } from '../../../../hooks/use-stock-locations'
 import { useTaxCategories } from '../../../../hooks/use-tax-categories'
 import {
   DELIVERY_METHOD_DEFAULTS,
@@ -249,6 +259,7 @@ function EditDeliveryMethodSheet({
         calculator_preferences:
           (deliveryMethod.calculator_preferences as Record<string, unknown>) ?? {},
         delivery_zone_ids: deliveryMethod.delivery_zone_ids ?? [],
+        stock_location_ids: deliveryMethod.stock_location_ids ?? [],
       })
     }
   }, [deliveryMethod, form])
@@ -279,6 +290,7 @@ function EditDeliveryMethodSheet({
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <DeliveryMethodFormFields form={form} />
             </div>
+            <ConditionsSection deliveryMethodId={id} />
             <SheetFooter>
               <Button
                 type="button"
@@ -304,11 +316,131 @@ function EditDeliveryMethodSheet({
   )
 }
 
+// ---------------------------------------------------------------------------
+// Conditions (eligibility rules) — live-mutating, separate from the form
+// ---------------------------------------------------------------------------
+
+function ConditionsSection({ deliveryMethodId }: { deliveryMethodId: string }) {
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const buildKey = useResourceKeyBuilder()
+  const { data: rules } = useDeliveryMethodRules(deliveryMethodId)
+  const { data: ruleTypes } = useDeliveryMethodRuleTypes()
+
+  const invalidate = () =>
+    queryClient.invalidateQueries({
+      queryKey: buildKey('delivery-methods', deliveryMethodId, 'rules'),
+    })
+
+  const addMutation = useMutation({
+    mutationFn: (type: string) =>
+      adminClient.deliveryMethods.rules.create(deliveryMethodId, { type }),
+    onSuccess: invalidate,
+  })
+  const updateMutation = useMutation({
+    mutationFn: ({ id, preferences }: { id: string; preferences: Record<string, unknown> }) =>
+      adminClient.deliveryMethods.rules.update(deliveryMethodId, id, { preferences }),
+    onSuccess: invalidate,
+  })
+  const removeMutation = useMutation({
+    mutationFn: (id: string) => adminClient.deliveryMethods.rules.delete(deliveryMethodId, id),
+    onSuccess: invalidate,
+  })
+
+  const existingTypes = new Set((rules?.data ?? []).map((rule) => rule.type))
+  const availableTypes = (ruleTypes?.data ?? []).filter((type) => !existingTypes.has(type.type))
+
+  return (
+    <div className="flex flex-col gap-3 border-t p-4">
+      <div className="flex items-center justify-between">
+        <span className="font-medium text-sm">{t('admin.delivery_methods.conditions.title')}</span>
+        {availableTypes.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button type="button" variant="outline" size="sm" disabled={addMutation.isPending}>
+                  <PlusIcon className="size-4" />
+                  {t('admin.delivery_methods.conditions.add')}
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end">
+              {availableTypes.map((type) => (
+                <DropdownMenuItem key={type.type} onClick={() => addMutation.mutate(type.type)}>
+                  {type.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
+
+      {(rules?.data ?? []).length === 0 && (
+        <p className="text-muted-foreground text-sm">
+          {t('admin.delivery_methods.conditions.empty')}
+        </p>
+      )}
+
+      {(rules?.data ?? []).map((rule) => (
+        <ConditionRuleRow
+          key={rule.id}
+          rule={rule}
+          onSave={(preferences) => updateMutation.mutate({ id: rule.id, preferences })}
+          onRemove={() => removeMutation.mutate(rule.id)}
+          saving={updateMutation.isPending}
+        />
+      ))}
+    </div>
+  )
+}
+
+function ConditionRuleRow({
+  rule,
+  onSave,
+  onRemove,
+  saving,
+}: {
+  rule: DeliveryMethodRule
+  onSave: (preferences: Record<string, unknown>) => void
+  onRemove: () => void
+  saving: boolean
+}) {
+  const { t } = useTranslation()
+  const [values, setValues] = useState<Record<string, unknown>>(
+    rule.preferences as Record<string, unknown>,
+  )
+  const dirty = JSON.stringify(values) !== JSON.stringify(rule.preferences)
+
+  return (
+    <div className="flex flex-col gap-2 rounded-md border p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-sm">{rule.name}</span>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          onClick={onRemove}
+          aria-label={t('admin.actions.delete')}
+        >
+          <Trash2Icon className="size-4" />
+        </Button>
+      </div>
+      <PreferencesForm schema={rule.preference_schema} values={values} onChange={setValues} />
+      {dirty && (
+        <Button type="button" size="sm" onClick={() => onSave(values)} disabled={saving}>
+          {saving ? t('admin.actions.saving') : t('admin.actions.save')}
+        </Button>
+      )}
+    </div>
+  )
+}
+
 function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
   const { data: calculators } = useDeliveryCalculators()
   const { data: zones } = useDeliveryZones()
+  const { data: stockLocations } = useStockLocations()
   const { data: taxCategories } = useTaxCategories()
 
   const fulfillmentType = form.watch('fulfillment_type')
@@ -325,11 +457,7 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
   }))
 
   const selectedCalculator = (calculators?.data ?? []).find((c) => c.type === calculatorType)
-  const preferenceSchema = (selectedCalculator?.preference_schema ?? []) as Array<{
-    key: string
-    type: string
-    default: unknown
-  }>
+  const preferenceSchema = (selectedCalculator?.preference_schema ?? []) as PreferenceField[]
 
   const taxCategoryOptions = [
     { value: '', label: t('admin.common.none') },
@@ -393,6 +521,48 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
         />
       </Field>
 
+      {fulfillmentType === 'pickup' && (
+        <Field>
+          <FieldLabel>{t('admin.fields.delivery_method.pickup_locations.label')}</FieldLabel>
+          <Controller
+            name="stock_location_ids"
+            control={form.control}
+            render={({ field }) => (
+              <div className="flex flex-col gap-2">
+                <span className="text-muted-foreground text-xs">
+                  {t('admin.delivery_methods.pickup_locations_hint')}
+                </span>
+                {(stockLocations?.data ?? []).map((location) => {
+                  const checked = field.value.includes(location.id)
+                  return (
+                    <label
+                      key={location.id}
+                      htmlFor={`pickup-location-${location.id}`}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      <Checkbox
+                        id={`pickup-location-${location.id}`}
+                        checked={checked}
+                        onCheckedChange={(next) => {
+                          field.onChange(
+                            next
+                              ? [...field.value, location.id]
+                              : field.value.filter(
+                                  (locationId: string) => locationId !== location.id,
+                                ),
+                          )
+                        }}
+                      />
+                      {location.name}
+                    </label>
+                  )
+                })}
+              </div>
+            )}
+          />
+        </Field>
+      )}
+
       {(fulfillmentType === 'shipping' || fulfillmentType === 'pickup_point') && (
         <>
           <Field>
@@ -421,28 +591,17 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
             />
           </Field>
 
-          {preferenceSchema
-            .filter((preference) => preference.type !== 'boolean')
-            .map((preference) => (
-              <Field key={preference.key}>
-                <FieldLabel htmlFor={`calculator-${preference.key}`}>
-                  {t(`admin.fields.calculator.${preference.key}.label`, {
-                    defaultValue: preference.key,
-                  })}
-                </FieldLabel>
-                <Controller
-                  name={`calculator_preferences.${preference.key}`}
-                  control={form.control}
-                  render={({ field }) => (
-                    <Input
-                      id={`calculator-${preference.key}`}
-                      value={(field.value as string | number | undefined)?.toString() ?? ''}
-                      onChange={(e) => field.onChange(e.target.value)}
-                    />
-                  )}
-                />
-              </Field>
-            ))}
+          <Controller
+            name="calculator_preferences"
+            control={form.control}
+            render={({ field }) => (
+              <PreferencesForm
+                schema={preferenceSchema}
+                values={(field.value ?? {}) as Record<string, unknown>}
+                onChange={field.onChange}
+              />
+            )}
+          />
 
           <Field>
             <FieldLabel>{t('admin.fields.delivery_method.delivery_zones.label')}</FieldLabel>

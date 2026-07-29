@@ -309,6 +309,14 @@ module Spree
     Rails.application.config.spree.stock_splitters = value
   end
 
+  def self.delivery_method_rules
+    Rails.application.config.spree.delivery_method_rules
+  end
+
+  def self.delivery_method_rules=(value)
+    Rails.application.config.spree.delivery_method_rules = value
+  end
+
   def self.order_routing
     Rails.application.config.spree.order_routing
   end
