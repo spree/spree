@@ -652,8 +652,16 @@ bindings, 2026-07-29).
 
 Applied immediately to **DeliveryZone** — an unreleased 6.0 table, so the
 creation migration gained `store_id NOT NULL` + per-store name uniqueness
-in place, with zero bridge cost. **StockLocation** is a released table
-and follows as its own work item using the 5.6 single-store pattern
-(nullable `store_id` + backfill task + shared-row deprecation,
-`null: false` in 6.1), paired with ConfigurationManagement now granting
-stock-location management.
+in place, with zero bridge cost. **DeliveryMethod and StockLocation**
+(released tables) landed on the same branch via the 5.6 single-store
+pattern: nullable `store_id` + `SingleStoreResource`, per-store seeds,
+manifest backfill task assigning the default store, `null: false` in
+6.1. (Cross-store sharing is not preserved anywhere — `spree_multi_store`
+is legacy and unsupported.) Admin lookups and runtime pickers (Estimator, Coordinator, order
+routing) all go through the store associations
+(`store.delivery_methods` / `store.stock_locations`) — strict semantics;
+the manifest backfill is a required upgrade step before checkout. **TaxRate and
+TaxCategory** follow inside the tax-provider plan's implementation
+(noted there). Stock availability (`Stock::Quantifier`) intentionally
+stays location-global until the 6.1 NOT NULL work — correct for
+single-store installs, revisited with multi-store.

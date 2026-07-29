@@ -43,7 +43,7 @@ delivery_methods = [
 delivery_methods.each do |attributes|
   next if attributes[:delivery_zones].empty?
 
-  Spree::DeliveryMethod.where(name: attributes[:name]).first_or_create! do |delivery_method|
+  Spree::DeliveryMethod.where(name: attributes[:name], store: Spree::Store.default).first_or_create! do |delivery_method|
     delivery_method.calculator = Spree::Calculator::Shipping::FlatRate.create!
     delivery_method.delivery_zones = attributes[:delivery_zones]
     delivery_method.display_on = attributes[:display_on]

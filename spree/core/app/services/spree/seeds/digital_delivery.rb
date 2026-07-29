@@ -4,7 +4,15 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call
-        digital_delivery_method = Spree::DeliveryMethod.find_or_initialize_by(name: Spree.t('digital.digital_delivery'))
+        Spree::Store.all.find_each do |store|
+          create_for(store)
+        end
+      end
+
+      private
+
+      def create_for(store)
+        digital_delivery_method = Spree::DeliveryMethod.find_or_initialize_by(name: Spree.t('digital.digital_delivery'), store: store)
 
         digital_delivery_method.display_on = 'both'
         digital_delivery_method.fulfillment_type = 'digital'

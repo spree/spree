@@ -9,6 +9,7 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'carts_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'products.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'order_market_backfill.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'store_binding_migration.rake')
   end
 
   let(:store) { @default_store }
@@ -65,6 +66,26 @@ describe '6.0 data migration tasks' do
       run_task('spree:migrate_shipping_to_delivery')
       expect { run_task('spree:migrate_shipping_to_delivery') }.not_to raise_error
       expect(fulfillment.reload.status).to eq('fulfilled')
+    end
+  end
+
+  describe 'spree:backfill_delivery_and_stock_store_ids' do
+    it 'assigns the default store to unbound rows and skips bound ones' do
+      bound = create(:shipping_method)
+      other_store = create(:store)
+      bound.update_columns(store_id: other_store.id)
+      legacy_method = create(:shipping_method)
+      legacy_method.update_columns(store_id: nil)
+      legacy_location = create(:stock_location)
+      legacy_location.update_columns(store_id: nil)
+
+      task = Rake::Task['spree:backfill_delivery_and_stock_store_ids']
+      task.reenable
+      task.invoke
+
+      expect(legacy_method.reload.store_id).to eq(@default_store.id)
+      expect(legacy_location.reload.store_id).to eq(@default_store.id)
+      expect(bound.reload.store_id).to eq(other_store.id)
     end
   end
 

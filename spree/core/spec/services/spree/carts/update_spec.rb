@@ -3,6 +3,8 @@ require 'spec_helper'
 module Spree
   RSpec.describe Carts::Update do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+    let!(:store_stock_location) { create(:stock_location, store: store, backorderable_default: true) }
+    let!(:store_delivery_method) { create(:shipping_method, store: store) }
     let(:user) { create(:user) }
     let(:order) { create(:order_with_line_items, user: user, store: store, currency: 'USD') }
 

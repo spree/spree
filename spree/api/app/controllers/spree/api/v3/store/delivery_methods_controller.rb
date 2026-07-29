@@ -45,7 +45,7 @@ module Spree
           end
 
           def scope
-            scope = Spree::DeliveryMethod.storefront_visible
+            scope = current_store.delivery_methods.storefront_visible
             scope = scope.by_fulfillment_type(params[:fulfillment_type]) if params[:fulfillment_type].present?
             scope
           end

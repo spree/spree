@@ -6,6 +6,7 @@ module Spree
 
     let(:country) { create(:country) }
     let(:store) { create(:store, checkout_zone: zone) }
+    let!(:stock_location) { create(:stock_location, store: store, backorderable_default: true) }
     let(:order) { create(:order_with_totals, store: store, ship_address: create(:address, country: country)) }
 
     let(:execute) { subject.call(order: order, params: params) }
@@ -19,19 +20,19 @@ module Spree
     let(:zone) { create(:zone_with_country) }
     let(:shipping_category) { order.products.first.shipping_category }
     let!(:shipping_method) do
-      create(:shipping_method, shipping_categories: [shipping_category]) do |shipping_method|
+      create(:shipping_method, store: store, shipping_categories: [shipping_category]) do |shipping_method|
         shipping_method.calculator.preferred_amount = 10
         shipping_method.calculator.save
       end
     end
     let!(:shipping_method_2) do
-      create(:shipping_method, shipping_categories: [shipping_category]) do |shipping_method|
+      create(:shipping_method, store: store, shipping_categories: [shipping_category]) do |shipping_method|
         shipping_method.calculator.preferred_amount = 15
         shipping_method.calculator.save
       end
     end
     let!(:shipping_method_3) do
-      create(:shipping_method, shipping_categories: [shipping_category]) do |shipping_method|
+      create(:shipping_method, store: store, shipping_categories: [shipping_category]) do |shipping_method|
         shipping_method.calculator.preferred_amount = 5
         shipping_method.calculator.save
         # scoped to an unrelated delivery zone so it never serves this order

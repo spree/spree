@@ -5,6 +5,7 @@ FactoryBot.define do
     name       { 'UPS Ground' }
     code       { 'UPS_GROUND' }
     display_on { 'both' }
+    store      { Spree::Store.find_by(default: true) || association(:store) }
 
     factory :delivery_method, aliases: [:shipping_method], class: Spree::DeliveryMethod do
       association(:calculator, factory: :shipping_calculator, strategy: :build)

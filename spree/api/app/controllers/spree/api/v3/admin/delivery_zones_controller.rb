@@ -49,10 +49,6 @@ module Spree
             Spree.api.admin_delivery_zone_serializer
           end
 
-          def scope
-            current_store.delivery_zones.accessible_by(current_ability, :show)
-          end
-
           def permitted_params
             params.permit(
               :name, :description,

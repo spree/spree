@@ -93,6 +93,15 @@ steps:
       migration. spree_adjustments stays intact as the rollback source.
       Idempotent — orders that already have typed rows are skipped.
 
+  - id: backfill_delivery_and_stock_store_ids
+    name: "Bind delivery methods and stock locations to the default store"
+    task: "spree:backfill_delivery_and_stock_store_ids"
+    notes: |
+      Delivery methods and stock locations carry a store_id in Spree 6.
+      Unassigned rows go to the default store; additional stores manage
+      their own records afterwards. The NOT NULL constraints land in 6.1.
+      Idempotent.
+
   - id: backfill_order_markets
     name: "Backfill order markets"
     task: "spree:backfill_order_markets"

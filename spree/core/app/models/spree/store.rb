@@ -118,6 +118,8 @@ module Spree
     end
 
     has_many :delivery_zones, class_name: 'Spree::DeliveryZone', dependent: :destroy
+    has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: :nullify
+    has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :wishlists, class_name: 'Spree::Wishlist'

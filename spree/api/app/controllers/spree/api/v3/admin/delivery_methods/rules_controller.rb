@@ -64,7 +64,7 @@ module Spree
             private
 
             def parent
-              @parent ||= Spree::DeliveryMethod.accessible_by(current_ability, :update).find_by_prefix_id!(params[:delivery_method_id])
+              @parent ||= current_store.delivery_methods.accessible_by(current_ability, :update).find_by_prefix_id!(params[:delivery_method_id])
             end
 
             def active_param

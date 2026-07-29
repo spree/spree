@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :stock_location, class: Spree::StockLocation do
+    store { Spree::Store.find_by(default: true) || association(:store) }
     name                  { FFaker::Name.unique.name }
     address1              { '1600 Pennsylvania Ave NW' }
     city                  { 'Washington' }

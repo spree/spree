@@ -75,7 +75,7 @@ module Spree
       end
 
       def resolve_preferred_stock_location
-        Spree::StockLocation.for_store(@store).find_by_param!(@params[:preferred_stock_location_id])
+        @store.stock_locations.find_by_param!(@params[:preferred_stock_location_id])
       end
 
       def assign_addresses(order)

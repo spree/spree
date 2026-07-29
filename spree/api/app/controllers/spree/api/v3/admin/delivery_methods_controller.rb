@@ -55,10 +55,6 @@ module Spree
             Spree.api.admin_delivery_method_serializer
           end
 
-          def scope
-            Spree::DeliveryMethod.accessible_by(current_ability, :show)
-          end
-
           def permitted_params
             params.permit(
               :name, :admin_name, :code, :fulfillment_type, :fulfillment_provider,
@@ -85,7 +81,7 @@ module Spree
               attributes[:delivery_zones] = Array(params[:delivery_zone_ids]).map { |id| current_store.delivery_zones.accessible_by(current_ability, :show).find_by_prefix_id!(id) }
             end
             if params.key?(:stock_location_ids)
-              attributes[:pickup_locations] = Array(params[:stock_location_ids]).map { |id| Spree::StockLocation.accessible_by(current_ability, :show).find_by_prefix_id!(id) }
+              attributes[:pickup_locations] = Array(params[:stock_location_ids]).map { |id| current_store.stock_locations.accessible_by(current_ability, :show).find_by_prefix_id!(id) }
             end
             attributes
           end
