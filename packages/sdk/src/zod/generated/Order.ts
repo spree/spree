@@ -11,6 +11,7 @@ import { PaymentSchema } from './Payment';
 export const OrderSchema = z.object({
   id: z.string(),
   market_id: z.string().nullable(),
+  cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),
   number: z.string(),
   email: z.string(),

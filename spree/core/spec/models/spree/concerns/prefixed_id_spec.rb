@@ -20,6 +20,15 @@ RSpec.describe Spree::PrefixedId do
     end
   end
 
+  describe '.prefixed_id_for' do
+    it 'encodes a raw id without loading the row' do
+      cart = create(:cart)
+
+      expect(Spree::Cart.prefixed_id_for(cart.id)).to eq(cart.prefixed_id)
+      expect(Spree::Cart.prefixed_id_for(nil)).to be_nil
+    end
+  end
+
   describe '#prefixed_id' do
     it 'returns a prefixed ID for persisted records' do
       product = create(:product)

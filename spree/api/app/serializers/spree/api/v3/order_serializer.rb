@@ -4,7 +4,8 @@ module Spree
       # Store API Order Serializer
       # Post-purchase order data (completed orders)
       class OrderSerializer < BaseSerializer
-        typelize number: :string, email: :string,
+        typelize cart_id: [:string, nullable: true],
+                 number: :string, email: :string,
                  customer_note: [:string, nullable: true],
                  market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
@@ -28,6 +29,14 @@ module Spree
 
         attribute :market_id do |order|
           order.market&.prefixed_id
+        end
+
+        # The checkout handle this order was born from (nil for admin drafts).
+        # Lets abandonment tooling match cart.* events to the conversion.
+        # Encoded from the FK — loading the cart row just for its id would be
+        # an N+1 on order lists.
+        attribute :cart_id do |order|
+          Spree::Cart.prefixed_id_for(order.cart_id)
         end
 
         attribute :channel_id do |order|

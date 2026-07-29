@@ -132,6 +132,17 @@ module Spree
         end
       end
 
+      # Builds the prefixed id for a raw primary key without loading the row —
+      # for serializing foreign keys (e.g. Order#cart_id) where fetching the
+      # associated record just to re-encode its id would be wasted I/O.
+      # @param id [Integer, String, nil]
+      # @return [String, nil]
+      def prefixed_id_for(id)
+        return nil if id.blank?
+
+        "#{_prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([id.to_i])}"
+      end
+
       def find_by_prefix_id!(prefixed_id)
         decoded = decode_own_prefixed_id(prefixed_id)
         raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with prefixed id=#{prefixed_id}", name) unless decoded
