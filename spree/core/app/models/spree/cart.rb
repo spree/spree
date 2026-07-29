@@ -147,6 +147,14 @@ module Spree
     end
     alias complete? completed?
 
+    # A completed cart is an immutable audit record — post-checkout life
+    # belongs to the order. Blocks save/update_columns/touch/destroy at the
+    # model level; the completion write itself passes because it fires while
+    # the persisted completed_at is still nil.
+    def readonly?
+      super || (completed_at.present? && !completed_at_changed?)
+    end
+
     # @return [Boolean] whether a completion attempt currently holds this cart
     def completing?
       completing_at.present?

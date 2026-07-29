@@ -1,6 +1,26 @@
 require 'spec_helper'
 
 describe Spree::Cart, type: :model do
+  describe 'readonly after completion' do
+    let(:cart) { create(:cart, store: @default_store) }
+
+    it 'rejects every write path once completed' do
+      cart.update_columns(completed_at: Time.current)
+
+      reloaded = Spree::Cart.find(cart.id)
+      expect(reloaded).to be_readonly
+      expect { reloaded.update!(email: 'x@example.com') }.to raise_error(ActiveRecord::ReadOnlyRecord)
+      expect { reloaded.update_columns(email: 'x@example.com') }.to raise_error(ActiveRecord::ReadOnlyRecord)
+      expect { reloaded.touch }.to raise_error(ActiveRecord::ReadOnlyRecord)
+      expect { reloaded.destroy }.to raise_error(ActiveRecord::ReadOnlyRecord)
+    end
+
+    it 'lets the completion write through and locks the instance after it' do
+      expect { cart.update_columns(completed_at: Time.current) }.not_to raise_error
+      expect(cart).to be_readonly
+    end
+  end
+
   describe 'lifecycle' do
     it 'generates a token on create' do
       expect(create(:cart).token).to be_present

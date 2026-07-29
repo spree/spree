@@ -15,6 +15,10 @@ module Spree
           order = @order || @parent || @cart
 
           order.with_lock do
+            # Completed carts are readonly — nothing left to version-bump;
+            # the row lock alone still serializes the idempotent paths.
+            next yield if order.readonly?
+
             # Persist increment within the transaction so reloads inside yield see the new version
             new_version = order.lock_version + 1
             order.update_column(:lock_version, new_version)
