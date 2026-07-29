@@ -1492,10 +1492,11 @@ function AddDiscountDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { orderId } = Route.useParams()
   const [target, setTarget] = useState('order')
   const [valueType, setValueType] = useState('flat')
+  const [value, setValue] = useState('')
 
   const mutation = useOrderAdjustmentLinesMutation(
     orderId,
@@ -1522,12 +1523,36 @@ function AddDiscountDialog({
     mutation.mutate(
       {
         label: fd.get('label') as string,
-        value: fd.get('value') as string,
+        value,
         value_type: valueType as 'flat' | 'percent',
         ...(target !== 'order' ? { line_item_id: target } : {}),
       },
-      { onSuccess: () => onOpenChange(false) },
+      {
+        onSuccess: () => {
+          setValue('')
+          onOpenChange(false)
+        },
+      },
     )
+  }
+
+  // Mirrors Orders::AddManualDiscount: percent applies to the already-
+  // discounted line amounts, clamped so no line goes below zero.
+  const numericValue = Number.parseFloat(value)
+  let previewAmount: number | null = null
+  if (valueType === 'percent' && Number.isFinite(numericValue) && numericValue > 0) {
+    const items = order.items ?? []
+    const base =
+      target === 'order'
+        ? items.reduce(
+            (sum, item) => sum + Math.max(Number.parseFloat(item.discounted_amount), 0),
+            0,
+          )
+        : Math.max(
+            Number.parseFloat(items.find((item) => item.id === target)?.discounted_amount ?? '0'),
+            0,
+          )
+    if (base > 0) previewAmount = Math.min((base * numericValue) / 100, base)
   }
 
   return (
@@ -1559,6 +1584,8 @@ function AddDiscountDialog({
                     type="number"
                     step="0.01"
                     min="0.01"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
                     required
                   />
                 </Field>
@@ -1603,6 +1630,16 @@ function AddDiscountDialog({
                   </SelectContent>
                 </Select>
               </Field>
+              {previewAmount !== null && (
+                <p className="text-sm text-muted-foreground">
+                  {t('admin.orders.detail.adjustment_lines.percent_preview', {
+                    amount: new Intl.NumberFormat(i18n.language, {
+                      style: 'currency',
+                      currency: order.currency,
+                    }).format(previewAmount),
+                  })}
+                </p>
+              )}
             </FieldGroup>
           </DialogBody>
           <DialogFooter>

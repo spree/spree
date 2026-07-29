@@ -1361,6 +1361,7 @@
           "kind_field": "Kind",
           "kind_promotion": "Promotion",
           "label_field": "Label",
+          "percent_preview": "Estimated discount: {{amount}}",
           "target_field": "Applies to",
           "target_order": "Whole order",
           "taxes": "Taxes",

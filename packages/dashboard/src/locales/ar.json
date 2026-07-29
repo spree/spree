@@ -1361,6 +1361,7 @@
           "kind_field": "الفئة",
           "kind_promotion": "عرض ترويجي",
           "label_field": "التسمية",
+          "percent_preview": "الخصم المقدر: {{amount}}",
           "target_field": "ينطبق على",
           "target_order": "الطلب بأكمله",
           "taxes": "الضرائب",

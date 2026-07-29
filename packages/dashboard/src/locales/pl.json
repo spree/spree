@@ -1367,6 +1367,7 @@
           "kind_field": "Rodzaj",
           "kind_promotion": "Promocja",
           "label_field": "Etykieta",
+          "percent_preview": "Szacowany rabat: {{amount}}",
           "target_field": "Dotyczy",
           "target_order": "Całe zamówienie",
           "taxes": "Podatki",

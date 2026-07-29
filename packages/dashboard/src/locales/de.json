@@ -1361,6 +1361,7 @@
           "kind_field": "Art",
           "kind_promotion": "Aktion",
           "label_field": "Bezeichnung",
+          "percent_preview": "Voraussichtlicher Rabatt: {{amount}}",
           "target_field": "Gilt für",
           "target_order": "Gesamte Bestellung",
           "taxes": "Steuern",

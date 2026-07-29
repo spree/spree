@@ -1361,6 +1361,7 @@
           "kind_field": "种类",
           "kind_promotion": "促销",
           "label_field": "名称",
+          "percent_preview": "预计折扣：{{amount}}",
           "target_field": "适用于",
           "target_order": "整个订单",
           "taxes": "税费",

@@ -1361,6 +1361,7 @@
           "kind_field": "Nature",
           "kind_promotion": "Promotion",
           "label_field": "Libellé",
+          "percent_preview": "Remise estimée : {{amount}}",
           "target_field": "S'applique à",
           "target_order": "Commande entière",
           "taxes": "Taxes",
