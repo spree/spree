@@ -16,6 +16,7 @@ FactoryBot.define do
 
     factory :digital_delivery_method, aliases: [:digital_shipping_method], class: Spree::DeliveryMethod do
       fulfillment_type { 'digital' }
+      fulfillment_provider { 'Spree::FulfillmentProvider::Digital' }
       association(:calculator, factory: :digital_shipping_calculator, strategy: :build)
     end
   end

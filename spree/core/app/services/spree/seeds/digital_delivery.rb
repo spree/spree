@@ -8,6 +8,7 @@ module Spree
 
         digital_delivery_method.display_on = 'both'
         digital_delivery_method.fulfillment_type = 'digital'
+        digital_delivery_method.fulfillment_provider = 'Spree::FulfillmentProvider::Digital'
         digital_delivery_method.calculator ||= Spree::Calculator::Shipping::DigitalDelivery.create!
         digital_delivery_method.save!
       end

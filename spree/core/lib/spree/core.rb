@@ -285,6 +285,22 @@ module Spree
     Rails.application.config.spree.tax_provider = value
   end
 
+  def self.fulfillment_providers
+    Rails.application.config.spree.fulfillment_providers
+  end
+
+  def self.fulfillment_providers=(value)
+    Rails.application.config.spree.fulfillment_providers = value
+  end
+
+  def self.fulfillment_types
+    Rails.application.config.spree.fulfillment_types
+  end
+
+  def self.fulfillment_types=(value)
+    Rails.application.config.spree.fulfillment_types = value
+  end
+
   def self.stock_splitters
     Rails.application.config.spree.stock_splitters
   end

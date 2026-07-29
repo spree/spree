@@ -84,10 +84,6 @@ module Spree
                   end
                 end
 
-                before_transition to: :complete do |order|
-                  order.create_digital_links if order.with_digital_assets?
-                end
-
                 after_transition to: :complete, do: :create_user_record
                 before_transition to: :payment, do: :set_shipments_cost
                 before_transition to: :payment, do: :create_tax_charge!

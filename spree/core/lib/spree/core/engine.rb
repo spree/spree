@@ -11,6 +11,8 @@ module Spree
                                :payment_methods,
                                :adjusters,
                                :tax_provider,
+                               :fulfillment_providers,
+                               :fulfillment_types,
                                :stock_splitters,
                                :order_routing,
                                :promotions,
@@ -164,6 +166,17 @@ module Spree
 
         # The sanctioned TaxLine writer (see docs/plans/6.0-tax-provider.md).
         Rails.application.config.spree.tax_provider = Spree::TaxProvider::Internal
+
+        Rails.application.config.spree.fulfillment_providers = [
+          Spree::FulfillmentProvider::Manual,
+          Spree::FulfillmentProvider::Digital,
+          Spree::FulfillmentProvider::Pickup,
+          Spree::FulfillmentProvider::PickupPoint
+        ]
+
+        # Open strings, no inclusion validation — extensions append their own
+        # (e.g. 'same_day_courier').
+        Rails.application.config.spree.fulfillment_types = %w[shipping pickup pickup_point digital local_delivery]
 
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add

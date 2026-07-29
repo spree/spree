@@ -703,6 +703,8 @@ module Spree
 
       touch :completed_at
 
+      auto_fulfill_provider_fulfillments
+
       send_order_placed_webhook
 
       consider_risk
@@ -809,8 +811,16 @@ module Spree
       %w(partial shipped fulfilled).include?(fulfillment_status)
     end
 
-    def fully_shipped?
+    # True when every fulfillment reached the fulfilled status — the signal
+    # order.fulfilled publishes on.
+    def fully_fulfilled?
       fulfillments.fulfilled.size == fulfillments.size
+    end
+
+    # @deprecated Use {#fully_fulfilled?}; removed in 6.1.
+    def fully_shipped?
+      Spree::Deprecation.warn('Spree::Order#fully_shipped? is deprecated and will be removed in Spree 6.1. Use #fully_fulfilled? instead.')
+      fully_fulfilled?
     end
 
     def create_proposed_shipments

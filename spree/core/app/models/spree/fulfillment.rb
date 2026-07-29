@@ -100,14 +100,15 @@ module Spree
       end
 
       event :fulfill do
-        transition from: %i(ready ready_for_pickup canceled), to: :fulfilled
+        transition from: %i(ready ready_for_pickup canceled), to: :fulfilled, if: ->(fulfillment) { fulfillment.provider.can_fulfill?(fulfillment) }
       end
-      after_transition to: :fulfilled, do: [:after_fulfill, :send_shipment_shipped_webhook, :publish_shipment_shipped_event]
+      after_transition to: :ready, do: :publish_fulfillment_ready_event
+      after_transition to: :fulfilled, do: [:after_fulfill, :send_fulfillment_fulfilled_webhook, :publish_fulfillment_fulfilled_event]
 
       event :cancel do
         transition to: :canceled, from: %i(pending ready ready_for_pickup)
       end
-      after_transition to: :canceled, do: [:after_cancel, :publish_shipment_canceled_event]
+      after_transition to: :canceled, do: [:after_cancel, :publish_fulfillment_canceled_event]
 
       event :resume do
         transition from: :canceled, to: :ready, if: lambda { |fulfillment|
@@ -115,7 +116,7 @@ module Spree
         }
         transition from: :canceled, to: :pending
       end
-      after_transition from: :canceled, to: %i(pending ready fulfilled), do: [:after_resume, :publish_shipment_resumed_event]
+      after_transition from: :canceled, to: %i(pending ready fulfilled), do: [:after_resume, :publish_fulfillment_resumed_event]
 
       after_transition do |fulfillment, transition|
         fulfillment.state_changes.create!(
@@ -212,6 +213,7 @@ module Spree
 
     def after_cancel
       manifest.each { |item| manifest_restock(item) }
+      provider.cancel_fulfillment(self)
     end
 
     def after_resume
@@ -490,6 +492,23 @@ module Spree
       selected_delivery_rate&.delivery_method || delivery_rates.first&.delivery_method
     end
 
+    # The fulfillment provider strategy handling this fulfillment's
+    # create/track/cancel mechanics — from the selected delivery method,
+    # falling back to Manual when no method is selected.
+    #
+    # @return [Spree::FulfillmentProvider::Base]
+    def provider
+      delivery_method&.provider || Spree::FulfillmentProvider::Manual.new
+    end
+
+    # Commission base for multi-vendor include_shipping: the cost net of
+    # fulfillment-attached discounts.
+    #
+    # @return [BigDecimal]
+    def delivery_amount
+      cost + discounts.sum(:amount)
+    end
+
     # Returns the tax category of the selected shipping rate
     #
     # @return [Spree::TaxCategory]
@@ -584,7 +603,18 @@ module Spree
       fulfillment_items.each(&:ship!)
       process_order_payments if Spree::Config[:auto_capture_on_dispatch]
       touch :fulfilled_at
+      run_provider_create_fulfillment
       update_order_fulfillment_status
+    end
+
+    # Lets the provider perform its dispatch mechanics; tracking data it
+    # returns is persisted unless an admin already entered one.
+    def run_provider_create_fulfillment
+      result = provider.create_fulfillment(self)
+      return unless result.is_a?(Hash)
+
+      new_tracking = result[:tracking_number].presence
+      update_column(:tracking, new_tracking) if new_tracking && tracking.blank?
     end
 
     def update_order_fulfillment_status
