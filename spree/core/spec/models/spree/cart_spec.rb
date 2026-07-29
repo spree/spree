@@ -1,6 +1,24 @@
 require 'spec_helper'
 
 describe Spree::Cart, type: :model do
+  describe 'lifecycle events' do
+    it 'publishes cart.* lifecycle events' do
+      expect(described_class.lifecycle_events_enabled).to be true
+      expect(described_class.event_prefix).to eq('cart')
+
+      registered = described_class._commit_callbacks.map(&:filter)
+      expect(registered).to include(:publish_create_event, :publish_update_event, :publish_delete_event)
+    end
+
+    # The V3 cart serializer resolves by convention when spree_api is loaded;
+    # core's dummy app only sees the fallback payload.
+    it 'carries the prefixed id in the event payload' do
+      cart = create(:cart, store: @default_store)
+
+      expect(cart.event_payload[:id]).to eq(cart.prefixed_id)
+    end
+  end
+
   describe 'readonly after completion' do
     let(:cart) { create(:cart, store: @default_store) }
 

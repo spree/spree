@@ -11,6 +11,11 @@ module Spree
   class Cart < Spree.base_class
     has_prefix_id :cart
 
+    # cart.created / cart.updated / cart.deleted — the abandonment-tooling
+    # signal (parity with 5.x, where incomplete orders emitted order.*).
+    # Payload serializes through the V3 cart serializer by convention.
+    publishes_lifecycle_events
+
     has_secure_token
 
     # Concurrency is manual (the API's OrderLock semantics — compare
