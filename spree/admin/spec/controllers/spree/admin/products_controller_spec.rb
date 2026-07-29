@@ -601,6 +601,21 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
           "but found: #{inputs_with_ids.map { |el| el['id'] }.join(', ')}"
       end
     end
+
+    context 'when admin user locale differs from store default locale' do
+      let!(:product) { create(:product, stores: [store], status: 'active') }
+
+      before do
+        store.update!(default_locale: 'en')
+        allow(controller).to receive(:current_locale).and_return('da')
+        allow(I18n).to receive(:locale).and_return(:'da')
+      end
+
+      it 'falls back to default locale and renders the edit template' do
+        get :edit, params: { id: product.to_param }
+        expect(response).to render_template(:edit)
+      end
+    end
   end
 
   describe 'PUT #update' do
