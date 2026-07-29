@@ -9,6 +9,7 @@ import {
   PageHeader,
   Slot,
   TagCombobox,
+  useResourceKey,
   useResourceMutation,
 } from '@spree/dashboard-core'
 import {
@@ -1917,9 +1918,13 @@ function DiscountsCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
   const confirm = useConfirm()
   const [giftCardOpen, setGiftCardOpen] = useState(false)
+  const [couponOpen, setCouponOpen] = useState(false)
 
   const removeGiftCardMutation = useOrderMutation(orderId, () =>
     adminClient.orders.giftCards.remove(orderId, order.gift_card?.id ?? ''),
+  )
+  const removeCouponMutation = useOrderMutation(orderId, () =>
+    adminClient.orders.discountCodes.delete(orderId, order.coupon_code ?? ''),
   )
   const applyStoreCreditMutation = useOrderMutation(orderId, () =>
     adminClient.orders.storeCredits.apply(orderId),
@@ -1930,6 +1935,8 @@ function DiscountsCard({ order }: { order: Order }) {
 
   const hasStoreCredit = Number.parseFloat(order.store_credit_total) > 0
   const hasCustomer = Boolean(order.customer_id)
+  const isEditable = !order.completed_at
+  const couponPending = Boolean(order.coupon_code) && Number.parseFloat(order.discount_total) === 0
 
   return (
     <>
@@ -1938,6 +1945,52 @@ function DiscountsCard({ order }: { order: Order }) {
           <CardTitle>{t('admin.orders.detail.gift_card_section.title')}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
+          {/* Discount code — editable on drafts; frozen after completion */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">
+                {t('admin.orders.detail.discount_section.label')}
+              </span>
+              {order.coupon_code ? (
+                <span className="font-mono text-xs text-muted-foreground">
+                  {order.coupon_code}
+                  {couponPending && ` · ${t('admin.orders.detail.discount_section.pending_hint')}`}
+                </span>
+              ) : (
+                <span className="text-xs text-muted-foreground">
+                  {t('admin.orders.detail.gift_card_section.none_applied')}
+                </span>
+              )}
+            </div>
+            {isEditable &&
+              (order.coupon_code ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={async () => {
+                    if (
+                      await confirm({
+                        message: t('admin.orders.detail.discount_section.remove_confirm_message'),
+                        confirmLabel: t('admin.actions.remove'),
+                      })
+                    ) {
+                      removeCouponMutation.mutate(undefined)
+                    }
+                  }}
+                  disabled={removeCouponMutation.isPending}
+                >
+                  {t('admin.actions.remove')}
+                </Button>
+              ) : (
+                <Button size="sm" variant="outline" onClick={() => setCouponOpen(true)}>
+                  <PlusIcon className="size-4" />
+                  {t('admin.actions.apply')}
+                </Button>
+              ))}
+          </div>
+
+          <Separator />
+
           {/* Gift card */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex flex-col">
@@ -2035,7 +2088,114 @@ function DiscountsCard({ order }: { order: Order }) {
       </Card>
 
       <ApplyGiftCardDialog orderId={orderId} open={giftCardOpen} onOpenChange={setGiftCardOpen} />
+      <CouponCodeDialog orderId={orderId} open={couponOpen} onOpenChange={setCouponOpen} />
     </>
+  )
+}
+
+function CouponCodeDialog({
+  orderId,
+  open,
+  onOpenChange,
+}: {
+  orderId: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  const { t } = useTranslation()
+  const [code, setCode] = useState('')
+
+  const promotionsQuery = useQuery({
+    queryKey: useResourceKey('promotions', 'coupon-options'),
+    queryFn: () => adminClient.promotions.list({ q: { kind_eq: 'coupon_code' }, per_page: 100 }),
+    enabled: open,
+  })
+  const couponPromotions = (promotionsQuery.data?.data ?? []).filter((promotion) => promotion.code)
+
+  const mutation = useOrderMutation(orderId, (params: { code: string }) =>
+    adminClient.orders.discountCodes.create(orderId, params),
+  )
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const trimmed = code.trim()
+    if (!trimmed) return
+    mutation.mutate(
+      { code: trimmed },
+      {
+        onSuccess: () => {
+          setCode('')
+          onOpenChange(false)
+        },
+      },
+    )
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('admin.orders.detail.discount_section.apply_dialog_title')}</DialogTitle>
+          <DialogDescription>
+            {t('admin.orders.detail.discount_section.apply_dialog_description')}
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <DialogBody>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="coupon-code">{t('admin.fields.code.label')}</FieldLabel>
+                <Input
+                  id="coupon-code"
+                  name="code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder={t('admin.orders.detail.discount_section.code_placeholder')}
+                  required
+                  autoFocus
+                />
+              </Field>
+              {couponPromotions.length > 0 && (
+                <Field>
+                  <FieldLabel>
+                    {t('admin.orders.detail.discount_section.promotions_label')}
+                  </FieldLabel>
+                  <div className="flex max-h-48 flex-col gap-1 overflow-y-auto">
+                    {couponPromotions.map((promotion) => (
+                      <button
+                        type="button"
+                        key={promotion.id}
+                        onClick={() => setCode(promotion.code ?? '')}
+                        className={cn(
+                          'flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm hover:bg-accent',
+                          code === promotion.code && 'border-primary',
+                        )}
+                      >
+                        <span className="truncate">{promotion.name}</span>
+                        <span className="ml-2 shrink-0 font-mono text-xs text-muted-foreground">
+                          {promotion.code}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </Field>
+              )}
+              {mutation.isError && (
+                <p className="text-sm text-destructive">{(mutation.error as Error).message}</p>
+              )}
+            </FieldGroup>
+          </DialogBody>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              {t('admin.actions.cancel')}
+            </Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {t('admin.actions.apply')}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

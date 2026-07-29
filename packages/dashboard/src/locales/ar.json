@@ -1384,6 +1384,15 @@
           "ship_message": "شحن هذا الوفاء؟",
           "void_message": "Void هذه الدفعة؟"
         },
+        "discount_section": {
+          "apply_dialog_description": "أدخل رمزاً أو اختر أحد عروض القسائم.",
+          "apply_dialog_title": "تطبيق رمز الخصم",
+          "code_placeholder": "SUMMER10",
+          "label": "رمز الخصم",
+          "pending_hint": "يُطبق عندما يصبح الطلب مؤهلاً",
+          "promotions_label": "عروض القسائم",
+          "remove_confirm_message": "إزالة رمز الخصم من هذا الطلب؟"
+        },
         "dropdown": {
           "cancel_shipment": "Cancel Shipment",
           "complete_order": "Complete Order",
@@ -1413,7 +1422,7 @@
           "none_applied": "لم يتم تطبيق أي شيء",
           "requires_customer": "يتطلب العميل",
           "store_credit_label": "Store credit",
-          "title": "Gift Card & Store Credit"
+          "title": "الخصومات والرصيد"
         },
         "items_table": {
           "item": "غرض",

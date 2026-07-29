@@ -1390,6 +1390,15 @@
           "ship_message": "Wysłać tę realizację?",
           "void_message": "Unieważnić tę płatność?"
         },
+        "discount_section": {
+          "apply_dialog_description": "Wpisz kod lub wybierz promocję kuponową.",
+          "apply_dialog_title": "Zastosuj kod rabatowy",
+          "code_placeholder": "LATO10",
+          "label": "Kod rabatowy",
+          "pending_hint": "zostanie zastosowany, gdy zamówienie się zakwalifikuje",
+          "promotions_label": "Promocje kuponowe",
+          "remove_confirm_message": "Usunąć kod rabatowy z tego zamówienia?"
+        },
         "dropdown": {
           "cancel_shipment": "Anuluj wysyłkę",
           "complete_order": "Sfinalizuj zamówienie",
@@ -1419,7 +1428,7 @@
           "none_applied": "Brak zastosowanych",
           "requires_customer": "Wymaga klienta",
           "store_credit_label": "Kredyt sklepowy",
-          "title": "Karta podarunkowa i kredyt sklepowy"
+          "title": "Rabaty i środki"
         },
         "items_table": {
           "item": "Pozycja",

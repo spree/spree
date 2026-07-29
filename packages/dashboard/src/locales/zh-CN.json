@@ -1384,6 +1384,15 @@
           "ship_message": "发货此履约单吗？",
           "void_message": "作废此付款吗？"
         },
+        "discount_section": {
+          "apply_dialog_description": "输入折扣码或选择一个优惠码促销。",
+          "apply_dialog_title": "应用折扣码",
+          "code_placeholder": "SUMMER10",
+          "label": "折扣码",
+          "pending_hint": "订单符合条件后生效",
+          "promotions_label": "优惠码促销",
+          "remove_confirm_message": "从此订单移除折扣码？"
+        },
         "dropdown": {
           "cancel_shipment": "取消发货",
           "complete_order": "完成订单",
@@ -1413,7 +1422,7 @@
           "none_applied": "未应用",
           "requires_customer": "需要客户",
           "store_credit_label": "店铺积分",
-          "title": "礼品卡和店铺积分"
+          "title": "折扣与余额"
         },
         "items_table": {
           "item": "商品",

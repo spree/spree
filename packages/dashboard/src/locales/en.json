@@ -1384,6 +1384,15 @@
           "ship_message": "Ship this fulfillment?",
           "void_message": "Void this payment?"
         },
+        "discount_section": {
+          "apply_dialog_description": "Enter a code or pick one of the coupon promotions.",
+          "apply_dialog_title": "Apply Discount Code",
+          "code_placeholder": "SUMMER10",
+          "label": "Discount code",
+          "pending_hint": "applies once the order qualifies",
+          "promotions_label": "Coupon promotions",
+          "remove_confirm_message": "Remove the discount code from this order?"
+        },
         "dropdown": {
           "cancel_shipment": "Cancel Shipment",
           "complete_order": "Complete Order",
@@ -1413,7 +1422,7 @@
           "none_applied": "None applied",
           "requires_customer": "Requires a customer",
           "store_credit_label": "Store credit",
-          "title": "Gift Card & Store Credit"
+          "title": "Discounts & Credit"
         },
         "items_table": {
           "item": "Item",

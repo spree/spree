@@ -1384,6 +1384,15 @@
           "ship_message": "Diese Lieferung versenden?",
           "void_message": "Diese Zahlung stornieren?"
         },
+        "discount_section": {
+          "apply_dialog_description": "Code eingeben oder eine Coupon-Aktion auswählen.",
+          "apply_dialog_title": "Rabattcode anwenden",
+          "code_placeholder": "SOMMER10",
+          "label": "Rabattcode",
+          "pending_hint": "wird angewendet, sobald die Bestellung qualifiziert",
+          "promotions_label": "Coupon-Aktionen",
+          "remove_confirm_message": "Rabattcode von dieser Bestellung entfernen?"
+        },
         "dropdown": {
           "cancel_shipment": "Lieferung stornieren",
           "complete_order": "Auftrag abschließen",
@@ -1413,7 +1422,7 @@
           "none_applied": "Keine angewendet",
           "requires_customer": "Erfordert einen Kunden",
           "store_credit_label": "Guthaben",
-          "title": "Geschenkkarte & Guthaben"
+          "title": "Rabatte & Guthaben"
         },
         "items_table": {
           "item": "Artikel",

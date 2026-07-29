@@ -1112,6 +1112,32 @@ export class AdminClient {
         this.request<void>('DELETE', `/orders/${orderId}/discounts/${id}`, options),
     },
 
+    /**
+     * Discount codes on a draft order — same pending semantics as the
+     * storefront cart endpoint (a real-but-not-yet-eligible code is stored
+     * and activates on recalculation). Completed orders respond 422
+     * (`discount_not_editable`); use manual discounts instead.
+     */
+    discountCodes: {
+      create: (
+        orderId: string,
+        params: { code: string },
+        options?: RequestOptions,
+      ): Promise<Order> =>
+        this.request<Order>('POST', `/orders/${orderId}/discount_codes`, {
+          ...options,
+          body: params,
+        }),
+
+      /** `code` is the discount code string, not an ID. */
+      delete: (orderId: string, code: string, options?: RequestOptions): Promise<Order> =>
+        this.request<Order>(
+          'DELETE',
+          `/orders/${orderId}/discount_codes/${encodeURIComponent(code)}`,
+          options,
+        ),
+    },
+
     fees: {
       list: (
         orderId: string,

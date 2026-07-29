@@ -1384,6 +1384,15 @@
           "ship_message": "Expédier cet envoi ?",
           "void_message": "Annuler ce paiement ?"
         },
+        "discount_section": {
+          "apply_dialog_description": "Saisissez un code ou choisissez une promotion à coupon.",
+          "apply_dialog_title": "Appliquer un code de réduction",
+          "code_placeholder": "ETE10",
+          "label": "Code de réduction",
+          "pending_hint": "s'applique dès que la commande est éligible",
+          "promotions_label": "Promotions à coupon",
+          "remove_confirm_message": "Retirer le code de réduction de cette commande ?"
+        },
         "dropdown": {
           "cancel_shipment": "Annuler l'envoi",
           "complete_order": "Finaliser la commande",
@@ -1413,7 +1422,7 @@
           "none_applied": "Aucun appliqué",
           "requires_customer": "Nécessite un client",
           "store_credit_label": "Avoir",
-          "title": "Carte cadeau et avoir"
+          "title": "Remises et avoirs"
         },
         "items_table": {
           "item": "Article",
