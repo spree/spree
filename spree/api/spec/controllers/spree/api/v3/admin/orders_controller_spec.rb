@@ -37,8 +37,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     context 'with ransack filtering' do
       let!(:completed_order) { create(:completed_order_with_totals, store: store) }
 
-      it 'filters by state' do
-        get :index, params: { q: { state_eq: 'complete' } }, as: :json
+      it 'filters by completion' do
+        get :index, params: { q: { completed_at_not_null: 1 } }, as: :json
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].length).to eq(1)
@@ -650,7 +650,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       subject
 
       expect(response).to have_http_status(:ok)
-      expect(order.reload.state).to eq('canceled')
+      expect(order.reload).to be_canceled
     end
   end
 
@@ -683,7 +683,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       subject
 
       expect(response).to have_http_status(:ok)
-      expect(order.reload.state).to eq('resumed')
+      expect(order.reload).not_to be_canceled
     end
   end
 

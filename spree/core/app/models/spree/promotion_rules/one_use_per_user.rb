@@ -2,7 +2,7 @@ module Spree
   module PromotionRules
     class OneUsePerUser < Spree::PromotionRule
       def applicable?(promotable)
-        promotable.is_a?(Spree::Order)
+        promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
       end
 
       def eligible?(order, _options = {})

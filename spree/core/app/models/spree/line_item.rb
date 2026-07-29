@@ -89,6 +89,17 @@ module Spree
       order || cart
     end
 
+    # Bridge for legacy callers assigning +current_order+ (now a Spree::Cart)
+    # to the order association — routes carts to the cart FK instead.
+    def order=(record)
+      if record.is_a?(Spree::Cart)
+        self.cart = record
+        super(nil)
+      else
+        super
+      end
+    end
+
     def copy_price
       if variant
         update_price if price.nil?

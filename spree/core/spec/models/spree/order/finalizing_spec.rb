@@ -8,7 +8,7 @@ describe Spree::Order, type: :model do
     let(:order) { Spree::Order.create(email: 'test@example.com') }
 
     before do
-      order.update_column :state, 'complete'
+      order.update_columns(completed_at: Time.current, status: 'placed')
     end
 
     after { Spree::Config.set track_inventory_levels: true }
@@ -72,7 +72,7 @@ describe Spree::Order, type: :model do
 
         it 'leaves order in complete state' do
           order.finalize!
-          expect(order.state).to eq 'complete'
+          expect(order.status).to eq 'placed'
         end
       end
     end

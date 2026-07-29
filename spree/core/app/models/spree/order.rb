@@ -18,6 +18,8 @@ module Spree
     FULFILLMENT_STATUSES = %w(backorder canceled partial pending ready fulfilled shipped)
     # @deprecated legacy name — remove in 6.1 together with the 'shipped' value
     SHIPMENT_STATES = FULFILLMENT_STATUSES
+    # @deprecated legacy machine vocabulary — line-item removability is
+    #   completion-based since 6.0; removed in 6.1.
     LINE_ITEM_REMOVABLE_STATES = %w(cart address delivery payment confirm resumed)
 
     extend Spree::DisplayMoney
@@ -106,14 +108,6 @@ module Spree
       validation.fetch(:numericality)[:less_than_or_equal_to] = 0
     end.freeze
 
-    checkout_flow do
-      go_to_state :address
-      go_to_state :delivery, if: ->(order) { order.delivery_required? }
-      go_to_state :payment, if: ->(order) { order.payment? || order.payment_required? }
-      go_to_state :confirm, if: ->(order) { order.confirmation_required? }
-      go_to_state :complete
-    end
-
     # lock_version (renamed from state_lock_version) drives the API's manual
     # optimistic concurrency (compare client-sent version, 409 on mismatch) —
     # Rails auto-locking must not raise on internal saves.
@@ -121,7 +115,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[fulfillments shipments user created_by approver canceler promotions bill_address ship_address line_items store channel tags]
     self.whitelisted_ransackable_attributes = %w[
-      completed_at email number state status payment_status payment_state fulfillment_status shipment_state delivery_total
+      completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
       total item_total item_count considered_risky channel_id currency
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
@@ -289,8 +283,8 @@ module Spree
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
-    scope :canceled, -> { where(state: %w[canceled partially_canceled]) }
-    scope :not_canceled, -> { where.not(state: %w[canceled partially_canceled]) }
+    scope :canceled, -> { where(status: 'canceled') }
+    scope :not_canceled, -> { where.not(status: 'canceled') }
     scope :ready_to_ship, -> { where(fulfillment_status: %w[ready pending]) }
     scope :partially_shipped, -> { where(fulfillment_status: %w[partial]) }
     scope :not_shipped, -> { where(fulfillment_status: %w[ready pending partial]) }
@@ -415,11 +409,10 @@ module Spree
       completed_at.present?
     end
 
-    # True when the order is mid-checkout: past the `cart` state but not yet
-    # completed or canceled. Used by stock reservation hooks and any flow
-    # that should only run during the active checkout phase.
+    # Orders are never mid-checkout since the cart flip — only a draft mid
+    # completion (or an admin draft) is still mutable.
     def in_checkout?
-      !cart? && !complete? && !canceled?
+      draft? && !completed? && !canceled? && !cart?
     end
 
     def draft?
@@ -428,6 +421,30 @@ module Spree
 
     def placed?
       status == 'placed'
+    end
+
+    def canceled?
+      status == 'canceled'
+    end
+
+    alias complete? completed?
+
+    # @deprecated machine vocabulary — data-derived bridge for the 6.0
+    #   transition, removed in 6.1. An order is "cart-like" while a draft
+    #   with no checkout data.
+    def cart?
+      draft? && !completed? && email.blank? && ship_address_id.blank?
+    end
+
+    # @deprecated machine vocabulary — resumption is tracked by the transient
+    #   flag only; removed in 6.1.
+    def resumed?
+      !!state_machine_resumed
+    end
+
+    # Derived, not stored (Decision 8): some but not all fulfillments canceled.
+    def partially_canceled?
+      !canceled? && fulfillments.canceled.any? && fulfillments.where.not(status: 'canceled').any?
     end
 
     # Checks if the order is fully refunded
@@ -471,13 +488,11 @@ module Spree
     end
 
     # If true, causes the confirmation step to happen during the checkout process
+    # Computed from data only — whether the confirm/review step exists never
+    # falls back to a machine state (the #4117 hack died with the machine).
     def confirmation_required?
       Spree::Config[:always_include_confirm_step] ||
-        payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?) ||
-        # Little hacky fix for #4117
-        # If this wasn't here, order would transition to address state on confirm failure
-        # because there would be no valid payments any more.
-        confirm?
+        payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?)
     end
 
     def email_required?
@@ -570,6 +585,7 @@ module Spree
 
       fulfillment_status.nil? || %w{ready backorder pending canceled}.include?(fulfillment_status)
     end
+    alias can_cancel? allow_cancel?
 
     def all_inventory_units_returned?
       inventory_units.all?(&:returned?)
@@ -675,11 +691,11 @@ module Spree
     end
 
     def can_ship?
-      complete? || resumed? || awaiting_return? || returned?
+      placed?
     end
 
     def uneditable?
-      complete? || canceled? || returned?
+      completed? || canceled?
     end
 
     # Finalizes an in progress order after checkout is complete.
@@ -702,6 +718,13 @@ module Spree
       updater.run_hooks
 
       touch :completed_at
+
+      # Completion side effects previously wired as machine transition
+      # callbacks — each guards its own idempotency.
+      use_all_coupon_codes
+      redeem_gift_card
+      subscribe_to_newsletter
+      create_user_record
 
       auto_fulfill_provider_fulfillments
 
@@ -742,7 +765,6 @@ module Spree
     # If so add error and restart checkout.
     def ensure_line_item_variants_are_not_discontinued
       if line_items.any? { |li| !li.variant || li.variant.discontinued? }
-        restart_checkout_flow
         errors.add(:base, Spree.t(:discontinued_variants_present))
         false
       else
@@ -752,7 +774,6 @@ module Spree
 
     def ensure_line_items_are_in_stock
       if insufficient_stock_lines.present?
-        restart_checkout_flow
         errors.add(:base, Spree.t(:insufficient_stock_lines_present))
         false
       else
@@ -775,16 +796,6 @@ module Spree
       checkout_steps.include?(step)
     end
 
-    def state_changed(name)
-      state = "#{name}_state"
-      if persisted?
-        old_state = send("#{state}_was")
-        new_state = send(state)
-        unless old_state == new_state
-          log_state_changes(state_name: name, old_state: old_state, new_state: new_state)
-        end
-      end
-    end
 
     def log_state_changes(state_name:, old_state:, new_state:)
       state_changes.create(
@@ -902,11 +913,7 @@ module Spree
       ::Spree::PromotionHandler::Cart.new(self).activate
     end
 
-    # Clean shipments and make order back to address state
-    #
-    # At some point the might need to force the order to transition from address
-    # to delivery again so that proper updated shipments are created.
-    # e.g. customer goes back from payment step and changes order items
+    # Drops stale fulfillments so they are rebuilt from current items.
     def ensure_updated_shipments
       if fulfillments.any? && !completed?
         fulfillments.destroy_all
@@ -914,21 +921,7 @@ module Spree
 
         # Manually publish update event since update_column bypasses callbacks
         publish_event('order.updated')
-
-        restart_checkout_flow
       end
-    end
-
-    def restart_checkout_flow
-      update_columns(
-        state: 'cart',
-        updated_at: Time.current
-      )
-
-      # Manually publish update event since update_columns bypasses callbacks
-      publish_event('order.updated')
-
-      next! unless line_items.empty?
     end
 
     def refresh_shipment_rates(shipping_method_filter = DeliveryMethod::DISPLAY_ON_FRONT_END)
@@ -967,6 +960,32 @@ module Spree
     # @return [Spree::ServiceModule::Result]
     def canceled_by(user, canceled_at = nil)
       Spree.order_cancel_service.call(order: self, canceler: user, canceled_at: canceled_at)
+    end
+
+    # Machine-free lifecycle: cancel/resume flip +status+ and run the same
+    # side effects the machine transitions ran.
+    def cancel
+      return false unless allow_cancel?
+
+      update_column(:canceled_at, Time.current) if canceled_at.blank?
+      after_cancel
+      true
+    end
+
+    def cancel!
+      cancel || raise(ActiveRecord::RecordInvalid.new(self))
+    end
+
+    def resume
+      return false unless canceled?
+
+      self.state_machine_resumed = true
+      after_resume
+      true
+    end
+
+    def resume!
+      resume || raise(ActiveRecord::RecordInvalid.new(self))
     end
 
     # Approves the order and records the approver.
@@ -1122,7 +1141,7 @@ module Spree
     # Determine if email is required (we don't want validation errors before we hit the checkout)
     # we need to add delivery to the list for quick checkouts
     def require_email
-      true unless new_record? || ['cart', 'address', 'delivery'].include?(state)
+      !new_record? && (completed? || placed?)
     end
 
     def ensure_line_items_present

@@ -14,7 +14,7 @@ module Spree
 
       context 'completed order' do
         before do
-          order.update_columns(state: 'complete', completed_at: Time.current)
+          order.update_columns(status: 'placed', completed_at: Time.current)
         end
 
         it 'returns failure' do

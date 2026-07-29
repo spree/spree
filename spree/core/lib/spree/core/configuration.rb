@@ -94,6 +94,10 @@ module Spree
       preference :reserve_stock_on, :string, default: 'checkout' # 'checkout' (default) or 'cart' — landing in 6.0 alongside Cart/Order split
       preference :stock_reservations_enabled, :boolean, default: true # Hold stock during checkout to prevent overselling
       preference :default_stock_reservation_ttl_minutes, :integer, default: 10 # Fallback TTL when a Store doesn't override
+      # Tiered cart-expiry reaper (docs/plans/6.0-cart-order-split.md Decision 5)
+      preference :guest_cart_expiry_days, :integer, default: 30
+      preference :customer_cart_expiry_days, :integer, default: 90
+      preference :empty_cart_expiry_hours, :integer, default: 48
       preference :send_core_emails, :boolean, default: true, deprecated: true # Default mail headers settings
       preference :shipping_instructions, :boolean, deprecated: true
       preference :show_only_complete_orders_by_default, :boolean, deprecated: true

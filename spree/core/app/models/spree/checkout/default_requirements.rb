@@ -32,7 +32,7 @@ module Spree
       end
 
       def shipping_method_selected?
-        @order.shipments.any? && @order.shipments.all? { |s| s.shipping_method.present? }
+        @order.fulfillments.any? && @order.fulfillments.all? { |fulfillment| fulfillment.delivery_method.present? }
       end
 
       def payment_required?

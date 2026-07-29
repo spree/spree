@@ -11,11 +11,6 @@ describe Spree::Order, type: :model do
       expect(order.shipments).to be_empty
     end
 
-    it 'puts order back in address state' do
-      order.ensure_updated_shipments
-      expect(order.state).to eq 'address'
-    end
-
     it 'resets shipment_total' do
       order.update_column(:shipment_total, 5)
       order.ensure_updated_shipments
@@ -35,10 +30,6 @@ describe Spree::Order, type: :model do
         expect do
           order.ensure_updated_shipments
         end.not_to change(order, :shipments)
-
-        expect do
-          order.ensure_updated_shipments
-        end.not_to change(order, :state)
       end
     end
   end

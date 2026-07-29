@@ -151,7 +151,7 @@ module Spree
       self.whitelisted_ransackable_scopes = %w[search multi_search with_min_total_spent]
 
       scope :with_min_total_spent, ->(amount) {
-        joins(:orders).where(spree_orders: { state: 'complete' }).
+        joins(:orders).where.not(spree_orders: { completed_at: nil }).
           group("#{table_name}.id").
           having('SUM(spree_orders.total) >= ?', amount.to_d)
       }
@@ -170,7 +170,7 @@ module Spree
           "LEFT JOIN (" \
             "SELECT user_id, COUNT(*) AS orders_count, SUM(total) AS total_spent, MAX(completed_at) AS last_order_completed_at " \
             "FROM #{order_table} " \
-            "WHERE state = 'complete' AND user_id IS NOT NULL " \
+            "WHERE completed_at IS NOT NULL AND user_id IS NOT NULL " \
             "GROUP BY user_id" \
           ") orders_agg ON orders_agg.user_id = #{table_name}.id"
         )

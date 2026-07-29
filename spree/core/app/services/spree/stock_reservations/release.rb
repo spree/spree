@@ -4,7 +4,7 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:)
-        Spree::StockReservation.where(order_id: order.id).delete_all
+        Spree::StockReservation.merge(Spree::StockReservation.for_order(order)).delete_all
         success(order)
       end
     end

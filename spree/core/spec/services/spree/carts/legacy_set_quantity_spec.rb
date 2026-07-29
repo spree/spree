@@ -52,7 +52,7 @@ module Spree
       end
 
       context 'when the order is mid-checkout' do
-        before { order.update_column(:state, 'address') }
+        before { order.update_columns(email: order.email || 'buyer@example.com', ship_address_id: order.ship_address_id || create(:address).id) }
 
         it 'reserves the new quantity' do
           subject.call(order: order, line_item: line_item, quantity: 4)
@@ -83,6 +83,8 @@ module Spree
       end
 
       context 'when the order is in the cart state' do
+        before { order.update_columns(email: nil, ship_address_id: nil) }
+
         it 'does not create a reservation' do
           expect {
             subject.call(order: order, line_item: line_item, quantity: 4)

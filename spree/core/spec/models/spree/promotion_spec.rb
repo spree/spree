@@ -278,16 +278,10 @@ describe Spree::Promotion, type: :model do
       promotion.activate(payload)
     end
 
-    it 'does not perform actions against an order in a finalized state' do
+    it 'does not perform actions against a completed order' do
       expect(action1).not_to receive(:perform).with(payload)
 
-      order.state = 'complete'
-      promotion.activate(payload)
-
-      order.state = 'awaiting_return'
-      promotion.activate(payload)
-
-      order.state = 'returned'
+      order.completed_at = Time.current
       promotion.activate(payload)
     end
 
@@ -306,7 +300,7 @@ describe Spree::Promotion, type: :model do
     end
 
     context 'when not activated' do
-      before { order.state = 'complete' }
+      before { order.completed_at = Time.current }
 
       it "doesn't assign the order" do
         expect(promotion.orders).to be_empty

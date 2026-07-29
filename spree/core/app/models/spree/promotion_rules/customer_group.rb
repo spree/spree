@@ -7,7 +7,7 @@ module Spree
       preference :customer_group_ids, :array, default: [], parse_on_set: normalize_id_preference(klass: Spree::CustomerGroup)
 
       def applicable?(promotable)
-        promotable.is_a?(Spree::Order)
+        promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
       end
 
       def customer_groups

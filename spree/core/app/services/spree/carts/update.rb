@@ -34,6 +34,10 @@ module Spree
 
       attr_reader :cart, :params
 
+      def address_changed?
+        cart.saved_change_to_ship_address_id? || cart.saved_change_to_market_id?
+      end
+
       def assign_cart_attributes
         cart.email = params[:email] if params[:email].present?
         cart.customer_note = params[:customer_note] if params.key?(:customer_note)
@@ -61,10 +65,9 @@ module Spree
           address_id = resolve_address_id(address_params[:id])
           cart.public_send(:"#{address_type}_id=", address_id) if address_id
         else
-          # Only revert to address state when shipping address changes.
-          # Billing address updates (e.g. during payment) should not
-          # destroy shipments and reset the checkout flow.
-          revert_to_address_state if address_type == :shipping_address && cart.has_checkout_step?('address')
+          # Only a shipping-address change invalidates delivery proposals;
+          # billing updates (e.g. during payment) must not rebuild them.
+          @address_invalidated = true if address_type == :shipping_address
           cart.public_send(:"#{address_type}_attributes=", address_params)
         end
       end
@@ -101,14 +104,8 @@ module Spree
 
         unless cart.market.country_ids.include?(cart.ship_address.country_id)
           cart.ship_address = nil
-          revert_to_address_state if cart.has_checkout_step?('address')
+          @address_invalidated = true
         end
-      end
-
-      def revert_to_address_state
-        return if ['cart', 'address'].include?(cart.state)
-
-        cart.state = 'address'
       end
 
       # Three-way dispatch on the cart→checkout transition:
@@ -126,23 +123,29 @@ module Spree
         end
       end
 
-      # Auto-advance as far as the checkout state machine allows, but never
-      # to complete. The complete transition must always be explicit via
-      # the /carts/:id/complete endpoint — otherwise gift cards or store
-      # credits that fully cover the order total would auto-complete the
-      # cart during address/delivery updates.
+      # Recalculation-on-write: address/market changes re-price, re-tax and
+      # rebuild delivery proposals; completion stays explicit via the
+      # /carts/:id/complete endpoint (a fully-covered cart must never
+      # auto-complete during address updates).
       def try_advance
         return if cart.complete? || cart.canceled?
 
-        steps = cart.checkout_steps
-        loop do
-          current_index = steps.index(cart.state).to_i
-          next_step = steps[current_index + 1]
-          break if next_step.nil? || next_step == 'complete'
-          break unless cart.next
+        if @address_invalidated || address_changed?
+          if cart.respond_to?(:recalculate_for_address_change!)
+            cart.recalculate_for_address_change!
+          else
+            cart.ensure_updated_shipments
+            if cart.ship_address.present? && cart.respond_to?(:create_proposed_shipments)
+              cart.create_proposed_shipments
+              cart.set_shipments_cost
+            end
+            cart.update_with_updater!
+          end
+        else
+          cart.update_with_updater!
         end
       rescue StandardError => e
-        Rails.error.report(e, context: { order_id: cart.id, state: cart.state }, source: 'spree.checkout')
+        Rails.error.report(e, context: { order_id: cart.id }, source: 'spree.checkout')
       ensure
         # A halted transition records warnings on the cart, which reload would drop, so carry them across the reload.
         warnings = cart.warnings

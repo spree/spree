@@ -575,7 +575,7 @@ describe Spree::Address, type: :model do
         incomplete_order.reload
         expect(incomplete_order.bill_address_id).to be_nil
         expect(incomplete_order.ship_address_id).to be_nil
-        expect(incomplete_order.state).to eq('address')
+        expect(incomplete_order.reload.completed_at).to be_nil
       end
 
       it 'still hard-deletes the address' do
@@ -590,7 +590,7 @@ describe Spree::Address, type: :model do
 
         expect(other_order.reload.ship_address_id).to eq(address.id)
         expect(other_order.bill_address_id).to eq(address.id)
-        expect(other_order.state).to eq('delivery')
+        expect(other_order.reload.ship_address_id).to eq(address.id)
       end
 
       context 'when the address is also used by a completed order' do

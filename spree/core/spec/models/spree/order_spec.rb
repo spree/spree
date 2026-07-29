@@ -212,7 +212,7 @@ describe Spree::Order, type: :model do
   describe '#allow_cancel?' do
     context 'when all shipments are canceled or ready' do
       before do
-        order.update_columns(state: 'complete', completed_at: Time.current)
+        order.update_columns(status: 'placed', completed_at: Time.current)
         order.fulfillments.delete_all
 
         create(:shipment, order: order, state: 'canceled')
@@ -397,7 +397,7 @@ describe Spree::Order, type: :model do
     let(:order) { Spree::Order.create(email: 'test@example.com', store: store) }
 
     before do
-      order.update_column :state, 'complete'
+      order.update_columns(completed_at: Time.current, status: 'placed')
     end
 
     after { Spree::Config.set track_inventory_levels: true }
@@ -459,9 +459,9 @@ describe Spree::Order, type: :model do
           allow(order).to receive_messages approved?: true
         end
 
-        it 'leaves order in complete state' do
+        it 'leaves the order placed' do
           order.finalize!
-          expect(order.state).to eq 'complete'
+          expect(order.status).to eq 'placed'
         end
       end
     end
@@ -469,7 +469,7 @@ describe Spree::Order, type: :model do
     context 'events', :events do
       let(:order) { create(:order_with_line_items, store: store) }
 
-      before { order.update_column(:state, 'complete') }
+      before { order.update_columns(completed_at: Time.current, status: 'placed') }
 
       it 'publishes order.completed event' do
         expect(order).to receive(:publish_event).with('order.completed', hash_including(:notify_customer)).at_least(:once)
@@ -513,11 +513,6 @@ describe Spree::Order, type: :model do
         order.line_items.first.variant.discontinue!
       end
 
-      it 'restarts checkout flow' do
-        expect(order).to receive(:restart_checkout_flow).once
-        subject
-      end
-
       it 'has error message' do
         subject
         expect(order.errors[:base]).to include(Spree.t(:discontinued_variants_present))
@@ -529,11 +524,6 @@ describe Spree::Order, type: :model do
     end
 
     context 'when no variants are destroyed' do
-      it 'does not restart checkout' do
-        expect(order).not_to receive(:restart_checkout_flow)
-        subject
-      end
-
       it 'is true' do
         expect(subject).to be_truthy
       end
@@ -547,12 +537,6 @@ describe Spree::Order, type: :model do
 
     before do
       allow(order).to receive(:insufficient_stock_lines).and_return([true])
-    end
-
-    it 'restarts checkout flow' do
-      allow(order).to receive(:restart_checkout_flow)
-      expect(order).to receive(:restart_checkout_flow).once
-      subject
     end
 
     it 'has error message' do
@@ -576,7 +560,7 @@ describe Spree::Order, type: :model do
 
     context 'completed order' do
       before do
-        order.update_columns(state: 'complete', completed_at: Time.current)
+        order.update_columns(status: 'placed', completed_at: Time.current)
       end
 
       it 'raises an exception' do
@@ -717,12 +701,9 @@ describe Spree::Order, type: :model do
   describe '#confirmation_required?' do
     subject { order.confirmation_required? }
 
-    # Regression test for #4117
-    it "is required if the state is currently 'confirm'" do
+    it 'is computed from data only' do
       order = Spree::Order.new
       assert !order.confirmation_required?
-      order.state = 'confirm'
-      assert order.confirmation_required?
     end
 
     context 'Spree::Config[:always_include_confirm_step] == true' do
@@ -813,51 +794,6 @@ describe Spree::Order, type: :model do
       it 'returns bill_address' do
         expect(subject).to eq(order.bill_address)
       end
-    end
-  end
-
-  describe '#restart_checkout_flow' do
-    it 'updates the state column to the first checkout_steps value' do
-      order = create(:order_with_totals, state: 'delivery')
-      expect(order.checkout_steps).to eql ['address', 'delivery', 'complete']
-      expect { order.restart_checkout_flow }.to change { order.state }.from('delivery').to('address')
-    end
-
-    context 'without line items' do
-      it 'updates the state column to cart' do
-        order = create(:order, state: 'delivery')
-        expect { order.restart_checkout_flow }.to change { order.state }.from('delivery').to('cart')
-      end
-    end
-
-    context 'events', :events do
-      it 'publishes order.updated event' do
-        order = create(:order_with_totals, state: 'delivery')
-        expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
-        order.restart_checkout_flow
-      end
-    end
-  end
-
-  # Regression tests for #4072
-  describe '#state_changed' do
-    let(:order) { create(:order) }
-
-    it 'logs state changes' do
-      order.update_column(:payment_state, 'balance_due')
-      order.payment_state = 'paid'
-      expect(order.state_changes).to be_empty
-      order.state_changed('payment')
-      state_change = order.state_changes.find_by(name: 'payment')
-      expect(state_change.previous_state).to eq('balance_due')
-      expect(state_change.next_state).to eq('paid')
-    end
-
-    it 'does not do anything if state does not change' do
-      order.update_column(:payment_state, 'balance_due')
-      expect(order.state_changes).to be_empty
-      order.state_changed('payment')
-      expect(order.state_changes).to be_empty
     end
   end
 
@@ -1057,10 +993,10 @@ describe Spree::Order, type: :model do
       end
 
       it 'does not persist other changes to the order' do
-        order.state = 'complete'
+        order.special_instructions = 'unpersisted change'
         order.associate_user!(user)
         order.reload
-        expect(order.state).to eql('cart')
+        expect(order.special_instructions).to be_blank
       end
 
       it 'does not change any other orders' do
@@ -1198,13 +1134,6 @@ describe Spree::Order, type: :model do
         expect(order.reload.shipment_total).to eq(0)
       end
 
-      it 'restarts checkout flow' do
-        order.update_column(:state, 'delivery')
-        order.ensure_updated_shipments
-        # restart_checkout_flow sets state to 'cart' then calls next! which goes to 'address'
-        expect(order.reload.state).to eq('address')
-      end
-
       context 'events', :events do
         it 'publishes order.updated event' do
           expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
@@ -1225,28 +1154,16 @@ describe Spree::Order, type: :model do
   describe '#can_ship?' do
     let(:order) { Spree::Order.create }
 
-    it "is true for order in the 'complete' state" do
-      allow(order).to receive_messages(complete?: true)
+    it 'is true for placed orders' do
+      order.status = 'placed'
       expect(order.can_ship?).to be true
     end
 
-    it "is true for order in the 'resumed' state" do
-      allow(order).to receive_messages(resumed?: true)
-      expect(order.can_ship?).to be true
-    end
+    it 'is false for drafts and canceled orders' do
+      order.status = 'draft'
+      expect(order.can_ship?).to be false
 
-    it "is true for an order in the 'awaiting return' state" do
-      allow(order).to receive_messages(awaiting_return?: true)
-      expect(order.can_ship?).to be true
-    end
-
-    it "is true for an order in the 'returned' state" do
-      allow(order).to receive_messages(returned?: true)
-      expect(order.can_ship?).to be true
-    end
-
-    it "is false if the order is neither in the 'complete' nor 'resumed' state" do
-      allow(order).to receive_messages(resumed?: false, complete?: false)
+      order.status = 'canceled'
       expect(order.can_ship?).to be false
     end
   end
@@ -1281,19 +1198,13 @@ describe Spree::Order, type: :model do
     let(:order) { create(:order) }
 
     it 'returns true when order is completed' do
-      allow(order).to receive_messages(complete?: true)
+      allow(order).to receive_messages(completed?: true)
 
       expect(order.uneditable?).to be true
     end
 
     it 'returns true when order is canceled' do
       allow(order).to receive_messages(canceled?: true)
-
-      expect(order.uneditable?).to be true
-    end
-
-    it 'returns true when order is returned' do
-      allow(order).to receive_messages(returned?: true)
 
       expect(order.uneditable?).to be true
     end
@@ -1354,15 +1265,15 @@ describe Spree::Order, type: :model do
   end
 
   describe '#can_cancel?' do
-    it 'is false for completed order in the canceled state' do
-      order.state = 'canceled'
+    it 'is false for a canceled order' do
+      order.status = 'canceled'
       order.shipment_state = 'ready'
       order.completed_at = Time.current
       expect(order.can_cancel?).to be false
     end
 
     it 'is true for completed order with no shipment' do
-      order.state = 'complete'
+      order.status = 'placed'
       order.shipment_state = nil
       order.completed_at = Time.current
       expect(order.can_cancel?).to be true
@@ -1780,27 +1691,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe 'order transit to returned state from resumed state' do
-    let!(:resumed_order) { create(:order_with_line_items, line_items_count: 3, state: :resumed) }
-
-    context 'when all inventory_units returned' do
-      before do
-        resumed_order.inventory_units.update_all(state: 'returned')
-        resumed_order.return
-      end
-
-      it { expect(resumed_order).to be_returned }
-    end
-
-    context 'when some inventory_units returned' do
-      before do
-        resumed_order.inventory_units.first.update_attribute(:state, 'returned')
-        resumed_order.return
-      end
-
-      it { expect(resumed_order).to be_resumed }
-    end
-  end
 
   describe '#credit_card_nil_payment' do
     let!(:order) { create(:order_with_line_items, line_items_count: 2, store: store) }
@@ -2551,7 +2441,7 @@ describe Spree::Order, type: :model do
       context 'when payment is void' do
         let(:amount) { 85 }
 
-        before { order.update_column(:state, 'void') }
+        before { order.update_columns(status: 'canceled', canceled_at: Time.current) }
 
         it 'returns true' do
           expect(subject).to be(true)

@@ -68,7 +68,9 @@ module Spree
       update_adjustment_total
     end
 
-    # give each of the fulfillments a chance to update themselves
+    # give each of the fulfillments a chance to update themselves.
+    # Completed orders only recompute statuses — repricing a completed
+    # order's delivery would break the money freeze.
     def update_fulfillments
       shipping_method_filter = order.completed? ? DeliveryMethod::DISPLAY_ON_BACK_END : DeliveryMethod::DISPLAY_ON_FRONT_END
 
@@ -76,6 +78,8 @@ module Spree
         next unless fulfillment.persisted?
 
         fulfillment.update!(order)
+        next if order.completed? && fulfillment.fulfilled?
+
         fulfillment.refresh_rates(shipping_method_filter)
         fulfillment.update_amounts
       end
@@ -184,7 +188,6 @@ module Spree
                                    end
       end
 
-      order.state_changed('shipment')
       order.fulfillment_status
     end
     # @deprecated Use {#update_fulfillment_status}; removed in 6.1.
@@ -215,7 +218,6 @@ module Spree
     #
     # The +payment_state+ value helps with reporting, etc. since it provides a quick and easy way to locate Orders needing attention.
     def update_payment_state
-      last_state = order.payment_state
       if payments.present? && payments.valid.empty?
         order.payment_state = 'failed'
       elsif order.canceled? && order.payment_total == 0
@@ -225,7 +227,6 @@ module Spree
         order.payment_state = 'credit_owed' if order.outstanding_balance < 0
         order.payment_state = 'paid' unless order.outstanding_balance?
       end
-      order.state_changed('payment') if last_state != order.payment_state
       order.payment_state
     end
 

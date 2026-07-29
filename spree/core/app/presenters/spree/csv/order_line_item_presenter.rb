@@ -72,7 +72,7 @@ module Spree
         csv = [
           order.number,
           index.zero? ? order.email : nil,
-          index.zero? ? order.state : nil,
+          index.zero? ? order.status : nil,
           index.zero? ? order.currency : nil,
           index.zero? ? order.item_total.to_f : nil,
           index.zero? ? order.shipment_total.to_f : nil,

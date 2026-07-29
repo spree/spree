@@ -1,57 +1,28 @@
 module Spree
   module Checkout
+    # Requirements-driven replacement for machine advancement: there are no
+    # states to walk, so "advancing" a cart means recalculating it (prices,
+    # promotions, tax, delivery proposals) so its requirements reflect the
+    # latest data. The optional +shipping_method_id+ keeps the quick-checkout
+    # flows working (Google Pay does not always send a separate selection).
     class Advance
       prepend Spree::ServiceModule::Base
 
       def call(order:, state: nil, shipping_method_id: nil)
-        return failure(order) if state.present? && !order.has_checkout_step?(state)
-        return success(order) if state.present? && order.passed_checkout_step?(state)
+        cart = order
 
-        old_state = order.state
-        order_updater_ran = false
-
-        # We need to check how many times we transitioned between checkout steps and return the error if no transition has been made
-        # We'll always return an error when passing the `state` arg and not reaching the targeted state
-        transitions_count = 0
-
-        until cannot_make_transition?(order, state)
-          next_result = Spree.checkout_next_service.call(order: order)
-          return failure(order, order.errors) if next_result.failure? && (transitions_count.zero? || state.present?)
-
-          transitions_count +=1
-
-          # Quick Checkout with Google Pay not always sends events for shipping method selection
-          # we have to check this after payment
-
-          if order.delivery? &&
-              shipping_method_id.present? &&
-              order.fulfillments.count == 1 &&
-              order.shipping_method.id != shipping_method_id
-
-            result = Spree::Checkout::SelectShippingMethod.call(order: order, params: { shipping_method_id: shipping_method_id })
-
-            # We're running the order update inside Spree::Checkout::SelectShippingMethod
-            order_updater_ran = result.success?
-          end
+        if cart.fulfillments.empty? && cart.delivery_required? && cart.ship_address.present? && cart.respond_to?(:rebuild_fulfillments!)
+          cart.rebuild_fulfillments!
         end
 
-        if order.state != old_state && !order_updater_ran
-          order.updater.update_fulfillment_status
-          order.updater.update_payment_state
-          order.save! if order.changed?
+        if shipping_method_id.present? && cart.fulfillments.count == 1 &&
+            cart.fulfillments.first.delivery_method&.id != shipping_method_id
+          result = Spree::Checkout::SelectShippingMethod.call(order: cart, params: { shipping_method_id: shipping_method_id })
+          return result if result.failure?
         end
 
-        success(order)
-      end
-
-      private
-
-      def cannot_make_transition?(order, state = nil)
-        order.state == state || order.confirm? || order.complete? || order.errors.present? || order.passed_checkout_step?(state)
-      end
-
-      def report_advance_error(error, order)
-        # You can report checkout advance error here
+        cart.update_with_updater!
+        success(cart)
       end
     end
   end

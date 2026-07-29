@@ -347,19 +347,17 @@ describe 'Order' do
   end
 
   describe '#total_applicable_store_credit' do
-    context 'order is in the confirm state' do
-      before { order.update(state: 'confirm') }
-
+    context 'order has payments (mid-checkout)' do
       include_examples 'check total store credit from payments'
     end
 
     context 'order is completed' do
-      before { order.update(state: 'complete') }
+      before { order.update_columns(completed_at: Time.current, status: 'placed') }
 
       include_examples 'check total store credit from payments'
     end
 
-    context 'order is in any state other than confirm or complete' do
+    context 'order has no payments and is not completed' do
       context 'the associated user has store credits' do
         subject { order }
 

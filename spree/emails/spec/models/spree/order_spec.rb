@@ -9,7 +9,7 @@ describe Spree::Order, type: :model do
     let(:order) { create(:order, email: 'test@example.com', store: store) }
 
     before do
-      order.update_column :state, 'complete'
+      order.update_column :status, 'placed'
     end
 
     it 'publishes order.completed event when finalizing', events: true do

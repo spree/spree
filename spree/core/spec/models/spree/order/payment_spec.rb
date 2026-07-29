@@ -268,7 +268,9 @@ module Spree
         # Creates an order w/total 20
         reimbursement = create :reimbursement
         order = reimbursement.order
-        # Set the payment amount to actually be the order total of 20
+        # Sync totals (the factory leaves the delivery repricing unapplied),
+        # then set the payment amount to the order total of 20
+        order.update_with_updater!
         order.payments.first.update_column :amount, order.total
         # Creates a refund of 20
         create :refund, amount: order.total,

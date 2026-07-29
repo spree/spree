@@ -20,7 +20,7 @@ module Spree
             .lock
             .index_by(&:id)
 
-          held = held_by_others(locked_stock_items.keys, order.id)
+          held = held_by_others(locked_stock_items.keys, order)
           existing = existing_reservations_for(targets)
 
           this_order_used = Hash.new(0)
@@ -45,7 +45,13 @@ module Spree
 
             reservation = existing[[stock_item.id, line_item.id]] ||
                           Spree::StockReservation.new(stock_item: stock_item, line_item: line_item)
-            reservation.order = order
+            if order.is_a?(Spree::Cart)
+              reservation.cart = order
+              reservation.order = nil
+            else
+              reservation.order = order
+              reservation.cart = nil
+            end
             reservation.quantity = line_item.quantity
             reservation.expires_at = expires_at
             reservation.save!
@@ -78,13 +84,14 @@ module Spree
         variant.stock_items.detect { |si| si.stock_location&.active? && si.available? }
       end
 
-      def held_by_others(stock_item_ids, exclude_order_id)
+      def held_by_others(stock_item_ids, owner)
         return {} if stock_item_ids.empty?
 
+        owner_column = owner.is_a?(Spree::Cart) ? :cart_id : :order_id
         Spree::StockReservation
           .active
           .where(stock_item_id: stock_item_ids)
-          .where.not(order_id: exclude_order_id)
+          .where.not(owner_column => owner.id)
           .group(:stock_item_id)
           .sum(:quantity)
       end

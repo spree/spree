@@ -9,7 +9,6 @@ RSpec.describe Spree::Payments::HandleWebhook do
   let(:payment_session) { create(:bogus_payment_session, order: order, payment_method: payment_method, amount: order.total) }
 
   before do
-    order.update_column(:state, 'payment')
     order.shipments.each { |s| s.update_column(:state, 'ready') }
   end
 
@@ -37,7 +36,7 @@ RSpec.describe Spree::Payments::HandleWebhook do
         subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
 
         order.reload
-        expect(order.state).to eq('complete')
+        expect(order.completed_at).to be_present
         expect(order.payment_state).to eq('paid')
       end
 
@@ -69,8 +68,9 @@ RSpec.describe Spree::Payments::HandleWebhook do
         subject.call(payment_method: payment_method, action: :authorized, payment_session: payment_session)
 
         order.reload
-        expect(order.state).to eq('complete')
-        expect(order.payment_state).to eq('balance_due')
+        expect(order.completed_at).to be_present
+        # 6.0 payment_status domain: an uncaptured hold reports 'authorized'
+        expect(order.payment_state).to eq('authorized')
       end
     end
 
@@ -91,7 +91,7 @@ RSpec.describe Spree::Payments::HandleWebhook do
       it 'does not complete the order' do
         subject.call(payment_method: payment_method, action: :failed, payment_session: payment_session)
 
-        expect(order.reload.state).not_to eq('complete')
+        expect(order.reload.completed_at).to be_nil
       end
     end
 
@@ -114,7 +114,7 @@ RSpec.describe Spree::Payments::HandleWebhook do
 
     context 'when order is already completed' do
       before do
-        order.update_columns(state: 'complete', completed_at: Time.current)
+        order.update_columns(status: 'placed', completed_at: Time.current)
       end
 
       it 'still creates the payment and completes the session' do

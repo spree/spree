@@ -110,8 +110,8 @@ module Spree
         where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.current)
     end
 
-    def self.order_activatable?(order)
-      order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
+    def self.order_activatable?(promotable)
+      promotable && !promotable.completed? && !promotable.canceled?
     end
 
     def generate_code=(generating_code)

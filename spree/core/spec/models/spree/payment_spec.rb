@@ -910,7 +910,7 @@ describe Spree::Payment, type: :model do
     end
 
     it "builds the payment's source" do
-      payment = Spree::Payment.new(params)
+      payment = Spree::Payment.new(params.merge(order: order))
       expect(payment).to be_valid
       expect(payment.source).not_to be_nil
     end

@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
 
   include_context 'API v3 Store'
 
-  let(:order) { create(:order_with_line_items, user: user, store: store, state: 'payment') }
+  let(:order) { create(:cart_with_line_items, customer: user, store: store) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -25,10 +25,10 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
     end
 
     it 'creates a payment with a custom amount' do
-      post :create, params: { cart_id: order.prefixed_id, payment_method_id: check_payment_method.prefixed_id, amount: '50.00' }
+      post :create, params: { cart_id: order.prefixed_id, payment_method_id: check_payment_method.prefixed_id, amount: '5.00' }
 
       expect(response).to have_http_status(:created)
-      expect(json_response['amount']).to eq('50.0')
+      expect(json_response['amount']).to eq('5.0')
     end
 
     it 'creates a payment with metadata' do
@@ -69,7 +69,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentsController, type: :controll
     end
 
     context 'with spree token (guest)' do
-      let(:guest_order) { create(:order_with_line_items, user: nil, store: store, state: 'payment') }
+      let(:guest_order) { create(:cart_with_line_items, customer: nil, store: store) }
 
       before { request.headers['Authorization'] = nil }
 

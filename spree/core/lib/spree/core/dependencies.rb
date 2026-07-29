@@ -24,6 +24,11 @@ module Spree
 
         # carts
         carts_complete_service: 'Spree::Carts::Complete',
+        carts_create_service: 'Spree::Carts::Create',
+        carts_update_service: 'Spree::Carts::Update',
+        carts_upsert_items_service: 'Spree::Carts::UpsertItems',
+        carts_validate_service: 'Spree::Carts::Validate',
+        cart_merge_strategy: 'Spree::Carts::Merge',
 
         # checkout
         checkout_next_service: 'Spree::Checkout::Next',

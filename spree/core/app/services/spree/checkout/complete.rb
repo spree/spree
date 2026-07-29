@@ -1,22 +1,12 @@
 module Spree
   module Checkout
+    # @deprecated Use Spree::Carts::Complete; removed in 6.1.
     class Complete
       prepend Spree::ServiceModule::Base
 
       def call(order:)
-        Spree.checkout_next_service.call(order: order) until cannot_make_transition?(order)
-
-        if order.reload.complete?
-          success(order)
-        else
-          failure(order)
-        end
-      end
-
-      private
-
-      def cannot_make_transition?(order)
-        order.complete? || order.errors.present?
+        Spree::Deprecation.warn('Spree::Checkout::Complete is deprecated and will be removed in Spree 6.1. Use Spree::Carts::Complete instead.')
+        Spree::Dependencies.carts_complete_service.constantize.call(cart: order)
       end
     end
   end

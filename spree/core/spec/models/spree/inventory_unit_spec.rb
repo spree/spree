@@ -98,7 +98,7 @@ describe Spree::InventoryUnit, type: :model do
     context 'other shipments' do
       let(:other_order) do
         order = create(:order)
-        order.state = 'payment'
+        order.completed_at = nil
         order.completed_at = nil
         order.tap(&:save!)
       end

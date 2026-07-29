@@ -14,21 +14,58 @@ module Spree
         params[:order][:ship_address_attributes] = replace_country_iso_with_id(params[:order][:ship_address_attributes]) if ship_changed
         params[:order][:bill_address_attributes] = replace_country_iso_with_id(params[:order][:bill_address_attributes]) if bill_changed
 
-        # for quick checkouts we cannot revert to previous states
-        # we already have the address and delivery steps completed
-        # however we need to update the shipping address with missing data
-        # as previously we didn't have access to first/last name and street
-        unless params[:do_not_change_state]
-          order.state = 'address' if (ship_changed || bill_changed || quick_checkout_cancelled?(params)) && order.has_checkout_step?('address')
-          order.state = 'delivery' if selected_shipping_rate_present?(params) && order.has_checkout_step?('delivery')
-        end
+        # An address change invalidates the delivery proposals — rebuild them
+        # (recalculation-on-write; there are no states to rewind).
+        address_changed = ship_changed || bill_changed || quick_checkout_cancelled?(params)
 
-        return success(order) if order.update_from_params(params, permitted_attributes, request_env)
+        return success(order) if update_from_params(order, params, permitted_attributes, request_env, address_changed)
 
         failure(order)
       end
 
       private
+
+      def update_from_params(order, params, permitted_attributes, request_env, address_changed)
+        massage_payment_params!(order, params)
+
+        attributes = params[:order] ? params[:order].permit(permitted_attributes).delete_if { |_k, v| v.nil? } : {}
+
+        if (existing_card_id = params[:order]&.delete(:existing_card)).present?
+          credit_card = Spree::CreditCard.find(existing_card_id)
+          if credit_card.user_id != order.user_id || credit_card.user_id.blank?
+            raise Spree::Core::GatewayError, Spree.t(:invalid_credit_card)
+          end
+
+          credit_card.verification_value = params[:cvc_confirm] if params[:cvc_confirm].present?
+
+          attributes[:payments_attributes].first[:source] = credit_card
+          attributes[:payments_attributes].first[:payment_method_id] = credit_card.payment_method_id
+          attributes[:payments_attributes].first.delete(:source_attributes)
+        end
+
+        attributes[:payments_attributes].first[:request_env] = request_env if attributes[:payments_attributes]
+
+        result = order.update(attributes)
+        if result
+          order.recalculate_for_address_change! if address_changed && order.respond_to?(:recalculate_for_address_change!)
+          order.set_shipments_cost if order.respond_to?(:set_shipments_cost) && order.fulfillments.any?
+        end
+        result
+      end
+
+      # For the payment step, filter parameters to the nested attributes of
+      # the selected payment method and set the chargeable amount.
+      def massage_payment_params!(order, params)
+        if params[:payment_source].present? && params.dig(:order, :payments_attributes)
+          source_params = params.delete(:payment_source)[params[:order][:payments_attributes].first[:payment_method_id].to_s]
+          params[:order][:payments_attributes].first[:source_attributes] = source_params if source_params
+        end
+
+        if params[:order] && (params[:order][:payments_attributes] || params[:order][:existing_card])
+          params[:order][:payments_attributes] ||= [{}]
+          params[:order][:payments_attributes].first[:amount] = order.order_total_after_store_credit
+        end
+      end
 
       def validate_address_ownership(order, params)
         return nil unless params[:order]

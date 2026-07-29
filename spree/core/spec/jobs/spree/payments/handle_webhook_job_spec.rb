@@ -7,7 +7,6 @@ RSpec.describe Spree::Payments::HandleWebhookJob, type: :job do
   let(:payment_session) { create(:bogus_payment_session, order: order, payment_method: payment_method, amount: order.total) }
 
   before do
-    order.update_column(:state, 'payment')
     order.shipments.each { |s| s.update_column(:state, 'ready') }
   end
 

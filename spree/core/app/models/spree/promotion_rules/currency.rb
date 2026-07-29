@@ -5,7 +5,7 @@ module Spree
       preference :currency, :string
 
       def applicable?(promotable)
-        promotable.is_a?(Spree::Order)
+        promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
       end
 
       def eligible?(order, options = {})

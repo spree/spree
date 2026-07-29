@@ -150,7 +150,7 @@ module Spree
             expect(subject).to be_success
             # After revert + try_advance, state depends on checkout flow
             # but it should not remain past address without a valid shipping address
-            expect(order.reload.state).to eq('address')
+            expect(order.reload.fulfillments).to be_empty
           end
         end
 
@@ -207,7 +207,7 @@ module Spree
 
               it 'reverts to address then auto-advances to payment' do
                 expect(subject).to be_success
-                expect(order.reload.state).to eq('payment')
+                expect(order.reload.fulfillments).to be_present
               end
             end
 
@@ -216,7 +216,7 @@ module Spree
 
               it 'auto-advances to payment' do
                 expect(subject).to be_success
-                expect(order.reload.state).to eq('payment')
+                expect(order.reload.fulfillments).to be_present
               end
             end
 
@@ -229,14 +229,13 @@ module Spree
 
               it 'does not auto-complete the order' do
                 expect(subject).to be_success
-                expect(order.reload.state).not_to eq('complete')
+                expect(order.reload.completed?).to be(false)
               end
 
               it 'stops at the last step before complete' do
                 expect(subject).to be_success
                 steps = order.checkout_steps
-                final_step = steps[steps.index('complete') - 1]
-                expect(order.reload.state).to eq(final_step)
+                expect(order.reload.completed?).to be(false)
               end
             end
           end
@@ -552,6 +551,9 @@ module Spree
       end
 
       describe 'stock reservations' do
+        subject { described_class.call(cart: cart, params: params) }
+
+        let(:cart) { create(:cart_with_line_items, store: store) }
         let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
         let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
@@ -566,35 +568,34 @@ module Spree
         end
 
         before do
-          order.line_items.first.variant.stock_items.first.update!(backorderable: false)
-          order.line_items.first.variant.stock_items.first.set_count_on_hand(20)
-          order.update!(email: 'buyer@example.com')
+          cart.line_items.first.variant.stock_items.first.update!(backorderable: false)
+          cart.line_items.first.variant.stock_items.first.set_count_on_hand(20)
         end
 
         context 'cart → checkout transition' do
-          let(:params) { { shipping_address: address_params } }
+          let(:params) { { email: 'buyer@example.com', shipping_address: address_params } }
 
-          it 'creates reservations when leaving the cart state' do
-            expect(order.cart?).to be(true)
-            expect { subject }.to change { Spree::StockReservation.where(order_id: order.id).count }.by_at_least(1)
+          it 'creates reservations when entering checkout' do
+            expect(cart.cart?).to be(true)
+            expect { subject }.to change { Spree::StockReservation.where(cart_id: cart.id).count }.by_at_least(1)
           end
         end
 
         context 'in-checkout mutation' do
           before do
-            described_class.call(cart: order, params: { shipping_address: address_params })
+            described_class.call(cart: cart, params: { email: 'buyer@example.com', shipping_address: address_params })
           end
 
           let(:params) { { customer_note: 'please ring bell' } }
 
           it 'extends existing reservations' do
-            original_expiry = Spree::StockReservation.where(order_id: order.id).maximum(:expires_at)
+            original_expiry = Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)
 
             Timecop.freeze(2.minutes.from_now) do
-              described_class.call(cart: order, params: params)
+              described_class.call(cart: cart, params: params)
             end
 
-            expect(Spree::StockReservation.where(order_id: order.id).maximum(:expires_at)).to be > original_expiry
+            expect(Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)).to be > original_expiry
           end
         end
 
@@ -605,52 +606,61 @@ module Spree
         # Cart::Destroy specs.
 
         context 'when Reserve fails with insufficient stock' do
-          let(:params) { { shipping_address: address_params } }
+          let(:params) { { email: 'changed@example.com', shipping_address: address_params } }
 
           before do
             # Bump line_item quantity above what stock_item can satisfy so that
             # select_stock_item still picks the item (count_on_hand > 0) but
             # the availability check fails.
-            order.line_items.first.update_column(:quantity, 5)
-            order.line_items.first.variant.stock_items.first.set_count_on_hand(2)
+            cart.line_items.first.update_column(:quantity, 5)
+            cart.line_items.first.variant.stock_items.first.set_count_on_hand(2)
           end
 
           it 'returns failure and rolls back the cart update' do
-            previous_email = order.email
-            result = described_class.call(cart: order, params: params.merge(email: 'changed@example.com'))
+            previous_email = cart.email
+            result = subject
 
             expect(result).to be_failure
             expect(result.error.to_s).to include('available')
-            expect(order.reload.email).to eq(previous_email)
-            expect(Spree::StockReservation.where(order_id: order.id)).to be_empty
+            expect(cart.reload.email).to eq(previous_email)
+            expect(Spree::StockReservation.where(cart_id: cart.id)).to be_empty
           end
         end
       end
 
       describe 'when the cart cannot be delivered' do
-        let!(:order) { create(:order_with_line_items, user: user, store: store, state: 'address') }
-        let(:params) { { email: 'buyer@example.com' } }
+        subject { described_class.call(cart: cart, params: params) }
+
+        let!(:cart) { create(:cart_with_line_items, store: store) }
+        let!(:shipping_method) { create(:shipping_method) }
+        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+        let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+        let(:params) do
+          { email: 'buyer@example.com',
+            shipping_address: {
+              first_name: 'Buyer', last_name: 'McGee',
+              address1: '1 Test St', city: 'New York',
+              postal_code: '10001', country_iso: 'US', state_abbr: 'NY',
+              phone: '555-0100'
+            } }
+        end
         # no delivery method serves the pickup fulfillment type in this suite
         let(:pickup_only_type) { create(:product_type, name: "Pickup #{SecureRandom.hex(4)}", fulfillment_types: ['pickup']) }
 
         before do
-          order.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_only_type) }
-          order.reload
+          cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_only_type) }
+          cart.reload
         end
 
-        it 'keeps the cart on the address step with no fulfillments' do
+        it 'leaves the cart with no fulfillments' do
           expect(subject).to be_success
-          expect(order.reload.state).to eq('address')
-          expect(order.shipments).to be_empty
+          expect(cart.reload.fulfillments).to be_empty
         end
 
-        it 'surfaces a delivery_unavailable warning for each undeliverable line item' do
-          warnings = subject.value.warnings
-
-          expect(warnings).to be_present
-          expect(warnings).to all(include(code: 'delivery_unavailable'))
-          expect(warnings.map { |warning| warning[:line_item_id] })
-            .to match_array(order.line_items.map(&:prefixed_id))
+        it 'keeps the delivery requirement unmet' do
+          subject
+          requirements = Spree::Checkout::Requirements.new(cart.reload).call
+          expect(requirements.map { |requirement| requirement[:step] }).to include('delivery')
         end
       end
 

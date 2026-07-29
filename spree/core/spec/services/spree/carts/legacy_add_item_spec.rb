@@ -336,7 +336,7 @@ module Spree
       end
 
       context 'when the order is in the cart state' do
-        let(:order) { create(:order, total: 100, state: 'cart') }
+        let(:order) { create(:order, total: 100, email: nil, user: nil, bill_address: nil) }
 
         it 'does not create a reservation' do
           expect { execute }.not_to change { Spree::StockReservation.count }

@@ -172,7 +172,7 @@ module Spree
 
       context 'order is canceled' do
         before do
-          order.state = 'canceled'
+          order.status = 'canceled'
         end
 
         context 'and is still unpaid' do
@@ -209,23 +209,9 @@ module Spree
       end
     end
 
-    it 'state change' do
-      order.shipment_state = 'shipped'
-      state_changes = double
-      allow(order).to receive_messages state_changes: state_changes
-      expect(state_changes).to receive(:create).with(
-        previous_state: nil,
-        next_state: 'shipped',
-        name: 'shipment',
-        user_id: order.user_id
-      )
-
-      order.state_changed('shipment')
-    end
-
     shared_context 'with original shipping method gone backend only' do
       before do
-        order.shipments.first.shipping_method.update(display_on: :back_end)
+        order.fulfillments.first.delivery_method.update(display_on: :back_end)
         create(:shipping_method) # create frontend available shipping method
       end
     end
@@ -324,7 +310,7 @@ module Spree
 
         it 'resets shipping method to frontend-available' do
           order.updater.update_shipments
-          expect(order.shipments.first.shipping_method).to eq Spree::ShippingMethod.find_by(display_on: 'both')
+          expect(order.fulfillments.first.delivery_method).to eq Spree::ShippingMethod.find_by(display_on: 'both')
         end
       end
     end

@@ -70,7 +70,7 @@ module Spree
       end
 
       context 'when the order is mid-checkout' do
-        before { order.update_column(:state, 'address') }
+        
 
         it 'reservation for the removed line item is destroyed via dependent: :destroy' do
           create(
@@ -133,6 +133,8 @@ module Spree
       end
 
       context 'when the order is in the cart state' do
+        before { order.update_columns(email: nil, ship_address_id: nil) }
+
         it 'does not run a reservation pass' do
           expect {
             subject.call(order: order, line_item: line_item)

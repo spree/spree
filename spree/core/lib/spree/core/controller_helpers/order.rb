@@ -14,7 +14,9 @@ module Spree
           @order_token ||= cookies.signed[:token] || params[:order_token]
         end
 
-        # The current incomplete order from the token for use in cart and during checkout
+        # The current incomplete cart from the token — the checkout owner
+        # since the cart/order split. The name stays for compatibility;
+        # Wave 6 renames the storefront surface to current_cart.
         def current_order(options = {})
           options[:create_order_if_necessary] ||= false
           options[:includes] ||= false
@@ -27,14 +29,18 @@ module Spree
           @current_order = find_order_by_token_or_user(options, false)
 
           if options[:create_order_if_necessary] && (@current_order.nil? || @current_order.completed?)
-            @current_order = current_store.orders.create!(current_order_params.except(:token))
-            @current_order.associate_user! try_spree_current_user if try_spree_current_user
-            @current_order.last_ip_address = ip_address
+            result = Spree::Carts::Create.call(params: {
+              store: current_store,
+              currency: current_currency,
+              user: try_spree_current_user
+            })
+            @current_order = result.value
+            @current_order.update_columns(last_ip_address: ip_address)
 
             create_token_cookie(@current_order.token)
           end
 
-          # There is some edge case where the order doesn't have a token.
+          # There is some edge case where the cart doesn't have a token.
           # but can't reproduce it. So let's generate one on the fly in that case.
           @current_order.regenerate_token if @current_order && @current_order.token.blank?
 
@@ -42,6 +48,7 @@ module Spree
 
           @current_order
         end
+        alias current_cart current_order
 
         def associate_user
           @order ||= current_order
@@ -82,9 +89,8 @@ module Spree
         private
 
         def user_orders_scope
-          try_spree_current_user.orders.
+          Spree::Cart.where(customer_id: try_spree_current_user.id).
             incomplete.
-            not_canceled.
             where.not(id: current_order.id).
             where(store_id: current_store.id)
         end
@@ -132,20 +138,28 @@ module Spree
 
           includes = options[:includes] ? order_includes : {}
 
-          # Find any incomplete orders for the token
-          incomplete_orders = current_store.orders.incomplete.not_canceled.includes(includes)
+          # Find any incomplete carts for the token
+          incomplete_carts = current_store.carts.incomplete.includes(includes)
 
           token_order_params = current_order_params.except(:user_id)
-          order = if with_adjustments
-                    incomplete_orders.includes(:discounts, :fees).lock(options[:lock]).find_by(token_order_params)
-                  else
-                    incomplete_orders.lock(options[:lock]).find_by(token_order_params)
-                  end
+          cart = if with_adjustments
+                   incomplete_carts.includes(:discounts, :fees).lock(options[:lock]).find_by(token_order_params)
+                 else
+                   incomplete_carts.lock(options[:lock]).find_by(token_order_params)
+                 end
 
-          # Find any incomplete orders for the current user
-          order = last_incomplete_order(includes) if order.nil? && try_spree_current_user
+          # Find any incomplete carts for the current user
+          cart = last_incomplete_cart(includes) if cart.nil? && try_spree_current_user
 
-          order
+          cart
+        end
+
+        def last_incomplete_cart(includes = {})
+          @last_incomplete_cart ||= Spree::Cart.where(customer_id: try_spree_current_user.id, store_id: current_store.id).
+            incomplete.
+            order(created_at: :desc).
+            includes(includes).
+            first
         end
 
         def order_includes

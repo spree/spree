@@ -250,7 +250,7 @@ module Spree
       end
 
       it 'rejects a canceled order' do
-        order.update_columns(state: 'canceled')
+        order.update_columns(status: 'canceled', canceled_at: Time.current)
         expect(execute.success?).to eq(false)
         expect(execute.error.to_s).to eq(Spree.t('fulfillments.errors.order_canceled'))
       end

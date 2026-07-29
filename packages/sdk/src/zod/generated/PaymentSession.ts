@@ -13,7 +13,8 @@ export const PaymentSessionSchema = z.object({
   expires_at: z.string().nullable(),
   amount: z.string(),
   payment_method_id: z.string(),
-  order_id: z.string(),
+  order_id: z.string().nullable(),
+  cart_id: z.string().nullable(),
   payment_method: PaymentMethodSchema,
   payment: PaymentSchema.optional(),
 });

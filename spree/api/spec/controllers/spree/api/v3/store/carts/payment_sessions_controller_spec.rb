@@ -5,11 +5,11 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
 
   include_context 'API v3 Store'
 
-  let(:order) { create(:order_with_line_items, user: user, store: store, state: 'payment') }
+  let(:order) { create(:cart_with_line_items, customer: user, store: store) }
   let(:payment_method) { create(:bogus_payment_method) }
   let!(:payment_session) do
     create(:bogus_payment_session,
-           order: order,
+           cart: order, order: nil,
            payment_method: payment_method,
            amount: order.total,
            external_data: { 'client_secret' => 'secret_123' })
@@ -43,7 +43,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
     end
 
     context 'with spree token (guest)' do
-      let(:guest_order) { create(:order_with_line_items, user: nil, store: store, state: 'payment') }
+      let(:guest_order) { create(:cart_with_line_items, customer: nil, store: store) }
 
       before { request.headers['Authorization'] = nil }
 
@@ -97,9 +97,9 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
 
       it 'returns not found for payment session from another order' do
         other_user = create(:user)
-        other_order = create(:order_with_line_items, user: other_user, store: store, state: 'payment')
+        other_order = create(:cart_with_line_items, customer: other_user, store: store)
         other_session = create(:bogus_payment_session,
-                               order: other_order,
+                               cart: other_order, order: nil,
                                payment_method: payment_method)
 
         get :show, params: { cart_id: order.prefixed_id, id: other_session.to_param }
@@ -109,9 +109,9 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
 
       it 'returns not found for external_id from another order' do
         other_user = create(:user)
-        other_order = create(:order_with_line_items, user: other_user, store: store, state: 'payment')
+        other_order = create(:cart_with_line_items, customer: other_user, store: store)
         other_session = create(:bogus_payment_session,
-                               order: other_order,
+                               cart: other_order, order: nil,
                                payment_method: payment_method)
 
         get :show, params: { cart_id: order.prefixed_id, id: other_session.external_id }

@@ -82,7 +82,8 @@ module Spree
 
     def process_return!
       return_items.each(&:receive!)
-      order.return! if order.all_inventory_units_returned?
+      # The order-level 'returned' machine state is gone — return lifecycle
+      # belongs to the first-class Return models (6.0-returns plan).
     end
 
     def return_items_belong_to_same_order

@@ -12,19 +12,16 @@ describe Spree::Order do
     end
 
     before do
-      # Don't care about available payment methods in this test
-      allow(persisted_order).to receive_messages(has_available_payment: false)
       persisted_order.line_items << line_item
+      persisted_order.update!(ship_address: create(:address))
+      persisted_order.create_proposed_shipments
+      persisted_order.set_shipments_cost
       create(:discount, order: persisted_order, line_item: line_item, amount: -line_item.amount, label: 'Promotion', kind: 'manual')
       persisted_order.update_with_updater!
-      persisted_order.state = 'delivery'
-      persisted_order.save # To ensure new state_change event
     end
 
-    it 'transitions from delivery to payment' do
-      allow(persisted_order).to receive_messages(payment_required?: true)
-      persisted_order.next!
-      expect(persisted_order.state).to eq('payment')
+    it 'still requires payment (shipping keeps the total above zero)' do
+      expect(persisted_order.reload.payment_required?).to be(true)
     end
   end
 

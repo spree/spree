@@ -382,8 +382,8 @@ module Spree
 
     def unassign_from_incomplete_orders
       orders = Spree::Order.incomplete.where(user_id: user_id)
-      orders.where(ship_address_id: id).update_all(ship_address_id: nil, state: 'address', updated_at: Time.current)
-      orders.where(bill_address_id: id).update_all(bill_address_id: nil, state: 'address', updated_at: Time.current)
+      orders.where(ship_address_id: id).update_all(ship_address_id: nil, updated_at: Time.current)
+      orders.where(bill_address_id: id).update_all(bill_address_id: nil, updated_at: Time.current)
     end
   end
 end

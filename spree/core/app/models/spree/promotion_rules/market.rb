@@ -14,7 +14,7 @@ module Spree
                  )
 
       def applicable?(promotable)
-        promotable.is_a?(Spree::Order)
+        promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
       end
 
       def markets

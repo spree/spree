@@ -71,7 +71,7 @@ module Spree
     #
     # Associations
     #
-    has_many :carts, -> { incomplete }, class_name: 'Spree::Order', inverse_of: :store
+    has_many :carts, class_name: 'Spree::Cart', inverse_of: :store, dependent: :destroy
     has_many :checkouts, -> { incomplete }, class_name: 'Spree::Order', inverse_of: :store
     has_many :orders, class_name: 'Spree::Order'
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'

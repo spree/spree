@@ -11,12 +11,18 @@ module Spree
         guest_order.bill_address ||= user.bill_address
         guest_order.ship_address ||= user.ship_address
 
-        changes = guest_order.slice(*Spree::Order::ASSOCIATED_USER_ATTRIBUTES)
+        owner_key = guest_order.is_a?(Spree::Cart) ? :customer_id : :user_id
+        changes = {
+          owner_key => guest_order.user&.id,
+          email: guest_order.email,
+          bill_address_id: guest_order.bill_address&.id,
+          ship_address_id: guest_order.ship_address&.id
+        }.compact
 
         # immediately persist the changes we just made, but don't use save
         # since we might have an invalid address associated
         ActiveRecord::Base.connected_to(role: :writing) do
-          Spree::Order.unscoped.where(id: guest_order.id).update_all(changes)
+          guest_order.class.unscoped.where(id: guest_order.id).update_all(changes)
         end
 
         # Manually publish update event since update_all bypasses callbacks

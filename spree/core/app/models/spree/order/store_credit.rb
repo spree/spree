@@ -54,7 +54,9 @@ module Spree
       end
 
       def total_applicable_store_credit
-        if payment? || confirm? || complete?
+        # Once payments exist (or the order completed), report what was
+        # actually applied; before that, what could be applied.
+        if completed? || payments.valid.any?
           total_applied_store_credit
         else
           [total, user.try(:total_available_store_credit) || 0.0].min

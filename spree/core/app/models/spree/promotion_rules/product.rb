@@ -42,7 +42,7 @@ module Spree
       end
 
       def applicable?(promotable)
-        promotable.is_a?(Spree::Order)
+        promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
       end
 
       def eligible?(order, _options = {})

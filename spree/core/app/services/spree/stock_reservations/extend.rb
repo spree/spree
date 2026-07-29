@@ -9,7 +9,7 @@ module Spree
         expires_at = Time.current + Spree::StockReservation.ttl_for(order)
 
         Spree::StockReservation
-          .where(order_id: order.id)
+          .merge(Spree::StockReservation.for_order(order))
           .update_all(expires_at: expires_at, updated_at: Time.current)
 
         success(order)

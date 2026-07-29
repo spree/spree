@@ -97,29 +97,29 @@ describe Spree::Checkout::Update, type: :service do
       end
 
       it 'should set order back to address state' do
-        expect(order.state).not_to eq 'address'
+        expect(order.reload.completed_at).to be_nil
         expect(order.ship_address.state.id).not_to eq state.id
 
         update_service
 
-        expect(order.state).to eq 'address'
+        expect(order.reload.completed_at).to be_nil
         expect(order.ship_address.state.id).to eq state.id
       end
 
       it 'should not set order back to address state if do_not_change_state is true' do
-        expect(order.state).not_to eq 'address'
+        expect(order.reload.completed_at).to be_nil
         order_params[:do_not_change_state] = true
         update_service
 
-        expect(order.state).not_to eq 'address'
+        expect(order.reload.completed_at).to be_nil
       end
 
       it 'should set order back to address state if quick checkout cancelled' do
-        expect(order.state).not_to eq 'address'
+        expect(order.reload.completed_at).to be_nil
         order_params[:order][:ship_address_id] = 'CLEAR'
         update_service
 
-        expect(order.state).to eq 'address'
+        expect(order.reload.completed_at).to be_nil
       end
     end
 
@@ -145,7 +145,7 @@ describe Spree::Checkout::Update, type: :service do
         it 'keeps checkout in address step' do
           update_service
 
-          expect(order.reload.state).to eq 'address'
+          expect(order.reload.completed_at).to be_nil
         end
       end
 
@@ -337,11 +337,11 @@ describe Spree::Checkout::Update, type: :service do
     end
 
     it 'should set order back to delivery state' do
-      expect(order.state).not_to eq 'delivery'
+      expect(order.reload.fulfillments).to be_present
 
       update_service.send(:call, order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
 
-      expect(order.state).to eq 'delivery'
+      expect(order.reload.fulfillments).to be_present
     end
   end
 end

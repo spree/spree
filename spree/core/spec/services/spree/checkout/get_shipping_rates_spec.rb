@@ -35,7 +35,6 @@ module Spree
 
       it "doesn't update checkout state" do
         expect { execute }.not_to change {
-          order.state
           order.completed_at
         }
       end
@@ -64,7 +63,6 @@ module Spree
         expect { execute }.not_to change {
           Spree::ShippingRate.count
           order.shipments
-          order.state
           order.completed_at
         }
       end

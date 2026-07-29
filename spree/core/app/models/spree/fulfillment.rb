@@ -20,10 +20,10 @@ module Spree
     publishes_lifecycle_events
 
     with_options inverse_of: :fulfillments do
-      belongs_to :address, class_name: 'Spree::Address'
-      belongs_to :order, class_name: 'Spree::Order', touch: true
+      belongs_to :address, class_name: 'Spree::Address', optional: true
+      belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
+      belongs_to :cart, class_name: 'Spree::Cart', optional: true
     end
-    belongs_to :cart, class_name: 'Spree::Cart', optional: true
     belongs_to :stock_location, -> { with_deleted }, class_name: 'Spree::StockLocation'
 
     with_options dependent: :delete_all do
@@ -43,6 +43,7 @@ module Spree
     before_validation :set_cost_zero_when_nil
 
     validates :stock_location, presence: true
+    validate :exactly_one_owner
 
     attr_accessor :special_instructions
 
@@ -71,7 +72,7 @@ module Spree
                                           }
     scope :digital_delivery, -> { joins(:delivery_methods).merge(Spree::DeliveryMethod.digital) }
 
-    delegate :store, :currency, to: :order
+    delegate :store, :currency, to: :owner
 
     # The exactly-one owner of this fulfillment — the cart during checkout,
     # the order after completion. New code must read +owner+, never assume
@@ -81,13 +82,24 @@ module Spree
     def owner
       order || cart
     end
+
+    # Bridge for legacy callers assigning +current_order+ (now a Spree::Cart)
+    # to the order association — routes carts to the cart FK instead.
+    def order=(record)
+      if record.is_a?(Spree::Cart)
+        self.cart = record
+        super(nil)
+      else
+        super
+      end
+    end
     delegate :amount_in_cents, to: :display_cost
 
     state_machine :status, initial: :pending, use_transactions: false do
       event :ready do
         transition from: :pending, to: :ready, if: lambda { |fulfillment|
           # Fix for #2040
-          fulfillment.determine_state(fulfillment.order) == 'ready'
+          fulfillment.determine_state(fulfillment.owner) == 'ready'
         }
       end
 
@@ -112,7 +124,7 @@ module Spree
 
       event :resume do
         transition from: :canceled, to: :ready, if: lambda { |fulfillment|
-          fulfillment.determine_state(fulfillment.order) == 'ready'
+          fulfillment.determine_state(fulfillment.owner) == 'ready'
         }
         transition from: :canceled, to: :pending
       end
@@ -410,7 +422,7 @@ module Spree
       # StockEstimator.new assignment below will replace the current delivery_method
       original_shipping_method_id = delivery_method.try(:id)
 
-      self.delivery_rates = Stock::Estimator.new(order).
+      self.delivery_rates = Stock::Estimator.new(owner).
                             shipping_rates(to_package, shipping_method_filter)
 
       if delivery_method
@@ -458,13 +470,13 @@ module Spree
       # Reload associations to pick up the new selected shipping rate
       delivery_rates.reset
       association(:selected_delivery_rate).reset
-      # Update shipment cost and order totals only for incomplete orders (during checkout)
+      # Update shipment cost and owner totals only during checkout.
       # For completed orders, totals are managed separately (e.g., in tests or admin adjustments)
-      return if order.completed?
+      return if owner.nil? || owner.completed?
 
       update_amounts
       reload # reload to pick up cost set by update_columns in update_amounts
-      order.set_shipments_cost
+      owner.set_shipments_cost
     end
 
     def set_up_inventory(status, variant, order, line_item, quantity = 1)
@@ -618,6 +630,8 @@ module Spree
     end
 
     def update_order_fulfillment_status
+      return if order.nil?
+
       new_status = OrderUpdater.new(order).update_fulfillment_status
       order.update_columns(fulfillment_status: new_status, updated_at: Time.current)
     end
@@ -626,9 +640,9 @@ module Spree
     # publish_shipment_resumed_event are defined in Spree::Fulfillment::CustomEvents
 
     def can_get_rates?
-      return true unless order.requires_ship_address?
+      return true unless owner&.requires_ship_address?
 
-      order.ship_address&.valid?
+      owner.ship_address&.valid?
     end
 
     def manifest_restock(item)
@@ -649,6 +663,10 @@ module Spree
       self.cost = 0 unless cost
     end
 
+    def exactly_one_owner
+      errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+    end
+
     def update_adjustments
       # A cost change shifts discount and tax bases — rebuild through the
       # order-level recalculation. Creation is excluded (the surrounding flow
@@ -656,7 +674,7 @@ module Spree
       # replacement) and completed orders are frozen.
       return if previously_new_record?
 
-      order.update_with_updater! if saved_change_to_cost? && status != 'fulfilled' && order&.persisted? && !order.completed?
+      owner.update_with_updater! if saved_change_to_cost? && status != 'fulfilled' && owner&.persisted? && !owner.completed?
     end
   end
 end

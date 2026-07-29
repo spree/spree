@@ -10,7 +10,7 @@ module Spree
       def call(payment_method:, action:, payment_session:, metadata: {})
         return success(nil) if payment_session.nil?
 
-        order = payment_session.order
+        order = payment_session.owner
 
         case action
         when :captured, :authorized
@@ -43,7 +43,8 @@ module Spree
           payment_session.complete if payment_session.can_complete?
 
           unless order.reload.completed?
-            Spree::Dependencies.carts_complete_service.constantize.call(cart: order)
+            completable = order.is_a?(Spree::Order) ? (order.cart || order) : order
+            Spree::Dependencies.carts_complete_service.constantize.call(cart: completable)
           end
         end
 

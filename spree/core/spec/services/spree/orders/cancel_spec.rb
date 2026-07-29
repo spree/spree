@@ -12,7 +12,7 @@ module Spree
     shared_examples 'tries to cancel' do
       context 'completed order' do
         it { expect(result).to be_success }
-        it { expect { result }.to change(order, :state).to('canceled') }
+        it { expect { result }.to change(order, :status).to('canceled') }
         it { expect(result.value).to eq(order) }
 
         it 'publishes order.canceled event' do

@@ -12,7 +12,7 @@ module Spree
       preference :country_iso, :string # legacy ISO-based shortcut
 
       def applicable?(promotable)
-        promotable.is_a?(Spree::Order)
+        promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
       end
 
       def countries

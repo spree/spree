@@ -42,7 +42,7 @@ module Spree
       private
 
       def assign_to_order(order:, address_id:)
-        order.update(ship_address_id: address_id, state: 'address')
+        order.update(ship_address_id: address_id)
       end
     end
   end

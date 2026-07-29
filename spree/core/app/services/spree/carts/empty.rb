@@ -28,7 +28,6 @@ module Spree
           order.order_promotions.destroy_all
           order.update_totals
           order.persist_totals
-          order.restart_checkout_flow
 
           Spree::StockReservations::Release.call(order: order)
 

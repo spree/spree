@@ -133,17 +133,28 @@ module Spree
       end
 
       def find_by_prefix_id!(prefixed_id)
-        decoded = Spree::PrefixedId.decode_prefixed_id(prefixed_id)
+        decoded = decode_own_prefixed_id(prefixed_id)
         raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with prefixed id=#{prefixed_id}", name) unless decoded
 
         find(decoded)
       end
 
       def find_by_prefix_id(prefixed_id)
-        decoded = Spree::PrefixedId.decode_prefixed_id(prefixed_id)
+        decoded = decode_own_prefixed_id(prefixed_id)
         return nil unless decoded
 
         find_by(id: decoded)
+      end
+
+      # Rejects prefixed IDs from other models — an or_ ID must never
+      # resolve a cart just because the numeric payloads collide.
+      def decode_own_prefixed_id(prefixed_id)
+        if _prefix_id_prefix.present?
+          expected = "#{_prefix_id_prefix}_"
+          return nil unless prefixed_id.to_s.start_with?(expected)
+        end
+
+        Spree::PrefixedId.decode_prefixed_id(prefixed_id)
       end
 
       def decode_prefixed_id(prefixed_id_string)

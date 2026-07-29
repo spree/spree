@@ -42,16 +42,12 @@ module Spree
               params.permit(:selected_delivery_rate_id)
             end
 
-            # Temporary — Spree 6 removes the checkout state machine.
             def try_advance
-              return if @cart.confirm? || @cart.complete? || @cart.canceled?
+              return if @cart.complete? || @cart.canceled?
 
-              loop do
-                break if @cart.payment?
-                break unless @cart.next
-              end
+              @cart.update_with_updater!
             rescue StandardError => e
-              Rails.error.report(e, context: { order_id: @cart.id, state: @cart.state }, source: 'spree.checkout')
+              Rails.error.report(e, context: { order_id: @cart.id }, source: 'spree.checkout')
             ensure
               @cart.reload
             end

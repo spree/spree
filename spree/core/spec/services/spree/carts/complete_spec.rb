@@ -1,153 +1,118 @@
 require 'spec_helper'
+require 'spree/testing_support/order_walkthrough'
 
-RSpec.describe Spree::Carts::Complete do
-  subject { described_class }
+module Spree
+  describe Carts::Complete do
+    subject { described_class.call(cart: cart) }
 
-  let(:store) { @default_store }
-  let(:order) { create(:order_with_line_items, store: store) }
+    let(:store) { @default_store }
+    let(:cart) { ::OrderWalkthrough.up_to(:complete, store).cart || raise('walkthrough returned no cart') }
 
-  before do
-    order.update_column(:state, 'payment')
-    create(:payment, order: order, amount: order.total, state: 'checkout')
-    order.shipments.each { |s| s.update_column(:state, 'ready') }
-  end
-
-  describe '#call' do
-    it 'completes the order' do
-      result = subject.call(cart: order)
-
-      expect(result).to be_success
-      expect(order.reload.state).to eq('complete')
-      expect(order.completed_at).to be_present
+    # Build a payment-ready cart without completing it
+    let(:ready_cart) do
+      cart = ::OrderWalkthrough.up_to(:payment, store)
+      FactoryBot.create(:payment, cart: cart, order: nil, payment_method: Spree::PaymentMethod.first, amount: cart.reload.total)
+      cart
     end
 
-    it 'returns the order as value' do
-      result = subject.call(cart: order)
+    describe 'the three-phase pipeline' do
+      subject { described_class.call(cart: ready_cart) }
 
-      expect(result.value).to eq(order)
-    end
+      it 'completes the cart into a placed order' do
+        result = subject
 
-    context 'when the channel forbids guest checkout and the order has no user' do
-      let(:channel) { store.default_channel }
-
-      before do
-        channel.update!(preferred_guest_checkout: false)
-        order.update!(user: nil, channel: channel)
+        expect(result).to be_success
+        order = result.value
+        expect(order).to be_a(Spree::Order)
+        expect(order.status).to eq('placed')
+        expect(order.completed_at).to be_present
+        expect(order.cart_id).to eq(ready_cart.id)
+        expect(ready_cart.reload.completed_at).to be_present
+        expect(ready_cart.completing_at).to be_nil
       end
 
-      it 'fails without completing the order — covers webhook/service completion paths' do
-        result = subject.call(cart: order)
+      it 'copies line items, fulfillments and addresses — never sharing rows' do
+        order = subject.value
+
+        expect(order.line_items.count).to eq(ready_cart.line_items.count)
+        expect(order.line_items.ids).not_to match_array(ready_cart.line_items.ids)
+        expect(order.fulfillments.count).to eq(ready_cart.reload.fulfillments.count)
+        expect(order.ship_address_id).not_to eq(ready_cart.ship_address_id)
+        expect(order.email).to eq(ready_cart.email)
+        expect(order.token).to eq(ready_cart.token)
+      end
+
+      it 'is idempotent — replay returns the same order' do
+        first = subject.value
+        replay = described_class.call(cart: ready_cart.reload)
+
+        expect(replay).to be_success
+        expect(replay.value.id).to eq(first.id)
+        expect(Spree::Order.where(cart_id: ready_cart.id).count).to eq(1)
+      end
+
+      it 'rejects a concurrent completion in flight' do
+        ready_cart.update_columns(completing_at: Time.current)
+
+        result = described_class.call(cart: ready_cart)
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('completion_in_progress')
+      end
+
+      it 'takes over a stale completion lock' do
+        ready_cart.update_columns(completing_at: 10.minutes.ago)
+
+        expect(subject).to be_success
+      end
+
+      it 'returns cart_changed on expected_total drift' do
+        result = described_class.call(cart: ready_cart, expected_total: ready_cart.total + 5)
 
         expect(result).to be_failure
-        expect(order.reload).not_to be_completed
+        expect(result.error.value[:code]).to eq('cart_changed')
+        expect(ready_cart.reload.completed_at).to be_nil
       end
-    end
 
-    context 'when order is already completed' do
-      before { order.update_columns(state: 'complete', completed_at: Time.current) }
+      it 'returns structured validation errors when requirements are unmet' do
+        ready_cart.update_columns(email: nil)
 
-      it 'returns success without re-processing' do
-        result = subject.call(cart: order)
-
-        expect(result).to be_success
-        expect(result.value).to eq(order)
-      end
-    end
-
-    context 'when order is canceled' do
-      before { order.update_column(:state, 'canceled') }
-
-      it 'returns failure' do
-        result = subject.call(cart: order)
-
+        result = described_class.call(cart: ready_cart)
         expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('validation_failed')
+        expect(result.error.value[:errors]).to be_present
       end
     end
 
-    context 'when order cannot be completed (missing address)' do
-      before { order.update_column(:state, 'cart') }
+    describe 'guest checkout policy' do
+      it 'fails when the channel forbids guest checkout and the cart has no customer' do
+        allow_any_instance_of(Spree::Checkout::Requirements).to receive(:call).and_return([])
+        allow_any_instance_of(Spree::Cart).to receive(:guest_checkout_disallowed?).and_return(true)
 
-      let(:order) { create(:order, store: store) }
-
-      it 'returns failure' do
-        result = subject.call(cart: order)
-
+        result = described_class.call(cart: ready_cart)
         expect(result).to be_failure
+        expect(ready_cart.reload.completed_at).to be_nil
       end
     end
 
-    context 'when payments were already processed by the payment session' do
-      before do
-        order.payments.destroy_all
-        create(:payment, order: order, amount: order.total, state: 'completed')
-        order.update_column(:payment_total, order.total)
+    describe 'stock reservations' do
+      it 'releases reservations on successful completion' do
+        line_item = ready_cart.line_items.first
+        stock_item = line_item.variant.stock_items.first
+        Spree::StockReservation.create!(cart: ready_cart, order: nil, line_item: line_item, stock_item: stock_item, quantity: 1, expires_at: 1.hour.from_now)
+
+        expect { described_class.call(cart: ready_cart) }.to change { Spree::StockReservation.count }.by(-1)
       end
+    end
 
-      it 'completes the order without re-processing payments' do
-        result = subject.call(cart: order)
+    describe 'admin/B2B order path' do
+      let(:order) { create(:order_with_line_items) }
 
+      it 'finalizes a draft order through the same service' do
+        create(:payment, order: order, amount: order.total, state: 'pending')
+
+        result = described_class.call(cart: order)
         expect(result).to be_success
-        expect(order.reload.state).to eq('complete')
-        # Payment stays completed — not re-processed
-        expect(order.payments.first.state).to eq('completed')
-      end
-    end
-
-    context 'when payment_total covers order total' do
-      before do
-        order.update_column(:payment_total, order.total)
-      end
-
-      it 'completes the order successfully' do
-        result = subject.call(cart: order)
-
-        expect(result).to be_success
-        expect(order.reload.state).to eq('complete')
-      end
-    end
-
-    context 'when order does not require payment' do
-      before do
-        order.update_column(:total, 0)
-      end
-
-      it 'completes without payment processing' do
-        result = subject.call(cart: order)
-
-        expect(result).to be_success
-      end
-    end
-
-    context 'with stock reservations' do
-      let(:line_item) { order.line_items.first }
-      let!(:reservation) do
-        line_item.variant.stock_items.first.update!(backorderable: false)
-        line_item.variant.stock_items.first.set_count_on_hand(20)
-        create(
-          :stock_reservation,
-          stock_item: line_item.variant.stock_items.first,
-          line_item: line_item,
-          order: order,
-          quantity: line_item.quantity,
-          expires_at: 5.minutes.from_now
-        )
-      end
-
-      it 'releases the reservation on successful completion' do
-        expect { subject.call(cart: order) }
-          .to change { Spree::StockReservation.where(order_id: order.id).count }.from(1).to(0)
-      end
-
-      it 'does not release the reservation when completion fails' do
-        order.update_column(:state, 'cart')
-        # cart can't complete from cart state without going through checkout flow
-
-        expect {
-          # call from this canceled-ish setup will fail; the reservation should stick around
-          allow_any_instance_of(Spree::Order).to receive(:reload).and_return(order)
-          allow(order).to receive(:complete?).and_return(false)
-          subject.call(cart: order)
-        }.not_to change { Spree::StockReservation.where(order_id: order.id).count }
+        expect(order.reload.completed_at).to be_present
       end
     end
   end

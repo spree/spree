@@ -10,6 +10,18 @@ FactoryBot.define do
     transient do
       line_items_price { BigDecimal(10) }
       attach_to_default_store { true }
+      # Legacy machine vocabulary shim — the state column is gone. 'complete'
+      # marks the order completed; every other value is ignored (mid-checkout
+      # entities are carts since 6.0).
+      state { nil }
+    end
+
+    after(:create) do |order, evaluator|
+      if evaluator.state.to_s == 'complete' && order.completed_at.blank?
+        order.update_columns(completed_at: Time.current, status: 'placed')
+      elsif evaluator.state.to_s == 'canceled'
+        order.update_columns(status: 'canceled', canceled_at: order.canceled_at || Time.current)
+      end
     end
 
     before(:create) do |order|
@@ -73,12 +85,10 @@ FactoryBot.define do
       end
 
       factory :completed_order_with_totals do
-        state { 'complete' }
-
         after(:create) do |order, evaluator|
           # Set completed_at before refreshing shipment rates so order.completed? returns true
           # This prevents the shipping rate selection from recalculating order totals
-          order.update_column(:completed_at, order.completed_at || Time.current)
+          order.update_columns(completed_at: order.completed_at || Time.current, status: 'placed')
           order.refresh_shipment_rates(evaluator.shipping_method_filter)
         end
 
@@ -110,7 +120,7 @@ FactoryBot.define do
 
             order.fulfillments.each do |shipment|
               shipment.fulfillment_items.update_all state: 'on_hand'
-              shipment.update_column('state', 'ready')
+              shipment.update_column(:status, 'ready')
             end
             order.reload
           end
