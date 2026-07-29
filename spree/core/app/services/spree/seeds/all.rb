@@ -16,7 +16,6 @@ module Spree
 
             # additional data
             ReturnsEnvironment.call
-            ShippingCategories.call
             StoreCreditCategories.call
             TaxCategories.call
             DigitalDelivery.call

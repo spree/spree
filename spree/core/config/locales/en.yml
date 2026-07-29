@@ -1452,10 +1452,6 @@ en:
       product_types:
         default: Default
         digital: Digital
-      shipping:
-        categories:
-          default: Default
-          digital: Digital
     select: Select
     select_stock: Select stock
     selected_quantity_not_available: selected of %{item} is not available.
