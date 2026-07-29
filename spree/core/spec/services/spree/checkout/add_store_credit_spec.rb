@@ -39,7 +39,7 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       subject { described_class.call(order: order, amount: requested_amount) }
 
       let(:store_credit) { create(:store_credit, amount: order_total, store: store) }
-      let(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
+      let(:order) { create(:order, customer: store_credit.user, total: order_total, store: store) }
 
       context 'with no amount specified' do
         let(:requested_amount) { nil }
@@ -74,7 +74,7 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       let(:expected_cc_total) { 100.0 }
       let(:store_credit_total) { order_total - expected_cc_total }
       let(:store_credit) { create(:store_credit, amount: store_credit_total, store: store) }
-      let(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
+      let(:order) { create(:order, customer: store_credit.user, total: order_total, store: store) }
       let!(:store_credit_2) { create(:store_credit, amount: 10) }
 
       before do
@@ -96,7 +96,7 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
 
     context 'when called again with an existing checkout store credit payment' do
       let(:store_credit) { create(:store_credit, amount: 500, store: store) }
-      let(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
+      let(:order) { create(:order, customer: store_credit.user, total: order_total, store: store) }
 
       before do
         order.update_column(:total, order_total)
@@ -139,10 +139,10 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       let(:amount_difference) { 100 }
       let!(:primary_store_credit) { create(:store_credit, amount: (order_total - amount_difference), store: store) }
       let!(:secondary_store_credit) do
-        create(:store_credit, amount: order_total, user: primary_store_credit.user,
+        create(:store_credit, amount: order_total, customer: primary_store_credit.user,
                 credit_type: create(:secondary_credit_type), store: store)
       end
-      let(:order) { create(:order, user: primary_store_credit.user, total: order_total, store: store) }
+      let(:order) { create(:order, customer: primary_store_credit.user, total: order_total, store: store) }
 
       before do
         Timecop.scale(3600)

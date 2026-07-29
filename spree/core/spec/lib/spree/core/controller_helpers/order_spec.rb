@@ -24,7 +24,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   controller(FakesController) {}
 
   let(:user) { create(:user) }
-  let(:order) { create(:order, user: user, store: store) }
+  let(:order) { create(:order, customer: user, store: store) }
   let!(:store) { @default_store }
 
   describe '#current_order' do
@@ -34,7 +34,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context 'create_order_if_necessary option is false' do
-      let!(:order) { create :order, user: user, store: store }
+      let!(:order) { create :order, customer: user, store: store }
 
       it 'returns current order' do
         expect(controller.current_order).to eq order
@@ -121,7 +121,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context "user is blank" do
-      let(:order) { create(:order, user: nil, store: store) }
+      let(:order) { create(:order, customer: nil, store: store) }
 
       it 'calls Spree::Order#associate_user! method' do
         expect_any_instance_of(Spree::Order).to receive(:associate_user!)
@@ -130,7 +130,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context "user isn't blank" do
-      let(:order) { create(:order, user: user, store: store) }
+      let(:order) { create(:order, customer: user, store: store) }
 
       it 'does not calls Spree::Order#associate_user! method' do
         expect_any_instance_of(Spree::Order).not_to receive(:associate_user!)
@@ -148,7 +148,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       end
 
       context 'within the same store' do
-        let!(:incomplete_order) { create(:order, user: user, store: order.store) }
+        let!(:incomplete_order) { create(:order, customer: user, store: order.store) }
 
         it 'calls Spree::Order#merge!' do
           expect(order).to receive(:merge!).with(incomplete_order, user)
@@ -157,7 +157,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       end
 
       context 'within different store' do
-        let!(:incomplete_order) { create(:order, user: user, store: create(:store)) }
+        let!(:incomplete_order) { create(:order, customer: user, store: create(:store)) }
 
         it 'does not call Spree::Order#merge!' do
           expect(order).not_to receive(:merge!)

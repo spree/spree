@@ -8,8 +8,8 @@ namespace :common do
     # When using execute with a Hash, args IS the hash directly
     defaults = {
       authentication: 'dummy',
-      user_class: 'Spree::LegacyUser',
-      admin_user_class: 'Spree::LegacyAdminUser',
+      user_class: 'Spree::Customer',
+      admin_user_class: 'Spree::AdminUser',
       install_storefront: false,
       install_admin: false,
       javascript: false,

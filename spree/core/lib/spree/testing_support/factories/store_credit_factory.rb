@@ -2,7 +2,7 @@ FactoryBot.define do
   sequence(:store_credits_order_number) { |n| "R1000#{n}" }
 
   factory :store_credit, class: Spree::StoreCredit do
-    user
+    customer
     association :created_by, factory: :admin_user
     association :category, factory: :store_credit_category
     amount { 150.00 }

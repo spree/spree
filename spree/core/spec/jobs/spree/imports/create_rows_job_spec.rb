@@ -15,7 +15,7 @@ RSpec.describe Spree::Imports::CreateRowsJob, type: :job do
   let!(:import) do
     create(
       :import,
-      user: user,
+      customer: user,
       owner: store,
       type: 'Spree::Imports::Products',
       status: :completed_mapping

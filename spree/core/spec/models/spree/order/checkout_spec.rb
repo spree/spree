@@ -498,7 +498,7 @@ describe Spree::Order, type: :model do
           let(:accept_marketing) { true }
 
           it 'subscribes to newsletter' do
-            expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, user: order.user, store: order.store)
+            expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, customer: order.customer, store: order.store)
             order.next!
           end
         end
@@ -566,7 +566,7 @@ describe Spree::Order, type: :model do
           end
 
           it 'creates a new user' do
-            expect { order.next! }.to change { Spree.user_class.count }.by(1)
+            expect { order.next! }.to change { Spree.customer_class.count }.by(1)
             expect(order.user).to be_present
             expect(order.user.email).to eq(order.email)
           end
@@ -578,7 +578,7 @@ describe Spree::Order, type: :model do
           end
 
           it 'does not create a new user' do
-            expect { order.next! }.not_to change { Spree.user_class.count }
+            expect { order.next! }.not_to change { Spree.customer_class.count }
           end
         end
       end

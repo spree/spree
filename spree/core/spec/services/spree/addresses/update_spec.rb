@@ -6,7 +6,7 @@ RSpec.describe Spree::Addresses::Update do
   let(:user) { create(:user) }
   let(:country) { create(:country) }
   let(:state) { create(:state, country: country) }
-  let!(:address) { create(:address, user: user) }
+  let!(:address) { create(:address, customer: user) }
   let(:result) { subject.call(address: address, address_params: new_address_params, order: order) }
   let(:value) { result.value }
   let(:order) { nil }
@@ -61,7 +61,7 @@ RSpec.describe Spree::Addresses::Update do
 
         context 'when user only sets the address as default shipping' do
           let(:result) { subject.call(address: address, address_params: {}, order: order, default_shipping: true) }
-          let!(:previous_address) { create(:address, user: user) }
+          let!(:previous_address) { create(:address, customer: user) }
 
           before { user.reload.update(ship_address: previous_address) }
 
@@ -74,7 +74,7 @@ RSpec.describe Spree::Addresses::Update do
 
         context 'when user only sets the address as default billing' do
           let(:result) { subject.call(address: address, address_params: {}, order: order, default_billing: true) }
-          let!(:previous_address) { create(:address, user: user) }
+          let!(:previous_address) { create(:address, customer: user) }
 
           before { user.reload.update(bill_address: previous_address) }
 
@@ -97,7 +97,7 @@ RSpec.describe Spree::Addresses::Update do
 
         context 'when user sets address as default shipping' do
           let(:result) { subject.call(address: address, address_params: new_address_params, order: order, default_shipping: true) }
-          let!(:previous_address) { create(:address, user: user) }
+          let!(:previous_address) { create(:address, customer: user) }
 
           before { user.reload.update(ship_address: previous_address) }
 
@@ -110,7 +110,7 @@ RSpec.describe Spree::Addresses::Update do
 
         context 'when user sets address as default billing' do
           let(:result) { subject.call(address: address, address_params: new_address_params, order: order, default_billing: true) }
-          let!(:previous_address) { create(:address, user: user) }
+          let!(:previous_address) { create(:address, customer: user) }
 
           before { user.reload.update(bill_address: previous_address) }
 
@@ -122,7 +122,7 @@ RSpec.describe Spree::Addresses::Update do
         end
 
         context 'when order is passed' do
-          let(:order) { create(:order, user: user, state: 'delivery', ship_address: address, bill_address: address) }
+          let(:order) { create(:order, customer: user, state: 'delivery', ship_address: address, bill_address: address) }
 
           it 'updates order to address state' do
             expect { result }.to change { order.reload.state }.from('delivery').to('address')
@@ -133,7 +133,7 @@ RSpec.describe Spree::Addresses::Update do
       end
 
       context 'when address is uneditable' do
-        let!(:completed_order) { create(:completed_order_with_totals, user: user, ship_address: address, bill_address: address) }
+        let!(:completed_order) { create(:completed_order_with_totals, customer: user, ship_address: address, bill_address: address) }
 
         context 'when there have been created same address with new params' do
           let!(:same_address) { user.addresses.create(new_address_params.except(:country_iso).merge(country: country, state: state)) }
@@ -167,7 +167,7 @@ RSpec.describe Spree::Addresses::Update do
           end
 
           context 'when the old address was set as default billing' do
-            let(:other_address) { create(:address, user: user) }
+            let(:other_address) { create(:address, customer: user) }
 
             before { user.update!(bill_address: address, ship_address: other_address) }
 
@@ -182,7 +182,7 @@ RSpec.describe Spree::Addresses::Update do
           end
 
           context 'when the old address was set as default shipping' do
-            let(:other_address) { create(:address, user: user) }
+            let(:other_address) { create(:address, customer: user) }
 
             before { user.update!(bill_address: other_address, ship_address: address) }
 
@@ -224,7 +224,7 @@ RSpec.describe Spree::Addresses::Update do
         end
 
         context 'when order with deleted address is passed' do
-          let(:order) { create(:order, user: user, state: 'delivery', ship_address: address, bill_address: address) }
+          let(:order) { create(:order, customer: user, state: 'delivery', ship_address: address, bill_address: address) }
 
           it 'updates order to address state' do
             expect { result }.to change { order.reload.state }.from('delivery').to('address')
@@ -242,7 +242,7 @@ RSpec.describe Spree::Addresses::Update do
         end
 
         context 'when a separate incomplete order shares the address' do
-          let!(:incomplete_order) { create(:order, user: user, ship_address: address, bill_address: address) }
+          let!(:incomplete_order) { create(:order, customer: user, ship_address: address, bill_address: address) }
 
           it 'repoints the incomplete order to the new address and moves it to the address step' do
             result
@@ -261,7 +261,7 @@ RSpec.describe Spree::Addresses::Update do
           end
 
           it "does not repoint another user's order sharing the address" do
-            other_order = create(:order, user: create(:user), ship_address: address, bill_address: address, state: 'delivery')
+            other_order = create(:order, customer: create(:user), ship_address: address, bill_address: address, state: 'delivery')
 
             result
 
@@ -289,11 +289,11 @@ RSpec.describe Spree::Addresses::Update do
       context 'when a guest cart shares an immutable address' do
         let(:address) { create(:address) }
         let!(:completed_guest_order) do
-          create(:order, user: nil, email: 'guest-complete@example.com', completed_at: Time.current,
+          create(:order, customer: nil, email: 'guest-complete@example.com', completed_at: Time.current,
                          ship_address: address, bill_address: address)
         end
         let!(:guest_cart) do
-          create(:order, user: nil, email: 'guest-cart@example.com', ship_address: address, bill_address: address)
+          create(:order, customer: nil, email: 'guest-cart@example.com', ship_address: address, bill_address: address)
         end
 
         it 'repoints the guest cart to the copy and keeps the completed order on the original' do
@@ -327,7 +327,7 @@ RSpec.describe Spree::Addresses::Update do
       end
 
       context 'when the address is uneditable' do
-        let!(:completed_order) { create(:completed_order_with_totals, user: user, ship_address: address, bill_address: address) }
+        let!(:completed_order) { create(:completed_order_with_totals, customer: user, ship_address: address, bill_address: address) }
 
         it 'returns a failure and leaves the original address intact' do
           expect { result }.not_to change(Spree::Address, :count)

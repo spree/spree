@@ -5,7 +5,7 @@ RSpec.describe Spree::Cart::RemoveOutOfStockItems do
 
   let(:store) { @default_store }
   let(:user) { create(:user) }
-  let(:order) { create(:order_with_totals, store: store, user: user) }
+  let(:order) { create(:order_with_totals, store: store, customer: user) }
   let(:product) { order.products.first }
   let(:variant) { order.variants.first }
   let(:execute) { subject.call(order: order) }

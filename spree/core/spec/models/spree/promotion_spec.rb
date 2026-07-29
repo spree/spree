@@ -259,7 +259,7 @@ describe Spree::Promotion, type: :model do
     let(:action1) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion) }
     let(:action2) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion) }
     let(:user) { create(:user) }
-    let(:order) { create(:order, user: user) }
+    let(:order) { create(:order, customer: user) }
     let(:payload) { { order: order, user: user } }
 
     before do
@@ -799,8 +799,8 @@ describe Spree::Promotion, type: :model do
 
     let(:promotion) { create :promotion, :with_order_adjustment, kind: :automatic }
     let(:user) { create :user }
-    let(:order) { create :order_with_line_items, user: user }
-    let(:excluded_order) { create :order_with_line_items, user: user }
+    let(:order) { create :order_with_line_items, customer: user }
+    let(:excluded_order) { create :order_with_line_items, customer: user }
 
     before do
       order.user_id = user.id
@@ -837,7 +837,7 @@ describe Spree::Promotion, type: :model do
       end
 
       context 'when the order is not complete' do
-        let(:order) { create :order, user: user }
+        let(:order) { create :order, customer: user }
 
         it { is_expected.to be false }
       end

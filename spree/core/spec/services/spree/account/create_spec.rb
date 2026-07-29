@@ -18,7 +18,7 @@ module Spree
         end
 
         it 'creates new user' do
-          expect { result }.to change(Spree.user_class, :count)
+          expect { result }.to change(Spree.customer_class, :count)
         end
 
         it 'creates user with given params' do

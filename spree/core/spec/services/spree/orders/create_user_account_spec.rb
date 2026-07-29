@@ -7,14 +7,14 @@ describe Spree::Orders::CreateUserAccount do
   let(:store) { @default_store }
   let(:address) { create(:address, country: store.default_country, firstname: 'John', lastname: 'Snow') }
   let(:order) do
-    create(:completed_order_with_totals, bill_address: address, ship_address: address, store: store, user: nil, email: 'new@customer.com')
+    create(:completed_order_with_totals, bill_address: address, ship_address: address, store: store, customer: nil, email: 'new@customer.com')
   end
 
   context 'when order has no user' do
-    let(:new_user) { Spree.user_class.find_by!(email: order.email) }
+    let(:new_user) { Spree.customer_class.find_by!(email: order.email) }
 
     it 'creates a new user' do
-      expect { subject }.to change { Spree.user_class.count }.by(1)
+      expect { subject }.to change { Spree.customer_class.count }.by(1)
 
       expect(new_user.email).to eq(order.email)
       expect(new_user.first_name).to eq(order.bill_address.firstname)
@@ -33,8 +33,8 @@ describe Spree::Orders::CreateUserAccount do
 
     it 'assigns the user to the order' do
       subject
-      expect(order.reload.user).to be_present
-      expect(order.user).to eq(new_user)
+      expect(order.reload.customer).to be_present
+      expect(order.customer).to eq(new_user)
     end
   end
 
@@ -42,12 +42,12 @@ describe Spree::Orders::CreateUserAccount do
     let!(:user) { create(:user, email: 'new@customer.com') }
 
     it 'does not create a new user' do
-      expect { subject }.to change { Spree.user_class.count }.by(0)
+      expect { subject }.to change { Spree.customer_class.count }.by(0)
     end
 
     it 'assigns the user to the order' do
       subject
-      expect(order.reload.user).to eq(user)
+      expect(order.reload.customer).to eq(user)
     end
 
     it 'returns success with the user' do

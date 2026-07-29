@@ -5,7 +5,7 @@ module Spree
     subject { described_class }
 
     let(:store) { @default_store }
-    let(:order) { create(:order_ready_to_ship, store: store, user: nil, email: 'john@snow.org') }
+    let(:order) { create(:order_ready_to_ship, store: store, customer: nil, email: 'john@snow.org') }
     let(:variant) { shipment.line_items.first.variant }
     let(:shipment) { order.shipments.first }
     let(:line_item) { shipment.line_items.last }

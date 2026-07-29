@@ -7,7 +7,7 @@ module Spree
     let(:user) { create(:user) }
     let(:country) { create(:country) }
     let(:state) { create(:state, country: country) }
-    let!(:address) { create(:address, user: user) }
+    let!(:address) { create(:address, customer: user) }
     let(:result) { subject.call(address: address, address_params: new_address_params) }
     let(:value) { result.value }
 

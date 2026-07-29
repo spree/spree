@@ -150,14 +150,14 @@ describe Spree::CreditCard, type: :model do
     let(:user) { create(:user) }
     let(:payment_method) { create(:credit_card_payment_method) }
     let!(:existing_card) do
-      create(:credit_card, user: user, payment_method: payment_method,
+      create(:credit_card, customer: user, payment_method: payment_method,
                            fingerprint: 'FZqjhq46SWprIY8i', month: 11, year: 2030)
     end
 
     def build_duplicate(attributes = {})
       build(
         :credit_card,
-        { user: user, payment_method: payment_method, fingerprint: 'FZqjhq46SWprIY8i', month: 11, year: 2030 }.merge(attributes)
+        { customer: user, payment_method: payment_method, fingerprint: 'FZqjhq46SWprIY8i', month: 11, year: 2030 }.merge(attributes)
       )
     end
 
@@ -176,7 +176,7 @@ describe Spree::CreditCard, type: :model do
     end
 
     it 'does not enforce uniqueness when the fingerprint is missing' do
-      create(:credit_card, user: user, payment_method: payment_method, fingerprint: nil, month: 11, year: 2030)
+      create(:credit_card, customer: user, payment_method: payment_method, fingerprint: nil, month: 11, year: 2030)
       expect(build_duplicate(fingerprint: nil)).to be_valid
     end
 
@@ -363,8 +363,8 @@ describe Spree::CreditCard, type: :model do
 
   it 'ensures only one credit card per user is default at a time' do
     user = FactoryBot.create(:user)
-    first = FactoryBot.create(:credit_card, user: user, default: true)
-    second = FactoryBot.create(:credit_card, user: user, default: true)
+    first = FactoryBot.create(:credit_card, customer: user, default: true)
+    second = FactoryBot.create(:credit_card, customer: user, default: true)
 
     expect(first.reload.default).to eq false
     expect(second.reload.default).to eq true
@@ -377,8 +377,8 @@ describe Spree::CreditCard, type: :model do
   end
 
   it 'allows default credit cards for different users' do
-    first = FactoryBot.create(:credit_card, user: FactoryBot.create(:user), default: true)
-    second = FactoryBot.create(:credit_card, user: FactoryBot.create(:user), default: true)
+    first = FactoryBot.create(:credit_card, customer: FactoryBot.create(:user), default: true)
+    second = FactoryBot.create(:credit_card, customer: FactoryBot.create(:user), default: true)
 
     expect(first.reload.default).to eq true
     expect(second.reload.default).to eq true
@@ -386,8 +386,8 @@ describe Spree::CreditCard, type: :model do
 
   it 'allows this card to save even if the previously default card has expired' do
     user = FactoryBot.create(:user)
-    first = FactoryBot.create(:credit_card, user: user, default: true)
-    second = FactoryBot.create(:credit_card, user: user, default: false)
+    first = FactoryBot.create(:credit_card, customer: user, default: true)
+    second = FactoryBot.create(:credit_card, customer: user, default: false)
     first.update_columns(year: Time.current.year, month: 1.month.ago.month)
 
     expect { second.update!(default: true) }.not_to raise_error

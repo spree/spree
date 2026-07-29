@@ -6,7 +6,7 @@ module Spree
     let(:user) { create(:user) }
 
     context 'when guest order is given' do
-      let(:order) { create(:order, user: nil) }
+      let(:order) { create(:order, customer: nil) }
 
       it 'assigns order to user' do
         expect(subject).to be_success
@@ -16,7 +16,7 @@ module Spree
 
     context 'when already assigned order is given' do
       let(:assigned_user) { create(:user) }
-      let(:order) { create(:order, user: assigned_user) }
+      let(:order) { create(:order, customer: assigned_user) }
 
       it 'reassigns order to new user' do
         expect(subject).to be_success

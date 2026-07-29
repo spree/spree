@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe Spree::Addresses::Find do
   let!(:user) { create(:user) }
-  let!(:address1) { create(:address, user: user) }
-  let!(:address2) { create(:address, user: user) }
-  let!(:address3) { create(:address, user: user, quick_checkout: true) }
-  let!(:address4) { create(:address, user: user, quick_checkout: true) }
+  let!(:address1) { create(:address, customer: user) }
+  let!(:address2) { create(:address, customer: user) }
+  let!(:address3) { create(:address, customer: user, quick_checkout: true) }
+  let!(:address4) { create(:address, customer: user, quick_checkout: true) }
 
   describe '#execute' do
     let(:scope) { Spree::Address.where(user: user) }

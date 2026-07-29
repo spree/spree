@@ -52,7 +52,7 @@ describe 'Order' do
 
     context 'there is enough store credit to pay for the entire order' do
       let(:store_credit) { create(:store_credit, amount: order_total) }
-      let(:order) { create(:order, user: store_credit.user, total: order_total) }
+      let(:order) { create(:order, customer: store_credit.user, total: order_total) }
 
       before do
         subject
@@ -70,7 +70,7 @@ describe 'Order' do
       let(:expected_cc_total) { 100.0 }
       let(:store_credit_total) { order_total - expected_cc_total }
       let(:store_credit) { create(:store_credit, amount: store_credit_total) }
-      let(:order) { create(:order, user: store_credit.user, total: order_total) }
+      let(:order) { create(:order, customer: store_credit.user, total: order_total) }
 
       before do
         # callbacks recalculate total based on line items
@@ -92,10 +92,10 @@ describe 'Order' do
         let(:amount_difference) { 100 }
         let!(:primary_store_credit) { create(:store_credit, amount: (order_total - amount_difference)) }
         let!(:secondary_store_credit) do
-          create(:store_credit, amount: order_total, user: primary_store_credit.user,
+          create(:store_credit, amount: order_total, customer: primary_store_credit.user,
                                 credit_type: create(:secondary_credit_type))
         end
-        let(:order) { create(:order, user: primary_store_credit.user, total: order_total) }
+        let(:order) { create(:order, customer: primary_store_credit.user, total: order_total) }
 
         before do
           Timecop.scale(3600)
@@ -123,7 +123,7 @@ describe 'Order' do
     subject { order.remove_store_credit_payments }
 
     let(:order_total) { 500.00 }
-    let(:order) { create(:order, user: store_credit.user, total: order_total) }
+    let(:order) { create(:order, customer: store_credit.user, total: order_total) }
 
     context 'when order is not complete' do
       let(:store_credit) { create(:store_credit, amount: order_total - 1) }
@@ -162,13 +162,13 @@ describe 'Order' do
     context 'order has an associated user' do
       subject { order.covered_by_store_credit? }
 
-      let(:order) { create(:order, user: user, total: order_total) }
+      let(:order) { create(:order, customer: user, total: order_total) }
       let(:user) { create(:user) }
       let(:order_total) { 10.0 }
 
       context 'user has enough store credit to pay for the order' do
         let!(:store_credit_payment) { create(:store_credit_payment, order: order, source: store_credit, amount: 10.0) }
-        let(:store_credit) { create(:store_credit, amount: 10.0, store: order.store, user: order.user) }
+        let(:store_credit) { create(:store_credit, amount: 10.0, store: order.store, customer: order.user) }
 
         it { is_expected.to be(true) }
       end
@@ -199,7 +199,7 @@ describe 'Order' do
     end
 
     context 'order has an associated user' do
-      subject { create(:order, user: user) }
+      subject { create(:order, customer: user) }
 
       let(:user) { create(:user) }
       let(:available_store_credit) { 25.0 }
@@ -215,7 +215,7 @@ describe 'Order' do
       context 'when store is provided' do
         let!(:store) { @default_store }
         let!(:second_store) { create(:store) }
-        let!(:store_credit) { create(:store_credit, amount: '100', user: user, store: store) }
+        let!(:store_credit) { create(:store_credit, amount: '100', customer: user, store: store) }
 
         before do
           allow(user).to receive(:total_available_store_credit).and_call_original
@@ -254,12 +254,12 @@ describe 'Order' do
     end
 
     context 'order has an associated user' do
-      let(:order) { create(:order, user: user, currency: 'USD') }
+      let(:order) { create(:order, customer: user, currency: 'USD') }
       let(:user) { create(:user) }
 
-      let!(:store_credit_1) { create(:store_credit, user: user, amount: 10, currency: 'USD') }
-      let!(:store_credit_2) { create(:store_credit, user: user, amount: 15, currency: 'USD') }
-      let!(:store_credit_3) { create(:store_credit, user: user, amount: 20, currency: 'EUR') }
+      let!(:store_credit_1) { create(:store_credit, customer: user, amount: 10, currency: 'USD') }
+      let!(:store_credit_2) { create(:store_credit, customer: user, amount: 15, currency: 'USD') }
+      let!(:store_credit_3) { create(:store_credit, customer: user, amount: 20, currency: 'EUR') }
 
       it 'returns the user available store credits' do
         expect(subject).to eq([store_credit_2, store_credit_1])
@@ -277,7 +277,7 @@ describe 'Order' do
     end
 
     context 'order has an associated user' do
-      subject { create(:order, user: user) }
+      subject { create(:order, customer: user) }
 
       let(:user) { create(:user) }
 
@@ -365,7 +365,7 @@ describe 'Order' do
 
         let(:store) { @default_store }
         let(:store_credit) { create(:store_credit, store: store) }
-        let(:order) { create(:order, user: store_credit.user, store: store) }
+        let(:order) { create(:order, customer: store_credit.user, store: store) }
 
         context 'the store credit is more than the order total' do
           let(:order_total) { store_credit.amount - 1 }

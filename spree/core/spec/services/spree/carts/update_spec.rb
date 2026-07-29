@@ -4,7 +4,7 @@ module Spree
   RSpec.describe Carts::Update do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
     let(:user) { create(:user) }
-    let(:order) { create(:order_with_line_items, user: user, store: store, currency: 'USD') }
+    let(:order) { create(:order_with_line_items, customer: user, store: store, currency: 'USD') }
 
     describe '#call' do
       subject { described_class.call(cart: order, params: params) }
@@ -27,7 +27,7 @@ module Spree
         end
 
         context 'when clearing customer_note' do
-          let(:order) { create(:order_with_line_items, user: user, store: store, special_instructions: 'Existing instructions') }
+          let(:order) { create(:order_with_line_items, customer: user, store: store, special_instructions: 'Existing instructions') }
 
           it 'clears with empty string' do
             result = described_class.call(cart: order, params: { customer_note: '' })
@@ -77,7 +77,7 @@ module Spree
           let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
           let!(:us_market) { create(:market, store: store, countries: [us_country]) }
           let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
-          let(:order) { create(:order_with_line_items, user: user, store: store, market: us_market, currency: 'USD') }
+          let(:order) { create(:order_with_line_items, customer: user, store: store, market: us_market, currency: 'USD') }
 
           it 'switches market when currency changes' do
             result = described_class.call(cart: order, params: { currency: 'EUR' })
@@ -137,7 +137,7 @@ module Spree
         context 'when shipping address country is not in the new market' do
           let!(:us_state) { us_country.states.find_by(abbr: 'NY') || create(:state, country: us_country, abbr: 'NY', name: 'New York') }
           let(:us_address) { create(:address, country: us_country, state: us_state) }
-          let(:order) { create(:order_with_line_items, user: user, store: store, market: us_market, ship_address: us_address, state: 'delivery') }
+          let(:order) { create(:order_with_line_items, customer: user, store: store, market: us_market, ship_address: us_address, state: 'delivery') }
           let(:params) { { market_id: eu_market.prefixed_id } }
 
           it 'clears the shipping address' do
@@ -156,7 +156,7 @@ module Spree
 
         context 'when shipping address country is in the new market' do
           let(:de_address) { create(:address, country: de_country) }
-          let(:order) { create(:order_with_line_items, user: user, store: store, market: us_market, ship_address: de_address) }
+          let(:order) { create(:order_with_line_items, customer: user, store: store, market: us_market, ship_address: de_address) }
           let(:params) { { market_id: eu_market.prefixed_id } }
 
           it 'keeps the shipping address' do
@@ -203,7 +203,7 @@ module Spree
             end
 
             context 'when order has address checkout step and is past address state' do
-              let(:order) { create(:order_with_line_items, user: user, store: store, state: 'delivery') }
+              let(:order) { create(:order_with_line_items, customer: user, store: store, state: 'delivery') }
 
               it 'reverts to address then auto-advances to payment' do
                 expect(subject).to be_success
@@ -212,7 +212,7 @@ module Spree
             end
 
             context 'when order is in cart state' do
-              let(:order) { create(:order_with_line_items, user: user, store: store, state: 'cart') }
+              let(:order) { create(:order_with_line_items, customer: user, store: store, state: 'cart') }
 
               it 'auto-advances to payment' do
                 expect(subject).to be_success
@@ -221,7 +221,7 @@ module Spree
             end
 
             context 'when order is fully covered by store credit payment' do
-              let(:order) { create(:order_with_line_items, user: user, store: store, state: 'cart') }
+              let(:order) { create(:order_with_line_items, customer: user, store: store, state: 'cart') }
 
               before do
                 create(:store_credit_payment, order: order, amount: order.total)
@@ -242,7 +242,7 @@ module Spree
           end
 
           context 'with existing address by nested id' do
-            let(:existing_address) { create(:address, user: user) }
+            let(:existing_address) { create(:address, customer: user) }
             let(:params) { { address_key => { id: existing_address.prefixed_id } } }
 
             it 'uses the existing address' do
@@ -252,7 +252,7 @@ module Spree
           end
 
           context 'with top-level address_id parameter' do
-            let(:existing_address) { create(:address, user: user) }
+            let(:existing_address) { create(:address, customer: user) }
             let(:params) { { address_id_key => existing_address.prefixed_id } }
 
             it 'uses the existing address' do
@@ -274,7 +274,7 @@ module Spree
       describe 'billing address does not reset checkout state' do
         let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
-        let(:order) { create(:order_with_line_items, user: user, store: store, state: 'delivery') }
+        let(:order) { create(:order_with_line_items, customer: user, store: store, state: 'delivery') }
 
         let(:params) do
           {
@@ -362,7 +362,7 @@ module Spree
 
       describe 'address ownership' do
         let(:other_user) { create(:user) }
-        let(:other_users_address) { create(:address, user: other_user) }
+        let(:other_users_address) { create(:address, customer: other_user) }
 
         shared_examples 'ignores other users address' do |address_type|
           context "when using another user's address for #{address_type}" do
@@ -392,7 +392,7 @@ module Spree
         include_examples 'ignores other users address', :billing_address
 
         context 'when order has no user (guest order)' do
-          let(:order) { create(:order_with_line_items, user: nil, store: store) }
+          let(:order) { create(:order_with_line_items, customer: nil, store: store) }
           let(:params) { { shipping_address_id: other_users_address.prefixed_id } }
 
           it 'ignores address_id params and keeps existing address' do
@@ -628,7 +628,7 @@ module Spree
       end
 
       describe 'when the cart cannot be delivered' do
-        let!(:order) { create(:order_with_line_items, user: user, store: store, state: 'address') }
+        let!(:order) { create(:order_with_line_items, customer: user, store: store, state: 'address') }
         let(:params) { { email: 'buyer@example.com' } }
         let(:unserved_category) { create(:shipping_category, name: 'Unserved') }
 

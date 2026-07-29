@@ -9,11 +9,11 @@ describe Spree::UserMethods do
     subject { test_user.last_incomplete_spree_order(current_store) }
 
     context 'with an incomplete order' do
-      let(:last_incomplete_order) { create :order, user: test_user, store: current_store }
+      let(:last_incomplete_order) { create :order, customer: test_user, store: current_store }
 
       before do
-        create(:order, user: test_user, created_at: 1.day.ago, store: current_store)
-        create(:order, user: create(:user), store: current_store)
+        create(:order, customer: test_user, created_at: 1.day.ago, store: current_store)
+        create(:order, customer: create(:user), store: current_store)
         last_incomplete_order
       end
 
@@ -21,7 +21,7 @@ describe Spree::UserMethods do
     end
 
     context 'with incomplete canceled order' do
-      let(:canceled_order) { create(:order, user: test_user, created_at: 1.day.ago, store: current_store, state: 'canceled') }
+      let(:canceled_order) { create(:order, customer: test_user, created_at: 1.day.ago, store: current_store, state: 'canceled') }
 
       it { is_expected.to be_nil }
     end
@@ -37,7 +37,7 @@ describe Spree::UserMethods do
     context 'rstrict t delete dependent destroyed' do
       before do
         test_user.promotion_rules.create!(promotion: possible_promotion)
-        create(:order, user: test_user, completed_at: Time.current)
+        create(:order, customer: test_user, completed_at: Time.current)
       end
 
       it 'does not destroy dependent destroy items' do
@@ -49,7 +49,7 @@ describe Spree::UserMethods do
     context 'allow to destroy dependent destroy' do
       before do
         test_user.promotion_rules.create!(promotion: possible_promotion)
-        create(:order, user: test_user, created_at: 1.day.ago)
+        create(:order, customer: test_user, created_at: 1.day.ago)
         test_user.destroy
       end
 
@@ -69,13 +69,13 @@ describe Spree::UserMethods do
     let(:inactive_payment_method) { create(:credit_card_payment_method, active: false) }
 
     let!(:valid_credit_card) do
-      create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year, payment_method: active_payment_method)
+      create(:credit_card, customer: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year, payment_method: active_payment_method)
     end
-    let!(:other_user_credit_card) { create(:credit_card, user: other_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year) }
-    let!(:blank_payment_profile_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: nil, year: next_year) }
-    let!(:outdated_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: previous_year) }
+    let!(:other_user_credit_card) { create(:credit_card, customer: other_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year) }
+    let!(:blank_payment_profile_credit_card) { create(:credit_card, customer: test_user, gateway_customer_profile_id: nil, year: next_year) }
+    let!(:outdated_credit_card) { create(:credit_card, customer: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: previous_year) }
     let!(:credit_card_with_inactive_payment_method) do
-      create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year, payment_method: inactive_payment_method)
+      create(:credit_card, customer: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year, payment_method: inactive_payment_method)
     end
 
     it 'includes only not expired credit cards with payment profile that belong to subject user' do
@@ -102,7 +102,6 @@ describe Spree::UserMethods do
   describe '#scramble_email_and_names' do
     it 'scramble email and names' do
       expect { test_user.send(:scramble_email_and_names) }.to change(test_user, :email).and change(test_user, :first_name).and change(test_user, :last_name)
-      expect(test_user.login).to eq(test_user.email)
       expect(test_user.first_name).to eq('Deleted')
       expect(test_user.last_name).to eq('User')
     end
@@ -123,51 +122,51 @@ describe Spree::UserMethods do
     let!(:user_5) { create(:user, email: 'johndoe@example.com', first_name: 'John', last_name: 'Doe') }
 
     it 'returns users based on a full email' do
-      expect(Spree.user_class.search('john.doe@example.com')).to eq([user_1])
-      expect(Spree.user_class.search('jane.doe@example.com')).to eq([user_2])
-      expect(Spree.user_class.search('john_doe@example.com')).to eq([user_4])
-      expect(Spree.user_class.search('johndoe@example.com')).to eq([user_5])
+      expect(Spree.customer_class.search('john.doe@example.com')).to eq([user_1])
+      expect(Spree.customer_class.search('jane.doe@example.com')).to eq([user_2])
+      expect(Spree.customer_class.search('john_doe@example.com')).to eq([user_4])
+      expect(Spree.customer_class.search('johndoe@example.com')).to eq([user_5])
     end
 
     it 'matches a partial email substring (admin pickers feed it a few chars at a time)' do
-      expect(Spree.user_class.search('mary.moe@')).to eq([user_3])
-      expect(Spree.user_class.search('john.doe')).to eq([user_1])
+      expect(Spree.customer_class.search('mary.moe@')).to eq([user_3])
+      expect(Spree.customer_class.search('john.doe')).to eq([user_1])
     end
 
     it 'is case-insensitive across email and name' do
       mixed = create(:user, email: 'Greg.Smith@Example.COM', first_name: 'Greg', last_name: 'Smith')
 
-      expect(Spree.user_class.search('GREG.SMITH@EXAMPLE.COM')).to eq([mixed])
-      expect(Spree.user_class.search('greg.smith@example.com')).to eq([mixed])
-      expect(Spree.user_class.search('gReG.SmItH')).to eq([mixed])
-      expect(Spree.user_class.search('GREG')).to eq([mixed])
-      expect(Spree.user_class.search('SMITH')).to eq([mixed])
-      expect(Spree.user_class.search('greg smith')).to eq([mixed])
-      expect(Spree.user_class.search('GREG SMITH')).to eq([mixed])
+      expect(Spree.customer_class.search('GREG.SMITH@EXAMPLE.COM')).to eq([mixed])
+      expect(Spree.customer_class.search('greg.smith@example.com')).to eq([mixed])
+      expect(Spree.customer_class.search('gReG.SmItH')).to eq([mixed])
+      expect(Spree.customer_class.search('GREG')).to eq([mixed])
+      expect(Spree.customer_class.search('SMITH')).to eq([mixed])
+      expect(Spree.customer_class.search('greg smith')).to eq([mixed])
+      expect(Spree.customer_class.search('GREG SMITH')).to eq([mixed])
     end
 
     it 'returns users based on the first name' do
-      expect(Spree.user_class.search('joh')).to include(user_1, user_5)
-      expect(Spree.user_class.search('jan')).to include(user_2)
-      expect(Spree.user_class.search('jan')).not_to include(user_1, user_3, user_4, user_5)
-      expect(Spree.user_class.search('greg')).not_to include(user_1, user_2, user_3, user_4, user_5)
+      expect(Spree.customer_class.search('joh')).to include(user_1, user_5)
+      expect(Spree.customer_class.search('jan')).to include(user_2)
+      expect(Spree.customer_class.search('jan')).not_to include(user_1, user_3, user_4, user_5)
+      expect(Spree.customer_class.search('greg')).not_to include(user_1, user_2, user_3, user_4, user_5)
     end
 
     it 'returns users based on the last name' do
-      expect(Spree.user_class.search('do')).to include(user_1, user_5)
-      expect(Spree.user_class.search('moe')).to include(user_3)
-      expect(Spree.user_class.search('moe')).not_to include(user_1, user_2, user_4, user_5)
-      expect(Spree.user_class.search('smith')).not_to include(user_1, user_2, user_3, user_4, user_5)
+      expect(Spree.customer_class.search('do')).to include(user_1, user_5)
+      expect(Spree.customer_class.search('moe')).to include(user_3)
+      expect(Spree.customer_class.search('moe')).not_to include(user_1, user_2, user_4, user_5)
+      expect(Spree.customer_class.search('smith')).not_to include(user_1, user_2, user_3, user_4, user_5)
     end
 
     it 'returns users based on the full name' do
-      expect(Spree.user_class.search('joh do')).to include(user_1, user_5)
-      expect(Spree.user_class.search('ane gon')).to include(user_2)
-      expect(Spree.user_class.search('ane gon')).not_to include(user_1, user_3, user_4, user_5)
-      expect(Spree.user_class.search('mary moe')).to include(user_3)
-      expect(Spree.user_class.search('mary moe')).not_to include(user_1, user_2, user_4, user_5)
-      expect(Spree.user_class.search('jane moe')).to include(user_2, user_3)
-      expect(Spree.user_class.search('greg smith')).not_to include(user_1, user_2, user_3, user_4, user_5)
+      expect(Spree.customer_class.search('joh do')).to include(user_1, user_5)
+      expect(Spree.customer_class.search('ane gon')).to include(user_2)
+      expect(Spree.customer_class.search('ane gon')).not_to include(user_1, user_3, user_4, user_5)
+      expect(Spree.customer_class.search('mary moe')).to include(user_3)
+      expect(Spree.customer_class.search('mary moe')).not_to include(user_1, user_2, user_4, user_5)
+      expect(Spree.customer_class.search('jane moe')).to include(user_2, user_3)
+      expect(Spree.customer_class.search('greg smith')).not_to include(user_1, user_2, user_3, user_4, user_5)
     end
   end
 
@@ -179,7 +178,7 @@ describe Spree::UserMethods do
     end
 
     it 'returns false if user has completed orders' do
-      create(:order, user: test_user, completed_at: Time.current)
+      create(:order, customer: test_user, completed_at: Time.current)
 
       expect(subject).to be(false)
     end
@@ -205,7 +204,7 @@ describe Spree::UserMethods do
     end
 
     context 'when a user is created with the flag already set to true' do
-      let(:new_user) { Spree.user_class.last }
+      let(:new_user) { Spree.customer_class.last }
 
       it 'creates a verified newsletter subscriber for the current store' do
         expect {
@@ -224,7 +223,7 @@ describe Spree::UserMethods do
       before do
         user.update!(accepts_email_marketing: true)
         # Subscriber on another store proves the removal is scoped to the current store only.
-        create(:newsletter_subscriber, user: user, email: user.email, store: other_store)
+        create(:newsletter_subscriber, customer: user, email: user.email, store: other_store)
       end
 
       it 'destroys only the current store subscriber, leaving other stores intact' do
@@ -255,13 +254,13 @@ describe Spree::UserMethods do
     let(:other_store) { create(:store) }
 
     it 'returns the subscriber for the given store' do
-      subscriber = create(:newsletter_subscriber, user: user, email: user.email, store: current_store)
+      subscriber = create(:newsletter_subscriber, customer: user, email: user.email, store: current_store)
 
       expect(user.newsletter_subscriber(current_store)).to eq(subscriber)
     end
 
     it 'defaults to the current store' do
-      subscriber = create(:newsletter_subscriber, user: user, email: user.email, store: current_store)
+      subscriber = create(:newsletter_subscriber, customer: user, email: user.email, store: current_store)
 
       Spree::Current.with(store: current_store) do
         expect(user.newsletter_subscriber).to eq(subscriber)
@@ -273,7 +272,7 @@ describe Spree::UserMethods do
     end
 
     it 'ignores subscribers on other stores' do
-      create(:newsletter_subscriber, user: user, email: user.email, store: other_store)
+      create(:newsletter_subscriber, customer: user, email: user.email, store: other_store)
 
       expect(user.newsletter_subscriber(current_store)).to be_nil
     end

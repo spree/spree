@@ -52,7 +52,7 @@ module Spree
           end
 
           context 'when user has some address already' do
-            let!(:address) { create(:address, user: user) }
+            let!(:address) { create(:address, customer: user) }
 
             context 'with default bill and ship address' do
               before do
@@ -87,8 +87,8 @@ module Spree
         context 'when order is passed' do
           let(:result) { subject.call(user: user, address_params: address_params, order: order) }
 
-          let(:order) { create(:order, user: user, state: 'delivery', ship_address: address, bill_address: address) }
-          let(:address) { create(:address, user: user) }
+          let(:order) { create(:order, customer: user, state: 'delivery', ship_address: address, bill_address: address) }
+          let(:address) { create(:address, customer: user) }
 
           it 'assigns a new ship address to the order' do
             result
@@ -106,7 +106,7 @@ module Spree
           let(:result) { subject.call(user: user, address_params: address_params, default_billing: true) }
 
           let!(:user) { create(:user) }
-          let!(:address) { create(:address, user: user) }
+          let!(:address) { create(:address, customer: user) }
 
           before { user.update!(bill_address: address) }
 
@@ -120,7 +120,7 @@ module Spree
           let(:result) { subject.call(user: user, address_params: address_params, default_shipping: true) }
 
           let!(:user) { create(:user) }
-          let!(:address) { create(:address, user: user) }
+          let!(:address) { create(:address, customer: user) }
 
           before { user.update!(ship_address: address) }
 

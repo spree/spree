@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Authentication::Strategies::BaseStrategy do
   let(:params) { { email: 'user@example.com', password: 'secret' } }
   let(:request_env) { {} }
-  let(:user_class) { Spree.user_class }
+  let(:user_class) { Spree.customer_class }
 
   subject(:strategy) do
     described_class.new(params: params, request_env: request_env, user_class: user_class)
@@ -27,8 +27,8 @@ describe Spree::Authentication::Strategies::BaseStrategy do
         described_class.new(params: params, request_env: request_env)
       end
 
-      it 'defaults to Spree.user_class' do
-        expect(strategy.user_class).to eq(Spree.user_class)
+      it 'defaults to Spree.customer_class' do
+        expect(strategy.user_class).to eq(Spree.customer_class)
       end
     end
   end

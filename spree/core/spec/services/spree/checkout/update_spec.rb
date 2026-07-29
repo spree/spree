@@ -63,7 +63,7 @@ describe Spree::Checkout::Update, type: :service do
 
   describe 'update address' do
     let(:user) { create(:user_with_addresses) }
-    let(:order) { create(:order_with_line_items, user: user, bill_address: user.bill_address, ship_address: user.ship_address, state: order_state) }
+    let(:order) { create(:order_with_line_items, customer: user, bill_address: user.bill_address, ship_address: user.ship_address, state: order_state) }
     let(:state) { create(:state) }
     let(:country) { state.country }
     let(:update_service) { described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil) }
@@ -128,7 +128,7 @@ describe Spree::Checkout::Update, type: :service do
       let(:ship_address_id) { order.ship_address_id }
       let(:bill_address_id) { order.bill_address_id }
       let(:address_attributes) { nil }
-      let(:address) { create(:address, user: user) }
+      let(:address) { create(:address, customer: user) }
 
       shared_examples 'user default addresses did not change' do
         it 'does not change user default addresses' do
@@ -206,7 +206,7 @@ describe Spree::Checkout::Update, type: :service do
   describe 'address ownership validation' do
     let(:user) { create(:user_with_addresses) }
     let(:other_user) { create(:user_with_addresses) }
-    let(:order) { create(:order_with_line_items, user: user, state: 'address') }
+    let(:order) { create(:order_with_line_items, customer: user, state: 'address') }
     let(:permitted_attributes) do
       Spree::PermittedAttributes.checkout_attributes + [
         bill_address_attributes: Spree::PermittedAttributes.address_attributes,
@@ -257,7 +257,7 @@ describe Spree::Checkout::Update, type: :service do
     end
 
     context 'when address_attributes contains id of the same user address' do
-      let(:user_address) { create(:address, user: user) }
+      let(:user_address) { create(:address, customer: user) }
       let(:order_params) do
         ActionController::Parameters.new(
           order: {
@@ -273,7 +273,7 @@ describe Spree::Checkout::Update, type: :service do
     end
 
     context 'when address_attributes contains id of address with no user' do
-      let(:guest_address) { create(:address, user: nil) }
+      let(:guest_address) { create(:address, customer: nil) }
       let(:order_params) do
         ActionController::Parameters.new(
           order: {

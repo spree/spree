@@ -45,9 +45,9 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
     let(:store) { @default_store }
 
     let(:admin_user) { create(:admin_user) }
-    let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: admin_user, store: store) }
-    let(:order_2) { create(:order, user: user, created_by: admin_user, store: store) }
-    let(:order_3) { create(:order, user: user, created_by: create(:admin_user), store: store) }
+    let(:order_1) { create(:order, created_at: 1.day.ago, customer: user, created_by: admin_user, store: store) }
+    let(:order_2) { create(:order, customer: user, created_by: admin_user, store: store) }
+    let(:order_3) { create(:order, customer: user, created_by: create(:admin_user), store: store) }
 
     it 'returns correct order' do
       Timecop.scale(3600) do
@@ -105,11 +105,11 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
   end
 end
 
-describe Spree.user_class, type: :model do
+describe Spree.customer_class, type: :model do
   subject { create(:user) }
 
   context 'reporting' do
-    let!(:orders) { create_list(:order, order_count, user: subject, store: store, total: order_value, completed_at: Date.today, currency: currency) }
+    let!(:orders) { create_list(:order, order_count, customer: subject, store: store, total: order_value, completed_at: Date.today, currency: currency) }
     let(:currency) { 'USD' }
     let(:store) { @default_store }
     let(:order_value) { BigDecimal('80.94') }
@@ -174,7 +174,7 @@ describe Spree.user_class, type: :model do
         let(:eur_order_count) { 2 }
 
         before do
-          create_list(:order, eur_order_count, user: subject, store: store, total: eur_order_value, completed_at: Date.today, currency: eur_currency)
+          create_list(:order, eur_order_count, customer: subject, store: store, total: eur_order_value, completed_at: Date.today, currency: eur_currency)
         end
 
         context 'lifetime_value' do
@@ -212,8 +212,8 @@ describe Spree.user_class, type: :model do
       let!(:user) { create(:user) }
       let(:amount) { 120.25 }
       let(:additional_amount) { 55.75 }
-      let!(:store_credit) { create(:store_credit, user: user, amount: amount, amount_used: 0.0, store: store) }
-      let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0, store: store) }
+      let!(:store_credit) { create(:store_credit, customer: user, amount: amount, amount_used: 0.0, store: store) }
+      let!(:additional_store_credit) { create(:store_credit, customer: user, amount: additional_amount, amount_used: 0.0, store: store) }
 
       context 'part of the store credit has been used' do
         let(:amount_used) { 35.00 }
@@ -266,9 +266,9 @@ describe Spree.user_class, type: :model do
       # the in-memory branch must match the query branch — filtered by store
       # and currency, gift cards excluded.
       context 'when the store_credits association is preloaded' do
-        let!(:eur_credit) { create(:store_credit, user: user, amount: 40, amount_used: 0.0, currency: 'EUR', store: store) }
+        let!(:eur_credit) { create(:store_credit, customer: user, amount: 40, amount_used: 0.0, currency: 'EUR', store: store) }
         let(:other_store) { create(:store) }
-        let!(:other_store_credit) { create(:store_credit, user: user, amount: 99, amount_used: 0.0, store: other_store) }
+        let!(:other_store_credit) { create(:store_credit, customer: user, amount: 99, amount_used: 0.0, store: other_store) }
 
         before { user.store_credits.load }
 
@@ -298,7 +298,7 @@ describe Spree.user_class, type: :model do
       let(:user) { create(:user) }
       let(:usd_amount) { 120.25 }
       let(:additional_amount) { 55.75 }
-      let(:store_credit) { create(:store_credit, user: user, amount: usd_amount, amount_used: 0.0, store: store) }
+      let(:store_credit) { create(:store_credit, customer: user, amount: usd_amount, amount_used: 0.0, store: store) }
 
       context 'store credits have never been used' do
         it 'returns store credit amount' do
@@ -311,8 +311,8 @@ describe Spree.user_class, type: :model do
         let(:eur_amount) { '321.31' }
 
         before do
-          create(:store_credit, user: user, amount: gbp_amount, amount_used: 0.0, store: store, currency: 'GBP')
-          create(:store_credit, user: user, amount: eur_amount, amount_used: 0.0, store: store, currency: 'EUR')
+          create(:store_credit, customer: user, amount: gbp_amount, amount_used: 0.0, store: store, currency: 'GBP')
+          create(:store_credit, customer: user, amount: eur_amount, amount_used: 0.0, store: store, currency: 'EUR')
         end
 
         it 'returns sum of amounts' do
@@ -351,8 +351,8 @@ describe Spree.user_class, type: :model do
 
       let!(:user) { create(:user_with_addresses) }
       let!(:other_user) { create(:user_with_addresses) }
-      let(:bill_address) { create(:address, user: assigned_user) }
-      let(:ship_address) { create(:address, user: assigned_user) }
+      let(:bill_address) { create(:address, customer: assigned_user) }
+      let(:ship_address) { create(:address, customer: assigned_user) }
 
       shared_examples 'invalid' do
         it 'is invalid' do
@@ -418,7 +418,7 @@ describe Spree.user_class, type: :model do
       subject { user }
 
       let!(:user) { create(:user_with_addresses) }
-      let(:address) { create(:address, user: user) }
+      let(:address) { create(:address, customer: user) }
 
       shared_examples 'invalid' do
         it 'is invalid' do
@@ -431,19 +431,19 @@ describe Spree.user_class, type: :model do
         before { subject.update(bill_address: address) }
 
         context 'when default bill address is not associated to completed order' do
-          let!(:completed_order) { create(:completed_order_with_totals, user: user) }
+          let!(:completed_order) { create(:completed_order_with_totals, customer: user) }
 
           it_behaves_like 'valid'
         end
 
         context 'when default bill address is associated to uncompleted order' do
-          let!(:uncompleted_order) { create(:order, user: user, bill_address: address, ship_address: address) }
+          let!(:uncompleted_order) { create(:order, customer: user, bill_address: address, ship_address: address) }
 
           it_behaves_like 'valid'
         end
 
         context 'when default bill address is associated to completed order' do
-          let!(:completed_order) { create(:completed_order_with_totals, user: user, bill_address: address, ship_address: address) }
+          let!(:completed_order) { create(:completed_order_with_totals, customer: user, bill_address: address, ship_address: address) }
 
           context 'when default bill address is the same as associated to order' do
             it { expect(user.addresses).to include(address) }
@@ -470,19 +470,19 @@ describe Spree.user_class, type: :model do
         before { subject.update(ship_address: address) }
 
         context 'when default ship address is not associated to completed order' do
-          let!(:completed_order) { create(:completed_order_with_totals, user: user) }
+          let!(:completed_order) { create(:completed_order_with_totals, customer: user) }
 
           it_behaves_like 'valid'
         end
 
         context 'when default ship address is associated to uncompleted order' do
-          let!(:uncompleted_order) { create(:order, user: user, ship_address: address) }
+          let!(:uncompleted_order) { create(:order, customer: user, ship_address: address) }
 
           it_behaves_like 'valid'
         end
 
         context 'when default ship address is associated to completed order' do
-          let!(:completed_order) { create(:completed_order_with_totals, user: user, bill_address: address, ship_address: address) }
+          let!(:completed_order) { create(:completed_order_with_totals, customer: user, bill_address: address, ship_address: address) }
 
           context 'when default ship address is the same as associated to order' do
             it { expect(user.addresses).to include(address) }

@@ -311,7 +311,7 @@ module Spree
         let(:calculator) { create(:flat_rate_calculator) }
         let(:flat_percent_calculator) { create(:flat_percent_item_total_calculator, preferred_flat_percent: 10) }
         let(:order) do
-          create(:order_with_line_items, line_items_count: 3, user: user, store: store)
+          create(:order_with_line_items, line_items_count: 3, customer: user, store: store)
         end
         let!(:promotion) { create(:promotion, name: 'promo', code: nil, multi_codes: true, number_of_codes: 1) }
         let!(:coupon_code) { promotion.coupon_codes.first }
@@ -383,7 +383,7 @@ module Spree
       context 'number of usages for' do
         let!(:user) { create(:user) }
         let(:calculator) { create(:flat_rate_calculator) }
-        let(:order) { create(:order_with_line_items, line_items_count: 3, user: user, store: store) }
+        let(:order) { create(:order_with_line_items, line_items_count: 3, customer: user, store: store) }
         subject { Spree::PromotionHandler::Coupon.new(order) }
 
         context 'one common promotion code' do
@@ -392,7 +392,7 @@ module Spree
             Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion,
                                                                     calculator: calculator)
           end
-          let!(:order_2) { create(:order_with_line_items, line_items_count: 3, user: user) }
+          let!(:order_2) { create(:order_with_line_items, line_items_count: 3, customer: user) }
           let!(:subject_2) { Spree::PromotionHandler::Coupon.new(order_2) }
 
           before do
@@ -410,7 +410,7 @@ module Spree
         end
 
         context 'one-time unique promotion codes' do
-          let!(:order_2) { create(:order_with_line_items, line_items_count: 3, user: user) }
+          let!(:order_2) { create(:order_with_line_items, line_items_count: 3, customer: user) }
           let!(:subject_2) { Spree::PromotionHandler::Coupon.new(order_2) }
           let!(:promotion) do
             create(

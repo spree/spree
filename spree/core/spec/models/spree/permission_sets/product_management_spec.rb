@@ -51,7 +51,7 @@ RSpec.describe Spree::PermissionSets::ProductManagement do
     end
 
     it 'does not grant manage access to User' do
-      expect(ability.can?(:manage, Spree.user_class)).to be false
+      expect(ability.can?(:manage, Spree.customer_class)).to be false
     end
   end
 end

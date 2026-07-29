@@ -120,7 +120,7 @@ RSpec.describe Spree::Import, :job, type: :model do
     context 'for Customers import' do
       it 'returns the user class' do
         import.type = 'Spree::Imports::Customers'
-        expect(import.model_class).to eq(Spree.user_class)
+        expect(import.model_class).to eq(Spree.customer_class)
       end
     end
   end

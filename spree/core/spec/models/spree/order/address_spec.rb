@@ -50,7 +50,7 @@ describe Spree::Order, type: :model do
 
   context 'address book' do
     let(:order) { create(:order) }
-    let(:address) { create(:address, user: order.user) }
+    let(:address) { create(:address, customer: order.user) }
 
     describe 'mass attribute assignment for bill_address_id, ship_address_id' do
       it 'is able to mass assign bill_address_id' do
@@ -84,8 +84,8 @@ describe Spree::Order, type: :model do
     end
 
     context 'when user wants to update firstname of the address with already completed order' do
-      let(:address) { create(:address, user: order.user) }
-      let!(:completed_order) { create(:completed_order_with_totals, user: order.user, ship_address: address) }
+      let(:address) { create(:address, customer: order.user) }
+      let!(:completed_order) { create(:completed_order_with_totals, customer: order.user, ship_address: address) }
 
       it 'creates new address with updated attributes' do
         expect(

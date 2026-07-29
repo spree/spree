@@ -19,8 +19,8 @@ describe Spree::AdminUserMethods do
   end
 
   describe 'prefixed_id' do
-    it 'generates a prefixed_id starting with admin_' do
-      expect(admin_user.prefixed_id).to start_with('admin_')
+    it 'generates a prefixed_id starting with adm_' do
+      expect(admin_user.prefixed_id).to start_with('adm_')
     end
 
     it 'uses prefixed_id as to_param' do
@@ -194,18 +194,18 @@ describe Spree::AdminUserMethods do
   end
 
   describe 'class configuration' do
-    it 'uses a different class than Spree.user_class' do
-      expect(Spree.admin_user_class).to eq(Spree::LegacyAdminUser)
-      expect(Spree.user_class).to eq(Spree::LegacyUser)
-      expect(Spree.admin_user_class).not_to eq(Spree.user_class)
+    it 'uses a different class than Spree.customer_class' do
+      expect(Spree.admin_user_class).to eq(Spree::AdminUser)
+      expect(Spree.customer_class).to eq(Spree::Customer)
+      expect(Spree.admin_user_class).not_to eq(Spree.customer_class)
     end
 
-    it 'does not include UserMethods' do
-      expect(Spree::LegacyAdminUser.included_modules).not_to include(Spree::UserMethods)
+    it 'does not include CustomerMethods' do
+      expect(Spree::AdminUser.included_modules).not_to include(Spree::CustomerMethods)
     end
 
     it 'includes AdminUserMethods' do
-      expect(Spree::LegacyAdminUser.included_modules).to include(Spree::AdminUserMethods)
+      expect(Spree::AdminUser.included_modules).to include(Spree::AdminUserMethods)
     end
   end
 

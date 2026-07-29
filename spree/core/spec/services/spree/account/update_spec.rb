@@ -6,13 +6,13 @@ module Spree
 
     let!(:user)  { create(:user_with_addresses) }
     let(:result) { subject.call(user: user, user_params: user_params) }
-    let!(:new_default_ship_address) { create(:address, user: user) }
-    let!(:new_default_bill_address) { create(:address, user: user) }
+    let!(:new_default_ship_address) { create(:address, customer: user) }
+    let!(:new_default_bill_address) { create(:address, customer: user) }
     let(:value) { result.value }
 
     shared_examples 'user not created' do
       it 'does not create new user' do
-        expect { result }.not_to change(Spree.user_class, :count)
+        expect { result }.not_to change(Spree.customer_class, :count)
       end
     end
 

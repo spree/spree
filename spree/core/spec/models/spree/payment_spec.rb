@@ -244,9 +244,9 @@ describe Spree::Payment, type: :model do
 
         context 'when source is not a credit card' do
           let(:user) { create(:user) }
-          let(:order) { create(:order, user: user, total: 100) }
+          let(:order) { create(:order, customer: user, total: 100) }
           let(:gateway) { create(:custom_payment_method) }
-          let(:source) { create(:payment_source, user: user, payment_method: gateway) }
+          let(:source) { create(:payment_source, customer: user, payment_method: gateway) }
           let(:payment) { build(:custom_payment, source: source, amount: 100, payment_method: gateway) }
 
           it 'creates a payment profile' do
@@ -942,7 +942,7 @@ describe Spree::Payment, type: :model do
     end
 
     context 'existing card' do
-      let!(:credit_card) { create(:credit_card, number: '4111111111111112', user: order.user, payment_method: gateway, gateway_customer_profile_id: 'BGS-1234567890') }
+      let!(:credit_card) { create(:credit_card, number: '4111111111111112', customer: order.user, payment_method: gateway, gateway_customer_profile_id: 'BGS-1234567890') }
 
       let(:params) do
         {

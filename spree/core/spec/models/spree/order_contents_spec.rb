@@ -6,7 +6,7 @@ describe Spree::OrderContents, type: :model do
   let!(:zone) { create(:zone_with_country, default_tax: true) }
   let(:store) { create(:store, checkout_zone: zone) }
   let(:user) { create(:user) }
-  let(:order) { create(:order, user: user, store: store) }
+  let(:order) { create(:order, customer: user, store: store) }
   let(:variant) { create(:variant) }
 
   describe '#add' do
@@ -59,7 +59,7 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'when store_credits payment' do
-      let(:order) { create(:order, user: user, store: store, total: 100) }
+      let(:order) { create(:order, customer: user, store: store, total: 100) }
       let!(:payment) { create(:store_credit_payment, order: order) }
 
       it { expect { subject.add(variant, 1) }.to change { order.payments.store_credits.count }.by(-1) }
@@ -173,7 +173,7 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'when store_credits payment' do
-      let(:order) { create(:order, user: user, store: store, total: 100) }
+      let(:order) { create(:order, customer: user, store: store, total: 100) }
       let(:payment) { create(:store_credit_payment, amount: 10, order: order) }
 
       before do
@@ -227,7 +227,7 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'when store_credits payment' do
-      let(:order) { create(:order, user: user, store: store, total: 100) }
+      let(:order) { create(:order, customer: user, store: store, total: 100) }
       let(:payment) { create(:store_credit_payment, amount: 10, order: order) }
 
       before do
@@ -281,7 +281,7 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'when store_credits payment' do
-      let(:order) { create(:order, user: user, store: store, total: 100) }
+      let(:order) { create(:order, customer: user, store: store, total: 100) }
       let!(:payment) { create(:store_credit_payment, amount: 10, order: order) }
 
       it { expect { subject.update_cart params }.to change { order.payments.store_credits.count }.by(-1) }
