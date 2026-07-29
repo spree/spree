@@ -14,6 +14,10 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     expect(Spree::Product.count).to be > 30
   end
 
+  it 'assigns imported products a product type' do
+    expect(Spree::Product.where(product_type_id: nil)).to be_empty
+  end
+
   it 'creates variants' do
     expect(Spree::Variant.count).to be > 80
   end

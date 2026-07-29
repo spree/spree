@@ -1449,6 +1449,9 @@ en:
     search_by: 'Search by:'
     security: Security
     seed:
+      product_types:
+        default: Default
+        digital: Digital
       shipping:
         categories:
           default: Default
