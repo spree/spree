@@ -100,6 +100,15 @@ module Spree
             def serialize_resource(resource)
               serializer_class.new(resource, params: serializer_params).to_h
             end
+
+            protected
+
+            # Payment confirmation races cart completion (a webhook can finish
+            # checkout before the customer returns) — completed carts must
+            # still resolve here.
+            def find_cart!
+              super(include_completed: true)
+            end
           end
         end
       end

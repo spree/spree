@@ -158,6 +158,15 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
         expect(response).to have_http_status(:ok)
         expect(json_response['status']).to eq('completed')
       end
+
+      it 'still resolves when a webhook already completed the cart' do
+        order.update_columns(completed_at: Time.current)
+
+        patch :complete, params: { cart_id: order.prefixed_id, id: payment_session.to_param, session_result: 'success' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['status']).to eq('completed')
+      end
     end
   end
 end

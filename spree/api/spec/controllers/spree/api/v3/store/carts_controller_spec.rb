@@ -35,6 +35,15 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(numbers).to include(user_cart1.number, user_cart2.number)
       end
 
+      it 'excludes completed carts — a signed-in customer never re-adopts a finished checkout' do
+        user_cart2.update_columns(completed_at: Time.current)
+
+        get :index
+
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).to eq([user_cart1.number])
+      end
+
       it 'scopes carts to the request channel — other channels never leak into a surface' do
         wholesale = create(:channel, store: store, code: 'wholesale')
         wholesale_cart = create(:cart, customer: user, store: store, channel: wholesale)
@@ -367,6 +376,23 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         get :show, params: { id: other_cart.prefixed_id }
 
         expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'with a completed cart' do
+      let(:cart) { create(:cart_with_line_items, store: store) }
+
+      before do
+        cart.update_columns(completed_at: Time.current)
+        request.headers['x-spree-token'] = cart.token
+      end
+
+      # The storefront contract: a completed cart is not a cart anymore —
+      # 404 tells the client to drop its stale cart cookie.
+      it 'returns not found' do
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
       end
     end
 

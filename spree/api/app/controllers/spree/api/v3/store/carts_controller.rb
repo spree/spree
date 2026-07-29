@@ -107,7 +107,7 @@ module Spree
           # Idempotent: if the cart is already completed, falls back to the
           # orders scope and returns the completed order.
           def complete
-            find_cart!
+            find_cart!(include_completed: true)
 
             if @cart.guest_checkout_disallowed?
               return render_authentication_required('api.errors.guest_checkout_not_allowed', 'You must be signed in to complete checkout')
@@ -125,6 +125,10 @@ module Spree
               )
             end
           rescue ActiveRecord::RecordNotFound
+            # Gateway-race retry with the ORDER id: the webhook completed the
+            # cart and the client re-posts with the id it got back. Foreign
+            # prefixes never decode against carts, so this only fires for
+            # order_ ids (or genuinely unknown ids, which 404 below).
             @cart = current_store.orders.complete.find_by_prefix_id!(params[:id])
             authorize!(:show, @cart, cart_token)
 
@@ -147,7 +151,7 @@ module Spree
           # Explicit by-ID lookups (show/update) stay cross-channel so a shared
           # checkout can load any cart the caller is authorized for.
           def scope
-            current_store.carts.where(customer: current_user, channel: current_channel).order(updated_at: :desc)
+            current_store.carts.incomplete.where(customer: current_user, channel: current_channel).order(updated_at: :desc)
           end
 
           private
@@ -186,7 +190,7 @@ module Spree
           # Find incomplete cart for associate action.
           # Only finds guest carts (no user) or carts already owned by current user (idempotent).
           def find_cart_for_association
-            current_store.carts.where(customer: [nil, current_user]).find_by_prefix_id!(params[:id])
+            current_store.carts.incomplete.where(customer: [nil, current_user]).find_by_prefix_id!(params[:id])
           end
 
           # Claiming a cart requires presenting its token, even when the caller
