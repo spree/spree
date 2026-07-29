@@ -46,6 +46,22 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
       end
     end
 
+    context 'with a real code the cart does not qualify for yet' do
+      let!(:promotion) do
+        create(:promotion_with_item_total_rule, :with_line_item_adjustment,
+               code: 'BIG50', kind: :coupon_code, store: store,
+               item_total_threshold_amount: 1_000_000, adjustment_rate: 50)
+      end
+
+      it 'keeps the code pending without discount rows' do
+        post :create, params: { cart_id: order.prefixed_id, code: 'BIG50' }
+
+        expect(response).to have_http_status(:created)
+        expect(order.reload.read_attribute(:coupon_code)).to eq('big50')
+        expect(order.discounts.where(promotion_id: promotion.id)).to be_empty
+      end
+    end
+
     context 'with a multi-code promotion' do
       let!(:promotion) do
         create(:promotion, :with_line_item_adjustment, multi_codes: true, number_of_codes: 1)

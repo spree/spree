@@ -155,6 +155,10 @@ module Spree
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
 
         unless promotion.eligible?(order, options)
+          # Rules that explain themselves keep their message, but the status
+          # code is always :coupon_code_not_eligible so callers can park the
+          # code for retry on recalculation.
+          self.status_code = :coupon_code_not_eligible
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
           return (error || ineligible_for_this_order)
         end
