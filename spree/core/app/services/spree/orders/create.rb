@@ -14,12 +14,12 @@ module Spree
       attr_reader :discount_application_errors
 
       # @param store [Spree::Store]
-      # @param user [Object, nil] resolved customer (Spree.customer_class instance)
+      # @param customer [Object, nil] resolved customer (Spree.customer_class instance)
       # @param params [Hash] order params (see admin API docs)
       # @return [Spree::ServiceModule::Result]
-      def call(store:, user: nil, params: {})
+      def call(store:, customer: nil, params: {})
         @store = store
-        @user = user
+        @customer = customer
         @params = params.to_h.deep_symbolize_keys
         @discount_application_errors = []
 
@@ -47,8 +47,8 @@ module Spree
 
       def build_order
         attrs = {
-          user: @user,
-          email: @params[:email] || @user&.email,
+          customer: @customer,
+          email: @params[:email] || @customer&.email,
           currency: @params[:currency].presence&.upcase || @store.default_currency,
           locale: @params[:locale] || Spree::Current.locale,
           customer_note: @params[:customer_note],
@@ -79,11 +79,11 @@ module Spree
       end
 
       def assign_addresses(order)
-        if @params[:use_customer_default_address] && @user
-          @user.association(:bill_address).load_target
-          @user.association(:ship_address).load_target
-          order.bill_address = @user.bill_address&.dup
-          order.ship_address = @user.ship_address&.dup
+        if @params[:use_customer_default_address] && @customer
+          @customer.association(:bill_address).load_target
+          @customer.association(:ship_address).load_target
+          order.bill_address = @customer.bill_address&.dup
+          order.ship_address = @customer.ship_address&.dup
         end
 
         assign_address(order, :ship_address, @params[:shipping_address_id], @params[:shipping_address])
@@ -100,9 +100,9 @@ module Spree
       end
 
       def resolve_user_address(address_id)
-        return unless @user
+        return unless @customer
 
-        @user.addresses.find_by_param(address_id)
+        @customer.addresses.find_by_param(address_id)
       end
 
       def add_items(order)

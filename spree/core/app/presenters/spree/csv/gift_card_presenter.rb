@@ -33,9 +33,9 @@ module Spree
           gift_card.currency,
           gift_card.display_state,
           gift_card.expires_at&.strftime('%Y-%m-%d'),
-          gift_card.user&.email,
-          gift_card.user&.first_name,
-          gift_card.user&.last_name,
+          gift_card.customer&.email,
+          gift_card.customer&.first_name,
+          gift_card.customer&.last_name,
           gift_card.created_at&.strftime('%Y-%m-%d %H:%M:%S'),
           gift_card.updated_at&.strftime('%Y-%m-%d %H:%M:%S')
         ]

@@ -214,7 +214,7 @@ storefront customer (not an admin user).
 - `spree_imports.user_id` — admin who ran the import
 - `spree_exports.user_id` — admin who ran the export
 - `spree_reports.user_id` — admin who generated the report
-- `spree_state_changes.user_id` — admin who triggered the change
+- `spree_state_changes.user_id` — references the order's **customer** (set from `order.customer_id`), not an admin. Kept as `user_id` because it's an internal state-audit log, not customer-facing API surface; the `belongs_to :user` association resolves to `Spree.customer_class`.
 - `spree_user_identities.user_id` — polymorphic (Customer or AdminUser)
 
 Single migration renames all 11 columns. Model associations updated:

@@ -126,7 +126,7 @@ module Spree
 
       self.amount ||= order.total_minus_store_credits if amount.blank? || amount.zero?
       self.currency ||= order.currency
-      self.customer ||= order.user
+      self.customer ||= order.customer
     end
   end
 end

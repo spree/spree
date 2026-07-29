@@ -7,7 +7,7 @@ module Spree
     include Spree::DeprecatedCustomerAlias
 
     validates :payment_method, presence: true
-    validates :user, presence: true
+    validates :customer, presence: true
     validates :profile_id, presence: true
     validates :payment_method_id, uniqueness: { scope: :user_id }
 

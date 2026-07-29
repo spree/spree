@@ -14,7 +14,7 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :customer_id do |store_credit|
-            store_credit.user&.prefixed_id
+            store_credit.customer&.prefixed_id
           end
 
           attribute :created_by_id do |store_credit|

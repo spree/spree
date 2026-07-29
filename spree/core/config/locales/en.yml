@@ -274,6 +274,14 @@ en:
             base:
               card_expired: Card has expired
               expiry_invalid: Card expiration is invalid
+        spree/customer:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: belongs to other user
+              deprecated_in_completed_order: deprecated in completed order
+            ship_address_id:
+              belongs_to_other_user: belongs to other user
+              deprecated_in_completed_order: deprecated in completed order
         spree/gift_card:
           attributes:
             base:
@@ -289,14 +297,6 @@ en:
               content_type: has not allowed content type
             type:
               inclusion: is not included in the list of allowed types
-        spree/customer:
-          attributes:
-            bill_address_id:
-              belongs_to_other_user: belongs to other user
-              deprecated_in_completed_order: deprecated in completed order
-            ship_address_id:
-              belongs_to_other_user: belongs to other user
-              deprecated_in_completed_order: deprecated in completed order
         spree/legacy_user:
           attributes:
             bill_address_id:

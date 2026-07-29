@@ -4,9 +4,9 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(guest_order:, user:, override_email: true, guest_only: false)
-        return failure(guest_order, 'Already assigned to a user') if guest_only && guest_order.user.present? && guest_order.user != user
+        return failure(guest_order, 'Already assigned to a user') if guest_only && guest_order.customer.present? && guest_order.customer != user
 
-        guest_order.user           = user
+        guest_order.customer           = user
         guest_order.email          = user.email if override_email
         guest_order.bill_address ||= user.bill_address
         guest_order.ship_address ||= user.ship_address

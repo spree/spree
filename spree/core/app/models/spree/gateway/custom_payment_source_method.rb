@@ -23,15 +23,15 @@ module Spree
     def create_profile(payment)
       return if payment.source.gateway_customer.present?
 
-      user = payment.source.user || payment.order.user
-      return if user.blank?
+      customer = payment.source.customer || payment.order.customer
+      return if customer.blank?
 
-      find_or_create_customer(user)
+      find_or_create_customer(customer)
     end
 
     # simulate a 3rd party payment gateway api to fetch/or create a customer
-    def find_or_create_customer(user)
-      gateway_customers.find_or_create_by!(customer: user, profile_id: "CUSTOMER-#{user.id}")
+    def find_or_create_customer(customer)
+      gateway_customers.find_or_create_by!(customer: customer, profile_id: "CUSTOMER-#{customer.id}")
     end
   end
 end

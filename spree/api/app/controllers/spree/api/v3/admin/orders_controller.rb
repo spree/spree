@@ -16,7 +16,7 @@ module Spree
 
             result = Spree.order_create_service.call(
               store: current_store,
-              user: resolve_user,
+              customer: resolve_user,
               params: order_create_params
             )
 
@@ -124,7 +124,7 @@ module Spree
           end
 
           def collection_includes
-            [:line_items, :user, :channel, :rich_text_internal_note]
+            [:line_items, :customer, :channel, :rich_text_internal_note]
           end
 
           private

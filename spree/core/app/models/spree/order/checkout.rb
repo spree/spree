@@ -48,7 +48,7 @@ module Spree
                   previous_state: transition.from,
                   next_state: transition.to,
                   name: 'order',
-                  user_id: order.user_id
+                  user_id: order.customer_id
                 )
                 order.save
               end
@@ -223,7 +223,7 @@ module Spree
           end
 
           # Customer-facing checkout step derived from the internal state machine state.
-          # Maps +'cart'+ to +'address'+ since cart is not a user-facing checkout step.
+          # Maps +'cart'+ to +'address'+ since cart is not a customer-facing checkout step.
           #
           # @return [String] current checkout step name (e.g. +"address"+, +"delivery"+, +"payment"+)
           def current_checkout_step
@@ -266,7 +266,7 @@ module Spree
 
               if existing_card_id.present?
                 credit_card = CreditCard.find existing_card_id
-                if credit_card.user_id != user_id || credit_card.user_id.blank?
+                if credit_card.customer_id != customer_id || credit_card.customer_id.blank?
                   raise Core::GatewayError, Spree.t(:invalid_credit_card)
                 end
 
@@ -290,16 +290,16 @@ module Spree
           end
 
           def assign_default_addresses!
-            if user
-              self.bill_address = user.bill_address if !bill_address_id && user.bill_address&.valid?
+            if customer
+              self.bill_address = customer.bill_address if !bill_address_id && customer.bill_address&.valid?
               # Skip setting ship address if order doesn't have a delivery checkout step
               # to avoid triggering validations on shipping address
-              self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && checkout_steps.include?('delivery')
+              self.ship_address = customer.ship_address if !ship_address_id && customer.ship_address&.valid? && checkout_steps.include?('delivery')
             end
           end
 
           def create_user_record
-            return if user.present?
+            return if customer.present?
             return unless signup_for_an_account?
 
             Spree::Orders::CreateUserAccount.call(order: self, accepts_email_marketing: accept_marketing?)

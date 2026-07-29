@@ -9,7 +9,7 @@ module Spree
         end
 
         def eligible?(order, options = {})
-          @user = order.try(:user) || options[:user]
+          @user = order.try(:customer) || options[:user]
           @email = if options[:email].present?
                      order.email = options[:email]
                      order.email

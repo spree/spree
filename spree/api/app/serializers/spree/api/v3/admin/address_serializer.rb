@@ -11,7 +11,7 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :customer_id do |address|
-            address.user&.prefixed_id
+            address.customer&.prefixed_id
           end
         end
       end

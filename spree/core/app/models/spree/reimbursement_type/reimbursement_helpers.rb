@@ -46,7 +46,7 @@ module Spree
 
     def store_credit_params(category, reimbursement, unpaid_amount)
       {
-        user: reimbursement.order.user,
+        user: reimbursement.order.customer,
         amount: unpaid_amount,
         category: category,
         created_by: reimbursement.order.store.users.first,

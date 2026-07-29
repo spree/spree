@@ -65,7 +65,7 @@ module Spree
           end
 
           attribute :customer_id do |order|
-            order.user&.prefixed_id
+            order.customer&.prefixed_id
           end
 
           # Override inherited associations to use admin serializers

@@ -618,8 +618,8 @@ module Spree
     end
 
     def full_name
-      @full_name ||= if user.present? && user.name.present?
-                       user.full_name
+      @full_name ||= if customer.present? && customer.name.present?
+                       customer.full_name
                      else
                        billing_address&.full_name || email
                      end
@@ -1087,7 +1087,7 @@ module Spree
     end
 
     def link_by_email
-      self.email = user.email if user
+      self.email = customer.email if customer
     end
 
     # Determine if email is required (we don't want validation errors before we hit the checkout)

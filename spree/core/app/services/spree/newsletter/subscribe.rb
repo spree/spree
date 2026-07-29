@@ -41,7 +41,7 @@ module Spree
           verification_token: subscriber.verification_token,
           unsubscribe_token: subscriber.generate_token_for(:unsubscribe),
           store_id: current_store.prefixed_id,
-          customer_id: subscriber.user&.prefixed_id
+          customer_id: subscriber.customer&.prefixed_id
         }
         payload[:redirect_url] = redirect_url if redirect_url.present?
         payload
@@ -49,7 +49,7 @@ module Spree
 
       def upsert_subscriber
         @upsert_subscriber ||= Spree::NewsletterSubscriber.find_or_create_by(email: email, store: current_store) do |new_record|
-          new_record.user = known_user
+          new_record.customer = known_user
         end
       end
       alias_method :subscriber, :upsert_subscriber

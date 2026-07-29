@@ -147,7 +147,7 @@ module Spree
           # Explicit by-ID lookups (show/update) stay cross-channel so a shared
           # checkout can load any cart the caller is authorized for.
           def scope
-            current_store.carts.where(user: current_user, channel: current_channel).order(updated_at: :desc)
+            current_store.carts.where(customer: current_user, channel: current_channel).order(updated_at: :desc)
           end
 
           private
@@ -185,7 +185,7 @@ module Spree
           # Find incomplete cart for associate action.
           # Only finds guest carts (no user) or carts already owned by current user (idempotent).
           def find_cart_for_association
-            current_store.carts.where(user: [nil, current_user]).find_by_prefix_id!(params[:id])
+            current_store.carts.where(customer: [nil, current_user]).find_by_prefix_id!(params[:id])
           end
 
           # Claiming a cart requires presenting its token, even when the caller

@@ -29,21 +29,21 @@ module Spree
         # Order management for the user's own orders
         can :create, Spree::Order
         can :show, Spree::Order do |order, token|
-          order.user == user || order.token && token == order.token
+          order.customer == user || order.token && token == order.token
         end
         can :update, Spree::Order do |order, token|
-          !order.completed? && (order.user == user || order.token && token == order.token)
+          !order.completed? && (order.customer == user || order.token && token == order.token)
         end
 
         # Line item management
         can :create, Spree::LineItem do |line_item, token|
-          line_item.order.user == user || line_item.order.token && token == line_item.order.token
+          line_item.order.customer == user || line_item.order.token && token == line_item.order.token
         end
         can :update, Spree::LineItem do |line_item, token|
-          !line_item.order.completed? && (line_item.order.user == user || line_item.order.token && token == line_item.order.token)
+          !line_item.order.completed? && (line_item.order.customer == user || line_item.order.token && token == line_item.order.token)
         end
         can :destroy, Spree::LineItem do |line_item, token|
-          !line_item.order.completed? && (line_item.order.user == user || line_item.order.token && token == line_item.order.token)
+          !line_item.order.completed? && (line_item.order.customer == user || line_item.order.token && token == line_item.order.token)
         end
 
         # User account management - available to all users (including guests for their own record)
@@ -65,10 +65,10 @@ module Spree
         # Wishlist management
         can :manage, Spree::Wishlist, user_id: user.id
         can :show, Spree::Wishlist do |wishlist|
-          wishlist.user == user || wishlist.is_private == false
+          wishlist.customer == user || wishlist.is_private == false
         end
         can [:create, :update, :destroy], Spree::WishedItem do |wished_item|
-          wished_item.wishlist.user == user
+          wished_item.wishlist.customer == user
         end
 
         # Invitation acceptance

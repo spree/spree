@@ -22,9 +22,9 @@ module Spree
       end
 
       def set_user_email_marketing_to_true
-        return if subscriber.user.blank?
+        return if subscriber.customer.blank?
 
-        subscriber.user.update!(accepts_email_marketing: true)
+        subscriber.customer.update!(accepts_email_marketing: true)
       end
 
       def publish_event

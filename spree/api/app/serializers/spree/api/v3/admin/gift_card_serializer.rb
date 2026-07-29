@@ -19,7 +19,7 @@ module Spree
           attributes created_at: :iso8601, updated_at: :iso8601
 
           attribute :customer_id do |gift_card|
-            gift_card.user&.prefixed_id
+            gift_card.customer&.prefixed_id
           end
 
           attribute :created_by_id do |gift_card|

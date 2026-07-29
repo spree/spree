@@ -42,7 +42,7 @@ module Spree
     end
 
     def set_user(user = nil)
-      order.associate_user!(user) if !order.user && !user.blank?
+      order.associate_user!(user) if !order.customer && !user.blank?
     end
 
     def clear_addresses(other_order)

@@ -10,27 +10,27 @@ module Spree
       end
 
       def covered_by_store_credit?
-        user.present? && total_applied_store_credit.positive? && total_applied_store_credit >= total
+        customer.present? && total_applied_store_credit.positive? && total_applied_store_credit >= total
       end
       alias covered_by_store_credit covered_by_store_credit?
 
-      # Returns the total amount of store credits available to the user associated with the order.
+      # Returns the total amount of store credits available to the customer associated with the order.
       # Returns only store credit for this store and same currency as order
       #
-      # @return [BigDecimal] The total amount of store credits available to the user associated with the order.
+      # @return [BigDecimal] The total amount of store credits available to the customer associated with the order.
       def total_available_store_credit
-        return 0.0 unless user
+        return 0.0 unless customer
 
-        user.total_available_store_credit(currency, store)
+        customer.total_available_store_credit(currency, store)
       end
 
-      # Returns the available store credits for the user associated with the order.
+      # Returns the available store credits for the customer associated with the order.
       #
-      # @return [Array<Spree::StoreCredit>] The available store credits for the user associated with the order.
+      # @return [Array<Spree::StoreCredit>] The available store credits for the customer associated with the order.
       def available_store_credits
-        return Spree::StoreCredit.none if user.nil?
+        return Spree::StoreCredit.none if customer.nil?
 
-        user.store_credits.for_store(store).where(currency: currency).available.sort_by(&:amount_remaining).reverse
+        customer.store_credits.for_store(store).where(currency: currency).available.sort_by(&:amount_remaining).reverse
       end
 
       def could_use_store_credit?
@@ -57,7 +57,7 @@ module Spree
         if payment? || confirm? || complete?
           total_applied_store_credit
         else
-          [total, user.try(:total_available_store_credit) || 0.0].min
+          [total, customer.try(:total_available_store_credit) || 0.0].min
         end
       end
 

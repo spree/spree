@@ -22,8 +22,8 @@ module Spree
       def call
         csv = [
           newsletter_subscriber.email,
-          newsletter_subscriber.user&.full_name,
-          newsletter_subscriber.user_id,
+          newsletter_subscriber.customer&.full_name,
+          newsletter_subscriber.customer_id,
           newsletter_subscriber.verified? ? Spree.t(:say_yes) : Spree.t(:say_no),
           newsletter_subscriber.verified_at,
           newsletter_subscriber.created_at,
