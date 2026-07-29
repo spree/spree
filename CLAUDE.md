@@ -181,7 +181,7 @@ end
 
 ### Migrations
 
-- Target version: `ActiveRecord::Migration[7.2]` (Rails 7.2 support)
+- Target version: existing migrations keep their `ActiveRecord::Migration[7.2]` marker; new 6.0 migrations may target `[8.1]` — the 6.0 line requires Rails 8.1 (decisions.md 2026-07-29)
 - No foreign key constraints
 - No default values
 - Always add `null: false` on required columns

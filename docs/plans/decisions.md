@@ -618,3 +618,20 @@ skipped. No separate draft-order entity and no `is_draft` boolean —
 `status = 'draft'` already encodes it (`cart_id` does NOT: the completion
 pipeline's draft copy has a cart_id while briefly draft; admin drafts
 have none).
+
+
+## 2026-07-29 — Spree 6.0 requires Rails 8.1 (7.2 support dropped)
+
+The core gemspec already pins `rails >= 8.1, < 8.2` and the deprecation
+bridges lean on Rails 8.1's `deprecated:` association option across every
+6.0 rename twin — supporting 7.2 would mean hand-rolled warn-wrappers for
+all of them on a platform whose security support ends 2026-08-09, before
+6.0 GA. Rails 8.1 (Oct 2025, supported to Oct 2027) also unlocks
+ActiveJob Continuations for resumable long-running jobs (upgrade data
+migrations, imports, bulk operations — the durable-steps half of a
+Medusa-style workflow story; compensation logic stays ours, e.g.
+`Carts::Complete`). Existing stores upgrade Rails to 8.1 on the 5.6 line
+first, then take 6.0 — 5.6 remains the bridge release. CI: the MySQL
+lanes were the designated old-Rails coverage (`RAILS_VERSION: 7.2.0`) and
+could no longer bundle; they now run 8.1 like the rest — MySQL itself
+stays fully supported.

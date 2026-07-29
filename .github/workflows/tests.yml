@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DB: mysql
-      RAILS_VERSION: "7.2.0"
+      RAILS_VERSION: "~> 8.1.0"
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
     steps:
@@ -290,7 +290,7 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_USERNAME: root
       DB_PASSWORD: password
-      RAILS_VERSION: "7.2.0"
+      RAILS_VERSION: "~> 8.1.0"
       CI_ARTIFACTS: /tmp/test-artifacts
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
