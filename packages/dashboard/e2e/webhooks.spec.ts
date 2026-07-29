@@ -17,7 +17,7 @@ async function createEndpoint(
   // Base UI's <Checkbox> renders two elements with the same accessible label
   // (a visible role=checkbox span + a hidden native <input>), so `getByLabel`
   // is ambiguous. Target the role=checkbox span by accessible name instead.
-  // The label is the literal event name (e.g. `order.completed`).
+  // The label is the literal event name (e.g. `order.placed`).
   for (const ev of opts.pickEvents ?? []) {
     await page.getByRole('checkbox', { name: ev }).click()
   }
@@ -50,7 +50,7 @@ test.describe('webhooks', () => {
     await createEndpoint(page, {
       name,
       url,
-      pickEvents: ['order.completed', 'order.canceled'],
+      pickEvents: ['order.placed', 'order.canceled'],
     })
 
     // One-shot "Save your signing secret" dialog. The reveal is the proof
@@ -79,7 +79,7 @@ test.describe('webhooks', () => {
     const name = `E2E Edit ${suffix}`
     const url = `https://edit-${suffix}.example.com/hook`
 
-    await createEndpoint(page, { name, url, pickEvents: ['order.completed'] })
+    await createEndpoint(page, { name, url, pickEvents: ['order.placed'] })
     // Skip the secret-reveal redirect: dismiss the dialog *and* go back to
     // the index so we can click the row.
     await page.getByRole('button', { name: /^done$/i }).click()
@@ -105,7 +105,7 @@ test.describe('webhooks', () => {
     const updated = `${original} (renamed)`
     const url = `https://rename-${suffix}.example.com/hook`
 
-    await createEndpoint(page, { name: original, url, pickEvents: ['order.completed'] })
+    await createEndpoint(page, { name: original, url, pickEvents: ['order.placed'] })
     // After the secret-reveal Done we're on the detail page; open the Edit
     // sheet via the header button to access the form fields.
     await page.getByRole('button', { name: /^done$/i }).click()
@@ -135,7 +135,7 @@ test.describe('webhooks', () => {
     const name = `E2E Test Send ${suffix}`
     const url = `https://test-${suffix}.example.com/hook`
 
-    await createEndpoint(page, { name, url, pickEvents: ['order.completed'] })
+    await createEndpoint(page, { name, url, pickEvents: ['order.placed'] })
     await page.getByRole('button', { name: /^done$/i }).click()
 
     // We're on the detail page after the secret-reveal redirect. The "Send
@@ -162,7 +162,7 @@ test.describe('webhooks', () => {
     const name = `E2E Delete ${suffix}`
     const url = `https://del-${suffix}.example.com/hook`
 
-    await createEndpoint(page, { name, url, pickEvents: ['order.completed'] })
+    await createEndpoint(page, { name, url, pickEvents: ['order.placed'] })
     await page.getByRole('button', { name: /^done$/i }).click()
     await page.goto(WEBHOOKS_PATH(creds.store_id))
     await expect(rowButton(page, name)).toBeVisible({ timeout: 15_000 })

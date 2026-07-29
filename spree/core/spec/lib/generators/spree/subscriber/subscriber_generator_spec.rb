@@ -25,23 +25,23 @@ RSpec.describe Spree::SubscriberGenerator, type: :generator do
   end
 
   it 'generates a subscriber with the events and a handle method' do
-    run_generator(['OmsOrderSync', 'order.completed', 'order.canceled'])
+    run_generator(['OmsOrderSync', 'order.placed', 'order.canceled'])
 
     subscriber = read('app/subscribers/oms_order_sync_subscriber.rb')
     expect(subscriber).to include('class OmsOrderSyncSubscriber < Spree::Subscriber')
-    expect(subscriber).to include("subscribes_to 'order.completed', 'order.canceled'")
+    expect(subscriber).to include("subscribes_to 'order.placed', 'order.canceled'")
     expect(subscriber).to include('def handle(event)')
   end
 
   it 'does not double the Subscriber suffix' do
-    run_generator(['OmsOrderSyncSubscriber', 'order.completed'])
+    run_generator(['OmsOrderSyncSubscriber', 'order.placed'])
 
     expect(read('app/subscribers/oms_order_sync_subscriber.rb')).to include('class OmsOrderSyncSubscriber')
     expect(read('app/subscribers/oms_order_sync_subscriber.rb')).not_to include('SubscriberSubscriber')
   end
 
   it 'creates config/initializers/spree.rb with the registration when absent' do
-    run_generator(['OmsOrderSync', 'order.completed'])
+    run_generator(['OmsOrderSync', 'order.placed'])
 
     initializer = read('config/initializers/spree.rb')
     expect(initializer).to include('Rails.application.config.after_initialize do')
@@ -60,7 +60,7 @@ RSpec.describe Spree::SubscriberGenerator, type: :generator do
       end
     RUBY
 
-    run_generator(['OmsOrderSync', 'order.completed'])
+    run_generator(['OmsOrderSync', 'order.placed'])
 
     initializer = read('config/initializers/spree.rb')
     expect(initializer).to include("Rails.application.config.after_initialize do\n  Spree.subscribers << OmsOrderSyncSubscriber")
@@ -76,7 +76,7 @@ RSpec.describe Spree::SubscriberGenerator, type: :generator do
       end
     RUBY
 
-    run_generator(['OmsOrderSync', 'order.completed'])
+    run_generator(['OmsOrderSync', 'order.placed'])
 
     initializer = read('config/initializers/spree.rb')
     expect(initializer).to include('track_inventory_levels')
@@ -85,9 +85,9 @@ RSpec.describe Spree::SubscriberGenerator, type: :generator do
   end
 
   it 'appends to an existing initializer without duplicating registrations' do
-    run_generator(['OmsOrderSync', 'order.completed'])
+    run_generator(['OmsOrderSync', 'order.placed'])
     run_generator(['BrandSync', 'brand.created'])
-    run_generator(['OmsOrderSync', 'order.completed'])
+    run_generator(['OmsOrderSync', 'order.placed'])
 
     initializer = read('config/initializers/spree.rb')
     expect(initializer.scan('Spree.subscribers << OmsOrderSyncSubscriber').size).to eq(1)
@@ -103,9 +103,9 @@ RSpec.describe Spree::SubscriberGenerator, type: :generator do
   end
 
   it 'adds async: false with --sync' do
-    run_generator(['CriticalSync', 'order.completed', '--sync'])
+    run_generator(['CriticalSync', 'order.placed', '--sync'])
 
-    expect(read('app/subscribers/critical_sync_subscriber.rb')).to include("subscribes_to 'order.completed', async: false")
+    expect(read('app/subscribers/critical_sync_subscriber.rb')).to include("subscribes_to 'order.placed', async: false")
   end
 
   it 'emits a TODO placeholder when no events are given' do
@@ -115,12 +115,12 @@ RSpec.describe Spree::SubscriberGenerator, type: :generator do
   end
 
   it 'generates a spec file unless --skip-spec' do
-    run_generator(['OmsOrderSync', 'order.completed'])
+    run_generator(['OmsOrderSync', 'order.placed'])
     expect(read('spec/subscribers/oms_order_sync_subscriber_spec.rb')).to include('RSpec.describe OmsOrderSyncSubscriber')
 
     FileUtils.rm_rf(destination)
     FileUtils.mkdir_p(destination)
-    run_generator(['OmsOrderSync', 'order.completed', '--skip-spec'])
+    run_generator(['OmsOrderSync', 'order.placed', '--skip-spec'])
     expect(read('spec/subscribers/oms_order_sync_subscriber_spec.rb')).to be(false)
   end
 end
