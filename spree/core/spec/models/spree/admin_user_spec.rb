@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Spree.admin_user_class, type: :model do
   let(:admin_user) { create(:admin_user) }
 
+  it_behaves_like 'account lockout' do
+    let(:lockable) { admin_user }
+  end
+
   describe 'password reset tokens' do
     it 'round-trips through find_by_password_reset_token' do
       token = admin_user.generate_token_for(:password_reset)
@@ -18,28 +22,10 @@ describe Spree.admin_user_class, type: :model do
     # The token payload keys off the password salt/digest so it invalidates
     # when the password changes. has_secure_password provides #password_salt
     # (derived from password_digest); the generator also falls back through
-    # encrypted_password/password_digest for legacy/Devise schemas without a
-    # password_salt column, so it never raises NameError.
+    # encrypted_password for a legacy bcrypt column on a custom model without a
+    # password_salt, so it never raises NameError.
     it 'generates a password reset token from the password digest' do
       expect(admin_user.generate_token_for(:password_reset)).to be_present
-    end
-  end
-
-  describe '#send_devise_notification (Devise bridge)' do
-    let(:mail) { double(deliver_later: true) }
-
-    it 'routes reset password instructions through Spree::AdminUserMailer' do
-      expect(Spree::AdminUserMailer).to receive(:password_reset_email).
-        with(admin_user, 'devise-token', Spree::Store.default).and_return(mail)
-
-      admin_user.send_devise_notification(:reset_password_instructions, 'devise-token', {})
-    end
-
-    it 'routes confirmation instructions through Spree::AdminUserMailer' do
-      expect(Spree::AdminUserMailer).to receive(:confirmation_email).
-        with(admin_user, 'devise-token', Spree::Store.default).and_return(mail)
-
-      admin_user.send_devise_notification(:confirmation_instructions, 'devise-token', {})
     end
   end
 

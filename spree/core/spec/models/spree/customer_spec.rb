@@ -47,22 +47,8 @@ describe Spree::Customer, type: :model do
     end
   end
 
-  describe 'account lockout' do
-    it 'is not locked by default' do
-      expect(customer).not_to be_locked
-    end
-
-    it 'locks after five failed attempts' do
-      5.times { customer.record_failed_attempt! }
-      expect(customer).to be_locked
-    end
-
-    it 'clears the lock on reset' do
-      5.times { customer.record_failed_attempt! }
-      customer.reset_failed_attempts!
-      expect(customer.reload).not_to be_locked
-      expect(customer.failed_attempts).to eq(0)
-    end
+  it_behaves_like 'account lockout' do
+    let(:lockable) { customer }
   end
 
   describe 'prefixed id' do

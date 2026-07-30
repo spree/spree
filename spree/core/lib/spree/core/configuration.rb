@@ -120,6 +120,10 @@ module Spree
       preference :admin_password_reset_expires_in, :integer, default: 15 # admin password reset token expiration time in minutes
       preference :customer_password_reset_expires_in, :integer, default: 15 # password reset token expiration time in minutes
 
+      # account lockout
+      preference :max_failed_login_attempts, :integer, default: 5 # failed login attempts before an account is locked
+      preference :lockout_duration, :integer, default: 1800 # lockout duration in seconds (30 minutes)
+
       # gift cards
       preference :gift_card_batch_web_limit, :integer, default: 500 # number of gift card codes to be generated in the web process, more than this will be generated in a background job
       preference :gift_card_batch_limit, :integer, default: 50_000

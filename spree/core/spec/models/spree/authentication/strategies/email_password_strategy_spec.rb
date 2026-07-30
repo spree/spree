@@ -19,7 +19,7 @@ describe Spree::Authentication::Strategies::EmailPasswordStrategy do
     context 'with valid credentials' do
       before do
         user # ensure user exists
-        # Mock password validation since LegacyUser doesn't have authentication
+        # Stub password validation to isolate the strategy from the model's digest
         allow(user).to receive(:valid_password?).with('password123').and_return(true)
         allow(strategy).to receive(:find_user_by_email).with('user@example.com').and_return(user)
       end
@@ -58,6 +58,55 @@ describe Spree::Authentication::Strategies::EmailPasswordStrategy do
 
         expect(result).not_to be_success
         expect(result.error).to eq('Invalid email or password')
+      end
+    end
+
+    describe 'account lockout' do
+      before do
+        allow(strategy).to receive(:find_user_by_email).with('user@example.com').and_return(user)
+      end
+
+      it 'fails a locked account without checking the password' do
+        allow(user).to receive(:locked?).and_return(true)
+        expect(strategy).not_to receive(:validate_password)
+
+        result = strategy.authenticate
+
+        expect(result).not_to be_success
+        expect(result.error).to eq('Account temporarily locked. Try again later.')
+      end
+
+      it 'records a failed attempt on an invalid password' do
+        allow(user).to receive(:valid_password?).with('password123').and_return(false)
+        expect(user).to receive(:record_failed_attempt!)
+
+        strategy.authenticate
+      end
+
+      it 'resets failed attempts on success when attempts were recorded' do
+        allow(user).to receive(:valid_password?).with('password123').and_return(true)
+        allow(user).to receive(:failed_attempts).and_return(3)
+        expect(user).to receive(:reset_failed_attempts!)
+
+        expect(strategy.authenticate).to be_success
+      end
+
+      it 'does not reset when there were no failed attempts' do
+        allow(user).to receive(:valid_password?).with('password123').and_return(true)
+        allow(user).to receive(:failed_attempts).and_return(0)
+        expect(user).not_to receive(:reset_failed_attempts!)
+
+        expect(strategy.authenticate).to be_success
+      end
+
+      it 'authenticates a user model that does not implement lockout' do
+        bare_user = double('user without lockout', valid_password?: true)
+        allow(strategy).to receive(:find_user_by_email).with('user@example.com').and_return(bare_user)
+
+        result = strategy.authenticate
+
+        expect(result).to be_success
+        expect(result.value).to eq(bare_user)
       end
     end
 
