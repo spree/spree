@@ -588,6 +588,7 @@
     },
     "account": {
       "edit_profile": "تعديل الملف الشخصي",
+      "preferences": "التفضيلات",
       "language": {
         "label": "اللغة",
         "update_failed": "تعذّر حفظ تفضيل اللغة. يرجى المحاولة مجددًا."

@@ -280,9 +280,12 @@ function DropdownMenuSubTrigger({
   className,
   inset,
   children,
+  hideChevron,
   ...props
 }: React.ComponentProps<typeof MenuPrimitive.SubmenuTrigger> & {
   inset?: boolean
+  /** Suppress the default trailing chevron when the trigger renders its own affordance. */
+  hideChevron?: boolean
 }) {
   return (
     <MenuPrimitive.SubmenuTrigger
@@ -295,7 +298,7 @@ function DropdownMenuSubTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ml-auto" />
+      {!hideChevron && <ChevronRightIcon className="ml-auto" />}
     </MenuPrimitive.SubmenuTrigger>
   )
 }

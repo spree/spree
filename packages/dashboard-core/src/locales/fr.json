@@ -588,6 +588,7 @@
     },
     "account": {
       "edit_profile": "Modifier le profil",
+      "preferences": "Préférences",
       "language": {
         "label": "Langue",
         "update_failed": "Impossible d’enregistrer votre préférence de langue. Veuillez réessayer."

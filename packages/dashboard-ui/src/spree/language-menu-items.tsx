@@ -1,4 +1,4 @@
-import { CheckIcon, LanguagesIcon } from 'lucide-react'
+import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react'
 import {
   DropdownMenuItem,
   DropdownMenuSub,
@@ -7,7 +7,7 @@ import {
 } from '../ui/dropdown-menu'
 
 interface LanguageMenuItemsProps {
-  /** Translated "Language" label for the submenu trigger (passed by the app). */
+  /** Translated "Language" label for the row (passed by the app). */
   label: string
   /** Admin UI languages available to switch to ({ code, name } pairs). */
   locales: ReadonlyArray<{ code: string; name: string }>
@@ -17,9 +17,10 @@ interface LanguageMenuItemsProps {
 }
 
 /**
- * Admin UI language picker rendered inside the user dropdown menu as a nested
- * submenu (a single "Language ▸" row that expands to the list), so the menu
- * stays compact no matter how many languages are installed.
+ * Admin UI language picker rendered inside the user dropdown's Preferences
+ * section. The row shows a select-style pill with the current language; opening
+ * it reveals the full list as a nested submenu (kept within the menu system so
+ * it stays robust inside the dropdown's portal tree).
  *
  * Headless: the label, locale list, and change handler are passed in, so this
  * component imports no i18n/data runtime. Renders nothing when fewer than two
@@ -32,10 +33,12 @@ export function LanguageMenuItems({ label, locales, value, onSelect }: LanguageM
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger>
-        <LanguagesIcon className="size-4" />
-        {label}
-        {current && <span className="ml-auto text-xs text-muted-foreground">{current.name}</span>}
+      <DropdownMenuSubTrigger hideChevron className="justify-between">
+        <span className="text-sm text-foreground">{label}</span>
+        <span className="ml-auto inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-2 py-1 text-xs font-normal text-foreground">
+          {current?.name ?? value}
+          <ChevronsUpDownIcon className="size-3 text-muted-foreground" />
+        </span>
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent>
         {locales.map((locale) => (

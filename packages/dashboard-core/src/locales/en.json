@@ -590,6 +590,7 @@
     },
     "account": {
       "edit_profile": "Edit Profile",
+      "preferences": "Preferences",
       "language": {
         "label": "Language",
         "update_failed": "Could not save your language preference. Please try again."
