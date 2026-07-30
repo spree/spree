@@ -781,13 +781,6 @@ module Spree
       end
     end
 
-    def empty!
-      raise Spree.t(:cannot_empty_completed_order) if completed?
-
-      result = Spree.cart_empty_service.call(order: self)
-      result.value
-    end
-
     def use_all_coupon_codes
       Spree::CouponCodes::CouponCodesHandler.new(order: self).use_all_codes
     end
