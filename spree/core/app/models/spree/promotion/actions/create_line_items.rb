@@ -58,7 +58,8 @@ module Spree
             current_quantity = order.quantity_of(item.variant)
             next unless current_quantity < item.quantity && item_available?(item)
 
-            line_item = Spree.cart_add_item_service.call(order: order,
+            add_service = order.is_a?(Spree::Cart) ? Spree.cart_add_item_service : Spree.order_add_item_service
+            line_item = add_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order },
                                                          variant: item.variant,
                                                          quantity: item.quantity - current_quantity).value
             action_taken = true if line_item.try(:valid?)
@@ -79,7 +80,8 @@ module Spree
             line_item = order.find_line_item_by_variant(item.variant)
             next unless line_item.present?
 
-            Spree.cart_remove_item_service.call(order: order,
+            remove_service = order.is_a?(Spree::Cart) ? Spree.cart_remove_item_service : Spree.order_remove_item_service
+            remove_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order },
                                                 variant: item.variant,
                                                 quantity: (item.quantity || 1))
             action_taken = true

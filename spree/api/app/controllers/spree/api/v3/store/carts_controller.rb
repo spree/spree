@@ -73,7 +73,7 @@ module Spree
           def destroy
             find_cart!
 
-            result = Spree.cart_destroy_service.call(order: @cart)
+            result = Spree.cart_destroy_service.call(cart: @cart)
 
             if result.success?
               head :no_content
@@ -93,7 +93,7 @@ module Spree
             authorize!(:update, @cart, cart_token)
             require_cart_token!
 
-            result = Spree.cart_associate_service.call(guest_order: @cart, user: current_user, guest_only: true)
+            result = Spree.cart_associate_service.call(guest_cart: @cart, user: current_user, guest_only: true)
 
             if result.success?
               render_cart

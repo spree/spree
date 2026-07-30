@@ -13,7 +13,7 @@ module Spree
             def create
               with_order_lock do
                 result = Spree.cart_add_item_service.call(
-                  order: @cart,
+                  cart: @cart,
                   variant: variant,
                   quantity: permitted_params[:quantity] || 1,
                   metadata: permitted_params[:metadata] || {},
@@ -37,7 +37,7 @@ module Spree
 
                 if permitted_params[:quantity].present?
                   result = Spree.cart_set_item_quantity_service.call(
-                    order: @cart,
+                    cart: @cart,
                     line_item: @line_item,
                     quantity: permitted_params[:quantity]
                   )
@@ -62,7 +62,7 @@ module Spree
                 @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
 
                 Spree.cart_remove_line_item_service.call(
-                  order: @cart,
+                  cart: @cart,
                   line_item: @line_item
                 )
 

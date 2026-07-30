@@ -17,6 +17,13 @@ module Spree
         cart_remove_item_service: 'Spree::Carts::RemoveItem',
         cart_remove_line_item_service: 'Spree::Carts::RemoveLineItem',
         cart_set_item_quantity_service: 'Spree::Carts::SetQuantity',
+
+        # draft orders (admin item editing) — cart twins split so the two
+        # sides can diverge; see Spree::Orders::AddItem
+        order_add_item_service: 'Spree::Orders::AddItem',
+        order_update_item_service: 'Spree::Orders::UpdateItem',
+        order_remove_line_item_service: 'Spree::Orders::RemoveLineItem',
+        order_remove_item_service: 'Spree::Orders::RemoveItem',
         cart_empty_service: 'Spree::Carts::Empty',
         cart_destroy_service: 'Spree::Carts::Destroy',
         cart_associate_service: 'Spree::Carts::Associate',
@@ -56,11 +63,7 @@ module Spree
         fulfillment_create_service: 'Spree::Fulfillments::Create',
 
         # shipment
-        shipment_change_state_service: 'Spree::Shipments::ChangeState',
-        shipment_create_service: 'Spree::Shipments::Create',
         shipment_update_service: 'Spree::Shipments::Update',
-        shipment_add_item_service: 'Spree::Shipments::AddItem',
-        shipment_remove_item_service: 'Spree::Shipments::RemoveItem',
 
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
@@ -92,9 +95,6 @@ module Spree
         classification_reposition_service: nil,
 
         # line items
-        line_item_create_service: 'Spree::LineItems::Create',
-        line_item_update_service: 'Spree::LineItems::Update',
-        line_item_destroy_service: 'Spree::LineItems::Destroy',
 
         payment_create_service: 'Spree::Payments::Create',
         payments_handle_webhook_service: 'Spree::Payments::HandleWebhook',

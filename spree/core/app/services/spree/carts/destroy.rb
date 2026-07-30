@@ -3,7 +3,12 @@ module Spree
     class Destroy
       prepend Spree::ServiceModule::Base
 
-      def call(order:)
+      def call(cart: nil, order: nil)
+        if order
+          Spree::Deprecation.warn('Calling Spree::Carts::Destroy with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          cart ||= order
+        end
+        rewrite_input!(remove: [:order], cart: cart)
         run :check_if_can_be_destroyed
         run :cancel_shipments
         run :void_payments
@@ -13,37 +18,37 @@ module Spree
 
       private
 
-      def check_if_can_be_destroyed(order:)
-        return failure(false, Spree.t(:cannot_be_destroyed)) unless order&.can_be_deleted?
+      def check_if_can_be_destroyed(cart:)
+        return failure(false, Spree.t(:cannot_be_destroyed)) unless cart&.can_be_deleted?
 
-        success(order: order)
+        success(cart: cart)
       end
 
-      def cancel_shipments(order:)
-        order.fulfillments.each(&:cancel)
+      def cancel_shipments(cart:)
+        cart.fulfillments.each(&:cancel)
 
-        success(order: order)
+        success(cart: cart)
       end
 
-      def void_payments(order:)
-        order.payments.each(&:void)
+      def void_payments(cart:)
+        cart.payments.each(&:void)
 
-        success(order: order)
+        success(cart: cart)
       end
 
-      def clear_addresses(order:)
-        order.ship_address = nil unless order.ship_address&.can_be_deleted?
-        order.bill_address = nil unless order.bill_address&.can_be_deleted?
+      def clear_addresses(cart:)
+        cart.ship_address = nil unless cart.ship_address&.can_be_deleted?
+        cart.bill_address = nil unless cart.bill_address&.can_be_deleted?
 
-        success(order: order)
+        success(cart: cart)
       end
 
-      def destroy_order(order:)
-        destroyed_result = order.destroy
+      def destroy_order(cart:)
+        destroyed_result = cart.destroy
 
         return failure(false, Spree.t(:cannot_be_destroyed)) unless destroyed_result.present?
 
-        success(order)
+        success(cart)
       end
     end
   end

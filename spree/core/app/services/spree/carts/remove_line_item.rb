@@ -3,19 +3,23 @@ module Spree
     class RemoveLineItem
       prepend Spree::ServiceModule::Base
 
-      def call(order:, line_item:, options: nil)
+      def call(cart: nil, order: nil, line_item: nil, options: nil)
+        if order
+          Spree::Deprecation.warn('Calling Spree::Carts::RemoveLineItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          cart ||= order
+        end
         options ||= {}
         ActiveRecord::Base.transaction do
-          order.line_items.destroy(line_item)
+          cart.line_items.destroy(line_item)
 
           # LineItem dependent: :destroy removes its own reservation row;
           # remaining items may need a fresh reservation pass when in checkout.
-          if order.in_checkout? && order.line_items.any?
-            result = Spree::StockReservations::Reserve.call(order: order)
+          if cart.in_checkout? && cart.line_items.any?
+            result = Spree::StockReservations::Reserve.call(cart: cart)
             raise Spree::StockReservations::InsufficientStockError.new(nil, result.error.to_s) if result.failure?
           end
 
-          Spree.cart_recalculate_service.new.call(order: order,
+          Spree.cart_recalculate_service.new.call(cart: cart,
                                                   line_item: line_item,
                                                   options: options)
         end

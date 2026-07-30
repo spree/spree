@@ -33,7 +33,7 @@ module Spree
           order.save!
 
           add_items(order) if @params[:items].present?
-          build_shipments(order)
+          build_fulfillments(order)
           apply_coupon(order) if @params[:coupon_code].present?
           order.update_with_updater!
         end
@@ -112,8 +112,8 @@ module Spree
         propagate_step_failure!(order, result, fallback: 'Failed to add items to order')
       end
 
-      def build_shipments(order)
-        result = Spree::Orders::BuildShipments.call(order: order)
+      def build_fulfillments(order)
+        result = Spree::Orders::BuildFulfillments.call(order: order)
         return if result.success?
 
         propagate_step_failure!(order, result, fallback: 'Failed to build shipments')

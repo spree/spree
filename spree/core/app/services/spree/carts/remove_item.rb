@@ -3,14 +3,18 @@ module Spree
     class RemoveItem
       prepend Spree::ServiceModule::Base
 
-      def call(order:, variant:, quantity: nil, options: nil)
+      def call(cart: nil, order: nil, variant: nil, quantity: nil, options: nil)
+        if order
+          Spree::Deprecation.warn('Calling Spree::Carts::RemoveItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          cart ||= order
+        end
         options ||= {}
         quantity ||= 1
 
         ActiveRecord::Base.transaction do
-          line_item = remove_from_line_item(order: order, variant: variant, quantity: quantity, options: options)
+          line_item = remove_from_line_item(cart: cart, variant: variant, quantity: quantity, options: options)
           Spree.cart_recalculate_service.call(line_item: line_item,
-                                              order: order,
+                                              cart: cart,
                                               options: options)
           success(line_item)
         end
@@ -18,16 +22,15 @@ module Spree
 
       private
 
-      def remove_from_line_item(order:, variant:, quantity:, options:)
-        line_item = Spree.line_item_by_variant_finder.new.execute(order: order, variant: variant, options: options)
+      def remove_from_line_item(cart:, variant:, quantity:, options:)
+        line_item = Spree.line_item_by_variant_finder.new.execute(cart: cart, variant: variant, options: options)
 
         raise ActiveRecord::RecordNotFound if line_item.nil?
 
         line_item.quantity -= quantity
-        line_item.target_fulfillment = options[:shipment]
 
         if line_item.quantity.zero?
-          order.line_items.destroy(line_item)
+          cart.line_items.destroy(line_item)
         else
           line_item.save!
         end

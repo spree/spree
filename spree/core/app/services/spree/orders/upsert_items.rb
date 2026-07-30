@@ -32,7 +32,7 @@ module Spree
 
             return failure(variant, "#{variant.name} is not available in #{order.currency}") if variant.amount_in(order.currency).nil?
 
-            line_item = Spree.line_item_by_variant_finder.new.execute(order: order, variant: variant)
+            line_item = Spree.line_item_by_variant_finder.new.execute(owner: order, variant: variant)
 
             if line_item
               line_item.quantity = quantity

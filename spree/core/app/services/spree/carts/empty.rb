@@ -3,35 +3,40 @@ module Spree
     class Empty
       prepend Spree::ServiceModule::Base
 
-      def call(order:)
+      def call(cart: nil, order: nil)
+        if order
+          Spree::Deprecation.warn('Calling Spree::Carts::Empty with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          cart ||= order
+        end
+        rewrite_input!(remove: [:order], cart: cart)
         run :check_if_can_be_empty
         run :empty_order
       end
 
       private
 
-      def check_if_can_be_empty(order:)
-        return failure(Spree.t(:cannot_empty)) if order.nil? || order.completed?
+      def check_if_can_be_empty(cart:)
+        return failure(Spree.t(:cannot_empty)) if cart.nil? || cart.completed?
 
-        success(order: order)
+        success(cart: cart)
       end
 
-      def empty_order(order:)
+      def empty_order(cart:)
         ActiveRecord::Base.transaction do
-          order.line_items.destroy_all
-          order.updater.update_item_count
-          order.tax_lines.destroy_all
-          order.discounts.destroy_all
-          order.fees.destroy_all
-          order.fulfillments.destroy_all
-          order.state_changes.destroy_all
-          order.order_promotions.destroy_all
-          order.update_totals
-          order.persist_totals
+          cart.line_items.destroy_all
+          cart.updater.update_item_count
+          cart.tax_lines.destroy_all
+          cart.discounts.destroy_all
+          cart.fees.destroy_all
+          cart.fulfillments.destroy_all
+          cart.state_changes.destroy_all
+          cart.order_promotions.destroy_all
+          cart.update_totals
+          cart.persist_totals
 
-          Spree::StockReservations::Release.call(order: order)
+          Spree::StockReservations::Release.call(cart: cart)
 
-          success(order)
+          success(cart)
         end
       end
     end

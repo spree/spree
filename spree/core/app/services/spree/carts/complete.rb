@@ -243,7 +243,7 @@ module Spree
           order.update_columns(status: 'placed') unless order.reload.placed?
           cart.update_columns(completed_at: Time.current, completing_at: nil)
         end
-        Spree::StockReservations::Release.call(order: order)
+        Spree::StockReservations::Release.call(owner: order)
         Spree::Orders::RecomputeStatuses.call(order: order)
         mark_coupon_codes_used!(cart, order)
       end
@@ -269,7 +269,7 @@ module Spree
           end
 
           order.finalize! unless order.completed?
-          Spree::StockReservations::Release.call(order: order)
+          Spree::StockReservations::Release.call(owner: order)
           Spree::Orders::RecomputeStatuses.call(order: order)
           success(order)
         end

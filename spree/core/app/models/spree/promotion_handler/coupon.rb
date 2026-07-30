@@ -145,7 +145,8 @@ module Spree
           line_item = order.find_line_item_by_variant(item.variant)
           next if line_item.blank?
 
-          Spree.cart_remove_item_service.call(order: order, variant: item.variant, quantity: item.quantity)
+          remove_service = order.is_a?(Spree::Cart) ? Spree.cart_remove_item_service : Spree.order_remove_item_service
+          remove_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order }, variant: item.variant, quantity: item.quantity)
         end
       end
 

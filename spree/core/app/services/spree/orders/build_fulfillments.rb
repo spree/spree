@@ -1,15 +1,15 @@
 module Spree
   module Orders
-    # Shared shipment-building step for admin order Create / Update.
+    # Shared fulfillment-building step for admin order Create / Update.
     #
-    # Rebuilds shipments from scratch (Stock::Coordinator), then layers in
+    # Rebuilds fulfillments from scratch (Stock::Coordinator), then layers in
     # tax, costs, and free-shipping promotions so totals reflect delivery
     # before payment is requested. Without this, draft orders would expose
     # delivery_total: 0.0 until completion is attempted — which is too late.
     #
     # No-op when the order has no shipping address, no line items, or does
     # not require delivery (digital orders, etc.).
-    class BuildShipments
+    class BuildFulfillments
       prepend Spree::ServiceModule::Base
 
       def call(order:)

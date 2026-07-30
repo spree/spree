@@ -3,9 +3,10 @@ module Spree
     class Release
       prepend Spree::ServiceModule::Base
 
-      def call(order:)
-        Spree::StockReservation.merge(Spree::StockReservation.for_order(order)).delete_all
-        success(order)
+      def call(owner: nil, cart: nil, order: nil)
+        cart = owner || cart || order
+        Spree::StockReservation.merge(Spree::StockReservation.for_order(cart)).delete_all
+        success(cart)
       end
     end
   end
