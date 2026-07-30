@@ -7,6 +7,22 @@
     "source.fixAll.biome": true,
     "source.organizeImports.biome": true
   },
+  "lsp": {
+    "ruby-lsp": {
+      "binary": {
+        "env": {
+          "BUNDLE_GEMFILE": "spree/Gemfile"
+        }
+      }
+    },
+    "rubocop": {
+      "binary": {
+        "env": {
+          "BUNDLE_GEMFILE": "spree/Gemfile"
+        }
+      }
+    }
+  },
   "languages": {
     "TypeScript": {
       "language_servers": ["biome", "vtsls", "!typescript-language-server", "!eslint"]
