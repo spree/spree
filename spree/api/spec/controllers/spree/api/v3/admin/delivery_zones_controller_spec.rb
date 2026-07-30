@@ -24,6 +24,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
     it 'creates a zone with typed members' do
       post :create, params: {
         name: 'US North-East',
+        expand: 'members',
         members: [
           { member_type: 'country', country_iso: 'US' },
           { member_type: 'postal_code', country_iso: 'US', postal_code_prefix: '10' }

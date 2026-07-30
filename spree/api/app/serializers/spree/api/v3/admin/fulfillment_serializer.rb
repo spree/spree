@@ -21,12 +21,12 @@ module Spree
           attributes :metadata, :adjustment_total, :pre_tax_amount,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :order_id do |shipment|
-            shipment.order&.prefixed_id
+          attribute :order_id do |fulfillment|
+            fulfillment.order&.prefixed_id
           end
 
-          attribute :stock_location_id do |shipment|
-            shipment.stock_location&.prefixed_id
+          attribute :stock_location_id do |fulfillment|
+            fulfillment.stock_location&.prefixed_id
           end
 
           # Override inherited associations to use admin serializers

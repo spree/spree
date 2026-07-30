@@ -32,7 +32,7 @@ defineTable<DeliveryZone>('delivery-zones', {
       label: i18n.t('admin.delivery_zones.members_column'),
       default: true,
       render: (zone) =>
-        i18n.t('admin.delivery_zones.members_count', { count: zone.members.length }),
+        i18n.t('admin.delivery_zones.members_count', { count: zone.members?.length ?? 0 }),
     },
   ],
 })

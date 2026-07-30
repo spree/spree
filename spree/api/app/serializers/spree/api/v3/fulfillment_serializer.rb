@@ -30,18 +30,18 @@ module Spree
 
         # Column-backed since 6.0; the fallback covers rows created before the
         # fulfillment_type backfill ran.
-        attribute :fulfillment_type do |shipment|
-          shipment.fulfillment_type.presence || (shipment.digital? ? 'digital' : 'shipping')
+        attribute :fulfillment_type do |fulfillment|
+          fulfillment.fulfillment_type.presence || (fulfillment.digital? ? 'digital' : 'shipping')
         end
 
-        attribute :fulfilled_at do |shipment|
-          shipment.fulfilled_at&.iso8601
+        attribute :fulfilled_at do |fulfillment|
+          fulfillment.fulfilled_at&.iso8601
         end
 
         # Which items (and how many) are in this fulfillment.
         # A line item can be split across fulfillments with different quantities.
-        attribute :items do |shipment|
-          shipment.manifest.filter_map do |item|
+        attribute :items do |fulfillment|
+          fulfillment.manifest.filter_map do |item|
             next unless item.line_item
 
             {

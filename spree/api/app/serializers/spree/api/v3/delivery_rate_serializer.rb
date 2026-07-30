@@ -9,8 +9,8 @@ module Spree
                  included_tax_total: :string, display_included_tax_total: :string,
                  tax_total: :string, display_tax_total: :string
 
-        attribute :delivery_method_id do |shipping_rate|
-          shipping_rate.shipping_method&.prefixed_id
+        attribute :delivery_method_id do |deliver_rate|
+          deliver_rate.delivery_method&.prefixed_id
         end
 
         attributes :name, :selected,
@@ -18,27 +18,27 @@ module Spree
                    :additional_tax_total, :included_tax_total,
                    :tax_total
 
-        attribute :display_cost do |shipping_rate|
-          shipping_rate.display_cost.to_s
+        attribute :display_cost do |deliver_rate|
+          deliver_rate.display_cost.to_s
         end
 
-        attribute :display_total do |shipping_rate|
-          shipping_rate.display_total.to_s
+        attribute :display_total do |deliver_rate|
+          deliver_rate.display_total.to_s
         end
 
-        attribute :display_additional_tax_total do |shipping_rate|
-          shipping_rate.display_additional_tax_total.to_s
+        attribute :display_additional_tax_total do |deliver_rate|
+          deliver_rate.display_additional_tax_total.to_s
         end
 
-        attribute :display_included_tax_total do |shipping_rate|
-          shipping_rate.display_included_tax_total.to_s
+        attribute :display_included_tax_total do |deliver_rate|
+          deliver_rate.display_included_tax_total.to_s
         end
 
-        attribute :display_tax_total do |shipping_rate|
-          shipping_rate.display_tax_total.to_s
+        attribute :display_tax_total do |deliver_rate|
+          deliver_rate.display_tax_total.to_s
         end
 
-        one :shipping_method, key: :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
+        one :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
       end
     end
   end

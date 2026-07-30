@@ -6,7 +6,7 @@ module Spree
 
         attributes :name, :description
 
-        many :members, resource: proc { Spree.api.delivery_zone_member_serializer }
+        many :members, resource: proc { Spree.api.delivery_zone_member_serializer }, if: proc { expand?('members') }
       end
     end
   end

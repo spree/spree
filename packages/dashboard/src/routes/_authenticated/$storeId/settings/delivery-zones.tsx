@@ -107,7 +107,7 @@ function DeliveryZonesPage() {
       <ResourceTable<DeliveryZone>
         tableKey="delivery-zones"
         queryKey="delivery-zones"
-        queryFn={(params) => adminClient.deliveryZones.list(params)}
+        queryFn={(params) => adminClient.deliveryZones.list({ ...params, expand: ['members'] })}
         searchParams={search}
         rowActions={(zone) => (
           <RowActions
@@ -229,7 +229,7 @@ function EditDeliveryZoneSheet({
       form.reset({
         name: zone.name,
         description: zone.description ?? '',
-        members: zone.members.map((member) => ({
+        members: (zone.members ?? []).map((member) => ({
           member_type:
             member.member_type as DeliveryZoneFormValues['members'][number]['member_type'],
           country_iso: member.country_iso ?? '',
