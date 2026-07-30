@@ -52,6 +52,35 @@ RSpec.describe Spree::PermissionSets::SuperUser do
       end
     end
 
+    context 'order-owned record restrictions on canceled orders' do
+      let(:canceled_order) { build(:order) }
+      let(:active_order) { build(:order) }
+
+      before do
+        allow(canceled_order).to receive(:canceled?).and_return(true)
+        allow(active_order).to receive(:canceled?).and_return(false)
+      end
+
+      described_class::RESTRICTED_MODELS.each do |klass|
+        context klass.name do
+          let(:record_on_canceled_order) { klass.new.tap { |r| allow(r).to receive(:order).and_return(canceled_order) } }
+          let(:record_on_active_order) { klass.new.tap { |r| allow(r).to receive(:order).and_return(active_order) } }
+
+          it 'prevents managing records on canceled orders' do
+            expect(ability.can?(:create, record_on_canceled_order)).to be false
+            expect(ability.can?(:edit, record_on_canceled_order)).to be false
+            expect(ability.can?(:destroy, record_on_canceled_order)).to be false
+          end
+
+          it 'allows managing records on non-canceled orders' do
+            expect(ability.can?(:create, record_on_active_order)).to be true
+            expect(ability.can?(:edit, record_on_active_order)).to be true
+            expect(ability.can?(:destroy, record_on_active_order)).to be true
+          end
+        end
+      end
+    end
+
     context 'immutable types' do
       let(:mutable_refund_reason) { build(:refund_reason, mutable: true) }
       let(:immutable_refund_reason) { build(:refund_reason, mutable: false) }

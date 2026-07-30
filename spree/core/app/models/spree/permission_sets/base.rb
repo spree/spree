@@ -38,6 +38,17 @@ module Spree
 
       protected
 
+      # Disallows managing order-owned records once their order is canceled.
+      #
+      # @return [void]
+      def restrict_cancelled_order_management!
+        RESTRICTED_MODELS.each do |klass|
+          cannot [:create, :edit, :destroy], klass do |record|
+            record.order.canceled?
+          end
+        end
+      end
+
       # Delegates the `can` method to the ability instance.
       #
       # @param args [Array] arguments to pass to CanCan::Ability#can
