@@ -56,14 +56,6 @@ namespace :common do
       system('yes | bundle exec rails importmap:install turbo:install stimulus:install')
     end
 
-    # install devise if it's not the legacy user, useful for testing storefront
-    if args[:authentication] == 'devise' && args[:user_class] != 'Spree::LegacyUser'
-      system('bundle exec rails g devise:install --force --auto-accept')
-      system("bundle exec rails g devise #{args[:user_class]} --force --auto-accept")
-      system("bundle exec rails g devise #{args[:admin_user_class]} --force --auto-accept") if args[:admin_user_class].present? && args[:admin_user_class] != args[:user_class]
-      system('rm -rf spec') # we need to cleanup factories created by devise to avoid naming conflict
-    end
-
     # Run core Spree install generator
     # The spree:install generator lives in the root spree gem. Core gems (spree_core, spree_api)
     # don't have spree as a dependency, so we need to use the root Gemfile to access the generator.

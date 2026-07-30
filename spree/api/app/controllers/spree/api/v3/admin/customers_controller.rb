@@ -11,13 +11,9 @@ module Spree
 
           def create
             @resource = Spree.customer_class.new(permitted_params)
-            # Admin-created customers don't pick a password upfront — they
-            # claim the account via password reset later.
-            # `Spree::CustomerMethods` exposes `skip_password_validation` so
-            # Devise's `:validatable` lets a nil credential through on this
-            # code path. Storefront registration never sets the flag, so
-            # customer self-signup still requires a password.
-            @resource.skip_password_validation = true if @resource.password.blank?
+            # Admin-created customers may be created without a password; they
+            # claim the account via password reset later (the model does not
+            # enforce password presence).
             authorize!(:create, @resource)
 
             if @resource.save

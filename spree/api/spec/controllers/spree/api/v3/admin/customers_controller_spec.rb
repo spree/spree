@@ -88,10 +88,9 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
 
     # Admin-created customers don't pick a password upfront — the merchant
     # adds the profile and the customer claims the account via a separate
-    # password-reset flow. The host app's `Spree::User` is Devise-
-    # validatable; `Spree::UserMethods` exposes `skip_password_validation`
-    # so the admin controller can opt out of the presence check on create.
-    # The Store API registration path stays untouched (see store
+    # password-reset flow. The customer model uses `has_secure_password
+    # validations: false`, so password presence is not enforced on create.
+    # The Store API registration path enforces it separately (see store
     # customers_controller spec).
     context 'without password' do
       let(:no_password_params) { { email: 'no-password@example.com', first_name: 'Pat' } }
@@ -155,11 +154,10 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       end
     end
 
-    # PATCH without a password must not blank an existing credential. Devise's
-    # `password_required?` already skips presence on persisted records when
-    # password is nil, so this is the regression guard for that contract —
-    # ensures a profile-only edit doesn't accidentally invalidate the
-    # customer's ability to log in.
+    # PATCH without a password must not blank an existing credential.
+    # has_secure_password only rewrites the digest when a non-blank password is
+    # supplied, so this is the regression guard — a profile-only edit must not
+    # accidentally invalidate the customer's ability to log in.
     context 'without password' do
       it 'updates profile fields without touching the existing credential' do
         original_digest = customer.password_digest

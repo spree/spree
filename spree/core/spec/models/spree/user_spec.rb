@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDescribes
+describe Spree.customer_class, type: :model do # rubocop:disable RSpec/MultipleDescribes
   it_behaves_like 'lifecycle events', factory: :user, event_prefix: 'user'
 
   describe '#can_be_deleted?' do
