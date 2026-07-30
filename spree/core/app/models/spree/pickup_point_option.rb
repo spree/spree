@@ -2,22 +2,27 @@ module Spree
   # Ephemeral value object returned by PickupPointProvider queries. Never
   # persisted — the selected option is frozen into
   # +fulfillment.pickup_point_data+ as plain JSON.
-  PickupPointOption = Struct.new(
-    :external_id,
-    :name,
-    :address1,
-    :address2,
-    :city,
-    :zipcode,
-    :country_iso,
-    :latitude,
-    :longitude,
-    :provider,
-    :metadata,
-    keyword_init: true
-  ) do
+  class PickupPointOption
+    include ActiveModel::Model
+    include ActiveModel::Attributes
+
+    attribute :external_id, :string
+    attribute :name, :string
+    attribute :address1, :string
+    attribute :address2, :string
+    attribute :city, :string
+    attribute :zipcode, :string
+    attribute :country_iso, :string
+    attribute :latitude, :float
+    attribute :longitude, :float
+    attribute :provider, :string
+    attribute :metadata
+
+    validates :external_id, :name, presence: true
+
+    # @return [Hash] the JSON shape persisted into fulfillment.pickup_point_data
     def to_pickup_point_data
-      to_h.compact.stringify_keys
+      attributes.compact.stringify_keys
     end
   end
 end

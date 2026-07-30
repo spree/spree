@@ -157,6 +157,7 @@ Per-request context available in models, controllers, jobs, and services:
 - Include `Spree::Metafields` for custom fields support (see docs/plans/5.4-6.0-custom-fields-rename.md)
 - Include `Spree::Metadata` for JSON metadata support
 - ALWAYS Use string columns instead of enums
+- NEVER use `Struct` for domain value objects — use a plain Ruby class with `ActiveModel::Model` + `ActiveModel::Attributes` (typed attributes, validations) so it behaves like an ActiveRecord object (e.g. `Spree::PickupPointOption`)
 - State machines: use `state_machines-activerecord` gem, default column `status` (legacy uses `state`, see docs/plans/6.0-normalize-state-to-status.md)
 - NEVER cast IDs to integer — always treat as strings (UUID support)
 - Uniqueness validations: ALWAYS use `scope: spree_base_uniqueness_scope`, should be also enforced by database index
