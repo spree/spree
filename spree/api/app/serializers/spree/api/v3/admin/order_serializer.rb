@@ -69,7 +69,12 @@ module Spree
           end
 
           # Override inherited associations to use admin serializers
-          many :order_promotions, key: :discounts, resource: proc { Spree.api.admin_applied_promotion_serializer }, if: proc { expand?('discounts') }
+          # Renamed from the store's `discounts` key: on the admin surface that
+          # word means the typed money rows (/orders/:id/discounts), so the
+          # promotion summaries carry their real name here. The inherited
+          # store-keyed declaration is dropped, not shadowed.
+          _attributes.delete(:discounts)
+          many :order_promotions, key: :applied_promotions, resource: proc { Spree.api.admin_applied_promotion_serializer }, if: proc { expand?('applied_promotions') }
           many :line_items, key: :items, resource: proc { Spree.api.admin_line_item_serializer }, if: proc { expand?('items') }
           many :fulfillments, resource: proc { Spree.api.admin_fulfillment_serializer }, if: proc { expand?('fulfillments') }
           many :payments, resource: proc { Spree.api.admin_payment_serializer }, if: proc { expand?('payments') }
