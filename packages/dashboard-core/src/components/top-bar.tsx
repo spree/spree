@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   LanguageMenuItems,
@@ -164,15 +165,18 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
           </div>
         </div>
         <DropdownMenuSeparator />
+        <DropdownMenuLabel className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          {t('admin.account.preferences')}
+        </DropdownMenuLabel>
         <ThemeMenuItems />
-        {/* Compact nested submenu; self-hides when < 2 languages are installed. */}
+        {/* Select-style pill; self-hides when < 2 languages are installed. */}
         <LanguageMenuItems
           label={t('admin.account.language.label')}
           locales={uiLocales}
           value={i18n.language}
           onSelect={handleSelectLocale}
         />
-        {uiLocales.length >= 2 && <DropdownMenuSeparator />}
+        <DropdownMenuSeparator />
         {store && (
           <DropdownMenuItem asChild>
             <Link
