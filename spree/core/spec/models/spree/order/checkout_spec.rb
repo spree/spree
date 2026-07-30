@@ -127,7 +127,7 @@ describe Spree::Order, type: :model do
       let(:gift_card) { create(:gift_card, amount: order.total, store: store) }
 
       before do
-        order.update_with_updater!
+        order.recalculate_totals!
         order.apply_gift_card(gift_card)
       end
 

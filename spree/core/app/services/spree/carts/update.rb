@@ -139,10 +139,10 @@ module Spree
               cart.create_proposed_fulfillments
               cart.set_shipments_cost
             end
-            cart.update_with_updater!
+            cart.recalculate_totals!
           end
         else
-          cart.update_with_updater!
+          cart.recalculate_totals!
         end
       rescue StandardError => e
         Rails.error.report(e, context: { order_id: cart.id }, source: 'spree.checkout')

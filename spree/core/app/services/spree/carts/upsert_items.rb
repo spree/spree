@@ -49,7 +49,7 @@ module Spree
             return failure(line_item) unless line_item.save
           end
 
-          cart.update_with_updater!
+          cart.recalculate_totals!
         end
 
         success(cart)

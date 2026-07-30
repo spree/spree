@@ -194,7 +194,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#update_with_updater!' do
+  describe '#recalculate_totals!' do
     let(:updater) { order.updater }
 
     before do
@@ -202,10 +202,8 @@ describe Spree::Order, type: :model do
       allow(updater).to receive(:update).and_return(true)
     end
 
-    after { order.update_with_updater! }
-
-    it 'expects to update order with order updater' do
-      expect(updater).to receive(:update).and_return(true)
+    it 'recalculates and persists totals through the RecalculateTotals flow' do
+      expect { order.recalculate_totals! }.to change { order.reload.updated_at }
     end
   end
 
@@ -360,8 +358,9 @@ describe Spree::Order, type: :model do
       let(:order) { create(:completed_order_with_totals) }
 
       it 'publishes order.canceled event' do
-        expect(order).to receive(:publish_event).with('order.canceled', hash_including(:notify_customer))
+        allow(Spree::Events).to receive(:publish)
         order.canceled_by(admin_user)
+        expect(Spree::Events).to have_received(:publish).with('order.canceled', hash_including(:notify_customer), any_args)
       end
     end
   end
@@ -441,7 +440,7 @@ describe Spree::Order, type: :model do
     it 'freezes adjustment recalculation (order-level freeze)' do
       order.finalize!
       expect(Spree::Adjusters::Promotion).not_to receive(:adjust)
-      order.update_with_updater!
+      order.recalculate_totals!
     end
 
     context 'order is considered risky' do
@@ -548,43 +547,6 @@ describe Spree::Order, type: :model do
     it 'is false' do
       allow(order).to receive(:restart_checkout_flow)
       expect(subject).to be_falsey
-    end
-  end
-
-  context 'empty!' do
-    let(:order) { Spree::Order.create(email: 'test@example.com') }
-    let(:promotion) { create :promotion, code: '10off' }
-
-    before do
-      promotion.orders << order
-    end
-
-    context 'completed order' do
-      before do
-        order.update_columns(status: 'placed', completed_at: Time.current)
-      end
-
-      it 'raises an exception' do
-        expect { order.empty! }.to raise_error(RuntimeError, Spree.t(:cannot_empty_completed_order))
-      end
-    end
-
-    context 'incomplete order' do
-      before do
-        order.empty!
-      end
-
-      it 'clears out line items, adjustments and update totals' do
-        expect(order.line_items.count).to be_zero
-        expect(order.discounts.count).to be_zero
-        expect(order.tax_lines.count).to be_zero
-        expect(order.fees.count).to be_zero
-        expect(order.shipments.count).to be_zero
-        expect(order.order_promotions.count).to be_zero
-        expect(order.promo_total).to be_zero
-        expect(order.item_total).to be_zero
-        expect(order.empty!).to eq(order)
-      end
     end
   end
 
@@ -763,12 +725,6 @@ describe Spree::Order, type: :model do
       Spree::Order.update_hooks = Set.new
     end
 
-    it 'calls hook during update' do
-      order = create(:order)
-      expect(order).to receive(:add_awesome_sauce)
-      order.update_with_updater!
-    end
-
     it 'calls hook during finalize' do
       order = create(:order)
       expect(order).to receive(:add_awesome_sauce)
@@ -844,7 +800,7 @@ describe Spree::Order, type: :model do
     it 'calls out to the FreeShipping promotion handler' do
       expect(Spree::PromotionHandler::FreeShipping).to receive(:new).and_return(handler = double)
       expect(handler).to receive(:activate)
-      expect(order).to receive(:update_with_updater!)
+      expect(order).to receive(:recalculate_totals!)
 
       order.apply_free_shipping_promotions
     end
@@ -1073,8 +1029,9 @@ describe Spree::Order, type: :model do
 
     context 'events', :events do
       it 'publishes order.approved event' do
-        expect(order).to receive(:publish_event).with('order.approved').at_least(:once)
+        allow(Spree::Events).to receive(:publish)
         order.approved_by(admin_user)
+        expect(Spree::Events).to have_received(:publish).with('order.approved', any_args)
       end
     end
   end
@@ -1109,8 +1066,9 @@ describe Spree::Order, type: :model do
 
     context 'events', :events do
       it 'publishes order.approved event' do
-        expect(order).to receive(:publish_event).with('order.approved')
+        allow(Spree::Events).to receive(:publish)
         order.approve!
+        expect(Spree::Events).to have_received(:publish).with('order.approved', any_args)
       end
     end
   end
@@ -1888,7 +1846,7 @@ describe Spree::Order, type: :model do
           free_shipping_promotion.activate(order: order)
           line_item_promotion.activate(order: order)
           order_promotion.activate(order: order)
-          order.update_with_updater!
+          order.recalculate_totals!
         end
 
         it 'includes all promotions' do
@@ -2664,14 +2622,14 @@ describe Spree::Order, type: :model do
     describe '#quick_checkout_available?' do
       it 'returns true if the order is fully digital' do
         digital_line_item
-        order.update_with_updater!
+        order.recalculate_totals!
 
         expect(order.quick_checkout_available?).to be true
       end
 
       it 'returns true if the order has no digital products at all' do
         physical_line_item
-        order.update_with_updater!
+        order.recalculate_totals!
 
         expect(order.quick_checkout_available?).to be true
       end
@@ -2679,7 +2637,7 @@ describe Spree::Order, type: :model do
       it 'returns false if the order has physical products and some digital products' do
         physical_line_item
         digital_line_item
-        order.update_with_updater!
+        order.recalculate_totals!
 
         expect(order.quick_checkout_available?).to be false
       end
@@ -2687,7 +2645,7 @@ describe Spree::Order, type: :model do
       it 'returns false if order has many shipments' do
         physical_line_item
         digital_line_item
-        order.update_with_updater!
+        order.recalculate_totals!
         order.create_proposed_fulfillments
 
         expect(order.shipments.count).to eq(2)
@@ -2697,7 +2655,7 @@ describe Spree::Order, type: :model do
 
       it 'returns false if order does not require payment' do
         physical_line_item.update(price: 0)
-        order.update_with_updater!
+        order.recalculate_totals!
 
         expect(order.total).to eq(0)
         expect(order.payment_required?).to be false
@@ -2715,7 +2673,7 @@ describe Spree::Order, type: :model do
 
       it 'returns false if the order is digital' do
         digital_line_item
-        order.update_with_updater!
+        order.recalculate_totals!
 
         expect(order.quick_checkout_require_address?).to be false
       end

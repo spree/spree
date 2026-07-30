@@ -74,7 +74,7 @@ module Spree
     end
 
     def persist_merge
-      updater.update
+      Spree::Orders::RecalculateTotals.call(order: order)
     end
 
     def handle_gift_card(other_order)

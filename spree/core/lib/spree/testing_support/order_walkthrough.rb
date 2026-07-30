@@ -36,7 +36,7 @@ class OrderWalkthrough
 
     return complete_cart!(cart) if state.to_sym == :complete
 
-    cart.update_with_updater!
+    cart.recalculate_totals!
     cart
   end
 
@@ -55,7 +55,7 @@ class OrderWalkthrough
 
   def self.delivery(cart)
     # Rates were proposed with the address; keep the selected defaults.
-    cart.update_with_updater!
+    cart.recalculate_totals!
   end
 
   def self.payment(cart)

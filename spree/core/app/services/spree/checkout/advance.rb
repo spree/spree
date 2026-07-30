@@ -21,7 +21,7 @@ module Spree
           return result if result.failure?
         end
 
-        cart.update_with_updater!
+        cart.recalculate_totals!
         success(cart)
       end
     end

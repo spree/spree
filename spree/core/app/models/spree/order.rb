@@ -75,7 +75,7 @@ module Spree
     # would drop warnings already recorded upstream.
     def remove_out_of_stock_items!
       existing_warnings = warnings
-      result = Spree::Carts::RemoveOutOfStockItems.call(order: self)
+      result = Spree::Carts::RemoveOutOfStockItems.call(cart: self)
       return self unless result.success?
 
       order, _messages, new_warnings = result.value
@@ -539,8 +539,17 @@ module Spree
       @updater ||= Spree.order_updater.new(self)
     end
 
+    # Recomputes and persists money totals (item, tax, promotion, delivery)
+    # and derived item counts. Convenience for
+    # {Spree::Orders::RecalculateTotals}.
+    def recalculate_totals!
+      Spree::Orders::RecalculateTotals.call(order: self)
+    end
+
+    # @deprecated Use {#recalculate_totals!}; removed in 6.1.
     def update_with_updater!
-      updater.update
+      Spree::Deprecation.warn('Spree::Order#update_with_updater! is deprecated and will be removed in Spree 6.1. Use #recalculate_totals! instead.')
+      recalculate_totals!
     end
 
     # @deprecated Use {Spree::Carts::Merge}; removed in 6.1.
@@ -598,7 +607,7 @@ module Spree
     # @param override_email [Boolean] whether to override the order email with the user's email
     # @return [Spree::ServiceModule::Result]
     def associate_user!(user, override_email = true)
-      Spree.cart_associate_service.call(guest_order: self, user: user, override_email: override_email)
+      Spree.cart_associate_service.call(guest_cart: self, user: user, override_email: override_email)
     end
 
     def disassociate_user!
@@ -905,7 +914,7 @@ module Spree
 
     def apply_free_shipping_promotions
       Spree::PromotionHandler::FreeShipping.new(self).activate
-      update_with_updater!
+      recalculate_totals!
     end
 
     # Applies user promotions when login after filling the cart
@@ -1196,7 +1205,7 @@ module Spree
         payments.store_credits.pending.each(&:void!)
       end
 
-      update_with_updater!
+      recalculate_totals!
       send_order_canceled_webhook
     end
 

@@ -10,7 +10,7 @@ module Spree
     #
     # Order totals are NOT recalculated here. Callers (Spree::Orders::Create
     # and Spree::Orders::Update) are responsible for running shipment
-    # rebuilding and a final `order.update_with_updater!` once their
+    # rebuilding and a final `order.recalculate_totals!` once their
     # full pipeline (items, shipments, coupons) has run.
     class UpsertItems
       prepend Spree::ServiceModule::Base

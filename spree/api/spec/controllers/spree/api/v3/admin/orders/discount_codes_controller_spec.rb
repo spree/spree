@@ -67,7 +67,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountCodesController, type: :co
 
     it 'removes the promotion and clears the stored code' do
       order.update!(coupon_code: 'save5')
-      order.update_with_updater!
+      order.recalculate_totals!
       expect(order.reload.discounts.where(promotion_id: promotion.id)).to be_present
 
       delete :destroy, params: { order_id: order.prefixed_id, id: 'save5' }, as: :json

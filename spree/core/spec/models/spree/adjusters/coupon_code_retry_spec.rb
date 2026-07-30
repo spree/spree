@@ -14,13 +14,13 @@ describe 'coupon code retry on recalculation' do
 
   it 'activates the pending code once the cart qualifies and deactivates below threshold' do
     cart.update!(coupon_code: 'save5')
-    cart.update_with_updater!
+    cart.recalculate_totals!
     expect(cart.reload.discounts.where(promotion_id: promotion.id)).to be_empty
 
     # Grow the cart past the threshold — recalculation applies the code.
     create(:line_item, cart: cart, order: nil, price: 25)
     cart.line_items.reload
-    cart.update_with_updater!
+    cart.recalculate_totals!
 
     expect(cart.reload.discounts.where(promotion_id: promotion.id)).to be_present
     expect(cart.order_promotions.where(promotion_id: promotion.id)).to be_present
@@ -28,7 +28,7 @@ describe 'coupon code retry on recalculation' do
     # Shrink below the threshold — rows deactivate, the code stays.
     cart.line_items.order(:created_at).last.destroy!
     cart.line_items.reload
-    cart.update_with_updater!
+    cart.recalculate_totals!
 
     expect(cart.reload.discounts.where(promotion_id: promotion.id)).to be_empty
     expect(cart.read_attribute(:coupon_code)).to eq('save5')
@@ -37,7 +37,7 @@ describe 'coupon code retry on recalculation' do
   it 'clears the persisted code when the promotion is removed' do
     cart.line_items.first.update!(price: 50)
     cart.update!(coupon_code: 'save5')
-    cart.update_with_updater!
+    cart.recalculate_totals!
     expect(cart.reload.discounts.where(promotion_id: promotion.id)).to be_present
 
     handler = Spree::PromotionHandler::Coupon.new(cart)

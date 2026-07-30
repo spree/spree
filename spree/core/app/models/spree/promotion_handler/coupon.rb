@@ -77,7 +77,7 @@ module Spree
 
           remove_promotion_adjustments(promotion)
           remove_promotion_line_items(promotion)
-          order.update_with_updater!
+          order.recalculate_totals!
 
           set_success_code :adjustments_deleted
         else
@@ -208,7 +208,7 @@ module Spree
         if discount || created_line_items
           handle_coupon_code(discount, coupon_code) if discount
 
-          order.update_with_updater!
+          order.recalculate_totals!
           set_success_code :coupon_code_applied
         elsif order.promotions.with_coupon_code(order.coupon_code)
           # since CouponCode is disposable...

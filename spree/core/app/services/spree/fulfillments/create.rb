@@ -15,9 +15,10 @@ module Spree
     #
     # The resulting cost is frozen only for fulfillments registered with
     # status: 'shipped' (rate refresh skips shipped shipments). Pending/ready
-    # fulfillments participate in the standard rate machinery — the order
-    # updater re-prices them from the delivery method calculators on the next
-    # recalculation, exactly like shipments created via split/transfer.
+    # fulfillments participate in the standard rate machinery — this service
+    # re-prices them from the delivery method calculators before the final
+    # totals recalculation (repricing a completed order's delivery is an
+    # explicit post-placement edit, never a side effect of a totals refresh).
     class Create
       prepend Spree::ServiceModule::Base
 
@@ -77,13 +78,27 @@ module Spree
             fulfillment.update!(order)
           end
 
-          order.reload.update_with_updater!
+          reprice_pending_fulfillments(order.reload)
+          order.recalculate_totals!
         end
 
         success(fulfillment.reload)
       end
 
       private
+
+      # Moved here from the old updater completed-order branch: pending/ready
+      # fulfillments re-price from backoffice-visible delivery methods;
+      # fulfilled ones keep their frozen cost.
+      def reprice_pending_fulfillments(order)
+        order.fulfillments.each do |fulfillment|
+          next unless fulfillment.persisted?
+          next if fulfillment.fulfilled?
+
+          fulfillment.refresh_rates(Spree::DeliveryMethod::DISPLAY_ON_BACK_END)
+          fulfillment.update_amounts
+        end
+      end
 
       # Units that can still be moved into a manual fulfillment: on-hand or
       # backordered units sitting in shipments that haven't shipped or been

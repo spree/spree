@@ -17,7 +17,7 @@ describe Spree::Order do
       persisted_order.create_proposed_fulfillments
       persisted_order.set_shipments_cost
       create(:discount, order: persisted_order, line_item: line_item, amount: -line_item.amount, label: 'Promotion', kind: 'manual')
-      persisted_order.update_with_updater!
+      persisted_order.recalculate_totals!
     end
 
     it 'still requires payment (shipping keeps the total above zero)' do

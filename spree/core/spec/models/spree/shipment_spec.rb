@@ -99,7 +99,7 @@ describe Spree::Shipment, type: :model do
     let(:shipment) { create(:shipment, stock_location: create(:stock_location)) }
 
     before do
-      allow(order).to receive :update_with_updater!
+      allow(order).to receive :recalculate_totals!
     end
 
     it 'generates a number containing a letter + 11 numbers' do
@@ -431,7 +431,7 @@ describe Spree::Shipment, type: :model do
     it 'returns true if order is digital and it does not have a ship address' do
       order.ship_address = nil
       order.line_items = [digital_line_item]
-      order.update_with_updater!
+      order.recalculate_totals!
       expect(order.digital?).to eq(true)
       expect(shipment.send(:can_get_rates?)).to be_truthy
     end
@@ -653,7 +653,7 @@ describe Spree::Shipment, type: :model do
     let(:inventory_unit) { create(:inventory_unit, state: 'on_hand', line_item: line_item, variant: variant, quantity: 1) }
 
     it 'cancels the shipment' do
-      allow(shipment.order).to receive(:update_with_updater!)
+      allow(shipment.order).to receive(:recalculate_totals!)
 
       shipment.state = 'pending'
       expect(shipment).to receive(:after_cancel)
@@ -701,7 +701,7 @@ describe Spree::Shipment, type: :model do
     let(:inventory_unit) { create(:inventory_unit, quantity: 1, line_item: line_item, variant: variant) }
 
     it 'transitions state to ready if the order is ready' do
-      allow(shipment.order).to receive(:update_with_updater!)
+      allow(shipment.order).to receive(:recalculate_totals!)
 
       shipment.state = 'canceled'
       expect(shipment).to receive(:determine_state).and_return('ready')
@@ -711,7 +711,7 @@ describe Spree::Shipment, type: :model do
     end
 
     it 'transitions state to pending if the order is not ready' do
-      allow(shipment.order).to receive(:update_with_updater!)
+      allow(shipment.order).to receive(:recalculate_totals!)
 
       shipment.state = 'canceled'
       expect(shipment).to receive(:determine_state).and_return('pending')
@@ -746,7 +746,7 @@ describe Spree::Shipment, type: :model do
       let(:subject) { shipment_with_inventory_units.ship! }
 
       before do
-        allow(order).to receive(:update_with_updater!)
+        allow(order).to receive(:recalculate_totals!)
         allow(shipment_with_inventory_units).to receive_messages(require_inventory: false, update_order: true)
       end
 
@@ -760,7 +760,7 @@ describe Spree::Shipment, type: :model do
     ['ready', 'canceled'].each do |status|
       context "from #{status}" do
         before do
-          allow(order).to receive(:update_with_updater!)
+          allow(order).to receive(:recalculate_totals!)
           allow(shipment).to receive_messages(require_inventory: false, update_order: true, status: status)
         end
 
@@ -849,7 +849,7 @@ describe Spree::Shipment, type: :model do
 
     it 'leaves typed adjustment columns to the order recalculation' do
       create(:fee, order: shipment.order, fulfillment: shipment, label: 'Additional', amount: 5)
-      shipment.order.update_with_updater!
+      shipment.order.recalculate_totals!
       expect(shipment.reload.adjustment_total).to eq(5)
     end
   end
@@ -966,13 +966,13 @@ describe Spree::Shipment, type: :model do
       end
 
       it 'triggers the order recalculation' do
-        expect(shipment.order).to receive(:update_with_updater!)
+        expect(shipment.order).to receive(:recalculate_totals!)
         shipment.save
       end
 
       it 'does not trigger recalculation if shipment is fulfilled' do
         shipment.status = 'fulfilled'
-        expect(shipment.order).not_to receive(:update_with_updater!)
+        expect(shipment.order).not_to receive(:recalculate_totals!)
         shipment.save
       end
     end
@@ -980,7 +980,7 @@ describe Spree::Shipment, type: :model do
     context 'cost does not change' do
       it 'does not trigger the order recalculation' do
         shipment.save!
-        expect(shipment.order).not_to receive(:update_with_updater!)
+        expect(shipment.order).not_to receive(:recalculate_totals!)
         shipment.save
       end
     end

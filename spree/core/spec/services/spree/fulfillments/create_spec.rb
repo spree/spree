@@ -204,7 +204,7 @@ module Spree
         params[:delivery_method] = delivery_method
 
         # Settle factory-persisted totals before measuring invariance.
-        order.update_with_updater!
+        order.recalculate_totals!
         original_total = order.reload.total
         source_shipment_cost = source_shipment.reload.cost
 

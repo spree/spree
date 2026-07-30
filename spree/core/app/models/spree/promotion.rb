@@ -203,7 +203,7 @@ module Spree
       action_taken
     end
 
-    # called anytime order.update_with_updater! happens
+    # called anytime order.recalculate_totals! happens
     def eligible?(promotable, options = {})
       return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
 

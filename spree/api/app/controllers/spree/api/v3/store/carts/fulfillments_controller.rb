@@ -49,7 +49,7 @@ module Spree
             def recalculate
               return if @cart.complete? || @cart.canceled?
 
-              @cart.update_with_updater!
+              @cart.recalculate_totals!
             rescue StandardError => e
               Rails.error.report(e, context: { order_id: @cart.id }, source: 'spree.checkout')
             ensure

@@ -54,7 +54,7 @@ module Spree
             state: 'checkout',
             response_code: store_credit.generate_authorization_code
           )
-          order.update_with_updater!
+          order.recalculate_totals!
         end
 
         success(order.reload)

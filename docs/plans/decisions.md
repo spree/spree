@@ -711,3 +711,22 @@ stays the OSS default), and the **EasyPost-or-Shippo** multi-carrier
 gem for delivery rates (pick still pending; Integration + provider
 pair). Stripe Tax remains buildable by third parties but is not the
 reference — and carries the merchant-of-record caveat recorded above.
+
+
+## 2026-07-30 — Service workflows: one step DSL, Carts::Complete as the stress test
+
+Services, sagas, extension hooks and events unify under a declared step
+DSL evolved from ServiceModule in place (plan:
+`6.0-service-workflows.md`, targeted 6.0). Medusa's workflows are the DX
+benchmark; the runtime stays plain Ruby in Rails transactions — no
+engine, no execution-state tables. Explicit transaction/io_step
+boundaries, per-step compensation, in-transaction `hook` extension
+points and declared `emit` events; the consistency doctrine (step →
+sync subscriber → async subscriber) ships as documentation.
+**Carts::Complete is the reference implementation and acceptance test:**
+the cart→order swap already exercises every hard property (in-lock
+verification, out-of-transaction payment I/O, compensation, replay
+idempotency, sweeper resume) and its spec battery must pass unmodified
+after the retrofit. Durable flows compile onto ActiveJob Continuations
+in Phase 2 (imports, upgrade migrations, payout runs) and may land
+post-GA without blocking the DSL.

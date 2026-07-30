@@ -81,7 +81,7 @@ FactoryBot.define do
         create(:shipment, order: order, cost: evaluator.shipment_cost, stock_location: stock_location)
         order.fulfillments.reload
 
-        order.update_with_updater!
+        order.recalculate_totals!
       end
 
       factory :completed_order_with_totals do

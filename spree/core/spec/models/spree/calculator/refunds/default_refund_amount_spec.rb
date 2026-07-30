@@ -24,7 +24,7 @@ describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
 
       before do
         create(:discount, order: order, line_item: line_item, amount: discount_amount, label: 'Discount', kind: 'manual')
-        order.update_with_updater!
+        order.recalculate_totals!
         line_item.reload
       end
 
@@ -36,7 +36,7 @@ describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
 
       before do
         create(:discount, order: order, fulfillment: shipment, amount: -50, label: 'Free shipping', kind: 'promotion')
-        order.update_with_updater!
+        order.recalculate_totals!
       end
 
       it 'does not affect the line item refund' do

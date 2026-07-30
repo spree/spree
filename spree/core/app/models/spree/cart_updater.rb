@@ -6,15 +6,6 @@ module Spree
   class CartUpdater < OrderUpdater
     alias cart order
 
-    def update
-      cart.association(:line_items).reset if cart.persisted?
-      cart.association(:fulfillments).reset if cart.persisted?
-
-      update_item_count
-      update_totals
-      persist_totals
-    end
-
     def update_payment_total
       cart.payment_total = payments.completed.includes(:refunds).inject(0) { |sum, payment| sum + payment.amount - payment.refunds.sum(:amount) }
     end

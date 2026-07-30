@@ -1,4 +1,9 @@
 module Spree
+  # Granular money calculator for orders (Spree::CartUpdater covers carts).
+  # The full-recalculation sequence is owned by
+  # Spree::Carts::RecalculateTotals / Spree::Orders::RecalculateTotals —
+  # this class provides the individual computations those steps (and a few
+  # surgical partial-update call sites) invoke.
   class OrderUpdater
     attr_reader :order
     delegate :payments, :line_items, :fulfillments, :update_hooks, :quantity, to: :order
@@ -7,29 +12,14 @@ module Spree
       @order = order
     end
 
-    # This is a multi-purpose method for processing logic related to changes in the Order.
-    # It is meant to be called from various observers so that the Order is aware of changes
-    # that affect totals and other values stored in the Order.
-    #
-    # This method should never do anything to the Order that results in a save call on the
-    # object with callbacks (otherwise you will end up in an infinite recursion as the
-    # associations try to save and then in turn try to call +update!+ again.)
+    # @deprecated Use {Spree::Orders::RecalculateTotals} /
+    #   {Spree::Carts::RecalculateTotals} (or the model's
+    #   #recalculate_totals! convenience); removed in 6.1. The full
+    #   recalculation sequence lives in that flow — this class is the
+    #   granular calculator behind it.
     def update
-      # Drop possibly stale association caches — an earlier recalculation on
-      # this instance may have loaded them mid-mutation.
-      order.association(:line_items).reset if order.persisted?
-      order.association(:fulfillments).reset if order.persisted?
-
-      update_item_count
-      update_totals
-      if order.completed?
-        update_payment_state
-        update_fulfillments
-        update_fulfillment_status
-        update_delivery_total
-      end
-      run_hooks
-      persist_totals
+      Spree::Deprecation.warn('Spree::OrderUpdater#update is deprecated and will be removed in Spree 6.1. Use Spree::Orders::RecalculateTotals / Spree::Carts::RecalculateTotals (or #recalculate_totals!) instead.')
+      Spree::Carts::RecalculateTotals.call(cart: order)
     end
 
     def run_hooks

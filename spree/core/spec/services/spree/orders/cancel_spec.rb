@@ -15,9 +15,10 @@ module Spree
         it { expect { result }.to change(order, :status).to('canceled') }
         it { expect(result.value).to eq(order) }
 
-        it 'publishes order.canceled event' do
-          expect(order).to receive(:publish_event).with('order.canceled', hash_including(:notify_customer))
+        it 'publishes order.canceled event', :events do
+          allow(Spree::Events).to receive(:publish)
           result
+          expect(Spree::Events).to have_received(:publish).with('order.canceled', hash_including(:notify_customer), any_args)
         end
       end
 
@@ -27,9 +28,10 @@ module Spree
         it { expect(result).to be_failure }
         it { expect(result.error).to be_present }
 
-        it 'does not publish order.canceled event' do
-          expect(order).not_to receive(:publish_event).with('order.canceled')
+        it 'does not publish order.canceled event', :events do
+          allow(Spree::Events).to receive(:publish)
           result
+          expect(Spree::Events).not_to have_received(:publish).with('order.canceled', any_args)
         end
       end
     end

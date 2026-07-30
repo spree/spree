@@ -90,8 +90,8 @@ module Spree
                 expect(order.reload.total).to eq(100)
               end
 
-              it 'calls update_with_updater!' do
-                expect(order).to receive(:update_with_updater!)
+              it 'calls recalculate_totals!' do
+                expect(order).to receive(:recalculate_totals!)
                 subject.apply
               end
 

@@ -12,7 +12,7 @@ FactoryBot.define do
       after(:create) do |cart, evaluator|
         create_list(:line_item, evaluator.line_items_count, cart: cart, order: nil, price: evaluator.line_items_price)
         cart.line_items.reload
-        cart.update_with_updater!
+        cart.recalculate_totals!
       end
     end
   end

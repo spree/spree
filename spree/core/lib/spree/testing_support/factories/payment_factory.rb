@@ -29,7 +29,7 @@ FactoryBot.define do
   end
 
   factory :store_credit_payment, class: Spree::Payment, parent: :payment do
-    payment_method { create(:store_credit_payment_method, store: order.store) }
-    source { create(:store_credit, store: order.store, user: order.user) }
+    payment_method { create(:store_credit_payment_method, store: (order || cart).store) }
+    source { create(:store_credit, store: (order || cart).store, user: (order || cart).user) }
   end
 end

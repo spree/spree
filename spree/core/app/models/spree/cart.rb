@@ -134,7 +134,9 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[email completed_at token updated_at]
 
-    attr_accessor :temporary_address, :use_billing, :use_shipping, :skip_market_resolution
+    attr_accessor :temporary_address, :use_shipping, :skip_market_resolution
+
+    before_validation :clone_shipping_address, if: :use_shipping?
 
     before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
 
@@ -198,8 +200,17 @@ module Spree
       @updater ||= Spree::CartUpdater.new(self)
     end
 
+    # Recomputes and persists money totals (item, tax, promotion, delivery)
+    # and derived item counts. Convenience for
+    # {Spree::Carts::RecalculateTotals}.
+    def recalculate_totals!
+      Spree::Carts::RecalculateTotals.call(cart: self)
+    end
+
+    # @deprecated Use {#recalculate_totals!}; removed in 6.1.
     def update_with_updater!
-      updater.update
+      Spree::Deprecation.warn('Spree::Cart#update_with_updater! is deprecated and will be removed in Spree 6.1. Use #recalculate_totals! instead.')
+      recalculate_totals!
     end
 
     # The address tax is computed against, honoring the tax_using_ship_address
@@ -221,6 +232,10 @@ module Spree
 
     def shipping_eq_billing_address?
       bill_address == ship_address
+    end
+
+    def use_shipping?
+      use_shipping.in?([true, 'true', '1'])
     end
 
     def quantity
@@ -364,7 +379,7 @@ module Spree
       line_items.reload.each(&:update_price)
       rebuild_fulfillments!
       set_fulfillments_cost
-      update_with_updater!
+      recalculate_totals!
     end
 
     # Duck-type parity with the order-side inventory hooks: carts have no
@@ -549,6 +564,12 @@ module Spree
     end
 
     private
+
+    # Same-object copy as Spree::Order — the two FKs share one address row.
+    def clone_shipping_address
+      self.bill_address = ship_address if ship_address
+      true
+    end
 
     def currency_must_be_supported_by_store
       return if currency.blank? || store.blank?

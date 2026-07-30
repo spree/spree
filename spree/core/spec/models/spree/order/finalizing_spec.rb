@@ -52,7 +52,7 @@ describe Spree::Order, type: :model do
     it 'freezes adjustment recalculation (order-level freeze)' do
       order.finalize!
       expect(Spree::Adjusters::Promotion).not_to receive(:adjust)
-      order.update_with_updater!
+      order.recalculate_totals!
     end
 
     context 'order is considered risky' do

@@ -10,7 +10,7 @@ module Spree
       before do
         create_list(:line_item, 2, order: order, price: 10)
         order.reload
-        order.update_with_updater!
+        order.recalculate_totals!
       end
 
       it 'updates payment totals' do
@@ -71,12 +71,12 @@ module Spree
       end
     end
 
-    describe '#update_with_updater!' do
+    describe '#recalculate_totals!' do
       it 'updates item count' do
         create(:line_item, order: order)
         create(:line_item, order: order)
 
-        order.update_with_updater!
+        order.recalculate_totals!
 
         expect(order.item_count).to eq(2)
       end
@@ -220,20 +220,12 @@ module Spree
       before { order.update(completed_at: Time.current) }
 
       describe '#update' do
-        it 'updates payment state' do
-          expect(updater).to receive(:update_payment_state)
-          updater.update
-        end
-
-        it 'updates fulfillment status' do
-          expect(updater).to receive(:update_fulfillment_status)
-          updater.update
-        end
-
-        it 'updates delivery total again after updating fulfillments' do
-          expect(updater).to receive(:update_delivery_total).ordered
-          expect(updater).to receive(:update_fulfillments).ordered
-          expect(updater).to receive(:update_delivery_total).ordered
+        it 'delegates to Carts::RecalculateTotals with a deprecation warning, money only' do
+          expect(Spree::Deprecation).to receive(:warn).with(/updater#update is deprecated/i)
+          expect(updater).not_to receive(:update_payment_state)
+          expect(updater).not_to receive(:update_fulfillments)
+          expect(updater).to receive(:update_totals).and_call_original
+          expect(updater).to receive(:persist_totals).and_call_original
           updater.update
         end
       end

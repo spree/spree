@@ -35,7 +35,7 @@ module Spree
           add_items(order) if @params[:items].present?
           build_fulfillments(order)
           apply_coupon(order) if @params[:coupon_code].present?
-          order.update_with_updater!
+          order.recalculate_totals!
         end
 
         success(order.reload)

@@ -674,7 +674,7 @@ module Spree
       # replacement) and completed orders are frozen.
       return if previously_new_record?
 
-      owner.update_with_updater! if saved_change_to_cost? && status != 'fulfilled' && owner&.persisted? && !owner.completed?
+      owner.recalculate_totals! if saved_change_to_cost? && status != 'fulfilled' && owner&.persisted? && !owner.completed?
     end
   end
 end

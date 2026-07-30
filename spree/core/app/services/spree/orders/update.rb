@@ -27,7 +27,7 @@ module Spree
             build_fulfillments
           end
 
-          @order.update_with_updater!
+          @order.recalculate_totals!
         end
 
         success(@order.reload)

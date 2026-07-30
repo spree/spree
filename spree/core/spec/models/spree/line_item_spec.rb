@@ -187,7 +187,7 @@ describe Spree::LineItem, type: :model do
       # every cart/checkout flow runs after the save.
       it 'refreshes tax through the order recalculation' do
         line_item.save
-        line_item.order.update_with_updater!
+        line_item.order.recalculate_totals!
 
         expect(line_item.reload.pre_tax_amount).to eq(line_item.price * line_item.quantity)
       end

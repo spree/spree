@@ -33,7 +33,7 @@ module Spree
           other_cart.reload.destroy! if other_cart.line_items.reload.empty?
         end
 
-        cart.update_with_updater!
+        cart.recalculate_totals!
         success(cart)
       end
     end

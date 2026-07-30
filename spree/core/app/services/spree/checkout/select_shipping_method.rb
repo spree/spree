@@ -36,9 +36,9 @@ module Spree
         end
 
         # Note: selected_shipping_rate_id= now automatically updates order totals,
-        # but we still need update_with_updater! here because Checkout::Advance
+        # but we still need recalculate_totals! here because Checkout::Advance
         # expects the full updater to run (including state updates) when this service succeeds.
-        order.update_with_updater!
+        order.recalculate_totals!
 
         success(order)
       end

@@ -270,7 +270,7 @@ module Spree
         order = reimbursement.order
         # Sync totals (the factory leaves the delivery repricing unapplied),
         # then set the payment amount to the order total of 20
-        order.update_with_updater!
+        order.recalculate_totals!
         order.payments.first.update_column :amount, order.total
         # Creates a refund of 20
         create :refund, amount: order.total,
@@ -278,7 +278,7 @@ module Spree
                         reimbursement: reimbursement
         order = reimbursement.order.reload
         # Update the order totals so payment_total goes to 0 reflecting the refund..
-        order.update_with_updater!
+        order.recalculate_totals!
         # Order Total - (Payment Total + Reimbursed)
         # 20 - (0 + 20) = 0
         expect(order.outstanding_balance).to eq 0
@@ -294,7 +294,7 @@ module Spree
         order.payments << create(:payment, state: :completed, order: order, amount: order.total)
 
         create(:refund, amount: 10, payment: order.payments.first)
-        order.update_with_updater!
+        order.recalculate_totals!
         # Order Total - (Payment Total + Reimbursed)
         # 10 - (0 + 0) = 0
         expect(order.outstanding_balance).to eq 10

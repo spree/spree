@@ -1,95 +1,161 @@
 module Spree
   module Carts
-    # Completes a cart into an immutable order — a three-phase pipeline with
+    # Completes a cart into an immutable order — a three-phase flow with
     # explicit transaction boundaries. External payment I/O never runs inside
     # a DB transaction; everything after a successful charge is small,
     # idempotent and resumable (docs/plans/6.0-cart-order-split.md).
     #
-    #   PREPARE  (txn)  replay → lock → in-lock recalculation → drift guard →
-    #                   validate → draft order + copies (unique orders.cart_id)
-    #   PAYMENT         offline methods collapse into FINALIZE; external
-    #                   gateways run outside any txn with compensation
-    #   FINALIZE (txn)  inventory + counters + draft→placed + cart.completed_at
-    #                   + RecomputeStatuses; events after commit
-    class Complete
-      prepend Spree::ServiceModule::Base
-
+    #   PREPARE  (txn, cart lock)  replay → TTL guard → in-lock recalculation
+    #                              → drift guard → validate → draft order +
+    #                              copies (unique orders.cart_id)
+    #   PAYMENT  (external_step)   offline methods collapse into FINALIZE;
+    #                              gateways run outside any txn — a
+    #                              pre-capture failure triggers the armed
+    #                              on_flow_failure compensation
+    #   FINALIZE (own txn)         inventory + counters + draft→placed +
+    #                              cart.completed_at + RecomputeStatuses;
+    #                              events after commit
+    class Complete < Spree::Workflow
       COMPLETING_TTL = 5.minutes
 
-      def call(cart:, expected_total: nil, payment_pending: false)
-        # Legacy signature bridge: completing an already-created draft order
-        # (admin/B2B path) funnels through the same finalize semantics.
-        return complete_order(cart, payment_pending: payment_pending) if cart.is_a?(Spree::Order)
+      argument :cart, [Spree::Cart, Spree::Order]
+      argument :expected_total, default: nil
+      argument :payment_pending, :boolean, default: false
+      returns :order
 
-        # P1 — replay: a double-clicked Place Order must get the order back
-        if (existing = completion_result(cart))
-          return finalize_or_return(cart, existing)
-        end
-
-        order = nil
-
-        # PHASE P — PREPARE
-        cart.with_lock do
-          if cart.completing? && cart.completing_at > COMPLETING_TTL.ago
-            return failure(cart, code: 'completion_in_progress')
-          end
-
-          # In-lock recalculation — the totals about to be charged are
-          # computed here, not trusted from earlier requests
-          cart.update_with_updater!
-
-          if expected_total.present? && BigDecimal(expected_total.to_s) != cart.total
-            return failure(cart, code: 'cart_changed', current_total: cart.total)
-          end
-
-          validation = Spree::Carts::Validate.new.errors_for(cart)
-          return failure(cart, code: 'validation_failed', errors: validation) if validation.any?
-
-          cart.update_columns(completing_at: Time.current)
-          order = create_draft_order!(cart)
-        end
-
-        # PHASE Y — PAYMENT (external I/O outside any transaction)
-        if order.payment_required? && !payment_covered?(order)
-          begin
-            order.process_payments!
-          rescue Spree::Core::GatewayError => e
-            return compensate!(cart, order, e.message)
-          end
-
-          unless payment_covered?(order)
-            return compensate!(cart, order, order.errors.full_messages.to_sentence.presence || Spree.t(:payment_processing_failed))
-          end
-        end
-
-        # PHASE F — FINALIZE
-        finalize!(cart, order)
-        success(order)
-      rescue ActiveRecord::RecordNotUnique
-        # Concurrent completion won the unique orders.cart_id race — replay
-        retry_result = completion_result(cart.reload)
-        retry_result ? finalize_or_return(cart, retry_result) : failure(cart, code: 'completion_in_progress')
+      # Concurrent completion lost the unique orders.cart_id race — re-enter
+      # the flow: the replay step returns the winner's order (or the TTL
+      # guard reports completion_in_progress).
+      rescue_from ActiveRecord::RecordNotUnique do |_error|
+        self.class.call(cart: cart.reload, expected_total: expected_total, payment_pending: payment_pending)
       end
+
+      # Legacy signature bridge: completing an already-created draft order
+      # (admin/B2B path) funnels through the same finalize semantics.
+      step :complete_draft_order, if: -> { cart.is_a?(Spree::Order) },
+                                  provides: [:draft_completion], halt_with: :draft_completion
+
+      # P1 — replay: a double-clicked Place Order must get the order back.
+      step :replay_completed, provides: [:replayed], halt_with: :replayed
+
+      transaction lock: :cart do
+        step :guard_concurrent_completion
+        step :recalculate_in_lock
+        step :verify_expected_total
+        step :validate_cart
+        step :mark_completing
+        step :create_draft_order, provides: [:order], on_flow_failure: :rollback_draft_order
+      end
+
+      external_step :process_payments, if: -> { order.payment_required? && !payment_covered?(order) }
+
+      run_hooks :before_finalize
+      step :finalize_completion
 
       private
 
-      # Exactly one of cart.order (single partition) or, later, the
-      # multi-vendor order group.
-      def completion_result(cart)
-        cart.order
+      # Admin/B2B draft orders bypass the cart but reuse the same finalize
+      # semantics (idempotency + inventory + reservation release in one home).
+      def complete_draft_order
+        order = cart
+        return { draft_completion: order } if order.completed?
+        return failure(order, 'Order is canceled') if order.canceled?
+
+        order.with_lock do
+          skip_payments = payment_pending || !order.payment_required?
+          order.process_payments! if !skip_payments && !payment_covered?(order)
+
+          return failure(order, order.errors.full_messages.to_sentence) if order.errors.any?
+          return failure(order, Spree.t(:payment_processing_failed)) if !skip_payments && !payment_covered?(order)
+
+          order.finalize! unless order.completed?
+          Spree::StockReservations::Release.call(owner: order)
+          Spree::Orders::RecomputeStatuses.call(order: order)
+        end
+
+        { draft_completion: order }
       end
 
-      def finalize_or_return(cart, order)
-        return success(order) if order.placed? || order.canceled?
+      # A draft here means a previous attempt died mid-pipeline — re-verify
+      # payment coverage, then re-run FINALIZE (idempotent).
+      def replay_completed
+        order = completion_result(cart)
+        return if order.nil?
+        return { replayed: order } if order.placed? || order.canceled?
 
-        # Draft order exists — a previous attempt died mid-pipeline. Resume:
-        # re-verify payment coverage, then re-run FINALIZE (idempotent).
         if order.payment_required? && !payment_covered?(order)
           return failure(cart, code: 'payment_failed', message: Spree.t(:payment_processing_failed))
         end
 
         finalize!(cart, order)
-        success(order)
+        { replayed: order }
+      end
+
+      def guard_concurrent_completion
+        failure(cart, code: 'completion_in_progress') if cart.completing? && cart.completing_at > COMPLETING_TTL.ago
+      end
+
+      # In-lock recalculation — the totals about to be charged are computed
+      # here, not trusted from earlier requests.
+      def recalculate_in_lock
+        cart.recalculate_totals!
+      end
+
+      def verify_expected_total
+        if expected_total.present? && BigDecimal(expected_total.to_s) != cart.total
+          failure(cart, code: 'cart_changed', current_total: cart.total)
+        end
+      end
+
+      def validate_cart
+        validation = Spree::Carts::Validate.new.errors_for(cart)
+        failure(cart, code: 'validation_failed', errors: validation) if validation.any?
+      end
+
+      def mark_completing
+        cart.update_columns(completing_at: Time.current)
+      end
+
+      def create_draft_order
+        { order: create_draft_order!(cart) }
+      end
+
+      def process_payments
+        order.process_payments!
+        return if payment_covered?(order)
+
+        failure(cart, code: 'payment_failed',
+                      message: order.errors.full_messages.to_sentence.presence || Spree.t(:payment_processing_failed))
+      rescue Spree::Core::GatewayError => e
+        failure(cart, code: 'payment_failed', message: e.message)
+      end
+
+      def finalize_completion
+        finalize!(cart, order)
+      end
+
+      # Y3 — armed when PREPARE commits; a pre-capture payment failure pops
+      # it. Post-capture (or covered net-terms) failures must resume through
+      # the sweeper instead — the draft is never destroyed once money moved
+      # or completion could still finalize.
+      def rollback_draft_order
+        return if order.nil?
+        return if order.payments.valid.completed.any? || payment_covered?(order)
+
+        ApplicationRecord.transaction do
+          order.payments.update_all(order_id: nil, cart_id: cart.id)
+          order.payment_sessions.update_all(order_id: nil, cart_id: cart.id)
+          order.stock_reservations.update_all(order_id: nil, cart_id: cart.id)
+          Spree::CouponCode.where(order_id: order.id).update_all(order_id: nil, cart_id: cart.id)
+          order.reload.destroy!
+          cart.update_columns(completing_at: nil)
+        end
+      end
+
+      # Exactly one of cart.order (single partition) or, later, the
+      # multi-vendor order group.
+      def completion_result(cart)
+        cart.order
       end
 
       # P7 — the copy contract: the order receives copies (line items with
@@ -221,22 +287,6 @@ module Spree
         order.payments.valid.where(state: %w[pending processing completed]).sum(:amount) >= order.total
       end
 
-      # Y3 — only pre-capture failures compensate; post-capture failures
-      # resume through the sweeper, never destroy the order.
-      def compensate!(cart, order, message)
-        if order.payments.valid.completed.none?
-          ApplicationRecord.transaction do
-            order.payments.update_all(order_id: nil, cart_id: cart.id)
-            order.payment_sessions.update_all(order_id: nil, cart_id: cart.id)
-            order.stock_reservations.update_all(order_id: nil, cart_id: cart.id)
-            Spree::CouponCode.where(order_id: order.id).update_all(order_id: nil, cart_id: cart.id)
-            order.reload.destroy!
-            cart.update_columns(completing_at: nil)
-          end
-        end
-        failure(cart, code: 'payment_failed', message: message)
-      end
-
       def finalize!(cart, order)
         ApplicationRecord.transaction do
           order.finalize! unless order.placed?
@@ -250,29 +300,6 @@ module Spree
 
       def mark_coupon_codes_used!(_cart, order)
         Spree::CouponCode.where(order_id: order.id).unused.update_all(state: 1)
-      end
-
-      # Admin/B2B draft orders bypass the cart but reuse the same finalize
-      # semantics (idempotency + inventory + reservation release in one home).
-      def complete_order(order, payment_pending: false)
-        return success(order) if order.completed?
-        return failure(order, 'Order is canceled') if order.canceled?
-
-        order.with_lock do
-          skip_payments = payment_pending || !order.payment_required?
-          order.process_payments! if !skip_payments && !payment_covered?(order)
-
-          return failure(order, order.errors.full_messages.to_sentence) if order.errors.any?
-
-          if !skip_payments && !payment_covered?(order)
-            return failure(order, Spree.t(:payment_processing_failed))
-          end
-
-          order.finalize! unless order.completed?
-          Spree::StockReservations::Release.call(owner: order)
-          Spree::Orders::RecomputeStatuses.call(order: order)
-          success(order)
-        end
       end
     end
   end

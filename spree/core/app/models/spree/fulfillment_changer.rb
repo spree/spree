@@ -118,7 +118,7 @@ module Spree
       desired_shipment.update_amounts
 
       desired_shipment.order.reload
-      desired_shipment.order.update_with_updater!
+      desired_shipment.order.recalculate_totals!
     end
 
     def new_on_hand_quantity
