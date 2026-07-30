@@ -112,6 +112,12 @@ module Spree
       update_order_total
     end
 
+    # Money only — payment_status/fulfillment_status are written exclusively
+    # by Spree::Orders::RecomputeStatuses, triggered from
+    # Spree::OrderStatusSubscriber on payment/refund/fulfillment/return
+    # events (never inline here: those records change without any money
+    # recalculation running, and most recalculations change no status
+    # inputs).
     # The sanctioned post-placement edit path: re-sums typed rows into order
     # and per-adjustable totals WITHOUT re-running promotion competition or
     # tax estimation (both stay frozen once completed). Called by the admin
