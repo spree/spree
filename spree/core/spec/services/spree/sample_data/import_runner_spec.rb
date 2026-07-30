@@ -23,7 +23,7 @@ RSpec.describe Spree::SampleData::ImportRunner, type: :service do
   end
 
   it 'enqueues row creation' do
-    expect { result }.to have_enqueued_job(Spree::Imports::CreateRowsJob)
+    expect { result }.to have_enqueued_job(Spree::Imports::ProcessJob)
   end
 
   it 'auto-maps the sample CSV columns' do
