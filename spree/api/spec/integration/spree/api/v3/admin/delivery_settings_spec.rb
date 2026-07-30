@@ -117,6 +117,8 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to embed, e.g. `members`'
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -144,6 +146,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       response '201', 'delivery zone created' do
         before { Spree::Country.find_by(iso: 'US') || create(:country_us) }
 
+        let(:expand) { 'members' }
         let(:body) do
           {
             name: 'US North-East',
