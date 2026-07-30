@@ -2110,8 +2110,8 @@ describe Spree::Order, type: :model do
     context 'when assigned address does not belong to user' do
       let(:address) { create(:address, user: create(:user)) }
 
-      it 'sets order bill address to nil' do
-        expect { subject }.to change { order.bill_address_id }.to(nil)
+      it 'does not change the existing bill address' do
+        expect { subject }.not_to(change { order.bill_address_id })
       end
     end
 
@@ -2128,8 +2128,8 @@ describe Spree::Order, type: :model do
       end
 
       context 'when assigning a different existing address' do
-        it 'sets order bill address to nil' do
-          expect { subject }.to change { order.bill_address_id }.to(nil)
+        it 'does not change the existing bill address' do
+          expect { subject }.not_to(change { order.bill_address_id })
         end
       end
     end
@@ -2215,8 +2215,8 @@ describe Spree::Order, type: :model do
     context 'when assigned address does not belong to user' do
       let(:address) { create(:address, user: create(:user)) }
 
-      it 'sets order ship address to nil' do
-        expect { subject }.to change { order.ship_address_id }.to(nil)
+      it 'does not change the existing ship address' do
+        expect { subject }.not_to(change { order.ship_address_id })
       end
     end
 
@@ -2233,8 +2233,8 @@ describe Spree::Order, type: :model do
       end
 
       context 'when assigning a different existing address' do
-        it 'sets order ship address to nil' do
-          expect { subject }.to change { order.ship_address_id }.to(nil)
+        it 'does not change the existing ship address' do
+          expect { subject }.not_to(change { order.ship_address_id })
         end
       end
     end

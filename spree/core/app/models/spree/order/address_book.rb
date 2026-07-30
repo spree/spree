@@ -16,14 +16,16 @@ module Spree
       def bill_address_id=(id)
         return if bill_address_id == id
 
-        address = Spree::Address.find_by(id: id)
-        # rubocop:disable Style/ConditionalAssignment
-        if address && user_id.present? && address.user_id == user_id
-          self['bill_address_id'] = address.id
-        else
+        if id.nil?
           self['bill_address_id'] = nil
+          reset_bill_address
+          return
         end
-        # rubocop:enable Style/ConditionalAssignment
+
+        address = Spree::Address.find_by(id: id)
+        return unless address && user_id.present? && address.user_id == user_id
+
+        self['bill_address_id'] = address.id
         reset_bill_address
       end
 
@@ -35,14 +37,16 @@ module Spree
       def ship_address_id=(id)
         return if ship_address_id == id
 
-        address = Spree::Address.find_by(id: id)
-        # rubocop:disable Style/ConditionalAssignment
-        if address && user_id.present? && address.user_id == user_id
-          self['ship_address_id'] = address.id
-        else
+        if id.nil?
           self['ship_address_id'] = nil
+          reset_ship_address
+          return
         end
-        # rubocop:enable Style/ConditionalAssignment
+
+        address = Spree::Address.find_by(id: id)
+        return unless address && user_id.present? && address.user_id == user_id
+
+        self['ship_address_id'] = address.id
         reset_ship_address
       end
 
