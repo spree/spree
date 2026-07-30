@@ -42,7 +42,7 @@ module Spree
       #
       # @return [void]
       def restrict_cancelled_order_management!
-        RESTRICTED_MODELS.each do |klass|
+        [Spree::LineItem, Spree::Adjustment, Spree::OrderPromotion].each do |klass|
           cannot [:create, :edit, :destroy], klass do |record|
             record.order.canceled?
           end
