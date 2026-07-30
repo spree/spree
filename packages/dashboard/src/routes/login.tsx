@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { SpreeError } from '@spree/admin-sdk'
 import { useAuth } from '@spree/dashboard-core'
 import { Button, Input, Label } from '@spree/dashboard-ui'
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
@@ -24,8 +25,13 @@ function LoginPage() {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       await login(data.email, data.password)
-    } catch {
-      form.setError('root', { message: t('admin.validation.invalid_email_or_password') })
+    } catch (err) {
+      // Surface the server's message (e.g. account lockout) — bad credentials and
+      // lockout share a code, so the message is the only distinguishing signal.
+      // Fall back to the generic string for network/unexpected errors.
+      const message =
+        err instanceof SpreeError ? err.message : t('admin.validation.invalid_email_or_password')
+      form.setError('root', { message })
     }
   }
 
