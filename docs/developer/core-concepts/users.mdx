@@ -1,6 +1,6 @@
 ---
 title: Users
-description: How Spree models customer and admin users — account data, roles, abilities, and access permissions across stores.
+description: How Spree models customer and admin users — Devise authentication, account data, roles, abilities, and access permissions across stores.
 ---
 
 ## Overview
@@ -12,11 +12,11 @@ Spree has two separate user types:
 
 | User type | Class | Default |
 |-----------|-------|---------|
-| Customers | `Spree.customer_class` | `Spree::Customer` |
+| Customers | `Spree.user_class` | `Spree::User` |
 | Admins | `Spree.admin_user_class` | `Spree::AdminUser` |
 
 <Info>
-You can use your own user classes. See the [Customize Authentication guide](/developer/customization/authentication) for details. `Spree.user_class` still works as a deprecated alias for `Spree.customer_class` and will be removed in Spree 6.1.
+You can use your own user classes. See the [Customize Authentication guide](/developer/customization/authentication) for details.
 </Info>
 
 ## Customers

@@ -159,7 +159,7 @@ Spree::Role.find_or_create_by(name: 'warehouse_staff')
 Assign a role to a user:
 
 ```ruby
-user = Spree.customer_class.find_by(email: 'john@example.com')
+user = Spree.user_class.find_by(email: 'john@example.com')
 role = Spree::Role.find_by(name: 'customer_service')
 user.spree_roles << role
 ```
@@ -221,7 +221,7 @@ class CustomAbility < Spree::Ability
   def initialize(user, options = {})
     alias_cancan_delete_action
 
-    @user = user || Spree.customer_class.new
+    @user = user || Spree.user_class.new
     @store = options[:store] || Spree::Current.store
 
     if @user.respond_to?(:has_spree_role?) && @user.has_spree_role?('admin')
@@ -239,7 +239,7 @@ class CustomAbility < Spree::Ability
 
   def apply_customer_service_permissions(user)
     can :manage, Spree::Order
-    can [:read, :admin], Spree.customer_class
+    can [:read, :admin], Spree.user_class
   end
 end
 ```

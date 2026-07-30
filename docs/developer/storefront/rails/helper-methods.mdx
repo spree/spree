@@ -50,11 +50,11 @@ Returns the current order object. If no order is found, it will return `nil`.
 
 ### `try_spree_current_user`
 
-<ResponseField name="try_spree_current_user" type="Spree.customer_class" description="The current user object.">
+<ResponseField name="try_spree_current_user" type="Spree.user_class" description="The current user object.">
   <SpreeUser />
 </ResponseField>
 
-Returns the current user object (class depends on the `Spree.customer_class` configuration). If the user is not signed in, it will return `nil`.
+Returns the current user object (class depends on the `Spree.user_class` configuration). If the user is not signed in, it will return `nil`.
 
 <Tip>
   If you want to check if the user is signed in, you can use the following:
