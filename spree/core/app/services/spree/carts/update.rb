@@ -134,7 +134,7 @@ module Spree
           if cart.respond_to?(:recalculate_for_address_change!)
             cart.recalculate_for_address_change!
           else
-            cart.ensure_updated_shipments
+            cart.ensure_updated_fulfillments
             if cart.ship_address.present? && cart.respond_to?(:create_proposed_fulfillments)
               cart.create_proposed_fulfillments
               cart.set_shipments_cost

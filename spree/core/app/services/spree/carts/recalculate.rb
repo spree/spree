@@ -14,7 +14,7 @@ module Spree
         order_updater.update_totals
         order_updater.persist_totals
 
-        order.ensure_updated_shipments
+        order.ensure_updated_fulfillments
 
         ::Spree::PromotionHandler::Cart.new(order, line_item).activate
         # Typed rows (discounts + tax) are rebuilt by the order-level

@@ -1,9 +1,12 @@
 module Spree
+  # @deprecated Use {Spree::Carts::Merge} (guest cart adoption on sign-in);
+  #   removed in 6.1.
   class OrderMerger
     attr_accessor :order
     delegate :updater, to: :order
 
     def initialize(order)
+      Spree::Deprecation.warn('Spree::OrderMerger is deprecated and will be removed in Spree 6.1. Use Spree::Carts::Merge instead.')
       @order = order
     end
 

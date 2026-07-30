@@ -25,7 +25,7 @@ module Spree
       let(:execute) { subject.call(line_item: line_item) }
 
       it 'ensures updated shipments' do
-        expect(order).to receive(:ensure_updated_shipments)
+        expect(order).to receive(:ensure_updated_fulfillments)
         expect(execute).to be_success
       end
     end

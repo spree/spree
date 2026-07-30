@@ -347,8 +347,14 @@ module Spree
       rebuild_fulfillments!
     end
 
-    def ensure_updated_shipments
+    def ensure_updated_fulfillments
       rebuild_fulfillments! unless completed?
+    end
+
+    # @deprecated Use {#ensure_updated_fulfillments}; removed in 6.1.
+    def ensure_updated_shipments
+      Spree::Deprecation.warn('Spree::Cart#ensure_updated_shipments is deprecated and will be removed in Spree 6.1. Use #ensure_updated_fulfillments instead.')
+      ensure_updated_fulfillments
     end
 
     # Re-prices, re-taxes and rebuilds delivery proposals — the

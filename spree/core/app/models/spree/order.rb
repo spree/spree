@@ -247,7 +247,7 @@ module Spree
     attr_accessor :use_billing, :use_shipping, :skip_market_resolution
 
     before_create :link_by_email
-    before_update :ensure_updated_shipments, :homogenize_line_item_currencies, if: :currency_changed?
+    before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
 
     with_options presence: true do
       # we want to have this case_sentive: true as changing it to false causes all SQL to use LOWER(slug)
@@ -543,6 +543,7 @@ module Spree
       updater.update
     end
 
+    # @deprecated Use {Spree::Carts::Merge}; removed in 6.1.
     def merger
       @merger ||= Spree::OrderMerger.new(self)
     end
@@ -920,7 +921,7 @@ module Spree
     end
 
     # Drops stale fulfillments so they are rebuilt from current items.
-    def ensure_updated_shipments
+    def ensure_updated_fulfillments
       if fulfillments.any? && !completed?
         fulfillments.destroy_all
         update_column(:delivery_total, 0)
@@ -928,6 +929,12 @@ module Spree
         # Manually publish update event since update_column bypasses callbacks
         publish_event('order.updated')
       end
+    end
+
+    # @deprecated Use {#ensure_updated_fulfillments}; removed in 6.1.
+    def ensure_updated_shipments
+      Spree::Deprecation.warn('Spree::Order#ensure_updated_shipments is deprecated and will be removed in Spree 6.1. Use #ensure_updated_fulfillments instead.')
+      ensure_updated_fulfillments
     end
 
     def refresh_shipment_rates(shipping_method_filter = DeliveryMethod::DISPLAY_ON_FRONT_END)
