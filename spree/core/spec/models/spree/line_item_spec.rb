@@ -200,9 +200,9 @@ describe Spree::LineItem, type: :model do
       end
     end
 
-    context 'target_shipment is provided' do
+    context 'target_fulfillment is provided' do
       it 'verifies inventory' do
-        line_item.target_shipment = Spree::Shipment.new
+        line_item.target_fulfillment = Spree::Shipment.new
         expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
         line_item.save
       end
@@ -384,7 +384,7 @@ describe Spree::LineItem, type: :model do
       it 'allows to decrease item quantity' do
         line_item = order.line_items.first
         line_item.quantity -= 1
-        line_item.target_shipment = order.shipments.first
+        line_item.target_fulfillment = order.shipments.first
         line_item.valid?
 
         expect(line_item.errors).to be_empty
@@ -393,7 +393,7 @@ describe Spree::LineItem, type: :model do
       it 'doesnt allow to increase item quantity' do
         line_item = order.line_items.first
         line_item.quantity += 2
-        line_item.target_shipment = order.shipments.first
+        line_item.target_fulfillment = order.shipments.first
         line_item.valid?
 
         expect(line_item.errors).not_to be_empty
@@ -413,7 +413,7 @@ describe Spree::LineItem, type: :model do
       it 'allows to increase quantity up to stock availability' do
         line_item = order.line_items.first
         line_item.quantity += 2
-        line_item.target_shipment = order.shipments.first
+        line_item.target_fulfillment = order.shipments.first
         line_item.valid?
 
         expect(line_item.errors).to be_empty
@@ -422,7 +422,7 @@ describe Spree::LineItem, type: :model do
       it 'doesnt allow to increase quantity over stock availability' do
         line_item = order.line_items.first
         line_item.quantity += 3
-        line_item.target_shipment = order.shipments.first
+        line_item.target_fulfillment = order.shipments.first
         line_item.valid?
 
         expect(line_item.errors).not_to be_empty

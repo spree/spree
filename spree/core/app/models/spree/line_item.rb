@@ -72,7 +72,21 @@ module Spree
 
     scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
 
-    attr_accessor :target_shipment
+    # Pins inventory-unit placement to a specific fulfillment when set
+    # (admin add-to-this-fulfillment flows).
+    attr_accessor :target_fulfillment
+
+    # @deprecated Use {#target_fulfillment}; removed in 6.1.
+    def target_shipment
+      Spree::Deprecation.warn('Spree::LineItem#target_shipment is deprecated and will be removed in Spree 6.1. Use #target_fulfillment instead.')
+      target_fulfillment
+    end
+
+    # @deprecated Use {#target_fulfillment=}; removed in 6.1.
+    def target_shipment=(value)
+      Spree::Deprecation.warn('Spree::LineItem#target_shipment= is deprecated and will be removed in Spree 6.1. Use #target_fulfillment= instead.')
+      self.target_fulfillment = value
+    end
 
     self.whitelisted_ransackable_associations = %w[variant order tax_category]
     self.whitelisted_ransackable_attributes = %w[variant_id order_id tax_category_id quantity
@@ -322,17 +336,17 @@ module Spree
     end
 
     def update_inventory
-      if (saved_changes? || target_shipment.present?) && order&.has_checkout_step?('delivery')
+      if (saved_changes? || target_fulfillment.present?) && order&.has_checkout_step?('delivery')
         verify_order_inventory
       end
     end
 
     def verify_order_inventory
-      Spree::OrderInventory.new(order, self).verify(target_shipment, is_updated: true)
+      Spree::OrderInventory.new(order, self).verify(target_fulfillment, is_updated: true)
     end
 
     def verify_order_inventory_before_destroy
-      Spree::OrderInventory.new(order, self).verify(target_shipment, removing: true)
+      Spree::OrderInventory.new(order, self).verify(target_fulfillment, removing: true)
     end
 
     def update_adjustments

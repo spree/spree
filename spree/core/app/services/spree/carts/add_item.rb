@@ -34,7 +34,7 @@ module Spree
           line_item.quantity += quantity.to_i
         end
 
-        line_item.target_shipment = options[:shipment] if options.key? :shipment
+        line_item.target_fulfillment = options[:shipment] if options.key? :shipment
 
         # `metadata` is the primary API param (maps to private_metadata).
         # Legacy `public_metadata`/`private_metadata` params kept for backward compatibility.

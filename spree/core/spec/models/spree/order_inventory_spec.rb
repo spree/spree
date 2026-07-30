@@ -89,7 +89,7 @@ describe Spree::OrderInventory, type: :model do
     end
   end
 
-  context '#determine_target_shipment' do
+  context '#determine_target_fulfillment' do
     let(:stock_location) { create :stock_location }
     let(:variant) { line_item.variant }
 
@@ -104,7 +104,7 @@ describe Spree::OrderInventory, type: :model do
     end
 
     it 'selects first non-shipped shipment that already contains given variant' do
-      shipment = subject.send(:determine_target_shipment)
+      shipment = subject.send(:determine_target_fulfillment)
       expect(shipment.fulfilled?).to be false
       expect(shipment.inventory_units_for(variant)).not_to be_empty
 
@@ -118,7 +118,7 @@ describe Spree::OrderInventory, type: :model do
       end
 
       it 'selects first non-shipped shipment that leaves from same stock_location' do
-        shipment = subject.send(:determine_target_shipment)
+        shipment = subject.send(:determine_target_fulfillment)
         shipment.reload
         expect(shipment.fulfilled?).to be false
         expect(shipment.inventory_units_for(variant)).to be_empty

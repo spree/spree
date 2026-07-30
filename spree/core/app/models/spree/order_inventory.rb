@@ -42,7 +42,7 @@ module Spree
       elsif units_count < line_item.quantity
         quantity = line_item.quantity - units_count
 
-        shipment ||= determine_target_shipment
+        shipment ||= determine_target_fulfillment
         add_to_shipment(shipment, quantity)
       elsif (units_count > line_item.quantity) || (units_count == line_item.quantity && line_item_changed)
         remove(units_count, shipment)
@@ -51,11 +51,11 @@ module Spree
 
     private
 
-    def remove(units_count, target_shipment = nil)
+    def remove(units_count, target_fulfillment = nil)
       quantity = set_quantity_to_remove(units_count)
 
-      if target_shipment.present?
-        remove_from_shipment(target_shipment, quantity)
+      if target_fulfillment.present?
+        remove_from_shipment(target_fulfillment, quantity)
       else
         order.fulfillments.each do |shipment|
           break if quantity.zero?
@@ -65,9 +65,9 @@ module Spree
       end
     end
 
-    def remove_all_units(quantity, target_shipment = nil)
-      if target_shipment.present?
-        remove_from_shipment(target_shipment, quantity)
+    def remove_all_units(quantity, target_fulfillment = nil)
+      if target_fulfillment.present?
+        remove_from_shipment(target_fulfillment, quantity)
       else
         order.fulfillments.each do |shipment|
           break if quantity.zero?
@@ -89,12 +89,12 @@ module Spree
     #
     # first unshipped that already includes this variant
     # first unshipped that's leaving from a stock_location that stocks this variant
-    def determine_target_shipment
-      target_shipment = order.fulfillments.detect do |shipment|
+    def determine_target_fulfillment
+      target_fulfillment = order.fulfillments.detect do |shipment|
         shipment.ready_or_pending? && shipment.include?(variant)
       end
 
-      target_shipment || order.fulfillments.detect do |shipment|
+      target_fulfillment || order.fulfillments.detect do |shipment|
         shipment.ready_or_pending? && variant.stock_location_ids.include?(shipment.stock_location_id)
       end
     end

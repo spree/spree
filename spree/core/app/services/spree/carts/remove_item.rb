@@ -24,7 +24,7 @@ module Spree
         raise ActiveRecord::RecordNotFound if line_item.nil?
 
         line_item.quantity -= quantity
-        line_item.target_shipment = options[:shipment]
+        line_item.target_fulfillment = options[:shipment]
 
         if line_item.quantity.zero?
           order.line_items.destroy(line_item)
