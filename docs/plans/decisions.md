@@ -665,3 +665,49 @@ TaxCategory** follow inside the tax-provider plan's implementation
 (noted there). Stock availability (`Stock::Quantifier`) intentionally
 stays location-global until the 6.1 NOT NULL work — correct for
 single-store installs, revisited with multi-store.
+
+
+## 2026-07-30 — Credential homes follow cardinality: Integration for store-level connections, PaymentMethod rows for merchant entities
+
+Provider architecture is three layers: store-owned commerce config rows
+(DeliveryMethod, PaymentMethod), stateless registry-keyed provider code
+(FulfillmentProvider/DeliveryRateProvider/tax engines — never hold
+credentials), and `Spree::Integration` as the per-store credentialed
+vendor connection (one row per store+type, `can_connect?`, admin
+listing). Where credentials live is decided by cardinality, and the two
+domains are deliberately opposite:
+
+- **Delivery/vendor APIs — one connection, many methods.** An EasyPost
+  account rates every method; config rows multiply, the connection does
+  not. Credentials belong on the Integration singleton; provider gems
+  ship an Integration subclass + a stateless provider pair
+  (`6.0-delivery-rate-provider.md`).
+- **Payments — one credential set per merchant entity, several per
+  store.** Two Stripe accounts are two merchants of record (separate
+  settlement and liability), selected per market at checkout — exactly
+  what PaymentMethod rows model, gated by MarketRule once
+  `5.7-payment-method-rules.md` lands. Credentials stay on the method
+  row; converging them onto Integration would fight its store+type
+  uniqueness and is explicitly NOT planned.
+
+Consequence for tax (`6.0-tax-provider.md`): "one Stripe connection
+serves payments and Stripe Tax" only holds single-entity. Under multiple
+merchants of record, tax liability follows the charging entity per
+market — a Stripe Tax provider must resolve credentials consistently
+with the market's selected payment entity, not via a store-singleton
+Integration lookup.
+
+
+## 2026-07-30 — Reference providers: Stripe (payments), Avalara (tax), EasyPost-or-Shippo (delivery)
+
+One first-party reference implementation per provider seam, each
+exercising its layer's canonical shape from the credential-cardinality
+entry above: **Stripe** for payments (monorepo move per 2026-07-15 —
+credentials on PaymentMethod rows, multi-entity capable), **Avalara**
+for tax (the enterprise standard, matching the enterprise-seller target;
+Integration subclass for store credentials + stateless provider writing
+TaxLines with `provider_id: 'avalara'`; the built-in `'internal'` engine
+stays the OSS default), and the **EasyPost-or-Shippo** multi-carrier
+gem for delivery rates (pick still pending; Integration + provider
+pair). Stripe Tax remains buildable by third parties but is not the
+reference — and carries the merchant-of-record caveat recorded above.
