@@ -85,9 +85,6 @@ RSpec.describe Spree::PermissionSets::OrderManagement do
       let(:active_order) { build(:order) }
 
       before do
-        # OrderPromotion has no positive grant in this set; grant it so the
-        # cannot-restriction has something to override, then re-activate so the
-        # restriction is defined last and takes precedence.
         ability.can :manage, Spree::OrderPromotion
         permission_set.activate!
         allow(canceled_order).to receive(:canceled?).and_return(true)
