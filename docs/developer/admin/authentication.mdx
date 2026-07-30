@@ -1,59 +1,32 @@
 ---
 title: Admin Panel Authentication
 sidebarTitle: Authentication
-description: How to customize the Spree admin panel authentication
+description: How to customize authentication for the Spree admin
 ---
 
-Spree allows you to use a different model for the admin panel than the storefront (that's the default since Spree 5.2).
-Here you can find how to customize the admin panel authentication to use a different model.
+Spree uses a separate model for admin/staff accounts (`Spree::AdminUser`) from storefront customers (`Spree::Customer`) — the default since Spree 5.2. Both are gem-owned and backed by [`has_secure_password`](https://api.rubyonrails.org/classes/ActiveModel/SecurePassword/ClassMethods.html); the admin dashboard authenticates against the Admin API with JWT access + refresh tokens, so no setup is required for the default.
 
-Let's assume you have an existing `AdminUser` model in your application and you're using Devise for authentication.
+You only need the steps below if you want the admin to authenticate against your **own** admin model.
 
-In `config/initializers/spree.rb` file, add the following line:
+## Using your own admin model
+
+Point `Spree.admin_user_class` at your model in `config/initializers/spree.rb`:
 
 ```ruby
-Spree.admin_user_class = 'AdminUser'
+Spree.admin_user_class = 'MyApp::AdminUser'
 ```
 
-This will tell Spree to use your `AdminUser` model for the admin panel. You will also need to add the following line in that model file:
+On that model, include the admin concern (roles, permissions, store access) and add `has_secure_password`:
 
 ```ruby
-include Spree::UserMethods
-```
+# app/models/my_app/admin_user.rb
+class MyApp::AdminUser < ApplicationRecord
+  has_secure_password validations: false
 
-In your `config/initializers/routes.rb` file, you will need to define devise routes for the 2nd model:
-
-```ruby
-Spree::Core::Engine.routes.prepend_routes do
-  # Admin authentication
-  devise_for(
-    Spree.admin_user_class.model_name.singular_route_key,
-    class_name: Spree.admin_user_class.to_s,
-    controllers: {
-      sessions: 'spree/admin/user_sessions',
-      passwords: 'spree/admin/user_passwords'
-    },
-    skip: :registrations,
-    path: :admin_user,
-    router_name: :spree
-  )
+  include Spree::AdminUserMethods
 end
 ```
 
-And now in your `lib/spree/authentication_helpers.rb` file, please replace the following lines: 
+If the model keeps an existing password column (for example `encrypted_password`), bridge it as described in [Authentication](/developer/customization/authentication#keeping-an-existing-password-column).
 
-```diff
-     def spree_admin_login_path(opts = {})
--      spree_login_path(opts)
-+      new_admin_user_session_path(opts)
-     end
-
-     def spree_admin_logout_path(opts = {})
--      spree_logout_path(opts)
-+      destroy_admin_user_session_path(opts)
-     end
-```
-
-Now when attempting to access the admin panel, you will be redirected to the dedicated admin panel login page.
-
-![Admin panel login page](/images/developer/admin/admin_panel_login.png)
+The admin dashboard signs in through the Admin API auth endpoints (`POST /api/v3/admin/auth/login`, plus `refresh` and `logout`); custom providers plug in via `Spree.admin_authentication_strategies` (see [Custom authentication providers](/developer/customization/authentication#custom-authentication-providers)).

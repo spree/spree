@@ -63,7 +63,7 @@ module Spree
         super
       else
         # Subclasses that call `mail` without wrapping their action in
-        # `with_store_locale` (e.g. Devise mailers, extensions) still get the
+        # `with_store_locale` (e.g. extension mailers) still get the
         # store default locale, as `mail` applied before Spree 5.6.
         with_store_locale(current_store) { super }
       end

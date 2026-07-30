@@ -19,8 +19,7 @@ module Spree
           @current_ability ||= Spree.ability_class.new(try_spree_current_user, { store: current_store })
         end
 
-        # this will work for devise out of the box
-        # for other auth systems you will need to override this method
+        # Works out of the box for the default auth; override for custom auth systems.
         def store_location(location = nil)
           return if try_spree_current_user
 
@@ -35,13 +34,12 @@ module Spree
         end
 
         # proxy method to *possible* spree_current_user method
-        # Authentication extensions (such as spree_auth_devise) are meant to provide spree_current_user
+        # The host app (via authentication_helpers.rb) or an auth extension provides spree_current_user
         def try_spree_current_user
-          # This one will be defined by apps looking to hook into Spree
-          # As per authentication_helpers.rb
+          # Provided by the host app, per authentication_helpers.rb
           if respond_to?(:spree_current_user)
             spree_current_user
-          # This one will be defined by Devise
+          # Fallback name used by some auth integrations
           elsif respond_to?(:current_spree_user)
             current_spree_user
           end

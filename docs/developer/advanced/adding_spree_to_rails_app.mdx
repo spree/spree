@@ -38,19 +38,20 @@ Spree uses a modular installation approach. First install the core, then add opt
 
 ### Install core Spree
 
-This installs core models, API, CLI, and authentication:
+This installs core models, API, CLI, and the gem-owned authentication models (`Spree::Customer` and `Spree::AdminUser`):
 
 ```bash
-bin/rails g spree:install --user_class=Spree::User --authentication=devise
+bin/rails g spree:install
 ```
+
+To authenticate against your own user model instead of the defaults, pass `--user_class` (see [Authentication](/developer/customization/authentication)).
 
 **Core installation options:**
 
 | Option | Description |
 |--------|-------------|
-| `user_class` | The class for your users, eg. `Spree::User` or `User` |
-| `admin_user_class` | The class for admin users (defaults to `user_class`) |
-| `authentication` | Authentication gem: `devise` or `custom` |
+| `user_class` | The customer model class (default: `Spree::Customer`) |
+| `admin_user_class` | The admin model class (default: `Spree::AdminUser`) |
 | `migrate` | Whether to run migrations (default: true) |
 | `seed` | Whether to run the seed file (default: true) |
 | `sample` | Whether to add sample data (default: false) |
@@ -61,7 +62,6 @@ bin/rails g spree:install --user_class=Spree::User --authentication=devise
 
 ```bash
 bin/rails g spree:admin:install
-bin/rails g spree:admin:devise  # if using Devise authentication
 ```
 
 ### Add sample data (optional)

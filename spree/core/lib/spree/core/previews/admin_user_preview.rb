@@ -11,12 +11,4 @@ class Spree::AdminUserPreview < ActionMailer::Preview
       Spree::PreviewData.store(locale)
     )
   end
-
-  def confirmation_email
-    Spree::AdminUserMailer.confirmation_email(
-      Spree::PreviewData.admin_user,
-      'preview-token',
-      Spree::PreviewData.store(locale)
-    )
-  end
 end

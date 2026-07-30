@@ -201,7 +201,7 @@ bin/rails g controller Spree::Admin::Brands --skip-routes
 
 Admin users must be authenticated to access the dashboard. Spree supports:
 
-- Built-in Devise authentication
+- Built-in `has_secure_password` authentication (the gem-owned `Spree::AdminUser` model)
 - Custom authentication adapters
 - SSO integration
 

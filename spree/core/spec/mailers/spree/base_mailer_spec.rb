@@ -136,8 +136,8 @@ describe Spree::BaseMailer, type: :mailer do
   end
 
   describe '#mail store locale fallback' do
-    # Subclasses that call `mail` directly without `with_store_locale` — Devise
-    # mailers, extensions — must still render in the store default locale, as
+    # Subclasses that call `mail` directly without `with_store_locale` — e.g.
+    # extension mailers — must still render in the store default locale, as
     # `mail` guaranteed before Spree 5.6 via `set_email_locale`.
     let(:probe_mailer) do
       stub_const('LocaleProbeMailer', Class.new(described_class) do

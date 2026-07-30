@@ -30,7 +30,7 @@ module Spree
         end
       end
 
-      # did not add unhappy path because validations are included in spree_auth_devise gem
+      # did not add unhappy path because validations live on the customer model
     end
   end
 end

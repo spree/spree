@@ -456,3 +456,71 @@ The 5.6→6.0 upgrade guide (`docs/developer/upgrades/5.6-to-6.0.mdx`) doesn't e
 yet (6.0 in-dev); Path A/B developer guidance currently lives in the task's `desc`,
 the `5_6_to_6_0` manifest notes, and this plan. It moves to the mdx when the full
 6.0 upgrade guide is authored.
+
+## 2026-07-29: Account lockout enforced in the auth strategy; thresholds config-driven
+
+Phase 4 of `6.0-platform-auth.md` was mostly already shipped (RefreshToken issue/rotate/revoke,
+login/refresh/logout endpoints, Rails `rate_limit` throttling). The remaining gap was that the
+lockout methods on Customer/AdminUser were **dead code** — nothing in the login path called them.
+
+Decisions made wiring it up:
+
+**Enforcement lives in `EmailPasswordStrategy`, not the controllers.** The strategy is the single
+point both store and admin login flow through, and it's the only layer that holds the user object on
+a *failed* password (the controllers get a generic failure). So `authenticate` checks `locked?`
+before validating, `record_failed_attempt!` on a bad password, and `reset_failed_attempts!` on
+success. All calls are `respond_to?`-guarded so a Path-B custom `customer_class` without the lockout
+methods still authenticates.
+
+**Thresholds moved to `Spree::Config`, logic to a shared concern.** The identical
+`locked?`/`record_failed_attempt!`/`reset_failed_attempts!` on both models (with hardcoded `5` /
+`30.minutes`) were extracted into `Spree::AccountLockout` (core concern) reading
+`Spree::Config[:max_failed_login_attempts]` (5) and `[:lockout_duration]` (1800s). These are **core**
+prefs (not `Spree::Api::Config`) because the concern lives on core models, which can't depend on the
+API config.
+
+**Distinct lockout message** ("Account temporarily locked. Try again later.") over a generic
+invalid-credentials response — industry-common, and login is already rate-limited so the marginal
+enumeration signal is low. It's a single return string, easily switched to the generic message if a
+stricter anti-enumeration posture is wanted (Spree's login/password-reset are otherwise
+anti-enumeration).
+
+**Refresh-token hashing at rest was declined** (tokens are already random + expiring; login
+throttled). **Admin `logout` gained a `rate_limit`** to match the store side. Following the repo's
+rate-limit spec convention, no throttle-*trip* test was added (those depend on the test cache store);
+the existing specs cover response format/headers/config.
+
+## 2026-07-29: Devise fully removed from core/api; legacy models deleted, table kept
+
+Phases 5 & 6 of `6.0-platform-auth.md`, scoped to `spree/core` + `spree/api` (spree/admin removed
+wholesale by `6.0-admin-spa.md`; the spree-starter / 5b changes are a separate pass).
+
+**Legacy models deleted, `spree_users` table retained.** `Spree::LegacyUser` /
+`Spree::LegacyAdminUser` are gone (no runtime fallback — `Spree.customer_class` has no default,
+`Role` is dynamic, and only four specs named the constant, all repointed to `Spree.customer_class`).
+The `spree_users` **table** is deliberately kept as the Phase 2 migration's safety net — its teardown
+is a separate later operator task, and the 4.3 baseline migration still materializes it on fresh
+installs.
+
+**Devise bridges removed, not kept.** Both `Spree::AdminUserMethods::DeviseNotifications` and
+`CustomerMethods::SkipPasswordValidation` were deleted. They were inert on the gem's
+`has_secure_password` models: admin auth emails flow through the `admin_user.password_reset_requested`
+event subscriber → `AdminUserMailer` (not `send_devise_notification`), and password-less
+admin-created customers rely on `has_secure_password validations: false` rather than a
+`password_required?` override. The `defined?(Devise)` guards in the migrate-users rake task are the
+one Devise reference kept — they're defensive checks for installs migrating *off* Devise.
+
+**`spree:install` scaffolds no auth by default.** With the generators deleted, the root-gem install
+generator's `--authentication` default moved to `nil` (was `devise`): a plain install writes no auth
+helpers because the gem owns auth (`Spree::Customer`/`Spree::AdminUser` + the initializer sets the
+class names). `dummy` stays available and is what the test harness passes explicitly via
+`common_rake`, so `test_app` is unaffected.
+
+**Deprecation aliases kept to 6.1.** The earlier Phase 6 plan to drop the `user_class` alias in 6.0
+is superseded — `Spree.user_class`, `Spree::UserMethods`, `Spree::DeprecatedCustomerAlias`, and the
+`:user`/`:admin_user` factory aliases all remain through 6.0 (in-code comments already tag them 6.1).
+
+**Docs.** The Devise-as-default pages were rewritten around gem-owned auth + the custom-model recipe,
+and `Spree.user_class` references swept to `Spree.customer_class`. `Spree::OauthAccessToken` is a
+no-op (extracted upstream). Deferred: the 6.0 upgrade guide, the `spree_users` teardown task, and the
+unrelated search-area `multi_search` alias removal.
