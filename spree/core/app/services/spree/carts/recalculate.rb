@@ -8,21 +8,13 @@ module Spree
 
         order.remove_gift_card if order.gift_card.present?
         order.payments.store_credits.checkout.destroy_all if order.payments.store_credits.checkout.any?
+        # Totals must be current before the proposal rebuild — delivery rate
+        # calculators (e.g. price sack) read them.
         order_updater.update_item_count
         order_updater.update_totals
         order_updater.persist_totals
 
-        shipment = options[:shipment]
-        if shipment.present?
-          # ADMIN END SHIPMENT RATE FIX
-          # refresh shipments to ensure correct shipment amount is calculated when using price sack calculator
-          # for calculating shipment rates.
-          # Currently shipment rate is calculated on previous order total instead of current order total when updating a shipment from admin end.
-          order.refresh_shipment_rates(::Spree::DeliveryMethod::DISPLAY_ON_BACK_END)
-          shipment.update_amounts
-        else
-          order.ensure_updated_shipments
-        end
+        order.ensure_updated_shipments
 
         ::Spree::PromotionHandler::Cart.new(order, line_item).activate
         # Typed rows (discounts + tax) are rebuilt by the order-level

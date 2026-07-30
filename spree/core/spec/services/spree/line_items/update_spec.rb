@@ -22,18 +22,6 @@ module Spree
       end
     end
 
-    context 'given a shipment' do
-      let(:shipment) { create :shipment }
-      let(:options) { { shipment: shipment } }
-      let(:execute) { subject.call(line_item: line_item, line_item_attributes: line_item_attributes, options: options) }
-
-      it 'ensure shipment calls update_amounts instead of order calling ensure_updated_shipments' do
-        expect(order).not_to receive(:ensure_updated_shipments)
-        expect(shipment).to receive(:update_amounts)
-        expect(execute).to be_success
-      end
-    end
-
     context 'not given a shipment' do
       let(:execute) { subject.call(line_item: line_item, line_item_attributes: line_item_attributes) }
 
