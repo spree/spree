@@ -9,7 +9,8 @@
 .idea
 .loadpath
 .project
-.vscode
+.vscode/*
+!.vscode/settings.json
 public/dispatch.cgi
 public/dispatch.fcgi
 public/dispatch.rb
