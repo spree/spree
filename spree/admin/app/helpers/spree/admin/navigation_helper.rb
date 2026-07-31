@@ -416,7 +416,7 @@ module Spree
       # @return [SafeBuffer] the section header HTML
       def render_nav_section_header(item)
         content_tag :li, class: 'nav-item nav-section-header mt-4 border-t pt-4 pl-2' do
-          content_tag :span, item.section_label, class: 'text-gray-600 uppercase font-light text-sm'
+          content_tag :span, Spree.t(item.section_label), class: 'text-gray-600 uppercase font-light text-sm'
         end
       end
 

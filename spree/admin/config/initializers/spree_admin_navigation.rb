@@ -191,7 +191,7 @@ Rails.application.config.after_initialize do
 
   # Section divider before settings
   sidebar_nav.add :settings_section,
-          section_label: 'Settings',
+          section_label: :'admin.settings_section',
           position: 90
 
   # Settings (bottom of sidebar)
