@@ -18,6 +18,21 @@ module Spree
 
     has_secure_token
 
+    extend Spree::DisplayMoney
+
+    include Spree::SingleStoreResource
+    include Spree::Purchase::Channel
+    include Spree::Purchase::Market
+    include Spree::Purchase::Currency
+    include Spree::Purchase::Locale
+    include Spree::Purchase::CheckoutSteps
+    include Spree::Purchase::DigitalItems
+    include Spree::Purchase::Taxation
+    include Spree::Purchase::StoreCredits
+    include Spree::Purchase::GiftCards
+    include Spree::Purchase::LineItemCurrencies
+    include Spree::Purchase::PaymentProcessing
+
     # Concurrency is manual (the API's OrderLock semantics — compare
     # client-sent version, 409 on mismatch); Rails auto-locking must not
     # raise on internal saves.
@@ -32,25 +47,14 @@ module Spree
     alias_attribute :item_count, :total_quantity
     alias_attribute :promo_total, :discount_total
 
-    extend Spree::DisplayMoney
     money_methods :item_total, :adjustment_total, :included_tax_total, :additional_tax_total,
                   :discount_total, :fee_total, :delivery_total, :total, :payment_total, :outstanding_balance,
                   :tax_total, :pre_tax_item_amount, :pre_tax_total, :amount_due
 
-    include Spree::Purchase::CheckoutSteps
-    include Spree::Purchase::DigitalItems
-    include Spree::Purchase::Taxation
-    include Spree::Purchase::StoreCredits
-    include Spree::Purchase::GiftCards
-    include Spree::Purchase::LineItemCurrencies
-    include Spree::Purchase::PaymentProcessing
     alias display_promo_total display_discount_total
     alias display_ship_total display_delivery_total
     alias_attribute :ship_total, :delivery_total
 
-    belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :market, class_name: 'Spree::Market'
-    belongs_to :channel, class_name: 'Spree::Channel'
     belongs_to :customer, class_name: "::#{Spree.user_class}", optional: true
     belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
@@ -130,12 +134,7 @@ module Spree
     alias_method :shipping_address_attributes=, :ship_address_attributes=
     alias_method :billing_address_attributes=, :bill_address_attributes=
 
-    before_validation :ensure_market_presence
-    before_validation :ensure_channel_presence
-
     validates :store, :currency, presence: true
-    validate :currency_must_be_supported_by_store
-
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
 
@@ -195,10 +194,6 @@ module Spree
     # {Spree::Carts::RecalculateTotals}.
     def recalculate_totals!
       Spree.cart_recalculate_totals_workflow.call(cart: self)
-    end
-
-    def currency
-      self[:currency] || store&.default_currency
     end
 
     def shipping_eq_billing_address?
@@ -391,34 +386,6 @@ module Spree
     def clone_shipping_address
       self.bill_address = ship_address if ship_address
       true
-    end
-
-    def currency_must_be_supported_by_store
-      return if currency.blank? || store.blank?
-
-      supported_codes = store.supported_currencies_list.map(&:iso_code)
-      unless supported_codes.include?(currency)
-        errors.add(:currency, Spree.t(:currency_not_supported_by_store))
-      end
-    end
-
-    def ensure_market_presence
-      self.market ||= Spree::Current.market || store&.default_market
-    end
-
-    # When currency changes, auto-resolve the matching market (mirrors Order).
-    def resolve_market_from_currency
-      return unless store&.markets&.exists?
-      return if market&.currency == currency
-
-      resolved = store.markets.find_by(currency: currency)
-      self.market = resolved if resolved
-    end
-
-    def ensure_channel_presence
-      return if channel_id.present?
-
-      self.channel = store&.default_channel
     end
   end
 end

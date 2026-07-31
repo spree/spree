@@ -18,6 +18,11 @@ module Spree
 
     extend Spree::DisplayMoney
 
+    include Spree::SingleStoreResource
+    include Spree::Purchase::Channel
+    include Spree::Purchase::Market
+    include Spree::Purchase::Currency
+    include Spree::Purchase::Locale
     include Spree::Purchase::CheckoutSteps
     include Spree::Purchase::DigitalItems
     include Spree::Purchase::Taxation
@@ -29,7 +34,6 @@ module Spree
     include Spree::Core::NumberGenerator.new(prefix: 'R')
 
     include Spree::NumberIdentifier
-    include Spree::SingleStoreResource
 
     publishes_lifecycle_events
     include Spree::MemoizedData
@@ -162,9 +166,6 @@ module Spree
     alias_method :shipping_address=, :ship_address=
     alias_attribute :shipping_address_id, :ship_address_id
 
-    belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :market, class_name: 'Spree::Market'
-    belongs_to :channel, class_name: 'Spree::Channel'
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
 
     with_options dependent: :destroy do
@@ -229,10 +230,6 @@ module Spree
     alias shipments_attributes= fulfillments_attributes=
 
     # Needs to happen before save_permalink is called
-    before_validation :ensure_market_presence
-    before_validation :ensure_channel_presence
-    before_validation :ensure_currency_presence
-    before_validation :ensure_locale_presence
     before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
 
     before_validation :clone_billing_address, if: :use_billing?
@@ -247,9 +244,6 @@ module Spree
       # which is very costly and slow on large set of records
       validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
       validates :total_quantity, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
-      validates :store
-      validates :currency
-      validates :locale
     end
     validates :payment_status,       inclusion:    { in: PAYMENT_STATES, allow_blank: true }
     validates :fulfillment_status,   inclusion:    { in: FULFILLMENT_STATUSES, allow_blank: true }
@@ -261,8 +255,6 @@ module Spree
     validates :delivery_total,       MONEY_VALIDATION
     validates :discount_total,       NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
-    validate :currency_must_be_supported_by_store
-    validate :locale_must_be_supported_by_store
 
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
@@ -522,16 +514,6 @@ module Spree
     def ensure_store_presence
       Spree::Deprecation.warn('Spree::Order#ensure_store_presence is deprecated and will be removed in Spree 6.0. ensure_store instead.')
       ensure_store
-    end
-
-    def ensure_market_presence
-      self.market ||= Spree::Current.market || store&.default_market
-    end
-
-    def ensure_channel_presence
-      return if channel_id.present?
-
-      self.channel = store&.default_channel
     end
 
     # @return [Boolean] true when this order has no registered user and its
@@ -1137,35 +1119,6 @@ module Spree
 
     def use_shipping?
       use_shipping.in?([true, 'true', '1'])
-    end
-
-    def ensure_currency_presence
-      self.currency ||= store&.default_currency
-    end
-
-    # Sets the locale from Spree::Current.locale when not already set.
-    # Called as a before_validation callback, mirroring ensure_currency_presence.
-    def ensure_locale_presence
-      self.locale ||= Spree::Current.locale
-    end
-
-    def currency_must_be_supported_by_store
-      return if currency.blank? || store.blank?
-
-      supported_codes = store.supported_currencies_list.map(&:iso_code)
-      unless supported_codes.include?(currency)
-        errors.add(:currency, Spree.t(:currency_not_supported_by_store))
-      end
-    end
-
-    # Validates that the order's locale is within the store's supported locales.
-    # Mirrors currency_must_be_supported_by_store.
-    def locale_must_be_supported_by_store
-      return if locale.blank? || store.blank?
-
-      unless store.supported_locales_list.include?(locale)
-        errors.add(:locale, Spree.t(:locale_not_supported_by_store))
-      end
     end
 
     # When currency changes, auto-resolve the matching market.
