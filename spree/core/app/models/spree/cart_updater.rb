@@ -6,6 +6,9 @@ module Spree
   class CartUpdater < OrderUpdater
     alias cart order
 
+    # Carts have no legacy update hooks.
+    def run_hooks; end
+
     def update_payment_total
       cart.payment_total = payments.completed.includes(:refunds).inject(0) { |sum, payment| sum + payment.amount - payment.refunds.sum(:amount) }
     end

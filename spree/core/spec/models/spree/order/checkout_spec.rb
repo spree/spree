@@ -107,7 +107,7 @@ describe Spree::Order, type: :model do
       context 'when newsletter is accepted for the order' do
         let(:accept_marketing) { true }
 
-        it 'subscribes to newsletter' do
+        it 'subscribes to newsletter', :events do
           expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, user: order.user, store: order.store)
           order.finalize!
         end
@@ -157,12 +157,13 @@ describe Spree::Order, type: :model do
 
       context 'with signup_for_an_account set to true' do
         before do
-          allow(order).to receive(:signup_for_an_account?).and_return(true)
+          order.update_column(:signup_for_an_account, true)
         end
 
-        it 'creates a new user' do
+        it 'creates a new user', :events do
           expect { order.finalize! }.to change { Spree.user_class.count }.by(1)
-          expect(order.user).to be_present
+          # The subscriber attaches the user on its own loaded instance.
+          expect(order.reload.user).to be_present
           expect(order.user.email).to eq(order.email)
         end
       end

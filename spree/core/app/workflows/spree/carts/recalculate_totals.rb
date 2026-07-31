@@ -38,15 +38,19 @@ module Spree
       end
 
       def update_item_count
-        cart.updater.update_item_count
+        calculator.update_item_count
       end
 
       def update_money_totals
-        cart.updater.update_totals
+        calculator.update_totals
       end
 
       def persist_totals
-        cart.updater.persist_totals
+        calculator.persist_totals
+      end
+
+      def calculator
+        @calculator ||= cart.is_a?(Spree::Order) ? Spree::OrderUpdater.new(cart) : Spree::CartUpdater.new(cart)
       end
     end
   end

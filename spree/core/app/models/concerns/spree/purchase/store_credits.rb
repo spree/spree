@@ -1,6 +1,8 @@
 module Spree
-  class Order < Spree.base_class
-    module StoreCredit
+  module Purchase
+    # Store-credit application surface shared by Spree::Cart and
+    # Spree::Order (carts reach user through the customer alias).
+    module StoreCredits
       def add_store_credit_payments(amount = nil)
         Spree.checkout_add_store_credit_service.call(order: self, amount: amount)
       end
@@ -14,19 +16,16 @@ module Spree
       end
       alias covered_by_store_credit covered_by_store_credit?
 
-      # Returns the total amount of store credits available to the user associated with the order.
-      # Returns only store credit for this store and same currency as order
+      # Only store credit for this store and the record's currency.
       #
-      # @return [BigDecimal] The total amount of store credits available to the user associated with the order.
+      # @return [BigDecimal]
       def total_available_store_credit
         return 0.0 unless user
 
         user.total_available_store_credit(currency, store)
       end
 
-      # Returns the available store credits for the user associated with the order.
-      #
-      # @return [Array<Spree::StoreCredit>] The available store credits for the user associated with the order.
+      # @return [Array<Spree::StoreCredit>]
       def available_store_credits
         return Spree::StoreCredit.none if user.nil?
 
@@ -39,22 +38,16 @@ module Spree
         total_available_store_credit > 0
       end
 
-      # Returns the total amount of the order minus the total amount of store credits applied to the order.
-      #
-      # @return [BigDecimal] The total amount of the order minus the total amount of store credits applied to the order.
       def order_total_after_store_credit
         total - total_applicable_store_credit
       end
 
-      # Returns the total amount of the order minus the total amount of store credits applied to the order.
-      #
-      # @return [BigDecimal] The total amount of the order minus the total amount of store credits applied to the order.
       def total_minus_store_credits
         total - total_applied_store_credit
       end
 
       def total_applicable_store_credit
-        # Once payments exist (or the order completed), report what was
+        # Once payments exist (or the record completed), report what was
         # actually applied; before that, what could be applied.
         if completed? || payments.valid.any?
           total_applied_store_credit
@@ -63,9 +56,7 @@ module Spree
         end
       end
 
-      # Returns the total amount of store credits applied to the order.
-      #
-      # @return [BigDecimal] The total amount of store credits applied to the order.
+      # @return [BigDecimal]
       def total_applied_store_credit
         if payments.loaded?
           payments.
@@ -77,9 +68,6 @@ module Spree
         end
       end
 
-      # Returns true if the order is using store credit.
-      #
-      # @return [Boolean] True if the order is using store credit, false otherwise.
       def using_store_credit?
         total_applied_store_credit > 0
       end

@@ -220,12 +220,9 @@ module Spree
       before { order.update(completed_at: Time.current) }
 
       describe '#update' do
-        it 'delegates to Carts::RecalculateTotals with a deprecation warning, money only' do
+        it 'delegates to the RecalculateTotals workflow with a deprecation warning' do
           expect(Spree::Deprecation).to receive(:warn).with(/updater#update is deprecated/i)
-          expect(updater).not_to receive(:update_payment_state)
-          expect(updater).not_to receive(:update_fulfillments)
-          expect(updater).to receive(:update_totals).and_call_original
-          expect(updater).to receive(:persist_totals).and_call_original
+          expect(Spree::Carts::RecalculateTotals).to receive(:call).with(cart: order).and_call_original
           updater.update
         end
       end
@@ -301,7 +298,7 @@ module Spree
         let(:order) { ::OrderWalkthrough.up_to(:delivery) }
 
         it 'resets shipping method to frontend-available' do
-          order.updater.update_shipments
+          Spree::CartUpdater.new(order).update_shipments
           expect(order.fulfillments.first.delivery_method).to eq Spree::ShippingMethod.find_by(display_on: 'both')
         end
       end

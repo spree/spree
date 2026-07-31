@@ -1,6 +1,15 @@
 module Spree
   class Order < Spree.base_class
     module AddressBook
+      def assign_default_addresses!
+        return unless user
+
+        self.bill_address = user.bill_address if !bill_address_id && user.bill_address&.valid?
+        # Skip the ship address for orders without a delivery step to
+        # avoid triggering shipping-address validations
+        self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && checkout_steps.include?('delivery')
+      end
+
       def clone_shipping_address
         self.bill_address = ship_address if ship_address
         user.bill_address = ship_address if should_assign_user_default_address?(ship_address)

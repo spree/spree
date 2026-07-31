@@ -57,12 +57,11 @@ describe Spree::Order, type: :model do
 
     context 'order is considered risky' do
       before do
-        allow(order).to receive_messages is_risky?: true
+        allow_any_instance_of(Spree::Order).to receive_messages(is_risky?: true)
       end
 
-      it 'changes state to risky' do
-        expect(order).to receive(:considered_risky!)
-        order.finalize!
+      it 'changes state to risky', :events do
+        expect { order.finalize! }.to change { order.reload.considered_risky }.to(true)
       end
 
       context 'and order is approved' do

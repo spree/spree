@@ -30,10 +30,10 @@ module Spree
       # Totals must be current before the proposal rebuild — delivery rate
       # calculators (e.g. price sack) read them.
       def refresh_totals
-        updater = cart.updater
-        updater.update_item_count
-        updater.update_totals
-        updater.persist_totals
+        calculator = cart.is_a?(Spree::Order) ? Spree::OrderUpdater.new(cart) : Spree::CartUpdater.new(cart)
+        calculator.update_item_count
+        calculator.update_totals
+        calculator.persist_totals
       end
 
       def rebuild_delivery_proposals

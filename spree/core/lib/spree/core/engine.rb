@@ -410,6 +410,7 @@ module Spree
         # Note: Spree::EventLogSubscriber is attached in to_prepare (below) so it
         # survives Zeitwerk code reloads in development.
         Spree.subscribers.concat [
+          Spree::OrderPlacedSubscriber,
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,

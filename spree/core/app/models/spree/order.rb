@@ -1,9 +1,3 @@
-require_dependency 'spree/order/checkout'
-require_dependency 'spree/order/currency_updater'
-require_dependency 'spree/order/digital'
-require_dependency 'spree/order/payments'
-require_dependency 'spree/order/store_credit'
-require_dependency 'spree/order/gift_card'
 
 module Spree
   class Order < Spree.base_class
@@ -24,15 +18,15 @@ module Spree
 
     extend Spree::DisplayMoney
 
-    include Spree::Order::Checkout
-    include Spree::Order::CurrencyUpdater
-    include Spree::Order::Digital
-    include Spree::Order::Payments
-    include Spree::Order::StoreCredit
+    include Spree::Purchase::CheckoutSteps
+    include Spree::Purchase::DigitalItems
+    include Spree::Purchase::Taxation
+    include Spree::Purchase::StoreCredits
+    include Spree::Purchase::GiftCards
+    include Spree::Purchase::LineItemCurrencies
+    include Spree::Purchase::PaymentProcessing
     include Spree::Order::AddressBook
-    include Spree::Order::Webhooks
     include Spree::Core::NumberGenerator.new(prefix: 'R')
-    include Spree::Order::GiftCard
 
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
@@ -126,7 +120,6 @@ module Spree
     # Set to false on admin-initiated flows to suppress customer-facing emails.
     attr_accessor :notify_customer
 
-    attribute :state_machine_resumed, :boolean
 
     STATUSES = %w[draft placed canceled].freeze
 
@@ -366,11 +359,6 @@ module Spree
       line_items.inject(0.0) { |sum, li| sum + li.amount }
     end
 
-    # Sum of all line item amounts pre-tax
-    def pre_tax_item_amount
-      line_items.sum(:pre_tax_amount)
-    end
-
     # Sum of the eligible promotion adjustments applied to the order itself
     # (whole-order discounts created by Promotion::Actions::CreateAdjustment,
     # distributed proportionally across line items), as opposed to promotions
@@ -379,11 +367,6 @@ module Spree
     # @return [BigDecimal]
     def order_level_promo_total
       discounts.promotion.where(promotion_action_id: promotion_actions_of_scope(:order)).sum(:amount)
-    end
-
-    # Sum of all line item and shipment pre-tax
-    def pre_tax_total
-      pre_tax_item_amount + fulfillments.sum(:pre_tax_amount)
     end
 
     # Promotion actions of the given discount scope, covering both the 6.0
@@ -435,12 +418,6 @@ module Spree
       draft? && !completed? && email.blank? && ship_address_id.blank?
     end
 
-    # @deprecated machine vocabulary — resumption is tracked by the transient
-    #   flag only; removed in 6.1.
-    def resumed?
-      !!state_machine_resumed
-    end
-
     # Derived, not stored (Decision 8): some but not all fulfillments canceled.
     def partially_canceled?
       !canceled? && fulfillments.canceled.any? && fulfillments.where.not(status: 'canceled').any?
@@ -481,19 +458,6 @@ module Spree
       true # true for Spree, can be decorated
     end
 
-    # Is this a free order in which case the payment step should be skipped
-    def payment_required?
-      total.to_f > 0.0
-    end
-
-    # If true, causes the confirmation step to happen during the checkout process
-    # Computed from data only — whether the confirm/review step exists never
-    # falls back to a machine state (the #4117 hack died with the machine).
-    def confirmation_required?
-      Spree::Config[:always_include_confirm_step] ||
-        payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?)
-    end
-
     def email_required?
       require_email
     end
@@ -526,15 +490,6 @@ module Spree
 
     # Returns the relevant zone (if any) to be used for taxation purposes.
     # Uses default tax zone unless there is a specific match
-    def tax_zone
-      @tax_zone ||= Zone.match(tax_address) || Zone.default_tax
-    end
-
-    # Returns the address for taxation based on configuration
-    def tax_address
-      Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
-    end
-
     def updater
       @updater ||= Spree.order_updater.new(self)
     end
@@ -728,18 +683,14 @@ module Spree
 
       touch :completed_at
 
-      # Completion side effects previously wired as machine transition
-      # callbacks — each guards its own idempotency.
+      # Completion side effects — each guards its own idempotency. The
+      # customer-facing ones (newsletter, account creation, risk) live in
+      # Spree::OrderPlacedSubscriber, triggered by the order.placed event
+      # published below.
       use_all_coupon_codes
       redeem_gift_card
-      subscribe_to_newsletter
-      create_user_record
 
-      auto_fulfill_provider_fulfillments
-
-      send_order_placed_webhook
-
-      consider_risk
+      Spree::Fulfillments::AutoFulfill.call(order: self)
 
       publish_order_placed_event
     end
@@ -990,9 +941,7 @@ module Spree
     end
 
     def resume
-      result = Spree.order_resume_workflow.call(order: self)
-      self.state_machine_resumed = true if result.success?
-      result.success?
+      Spree.order_resume_workflow.call(order: self).success?
     end
 
     def resume!
@@ -1042,10 +991,6 @@ module Spree
     # @return [Spree::ServiceModule::Result]
     def approve!
       Spree.order_approve_service.call(order: self)
-    end
-
-    def tax_total
-      included_tax_total + additional_tax_total
     end
 
     def quantity
@@ -1124,10 +1069,6 @@ module Spree
 
     def all_line_items
       line_items
-    end
-
-    def requires_ship_address?
-      !digital?
     end
 
     private

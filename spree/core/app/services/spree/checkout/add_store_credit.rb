@@ -22,7 +22,8 @@ module Spree
         end
 
         if @order.reload.payments.store_credits.valid.any?
-          @order.updater.run_hooks
+          # Legacy update hooks are an order-side extension seam; carts have none.
+          @order.update_hooks.each { |hook| @order.send(hook) } if @order.respond_to?(:update_hooks)
           success(@order)
         else
           failure(@order)

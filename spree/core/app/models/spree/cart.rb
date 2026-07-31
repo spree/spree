@@ -36,6 +36,14 @@ module Spree
     money_methods :item_total, :adjustment_total, :included_tax_total, :additional_tax_total,
                   :discount_total, :fee_total, :delivery_total, :total, :payment_total, :outstanding_balance,
                   :tax_total, :pre_tax_item_amount, :pre_tax_total, :amount_due
+
+    include Spree::Purchase::CheckoutSteps
+    include Spree::Purchase::DigitalItems
+    include Spree::Purchase::Taxation
+    include Spree::Purchase::StoreCredits
+    include Spree::Purchase::GiftCards
+    include Spree::Purchase::LineItemCurrencies
+    include Spree::Purchase::PaymentProcessing
     alias display_promo_total display_discount_total
     alias display_ship_total display_delivery_total
     alias_attribute :ship_total, :delivery_total
@@ -46,7 +54,6 @@ module Spree
     belongs_to :customer, class_name: "::#{Spree.user_class}", optional: true
     belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
-    belongs_to :gift_card, class_name: 'Spree::GiftCard', optional: true
     # Normalizes like the legacy Order writer so lookups stay case-insensitive.
     def coupon_code=(code)
       normalized = begin
@@ -183,47 +190,11 @@ module Spree
       false
     end
 
-    class_attribute :update_hooks, default: Set.new
-
-    # Mirrors Spree::Order.register_update_hook for cart-side hooks.
-    def self.register_update_hook(hook)
-      update_hooks.add(hook)
-    end
-
-    # Legacy extensions register their hooks on Spree::Order and expect them
-    # to fire during checkout — include those alongside cart-registered ones.
-    def update_hooks
-      self.class.update_hooks | Spree::Order.update_hooks
-    end
-
-    def updater
-      @updater ||= Spree::CartUpdater.new(self)
-    end
-
     # Recomputes and persists money totals (item, tax, promotion, delivery)
     # and derived item counts. Convenience for
     # {Spree::Carts::RecalculateTotals}.
     def recalculate_totals!
       Spree.cart_recalculate_totals_workflow.call(cart: self)
-    end
-
-    # @deprecated Use {#recalculate_totals!}; removed in 6.1.
-    def update_with_updater!
-      Spree::Deprecation.warn('Spree::Cart#update_with_updater! is deprecated and will be removed in Spree 6.1. Use #recalculate_totals! instead.')
-      recalculate_totals!
-    end
-
-    # The address tax is computed against, honoring the tax_using_ship_address
-    # preference (mirrors Spree::Order#tax_address).
-    #
-    # @return [Spree::Address, nil]
-    def tax_address
-      Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
-    end
-
-    # @return [Spree::Zone, nil]
-    def tax_zone
-      Spree::Zone.match(tax_address) || Spree::Zone.default_tax
     end
 
     def currency
@@ -250,27 +221,10 @@ module Spree
       outstanding_balance != 0
     end
 
-    def payment_required?
-      total.to_f > 0.0
-    end
-
-    def confirmation_required?
-      Spree::Config[:always_include_confirm_step] ||
-        payments.valid.map(&:payment_method).compact.any?(&:payment_profiles_supported?)
-    end
-
     # Whether every line item can be delivered without a shipping address
     # (digital-only carts skip the address/delivery steps).
     def delivery_required?
       line_items.any? && !digital?
-    end
-
-    def digital?
-      line_items.any? && line_items.includes(variant: :product).all? { |line_item| line_item.variant.product.digital? }
-    end
-
-    def requires_ship_address?
-      !digital?
     end
 
     def paid?
@@ -350,8 +304,9 @@ module Spree
 
     def set_fulfillments_cost
       fulfillments.each(&:update_amounts)
-      updater.update_delivery_total
-      updater.persist_totals
+      calculator = Spree::CartUpdater.new(self)
+      calculator.update_delivery_total
+      calculator.persist_totals
     end
     alias set_shipments_cost set_fulfillments_cost
     alias create_proposed_fulfillments rebuild_fulfillments!
@@ -382,145 +337,9 @@ module Spree
       recalculate_totals!
     end
 
-    # Duck-type parity with the order-side inventory hooks: carts have no
-    # named steps, only the delivery requirement.
-    def has_checkout_step?(step)
-      step.to_s == 'delivery' ? delivery_required? : true
-    end
-
-    # Checkout-step introspection (mirrors Order::Checkout, computed from
-    # requirements)
-    def checkout_steps
-      steps = ['address']
-      steps << 'delivery' if delivery_required?
-      steps << 'payment' if payment_required?
-      steps << 'confirm' if confirmation_required?
-      steps << 'complete'
-      steps
-    end
-
-    def current_checkout_step
-      return 'complete' if completed?
-
-      first_unmet = Spree::Checkout::Requirements.new(self).call.first
-      step = first_unmet ? first_unmet[:step].to_s : 'complete'
-      # `cart` (missing line items) is not a customer-facing checkout step
-      step == 'cart' ? 'address' : step
-    end
-
-    def completed_checkout_steps
-      steps = checkout_steps.reject { |step| step == 'complete' }
-      return steps if current_checkout_step == 'complete'
-
-      index = steps.index(current_checkout_step) || 0
-      steps.first(index)
-    end
-
-    def available_store_credits
-      return Spree::StoreCredit.none if customer.nil?
-
-      customer.store_credits.for_store(store).where(currency: currency).available.sort_by(&:amount_remaining).reverse
-    end
-
-    def total_available_store_credit
-      return 0.0 unless customer
-
-      customer.total_available_store_credit(currency, store)
-    end
-
-    def could_use_store_credit?
-      return false if store.payment_methods.store_credit.available.empty?
-
-      total_available_store_credit > 0
-    end
-
-    def total_applied_store_credit
-      payments.store_credits.valid.sum(:amount)
-    end
-
-    def covered_by_store_credit?
-      customer.present? && total_applied_store_credit.positive? && total_applied_store_credit >= total
-    end
-
-    def using_store_credit?
-      total_applied_store_credit.positive?
-    end
-
-    def display_total_applied_store_credit
-      Spree::Money.new(-total_applied_store_credit, currency: currency)
-    end
-
-    def order_total_after_store_credit
-      total - total_applied_store_credit
-    end
-
-    def total_minus_store_credits
-      total - total_applied_store_credit
-    end
-
-    def tax_total
-      included_tax_total + additional_tax_total
-    end
-
-    def pre_tax_item_amount
-      line_items.sum(:pre_tax_amount)
-    end
-
-    def pre_tax_total
-      pre_tax_item_amount + fulfillments.sum(:pre_tax_amount)
-    end
 
     def amount_due
       [outstanding_balance - total_applied_store_credit, 0].max
-    end
-
-    def gift_card_total
-      return 0.to_d unless gift_card.present?
-
-      store_credit_ids = payments.store_credits.valid.pluck(:source_id)
-      Spree::StoreCredit.where(id: store_credit_ids, originator: gift_card).sum(:amount)
-    end
-
-    def apply_gift_card(gift_card)
-      Spree.gift_card_apply_service.call(gift_card: gift_card, order: self)
-    end
-
-    def remove_gift_card
-      Spree.gift_card_remove_service.call(order: self)
-    end
-
-    def redeem_gift_card
-      return unless gift_card.present?
-
-      Spree.gift_card_redeem_service.call(gift_card: gift_card)
-    end
-
-    # See Spree::Order::GiftCard#recalculate_gift_card — same in-lock
-    # read-compute-write to keep the payment amount in sync with the total.
-    def recalculate_gift_card
-      return unless gift_card.present?
-
-      payment = payments.checkout.store_credits.where(source: gift_card.store_credits).first
-      return unless payment
-
-      gift_card.with_lock do
-        new_amount = [gift_card.amount_remaining + payment.amount, total].min
-        next if payment.amount == new_amount
-
-        difference = new_amount - payment.amount
-        payment.update_column(:amount, new_amount)
-        payment.source.update_column(:amount, new_amount)
-        gift_card.amount_used += difference
-        gift_card.save!
-      end
-    end
-
-    def display_gift_card_total
-      Spree::Money.new(gift_card_total, currency: currency)
-    end
-
-    def total_minus_gift_cards
-      total - gift_card_total
     end
 
     # Serializer surface: available payment methods for this cart.
@@ -555,7 +374,7 @@ module Spree
     # (mirrors Order#remove_out_of_stock_items!).
     def remove_out_of_stock_items!
       existing_warnings = warnings
-      result = Spree::Carts::RemoveOutOfStockItems.call(order: self)
+      result = Spree::Carts::RemoveOutOfStockItems.call(cart: self)
       return self unless result.success?
 
       cart, _messages, new_warnings = result.value

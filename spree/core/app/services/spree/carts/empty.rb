@@ -24,7 +24,7 @@ module Spree
       def empty_order(cart:)
         ActiveRecord::Base.transaction do
           cart.line_items.destroy_all
-          cart.updater.update_item_count
+          Spree::CartUpdater.new(cart).update_item_count
           cart.tax_lines.destroy_all
           cart.discounts.destroy_all
           cart.fees.destroy_all

@@ -22,7 +22,6 @@ module Spree
 
         order.consider_risk
         step :recompute_statuses, with: -> { Spree::Orders::RecomputeStatuses }
-        order.send_order_resumed_webhook
         order.publish_event('order.resumed')
         success(order.reload)
       rescue ActiveRecord::RecordInvalid, StateMachines::InvalidTransition
