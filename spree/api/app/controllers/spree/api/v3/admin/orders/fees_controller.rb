@@ -14,13 +14,12 @@ module Spree
             # POST /api/v3/admin/orders/:order_id/fees
             def create
               with_order_lock do
-                @resource = @parent.fees.build(permitted_params.reverse_merge(kind: 'surcharge').merge(target_attributes))
+                result = Spree.order_fee_create_service.call(order: @parent, attributes: permitted_params.merge(target_attributes))
 
-                if @resource.save
-                  @parent.updater.resum_typed_totals!
-                  render json: serialize_resource(@resource), status: :created
+                if result.success?
+                  render json: serialize_resource(result.value), status: :created
                 else
-                  render_validation_error(@resource.errors)
+                  render_validation_error(result.value.errors)
                 end
               end
             end
@@ -28,8 +27,9 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/fees/:id
             def update
               with_order_lock do
-                if @resource.update(permitted_params)
-                  @parent.updater.resum_typed_totals!
+                result = Spree.order_fee_update_service.call(order: @parent, fee: @resource, attributes: permitted_params)
+
+                if result.success?
                   render json: serialize_resource(@resource)
                 else
                   render_validation_error(@resource.errors)
@@ -40,8 +40,7 @@ module Spree
             # DELETE /api/v3/admin/orders/:order_id/fees/:id
             def destroy
               with_order_lock do
-                @resource.destroy!
-                @parent.updater.resum_typed_totals!
+                Spree.order_fee_destroy_service.call(order: @parent, fee: @resource)
                 head :no_content
               end
             end

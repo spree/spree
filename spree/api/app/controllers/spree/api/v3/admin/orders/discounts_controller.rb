@@ -35,11 +35,12 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/discounts/:id
             def update
               with_order_lock do
-                return render_promotion_row_error if @resource.promotion?
+                result = Spree.order_discount_update_service.call(order: @parent, discount: @resource, attributes: permitted_params)
 
-                if @resource.update(permitted_params)
-                  @parent.updater.resum_typed_totals!
+                if result.success?
                   render json: serialize_resource(@resource)
+                elsif result.error.value == :promotion_discount_not_editable
+                  render_promotion_row_error
                 else
                   render_validation_error(@resource.errors)
                 end
@@ -49,11 +50,13 @@ module Spree
             # DELETE /api/v3/admin/orders/:order_id/discounts/:id
             def destroy
               with_order_lock do
-                return render_promotion_row_error if @resource.promotion?
+                result = Spree.order_discount_destroy_service.call(order: @parent, discount: @resource)
 
-                @resource.destroy!
-                @parent.updater.resum_typed_totals!
-                head :no_content
+                if result.success?
+                  head :no_content
+                else
+                  render_promotion_row_error
+                end
               end
             end
 
