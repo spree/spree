@@ -1,11 +1,12 @@
 module Spree
   module Orders
-    # Draft-order twin of the cart service — order: is the canonical keyword
-    # on this side, mapped onto the shared pipeline. Exists so cart-only
-    # behavior (reservations, checkout warnings) can diverge without
-    # branching one implementation.
+    # Draft-order twin of the cart workflow — order: is the canonical
+    # keyword on this side, mapped onto the shared pipeline so cart-only
+    # behavior can diverge without branching one implementation.
     class AddItem < Spree::Carts::AddItem
-      alias_argument order: :cart
+      def perform(order:, **rest)
+        super(cart: order, **rest)
+      end
     end
   end
 end

@@ -1,8 +1,8 @@
 module Spree
   module Carts
     # Money recalculation — item counts, money totals (with the
-    # typed-adjustment two-pass), one update_columns persist. Money ONLY: payment_status/fulfillment_status (and the
-    # legacy payment_state column) are written exclusively by
+    # typed-adjustment two-pass), one update_columns persist. Money ONLY:
+    # payment_status/fulfillment_status are written exclusively by
     # Spree::Orders::RecomputeStatuses, triggered from
     # Spree::OrderStatusSubscriber on payment/refund/fulfillment/return
     # events; completed-order fulfillment repricing belongs to the explicit
@@ -10,18 +10,21 @@ module Spree
     #
     # Granular math stays on the calculator objects (Spree::OrderUpdater /
     # Spree::CartUpdater, resolved polymorphically via the model's #updater);
-    # this service owns the sequence. Callers use this service (or the
-    # model's #recalculate_totals! convenience) — never the calculator's
-    # #update, which is deprecated.
+    # this workflow owns the sequence. Callers use it (or the model's
+    # #recalculate_totals! convenience) — never the calculator's #update,
+    # which is deprecated.
     class RecalculateTotals < Spree::Workflow
-      argument :cart, [Spree::Cart, Spree::Order]
-      alias_argument order: :cart, deprecated: true
-      returns :cart
+      # @param cart [Spree::Cart, Spree::Order]
+      def perform(cart:)
+        super
 
-      step :reset_association_caches
-      step :update_item_count
-      step :update_money_totals
-      step :persist_totals
+        step :reset_association_caches
+        step :update_item_count
+        step :update_money_totals
+        step :persist_totals
+
+        success(cart)
+      end
 
       private
 

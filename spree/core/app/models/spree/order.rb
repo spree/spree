@@ -990,11 +990,9 @@ module Spree
     end
 
     def resume
-      return false unless canceled?
-
-      self.state_machine_resumed = true
-      after_resume
-      true
+      result = Spree.order_resume_workflow.call(order: self)
+      self.state_machine_resumed = true if result.success?
+      result.success?
     end
 
     def resume!
@@ -1188,15 +1186,6 @@ module Spree
       end
     end
 
-    def after_resume
-      update_column(:status, 'placed')
-
-      fulfillments.each(&:resume!)
-      consider_risk
-      send_order_resumed_webhook
-      publish_order_resumed_event
-    end
-
     def use_billing?
       use_billing.in?([true, 'true', '1'])
     end
@@ -1272,8 +1261,5 @@ module Spree
       publish_event('order.completed', payload, { deprecated_alias_of: 'order.placed' })
     end
 
-    def publish_order_resumed_event
-      publish_event('order.resumed')
-    end
   end
 end

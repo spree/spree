@@ -50,15 +50,6 @@ module Spree
       @workflows[workflow_key.to_s] = class_name.to_s
     end
 
-    # @return [Array<String>] context keys available at the hook point
-    def contract(key)
-      workflow_key, hook_name = split_key(key)
-      workflow = @workflows[workflow_key]&.safe_constantize
-      raise UnknownHookError, "No workflow registered for '#{workflow_key}'" if workflow.nil?
-
-      workflow.hook_contract(hook_name.to_sym)
-    end
-
     # Validates every registered key against hooks declared by workflow
     # classes. Call after eager load — a typo fails the boot instead of
     # never firing.

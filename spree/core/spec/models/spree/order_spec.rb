@@ -294,15 +294,15 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#after_resume' do
+  describe '#resume!' do
     let(:order) { create(:completed_order_with_totals, store: store) }
 
     before { order.cancel! }
 
     it 'publishes order.resumed event', :events do
-      expect(order).to receive(:publish_event).with('order.resumed').at_least(:once)
-      allow(order).to receive(:publish_event).with(anything)
+      allow(Spree::Events).to receive(:publish)
       order.resume!
+      expect(Spree::Events).to have_received(:publish).with('order.resumed', any_args)
     end
 
     it 'restores status to placed' do

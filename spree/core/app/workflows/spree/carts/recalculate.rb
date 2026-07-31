@@ -1,19 +1,24 @@
 module Spree
   module Carts
     class Recalculate < Spree::Workflow
-      argument :cart, [Spree::Cart, Spree::Order]
-      argument :line_item, Spree::LineItem, default: nil
-      argument :line_item_created, :boolean, default: false
-      argument :options, default: {}
-      alias_argument order: :cart, deprecated: true
-      returns :line_item
+      # @param cart [Spree::Cart, Spree::Order] draft orders ride the same pipeline
+      # @param line_item [Spree::LineItem, nil] the item whose change triggered this
+      def perform(cart: nil, order: nil, line_item: nil, line_item_created: false, options: {})
+        if order
+          Spree::Deprecation.warn('Calling Spree::Carts::Recalculate with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          cart ||= order
+        end
+        super(cart: cart, line_item: line_item, line_item_created: line_item_created, options: options)
 
-      step :unapply_stale_payment_sources
-      step :refresh_totals
-      step :rebuild_delivery_proposals
-      step :activate_promotions
-      # Typed rows (discounts + tax) are rebuilt by the full recalculation.
-      step :final_recalculation, with: -> { Spree.cart_recalculate_totals_workflow }
+        step :unapply_stale_payment_sources
+        step :refresh_totals
+        step :rebuild_delivery_proposals
+        step :activate_promotions
+        # Typed rows (discounts + tax) are rebuilt by the full recalculation.
+        step :final_recalculation, with: -> { Spree.cart_recalculate_totals_workflow }
+
+        success(line_item)
+      end
 
       private
 
