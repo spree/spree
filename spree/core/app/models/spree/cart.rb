@@ -50,6 +50,11 @@ module Spree
     alias_attribute :ship_total, :delivery_total
 
     belongs_to :customer, class_name: "::#{Spree.user_class}", optional: true
+    # Order-parity aliases — shared Cart/Order code (services, Purchase
+    # concerns) reads #user; the cart column is customer_id.
+    alias_method :user, :customer
+    alias_method :user=, :customer=
+    alias_attribute :user_id, :customer_id
     belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     # Normalizes like the legacy Order writer so lookups stay case-insensitive.
@@ -155,6 +160,12 @@ module Spree
       completing_at.present?
     end
 
+    # Mirrors Order#can_be_deleted? — a completed cart is an immutable audit
+    # record, and settled money must never be deleted.
+    def can_be_deleted?
+      !completed? && payments.completed.empty?
+    end
+
     # Checkout begins once any checkout-only data is present (email or a
     # shipping address). Drives stock-reservation dispatch.
     def in_checkout?
@@ -182,6 +193,11 @@ module Spree
 
     def outstanding_balance
       total - payment_total
+    end
+
+    # Total fulfillment discount applied by promotions, as a positive amount.
+    def fulfillment_discount
+      discounts.for_fulfillments.sum(:amount) * -1
     end
 
     def outstanding_balance?

@@ -3,12 +3,12 @@ FactoryBot.define do
     tracking { 'U10000' }
     cost     { 100.00 }
     status   { 'pending' }
-    order
+    order    { cart.present? ? nil : association(:order) }
     stock_location
 
     after(:create) do |fulfillment, _evalulator|
       fulfillment.add_delivery_method(create(:delivery_method), true)
-      fulfillment.order.line_items.map do |line_item|
+      (fulfillment.order || fulfillment.cart).line_items.map do |line_item|
         fulfillment.fulfillment_items.create(
           order_id: fulfillment.order_id,
           variant_id: line_item.variant_id,

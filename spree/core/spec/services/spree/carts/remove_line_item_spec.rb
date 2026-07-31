@@ -4,74 +4,74 @@ module Spree
   describe Carts::RemoveLineItem do
     subject { described_class }
 
-    let(:order) { create :order, line_items: [line_item] }
-    let(:line_item) { create :line_item, variant: variant, price: nil, quantity: 10 }
-    let(:variant) { create :variant, price: 20 }
-    let(:execute) { subject.call order: order, line_item: line_item }
+    let(:cart) { create(:cart) }
+    let!(:line_item) { create(:line_item, cart: cart, order: nil, variant: variant, price: nil, quantity: 10) }
+    let(:variant) { create(:variant, price: 20) }
+    let(:execute) { subject.call cart: cart, line_item: line_item }
     let(:value) { execute.value }
+
+    before { cart.recalculate_totals! }
 
     context 'remove line item' do
       context 'with any quantity' do
-        it 'with any quantity' do
-          expect(order.amount).to eq 200
-          expect { execute }.to change { order.line_items.count }.by(-1)
+        it 'removes the whole line item' do
+          expect(cart.reload.item_total).to eq 200
+          expect { execute }.to change { cart.line_items.count }.by(-1)
           expect(execute).to be_success
           expect(value).to eq line_item
-          expect(order.amount).to eq 0
+          expect(cart.reload.item_total).to eq 0
         end
       end
 
       context 'with many unique items' do
-        let(:order) { create(:order_with_line_items, line_items_count: 2) }
-        let(:line_item) {order.line_items.first}
+        let(:cart) { create(:cart_with_line_items, line_items_count: 2) }
+        let!(:line_item) { cart.line_items.first }
 
-        it 'from order with many unique items' do
-          expect(order.amount).to eq 20
-          expect(order.line_items.count).to eq 2
-          expect { execute }.to change { order.line_items.count }.by(-1)
+        it 'removes only the given line item' do
+          expect(cart.reload.item_total).to eq 20
+          expect(cart.line_items.count).to eq 2
+          expect { execute }.to change { cart.line_items.count }.by(-1)
           expect(execute).to be_success
           expect(value).to eq line_item
-          expect(order.amount).to eq 10
+          expect(cart.reload.item_total).to eq 10
         end
       end
     end
 
-    context 'not given a shipment' do
-      let(:execute) { subject.call order: order, line_item: line_item }
-
-      it 'ensures updated shipments' do
-        expect(order).to receive(:ensure_updated_fulfillments)
+    context 'not given a fulfillment' do
+      it 'ensures updated fulfillments' do
+        expect(cart).to receive(:ensure_updated_fulfillments)
         expect(execute).to be_success
       end
     end
 
     context 'stock reservations' do
-      let(:order) { create(:order_with_line_items, line_items_count: 2) }
-      let(:line_item) { order.line_items.first }
-      let(:other_line_item) { order.line_items.last }
+      let(:cart) { create(:cart_with_line_items, line_items_count: 2) }
+      let!(:line_item) { cart.line_items.first }
+      let(:other_line_item) { cart.line_items.last }
 
       before do
-        order.line_items.each do |li|
-          li.variant.stock_items.first.update!(backorderable: false)
-          li.variant.stock_items.first.set_count_on_hand(10)
+        cart.line_items.each do |cart_line_item|
+          cart_line_item.variant.stock_items.first.update!(backorderable: false)
+          cart_line_item.variant.stock_items.first.set_count_on_hand(10)
         end
       end
 
-      context 'when the order is mid-checkout' do
-        
+      context 'when the cart is mid-checkout' do
+        before { cart.update_columns(email: 'buyer@example.com') }
 
         it 'reservation for the removed line item is destroyed via dependent: :destroy' do
           create(
             :stock_reservation,
             stock_item: line_item.variant.stock_items.first,
             line_item: line_item,
-            order: order,
+            cart: cart,
             quantity: line_item.quantity,
             expires_at: 5.minutes.from_now
           )
 
-          expect { subject.call(order: order, line_item: line_item) }
-            .to change { Spree::StockReservation.where(order_id: order.id, line_item_id: line_item.id).count }
+          expect { subject.call(cart: cart, line_item: line_item) }
+            .to change { Spree::StockReservation.where(cart_id: cart.id, line_item_id: line_item.id).count }
             .from(1).to(0)
         end
 
@@ -80,14 +80,14 @@ module Spree
             :stock_reservation,
             stock_item: other_line_item.variant.stock_items.first,
             line_item: other_line_item,
-            order: order,
+            cart: cart,
             quantity: other_line_item.quantity,
             expires_at: 1.minute.from_now
           )
           original_expiry = Spree::StockReservation.find_by(line_item_id: other_line_item.id).expires_at
 
           Timecop.freeze(2.minutes.from_now) do
-            subject.call(order: order, line_item: line_item)
+            subject.call(cart: cart, line_item: line_item)
           end
 
           new_expiry = Spree::StockReservation.find_by(line_item_id: other_line_item.id).expires_at
@@ -97,11 +97,11 @@ module Spree
         it 'leaves no orphaned reservations after removing every line item' do
           # Removing the second-to-last item still triggers a Reserve pass over
           # the remaining one. Removing the last item must not leave any
-          # reservation rows behind for this order.
-          subject.call(order: order, line_item: line_item)
-          subject.call(order: order, line_item: other_line_item.reload)
+          # reservation rows behind for this cart.
+          subject.call(cart: cart, line_item: line_item)
+          subject.call(cart: cart, line_item: other_line_item.reload)
 
-          expect(Spree::StockReservation.where(order_id: order.id)).to be_empty
+          expect(Spree::StockReservation.where(cart_id: cart.id)).to be_empty
         end
 
         it 'returns failure and rolls back the destroy when re-reservation fails' do
@@ -110,22 +110,20 @@ module Spree
           # still picks the row.
           other_line_item.update_column(:quantity, 5)
           other_line_item.variant.stock_items.first.set_count_on_hand(2)
-          line_item_count_before = order.line_items.count
+          line_item_count_before = cart.line_items.count
 
-          result = subject.call(order: order, line_item: line_item)
+          result = subject.call(cart: cart, line_item: line_item)
 
           expect(result).to be_failure
           expect(result.error.to_s).to include('available')
-          expect(order.reload.line_items.count).to eq(line_item_count_before)
+          expect(cart.reload.line_items.count).to eq(line_item_count_before)
         end
       end
 
-      context 'when the order is in the cart state' do
-        before { order.update_columns(email: nil, ship_address_id: nil) }
-
+      context 'when the cart is not yet in checkout' do
         it 'does not run a reservation pass' do
           expect {
-            subject.call(order: order, line_item: line_item)
+            subject.call(cart: cart, line_item: line_item)
           }.not_to change { Spree::StockReservation.count }
         end
       end

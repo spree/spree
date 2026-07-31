@@ -57,7 +57,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FeesController, type: :controller 
     let!(:fee) { create(:fee, order: order, amount: 5, label: 'Handling', kind: 'handling') }
 
     it 'updates the fee and re-sums totals' do
-      order.updater.resum_typed_totals!
+      order.recalculate_totals!
       with_fee_total = order.reload.total
 
       patch :update, params: { order_id: order.prefixed_id, id: fee.prefixed_id, amount: 8 }, as: :json
@@ -72,7 +72,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FeesController, type: :controller 
     let!(:fee) { create(:fee, order: order, amount: 5, label: 'Handling', kind: 'handling') }
 
     it 'removes the fee and re-sums totals' do
-      order.updater.resum_typed_totals!
+      order.recalculate_totals!
       with_fee_total = order.reload.total
 
       delete :destroy, params: { order_id: order.prefixed_id, id: fee.prefixed_id }, as: :json

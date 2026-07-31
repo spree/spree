@@ -26,7 +26,7 @@ module Spree
         end
 
         def order_total(order)
-          order.item_total + order.ship_total - order.shipping_discount
+          order.item_total + order.delivery_total - order.fulfillment_discount
         end
       end
     end

@@ -105,7 +105,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::DiscountsController, type: :contro
     end
 
     it 'removes the row and re-sums totals' do
-      order.updater.resum_typed_totals!
+      order.recalculate_totals!
       with_discount_total = order.reload.total
 
       delete :destroy, params: { order_id: order.prefixed_id, id: manual_discount.prefixed_id }, as: :json

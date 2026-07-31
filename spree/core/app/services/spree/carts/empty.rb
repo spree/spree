@@ -29,10 +29,11 @@ module Spree
           cart.discounts.destroy_all
           cart.fees.destroy_all
           cart.fulfillments.destroy_all
-          cart.state_changes.destroy_all
+          # Carts have no state machine — only legacy Order records carry
+          # state-change rows.
+          cart.state_changes.destroy_all if cart.respond_to?(:state_changes)
           cart.order_promotions.destroy_all
-          cart.update_totals
-          cart.persist_totals
+          cart.recalculate_totals!
 
           Spree::StockReservations::Release.call(cart: cart)
 

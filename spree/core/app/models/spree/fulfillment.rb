@@ -268,13 +268,16 @@ module Spree
     # pending    unless order is complete and +order.payment_state+ is +paid+
     # shipped    if already shipped (ie. does not change the state)
     # ready      all other cases
-    def determine_state(order)
-      return 'canceled' if canceled? || order.canceled?
-      return 'pending' unless order.can_ship?
+    # @param [Spree::Cart, Spree::Order]
+    def determine_state(order_or_cart)
+      return 'pending' if order_or_cart.is_a?(Spree::Cart)
+
+      return 'canceled' if canceled? || order_or_cart.canceled?
+      return 'pending' unless order_or_cart.can_ship?
       return 'pending' if fulfillment_items.any?(&:backordered?)
       return 'fulfilled' if fulfilled?
 
-      order.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
+      order_or_cart.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
     end
 
     def discounted_cost

@@ -6,7 +6,7 @@ module Spree
     let!(:store_stock_location) { create(:stock_location, store: store, backorderable_default: true) }
     let!(:store_delivery_method) { create(:shipping_method, store: store) }
     let(:user) { create(:user) }
-    let(:cart) { create(:cart_with_line_items, user: user, store: store, currency: 'USD') }
+    let(:cart) { create(:cart_with_line_items, customer: user, store: store, currency: 'USD') }
 
     describe '#call' do
       subject { described_class.call(cart: cart, params: params) }
@@ -25,22 +25,22 @@ module Spree
 
         it 'updates the customer note' do
           expect(subject).to be_success
-          expect(cart.reload.special_instructions).to eq('Leave at the door')
+          expect(cart.reload.customer_note).to eq('Leave at the door')
         end
 
         context 'when clearing customer_note' do
-          let(:cart) { create(:cart_with_line_items, user: user, store: store, special_instructions: 'Existing instructions') }
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, customer_note: 'Existing instructions') }
 
           it 'clears with empty string' do
             result = described_class.call(cart: cart, params: { customer_note: '' })
             expect(result).to be_success
-            expect(cart.reload.special_instructions).to eq('')
+            expect(cart.reload.customer_note).to eq('')
           end
 
           it 'clears with nil' do
             result = described_class.call(cart: cart, params: { customer_note: nil })
             expect(result).to be_success
-            expect(cart.reload.special_instructions).to be_nil
+            expect(cart.reload.customer_note).to be_nil
           end
         end
       end
@@ -79,7 +79,7 @@ module Spree
           let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
           let!(:us_market) { store.default_market }
           let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
-          let(:cart) { create(:cart_with_line_items, user: user, store: store, market: us_market, currency: 'USD') }
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, currency: 'USD') }
 
           it 'switches market when currency changes' do
             result = described_class.call(cart: cart, params: { currency: 'EUR' })
@@ -142,7 +142,7 @@ module Spree
         context 'when shipping address country is not in the new market' do
           let!(:us_state) { us_country.states.find_by(abbr: 'NY') || create(:state, country: us_country, abbr: 'NY', name: 'New York') }
           let(:us_address) { create(:address, country: us_country, state: us_state) }
-          let(:cart) { create(:cart_with_line_items, user: user, store: store, market: us_market, ship_address: us_address, email: 'buyer@example.com') }
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, ship_address: us_address, email: 'buyer@example.com') }
           let(:params) { { market_id: eu_market.prefixed_id } }
 
           it 'clears the shipping address' do
@@ -161,7 +161,7 @@ module Spree
 
         context 'when shipping address country is in the new market' do
           let(:de_address) { create(:address, country: de_country) }
-          let(:cart) { create(:cart_with_line_items, user: user, store: store, market: us_market, ship_address: de_address) }
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, ship_address: de_address) }
           let(:params) { { market_id: eu_market.prefixed_id } }
 
           it 'keeps the shipping address' do
@@ -256,7 +256,7 @@ module Spree
             end
 
             context 'when the cart is already mid-checkout' do
-              let(:cart) { create(:cart_with_line_items, user: user, store: store, email: 'buyer@example.com', ship_address: create(:address, user: user)) }
+              let(:cart) { create(:cart_with_line_items, customer: user, store: store, email: 'buyer@example.com', ship_address: create(:address, user: user)) }
 
               it 'rebuilds delivery proposals for the new address' do
                 expect(subject).to be_success
@@ -281,7 +281,7 @@ module Spree
       describe 'billing address does not reset checkout state' do
         let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
-        let(:cart) { create(:cart_with_line_items, user: user, store: store, email: 'buyer@example.com', ship_address: create(:address, user: user)) }
+        let(:cart) { create(:cart_with_line_items, customer: user, store: store, email: 'buyer@example.com', ship_address: create(:address, user: user)) }
 
         let(:params) do
           {
@@ -396,7 +396,7 @@ module Spree
         include_examples 'ignores other users address', :billing_address
 
         context 'when the cart has no user (guest cart)' do
-          let(:cart) { create(:cart_with_line_items, user: nil, store: store) }
+          let(:cart) { create(:cart_with_line_items, customer: nil, store: store) }
           let(:params) { { shipping_address_id: other_users_address.prefixed_id } }
 
           it 'ignores address_id params and keeps existing address' do
@@ -581,8 +581,8 @@ module Spree
           let(:params) { { email: 'buyer@example.com', shipping_address: address_params } }
 
           it 'creates reservations when entering checkout' do
-            expect(cart.cart?).to be(true)
             expect { subject }.to change { Spree::StockReservation.where(cart_id: cart.id).count }.by_at_least(1)
+            expect(cart.reload.in_checkout?).to be(true)
           end
         end
 

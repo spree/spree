@@ -4,50 +4,46 @@ module Spree
   describe Carts::AddItem do
     subject { described_class }
 
-    let(:order) { create :order, total: 100 }
-    let(:variant) { create :variant, price: 20 }
+    let(:cart) { create(:cart) }
+    let(:variant) { create(:variant, price: 20) }
     let(:qty) { 1 }
-    let(:execute) { subject.call(order: order, variant: variant, quantity: qty) }
+    let(:execute) { subject.call(cart: cart, variant: variant, quantity: qty) }
     let(:value) { execute.value }
-    let(:expected_line_item) { order.reload.line_items.first }
+    let(:expected_line_item) { cart.reload.line_items.first }
 
-    context 'add line item to order' do
-      it 'change by one and recalculate amount' do
-        expect { execute }.to change { order.line_items.count }.by(1)
+    context 'add line item to cart' do
+      it 'changes by one and recalculates totals' do
+        expect { execute }.to change { cart.line_items.count }.by(1)
         expect(execute).to be_success
         expect(value).to eq expected_line_item
-        expect(order.amount).to eq 20
+        expect(cart.reload.item_total).to eq 20
       end
     end
 
     context 'with same line item' do
-      let(:line_item) { create :line_item, variant: variant }
-      let(:order) { create :order, line_items: [line_item] }
+      let!(:line_item) { create(:line_item, cart: cart, order: nil, variant: variant) }
 
-      it 'not to add' do
+      it 'increments the existing line item instead of adding a new one' do
         expect(execute).to be_success
         expect(value).to eq expected_line_item
-        expect(order.line_items.count).to eq 1
+        expect(cart.line_items.count).to eq 1
+        expect(expected_line_item.quantity).to eq(line_item.quantity + 1)
       end
     end
 
-    context 'not given a shipment' do
-      let(:execute) { subject.call(order: order, variant: variant, quantity: qty) }
-
-      it 'ensures updated shipments' do
-        expect(order).to receive(:ensure_updated_fulfillments)
+    context 'not given a fulfillment' do
+      it 'ensures updated fulfillments' do
+        expect(cart).to receive(:ensure_updated_fulfillments)
         expect(execute).to be_success
       end
     end
 
     context 'with store_credits payment' do
-      let!(:order) { create(:order, total: 100) }
-      let!(:payment) { create(:store_credit_payment, order: order) }
+      let(:cart) { create(:cart_with_line_items, customer: create(:user)) }
+      let!(:payment) { create(:store_credit_payment, cart: cart, order: nil, amount: 5) }
 
-      let(:execute) { subject.call(order: order, variant: variant, quantity: 1) }
-
-      it do
-        expect { execute }.to change { order.payments.store_credits.count }.by(-1)
+      it 'invalidates the store credit payment' do
+        expect { execute }.to change { cart.payments.store_credits.count }.by(-1)
       end
     end
 
@@ -59,14 +55,14 @@ module Spree
         let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
         before do
-          subject.call(order: order, variant: variant, quantity: 1)
-          order.reload
+          subject.call(cart: cart, variant: variant, quantity: 1)
+          cart.reload
         end
 
-        it 'creates valid discount on order' do
-          subject.call(order: order, variant: variant, quantity: 1)
-          expect(order.discounts.to_a.sum(&:amount)).not_to eq 0
-          expect(order.total).to eq 30
+        it 'creates valid discount on the cart' do
+          subject.call(cart: cart, variant: variant, quantity: 1)
+          expect(cart.discounts.to_a.sum(&:amount)).not_to eq 0
+          expect(cart.reload.total).to eq 30
         end
       end
 
@@ -74,14 +70,14 @@ module Spree
         let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
         before do
-          subject.call(order: order, variant: variant, quantity: 1)
-          order.reload
+          subject.call(cart: cart, variant: variant, quantity: 1)
+          cart.reload
         end
 
-        it 'creates valid discount on order' do
-          subject.call(order: order, variant: variant, quantity: 1)
-          expect(order.line_item_discounts.to_a.sum(&:amount)).not_to eq 0
-          expect(order.total).to eq 30
+        it 'creates valid line item discount on the cart' do
+          subject.call(cart: cart, variant: variant, quantity: 1)
+          expect(cart.discounts.for_line_items.to_a.sum(&:amount)).not_to eq 0
+          expect(cart.reload.total).to eq 30
         end
       end
 
@@ -101,28 +97,28 @@ module Spree
         let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
         it 'updates included_tax_total' do
-          expect(order.included_tax_total.to_f).to eq(0.00)
-          subject.call(order: order, variant: variant, quantity: 1)
-          expect(order.included_tax_total.to_f).to eq(100)
+          expect(cart.included_tax_total.to_f).to eq(0.00)
+          subject.call(cart: cart, variant: variant, quantity: 1)
+          expect(cart.reload.included_tax_total.to_f).to eq(100)
         end
 
         it 'updates included_tax_total after adding two line items' do
-          subject.call(order: order, variant: variant, quantity: 1)
-          expect(order.included_tax_total.to_f).to eq(100)
-          subject.call(order: order, variant: variant, quantity: 1)
-          expect(order.included_tax_total.to_f).to eq(200)
+          subject.call(cart: cart, variant: variant, quantity: 1)
+          expect(cart.reload.included_tax_total.to_f).to eq(100)
+          subject.call(cart: cart, variant: variant, quantity: 1)
+          expect(cart.reload.included_tax_total.to_f).to eq(200)
         end
       end
     end
 
     context 'pass valid params hash in options' do
       let(:options) { { quantity: 2, variant_id: variant.id } }
-      let(:execute) { subject.call(order: order, variant: variant, quantity: nil, options: options) }
+      let(:execute) { subject.call(cart: cart, variant: variant, quantity: nil, options: options) }
 
-      it do
+      it 'takes the quantity from options' do
         expect(execute).to be_success
-        expect(order.line_items.count).to eq 1
-        line_item = order.line_items.first
+        expect(cart.line_items.count).to eq 1
+        line_item = cart.line_items.first
         expect(line_item.quantity).to eq 2
       end
     end
@@ -130,70 +126,70 @@ module Spree
     context 'pass invalid arguments' do
       context 'different quantity in argument and in options' do
         let(:options) { { quantity: 2 } }
-        let(:execute) { subject.call(order: order, variant: variant, quantity: 3, options: options) }
+        let(:execute) { subject.call(cart: cart, variant: variant, quantity: 3, options: options) }
 
-        it 'take value from options' do
+        it 'takes value from options' do
           expect(execute).to be_success
-          line_item = order.line_items.first
+          line_item = cart.line_items.first
           expect(line_item.quantity).to eq 2
         end
       end
 
-      context 'different quantity no quantity in argument and in params' do
+      context 'no quantity in argument nor in options' do
         let(:options) { {} }
-        let(:execute) { subject.call(order: order, variant: variant, quantity: nil, options: options) }
+        let(:execute) { subject.call(cart: cart, variant: variant, quantity: nil, options: options) }
 
-        it 'set default' do
+        it 'sets the default' do
           expect(execute).to be_success
-          line_item = order.line_items.first
+          line_item = cart.line_items.first
           expect(line_item.quantity).to eq 1
         end
       end
 
-      context 'not permitted' do
+      context 'not permitted option' do
         let(:options) { { dummy_param: true } }
-        let(:execute) { subject.call(order: order, variant: variant, quantity: 1, options: options) }
+        let(:execute) { subject.call(cart: cart, variant: variant, quantity: 1, options: options) }
 
-        it do
+        it 'ignores the option' do
           expect(execute).to be_success
-          line_item = order.line_items.first
+          line_item = cart.line_items.first
           expect(line_item.quantity).to eq 1
         end
       end
 
       context 'pass non-existing variant' do
-        let(:variant_2) { create :variant }
-        let(:execute) { subject.call(order: order, variant: variant_2, quantity: 1) }
+        let(:other_variant) { create(:variant) }
+        let(:execute) { subject.call(cart: cart, variant: other_variant, quantity: 1) }
 
-        before { Spree::Variant.find(variant_2.id).destroy }
+        before { Spree::Variant.find(other_variant.id).destroy }
 
-        it do
+        it 'fails without adding a line item' do
           expect(execute).to be_failure
-          order.reload
-          expect(order.line_items.count).to eq 0
+          cart.reload
+          expect(cart.line_items.count).to eq 0
         end
       end
 
-      context 'variant have not desired quantity' do
-        let(:execute) { subject.call(order: order, variant: variant, quantity: 10) }
+      context 'variant does not have the desired quantity' do
+        let(:execute) { subject.call(cart: cart, variant: variant, quantity: 10) }
 
         before { variant.stock_items.first.update backorderable: false }
 
-        it do
+        it 'fails without adding a line item' do
           expect(execute).to be_failure
-          order.reload
-          expect(order.line_items.count).to eq 0
+          cart.reload
+          expect(cart.line_items.count).to eq 0
         end
       end
 
-      context 'variant has been descontinued' do
+      context 'variant has been discontinued' do
         let(:variant) { create :variant, discontinue_on: 1.day.ago }
-        let(:execute) { subject.call(order: order, variant: variant, quantity: 10) }
+        let(:execute) { subject.call(cart: cart, variant: variant, quantity: 10) }
 
-        it do
+        it 'fails without adding a line item' do
           expect(execute).to be_failure
-          order.reload
-          expect(order.line_items.count).to eq 0
+          cart.reload
+          expect(cart.line_items.count).to eq 0
         end
       end
     end
@@ -216,23 +212,23 @@ module Spree
       end
 
       it 'adds the not-yet-published, preorderable item to the cart' do
-        expect { execute }.to change { order.line_items.count }.by(1)
+        expect { execute }.to change { cart.line_items.count }.by(1)
         expect(execute).to be_success
       end
 
       it 'caps the pre-order at the backorder_limit' do
-        result = subject.call(order: order, variant: variant, quantity: 6)
+        result = subject.call(cart: cart, variant: variant, quantity: 6)
         expect(result).to be_failure
-        expect(order.reload.line_items).to be_empty
+        expect(cart.reload.line_items).to be_empty
       end
 
       context 'with no backorder_limit (unlimited)' do
         before { variant.update!(backorder_limit: nil) }
 
         it 'accepts a pre-order beyond any stock count' do
-          result = subject.call(order: order, variant: variant, quantity: 100)
+          result = subject.call(cart: cart, variant: variant, quantity: 100)
           expect(result).to be_success
-          expect(order.reload.line_items.first.quantity).to eq 100
+          expect(cart.reload.line_items.first.quantity).to eq 100
         end
       end
 
@@ -245,7 +241,7 @@ module Spree
 
         it 'is rejected because the product is not yet published' do
           expect(execute).to be_failure
-          expect(order.reload.line_items).to be_empty
+          expect(cart.reload.line_items).to be_empty
         end
       end
     end
@@ -253,46 +249,46 @@ module Spree
     context 'setting metadata' do
       context 'via metadata param' do
         let(:metadata) { { 'gift_message' => 'Happy Birthday!' } }
-        let(:execute) { subject.call(order: order, variant: variant, quantity: qty, metadata: metadata) }
+        let(:execute) { subject.call(cart: cart, variant: variant, quantity: qty, metadata: metadata) }
 
         it 'stores metadata on the line item' do
           expect(execute).to be_success
-          order.reload
-          expect(order.line_items.first.metadata).to eq metadata
-          expect(order.line_items.first.private_metadata).to eq metadata
+          cart.reload
+          expect(cart.line_items.first.metadata).to eq metadata
+          expect(cart.line_items.first.private_metadata).to eq metadata
         end
       end
 
       context 'via legacy public_metadata and private_metadata params' do
         let(:public_metadata) { { 'prop1' => 'value1' } }
         let(:private_metadata) { { 'prop2' => 'value2' } }
-        let(:execute) { subject.call(order: order, variant: variant, quantity: qty, public_metadata: public_metadata, private_metadata: private_metadata) }
+        let(:execute) { subject.call(cart: cart, variant: variant, quantity: qty, public_metadata: public_metadata, private_metadata: private_metadata) }
 
         it 'stores private_metadata' do
           expect(execute).to be_success
-          order.reload
-          expect(order.line_items.first.private_metadata).to eq private_metadata
+          cart.reload
+          expect(cart.line_items.first.private_metadata).to eq private_metadata
         end
 
         it 'stores public_metadata' do
           expect(execute).to be_success
-          order.reload
-          expect(order.line_items.first.public_metadata).to eq public_metadata
+          cart.reload
+          expect(cart.line_items.first.public_metadata).to eq public_metadata
         end
       end
     end
 
     context 'when variant has price in the cart currency, but with amount set to nil' do
-      let(:call_service) { subject.call(order: order, variant: variant, quantity: 1) }
+      let(:call_workflow) { subject.call(cart: cart, variant: variant, quantity: 1) }
 
       before do
         allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
         variant.prices.first.update(amount: nil)
       end
 
-      it 'does not add the item and raises error' do
-        expect(call_service).to be_failure
-        expect(call_service.error).not_to be_nil
+      it 'does not add the item and returns failure' do
+        expect(call_workflow).to be_failure
+        expect(call_workflow.error).not_to be_nil
       end
     end
 
@@ -304,26 +300,26 @@ module Spree
         variant.stock_items.first.set_count_on_hand(10)
       end
 
-      context 'when the order is mid-checkout' do
-        let(:order) { create(:order, total: 100, state: 'address') }
+      context 'when the cart is mid-checkout' do
+        let(:cart) { create(:cart, email: 'buyer@example.com') }
 
         it 'creates a reservation for the new line item' do
-          expect { execute }.to change { Spree::StockReservation.where(order_id: order.id).count }.by(1)
+          expect { execute }.to change { Spree::StockReservation.where(cart_id: cart.id).count }.by(1)
           expect(execute).to be_success
         end
 
         it 'fails when adding more than available and rolls back the line item' do
           variant.stock_items.first.set_count_on_hand(0)
 
-          result = subject.call(order: order, variant: variant, quantity: 1)
+          result = subject.call(cart: cart, variant: variant, quantity: 1)
 
           expect(result).to be_failure
-          expect(order.reload.line_items).to be_empty
+          expect(cart.reload.line_items).to be_empty
         end
       end
 
-      context 'when the order is in the cart state' do
-        let(:order) { create(:order, total: 100, email: nil, user: nil, bill_address: nil) }
+      context 'when the cart is not yet in checkout' do
+        let(:cart) { create(:cart) }
 
         it 'does not create a reservation' do
           expect { execute }.not_to change { Spree::StockReservation.count }
@@ -332,7 +328,7 @@ module Spree
       end
 
       context 'when stock_reservations_enabled is false' do
-        let(:order) { create(:order, total: 100, state: 'address') }
+        let(:cart) { create(:cart, email: 'buyer@example.com') }
 
         before { Spree::Config[:stock_reservations_enabled] = false }
         after { Spree::Config[:stock_reservations_enabled] = true }
@@ -344,7 +340,7 @@ module Spree
       end
 
       context 'when the variant is a capped pre-order with partial stock' do
-        let(:order) { create(:order, total: 100, state: 'address') }
+        let(:cart) { create(:cart, email: 'buyer@example.com') }
 
         before do
           variant.update!(preorderable: true, backorder_limit: 5)
@@ -352,10 +348,10 @@ module Spree
         end
 
         it 'skips reservation and accepts quantities beyond on-hand stock' do
-          result = subject.call(order: order, variant: variant, quantity: 5)
+          result = subject.call(cart: cart, variant: variant, quantity: 5)
 
           expect(result).to be_success
-          expect(Spree::StockReservation.where(order_id: order.id)).to be_empty
+          expect(Spree::StockReservation.where(cart_id: cart.id)).to be_empty
         end
       end
     end

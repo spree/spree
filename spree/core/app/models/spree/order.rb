@@ -259,6 +259,8 @@ module Spree
     validates :discount_total,       NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
 
+    # @deprecated Both warn and run the full recalculation; use
+    #   {#recalculate_totals!}. Removed in 6.1.
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
     delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
@@ -379,8 +381,15 @@ module Spree
       (item_total + line_items.sum(:promo_total)).to_f
     end
 
-    def shipping_discount
+    # Total fulfillment discount applied by promotions, as a positive amount.
+    def fulfillment_discount
       discounts.for_fulfillments.sum(:amount) * -1
+    end
+
+    # @deprecated Use {#fulfillment_discount}; removed in 6.1.
+    def shipping_discount
+      Spree::Deprecation.warn('Spree::Order#shipping_discount is deprecated and will be removed in Spree 6.1. Use #fulfillment_discount instead.')
+      fulfillment_discount
     end
 
     def completed?
@@ -484,8 +493,8 @@ module Spree
       !digital? && delivery_required?
     end
 
-    # Returns the relevant zone (if any) to be used for taxation purposes.
-    # Uses default tax zone unless there is a specific match
+    # @deprecated Use {#recalculate_totals!} for money and {#update_statuses!}
+    #   for payment/fulfillment statuses; removed in 6.1.
     def updater
       @updater ||= Spree.order_updater.new(self)
     end

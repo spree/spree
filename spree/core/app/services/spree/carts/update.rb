@@ -6,7 +6,7 @@ module Spree
       def call(cart:, params:)
         @cart = cart
         @params = params.to_h.deep_symbolize_keys
-        was_in_cart = cart.cart?
+        was_in_checkout = cart.in_checkout?
 
         ApplicationRecord.transaction do
           assign_cart_attributes
@@ -18,7 +18,7 @@ module Spree
 
           process_items
           try_advance
-          sync_stock_reservations(was_in_cart: was_in_cart)
+          sync_stock_reservations(was_in_checkout: was_in_checkout)
         end
 
         success(cart)
@@ -112,14 +112,14 @@ module Spree
       # entering checkout → Reserve, mid-checkout mutation → Extend, reverting to cart → Release.
       # A failed Reserve raises so the enclosing transaction rolls back and the
       # outer rescue surfaces the error to the API caller.
-      def sync_stock_reservations(was_in_cart:)
-        if cart.cart?
-          Spree::StockReservations::Release.call(cart: cart) unless was_in_cart
-        elsif was_in_cart
+      def sync_stock_reservations(was_in_checkout:)
+        if !cart.in_checkout?
+          Spree::StockReservations::Release.call(cart: cart) if was_in_checkout
+        elsif was_in_checkout
+          Spree::StockReservations::Extend.call(cart: cart)
+        else
           result = Spree::StockReservations::Reserve.call(cart: cart)
           raise Spree::StockReservations::InsufficientStockError.new(nil, result.error.to_s) if result.failure?
-        else
-          Spree::StockReservations::Extend.call(order: cart)
         end
       end
 
@@ -128,7 +128,7 @@ module Spree
       # /carts/:id/complete endpoint (a fully-covered cart must never
       # auto-complete during address updates).
       def try_advance
-        return if cart.complete? || cart.canceled?
+        return if cart.complete?
 
         if @address_invalidated || address_changed?
           if cart.respond_to?(:recalculate_for_address_change!)

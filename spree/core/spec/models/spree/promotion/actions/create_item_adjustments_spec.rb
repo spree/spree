@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateItemAdjustments, type: :model do
   let(:order) { create(:order_with_line_items, line_items_count: 2) }
-  let(:promotion) { create(:promotion, kind: :automatic, code: nil, stores: [order.store]) }
+  let(:promotion) { create(:promotion, kind: :automatic, code: nil, store: order.store) }
   let(:action) do
     described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 3))
   end

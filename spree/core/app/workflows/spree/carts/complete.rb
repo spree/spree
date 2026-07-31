@@ -187,7 +187,7 @@ module Spree
             accept_marketing: cart.accept_marketing,
             coupon_code: cart.read_attribute(:coupon_code),
             preferred_stock_location_id: cart.preferred_stock_location_id,
-            special_instructions: cart.special_instructions,
+            customer_note: cart.customer_note,
             last_ip_address: cart.last_ip_address,
             ship_address: cart.ship_address&.dup,
             bill_address: cart.bill_address&.dup

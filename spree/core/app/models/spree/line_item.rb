@@ -213,13 +213,13 @@ module Spree
 
     # Returns true if the line item has sufficient stock
     #
-    # The order's own active stock reservations are excluded from the
+    # The owner's own active stock reservations are excluded from the
     # availability check — a customer's own checkout hold must not make
     # their own line item look out of stock.
     #
     # @return [Boolean]
     def sufficient_stock?
-      Spree::Stock::Quantifier.new(variant, excluded_order: order).can_supply?(quantity)
+      Spree::Stock::Quantifier.new(variant, excluded_order: owner).can_supply?(quantity)
     end
 
     # Returns true if the line item has insufficient stock

@@ -5,8 +5,8 @@ module Spree
     subject { described_class }
 
     let(:store) { @default_store }
-    let(:order) { create(:order, store: store) }
-    let(:line_item) { create(:line_item, order: order) }
+    let(:cart) { create(:cart, store: store) }
+    let(:line_item) { create(:line_item, cart: cart, order: nil) }
 
     context 'with non-backorderable item' do
       before do
@@ -16,7 +16,7 @@ module Spree
 
       context 'with sufficient stock quantity' do
         it 'returns successful result', :aggregate_failures do
-          result = subject.call(order: order, line_item: line_item, quantity: 5)
+          result = subject.call(cart: cart, line_item: line_item, quantity: 5)
 
           expect(result.success).to eq(true)
           expect(result.value).to be_a LineItem
@@ -25,8 +25,8 @@ module Spree
       end
 
       context 'with insufficient stock quantity' do
-        it 'return result with success equal false', :aggregate_failures do
-          result = subject.call(order: order, line_item: line_item, quantity: 10)
+        it 'returns result with success equal false', :aggregate_failures do
+          result = subject.call(cart: cart, line_item: line_item, quantity: 10)
 
           expect(result.success).to eq(false)
           expect(result.value).to be_a LineItem
@@ -37,7 +37,7 @@ module Spree
 
     context 'with backorderable item' do
       it 'returns successful result', :aggregate_failures do
-        result = subject.call(order: order, line_item: line_item, quantity: 5)
+        result = subject.call(cart: cart, line_item: line_item, quantity: 5)
 
         expect(result.success).to eq(true)
         expect(result.value).to be_a LineItem
@@ -51,43 +51,41 @@ module Spree
         line_item.variant.stock_items.first.set_count_on_hand(20)
       end
 
-      context 'when the order is mid-checkout' do
-        before { order.update_columns(email: order.email || 'buyer@example.com', ship_address_id: order.ship_address_id || create(:address).id) }
+      context 'when the cart is mid-checkout' do
+        before { cart.update_columns(email: 'buyer@example.com') }
 
         it 'reserves the new quantity' do
-          subject.call(order: order, line_item: line_item, quantity: 4)
+          subject.call(cart: cart, line_item: line_item, quantity: 4)
 
-          reservation = Spree::StockReservation.where(order_id: order.id, line_item_id: line_item.id).first
+          reservation = Spree::StockReservation.where(cart_id: cart.id, line_item_id: line_item.id).first
           expect(reservation).to be_present
           expect(reservation.quantity).to eq(4)
         end
 
         it 'updates an existing reservation in place rather than duplicating' do
-          subject.call(order: order, line_item: line_item, quantity: 2)
-          subject.call(order: order, line_item: line_item, quantity: 4)
+          subject.call(cart: cart, line_item: line_item, quantity: 2)
+          subject.call(cart: cart, line_item: line_item, quantity: 4)
 
-          reservations = Spree::StockReservation.where(order_id: order.id, line_item_id: line_item.id)
+          reservations = Spree::StockReservation.where(cart_id: cart.id, line_item_id: line_item.id)
           expect(reservations.count).to eq(1)
           expect(reservations.first.quantity).to eq(4)
         end
 
         it 'fails when the new quantity exceeds available stock and rolls back' do
-          subject.call(order: order, line_item: line_item, quantity: 2)
+          subject.call(cart: cart, line_item: line_item, quantity: 2)
           line_item.variant.stock_items.first.set_count_on_hand(3)
 
-          result = subject.call(order: order, line_item: line_item, quantity: 5)
+          result = subject.call(cart: cart, line_item: line_item, quantity: 5)
 
           expect(result).to be_failure
           expect(line_item.reload.quantity).to eq(2)
         end
       end
 
-      context 'when the order is in the cart state' do
-        before { order.update_columns(email: nil, ship_address_id: nil) }
-
+      context 'when the cart is not yet in checkout' do
         it 'does not create a reservation' do
           expect {
-            subject.call(order: order, line_item: line_item, quantity: 4)
+            subject.call(cart: cart, line_item: line_item, quantity: 4)
           }.not_to change { Spree::StockReservation.count }
         end
       end

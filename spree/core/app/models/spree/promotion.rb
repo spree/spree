@@ -107,7 +107,8 @@ module Spree
     end
 
     def self.order_activatable?(promotable)
-      promotable && !promotable.completed? && !promotable.canceled?
+      # Carts have no cancellation concept — only placed orders can be canceled.
+      promotable && !promotable.completed? && !(promotable.is_a?(Spree::Order) && promotable.canceled?)
     end
 
     def generate_code=(generating_code)

@@ -82,128 +82,132 @@ module Spree
       end
     end
 
+    # The status shims delegate to Spree::Orders::UpdateStatuses, the sole
+    # writer of fulfillment_status — so these run against real fulfillments.
     context 'updating shipment state' do
-      before do
-        allow(order).to receive_messages backordered?: false
-        allow(order).to receive_message_chain(:fulfillments, :shipped, :count).and_return(0)
-        allow(order).to receive_message_chain(:fulfillments, :ready, :count).and_return(0)
-        allow(order).to receive_message_chain(:fulfillments, :pending, :count).and_return(0)
-      end
+      # Fulfillment#determine_state re-derives each state from the order, so
+      # these need a placed order for the factory statuses to survive.
+      let(:order) { create(:completed_order_with_totals, line_items_count: 1) }
+
+      before { order.fulfillments.destroy_all }
 
       it 'is backordered' do
-        allow(order).to receive_messages backordered?: true
-        updater.update_fulfillment_status
+        create(:fulfillment, order: order, status: 'pending')
+        allow(order).to receive(:backordered?).and_return(true)
+
+        updater.update_shipment_state
 
         expect(order.fulfillment_status).to eq('backorder')
       end
 
       it 'is nil' do
-        allow(order).to receive_message_chain(:fulfillments, :states).and_return([])
-        allow(order).to receive_message_chain(:fulfillments, :count).and_return(0)
+        updater.update_shipment_state
 
-        updater.update_fulfillment_status
         expect(order.fulfillment_status).to be_nil
       end
 
-      ['fulfilled', 'ready', 'pending'].each do |status|
+      ['fulfilled', 'pending'].each do |status|
         it "is #{status}" do
-          allow(order).to receive_message_chain(:fulfillments, :states).and_return([status])
-          updater.update_fulfillment_status
-          expect(order.fulfillment_status).to eq(status.to_s)
+          create(:fulfillment, order: order, status: status)
+
+          updater.update_shipment_state
+
+          expect(order.fulfillment_status).to eq(status)
         end
       end
 
-      it 'rolls ready_for_pickup up as ready' do
-        allow(order).to receive_message_chain(:fulfillments, :states).and_return(['ready_for_pickup'])
-        updater.update_fulfillment_status
-        expect(order.fulfillment_status).to eq('ready')
+      # Fulfillment#determine_state only yields 'ready' once the order is paid.
+      context 'when the order is paid' do
+        before { allow(order).to receive(:paid?).and_return(true) }
+
+        it 'is ready' do
+          create(:fulfillment, order: order, status: 'ready')
+
+          updater.update_shipment_state
+
+          expect(order.fulfillment_status).to eq('ready')
+        end
+
+        it 'rolls ready_for_pickup up as ready' do
+          create(:fulfillment, order: order, status: 'ready_for_pickup')
+
+          updater.update_shipment_state
+
+          expect(order.fulfillment_status).to eq('ready')
+        end
       end
 
       it 'is partial' do
-        allow(order).to receive_message_chain(:fulfillments, :states).and_return(['pending', 'fulfilled'])
-        updater.update_fulfillment_status
+        create(:fulfillment, order: order, status: 'pending')
+        create(:fulfillment, order: order, status: 'fulfilled')
+
+        updater.update_shipment_state
+
         expect(order.fulfillment_status).to eq('partial')
       end
     end
 
+    # The status shims delegate to Spree::Orders::UpdateStatuses, the sole
+    # writer of payment_status — so these run against real payments and use
+    # its vocabulary (none/authorized/partially_paid/paid/refunded/voided),
+    # not the legacy balance_due/credit_owed/void names.
     context 'updating payment state' do
-      let(:order) { Order.new }
-      let(:updater) { order.updater }
+      let(:order) { create(:order_with_line_items, line_items_count: 1) }
+      let(:order_total) { order.total }
 
-      it 'is failed if no valid payments' do
-        allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(true)
-
+      it 'is none when there are no payments' do
         updater.update_payment_state
-        expect(order.payment_state).to eq('failed')
+
+        expect(order.payment_state).to eq('none')
       end
 
-      context 'payment total is greater than order total' do
-        it 'is credit_owed' do
-          order.payment_total = 2
-          order.total = 1
+      it 'is authorized when a payment is only pending' do
+        create(:payment, order: order, amount: order_total, state: 'pending')
 
-          expect do
-            updater.update_payment_state
-          end.to change(order, :payment_state).to 'credit_owed'
-        end
+        updater.update_payment_state
+
+        expect(order.payment_state).to eq('authorized')
       end
 
       context 'order total is greater than payment total' do
-        it 'is balance_due' do
-          order.payment_total = 1
-          order.total = 2
+        it 'is partially_paid' do
+          create(:payment, order: order, amount: order_total - 1, state: 'completed')
 
-          expect do
-            updater.update_payment_state
-          end.to change(order, :payment_state).to 'balance_due'
+          updater.update_payment_state
+
+          expect(order.payment_state).to eq('partially_paid')
         end
       end
 
       context 'order total equals payment total' do
         it 'is paid' do
-          order.payment_total = 30
-          order.total = 30
+          create(:payment, order: order, amount: order_total, state: 'completed')
 
-          expect do
-            updater.update_payment_state
-          end.to change(order, :payment_state).to 'paid'
+          updater.update_payment_state
+
+          expect(order.payment_state).to eq('paid')
         end
       end
 
       context 'order is canceled' do
-        before do
-          order.status = 'canceled'
-        end
+        before { order.update_columns(status: 'canceled') }
 
         context 'and is still unpaid' do
-          it 'is void' do
-            order.payment_total = 0
-            order.total = 30
-            expect do
-              updater.update_payment_state
-            end.to change(order, :payment_state).to 'void'
-          end
-        end
+          it 'is none' do
+            updater.update_payment_state
 
-        context 'and is paid' do
-          it 'is credit_owed' do
-            order.payment_total = 30
-            order.total = 30
-            allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(false)
-            allow(order).to receive_message_chain(:payments, :completed, :size).and_return(1)
-            expect do
-              updater.update_payment_state
-            end.to change(order, :payment_state).to 'credit_owed'
+            expect(order.payment_state).to eq('none')
           end
         end
 
         context 'and payment is refunded' do
-          it 'is void' do
-            order.payment_total = 0
-            order.total = 30
-            expect do
-              updater.update_payment_state
-            end.to change(order, :payment_state).to 'void'
+          it 'is voided' do
+            payment = create(:payment, order: order, amount: order_total, state: 'completed')
+            create(:refund, payment: payment, amount: order_total)
+
+            updater.update_payment_state
+
+            expect(order.payment_state).to eq('voided')
           end
         end
       end
@@ -239,21 +243,21 @@ module Spree
           allow(shipments).to receive_messages shipped: []
 
           expect(shipment).to receive(:update!).with(order)
-          updater.update_fulfillments
+          updater.update_shipments
         end
 
         it 'refreshes shipment rates' do
           allow(order).to receive_messages fulfillments: shipments
 
           expect(shipment).to receive(:refresh_rates)
-          updater.update_fulfillments
+          updater.update_shipments
         end
 
         it 'updates the shipment amount' do
           allow(order).to receive_messages fulfillments: shipments
 
           expect(shipment).to receive(:update_amounts)
-          updater.update_fulfillments
+          updater.update_shipments
         end
 
         context 'refresh rates' do
@@ -298,7 +302,7 @@ module Spree
         let(:order) { ::OrderWalkthrough.up_to(:delivery) }
 
         it 'resets shipping method to frontend-available' do
-          Spree::CartUpdater.new(order).update_shipments
+          Spree::OrderUpdater.new(order).update_shipments
           expect(order.fulfillments.first.delivery_method).to eq Spree::ShippingMethod.find_by(display_on: 'both')
         end
       end
