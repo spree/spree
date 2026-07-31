@@ -209,7 +209,7 @@ module Spree
     def create_credit_record_params(amount)
       {
         amount: amount,
-        user_id: customer_id,
+        customer_id: customer_id,
         category_id: category_id,
         created_by_id: created_by_id,
         currency: currency,

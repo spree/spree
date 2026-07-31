@@ -69,12 +69,12 @@ module Spree
               )
             end
 
-            linked_user = subscriber.user
+            linked_customer = subscriber.customer
             subscriber.destroy!
 
             # Keep accepts_email_marketing in sync, but only when no subscriptions remain.
-            if linked_user&.accepts_email_marketing? && Spree::NewsletterSubscriber.where(user_id: linked_user.id).none?
-              linked_user.update(accepts_email_marketing: false)
+            if linked_customer&.accepts_email_marketing? && Spree::NewsletterSubscriber.where(customer_id: linked_customer.id).none?
+              linked_customer.update(accepts_email_marketing: false)
             end
 
             head :no_content
@@ -92,7 +92,7 @@ module Spree
                 email: subscriber.email,
                 unsubscribe_token: subscriber.generate_token_for(:unsubscribe),
                 store_id: current_store.prefixed_id,
-                customer_id: subscriber.user&.prefixed_id
+                customer_id: subscriber.customer&.prefixed_id
               }
 
               redirect_url = validated_redirect_url

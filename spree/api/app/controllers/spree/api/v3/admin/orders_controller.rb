@@ -133,7 +133,9 @@ module Spree
             customer_param = params[:customer_id].presence || params[:user_id].presence
             return unless customer_param
 
-            Spree.customer_class.find_by_param!(customer_param)
+            Spree.customer_class.
+              accessible_by(current_ability, :show).
+              find_by_prefix_id!(customer_param)
           end
 
           def order_create_params

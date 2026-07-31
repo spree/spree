@@ -9,7 +9,7 @@ module Spree
     validates :payment_method, presence: true
     validates :customer, presence: true
     validates :profile_id, presence: true
-    validates :payment_method_id, uniqueness: { scope: :user_id }
+    validates :payment_method_id, uniqueness: { scope: :customer_id }
 
     encrypts :profile_id, deterministic: true if Rails.configuration.active_record.encryption.include?(:primary_key)
   end

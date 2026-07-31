@@ -85,8 +85,7 @@ module Spree
 
           many :payment_methods, resource: proc { Spree.api.admin_payment_method_serializer }, if: proc { expand?('payment_methods') }
 
-          one :user,
-              key: :customer,
+          one :customer,
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 

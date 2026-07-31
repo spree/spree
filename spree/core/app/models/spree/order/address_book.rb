@@ -60,7 +60,7 @@ module Spree
         attributes.transform_values!(&:presence)
         attributes = attributes.to_h.symbolize_keys
 
-        default_address_scope = customer ? customer.addresses : ::Spree::Address.where(user_id: nil)
+        default_address_scope = customer ? customer.addresses : ::Spree::Address.where(customer_id: nil)
         default_address = default_address_scope.find_by(id: attributes[:id])
 
         if default_address&.editable?

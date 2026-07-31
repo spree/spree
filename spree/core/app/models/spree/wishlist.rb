@@ -22,7 +22,7 @@ module Spree
     has_many :products, -> { distinct }, through: :variants, source: :product, class_name: 'Spree::Product'
 
     after_commit :ensure_default_exists_and_is_unique
-    validates :name, :store, :user, presence: true
+    validates :name, :store, :customer, presence: true
 
     def include?(variant_id)
       wished_items.exists?(variant_id: variant_id)
@@ -46,7 +46,7 @@ module Spree
 
     def ensure_default_exists_and_is_unique
       if is_default?
-        Wishlist.where(is_default: true, user_id: user_id, store_id: store_id).where.not(id: id).update_all(is_default: false)
+        Wishlist.where(is_default: true, customer_id: customer_id, store_id: store_id).where.not(id: id).update_all(is_default: false)
       end
     end
   end

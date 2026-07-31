@@ -14,7 +14,12 @@ module Spree
           return failure('Account temporarily locked. Try again later.') if user.respond_to?(:locked?) && user.locked?
 
           if validate_password(user, password)
-            user.reset_failed_attempts! if user.respond_to?(:reset_failed_attempts!) && user.failed_attempts.to_i.positive?
+            # Require the full lockout contract before touching the counter — a
+            # custom customer_class may implement one hook but not the other.
+            if user.respond_to?(:failed_attempts) && user.respond_to?(:reset_failed_attempts!) &&
+               user.failed_attempts.to_i.positive?
+              user.reset_failed_attempts!
+            end
             success(user)
           else
             user.record_failed_attempt! if user.respond_to?(:record_failed_attempt!)

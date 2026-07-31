@@ -33,7 +33,7 @@ class CreateSpreeCustomersAndAdminUsers < ActiveRecord::Migration[7.2]
       t.string :last_name
       t.string :phone
       t.string :selected_locale
-      t.boolean :accepts_email_marketing
+      t.boolean :accepts_email_marketing, null: false
       t.bigint :bill_address_id
       t.bigint :ship_address_id
       t.integer :failed_attempts

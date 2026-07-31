@@ -108,6 +108,17 @@ describe Spree::Authentication::Strategies::EmailPasswordStrategy do
         expect(result).to be_success
         expect(result.value).to eq(bare_user)
       end
+
+      it 'authenticates without raising when the class defines the reset hook but no counter' do
+        partial_user = double('customer with reset hook but no counter',
+                              valid_password?: true, reset_failed_attempts!: nil)
+        allow(strategy).to receive(:find_user_by_email).with('user@example.com').and_return(partial_user)
+
+        result = strategy.authenticate
+
+        expect(result).to be_success
+        expect(result.value).to eq(partial_user)
+      end
     end
 
     context 'when email is blank' do

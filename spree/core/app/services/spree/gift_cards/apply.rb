@@ -37,7 +37,7 @@ module Spree
 
           store_credit = gift_card.store_credits.create!(
             store: store,
-            user: order.customer,
+            customer: order.customer,
             amount: amount,
             currency: order.currency,
             originator: gift_card,

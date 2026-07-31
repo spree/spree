@@ -428,12 +428,17 @@ admins never move — the task only backfills `password_digest` from the legacy
 insert explicit ids, so it also **resets the Postgres sequence** afterward
 (`reset_pk_sequence!`, guarded to PG) — no prior precedent because taxon→category
 preserved ids via `rename_table`. With ids preserved, the only polymorphic fixups
-are **`user_type` string re-points** `Spree::User` → `Spree.customer_class` on
-`spree_role_users`, `spree_refresh_tokens`, `spree_user_identities`, and
-`spree_api_keys` (`created_by_type` + `revoked_by_type`); admin-typed rows stay.
-The task reads the legacy table **by name only** (never `LegacyUser`, deleted once
-all phases ship together), aborts on `Devise.pepper`, skips blank-email rows, and
-leaves `spree_users` in place as a safety net.
+are **type-string re-points** `Spree::User` → `Spree.customer_class` on
+`spree_role_users`, `spree_refresh_tokens`, `spree_user_identities`,
+`spree_api_keys` (`created_by_type` + `revoked_by_type`), and
+`spree_customer_group_users` (whose type column renamed `user_type` →
+`customer_type` with the 2026-03-16 FK rename — **must** be re-pointed too or
+memberships dangle); admin-typed rows stay. The task reads the legacy table **by
+name only** (never `LegacyUser`, deleted once all phases ship together), aborts on
+`Devise.pepper` (and, since Devise is gone in 6.0 and a pepper can't be
+introspected, aborts when Devise is absent unless `CONFIRM_NO_PEPPER=true`),
+preflight-aborts on blank-email or email-conflict rows (`SKIP_INVALID_ROWS=true`
+to skip), and leaves `spree_users` in place as a safety net.
 
 **Single clash-aware create migration.** The two Phase-1 create migrations merged
 into `20260728000000_create_spree_customers_and_admin_users` — a **non-colliding**

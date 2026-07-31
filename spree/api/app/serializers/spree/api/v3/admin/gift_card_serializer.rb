@@ -29,8 +29,7 @@ module Spree
           # Customer the card was issued to. Gated behind `expand?` to keep
           # the list payload thin — the SPA's list view passes
           # `expand=customer,created_by` to populate the row chips.
-          one :user,
-              key: :customer,
+          one :customer,
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 

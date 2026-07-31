@@ -10,8 +10,8 @@ module Spree
                                         dependent: :destroy
         has_many :users, through: :promotion_rule_users, source: :customer, class_name: "::#{Spree.customer_class}"
 
-        # Customers, not admin users — the rule keys off `Spree::Order#user_id`.
-        # The data layer keeps the `users` association (legacy column name);
+        # Customers, not admin users — the rule keys off `Spree::Order#customer_id`.
+        # The data layer keeps the `users` association name (deferred model rename);
         # the API exposes the same set as `customer_ids`.
         def self.additional_permitted_attributes
           [customer_ids: []]
@@ -50,7 +50,7 @@ module Spree
         end
 
         def eligible?(order, _options = {})
-          eligible_user_ids.include?(order.user_id)
+          eligible_user_ids.include?(order.customer_id)
         end
 
         def user_ids_string
@@ -78,7 +78,7 @@ module Spree
 
           if user_ids_to_add.any?
             Spree::PromotionRuleUser.insert_all(
-              user_ids_to_add.map { |user_id| { user_id: user_id, promotion_rule_id: id } }
+              user_ids_to_add.map { |customer_id| { customer_id: customer_id, promotion_rule_id: id } }
             )
           end
 

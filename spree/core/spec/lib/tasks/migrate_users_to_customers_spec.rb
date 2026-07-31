@@ -40,9 +40,15 @@ describe 'spree:upgrade:migrate_users_to_customers' do
   before do
     subject.reenable
     ENV['SOURCE_USER_TABLE'] = source_table
+    # Devise is gone in 6.0, so the task can't introspect a former pepper — the
+    # examples assert the confirmed no-pepper happy path.
+    ENV['CONFIRM_NO_PEPPER'] = 'true'
   end
 
-  after { ENV.delete('SOURCE_USER_TABLE') }
+  after do
+    ENV.delete('SOURCE_USER_TABLE')
+    ENV.delete('CONFIRM_NO_PEPPER')
+  end
 
   # Raw handle on the legacy table — no validations, lets us set explicit ids.
   let(:legacy_users) { Class.new(Spree.base_class) { self.table_name = 'spree_legacy_source_users' } }
@@ -54,7 +60,6 @@ describe 'spree:upgrade:migrate_users_to_customers' do
       legacy_users.create!(id: 900_001, email: 'alice@example.com', encrypted_password: 'alice_digest',
                            first_name: 'Alice', accepts_email_marketing: true, failed_attempts: 2)
       legacy_users.create!(id: 900_002, email: 'bob@example.com', encrypted_password: 'bob_digest')
-      legacy_users.create!(id: 900_003, email: '', encrypted_password: 'ghost_digest')
     end
 
     it 'copies rows preserving id and mapping encrypted_password to password_digest' do
@@ -70,11 +75,31 @@ describe 'spree:upgrade:migrate_users_to_customers' do
       expect(Spree.customer_class.exists?(900_002)).to be(true)
     end
 
-    it 'skips rows with a blank email' do
-      subject.invoke
+    describe 'invalid source rows' do
+      it 'aborts and copies nothing when a source row has a blank email' do
+        legacy_users.create!(id: 900_010, email: '', encrypted_password: 'ghost_digest')
 
-      expect(Spree.customer_class.exists?(900_003)).to be(false)
-      expect(Spree.customer_class.where(email: '')).to be_empty
+        expect { subject.invoke }.to raise_error(SystemExit)
+        expect(Spree.customer_class.exists?(900_001)).to be(false)
+      end
+
+      it 'aborts when a source email is already owned by a different customer' do
+        create(:user, email: 'alice@example.com')
+
+        expect { subject.invoke }.to raise_error(SystemExit)
+      end
+
+      it 'skips invalid rows and copies the rest with SKIP_INVALID_ROWS=true' do
+        legacy_users.create!(id: 900_010, email: '', encrypted_password: 'ghost_digest')
+        ENV['SKIP_INVALID_ROWS'] = 'true'
+
+        subject.invoke
+
+        expect(Spree.customer_class.exists?(900_010)).to be(false)
+        expect(Spree.customer_class.exists?(900_001)).to be(true)
+      ensure
+        ENV.delete('SKIP_INVALID_ROWS')
+      end
     end
 
     it 'advances the primary key sequence past the copied ids' do
@@ -97,6 +122,8 @@ describe 'spree:upgrade:migrate_users_to_customers' do
     let!(:identity) { create(:user_identity).tap { |i| i.update_columns(user_type: 'Spree::User') } }
     let!(:role_user) { create(:role_user).tap { |ru| ru.update_columns(user_type: 'Spree::User') } }
     let!(:api_key) { create(:api_key, :secret).tap { |k| k.update_columns(created_by_type: 'Spree::User', created_by_id: 1) } }
+    # Customer-group membership stores the type in the renamed customer_type column.
+    let!(:group_membership) { create(:customer_group_user).tap { |m| m.update_columns(customer_type: 'Spree::User') } }
 
     it 'flips Spree::User references to Spree::Customer' do
       subject.invoke
@@ -105,6 +132,7 @@ describe 'spree:upgrade:migrate_users_to_customers' do
       expect(identity.reload.user_type).to eq('Spree::Customer')
       expect(role_user.reload.user_type).to eq('Spree::Customer')
       expect(api_key.reload.created_by_type).to eq('Spree::Customer')
+      expect(group_membership.reload.customer_type).to eq('Spree::Customer')
     end
 
     it 'leaves admin references untouched' do
@@ -131,6 +159,12 @@ describe 'spree:upgrade:migrate_users_to_customers' do
   describe 'guards' do
     it 'aborts when a Devise pepper is configured' do
       stub_const('Devise', Class.new { def self.pepper; 'peppered'; end })
+
+      expect { subject.invoke }.to raise_error(SystemExit)
+    end
+
+    it 'aborts when Devise is absent and no-pepper is unconfirmed' do
+      ENV.delete('CONFIRM_NO_PEPPER')
 
       expect { subject.invoke }.to raise_error(SystemExit)
     end
