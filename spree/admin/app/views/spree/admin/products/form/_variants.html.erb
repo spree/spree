@@ -1,7 +1,13 @@
 <% if @product.has_variants? || can?(:manage_option_types, @product) %>
   <div class="card mb-6">
-    <div class="card-header">
+    <div class="card-header flex justify-between items-center pr-3">
       <h5 class="card-title"><%= Spree.t(:variants) %></h5>
+      <% if @product.has_variants? %>
+        <%= link_to_with_icon 'pencil', Spree.t(:bulk_edit),
+            spree.edit_variants_admin_product_path(@product),
+            class: 'btn btn-sm btn-primary',
+            data: { turbo_frame: '_top' } %>
+      <% end %>
     </div>
     <% option_types_for_select = @option_types.map { |ot| [ot.presentation, ot.prefixed_id] } %>
     <div class="card-body p-0">
