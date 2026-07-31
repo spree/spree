@@ -13,6 +13,16 @@ module Spree
           def create
             user = Spree.customer_class.new(permitted_params.except(:current_password))
 
+            # The model allows a blank password (admin-created customers claim
+            # their account via password reset), so self-registration — which
+            # issues a JWT + refresh token on success — must require one itself,
+            # otherwise a caller with the publishable key could obtain an
+            # authenticated session for any unclaimed email.
+            if user.password.blank?
+              user.errors.add(:password, :blank)
+              return render_errors(user.errors)
+            end
+
             if user.save
               link_matching_newsletter_subscriber!(user)
               refresh_token = Spree::RefreshToken.create_for(user, request_env: {

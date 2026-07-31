@@ -128,6 +128,28 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['email']).to be_present
       end
+
+      it 'rejects a blank password without creating a customer or issuing tokens' do
+        expect {
+          post :create, params: { email: 'nopass@example.com', password: '', password_confirmation: '' }
+        }.not_to change(Spree.customer_class, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['password']).to be_present
+        expect(json_response).not_to include('token', 'refresh_token')
+      end
+
+      it 'rejects an omitted password without creating a customer or issuing tokens' do
+        expect {
+          post :create, params: { email: 'nopass@example.com' }
+        }.not_to change(Spree.customer_class, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['password']).to be_present
+        expect(json_response).not_to include('token', 'refresh_token')
+      end
     end
 
     context 'without API key' do
