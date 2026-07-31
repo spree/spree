@@ -11,7 +11,9 @@ module Spree
         super(cart: cart, line_item: line_item, line_item_created: line_item_created, options: options)
 
         step :unapply_stale_payment_sources
-        step :refresh_totals
+        # Totals must be current before the proposal rebuild — delivery
+        # rate calculators (e.g. price sack) read them.
+        step :refresh_totals, with: -> { Spree.cart_recalculate_totals_workflow }
         step :rebuild_delivery_proposals
         step :activate_promotions
         # Typed rows (discounts + tax) are rebuilt by the full recalculation.
@@ -25,15 +27,6 @@ module Spree
       def unapply_stale_payment_sources
         cart.remove_gift_card if cart.gift_card.present?
         cart.payments.store_credits.checkout.destroy_all if cart.payments.store_credits.checkout.any?
-      end
-
-      # Totals must be current before the proposal rebuild — delivery rate
-      # calculators (e.g. price sack) read them.
-      def refresh_totals
-        calculator = cart.is_a?(Spree::Order) ? Spree::OrderUpdater.new(cart) : Spree::CartUpdater.new(cart)
-        calculator.update_item_count
-        calculator.update_totals
-        calculator.persist_totals
       end
 
       def rebuild_delivery_proposals

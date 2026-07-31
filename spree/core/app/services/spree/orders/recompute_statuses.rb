@@ -11,6 +11,7 @@ module Spree
       PAYMENT_STATUSES = %w[none authorized partially_paid paid partially_refunded refunded overcharged voided].freeze
 
       def call(order:)
+        refresh_fulfillment_states(order)
         order.update_columns(
           payment_status: payment_status_for(order),
           fulfillment_status: fulfillment_status_for(order),
@@ -20,6 +21,14 @@ module Spree
       end
 
       private
+
+      # A fulfillment's own state depends on payment coverage
+      # (Fulfillment#determine_state) — refresh each before rolling up.
+      def refresh_fulfillment_states(order)
+        order.fulfillments.each do |fulfillment|
+          fulfillment.update!(order) if fulfillment.persisted?
+        end
+      end
 
       # Money is quantized to currency precision before comparing, and
       # granted refunds are subtracted from the target total — the two rules
@@ -53,10 +62,27 @@ module Spree
         end
       end
 
-      # Domain owned by the fulfillment plan (incl. backorder) — same rollup
-      # OrderUpdater#update_fulfillment_status computes.
+      # fulfilled when all fulfillments fulfilled; partial when mixed with
+      # fulfilled; ready when all ready (ready_for_pickup rolls up as
+      # ready); backorder when backordered inventory exists; pending when
+      # all pending.
       def fulfillment_status_for(order)
-        Spree::OrderUpdater.new(order).update_fulfillment_status
+        return 'backorder' if order.backordered?
+
+        statuses = order.fulfillments.states.map { |status| status == 'ready_for_pickup' ? 'ready' : status }.uniq
+
+        if statuses.size > 1
+          if statuses.include?('fulfilled')
+            'partial'
+          elsif statuses.include?('pending')
+            'pending'
+          else
+            'ready'
+          end
+        else
+          # nil when there are no fulfillments
+          statuses.first
+        end
       end
 
       def quantize(amount, precision)

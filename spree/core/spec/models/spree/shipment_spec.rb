@@ -874,8 +874,11 @@ describe Spree::Shipment, type: :model do
     it 'updates everything around order shipment total and state' do
       expect(shipment.cost.to_f).to eq 10
       expect(shipment.state).to eq 'pending'
-      expect(shipment.order.total.to_f).to eq 110
-      expect(shipment.order.payment_state).to eq 'balance_due'
+      # The full recalculation derives item_total from real line items
+      # (fabricated column values don't survive it) and statuses come from
+      # the payment records via RecomputeStatuses.
+      expect(shipment.order.total.to_f).to eq(shipment.order.item_total.to_f + 10)
+      expect(shipment.order.payment_status).to eq('none')
     end
   end
 

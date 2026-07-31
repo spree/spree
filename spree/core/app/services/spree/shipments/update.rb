@@ -17,8 +17,7 @@ module Spree
             # might change the Order#payment_state)
             shipment.update_amounts
 
-            order.updater.update_delivery_total
-            order.updater.update_payment_state
+            order.recalculate_totals!
 
             # Update shipment state only after order total is updated because it
             # (via Order#paid?) affects the shipment state (YAY)
@@ -27,10 +26,8 @@ module Spree
               updated_at: Time.current
             )
 
-            # And then it's time to update shipment states and finally persist
-            # order changes
-            order.updater.update_fulfillment_status
-            order.updater.persist_totals
+            # And then derive the order-level statuses from the new state
+            Spree::Orders::RecomputeStatuses.call(order: order)
           end
         end
         success(shipment)

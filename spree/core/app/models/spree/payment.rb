@@ -390,15 +390,10 @@ module Spree
     end
 
     def update_order
-      owner.updater.update_payment_total if completed? || void?
+      return unless completed? || void? || (owner.is_a?(Spree::Order) && owner.completed?)
 
-      if owner.is_a?(Spree::Order) && owner.completed?
-        owner.updater.update_payment_state
-        owner.updater.update_fulfillments
-        owner.updater.update_fulfillment_status
-      end
-
-      owner.updater.persist_totals if completed? || (owner.is_a?(Spree::Order) && owner.completed?)
+      owner.recalculate_totals!
+      Spree::Orders::RecomputeStatuses.call(order: owner) if owner.is_a?(Spree::Order) && owner.completed?
     end
 
     def create_eligible_credit_event

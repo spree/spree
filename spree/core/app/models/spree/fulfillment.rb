@@ -632,8 +632,7 @@ module Spree
     def update_order_fulfillment_status
       return if order.nil?
 
-      new_status = OrderUpdater.new(order).update_fulfillment_status
-      order.update_columns(fulfillment_status: new_status, updated_at: Time.current)
+      Spree::Orders::RecomputeStatuses.call(order: order)
     end
 
     # publish_shipment_shipped_event, publish_shipment_canceled_event, and

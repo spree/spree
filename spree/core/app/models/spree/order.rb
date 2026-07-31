@@ -669,17 +669,14 @@ module Spree
       # freeze (OrderUpdater#recalculate_adjustments) once completed — no
       # per-row locking needed.
 
-      # update payment and shipment(s) states, and save
-      updater.update_payment_state
       fulfillments.each do |shipment|
         shipment.update!(self)
         shipment.finalize!
       end
 
-      updater.update_fulfillment_status
       self.status = 'placed'
       save!
-      updater.run_hooks
+      update_hooks.each { |hook| send(hook) }
 
       touch :completed_at
 
@@ -692,13 +689,15 @@ module Spree
 
       Spree::Fulfillments::AutoFulfill.call(order: self)
 
+      Spree::Orders::RecomputeStatuses.call(order: self)
+
       publish_order_placed_event
     end
 
     def fulfill!
       fulfillments.each { |shipment| shipment.update!(self) if shipment.persisted? }
-      updater.update_fulfillment_status
       save!
+      Spree::Orders::RecomputeStatuses.call(order: self)
     end
 
     # Helper methods for checkout steps
@@ -900,9 +899,7 @@ module Spree
 
     def set_shipments_cost
       fulfillments.each(&:update_amounts)
-      updater.update_delivery_total
-      updater.update_adjustment_total
-      persist_totals
+      recalculate_totals!
     end
 
     def shipping_method
@@ -1185,7 +1182,7 @@ module Spree
     end
 
     def recalculate_store_credit_payment
-      updater.update_adjustment_total if using_store_credit?
+      recalculate_totals! if using_store_credit?
 
       if gift_card.present?
         recalculate_gift_card

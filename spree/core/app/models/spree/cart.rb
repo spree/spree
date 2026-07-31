@@ -304,9 +304,12 @@ module Spree
 
     def set_fulfillments_cost
       fulfillments.each(&:update_amounts)
-      calculator = Spree::CartUpdater.new(self)
-      calculator.update_delivery_total
-      calculator.persist_totals
+      self.delivery_total = fulfillments.reload.to_a.sum(&:cost)
+      update_columns(
+        delivery_total: delivery_total,
+        total: item_total + delivery_total + adjustment_total,
+        updated_at: Time.current
+      )
     end
     alias set_shipments_cost set_fulfillments_cost
     alias create_proposed_fulfillments rebuild_fulfillments!
