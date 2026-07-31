@@ -16,7 +16,7 @@ module Spree
               with_order_lock do
                 line_item = @parent.line_items.find_by_prefix_id!(params[:line_item_id]) if params[:line_item_id].present?
 
-                result = Spree.order_add_manual_discount_service.call(
+                result = Spree.order_discount_create_service.call(
                   order: @parent,
                   label: params[:label],
                   value: params[:value].presence || params[:amount],

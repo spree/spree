@@ -57,7 +57,7 @@ module Spree
         order_cancel_workflow: 'Spree::Orders::Cancel',
         order_resume_workflow: 'Spree::Orders::Resume',
         order_complete_service: 'Spree::Orders::Complete',
-        order_add_manual_discount_service: 'Spree::Orders::AddManualDiscount',
+        order_discount_create_service: 'Spree::Orders::Discounts::Create',
         order_discount_update_service: 'Spree::Orders::Discounts::Update',
         order_discount_destroy_service: 'Spree::Orders::Discounts::Destroy',
         order_fee_create_service: 'Spree::Orders::Fees::Create',
