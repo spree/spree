@@ -80,7 +80,9 @@ namespace :spree do
       # Compare case-insensitively to match Spree::Customer's uniqueness
       # (case_sensitive: false) — emails are stored case-preserved, so a legacy
       # `Alice@` conflicting with an existing `alice@` must be caught here too.
-      existing_emails = customer_model.where.not(email: [nil, '']).pluck(:email).map(&:downcase).to_set
+      # Blanks are filtered in Ruby: `where.not(email: [nil, ''])` returns no rows
+      # on MySQL (NOT IN with NULL), which would silently drop every conflict.
+      existing_emails = customer_model.pluck(:email).map { |e| e&.downcase.presence }.compact.to_set
       conflict_ids = pending.where("email IS NOT NULL AND email <> ''").pluck(:id, :email).
                              filter_map { |id, email| id if existing_emails.include?(email.downcase) }
       invalid_ids = (blank_email_ids + conflict_ids).uniq
