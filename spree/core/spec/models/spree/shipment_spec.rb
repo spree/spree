@@ -200,7 +200,7 @@ describe Spree::Shipment, type: :model do
       # 10% additional tax on the 20.00 line
       order.line_items.first.update_columns(adjustment_total: 2.0, additional_tax_total: 2.0)
 
-      expect(order.shipments.first.item_cost).to eq(11.0)
+      expect(order.fulfillments.first.item_cost).to eq(11.0)
       expect(order.shipments.last.item_cost).to eq(11.0)
     end
 
@@ -379,7 +379,7 @@ describe Spree::Shipment, type: :model do
   context 'manifest' do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
-    let!(:line_item) { Spree::Carts::AddItem.call(order: order, variant: variant).value }
+    let!(:line_item) { Spree::Orders::AddItem.call(order: order, variant: variant).value }
     let!(:shipment) { order.create_proposed_fulfillments.first }
 
     it 'returns variant expected' do
@@ -674,7 +674,7 @@ describe Spree::Shipment, type: :model do
       let(:other_order) { create(:order) }
 
       before do
-        Spree::Carts::AddItem.call(order: order, variant: variant)
+        Spree::Orders::AddItem.call(order: order, variant: variant)
         order.create_proposed_fulfillments
 
         Spree::Carts::AddItem.call(order: other_order, variant: variant)
@@ -682,11 +682,11 @@ describe Spree::Shipment, type: :model do
       end
 
       it "doesn't fill backorders when restocking inventory units" do
-        shipment = order.shipments.first
+        shipment = order.fulfillments.first
         expect(shipment.inventory_units.count).to eq 1
         expect(shipment.inventory_units.first).to be_backordered
 
-        other_shipment = other_order.shipments.first
+        other_shipment = other_order.fulfillments.first
         expect(other_shipment.inventory_units.count).to eq 1
         expect(other_shipment.inventory_units.first).to be_backordered
 
@@ -811,7 +811,7 @@ describe Spree::Shipment, type: :model do
         end
 
         before do
-          calculator = @shipment.shipping_method.calculator
+          calculator = @shipment.delivery_method.calculator
           calculator.set_preference(:amount, @shipment.cost)
           calculator.save!
         end
@@ -884,7 +884,7 @@ describe Spree::Shipment, type: :model do
 
   describe '#selected_shipping_rate_id=' do
     let(:order) { create(:order_with_line_items, line_items_count: 1) }
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
     let(:shipping_method_1) { create(:shipping_method) }
     let(:shipping_method_2) { create(:shipping_method) }
 
@@ -893,7 +893,7 @@ describe Spree::Shipment, type: :model do
       create(:shipping_rate, shipment: shipment, shipping_method: shipping_method_1, cost: 10, selected: true)
       create(:shipping_rate, shipment: shipment, shipping_method: shipping_method_2, cost: 20, selected: false)
       shipment.reload
-      order.set_shipments_cost
+      order.set_fulfillments_cost
     end
 
     it 'updates order totals when a different shipping rate is selected' do
@@ -937,7 +937,7 @@ describe Spree::Shipment, type: :model do
 
   describe '#selected_delivery_rate_id / #selected_delivery_rate_id=' do
     let(:order) { create(:order_with_line_items, line_items_count: 1) }
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
     let(:rate) { create(:shipping_rate, shipment: shipment, cost: 20, selected: false) }
 
     it 'selects a rate by its prefixed ID and reads back the prefixed ID' do
@@ -1033,20 +1033,20 @@ describe Spree::Shipment, type: :model do
 
     before do
       perform_enqueued_jobs(only: Spree::StockLocations::StockItems::CreateJob)
-      shipping_method = order.shipments.first.shipping_method
-      shipping_method.calculator.preferences[:amount] = order.shipments.first.cost
+      shipping_method = order.fulfillments.first.shipping_method
+      shipping_method.calculator.preferences[:amount] = order.fulfillments.first.cost
       shipping_method.calculator.save!
     end
 
     it 'creates new shipment for same order' do
-      shipment = order.shipments.first
+      shipment = order.fulfillments.first
 
       expect { shipment.transfer_to_location(variant, 1, stock_location).run! }.
         to change { order.reload.shipments.size }.from(1).to(2)
     end
 
     it 'sets the given stock location for new shipment' do
-      shipment = order.shipments.first
+      shipment = order.fulfillments.first
       shipment.transfer_to_location(variant, 1, stock_location).run!
 
       new_shipment = order.reload.shipments.last
@@ -1055,7 +1055,7 @@ describe Spree::Shipment, type: :model do
     end
 
     it 'sets proper costs for new shipment' do
-      shipment = order.shipments.first
+      shipment = order.fulfillments.first
       shipment.transfer_to_location(variant, 1, shipment.stock_location)
 
       new_shipment = order.reload.shipments.last
@@ -1064,7 +1064,7 @@ describe Spree::Shipment, type: :model do
     end
 
     it 'updates `order.shipment_total` to the sum of shipments cost' do
-      shipment = order.shipments.first
+      shipment = order.fulfillments.first
       shipment.transfer_to_location(variant, 1, shipment.stock_location)
 
       order.reload
@@ -1129,7 +1129,7 @@ describe Spree::Shipment, type: :model do
 
   describe 'events', events: true do
     let(:order) { create(:order_ready_to_ship) }
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
 
     describe 'shipped state transition' do
       before { shipment.update_column(:tracking, 'TRACK123') }

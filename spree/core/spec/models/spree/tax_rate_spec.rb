@@ -190,7 +190,7 @@ describe Spree::TaxRate, type: :model do
 
       context 'a download' do
         before do
-          Spree::Carts::AddItem.call(order: order, variant: download.default_variant)
+          Spree::Orders::AddItem.call(order: order, variant: download.default_variant)
         end
 
         it 'without an address costs 100 euros including tax' do
@@ -227,7 +227,7 @@ describe Spree::TaxRate, type: :model do
       context 'a t-shirt' do
         it 'to germany costs 100 euros including tax' do
           allow(order).to receive(:tax_zone).and_return(germany_zone)
-          Spree::Carts::AddItem.call(order: order, variant: tshirt.default_variant)
+          Spree::Orders::AddItem.call(order: order, variant: tshirt.default_variant)
           order.recalculate_totals!
           expect(order.display_total).to eq(Spree::Money.new(100))
           expect(order.included_tax_total).to eq(15.97)
@@ -235,7 +235,7 @@ describe Spree::TaxRate, type: :model do
 
         it 'to france costs 100 euros including tax' do
           allow(order).to receive(:tax_zone).and_return(france_zone)
-          Spree::Carts::AddItem.call(order: order, variant: tshirt.default_variant)
+          Spree::Orders::AddItem.call(order: order, variant: tshirt.default_variant)
           order.update_line_item_prices!
           order.recalculate_totals!
           expect(order.display_total).to eq(Spree::Money.new(100.00))
@@ -245,7 +245,7 @@ describe Spree::TaxRate, type: :model do
 
         it 'to somewhere else costs the net amount' do
           allow(order).to receive(:tax_zone).and_return(india_zone)
-          Spree::Carts::AddItem.call(order: order, variant: tshirt.default_variant)
+          Spree::Orders::AddItem.call(order: order, variant: tshirt.default_variant)
           order.update_line_item_prices!
           order.recalculate_totals!
           expect(order.included_tax_total).to eq(0)
@@ -266,7 +266,7 @@ describe Spree::TaxRate, type: :model do
         Spree::TaxRate.create(name: 'Tax Rate #1', amount: 0.1, tax_category: category, zone: zone)
       end
       let(:taxable) { create(:product, tax_category: category) }
-      let!(:line_item) { Spree::Carts::AddItem.call(order: order, variant: taxable.default_variant).value }
+      let!(:line_item) { Spree::Orders::AddItem.call(order: order, variant: taxable.default_variant).value }
 
       before do
         allow_any_instance_of(Spree::Order).to receive(:tax_zone).and_return(zone)

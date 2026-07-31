@@ -122,6 +122,6 @@ describe Spree::Order, type: :model do
   end
 
   def add_line_item_to_order(order, variant, quantity)
-    Spree::Carts::AddItem.call(order: order, variant: variant, quantity: quantity)
+    Spree::Orders::AddItem.call(order: order, variant: variant, quantity: quantity)
   end
 end

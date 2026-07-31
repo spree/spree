@@ -15,7 +15,7 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
 
   describe '#items' do
     let(:order) { create(:order_ready_to_ship, store: store) }
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
 
     it 'serializes manifest items with prefixed IDs' do
       result = described_class.new(shipment, params: params).to_h
@@ -55,7 +55,7 @@ RSpec.describe Spree::Api::V3::FulfillmentSerializer do
 
   describe 'attributes' do
     let(:order) { create(:order_ready_to_ship, store: store) }
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
 
     it 'includes expected fields' do
       result = described_class.new(shipment, params: params).to_h

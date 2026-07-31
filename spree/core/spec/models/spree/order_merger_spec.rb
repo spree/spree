@@ -68,8 +68,8 @@ module Spree
 
       context '2 equal line items' do
         before do
-          @line_item_1 = Spree::Carts::AddItem.call(order: order_1, variant: variant, quantity: 1, options: {foos: {}}).value
-          @line_item_2 = Spree::Carts::AddItem.call(order: order_2, variant: variant, quantity: 1, options: {foos: {}}).value
+          @line_item_1 = Spree::Orders::AddItem.call(order: order_1, variant: variant, quantity: 1, options: {foos: {}}).value
+          @line_item_2 = Spree::Orders::AddItem.call(order: order_2, variant: variant, quantity: 1, options: {foos: {}}).value
         end
 
         specify do

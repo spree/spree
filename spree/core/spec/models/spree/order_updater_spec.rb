@@ -261,7 +261,7 @@ module Spree
           let(:order) { create(:completed_order_with_totals) }
 
           it 'keeps the original shipping method' do
-            expect { updater.update_shipments }.not_to change { order.shipments.first.shipping_method }
+            expect { updater.update_shipments }.not_to change { order.fulfillments.first.shipping_method }
           end
         end
       end

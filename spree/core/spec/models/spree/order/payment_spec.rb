@@ -3,7 +3,6 @@ require 'spec_helper'
 module Spree
   describe Spree::Order, type: :model do
     let(:order) { create(:order, total: 100, payment_total: 0) }
-    let(:updater) { order.updater }
 
     context 'processing payments' do
       before do
@@ -17,7 +16,7 @@ module Spree
         payment = create(:payment, amount: 100, order: order)
 
         order.process_payments!
-        updater.update_payment_state
+        order.update_statuses!
         expect(order.payment_state).to eq('paid')
 
         expect(payment.reload).to be_completed
@@ -32,7 +31,7 @@ module Spree
             expect(order).to receive(:unprocessed_payments).and_return([store_credit, payment]).at_least(:once)
 
             order.process_payments!
-            updater.update_payment_state
+            order.update_statuses!
             expect(order.payment_state).to eq('paid')
 
             expect(payment).to be_completed
@@ -53,28 +52,28 @@ module Spree
 
           before do
             order.process_payments!
-            updater.update_payment_state
+            order.update_statuses!
 
             expect(payment.reload).to be_completed
             expect(store_credit_payment.reload).to be_pending
           end
 
-          context 'order payment state should be balance due' do
+          context 'order payment status should be partially paid' do
             let!(:payment_amount) { 70.00 }
             let!(:store_credit_amount) { 30.00 }
 
             it do
-              expect(order.payment_state).to eq('balance_due')
+              expect(order.payment_status).to eq('partially_paid')
               expect(order.outstanding_balance).to eq(30.00)
             end
           end
 
-          context 'order payment state should be balance due' do
+          context 'order payment status should be partially paid' do
             let!(:payment_amount) { 90.00 }
             let!(:store_credit_amount) { 10.00 }
 
             it do
-              expect(order.payment_state).to eq('balance_due')
+              expect(order.payment_status).to eq('partially_paid')
               expect(order.outstanding_balance).to eq(10.00)
             end
           end
@@ -88,7 +87,7 @@ module Spree
         allow(order).to receive(:unprocessed_payments).and_return([payment_1, payment_2, payment_3])
 
         order.process_payments!
-        updater.update_payment_state
+        order.update_statuses!
         expect(order.payment_state).to eq('paid')
 
         expect(payment_1).to be_completed
@@ -286,9 +285,9 @@ module Spree
 
       it 'does not incorporate refunds without a reimbursement' do
         order = create(:completed_order_with_totals)
-        calculator = order.shipments.first.shipping_method.calculator
+        calculator = order.fulfillments.first.delivery_method.calculator
 
-        calculator.set_preference(:amount, order.shipments.first.cost)
+        calculator.set_preference(:amount, order.fulfillments.first.cost)
         calculator.save!
 
         order.payments << create(:payment, state: :completed, order: order, amount: order.total)

@@ -6,7 +6,7 @@ module Spree
 
     let(:store) { @default_store }
     let(:order) { create(:order_ready_to_ship, store: store, line_items_count: 2) }
-    let(:source_shipment) { order.shipments.first }
+    let(:source_shipment) { order.fulfillments.first }
     let(:stock_location) { source_shipment.stock_location }
     let(:line_items) { order.line_items.sort_by(&:id) }
 
@@ -28,7 +28,7 @@ module Spree
         # (same as /split), so only a calculator-aligned cost is stable.
         order = create(:order_ready_to_ship, store: store, line_items_count: 2, shipment_cost: 10)
 
-        expect { subject.call(order: order, stock_location: order.shipments.first.stock_location) }.
+        expect { subject.call(order: order, stock_location: order.fulfillments.first.stock_location) }.
           not_to change { order.reload.total }
       end
 

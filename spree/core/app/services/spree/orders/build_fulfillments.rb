@@ -19,7 +19,7 @@ module Spree
 
         order.create_proposed_fulfillments
         order.create_shipment_tax_charge!
-        order.set_shipments_cost
+        order.set_fulfillments_cost
         order.apply_free_shipping_promotions
 
         success(order)

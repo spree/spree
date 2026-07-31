@@ -476,7 +476,7 @@ module Spree
 
       update_amounts
       reload # reload to pick up cost set by update_columns in update_amounts
-      owner.set_shipments_cost
+      owner.set_fulfillments_cost
     end
 
     def set_up_inventory(status, variant, order, line_item, quantity = 1)

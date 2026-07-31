@@ -383,7 +383,7 @@ describe Spree::Order, type: :model do
       expect(order.updater).to receive :update_delivery_total
       expect(order.updater).to receive :persist_totals
 
-      order.set_shipments_cost
+      order.set_fulfillments_cost
     end
   end
 
@@ -1067,7 +1067,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#ensure_updated_shipments' do
+  describe '#ensure_updated_fulfillments' do
     let(:order) { create(:order_with_line_items) }
 
     context 'when order has shipments and is not completed' do
@@ -1077,20 +1077,20 @@ describe Spree::Order, type: :model do
 
       it 'destroys all shipments' do
         expect(order.shipments).to be_present
-        order.ensure_updated_shipments
+        order.ensure_updated_fulfillments
         expect(order.reload.shipments).to be_empty
       end
 
       it 'resets shipment_total to 0' do
         order.update_column(:shipment_total, 10.0)
-        order.ensure_updated_shipments
+        order.ensure_updated_fulfillments
         expect(order.reload.shipment_total).to eq(0)
       end
 
       context 'events', :events do
         it 'publishes order.updated event' do
           expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
-          order.ensure_updated_shipments
+          order.ensure_updated_fulfillments
         end
       end
     end
@@ -1099,7 +1099,7 @@ describe Spree::Order, type: :model do
       let(:order) { create(:completed_order_with_totals) }
 
       it 'does not destroy shipments' do
-        expect { order.ensure_updated_shipments }.not_to change { order.shipments.count }
+        expect { order.ensure_updated_fulfillments }.not_to change { order.shipments.count }
       end
     end
   end
@@ -2491,7 +2491,7 @@ describe Spree::Order, type: :model do
     subject { order.line_items_without_shipping_rates }
 
     let(:order) { create(:order_with_line_items) }
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
     let(:line_item) { order.line_items.first }
 
     context 'when order has no shipments' do
@@ -2524,7 +2524,7 @@ describe Spree::Order, type: :model do
 
     let(:order) { create(:order_with_line_items) }
     let(:line_item) { order.line_items.first }
-    let(:shipment) { order.shipments.first }
+    let(:shipment) { order.fulfillments.first }
 
     context 'when order has no shipments' do
       before do

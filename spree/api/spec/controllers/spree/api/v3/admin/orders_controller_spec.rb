@@ -502,8 +502,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         order.reload
         expect(order.line_items.find_by(variant: variant).quantity).to eq(2)
         expect(order.shipments).not_to be_empty
-        expect(order.shipments.first.shipping_rates).not_to be_empty
-        expect(order.shipments.first.selected_shipping_rate).to be_present
+        expect(order.fulfillments.first.shipping_rates).not_to be_empty
+        expect(order.fulfillments.first.selected_shipping_rate).to be_present
         expect(order.shipment_total).to eq(5)
 
         expect(json_response['delivery_total']).to eq('5.0')
@@ -536,7 +536,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           new_shipment_ids = order.shipments.map(&:id)
           expect(new_shipment_ids).not_to be_empty
           expect(new_shipment_ids & old_shipment_ids).to be_empty
-          expect(order.shipments.first.inventory_units.sum(:quantity)).to eq(4)
+          expect(order.fulfillments.first.inventory_units.sum(:quantity)).to eq(4)
         end
       end
     end

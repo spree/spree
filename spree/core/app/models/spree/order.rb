@@ -71,7 +71,10 @@ module Spree
     # Returns self (reloaded if items were removed) with warnings set.
     # Captured before the call because removing items reloads the order, which
     # would drop warnings already recorded upstream.
+    # @deprecated Only Carts can auto remove out of stock items
     def remove_out_of_stock_items!
+      Spree::Deprecation.warn('Spree::Order#remove_out_of_stock_items! is deprecated and will be removed in Spree 6.1. This method now works only on Spree::Cart objects')
+
       existing_warnings = warnings
       result = Spree::Carts::RemoveOutOfStockItems.call(cart: self)
       return self unless result.success?
@@ -343,6 +346,7 @@ module Spree
     # Use this method in other gems that wish to register their own custom logic
     # that should be called after Order#update
     def self.register_update_hook(hook)
+      Spree::Deprecation.warn('Order.register_update_hook is deprecated and will be removed in Spree 6.1')
       update_hooks.add(hook)
     end
 
@@ -511,11 +515,6 @@ module Spree
       @merger ||= Spree::OrderMerger.new(self)
     end
 
-    def ensure_store_presence
-      Spree::Deprecation.warn('Spree::Order#ensure_store_presence is deprecated and will be removed in Spree 6.0. ensure_store instead.')
-      ensure_store
-    end
-
     # @return [Boolean] true when this order has no registered user and its
     #   channel forbids guest checkout (see Spree::Channel::Gating). Enforced by
     #   the checkout completion service and the v3 Store API so every completion
@@ -654,9 +653,9 @@ module Spree
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
     def finalize!
-      # Typed adjustment rows are frozen by the order-level recalculation
-      # freeze (OrderUpdater#recalculate_adjustments) once completed — no
-      # per-row locking needed.
+      # Typed adjustment rows are frozen once completed — the totals
+      # recalculation only re-sums them, never regenerates (see
+      # Spree::Carts::RecalculateTotals) — so no per-row locking is needed.
 
       fulfillments.each do |shipment|
         shipment.update!(self)
@@ -874,7 +873,7 @@ module Spree
 
     # @deprecated Use {#ensure_updated_fulfillments}; removed in 6.1.
     def ensure_updated_shipments
-      Spree::Deprecation.warn('Spree::Order#ensure_updated_shipments is deprecated and will be removed in Spree 6.1. Use #ensure_updated_fulfillments instead.')
+      Spree::Deprecation.warn('Spree::Order#ensure_updated_fulfillments is deprecated and will be removed in Spree 6.1. Use #ensure_updated_fulfillments instead.')
       ensure_updated_fulfillments
     end
 
@@ -886,14 +885,28 @@ module Spree
       bill_address == ship_address
     end
 
+
     def set_shipments_cost
+      Spree::Deprecation.warn('Spree::Order#set_shipments_cost is deprecated and will be removed in Spree 6.1l. Please use set_fulfillments_cost instead')
+      set_fulfillments_cost
+    end
+
+    def set_fulfillments_cost
       fulfillments.each(&:update_amounts)
       recalculate_totals!
     end
 
     def shipping_method
-      # This query will select the first available shipping method from the shipments.
-      # It will use subquery to first select the shipping method id from the shipments' selected_shipping_rate.
+      Spree::Deprecation.warn('Spree::Order#shipping_method is deprecated and will be removed in Spree 6.1. Please use Spree::Order#delivery_method')
+      delivery_method
+    end
+
+    # Returns first available delivery method from the fulfillments
+    # Useful for analytics and CSV exports
+    # @return [Spree::DeliveryMethod]
+    def delivery_method
+      # This query will select the first available delivery method from the fulfillments.
+      # It will use subquery to first select the delivery method id from the fulfillments' selected_delivery_rate.
       Spree::DeliveryMethod.
         where(id: fulfillments.with_selected_delivery_method.limit(1).pluck(:delivery_method_id)).
         limit(1).
@@ -949,11 +962,6 @@ module Spree
 
     def can_approve?
       !approved?
-    end
-
-    def can_be_destroyed?
-      Spree::Deprecation.warn('Spree::Order#can_be_destroyed? is deprecated and will be removed in the next major version. Use Spree::Order#can_be_deleted? instead.')
-      can_be_deleted?
     end
 
     def can_be_deleted?
@@ -1034,6 +1042,7 @@ module Spree
     # without fulfillment discounts (eg. Free Shipping)
     # @return [BigDecimal]
     def cart_promo_total
+      Spree::Deprecation.warn('Spree::Order#cart_promo_total is deprecated and will be removed in Spree 6.1. Please use order.cart.discount_total instead')
       discounts.promotion.nonzero.for_line_items.sum(:amount)
     end
 
@@ -1047,13 +1056,14 @@ module Spree
       end
 
       csv_lines = []
-      all_line_items.each_with_index do |line_item, index|
+      line_items.each_with_index do |line_item, index|
         csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index, metafields_for_csv).call
       end
       csv_lines
     end
 
     def all_line_items
+      Spree::Deprecation.warn('Spree::Order#all_line_items is deprecated and will be removed in Spree 6.1. Please use Spree::Order#line_items instead')
       line_items
     end
 

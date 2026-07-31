@@ -84,7 +84,7 @@ module Spree
           index.zero? ? order.promo_code : nil,
           index.zero? ? order.payments.store_credits.sum(:amount).abs : nil,
           index.zero? ? order.total.to_f : nil,
-          index.zero? ? order.shipping_method&.name : nil,
+          index.zero? ? order.delivery_method&.name : nil,
           index.zero? ? order.total_weight.to_f : nil,
           index.zero? ? order.payments.valid&.first&.display_source_name : nil,
           line_item.product_id,

@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
   include_context 'API v3 Admin authenticated'
 
   let!(:order) { create(:order_ready_to_ship, store: store) }
-  let!(:shipment) { order.shipments.first }
+  let!(:shipment) { order.fulfillments.first }
 
   before { request.headers.merge!(headers) }
 
@@ -53,7 +53,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       post :create, params: {
         order_id: other_order.prefixed_id,
-        stock_location_id: other_order.shipments.first.stock_location.prefixed_id,
+        stock_location_id: other_order.fulfillments.first.stock_location.prefixed_id,
         items: [{ item_id: line_item.prefixed_id, quantity: 1 }]
       }, as: :json
 
@@ -99,7 +99,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       post :create, params: {
         order_id: draft_order.prefixed_id,
-        stock_location_id: draft_order.shipments.first.stock_location.prefixed_id
+        stock_location_id: draft_order.fulfillments.first.stock_location.prefixed_id
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)

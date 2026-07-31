@@ -169,7 +169,7 @@ module Spree
             expect(order.line_items.find_by(variant: variant).quantity).to eq(3)
             expect(new_shipment_ids).not_to be_empty
             expect(new_shipment_ids & old_shipment_ids).to be_empty
-            expect(order.shipments.first.inventory_units.sum(:quantity)).to eq(3)
+            expect(order.fulfillments.first.inventory_units.sum(:quantity)).to eq(3)
             expect(order.shipment_total).to eq(5)
           end
         end
@@ -235,7 +235,7 @@ module Spree
           described_class.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
 
           order.reload
-          shipment = order.shipments.first
+          shipment = order.fulfillments.first
           expect(shipment).to be_present
           expect(shipment.adjustment_total).to eq(-5)
           expect(order.shipping_discount).to eq(5)
@@ -259,7 +259,7 @@ module Spree
           })
 
           order.reload
-          expect(order.shipments.first.adjustment_total).to eq(-5)
+          expect(order.fulfillments.first.adjustment_total).to eq(-5)
           expect(order.shipping_discount).to eq(5)
           expect(order.total).to eq(order.item_total)
         end

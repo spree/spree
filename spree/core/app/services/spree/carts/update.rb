@@ -137,7 +137,7 @@ module Spree
             cart.ensure_updated_fulfillments
             if cart.ship_address.present? && cart.respond_to?(:create_proposed_fulfillments)
               cart.create_proposed_fulfillments
-              cart.set_shipments_cost
+              cart.set_fulfillments_cost
             end
             cart.recalculate_totals!
           end

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Spree::ShippingRate, type: :model do
+describe Spree::DeliveryRate, type: :model do
   let(:shipment) { create(:shipment) }
-  let(:shipping_method) { create(:shipping_method) }
+  let(:delivery_method) { create(:delivery_method) }
   let(:shipping_rate) do
-    Spree::ShippingRate.new shipment: shipment,
-                            shipping_method: shipping_method,
+    Spree::DeliveryRate.new shipment: shipment,
+                            delivery_method: delivery_method,
                             cost: 10
   end
 
@@ -112,16 +112,16 @@ describe Spree::ShippingRate, type: :model do
   end
 
   # Regression test for #3829
-  context '#shipping_method' do
+  context '#delivery_method' do
     it 'can be retrieved' do
-      expect(shipping_rate.shipping_method.reload).to eq(shipping_method)
+      expect(shipping_rate.delivery_method.reload).to eq(delivery_method)
     end
 
     it 'can be retrieved even when deleted' do
-      shipping_method.update_column(:deleted_at, Time.current)
+      delivery_method.update_column(:deleted_at, Time.current)
       shipping_rate.save
       shipping_rate.reload
-      expect(shipping_rate.shipping_method).to eq(shipping_method)
+      expect(shipping_rate.delivery_method).to eq(delivery_method)
     end
   end
 
@@ -240,7 +240,7 @@ describe Spree::ShippingRate, type: :model do
   end
 
   describe '#delivery_range' do
-    let(:shipping_method) { create(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
+    let(:delivery_method) { create(:delivery_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
 
     it 'returns the delivery range for the shipping method' do
       expect(shipping_rate.delivery_range).to eq('1-2')
@@ -248,7 +248,7 @@ describe Spree::ShippingRate, type: :model do
   end
 
   describe '#display_delivery_range' do
-    let(:shipping_method) { create(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
+    let(:delivery_method) { create(:delivery_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
 
     it 'returns the display delivery range for the shipping method' do
       expect(shipping_rate.display_delivery_range).to eq('Delivery in 1-2 business days')

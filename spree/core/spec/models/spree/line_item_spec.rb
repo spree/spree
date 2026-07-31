@@ -144,7 +144,7 @@ describe Spree::LineItem, type: :model do
     context 'on a completed order whose inventory units were already cleared' do
       let(:order) { create(:completed_order_with_totals) }
       let(:line_item) { order.line_items.first }
-      let(:shipment) { order.shipments.first }
+      let(:shipment) { order.fulfillments.first }
       let(:other_line_item) do
         create(:line_item, order: order, variant: create(:variant), quantity: 1).tap do |li|
           shipment.set_up_inventory('on_hand', li.variant, order, li, 1)
@@ -228,7 +228,7 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'creates a tax adjustment' do
-        Spree::Carts::AddItem.call(order: order, variant: variant)
+        Spree::Orders::AddItem.call(order: order, variant: variant)
         line_item = order.find_line_item_by_variant(variant)
         expect(line_item.tax_lines.count).to eq(1)
       end
@@ -245,7 +245,7 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'does not create a tax adjustment' do
-        Spree::Carts::AddItem.call(order: order, variant: variant)
+        Spree::Orders::AddItem.call(order: order, variant: variant)
 
         line_item = order.find_line_item_by_variant(variant)
         expect(line_item.tax_lines.count).to eq(0)
@@ -375,7 +375,7 @@ describe Spree::LineItem, type: :model do
     context 'nothing left on stock' do
       before do
         variant.stock_items.update_all count_on_hand: 5, backorderable: false
-        Spree::Carts::AddItem.call(order: order, variant: variant, quantity: 5)
+        Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         order.create_proposed_fulfillments
         order.finalize!
         order.reload
@@ -384,7 +384,7 @@ describe Spree::LineItem, type: :model do
       it 'allows to decrease item quantity' do
         line_item = order.line_items.first
         line_item.quantity -= 1
-        line_item.target_fulfillment = order.shipments.first
+        line_item.target_fulfillment = order.fulfillments.first
         line_item.valid?
 
         expect(line_item.errors).to be_empty
@@ -393,7 +393,7 @@ describe Spree::LineItem, type: :model do
       it 'doesnt allow to increase item quantity' do
         line_item = order.line_items.first
         line_item.quantity += 2
-        line_item.target_fulfillment = order.shipments.first
+        line_item.target_fulfillment = order.fulfillments.first
         line_item.valid?
 
         expect(line_item.errors).not_to be_empty
@@ -404,7 +404,7 @@ describe Spree::LineItem, type: :model do
     context '2 items left on stock' do
       before do
         variant.stock_items.update_all count_on_hand: 7, backorderable: false
-        Spree::Carts::AddItem.call(order: order, variant: variant, quantity: 5)
+        Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         order.create_proposed_fulfillments
         order.finalize!
         order.reload
@@ -413,7 +413,7 @@ describe Spree::LineItem, type: :model do
       it 'allows to increase quantity up to stock availability' do
         line_item = order.line_items.first
         line_item.quantity += 2
-        line_item.target_fulfillment = order.shipments.first
+        line_item.target_fulfillment = order.fulfillments.first
         line_item.valid?
 
         expect(line_item.errors).to be_empty
@@ -422,7 +422,7 @@ describe Spree::LineItem, type: :model do
       it 'doesnt allow to increase quantity over stock availability' do
         line_item = order.line_items.first
         line_item.quantity += 3
-        line_item.target_fulfillment = order.shipments.first
+        line_item.target_fulfillment = order.fulfillments.first
         line_item.valid?
 
         expect(line_item.errors).not_to be_empty
@@ -740,7 +740,7 @@ describe Spree::LineItem, type: :model do
       let!(:volume_price) { create(:price, variant: variant, currency: 'USD', amount: 7.00, price_list: price_list) }
 
       it 'applies volume price on initial creation' do
-        result = Spree::Carts::AddItem.call(order: order, variant: variant, quantity: 15)
+        result = Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 15)
         expect(result.success?).to be true
 
         new_line_item = order.line_items.find_by(variant: variant)
@@ -749,7 +749,7 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'does not apply volume price when quantity is below threshold' do
-        result = Spree::Carts::AddItem.call(order: order, variant: variant, quantity: 5)
+        result = Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         expect(result.success?).to be true
 
         new_line_item = order.line_items.find_by(variant: variant)

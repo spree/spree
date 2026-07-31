@@ -52,7 +52,7 @@ describe Spree::OrderInventory, type: :model do
         expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
 
         # The before_save callback in LineItem would verify inventory
-        line_item = Spree::Carts::AddItem.call(order: order, variant: variant, options: { shipment: shipment }).value
+        line_item = Spree::Orders::AddItem.call(order: order, variant: variant, options: { shipment: shipment }).value
 
         units = shipment.inventory_units_for(line_item.variant)
         expect(units.sum(&:quantity)).to eq 1
@@ -70,7 +70,7 @@ describe Spree::OrderInventory, type: :model do
 
         expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
 
-        line_item = Spree::Carts::AddItem.call(order: order, variant: variant).value
+        line_item = Spree::Orders::AddItem.call(order: order, variant: variant).value
         subject.verify(shipment)
 
         units = shipment.inventory_units_for(line_item.variant)

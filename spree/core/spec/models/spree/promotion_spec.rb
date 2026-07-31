@@ -854,7 +854,7 @@ describe Spree::Promotion, type: :model do
       expect(line_item.discounts.size).to eq(1)
       expect(order.adjustment_total).to eq(-5)
 
-      other_line_item = Spree::Carts::AddItem.call(order: order, variant: variant, options: { currency: order.currency }).value
+      other_line_item = Spree::Orders::AddItem.call(order: order, variant: variant, options: { currency: order.currency }).value
 
       expect(other_line_item).not_to eq line_item
       expect(other_line_item.discounts.size).to eq(1)
