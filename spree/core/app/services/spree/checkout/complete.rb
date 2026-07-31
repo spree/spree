@@ -6,7 +6,7 @@ module Spree
 
       def call(order:)
         Spree::Deprecation.warn('Spree::Checkout::Complete is deprecated and will be removed in Spree 6.1. Use Spree::Carts::Complete instead.')
-        Spree::Dependencies.carts_complete_service.constantize.call(cart: order)
+        Spree::Dependencies.carts_complete_workflow.constantize.call(cart: order)
       end
     end
   end

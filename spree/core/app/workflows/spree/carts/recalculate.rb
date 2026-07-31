@@ -13,7 +13,7 @@ module Spree
       step :rebuild_delivery_proposals
       step :activate_promotions
       # Typed rows (discounts + tax) are rebuilt by the full recalculation.
-      step :final_recalculation, with: -> { Spree::Carts::RecalculateTotals }
+      step :final_recalculation, with: -> { Spree.cart_recalculate_totals_workflow }
 
       private
 

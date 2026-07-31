@@ -12,7 +12,7 @@ module Spree
         ActiveRecord::Base.transaction do
           run :change_item_quantity
           run :handle_stock_reservations
-          run Spree.cart_recalculate_service
+          run Spree.cart_recalculate_workflow
         end
       end
 

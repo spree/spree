@@ -19,7 +19,7 @@ module Spree
             raise Spree::StockReservations::InsufficientStockError.new(nil, result.error.to_s) if result.failure?
           end
 
-          Spree.cart_recalculate_service.new.call(cart: cart,
+          Spree.cart_recalculate_workflow.new.call(cart: cart,
                                                   line_item: line_item,
                                                   options: options)
         end

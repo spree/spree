@@ -17,7 +17,7 @@ module Spree
       def call(order:, payment_pending: false, notify_customer: false)
         order.notify_customer = notify_customer
 
-        Spree::Dependencies.carts_complete_service.constantize.call(
+        Spree::Dependencies.carts_complete_workflow.constantize.call(
           cart: order,
           payment_pending: payment_pending
         )

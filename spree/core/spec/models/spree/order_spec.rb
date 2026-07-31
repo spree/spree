@@ -315,15 +315,10 @@ describe Spree::Order, type: :model do
     subject { order.canceled_by(admin_user) }
 
     let(:admin_user) { create :admin_user }
-    let(:order) { create :order }
-
-    before do
-      allow(order).to receive(:cancel!)
-    end
+    let(:order) { create(:completed_order_with_totals) }
 
     it 'cancels the order' do
-      expect(order).to receive(:cancel!)
-      subject
+      expect { subject }.to change { order.reload.status }.to('canceled')
     end
 
     it 'saves canceler_id' do

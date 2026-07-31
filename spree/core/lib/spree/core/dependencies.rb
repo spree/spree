@@ -12,8 +12,10 @@ module Spree
         # cart_create/update/estimate_shipping_rates/change_currency service
         # registrations were removed with their dead implementations.
         cart_compare_line_items_service: 'Spree::CompareLineItems',
-        cart_add_item_service: 'Spree::Carts::AddItem',
-        cart_recalculate_service: 'Spree::Carts::Recalculate',
+        cart_add_item_workflow: 'Spree::Carts::AddItem',
+        cart_recalculate_workflow: 'Spree::Carts::Recalculate',
+        cart_recalculate_totals_workflow: 'Spree::Carts::RecalculateTotals',
+        order_recalculate_totals_workflow: 'Spree::Orders::RecalculateTotals',
         cart_remove_item_service: 'Spree::Carts::RemoveItem',
         cart_remove_line_item_service: 'Spree::Carts::RemoveLineItem',
         cart_set_item_quantity_service: 'Spree::Carts::SetQuantity',
@@ -30,7 +32,7 @@ module Spree
         cart_remove_out_of_stock_items_service: 'Spree::Carts::RemoveOutOfStockItems',
 
         # carts
-        carts_complete_service: 'Spree::Carts::Complete',
+        carts_complete_workflow: 'Spree::Carts::Complete',
         carts_create_service: 'Spree::Carts::Create',
         carts_update_service: 'Spree::Carts::Update',
         carts_upsert_items_service: 'Spree::Carts::UpsertItems',
@@ -52,7 +54,7 @@ module Spree
 
         # order
         order_approve_service: 'Spree::Orders::Approve',
-        order_cancel_service: 'Spree::Orders::Cancel',
+        order_cancel_workflow: 'Spree::Orders::Cancel',
         order_complete_service: 'Spree::Orders::Complete',
         order_add_manual_discount_service: 'Spree::Orders::AddManualDiscount',
         order_create_service: 'Spree::Orders::Create',
@@ -119,6 +121,52 @@ module Spree
       }.freeze
 
       include Spree::DependenciesHelper
+
+      # 6.0 tier rename: these seams resolve Spree::Workflow classes now.
+      # The old *_service names stay settable and readable one release so
+      # applications don't crash at boot — but a legacy write is stashed,
+      # NOT applied to the workflow seam: a class written against the old
+      # service contract is not interchangeable with the workflow the new
+      # call sites consume. Reads return the stashed value (legacy code
+      # calling its own class keeps working), falling back to the workflow
+      # class — safe for legacy callers, whose old keyword vocabulary the
+      # workflows accept through alias_argument bridges. Removed in 6.1.
+      LEGACY_WORKFLOW_KEYS = {
+        cart_add_item_service: :cart_add_item_workflow,
+        cart_recalculate_service: :cart_recalculate_workflow,
+        carts_complete_service: :carts_complete_workflow,
+        order_cancel_service: :order_cancel_workflow
+      }.freeze
+
+      def legacy_workflow_overrides
+        @legacy_workflow_overrides ||= {}
+      end
+
+      LEGACY_WORKFLOW_KEYS.each do |legacy, current|
+        define_method("#{legacy}=") do |value|
+          Spree::Deprecation.warn(
+            "Spree::Dependencies##{legacy}= is deprecated and NO LONGER CONSULTED by Spree — " \
+            "the override was not applied. Port the class to the Spree::Workflow contract and " \
+            "set #{current}= instead. The #{legacy} name is removed in Spree 6.1."
+          )
+          legacy_workflow_overrides[legacy] = value
+        end
+
+        define_method(legacy) do
+          Spree::Deprecation.warn("Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.1. Use #{current} instead.")
+          legacy_workflow_overrides.fetch(legacy) { send(current) }
+        end
+
+        define_method("#{legacy}_class") do
+          Spree::Deprecation.warn("Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.1. Use #{current} instead.")
+          if legacy_workflow_overrides.key?(legacy)
+            value = legacy_workflow_overrides[legacy]
+            value.is_a?(String) ? value.constantize : value
+          else
+            send("#{current}_class")
+          end
+        end
+      end
     end
   end
 end

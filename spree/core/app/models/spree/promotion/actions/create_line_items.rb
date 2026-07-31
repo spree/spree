@@ -58,7 +58,7 @@ module Spree
             current_quantity = order.quantity_of(item.variant)
             next unless current_quantity < item.quantity && item_available?(item)
 
-            add_service = order.is_a?(Spree::Cart) ? Spree.cart_add_item_service : Spree.order_add_item_service
+            add_service = order.is_a?(Spree::Cart) ? Spree.cart_add_item_workflow : Spree.order_add_item_service
             line_item = add_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order },
                                                          variant: item.variant,
                                                          quantity: item.quantity - current_quantity).value

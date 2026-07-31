@@ -543,7 +543,7 @@ module Spree
     # and derived item counts. Convenience for
     # {Spree::Orders::RecalculateTotals}.
     def recalculate_totals!
-      Spree::Orders::RecalculateTotals.call(order: self)
+      Spree.order_recalculate_totals_workflow.call(order: self)
     end
 
     # @deprecated Use {#recalculate_totals!}; removed in 6.1.
@@ -974,17 +974,15 @@ module Spree
     # @param canceled_at [Time, nil] the time of cancellation (defaults to current time)
     # @return [Spree::ServiceModule::Result]
     def canceled_by(user, canceled_at = nil)
-      Spree.order_cancel_service.call(order: self, canceler: user, canceled_at: canceled_at)
+      Spree.order_cancel_workflow.call(order: self, canceler: user, canceled_at: canceled_at)
     end
 
-    # Machine-free lifecycle: cancel/resume flip +status+ and run the same
-    # side effects the machine transitions ran.
+    # Machine-free lifecycle: cancellation runs through the
+    # {Spree::Orders::Cancel} workflow (which also records a
+    # Spree::OrderCancellation row); resume flips +status+ back and runs
+    # the same side effects the machine transition ran.
     def cancel
-      return false unless allow_cancel?
-
-      update_column(:canceled_at, Time.current) if canceled_at.blank?
-      after_cancel
-      true
+      Spree.order_cancel_workflow.call(order: self).success?
     end
 
     def cancel!
@@ -1188,25 +1186,6 @@ module Spree
 
         false
       end
-    end
-
-    def after_cancel
-      update_column(:status, 'canceled')
-
-      fulfillments.each(&:cancel!)
-
-      # payments fully covered by gift card won't be refunded
-      # we want to only void the payment
-      if gift_card.present? && covered_by_store_credit?
-        payments.completed.store_credits.each(&:void!)
-      else
-        payments.completed.each(&:cancel!)
-        payments.incomplete.not_store_credits.each(&:void_transaction!)
-        payments.store_credits.pending.each(&:void!)
-      end
-
-      recalculate_totals!
-      send_order_canceled_webhook
     end
 
     def after_resume

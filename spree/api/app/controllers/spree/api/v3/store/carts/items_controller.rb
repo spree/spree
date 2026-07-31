@@ -12,7 +12,7 @@ module Spree
             # POST  /api/v3/store/carts/:cart_id/items
             def create
               with_order_lock do
-                result = Spree.cart_add_item_service.call(
+                result = Spree.cart_add_item_workflow.call(
                   cart: @cart,
                   variant: variant,
                   quantity: permitted_params[:quantity] || 1,

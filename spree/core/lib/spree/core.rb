@@ -556,8 +556,10 @@ module Spree
     private
 
     def core_dependency?(name)
-      defined?(Spree::Dependencies) &&
-        Spree::Dependencies.class::INJECTION_POINTS.include?(name)
+      return false unless defined?(Spree::Dependencies)
+
+      Spree::Dependencies.class::INJECTION_POINTS.include?(name) ||
+        Spree::Dependencies.class::LEGACY_WORKFLOW_KEYS.key?(name)
     end
   end
 

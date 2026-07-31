@@ -18,7 +18,7 @@ module Spree
             cart = order.cart
             next if cart.nil? || cart.completed?
 
-            result = Spree::Dependencies.carts_complete_service.constantize.call(cart: cart)
+            result = Spree::Dependencies.carts_complete_workflow.constantize.call(cart: cart)
             Rails.logger.error("[Spree] Completion recovery failed for order #{order.number}: #{result.error&.value}") if result.failure?
           rescue StandardError => e
             Rails.logger.error("[Spree] Completion recovery raised for order #{order.number}: #{e.message}")

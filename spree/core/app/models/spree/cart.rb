@@ -204,7 +204,7 @@ module Spree
     # and derived item counts. Convenience for
     # {Spree::Carts::RecalculateTotals}.
     def recalculate_totals!
-      Spree::Carts::RecalculateTotals.call(cart: self)
+      Spree.cart_recalculate_totals_workflow.call(cart: self)
     end
 
     # @deprecated Use {#recalculate_totals!}; removed in 6.1.

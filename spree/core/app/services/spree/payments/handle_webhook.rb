@@ -44,7 +44,7 @@ module Spree
 
           unless order.reload.completed?
             completable = order.is_a?(Spree::Order) ? (order.cart || order) : order
-            Spree::Dependencies.carts_complete_service.constantize.call(cart: completable)
+            Spree::Dependencies.carts_complete_workflow.constantize.call(cart: completable)
           end
         end
 

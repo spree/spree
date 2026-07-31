@@ -14,7 +14,7 @@ module Spree
       transaction do
         step :add_to_line_item, provides: [:line_item, :line_item_created]
         step :handle_stock_reservations, if: -> { cart.in_checkout? }
-        step :recalculate, with: -> { Spree.cart_recalculate_service }
+        step :recalculate, with: -> { Spree.cart_recalculate_workflow }
         run_hooks :after_item_added
       end
 

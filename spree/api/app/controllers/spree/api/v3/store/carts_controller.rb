@@ -113,7 +113,7 @@ module Spree
               return render_authentication_required('api.errors.guest_checkout_not_allowed', 'You must be signed in to complete checkout')
             end
 
-            result = Spree::Dependencies.carts_complete_service.constantize.call(cart: @cart)
+            result = Spree::Dependencies.carts_complete_workflow.constantize.call(cart: @cart)
 
             if result.success?
               @cart = result.value

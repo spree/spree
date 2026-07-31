@@ -13,7 +13,7 @@ module Spree
 
         ActiveRecord::Base.transaction do
           line_item = remove_from_line_item(cart: cart, variant: variant, quantity: quantity, options: options)
-          Spree.cart_recalculate_service.call(line_item: line_item,
+          Spree.cart_recalculate_workflow.call(line_item: line_item,
                                               cart: cart,
                                               options: options)
           success(line_item)
