@@ -3,11 +3,6 @@ module Spree
   # checkout copies a cart into an immutable {Spree::Order}; the cart is
   # retained with +completed_at+ set. Carts have no status column —
   # +completed_at+ is the only lifecycle marker.
-  #
-  # There is no checkout state machine: progression is computed by
-  # Spree::Checkout::Requirements against cart data, and recalculation happens
-  # on the writes that matter (items, addresses, market) instead of on state
-  # transitions. See docs/plans/6.0-cart-order-split.md.
   class Cart < Spree.base_class
     has_prefix_id :cart
 
@@ -43,9 +38,8 @@ module Spree
     attribute :metadata, default: -> { {} }
     attribute :accept_marketing, :boolean, default: false
 
-    # Standardized column names; legacy readers stay as aliases one release.
-    alias_attribute :item_count, :total_quantity
-    alias_attribute :promo_total, :discount_total
+    # Transient warnings populated by remove_out_of_stock_items!
+    attribute :warnings, default: -> { [] }
 
     money_methods :item_total, :adjustment_total, :included_tax_total, :additional_tax_total,
                   :discount_total, :fee_total, :delivery_total, :total, :payment_total, :outstanding_balance,
@@ -95,16 +89,12 @@ module Spree
       Spree::StockLocation.find_by(id: preferred_stock_location_id)
     end
 
-    alias_method :user, :customer
-    alias_method :user=, :customer=
-    alias_attribute :user_id, :customer_id
     alias_method :shipping_address, :ship_address
     alias_method :shipping_address=, :ship_address=
     alias_attribute :shipping_address_id, :ship_address_id
     alias_method :billing_address, :bill_address
     alias_method :billing_address=, :bill_address=
     alias_attribute :billing_address_id, :bill_address_id
-    alias_attribute :customer_note, :special_instructions
 
     has_many :line_items, -> { order(:created_at) }, class_name: 'Spree::LineItem', inverse_of: :cart, dependent: :destroy
     has_many :variants, through: :line_items
@@ -117,7 +107,6 @@ module Spree
         pluck(:status).uniq
       end
     end
-    has_many :shipments, class_name: 'Spree::Fulfillment', inverse_of: :cart, deprecated: true
     has_many :fulfillment_items, through: :fulfillments, class_name: 'Spree::FulfillmentItem'
     has_many :order_promotions, class_name: 'Spree::OrderPromotion', inverse_of: :cart, dependent: :destroy
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
@@ -134,7 +123,6 @@ module Spree
     alias_method :shipping_address_attributes=, :ship_address_attributes=
     alias_method :billing_address_attributes=, :bill_address_attributes=
 
-    validates :store, :currency, presence: true
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
 
@@ -147,12 +135,6 @@ module Spree
     before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
 
     delegate :name, to: :customer, prefix: true, allow_nil: true
-
-    # Public cart identifier on the wire (orders keep R-numbers; carts are
-    # identified by token).
-    def number
-      token
-    end
 
     # @return [Boolean]
     def completed?
@@ -177,16 +159,6 @@ module Spree
     # shipping address). Drives stock-reservation dispatch.
     def in_checkout?
       !completed? && (email.present? || ship_address_id.present?)
-    end
-
-    # Reservation dispatch parity with the order-based checkout.
-    def cart?
-      !in_checkout?
-    end
-
-    # @return [Boolean] carts are never canceled — completion or expiry only
-    def canceled?
-      false
     end
 
     # Recomputes and persists money totals (item, tax, promotion, delivery)
@@ -228,12 +200,6 @@ module Spree
 
     def backordered?
       fulfillment_items.any?(&:backordered?)
-    end
-
-    # Fulfillments never dispatch from a cart — determine_state reports
-    # 'pending' until completion copies them onto an order.
-    def can_ship?
-      false
     end
 
     def guest_checkout_disallowed?
@@ -309,20 +275,8 @@ module Spree
     alias set_shipments_cost set_fulfillments_cost
     alias create_proposed_fulfillments rebuild_fulfillments!
 
-    # @deprecated Use {#create_proposed_fulfillments}; removed in 6.1.
-    def create_proposed_shipments
-      Spree::Deprecation.warn('Spree::Cart#create_proposed_shipments is deprecated and will be removed in Spree 6.1. Use #create_proposed_fulfillments instead.')
-      rebuild_fulfillments!
-    end
-
     def ensure_updated_fulfillments
       rebuild_fulfillments! unless completed?
-    end
-
-    # @deprecated Use {#ensure_updated_fulfillments}; removed in 6.1.
-    def ensure_updated_shipments
-      Spree::Deprecation.warn('Spree::Cart#ensure_updated_shipments is deprecated and will be removed in Spree 6.1. Use #ensure_updated_fulfillments instead.')
-      ensure_updated_fulfillments
     end
 
     # Re-prices, re-taxes and rebuilds delivery proposals — the
@@ -364,9 +318,6 @@ module Spree
       Spree::Dependencies.cart_merge_strategy.constantize.call(cart: self, other_cart: other_cart, user: user)
       reload
     end
-
-    # Transient warnings populated by remove_out_of_stock_items!
-    attribute :warnings, default: -> { [] }
 
     # Removes out-of-stock/discontinued items and populates warnings
     # (mirrors Order#remove_out_of_stock_items!).

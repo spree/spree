@@ -6,12 +6,12 @@ class CreateSpreeCarts < ActiveRecord::Migration[7.2]
       t.references :channel, null: false
       t.references :customer, null: true
       t.string :currency, null: false
-      t.string :locale
+      t.string :locale, null: false
       t.string :email
       t.references :ship_address, null: true, index: false
       t.references :bill_address, null: true, index: false
       t.boolean :accept_marketing
-      t.text :special_instructions
+      t.text :customer_note
       t.string :last_ip_address
       t.string :token, null: false
       t.integer :lock_version, default: 0

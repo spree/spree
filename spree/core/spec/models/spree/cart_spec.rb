@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Spree::Cart, type: :model do
+  let(:store) { @default_store }
+  let(:customer) { create(:user) }
+
   describe 'lifecycle events' do
     it 'publishes cart.* lifecycle events' do
       expect(described_class.lifecycle_events_enabled).to be true
@@ -13,14 +16,14 @@ describe Spree::Cart, type: :model do
     # The V3 cart serializer resolves by convention when spree_api is loaded;
     # core's dummy app only sees the fallback payload.
     it 'carries the prefixed id in the event payload' do
-      cart = create(:cart, store: @default_store)
+      cart = create(:cart, store: store)
 
       expect(cart.event_payload[:id]).to eq(cart.prefixed_id)
     end
   end
 
   describe 'readonly after completion' do
-    let(:cart) { create(:cart, store: @default_store) }
+    let(:cart) { create(:cart, store: store) }
 
     it 'rejects every write path once completed' do
       cart.update_columns(completed_at: Time.current)
@@ -80,6 +83,75 @@ describe Spree::Cart, type: :model do
       order = create(:order, cart: cart)
 
       expect(cart.order).to eq(order)
+    end
+  end
+
+  describe '#warnings' do
+    let(:cart) { build(:cart) }
+
+    it 'defaults to empty array' do
+      expect(cart.warnings).to eq([])
+    end
+
+    it 'is a transient attribute (not persisted)' do
+      cart.warnings = [{ code: 'test', message: 'test' }]
+      cart.save!
+      expect(cart.reload.warnings).to eq([])
+    end
+  end
+
+  describe '#remove_out_of_stock_items!' do
+    let(:cart) { create(:cart_with_line_items, store: store, customer: customer) }
+
+    context 'when all items are in stock' do
+      it 'does not remove any items' do
+        expect { cart.remove_out_of_stock_items! }.not_to change { cart.line_items.count }
+      end
+
+      it 'sets warnings to empty array' do
+        cart.remove_out_of_stock_items!
+        expect(cart.warnings).to eq([])
+      end
+    end
+
+    context 'when an item is out of stock' do
+      before do
+        cart.line_items.first.variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      end
+
+      it 'removes the out of stock item' do
+        expect { cart.remove_out_of_stock_items! }.to change { cart.reload.line_items.count }.by(-1)
+      end
+
+      it 'populates warnings with structured data' do
+        cart.remove_out_of_stock_items!
+        expect(cart.warnings.length).to eq(1)
+        expect(cart.warnings.first[:code]).to eq('line_item_removed')
+        expect(cart.warnings.first[:message]).to be_present
+        expect(cart.warnings.first[:variant_id]).to start_with('variant_')
+        expect(cart.warnings.first[:line_item_id]).to start_with('li_')
+      end
+    end
+
+    context 'when a product is discontinued' do
+      before do
+        cart.line_items.first.product.update_columns(status: 'discontinued')
+      end
+
+      it 'removes the item and populates warnings' do
+        cart.remove_out_of_stock_items!
+        expect(cart.warnings.length).to eq(1)
+        expect(cart.warnings.first[:code]).to eq('line_item_removed')
+      end
+    end
+
+    context 'when cart is empty' do
+      let(:order) { create(:order, store: store, user: user) }
+
+      it 'does nothing' do
+        cart.remove_out_of_stock_items!
+        expect(cart.warnings).to eq([])
+      end
     end
   end
 end
