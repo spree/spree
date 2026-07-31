@@ -70,8 +70,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     end
 
     context 'with q[search] (full-text search)' do
-      # Factories auto-attach a user and a `before_create :link_by_email`
-      # callback resets `email` from `user.email`. Pass `user: nil` so our
+      # Factories auto-attach a customer and a `before_create :link_by_email`
+      # callback resets `email` from `customer.email`. Pass `customer: nil` so our
       # explicit email sticks for the email-match assertion.
       let!(:matching_order) do
         create(:order, store: store, state: 'cart', customer: nil, email: 'jane.doe@example.com')

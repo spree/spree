@@ -91,6 +91,13 @@ describe 'spree:upgrade:migrate_users_to_customers' do
         expect { subject.invoke }.to raise_error(SystemExit)
       end
 
+      it 'treats email conflicts case-insensitively' do
+        legacy_users.create!(id: 900_011, email: 'Carol@Example.com', encrypted_password: 'x')
+        create(:user, email: 'carol@example.com')
+
+        expect { subject.invoke }.to raise_error(SystemExit)
+      end
+
       it 'skips invalid rows and copies the rest with SKIP_INVALID_ROWS=true' do
         legacy_users.create!(id: 900_010, email: '', encrypted_password: 'ghost_digest')
         ENV['SKIP_INVALID_ROWS'] = 'true'

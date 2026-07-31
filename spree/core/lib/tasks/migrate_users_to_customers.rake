@@ -77,8 +77,12 @@ namespace :spree do
       # passes SKIP_INVALID_ROWS=true to skip them and continue.
       pending = source.where.not(id: customer_model.select(:id))
       blank_email_ids = pending.where("email IS NULL OR email = ''").pluck(:id)
-      conflict_ids = pending.where("email IS NOT NULL AND email <> ''").
-                             where(email: customer_model.select(:email)).pluck(:id)
+      # Compare case-insensitively to match Spree::Customer's uniqueness
+      # (case_sensitive: false) — emails are stored case-preserved, so a legacy
+      # `Alice@` conflicting with an existing `alice@` must be caught here too.
+      existing_emails = customer_model.where.not(email: [nil, '']).pluck(:email).map(&:downcase).to_set
+      conflict_ids = pending.where("email IS NOT NULL AND email <> ''").pluck(:id, :email).
+                             filter_map { |id, email| id if existing_emails.include?(email.downcase) }
       invalid_ids = (blank_email_ids + conflict_ids).uniq
 
       if invalid_ids.any? && ENV['SKIP_INVALID_ROWS'] != 'true'
