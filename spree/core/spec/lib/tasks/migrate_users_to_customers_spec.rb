@@ -73,6 +73,8 @@ describe 'spree:upgrade:migrate_users_to_customers' do
       expect(alice.password_digest).to eq('alice_digest')
 
       expect(Spree.customer_class.exists?(900_002)).to be(true)
+      # accepts_email_marketing is NOT NULL — a legacy nil must land as false.
+      expect(Spree.customer_class.find(900_002).accepts_email_marketing).to be(false)
     end
 
     describe 'invalid source rows' do

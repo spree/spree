@@ -83,14 +83,14 @@ module Spree
       end
 
       def prepare_address_params!(address, address_params)
-        address_params[:user_id] = address&.customer_id
+        address_params[:customer_id] = address&.customer_id
         address_params[:country_id] ||= address.country_id
         address_params = fill_country_and_state_ids(address_params)
         address_params.transform_values!(&:presence)
       end
 
       def reassign_incomplete_orders(old_address_id, new_address)
-        orders = Spree::Order.incomplete.where(user_id: new_address.customer_id)
+        orders = Spree::Order.incomplete.where(customer_id: new_address.customer_id)
         orders.where(ship_address_id: old_address_id).update_all(ship_address_id: new_address.id, state: 'address', updated_at: Time.current)
         orders.where(bill_address_id: old_address_id).update_all(bill_address_id: new_address.id, state: 'address', updated_at: Time.current)
       end

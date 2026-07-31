@@ -180,7 +180,16 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:created)
         created_order = Spree::Order.find_by_prefix_id(json_response['id'])
-        expect(created_order.user).to eq(customer)
+        expect(created_order.customer).to eq(customer)
+      end
+
+      it 'refuses to attach a customer the principal is not allowed to see' do
+        restricted = Spree::Ability.new(admin_user)
+        restricted.cannot :show, Spree.customer_class, id: customer.id
+        allow_any_instance_of(described_class).to receive(:current_ability).and_return(restricted)
+
+        expect { subject }.not_to change(Spree::Order, :count)
+        expect(response).to have_http_status(:not_found)
       end
     end
 

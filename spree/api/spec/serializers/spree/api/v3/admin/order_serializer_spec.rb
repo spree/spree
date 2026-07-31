@@ -35,4 +35,15 @@ RSpec.describe Spree::Api::V3::Admin::OrderSerializer do
       expect(line_item_data['metadata']).to eq({ 'gift' => true })
     end
   end
+
+  describe 'customer' do
+    let(:order) { create(:order, store: store, customer: create(:user, email: 'buyer@example.com')) }
+    let(:base_params) { { store: store, currency: store.default_currency, expand: 'customer' } }
+
+    it 'embeds the customer through the renamed association' do
+      expect(subject['customer']).to be_present
+      expect(subject['customer']['id']).to eq(order.customer.prefixed_id)
+      expect(subject['customer']['email']).to eq('buyer@example.com')
+    end
+  end
 end
