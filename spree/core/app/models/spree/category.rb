@@ -57,7 +57,6 @@ module Spree
     #
     validates :name, presence: true
     validates :taxonomy, presence: true, if: :requires_taxonomy?
-    validates :store, presence: true
     # Taxonomy-backed categories are unique within their taxonomy; taxonomy-less
     # categories (store-owned) are unique within their store, so two stores can
     # each have a top-level "Shoes".

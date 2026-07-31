@@ -1,6 +1,5 @@
 module Spree
   class StockLocation < Spree.base_class
-    include Spree::SingleStoreResource
     has_prefix_id :sloc  # Spree-specific: stock location
 
     # Categorizes the location. Open string — extensible by setting any value;
@@ -12,6 +11,7 @@ module Spree
     # (ship-to-store). See docs/plans/6.0-fulfillment-and-delivery.md.
     PICKUP_STOCK_POLICIES = %w[local any].freeze
 
+    include Spree::SingleStoreResource
     include Spree::UniqueName
     if defined?(Spree::Security::StockLocations)
       include Spree::Security::StockLocations
@@ -21,8 +21,6 @@ module Spree
     end
 
     acts_as_paranoid
-
-    belongs_to :store, class_name: 'Spree::Store'
 
     has_many :fulfillments, class_name: 'Spree::Fulfillment'
     has_many :shipments, class_name: 'Spree::Fulfillment', foreign_key: :stock_location_id, deprecated: true
@@ -34,7 +32,6 @@ module Spree
     belongs_to :country, class_name: 'Spree::Country'
 
     validates :kind, presence: true
-    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
     validates :pickup_stock_policy, inclusion: { in: PICKUP_STOCK_POLICIES }
     validates :pickup_ready_in_minutes,
               numericality: { only_integer: true, greater_than_or_equal_to: 0 },

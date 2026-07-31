@@ -8,8 +8,6 @@ module Spree
     if defined?(Spree::Security::Promotions)
       include Spree::Security::Promotions
     end
-    # Multi-store sharing moved to the spree_multi_store extension in 5.6.
-    include Spree::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
 
     publishes_lifecycle_events
 
@@ -39,7 +37,6 @@ module Spree
     has_many :coupon_codes, -> { order(created_at: :asc) }, dependent: :destroy, class_name: 'Spree::CouponCode'
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
-    belongs_to :store, class_name: 'Spree::Store'
 
     after_save :apply_pending_rules_and_actions, if: :pending_rules_or_actions?
 
@@ -61,7 +58,6 @@ module Spree
     #
     validates_associated :rules
     validates :name, presence: true
-    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }, allow_blank: true
     validate :expires_at_must_be_later_than_starts_at, if: -> { starts_at && expires_at }

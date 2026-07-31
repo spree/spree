@@ -46,7 +46,7 @@ module Spree
       preference :disable_migration_check, :boolean, default: false # when turned on disables the startup warning about missing engine migrations
       preference :enable_legacy_default_price, :boolean, default: false # when enabled, keeps the legacy DefaultPrice concern active (has_one :default_price, variant.price= delegation, check_price validation). Disable (default) to use set_price exclusively.
       preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation
-      preference :disable_store_presence_validation, :boolean, default: false # when turned off disables Store presence validation for Products and Payment Methods
+      preference :disable_store_presence_validation, :boolean, default: false, deprecated: true # when turned off disables Store presence validation for Products and Payment Methods
       preference :events_log_enabled, :boolean, default: true # Log all Spree events to Rails logger
       preference :expedited_exchanges, :boolean, default: false # NOTE this requires payment profiles to be supported on your gateway of choice as well as a delayed job handler to be configured with activejob. kicks off an exchange shipment upon return authorization save. charge customer if they do not return items within timely manner.
       preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged

@@ -1,9 +1,9 @@
 module Spree
   class DeliveryMethod < Spree.base_class
-    include Spree::SingleStoreResource
     has_prefix_id :dm
 
     acts_as_paranoid
+    include Spree::SingleStoreResource
     include Spree::CalculatedAdjustments
     include Spree::Metafields
     include Spree::Metadata
@@ -27,8 +27,6 @@ module Spree
     has_many :shipping_categories, through: :shipping_method_categories
     has_many :delivery_rates, class_name: 'Spree::DeliveryRate', inverse_of: :delivery_method
     has_many :fulfillments, through: :delivery_rates, class_name: 'Spree::Fulfillment'
-
-    belongs_to :store, class_name: 'Spree::Store'
 
     has_many :delivery_method_stock_locations, class_name: 'Spree::DeliveryMethodStockLocation',
              dependent: :destroy, inverse_of: :delivery_method
@@ -58,7 +56,6 @@ module Spree
     has_many :zones, through: :delivery_method_zones, source: :delivery_zone, deprecated: true
 
     validates :name, :display_on, :fulfillment_type, presence: true
-    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
     validates :estimated_transit_business_days_min, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
     validates :estimated_transit_business_days_max, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
 

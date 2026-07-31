@@ -24,7 +24,7 @@ module Spree
     has_many :products, class_name: 'Spree::Product', dependent: :restrict_with_error
 
     validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :store_id }
-    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
+    validates :store, presence: true
     validates :fulfillment_types, presence: true
 
     self.whitelisted_ransackable_attributes = %w[name]

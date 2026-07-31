@@ -32,7 +32,6 @@ module Spree
     include Spree::Product::Webhooks
     include Spree::Product::Slugs
     include Spree::Product::Channels
-    include Spree::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
     include Spree::SearchIndexable
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern

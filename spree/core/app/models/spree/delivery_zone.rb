@@ -15,7 +15,7 @@ module Spree
     has_many :delivery_methods, through: :delivery_method_zones, class_name: 'Spree::DeliveryMethod'
 
     validates :name, presence: true, uniqueness: { scope: [:store_id, *spree_base_uniqueness_scope] }
-    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
+    validates :store, presence: true
 
     self.whitelisted_ransackable_attributes = %w[name]
 

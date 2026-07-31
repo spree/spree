@@ -2,6 +2,8 @@ module Spree
   class ApiKey < Spree.base_class
     has_prefix_id :key  # Spree-specific: api key
 
+    include Spree::SingleStoreResource
+
     KEY_TYPES = %w[publishable secret].freeze
     PREFIXES = { 'publishable' => 'pk_', 'secret' => 'sk_' }.freeze
     TOKEN_LENGTH = 24
@@ -60,7 +62,6 @@ module Spree
     validates :token, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }, if: :publishable?
     validates :token_digest, presence: true, uniqueness: true, if: :secret?
     validates :token_prefix, presence: true, if: :secret?
-    validates :store, presence: true
     validates :scopes, presence: true, if: -> { secret? && scopes_enforceable? }
     validate :validate_known_scopes, if: -> { secret? && scopes_enforceable? }
     # Scopes are fixed for the life of the secret — mirroring Stripe/GitHub/AWS:
