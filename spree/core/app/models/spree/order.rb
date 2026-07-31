@@ -501,6 +501,13 @@ module Spree
       Spree.order_recalculate_totals_workflow.call(order: self)
     end
 
+    # Derives and persists payment_status / fulfillment_status from the
+    # order's payment, refund and fulfillment records. Convenience for
+    # {Spree::Orders::UpdateStatuses}, the sole status writer.
+    def update_statuses!
+      Spree.order_update_statuses_service.call(order: self)
+    end
+
     # @deprecated Use {#recalculate_totals!}; removed in 6.1.
     def update_with_updater!
       Spree::Deprecation.warn('Spree::Order#update_with_updater! is deprecated and will be removed in Spree 6.1. Use #recalculate_totals! instead.')
@@ -689,7 +696,7 @@ module Spree
 
       Spree::Fulfillments::AutoFulfill.call(order: self)
 
-      Spree::Orders::RecomputeStatuses.call(order: self)
+      update_statuses!
 
       publish_order_placed_event
     end
@@ -697,7 +704,7 @@ module Spree
     def fulfill!
       fulfillments.each { |shipment| shipment.update!(self) if shipment.persisted? }
       save!
-      Spree::Orders::RecomputeStatuses.call(order: self)
+      update_statuses!
     end
 
     # Helper methods for checkout steps

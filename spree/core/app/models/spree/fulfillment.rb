@@ -570,10 +570,6 @@ module Spree
       end
     end
 
-    def update_attributes_and_order(params = {})
-      Shipments::Update.call(shipment: self, shipment_attributes: params).success?
-    end
-
     # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
     # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
     # yield the correct results.
@@ -632,7 +628,7 @@ module Spree
     def update_order_fulfillment_status
       return if order.nil?
 
-      Spree::Orders::RecomputeStatuses.call(order: order)
+      order.update_statuses!
     end
 
     # publish_shipment_shipped_event, publish_shipment_canceled_event, and

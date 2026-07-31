@@ -13,7 +13,7 @@ module Spree
     #                              pre-capture failure pops the armed
     #                              on_flow_failure compensation
     #   FINALIZE (own txn)         inventory + counters + draft→placed +
-    #                              cart.completed_at + RecomputeStatuses;
+    #                              cart.completed_at + UpdateStatuses;
     #                              events after commit
     class Complete < Spree::Workflow
       COMPLETING_TTL = 5.minutes
@@ -78,7 +78,7 @@ module Spree
 
           order.finalize! unless order.completed?
           Spree::StockReservations::Release.call(owner: order)
-          Spree::Orders::RecomputeStatuses.call(order: order)
+          order.update_statuses!
         end
 
         halt!(order)
@@ -303,7 +303,7 @@ module Spree
           cart.update_columns(completed_at: Time.current, completing_at: nil)
         end
         Spree::StockReservations::Release.call(owner: order)
-        Spree::Orders::RecomputeStatuses.call(order: order)
+        order.update_statuses!
         mark_coupon_codes_used!(cart, order)
       end
 

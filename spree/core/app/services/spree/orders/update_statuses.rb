@@ -5,7 +5,7 @@ module Spree
     # fulfillment records and stored in indexed columns so admin filtering
     # keeps working. Triggered from payment/refund/fulfillment/return event
     # subscribers — never inline from controllers.
-    class RecomputeStatuses
+    class UpdateStatuses
       prepend Spree::ServiceModule::Base
 
       PAYMENT_STATUSES = %w[none authorized partially_paid paid partially_refunded refunded overcharged voided].freeze

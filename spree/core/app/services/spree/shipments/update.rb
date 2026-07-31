@@ -1,36 +1,10 @@
-# Update Shipment and make sure Order states follow the shipment changes
 module Spree
   module Shipments
+    # @deprecated Use {Spree::Fulfillments::Update}; removed in 6.1.
     class Update
-      prepend Spree::ServiceModule::Base
-
-      def call(shipment:, shipment_attributes: {})
-        ActiveRecord::Base.transaction do
-          return failure(shipment) unless shipment.update(shipment_attributes)
-
-          if shipment_attributes.key?(:selected_shipping_rate_id) || shipment_attributes.key?(:selected_delivery_rate_id)
-            order = shipment.order
-
-            # Changing the selected Shipping Rate won't update the cost (for now)
-            # so we persist the Shipment#cost before calculating order shipment
-            # total and updating payment state (given a change in shipment cost
-            # might change the Order#payment_state)
-            shipment.update_amounts
-
-            order.recalculate_totals!
-
-            # Update shipment state only after order total is updated because it
-            # (via Order#paid?) affects the shipment state (YAY)
-            shipment.update_columns(
-              state: shipment.determine_state(order),
-              updated_at: Time.current
-            )
-
-            # And then derive the order-level statuses from the new state
-            Spree::Orders::RecomputeStatuses.call(order: order)
-          end
-        end
-        success(shipment)
+      def self.call(shipment:, shipment_attributes: {}, &block)
+        Spree::Deprecation.warn('Spree::Shipments::Update is deprecated and will be removed in Spree 6.1. Use Spree::Fulfillments::Update instead.')
+        Spree::Fulfillments::Update.call(fulfillment: shipment, fulfillment_attributes: shipment_attributes, &block)
       end
     end
   end

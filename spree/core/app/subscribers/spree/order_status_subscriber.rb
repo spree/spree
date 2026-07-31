@@ -2,7 +2,7 @@ module Spree
   # The trigger side of derive-then-persist statuses: any payment, refund,
   # fulfillment or return-item change recomputes the owning order's
   # payment_status / fulfillment_status through the single writer
-  # (Spree::Orders::RecomputeStatuses). Synchronous so API responses right
+  # (Spree::Orders::UpdateStatuses). Synchronous so API responses right
   # after a capture/void/fulfill already carry the fresh status. Cart-owned
   # records are skipped — carts have no status columns.
   class OrderStatusSubscriber < Spree::Subscriber
@@ -17,7 +17,7 @@ module Spree
       order = order_for(event)
       return unless order
 
-      Spree::Orders::RecomputeStatuses.call(order: order)
+      order.update_statuses!
     end
 
     private

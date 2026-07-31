@@ -868,7 +868,7 @@ describe Spree::Shipment, type: :model do
     end
 
     before do
-      shipment.update_attributes_and_order selected_shipping_rate_id: shipping_rate.id
+      Spree::Fulfillments::Update.call(fulfillment: shipment, fulfillment_attributes: { selected_shipping_rate_id: shipping_rate.id })
     end
 
     it 'updates everything around order shipment total and state' do
@@ -876,7 +876,7 @@ describe Spree::Shipment, type: :model do
       expect(shipment.state).to eq 'pending'
       # The full recalculation derives item_total from real line items
       # (fabricated column values don't survive it) and statuses come from
-      # the payment records via RecomputeStatuses.
+      # the payment records via UpdateStatuses.
       expect(shipment.order.total.to_f).to eq(shipment.order.item_total.to_f + 10)
       expect(shipment.order.payment_status).to eq('none')
     end

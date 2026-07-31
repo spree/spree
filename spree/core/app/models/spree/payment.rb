@@ -393,7 +393,7 @@ module Spree
       return unless completed? || void? || (owner.is_a?(Spree::Order) && owner.completed?)
 
       owner.recalculate_totals!
-      Spree::Orders::RecomputeStatuses.call(order: owner) if owner.is_a?(Spree::Order) && owner.completed?
+      owner.update_statuses! if owner.is_a?(Spree::Order) && owner.completed?
     end
 
     def create_eligible_credit_event

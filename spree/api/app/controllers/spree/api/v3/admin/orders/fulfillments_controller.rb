@@ -42,9 +42,9 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id
             def update
               with_order_lock do
-                result = Spree.shipment_update_service.call(
-                  shipment: @resource,
-                  shipment_attributes: permitted_params.to_h
+                result = Spree.fulfillment_update_service.call(
+                  fulfillment: @resource,
+                  fulfillment_attributes: permitted_params.to_h
                 )
 
                 if result.success?

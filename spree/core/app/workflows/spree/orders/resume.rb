@@ -21,7 +21,7 @@ module Spree
         end
 
         order.consider_risk
-        step :recompute_statuses, with: -> { Spree::Orders::RecomputeStatuses }
+        step :update_statuses, with: -> { Spree.order_update_statuses_service }
         order.publish_event('order.resumed')
         success(order.reload)
       rescue ActiveRecord::RecordInvalid, StateMachines::InvalidTransition

@@ -46,7 +46,7 @@ module Spree
 
         external_step :settle_payments
         step :recompute_totals, with: -> { Spree.order_recalculate_totals_workflow }
-        step :recompute_statuses, with: -> { Spree::Orders::RecomputeStatuses }
+        step :update_statuses, with: -> { Spree.order_update_statuses_service }
         order.publish_event('order.canceled', order.event_payload.merge(notify_customer: notify_customer))
         success(order.reload)
       rescue ActiveRecord::RecordInvalid, StateMachines::InvalidTransition

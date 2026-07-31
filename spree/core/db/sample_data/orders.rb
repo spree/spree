@@ -132,7 +132,7 @@ end
 
 # Statuses are derive-then-persist; the direct writes above bypass the
 # event subscribers, so recompute explicitly.
-orders.each { |order| Spree::Orders::RecomputeStatuses.call(order: order.reload) }
+orders.each { |order| order.reload.update_statuses! }
 
 # Reimbursement
 first_complete_order = Spree::Order.complete.first

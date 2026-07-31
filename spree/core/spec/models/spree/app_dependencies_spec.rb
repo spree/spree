@@ -87,6 +87,21 @@ describe Spree::Core::Dependencies, type: :model do
     end
   end
 
+  describe 'legacy service rename keys' do
+    it 'stashes shipment_update_service writes without touching the fulfillment seam' do
+      allow(Spree::Deprecation).to receive(:warn)
+
+      deps.shipment_update_service = 'MyCustomShipmentUpdate'
+      expect(deps.shipment_update_service).to eq('MyCustomShipmentUpdate')
+      expect(deps.fulfillment_update_service).to eq('Spree::Fulfillments::Update')
+    end
+
+    it 'falls back to the fulfillment service for legacy reads with no stash' do
+      allow(Spree::Deprecation).to receive(:warn)
+      expect(deps.shipment_update_service).to eq('Spree::Fulfillments::Update')
+    end
+  end
+
   describe 'legacy keys through the Spree top-level resolver' do
     it 'sets and resolves without raising, leaving the workflow seam untouched' do
       allow(Spree::Deprecation).to receive(:warn)

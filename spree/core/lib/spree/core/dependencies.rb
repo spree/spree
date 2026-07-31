@@ -65,13 +65,12 @@ module Spree
         order_fee_destroy_service: 'Spree::Orders::Fees::Destroy',
         order_create_service: 'Spree::Orders::Create',
         order_update_service: 'Spree::Orders::Update',
+        order_update_statuses_service: 'Spree::Orders::UpdateStatuses',
         order_updater: 'Spree::OrderUpdater',
 
         # fulfillment
         fulfillment_create_service: 'Spree::Fulfillments::Create',
-
-        # shipment
-        shipment_update_service: 'Spree::Shipments::Update',
+        fulfillment_update_service: 'Spree::Fulfillments::Update',
 
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
@@ -144,15 +143,24 @@ module Spree
         order_cancel_service: :order_cancel_workflow
       }.freeze
 
+      # Same stash-don't-apply treatment for the 6.0 Shipment→Fulfillment
+      # service rename: the new class speaks the fulfillment keyword
+      # vocabulary (still accepting the old shipment keywords with a
+      # warning), but a legacy override written against the old keywords is
+      # not interchangeable with what the new call sites pass. Removed in 6.1.
+      LEGACY_SERVICE_KEYS = {
+        shipment_update_service: :fulfillment_update_service
+      }.freeze
+
       def legacy_workflow_overrides
         @legacy_workflow_overrides ||= {}
       end
 
-      LEGACY_WORKFLOW_KEYS.each do |legacy, current|
+      LEGACY_WORKFLOW_KEYS.merge(LEGACY_SERVICE_KEYS).each do |legacy, current|
         define_method("#{legacy}=") do |value|
           Spree::Deprecation.warn(
             "Spree::Dependencies##{legacy}= is deprecated and NO LONGER CONSULTED by Spree — " \
-            "the override was not applied. Port the class to the Spree::Workflow contract and " \
+            "the override was not applied. Port the class to the #{current} contract and " \
             "set #{current}= instead. The #{legacy} name is removed in Spree 6.1."
           )
           legacy_workflow_overrides[legacy] = value

@@ -2,7 +2,7 @@ module Spree
   module Carts
     # Money recalculation — item counts, money totals, one update_columns
     # persist. Money ONLY: payment_status/fulfillment_status are written
-    # exclusively by Spree::Orders::RecomputeStatuses, and completed-order
+    # exclusively by Spree::Orders::UpdateStatuses, and completed-order
     # fulfillment repricing belongs to the explicit post-placement edit
     # path, never to a totals refresh.
     #
