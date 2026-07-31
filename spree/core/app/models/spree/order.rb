@@ -150,6 +150,8 @@ module Spree
     alias_attribute :customer_id, :user_id
 
     belongs_to :user, class_name: "::#{Spree.user_class}", optional: true, autosave: true
+    alias_method :customer, :user
+    alias_method :customer=, :user=
     # The cart this order was completed from (unique — the completion
     # idempotency key). Backoffice draft orders have no cart.
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :order

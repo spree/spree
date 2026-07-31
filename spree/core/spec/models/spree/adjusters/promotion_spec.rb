@@ -6,7 +6,7 @@ describe Spree::Adjusters::Promotion, type: :model do
 
   def line_promo(rate, code: nil)
     kind = code ? :coupon_code : :automatic
-    create(:promotion_with_item_adjustment, adjustment_rate: rate, code: code, kind: kind, stores: [store])
+    create(:promotion_with_item_adjustment, adjustment_rate: rate, code: code, kind: kind, store: store)
   end
 
   it 'writes a discount row per line item for an applied promotion' do
@@ -60,7 +60,7 @@ describe Spree::Adjusters::Promotion, type: :model do
   end
 
   it 'clamps so a line never goes below zero' do
-    promo = create(:promotion, kind: :automatic, code: nil, stores: [store])
+    promo = create(:promotion, kind: :automatic, code: nil, store: store)
     action = Spree::Promotion::Actions::CreateItemAdjustments.create!(
       promotion: promo,
       calculator: Spree::Calculator::FlatRate.new(preferred_amount: 999)
@@ -77,7 +77,7 @@ describe Spree::Adjusters::Promotion, type: :model do
     let(:order) { create(:order_with_line_items, line_items_count: 3) }
 
     it 'distributes the winner across line items with largest-remainder' do
-      promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, code: nil, kind: :automatic, stores: [store])
+      promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, code: nil, kind: :automatic, store: store)
       promo.activate(order: order)
 
       rows = order.discounts.reload
@@ -87,7 +87,7 @@ describe Spree::Adjusters::Promotion, type: :model do
     end
 
     it 'never distributes more than the remaining line bases' do
-      promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 9_999, code: nil, kind: :automatic, stores: [store])
+      promo = create(:promotion_with_order_adjustment, weighted_order_adjustment_amount: 9_999, code: nil, kind: :automatic, store: store)
       promo.activate(order: order)
 
       expect(order.discounts.reload.sum(&:amount)).to eq(-order.line_items.sum(&:amount))
@@ -99,7 +99,7 @@ describe Spree::Adjusters::Promotion, type: :model do
 
     it 'persists a fulfillment discount even at zero cost' do
       order.fulfillments.each { |fulfillment| fulfillment.update_column(:cost, 0) }
-      promo = create(:free_shipping_promotion, code: nil, kind: :automatic, stores: [store])
+      promo = create(:free_shipping_promotion, code: nil, kind: :automatic, store: store)
       promo.activate(order: order)
 
       rows = order.discounts.reload.select(&:fulfillment_id)

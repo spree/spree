@@ -51,6 +51,11 @@ module Spree
           @line_item.quantity += requested_quantity.to_i
         end
 
+        # Pins inventory placement to a specific fulfillment (admin
+        # post-placement adds); :shipment is the legacy option key.
+        target = item_options[:fulfillment] || item_options[:shipment]
+        @line_item.target_fulfillment = target if target
+
         # `metadata` is the primary API param (maps to private_metadata).
         # Legacy `public_metadata`/`private_metadata` params kept for backward compatibility.
         resolved_metadata = metadata.presence || private_metadata

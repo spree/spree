@@ -273,9 +273,10 @@ module Spree
       return 'pending' if order_or_cart.is_a?(Spree::Cart)
 
       return 'canceled' if canceled? || order_or_cart.canceled?
+      # Fulfillment is a fact — payment coverage can never un-fulfill it.
+      return 'fulfilled' if fulfilled?
       return 'pending' unless order_or_cart.can_ship?
       return 'pending' if fulfillment_items.any?(&:backordered?)
-      return 'fulfilled' if fulfilled?
 
       order_or_cart.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
     end

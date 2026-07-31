@@ -47,7 +47,7 @@ module Spree
             end
 
             def recalculate
-              return if @cart.complete? || @cart.canceled?
+              return if @cart.complete?
 
               @cart.recalculate_totals!
             rescue StandardError => e

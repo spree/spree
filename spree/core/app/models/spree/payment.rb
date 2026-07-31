@@ -392,7 +392,10 @@ module Spree
     def update_order
       return unless completed? || void? || (owner.is_a?(Spree::Order) && owner.completed?)
 
-      owner.recalculate_totals!
+      # A payment settling moves only the payment side of the ledger — never
+      # re-sum item/adjustment money here.
+      completed_total = owner.payments.completed.includes(:refunds).sum { |payment| payment.amount - payment.refunds.sum(:amount) }
+      owner.update_column(:payment_total, completed_total)
       owner.update_statuses! if owner.is_a?(Spree::Order) && owner.completed?
     end
 

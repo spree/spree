@@ -24,8 +24,10 @@ module Spree
 
       # A fulfillment's own state depends on payment coverage
       # (Fulfillment#determine_state) — refresh each before rolling up.
+      # Reloaded so a stale association cache never writes an outdated
+      # status back over a transition that already persisted.
       def refresh_fulfillment_states(order)
-        order.fulfillments.each do |fulfillment|
+        order.fulfillments.reload.each do |fulfillment|
           fulfillment.update!(order) if fulfillment.persisted?
         end
       end

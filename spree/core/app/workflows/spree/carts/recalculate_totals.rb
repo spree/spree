@@ -20,9 +20,10 @@ module Spree
 
         step :reset_association_caches
         step :update_item_count
+        step :refresh_money_inputs
         step :regenerate_typed_rows unless money_frozen?
         step :fold_typed_rows
-        step :update_money_totals
+        step :refresh_grand_total
         step :persist_totals
 
         success(cart)
@@ -74,10 +75,16 @@ module Spree
         cart.non_taxable_adjustment_total = fees.select(&:order_level?).sum(&:amount)
       end
 
-      def update_money_totals
+      # Runs before the adjusters: promotion-rule eligibility (item-total
+      # thresholds, free shipping) reads these attributes, so they must
+      # reflect the current line items — not the previous recalculation.
+      def refresh_money_inputs
         cart.payment_total = cart.payments.completed.includes(:refunds).inject(0) { |sum, payment| sum + payment.amount - payment.refunds.sum(:amount) }
         cart.item_total = cart.line_items.to_a.sum(&:amount)
         cart.delivery_total = cart.fulfillments.to_a.sum(&:cost)
+      end
+
+      def refresh_grand_total
         cart.total = cart.item_total + cart.delivery_total + cart.adjustment_total
       end
 

@@ -35,7 +35,7 @@ namespace :spree do
           ship_address_id: order.ship_address_id,
           bill_address_id: order.bill_address_id,
           accept_marketing: order.accept_marketing,
-          special_instructions: order.special_instructions,
+          customer_note: order.customer_note,
           last_ip_address: order.last_ip_address,
           gift_card_id: order.gift_card_id,
           metadata: order.metadata,

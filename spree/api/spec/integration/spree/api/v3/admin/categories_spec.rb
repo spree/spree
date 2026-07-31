@@ -287,7 +287,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
 
       response '204', 'product removed' do
-        let!(:product) { create(:product, stores: [store]) }
+        let!(:product) { create(:product, store: store) }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:category_id) { category.prefixed_id }
         let(:id) { product.prefixed_id }

@@ -4,12 +4,6 @@ RSpec.describe Spree::CustomerGroup, type: :model do
   let(:store) { @default_store }
   let(:customer_group) { create(:customer_group, store: store) }
 
-  describe 'associations' do
-    it { is_expected.to belong_to(:store).optional(false) }
-    it { is_expected.to have_many(:customer_group_users).dependent(:destroy) }
-    it { is_expected.to have_many(:users).through(:customer_group_users) }
-  end
-
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
 

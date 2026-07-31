@@ -261,7 +261,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       }
 
       response '201', 'product added' do
-        let!(:product) { create(:product, stores: [store]) }
+        let!(:product) { create(:product, store: store) }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:collection_id) { collection.prefixed_id }
         let(:body) { { product_id: product.prefixed_id } }
@@ -288,7 +288,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :id, in: :path, type: :string, required: true, description: 'Product ID'
 
       response '204', 'product removed' do
-        let!(:product) { create(:product, stores: [store]) }
+        let!(:product) { create(:product, store: store) }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:collection_id) { collection.prefixed_id }
         let(:id) { product.prefixed_id }
@@ -321,7 +321,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       }
 
       response '204', 'product repositioned' do
-        let!(:product) { create(:product, stores: [store]) }
+        let!(:product) { create(:product, store: store) }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:collection_id) { collection.prefixed_id }
         let(:id) { product.prefixed_id }

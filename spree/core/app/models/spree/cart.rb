@@ -141,6 +141,13 @@ module Spree
 
     delegate :name, to: :customer, prefix: true, allow_nil: true
 
+    # @deprecated Store API bridge — carts have no order-style number; the
+    #   prefixed ID is the identifier. Removed from the API in 6.1.
+    # @return [String]
+    def number
+      prefixed_id
+    end
+
     # @return [Boolean]
     def completed?
       completed_at.present?

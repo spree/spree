@@ -31,7 +31,7 @@ module Spree
       #
       # @return [String]
       def current_checkout_step
-        return 'complete' if completed? || canceled?
+        return 'complete' if completed?
 
         first_unmet = Spree::Checkout::Requirements.new(self).call.first
         step = first_unmet ? first_unmet[:step].to_s : 'complete'

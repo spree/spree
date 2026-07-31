@@ -37,6 +37,8 @@ module Spree
           order.channel&.prefixed_id
         end
 
+        # @deprecated `number` mirrors `id` (carts have no order-style
+        #   number) — kept one release for 5.x clients; removed in 6.1.
         attributes :number, :token, :email, :customer_note,
                    :currency, :locale, :total_quantity, :warnings, :coupon_code
 
