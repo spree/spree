@@ -679,7 +679,11 @@ module Spree
     ##
     # Check to see if any line item variants are discontinued.
     # If so add error and restart checkout.
+    # @deprecated Completion validation lives in
+    #   {Spree::Checkout::DefaultRequirements} (the +discontinued+ stock
+    #   error). Removed in 6.1.
     def ensure_line_item_variants_are_not_discontinued
+      Spree::Deprecation.warn('Spree::Order#ensure_line_item_variants_are_not_discontinued is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if line_items.any? { |li| !li.variant || li.variant.discontinued? }
         errors.add(:base, Spree.t(:discontinued_variants_present))
         false
@@ -688,7 +692,11 @@ module Spree
       end
     end
 
+    # @deprecated Completion validation lives in
+    #   {Spree::Checkout::DefaultRequirements} (the +out_of_stock+ stock
+    #   error). Removed in 6.1.
     def ensure_line_items_are_in_stock
+      Spree::Deprecation.warn('Spree::Order#ensure_line_items_are_in_stock is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if insufficient_stock_lines.present?
         errors.add(:base, Spree.t(:insufficient_stock_lines_present))
         false
@@ -698,10 +706,12 @@ module Spree
     end
 
     def use_all_coupon_codes
+      Spree::Deprecation.warn('Spree::Order#use_all_coupon_codes is deprecated and will be removed in Spree 6.1. Use Spree::CouponCodes::CouponCodesHandler instead.')
       Spree::CouponCodes::CouponCodesHandler.new(order: self).use_all_codes
     end
 
     def log_state_changes(state_name:, old_state:, new_state:)
+      Spree::Deprecation.warn('Spree::Order#log_state_changes is deprecated and will be removed in Spree 6.1.')
       state_changes.create(
         previous_state: old_state,
         next_state: new_state,
@@ -720,6 +730,7 @@ module Spree
     end
 
     def can_add_coupon?
+      Spree::Deprecation.warn('Spree::Order#can_add_coupon? is deprecated and will be removed in Spree 6.1. Use Spree::Promotion.order_activatable? instead.')
       Spree::Promotion.order_activatable?(self)
     end
 

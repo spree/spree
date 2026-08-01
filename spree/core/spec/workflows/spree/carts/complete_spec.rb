@@ -81,6 +81,16 @@ module Spree
         expect(result.error.value[:code]).to eq('validation_failed')
         expect(result.error.value[:errors]).to be_present
       end
+
+      it 'rejects a variant discontinued after it entered the cart' do
+        ready_cart.line_items.first.variant.update_columns(discontinue_on: 1.minute.ago)
+
+        result = described_class.call(cart: ready_cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('validation_failed')
+        expect(result.error.value[:errors].map { |error| error[:code] }).to include('discontinued')
+      end
     end
 
     describe 'guest checkout policy' do
