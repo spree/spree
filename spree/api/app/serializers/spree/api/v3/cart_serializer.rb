@@ -8,7 +8,7 @@ module Spree
                  customer_note: [:string, nullable: true], market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
-                 requirements: 'Array<{step: string, field: string, message: string}>',
+                 requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
                  adjustment_total: [:string, nullable: true], display_adjustment_total: [:string, nullable: true],

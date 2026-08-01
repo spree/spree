@@ -62,37 +62,25 @@ module Spree
 
       private
 
-      # Admin/B2B draft orders bypass the cart but reuse the same finalize
-      # semantics (idempotency + inventory + reservation release in one home).
+      # Admin/B2B draft orders bypass the cart — the order-side completion
+      # workflow (Spree::Orders::Complete) owns that path end to end.
       def complete_draft_order
-        order = cart
-        halt!(order) if order.completed?
-        failure(order, 'Order is canceled') if order.canceled?
-
-        order.with_lock do
-          skip_payments = payment_pending || !order.payment_required?
-          order.process_payments! if !skip_payments && !payment_covered?(order)
-
-          failure(order, order.errors.full_messages.to_sentence) if order.errors.any?
-          failure(order, Spree.t(:payment_processing_failed)) if !skip_payments && !payment_covered?(order)
-
-          order.finalize! unless order.completed?
-          Spree::StockReservations::Release.call(owner: order)
-          order.update_statuses!
-        end
-
-        halt!(order)
+        result = Spree.order_complete_workflow.call(order: cart, payment_pending: payment_pending)
+        failure(result.value, result.error) if result.failure?
+        halt!(result.value)
       end
 
-      # A draft here means a previous attempt died mid-pipeline — re-verify
-      # payment coverage, then re-run FINALIZE (idempotent).
+      # An existing order here means a previous attempt died mid-pipeline —
+      # re-verify payment coverage on drafts, then re-run FINALIZE
+      # (idempotent, and the only healer for the crash window between the
+      # order commit and the cart stamp).
       def replay_completed
         order = completion_result(cart)
         return if order.nil?
 
-        halt!(order) if order.placed? || order.canceled?
+        halt!(order) if order.canceled?
 
-        if order.payment_required? && !payment_covered?(order)
+        if !order.placed? && order.payment_required? && !payment_covered?(order)
           failure(cart, code: 'payment_failed', message: Spree.t(:payment_processing_failed))
         end
 
@@ -117,7 +105,7 @@ module Spree
       end
 
       def validate_cart
-        validation = Spree::Carts::Validate.new.errors_for(cart)
+        validation = Spree::Checkout::Requirements.new(cart).call(completion: true)
         failure(cart, code: 'validation_failed', errors: validation) if validation.any?
       end
 
@@ -296,18 +284,22 @@ module Spree
         order.payments.valid.where(state: %w[pending processing completed]).sum(:amount) >= order.total
       end
 
+      # The FINALIZE phase: the order-side completion workflow owns the
+      # placement side effects; the two cart-side stamps follow.
       def finalize!(cart, order)
-        ApplicationRecord.transaction do
-          order.finalize! unless order.placed?
-          order.update_columns(status: 'placed') unless order.reload.placed?
-          cart.update_columns(completed_at: Time.current, completing_at: nil)
-        end
-        Spree::StockReservations::Release.call(owner: order)
-        order.update_statuses!
-        mark_coupon_codes_used!(cart, order)
+        @order = order
+        step :complete_order, with: -> { Spree.order_complete_workflow }
+        step :complete_cart
+        step :mark_coupon_codes_used
       end
 
-      def mark_coupon_codes_used!(_cart, order)
+      def complete_cart
+        return if cart.completed?
+
+        cart.update_columns(completed_at: Time.current, completing_at: nil)
+      end
+
+      def mark_coupon_codes_used
         Spree::CouponCode.where(order_id: order.id).unused.update_all(state: 1)
       end
     end

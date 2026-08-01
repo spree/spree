@@ -317,102 +317,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#finalize!' do
-    let(:order) { Spree::Order.create(email: 'test@example.com', store: store) }
-
-    before do
-      order.update_columns(completed_at: Time.current, status: 'placed')
-    end
-
-    after { Spree::Config.set track_inventory_levels: true }
-
-    it 'sets completed_at' do
-      expect(order).to receive(:touch).with(:completed_at)
-      order.finalize!
-    end
-
-    it 'sells inventory units' do
-      order.shipments.each do |shipment| # rubocop:disable RSpec/IteratedExpectation
-        expect(shipment).to receive(:update!)
-        expect(shipment).to receive(:finalize!)
-      end
-      order.finalize!
-    end
-
-    it 'decreases the stock for each variant in the shipment' do
-      order.shipments.each do |shipment|
-        expect(shipment.stock_location).to receive(:decrease_stock_for_variant)
-      end
-      order.finalize!
-    end
-
-    it 'changes the shipment state to ready if order is paid' do
-      Spree::Shipment.create(order: order, stock_location: create(:stock_location))
-      order.shipments.reload
-
-      allow(order).to receive_messages(paid?: true, complete?: true)
-      order.finalize!
-      order.reload # reload so we're sure the changes are persisted
-      expect(order.shipment_state).to eq('ready')
-    end
-
-    it 'does not sell inventory units if track_inventory_levels is false' do
-      Spree::Config.set track_inventory_levels: false
-      expect(Spree::InventoryUnit).not_to receive(:sell_units)
-      order.finalize!
-    end
-
-    it 'freezes adjustment recalculation (order-level freeze)' do
-      order.finalize!
-      expect(Spree::Adjusters::Promotion).not_to receive(:adjust)
-      order.recalculate_totals!
-    end
-
-    context 'order is considered risky' do
-      before do
-        allow_any_instance_of(Spree::Order).to receive_messages(is_risky?: true)
-      end
-
-      it 'changes state to risky', :events do
-        expect { order.finalize! }.to change { order.reload.considered_risky }.to(true)
-      end
-
-      context 'and order is approved' do
-        before do
-          allow(order).to receive_messages approved?: true
-        end
-
-        it 'leaves the order placed' do
-          order.finalize!
-          expect(order.status).to eq 'placed'
-        end
-      end
-    end
-
-    context 'events', :events do
-      let(:order) { create(:order_with_line_items, store: store) }
-
-      before { order.update_columns(completed_at: Time.current, status: 'placed') }
-
-      it 'publishes order.completed event' do
-        expect(order).to receive(:publish_event).with('order.placed', hash_including(:notify_customer)).at_least(:once)
-        expect(order).to receive(:publish_event).with('order.completed', hash_including(:notify_customer), { deprecated_alias_of: 'order.placed' }).at_least(:once)
-        allow(order).to receive(:publish_event).with(anything)
-        allow(order).to receive(:publish_event).with(anything, anything)
-        order.finalize!
-      end
-
-      it 'enqueues RefreshMetricsJob for each product in the order' do
-        product_count = order.line_items.map { |li| li.variant.product_id }.uniq.count
-
-        expect do
-          order.finalize!
-          perform_enqueued_jobs(only: Spree::Events::SubscriberJob)
-        end.to have_enqueued_job(Spree::Products::RefreshMetricsJob).exactly(product_count).times
-      end
-    end
-  end
-
   context 'insufficient_stock_lines' do
     let(:line_item) { create(:line_item) }
 
@@ -582,24 +486,6 @@ describe Spree::Order, type: :model do
       it 'returns the currency from the object' do
         expect(order.currency).to eq('EUR')
       end
-    end
-  end
-
-  context 'add_update_hook' do
-    before do
-      Spree::Order.class_eval do
-        register_update_hook :add_awesome_sauce
-      end
-    end
-
-    after do
-      Spree::Order.update_hooks = Set.new
-    end
-
-    it 'calls hook during finalize' do
-      order = create(:order)
-      expect(order).to receive(:add_awesome_sauce)
-      order.finalize!
     end
   end
 

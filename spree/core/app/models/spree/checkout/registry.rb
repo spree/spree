@@ -69,18 +69,59 @@ module Spree
           requirements.reject! { |r| r.step == step.to_s && r.field == field.to_s }
         end
 
-        # Canonical ordered list of built-in checkout step names, used to
-        # resolve +before:+/+after:+ anchors. The registry owns this list —
-        # installs that reorder or remove built-in steps set it directly
-        # (+base_step_names=+) instead of customizing the removed
-        # +checkout_flow+ state machine API.
+        # Canonical ordered built-in steps with their applicability — the ONE
+        # place the step vocabulary is declared. Keys are step names, values
+        # are nil (always applicable) or a lambda receiving the cart/order.
+        # Installs customize it directly:
         #
-        # @return [Array<String>]
-        def base_step_names
-          @base_step_names ||= %w[address delivery payment confirm complete]
+        #   Spree::Checkout::Registry.base_steps['payment'] = ->(cart) { cart.total > 0 }
+        #   Spree::Checkout::Registry.base_steps.delete('confirm')
+        #
+        # @return [Hash{String => Proc, nil}]
+        def base_steps
+          @base_steps ||= {
+            'address' => nil,
+            'delivery' => ->(record) { record.delivery_required? },
+            'payment' => ->(record) { record.payment_required? },
+            'confirm' => ->(record) { record.confirmation_required? },
+            'complete' => nil
+          }
         end
 
-        attr_writer :base_step_names
+        # @return [Array<String>]
+        def base_step_names
+          base_steps.keys
+        end
+
+        # Reorder/remove built-in steps by name; known steps keep their
+        # default applicability.
+        #
+        # @param names [Array<String>]
+        def base_step_names=(names)
+          defaults = base_steps
+          @base_steps = names.map(&:to_s).index_with { |name| defaults[name] }
+        end
+
+        # The full ordered step list for a record: applicable base steps with
+        # applicable registered custom steps spliced at their before/after
+        # anchors (unanchored customs land before 'complete').
+        #
+        # @param record [Spree::Cart, Spree::Order]
+        # @return [Array<String>]
+        def step_names_for(record)
+          names = base_steps.filter_map do |name, applicable|
+            name if applicable.nil? || applicable.call(record)
+          end
+
+          ordered_steps.each do |step|
+            next unless step.applicable?(record)
+
+            anchor_index = names.index(step.before) || (names.index(step.after)&.+ 1)
+            names.insert(anchor_index || names.index('complete') || names.length, step.name)
+          end
+
+          names.uniq
+        end
 
         # Returns steps sorted by +before+/+after+ constraints relative to
         # {base_step_names}. Steps with anchors are ordered by the anchor's
@@ -115,7 +156,7 @@ module Spree
         def reset!
           @steps = []
           @requirements = []
-          @base_step_names = nil
+          @base_steps = nil
         end
       end
     end

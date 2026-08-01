@@ -3,7 +3,10 @@ module Spree
     # Built-in checkout requirements that map to the standard Spree checkout flow.
     #
     # Checks line items, email, shipping address, shipping method, and payment
-    # against the cart — checkout is a cart-phase concern.
+    # against the cart — checkout is a cart-phase concern. The heavier
+    # completion-only checks (per-item stock, discontinued products, guest
+    # policy) run only when +completion: true+ is passed, so the advisory
+    # requirements feed on cart reads stays cheap.
     #
     # @see Requirements
     class DefaultRequirements
@@ -12,9 +15,19 @@ module Spree
         @cart = cart
       end
 
-      # @return [Array<Hash{Symbol => String}>] unmet default requirements as
-      #   +{ step:, field:, message: }+ hashes
-      def call
+      # @param completion [Boolean] include the completion-only checks
+      # @return [Array<Hash{Symbol => String}>] unmet requirements as
+      #   +{ step:, field:, code:, message: }+ hashes
+      def call(completion: false)
+        requirements = advisory_requirements
+        return requirements unless completion
+
+        requirements + completion_requirements
+      end
+
+      private
+
+      def advisory_requirements
         [].tap do |r|
           r << req('cart', 'line_items', Spree.t('checkout_requirements.line_items_required')) unless @cart.line_items.any?
           r << req('address', 'email', Spree.t('checkout_requirements.email_required')) unless @cart.email.present?
@@ -24,7 +37,21 @@ module Spree
         end
       end
 
-      private
+      def completion_requirements
+        errors = stock_errors
+        errors << req('address', 'email', Spree.t(:guest_checkout_not_allowed), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
+        errors
+      end
+
+      def stock_errors
+        @cart.line_items.includes(variant: :product).filter_map do |line_item|
+          if line_item.variant.product.discontinued?
+            req('cart', 'line_items', Spree.t('cart_line_item.discontinued', li_name: line_item.name), code: 'discontinued')
+          elsif !line_item.sufficient_stock?
+            req('cart', 'line_items', Spree.t('cart_line_item.out_of_stock', li_name: line_item.name), code: 'out_of_stock')
+          end
+        end
+      end
 
       def delivery_required?
         @cart.delivery_required?
@@ -42,8 +69,8 @@ module Spree
         @cart.payments.valid.any?
       end
 
-      def req(step, field, message)
-        { step: step, field: field, message: message }
+      def req(step, field, message, code: nil)
+        { step: step, field: field, code: code || "#{field}_required", message: message }
       end
     end
   end

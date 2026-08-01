@@ -13,6 +13,7 @@ module Spree
           clear_shipping_address_if_outside_market
           assign_address(:shipping_address)
           assign_address(:billing_address)
+          assign_default_addresses
 
           cart.save!
 
@@ -81,6 +82,16 @@ module Spree
         )
 
         raise StandardError, result.error.to_s if result.failure?
+      end
+
+      # Legacy `before_transition to: :address` parity: once a signed-in
+      # customer is in checkout, blank address slots fill from their saved
+      # defaults (assign_default_addresses! guards each slot itself).
+      def assign_default_addresses
+        return unless cart.user
+        return unless cart.email.present? || cart.ship_address_id.present?
+
+        cart.assign_default_addresses!
       end
 
       def resolve_address_id(prefixed_id)

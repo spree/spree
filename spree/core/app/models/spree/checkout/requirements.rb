@@ -1,17 +1,20 @@
 module Spree
   module Checkout
-    # Aggregates all checkout requirements for a cart.
-    #
-    # Combines built-in checks from {DefaultRequirements} with custom steps and
-    # requirements registered in {Registry}. The resulting array of hashes is
-    # exposed on the Cart API as the +requirements+ attribute.
+    # Aggregates all checkout requirements for a cart — the single source of
+    # truth for "what does this cart still need". Combines built-in checks
+    # from {DefaultRequirements} with custom steps and requirements
+    # registered in {Registry}. The resulting array of hashes is exposed on
+    # the Cart API as the +requirements+ attribute; with +completion: true+
+    # it includes the heavier completion-only checks (stock, discontinued,
+    # guest policy) and is exactly what Spree::Carts::Complete gates
+    # completion on.
     #
     # Each requirement hash has the shape:
-    #   { step: String, field: String, message: String }
+    #   { step: String, field: String, code: String, message: String }
     #
     # @example
     #   reqs = Spree::Checkout::Requirements.new(cart)
-    #   reqs.call  # => [{ step: "address", field: "email", message: "Email address is required" }]
+    #   reqs.call  # => [{ step: "address", field: "email", code: "email_required", message: "Email address is required" }]
     #   reqs.met?  # => false
     class Requirements
       # @param cart [Spree::Cart]
@@ -19,9 +22,11 @@ module Spree
         @cart = cart
       end
 
+      # @param completion [Boolean] include the completion-only checks
       # @return [Array<Hash{Symbol => String}>] all unmet requirements
-      def call
-        default + from_registered_steps + from_additional_requirements
+      def call(completion: false)
+        requirements = default(completion: completion) + from_registered_steps + from_additional_requirements
+        requirements.map { |requirement| { code: "#{requirement[:field]}_required" }.merge(requirement) }
       end
 
       # @return [Boolean] true when all requirements are satisfied
@@ -32,8 +37,8 @@ module Spree
       private
 
       # @return [Array<Hash>] built-in checkout requirements
-      def default
-        DefaultRequirements.new(@cart).call
+      def default(completion:)
+        DefaultRequirements.new(@cart).call(completion: completion)
       end
 
       # @return [Array<Hash>] requirements from unsatisfied registered steps

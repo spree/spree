@@ -36,7 +36,6 @@ module Spree
         carts_create_service: 'Spree::Carts::Create',
         carts_update_service: 'Spree::Carts::Update',
         carts_upsert_items_service: 'Spree::Carts::UpsertItems',
-        carts_validate_service: 'Spree::Carts::Validate',
         cart_merge_strategy: 'Spree::Carts::Merge',
 
         # checkout
@@ -56,7 +55,7 @@ module Spree
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_workflow: 'Spree::Orders::Cancel',
         order_resume_workflow: 'Spree::Orders::Resume',
-        order_complete_service: 'Spree::Orders::Complete',
+        order_complete_workflow: 'Spree::Orders::Complete',
         order_discount_create_service: 'Spree::Orders::Discounts::Create',
         order_discount_update_service: 'Spree::Orders::Discounts::Update',
         order_discount_destroy_service: 'Spree::Orders::Discounts::Destroy',
@@ -140,7 +139,8 @@ module Spree
         cart_add_item_service: :cart_add_item_workflow,
         cart_recalculate_service: :cart_recalculate_workflow,
         carts_complete_service: :carts_complete_workflow,
-        order_cancel_service: :order_cancel_workflow
+        order_cancel_service: :order_cancel_workflow,
+        order_complete_service: :order_complete_workflow
       }.freeze
 
       # Same stash-don't-apply treatment for the 6.0 Shipment→Fulfillment

@@ -644,34 +644,11 @@ module Spree
 
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
+    # @deprecated Completion lives in {Spree::Orders::Complete} (checkout
+    #   reaches it through +Spree.carts_complete_workflow+). Removed in 6.1.
     def finalize!
-      # Typed adjustment rows are frozen once completed — the totals
-      # recalculation only re-sums them, never regenerates (see
-      # Spree::Carts::RecalculateTotals) — so no per-row locking is needed.
-
-      fulfillments.each do |shipment|
-        shipment.update!(self)
-        shipment.finalize!
-      end
-
-      self.status = 'placed'
-      save!
-      update_hooks.each { |hook| send(hook) }
-
-      touch :completed_at
-
-      # Completion side effects — each guards its own idempotency. The
-      # customer-facing ones (newsletter, account creation, risk) live in
-      # Spree::OrderPlacedSubscriber, triggered by the order.placed event
-      # published below.
-      use_all_coupon_codes
-      redeem_gift_card
-
-      Spree::Fulfillments::AutoFulfill.call(order: self)
-
-      update_statuses!
-
-      publish_order_placed_event
+      Spree::Deprecation.warn('Spree::Order#finalize! is deprecated and will be removed in Spree 6.1. Completion runs through Spree.order_complete_workflow (Spree::Orders::Complete).')
+      Spree.order_complete_workflow.call(order: self, payment_pending: true)
     end
 
     def fulfill!
@@ -1123,14 +1100,6 @@ module Spree
       elsif using_store_credit?
         Spree.checkout_add_store_credit_service.call(order: self)
       end
-    end
-
-    def publish_order_placed_event
-      payload = event_payload.merge(notify_customer: notify_customer)
-      publish_event('order.placed', payload)
-      # One-release alias for 5.x webhook consumers; removed in 6.1.
-      # Wildcard subscribers dedupe on the metadata marker.
-      publish_event('order.completed', payload, { deprecated_alias_of: 'order.placed' })
     end
 
   end

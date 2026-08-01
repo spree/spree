@@ -85,7 +85,6 @@ module Spree
 
     describe 'guest checkout policy' do
       it 'fails when the channel forbids guest checkout and the cart has no customer' do
-        allow_any_instance_of(Spree::Checkout::Requirements).to receive(:call).and_return([])
         allow_any_instance_of(Spree::Cart).to receive(:guest_checkout_disallowed?).and_return(true)
 
         result = described_class.call(cart: ready_cart)
@@ -113,6 +112,125 @@ module Spree
         result = described_class.call(cart: order)
         expect(result).to be_success
         expect(order.reload.completed_at).to be_present
+      end
+
+      it 'refuses a canceled draft order' do
+        order.update_columns(status: 'canceled', canceled_at: Time.current)
+
+        result = described_class.call(cart: order)
+        expect(result).to be_failure
+        expect(order.reload.completed_at).to be_nil
+      end
+    end
+
+    describe 'payment failure compensation' do
+      it 'rolls the draft order back and re-points money records to the cart' do
+        # A payment that never completes: processing is a no-op, so coverage
+        # stays below total and the pre-capture rollback arm fires.
+        allow_any_instance_of(Spree::Payment).to receive(:process!)
+        payment = ready_cart.payments.first
+
+        result = described_class.call(cart: ready_cart)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('payment_failed')
+        expect(Spree::Order.where(cart_id: ready_cart.id)).to be_none
+        expect(payment.reload.cart_id).to eq(ready_cart.id)
+        expect(payment.order_id).to be_nil
+        expect(ready_cart.reload.completing_at).to be_nil
+        expect(ready_cart.completed_at).to be_nil
+      end
+    end
+
+    describe 'net-terms completion (payment_pending)' do
+      let(:uncovered_cart) { ::OrderWalkthrough.up_to(:payment, store) }
+
+      it 'does not waive the payment requirement on carts — net terms is a draft-order flow' do
+        result = described_class.call(cart: uncovered_cart, payment_pending: true)
+
+        expect(result).to be_failure
+        expect(result.error.value[:code]).to eq('validation_failed')
+        expect(result.error.value[:errors].map { |error| error[:code] }).to include('payment_required')
+      end
+
+      it 'completes without capturing when the payment is authorized but pending' do
+        uncovered_cart.payments.create!(payment_method: Spree::PaymentMethod.first, amount: uncovered_cart.total, state: 'pending')
+
+        result = described_class.call(cart: uncovered_cart, payment_pending: true)
+
+        expect(result).to be_success
+        expect(result.value.status).to eq('placed')
+        expect(result.value.payment_total).to eq(0)
+      end
+    end
+
+    describe 'crash-window replay' do
+      it 'heals a completion that died between the order commit and the cart stamp' do
+        order = described_class.call(cart: ready_cart).value
+        # Simulate the crash window: order placed, cart stamp lost
+        # (update_all — the readonly completed-cart guard blocks AR writes).
+        Spree::Cart.where(id: ready_cart.id).update_all(completed_at: nil, completing_at: Time.current)
+        crashed_cart = Spree::Cart.find(ready_cart.id)
+
+        result = described_class.call(cart: crashed_cart)
+
+        expect(result).to be_success
+        expect(result.value.id).to eq(order.id)
+        expect(crashed_cart.reload.completed_at).to be_present
+        expect(crashed_cart.completing_at).to be_nil
+        expect(Spree::Order.where(cart_id: crashed_cart.id).count).to eq(1)
+      end
+
+      it 'returns a canceled order from a previous completion without re-finalizing' do
+        order = described_class.call(cart: ready_cart).value
+        order.update_columns(status: 'canceled', canceled_at: Time.current)
+
+        result = described_class.call(cart: ready_cart.reload)
+
+        expect(result).to be_success
+        expect(result.value.status).to eq('canceled')
+      end
+    end
+
+    describe 'before_finalize hook' do
+      after { Spree.hooks.clear! }
+
+      it 'dispatches with the workflow instance before the order places' do
+        seen = nil
+        Spree.hooks.register('carts.complete.before_finalize') do |flow|
+          seen = { order_placed: flow.order.placed?, cart_id: flow.cart.id }
+        end
+
+        described_class.call(cart: ready_cart)
+
+        expect(seen).to eq(order_placed: false, cart_id: ready_cart.id)
+      end
+    end
+
+    describe 'coupon codes' do
+      it 're-points an applied cart coupon code to the order and marks it used' do
+        promotion = create(:promotion_with_item_adjustment, adjustment_rate: 2, kind: :coupon_code, store: store, multi_codes: true, number_of_codes: 1)
+        coupon_code = promotion.coupon_codes.first
+        coupon_code.update!(cart: ready_cart)
+        ready_cart.update_columns(coupon_code: coupon_code.code)
+
+        result = described_class.call(cart: ready_cart)
+
+        expect(result).to be_success
+        expect(coupon_code.reload.state).to eq('used')
+        expect(coupon_code.order_id).to eq(result.value.id)
+        expect(coupon_code.cart_id).to be_nil
+      end
+
+      it 'detaches codes whose promotion did not apply' do
+        promotion = create(:promotion, kind: :coupon_code, store: store)
+        coupon_code = create(:coupon_code, promotion: promotion, cart: ready_cart)
+
+        result = described_class.call(cart: ready_cart)
+
+        expect(result).to be_success
+        expect(coupon_code.reload.state).to eq('unused')
+        expect(coupon_code.order_id).to be_nil
       end
     end
   end

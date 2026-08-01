@@ -278,6 +278,44 @@ module Spree
         end
       end
 
+      describe 'default address filling on checkout entry' do
+        let(:default_bill) { create(:address, user: user) }
+        let(:default_ship) { create(:address, user: user) }
+        let(:cart) { create(:cart_with_line_items, customer: user, store: store) }
+
+        before { user.update!(bill_address: default_bill, ship_address: default_ship) }
+
+        it 'fills blank slots from the customer saved defaults once in checkout' do
+          described_class.call(cart: cart, params: { email: 'buyer@example.com' })
+
+          expect(cart.reload.bill_address_id).to eq(default_bill.id)
+          expect(cart.ship_address_id).to eq(default_ship.id)
+        end
+
+        it 'never fills before checkout begins' do
+          described_class.call(cart: cart, params: { customer_note: 'gift please' })
+
+          expect(cart.reload.bill_address_id).to be_nil
+          expect(cart.ship_address_id).to be_nil
+        end
+
+        it 'does not overwrite an explicitly provided address' do
+          explicit = create(:address, user: user)
+          described_class.call(cart: cart, params: { email: 'buyer@example.com', shipping_address_id: explicit.prefixed_id })
+
+          expect(cart.reload.ship_address_id).to eq(explicit.id)
+          expect(cart.bill_address_id).to eq(default_bill.id)
+        end
+
+        it 'does nothing for guest carts' do
+          guest_cart = create(:cart_with_line_items, store: store, customer: nil)
+
+          described_class.call(cart: guest_cart, params: { email: 'guest@example.com' })
+
+          expect(guest_cart.reload.ship_address_id).to be_nil
+        end
+      end
+
       describe 'billing address does not reset checkout state' do
         let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }

@@ -7,14 +7,13 @@ module Spree
     # (payment_required?/confirmation_required?) live in
     # {Spree::Purchase::PaymentProcessing}.
     module CheckoutSteps
+      # The Registry owns the step vocabulary and applicability — built-in
+      # and registered custom steps alike (see
+      # Spree::Checkout::Registry.base_steps / .register_step).
+      #
       # @return [Array<String>]
       def checkout_steps
-        steps = ['address']
-        steps << 'delivery' if delivery_required?
-        steps << 'payment' if payment_required?
-        steps << 'confirm' if confirmation_required?
-        steps << 'complete'
-        steps
+        Spree::Checkout::Registry.step_names_for(self)
       end
 
       # @param step [String, Symbol]
