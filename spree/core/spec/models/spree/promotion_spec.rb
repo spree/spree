@@ -328,6 +328,7 @@ describe Spree::Promotion, type: :model do
     end
   end
 
+
   context '#expired' do
     it 'is not exipired' do
       expect(promotion).not_to be_expired
@@ -444,7 +445,7 @@ describe Spree::Promotion, type: :model do
     end
   end
 
-  context '#adjusted_credits_count' do
+  describe '#adjusted_credits_count' do
     let(:order) { create :order }
     let(:line_item) { create :line_item, order: order }
     let(:promotion) { create(:promotion, name: 'promo', code: '10off') }
@@ -489,6 +490,40 @@ describe Spree::Promotion, type: :model do
       expect(item_discount.line_item).to eq(line_item)
       expect(promotion.credits_count).to eq(1)
       expect(promotion.adjusted_credits_count(order)).to eq(0)
+    end
+
+    context 'across carts and orders' do
+    let(:promotion) { create(:promotion_with_item_adjustment, store: @default_store, usage_limit: 1) }
+        let(:action) { promotion.promotion_actions.first }
+        let!(:consuming_order) { create(:order_with_line_items, store: @default_store, line_items_count: 1) }
+
+        before do
+          create(:discount, order: consuming_order, line_item: consuming_order.line_items.first,
+                            promotion: promotion, promotion_action: action, kind: 'promotion', amount: -1)
+        end
+
+        it 'counts only order-side credits — carts never consume usage' do
+          cart = create(:cart_with_line_items, store: @default_store)
+          create(:discount, order: nil, cart: cart, line_item: cart.line_items.first,
+                            promotion: promotion, promotion_action: action, kind: 'promotion', amount: -1)
+
+          expect(promotion.credits_count).to eq(1)
+          expect(promotion.usage_limit_exceeded?(cart)).to be true
+        end
+
+        it 'does not subtract another order credit on a cart/line-item id collision' do
+          # A cart whose id collides with the consuming order's line item id used
+          # to fall into the LineItem branch and subtract that order's credit,
+          # letting the cart bypass the usage limit.
+          cart = create(:cart_with_line_items, store: @default_store)
+          cart.update_columns(id: consuming_order.line_items.first.id) if Spree::Cart.where(id: consuming_order.line_items.first.id).none?
+
+          expect(promotion.adjusted_credits_count(Spree::Cart.find(cart.reload.id))).to eq(1)
+        end
+
+        it 'subtracts the order own credit when checking that order' do
+          expect(promotion.adjusted_credits_count(consuming_order)).to eq(0)
+        end
     end
   end
 

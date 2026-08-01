@@ -248,7 +248,12 @@ module Spree
     end
 
     def adjusted_credits_count(promotable)
-      own_credits = if promotable.is_a?(Order)
+      own_credits = case promotable
+                    when Spree::Cart
+                      # Cart-side discount rows carry no order_id and are
+                      # never part of credits_count — nothing to subtract.
+                      0
+                    when Order
                       credits.where(order_id: promotable.id).select(:order_id).distinct.count
                     else
                       credits.where(line_item_id: promotable.id).select(:order_id).distinct.count
