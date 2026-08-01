@@ -98,6 +98,7 @@ import {
   useOrderTaxLines,
 } from '../../../../hooks/use-order'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
+import { FEE_KINDS } from '../../../../schemas/order'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
   component: OrderDetailPage,
@@ -1293,6 +1294,13 @@ function AddPaymentDialog({
 // Adjustment lines: taxes, discounts & fees (typed rows)
 // ---------------------------------------------------------------------------
 
+/** The API accepts any kind string, so unknown values fall back to the raw value. */
+function feeKindLabel(kind: string) {
+  return (FEE_KINDS as readonly string[]).includes(kind)
+    ? i18n.t(`admin.orders.detail.adjustment_lines.fee_kind_${kind}`)
+    : kind
+}
+
 function AdjustmentLineRow({
   label,
   meta,
@@ -1466,7 +1474,9 @@ function AdjustmentLinesCard({ order }: { order: Order }) {
                 <AdjustmentLineRow
                   key={row.id}
                   label={row.label}
-                  meta={row.kind ? <Badge variant="outline">{row.kind}</Badge> : undefined}
+                  meta={
+                    row.kind ? <Badge variant="outline">{feeKindLabel(row.kind)}</Badge> : undefined
+                  }
                   amount={row.display_amount}
                   onDelete={() => handleDeleteFee(row)}
                   deleting={deleteFeeMutation.isPending}
@@ -1670,6 +1680,7 @@ function AddFeeDialog({
   const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const [target, setTarget] = useState('order')
+  const [kind, setKind] = useState<string>('surcharge')
 
   const mutation = useOrderAdjustmentLinesMutation(
     orderId,
@@ -1682,15 +1693,19 @@ function AddFeeDialog({
     ...(order.items ?? []).map((item) => ({ value: item.id, label: item.name ?? item.id })),
   ]
 
+  const kindOptions = FEE_KINDS.map((value) => ({
+    value,
+    label: t(`admin.orders.detail.adjustment_lines.fee_kind_${value}`),
+  }))
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
-    const kind = (fd.get('kind') as string).trim()
     mutation.mutate(
       {
         label: fd.get('label') as string,
         amount: fd.get('amount') as string,
-        ...(kind ? { kind } : {}),
+        kind,
         ...(target !== 'order' ? { line_item_id: target } : {}),
       },
       { onSuccess: () => onOpenChange(false) },
@@ -1723,10 +1738,23 @@ function AddFeeDialog({
                   <Input id="fee-amount" name="amount" type="number" step="0.01" min="0" required />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="fee-kind">
-                    {t('admin.orders.detail.adjustment_lines.kind_field')}
-                  </FieldLabel>
-                  <Input id="fee-kind" name="kind" placeholder="surcharge" />
+                  <FieldLabel>{t('admin.orders.detail.adjustment_lines.kind_field')}</FieldLabel>
+                  <Select
+                    items={kindOptions}
+                    value={kind}
+                    onValueChange={(v) => setKind(v as string)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {kindOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </Field>
               </div>
               <Field>

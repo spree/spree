@@ -51,6 +51,12 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FeesController, type: :controller 
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it 'rejects an unknown kind' do
+      post :create, params: { order_id: order.prefixed_id, label: 'Mystery', amount: 3, kind: 'nonsense' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe 'PATCH #update' do

@@ -107,7 +107,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Creates a fee (surcharge, handling, gift wrap, COD). Order-level when no target is given. Works on completed orders.'
+      description 'Creates a fee (surcharge, handling, gift wrap, COD, payment fee). Order-level when no target is given. Works on completed orders.'
       admin_scope :write, :orders
 
       admin_sdk_example 'orders/fees-create'
@@ -120,7 +120,7 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
         properties: {
           label: { type: :string, example: 'Gift wrap' },
           amount: { type: :number, example: 4 },
-          kind: { type: :string, example: 'gift_wrap', description: "Defaults to 'surcharge'" },
+          kind: { type: :string, enum: Spree::Fee::KINDS, example: 'gift_wrap', description: "Defaults to 'surcharge'" },
           line_item_id: { type: :string, nullable: true },
           fulfillment_id: { type: :string, nullable: true }
         },
@@ -135,6 +135,12 @@ RSpec.describe 'Admin Order Adjustment Lines API', type: :request, swagger_doc: 
           expect(data['label']).to eq('Gift wrap')
           expect(data['amount']).to eq('4.0')
         end
+      end
+
+      response '422', 'invalid fee' do
+        let(:body) { { label: 'Mystery', amount: 4, kind: 'nonsense' } }
+
+        run_test!
       end
     end
   end

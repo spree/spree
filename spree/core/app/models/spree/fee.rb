@@ -7,6 +7,9 @@ module Spree
   class Fee < Spree.base_class
     include Spree::TypedAdjustmentLine
 
+    # Extensions may append their own kinds — the list is validated, not frozen.
+    KINDS = %w[surcharge handling gift_wrap cod payment]
+
     has_prefix_id :fee
 
     # Adjustable — optional: both nil means an order-level fee
@@ -16,7 +19,7 @@ module Spree
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy
 
     validates :amount, numericality: { greater_than_or_equal_to: 0 }
-    validates :kind, presence: true
+    validates :kind, presence: true, inclusion: { in: ->(_fee) { KINDS }, allow_blank: true }
 
     scope :for_line_items, -> { where.not(line_item_id: nil) }
     scope :for_fulfillments, -> { where.not(fulfillment_id: nil) }

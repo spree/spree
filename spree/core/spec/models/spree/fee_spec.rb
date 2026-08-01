@@ -28,6 +28,18 @@ describe Spree::Fee, type: :model do
     expect(fee.errors[:label]).to be_present
   end
 
+  it 'rejects a kind outside the known list' do
+    fee = described_class.new(order: order, amount: 5, label: 'Mystery', kind: 'nonsense')
+    expect(fee).not_to be_valid
+    expect(fee.errors[:kind]).to be_present
+  end
+
+  it 'accepts a kind an extension appended to the list' do
+    stub_const("#{described_class}::KINDS", described_class::KINDS + ['insurance'])
+    fee = described_class.new(order: order, amount: 5, label: 'Insurance', kind: 'insurance')
+    expect(fee).to be_valid
+  end
+
   it 'destroys its tax lines with it' do
     fee = create(:fee, order: order)
     create(:tax_line, order: order, fee: fee, line_item: nil)
