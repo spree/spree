@@ -21,6 +21,13 @@ module Spree
         payments.pending
       end
 
+      # Active front-end payment methods available for this record.
+      #
+      # @return [Array<Spree::PaymentMethod>]
+      def payment_methods
+        store.payment_methods.active.available_on_front_end.select { |payment_method| payment_method.available_for_order?(self) }
+      end
+
       # Free checkouts have no money to collect.
       #
       # @return [Boolean]

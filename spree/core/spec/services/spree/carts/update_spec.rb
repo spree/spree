@@ -152,7 +152,7 @@ module Spree
           end
 
           it 'drops delivery proposals built for the cleared address' do
-            cart.create_proposed_fulfillments
+            cart.rebuild_fulfillments!
             expect(cart.fulfillments).to be_present
             expect(subject).to be_success
             expect(cart.reload.fulfillments).to be_empty
@@ -337,7 +337,7 @@ module Spree
         end
 
         it 'preserves existing delivery proposals' do
-          cart.create_proposed_fulfillments
+          cart.rebuild_fulfillments!
           fulfillment_ids = cart.fulfillments.pluck(:id)
           expect(fulfillment_ids).not_to be_empty
 

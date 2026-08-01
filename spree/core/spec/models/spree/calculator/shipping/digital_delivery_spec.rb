@@ -31,7 +31,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
       package = Spree::Stock::Package.new(create(:stock_location), [])
       variants.each do |v|
         add_line_item_to_order(order, v, 1)
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
         package.add(order.inventory_units.where(variant_id: v.id).first, 1)
       end
       package
@@ -44,7 +44,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
       package = Spree::Stock::Package.new(create(:stock_location), [])
       variants.each do |v|
         add_line_item_to_order(order, v, 1)
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
         package.add(order.inventory_units.where(variant_id: v.id).first, 1)
       end
       package
@@ -56,7 +56,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
       package = Spree::Stock::Package.new(create(:stock_location), [])
       variants.each do |v|
         add_line_item_to_order(order, v, 1)
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
         package.add(order.inventory_units.where(variant_id: v.id).first, 1)
       end
       package

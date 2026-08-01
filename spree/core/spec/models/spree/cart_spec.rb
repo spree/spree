@@ -4,6 +4,25 @@ describe Spree::Cart, type: :model do
   let(:store) { @default_store }
   let(:customer) { create(:user) }
 
+  describe 'Validations' do
+    describe '#email' do
+      it 'allows a blank email — presence during checkout is a Requirements concern' do
+        expect(build(:cart, store: store, email: nil)).to be_valid
+      end
+
+      it 'rejects a malformed email whenever one is present' do
+        cart = build(:cart, store: store, email: 'not-an-email')
+
+        expect(cart).not_to be_valid
+        expect(cart.errors[:email]).to be_present
+      end
+
+      it 'rejects an email longer than 254 characters' do
+        expect(build(:cart, store: store, email: "#{'a' * 250}@x.com")).not_to be_valid
+      end
+    end
+  end
+
   describe '#checkout_steps' do
     let(:cart) { build(:cart, store: store) }
 
@@ -267,32 +286,6 @@ describe Spree::Cart, type: :model do
     end
   end
 
-  describe '#can_be_deleted?' do
-    it 'is true for an open cart without settled payments' do
-      expect(build(:cart)).to be_can_be_deleted
-    end
-
-    it 'is false once completed' do
-      expect(build(:cart, completed_at: Time.current)).not_to be_can_be_deleted
-    end
-
-    it 'is false with a completed payment' do
-      cart = create(:cart_with_line_items, store: store)
-      create(:payment, cart: cart, order: nil, state: 'completed', amount: cart.total)
-
-      expect(cart.reload).not_to be_can_be_deleted
-    end
-  end
-
-  describe '#in_checkout?' do
-    it 'begins once checkout-only data appears and ends at completion' do
-      expect(build(:cart)).not_to be_in_checkout
-      expect(build(:cart, email: 'buyer@example.com')).to be_in_checkout
-      expect(build(:cart, ship_address: create(:address))).to be_in_checkout
-      expect(build(:cart, email: 'buyer@example.com', completed_at: Time.current)).not_to be_in_checkout
-    end
-  end
-
   describe '#recalculate_totals!' do
     it 'runs the configured totals workflow on itself' do
       cart = create(:cart, store: store)
@@ -302,105 +295,9 @@ describe Spree::Cart, type: :model do
     end
   end
 
-  describe '#quantity' do
-    it 'sums line item quantities' do
-      cart = create(:cart_with_line_items, line_items_count: 2)
-      cart.line_items.first.update_column(:quantity, 3)
-
-      expect(cart.quantity).to eq(4)
-    end
-  end
-
-  describe 'money readers' do
-    let(:cart) { build(:cart, total: 100, payment_total: 40) }
-
-    it '#outstanding_balance is total minus payment_total' do
-      expect(cart.outstanding_balance).to eq(60)
-    end
-
-    it '#outstanding_balance? reflects a non-zero balance' do
-      expect(cart.outstanding_balance?).to be(true)
-      expect(build(:cart, total: 40, payment_total: 40).outstanding_balance?).to be(false)
-    end
-
-    it '#paid? requires a positive total fully covered by payments' do
-      expect(build(:cart, total: 100, payment_total: 100)).to be_paid
-      expect(build(:cart, total: 100, payment_total: 40)).not_to be_paid
-      expect(build(:cart, total: 0, payment_total: 0)).not_to be_paid
-    end
-
-    it '#amount_due nets applied store credit and never goes negative' do
-      allow(cart).to receive(:total_applied_store_credit).and_return(70)
-
-      expect(cart.amount_due).to eq(0)
-
-      allow(cart).to receive(:total_applied_store_credit).and_return(10)
-      expect(cart.amount_due).to eq(50)
-    end
-  end
-
-  describe '#fulfillment_discount' do
-    it 'sums fulfillment-attached discounts as a positive amount' do
-      cart = create(:cart_with_line_items, store: store)
-      fulfillment = create(:fulfillment, cart: cart, order: nil)
-      create(:discount, order: nil, cart: cart, line_item: nil, fulfillment: fulfillment, amount: -4, kind: 'promotion')
-
-      expect(cart.fulfillment_discount).to eq(4)
-    end
-  end
-
-  describe '#delivery_required?' do
-    it 'is false for an empty cart and true with physical items' do
-      expect(build(:cart)).not_to be_delivery_required
-      expect(create(:cart_with_line_items)).to be_delivery_required
-    end
-
-    it 'is false for a digital-only cart' do
-      cart = create(:cart_with_line_items)
-      allow(cart).to receive(:digital?).and_return(true)
-
-      expect(cart).not_to be_delivery_required
-    end
-  end
-
-  describe '#backordered?' do
-    let(:cart) { create(:cart_with_line_items, store: store) }
-    let!(:fulfillment) { create(:fulfillment, cart: cart, order: nil) }
-
-    it 'reflects backordered fulfillment items' do
-      expect(cart.reload).not_to be_backordered
-
-      fulfillment.fulfillment_items.update_all(status: 'backordered')
-      expect(Spree::Cart.find(cart.id)).to be_backordered
-    end
-  end
-
-  describe '#guest_checkout_disallowed?' do
-    it 'never blocks a signed-in customer' do
-      expect(build(:cart, customer: create(:user)).guest_checkout_disallowed?).to be(false)
-    end
-
-    it 'follows the channel guest-checkout flag for guests' do
-      cart = create(:cart, store: store, customer: nil)
-
-      allow(cart.channel).to receive(:guest_checkout_enabled?).and_return(false)
-      expect(cart.guest_checkout_disallowed?).to be(true)
-
-      allow(cart.channel).to receive(:guest_checkout_enabled?).and_return(true)
-      expect(cart.guest_checkout_disallowed?).to be(false)
-    end
-  end
-
-  describe '#payment_methods' do
-    let(:cart) { create(:cart, store: store) }
-
-    it 'lists active front-end methods available for this cart' do
-      available = create(:credit_card_payment_method, store: store)
-      inactive = create(:credit_card_payment_method, store: store, active: false)
-
-      expect(cart.payment_methods).to include(available)
-      expect(cart.payment_methods).not_to include(inactive)
-      expect(cart.collect_frontend_payment_methods).to eq(cart.payment_methods)
+  describe '#outstanding_balance' do
+    it 'is total minus payment_total (carts never net refunds)' do
+      expect(build(:cart, total: 100, payment_total: 40).outstanding_balance).to eq(60)
     end
   end
 

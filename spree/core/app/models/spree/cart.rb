@@ -28,6 +28,9 @@ module Spree
     include Spree::Purchase::LineItemCurrencies
     include Spree::Purchase::PaymentProcessing
     include Spree::Purchase::Addresses
+    include Spree::Purchase::Validations
+    include Spree::Purchase::Totals
+    include Spree::Purchase::Lifecycle
 
     # Concurrency is manual (the API's OrderLock semantics — compare
     # client-sent version, 409 on mismatch); Rails auto-locking must not
@@ -108,15 +111,14 @@ module Spree
 
     alias items line_items
 
-    accepts_nested_attributes_for :line_items
-    accepts_nested_attributes_for :payments
-
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
 
-    self.whitelisted_ransackable_attributes = %w[email completed_at token updated_at]
+    # Shape only — email presence during checkout is a Checkout::Requirements
+    # concern, never a model validation (guest carts have no email).
+    validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }
 
-    attr_accessor :skip_market_resolution
+    self.whitelisted_ransackable_attributes = %w[email completed_at token updated_at]
 
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
 
@@ -128,12 +130,6 @@ module Spree
     def number
       prefixed_id
     end
-
-    # @return [Boolean]
-    def completed?
-      completed_at.present?
-    end
-    alias complete? completed?
 
     # A completed cart is an immutable audit record — post-checkout life
     # belongs to the order. Blocks save/update_columns/touch/destroy at the
@@ -148,20 +144,6 @@ module Spree
       completing_at.present?
     end
 
-    # Mirrors Order#can_be_deleted? — a completed cart is an immutable audit
-    # record, and settled money must never be deleted.
-    #
-    # @return [Boolean]
-    def can_be_deleted?
-      !completed? && payments.completed.empty?
-    end
-
-    # Checkout begins once any checkout-only data is present (email or a
-    # shipping address). Drives stock-reservation dispatch.
-    def in_checkout?
-      !completed? && (email.present? || ship_address_id.present?)
-    end
-
     # Recomputes and persists money totals (item, tax, promotion, delivery)
     # and derived item counts. Convenience for
     # {Spree::Carts::RecalculateTotals}.
@@ -169,46 +151,8 @@ module Spree
       Spree.cart_recalculate_totals_workflow.call(cart: self)
     end
 
-    def quantity
-      line_items.sum(:quantity)
-    end
-
     def outstanding_balance
       total - payment_total
-    end
-
-    # Total fulfillment discount applied by promotions, as a positive amount.
-    #
-    # @return [BigDecimal]
-    def fulfillment_discount
-      discounts.for_fulfillments.sum(:amount) * -1
-    end
-
-    def outstanding_balance?
-      outstanding_balance != 0
-    end
-
-    # Whether every line item can be delivered without a shipping address
-    # (digital-only carts skip the address/delivery steps).
-    def delivery_required?
-      line_items.any? && !digital?
-    end
-
-    def paid?
-      total.positive? && payment_total >= total
-    end
-
-    def backordered?
-      fulfillment_items.any?(&:backordered?)
-    end
-
-    def guest_checkout_disallowed?
-      return false if customer.present?
-
-      resolved_channel = channel || store&.default_channel
-      return false unless resolved_channel.respond_to?(:guest_checkout_enabled?)
-
-      !resolved_channel.guest_checkout_enabled?
     end
 
     # Idempotent delivery-proposal rebuild — replaces the destructive
@@ -273,7 +217,12 @@ module Spree
       )
     end
     alias set_shipments_cost set_fulfillments_cost
-    alias create_proposed_fulfillments rebuild_fulfillments!
+
+    # @deprecated Use {#rebuild_fulfillments!}; removed in 6.1.
+    def create_proposed_fulfillments
+      Spree::Deprecation.warn('Spree::Cart#create_proposed_fulfillments is deprecated and will be removed in Spree 6.1. Use #rebuild_fulfillments! instead.')
+      rebuild_fulfillments!
+    end
 
     def ensure_updated_fulfillments
       rebuild_fulfillments! unless completed?
@@ -289,19 +238,6 @@ module Spree
       recalculate_totals!
     end
 
-
-    def amount_due
-      [outstanding_balance - total_applied_store_credit, 0].max
-    end
-
-    # Serializer surface: available payment methods for this cart.
-    def payment_methods
-      collect_frontend_payment_methods
-    end
-
-    def collect_frontend_payment_methods
-      store.payment_methods.active.available_on_front_end.select { |payment_method| payment_method.available_for_order?(self) }
-    end
 
     # Binds a signing-in user to the cart through the swappable associate
     # service (same seam Order#associate_user! uses).

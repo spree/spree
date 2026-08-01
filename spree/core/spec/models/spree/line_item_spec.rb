@@ -376,7 +376,7 @@ describe Spree::LineItem, type: :model do
       before do
         variant.stock_items.update_all count_on_hand: 5, backorderable: false
         Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
         order.finalize!
         order.reload
       end
@@ -405,7 +405,7 @@ describe Spree::LineItem, type: :model do
       before do
         variant.stock_items.update_all count_on_hand: 7, backorderable: false
         Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
         order.finalize!
         order.reload
       end

@@ -59,7 +59,7 @@ describe Spree::DeliveryMethodRule, type: :model do
 
     it 'drops ineligible methods from rate estimation' do
       fulfillment = order.fulfillments.first || begin
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
         order.fulfillments.first
       end
       method = fulfillment.refresh_rates.map(&:delivery_method).first
@@ -74,7 +74,7 @@ describe Spree::DeliveryMethodRule, type: :model do
     end
 
     it 'keeps methods whose rules pass' do
-      order.create_proposed_fulfillments if order.fulfillments.none?
+      order.rebuild_fulfillments! if order.fulfillments.none?
       fulfillment = order.fulfillments.first
       method = fulfillment.refresh_rates.map(&:delivery_method).first
 
@@ -87,7 +87,7 @@ describe Spree::DeliveryMethodRule, type: :model do
     end
 
     it 'ignores inactive rules' do
-      order.create_proposed_fulfillments if order.fulfillments.none?
+      order.rebuild_fulfillments! if order.fulfillments.none?
       fulfillment = order.fulfillments.first
       method = fulfillment.refresh_rates.map(&:delivery_method).first
 

@@ -44,6 +44,14 @@ module Spree
       def requires_ship_address?
         !digital?
       end
+
+      # Whether any line item needs physical delivery (digital-only
+      # purchases skip the address/delivery steps).
+      #
+      # @return [Boolean]
+      def delivery_required?
+        line_items.any? && !digital?
+      end
     end
   end
 end

@@ -50,7 +50,7 @@ module Spree
 
     context 'one shipment' do
       before do
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
         order.reload
       end
 
@@ -87,7 +87,7 @@ module Spree
       let(:shipment_2) { order.shipments.last }
 
       before do
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
         order.reload
       end
 

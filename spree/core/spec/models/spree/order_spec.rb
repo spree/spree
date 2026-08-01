@@ -17,6 +17,37 @@ describe Spree::Order, type: :model do
 
   it_behaves_like 'metadata'
 
+  describe 'Validations' do
+    describe '#email' do
+      it 'is not required on drafts' do
+        expect(build(:order, store: store, email: nil)).to be_valid
+      end
+
+      it 'is required once placed' do
+        order = create(:order, store: store, email: 'buyer@example.com')
+        order.assign_attributes(email: nil, status: 'placed', completed_at: Time.current)
+
+        expect(order).not_to be_valid
+        expect(order.errors[:email]).to be_present
+      end
+
+      it 'rejects a malformed email when required' do
+        order = create(:order, store: store, email: 'buyer@example.com')
+        order.assign_attributes(email: 'not-an-email', status: 'placed', completed_at: Time.current)
+
+        expect(order).not_to be_valid
+        expect(order.errors[:email]).to be_present
+      end
+
+      it 'rejects an email longer than 254 characters when required' do
+        order = create(:order, store: store, email: 'buyer@example.com')
+        order.assign_attributes(email: "#{'a' * 250}@x.com", status: 'placed', completed_at: Time.current)
+
+        expect(order).not_to be_valid
+      end
+    end
+  end
+
   describe 'Scopes' do
     let!(:user) { create(:user) }
     let!(:completed_order) { create(:order, user: user, completed_at: Time.current) }
@@ -378,72 +409,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#amount_due' do
-    let(:store_credit) { create(:store_credit, amount: 200, store: order.store, user: order.user) }
-    let(:store_credit_payment_method) { create(:store_credit_payment_method, store: order.store) }
-
-    before { order.update_columns(total: 100, payment_total: 0) }
-
-    context 'without store credit' do
-      it 'returns the outstanding balance' do
-        expect(order.amount_due).to eq(100)
-      end
-    end
-
-    context 'with store credit payment in checkout state' do
-      before do
-        create(:store_credit_payment, order: order, amount: 60, state: 'checkout',
-               source: store_credit, payment_method: store_credit_payment_method)
-      end
-
-      it 'subtracts the applied store credit from outstanding balance' do
-        expect(order.amount_due).to eq(40)
-      end
-    end
-
-    context 'with store credit covering the full order total' do
-      before do
-        create(:store_credit_payment, order: order, amount: 100, state: 'checkout',
-               source: store_credit, payment_method: store_credit_payment_method)
-      end
-
-      it 'returns zero' do
-        expect(order.amount_due).to eq(0)
-      end
-    end
-
-    context 'with completed store credit and card payment' do
-      before do
-        create(:store_credit_payment, order: order, amount: 60, state: 'completed',
-               source: store_credit, payment_method: store_credit_payment_method)
-        create(:payment, order: order, amount: 40, state: 'completed')
-        order.update_columns(payment_total: 100)
-      end
-
-      it 'returns zero when fully paid' do
-        expect(order.amount_due).to eq(0)
-      end
-    end
-
-    context 'with invalid store credit payment' do
-      before do
-        create(:store_credit_payment, order: order, amount: 60, state: 'invalid',
-               source: store_credit, payment_method: store_credit_payment_method)
-      end
-
-      it 'ignores invalid store credit payments' do
-        expect(order.amount_due).to eq(100)
-      end
-    end
-
-    it 'never returns a negative value' do
-      create(:store_credit_payment, order: order, amount: 60, state: 'checkout',
-             source: store_credit, payment_method: store_credit_payment_method)
-      order.update_columns(payment_total: 80)
-      expect(order.amount_due).to eq(0)
-    end
-  end
-
   describe '#display_outstanding_balance' do
     it 'returns the value as a spree money' do
       allow(order).to receive(:outstanding_balance).and_return(10.55)
@@ -618,6 +583,19 @@ describe Spree::Order, type: :model do
     let(:override_email) { true }
 
     let(:order) { build(:order, order_attributes) }
+
+    # The user-default ship address only copies onto records needing
+    # physical delivery (Spree::Carts::Associate).
+    before { allow(order).to receive(:delivery_required?).and_return(true) }
+
+    it 'does not copy the ship address onto a record without physical delivery' do
+      empty_order = create(:order, user: nil, ship_address: nil)
+
+      empty_order.associate_user!(user)
+
+      expect(empty_order.reload.user).to eq(user)
+      expect(empty_order.ship_address_id).to be_nil
+    end
 
     let(:order_attributes) do
       {
@@ -835,7 +813,7 @@ describe Spree::Order, type: :model do
 
     context 'when order has shipments and is not completed' do
       before do
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
       end
 
       it 'destroys all shipments' do
@@ -963,20 +941,6 @@ describe Spree::Order, type: :model do
 
     it 'returns the correct sum of items' do
       expect(@order.amount).to eq(3.0)
-    end
-  end
-
-  describe '#backordered?' do
-    let(:shipments) { create_list(:shipment, 2) }
-
-    before do
-      allow(shipments.first).to receive_messages(backordered?: true)
-      allow(shipments.second).to receive_messages(backordered?: false)
-      allow(order).to receive_messages(fulfillments: shipments)
-    end
-
-    it 'is backordered if one of the shipments is backordered' do
-      expect(order).to be_backordered
     end
   end
 
@@ -1121,7 +1085,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#create_proposed_fulfillments' do
+  describe '#rebuild_fulfillments!' do
     context 'has unassociated inventory units' do
       let!(:inventory_unit) { create(:inventory_unit, order: subject) }
 
@@ -1135,7 +1099,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'does not delete inventory_unit' do
-          subject.create_proposed_fulfillments
+          subject.rebuild_fulfillments!
           expect(inventory_unit.reload).to eq inventory_unit
         end
       end
@@ -1146,7 +1110,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'does not delete inventory_unit' do
-          subject.create_proposed_fulfillments
+          subject.rebuild_fulfillments!
           expect(inventory_unit.reload).to eq inventory_unit
         end
       end
@@ -1157,7 +1121,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'deletes inventory_unit' do
-          subject.create_proposed_fulfillments
+          subject.rebuild_fulfillments!
           expect { inventory_unit.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
@@ -1168,7 +1132,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'deletes inventory_unit' do
-          subject.create_proposed_fulfillments
+          subject.rebuild_fulfillments!
           expect { inventory_unit.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
@@ -1183,7 +1147,7 @@ describe Spree::Order, type: :model do
       allow(strategy).to receive(:for_allocation).and_return([package])
       allow(subject).to receive(:order_routing_strategy).and_return(strategy)
 
-      subject.create_proposed_fulfillments
+      subject.rebuild_fulfillments!
       expect(subject.fulfillments).to eq [shipment]
     end
   end
@@ -1859,134 +1823,14 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#paid?' do
-    subject { order.paid? }
-
-    let!(:payment_0) { create(:payment, order: order, amount: amount) }
-    let!(:payment_1) { create(:payment, order: order, amount: amount) }
-    let!(:payment_2) { create(:payment, order: order, amount: amount) }
-    let(:amount) { 100 }
-    let(:order) { create(:order, total: total) }
-    let(:total) { 200 }
-
-    before { payment_1.complete }
-
-    context 'when all order valid payments are completed' do
-      before do
-        payment_1.complete
-        payment_2.complete
-      end
-
-      context 'when the amount of the valid payments < the order total' do
-        let(:total) { 201 }
-
-        it { expect(subject).to eq(false) }
-      end
-
-      context 'when the amount of the valid payments == the order total' do
-        let(:total) { 200 }
-
-        it { expect(subject).to eq(true) }
-      end
-
-      context 'when the amount of the valid payments > the order total' do
-        let(:total) { 199 }
-
-        it { expect(subject).to eq(true) }
-      end
-    end
-
-    context 'when not all order payments are completed one is void' do
-      before do
-        payment_0.void
-        payment_1.complete
-        payment_2.complete
-      end
-
-      context 'when the amount of the valid payments < the order total' do
-        let(:total) { 201 }
-
-        it { expect(subject).to eq(false) }
-      end
-
-      context 'when the amount of the valid payments == the order total' do
-        let(:total) { 200 }
-
-        it { expect(subject).to eq(true) }
-      end
-
-      context 'when the amount of the valid payments > the order total' do
-        let(:total) { 199 }
-
-        it { expect(subject).to eq(true) }
-      end
-    end
-
-    context 'when not all order payments are completed one is failed' do
-      before do
-        payment_0.state = 'failed'
-        payment_0.save!
-
-        payment_1.complete
-        payment_2.complete
-      end
-
-      context 'when the amount of the valid payments < the order total' do
-        let(:total) { 201 }
-
-        it { expect(subject).to eq(false) }
-      end
-
-      context 'when the amount of the valid payments == the order total' do
-        let(:total) { 200 }
-
-        it { expect(subject).to eq(true) }
-      end
-
-      context 'when the amount of the valid payments > the order total' do
-        let(:total) { 199 }
-
-        it { expect(subject).to eq(true) }
-      end
-    end
-
-    context 'when not all order payments are completed one is invalid' do
-      before do
-        payment_0.state = 'invalid'
-        payment_0.save!
-
-        payment_1.complete
-        payment_2.complete
-      end
-
-      context 'when the amount of the valid payments < the order total' do
-        let(:total) { 201 }
-
-        it { expect(subject).to eq(false) }
-      end
-
-      context 'when the amount of the valid payments == the order total' do
-        let(:total) { 200 }
-
-        it { expect(subject).to eq(true) }
-      end
-
-      context 'when the amount of the valid payments > the order total' do
-        let(:total) { 199 }
-
-        it { expect(subject).to eq(true) }
-      end
-    end
-  end
-
-  describe '#create_proposed_shipments' do
+  describe '#rebuild_fulfillments!' do
     it 'delegates to #create_proposed_fulfillments with a deprecation warning' do
       order = create(:order)
 
       expect(Spree::Deprecation).to receive(:warn).with(/create_proposed_fulfillments/)
       expect(order).to receive(:create_proposed_fulfillments)
 
-      order.create_proposed_shipments
+      order.rebuild_fulfillments!
     end
   end
 
@@ -2386,7 +2230,7 @@ describe Spree::Order, type: :model do
         physical_line_item
         digital_line_item
         order.recalculate_totals!
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
 
         expect(order.shipments.count).to eq(2)
 
@@ -2405,17 +2249,18 @@ describe Spree::Order, type: :model do
     end
 
     describe '#quick_checkout_require_address?' do
-      let(:order) { create(:order) }
+      let(:order) { create(:order_with_line_items) }
 
       it 'returns true if the order is not digital and delivery is required' do
         expect(order.quick_checkout_require_address?).to be true
       end
 
       it 'returns false if the order is digital' do
-        digital_line_item
-        order.recalculate_totals!
+        digital_order = create(:order)
+        create(:line_item, variant: digital_variant, quantity: 1, order: digital_order)
+        digital_order.recalculate_totals!
 
-        expect(order.quick_checkout_require_address?).to be false
+        expect(digital_order.reload.quick_checkout_require_address?).to be false
       end
 
       it 'returns false if the order does not require delivery' do

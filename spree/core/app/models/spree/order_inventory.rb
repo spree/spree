@@ -101,7 +101,7 @@ module Spree
 
     def add_to_shipment(shipment, quantity)
       if shipment.nil?
-        shipment = order.create_proposed_fulfillments.first
+        shipment = order.rebuild_fulfillments!.first
       elsif variant.should_track_inventory?
         on_hand, back_order = shipment.stock_location.fill_status(variant, quantity)
 

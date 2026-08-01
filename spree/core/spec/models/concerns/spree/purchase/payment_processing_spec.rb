@@ -131,6 +131,28 @@ RSpec.shared_examples 'a payment processing host' do
     end
   end
 
+  describe '#payment_methods' do
+    let(:record) { new_record_with_line_items }
+    let(:store) { record.store }
+
+    it 'lists active front-end methods available for this record' do
+      available = create(:credit_card_payment_method, store: store)
+      inactive = create(:credit_card_payment_method, store: store, active: false)
+      back_office_only = create(:credit_card_payment_method, store: store, display_on: 'back_end')
+
+      expect(record.payment_methods).to include(available)
+      expect(record.payment_methods).not_to include(inactive)
+      expect(record.payment_methods).not_to include(back_office_only)
+    end
+
+    it 'excludes methods that report themselves unavailable for the record' do
+      # Store credit is only offered when the customer actually holds credit.
+      store_credit_method = create(:store_credit_payment_method, store: store)
+
+      expect(record.payment_methods).not_to include(store_credit_method)
+    end
+  end
+
   describe '#payment_required?' do
     let(:record) { new_record_with_line_items }
 
@@ -222,5 +244,13 @@ RSpec.describe Spree::Purchase::PaymentProcessing do
     end
 
     it_behaves_like 'a payment processing host'
+
+    it 'bridges the deprecated collect_frontend_payment_methods to payment_methods' do
+      order = new_record_with_line_items
+      available = create(:credit_card_payment_method, store: order.store)
+
+      expect(Spree::Deprecation).to receive(:warn).with(/collect_frontend_payment_methods/)
+      expect(order.collect_frontend_payment_methods).to include(available)
+    end
   end
 end

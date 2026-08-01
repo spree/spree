@@ -142,16 +142,7 @@ module Spree
         return if cart.complete?
 
         if @address_invalidated || address_changed?
-          if cart.respond_to?(:recalculate_for_address_change!)
-            cart.recalculate_for_address_change!
-          else
-            cart.ensure_updated_fulfillments
-            if cart.ship_address.present? && cart.respond_to?(:create_proposed_fulfillments)
-              cart.create_proposed_fulfillments
-              cart.set_fulfillments_cost
-            end
-            cart.recalculate_totals!
-          end
+          cart.recalculate_for_address_change!
         else
           cart.recalculate_totals!
         end

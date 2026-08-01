@@ -30,6 +30,9 @@ module Spree
     include Spree::Purchase::LineItemCurrencies
     include Spree::Purchase::PaymentProcessing
     include Spree::Purchase::Addresses
+    include Spree::Purchase::Validations
+    include Spree::Purchase::Totals
+    include Spree::Purchase::Lifecycle
     include Spree::Core::NumberGenerator.new(prefix: 'R')
 
     include Spree::NumberIdentifier
@@ -59,9 +62,6 @@ module Spree
 
     alias display_ship_total display_delivery_total
     alias_attribute :ship_total, :delivery_total
-    def amount_due
-      [outstanding_balance - total_applied_store_credit, 0].max
-    end
 
     # Transient warnings populated by remove_out_of_stock_items! and ensure_available_shipping_rates
     attribute :warnings, default: -> { [] }
@@ -101,25 +101,6 @@ module Spree
       self.customer_note = value
     end
 
-    MONEY_THRESHOLD  = 100_000_000
-    MONEY_VALIDATION = {
-      presence: true,
-      numericality: {
-        greater_than: -MONEY_THRESHOLD,
-        less_than: MONEY_THRESHOLD,
-        allow_blank: true
-      },
-      format: { with: /\A-?\d+(?:\.\d{1,2})?\z/, allow_blank: true }
-    }.freeze
-
-    POSITIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
-      validation.fetch(:numericality)[:greater_than_or_equal_to] = 0
-    end.freeze
-
-    NEGATIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
-      validation.fetch(:numericality)[:less_than_or_equal_to] = 0
-    end.freeze
-
     # lock_version (renamed from state_lock_version) drives the API's manual
     # optimistic concurrency (compare client-sent version, 409 on mismatch) —
     # Rails auto-locking must not raise on internal saves.
@@ -153,6 +134,13 @@ module Spree
     end
 
     ASSOCIATED_USER_ATTRIBUTES = [:user_id, :email, :bill_address_id, :ship_address_id]
+
+    # @deprecated Use {Spree::Purchase::PaymentProcessing#payment_methods};
+    #   removed in 6.1.
+    def collect_frontend_payment_methods
+      Spree::Deprecation.warn('Spree::Order#collect_frontend_payment_methods is deprecated and will be removed in Spree 6.1. Use #payment_methods instead.')
+      payment_methods
+    end
 
     # 6.0 forward-compat: User→Customer rename. Column stays user_id in 5.x.
     alias_attribute :customer_id, :user_id
@@ -229,22 +217,11 @@ module Spree
     before_create :link_by_email
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
 
-    with_options presence: true do
-      # we want to have this case_sentive: true as changing it to false causes all SQL to use LOWER(slug)
-      # which is very costly and slow on large set of records
-      validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
-      validates :total_quantity, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
-    end
-    validates :payment_status,       inclusion:    { in: PAYMENT_STATES, allow_blank: true }
-    validates :fulfillment_status,   inclusion:    { in: FULFILLMENT_STATUSES, allow_blank: true }
-    validates :item_total,           POSITIVE_MONEY_VALIDATION
-    validates :adjustment_total,     MONEY_VALIDATION
-    validates :included_tax_total,   POSITIVE_MONEY_VALIDATION
-    validates :additional_tax_total, POSITIVE_MONEY_VALIDATION
-    validates :payment_total,        MONEY_VALIDATION
-    validates :delivery_total,       MONEY_VALIDATION
-    validates :discount_total,       NEGATIVE_MONEY_VALIDATION
-    validates :total,                MONEY_VALIDATION
+    # Shared money/quantity validations live in Spree::Purchase::Validations;
+    # only order-specific rules stay here.
+    validates :email, presence: true, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
+    validates :payment_status,     inclusion: { in: PAYMENT_STATES, allow_blank: true }
+    validates :fulfillment_status, inclusion: { in: FULFILLMENT_STATUSES, allow_blank: true }
 
     # @deprecated Both warn and run the full recalculation; use
     #   {#recalculate_totals!}. Removed in 6.1.
@@ -368,12 +345,6 @@ module Spree
       (item_total + line_items.sum(:promo_total)).to_f
     end
 
-    # Total fulfillment discount applied by promotions, as a positive amount.
-    #
-    # @return [BigDecimal]
-    def fulfillment_discount
-      discounts.for_fulfillments.sum(:amount) * -1
-    end
 
     # @deprecated Use {#fulfillment_discount}; removed in 6.1.
     def shipping_discount
@@ -381,15 +352,7 @@ module Spree
       fulfillment_discount
     end
 
-    def completed?
-      completed_at.present?
-    end
 
-    # Orders are never mid-checkout since the cart flip — only a draft mid
-    # completion (or an admin draft) is still mutable.
-    def in_checkout?
-      draft? && !completed? && !canceled? && !cart?
-    end
 
     def draft?
       status == 'draft'
@@ -402,8 +365,6 @@ module Spree
     def canceled?
       status == 'canceled'
     end
-
-    alias complete? completed?
 
     # @deprecated machine vocabulary — data-derived bridge for the 6.0
     #   transition, removed in 6.1. An order is "cart-like" while a draft
@@ -447,18 +408,11 @@ module Spree
       line_items.exists?
     end
 
-    # Does this order require a delivery (physical or digital).
-    def delivery_required?
-      true # true for Spree, can be decorated
-    end
 
     def email_required?
       require_email
     end
 
-    def backordered?
-      fulfillments.any?(&:backordered?)
-    end
 
     # Check if the shipping address is a quick checkout address
     # quick checkout addresses are incomplete as wallet providers like Apple Pay and Google Pay
@@ -513,22 +467,6 @@ module Spree
       @merger ||= Spree::OrderMerger.new(self)
     end
 
-    # @return [Boolean] true when this order has no registered user and its
-    #   channel forbids guest checkout (see Spree::Channel::Gating). Enforced by
-    #   the checkout completion service and the v3 Store API so every completion
-    #   path (controller, payment webhook) is covered.
-    #
-    #   A +prices_hidden+ channel also disallows guest completion regardless of
-    #   the +guest_checkout+ flag — prices are withheld from guests, and a buyer
-    #   who cannot see prices cannot meaningfully place an order. This dissolves
-    #   the otherwise contradictory "prices hidden but guests may buy" config.
-    def guest_checkout_disallowed?
-      return false if user_id.present?
-      return false if channel.blank?
-      return true if channel.storefront_prices_hidden?
-
-      !channel.resolved_guest_checkout
-    end
 
     def allow_cancel?
       return false if !completed? || canceled?
@@ -598,9 +536,6 @@ module Spree
       reimbursements.sum(&:paid_amount)
     end
 
-    def outstanding_balance?
-      outstanding_balance != 0
-    end
 
     def name
       if (address = bill_address || ship_address)
@@ -663,17 +598,10 @@ module Spree
       update_statuses!
     end
 
-    # Helper methods for checkout steps
-    def paid?
-      payments.valid.completed.size == payments.valid.size && payments.valid.sum(:amount) >= total
-    end
 
-    def payment_methods
-      @payment_methods ||= store.payment_methods.active.available_on_front_end.select { |pm| pm.available_for_order?(self) }
-    end
 
     def available_payment_methods(store = nil)
-      Spree::Deprecation.warn('`Order#available_payment_methods` is deprecated and will be removed in Spree 5.5. Use `collect_frontend_payment_methods` instead.')
+      Spree::Deprecation.warn('`Order#available_payment_methods` is deprecated and will be removed in Spree 6.1. Use `payment_methods` instead.')
 
       @available_payment_methods ||= collect_payment_methods(store)
     end
@@ -749,7 +677,7 @@ module Spree
       fully_fulfilled?
     end
 
-    def create_proposed_fulfillments
+    def rebuild_fulfillments!
       discounts.for_fulfillments.delete_all
       tax_lines.for_fulfillments.delete_all
       fees.for_fulfillments.delete_all
@@ -769,10 +697,16 @@ module Spree
       end
     end
 
-    # @deprecated Use {#create_proposed_fulfillments}; removed in 6.1.
+    # @deprecated Use {#rebuild_fulfillments!}; removed in 6.1.
+    def create_proposed_fulfillments
+      Spree::Deprecation.warn('Spree::Order#create_proposed_fulfillments is deprecated and will be removed in Spree 6.1. Use #rebuild_fulfillments! instead.')
+      rebuild_fulfillments!
+    end
+
+    # @deprecated Use {#rebuild_fulfillments!}; removed in 6.1.
     def create_proposed_shipments
-      Spree::Deprecation.warn('Spree::Order#create_proposed_shipments is deprecated and will be removed in Spree 6.1. Use #create_proposed_fulfillments instead.')
-      create_proposed_fulfillments
+      Spree::Deprecation.warn('Spree::Order#create_proposed_shipments is deprecated and will be removed in Spree 6.1. Use #rebuild_fulfillments! instead.')
+      rebuild_fulfillments!
     end
 
     # Resolves the routing strategy from the channel override first, then the
@@ -933,9 +867,6 @@ module Spree
       !approved?
     end
 
-    def can_be_deleted?
-      !completed? && payments.completed.empty?
-    end
 
     def consider_risk
       considered_risky! if is_risky? && !approved?
@@ -956,9 +887,6 @@ module Spree
       Spree.order_approve_service.call(order: self)
     end
 
-    def quantity
-      line_items.sum(:quantity)
-    end
 
     def has_non_reimbursement_related_refunds?
       refunds.non_reimbursement.exists? ||
@@ -969,9 +897,6 @@ module Spree
       store.payment_methods.active.available_on_back_end.select { |pm| pm.available_for_order?(self) }
     end
 
-    def collect_frontend_payment_methods
-      store.payment_methods.active.available_on_front_end.select { |pm| pm.available_for_order?(self) }
-    end
 
     # determines whether the inventory is fully discounted
     #
@@ -1093,7 +1018,7 @@ module Spree
     end
 
     def collect_payment_methods
-      Spree::Deprecation.warn('`Order#collect_payment_methods` is deprecated and will be removed in Spree 5.5. Use `collect_frontend_payment_methods` instead.')
+      Spree::Deprecation.warn('`Order#collect_payment_methods` is deprecated and will be removed in Spree 6.1. Use `payment_methods` instead.')
 
       store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
