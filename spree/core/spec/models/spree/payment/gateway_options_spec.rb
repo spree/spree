@@ -6,7 +6,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
   let(:payment) do
     double(
       Spree::Payment,
-      order: order,
+      owner: order,
       number: 'P1566',
       currency: 'EUR',
       payment_method: payment_method

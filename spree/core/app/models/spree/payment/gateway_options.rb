@@ -3,7 +3,9 @@ module Spree
     class GatewayOptions
       def initialize(payment)
         @payment = payment
-        @order = payment.order
+        # The payment's cart or order — the reader keeps the legacy `order`
+        # name because gateway extensions subclass this class.
+        @order = payment.owner
       end
 
       attr_reader :payment, :order

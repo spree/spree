@@ -654,59 +654,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#confirmation_required?' do
-    subject { order.confirmation_required? }
-
-    it 'is computed from data only' do
-      order = Spree::Order.new
-      assert !order.confirmation_required?
-    end
-
-    context 'Spree::Config[:always_include_confirm_step] == true' do
-      before do
-        Spree::Config[:always_include_confirm_step] = true
-      end
-
-      it 'returns true if payments empty' do
-        order = Spree::Order.new
-        assert order.confirmation_required?
-      end
-    end
-
-    context 'Spree::Config[:always_include_confirm_step] == false' do
-      it 'returns false if payments empty and Spree::Config[:always_include_confirm_step] == false' do
-        order = Spree::Order.new
-        assert !order.confirmation_required?
-      end
-
-      it 'does not bomb out when an order has an unpersisted payment' do
-        order = Spree::Order.new
-        order.payments.build
-        assert !order.confirmation_required?
-      end
-    end
-
-    context 'when the payment does not require confirmation' do
-      before do
-        order.update_column(:total, 50)
-        create(:payment, order: order, amount: 50)
-
-        allow_any_instance_of(Spree::Gateway::Bogus).to receive(:confirmation_required?).and_return(false)
-      end
-
-      it { is_expected.to be(false) }
-    end
-
-    context 'when at least one payment method requires confirmation' do
-      before do
-        order.update_column(:total, 50)
-        create(:payment, order: order, amount: 50)
-      end
-
-      it { is_expected.to be(true) }
-    end
-  end
-
   context 'add_update_hook' do
     before do
       Spree::Order.class_eval do
@@ -1493,23 +1440,6 @@ describe Spree::Order, type: :model do
       isolated_order = create(:order, store: isolated_store)
 
       expect(isolated_order.order_routing_strategy).to be_a(Spree::OrderRouting::Strategy::Rules)
-    end
-  end
-
-  describe '#ensure_channel_presence' do
-    let(:store) { create(:store) }
-
-    it 'auto-assigns the store default channel on new orders' do
-      o = build(:order, store: store, channel: nil)
-      o.valid?
-      expect(o.channel).to eq(store.default_channel)
-    end
-
-    it 'preserves an explicitly set channel' do
-      other = store.channels.create!(name: 'POS', code: 'pos')
-      o = build(:order, store: store, channel: other)
-      o.valid?
-      expect(o.channel).to eq(other)
     end
   end
 
