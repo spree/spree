@@ -218,12 +218,6 @@ module Spree
     end
     alias set_shipments_cost set_fulfillments_cost
 
-    # @deprecated Use {#rebuild_fulfillments!}; removed in 6.1.
-    def create_proposed_fulfillments
-      Spree::Deprecation.warn('Spree::Cart#create_proposed_fulfillments is deprecated and will be removed in Spree 6.1. Use #rebuild_fulfillments! instead.')
-      rebuild_fulfillments!
-    end
-
     def ensure_updated_fulfillments
       rebuild_fulfillments! unless completed?
     end
@@ -237,7 +231,6 @@ module Spree
       set_fulfillments_cost
       recalculate_totals!
     end
-
 
     # Binds a signing-in user to the cart through the swappable associate
     # service (same seam Order#associate_user! uses).

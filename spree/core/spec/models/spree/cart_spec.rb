@@ -237,6 +237,17 @@ describe Spree::Cart, type: :model do
     end
   end
 
+  describe '#create_proposed_fulfillments (deprecated)' do
+    it 'delegates to #rebuild_fulfillments! with a deprecation warning' do
+      cart = build(:cart, store: store)
+
+      expect(Spree::Deprecation).to receive(:warn).with(/create_proposed_fulfillments/)
+      expect(cart).to receive(:rebuild_fulfillments!)
+
+      cart.create_proposed_fulfillments
+    end
+  end
+
   describe '#coupon_code=' do
     it 'normalizes to a stripped, lowercased code' do
       expect(build(:cart, coupon_code: '  SAVE10  ').read_attribute(:coupon_code)).to eq('save10')

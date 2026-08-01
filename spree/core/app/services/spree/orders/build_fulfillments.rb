@@ -17,7 +17,7 @@ module Spree
         return success(order) unless order.line_items.any?
         return success(order) unless order.delivery_required?
 
-        order.create_proposed_fulfillments
+        order.rebuild_fulfillments!
         order.create_shipment_tax_charge!
         order.set_fulfillments_cost
         order.apply_free_shipping_promotions

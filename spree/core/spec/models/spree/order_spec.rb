@@ -1823,14 +1823,23 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#rebuild_fulfillments!' do
-    it 'delegates to #create_proposed_fulfillments with a deprecation warning' do
+  describe 'legacy proposal-rebuild bridges' do
+    it 'delegates #create_proposed_fulfillments to #rebuild_fulfillments! with a deprecation warning' do
       order = create(:order)
 
       expect(Spree::Deprecation).to receive(:warn).with(/create_proposed_fulfillments/)
-      expect(order).to receive(:create_proposed_fulfillments)
+      expect(order).to receive(:rebuild_fulfillments!)
 
-      order.rebuild_fulfillments!
+      order.create_proposed_fulfillments
+    end
+
+    it 'delegates #create_proposed_shipments to #rebuild_fulfillments! with a deprecation warning' do
+      order = create(:order)
+
+      expect(Spree::Deprecation).to receive(:warn).with(/create_proposed_shipments/)
+      expect(order).to receive(:rebuild_fulfillments!)
+
+      order.create_proposed_shipments
     end
   end
 
