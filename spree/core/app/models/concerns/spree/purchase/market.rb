@@ -8,7 +8,11 @@ module Spree
 
         validates :market, presence: true
 
+
+        attr_accessor :skip_market_resolution
+
         before_validation :ensure_market_presence
+        before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
       end
 
       def ensure_market_presence

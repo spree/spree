@@ -1105,16 +1105,6 @@ module Spree
       end
     end
 
-    # When currency changes, auto-resolve the matching market.
-    # Only applies when the store has markets configured.
-    def resolve_market_from_currency
-      return unless store_has_markets?
-      return if market&.currency == currency
-
-      resolved = store.markets.find_by(currency: currency)
-      self.market = resolved if resolved
-    end
-
     def collect_payment_methods
       Spree::Deprecation.warn('`Order#collect_payment_methods` is deprecated and will be removed in Spree 5.5. Use `collect_frontend_payment_methods` instead.')
 

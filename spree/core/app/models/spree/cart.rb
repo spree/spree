@@ -124,8 +124,6 @@ module Spree
 
     attr_accessor :skip_market_resolution
 
-    before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
-
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
 
     delegate :name, to: :customer, prefix: true, allow_nil: true

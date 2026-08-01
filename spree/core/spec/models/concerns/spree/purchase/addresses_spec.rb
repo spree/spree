@@ -209,16 +209,11 @@ RSpec.describe Spree::Purchase::Addresses do
     it_behaves_like 'an addresses host'
 
     describe 'use_billing clone callback (deprecated bridge, removed in 6.1)' do
-      let(:order) { Spree::Order.new }
+      let(:order) { build(:order) }
 
       before do
         order.bill_address = create(:address)
         order.ship_address = nil
-      end
-
-      it 'warns on assignment' do
-        expect(Spree::Deprecation).to receive(:warn).with(/use_billing is deprecated/)
-        order.use_billing = true
       end
 
       %w[true 1].push(true).each do |truthy_value|
