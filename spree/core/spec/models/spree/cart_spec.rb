@@ -302,24 +302,6 @@ describe Spree::Cart, type: :model do
     end
   end
 
-  describe '#shipping_eq_billing_address?' do
-    it 'compares the two addresses' do
-      address = create(:address)
-      expect(build(:cart, ship_address: address, bill_address: address).shipping_eq_billing_address?).to be(true)
-      expect(build(:cart, ship_address: address, bill_address: create(:address)).shipping_eq_billing_address?).to be(false)
-    end
-  end
-
-  describe '#use_shipping?' do
-    it 'accepts the truthy form values' do
-      expect(build(:cart, use_shipping: true).use_shipping?).to be(true)
-      expect(build(:cart, use_shipping: 'true').use_shipping?).to be(true)
-      expect(build(:cart, use_shipping: '1').use_shipping?).to be(true)
-      expect(build(:cart, use_shipping: false).use_shipping?).to be(false)
-      expect(build(:cart).use_shipping?).to be(false)
-    end
-  end
-
   describe '#quantity' do
     it 'sums line item quantities' do
       cart = create(:cart_with_line_items, line_items_count: 2)

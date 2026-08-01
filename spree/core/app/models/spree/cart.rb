@@ -27,7 +27,7 @@ module Spree
     include Spree::Purchase::GiftCards
     include Spree::Purchase::LineItemCurrencies
     include Spree::Purchase::PaymentProcessing
-    include Spree::Purchase::AddressBook
+    include Spree::Purchase::Addresses
 
     # Concurrency is manual (the API's OrderLock semantics — compare
     # client-sent version, 409 on mismatch); Rails auto-locking must not
@@ -56,8 +56,6 @@ module Spree
     alias_method :user, :customer
     alias_method :user=, :customer=
     alias_attribute :user_id, :customer_id
-    belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
-    belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     # Normalizes like the legacy Order writer so lookups stay case-insensitive.
     def coupon_code=(code)
       normalized = begin
@@ -95,13 +93,6 @@ module Spree
       Spree::StockLocation.find_by(id: preferred_stock_location_id)
     end
 
-    alias_method :shipping_address, :ship_address
-    alias_method :shipping_address=, :ship_address=
-    alias_attribute :shipping_address_id, :ship_address_id
-    alias_method :billing_address, :bill_address
-    alias_method :billing_address=, :bill_address=
-    alias_attribute :billing_address_id, :bill_address_id
-
     has_many :line_items, -> { order(:created_at) }, class_name: 'Spree::LineItem', inverse_of: :cart, dependent: :destroy
     has_many :variants, through: :line_items
     has_many :products, through: :variants
@@ -125,17 +116,13 @@ module Spree
 
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :payments
-    alias_method :shipping_address_attributes=, :ship_address_attributes=
-    alias_method :billing_address_attributes=, :bill_address_attributes=
 
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
 
     self.whitelisted_ransackable_attributes = %w[email completed_at token updated_at]
 
-    attr_accessor :temporary_address, :use_shipping, :skip_market_resolution
-
-    before_validation :clone_shipping_address, if: :use_shipping?
+    attr_accessor :skip_market_resolution
 
     before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
 
@@ -188,14 +175,6 @@ module Spree
     # {Spree::Carts::RecalculateTotals}.
     def recalculate_totals!
       Spree.cart_recalculate_totals_workflow.call(cart: self)
-    end
-
-    def shipping_eq_billing_address?
-      bill_address == ship_address
-    end
-
-    def use_shipping?
-      use_shipping.in?([true, 'true', '1'])
     end
 
     def quantity

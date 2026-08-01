@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-# Shared battery for Spree::Purchase::AddressBook, run against BOTH hosts.
+# Shared battery for Spree::Purchase::Addresses, run against BOTH hosts.
 # Checkout moved from Order to Cart once already and silently lost this
 # behavior (dedup, default promotion, ownership guard) — the shared examples
 # exist so it cannot happen again without a red suite.
-RSpec.shared_examples 'an address book host' do
+RSpec.shared_examples 'an addresses host' do
   let(:store) { @default_store }
   let(:user) { create(:user) }
 
@@ -120,20 +120,133 @@ RSpec.shared_examples 'an address book host' do
       expect(record.ship_address).to be_nil
     end
   end
+
+  describe '#shipping_eq_billing_address?' do
+    it 'compares the two addresses' do
+      address = create(:address, user: user)
+      record.ship_address = address
+      record.bill_address = address
+      expect(record.shipping_eq_billing_address?).to be(true)
+
+      record.bill_address = create(:address, user: user)
+      expect(record.shipping_eq_billing_address?).to be(false)
+    end
+  end
+
+  describe 'mass attribute assignment for bill_address_id, ship_address_id' do
+    let(:address) { create(:address, user: user) }
+
+    it 'is able to mass assign bill_address_id' do
+      record.update(bill_address_id: address.id)
+      expect(record.bill_address_id).to eq address.id
+    end
+
+    it 'is able to mass assign ship_address_id' do
+      record.update(ship_address_id: address.id)
+      expect(record.ship_address_id).to eq address.id
+    end
+  end
+
+  describe 'same bill & ship addresses' do
+    it 'has equal ids when both ids are set' do
+      address = create(:address, user: user)
+      record.update!(bill_address_id: address.id, ship_address_id: address.id)
+
+      expect(record.bill_address_id).to eq record.ship_address_id
+    end
+  end
+
+  describe 'editing an address locked by a completed order' do
+    let(:address) { create(:address, user: user) }
+    let!(:completed_order) { create(:completed_order_with_totals, user: user, ship_address: address) }
+
+    it 'creates a new address with the updated attributes' do
+      expect(
+        record.update(
+          bill_address_attributes: {
+            firstname: 'New name',
+            **address.attributes.except(
+              'firstname', 'created_at', 'updated_at', 'deleted_at', 'quick_checkout',
+              'public_metadata', 'private_metadata', 'latitude', 'longitude', 'preferences'
+            )
+          }
+        )
+      ).to be_truthy
+
+      expect(record.bill_address_id).not_to eq address.id
+      expect(record.bill_address.firstname).to eq 'New name'
+    end
+  end
 end
 
-RSpec.describe Spree::Purchase::AddressBook do
+RSpec.describe Spree::Purchase::Addresses do
+  let(:store) { @default_store }
+  let(:user) { create(:user) }
+
   context 'included in Spree::Cart' do
     let(:record) { create(:cart, store: store, customer: user, ship_address: nil, bill_address: nil) }
     let(:guest_record) { create(:cart, store: store, customer: nil) }
 
-    it_behaves_like 'an address book host'
+    it_behaves_like 'an addresses host'
+
+    # Carts expose only use_shipping through the API — the ship→bill clone
+    # is the one wired as a callback.
+    describe 'use_shipping clone callback' do
+      it 'clones the ship address onto the bill address when truthy' do
+        record.ship_address = create(:address, user: user)
+        record.use_shipping = true
+        record.valid?
+
+        expect(record.bill_address).to eq(record.ship_address)
+      end
+    end
   end
 
   context 'included in Spree::Order' do
     let(:record) { create(:order, store: store, user: user, ship_address: nil, bill_address: nil) }
     let(:guest_record) { create(:order, store: store, user: nil, email: 'guest@example.com') }
 
-    it_behaves_like 'an address book host'
+    it_behaves_like 'an addresses host'
+
+    describe 'use_billing clone callback (deprecated bridge, removed in 6.1)' do
+      let(:order) { Spree::Order.new }
+
+      before do
+        order.bill_address = create(:address)
+        order.ship_address = nil
+      end
+
+      it 'warns on assignment' do
+        expect(Spree::Deprecation).to receive(:warn).with(/use_billing is deprecated/)
+        order.use_billing = true
+      end
+
+      %w[true 1].push(true).each do |truthy_value|
+        context "with #{truthy_value.inspect}" do
+          before { order.use_billing = truthy_value }
+
+          it 'clones the bill address to the ship address' do
+            order.valid?
+            expect(order.ship_address).to eq(order.bill_address)
+          end
+        end
+      end
+
+      context "with something other than a 'truthful' value" do
+        before { order.use_billing = '0' }
+
+        it 'does not clone the bill address to the shipping' do
+          order.valid?
+          expect(order.ship_address).to be_nil
+        end
+      end
+
+      it 'has equal ids when use_billing is active at create' do
+        address = create(:address)
+        order = create(:order, use_billing: true, bill_address_id: address.id, ship_address_id: nil).reload
+
+        expect(order.bill_address_id).to eq order.ship_address_id
+      end
+    end
   end
 end

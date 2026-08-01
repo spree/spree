@@ -1,10 +1,63 @@
 module Spree
   module Purchase
-    # Address-book behavior shared by Spree::Cart and Spree::Order: fills
-    # defaults from the customer's saved addresses, deduplicates address
-    # rows on write, guards address_id assignment to the owning customer,
-    # and promotes checkout addresses to the customer's defaults.
-    module AddressBook
+    # The full address surface shared by Spree::Cart and Spree::Order:
+    # the bill/ship associations and their public aliases, default filling
+    # from the customer's saved addresses, address-row deduplication on
+    # write, ownership-guarded address_id assignment, promotion of checkout
+    # addresses to the customer's defaults, and the ship→bill cloning
+    # predicate. The shipping address is canonical: use_shipping copies it
+    # onto the billing address; the reverse use_billing direction is a
+    # deprecated 6.1-removal bridge. Clone callbacks are wired per model.
+    module Addresses
+      extend ActiveSupport::Concern
+
+      included do
+        belongs_to :bill_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
+        belongs_to :ship_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
+
+        accepts_nested_attributes_for :bill_address
+        accepts_nested_attributes_for :ship_address
+
+        alias_method :billing_address, :bill_address
+        alias_method :billing_address=, :bill_address=
+        alias_attribute :billing_address_id, :bill_address_id
+        alias_method :shipping_address, :ship_address
+        alias_method :shipping_address=, :ship_address=
+        alias_attribute :shipping_address_id, :ship_address_id
+
+        alias_method :shipping_address_attributes=, :ship_address_attributes=
+        alias_method :billing_address_attributes=, :bill_address_attributes=
+
+        attr_accessor :temporary_address, :use_shipping
+        attr_reader :use_billing
+
+        before_validation :clone_billing_address, if: :use_billing?
+        before_validation :clone_shipping_address, if: :use_shipping?
+      end
+
+      # @return [Boolean]
+      def shipping_eq_billing_address?
+        bill_address == ship_address
+      end
+
+      # @deprecated The shipping address is canonical — use +use_shipping+ to
+      #   copy it onto the billing address. Removed in 6.1.
+      def use_billing=(value)
+        Spree::Deprecation.warn('use_billing is deprecated and will be removed in Spree 6.1. The shipping address comes first — use use_shipping to copy it onto the billing address.')
+        @use_billing = value
+      end
+
+      # @deprecated See {#use_billing=}; removed in 6.1.
+      # @return [Boolean]
+      def use_billing?
+        use_billing.in?([true, 'true', '1'])
+      end
+
+      # @return [Boolean]
+      def use_shipping?
+        use_shipping.in?([true, 'true', '1'])
+      end
+
       # Fills any blank bill/ship address from the customer's valid saved
       # defaults. The ship address is skipped when no physical delivery is
       # required, so shipping-address validations never fire on digital-only
@@ -33,6 +86,8 @@ module Spree
       # Copies the bill address onto the ship address and promotes it to the
       # customer's default ship address.
       #
+      # @deprecated The shipping address is canonical (see {#use_billing=});
+      #   removed in 6.1 together with the use_billing bridge.
       # @return [true]
       def clone_billing_address
         self.ship_address = bill_address if bill_address

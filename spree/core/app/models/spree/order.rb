@@ -29,7 +29,7 @@ module Spree
     include Spree::Purchase::GiftCards
     include Spree::Purchase::LineItemCurrencies
     include Spree::Purchase::PaymentProcessing
-    include Spree::Purchase::AddressBook
+    include Spree::Purchase::Addresses
     include Spree::Core::NumberGenerator.new(prefix: 'R')
 
     include Spree::NumberIdentifier
@@ -121,8 +121,6 @@ module Spree
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
 
-    attr_accessor :temporary_address
-
     # Set to false on admin-initiated flows to suppress customer-facing emails.
     attr_accessor :notify_customer
 
@@ -157,18 +155,6 @@ module Spree
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
-
-    belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address',
-                              optional: true, dependent: :destroy
-    alias_method :billing_address, :bill_address
-    alias_method :billing_address=, :bill_address=
-    alias_attribute :billing_address_id, :bill_address_id
-
-    belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address',
-                              optional: true, dependent: :destroy
-    alias_method :shipping_address, :ship_address
-    alias_method :shipping_address=, :ship_address=
-    alias_attribute :shipping_address_id, :ship_address_id
 
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
 
@@ -224,10 +210,6 @@ module Spree
     delegate :has_markets?, to: :store, prefix: true
 
     accepts_nested_attributes_for :line_items
-    accepts_nested_attributes_for :bill_address
-    accepts_nested_attributes_for :ship_address
-    alias shipping_address_attributes= ship_address_attributes=
-    alias billing_address_attributes= bill_address_attributes=
     accepts_nested_attributes_for :payments, reject_if: :credit_card_nil_payment?
     accepts_nested_attributes_for :fulfillments
     # @deprecated legacy writer — removed in 6.1
@@ -236,9 +218,7 @@ module Spree
     # Needs to happen before save_permalink is called
     before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
 
-    before_validation :clone_billing_address, if: :use_billing?
-    before_validation :clone_shipping_address, if: :use_shipping?
-    attr_accessor :use_billing, :use_shipping, :skip_market_resolution
+    attr_accessor :skip_market_resolution
 
     before_create :link_by_email
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
@@ -888,11 +868,6 @@ module Spree
       fulfillments.map { |s| s.refresh_rates(shipping_method_filter) }
     end
 
-    def shipping_eq_billing_address?
-      bill_address == ship_address
-    end
-
-
     def set_shipments_cost
       Spree::Deprecation.warn('Spree::Order#set_shipments_cost is deprecated and will be removed in Spree 6.1l. Please use set_fulfillments_cost instead')
       set_fulfillments_cost
@@ -1128,14 +1103,6 @@ module Spree
 
         false
       end
-    end
-
-    def use_billing?
-      use_billing.in?([true, 'true', '1'])
-    end
-
-    def use_shipping?
-      use_shipping.in?([true, 'true', '1'])
     end
 
     # When currency changes, auto-resolve the matching market.

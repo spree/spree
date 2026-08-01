@@ -69,34 +69,63 @@ RSpec.shared_examples 'a currency host' do
   end
 
   describe '#currency_must_be_supported_by_store' do
-    it 'rejects a currency the store does not support' do
-      record = new_record
-      record.currency = 'XOF'
+    let(:store) { @default_store }
+
+    before do
+      allow(store).to receive(:supported_currencies).and_return(['EUR', 'USD'])
+    end
+
+    it 'is valid when the currency is supported by the store' do
+      expect(new_record(currency: 'EUR')).to be_valid
+    end
+
+    it 'is invalid when the currency is not supported by the store' do
+      record = new_record(currency: 'JPY')
 
       expect(record).not_to be_valid
-      expect(record.errors[:currency]).to be_present
+      expect(record.errors[:currency]).to include(Spree.t(:currency_not_supported_by_store))
     end
   end
 end
 
 RSpec.shared_examples 'a locale host' do
+  let(:store) { @default_store }
+
   describe '#ensure_locale' do
-    it 'fills a blank locale from the current locale or market default' do
-      record = new_record
-      record.locale = nil
+    it 'sets locale from Spree::Current.locale when blank' do
+      allow(Spree::Current).to receive(:locale).and_return('fr')
+      allow(store).to receive(:supported_locales_list).and_return(['en', 'fr'])
+
+      record = new_record(locale: nil)
       record.valid?
 
-      expect(record.locale).to be_present
+      expect(record.locale).to eq('fr')
+    end
+
+    it 'does not override locale when already set' do
+      allow(Spree::Current).to receive(:locale).and_return('fr')
+
+      record = new_record(locale: 'en')
+      record.valid?
+
+      expect(record.locale).to eq('en')
     end
   end
 
   describe '#locale_must_be_supported_by_store' do
-    it 'rejects a locale the store does not support' do
-      record = new_record
-      record.locale = 'xx'
+    before do
+      allow(store).to receive(:supported_locales_list).and_return(['en', 'fr'])
+    end
+
+    it 'is valid when the locale is supported by the store' do
+      expect(new_record(locale: 'fr')).to be_valid
+    end
+
+    it 'is invalid when the locale is not supported by the store' do
+      record = new_record(locale: 'de')
 
       expect(record).not_to be_valid
-      expect(record.errors[:locale]).to be_present
+      expect(record.errors[:locale]).to include(Spree.t(:locale_not_supported_by_store))
     end
   end
 end
