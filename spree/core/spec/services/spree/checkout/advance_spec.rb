@@ -1,12 +1,11 @@
 require 'spec_helper'
-require 'spree/testing_support/order_walkthrough'
 
 module Spree
   describe Checkout::Advance do
     subject { described_class.call(order: cart) }
 
     let(:store) { @default_store }
-    let(:cart) { ::OrderWalkthrough.up_to(:delivery, store) }
+    let(:cart) { create(:cart_ready_for_delivery, store: store) }
 
     it 'recalculates the cart and returns success' do
       expect(subject).to be_success

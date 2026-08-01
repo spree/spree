@@ -1,19 +1,11 @@
 require 'spec_helper'
-require 'spree/testing_support/order_walkthrough'
 
 module Spree
   describe Carts::Complete do
-    subject { described_class.call(cart: cart) }
-
     let(:store) { @default_store }
-    let(:cart) { ::OrderWalkthrough.up_to(:complete, store).cart || raise('walkthrough returned no cart') }
 
-    # Build a payment-ready cart without completing it
-    let(:ready_cart) do
-      cart = ::OrderWalkthrough.up_to(:payment, store)
-      FactoryBot.create(:payment, cart: cart, order: nil, payment_method: Spree::PaymentMethod.first, amount: cart.reload.total)
-      cart
-    end
+    # Payment-covered cart, one completion attempt away from an order.
+    let(:ready_cart) { create(:cart_ready_to_complete, store: store) }
 
     describe 'the three-phase pipeline' do
       subject { described_class.call(cart: ready_cart) }
@@ -153,7 +145,7 @@ module Spree
     end
 
     describe 'net-terms completion (payment_pending)' do
-      let(:uncovered_cart) { ::OrderWalkthrough.up_to(:payment, store) }
+      let(:uncovered_cart) { create(:cart_ready_for_delivery, store: store) }
 
       it 'does not waive the payment requirement on carts — net terms is a draft-order flow' do
         result = described_class.call(cart: uncovered_cart, payment_pending: true)

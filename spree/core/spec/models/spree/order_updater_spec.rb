@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'spree/testing_support/order_walkthrough'
 
 module Spree
   describe OrderUpdater, type: :model do
@@ -299,7 +298,7 @@ module Spree
 
       describe '#update_shipments' do
         include_context 'with original shipping method gone backend only'
-        let(:order) { ::OrderWalkthrough.up_to(:delivery) }
+        let(:order) { create(:cart_ready_for_delivery, store: @default_store) }
 
         it 'resets shipping method to frontend-available' do
           Spree::OrderUpdater.new(order).update_shipments

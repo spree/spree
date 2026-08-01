@@ -2,8 +2,13 @@
 # every step BEFORE the given one satisfied (matching the legacy contract
 # where `up_to(:delivery)` had completed the address step). `up_to(:complete)`
 # runs the real completion pipeline and returns the resulting Spree::Order.
+# @deprecated Removed in Spree 6.1 — build checkout state with the factories
+#   instead: create(:cart_ready_for_delivery) (address + delivery proposals),
+#   create(:cart_ready_to_complete) (payment-covered), or
+#   create(:completed_order_with_totals) for a placed order.
 class OrderWalkthrough
   def self.up_to(state, store = nil)
+    Spree::Deprecation.warn('OrderWalkthrough is deprecated and will be removed in Spree 6.1. Use the cart factories instead: :cart_ready_for_delivery, :cart_ready_to_complete, or :completed_order_with_totals.')
     store ||= Spree::Store.default
 
     # A payment method must exist for checkout to proceed

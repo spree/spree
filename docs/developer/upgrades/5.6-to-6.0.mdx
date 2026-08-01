@@ -230,6 +230,7 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `Cart#number` (Store API field) | `id` — carts have no order-style number; the field mirrors the prefixed ID for one release |
 | `order.completed` event | `order.placed` |
 | Calling cart services with `order:` kwargs | `cart:` kwargs |
+| `OrderWalkthrough` (testing support) | factories: `:cart_ready_for_delivery`, `:cart_ready_to_complete`, `:completed_order_with_totals` |
 
 ## For extension authors
 
