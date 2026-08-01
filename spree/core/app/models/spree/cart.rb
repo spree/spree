@@ -303,13 +303,10 @@ module Spree
       store.payment_methods.active.available_on_front_end.select { |payment_method| payment_method.available_for_order?(self) }
     end
 
-    # Binds a signing-in user to the cart (mirrors Order#associate_user!).
+    # Binds a signing-in user to the cart through the swappable associate
+    # service (same seam Order#associate_user! uses).
     def associate_user!(user, override_email = true)
-      self.customer = user
-      self.email = user.email if override_email || email.blank?
-      self.bill_address ||= user.bill_address if user.bill_address&.valid?
-      self.ship_address ||= user.ship_address if user.ship_address&.valid? && delivery_required?
-      save! if persisted?
+      Spree.cart_associate_service.call(guest_cart: self, user: user, override_email: override_email)
     end
 
     # Merges another cart into this one through the swappable merge strategy

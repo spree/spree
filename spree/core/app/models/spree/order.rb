@@ -226,11 +226,6 @@ module Spree
     # @deprecated legacy writer — removed in 6.1
     alias shipments_attributes= fulfillments_attributes=
 
-    # Needs to happen before save_permalink is called
-    before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
-
-    attr_accessor :skip_market_resolution
-
     before_create :link_by_email
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
 
