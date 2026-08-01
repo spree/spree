@@ -14,7 +14,6 @@ module Spree
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
-    include Spree::Fulfillment::Webhooks
     include Spree::Fulfillment::CustomEvents
 
     publishes_lifecycle_events
@@ -115,7 +114,7 @@ module Spree
         transition from: %i(ready ready_for_pickup canceled), to: :fulfilled, if: ->(fulfillment) { fulfillment.provider.can_fulfill?(fulfillment) }
       end
       after_transition to: :ready, do: :publish_fulfillment_ready_event
-      after_transition to: :fulfilled, do: [:after_fulfill, :send_fulfillment_fulfilled_webhook, :publish_fulfillment_fulfilled_event]
+      after_transition to: :fulfilled, do: [:after_fulfill, :publish_fulfillment_fulfilled_event]
 
       event :cancel do
         transition to: :canceled, from: %i(pending ready ready_for_pickup)

@@ -29,7 +29,6 @@ module Spree
     include Spree::MetafieldFilterable
     include Spree::Metadata
     include Spree::Searchable
-    include Spree::Product::Webhooks
     include Spree::Product::Slugs
     include Spree::Product::Channels
     include Spree::SearchIndexable
@@ -346,17 +345,17 @@ module Spree
       event :activate do
         transition to: :active
       end
-      after_transition to: :active, do: [:after_activate, :send_product_activated_webhook, :publish_product_activated_event]
+      after_transition to: :active, do: [:after_activate, :publish_product_activated_event]
 
       event :archive do
         transition to: :archived
       end
-      after_transition to: :archived, do: [:after_archive, :send_product_archived_webhook, :publish_product_archived_event]
+      after_transition to: :archived, do: [:after_archive, :publish_product_archived_event]
 
       event :draft do
         transition to: :draft
       end
-      after_transition to: :draft, do: [:after_draft, :send_product_drafted_webhook]
+      after_transition to: :draft, do: :after_draft
     end
 
     def self.bulk_auto_match_collections(store, product_ids)

@@ -15,7 +15,6 @@ module Spree
     extend Spree::DisplayMoney
 
     include Spree::Payment::Processing
-    include Spree::Payment::Webhooks
     include Spree::Payment::CustomEvents
 
     publishes_lifecycle_events
@@ -126,11 +125,11 @@ module Spree
       event :complete do
         transition from: [:processing, :pending, :checkout], to: :completed
       end
-      after_transition to: :completed, do: [:after_completed, :send_payment_completed_webhook, :publish_payment_completed_event]
+      after_transition to: :completed, do: [:after_completed, :publish_payment_completed_event]
       event :void do
         transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
-      after_transition to: :void, do: [:after_void, :send_payment_voided_webhook, :publish_payment_voided_event]
+      after_transition to: :void, do: [:after_void, :publish_payment_voided_event]
       # when the card brand isn't supported
       event :invalidate do
         transition from: [:checkout], to: :invalid

@@ -586,7 +586,6 @@ require 'spree/service_module'
 require 'spree/workflow'
 require 'spree/analytics'
 require 'spree/events'
-require 'spree/webhooks'
 
 require 'spree/core/partials'
 require 'spree/core/controller_helpers/auth'

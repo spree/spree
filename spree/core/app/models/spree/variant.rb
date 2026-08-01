@@ -9,7 +9,6 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
     include Spree::Searchable
-    include Spree::Variant::Webhooks
 
     publishes_lifecycle_events
 
