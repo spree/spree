@@ -707,10 +707,10 @@ describe Spree::Order, type: :model do
       end
 
       it 'does not persist other changes to the order' do
-        order.special_instructions = 'unpersisted change'
+        order.customer_note = 'unpersisted change'
         order.associate_user!(user)
         order.reload
-        expect(order.special_instructions).to be_blank
+        expect(order.customer_note).to be_blank
       end
 
       it 'does not change any other orders' do

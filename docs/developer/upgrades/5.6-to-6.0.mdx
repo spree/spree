@@ -89,6 +89,14 @@ bundle exec rake spree:migrate_taxons_to_categories_and_collections
 
 Taxons become `Spree::Category` (hierarchy) and automatic taxons become `Spree::Collection` (flat, rule-based). `Spree::Taxon` remains as an alias for one release.
 
+### Backfill order coupon codes
+
+```bash
+bundle exec rake spree:backfill_order_coupon_codes
+```
+
+`spree_orders` gains a `coupon_code` column (parity with carts). Historical placed orders applied coupons only through the promotion join tables — this fills the column from the attached coupon-code record (or the applied single-code promotion) so admin filtering and the serializer answer consistently for old orders.
+
 ### Markets on orders
 
 ```bash
@@ -213,6 +221,8 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `Order#finalize!` | `Spree.order_complete_workflow` |
 | `Order#updater`, `Spree::OrderUpdater`, `Spree::CartUpdater` | `#recalculate_totals!` / `#update_statuses!` |
 | `Order#shipping_discount` | `#fulfillment_discount` |
+| `Order#special_instructions` | `#customer_note` (column renamed) |
+| `Order#promo_total`, `#item_count`, `#ship_total` | `#discount_total`, `#total_quantity`, `#delivery_total` (columns renamed) |
 | `use_billing` / `clone_billing_address` | `use_shipping` (shipping address is canonical) |
 | `Fulfillment#ship`, `#ship!`, `#shipped?`, `#can_ship?`, `#shipping_method`, `#add_shipping_method` | `#fulfill`, `#fulfill!`, `#fulfilled?`, `#can_fulfill?`, `#delivery_method`, `#add_delivery_method` |
 | `LineItem#target_shipment` | `#target_fulfillment` |

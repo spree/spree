@@ -124,7 +124,7 @@ module Spree
           format_date(line_item.order.fulfillments.first&.fulfilled_at),
           index.zero? ? format_date(order.canceled_at) : nil,
           index.zero? ? order.canceler&.email : nil,
-          index.zero? ? order.special_instructions : nil
+          index.zero? ? order.customer_note : nil
         ]
 
         if index.zero?

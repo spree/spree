@@ -56,15 +56,9 @@ module Spree
     alias_method :user, :customer
     alias_method :user=, :customer=
     alias_attribute :user_id, :customer_id
-    # Normalizes like the legacy Order writer so lookups stay case-insensitive.
-    def coupon_code=(code)
-      normalized = begin
-        code.strip.downcase
-      rescue StandardError
-        nil
-      end
-      super(normalized)
-    end
+    # Codes are stored stripped + lowercased so lookups stay case-insensitive;
+    # normalizes also applies to finder values.
+    normalizes :coupon_code, with: ->(code) { code.to_s.strip.downcase.presence }
 
     # Pickup location choice is a preference (mirrors the admin-user
     # preference of the same name), copied to the order column at completion.

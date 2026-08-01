@@ -87,8 +87,19 @@ module Spree
     # aliases one release.
     alias_attribute :promo_total, :discount_total
     alias display_promo_total display_discount_total
-    alias_attribute :customer_note, :special_instructions
     alias_attribute :item_count, :total_quantity
+
+    # @deprecated The column is +customer_note+ since 6.0; removed in 6.1.
+    def special_instructions
+      Spree::Deprecation.warn('Spree::Order#special_instructions is deprecated and will be removed in Spree 6.1. Use #customer_note instead.')
+      customer_note
+    end
+
+    # @deprecated See {#special_instructions}; removed in 6.1.
+    def special_instructions=(value)
+      Spree::Deprecation.warn('Spree::Order#special_instructions= is deprecated and will be removed in Spree 6.1. Use #customer_note= instead.')
+      self.customer_note = value
+    end
 
     MONEY_THRESHOLD  = 100_000_000
     MONEY_VALIDATION = {
@@ -720,14 +731,7 @@ module Spree
       )
     end
 
-    def coupon_code=(code)
-      normalized = begin
-        code.strip.downcase
-      rescue StandardError
-        nil
-      end
-      super(normalized)
-    end
+    normalizes :coupon_code, with: ->(code) { code.to_s.strip.downcase.presence }
 
     def can_add_coupon?
       Spree::Deprecation.warn('Spree::Order#can_add_coupon? is deprecated and will be removed in Spree 6.1. Use Spree::Promotion.order_activatable? instead.')

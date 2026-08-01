@@ -224,7 +224,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
         type: :object,
         properties: {
           email: { type: :string },
-          special_instructions: { type: :string },
+          customer_note: { type: :string },
           internal_note: { type: :string },
           channel_id: { type: :string, description: 'Channel ID' },
           preferred_stock_location_id: {
