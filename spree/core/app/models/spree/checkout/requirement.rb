@@ -10,8 +10,8 @@ module Spree
     #     step: :payment,
     #     field: :po_number,
     #     message: 'PO number is required for business accounts',
-    #     satisfied: ->(order) { order.po_number.present? },
-    #     applicable: ->(order) { order.account&.business? }
+    #     satisfied: ->(cart) { cart.po_number.present? },
+    #     applicable: ->(cart) { cart.account&.business? }
     #   )
     class Requirement
       # @return [String] checkout step this requirement belongs to
@@ -26,8 +26,8 @@ module Spree
       # @param step [String, Symbol] checkout step this requirement belongs to
       # @param field [String, Symbol] field identifier
       # @param message [String] human-readable validation message
-      # @param satisfied [Proc] lambda accepting an order, returns true when met
-      # @param applicable [Proc] lambda accepting an order, returns true when this requirement applies
+      # @param satisfied [Proc] lambda accepting a cart, returns true when met
+      # @param applicable [Proc] lambda accepting a cart, returns true when this requirement applies
       #   (defaults to always applicable)
       def initialize(step:, field:, message:, satisfied:, applicable: ->(_) { true })
         @step = step.to_s
@@ -37,13 +37,13 @@ module Spree
         @applicable_proc = applicable
       end
 
-      # @param order [Spree::Order]
+      # @param cart [Spree::Cart]
       # @return [Boolean] whether the requirement has been met
-      def satisfied?(order) = @satisfied_proc.call(order)
+      def satisfied?(cart) = @satisfied_proc.call(cart)
 
-      # @param order [Spree::Order]
-      # @return [Boolean] whether this requirement applies to the given order
-      def applicable?(order) = @applicable_proc.call(order)
+      # @param cart [Spree::Cart]
+      # @return [Boolean] whether this requirement applies to the given cart
+      def applicable?(cart) = @applicable_proc.call(cart)
     end
   end
 end

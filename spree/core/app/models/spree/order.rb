@@ -23,14 +23,13 @@ module Spree
     include Spree::Purchase::Market
     include Spree::Purchase::Currency
     include Spree::Purchase::Locale
-    include Spree::Purchase::CheckoutSteps
     include Spree::Purchase::DigitalItems
     include Spree::Purchase::Taxation
     include Spree::Purchase::StoreCredits
     include Spree::Purchase::GiftCards
     include Spree::Purchase::LineItemCurrencies
     include Spree::Purchase::PaymentProcessing
-    include Spree::Order::AddressBook
+    include Spree::Purchase::AddressBook
     include Spree::Core::NumberGenerator.new(prefix: 'R')
 
     include Spree::NumberIdentifier
@@ -384,6 +383,8 @@ module Spree
     end
 
     # Total fulfillment discount applied by promotions, as a positive amount.
+    #
+    # @return [BigDecimal]
     def fulfillment_discount
       discounts.for_fulfillments.sum(:amount) * -1
     end
@@ -742,11 +743,6 @@ module Spree
     def use_all_coupon_codes
       Spree::CouponCodes::CouponCodesHandler.new(order: self).use_all_codes
     end
-
-    def has_step?(step)
-      checkout_steps.include?(step)
-    end
-
 
     def log_state_changes(state_name:, old_state:, new_state:)
       state_changes.create(

@@ -27,6 +27,7 @@ module Spree
     include Spree::Purchase::GiftCards
     include Spree::Purchase::LineItemCurrencies
     include Spree::Purchase::PaymentProcessing
+    include Spree::Purchase::AddressBook
 
     # Concurrency is manual (the API's OrderLock semantics — compare
     # client-sent version, 409 on mismatch); Rails auto-locking must not
@@ -123,7 +124,6 @@ module Spree
     alias items line_items
 
     accepts_nested_attributes_for :line_items
-    accepts_nested_attributes_for :ship_address, :bill_address
     accepts_nested_attributes_for :payments
     alias_method :shipping_address_attributes=, :ship_address_attributes=
     alias_method :billing_address_attributes=, :bill_address_attributes=
@@ -169,6 +169,8 @@ module Spree
 
     # Mirrors Order#can_be_deleted? — a completed cart is an immutable audit
     # record, and settled money must never be deleted.
+    #
+    # @return [Boolean]
     def can_be_deleted?
       !completed? && payments.completed.empty?
     end
@@ -203,6 +205,8 @@ module Spree
     end
 
     # Total fulfillment discount applied by promotions, as a positive amount.
+    #
+    # @return [BigDecimal]
     def fulfillment_discount
       discounts.for_fulfillments.sum(:amount) * -1
     end
@@ -354,12 +358,5 @@ module Spree
       cart
     end
 
-    private
-
-    # Same-object copy as Spree::Order — the two FKs share one address row.
-    def clone_shipping_address
-      self.bill_address = ship_address if ship_address
-      true
-    end
   end
 end

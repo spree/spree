@@ -13,8 +13,8 @@ module Spree
     #   Spree::Checkout::Registry.register_step(
     #     name: :loyalty,
     #     before: :payment,
-    #     satisfied: ->(order) { order.loyalty_verified? },
-    #     requirements: ->(order) { [{ step: 'loyalty', field: 'loyalty_number', message: 'Required' }] }
+    #     satisfied: ->(cart) { cart.loyalty_verified? },
+    #     requirements: ->(cart) { [{ step: 'loyalty', field: 'loyalty_number', message: 'Required' }] }
     #   )
     #
     # @example Add a requirement to an existing step
@@ -22,7 +22,7 @@ module Spree
     #     step: :payment,
     #     field: :po_number,
     #     message: 'PO number is required',
-    #     satisfied: ->(order) { order.po_number.present? }
+    #     satisfied: ->(cart) { cart.po_number.present? }
     #   )
     #
     # @example Remove a step
@@ -32,8 +32,8 @@ module Spree
         # Register a new custom checkout step.
         #
         # @param name [String, Symbol] unique step identifier
-        # @param satisfied [Proc] lambda accepting an order, returns true when step is complete
-        # @param requirements [Proc] lambda accepting an order, returns Array of requirement hashes
+        # @param satisfied [Proc] lambda accepting a cart, returns true when step is complete
+        # @param requirements [Proc] lambda accepting a cart, returns Array of requirement hashes
         # @param options [Hash] additional options forwarded to {Step} (+:before+, +:after+, +:applicable+)
         # @return [Array<Step>] the updated steps list
         def register_step(name:, satisfied:, requirements:, **options)
@@ -45,7 +45,7 @@ module Spree
         # @param step [String, Symbol] checkout step this requirement belongs to
         # @param field [String, Symbol] field identifier
         # @param message [String] human-readable validation message
-        # @param satisfied [Proc] lambda accepting an order, returns true when met
+        # @param satisfied [Proc] lambda accepting a cart, returns true when met
         # @param options [Hash] additional options forwarded to {Requirement} (+:applicable+)
         # @return [Array<Requirement>] the updated requirements list
         def add_requirement(step:, field:, message:, satisfied:, **options)

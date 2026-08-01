@@ -21,6 +21,22 @@ module Spree
         payments.pending
       end
 
+      # Free checkouts have no money to collect.
+      #
+      # @return [Boolean]
+      def payment_required?
+        total.to_f > 0.0
+      end
+
+      # Whether a confirm/review pass is expected before completion —
+      # computed from data only.
+      #
+      # @return [Boolean]
+      def confirmation_required?
+        Spree::Config[:always_include_confirm_step] ||
+          payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?)
+      end
+
       def unprocessed_payments
         payments.select(&:checkout?)
       end

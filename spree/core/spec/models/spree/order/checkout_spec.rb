@@ -7,61 +7,6 @@ describe Spree::Order, type: :model do
   let(:accept_marketing) { false }
   let!(:state) { country.states.first || create(:state, country: country, name: 'New York', abbr: 'NY') }
 
-  describe '#checkout_steps' do
-    context 'when confirmation not required' do
-      before do
-        allow(order).to receive_messages confirmation_required?: false
-        allow(order).to receive_messages payment_required?: true
-      end
-
-      specify do
-        expect(order.checkout_steps).to eq(%w(address delivery payment complete))
-      end
-    end
-
-    context 'when confirmation required' do
-      before do
-        allow(order).to receive_messages confirmation_required?: true
-        allow(order).to receive_messages payment_required?: true
-      end
-
-      specify do
-        expect(order.checkout_steps).to eq(%w(address delivery payment confirm complete))
-      end
-    end
-
-    context 'when delivery not required' do
-      before { allow(order).to receive_messages delivery_required?: false }
-
-      specify do
-        expect(order.checkout_steps).to eq(%w(address complete))
-      end
-    end
-
-    context 'when payment not required' do
-      before { allow(order).to receive_messages payment_required?: false }
-
-      specify do
-        expect(order.checkout_steps).to eq(%w(address delivery complete))
-      end
-    end
-
-    context 'when payment required' do
-      before { allow(order).to receive_messages payment_required?: true }
-
-      specify do
-        expect(order.checkout_steps).to eq(%w(address delivery payment complete))
-      end
-    end
-  end
-
-  describe '#checkout_step_index' do
-    it 'always returns an integer' do
-      expect(order.checkout_step_index('imnotthere')).to be_a Integer
-      expect(order.checkout_step_index('delivery')).to be > 0
-    end
-  end
-
   describe '#assign_default_addresses!' do
     let(:default_address) { create(:address, state: state) }
     let(:order) { create(:order, store: store, ship_address: nil, bill_address: nil, user: user) }

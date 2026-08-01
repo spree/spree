@@ -1,10 +1,11 @@
 module Spree
   module Purchase
-    # Data-driven checkout-step introspection shared by Spree::Cart and
-    # Spree::Order — computed from what the record actually requires
-    # (Spree::Checkout::Requirements), never from a state column. The host
-    # supplies delivery_required? (always true for orders, computed for
-    # carts).
+    # Data-driven checkout-step introspection for Spree::Cart — computed
+    # from what the cart actually requires (Spree::Checkout::Requirements),
+    # never from a state column. Cart-only: an order is past checkout by
+    # definition. The payment predicates the step list reads
+    # (payment_required?/confirmation_required?) live in
+    # {Spree::Purchase::PaymentProcessing}.
     module CheckoutSteps
       # @return [Array<String>]
       def checkout_steps
@@ -16,18 +17,22 @@ module Spree
         steps
       end
 
+      # @param step [String, Symbol]
+      # @return [Boolean]
       def has_checkout_step?(step)
         step.present? && checkout_steps.include?(step.to_s)
       end
 
+      # @param step [String]
+      # @return [Integer] position of the step, 0 when unknown
       def checkout_step_index(step)
         checkout_steps.index(step).to_i
       end
 
-      # Customer-facing checkout step. Completed/canceled records are past
-      # checkout; open ones report the first unmet requirement's step
-      # ('cart' — missing line items — is not customer-facing and reports
-      # as 'address').
+      # Customer-facing checkout step. Completed carts are past checkout;
+      # open ones report the first unmet requirement's step ('cart' —
+      # missing line items — is not customer-facing and reports as
+      # 'address').
       #
       # @return [String]
       def current_checkout_step
@@ -48,17 +53,6 @@ module Spree
 
         index = steps.index(current_checkout_step) || 0
         steps.first(index)
-      end
-
-      # Free checkouts skip the payment step.
-      def payment_required?
-        total.to_f > 0.0
-      end
-
-      # Whether the confirm/review step exists — computed from data only.
-      def confirmation_required?
-        Spree::Config[:always_include_confirm_step] ||
-          payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?)
       end
     end
   end

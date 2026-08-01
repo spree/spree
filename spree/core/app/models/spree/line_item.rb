@@ -51,7 +51,7 @@ module Spree
     validates_with Spree::Stock::AvailabilityValidator, if: -> { variant.present? }
     validate :ensure_proper_currency, if: -> { owner.present? }
 
-    before_destroy :verify_order_inventory_before_destroy, if: -> { order&.has_checkout_step?('delivery') }
+    before_destroy :verify_order_inventory_before_destroy, if: -> { order&.delivery_required? }
 
     after_save :update_inventory
     after_save :update_adjustments
@@ -336,7 +336,7 @@ module Spree
     end
 
     def update_inventory
-      if (saved_changes? || target_fulfillment.present?) && order&.has_checkout_step?('delivery')
+      if (saved_changes? || target_fulfillment.present?) && order&.delivery_required?
         verify_order_inventory
       end
     end

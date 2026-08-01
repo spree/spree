@@ -18,8 +18,10 @@ RSpec.describe 'v3 Store serializer price gating' do
   end
 
   describe Spree::Api::V3::CartSerializer do
+    let(:cart) { create(:cart_with_line_items, store: store, line_items_count: 1) }
+
     it 'nulls totals, store-credit, and nested line-item prices for gated guests' do
-      hash = serialize(described_class, hide: true)
+      hash = serialize(described_class, cart, hide: true)
 
       expect(hash['total']).to be_nil
       expect(hash['display_total']).to be_nil
@@ -33,7 +35,7 @@ RSpec.describe 'v3 Store serializer price gating' do
     end
 
     it 'serializes money fields normally when not gated' do
-      hash = serialize(described_class, hide: false)
+      hash = serialize(described_class, cart, hide: false)
 
       expect(hash['total']).to be_present
       expect(hash['items'].first['price']).to be_present

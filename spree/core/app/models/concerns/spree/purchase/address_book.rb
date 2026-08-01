@@ -1,27 +1,50 @@
 module Spree
-  class Order < Spree.base_class
+  module Purchase
+    # Address-book behavior shared by Spree::Cart and Spree::Order: fills
+    # defaults from the customer's saved addresses, deduplicates address
+    # rows on write, guards address_id assignment to the owning customer,
+    # and promotes checkout addresses to the customer's defaults.
     module AddressBook
+      # Fills any blank bill/ship address from the customer's valid saved
+      # defaults. The ship address is skipped when no physical delivery is
+      # required, so shipping-address validations never fire on digital-only
+      # purchases.
+      #
+      # @return [void]
       def assign_default_addresses!
         return unless user
 
         self.bill_address = user.bill_address if !bill_address_id && user.bill_address&.valid?
-        # Skip the ship address for orders without a delivery step to
+        # Skip the ship address for orders without physical delivery to
         # avoid triggering shipping-address validations
-        self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && checkout_steps.include?('delivery')
+        self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && delivery_required?
       end
 
+      # Copies the ship address onto the bill address and promotes it to the
+      # customer's default bill address.
+      #
+      # @return [true]
       def clone_shipping_address
         self.bill_address = ship_address if ship_address
         user.bill_address = ship_address if should_assign_user_default_address?(ship_address)
         true
       end
 
+      # Copies the bill address onto the ship address and promotes it to the
+      # customer's default ship address.
+      #
+      # @return [true]
       def clone_billing_address
         self.ship_address = bill_address if bill_address
         user.ship_address = bill_address if should_assign_user_default_address?(bill_address)
         true
       end
 
+      # Ownership-guarded writer: the id is applied only when the address
+      # belongs to the record's customer; anything else — including any id on
+      # a guest record — resolves to nil.
+      #
+      # @param id [Integer, String, nil]
       def bill_address_id=(id)
         return if bill_address_id == id
 
@@ -36,11 +59,19 @@ module Spree
         reset_bill_address
       end
 
+      # Deduplicating writer: reuses or updates an existing address row when
+      # possible, then promotes the result to the customer's default bill
+      # address.
+      #
+      # @param attributes [Hash, ActionController::Parameters]
       def bill_address_attributes=(attributes)
         self.bill_address = update_or_create_address(attributes)
         user.bill_address = bill_address if should_assign_user_default_address?(bill_address)
       end
 
+      # Ownership-guarded writer — see {#bill_address_id=}.
+      #
+      # @param id [Integer, String, nil]
       def ship_address_id=(id)
         return if ship_address_id == id
 
@@ -55,6 +86,11 @@ module Spree
         reset_ship_address
       end
 
+      # Deduplicating writer — see {#bill_address_attributes=}. Quick-checkout
+      # (wallet) addresses are never promoted to defaults, and an unpersisted
+      # quick-checkout address is discarded.
+      #
+      # @param attributes [Hash, ActionController::Parameters]
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes)
         user.ship_address = ship_address if should_assign_user_default_address?(ship_address)

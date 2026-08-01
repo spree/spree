@@ -4,6 +4,69 @@ describe Spree::Cart, type: :model do
   let(:store) { @default_store }
   let(:customer) { create(:user) }
 
+  describe '#checkout_steps' do
+    let(:cart) { build(:cart, store: store) }
+
+    before { allow(cart).to receive_messages(delivery_required?: true) }
+
+    context 'when confirmation not required' do
+      before do
+        allow(cart).to receive_messages confirmation_required?: false
+        allow(cart).to receive_messages payment_required?: true
+      end
+
+      specify do
+        expect(cart.checkout_steps).to eq(%w(address delivery payment complete))
+      end
+    end
+
+    context 'when confirmation required' do
+      before do
+        allow(cart).to receive_messages confirmation_required?: true
+        allow(cart).to receive_messages payment_required?: true
+      end
+
+      specify do
+        expect(cart.checkout_steps).to eq(%w(address delivery payment confirm complete))
+      end
+    end
+
+    context 'when delivery not required' do
+      before { allow(cart).to receive_messages delivery_required?: false }
+
+      specify do
+        expect(cart.checkout_steps).to eq(%w(address complete))
+      end
+    end
+
+    context 'when payment not required' do
+      before { allow(cart).to receive_messages payment_required?: false }
+
+      specify do
+        expect(cart.checkout_steps).to eq(%w(address delivery complete))
+      end
+    end
+
+    context 'when payment required' do
+      before { allow(cart).to receive_messages payment_required?: true }
+
+      specify do
+        expect(cart.checkout_steps).to eq(%w(address delivery payment complete))
+      end
+    end
+  end
+
+  describe '#checkout_step_index' do
+    let(:cart) { build(:cart, store: store) }
+
+    before { allow(cart).to receive_messages(delivery_required?: true) }
+
+    it 'always returns an integer' do
+      expect(cart.checkout_step_index('imnotthere')).to be_a Integer
+      expect(cart.checkout_step_index('delivery')).to be > 0
+    end
+  end
+
   describe 'lifecycle events' do
     it 'publishes cart.* lifecycle events' do
       expect(described_class.lifecycle_events_enabled).to be true
@@ -151,6 +214,336 @@ describe Spree::Cart, type: :model do
       it 'does nothing' do
         cart.remove_out_of_stock_items!
         expect(cart.warnings).to eq([])
+      end
+    end
+  end
+
+  describe '#coupon_code=' do
+    it 'normalizes to a stripped, lowercased code' do
+      expect(build(:cart, coupon_code: '  SAVE10  ').read_attribute(:coupon_code)).to eq('save10')
+    end
+
+    it 'tolerates nil' do
+      expect(build(:cart, coupon_code: nil).read_attribute(:coupon_code)).to be_nil
+    end
+  end
+
+  describe '#number' do
+    it 'mirrors the prefixed id (deprecated API bridge)' do
+      cart = create(:cart, store: store)
+
+      expect(cart.number).to eq(cart.prefixed_id)
+    end
+  end
+
+  describe '#preferred_stock_location_id=' do
+    let(:cart) { create(:cart, store: store) }
+    let(:pickup_location) { create(:stock_location, pickup_enabled: true) }
+
+    it 'accepts a raw id of a pickup-enabled location' do
+      cart.preferred_stock_location_id = pickup_location.id
+
+      expect(cart.preferred_stock_location_id).to eq(pickup_location.id)
+      expect(cart.preferred_stock_location).to eq(pickup_location)
+    end
+
+    it 'accepts a prefixed id' do
+      cart.preferred_stock_location_id = pickup_location.prefixed_id
+
+      expect(cart.preferred_stock_location_id).to eq(pickup_location.id)
+    end
+
+    it 'clears the preference on blank' do
+      cart.preferred_stock_location_id = pickup_location.id
+      cart.preferred_stock_location_id = ''
+
+      expect(cart.preferred_stock_location_id).to be_nil
+    end
+
+    it 'rejects a location that is not pickup-enabled' do
+      not_pickup = create(:stock_location, pickup_enabled: false)
+
+      expect { cart.preferred_stock_location_id = not_pickup.id }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe '#can_be_deleted?' do
+    it 'is true for an open cart without settled payments' do
+      expect(build(:cart)).to be_can_be_deleted
+    end
+
+    it 'is false once completed' do
+      expect(build(:cart, completed_at: Time.current)).not_to be_can_be_deleted
+    end
+
+    it 'is false with a completed payment' do
+      cart = create(:cart_with_line_items, store: store)
+      create(:payment, cart: cart, order: nil, state: 'completed', amount: cart.total)
+
+      expect(cart.reload).not_to be_can_be_deleted
+    end
+  end
+
+  describe '#in_checkout?' do
+    it 'begins once checkout-only data appears and ends at completion' do
+      expect(build(:cart)).not_to be_in_checkout
+      expect(build(:cart, email: 'buyer@example.com')).to be_in_checkout
+      expect(build(:cart, ship_address: create(:address))).to be_in_checkout
+      expect(build(:cart, email: 'buyer@example.com', completed_at: Time.current)).not_to be_in_checkout
+    end
+  end
+
+  describe '#recalculate_totals!' do
+    it 'runs the configured totals workflow on itself' do
+      cart = create(:cart, store: store)
+
+      expect(Spree.cart_recalculate_totals_workflow).to receive(:call).with(cart: cart)
+      cart.recalculate_totals!
+    end
+  end
+
+  describe '#shipping_eq_billing_address?' do
+    it 'compares the two addresses' do
+      address = create(:address)
+      expect(build(:cart, ship_address: address, bill_address: address).shipping_eq_billing_address?).to be(true)
+      expect(build(:cart, ship_address: address, bill_address: create(:address)).shipping_eq_billing_address?).to be(false)
+    end
+  end
+
+  describe '#use_shipping?' do
+    it 'accepts the truthy form values' do
+      expect(build(:cart, use_shipping: true).use_shipping?).to be(true)
+      expect(build(:cart, use_shipping: 'true').use_shipping?).to be(true)
+      expect(build(:cart, use_shipping: '1').use_shipping?).to be(true)
+      expect(build(:cart, use_shipping: false).use_shipping?).to be(false)
+      expect(build(:cart).use_shipping?).to be(false)
+    end
+  end
+
+  describe '#quantity' do
+    it 'sums line item quantities' do
+      cart = create(:cart_with_line_items, line_items_count: 2)
+      cart.line_items.first.update_column(:quantity, 3)
+
+      expect(cart.quantity).to eq(4)
+    end
+  end
+
+  describe 'money readers' do
+    let(:cart) { build(:cart, total: 100, payment_total: 40) }
+
+    it '#outstanding_balance is total minus payment_total' do
+      expect(cart.outstanding_balance).to eq(60)
+    end
+
+    it '#outstanding_balance? reflects a non-zero balance' do
+      expect(cart.outstanding_balance?).to be(true)
+      expect(build(:cart, total: 40, payment_total: 40).outstanding_balance?).to be(false)
+    end
+
+    it '#paid? requires a positive total fully covered by payments' do
+      expect(build(:cart, total: 100, payment_total: 100)).to be_paid
+      expect(build(:cart, total: 100, payment_total: 40)).not_to be_paid
+      expect(build(:cart, total: 0, payment_total: 0)).not_to be_paid
+    end
+
+    it '#amount_due nets applied store credit and never goes negative' do
+      allow(cart).to receive(:total_applied_store_credit).and_return(70)
+
+      expect(cart.amount_due).to eq(0)
+
+      allow(cart).to receive(:total_applied_store_credit).and_return(10)
+      expect(cart.amount_due).to eq(50)
+    end
+  end
+
+  describe '#fulfillment_discount' do
+    it 'sums fulfillment-attached discounts as a positive amount' do
+      cart = create(:cart_with_line_items, store: store)
+      fulfillment = create(:fulfillment, cart: cart, order: nil)
+      create(:discount, order: nil, cart: cart, line_item: nil, fulfillment: fulfillment, amount: -4, kind: 'promotion')
+
+      expect(cart.fulfillment_discount).to eq(4)
+    end
+  end
+
+  describe '#delivery_required?' do
+    it 'is false for an empty cart and true with physical items' do
+      expect(build(:cart)).not_to be_delivery_required
+      expect(create(:cart_with_line_items)).to be_delivery_required
+    end
+
+    it 'is false for a digital-only cart' do
+      cart = create(:cart_with_line_items)
+      allow(cart).to receive(:digital?).and_return(true)
+
+      expect(cart).not_to be_delivery_required
+    end
+  end
+
+  describe '#backordered?' do
+    let(:cart) { create(:cart_with_line_items, store: store) }
+    let!(:fulfillment) { create(:fulfillment, cart: cart, order: nil) }
+
+    it 'reflects backordered fulfillment items' do
+      expect(cart.reload).not_to be_backordered
+
+      fulfillment.fulfillment_items.update_all(status: 'backordered')
+      expect(Spree::Cart.find(cart.id)).to be_backordered
+    end
+  end
+
+  describe '#guest_checkout_disallowed?' do
+    it 'never blocks a signed-in customer' do
+      expect(build(:cart, customer: create(:user)).guest_checkout_disallowed?).to be(false)
+    end
+
+    it 'follows the channel guest-checkout flag for guests' do
+      cart = create(:cart, store: store, customer: nil)
+
+      allow(cart.channel).to receive(:guest_checkout_enabled?).and_return(false)
+      expect(cart.guest_checkout_disallowed?).to be(true)
+
+      allow(cart.channel).to receive(:guest_checkout_enabled?).and_return(true)
+      expect(cart.guest_checkout_disallowed?).to be(false)
+    end
+  end
+
+  describe '#payment_methods' do
+    let(:cart) { create(:cart, store: store) }
+
+    it 'lists active front-end methods available for this cart' do
+      available = create(:credit_card_payment_method, store: store)
+      inactive = create(:credit_card_payment_method, store: store, active: false)
+
+      expect(cart.payment_methods).to include(available)
+      expect(cart.payment_methods).not_to include(inactive)
+      expect(cart.collect_frontend_payment_methods).to eq(cart.payment_methods)
+    end
+  end
+
+  describe '#associate_user!' do
+    let(:cart) { create(:cart, store: store, customer: nil, email: nil) }
+    let(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }
+
+    it 'binds the user, takes the email and copies valid default addresses' do
+      cart.associate_user!(user)
+
+      expect(cart.reload.customer).to eq(user)
+      expect(cart.email).to eq(user.email)
+      expect(cart.bill_address_id).to eq(user.bill_address_id)
+    end
+
+    it 'keeps an existing email when override is disabled' do
+      cart.update!(email: 'original@example.com')
+
+      cart.associate_user!(user, false)
+
+      expect(cart.reload.email).to eq('original@example.com')
+    end
+  end
+
+  describe '#merge!' do
+    it 'runs the configured merge strategy and reloads' do
+      cart = create(:cart, store: store)
+      other_cart = create(:cart, store: store)
+      strategy = class_double(Spree::Carts::Merge).as_stubbed_const
+
+      expect(strategy).to receive(:call).with(cart: cart, other_cart: other_cart, user: nil)
+      allow(Spree::Dependencies).to receive(:cart_merge_strategy).and_return('Spree::Carts::Merge')
+
+      cart.merge!(other_cart)
+    end
+  end
+
+  describe 'delivery proposals' do
+    let(:country) { @default_country }
+    let(:state) { country.states.first || create(:state, country: country) }
+    let!(:zone) { create(:zone) }
+    let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
+    let!(:shipping_method) do
+      create(:shipping_method).tap do |method|
+        method.calculator.preferred_amount = 5
+        method.calculator.save
+      end
+    end
+    let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
+    let(:ship_address) { create(:address, country: country, state: state) }
+    let(:cart) { create(:cart_with_line_items, store: store, ship_address: ship_address, email: 'buyer@example.com') }
+
+    describe '#rebuild_fulfillments!' do
+      it 'builds cart-owned proposals from the current items and address' do
+        cart.rebuild_fulfillments!
+
+        expect(cart.fulfillments).to be_present
+        expect(cart.fulfillments.map(&:order_id).uniq).to eq([nil])
+        expect(cart.fulfillments.first.address_id).to eq(ship_address.id)
+        expect(cart.fulfillments.first.delivery_rates).to be_present
+      end
+
+      it 'is idempotent and never touches a completed cart' do
+        cart.rebuild_fulfillments!
+        expect { cart.rebuild_fulfillments! }.not_to change { cart.fulfillments.count }
+
+        cart.update_columns(completed_at: Time.current)
+        expect(Spree::Cart.find(cart.id).rebuild_fulfillments!).to be_nil
+      end
+    end
+
+    describe '#prune_undeliverable_fulfillments!' do
+      it 'drops proposals with no delivery rates and records a warning per line item' do
+        cart.rebuild_fulfillments!
+        cart.fulfillments.each { |fulfillment| fulfillment.delivery_rates.delete_all }
+
+        cart.prune_undeliverable_fulfillments!
+
+        expect(cart.fulfillments.reload).to be_empty
+        expect(cart.warnings.map { |warning| warning[:code] }).to include('delivery_unavailable')
+      end
+    end
+
+    describe '#ensure_available_shipping_rates' do
+      it 'errors when there are no deliverable proposals' do
+        expect(cart.ensure_available_shipping_rates).to be(false)
+        expect(cart.errors[:base]).to be_present
+
+        cart.errors.clear
+        cart.rebuild_fulfillments!
+        expect(cart.ensure_available_shipping_rates).to be(true)
+      end
+    end
+
+    describe '#set_fulfillments_cost' do
+      it 'persists the delivery total and grand total from fulfillment costs' do
+        cart.rebuild_fulfillments!
+        cart.recalculate_totals!
+
+        cart.set_fulfillments_cost
+
+        expect(cart.reload.delivery_total).to eq(cart.fulfillments.sum(&:cost))
+        expect(cart.total).to eq(cart.item_total + cart.delivery_total + cart.adjustment_total)
+      end
+    end
+
+    describe '#ensure_updated_fulfillments' do
+      it 'rebuilds for open carts and skips completed ones' do
+        expect(cart).to receive(:rebuild_fulfillments!)
+        cart.ensure_updated_fulfillments
+
+        cart.update_columns(completed_at: Time.current)
+        completed = Spree::Cart.find(cart.id)
+        expect(completed).not_to receive(:rebuild_fulfillments!)
+        completed.ensure_updated_fulfillments
+      end
+    end
+
+    describe '#recalculate_for_address_change!' do
+      it 'reprices items, rebuilds proposals and recalculates totals' do
+        cart.recalculate_for_address_change!
+
+        expect(cart.fulfillments.reload).to be_present
+        expect(cart.reload.delivery_total).to be > 0
+        expect(cart.total).to eq(cart.item_total + cart.delivery_total + cart.adjustment_total)
       end
     end
   end

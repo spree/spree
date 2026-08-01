@@ -1,6 +1,6 @@
 module Spree
   module Checkout
-    # Aggregates all checkout requirements for an order.
+    # Aggregates all checkout requirements for a cart.
     #
     # Combines built-in checks from {DefaultRequirements} with custom steps and
     # requirements registered in {Registry}. The resulting array of hashes is
@@ -10,13 +10,13 @@ module Spree
     #   { step: String, field: String, message: String }
     #
     # @example
-    #   reqs = Spree::Checkout::Requirements.new(order)
+    #   reqs = Spree::Checkout::Requirements.new(cart)
     #   reqs.call  # => [{ step: "address", field: "email", message: "Email address is required" }]
     #   reqs.met?  # => false
     class Requirements
-      # @param order [Spree::Order]
-      def initialize(order)
-        @order = order
+      # @param cart [Spree::Cart]
+      def initialize(cart)
+        @cart = cart
       end
 
       # @return [Array<Hash{Symbol => String}>] all unmet requirements
@@ -33,22 +33,22 @@ module Spree
 
       # @return [Array<Hash>] built-in checkout requirements
       def default
-        DefaultRequirements.new(@order).call
+        DefaultRequirements.new(@cart).call
       end
 
       # @return [Array<Hash>] requirements from unsatisfied registered steps
       def from_registered_steps
         Registry.ordered_steps
-          .select { |s| s.applicable?(@order) }
-          .reject { |s| s.satisfied?(@order) }
-          .flat_map { |s| s.requirements(@order) }
+          .select { |s| s.applicable?(@cart) }
+          .reject { |s| s.satisfied?(@cart) }
+          .flat_map { |s| s.requirements(@cart) }
       end
 
       # @return [Array<Hash>] requirements from unsatisfied registered requirements
       def from_additional_requirements
         Registry.requirements
-          .select { |r| r.applicable?(@order) }
-          .reject { |r| r.satisfied?(@order) }
+          .select { |r| r.applicable?(@cart) }
+          .reject { |r| r.satisfied?(@cart) }
           .map { |r| { step: r.step, field: r.field, message: r.message } }
       end
     end
