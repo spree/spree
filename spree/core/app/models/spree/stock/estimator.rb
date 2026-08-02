@@ -68,6 +68,7 @@ module Spree
 
           ship_method.available_to_display?(display_filter) &&
             ship_method.include?(order.ship_address) &&
+            ship_method.serves_location?(package.stock_location) &&
             ship_method.eligible_for_package?(package) &&
             calculator.available?(package) &&
             (calculator.preferences[:currency].blank? ||

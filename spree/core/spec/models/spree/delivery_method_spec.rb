@@ -35,14 +35,75 @@ describe Spree::DeliveryMethod, type: :model do
     end
   end
 
-  describe '#requires_zone_check?' do
-    it 'returns true if the shipping method is not digital' do
-      expect(delivery_method.requires_zone_check?).to be_truthy
+  describe '#requires_address? / #requires_zone_check?' do
+    it 'is true for shipping methods' do
+      expect(delivery_method.requires_address?).to be true
+      expect(delivery_method.requires_zone_check?).to be true
     end
 
-    it 'returns false if the shipping method is digital' do
-      delivery_method = create(:digital_delivery_method)
-      expect(delivery_method.requires_zone_check?).to be_falsey
+    it 'is decided by the fulfillment provider, not the fulfillment type' do
+      [
+        ['digital', 'Spree::FulfillmentProvider::Digital'],
+        ['pickup', 'Spree::FulfillmentProvider::Pickup'],
+        ['pickup_point', 'Spree::FulfillmentProvider::PickupPoint']
+      ].each do |fulfillment_type, provider|
+        method = create(:delivery_method, fulfillment_type: fulfillment_type, fulfillment_provider: provider)
+
+        expect(method.requires_address?).to be false
+        expect(method.requires_zone_check?).to be false
+      end
+    end
+
+    it 'is true for the Manual provider whatever the fulfillment type' do
+      method = create(:delivery_method, fulfillment_type: 'pickup')
+
+      expect(method.fulfillment_provider).to eq('Spree::FulfillmentProvider::Manual')
+      expect(method.requires_address?).to be true
+    end
+  end
+
+  describe '#serves_location?' do
+    let(:warehouse) { create(:stock_location) }
+    let(:counter) { create(:stock_location, pickup_enabled: true) }
+
+    it 'is true for shipping methods regardless of location' do
+      expect(delivery_method.serves_location?(warehouse)).to be true
+    end
+
+    context 'for a pickup method' do
+      let(:pickup_method) { create(:pickup_delivery_method) }
+
+      it 'accepts a package sourced from a pickup-enabled location' do
+        expect(pickup_method.serves_location?(counter)).to be true
+      end
+
+      it 'rejects a package sourced from a plain warehouse' do
+        expect(pickup_method.serves_location?(warehouse)).to be false
+      end
+
+      it 'rejects a nil location' do
+        expect(pickup_method.serves_location?(nil)).to be false
+      end
+
+      it 'respects the configured pickup-location set' do
+        other_counter = create(:stock_location, pickup_enabled: true)
+        pickup_method.pickup_locations << other_counter
+
+        expect(pickup_method.serves_location?(counter)).to be false
+        expect(pickup_method.serves_location?(other_counter)).to be true
+      end
+
+      it 'accepts any source when an eligible counter takes remote stock (ship-to-store)' do
+        counter.update!(pickup_stock_policy: 'any')
+
+        expect(pickup_method.serves_location?(warehouse)).to be true
+      end
+
+      it 'ignores inactive counters' do
+        counter.update!(active: false)
+
+        expect(pickup_method.serves_location?(counter)).to be false
+      end
     end
   end
 

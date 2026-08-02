@@ -80,8 +80,10 @@ module Spree
       end
     end
 
+    # Zones describe the customer's destination address, so only methods
+    # that deliver to one are zone-checked.
     def requires_zone_check?
-      !digital? && !pickup?
+      requires_address?
     end
 
     def build_tracking_url(tracking)
@@ -118,8 +120,18 @@ module Spree
       fulfillment_type == 'pickup_point'
     end
 
+    # Whether this method delivers to a customer shipping address —
+    # answered by the fulfillment provider (digital and the pickup kinds
+    # are address-free; custom providers default to requiring one).
     def requires_address?
-      !digital? && !pickup?
+      provider.requires_address?
+    end
+
+    # Whether this method can serve a package sourced from the given stock
+    # location — answered by the fulfillment provider (shipping/digital are
+    # location-agnostic; merchant pickup requires an eligible counter).
+    def serves_location?(stock_location)
+      provider.serves_location?(self, stock_location)
     end
 
     # The FulfillmentProvider strategy handling this method's fulfillments.
