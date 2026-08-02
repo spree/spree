@@ -70,6 +70,8 @@ module Spree
         # v3 event serializers (for models without Store API endpoints yet)
         asset_serializer: 'Spree::Api::V3::AssetSerializer',
         customer_return_serializer: 'Spree::Api::V3::CustomerReturnSerializer',
+        return_serializer: 'Spree::Api::V3::ReturnSerializer',
+        return_line_item_serializer: 'Spree::Api::V3::ReturnLineItemSerializer',
         digital_serializer: 'Spree::Api::V3::DigitalSerializer',
         export_serializer: 'Spree::Api::V3::ExportSerializer',
         gift_card_batch_serializer: 'Spree::Api::V3::GiftCardBatchSerializer',
@@ -124,6 +126,8 @@ module Spree
         admin_gift_card_batch_serializer: 'Spree::Api::V3::Admin::GiftCardBatchSerializer',
         admin_payment_serializer: 'Spree::Api::V3::Admin::PaymentSerializer',
         admin_refund_serializer: 'Spree::Api::V3::Admin::RefundSerializer',
+        admin_return_serializer: 'Spree::Api::V3::Admin::ReturnSerializer',
+        admin_return_line_item_serializer: 'Spree::Api::V3::Admin::ReturnLineItemSerializer',
         admin_shipping_category_serializer: 'Spree::Api::V3::Admin::ShippingCategorySerializer',
         admin_tax_category_serializer: 'Spree::Api::V3::Admin::TaxCategorySerializer',
         admin_return_authorization_serializer: 'Spree::Api::V3::Admin::ReturnAuthorizationSerializer',

@@ -37,10 +37,6 @@ module Spree
           def serializer_class
             Spree.api.order_serializer
           end
-
-          def order_token
-            request.headers['x-spree-token']
-          end
         end
       end
     end

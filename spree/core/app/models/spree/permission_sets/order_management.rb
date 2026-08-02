@@ -20,6 +20,7 @@ module Spree
         can :manage, Spree::ReturnAuthorization
         can :manage, Spree::CustomerReturn
         can :manage, Spree::Reimbursement
+        can :manage, Spree::Return
         can :manage, Spree::Refund
         can :manage, Spree::StoreCredit
         can :manage, Spree::GiftCard

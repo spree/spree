@@ -20,6 +20,7 @@ module Spree
         can [:read, :admin], Spree::ReturnAuthorization
         can [:read, :admin], Spree::CustomerReturn
         can [:read, :admin], Spree::Reimbursement
+        can [:read, :admin], Spree::Return
         can [:read, :admin], Spree::Refund
         can [:read, :admin], Spree::StoreCredit
         can [:read, :admin], Spree::GiftCard

@@ -54,8 +54,10 @@ export { ProductPublicationSchema, type ProductPublication } from './ProductPubl
 export { ProductTypeSchema, type ProductType } from './ProductType';
 export { PromotionSchema, type Promotion } from './Promotion';
 export { RefundSchema, type Refund } from './Refund';
+export { ReturnSchema, type Return } from './Return';
 export { ReturnAuthorizationSchema, type ReturnAuthorization } from './ReturnAuthorization';
 export { ReturnItemSchema, type ReturnItem } from './ReturnItem';
+export { ReturnLineItemSchema, type ReturnLineItem } from './ReturnLineItem';
 export { StateSchema, type State } from './State';
 export { StockLocationSchema, type StockLocation } from './StockLocation';
 export { StockReservationSchema, type StockReservation } from './StockReservation';

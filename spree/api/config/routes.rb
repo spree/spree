@@ -62,7 +62,11 @@ Spree::Core::Engine.add_routes do
         end
 
         # Orders (single order lookup, guest-accessible via order token)
-        resources :orders, only: [:show]
+        resources :orders, only: [:show] do
+          # Customer self-service returns — opening and viewing only; the
+          # merchant approves, receives and refunds through the Admin API.
+          resources :returns, only: [:index, :show, :create], controller: 'orders/returns'
+        end
 
         # Policies (return policy, privacy policy, terms of service, etc.)
         resources :policies, only: [:index, :show]
@@ -418,6 +422,14 @@ Spree::Core::Engine.add_routes do
               patch :cancel
               patch :resume
               patch :split
+            end
+          end
+          resources :returns, controller: 'orders/returns', only: [:index, :show, :create, :update] do
+            member do
+              patch :approve
+              patch :receive
+              patch :refund
+              patch :cancel
             end
           end
           resources :payments, controller: 'orders/payments', only: [:index, :show, :create] do
