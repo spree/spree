@@ -88,6 +88,10 @@ import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
 } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import {
+  OrderClaimsCard,
+  OrderExchangesCard,
+} from '../../../../components/spree/order-post-sale-cards'
 import { OrderReturnsCard } from '../../../../components/spree/order-returns-card'
 import {
   orderQueryKey,
@@ -149,6 +153,8 @@ function OrderDetailPage() {
           <LineItemsCard order={order} />
           <FulfillmentsCard order={order} />
           <OrderReturnsCard orderId={orderId} />
+          <OrderExchangesCard orderId={orderId} />
+          <OrderClaimsCard orderId={orderId} />
           <PaymentsCard order={order} />
           <AdjustmentLinesCard order={order} />
           <OrderSummaryCard order={order} />

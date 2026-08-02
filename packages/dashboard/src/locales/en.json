@@ -1700,6 +1700,19 @@
             "ship": "Mark as shipped",
             "void": "Void"
           },
+          "claims": {
+            "actions": {
+              "resolve_refund": "Resolve with refund",
+              "resolve_replacement": "Resolve with replacement",
+              "deny": "Deny"
+            },
+            "types": {
+              "damaged": "Damaged",
+              "missing": "Missing",
+              "wrong_item": "Wrong item",
+              "other": "Other"
+            }
+          },
           "dialogs": {
             "approve_title": "Approve order?",
             "cancel_title": "Cancel order?",
@@ -1708,6 +1721,12 @@
           "empty_history": "No history yet.",
           "empty_payments": "No payments yet.",
           "empty_shipments": "No shipments yet.",
+          "exchanges": {
+            "actions": {
+              "fulfill": "Ship replacement"
+            },
+            "price_difference": "Price difference"
+          },
           "no_delivery_method": "No delivery method selected.",
           "returns": {
             "actions": {
@@ -1733,8 +1752,10 @@
             }
           },
           "section_billing_address": "Billing address",
+          "section_claims": "Claims",
           "section_customer": "Customer",
           "section_customer_note": "Customer note",
+          "section_exchanges": "Exchanges",
           "section_fulfillments": "Fulfillments",
           "section_history": "History",
           "section_internal_note": "Internal note",

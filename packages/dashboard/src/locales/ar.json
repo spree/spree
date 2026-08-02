@@ -1700,6 +1700,19 @@
             "ship": "وضع علامة على أنه تم الشحن",
             "void": "Void"
           },
+          "claims": {
+            "actions": {
+              "resolve_refund": "الحل بالاسترداد",
+              "resolve_replacement": "الحل بالاستبدال",
+              "deny": "رفض"
+            },
+            "types": {
+              "damaged": "تالف",
+              "missing": "مفقود",
+              "wrong_item": "منتج خاطئ",
+              "other": "أخرى"
+            }
+          },
           "dialogs": {
             "approve_title": "الموافقة على الطلب؟",
             "cancel_title": "هل تريد إلغاء الطلب؟",
@@ -1708,6 +1721,12 @@
           "empty_history": "لا يوجد تاريخ بعد.",
           "empty_payments": "لا توجد مدفوعات حتى الآن.",
           "empty_shipments": "لا توجد شحنات حتى الآن.",
+          "exchanges": {
+            "actions": {
+              "fulfill": "شحن البديل"
+            },
+            "price_difference": "فرق السعر"
+          },
           "no_delivery_method": "لم يتم اختيار طريقة توصيل.",
           "returns": {
             "actions": {
@@ -1733,8 +1752,10 @@
             }
           },
           "section_billing_address": "عنوان إرسال الفواتير",
+          "section_claims": "المطالبات",
           "section_customer": "العميل",
           "section_customer_note": "ملاحظة العميل",
+          "section_exchanges": "الاستبدالات",
           "section_fulfillments": "عمليات التنفيذ",
           "section_history": "تاريخ",
           "section_internal_note": "ملاحظة داخلية",

@@ -1708,6 +1708,19 @@
             "ship": "Oznacz jako wysłane",
             "void": "Unieważnij"
           },
+          "claims": {
+            "actions": {
+              "resolve_refund": "Rozwiąż zwrotem płatności",
+              "resolve_replacement": "Rozwiąż zamiennikiem",
+              "deny": "Odrzuć"
+            },
+            "types": {
+              "damaged": "Uszkodzony",
+              "missing": "Brakujący",
+              "wrong_item": "Niewłaściwy produkt",
+              "other": "Inne"
+            }
+          },
           "dialogs": {
             "approve_title": "Zatwierdzić zamówienie?",
             "cancel_title": "Anulować zamówienie?",
@@ -1716,6 +1729,12 @@
           "empty_history": "Brak historii.",
           "empty_payments": "Brak płatności.",
           "empty_shipments": "Brak przesyłek.",
+          "exchanges": {
+            "actions": {
+              "fulfill": "Wyślij zamiennik"
+            },
+            "price_difference": "Różnica w cenie"
+          },
           "no_delivery_method": "Nie wybrano metody dostawy.",
           "returns": {
             "actions": {
@@ -1741,8 +1760,10 @@
             }
           },
           "section_billing_address": "Adres rozliczeniowy",
+          "section_claims": "Reklamacje",
           "section_customer": "Klient",
           "section_customer_note": "Notatka klienta",
+          "section_exchanges": "Wymiany",
           "section_fulfillments": "Realizacje",
           "section_history": "Historia",
           "section_internal_note": "Notatka wewnętrzna",

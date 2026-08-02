@@ -1700,6 +1700,19 @@
             "ship": "标记为已发货",
             "void": "作废"
           },
+          "claims": {
+            "actions": {
+              "resolve_refund": "以退款解决",
+              "resolve_replacement": "以换货解决",
+              "deny": "拒绝"
+            },
+            "types": {
+              "damaged": "已损坏",
+              "missing": "缺失",
+              "wrong_item": "商品错误",
+              "other": "其他"
+            }
+          },
           "dialogs": {
             "approve_title": "批准订单？",
             "cancel_title": "取消订单？",
@@ -1708,6 +1721,12 @@
           "empty_history": "暂无历史记录。",
           "empty_payments": "暂无付款。",
           "empty_shipments": "暂无发货。",
+          "exchanges": {
+            "actions": {
+              "fulfill": "寄出替换商品"
+            },
+            "price_difference": "差价"
+          },
           "no_delivery_method": "未选择配送方式。",
           "returns": {
             "actions": {
@@ -1733,8 +1752,10 @@
             }
           },
           "section_billing_address": "账单地址",
+          "section_claims": "索赔",
           "section_customer": "客户",
           "section_customer_note": "客户备注",
+          "section_exchanges": "换货",
           "section_fulfillments": "履约单",
           "section_history": "历史记录",
           "section_internal_note": "内部备注",

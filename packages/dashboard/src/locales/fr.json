@@ -1700,6 +1700,19 @@
             "ship": "Marquer comme expédiée",
             "void": "Annuler"
           },
+          "claims": {
+            "actions": {
+              "resolve_refund": "Résoudre par remboursement",
+              "resolve_replacement": "Résoudre par remplacement",
+              "deny": "Refuser"
+            },
+            "types": {
+              "damaged": "Endommagé",
+              "missing": "Manquant",
+              "wrong_item": "Mauvais article",
+              "other": "Autre"
+            }
+          },
           "dialogs": {
             "approve_title": "Approuver la commande ?",
             "cancel_title": "Annuler la commande ?",
@@ -1708,6 +1721,12 @@
           "empty_history": "Aucun historique pour le moment.",
           "empty_payments": "Aucun paiement pour le moment.",
           "empty_shipments": "Aucune expédition pour le moment.",
+          "exchanges": {
+            "actions": {
+              "fulfill": "Expédier le remplacement"
+            },
+            "price_difference": "Différence de prix"
+          },
           "no_delivery_method": "Aucune méthode de livraison sélectionnée.",
           "returns": {
             "actions": {
@@ -1733,8 +1752,10 @@
             }
           },
           "section_billing_address": "Adresse de facturation",
+          "section_claims": "Réclamations",
           "section_customer": "Client",
           "section_customer_note": "Note du client",
+          "section_exchanges": "Échanges",
           "section_fulfillments": "Traitements",
           "section_history": "Historique",
           "section_internal_note": "Note interne",

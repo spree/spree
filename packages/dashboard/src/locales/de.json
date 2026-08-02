@@ -1700,6 +1700,19 @@
             "ship": "Als versendet markieren",
             "void": "Stornieren"
           },
+          "claims": {
+            "actions": {
+              "resolve_refund": "Mit Erstattung lösen",
+              "resolve_replacement": "Mit Ersatz lösen",
+              "deny": "Ablehnen"
+            },
+            "types": {
+              "damaged": "Beschädigt",
+              "missing": "Fehlt",
+              "wrong_item": "Falscher Artikel",
+              "other": "Sonstiges"
+            }
+          },
           "dialogs": {
             "approve_title": "Bestellung genehmigen?",
             "cancel_title": "Bestellung stornieren?",
@@ -1708,6 +1721,12 @@
           "empty_history": "Noch kein Verlauf.",
           "empty_payments": "Noch keine Zahlungen.",
           "empty_shipments": "Noch keine Sendungen.",
+          "exchanges": {
+            "actions": {
+              "fulfill": "Ersatz versenden"
+            },
+            "price_difference": "Preisdifferenz"
+          },
           "no_delivery_method": "Keine Versandmethode ausgewählt.",
           "returns": {
             "actions": {
@@ -1733,8 +1752,10 @@
             }
           },
           "section_billing_address": "Rechnungsadresse",
+          "section_claims": "Reklamationen",
           "section_customer": "Kunde",
           "section_customer_note": "Kundennotiz",
+          "section_exchanges": "Umtausch",
           "section_fulfillments": "Fulfillments",
           "section_history": "Verlauf",
           "section_internal_note": "Interne Notiz",
