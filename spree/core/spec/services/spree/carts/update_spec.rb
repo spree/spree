@@ -45,6 +45,51 @@ module Spree
         end
       end
 
+      describe 'updating preferred_stock_location_id (pickup selection)' do
+        let(:pickup_location) { create(:stock_location, pickup_enabled: true, store: store) }
+
+        it 'resolves a prefixed id against the store pickup-enabled locations' do
+          result = described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.prefixed_id })
+
+          expect(result).to be_success
+          expect(cart.reload.preferred_stock_location_id).to eq(pickup_location.id)
+          expect(cart.preferred_stock_location).to eq(pickup_location)
+        end
+
+        it 'accepts a raw id' do
+          result = described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.id })
+
+          expect(result).to be_success
+          expect(cart.reload.preferred_stock_location_id).to eq(pickup_location.id)
+        end
+
+        it 'clears the selection on blank' do
+          cart.preferred_stock_location_id = pickup_location.id
+          cart.save!
+
+          result = described_class.call(cart: cart, params: { preferred_stock_location_id: '' })
+
+          expect(result).to be_success
+          expect(cart.reload.preferred_stock_location_id).to be_nil
+        end
+
+        it 'rejects a location that is not pickup-enabled' do
+          not_pickup = create(:stock_location, pickup_enabled: false)
+
+          expect {
+            described_class.call(cart: cart, params: { preferred_stock_location_id: not_pickup.prefixed_id })
+          }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+
+        it 'rejects a pickup location belonging to another store' do
+          other_store_location = create(:stock_location, pickup_enabled: true, store: create(:store))
+
+          expect {
+            described_class.call(cart: cart, params: { preferred_stock_location_id: other_store_location.prefixed_id })
+          }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
+
       describe 'updating currency' do
         context 'with supported currency' do
           let(:params) { { currency: 'EUR' } }

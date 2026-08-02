@@ -52,9 +52,7 @@ namespace :spree do
           payment_total: order.payment_total,
           total: order.total
         )
-        # Raw preference write — the public setter validates pickup_enabled,
-        # which must not reject historical selections.
-        cart.assign_stock_location_id_preference(order.preferred_stock_location_id) if order.preferred_stock_location_id.present?
+        cart.preferred_stock_location_id = order.preferred_stock_location_id if order.preferred_stock_location_id.present?
         # save!(validate: false) skips before_validation, so resolve the now
         # mandatory market/channel explicitly (legacy rows may have neither).
         cart.send(:ensure_market_presence)

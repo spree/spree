@@ -48,6 +48,17 @@ module Spree
         cart.locale = params[:locale] if params[:locale].present?
         cart.metadata = cart.metadata.merge(params[:metadata].to_h) if params[:metadata].present?
         cart.use_shipping = params[:use_shipping] if params.key?(:use_shipping)
+        assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
+      end
+
+      # Storefront pickup selection: resolves the public prefixed ID (or raw
+      # ID) against the store's pickup-enabled locations — the eligibility
+      # rule is enforced here at the API seam, mirroring Orders::Create.
+      def assign_preferred_stock_location
+        value = params[:preferred_stock_location_id]
+
+        cart.preferred_stock_location_id =
+          value.blank? ? nil : cart.store.stock_locations.pickup_enabled.find_by_param!(value).id
       end
 
       def assign_address(address_type)

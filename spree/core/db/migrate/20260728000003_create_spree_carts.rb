@@ -19,6 +19,7 @@ class CreateSpreeCarts < ActiveRecord::Migration[7.2]
       t.datetime :completing_at
       t.string :coupon_code
       t.references :gift_card, null: true
+      t.references :preferred_stock_location, null: true, index: false
 
       t.decimal :item_total, precision: 10, scale: 2, default: 0.0
       t.decimal :adjustment_total, precision: 10, scale: 2, default: 0.0

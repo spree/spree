@@ -63,32 +63,10 @@ module Spree
     # normalizes also applies to finder values.
     normalizes :coupon_code, with: ->(code) { code.to_s.strip.downcase.presence }
 
-    # Pickup location choice is a preference (mirrors the admin-user
-    # preference of the same name), copied to the order column at completion.
-    preference :stock_location_id, :integer, nullable: true
-    alias_method :assign_stock_location_id_preference, :preferred_stock_location_id=
-
-    # Accepts the public prefixed ID (+sloc_...+) or a raw ID; validates the
-    # location is pickup-enabled so the storefront can only select real
-    # pickup locations.
-    def preferred_stock_location_id=(value)
-      if value.blank?
-        assign_stock_location_id_preference(nil)
-        return
-      end
-
-      location = if Spree::PrefixedId.prefixed_id?(value)
-                   Spree::StockLocation.pickup_enabled.find_by_prefix_id!(value)
-                 else
-                   Spree::StockLocation.pickup_enabled.find(value)
-                 end
-      assign_stock_location_id_preference(location.id)
-    end
-
-    # @return [Spree::StockLocation, nil]
-    def preferred_stock_location
-      Spree::StockLocation.find_by(id: preferred_stock_location_id)
-    end
+    # Pickup location choice, copied to the order at completion. Prefixed-ID
+    # resolution and the pickup-enabled rule live in Spree::Carts::Update,
+    # matching the Orders::Create twin.
+    belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
 
     has_many :line_items, -> { order(:created_at) }, class_name: 'Spree::LineItem', inverse_of: :cart, dependent: :destroy
     has_many :variants, through: :line_items

@@ -615,6 +615,27 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(order.reload.ship_address_id).to eq(existing_address.id)
     end
 
+    context 'selecting a pickup location' do
+      let!(:pickup_location) { create(:stock_location, pickup_enabled: true, store: store) }
+
+      it 'persists the choice and returns it as a prefixed id' do
+        patch :update, params: { id: order.prefixed_id, preferred_stock_location_id: pickup_location.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.preferred_stock_location).to eq(pickup_location)
+        expect(json_response['preferred_stock_location_id']).to eq(pickup_location.prefixed_id)
+      end
+
+      it 'returns 404 for a location that is not pickup-enabled' do
+        not_pickup = create(:stock_location, pickup_enabled: false, store: store)
+
+        patch :update, params: { id: order.prefixed_id, preferred_stock_location_id: not_pickup.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+        expect(order.reload.preferred_stock_location_id).to be_nil
+      end
+    end
+
     context 'when a line item cannot be delivered to the address' do
       let(:address) { user.addresses.first || create(:address, user: user, country: country, state: us_state) }
       let(:unserved_type) { create(:product_type, name: 'Pickup Only', fulfillment_types: ['pickup']) }

@@ -266,34 +266,14 @@ describe Spree::Cart, type: :model do
     end
   end
 
-  describe '#preferred_stock_location_id=' do
+  describe '#preferred_stock_location' do
     let(:cart) { create(:cart, store: store) }
     let(:pickup_location) { create(:stock_location, pickup_enabled: true) }
 
-    it 'accepts a raw id of a pickup-enabled location' do
-      cart.preferred_stock_location_id = pickup_location.id
+    it 'persists the pickup choice' do
+      cart.update!(preferred_stock_location_id: pickup_location.id)
 
-      expect(cart.preferred_stock_location_id).to eq(pickup_location.id)
-      expect(cart.preferred_stock_location).to eq(pickup_location)
-    end
-
-    it 'accepts a prefixed id' do
-      cart.preferred_stock_location_id = pickup_location.prefixed_id
-
-      expect(cart.preferred_stock_location_id).to eq(pickup_location.id)
-    end
-
-    it 'clears the preference on blank' do
-      cart.preferred_stock_location_id = pickup_location.id
-      cart.preferred_stock_location_id = ''
-
-      expect(cart.preferred_stock_location_id).to be_nil
-    end
-
-    it 'rejects a location that is not pickup-enabled' do
-      not_pickup = create(:stock_location, pickup_enabled: false)
-
-      expect { cart.preferred_stock_location_id = not_pickup.id }.to raise_error(ActiveRecord::RecordNotFound)
+      expect(cart.reload.preferred_stock_location).to eq(pickup_location)
     end
   end
 

@@ -8,6 +8,7 @@ module Spree
                  customer_note: [:string, nullable: true], market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
                  coupon_code: [:string, nullable: true],
+                 preferred_stock_location_id: [:string, nullable: true],
                  requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -35,6 +36,11 @@ module Spree
         # adopting it (see the wholesale reference storefront's cart guard).
         attribute :channel_id do |order|
           order.channel&.prefixed_id
+        end
+
+        # Pickup selection — mirrors the writable param on cart update.
+        attribute :preferred_stock_location_id do |cart|
+          cart.preferred_stock_location&.prefixed_id
         end
 
         # @deprecated `number` mirrors `id` (carts have no order-style
