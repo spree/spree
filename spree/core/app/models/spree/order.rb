@@ -163,6 +163,7 @@ module Spree
       has_many :payments, class_name: 'Spree::Payment'
       has_many :payment_sessions, inverse_of: :order, class_name: 'Spree::PaymentSession'
       has_many :return_authorizations, inverse_of: :order, class_name: 'Spree::ReturnAuthorization'
+      has_many :returns, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Return'
       has_many :cancellations, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderCancellation'
       has_many :approvals, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderApproval'
     end
