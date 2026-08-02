@@ -35,8 +35,13 @@ module Spree
 
       attr_reader :cart, :params
 
-      def address_changed?
-        cart.saved_change_to_ship_address_id? || cart.saved_change_to_market_id?
+      # Pickup intent counts as a destination change: proposals priced for
+      # shipping (or for another counter) are stale once the customer picks
+      # or clears a pickup location.
+      def destination_changed?
+        cart.saved_change_to_ship_address_id? ||
+          cart.saved_change_to_market_id? ||
+          cart.saved_change_to_preferred_stock_location_id?
       end
 
       def assign_cart_attributes
@@ -152,7 +157,7 @@ module Spree
       def try_advance
         return if cart.complete?
 
-        if @address_invalidated || address_changed?
+        if @address_invalidated || destination_changed?
           cart.recalculate_for_address_change!
         else
           cart.recalculate_totals!

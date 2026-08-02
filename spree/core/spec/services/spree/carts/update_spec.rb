@@ -88,6 +88,49 @@ module Spree
             described_class.call(cart: cart, params: { preferred_stock_location_id: other_store_location.prefixed_id })
           }.to raise_error(ActiveRecord::RecordNotFound)
         end
+
+        it 'rebuilds delivery proposals when the pickup intent changes' do
+          expect(cart).to receive(:recalculate_for_address_change!)
+
+          described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.prefixed_id })
+        end
+
+        it 'rebuilds delivery proposals when the pickup intent is cleared' do
+          cart.update!(preferred_stock_location_id: pickup_location.id)
+
+          expect(cart).to receive(:recalculate_for_address_change!)
+
+          described_class.call(cart: cart, params: { preferred_stock_location_id: '' })
+        end
+
+        it 'does not rebuild proposals when the same location is sent again' do
+          cart.update!(preferred_stock_location_id: pickup_location.id)
+
+          expect(cart).not_to receive(:recalculate_for_address_change!)
+
+          described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.prefixed_id })
+        end
+
+        it 'builds collectable pickup proposals for a cart with no shipping address' do
+          create(:pickup_delivery_method, store: store)
+          # Ship-to-store counter: stock ships from the warehouse to the
+          # counter, so the warehouse-sourced package is collectable.
+          pickup_location.update!(pickup_stock_policy: 'any')
+          no_address_cart = create(:cart_with_line_items, customer: user, store: store, ship_address: nil)
+          # Pickup is only offered when every item's product type supports it.
+          pickup_capable_type = create(:product_type, fulfillment_types: %w[shipping pickup])
+          no_address_cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_capable_type) }
+
+          result = described_class.call(
+            cart: no_address_cart,
+            params: { email: 'pickup@example.com', preferred_stock_location_id: pickup_location.prefixed_id }
+          )
+
+          expect(result).to be_success
+          fulfillments = result.value.reload.fulfillments
+          expect(fulfillments).to be_present
+          expect(fulfillments.flat_map(&:delivery_rates).map(&:delivery_method)).to all(have_attributes(fulfillment_type: 'pickup'))
+        end
       end
 
       describe 'updating currency' do

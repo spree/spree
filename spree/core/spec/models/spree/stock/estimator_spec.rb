@@ -52,6 +52,30 @@ module Spree
           it_behaves_like "shipping rate doesn't match"
         end
 
+        context 'pickup methods are gated on the package source location' do
+          let(:shipping_method) { create(:pickup_delivery_method) }
+
+          context 'when the package is sourced from a plain warehouse' do
+            it_behaves_like "shipping rate doesn't match"
+          end
+
+          context 'when the package is sourced from a pickup-enabled location' do
+            let(:package) do
+              build(:stock_package,
+                    stock_location: create(:stock_location, pickup_enabled: true),
+                    contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) })
+            end
+
+            it_behaves_like 'shipping rate matches'
+          end
+
+          context 'when a ship-to-store counter accepts remote stock' do
+            let!(:any_policy_counter) { create(:stock_location, pickup_enabled: true, pickup_stock_policy: 'any') }
+
+            it_behaves_like 'shipping rate matches'
+          end
+        end
+
         context 'when the calculator is not available for that order' do
           before { allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(false) }
 

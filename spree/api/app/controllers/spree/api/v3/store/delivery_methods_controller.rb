@@ -67,10 +67,14 @@ module Spree
           # 'local' policy: every cart item must be on hand at the location.
           # 'any' policy: the location offers pickup regardless of local stock
           # (the merchant transfers goods in).
+          # Only pickup-collectable items count toward local coverage — a
+          # tracked digital variant in a mixed cart is delivered by its own
+          # provider and must not disqualify a counter.
           def covers_cart?(location, cart)
             return true if location.pickup_stock_policy == 'any'
 
-            cart.line_items.includes(:variant).all? do |line_item|
+            cart.line_items.includes(variant: :product).all? do |line_item|
+              next true unless line_item.variant.product.fulfillment_types.include?('pickup')
               next true unless line_item.variant.should_track_inventory?
 
               stock_item = location.stock_item(line_item.variant)
