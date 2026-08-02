@@ -20,7 +20,7 @@ module Spree
               authorize!(:create, Spree::Shipment)
 
               with_order_lock do
-                result = Spree.fulfillment_create_service.call(
+                result = Spree.fulfillment_create_workflow.call(
                   order: @order,
                   stock_location: stock_location_for_create,
                   items: items_for_create,

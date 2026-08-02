@@ -36,7 +36,7 @@ module Spree
         carts_create_service: 'Spree::Carts::Create',
         carts_update_service: 'Spree::Carts::Update',
         carts_upsert_items_service: 'Spree::Carts::UpsertItems',
-        cart_merge_strategy: 'Spree::Carts::Merge',
+        cart_merge_workflow: 'Spree::Carts::Merge',
 
         # checkout
         checkout_next_service: 'Spree::Checkout::Next',
@@ -68,7 +68,7 @@ module Spree
         order_updater: 'Spree::OrderUpdater',
 
         # fulfillment
-        fulfillment_create_service: 'Spree::Fulfillments::Create',
+        fulfillment_create_workflow: 'Spree::Fulfillments::Create',
         fulfillment_update_service: 'Spree::Fulfillments::Update',
 
         # tracking numbers
@@ -103,7 +103,9 @@ module Spree
         # line items
 
         payment_create_service: 'Spree::Payments::Create',
-        payments_handle_webhook_service: 'Spree::Payments::HandleWebhook',
+        payment_capture_workflow: 'Spree::Payments::Capture',
+        payment_refund_workflow: 'Spree::Payments::Refund',
+        payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
 
         # finders
         address_finder: 'Spree::Addresses::Find',
@@ -138,7 +140,10 @@ module Spree
       LEGACY_WORKFLOW_KEYS = {
         cart_add_item_service: :cart_add_item_workflow,
         cart_recalculate_service: :cart_recalculate_workflow,
+        cart_merge_strategy: :cart_merge_workflow,
         carts_complete_service: :carts_complete_workflow,
+        payments_handle_webhook_service: :payments_handle_webhook_workflow,
+        fulfillment_create_service: :fulfillment_create_workflow,
         order_cancel_service: :order_cancel_workflow,
         order_complete_service: :order_complete_workflow
       }.freeze

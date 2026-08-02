@@ -303,13 +303,12 @@ describe Spree::Cart, type: :model do
   end
 
   describe '#merge!' do
-    it 'runs the configured merge strategy and reloads' do
+    it 'runs the configured merge workflow and reloads' do
       cart = create(:cart, store: store)
       other_cart = create(:cart, store: store)
-      strategy = class_double(Spree::Carts::Merge).as_stubbed_const
+      workflow = class_double(Spree::Carts::Merge).as_stubbed_const
 
-      expect(strategy).to receive(:call).with(cart: cart, other_cart: other_cart, user: nil)
-      allow(Spree::Dependencies).to receive(:cart_merge_strategy).and_return('Spree::Carts::Merge')
+      expect(workflow).to receive(:call).with(cart: cart, other_cart: other_cart, user: nil)
 
       cart.merge!(other_cart)
     end

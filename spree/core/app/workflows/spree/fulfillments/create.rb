@@ -15,12 +15,22 @@ module Spree
     #
     # The resulting cost is frozen only for fulfillments registered with
     # status: 'shipped' (rate refresh skips shipped shipments). Pending/ready
-    # fulfillments participate in the standard rate machinery — this service
+    # fulfillments participate in the standard rate machinery — this workflow
     # re-prices them from the delivery method calculators before the final
     # totals recalculation (repricing a completed order's delivery is an
     # explicit post-placement edit, never a side effect of a totals refresh).
-    class Create
-      prepend Spree::ServiceModule::Base
+    #
+    # In the workflow tier for its hooks and its transaction discipline:
+    # 3PL and courier integrations need to contribute provider payload and
+    # to observe created fulfillments, and the guards now abort through
+    # `failure`, which rolls the locked transaction back instead of
+    # returning from inside it.
+    class Create < Spree::Workflow
+      hooks :validate, :get_provider_data, :after_create
+
+      # The created fulfillment, and provider payload contributed by
+      # get_provider_data handlers. Both nil while :validate runs.
+      attr_reader :fulfillment, :provider_data
 
       # @param order [Spree::Order] completed order to fulfill
       # @param stock_location [Spree::StockLocation] location the fulfillment ships from
@@ -37,55 +47,87 @@ module Spree
       # @param status [String, nil] pass 'shipped' to register an already-shipped fulfillment
       # @param metadata [Hash, nil] metadata stored on the fulfillment
       # @return [Spree::ServiceModule::Result] the created shipment on success
-      def call(order:, stock_location:, items: nil, tracking: nil, delivery_method: nil, cost: nil, status: nil, metadata: nil)
-        return failure(nil, Spree.t('fulfillments.errors.invalid_status')) unless status.nil? || status == 'shipped'
+      def perform(order:, stock_location:, items: nil, tracking: nil, delivery_method: nil, cost: nil, status: nil, metadata: nil)
+        super
 
-        cost = parse_cost(cost)
-        return cost if cost.is_a?(Spree::ServiceModule::Result)
+        step :ensure_valid_status
+        step :parse_requested_cost
 
-        fulfillment = nil
+        # Veto point — 3PL capacity, cut-off windows, per-location policy.
+        # Before the lock: a rejection touches nothing.
+        run_hooks :validate
+        # Provider payload (carrier account, service level, customs data)
+        # contributed by integrations, readable by after_create handlers.
+        @provider_data = run_hooks :get_provider_data
 
         # The order row is locked before reading fulfillable units so
         # concurrent creations (e.g. duplicate carrier webhooks) validate and
         # move units against a serialized snapshot. The API layer already
-        # serializes via with_order_lock; this covers direct service callers.
-        ActiveRecord::Base.transaction do
+        # serializes via with_order_lock; this covers direct callers.
+        ApplicationRecord.transaction do
           order.lock!
 
-          return failure(nil, Spree.t('fulfillments.errors.order_not_completed')) unless order.completed?
-          return failure(nil, Spree.t('fulfillments.errors.order_canceled')) if order.canceled?
-
-          units_by_line_item = fulfillable_units(order)
-
-          requested = normalize_items(order, items, units_by_line_item)
-          return requested if requested.is_a?(Spree::ServiceModule::Result)
-
-          fulfillment = order.fulfillments.new(
-            stock_location: stock_location,
-            address_id: order.ship_address_id,
-            tracking: tracking
-          )
-          fulfillment.metadata = metadata if metadata.present?
-          fulfillment.save!
-
-          source_shipments = move_units(order, fulfillment, requested, units_by_line_item)
-          inherited = destroy_drained_shipments(source_shipments, capture_delivery_method: delivery_method.nil?)
-          attach_cost_and_rate(fulfillment, delivery_method, cost, inherited)
-
-          if status == 'shipped'
-            mark_shipped(fulfillment)
-          else
-            fulfillment.update!(order)
-          end
-
-          reprice_pending_fulfillments(order.reload)
-          order.recalculate_totals!
+          step :ensure_order_fulfillable
+          step :build_fulfillment
+          step :move_requested_units
+          step :apply_status
+          step :reprice_and_recalculate
         end
 
+        run_hooks :after_create
         success(fulfillment.reload)
       end
 
       private
+
+      def ensure_valid_status
+        return if status.nil? || status == 'shipped'
+
+        failure(nil, Spree.t('fulfillments.errors.invalid_status'))
+      end
+
+      # parse_cost returns a failure Result for an unparseable value; step
+      # raises on a failure Result, so this aborts the flow.
+      def parse_requested_cost
+        @requested_cost = parse_cost(cost)
+      end
+
+      def ensure_order_fulfillable
+        failure(nil, Spree.t('fulfillments.errors.order_not_completed')) unless order.completed?
+        failure(nil, Spree.t('fulfillments.errors.order_canceled')) if order.canceled?
+      end
+
+      def build_fulfillment
+        @units_by_line_item = fulfillable_units(order)
+        @requested = normalize_items(order, items, @units_by_line_item)
+
+        @fulfillment = order.fulfillments.new(
+          stock_location: stock_location,
+          address_id: order.ship_address_id,
+          tracking: tracking
+        )
+        @fulfillment.metadata = metadata if metadata.present?
+        @fulfillment.save!
+      end
+
+      def move_requested_units
+        source_shipments = move_units(order, fulfillment, @requested, @units_by_line_item)
+        inherited = destroy_drained_shipments(source_shipments, capture_delivery_method: delivery_method.nil?)
+        attach_cost_and_rate(fulfillment, delivery_method, @requested_cost, inherited)
+      end
+
+      def apply_status
+        if status == 'shipped'
+          mark_shipped(fulfillment)
+        else
+          fulfillment.update!(order)
+        end
+      end
+
+      def reprice_and_recalculate
+        reprice_pending_fulfillments(order.reload)
+        order.recalculate_totals!
+      end
 
       # Moved here from the old updater completed-order branch: pending/ready
       # fulfillments re-price from backoffice-visible delivery methods;
@@ -123,12 +165,12 @@ module Spree
             quantity = available_for.call(line_item)
             { line_item: line_item, quantity: quantity } if quantity.positive?
           end
-          return failure(nil, Spree.t('fulfillments.errors.no_items_to_fulfill')) if derived.empty?
+          failure(nil, Spree.t('fulfillments.errors.no_items_to_fulfill')) if derived.empty?
 
           return derived
         end
 
-        return failure(nil, Spree.t('fulfillments.errors.no_items_to_fulfill')) if items.empty?
+        failure(nil, Spree.t('fulfillments.errors.no_items_to_fulfill')) if items.empty?
 
         # Merge duplicate line item entries, then validate quantities.
         merged = items.group_by { |item| item[:line_item].id }.values.map do |grouped|
@@ -140,12 +182,12 @@ module Spree
           quantity = item[:quantity]
 
           unless quantity.positive?
-            return failure(nil, Spree.t('fulfillments.errors.invalid_quantity', item: line_item.prefixed_id))
+            failure(nil, Spree.t('fulfillments.errors.invalid_quantity', item: line_item.prefixed_id))
           end
 
           available = available_for.call(line_item)
           if quantity > available
-            return failure(
+            failure(
               nil,
               Spree.t('fulfillments.errors.insufficient_quantity',
                       item: line_item.prefixed_id, requested: quantity, available: available)
@@ -254,7 +296,7 @@ module Spree
         return if cost.blank?
 
         parsed = cost.is_a?(String) ? BigDecimal(cost.strip) : cost
-        return failure(nil, Spree.t('fulfillments.errors.invalid_cost')) if parsed.negative?
+        failure(nil, Spree.t('fulfillments.errors.invalid_cost')) if parsed.negative?
 
         parsed
       rescue ArgumentError

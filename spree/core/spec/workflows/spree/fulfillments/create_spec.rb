@@ -284,5 +284,41 @@ module Spree
         expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.no_items_to_fulfill'))
       end
     end
+
+    describe 'hooks' do
+      before { Spree.hooks.clear! }
+      after { Spree.hooks.clear! }
+
+      it 'lets a validate handler veto before any fulfillment is created' do
+        Spree.hooks.register('fulfillments.create.validate') { |flow| flow.reject!('outside the cut-off window') }
+
+        result = execute
+
+        expect(result.success?).to eq(false)
+        expect(result.error.to_s).to eq('outside the cut-off window')
+        expect(order.reload.shipments.count).to eq(1)
+      end
+
+      it 'merges provider payload from get_provider_data handlers' do
+        Spree.hooks.register('fulfillments.create.get_provider_data') { |_flow| { carrier_account: 'acct_1' } }
+        Spree.hooks.register('fulfillments.create.get_provider_data') { |_flow| { service_level: 'express' } }
+
+        seen = nil
+        Spree.hooks.register('fulfillments.create.after_create') { |flow| seen = flow.provider_data }
+
+        expect(execute.success?).to eq(true)
+        expect(seen).to eq(carrier_account: 'acct_1', service_level: 'express')
+      end
+
+      it 'exposes the created fulfillment to after_create' do
+        seen = nil
+        Spree.hooks.register('fulfillments.create.after_create') { |flow| seen = flow.fulfillment }
+
+        execute
+
+        expect(seen).to be_a(Spree::Fulfillment)
+        expect(seen).to be_persisted
+      end
+    end
   end
 end

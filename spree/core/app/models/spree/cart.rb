@@ -216,10 +216,10 @@ module Spree
       Spree.cart_associate_service.call(guest_cart: self, user: user, override_email: override_email)
     end
 
-    # Merges another cart into this one through the swappable merge strategy
-    # (Spree::Dependencies.cart_merge_strategy).
+    # Merges another cart into this one through the swappable merge workflow
+    # (Spree::Dependencies.cart_merge_workflow).
     def merge!(other_cart, user = nil)
-      Spree::Dependencies.cart_merge_strategy.constantize.call(cart: self, other_cart: other_cart, user: user)
+      Spree.cart_merge_workflow.call(cart: self, other_cart: other_cart, user: user)
       reload
     end
 
