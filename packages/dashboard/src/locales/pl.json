@@ -378,6 +378,7 @@
       "empty": "Brak metod dostawy.",
       "fulfillment_types": {
         "digital": "Cyfrowa",
+        "local_delivery": "Dostawa lokalna",
         "pickup": "Odbiór",
         "pickup_point": "Punkt odbioru",
         "shipping": "Wysyłka"

@@ -374,6 +374,7 @@
       "empty": "暂无配送方式。",
       "fulfillment_types": {
         "digital": "数字",
+        "local_delivery": "同城配送",
         "pickup": "自提",
         "pickup_point": "自提点",
         "shipping": "物流"

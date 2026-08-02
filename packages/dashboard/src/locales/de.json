@@ -374,6 +374,7 @@
       "empty": "Noch keine Versandarten.",
       "fulfillment_types": {
         "digital": "Digital",
+        "local_delivery": "Lokale Lieferung",
         "pickup": "Abholung",
         "pickup_point": "Abholstation",
         "shipping": "Versand"

@@ -374,6 +374,7 @@
       "empty": "لا توجد طرق توصيل بعد.",
       "fulfillment_types": {
         "digital": "رقمي",
+        "local_delivery": "توصيل محلي",
         "pickup": "استلام",
         "pickup_point": "نقطة استلام",
         "shipping": "شحن"

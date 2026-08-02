@@ -20,8 +20,10 @@ test.describe('product types', () => {
     await expect(page.getByRole('heading', { name: /new product type/i })).toBeVisible()
 
     await page.locator('#name').fill(name)
-    // Shipping is preselected; add pickup on top.
-    await page.locator('#fulfillment-type-pickup').click()
+    // Shipping is preselected; add pickup on top. Base UI renders the real
+    // control as a button (the id lands on a visually-hidden input), so
+    // drive it through its label like a user would.
+    await page.getByRole('checkbox', { name: /^pickup$/i }).click()
 
     await page.getByRole('button', { name: /create product type/i }).click()
 
@@ -34,7 +36,7 @@ test.describe('product types', () => {
 
     await page.getByRole('button', { name: CTA }).click()
     await page.locator('#name').fill(`E2E Invalid ${Date.now()}`)
-    await page.locator('#fulfillment-type-shipping').click() // uncheck the default
+    await page.getByRole('checkbox', { name: /^shipping$/i }).click() // uncheck the default
 
     await page.getByRole('button', { name: /create product type/i }).click()
 

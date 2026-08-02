@@ -374,6 +374,7 @@
       "empty": "Aucune méthode de livraison.",
       "fulfillment_types": {
         "digital": "Numérique",
+        "local_delivery": "Livraison locale",
         "pickup": "Retrait",
         "pickup_point": "Point relais",
         "shipping": "Expédition"

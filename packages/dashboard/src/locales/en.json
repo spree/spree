@@ -374,6 +374,7 @@
       "empty": "No delivery methods yet.",
       "fulfillment_types": {
         "digital": "Digital",
+        "local_delivery": "Local delivery",
         "pickup": "Pickup",
         "pickup_point": "Pickup point",
         "shipping": "Shipping"
