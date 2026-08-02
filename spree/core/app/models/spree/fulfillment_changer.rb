@@ -146,7 +146,7 @@ module Spree
     end
 
     def current_shipment_not_already_shipped
-      return unless current_shipment.shipped?
+      return unless current_shipment.fulfilled?
 
       errors.add(:current_shipment, :has_already_been_shipped)
     end

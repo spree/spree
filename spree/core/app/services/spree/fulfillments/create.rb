@@ -224,7 +224,7 @@ module Spree
           next unless shipment.fulfillment_items.sum(:quantity).zero?
 
           inherited[:cost] += shipment.cost
-          inherited[:delivery_method] ||= shipment.shipping_method if capture_delivery_method
+          inherited[:delivery_method] ||= shipment.delivery_method if capture_delivery_method
           shipment.destroy!
         end
 
@@ -241,7 +241,7 @@ module Spree
         method = delivery_method || inherited[:delivery_method]
 
         fulfillment.update_columns(cost: effective_cost) if effective_cost.positive?
-        fulfillment.add_shipping_method(method, true) if method
+        fulfillment.add_delivery_method(method, true) if method
       end
 
       # Strict decimal parsing (same semantics as Shipment#cost=, which the

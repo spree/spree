@@ -58,7 +58,7 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/fulfill
             def fulfill
               with_order_lock do
-                @resource.ship!
+                @resource.fulfill!
                 render json: serialize_resource(@resource.reload)
               rescue StateMachines::InvalidTransition => e
                 render_service_error(e.message)

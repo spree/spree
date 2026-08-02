@@ -75,7 +75,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       expect(response).to have_http_status(:created)
       fulfillment = order.reload.shipments.first
-      expect(fulfillment.shipping_method).to eq(delivery_method)
+      expect(fulfillment.delivery_method).to eq(delivery_method)
     end
 
     it "registers an already-shipped fulfillment with status: 'shipped' and an explicit cost" do

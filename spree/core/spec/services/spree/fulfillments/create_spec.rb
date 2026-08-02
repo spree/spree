@@ -102,15 +102,15 @@ module Spree
 
       it 'keeps the delivery method selected through the rate refresh' do
         expect(execute.success?).to eq(true)
-        expect(fulfillment.shipping_method).to eq(delivery_method)
+        expect(fulfillment.delivery_method).to eq(delivery_method)
       end
 
       it "inherits the drained source's delivery method when none is given" do
-        original_method = source_shipment.shipping_method
+        original_method = source_shipment.delivery_method
         result = subject.call(order: order, stock_location: stock_location)
 
         expect(result.success?).to eq(true)
-        expect(result.value.shipping_method).to eq(original_method)
+        expect(result.value.delivery_method).to eq(original_method)
       end
 
       it 'inherits the first non-nil method when draining sources with different carriers' do
@@ -118,13 +118,13 @@ module Spree
         second_source = order.shipments.create!(stock_location: stock_location)
         second_source.add_shipping_method(other_method, true)
         line_items.last.inventory_units.update_all(shipment_id: second_source.id)
-        first_source_method = source_shipment.shipping_method
+        first_source_method = source_shipment.delivery_method
 
         result = subject.call(order: order, stock_location: stock_location, status: 'shipped')
 
         expect(result.success?).to eq(true)
         expect(order.reload.shipments).to contain_exactly(result.value)
-        expect(result.value.shipping_method).to eq(first_source_method)
+        expect(result.value.delivery_method).to eq(first_source_method)
       end
 
       it 'does not inherit a method from partially drained sources' do
@@ -136,7 +136,7 @@ module Spree
         )
 
         expect(result.success?).to eq(true)
-        expect(result.value.shipping_method).to be_nil
+        expect(result.value.delivery_method).to be_nil
       end
     end
 
@@ -211,7 +211,7 @@ module Spree
         expect(execute.success?).to eq(true)
         expect(fulfillment.cost).to eq(source_shipment_cost)
         expect(fulfillment.selected_shipping_rate.cost).to eq(source_shipment_cost)
-        expect(fulfillment.selected_shipping_rate.shipping_method).to eq(delivery_method)
+        expect(fulfillment.selected_shipping_rate.delivery_method).to eq(delivery_method)
         expect(order.reload.total).to eq(original_total)
       end
 

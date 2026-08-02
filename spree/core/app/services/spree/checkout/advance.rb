@@ -20,12 +20,38 @@ module Spree
 
         if shipping_method_id.present? && cart.fulfillments.count == 1 &&
             cart.fulfillments.first.delivery_method&.id != shipping_method_id
-          result = Spree::Checkout::SelectShippingMethod.call(order: cart, params: { shipping_method_id: shipping_method_id })
+          result = select_delivery_method(cart, shipping_method_id)
           return result if result.failure?
         end
 
         cart.recalculate_totals!
         success(cart)
+      end
+
+      private
+
+      # Quick-checkout convenience: wallets (Google Pay) send the chosen
+      # method alongside the address instead of as a separate selection, so
+      # the rate is picked here. Normal checkout selects a rate directly on
+      # the fulfillment.
+      def select_delivery_method(cart, delivery_method_id)
+        delivery_method = Spree::DeliveryMethod.find_by(id: delivery_method_id)
+        return failure(:delivery_method_not_found) if delivery_method.nil?
+
+        fulfillment = cart.fulfillments.first
+        rate = fulfillment.delivery_rates.find_by(delivery_method: delivery_method)
+
+        if rate.nil?
+          return failure(
+            :selected_delivery_method_not_found,
+            "Couldn't find delivery rates for Delivery Method with ID = #{delivery_method.id} and Fulfillment with ID = #{fulfillment.id}"
+          )
+        end
+
+        # Assigning the rate updates the fulfillment amount and order totals.
+        fulfillment.selected_delivery_rate_id = rate.id
+
+        success(fulfillment)
       end
     end
   end

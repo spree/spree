@@ -263,8 +263,8 @@ module Spree
           include_context 'with original shipping method gone backend only'
           let(:order) { create(:completed_order_with_totals) }
 
-          it 'keeps the original shipping method' do
-            expect { updater.update_shipments }.not_to change { order.fulfillments.first.shipping_method }
+          it 'keeps the original delivery method' do
+            expect { updater.update_shipments }.not_to change { order.fulfillments.first.delivery_method }
           end
         end
       end

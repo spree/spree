@@ -62,7 +62,7 @@ module Spree
         it 'sets selected shipping method for shipment' do
           expect(shipment.shipping_rates.count).to eq(2)
           execute
-          expect(selected_shipping_rate.shipping_method).to eq(shipping_method_2)
+          expect(selected_shipping_rate.delivery_method).to eq(shipping_method_2)
         end
       end
 
@@ -103,11 +103,11 @@ module Spree
 
         it 'sets selected shipping method for the specified shipment' do
           expect(order.shipments.count).to eq(2)
-          expect(shipment.selected_shipping_rate.shipping_method).to eq(shipping_method)
-          expect(shipment_2.selected_shipping_rate.shipping_method).to eq(shipping_method)
+          expect(shipment.selected_shipping_rate.delivery_method).to eq(shipping_method)
+          expect(shipment_2.selected_shipping_rate.delivery_method).to eq(shipping_method)
           execute
-          expect(shipment.reload.selected_shipping_rate.shipping_method).to eq(shipping_method)
-          expect(shipment_2.reload.selected_shipping_rate.shipping_method).to eq(shipping_method_2)
+          expect(shipment.reload.selected_shipping_rate.delivery_method).to eq(shipping_method)
+          expect(shipment_2.reload.selected_shipping_rate.delivery_method).to eq(shipping_method_2)
         end
       end
 
@@ -116,11 +116,11 @@ module Spree
 
         it 'sets selected shipping method for all shipments' do
           expect(order.shipments.count).to eq(2)
-          expect(shipment.selected_shipping_rate.shipping_method).to eq(shipping_method)
-          expect(shipment_2.selected_shipping_rate.shipping_method).to eq(shipping_method)
+          expect(shipment.selected_shipping_rate.delivery_method).to eq(shipping_method)
+          expect(shipment_2.selected_shipping_rate.delivery_method).to eq(shipping_method)
           execute
-          expect(shipment.reload.selected_shipping_rate.shipping_method).to eq(shipping_method_2)
-          expect(shipment_2.reload.selected_shipping_rate.shipping_method).to eq(shipping_method_2)
+          expect(shipment.reload.selected_shipping_rate.delivery_method).to eq(shipping_method_2)
+          expect(shipment_2.reload.selected_shipping_rate.delivery_method).to eq(shipping_method_2)
         end
       end
     end

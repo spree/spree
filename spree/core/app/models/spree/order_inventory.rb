@@ -120,7 +120,7 @@ module Spree
     end
 
     def remove_from_shipment(shipment, quantity)
-      return 0 if quantity.zero? || shipment.shipped?
+      return 0 if quantity.zero? || shipment.fulfilled?
 
       shipment_units = shipment.inventory_units_for_item(line_item, variant).reject(&:shipped?).sort_by(&:status)
 
