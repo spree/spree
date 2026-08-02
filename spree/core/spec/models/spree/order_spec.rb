@@ -586,7 +586,7 @@ describe Spree::Order, type: :model do
 
     # The user-default ship address only copies onto records needing
     # physical delivery (Spree::Carts::Associate).
-    before { allow(order).to receive(:delivery_required?).and_return(true) }
+    before { allow(order).to receive(:delivery_step_required?).and_return(true) }
 
     it 'does not copy the ship address onto a record without physical delivery' do
       empty_order = create(:order, user: nil, ship_address: nil)
@@ -1823,6 +1823,26 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe 'legacy delivery-predicate bridges' do
+    it 'delegates #delivery_required? to #delivery_step_required? with a deprecation warning' do
+      order = build(:order)
+
+      expect(Spree::Deprecation).to receive(:warn).with(/delivery_required\?/)
+      expect(order).to receive(:delivery_step_required?)
+
+      order.delivery_required?
+    end
+
+    it 'delegates #requires_ship_address? to #shipping_address_required? with a deprecation warning' do
+      order = build(:order)
+
+      expect(Spree::Deprecation).to receive(:warn).with(/requires_ship_address\?/)
+      expect(order).to receive(:shipping_address_required?)
+
+      order.requires_ship_address?
+    end
+  end
+
   describe 'legacy proposal-rebuild bridges' do
     it 'delegates #create_proposed_fulfillments to #rebuild_fulfillments! with a deprecation warning' do
       order = create(:order)
@@ -2272,8 +2292,10 @@ describe Spree::Order, type: :model do
         expect(digital_order.reload.quick_checkout_require_address?).to be false
       end
 
-      it 'returns false if the order does not require delivery' do
-        allow(order).to receive(:delivery_required?).and_return(false)
+      it 'returns false when every selected delivery method is address-free' do
+        pickup_method = instance_double(Spree::DeliveryMethod, requires_address?: false)
+        pickup_fulfillment = instance_double(Spree::Fulfillment, delivery_method: pickup_method)
+        allow(order).to receive(:fulfillments).and_return([pickup_fulfillment])
 
         expect(order.quick_checkout_require_address?).to be false
       end

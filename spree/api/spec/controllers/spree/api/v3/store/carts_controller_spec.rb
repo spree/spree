@@ -548,7 +548,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
         expect(json_response['requirements']).to include(
-          a_hash_including('step' => 'delivery', 'field' => 'shipping_method')
+          a_hash_including('step' => 'delivery', 'field' => 'delivery_method')
         )
       end
 
@@ -652,7 +652,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
         expect(json_response['requirements']).to include(
-          a_hash_including('step' => 'delivery', 'field' => 'shipping_method')
+          a_hash_including('step' => 'delivery', 'field' => 'delivery_method')
         )
       end
     end

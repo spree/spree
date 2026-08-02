@@ -47,7 +47,7 @@ RSpec.describe Spree::Checkout::Requirements do
 
   describe 'ship_address requirement' do
     it 'requires ship_address for physical orders without address' do
-      allow(order).to receive(:requires_ship_address?).and_return(true)
+      allow(order).to receive(:shipping_address_required?).and_return(true)
       order.ship_address = nil
 
       expect(subject).to include(
@@ -56,7 +56,7 @@ RSpec.describe Spree::Checkout::Requirements do
     end
 
     it 'does not require ship_address for digital orders' do
-      allow(order).to receive(:requires_ship_address?).and_return(false)
+      allow(order).to receive(:shipping_address_required?).and_return(false)
 
       expect(subject).not_to include(
         a_hash_including(step: 'address', field: 'ship_address')
@@ -70,11 +70,11 @@ RSpec.describe Spree::Checkout::Requirements do
     it 'requires shipping_method when delivery step exists and no shipments have methods' do
       allow(order).to receive(:has_checkout_step?).with('delivery').and_return(true)
       allow(order).to receive(:has_checkout_step?).with('payment').and_return(true)
-      allow(order).to receive(:delivery_required?).and_return(true)
+      allow(order).to receive(:delivery_step_required?).and_return(true)
       order.shipments.destroy_all
 
       expect(subject).to include(
-        a_hash_including(step: 'delivery', field: 'shipping_method')
+        a_hash_including(step: 'delivery', field: 'delivery_method')
       )
     end
 
@@ -83,7 +83,7 @@ RSpec.describe Spree::Checkout::Requirements do
       allow(order).to receive(:has_checkout_step?).with('payment').and_return(true)
 
       expect(subject).not_to include(
-        a_hash_including(step: 'delivery', field: 'shipping_method')
+        a_hash_including(step: 'delivery', field: 'delivery_method')
       )
     end
   end

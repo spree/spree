@@ -104,20 +104,77 @@ RSpec.shared_examples 'an addresses host' do
     end
 
     it 'fills both addresses from the user defaults' do
-      allow(record).to receive(:delivery_required?).and_return(true)
-
       record.assign_default_addresses!
 
       expect(record.bill_address.id).to eq(default_bill.id)
       expect(record.ship_address.id).to eq(default_ship.id)
     end
 
-    it 'skips the ship address when no physical delivery is required' do
-      allow(record).to receive(:delivery_required?).and_return(false)
+    it 'skips the ship address for an all-digital record' do
+      allow(record).to receive(:digital?).and_return(true)
 
       record.assign_default_addresses!
 
       expect(record.ship_address).to be_nil
+    end
+
+    it 'still assigns the ship address to an empty record — items usually arrive after the address' do
+      record.assign_default_addresses!
+
+      expect(record.ship_address).to be_present
+    end
+  end
+
+  describe '#shipping_address_required?' do
+    let(:shipping_method) { instance_double(Spree::DeliveryMethod, requires_address?: true) }
+    let(:pickup_method) { instance_double(Spree::DeliveryMethod, requires_address?: false) }
+
+    def fulfillment_with(delivery_method)
+      instance_double(Spree::Fulfillment, delivery_method: delivery_method)
+    end
+
+    context 'with delivery methods selected' do
+      it 'is false when every selected method delivers without an address' do
+        allow(record).to receive(:fulfillments).and_return([fulfillment_with(pickup_method)])
+
+        expect(record.shipping_address_required?).to be false
+      end
+
+      it 'is true when any selected method requires one' do
+        allow(record).to receive(:fulfillments)
+          .and_return([fulfillment_with(pickup_method), fulfillment_with(shipping_method)])
+
+        expect(record.shipping_address_required?).to be true
+      end
+    end
+
+    context 'before any selection' do
+      let!(:store_shipping_method) { create(:delivery_method, store: store) }
+
+      it 'is false for an empty record' do
+        expect(record.shipping_address_required?).to be false
+      end
+
+      it 'is true when an item can only be fulfilled by an address-requiring type' do
+        create(:line_item, "#{record.model_name.element}": record)
+
+        expect(record.reload.shipping_address_required?).to be true
+      end
+
+      it 'is false when merchant pickup intent is expressed' do
+        create(:line_item, "#{record.model_name.element}": record)
+        record.preferred_stock_location_id = create(:stock_location, pickup_enabled: true).id
+
+        expect(record.shipping_address_required?).to be false
+      end
+
+      it 'is false when every item is deliverable only by address-free types' do
+        digital_type = create(:product_type, fulfillment_types: ['digital'])
+        product = create(:product, product_type: digital_type, store: store)
+        create(:line_item, "#{record.model_name.element}": record, variant: product.default_variant)
+
+        expect(record.reload.shipping_address_required?).to be false
+      end
     end
   end
 

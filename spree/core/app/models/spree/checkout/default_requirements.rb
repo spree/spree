@@ -31,8 +31,8 @@ module Spree
         [].tap do |r|
           r << req('cart', 'line_items', Spree.t('checkout_requirements.line_items_required')) unless @cart.line_items.any?
           r << req('address', 'email', Spree.t('checkout_requirements.email_required')) unless @cart.email.present?
-          r << req('address', 'ship_address', Spree.t('checkout_requirements.ship_address_required')) if @cart.requires_ship_address? && @cart.ship_address.blank?
-          r << req('delivery', 'shipping_method', Spree.t('checkout_requirements.shipping_method_required')) if delivery_required? && !shipping_method_selected?
+          r << req('address', 'ship_address', Spree.t('checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
+          r << req('delivery', 'delivery_method', Spree.t('checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
           r << req('payment', 'payment', Spree.t('checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
         end
       end
@@ -56,11 +56,11 @@ module Spree
         end
       end
 
-      def delivery_required?
-        @cart.delivery_required?
+      def delivery_step_required?
+        @cart.delivery_step_required?
       end
 
-      def shipping_method_selected?
+      def delivery_method_selected?
         @cart.fulfillments.any? && @cart.fulfillments.all? { |fulfillment| fulfillment.delivery_method.present? }
       end
 

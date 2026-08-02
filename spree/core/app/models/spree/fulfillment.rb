@@ -638,7 +638,7 @@ module Spree
     # publish_shipment_resumed_event are defined in Spree::Fulfillment::CustomEvents
 
     def can_get_rates?
-      return true unless owner&.requires_ship_address?
+      return true unless owner&.shipping_address_required?
 
       owner.ship_address&.valid?
     end

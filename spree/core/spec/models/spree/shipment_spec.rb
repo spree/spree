@@ -436,20 +436,29 @@ describe Spree::Shipment, type: :model do
       expect(shipment.send(:can_get_rates?)).to be_truthy
     end
 
-    it 'returns false if order is not digital and it does not have a ship address' do
+    it 'returns false if order has physical items and no ship address' do
       order.ship_address = nil
+      create(:line_item, order: order)
+      order.line_items.reload
+
       expect(order.digital?).to eq(false)
       expect(shipment.send(:can_get_rates?)).to be_falsey
     end
 
     it 'returns false when order\'s ship address is not valid' do
       order.ship_address = build(:address, address1: nil)
+      create(:line_item, order: order)
+      order.line_items.reload
+
       expect(order.digital?).to eq(false)
       expect(shipment.send(:can_get_rates?)).to be_falsey
     end
 
     it 'returns true when order\'s ship address is valid' do
       order.ship_address = build(:address)
+      create(:line_item, order: order)
+      order.line_items.reload
+
       expect(order.digital?).to eq(false)
       expect(shipment.send(:can_get_rates?)).to be_truthy
     end

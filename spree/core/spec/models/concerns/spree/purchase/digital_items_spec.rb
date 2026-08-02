@@ -83,13 +83,20 @@ RSpec.shared_examples 'a digital items host' do
     end
   end
 
-  describe '#requires_ship_address?' do
-    it 'is false only for an all-digital record' do
-      add_line_item(record, digital_variant, 1)
-      expect(record.requires_ship_address?).to be false
+  describe '#delivery_step_required?' do
+    it 'is false for an empty record — nothing to deliver yet' do
+      expect(record.delivery_step_required?).to be false
+    end
 
+    it 'is false for an all-digital record — the provider fulfills without a selection' do
+      add_line_item(record, digital_variant, 1)
+      expect(record.delivery_step_required?).to be false
+    end
+
+    it 'is true once any item needs a delivery choice' do
+      add_line_item(record, digital_variant, 1)
       add_line_item(record, create(:variant), 1)
-      expect(record.requires_ship_address?).to be true
+      expect(record.delivery_step_required?).to be true
     end
   end
 end

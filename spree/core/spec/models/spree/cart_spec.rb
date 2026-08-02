@@ -26,7 +26,7 @@ describe Spree::Cart, type: :model do
   describe '#checkout_steps' do
     let(:cart) { build(:cart, store: store) }
 
-    before { allow(cart).to receive_messages(delivery_required?: true) }
+    before { allow(cart).to receive_messages(delivery_step_required?: true) }
 
     context 'when confirmation not required' do
       before do
@@ -51,7 +51,7 @@ describe Spree::Cart, type: :model do
     end
 
     context 'when delivery not required' do
-      before { allow(cart).to receive_messages delivery_required?: false }
+      before { allow(cart).to receive_messages delivery_step_required?: false }
 
       specify do
         expect(cart.checkout_steps).to eq(%w(address complete))
@@ -78,7 +78,7 @@ describe Spree::Cart, type: :model do
   describe '#checkout_step_index' do
     let(:cart) { build(:cart, store: store) }
 
-    before { allow(cart).to receive_messages(delivery_required?: true) }
+    before { allow(cart).to receive_messages(delivery_step_required?: true) }
 
     it 'always returns an integer' do
       expect(cart.checkout_step_index('imnotthere')).to be_a Integer
@@ -234,17 +234,6 @@ describe Spree::Cart, type: :model do
         cart.remove_out_of_stock_items!
         expect(cart.warnings).to eq([])
       end
-    end
-  end
-
-  describe '#create_proposed_fulfillments (deprecated)' do
-    it 'delegates to #rebuild_fulfillments! with a deprecation warning' do
-      cart = build(:cart, store: store)
-
-      expect(Spree::Deprecation).to receive(:warn).with(/create_proposed_fulfillments/)
-      expect(cart).to receive(:rebuild_fulfillments!)
-
-      cart.create_proposed_fulfillments
     end
   end
 

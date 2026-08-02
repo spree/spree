@@ -426,14 +426,13 @@ module Spree
     # Either fully digital or not digital at all
     # @return [Boolean]
     def quick_checkout_available?
-      payment_required? && fulfillments.count <= 1 && (digital? || !some_digital? || !delivery_required?)
+      payment_required? && fulfillments.count <= 1 && (digital? || !some_digital? || !delivery_step_required?)
     end
 
     # Check if quick checkout requires an address collection
-    # If the order is digital or not delivery required, then we don't need to collect an address
     # @return [Boolean]
     def quick_checkout_require_address?
-      !digital? && delivery_required?
+      shipping_address_required?
     end
 
     # @deprecated Use {#recalculate_totals!} for money and {#update_statuses!}
@@ -707,6 +706,18 @@ module Spree
     def create_proposed_shipments
       Spree::Deprecation.warn('Spree::Order#create_proposed_shipments is deprecated and will be removed in Spree 6.1. Use #rebuild_fulfillments! instead.')
       rebuild_fulfillments!
+    end
+
+    # @deprecated Use {#delivery_step_required?}; removed in 6.1.
+    def delivery_required?
+      Spree::Deprecation.warn('Spree::Order#delivery_required? is deprecated and will be removed in Spree 6.1. Use #delivery_step_required? (delivery-step applicability) or #shipping_address_required? (address collection) instead.')
+      delivery_step_required?
+    end
+
+    # @deprecated Use {#shipping_address_required?}; removed in 6.1.
+    def requires_ship_address?
+      Spree::Deprecation.warn('Spree::Order#requires_ship_address? is deprecated and will be removed in Spree 6.1. Use #shipping_address_required? instead.')
+      shipping_address_required?
     end
 
     # Resolves the routing strategy from the channel override first, then the

@@ -41,15 +41,13 @@ module Spree
         digital_line_items.map(&:digital_links).flatten
       end
 
-      def requires_ship_address?
-        !digital?
-      end
-
-      # Whether any line item needs physical delivery (digital-only
-      # purchases skip the address/delivery steps).
+      # Whether the customer must choose a delivery option in checkout —
+      # shipping and both pickup kinds are chosen; digital fulfillments are
+      # created by their provider without a selection. Delivery itself
+      # happens for all of them.
       #
       # @return [Boolean]
-      def delivery_required?
+      def delivery_step_required?
         line_items.any? && !digital?
       end
     end

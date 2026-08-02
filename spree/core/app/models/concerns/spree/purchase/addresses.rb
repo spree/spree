@@ -40,6 +40,29 @@ module Spree
         bill_address == ship_address
       end
 
+      # Whether checkout must collect a customer shipping address. Selected
+      # delivery methods are the source of truth — their fulfillment
+      # providers decide (digital and pickup deliveries need none). Before
+      # any selection, falls back to the record's merchant-pickup intent and
+      # the items' possible fulfillment types, matched against the store's
+      # configured address-requiring delivery methods.
+      #
+      # @return [Boolean]
+      def shipping_address_required?
+        selected_methods = fulfillments.filter_map(&:delivery_method)
+        return selected_methods.any?(&:requires_address?) if selected_methods.any?
+
+        return false if preferred_stock_location_id.present?
+
+        address_requiring_types = store.delivery_methods.select(&:requires_address?).map(&:fulfillment_type).uniq
+        return false if address_requiring_types.empty?
+
+        line_items.includes(variant: :product).any? do |line_item|
+          fulfillment_types = line_item.variant&.product&.fulfillment_types || ['shipping']
+          (fulfillment_types & address_requiring_types).any?
+        end
+      end
+
       # @deprecated The shipping address is canonical — use +use_shipping+ to
       #   copy it onto the billing address. Removed in 6.1.
       def use_billing=(value)
@@ -68,9 +91,10 @@ module Spree
         return unless user
 
         self.bill_address = user.bill_address if !bill_address_id && user.bill_address&.valid?
-        # Skip the ship address for orders without physical delivery to
-        # avoid triggering shipping-address validations
-        self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && delivery_required?
+        # Skip the ship address only for all-digital records to avoid
+        # triggering shipping-address validations (an empty record still
+        # gets one — items usually arrive after the address).
+        self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && !digital?
       end
 
       # Copies the ship address onto the bill address and promotes it to the

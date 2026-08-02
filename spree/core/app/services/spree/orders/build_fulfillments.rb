@@ -15,7 +15,7 @@ module Spree
       def call(order:)
         return success(order) unless order.ship_address_id.present?
         return success(order) unless order.line_items.any?
-        return success(order) unless order.delivery_required?
+        return success(order) unless order.delivery_step_required?
 
         order.rebuild_fulfillments!
         order.create_shipment_tax_charge!

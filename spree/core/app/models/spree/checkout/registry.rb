@@ -81,7 +81,7 @@ module Spree
         def base_steps
           @base_steps ||= {
             'address' => nil,
-            'delivery' => ->(record) { record.delivery_required? },
+            'delivery' => ->(record) { record.delivery_step_required? },
             'payment' => ->(record) { record.payment_required? },
             'confirm' => ->(record) { record.confirmation_required? },
             'complete' => nil

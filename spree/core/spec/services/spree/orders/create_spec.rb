@@ -129,7 +129,7 @@ module Spree
         end
 
         before do
-          allow_any_instance_of(Spree::Order).to receive(:delivery_required?).and_return(false)
+          allow_any_instance_of(Spree::Order).to receive(:delivery_step_required?).and_return(false)
         end
 
         it 'does not build shipments' do

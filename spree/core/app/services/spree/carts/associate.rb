@@ -16,7 +16,7 @@ module Spree
         # validations, so a broken address-book entry must not land on the
         # cart. Digital-only checkouts never receive a ship address.
         guest_cart.bill_address ||= user.bill_address if user.bill_address&.valid?
-        guest_cart.ship_address ||= user.ship_address if user.ship_address&.valid? && guest_cart.delivery_required?
+        guest_cart.ship_address ||= user.ship_address if user.ship_address&.valid? && guest_cart.delivery_step_required?
 
         owner_key = guest_cart.is_a?(Spree::Cart) ? :customer_id : :user_id
         changes = {
