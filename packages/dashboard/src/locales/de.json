@@ -1709,6 +1709,29 @@
           "empty_payments": "Noch keine Zahlungen.",
           "empty_shipments": "Noch keine Sendungen.",
           "no_delivery_method": "Keine Versandmethode ausgewählt.",
+          "returns": {
+            "actions": {
+              "approve": "Genehmigen",
+              "receive": "Artikel annehmen",
+              "refund": "Erstatten"
+            },
+            "confirm": {
+              "cancel": "Diese Retoure stornieren? Es wird nichts eingelagert und kein Geld bewegt."
+            },
+            "refund_total": "Erstattungssumme",
+            "received_of": "{{received}} von {{requested}} erhalten",
+            "not_resellable": "Nicht wiederverkäuflich",
+            "receive_title": "Retournierte Artikel annehmen",
+            "received_quantity": "Erhalten",
+            "resellable": "Wiederverkäuflich",
+            "refund_title": "Retoure erstatten",
+            "refund_amount": "Betrag",
+            "refund_method": "Erstatten an",
+            "refund_methods": {
+              "original_payment": "Ursprüngliche Zahlung",
+              "store_credit": "Guthaben"
+            }
+          },
           "section_billing_address": "Rechnungsadresse",
           "section_customer": "Kunde",
           "section_customer_note": "Kundennotiz",
@@ -1717,6 +1740,7 @@
           "section_internal_note": "Interne Notiz",
           "section_items": "Artikel",
           "section_payments": "Zahlungen",
+          "section_returns": "Retouren",
           "section_shipping_address": "Lieferadresse",
           "section_summary": "Zusammenfassung",
           "summary": {

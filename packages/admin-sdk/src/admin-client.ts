@@ -147,6 +147,10 @@ import type {
   PromotionRuleUpdateParams,
   PromotionUpdateParams,
   ResourceTypeDefinition,
+  ReturnCreateParams,
+  ReturnReceiveParams,
+  ReturnRefundParams,
+  ReturnUpdateParams,
   StockItemUpdateParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
@@ -207,6 +211,7 @@ import type {
   Refund,
   ResourceTranslations,
   ResourceTranslationsNode,
+  Return,
   Role,
   StockItem,
   StockLocation,
@@ -984,6 +989,94 @@ export class AdminClient {
         options?: RequestOptions,
       ): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/split`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    returns: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Return>> =>
+        this.request<PaginatedResponse<Return>>('GET', `/orders/${orderId}/returns`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('GET', `/orders/${orderId}/returns/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      create: (
+        orderId: string,
+        params: ReturnCreateParams,
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('POST', `/orders/${orderId}/returns`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: ReturnUpdateParams,
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      approve: (
+        orderId: string,
+        id: string,
+        params?: { generate_label?: boolean },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/approve`, {
+          ...options,
+          body: params,
+        }),
+
+      receive: (
+        orderId: string,
+        id: string,
+        params?: ReturnReceiveParams,
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/receive`, {
+          ...options,
+          body: params,
+        }),
+
+      refund: (
+        orderId: string,
+        id: string,
+        params?: ReturnRefundParams,
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/refund`, {
+          ...options,
+          body: params,
+        }),
+
+      cancel: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/cancel`, {
           ...options,
           body: params,
         }),

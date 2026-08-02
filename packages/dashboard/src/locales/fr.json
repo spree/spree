@@ -1709,6 +1709,29 @@
           "empty_payments": "Aucun paiement pour le moment.",
           "empty_shipments": "Aucune expédition pour le moment.",
           "no_delivery_method": "Aucune méthode de livraison sélectionnée.",
+          "returns": {
+            "actions": {
+              "approve": "Approuver",
+              "receive": "Réceptionner les articles",
+              "refund": "Rembourser"
+            },
+            "confirm": {
+              "cancel": "Annuler ce retour ? Aucun article ne sera remis en stock et aucun montant ne sera remboursé."
+            },
+            "refund_total": "Total du remboursement",
+            "received_of": "{{received}} sur {{requested}} reçus",
+            "not_resellable": "Non revendable",
+            "receive_title": "Réceptionner les articles retournés",
+            "received_quantity": "Reçu",
+            "resellable": "Revendable",
+            "refund_title": "Rembourser le retour",
+            "refund_amount": "Montant",
+            "refund_method": "Rembourser sur",
+            "refund_methods": {
+              "original_payment": "Paiement d’origine",
+              "store_credit": "Avoir"
+            }
+          },
           "section_billing_address": "Adresse de facturation",
           "section_customer": "Client",
           "section_customer_note": "Note du client",
@@ -1717,6 +1740,7 @@
           "section_internal_note": "Note interne",
           "section_items": "Articles",
           "section_payments": "Paiements",
+          "section_returns": "Retours",
           "section_shipping_address": "Adresse de livraison",
           "section_summary": "Récapitulatif",
           "summary": {

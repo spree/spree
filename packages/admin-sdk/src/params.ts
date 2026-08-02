@@ -129,6 +129,49 @@ export interface FulfillmentUpdateParams {
   selected_delivery_rate_id?: string
 }
 
+export interface ReturnCreateParams {
+  /** Fulfilled units coming back, and how many of each */
+  items: Array<{ fulfillment_item_id: string; quantity: number }>
+  /** Where the goods come back to; defaults to the location that shipped them */
+  stock_location_id?: string
+  reason_id?: string
+  memo?: string
+}
+
+export interface ReturnUpdateParams {
+  memo?: string
+  reason_id?: string
+  stock_location_id?: string
+  metadata?: Record<string, unknown>
+}
+
+export interface ReturnReceiveParams {
+  /**
+   * What actually arrived. Omit to receive everything as requested and
+   * resellable — pass explicit rows for a partial or damaged receipt, which
+   * is the normal case.
+   */
+  items?: Array<{
+    return_line_item_id: string
+    quantity: number
+    /** Non-resellable goods are received but never restocked */
+    resellable?: boolean
+  }>
+}
+
+export interface ReturnRefundParams {
+  /**
+   * Decimal amount; see `PaymentCreateParams.amount` for the string
+   * rationale. Defaults to the value of what was actually received.
+   */
+  amount?: string | number
+  /**
+   * `store_credit` issues credit immediately; `original_payment` refunds
+   * through the gateway that took the money.
+   */
+  refund_method?: 'original_payment' | 'store_credit'
+}
+
 export interface AddressInputParams {
   first_name?: string
   last_name?: string
