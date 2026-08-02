@@ -7,6 +7,7 @@
 export const Subject = {
   All: 'all',
   Product: 'Spree::Product',
+  ProductType: 'Spree::ProductType',
   Variant: 'Spree::Variant',
   Order: 'Spree::Order',
   Customer: 'Spree::User',

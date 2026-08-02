@@ -8,6 +8,7 @@ import {
   MapIcon,
   PercentIcon,
   RadioTowerIcon,
+  ShapesIcon,
   StoreIcon,
   TagIcon,
   TruckIcon,
@@ -93,6 +94,16 @@ settingsNav.add({
   group: 'payments',
   position: 300,
   subject: Subject.Market,
+})
+
+settingsNav.add({
+  key: 'settings.product-types',
+  labelKey: 'admin.settings_nav.items.product_types',
+  path: '/product-types',
+  icon: ShapesIcon,
+  group: 'fulfillment',
+  position: 70,
+  subject: Subject.ProductType,
 })
 
 settingsNav.add({

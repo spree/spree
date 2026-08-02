@@ -136,6 +136,8 @@ import type {
   PriceListUpdateParams,
   PriceUpdateParams,
   ProductCreateParams,
+  ProductTypeCreateParams,
+  ProductTypeUpdateParams,
   ProductUpdateParams,
   PromotionActionCalculator,
   PromotionActionCreateParams,
@@ -197,6 +199,7 @@ import type {
   Price,
   PriceList,
   Product,
+  ProductType,
   Promotion,
   PromotionAction,
   PromotionRule,
@@ -2207,6 +2210,33 @@ export class AdminClient {
   // ============================================
   // Tax Categories
   // ============================================
+
+  readonly productTypes = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ProductType>> =>
+      this.request<PaginatedResponse<ProductType>>('GET', '/product_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<ProductType> =>
+      this.request<ProductType>('GET', `/product_types/${id}`, options),
+
+    create: (params: ProductTypeCreateParams, options?: RequestOptions): Promise<ProductType> =>
+      this.request<ProductType>('POST', '/product_types', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: ProductTypeUpdateParams,
+      options?: RequestOptions,
+    ): Promise<ProductType> =>
+      this.request<ProductType>('PATCH', `/product_types/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/product_types/${id}`, options),
+  }
 
   readonly taxCategories = {
     list: (

@@ -589,6 +589,10 @@
         "delivery_zones": {
           "label": "Zones de livraison"
         },
+        "fulfillment_provider": {
+          "label": "Fournisseur d'expédition",
+          "help": "Comment les expéditions de cette méthode sont traitées et suivies."
+        },
         "fulfillment_type": {
           "label": "Type de traitement"
         },
@@ -844,6 +848,10 @@
           "label": "Nom",
           "placeholder": "Nom du produit"
         },
+        "product_type_id": {
+          "help": "Détermine les options de livraison proposées au paiement.",
+          "label": "Type de produit"
+        },
         "tags": {
           "label": "Étiquettes"
         }
@@ -858,6 +866,18 @@
           "help": "Laissez vide pour garder le produit listé indéfiniment.",
           "label": "Dépublier le",
           "placeholder": "Jamais"
+        }
+      },
+      "product_type": {
+        "fulfillment_types": {
+          "help": "Comment les produits de ce type peuvent être livrés — expédition, retrait en magasin, point relais ou numérique.",
+          "label": "Modes d'expédition"
+        },
+        "name": {
+          "placeholder": "p. ex. T-Shirt"
+        },
+        "products_count": {
+          "label": "Produits"
         }
       },
       "products_count": {
@@ -2289,6 +2309,25 @@
       "preferred_amount": "Montant",
       "preferred_percent": "Pourcentage"
     },
+    "product_types": {
+      "add_cta": "Ajouter un type de produit",
+      "add_sheet_title": "Nouveau type de produit",
+      "create_description": "Regroupez les produits et définissez leurs modes de livraison.",
+      "create_label": "Créer le type de produit",
+      "delete_confirm": {
+        "message": "Voulez-vous vraiment supprimer « {{name}} » ? Les types encore utilisés par des produits ne peuvent pas être supprimés.",
+        "title": "Supprimer le type de produit"
+      },
+      "edit_description": "Modifier le nom ou les modes de livraison des produits de ce type.",
+      "edit_sheet_title": "Modifier le type de produit",
+      "empty": "Aucun type de produit",
+      "messages": {
+        "created": "Type de produit créé",
+        "deleted": "Type de produit supprimé",
+        "updated": "Type de produit mis à jour"
+      },
+      "search_placeholder": "Rechercher des types de produit"
+    },
     "products": {
       "category_search_placeholder": "Rechercher des catégories…",
       "columns": {
@@ -2358,6 +2397,7 @@
           "ends_after_starts": "Doit être postérieur à la date de début."
         }
       },
+      "product_type_placeholder": "Aucun type de produit",
       "save_label": "Enregistrer le produit",
       "seo": {
         "meta_description_placeholder": "Description SEO",
@@ -2708,6 +2748,7 @@
         "imports": "Imports",
         "markets": "Marchés",
         "payment_methods": "Modes de paiement",
+        "product_types": "Types de produit",
         "profile": "Profil",
         "staff": "Personnel",
         "stock_locations": "Emplacements de stock",

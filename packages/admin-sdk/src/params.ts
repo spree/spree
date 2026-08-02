@@ -772,6 +772,17 @@ export interface WebhookEndpointDisableParams {
   reason?: string
 }
 
+export interface ProductTypeCreateParams {
+  name: string
+  /** Fulfillment types products of this type support (e.g. ['shipping', 'pickup']). */
+  fulfillment_types?: string[]
+}
+
+export interface ProductTypeUpdateParams {
+  name?: string
+  fulfillment_types?: string[]
+}
+
 export interface TaxCategoryCreateParams {
   name: string
   tax_code?: string | null
@@ -1384,6 +1395,8 @@ export interface DeliveryMethodParams {
   estimated_transit_business_days_max?: number | null
   /** Prefixed tax category ID (`taxcat_...`), or null to clear. */
   tax_category_id?: string | null
+  /** Product type prefixed ID (pt_...); drives fulfillment eligibility. */
+  product_type_id?: string | null
   /** Delivery calculator class name (see `deliveryMethods.calculators()`). */
   calculator_type?: string
   calculator_preferences?: Record<string, unknown>

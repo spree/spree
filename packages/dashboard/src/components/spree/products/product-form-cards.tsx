@@ -46,6 +46,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
 import { useDeleteProductMedia } from '../../../hooks/use-product-media'
+import { useProductTypes } from '../../../hooks/use-product-types'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
 import type { ProductFormValues } from '../../../schemas/product'
 import { ProductBulkPriceEditor } from '../bulk-price-editor/product-bulk-price-editor'
@@ -644,12 +645,44 @@ export function StatusCard({ form }: FormCardProps) {
 export function CategorizationCard({ form }: FormCardProps) {
   const { t } = useTranslation()
   const { data: categoriesData } = useCategories()
+  const { data: productTypesData } = useProductTypes()
+  const productTypes = productTypesData?.data ?? []
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.pages.products.section_categorization')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        <Field>
+          <FieldLabel>{t('admin.fields.product.product_type_id.label')}</FieldLabel>
+          <Controller
+            name="product_type_id"
+            control={form.control}
+            render={({ field }) => (
+              <Select value={field.value ?? ''} onValueChange={(v) => field.onChange(v || null)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={t('admin.products.product_type_placeholder')}>
+                    {(v) =>
+                      productTypes.find((pt) => pt.id === v)?.name ??
+                      t('admin.products.product_type_placeholder')
+                    }
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {productTypes.map((productType) => (
+                    <SelectItem key={productType.id} value={productType.id}>
+                      {productType.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <span className="text-muted-foreground text-xs">
+            {t('admin.fields.product.product_type_id.help')}
+          </span>
+        </Field>
+
         <Field>
           <FieldLabel>{t('admin.fields.product.category_ids.label')}</FieldLabel>
           <Controller

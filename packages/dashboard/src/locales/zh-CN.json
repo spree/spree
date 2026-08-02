@@ -589,6 +589,10 @@
         "delivery_zones": {
           "label": "配送区域"
         },
+        "fulfillment_provider": {
+          "label": "履约服务商",
+          "help": "此配送方式的履约如何发运与跟踪。"
+        },
         "fulfillment_type": {
           "label": "履约类型"
         },
@@ -844,6 +848,10 @@
           "label": "名称",
           "placeholder": "产品名称"
         },
+        "product_type_id": {
+          "help": "决定结账时提供哪些配送选项。",
+          "label": "商品类型"
+        },
         "tags": {
           "label": "标签"
         }
@@ -858,6 +866,18 @@
           "help": "留空则一直保持上架。",
           "label": "下架时间",
           "placeholder": "永不"
+        }
+      },
+      "product_type": {
+        "fulfillment_types": {
+          "help": "此类型商品的交付方式 — 配送、到店自提、自提点或数字交付。",
+          "label": "履约方式"
+        },
+        "name": {
+          "placeholder": "例如:T恤"
+        },
+        "products_count": {
+          "label": "商品数"
         }
       },
       "products_count": {
@@ -2289,6 +2309,25 @@
       "preferred_amount": "金额",
       "preferred_percent": "百分比"
     },
+    "product_types": {
+      "add_cta": "添加商品类型",
+      "add_sheet_title": "新建商品类型",
+      "create_description": "将商品分组并定义其交付方式。",
+      "create_label": "创建商品类型",
+      "delete_confirm": {
+        "message": "确定要删除“{{name}}”吗?仍被商品使用的类型无法删除。",
+        "title": "删除商品类型"
+      },
+      "edit_description": "修改名称或此类型商品的交付方式。",
+      "edit_sheet_title": "编辑商品类型",
+      "empty": "暂无商品类型",
+      "messages": {
+        "created": "商品类型已创建",
+        "deleted": "商品类型已删除",
+        "updated": "商品类型已更新"
+      },
+      "search_placeholder": "搜索商品类型"
+    },
     "products": {
       "category_search_placeholder": "搜索分类…",
       "columns": {
@@ -2358,6 +2397,7 @@
           "ends_after_starts": "必须晚于开始日期。"
         }
       },
+      "product_type_placeholder": "无商品类型",
       "save_label": "保存产品",
       "seo": {
         "meta_description_placeholder": "SEO 描述",
@@ -2708,6 +2748,7 @@
         "imports": "导入",
         "markets": "市场",
         "payment_methods": "支付方式",
+        "product_types": "商品类型",
         "profile": "个人资料",
         "staff": "员工",
         "stock_locations": "库存地点",

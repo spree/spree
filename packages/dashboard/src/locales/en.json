@@ -589,6 +589,10 @@
         "delivery_zones": {
           "label": "Delivery zones"
         },
+        "fulfillment_provider": {
+          "label": "Fulfillment provider",
+          "help": "How fulfillments for this method are dispatched and tracked."
+        },
         "fulfillment_type": {
           "label": "Fulfillment type"
         },
@@ -844,6 +848,10 @@
           "label": "Name",
           "placeholder": "Product name"
         },
+        "product_type_id": {
+          "help": "Controls which delivery options are offered at checkout.",
+          "label": "Product type"
+        },
         "tags": {
           "label": "Tags"
         }
@@ -858,6 +866,18 @@
           "help": "Leave empty to keep listed indefinitely.",
           "label": "Unpublish on",
           "placeholder": "Never"
+        }
+      },
+      "product_type": {
+        "fulfillment_types": {
+          "help": "How products of this type can be delivered — shipping, store pickup, pickup point, or digital.",
+          "label": "Fulfillment types"
+        },
+        "name": {
+          "placeholder": "e.g. T-Shirt"
+        },
+        "products_count": {
+          "label": "Products"
         }
       },
       "products_count": {
@@ -2289,6 +2309,25 @@
       "preferred_amount": "Amount",
       "preferred_percent": "Percent"
     },
+    "product_types": {
+      "add_cta": "Add product type",
+      "add_sheet_title": "New product type",
+      "create_description": "Group products and define how they can be delivered.",
+      "create_label": "Create product type",
+      "delete_confirm": {
+        "message": "Are you sure you want to delete “{{name}}”? Types still used by products cannot be deleted.",
+        "title": "Delete product type"
+      },
+      "edit_description": "Change the name or the ways products of this type are delivered.",
+      "edit_sheet_title": "Edit product type",
+      "empty": "No product types yet",
+      "messages": {
+        "created": "Product type created",
+        "deleted": "Product type deleted",
+        "updated": "Product type updated"
+      },
+      "search_placeholder": "Search product types"
+    },
     "products": {
       "category_search_placeholder": "Search categories…",
       "columns": {
@@ -2358,6 +2397,7 @@
           "ends_after_starts": "Must be after start date."
         }
       },
+      "product_type_placeholder": "No product type",
       "save_label": "Save product",
       "seo": {
         "meta_description_placeholder": "SEO description",
@@ -2708,6 +2748,7 @@
         "imports": "Imports",
         "markets": "Markets",
         "payment_methods": "Payment methods",
+        "product_types": "Product types",
         "profile": "Profile",
         "staff": "Staff",
         "stock_locations": "Stock locations",

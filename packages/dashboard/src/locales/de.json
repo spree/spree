@@ -589,6 +589,10 @@
         "delivery_zones": {
           "label": "Lieferzonen"
         },
+        "fulfillment_provider": {
+          "label": "Fulfillment-Anbieter",
+          "help": "Wie Sendungen dieser Methode abgewickelt und verfolgt werden."
+        },
         "fulfillment_type": {
           "label": "Fulfillment-Typ"
         },
@@ -844,6 +848,10 @@
           "label": "Name",
           "placeholder": "Produktname"
         },
+        "product_type_id": {
+          "help": "Bestimmt, welche Lieferoptionen im Checkout angeboten werden.",
+          "label": "Produkttyp"
+        },
         "tags": {
           "label": "Tags"
         }
@@ -858,6 +866,18 @@
           "help": "Leer lassen, um unbegrenzt gelistet zu bleiben.",
           "label": "Veröffentlichung beenden am",
           "placeholder": "Nie"
+        }
+      },
+      "product_type": {
+        "fulfillment_types": {
+          "help": "Wie Produkte dieses Typs geliefert werden können — Versand, Abholung im Geschäft, Abholstation oder digital.",
+          "label": "Fulfillment-Arten"
+        },
+        "name": {
+          "placeholder": "z. B. T-Shirt"
+        },
+        "products_count": {
+          "label": "Produkte"
         }
       },
       "products_count": {
@@ -2289,6 +2309,25 @@
       "preferred_amount": "Betrag",
       "preferred_percent": "Prozent"
     },
+    "product_types": {
+      "add_cta": "Produkttyp hinzufügen",
+      "add_sheet_title": "Neuer Produkttyp",
+      "create_description": "Produkte gruppieren und festlegen, wie sie geliefert werden können.",
+      "create_label": "Produkttyp erstellen",
+      "delete_confirm": {
+        "message": "Möchten Sie „{{name}}“ wirklich löschen? Typen, die noch von Produkten verwendet werden, können nicht gelöscht werden.",
+        "title": "Produkttyp löschen"
+      },
+      "edit_description": "Namen oder Lieferarten der Produkte dieses Typs ändern.",
+      "edit_sheet_title": "Produkttyp bearbeiten",
+      "empty": "Noch keine Produkttypen",
+      "messages": {
+        "created": "Produkttyp erstellt",
+        "deleted": "Produkttyp gelöscht",
+        "updated": "Produkttyp aktualisiert"
+      },
+      "search_placeholder": "Produkttypen durchsuchen"
+    },
     "products": {
       "category_search_placeholder": "Kategorien suchen…",
       "columns": {
@@ -2358,6 +2397,7 @@
           "ends_after_starts": "Muss nach dem Startdatum liegen."
         }
       },
+      "product_type_placeholder": "Kein Produkttyp",
       "save_label": "Produkt speichern",
       "seo": {
         "meta_description_placeholder": "SEO-Beschreibung",
@@ -2708,6 +2748,7 @@
         "imports": "Importe",
         "markets": "Märkte",
         "payment_methods": "Zahlungsmethoden",
+        "product_types": "Produkttypen",
         "profile": "Profil",
         "staff": "Mitarbeiter",
         "stock_locations": "Lagerstandorte",

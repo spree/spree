@@ -589,6 +589,10 @@
         "delivery_zones": {
           "label": "مناطق التوصيل"
         },
+        "fulfillment_provider": {
+          "label": "مزود التنفيذ",
+          "help": "كيفية معالجة عمليات التنفيذ لهذه الطريقة وتتبعها."
+        },
         "fulfillment_type": {
           "label": "نوع التنفيذ"
         },
@@ -844,6 +848,10 @@
           "label": "الاسم",
           "placeholder": "اسم المنتج"
         },
+        "product_type_id": {
+          "help": "يحدد خيارات التسليم المتاحة عند إتمام الشراء.",
+          "label": "نوع المنتج"
+        },
         "tags": {
           "label": "Tags"
         }
@@ -858,6 +866,18 @@
           "help": "اتركه فارغًا للإبقاء في القائمة بلا نهاية.",
           "label": "إلغاء النشر في",
           "placeholder": "أبدًا"
+        }
+      },
+      "product_type": {
+        "fulfillment_types": {
+          "help": "كيف يمكن تسليم منتجات هذا النوع — شحن، استلام من المتجر، نقطة استلام، أو رقمي.",
+          "label": "طرق التنفيذ"
+        },
+        "name": {
+          "placeholder": "مثال: تي شيرت"
+        },
+        "products_count": {
+          "label": "المنتجات"
         }
       },
       "products_count": {
@@ -2289,6 +2309,25 @@
       "preferred_amount": "كمية",
       "preferred_percent": "نسبة مئوية"
     },
+    "product_types": {
+      "add_cta": "إضافة نوع منتج",
+      "add_sheet_title": "نوع منتج جديد",
+      "create_description": "جمّع المنتجات وحدد طرق تسليمها.",
+      "create_label": "إنشاء نوع منتج",
+      "delete_confirm": {
+        "message": "هل أنت متأكد من حذف “{{name}}”؟ لا يمكن حذف الأنواع التي لا تزال مستخدمة من قبل منتجات.",
+        "title": "حذف نوع المنتج"
+      },
+      "edit_description": "غيّر الاسم أو طرق تسليم منتجات هذا النوع.",
+      "edit_sheet_title": "تعديل نوع المنتج",
+      "empty": "لا توجد أنواع منتجات بعد",
+      "messages": {
+        "created": "تم إنشاء نوع المنتج",
+        "deleted": "تم حذف نوع المنتج",
+        "updated": "تم تحديث نوع المنتج"
+      },
+      "search_placeholder": "ابحث في أنواع المنتجات"
+    },
     "products": {
       "category_search_placeholder": "فئات البحث…",
       "columns": {
@@ -2358,6 +2397,7 @@
           "ends_after_starts": "يجب أن يكون بعد تاريخ البدء."
         }
       },
+      "product_type_placeholder": "بدون نوع منتج",
       "save_label": "حفظ المنتج",
       "seo": {
         "meta_description_placeholder": "SEO description",
@@ -2708,6 +2748,7 @@
         "imports": "عمليات الاستيراد",
         "markets": "الأسواق",
         "payment_methods": "طرق الدفع",
+        "product_types": "أنواع المنتجات",
         "profile": "الملف الشخصي",
         "staff": "الموظفون",
         "stock_locations": "مواقع المخزون",

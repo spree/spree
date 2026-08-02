@@ -227,6 +227,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # Products
+        resources :product_types
         resources :products, concerns: [:custom_fieldable, :translatable] do
           member do
             post :clone
@@ -298,6 +299,7 @@ Spree::Core::Engine.add_routes do
         resources :delivery_methods do
           collection do
             get :calculators
+            get :fulfillment_providers
           end
           resources :rules, controller: 'delivery_methods/rules', only: [:index, :show, :create, :update, :destroy]
         end

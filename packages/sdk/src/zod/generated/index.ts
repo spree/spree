@@ -51,6 +51,7 @@ export { ProductFilterPriceRangeSchema, type ProductFilterPriceRange } from './P
 export { ProductFilterSortOptionSchema, type ProductFilterSortOption } from './ProductFilterSortOption';
 export { ProductFiltersSchema, type ProductFilters } from './ProductFilters';
 export { ProductPublicationSchema, type ProductPublication } from './ProductPublication';
+export { ProductTypeSchema, type ProductType } from './ProductType';
 export { PromotionSchema, type Promotion } from './Promotion';
 export { RefundSchema, type Refund } from './Refund';
 export { ReturnAuthorizationSchema, type ReturnAuthorization } from './ReturnAuthorization';

@@ -593,6 +593,10 @@
         "delivery_zones": {
           "label": "Strefy dostawy"
         },
+        "fulfillment_provider": {
+          "label": "Dostawca realizacji",
+          "help": "Jak realizacje tej metody są przetwarzane i śledzone."
+        },
         "fulfillment_type": {
           "label": "Typ realizacji"
         },
@@ -848,6 +852,10 @@
           "label": "Nazwa",
           "placeholder": "Nazwa produktu"
         },
+        "product_type_id": {
+          "help": "Określa, które opcje dostawy są oferowane przy zamówieniu.",
+          "label": "Typ produktu"
+        },
         "tags": {
           "label": "Tagi"
         }
@@ -862,6 +870,18 @@
           "help": "Pozostaw puste, aby utrzymać na liście bezterminowo.",
           "label": "Cofnij publikację",
           "placeholder": "Nigdy"
+        }
+      },
+      "product_type": {
+        "fulfillment_types": {
+          "help": "Jak produkty tego typu mogą być dostarczane — wysyłka, odbiór w sklepie, punkt odbioru lub cyfrowo.",
+          "label": "Sposoby realizacji"
+        },
+        "name": {
+          "placeholder": "np. T-Shirt"
+        },
+        "products_count": {
+          "label": "Produkty"
         }
       },
       "products_count": {
@@ -2317,6 +2337,25 @@
       "preferred_amount": "Kwota",
       "preferred_percent": "Procent"
     },
+    "product_types": {
+      "add_cta": "Dodaj typ produktu",
+      "add_sheet_title": "Nowy typ produktu",
+      "create_description": "Grupuj produkty i określ, jak mogą być dostarczane.",
+      "create_label": "Utwórz typ produktu",
+      "delete_confirm": {
+        "message": "Czy na pewno usunąć „{{name}}”? Typów używanych przez produkty nie można usunąć.",
+        "title": "Usuń typ produktu"
+      },
+      "edit_description": "Zmień nazwę lub sposoby dostawy produktów tego typu.",
+      "edit_sheet_title": "Edytuj typ produktu",
+      "empty": "Brak typów produktów",
+      "messages": {
+        "created": "Utworzono typ produktu",
+        "deleted": "Usunięto typ produktu",
+        "updated": "Zaktualizowano typ produktu"
+      },
+      "search_placeholder": "Szukaj typów produktów"
+    },
     "products": {
       "category_search_placeholder": "Szukaj kategorii…",
       "columns": {
@@ -2388,6 +2427,7 @@
           "ends_after_starts": "Musi być po dacie rozpoczęcia."
         }
       },
+      "product_type_placeholder": "Brak typu produktu",
       "save_label": "Zapisz produkt",
       "seo": {
         "meta_description_placeholder": "Opis SEO",
@@ -2740,6 +2780,7 @@
         "imports": "Importy",
         "markets": "Rynki",
         "payment_methods": "Metody płatności",
+        "product_types": "Typy produktów",
         "profile": "Profil",
         "staff": "Zespół",
         "stock_locations": "Lokalizacje magazynowe",
