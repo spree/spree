@@ -253,6 +253,10 @@ en:
           attributes:
             origin:
               must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
+        spree/exchange_line_item:
+          attributes:
+            new_variant:
+              must_differ_from_original: must be different from the item being returned
         spree/calculator/tiered_flat_rate:
           attributes:
             base:

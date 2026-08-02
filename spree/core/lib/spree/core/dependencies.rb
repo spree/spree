@@ -78,6 +78,20 @@ module Spree
         return_refund_workflow: 'Spree::Returns::Refund',
         return_cancel_workflow: 'Spree::Returns::Cancel',
 
+        # exchanges
+        exchange_create_workflow: 'Spree::Exchanges::Create',
+        exchange_approve_workflow: 'Spree::Exchanges::Approve',
+        exchange_receive_workflow: 'Spree::Exchanges::Receive',
+        exchange_fulfill_workflow: 'Spree::Exchanges::Fulfill',
+        exchange_cancel_workflow: 'Spree::Exchanges::Cancel',
+
+        # claims
+        claim_create_workflow: 'Spree::Claims::Create',
+        claim_approve_workflow: 'Spree::Claims::Approve',
+        claim_resolve_workflow: 'Spree::Claims::Resolve',
+        claim_deny_workflow: 'Spree::Claims::Deny',
+        claim_cancel_workflow: 'Spree::Claims::Cancel',
+
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
 
