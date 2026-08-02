@@ -247,7 +247,7 @@ en:
     errors:
       messages:
         blank: can't be blank
-        unregistered_fulfillment_types: "contains unregistered fulfillment types: %{types}"
+        unregistered_fulfillment_types: 'contains unregistered fulfillment types: %{types}'
       models:
         spree/allowed_origin:
           attributes:
@@ -759,11 +759,11 @@ en:
     charged: Charged
     checkout: Checkout
     checkout_requirements:
+      delivery_method_required: Select a delivery method for all fulfillments
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
       payment_required: Add a payment method
       ship_address_required: Shipping address is required
-      delivery_method_required: Select a delivery method for all fulfillments
     choose_currency: Choose Currency
     city: City
     clear: Clear
