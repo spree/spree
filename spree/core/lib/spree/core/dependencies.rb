@@ -71,6 +71,13 @@ module Spree
         fulfillment_create_workflow: 'Spree::Fulfillments::Create',
         fulfillment_update_service: 'Spree::Fulfillments::Update',
 
+        # returns
+        return_create_workflow: 'Spree::Returns::Create',
+        return_approve_workflow: 'Spree::Returns::Approve',
+        return_receive_workflow: 'Spree::Returns::Receive',
+        return_refund_workflow: 'Spree::Returns::Refund',
+        return_cancel_workflow: 'Spree::Returns::Cancel',
+
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
 
