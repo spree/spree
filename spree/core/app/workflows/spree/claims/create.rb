@@ -70,7 +70,9 @@ module Spree
             variant: item[:line_item].variant,
             quantity: item[:quantity],
             description: item[:description],
-            send_replacement: item.fetch(:send_replacement, false),
+            # A caller that omits this — or passes nil for an absent param —
+            # must not write NULL over the column default.
+            send_replacement: ActiveModel::Type::Boolean.new.cast(item[:send_replacement]) || false,
             replacement_variant: item[:replacement_variant],
             refund_amount: item[:refund_amount] || 0
           )

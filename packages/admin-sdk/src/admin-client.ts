@@ -81,6 +81,9 @@ import type {
   CategoryUpdateParams,
   ChannelCreateParams,
   ChannelUpdateParams,
+  ClaimCreateParams,
+  ClaimResolveParams,
+  ClaimUpdateParams,
   CustomerAddressParams,
   CustomerCreateParams,
   CustomerGroupCreateParams,
@@ -96,6 +99,10 @@ import type {
   DeliveryMethodParams,
   DeliveryZoneParams,
   DirectUploadCreateParams,
+  ExchangeCreateParams,
+  ExchangeFulfillParams,
+  ExchangeReceiveParams,
+  ExchangeUpdateParams,
   ExportCreateParams,
   FulfillmentCreateParams,
   FulfillmentUpdateParams,
@@ -172,6 +179,7 @@ import type {
   ApiKey,
   Category,
   Channel,
+  Claim,
   Country,
   CouponCode,
   CreditCard,
@@ -183,6 +191,7 @@ import type {
   DeliveryMethodRule,
   DeliveryZone,
   Discount,
+  Exchange,
   Export,
   Fee,
   Fulfillment,
@@ -1077,6 +1086,166 @@ export class AdminClient {
         options?: RequestOptions,
       ): Promise<Return> =>
         this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/cancel`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    exchanges: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Exchange>> =>
+        this.request<PaginatedResponse<Exchange>>('GET', `/orders/${orderId}/exchanges`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('GET', `/orders/${orderId}/exchanges/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      create: (
+        orderId: string,
+        params: ExchangeCreateParams,
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('POST', `/orders/${orderId}/exchanges`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: ExchangeUpdateParams,
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      approve: (orderId: string, id: string, options?: RequestOptions): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/approve`, options),
+
+      receive: (
+        orderId: string,
+        id: string,
+        params?: ExchangeReceiveParams,
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/receive`, {
+          ...options,
+          body: params,
+        }),
+
+      fulfill: (
+        orderId: string,
+        id: string,
+        params?: ExchangeFulfillParams,
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/fulfill`, {
+          ...options,
+          body: params,
+        }),
+
+      cancel: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/cancel`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    claims: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Claim>> =>
+        this.request<PaginatedResponse<Claim>>('GET', `/orders/${orderId}/claims`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('GET', `/orders/${orderId}/claims/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      create: (
+        orderId: string,
+        params: ClaimCreateParams,
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('POST', `/orders/${orderId}/claims`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: ClaimUpdateParams,
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      approve: (orderId: string, id: string, options?: RequestOptions): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/approve`, options),
+
+      resolve: (
+        orderId: string,
+        id: string,
+        params: ClaimResolveParams,
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/resolve`, {
+          ...options,
+          body: params,
+        }),
+
+      deny: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/deny`, {
+          ...options,
+          body: params,
+        }),
+
+      cancel: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/cancel`, {
           ...options,
           body: params,
         }),

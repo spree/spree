@@ -159,6 +159,69 @@ export interface ReturnReceiveParams {
   }>
 }
 
+export interface ExchangeCreateParams {
+  /** Items coming back, and what should go out in their place */
+  items: Array<{ fulfillment_item_id: string; new_variant_id: string; quantity: number }>
+  stock_location_id?: string
+  reason_id?: string
+  memo?: string
+}
+
+export interface ExchangeUpdateParams {
+  memo?: string
+  reason_id?: string
+  stock_location_id?: string
+  metadata?: Record<string, unknown>
+}
+
+export interface ExchangeReceiveParams {
+  /** Omit to receive everything as requested and resellable */
+  items?: Array<{
+    exchange_line_item_id: string
+    quantity: number
+    resellable?: boolean
+  }>
+}
+
+export interface ExchangeFulfillParams {
+  /**
+   * How a credit is returned when the replacements cost less than what came
+   * back. A balance the customer owes is left for the merchant to collect.
+   */
+  refund_method?: 'original_payment' | 'store_credit'
+}
+
+export interface ClaimCreateParams {
+  /** Affected items, and how each should be made right */
+  items: Array<{
+    line_item_id: string
+    quantity: number
+    description?: string
+    send_replacement?: boolean
+    replacement_variant_id?: string
+    refund_amount?: string | number
+  }>
+  /** One of the store's configured claim types */
+  claim_type?: string
+  reason_id?: string
+  memo?: string
+}
+
+export interface ClaimUpdateParams {
+  memo?: string
+  reason_id?: string
+  claim_type?: string
+  metadata?: Record<string, unknown>
+}
+
+export interface ClaimResolveParams {
+  /** Money back, a replacement shipment, or both */
+  resolution: 'refund' | 'replacement' | 'refund_and_replacement'
+  refund_method?: 'original_payment' | 'store_credit'
+  /** Decimal amount; defaults to the claim total */
+  amount?: string | number
+}
+
 export interface ReturnRefundParams {
   /**
    * Decimal amount; see `PaymentCreateParams.amount` for the string

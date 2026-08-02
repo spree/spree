@@ -66,6 +66,7 @@ Spree::Core::Engine.add_routes do
           # Customer self-service returns — opening and viewing only; the
           # merchant approves, receives and refunds through the Admin API.
           resources :returns, only: [:index, :show, :create], controller: 'orders/returns'
+          resources :claims, only: [:index, :show, :create], controller: 'orders/claims'
         end
 
         # Policies (return policy, privacy policy, terms of service, etc.)
@@ -429,6 +430,22 @@ Spree::Core::Engine.add_routes do
               patch :approve
               patch :receive
               patch :refund
+              patch :cancel
+            end
+          end
+          resources :exchanges, controller: 'orders/exchanges', only: [:index, :show, :create, :update] do
+            member do
+              patch :approve
+              patch :receive
+              patch :fulfill
+              patch :cancel
+            end
+          end
+          resources :claims, controller: 'orders/claims', only: [:index, :show, :create, :update] do
+            member do
+              patch :approve
+              patch :resolve
+              patch :deny
               patch :cancel
             end
           end

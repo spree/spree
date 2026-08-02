@@ -5,6 +5,8 @@ export { BaseSchema, type Base } from './Base';
 export { CartSchema, type Cart } from './Cart';
 export { CategorySchema, type Category } from './Category';
 export { ChannelSchema, type Channel } from './Channel';
+export { ClaimSchema, type Claim } from './Claim';
+export { ClaimLineItemSchema, type ClaimLineItem } from './ClaimLineItem';
 export { CollectionSchema, type Collection } from './Collection';
 export { CountrySchema, type Country } from './Country';
 export { CreditCardSchema, type CreditCard } from './CreditCard';
@@ -19,6 +21,8 @@ export { DeliveryZoneMemberSchema, type DeliveryZoneMember } from './DeliveryZon
 export { DigitalSchema, type Digital } from './Digital';
 export { DigitalLinkSchema, type DigitalLink } from './DigitalLink';
 export { DiscountSchema, type Discount } from './Discount';
+export { ExchangeSchema, type Exchange } from './Exchange';
+export { ExchangeLineItemSchema, type ExchangeLineItem } from './ExchangeLineItem';
 export { FeeSchema, type Fee } from './Fee';
 export { FulfillmentSchema, type Fulfillment } from './Fulfillment';
 export { GiftCardSchema, type GiftCard } from './GiftCard';
