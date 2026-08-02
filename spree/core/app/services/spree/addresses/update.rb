@@ -63,8 +63,8 @@ module Spree
           address.destroy!
 
           if new_address.user.present?
-            default_billing = address.user_default_billing? || default_billing
-            default_shipping = address.user_default_shipping? || default_shipping
+            default_billing = address.is_default_billing? || default_billing
+            default_shipping = address.is_default_shipping || default_shipping
 
             assign_to_user_as_default(
               user: new_address.user,
