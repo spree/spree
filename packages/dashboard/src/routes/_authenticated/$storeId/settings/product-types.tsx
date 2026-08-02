@@ -33,6 +33,7 @@ import { useEffect } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { useFulfillmentProviders } from '../../../../hooks/use-delivery-methods'
 import {
   useCreateProductType,
   useDeleteProductType,
@@ -285,6 +286,10 @@ function EditProductTypeSheet({
 function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
+  const { data: fulfillmentProviders } = useFulfillmentProviders()
+  // Registry-driven: extension-registered types appear without a dashboard
+  // change; the shipped const only covers the pre-fetch render.
+  const registeredFulfillmentTypes = fulfillmentProviders?.fulfillment_types ?? FULFILLMENT_TYPES
 
   return (
     <FieldGroup>
@@ -315,7 +320,7 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
           control={form.control}
           render={({ field }) => (
             <div className="flex flex-col gap-2">
-              {FULFILLMENT_TYPES.map((fulfillmentType) => {
+              {registeredFulfillmentTypes.map((fulfillmentType) => {
                 const checked = field.value.includes(fulfillmentType)
                 return (
                   <label
@@ -334,7 +339,9 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
                         )
                       }}
                     />
-                    {t(`admin.delivery_methods.fulfillment_types.${fulfillmentType}`)}
+                    {t(`admin.delivery_methods.fulfillment_types.${fulfillmentType}`, {
+                      defaultValue: fulfillmentType,
+                    })}
                   </label>
                 )
               })}

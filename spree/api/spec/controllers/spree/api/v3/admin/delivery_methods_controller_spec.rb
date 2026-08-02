@@ -33,8 +33,43 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     end
   end
 
+  describe 'GET #fulfillment_providers' do
+    it 'lists registered providers with the fulfillment types they handle' do
+      get :fulfillment_providers, params: {}, as: :json
+
+      expect(response).to have_http_status(:ok)
+      pickup = json_response['data'].find { |row| row['type'] == 'Spree::FulfillmentProvider::Pickup' }
+      expect(pickup['name']).to eq('Pickup')
+      expect(pickup['fulfillment_types']).to eq(['pickup'])
+      expect(pickup['requires_address']).to be false
+
+      manual = json_response['data'].find { |row| row['type'] == 'Spree::FulfillmentProvider::Manual' }
+      expect(manual['fulfillment_types']).to eq([])
+      expect(manual['requires_address']).to be true
+
+      expect(json_response['fulfillment_types']).to eq(Spree.fulfillment_types)
+    end
+  end
+
   describe 'POST #create' do
     let!(:zone) { create(:delivery_zone) }
+
+    it 'rejects an unregistered fulfillment type with 422' do
+      post :create, params: { name: 'Typo', fulfillment_type: 'pickpu' }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it 'persists the chosen fulfillment provider' do
+      post :create, params: {
+        name: 'Store pickup',
+        fulfillment_type: 'pickup',
+        fulfillment_provider: 'Spree::FulfillmentProvider::Pickup'
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['fulfillment_provider']).to eq('Spree::FulfillmentProvider::Pickup')
+    end
 
     it 'creates a delivery method with calculator and zones' do
       post :create, params: {

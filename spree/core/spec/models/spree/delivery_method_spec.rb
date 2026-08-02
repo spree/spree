@@ -80,6 +80,29 @@ describe Spree::DeliveryMethod, type: :model do
       expect(subject.errors.messages[:name].size).to eq(1)
     end
 
+    it 'rejects a fulfillment type outside the Spree.fulfillment_types registry' do
+      method = build(:delivery_method, fulfillment_type: 'pickpu')
+
+      expect(method).not_to be_valid
+      expect(method.errors[:fulfillment_type]).to be_present
+    end
+
+    it 'accepts a custom type once registered' do
+      Spree.fulfillment_types << 'same_day_courier'
+
+      expect(build(:delivery_method, fulfillment_type: 'same_day_courier')).to be_valid
+    ensure
+      Spree.fulfillment_types.delete('same_day_courier')
+    end
+
+    it 'leaves persisted rows with unregistered types loadable and savable' do
+      method = create(:delivery_method)
+      method.update_column(:fulfillment_type, 'legacy_freight')
+
+      method.reload.name = 'Renamed'
+      expect(method.save).to be true
+    end
+
     it 'defaults display_on and rejects explicit blank' do
       expect(subject.display_on).to eq('both')
 

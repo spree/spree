@@ -22,6 +22,26 @@ module Spree
             render json: { data: data }
           end
 
+          # GET /api/v3/admin/delivery_methods/fulfillment_providers
+          # Registered FulfillmentProvider strategies plus the registered
+          # fulfillment-type vocabulary (Spree.fulfillment_types — the strict
+          # set both DeliveryMethod and ProductType validate against), so
+          # admin UIs render both lists from the registry, not JS constants.
+          def fulfillment_providers
+            authorize! :create, model_class
+
+            data = Spree.fulfillment_providers.map do |provider_class|
+              {
+                type: provider_class.to_s,
+                name: provider_class.provider_name,
+                fulfillment_types: provider_class.fulfillment_types,
+                requires_address: provider_class.new.requires_address?
+              }
+            end
+
+            render json: { data: data, fulfillment_types: Spree.fulfillment_types }
+          end
+
           def create
             @resource = model_class.new(assignable_params)
             authorize_resource!(@resource, :create)

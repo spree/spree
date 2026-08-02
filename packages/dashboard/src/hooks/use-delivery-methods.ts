@@ -24,6 +24,14 @@ export function useDeliveryCalculators() {
   })
 }
 
+export function useFulfillmentProviders() {
+  return useQuery({
+    queryKey: useResourceKey('delivery-methods', 'fulfillment-providers'),
+    queryFn: () => adminClient.deliveryMethods.fulfillmentProviders(),
+    staleTime: 1000 * 60 * 30,
+  })
+}
+
 export function useCreateDeliveryMethod() {
   return useResourceMutation<DeliveryMethod, Error, DeliveryMethodParams>({
     mutationFn: (params) => adminClient.deliveryMethods.create(params),

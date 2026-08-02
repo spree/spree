@@ -53,6 +53,11 @@ test.describe('delivery methods', () => {
     await page.getByRole('combobox').first().click()
     await page.getByRole('option', { name: /^pickup$/i }).click()
 
+    // Choosing pickup reveals the provider field (several providers handle the
+    // type) and suggests the one that actually does pickup, not generic Manual.
+    await expect(page.getByText(/fulfillment provider/i)).toBeVisible()
+    await expect(page.getByRole('combobox').nth(1)).toHaveText(/pickup/i)
+
     await page.getByRole('button', { name: /create delivery method/i }).click()
 
     await expect(page.getByText(name)).toBeVisible({ timeout: 15_000 })

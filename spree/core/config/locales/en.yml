@@ -247,6 +247,7 @@ en:
     errors:
       messages:
         blank: can't be blank
+        unregistered_fulfillment_types: "contains unregistered fulfillment types: %{types}"
       models:
         spree/allowed_origin:
           attributes:

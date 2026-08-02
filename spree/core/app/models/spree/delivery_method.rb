@@ -56,6 +56,13 @@ module Spree
     has_many :zones, through: :delivery_method_zones, source: :delivery_zone, deprecated: true
 
     validates :name, :display_on, :fulfillment_type, presence: true
+    # Strict vocabulary: an unregistered type silently matches no product
+    # (empty intersection — no error, just missing rates), so typos must
+    # fail loudly. Validated on change only: rows migrated with tokens not
+    # yet registered in an initializer stay loadable and savable.
+    validates :fulfillment_type,
+              inclusion: { in: -> (_record) { Spree.fulfillment_types } },
+              if: :fulfillment_type_changed?
     validates :estimated_transit_business_days_min, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
     validates :estimated_transit_business_days_max, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
 

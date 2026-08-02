@@ -26,6 +26,7 @@ module Spree
     validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :store_id }
     validates :store, presence: true
     validates :fulfillment_types, presence: true
+    validate :fulfillment_types_must_be_registered, if: :fulfillment_types_changed?
 
     self.whitelisted_ransackable_attributes = %w[name]
     self.whitelisted_ransackable_associations = %w[option_types]
@@ -38,6 +39,24 @@ module Spree
     # @return [Boolean] true when products of this type require physical delivery
     def requires_shipping?
       fulfillment_types.include?('shipping')
+    end
+
+    private
+
+    # Strict vocabulary against Spree.fulfillment_types — an unregistered
+    # token silently removes the product from every delivery method's
+    # eligibility, so typos must fail loudly. Change-only, so rows migrated
+    # ahead of their initializer registration stay loadable and savable.
+    def fulfillment_types_must_be_registered
+      unregistered = Array(fulfillment_types).map(&:to_s) - Spree.fulfillment_types
+      return if unregistered.empty?
+
+      errors.add(
+        :fulfillment_types,
+        Spree.t(:unregistered_fulfillment_types, scope: [:errors, :messages],
+                types: unregistered.join(', '),
+                default: "contains unregistered fulfillment types: #{unregistered.join(', ')}")
+      )
     end
   end
 end

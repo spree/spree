@@ -92,8 +92,14 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
     context 'with a cart' do
       let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
       let(:variant) { cart.line_items.first.variant }
+      let(:pickup_capable_type) { create(:product_type, name: 'Collectable', fulfillment_types: %w[shipping pickup]) }
 
-      before { request.headers['x-spree-token'] = cart.token }
+      before do
+        request.headers['x-spree-token'] = cart.token
+        # Coverage only counts pickup-collectable items, so the cart's
+        # products must support pickup for the stock checks to matter.
+        cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_capable_type) }
+      end
 
       it 'keeps locations that can fulfill the whole cart from local stock' do
         pickup_location.stock_item_or_create(variant).set_count_on_hand(10)
@@ -109,6 +115,18 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
         get :pickup_locations, params: { id: pickup_method.prefixed_id, cart_id: cart.prefixed_id }, as: :json
 
         expect(json_response['data'].map { |row| row['name'] }).not_to include('Downtown')
+      end
+
+      it 'ignores items the counter will never hand over (mixed cart with a tracked digital item)' do
+        pickup_location.stock_item_or_create(variant).set_count_on_hand(10)
+
+        digital_type = create(:product_type, name: 'Digital good', fulfillment_types: ['digital'])
+        digital_product = create(:product, product_type: digital_type, store: store)
+        create(:line_item, cart: cart, order: nil, variant: digital_product.default_variant)
+
+        get :pickup_locations, params: { id: pickup_method.prefixed_id, cart_id: cart.prefixed_id }, as: :json
+
+        expect(json_response['data'].map { |row| row['name'] }).to include('Downtown')
       end
     end
   end

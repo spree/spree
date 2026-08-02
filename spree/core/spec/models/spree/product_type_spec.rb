@@ -13,6 +13,29 @@ describe Spree::ProductType, type: :model do
 
       expect(product_type.reload.fulfillment_types).to eq(%w[shipping pickup])
     end
+
+    it 'rejects types outside the Spree.fulfillment_types registry' do
+      product_type = build(:product_type, fulfillment_types: %w[shipping freigt])
+
+      expect(product_type).not_to be_valid
+      expect(product_type.errors[:fulfillment_types].first).to include('freigt')
+    end
+
+    it 'accepts a custom type once registered' do
+      Spree.fulfillment_types << 'freight'
+
+      expect(build(:product_type, fulfillment_types: ['freight'])).to be_valid
+    ensure
+      Spree.fulfillment_types.delete('freight')
+    end
+
+    it 'leaves persisted rows with unregistered types savable when untouched' do
+      product_type = create(:product_type)
+      product_type.update_column(:fulfillment_types, ['legacy_freight'])
+
+      product_type.reload.name = 'Renamed'
+      expect(product_type.save).to be true
+    end
   end
 
   describe '#digital?' do

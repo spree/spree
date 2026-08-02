@@ -182,6 +182,7 @@ import type {
   Export,
   Fee,
   Fulfillment,
+  FulfillmentProviderOption,
   GiftCard,
   GiftCardBatch,
   Import,
@@ -1265,6 +1266,20 @@ export class AdminClient {
       this.request<{ data: Array<{ type: string; name: string; preference_schema: unknown[] }> }>(
         'GET',
         '/delivery_methods/calculators',
+        options,
+      ),
+
+    /**
+     * Registered fulfillment provider strategies plus the registered
+     * fulfillment-type vocabulary (the strict set delivery methods and
+     * product types validate against).
+     */
+    fulfillmentProviders: (
+      options?: RequestOptions,
+    ): Promise<{ data: FulfillmentProviderOption[]; fulfillment_types: string[] }> =>
+      this.request<{ data: FulfillmentProviderOption[]; fulfillment_types: string[] }>(
+        'GET',
+        '/delivery_methods/fulfillment_providers',
         options,
       ),
 
