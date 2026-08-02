@@ -1,3 +1,134 @@
+## 2026-08-02: Workflows replace state machines for new models; hooks ship on the 6.0 boundary; OrderChange substrate targets 6.1
+
+A review of our workflow and extension surface against the wider ecosystem
+settled three things.
+
+**1. New models get no state machine.** The returns/exchanges/claims draft gave
+each of `Return`, `Exchange` and `Claim` a `state_machine :status` block with
+the real work on transition callbacks (`after_transition to: :received,
+do: :restock_items`, `do: :process_refund`). That is now removed: plain `status`
+string column, inclusion validation, generated predicates, and every transition
+is a workflow.
+
+Why: a transition callback runs inside the transaction that saves the status
+column, so `process_refund` would put a gateway call inside a database
+transaction — the exact failure `Carts::Complete`'s three-phase design exists to
+prevent. Transitions also take no arguments, and every real return is partial
+("two of three arrived, one not resellable") with nowhere to put that input;
+there is no compensation story where `on_flow_failure:` is; and guards raise
+`StateMachines::InvalidTransition` instead of returning an inspectable `Result`.
+The stated purpose of that plan was escaping six interlocking state machines —
+replacing six with three is a difference of degree, not of kind.
+
+The precedent had already shipped: the Order state machine is gone in 6.0, and
+`Orders::Cancel`/`Orders::Resume` absorbed `Order#after_cancel`/`#after_resume`,
+moving gateway settlement out of the transaction in the process.
+`state_machines-activerecord` stays a dependency for the legacy models through
+6.0; it is simply not used on anything new.
+
+**2. Hook keys are public API, so they ship on the breaking-change boundary.**
+The doctrine's "a service graduates the moment it earns a hook — never
+speculatively" was written to stop speculative abstraction, and it still governs
+*workflows*. It does not govern *hooks on flows already in the workflow tier*.
+Adding a hook later is cheap; *moving* one means restructuring a flow extensions
+have registered against, which breaks them. 6.0 is the window. A documented,
+coherent extension surface is itself the demand, so hooks are placed
+deliberately across the existing workflows now rather than one merchant request
+at a time. Two closed waves (see `6.0-service-workflows.md` Phase 3): Wave A
+adds `validate` and lifecycle hooks to the existing workflows; Wave B graduates
+four services that already qualify on external I/O or orchestration
+(`Fulfillments::Create`, `Payments::Capture`/`Refund`,
+`Payments::HandleWebhook`, `Carts::Merge`).
+
+Three hook families are now named: **lifecycle** (past tense, react, cannot
+change the outcome — what we ship today), **validation** (`validate`, reject
+before the work — the most-requested seam, currently only reachable by replacing
+a whole service class), and **context** (`set_pricing_context`,
+`get_provider_data` — feed data *into* a calculation). Context hooks are
+**blocked**: they need handlers to write back, and `run_hooks` currently
+dispatches the workflow instance for reading only. Do not ship a `set_*_context`
+hook until that contract is settled.
+
+Explicitly rejected: workflows for plain CRUD. Wrapping every region, tax-rate
+and API-key write in a workflow class would add hundreds of pass-through
+classes with no hook, no compensation and no external I/O. Workflows are earned
+by orchestration, not by being a write.
+
+**3. The OrderChange substrate targets 6.1, not 6.0**
+(`6.1-order-change-substrate.md`). One `OrderChange` + `OrderChangeAction` pair
+behind every post-placement mutation — admin order edits, returns, exchanges,
+claims, draft-order amendments — with a `begin → request → confirm → cancel`
+lifecycle, so those flows stop inventing four separate draft models and four
+separate "what will this cost" calculations. It is deferred because it is new
+schema plus a new extension API, and 6.0 already carries the Cart/Order split,
+typed adjustments, the fulfillment rename and the returns rework; designing it
+under time pressure against three consumers that are themselves still landing
+is how it would go wrong. The 6.0 returns work ships on its own status flows and
+adopts the substrate additively in 6.1 via a nullable `order_change_id`.
+
+Two constraints apply to 6.0 work in the meantime: **do not persist a financial
+preview** (compute in memory and discard — a persisted per-domain draft would
+have to be migrated onto the substrate later), and expose post-placement money
+math through a service returning a value object so callers can be re-pointed
+without changing.
+
+**4. Hook contracts and configurable statuses (settled interactively the same
+day), which unblock Wave A:**
+
+*Context hooks collect and deep-merge handler return values.* A handler returns
+a hash; `run_hooks` merges every handler's hash in registration order and
+returns it. Chosen over a mutable context object because handlers stay pure and
+independently testable, with no order-dependent shared state. `run_hooks`
+returning a value is additive — lifecycle hooks ignore it. Last writer wins on
+a key collision, reported via `Rails.error.report` in development so two
+extensions fighting over one key is visible. **This unblocks the context-hook
+family** — `set_promotion_context`, `set_tax_line_context` and
+`get_provider_data` now ship in Waves A and B rather than being deferred.
+
+*`validate` handlers reject with `reject!(message)`* — a purpose-named method
+wrapping the existing failure path (raises `FailureSignal`, unwinds the undo
+stack, rolls back an open transaction). Preferred over reusing `failure(...)`
+so "an extension vetoed this" stays legible against "this step failed", and
+over a falsy return value, where a stray `nil` would abort a flow by accident.
+
+*Statuses are configuration, not frozen constants.* `Spree::HasStatus` holds
+values in a `class_attribute` with an additive `add_status(value, after:)`, so
+a merchant can add an `inspecting` step between `received` and `refunded`
+without reopening core. This follows the established `class_attribute` pattern
+for genuinely configurable collections (`DeliveryZoneMember.range_capable_country_isos`,
+`RichTextSanitizer.allowed_tags`) rather than the frozen-constant pattern used
+for closed value lists.
+
+**Additive only — wholesale replacement is not offered.** Core workflows guard
+on core statuses (`Returns::Refund` requires `received?`); letting an extension
+drop one would silently break core flows with no error at the point of removal,
+because the guard would simply never pass. Adding is safe, removing is not, so
+the API exposes only the safe half.
+
+`add_status` deliberately takes **no `from:`/`to:` transition graph**. A custom
+status needs a custom workflow to move records into it, which is the intended
+shape, not a gap: validating transitions centrally is a state machine by
+another name — precisely what ruling 1 removes.
+
+**5. Two smaller rulings from the same session.**
+
+*Refunds branch on method, not blanket `external_step`.* Store credit and gift
+cards are internal ledger writes, so routing them through `external_step` would
+push a pure database write outside the transaction that marks the return
+refunded — a crash between the two leaves a refunded return with no credit
+issued. `Returns::Refund` (and `Claims::Resolve`, `Exchanges::Fulfill`) keeps
+internal credit inside the transaction and sends only gateway refunds outside
+it. Precedent: `Orders::Cancel#settle_payments` already distinguishes
+gift-card-covered payments from gateway payments.
+
+*`with:` step swapping stays a core-only seam in 6.0.* The public extension
+surface is hook keys and their contracts, `reject!`, `Spree::Dependencies`
+class swapping, `has_status`/`add_status`, and workflow `#perform` signatures.
+Step names, step boundaries and `with:` targets are explicitly internal —
+documenting them would freeze internal structure we still expect to refactor
+during the 6.0 finishing work, in exchange for granularity that hooks largely
+already provide. Revisit in 6.1 once real hook usage shows what is missing.
+
 ## 2026-07-27: One owner pattern for cart/order-scoped rows — dual concrete FKs, not polymorphic
 
 The cart-order-split stub's "polymorphic `LineItem#owner`" is superseded. Every
