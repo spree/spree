@@ -264,6 +264,59 @@ RSpec.describe Spree::Workflow do
       expect { Spree.hooks.validate! }.to raise_error(Spree::Hooks::UnknownHookError, /declares no hook 'typo_hook'/)
     end
 
+    it 'merges the hashes context handlers return and ignores non-hash returns' do
+      workflow = build_workflow do
+        hooks :set_pricing_context
+        attr_reader :collected
+
+        def perform(subject:)
+          super
+          @collected = run_hooks :set_pricing_context
+          success(collected)
+        end
+      end
+
+      Spree.hooks.register('testing.sample_workflow.set_pricing_context') { |_flow| { tier: 'gold' } }
+      Spree.hooks.register('testing.sample_workflow.set_pricing_context') { |flow| { subject: flow.subject } }
+      # Lifecycle-style handler: returns whatever its last expression was.
+      Spree.hooks.register('testing.sample_workflow.set_pricing_context') { |_flow| 'not a hash' }
+
+      expect(workflow.call(subject: 7).value).to eq(tier: 'gold', subject: 7)
+    end
+
+    it 'returns an empty hash when no handler contributes' do
+      workflow = build_workflow do
+        hooks :set_pricing_context
+
+        def perform(subject:)
+          super
+          success(run_hooks(:set_pricing_context))
+        end
+      end
+
+      expect(workflow.call(subject: 1).value).to eq({})
+    end
+
+    it 'lets the last registered handler win a key collision and reports it' do
+      workflow = build_workflow do
+        hooks :set_pricing_context
+
+        def perform(subject:)
+          super
+          success(run_hooks(:set_pricing_context))
+        end
+      end
+
+      Spree.hooks.register('testing.sample_workflow.set_pricing_context') { |_flow| { tier: 'silver' } }
+      Spree.hooks.register('testing.sample_workflow.set_pricing_context') { |_flow| { tier: 'gold' } }
+
+      expect(Rails.error).to receive(:report).with(
+        an_instance_of(Spree::Hooks::ContextCollision), hash_including(source: 'spree.hooks')
+      )
+
+      expect(workflow.call(subject: 1).value).to eq(tier: 'gold')
+    end
+
     it 'raises when dispatching a hook the class does not declare' do
       workflow = build_workflow do
         def perform(subject:)
@@ -275,6 +328,58 @@ RSpec.describe Spree::Workflow do
 
       expect { workflow.call(subject: 1) }
         .to raise_error(Spree::Workflow::ContractError, /does not declare hook :never_declared/)
+    end
+
+    describe 'reject!' do
+      it 'aborts the flow with a failure result the caller can inspect' do
+        workflow = build_workflow do
+          hooks :validate
+
+          def perform(subject:)
+            super
+            run_hooks :validate
+            step :never_runs
+            success(subject)
+          end
+
+          private
+
+          def never_runs = raise('should not be reached')
+        end
+
+        Spree.hooks.register('testing.sample_workflow.validate') do |flow|
+          flow.reject!('outside the return window')
+        end
+
+        result = workflow.call(subject: 1)
+
+        expect(result).to be_failure
+        expect(result.error.value).to eq('outside the return window')
+      end
+
+      it 'rolls back work committed by earlier steps in the same transaction' do
+        workflow = build_workflow do
+          hooks :validate
+
+          def perform(subject:)
+            super
+            ApplicationRecord.transaction do
+              step :create_store
+              run_hooks :validate
+            end
+            success(subject)
+          end
+
+          private
+
+          def create_store = Spree::Store.create!(name: 'Rejected', code: 'rejected-hook', url: 'rejected.test', mail_from_address: 'no@reply.test')
+        end
+
+        Spree.hooks.register('testing.sample_workflow.validate') { |flow| flow.reject!(:vetoed) }
+
+        expect { workflow.call(subject: 1) }.not_to change(Spree::Store, :count)
+        expect(workflow.call(subject: 1)).to be_failure
+      end
     end
   end
 

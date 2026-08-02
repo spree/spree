@@ -10,9 +10,10 @@ module Spree
     class Cancel < Spree::Workflow
       DEFAULT_REASON = 'other'.freeze
 
-      hooks :after_cancel
+      hooks :before_cancel, :after_cancel
 
-      # after_cancel handlers read this plus the argument readers.
+      # Hook handlers read this plus the argument readers. Nil when
+      # before_cancel runs — the record does not exist yet.
       attr_reader :cancellation
 
       # @param order [Spree::Order]
@@ -32,6 +33,11 @@ module Spree
         super
 
         step :ensure_cancellable
+
+        # Veto point — vendor policy, already-dispatched guards. Before the
+        # transaction: nothing is written yet, and payment settlement has
+        # not run.
+        run_hooks :before_cancel
 
         @decided_at = canceled_at || Time.current
         @amount_to_refund = refund_amount

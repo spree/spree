@@ -6,13 +6,14 @@ module Spree
     # inside the transaction), then risk reassessment, status recomputation
     # and the order.resumed event.
     class Resume < Spree::Workflow
-      hooks :after_resume
+      hooks :before_resume, :after_resume
 
       # @param order [Spree::Order]
       def perform(order:)
         super
 
         step :ensure_resumable
+        run_hooks :before_resume
 
         ApplicationRecord.transaction do
           step :mark_placed

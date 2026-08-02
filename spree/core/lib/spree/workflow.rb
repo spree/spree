@@ -154,6 +154,18 @@ module Spree
       raise Halted.new(value)
     end
 
+    # Vetoes the flow from a hook handler — the extension-facing twin of
+    # failure(...). Same mechanics (raises, unwinds the undo stack, rolls
+    # back an open transaction); the distinct name keeps "an extension
+    # rejected this" legible against "this step failed" at the call site.
+    # Public because handlers call it on the dispatched instance.
+    #
+    # @param message [String, Symbol] surfaced as the failure Result's error
+    # @param value [Object, nil] subject of the failure Result
+    def reject!(message, value = nil)
+      failure(value, message)
+    end
+
     private
 
     def step(name, with: nil, on_flow_failure: nil)
@@ -181,6 +193,10 @@ module Spree
     # Dispatches every handler registered for this extension point with
     # the workflow instance — argument readers plus whatever the workflow
     # exposes via attr_reader are the handler's contract.
+    #
+    # @return [Hash] the deep-merged hashes handlers returned. Context hooks
+    #   consume it (`context = run_hooks(:set_pricing_context)`); lifecycle
+    #   hooks ignore it and validate handlers abort via #reject! instead.
     def run_hooks(name)
       unless self.class.declared_hooks&.include?(name.to_sym)
         raise ContractError, "#{self.class.name} does not declare hook :#{name} — add `hooks :#{name}` to the class"

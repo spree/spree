@@ -8,6 +8,9 @@ module Spree
   class Hooks
     class UnknownHookError < StandardError; end
 
+    # Reported (never raised) when two context-hook handlers set the same key.
+    class ContextCollision < StandardError; end
+
     def initialize
       @handlers = Hash.new { |hash, key| hash[key] = [] }
       # workflow key => workflow class name; populated by Spree::Workflow
@@ -41,8 +44,21 @@ module Spree
       @handlers[key.to_s].map { |entry| entry.is_a?(Proc) ? entry : entry.constantize.new }
     end
 
+    # Calls every handler registered for the key and deep-merges the hashes
+    # they return, so context hooks (set_pricing_context, get_provider_data)
+    # can feed data into a calculation without sharing mutable state.
+    # Handlers returning anything other than a Hash contribute nothing —
+    # lifecycle handlers routinely return whatever their last expression was.
+    #
+    # @return [Hash] merged contributions; empty when no handler contributed
     def dispatch(key, context)
-      self.for(key).each { |handler| handler.call(context) }
+      self.for(key).each_with_object({}) do |handler, merged|
+        contribution = handler.call(context)
+        next unless contribution.is_a?(Hash)
+
+        report_collisions(key, merged, contribution)
+        merged.deep_merge!(contribution)
+      end
     end
 
     # Registered by Spree::Workflow at class-definition time.
@@ -93,6 +109,23 @@ module Spree
     end
 
     private
+
+    # Last writer wins on a collision, which is only defensible if it's
+    # visible — two extensions silently fighting over one key is the failure
+    # mode this whole contract exists to avoid.
+    def report_collisions(key, merged, contribution)
+      collisions = merged.keys & contribution.keys
+      return if collisions.empty?
+
+      Rails.error.report(
+        Spree::Hooks::ContextCollision.new(
+          "Hook '#{key}' handlers both set: #{collisions.join(', ')} — last registered handler wins"
+        ),
+        context: { hook: key, keys: collisions },
+        source: 'spree.hooks',
+        handled: true
+      )
+    end
 
     def split_key(key)
       parts = key.to_s.split('.')

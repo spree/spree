@@ -14,6 +14,13 @@ module Spree
     # tax_lines/discounts/fees endpoints write rows directly, then run
     # this).
     class RecalculateTotals < Spree::Workflow
+      hooks :set_tax_line_context
+
+      # Tax context contributed by set_tax_line_context handlers (exemption
+      # certificates, customer tax IDs) — read by tax providers that support
+      # it. Nil until the typed rows are regenerated.
+      attr_reader :tax_line_context
+
       # @param cart [Spree::Cart, Spree::Order]
       def perform(cart:)
         super
@@ -49,6 +56,7 @@ module Spree
       def regenerate_typed_rows
         Spree.adjusters.each { |adjuster| adjuster.adjust(cart) }
         refresh_discount_and_fee_columns
+        @tax_line_context = run_hooks :set_tax_line_context
         Spree.tax_provider.estimate(cart)
       end
 

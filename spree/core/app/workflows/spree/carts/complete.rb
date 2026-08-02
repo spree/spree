@@ -18,9 +18,9 @@ module Spree
     class Complete < Spree::Workflow
       COMPLETING_TTL = 5.minutes
 
-      hooks :before_finalize
+      hooks :validate, :before_finalize, :after_finalize
 
-      # before_finalize handlers read this plus the argument readers.
+      # Hook handlers read this plus the argument readers.
       attr_reader :order
 
       # @param cart [Spree::Cart, Spree::Order] a draft order funnels into
@@ -52,6 +52,7 @@ module Spree
 
         run_hooks :before_finalize
         step :finalize_completion
+        run_hooks :after_finalize
         success(order)
       rescue ActiveRecord::RecordNotUnique
         # Concurrent completion lost the unique orders.cart_id race —
@@ -104,9 +105,14 @@ module Spree
         end
       end
 
+      # Core's own checkout requirements first, then the extension veto —
+      # a handler that rejects here does so before any money moves and
+      # before the draft order exists, so the lock's rollback is the undo.
       def validate_cart
         validation = Spree::Checkout::Requirements.new(cart).call(completion: true)
         failure(cart, code: 'validation_failed', errors: validation) if validation.any?
+
+        run_hooks :validate
       end
 
       def mark_completing

@@ -1,9 +1,10 @@
 module Spree
   module Carts
     class AddItem < Spree::Workflow
-      hooks :after_item_added
+      hooks :validate, :after_item_added
 
-      # after_item_added handlers read these plus the argument readers.
+      # Hook handlers read these plus the argument readers. Both are nil
+      # when the :validate hook runs — it fires before the item is built.
       attr_reader :line_item, :line_item_created
 
       # @param cart [Spree::Cart, Spree::Order] draft orders ride the same pipeline
@@ -17,6 +18,11 @@ module Spree
         end
         super(cart: cart, variant: variant, quantity: quantity, metadata: metadata,
               public_metadata: public_metadata, private_metadata: private_metadata, options: options)
+
+        # Veto point — purchase limits, B2B eligibility, per-group rules.
+        # Outside the transaction: nothing has been written yet, so a
+        # rejection costs no rollback.
+        run_hooks :validate
 
         ApplicationRecord.transaction do
           step :add_to_line_item
