@@ -330,6 +330,35 @@ RSpec.describe Spree::Workflow do
         .to raise_error(Spree::Workflow::ContractError, /does not declare hook :never_declared/)
     end
 
+    it 'registers a subclass under its own key so twin hooks are reachable' do
+      parent = build_workflow do
+        hooks :validate
+
+        def perform(subject:)
+          super
+          run_hooks :validate
+          success(subject)
+        end
+      end
+
+      twin = Class.new(parent) do
+        def self.name = 'Spree::Testing::TwinWorkflow'
+        workflow_key 'testing.twin_workflow'
+      end
+      stub_const('Spree::Testing::TwinWorkflow', twin)
+      # workflow_key is resolved lazily, so re-register under the final key.
+      twin.hooks :validate
+
+      fired = []
+      Spree.hooks.register('testing.twin_workflow.validate') { |_flow| fired << :twin }
+      Spree.hooks.register('testing.sample_workflow.validate') { |_flow| fired << :parent }
+
+      expect(Spree.hooks.validate!).to be(true)
+
+      twin.call(subject: 1)
+      expect(fired).to eq([:twin])
+    end
+
     describe 'reject!' do
       it 'aborts the flow with a failure result the caller can inspect' do
         workflow = build_workflow do

@@ -84,9 +84,16 @@ module Spree
     class << self
       attr_reader :declared_hooks
 
+      # A subclass inherits the parent's declared hooks but dispatches them
+      # under its OWN key — Spree::Orders::AddItem fires
+      # 'orders.add_item.validate', not the cart key — so it registers
+      # itself too, otherwise Spree.hooks.validate! rejects registrations
+      # against a twin's perfectly valid hook.
       def inherited(subclass)
         super
-        subclass.instance_variable_set(:@declared_hooks, (declared_hooks || []).dup)
+        inherited_hooks = (declared_hooks || []).dup
+        subclass.instance_variable_set(:@declared_hooks, inherited_hooks)
+        Spree.hooks.register_workflow(subclass.workflow_key, subclass.name) if inherited_hooks.any? && subclass.name
       end
 
       # Dotted identity used for hook keys and instrumentation; derived
