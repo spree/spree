@@ -145,6 +145,7 @@ end
 
   The requirement appears in the Cart API's `requirements` array (so a storefront rendering the feed generically needs zero changes) *and* blocks completion. `register_step` adds whole steps (spliced into `checkout_steps` at `before:`/`after:` anchors); built-in steps are customized through `Registry.base_steps` — an ordered `{ name => applicability }` hash you can mutate directly (`base_steps.delete('confirm')`).
 - **The API `requirements` array now carries a stable `code`** on every entry (`email_required`, `out_of_stock`, `guest_checkout_not_allowed`, ...). Additive change — existing consumers keep working.
+- **The delivery requirement is keyed `delivery_method`, not `shipping_method`.** Its entry is now `{ step: 'delivery', field: 'delivery_method', code: 'delivery_method_required' }`. A storefront that renders the feed generically needs no change; one that keys off the field or code to highlight a specific input must switch both tokens. The `Spree.t('checkout_requirements.shipping_method_required')` translation key was renamed to `checkout_requirements.delivery_method_required` — override it under the new key.
 - **"Logic between steps" has no backend home by design.** Side effects hang off data writes (workflow hooks such as `Carts::Complete`'s `before_finalize` and `Carts::AddItem`'s `after_item_added`) and events (`cart.updated`, `order.placed`) — not step transitions.
 
 ## Statuses: derived, then persisted
@@ -226,8 +227,11 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `use_billing` / `clone_billing_address` | `use_shipping` (shipping address is canonical) |
 | `Fulfillment#ship`, `#ship!`, `#shipped?`, `#can_ship?`, `#shipping_method`, `#add_shipping_method` | `#fulfill`, `#fulfill!`, `#fulfilled?`, `#can_fulfill?`, `#delivery_method`, `#add_delivery_method` |
 | `LineItem#target_shipment` | `#target_fulfillment` |
-| `create_proposed_shipments` / `create_proposed_fulfillments` | `#rebuild_fulfillments!` (both models) |
+| `Order#create_proposed_shipments` / `#create_proposed_fulfillments` | `#rebuild_fulfillments!` (Cart ships with the new name only) |
 | `Order#remove_out_of_stock_items!` | cart-side only (`Spree::Carts::RemoveOutOfStockItems`) |
+| `Order#delivery_required?` | `#delivery_step_required?` — digital and pickup are deliveries too; this asks whether the customer must choose a delivery option |
+| `Order#requires_ship_address?` | `#shipping_address_required?` — decided by the selected delivery methods (`DeliveryMethod#requires_address?`); digital, pickup, and pickup-point deliveries need no customer address |
+| `requirements[].field` / `.code` `shipping_method` (Store API) | `delivery_method` / `delivery_method_required` — no bridge; clients keying off the delivery requirement must switch both tokens |
 | `Cart#number` (Store API field) | `id` — carts have no order-style number; the field mirrors the prefixed ID for one release |
 | `order.completed` event | `order.placed` |
 | Calling cart services with `order:` kwargs | `cart:` kwargs |
@@ -237,7 +241,7 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 
 - **Don't reach for model business methods from services** — 6.0 code style writes behavior inline in service/workflow steps; models keep data, validations, predicates and persistence primitives. Extensions patching removed model methods (`finalize!` internals, updater hooks) should move to workflow hooks (`Spree.hooks.register('carts.complete.before_finalize') { |flow| ... }` — handlers receive the workflow instance) or event subscribers.
 - **Store-scoped data is single-owner.** `Product`, `Promotion` and `PaymentMethod` `belongs_to :store`; the `stores: [...]` writers are gone. Multi-store sharing lives in the `spree_multi_store` extension.
-- The Store API v3 contract is stable across the split — cart endpoints keep their shapes; `requirements` gains `code`, and serializer `number` on carts is bridged as described above.
+- The Store API v3 contract is stable across the split — cart endpoints keep their shapes; `requirements` gains `code` (and renames the delivery entry's field/code to `delivery_method`, see above), and serializer `number` on carts is bridged as described above.
 
 <Warning>
   This guide tracks the 6.0 development line and will grow until release. If a behavioral change you hit isn't documented here, treat it as a documentation bug and report it.
