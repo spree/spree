@@ -43,15 +43,25 @@ RSpec.shared_examples 'a purchase lifecycle host' do
       expect(new_record(customer: create(:user)).guest_checkout_disallowed?).to be(false)
     end
 
-    it 'follows the channel guest-checkout flag for guests' do
+    it 'follows the channel guest-checkout setting for guests' do
       record = new_record
       record.valid? # resolve the default channel
 
-      allow(record.channel).to receive(:guest_checkout_enabled?).and_return(false)
+      record.channel.preferred_guest_checkout = false
       expect(record.guest_checkout_disallowed?).to be(true)
 
-      allow(record.channel).to receive(:guest_checkout_enabled?).and_return(true)
+      record.channel.preferred_guest_checkout = true
       expect(record.guest_checkout_disallowed?).to be(false)
+    end
+
+    it 'blocks guests on a prices_hidden channel even when guest checkout is on' do
+      record = new_record
+      record.valid? # resolve the default channel
+
+      record.channel.preferred_guest_checkout = true
+      record.channel.preferred_storefront_access = 'prices_hidden'
+
+      expect(record.guest_checkout_disallowed?).to be(true)
     end
   end
 end
