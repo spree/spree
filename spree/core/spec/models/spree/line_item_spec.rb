@@ -124,6 +124,56 @@ describe Spree::LineItem, type: :model do
     end
   end
 
+  # Inventory verification is NOT gated on digitality: a digital variant can
+  # be stock-limited (licences, seats, tickets), and the Digital provider
+  # issues one link per fulfillment unit. Tracking is decided per variant by
+  # should_track_inventory?, never by the order being all-digital.
+  describe 'inventory verification on a digital order' do
+    let(:digital_type) { create(:product_type, name: 'Licence', fulfillment_types: ['digital'], store: store) }
+    let(:licence_product) { create(:product, product_type: digital_type, store: store) }
+    let(:licence_variant) do
+      licence_product.default_variant.tap do |variant|
+        variant.update!(track_inventory: true)
+        variant.digitals << create(:digital, variant: variant)
+      end
+    end
+    let(:order) { create(:completed_order_with_totals, store: store) }
+
+    # The order must ALREADY be all-digital when the item saves — that is the
+    # state in which an order-level digitality gate suppresses verification
+    # (on the first digital item the order's line_items cache is still empty,
+    # so `digital?` is false and any such gate passes by accident).
+    before do
+      order.line_items.destroy_all
+      create(:line_item, order: order, variant: licence_variant, quantity: 1)
+      order.reload
+    end
+
+    it 'is an all-digital order' do
+      expect(order).to be_digital
+    end
+
+    it 'builds fulfillment items for a stock-limited digital variant' do
+      second_licence = create(:product, product_type: digital_type, store: store).default_variant
+      second_licence.update!(track_inventory: true)
+
+      line_item = create(:line_item, order: order, variant: second_licence, quantity: 2)
+
+      expect(line_item.reload.inventory_units.sum(&:quantity)).to eq(2)
+    end
+
+    it 'decrements stock for a tracked digital variant' do
+      second_licence = create(:product, product_type: digital_type, store: store).default_variant
+      second_licence.update!(track_inventory: true)
+      stock_item = second_licence.stock_items.first
+      stock_item.set_count_on_hand(5)
+
+      expect {
+        create(:line_item, order: order, variant: second_licence, quantity: 2)
+      }.to change { stock_item.reload.count_on_hand }.from(5).to(3)
+    end
+  end
+
   context '#destroy' do
     let!(:line_item) { order.line_items.first }
 

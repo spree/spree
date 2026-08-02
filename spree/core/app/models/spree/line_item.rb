@@ -51,7 +51,11 @@ module Spree
     validates_with Spree::Stock::AvailabilityValidator, if: -> { variant.present? }
     validate :ensure_proper_currency, if: -> { owner.present? }
 
-    before_destroy :verify_order_inventory_before_destroy, if: -> { order&.delivery_required? }
+    # Order-side only: a cart's fulfillment items are built by the Stock
+    # Coordinator and copied at completion, so `owner` would be wrong here.
+    # Removing an item from a placed order must drain its units and restock —
+    # `removing: true` keeps verify from re-adding units mid-destroy.
+    before_destroy :verify_order_inventory_before_destroy, if: -> { order.present? }
 
     after_save :update_inventory
     after_save :update_adjustments
@@ -335,8 +339,15 @@ module Spree
       end
     end
 
+    # Order-side only (see before_destroy above); OrderInventory#verify
+    # itself returns early unless the order is completed.
+    #
+    # No digitality gate: digital items get fulfillment items too (the
+    # Digital provider issues one link per unit), and stock-limited digitals
+    # — licences, seats, tickets — must decrement like anything else.
+    # Tracking is decided per variant by should_track_inventory?.
     def update_inventory
-      if (saved_changes? || target_fulfillment.present?) && order&.delivery_required?
+      if (saved_changes? || target_fulfillment.present?) && order.present?
         verify_order_inventory
       end
     end
