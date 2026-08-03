@@ -359,7 +359,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       end
 
       it 'accepts correct current_password' do
-        patch :update, params: { email: 'new@example.com', current_password: 'secret' }
+        patch :update, params: { email: 'new@example.com', current_password: 'secret123' }
 
         expect(response).to have_http_status(:ok)
         expect(user.reload.email).to eq('new@example.com')
@@ -382,7 +382,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       end
 
       it 'accepts correct current_password' do
-        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123', current_password: 'secret' }
+        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123', current_password: 'secret123' }
 
         expect(response).to have_http_status(:ok)
       end
@@ -390,7 +390,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
     context 'validation errors' do
       it 'returns errors for blank email with current password' do
-        patch :update, params: { email: '', current_password: 'secret' }
+        patch :update, params: { email: '', current_password: 'secret123' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -399,7 +399,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
       it 'returns errors for duplicate email with current password' do
         other_user = create(:user)
-        patch :update, params: { email: other_user.email, current_password: 'secret' }
+        patch :update, params: { email: other_user.email, current_password: 'secret123' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')

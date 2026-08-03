@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :customer, aliases: [:user], class: Spree.customer_class do
     email                 { generate(:random_email) }
-    password              { 'secret' }
+    password              { 'secret123' }
     password_confirmation { password }
 
     first_name { FFaker::Name.first_name }
@@ -19,7 +19,7 @@ FactoryBot.define do
   factory :admin_user, class: Spree.admin_user_class do
     email                 { generate(:random_email) }
     login                 { email }
-    password              { 'secret' }
+    password              { 'secret123' }
     password_confirmation { password }
     first_name { FFaker::Name.first_name }
     last_name  { FFaker::Name.last_name }

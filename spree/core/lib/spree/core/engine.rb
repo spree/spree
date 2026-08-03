@@ -11,6 +11,7 @@ module Spree
                                :payment_methods,
                                :adjusters,
                                :tax_provider,
+                               :password_validator,
                                :fulfillment_providers,
                                :fulfillment_types,
                                :stock_splitters,
@@ -173,6 +174,10 @@ module Spree
 
         # The sanctioned TaxLine writer (see docs/plans/6.0-tax-provider.md).
         Rails.application.config.spree.tax_provider = Spree::TaxProvider::Internal
+
+        # Password policy for the default auth models. Swap for corporate rules,
+        # breach-list lookups or entropy scoring.
+        Rails.application.config.spree.password_validator = Spree::PasswordLengthValidator
 
         Rails.application.config.spree.fulfillment_providers = [
           Spree::FulfillmentProvider::Manual,

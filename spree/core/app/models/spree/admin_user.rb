@@ -8,9 +8,9 @@ module Spree
 
     include Spree::AdminUserMethods
     include Spree::AccountLockout
+    include Spree::PasswordPolicy
 
     validates :email, presence: true, uniqueness: { case_sensitive: false }
-    validates :password, confirmation: true, length: { maximum: ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED }, allow_blank: true
 
     # Back-compat with callers and auth strategies that check +valid_password?+.
     # Guards a blank digest (password-less accounts) so it returns false instead

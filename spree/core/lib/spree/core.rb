@@ -297,6 +297,26 @@ module Spree
     Rails.application.config.spree.tax_provider = value
   end
 
+  # Validator enforcing the password policy on the default auth models
+  # ({Spree::Customer}, {Spree::AdminUser}). Defaults to
+  # {Spree::PasswordLengthValidator}, which reads the configurable length bounds.
+  #
+  # Assign an +ActiveModel::Validator+ subclass to replace the policy wholesale —
+  # corporate rules, breach-list lookups, entropy scoring. Errors it adds to
+  # +:password+ reach API clients through the standard 422 path, so the
+  # validator's message is the user-facing reason.
+  #
+  #   Spree.password_validator = MyApp::PasswordValidator
+  #
+  # @return [Class]
+  def self.password_validator
+    Rails.application.config.spree.password_validator
+  end
+
+  def self.password_validator=(value)
+    Rails.application.config.spree.password_validator = value
+  end
+
   def self.fulfillment_providers
     Rails.application.config.spree.fulfillment_providers
   end

@@ -128,6 +128,16 @@ module Spree
       preference :max_failed_login_attempts, :integer, default: 5 # failed login attempts before an account is locked
       preference :lockout_duration, :integer, default: 1800 # lockout duration in seconds (30 minutes)
 
+      # password policy
+      # NIST 800-63B recommends a length floor with no composition rules (no forced
+      # symbols/digits, which push users toward predictable substitutions).
+      preference :minimum_password_length, :integer, default: 8
+      # bcrypt silently truncates past 72 bytes — without a cap a long passphrase and
+      # its 72-byte prefix are the same password. A correctness guard, not policy.
+      preference :maximum_password_length, :integer, default: ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED
+      # To replace the policy itself, assign Spree.password_validator — a class,
+      # not a preference.
+
       # gift cards
       preference :gift_card_batch_web_limit, :integer, default: 500 # number of gift card codes to be generated in the web process, more than this will be generated in a background job
       preference :gift_card_batch_limit, :integer, default: 50_000

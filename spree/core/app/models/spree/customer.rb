@@ -14,9 +14,9 @@ module Spree
 
     include Spree::CustomerMethods
     include Spree::AccountLockout
+    include Spree::PasswordPolicy
 
     validates :email, presence: true, uniqueness: { case_sensitive: false }
-    validates :password, confirmation: true, length: { maximum: ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED }, allow_blank: true
 
     attribute :accepts_email_marketing, :boolean, default: false
 
