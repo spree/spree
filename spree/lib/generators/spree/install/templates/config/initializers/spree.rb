@@ -81,9 +81,6 @@ Rails.application.config.after_initialize do
   # Spree.export_types << Spree::Exports::Payments
   # Spree.reports << Spree::Reports::MassivelyOvercomplexReportForCfo
 
-  # Admin partials
-  # Spree.admin.partials.product_form << 'spree/admin/products/custom_section'
-
   # Role-based permissions
   # Configure which permission sets are assigned to each role
   # More on permission sets: https://spreecommerce.org/docs/developer/customization/permissions

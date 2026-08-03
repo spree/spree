@@ -18,7 +18,6 @@ def add_gems
 
   # Optional Spree packages
   gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../emails' } : { version: SPREE_VERSION }
-  gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../admin' } : { version: SPREE_VERSION }
 
   # translations
   gem 'spree_i18n'
@@ -46,13 +45,6 @@ def install_spree
   generate 'spree:install', '--force', '--auto-accept', '--seed=false',
            '--user_class=Spree::User', '--admin_user_class=Spree::AdminUser',
            '--authentication=devise'
-end
-
-def install_spree_admin
-  say 'Installing Spree Admin...', :blue
-
-  generate 'spree:admin:install', '--force'
-  generate 'spree:admin:devise', '--force'
 end
 
 def configure_development_environment
@@ -104,7 +96,7 @@ def show_success_message
   say
   say 'Then visit:', :yellow
   say '  Store API: http://localhost:3000/api/v3/store', :bold
-  say '  Admin Panel: http://localhost:3000/admin', :bold
+  say '  Admin API: http://localhost:3000/api/v3/admin', :bold
   say
   say 'Admin credentials:', :yellow
   say "  Email: #{ADMIN_EMAIL}", :bold
@@ -123,7 +115,6 @@ after_bundle do
   configure_development_environment
   setup_auth
   install_spree
-  install_spree_admin
   setup_procfile
   seed_database
   load_sample_data

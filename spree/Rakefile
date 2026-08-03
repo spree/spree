@@ -8,7 +8,7 @@ rescue LoadError
 end
 
 SPREE_CORE_GEMS = %w(core api).freeze
-SPREE_OPTIONAL_GEMS = %w(emails admin dashboard).freeze
+SPREE_OPTIONAL_GEMS = %w(emails dashboard).freeze
 
 task default: :test
 
@@ -120,13 +120,6 @@ namespace :gem do
         sh "gem push spree_#{gem_name}-#{version}.gem"
       end
     end
-  end
-end
-
-desc "Creates a sandbox application for simulating the Spree code in a deployed Rails app"
-task :sandbox do
-  Bundler.with_unbundled_env do
-    exec("bin/sandbox.sh")
   end
 end
 

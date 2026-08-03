@@ -1344,8 +1344,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    # Mirrors `spree/admin/spec/controllers/.../products_controller_spec.rb`:
-    # asserts the reindex job is enqueued once per affected product.
+    # Asserts the reindex job is enqueued once per affected product.
     it 'reindexes products' do
       allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
 
