@@ -12,8 +12,14 @@ RSpec.describe Spree::Returns::EligibilityValidator do
     )
   end
 
-  # The engine registers this handler at boot; specs run against an app where
-  # that has already happened, so nothing to register here.
+  # The engine registers this at boot, but any spec calling Spree.hooks.clear!
+  # earlier in the run wipes it for the rest of the process — so register it
+  # here rather than depending on file order.
+  before do
+    Spree.hooks.register('returns.create.validate', described_class.name)
+    Spree.hooks.register('exchanges.create.validate', described_class.name)
+  end
+
   it 'is registered on the create workflows' do
     expect(Spree.hooks.for('returns.create.validate').map(&:class)).to include(described_class)
     expect(Spree.hooks.for('exchanges.create.validate').map(&:class)).to include(described_class)
