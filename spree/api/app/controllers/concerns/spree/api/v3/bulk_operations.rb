@@ -1,11 +1,9 @@
 module Spree
   module Api
     module V3
-      # API-side counterpart to `Spree::Admin::BulkOperationsConcern`. Provides
-      # the shared tag bulk actions, the `bulk_collection` relation, and the
-      # `after_bulk_tags_change` hook controllers override (e.g. to reindex
-      # search + match automatic taxons). Shape mirrors the legacy concern so
-      # the two stay easy to keep in sync.
+      # Provides the shared tag bulk actions, the `bulk_collection` relation,
+      # and the `after_bulk_tags_change` hook controllers override (e.g. to
+      # reindex search + match automatic taxons).
       module BulkOperations
         extend ActiveSupport::Concern
 
@@ -56,7 +54,7 @@ module Spree
 
         # Hook for controllers to perform additional work after bulk tag
         # mutations — e.g. enqueueing search reindex jobs, re-matching
-        # automatic taxons. Mirrors `Spree::Admin::BulkOperationsConcern`.
+        # automatic taxons.
         def after_bulk_tags_change
         end
 

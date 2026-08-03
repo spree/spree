@@ -68,14 +68,6 @@ module Spree
       scope.map { |record| line_item_class.new(record: record, report: self) }
     end
 
-    def to_partial_path
-      'spree/admin/reports/report'
-    end
-
-    def no_report_data_partial_path
-      'spree/admin/reports/no_report_data'
-    end
-
     def human_name
       [Spree.t("report_names.#{type.demodulize.underscore}"), store.name, date_from.strftime('%Y-%m-%d'), date_to.strftime('%Y-%m-%d')].join(' - ')
     end

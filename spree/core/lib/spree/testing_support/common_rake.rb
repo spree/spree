@@ -3,17 +3,13 @@ require 'generators/spree/dummy_model/dummy_model_generator'
 
 desc 'Generates a dummy app for testing'
 namespace :common do
-  task :test_app, [:authentication, :user_class, :admin_user_class, :css, :javascript, :install_admin, :install_storefront] do |_t, args|
+  task :test_app, [:authentication, :user_class, :admin_user_class] do |_t, args|
     # Support both Rake::TaskArguments (via invoke) and Hash (via execute)
     # When using execute with a Hash, args IS the hash directly
     defaults = {
       authentication: 'dummy',
       user_class: 'Spree::LegacyUser',
-      admin_user_class: 'Spree::LegacyAdminUser',
-      install_storefront: false,
-      install_admin: false,
-      javascript: false,
-      css: false
+      admin_user_class: 'Spree::LegacyAdminUser'
     }
     # Rake::TaskArguments#with_defaults modifies in-place
     # ActiveSupport adds Hash#with_defaults which returns a new hash, so check for Rake::TaskArguments specifically
@@ -25,15 +21,6 @@ namespace :common do
     end
     require ENV['LIB_NAME'].to_s
 
-    # Convert to booleans (supports both string and boolean values for backwards compatibility)
-    install_admin = args[:install_admin].to_b
-    install_storefront = args[:install_storefront].to_b
-    javascript_enabled = args[:javascript].to_b
-    css_enabled = args[:css].to_b
-
-    # Admin and Storefront require CSS (Tailwind) to function properly
-    css_enabled ||= install_admin || install_storefront
-
     puts args
 
     ENV['RAILS_ENV'] = 'test'
@@ -42,21 +29,12 @@ namespace :common do
     dummy_app_args = [
       "--lib_name=#{ENV['LIB_NAME']}"
     ]
-    dummy_app_args << '--javascript' if javascript_enabled
-    dummy_app_args << '--css=tailwind' if css_enabled
 
     puts dummy_app_args
 
     Spree::DummyGenerator.start dummy_app_args
 
-    # Install JavaScript dependencies (importmap, turbo, stimulus) if JavaScript is enabled
-    # Rails includes the gems but doesn't run the installers automatically
-    if javascript_enabled
-      puts 'Installing JavaScript dependencies...'
-      system('yes | bundle exec rails importmap:install turbo:install stimulus:install')
-    end
-
-    # install devise if it's not the legacy user, useful for testing storefront
+    # install devise if it's not the legacy user
     if args[:authentication] == 'devise' && args[:user_class] != 'Spree::LegacyUser'
       system('bundle exec rails g devise:install --force --auto-accept')
       system("bundle exec rails g devise #{args[:user_class]} --force --auto-accept")
@@ -67,7 +45,7 @@ namespace :common do
     # Run core Spree install generator
     # The spree:install generator lives in the root spree gem. Core gems (spree_core, spree_api)
     # don't have spree as a dependency, so we need to use the root Gemfile to access the generator.
-    # Other gems (admin, storefront, etc.) already have spree in their Gemfile.
+    # Other gems already have spree in their Gemfile.
     core_gems = %w[spree/core spree/api]
     root_gemfile = File.expand_path('../../../../Gemfile', __dir__)
     use_root_gemfile = core_gems.include?(ENV['LIB_NAME']) &&
@@ -76,31 +54,6 @@ namespace :common do
     bundle_exec = use_root_gemfile ? "bundle exec --gemfile=#{root_gemfile}" : 'bundle exec'
     puts 'Running Spree install generator...'
     system("#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]} --authentication=#{args[:authentication]}")
-
-    # Determine if we need to install admin/storefront
-    # Either via explicit flag or because we're testing that gem itself
-    needs_admin = install_admin || ENV['LIB_NAME'] == 'spree/admin'
-    needs_storefront = install_storefront || ENV['LIB_NAME'] == 'spree/storefront'
-
-    # Run admin install generator if requested or testing admin gem
-    if needs_admin
-      # Only run install if explicitly requested (not when testing admin gem itself)
-      if install_admin
-        puts 'Running Spree Admin install generator...'
-        system('bundle exec rails g spree:admin:install --force')
-      end
-      system('bundle exec rails g spree:admin:devise --force') if args[:authentication] == 'devise'
-    end
-
-    # Run storefront install generator if requested or testing storefront gem
-    if needs_storefront
-      # Only run install if explicitly requested (not when testing storefront gem itself)
-      if install_storefront
-        puts 'Running Spree Storefront install generator...'
-        system('bundle exec rails g spree:storefront:install --force --migrate=false')
-      end
-      system('bundle exec rails g spree:storefront:devise --force') if args[:authentication] == 'devise'
-    end
 
     unless ENV['NO_MIGRATE']
       puts 'Setting up dummy database...'
@@ -122,13 +75,6 @@ namespace :common do
     rescue LoadError => e
       puts "Error loading generator: #{e.message}"
       puts 'Skipping installation no generator to run...'
-    end
-
-    # Precompile assets after all generators have run
-    # This ensures CSS entry points (like Spree Admin's Tailwind CSS) are created first
-    if javascript_enabled || css_enabled
-      puts 'Precompiling assets...'
-      system('bundle exec rake assets:precompile')
     end
   end
 

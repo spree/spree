@@ -7,15 +7,11 @@ namespace :extension do
     # Support both hash passed as first arg and named options
     options = args[:options].is_a?(Hash) ? args[:options] : args.to_h
     Rake::Task['common:test_app'].execute(Rake::TaskArguments.new(
-      [:authentication, :user_class, :admin_user_class, :css, :javascript, :install_admin, :install_storefront],
+      [:authentication, :user_class, :admin_user_class],
       [
         options[:authentication],
         options[:user_class],
-        options[:admin_user_class],
-        options[:css],
-        options[:javascript],
-        options[:install_admin],
-        options[:install_storefront]
+        options[:admin_user_class]
       ]
     ))
   end

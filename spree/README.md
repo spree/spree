@@ -8,7 +8,7 @@ Ruby gems that power Spree Commerce — models, services, APIs, admin dashboard,
 spree/
 ├── core/               # spree_core — models, services, business logic
 ├── api/                # spree_api — REST APIs (Store API + Admin API)
-├── admin/              # spree_admin — admin dashboard
+├── dashboard/          # spree_dashboard — hosts the React admin dashboard (optional)
 ├── emails/             # spree_emails — transactional emails (optional)
 ├── spree.gemspec       # meta-gem (installs core + api)
 ├── template.rb         # Rails application template for new projects
@@ -23,8 +23,8 @@ Add to your Rails application's Gemfile:
 
 ```ruby
 gem 'spree'
-gem 'spree_admin'   # optional
-gem 'spree_emails'  # optional
+gem 'spree_dashboard'  # optional
+gem 'spree_emails'     # optional
 ```
 
 Or use the Rails application template:

@@ -31,10 +31,6 @@ flags:
     paths:
       - spree/api/
     carryforward: true
-  admin:
-    paths:
-      - spree/admin/
-    carryforward: true
   emails:
     paths:
       - spree/emails/
@@ -56,11 +52,6 @@ component_management:
       paths:
         - spree/api/app/**
         - spree/api/lib/**
-    - component_id: admin
-      name: Admin
-      paths:
-        - spree/admin/app/**
-        - spree/admin/lib/**
     - component_id: emails
       name: Emails
       paths:

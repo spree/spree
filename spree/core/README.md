@@ -98,7 +98,6 @@ Spree Core includes testing support utilities:
 ```ruby
 # spec/rails_helper.rb
 require 'spree/testing_support/factories'
-require 'spree/testing_support/authorization_helpers'
 ```
 
 To run the test suite:
