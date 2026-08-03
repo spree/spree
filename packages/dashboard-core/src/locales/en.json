@@ -352,6 +352,9 @@
       },
       "permalink": {
         "label": "Permalink"
+      },
+      "number": {
+        "label": "Number"
       }
     },
     "components": {

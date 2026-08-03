@@ -431,7 +431,16 @@ export function ResolveClaimDialog({
   const [refundMethod, setRefundMethod] = useState<'original_payment' | 'store_credit'>(
     'store_credit',
   )
-  const [amount, setAmount] = useState(claim.refund_total)
+  // A claim opened without per-item amounts has a refund_total of zero, and
+  // the workflow refuses to refund nothing — offer what the customer paid for
+  // the claimed items instead, which is also the ceiling it enforces.
+  const [amount, setAmount] = useState(() => {
+    const recorded = Number(claim.refund_total)
+    if (Number.isFinite(recorded) && recorded > 0) return claim.refund_total
+
+    const paid = lines.reduce((sum, line) => sum + Number(line.paid_amount ?? 0), 0)
+    return paid > 0 ? paid.toFixed(2) : claim.refund_total
+  })
   const [replacing, setReplacing] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(lines.map((line) => [line.id, line.send_replacement])),
   )

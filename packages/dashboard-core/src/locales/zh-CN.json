@@ -352,6 +352,9 @@
       },
       "permalink": {
         "label": "固定链接"
+      },
+      "number": {
+        "label": "编号"
       }
     },
     "components": {

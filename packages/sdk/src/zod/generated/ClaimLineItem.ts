@@ -8,6 +8,7 @@ export const ClaimLineItemSchema = z.object({
   send_replacement: z.boolean(),
   description: z.string().nullable(),
   refund_amount: z.string(),
+  paid_amount: z.string(),
   display_refund_amount: z.string(),
   variant_id: z.string().nullable(),
   replacement_variant_id: z.string().nullable(),

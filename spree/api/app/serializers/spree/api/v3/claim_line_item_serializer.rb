@@ -8,6 +8,7 @@ module Spree
                  send_replacement: :boolean,
                  refund_amount: :string,
                  display_refund_amount: :string,
+                 paid_amount: :string,
                  description: [:string, nullable: true],
                  variant_id: [:string, nullable: true],
                  replacement_variant_id: [:string, nullable: true],
@@ -17,6 +18,13 @@ module Spree
 
         attribute :refund_amount do |line|
           line.refund_amount.to_s
+        end
+
+        # What the customer actually paid for these units — the ceiling the
+        # resolve workflow enforces, and what the dashboard offers when the
+        # claim carries no explicit amount.
+        attribute :paid_amount do |line|
+          line.paid_amount.to_s
         end
 
         attribute :display_refund_amount do |line|
