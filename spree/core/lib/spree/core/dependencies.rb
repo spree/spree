@@ -95,14 +95,6 @@ module Spree
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
 
-        # sorter
-        collection_sorter: 'Spree::BaseSorter',
-        order_sorter: 'Spree::BaseSorter',
-        posts_sorter: nil,
-        products_sorter: 'Spree::Products::Sort',
-        # paginator
-        collection_paginator: nil,
-
         # coupons
         # TODO: we should split this service into 2 separate - Add and Remove
         coupon_handler: 'Spree::PromotionHandler::Coupon',
@@ -115,33 +107,14 @@ module Spree
         address_create_service: 'Spree::Addresses::Create',
         address_update_service: 'Spree::Addresses::Update',
 
-        # credit cards
-        credit_cards_destroy_service: 'Spree::CreditCards::Destroy',
-
-        # classifications
-        classification_reposition_service: nil,
-
-        # line items
-
         payment_create_service: 'Spree::Payments::Create',
         payment_capture_workflow: 'Spree::Payments::Capture',
         payment_refund_workflow: 'Spree::Payments::Refund',
         payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
 
         # finders
-        address_finder: 'Spree::Addresses::Find',
-        country_finder: 'Spree::Countries::Find',
-        cms_page_finder: nil, # LEGACY
-        menu_finder: nil, # LEGACY
-        current_order_finder: 'Spree::Orders::FindCurrent',
         current_store_finder: 'Spree::Stores::FindDefault',
-        completed_order_finder: 'Spree::Orders::FindComplete',
-        credit_card_finder: 'Spree::CreditCards::Find',
-        posts_finder: nil,
-        products_finder: 'Spree::Products::Find',
-        taxon_finder: 'Spree::Taxons::Find',
         line_item_by_variant_finder: 'Spree::LineItems::FindByVariant',
-        variant_finder: 'Spree::Variants::Find',
 
         # search
         search_product_presenter: 'Spree::SearchProvider::ProductPresenter'
