@@ -12,7 +12,7 @@ module Spree
 
       context 'return items are supplied' do
         before do
-          expect(Spree::Exchange).to receive(:new).with(reimbursement.order, return_items).and_return(new_exchange)
+          expect(Spree::ReimbursementType::ExchangeProcessor).to receive(:new).with(reimbursement.order, return_items).and_return(new_exchange)
         end
 
         context 'simulate is true' do

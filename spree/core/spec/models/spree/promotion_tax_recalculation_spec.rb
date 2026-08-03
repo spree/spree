@@ -27,7 +27,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
     line_item
     # the order instance may hold a stale (empty) cached line_items association
     order.reload
-    order.update_with_updater!
+    order.recalculate_totals!
     order.reload
   end
 
@@ -55,7 +55,7 @@ describe 'Promotion discounts and the taxable basis', type: :model do
   # completed order keeps.
   def rebuild_tax_like_checkout!
     order.create_tax_charge!
-    order.update_with_updater!
+    order.recalculate_totals!
     order.reload
   end
 

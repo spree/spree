@@ -16,11 +16,4 @@ describe Spree::ShippingCategory, type: :model do
     end
   end
 
-  describe '#includes_digital_shipping_method?' do
-    it 'returns true if the shipping category includes a digital shipping method' do
-      shipping_category = create(:shipping_category)
-      create(:shipping_method, shipping_categories: [shipping_category], calculator: create(:digital_shipping_calculator))
-      expect(shipping_category.includes_digital_shipping_method?).to be_truthy
-    end
-  end
 end

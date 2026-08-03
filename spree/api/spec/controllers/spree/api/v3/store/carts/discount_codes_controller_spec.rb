@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
 
   include_context 'API v3 Store'
 
-  let!(:order) { create(:order_with_line_items, store: store, customer: user) }
+  let!(:order) { create(:cart_with_line_items, store: store, customer: user) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -43,6 +43,22 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
         post :create, params: { cart_id: order.prefixed_id, code: 'SAVE10' }
 
         expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
+    context 'with a real code the cart does not qualify for yet' do
+      let!(:promotion) do
+        create(:promotion_with_item_total_rule, :with_line_item_adjustment,
+               code: 'BIG50', kind: :coupon_code, store: store,
+               item_total_threshold_amount: 1_000_000, adjustment_rate: 50)
+      end
+
+      it 'keeps the code pending without discount rows' do
+        post :create, params: { cart_id: order.prefixed_id, code: 'BIG50' }
+
+        expect(response).to have_http_status(:created)
+        expect(order.reload.read_attribute(:coupon_code)).to eq('big50')
+        expect(order.discounts.where(promotion_id: promotion.id)).to be_empty
       end
     end
 
@@ -90,7 +106,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::DiscountCodesController, type: :con
     end
 
     context 'with guest spree token' do
-      let(:guest_order) { create(:order_with_line_items, store: store, customer: nil) }
+      let(:guest_order) { create(:cart_with_line_items, store: store, customer: nil) }
       let!(:promotion) { create(:promotion_with_item_adjustment, code: 'GUEST10') }
 
       before do

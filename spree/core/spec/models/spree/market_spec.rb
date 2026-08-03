@@ -69,13 +69,13 @@ RSpec.describe Spree::Market, type: :model do
     end
 
     it 'falls back to first by position' do
-      market = create(:market, store: store, position: 1)
-      create(:market, store: store, position: 2)
+      store.markets.update_all(default: false)
+      market = store.markets.order(:position).first
       expect(described_class.default_for_store(store)).to eq(market)
     end
 
-    it 'returns nil for store without markets' do
-      expect(described_class.default_for_store(store)).to be_nil
+    it 'always resolves — every store owns an auto-created default market' do
+      expect(described_class.default_for_store(store)).to eq(store.default_market)
     end
   end
 
@@ -209,7 +209,7 @@ RSpec.describe Spree::Market, type: :model do
     end
 
     it 'returns false for the only market in a store' do
-      market = create(:market, store: store)
+      market = store.markets.sole
       expect(market.can_be_deleted?).to be false
     end
 
@@ -230,7 +230,8 @@ RSpec.describe Spree::Market, type: :model do
     end
 
     it 'does not allow destroying the only market in a store' do
-      market = create(:market, store: store)
+      market = store.markets.sole
+      market.update_column(:default, false)
       expect(market.destroy).to be false
       expect(market.reload.deleted_at).to be_nil
       expect(market.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/market.attributes.base.cannot_destroy_last_market'))
@@ -245,7 +246,8 @@ RSpec.describe Spree::Market, type: :model do
     it 'does not affect markets in other stores when checking for last market' do
       other_store = create(:store)
       create(:market, store: other_store)
-      market = create(:market, store: store)
+      market = store.markets.sole
+      market.update_column(:default, false)
       expect(market.destroy).to be false
       expect(market.errors[:base]).to include(I18n.t('activerecord.errors.models.spree/market.attributes.base.cannot_destroy_last_market'))
     end

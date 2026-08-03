@@ -87,7 +87,7 @@ module Spree
 
           # POST /api/v3/admin/orders/:id/resend_confirmation
           def resend_confirmation
-            @resource.publish_event('order.completed')
+            @resource.publish_event('order.resend_confirmation_email')
             render json: serialize_resource(@resource)
           end
 
@@ -103,7 +103,12 @@ module Spree
 
           # Override scope — Order uses SingleStoreResource (for_store)
           def scope
-            current_store.orders.accessible_by(current_ability, :show).preload_associations_lazily
+            base = current_store.orders.accessible_by(current_ability, :show).preload_associations_lazily
+
+            # Transient completion drafts (status draft + cart_id set) belong
+            # to in-flight checkouts, never to the admin. Admin drafts are the
+            # cart-less ones.
+            base.where(cart_id: nil).or(base.where.not(status: 'draft'))
           end
 
           def set_resource

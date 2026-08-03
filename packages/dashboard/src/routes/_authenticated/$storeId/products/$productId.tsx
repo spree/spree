@@ -141,6 +141,7 @@ function productToFormValues(
     category_ids: product.categories?.map((t) => t.id) ?? [],
     tags: product.tags ?? [],
     tax_category_id: product.tax_category_id ?? null,
+    product_type_id: product.product_type_id ?? null,
     meta_title: product.meta_title ?? '',
     meta_description: product.meta_description ?? '',
     slug: product.slug ?? '',

@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
       let(:idempotency_key) { SecureRandom.uuid }
 
       it 'processes normally without Idempotency-Key header' do
-        expect { post :create }.to change(Spree::Order, :count).by(1)
+        expect { post :create }.to change(Spree::Cart, :count).by(1)
         expect(response).to have_http_status(:created)
         expect(response.headers['Idempotent-Replayed']).to be_nil
       end
@@ -30,11 +30,11 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
       it 'caches and replays the response for duplicate requests' do
         request.headers['Idempotency-Key'] = idempotency_key
 
-        expect { post :create }.to change(Spree::Order, :count).by(1)
+        expect { post :create }.to change(Spree::Cart, :count).by(1)
         expect(response).to have_http_status(:created)
         first_response = json_response
 
-        expect { post :create }.not_to change(Spree::Order, :count)
+        expect { post :create }.not_to change(Spree::Cart, :count)
         expect(response).to have_http_status(:created)
         expect(response.headers['Idempotent-Replayed']).to eq('true')
         expect(json_response['id']).to eq(first_response['id'])
@@ -53,10 +53,10 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
 
       it 'allows different idempotency keys for different requests' do
         request.headers['Idempotency-Key'] = 'key-1'
-        expect { post :create }.to change(Spree::Order, :count).by(1)
+        expect { post :create }.to change(Spree::Cart, :count).by(1)
 
         request.headers['Idempotency-Key'] = 'key-2'
-        expect { post :create }.to change(Spree::Order, :count).by(1)
+        expect { post :create }.to change(Spree::Cart, :count).by(1)
       end
 
       it 'scopes cache by API key' do
@@ -68,7 +68,7 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
         request.headers['X-Spree-Api-Key'] = other_api_key.token
         request.headers['Idempotency-Key'] = idempotency_key
 
-        expect { post :create }.to change(Spree::Order, :count).by(1)
+        expect { post :create }.to change(Spree::Cart, :count).by(1)
         expect(response.headers['Idempotent-Replayed']).to be_nil
         expect(json_response['id']).not_to eq(first_response['id'])
       end
@@ -82,7 +82,7 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
       end
 
       it 'does not apply to GET requests' do
-        cart = create(:order, store: store)
+        cart = create(:cart, store: store)
         request.headers['x-spree-token'] = cart.token
         request.headers['Idempotency-Key'] = idempotency_key
 

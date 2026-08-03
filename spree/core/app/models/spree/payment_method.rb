@@ -12,8 +12,6 @@ module Spree
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end
-    # Multi-store sharing moved to the spree_multi_store extension in 5.6.
-    include Spree::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
 
     scope :active,    -> { where(active: true).order(position: :asc) }
     scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
@@ -22,7 +20,7 @@ module Spree
     after_initialize :set_name, if: :new_record?
 
     validates :name, presence: true
-    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
+    validates :store, presence: true
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     belongs_to :store, class_name: 'Spree::Store'

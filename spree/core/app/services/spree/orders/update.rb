@@ -24,10 +24,10 @@ module Spree
           end
 
           if items_param || @order.ship_address_id != ship_address_id_before
-            build_shipments
+            build_fulfillments
           end
 
-          @order.update_with_updater!
+          @order.recalculate_totals!
         end
 
         success(@order.reload)
@@ -42,8 +42,8 @@ module Spree
         raise ActiveRecord::RecordInvalid, @order if result.failure?
       end
 
-      def build_shipments
-        result = Spree::Orders::BuildShipments.call(order: @order)
+      def build_fulfillments
+        result = Spree::Orders::BuildFulfillments.call(order: @order)
         raise ActiveRecord::RecordInvalid, @order if result.failure?
       end
     end

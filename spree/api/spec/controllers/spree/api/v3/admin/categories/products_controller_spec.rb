@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
   # migrate to Spree::Collection; membership can't be read or mutated here either.
   describe 'automatic (rule-based) categories' do
     let!(:automatic_category) { Spree::Category.create!(name: 'On Sale', store: store, automatic: true) }
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product, store: store) }
 
     it 'are not listable through the nested products endpoint' do
       get :index, params: { category_id: automatic_category.prefixed_id }, as: :json

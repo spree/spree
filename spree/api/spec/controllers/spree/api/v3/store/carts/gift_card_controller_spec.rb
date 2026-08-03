@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
 
   include_context 'API v3 Store'
 
-  let!(:order) { create(:order_with_line_items, store: store, customer: user) }
+  let!(:order) { create(:cart_with_line_items, store: store, customer: user) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -54,7 +54,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::GiftCardsController, type: :control
     end
 
     context 'with guest spree token' do
-      let(:guest_order) { create(:order_with_line_items, store: store, customer: nil) }
+      let(:guest_order) { create(:cart_with_line_items, store: store, customer: nil) }
 
       before do
         request.headers['Authorization'] = nil

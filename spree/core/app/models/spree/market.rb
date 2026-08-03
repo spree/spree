@@ -16,9 +16,25 @@ module Spree
     has_many :orders, class_name: 'Spree::Order', dependent: :nullify
 
     #
+    # Preferences
+    #
+    # How long after an order completes a customer may open a return or
+    # exchange. Per market because this is a legal question before a
+    # merchandising one — the EU right of withdrawal is 14 days minimum,
+    # US practice is the merchant's choice. Nil means no limit.
+    #
+    # Enforced by Spree::Returns::EligibilityValidator, which staff bypass;
+    # a store replaces that handler to express anything more elaborate.
+    # Nullable so nil survives as "no limit" — an integer preference without
+    # it collapses nil to 0, which would reject every return.
+    preference :return_window_days, :integer, default: 30, nullable: true
+
+    #
     # Validations
     #
     validates :store, presence: true
+    validates :preferred_return_window_days,
+              numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validates :name, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
     validates :currency, presence: true
     validates :default_locale, presence: true
@@ -27,6 +43,11 @@ module Spree
     #
     # Callbacks
     #
+    # Set by Stores::Markets#ensure_default_market — the store-creation
+    # bootstrap market skips the shipping-coverage check (no delivery setup
+    # can exist for a store that is still being created).
+    attr_accessor :bootstrap_default
+
     before_save :ensure_single_default
     before_destroy :ensure_can_be_deleted
 
@@ -131,9 +152,19 @@ module Spree
       return unless default? && default_changed?
 
       self.class.where(store_id: store_id, default: true).where.not(id: id).update_all(default: false)
+
+      # The demotion happens via update_all — drop the owning store's cached
+      # associations so same-instance reads see the new default immediately.
+      if store && !store.destroyed?
+        store.association(:default_market).reset
+        store.association(:markets).reset if store.association_cached?(:markets)
+      end
     end
 
     def ensure_can_be_deleted
+      # Cascading from the store's own destruction — the default/last-market
+      # guards only protect live stores.
+      return if destroyed_by_association
       return if can_be_deleted?
 
       if default?

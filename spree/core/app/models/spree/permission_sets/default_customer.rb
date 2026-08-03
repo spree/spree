@@ -35,15 +35,23 @@ module Spree
           !order.completed? && (order.customer == user || order.token && token == order.token)
         end
 
+        # Cart management — the checkout owner since the cart/order split
+        can :create, Spree::Cart
+        can :show, Spree::Cart do |cart, token|
+          cart.customer == user || cart.token && token == cart.token
+        end
+        can [:update, :destroy], Spree::Cart do |cart, token|
+          !cart.completed? && (cart.customer == user || cart.token && token == cart.token)
+        end
+
         # Line item management
         can :create, Spree::LineItem do |line_item, token|
-          line_item.order.customer == user || line_item.order.token && token == line_item.order.token
+          owner = line_item.owner
+          owner.customer == user || owner.token && token == owner.token
         end
-        can :update, Spree::LineItem do |line_item, token|
-          !line_item.order.completed? && (line_item.order.customer == user || line_item.order.token && token == line_item.order.token)
-        end
-        can :destroy, Spree::LineItem do |line_item, token|
-          !line_item.order.completed? && (line_item.order.customer == user || line_item.order.token && token == line_item.order.token)
+        can [:update, :destroy], Spree::LineItem do |line_item, token|
+          owner = line_item.owner
+          !owner.completed? && (owner.customer == user || owner.token && token == owner.token)
         end
 
         # User account management - available to all users (including guests for their own record)

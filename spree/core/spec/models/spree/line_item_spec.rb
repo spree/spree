@@ -8,6 +8,33 @@ describe Spree::LineItem, type: :model do
   it_behaves_like 'metadata'
   it_behaves_like 'lifecycle events'
 
+  describe '#owner (cart/order split)' do
+    let(:cart) { create(:cart) }
+
+    it 'requires exactly one of cart or order' do
+      li = build(:line_item)
+      expect(li).to be_valid
+
+      li.cart = cart
+      expect(li).not_to be_valid
+
+      li.order = nil
+      li.currency = cart.currency
+      expect(li).to be_valid
+      expect(li.owner).to eq(cart)
+
+      li.cart = nil
+      expect(li).not_to be_valid
+    end
+
+    it 'copies the currency from a cart owner' do
+      li = create(:line_item, order: nil, cart: cart, currency: nil)
+
+      expect(li.currency).to eq(cart.currency)
+      expect(li.owner).to eq(cart)
+    end
+  end
+
   describe 'Validations' do
     describe 'ensure_proper_currency' do
       context 'order is present' do
@@ -97,6 +124,56 @@ describe Spree::LineItem, type: :model do
     end
   end
 
+  # Inventory verification is NOT gated on digitality: a digital variant can
+  # be stock-limited (licences, seats, tickets), and the Digital provider
+  # issues one link per fulfillment unit. Tracking is decided per variant by
+  # should_track_inventory?, never by the order being all-digital.
+  describe 'inventory verification on a digital order' do
+    let(:digital_type) { create(:product_type, name: 'Licence', fulfillment_types: ['digital'], store: store) }
+    let(:licence_product) { create(:product, product_type: digital_type, store: store) }
+    let(:licence_variant) do
+      licence_product.default_variant.tap do |variant|
+        variant.update!(track_inventory: true)
+        variant.digitals << create(:digital, variant: variant)
+      end
+    end
+    let(:order) { create(:completed_order_with_totals, store: store) }
+
+    # The order must ALREADY be all-digital when the item saves — that is the
+    # state in which an order-level digitality gate suppresses verification
+    # (on the first digital item the order's line_items cache is still empty,
+    # so `digital?` is false and any such gate passes by accident).
+    before do
+      order.line_items.destroy_all
+      create(:line_item, order: order, variant: licence_variant, quantity: 1)
+      order.reload
+    end
+
+    it 'is an all-digital order' do
+      expect(order).to be_digital
+    end
+
+    it 'builds fulfillment items for a stock-limited digital variant' do
+      second_licence = create(:product, product_type: digital_type, store: store).default_variant
+      second_licence.update!(track_inventory: true)
+
+      line_item = create(:line_item, order: order, variant: second_licence, quantity: 2)
+
+      expect(line_item.reload.inventory_units.sum(&:quantity)).to eq(2)
+    end
+
+    it 'decrements stock for a tracked digital variant' do
+      second_licence = create(:product, product_type: digital_type, store: store).default_variant
+      second_licence.update!(track_inventory: true)
+      stock_item = second_licence.stock_items.first
+      stock_item.set_count_on_hand(5)
+
+      expect {
+        create(:line_item, order: order, variant: second_licence, quantity: 2)
+      }.to change { stock_item.reload.count_on_hand }.from(5).to(3)
+    end
+  end
+
   context '#destroy' do
     let!(:line_item) { order.line_items.first }
 
@@ -117,7 +194,7 @@ describe Spree::LineItem, type: :model do
     context 'on a completed order whose inventory units were already cleared' do
       let(:order) { create(:completed_order_with_totals) }
       let(:line_item) { order.line_items.first }
-      let(:shipment) { order.shipments.first }
+      let(:shipment) { order.fulfillments.first }
       let(:other_line_item) do
         create(:line_item, order: order, variant: create(:variant), quantity: 1).tap do |li|
           shipment.set_up_inventory('on_hand', li.variant, order, li, 1)
@@ -155,23 +232,27 @@ describe Spree::LineItem, type: :model do
         line_item.quantity = line_item.quantity + 1
       end
 
-      it 'triggers adjustment total recalculation' do
-        expect(line_item).to receive(:update_tax_charge) # Regression test for https://github.com/spree/spree/issues/4671
-        expect(line_item).to receive(:recalculate_adjustments)
+      # Regression guard for #4671 — a quantity change must move the tax
+      # basis. Typed rows are rebuilt by the order-level recalculation that
+      # every cart/checkout flow runs after the save.
+      it 'refreshes tax through the order recalculation' do
         line_item.save
+        line_item.order.recalculate_totals!
+
+        expect(line_item.reload.pre_tax_amount).to eq(line_item.price * line_item.quantity)
       end
     end
 
     context 'line item does not change' do
-      it 'does not trigger adjustment total recalculation' do
-        expect(line_item).not_to receive(:recalculate_adjustments)
+      it 'does not trigger price recalculation' do
+        expect(line_item).not_to receive(:recalculate_price)
         line_item.save
       end
     end
 
-    context 'target_shipment is provided' do
+    context 'target_fulfillment is provided' do
       it 'verifies inventory' do
-        line_item.target_shipment = Spree::Shipment.new
+        line_item.target_fulfillment = Spree::Shipment.new
         expect_any_instance_of(Spree::OrderInventory).to receive(:verify)
         line_item.save
       end
@@ -182,22 +263,30 @@ describe Spree::LineItem, type: :model do
     let(:variant) { create(:variant) }
 
     before do
-      create(:tax_rate, zone: order.tax_zone, tax_category: variant.tax_category)
+      create(:tax_rate, zone: tax_rate_zone, tax_category: variant.tax_category)
     end
 
     context 'when order has a tax zone' do
+      let(:tax_rate_zone) do
+        create(:zone, default_tax: true, kind: 'country').tap do |zone|
+          zone.zone_members.create!(zoneable: order.tax_address.country)
+        end
+      end
+
       before do
         expect(order.tax_zone).to be_present
       end
 
       it 'creates a tax adjustment' do
-        Spree::Cart::AddItem.call(order: order, variant: variant)
+        Spree::Orders::AddItem.call(order: order, variant: variant)
         line_item = order.find_line_item_by_variant(variant)
-        expect(line_item.adjustments.tax.count).to eq(1)
+        expect(line_item.tax_lines.count).to eq(1)
       end
     end
 
     context 'when order does not have a tax zone' do
+      let(:tax_rate_zone) { create(:zone, kind: 'country') }
+
       before do
         order.bill_address = nil
         order.ship_address = nil
@@ -206,10 +295,10 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'does not create a tax adjustment' do
-        Spree::Cart::AddItem.call(order: order, variant: variant)
+        Spree::Orders::AddItem.call(order: order, variant: variant)
 
         line_item = order.find_line_item_by_variant(variant)
-        expect(line_item.adjustments.tax.count).to eq(0)
+        expect(line_item.tax_lines.count).to eq(0)
       end
     end
   end
@@ -336,8 +425,8 @@ describe Spree::LineItem, type: :model do
     context 'nothing left on stock' do
       before do
         variant.stock_items.update_all count_on_hand: 5, backorderable: false
-        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
-        order.create_proposed_shipments
+        Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
+        order.rebuild_fulfillments!
         order.finalize!
         order.reload
       end
@@ -345,7 +434,7 @@ describe Spree::LineItem, type: :model do
       it 'allows to decrease item quantity' do
         line_item = order.line_items.first
         line_item.quantity -= 1
-        line_item.target_shipment = order.shipments.first
+        line_item.target_fulfillment = order.fulfillments.first
         line_item.valid?
 
         expect(line_item.errors).to be_empty
@@ -354,7 +443,7 @@ describe Spree::LineItem, type: :model do
       it 'doesnt allow to increase item quantity' do
         line_item = order.line_items.first
         line_item.quantity += 2
-        line_item.target_shipment = order.shipments.first
+        line_item.target_fulfillment = order.fulfillments.first
         line_item.valid?
 
         expect(line_item.errors).not_to be_empty
@@ -365,8 +454,8 @@ describe Spree::LineItem, type: :model do
     context '2 items left on stock' do
       before do
         variant.stock_items.update_all count_on_hand: 7, backorderable: false
-        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
-        order.create_proposed_shipments
+        Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
+        order.rebuild_fulfillments!
         order.finalize!
         order.reload
       end
@@ -374,7 +463,7 @@ describe Spree::LineItem, type: :model do
       it 'allows to increase quantity up to stock availability' do
         line_item = order.line_items.first
         line_item.quantity += 2
-        line_item.target_shipment = order.shipments.first
+        line_item.target_fulfillment = order.fulfillments.first
         line_item.valid?
 
         expect(line_item.errors).to be_empty
@@ -383,7 +472,7 @@ describe Spree::LineItem, type: :model do
       it 'doesnt allow to increase quantity over stock availability' do
         line_item = order.line_items.first
         line_item.quantity += 3
-        line_item.target_shipment = order.shipments.first
+        line_item.target_fulfillment = order.fulfillments.first
         line_item.valid?
 
         expect(line_item.errors).not_to be_empty
@@ -701,7 +790,7 @@ describe Spree::LineItem, type: :model do
       let!(:volume_price) { create(:price, variant: variant, currency: 'USD', amount: 7.00, price_list: price_list) }
 
       it 'applies volume price on initial creation' do
-        result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 15)
+        result = Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 15)
         expect(result.success?).to be true
 
         new_line_item = order.line_items.find_by(variant: variant)
@@ -710,7 +799,7 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'does not apply volume price when quantity is below threshold' do
-        result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
+        result = Spree::Orders::AddItem.call(order: order, variant: variant, quantity: 5)
         expect(result.success?).to be true
 
         new_line_item = order.line_items.find_by(variant: variant)

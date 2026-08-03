@@ -128,6 +128,14 @@ module Spree
           product.status = to_spree_status(attributes['status']) if attributes['status'].present?
 
           if options.empty?
+            if attributes['product_type'].present?
+              product_type = prepare_product_type
+              product.product_type = product_type if product_type.present?
+            end
+
+            # Deprecated column — accepted through 6.0 (removal with the
+            # ShippingCategory drop in 6.1); importers should move to
+            # product_type.
             if attributes['shipping_category'].present?
               shipping_category = prepare_shipping_category
               product.shipping_category = shipping_category if shipping_category.present?
@@ -135,6 +143,14 @@ module Spree
           end
 
           product
+        end
+
+        def prepare_product_type
+          product_type_name = attributes['product_type'].strip
+          cached_lookup(:product_type, product_type_name) do
+            Spree::ProductType.where(store_id: store.id).find_by(name: product_type_name) ||
+              Spree::ProductType.create!(name: product_type_name, store_id: store.id)
+          end
         end
 
         def prepare_shipping_category

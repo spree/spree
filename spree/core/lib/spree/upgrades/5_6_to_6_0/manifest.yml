@@ -80,3 +80,92 @@ steps:
       Idempotent. The source table is left in place as a safety net — drop it
       manually once the migration is verified. Override the source with
       SOURCE_USER_TABLE / SOURCE_USER_TYPE and batch size with BATCH_SIZE.
+
+  - id: migrate_shipping_to_delivery
+    name: "Backfill fulfillment & delivery naming"
+    task: "spree:migrate_shipping_to_delivery"
+    notes: |
+      Rewrites stored 'Spree::Shipment' class-name strings (state changes,
+      stock movements, legacy adjustments), renames the terminal fulfillment
+      status 'shipped' -> 'fulfilled', backfills fulfillment_type and the
+      fulfillment provider on delivery methods (DigitalDelivery calculators
+      become digital + the Digital provider) and copies the type onto existing
+      fulfillments, assigns the Digital product type to products in
+      digital-only shipping categories, and converts display_on into the
+      storefront_visible boolean. Idempotent.
+
+  - id: migrate_zones_to_delivery_zones
+    name: "Convert delivery zones"
+    task: "spree:migrate_zones_to_delivery_zones"
+    notes: |
+      Converts legacy Spree::Zone rows referenced by delivery methods into
+      Spree::DeliveryZone records with typed country/state members and
+      re-points the join rows. Run immediately after db:migrate, before
+      creating new delivery zones, so unmigrated ids stay unambiguous.
+      Tax-scoped zones are left for the tax-provider migration; unreferenced
+      shipping zones are logged and skipped. Idempotent via a
+      migrated_from_zone_id marker.
+
+  - id: migrate_adjustments_to_typed_rows
+    name: "Convert adjustments to typed rows"
+    task: "spree:migrate_adjustments_to_typed_rows"
+    notes: |
+      Converts legacy spree_adjustments into TaxLine / Discount / Fee rows:
+      tax-rate rows become tax lines with rate snapshots, eligible promotion
+      rows become discounts (order-level amounts distributed across line items
+      largest-remainder), sourceless rows map by sign to manual discounts or
+      surcharges, and unknown sources become fees with provenance metadata.
+      Order totals are never modified; per-order reconciliation freezes and
+      logs any order whose typed sums don't match its stored totals.
+      ReturnAuthorization adjustments freeze the order for the returns
+      migration. spree_adjustments stays intact as the rollback source.
+      Idempotent — orders that already have typed rows are skipped.
+
+  - id: backfill_delivery_and_stock_store_ids
+    name: "Bind delivery methods and stock locations to the default store"
+    task: "spree:backfill_delivery_and_stock_store_ids"
+    notes: |
+      Delivery methods and stock locations carry a store_id in Spree 6.
+      Unassigned rows go to the default store; additional stores manage
+      their own records afterwards. The NOT NULL constraints land in 6.1.
+      Idempotent.
+
+  - id: backfill_order_markets
+    name: "Backfill order markets"
+    task: "spree:backfill_order_markets"
+    notes: |
+      Market is mandatory in Spree 6. Assigns the store's default market to
+      orders that predate markets. Channel needs no step here — the 5.4→5.5
+      manifest's channels step already backfills channel_id on every upgrade
+      path. Run before the cart conversion so converted carts inherit
+      resolved values. The NOT NULL constraints on spree_orders land in 6.1.
+      Idempotent.
+
+  - id: migrate_incomplete_orders_to_carts
+    name: "Convert incomplete orders to carts"
+    task: "spree:migrate_incomplete_orders_to_carts"
+    notes: |
+      The final flip: every order that never completed nor canceled becomes a
+      Spree::Cart with the same token, binding, addresses and totals. Line
+      items, payments, payment sessions, reservations, coupon codes, applied
+      promotions and typed adjustment rows are re-owned onto the cart and the
+      hollow order row is deleted. Orders holding payment sessions convert
+      last. Completed and canceled orders are untouched. Run AFTER
+      migrate_adjustments_to_typed_rows so the typed rows exist to re-own.
+
+  - id: migrate_calculator_bounds_to_delivery_method_rules
+    name: "Convert calculator eligibility bounds to delivery method rules"
+    task: "spree:migrate_calculator_bounds_to_delivery_method_rules"
+    notes: |
+      Folds the FlatRate calculator's min/max item-total and weight
+      preferences into DeliveryMethodRule rows (eligibility separated from
+      pricing — see 6.0-delivery-method-rules.md) and clears the migrated
+      preferences so they aren't double-enforced. Run after
+      migrate_shipping_to_delivery. Idempotent.
+
+  - id: product_types_backfill
+    name: "Backfill product type store ownership"
+    task: "spree:product_types:backfill"
+    notes: |
+      Assigns store-less product types to the default store, removes orphaned
+      option-type joins, and resets product counters. Idempotent.

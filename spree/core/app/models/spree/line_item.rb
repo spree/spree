@@ -12,7 +12,8 @@ module Spree
     before_validation :ensure_valid_quantity
 
     with_options inverse_of: :line_items do
-      belongs_to :order, class_name: 'Spree::Order', touch: true
+      belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
+      belongs_to :cart, class_name: 'Spree::Cart', touch: true, optional: true
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory'
@@ -20,16 +21,21 @@ module Spree
 
     has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
-    has_many :adjustments, as: :adjustable, dependent: :destroy
-    has_many :inventory_units, class_name: 'Spree::InventoryUnit', inverse_of: :line_item, dependent: :destroy
-    has_many :shipments, through: :inventory_units, source: :shipment
+    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :line_item
+    has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :line_item
+    has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :line_item
+    has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem', inverse_of: :line_item, dependent: :destroy
+    has_many :fulfillments, through: :fulfillment_items, source: :fulfillment
+    has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :line_item, deprecated: true
+    has_many :shipments, through: :fulfillment_items, source: :fulfillment, deprecated: true
     has_many :digital_links, dependent: :destroy
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :line_item, dependent: :destroy
 
     before_validation :copy_price
     before_validation :copy_tax_category
 
-    validates :variant, :order, presence: true
+    validates :variant, presence: true
+    validate :exactly_one_owner
 
     DB_INTEGER_MAX = (2**31) - 1
 
@@ -43,9 +49,13 @@ module Spree
     validates :price, numericality: true
 
     validates_with Spree::Stock::AvailabilityValidator, if: -> { variant.present? }
-    validate :ensure_proper_currency, if: -> { order.present? }
+    validate :ensure_proper_currency, if: -> { owner.present? }
 
-    before_destroy :verify_order_inventory_before_destroy, if: -> { order.has_checkout_step?('delivery') }
+    # Order-side only: a cart's fulfillment items are built by the Stock
+    # Coordinator and copied at completion, so `owner` would be wrong here.
+    # Removing an item from a placed order must drain its units and restock —
+    # `removing: true` keeps verify from re-adding units mid-destroy.
+    before_destroy :verify_order_inventory_before_destroy, if: -> { order.present? }
 
     after_save :update_inventory
     after_save :update_adjustments
@@ -61,12 +71,26 @@ module Spree
     def thumbnail
       variant.primary_media || product.primary_media
     end
-    delegate :tax_zone, to: :order
+    delegate :tax_zone, to: :owner
     delegate :digital?, :can_supply?, to: :variant
 
     scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
 
-    attr_accessor :target_shipment
+    # Pins inventory-unit placement to a specific fulfillment when set
+    # (admin add-to-this-fulfillment flows).
+    attr_accessor :target_fulfillment
+
+    # @deprecated Use {#target_fulfillment}; removed in 6.1.
+    def target_shipment
+      Spree::Deprecation.warn('Spree::LineItem#target_shipment is deprecated and will be removed in Spree 6.1. Use #target_fulfillment instead.')
+      target_fulfillment
+    end
+
+    # @deprecated Use {#target_fulfillment=}; removed in 6.1.
+    def target_shipment=(value)
+      Spree::Deprecation.warn('Spree::LineItem#target_shipment= is deprecated and will be removed in Spree 6.1. Use #target_fulfillment= instead.')
+      self.target_fulfillment = value
+    end
 
     self.whitelisted_ransackable_associations = %w[variant order tax_category]
     self.whitelisted_ransackable_attributes = %w[variant_id order_id tax_category_id quantity
@@ -75,16 +99,35 @@ module Spree
                                                  pre_tax_amount taxable_adjustment_total
                                                  non_taxable_adjustment_total]
 
+    # The exactly-one owner of this line item — the cart during checkout, the
+    # order after completion. New code must read +owner+, never assume +order+.
+    #
+    # @return [Spree::Cart, Spree::Order, nil]
+    def owner
+      order || cart
+    end
+
+    # Bridge for legacy callers assigning +current_order+ (now a Spree::Cart)
+    # to the order association — routes carts to the cart FK instead.
+    def order=(record)
+      if record.is_a?(Spree::Cart)
+        self.cart = record
+        super(nil)
+      else
+        super
+      end
+    end
+
     def copy_price
       if variant
         update_price if price.nil?
         self.cost_price = variant.cost_price if cost_price.nil?
-        self.currency = order.currency if currency.nil?
+        self.currency = owner.currency if currency.nil? && owner
       end
     end
 
     def update_price
-      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      context = Spree::Pricing::Context.from_order(variant, owner, quantity: quantity)
       currency_price = variant.price_for(context)
 
       self.price = currency_price.price_including_vat_for(tax_zone: tax_zone) if currency_price.present?
@@ -146,27 +189,13 @@ module Spree
     alias discounted_money display_discounted_amount
     alias discounted_amount taxable_amount
 
-    # Returns the amount this line item is taxed on: the discounted amount
-    # reduced further by the line item's proportional share of any
-    # whole-order promotions, which are adjustments on the order itself and
-    # therefore not part of +taxable_adjustment_total+. Never negative.
+    # Returns the amount this line item is taxed on. Whole-order promotions
+    # are distributed to line-item Discount rows at application time, so the
+    # discounted amount already carries the line's share. Never negative.
     #
     # @return [BigDecimal]
     def taxable_basis
-      basis = taxable_amount
-      return basis if basis <= 0
-
-      order_discount = order.order_level_promo_total
-      return basis if order_discount.zero?
-
-      # summed in SQL so the allocation uses the persisted adjustment totals
-      # of all line items, not a possibly stale cached association
-      items_total = order.line_items.reorder(nil).pick(
-        Arel.sql('COALESCE(SUM(price * quantity + taxable_adjustment_total), 0)')
-      )
-      return basis if items_total <= 0
-
-      [basis + (order_discount * basis / items_total), BigDecimal(0)].max
+      [taxable_amount, BigDecimal(0)].max
     end
 
     # Returns the final amount of the line item
@@ -188,13 +217,13 @@ module Spree
 
     # Returns true if the line item has sufficient stock
     #
-    # The order's own active stock reservations are excluded from the
+    # The owner's own active stock reservations are excluded from the
     # availability check — a customer's own checkout hold must not make
     # their own line item look out of stock.
     #
     # @return [Boolean]
     def sufficient_stock?
-      Spree::Stock::Quantifier.new(variant, excluded_order: order).can_supply?(quantity)
+      Spree::Stock::Quantifier.new(variant, excluded_order: owner).can_supply?(quantity)
     end
 
     # Returns true if the line item has insufficient stock
@@ -208,21 +237,21 @@ module Spree
     #
     # @return [Boolean]
     def any_shipped?
-      inventory_units.any?(&:shipped?)
+      fulfillment_items.any?(&:shipped?)
     end
 
     # returns true if all of the inventory units are shipped
     #
     # @return [Boolean]
     def fully_shipped?
-      inventory_units.all?(&:shipped?)
+      fulfillment_items.all?(&:shipped?)
     end
 
     # Returns the shipping cost for the line item
     #
     # @return [BigDecimal]
     def shipping_cost
-      shipments.sum do |shipment|
+      fulfillments.sum do |shipment|
         # Skip cancelled shipments
         return BigDecimal('0') if shipment.canceled?
 
@@ -230,13 +259,13 @@ module Spree
         return BigDecimal('0') if shipment.cost.zero?
 
         # Get total inventory units in this shipment
-        total_units = shipment.inventory_units
+        total_units = shipment.fulfillment_items
 
         # Calculate proportional shipping cost
         return BigDecimal('0') if total_units.empty?
 
         # Get all inventory units in this shipment for this line item
-        line_item_units = shipment.inventory_units.find_all { |unit| unit.line_item_id == id }.count
+        line_item_units = shipment.fulfillment_items.find_all { |unit| unit.line_item_id == id }.count
 
         # Calculate proportional shipping cost
         return BigDecimal('0') if line_item_units.zero?
@@ -250,7 +279,7 @@ module Spree
 
       opts = options.dup # we will be deleting from the hash, so leave the caller's copy intact
 
-      currency = opts.delete(:currency) || order.try(:currency)
+      currency = opts.delete(:currency) || owner&.currency
 
       update_price_from_modifier(currency, opts)
       assign_attributes opts
@@ -274,7 +303,7 @@ module Spree
     # This is used for volume-based pricing and other price list rules
     # @return [void]
     def recalculate_price
-      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      context = Spree::Pricing::Context.from_order(variant, owner, quantity: quantity)
       currency_price = variant.price_for(context)
 
       return unless currency_price.present?
@@ -310,25 +339,34 @@ module Spree
       end
     end
 
+    # Order-side only (see before_destroy above); OrderInventory#verify
+    # itself returns early unless the order is completed.
+    #
+    # No digitality gate: digital items get fulfillment items too (the
+    # Digital provider issues one link per unit), and stock-limited digitals
+    # — licences, seats, tickets — must decrement like anything else.
+    # Tracking is decided per variant by should_track_inventory?.
     def update_inventory
-      if (saved_changes? || target_shipment.present?) && order.has_checkout_step?('delivery')
+      if (saved_changes? || target_fulfillment.present?) && order.present?
         verify_order_inventory
       end
     end
 
     def verify_order_inventory
-      Spree::OrderInventory.new(order, self).verify(target_shipment, is_updated: true)
+      Spree::OrderInventory.new(order, self).verify(target_fulfillment, is_updated: true)
     end
 
     def verify_order_inventory_before_destroy
-      Spree::OrderInventory.new(order, self).verify(target_shipment, removing: true)
+      Spree::OrderInventory.new(order, self).verify(target_fulfillment, removing: true)
     end
 
     def update_adjustments
-      if saved_change_to_quantity?
+      # Typed rows (discounts + tax) are rebuilt by the order-level
+      # recalculation, which every cart/checkout flow runs after the save —
+      # recalculating from here would cache the owner's associations
+      # mid-mutation and hide later changes from that run.
+      if saved_change_to_quantity? && owner&.persisted? && !owner.completed?
         recalculate_price if should_update_price? && !previously_new_record?
-        recalculate_adjustments
-        update_tax_charge # Called to ensure pre_tax_amount is updated.
       end
     end
 
@@ -337,21 +375,23 @@ module Spree
     # By default, prices are not updated after an order is completed
     # @return [Boolean]
     def should_update_price?
-      !order.completed?
-    end
-
-    def recalculate_adjustments
-      Spree::Adjustable::AdjustmentsUpdater.update(self)
+      !owner.completed?
     end
 
     def update_tax_charge
-      Spree::TaxRate.adjust(order, [self])
+      return unless owner
+
+      Spree.tax_provider.estimate(owner, [self])
     end
 
     def ensure_proper_currency
-      unless currency == order.currency
+      unless currency == owner.currency
         errors.add(:currency, :must_match_order_currency)
       end
+    end
+
+    def exactly_one_owner
+      errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
     end
   end
 end

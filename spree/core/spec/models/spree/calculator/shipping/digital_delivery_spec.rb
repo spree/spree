@@ -23,7 +23,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
 
   describe '#available?' do
     let(:digital_shipping_method) { create(:digital_shipping_method) }
-    let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+    let(:digital_product) { create(:digital_product) }
 
     let(:digital_order) do
       order = create(:order)
@@ -31,7 +31,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
       package = Spree::Stock::Package.new(create(:stock_location), [])
       variants.each do |v|
         add_line_item_to_order(order, v, 1)
-        order.create_proposed_shipments
+        order.rebuild_fulfillments!
         package.add(order.inventory_units.where(variant_id: v.id).first, 1)
       end
       package
@@ -44,7 +44,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
       package = Spree::Stock::Package.new(create(:stock_location), [])
       variants.each do |v|
         add_line_item_to_order(order, v, 1)
-        order.create_proposed_shipments
+        order.rebuild_fulfillments!
         package.add(order.inventory_units.where(variant_id: v.id).first, 1)
       end
       package
@@ -56,7 +56,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
       package = Spree::Stock::Package.new(create(:stock_location), [])
       variants.each do |v|
         add_line_item_to_order(order, v, 1)
-        order.create_proposed_shipments
+        order.rebuild_fulfillments!
         package.add(order.inventory_units.where(variant_id: v.id).first, 1)
       end
       package
@@ -76,6 +76,6 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
   end
 
   def add_line_item_to_order(order, variant, quantity)
-    Spree::Cart::AddItem.call(order: order, variant: variant, quantity: quantity)
+    Spree::Orders::AddItem.call(order: order, variant: variant, quantity: quantity)
   end
 end

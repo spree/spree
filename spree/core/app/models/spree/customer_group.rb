@@ -4,6 +4,8 @@ module Spree
 
     acts_as_paranoid
 
+    include Spree::SingleStoreResource
+
     #
     # Associations
     #
@@ -20,12 +22,6 @@ module Spree
     # Validations
     #
     validates :name, presence: true, uniqueness: { scope: [:store_id], conditions: -> { where(deleted_at: nil) } }
-    validates :store, presence: true
-
-    #
-    # Scopes
-    #
-    scope :for_store, ->(store) { where(store: store) }
 
     #
     # Instance Methods

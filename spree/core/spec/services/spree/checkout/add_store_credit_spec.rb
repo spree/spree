@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+
 describe Spree::Checkout::AddStoreCredit, type: :service do
   let(:store) { @default_store }
 
@@ -10,7 +11,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
 
     before do
       create(:store_credit_payment_method)
-      allow(order.updater).to receive(:run_hooks)
     end
 
     context 'there is no store credit' do
@@ -31,7 +31,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       it 'returns error' do
         expect(subject.success?).to eq(false)
         expect(subject.error.to_s).to eq('User does not have any Store Credits available')
-        expect(order.updater).not_to have_received(:run_hooks)
       end
     end
 
@@ -50,8 +49,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
           expect(order.reload.payments.count).to eq 1
           expect(order.payments.first).to be_store_credit
           expect(order.payments.first.amount).to eq order_total
-
-          expect(order.updater).to have_received(:run_hooks)
         end
       end
 
@@ -64,8 +61,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
           expect(order.reload.payments.count).to eq 1
           expect(order.payments.first).to be_store_credit
           expect(order.payments.first.amount).to eq requested_amount
-
-          expect(order.updater).to have_received(:run_hooks)
         end
       end
     end
@@ -89,8 +84,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
         expect(order.reload.payments.count).to eq 1
         expect(order.payments.first).to be_store_credit
         expect(order.payments.first.amount).to eq store_credit_total
-
-        expect(order.updater).to have_received(:run_hooks)
       end
     end
 
@@ -161,8 +154,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
         expect(secondary_payment.source).to eq secondary_store_credit
         expect(primary_payment.amount).to eq(order_total - amount_difference)
         expect(secondary_payment.amount).to eq(amount_difference)
-
-        expect(order.updater).to have_received(:run_hooks)
       end
     end
   end

@@ -11,6 +11,7 @@ module Spree
     class ProductManagement < Base
       def activate!
         can :manage, Spree::Product
+        can :manage, Spree::ProductType
         can :manage, Spree::Variant
         can :manage, Spree::OptionType
         can :manage, Spree::OptionValue

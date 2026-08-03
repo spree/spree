@@ -10,7 +10,8 @@ module Spree
 
     publishes_lifecycle_events
 
-    belongs_to :order, class_name: 'Spree::Order'
+    belongs_to :order, class_name: 'Spree::Order', optional: true
+    belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :payment_sessions
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
     belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
 
@@ -18,7 +19,8 @@ module Spree
             foreign_key: :response_code,
             primary_key: :external_id
 
-    validates :order, :payment_method, :external_id, :status, :currency, presence: true
+    validates :payment_method, :external_id, :status, :currency, presence: true
+    validate :exactly_one_owner
     validates :external_id, uniqueness: { scope: [:order_id, :payment_method_id] }
     validates :amount, presence: true, numericality: { greater_than: 0 }
 
@@ -62,7 +64,7 @@ module Spree
 
     before_validation :set_defaults_from_order, on: :create
 
-    delegate :store, to: :order
+    delegate :store, to: :owner
 
     def amount_in_cents
       money.cents
@@ -85,7 +87,7 @@ module Spree
     def find_or_create_payment!(metadata = {})
       return payment if payment.present?
 
-      order.payments.find_or_create_by!(
+      owner.payments.find_or_create_by!(
         payment_method: payment_method,
         response_code: external_id,
       ) do |p|
@@ -93,13 +95,47 @@ module Spree
         p.skip_source_requirement = true
       end
     rescue ActiveRecord::RecordNotUnique
-      order.payments.find_by!(
+      owner.payments.find_by!(
         payment_method: payment_method,
         response_code: external_id
       )
     end
 
+    # @return [Spree::Cart, Spree::Order, nil]
+    def owner
+      order || cart
+    end
+
+    # Bridge for legacy callers assigning +current_order+ (now a Spree::Cart)
+    # to the order association — routes carts to the cart FK instead.
+    def order=(record)
+      if record.is_a?(Spree::Cart)
+        self.cart = record
+        super(nil)
+      else
+        super
+      end
+    end
+
+    # Assigns the owning record to the matching association (cart or order),
+    # clearing the other one. Lets gateways stay owner-agnostic.
+    #
+    # @param record [Spree::Cart, Spree::Order]
+    def owner=(record)
+      if record.is_a?(Spree::Cart)
+        self.cart = record
+        self.order = nil
+      else
+        self.order = record
+        self.cart = nil
+      end
+    end
+
     private
+
+    def exactly_one_owner
+      errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+    end
 
     def publish_processing_event
       publish_event('payment_session.processing')
@@ -122,11 +158,11 @@ module Spree
     end
 
     def set_defaults_from_order
-      return unless order
+      return unless owner
 
-      self.amount ||= order.total_minus_store_credits if amount.blank? || amount.zero?
-      self.currency ||= order.currency
-      self.customer ||= order.customer
+      self.amount ||= owner.total_minus_store_credits if amount.blank? || amount.zero?
+      self.currency ||= owner.currency
+      self.customer ||= owner.customer
     end
   end
 end

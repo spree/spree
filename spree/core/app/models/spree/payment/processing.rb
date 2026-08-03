@@ -91,7 +91,7 @@ module Spree
       end
 
       def gateway_options
-        order.reload
+        owner.reload
         gateway_options_class.new(self).to_hash
       end
 

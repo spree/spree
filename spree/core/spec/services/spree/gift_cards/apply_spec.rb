@@ -36,8 +36,8 @@ RSpec.describe Spree::GiftCards::Apply do
     expect(store_credit.originator).to eq(gift_card)
   end
 
-  it 'calls update_with_updater!' do
-    expect(order).to receive(:update_with_updater!)
+  it 'calls recalculate_totals!' do
+    expect(order).to receive(:recalculate_totals!)
     subject
   end
 
@@ -82,8 +82,8 @@ RSpec.describe Spree::GiftCards::Apply do
         expect(subject).to be_success
       end
 
-      it 'calls update_with_updater!' do
-        expect(order).to receive(:update_with_updater!)
+      it 'calls recalculate_totals!' do
+        expect(order).to receive(:recalculate_totals!)
         subject
       end
     end

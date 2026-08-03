@@ -214,7 +214,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       it 'transitions into completed_mapping and enqueues row creation' do
         expect {
           patch :complete_mapping, params: { id: import.prefixed_id }, as: :json
-        }.to have_enqueued_job(Spree::Imports::CreateRowsJob)
+        }.to have_enqueued_job(Spree::Imports::ProcessJob)
 
         expect(response).to have_http_status(:ok)
         expect(json_response['status']).to eq('completed_mapping')
@@ -281,7 +281,7 @@ RSpec.describe Spree::Api::V3::Admin::ImportsController, type: :controller do
       it 're-enters processing and re-dispatches the rows' do
         expect {
           patch :retry_failed_rows, params: { id: product_import.prefixed_id }, as: :json
-        }.to have_enqueued_job(Spree::Imports::ProcessRowsJob)
+        }.to have_enqueued_job(Spree::Imports::ProcessJob)
 
         expect(response).to have_http_status(:ok)
         expect(json_response['status']).to eq('processing')

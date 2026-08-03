@@ -175,6 +175,13 @@ describe Spree::CreditCard, type: :model do
       expect(build_duplicate(payment_method: create(:credit_card_payment_method))).to be_valid
     end
 
+    it 'allows the same fingerprint for guest payment sources' do
+      create(:credit_card, user: nil, payment_method: payment_method,
+                           fingerprint: 'FZqjhq46SWprIY8i', month: 11, year: 2030)
+
+      expect(build_duplicate(user: nil)).to be_valid
+    end
+
     it 'does not enforce uniqueness when the fingerprint is missing' do
       create(:credit_card, customer: user, payment_method: payment_method, fingerprint: nil, month: 11, year: 2030)
       expect(build_duplicate(fingerprint: nil)).to be_valid

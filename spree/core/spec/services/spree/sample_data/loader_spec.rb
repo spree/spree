@@ -14,6 +14,10 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     expect(Spree::Product.count).to be > 30
   end
 
+  it 'assigns imported products a product type' do
+    expect(Spree::Product.where(product_type_id: nil)).to be_empty
+  end
+
   it 'creates variants' do
     expect(Spree::Variant.count).to be > 80
   end
@@ -24,6 +28,11 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
 
   it 'creates completed orders' do
     expect(Spree::Order.complete.count).to be >= 2
+  end
+
+  it 'derives payment and fulfillment statuses for the sample orders' do
+    statuses = Spree::Order.complete.pluck(:payment_status, :fulfillment_status).flatten
+    expect(statuses).to all(be_present)
   end
 
   describe 'wholesale demo data' do

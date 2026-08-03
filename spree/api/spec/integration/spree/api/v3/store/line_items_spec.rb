@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:order) { create(:order, store: store, customer: user) }
+  let!(:order) { create(:cart, store: store, customer: user) }
   let!(:product) { create(:product) }
   let!(:variant) { product.default_variant }
   let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }

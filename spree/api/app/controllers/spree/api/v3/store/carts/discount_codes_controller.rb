@@ -10,16 +10,22 @@ module Spree
             before_action :find_cart!
 
             # POST  /api/v3/store/carts/:cart_id/discount_codes
-            # Apply a discount code to the cart
+            # Applies a discount code. A real-but-not-yet-eligible code is
+            # accepted and persisted — recalculation activates the discount
+            # the moment the cart qualifies (Shopify-parity). Unknown/expired
+            # codes are rejected and never persisted.
             def create
               with_order_lock do
                 @cart.coupon_code = permitted_params[:code]
 
                 coupon_handler.apply
 
-                if coupon_handler.successful?
+                if coupon_handler.successful? || pending_eligibility?
+                  @cart.save!(validate: false) if @cart.changed?
+                  @cart.reload
                   render_cart(status: :created)
                 else
+                  @cart.update_column(:coupon_code, nil) if @cart.read_attribute(:coupon_code).present?
                   render_errors(coupon_handler.error)
                 end
               end
@@ -44,6 +50,12 @@ module Spree
 
             def coupon_handler
               @coupon_handler ||= Spree.coupon_handler.new(@cart, enable_gift_cards: false)
+            end
+
+            # A real code on a cart that doesn't qualify yet: the code is
+            # kept and recalculation activates it later.
+            def pending_eligibility?
+              coupon_handler.status_code == :coupon_code_not_eligible
             end
 
             def permitted_params

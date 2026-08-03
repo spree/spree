@@ -3,15 +3,11 @@
 <% end %>
 ============================================================
 <%= Spree.t('order_mailer.subtotal') %> <%= order.display_item_total %>
-<% if order.line_item_adjustments.exists? %>
-  <% if order.all_adjustments.promotion.eligible.exists? %>
-    <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
-      <%= Spree.t(:promotion) %>: <%= label %> <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %>
-    <% end %>
-  <% end %>
+<% order.discounts.promotion.to_a.group_by(&:label).each do |label, discounts| %>
+  <%= Spree.t(:promotion) %>: <%= label %> <%= Spree::Money.new(discounts.sum(&:amount), currency: order.currency) %>
 <% end %>
 
-<% order.shipments.group_by { |s| s.selected_shipping_rate.try(:name) }.each do |name, shipments| %>
+<% order.fulfillments.group_by { |f| f.selected_delivery_rate.try(:name) }.each do |name, shipments| %>
   <%= Spree.t(:shipping) %>: <%= name %> <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency) %>
 <% end %>
 
@@ -23,7 +19,10 @@
   <%= Spree.t(:gift_card) %>: -<%= order.display_gift_card_total.to_html %>
 <% end %>
 
-<% order.adjustments.eligible.each do |adjustment| %>
-  <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
-  <%= adjustment.label %> <%= adjustment.display_amount %>
+<% order.discounts.manual.to_a.group_by(&:label).each do |label, discounts| %>
+  <%= label %> <%= Spree::Money.new(discounts.sum(&:amount), currency: order.currency) %>
+<% end %>
+<% order.fees.each do |fee| %>
+  <% next if fee.amount == 0 %>
+  <%= fee.label %> <%= fee.display_amount %>
 <% end %>

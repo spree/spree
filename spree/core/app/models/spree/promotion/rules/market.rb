@@ -2,7 +2,7 @@
 module Spree
   class Promotion
     module Rules
-      class Market < PromotionRule
+      class Market < Spree::PromotionRule
         # Stored as raw IDs. Accepts prefixed IDs (`mkt_…`) from API
         # callers and decodes them on write so eligibility checks compare
         # against the order's raw `market_id` directly. Scope confines the
@@ -15,7 +15,7 @@ module Spree
                    )
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def markets

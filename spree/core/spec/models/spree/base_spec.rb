@@ -47,7 +47,7 @@ describe Spree::Base do
   end
 
   describe '.api_type' do
-    it { expect(Spree::InventoryUnit.api_type).to eq('inventory_unit') }
+    it { expect(Spree::FulfillmentItem.api_type).to eq('fulfillment_item') }
     it { expect(Spree::Address.api_type).to eq('address') }
   end
 
@@ -79,7 +79,7 @@ describe Spree::Base do
     # Backwards-compatible alias retained for extensions that still call
     # the old name; must delegate so subclass overrides (e.g.
     # `Spree::Gateway.api_type`) propagate.
-    it { expect(Spree::InventoryUnit.json_api_type).to eq('inventory_unit') }
+    it { expect(Spree::FulfillmentItem.json_api_type).to eq('fulfillment_item') }
     it { expect(Spree::Address.json_api_type).to eq('address') }
 
     it 'honors subclass overrides of .api_type' do

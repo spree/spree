@@ -9,7 +9,13 @@ RSpec.describe Spree::Api::V3::Store::MarketsController, type: :controller do
   let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
   let!(:france) { Spree::Country.find_by(iso: 'FR') || create(:country, iso: 'FR', name: 'France') }
 
-  let!(:na_market) { create(:market, :default, name: 'North America', store: store, countries: [usa], currency: 'USD', default_locale: 'en', supported_locales: 'en,es') }
+  # The store's bootstrap market already owns the US country — reshape it
+  # into the North America fixture instead of colliding with it.
+  let!(:na_market) do
+    store.default_market.tap do |market|
+      market.update!(name: 'North America', currency: 'USD', default_locale: 'en', supported_locales: 'en,es')
+    end
+  end
   let!(:eu_market) { create(:market, name: 'Europe', store: store, countries: [germany, france], currency: 'EUR', default_locale: 'de', supported_locales: 'de,en,fr', tax_inclusive: true) }
 
   before do

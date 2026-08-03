@@ -39,9 +39,9 @@ module Spree
     end
 
     # Prevents saving the same physical card (same gateway fingerprint + expiry)
-    # twice for a user and payment method. Skipped when the gateway does not
-    # provide a fingerprint.
-    validate :fingerprint_not_duplicated, if: -> { fingerprint.present? }
+    # twice for a user and payment method. Guest payment sources are not saved
+    # cards owned by a customer, so they are excluded from this validation.
+    validate :fingerprint_not_duplicated, if: -> { fingerprint.present? && user_id.present? }
 
     scope :with_payment_profile, -> { where.not(gateway_customer_profile_id: nil) }
     scope :capturable, -> { where.not(gateway_customer_profile_id: nil).or(where.not(gateway_payment_profile_id: nil)) }

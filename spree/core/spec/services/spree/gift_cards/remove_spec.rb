@@ -39,8 +39,8 @@ RSpec.describe Spree::GiftCards::Remove do
       expect(store_credit_payment.source).to be_deleted
     end
 
-    it 'calls update_with_updater!' do
-      expect(order).to receive(:update_with_updater!)
+    it 'calls recalculate_totals!' do
+      expect(order).to receive(:recalculate_totals!)
       subject
     end
 

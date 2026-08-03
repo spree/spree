@@ -3,10 +3,11 @@ module Spree
     class Quantifier
       attr_reader :variant, :stock_location, :excluded_order
 
-      # @param excluded_order [Spree::Order, nil] when given, reservations
-      #   belonging to this order are not counted against availability. Used
-      #   when checking an order's own line items so the customer's own
-      #   checkout hold doesn't make their item look out of stock.
+      # @param excluded_order [Spree::Cart, Spree::Order, nil] when given,
+      #   reservations belonging to this cart/order are not counted against
+      #   availability. Used when checking a cart's own line items so the
+      #   customer's own checkout hold doesn't make their item look out of
+      #   stock.
       def initialize(variant, stock_location = nil, excluded_order: nil)
         @variant         = variant
         @stock_location  = stock_location
@@ -68,17 +69,18 @@ module Spree
         return @reserved_quantity = 0 unless Spree::Config[:stock_reservations_enabled]
         return @reserved_quantity = 0 if stock_items.blank?
 
-        excluded_order_id = excluded_order&.id
+        excluded_owner_key = excluded_order.is_a?(Spree::Cart) ? :cart_id : :order_id
+        excluded_owner_id = excluded_order&.id
 
         @reserved_quantity = if reservations_preloaded?
                                stock_items.sum do |si|
                                  reservations = si.active_stock_reservations
-                                 reservations = reservations.reject { |r| r.order_id == excluded_order_id } if excluded_order_id
+                                 reservations = reservations.reject { |r| r.public_send(excluded_owner_key) == excluded_owner_id } if excluded_owner_id
                                  reservations.sum(&:quantity)
                                end
                              else
                                reservations = Spree::StockReservation.active.where(stock_item_id: stock_items.map(&:id))
-                               reservations = reservations.where.not(order_id: excluded_order_id) if excluded_order_id
+                               reservations = reservations.where.not(excluded_owner_key => excluded_owner_id) if excluded_owner_id
                                reservations.sum(:quantity)
                              end
       end

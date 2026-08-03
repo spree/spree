@@ -43,7 +43,7 @@ module Spree
       end
 
       context 'upserting existing line items' do
-        let!(:existing_line_item) { create(:line_item, order: cart, variant: variant, quantity: 5) }
+        let!(:existing_line_item) { create(:line_item, cart: cart, order: nil, variant: variant, quantity: 5) }
 
         let(:items) do
           [{ variant_id: variant.prefixed_id, quantity: 2 }]
@@ -56,7 +56,7 @@ module Spree
       end
 
       context 'mix of new and existing line items' do
-        let!(:existing_line_item) { create(:line_item, order: cart, variant: variant, quantity: 5) }
+        let!(:existing_line_item) { create(:line_item, cart: cart, order: nil, variant: variant, quantity: 5) }
 
         let(:items) do
           [
@@ -93,7 +93,7 @@ module Spree
         end
 
         context 'merging metadata on existing line item' do
-          let!(:existing_line_item) { create(:line_item, order: cart, variant: variant, quantity: 1, private_metadata: { 'existing' => 'val' }) }
+          let!(:existing_line_item) { create(:line_item, cart: cart, order: nil, variant: variant, quantity: 1, private_metadata: { 'existing' => 'val' }) }
 
           let(:items) do
             [{ variant_id: variant.prefixed_id, quantity: 2, metadata: { 'new_key' => 'new_val' } }]
@@ -241,7 +241,7 @@ module Spree
       end
 
       context 'does not touch unrelated existing line items' do
-        let!(:unrelated_line_item) { create(:line_item, order: cart, variant: variant, quantity: 3) }
+        let!(:unrelated_line_item) { create(:line_item, cart: cart, order: nil, variant: variant, quantity: 3) }
 
         let(:items) do
           [{ variant_id: variant2.prefixed_id, quantity: 1 }]

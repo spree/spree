@@ -8,8 +8,6 @@ module Spree
     if defined?(Spree::Security::Promotions)
       include Spree::Security::Promotions
     end
-    # Multi-store sharing moved to the spree_multi_store extension in 5.6.
-    include Spree::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
 
     publishes_lifecycle_events
 
@@ -39,7 +37,6 @@ module Spree
     has_many :coupon_codes, -> { order(created_at: :asc) }, dependent: :destroy, class_name: 'Spree::CouponCode'
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
-    belongs_to :store, class_name: 'Spree::Store'
 
     after_save :apply_pending_rules_and_actions, if: :pending_rules_or_actions?
 
@@ -61,7 +58,6 @@ module Spree
     #
     validates_associated :rules
     validates :name, presence: true
-    validates :store, presence: true, unless: -> { Spree::Config[:disable_store_presence_validation] }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }, allow_blank: true
     validate :expires_at_must_be_later_than_starts_at, if: -> { starts_at && expires_at }
@@ -90,7 +86,7 @@ module Spree
     #
     # `name` is whitelisted so the admin global search / command palette can
     # filter via the `name_or_code_cont` predicate without a dedicated scope.
-    self.whitelisted_ransackable_attributes = ['name', 'path', 'promotion_category_id', 'code', 'starts_at', 'expires_at']
+    self.whitelisted_ransackable_attributes = ['name', 'path', 'promotion_category_id', 'code', 'kind', 'starts_at', 'expires_at']
     self.whitelisted_ransackable_associations = %w[coupon_codes]
 
     def self.with_coupon_code(coupon_code)
@@ -110,8 +106,9 @@ module Spree
         where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.current)
     end
 
-    def self.order_activatable?(order)
-      order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
+    def self.order_activatable?(promotable)
+      # Carts have no cancellation concept — only placed orders can be canceled.
+      promotable && !promotable.completed? && !(promotable.is_a?(Spree::Order) && promotable.canceled?)
     end
 
     def generate_code=(generating_code)
@@ -203,7 +200,7 @@ module Spree
       action_taken
     end
 
-    # called anytime order.update_with_updater! happens
+    # called anytime order.recalculate_totals! happens
     def eligible?(promotable, options = {})
       return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
 
@@ -243,7 +240,7 @@ module Spree
     end
 
     def products
-      rules.where(type: 'Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
+      rules.where(type: %w[Spree::Promotion::Rules::Product Spree::Promotion::Rules::Product]).map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(promotable)
@@ -251,12 +248,21 @@ module Spree
     end
 
     def adjusted_credits_count(promotable)
-      adjustments = promotable.is_a?(Order) ? promotable.all_adjustments : promotable.adjustments
-      credits_count - adjustments.eligible.promotion.where(source_id: actions.pluck(:id)).select(:order_id).distinct.count
+      own_credits = case promotable
+                    when Spree::Cart
+                      # Cart-side discount rows carry no order_id and are
+                      # never part of credits_count — nothing to subtract.
+                      0
+                    when Order
+                      credits.where(order_id: promotable.id).select(:order_id).distinct.count
+                    else
+                      credits.where(line_item_id: promotable.id).select(:order_id).distinct.count
+                    end
+      credits_count - own_credits
     end
 
     def credits
-      Adjustment.eligible.promotion.where(source_id: actions.map(&:id))
+      Spree::Discount.promotion.where(promotion_action_id: actions.map(&:id))
     end
 
     def credits_count
@@ -279,10 +285,9 @@ module Spree
     end
 
     def used_by?(user, excluded_orders = [])
-      user.orders.complete.joins(:promotions).joins(:all_adjustments).
+      user.orders.complete.joins(:discounts).
         where.not(spree_orders: { id: excluded_orders.map(&:id) }).
-        where(spree_promotions: { id: id }).
-        where(spree_adjustments: { source_type: 'Spree::PromotionAction', eligible: true }).any?
+        where(Spree::Discount.table_name => { promotion_id: id, kind: 'promotion' }).any?
     end
 
     def name_for_order(order)
@@ -367,7 +372,7 @@ module Spree
       when Spree::LineItem
         !promotable.product.promotionable?
       when Spree::Order
-        (promotable.item_count.positive? || promotable.line_items.any?) &&
+        (promotable.total_quantity.positive? || promotable.line_items.any?) &&
           promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
       end
     end

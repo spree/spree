@@ -18,7 +18,7 @@ describe Spree::FulfilmentChanger do
     )
   end
 
-  let(:current_shipment) { order.shipments.first }
+  let(:current_shipment) { order.fulfillments.first }
   let(:desired_shipment) { order.shipments.create(stock_location: desired_stock_location) }
   let(:desired_stock_location) { current_shipment.stock_location }
 

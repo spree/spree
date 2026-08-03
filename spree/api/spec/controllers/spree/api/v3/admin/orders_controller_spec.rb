@@ -37,8 +37,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     context 'with ransack filtering' do
       let!(:completed_order) { create(:completed_order_with_totals, store: store) }
 
-      it 'filters by state' do
-        get :index, params: { q: { state_eq: 'complete' } }, as: :json
+      it 'filters by completion' do
+        get :index, params: { q: { completed_at_not_null: 1 } }, as: :json
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].length).to eq(1)
@@ -117,6 +117,19 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
   end
 
   describe 'GET #show' do
+    it 'expands the originating cart on a placed order' do
+      cart = create(:cart_with_line_items, store: store)
+      cart.update_columns(completed_at: Time.current)
+      placed = create(:completed_order_with_totals, store: store, cart_id: cart.id)
+
+      get :show, params: { id: placed.prefixed_id, expand: 'cart' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['cart_id']).to eq(cart.prefixed_id)
+      expect(json_response['cart']['id']).to eq(cart.prefixed_id)
+      expect(json_response['cart']['completed_at']).to be_present
+    end
+
     subject { get :show, params: { id: order.prefixed_id }, as: :json }
 
     before { request.headers.merge!(headers) }
@@ -219,7 +232,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let!(:zone)   { create(:zone) }
       let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
       let!(:shipping_method) do
-        create(:shipping_method, zones: [zone]).tap do |sm|
+        create(:shipping_method).tap do |sm|
           sm.calculator.preferred_amount = 5
           sm.calculator.save
         end
@@ -315,7 +328,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let!(:zone)   { create(:zone) }
       let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
       let!(:shipping_method) do
-        create(:shipping_method, zones: [zone]).tap do |sm|
+        create(:shipping_method).tap do |sm|
           sm.calculator.preferred_amount = 5
           sm.calculator.save
         end
@@ -475,7 +488,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       let!(:zone)   { create(:zone) }
       let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
       let!(:shipping_method) do
-        create(:shipping_method, zones: [zone]).tap do |sm|
+        create(:shipping_method).tap do |sm|
           sm.calculator.preferred_amount = 5
           sm.calculator.save
         end
@@ -498,8 +511,8 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
         order.reload
         expect(order.line_items.find_by(variant: variant).quantity).to eq(2)
         expect(order.shipments).not_to be_empty
-        expect(order.shipments.first.shipping_rates).not_to be_empty
-        expect(order.shipments.first.selected_shipping_rate).to be_present
+        expect(order.fulfillments.first.shipping_rates).not_to be_empty
+        expect(order.fulfillments.first.selected_shipping_rate).to be_present
         expect(order.shipment_total).to eq(5)
 
         expect(json_response['delivery_total']).to eq('5.0')
@@ -532,7 +545,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
           new_shipment_ids = order.shipments.map(&:id)
           expect(new_shipment_ids).not_to be_empty
           expect(new_shipment_ids & old_shipment_ids).to be_empty
-          expect(order.shipments.first.inventory_units.sum(:quantity)).to eq(4)
+          expect(order.fulfillments.first.inventory_units.sum(:quantity)).to eq(4)
         end
       end
     end
@@ -659,7 +672,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       subject
 
       expect(response).to have_http_status(:ok)
-      expect(order.reload.state).to eq('canceled')
+      expect(order.reload).to be_canceled
     end
   end
 
@@ -692,7 +705,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       subject
 
       expect(response).to have_http_status(:ok)
-      expect(order.reload.state).to eq('resumed')
+      expect(order.reload).not_to be_canceled
     end
   end
 

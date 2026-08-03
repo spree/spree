@@ -21,6 +21,16 @@ module Spree
       end
     end
 
+    # Fulfillment replaced Shipment in 6.0; calculators keep their historical
+    # compute_shipment extension point, so fulfillments dispatch to it.
+    def compute_fulfillment(fulfillment)
+      unless respond_to?(:compute_shipment)
+        raise NotImplementedError, "Please implement 'compute_shipment(shipment)' in your calculator: #{self.class.name}"
+      end
+
+      compute_shipment(fulfillment)
+    end
+
     # overwrite to provide description for your calculators
     def self.description
       'Base Calculator'

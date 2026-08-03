@@ -130,11 +130,6 @@ RSpec.describe 'Spree environment accessors' do
       expect(Spree.calculators.shipping_methods).to include(Spree::Calculator::Shipping::FlatRate)
     end
 
-    it 'allows access to calculators.tax_rates' do
-      expect(Spree.calculators.tax_rates).to eq(Rails.application.config.spree.calculators.tax_rates)
-      expect(Spree.calculators.tax_rates).to be_an(Array)
-    end
-
     it 'allows access to promotions.rules' do
       expect(Spree.promotions.rules).to eq(Rails.application.config.spree.promotions.rules)
       expect(Spree.promotions.rules).to be_an(Array)

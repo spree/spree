@@ -352,6 +352,9 @@
       },
       "permalink": {
         "label": "الرابط الدائم"
+      },
+      "number": {
+        "label": "الرقم"
       }
     },
     "components": {

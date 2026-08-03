@@ -14,7 +14,7 @@ describe 'spree:upgrade:backfill_product_tag_tenants' do
   before { subject.reenable }
 
   let!(:store) { Spree::Store.default || create(:store, default: true) }
-  let!(:product) { create(:product, stores: [store], tag_list: ['eco']) }
+  let!(:product) { create(:product, store: store, tag_list: ['eco']) }
 
   def tagging_for(taggable)
     ActsAsTaggableOn::Tagging.find_by(taggable: taggable, context: 'tags')

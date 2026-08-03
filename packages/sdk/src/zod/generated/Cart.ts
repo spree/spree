@@ -1,7 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AddressSchema } from './Address';
-import { DiscountSchema } from './Discount';
+import { AppliedPromotionSchema } from './AppliedPromotion';
 import { FulfillmentSchema } from './Fulfillment';
 import { GiftCardSchema } from './GiftCard';
 import { LineItemSchema } from './LineItem';
@@ -13,6 +13,7 @@ export const CartSchema = z.object({
   id: z.string(),
   market_id: z.string().nullable(),
   channel_id: z.string().nullable(),
+  preferred_stock_location_id: z.string().nullable(),
   number: z.string(),
   token: z.string(),
   email: z.string().nullable(),
@@ -21,6 +22,7 @@ export const CartSchema = z.object({
   locale: z.string().nullable(),
   total_quantity: z.number(),
   warnings: z.array(z.any()),
+  coupon_code: z.string().nullable(),
   item_total: z.string().nullable(),
   display_item_total: z.string().nullable(),
   adjustment_total: z.string().nullable(),
@@ -46,9 +48,9 @@ export const CartSchema = z.object({
   covered_by_store_credit: z.boolean(),
   current_step: z.string(),
   completed_steps: z.array(z.string()),
-  requirements: z.array(z.object({ step: z.string(), field: z.string(), message: z.string() })),
+  requirements: z.array(z.object({ step: z.string(), field: z.string(), code: z.string(), message: z.string() })),
   shipping_eq_billing_address: z.boolean(),
-  discounts: z.array(DiscountSchema),
+  discounts: z.array(AppliedPromotionSchema),
   items: z.array(LineItemSchema),
   fulfillments: z.array(FulfillmentSchema),
   payments: z.array(PaymentSchema),

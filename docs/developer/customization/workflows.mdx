@@ -1,0 +1,389 @@
+---
+title: Services & Workflows
+section: customization
+---
+
+## Overview
+
+Spree's business logic lives in two kinds of plain Ruby classes. Both are called
+the same way and both return the same result object, so as a caller you never
+need to know which one you're using.
+
+**Services** (`app/services/`) are the default. A service is an ordinary class
+with a `call` method — creating a customer, updating a price, removing an item
+from a cart. Most of Spree is services.
+
+**Workflows** (`app/workflows/`) handle the flows that need more: completing a
+checkout, cancelling an order, capturing a payment, creating a fulfillment.
+These are the operations where something can go wrong halfway through, where
+money moves, or where you might want to inject your own logic partway.
+
+A workflow earns its place by needing at least one of:
+
+* **Extension points** — named places where your code can run inside the flow
+* **External calls** — payment gateways, carrier APIs, anything over the network
+* **Compensation** — undoing earlier work when a later step fails
+
+Everything else stays a service. If you're writing a plain create-update-delete
+operation, write a service.
+
+## Calling them
+
+Identical for both:
+
+```ruby
+result = Spree.cart_add_item_workflow.call(cart: cart, variant: variant, quantity: 2)
+
+if result.success?
+  line_item = result.value
+else
+  puts result.error.value
+end
+```
+
+Never raise on expected failures — check `result.success?`. See
+[Dependencies](/developer/customization/dependencies) for how to swap either one
+for your own class.
+
+## Extending a workflow with hooks
+
+Before hooks, customizing a flow meant replacing the whole class and keeping
+your copy in sync with every Spree release. Hooks let you run your own code at a
+named point inside a flow you don't own.
+
+Register in `config/initializers/spree.rb`:
+
+```ruby
+Spree.hooks.register('carts.add_item.validate', 'MyStore::CheckPurchaseLimit')
+```
+
+The key is `<workflow>.<hook>`. Handlers are stored as **class name strings**,
+resolved when the hook fires — that keeps registration safe at boot time and
+survives code reloading in development. A block works for one-liners:
+
+```ruby
+Spree.hooks.register('orders.cancel.after_cancel') do |workflow|
+  MyStore::Analytics.track(:order_cancelled, workflow.order.number)
+end
+```
+
+Your handler is a class with a `call` method that receives the workflow:
+
+```ruby
+module MyStore
+  class CheckPurchaseLimit
+    def call(workflow)
+      # every #perform keyword is a reader: cart, variant, quantity, ...
+      return if workflow.quantity <= 10
+
+      workflow.reject!('You can order at most 10 of this item.')
+    end
+  end
+end
+```
+
+<Note>
+Hook keys are validated at boot. Registering against a hook that doesn't exist
+raises `Spree::Hooks::UnknownHookError` with the list of valid hooks for that
+workflow, so a typo fails immediately instead of silently never firing.
+</Note>
+
+## Every hook can have many handlers
+
+A hook is not a single slot. Your extension, another extension and the host
+application can all register against the same key, and every one of them runs.
+Assume you are never alone on a hook.
+
+```ruby
+Spree.hooks.register('carts.add_item.validate', 'MyStore::CheckPurchaseLimit')
+Spree.hooks.register('carts.add_item.validate', 'OtherGem::CheckChannelRules')
+Spree.hooks.register('carts.add_item.validate') { |workflow| ... }
+# all three run
+```
+
+**Handlers run in registration order** — the order the `register` calls
+happened, which for gems is initializer load order. Don't depend on it. If your
+handler only makes sense after another one has run, you have a sequencing
+requirement that hooks don't express; put both pieces in one handler.
+
+**Registering the same class twice is a no-op.** `register` deduplicates by
+class name, so an initializer that runs twice (or a gem registering defensively)
+won't double up. Two *different* classes are two handlers, and two separate
+blocks are always two handlers — blocks can't be compared, so prefer class names
+anywhere registration might repeat.
+
+What "many handlers" means differs by kind:
+
+| Kind | With several handlers |
+|---|---|
+| `validate` | Runs in order until one rejects. **The first `reject!` stops the flow** — later validate handlers never run, so don't rely on yours executing. |
+| Context | **All** run and their hashes are merged. A key set by two handlers goes to the last one registered, and the collision is reported through `Rails.error`. |
+| Lifecycle | All run in order. Return values are ignored. |
+
+One consequence worth planning for: because any handler can veto, a `validate`
+handler should say *why* it rejected in the message, and a lifecycle handler
+should not assume it is the only observer of the event.
+
+<Warning>
+Handlers are not isolated from each other. An exception raised in one propagates
+out of the workflow, later handlers on that hook never run, and an open
+transaction rolls back — a `raise` in an `after_item_added` handler leaves the
+customer's item not added at all.
+
+If your handler does something optional (analytics, a nice-to-have
+notification), rescue inside it so a failure in your code can't undo someone
+else's order. Work that is genuinely allowed to fail belongs in an
+[event subscriber](/developer/core-concepts/events), not a hook.
+</Warning>
+
+## The three kinds of hooks
+
+### Lifecycle hooks — react to something that happened
+
+Named in the past tense (`after_item_added`, `after_cancel`, `after_create`).
+They run after the work is done. Return values are ignored; you cannot change
+the outcome.
+
+```ruby
+class MyStore::NotifyWarehouse
+  def call(workflow)
+    WarehouseApi.notify(workflow.fulfillment.number)
+  end
+end
+
+Spree.hooks.register('fulfillments.create.after_create', 'MyStore::NotifyWarehouse')
+```
+
+Note that some lifecycle hooks run **inside** the flow's database transaction
+(`after_item_added`, `after_cancel`). That's deliberate — it lets you write
+related records atomically with the change. It also means slow work does not
+belong there: use an [event subscriber](/developer/core-concepts/events) for
+emails, webhooks and other eventual work.
+
+### Validation hooks — veto before the work happens
+
+Always called `validate`. They run **before** anything is written, so rejecting
+costs nothing — no rollback, no partial state, no money moved.
+
+Call `reject!` on the workflow to stop the flow:
+
+```ruby
+module MyStore
+  class LimitReturnWindow
+    def call(workflow)
+      return if workflow.order.completed_at > 30.days.ago
+
+      workflow.reject!('This order is outside the 30-day return window.')
+    end
+  end
+end
+```
+
+The caller receives a normal failure result — no exception reaches your
+controller:
+
+```ruby
+result = Spree.cart_add_item_workflow.call(cart: cart, variant: variant)
+result.success?    # => false
+result.error.value # => "You can order at most 10 of this item."
+```
+
+<Warning>
+Reject from `validate` hooks, not from `after_*` hooks. Rejecting late still
+rolls the database back, but it cannot undo work that already left the system —
+`carts.complete.before_finalize` runs *after* the customer's card was charged,
+so rejecting there rolls back the order while the charge stands. If you need to
+stop a flow, `validate` is the place.
+</Warning>
+
+### Context hooks — feed data into a calculation
+
+Named imperatively (`set_promotion_context`, `set_tax_line_context`,
+`get_provider_data`). They run before a calculation so you can contribute data
+to it.
+
+Your handler **returns a hash**. Spree merges the hashes from every registered
+handler and hands the result to the workflow:
+
+```ruby
+module MyStore
+  class TaxExemption
+    def call(workflow)
+      certificate = workflow.cart.customer&.tax_exemption_certificate
+      return {} if certificate.blank?
+
+      { exemption_certificate: certificate.number }
+    end
+  end
+end
+
+Spree.hooks.register('carts.recalculate_totals.set_tax_line_context', 'MyStore::TaxExemption')
+```
+
+Handlers stay independent — there is no shared object to mutate and no ordering
+to reason about. A handler returning anything other than a hash contributes
+nothing, so lifecycle-style handlers are harmless if registered here by mistake.
+
+If two handlers set the same key, the last registered one wins and the collision
+is reported through `Rails.error` so it's visible rather than mysterious.
+
+## Available hooks
+
+| Workflow key | Hook | Kind | When it runs |
+|---|---|---|---|
+| `carts.add_item` | `validate` | validate | Before the line item is built |
+| `carts.add_item` | `after_item_added` | lifecycle | After the item is saved and totals recalculated (in transaction) |
+| `carts.complete` | `validate` | validate | After checkout requirements pass, before the order is created |
+| `carts.complete` | `before_finalize` | lifecycle | After payment, before the order is placed |
+| `carts.complete` | `after_finalize` | lifecycle | After the order is placed |
+| `carts.merge` | `validate` | validate | Before any items move between carts |
+| `carts.merge` | `after_merge` | lifecycle | After the carts are folded together |
+| `carts.recalculate` | `set_promotion_context` | context | Before promotions are evaluated |
+| `carts.recalculate` | `after_recalculate` | lifecycle | After the cart is fully repriced |
+| `carts.recalculate_totals` | `set_tax_line_context` | context | Before tax is estimated |
+| `orders.cancel` | `before_cancel` | validate | Before the cancellation is recorded |
+| `orders.cancel` | `after_cancel` | lifecycle | With the cancellation, in transaction |
+| `orders.resume` | `before_resume` | validate | Before the order is un-cancelled |
+| `orders.resume` | `after_resume` | lifecycle | With the status flip, in transaction |
+| `fulfillments.create` | `validate` | validate | Before the order is locked |
+| `fulfillments.create` | `get_provider_data` | context | Before the fulfillment is built |
+| `fulfillments.create` | `after_create` | lifecycle | After the fulfillment is created and totals recalculated |
+| `payments.capture` | `validate` | validate | Before the gateway is called |
+| `payments.capture` | `before_capture` | lifecycle | Immediately before the gateway call |
+| `payments.capture` | `after_capture` | lifecycle | After a successful capture |
+| `payments.refund` | `validate` | validate | Before the refund record exists |
+| `payments.refund` | `before_refund` | lifecycle | Immediately before the gateway call |
+| `payments.refund` | `after_refund` | lifecycle | After a successful refund |
+| `payments.handle_webhook` | `after_handle` | lifecycle | After the gateway callback is processed |
+
+`before_cancel` and `before_resume` accept `reject!` like a `validate` hook.
+
+Draft-order editing in the admin uses **twin workflows** with their own keys —
+`orders.add_item`, `orders.recalculate`, `orders.recalculate_totals` — carrying
+the same hooks as their cart counterparts. Register against the cart key for
+storefront carts, the order key for admin edits, or both.
+
+Inspect what's available at runtime:
+
+```ruby
+Spree.hooks.workflows              # => { 'carts.add_item' => 'Spree::Carts::AddItem', ... }
+Spree::Carts::Complete.declared_hooks  # => [:validate, :before_finalize, :after_finalize]
+Spree.hooks.keys                   # => registered keys
+Spree.hooks.validate!              # => true, or raises on a bad registration
+```
+
+## Writing your own workflow
+
+Most extensions only need hooks. Write a workflow when you're adding a *new*
+multi-step operation of your own — one with external calls, compensation, or
+extension points for others.
+
+```ruby
+module MyStore
+  class Subscriptions::Renew < Spree::Workflow
+    hooks :validate, :after_renew
+
+    attr_reader :order
+
+    # The method signature is the contract — Ruby raises on a missing or
+    # unknown keyword, and a bare `super` turns each parameter into a reader.
+    #
+    # @param subscription [MyStore::Subscription]
+    # @param renewed_at [Time, nil]
+    def perform(subscription:, renewed_at: nil)
+      super
+
+      step :ensure_renewable
+      run_hooks :validate
+
+      ApplicationRecord.transaction do
+        step :build_order, on_flow_failure: :discard_order
+        step :extend_period
+      end
+
+      external_step :charge_customer
+
+      run_hooks :after_renew
+      subscription.publish_event('subscription.renewed')
+      success(order)
+    end
+
+    private
+
+    def ensure_renewable
+      failure(subscription, :not_active) unless subscription.active?
+    end
+
+    def build_order
+      @order = MyStore::Subscriptions::BuildOrder.call(subscription: subscription).value
+    end
+
+    def extend_period
+      subscription.update!(renews_at: (renewed_at || Time.current) + 1.month)
+    end
+
+    def charge_customer
+      Spree.payment_capture_workflow.call(payment: order.payments.last)
+    end
+
+    # Runs if a later step fails after the transaction committed.
+    def discard_order
+      order&.destroy
+    end
+  end
+end
+```
+
+The whole vocabulary:
+
+| | |
+|---|---|
+| `step :name` | Runs the private method of that name |
+| `external_step :name` | Same, but refuses to run inside a database transaction this workflow opened — use it for every network call |
+| `with: -> { ... }` | Delegates a step to a swappable collaborator, keyword arguments sliced from the workflow's readers |
+| `on_flow_failure: :name` | Names the undo for a step, run in reverse if a later step fails |
+| `run_hooks :name` | Dispatches a declared hook; returns the merged hash from context handlers |
+| `failure(value, error)` | Aborts the flow — rolls back an open transaction and returns a failure result |
+| `reject!(message)` | The same, named for hook handlers vetoing a flow |
+| `halt!(value)` | Successful early exit (not valid inside a transaction the workflow opened) |
+| `hooks :a, :b` | Declares the extension points this workflow dispatches |
+
+Everything else is ordinary Rails — `ApplicationRecord.transaction`,
+`with_lock`, `if`, `rescue`, `publish_event`.
+
+Two rules worth internalising:
+
+**Network calls never share a database transaction.** That's what
+`external_step` enforces. A gateway call inside a transaction holds a database
+connection open across a network round trip, and a timeout leaves your database
+and the payment processor disagreeing about what happened.
+
+**New models get a plain `status` string, not a state machine.** Transitions are
+workflows: `MyStore::Subscriptions::Cancel.call(...)`, not `subscription.cancel!`.
+Transition callbacks hide side effects inside a save, cannot take arguments, and
+have no compensation story.
+
+## Observability
+
+Every step emits an `ActiveSupport::Notifications` event, so your APM sees the
+flow without extra instrumentation:
+
+```ruby
+ActiveSupport::Notifications.subscribe('step.spree_workflow') do |*, payload|
+  Rails.logger.info("#{payload[:workflow]}##{payload[:step]}")
+end
+```
+
+## Choosing an extension point
+
+| You want to | Use |
+|---|---|
+| Stop an operation from happening | A `validate` hook |
+| Add data to a pricing or tax calculation | A context hook |
+| Do something after an operation, in the same transaction | A lifecycle hook |
+| Send an email, call a webhook, update a search index | An [event subscriber](/developer/core-concepts/events) |
+| Replace an operation entirely | [Dependencies](/developer/customization/dependencies) |
+| Add a brand-new multi-step operation | Your own workflow |
+
+Reach for the smallest one that does the job. A hook survives Spree upgrades;
+a replaced class has to be kept in sync with every release.

@@ -129,6 +129,118 @@ export interface FulfillmentUpdateParams {
   selected_delivery_rate_id?: string
 }
 
+export interface ReturnCreateParams {
+  /** Fulfilled units coming back, and how many of each */
+  items: Array<{ fulfillment_item_id: string; quantity: number }>
+  /** Where the goods come back to; defaults to the location that shipped them */
+  stock_location_id?: string
+  reason_id?: string
+  memo?: string
+}
+
+export interface ReturnUpdateParams {
+  memo?: string
+  reason_id?: string
+  stock_location_id?: string
+  metadata?: Record<string, unknown>
+}
+
+export interface ReturnReceiveParams {
+  /**
+   * What actually arrived. Omit to receive everything as requested and
+   * resellable — pass explicit rows for a partial or damaged receipt, which
+   * is the normal case.
+   */
+  items?: Array<{
+    return_line_item_id: string
+    quantity: number
+    /** Non-resellable goods are received but never restocked */
+    resellable?: boolean
+  }>
+}
+
+export interface ExchangeCreateParams {
+  /** Items coming back, and what should go out in their place */
+  items: Array<{ fulfillment_item_id: string; new_variant_id: string; quantity: number }>
+  stock_location_id?: string
+  reason_id?: string
+  memo?: string
+}
+
+export interface ExchangeUpdateParams {
+  memo?: string
+  reason_id?: string
+  stock_location_id?: string
+  metadata?: Record<string, unknown>
+}
+
+export interface ExchangeReceiveParams {
+  /** Omit to receive everything as requested and resellable */
+  items?: Array<{
+    exchange_line_item_id: string
+    quantity: number
+    resellable?: boolean
+  }>
+}
+
+export interface ExchangeFulfillParams {
+  /**
+   * How a credit is returned when the replacements cost less than what came
+   * back. A balance the customer owes is left for the merchant to collect.
+   */
+  refund_method?: 'original_payment' | 'store_credit'
+}
+
+export interface ClaimCreateParams {
+  /** Affected items, and how each should be made right */
+  items: Array<{
+    line_item_id: string
+    quantity: number
+    description?: string
+    send_replacement?: boolean
+    replacement_variant_id?: string
+    refund_amount?: string | number
+  }>
+  /** One of the store's configured claim types */
+  claim_type?: string
+  reason_id?: string
+  memo?: string
+}
+
+export interface ClaimUpdateParams {
+  memo?: string
+  reason_id?: string
+  claim_type?: string
+  metadata?: Record<string, unknown>
+}
+
+export interface ClaimResolveParams {
+  /** Money back, a replacement shipment, or both */
+  resolution: 'refund' | 'replacement' | 'refund_and_replacement'
+  refund_method?: 'original_payment' | 'store_credit'
+  /** Decimal amount; defaults to the claim total */
+  amount?: string | number
+  /**
+   * Which claim lines to send a replacement for. Omit to keep whatever the
+   * claim was opened with — the merchant usually decides what to send when
+   * resolving, not when the customer first reported the problem.
+   */
+  replacement_line_item_ids?: string[]
+}
+
+export interface ReturnRefundParams {
+  /**
+   * Decimal amount; see `PaymentCreateParams.amount` for the string
+   * rationale. Defaults to the value of what was actually received.
+   */
+  amount?: string | number
+  /**
+   * `store_credit` issues credit immediately; `original_payment` refunds
+   * through the gateway that took the money.
+   */
+  refund_method?: 'original_payment' | 'store_credit'
+}
+
 export interface AddressInputParams {
   first_name?: string
   last_name?: string
@@ -772,6 +884,17 @@ export interface WebhookEndpointDisableParams {
   reason?: string
 }
 
+export interface ProductTypeCreateParams {
+  name: string
+  /** Fulfillment types products of this type support (e.g. ['shipping', 'pickup']). */
+  fulfillment_types?: string[]
+}
+
+export interface ProductTypeUpdateParams {
+  name?: string
+  fulfillment_types?: string[]
+}
+
 export interface TaxCategoryCreateParams {
   name: string
   tax_code?: string | null
@@ -1368,4 +1491,43 @@ export interface PromotionRuleUpdateParams {
   product_ids?: string[]
   category_ids?: string[]
   customer_ids?: string[]
+}
+
+export interface DeliveryMethodParams {
+  name?: string
+  admin_name?: string | null
+  code?: string | null
+  /** One of `shipping`, `digital`, `pickup`, `pickup_point`. */
+  fulfillment_type?: string
+  fulfillment_provider?: string
+  pickup_point_provider?: string | null
+  storefront_visible?: boolean
+  tracking_url?: string | null
+  estimated_transit_business_days_min?: number | null
+  estimated_transit_business_days_max?: number | null
+  /** Prefixed tax category ID (`taxcat_...`), or null to clear. */
+  tax_category_id?: string | null
+  /** Product type prefixed ID (pt_...); drives fulfillment eligibility. */
+  product_type_id?: string | null
+  /** Delivery calculator class name (see `deliveryMethods.calculators()`). */
+  calculator_type?: string
+  calculator_preferences?: Record<string, unknown>
+  /** Prefixed delivery zone IDs (`dz_...`); replaces the full set. */
+  delivery_zone_ids?: string[]
+}
+
+export interface DeliveryZoneMemberParams {
+  member_type: 'country' | 'state' | 'postal_code'
+  country_iso?: string
+  state_abbr?: string
+  postal_code_prefix?: string
+  postal_code_from?: string
+  postal_code_to?: string
+}
+
+export interface DeliveryZoneParams {
+  name?: string
+  description?: string | null
+  /** Replaces the zone's full member set atomically. */
+  members?: DeliveryZoneMemberParams[]
 }

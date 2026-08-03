@@ -7,7 +7,6 @@ module Spree
       min: -2**31
     }.freeze
 
-    include Spree::StockMovement::Webhooks
     include Spree::StockMovement::CustomEvents
 
     publishes_lifecycle_events

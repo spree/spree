@@ -12,10 +12,10 @@ module Spree
   # API dependencies accessor for cleaner access to API dependencies
   #
   # @example Getting a dependency (returns resolved class)
-  #   Spree.api.storefront_coupon_handler.call(order: order, coupon_code: code)
+  #   Spree.api.product_serializer.render(product)
   #
   # @example Setting a dependency
-  #   Spree.api.storefront_coupon_handler = MyApp::CouponHandler
+  #   Spree.api.product_serializer = MyApp::ProductSerializer
   #
   # @return [Spree::ApiDependenciesAccessor] the API dependencies accessor
   def self.api

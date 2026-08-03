@@ -17,8 +17,14 @@ module Spree
         can :manage, Spree::PaymentMethod
         can :manage, Spree::Gateway
 
-        # Shipping configuration
-        can :manage, Spree::ShippingMethod
+        # Delivery configuration. Stock locations ride along: pickup methods
+        # bind them, so delivery configuration and location management are
+        # the same capability.
+        can :manage, Spree::DeliveryMethod
+        can :manage, Spree::StockLocation
+        can :manage, Spree::DeliveryMethodRule
+        can :manage, Spree::DeliveryZone
+        can :manage, Spree::DeliveryZoneMember
         can :manage, Spree::ShippingCategory
         can :manage, Spree::Zone
         can :manage, Spree::ZoneMember

@@ -23,7 +23,9 @@ RSpec.describe Spree::PermissionSets::OrderManagement do
     end
 
     it 'grants manage access to Adjustment' do
-      expect(ability.can?(:manage, Spree::Adjustment)).to be true
+      expect(ability.can?(:manage, Spree::Discount)).to be true
+      expect(ability.can?(:manage, Spree::Fee)).to be true
+      expect(ability.can?(:manage, Spree::TaxLine)).to be true
     end
 
     it 'grants manage access to LineItem' do

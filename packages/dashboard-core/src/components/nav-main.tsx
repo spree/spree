@@ -25,7 +25,13 @@ export type NavItem = {
   subject?: SubjectName
   /** Component rendered after the label (e.g. a count badge). May return null. */
   badge?: ComponentType
-  items?: { title: string; url: string; subject?: SubjectName }[]
+  items?: {
+    title: string
+    url: string
+    subject?: SubjectName
+    /** Component rendered after the label, same contract as the parent's. */
+    badge?: ComponentType
+  }[]
 }
 
 export function NavIcon({ icon: Icon, isActive }: { icon: NavItem['icon']; isActive?: boolean }) {
@@ -131,6 +137,11 @@ function NavItemContent({
                 <SidebarMenuSubButton asChild isActive={subActive}>
                   <Link to={subItem.url}>
                     <span>{subItem.title}</span>
+                    {subItem.badge && (
+                      <span className="ml-auto">
+                        <subItem.badge />
+                      </span>
+                    )}
                   </Link>
                 </SidebarMenuSubButton>
               </SidebarMenuSubItem>

@@ -6,7 +6,7 @@ RSpec.describe 'Collections API', type: :request, swagger_doc: 'api-reference/st
   include_context 'API v3 Store'
 
   let!(:collection) { create(:collection, store: store, name: 'Summer Sale') }
-  let!(:product) { create(:product, status: 'active', stores: [store]) }
+  let!(:product) { create(:product, status: 'active', store: store) }
   let!(:other_store) { create(:store) }
   let!(:other_collection) { create(:collection, store: other_store) }
 

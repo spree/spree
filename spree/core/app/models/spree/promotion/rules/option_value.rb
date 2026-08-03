@@ -1,7 +1,7 @@
 module Spree
   class Promotion
     module Rules
-      class OptionValue < PromotionRule
+      class OptionValue < Spree::PromotionRule
         MATCH_POLICIES = %w(any)
         preference :match_policy, :string, default: MATCH_POLICIES.first
         preference :eligible_values, :array, default: [], parse_on_set: lambda { |values|
@@ -9,7 +9,7 @@ module Spree
         }
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(promotable, _options = {})

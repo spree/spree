@@ -99,7 +99,7 @@ FactoryBot.define do
 
       factory :digital_product do
         track_inventory { false }
-        shipping_category { |r| Spree::ShippingCategory.digital || r.association(:digital_shipping_category) }
+        product_type { create(:product_type, name: "Digital #{SecureRandom.hex(4)}", fulfillment_types: ['digital']) }
       end
     end
   end

@@ -33,3 +33,11 @@ export const NEW_ORDER_DEFAULTS: NewOrderFormValues = {
   coupon_code: '',
   channel_id: '',
 }
+
+/**
+ * Fee kinds offered when adding a manual fee to an order. The backend accepts
+ * any string, so this is the curated admin-facing set, not a DB constraint.
+ */
+export const FEE_KINDS = ['surcharge', 'handling', 'gift_wrap', 'cod', 'payment'] as const
+
+export type FeeKind = (typeof FEE_KINDS)[number]

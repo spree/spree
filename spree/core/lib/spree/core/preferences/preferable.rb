@@ -76,8 +76,12 @@ module Spree::Preferences::Preferable
   end
 
   def defined_preferences
-    methods.grep(/\Apreferred_.*=\Z/).map do |pref_method|
-      pref_method.to_s.gsub(/\Apreferred_|=\Z/, '').to_sym
+    # Only real `preference`-macro definitions carry a `_default` getter —
+    # the name grep alone would also catch `preferred_*` association writers
+    # (e.g. Order#preferred_stock_location=).
+    methods.grep(/\Apreferred_.*=\Z/).filter_map do |pref_method|
+      name = pref_method.to_s.gsub(/\Apreferred_|=\Z/, '').to_sym
+      name if respond_to?(self.class.preference_default_getter_method(name))
     end
   end
 

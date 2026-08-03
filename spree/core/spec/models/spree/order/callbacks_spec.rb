@@ -3,15 +3,10 @@ require 'spec_helper'
 describe Spree::Order, type: :model do
   let(:order) { build(:order) }
 
-  before do
-    Spree::Order.define_state_machine!
-  end
-
   context 'validations' do
     context 'email validation' do
       # Regression test for #1238
       it "o'brien@gmail.com is a valid email address" do
-        order.state = 'address'
         order.email = "o'brien@gmail.com"
         order.valid?
         expect(order.errors).to be_empty
@@ -34,9 +29,8 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context 'in the cart state' do
+  context 'as a draft' do
     it 'does not validate email address' do
-      order.state = 'cart'
       order.email = nil
       order.valid?
       expect(order.errors).to be_empty

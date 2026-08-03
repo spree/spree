@@ -817,10 +817,9 @@ describe Spree::Payment, type: :model do
     context 'completed orders' do
       before { allow(order).to receive_messages completed?: true }
 
-      it 'updates payment_state and shipments' do
-        expect(order.updater).to receive(:update_payment_state)
-        expect(order.updater).to receive(:update_shipment_state)
-        Spree::Payment.create(amount: 100, order: order, payment_method: gateway, source: card)
+      it 'recomputes totals and statuses' do
+        expect { Spree::Payment.create(amount: 100, order: order, payment_method: gateway, source: card) }
+          .to change { order.reload.updated_at }
       end
     end
 
@@ -910,7 +909,7 @@ describe Spree::Payment, type: :model do
     end
 
     it "builds the payment's source" do
-      payment = Spree::Payment.new(params)
+      payment = Spree::Payment.new(params.merge(order: order))
       expect(payment).to be_valid
       expect(payment.source).not_to be_nil
     end

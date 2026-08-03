@@ -22,7 +22,7 @@ module Spree
   #   class Spree::Order < Spree.base_class
   #     def complete!
   #       # ... completion logic ...
-  #       publish_event('order.completed')
+  #       publish_event('order.placed')
   #     end
   #   end
   #
@@ -134,15 +134,15 @@ module Spree
 
     # Publish an event with this model's data
     #
-    # @param event_name [String] The event name (e.g., 'order.completed')
+    # @param event_name [String] The event name (e.g., 'order.placed')
     # @param payload [Hash, nil] Custom payload (defaults to event_payload)
     # @param metadata [Hash] Additional metadata
     # @return [Spree::Event] The published event
     #
     # @example
-    #   order.publish_event('order.completed')
-    #   order.publish_event('order.completed', { custom: 'data' })
-    #   order.publish_event('order.completed', metadata: { user_id: 1 })
+    #   order.publish_event('order.placed')
+    #   order.publish_event('order.placed', { custom: 'data' })
+    #   order.publish_event('order.placed', metadata: { user_id: 1 })
     #
     def publish_event(event_name, payload = nil, metadata = {})
       return unless Spree::Events.enabled?

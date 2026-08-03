@@ -3,32 +3,30 @@ require 'spec_helper'
 RSpec.describe Spree::Seeds::DigitalDelivery do
   subject { described_class.call }
 
-  describe 'ShippingMethod' do
-    it 'creates a Digital Delivery shipping method' do
-      expect { subject }.to change(Spree::ShippingMethod, :count).by(1)
+  describe 'DeliveryMethod' do
+    it 'creates a Digital Delivery delivery method' do
+      expect { subject }.to change(Spree::DeliveryMethod, :count).by(1)
 
-      shipping_method = Spree::ShippingMethod.find_by(name: Spree.t('digital.digital_delivery'))
-      expect(shipping_method).to be_present
-      expect(shipping_method.display_on).to eq('both')
-      expect(shipping_method.shipping_categories.first.name).to eq('Digital')
-      expect(shipping_method.calculator).to be_a(Spree::Calculator::Shipping::DigitalDelivery)
-      expect(shipping_method.zones).to match_array(Spree::Zone.all)
+      delivery_method = Spree::DeliveryMethod.find_by(name: Spree.t('digital.digital_delivery'))
+      expect(delivery_method).to be_present
+      expect(delivery_method.display_on).to eq('both')
+      expect(delivery_method.fulfillment_type).to eq('digital')
+      expect(delivery_method).to be_digital
+      expect(delivery_method.calculator).to be_a(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
-    context 'when Digital Delivery shipping method already exists' do
+    context 'when Digital Delivery delivery method already exists' do
       before do
-        shipping_category = Spree::ShippingCategory.find_or_create_by(name: 'Digital')
-        Spree::ShippingMethod.create!(
+        Spree::DeliveryMethod.create!(
           name: Spree.t('digital.digital_delivery'),
           display_on: 'both',
-          shipping_categories: [shipping_category],
-          calculator: Spree::Calculator::Shipping::DigitalDelivery.create!,
-          zones: Spree::Zone.all
+          fulfillment_type: 'digital',
+          calculator: Spree::Calculator::Shipping::DigitalDelivery.create!
         )
       end
 
-      it "doesn't create a new shipping method" do
-        expect { subject }.not_to change(Spree::ShippingMethod, :count)
+      it "doesn't create a new delivery method" do
+        expect { subject }.not_to change(Spree::DeliveryMethod, :count)
       end
     end
   end

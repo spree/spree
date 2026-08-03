@@ -76,23 +76,27 @@ unless orders[1].line_items.any?
   ).save!
 end
 
-orders.each(&:create_proposed_shipments)
+orders.each(&:create_proposed_fulfillments)
 
-Spree::Order.where(id: orders.map(&:id)).update_all(state: :complete, status: 'placed', completed_at: Time.current - 1.day)
+Spree::Order.where(id: orders.map(&:id)).update_all(status: 'placed', completed_at: Time.current - 1.day)
 
-# Adjustments (tax)
+# Tax lines (zero-amount sample rows against the California rate)
 tax_rate = Spree::TaxRate.find_by(name: 'California')
 
 if tax_rate
   orders.each do |order|
-    order.all_adjustments.where(
-      adjustable: order,
-      source: tax_rate,
-      label: 'Tax',
-      state: 'open',
-      mandatory: true
-    ).first_or_create! do |adj|
-      adj.amount = 0
+    line_item = order.line_items.first
+    next if line_item.nil?
+
+    order.tax_lines.where(
+      line_item: line_item,
+      tax_rate: tax_rate,
+      label: 'Tax'
+    ).first_or_create! do |tax_line|
+      tax_line.amount = 0
+      tax_line.rate = tax_rate.amount
+      tax_line.included = tax_rate.included_in_price
+      tax_line.provider_id = 'internal'
     end
   end
 end
@@ -125,6 +129,10 @@ if method
     payment.update_columns(state: 'pending', response_code: "BGS-#{SecureRandom.hex(6)}")
   end
 end
+
+# Statuses are derive-then-persist; the direct writes above bypass the
+# event subscribers, so recompute explicitly.
+orders.each { |order| order.reload.update_statuses! }
 
 # Reimbursement
 first_complete_order = Spree::Order.complete.first

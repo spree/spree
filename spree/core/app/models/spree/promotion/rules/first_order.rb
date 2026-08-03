@@ -1,11 +1,11 @@
 module Spree
   class Promotion
     module Rules
-      class FirstOrder < PromotionRule
+      class FirstOrder < Spree::PromotionRule
         attr_reader :user, :email, :store
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, options = {})

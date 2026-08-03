@@ -7,7 +7,9 @@ module Spree
         typelize number: :string, current_step: :string, completed_steps: 'string[]', token: :string, email: [:string, nullable: true],
                  customer_note: [:string, nullable: true], market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
-                 requirements: 'Array<{step: string, field: string, message: string}>',
+                 coupon_code: [:string, nullable: true],
+                 preferred_stock_location_id: [:string, nullable: true],
+                 requirements: 'Array<{step: string, field: string, code: string, message: string}>',
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
                  adjustment_total: [:string, nullable: true], display_adjustment_total: [:string, nullable: true],
@@ -25,11 +27,6 @@ module Spree
                  billing_address: { nullable: true }, shipping_address: { nullable: true },
                  gift_card: { nullable: true }, market: { nullable: true }
 
-        # Override ID to use cart_ prefix
-        attribute :id do |order|
-          "cart_#{Spree::PrefixedId::SQIDS.encode([order.id])}"
-        end
-
         attribute :market_id do |order|
           order.market&.prefixed_id
         end
@@ -41,8 +38,15 @@ module Spree
           order.channel&.prefixed_id
         end
 
+        # Pickup selection — mirrors the writable param on cart update.
+        attribute :preferred_stock_location_id do |cart|
+          cart.preferred_stock_location&.prefixed_id
+        end
+
+        # @deprecated `number` mirrors `id` (carts have no order-style
+        #   number) — kept one release for 5.x clients; removed in 6.1.
         attributes :number, :token, :email, :customer_note,
-                   :currency, :locale, :total_quantity, :warnings
+                   :currency, :locale, :total_quantity, :warnings, :coupon_code
 
         # Nulled for gated (prices_hidden) guests so the cart can't leak the
         # prices that product/variant serializers already withhold.
@@ -83,7 +87,7 @@ module Spree
           order.shipping_eq_billing_address?
         end
 
-        many :discounts, resource: proc { Spree.api.discount_serializer }
+        many :order_promotions, key: :discounts, resource: proc { Spree.api.applied_promotion_serializer }
         many :line_items, key: :items, resource: proc { Spree.api.line_item_serializer }
         many :fulfillments, resource: proc { Spree.api.fulfillment_serializer }
         many :payments, resource: proc { Spree.api.payment_serializer }

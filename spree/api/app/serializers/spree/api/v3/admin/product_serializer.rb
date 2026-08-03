@@ -10,6 +10,7 @@ module Spree
 
           typelize status: :string,
                    tax_category_id: [:string, nullable: true],
+                   product_type_id: [:string, nullable: true],
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
@@ -17,6 +18,10 @@ module Spree
           attributes :status,
                      :metadata, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :product_type_id do |product|
+            product.product_type&.prefixed_id
+          end
 
           attribute :tax_category_id do |product|
             product.tax_category&.prefixed_id

@@ -4,7 +4,7 @@
 module Spree
   class Promotion
     module Rules
-      class Product < PromotionRule
+      class Product < Spree::PromotionRule
         #
         # Associations
         #
@@ -43,7 +43,7 @@ module Spree
         end
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, _options = {})

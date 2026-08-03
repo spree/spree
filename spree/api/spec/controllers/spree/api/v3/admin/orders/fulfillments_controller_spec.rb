@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
   include_context 'API v3 Admin authenticated'
 
   let!(:order) { create(:order_ready_to_ship, store: store) }
-  let!(:shipment) { order.shipments.first }
+  let!(:shipment) { order.fulfillments.first }
 
   before { request.headers.merge!(headers) }
 
@@ -53,7 +53,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       post :create, params: {
         order_id: other_order.prefixed_id,
-        stock_location_id: other_order.shipments.first.stock_location.prefixed_id,
+        stock_location_id: other_order.fulfillments.first.stock_location.prefixed_id,
         items: [{ item_id: line_item.prefixed_id, quantity: 1 }]
       }, as: :json
 
@@ -75,7 +75,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       expect(response).to have_http_status(:created)
       fulfillment = order.reload.shipments.first
-      expect(fulfillment.shipping_method).to eq(delivery_method)
+      expect(fulfillment.delivery_method).to eq(delivery_method)
     end
 
     it "registers an already-shipped fulfillment with status: 'shipped' and an explicit cost" do
@@ -88,10 +88,10 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['status']).to eq('shipped')
+      expect(json_response['status']).to eq('fulfilled')
       expect(json_response['fulfilled_at']).to be_present
       expect(BigDecimal(json_response['cost'])).to eq(BigDecimal('7.42'))
-      expect(order.reload.shipment_state).to eq('shipped')
+      expect(order.reload.fulfillment_status).to eq('fulfilled')
     end
 
     it 'returns 422 for a non-completed order' do
@@ -99,7 +99,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       post :create, params: {
         order_id: draft_order.prefixed_id,
-        stock_location_id: draft_order.shipments.first.stock_location.prefixed_id
+        stock_location_id: draft_order.fulfillments.first.stock_location.prefixed_id
       }, as: :json
 
       expect(response).to have_http_status(:unprocessable_content)
@@ -183,7 +183,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       expect(response).to have_http_status(:ok)
       expect(shipment.reload.state).to eq(original_state)
-      expect(shipment.state).not_to eq('shipped')
+      expect(shipment.status).not_to eq('fulfilled')
     end
   end
 
@@ -197,7 +197,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['status']).to eq('shipped')
+      expect(json_response['status']).to eq('fulfilled')
     end
   end
 

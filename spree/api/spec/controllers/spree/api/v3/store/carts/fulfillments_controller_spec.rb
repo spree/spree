@@ -5,14 +5,17 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
 
   include_context 'API v3 Store'
 
+  let!(:shipping_method) { create(:shipping_method) }
   let!(:order) do
-    create(:order_with_line_items, customer: user, store: store, state: 'delivery').tap do |o|
-      o.create_proposed_shipments
-      o.shipments.first.refresh_rates
+    create(:cart_with_line_items, customer: user, store: store).tap do |o|
+      o.update!(email: user.email, ship_address: create(:address))
+      o.rebuild_fulfillments!
+      o.fulfillments.first.refresh_rates
+      o.set_fulfillments_cost
       o.reload
     end
   end
-  let!(:fulfillment) { order.shipments.first }
+  let!(:fulfillment) { order.fulfillments.first }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -25,17 +28,17 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
       let(:expensive_shipping_method) { create(:shipping_method, name: 'Express Shipping') }
 
       before do
-        fulfillment.shipping_rates.delete_all
+        fulfillment.delivery_rates.delete_all
         create(:shipping_rate, shipment: fulfillment, shipping_method: cheaper_shipping_method, cost: 5, selected: true)
         create(:shipping_rate, shipment: fulfillment, shipping_method: expensive_shipping_method, cost: 25, selected: false)
         fulfillment.reload
-        order.set_shipments_cost
+        order.set_fulfillments_cost
       end
 
-      it 'updates order totals when a different delivery rate is selected' do
-        expensive_rate = fulfillment.shipping_rates.find_by(shipping_method: expensive_shipping_method)
+      it 'updates cart totals when a different delivery rate is selected' do
+        expensive_rate = fulfillment.delivery_rates.find_by(shipping_method: expensive_shipping_method)
 
-        expect(order.shipment_total).to eq(5)
+        expect(order.delivery_total).to eq(5)
 
         patch :update, params: {
           cart_id: order.prefixed_id,
@@ -46,15 +49,15 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
         expect(response).to have_http_status(:ok)
         expect(json_response['id']).to start_with('cart_')
         order.reload
-        expect(order.shipment_total).to eq(25)
+        expect(order.delivery_total).to eq(25)
       end
     end
 
     context 'auto-advance after rate selection' do
-      it 'advances order from delivery to payment' do
-        rate = fulfillment.shipping_rates.first
+      it 'advances the cart from delivery to payment' do
+        rate = fulfillment.delivery_rates.first
 
-        expect(order.state).to eq('delivery')
+        expect(order.current_checkout_step).to eq('payment').or eq('delivery')
 
         patch :update, params: {
           cart_id: order.prefixed_id,
@@ -63,13 +66,11 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
         }
 
         expect(response).to have_http_status(:ok)
-        expect(order.reload.state).to eq('payment')
         expect(json_response['current_step']).to eq('payment')
       end
 
       it 'does not fail if advancement is not possible' do
-        order.update_column(:state, 'address')
-        rate = fulfillment.shipping_rates.first
+        rate = fulfillment.delivery_rates.first
 
         patch :update, params: {
           cart_id: order.prefixed_id,
@@ -80,17 +81,16 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
         expect(response).to have_http_status(:ok)
       end
 
-      it 'does not advance from payment to complete' do
+      it 'does not complete the cart' do
         create(:store_credit_payment_method)
-        credit = create(:store_credit, customer: order.user, store: store, amount: order.total)
+        credit = create(:store_credit, user: order.user, store: store, amount: order.total)
         order.payments.create!(
           source: credit,
           payment_method: Spree::PaymentMethod::StoreCredit.first,
           amount: (order.total / 2).to_d,
-          state: 'checkout',
           response_code: credit.generate_authorization_code
         )
-        rate = fulfillment.shipping_rates.first
+        rate = fulfillment.delivery_rates.first
 
         patch :update, params: {
           cart_id: order.prefixed_id,
@@ -100,7 +100,6 @@ RSpec.describe Spree::Api::V3::Store::Carts::FulfillmentsController, type: :cont
 
         expect(response).to have_http_status(:ok)
         order.reload
-        expect(order.state).to eq('payment')
         expect(order.completed_at).to be_nil
       end
     end

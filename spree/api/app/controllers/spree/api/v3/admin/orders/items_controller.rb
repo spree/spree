@@ -7,7 +7,7 @@ module Spree
             # POST /api/v3/admin/orders/:order_id/items
             def create
               with_order_lock do
-                result = Spree.cart_add_item_service.call(
+                result = Spree.order_add_item_service.call(
                   order: @parent,
                   variant: variant,
                   quantity: permitted_params[:quantity] || 1,
@@ -25,24 +25,17 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/items/:id
             def update
               with_order_lock do
-                if permitted_params[:quantity].present?
-                  result = Spree.cart_set_item_quantity_service.call(
-                    order: @parent,
-                    line_item: @resource,
-                    quantity: permitted_params[:quantity]
-                  )
+                result = Spree.order_update_item_service.call(
+                  order: @parent,
+                  line_item: @resource,
+                  quantity: permitted_params[:quantity],
+                  metadata: permitted_params[:metadata]&.to_h
+                )
 
-                  if result.success?
-                    render json: serialize_resource(@resource.reload)
-                  else
-                    render_service_error(result.error, code: ERROR_CODES[:invalid_quantity])
-                  end
+                if result.success?
+                  render json: serialize_resource(@resource.reload)
                 else
-                  if @resource.update(permitted_params.except(:variant_id, :quantity))
-                    render json: serialize_resource(@resource)
-                  else
-                    render_errors(@resource.errors)
-                  end
+                  render_service_error(result.error, code: ERROR_CODES[:invalid_quantity])
                 end
               end
             end
@@ -50,7 +43,7 @@ module Spree
             # DELETE /api/v3/admin/orders/:order_id/items/:id
             def destroy
               with_order_lock do
-                Spree.cart_remove_line_item_service.call(
+                Spree.order_remove_line_item_service.call(
                   order: @parent,
                   line_item: @resource
                 )

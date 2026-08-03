@@ -10,7 +10,11 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
   let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany', states_required: false) }
   let!(:france) { Spree::Country.find_by(iso: 'FR') || create(:country, iso: 'FR', name: 'France', states_required: false) }
 
-  let!(:na_market) { create(:market, :default, name: 'North America', store: store, countries: [usa], currency: 'USD', default_locale: 'en', supported_locales: 'en,es') }
+  let!(:na_market) do
+    store.default_market.tap do |market|
+      market.update!(name: 'North America', currency: 'USD', default_locale: 'en', supported_locales: 'en,es')
+    end
+  end
   let!(:eu_market) { create(:market, name: 'Europe', store: store, countries: [germany, france], currency: 'EUR', default_locale: 'de', supported_locales: 'de,en,fr', tax_inclusive: true) }
 
   path '/api/v3/store/markets' do

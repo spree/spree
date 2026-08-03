@@ -72,19 +72,19 @@ module Spree
         csv = [
           order.number,
           index.zero? ? order.email : nil,
-          index.zero? ? order.state : nil,
+          index.zero? ? order.status : nil,
           index.zero? ? order.currency : nil,
           index.zero? ? order.item_total.to_f : nil,
           index.zero? ? order.shipment_total.to_f : nil,
           index.zero? ? order.tax_total.to_f : nil,
           index.zero? ? order.included_tax_total.positive? : nil,
-          index.zero? ? (order.promo_total.negative? || line_item.promo_total.negative?) : nil,
+          index.zero? ? (order.discount_total.negative? || line_item.promo_total.negative?) : nil,
           index.zero? ? order.has_free_shipping? : nil,
-          index.zero? ? order.promo_total.abs : nil,
+          index.zero? ? order.discount_total.abs : nil,
           index.zero? ? order.promo_code : nil,
           index.zero? ? order.payments.store_credits.sum(:amount).abs : nil,
           index.zero? ? order.total.to_f : nil,
-          index.zero? ? order.shipping_method&.name : nil,
+          index.zero? ? order.delivery_method&.name : nil,
           index.zero? ? order.total_weight.to_f : nil,
           index.zero? ? order.payments.valid&.first&.display_source_name : nil,
           line_item.product_id,
@@ -121,10 +121,10 @@ module Spree
           index.zero? ? order.ship_address&.country&.name : nil,
           index.zero? ? order.ship_address&.phone : nil,
           index.zero? ? format_date(order.completed_at) : nil,
-          format_date(line_item.order.shipments.first&.shipped_at),
+          format_date(line_item.order.fulfillments.first&.fulfilled_at),
           index.zero? ? format_date(order.canceled_at) : nil,
           index.zero? ? order.canceler&.email : nil,
-          index.zero? ? order.special_instructions : nil
+          index.zero? ? order.customer_note : nil
         ]
 
         if index.zero?

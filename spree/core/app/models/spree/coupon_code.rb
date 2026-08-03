@@ -14,7 +14,19 @@ module Spree
     scope :not_in_promotions, ->(promotion_ids) { where.not(promotion_id: promotion_ids) }
 
     belongs_to :promotion, class_name: 'Spree::Promotion', touch: true
-    belongs_to :order, class_name: 'Spree::Order'
+    belongs_to :order, class_name: 'Spree::Order', optional: true
+    belongs_to :cart, class_name: 'Spree::Cart', optional: true
+
+    # Bridge for legacy callers assigning +current_order+ (now a Spree::Cart)
+    # to the order association — routes carts to the cart FK instead.
+    def order=(record)
+      if record.is_a?(Spree::Cart)
+        self.cart = record
+        super(nil)
+      else
+        super
+      end
+    end
 
     validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope, conditions: -> { where(deleted_at: nil) } }
     validates :state, :promotion, presence: true
@@ -26,12 +38,13 @@ module Spree
       used_with_code(code).any?
     end
 
-    def apply_order!(order)
-      update(order: order, state: 'used')
+    def apply_order!(owner)
+      owner_key = owner.is_a?(Spree::Cart) ? :cart : :order
+      update(owner_key => owner, state: 'used')
     end
 
     def remove_from_order
-      update(order: nil, state: 'unused')
+      update(order: nil, cart: nil, state: 'unused')
     end
 
     def display_code

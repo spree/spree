@@ -23,7 +23,10 @@ require 'jwt'
 require 'monetize'
 require 'mobility'
 require 'name_of_person'
+require 'nokogiri'
+require 'rails-html-sanitizer'
 require 'paranoia'
+require 'request_store'
 require 'ransack'
 require 'state_machines-activerecord'
 require 'active_storage_validations'
@@ -281,12 +284,49 @@ module Spree
     Rails.application.config.spree.adjusters = value
   end
 
+  # The configured tax provider instance — the only sanctioned writer of
+  # {Spree::TaxLine} rows. Global default is {Spree::TaxProvider::Internal};
+  # per-Market resolution arrives with docs/plans/6.0-tax-provider.md.
+  #
+  # @return [Spree::TaxProvider::Base]
+  def self.tax_provider
+    Rails.application.config.spree.tax_provider.new
+  end
+
+  def self.tax_provider=(value)
+    Rails.application.config.spree.tax_provider = value
+  end
+
+  def self.fulfillment_providers
+    Rails.application.config.spree.fulfillment_providers
+  end
+
+  def self.fulfillment_providers=(value)
+    Rails.application.config.spree.fulfillment_providers = value
+  end
+
+  def self.fulfillment_types
+    Rails.application.config.spree.fulfillment_types
+  end
+
+  def self.fulfillment_types=(value)
+    Rails.application.config.spree.fulfillment_types = value
+  end
+
   def self.stock_splitters
     Rails.application.config.spree.stock_splitters
   end
 
   def self.stock_splitters=(value)
     Rails.application.config.spree.stock_splitters = value
+  end
+
+  def self.delivery_method_rules
+    Rails.application.config.spree.delivery_method_rules
+  end
+
+  def self.delivery_method_rules=(value)
+    Rails.application.config.spree.delivery_method_rules = value
   end
 
   def self.order_routing
@@ -528,8 +568,11 @@ module Spree
     private
 
     def core_dependency?(name)
-      defined?(Spree::Dependencies) &&
-        Spree::Dependencies.class::INJECTION_POINTS.include?(name)
+      return false unless defined?(Spree::Dependencies)
+
+      Spree::Dependencies.class::INJECTION_POINTS.include?(name) ||
+        Spree::Dependencies.class::LEGACY_WORKFLOW_KEYS.key?(name) ||
+        Spree::Dependencies.class::LEGACY_SERVICE_KEYS.key?(name)
     end
   end
 
@@ -552,9 +595,9 @@ require 'spree/translations'
 require 'spree/money'
 require 'spree/permitted_attributes'
 require 'spree/service_module'
+require 'spree/workflow'
 require 'spree/analytics'
 require 'spree/events'
-require 'spree/webhooks'
 
 require 'spree/core/partials'
 require 'spree/core/controller_helpers/auth'

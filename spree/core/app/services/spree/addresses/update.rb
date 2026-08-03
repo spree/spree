@@ -63,8 +63,8 @@ module Spree
           address.destroy!
 
           if new_address.customer.present?
-            default_billing = address.user_default_billing? || default_billing
-            default_shipping = address.user_default_shipping? || default_shipping
+            default_billing = address.is_default_billing? || default_billing
+            default_shipping = address.is_default_shipping || default_shipping
 
             assign_to_user_as_default(
               user: new_address.customer,
@@ -91,8 +91,8 @@ module Spree
 
       def reassign_incomplete_orders(old_address_id, new_address)
         orders = Spree::Order.incomplete.where(customer_id: new_address.customer_id)
-        orders.where(ship_address_id: old_address_id).update_all(ship_address_id: new_address.id, state: 'address', updated_at: Time.current)
-        orders.where(bill_address_id: old_address_id).update_all(bill_address_id: new_address.id, state: 'address', updated_at: Time.current)
+        orders.where(ship_address_id: old_address_id).update_all(ship_address_id: new_address.id, updated_at: Time.current)
+        orders.where(bill_address_id: old_address_id).update_all(bill_address_id: new_address.id, updated_at: Time.current)
       end
 
       def defaults_changed?(address, default_billing, default_shipping)

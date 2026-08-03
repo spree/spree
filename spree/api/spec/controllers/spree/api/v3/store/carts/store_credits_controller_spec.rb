@@ -5,9 +5,9 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
 
   include_context 'API v3 Store'
 
-  let!(:order) { create(:order_with_line_items, customer: user, store: store, state: 'payment') }
+  let!(:order) { create(:cart_with_line_items, customer: user, store: store) }
   let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
-  let!(:store_credit) { create(:store_credit, customer: user, store: store, amount: 100) }
+  let!(:store_credit) { create(:store_credit, user: user, store: store, amount: 100) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -25,7 +25,7 @@ RSpec.describe Spree::Api::V3::Store::Carts::StoreCreditsController, type: :cont
 
     context 'without available store credit' do
       let(:user_without_credit) { create(:user) }
-      let!(:order_without_credit) { create(:order_with_line_items, customer: user_without_credit, store: store, state: 'payment') }
+      let!(:order_without_credit) { create(:cart_with_line_items, customer: user_without_credit, store: store) }
 
       it 'returns an error' do
         jwt = Spree::Api::V3::TestingSupport.generate_jwt(user_without_credit)

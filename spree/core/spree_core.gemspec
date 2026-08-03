@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'i18n-tasks'
 
-  s.add_dependency 'rails', '>= 7.2', '< 8.2'
+  s.add_dependency 'rails', '>= 8.1', '< 8.2'
 
 
   s.add_dependency 'acts_as_list', '>= 0.8'
@@ -45,9 +45,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'money', '~> 6.13'
   s.add_dependency 'monetize', '~> 1.9'
   s.add_dependency 'name_of_person', '~> 1.1'
+  s.add_dependency 'nokogiri', '~> 1.18'
   s.add_dependency 'ostruct'
   s.add_dependency 'paranoia', '>= 2.4'
+  s.add_dependency 'rails-html-sanitizer', '~> 1.6'
   s.add_dependency 'ransack', '>= 4.1'
+  s.add_dependency 'request_store', '~> 1.5'
   s.add_dependency 'rexml'
 
   s.add_dependency 'state_machines-activerecord', '~> 0.100'

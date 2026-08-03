@@ -8,7 +8,11 @@ RSpec.describe 'Currencies API', type: :request, swagger_doc: 'api-reference/sto
   let!(:usa) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US', name: 'United States') }
   let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
 
-  let!(:na_market) { create(:market, :default, name: 'North America', store: store, countries: [usa], currency: 'USD', default_locale: 'en') }
+  let!(:na_market) do
+    store.default_market.tap do |market|
+      market.update!(name: 'North America', currency: 'USD', default_locale: 'en')
+    end
+  end
   let!(:eu_market) { create(:market, name: 'Europe', store: store, countries: [germany], currency: 'EUR', default_locale: 'de') }
 
   path '/api/v3/store/currencies' do

@@ -1,11 +1,12 @@
 module Spree
+  # Pure tax configuration read by the internal tax provider
+  # (Spree::TaxProvider::Internal). Since 6.0 tax rates have no write path of
+  # their own — TaxLine rows are written exclusively by Spree.tax_provider.
   class TaxRate < Spree.base_class
     has_prefix_id :tax
 
     acts_as_paranoid
 
-    include Spree::CalculatedAdjustments
-    include Spree::AdjustmentSource
     include Spree::Metafields
     include Spree::Metadata
 
@@ -14,6 +15,8 @@ module Spree
       belongs_to :tax_category,
                  class_name: 'Spree::TaxCategory'
     end
+
+    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :nullify
 
     with_options presence: true do
       validates :amount, numericality: { allow_nil: true }
@@ -51,66 +54,6 @@ module Spree
       potential_rates_for_zone(order_tax_zone)
     end
 
-    # Pre-tax amounts must be stored so that we can calculate
-    # correct rate amounts in the future. For example:
-    # https://github.com/spree/spree/issues/4318#issuecomment-34723428
-    #
-    # NOTE: this deliberately excludes the item's share of whole-order
-    # promotions and is therefore NOT the basis tax is computed on (that is
-    # LineItem#taxable_basis / Shipment#taxable_basis). Refund and reporting
-    # code (e.g. Calculator::Returns::DefaultRefundAmount) weighs order-level
-    # adjustments separately on top of this column, so allocating them here
-    # would double-count discounts.
-    def self.store_pre_tax_amount(item, rates)
-      pre_tax_amount = case item.class.to_s
-                       when 'Spree::LineItem' then item.discounted_amount
-                       when 'Spree::Shipment' then item.discounted_cost
-                       end
-
-      included_rates = rates.select(&:included_in_price)
-      if included_rates.any?
-        pre_tax_amount /= (1 + included_rates.sum(&:amount))
-      end
-
-      item.update_column(:pre_tax_amount, pre_tax_amount)
-    end
-
-    # Deletes all tax adjustments, then applies all applicable rates
-    # to relevant items.
-    def self.adjust(order, items)
-      return if items.none?
-
-      rates = match(order.tax_zone)
-      tax_category_ids = rates.map(&:tax_category_id)
-
-      # using destroy_all to ensure adjustment destroy callback fires.
-      Spree::Adjustment.where(adjustable: items).tax.destroy_all
-
-      relevant_items = if tax_category_ids.any?
-                          items.select do |item|
-                            tax_category_ids.include?(item.tax_category_id)
-                          end
-                        else
-                          []
-                        end
-
-      relevant_items.each do |item|
-        relevant_rates = rates.select do |rate|
-          rate.tax_category_id == item.tax_category_id
-        end
-        store_pre_tax_amount(item, relevant_rates)
-        relevant_rates.each do |rate|
-          rate.adjust(order, item)
-        end
-      end
-
-      # updates pre_tax for items without any tax rates
-      remaining_items = items - relevant_items
-      remaining_items.each do |item|
-        store_pre_tax_amount(item, [])
-      end
-    end
-
     def self.included_tax_amount_for(options)
       return 0 unless options[:tax_zone] && options[:tax_category]
 
@@ -118,14 +61,6 @@ module Spree
         included_in_price.
         for_tax_category(options[:tax_category]).
         sum(:amount)
-    end
-
-    def adjust(order, item)
-      create_adjustment(order, item, included_in_price)
-    end
-
-    def compute_amount(item)
-      compute(item)
     end
 
     def included?
@@ -136,14 +71,17 @@ module Spree
       !included_in_price
     end
 
-    private
-
-    def label
+    # The customer-facing label snapshotted onto TaxLine rows.
+    #
+    # @return [String]
+    def adjustment_label
       Spree.t included_in_price? ? :including_tax : :excluding_tax,
               scope: 'adjustment_labels.tax_rates',
               name: name.presence || tax_category.name,
               amount: amount_for_label
     end
+
+    private
 
     def amount_for_label
       return '' unless show_rate_in_label?

@@ -1,7 +1,7 @@
 module Spree
   class Promotion
     module Rules
-      class User < PromotionRule
+      class User < Spree::PromotionRule
         #
         # Associations
         #
@@ -42,7 +42,7 @@ module Spree
         after_save :add_users
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible_user_ids

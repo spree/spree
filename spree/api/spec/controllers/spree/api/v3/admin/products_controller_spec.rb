@@ -726,6 +726,26 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(product.reload.name).to eq('Updated Name')
     end
 
+    it 'assigns a product type by prefixed id and returns it' do
+      product_type = create(:product_type, store: store, fulfillment_types: %w[shipping pickup])
+
+      patch :update, params: { id: product.prefixed_id, product_type_id: product_type.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_type_id']).to eq(product_type.prefixed_id)
+      expect(product.reload.product_type).to eq(product_type)
+      expect(product.fulfillment_types).to eq(%w[shipping pickup])
+    end
+
+    it 'clears the product type with null' do
+      product.update!(product_type: create(:product_type, store: store))
+
+      patch :update, params: { id: product.prefixed_id, product_type_id: nil }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(product.reload.product_type).to be_nil
+    end
+
     context 'with full payload: name, description, status, categories, tags, SEO, variants with multi-currency prices' do
       let!(:product_to_update) do
         create(:product_with_option_types).tap do |p|

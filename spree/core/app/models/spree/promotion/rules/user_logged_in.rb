@@ -1,7 +1,7 @@
 module Spree
   class Promotion
     module Rules
-      class UserLoggedIn < PromotionRule
+      class UserLoggedIn < Spree::PromotionRule
         # Wire-format shorthand is `customer_logged_in` (the model is still
         # `UserLoggedIn` pre-6.0 rename, see docs/plans/6.0-platform-auth.md).
         def self.api_type
@@ -9,7 +9,7 @@ module Spree
         end
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, _options = {})

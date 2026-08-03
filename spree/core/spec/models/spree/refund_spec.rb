@@ -113,9 +113,8 @@ describe Spree::Refund, type: :model do
         subject
       end
 
-      it 'updates the payment total' do
-        expect(payment.order.updater).to receive(:update)
-        subject
+      it 'recalculates order totals' do
+        expect { subject }.to change { payment.order.reload.updated_at }
       end
     end
 

@@ -15,14 +15,8 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
   # The market factory does this for its own countries; we mirror that for the
   # other countries this spec assigns directly through the API.
   before do
-    shipping_zone = Spree::Zone.find_or_create_by!(name: 'Test Shipping Zone') { |z| z.kind = 'country' }
-    [country, other_country].each do |c|
-      shipping_zone.zone_members.find_or_create_by!(zoneable: c)
-    end
-    if shipping_zone.shipping_methods.empty?
-      shipping_category = Spree::ShippingCategory.first || create(:shipping_category)
-      create(:shipping_method, zones: [shipping_zone], shipping_categories: [shipping_category])
-    end
+    # Delivery methods are worldwide by default; one method covers all countries.
+    create(:shipping_method) unless Spree::DeliveryMethod.where.missing(:delivery_method_zones).exists?
   end
 
   path '/api/v3/admin/markets' do
@@ -264,7 +258,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
 
       response '422', 'cannot delete default or last market' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:id) { market.prefixed_id }
+        let(:id) { store.default_market.prefixed_id }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

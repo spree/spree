@@ -3,18 +3,20 @@ require 'spec_helper'
 module Spree
   RSpec.describe Carts::Update do
     let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+    let!(:store_stock_location) { create(:stock_location, store: store, backorderable_default: true) }
+    let!(:store_delivery_method) { create(:shipping_method, store: store) }
     let(:user) { create(:user) }
-    let(:order) { create(:order_with_line_items, customer: user, store: store, currency: 'USD') }
+    let(:cart) { create(:cart_with_line_items, customer: user, store: store, currency: 'USD') }
 
     describe '#call' do
-      subject { described_class.call(cart: order, params: params) }
+      subject { described_class.call(cart: cart, params: params) }
 
       describe 'updating email' do
         let(:params) { { email: 'new@example.com' } }
 
-        it 'updates the order email' do
+        it 'updates the cart email' do
           expect(subject).to be_success
-          expect(order.reload.email).to eq('new@example.com')
+          expect(cart.reload.email).to eq('new@example.com')
         end
       end
 
@@ -23,23 +25,111 @@ module Spree
 
         it 'updates the customer note' do
           expect(subject).to be_success
-          expect(order.reload.special_instructions).to eq('Leave at the door')
+          expect(cart.reload.customer_note).to eq('Leave at the door')
         end
 
         context 'when clearing customer_note' do
-          let(:order) { create(:order_with_line_items, customer: user, store: store, special_instructions: 'Existing instructions') }
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, customer_note: 'Existing instructions') }
 
           it 'clears with empty string' do
-            result = described_class.call(cart: order, params: { customer_note: '' })
+            result = described_class.call(cart: cart, params: { customer_note: '' })
             expect(result).to be_success
-            expect(order.reload.special_instructions).to eq('')
+            expect(cart.reload.customer_note).to eq('')
           end
 
           it 'clears with nil' do
-            result = described_class.call(cart: order, params: { customer_note: nil })
+            result = described_class.call(cart: cart, params: { customer_note: nil })
             expect(result).to be_success
-            expect(order.reload.special_instructions).to be_nil
+            expect(cart.reload.customer_note).to be_nil
           end
+        end
+      end
+
+      describe 'updating preferred_stock_location_id (pickup selection)' do
+        let(:pickup_location) { create(:stock_location, pickup_enabled: true, store: store) }
+
+        it 'resolves a prefixed id against the store pickup-enabled locations' do
+          result = described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.prefixed_id })
+
+          expect(result).to be_success
+          expect(cart.reload.preferred_stock_location_id).to eq(pickup_location.id)
+          expect(cart.preferred_stock_location).to eq(pickup_location)
+        end
+
+        it 'accepts a raw id' do
+          result = described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.id })
+
+          expect(result).to be_success
+          expect(cart.reload.preferred_stock_location_id).to eq(pickup_location.id)
+        end
+
+        it 'clears the selection on blank' do
+          cart.preferred_stock_location_id = pickup_location.id
+          cart.save!
+
+          result = described_class.call(cart: cart, params: { preferred_stock_location_id: '' })
+
+          expect(result).to be_success
+          expect(cart.reload.preferred_stock_location_id).to be_nil
+        end
+
+        it 'rejects a location that is not pickup-enabled' do
+          not_pickup = create(:stock_location, pickup_enabled: false)
+
+          expect {
+            described_class.call(cart: cart, params: { preferred_stock_location_id: not_pickup.prefixed_id })
+          }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+
+        it 'rejects a pickup location belonging to another store' do
+          other_store_location = create(:stock_location, pickup_enabled: true, store: create(:store))
+
+          expect {
+            described_class.call(cart: cart, params: { preferred_stock_location_id: other_store_location.prefixed_id })
+          }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+
+        it 'rebuilds delivery proposals when the pickup intent changes' do
+          expect(cart).to receive(:recalculate_for_address_change!)
+
+          described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.prefixed_id })
+        end
+
+        it 'rebuilds delivery proposals when the pickup intent is cleared' do
+          cart.update!(preferred_stock_location_id: pickup_location.id)
+
+          expect(cart).to receive(:recalculate_for_address_change!)
+
+          described_class.call(cart: cart, params: { preferred_stock_location_id: '' })
+        end
+
+        it 'does not rebuild proposals when the same location is sent again' do
+          cart.update!(preferred_stock_location_id: pickup_location.id)
+
+          expect(cart).not_to receive(:recalculate_for_address_change!)
+
+          described_class.call(cart: cart, params: { preferred_stock_location_id: pickup_location.prefixed_id })
+        end
+
+        it 'builds collectable pickup proposals for a cart with no shipping address' do
+          create(:pickup_delivery_method, store: store)
+          # Ship-to-store counter: stock ships from the warehouse to the
+          # counter, so the warehouse-sourced package is collectable.
+          pickup_location.update!(pickup_stock_policy: 'any')
+          no_address_cart = create(:cart_with_line_items, customer: user, store: store, ship_address: nil)
+          # Pickup is only offered when every item's product type supports it.
+          pickup_capable_type = create(:product_type, fulfillment_types: %w[shipping pickup])
+          no_address_cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_capable_type) }
+
+          result = described_class.call(
+            cart: no_address_cart,
+            params: { email: 'pickup@example.com', preferred_stock_location_id: pickup_location.prefixed_id }
+          )
+
+          expect(result).to be_success
+          fulfillments = result.value.reload.fulfillments
+          expect(fulfillments).to be_present
+          expect(fulfillments.flat_map(&:delivery_rates).map(&:delivery_method)).to all(have_attributes(fulfillment_type: 'pickup'))
         end
       end
 
@@ -49,13 +139,13 @@ module Spree
 
           it 'updates the currency' do
             expect(subject).to be_success
-            expect(order.reload.currency).to eq('EUR')
+            expect(cart.reload.currency).to eq('EUR')
           end
 
           it 'is case-insensitive' do
-            result = described_class.call(cart: order, params: { currency: 'eur' })
+            result = described_class.call(cart: cart, params: { currency: 'eur' })
             expect(result).to be_success
-            expect(order.reload.currency).to eq('EUR')
+            expect(cart.reload.currency).to eq('EUR')
           end
         end
 
@@ -68,45 +158,47 @@ module Spree
 
           it 'does not change the currency' do
             subject
-            expect(order.reload.currency).to eq('USD')
+            expect(cart.reload.currency).to eq('USD')
           end
         end
 
         context 'auto-switches market to match currency' do
           let(:us_country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
           let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
-          let!(:us_market) { create(:market, store: store, countries: [us_country]) }
+          let!(:us_market) { store.default_market }
           let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
-          let(:order) { create(:order_with_line_items, customer: user, store: store, market: us_market, currency: 'USD') }
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, currency: 'USD') }
 
           it 'switches market when currency changes' do
-            result = described_class.call(cart: order, params: { currency: 'EUR' })
+            result = described_class.call(cart: cart, params: { currency: 'EUR' })
 
             expect(result).to be_success
-            expect(order.reload.currency).to eq('EUR')
-            expect(order.market).to eq(eu_market)
+            expect(cart.reload.currency).to eq('EUR')
+            expect(cart.market).to eq(eu_market)
           end
 
           it 'does not switch market when currency matches current market' do
-            result = described_class.call(cart: order, params: { currency: 'USD' })
+            result = described_class.call(cart: cart, params: { currency: 'USD' })
 
             expect(result).to be_success
-            expect(order.reload.market).to eq(us_market)
+            expect(cart.reload.market).to eq(us_market)
           end
 
           it 'does not switch market when market_id is explicitly provided' do
-            result = described_class.call(cart: order, params: { currency: 'EUR', market_id: us_market.prefixed_id })
+            result = described_class.call(cart: cart, params: { currency: 'EUR', market_id: us_market.prefixed_id })
 
             expect(result).to be_success
-            expect(order.reload.market).to eq(us_market)
+            expect(cart.reload.market).to eq(us_market)
           end
 
-          it 'returns failure when no market exists for currency' do
-            result = described_class.call(cart: order, params: { currency: 'GBP' })
+          it 'keeps the current market when no market exists for the currency' do
+            # GBP is store-supported via the legacy column; without a GBP
+            # market the cart keeps its current market.
+            result = described_class.call(cart: cart, params: { currency: 'GBP' })
 
-            expect(result).to be_failure
-            expect(order.reload.currency).to eq('USD')
-            expect(order.market).to eq(us_market)
+            expect(result).to be_success
+            expect(cart.reload.currency).to eq('GBP')
+            expect(cart.market).to eq(us_market)
           end
         end
       end
@@ -114,7 +206,8 @@ module Spree
       describe 'updating market' do
         let(:us_country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
-        let!(:us_market) { create(:market, :default, store: store, countries: [us_country]) }
+        # The store's bootstrap market already owns the US country.
+        let!(:us_market) { store.default_market }
         let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
 
         context 'with valid market_id' do
@@ -122,7 +215,7 @@ module Spree
 
           it 'updates the market' do
             expect(subject).to be_success
-            expect(order.reload.market).to eq(eu_market)
+            expect(cart.reload.market).to eq(eu_market)
           end
         end
 
@@ -137,31 +230,31 @@ module Spree
         context 'when shipping address country is not in the new market' do
           let!(:us_state) { us_country.states.find_by(abbr: 'NY') || create(:state, country: us_country, abbr: 'NY', name: 'New York') }
           let(:us_address) { create(:address, country: us_country, state: us_state) }
-          let(:order) { create(:order_with_line_items, customer: user, store: store, market: us_market, ship_address: us_address, state: 'delivery') }
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, ship_address: us_address, email: 'buyer@example.com') }
           let(:params) { { market_id: eu_market.prefixed_id } }
 
           it 'clears the shipping address' do
-            expect(order.ship_address).to be_present
+            expect(cart.ship_address).to be_present
             expect(subject).to be_success
-            expect(order.reload.ship_address).to be_nil
+            expect(cart.reload.ship_address).to be_nil
           end
 
-          it 'reverts checkout state to address' do
+          it 'drops delivery proposals built for the cleared address' do
+            cart.rebuild_fulfillments!
+            expect(cart.fulfillments).to be_present
             expect(subject).to be_success
-            # After revert + try_advance, state depends on checkout flow
-            # but it should not remain past address without a valid shipping address
-            expect(order.reload.state).to eq('address')
+            expect(cart.reload.fulfillments).to be_empty
           end
         end
 
         context 'when shipping address country is in the new market' do
           let(:de_address) { create(:address, country: de_country) }
-          let(:order) { create(:order_with_line_items, customer: user, store: store, market: us_market, ship_address: de_address) }
+          let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, ship_address: de_address) }
           let(:params) { { market_id: eu_market.prefixed_id } }
 
           it 'keeps the shipping address' do
             expect(subject).to be_success
-            expect(order.reload.ship_address).to eq(de_address)
+            expect(cart.reload.ship_address).to eq(de_address)
           end
         end
       end
@@ -192,7 +285,7 @@ module Spree
 
             it 'creates a new address' do
               expect(subject).to be_success
-              address = order.reload.public_send(address_key)
+              address = cart.reload.public_send(address_key)
               expect(address.first_name).to eq('John')
               expect(address.last_name).to eq('Doe')
               expect(address.address1).to eq('123 Main St')
@@ -202,68 +295,70 @@ module Spree
               expect(address.state.abbr).to eq('NY')
             end
 
-            context 'when order has address checkout step and is past address state' do
-              let(:order) { create(:order_with_line_items, customer: user, store: store, state: 'delivery') }
-
-              it 'reverts to address then auto-advances to payment' do
-                expect(subject).to be_success
-                expect(order.reload.state).to eq('payment')
-              end
-            end
-
-            context 'when order is in cart state' do
-              let(:order) { create(:order_with_line_items, customer: user, store: store, state: 'cart') }
-
-              it 'auto-advances to payment' do
-                expect(subject).to be_success
-                expect(order.reload.state).to eq('payment')
-              end
-            end
-
-            context 'when order is fully covered by store credit payment' do
-              let(:order) { create(:order_with_line_items, customer: user, store: store, state: 'cart') }
-
+            context 'when the cart is fully covered by store credit payment' do
               before do
-                create(:store_credit_payment, order: order, amount: order.total)
+                create(:store_credit_payment, cart: cart, amount: cart.total)
               end
 
-              it 'does not auto-complete the order' do
+              it 'does not auto-complete the cart' do
                 expect(subject).to be_success
-                expect(order.reload.state).not_to eq('complete')
-              end
-
-              it 'stops at the last step before complete' do
-                expect(subject).to be_success
-                steps = order.checkout_steps
-                final_step = steps[steps.index('complete') - 1]
-                expect(order.reload.state).to eq(final_step)
+                expect(cart.reload.completed?).to be(false)
               end
             end
           end
 
           context 'with existing address by nested id' do
-            let(:existing_address) { create(:address, customer: user) }
+            let(:existing_address) { create(:address, user: user) }
             let(:params) { { address_key => { id: existing_address.prefixed_id } } }
 
             it 'uses the existing address' do
               expect(subject).to be_success
-              expect(order.reload.public_send(address_id_key)).to eq(existing_address.id)
+              expect(cart.reload.public_send(address_id_key)).to eq(existing_address.id)
             end
           end
 
           context 'with top-level address_id parameter' do
-            let(:existing_address) { create(:address, customer: user) }
+            let(:existing_address) { create(:address, user: user) }
             let(:params) { { address_id_key => existing_address.prefixed_id } }
 
             it 'uses the existing address' do
               expect(subject).to be_success
-              expect(order.reload.public_send(address_id_key)).to eq(existing_address.id)
+              expect(cart.reload.public_send(address_id_key)).to eq(existing_address.id)
             end
           end
         end
 
         describe 'shipping_address' do
           include_examples 'address update', :shipping_address
+
+          describe 'delivery proposals' do
+            let(:params) do
+              {
+                shipping_address: {
+                  first_name: 'John', last_name: 'Doe',
+                  address1: '123 Main St', city: 'New York',
+                  postal_code: '10001', country_iso: 'US', state_abbr: 'NY',
+                  phone: '555-1234'
+                }
+              }
+            end
+
+            context 'when the cart is already mid-checkout' do
+              let(:cart) { create(:cart_with_line_items, customer: user, store: store, email: 'buyer@example.com', ship_address: create(:address, user: user)) }
+
+              it 'rebuilds delivery proposals for the new address' do
+                expect(subject).to be_success
+                expect(cart.reload.fulfillments).to be_present
+              end
+            end
+
+            context 'when the cart is still in the shopping phase' do
+              it 'builds delivery proposals once the address arrives' do
+                expect(subject).to be_success
+                expect(cart.reload.fulfillments).to be_present
+              end
+            end
+          end
         end
 
         describe 'billing_address' do
@@ -271,10 +366,48 @@ module Spree
         end
       end
 
+      describe 'default address filling on checkout entry' do
+        let(:default_bill) { create(:address, user: user) }
+        let(:default_ship) { create(:address, user: user) }
+        let(:cart) { create(:cart_with_line_items, customer: user, store: store) }
+
+        before { user.update!(bill_address: default_bill, ship_address: default_ship) }
+
+        it 'fills blank slots from the customer saved defaults once in checkout' do
+          described_class.call(cart: cart, params: { email: 'buyer@example.com' })
+
+          expect(cart.reload.bill_address_id).to eq(default_bill.id)
+          expect(cart.ship_address_id).to eq(default_ship.id)
+        end
+
+        it 'never fills before checkout begins' do
+          described_class.call(cart: cart, params: { customer_note: 'gift please' })
+
+          expect(cart.reload.bill_address_id).to be_nil
+          expect(cart.ship_address_id).to be_nil
+        end
+
+        it 'does not overwrite an explicitly provided address' do
+          explicit = create(:address, user: user)
+          described_class.call(cart: cart, params: { email: 'buyer@example.com', shipping_address_id: explicit.prefixed_id })
+
+          expect(cart.reload.ship_address_id).to eq(explicit.id)
+          expect(cart.bill_address_id).to eq(default_bill.id)
+        end
+
+        it 'does nothing for guest carts' do
+          guest_cart = create(:cart_with_line_items, store: store, customer: nil)
+
+          described_class.call(cart: guest_cart, params: { email: 'guest@example.com' })
+
+          expect(guest_cart.reload.ship_address_id).to be_nil
+        end
+      end
+
       describe 'billing address does not reset checkout state' do
         let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
-        let(:order) { create(:order_with_line_items, customer: user, store: store, state: 'delivery') }
+        let(:cart) { create(:cart_with_line_items, customer: user, store: store, email: 'buyer@example.com', ship_address: create(:address, user: user)) }
 
         let(:params) do
           {
@@ -291,17 +424,14 @@ module Spree
           }
         end
 
-        it 'does not revert order state to address' do
-          # Capture shipments before the update
-          order.reload
-          shipment_ids = order.shipments.pluck(:id)
-          expect(shipment_ids).not_to be_empty
+        it 'preserves existing delivery proposals' do
+          cart.rebuild_fulfillments!
+          fulfillment_ids = cart.fulfillments.pluck(:id)
+          expect(fulfillment_ids).not_to be_empty
 
           expect(subject).to be_success
 
-          order.reload
-          # Shipments should be preserved (not recreated)
-          expect(order.shipments.pluck(:id)).to eq(shipment_ids)
+          expect(cart.reload.fulfillments.pluck(:id)).to eq(fulfillment_ids)
         end
       end
 
@@ -324,55 +454,55 @@ module Spree
 
         it 'copies shipping address to billing address' do
           # First set a shipping address
-          result = described_class.call(cart: order, params: { shipping_address: shipping_address })
+          result = described_class.call(cart: cart, params: { shipping_address: shipping_address })
           expect(result).to be_success
 
           # Then use_shipping to copy it to billing
-          result = described_class.call(cart: order, params: { use_shipping: true })
+          result = described_class.call(cart: cart, params: { use_shipping: true })
           expect(result).to be_success
 
-          order.reload
-          expect(order.bill_address).to be_present
-          expect(order.bill_address.first_name).to eq('John')
-          expect(order.bill_address.address1).to eq('123 Main St')
-          expect(order.bill_address.postal_code).to eq('10001')
+          cart.reload
+          expect(cart.bill_address).to be_present
+          expect(cart.bill_address.first_name).to eq('John')
+          expect(cart.bill_address.address1).to eq('123 Main St')
+          expect(cart.bill_address.postal_code).to eq('10001')
         end
 
         it 'works when set alongside shipping address in the same request' do
           params = { shipping_address: shipping_address, use_shipping: true }
-          result = described_class.call(cart: order, params: params)
+          result = described_class.call(cart: cart, params: params)
           expect(result).to be_success
 
-          order.reload
-          expect(order.ship_address.first_name).to eq('John')
-          expect(order.bill_address.first_name).to eq('John')
-          expect(order.bill_address.address1).to eq(order.ship_address.address1)
+          cart.reload
+          expect(cart.ship_address.first_name).to eq('John')
+          expect(cart.bill_address.first_name).to eq('John')
+          expect(cart.bill_address.address1).to eq(cart.ship_address.address1)
         end
 
         it 'does not copy when use_shipping is false' do
           # Set shipping address first
-          described_class.call(cart: order, params: { shipping_address: shipping_address })
-          original_bill_address_id = order.reload.bill_address_id
+          described_class.call(cart: cart, params: { shipping_address: shipping_address })
+          original_bill_address_id = cart.reload.bill_address_id
 
-          result = described_class.call(cart: order, params: { use_shipping: false })
+          result = described_class.call(cart: cart, params: { use_shipping: false })
           expect(result).to be_success
-          expect(order.reload.bill_address_id).to eq(original_bill_address_id)
+          expect(cart.reload.bill_address_id).to eq(original_bill_address_id)
         end
       end
 
       describe 'address ownership' do
         let(:other_user) { create(:user) }
-        let(:other_users_address) { create(:address, customer: other_user) }
+        let(:other_users_address) { create(:address, user: other_user) }
 
         shared_examples 'ignores other users address' do |address_type|
           context "when using another user's address for #{address_type}" do
             let(:params) { { address_type => { id: other_users_address.prefixed_id } } }
 
             it 'ignores the address and keeps original' do
-              original_address_id = order.public_send(:"#{address_type}_id")
+              original_address_id = cart.public_send(:"#{address_type}_id")
               expect(subject).to be_success
-              expect(order.reload.public_send(:"#{address_type}_id")).to eq(original_address_id)
-              expect(order.public_send(:"#{address_type}_id")).not_to eq(other_users_address.id)
+              expect(cart.reload.public_send(:"#{address_type}_id")).to eq(original_address_id)
+              expect(cart.public_send(:"#{address_type}_id")).not_to eq(other_users_address.id)
             end
           end
 
@@ -380,10 +510,10 @@ module Spree
             let(:params) { { :"#{address_type}_id" => other_users_address.prefixed_id } }
 
             it 'ignores the address and keeps original' do
-              original_address_id = order.public_send(:"#{address_type}_id")
+              original_address_id = cart.public_send(:"#{address_type}_id")
               expect(subject).to be_success
-              expect(order.reload.public_send(:"#{address_type}_id")).to eq(original_address_id)
-              expect(order.public_send(:"#{address_type}_id")).not_to eq(other_users_address.id)
+              expect(cart.reload.public_send(:"#{address_type}_id")).to eq(original_address_id)
+              expect(cart.public_send(:"#{address_type}_id")).not_to eq(other_users_address.id)
             end
           end
         end
@@ -391,14 +521,14 @@ module Spree
         include_examples 'ignores other users address', :shipping_address
         include_examples 'ignores other users address', :billing_address
 
-        context 'when order has no user (guest order)' do
-          let(:order) { create(:order_with_line_items, customer: nil, store: store) }
+        context 'when the cart has no user (guest cart)' do
+          let(:cart) { create(:cart_with_line_items, customer: nil, store: store) }
           let(:params) { { shipping_address_id: other_users_address.prefixed_id } }
 
           it 'ignores address_id params and keeps existing address' do
-            original_address_id = order.ship_address_id
+            original_address_id = cart.ship_address_id
             expect(subject).to be_success
-            expect(order.reload.ship_address_id).to eq(original_address_id)
+            expect(cart.reload.ship_address_id).to eq(original_address_id)
           end
         end
       end
@@ -406,19 +536,19 @@ module Spree
       describe 'updating metadata' do
         let(:params) { { metadata: { 'erp_id' => '12345', 'source' => 'mobile' } } }
 
-        it 'merges metadata into the order' do
+        it 'merges metadata into the cart' do
           expect(subject).to be_success
-          expect(order.reload.metadata).to include('erp_id' => '12345', 'source' => 'mobile')
+          expect(cart.reload.metadata).to include('erp_id' => '12345', 'source' => 'mobile')
         end
 
         context 'with existing metadata' do
-          before { order.update!(metadata: { 'existing_key' => 'existing_value' }) }
+          before { cart.update!(metadata: { 'existing_key' => 'existing_value' }) }
 
           let(:params) { { metadata: { 'new_key' => 'new_value' } } }
 
           it 'merges without removing existing keys' do
             expect(subject).to be_success
-            expect(order.reload.metadata).to include('existing_key' => 'existing_value', 'new_key' => 'new_value')
+            expect(cart.reload.metadata).to include('existing_key' => 'existing_value', 'new_key' => 'new_value')
           end
         end
       end
@@ -445,10 +575,10 @@ module Spree
 
         it 'updates all fields in a single transaction' do
           expect(subject).to be_success
-          order.reload
-          expect(order.email).to eq('customer@example.com')
-          expect(order.customer_note).to eq('Handle with care')
-          expect(order.shipping_address.first_name).to eq('John')
+          cart.reload
+          expect(cart.email).to eq('customer@example.com')
+          expect(cart.customer_note).to eq('Handle with care')
+          expect(cart.shipping_address.first_name).to eq('John')
         end
       end
 
@@ -469,17 +599,17 @@ module Spree
             }
           end
 
-          it 'adds line items to the order' do
+          it 'adds line items to the cart' do
             expect(subject).to be_success
-            order.reload
-            line_item = order.line_items.find_by(variant: variant)
+            cart.reload
+            line_item = cart.line_items.find_by(variant: variant)
             expect(line_item).to be_present
             expect(line_item.quantity).to eq(2)
           end
         end
 
         context 'with existing line item (upsert)' do
-          let!(:existing_line_item) { order.line_items.first }
+          let!(:existing_line_item) { cart.line_items.first }
           let(:existing_variant) { existing_line_item.variant }
 
           before do
@@ -523,17 +653,17 @@ module Spree
           let(:params) { { shipping_address_id: 'addr_invalid123' } }
 
           it 'succeeds but does not change the address' do
-            original_address_id = order.ship_address_id
+            original_address_id = cart.ship_address_id
             expect(subject).to be_success
-            expect(order.reload.ship_address_id).to eq(original_address_id)
+            expect(cart.reload.ship_address_id).to eq(original_address_id)
           end
         end
 
-        context 'when order save fails' do
+        context 'when the cart save fails' do
           let(:params) { { email: 'new@example.com' } }
 
           before do
-            allow(order).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new(order))
+            allow(cart).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new(cart))
           end
 
           it 'returns failure with error message' do
@@ -547,15 +677,18 @@ module Spree
 
         it 'handles string keys' do
           expect(subject).to be_success
-          expect(order.reload.email).to eq('string_key@example.com')
+          expect(cart.reload.email).to eq('string_key@example.com')
         end
       end
 
       describe 'stock reservations' do
+        subject { described_class.call(cart: cart, params: params) }
+
+        let(:cart) { create(:cart_with_line_items, store: store) }
         let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
         let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
         let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
-        let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
+        let!(:shipping_method) { create(:shipping_method) }
         let(:address_params) do
           {
             first_name: 'Buyer', last_name: 'McGee',
@@ -566,35 +699,34 @@ module Spree
         end
 
         before do
-          order.line_items.first.variant.stock_items.first.update!(backorderable: false)
-          order.line_items.first.variant.stock_items.first.set_count_on_hand(20)
-          order.update!(email: 'buyer@example.com')
+          cart.line_items.first.variant.stock_items.first.update!(backorderable: false)
+          cart.line_items.first.variant.stock_items.first.set_count_on_hand(20)
         end
 
         context 'cart → checkout transition' do
-          let(:params) { { shipping_address: address_params } }
+          let(:params) { { email: 'buyer@example.com', shipping_address: address_params } }
 
-          it 'creates reservations when leaving the cart state' do
-            expect(order.cart?).to be(true)
-            expect { subject }.to change { Spree::StockReservation.where(order_id: order.id).count }.by_at_least(1)
+          it 'creates reservations when entering checkout' do
+            expect { subject }.to change { Spree::StockReservation.where(cart_id: cart.id).count }.by_at_least(1)
+            expect(cart.reload.in_checkout?).to be(true)
           end
         end
 
         context 'in-checkout mutation' do
           before do
-            described_class.call(cart: order, params: { shipping_address: address_params })
+            described_class.call(cart: cart, params: { email: 'buyer@example.com', shipping_address: address_params })
           end
 
           let(:params) { { customer_note: 'please ring bell' } }
 
           it 'extends existing reservations' do
-            original_expiry = Spree::StockReservation.where(order_id: order.id).maximum(:expires_at)
+            original_expiry = Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)
 
             Timecop.freeze(2.minutes.from_now) do
-              described_class.call(cart: order, params: params)
+              described_class.call(cart: cart, params: params)
             end
 
-            expect(Spree::StockReservation.where(order_id: order.id).maximum(:expires_at)).to be > original_expiry
+            expect(Spree::StockReservation.where(cart_id: cart.id).maximum(:expires_at)).to be > original_expiry
           end
         end
 
@@ -605,51 +737,61 @@ module Spree
         # Cart::Destroy specs.
 
         context 'when Reserve fails with insufficient stock' do
-          let(:params) { { shipping_address: address_params } }
+          let(:params) { { email: 'changed@example.com', shipping_address: address_params } }
 
           before do
             # Bump line_item quantity above what stock_item can satisfy so that
             # select_stock_item still picks the item (count_on_hand > 0) but
             # the availability check fails.
-            order.line_items.first.update_column(:quantity, 5)
-            order.line_items.first.variant.stock_items.first.set_count_on_hand(2)
+            cart.line_items.first.update_column(:quantity, 5)
+            cart.line_items.first.variant.stock_items.first.set_count_on_hand(2)
           end
 
           it 'returns failure and rolls back the cart update' do
-            previous_email = order.email
-            result = described_class.call(cart: order, params: params.merge(email: 'changed@example.com'))
+            previous_email = cart.email
+            result = subject
 
             expect(result).to be_failure
             expect(result.error.to_s).to include('available')
-            expect(order.reload.email).to eq(previous_email)
-            expect(Spree::StockReservation.where(order_id: order.id)).to be_empty
+            expect(cart.reload.email).to eq(previous_email)
+            expect(Spree::StockReservation.where(cart_id: cart.id)).to be_empty
           end
         end
       end
 
       describe 'when the cart cannot be delivered' do
-        let!(:order) { create(:order_with_line_items, customer: user, store: store, state: 'address') }
-        let(:params) { { email: 'buyer@example.com' } }
-        let(:unserved_category) { create(:shipping_category, name: 'Unserved') }
+        subject { described_class.call(cart: cart, params: params) }
+
+        let!(:cart) { create(:cart_with_line_items, store: store) }
+        let!(:shipping_method) { create(:shipping_method) }
+        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+        let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+        let(:params) do
+          { email: 'buyer@example.com',
+            shipping_address: {
+              first_name: 'Buyer', last_name: 'McGee',
+              address1: '1 Test St', city: 'New York',
+              postal_code: '10001', country_iso: 'US', state_abbr: 'NY',
+              phone: '555-0100'
+            } }
+        end
+        # no delivery method serves the pickup fulfillment type in this suite
+        let(:pickup_only_type) { create(:product_type, name: "Pickup #{SecureRandom.hex(4)}", fulfillment_types: ['pickup']) }
 
         before do
-          order.line_items.each { |line_item| line_item.variant.product.update!(shipping_category: unserved_category) }
-          order.reload
+          cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_only_type) }
+          cart.reload
         end
 
-        it 'keeps the cart on the address step with no fulfillments' do
+        it 'leaves the cart with no fulfillments' do
           expect(subject).to be_success
-          expect(order.reload.state).to eq('address')
-          expect(order.shipments).to be_empty
+          expect(cart.reload.fulfillments).to be_empty
         end
 
-        it 'surfaces a delivery_unavailable warning for each undeliverable line item' do
-          warnings = subject.value.warnings
-
-          expect(warnings).to be_present
-          expect(warnings).to all(include(code: 'delivery_unavailable'))
-          expect(warnings.map { |warning| warning[:line_item_id] })
-            .to match_array(order.line_items.map(&:prefixed_id))
+        it 'keeps the delivery requirement unmet' do
+          subject
+          requirements = Spree::Checkout::Requirements.new(cart.reload).call
+          expect(requirements.map { |requirement| requirement[:step] }).to include('delivery')
         end
       end
 
