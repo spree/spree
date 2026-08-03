@@ -111,12 +111,13 @@ module Spree
             preferences = permitted_params[:calculator_preferences]
 
             if calculator_type.present? && delivery_method.calculator&.type != calculator_type
-              unless Spree::DeliveryMethod.calculators.map(&:to_s).include?(calculator_type)
+              selected_calculator_class = Spree::DeliveryMethod.calculators.find { |klass| klass.to_s == calculator_type }
+              unless selected_calculator_class
                 delivery_method.errors.add(:calculator_type, :invalid)
                 return
               end
 
-              delivery_method.calculator = calculator_type.constantize.new
+              delivery_method.calculator = selected_calculator_class.new
             end
 
             return if preferences.blank? || delivery_method.calculator.nil?
