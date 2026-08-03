@@ -9,6 +9,7 @@ export function useOrder(orderId: string) {
         expand: [
           'items',
           'fulfillments',
+          'fulfillments.fulfillment_items',
           'fulfillments.delivery_method',
           'fulfillments.stock_location',
           'payments',

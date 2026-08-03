@@ -1704,14 +1704,18 @@
             "actions": {
               "resolve_refund": "Mit Erstattung lösen",
               "resolve_replacement": "Mit Ersatz lösen",
-              "deny": "Ablehnen"
+              "deny": "Ablehnen",
+              "create": "Neue Reklamation"
             },
             "types": {
               "damaged": "Beschädigt",
               "missing": "Fehlt",
               "wrong_item": "Falscher Artikel",
               "other": "Sonstiges"
-            }
+            },
+            "empty": "Keine Reklamationen für diese Bestellung.",
+            "create_title": "Neue Reklamation",
+            "claim_type": "Problem"
           },
           "dialogs": {
             "approve_title": "Bestellung genehmigen?",
@@ -1723,16 +1727,21 @@
           "empty_shipments": "Noch keine Sendungen.",
           "exchanges": {
             "actions": {
-              "fulfill": "Ersatz versenden"
+              "fulfill": "Ersatz versenden",
+              "create": "Neuer Umtausch"
             },
-            "price_difference": "Preisdifferenz"
+            "price_difference": "Preisdifferenz",
+            "empty": "Kein Umtausch für diese Bestellung.",
+            "create_title": "Neuer Umtausch",
+            "replacement_variant": "Varianten-ID des Ersatzes"
           },
           "no_delivery_method": "Keine Versandmethode ausgewählt.",
           "returns": {
             "actions": {
               "approve": "Genehmigen",
               "receive": "Artikel annehmen",
-              "refund": "Erstatten"
+              "refund": "Erstatten",
+              "create": "Neue Retoure"
             },
             "confirm": {
               "cancel": "Diese Retoure stornieren? Es wird nichts eingelagert und kein Geld bewegt."
@@ -1749,7 +1758,11 @@
             "refund_methods": {
               "original_payment": "Ursprüngliche Zahlung",
               "store_credit": "Guthaben"
-            }
+            },
+            "empty": "Keine Retouren für diese Bestellung.",
+            "empty_nothing_fulfilled": "Für diese Bestellung wurde noch nichts versandt.",
+            "memo": "Notiz",
+            "create_title": "Neue Retoure"
           },
           "section_billing_address": "Rechnungsadresse",
           "section_claims": "Reklamationen",

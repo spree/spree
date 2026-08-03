@@ -1704,14 +1704,18 @@
             "actions": {
               "resolve_refund": "Résoudre par remboursement",
               "resolve_replacement": "Résoudre par remplacement",
-              "deny": "Refuser"
+              "deny": "Refuser",
+              "create": "Nouvelle réclamation"
             },
             "types": {
               "damaged": "Endommagé",
               "missing": "Manquant",
               "wrong_item": "Mauvais article",
               "other": "Autre"
-            }
+            },
+            "empty": "Aucune réclamation pour cette commande.",
+            "create_title": "Nouvelle réclamation",
+            "claim_type": "Problème"
           },
           "dialogs": {
             "approve_title": "Approuver la commande ?",
@@ -1723,16 +1727,21 @@
           "empty_shipments": "Aucune expédition pour le moment.",
           "exchanges": {
             "actions": {
-              "fulfill": "Expédier le remplacement"
+              "fulfill": "Expédier le remplacement",
+              "create": "Nouvel échange"
             },
-            "price_difference": "Différence de prix"
+            "price_difference": "Différence de prix",
+            "empty": "Aucun échange pour cette commande.",
+            "create_title": "Nouvel échange",
+            "replacement_variant": "ID de la variante de remplacement"
           },
           "no_delivery_method": "Aucune méthode de livraison sélectionnée.",
           "returns": {
             "actions": {
               "approve": "Approuver",
               "receive": "Réceptionner les articles",
-              "refund": "Rembourser"
+              "refund": "Rembourser",
+              "create": "Nouveau retour"
             },
             "confirm": {
               "cancel": "Annuler ce retour ? Aucun article ne sera remis en stock et aucun montant ne sera remboursé."
@@ -1749,7 +1758,11 @@
             "refund_methods": {
               "original_payment": "Paiement d’origine",
               "store_credit": "Avoir"
-            }
+            },
+            "empty": "Aucun retour pour cette commande.",
+            "empty_nothing_fulfilled": "Rien n’a encore été expédié pour cette commande.",
+            "memo": "Note",
+            "create_title": "Nouveau retour"
           },
           "section_billing_address": "Adresse de facturation",
           "section_claims": "Réclamations",

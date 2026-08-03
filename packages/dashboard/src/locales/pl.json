@@ -1712,14 +1712,18 @@
             "actions": {
               "resolve_refund": "Rozwiąż zwrotem płatności",
               "resolve_replacement": "Rozwiąż zamiennikiem",
-              "deny": "Odrzuć"
+              "deny": "Odrzuć",
+              "create": "Nowa reklamacja"
             },
             "types": {
               "damaged": "Uszkodzony",
               "missing": "Brakujący",
               "wrong_item": "Niewłaściwy produkt",
               "other": "Inne"
-            }
+            },
+            "empty": "Brak reklamacji dla tego zamówienia.",
+            "create_title": "Nowa reklamacja",
+            "claim_type": "Problem"
           },
           "dialogs": {
             "approve_title": "Zatwierdzić zamówienie?",
@@ -1731,16 +1735,21 @@
           "empty_shipments": "Brak przesyłek.",
           "exchanges": {
             "actions": {
-              "fulfill": "Wyślij zamiennik"
+              "fulfill": "Wyślij zamiennik",
+              "create": "Nowa wymiana"
             },
-            "price_difference": "Różnica w cenie"
+            "price_difference": "Różnica w cenie",
+            "empty": "Brak wymian dla tego zamówienia.",
+            "create_title": "Nowa wymiana",
+            "replacement_variant": "ID wariantu zamiennego"
           },
           "no_delivery_method": "Nie wybrano metody dostawy.",
           "returns": {
             "actions": {
               "approve": "Zatwierdź",
               "receive": "Przyjmij produkty",
-              "refund": "Zwróć płatność"
+              "refund": "Zwróć płatność",
+              "create": "Nowy zwrot"
             },
             "confirm": {
               "cancel": "Anulować ten zwrot? Nic nie wróci do magazynu i żadne pieniądze nie zostaną zwrócone."
@@ -1757,7 +1766,11 @@
             "refund_methods": {
               "original_payment": "Pierwotna płatność",
               "store_credit": "Kredyt sklepowy"
-            }
+            },
+            "empty": "Brak zwrotów dla tego zamówienia.",
+            "empty_nothing_fulfilled": "Nic jeszcze nie zostało wysłane w tym zamówieniu.",
+            "memo": "Notatka",
+            "create_title": "Nowy zwrot"
           },
           "section_billing_address": "Adres rozliczeniowy",
           "section_claims": "Reklamacje",

@@ -1704,14 +1704,18 @@
             "actions": {
               "resolve_refund": "Resolve with refund",
               "resolve_replacement": "Resolve with replacement",
-              "deny": "Deny"
+              "deny": "Deny",
+              "create": "New claim"
             },
             "types": {
               "damaged": "Damaged",
               "missing": "Missing",
               "wrong_item": "Wrong item",
               "other": "Other"
-            }
+            },
+            "empty": "No claims for this order.",
+            "create_title": "New claim",
+            "claim_type": "Problem"
           },
           "dialogs": {
             "approve_title": "Approve order?",
@@ -1723,16 +1727,21 @@
           "empty_shipments": "No shipments yet.",
           "exchanges": {
             "actions": {
-              "fulfill": "Ship replacement"
+              "fulfill": "Ship replacement",
+              "create": "New exchange"
             },
-            "price_difference": "Price difference"
+            "price_difference": "Price difference",
+            "empty": "No exchanges for this order.",
+            "create_title": "New exchange",
+            "replacement_variant": "Replacement variant ID"
           },
           "no_delivery_method": "No delivery method selected.",
           "returns": {
             "actions": {
               "approve": "Approve",
               "receive": "Receive items",
-              "refund": "Refund"
+              "refund": "Refund",
+              "create": "New return"
             },
             "confirm": {
               "cancel": "Cancel this return? Nothing will be restocked and no money will move."
@@ -1749,7 +1758,11 @@
             "refund_methods": {
               "original_payment": "Original payment",
               "store_credit": "Store credit"
-            }
+            },
+            "empty": "No returns for this order.",
+            "empty_nothing_fulfilled": "Nothing has shipped on this order yet.",
+            "memo": "Note",
+            "create_title": "New return"
           },
           "section_billing_address": "Billing address",
           "section_claims": "Claims",

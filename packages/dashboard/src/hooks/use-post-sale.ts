@@ -53,6 +53,15 @@ function usePostSaleMutation<TParams>(
 }
 
 export function useExchangeActions(orderId: string) {
+  const create = usePostSaleMutation(
+    orderId,
+    'order-exchanges',
+    (params: {
+      items: Array<{ fulfillment_item_id: string; new_variant_id: string; quantity: number }>
+      memo?: string
+    }) => adminClient.orders.exchanges.create(orderId, params),
+  )
+
   const approve = usePostSaleMutation(orderId, 'order-exchanges', (exchangeId: string) =>
     adminClient.orders.exchanges.approve(orderId, exchangeId),
   )
@@ -89,10 +98,20 @@ export function useExchangeActions(orderId: string) {
       adminClient.orders.exchanges.cancel(orderId, exchangeId, { reason }),
   )
 
-  return { approve, receive, fulfill, cancel }
+  return { create, approve, receive, fulfill, cancel }
 }
 
 export function useClaimActions(orderId: string) {
+  const create = usePostSaleMutation(
+    orderId,
+    'order-claims',
+    (params: {
+      items: Array<{ line_item_id: string; quantity: number; description?: string }>
+      claim_type: string
+      memo?: string
+    }) => adminClient.orders.claims.create(orderId, params),
+  )
+
   const approve = usePostSaleMutation(orderId, 'order-claims', (claimId: string) =>
     adminClient.orders.claims.approve(orderId, claimId),
   )
@@ -132,5 +151,5 @@ export function useClaimActions(orderId: string) {
       adminClient.orders.claims.cancel(orderId, claimId, { reason }),
   )
 
-  return { approve, resolve, deny, cancel }
+  return { create, approve, resolve, deny, cancel }
 }

@@ -1,8 +1,9 @@
-import type { Return, ReturnLineItem } from '@spree/admin-sdk'
+import type { Order, Return, ReturnLineItem } from '@spree/admin-sdk'
 import {
   Badge,
   Button,
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -34,12 +35,14 @@ import {
   CheckCircleIcon,
   EllipsisVerticalIcon,
   PackageCheckIcon,
+  PlusIcon,
   RotateCcwIcon,
   XCircleIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useOrderReturns, useReturnActions } from '../../hooks/use-returns'
+import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 type ReceiptRow = { quantity: number; resellable: boolean }
 
@@ -58,17 +61,19 @@ function variantLabel(line: ReturnLineItem): string {
  * receiving records what actually arrived, refunding picks where the money
  * goes.
  */
-export function OrderReturnsCard({ orderId }: { orderId: string }) {
+export function OrderReturnsCard({ order }: { order: Order }) {
+  const orderId = order.id
   const { t } = useTranslation()
   const confirm = useConfirm()
   const { data } = useOrderReturns(orderId)
-  const { approve, receive, refund, cancel } = useReturnActions(orderId)
+  const { create, approve, receive, refund, cancel } = useReturnActions(orderId)
 
+  const [creating, setCreating] = useState(false)
   const [receiving, setReceiving] = useState<Return | null>(null)
   const [refunding, setRefunding] = useState<Return | null>(null)
 
   const returns = data?.data ?? []
-  if (returns.length === 0) return null
+  const canCreate = fulfilledUnits(order).length > 0
 
   return (
     <>
@@ -77,10 +82,25 @@ export function OrderReturnsCard({ orderId }: { orderId: string }) {
           <CardTitle>
             <RotateCcwIcon className="size-4" />
             {t('admin.pages.orders.detail.section_returns')}
-            <Badge variant="outline">{returns.length}</Badge>
+            {returns.length > 0 && <Badge variant="outline">{returns.length}</Badge>}
           </CardTitle>
+          {canCreate && (
+            <CardAction>
+              <Button variant="outline" size="sm" onClick={() => setCreating(true)}>
+                <PlusIcon className="size-4" />
+                {t('admin.pages.orders.detail.returns.actions.create')}
+              </Button>
+            </CardAction>
+          )}
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
+          {returns.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              {canCreate
+                ? t('admin.pages.orders.detail.returns.empty')
+                : t('admin.pages.orders.detail.returns.empty_nothing_fulfilled')}
+            </p>
+          )}
           {returns.map((returnRecord) => (
             <div key={returnRecord.id} className="rounded-lg border p-4 flex flex-col gap-3">
               <div className="flex items-center justify-between">
@@ -156,6 +176,17 @@ export function OrderReturnsCard({ orderId }: { orderId: string }) {
           ))}
         </CardContent>
       </Card>
+
+      {creating && (
+        <CreateReturnDialog
+          order={order}
+          onClose={() => setCreating(false)}
+          onSubmit={(params) => {
+            create.mutate(params)
+            setCreating(false)
+          }}
+        />
+      )}
 
       {receiving && (
         <ReceiveDialog

@@ -126,6 +126,7 @@ module Spree
         admin_stock_transfer_serializer: 'Spree::Api::V3::Admin::StockTransferSerializer',
         admin_shipment_serializer: 'Spree::Api::V3::Admin::FulfillmentSerializer',
         admin_fulfillment_serializer: 'Spree::Api::V3::Admin::FulfillmentSerializer',
+        admin_fulfillment_item_serializer: 'Spree::Api::V3::Admin::FulfillmentItemSerializer',
         admin_gift_card_serializer: 'Spree::Api::V3::Admin::GiftCardSerializer',
         admin_gift_card_batch_serializer: 'Spree::Api::V3::Admin::GiftCardBatchSerializer',
         admin_payment_serializer: 'Spree::Api::V3::Admin::PaymentSerializer',

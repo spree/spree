@@ -42,6 +42,14 @@ function useReturnMutation<TParams>(
  * refunding takes a method and an amount.
  */
 export function useReturnActions(orderId: string) {
+  // Opens as 'requested' — identical to how a customer-filed return starts,
+  // so staff-created and self-service returns share one path.
+  const create = useReturnMutation(
+    orderId,
+    (params: { items: Array<{ fulfillment_item_id: string; quantity: number }>; memo?: string }) =>
+      adminClient.orders.returns.create(orderId, params),
+  )
+
   const approve = useReturnMutation(orderId, (returnId: string) =>
     adminClient.orders.returns.approve(orderId, returnId),
   )
@@ -80,5 +88,5 @@ export function useReturnActions(orderId: string) {
       adminClient.orders.returns.cancel(orderId, returnId, { reason }),
   )
 
-  return { approve, receive, refund, cancel }
+  return { create, approve, receive, refund, cancel }
 }

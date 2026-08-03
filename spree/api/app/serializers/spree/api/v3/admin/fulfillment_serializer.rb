@@ -34,6 +34,12 @@ module Spree
           one :stock_location, resource: proc { Spree.api.admin_stock_location_serializer }, if: proc { expand?('stock_location') }
           many :delivery_rates, resource: proc { Spree.api.admin_delivery_rate_serializer }, if: proc { expand?('delivery_rates') }
 
+          # The units in this fulfillment — the dashboard needs them to offer
+          # what can actually be returned or exchanged.
+          many :fulfillment_items,
+               resource: proc { Spree.api.admin_fulfillment_item_serializer },
+               if: proc { expand?('fulfillment_items') }
+
           one :order,
               resource: proc { Spree.api.admin_order_serializer },
               if: proc { expand?('order') }

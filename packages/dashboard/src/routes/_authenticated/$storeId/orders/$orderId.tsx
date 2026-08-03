@@ -152,9 +152,9 @@ function OrderDetailPage() {
         <>
           <LineItemsCard order={order} />
           <FulfillmentsCard order={order} />
-          <OrderReturnsCard orderId={orderId} />
-          <OrderExchangesCard orderId={orderId} />
-          <OrderClaimsCard orderId={orderId} />
+          <OrderReturnsCard order={order} />
+          <OrderExchangesCard order={order} />
+          <OrderClaimsCard order={order} />
           <PaymentsCard order={order} />
           <AdjustmentLinesCard order={order} />
           <OrderSummaryCard order={order} />

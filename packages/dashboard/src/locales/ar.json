@@ -1704,14 +1704,18 @@
             "actions": {
               "resolve_refund": "الحل بالاسترداد",
               "resolve_replacement": "الحل بالاستبدال",
-              "deny": "رفض"
+              "deny": "رفض",
+              "create": "مطالبة جديدة"
             },
             "types": {
               "damaged": "تالف",
               "missing": "مفقود",
               "wrong_item": "منتج خاطئ",
               "other": "أخرى"
-            }
+            },
+            "empty": "لا توجد مطالبات لهذا الطلب.",
+            "create_title": "مطالبة جديدة",
+            "claim_type": "المشكلة"
           },
           "dialogs": {
             "approve_title": "الموافقة على الطلب؟",
@@ -1723,16 +1727,21 @@
           "empty_shipments": "لا توجد شحنات حتى الآن.",
           "exchanges": {
             "actions": {
-              "fulfill": "شحن البديل"
+              "fulfill": "شحن البديل",
+              "create": "استبدال جديد"
             },
-            "price_difference": "فرق السعر"
+            "price_difference": "فرق السعر",
+            "empty": "لا توجد استبدالات لهذا الطلب.",
+            "create_title": "استبدال جديد",
+            "replacement_variant": "معرّف النسخة البديلة"
           },
           "no_delivery_method": "لم يتم اختيار طريقة توصيل.",
           "returns": {
             "actions": {
               "approve": "موافقة",
               "receive": "استلام العناصر",
-              "refund": "استرداد"
+              "refund": "استرداد",
+              "create": "مرتجع جديد"
             },
             "confirm": {
               "cancel": "إلغاء هذا المرتجع؟ لن تتم إعادة أي مخزون ولن يتم تحويل أي مبلغ."
@@ -1749,7 +1758,11 @@
             "refund_methods": {
               "original_payment": "الدفعة الأصلية",
               "store_credit": "رصيد المتجر"
-            }
+            },
+            "empty": "لا توجد مرتجعات لهذا الطلب.",
+            "empty_nothing_fulfilled": "لم يتم شحن أي شيء في هذا الطلب بعد.",
+            "memo": "ملاحظة",
+            "create_title": "مرتجع جديد"
           },
           "section_billing_address": "عنوان إرسال الفواتير",
           "section_claims": "المطالبات",
