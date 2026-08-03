@@ -29,8 +29,11 @@ export type FulfilledUnit = {
 }
 
 /**
- * Every fulfilled unit on the order, flattened out of its fulfillments —
- * a return or exchange is against a shipped unit, not a line item.
+ * Every unit on the order, flattened out of its fulfillments. A return or
+ * exchange is against a fulfillment item rather than a line item, but it does
+ * not require the goods to have shipped — the backend only asks that the
+ * order is complete and not canceled, and a merchant may well open a return
+ * on something still in the warehouse.
  */
 export function fulfilledUnits(order: Order): FulfilledUnit[] {
   return (order.fulfillments ?? []).flatMap((fulfillment) =>

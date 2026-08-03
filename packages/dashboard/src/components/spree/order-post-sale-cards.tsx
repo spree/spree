@@ -67,11 +67,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
               variant="outline"
               size="sm"
               disabled={!canCreate}
-              title={
-                canCreate
-                  ? undefined
-                  : t('admin.pages.orders.detail.returns.empty_nothing_fulfilled')
-              }
+              title={canCreate ? undefined : t('admin.pages.orders.detail.returns.empty_no_units')}
               onClick={() => setCreating(true)}
             >
               <PlusIcon className="size-4" />
@@ -84,7 +80,7 @@ export function OrderExchangesCard({ order }: { order: Order }) {
             <p className="text-sm text-muted-foreground">
               {canCreate
                 ? t('admin.pages.orders.detail.exchanges.empty')
-                : t('admin.pages.orders.detail.returns.empty_nothing_fulfilled')}
+                : t('admin.pages.orders.detail.returns.empty_no_units')}
             </p>
           )}
           {exchanges.map((exchange: Exchange) => (
