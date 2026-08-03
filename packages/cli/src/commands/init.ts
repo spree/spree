@@ -103,12 +103,12 @@ export async function runFirstRunSetup(flags: {
 
   // With the React Dashboard chosen, its dev server IS the admin — started
   // below alongside the stack, so what the user customizes is what they use.
-  // One admin block; the classic admin gets a one-line pointer. (The
-  // production image serves the built dashboard at /dashboard — a deployment
+  // One admin block: the dev server is the only admin URL worth naming. (The
+  // production image serves a built dashboard at /dashboard — a deployment
   // detail, not a dev-flow concept.) The summary, --open, and the spawn all
   // key off the same runnable check so they can't disagree — if the dev
-  // server can't start (deps install failed above), the card leads with the
-  // classic admin instead of advertising a dead URL.
+  // server can't start (deps install failed above), the card says how to
+  // install it instead of advertising a dead URL.
   const dashboardRunnable = dashboardDevRunnable(ctx.projectDir)
   if (hasDashboardApp(ctx.projectDir) && !dashboardRunnable) {
     warnDashboardNotRunnable(ctx.projectDir)
@@ -119,11 +119,11 @@ export async function runFirstRunSetup(flags: {
         `  ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
         `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
         `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
-        `  ${pc.dim(`Live-reloading from apps/dashboard/ — classic admin: http://localhost:${ctx.port}/admin`)}`,
+        `  ${pc.dim('Live-reloading from apps/dashboard/')}`,
       ]
     : [
         pc.bold('Admin Dashboard'),
-        `  ${pc.cyan(`http://localhost:${ctx.port}/admin`)}`,
+        `  ${pc.dim(`Not installed — add it with ${pc.bold('spree add dashboard')}`)}`,
         `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
         `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
       ]
@@ -176,8 +176,10 @@ export async function runFirstRunSetup(flags: {
   try {
     if (flags.open) {
       // With the dashboard, wait for Vite to report ready (it auto-bumps the
-      // port when 5173 is taken) so the browser opens the real URL.
-      await openBrowser(dashboard ? await dashboard.url : `http://localhost:${ctx.port}/admin`)
+      // port when 5173 is taken) so the browser opens the real URL. Without
+      // one there's no admin to open in development, so fall back to the
+      // store itself.
+      await openBrowser(dashboard ? await dashboard.url : `http://localhost:${ctx.port}`)
     }
 
     p.log.info('Streaming logs (Ctrl+C to stop)...\n')

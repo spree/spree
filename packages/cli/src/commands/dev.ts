@@ -99,11 +99,11 @@ export function registerDevCommand(program: Command): void {
                 `  ${pc.cyan(`http://localhost:${DASHBOARD_PORT}`)}`,
                 `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
                 `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
-                `  ${pc.dim(`Live-reloading from apps/dashboard/ — classic admin: http://localhost:${ctx.port}/admin`)}`,
+                `  ${pc.dim('Live-reloading from apps/dashboard/')}`,
               ]
             : [
                 pc.bold('Admin Dashboard'),
-                `  ${pc.cyan(`http://localhost:${ctx.port}/admin`)}`,
+                `  ${pc.dim(`Not installed — add it with ${pc.bold('spree add dashboard')}`)}`,
                 `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
                 `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
               ]),
