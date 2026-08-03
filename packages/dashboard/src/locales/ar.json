@@ -1718,7 +1718,8 @@
             },
             "empty": "لا توجد مطالبات لهذا الطلب.",
             "create_title": "مطالبة جديدة",
-            "claim_type": "المشكلة"
+            "claim_type": "المشكلة",
+            "refund_amount": "مبلغ الاسترداد"
           },
           "dialogs": {
             "approve_title": "الموافقة على الطلب؟",

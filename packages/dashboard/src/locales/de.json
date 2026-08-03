@@ -1718,7 +1718,8 @@
             },
             "empty": "Keine Reklamationen für diese Bestellung.",
             "create_title": "Neue Reklamation",
-            "claim_type": "Problem"
+            "claim_type": "Problem",
+            "refund_amount": "Erstattungsbetrag"
           },
           "dialogs": {
             "approve_title": "Bestellung genehmigen?",

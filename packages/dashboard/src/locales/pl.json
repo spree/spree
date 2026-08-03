@@ -1726,7 +1726,8 @@
             },
             "empty": "Brak reklamacji dla tego zamówienia.",
             "create_title": "Nowa reklamacja",
-            "claim_type": "Problem"
+            "claim_type": "Problem",
+            "refund_amount": "Kwota zwrotu"
           },
           "dialogs": {
             "approve_title": "Zatwierdzić zamówienie?",

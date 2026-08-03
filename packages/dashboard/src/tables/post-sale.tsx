@@ -1,6 +1,7 @@
 import type { Claim, Exchange, Return } from '@spree/admin-sdk'
 import { defineTable } from '@spree/dashboard-core'
-import { Badge, RelativeTime, ResourceNameCell } from '@spree/dashboard-ui'
+import { Badge, RelativeTime } from '@spree/dashboard-ui'
+import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { RepeatIcon, RotateCcwIcon, ShieldAlertIcon } from 'lucide-react'
 
@@ -21,6 +22,24 @@ const STATUS_VARIANT: Record<
   resolved: 'success',
   denied: 'destructive',
   canceled: 'secondary',
+}
+
+/**
+ * The record's own number, linking to the order it belongs to — that page is
+ * where it can actually be actioned, so there is nowhere else useful to go.
+ */
+function numberCell(record: { number: string; order_id?: string | null }) {
+  if (!record.order_id) return record.number
+
+  return (
+    <Link
+      to={'/$storeId/orders/$orderId' as string}
+      params={{ orderId: record.order_id }}
+      className="font-medium text-foreground no-underline"
+    >
+      {record.number}
+    </Link>
+  )
 }
 
 function statusLabel(value: string): string {
@@ -80,7 +99,7 @@ defineTable<Return>('returns', {
       sortable: true,
       filterable: true,
       default: true,
-      render: (r) => <ResourceNameCell id={r.id} dataAttr="data-return-id" name={r.number} />,
+      render: (r) => numberCell(r),
     },
     statusColumn(['requested', 'approved', 'received', 'refunded', 'canceled']),
     orderColumn<Return>(),
@@ -109,7 +128,7 @@ defineTable<Exchange>('exchanges', {
       sortable: true,
       filterable: true,
       default: true,
-      render: (e) => <ResourceNameCell id={e.id} dataAttr="data-exchange-id" name={e.number} />,
+      render: (e) => numberCell(e),
     },
     statusColumn(['requested', 'approved', 'received', 'fulfilled', 'canceled']),
     orderColumn<Exchange>(),
@@ -138,7 +157,7 @@ defineTable<Claim>('claims', {
       sortable: true,
       filterable: true,
       default: true,
-      render: (c) => <ResourceNameCell id={c.id} dataAttr="data-claim-id" name={c.number} />,
+      render: (c) => numberCell(c),
     },
     statusColumn(['open', 'approved', 'resolved', 'denied', 'canceled']),
     {

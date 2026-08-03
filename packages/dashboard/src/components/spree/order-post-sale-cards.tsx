@@ -57,14 +57,22 @@ export function OrderExchangesCard({ order }: { order: Order }) {
             {t('admin.pages.orders.detail.section_exchanges')}
             {exchanges.length > 0 && <Badge variant="outline">{exchanges.length}</Badge>}
           </CardTitle>
-          {canCreate && (
-            <CardAction>
-              <Button variant="outline" size="sm" onClick={() => setCreating(true)}>
-                <PlusIcon className="size-4" />
-                {t('admin.pages.orders.detail.exchanges.actions.create')}
-              </Button>
-            </CardAction>
-          )}
+          <CardAction>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!canCreate}
+              title={
+                canCreate
+                  ? undefined
+                  : t('admin.pages.orders.detail.returns.empty_nothing_fulfilled')
+              }
+              onClick={() => setCreating(true)}
+            >
+              <PlusIcon className="size-4" />
+              {t('admin.pages.orders.detail.exchanges.actions.create')}
+            </Button>
+          </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {exchanges.length === 0 && (
@@ -195,14 +203,17 @@ export function OrderClaimsCard({ order }: { order: Order }) {
             {t('admin.pages.orders.detail.section_claims')}
             {claims.length > 0 && <Badge variant="outline">{claims.length}</Badge>}
           </CardTitle>
-          {canCreate && (
-            <CardAction>
-              <Button variant="outline" size="sm" onClick={() => setCreatingClaim(true)}>
-                <PlusIcon className="size-4" />
-                {t('admin.pages.orders.detail.claims.actions.create')}
-              </Button>
-            </CardAction>
-          )}
+          <CardAction>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!canCreate}
+              onClick={() => setCreatingClaim(true)}
+            >
+              <PlusIcon className="size-4" />
+              {t('admin.pages.orders.detail.claims.actions.create')}
+            </Button>
+          </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {claims.length === 0 && (

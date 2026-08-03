@@ -1718,7 +1718,8 @@
             },
             "empty": "Aucune réclamation pour cette commande.",
             "create_title": "Nouvelle réclamation",
-            "claim_type": "Problème"
+            "claim_type": "Problème",
+            "refund_amount": "Montant du remboursement"
           },
           "dialogs": {
             "approve_title": "Approuver la commande ?",

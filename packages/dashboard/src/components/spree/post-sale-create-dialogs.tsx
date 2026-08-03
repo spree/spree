@@ -261,7 +261,12 @@ export function CreateClaimDialog({
   order: Order
   onClose: () => void
   onSubmit: (params: {
-    items: Array<{ line_item_id: string; quantity: number; description?: string }>
+    items: Array<{
+      line_item_id: string
+      quantity: number
+      description?: string
+      refund_amount?: string
+    }>
     claim_type: string
     memo?: string
   }) => void
@@ -269,6 +274,7 @@ export function CreateClaimDialog({
   const { t } = useTranslation()
   const items = order.items ?? []
   const [selection, setSelection] = useState<Selection>({})
+  const [amounts, setAmounts] = useState<Record<string, string>>({})
   const [claimType, setClaimType] = useState<string>('damaged')
   const [memo, setMemo] = useState('')
 
@@ -303,15 +309,59 @@ export function CreateClaimDialog({
             </Select>
           </Field>
 
-          <QuantityPicker
-            units={items.map((item) => ({
-              id: item.id,
-              label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
-              quantity: item.quantity,
-            }))}
-            selection={selection}
-            onChange={setSelection}
-          />
+          <div className="flex flex-col gap-2">
+            {items.map((item) => {
+              const label = [item.name, item.options_text].filter(Boolean).join(' — ') || item.id
+              const chosenQuantity = selection[item.id] ?? 0
+
+              return (
+                <div key={item.id} className="flex flex-col gap-2 rounded-lg border p-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-sm truncate">{label}</span>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={item.quantity}
+                      className="w-20"
+                      value={chosenQuantity}
+                      onChange={(event) => {
+                        const quantity = Math.max(
+                          0,
+                          Math.min(Number(event.target.value), item.quantity),
+                        )
+                        setSelection({ ...selection, [item.id]: quantity })
+                        // Default the refund to what was paid for those units;
+                        // the merchant can still overwrite it.
+                        if (quantity > 0 && !amounts[item.id]) {
+                          const unitPrice = Number(item.price)
+                          if (Number.isFinite(unitPrice)) {
+                            setAmounts((current) => ({
+                              ...current,
+                              [item.id]: (unitPrice * quantity).toFixed(2),
+                            }))
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                  {chosenQuantity > 0 && (
+                    <Field>
+                      <FieldLabel htmlFor={`claim-amount-${item.id}`}>
+                        {t('admin.pages.orders.detail.claims.refund_amount')}
+                      </FieldLabel>
+                      <Input
+                        id={`claim-amount-${item.id}`}
+                        value={amounts[item.id] ?? ''}
+                        onChange={(event) =>
+                          setAmounts({ ...amounts, [item.id]: event.target.value })
+                        }
+                      />
+                    </Field>
+                  )}
+                </div>
+              )
+            })}
+          </div>
 
           <Field>
             <FieldLabel htmlFor="claim-memo">
@@ -332,7 +382,11 @@ export function CreateClaimDialog({
             disabled={chosen.length === 0}
             onClick={() =>
               onSubmit({
-                items: chosen.map(([id, quantity]) => ({ line_item_id: id, quantity })),
+                items: chosen.map(([id, quantity]) => ({
+                  line_item_id: id,
+                  quantity,
+                  refund_amount: amounts[id] || undefined,
+                })),
                 claim_type: claimType,
                 memo: memo || undefined,
               })

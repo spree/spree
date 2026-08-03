@@ -1718,7 +1718,8 @@
             },
             "empty": "No claims for this order.",
             "create_title": "New claim",
-            "claim_type": "Problem"
+            "claim_type": "Problem",
+            "refund_amount": "Refund amount"
           },
           "dialogs": {
             "approve_title": "Approve order?",

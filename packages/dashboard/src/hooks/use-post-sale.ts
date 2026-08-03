@@ -106,7 +106,12 @@ export function useClaimActions(orderId: string) {
     orderId,
     'order-claims',
     (params: {
-      items: Array<{ line_item_id: string; quantity: number; description?: string }>
+      items: Array<{
+        line_item_id: string
+        quantity: number
+        description?: string
+        refund_amount?: string
+      }>
       claim_type: string
       memo?: string
     }) => adminClient.orders.claims.create(orderId, params),

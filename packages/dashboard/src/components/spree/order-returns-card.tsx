@@ -84,14 +84,22 @@ export function OrderReturnsCard({ order }: { order: Order }) {
             {t('admin.pages.orders.detail.section_returns')}
             {returns.length > 0 && <Badge variant="outline">{returns.length}</Badge>}
           </CardTitle>
-          {canCreate && (
-            <CardAction>
-              <Button variant="outline" size="sm" onClick={() => setCreating(true)}>
-                <PlusIcon className="size-4" />
-                {t('admin.pages.orders.detail.returns.actions.create')}
-              </Button>
-            </CardAction>
-          )}
+          <CardAction>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!canCreate}
+              title={
+                canCreate
+                  ? undefined
+                  : t('admin.pages.orders.detail.returns.empty_nothing_fulfilled')
+              }
+              onClick={() => setCreating(true)}
+            >
+              <PlusIcon className="size-4" />
+              {t('admin.pages.orders.detail.returns.actions.create')}
+            </Button>
+          </CardAction>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {returns.length === 0 && (

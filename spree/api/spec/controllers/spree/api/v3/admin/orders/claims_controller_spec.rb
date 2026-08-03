@@ -64,6 +64,22 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ClaimsController, type: :controlle
       expect(Spree::StoreCredit.find_by(originator: claim)).to be_present
     end
 
+    # A claim opened without per-item amounts has nothing to refund; the
+    # dashboard collects them at creation, and the API says so plainly.
+    it 'refuses a refund when no amount was recorded on the claim' do
+      empty = create(:claim, store: store, order: order)
+      empty.claim_line_items.each { |line| line.update!(refund_amount: 0) }
+      Spree::Claims::Approve.call(claim: empty)
+
+      patch :resolve, params: {
+        order_id: order.prefixed_id,
+        id: empty.prefixed_id,
+        resolution: 'refund'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'rejects an unknown resolution' do
       patch :resolve, params: {
         order_id: order.prefixed_id,
