@@ -137,7 +137,7 @@ module Spree
 
     def complete_payment_setup_session(setup_session:, params: {})
       credit_card = CreditCard.create!(
-        user: setup_session.customer,
+        customer: setup_session.customer,
         payment_method: self,
         name: 'Bogus Card',
         last_digits: '4242',
