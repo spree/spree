@@ -2057,6 +2057,66 @@ export class AdminClient {
   }
 
   // ============================================
+  // Post-sale, across all orders (read-only — creating any of these needs an
+  // order, so writes live on client.orders.{returns,exchanges,claims})
+  // ============================================
+
+  readonly returns = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Return>> =>
+      this.request<PaginatedResponse<Return>>('GET', '/returns', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Return> =>
+      this.request<Return>('GET', `/returns/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  readonly exchanges = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Exchange>> =>
+      this.request<PaginatedResponse<Exchange>>('GET', '/exchanges', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<Exchange> =>
+      this.request<Exchange>('GET', `/exchanges/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  readonly claims = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Claim>> =>
+      this.request<PaginatedResponse<Claim>>('GET', '/claims', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Claim> =>
+      this.request<Claim>('GET', `/claims/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  // ============================================
   // Gift card batches (bulk issuance)
   // ============================================
 

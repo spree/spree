@@ -385,6 +385,12 @@ Spree::Core::Engine.add_routes do
         resources :gift_cards
         resources :gift_card_batches, only: [:index, :show, :create]
 
+        # Post-sale, across all orders. Read-only — creating any of these
+        # needs an order, so writes live under /orders/:order_id/...
+        resources :returns, only: [:index, :show]
+        resources :exchanges, only: [:index, :show]
+        resources :claims, only: [:index, :show]
+
         # Channels (per-store distribution surfaces)
         resources :channels do
           member do
