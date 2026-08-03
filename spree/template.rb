@@ -101,6 +101,7 @@ add_gems
 after_bundle do
   configure_development_environment
   install_spree
+  setup_procfile
   seed_database
   load_sample_data
   show_success_message

@@ -3,29 +3,6 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "05bad36b6a70ef61186c5f7152922a518714d5ac67766cebae0c35d0503e8d1a",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "lib/spree/testing_support/capybara_ext.rb",
-      "line": 16,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "first(\".icon-#{type}\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "CapybaraExt",
-        "method": "click_icon"
-      },
-      "user_input": "type",
-      "confidence": "Medium",
-      "cwe_id": [
-        89
-      ],
-      "note": "False positive: this is a Capybara CSS selector, not a SQL query"
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
       "fingerprint": "5ea89a73bb4996140bbba012ae1b3112199826c65f3d699e4d5a49b8dc5b98cf",
       "check_name": "SQL",
       "message": "Possible SQL injection",

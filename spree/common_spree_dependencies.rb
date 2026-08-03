@@ -21,28 +21,20 @@ gem 'meilisearch', '>= 0.28'
 
 group :test do
   gem 'parallel_tests'
-  gem 'capybara'
-  gem 'capybara-screenshot'
-  gem 'capybara-select-2'
   gem 'database_cleaner-active_record'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.2.0'
-  gem 'multi_json'
-  gem 'rspec-activemodel-mocks'
   gem 'rspec-rails'
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
   gem 'rswag-specs'
-  gem 'jsonapi-rspec'
   # Pinned to 0.x: SimpleCov 1.0 changed how parallel/sharded coverage results
   # merge, dropping covered files from the report (e.g. a tested helper shown at
   # 0%) and deflating the reported total. Stay on 0.x until that's resolved.
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-cobertura'
-  gem 'stackprof'
   gem 'webmock'
   gem 'timecop'
-  gem 'test-prof'
   gem 'rails-controller-testing'
   gem 'shoulda-matchers', '~> 6.0'
 end
@@ -65,7 +57,6 @@ group :test, :development do
 end
 
 group :development do
-  gem 'importmap-rails'
   # gem 'github_fast_changelog'
   gem 'solargraph'
   gem 'ruby-lsp'

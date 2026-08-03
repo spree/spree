@@ -35,15 +35,11 @@ module Spree
         transition to: :failed
       end
       after_transition to: :failed, do: :publish_import_row_failed_event
-      # NOTE: add_row_to_import_view and update_footer_in_import_view
-      # are now handled by Spree::Admin::ImportRowSubscriber
 
       event :complete do
         transition to: :completed
       end
       after_transition to: :completed, do: :publish_import_row_completed_event
-      # NOTE: add_row_to_import_view and update_footer_in_import_view
-      # are now handled by Spree::Admin::ImportRowSubscriber
     end
 
     # How long a row may sit in `processing` before we consider its owning worker dead

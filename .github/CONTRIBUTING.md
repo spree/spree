@@ -144,7 +144,7 @@ The Spree [Rails engines](https://guides.rubyonrails.org/engines.html) live insi
 |---|---|---|
 | `core` | `spree_core` | Models, services, business logic |
 | `api` | `spree_api` | REST APIs |
-| `admin` | `spree_admin` | Admin dashboard |
+| `dashboard` | `spree_dashboard` | Hosts the React admin dashboard |
 | `emails` | `spree_emails` | Transactional emails |
 
 ### Spree namespace

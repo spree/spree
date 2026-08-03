@@ -15,11 +15,8 @@ module Spree
   #   end
   #
   # The registry holds domain data only — each frontend maps task keys to its
-  # own presentation: the legacy admin renders the
-  # `spree/admin/dashboard/setup_tasks/_<key>` partial titled by the
-  # `admin.store_setup_tasks.<key>` translation (both resolved across engine
-  # paths, so extensions ship theirs by convention), and the React dashboard
-  # consumes tasks as {Spree::SetupTask} records via the Admin API.
+  # own presentation: the React dashboard consumes tasks as {Spree::SetupTask}
+  # records via the Admin API.
   class SetupTasks
     class Definition
       attr_reader :key, :position
