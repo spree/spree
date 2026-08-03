@@ -59,6 +59,12 @@ import {
   Skeleton,
   StatusBadge,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
@@ -156,7 +162,9 @@ function OrderDetailPage() {
           <OrderExchangesCard order={order} />
           <OrderClaimsCard order={order} />
           <PaymentsCard order={order} />
-          <AdjustmentLinesCard order={order} />
+          <TaxLinesCard order={order} />
+          <OrderDiscountsCard order={order} />
+          <FeesCard order={order} />
           <OrderSummaryCard order={order} />
           <EditableApiCustomFieldsProvider
             ownerType="Spree::Order"
@@ -1309,68 +1317,51 @@ function feeKindLabel(kind: string) {
     : kind
 }
 
-function AdjustmentLineRow({
-  label,
-  meta,
-  amount,
+/** Trailing action cell — renders empty (keeping column width) for undeletable rows. */
+function AdjustmentDeleteCell({
   onDelete,
   deleting,
 }: {
-  label: ReactNode
-  meta?: ReactNode
-  amount: string
   onDelete?: () => void
   deleting?: boolean
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 px-5 py-2">
-      <div className="flex min-w-0 items-center gap-2">
-        <span className="truncate text-sm">{label}</span>
-        {meta}
-      </div>
-      <div className="flex shrink-0 items-center gap-2">
-        <span className="text-sm tabular-nums">{amount}</span>
-        {onDelete && (
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={onDelete}
-            disabled={deleting}
-            aria-label={i18n.t('admin.actions.delete')}
-          >
-            <TrashIcon className="size-3.5" />
-          </Button>
-        )}
-      </div>
-    </div>
+    <TableCell className="w-10 text-right">
+      {onDelete && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              disabled={deleting}
+              aria-label={i18n.t('admin.actions.actions_menu')}
+            >
+              <EllipsisVerticalIcon className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={onDelete}
+            >
+              <TrashIcon className="size-4" />
+              {i18n.t('admin.actions.delete')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+    </TableCell>
   )
 }
 
-function AdjustmentLinesCard({ order }: { order: Order }) {
+function TaxLinesCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const { orderId } = Route.useParams()
-  const confirm = useConfirm()
-  const [addDiscountOpen, setAddDiscountOpen] = useState(false)
-  const [addFeeOpen, setAddFeeOpen] = useState(false)
-
   const { data: taxLines } = useOrderTaxLines(orderId)
-  const { data: discounts } = useOrderDiscounts(orderId)
-  const { data: fees } = useOrderFees(orderId)
-
-  const deleteDiscountMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
-    adminClient.orders.discounts.delete(orderId, id),
-  )
-  const deleteFeeMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
-    adminClient.orders.fees.delete(orderId, id),
-  )
-
-  const taxRows = taxLines?.data ?? []
-  const discountRows = discounts?.data ?? []
-  const feeRows = fees?.data ?? []
 
   // Tax rows grouped by label so a rate charged on many lines reads as one row.
   const taxGroups = new Map<string, { label: string; amount: number }>()
-  for (const row of taxRows) {
+  for (const row of taxLines?.data ?? []) {
     const existing = taxGroups.get(row.label)
     if (existing) {
       existing.amount += Number.parseFloat(row.amount)
@@ -1378,6 +1369,62 @@ function AdjustmentLinesCard({ order }: { order: Order }) {
       taxGroups.set(row.label, { label: row.label, amount: Number.parseFloat(row.amount) })
     }
   }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.orders.detail.adjustment_lines.taxes')}</CardTitle>
+      </CardHeader>
+
+      {taxGroups.size === 0 ? (
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            {t('admin.orders.detail.adjustment_lines.taxes_empty')}
+          </p>
+        </CardContent>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.orders.detail.adjustment_lines.column_label')}</TableHead>
+              <TableHead className="text-right">
+                {t('admin.orders.detail.adjustment_lines.column_amount')}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="border-t border-border">
+            {[...taxGroups.values()].map((group) => (
+              <TableRow key={group.label}>
+                <TableCell>{group.label}</TableCell>
+                <TableCell className="text-right tabular-nums">
+                  {formatPrice({
+                    amount: group.amount.toFixed(2),
+                    currency: order.currency,
+                    display_amount: null,
+                  })}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </Card>
+  )
+}
+
+function OrderDiscountsCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
+  const { orderId } = Route.useParams()
+  const confirm = useConfirm()
+  const [addDiscountOpen, setAddDiscountOpen] = useState(false)
+
+  const { data: discounts } = useOrderDiscounts(orderId)
+  const deleteDiscountMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
+    adminClient.orders.discounts.delete(orderId, id),
+  )
+
+  // Only promotion rows are system-owned; anything else is admin-entered and deletable.
+  const discountRows = discounts?.data ?? []
 
   async function handleDeleteDiscount(row: Discount) {
     const confirmed = await confirm({
@@ -1390,6 +1437,80 @@ function AdjustmentLinesCard({ order }: { order: Order }) {
     })
     if (confirmed) deleteDiscountMutation.mutate(row.id)
   }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('admin.orders.detail.adjustment_lines.discounts')}</CardTitle>
+        <CardAction>
+          <Button variant="outline" size="sm" onClick={() => setAddDiscountOpen(true)}>
+            <PlusIcon className="size-4" />
+            {t('admin.orders.detail.adjustment_lines.add_discount')}
+          </Button>
+        </CardAction>
+      </CardHeader>
+
+      {discountRows.length === 0 ? (
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            {t('admin.orders.detail.adjustment_lines.discounts_empty')}
+          </p>
+        </CardContent>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.orders.detail.adjustment_lines.column_label')}</TableHead>
+              <TableHead>{t('admin.orders.detail.adjustment_lines.column_source')}</TableHead>
+              <TableHead>{t('admin.orders.detail.adjustment_lines.column_code')}</TableHead>
+              <TableHead className="text-right">
+                {t('admin.orders.detail.adjustment_lines.column_amount')}
+              </TableHead>
+              <TableHead className="w-10" />
+            </TableRow>
+          </TableHeader>
+          <TableBody className="border-t border-border">
+            {discountRows.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.label}</TableCell>
+                <TableCell>
+                  <Badge variant="secondary">
+                    {row.kind === 'promotion'
+                      ? t('admin.orders.detail.adjustment_lines.kind_promotion')
+                      : t('admin.orders.detail.adjustment_lines.kind_manual')}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {row.code ? <Badge variant="outline">{row.code}</Badge> : '—'}
+                </TableCell>
+                <TableCell className="text-right tabular-nums">{row.display_amount}</TableCell>
+                <AdjustmentDeleteCell
+                  onDelete={row.kind === 'promotion' ? undefined : () => handleDeleteDiscount(row)}
+                  deleting={deleteDiscountMutation.isPending}
+                />
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+
+      <AddDiscountDialog order={order} open={addDiscountOpen} onOpenChange={setAddDiscountOpen} />
+    </Card>
+  )
+}
+
+function FeesCard({ order }: { order: Order }) {
+  const { t } = useTranslation()
+  const { orderId } = Route.useParams()
+  const confirm = useConfirm()
+  const [addFeeOpen, setAddFeeOpen] = useState(false)
+
+  const { data: fees } = useOrderFees(orderId)
+  const deleteFeeMutation = useOrderAdjustmentLinesMutation(orderId, (id: string) =>
+    adminClient.orders.fees.delete(orderId, id),
+  )
+
+  const feeRows = fees?.data ?? []
 
   async function handleDeleteFee(row: Fee) {
     const confirmed = await confirm({
@@ -1404,98 +1525,51 @@ function AdjustmentLinesCard({ order }: { order: Order }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('admin.orders.detail.adjustment_lines.title')}</CardTitle>
+        <CardTitle>{t('admin.orders.detail.adjustment_lines.fees')}</CardTitle>
         <CardAction>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setAddDiscountOpen(true)}>
-              <PlusIcon className="size-4" />
-              {t('admin.orders.detail.adjustment_lines.add_discount')}
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setAddFeeOpen(true)}>
-              <PlusIcon className="size-4" />
-              {t('admin.orders.detail.adjustment_lines.add_fee')}
-            </Button>
-          </div>
+          <Button variant="outline" size="sm" onClick={() => setAddFeeOpen(true)}>
+            <PlusIcon className="size-4" />
+            {t('admin.orders.detail.adjustment_lines.add_fee')}
+          </Button>
         </CardAction>
       </CardHeader>
 
-      {taxRows.length === 0 && discountRows.length === 0 && feeRows.length === 0 ? (
+      {feeRows.length === 0 ? (
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            {t('admin.orders.detail.adjustment_lines.empty')}
+            {t('admin.orders.detail.adjustment_lines.fees_empty')}
           </p>
         </CardContent>
       ) : (
-        <div className="pb-2">
-          {taxGroups.size > 0 && (
-            <>
-              <p className="px-5 pt-1 pb-1 font-medium text-muted-foreground text-xs uppercase">
-                {t('admin.orders.detail.adjustment_lines.taxes')}
-              </p>
-              {[...taxGroups.values()].map((group) => (
-                <AdjustmentLineRow
-                  key={group.label}
-                  label={group.label}
-                  amount={formatPrice({
-                    amount: group.amount.toFixed(2),
-                    currency: order.currency,
-                    display_amount: null,
-                  })}
-                />
-              ))}
-            </>
-          )}
-
-          {discountRows.length > 0 && (
-            <>
-              <p className="px-5 pt-3 pb-1 font-medium text-muted-foreground text-xs uppercase">
-                {t('admin.orders.detail.adjustment_lines.discounts')}
-              </p>
-              {discountRows.map((row) => (
-                <AdjustmentLineRow
-                  key={row.id}
-                  label={row.label}
-                  meta={
-                    <>
-                      {row.code && <Badge variant="outline">{row.code}</Badge>}
-                      {row.kind === 'promotion' && (
-                        <Badge variant="secondary">
-                          {t('admin.orders.detail.adjustment_lines.kind_promotion')}
-                        </Badge>
-                      )}
-                    </>
-                  }
-                  amount={row.display_amount}
-                  onDelete={row.kind === 'manual' ? () => handleDeleteDiscount(row) : undefined}
-                  deleting={deleteDiscountMutation.isPending}
-                />
-              ))}
-            </>
-          )}
-
-          {feeRows.length > 0 && (
-            <>
-              <p className="px-5 pt-3 pb-1 font-medium text-muted-foreground text-xs uppercase">
-                {t('admin.orders.detail.adjustment_lines.fees')}
-              </p>
-              {feeRows.map((row) => (
-                <AdjustmentLineRow
-                  key={row.id}
-                  label={row.label}
-                  meta={
-                    row.kind ? <Badge variant="outline">{feeKindLabel(row.kind)}</Badge> : undefined
-                  }
-                  amount={row.display_amount}
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('admin.orders.detail.adjustment_lines.column_label')}</TableHead>
+              <TableHead>{t('admin.orders.detail.adjustment_lines.column_kind')}</TableHead>
+              <TableHead className="text-right">
+                {t('admin.orders.detail.adjustment_lines.column_amount')}
+              </TableHead>
+              <TableHead className="w-10" />
+            </TableRow>
+          </TableHeader>
+          <TableBody className="border-t border-border">
+            {feeRows.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.label}</TableCell>
+                <TableCell className="text-muted-foreground">
+                  {row.kind ? <Badge variant="outline">{feeKindLabel(row.kind)}</Badge> : '—'}
+                </TableCell>
+                <TableCell className="text-right tabular-nums">{row.display_amount}</TableCell>
+                <AdjustmentDeleteCell
                   onDelete={() => handleDeleteFee(row)}
                   deleting={deleteFeeMutation.isPending}
                 />
-              ))}
-            </>
-          )}
-        </div>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
 
-      <AddDiscountDialog order={order} open={addDiscountOpen} onOpenChange={setAddDiscountOpen} />
       <AddFeeDialog order={order} open={addFeeOpen} onOpenChange={setAddFeeOpen} />
     </Card>
   )
