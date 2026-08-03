@@ -53,7 +53,7 @@ describe Spree::Order, type: :model do
         let(:accept_marketing) { true }
 
         it 'subscribes to newsletter', :events do
-          expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, user: order.user, store: order.store)
+          expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, customer: order.customer, store: order.store)
           order.finalize!
         end
       end

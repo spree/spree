@@ -21,7 +21,7 @@ module Spree
       end
 
       def customer_id
-        order.user_id
+        order.customer_id
       end
 
       def ip

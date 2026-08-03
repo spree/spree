@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Carts::Associate do
-    subject { described_class.call(guest_cart: cart, user: user) }
+    subject { described_class.call(guest_cart: cart, customer: user) }
 
     let(:user) { create(:user) }
 
@@ -19,7 +19,7 @@ module Spree
         user.update!(bill_address: create(:address, user: user), ship_address: create(:address, user: user))
         cart_with_items = create(:cart_with_line_items, customer: nil)
 
-        described_class.call(guest_cart: cart_with_items, user: user)
+        described_class.call(guest_cart: cart_with_items, customer: user)
 
         expect(cart_with_items.reload.bill_address_id).to eq(user.bill_address_id)
         expect(cart_with_items.ship_address_id).to eq(user.ship_address_id)
@@ -52,12 +52,37 @@ module Spree
       end
 
       context 'with guest_only: true' do
-        subject { described_class.call(guest_cart: cart, user: user, guest_only: true) }
+        subject { described_class.call(guest_cart: cart, customer: user, guest_only: true) }
 
         it 'returns failure' do
           expect(subject).to be_failure
           expect(cart.reload.customer).to eq(assigned_user)
         end
+      end
+    end
+
+    context 'when a guest order is given' do
+      let(:order) { create(:order, customer: nil) }
+
+      # Explicitly covers the Order owner path — the service persists via
+      # update_all (raw columns, no alias), keyed off customer_id for both types.
+      it 'assigns the order to the customer' do
+        result = described_class.call(guest_cart: order, customer: user)
+
+        expect(result).to be_success
+        expect(order.reload.customer).to eq(user)
+      end
+    end
+
+    context 'with the deprecated user: keyword' do
+      let(:cart) { create(:cart, customer: nil) }
+
+      it 'warns and still assigns the customer' do
+        expect(Spree::Deprecation).to receive(:warn).at_least(:once)
+
+        described_class.call(guest_cart: cart, user: user)
+
+        expect(cart.reload.customer).to eq(user)
       end
     end
   end

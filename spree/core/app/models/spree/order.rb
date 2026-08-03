@@ -133,7 +133,7 @@ module Spree
       self.tag_list = tags
     end
 
-    ASSOCIATED_USER_ATTRIBUTES = [:customer_id, :email, :bill_address_id, :ship_address_id]
+    ASSOCIATED_CUSTOMER_ATTRIBUTES = [:customer_id, :email, :bill_address_id, :ship_address_id]
 
     # @deprecated Use {Spree::Purchase::PaymentProcessing#payment_methods};
     #   removed in 6.1.
@@ -481,17 +481,29 @@ module Spree
     # Associates the specified user with the order.
     # Delegates to {Spree::Carts::Associate} service.
     #
-    # @param user [Spree.customer_class] the user to associate with the order
-    # @param override_email [Boolean] whether to override the order email with the user's email
+    # @param customer [Spree.customer_class] the customer to associate with the order
+    # @param override_email [Boolean] whether to override the order email with the customer's email
     # @return [Spree::ServiceModule::Result]
-    def associate_user!(user, override_email = true)
-      Spree.cart_associate_service.call(guest_cart: self, user: user, override_email: override_email)
+    def associate_customer!(customer, override_email = true)
+      Spree.cart_associate_service.call(guest_cart: self, customer: customer, override_email: override_email)
     end
 
-    def disassociate_user!
-      nullified_attributes = ASSOCIATED_USER_ATTRIBUTES.index_with(nil)
+    # @deprecated Use {#associate_customer!}; removed in 6.1.
+    def associate_user!(user, override_email = true)
+      Spree::Deprecation.warn('Spree::Order#associate_user! is deprecated and will be removed in Spree 6.1. Use #associate_customer! instead.')
+      associate_customer!(user, override_email)
+    end
+
+    def disassociate_customer!
+      nullified_attributes = ASSOCIATED_CUSTOMER_ATTRIBUTES.index_with(nil)
 
       update!(nullified_attributes)
+    end
+
+    # @deprecated Use {#disassociate_customer!}; removed in 6.1.
+    def disassociate_user!
+      Spree::Deprecation.warn('Spree::Order#disassociate_user! is deprecated and will be removed in Spree 6.1. Use #disassociate_customer! instead.')
+      disassociate_customer!
     end
 
     def quantity_of(variant, options = {})

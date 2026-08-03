@@ -104,7 +104,7 @@ module Spree
       # customer is in checkout, blank address slots fill from their saved
       # defaults (assign_default_addresses! guards each slot itself).
       def assign_default_addresses
-        return unless cart.user
+        return unless cart.customer
         return unless cart.email.present? || cart.ship_address_id.present?
 
         cart.assign_default_addresses!

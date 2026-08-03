@@ -93,7 +93,7 @@ module Spree
             authorize!(:update, @cart, cart_token)
             require_cart_token!
 
-            result = Spree.cart_associate_service.call(guest_cart: @cart, user: current_user, guest_only: true)
+            result = Spree.cart_associate_service.call(guest_cart: @cart, customer: current_user, guest_only: true)
 
             if result.success?
               render_cart

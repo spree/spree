@@ -101,7 +101,7 @@ module Spree
         status: 'pending',
         external_id: "bogus_#{SecureRandom.hex(12)}",
         external_data: external_data.merge('client_secret' => "bogus_secret_#{SecureRandom.hex(8)}"),
-        customer: order.user
+        customer: order.customer
       )
     end
 

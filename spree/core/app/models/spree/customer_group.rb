@@ -78,7 +78,7 @@ module Spree
       user_ids = Array(user_ids).map(&:to_s).uniq
       return 0 if user_ids.empty?
 
-      deleted_count = customer_group_users.where(user_id: user_ids).delete_all
+      deleted_count = customer_group_users.where(customer_id: user_ids).delete_all
 
       if deleted_count > 0
         touch_users(user_ids)

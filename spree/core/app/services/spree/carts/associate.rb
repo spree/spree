@@ -3,24 +3,27 @@ module Spree
     class Associate
       prepend Spree::ServiceModule::Base
 
-      def call(guest_cart: nil, guest_order: nil, user: nil, override_email: true, guest_only: false)
+      def call(guest_cart: nil, guest_order: nil, customer: nil, user: nil, override_email: true, guest_only: false)
         if guest_order
           Spree::Deprecation.warn('Calling Spree::Carts::Associate with guest_order: is deprecated and will be removed in Spree 6.1. Pass guest_cart: instead.')
           guest_cart ||= guest_order
         end
-        return failure(guest_cart, 'Already assigned to a user') if guest_only && guest_cart.user.present? && guest_cart.user != user
+        if user && customer.nil?
+          Spree::Deprecation.warn('Calling Spree::Carts::Associate with user: is deprecated and will be removed in Spree 6.1. Pass customer: instead.')
+          customer = user
+        end
+        return failure(guest_cart, 'Already assigned to a customer') if guest_only && guest_cart.customer.present? && guest_cart.customer != customer
 
-        guest_cart.user           = user
-        guest_cart.email          = user.email if override_email
+        guest_cart.customer       = customer
+        guest_cart.email          = customer.email if override_email
         # Only valid saved defaults are copied — update_all below skips
         # validations, so a broken address-book entry must not land on the
         # cart. Digital-only checkouts never receive a ship address.
-        guest_cart.bill_address ||= user.bill_address if user.bill_address&.valid?
-        guest_cart.ship_address ||= user.ship_address if user.ship_address&.valid? && guest_cart.delivery_step_required?
+        guest_cart.bill_address ||= customer.bill_address if customer.bill_address&.valid?
+        guest_cart.ship_address ||= customer.ship_address if customer.ship_address&.valid? && guest_cart.delivery_step_required?
 
-        owner_key = guest_cart.is_a?(Spree::Cart) ? :customer_id : :user_id
         changes = {
-          owner_key => guest_cart.user&.id,
+          customer_id: guest_cart.customer&.id,
           email: guest_cart.email,
           bill_address_id: guest_cart.bill_address&.id,
           ship_address_id: guest_cart.ship_address&.id

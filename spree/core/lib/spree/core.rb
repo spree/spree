@@ -386,7 +386,7 @@ module Spree
   end
 
   # Class-name strings (`'Spree::Product'`, `'Spree::Order'`,
-  # `Spree.user_class.to_s`, plus any registered by apps) for resources that
+  # `Spree.customer_class.to_s`, plus any registered by apps) for resources that
   # expose tags via `acts_as_taggable_on :tags`. Used by the Admin API
   # `/tags` autocomplete endpoint to validate `taggable_type`. Apps extend
   # the list in an initializer:

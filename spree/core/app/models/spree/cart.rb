@@ -53,7 +53,7 @@ module Spree
     alias display_ship_total display_delivery_total
     alias_attribute :ship_total, :delivery_total
 
-    belongs_to :customer, class_name: "::#{Spree.user_class}", optional: true
+    belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true
     # Order-parity aliases — shared Cart/Order code (services, Purchase
     # concerns) reads #user; the cart column is customer_id.
     alias_method :user, :customer
@@ -210,16 +210,22 @@ module Spree
       recalculate_totals!
     end
 
-    # Binds a signing-in user to the cart through the swappable associate
-    # service (same seam Order#associate_user! uses).
+    # Binds a signing-in customer to the cart through the swappable associate
+    # service (same seam Order#associate_customer! uses).
+    def associate_customer!(customer, override_email = true)
+      Spree.cart_associate_service.call(guest_cart: self, customer: customer, override_email: override_email)
+    end
+
+    # @deprecated Use {#associate_customer!}; removed in 6.1.
     def associate_user!(user, override_email = true)
-      Spree.cart_associate_service.call(guest_cart: self, user: user, override_email: override_email)
+      Spree::Deprecation.warn('Spree::Cart#associate_user! is deprecated and will be removed in Spree 6.1. Use #associate_customer! instead.')
+      associate_customer!(user, override_email)
     end
 
     # Merges another cart into this one through the swappable merge workflow
     # (Spree::Dependencies.cart_merge_workflow).
-    def merge!(other_cart, user = nil)
-      Spree.cart_merge_workflow.call(cart: self, other_cart: other_cart, user: user)
+    def merge!(other_cart, customer = nil)
+      Spree.cart_merge_workflow.call(cart: self, other_cart: other_cart, customer: customer)
       reload
     end
 

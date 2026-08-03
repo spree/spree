@@ -91,7 +91,7 @@ module Spree
         @refunds = [
           Spree::StoreCredit.create!(
             store: exchange.store,
-            user: exchange.order.user,
+            customer: exchange.order.customer,
             amount: credit_amount,
             currency: exchange.currency,
             category: Spree::StoreCreditCategory.default_reimbursement_category,

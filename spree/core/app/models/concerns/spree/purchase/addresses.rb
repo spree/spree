@@ -88,13 +88,13 @@ module Spree
       #
       # @return [void]
       def assign_default_addresses!
-        return unless user
+        return unless customer
 
-        self.bill_address = user.bill_address if !bill_address_id && user.bill_address&.valid?
+        self.bill_address = customer.bill_address if !bill_address_id && customer.bill_address&.valid?
         # Skip the ship address only for all-digital records to avoid
         # triggering shipping-address validations (an empty record still
         # gets one — items usually arrive after the address).
-        self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && !digital?
+        self.ship_address = customer.ship_address if !ship_address_id && customer.ship_address&.valid? && !digital?
       end
 
       # Copies the ship address onto the bill address and promotes it to the
@@ -103,7 +103,7 @@ module Spree
       # @return [true]
       def clone_shipping_address
         self.bill_address = ship_address if ship_address
-        user.bill_address = ship_address if should_assign_user_default_address?(ship_address)
+        customer.bill_address = ship_address if should_assign_user_default_address?(ship_address)
         true
       end
 
@@ -115,7 +115,7 @@ module Spree
       # @return [true]
       def clone_billing_address
         self.ship_address = bill_address if bill_address
-        user.ship_address = bill_address if should_assign_user_default_address?(bill_address)
+        customer.ship_address = bill_address if should_assign_user_default_address?(bill_address)
         true
       end
 
@@ -129,7 +129,7 @@ module Spree
 
         address = Spree::Address.find_by(id: id)
         # rubocop:disable Style/ConditionalAssignment
-        if address && user_id.present? && address.user_id == user_id
+        if address && customer_id.present? && address.customer_id == customer_id
           self['bill_address_id'] = address.id
         else
           self['bill_address_id'] = nil
@@ -145,7 +145,7 @@ module Spree
       # @param attributes [Hash, ActionController::Parameters]
       def bill_address_attributes=(attributes)
         self.bill_address = update_or_create_address(attributes)
-        user.bill_address = bill_address if should_assign_user_default_address?(bill_address)
+        customer.bill_address = bill_address if should_assign_user_default_address?(bill_address)
       end
 
       # Ownership-guarded writer — see {#bill_address_id=}.
@@ -156,7 +156,7 @@ module Spree
 
         address = Spree::Address.find_by(id: id)
         # rubocop:disable Style/ConditionalAssignment
-        if address && user_id.present? && address.user_id == user_id
+        if address && customer_id.present? && address.customer_id == customer_id
           self['ship_address_id'] = address.id
         else
           self['ship_address_id'] = nil
@@ -172,7 +172,7 @@ module Spree
       # @param attributes [Hash, ActionController::Parameters]
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes)
-        user.ship_address = ship_address if should_assign_user_default_address?(ship_address)
+        customer.ship_address = ship_address if should_assign_user_default_address?(ship_address)
         self.ship_address = nil if quick_checkout_address?(attributes[:quick_checkout]) && !ship_address.persisted?
       end
 
@@ -184,7 +184,7 @@ module Spree
         attributes.transform_values!(&:presence)
         attributes = attributes.to_h.symbolize_keys
 
-        default_address_scope = user ? user.addresses : ::Spree::Address.where(user_id: nil)
+        default_address_scope = customer ? customer.addresses : ::Spree::Address.where(customer_id: nil)
         default_address = default_address_scope.find_by(id: attributes[:id])
 
         if default_address&.editable?
@@ -194,7 +194,7 @@ module Spree
         end
 
         attributes = attributes.except(:id, :updated_at, :created_at)
-        attributes[:user_id] = user&.id
+        attributes[:customer_id] = customer&.id
 
         existing_address = find_existing_address(attributes)
         return existing_address if existing_address
@@ -217,7 +217,7 @@ module Spree
       end
 
       def should_assign_user_default_address?(address)
-        user.present? && address.present? && address.valid? && address.user == user && !address.quick_checkout?
+        customer.present? && address.present? && address.valid? && address.customer == customer && !address.quick_checkout?
       end
     end
   end

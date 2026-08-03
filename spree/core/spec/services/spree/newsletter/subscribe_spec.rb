@@ -123,7 +123,7 @@ module Spree
         let(:user) { create(:user, email: email, accepts_email_marketing: false) }
 
         it 'links the existing subscriber to the user and preserves consent' do
-          expect(service.user).to eq(user)
+          expect(service.customer).to eq(user)
           expect(user.reload.accepts_email_marketing).to eq(true)
         end
       end
@@ -150,7 +150,7 @@ module Spree
         let(:user) { create(:user, email: email, accepts_email_marketing: false) }
 
         it 'links and verifies the existing subscriber' do
-          expect(service.user).to eq(user)
+          expect(service.customer).to eq(user)
           expect(service.reload).to be_verified
           expect(user.reload.accepts_email_marketing).to eq(true)
         end
