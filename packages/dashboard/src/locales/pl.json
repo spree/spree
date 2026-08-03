@@ -1716,7 +1716,8 @@
               "resolve_refund": "Rozwiąż zwrotem płatności",
               "resolve_replacement": "Rozwiąż zamiennikiem",
               "deny": "Odrzuć",
-              "create": "Nowa reklamacja"
+              "create": "Nowa reklamacja",
+              "resolve": "Rozwiąż"
             },
             "types": {
               "damaged": "Uszkodzony",
@@ -1727,7 +1728,15 @@
             "empty": "Brak reklamacji dla tego zamówienia.",
             "create_title": "Nowa reklamacja",
             "claim_type": "Problem",
-            "refund_amount": "Kwota zwrotu"
+            "refund_amount": "Kwota zwrotu",
+            "resolve_title": "Rozwiąż reklamację",
+            "resolution": "Sposób rozwiązania",
+            "replacement_items": "Wyślij zamiennik dla",
+            "resolutions": {
+              "refund": "Zwrot płatności",
+              "replacement": "Zamiennik",
+              "refund_and_replacement": "Zwrot i zamiennik"
+            }
           },
           "dialogs": {
             "approve_title": "Zatwierdzić zamówienie?",

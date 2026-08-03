@@ -1,4 +1,4 @@
-import type { Order } from '@spree/admin-sdk'
+import type { Claim, Order } from '@spree/admin-sdk'
 import {
   Button,
   Dialog,
@@ -15,6 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Switch,
   Textarea,
 } from '@spree/dashboard-ui'
 import { useState } from 'react'
@@ -393,6 +394,180 @@ export function CreateClaimDialog({
             }
           >
             {t('admin.pages.orders.detail.claims.actions.create')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+/**
+ * Deciding how to make a claim right. This is where the merchant chooses —
+ * not at claim creation, when only the customer's complaint is known.
+ */
+export function ResolveClaimDialog({
+  claim,
+  onClose,
+  onSubmit,
+}: {
+  claim: Claim
+  onClose: () => void
+  onSubmit: (params: {
+    resolution: 'refund' | 'replacement' | 'refund_and_replacement'
+    refundMethod: 'original_payment' | 'store_credit'
+    amount?: string
+    replacementLineItemIds: string[]
+  }) => void
+}) {
+  const { t } = useTranslation()
+  const lines = claim.claim_line_items ?? []
+
+  const [resolution, setResolution] = useState<'refund' | 'replacement' | 'refund_and_replacement'>(
+    'refund',
+  )
+  const [refundMethod, setRefundMethod] = useState<'original_payment' | 'store_credit'>(
+    'store_credit',
+  )
+  const [amount, setAmount] = useState(claim.refund_total)
+  const [replacing, setReplacing] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(lines.map((line) => [line.id, line.send_replacement])),
+  )
+
+  const refunding = resolution.includes('refund')
+  const sendingReplacement = resolution.includes('replacement')
+  const chosenReplacements = Object.entries(replacing)
+    .filter(([, on]) => on)
+    .map(([id]) => id)
+
+  const resolutionOptions = (['refund', 'replacement', 'refund_and_replacement'] as const).map(
+    (value) => ({
+      value,
+      label: t(`admin.pages.orders.detail.claims.resolutions.${value}`),
+    }),
+  )
+
+  const methodOptions = [
+    {
+      value: 'store_credit',
+      label: t('admin.pages.orders.detail.returns.refund_methods.store_credit'),
+    },
+    {
+      value: 'original_payment',
+      label: t('admin.pages.orders.detail.returns.refund_methods.original_payment'),
+    },
+  ]
+
+  // Refunding nothing, or replacing nothing, is what the server rejects —
+  // say so here instead of letting the request fail.
+  const ready =
+    (!refunding || Number(amount) > 0) && (!sendingReplacement || chosenReplacements.length > 0)
+
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('admin.pages.orders.detail.claims.resolve_title')}</DialogTitle>
+        </DialogHeader>
+        <DialogBody className="flex flex-col gap-4">
+          <Field>
+            <FieldLabel htmlFor="claim-resolution">
+              {t('admin.pages.orders.detail.claims.resolution')}
+            </FieldLabel>
+            <Select
+              items={resolutionOptions}
+              value={resolution}
+              onValueChange={(value) => setResolution(value as typeof resolution)}
+            >
+              <SelectTrigger id="claim-resolution">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {resolutionOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+
+          {refunding && (
+            <>
+              <Field>
+                <FieldLabel htmlFor="claim-resolve-amount">
+                  {t('admin.pages.orders.detail.claims.refund_amount')}
+                </FieldLabel>
+                <Input
+                  id="claim-resolve-amount"
+                  value={amount}
+                  onChange={(event) => setAmount(event.target.value)}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="claim-refund-method">
+                  {t('admin.pages.orders.detail.returns.refund_method')}
+                </FieldLabel>
+                <Select
+                  items={methodOptions}
+                  value={refundMethod}
+                  onValueChange={(value) => setRefundMethod(value as typeof refundMethod)}
+                >
+                  <SelectTrigger id="claim-refund-method">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {methodOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </>
+          )}
+
+          {sendingReplacement && (
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium">
+                {t('admin.pages.orders.detail.claims.replacement_items')}
+              </span>
+              {lines.map((line) => (
+                <div
+                  key={line.id}
+                  className="flex items-center justify-between gap-4 rounded-lg border p-3"
+                >
+                  <span className="text-sm truncate">
+                    {line.variant?.product_name ?? line.variant_id}
+                    <span className="text-muted-foreground"> ×{line.quantity}</span>
+                  </span>
+                  <Switch
+                    checked={replacing[line.id] ?? false}
+                    onCheckedChange={(checked) =>
+                      setReplacing({ ...replacing, [line.id]: checked })
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            {t('admin.actions.cancel')}
+          </Button>
+          <Button
+            disabled={!ready}
+            onClick={() =>
+              onSubmit({
+                resolution,
+                refundMethod,
+                amount: refunding ? amount : undefined,
+                replacementLineItemIds: chosenReplacements,
+              })
+            }
+          >
+            {t('admin.pages.orders.detail.claims.actions.resolve')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -34,7 +34,12 @@ import {
   useOrderClaims,
   useOrderExchanges,
 } from '../../hooks/use-post-sale'
-import { CreateClaimDialog, CreateExchangeDialog, fulfilledUnits } from './post-sale-create-dialogs'
+import {
+  CreateClaimDialog,
+  CreateExchangeDialog,
+  fulfilledUnits,
+  ResolveClaimDialog,
+} from './post-sale-create-dialogs'
 
 /** Exchanges on an order, with the actions available at each status. */
 export function OrderExchangesCard({ order }: { order: Order }) {
@@ -189,6 +194,7 @@ export function OrderClaimsCard({ order }: { order: Order }) {
   const { data } = useOrderClaims(orderId)
   const { create, approve, resolve, deny, cancel } = useClaimActions(orderId)
   const [creatingClaim, setCreatingClaim] = useState(false)
+  const [resolving, setResolving] = useState<Claim | null>(null)
 
   const claims = data?.data ?? []
   // A claim is about ordered items, so it never depends on anything shipping.
@@ -248,24 +254,10 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                       </DropdownMenuItem>
                     )}
                     {claim.status === 'approved' && (
-                      <>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            resolve.mutate({ claimId: claim.id, resolution: 'refund' })
-                          }
-                        >
-                          <BanknoteIcon className="size-4" />
-                          {t('admin.pages.orders.detail.claims.actions.resolve_refund')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            resolve.mutate({ claimId: claim.id, resolution: 'replacement' })
-                          }
-                        >
-                          <TruckIcon className="size-4" />
-                          {t('admin.pages.orders.detail.claims.actions.resolve_replacement')}
-                        </DropdownMenuItem>
-                      </>
+                      <DropdownMenuItem onClick={() => setResolving(claim)}>
+                        <BanknoteIcon className="size-4" />
+                        {t('admin.pages.orders.detail.claims.actions.resolve')}
+                      </DropdownMenuItem>
                     )}
                     {claim.status === 'open' && (
                       <DropdownMenuItem onClick={() => deny.mutate({ claimId: claim.id })}>
@@ -323,6 +315,23 @@ export function OrderClaimsCard({ order }: { order: Order }) {
           ))}
         </CardContent>
       </Card>
+
+      {resolving && (
+        <ResolveClaimDialog
+          claim={resolving}
+          onClose={() => setResolving(null)}
+          onSubmit={({ resolution, refundMethod, amount, replacementLineItemIds }) => {
+            resolve.mutate({
+              claimId: resolving.id,
+              resolution,
+              refundMethod,
+              amount,
+              replacementLineItemIds,
+            })
+            setResolving(null)
+          }}
+        />
+      )}
 
       {creatingClaim && (
         <CreateClaimDialog

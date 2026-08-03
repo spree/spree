@@ -1708,7 +1708,8 @@
               "resolve_refund": "Mit Erstattung lösen",
               "resolve_replacement": "Mit Ersatz lösen",
               "deny": "Ablehnen",
-              "create": "Neue Reklamation"
+              "create": "Neue Reklamation",
+              "resolve": "Lösen"
             },
             "types": {
               "damaged": "Beschädigt",
@@ -1719,7 +1720,15 @@
             "empty": "Keine Reklamationen für diese Bestellung.",
             "create_title": "Neue Reklamation",
             "claim_type": "Problem",
-            "refund_amount": "Erstattungsbetrag"
+            "refund_amount": "Erstattungsbetrag",
+            "resolve_title": "Reklamation lösen",
+            "resolution": "Lösungsweg",
+            "replacement_items": "Ersatz senden für",
+            "resolutions": {
+              "refund": "Erstattung",
+              "replacement": "Ersatz",
+              "refund_and_replacement": "Erstattung und Ersatz"
+            }
           },
           "dialogs": {
             "approve_title": "Bestellung genehmigen?",

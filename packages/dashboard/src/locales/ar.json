@@ -1708,7 +1708,8 @@
               "resolve_refund": "الحل بالاسترداد",
               "resolve_replacement": "الحل بالاستبدال",
               "deny": "رفض",
-              "create": "مطالبة جديدة"
+              "create": "مطالبة جديدة",
+              "resolve": "حل"
             },
             "types": {
               "damaged": "تالف",
@@ -1719,7 +1720,15 @@
             "empty": "لا توجد مطالبات لهذا الطلب.",
             "create_title": "مطالبة جديدة",
             "claim_type": "المشكلة",
-            "refund_amount": "مبلغ الاسترداد"
+            "refund_amount": "مبلغ الاسترداد",
+            "resolve_title": "حل المطالبة",
+            "resolution": "طريقة الحل",
+            "replacement_items": "إرسال بديل لـ",
+            "resolutions": {
+              "refund": "استرداد",
+              "replacement": "استبدال",
+              "refund_and_replacement": "استرداد واستبدال"
+            }
           },
           "dialogs": {
             "approve_title": "الموافقة على الطلب؟",

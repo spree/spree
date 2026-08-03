@@ -53,6 +53,7 @@ module Spree
                            resolution: params[:resolution],
                            refund_method: params[:refund_method] || 'store_credit',
                            amount: params[:amount],
+                           replacement_line_item_ids: replacement_line_item_ids,
                            resolver: try_spree_current_user)
             end
 
@@ -97,6 +98,16 @@ module Spree
             end
 
             private
+
+            # Which lines to replace, decided at resolution time. Absent means
+            # "leave whatever the claim was opened with".
+            def replacement_line_item_ids
+              return nil unless params.key?(:replacement_line_item_ids)
+
+              Array(params[:replacement_line_item_ids]).map do |id|
+                @resource.claim_line_items.find_by_prefix_id!(id).id
+              end
+            end
 
             def run_workflow(workflow, **arguments)
               result = workflow.call(claim: @resource, **arguments)

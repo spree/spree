@@ -220,6 +220,12 @@ export interface ClaimResolveParams {
   refund_method?: 'original_payment' | 'store_credit'
   /** Decimal amount; defaults to the claim total */
   amount?: string | number
+  /**
+   * Which claim lines to send a replacement for. Omit to keep whatever the
+   * claim was opened with — the merchant usually decides what to send when
+   * resolving, not when the customer first reported the problem.
+   */
+  replacement_line_item_ids?: string[]
 }
 
 export interface ReturnRefundParams {

@@ -1708,7 +1708,8 @@
               "resolve_refund": "以退款解决",
               "resolve_replacement": "以换货解决",
               "deny": "拒绝",
-              "create": "新建索赔"
+              "create": "新建索赔",
+              "resolve": "解决"
             },
             "types": {
               "damaged": "已损坏",
@@ -1719,7 +1720,15 @@
             "empty": "此订单暂无索赔。",
             "create_title": "新建索赔",
             "claim_type": "问题",
-            "refund_amount": "退款金额"
+            "refund_amount": "退款金额",
+            "resolve_title": "解决索赔",
+            "resolution": "解决方式",
+            "replacement_items": "为以下商品发送替换",
+            "resolutions": {
+              "refund": "退款",
+              "replacement": "换货",
+              "refund_and_replacement": "退款并换货"
+            }
           },
           "dialogs": {
             "approve_title": "批准订单？",

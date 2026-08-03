@@ -1708,7 +1708,8 @@
               "resolve_refund": "Résoudre par remboursement",
               "resolve_replacement": "Résoudre par remplacement",
               "deny": "Refuser",
-              "create": "Nouvelle réclamation"
+              "create": "Nouvelle réclamation",
+              "resolve": "Résoudre"
             },
             "types": {
               "damaged": "Endommagé",
@@ -1719,7 +1720,15 @@
             "empty": "Aucune réclamation pour cette commande.",
             "create_title": "Nouvelle réclamation",
             "claim_type": "Problème",
-            "refund_amount": "Montant du remboursement"
+            "refund_amount": "Montant du remboursement",
+            "resolve_title": "Résoudre la réclamation",
+            "resolution": "Mode de résolution",
+            "replacement_items": "Envoyer un remplacement pour",
+            "resolutions": {
+              "refund": "Remboursement",
+              "replacement": "Remplacement",
+              "refund_and_replacement": "Remboursement et remplacement"
+            }
           },
           "dialogs": {
             "approve_title": "Approuver la commande ?",

@@ -80,6 +80,25 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ClaimsController, type: :controlle
       expect(response).to have_http_status(:unprocessable_content)
     end
 
+    # The merchant decides what to send when resolving, so a claim opened
+    # without replacement flags can still be resolved with one.
+    it 'sends a replacement for the lines chosen at resolve time' do
+      line = claim.claim_line_items.first
+      line.update!(send_replacement: false)
+      line.variant.stock_items.first&.set_count_on_hand(10)
+
+      patch :resolve, params: {
+        order_id: order.prefixed_id,
+        id: claim.prefixed_id,
+        resolution: 'replacement',
+        replacement_line_item_ids: [line.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['status']).to eq('resolved')
+      expect(line.reload.send_replacement).to be(true)
+    end
+
     it 'rejects an unknown resolution' do
       patch :resolve, params: {
         order_id: order.prefixed_id,
