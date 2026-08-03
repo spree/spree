@@ -39,12 +39,9 @@ module Spree
         cart_merge_workflow: 'Spree::Carts::Merge',
 
         # checkout
-        checkout_next_service: 'Spree::Checkout::Next',
         checkout_advance_service: 'Spree::Checkout::Advance',
-        checkout_complete_service: 'Spree::Checkout::Complete',
         checkout_add_store_credit_service: 'Spree::Checkout::AddStoreCredit',
         checkout_remove_store_credit_service: 'Spree::Checkout::RemoveStoreCredit',
-        checkout_select_shipping_method_service: 'Spree::Checkout::SelectShippingMethod',
 
         # gift cards
         gift_card_apply_service: 'Spree::GiftCards::Apply',
@@ -98,10 +95,6 @@ module Spree
         # coupons
         # TODO: we should split this service into 2 separate - Add and Remove
         coupon_handler: 'Spree::PromotionHandler::Coupon',
-
-        # account
-        account_create_service: 'Spree::Account::Create',
-        account_update_service: 'Spree::Account::Update',
 
         # addresses
         address_create_service: 'Spree::Addresses::Create',
