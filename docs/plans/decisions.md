@@ -1,3 +1,60 @@
+## 2026-08-03: Return eligibility ships as a hook, not a policy engine — enforced in the workflow, scoped per market
+
+A survey of Shopify, Medusa, Saleor and Vendure settled how far 6.0 goes on
+return policy. **Core ships the seam and no policy**: a `validate` hook on
+`Returns::Create`, `Exchanges::Create` and `Claims::Create`, with no return
+window, restocking fee or final-sale flag anywhere in core.
+
+**What the survey found.** Medusa, Saleor and Vendure ship *no* return
+eligibility policy at all — not a different approach, genuinely nothing. Only
+Shopify has an engine (window with a delivery-date anchor, percentage
+restocking fee, final-sale product/collection lists, per-market rule sets), and
+it exposes **no API for any of it**; configuration is admin-UI only.
+
+The seam comparison mattered more than the feature list. Medusa built a hook
+system, exposed `setPricingContext` on returns, and deliberately did not expose
+a validation hook — policy has to live in route middleware or a replaced
+workflow. Saleor built the filter-veto webhook shape for shipping and never
+generalized it to returns; an external app decides eligibility itself and calls
+the staff mutation, which never asks permission. Vendure's `onTransitionStart`
+returning `false | string` is the only comparable veto and hangs off a state
+machine rather than a return flow; its RMA issue is open at priority P4.
+
+So `validate` + `reject!(message)` is already the strongest extension point in
+the field. A `ReturnPolicy` model with STI rules would be the most capable
+thing on the market by a wide margin and entirely speculative — no competitor
+has demonstrated the demand, and the hook carries one later without changing
+its contract. Deferred, not rejected.
+
+**Enforce for customers, advise for staff.** The one lesson worth copying from
+Shopify: eligibility is enforced on the customer surface and advisory on the
+staff surface. A Shopify staff member can create a return on a final-sale item
+outside the window; the customer API refuses. Their `returnableFulfillments`
+deliberately ignores return rules because it mirrors the admin, "where any
+authorized staff can create returns." A handler that rejects unconditionally
+would be stricter than Shopify — a supervisor overriding policy for a good
+customer is ordinary retail.
+
+**This lives in the workflow, not the model.** Eligibility is a decision made
+during a flow with the caller's context in hand — who is asking, and whether
+they may override — not a property of a return record. `Returns::Create` takes
+`created_by` (nil for customer self-service, set for staff) and the handler
+decides what that means.
+
+**Per market, not per store.** Return rules are legal before they are
+merchandising: the EU right of withdrawal is 14 days minimum, US practice is
+the merchant's choice. `Order belongs_to :market`, and
+`5.4-6.0-eu-legal-compliance.md` already puts `withdrawal_period_days` and the
+other legal settings on Market, so a handler reads its window from
+`order.market`. Shopify reached the same conclusion — its per-market rule sets
+exist specifically for EU compliance.
+
+Also noted from Shopify but **not adopted in 6.0**: rules are snapshotted onto
+the order at placement, so changing a window never retroactively invalidates a
+pending return, and non-returnable reasons are tracked per *quantity* rather
+than per line item. Both are right, and both belong with a policy engine rather
+than ahead of one.
+
 ## 2026-08-02: Workflows replace state machines for new models; hooks ship on the 6.0 boundary; OrderChange substrate targets 6.1
 
 A review of our workflow and extension surface against the wider ecosystem
