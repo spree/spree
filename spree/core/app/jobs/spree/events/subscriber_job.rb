@@ -10,7 +10,7 @@ module Spree
     # @example Direct usage (typically called by the adapter)
     #   Spree::Events::SubscriberJob.perform_later(
     #     'MySubscriber',
-    #     { name: 'order.completed', payload: {...}, ... }
+    #     { name: 'order.placed', payload: {...}, ... }
     #   )
     #
     class SubscriberJob < Spree::BaseJob

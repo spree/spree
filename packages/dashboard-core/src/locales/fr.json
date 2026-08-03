@@ -352,6 +352,9 @@
       },
       "permalink": {
         "label": "Lien permanent"
+      },
+      "number": {
+        "label": "Numéro"
       }
     },
     "components": {

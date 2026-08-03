@@ -2,7 +2,7 @@ module Spree
   module Stock
     class AvailabilityValidator < ActiveModel::Validator
       def validate(line_item)
-        unit_count = line_item.inventory_units.reject(&:pending?).sum(&:quantity)
+        unit_count = line_item.fulfillment_items.reject(&:pending?).sum(&:quantity)
         return if unit_count >= line_item.quantity
 
         quantity = line_item.quantity - unit_count

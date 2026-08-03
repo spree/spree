@@ -2,11 +2,11 @@
 module Spree
   class Promotion
     module Rules
-      class Currency < PromotionRule
+      class Currency < Spree::PromotionRule
         preference :currency, :string
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, options = {})

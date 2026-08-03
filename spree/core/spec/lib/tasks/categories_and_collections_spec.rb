@@ -22,7 +22,7 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
                                sort_order: 'price asc', rules_match_policy: 'all')
     end
     let!(:rule) { create(:tag_taxon_rule, taxon: category, value: 'sale', match_policy: 'is_equal_to') }
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product, store: store) }
     let!(:membership) { Spree::ProductCategory.create!(category: category, product: product, position: 1) }
 
     it 'creates a Collection mirroring the category and deletes the category' do

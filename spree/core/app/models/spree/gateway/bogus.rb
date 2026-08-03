@@ -94,7 +94,7 @@ module Spree
 
     def create_payment_session(order:, amount: nil, external_data: {})
       payment_session_class.create(
-        order: order,
+        owner: order,
         payment_method: self,
         amount: amount.presence || order.total_minus_store_credits,
         currency: order.currency,

@@ -183,7 +183,7 @@ module Spree
     end
 
     # Imports are deletable only while no processing jobs can be in flight —
-    # CreateRowsJob/ProcessGroupJob re-load the record mid-run.
+    # ProcessJob/ProcessGroupJob re-load the record mid-run.
     # @return [Boolean]
     def can_be_deleted?
       %w[pending mapping completed failed].include?(status)
@@ -345,19 +345,28 @@ module Spree
     # Creates rows asynchronously
     # @return [void]
     def create_rows_async
-      # The 2s delay lets the attachment settle before the job reads it; running
-      # inline there is nothing to wait for.
-      return Spree::Imports::CreateRowsJob.perform_now(id) if preferred_inline
+      if preferred_inline
+        # The transition callback runs inside the state machine's
+        # transaction and Continuations forbid checkpoints there — the
+        # inline run starts at commit, still before the transition call
+        # returns to the caller.
+        ActiveRecord.after_all_transactions_commit { Spree::Imports::ProcessJob.perform_now(id) }
+        return
+      end
 
-      Spree::Imports::CreateRowsJob.set(wait: 2.seconds).perform_later(id)
+      # The 2s delay lets the attachment settle before the job reads it.
+      Spree::Imports::ProcessJob.set(wait: 2.seconds).perform_later(id)
     end
 
     # Processes rows asynchronously
     # @return [void]
     def process_rows_async
-      return Spree::Imports::ProcessRowsJob.perform_now(id) if preferred_inline
+      if preferred_inline
+        ActiveRecord.after_all_transactions_commit { Spree::Imports::ProcessJob.perform_now(id, skip_row_creation: true) }
+        return
+      end
 
-      Spree::Imports::ProcessRowsJob.perform_later(id)
+      Spree::Imports::ProcessJob.perform_later(id, skip_row_creation: true)
     end
 
     # Returns the store for the import

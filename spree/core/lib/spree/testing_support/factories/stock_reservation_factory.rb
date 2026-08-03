@@ -12,12 +12,15 @@ FactoryBot.define do
     # same variant. Callers can override stock_item:/line_item:/order: to wire
     # up a specific scenario.
     after(:build) do |reservation, evaluator|
-      reservation.order ||= evaluator.order || create(:order_with_line_items, line_items_count: 1)
+      if reservation.owner.nil?
+        reservation.order = evaluator.order || create(:order_with_line_items, line_items_count: 1)
+      end
+      owner = reservation.owner
 
       if reservation.line_item.nil?
-        reservation.line_item = reservation.order.line_items.first ||
-                                create(:line_item, order: reservation.order)
-        reservation.order.line_items.reload
+        reservation.line_item = owner.line_items.first ||
+                                create(:line_item, order: owner.is_a?(Spree::Order) ? owner : nil, cart: owner.is_a?(Spree::Cart) ? owner : nil)
+        owner.line_items.reload
       end
 
       reservation.stock_item ||= reservation.line_item.variant.stock_items.first ||

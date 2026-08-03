@@ -6,7 +6,6 @@ module Spree
 
     include Spree::Metafields
     include Spree::Metadata
-    include Spree::StockItem::Webhooks
 
     publishes_lifecycle_events
 

@@ -5,7 +5,7 @@ en:
       messages:
         blank: can't be blank
       models:
-        spree/fulfilment_changer:
+        spree/fulfillment_changer:
           attributes:
             current_shipment:
               can_not_have_backordered_inventory_units: has backordered inventory units
@@ -149,6 +149,8 @@ en:
         on_hand: On Hand
         shipping_category: Shipping Category
         tax_category: Tax Category
+      spree/product_type:
+        name: Name
       spree/promotion:
         advertise: Advertise
         code: Code
@@ -167,8 +169,6 @@ en:
       spree/property:
         name: Name
         presentation: Presentation
-      spree/prototype:
-        name: Name
       spree/return_authorization:
         amount: Amount
       spree/role:
@@ -247,6 +247,7 @@ en:
     errors:
       messages:
         blank: can't be blank
+        unregistered_fulfillment_types: 'contains unregistered fulfillment types: %{types}'
       models:
         spree/allowed_origin:
           attributes:
@@ -274,6 +275,10 @@ en:
             base:
               card_expired: Card has expired
               expiry_invalid: Card expiration is invalid
+        spree/exchange_line_item:
+          attributes:
+            new_variant:
+              must_differ_from_original: must be different from the item being returned
         spree/gift_card:
           attributes:
             base:
@@ -473,6 +478,9 @@ en:
       spree/product:
         one: Product
         other: Products
+      spree/product_type:
+        one: Product Type
+        other: Product Types
       spree/promotion:
         one: Promotion
         other: Promotions
@@ -482,9 +490,6 @@ en:
       spree/property:
         one: Property
         other: Properties
-      spree/prototype:
-        one: Prototype
-        other: Prototypes
       spree/refund_reason:
         one: Refund Reason
         other: Refund Reasons
@@ -758,11 +763,11 @@ en:
     charged: Charged
     checkout: Checkout
     checkout_requirements:
+      delivery_method_required: Select a delivery method for all fulfillments
       email_required: Email address is required
       line_items_required: Add at least one item to your cart
       payment_required: Add a payment method
       ship_address_required: Shipping address is required
-      shipping_method_required: Select a shipping method for all shipments
     choose_currency: Choose Currency
     city: City
     clear: Clear
@@ -862,6 +867,13 @@ en:
     delete: Delete
     deleted: Deleted
     delivery: Delivery
+    delivery_method_rule_types:
+      item_total_rule:
+        description: Limits the delivery method to carts within an item total range
+        name: Item total
+      weight_rule:
+        description: Limits the delivery method to packages within a weight range
+        name: Weight
     depth: Depth
     description: Description
     destination: Destination
@@ -919,11 +931,26 @@ en:
       messages:
         cannot_delete_channel_with_active_api_keys: Channel cannot be deleted while active API keys are bound to it. Revoke those keys first.
         cannot_delete_default_channel: Default channel cannot be deleted. Promote another channel to default first.
+        cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
+        coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
+        delivery_zone_postal_definition_required: postal code member requires a prefix or a from/to range
+        delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
+        delivery_zone_range_inverted: must be greater than or equal to postal_code_from
+        delivery_zone_range_not_supported: postal code ranges are not supported for this country — use prefixes
+        discount_has_no_effect: discount would have no effect on this order
+        discount_value_must_be_positive: discount value must be a positive number
+        discount_value_type_invalid: value_type must be flat or percent
+        exactly_one_adjustable: must be attached to exactly one adjustable
+        exactly_one_of_cart_or_order: must belong to exactly one of cart or order
+        invalid_delivery_method_rule: is not a registered delivery method rule
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_storefront_access: is not a valid storefront access level
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
+        no_pickup_point_provider: this delivery method has no pickup point provider configured
+        pickup_point_not_found: pickup point could not be found with this provider
+        promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
       services:
@@ -967,6 +994,17 @@ en:
     free_shipping: Free Shipping
     from: From
     front_end: Front End
+    fulfillment_mailer:
+      fulfilled_email:
+        dear_customer: Dear %{name},
+        delivery_method: 'Delivery method: %{delivery_method}'
+        fulfillment_summary: Fulfillment summary for order
+        instructions: Your order %{number} has been fulfilled
+        store_team: "%{store_name} Team"
+        subject: Fulfillment Notification
+        thanks: Thank you for your business.
+        track_information: 'Tracking Information: %{tracking}'
+        track_link: 'Tracking Link: %{url}'
     fulfillments:
       errors:
         insufficient_quantity: Requested quantity (%{requested}) for item %{item} exceeds its unfulfilled quantity (%{available})
@@ -1322,8 +1360,6 @@ en:
     propagate_all_variants: Propagate all variants
     properties: Properties
     property: Property
-    prototype: Prototype
-    prototypes: Prototypes
     provider: Provider
     published_at: Published at
     qty: Qty
@@ -1388,6 +1424,8 @@ en:
     return_authorization: Return Authorization
     return_authorization_canceled: Return authorization canceled
     return_authorizations: Return Authorizations
+    return_errors:
+      outside_window: This order is outside the %{days}-day return window
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
     return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed
     return_item_order_not_completed: Return item's order must be completed
@@ -1418,10 +1456,9 @@ en:
     search_by: 'Search by:'
     security: Security
     seed:
-      shipping:
-        categories:
-          default: Default
-          digital: Digital
+      product_types:
+        default: Default
+        digital: Digital
     select: Select
     select_stock: Select stock
     selected_quantity_not_available: selected of %{item} is not available.

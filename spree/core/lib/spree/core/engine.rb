@@ -10,7 +10,11 @@ module Spree
                                :dependencies,
                                :payment_methods,
                                :adjusters,
+                               :tax_provider,
+                               :fulfillment_providers,
+                               :fulfillment_types,
                                :stock_splitters,
+                               :delivery_method_rules,
                                :order_routing,
                                :promotions,
                                :pricing,
@@ -109,6 +113,12 @@ module Spree
         app.config.spree.order_routing.rules = []
       end
 
+      # Seeded early for the same reason as order routing: initializer files
+      # append custom rule kinds. Core defaults concatenate in after_initialize.
+      initializer 'spree.register.delivery_method_rules', before: :load_config_initializers do |app|
+        app.config.spree.delivery_method_rules = []
+      end
+
       initializer 'spree.register.metafields' do |app|
         app.config.spree.metafields = MetafieldsEnvironment.new
         app.config.spree.metafields.types = []
@@ -145,14 +155,9 @@ module Spree
           Spree::Calculator::Shipping::DigitalDelivery,
         ]
 
-        Rails.application.config.spree.calculators.tax_rates = [
-          Spree::Calculator::DefaultTax
-        ]
-
         Rails.application.config.spree.stock_splitters = [
-          Spree::Stock::Splitter::ShippingCategory,
-          Spree::Stock::Splitter::Backordered,
-          Spree::Stock::Splitter::Digital
+          Spree::Stock::Splitter::FulfillmentType,
+          Spree::Stock::Splitter::Backordered
         ]
 
         Rails.application.config.spree.payment_methods = [
@@ -163,9 +168,22 @@ module Spree
         ]
 
         Rails.application.config.spree.adjusters = [
-          Spree::Adjustable::Adjuster::Promotion,
-          Spree::Adjustable::Adjuster::Tax
+          Spree::Adjusters::Promotion
         ]
+
+        # The sanctioned TaxLine writer (see docs/plans/6.0-tax-provider.md).
+        Rails.application.config.spree.tax_provider = Spree::TaxProvider::Internal
+
+        Rails.application.config.spree.fulfillment_providers = [
+          Spree::FulfillmentProvider::Manual,
+          Spree::FulfillmentProvider::Digital,
+          Spree::FulfillmentProvider::Pickup,
+          Spree::FulfillmentProvider::PickupPoint
+        ]
+
+        # Open strings, no inclusion validation — extensions append their own
+        # (e.g. 'same_day_courier').
+        Rails.application.config.spree.fulfillment_types = %w[shipping pickup pickup_point digital local_delivery]
 
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
@@ -182,6 +200,12 @@ module Spree
           Spree::OrderRouting::Rules::PreferredLocation,
           Spree::OrderRouting::Rules::MinimizeSplits,
           Spree::OrderRouting::Rules::DefaultLocation
+        ]
+
+        # Delivery-method eligibility rule kinds (docs/plans/6.0-delivery-method-rules.md).
+        Rails.application.config.spree.delivery_method_rules.concat [
+          Spree::DeliveryMethodRules::ItemTotalRule,
+          Spree::DeliveryMethodRules::WeightRule
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
@@ -286,6 +310,7 @@ module Spree
           Spree::OptionType,
           Spree::OptionValue,
           Spree::Product,
+          Spree::ProductType,
           Spree::Collection,
           Spree::Category,
           Spree::Taxonomy,
@@ -331,10 +356,11 @@ module Spree
           Spree::PaymentMethod,
           Spree::PaymentSource,
           Spree::Product,
+          Spree::ProductType,
           Spree::Promotion,
           Spree::Refund,
-          Spree::Shipment,
-          Spree::ShippingMethod,
+          Spree::Fulfillment,
+          Spree::DeliveryMethod,
           Spree::StockItem,
           Spree::StockTransfer,
           Spree::Store,
@@ -384,6 +410,7 @@ module Spree
         # Note: Spree::EventLogSubscriber is attached in to_prepare (below) so it
         # survives Zeitwerk code reloads in development.
         Spree.subscribers.concat [
+          Spree::OrderPlacedSubscriber,
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
@@ -445,6 +472,14 @@ module Spree
         app.config.after_initialize do
           Spree::Events.activate!
         end
+      end
+
+      # The one eligibility rule core ships: a per-market return window,
+      # bypassed by staff. Registered after application initializers so a
+      # store can unregister it in its own initializer.
+      initializer 'spree.returns.register_eligibility_validator', after: :load_config_initializers do
+        Spree.hooks.register('returns.create.validate', 'Spree::Returns::EligibilityValidator')
+        Spree.hooks.register('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
       end
 
       config.to_prepare do

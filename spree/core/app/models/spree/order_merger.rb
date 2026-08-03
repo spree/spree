@@ -1,9 +1,12 @@
 module Spree
+  # @deprecated Use {Spree::Carts::Merge} (guest cart adoption on sign-in);
+  #   removed in 6.1.
   class OrderMerger
     attr_accessor :order
     delegate :updater, to: :order
 
     def initialize(order)
+      Spree::Deprecation.warn('Spree::OrderMerger is deprecated and will be removed in Spree 6.1. Use Spree::Carts::Merge instead.')
       @order = order
     end
 
@@ -58,7 +61,9 @@ module Spree
         handle_error(current_line_item) unless current_line_item.save
       else
         order.line_items << other_order_line_item
-        other_order_line_item.adjustments.update_all(order_id: order.id)
+        other_order_line_item.discounts.update_all(order_id: order.id)
+        other_order_line_item.tax_lines.update_all(order_id: order.id)
+        other_order_line_item.fees.update_all(order_id: order.id)
         handle_error(other_order_line_item) unless other_order_line_item.save
       end
     end
@@ -69,7 +74,7 @@ module Spree
     end
 
     def persist_merge
-      updater.update
+      Spree::Orders::RecalculateTotals.call(order: order)
     end
 
     def handle_gift_card(other_order)

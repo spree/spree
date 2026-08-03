@@ -20,7 +20,7 @@ module Spree
               authorize!(:create, Spree::Shipment)
 
               with_order_lock do
-                result = Spree.fulfillment_create_service.call(
+                result = Spree.fulfillment_create_workflow.call(
                   order: @order,
                   stock_location: stock_location_for_create,
                   items: items_for_create,
@@ -42,9 +42,9 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id
             def update
               with_order_lock do
-                result = Spree.shipment_update_service.call(
-                  shipment: @resource,
-                  shipment_attributes: permitted_params.to_h
+                result = Spree.fulfillment_update_service.call(
+                  fulfillment: @resource,
+                  fulfillment_attributes: permitted_params.to_h
                 )
 
                 if result.success?
@@ -58,7 +58,7 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/fulfill
             def fulfill
               with_order_lock do
-                @resource.ship!
+                @resource.fulfill!
                 render json: serialize_resource(@resource.reload)
               rescue StateMachines::InvalidTransition => e
                 render_service_error(e.message)
@@ -100,7 +100,7 @@ module Spree
                 fulfilment_changer = @resource.transfer_to_location(variant, quantity, stock_location)
 
                 if fulfilment_changer.run!
-                  fulfillments = @order.reload.shipments
+                  fulfillments = @order.reload.fulfillments
                   render json: {
                     data: fulfillments.map { |s| serialize_resource(s) }
                   }

@@ -62,5 +62,5 @@ services:
     command:
       [
         "sh", "-c",
-        "(bundle check || bundle install) && rm -f public/assets/.manifest.json && bin/rails spree:install:migrations db:prepare && bin/rails spree:admin:tailwindcss:build && (bin/rails spree:admin:tailwindcss:watch &) && exec bin/rails server -b 0.0.0.0 -p 3000"
+        "(bundle check || bundle install) && rm -f public/assets/.manifest.json && bin/rails spree:install:migrations db:prepare && exec bin/rails server -b 0.0.0.0 -p 3000"
       ]

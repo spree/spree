@@ -53,7 +53,7 @@ Spree uses an event-driven architecture for decoupling components:
 
 ```ruby
 # Publishing events
-order.publish_event('order.completed')
+order.publish_event('order.placed')
 
 # Subscribing to events
 module Spree

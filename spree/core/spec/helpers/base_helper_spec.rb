@@ -22,14 +22,15 @@ describe Spree::BaseHelper, type: :helper do
         create(:market, store: current_store, countries: [country], currency: 'USD', default: true)
       end
 
-      it 'returns only the countries from markets' do
-        expect(available_countries).to eq([country])
+      it 'returns the countries from all markets including the bootstrap market' do
+        us = Spree::Country.find_by(iso: 'US')
+        expect(available_countries).to contain_exactly(country, us)
       end
     end
 
-    context 'without markets' do
-      it 'returns complete list of countries' do
-        expect(available_countries).to contain_exactly(*Spree::Country.all)
+    context 'without extra markets' do
+      it 'returns the bootstrap market country' do
+        expect(available_countries.map(&:iso)).to eq(['US'])
       end
     end
   end

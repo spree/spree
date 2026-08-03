@@ -21,7 +21,7 @@ FactoryBot.define do
       before(:create) do |customer_return, evaluator|
         shipped_order = create(:shipped_order, line_items_count: evaluator.line_items_count, store: customer_return.store)
 
-        shipped_order.inventory_units.take(evaluator.return_items_count).each do |inventory_unit|
+        shipped_order.fulfillment_items.take(evaluator.return_items_count).each do |inventory_unit|
           customer_return.return_items << build(:return_item, inventory_unit: inventory_unit)
         end
       end

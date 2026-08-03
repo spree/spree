@@ -177,7 +177,7 @@ module Spree
             params.permit(
               :name, :description, :slug, :status,
               :meta_title, :meta_description, :meta_keywords,
-              :tax_category_id,
+              :tax_category_id, :product_type_id,
               :promotionable, :digital,
               tags: [],
               category_ids: [],

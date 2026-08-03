@@ -29,7 +29,7 @@ module Spree
           end
 
           order.update!(gift_card: nil)
-          order.update_with_updater!
+          order.recalculate_totals!
         end
 
         success(true)

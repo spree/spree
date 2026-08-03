@@ -11,6 +11,7 @@ module Spree
     # (ship-to-store). See docs/plans/6.0-fulfillment-and-delivery.md.
     PICKUP_STOCK_POLICIES = %w[local any].freeze
 
+    include Spree::SingleStoreResource
     include Spree::UniqueName
     if defined?(Spree::Security::StockLocations)
       include Spree::Security::StockLocations
@@ -21,7 +22,8 @@ module Spree
 
     acts_as_paranoid
 
-    has_many :shipments
+    has_many :fulfillments, class_name: 'Spree::Fulfillment'
+    has_many :shipments, class_name: 'Spree::Fulfillment', foreign_key: :stock_location_id, deprecated: true
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
     has_many :variants, through: :stock_items
     has_many :stock_movements, through: :stock_items

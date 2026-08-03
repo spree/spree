@@ -10,7 +10,11 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
   let!(:new_york) { Spree::State.find_by(abbr: 'NY', country: usa) || create(:state, country: usa, name: 'New York', abbr: 'NY') }
   let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany', states_required: false) }
 
-  let!(:na_market) { create(:market, :default, name: 'North America', store: store, countries: [usa], currency: 'USD', default_locale: 'en', supported_locales: 'en,es') }
+  let!(:na_market) do
+    store.default_market.tap do |market|
+      market.update!(name: 'North America', currency: 'USD', default_locale: 'en', supported_locales: 'en,es')
+    end
+  end
   let!(:eu_market) { create(:market, name: 'Europe', store: store, countries: [germany], currency: 'EUR', default_locale: 'de', supported_locales: 'de,en') }
 
   path '/api/v3/store/countries' do

@@ -53,8 +53,21 @@ Spree::Core::Engine.add_routes do
           resource :store_credits, only: [:create, :destroy], controller: 'carts/store_credits'
         end
 
+        # Delivery methods (pickup discovery)
+        resources :delivery_methods, only: [:index, :show] do
+          member do
+            get :pickup_locations
+            get :pickup_points
+          end
+        end
+
         # Orders (single order lookup, guest-accessible via order token)
-        resources :orders, only: [:show]
+        resources :orders, only: [:show] do
+          # Customer self-service returns — opening and viewing only; the
+          # merchant approves, receives and refunds through the Admin API.
+          resources :returns, only: [:index, :show, :create], controller: 'orders/returns'
+          resources :claims, only: [:index, :show, :create], controller: 'orders/claims'
+        end
 
         # Policies (return policy, privacy policy, terms of service, etc.)
         resources :policies, only: [:index, :show]
@@ -219,6 +232,7 @@ Spree::Core::Engine.add_routes do
         end
 
         # Products
+        resources :product_types
         resources :products, concerns: [:custom_fieldable, :translatable] do
           member do
             post :clone
@@ -287,6 +301,20 @@ Spree::Core::Engine.add_routes do
         resources :stock_transfers, only: [:index, :show, :create, :destroy]
 
         # Payment Methods
+        resources :delivery_methods do
+          collection do
+            get :calculators
+            get :fulfillment_providers
+          end
+          resources :rules, controller: 'delivery_methods/rules', only: [:index, :show, :create, :update, :destroy]
+        end
+        resources :delivery_method_rules, only: [] do
+          collection do
+            get :types
+          end
+        end
+        resources :delivery_zones
+
         resources :payment_methods do
           collection do
             get :types
@@ -357,6 +385,12 @@ Spree::Core::Engine.add_routes do
         resources :gift_cards
         resources :gift_card_batches, only: [:index, :show, :create]
 
+        # Post-sale, across all orders. Read-only — creating any of these
+        # needs an order, so writes live under /orders/:order_id/...
+        resources :returns, only: [:index, :show]
+        resources :exchanges, only: [:index, :show]
+        resources :claims, only: [:index, :show]
+
         # Channels (per-store distribution surfaces)
         resources :channels do
           member do
@@ -397,6 +431,30 @@ Spree::Core::Engine.add_routes do
               patch :split
             end
           end
+          resources :returns, controller: 'orders/returns', only: [:index, :show, :create, :update] do
+            member do
+              patch :approve
+              patch :receive
+              patch :refund
+              patch :cancel
+            end
+          end
+          resources :exchanges, controller: 'orders/exchanges', only: [:index, :show, :create, :update] do
+            member do
+              patch :approve
+              patch :receive
+              patch :fulfill
+              patch :cancel
+            end
+          end
+          resources :claims, controller: 'orders/claims', only: [:index, :show, :create, :update] do
+            member do
+              patch :approve
+              patch :resolve
+              patch :deny
+              patch :cancel
+            end
+          end
           resources :payments, controller: 'orders/payments', only: [:index, :show, :create] do
             member do
               patch :capture
@@ -404,7 +462,10 @@ Spree::Core::Engine.add_routes do
             end
           end
           resources :refunds, controller: 'orders/refunds', only: [:index, :create]
-          resources :adjustments, controller: 'orders/adjustments', only: [:index, :show]
+          resources :tax_lines, controller: 'orders/tax_lines', only: [:index, :show]
+          resources :discounts, controller: 'orders/discounts', only: [:index, :show, :create, :update, :destroy]
+          resources :discount_codes, controller: 'orders/discount_codes', only: [:create, :destroy]
+          resources :fees, controller: 'orders/fees', only: [:index, :show, :create, :update, :destroy]
           resources :gift_cards, controller: 'orders/gift_cards', only: [:create, :destroy]
           resource :store_credits, controller: 'orders/store_credits', only: [:create, :destroy]
         end

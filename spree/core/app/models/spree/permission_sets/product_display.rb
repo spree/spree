@@ -13,6 +13,7 @@ module Spree
         can [:read, :admin, :index], Spree::Product
         can [:read, :admin], Spree::Variant
         can [:read, :admin], Spree::OptionType
+        can [:read, :admin], Spree::ProductType
         can [:read, :admin], Spree::OptionValue
         can [:read, :admin], Spree::Metafield
         can [:read, :admin], Spree::Collection

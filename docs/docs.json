@@ -328,6 +328,7 @@
                   "developer/customization/authentication",
                   "developer/customization/checkout",
                   "developer/customization/permissions",
+                  "developer/customization/workflows",
                   "developer/customization/dependencies",
                   "developer/customization/decorators",
                   "developer/customization/model-preferences",

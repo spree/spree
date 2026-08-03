@@ -69,7 +69,12 @@ module Spree
           end
 
           # Override inherited associations to use admin serializers
-          many :discounts, resource: proc { Spree.api.admin_discount_serializer }, if: proc { expand?('discounts') }
+          # Renamed from the store's `discounts` key: on the admin surface that
+          # word means the typed money rows (/orders/:id/discounts), so the
+          # promotion summaries carry their real name here. The inherited
+          # store-keyed declaration is dropped, not shadowed.
+          _attributes.delete(:discounts)
+          many :order_promotions, key: :applied_promotions, resource: proc { Spree.api.admin_applied_promotion_serializer }, if: proc { expand?('applied_promotions') }
           many :line_items, key: :items, resource: proc { Spree.api.admin_line_item_serializer }, if: proc { expand?('items') }
           many :fulfillments, resource: proc { Spree.api.admin_fulfillment_serializer }, if: proc { expand?('fulfillments') }
           many :payments, resource: proc { Spree.api.admin_payment_serializer }, if: proc { expand?('payments') }
@@ -77,6 +82,7 @@ module Spree
           one :billing_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('billing_address') }
           one :shipping_address, resource: proc { Spree.api.admin_address_serializer }, if: proc { expand?('shipping_address') }
           one :gift_card, resource: proc { Spree.api.admin_gift_card_serializer }
+          one :cart, resource: proc { Spree.api.admin_cart_serializer }, if: proc { expand?('cart') }
           one :market, resource: proc { Spree.api.admin_market_serializer }
           one :channel, resource: proc { Spree.api.admin_channel_serializer }, if: proc { expand?('channel') }
           one :preferred_stock_location,
@@ -102,9 +108,6 @@ module Spree
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('created_by') }
 
-          many :adjustments,
-               resource: proc { Spree.api.admin_adjustment_serializer },
-               if: proc { expand?('adjustments') }
 
           many :return_authorizations,
                resource: proc { Spree.api.admin_return_authorization_serializer },

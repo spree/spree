@@ -8,7 +8,7 @@ function sign(payload: string, secret: string, timestamp: number): string {
 
 describe('verifyWebhookSignature', () => {
   const secret = 'test_secret_key_abc123'
-  const payload = '{"id":"evt_123","name":"order.completed","data":{}}'
+  const payload = '{"id":"evt_123","name":"order.placed","data":{}}'
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -44,7 +44,7 @@ describe('verifyWebhookSignature', () => {
   it('rejects a tampered payload', () => {
     const timestamp = Math.floor(Date.now() / 1000)
     const signature = sign(payload, secret, timestamp)
-    const tampered = payload.replace('order.completed', 'order.canceled')
+    const tampered = payload.replace('order.placed', 'order.canceled')
 
     expect(verifyWebhookSignature(tampered, signature, String(timestamp), secret)).toBe(false)
   })
@@ -97,7 +97,7 @@ describe('WebhookEvent type', () => {
 
     const event: WebhookEvent<OrderData> = {
       id: 'evt_123',
-      name: 'order.completed',
+      name: 'order.placed',
       created_at: '2026-01-15T12:00:00Z',
       data: { number: 'R123456', email: 'test@example.com' },
       metadata: { spree_version: '5.4.0' },
@@ -105,7 +105,7 @@ describe('WebhookEvent type', () => {
 
     expect(event.data.number).toBe('R123456')
     expect(event.data.email).toBe('test@example.com')
-    expect(event.name).toBe('order.completed')
+    expect(event.name).toBe('order.placed')
   })
 
   it('defaults data to unknown', () => {

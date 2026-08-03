@@ -4,10 +4,12 @@ module Spree
       # Store API Order Serializer
       # Post-purchase order data (completed orders)
       class OrderSerializer < BaseSerializer
-        typelize number: :string, email: :string,
+        typelize cart_id: [:string, nullable: true],
+                 number: :string, email: :string,
                  customer_note: [:string, nullable: true],
                  market_id: [:string, nullable: true], channel_id: [:string, nullable: true],
                  currency: :string, locale: [:string, nullable: true], total_quantity: :number,
+                 coupon_code: [:string, nullable: true],
                  fulfillment_status: [:string, nullable: true], payment_status: [:string, nullable: true],
                  item_total: [:string, nullable: true], display_item_total: [:string, nullable: true],
                  delivery_total: [:string, nullable: true], display_delivery_total: [:string, nullable: true],
@@ -29,12 +31,20 @@ module Spree
           order.market&.prefixed_id
         end
 
+        # The checkout handle this order was born from (nil for admin drafts).
+        # Lets abandonment tooling match cart.* events to the conversion.
+        # Encoded from the FK — loading the cart row just for its id would be
+        # an N+1 on order lists.
+        attribute :cart_id do |order|
+          Spree::Cart.prefixed_id_for(order.cart_id)
+        end
+
         attribute :channel_id do |order|
           order.channel&.prefixed_id
         end
 
         attributes :number, :email, :customer_note,
-                   :currency, :locale, :total_quantity,
+                   :currency, :locale, :total_quantity, :coupon_code,
                    :fulfillment_status, :payment_status,
                    completed_at: :iso8601
 
@@ -61,7 +71,7 @@ module Spree
           order.covered_by_store_credit?
         end
 
-        many :discounts, resource: proc { Spree.api.discount_serializer }
+        many :order_promotions, key: :discounts, resource: proc { Spree.api.applied_promotion_serializer }
         many :line_items, key: :items, resource: proc { Spree.api.line_item_serializer }
         many :fulfillments, resource: proc { Spree.api.fulfillment_serializer }
         many :payments, resource: proc { Spree.api.payment_serializer }

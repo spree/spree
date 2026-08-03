@@ -15,6 +15,7 @@ import type {
   Category,
   CategoryListParams,
   Channel,
+  Claim,
   CompletePaymentSessionParams,
   CompletePaymentSetupSessionParams,
   Country,
@@ -25,6 +26,7 @@ import type {
   CreditCard,
   Currency,
   Customer,
+  DeliveryMethod,
   GiftCard,
   Locale,
   LoginCredentials,
@@ -43,6 +45,8 @@ import type {
   RegisterParams,
   RequestPasswordResetParams,
   ResetPasswordParams,
+  Return,
+  StockLocation,
   StoreCredit,
   UpdateCartParams,
   UpdateLineItemParams,
@@ -229,6 +233,54 @@ export class StoreClient {
   // ============================================
   // Policies
   // ============================================
+
+  readonly deliveryMethods = {
+    /**
+     * List storefront-visible delivery methods.
+     * Filter by fulfillment_type to discover pickup options.
+     */
+    list: (
+      params?: { fulfillment_type?: 'shipping' | 'digital' | 'pickup' | 'pickup_point' },
+      options?: RequestOptions,
+    ): Promise<ListResponse<DeliveryMethod>> =>
+      this.request<ListResponse<DeliveryMethod>>('GET', '/delivery_methods', {
+        ...options,
+        params: params,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('GET', `/delivery_methods/${id}`, options),
+
+    /**
+     * Pickup-enabled stock locations for a pickup delivery method.
+     * Pass cart_id to keep only locations able to fulfill the whole cart
+     * from local stock.
+     */
+    pickupLocations: (
+      id: string,
+      params?: { cart_id?: string },
+      options?: RequestOptions,
+    ): Promise<{ data: StockLocation[] }> =>
+      this.request<{ data: StockLocation[] }>('GET', `/delivery_methods/${id}/pickup_locations`, {
+        ...options,
+        params: params,
+      }),
+
+    /** Third-party pickup points near the customer (pickup_point methods). */
+    pickupPoints: (
+      id: string,
+      params: { latitude: number; longitude: number },
+      options?: RequestOptions,
+    ): Promise<{ data: Array<Record<string, unknown>> }> =>
+      this.request<{ data: Array<Record<string, unknown>> }>(
+        'GET',
+        `/delivery_methods/${id}/pickup_points`,
+        {
+          ...options,
+          params: params,
+        },
+      ),
+  }
 
   readonly policies = {
     /**
@@ -601,6 +653,102 @@ export class StoreClient {
         ...options,
         params: getParams(params),
       }),
+
+    /**
+     * Returns the customer opened on this order.
+     *
+     * Opening one is all a customer can do — approving, receiving and
+     * refunding are the merchant's, through the Admin API. Whether they may
+     * open one at all is store policy, enforced by a `returns.create.validate`
+     * handler on the server; a rejected request comes back as a 422.
+     */
+    returns: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Return>> =>
+        this.request<PaginatedResponse<Return>>('GET', `/orders/${orderId}/returns`, {
+          ...options,
+          params: params ? transformListParams({ ...params }) : undefined,
+        }),
+
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('GET', `/orders/${orderId}/returns/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      /**
+       * @param params.items the fulfilled units coming back. `fulfillment_item_id`
+       *   rather than a line item id, because a return is against a shipped unit.
+       */
+      create: (
+        orderId: string,
+        params: {
+          items: Array<{ fulfillment_item_id: string; quantity: number }>
+          reason_id?: string
+          memo?: string
+        },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('POST', `/orders/${orderId}/returns`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    /**
+     * Claims the customer filed on this order — a damaged, missing or wrong
+     * item. Nothing has to come back, so unlike a return this works whether or
+     * not the order shipped. Approving, denying and resolving are the
+     * merchant's.
+     */
+    claims: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Claim>> =>
+        this.request<PaginatedResponse<Claim>>('GET', `/orders/${orderId}/claims`, {
+          ...options,
+          params: params ? transformListParams({ ...params }) : undefined,
+        }),
+
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('GET', `/orders/${orderId}/claims/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      /**
+       * @param params.claim_type one of the store's configured claim types
+       *   (`damaged`, `missing`, `wrong_item`, `other` by default)
+       */
+      create: (
+        orderId: string,
+        params: {
+          items: Array<{ line_item_id: string; quantity: number; description?: string }>
+          claim_type?: string
+          memo?: string
+        },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('POST', `/orders/${orderId}/claims`, {
+          ...options,
+          body: params,
+        }),
+    },
   }
 
   // ============================================

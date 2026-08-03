@@ -192,11 +192,11 @@ RSpec.describe Spree::Current do
       end
     end
 
-    context 'when market is not set and store has no markets' do
+    context 'when market is not set' do
       let!(:store) { create(:store, default: true) }
 
-      it 'returns nil' do
-        expect(described_class.market).to be_nil
+      it 'falls back to the store default market' do
+        expect(described_class.market).to eq(store.default_market)
       end
     end
   end

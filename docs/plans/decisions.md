@@ -1,3 +1,191 @@
+## 2026-08-03: Return eligibility ships as a hook, not a policy engine — enforced in the workflow, scoped per market
+
+A survey of Shopify, Medusa, Saleor and Vendure settled how far 6.0 goes on
+return policy. **Core ships the seam and no policy**: a `validate` hook on
+`Returns::Create`, `Exchanges::Create` and `Claims::Create`, with no return
+window, restocking fee or final-sale flag anywhere in core.
+
+**What the survey found.** Medusa, Saleor and Vendure ship *no* return
+eligibility policy at all — not a different approach, genuinely nothing. Only
+Shopify has an engine (window with a delivery-date anchor, percentage
+restocking fee, final-sale product/collection lists, per-market rule sets), and
+it exposes **no API for any of it**; configuration is admin-UI only.
+
+The seam comparison mattered more than the feature list. Medusa built a hook
+system, exposed `setPricingContext` on returns, and deliberately did not expose
+a validation hook — policy has to live in route middleware or a replaced
+workflow. Saleor built the filter-veto webhook shape for shipping and never
+generalized it to returns; an external app decides eligibility itself and calls
+the staff mutation, which never asks permission. Vendure's `onTransitionStart`
+returning `false | string` is the only comparable veto and hangs off a state
+machine rather than a return flow; its RMA issue is open at priority P4.
+
+So `validate` + `reject!(message)` is already the strongest extension point in
+the field. A `ReturnPolicy` model with STI rules would be the most capable
+thing on the market by a wide margin and entirely speculative — no competitor
+has demonstrated the demand, and the hook carries one later without changing
+its contract. Deferred, not rejected.
+
+**Enforce for customers, advise for staff.** The one lesson worth copying from
+Shopify: eligibility is enforced on the customer surface and advisory on the
+staff surface. A Shopify staff member can create a return on a final-sale item
+outside the window; the customer API refuses. Their `returnableFulfillments`
+deliberately ignores return rules because it mirrors the admin, "where any
+authorized staff can create returns." A handler that rejects unconditionally
+would be stricter than Shopify — a supervisor overriding policy for a good
+customer is ordinary retail.
+
+**This lives in the workflow, not the model.** Eligibility is a decision made
+during a flow with the caller's context in hand — who is asking, and whether
+they may override — not a property of a return record. `Returns::Create` takes
+`created_by` (nil for customer self-service, set for staff) and the handler
+decides what that means.
+
+**Per market, not per store.** Return rules are legal before they are
+merchandising: the EU right of withdrawal is 14 days minimum, US practice is
+the merchant's choice. `Order belongs_to :market`, and
+`5.4-6.0-eu-legal-compliance.md` already puts `withdrawal_period_days` and the
+other legal settings on Market, so a handler reads its window from
+`order.market`. Shopify reached the same conclusion — its per-market rule sets
+exist specifically for EU compliance.
+
+Also noted from Shopify but **not adopted in 6.0**: rules are snapshotted onto
+the order at placement, so changing a window never retroactively invalidates a
+pending return, and non-returnable reasons are tracked per *quantity* rather
+than per line item. Both are right, and both belong with a policy engine rather
+than ahead of one.
+
+## 2026-08-02: Workflows replace state machines for new models; hooks ship on the 6.0 boundary; OrderChange substrate targets 6.1
+
+A review of our workflow and extension surface against the wider ecosystem
+settled three things.
+
+**1. New models get no state machine.** The returns/exchanges/claims draft gave
+each of `Return`, `Exchange` and `Claim` a `state_machine :status` block with
+the real work on transition callbacks (`after_transition to: :received,
+do: :restock_items`, `do: :process_refund`). That is now removed: plain `status`
+string column, inclusion validation, generated predicates, and every transition
+is a workflow.
+
+Why: a transition callback runs inside the transaction that saves the status
+column, so `process_refund` would put a gateway call inside a database
+transaction — the exact failure `Carts::Complete`'s three-phase design exists to
+prevent. Transitions also take no arguments, and every real return is partial
+("two of three arrived, one not resellable") with nowhere to put that input;
+there is no compensation story where `on_flow_failure:` is; and guards raise
+`StateMachines::InvalidTransition` instead of returning an inspectable `Result`.
+The stated purpose of that plan was escaping six interlocking state machines —
+replacing six with three is a difference of degree, not of kind.
+
+The precedent had already shipped: the Order state machine is gone in 6.0, and
+`Orders::Cancel`/`Orders::Resume` absorbed `Order#after_cancel`/`#after_resume`,
+moving gateway settlement out of the transaction in the process.
+`state_machines-activerecord` stays a dependency for the legacy models through
+6.0; it is simply not used on anything new.
+
+**2. Hook keys are public API, so they ship on the breaking-change boundary.**
+The doctrine's "a service graduates the moment it earns a hook — never
+speculatively" was written to stop speculative abstraction, and it still governs
+*workflows*. It does not govern *hooks on flows already in the workflow tier*.
+Adding a hook later is cheap; *moving* one means restructuring a flow extensions
+have registered against, which breaks them. 6.0 is the window. A documented,
+coherent extension surface is itself the demand, so hooks are placed
+deliberately across the existing workflows now rather than one merchant request
+at a time. Two closed waves (see `6.0-service-workflows.md` Phase 3): Wave A
+adds `validate` and lifecycle hooks to the existing workflows; Wave B graduates
+four services that already qualify on external I/O or orchestration
+(`Fulfillments::Create`, `Payments::Capture`/`Refund`,
+`Payments::HandleWebhook`, `Carts::Merge`).
+
+Three hook families are now named: **lifecycle** (past tense, react, cannot
+change the outcome — what we ship today), **validation** (`validate`, reject
+before the work — the most-requested seam, currently only reachable by replacing
+a whole service class), and **context** (`set_pricing_context`,
+`get_provider_data` — feed data *into* a calculation). Context hooks are
+**blocked**: they need handlers to write back, and `run_hooks` currently
+dispatches the workflow instance for reading only. Do not ship a `set_*_context`
+hook until that contract is settled.
+
+Explicitly rejected: workflows for plain CRUD. Wrapping every region, tax-rate
+and API-key write in a workflow class would add hundreds of pass-through
+classes with no hook, no compensation and no external I/O. Workflows are earned
+by orchestration, not by being a write.
+
+**3. The OrderChange substrate targets 6.1, not 6.0**
+(`6.1-order-change-substrate.md`). One `OrderChange` + `OrderChangeAction` pair
+behind every post-placement mutation — admin order edits, returns, exchanges,
+claims, draft-order amendments — with a `begin → request → confirm → cancel`
+lifecycle, so those flows stop inventing four separate draft models and four
+separate "what will this cost" calculations. It is deferred because it is new
+schema plus a new extension API, and 6.0 already carries the Cart/Order split,
+typed adjustments, the fulfillment rename and the returns rework; designing it
+under time pressure against three consumers that are themselves still landing
+is how it would go wrong. The 6.0 returns work ships on its own status flows and
+adopts the substrate additively in 6.1 via a nullable `order_change_id`.
+
+Two constraints apply to 6.0 work in the meantime: **do not persist a financial
+preview** (compute in memory and discard — a persisted per-domain draft would
+have to be migrated onto the substrate later), and expose post-placement money
+math through a service returning a value object so callers can be re-pointed
+without changing.
+
+**4. Hook contracts and configurable statuses (settled interactively the same
+day), which unblock Wave A:**
+
+*Context hooks collect and deep-merge handler return values.* A handler returns
+a hash; `run_hooks` merges every handler's hash in registration order and
+returns it. Chosen over a mutable context object because handlers stay pure and
+independently testable, with no order-dependent shared state. `run_hooks`
+returning a value is additive — lifecycle hooks ignore it. Last writer wins on
+a key collision, reported via `Rails.error.report` in development so two
+extensions fighting over one key is visible. **This unblocks the context-hook
+family** — `set_promotion_context`, `set_tax_line_context` and
+`get_provider_data` now ship in Waves A and B rather than being deferred.
+
+*`validate` handlers reject with `reject!(message)`* — a purpose-named method
+wrapping the existing failure path (raises `FailureSignal`, unwinds the undo
+stack, rolls back an open transaction). Preferred over reusing `failure(...)`
+so "an extension vetoed this" stays legible against "this step failed", and
+over a falsy return value, where a stray `nil` would abort a flow by accident.
+
+*Statuses are configuration, not frozen constants.* `Spree::HasStatus` holds
+values in a `class_attribute` with an additive `add_status(value, after:)`, so
+a merchant can add an `inspecting` step between `received` and `refunded`
+without reopening core. This follows the established `class_attribute` pattern
+for genuinely configurable collections (`DeliveryZoneMember.range_capable_country_isos`,
+`RichTextSanitizer.allowed_tags`) rather than the frozen-constant pattern used
+for closed value lists.
+
+**Additive only — wholesale replacement is not offered.** Core workflows guard
+on core statuses (`Returns::Refund` requires `received?`); letting an extension
+drop one would silently break core flows with no error at the point of removal,
+because the guard would simply never pass. Adding is safe, removing is not, so
+the API exposes only the safe half.
+
+`add_status` deliberately takes **no `from:`/`to:` transition graph**. A custom
+status needs a custom workflow to move records into it, which is the intended
+shape, not a gap: validating transitions centrally is a state machine by
+another name — precisely what ruling 1 removes.
+
+**5. Two smaller rulings from the same session.**
+
+*Refunds branch on method, not blanket `external_step`.* Store credit and gift
+cards are internal ledger writes, so routing them through `external_step` would
+push a pure database write outside the transaction that marks the return
+refunded — a crash between the two leaves a refunded return with no credit
+issued. `Returns::Refund` (and `Claims::Resolve`, `Exchanges::Fulfill`) keeps
+internal credit inside the transaction and sends only gateway refunds outside
+it. Precedent: `Orders::Cancel#settle_payments` already distinguishes
+gift-card-covered payments from gateway payments.
+
+*`with:` step swapping stays a core-only seam in 6.0.* The public extension
+surface is hook keys and their contracts, `reject!`, `Spree::Dependencies`
+class swapping, `has_status`/`add_status`, and workflow `#perform` signatures.
+Step names, step boundaries and `with:` targets are explicitly internal —
+documenting them would freeze internal structure we still expect to refactor
+during the 6.0 finishing work, in exchange for granularity that hooks largely
+already provide. Revisit in 6.1 once real hook usage shows what is missing.
+
 ## 2026-07-27: One owner pattern for cart/order-scoped rows — dual concrete FKs, not polymorphic
 
 The cart-order-split stub's "polymorphic `LineItem#owner`" is superseded. Every
@@ -243,6 +431,17 @@ Note this is a behavior change for multi-store installs (globally-visible
 methods become single-store), not a mechanical migration.
 
 ## 2026-03-16: Fix promotion rule/action STI namespacing
+**REVERSED 2026-07-29 (Damian, during Wave 6 of the core rewrite):** the rename
+shipped briefly on `feature/6-0-core-rewrite` and was rolled back — class-name
+churn wasn't required by any 6.0 feature, and it forced an STI `type`-column
+data migration plus extension breakage for a purely cosmetic consistency win.
+Promotion rules/actions stay `Spree::Promotion::Rules::*` /
+`Spree::Promotion::Actions::*` (incl. `CreateItemAdjustments`, which now writes
+typed `Spree::Discount` rows under its legacy name). The STI-namespace
+convention below still applies to NEW hierarchies; existing promotion classes
+are grandfathered.
+
+Original decision:
 Rename `Spree::Promotion::Rules::*` → `Spree::PromotionRules::*` and
 `Spree::Promotion::Actions::*` → `Spree::PromotionActions::*`.
 
@@ -408,3 +607,314 @@ same format `has_secure_password` reads — so the rake task migrating
 spree-starter installs onto `spree_customers` copies it to `password_digest`
 and **no customer resets their password** (task aborts loudly if
 `Devise.pepper` is set).
+
+## 2026-07-28: Core-rewrite implementation decisions (cart/order split + fulfillment + split adjustments)
+
+Interactive review settled everything blocking implementation start; task
+sequencing lives in `docs/plans/6.0-core-rewrite-tasks.md` (7 waves, data
+rake tasks last).
+
+1. **ProductType prerequisite is the minimal Phase 1 slice** — rename +
+   store ownership + `fulfillment_types` + `Product#product_type_id`. The
+   rest of `6.0-product-types.md` (custom-field-definition join, live
+   template propagation, its API/dashboard) ships as its own effort.
+2. **`spree_admin` is dropped from the spree-starter Gemfile on the 6.0
+   line.** The legacy admin's adjustments/checkout screens hard-break when
+   `Spree::Adjustment` and the Order state machine are removed; rather than
+   limp on aliases, the dev server stops loading the gem — the React
+   dashboard is the only admin. The gem stays in the monorepo untouched
+   (it's already out of the CI matrix) until its 6.0 deletion; one-release
+   constant aliases (`Spree::Shipment = Spree::Fulfillment`, …) still ship
+   for extensions and the emails gem.
+3. **`checkout_flow`/`insert_checkout_step` are hard-removed in 6.0** — no
+   translation shim (machine transitions have no `Checkout::Registry`
+   equivalent); migration guide instead.
+4. **`DeliveryRate` carries no owner columns** — it derives `owner` through
+   its fulfillment. The dual-FK pattern covers LineItem, the typed money
+   lines, and Fulfillment; rates were never directly order-linked.
+5. **Cart reaper defaults: guest 30d, customer 90d, empty carts 48h**
+   (config preferences; carts with authorized/pending payment sessions are
+   never reaped, unconditionally).
+6. **`shipment.*` webhooks dual-emit for exactly one release**, dropped in 6.1.
+7. **`ready_for_pickup` is a first-class Store API status** (not mapped
+   onto `ready`); the order-level rollup still reports `ready`.
+8. **`partially_canceled` becomes a derived predicate** over child
+   cancellations, not a stored status value.
+
+## 2026-07-29: Delivery methods stay regional; a reference multi-carrier rate provider ships in the monorepo
+
+Question raised during 6.0 review: does one carrier method (e.g. UPS) need
+per-market rates/calculators, or is "UPS (Europe)" + "UPS (North America)" as
+separate `DeliveryMethod` rows a modeling smell?
+
+Competitor survey says the split IS the industry shape — every platform
+regionalizes the sellable method and shares only the carrier integration:
+
+- **Shopify**: rates live inside Shipping Zones (per profile); a zone rate is
+  a manual definition or a "participant" of a globally-registered
+  CarrierService. No cross-zone method entity exists.
+- **Medusa v2**: a Shipping Option belongs to exactly one Service Zone plus a
+  fulfillment provider module; flat prices come from the pricing module
+  (per currency/region), `calculated` delegates to the provider.
+- **Saleor**: Shipping Methods live inside Shipping Zones with per-channel
+  price listings; external carriers are Shipping Apps returning dynamic
+  methods per checkout.
+- **Vendure**: ShippingMethod is standalone (eligibility checker + calculator
+  strategies) but channel-scoped — idiomatically still one method per region.
+
+**Decision 1 — no cross-market method entity.** `DeliveryMethod` +
+`DeliveryZone` already matches the consensus: method rows are cheap and
+regional; carrier logic is shared one level down. Built-in calculators carry a
+single `preferred_currency`, so multi-currency stores need per-market methods
+regardless. Nothing to build.
+
+**Decision 2 — the monorepo ships one reference `DeliveryRateProvider`**
+backed by a multi-carrier aggregator (Shippo or EasyPost — pick pending API/
+pricing review), mirroring the Stripe reference-gateway decision (2026-07-15).
+One integration returns live UPS/FedEx/DHL/USPS rates, which dissolves the
+per-carrier-per-market method sprawl for the majority of installs: one
+"Carrier shipping" method per market, the provider returns whatever serves the
+address. It also makes the reference implementation the first real consumer of
+the `6.0-delivery-rate-provider.md` interface — validating the seam the way
+payment sessions were validated by Stripe. Built-in calculators remain the
+manual-rate path for the minority (2026-07-27 reversal unchanged).
+
+## 2026-07-29: Geo modeling — Markets, DeliveryZones and StockLocations stay disjoint
+
+Two follow-up questions from the same 6.0 review: should Markets link to
+DeliveryZones, and should StockLocations link to DeliveryZones? Competitor
+survey on both:
+
+**Markets ↔ delivery zones.** Shopify (Markets vs profile shipping zones) and
+Medusa (Regions vs service zones) keep them fully disjoint — independent
+country lists, merchant coordinates, and Shopify's "market country with no
+shipping coverage" dead-end is a known sore point of that camp. Saleor links
+shipping zones to *channels* (m:n + per-channel price listings); Vendure
+reuses one country-granular Zone entity as channel defaults for tax and
+shipping — the unified model, bought at the cost of country-only granularity.
+
+**Decision: stay disjoint.** Two structural reasons resist merging across
+every platform surveyed: granularity (markets are country-level commercial
+units; delivery coverage legitimately goes sub-country — states, postal
+prefixes/ranges, remote-island carve-outs) and cardinality (one EU market
+maps naturally onto several delivery zones — standard / remote / oversized).
+Spree already carries a stronger coordination guardrail than the disjoint
+camp: `MarketCountry#country_covered_by_shipping_zone` refuses market
+countries the store cannot deliver to. The channel axis heads the Saleor
+direction separately via `5.7-channel-markets.md`. If more convenience is
+ever wanted, it is a dashboard affordance ("create delivery zone from this
+market's countries"), never a schema link.
+
+**Stock locations ↔ delivery zones.** Here the industry splits 3–1 the other
+way: Shopify's delivery profiles nest location groups that each own their
+zones+rates; Medusa roots the whole hierarchy at the stock location
+(StockLocation → FulfillmentSet → ServiceZone → ShippingOption); Saleor links
+warehouses ↔ shipping zones m:n and allocates stock through that link. Only
+Vendure leaves origin/coverage coordination to code (allocation strategies).
+
+**Decision: no StockLocation↔DeliveryZone schema link — compose it at the
+method level.** Spree expresses per-origin coverage as
+DeliveryMethod↔StockLocation (the `spree_delivery_method_stock_locations`
+join shipped in the 6.0 rename migration, currently dormant/unwired) times
+DeliveryMethod↔DeliveryZone — "UPS EU ships from the Poland warehouse" is a
+method restricted to that location with EU zones. That is Shopify's
+location-group→zones expressiveness without a third geo entity. Wiring the
+dormant join (association + Estimator/Coordinator filtering + admin API
+exposure) is follow-up work on `6.0-fulfillment-and-delivery.md`, which
+already uses the table for pickup locations. The Medusa/Saleor-style
+allocation question — *choosing* the warehouse by destination — is the order
+routing seam (`6.0-order-routing.md` strategies), not geo schema.
+
+## 2026-07-29: Delivery-method eligibility moves out of calculators into DeliveryMethodRule
+
+Dashboard review surfaced min/max item-total and weight bounds rendering
+inside the rate-calculator preference form. They are eligibility, not
+pricing — and structurally worse than they look: the four bounds exist only
+on `Calculator::Shipping::FlatRate` (no other calculator has them), are
+enforced by `compute_package` returning nil rather than the
+`available?(package)` hook the Estimator consults, and would be silently
+LOST on provider-priced methods once `6.0-delivery-rate-provider.md` lands
+(the provider bypasses the calculator that carries them).
+
+Competitors uniformly separate the concerns: Shopify puts weight/price
+conditions on the zone rate, Saleor uses method columns (+ per-channel price
+bounds), Medusa v2 attaches typed ShippingOptionRule records, Vendure gives
+ShippingMethod an eligibility-checker strategy parallel to its calculator.
+
+**Decision:** `Spree::DeliveryMethodRule` STI on DeliveryMethod — the fifth
+instance of the house rule pattern and the symmetric sibling of
+`5.7-payment-method-rules.md` (ItemTotal + Weight first; Channel/Market/
+CustomerGroup later, in lockstep with the payment set). One enforcement
+seam: the Estimator's method filter, so calculator- and provider-priced
+methods obey the same eligibility; no admin-bypass concept (the Estimator is
+the only rate source, and these are logistics constraints). FlatRate's
+bound preferences become a one-release deprecation bridge with a data task.
+Plan: `6.0-delivery-method-rules.md` — targeted 6.0 directly; per the same
+review, the pending 5.7 plans are expected to retarget 6.0 (skipping a 5.7
+release for a faster 6.0 launch). Open questions resolved interactively the
+same day: WeightRule uses the store's implicit unit (raw-number comparison,
+legacy parity); rules are method-scoped only (no zone context — per-region
+bounds are separate methods); Phase 1 ships with the 6.0 core-rewrite
+finishing work, Channel/Market/CustomerGroup later with payment rules.
+
+
+## 2026-07-29 — Admin discount application follows the Saleor shape
+
+How should an admin apply a discount to an order in the dashboard? Competitor
+survey: Shopify draft orders take only **manual** discounts (order- or
+line-level custom amount/percent with a reason) — codes are a checkout
+concept the buyer redeems; Medusa admin drafts accept **promotion codes**
+directly; Saleor drafts take **both** a voucher code and a manual order
+discount stored as its own discount object.
+
+**Decision:** the Saleor shape, split by lifecycle. Draft orders accept
+discount codes post-creation via `POST /admin/orders/:id/discount_codes`
+(same `PromotionHandler::Coupon` path and pending semantics as the
+storefront cart endpoint — a real-but-not-yet-eligible code is stored and
+activates on recalculation); completed orders refuse codes (recalculation
+is frozen) and take **manual typed Discount rows** through the existing
+`/admin/orders/:id/discounts` CRUD (`Orders::AddManualDiscount`,
+largest-remainder distribution, `resum_typed_totals!`). The dashboard's
+promotion picker is sugar over the code path — picking a coupon promotion
+fills in its code; it is not a separate application mechanism. The coupon
+handler now always reports ineligibility with the retryable status code so
+endpoints can tell a not-yet-qualifying code from an invalid one.
+
+
+## 2026-07-29 — `order.placed` replaces `order.completed`; carts get their own events
+
+Competitor survey (Shopify, BigCommerce, Medusa v2, Saleor, Vendure): every
+platform with a separate cart entity namespaces its events (`carts/*`,
+`cart.*`, `CHECKOUT_*`), and "order created" then means *placed* only where
+drafts live in their own namespace (`draft_orders/*`, `DRAFT_ORDER_*`).
+Medusa — the same single-Order-model shape as ours — uses an explicit
+`order.placed`, and reserves `order.completed` for "fulfillment finished",
+a direct collision with our historical name.
+
+**Decisions:** carts publish `cart.created/updated/deleted` (5.x
+abandonment-signal parity). The placement event is renamed
+`order.completed` → **`order.placed`** — newcomers are the primary
+audience and the old name misleads anyone arriving from Medusa. Per the
+one-release bridge convention, 6.0 dual-emits: `order.completed` still
+fires with an identical payload and `deprecated_alias_of: 'order.placed'`
+in the event metadata (wildcard subscribers dedupe on it); the alias is
+dropped in 6.1. The dashboard event picker offers only `order.placed`. `order.created` keeps meaning "order row exists" (admin drafts
+included). Admin confirmation resends publish the targeted
+`order.resend_confirmation_email` instead of re-blasting the placement
+event. Order payloads carry `cart_id` (BigCommerce `store/cart/converted`
+parity) so abandonment flows can cancel on conversion. Server-side
+abandonment detection (BigCommerce `store/cart/abandoned`) explicitly
+skipped. No separate draft-order entity and no `is_draft` boolean —
+`status = 'draft'` already encodes it (`cart_id` does NOT: the completion
+pipeline's draft copy has a cart_id while briefly draft; admin drafts
+have none).
+
+
+## 2026-07-29 — Spree 6.0 requires Rails 8.1 (7.2 support dropped)
+
+The core gemspec already pins `rails >= 8.1, < 8.2` and the deprecation
+bridges lean on Rails 8.1's `deprecated:` association option across every
+6.0 rename twin — supporting 7.2 would mean hand-rolled warn-wrappers for
+all of them on a platform whose security support ends 2026-08-09, before
+6.0 GA. Rails 8.1 (Oct 2025, supported to Oct 2027) also unlocks
+ActiveJob Continuations for resumable long-running jobs (upgrade data
+migrations, imports, bulk operations — the durable-steps half of a
+Medusa-style workflow story; compensation logic stays ours, e.g.
+`Carts::Complete`). Existing stores upgrade Rails to 8.1 on the 5.6 line
+first, then take 6.0 — 5.6 remains the bridge release. CI: the MySQL
+lanes were the designated old-Rails coverage (`RAILS_VERSION: 7.2.0`) and
+could no longer bundle; they now run 8.1 like the rest — MySQL itself
+stays fully supported.
+
+
+## 2026-07-29 — Every major model carries a store_id; DeliveryZone bound now, StockLocation next
+
+Ratifies the principle already stated in `6.0-delivery-rate-provider.md`
+(DeliveryMethod gets `store_id` there) as a standing convention: new
+models carrying store-specific data always `belongs_to :store` through
+`Spree::SingleStoreResource`; only genuinely global reference data stays
+unscoped. Store binding also closes cross-store lookup holes structurally
+— admin controllers scope `current_store.<resources>` instead of relying
+on ability scoping alone (see the Strix findings on delivery-method
+bindings, 2026-07-29).
+
+Applied immediately to **DeliveryZone** — an unreleased 6.0 table, so the
+creation migration gained `store_id NOT NULL` + per-store name uniqueness
+in place, with zero bridge cost. **DeliveryMethod and StockLocation**
+(released tables) landed on the same branch via the 5.6 single-store
+pattern: nullable `store_id` + `SingleStoreResource`, per-store seeds,
+manifest backfill task assigning the default store, `null: false` in
+6.1. (Cross-store sharing is not preserved anywhere — `spree_multi_store`
+is legacy and unsupported.) Admin lookups and runtime pickers (Estimator, Coordinator, order
+routing) all go through the store associations
+(`store.delivery_methods` / `store.stock_locations`) — strict semantics;
+the manifest backfill is a required upgrade step before checkout. **TaxRate and
+TaxCategory** follow inside the tax-provider plan's implementation
+(noted there). Stock availability (`Stock::Quantifier`) intentionally
+stays location-global until the 6.1 NOT NULL work — correct for
+single-store installs, revisited with multi-store.
+
+
+## 2026-07-30 — Credential homes follow cardinality: Integration for store-level connections, PaymentMethod rows for merchant entities
+
+Provider architecture is three layers: store-owned commerce config rows
+(DeliveryMethod, PaymentMethod), stateless registry-keyed provider code
+(FulfillmentProvider/DeliveryRateProvider/tax engines — never hold
+credentials), and `Spree::Integration` as the per-store credentialed
+vendor connection (one row per store+type, `can_connect?`, admin
+listing). Where credentials live is decided by cardinality, and the two
+domains are deliberately opposite:
+
+- **Delivery/vendor APIs — one connection, many methods.** An EasyPost
+  account rates every method; config rows multiply, the connection does
+  not. Credentials belong on the Integration singleton; provider gems
+  ship an Integration subclass + a stateless provider pair
+  (`6.0-delivery-rate-provider.md`).
+- **Payments — one credential set per merchant entity, several per
+  store.** Two Stripe accounts are two merchants of record (separate
+  settlement and liability), selected per market at checkout — exactly
+  what PaymentMethod rows model, gated by MarketRule once
+  `5.7-payment-method-rules.md` lands. Credentials stay on the method
+  row; converging them onto Integration would fight its store+type
+  uniqueness and is explicitly NOT planned.
+
+Consequence for tax (`6.0-tax-provider.md`): "one Stripe connection
+serves payments and Stripe Tax" only holds single-entity. Under multiple
+merchants of record, tax liability follows the charging entity per
+market — a Stripe Tax provider must resolve credentials consistently
+with the market's selected payment entity, not via a store-singleton
+Integration lookup.
+
+
+## 2026-07-30 — Reference providers: Stripe (payments), Avalara (tax), EasyPost-or-Shippo (delivery)
+
+One first-party reference implementation per provider seam, each
+exercising its layer's canonical shape from the credential-cardinality
+entry above: **Stripe** for payments (monorepo move per 2026-07-15 —
+credentials on PaymentMethod rows, multi-entity capable), **Avalara**
+for tax (the enterprise standard, matching the enterprise-seller target;
+Integration subclass for store credentials + stateless provider writing
+TaxLines with `provider_id: 'avalara'`; the built-in `'internal'` engine
+stays the OSS default), and the **EasyPost-or-Shippo** multi-carrier
+gem for delivery rates (pick still pending; Integration + provider
+pair). Stripe Tax remains buildable by third parties but is not the
+reference — and carries the merchant-of-record caveat recorded above.
+
+
+## 2026-07-30 — Service workflows: one step DSL, Carts::Complete as the stress test
+
+Services, sagas, extension hooks and events unify under a declared step
+DSL evolved from ServiceModule in place (plan:
+`6.0-service-workflows.md`, targeted 6.0). Medusa's workflows are the DX
+benchmark; the runtime stays plain Ruby in Rails transactions — no
+engine, no execution-state tables. Explicit transaction/io_step
+boundaries, per-step compensation, in-transaction `hook` extension
+points and declared `emit` events; the consistency doctrine (step →
+sync subscriber → async subscriber) ships as documentation.
+**Carts::Complete is the reference implementation and acceptance test:**
+the cart→order swap already exercises every hard property (in-lock
+verification, out-of-transaction payment I/O, compensation, replay
+idempotency, sweeper resume) and its spec battery must pass unmodified
+after the retrofit. Durable flows compile onto ActiveJob Continuations
+in Phase 2 (imports, upgrade migrations, payout runs) and may land
+post-GA without blocking the DSL.

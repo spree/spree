@@ -1,16 +1,9 @@
 module Spree
-  class ShipmentMailer < BaseMailer
-    helper Spree::MailHelper
-    helper Spree::ShipmentHelper
-
+  # Deprecated: use Spree::FulfillmentMailer. Removed in Spree 6.1.
+  class ShipmentMailer < FulfillmentMailer
     def shipped_email(shipment, resend = false)
-      @shipment = shipment.respond_to?(:id) ? shipment : Spree::Shipment.find(shipment)
-      @order = @shipment.order
-      current_store = @shipment.store
-      with_store_locale(current_store, @order.locale) do
-        subject = order_email_subject(current_store, Spree.t('shipment_mailer.shipped_email.subject'), @order.number, resend: resend)
-        mail(to: @order.email, subject: subject, store_url: current_store.storefront_url)
-      end
+      Spree::Deprecation.warn('Spree::ShipmentMailer#shipped_email is deprecated and will be removed in Spree 6.1. Use Spree::FulfillmentMailer#fulfilled_email instead.')
+      fulfilled_email(shipment, resend)
     end
   end
 end

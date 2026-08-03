@@ -10,7 +10,7 @@ module Spree
     #
     # Order totals are NOT recalculated here. Callers (Spree::Orders::Create
     # and Spree::Orders::Update) are responsible for running shipment
-    # rebuilding and a final `order.update_with_updater!` once their
+    # rebuilding and a final `order.recalculate_totals!` once their
     # full pipeline (items, shipments, coupons) has run.
     class UpsertItems
       prepend Spree::ServiceModule::Base
@@ -32,7 +32,7 @@ module Spree
 
             return failure(variant, "#{variant.name} is not available in #{order.currency}") if variant.amount_in(order.currency).nil?
 
-            line_item = Spree.line_item_by_variant_finder.new.execute(order: order, variant: variant)
+            line_item = Spree.line_item_by_variant_finder.new.execute(owner: order, variant: variant)
 
             if line_item
               line_item.quantity = quantity

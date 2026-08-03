@@ -278,16 +278,10 @@ describe Spree::Promotion, type: :model do
       promotion.activate(payload)
     end
 
-    it 'does not perform actions against an order in a finalized state' do
+    it 'does not perform actions against a completed order' do
       expect(action1).not_to receive(:perform).with(payload)
 
-      order.state = 'complete'
-      promotion.activate(payload)
-
-      order.state = 'awaiting_return'
-      promotion.activate(payload)
-
-      order.state = 'returned'
+      order.completed_at = Time.current
       promotion.activate(payload)
     end
 
@@ -306,7 +300,7 @@ describe Spree::Promotion, type: :model do
     end
 
     context 'when not activated' do
-      before { order.state = 'complete' }
+      before { order.completed_at = Time.current }
 
       it "doesn't assign the order" do
         expect(promotion.orders).to be_empty
@@ -333,6 +327,7 @@ describe Spree::Promotion, type: :model do
       expect(promotion.usage_limit_exceeded?(promotable)).to be true
     end
   end
+
 
   context '#expired' do
     it 'is not exipired' do
@@ -377,31 +372,30 @@ describe Spree::Promotion, type: :model do
 
     let!(:action) do
       calculator = Spree::Calculator::FlatRate.new
-      action_params = { promotion: promotion, calculator: calculator }
-      action = Spree::Promotion::Actions::CreateAdjustment.create(action_params)
+      action = Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator)
       promotion.actions << action
       action
     end
 
-    let!(:adjustment) do
-      order = create(:order)
-      Spree::Adjustment.create!(
-        order: order,
-        adjustable: order,
-        source: action,
-        amount: 10,
-        label: 'Promotional adjustment'
-      )
+    let(:order) { create(:order_with_line_items, line_items_count: 1) }
+
+    let!(:discount) do
+      create(:discount,
+             order: order,
+             line_item: order.line_items.first,
+             promotion_action: action,
+             promotion: promotion,
+             kind: 'promotion',
+             amount: -10,
+             label: 'Promotional discount')
     end
 
-    it 'counts eligible adjustments' do
-      adjustment.update_column(:eligible, true)
+    it 'counts applied discounts' do
       expect(promotion.credits_count).to eq(1)
     end
 
-    # Regression test for #4112
-    it 'does not count ineligible adjustments' do
-      adjustment.update_column(:eligible, false)
+    it 'does not count manual discounts' do
+      discount.update!(kind: 'manual', promotion_action: nil, promotion: nil)
       expect(promotion.credits_count).to eq(0)
     end
 
@@ -415,37 +409,34 @@ describe Spree::Promotion, type: :model do
       end
 
       before do
-        order = adjustment.order
-        Spree::Adjustment.create!(
-          order: order,
-          adjustable: order,
-          source: second_action,
-          amount: -5,
-          label: 'Second promotional adjustment'
-        )
-        # mark both adjustments eligible
-        order.all_adjustments.update_all(eligible: true)
+        create(:discount,
+               order: order,
+               line_item: order.line_items.first,
+               promotion_action: second_action,
+               promotion: promotion,
+               kind: 'promotion',
+               amount: -5,
+               label: 'Second promotional discount')
       end
 
-      it 'counts unique orders, not individual adjustments' do
+      it 'counts unique orders, not individual discounts' do
         expect(promotion.credits_count).to eq(1)
       end
     end
 
     # Regression test for #11879
     context 'with the same action applied to multiple orders' do
-      let!(:second_order) { create(:order) }
+      let!(:second_order) { create(:order_with_line_items, line_items_count: 1) }
 
       before do
-        Spree::Adjustment.create!(
-          order: second_order,
-          adjustable: second_order,
-          source: action,
-          amount: 10,
-          label: 'Promotional adjustment'
-        )
-        adjustment.update_column(:eligible, true)
-        second_order.all_adjustments.update_all(eligible: true)
+        create(:discount,
+               order: second_order,
+               line_item: second_order.line_items.first,
+               promotion_action: action,
+               promotion: promotion,
+               kind: 'promotion',
+               amount: -10,
+               label: 'Promotional discount')
       end
 
       it 'counts each order separately' do
@@ -454,7 +445,7 @@ describe Spree::Promotion, type: :model do
     end
   end
 
-  context '#adjusted_credits_count' do
+  describe '#adjusted_credits_count' do
     let(:order) { create :order }
     let(:line_item) { create :line_item, order: order }
     let(:promotion) { create(:promotion, name: 'promo', code: '10off') }
@@ -468,35 +459,71 @@ describe Spree::Promotion, type: :model do
       promotion.actions << action
       action
     end
-    let(:order_adjustment) do
-      Spree::Adjustment.create!(
-        source: order_action,
-        amount: 10,
-        adjustable: order,
-        order: order,
-        label: 'Promotional adjustment'
-      )
+    let(:order_discount) do
+      create(:discount,
+             order: order,
+             line_item: line_item,
+             promotion_action: order_action,
+             promotion: promotion,
+             kind: 'promotion',
+             amount: -10,
+             label: 'Promotional discount')
     end
-    let(:item_adjustment) do
-      Spree::Adjustment.create!(
-        source: item_action,
-        amount: 10,
-        adjustable: line_item,
-        order: order,
-        label: 'Promotional adjustment'
-      )
+    let(:item_discount) do
+      create(:discount,
+             order: order,
+             line_item: line_item,
+             promotion_action: item_action,
+             promotion: promotion,
+             kind: 'promotion',
+             amount: -10,
+             label: 'Promotional discount')
     end
 
-    it 'counts order level adjustments' do
-      expect(order_adjustment.adjustable).to eq(order)
+    it 'does not count the current order against its own limit (order-level action)' do
+      expect(order_discount.order).to eq(order)
       expect(promotion.credits_count).to eq(1)
       expect(promotion.adjusted_credits_count(order)).to eq(0)
     end
 
-    it 'counts item level adjustments' do
-      expect(item_adjustment.adjustable).to eq(line_item)
+    it 'does not count the current order against its own limit (item-level action)' do
+      expect(item_discount.line_item).to eq(line_item)
       expect(promotion.credits_count).to eq(1)
       expect(promotion.adjusted_credits_count(order)).to eq(0)
+    end
+
+    context 'across carts and orders' do
+    let(:promotion) { create(:promotion_with_item_adjustment, store: @default_store, usage_limit: 1) }
+        let(:action) { promotion.promotion_actions.first }
+        let!(:consuming_order) { create(:order_with_line_items, store: @default_store, line_items_count: 1) }
+
+        before do
+          create(:discount, order: consuming_order, line_item: consuming_order.line_items.first,
+                            promotion: promotion, promotion_action: action, kind: 'promotion', amount: -1)
+        end
+
+        it 'counts only order-side credits — carts never consume usage' do
+          cart = create(:cart_with_line_items, store: @default_store)
+          create(:discount, order: nil, cart: cart, line_item: cart.line_items.first,
+                            promotion: promotion, promotion_action: action, kind: 'promotion', amount: -1)
+
+          expect(promotion.credits_count).to eq(1)
+          expect(promotion.usage_limit_exceeded?(cart)).to be true
+        end
+
+        it 'does not subtract another order credit on a cart/line-item id collision' do
+          # A cart whose id collides with the consuming order's line item id used
+          # to fall into the LineItem branch and subtract that order's credit,
+          # letting the cart bypass the usage limit.
+          cart = create(:cart_with_line_items, store: @default_store)
+          cart.update_columns(id: consuming_order.line_items.first.id) if Spree::Cart.where(id: consuming_order.line_items.first.id).none?
+
+          expect(promotion.adjusted_credits_count(Spree::Cart.find(cart.reload.id))).to eq(1)
+        end
+
+        it 'subtracts the order own credit when checking that order' do
+          expect(promotion.adjusted_credits_count(consuming_order)).to eq(0)
+        end
     end
   end
 
@@ -810,7 +837,7 @@ describe Spree::Promotion, type: :model do
     context 'when the user has used this promo' do
       before do
         promotion.activate(order: order)
-        order.update_with_updater!
+        order.recalculate_totals!
         order.completed_at = Time.current
         order.save!
       end
@@ -818,12 +845,9 @@ describe Spree::Promotion, type: :model do
       context 'when the order is complete' do
         it { is_expected.to be true }
 
-        context 'when the promotion is not eligible' do
-          let(:adjustment) { order.adjustments.first }
-
+        context 'when the promotion discount was removed' do
           before do
-            adjustment.eligible = false
-            adjustment.save!
+            order.discounts.destroy_all
           end
 
           it { is_expected.to be false }
@@ -855,20 +879,20 @@ describe Spree::Promotion, type: :model do
     let(:variant) { create :variant }
 
     it 'updates the promotions for new line items' do
-      expect(line_item.adjustments).to be_empty
+      expect(line_item.discounts).to be_empty
       expect(order.adjustment_total).to eq 0
 
       promo.activate(order: order)
-      order.update_with_updater!
+      order.recalculate_totals!
 
       line_item.reload
-      expect(line_item.adjustments.size).to eq(1)
+      expect(line_item.discounts.size).to eq(1)
       expect(order.adjustment_total).to eq(-5)
 
-      other_line_item = Spree::Cart::AddItem.call(order: order, variant: variant, options: { currency: order.currency }).value
+      other_line_item = Spree::Orders::AddItem.call(order: order, variant: variant, options: { currency: order.currency }).value
 
       expect(other_line_item).not_to eq line_item
-      expect(other_line_item.adjustments.size).to eq(1)
+      expect(other_line_item.discounts.size).to eq(1)
       expect(order.adjustment_total).to eq(-10)
     end
   end

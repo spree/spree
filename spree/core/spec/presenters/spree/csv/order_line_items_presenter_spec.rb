@@ -14,7 +14,7 @@ RSpec.describe Spree::CSV::OrderLineItemPresenter do
     it 'returns array with correct values' do
       expect(subject[0]).to eq order.number
       expect(subject[1]).to eq order.email
-      expect(subject[2]).to eq order.state
+      expect(subject[2]).to eq order.status
       expect(subject[3]).to eq order.currency
       expect(subject[4]).to eq order.item_total.to_f
       expect(subject[5]).to eq order.shipment_total.to_f

@@ -141,7 +141,7 @@ module Spree
       end
 
       context 'with multiple markets' do
-        let!(:us_market) { create(:market, store: store, name: 'US', currency: 'USD', default_locale: 'en') }
+        let!(:us_market) { store.default_market }
         let!(:eu_market) { create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de', supported_locales: 'de,fr') }
 
         # Product with prices in both currencies
@@ -195,7 +195,7 @@ module Spree
       end
 
       context 'with market but product has no price in that currency' do
-        let!(:us_market) { create(:market, store: store, name: 'US', currency: 'USD', default_locale: 'en') }
+        let!(:us_market) { store.default_market }
         let!(:eu_market) { create(:market, store: store, name: 'EU', currency: 'EUR', default_locale: 'de') }
 
         # Product with USD price only — no EUR price

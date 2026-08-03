@@ -85,6 +85,12 @@ module Spree
         end
       end
 
+      # Rewrites the pipeline seed in place — used by kwarg-rename bridges so
+      # every subsequent step sees the canonical keys.
+      def rewrite_input!(remove: [], **merge)
+        @_passed_input = Result.new(true, @_passed_input.value.except(*remove).merge(merge))
+      end
+
       def success(value)
         Result.new(true, value, nil)
       end

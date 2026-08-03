@@ -17,7 +17,6 @@ module Spree
     # Associations
     #
     belongs_to :user, optional: true, class_name: Spree.user_class&.name
-    belongs_to :store, class_name: 'Spree::Store', required: true
 
     #
     # Validations
@@ -44,7 +43,7 @@ module Spree
     #
     self.whitelisted_ransackable_attributes = %w[email verified_at]
     self.whitelisted_ransackable_scopes = %w[verified unverified]
-    
+
     def accepts_email_marketing
       return user.accepts_email_marketing if user.present?
 

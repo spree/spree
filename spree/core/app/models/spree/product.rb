@@ -29,10 +29,8 @@ module Spree
     include Spree::MetafieldFilterable
     include Spree::Metadata
     include Spree::Searchable
-    include Spree::Product::Webhooks
     include Spree::Product::Slugs
     include Spree::Product::Channels
-    include Spree::LegacyMultiStoreSupport unless defined?(SpreeMultiStore)
     include Spree::SearchIndexable
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
@@ -123,8 +121,9 @@ module Spree
                                                              source: :promotion
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
-    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
-    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::ShippingMethod'
+    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products, optional: true
+    belongs_to :product_type, class_name: 'Spree::ProductType', optional: true, counter_cache: :products_count
+    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::DeliveryMethod'
 
     # Every product has at least one variant. `default_variant` is the "face" of
     # the product (price display, default add-to-cart, property delegation).
@@ -157,9 +156,7 @@ module Spree
 
     after_initialize :assign_default_tax_category
 
-    before_validation :ensure_default_shipping_category
-
-    after_create :add_associations_from_prototype
+    after_create :sync_associations_from_product_type
     after_create :apply_pending_variants, if: :pending_variants?
     after_create :ensure_default_variant
     after_create :set_default_variant
@@ -177,7 +174,6 @@ module Spree
     end
     with_options presence: true do
       validates :name
-      validates :shipping_category, if: :requires_shipping_category?
     end
 
     # Every persisted product must keep a default variant. It's assigned on
@@ -349,17 +345,17 @@ module Spree
       event :activate do
         transition to: :active
       end
-      after_transition to: :active, do: [:after_activate, :send_product_activated_webhook, :publish_product_activated_event]
+      after_transition to: :active, do: [:after_activate, :publish_product_activated_event]
 
       event :archive do
         transition to: :archived
       end
-      after_transition to: :archived, do: [:after_archive, :send_product_archived_webhook, :publish_product_archived_event]
+      after_transition to: :archived, do: [:after_archive, :publish_product_archived_event]
 
       event :draft do
         transition to: :draft
       end
-      after_transition to: :draft, do: [:after_draft, :send_product_drafted_webhook]
+      after_transition to: :draft, do: :after_draft
     end
 
     def self.bulk_auto_match_collections(store, product_ids)
@@ -499,9 +495,6 @@ module Spree
     def tax_category
       @tax_category ||= super || TaxCategory.default
     end
-
-    # Adding properties and option types on creation based on a chosen prototype
-    attr_accessor :prototype_id
 
     def first_or_default_variant(currency)
       if !has_variants?
@@ -657,7 +650,15 @@ module Spree
     #
     # @return [Boolean]
     def digital?
-      @digital ||= shipping_category&.includes_digital_shipping_method?
+      @digital ||= fulfillment_types == ['digital']
+    end
+
+    # The fulfillment types this product may be delivered by, from its
+    # ProductType; typeless products default to physical shipping.
+    #
+    # @return [Array<String>]
+    def fulfillment_types
+      product_type&.fulfillment_types.presence || ['shipping']
     end
 
     def auto_match_collections
@@ -850,10 +851,16 @@ module Spree
       association(:default_variant).reset
     end
 
-    def add_associations_from_prototype
-      if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
-        self.option_types = prototype.option_types
-        self.categories = prototype.taxons
+    # Additive, unlike the legacy prototype callback which replaced both sets —
+    # the type is a floor the product builds on, never a ceiling.
+    def sync_associations_from_product_type
+      return unless product_type
+
+      product_type.option_types.each do |option_type|
+        option_types << option_type unless option_types.include?(option_type)
+      end
+      product_type.categories.each do |category|
+        categories << category unless categories.include?(category)
       end
     end
 
@@ -894,15 +901,6 @@ module Spree
       self.tax_category = Spree::TaxCategory.default if new_record? && self[:tax_category_id].blank?
     end
 
-    def ensure_default_shipping_category
-      return if shipping_category.present?
-
-      if new_record?
-        name = I18n.t('spree.seed.shipping.categories.default')
-        self.shipping_category = Spree::ShippingCategory.find_or_create_by!(name: name)
-      end
-    end
-
     def run_touch_callbacks
       run_callbacks(:touch)
     end
@@ -937,10 +935,6 @@ module Spree
       if discontinue_on < make_active_at
         errors.add(:discontinue_on, :invalid_date_range)
       end
-    end
-
-    def requires_shipping_category?
-      true
     end
 
     def eligible_for_collection_matching?

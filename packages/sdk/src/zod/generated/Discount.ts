@@ -3,10 +3,14 @@ import { z } from 'zod';
 
 export const DiscountSchema = z.object({
   id: z.string(),
-  promotion_id: z.string(),
-  name: z.string(),
-  description: z.string().nullable(),
+  label: z.string(),
+  kind: z.string(),
   code: z.string().nullable(),
+  value_type: z.string().nullable(),
+  value: z.string().nullable(),
+  promotion_id: z.string().nullable(),
+  line_item_id: z.string().nullable(),
+  fulfillment_id: z.string().nullable(),
   amount: z.string().nullable(),
   display_amount: z.string().nullable(),
 });

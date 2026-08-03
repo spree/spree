@@ -225,9 +225,9 @@ describe Spree::Store, type: :model, without_global_store: true do
         let(:store) { build(:store) }
 
         before do
-          zone = create(:zone, name: 'Test Zone', kind: 'country')
-          zone.zone_members.create!(zoneable: country)
-          create(:shipping_method, zones: [zone])
+          zone = create(:delivery_zone)
+          zone.members.create!(member_type: 'country', country: country)
+          create(:shipping_method, delivery_zones: [zone])
           store.default_country_iso = country.iso
         end
 
@@ -249,8 +249,9 @@ describe Spree::Store, type: :model, without_global_store: true do
       context 'when default_country_iso is not set' do
         let(:store) { build(:store) }
 
-        it 'does not create a market' do
-          expect { store.save! }.not_to change(Spree::Market, :count)
+        it 'creates a fallback default market so the store always owns one' do
+          expect { store.save! }.to change(Spree::Market, :count).by(1)
+          expect(store.default_market.currency).to eq('USD')
         end
       end
     end
@@ -388,7 +389,7 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       it 'returns countries from all markets' do
         countries = subject.countries_available_for_checkout
-        expect(countries.map(&:iso)).to contain_exactly('DE', 'FR')
+        expect(countries.map(&:iso)).to contain_exactly('DE', 'FR', 'US')
       end
     end
 
@@ -495,9 +496,10 @@ describe Spree::Store, type: :model, without_global_store: true do
         create(:market, store: store, currency: 'EUR')
       end
 
-      it 'derives currencies from markets' do
+      it 'derives currencies from markets plus the legacy column' do
+        # The factory column ('USD,EUR,GBP') stays honored alongside markets.
         expect(store.supported_currencies_list).to contain_exactly(
-          ::Money::Currency.find('USD'), ::Money::Currency.find('EUR')
+          ::Money::Currency.find('USD'), ::Money::Currency.find('EUR'), ::Money::Currency.find('GBP')
         )
       end
 
@@ -662,9 +664,10 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
     end
 
-    context 'without any markets' do
-      it 'returns nil' do
-        expect(store.default_market).to be_nil
+    context 'without an explicit default' do
+      it 'returns the auto-created bootstrap market' do
+        expect(store.default_market).to be_present
+        expect(store.default_market.default).to be(true)
       end
     end
   end
@@ -698,7 +701,7 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       it 'returns countries from all markets' do
         countries = store.countries_from_markets
-        expect(countries.pluck(:iso)).to contain_exactly(country_a.iso, country_b.iso, country_c.iso)
+        expect(countries.pluck(:iso)).to contain_exactly(country_a.iso, country_b.iso, country_c.iso, 'US')
       end
 
       it 'returns an ActiveRecord relation' do
@@ -722,8 +725,8 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
 
     context 'without markets' do
-      it 'returns empty relation' do
-        expect(store.countries_from_markets).to be_empty
+      it 'returns the bootstrap market country' do
+        expect(store.countries_from_markets.pluck(:iso)).to eq(['US'])
       end
     end
   end
@@ -762,12 +765,12 @@ describe Spree::Store, type: :model, without_global_store: true do
     context 'with country-type zones with shipping methods' do
       let(:country1) { create(:country) }
       let(:country2) { create(:country) }
-      let!(:zone) { create(:zone, kind: 'country') }
+      let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.zone_members.create!(zoneable: country1)
-        zone.zone_members.create!(zoneable: country2)
-        create(:shipping_method, zones: [zone])
+        zone.members.create!(member_type: 'country', country: country1)
+        zone.members.create!(member_type: 'country', country: country2)
+        create(:shipping_method, delivery_zones: [zone])
       end
 
       it 'returns countries from those zones' do
@@ -779,11 +782,11 @@ describe Spree::Store, type: :model, without_global_store: true do
     context 'with state-type zones with shipping methods' do
       let(:country) { create(:country) }
       let(:state) { create(:state, country: country) }
-      let!(:zone) { create(:zone, kind: 'state') }
+      let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.zone_members.create!(zoneable: state)
-        create(:shipping_method, zones: [zone])
+        zone.members.create!(member_type: 'state', state: state)
+        create(:shipping_method, delivery_zones: [zone])
       end
 
       it 'returns countries inferred from state-type zones' do
@@ -794,10 +797,10 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     context 'when zone has no shipping method' do
       let(:country) { create(:country) }
-      let!(:zone) { create(:zone, kind: 'country') }
+      let!(:zone) { create(:delivery_zone) }
 
       before do
-        zone.zone_members.create!(zoneable: country)
+        zone.members.create!(member_type: 'country', country: country)
       end
 
       it 'does not include countries from that zone' do
@@ -815,14 +818,14 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     context 'when country appears in multiple zones' do
       let(:country) { create(:country) }
-      let!(:zone1) { create(:zone, kind: 'country') }
-      let!(:zone2) { create(:zone, kind: 'country') }
+      let!(:zone1) { create(:delivery_zone) }
+      let!(:zone2) { create(:delivery_zone) }
 
       before do
-        zone1.zone_members.create!(zoneable: country)
-        zone2.zone_members.create!(zoneable: country)
-        create(:shipping_method, zones: [zone1])
-        create(:shipping_method, zones: [zone2])
+        zone1.members.create!(member_type: 'country', country: country)
+        zone2.members.create!(member_type: 'country', country: country)
+        create(:shipping_method, delivery_zones: [zone1])
+        create(:shipping_method, delivery_zones: [zone2])
       end
 
       it 'deduplicates countries' do

@@ -10,7 +10,7 @@ module Spree
   class ReimbursementTaxCalculator
     class << self
       def call(reimbursement)
-        reimbursement.return_items.includes(:inventory_unit).each do |return_item|
+        reimbursement.return_items.includes(:fulfillment_item).each do |return_item|
           set_tax!(return_item)
         end
       end

@@ -34,10 +34,10 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context 'create_order_if_necessary option is false' do
-      let!(:order) { create :order, user: user, store: store }
+      let!(:cart) { create :cart, customer: user, store: store }
 
-      it 'returns current order' do
-        expect(controller.current_order).to eq order
+      it 'returns the current cart' do
+        expect(controller.current_order).to eq cart
       end
     end
 
@@ -45,7 +45,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       it 'creates new order' do
         expect do
           controller.current_order(create_order_if_necessary: true)
-        end.to change(Spree::Order, :count).to(1)
+        end.to change(Spree::Cart, :count).to(1)
       end
     end
 
@@ -140,18 +140,20 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   end
 
   describe '#set_current_order' do
+    let(:current_cart) { create(:cart, customer: user, store: store) }
+
     before { allow(controller).to receive_messages(try_spree_current_user: user) }
 
     context 'user has some incomplete orders other than current one' do
       before do
-        allow(controller).to receive_messages(current_order: order, last_incomplete_order: incomplete_order, cookies: double(signed: { token: 'token' }))
+        allow(controller).to receive_messages(current_order: current_cart, last_incomplete_order: incomplete_order, cookies: double(signed: { token: 'token' }))
       end
 
       context 'within the same store' do
-        let!(:incomplete_order) { create(:order, user: user, store: order.store) }
+        let!(:incomplete_order) { create(:cart, customer: user, store: current_cart.store) }
 
-        it 'calls Spree::Order#merge!' do
-          expect(order).to receive(:merge!).with(incomplete_order, user)
+        it 'merges the other cart' do
+          expect(current_cart).to receive(:merge!).with(incomplete_order, user)
           controller.set_current_order
         end
       end

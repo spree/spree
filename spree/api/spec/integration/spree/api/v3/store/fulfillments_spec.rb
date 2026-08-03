@@ -5,8 +5,17 @@ require 'swagger_helper'
 RSpec.describe 'Cart Fulfillments API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:order) { create(:order_with_line_items, store: store, user: user, state: 'delivery') }
-  let!(:fulfillment) { order.shipments.first }
+  let!(:shipping_method) { create(:shipping_method) }
+  let!(:order) do
+    create(:cart_with_line_items, store: store, customer: user).tap do |o|
+      o.update!(email: user.email, ship_address: create(:address))
+      o.rebuild_fulfillments!
+      o.fulfillments.first.refresh_rates
+      o.set_fulfillments_cost
+      o.reload
+    end
+  end
+  let!(:fulfillment) { order.fulfillments.first }
   let(:cart_id) { order.prefixed_id }
 
   path '/api/v3/store/carts/{cart_id}/fulfillments/{id}' do
@@ -33,7 +42,7 @@ RSpec.describe 'Cart Fulfillments API', type: :request, swagger_doc: 'api-refere
       }
 
       response '200', 'delivery rate selected, returns updated cart' do
-        let(:delivery_rate) { fulfillment.shipping_rates.first }
+        let(:delivery_rate) { fulfillment.delivery_rates.first }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { fulfillment.to_param }

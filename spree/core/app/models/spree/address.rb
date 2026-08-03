@@ -44,7 +44,8 @@ module Spree
     # we need a safe operator here as Address is added to metafield_enabled_resources in Engine
     belongs_to :user, class_name: Spree.user_class&.name, optional: true, touch: true
 
-    has_many :shipments, inverse_of: :address
+    has_many :fulfillments, class_name: 'Spree::Fulfillment', inverse_of: :address
+    has_many :shipments, class_name: 'Spree::Fulfillment', foreign_key: :address_id, deprecated: true
 
     after_initialize :set_default_values, if: -> { new_record? && user.present? }
 
@@ -85,6 +86,19 @@ module Spree
     alias_attribute :postal_code, :zipcode
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
+
+    # The single home for postal-code normalization (delivery-zone matching) —
+    # don't scatter zipcode munging elsewhere.
+    # @param value [String, nil]
+    # @return [String] value with spaces/dashes stripped, upcased
+    def self.normalize_zipcode(value)
+      value.to_s.gsub(/[\s-]/, '').upcase
+    end
+
+    # @return [String] this address's zipcode, normalized via {.normalize_zipcode}
+    def normalized_zipcode
+      self.class.normalize_zipcode(zipcode)
+    end
 
     # Writer methods for API convenience - these set country/state from ISO/abbr codes
     # The reader methods (country_iso, state_abbr) are delegates to country.iso and state.abbr
@@ -368,8 +382,8 @@ module Spree
 
     def unassign_from_incomplete_orders
       orders = Spree::Order.incomplete.where(user_id: user_id)
-      orders.where(ship_address_id: id).update_all(ship_address_id: nil, state: 'address', updated_at: Time.current)
-      orders.where(bill_address_id: id).update_all(bill_address_id: nil, state: 'address', updated_at: Time.current)
+      orders.where(ship_address_id: id).update_all(ship_address_id: nil, updated_at: Time.current)
+      orders.where(bill_address_id: id).update_all(bill_address_id: nil, updated_at: Time.current)
     end
   end
 end

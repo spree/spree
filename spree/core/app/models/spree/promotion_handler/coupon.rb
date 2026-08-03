@@ -12,6 +12,9 @@ module Spree
 
       def apply
         if gift_cards_enabled? && load_gift_card_code
+          # The entered code is a gift card, not a coupon — drop the pending
+          # coupon_code assignment so locking flows don't see a dirty record.
+          order.restore_attributes([:coupon_code]) if order.has_attribute?(:coupon_code) && order.will_save_change_to_attribute?(:coupon_code)
 
           if @gift_card.expired?
             set_error_code :gift_card_expired
@@ -63,6 +66,7 @@ module Spree
         if promotion.present?
           # Order promotion has to be destroyed before line item removing
           order.promotions.delete(promotion)
+          clear_persisted_coupon_code(coupon_code)
 
           if promotion.multi_codes?
             coupon_code = promotion.coupon_codes.find_by(order: order)
@@ -73,7 +77,7 @@ module Spree
 
           remove_promotion_adjustments(promotion)
           remove_promotion_line_items(promotion)
-          order.update_with_updater!
+          order.recalculate_totals!
 
           set_success_code :adjustments_deleted
         else
@@ -101,13 +105,13 @@ module Spree
         ).with_coupon_code(order.coupon_code)
       end
 
-      # Returns the amount of adjustments for the promotion
+      # Returns the amount of discounts for the promotion
       #
       # @return [Numeric]
       def adjustments_amount
         @adjustments_amount ||=
-          @order.all_adjustments.promotion.eligible.
-          where(source: promotion&.actions).
+          @order.discounts.promotion.
+          where(promotion_action_id: promotion&.actions&.ids).
           sum(:amount)
       end
 
@@ -120,20 +124,29 @@ module Spree
 
       private
 
+      # Carts persist the entered code (adjuster candidacy) — removing the
+      # promotion must clear it or recalculation re-applies immediately.
+      def clear_persisted_coupon_code(code)
+        return unless order.has_attribute?(:coupon_code)
+        return unless order.read_attribute(:coupon_code).to_s.casecmp?(code.to_s.strip)
+
+        order.update_column(:coupon_code, nil)
+      end
+
       def remove_promotion_adjustments(promotion)
-        promotion_actions_ids = promotion.actions.pluck(:id)
-        order.all_adjustments.where(source_id: promotion_actions_ids,
-                                    source_type: 'Spree::PromotionAction').destroy_all
+        order.discounts.where(promotion_action_id: promotion.actions.pluck(:id)).destroy_all
       end
 
       def remove_promotion_line_items(promotion)
-        create_line_item_actions_ids = promotion.actions.where(type: 'Spree::Promotion::Actions::CreateLineItems').pluck(:id)
+        create_line_item_actions_ids = promotion.actions.
+          where(type: %w[Spree::Promotion::Actions::CreateLineItems Spree::Promotion::Actions::CreateLineItems]).pluck(:id)
 
         Spree::PromotionActionLineItem.where(promotion_action: create_line_item_actions_ids).find_each do |item|
           line_item = order.find_line_item_by_variant(item.variant)
           next if line_item.blank?
 
-          Spree.cart_remove_item_service.call(order: order, variant: item.variant, quantity: item.quantity)
+          remove_service = order.is_a?(Spree::Cart) ? Spree.cart_remove_item_service : Spree.order_remove_item_service
+          remove_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order }, variant: item.variant, quantity: item.quantity)
         end
       end
 
@@ -143,6 +156,10 @@ module Spree
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
 
         unless promotion.eligible?(order, options)
+          # Rules that explain themselves keep their message, but the status
+          # code is always :coupon_code_not_eligible so callers can park the
+          # code for retry on recalculation.
+          self.status_code = :coupon_code_not_eligible
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
           return (error || ineligible_for_this_order)
         end
@@ -175,10 +192,10 @@ module Spree
       def determine_promotion_application_result
         coupon_code = order.coupon_code.downcase
 
-        # Check for applied adjustments.
-        discount = order.all_adjustments.promotion.eligible.detect do |p|
-          p.source.promotion.code.try(:downcase) == coupon_code ||
-            Spree::CouponCode.unused.where(promotion_id: p.source.promotion_id, code: coupon_code).exists?
+        # Check for applied discounts.
+        discount = order.discounts.promotion.includes(:promotion).detect do |row|
+          row.promotion&.code.try(:downcase) == coupon_code ||
+            Spree::CouponCode.unused.where(promotion_id: row.promotion_id, code: coupon_code).exists?
         end
 
         # Check for applied line items.
@@ -191,7 +208,7 @@ module Spree
         if discount || created_line_items
           handle_coupon_code(discount, coupon_code) if discount
 
-          order.update_with_updater!
+          order.recalculate_totals!
           set_success_code :coupon_code_applied
         elsif order.promotions.with_coupon_code(order.coupon_code)
           # since CouponCode is disposable...
@@ -209,7 +226,7 @@ module Spree
       end
 
       def handle_coupon_code(discount, coupon_code)
-        Spree::CouponCode.unused.find_by(promotion_id: discount.source.promotion_id, code: coupon_code)&.apply_order!(order)
+        Spree::CouponCode.unused.find_by(promotion_id: discount.promotion_id, code: coupon_code)&.apply_order!(order)
       end
 
       # Whether the coupon handler should also handle gift card codes.

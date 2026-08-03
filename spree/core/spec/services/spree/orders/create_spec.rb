@@ -11,7 +11,7 @@ module Spree
     let!(:zone)   { create(:zone) }
     let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
     let!(:shipping_method) do
-      create(:shipping_method, zones: [zone]).tap do |sm|
+      create(:shipping_method).tap do |sm|
         sm.calculator.preferred_amount = 5
         sm.calculator.save
       end
@@ -104,8 +104,8 @@ module Spree
 
           expect(order.line_items.count).to eq(1)
           expect(order.shipments).not_to be_empty
-          expect(order.shipments.first.shipping_rates).not_to be_empty
-          expect(order.shipments.first.selected_shipping_rate).to be_present
+          expect(order.fulfillments.first.shipping_rates).not_to be_empty
+          expect(order.fulfillments.first.selected_shipping_rate).to be_present
 
           expect(order.shipment_total).to eq(5)
           expect(order.total).to eq(order.item_total + order.shipment_total + order.adjustment_total)
@@ -129,7 +129,7 @@ module Spree
         end
 
         before do
-          allow_any_instance_of(Spree::Order).to receive(:delivery_required?).and_return(false)
+          allow_any_instance_of(Spree::Order).to receive(:delivery_step_required?).and_return(false)
         end
 
         it 'does not build shipments' do
@@ -162,9 +162,9 @@ module Spree
           expect(order.shipment_total).to eq(5)
 
           # Promo created a -5 adjustment on the shipment
-          shipment = order.shipments.first
+          shipment = order.fulfillments.first
           expect(shipment.adjustment_total).to eq(-5)
-          expect(shipment.adjustments.promotion.size).to eq(1)
+          expect(shipment.discounts.promotion.size).to eq(1)
           expect(order.shipping_discount).to eq(5)
 
           # Promotion is associated with the order
@@ -192,7 +192,7 @@ module Spree
           expect(subject).to be_success
           order = subject.value
 
-          shipment = order.shipments.first
+          shipment = order.fulfillments.first
           expect(shipment).to be_present
           expect(shipment.adjustment_total).to eq(-5)
           expect(order.shipping_discount).to eq(5)

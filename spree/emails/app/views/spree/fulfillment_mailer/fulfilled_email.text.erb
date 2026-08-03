@@ -1,0 +1,17 @@
+<%= Spree.t('fulfillment_mailer.fulfilled_email.dear_customer', name: name_for(@fulfillment.order)) %>
+
+<%= Spree.t('fulfillment_mailer.fulfilled_email.instructions', number: @fulfillment.order.number) %>
+
+============================================================
+<%= Spree.t('fulfillment_mailer.fulfilled_email.fulfillment_summary') %>
+============================================================
+<% @fulfillment.manifest.each do |item| %>
+  <%= item.variant.sku %> <%= item.variant.product.name %> <%= item.variant.options_text %>
+<% end %>
+============================================================
+
+<%= Spree.t('fulfillment_mailer.fulfilled_email.track_information', tracking: @fulfillment.tracking) if @fulfillment.tracking %>
+<%= Spree.t('fulfillment_mailer.fulfilled_email.track_link', url: @fulfillment.tracking_url) if @fulfillment.tracking_url %>
+
+<%= Spree.t('fulfillment_mailer.fulfilled_email.thanks') %>
+<%= Spree.t('fulfillment_mailer.fulfilled_email.store_team', store_name: current_store.name) %>

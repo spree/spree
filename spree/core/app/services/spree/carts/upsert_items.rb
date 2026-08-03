@@ -36,7 +36,7 @@ module Spree
 
             return failure(variant, "#{variant.name} is not available in #{cart.currency}") if variant.amount_in(cart.currency).nil?
 
-            line_item = Spree.line_item_by_variant_finder.new.execute(order: cart, variant: variant)
+            line_item = Spree.line_item_by_variant_finder.new.execute(owner: cart, variant: variant)
 
             if line_item
               line_item.quantity = quantity
@@ -49,7 +49,7 @@ module Spree
             return failure(line_item) unless line_item.save
           end
 
-          cart.update_with_updater!
+          cart.recalculate_totals!
         end
 
         success(cart)

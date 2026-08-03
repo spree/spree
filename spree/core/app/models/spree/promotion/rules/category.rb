@@ -5,7 +5,7 @@ module Spree
       # Renamed from Spree::Promotion::Rules::Taxon in 6.0 (alias kept for one
       # release). Existing spree_promotion_rules.type strings are backfilled by the
       # Phase 4 data migration; the alias keeps old rows resolving until then.
-      class Category < PromotionRule
+      class Category < Spree::PromotionRule
         #
         # Associations
         #
@@ -48,7 +48,7 @@ module Spree
         after_save :add_categories
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible_category_ids

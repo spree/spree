@@ -6,19 +6,20 @@ module Spree
       def call(cart:, params:)
         @cart = cart
         @params = params.to_h.deep_symbolize_keys
-        was_in_cart = cart.cart?
+        was_in_checkout = cart.in_checkout?
 
         ApplicationRecord.transaction do
           assign_cart_attributes
           clear_shipping_address_if_outside_market
           assign_address(:shipping_address)
           assign_address(:billing_address)
+          assign_default_addresses
 
           cart.save!
 
           process_items
           try_advance
-          sync_stock_reservations(was_in_cart: was_in_cart)
+          sync_stock_reservations(was_in_checkout: was_in_checkout)
         end
 
         success(cart)
@@ -34,6 +35,15 @@ module Spree
 
       attr_reader :cart, :params
 
+      # Pickup intent counts as a destination change: proposals priced for
+      # shipping (or for another counter) are stale once the customer picks
+      # or clears a pickup location.
+      def destination_changed?
+        cart.saved_change_to_ship_address_id? ||
+          cart.saved_change_to_market_id? ||
+          cart.saved_change_to_preferred_stock_location_id?
+      end
+
       def assign_cart_attributes
         cart.email = params[:email] if params[:email].present?
         cart.customer_note = params[:customer_note] if params.key?(:customer_note)
@@ -43,6 +53,17 @@ module Spree
         cart.locale = params[:locale] if params[:locale].present?
         cart.metadata = cart.metadata.merge(params[:metadata].to_h) if params[:metadata].present?
         cart.use_shipping = params[:use_shipping] if params.key?(:use_shipping)
+        assign_preferred_stock_location if params.key?(:preferred_stock_location_id)
+      end
+
+      # Storefront pickup selection: resolves the public prefixed ID (or raw
+      # ID) against the store's pickup-enabled locations — the eligibility
+      # rule is enforced here at the API seam, mirroring Orders::Create.
+      def assign_preferred_stock_location
+        value = params[:preferred_stock_location_id]
+
+        cart.preferred_stock_location_id =
+          value.blank? ? nil : cart.store.stock_locations.pickup_enabled.find_by_param!(value).id
       end
 
       def assign_address(address_type)
@@ -61,10 +82,9 @@ module Spree
           address_id = resolve_address_id(address_params[:id])
           cart.public_send(:"#{address_type}_id=", address_id) if address_id
         else
-          # Only revert to address state when shipping address changes.
-          # Billing address updates (e.g. during payment) should not
-          # destroy shipments and reset the checkout flow.
-          revert_to_address_state if address_type == :shipping_address && cart.has_checkout_step?('address')
+          # Only a shipping-address change invalidates delivery proposals;
+          # billing updates (e.g. during payment) must not rebuild them.
+          @address_invalidated = true if address_type == :shipping_address
           cart.public_send(:"#{address_type}_attributes=", address_params)
         end
       end
@@ -78,6 +98,16 @@ module Spree
         )
 
         raise StandardError, result.error.to_s if result.failure?
+      end
+
+      # Legacy `before_transition to: :address` parity: once a signed-in
+      # customer is in checkout, blank address slots fill from their saved
+      # defaults (assign_default_addresses! guards each slot itself).
+      def assign_default_addresses
+        return unless cart.user
+        return unless cart.email.present? || cart.ship_address_id.present?
+
+        cart.assign_default_addresses!
       end
 
       def resolve_address_id(prefixed_id)
@@ -101,48 +131,39 @@ module Spree
 
         unless cart.market.country_ids.include?(cart.ship_address.country_id)
           cart.ship_address = nil
-          revert_to_address_state if cart.has_checkout_step?('address')
+          @address_invalidated = true
         end
-      end
-
-      def revert_to_address_state
-        return if ['cart', 'address'].include?(cart.state)
-
-        cart.state = 'address'
       end
 
       # Three-way dispatch on the cart→checkout transition:
       # entering checkout → Reserve, mid-checkout mutation → Extend, reverting to cart → Release.
       # A failed Reserve raises so the enclosing transaction rolls back and the
       # outer rescue surfaces the error to the API caller.
-      def sync_stock_reservations(was_in_cart:)
-        if cart.cart?
-          Spree::StockReservations::Release.call(order: cart) unless was_in_cart
-        elsif was_in_cart
-          result = Spree::StockReservations::Reserve.call(order: cart)
-          raise Spree::StockReservations::InsufficientStockError.new(nil, result.error.to_s) if result.failure?
+      def sync_stock_reservations(was_in_checkout:)
+        if !cart.in_checkout?
+          Spree::StockReservations::Release.call(cart: cart) if was_in_checkout
+        elsif was_in_checkout
+          Spree::StockReservations::Extend.call(cart: cart)
         else
-          Spree::StockReservations::Extend.call(order: cart)
+          result = Spree::StockReservations::Reserve.call(cart: cart)
+          raise Spree::StockReservations::InsufficientStockError.new(nil, result.error.to_s) if result.failure?
         end
       end
 
-      # Auto-advance as far as the checkout state machine allows, but never
-      # to complete. The complete transition must always be explicit via
-      # the /carts/:id/complete endpoint — otherwise gift cards or store
-      # credits that fully cover the order total would auto-complete the
-      # cart during address/delivery updates.
+      # Recalculation-on-write: address/market changes re-price, re-tax and
+      # rebuild delivery proposals; completion stays explicit via the
+      # /carts/:id/complete endpoint (a fully-covered cart must never
+      # auto-complete during address updates).
       def try_advance
-        return if cart.complete? || cart.canceled?
+        return if cart.complete?
 
-        steps = cart.checkout_steps
-        loop do
-          current_index = steps.index(cart.state).to_i
-          next_step = steps[current_index + 1]
-          break if next_step.nil? || next_step == 'complete'
-          break unless cart.next
+        if @address_invalidated || destination_changed?
+          cart.recalculate_for_address_change!
+        else
+          cart.recalculate_totals!
         end
       rescue StandardError => e
-        Rails.error.report(e, context: { order_id: cart.id, state: cart.state }, source: 'spree.checkout')
+        Rails.error.report(e, context: { order_id: cart.id }, source: 'spree.checkout')
       ensure
         # A halted transition records warnings on the cart, which reload would drop, so carry them across the reload.
         warnings = cart.warnings

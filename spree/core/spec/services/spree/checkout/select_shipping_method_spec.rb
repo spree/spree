@@ -6,6 +6,7 @@ module Spree
 
     let(:country) { create(:country) }
     let(:store) { create(:store, checkout_zone: zone) }
+    let!(:stock_location) { create(:stock_location, store: store, backorderable_default: true) }
     let(:order) { create(:order_with_totals, store: store, ship_address: create(:address, country: country)) }
 
     let(:execute) { subject.call(order: order, params: params) }
@@ -19,21 +20,25 @@ module Spree
     let(:zone) { create(:zone_with_country) }
     let(:shipping_category) { order.products.first.shipping_category }
     let!(:shipping_method) do
-      create(:shipping_method, zones: [zone], shipping_categories: [shipping_category]) do |shipping_method|
+      create(:shipping_method, store: store, shipping_categories: [shipping_category]) do |shipping_method|
         shipping_method.calculator.preferred_amount = 10
         shipping_method.calculator.save
       end
     end
     let!(:shipping_method_2) do
-      create(:shipping_method, zones: [zone], shipping_categories: [shipping_category]) do |shipping_method|
+      create(:shipping_method, store: store, shipping_categories: [shipping_category]) do |shipping_method|
         shipping_method.calculator.preferred_amount = 15
         shipping_method.calculator.save
       end
     end
     let!(:shipping_method_3) do
-      create(:shipping_method, zones: [create(:zone)], shipping_categories: [shipping_category]) do |shipping_method|
+      create(:shipping_method, store: store, shipping_categories: [shipping_category]) do |shipping_method|
         shipping_method.calculator.preferred_amount = 5
         shipping_method.calculator.save
+        # scoped to an unrelated delivery zone so it never serves this order
+        elsewhere = create(:delivery_zone)
+        elsewhere.members.create!(member_type: 'country', country: create(:country))
+        shipping_method.delivery_zones = [elsewhere]
       end
     end
     let(:shipment) { order.shipments.last }
@@ -45,7 +50,7 @@ module Spree
 
     context 'one shipment' do
       before do
-        Spree::Checkout::GetShippingRates.call(order: order)
+        order.rebuild_fulfillments!
         order.reload
       end
 
@@ -57,7 +62,7 @@ module Spree
         it 'sets selected shipping method for shipment' do
           expect(shipment.shipping_rates.count).to eq(2)
           execute
-          expect(selected_shipping_rate.shipping_method).to eq(shipping_method_2)
+          expect(selected_shipping_rate.delivery_method).to eq(shipping_method_2)
         end
       end
 
@@ -78,11 +83,11 @@ module Spree
       let(:product_2) { create(:product_in_stock, shipping_category: shipping_category) }
       let!(:line_item) { create(:line_item, variant: product_2.default_variant, order: order) }
 
-      let(:shipment) { order.shipments.first }
+      let(:shipment) { order.fulfillments.first }
       let(:shipment_2) { order.shipments.last }
 
       before do
-        Spree::Checkout::GetShippingRates.call(order: order)
+        order.rebuild_fulfillments!
         order.reload
       end
 
@@ -98,11 +103,11 @@ module Spree
 
         it 'sets selected shipping method for the specified shipment' do
           expect(order.shipments.count).to eq(2)
-          expect(shipment.selected_shipping_rate.shipping_method).to eq(shipping_method)
-          expect(shipment_2.selected_shipping_rate.shipping_method).to eq(shipping_method)
+          expect(shipment.selected_shipping_rate.delivery_method).to eq(shipping_method)
+          expect(shipment_2.selected_shipping_rate.delivery_method).to eq(shipping_method)
           execute
-          expect(shipment.reload.selected_shipping_rate.shipping_method).to eq(shipping_method)
-          expect(shipment_2.reload.selected_shipping_rate.shipping_method).to eq(shipping_method_2)
+          expect(shipment.reload.selected_shipping_rate.delivery_method).to eq(shipping_method)
+          expect(shipment_2.reload.selected_shipping_rate.delivery_method).to eq(shipping_method_2)
         end
       end
 
@@ -111,11 +116,11 @@ module Spree
 
         it 'sets selected shipping method for all shipments' do
           expect(order.shipments.count).to eq(2)
-          expect(shipment.selected_shipping_rate.shipping_method).to eq(shipping_method)
-          expect(shipment_2.selected_shipping_rate.shipping_method).to eq(shipping_method)
+          expect(shipment.selected_shipping_rate.delivery_method).to eq(shipping_method)
+          expect(shipment_2.selected_shipping_rate.delivery_method).to eq(shipping_method)
           execute
-          expect(shipment.reload.selected_shipping_rate.shipping_method).to eq(shipping_method_2)
-          expect(shipment_2.reload.selected_shipping_rate.shipping_method).to eq(shipping_method_2)
+          expect(shipment.reload.selected_shipping_rate.delivery_method).to eq(shipping_method_2)
+          expect(shipment_2.reload.selected_shipping_rate.delivery_method).to eq(shipping_method_2)
         end
       end
     end

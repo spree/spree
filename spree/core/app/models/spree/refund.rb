@@ -16,6 +16,10 @@ module Spree
     end
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
     belongs_to :refunder, class_name: Spree.admin_user_class.to_s, optional: true
+    # What triggered this refund — a Spree::Return today, later an Exchange
+    # or Claim; nil for a manual refund. Deliberately polymorphic: the set is
+    # small and closed, and refunds are never bulk-queried in a hot path.
+    belongs_to :originator, polymorphic: true, optional: true
 
     has_many :log_entries, as: :source
 
@@ -131,7 +135,7 @@ module Spree
     end
 
     def update_order
-      payment.order.updater.update
+      payment.order.recalculate_totals!
     end
   end
 end

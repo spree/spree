@@ -209,7 +209,7 @@ describe Spree::WebhookDelivery, type: :model do
   end
 
   describe '#redeliver!' do
-    let(:delivery) { create(:webhook_delivery, :failed, webhook_endpoint: webhook_endpoint, event_name: 'order.completed', payload: { id: 'test', name: 'order.completed' }) }
+    let(:delivery) { create(:webhook_delivery, :failed, webhook_endpoint: webhook_endpoint, event_name: 'order.placed', payload: { id: 'test', name: 'order.placed' }) }
 
     before do
       allow_any_instance_of(Spree::WebhookDelivery).to receive(:queue_for_delivery!)

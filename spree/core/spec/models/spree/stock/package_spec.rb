@@ -57,33 +57,39 @@ module Spree
         expect(item.quantity).to eq 1
       end
 
-      # Contains regression test for #2804
-      it 'builds a list of shipping methods common to all categories' do
-        category1 = create(:shipping_category)
-        category2 = create(:shipping_category)
-        method1   = create(:shipping_method)
-        method2   = create(:shipping_method)
-        method1.shipping_categories = [category1, category2]
-        method2.shipping_categories = [category1]
-        variant1 = create(:product, shipping_category: category1).default_variant
-        variant2 = create(:product, shipping_category: category2).default_variant
-        contents = [ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
-                    ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
-                    ContentItem.new(build(:inventory_unit, variant_id: variant2.id))]
+      # Replaces the ShippingCategory intersection (#2804) with the 6.0
+      # fulfillment-type eligibility semantics.
+      describe '#eligible_delivery_methods' do
+        let!(:shipping_dm) { create(:shipping_method) }
+        let!(:digital_dm) { create(:digital_shipping_method) }
 
-        package = Package.new(stock_location, contents)
-        expect(package.shipping_methods).to eq([method1])
-      end
+        it 'returns methods whose fulfillment type every item supports' do
+          variant1 = create(:product).default_variant
+          variant2 = create(:product).default_variant
+          contents = [ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
+                      ContentItem.new(build(:inventory_unit, variant_id: variant2.id))]
 
-      context 'when no categories' do
-        let(:variant) { create(:variant) }
-        let(:contents) { [ContentItem.new(build(:inventory_unit, variant: variant))] }
-        let(:package) { Package.new(stock_location, contents) }
+          package = Package.new(stock_location, contents)
+          expect(package.eligible_delivery_methods).to eq([shipping_dm])
+        end
 
-        before { allow(variant).to receive_messages shipping_category: nil }
+        it 'returns nothing when the items share no fulfillment type' do
+          physical = create(:product).default_variant
+          digital = create(:digital_product).default_variant
+          contents = [ContentItem.new(build(:inventory_unit, variant_id: physical.id)),
+                      ContentItem.new(build(:inventory_unit, variant_id: digital.id))]
 
-        it 'builds an empty list of shipping methods' do
-          expect(package.shipping_methods).to be_empty
+          package = Package.new(stock_location, contents)
+          expect(package.eligible_delivery_methods).to be_empty
+        end
+
+        it 'subtracts per-product exclusions' do
+          excluded = create(:shipping_method)
+          variant = create(:product, excluded_delivery_method_ids: [excluded.id]).default_variant
+          contents = [ContentItem.new(build(:inventory_unit, variant_id: variant.id))]
+
+          package = Package.new(stock_location, contents)
+          expect(package.eligible_delivery_methods).to eq([shipping_dm])
         end
       end
 
@@ -92,18 +98,18 @@ module Spree
         subject.add build_inventory_unit, :backordered
 
         shipping_method = build(:shipping_method)
-        subject.shipping_rates = [Spree::ShippingRate.new(shipping_method: shipping_method, cost: 10.00, selected: true)]
+        subject.shipping_rates = [Spree::DeliveryRate.new(delivery_method: shipping_method, cost: 10.00, selected: true)]
 
         shipment = subject.to_shipment
         expect(shipment.stock_location).to eq subject.stock_location
-        expect(shipment.inventory_units.size).to eq 3
+        expect(shipment.fulfillment_items.size).to eq 3
 
-        first_unit = shipment.inventory_units.first
+        first_unit = shipment.fulfillment_items.first
         expect(first_unit.variant).to eq variant
         expect(first_unit.state).to eq 'on_hand'
         expect(first_unit).to be_pending
 
-        last_unit = shipment.inventory_units.last
+        last_unit = shipment.fulfillment_items.last
         expect(last_unit.variant).to eq variant
         expect(last_unit.state).to eq 'backordered'
 

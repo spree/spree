@@ -1,113 +1,35 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
-  let(:order) { create(:order_with_line_items, line_items_count: 1) }
-  let(:promotion) { create(:promotion) }
-  let(:action) { Spree::Promotion::Actions::CreateAdjustment.new(promotion: promotion) }
-  let(:payload) { { order: order } }
+  let(:order) { create(:order_with_line_items, line_items_count: 2) }
+  let(:promotion) { create(:promotion, kind: :automatic, code: nil, store: order.store) }
+  let(:action) do
+    described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 4))
+  end
 
-  it_behaves_like 'an adjustment source'
+  describe '#perform' do
+    it 'distributes the order-level discount across line items' do
+      expect(action.perform(order: order, promotion: promotion)).to be(true)
 
-  describe '#compute_amount' do
-    subject { described_class.new }
-
-    let(:shipping_discount) { 10 }
-    let(:order) do
-      double(:order, item_total: 30, ship_total: 10, shipping_discount: shipping_discount)
+      rows = order.discounts.reload
+      expect(rows.map(&:line_item_id)).to match_array(order.line_items.ids)
+      expect(rows.sum(&:amount)).to eq(-4)
     end
 
-    context 'when shipping_discount is applied' do
-      context 'and total is less than discount' do
-        it 'returns discount amount eq to total' do
-          allow(subject).to receive(:compute).with(order).and_return(100)
-
-          expect(subject.compute_amount(order)).to eq(-30)
-        end
-      end
-
-      context 'and total is equal to discount' do
-        it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(30)
-
-          expect(subject.compute_amount(order)).to eq(-30)
-        end
-      end
-
-      context 'and total is greater than discount' do
-        it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(10)
-
-          expect(subject.compute_amount(order)).to eq(-10)
-        end
-      end
-    end
-
-    context 'when shipping_discount is not applied' do
-      let(:shipping_discount) { 0 }
-
-      context 'and total is less than discount' do
-        it 'returns discount amount eq to total' do
-          allow(subject).to receive(:compute).with(order).and_return(100)
-
-          expect(subject.compute_amount(order)).to eq(-40)
-        end
-      end
-
-      context 'and total is equal to discount' do
-        it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(40)
-
-          expect(subject.compute_amount(order)).to eq(-40)
-        end
-      end
-
-      context 'and total is greater than discount' do
-        it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(10)
-
-          expect(subject.compute_amount(order)).to eq(-10)
-        end
-      end
+    it 'reports no action at zero amount' do
+      zero = described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 0))
+      expect(zero.perform(order: order, promotion: promotion)).to be(false)
     end
   end
 
-  # From promotion spec:
-  context '#perform' do
-    before do
-      action.calculator = Spree::Calculator::FlatRate.new(preferred_amount: 10)
-      promotion.promotion_actions = [action]
-      allow(action).to receive_messages(promotion: promotion)
+  describe '#compute_amount' do
+    it 'caps at the order total' do
+      huge = described_class.create!(promotion: promotion, calculator: Spree::Calculator::FlatRate.new(preferred_amount: 99_999))
+      expect(huge.compute_amount(order)).to eq(-action.order_total(order))
     end
+  end
 
-    # Regression test for #3966
-    it 'does not apply an adjustment if the amount is 0' do
-      action.calculator.preferred_amount = 0
-      action.perform(payload)
-      expect(promotion.credits_count).to eq(0)
-      expect(order.adjustments.count).to eq(0)
-    end
-
-    it 'creates a discount with correct negative amount' do
-      order.shipments.create!(cost: 10, stock_location: create(:stock_location))
-
-      action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
-      expect(order.adjustments.count).to eq(1)
-      expect(order.adjustments.first.amount.to_i).to eq(-10)
-    end
-
-    it 'creates a discount accessible through both order_id and adjustable_id' do
-      action.perform(payload)
-      expect(order.adjustments.count).to eq(1)
-      expect(order.all_adjustments.count).to eq(1)
-    end
-
-    it 'does not create a discount when order already has one from this promotion' do
-      order.shipments.create!(cost: 10, stock_location: create(:stock_location))
-
-      action.perform(payload)
-      action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
-    end
+  it 'has order discount scope' do
+    expect(action.discount_scope).to eq(:order)
   end
 end

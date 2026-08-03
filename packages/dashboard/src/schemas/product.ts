@@ -108,6 +108,9 @@ export const productFormSchema = z.object({
   // Tax
   tax_category_id: z.string().nullable().optional(),
 
+  // Product type — drives fulfillment eligibility (shipping/pickup/digital)
+  product_type_id: z.string().nullable().optional(),
+
   // SEO
   meta_title: z.string().optional(),
   meta_description: z.string().optional(),
@@ -148,6 +151,7 @@ export function newProductFormDefaults(): ProductFormValues {
     category_ids: [],
     tags: [],
     tax_category_id: null,
+    product_type_id: null,
     meta_title: '',
     meta_description: '',
     slug: '',

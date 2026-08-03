@@ -6,7 +6,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
   let(:payment) do
     double(
       Spree::Payment,
-      order: order,
+      owner: order,
       number: 'P1566',
       currency: 'EUR',
       payment_method: payment_method
@@ -30,7 +30,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
       ship_total: '12.44'.to_d,
       additional_tax_total: '1.53'.to_d,
       item_total: '15.11'.to_d,
-      promo_total: '2.57'.to_d,
+      discount_total: '2.57'.to_d,
       bill_address: bill_address,
       ship_address: ship_address
     )

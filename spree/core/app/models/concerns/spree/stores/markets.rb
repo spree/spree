@@ -8,6 +8,7 @@ module Spree
         has_one :default_market, -> { default }, class_name: 'Spree::Market'
 
         after_create :ensure_default_market
+        after_update :sync_default_market_settings
       end
 
       # Returns the default country, derived from the default market
@@ -82,24 +83,26 @@ module Spree
       # Returns supported currencies derived from markets, falling back to store attributes
       # @return [Array<Money::Currency>]
       def supported_currencies_list
-        @supported_currencies_list ||= if has_markets?
-                                         markets.pluck(:currency).uniq.map do |code|
-                                           ::Money::Currency.find(code)
-                                         end.compact.sort_by { |c| c.iso_code == default_currency ? 0 : 1 }
-                                       else
-                                         legacy_supported_currencies_list
-                                       end
+        # Union of market currencies and the legacy store column — column
+        # configuration stays honored until it is explicitly migrated onto
+        # markets (every store owns at least a bootstrap market in 6.0).
+        @supported_currencies_list ||= begin
+          market_codes = has_markets? ? markets.pluck(:currency) : []
+          legacy_codes = legacy_supported_currencies_list.map(&:iso_code)
+          (market_codes + legacy_codes).uniq.filter_map { |code| ::Money::Currency.find(code) }.
+            sort_by { |currency| currency.iso_code == default_currency ? 0 : 1 }
+        end
       end
 
       # Supported locale codes derived from markets, falling back to store
       # attributes.
       # @return [Array<String>]
       def supported_locales_list
-        @supported_locales_list ||= if has_markets?
-                                      (markets.flat_map(&:supported_locales_list) << default_locale).compact.uniq.sort
-                                    else
-                                      legacy_supported_locales_list
-                                    end
+        # Same union semantics as +supported_currencies_list+.
+        @supported_locales_list ||= begin
+          market_locales = has_markets? ? markets.flat_map(&:supported_locales_list) : []
+          (market_locales + legacy_supported_locales_list + [default_locale]).compact.uniq.sort
+        end
       end
 
       # Supported locales as rich Spree::Locale objects (name, default?, rtl?).
@@ -117,23 +120,73 @@ module Spree
 
       private
 
+      # Every store owns a default market — Cart and Order require one.
+      # Resolution order: the country given at creation, the legacy
+      # default_country column, then US (created if the countries table is
+      # empty, e.g. bare test databases).
       def ensure_default_market
         return if markets.exists?
 
-        country = @default_country_for_market
-        return if country.blank?
+        country = @default_country_for_market ||
+          Spree::Country.find_by(id: read_attribute(:default_country_id)) ||
+          Spree::Country.by_iso('US') ||
+          create_fallback_country
 
         iso_country = ISO3166::Country[country.iso]
 
         Spree::Events.disable do
           markets.create!(
             name: country.name,
-            currency: iso_country&.currency_code || read_attribute(:default_currency) || 'USD',
-            default_locale: iso_country&.languages_official&.first || read_attribute(:default_locale) || 'en',
+            currency: read_attribute(:default_currency) || iso_country&.currency_code || 'USD',
+            default_locale: read_attribute(:default_locale) || iso_country&.languages_official&.first || 'en',
+            supported_locales: read_attribute(:supported_locales),
             default: true,
+            bootstrap_default: true,
             countries: [country]
           )
         end
+      end
+
+      # Store-level locale/currency edits keep steering the storefront: the
+      # legacy columns stay writable and propagate onto the default market
+      # (which is what readers delegate to).
+      # Diffs against the market rather than dirty-tracking — long-lived store
+      # instances (spec globals, app singletons) can carry stale change state.
+      def sync_default_market_settings
+        association(:default_market).reset
+        market = default_market
+        return if market.blank?
+
+        updates = {}
+        new_locale = read_attribute(:default_locale)
+        new_currency = read_attribute(:default_currency)
+        updates[:default_locale] = new_locale if new_locale.present? && market.default_locale != new_locale
+        updates[:currency] = new_currency if new_currency.present? && market.currency != new_currency
+        return if updates.empty?
+
+        market.update_columns(updates.merge(updated_at: Time.current))
+        association(:default_market).reset
+        clear_market_derived_memoization
+      end
+
+      def clear_market_derived_memoization
+        @supported_currencies_list = nil
+        @supported_locales_list = nil
+        @supported_locales = nil
+        @has_markets = nil
+      end
+
+      def create_fallback_country
+        iso_country = ISO3166::Country['US']
+        Spree::Country.create!(
+          iso_name: iso_country.local_name.upcase,
+          iso: iso_country.alpha2,
+          iso3: iso_country.alpha3,
+          name: iso_country.local_name,
+          numcode: iso_country.number,
+          states_required: false,
+          zipcode_required: true
+        )
       end
 
       def legacy_supported_currencies_list

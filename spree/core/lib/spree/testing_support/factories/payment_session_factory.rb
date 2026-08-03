@@ -1,9 +1,13 @@
 FactoryBot.define do
   factory :payment_session, class: 'Spree::PaymentSession' do
-    order
-    payment_method { create(:credit_card_payment_method, store: order.store) }
-    amount { order.total }
-    currency { order.currency }
+    transient do
+      owner { order || cart }
+    end
+
+    order { cart.present? ? nil : create(:order) }
+    payment_method { create(:credit_card_payment_method, store: (order || cart).store) }
+    amount { (order || cart).total }
+    currency { (order || cart).currency }
     status { 'pending' }
     external_id { "ps_test_#{SecureRandom.hex(12)}" }
     external_data { {} }
@@ -39,7 +43,7 @@ FactoryBot.define do
 
     factory :bogus_payment_session, class: 'Spree::PaymentSessions::Bogus' do
       type { 'Spree::PaymentSessions::Bogus' }
-      payment_method { create(:bogus_payment_method, store: order.store) }
+      payment_method { create(:bogus_payment_method, store: (order || cart).store) }
       external_id { "bogus_#{SecureRandom.hex(12)}" }
       external_data { { 'client_secret' => "bogus_secret_#{SecureRandom.hex(8)}" } }
     end

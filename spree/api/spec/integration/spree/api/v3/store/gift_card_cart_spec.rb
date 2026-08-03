@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Cart Gift Card API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:order) { create(:order_with_line_items, store: store, user: user) }
+  let!(:order) { create(:cart_with_line_items, store: store, customer: user) }
   let(:cart_id) { order.prefixed_id }
 
   path '/api/v3/store/carts/{cart_id}/gift_cards' do

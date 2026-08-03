@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'i18n-tasks'
 
-  s.add_dependency 'rails', '>= 7.2', '< 8.2'
+  s.add_dependency 'rails', '>= 8.1', '< 8.2'
 
 
   s.add_dependency 'acts_as_list', '>= 0.8'

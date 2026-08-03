@@ -20,11 +20,6 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
     it { is_expected.not_to allow_value('test@').for(:email) }
   end
 
-  describe 'associations' do
-    it { is_expected.to belong_to(:user).optional }
-    it { is_expected.to belong_to(:store).without_validating_presence }
-  end
-
   describe 'callbacks' do
     describe 'set_store' do
       let(:current_store) { create(:store) }

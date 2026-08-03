@@ -59,11 +59,17 @@ module Spree
       end
 
       def shipping_methods(package, display_filter)
-        package.shipping_methods.select do |ship_method|
+        methods = package.eligible_delivery_methods
+        # Storeless orders exist only in specs; real orders always carry one.
+        methods = methods.merge(order.store.delivery_methods) if order.store
+
+        methods.select do |ship_method|
           calculator = ship_method.calculator
 
           ship_method.available_to_display?(display_filter) &&
             ship_method.include?(order.ship_address) &&
+            ship_method.serves_location?(package.stock_location) &&
+            ship_method.eligible_for_package?(package) &&
             calculator.available?(package) &&
             (calculator.preferences[:currency].blank? ||
              calculator.preferences[:currency] == currency)

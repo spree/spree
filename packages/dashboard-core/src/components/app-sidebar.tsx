@@ -22,6 +22,7 @@ function entryToNavItem(entry: NavEntry, storeId: string): NavItem {
       title: child.label,
       url: pathFor(child.path),
       subject: child.subject,
+      badge: child.badge,
     })),
   }
 }

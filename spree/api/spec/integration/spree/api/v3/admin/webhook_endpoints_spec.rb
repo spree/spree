@@ -100,7 +100,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
           subscriptions: {
             type: :array,
             items: { type: :string },
-            example: %w[order.completed order.canceled]
+            example: %w[order.placed order.canceled]
           }
         }
       }
@@ -111,7 +111,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
           {
             name: 'CI integration',
             url: 'https://ci.example.com/webhooks',
-            subscriptions: ['order.completed']
+            subscriptions: ['order.placed']
           }
         end
 
@@ -119,7 +119,7 @@ RSpec.describe 'Admin Webhook Endpoints API', type: :request, swagger_doc: 'api-
           data = JSON.parse(response.body)
           expect(data['name']).to eq('CI integration')
           expect(data['url']).to eq('https://ci.example.com/webhooks')
-          expect(data['subscriptions']).to eq(['order.completed'])
+          expect(data['subscriptions']).to eq(['order.placed'])
           expect(data['secret_key']).to be_present
         end
       end

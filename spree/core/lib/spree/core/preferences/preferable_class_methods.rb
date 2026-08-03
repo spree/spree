@@ -12,7 +12,9 @@ module Spree::Preferences
       # cache_key will be nil for new objects, then if we check if there
       # is a pending preference before going to default
       define_method preference_getter_method(name) do
-        preferences.fetch(name) do
+        # Rows persisted before the model gained preferences can load with a
+        # NULL column — treat that as "no stored preferences".
+        (preferences || {}).fetch(name) do
           default.call
         end
       end
@@ -26,6 +28,7 @@ module Spree::Preferences
           value = parse_on_set.arity.abs > 1 ? parse_on_set.call(value, self) : parse_on_set.call(value)
         end
         value = convert_preference_value(value, type, nullable: nullable)
+        self.preferences = {} if preferences.nil?
         preferences[name] = value
 
         Spree::Deprecation.warn("`#{name}` is deprecated. #{deprecated}") if deprecated

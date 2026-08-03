@@ -14,11 +14,11 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
   end
 
   describe 'GET #index' do
-    let!(:product_a) { create(:product, stores: [store]) }
-    let!(:product_b) { create(:product, stores: [store]) }
-    let!(:product_c) { create(:product, stores: [store]) }
+    let!(:product_a) { create(:product, store: store) }
+    let!(:product_b) { create(:product, store: store) }
+    let!(:product_c) { create(:product, store: store) }
     let!(:other_collection) { create(:collection, store: store) }
-    let!(:other_product) { create(:product, stores: [store]) }
+    let!(:other_product) { create(:product, store: store) }
 
     before do
       Spree::ProductCollection.create!(collection: collection, product: product_b, position: 1)
@@ -47,7 +47,7 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
 
     it 'lists the rule-materialized products of an automatic collection' do
       automatic = create(:automatic_collection, store: store)
-      member = create(:product, stores: [store])
+      member = create(:product, store: store)
       Spree::ProductCollection.create!(collection: automatic, product: member, position: 1)
 
       get :index, params: { collection_id: automatic.prefixed_id }, as: :json
@@ -58,7 +58,7 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
   end
 
   describe 'POST #create' do
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product, store: store) }
 
     it 'adds the product to the collection' do
       post :create, params: { collection_id: collection.prefixed_id, product_id: product.prefixed_id }, as: :json
@@ -68,7 +68,7 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
     end
 
     it '404s for a product outside the store' do
-      other = create(:product, stores: [create(:store)])
+      other = create(:product, store: create(:store))
       post :create, params: { collection_id: collection.prefixed_id, product_id: other.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:not_found)
@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
   end
 
   describe 'DELETE #destroy' do
-    let!(:product) { create(:product, stores: [store]) }
+    let!(:product) { create(:product, store: store) }
 
     before { Spree::ProductCollection.create!(collection: collection, product: product, position: 1) }
 
@@ -98,7 +98,7 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
     end
 
     it '404s for a product not in the collection' do
-      stray = create(:product, stores: [store])
+      stray = create(:product, store: store)
       delete :destroy, params: { collection_id: collection.prefixed_id, id: stray.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:not_found)
@@ -115,9 +115,9 @@ RSpec.describe Spree::Api::V3::Admin::Collections::ProductsController, type: :co
   end
 
   describe 'PATCH #reposition' do
-    let!(:first)  { create(:product, stores: [store]) }
-    let!(:second) { create(:product, stores: [store]) }
-    let!(:third)  { create(:product, stores: [store]) }
+    let!(:first)  { create(:product, store: store) }
+    let!(:second) { create(:product, store: store) }
+    let!(:third)  { create(:product, store: store) }
 
     before do
       Spree::ProductCollection.create!(collection: collection, product: first, position: 1)

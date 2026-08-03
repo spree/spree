@@ -419,38 +419,35 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
     end
 
     # ---------------------------------------------------------------
-    # Splitter chain: shipping category split runs per-location
+    # Splitter chain: fulfillment-type split runs per-location
     # ---------------------------------------------------------------
 
-    context 'two variants with different shipping categories at same location' do
-      let(:cat_light) { create(:shipping_category, name: 'Light') }
-      let(:cat_heavy) { create(:shipping_category, name: 'Heavy') }
-
-      let(:variant_light) { create(:variant, product: create(:product, shipping_category: cat_light)) }
-      let(:variant_heavy) { create(:variant, product: create(:product, shipping_category: cat_heavy)) }
+    context 'two variants with different fulfillment types at same location' do
+      let(:variant_shipping) { create(:variant, product: create(:product)) }
+      let(:variant_digital) { create(:variant, product: create(:digital_product, track_inventory: true)) }
 
       let(:order) do
         o = create(:order, store: store, ship_address: create(:ship_address))
-        create(:line_item, order: o, variant: variant_light, quantity: 1)
-        create(:line_item, order: o, variant: variant_heavy, quantity: 1)
+        create(:line_item, order: o, variant: variant_shipping, quantity: 1)
+        create(:line_item, order: o, variant: variant_digital, quantity: 1)
         o.reload
       end
 
       before do
-        nyc.stock_item_or_create(variant_light).update!(count_on_hand: 10)
-        nyc.stock_item_or_create(variant_heavy).update!(count_on_hand: 10)
+        nyc.stock_item_or_create(variant_shipping).update!(count_on_hand: 10)
+        nyc.stock_item_or_create(variant_digital).update!(count_on_hand: 10)
       end
 
-      # The ShippingCategory splitter is in the default Spree.stock_splitters
+      # The FulfillmentType splitter is in the default Spree.stock_splitters
       # chain — Coordinator and Rules both pass it to the Packer, so each
-      # location's allocation gets fanned out into one package per shipping
-      # category. Both pipelines should produce 2 NYC packages here.
-      it 'produces two NYC packages, one per shipping category' do
+      # location's allocation gets fanned out into one package per
+      # fulfillment-type set. Both pipelines should produce 2 NYC packages here.
+      it 'produces two NYC packages, one per fulfillment-type set' do
         packages = strategy.for_allocation
         nyc_packages = packages.select { |p| p.stock_location.id == nyc.id }
         expect(nyc_packages.size).to eq(2)
-        categories = nyc_packages.flat_map { |p| p.contents.map { |c| c.variant.product.shipping_category_id } }.uniq
-        expect(categories).to contain_exactly(cat_light.id, cat_heavy.id)
+        type_sets = nyc_packages.map { |p| p.fulfillment_types.sort }
+        expect(type_sets).to contain_exactly(['digital'], ['shipping'])
         expect(total_on_hand(packages)).to eq(2)
         expect(total_backordered(packages)).to eq(0)
       end

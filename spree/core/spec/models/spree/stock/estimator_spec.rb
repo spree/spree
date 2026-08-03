@@ -13,13 +13,12 @@ module Spree
 
       context '#shipping rates' do
         before do
-          shipping_method.zones.first.members.create(zoneable: order.ship_address.country)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return(currency: currency)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :marked_for_destruction?)
 
-          allow(package).to receive_messages(shipping_methods: [shipping_method])
+          allow(package).to receive_messages(eligible_delivery_methods: [shipping_method])
         end
 
         let(:currency) { 'USD' }
@@ -43,9 +42,38 @@ module Spree
         end
 
         context "when the order's ship address is in a different zone" do
-          before { shipping_method.zones.each { |z| z.members.delete_all } }
+          before do
+            other_country = create(:country, iso: 'XZ', iso3: 'XZZ', name: 'Elsewhere', iso_name: 'ELSEWHERE')
+            zone = create(:delivery_zone)
+            zone.members.create!(member_type: 'country', country: other_country)
+            shipping_method.delivery_zones = [zone]
+          end
 
           it_behaves_like "shipping rate doesn't match"
+        end
+
+        context 'pickup methods are gated on the package source location' do
+          let(:shipping_method) { create(:pickup_delivery_method) }
+
+          context 'when the package is sourced from a plain warehouse' do
+            it_behaves_like "shipping rate doesn't match"
+          end
+
+          context 'when the package is sourced from a pickup-enabled location' do
+            let(:package) do
+              build(:stock_package,
+                    stock_location: create(:stock_location, pickup_enabled: true),
+                    contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) })
+            end
+
+            it_behaves_like 'shipping rate matches'
+          end
+
+          context 'when a ship-to-store counter accepts remote stock' do
+            let!(:any_policy_counter) { create(:stock_location, pickup_enabled: true, pickup_stock_policy: 'any') }
+
+            it_behaves_like 'shipping rate matches'
+          end
         end
 
         context 'when the calculator is not available for that order' do
@@ -116,7 +144,7 @@ module Spree
           before do
             allow(backend_method).to receive_message_chain(:calculator, :compute).and_return(0.00)
             allow(generic_method).to receive_message_chain(:calculator, :compute).and_return(5.00)
-            allow(package).to receive(:shipping_methods).and_return([backend_method, generic_method])
+            allow(package).to receive(:eligible_delivery_methods).and_return([backend_method, generic_method])
           end
 
           it 'does not return backend rates at all' do
@@ -130,7 +158,12 @@ module Spree
         end
 
         context 'includes tax adjustments if applicable' do
-          let!(:tax_rate) { create(:tax_rate, zone: order.tax_zone) }
+          let!(:default_tax_zone) do
+            create(:zone, default_tax: true, kind: 'country').tap do |zone|
+              zone.zone_members.create!(zoneable: ship_address.country)
+            end
+          end
+          let!(:tax_rate) { create(:tax_rate, zone: default_tax_zone) }
 
           before do
             Spree::ShippingMethod.all.each do |sm|
