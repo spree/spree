@@ -1424,6 +1424,8 @@ en:
     return_authorization: Return Authorization
     return_authorization_canceled: Return authorization canceled
     return_authorizations: Return Authorizations
+    return_errors:
+      outside_window: This order is outside the %{days}-day return window
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
     return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed
     return_item_order_not_completed: Return item's order must be completed

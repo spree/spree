@@ -16,9 +16,25 @@ module Spree
     has_many :orders, class_name: 'Spree::Order', dependent: :nullify
 
     #
+    # Preferences
+    #
+    # How long after an order completes a customer may open a return or
+    # exchange. Per market because this is a legal question before a
+    # merchandising one — the EU right of withdrawal is 14 days minimum,
+    # US practice is the merchant's choice. Nil means no limit.
+    #
+    # Enforced by Spree::Returns::EligibilityValidator, which staff bypass;
+    # a store replaces that handler to express anything more elaborate.
+    # Nullable so nil survives as "no limit" — an integer preference without
+    # it collapses nil to 0, which would reject every return.
+    preference :return_window_days, :integer, default: 30, nullable: true
+
+    #
     # Validations
     #
     validates :store, presence: true
+    validates :preferred_return_window_days,
+              numericality: { only_integer: true, greater_than: 0, allow_nil: true }
     validates :name, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
     validates :currency, presence: true
     validates :default_locale, presence: true

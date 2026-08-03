@@ -474,6 +474,14 @@ module Spree
         end
       end
 
+      # The one eligibility rule core ships: a per-market return window,
+      # bypassed by staff. Registered after application initializers so a
+      # store can unregister it in its own initializer.
+      initializer 'spree.returns.register_eligibility_validator', after: :load_config_initializers do
+        Spree.hooks.register('returns.create.validate', 'Spree::Returns::EligibilityValidator')
+        Spree.hooks.register('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
+      end
+
       config.to_prepare do
         # Ensure spree locale paths are present before decorators
         I18n.load_path.unshift(*(Dir.glob(
