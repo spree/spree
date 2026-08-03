@@ -41,6 +41,11 @@ import {
   ResolveClaimDialog,
 } from './post-sale-create-dialogs'
 
+// Statuses that still offer an action. A terminal record would otherwise
+// show a menu button that opens onto nothing.
+const EXCHANGE_ACTIONABLE = ['requested', 'approved', 'received']
+const CLAIM_ACTIONABLE = ['open', 'approved']
+
 /** Exchanges on an order, with the actions available at each status. */
 export function OrderExchangesCard({ order }: { order: Order }) {
   const orderId = order.id
@@ -91,55 +96,61 @@ export function OrderExchangesCard({ order }: { order: Order }) {
                   <span className="text-sm font-medium">{exchange.number}</span>
                 </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon-xs">
-                      <EllipsisVerticalIcon className="size-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {exchange.status === 'requested' && (
-                      <DropdownMenuItem onClick={() => approve.mutate(exchange.id)}>
-                        <CheckCircleIcon className="size-4" />
-                        {t('admin.pages.orders.detail.returns.actions.approve')}
-                      </DropdownMenuItem>
-                    )}
-                    {exchange.status === 'approved' && (
-                      <DropdownMenuItem onClick={() => receive.mutate({ exchangeId: exchange.id })}>
-                        <PackageCheckIcon className="size-4" />
-                        {t('admin.pages.orders.detail.returns.actions.receive')}
-                      </DropdownMenuItem>
-                    )}
-                    {exchange.status === 'received' && (
-                      <DropdownMenuItem onClick={() => fulfill.mutate({ exchangeId: exchange.id })}>
-                        <TruckIcon className="size-4" />
-                        {t('admin.pages.orders.detail.exchanges.actions.fulfill')}
-                      </DropdownMenuItem>
-                    )}
-                    {['requested', 'approved'].includes(exchange.status) && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={async () => {
-                            if (
-                              await confirm({
-                                message: t('admin.pages.orders.detail.returns.confirm.cancel'),
-                                variant: 'destructive',
-                                confirmLabel: t('admin.actions.cancel'),
-                              })
-                            ) {
-                              cancel.mutate({ exchangeId: exchange.id })
-                            }
-                          }}
-                        >
-                          <XCircleIcon className="size-4" />
-                          {t('admin.actions.cancel')}
+                {EXCHANGE_ACTIONABLE.includes(exchange.status) && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon-xs">
+                        <EllipsisVerticalIcon className="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {exchange.status === 'requested' && (
+                        <DropdownMenuItem onClick={() => approve.mutate(exchange.id)}>
+                          <CheckCircleIcon className="size-4" />
+                          {t('admin.pages.orders.detail.returns.actions.approve')}
                         </DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      )}
+                      {exchange.status === 'approved' && (
+                        <DropdownMenuItem
+                          onClick={() => receive.mutate({ exchangeId: exchange.id })}
+                        >
+                          <PackageCheckIcon className="size-4" />
+                          {t('admin.pages.orders.detail.returns.actions.receive')}
+                        </DropdownMenuItem>
+                      )}
+                      {exchange.status === 'received' && (
+                        <DropdownMenuItem
+                          onClick={() => fulfill.mutate({ exchangeId: exchange.id })}
+                        >
+                          <TruckIcon className="size-4" />
+                          {t('admin.pages.orders.detail.exchanges.actions.fulfill')}
+                        </DropdownMenuItem>
+                      )}
+                      {['requested', 'approved'].includes(exchange.status) && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  message: t('admin.pages.orders.detail.returns.confirm.cancel'),
+                                  variant: 'destructive',
+                                  confirmLabel: t('admin.actions.cancel'),
+                                })
+                              ) {
+                                cancel.mutate({ exchangeId: exchange.id })
+                              }
+                            }}
+                          >
+                            <XCircleIcon className="size-4" />
+                            {t('admin.actions.cancel')}
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -236,55 +247,57 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                   </Badge>
                 </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon-xs">
-                      <EllipsisVerticalIcon className="size-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {claim.status === 'open' && (
-                      <DropdownMenuItem onClick={() => approve.mutate(claim.id)}>
-                        <CheckCircleIcon className="size-4" />
-                        {t('admin.pages.orders.detail.returns.actions.approve')}
-                      </DropdownMenuItem>
-                    )}
-                    {claim.status === 'approved' && (
-                      <DropdownMenuItem onClick={() => setResolving(claim)}>
-                        <BanknoteIcon className="size-4" />
-                        {t('admin.pages.orders.detail.claims.actions.resolve')}
-                      </DropdownMenuItem>
-                    )}
-                    {claim.status === 'open' && (
-                      <DropdownMenuItem onClick={() => deny.mutate({ claimId: claim.id })}>
-                        <XCircleIcon className="size-4" />
-                        {t('admin.pages.orders.detail.claims.actions.deny')}
-                      </DropdownMenuItem>
-                    )}
-                    {['open', 'approved'].includes(claim.status) && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={async () => {
-                            if (
-                              await confirm({
-                                message: t('admin.pages.orders.detail.returns.confirm.cancel'),
-                                variant: 'destructive',
-                                confirmLabel: t('admin.actions.cancel'),
-                              })
-                            ) {
-                              cancel.mutate({ claimId: claim.id })
-                            }
-                          }}
-                        >
-                          <XCircleIcon className="size-4" />
-                          {t('admin.actions.cancel')}
+                {CLAIM_ACTIONABLE.includes(claim.status) && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon-xs">
+                        <EllipsisVerticalIcon className="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {claim.status === 'open' && (
+                        <DropdownMenuItem onClick={() => approve.mutate(claim.id)}>
+                          <CheckCircleIcon className="size-4" />
+                          {t('admin.pages.orders.detail.returns.actions.approve')}
                         </DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      )}
+                      {claim.status === 'approved' && (
+                        <DropdownMenuItem onClick={() => setResolving(claim)}>
+                          <BanknoteIcon className="size-4" />
+                          {t('admin.pages.orders.detail.claims.actions.resolve')}
+                        </DropdownMenuItem>
+                      )}
+                      {claim.status === 'open' && (
+                        <DropdownMenuItem onClick={() => deny.mutate({ claimId: claim.id })}>
+                          <XCircleIcon className="size-4" />
+                          {t('admin.pages.orders.detail.claims.actions.deny')}
+                        </DropdownMenuItem>
+                      )}
+                      {['open', 'approved'].includes(claim.status) && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  message: t('admin.pages.orders.detail.returns.confirm.cancel'),
+                                  variant: 'destructive',
+                                  confirmLabel: t('admin.actions.cancel'),
+                                })
+                              ) {
+                                cancel.mutate({ claimId: claim.id })
+                              }
+                            }}
+                          >
+                            <XCircleIcon className="size-4" />
+                            {t('admin.actions.cancel')}
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
 
               <div className="flex flex-col gap-1.5">

@@ -33,6 +33,9 @@ function useReturnMutation<TParams>(
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: buildKey('order-returns', orderId) })
       queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) })
+      // Keyed separately from the per-order list, so the sidebar count would
+      // otherwise stay stale until a page reload.
+      queryClient.invalidateQueries({ queryKey: buildKey('returns-pending') })
     },
     onError: (error) => {
       // Without this a rejected workflow — a claim with nothing to refund, a

@@ -46,6 +46,10 @@ import { CreateReturnDialog, fulfilledUnits } from './post-sale-create-dialogs'
 
 type ReceiptRow = { quantity: number; resellable: boolean }
 
+// Statuses that still offer an action; refunded and canceled are done and
+// would render a menu button that opens onto nothing.
+const RETURN_ACTIONABLE = ['requested', 'approved', 'received']
+
 /** "Product — Small / Blue", falling back to the SKU or the raw id. */
 function variantLabel(line: ReturnLineItem): string {
   const variant = line.variant
@@ -113,55 +117,57 @@ export function OrderReturnsCard({ order }: { order: Order }) {
                   <span className="text-sm font-medium">{returnRecord.number}</span>
                 </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon-xs">
-                      <EllipsisVerticalIcon className="size-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {returnRecord.status === 'requested' && (
-                      <DropdownMenuItem onClick={() => approve.mutate(returnRecord.id)}>
-                        <CheckCircleIcon className="size-4" />
-                        {t('admin.pages.orders.detail.returns.actions.approve')}
-                      </DropdownMenuItem>
-                    )}
-                    {returnRecord.status === 'approved' && (
-                      <DropdownMenuItem onClick={() => setReceiving(returnRecord)}>
-                        <PackageCheckIcon className="size-4" />
-                        {t('admin.pages.orders.detail.returns.actions.receive')}
-                      </DropdownMenuItem>
-                    )}
-                    {returnRecord.status === 'received' && (
-                      <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
-                        <BanknoteIcon className="size-4" />
-                        {t('admin.pages.orders.detail.returns.actions.refund')}
-                      </DropdownMenuItem>
-                    )}
-                    {['requested', 'approved'].includes(returnRecord.status) && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={async () => {
-                            if (
-                              await confirm({
-                                message: t('admin.pages.orders.detail.returns.confirm.cancel'),
-                                variant: 'destructive',
-                                confirmLabel: t('admin.actions.cancel'),
-                              })
-                            ) {
-                              cancel.mutate({ returnId: returnRecord.id })
-                            }
-                          }}
-                        >
-                          <XCircleIcon className="size-4" />
-                          {t('admin.actions.cancel')}
+                {RETURN_ACTIONABLE.includes(returnRecord.status) && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon-xs">
+                        <EllipsisVerticalIcon className="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {returnRecord.status === 'requested' && (
+                        <DropdownMenuItem onClick={() => approve.mutate(returnRecord.id)}>
+                          <CheckCircleIcon className="size-4" />
+                          {t('admin.pages.orders.detail.returns.actions.approve')}
                         </DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      )}
+                      {returnRecord.status === 'approved' && (
+                        <DropdownMenuItem onClick={() => setReceiving(returnRecord)}>
+                          <PackageCheckIcon className="size-4" />
+                          {t('admin.pages.orders.detail.returns.actions.receive')}
+                        </DropdownMenuItem>
+                      )}
+                      {returnRecord.status === 'received' && (
+                        <DropdownMenuItem onClick={() => setRefunding(returnRecord)}>
+                          <BanknoteIcon className="size-4" />
+                          {t('admin.pages.orders.detail.returns.actions.refund')}
+                        </DropdownMenuItem>
+                      )}
+                      {['requested', 'approved'].includes(returnRecord.status) && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  message: t('admin.pages.orders.detail.returns.confirm.cancel'),
+                                  variant: 'destructive',
+                                  confirmLabel: t('admin.actions.cancel'),
+                                })
+                              ) {
+                                cancel.mutate({ returnId: returnRecord.id })
+                              }
+                            }}
+                          >
+                            <XCircleIcon className="size-4" />
+                            {t('admin.actions.cancel')}
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
 
               <div className="flex flex-col gap-1.5">

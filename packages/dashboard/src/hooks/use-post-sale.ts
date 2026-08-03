@@ -39,6 +39,7 @@ export function useOrderClaims(orderId: string) {
 function usePostSaleMutation<TParams>(
   orderId: string,
   resourceKey: string,
+  countKey: string,
   mutationFn: (params: TParams) => Promise<unknown>,
 ) {
   const queryClient = useQueryClient()
@@ -49,6 +50,10 @@ function usePostSaleMutation<TParams>(
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: buildKey(resourceKey, orderId) })
       queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) })
+      // The sidebar count is keyed separately and would otherwise keep a
+      // stale figure until a page reload — resolving a claim is exactly what
+      // takes it out of the count.
+      queryClient.invalidateQueries({ queryKey: buildKey(`${countKey}-pending`) })
     },
     onError: (error) => {
       // Without this a rejected workflow — a claim with nothing to refund, a
@@ -62,19 +67,24 @@ export function useExchangeActions(orderId: string) {
   const create = usePostSaleMutation(
     orderId,
     'order-exchanges',
+    'exchanges',
     (params: {
       items: Array<{ fulfillment_item_id: string; new_variant_id: string; quantity: number }>
       memo?: string
     }) => adminClient.orders.exchanges.create(orderId, params),
   )
 
-  const approve = usePostSaleMutation(orderId, 'order-exchanges', (exchangeId: string) =>
-    adminClient.orders.exchanges.approve(orderId, exchangeId),
+  const approve = usePostSaleMutation(
+    orderId,
+    'order-exchanges',
+    'exchanges',
+    (exchangeId: string) => adminClient.orders.exchanges.approve(orderId, exchangeId),
   )
 
   const receive = usePostSaleMutation(
     orderId,
     'order-exchanges',
+    'exchanges',
     ({
       exchangeId,
       items,
@@ -87,6 +97,7 @@ export function useExchangeActions(orderId: string) {
   const fulfill = usePostSaleMutation(
     orderId,
     'order-exchanges',
+    'exchanges',
     ({
       exchangeId,
       refundMethod,
@@ -100,6 +111,7 @@ export function useExchangeActions(orderId: string) {
   const cancel = usePostSaleMutation(
     orderId,
     'order-exchanges',
+    'exchanges',
     ({ exchangeId, reason }: { exchangeId: string; reason?: string }) =>
       adminClient.orders.exchanges.cancel(orderId, exchangeId, { reason }),
   )
@@ -111,6 +123,7 @@ export function useClaimActions(orderId: string) {
   const create = usePostSaleMutation(
     orderId,
     'order-claims',
+    'claims',
     (params: {
       items: Array<{
         line_item_id: string
@@ -123,13 +136,14 @@ export function useClaimActions(orderId: string) {
     }) => adminClient.orders.claims.create(orderId, params),
   )
 
-  const approve = usePostSaleMutation(orderId, 'order-claims', (claimId: string) =>
+  const approve = usePostSaleMutation(orderId, 'order-claims', 'claims', (claimId: string) =>
     adminClient.orders.claims.approve(orderId, claimId),
   )
 
   const resolve = usePostSaleMutation(
     orderId,
     'order-claims',
+    'claims',
     ({
       claimId,
       resolution,
@@ -154,6 +168,7 @@ export function useClaimActions(orderId: string) {
   const deny = usePostSaleMutation(
     orderId,
     'order-claims',
+    'claims',
     ({ claimId, reason }: { claimId: string; reason?: string }) =>
       adminClient.orders.claims.deny(orderId, claimId, { reason }),
   )
@@ -161,6 +176,7 @@ export function useClaimActions(orderId: string) {
   const cancel = usePostSaleMutation(
     orderId,
     'order-claims',
+    'claims',
     ({ claimId, reason }: { claimId: string; reason?: string }) =>
       adminClient.orders.claims.cancel(orderId, claimId, { reason }),
   )

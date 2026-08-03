@@ -19,9 +19,8 @@ function usePendingCount(
   const { data } = useQuery({
     queryKey: useResourceKey(`${resourceKey}-pending`),
     queryFn: () => list({ limit: 1, status_in: statuses }),
-    // The sidebar is always mounted; without this it would refetch on every
-    // navigation.
-    staleTime: 60_000,
+    // Deliberately no staleTime: acting on a record invalidates this key, and
+    // a stale window would hold the old count past that invalidation.
   })
 
   return data?.meta?.count ?? 0
