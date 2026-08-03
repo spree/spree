@@ -4,7 +4,6 @@ module Spree
 
     include Spree::PrefixedId
     include Spree::Metafields
-    include Spree::Metadata
     include Spree::UserAddress
     include Spree::UserPaymentSource
     include Spree::UserReporting
@@ -15,6 +14,10 @@ module Spree
 
     included do
       has_prefix_id :cust  # Stripe: cus_
+
+      # Single consolidated metadata JSON column (docs/plans/decisions.md
+      # 2026-03-16 "Consolidate metadata") — no public/private split.
+      attribute :metadata, default: -> { {} }
 
       # Enable lifecycle events for user models
       publishes_lifecycle_events
