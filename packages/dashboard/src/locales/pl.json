@@ -1295,9 +1295,11 @@
     "nav": {
       "account": "Konto",
       "categories": "Kategorie",
+      "claims": "Reklamacje",
       "customer_groups": "Grupy",
       "customers": "Klienci",
       "draft_orders": "Zamówienia robocze",
+      "exchanges": "Wymiany",
       "getting_started": "Pierwsze kroki",
       "gift_cards": "Karty podarunkowe",
       "home": "Strona główna",
@@ -1307,6 +1309,7 @@
       "products": "Produkty",
       "promotions": "Promocje",
       "reports": "Raporty",
+      "returns": "Zwroty",
       "settings": "Ustawienia",
       "transfers": "Transfery"
     },
@@ -2373,6 +2376,23 @@
         "visible": "Widoczna"
       },
       "title": "Metody płatności"
+    },
+    "post_sale": {
+      "search_placeholder": "Szukaj po numerze…",
+      "returns_empty": "Brak zwrotów.",
+      "exchanges_empty": "Brak wymian.",
+      "claims_empty": "Brak reklamacji.",
+      "statuses": {
+        "requested": "Zgłoszony",
+        "open": "Otwarta",
+        "approved": "Zatwierdzony",
+        "received": "Otrzymany",
+        "refunded": "Zwrócony",
+        "fulfilled": "Wysłany",
+        "resolved": "Rozwiązana",
+        "denied": "Odrzucona",
+        "canceled": "Anulowany"
+      }
     },
     "preferences": {
       "additional_item": "Koszt każdej kolejnej pozycji",

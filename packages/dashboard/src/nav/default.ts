@@ -47,6 +47,30 @@ nav.add({
       subject: Subject.Order,
       position: 100,
     },
+    // Post-sale. These live under Orders because they are always about one,
+    // and gating them on Order keeps a role that can see orders able to see
+    // what came back from them.
+    {
+      key: 'returns',
+      label: i18n.t('admin.nav.returns'),
+      path: '/returns',
+      subject: Subject.Order,
+      position: 200,
+    },
+    {
+      key: 'exchanges',
+      label: i18n.t('admin.nav.exchanges'),
+      path: '/exchanges',
+      subject: Subject.Order,
+      position: 300,
+    },
+    {
+      key: 'claims',
+      label: i18n.t('admin.nav.claims'),
+      path: '/claims',
+      subject: Subject.Order,
+      position: 400,
+    },
   ],
 })
 

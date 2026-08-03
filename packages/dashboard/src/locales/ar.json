@@ -1291,9 +1291,11 @@
     "nav": {
       "account": "الحساب",
       "categories": "الفئات",
+      "claims": "المطالبات",
       "customer_groups": "المجموعات",
       "customers": "العملاء",
       "draft_orders": "مسودات الطلبات",
+      "exchanges": "الاستبدالات",
       "getting_started": "البدء",
       "gift_cards": "بطاقات الهدايا",
       "home": "الرئيسية",
@@ -1303,6 +1305,7 @@
       "products": "المنتجات",
       "promotions": "العروض الترويجية",
       "reports": "التقارير",
+      "returns": "المرتجعات",
       "settings": "الإعدادات",
       "transfers": "التحويلات"
     },
@@ -2345,6 +2348,23 @@
         "visible": "مرئي"
       },
       "title": "Payment Methods"
+    },
+    "post_sale": {
+      "search_placeholder": "البحث بالرقم…",
+      "returns_empty": "لا توجد مرتجعات بعد.",
+      "exchanges_empty": "لا توجد استبدالات بعد.",
+      "claims_empty": "لا توجد مطالبات بعد.",
+      "statuses": {
+        "requested": "مطلوب",
+        "open": "مفتوحة",
+        "approved": "تمت الموافقة",
+        "received": "تم الاستلام",
+        "refunded": "تم الاسترداد",
+        "fulfilled": "تم الشحن",
+        "resolved": "تم الحل",
+        "denied": "مرفوضة",
+        "canceled": "ملغى"
+      }
     },
     "preferences": {
       "additional_item": "Additional Item Cost",

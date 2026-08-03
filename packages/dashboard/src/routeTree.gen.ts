@@ -18,7 +18,10 @@ import { Route as acceptInvitationDotinvitationIdRouteImport } from './routes/ac
 import { Route as authenticatedStoreIdRouteImport } from './routes/_authenticated/$storeId'
 import { Route as IndexRouteImport } from './routes/_authenticated/$storeId/index'
 import { Route as SettingsRouteImport } from './routes/_authenticated/$storeId/settings'
+import { Route as ReturnsRouteImport } from './routes/_authenticated/$storeId/returns'
 import { Route as GettingStartedRouteImport } from './routes/_authenticated/$storeId/getting-started'
+import { Route as ExchangesRouteImport } from './routes/_authenticated/$storeId/exchanges'
+import { Route as ClaimsRouteImport } from './routes/_authenticated/$storeId/claims'
 import { Route as SplatRouteImport } from './routes/_authenticated/$storeId/$'
 import { Route as SettingsIndexRouteImport } from './routes/_authenticated/$storeId/settings/index'
 import { Route as PromotionsIndexRouteImport } from './routes/_authenticated/$storeId/promotions/index'
@@ -107,9 +110,24 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
+const ReturnsRoute = ReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
 const GettingStartedRoute = GettingStartedRouteImport.update({
   id: '/getting-started',
   path: '/getting-started',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ExchangesRoute = ExchangesRouteImport.update({
+  id: '/exchanges',
+  path: '/exchanges',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ClaimsRoute = ClaimsRouteImport.update({
+  id: '/claims',
+  path: '/claims',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const SplatRoute = SplatRouteImport.update({
@@ -335,7 +353,10 @@ export interface FileRoutesByFullPath {
   '/$storeId': typeof authenticatedStoreIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/$storeId/$': typeof SplatRoute
+  '/$storeId/claims': typeof ClaimsRoute
+  '/$storeId/exchanges': typeof ExchangesRoute
   '/$storeId/getting-started': typeof GettingStartedRoute
+  '/$storeId/returns': typeof ReturnsRoute
   '/$storeId/settings': typeof SettingsRouteWithChildren
   '/$storeId/': typeof IndexRoute
   '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
@@ -387,7 +408,10 @@ export interface FileRoutesByTo {
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/': typeof authenticatedIndexRoute
   '/$storeId/$': typeof SplatRoute
+  '/$storeId/claims': typeof ClaimsRoute
+  '/$storeId/exchanges': typeof ExchangesRoute
   '/$storeId/getting-started': typeof GettingStartedRoute
+  '/$storeId/returns': typeof ReturnsRoute
   '/$storeId': typeof IndexRoute
   '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
   '/$storeId/customers/groups': typeof CustomersGroupsRoute
@@ -441,7 +465,10 @@ export interface FileRoutesById {
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/_authenticated/': typeof authenticatedIndexRoute
   '/_authenticated/$storeId/$': typeof SplatRoute
+  '/_authenticated/$storeId/claims': typeof ClaimsRoute
+  '/_authenticated/$storeId/exchanges': typeof ExchangesRoute
   '/_authenticated/$storeId/getting-started': typeof GettingStartedRoute
+  '/_authenticated/$storeId/returns': typeof ReturnsRoute
   '/_authenticated/$storeId/settings': typeof SettingsRouteWithChildren
   '/_authenticated/$storeId/': typeof IndexRoute
   '/_authenticated/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
@@ -496,7 +523,10 @@ export interface FileRouteTypes {
     | '/$storeId'
     | '/accept-invitation/$invitationId'
     | '/$storeId/$'
+    | '/$storeId/claims'
+    | '/$storeId/exchanges'
     | '/$storeId/getting-started'
+    | '/$storeId/returns'
     | '/$storeId/settings'
     | '/$storeId/'
     | '/$storeId/customers/$customerId'
@@ -548,7 +578,10 @@ export interface FileRouteTypes {
     | '/accept-invitation/$invitationId'
     | '/'
     | '/$storeId/$'
+    | '/$storeId/claims'
+    | '/$storeId/exchanges'
     | '/$storeId/getting-started'
+    | '/$storeId/returns'
     | '/$storeId'
     | '/$storeId/customers/$customerId'
     | '/$storeId/customers/groups'
@@ -601,7 +634,10 @@ export interface FileRouteTypes {
     | '/accept-invitation/$invitationId'
     | '/_authenticated/'
     | '/_authenticated/$storeId/$'
+    | '/_authenticated/$storeId/claims'
+    | '/_authenticated/$storeId/exchanges'
     | '/_authenticated/$storeId/getting-started'
+    | '/_authenticated/$storeId/returns'
     | '/_authenticated/$storeId/settings'
     | '/_authenticated/$storeId/'
     | '/_authenticated/$storeId/customers/$customerId'
@@ -720,11 +756,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/returns': {
+      id: '/_authenticated/$storeId/returns'
+      path: '/returns'
+      fullPath: '/$storeId/returns'
+      preLoaderRoute: typeof ReturnsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/getting-started': {
       id: '/_authenticated/$storeId/getting-started'
       path: '/getting-started'
       fullPath: '/$storeId/getting-started'
       preLoaderRoute: typeof GettingStartedRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/exchanges': {
+      id: '/_authenticated/$storeId/exchanges'
+      path: '/exchanges'
+      fullPath: '/$storeId/exchanges'
+      preLoaderRoute: typeof ExchangesRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/claims': {
+      id: '/_authenticated/$storeId/claims'
+      path: '/claims'
+      fullPath: '/$storeId/claims'
+      preLoaderRoute: typeof ClaimsRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/$': {
@@ -1075,7 +1132,10 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 
 interface authenticatedStoreIdRouteChildren {
   SplatRoute: typeof SplatRoute
+  ClaimsRoute: typeof ClaimsRoute
+  ExchangesRoute: typeof ExchangesRoute
   GettingStartedRoute: typeof GettingStartedRoute
+  ReturnsRoute: typeof ReturnsRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   IndexRoute: typeof IndexRoute
   CustomersCustomerIdRoute: typeof CustomersCustomerIdRoute
@@ -1104,7 +1164,10 @@ interface authenticatedStoreIdRouteChildren {
 
 const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   SplatRoute: SplatRoute,
+  ClaimsRoute: ClaimsRoute,
+  ExchangesRoute: ExchangesRoute,
   GettingStartedRoute: GettingStartedRoute,
+  ReturnsRoute: ReturnsRoute,
   SettingsRoute: SettingsRouteWithChildren,
   IndexRoute: IndexRoute,
   CustomersCustomerIdRoute: CustomersCustomerIdRoute,

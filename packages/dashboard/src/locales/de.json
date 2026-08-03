@@ -1291,9 +1291,11 @@
     "nav": {
       "account": "Konto",
       "categories": "Kategorien",
+      "claims": "Reklamationen",
       "customer_groups": "Gruppen",
       "customers": "Kunden",
       "draft_orders": "Bestellentwürfe",
+      "exchanges": "Umtausch",
       "getting_started": "Erste Schritte",
       "gift_cards": "Geschenkkarten",
       "home": "Startseite",
@@ -1303,6 +1305,7 @@
       "products": "Produkte",
       "promotions": "Aktionen",
       "reports": "Berichte",
+      "returns": "Retouren",
       "settings": "Einstellungen",
       "transfers": "Umlagerungen"
     },
@@ -2345,6 +2348,23 @@
         "visible": "Sichtbar"
       },
       "title": "Zahlungsarten"
+    },
+    "post_sale": {
+      "search_placeholder": "Nach Nummer suchen…",
+      "returns_empty": "Noch keine Retouren.",
+      "exchanges_empty": "Noch kein Umtausch.",
+      "claims_empty": "Noch keine Reklamationen.",
+      "statuses": {
+        "requested": "Angefragt",
+        "open": "Offen",
+        "approved": "Genehmigt",
+        "received": "Erhalten",
+        "refunded": "Erstattet",
+        "fulfilled": "Versandt",
+        "resolved": "Gelöst",
+        "denied": "Abgelehnt",
+        "canceled": "Storniert"
+      }
     },
     "preferences": {
       "additional_item": "Kosten für jeden weiteren Artikel",

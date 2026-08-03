@@ -1291,9 +1291,11 @@
     "nav": {
       "account": "Compte",
       "categories": "Catégories",
+      "claims": "Réclamations",
       "customer_groups": "Groupes",
       "customers": "Clients",
       "draft_orders": "Commandes provisoires",
+      "exchanges": "Échanges",
       "getting_started": "Premiers pas",
       "gift_cards": "Cartes cadeaux",
       "home": "Accueil",
@@ -1303,6 +1305,7 @@
       "products": "Produits",
       "promotions": "Promotions",
       "reports": "Rapports",
+      "returns": "Retours",
       "settings": "Paramètres",
       "transfers": "Transferts"
     },
@@ -2345,6 +2348,23 @@
         "visible": "Visible"
       },
       "title": "Moyens de paiement"
+    },
+    "post_sale": {
+      "search_placeholder": "Rechercher par numéro…",
+      "returns_empty": "Aucun retour pour l’instant.",
+      "exchanges_empty": "Aucun échange pour l’instant.",
+      "claims_empty": "Aucune réclamation pour l’instant.",
+      "statuses": {
+        "requested": "Demandé",
+        "open": "Ouvert",
+        "approved": "Approuvé",
+        "received": "Reçu",
+        "refunded": "Remboursé",
+        "fulfilled": "Expédié",
+        "resolved": "Résolu",
+        "denied": "Refusé",
+        "canceled": "Annulé"
+      }
     },
     "preferences": {
       "additional_item": "Coût de chaque article supplémentaire",

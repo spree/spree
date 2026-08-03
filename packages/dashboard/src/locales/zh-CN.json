@@ -1291,9 +1291,11 @@
     "nav": {
       "account": "账户",
       "categories": "分类",
+      "claims": "索赔",
       "customer_groups": "分组",
       "customers": "客户",
       "draft_orders": "草稿订单",
+      "exchanges": "换货",
       "getting_started": "快速入门",
       "gift_cards": "礼品卡",
       "home": "首页",
@@ -1303,6 +1305,7 @@
       "products": "商品",
       "promotions": "促销",
       "reports": "报表",
+      "returns": "退货",
       "settings": "设置",
       "transfers": "调拨"
     },
@@ -2345,6 +2348,23 @@
         "visible": "可见"
       },
       "title": "支付方式"
+    },
+    "post_sale": {
+      "search_placeholder": "按编号搜索…",
+      "returns_empty": "暂无退货。",
+      "exchanges_empty": "暂无换货。",
+      "claims_empty": "暂无索赔。",
+      "statuses": {
+        "requested": "已申请",
+        "open": "待处理",
+        "approved": "已批准",
+        "received": "已收到",
+        "refunded": "已退款",
+        "fulfilled": "已发货",
+        "resolved": "已解决",
+        "denied": "已拒绝",
+        "canceled": "已取消"
+      }
     },
     "preferences": {
       "additional_item": "附加件费用",

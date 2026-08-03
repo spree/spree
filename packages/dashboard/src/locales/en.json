@@ -1291,9 +1291,11 @@
     "nav": {
       "account": "Account",
       "categories": "Categories",
+      "claims": "Claims",
       "customer_groups": "Groups",
       "customers": "Customers",
       "draft_orders": "Draft Orders",
+      "exchanges": "Exchanges",
       "getting_started": "Getting Started",
       "gift_cards": "Gift Cards",
       "home": "Home",
@@ -1303,6 +1305,7 @@
       "products": "Products",
       "promotions": "Promotions",
       "reports": "Reports",
+      "returns": "Returns",
       "settings": "Settings",
       "transfers": "Transfers"
     },
@@ -2345,6 +2348,23 @@
         "visible": "Visible"
       },
       "title": "Payment Methods"
+    },
+    "post_sale": {
+      "search_placeholder": "Search by number…",
+      "returns_empty": "No returns yet.",
+      "exchanges_empty": "No exchanges yet.",
+      "claims_empty": "No claims yet.",
+      "statuses": {
+        "requested": "Requested",
+        "open": "Open",
+        "approved": "Approved",
+        "received": "Received",
+        "refunded": "Refunded",
+        "fulfilled": "Fulfilled",
+        "resolved": "Resolved",
+        "denied": "Denied",
+        "canceled": "Canceled"
+      }
     },
     "preferences": {
       "additional_item": "Additional Item Cost",
