@@ -297,4 +297,216 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
       expect(response.headers['Cache-Control']).to include('no-store')
     end
   end
+
+  describe 'GET #providers' do
+    let(:oidc_factory) do
+      Spree::Authentication::Strategies::OidcStrategy.configure(
+        issuer: 'https://idp.example.com',
+        client_id: 'client-id',
+        client_secret: 'client-secret',
+        redirect_uri: 'https://shop.example.com/api/v3/admin/auth/callback/entra',
+        label: 'Microsoft Entra ID'
+      )
+    end
+
+    it 'lists the email provider on a default install' do
+      get :providers
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['providers']).to eq([{ 'key' => 'email', 'kind' => 'password' }])
+    end
+
+    it 'does not require authentication' do
+      get :providers
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    context 'with a redirect provider registered' do
+      before do
+        allow_any_instance_of(Spree::Authentication::Strategies::OidcStrategy).
+          to receive(:discovery_document).
+          and_return('authorization_endpoint' => 'https://idp.example.com/authorize')
+
+        Spree.admin_authentication_strategies.add(:entra, oidc_factory)
+      end
+
+      after { Spree.admin_authentication_strategies.remove(:entra) }
+
+      it 'describes it with a label and an authorization URL' do
+        get :providers
+
+        entra = json_response['providers'].find { |provider| provider['key'] == 'entra' }
+        expect(entra['kind']).to eq('redirect')
+        expect(entra['label']).to eq('Microsoft Entra ID')
+        expect(entra['authorization_url']).to start_with('https://idp.example.com/authorize?')
+      end
+
+      # Unauthenticated endpoint — it must never leak credentials or internals.
+      it 'exposes no client secret or class name' do
+        get :providers
+
+        expect(response.body).not_to include('client-secret')
+        expect(response.body).not_to include('OidcStrategy')
+      end
+    end
+
+    context 'when the email strategy is removed (SSO-only store)' do
+      before { Spree.admin_authentication_strategies.remove(:email) }
+
+      after do
+        Spree.admin_authentication_strategies.add(:email, Spree::Authentication::Strategies::EmailPasswordStrategy)
+      end
+
+      it 'omits the password provider so the login page hides the form' do
+        get :providers
+
+        expect(json_response['providers'].map { |provider| provider['key'] }).not_to include('email')
+      end
+    end
+  end
+
+  describe 'GET #callback' do
+    let!(:admin) { create(:admin_user, email: 'ada@example.com') }
+    let(:oidc_factory) do
+      Spree::Authentication::Strategies::OidcStrategy.configure(
+        issuer: 'https://idp.example.com',
+        client_id: 'client-id',
+        client_secret: 'client-secret',
+        redirect_uri: 'https://shop.example.com/api/v3/admin/auth/callback/entra',
+        label: 'Microsoft Entra ID'
+      )
+    end
+
+    # The state binds to the provider it was minted for, so the callback can
+    # reject one provider's state replayed against another.
+    def state_for(provider, expires_in: 15.minutes)
+      Rails.application.message_verifier('spree/admin/oauth_state').generate(
+        { provider: provider.to_s, nonce: SecureRandom.hex(16) },
+        expires_in: expires_in
+      )
+    end
+
+    let(:valid_state) { state_for('entra') }
+
+    before { Spree.admin_authentication_strategies.add(:entra, oidc_factory) }
+
+    after { Spree.admin_authentication_strategies.remove(:entra) }
+
+    def stub_claims(claims)
+      allow_any_instance_of(Spree::Authentication::Strategies::OidcStrategy).
+        to receive(:exchange_code_for_tokens).and_return('id_token' => 'signed-token')
+      allow_any_instance_of(Spree::Authentication::Strategies::OidcStrategy).
+        to receive(:verify_id_token).and_return(claims)
+    end
+
+    context 'with a verified email matching an existing admin' do
+      before do
+        stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'true')
+      end
+
+      it 'signs the admin in with the same token pair as password login' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['token']).to be_present
+        expect(json_response['user']['email']).to eq(admin.email)
+      end
+
+      it 'sets the refresh cookie' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(set_cookie_for('spree_admin_refresh_token')).to be_present
+      end
+
+      it 'links the SSO identity to the existing account' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(admin.identities.find_by(provider: 'entra', uid: 'idp-subject-1')).to be_present
+      end
+    end
+
+    context 'when the IdP does not assert a verified email' do
+      before do
+        stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'false')
+      end
+
+      it 'refuses to claim the account' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(admin.identities).to be_empty
+      end
+    end
+
+    context 'when no account matches' do
+      before do
+        stub_claims('sub' => 'idp-subject-9', 'email' => 'stranger@example.com', 'email_verified' => 'true')
+      end
+
+      it 'rejects with account_not_provisioned rather than creating an admin' do
+        expect {
+          get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+        }.not_to change(Spree.admin_user_class, :count)
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('account_not_provisioned')
+      end
+    end
+
+    describe 'CSRF state' do
+      before do
+        stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'true')
+      end
+
+      it 'rejects a forged state' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: 'forged' }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+      end
+
+      it 'rejects a missing state' do
+        get :callback, params: { provider: 'entra', code: 'auth-code' }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+      end
+
+      it 'rejects an expired state' do
+        expired = Timecop.travel(20.minutes.ago) { state_for('entra') }
+
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: expired }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+      end
+
+      # A state minted for one provider must not authorize a different one.
+      it 'rejects a state minted for another provider' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: state_for('other') }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+      end
+    end
+
+    context 'with an unregistered provider' do
+      # State is provider-bound and checked first, so a state minted for another
+      # provider is rejected before the registry is ever consulted.
+      it 'rejects another provider\'s state before looking the provider up' do
+        get :callback, params: { provider: 'nope', code: 'auth-code', state: valid_state }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+      end
+
+      it 'returns invalid_provider once the state matches' do
+        get :callback, params: { provider: 'nope', code: 'auth-code', state: state_for('nope') }
+
+        expect(response).to have_http_status(:bad_request)
+        expect(json_response['error']['code']).to eq('invalid_provider')
+      end
+    end
+  end
 end

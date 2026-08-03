@@ -152,6 +152,11 @@ Spree::Core::Engine.add_routes do
         post 'auth/refresh', to: 'auth#refresh'
         post 'auth/logout', to: 'auth#logout'
 
+        # Provider discovery + SSO callback — unauthenticated; both are used
+        # before a session exists. Discovery drives the dashboard login page.
+        get 'auth/providers', to: 'auth#providers'
+        get 'auth/callback/:provider', to: 'auth#callback'
+
         # Public invitation acceptance — unauthenticated; the prefixed ID +
         # token in the URL act as the credential. Mounted under `auth/` so
         # the issued refresh-token cookie's path matches `/auth/refresh`.

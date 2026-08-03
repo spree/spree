@@ -46,6 +46,26 @@ export interface AuthTokens {
   user: AdminUser
 }
 
+/**
+ * One authentication provider the store accepts.
+ *
+ * `password` providers are driven by the login form; `redirect` providers send
+ * the browser to `authorization_url` and come back through the OAuth callback.
+ */
+export interface AuthProvider {
+  /** Registry key, e.g. "email" or "entra". Identifies the provider on login. */
+  key: string
+  kind: 'password' | 'redirect'
+  /** Button label for redirect providers. Absent for password providers. */
+  label?: string
+  /** Where to send the browser. Absent if the provider is misconfigured or unreachable. */
+  authorization_url?: string
+}
+
+export interface AuthProvidersResponse {
+  providers: AuthProvider[]
+}
+
 export interface PermissionRule {
   /** true for `can`, false for `cannot` */
   allow: boolean
@@ -449,6 +469,14 @@ export class AdminClient {
      */
     logout: (options?: RequestOptions): Promise<void> =>
       this.request<void>('POST', '/auth/logout', options),
+
+    /**
+     * List the authentication providers this store accepts. Unauthenticated — it
+     * is read before a session exists, to decide whether the login page shows the
+     * password form, SSO buttons, or both.
+     */
+    providers: (options?: RequestOptions): Promise<AuthProvidersResponse> =>
+      this.request<AuthProvidersResponse>('GET', '/auth/providers', options),
 
     /**
      * Public (unauthenticated) lookup of a pending invitation by prefixed ID + token.

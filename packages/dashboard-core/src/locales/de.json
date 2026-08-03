@@ -171,7 +171,14 @@
     "auth": {
       "login": {
         "title": "Willkommen zurück",
-        "subtitle": "Melden Sie sich bei Ihrem Administratorkonto an"
+        "subtitle": "Melden Sie sich bei Ihrem Administratorkonto an",
+        "divider": "oder",
+        "sso_button": "Weiter mit {{provider}}",
+        "providers_error_title": "Anmeldung nicht verfügbar",
+        "providers_error_message": "Die Anmeldeoptionen konnten nicht geladen werden. Bitte laden Sie die Seite neu oder wenden Sie sich an Ihren Administrator.",
+        "account_not_provisioned": "Dieses Konto ist für diesen Shop nicht freigegeben. Bitten Sie einen Administrator um eine Einladung.",
+        "sso_failed": "Die Anmeldung mit diesem Anbieter war nicht möglich. Bitte versuchen Sie es erneut.",
+        "invalid_oauth_state": "Die Anmeldesitzung ist abgelaufen oder ungültig. Bitte melden Sie sich erneut an."
       },
       "forgot_password": {
         "link": "Passwort vergessen?",

@@ -898,6 +898,7 @@ en:
         channel_store_mismatch: must belong to the same store
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
         delivery_zone_postal_definition_required: postal code member requires a prefix or a from/to range
+        invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
         delivery_zone_range_inverted: must be greater than or equal to postal_code_from
         delivery_zone_range_not_supported: postal code ranges are not supported for this country — use prefixes
@@ -912,6 +913,10 @@ en:
         invalid_storefront_access: is not a valid storefront access level
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_pickup_point_provider: this delivery method has no pickup point provider configured
+        oidc_account_not_provisioned: This account is not authorized for this store. Ask an administrator for an invitation.
+        oidc_authentication_failed: We could not sign you in with this provider. Please try again.
+        oidc_missing_code: The identity provider did not return an authorization code.
+        oidc_requires_redirect: This provider requires signing in through its own login page.
         pickup_point_not_found: pickup point could not be found with this provider
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         store_association_can_not_be_changed: The store association can not be changed

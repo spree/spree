@@ -3,6 +3,8 @@ module Spree
     module V3
       module Store
         class AuthController < Store::BaseController
+          include Spree::Api::V3::AuthenticationStrategies
+
           allow_guest_storefront_access!
           # Tighter rate limits for auth endpoints (per IP to prevent brute force)
           rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
@@ -17,7 +19,7 @@ module Spree
           #   { "provider": "email", "email": "...", "password": "..." }
           def create
             strategy = authentication_strategy
-            return unless strategy # Error already rendered by determine_strategy
+            return unless strategy # Error already rendered by authentication_strategy
 
             result = strategy.authenticate
 
@@ -112,33 +114,12 @@ module Spree
             }
           end
 
-          def authentication_strategy
-            strategy_class = determine_strategy
-            return nil unless strategy_class
-
-            strategy_class.new(
-              params: params,
-              request_env: request.headers.env,
-              user_class: Spree.customer_class
-            )
+          def authentication_strategies
+            Spree.store_authentication_strategies
           end
 
-          def determine_strategy
-            provider = params[:provider].presence || 'email'
-
-            # Retrieve pre-loaded strategy class from configuration
-            strategy_class = Spree.store_authentication_strategies[provider]
-
-            unless strategy_class
-              render_error(
-                code: ERROR_CODES[:invalid_provider],
-                message: "Unsupported authentication provider: #{provider}",
-                status: :bad_request
-              )
-              return nil
-            end
-
-            strategy_class
+          def authentication_user_class
+            Spree.customer_class
           end
 
           def user_serializer
