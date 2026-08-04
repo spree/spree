@@ -55,6 +55,9 @@ module Spree
       args << '--skip-dev-gems'
       args << '--skip-action-mailbox'
       args << '--skip-jbuilder'
+      args << '--skip-hotwire'
+      args << '--skip-action-mailbox'
+      args << '--skip-action-cable'
 
       # API mode (implies skip-asset-pipeline, skip-javascript, skip-hotwire)
       args << '--api' if options[:api]
@@ -73,7 +76,6 @@ module Spree
       template 'rails/application.rb', "#{dummy_path}/config/application.rb", force: true
       template 'rails/routes.rb', "#{dummy_path}/config/routes.rb", force: true
       template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
-      template "app/assets/config/manifest.js", "#{dummy_path}/app/assets/config/manifest.js", force: true unless options[:api]
     end
 
     def test_dummy_inject_extension_requirements

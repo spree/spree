@@ -3,5 +3,7 @@
 <% if image.present? && image.attached? %>
   <%= link_to spree_image_tag(image, variant: :small, alt: alt, width: 80, class: 'item_thumb'), product_url %>
 <% else %>
-  <%= link_to image_tag('noimage/small.png', alt: alt, width: 80, class: 'item_thumb'), product_url %>
+  <%= link_to product_url, 'aria-label': alt do %>
+    <%= image_placeholder_tag %>
+  <% end %>
 <% end %>

@@ -46,14 +46,8 @@ services:
     # or 500 on ActiveRecord::PendingMigrationError after every such pull.
     # `bundle check` is sub-second when clean; the rails invocation is one
     # boot (~5s) that no-ops when nothing changed.
-    #
-    # rm -f of the propshaft manifest: if public/assets/.manifest.json exists
-    # (left behind by any assets:precompile — image builds, test prep, a
-    # one-off rake run), Propshaft silently switches to its static resolver
-    # and serves that frozen snapshot instead of app/assets/builds. Dev must
-    # always resolve live.
     command:
       [
         "sh", "-c",
-        "(bundle check || bundle install) && rm -f public/assets/.manifest.json && bin/rails spree:install:migrations db:prepare && exec bin/rails server -b 0.0.0.0 -p 3000"
+        "(bundle check || bundle install) && bin/rails spree:install:migrations db:prepare && exec bin/rails server -b 0.0.0.0 -p 3000"
       ]
