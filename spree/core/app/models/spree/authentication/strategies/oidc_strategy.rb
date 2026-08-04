@@ -191,13 +191,10 @@ module Spree
         def find_linkable_user(claims)
           return nil unless claims['email_verified'].to_s == 'true'
 
-          email = claims['email']
-          return nil if email.blank?
-
-          # Compared case-insensitively on both sides: the models normalize email
-          # with +squish+ but never downcase, so a stored "Ada@Example.com" would
-          # not match a lowercased claim on a case-sensitive database.
-          user_class.find_by(user_class.arel_table[:email].lower.eq(email.to_s.downcase))
+          # find_user_by_email matches case-insensitively, which matters here: the
+          # models normalize email with +squish+ but never downcase, so a stored
+          # "Ada@Example.com" must still link to a lowercased IdP claim.
+          find_user_by_email(claims['email'])
         end
 
         def identity_info(claims)

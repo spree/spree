@@ -81,6 +81,25 @@ describe Spree::Authentication::Strategies::BaseStrategy do
       result = strategy.send(:find_user_by_email, 'nonexistent@example.com')
       expect(result).to be_nil
     end
+
+    it 'returns nil for a blank email rather than matching an arbitrary record' do
+      expect(strategy.send(:find_user_by_email, nil)).to be_nil
+      expect(strategy.send(:find_user_by_email, '')).to be_nil
+    end
+
+    # Email uniqueness is validated case-insensitively, so a differently-cased
+    # address is the same account and must still log in.
+    context 'when the stored email is capitalized' do
+      let!(:user) { create(:user, email: 'Ada@Example.com') }
+
+      it 'finds the user from a lowercase email' do
+        expect(strategy.send(:find_user_by_email, 'ada@example.com')).to eq(user)
+      end
+
+      it 'finds the user from a differently-cased email' do
+        expect(strategy.send(:find_user_by_email, 'ADA@EXAMPLE.COM')).to eq(user)
+      end
+    end
   end
 
   describe '#find_or_create_user_from_oauth' do

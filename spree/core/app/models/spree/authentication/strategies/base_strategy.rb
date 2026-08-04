@@ -75,9 +75,19 @@ module Spree
           Spree::ServiceModule::Result.new(success: false, error: message)
         end
 
-        # Find user by email
+        # Looks a user up by email, case-insensitively.
+        #
+        # The models validate email uniqueness with +case_sensitive: false+ but
+        # normalize with +squish+ only, so a stored "Ada@Example.com" is the same
+        # account as "ada@example.com" — an exact match would refuse login to
+        # someone who capitalizes their own address differently.
+        #
+        # @param email [String]
+        # @return [Object, nil]
         def find_user_by_email(email)
-          user_class.find_by(email: email)
+          return nil if email.blank?
+
+          user_class.find_by(user_class.arel_table[:email].lower.eq(email.to_s.downcase))
         end
 
         # Find or create user identity
