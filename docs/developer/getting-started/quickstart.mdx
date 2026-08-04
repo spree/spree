@@ -1,66 +1,27 @@
 ---
 title: "Installing Spree"
 sidebarTitle: Installation
-description: "Install Spree Commerce locally with Docker or Ruby on Rails, run your first store, and deploy it to production with the official starter template."
+description: "Install Spree Commerce locally, run your first store, and deploy it to production with the official starter template."
 ---
 
-## Installation options
+## Using `create-spree-app`
 
-<Tabs>
-  <Tab title="create-spree-app">
-    The quickest way to get started. Scaffolds a full Spree project with Next.js Storefront (optional).
+  The quickest way to get started. Scaffolds a full Spree project with Next.js Storefront (optional).
 
-    **Requirements:** [Node.js](https://nodejs.org/) 20+ and [Docker](https://docs.docker.com/get-docker/) running.
+  **Requirements:** [Node.js](https://nodejs.org/) 20+ and [Docker](https://docs.docker.com/get-docker/) running.
 
-    ```bash
-    npx create-spree-app@latest my-store
-    ```
+  ```bash
+  npx create-spree-app@latest my-store
+  ```
 
-    The CLI walks you through an interactive setup:
+  The CLI walks you through an interactive setup:
 
-    1. Choose **Full-stack** (Backend + Next.js Storefront) or **Backend only**
-    2. Optionally load **sample data** (products, categories, images)
+  1. Choose **Full-stack** (Backend + Next.js Storefront) or **Backend only**
+  2. Optionally load **sample data** (products, categories, images)
 
-    Once complete, your store should be running at [http://localhost:3000/admin](http://localhost:3000/admin). The port can be different if `3000` is already used on your system.
+  Once complete, your store should be running at [http://localhost:3000/admin](http://localhost:3000/admin). The port can be different if `3000` is already used on your system.
 
-    See the full [create-spree-app documentation](/developer/create-spree-app/quickstart) for all CLI flags and options.
-  </Tab>
-  <Tab title="Manual Installation">
-    For developers who prefer full control over the setup, or want to add Spree to an existing Rails application.
-
-    1. Install [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
-    2. Install [vips](https://www.libvips.org/install.html) for image processing
-    3. Install Rails gem:
-        ```bash
-        gem install rails
-        ```
-    4. Create a new Spree application:
-        ```bash
-        rails new my_store -m https://raw.githubusercontent.com/spree/spree/main/spree/template.rb
-        ```
-        To use a specific database, pass the `-d` flag:
-        ```bash
-        rails new my_store -d postgresql -m https://raw.githubusercontent.com/spree/spree/main/spree/template.rb
-        rails new my_store -d mysql -m https://raw.githubusercontent.com/spree/spree/main/spree/template.rb
-        ```
-    5. Navigate to the application directory:
-        ```bash
-        cd my_store
-        ```
-    6. Start the development server:
-        ```bash
-        bin/dev
-        ```
-    7. Optionally load sample data (products, categories, etc.):
-        ```bash
-        bin/rails spree_sample:load
-        ```
-
-    <Info>
-      Spree works with **PostgreSQL**, **MySQL**, and **SQLite** databases. The Rails template defaults to SQLite for quick setup. You can switch to PostgreSQL or MySQL at any time. [Learn more about database configuration](/developer/deployment/database).
-    </Info>
-  </Tab>
-</Tabs>
+  See the full [create-spree-app documentation](/developer/create-spree-app/quickstart) for all CLI flags and options.
 
 ## Accessing Admin Panel
 
