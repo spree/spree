@@ -599,6 +599,7 @@
     },
     "account": {
       "edit_profile": "Profil bearbeiten",
+      "preferences": "Einstellungen",
       "language": {
         "label": "Sprache",
         "update_failed": "Spracheinstellung konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."

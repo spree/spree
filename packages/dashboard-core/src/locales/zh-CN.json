@@ -599,6 +599,7 @@
     },
     "account": {
       "edit_profile": "编辑个人资料",
+      "preferences": "偏好设置",
       "language": {
         "label": "语言",
         "update_failed": "无法保存您的语言偏好。请重试。"

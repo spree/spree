@@ -14,6 +14,13 @@
           "BUNDLE_GEMFILE": "spree/Gemfile"
         }
       }
+    },
+    "rubocop": {
+      "binary": {
+        "env": {
+          "BUNDLE_GEMFILE": "spree/Gemfile"
+        }
+      }
     }
   },
   "languages": {

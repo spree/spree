@@ -1,35 +1,48 @@
-import { CheckIcon, MonitorIcon, MoonIcon, SunIcon } from 'lucide-react'
+import { MonitorIcon, MoonStarIcon, SunIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '../ui/dropdown-menu'
+import { cn } from '../lib/utils'
 import { useTheme } from './theme-provider'
 
+const OPTIONS = [
+  { value: 'system', icon: MonitorIcon, labelKey: 'admin.components.theme_toggle.system' },
+  { value: 'light', icon: SunIcon, labelKey: 'admin.components.theme_toggle.light' },
+  { value: 'dark', icon: MoonStarIcon, labelKey: 'admin.components.theme_toggle.dark' },
+] as const
+
 /**
- * Theme picker rendered inside the user dropdown menu. Three-way (Light / Dark
- * / System) — System follows `prefers-color-scheme`.
+ * Theme picker rendered inside the user dropdown's Preferences section as a
+ * compact segmented control (System / Light / Dark). System follows
+ * `prefers-color-scheme`. The buttons are plain (not menu items) so activating
+ * one switches the theme without closing the dropdown.
  */
 export function ThemeMenuItems() {
   const { mode, setMode } = useTheme()
   const { t } = useTranslation()
 
-  const items = [
-    { value: 'light', label: t('admin.components.theme_toggle.light'), icon: SunIcon },
-    { value: 'dark', label: t('admin.components.theme_toggle.dark'), icon: MoonIcon },
-    { value: 'system', label: t('admin.components.theme_toggle.system'), icon: MonitorIcon },
-  ] as const
-
   return (
-    <>
-      <DropdownMenuLabel className="text-xs">
-        {t('admin.components.theme_toggle.label')}
-      </DropdownMenuLabel>
-      {items.map(({ value, label, icon: Icon }) => (
-        <DropdownMenuItem key={value} closeOnClick={false} onClick={() => setMode(value)}>
-          <Icon className="size-4" />
-          {label}
-          {mode === value && <CheckIcon className="ml-auto size-3.5" />}
-        </DropdownMenuItem>
-      ))}
-      <DropdownMenuSeparator />
-    </>
+    <div className="flex items-center justify-between gap-2 px-2.5 py-1.5">
+      <span className="text-sm text-foreground">{t('admin.components.theme_toggle.label')}</span>
+      <div className="flex items-center gap-0.5 rounded-lg border border-border bg-muted/40 p-0.5">
+        {OPTIONS.map(({ value, icon: Icon, labelKey }) => {
+          const active = mode === value
+          return (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={active}
+              aria-label={t(labelKey)}
+              title={t(labelKey)}
+              onClick={() => setMode(value)}
+              className={cn(
+                'flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground',
+                active && 'bg-background text-foreground shadow-sm',
+              )}
+            >
+              <Icon className="size-4" />
+            </button>
+          )
+        })}
+      </div>
+    </div>
   )
 }

@@ -599,6 +599,7 @@
     },
     "account": {
       "edit_profile": "Edytuj profil",
+      "preferences": "Preferencje",
       "language": {
         "label": "Język",
         "update_failed": "Nie udało się zapisać preferencji języka. Spróbuj ponownie."
