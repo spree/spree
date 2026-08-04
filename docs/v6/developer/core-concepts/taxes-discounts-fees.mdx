@@ -106,7 +106,7 @@ You never create tax lines yourself. They're written whenever the order total is
 | `label` | What the customer sees, e.g. `Summer Sale` |
 | `kind` | `promotion` or `manual` |
 | `code` | The coupon code used, if any |
-| `value` / `value_type` | The rule behind it, e.g. `"10"` / `percent` |
+| `value` / `value_type` | The rule behind it, e.g. `"10"` / `percent`. Accepts a string or a number on write. |
 | `amount` / `display_amount` | The reduction, as a negative amount |
 | `promotion_id` | The promotion it came from |
 | `line_item_id` / `fulfillment_id` | What it reduced |
@@ -119,7 +119,7 @@ Most discounts come from [Promotions](/developer/core-concepts/promotions) — a
 // 10% off a single line item
 await adminClient.orders.discounts.create('or_xxx', {
   label: 'Goodwill discount',
-  value: 10,
+  value: '10',
   value_type: 'percent',
   line_item_id: 'li_xxx',
 })

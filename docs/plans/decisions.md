@@ -2,10 +2,11 @@
 
 A full usage audit of `Spree::Config` (multi-agent trace with adversarial
 verification over all 68 preferences) found 38 genuinely live settings, 6 read
-only by subsystems 6.0 replaced, and 7 with zero read sites anywhere — one of
-which, `default_stock_reservation_ttl_minutes`, was *silently unreachable*
-because the Store preference it falls back from carries its own default and a
-`> 0` validation, so it is never blank. Both default to 10, so nobody noticed.
+only by subsystems 6.0 replaced, and 7 with zero read sites anywhere. One of the
+38 — `default_stock_reservation_ttl_minutes` — has a read site but is *silently
+unreachable*: the Store preference it falls back from carries its own default
+and a `> 0` validation, so it is never blank. Both default to 10, so nobody
+noticed.
 That failure mode is the argument for the whole decision: two sources of truth
 for one behavior, where one quietly wins and the documentation becomes a lie.
 
