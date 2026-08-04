@@ -71,15 +71,24 @@ module Spree
         # @param redirect_uri [String] must match the value registered with the IdP
         # @param label [String] name shown on the dashboard login button
         # @param scope [String] space-separated scopes; must include +openid+
+        # @param trust_unverified_email [Boolean] allow first-login account linking
+        #   when the provider omits the +email_verified+ claim. Off by default.
+        #   Only enable for a provider whose directory owns its email addresses —
+        #   Microsoft Entra ID omits the claim for work accounts, for instance, and
+        #   a tenant admin controls those addresses. Never enable it for a provider
+        #   where a person can set their own email (a consumer Google or GitHub
+        #   account), since that turns "claim any staff address" into a takeover.
         # @return [Factory]
-        def self.configure(issuer:, client_id:, client_secret:, redirect_uri:, label: nil, scope: 'openid email profile')
+        def self.configure(issuer:, client_id:, client_secret:, redirect_uri:, label: nil, scope: 'openid email profile',
+                           trust_unverified_email: false)
           config = {
             issuer: issuer.to_s.chomp('/'),
             client_id: client_id,
             client_secret: client_secret,
             redirect_uri: redirect_uri,
             label: label,
-            scope: scope
+            scope: scope,
+            trust_unverified_email: trust_unverified_email
           }
 
           missing = REQUIRED_OPTIONS.select { |option| config[option].blank? }
@@ -188,13 +197,29 @@ module Spree
         # Only an email the provider asserts as verified may claim an existing
         # account. Matching on an unverified claim would let anyone who can set
         # their IdP email to a staff address take that account over.
+        #
+        # Some directories — Microsoft Entra ID among them — omit +email_verified+
+        # for work accounts, which would block first-login linking for every
+        # existing admin. Those providers opt in with +trust_unverified_email+; an
+        # explicitly false claim is still refused either way.
         def find_linkable_user(claims)
-          return nil unless claims['email_verified'].to_s == 'true'
+          return nil unless email_claim_trusted?(claims)
 
           # find_user_by_email matches case-insensitively, which matters here: the
           # models normalize email with +squish+ but never downcase, so a stored
           # "Ada@Example.com" must still link to a lowercased IdP claim.
           find_user_by_email(claims['email'])
+        end
+
+        # A present claim is always obeyed: "false" refuses linking even when the
+        # provider is configured as trusted. Only an *absent* claim falls back to
+        # the provider's configuration.
+        def email_claim_trusted?(claims)
+          verified = claims['email_verified']
+
+          return verified.to_s == 'true' unless verified.nil?
+
+          config[:trust_unverified_email].present?
         end
 
         def identity_info(claims)

@@ -114,6 +114,46 @@ describe Spree::Authentication::Strategies::OidcStrategy do
         end
       end
 
+      # Entra omits email_verified for work accounts, so the claim's absence must
+      # be a configurable decision rather than an implicit yes or no.
+      context 'when the provider omits the email_verified claim' do
+        let(:claims) { { 'sub' => 'idp-subject-1', 'email' => admin.email } }
+
+        it 'refuses to link by default' do
+          result = strategy.callback
+
+          expect(result).not_to be_success
+          expect(admin.identities).to be_empty
+        end
+
+        context 'and the provider is configured to trust its directory' do
+          let(:factory) do
+            described_class.configure(
+              issuer: issuer,
+              client_id: 'client-id',
+              client_secret: 'client-secret',
+              redirect_uri: 'https://shop.example.com/api/v3/admin/auth/callback/entra',
+              label: 'Microsoft Entra ID',
+              trust_unverified_email: true
+            )
+          end
+
+          it 'links the identity to the existing admin' do
+            result = strategy.callback
+
+            expect(result).to be_success
+            expect(result.value).to eq(admin)
+          end
+
+          # A present "false" is an explicit denial and outranks the configuration.
+          it 'still refuses an explicitly unverified email' do
+            allow(strategy).to receive(:verify_id_token).and_return(claims.merge('email_verified' => 'false'))
+
+            expect(strategy.callback).not_to be_success
+          end
+        end
+      end
+
       context 'when the email is not verified by the provider' do
         let(:claims) do
           { 'sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'false' }
