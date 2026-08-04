@@ -88,26 +88,39 @@ Shipped plans:
 | `packages/sdk-core` | `@spree/sdk-core` — shared HTTP/retry/error layer (private internal) |
 | `packages/cli` | `@spree/cli` — Docker-based project management CLI |
 | `packages/create-spree-app` | `create-spree-app` — project scaffolding |
-| `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, run `pnpm server:setup`) |
+| `server/` | Rails app cloned from `spree/spree-starter` (.gitignored, provisioned per worktree by `scripts/worktree/setup.sh`) |
 
-## Development Server (`server/`)
+## Development Server (worktrees)
 
-One-time bootstrap (Docker required, no host Ruby): `pnpm install && pnpm server:setup`. It clones spree-starter into `server/`, boots the edge stack (monorepo gems bind-mounted via a compose overlay), and prepares + seeds the DB. Idempotent — but re-running it is a **full reset** that wipes the DB and volumes.
+Development happens in **git worktrees** — every worktree is a self-contained native dev environment, no Docker: its own gitignored `server/` clone of spree-starter (monorepo gems loaded as path gems via `SPREE_PATH`), its own database on the shared Homebrew Postgres (:5432, copied in ~2 s from the seeded `spree_worktree_template`), and stable per-branch https URLs via [portless](https://github.com/vercel-labs/portless). Worktrees are managed with [worktrunk](https://worktrunk.dev) (`wt`): creating one runs `scripts/worktree/setup.sh` automatically (see `.config/wt.toml`), removing one drops its databases. The main checkout is for integration (merges, template rebuilds), not for running servers.
 
-Day-to-day from the repo root: `pnpm server:dev` (foreground — streams web logs; jobs run in-process via Solid Queue; Ctrl+C stops it, postgres stays warm) / `server:stop` (full teardown) / `server:restart` / `server:logs` / `server:console` / `server:seed` / `server:load_sample_data`. CLI commands run from `server/`: `pnpm exec spree <cmd>` (`spree migrate`, `spree console`, `spree generate model …`). `spree dev` and `spree build` refuse to run in `server/` (SPREE_PATH guard) — use the `pnpm server:*` scripts instead.
+```bash
+wt switch -c feature-x       # create worktree + provisioned environment (~20 s)
+pnpm wt:dev                  # Rails → https://feature-x.spree.localhost  (/up, /api/v3, /jobs; jobs run inside Puma via Solid Queue)
+pnpm wt:dashboard            # admin UI → https://admin.feature-x.spree.localhost
+pnpm wt:e2e [spec...]        # Playwright on this worktree's own port block
+pnpm wt:template             # rebuild the template DB after schema-changing pulls
+wt merge main                # ship + clean up (worktree, branch and databases all removed)
+wt remove                    # abandon instead of shipping
+```
 
-| What changed | What to run |
+Admin login: `spree@example.com` / `spree123`. Both dev scripts run in the foreground and stream logs; `server/log/development.log` has the Rails log if the server runs detached. Start servers only in worktrees you're actively looking at — rspec/vitest/tsc need no servers.
+
+One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postgres` superuser role), Ruby per `server/.ruby-version` (mise or rbenv), Node ≥ 24 with `npm i -g portless` (start the proxy once with `portless proxy start`, accepting sudo for :443), worktrunk, then `pnpm wt:template`.
+
+| What changed | What to run (inside the worktree) |
 |---|---|
-| Ruby code in `spree/*` gems | Nothing — bind-mounted, reloads on next request |
-| Hosted React Dashboard at `/dashboard` (single-node test) | `pnpm server:dashboard` — rebuilds `packages/dashboard-starter/dist` with `VITE_BASE_PATH=/dashboard/`; served immediately through the monorepo mount (no restart). For dashboard *development* keep using Vite on :5173 (`cd packages/dashboard && pnpm dev`). |
-| New migration in a gem | Nothing — the next `pnpm server:dev` boot runs `spree:install:migrations db:prepare` (or `cd server && pnpm exec spree migrate` while running) |
-| Gem dependencies (gemspec / Gemfile / starter `Gemfile.lock` drift after a pull) | Nothing — the next `pnpm server:dev` boot self-heals (`bundle check || bundle install` into the `bundle_cache` volume); while running: `cd server && pnpm exec spree bundle install` |
-| Compose files / `server/.env` | `pnpm server:dev` (force-recreates web + worker) |
-| `server/Dockerfile` / `.ruby-version` / starter update that breaks the image build (frozen-lockfile error) | `pnpm server:build`, then `pnpm server:dev` — the build script swaps the edge PATH lock for a RubyGems-resolved one and the next boot swaps it back |
-| Working on the Meilisearch search provider | Off by default (DB provider) — `SPREE_MEILISEARCH=1 pnpm server:dev` chains `scripts/docker-compose.meilisearch.yml` (service + `MEILISEARCH_URL`), then `cd server && pnpm exec spree rake spree:search:reindex` once. Booting without the flag reverts web to DB search and removes the meilisearch container; the index volume stays. Image bump ("database version … is incompatible"): `pnpm server:stop && docker volume rm server_meilisearch_data`, flagged boot, reindex |
-| Broken beyond repair | `pnpm server:setup` (full reset — wipes DB + volumes) |
+| Ruby code in `spree/*` gems | Nothing — path gems, reloads on next request |
+| New migration in a gem | `cd server && bin/rails spree:install:migrations db:migrate`; then `pnpm wt:template` once so future worktrees inherit it |
+| Gem dependencies | `cd server && bundle install` (the gem home is shared across worktrees, so this is fast) |
+| Need sample data (products + images) | `cd server && bin/rails spree:load_sample_data` — per worktree, on demand; takes minutes and hits the network |
+| Rails console / database | `cd server && bin/rails console`; the DB is `spree_dev_<branch>` on `localhost:5432` |
+| E2E prerequisites | Once per worktree: `cd spree/api && bundle install && bundle exec rake test_app` (then `pnpm wt:e2e`) |
+| Meilisearch search provider | Optional: `brew install meilisearch`, run it, set `MEILISEARCH_URL` in `server/.env`, `bin/rails spree:search:reindex` |
+| Hosted dashboard at `/dashboard` (single-node test) | `pnpm server:dashboard` to build `packages/dashboard-starter/dist`, set `SPREE_DASHBOARD_DIST_PATH=<monorepo>/packages/dashboard-starter/dist` in `server/.env` |
+| Broken beyond repair | `wt remove` and recreate — or `dropdb spree_dev_<branch>`, delete `server/`, re-run `pnpm wt:setup` |
 
-Backend: http://localhost:3000, admin at `/admin`, hosted React Dashboard at `/dashboard` (`spree@example.com` / `spree123`). Native no-Docker path: `pnpm server:create`, then `cd server && bin/setup && bin/dev`.
+**The legacy Docker compose flow (`pnpm server:setup` / `server:dev` / `server:stop` etc.) is deprecated — never use it.** It exists only for spree-starter parity; it fights the worktree stack for ports and its teardown scripts wipe shared state.
 
 ---
 
@@ -494,20 +507,19 @@ The Spree 6.0 admin dashboard — a Vite-built React SPA that replaces the legac
 
 The split lets plugin authors register UI via `defineDashboardPlugin` from `@spree/dashboard-core/plugin`, build new pages with `@spree/dashboard-ui` primitives, and reuse the same providers/hooks. It also lets app developers compose custom dashboards (e.g. vendor panels) from the same packages.
 
-**Running the admin UI locally:**
+**Running the admin UI locally** (from a worktree — see "Development Server" above):
 
 ```bash
-# 1. Boot a Spree backend (one terminal, from monorepo root)
-pnpm server:setup       # one-time bootstrap (see "Development Server" above)
-pnpm server:dev         # foreground; streams logs — Rails on http://localhost:3000
+# 1. Boot this worktree's Spree backend (one terminal)
+pnpm wt:dev             # foreground; streams logs — https://<branch>.spree.localhost
 
-# 2. Boot the admin (separate terminal, from monorepo root)
-pnpm turbo dev --filter=@spree/dashboard-starter   # http://localhost:5173 (proxies /api/* to :3000)
+# 2. Boot the admin (separate terminal)
+pnpm wt:dashboard       # https://admin.<branch>.spree.localhost (proxies /api/* to this worktree's Rails)
 ```
 
-The starter is the canonical host — the same app `spree add dashboard` scaffolds — so local dev exercises the real consumer path (shell + plugin pipeline) while still hot-reloading `@spree/dashboard`/`-core`/`-ui` source through the workspace. `turbo dev` (not a bare `pnpm dev` inside the package) matters on a fresh clone: the starter's `vite.config.ts` resolves the compiled Node-side Vite entries (`@spree/dashboard/vite`, `@spree/dashboard-core/vite`) from `dist/`, and turbo's `^build` dependency produces them. After any full `pnpm build`, `cd packages/dashboard-starter && pnpm dev` works too.
+The starter is the canonical host — the same app `spree add dashboard` scaffolds — so local dev exercises the real consumer path (shell + plugin pipeline) while still hot-reloading `@spree/dashboard`/`-core`/`-ui` source through the workspace. Building the workspace deps first matters on a fresh worktree: the starter's `vite.config.ts` resolves the compiled Node-side Vite entries (`@spree/dashboard/vite`, `@spree/dashboard-core/vite`) from `dist/` — `pnpm wt:dashboard` handles this (turbo builds the dependency graph, then starts Vite on the portless-assigned port).
 
-`VITE_API_PROXY_TARGET` overrides the backend the dev proxy targets (default `http://localhost:3000`); don't use `VITE_SPREE_API_URL` in dev — it flips the SDK to absolute cross-origin URLs, bypassing the proxy. Sign in with the seed admin user (`spree@example.com` / `spree123` — override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD`; see `spree/core/app/services/spree/seeds/admin_user.rb`).
+`VITE_API_PROXY_TARGET` sets the backend the dev proxy targets — the worktree setup writes it into `packages/dashboard-starter/.env.local` pointing at that worktree's Rails URL. Don't use `VITE_SPREE_API_URL` in dev — it flips the SDK to absolute cross-origin URLs, bypassing the proxy. Sign in with the seed admin user (`spree@example.com` / `spree123` — override at seed time with `ADMIN_EMAIL` / `ADMIN_PASSWORD`; see `spree/core/app/services/spree/seeds/admin_user.rb`).
 
 **When implementing a new admin feature:**
 
