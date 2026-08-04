@@ -8,17 +8,17 @@ module Spree
     let(:store) { create :store, default_currency: 'EUR' }
     let(:currency) { 'USD' }
     let(:metadata) { { prop1: 2 } }
-    let(:expected) { Order.first }
+    let(:expected) { Spree::Cart.first }
 
     context 'create an order' do
       let(:execute) { subject.call params: { user: user, store: store, currency: currency, metadata: metadata } }
       let(:value) { execute.value }
 
       it do
-        expect { execute }.to change(Order, :count)
+        expect { execute }.to change(Spree::Cart, :count)
         expect(execute).to be_success
         expect(value).to eq expected
-        expect(expected.number).to be_present
+        expect(expected.token).to be_present
       end
     end
 
@@ -27,13 +27,13 @@ module Spree
       let(:value) { execute.value }
 
       it do
-        expect { execute }.to change(Order, :count)
+        expect { execute }.to change(Spree::Cart, :count)
         expect(execute).to be_success
         expect(value).to eq expected
         expect(expected.user).to eq user
         expect(expected.store).to eq store
         expect(expected.currency).to eq 'EUR'
-        expect(expected.number).to be_present
+        expect(expected.token).to be_present
       end
     end
 
@@ -46,7 +46,7 @@ module Spree
       end
 
       it do
-        expect { execute }.to change(Order, :count)
+        expect { execute }.to change(Spree::Cart, :count)
         expect(execute).to be_success
         expect(value.locale).to eq('fr')
       end
@@ -61,7 +61,7 @@ module Spree
       end
 
       it do
-        expect { execute }.to change(Order, :count)
+        expect { execute }.to change(Spree::Cart, :count)
         expect(execute).to be_success
         expect(value.locale).to eq('en')
       end
@@ -99,7 +99,7 @@ module Spree
       let(:value) { execute.value }
 
       it do
-        expect { execute }.not_to change(Order, :count)
+        expect { execute }.not_to change(Spree::Cart, :count)
         expect(execute).to be_failure
       end
     end

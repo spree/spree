@@ -33,7 +33,7 @@ describe Spree::Ability, type: :model do
     let(:resource_shipment) { Spree::Shipment.new }
     let(:resource_product) { store.products.new }
     let(:resource_user) { create(:user) }
-    let(:resource_order) { create(:order, user: resource_user) }
+    let(:resource_order) { create(:order, customer: resource_user) }
     let(:fakedispatch_user) { create(:user) }
     let(:fakedispatch_ability) { Spree::Ability.new(fakedispatch_user) }
 
@@ -118,7 +118,7 @@ describe Spree::Ability, type: :model do
       end
 
       context 'requested by other user' do
-        before { resource.user = Spree.user_class.new }
+        before { resource.user = Spree.customer_class.new }
 
         it_behaves_like 'create only'
       end
@@ -174,7 +174,7 @@ describe Spree::Ability, type: :model do
     end
 
     context 'for Taxons' do
-      let(:resource) { Spree::Taxon.new }
+      let(:resource) { Spree::Category.new }
 
       context 'requested by any user' do
         it_behaves_like 'read only'
@@ -224,7 +224,7 @@ describe Spree::Ability, type: :model do
       let(:guest_address) { create(:address, user_id: nil) }
 
       context 'with non-persisted guest user' do
-        let(:guest_user) { Spree.user_class.new }
+        let(:guest_user) { Spree.customer_class.new }
         let(:guest_ability) { Spree::Ability.new(guest_user) }
 
         it 'cannot read guest addresses with nil user_id' do

@@ -8,7 +8,7 @@ RSpec.describe Spree::Products::RefreshMetricsJob, type: :job do
     subject { described_class.perform_now(product.id) }
 
     context 'when the product has completed orders' do
-      let!(:order) { create(:completed_order_with_totals, line_items_price: 50, store: store, variants: [product.master]) }
+      let!(:order) { create(:completed_order_with_totals, line_items_price: 50, store: store, variants: [product.default_variant]) }
 
       it 'sets +units_sold_count+ and +revenue+ on the product from completed line items' do
         subject

@@ -5,7 +5,7 @@
 module Spree
   class Promotion
     module Rules
-      class Country < PromotionRule
+      class Country < Spree::PromotionRule
         preference :country_isos, :array, default: [], parse_on_set: lambda { |values|
           normalize_id_preference.call(values).map(&:upcase)
         }
@@ -13,7 +13,7 @@ module Spree
         preference :country_iso, :string # legacy ISO-based shortcut
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def countries

@@ -1,52 +1,65 @@
 require 'spec_helper'
 
 describe Spree do
-  describe '.user_class' do
+  describe '.customer_class' do
     after do
-      described_class.user_class = 'Spree::LegacyUser'
+      described_class.customer_class = 'Spree::Customer'
     end
 
-    context 'when user_class is a Class instance' do
+    context 'when customer_class is a Class instance' do
       it 'raises an error' do
-        described_class.user_class = Spree::LegacyUser
+        described_class.customer_class = Spree::Customer
 
-        expect { described_class.user_class }.to raise_error(RuntimeError)
+        expect { described_class.customer_class }.to raise_error(RuntimeError)
       end
     end
 
-    context 'when user_class is a Symbol instance' do
-      it 'returns the user_class constant' do
-        described_class.user_class = :'Spree::LegacyUser'
+    context 'when customer_class is a Symbol instance' do
+      it 'returns the customer_class constant' do
+        described_class.customer_class = :'Spree::Customer'
 
-        expect(described_class.user_class).to eq(Spree::LegacyUser)
+        expect(described_class.customer_class).to eq(Spree::Customer)
       end
     end
 
-    context 'when user_class is a String instance' do
-      it 'returns the user_class constant' do
-        described_class.user_class = 'Spree::LegacyUser'
+    context 'when customer_class is a String instance' do
+      it 'returns the customer_class constant' do
+        described_class.customer_class = 'Spree::Customer'
 
-        expect(described_class.user_class).to eq(Spree::LegacyUser)
+        expect(described_class.customer_class).to eq(Spree::Customer)
       end
     end
 
     context 'when constantize is false' do
-      it 'returns the user_class as a String' do
-        described_class.user_class = 'Spree::LegacyUser'
+      it 'returns the customer_class as a String' do
+        described_class.customer_class = 'Spree::Customer'
 
-        expect(described_class.user_class(constantize: false)).to eq('Spree::LegacyUser')
+        expect(described_class.customer_class(constantize: false)).to eq('Spree::Customer')
       end
+    end
+  end
+
+  describe '.user_class (deprecated alias for .customer_class)' do
+    after do
+      described_class.customer_class = 'Spree::Customer'
+    end
+
+    it 'delegates reads and writes to customer_class' do
+      described_class.user_class = 'Spree::Customer'
+
+      expect(described_class.user_class).to eq(Spree::Customer)
+      expect(described_class.customer_class).to eq(Spree::Customer)
     end
   end
 
   describe '.admin_user_class' do
     after do
-      described_class.admin_user_class = 'Spree::LegacyAdminUser'
+      described_class.admin_user_class = 'Spree::AdminUser'
     end
 
     context 'when admin_user_class is a Class instance' do
       it 'raises an error' do
-        described_class.admin_user_class = Spree::LegacyUser
+        described_class.admin_user_class = Spree::AdminUser
 
         expect { described_class.admin_user_class }.to raise_error(RuntimeError)
       end
@@ -54,25 +67,25 @@ describe Spree do
 
     context 'when admin_user_class is a Symbol instance' do
       it 'returns the admin_user_class constant' do
-        described_class.admin_user_class = :'Spree::LegacyUser'
+        described_class.admin_user_class = :'Spree::AdminUser'
 
-        expect(described_class.admin_user_class).to eq(Spree::LegacyUser)
+        expect(described_class.admin_user_class).to eq(Spree::AdminUser)
       end
     end
 
     context 'when admin_user_class is a String instance' do
       it 'returns the admin_user_class constant' do
-        described_class.admin_user_class = 'Spree::LegacyUser'
+        described_class.admin_user_class = 'Spree::AdminUser'
 
-        expect(described_class.admin_user_class).to eq(Spree::LegacyUser)
+        expect(described_class.admin_user_class).to eq(Spree::AdminUser)
       end
     end
 
     context 'when constantize is false' do
       it 'returns the admin_user_class as a String' do
-        described_class.admin_user_class = 'Spree::LegacyUser'
+        described_class.admin_user_class = 'Spree::AdminUser'
 
-        expect(described_class.admin_user_class(constantize: false)).to eq('Spree::LegacyUser')
+        expect(described_class.admin_user_class(constantize: false)).to eq('Spree::AdminUser')
       end
     end
   end

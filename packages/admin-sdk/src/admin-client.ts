@@ -46,6 +46,26 @@ export interface AuthTokens {
   user: AdminUser
 }
 
+/**
+ * One authentication provider the store accepts.
+ *
+ * `password` providers are driven by the login form; `redirect` providers send
+ * the browser to `authorization_url` and come back through the OAuth callback.
+ */
+export interface AuthProvider {
+  /** Registry key, e.g. "email" or "entra". Identifies the provider on login. */
+  key: string
+  kind: 'password' | 'redirect'
+  /** Button label for redirect providers. Absent for password providers. */
+  label?: string
+  /** Where to send the browser. Absent if the provider is misconfigured or unreachable. */
+  authorization_url?: string
+}
+
+export interface AuthProvidersResponse {
+  providers: AuthProvider[]
+}
+
 export interface PermissionRule {
   /** true for `can`, false for `cannot` */
   allow: boolean
@@ -81,6 +101,9 @@ import type {
   CategoryUpdateParams,
   ChannelCreateParams,
   ChannelUpdateParams,
+  ClaimCreateParams,
+  ClaimResolveParams,
+  ClaimUpdateParams,
   CustomerAddressParams,
   CustomerCreateParams,
   CustomerGroupCreateParams,
@@ -93,7 +116,13 @@ import type {
   CustomFieldDefinitionUpdateParams,
   CustomFieldOwnerType,
   CustomFieldUpdateParams,
+  DeliveryMethodParams,
+  DeliveryZoneParams,
   DirectUploadCreateParams,
+  ExchangeCreateParams,
+  ExchangeFulfillParams,
+  ExchangeReceiveParams,
+  ExchangeUpdateParams,
   ExportCreateParams,
   FulfillmentCreateParams,
   FulfillmentUpdateParams,
@@ -127,12 +156,15 @@ import type {
   PaymentMethodCreateParams,
   PaymentMethodType,
   PaymentMethodUpdateParams,
+  PreferenceField,
   PriceBulkUpsertRow,
   PriceCreateParams,
   PriceListCreateParams,
   PriceListUpdateParams,
   PriceUpdateParams,
   ProductCreateParams,
+  ProductTypeCreateParams,
+  ProductTypeUpdateParams,
   ProductUpdateParams,
   PromotionActionCalculator,
   PromotionActionCreateParams,
@@ -142,6 +174,10 @@ import type {
   PromotionRuleUpdateParams,
   PromotionUpdateParams,
   ResourceTypeDefinition,
+  ReturnCreateParams,
+  ReturnReceiveParams,
+  ReturnRefundParams,
+  ReturnUpdateParams,
   StockItemUpdateParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
@@ -158,12 +194,12 @@ import type {
 } from './params'
 import type {
   Address,
-  Adjustment,
   AdminUser,
   AllowedOrigin,
   ApiKey,
   Category,
   Channel,
+  Claim,
   Country,
   CouponCode,
   CreditCard,
@@ -171,8 +207,15 @@ import type {
   CustomerGroup,
   CustomField,
   CustomFieldDefinition,
+  DeliveryMethod,
+  DeliveryMethodRule,
+  DeliveryZone,
+  Discount,
+  Exchange,
   Export,
+  Fee,
   Fulfillment,
+  FulfillmentProviderOption,
   GiftCard,
   GiftCardBatch,
   Import,
@@ -190,12 +233,14 @@ import type {
   Price,
   PriceList,
   Product,
+  ProductType,
   Promotion,
   PromotionAction,
   PromotionRule,
   Refund,
   ResourceTranslations,
   ResourceTranslationsNode,
+  Return,
   Role,
   StockItem,
   StockLocation,
@@ -204,6 +249,7 @@ import type {
   StoreCredit,
   StoreCreditCategory,
   TaxCategory,
+  TaxLine,
   TranslatableResource,
   TranslationBatchEntry,
   Variant,
@@ -423,6 +469,14 @@ export class AdminClient {
      */
     logout: (options?: RequestOptions): Promise<void> =>
       this.request<void>('POST', '/auth/logout', options),
+
+    /**
+     * List the authentication providers this store accepts. Unauthenticated — it
+     * is read before a session exists, to decide whether the login page shows the
+     * password form, SSO buttons, or both.
+     */
+    providers: (options?: RequestOptions): Promise<AuthProvidersResponse> =>
+      this.request<AuthProvidersResponse>('GET', '/auth/providers', options),
 
     /**
      * Public (unauthenticated) lookup of a pending invitation by prefixed ID + token.
@@ -977,6 +1031,254 @@ export class AdminClient {
         }),
     },
 
+    returns: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Return>> =>
+        this.request<PaginatedResponse<Return>>('GET', `/orders/${orderId}/returns`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('GET', `/orders/${orderId}/returns/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      create: (
+        orderId: string,
+        params: ReturnCreateParams,
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('POST', `/orders/${orderId}/returns`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: ReturnUpdateParams,
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      approve: (
+        orderId: string,
+        id: string,
+        params?: { generate_label?: boolean },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/approve`, {
+          ...options,
+          body: params,
+        }),
+
+      receive: (
+        orderId: string,
+        id: string,
+        params?: ReturnReceiveParams,
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/receive`, {
+          ...options,
+          body: params,
+        }),
+
+      refund: (
+        orderId: string,
+        id: string,
+        params?: ReturnRefundParams,
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/refund`, {
+          ...options,
+          body: params,
+        }),
+
+      cancel: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/cancel`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    exchanges: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Exchange>> =>
+        this.request<PaginatedResponse<Exchange>>('GET', `/orders/${orderId}/exchanges`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('GET', `/orders/${orderId}/exchanges/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      create: (
+        orderId: string,
+        params: ExchangeCreateParams,
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('POST', `/orders/${orderId}/exchanges`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: ExchangeUpdateParams,
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      approve: (orderId: string, id: string, options?: RequestOptions): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/approve`, options),
+
+      receive: (
+        orderId: string,
+        id: string,
+        params?: ExchangeReceiveParams,
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/receive`, {
+          ...options,
+          body: params,
+        }),
+
+      fulfill: (
+        orderId: string,
+        id: string,
+        params?: ExchangeFulfillParams,
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/fulfill`, {
+          ...options,
+          body: params,
+        }),
+
+      cancel: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Exchange> =>
+        this.request<Exchange>('PATCH', `/orders/${orderId}/exchanges/${id}/cancel`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    claims: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Claim>> =>
+        this.request<PaginatedResponse<Claim>>('GET', `/orders/${orderId}/claims`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('GET', `/orders/${orderId}/claims/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      create: (
+        orderId: string,
+        params: ClaimCreateParams,
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('POST', `/orders/${orderId}/claims`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: ClaimUpdateParams,
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      approve: (orderId: string, id: string, options?: RequestOptions): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/approve`, options),
+
+      resolve: (
+        orderId: string,
+        id: string,
+        params: ClaimResolveParams,
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/resolve`, {
+          ...options,
+          body: params,
+        }),
+
+      deny: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/deny`, {
+          ...options,
+          body: params,
+        }),
+
+      cancel: (
+        orderId: string,
+        id: string,
+        params?: { reason?: string },
+        options?: RequestOptions,
+      ): Promise<Claim> =>
+        this.request<Claim>('PATCH', `/orders/${orderId}/claims/${id}/cancel`, {
+          ...options,
+          body: params,
+        }),
+    },
+
     payments: {
       list: (
         orderId: string,
@@ -1038,19 +1340,135 @@ export class AdminClient {
         this.request<Refund>('POST', `/orders/${orderId}/refunds`, { ...options, body: params }),
     },
 
-    adjustments: {
+    taxLines: {
       list: (
         orderId: string,
         params?: ListParams & Record<string, unknown>,
         options?: RequestOptions,
-      ): Promise<PaginatedResponse<Adjustment>> =>
-        this.request<PaginatedResponse<Adjustment>>('GET', `/orders/${orderId}/adjustments`, {
+      ): Promise<PaginatedResponse<TaxLine>> =>
+        this.request<PaginatedResponse<TaxLine>>('GET', `/orders/${orderId}/tax_lines`, {
           ...options,
           params: params ? transformListParams(params) : undefined,
         }),
 
-      get: (orderId: string, id: string, options?: RequestOptions): Promise<Adjustment> =>
-        this.request<Adjustment>('GET', `/orders/${orderId}/adjustments/${id}`, options),
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<TaxLine> =>
+        this.request<TaxLine>('GET', `/orders/${orderId}/tax_lines/${id}`, options),
+    },
+
+    discounts: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Discount>> =>
+        this.request<PaginatedResponse<Discount>>('GET', `/orders/${orderId}/discounts`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Discount> =>
+        this.request<Discount>('GET', `/orders/${orderId}/discounts/${id}`, options),
+
+      /**
+       * Creates a manual discount. With `line_item_id` a single row is
+       * created; without it the value is distributed across line items
+       * (largest remainder). Works on completed orders.
+       */
+      create: (
+        orderId: string,
+        params: {
+          label: string
+          value: string | number
+          value_type?: 'flat' | 'percent'
+          line_item_id?: string
+        },
+        options?: RequestOptions,
+      ): Promise<{ data: Discount[] }> =>
+        this.request<{ data: Discount[] }>('POST', `/orders/${orderId}/discounts`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Manual rows only — promotion-sourced rows respond 422 (`discount_not_editable`). */
+      update: (
+        orderId: string,
+        id: string,
+        params: { label?: string; amount?: string | number },
+        options?: RequestOptions,
+      ): Promise<Discount> =>
+        this.request<Discount>('PATCH', `/orders/${orderId}/discounts/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Manual rows only — promotion-sourced rows respond 422 (`discount_not_editable`). */
+      delete: (orderId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/orders/${orderId}/discounts/${id}`, options),
+    },
+
+    /**
+     * Discount codes on a draft order — same pending semantics as the
+     * storefront cart endpoint (a real-but-not-yet-eligible code is stored
+     * and activates on recalculation). Completed orders respond 422
+     * (`discount_not_editable`); use manual discounts instead.
+     */
+    discountCodes: {
+      create: (
+        orderId: string,
+        params: { code: string },
+        options?: RequestOptions,
+      ): Promise<Order> =>
+        this.request<Order>('POST', `/orders/${orderId}/discount_codes`, {
+          ...options,
+          body: params,
+        }),
+
+      /** `code` is the discount code string, not an ID. */
+      delete: (orderId: string, code: string, options?: RequestOptions): Promise<Order> =>
+        this.request<Order>(
+          'DELETE',
+          `/orders/${orderId}/discount_codes/${encodeURIComponent(code)}`,
+          options,
+        ),
+    },
+
+    fees: {
+      list: (
+        orderId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Fee>> =>
+        this.request<PaginatedResponse<Fee>>('GET', `/orders/${orderId}/fees`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      get: (orderId: string, id: string, options?: RequestOptions): Promise<Fee> =>
+        this.request<Fee>('GET', `/orders/${orderId}/fees/${id}`, options),
+
+      create: (
+        orderId: string,
+        params: {
+          label: string
+          amount: string | number
+          kind?: string
+          line_item_id?: string
+          fulfillment_id?: string
+        },
+        options?: RequestOptions,
+      ): Promise<Fee> =>
+        this.request<Fee>('POST', `/orders/${orderId}/fees`, { ...options, body: params }),
+
+      update: (
+        orderId: string,
+        id: string,
+        params: { label?: string; amount?: string | number; kind?: string },
+        options?: RequestOptions,
+      ): Promise<Fee> =>
+        this.request<Fee>('PATCH', `/orders/${orderId}/fees/${id}`, { ...options, body: params }),
+
+      delete: (orderId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/orders/${orderId}/fees/${id}`, options),
     },
 
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Order']),
@@ -1101,6 +1519,146 @@ export class AdminClient {
   // ============================================
   // Payment Methods
   // ============================================
+
+  readonly deliveryMethods = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryMethod>> =>
+      this.request<PaginatedResponse<DeliveryMethod>>('GET', '/delivery_methods', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('GET', `/delivery_methods/${id}`, options),
+
+    create: (params: DeliveryMethodParams, options?: RequestOptions): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('POST', '/delivery_methods', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: DeliveryMethodParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryMethod> =>
+      this.request<DeliveryMethod>('PATCH', `/delivery_methods/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/delivery_methods/${id}`, options),
+
+    /** Registered delivery calculator classes with preference schemas. */
+    calculators: (
+      options?: RequestOptions,
+    ): Promise<{ data: Array<{ type: string; name: string; preference_schema: unknown[] }> }> =>
+      this.request<{ data: Array<{ type: string; name: string; preference_schema: unknown[] }> }>(
+        'GET',
+        '/delivery_methods/calculators',
+        options,
+      ),
+
+    /**
+     * Registered fulfillment provider strategies plus the registered
+     * fulfillment-type vocabulary (the strict set delivery methods and
+     * product types validate against).
+     */
+    fulfillmentProviders: (
+      options?: RequestOptions,
+    ): Promise<{ data: FulfillmentProviderOption[]; fulfillment_types: string[] }> =>
+      this.request<{ data: FulfillmentProviderOption[]; fulfillment_types: string[] }>(
+        'GET',
+        '/delivery_methods/fulfillment_providers',
+        options,
+      ),
+
+    /** Eligibility rules on a delivery method (item total / weight bounds, …). */
+    rules: {
+      list: (
+        deliveryMethodId: string,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DeliveryMethodRule>> =>
+        this.request<PaginatedResponse<DeliveryMethodRule>>(
+          'GET',
+          `/delivery_methods/${deliveryMethodId}/rules`,
+          options,
+        ),
+
+      create: (
+        deliveryMethodId: string,
+        params: { type: string; active?: boolean; preferences?: Record<string, unknown> },
+        options?: RequestOptions,
+      ): Promise<DeliveryMethodRule> =>
+        this.request<DeliveryMethodRule>('POST', `/delivery_methods/${deliveryMethodId}/rules`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        deliveryMethodId: string,
+        id: string,
+        params: { active?: boolean; preferences?: Record<string, unknown> },
+        options?: RequestOptions,
+      ): Promise<DeliveryMethodRule> =>
+        this.request<DeliveryMethodRule>(
+          'PATCH',
+          `/delivery_methods/${deliveryMethodId}/rules/${id}`,
+          { ...options, body: params },
+        ),
+
+      delete: (deliveryMethodId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/delivery_methods/${deliveryMethodId}/rules/${id}`, options),
+    },
+
+    /** Registered rule kinds with preference schemas for building pickers. */
+    ruleTypes: (
+      options?: RequestOptions,
+    ): Promise<{
+      data: Array<{
+        type: string
+        name: string
+        description: string
+        preference_schema: PreferenceField[]
+      }>
+    }> =>
+      this.request<{
+        data: Array<{
+          type: string
+          name: string
+          description: string
+          preference_schema: PreferenceField[]
+        }>
+      }>('GET', '/delivery_method_rules/types', options),
+  }
+
+  readonly deliveryZones = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryZone>> =>
+      this.request<PaginatedResponse<DeliveryZone>>('GET', '/delivery_zones', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<DeliveryZone> =>
+      this.request<DeliveryZone>('GET', `/delivery_zones/${id}`, options),
+
+    create: (params: DeliveryZoneParams, options?: RequestOptions): Promise<DeliveryZone> =>
+      this.request<DeliveryZone>('POST', '/delivery_zones', { ...options, body: params }),
+
+    /** `members` replaces the zone's full member set atomically. */
+    update: (
+      id: string,
+      params: DeliveryZoneParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryZone> =>
+      this.request<DeliveryZone>('PATCH', `/delivery_zones/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/delivery_zones/${id}`, options),
+  }
 
   readonly paymentMethods = {
     list: (
@@ -1524,6 +2082,66 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/gift_cards/${id}`, options),
+  }
+
+  // ============================================
+  // Post-sale, across all orders (read-only — creating any of these needs an
+  // order, so writes live on client.orders.{returns,exchanges,claims})
+  // ============================================
+
+  readonly returns = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Return>> =>
+      this.request<PaginatedResponse<Return>>('GET', '/returns', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Return> =>
+      this.request<Return>('GET', `/returns/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  readonly exchanges = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Exchange>> =>
+      this.request<PaginatedResponse<Exchange>>('GET', '/exchanges', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<Exchange> =>
+      this.request<Exchange>('GET', `/exchanges/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+  }
+
+  readonly claims = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Claim>> =>
+      this.request<PaginatedResponse<Claim>>('GET', '/claims', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Claim> =>
+      this.request<Claim>('GET', `/claims/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
   }
 
   // ============================================
@@ -1957,6 +2575,33 @@ export class AdminClient {
   // ============================================
   // Tax Categories
   // ============================================
+
+  readonly productTypes = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ProductType>> =>
+      this.request<PaginatedResponse<ProductType>>('GET', '/product_types', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<ProductType> =>
+      this.request<ProductType>('GET', `/product_types/${id}`, options),
+
+    create: (params: ProductTypeCreateParams, options?: RequestOptions): Promise<ProductType> =>
+      this.request<ProductType>('POST', '/product_types', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: ProductTypeUpdateParams,
+      options?: RequestOptions,
+    ): Promise<ProductType> =>
+      this.request<ProductType>('PATCH', `/product_types/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/product_types/${id}`, options),
+  }
 
   readonly taxCategories = {
     list: (

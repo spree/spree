@@ -1,71 +1,17 @@
 module Spree
   module Taxons
+    # @deprecated Renamed to Spree::Categories::RemoveProducts in 6.0. This shim keeps
+    #   the old `taxons:` keyword working by delegating to the renamed service;
+    #   removed in 6.1.
     class RemoveProducts
       prepend Spree::ServiceModule::Base
 
-      # Removes the given products from the given taxons.
-      #
-      # @param taxons [Array<Spree::Taxon>]
+      # @param taxons [Array<Spree::Category>]
       # @param products [Array<Spree::Product>]
       # @return [Spree::ServiceModule::Base::Result]
       def call(taxons:, products:)
-        return if taxons.blank? || products.blank?
-
-        taxon_ids = taxons.pluck(:id)
-        product_ids = products.pluck(:id)
-
-        ApplicationRecord.transaction do
-          taxon_ids.each do |taxon_id|
-            Spree::Classification.where(taxon_id: taxon_id, product_id: product_ids).delete_all
-          end
-
-          classifications_params = taxon_ids.flat_map do |taxon_id|
-            position = 0
-            existing_product_ids = Spree::Classification.where(taxon_id: taxon_id).pluck(:product_id)
-
-            existing_product_ids.map do |product_id|
-              {
-                taxon_id: taxon_id,
-                product_id: product_id,
-                position: (position += 1),
-                created_at: Time.current,
-                updated_at: Time.current
-              }
-            end
-          end
-
-          if classifications_params.any?
-            opts = {}
-            opts[:unique_by] = :index_spree_products_taxons_on_product_id_and_taxon_id unless mysql_adapter?
-
-            Spree::Classification.upsert_all(
-              classifications_params,
-              **opts
-            )
-          end
-        end
-
-        # update counter caches
-        taxon_ids.each { |id| Spree::Taxon.reset_counters(id, :classifications) }
-        product_ids.each { |id| Spree::Product.reset_counters(id, :classifications) }
-        # Recompute the descendant-inclusive products_count for the taxons and
-        # their ancestors (delete_all skips Classification callbacks).
-        Spree::Taxon.recalculate_products_count(taxon_ids)
-
-        # clear cache & index products
-        Spree::Product.where(id: product_ids).touch_all
-        products.each(&:enqueue_search_index)
-
-        Spree::Taxon.where(id: taxon_ids).touch_all
-        Spree::Taxons::TouchFeaturedSections.call(taxon_ids: taxon_ids) if defined?(Spree::Taxons::TouchFeaturedSections)
-
-        success(true)
-      end
-
-      private
-
-      def mysql_adapter?
-        ActiveRecord::Base.connection.adapter_name.downcase.include?('mysql')
+        Spree::Deprecation.warn('Spree::Taxons::RemoveProducts is deprecated and will be removed in Spree 6.1. Use Spree::Categories::RemoveProducts instead.')
+        Spree::Categories::RemoveProducts.call(categories: taxons, products: products)
       end
     end
   end

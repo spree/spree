@@ -157,7 +157,7 @@ module Spree
 
       context 'with pattern subscription' do
         let!(:pattern_endpoint) { create(:webhook_endpoint, store: store, subscriptions: ['order.*']) }
-        let(:event_name) { 'order.completed' }
+        let(:event_name) { 'order.placed' }
 
         it 'creates delivery for matching pattern events' do
           expect {

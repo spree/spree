@@ -3,7 +3,7 @@
 module Spree
   class Promotion
     module Rules
-      class ItemTotal < PromotionRule
+      class ItemTotal < Spree::PromotionRule
         preference :amount_min, :decimal, default: 100.00
         preference :operator_min, :string, default: '>'
         preference :amount_max, :decimal, default: nil, nullable: true
@@ -13,7 +13,7 @@ module Spree
         OPERATORS_MAX = ['lt', 'lte']
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, _options = {})

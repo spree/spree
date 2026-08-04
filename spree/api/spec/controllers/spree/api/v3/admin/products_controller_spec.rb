@@ -190,8 +190,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(ids).not_to include(non_matching_product.prefixed_id)
       end
 
-      it 'matches by master variant SKU' do
-        matching_product.master.update!(sku: 'ESPRESSO-PRO-2026')
+      it 'matches by default variant SKU' do
+        matching_product.default_variant.update!(sku: 'ESPRESSO-PRO-2026')
 
         get :index, params: { q: { search: 'ESPRESSO-PRO' } }, as: :json
 
@@ -229,13 +229,13 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       context 'by price' do
         let!(:cheap_product) do
           create(:product, name: 'Cheap').tap do |p|
-            p.master.prices.first.update!(amount: 10.0)
+            p.default_variant.prices.first.update!(amount: 10.0)
           end
         end
 
         let!(:expensive_product) do
           create(:product, name: 'Expensive').tap do |p|
-            p.master.prices.first.update!(amount: 100.0)
+            p.default_variant.prices.first.update!(amount: 100.0)
           end
         end
 
@@ -389,7 +389,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect {
           post :create, params: product_params, as: :json
         }.to change(Spree::Product, :count).by(1)
-                          .and change(Spree::Variant, :count).by(4) # master (auto-created until 6.0 master removal) + 3 variants
+                          .and change(Spree::Variant, :count).by(3) # 3 option variants
 
         expect(response).to have_http_status(:created)
 
@@ -405,7 +405,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(created.tag_list).to match_array(['premium', 'cotton', 'summer'])
         expect(created.taxons).to match_array([category1, category2])
 
-        # Cost price now lives on the variant, not the master delegate.
+        # Cost price now lives on the variant, not delegated from the product.
         small_variant = created.variants.find_by(sku: 'PREM-TEE-S')
         expect(small_variant.cost_price.to_f).to eq(8.50)
 
@@ -565,7 +565,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         # Mirrors the exact wire shape the dashboard ships from
         # `new.tsx` for a simple product with media + inventory:
         # - status, channels, custom_fields, media, variants[] with empty
-        #   options + stock_items routed to the master via apply_variants.
+        #   options + stock_items routed to the default variant via apply_variants.
         blob1 = ActiveStorage::Blob.create_and_upload!(
           io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
           filename: 'one.jpg',
@@ -601,9 +601,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         expect(response).to have_http_status(:created)
         created = Spree::Product.find_by(name: 'test product')
         expect(created.media.count).to eq(2)
-        expect(created.master.stock_items.find_by(stock_location: location).count_on_hand).to eq(10)
-        # No phantom non-master variant.
-        expect(created.variants.count).to eq(0)
+        expect(created.default_variant.stock_items.find_by(stock_location: location).count_on_hand).to eq(10)
+        # Simple product has exactly one variant — the default variant.
+        expect(created.variants.count).to eq(1)
       end
 
       it 'returns 422 with field-level details for an unknown custom_field_definition_id' do
@@ -623,7 +623,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     end
 
     context 'with top-level prices (simple-product flow)' do
-      it 'forwards prices to the auto-created master variant' do
+      it 'forwards prices to the auto-created default variant' do
         post :create, params: {
           name: 'Simple Product',
           prices: [
@@ -634,8 +634,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         created = Spree::Product.find_by(name: 'Simple Product')
-        usd = created.master.prices.find_by(currency: 'USD')
-        eur = created.master.prices.find_by(currency: 'EUR')
+        usd = created.default_variant.prices.find_by(currency: 'USD')
+        eur = created.default_variant.prices.find_by(currency: 'EUR')
         expect(usd.amount).to eq(12.50)
         expect(eur.amount).to eq(11.00)
         expect(eur.compare_at_amount).to eq(13.99)
@@ -657,7 +657,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:created)
-        price = Spree::Product.find_by(name: 'String Price Product').master.prices.find_by(currency: 'USD')
+        price = Spree::Product.find_by(name: 'String Price Product').default_variant.prices.find_by(currency: 'USD')
         expect(price.amount).to eq(29.99)
         expect(price.compare_at_amount).to eq(39.99)
       end
@@ -726,10 +726,30 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(product.reload.name).to eq('Updated Name')
     end
 
+    it 'assigns a product type by prefixed id and returns it' do
+      product_type = create(:product_type, store: store, fulfillment_types: %w[shipping pickup])
+
+      patch :update, params: { id: product.prefixed_id, product_type_id: product_type.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_type_id']).to eq(product_type.prefixed_id)
+      expect(product.reload.product_type).to eq(product_type)
+      expect(product.fulfillment_types).to eq(%w[shipping pickup])
+    end
+
+    it 'clears the product type with null' do
+      product.update!(product_type: create(:product_type, store: store))
+
+      patch :update, params: { id: product.prefixed_id, product_type_id: nil }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(product.reload.product_type).to be_nil
+    end
+
     context 'with full payload: name, description, status, categories, tags, SEO, variants with multi-currency prices' do
       let!(:product_to_update) do
         create(:product_with_option_types).tap do |p|
-          p.master.update!(sku: 'OLD-SKU')
+          p.default_variant.update!(sku: 'OLD-SKU')
         end
       end
 
@@ -1324,8 +1344,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    # Mirrors `spree/admin/spec/controllers/.../products_controller_spec.rb`:
-    # asserts the reindex job is enqueued once per affected product.
+    # Asserts the reindex job is enqueued once per affected product.
     it 'reindexes products' do
       allow_any_instance_of(Spree::Product).to receive(:search_indexing_enabled?).and_return(true)
 
@@ -1359,6 +1378,94 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       context "when product is in #{from_status} status" do
         it_behaves_like 'updates status to active', from_status
       end
+    end
+  end
+
+  describe 'POST #bulk_add_to_collections' do
+    let!(:collection) { create(:collection, store: store) }
+    let!(:other_collection) { create(:collection, store: store) }
+    let!(:second_product) { create(:product) }
+
+    before { request.headers.merge!(headers) }
+
+    it 'adds every product to every collection' do
+      post :bulk_add_to_collections, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        collection_ids: [collection.prefixed_id, other_collection.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'collection_count' => 2)
+      expect(product.reload.collections).to include(collection, other_collection)
+      expect(second_product.reload.collections).to include(collection, other_collection)
+    end
+
+    it 'silently ignores collections from other stores' do
+      foreign_collection = create(:collection, store: create(:store))
+
+      post :bulk_add_to_collections, params: {
+        ids: [product.prefixed_id],
+        collection_ids: [collection.prefixed_id, foreign_collection.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['collection_count']).to eq(1)
+      expect(product.reload.collections).to include(collection)
+      expect(product.reload.collections).not_to include(foreign_collection)
+    end
+
+    it 'silently ignores automatic collections (curation is manual-only)' do
+      automatic = create(:automatic_collection, store: store)
+
+      post :bulk_add_to_collections, params: {
+        ids: [product.prefixed_id],
+        collection_ids: [collection.prefixed_id, automatic.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['collection_count']).to eq(1)
+      expect(product.reload.collections).to include(collection)
+      expect(product.reload.collections).not_to include(automatic)
+    end
+
+    it 'silently drops products from other stores' do
+      other_store_product = create(:product, store: create(:store))
+
+      post :bulk_add_to_collections, params: {
+        ids: [product.prefixed_id, other_store_product.prefixed_id],
+        collection_ids: [collection.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_count']).to eq(1)
+      expect(other_store_product.reload.collections).to be_empty
+    end
+
+    it 'returns 422 when ids is missing' do
+      post :bulk_add_to_collections, params: { collection_ids: [collection.prefixed_id] }, as: :json
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
+  describe 'POST #bulk_remove_from_collections' do
+    let!(:collection) { create(:collection, store: store) }
+    let!(:second_product) { create(:product) }
+
+    before do
+      request.headers.merge!(headers)
+      Spree::Collections::AddProducts.call(collections: [collection], products: [product, second_product])
+    end
+
+    it 'removes every product from every collection' do
+      post :bulk_remove_from_collections, params: {
+        ids: [product.prefixed_id, second_product.prefixed_id],
+        collection_ids: [collection.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response).to eq('product_count' => 2, 'collection_count' => 1)
+      expect(product.reload.collections).not_to include(collection)
+      expect(second_product.reload.collections).not_to include(collection)
     end
   end
 
@@ -1464,8 +1571,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       }, as: :json
 
       positions = [
-        product.reload.classifications.find_by(taxon: category).position,
-        second_product.reload.classifications.find_by(taxon: category).position
+        product.reload.classifications.find_by(category: category).position,
+        second_product.reload.classifications.find_by(category: category).position
       ]
       expect(positions).to contain_exactly(1, 2)
     end
@@ -1498,55 +1605,6 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       expect(category.reload.updated_at).to be > category_old_updated_at
     end
 
-    # Legacy spec coverage: `bulk_auto_match_taxons` only enqueues jobs for
-    # products that are non-deleted and non-archived. Two active products
-    # should fire two jobs; archived + soft-deleted siblings are skipped.
-    describe 'auto matching taxons' do
-      let!(:active_a) { create(:product, status: :active) }
-      let!(:active_b) { create(:product, status: :active) }
-      let!(:archived) { create(:product, status: :archived) }
-      let!(:soft_deleted) { create(:product, status: :draft, deleted_at: Time.current) }
-
-      let(:bulk_ids) do
-        [active_a, active_b, archived, soft_deleted].map(&:prefixed_id)
-      end
-
-      before { Spree::Taxon.delete_all }
-
-      context 'on a store with automatic taxons' do
-        let!(:auto_taxon) { create(:automatic_taxon) }
-        let!(:plain_taxon) { create(:taxon) }
-
-        it 'auto matches taxons in bulk only for live active products' do
-          expect do
-            post :bulk_add_to_categories, params: {
-              ids: bulk_ids,
-              category_ids: [plain_taxon.prefixed_id]
-            }, as: :json
-          end.to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
-            .on_queue(Spree.queues.taxons)
-            .exactly(:twice)
-
-          jobs = Spree::Products::AutoMatchTaxonsJob.queue_adapter.enqueued_jobs.last(2)
-          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
-            [active_a.id], [active_b.id]
-          )
-        end
-      end
-
-      context 'on a store without any automatic taxons' do
-        let!(:plain_taxon) { create(:taxon) }
-
-        it 'skips auto matching taxons' do
-          expect do
-            post :bulk_add_to_categories, params: {
-              ids: bulk_ids,
-              category_ids: [plain_taxon.prefixed_id]
-            }, as: :json
-          end.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
-        end
-      end
-    end
   end
 
   describe 'POST #bulk_remove_from_categories' do
@@ -1629,59 +1687,13 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       }, as: :json
 
       positions = [
-        survivor.reload.classifications.find_by(taxon: category)&.position,
-        latecomer.reload.classifications.find_by(taxon: category)&.position
+        survivor.reload.classifications.find_by(category: category)&.position,
+        latecomer.reload.classifications.find_by(category: category)&.position
       ].compact.sort
 
       expect(positions).to eq([1, 2])
     end
 
-    describe 'auto matching taxons' do
-      let!(:active_a) { create(:product, status: :active) }
-      let!(:active_b) { create(:product, status: :active) }
-      let!(:archived) { create(:product, status: :archived) }
-      let!(:soft_deleted) { create(:product, status: :draft, deleted_at: Time.current) }
-
-      let(:bulk_ids) do
-        [active_a, active_b, archived, soft_deleted].map(&:prefixed_id)
-      end
-
-      before { Spree::Taxon.delete_all }
-
-      context 'on a store with automatic taxons' do
-        let!(:auto_taxon) { create(:automatic_taxon) }
-        let!(:plain_taxon) { create(:taxon) }
-
-        it 'auto matches taxons in bulk only for live active products' do
-          expect do
-            post :bulk_remove_from_categories, params: {
-              ids: bulk_ids,
-              category_ids: [plain_taxon.prefixed_id]
-            }, as: :json
-          end.to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
-            .on_queue(Spree.queues.taxons)
-            .exactly(:twice)
-
-          jobs = Spree::Products::AutoMatchTaxonsJob.queue_adapter.enqueued_jobs.last(2)
-          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
-            [active_a.id], [active_b.id]
-          )
-        end
-      end
-
-      context 'on a store without any automatic taxons' do
-        let!(:plain_taxon) { create(:taxon) }
-
-        it 'skips auto matching taxons' do
-          expect do
-            post :bulk_remove_from_categories, params: {
-              ids: bulk_ids,
-              category_ids: [plain_taxon.prefixed_id]
-            }, as: :json
-          end.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
-        end
-      end
-    end
   end
 
   describe 'POST #bulk_add_to_channels' do
@@ -1776,6 +1788,43 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     let!(:second_product) { create(:product) }
 
     before { request.headers.merge!(headers) }
+
+    # Tag changes flip automatic-collection matches; after_bulk_tags_change kicks
+    # bulk_auto_match_collections, which enqueues one job per live (non-deleted,
+    # non-archived) product, and only when the store has automatic collections.
+    describe 'auto matching collections' do
+      let!(:active_a) { create(:product, status: :active) }
+      let!(:active_b) { create(:product, status: :active) }
+      let!(:archived) { create(:product, status: :archived) }
+      let!(:soft_deleted) { create(:product, status: :draft, deleted_at: Time.current) }
+
+      let(:bulk_ids) { [active_a, active_b, archived, soft_deleted].map(&:prefixed_id) }
+
+      context 'on a store with automatic collections' do
+        let!(:auto_collection) { create(:automatic_collection, store: store) }
+
+        it 'auto matches collections in bulk only for live active products' do
+          expect do
+            post :bulk_add_tags, params: { ids: bulk_ids, tags: ['summer'] }, as: :json
+          end.to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+            .on_queue(Spree.queues.collections)
+            .exactly(:twice)
+
+          jobs = Spree::Products::AutoMatchCollectionsJob.queue_adapter.enqueued_jobs.last(2)
+          expect(jobs.map { |job| job['arguments'] }).to contain_exactly(
+            [active_a.id], [active_b.id]
+          )
+        end
+      end
+
+      context 'on a store without any automatic collections' do
+        it 'skips auto matching collections' do
+          expect do
+            post :bulk_add_tags, params: { ids: bulk_ids, tags: ['summer'] }, as: :json
+          end.not_to have_enqueued_job(Spree::Products::AutoMatchCollectionsJob)
+        end
+      end
+    end
 
     it 'adds the listed tags to every listed product' do
       post :bulk_add_tags, params: {

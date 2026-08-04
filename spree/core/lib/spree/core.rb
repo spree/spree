@@ -42,7 +42,7 @@ require 'sqids'
 StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
-  mattr_accessor :base_class, :user_class, :admin_user_class,
+  mattr_accessor :base_class, :customer_class, :admin_user_class,
                  :private_storage_service_name, :public_storage_service_name,
                  :cdn_host, :root_domain, :searcher_class, :events_adapter_class, :queues,
                  :google_places_api_key
@@ -56,12 +56,24 @@ module Spree
     end
   end
 
-  def self.user_class(constantize: true)
-    if @@user_class.is_a?(Class)
-      raise 'Spree.user_class MUST be a String or Symbol object, not a Class object.'
-    elsif @@user_class.is_a?(String) || @@user_class.is_a?(Symbol)
-      constantize ? @@user_class.to_s.constantize : @@user_class.to_s
+  def self.customer_class(constantize: true)
+    if @@customer_class.is_a?(Class)
+      raise 'Spree.customer_class MUST be a String or Symbol object, not a Class object.'
+    elsif @@customer_class.is_a?(String) || @@customer_class.is_a?(Symbol)
+      constantize ? @@customer_class.to_s.constantize : @@customer_class.to_s
     end
+  end
+
+  # @deprecated Spree.user_class was renamed to Spree.customer_class in 6.0; removed in 6.1.
+  def self.user_class(constantize: true)
+    Spree::Deprecation.warn('Spree.user_class is deprecated and will be removed in Spree 6.1. Use Spree.customer_class instead.') if defined?(Spree::Deprecation)
+    customer_class(constantize: constantize)
+  end
+
+  # @deprecated Spree.user_class= was renamed to Spree.customer_class= in 6.0; removed in 6.1.
+  def self.user_class=(value)
+    Spree::Deprecation.warn('Spree.user_class= is deprecated and will be removed in Spree 6.1. Use Spree.customer_class= instead.') if defined?(Spree::Deprecation)
+    self.customer_class = value
   end
 
   def self.admin_user_class(constantize: true)
@@ -106,7 +118,8 @@ module Spree
       products: :default,
       reports: :default,
       variants: :default,
-      taxons: :default,
+      categories: :default,
+      collections: :default,
       stock_location_stock_items: :default,
       coupon_codes: :default,
       themes: :default,
@@ -117,7 +130,13 @@ module Spree
       api_keys: :default,
       search: :default,
       stock_reservations: :default
-    )
+    ).tap do |queues|
+      # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
+      queues.define_singleton_method(:taxons) do
+        Spree::Deprecation.warn('Spree.queues.taxons is deprecated and will be removed in Spree 6.1. Use Spree.queues.categories instead.') if defined?(Spree::Deprecation)
+        categories
+      end
+    end
   end
 
   # @deprecated Spree.searcher_class is deprecated and will be removed in Spree 5.5. Use Spree.search_provider instead.
@@ -265,12 +284,69 @@ module Spree
     Rails.application.config.spree.adjusters = value
   end
 
+  # The configured tax provider instance — the only sanctioned writer of
+  # {Spree::TaxLine} rows. Global default is {Spree::TaxProvider::Internal};
+  # per-Market resolution arrives with docs/plans/6.0-tax-provider.md.
+  #
+  # @return [Spree::TaxProvider::Base]
+  def self.tax_provider
+    Rails.application.config.spree.tax_provider.new
+  end
+
+  def self.tax_provider=(value)
+    Rails.application.config.spree.tax_provider = value
+  end
+
+  # Validator enforcing the password policy on the default auth models
+  # ({Spree::Customer}, {Spree::AdminUser}). Defaults to
+  # {Spree::PasswordLengthValidator}, which reads the configurable length bounds.
+  #
+  # Assign an +ActiveModel::Validator+ subclass to replace the policy wholesale —
+  # corporate rules, breach-list lookups, entropy scoring. Errors it adds to
+  # +:password+ reach API clients through the standard 422 path, so the
+  # validator's message is the user-facing reason.
+  #
+  #   Spree.password_validator = MyApp::PasswordValidator
+  #
+  # @return [Class]
+  def self.password_validator
+    Rails.application.config.spree.password_validator
+  end
+
+  def self.password_validator=(value)
+    Rails.application.config.spree.password_validator = value
+  end
+
+  def self.fulfillment_providers
+    Rails.application.config.spree.fulfillment_providers
+  end
+
+  def self.fulfillment_providers=(value)
+    Rails.application.config.spree.fulfillment_providers = value
+  end
+
+  def self.fulfillment_types
+    Rails.application.config.spree.fulfillment_types
+  end
+
+  def self.fulfillment_types=(value)
+    Rails.application.config.spree.fulfillment_types = value
+  end
+
   def self.stock_splitters
     Rails.application.config.spree.stock_splitters
   end
 
   def self.stock_splitters=(value)
     Rails.application.config.spree.stock_splitters = value
+  end
+
+  def self.delivery_method_rules
+    Rails.application.config.spree.delivery_method_rules
+  end
+
+  def self.delivery_method_rules=(value)
+    Rails.application.config.spree.delivery_method_rules = value
   end
 
   def self.order_routing
@@ -330,7 +406,7 @@ module Spree
   end
 
   # Class-name strings (`'Spree::Product'`, `'Spree::Order'`,
-  # `Spree.user_class.to_s`, plus any registered by apps) for resources that
+  # `Spree.customer_class.to_s`, plus any registered by apps) for resources that
   # expose tags via `acts_as_taggable_on :tags`. Used by the Admin API
   # `/tags` autocomplete endpoint to validate `taggable_type`. Apps extend
   # the list in an initializer:
@@ -512,8 +588,11 @@ module Spree
     private
 
     def core_dependency?(name)
-      defined?(Spree::Dependencies) &&
-        Spree::Dependencies.class::INJECTION_POINTS.include?(name)
+      return false unless defined?(Spree::Dependencies)
+
+      Spree::Dependencies.class::INJECTION_POINTS.include?(name) ||
+        Spree::Dependencies.class::LEGACY_WORKFLOW_KEYS.key?(name) ||
+        Spree::Dependencies.class::LEGACY_SERVICE_KEYS.key?(name)
     end
   end
 
@@ -536,9 +615,9 @@ require 'spree/translations'
 require 'spree/money'
 require 'spree/permitted_attributes'
 require 'spree/service_module'
+require 'spree/workflow'
 require 'spree/analytics'
 require 'spree/events'
-require 'spree/webhooks'
 
 require 'spree/core/partials'
 require 'spree/core/controller_helpers/auth'

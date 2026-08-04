@@ -2,9 +2,9 @@
 
 module Spree
   class OrderEmailSubscriber < Spree::Subscriber
-    subscribes_to 'order.completed', 'order.canceled', 'order.resend_confirmation_email'
+    subscribes_to 'order.placed', 'order.canceled', 'order.resend_confirmation_email'
 
-    on 'order.completed', :send_confirmation_email
+    on 'order.placed', :send_confirmation_email
     on 'order.canceled', :send_cancel_email
     on 'order.resend_confirmation_email', :resend_confirmation_email
 

@@ -8,7 +8,7 @@ const sampleEndpoint = {
   name: 'Production',
   url: 'https://example.com/hooks',
   active: true,
-  subscriptions: ['order.completed'],
+  subscriptions: ['order.placed'],
   disabled_reason: null,
   created_at: '2026-05-01T00:00:00Z',
   updated_at: '2026-05-01T00:00:00Z',
@@ -17,7 +17,7 @@ const sampleEndpoint = {
 
 const sampleDelivery = {
   id: 'whd_1',
-  event_name: 'order.completed',
+  event_name: 'order.placed',
   response_code: 200,
   success: true,
   created_at: '2026-05-01T00:00:00Z',
@@ -72,12 +72,12 @@ describe('webhookEndpoints', () => {
 
       await createTestClient().webhookEndpoints.create({
         url: 'https://example.com/hooks',
-        subscriptions: ['order.completed'],
+        subscriptions: ['order.placed'],
       })
 
       expect(body).toEqual({
         url: 'https://example.com/hooks',
-        subscriptions: ['order.completed'],
+        subscriptions: ['order.placed'],
       })
     })
 
@@ -196,7 +196,7 @@ describe('webhookEndpoints', () => {
 
       const res = await createTestClient().webhookEndpoints.deliveries.get('whe_abc123', 'whd_1')
 
-      expect(res.event_name).toBe('order.completed')
+      expect(res.event_name).toBe('order.placed')
     })
 
     it('POSTs /deliveries/:id/redeliver', async () => {

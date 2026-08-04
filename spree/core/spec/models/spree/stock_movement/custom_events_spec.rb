@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Spree::StockMovement::CustomEvents do
   let(:stock_location) { create(:stock_location) }
   let(:product) { create(:product) }
-  let(:variant) { product.master }
+  let(:variant) { product.default_variant }
   let!(:stock_item) do
     item = variant.stock_items.first || create(:stock_item, variant: variant, stock_location: stock_location)
     item.update!(backorderable: false)

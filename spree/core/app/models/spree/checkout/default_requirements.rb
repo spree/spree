@@ -2,49 +2,78 @@ module Spree
   module Checkout
     # Built-in checkout requirements that map to the standard Spree checkout flow.
     #
-    # Checks line items, email, shipping address, shipping method, and payment.
-    # In Spree 6 these same checks will read from the +Cart+ model instead of
-    # the state machine — the API contract stays identical.
+    # Checks line items, email, shipping address, shipping method, and payment
+    # against the cart — checkout is a cart-phase concern. The heavier
+    # completion-only checks (per-item stock, discontinued products, guest
+    # policy) run only when +completion: true+ is passed, so the advisory
+    # requirements feed on cart reads stays cheap.
     #
     # @see Requirements
     class DefaultRequirements
-      # @param order [Spree::Order]
-      def initialize(order)
-        @order = order
+      # @param cart [Spree::Cart]
+      def initialize(cart)
+        @cart = cart
       end
 
-      # @return [Array<Hash{Symbol => String}>] unmet default requirements as
-      #   +{ step:, field:, message: }+ hashes
-      def call
-        [].tap do |r|
-          r << req('cart', 'line_items', Spree.t('checkout_requirements.line_items_required')) unless @order.line_items.any?
-          r << req('address', 'email', Spree.t('checkout_requirements.email_required')) unless @order.email.present?
-          r << req('address', 'ship_address', Spree.t('checkout_requirements.ship_address_required')) if @order.requires_ship_address? && @order.ship_address.blank?
-          r << req('delivery', 'shipping_method', Spree.t('checkout_requirements.shipping_method_required')) if delivery_required? && !shipping_method_selected?
-          r << req('payment', 'payment', Spree.t('checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
-        end
+      # @param completion [Boolean] include the completion-only checks
+      # @return [Array<Hash{Symbol => String}>] unmet requirements as
+      #   +{ step:, field:, code:, message: }+ hashes
+      def call(completion: false)
+        requirements = advisory_requirements
+        return requirements unless completion
+
+        requirements + completion_requirements
       end
 
       private
 
-      def delivery_required?
-        @order.has_checkout_step?('delivery') && @order.delivery_required?
+      def advisory_requirements
+        [].tap do |r|
+          r << req('cart', 'line_items', Spree.t('checkout_requirements.line_items_required')) unless @cart.line_items.any?
+          r << req('address', 'email', Spree.t('checkout_requirements.email_required')) unless @cart.email.present?
+          r << req('address', 'ship_address', Spree.t('checkout_requirements.ship_address_required')) if @cart.shipping_address_required? && @cart.ship_address.blank?
+          r << req('delivery', 'delivery_method', Spree.t('checkout_requirements.delivery_method_required')) if delivery_step_required? && !delivery_method_selected?
+          r << req('payment', 'payment', Spree.t('checkout_requirements.payment_required')) if payment_required? && !payment_satisfied?
+        end
       end
 
-      def shipping_method_selected?
-        @order.shipments.any? && @order.shipments.all? { |s| s.shipping_method.present? }
+      def completion_requirements
+        errors = stock_errors
+        errors << req('address', 'email', Spree.t(:guest_checkout_not_allowed), code: 'guest_checkout_not_allowed') if @cart.guest_checkout_disallowed?
+        errors
+      end
+
+      # Discontinuation is checked at both levels: a product can stay active
+      # while an individual variant hit its discontinue_on date after it
+      # entered the cart.
+      def stock_errors
+        @cart.line_items.includes(variant: :product).filter_map do |line_item|
+          if line_item.variant.nil? || line_item.variant.discontinued? || line_item.variant.product.discontinued?
+            req('cart', 'line_items', Spree.t('cart_line_item.discontinued', li_name: line_item.name), code: 'discontinued')
+          elsif !line_item.sufficient_stock?
+            req('cart', 'line_items', Spree.t('cart_line_item.out_of_stock', li_name: line_item.name), code: 'out_of_stock')
+          end
+        end
+      end
+
+      def delivery_step_required?
+        @cart.delivery_step_required?
+      end
+
+      def delivery_method_selected?
+        @cart.fulfillments.any? && @cart.fulfillments.all? { |fulfillment| fulfillment.delivery_method.present? }
       end
 
       def payment_required?
-        @order.has_checkout_step?('payment') && @order.payment_required?
+        @cart.payment_required?
       end
 
       def payment_satisfied?
-        @order.payments.valid.any?
+        @cart.payments.valid.any?
       end
 
-      def req(step, field, message)
-        { step: step, field: field, message: message }
+      def req(step, field, message, code: nil)
+        { step: step, field: field, code: code || "#{field}_required", message: message }
       end
     end
   end

@@ -16,7 +16,7 @@ module Spree
 
             result = Spree.order_create_service.call(
               store: current_store,
-              user: resolve_user,
+              customer: resolve_user,
               params: order_create_params
             )
 
@@ -87,7 +87,7 @@ module Spree
 
           # POST /api/v3/admin/orders/:id/resend_confirmation
           def resend_confirmation
-            @resource.publish_event('order.completed')
+            @resource.publish_event('order.resend_confirmation_email')
             render json: serialize_resource(@resource)
           end
 
@@ -103,7 +103,12 @@ module Spree
 
           # Override scope — Order uses SingleStoreResource (for_store)
           def scope
-            current_store.orders.accessible_by(current_ability, :show).preload_associations_lazily
+            base = current_store.orders.accessible_by(current_ability, :show).preload_associations_lazily
+
+            # Transient completion drafts (status draft + cart_id set) belong
+            # to in-flight checkouts, never to the admin. Admin drafts are the
+            # cart-less ones.
+            base.where(cart_id: nil).or(base.where.not(status: 'draft'))
           end
 
           def set_resource
@@ -124,7 +129,7 @@ module Spree
           end
 
           def collection_includes
-            [:line_items, :user, :channel, :rich_text_internal_note]
+            [:line_items, :customer, :channel, :rich_text_internal_note]
           end
 
           private
@@ -133,7 +138,9 @@ module Spree
             customer_param = params[:customer_id].presence || params[:user_id].presence
             return unless customer_param
 
-            Spree.user_class.find_by_param!(customer_param)
+            Spree.customer_class.
+              accessible_by(current_ability, :show).
+              find_by_prefix_id!(customer_param)
           end
 
           def order_create_params

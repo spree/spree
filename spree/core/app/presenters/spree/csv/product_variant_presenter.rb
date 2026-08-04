@@ -10,7 +10,6 @@ module Spree
         'slug',
         'status',
         'vendor_name',
-        'brand_name',
         'description',
         'meta_title',
         'meta_description',
@@ -47,29 +46,29 @@ module Spree
         'category3',
       ].freeze
 
-      def initialize(product, variant, index = 0, properties = [], taxons = [], store = nil, metafields = [], currency = nil)
+      def initialize(product, variant, index = 0, properties = [], categories = [], store = nil, metafields = [], currency = nil)
         @product = product
         @variant = variant
         @index = index
         @properties = properties
-        @taxons = taxons
+        @categories = categories
         @store = store || product.store
         @currency = currency || @store.default_currency
         @price_only = @currency != @store.default_currency
         @metafields = metafields
       end
 
-      attr_accessor :product, :variant, :index, :properties, :taxons, :store, :currency, :price_only, :metafields
+      attr_accessor :product, :variant, :index, :properties, :categories, :store, :currency, :price_only, :metafields
 
       ##
       # Generates an array representing a CSV row of product variant data.
       #
       # For the primary variant row (when the index is zero), product-level details such as name,
-      # slug, status, vendor and brand names, description, meta tags, and tag/label lists are included.
+      # slug, status, vendor name, description, meta tags, and tag/label lists are included.
       # In all cases, variant-specific attributes (e.g., id, SKU, pricing, dimensions, weight,
       # availability dates, inventory count, shipping category, tax category, image URLs via original_url,
       # and the first three option types and corresponding option values) are appended.
-      # Additionally, when the index is zero, associated taxons and properties are added.
+      # Additionally, when the index is zero, associated categories and properties are added.
       #
       # @return [Array] An array containing the combined product and variant CSV data.
       def call
@@ -84,7 +83,6 @@ module Spree
           product.slug,
           index.zero? ? product.status : nil,
           index.zero? ? product.try(:vendor_name) : nil,
-          index.zero? ? product.try(:brand_name) : nil,
           index.zero? ? product.description&.html_safe : nil,
           index.zero? ? product.meta_title : nil,
           index.zero? ? product.meta_description : nil,
@@ -119,7 +117,7 @@ module Spree
         ]
 
         if index.zero?
-          csv += taxons
+          csv += categories
           csv += properties
           csv += metafields
         end

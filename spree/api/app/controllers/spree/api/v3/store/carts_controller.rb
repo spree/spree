@@ -17,7 +17,7 @@ module Spree
           def show
             @cart = find_cart
 
-            if @cart.ship_address_id.present? && @cart.shipments.empty?
+            if @cart.ship_address_id.present? && @cart.fulfillments.empty?
               ActiveRecord::Base.connected_to(role: :writing) do
                 with_order_lock { Spree::Checkout::Advance.call(order: @cart) }
               end
@@ -73,7 +73,7 @@ module Spree
           def destroy
             find_cart!
 
-            result = Spree.cart_destroy_service.call(order: @cart)
+            result = Spree.cart_destroy_service.call(cart: @cart)
 
             if result.success?
               head :no_content
@@ -93,7 +93,7 @@ module Spree
             authorize!(:update, @cart, cart_token)
             require_cart_token!
 
-            result = Spree.cart_associate_service.call(guest_order: @cart, user: current_user, guest_only: true)
+            result = Spree.cart_associate_service.call(guest_cart: @cart, customer: current_user, guest_only: true)
 
             if result.success?
               render_cart
@@ -107,13 +107,13 @@ module Spree
           # Idempotent: if the cart is already completed, falls back to the
           # orders scope and returns the completed order.
           def complete
-            find_cart!
+            find_cart!(include_completed: true)
 
             if @cart.guest_checkout_disallowed?
               return render_authentication_required('api.errors.guest_checkout_not_allowed', 'You must be signed in to complete checkout')
             end
 
-            result = Spree::Dependencies.carts_complete_service.constantize.call(cart: @cart)
+            result = Spree::Dependencies.carts_complete_workflow.constantize.call(cart: @cart)
 
             if result.success?
               @cart = result.value
@@ -125,6 +125,10 @@ module Spree
               )
             end
           rescue ActiveRecord::RecordNotFound
+            # Gateway-race retry with the ORDER id: the webhook completed the
+            # cart and the client re-posts with the id it got back. Foreign
+            # prefixes never decode against carts, so this only fires for
+            # order_ ids (or genuinely unknown ids, which 404 below).
             @cart = current_store.orders.complete.find_by_prefix_id!(params[:id])
             authorize!(:show, @cart, cart_token)
 
@@ -147,7 +151,7 @@ module Spree
           # Explicit by-ID lookups (show/update) stay cross-channel so a shared
           # checkout can load any cart the caller is authorized for.
           def scope
-            current_store.carts.where(user: current_user, channel: current_channel).order(updated_at: :desc)
+            current_store.carts.incomplete.where(customer: current_user, channel: current_channel).order(updated_at: :desc)
           end
 
           private
@@ -161,6 +165,7 @@ module Spree
               :locale,
               :shipping_address_id,
               :billing_address_id,
+              :preferred_stock_location_id,
               :use_shipping,
               shipping_address: address_params,
               billing_address: address_params,
@@ -185,7 +190,7 @@ module Spree
           # Find incomplete cart for associate action.
           # Only finds guest carts (no user) or carts already owned by current user (idempotent).
           def find_cart_for_association
-            current_store.carts.where(user: [nil, current_user]).find_by_prefix_id!(params[:id])
+            current_store.carts.incomplete.where(customer: [nil, current_user]).find_by_prefix_id!(params[:id])
           end
 
           # Claiming a cart requires presenting its token, even when the caller

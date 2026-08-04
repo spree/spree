@@ -8,7 +8,7 @@ module Spree
         return unless product
 
         completed_order_ids = product.completed_orders.select(:id)
-        variant_ids = product.variants_including_master.ids
+        variant_ids = product.variants.ids
 
         line_items = Spree::LineItem.joins(:order)
           .where(spree_orders: { id: completed_order_ids })

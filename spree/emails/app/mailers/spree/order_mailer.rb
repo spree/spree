@@ -32,7 +32,7 @@ module Spree
     def payment_link_email(order_id)
       @order = Spree::Order.incomplete.not_canceled.find(order_id)
       @current_store = @order.store
-      @checkout_payment_url = spree.checkout_state_url(@order.token, :payment, host: @current_store.storefront_url)
+      @checkout_payment_url = URI.join(@current_store.storefront_url, "/checkout/#{@order.token}/payment").to_s
 
       with_store_locale(@current_store, @order.locale) do
         mail(to: @order.email, subject: Spree.t('order_mailer.payment_link_email.subject', number: @order.number),

@@ -20,7 +20,7 @@ RSpec.describe 'Permission Sets Integration with Ability', type: :model do
       Class.new(Spree::PermissionSets::Base) do
         def activate!
           can [:read, :admin], Spree::Order
-          can [:read, :admin], Spree.user_class
+          can [:read, :admin], Spree.customer_class
         end
       end
     end
@@ -92,7 +92,7 @@ RSpec.describe 'Permission Sets Integration with Ability', type: :model do
   end
 
   describe 'default role' do
-    let(:guest_user) { Spree.user_class.new }
+    let(:guest_user) { Spree.customer_class.new }
 
     before do
       Spree.permissions.assign(:default, Spree::PermissionSets::DefaultCustomer)

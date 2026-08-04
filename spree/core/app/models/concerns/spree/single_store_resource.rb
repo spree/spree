@@ -3,7 +3,10 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
+      belongs_to :store, class_name: 'Spree::Store'
+
       before_validation :ensure_store, unless: :store_id?
+      validates :store, presence: true
       validate :ensure_store_association_is_not_changed
 
       scope :for_store, ->(store) { where(store_id: store.id) }

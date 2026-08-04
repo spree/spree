@@ -4,15 +4,13 @@ require 'spree/core/version'
 
 module Spree
   class DummyGenerator < Rails::Generators::Base
-    SPREE_GEMS = %w(spree_admin spree_api spree_emails).freeze
+    SPREE_GEMS = %w(spree_api spree_emails).freeze
 
     desc 'Creates blank Rails application, installs Spree and all sample data'
 
     class_option :lib_name, default: ''
     class_option :database, default: ''
     class_option :api, type: :boolean, default: false
-    class_option :javascript, type: :boolean, default: false
-    class_option :css, type: :string, default: ''
 
     def self.source_paths
       paths = superclass.source_paths
@@ -33,14 +31,8 @@ module Spree
       # Database
       args << "--database=#{options[:database].presence || 'sqlite3'}"
 
-      # CSS framework (e.g., tailwind)
-      args << "--css=#{options[:css]}" if options[:css].present?
-
-      # JavaScript
-      args << '--skip-javascript' unless options[:javascript]
-
-      # Skip asset pipeline if no javascript or css is required
-      args << '--skip-asset-pipeline' unless options[:javascript] || options[:css].present?
+      args << '--skip-javascript'
+      args << '--skip-asset-pipeline'
 
       # Skip options
       args << '--force'

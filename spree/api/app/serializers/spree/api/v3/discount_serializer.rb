@@ -1,20 +1,34 @@
 module Spree
   module Api
     module V3
-      # Unified discount serializer for applied promotions on Cart and Order.
-      # Replaces CartPromotionSerializer and OrderPromotionSerializer.
+      # A typed Spree::Discount money row (promotion-sourced or manual) on a
+      # line item or fulfillment. The embedded `discounts` key on Cart/Order
+      # stays the applied-promotion summary — see AppliedPromotionSerializer.
       class DiscountSerializer < BaseSerializer
-        typelize name: :string, description: [:string, nullable: true], code: [:string, nullable: true],
-                 amount: [:string, nullable: true], display_amount: [:string, nullable: true], promotion_id: :string
+        typelize label: :string, kind: :string, code: [:string, nullable: true],
+                 value: [:string, nullable: true], value_type: [:string, nullable: true],
+                 amount: [:string, nullable: true], display_amount: [:string, nullable: true],
+                 promotion_id: [:string, nullable: true], line_item_id: [:string, nullable: true],
+                 fulfillment_id: [:string, nullable: true]
+
+        attributes :label, :kind, :code, :value_type
+
+        attribute :value do |record|
+          record.value&.to_s
+        end
 
         attribute :promotion_id do |record|
           record.promotion&.prefixed_id
         end
 
-        attributes :name, :description, :code
+        attribute :line_item_id do |record|
+          record.line_item&.prefixed_id
+        end
 
-        # Nulled for gated (prices_hidden) guests so an applied discount can't
-        # leak the amount the cart/order totals already withhold.
+        attribute :fulfillment_id do |record|
+          record.fulfillment&.prefixed_id
+        end
+
         money_attributes :amount, :display_amount
       end
     end

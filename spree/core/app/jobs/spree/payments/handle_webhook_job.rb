@@ -11,7 +11,7 @@ module Spree
         payment_method = Spree::PaymentMethod.find(payment_method_id)
         payment_session = Spree::PaymentSession.find(payment_session_id)
 
-        Spree::Dependencies.payments_handle_webhook_service.constantize.call(
+        Spree.payments_handle_webhook_workflow.call(
           payment_method: payment_method,
           action: action.to_sym,
           payment_session: payment_session

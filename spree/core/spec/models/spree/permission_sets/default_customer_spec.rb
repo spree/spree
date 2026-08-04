@@ -24,7 +24,7 @@ RSpec.describe Spree::PermissionSets::DefaultCustomer do
       end
 
       it 'grants read access to Taxon' do
-        expect(ability.can?(:read, Spree::Taxon)).to be true
+        expect(ability.can?(:read, Spree::Category)).to be true
       end
 
       it 'grants read access to Store' do
@@ -38,7 +38,7 @@ RSpec.describe Spree::PermissionSets::DefaultCustomer do
       end
 
       context 'with user order' do
-        let(:order) { build(:order, user: user) }
+        let(:order) { build(:order, customer: user) }
 
         it 'allows viewing own order' do
           expect(ability.can?(:show, order)).to be true
@@ -56,7 +56,7 @@ RSpec.describe Spree::PermissionSets::DefaultCustomer do
       end
 
       context 'with token' do
-        let(:order) { build(:order, user: nil, token: 'secret') }
+        let(:order) { build(:order, customer: nil, token: 'secret') }
 
         it 'allows viewing order with correct token' do
           expect(ability.can?(:show, order, 'secret')).to be true
@@ -92,7 +92,7 @@ RSpec.describe Spree::PermissionSets::DefaultCustomer do
       end
 
       it 'allows creating new user' do
-        expect(ability.can?(:create, Spree.user_class)).to be true
+        expect(ability.can?(:create, Spree.customer_class)).to be true
       end
     end
 
@@ -125,7 +125,7 @@ RSpec.describe Spree::PermissionSets::DefaultCustomer do
       end
 
       context 'with guest user (non-persisted)' do
-        let(:guest_user) { Spree.user_class.new }
+        let(:guest_user) { Spree.customer_class.new }
         let(:guest_ability) { Spree::Ability.new(guest_user) }
         let(:guest_permission_set) { described_class.new(guest_ability) }
         let(:guest_address) { build(:address, user_id: nil) }
@@ -169,9 +169,9 @@ RSpec.describe Spree::PermissionSets::DefaultCustomer do
     end
 
     context 'wishlist permissions' do
-      let(:own_wishlist) { build(:wishlist, user: user) }
-      let(:public_wishlist) { build(:wishlist, user: create(:user), is_private: false) }
-      let(:private_wishlist) { build(:wishlist, user: create(:user), is_private: true) }
+      let(:own_wishlist) { build(:wishlist, customer: user) }
+      let(:public_wishlist) { build(:wishlist, customer: create(:user), is_private: false) }
+      let(:private_wishlist) { build(:wishlist, customer: create(:user), is_private: true) }
 
       it 'allows managing own wishlist' do
         expect(ability.can?(:manage, own_wishlist)).to be true

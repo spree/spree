@@ -21,7 +21,7 @@ module Spree
 
     # Find or create user from OAuth data
     def self.find_or_create_from_oauth(provider:, uid:, info:, tokens: {}, user_class: nil)
-      user_class ||= Spree.user_class
+      user_class ||= Spree.customer_class
       user_type = user_class.name
 
       identity = find_by(provider: provider, uid: uid, user_type: user_type)
@@ -57,7 +57,7 @@ module Spree
     end
 
     def self.create_user_from_oauth(provider:, uid:, info:, tokens: {}, user_class: nil)
-      user_class ||= Spree.user_class
+      user_class ||= Spree.customer_class
 
       transaction do
         user = user_class.create!(

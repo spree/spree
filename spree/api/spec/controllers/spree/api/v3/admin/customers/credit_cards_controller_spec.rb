@@ -7,7 +7,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::CreditCardsController, type: :c
 
   let(:customer) { create(:user) }
   let(:payment_method) { create(:credit_card_payment_method) }
-  let!(:credit_card) { create(:credit_card, user: customer, payment_method: payment_method) }
+  let!(:credit_card) { create(:credit_card, customer: customer, payment_method: payment_method) }
 
   before { request.headers.merge!(headers) }
 
@@ -73,7 +73,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::CreditCardsController, type: :c
 
     context 'when card belongs to a different customer (security check)' do
       let(:other_customer) { create(:user) }
-      let!(:other_card) { create(:credit_card, user: other_customer, payment_method: payment_method) }
+      let!(:other_card) { create(:credit_card, customer: other_customer, payment_method: payment_method) }
 
       it 'returns 404 — cannot read another customer\'s cards' do
         get :show, params: { customer_id: customer.prefixed_id, id: other_card.prefixed_id }, as: :json
@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::CreditCardsController, type: :c
   describe 'cross-store isolation' do
     let(:other_store) { create(:store) }
     let(:other_payment_method) { create(:credit_card_payment_method, store: other_store) }
-    let!(:foreign_card) { create(:credit_card, user: customer, payment_method: other_payment_method) }
+    let!(:foreign_card) { create(:credit_card, customer: customer, payment_method: other_payment_method) }
 
     it 'excludes cards from other stores in the index' do
       get :index, params: { customer_id: customer.prefixed_id }, as: :json

@@ -30,33 +30,11 @@ describe 'Product scopes', type: :model do
     end
 
     context 'different currency' do
-      let!(:price_eur) { create(:price, variant: product.master, currency: 'EUR') }
+      let!(:price_eur) { create(:price, variant: product.default_variant, currency: 'EUR') }
       let!(:product_2) { create(:product) }
 
       it { expect(Spree::Product.available(nil, 'EUR')).to include(product) }
       it { expect(Spree::Product.available(nil, 'EUR')).not_to include(product_2) }
-    end
-  end
-
-  describe '.for_filters' do
-    subject { Spree::Product.method(:for_filters) }
-
-    let(:taxon_1) { create(:taxon) }
-    let(:taxon_2) { create(:taxon) }
-
-    let!(:product_1) { create(:product, currency: 'GBP', taxons: [taxon_1]) }
-    let!(:product_2) { create(:product, currency: 'GBP', taxons: [taxon_2]) }
-
-    before do
-      create(:product, currency: 'USD', taxons: [create(:taxon)])
-    end
-
-    context 'when giving a taxon' do
-      it { expect(subject.call('GBP', taxon: taxon_1)).to contain_exactly(product_1) }
-    end
-
-    context 'when giving a currency with no products' do
-      it { expect(subject.call('PLN')).to be_empty }
     end
   end
 
@@ -92,6 +70,30 @@ describe 'Product scopes', type: :model do
         expect(Spree::Product.in_taxon(@child_taxon)).to include(product, product_2)
         expect(Spree::Product.in_taxon(other_taxon)).to include(product, product_2)
       end
+    end
+  end
+
+  describe '#in_collection (flat — no hierarchy)' do
+    let!(:collection_a) { create(:collection, store: store) }
+    let!(:collection_b) { create(:collection, store: store) }
+    let!(:product_a) { create(:product) }
+    let!(:product_b) { create(:product) }
+
+    before do
+      Spree::ProductCollection.create!(collection: collection_a, product: product_a)
+      Spree::ProductCollection.create!(collection: collection_b, product: product_b)
+    end
+
+    it 'returns only products directly in the collection' do
+      expect(Spree::Product.in_collection(collection_a)).to contain_exactly(product_a)
+    end
+
+    it 'accepts a prefixed id string' do
+      expect(Spree::Product.in_collection(collection_a.prefixed_id)).to contain_exactly(product_a)
+    end
+
+    it 'returns none for an unknown collection' do
+      expect(Spree::Product.in_collection('coll_nope')).to be_empty
     end
   end
 
@@ -243,7 +245,7 @@ describe 'Product scopes', type: :model do
       end
 
       # Regression test: in_stock combined with price sorting scopes should not
-      # raise table alias conflicts (variants_including_masters_spree_products)
+      # raise table alias conflicts (variants_spree_products)
       it 'can be chained with price sorting scopes without error' do
         expect { Spree::Product.in_stock.descend_by_price.to_a }.not_to raise_error
         expect { Spree::Product.in_stock.ascend_by_price.to_a }.not_to raise_error
@@ -281,13 +283,13 @@ describe 'Product scopes', type: :model do
     context 'with completed orders' do
       before do
         # Product 2: 3 units sold (3 orders x 1 quantity each)
-        create_list(:completed_order_with_totals, 3, line_items_price: 100, store: store, variants: [product_2.master])
+        create_list(:completed_order_with_totals, 3, line_items_price: 100, store: store, variants: [product_2.default_variant])
 
         # Product 1: 2 units sold (2 orders x 1 quantity each)
-        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
+        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.default_variant])
 
         # Product 3: 1 unit sold (1 order x 1 quantity)
-        create(:completed_order_with_totals, line_items_price: 150, store: store, variants: [product_3.master])
+        create(:completed_order_with_totals, line_items_price: 150, store: store, variants: [product_3.default_variant])
 
         # Product 4: no completed orders
 
@@ -308,11 +310,11 @@ describe 'Product scopes', type: :model do
     context 'with incomplete orders' do
       before do
         # Product 1: 2 units sold (2 completed orders)
-        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
+        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.default_variant])
 
         # Product 2: 1 unit sold (1 completed order) + 2 incomplete orders (should not be counted)
-        create(:completed_order_with_totals, line_items_price: 100, store: store, variants: [product_2.master])
-        create_list(:order_with_totals, 2, line_items_price: 100, store: store, variants: [product_2.master])
+        create(:completed_order_with_totals, line_items_price: 100, store: store, variants: [product_2.default_variant])
+        create_list(:order_with_totals, 2, line_items_price: 100, store: store, variants: [product_2.default_variant])
 
         refresh_all_metrics!
       end
@@ -333,10 +335,10 @@ describe 'Product scopes', type: :model do
       before do
         # Both products have 2 units sold, but different revenue
         # Product 1: 2 units, lower revenue
-        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
+        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.default_variant])
 
         # Product 2: 2 units, higher revenue
-        create_list(:completed_order_with_totals, 2, line_items_price: 150, store: store, variants: [product_2.master])
+        create_list(:completed_order_with_totals, 2, line_items_price: 150, store: store, variants: [product_2.default_variant])
 
         refresh_all_metrics!
       end
@@ -358,13 +360,13 @@ describe 'Product scopes', type: :model do
       before do
         # Product 1: 5 units sold (quantity 2 + quantity 3)
         order1 = create(:order_with_line_items, line_items_count: 0, store: store)
-        create(:line_item, order: order1, variant: product_1.master, price: 50, quantity: 2)
-        create(:line_item, order: order1, variant: product_1.master, price: 50, quantity: 3)
+        create(:line_item, order: order1, variant: product_1.default_variant, price: 50, quantity: 2)
+        create(:line_item, order: order1, variant: product_1.default_variant, price: 50, quantity: 3)
         order1.update!(completed_at: Time.current)
 
         # Product 2: 2 units sold (quantity 2)
         order2 = create(:order_with_line_items, line_items_count: 0, store: store)
-        create(:line_item, order: order2, variant: product_2.master, price: 100, quantity: 2)
+        create(:line_item, order: order2, variant: product_2.default_variant, price: 100, quantity: 2)
         order2.update!(completed_at: Time.current)
 
         refresh_all_metrics!
@@ -390,16 +392,16 @@ describe 'Product scopes', type: :model do
       before do
         # Product 1: 5 units sold across 2 orders (quantity 3 + quantity 2)
         order1 = create(:order_with_line_items, line_items_count: 0, store: store)
-        create(:line_item, order: order1, variant: product_1.master, price: 50, quantity: 3)
+        create(:line_item, order: order1, variant: product_1.default_variant, price: 50, quantity: 3)
         order1.update!(completed_at: Time.current)
 
         order2 = create(:order_with_line_items, line_items_count: 0, store: store)
-        create(:line_item, order: order2, variant: product_1.master, price: 50, quantity: 2)
+        create(:line_item, order: order2, variant: product_1.default_variant, price: 50, quantity: 2)
         order2.update!(completed_at: Time.current)
 
         # Product 2: 4 units sold in 1 order (quantity 4)
         order3 = create(:order_with_line_items, line_items_count: 0, store: store)
-        create(:line_item, order: order3, variant: product_2.master, price: 100, quantity: 4)
+        create(:line_item, order: order3, variant: product_2.default_variant, price: 100, quantity: 4)
         order3.update!(completed_at: Time.current)
 
         refresh_all_metrics!
@@ -442,14 +444,14 @@ describe 'Product scopes', type: :model do
     context 'with products having only pending orders (no completed_at)' do
       before do
         # Product 1: 2 units sold (2 completed orders)
-        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
+        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.default_variant])
 
         # Product 2: 1 pending order (no completed_at) - should not be counted
-        create(:order_with_line_items, line_items_count: 1, store: store, variants: [product_2.master])
+        create(:order_with_line_items, line_items_count: 1, store: store, variants: [product_2.default_variant])
 
         # Product 3: 2 pending orders (not counted) + 1 completed order (1 unit)
-        create_list(:order_with_line_items, 2, line_items_count: 1, store: store, variants: [product_3.master])
-        create(:completed_order_with_totals, line_items_price: 100, store: store, variants: [product_3.master])
+        create_list(:order_with_line_items, 2, line_items_count: 1, store: store, variants: [product_3.default_variant])
+        create(:completed_order_with_totals, line_items_price: 100, store: store, variants: [product_3.default_variant])
 
         # Product 4: no orders at all
 

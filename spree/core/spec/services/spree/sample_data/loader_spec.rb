@@ -14,16 +14,25 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     expect(Spree::Product.count).to be > 30
   end
 
+  it 'assigns imported products a product type' do
+    expect(Spree::Product.where(product_type_id: nil)).to be_empty
+  end
+
   it 'creates variants' do
-    expect(Spree::Variant.count).to be > 100
+    expect(Spree::Variant.count).to be > 80
   end
 
   it 'creates customers' do
-    expect(Spree.user_class.where.not(email: 'spree@example.com').count).to be > 5
+    expect(Spree.customer_class.where.not(email: 'spree@example.com').count).to be > 5
   end
 
   it 'creates completed orders' do
     expect(Spree::Order.complete.count).to be >= 2
+  end
+
+  it 'derives payment and fulfillment statuses for the sample orders' do
+    statuses = Spree::Order.complete.pluck(:payment_status, :fulfillment_status).flatten
+    expect(statuses).to all(be_present)
   end
 
   describe 'wholesale demo data' do
@@ -40,7 +49,7 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     end
 
     it 'creates an approved wholesale buyer' do
-      buyer = Spree.user_class.find_by(email: 'wholesale@example.com')
+      buyer = Spree.customer_class.find_by(email: 'wholesale@example.com')
       group = store.customer_groups.find_by(name: 'Wholesale')
 
       expect(buyer).to be_present

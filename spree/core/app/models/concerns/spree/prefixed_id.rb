@@ -114,7 +114,7 @@ module Spree
       end
 
       # Resolve an array of prefixed IDs for a has_many _ids setter.
-      # Infers the target class from the association name (e.g., taxon_ids → taxons → Spree::Taxon).
+      # Infers the target class from the association name (e.g., taxon_ids → taxons → Spree::Category).
       # Only resolves when a matching association exists.
       def resolve_prefixed_ids_for_attribute(attribute_name, values)
         association_name = attribute_name.sub(/_ids$/, '').pluralize
@@ -132,18 +132,40 @@ module Spree
         end
       end
 
+      # Builds the prefixed id for a raw primary key without loading the row —
+      # for serializing foreign keys (e.g. Order#cart_id) where fetching the
+      # associated record just to re-encode its id would be wasted I/O.
+      # @param id [Integer, String, nil]
+      # @return [String, nil]
+      def prefixed_id_for(id)
+        return nil if id.blank?
+
+        "#{_prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([id.to_i])}"
+      end
+
       def find_by_prefix_id!(prefixed_id)
-        decoded = Spree::PrefixedId.decode_prefixed_id(prefixed_id)
+        decoded = decode_own_prefixed_id(prefixed_id)
         raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with prefixed id=#{prefixed_id}", name) unless decoded
 
         find(decoded)
       end
 
       def find_by_prefix_id(prefixed_id)
-        decoded = Spree::PrefixedId.decode_prefixed_id(prefixed_id)
+        decoded = decode_own_prefixed_id(prefixed_id)
         return nil unless decoded
 
         find_by(id: decoded)
+      end
+
+      # Rejects prefixed IDs from other models — an or_ ID must never
+      # resolve a cart just because the numeric payloads collide.
+      def decode_own_prefixed_id(prefixed_id)
+        if _prefix_id_prefix.present?
+          expected = "#{_prefix_id_prefix}_"
+          return nil unless prefixed_id.to_s.start_with?(expected)
+        end
+
+        Spree::PrefixedId.decode_prefixed_id(prefixed_id)
       end
 
       def decode_prefixed_id(prefixed_id_string)

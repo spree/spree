@@ -15,7 +15,6 @@ module Spree
     extend Spree::DisplayMoney
 
     include Spree::Payment::Processing
-    include Spree::Payment::Webhooks
     include Spree::Payment::CustomEvents
 
     publishes_lifecycle_events
@@ -25,10 +24,13 @@ module Spree
     INVALID_STATES      = %w(failed invalid void).freeze
 
     with_options inverse_of: :payments do
-      belongs_to :order, class_name: 'Spree::Order', touch: true
+      belongs_to :order, class_name: 'Spree::Order', touch: true, optional: true
+      belongs_to :cart, class_name: 'Spree::Cart', optional: true
       belongs_to :payment_method, -> { with_deleted }, class_name: 'Spree::PaymentMethod'
     end
     belongs_to :source, polymorphic: true
+
+    validate :exactly_one_owner
 
     has_many :offsets, -> { offset_payment }, class_name: 'Spree::Payment', foreign_key: :source_id
     has_many :log_entries, as: :source
@@ -47,7 +49,7 @@ module Spree
 
     before_validation :validate_source
 
-    after_initialize :set_amount, if: -> { new_record? && order.present? && !amount_changed? }
+    after_initialize :set_amount, if: -> { new_record? && owner.present? && !amount_changed? }
 
     #
     # Callbacks
@@ -96,7 +98,7 @@ module Spree
     # transaction_id is much easier to understand
     alias_attribute :transaction_id, :response_code
 
-    delegate :currency, to: :order
+    delegate :currency, to: :owner
 
     money_methods :amount, :credit_allowed
     alias money display_amount # for compatibility with older versions of Spree
@@ -123,11 +125,11 @@ module Spree
       event :complete do
         transition from: [:processing, :pending, :checkout], to: :completed
       end
-      after_transition to: :completed, do: [:after_completed, :send_payment_completed_webhook, :publish_payment_completed_event]
+      after_transition to: :completed, do: [:after_completed, :publish_payment_completed_event]
       event :void do
         transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
-      after_transition to: :void, do: [:after_void, :send_payment_voided_webhook, :publish_payment_voided_event]
+      after_transition to: :void, do: [:after_void, :publish_payment_voided_event]
       # when the card brand isn't supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
@@ -150,12 +152,12 @@ module Spree
     end
 
     def max_amount
-      return amount if order.nil?
+      return amount if owner.nil?
 
-      amount_from_order = order.total - order.payment_total
+      amount_from_order = owner.total - owner.payment_total
 
       if payment_method&.store_credit?
-        store_credits = order.available_store_credits
+        store_credits = owner.available_store_credits
         store_credits.any? ? [store_credits.first.amount_remaining, amount_from_order].min : amount_from_order
       else
         amount_from_order
@@ -200,13 +202,13 @@ module Spree
                         payment_method.payment_source_class.new(source_attributes)
                       end
 
-        if source.user_id.present? && source.user_id != order.user_id
+        if source.customer_id.present? && source.customer_id != owner&.customer_id
           self.source = nil
           return
         end
 
         source.payment_method_id = payment_method.id if source.respond_to?(:payment_method_id)
-        source.user_id = order.user_id if order
+        source.customer_id = owner.customer_id if owner
       end
     end
 
@@ -288,10 +290,30 @@ module Spree
       INVALID_STATES.include?(state)
     end
 
+    # @return [Spree::Cart, Spree::Order, nil]
+    def owner
+      order || cart
+    end
+
+    # Bridge for legacy callers assigning +current_order+ (now a Spree::Cart)
+    # to the order association — routes carts to the cart FK instead.
+    def order=(record)
+      if record.is_a?(Spree::Cart)
+        self.cart = record
+        super(nil)
+      else
+        super
+      end
+    end
+
     private
 
+    def exactly_one_owner
+      errors.add(:base, Spree.t('errors.messages.exactly_one_of_cart_or_order')) unless [order, cart].compact.one?
+    end
+
     def set_amount
-      self.amount = order.total - order.payment_total
+      self.amount = owner.total - owner.payment_total
     end
 
     def amount_must_be_less_than_or_equal_to_max_amount
@@ -325,9 +347,9 @@ module Spree
 
     def payment_method_available_for_order
       return if payment_method.blank?
-      return if order.blank?
+      return if owner.blank?
 
-      errors.add(:payment_method, :invalid) if !payment_method.available_for_order?(order) || !payment_method.available_for_store?(order.store)
+      errors.add(:payment_method, :invalid) if !payment_method.available_for_order?(owner) || !payment_method.available_for_store?(owner.store)
     end
 
     def add_source_error(field, message)
@@ -355,7 +377,7 @@ module Spree
 
     def split_uncaptured_amount
       if uncaptured_amount > 0
-        order.payments.create!(
+        owner.payments.create!(
           amount: uncaptured_amount,
           payment_method: payment_method,
           source: source,
@@ -367,15 +389,13 @@ module Spree
     end
 
     def update_order
-      order.updater.update_payment_total if completed? || void?
+      return unless completed? || void? || (owner.is_a?(Spree::Order) && owner.completed?)
 
-      if order.completed?
-        order.updater.update_payment_state
-        order.updater.update_shipments
-        order.updater.update_shipment_state
-      end
-
-      order.persist_totals if completed? || order.completed?
+      # A payment settling moves only the payment side of the ledger — never
+      # re-sum item/adjustment money here.
+      completed_total = owner.payments.completed.includes(:refunds).sum { |payment| payment.amount - payment.refunds.sum(:amount) }
+      owner.update_column(:payment_total, completed_total)
+      owner.update_statuses! if owner.is_a?(Spree::Order) && owner.completed?
     end
 
     def create_eligible_credit_event
@@ -396,7 +416,7 @@ module Spree
       # invalid payment or store_credit payment shouldn't invalidate other payment types
       return if has_invalid_state? || store_credit?
 
-      order.payments.with_state('checkout').where.not(id: id).each do |payment|
+      owner.payments.with_state('checkout').where.not(id: id).each do |payment|
         payment.invalidate! unless payment.store_credit?
       end
     end

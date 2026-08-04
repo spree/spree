@@ -15,7 +15,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     request.headers['X-Spree-Api-Key'] = api_key.token
   end
 
-  let(:cart) { Spree::Order.last }
+  let(:cart) { Spree::Cart.last }
 
   describe 'GET #index' do
     context 'with JWT authentication' do
@@ -23,8 +23,8 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
       end
 
-      let!(:user_cart1) { create(:order, user: user, store: store) }
-      let!(:user_cart2) { create(:order, user: user, store: store) }
+      let!(:user_cart1) { create(:cart, customer: user, store: store) }
+      let!(:user_cart2) { create(:cart, customer: user, store: store) }
 
       it 'returns the current users carts' do
         get :index
@@ -35,9 +35,18 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(numbers).to include(user_cart1.number, user_cart2.number)
       end
 
+      it 'excludes completed carts — a signed-in customer never re-adopts a finished checkout' do
+        user_cart2.update_columns(completed_at: Time.current)
+
+        get :index
+
+        numbers = json_response['data'].map { |c| c['number'] }
+        expect(numbers).to eq([user_cart1.number])
+      end
+
       it 'scopes carts to the request channel — other channels never leak into a surface' do
         wholesale = create(:channel, store: store, code: 'wholesale')
-        wholesale_cart = create(:order, user: user, store: store, channel: wholesale)
+        wholesale_cart = create(:cart, customer: user, store: store, channel: wholesale)
 
         get :index
 
@@ -77,7 +86,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'does not return other users carts' do
         other_user = create(:user)
-        create(:order, user: other_user, store: store)
+        create(:cart, customer: other_user, store: store)
 
         get :index
 
@@ -86,7 +95,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'does not return guest carts' do
-        create(:order, user: nil, store: store)
+        create(:cart, customer: nil, store: store)
 
         get :index
 
@@ -105,7 +114,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'does not return carts from other stores' do
         other_store = create(:store)
-        create(:order, user: user, store: other_store)
+        create(:cart, customer: user, store: other_store)
 
         get :index
 
@@ -138,7 +147,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     it 'creates a new cart' do
       expect do
         post :create
-      end.to change(Spree::Order, :count).by(1)
+      end.to change(Spree::Cart, :count).by(1)
 
       expect(response).to have_http_status(:created)
       expect(json_response['number']).to be_present
@@ -200,7 +209,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         post :create, params: { metadata: { 'source' => 'mobile_app', 'campaign' => 'summer_sale' } }
 
         expect(response).to have_http_status(:created)
-        order = Spree::Order.last
+        order = Spree::Cart.last
         expect(order.metadata).to eq({ 'source' => 'mobile_app', 'campaign' => 'summer_sale' })
       end
 
@@ -222,7 +231,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         post :create
 
         expect(response).to have_http_status(:created)
-        expect(cart.user_id).to eq(user.id)
+        expect(cart.customer_id).to eq(user.id)
       end
     end
 
@@ -247,7 +256,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         }
 
         expect(response).to have_http_status(:created)
-        order = Spree::Order.last
+        order = Spree::Cart.last
         expect(order.line_items.count).to eq(2)
         expect(order.line_items.find_by(variant: variant).quantity).to eq(2)
         expect(order.line_items.find_by(variant: variant2).quantity).to eq(1)
@@ -298,7 +307,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
   describe 'GET #show' do
     context 'with x-spree-token header' do
-      let(:cart) { create(:order_with_line_items, store: store) }
+      let(:cart) { create(:cart_with_line_items, store: store) }
 
       before { request.headers['x-spree-token'] = cart.token }
 
@@ -338,7 +347,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'returns not found for other store cart' do
         other_store = create(:store)
-        other_cart = create(:order_with_line_items, store: other_store)
+        other_cart = create(:cart_with_line_items, store: other_store)
         request.headers['x-spree-token'] = other_cart.token
         get :show, params: { id: other_cart.prefixed_id }
 
@@ -351,7 +360,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
       end
 
-      let!(:cart) { create(:order_with_line_items, user: user, store: store) }
+      let!(:cart) { create(:cart_with_line_items, customer: user, store: store) }
 
       it 'returns the users cart' do
         get :show, params: { id: cart.prefixed_id }
@@ -362,11 +371,28 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'returns forbidden when cart belongs to another user' do
         other_user = create(:user)
-        other_cart = create(:order_with_line_items, user: other_user, store: store)
+        other_cart = create(:cart_with_line_items, customer: other_user, store: store)
 
         get :show, params: { id: other_cart.prefixed_id }
 
         expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'with a completed cart' do
+      let(:cart) { create(:cart_with_line_items, store: store) }
+
+      before do
+        cart.update_columns(completed_at: Time.current)
+        request.headers['x-spree-token'] = cart.token
+      end
+
+      # The storefront contract: a completed cart is not a cart anymore —
+      # 404 tells the client to drop its stale cart cookie.
+      it 'returns not found' do
+        get :show, params: { id: cart.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
       end
     end
 
@@ -390,7 +416,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     end
 
     context 'response structure' do
-      let(:cart) { create(:order_with_line_items, store: store) }
+      let(:cart) { create(:cart_with_line_items, store: store) }
 
       before { request.headers['x-spree-token'] = cart.token }
 
@@ -434,7 +460,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     end
 
     context 'warnings' do
-      let(:cart) { create(:order_with_line_items, store: store) }
+      let(:cart) { create(:cart_with_line_items, store: store) }
 
       before { request.headers['x-spree-token'] = cart.token }
 
@@ -483,11 +509,11 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
     context 'auto-advance' do
       let(:user) { create(:user_with_addresses) }
-      let(:cart) { create(:order_with_line_items, store: store, user: user) }
+      let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
       let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
       let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
       let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
-      let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
+      let!(:shipping_method) { create(:shipping_method) }
 
       before do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
@@ -496,11 +522,10 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       it 'generates shipments when address is present but shipments are empty' do
         address = create(:address, user: user, country: country, state: us_state)
         cart.update!(email: 'customer@example.com', ship_address: address)
-        cart.shipments.delete_all
-        cart.update_column(:state, 'address')
+        cart.fulfillments.delete_all
         cart.reload
 
-        expect(cart.shipments).to be_empty
+        expect(cart.fulfillments).to be_empty
 
         get :show, params: { id: cart.prefixed_id }
 
@@ -511,12 +536,10 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       it 'surfaces a delivery_unavailable warning when the cart cannot be delivered' do
         address = create(:address, user: user, country: country, state: us_state)
         cart.update!(email: 'customer@example.com', ship_address: address)
-        cart.shipments.delete_all
-        cart.update_column(:state, 'address')
-
-        # Move the products into a shipping category no shipping method serves.
-        unserved_category = create(:shipping_category, name: 'Unserved')
-        cart.line_items.each { |line_item| line_item.variant.product.update!(shipping_category: unserved_category) }
+        cart.fulfillments.delete_all
+        # Give the products a fulfillment type no delivery method serves.
+        unserved_type = create(:product_type, name: 'Pickup Only', fulfillment_types: ['pickup'])
+        cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: unserved_type) }
         cart.reload
 
         get :show, params: { id: cart.prefixed_id }
@@ -525,13 +548,13 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
         expect(json_response['requirements']).to include(
-          a_hash_including('step' => 'delivery', 'field' => 'shipping_method')
+          a_hash_including('step' => 'delivery', 'field' => 'delivery_method')
         )
       end
 
       it 'does not advance when no address is set' do
         cart.update!(ship_address: nil)
-        cart.shipments.delete_all
+        cart.fulfillments.delete_all
         cart.reload
 
         get :show, params: { id: cart.prefixed_id }
@@ -542,7 +565,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     end
 
     context 'with a custom address serializer' do
-      let(:cart) { create(:order_with_line_items, store: store) }
+      let(:cart) { create(:cart_with_line_items, store: store) }
 
       before { request.headers['x-spree-token'] = cart.token }
 
@@ -559,6 +582,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'serializes the billing address with the configured serializer' do
+        cart.update!(bill_address: create(:address))
         get :show, params: { id: cart.prefixed_id, expand: 'billing_address' }
 
         expect(response).to have_http_status(:ok)
@@ -571,11 +595,11 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
   describe 'PATCH #update' do
     let(:user) { create(:user_with_addresses) }
-    let!(:order) { create(:order_with_line_items, store: store, user: user) }
+    let!(:order) { create(:cart_with_line_items, store: store, customer: user) }
     let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
     let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
     let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
-    let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
+    let!(:shipping_method) { create(:shipping_method) }
 
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
@@ -591,13 +615,34 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       expect(order.reload.ship_address_id).to eq(existing_address.id)
     end
 
+    context 'selecting a pickup location' do
+      let!(:pickup_location) { create(:stock_location, pickup_enabled: true, store: store) }
+
+      it 'persists the choice and returns it as a prefixed id' do
+        patch :update, params: { id: order.prefixed_id, preferred_stock_location_id: pickup_location.prefixed_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.preferred_stock_location).to eq(pickup_location)
+        expect(json_response['preferred_stock_location_id']).to eq(pickup_location.prefixed_id)
+      end
+
+      it 'returns 404 for a location that is not pickup-enabled' do
+        not_pickup = create(:stock_location, pickup_enabled: false, store: store)
+
+        patch :update, params: { id: order.prefixed_id, preferred_stock_location_id: not_pickup.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+        expect(order.reload.preferred_stock_location_id).to be_nil
+      end
+    end
+
     context 'when a line item cannot be delivered to the address' do
       let(:address) { user.addresses.first || create(:address, user: user, country: country, state: us_state) }
-      let(:unserved_category) { create(:shipping_category, name: 'Unserved') }
+      let(:unserved_type) { create(:product_type, name: 'Pickup Only', fulfillment_types: ['pickup']) }
 
       before do
         order.update!(email: 'customer@example.com')
-        order.line_items.each { |line_item| line_item.variant.product.update!(shipping_category: unserved_category) }
+        order.line_items.each { |line_item| line_item.variant.product.update!(product_type: unserved_type) }
       end
 
       it 'returns ok with a delivery_unavailable warning, an unmet delivery requirement, and no fulfillments' do
@@ -607,13 +652,13 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['fulfillments']).to be_empty
         expect(json_response['warnings'].map { |warning| warning['code'] }).to include('delivery_unavailable')
         expect(json_response['requirements']).to include(
-          a_hash_including('step' => 'delivery', 'field' => 'shipping_method')
+          a_hash_including('step' => 'delivery', 'field' => 'delivery_method')
         )
       end
     end
 
     context 'updating market' do
-      let!(:market) { create(:market, store: store, countries: [country]) }
+      let!(:market) { store.default_market }
 
       it 'updates the cart market' do
         patch :update, params: { id: order.prefixed_id, market_id: market.prefixed_id }
@@ -657,21 +702,23 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         expect(json_response['market_id']).to eq(eu_market.prefixed_id)
       end
 
-      it 'returns validation error when no market exists for currency' do
+      it 'keeps the current market when no market exists for the currency' do
         order.update!(market: market)
 
         patch :update, params: { id: order.prefixed_id, currency: 'GBP' }
 
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response['error']['code']).to eq('validation_error')
+        # GBP is store-supported via the legacy column; without a GBP market
+        # the cart keeps its current market.
+        expect(response).to have_http_status(:ok)
+        expect(json_response['currency']).to eq('GBP')
+        expect(json_response['market_id']).to eq(market.prefixed_id)
       end
     end
 
     it 'auto-advances to payment after address submission' do
       order.update!(email: 'customer@example.com')
-      order.next # cart -> address
-      order.reload
-      expect(order.state).to eq('address')
+            order.reload
+      
 
       patch :update, params: {
         id: order.prefixed_id,
@@ -703,23 +750,20 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
       end
 
       it 'creates a reservation when the cart leaves the cart state' do
-        order.update!(email: 'customer@example.com')
-
         expect {
-          patch :update, params: { id: order.prefixed_id, shipping_address: address_params }
-        }.to change { Spree::StockReservation.where(order_id: order.id).count }.by_at_least(1)
+          patch :update, params: { id: order.prefixed_id, email: 'customer@example.com', shipping_address: address_params }
+        }.to change { Spree::StockReservation.for_order(order).count }.by_at_least(1)
       end
 
       it 'extends an existing reservation on subsequent in-checkout updates' do
-        order.update!(email: 'customer@example.com')
-        patch :update, params: { id: order.prefixed_id, shipping_address: address_params }
-        original_expiry = Spree::StockReservation.where(order_id: order.id).maximum(:expires_at)
+        patch :update, params: { id: order.prefixed_id, email: 'customer@example.com', shipping_address: address_params }
+        original_expiry = Spree::StockReservation.for_order(order).maximum(:expires_at)
 
         Timecop.freeze(2.minutes.from_now) do
           patch :update, params: { id: order.prefixed_id, customer_note: 'please ring bell' }
         end
 
-        expect(Spree::StockReservation.where(order_id: order.id).maximum(:expires_at)).to be > original_expiry
+        expect(Spree::StockReservation.for_order(order).maximum(:expires_at)).to be > original_expiry
       end
 
       context 'when stock_reservations_enabled is false' do
@@ -738,7 +782,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
   end
 
   describe 'PATCH #associate' do
-    let(:guest_cart) { create(:order_with_line_items, store: store, user: nil, email: 'guest@example.com') }
+    let(:guest_cart) { create(:cart_with_line_items, store: store, customer: nil, email: 'guest@example.com') }
 
     context 'with JWT authentication' do
       before do
@@ -828,7 +872,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'returns not found when cart belongs to another user' do
         other_user = create(:user)
-        other_user_cart = create(:order_with_line_items, store: store, user: other_user)
+        other_user_cart = create(:cart_with_line_items, store: store, customer: other_user)
 
         patch :associate, params: { id: other_user_cart.prefixed_id }
 
@@ -838,7 +882,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
       it 'returns not found for cart from other store' do
         other_store = create(:store)
-        other_store_cart = create(:order_with_line_items, store: other_store)
+        other_store_cart = create(:cart_with_line_items, store: other_store)
 
         patch :associate, params: { id: other_store_cart.prefixed_id }
 
@@ -869,7 +913,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let(:cart) { create(:order_with_line_items, store: store) }
+    let(:cart) { create(:cart_with_line_items, store: store) }
 
     context 'with x-spree-token header' do
       before { request.headers['x-spree-token'] = cart.token }
@@ -888,18 +932,19 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
           :stock_reservation,
           stock_item: line_item.variant.stock_items.first,
           line_item: line_item,
-          order: cart,
+          cart: cart,
+          order: nil,
           quantity: line_item.quantity,
           expires_at: 5.minutes.from_now
         )
 
         expect { delete :destroy, params: { id: cart.prefixed_id } }
-          .to change { Spree::StockReservation.where(order_id: cart.id).count }.from(1).to(0)
+          .to change { Spree::StockReservation.where(cart_id: cart.id).count }.from(1).to(0)
       end
     end
 
     context 'with JWT authentication' do
-      let!(:user_cart) { create(:order_with_line_items, user: user, store: store) }
+      let!(:user_cart) { create(:cart_with_line_items, customer: user, store: store) }
 
       before do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
@@ -914,26 +959,31 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
   end
 
   describe 'POST #complete' do
-    let(:order) { create(:order_with_line_items, user: user, store: store, state: 'confirm') }
+    let(:order) do
+      cart = create(:cart_with_line_items, customer: user, store: store)
+      cart.update!(email: user.email, ship_address: create(:address), bill_address: create(:address))
+      cart.rebuild_fulfillments!
+      cart.set_fulfillments_cost
+      cart
+    end
 
     before do
       request.headers['Authorization'] = "Bearer #{jwt_token}"
+      create(:shipping_method) if Spree::DeliveryMethod.none?
     end
 
     it 'completes the checkout' do
-      # Set up order so it can be completed
-      create(:payment, order: order, amount: order.total, state: 'checkout')
-      order.shipments.each { |s| s.update_column(:state, 'ready') }
+      create(:payment, cart: order, amount: order.reload.total)
 
       post :complete, params: { id: order.prefixed_id }
 
       expect(response).to have_http_status(:ok)
-      expect(order.reload.state).to eq('complete')
+      expect(order.reload.completed_at).to be_present
+      expect(order.order).to be_present
     end
 
     it 'releases stock reservations on successful completion' do
-      create(:payment, order: order, amount: order.total, state: 'checkout')
-      order.shipments.each { |s| s.update_column(:state, 'ready') }
+      create(:payment, cart: order, amount: order.reload.total)
       line_item = order.line_items.first
       line_item.variant.stock_items.first.update!(backorderable: false)
       line_item.variant.stock_items.first.set_count_on_hand(20)
@@ -941,17 +991,18 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         :stock_reservation,
         stock_item: line_item.variant.stock_items.first,
         line_item: line_item,
-        order: order,
+        cart: order,
+        order: nil,
         quantity: line_item.quantity,
         expires_at: 5.minutes.from_now
       )
 
       expect { post :complete, params: { id: order.prefixed_id } }
-        .to change { Spree::StockReservation.where(order_id: order.id).count }.from(1).to(0)
+        .to change { Spree::StockReservation.for_order(order).count }.from(1).to(0)
     end
 
     context 'when order cannot be completed' do
-      let(:incomplete_order) { create(:order_with_line_items, user: user, store: store, state: 'address') }
+      let(:incomplete_order) { create(:cart_with_line_items, customer: user, store: store) }
 
       it 'returns unprocessable entity with cart_cannot_complete code' do
         post :complete, params: { id: incomplete_order.prefixed_id }
@@ -992,22 +1043,24 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
     context 'with guest cart token' do
       let(:guest_order) do
-        order = create(:order_with_line_items, user: nil, store: store, email: 'guest@example.com')
-        order.update_column(:state, 'confirm')
-        order
+        cart = create(:cart_with_line_items, customer: nil, store: store, email: 'guest@example.com')
+        cart.update!(ship_address: create(:address), bill_address: create(:address))
+        cart.rebuild_fulfillments!
+        cart.set_fulfillments_cost
+        cart
       end
 
       it 'completes via spree token' do
+        create(:shipping_method) if Spree::DeliveryMethod.none?
         request.headers['Authorization'] = nil
         request.headers['x-spree-token'] = guest_order.token
 
-        create(:payment, order: guest_order, amount: guest_order.total, state: 'checkout')
-        guest_order.shipments.each { |s| s.update_column(:state, 'ready') }
+        create(:payment, cart: guest_order, order: nil, amount: guest_order.reload.total)
 
         post :complete, params: { id: guest_order.prefixed_id }
 
         expect(response).to have_http_status(:ok)
-        expect(guest_order.reload.state).to eq('complete')
+        expect(guest_order.reload.completed_at).to be_present
       end
     end
   end

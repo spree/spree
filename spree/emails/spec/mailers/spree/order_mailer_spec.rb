@@ -123,21 +123,23 @@ describe Spree::OrderMailer, type: :mailer do
     end
   end
 
-  context 'only shows eligible adjustments in emails' do
+  context 'shows manual discounts and fees in emails' do
     before do
-      create(:adjustment, order: order, eligible: true, label: 'Eligible Adjustment')
-      create(:adjustment, order: order, eligible: false, label: 'Ineligible Adjustment')
+      line_item = order.line_items.first
+      order.discounts.create!(line_item: line_item, amount: -2, kind: 'manual', label: 'Loyal Customer Discount')
+      order.fees.create!(amount: 3, kind: 'handling', label: 'Handling Fee')
     end
 
     let!(:confirmation_email) { described_class.confirm_email(order) }
     let!(:cancel_email) { described_class.cancel_email(order) }
 
     specify do
-      expect(confirmation_email.body).not_to include('Ineligible Adjustment')
+      expect(confirmation_email).to have_body_text('Loyal Customer Discount')
+      expect(confirmation_email).to have_body_text('Handling Fee')
     end
 
     specify do
-      expect(cancel_email.body).not_to include('Ineligible Adjustment')
+      expect(cancel_email).to have_body_text('Loyal Customer Discount')
     end
   end
 
@@ -336,17 +338,13 @@ describe Spree::OrderMailer, type: :mailer do
     let(:payment_link_email) { described_class.payment_link_email(order_for_payment.id) }
 
     let(:order_for_payment) { create(:order_with_line_items, store: store) }
-    let(:payment_url) { "http://shop.com/checkout/#{order_for_payment.token}/payment" }
+    let(:payment_url) { "#{store.storefront_url.chomp('/')}/checkout/#{order_for_payment.token}/payment" }
 
-    before do
-      allow(Spree::Core::Engine.routes.url_helpers).to receive(:checkout_state_url).and_return(payment_url)
-    end
-
-    it 'sends an email with the payment link' do
+    it 'sends an email with the cart checkout payment link' do
       expect(payment_link_email.from).to contain_exactly(store.mail_from_address)
       expect(payment_link_email.to).to contain_exactly(order_for_payment.email)
       expect(payment_link_email.subject).to eq("Payment link for order ##{order_for_payment.number}")
-      expect(payment_link_email.body).to include(payment_url)
+      expect(payment_link_email.body.to_s).to include(payment_url)
     end
   end
 end

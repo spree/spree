@@ -37,7 +37,7 @@ module Spree
             authorize!(:update, @product)
 
             @parent = if params[:variant_id].present?
-                        @product.variants_including_master.find_by_prefix_id!(params[:variant_id])
+                        @product.variants.find_by_prefix_id!(params[:variant_id])
                       else
                         @product
                       end
@@ -51,8 +51,9 @@ module Spree
           end
 
           # For product-scoped listings we surface BOTH product-level assets and any
-          # legacy master-pinned assets, so existing data keeps showing up while
-          # merchants migrate. New uploads land on `Spree::Product` (see #set_parent).
+          # legacy assets still pinned to the default variant, so existing data keeps
+          # showing up while merchants migrate. New uploads land on `Spree::Product`
+          # (see #set_parent).
           def scope
             return super if params[:variant_id].present?
 
@@ -60,7 +61,7 @@ module Spree
               viewable_type: 'Spree::Product', viewable_id: @product.id
             ).or(
               Spree::Asset.where(
-                viewable_type: 'Spree::Variant', viewable_id: @product.master&.id
+                viewable_type: 'Spree::Variant', viewable_id: @product.default_variant&.id
               )
             ).order(:position)
           end

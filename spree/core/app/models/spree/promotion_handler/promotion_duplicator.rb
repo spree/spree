@@ -31,7 +31,7 @@ module Spree
           new_rule.save!
 
           new_rule.users = rule.users if rule.try(:users)
-          new_rule.taxons = rule.taxons if rule.try(:taxons)
+          new_rule.categories = rule.categories if rule.try(:categories)
           new_rule.products = rule.products if rule.try(:products)
         end
       end

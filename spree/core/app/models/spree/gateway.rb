@@ -96,8 +96,8 @@ module Spree
       if order.completed?
         sources_by_order order
       else
-        if order.user_id
-          credit_cards.where(user_id: order.user_id).capturable
+        if order.customer_id
+          credit_cards.where(customer_id: order.customer_id).capturable
         else
           []
         end

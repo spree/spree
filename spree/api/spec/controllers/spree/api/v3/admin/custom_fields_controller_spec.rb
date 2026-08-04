@@ -294,7 +294,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
       let(:granted_scope) { 'write_categories' }
       let(:category) { create(:taxon) }
       let(:category_definition) do
-        create(:metafield_definition, :short_text_field, resource_type: 'Spree::Taxon')
+        create(:metafield_definition, :short_text_field, resource_type: 'Spree::Category')
       end
 
       it 'resolves the parent and gates by the categories scope' do

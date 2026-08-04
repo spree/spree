@@ -3,7 +3,9 @@ module Spree
     class GatewayOptions
       def initialize(payment)
         @payment = payment
-        @order = payment.order
+        # The payment's cart or order — the reader keeps the legacy `order`
+        # name because gateway extensions subclass this class.
+        @order = payment.owner
       end
 
       attr_reader :payment, :order
@@ -19,7 +21,7 @@ module Spree
       end
 
       def customer_id
-        order.user_id
+        order.customer_id
       end
 
       def ip
@@ -51,7 +53,7 @@ module Spree
       end
 
       def discount
-        order.promo_total * exchange_multiplier
+        order.discount_total * exchange_multiplier
       end
 
       def billing_address

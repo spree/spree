@@ -6,7 +6,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
   include_context 'API v3 Admin'
 
   let!(:order) { create(:order_ready_to_ship, store: store) }
-  let!(:shipment) { order.shipments.first }
+  let!(:shipment) { order.fulfillments.first }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/orders/{order_id}/fulfillments' do
@@ -102,7 +102,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
           data = JSON.parse(response.body)
           expect(data['id']).to start_with('ful_')
           expect(data['tracking']).to eq('INPOST-12345')
-          expect(data['status']).to eq('shipped')
+          expect(data['status']).to eq('fulfilled')
         end
       end
 
@@ -110,7 +110,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:draft_order) { create(:order_with_line_items, store: store) }
         let(:order_id) { draft_order.prefixed_id }
-        let(:body) { { stock_location_id: draft_order.shipments.first.stock_location.prefixed_id } }
+        let(:body) { { stock_location_id: draft_order.fulfillments.first.stock_location.prefixed_id } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -222,7 +222,7 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['status']).to eq('shipped')
+          expect(data['status']).to eq('fulfilled')
         end
       end
     end

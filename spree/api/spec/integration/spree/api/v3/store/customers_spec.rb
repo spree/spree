@@ -55,7 +55,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
           expect(data['user']).to be_present
 
           # Verify user was created with all fields
-          new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+          new_user = Spree.customer_class.find_by(email: 'newuser@example.com')
           expect(new_user).to be_present
           expect(new_user.first_name).to eq('John')
           expect(new_user.phone).to eq('+1234567890')

@@ -121,11 +121,11 @@ describe Spree::WebhookEndpoint, type: :model do
     end
 
     context 'with specific subscriptions' do
-      let(:endpoint) { build(:webhook_endpoint, subscriptions: %w[order.created order.completed]) }
+      let(:endpoint) { build(:webhook_endpoint, subscriptions: %w[order.created order.placed]) }
 
       it 'returns true for subscribed events' do
         expect(endpoint.subscribed_to?('order.created')).to be true
-        expect(endpoint.subscribed_to?('order.completed')).to be true
+        expect(endpoint.subscribed_to?('order.placed')).to be true
       end
 
       it 'returns false for non-subscribed events' do
@@ -139,7 +139,7 @@ describe Spree::WebhookEndpoint, type: :model do
 
       it 'matches events that fit the pattern' do
         expect(endpoint.subscribed_to?('order.created')).to be true
-        expect(endpoint.subscribed_to?('order.completed')).to be true
+        expect(endpoint.subscribed_to?('order.placed')).to be true
         expect(endpoint.subscribed_to?('order.updated')).to be true
       end
 
@@ -154,7 +154,7 @@ describe Spree::WebhookEndpoint, type: :model do
 
       it 'matches pattern events' do
         expect(endpoint.subscribed_to?('order.created')).to be true
-        expect(endpoint.subscribed_to?('order.completed')).to be true
+        expect(endpoint.subscribed_to?('order.placed')).to be true
       end
 
       it 'matches exact events' do
@@ -177,10 +177,10 @@ describe Spree::WebhookEndpoint, type: :model do
     end
 
     context 'with specific subscriptions' do
-      let(:endpoint) { build(:webhook_endpoint, subscriptions: %w[order.created order.completed]) }
+      let(:endpoint) { build(:webhook_endpoint, subscriptions: %w[order.created order.placed]) }
 
       it 'returns the subscriptions' do
-        expect(endpoint.subscribed_events).to eq(%w[order.created order.completed])
+        expect(endpoint.subscribed_events).to eq(%w[order.created order.placed])
       end
     end
   end

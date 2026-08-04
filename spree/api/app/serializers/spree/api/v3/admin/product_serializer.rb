@@ -10,6 +10,7 @@ module Spree
 
           typelize status: :string,
                    tax_category_id: [:string, nullable: true],
+                   product_type_id: [:string, nullable: true],
                    price: ['Price', nullable: true],
                    deleted_at: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
@@ -17,6 +18,10 @@ module Spree
           attributes :status,
                      :metadata, deleted_at: :iso8601,
                      created_at: :iso8601, updated_at: :iso8601
+
+          attribute :product_type_id do |product|
+            product.product_type&.prefixed_id
+          end
 
           attribute :tax_category_id do |product|
             product.tax_category&.prefixed_id
@@ -63,11 +68,11 @@ module Spree
                resource: proc { Spree.api.admin_option_value_serializer },
                if: proc { expand?('option_values') }
 
-          many :taxons,
-               proc { |taxons, params|
-                 taxons.select { |t| t.taxonomy.store_id == params[:store].id }
+          many :categories,
+               proc { |categories, params|
+                 store_id = params[:store].id
+                 categories.select { |c| c.store_id == store_id || c.taxonomy&.store_id == store_id }
                },
-               key: :categories,
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { expand?('categories') }
 

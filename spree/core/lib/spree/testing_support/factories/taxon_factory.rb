@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :taxon, class: Spree::Taxon do
+  factory :taxon, class: Spree::Category, aliases: [:category] do
     sequence(:name) { |n| "taxon_#{n}" }
 
     association :taxonomy, strategy: :create

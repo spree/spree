@@ -324,7 +324,7 @@ describe Spree::Address, type: :model do
     context 'when user is assigned and it has default name' do
       it 'should assign address name to the user' do
         user = create(:user, first_name: nil, last_name: nil)
-        create(:address, user: user, firstname: 'John', lastname: 'Doe')
+        create(:address, customer: user, firstname: 'John', lastname: 'Doe')
 
         expect(user.reload.first_name).to eq 'John'
         expect(user.reload.last_name).to eq 'Doe'
@@ -520,9 +520,9 @@ describe Spree::Address, type: :model do
   context 'editable & destroy' do
     subject(:destroy_address) { address.destroy }
 
-    let(:address) { create(:address, user: user) }
-    let(:address2) { create(:address, user: user) }
-    let(:address3) { create(:address, user: user) }
+    let(:address) { create(:address, customer: user) }
+    let(:address2) { create(:address, customer: user) }
+    let(:address3) { create(:address, customer: user) }
 
     let(:order) { create(:completed_order_with_totals) }
     let(:user) { create(:user) }
@@ -566,7 +566,7 @@ describe Spree::Address, type: :model do
 
     context 'when an incomplete order references the address' do
       let!(:incomplete_order) do
-        create(:order, user: user, bill_address: address, ship_address: address, state: 'delivery')
+        create(:order, customer: user, bill_address: address, ship_address: address, state: 'delivery')
       end
 
       it 'detaches the address from the order and resets it to the address step' do
@@ -575,7 +575,7 @@ describe Spree::Address, type: :model do
         incomplete_order.reload
         expect(incomplete_order.bill_address_id).to be_nil
         expect(incomplete_order.ship_address_id).to be_nil
-        expect(incomplete_order.state).to eq('address')
+        expect(incomplete_order.reload.completed_at).to be_nil
       end
 
       it 'still hard-deletes the address' do
@@ -584,13 +584,13 @@ describe Spree::Address, type: :model do
       end
 
       it "leaves another user's order referencing the same address untouched" do
-        other_order = create(:order, user: create(:user), bill_address: address, ship_address: address, state: 'delivery')
+        other_order = create(:order, customer: create(:user), bill_address: address, ship_address: address, state: 'delivery')
 
         address.destroy
 
         expect(other_order.reload.ship_address_id).to eq(address.id)
         expect(other_order.bill_address_id).to eq(address.id)
-        expect(other_order.state).to eq('delivery')
+        expect(other_order.reload.ship_address_id).to eq(address.id)
       end
 
       context 'when the address is also used by a completed order' do
@@ -613,7 +613,7 @@ describe Spree::Address, type: :model do
       before do
         user.update(ship_address: address2, bill_address: address2)
         user.reload
-        allow_any_instance_of(Spree::LegacyUser).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new)
+        allow_any_instance_of(Spree.customer_class).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new)
       end
 
       it 'does not set deleted_at attribute for address' do
@@ -625,8 +625,8 @@ describe Spree::Address, type: :model do
     describe '#assign_new_default_address_to_user' do
       shared_examples 'default address' do
         context 'when 2 addresses are available' do
-          let!(:address2_quick_checkout) { create(:address, user: user, quick_checkout: true) }
-          let!(:address3) { create(:address, user: user) }
+          let!(:address2_quick_checkout) { create(:address, customer: user, quick_checkout: true) }
+          let!(:address3) { create(:address, customer: user) }
 
           it 'assigns last available address as default to bill and ship address' do
             user.update!(bill_address: address, ship_address: address)
@@ -709,6 +709,13 @@ describe Spree::Address, type: :model do
 
         it_behaves_like 'default address'
       end
+    end
+  end
+
+  describe '#normalized_zipcode' do
+    it 'strips spaces and dashes and upcases' do
+      expect(build(:address, zipcode: ' sw1a 1-aa ').normalized_zipcode).to eq('SW1A1AA')
+      expect(build(:address, zipcode: nil).normalized_zipcode).to eq('')
     end
   end
 

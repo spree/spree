@@ -7,7 +7,7 @@ RSpec.describe 'Admin Customer Store Credits API', type: :request, swagger_doc: 
 
   let!(:customer) { create(:user) }
   let!(:category) { create(:store_credit_category) }
-  let!(:store_credit) { create(:store_credit, user: customer, store: store, amount: 50.00, category: category) }
+  let!(:store_credit) { create(:store_credit, customer: customer, store: store, amount: 50.00, category: category) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/customers/{customer_id}/store_credits' do

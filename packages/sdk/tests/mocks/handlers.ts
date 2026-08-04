@@ -37,6 +37,25 @@ export const fixtures = {
     payment_status: 'paid',
     items: [],
   },
+  return: {
+    id: 'ret_1',
+    number: 'RET123456789',
+    status: 'requested',
+    order_id: 'or_1',
+    refund_total: '19.99',
+    display_refund_total: '$19.99',
+    return_line_items: [],
+  },
+  claim: {
+    id: 'claim_1',
+    number: 'CLM123456789',
+    status: 'open',
+    claim_type: 'damaged',
+    order_id: 'or_1',
+    refund_total: '19.99',
+    display_refund_total: '$19.99',
+    claim_line_items: [],
+  },
   lineItem: {
     id: 'li_1',
     quantity: 2,
@@ -384,6 +403,28 @@ export const handlers = [
 
   // Orders (read-only, single lookup)
   http.get(`${API_PREFIX}/orders/:id`, () => HttpResponse.json(fixtures.order)),
+
+  // Customer self-service returns and claims
+  http.get(`${API_PREFIX}/orders/:orderId/returns`, () =>
+    HttpResponse.json({
+      data: [fixtures.return],
+      meta: { page: 1, limit: 25, count: 1, pages: 1, from: 1, to: 1 },
+    }),
+  ),
+  http.get(`${API_PREFIX}/orders/:orderId/returns/:id`, () => HttpResponse.json(fixtures.return)),
+  http.post(`${API_PREFIX}/orders/:orderId/returns`, () =>
+    HttpResponse.json(fixtures.return, { status: 201 }),
+  ),
+  http.get(`${API_PREFIX}/orders/:orderId/claims`, () =>
+    HttpResponse.json({
+      data: [fixtures.claim],
+      meta: { page: 1, limit: 25, count: 1, pages: 1, from: 1, to: 1 },
+    }),
+  ),
+  http.get(`${API_PREFIX}/orders/:orderId/claims/:id`, () => HttpResponse.json(fixtures.claim)),
+  http.post(`${API_PREFIX}/orders/:orderId/claims`, () =>
+    HttpResponse.json(fixtures.claim, { status: 201 }),
+  ),
 
   // Customer
   http.get(`${API_PREFIX}/customers/me`, () => HttpResponse.json(fixtures.user)),

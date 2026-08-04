@@ -9,19 +9,18 @@ module Spree
       does_not_contain
     ].freeze
 
-    belongs_to :taxon, class_name: 'Spree::Taxon', inverse_of: :taxon_rules, touch: true
+    # Category no longer declares the has_many :taxon_rules inverse (categories are
+    # manual in 6.0), so this is a plain belongs_to. Data-only until 6.1.
+    belongs_to :taxon, class_name: 'Spree::Category', touch: true
 
     validates :taxon, :type, :value, presence: true
     validates :match_policy, inclusion: { in: MATCH_POLICIES }, presence: true
 
-    after_commit :regenerate_taxon_products, if: -> { saved_change_to_value? || destroyed? || saved_change_to_match_policy? }
-
     delegate :store, to: :taxon
 
-    private
-
-    def regenerate_taxon_products
-      taxon.regenerate_taxon_products(only_once: true)
-    end
+    # Retained as a data-only model in 6.0 so the taxons -> collections data
+    # migration can read existing automatic-taxon rules; dropped in 6.1 along
+    # with the spree_taxon_rules table. Automatic membership now lives on
+    # Spree::Collection (rule matching + regeneration moved there).
   end
 end

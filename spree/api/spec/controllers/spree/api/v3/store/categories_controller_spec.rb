@@ -188,7 +188,7 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
       end
     end
 
-    context 'with translations', if: Spree::Taxon.include?(Spree::TranslatableResource) do
+    context 'with translations', if: Spree::Category.include?(Spree::TranslatableResource) do
       let!(:translated_taxon) do
         create(:taxon, taxonomy: taxonomy, name: 'Clothing', permalink: 'clothing').tap do |t|
           Mobility.with_locale(:fr) do

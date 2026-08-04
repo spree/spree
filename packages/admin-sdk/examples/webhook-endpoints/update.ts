@@ -8,7 +8,7 @@ const client = createAdminClient({
 // region:example
 const endpoint = await client.webhookEndpoints.update('whe_xxx', {
   name: 'Order pipeline (v2)',
-  subscriptions: ['order.completed', 'order.canceled', 'order.paid'],
+  subscriptions: ['order.placed', 'order.canceled', 'order.paid'],
 })
 
 // endregion:example

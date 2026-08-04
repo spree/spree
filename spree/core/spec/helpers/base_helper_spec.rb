@@ -10,30 +10,6 @@ describe Spree::BaseHelper, type: :helper do
     allow(Rails.application.routes).to receive(:default_url_options).and_return(protocol: 'http', port: nil)
   end
 
-  context 'available_countries' do
-    before do
-      create_list(:country, 3)
-    end
-
-    context 'with markets' do
-      let!(:country) { create(:country) }
-
-      before do
-        create(:market, store: current_store, countries: [country], currency: 'USD', default: true)
-      end
-
-      it 'returns only the countries from markets' do
-        expect(available_countries).to eq([country])
-      end
-    end
-
-    context 'without markets' do
-      it 'returns complete list of countries' do
-        expect(available_countries).to contain_exactly(*Spree::Country.all)
-      end
-    end
-  end
-
   describe '#spree_storefront_resource_url' do
     let!(:store) { @default_store }
     let!(:taxon) { create(:taxon) }
@@ -99,50 +75,4 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
-  context 'spree_base_cache_key' do
-    let(:current_currency) { 'USD' }
-
-    context 'when try_spree_current_user defined' do
-      before do
-        allow(I18n).to receive(:locale).and_return(I18n.default_locale)
-        allow_any_instance_of(described_class).to receive(:try_spree_current_user).and_return(user)
-      end
-
-      context 'when admin user' do
-        let!(:user) { create(:admin_user) }
-
-        it 'returns base cache key' do
-          expect(spree_base_cache_key).to eq [:en, 'USD', true, user.role_users.cache_key_with_version]
-        end
-      end
-
-      context 'when user without admin role' do
-        let!(:user) { create(:user) }
-
-        it 'returns base cache key' do
-          expect(spree_base_cache_key).to eq [:en, 'USD', true, user.role_users.cache_key_with_version]
-        end
-      end
-
-      context 'when spree_current_user is nil' do
-        let!(:user) { nil }
-
-        it 'returns base cache key' do
-          expect(spree_base_cache_key).to eq [:en, 'USD', false, false]
-        end
-      end
-    end
-
-    context 'when try_spree_current_user is undefined' do
-      let(:current_currency) { 'USD' }
-
-      before do
-        allow(I18n).to receive(:locale).and_return(I18n.default_locale)
-      end
-
-      it 'returns base cache key' do
-        expect(spree_base_cache_key).to eq [:en, 'USD']
-      end
-    end
-  end
 end

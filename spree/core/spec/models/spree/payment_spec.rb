@@ -244,9 +244,9 @@ describe Spree::Payment, type: :model do
 
         context 'when source is not a credit card' do
           let(:user) { create(:user) }
-          let(:order) { create(:order, user: user, total: 100) }
+          let(:order) { create(:order, customer: user, total: 100) }
           let(:gateway) { create(:custom_payment_method) }
-          let(:source) { create(:payment_source, user: user, payment_method: gateway) }
+          let(:source) { create(:payment_source, customer: user, payment_method: gateway) }
           let(:payment) { build(:custom_payment, source: source, amount: 100, payment_method: gateway) }
 
           it 'creates a payment profile' do
@@ -817,10 +817,9 @@ describe Spree::Payment, type: :model do
     context 'completed orders' do
       before { allow(order).to receive_messages completed?: true }
 
-      it 'updates payment_state and shipments' do
-        expect(order.updater).to receive(:update_payment_state)
-        expect(order.updater).to receive(:update_shipment_state)
-        Spree::Payment.create(amount: 100, order: order, payment_method: gateway, source: card)
+      it 'recomputes totals and statuses' do
+        expect { Spree::Payment.create(amount: 100, order: order, payment_method: gateway, source: card) }
+          .to change { order.reload.updated_at }
       end
     end
 
@@ -910,7 +909,7 @@ describe Spree::Payment, type: :model do
     end
 
     it "builds the payment's source" do
-      payment = Spree::Payment.new(params)
+      payment = Spree::Payment.new(params.merge(order: order))
       expect(payment).to be_valid
       expect(payment.source).not_to be_nil
     end
@@ -942,7 +941,7 @@ describe Spree::Payment, type: :model do
     end
 
     context 'existing card' do
-      let!(:credit_card) { create(:credit_card, number: '4111111111111112', user: order.user, payment_method: gateway, gateway_customer_profile_id: 'BGS-1234567890') }
+      let!(:credit_card) { create(:credit_card, number: '4111111111111112', customer: order.user, payment_method: gateway, gateway_customer_profile_id: 'BGS-1234567890') }
 
       let(:params) do
         {

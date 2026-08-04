@@ -102,7 +102,7 @@ module Spree
     ]
 
     @@classification_attributes = [
-      :position, :taxon_id, :product_id
+      :position, :category_id, :product_id
     ]
 
     @@cms_page_attributes = [:title, :meta_title, :content, :meta_description, :visible, :slug, :locale]
@@ -185,8 +185,8 @@ module Spree
 
     @@product_attributes = [
       :name, :description, :available_on, :make_active_at, :discontinue_on, :permalink, :meta_description,
-      :meta_keywords, :meta_title, :price, :sku, :deleted_at, :prototype_id,
-      :option_values_hash, :weight, :height, :width, :depth,
+      :meta_keywords, :meta_title, :price, :sku, :deleted_at,
+      :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
       :cost_currency, :cost_price, :compare_at_price,
       :slug, :track_inventory, :backorderable, :barcode, :status,

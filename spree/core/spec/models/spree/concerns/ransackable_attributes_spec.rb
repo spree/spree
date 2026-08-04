@@ -29,7 +29,7 @@ RSpec.describe Spree::RansackableAttributes do
 
   describe '.ransackable_associations' do
     it 'returns whitelisted associations' do
-      expect(Spree::Product.ransackable_associations).to include('taxons', 'variants')
+      expect(Spree::Product.ransackable_associations).to include('categories', 'variants')
     end
 
     it 'merges custom associations from Spree.ransack' do

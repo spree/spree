@@ -6,8 +6,8 @@ RSpec.describe Spree::Api::V3::Admin::Orders::StoreCreditsController, type: :con
   include_context 'API v3 Admin authenticated'
 
   let(:customer) { create(:user) }
-  let!(:order) { create(:order_with_line_items, store: store, user: customer) }
-  let!(:store_credit) { create(:store_credit, store: store, user: customer, amount: 50.00) }
+  let!(:order) { create(:order_with_line_items, store: store, customer: customer) }
+  let!(:store_credit) { create(:store_credit, store: store, customer: customer, amount: 50.00) }
   let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
 
   before { request.headers.merge!(headers) }
@@ -53,7 +53,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::StoreCreditsController, type: :con
     end
 
     context 'when the order has no customer' do
-      let!(:order) { create(:order_with_line_items, store: store, user: nil) }
+      let!(:order) { create(:order_with_line_items, store: store, customer: nil) }
 
       it 'returns 422 (no customer means no store credit)' do
         post :create, params: { order_id: order.prefixed_id }, as: :json
@@ -64,7 +64,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::StoreCreditsController, type: :con
 
     context 'when order belongs to a different store' do
       let!(:other_store) { create(:store) }
-      let!(:order) { create(:order_with_line_items, store: other_store, user: customer) }
+      let!(:order) { create(:order_with_line_items, store: other_store, customer: customer) }
 
       it 'returns 404' do
         post :create, params: { order_id: order.prefixed_id }, as: :json

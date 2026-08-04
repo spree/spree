@@ -70,13 +70,34 @@ module Spree
         order.currency
       end
 
-      def shipping_categories
-        Spree::ShippingCategory.joins(products: :variants_including_master).
-          where(spree_variants: { id: variant_ids }).distinct
+      # The fulfillment types every item in this package supports — the
+      # intersection across products (splitters keep packages homogeneous,
+      # so this is normally one product-type's set).
+      #
+      # @return [Array<String>]
+      def fulfillment_types
+        contents.map { |item| item.variant.product.fulfillment_types }.reduce(:&) || []
       end
 
+      # Delivery methods eligible to serve this package: the method's
+      # fulfillment_type must be supported by every item, minus any
+      # per-product exclusions. Replaces the ShippingCategory-based
+      # Package#shipping_methods.
+      #
+      # @return [ActiveRecord::Relation<Spree::DeliveryMethod>]
+      def eligible_delivery_methods
+        types = fulfillment_types
+        return Spree::DeliveryMethod.none if types.empty?
+
+        methods = Spree::DeliveryMethod.by_fulfillment_type(types)
+        excluded_ids = contents.flat_map { |item| item.variant.product.excluded_delivery_method_ids || [] }.uniq
+        excluded_ids.any? ? methods.where.not(id: excluded_ids) : methods
+      end
+
+      # @deprecated Use {#eligible_delivery_methods}; removed in 6.1.
       def shipping_methods
-        shipping_categories.includes(:shipping_methods).map(&:shipping_methods).reduce(:&).to_a
+        Spree::Deprecation.warn('Spree::Stock::Package#shipping_methods is deprecated and will be removed in Spree 6.1. Use #eligible_delivery_methods instead.')
+        eligible_delivery_methods.to_a
       end
 
       def inspect
@@ -89,12 +110,12 @@ module Spree
         # At this point we should only have one content item per inventory unit
         # across the entire set of inventory units to be shipped, which has been
         # taken care of by the Prioritizer
-        contents.each { |content_item| content_item.inventory_unit.state = content_item.state.to_s }
+        contents.each { |content_item| content_item.inventory_unit.status = content_item.state.to_s }
 
-        Spree::Shipment.new(
+        Spree::Fulfillment.new(
           stock_location: stock_location,
-          shipping_rates: shipping_rates,
-          inventory_units: contents.map(&:inventory_unit)
+          delivery_rates: shipping_rates,
+          fulfillment_items: contents.map(&:inventory_unit)
         )
       end
 

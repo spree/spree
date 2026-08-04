@@ -10,7 +10,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    belongs_to :customer, class_name: Spree.user_class.to_s, optional: true
+    belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
     belongs_to :payment_source, polymorphic: true, optional: true
 

@@ -8,11 +8,11 @@ RSpec.describe Spree::MarketCountry, type: :model do
 
       context 'when country is in a zone with a shipping method' do
         let(:country) { create(:country) }
-        let!(:zone) { create(:zone, kind: 'country') }
+        let!(:zone) { create(:delivery_zone) }
 
         before do
-          zone.zone_members.create!(zoneable: country)
-          create(:shipping_method, zones: [zone])
+          zone.members.create!(member_type: 'country', country: country)
+          create(:shipping_method, delivery_zones: [zone])
         end
 
         it 'is valid' do
@@ -24,6 +24,14 @@ RSpec.describe Spree::MarketCountry, type: :model do
       context 'when country has no shipping zone coverage' do
         let(:country) { create(:country) }
 
+        before do
+          market # instantiate first — the factory may add a worldwide method
+          # scope any worldwide methods (e.g. the market factory's) elsewhere
+          elsewhere = create(:delivery_zone)
+          elsewhere.members.create!(member_type: 'country', country: create(:country))
+          Spree::DeliveryMethod.find_each { |dm| dm.delivery_zones = [elsewhere] if dm.delivery_zones.empty? }
+        end
+
         it 'is invalid' do
           market_country = Spree::MarketCountry.new(market: market, country: country)
           expect(market_country).not_to be_valid
@@ -33,10 +41,14 @@ RSpec.describe Spree::MarketCountry, type: :model do
 
       context 'when country is in a zone without a shipping method' do
         let(:country) { create(:country) }
-        let!(:zone) { create(:zone, kind: 'country') }
+        let!(:zone) { create(:delivery_zone) }
 
         before do
-          zone.zone_members.create!(zoneable: country)
+          market # instantiate first — the factory may add a worldwide method
+          zone.members.create!(member_type: 'country', country: country)
+          elsewhere = create(:delivery_zone)
+          elsewhere.members.create!(member_type: 'country', country: create(:country))
+          Spree::DeliveryMethod.find_each { |dm| dm.delivery_zones = [elsewhere] if dm.delivery_zones.empty? }
         end
 
         it 'is invalid' do
@@ -49,11 +61,11 @@ RSpec.describe Spree::MarketCountry, type: :model do
       context 'when country is covered via a state-type zone' do
         let(:country) { create(:country) }
         let(:state) { create(:state, country: country) }
-        let!(:zone) { create(:zone, kind: 'state') }
+        let!(:zone) { create(:delivery_zone) }
 
         before do
-          zone.zone_members.create!(zoneable: state)
-          create(:shipping_method, zones: [zone])
+          zone.members.create!(member_type: 'state', state: state)
+          create(:shipping_method, delivery_zones: [zone])
         end
 
         it 'is valid' do

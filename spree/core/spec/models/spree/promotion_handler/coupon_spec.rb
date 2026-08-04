@@ -84,14 +84,14 @@ module Spree
                 subject.apply
                 expect(subject.success).to be_present
                 order.line_items.each do |line_item|
-                  expect(line_item.adjustments.count).to eq(1)
+                  expect(line_item.discounts.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
                 expect(order.reload.total).to eq(100)
               end
 
-              it 'calls update_with_updater!' do
-                expect(order).to receive(:update_with_updater!)
+              it 'calls recalculate_totals!' do
+                expect(order).to receive(:recalculate_totals!)
                 subject.apply
               end
 
@@ -112,7 +112,7 @@ module Spree
                 subject.apply
                 expect(subject.success).to be_present
                 order.line_items.each do |line_item|
-                  expect(line_item.adjustments.count).to eq(1)
+                  expect(line_item.discounts.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
                 expect(order.reload.total).to eq(100)
@@ -129,7 +129,7 @@ module Spree
               general_promo = create(:promotion, name: 'General Promo', store: order.store)
               Promotion::Actions::CreateItemAdjustments.create(promotion: general_promo, calculator: calculator) # general_action
 
-              Spree::Cart::AddItem.call(order: order, variant: create(:variant))
+              Spree::Orders::AddItem.call(order: order, variant: create(:variant))
             end
 
             # regression spec for #4515
@@ -153,7 +153,7 @@ module Spree
               subject.apply
               expect(subject.success).to be_present
 
-              expect(order.shipment_adjustments.count).to eq(1)
+              expect(order.fulfillment_discounts.count).to eq(1)
             end
 
             it 'coupon already applied to the order' do
@@ -169,20 +169,18 @@ module Spree
           let!(:action) { Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
           context 'right coupon given' do
-            let(:order) { create(:order, store: store) }
+            let(:order) { create(:order_with_line_items, store: store, line_items_count: 1) }
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
             before do
-              allow(order).to receive_messages(coupon_code: '10off',
-                                               # These need to be here so that promotion adjustment "wins"
-                                               item_total: 50,
-                                               ship_total: 10)
+              allow(order).to receive_messages(coupon_code: '10off')
             end
 
-            it 'successfully activates promo' do
+            it 'successfully activates promo and distributes the discount to line items' do
               subject.apply
               expect(subject.success).to be_present
-              expect(order.adjustments.count).to eq(1)
+              expect(order.discounts.count).to eq(1)
+              expect(order.discounts.sum(:amount)).to eq(-10)
             end
 
             it 'coupon already applied to the order' do
@@ -230,16 +228,16 @@ module Spree
           let!(:tax_category)  { create(:tax_category, name: 'Taxable Foo') }
           let!(:rate)          { create(:tax_rate, amount: 0.10, tax_category: tax_category, zone: zone) }
 
-          before { allow(order).to receive(:coupon_code).and_return '10off' }
 
           context 'and the product price is less than promo discount' do
             let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 9.0) }
 
-            before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master) } }
+            before { product_list.each { |item| Spree::Orders::AddItem.call(order: order, variant: item.default_variant) } }
 
             it 'successfully applies the promo' do
               # 3 * (9 + 0.9)
               expect(order.total).to eq(29.7)
+              order.coupon_code = '10off'
               subject.apply
               expect(subject.success).to be_present
               # 3 * ((9 - [9,10].min) + 0)
@@ -251,11 +249,12 @@ module Spree
           context 'and the product price is greater than promo discount' do
             let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 11.0) }
 
-            before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master, quantity: 2) } }
+            before { product_list.each { |item| Spree::Orders::AddItem.call(order: order, variant: item.default_variant, quantity: 2) } }
 
             it 'successfully applies the promo' do
               # 3 * (22 + 2.2)
               expect(order.total.to_f).to eq(72.6)
+              order.coupon_code = '10off'
               subject.apply
               expect(subject.success).to be_present
               # 3 * ( (22 - 10) + 1.2)
@@ -269,13 +268,13 @@ module Spree
             let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 10.0) }
 
             before do
-              allow(order).to receive(:coupon_code).and_return '20off'
-              product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master, quantity: 2) }
+              product_list.each { |item| Spree::Orders::AddItem.call(order: order, variant: item.default_variant, quantity: 2) }
             end
 
             it 'successfully applies the promo' do
               # 3 * ((2 * 10) + 2.0)
               expect(order.total.to_f).to eq(66)
+              order.coupon_code = '20off'
               subject.apply
               expect(subject.success).to be_present
               # 0
@@ -311,7 +310,7 @@ module Spree
         let(:calculator) { create(:flat_rate_calculator) }
         let(:flat_percent_calculator) { create(:flat_percent_item_total_calculator, preferred_flat_percent: 10) }
         let(:order) do
-          create(:order_with_line_items, line_items_count: 3, user: user, store: store)
+          create(:order_with_line_items, line_items_count: 3, customer: user, store: store)
         end
         let!(:promotion) { create(:promotion, name: 'promo', code: nil, multi_codes: true, number_of_codes: 1) }
         let!(:coupon_code) { promotion.coupon_codes.first }
@@ -329,7 +328,7 @@ module Spree
             expect(coupon_code.order).to eq(order)
 
             order.line_items.each do |line_item|
-              expect(line_item.adjustments.count).to eq(1)
+              expect(line_item.discounts.count).to eq(1)
             end
             expect(order.reload.total).to eq(100)
           end
@@ -370,7 +369,7 @@ module Spree
               expect(coupon_code.order).to be_nil
 
               expect(order.promotions).to be_empty
-              expect(order.line_item_adjustments).to be_empty
+              expect(order.line_item_discounts).to be_empty
             end
 
             it 'touches the promotion' do
@@ -383,7 +382,7 @@ module Spree
       context 'number of usages for' do
         let!(:user) { create(:user) }
         let(:calculator) { create(:flat_rate_calculator) }
-        let(:order) { create(:order_with_line_items, line_items_count: 3, user: user, store: store) }
+        let(:order) { create(:order_with_line_items, line_items_count: 3, customer: user, store: store) }
         subject { Spree::PromotionHandler::Coupon.new(order) }
 
         context 'one common promotion code' do
@@ -392,7 +391,7 @@ module Spree
             Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion,
                                                                     calculator: calculator)
           end
-          let!(:order_2) { create(:order_with_line_items, line_items_count: 3, user: user) }
+          let!(:order_2) { create(:order_with_line_items, line_items_count: 3, customer: user) }
           let!(:subject_2) { Spree::PromotionHandler::Coupon.new(order_2) }
 
           before do
@@ -410,7 +409,7 @@ module Spree
         end
 
         context 'one-time unique promotion codes' do
-          let!(:order_2) { create(:order_with_line_items, line_items_count: 3, user: user) }
+          let!(:order_2) { create(:order_with_line_items, line_items_count: 3, customer: user) }
           let!(:subject_2) { Spree::PromotionHandler::Coupon.new(order_2) }
           let!(:promotion) do
             create(

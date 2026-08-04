@@ -18,14 +18,14 @@ module Spree
     let!(:other_zone)  { create(:zone) }
     let!(:other_zone_member) { create(:zone_member, zone: other_zone, zoneable: other_country) }
     let!(:shipping_method) do
-      create(:shipping_method, zones: [zone, other_zone]).tap do |sm|
+      create(:shipping_method).tap do |sm|
         sm.calculator.preferred_amount = 5
         sm.calculator.save
       end
     end
     let!(:stock_location) { Spree::StockLocation.first || create(:stock_location, country: country, state: state) }
 
-    let(:order) { create(:order, user: user, store: store) }
+    let(:order) { create(:order, customer: user, store: store) }
 
     describe '#call' do
       subject { described_class.call(order: order, params: params) }
@@ -78,7 +78,7 @@ module Spree
       end
 
       context 'with item that fails (currency mismatch)' do
-        let(:order) { create(:order, user: user, store: store, currency: 'GBP') }
+        let(:order) { create(:order, customer: user, store: store, currency: 'GBP') }
         let(:params) do
           {
             email: 'gbp@example.com',
@@ -145,7 +145,7 @@ module Spree
         # Order seeded with a shipping address + line item + an initial shipment.
         let(:initial_address) { create(:address, country: country, state: state) }
         let(:order) do
-          o = create(:order, user: user, store: store, ship_address: initial_address)
+          o = create(:order, customer: user, store: store, ship_address: initial_address)
           described_class.call(order: o, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
           o.reload
         end
@@ -169,7 +169,7 @@ module Spree
             expect(order.line_items.find_by(variant: variant).quantity).to eq(3)
             expect(new_shipment_ids).not_to be_empty
             expect(new_shipment_ids & old_shipment_ids).to be_empty
-            expect(order.shipments.first.inventory_units.sum(:quantity)).to eq(3)
+            expect(order.fulfillments.first.inventory_units.sum(:quantity)).to eq(3)
             expect(order.shipment_total).to eq(5)
           end
         end
@@ -229,13 +229,13 @@ module Spree
       describe 'with an automatic free-shipping promotion' do
         let!(:promotion) { create(:free_shipping_promotion, kind: :automatic) }
         let(:initial_address) { create(:address, country: country, state: state) }
-        let(:order) { create(:order, user: user, store: store, ship_address: initial_address) }
+        let(:order) { create(:order, customer: user, store: store, ship_address: initial_address) }
 
         it 'applies the promo when items are added so delivery cost nets to zero' do
           described_class.call(order: order, params: { items: [{ variant_id: variant.prefixed_id, quantity: 1 }] })
 
           order.reload
-          shipment = order.shipments.first
+          shipment = order.fulfillments.first
           expect(shipment).to be_present
           expect(shipment.adjustment_total).to eq(-5)
           expect(order.shipping_discount).to eq(5)
@@ -259,7 +259,7 @@ module Spree
           })
 
           order.reload
-          expect(order.shipments.first.adjustment_total).to eq(-5)
+          expect(order.fulfillments.first.adjustment_total).to eq(-5)
           expect(order.shipping_discount).to eq(5)
           expect(order.total).to eq(order.item_total)
         end

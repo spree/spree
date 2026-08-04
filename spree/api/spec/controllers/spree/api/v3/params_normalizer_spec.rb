@@ -9,7 +9,7 @@ RSpec.describe Spree::Api::V3::ParamsNormalizer do
       public :resolve_prefixed_ids, :normalize_nested_attributes, :prefixed_id?, :decode_prefixed_id
 
       def model_class
-        Spree::Taxon
+        Spree::Collection
       end
     end
   end
@@ -86,15 +86,15 @@ RSpec.describe Spree::Api::V3::ParamsNormalizer do
   describe '#normalize_nested_attributes' do
     it 'converts flat nested keys to _attributes format' do
       hash = {
-        'name' => 'Categories',
-        'taxon_rules' => [{ 'type' => 'Spree::TaxonRule::IncludeTag', 'value' => 'sale' }]
+        'name' => 'On Sale',
+        'rules' => [{ 'type' => 'Spree::CollectionRules::Tag', 'value' => 'sale' }]
       }.with_indifferent_access
 
       result = controller.normalize_nested_attributes(hash)
 
-      expect(result).not_to have_key('taxon_rules')
-      expect(result['taxon_rules_attributes']).to eq([{ 'type' => 'Spree::TaxonRule::IncludeTag', 'value' => 'sale' }])
-      expect(result['name']).to eq('Categories')
+      expect(result).not_to have_key('rules')
+      expect(result['rules_attributes']).to eq([{ 'type' => 'Spree::CollectionRules::Tag', 'value' => 'sale' }])
+      expect(result['name']).to eq('On Sale')
     end
 
     it 'does not rename keys that already have _attributes suffix' do

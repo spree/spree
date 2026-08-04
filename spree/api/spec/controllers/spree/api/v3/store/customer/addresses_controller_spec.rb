@@ -7,7 +7,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
   let(:country) { create(:country) }
   let(:state) { create(:state, country: country) }
-  let!(:address) { create(:address, user: user, country: country, state: state) }
+  let!(:address) { create(:address, customer: user, country: country, state: state) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
     it 'only returns addresses belonging to the current user' do
       other_user = create(:user)
-      other_address = create(:address, user: other_user)
+      other_address = create(:address, customer: other_user)
 
       get :index
 
@@ -67,7 +67,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
     context 'when address belongs to another user' do
       let(:other_user) { create(:user) }
-      let(:other_address) { create(:address, user: other_user) }
+      let(:other_address) { create(:address, customer: other_user) }
 
       it 'returns not found' do
         get :show, params: { id: other_address.prefixed_id }
@@ -153,7 +153,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
     context 'when address belongs to another user' do
       let(:other_user) { create(:user) }
-      let(:other_address) { create(:address, user: other_user) }
+      let(:other_address) { create(:address, customer: other_user) }
 
       it 'returns not found' do
         patch :update, params: { id: other_address.prefixed_id, first_name: 'Hacker' }
@@ -317,13 +317,13 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       end
 
       context 'as the ship address' do
-        let!(:order) { create(:completed_order_with_totals, user: user, ship_address: address) }
+        let!(:order) { create(:completed_order_with_totals, customer: user, ship_address: address) }
 
         it_behaves_like 'soft-deletes the referenced address', :ship_address
       end
 
       context 'as the bill address' do
-        let!(:order) { create(:completed_order_with_totals, user: user, bill_address: address) }
+        let!(:order) { create(:completed_order_with_totals, customer: user, bill_address: address) }
 
         it_behaves_like 'soft-deletes the referenced address', :bill_address
       end
@@ -331,7 +331,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
     context 'when address belongs to another user' do
       let!(:other_user) { create(:user) }
-      let!(:other_address) { create(:address, user: other_user) }
+      let!(:other_address) { create(:address, customer: other_user) }
 
       it 'returns not found' do
         expect {

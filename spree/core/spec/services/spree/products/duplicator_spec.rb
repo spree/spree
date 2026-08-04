@@ -8,9 +8,9 @@ RSpec.describe Spree::Products::Duplicator do
   let!(:product) { create(:product, tag_list: ['tag1', 'tag2'], status: :active) }
 
   let(:filepath) { File.expand_path('../../../fixtures/thinking-cat.jpg', __dir__) }
-  let(:master_image_params) do
+  let(:default_variant_image_params) do
     {
-      viewable_id: product.master.id,
+      viewable_id: product.default_variant.id,
       viewable_type: 'Spree::Variant',
       alt: 'position 1',
       position: 1
@@ -19,12 +19,12 @@ RSpec.describe Spree::Products::Duplicator do
 
   before do
     file = File.open(filepath)
-    new_image = Spree::Image.new(master_image_params)
+    new_image = Spree::Image.new(default_variant_image_params)
     new_image.attachment.attach(io: file, filename: File.basename(file))
     new_image.save!
 
-    product.master.update!(barcode: '1234567890')
-    product.master.stock_items.last.update!(count_on_hand: 100, backorderable: true)
+    product.default_variant.update!(barcode: '1234567890')
+    product.default_variant.stock_items.last.update!(count_on_hand: 100, backorderable: true)
   end
 
   it { is_expected.to be_success }
@@ -77,8 +77,8 @@ RSpec.describe Spree::Products::Duplicator do
     end
 
     it 'clones backorderable and sets stock to 0' do
-      expect(new_product.master).to be_backorderable
-      expect(new_product.master.total_on_hand).to eq(0)
+      expect(new_product.default_variant).to be_backorderable
+      expect(new_product.default_variant.total_on_hand).to eq(0)
     end
   end
 
@@ -86,18 +86,18 @@ RSpec.describe Spree::Products::Duplicator do
     let(:new_product) { duplicate.value }
 
     before do
-      product.master.set_price('USD', 10.99, 11.99)
-      product.master.set_price('GBP', 8.99, 9.99)
+      product.default_variant.set_price('USD', 10.99, 11.99)
+      product.default_variant.set_price('GBP', 8.99, 9.99)
     end
 
     it 'clones prices' do
       expect(duplicate).to be_success
 
-      usd_price = new_product.master.price_in('USD')
+      usd_price = new_product.default_variant.price_in('USD')
       expect(usd_price.amount).to eq(10.99)
       expect(usd_price.compare_at_amount).to eq(11.99)
 
-      gbp_price = new_product.master.price_in('GBP')
+      gbp_price = new_product.default_variant.price_in('GBP')
       expect(gbp_price.amount).to eq(8.99)
       expect(gbp_price.compare_at_amount).to eq(9.99)
     end
@@ -125,7 +125,7 @@ RSpec.describe Spree::Products::Duplicator do
     end
 
     it 'duplicates the variants' do
-      # will change the count by 3, since there will be a master variant as well
+      # will change the count by 3, since there will be a default variant as well
       expect { duplicate }.to change { Spree::Variant.count }.by(3)
     end
 
@@ -134,7 +134,7 @@ RSpec.describe Spree::Products::Duplicator do
     end
 
     it 'clones barcodes' do
-      expect(new_product.variants.pluck(:barcode)).to contain_exactly('v1-123', 'v2-456')
+      expect(new_product.variants.pluck(:barcode)).to contain_exactly('1234567890', 'v1-123', 'v2-456')
     end
 
     it 'clones backorderable and sets stock to 0' do

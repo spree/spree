@@ -1,0 +1,171 @@
+# Spree 5.6 → 6.0 upgrade manifest.
+#
+# Lists ONLY the version-specific rake tasks that perform data backfills.
+# Universal upgrade steps (bundle update, db:migrate, scheduling cron jobs,
+# reviewing breaking changes) are NOT in this file:
+#
+#   - `bundle update` + `db:migrate` are handled by your deploy pipeline
+#     (Heroku release phase, K8s init container, Render auto-migrate,
+#     Capistrano deploy hook, etc.) and by the @spree/cli's `spree upgrade`
+#     wrapper for local development.
+#   - Cron scheduling, optional tunings, and human-readable behavior changes
+#     live in the upgrade doc at docs/developer/upgrades/5.6-to-6.0.mdx.
+#
+# This manifest is the machine-runnable shape — what `bin/rake spree:upgrade`
+# (in production) and `spree upgrade` (in dev) execute. Every step must be a
+# rake task and must be idempotent. Re-running the full manifest is safe.
+---
+from: "5.6"
+to: "6.0"
+docs: "https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0"
+
+steps:
+  - id: remove_master_variant
+    name: "Migrate products off the master variant"
+    task: "spree:remove_master_variant"
+    notes: |
+      Backfills spree_products.default_variant_id and retires the hidden master
+      variant: simple products' masters become regular variants, ghost masters
+      on products with variants are deleted (or kept as regular variants when
+      they still carry line items), and variant_count is recomputed to the real
+      count. Until this runs, products have a NULL default_variant_id.
+
+      Run spree:media:migrate_master_images_to_product_media first and let its
+      jobs finish, so no master-pinned media is lost when ghost masters are
+      deleted.
+
+  - id: migrate_taxons_to_categories_and_collections
+    name: "Migrate taxons to categories and collections"
+    task: "spree:migrate_taxons_to_categories_and_collections"
+    notes: |
+      Migrates rule-based (automatic) taxons into Spree::Collection — copying
+      their rules, product membership and translations, and moving the ActionText
+      description, images, custom fields and slugs onto the new collection — then
+      deletes the migrated automatic taxon. Manual taxons stay as categories.
+
+      Severs the taxonomy structure: backfills store_id from the taxonomy, drops
+      taxonomy roots left childless, and nulls taxonomy_id on the survivors
+      (categories are store-owned in 6.0). Finally backfills the renamed
+      class-name strings ('Spree::Taxon*' -> 'Spree::Category*') across the
+      metafield, attachment, ActionText, friendly_id slug and promotion-rule
+      columns.
+
+      Idempotent. Multi-tenant installs run the per-tenant override shipped by
+      spree_multi_tenant.
+
+  - id: migrate_users_to_customers
+    name: "Move users onto the gem-owned Customer/AdminUser models"
+    task: "spree:upgrade:migrate_users_to_customers"
+    notes: |
+      Copies the legacy Devise user table (default spree_users) into
+      spree_customers, preserving ids so the renamed customer_id foreign keys
+      still resolve and mapping encrypted_password -> password_digest, then
+      re-points every polymorphic reference that named the old customer class
+      (default Spree::User) to Spree::Customer — the user_type columns plus
+      customer_type on customer-group memberships — and backfills password_digest
+      on spree_admin_users.
+
+      Precondition: NO Devise pepper. encrypted_password is a plain bcrypt digest
+      that has_secure_password reads directly only when unpeppered; the task
+      aborts if Devise.pepper is set. Because Devise is gone in 6.0 a former
+      pepper can't be introspected, so when Devise is absent the task aborts until
+      you confirm none was used with CONFIRM_NO_PEPPER=true. Peppered / SSO /
+      non-bcrypt installs keep a custom customer_class instead (see the 5.6-to-6.0
+      upgrade guide) and skip this step.
+
+      Source rows with a blank email, or whose email is already owned by a
+      different customer, abort the task with their ids — reconcile them or pass
+      SKIP_INVALID_ROWS=true to skip and continue.
+
+      Idempotent. The source table is left in place as a safety net — drop it
+      manually once the migration is verified. Override the source with
+      SOURCE_USER_TABLE / SOURCE_USER_TYPE and batch size with BATCH_SIZE.
+
+  - id: migrate_shipping_to_delivery
+    name: "Backfill fulfillment & delivery naming"
+    task: "spree:migrate_shipping_to_delivery"
+    notes: |
+      Rewrites stored 'Spree::Shipment' class-name strings (state changes,
+      stock movements, legacy adjustments), renames the terminal fulfillment
+      status 'shipped' -> 'fulfilled', backfills fulfillment_type and the
+      fulfillment provider on delivery methods (DigitalDelivery calculators
+      become digital + the Digital provider) and copies the type onto existing
+      fulfillments, assigns the Digital product type to products in
+      digital-only shipping categories, and converts display_on into the
+      storefront_visible boolean. Idempotent.
+
+  - id: migrate_zones_to_delivery_zones
+    name: "Convert delivery zones"
+    task: "spree:migrate_zones_to_delivery_zones"
+    notes: |
+      Converts legacy Spree::Zone rows referenced by delivery methods into
+      Spree::DeliveryZone records with typed country/state members and
+      re-points the join rows. Run immediately after db:migrate, before
+      creating new delivery zones, so unmigrated ids stay unambiguous.
+      Tax-scoped zones are left for the tax-provider migration; unreferenced
+      shipping zones are logged and skipped. Idempotent via a
+      migrated_from_zone_id marker.
+
+  - id: migrate_adjustments_to_typed_rows
+    name: "Convert adjustments to typed rows"
+    task: "spree:migrate_adjustments_to_typed_rows"
+    notes: |
+      Converts legacy spree_adjustments into TaxLine / Discount / Fee rows:
+      tax-rate rows become tax lines with rate snapshots, eligible promotion
+      rows become discounts (order-level amounts distributed across line items
+      largest-remainder), sourceless rows map by sign to manual discounts or
+      surcharges, and unknown sources become fees with provenance metadata.
+      Order totals are never modified; per-order reconciliation freezes and
+      logs any order whose typed sums don't match its stored totals.
+      ReturnAuthorization adjustments freeze the order for the returns
+      migration. spree_adjustments stays intact as the rollback source.
+      Idempotent — orders that already have typed rows are skipped.
+
+  - id: backfill_delivery_and_stock_store_ids
+    name: "Bind delivery methods and stock locations to the default store"
+    task: "spree:backfill_delivery_and_stock_store_ids"
+    notes: |
+      Delivery methods and stock locations carry a store_id in Spree 6.
+      Unassigned rows go to the default store; additional stores manage
+      their own records afterwards. The NOT NULL constraints land in 6.1.
+      Idempotent.
+
+  - id: backfill_order_markets
+    name: "Backfill order markets"
+    task: "spree:backfill_order_markets"
+    notes: |
+      Market is mandatory in Spree 6. Assigns the store's default market to
+      orders that predate markets. Channel needs no step here — the 5.4→5.5
+      manifest's channels step already backfills channel_id on every upgrade
+      path. Run before the cart conversion so converted carts inherit
+      resolved values. The NOT NULL constraints on spree_orders land in 6.1.
+      Idempotent.
+
+  - id: migrate_incomplete_orders_to_carts
+    name: "Convert incomplete orders to carts"
+    task: "spree:migrate_incomplete_orders_to_carts"
+    notes: |
+      The final flip: every order that never completed nor canceled becomes a
+      Spree::Cart with the same token, binding, addresses and totals. Line
+      items, payments, payment sessions, reservations, coupon codes, applied
+      promotions and typed adjustment rows are re-owned onto the cart and the
+      hollow order row is deleted. Orders holding payment sessions convert
+      last. Completed and canceled orders are untouched. Run AFTER
+      migrate_adjustments_to_typed_rows so the typed rows exist to re-own.
+
+  - id: migrate_calculator_bounds_to_delivery_method_rules
+    name: "Convert calculator eligibility bounds to delivery method rules"
+    task: "spree:migrate_calculator_bounds_to_delivery_method_rules"
+    notes: |
+      Folds the FlatRate calculator's min/max item-total and weight
+      preferences into DeliveryMethodRule rows (eligibility separated from
+      pricing — see 6.0-delivery-method-rules.md) and clears the migrated
+      preferences so they aren't double-enforced. Run after
+      migrate_shipping_to_delivery. Idempotent.
+
+  - id: product_types_backfill
+    name: "Backfill product type store ownership"
+    task: "spree:product_types:backfill"
+    notes: |
+      Assigns store-less product types to the default store, removes orphaned
+      option-type joins, and resets product counters. Idempotent.

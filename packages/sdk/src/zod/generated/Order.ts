@@ -1,7 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AddressSchema } from './Address';
-import { DiscountSchema } from './Discount';
+import { AppliedPromotionSchema } from './AppliedPromotion';
 import { FulfillmentSchema } from './Fulfillment';
 import { GiftCardSchema } from './GiftCard';
 import { LineItemSchema } from './LineItem';
@@ -11,6 +11,7 @@ import { PaymentSchema } from './Payment';
 export const OrderSchema = z.object({
   id: z.string(),
   market_id: z.string().nullable(),
+  cart_id: z.string().nullable(),
   channel_id: z.string().nullable(),
   number: z.string(),
   email: z.string(),
@@ -18,6 +19,7 @@ export const OrderSchema = z.object({
   currency: z.string(),
   locale: z.string().nullable(),
   total_quantity: z.number(),
+  coupon_code: z.string().nullable(),
   fulfillment_status: z.string().nullable(),
   payment_status: z.string().nullable(),
   completed_at: z.string().nullable(),
@@ -44,7 +46,7 @@ export const OrderSchema = z.object({
   store_credit_total: z.string().nullable(),
   display_store_credit_total: z.string().nullable(),
   covered_by_store_credit: z.boolean(),
-  discounts: z.array(DiscountSchema),
+  discounts: z.array(AppliedPromotionSchema),
   items: z.array(LineItemSchema),
   fulfillments: z.array(FulfillmentSchema),
   payments: z.array(PaymentSchema),

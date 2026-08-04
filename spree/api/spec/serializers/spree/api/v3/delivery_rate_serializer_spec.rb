@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::DeliveryRateSerializer do
     end
 
     it 'returns prefixed delivery_method_id' do
-      expect(subject['delivery_method_id']).to eq(shipping_rate.shipping_method.prefixed_id)
+      expect(subject['delivery_method_id']).to eq(shipping_rate.delivery_method.prefixed_id)
     end
   end
 

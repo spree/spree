@@ -10,7 +10,7 @@ module Spree
       }
     end
 
-    let(:subscriber) { create(:newsletter_subscriber, :unverified, user: user) }
+    let(:subscriber) { create(:newsletter_subscriber, :unverified, customer: user) }
 
     around do |example|
       Timecop.freeze('2137-01-01') { example.run }

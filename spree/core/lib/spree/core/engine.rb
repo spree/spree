@@ -10,7 +10,12 @@ module Spree
                                :dependencies,
                                :payment_methods,
                                :adjusters,
+                               :tax_provider,
+                               :password_validator,
+                               :fulfillment_providers,
+                               :fulfillment_types,
                                :stock_splitters,
+                               :delivery_method_rules,
                                :order_routing,
                                :promotions,
                                :pricing,
@@ -19,6 +24,8 @@ module Spree
                                :export_types,
                                :import_types,
                                :taxon_rules,
+                               :collection_rules,
+                               :time_based_collection_rules,
                                :themes,
                                :theme_layout_sections,
                                :pages,
@@ -107,6 +114,12 @@ module Spree
         app.config.spree.order_routing.rules = []
       end
 
+      # Seeded early for the same reason as order routing: initializer files
+      # append custom rule kinds. Core defaults concatenate in after_initialize.
+      initializer 'spree.register.delivery_method_rules', before: :load_config_initializers do |app|
+        app.config.spree.delivery_method_rules = []
+      end
+
       initializer 'spree.register.metafields' do |app|
         app.config.spree.metafields = MetafieldsEnvironment.new
         app.config.spree.metafields.types = []
@@ -130,8 +143,8 @@ module Spree
       end
 
       # Promotion rules need to be evaluated on after initialize otherwise
-      # Spree.user_class would be nil and users might experience errors related
-      # to malformed model associations (Spree.user_class is only defined on
+      # Spree.customer_class would be nil and users might experience errors related
+      # to malformed model associations (Spree.customer_class is only defined on
       # the app initializer)
       config.after_initialize do
         Rails.application.config.spree.calculators.shipping_methods = [
@@ -143,14 +156,9 @@ module Spree
           Spree::Calculator::Shipping::DigitalDelivery,
         ]
 
-        Rails.application.config.spree.calculators.tax_rates = [
-          Spree::Calculator::DefaultTax
-        ]
-
         Rails.application.config.spree.stock_splitters = [
-          Spree::Stock::Splitter::ShippingCategory,
-          Spree::Stock::Splitter::Backordered,
-          Spree::Stock::Splitter::Digital
+          Spree::Stock::Splitter::FulfillmentType,
+          Spree::Stock::Splitter::Backordered
         ]
 
         Rails.application.config.spree.payment_methods = [
@@ -161,9 +169,26 @@ module Spree
         ]
 
         Rails.application.config.spree.adjusters = [
-          Spree::Adjustable::Adjuster::Promotion,
-          Spree::Adjustable::Adjuster::Tax
+          Spree::Adjusters::Promotion
         ]
+
+        # The sanctioned TaxLine writer (see docs/plans/6.0-tax-provider.md).
+        Rails.application.config.spree.tax_provider = Spree::TaxProvider::Internal
+
+        # Password policy for the default auth models. Swap for corporate rules,
+        # breach-list lookups or entropy scoring.
+        Rails.application.config.spree.password_validator = Spree::PasswordLengthValidator
+
+        Rails.application.config.spree.fulfillment_providers = [
+          Spree::FulfillmentProvider::Manual,
+          Spree::FulfillmentProvider::Digital,
+          Spree::FulfillmentProvider::Pickup,
+          Spree::FulfillmentProvider::PickupPoint
+        ]
+
+        # Open strings, no inclusion validation — extensions append their own
+        # (e.g. 'same_day_courier').
+        Rails.application.config.spree.fulfillment_types = %w[shipping pickup pickup_point digital local_delivery]
 
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
@@ -180,6 +205,12 @@ module Spree
           Spree::OrderRouting::Rules::PreferredLocation,
           Spree::OrderRouting::Rules::MinimizeSplits,
           Spree::OrderRouting::Rules::DefaultLocation
+        ]
+
+        # Delivery-method eligibility rule kinds (docs/plans/6.0-delivery-method-rules.md).
+        Rails.application.config.spree.delivery_method_rules.concat [
+          Spree::DeliveryMethodRules::ItemTotalRule,
+          Spree::DeliveryMethodRules::WeightRule
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [
@@ -208,7 +239,7 @@ module Spree
           Spree::Promotion::Rules::FirstOrder,
           Spree::Promotion::Rules::UserLoggedIn,
           Spree::Promotion::Rules::OneUsePerUser,
-          Spree::Promotion::Rules::Taxon,
+          Spree::Promotion::Rules::Category,
           Spree::Promotion::Rules::OptionValue,
         ]
 
@@ -260,6 +291,21 @@ module Spree
           Spree::TaxonRules::Sale,
         ]
 
+        # Mirrors config.spree.taxon_rules above. AvailableOn ships with an interim
+        # legacy-column implementation; its channel-aware rewrite is a later phase
+        # (see docs/plans/6.0-replace-taxons-with-categories.md → Migration Phase 5).
+        Rails.application.config.spree.collection_rules = [
+          Spree::CollectionRules::Tag,
+          Spree::CollectionRules::AvailableOn,
+          Spree::CollectionRules::Sale,
+        ]
+
+        # Net-new (no taxon_rules equivalent — taxons ship no scheduled refresh).
+        # Drives Spree::Collections::RegenerateTimeBasedJob.
+        Rails.application.config.spree.time_based_collection_rules = [
+          Spree::CollectionRules::AvailableOn,
+        ]
+
         Rails.application.config.spree.reports = [
           Spree::Reports::ProductsPerformance,
           Spree::Reports::SalesTotal
@@ -269,7 +315,9 @@ module Spree
           Spree::OptionType,
           Spree::OptionValue,
           Spree::Product,
-          Spree::Taxon,
+          Spree::ProductType,
+          Spree::Collection,
+          Spree::Category,
           Spree::Taxonomy,
           Spree::Store,
           Spree::Policy
@@ -284,7 +332,7 @@ module Spree
         Rails.application.config.spree.taggable_types = [
           'Spree::Product',
           'Spree::Order',
-          Spree.user_class.to_s
+          Spree.customer_class.to_s
         ]
 
         Rails.application.config.spree.metafields.types = [
@@ -299,6 +347,7 @@ module Spree
         Rails.application.config.spree.metafields.enabled_resources = [
           Spree::Address,
           Spree::Asset,
+          Spree::Collection,
           Spree::CreditCard,
           Spree::CustomerReturn,
           Spree::GiftCard,
@@ -312,19 +361,20 @@ module Spree
           Spree::PaymentMethod,
           Spree::PaymentSource,
           Spree::Product,
+          Spree::ProductType,
           Spree::Promotion,
           Spree::Refund,
-          Spree::Shipment,
-          Spree::ShippingMethod,
+          Spree::Fulfillment,
+          Spree::DeliveryMethod,
           Spree::StockItem,
           Spree::StockTransfer,
           Spree::Store,
           Spree::StoreCredit,
           Spree::TaxRate,
-          Spree::Taxon,
+          Spree::Category,
           Spree::Taxonomy,
           Spree::Variant,
-          Spree.user_class
+          Spree.customer_class
         ]
 
         Rails.application.config.spree.analytics_events = {
@@ -365,6 +415,7 @@ module Spree
         # Note: Spree::EventLogSubscriber is attached in to_prepare (below) so it
         # survives Zeitwerk code reloads in development.
         Spree.subscribers.concat [
+          Spree::OrderPlacedSubscriber,
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
@@ -403,22 +454,6 @@ module Spree
         end
       end
 
-      initializer 'spree.core.assets' do |app|
-        if app.config.respond_to?(:assets)
-          app.config.assets.paths << root.join('app/javascript')
-          app.config.assets.paths << root.join('vendor/javascript')
-          app.config.assets.precompile += %w[spree_core_manifest]
-        end
-      end
-
-      initializer 'spree.core.importmap', before: 'importmap' do |app|
-        if app.config.respond_to?(:importmap)
-          app.config.importmap.paths << root.join('config/importmap.rb')
-          # https://github.com/rails/importmap-rails?tab=readme-ov-file#sweeping-the-cache-in-development-and-test
-          app.config.importmap.cache_sweepers << root.join('app/javascript')
-        end
-      end
-
       # Activate event subscribers after all engines have registered their subscribers
       # This registers an after_initialize callback late, ensuring it runs after all engine callbacks
       # Needed for console, jobs, and other contexts where to_prepare doesn't run
@@ -426,6 +461,14 @@ module Spree
         app.config.after_initialize do
           Spree::Events.activate!
         end
+      end
+
+      # The one eligibility rule core ships: a per-market return window,
+      # bypassed by staff. Registered after application initializers so a
+      # store can unregister it in its own initializer.
+      initializer 'spree.returns.register_eligibility_validator', after: :load_config_initializers do
+        Spree.hooks.register('returns.create.validate', 'Spree::Returns::EligibilityValidator')
+        Spree.hooks.register('exchanges.create.validate', 'Spree::Returns::EligibilityValidator')
       end
 
       config.to_prepare do

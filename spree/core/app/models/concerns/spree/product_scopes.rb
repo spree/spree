@@ -18,20 +18,8 @@ module Spree
       scope :ascend_by_name, -> { order("#{Product.quoted_table_name}.name ASC") }
       scope :descend_by_name, -> { order("#{Product.quoted_table_name}.name DESC") }
 
-      # Deprecated — master variant being removed in 6.0. Use ascend_by_price / descend_by_price instead.
-      def self.ascend_by_master_price
-        Spree::Deprecation.warn('ascend_by_master_price is deprecated and will be removed in Spree 6.0. Use ascend_by_price instead.')
-        order(price_table_name => { amount: :asc })
-      end
-
-      # Deprecated — master variant being removed in 6.0. Use ascend_by_price / descend_by_price instead.
-      def self.descend_by_master_price
-        Spree::Deprecation.warn('descend_by_master_price is deprecated and will be removed in Spree 6.0. Use descend_by_price instead.')
-        order(price_table_name => { amount: :desc })
-      end
-
       # Price sorting scopes that use a derived table JOIN to get prices across all variants.
-      # These ensure products with only variant prices (no master price) are included in results.
+      # These ensure products are matched on any of their variants' prices.
       #
       # Uses Arel::Nodes::As for select expressions so that:
       # - PG allows ORDER BY with DISTINCT (expressions must appear in SELECT list)
@@ -67,18 +55,6 @@ module Spree
       scope :price_between, ->(low, high) {
         where(Price.table_name => { amount: low..high })
       }
-
-      # Deprecated — master variant being removed in 6.0. Use price_lte / price_gte instead.
-      def self.master_price_lte(price)
-        Spree::Deprecation.warn('master_price_lte is deprecated and will be removed in Spree 6.0. Use price_lte instead.')
-        where(Price.table_name => { amount: ..price })
-      end
-
-      # Deprecated — master variant being removed in 6.0. Use price_lte / price_gte instead.
-      def self.master_price_gte(price)
-        Spree::Deprecation.warn('master_price_gte is deprecated and will be removed in Spree 6.0. Use price_gte instead.')
-        where(Price.table_name => { amount: price.. })
-      end
 
       # Joins spree_variants and spree_stock_items directly (without association
       # aliases) so that the table names stay as-is. This avoids alias conflicts
@@ -143,14 +119,14 @@ module Spree
       #
       #   Spree::Product.in_taxon(taxon).count(distinct: true)
       scope :in_taxon, ->(taxon) {
-        joins(:classifications).
-          where("#{Classification.table_name}.taxon_id" => taxon.cached_self_and_descendants_ids).distinct
+        joins(:product_categories).
+          where("#{Spree::ProductCategory.table_name}.category_id" => taxon.cached_self_and_descendants_ids).distinct
       }
 
       # Products in a category AND all its descendants.
       # Accepts a Category record or a prefixed ID string (e.g. 'ctg_xxx').
       def self.in_category(category_or_id)
-        category = category_or_id.is_a?(String) ? Spree::Taxon.find_by_prefix_id(category_or_id) : category_or_id
+        category = category_or_id.is_a?(String) ? Spree::Category.find_by_prefix_id(category_or_id) : category_or_id
         return none unless category
 
         in_taxon(category)
@@ -164,28 +140,30 @@ module Spree
 
         ids, records = categories_or_ids.partition { |c| c.is_a?(String) }
         if ids.any?
-          decoded = ids.filter_map { |id| Spree::Taxon.decode_prefixed_id(id) }
-          records += Spree::Taxon.where(id: decoded).to_a if decoded.any?
+          decoded = ids.filter_map { |id| Spree::Category.decode_prefixed_id(id) }
+          records += Spree::Category.where(id: decoded).to_a if decoded.any?
         end
         return none if records.empty?
 
         taxon_ids = records.flat_map(&:cached_self_and_descendants_ids).uniq
 
-        joins(:classifications).where(Classification.table_name => { taxon_id: taxon_ids }).distinct
+        joins(:product_categories).where(Spree::ProductCategory.table_name => { category_id: taxon_ids }).distinct
       end
 
-      # Deprecated — remove in 6.0. Use in_taxon instead.
-      def self.in_taxons(*taxons)
-        Spree::Deprecation.warn('in_taxons is deprecated and will be removed in Spree 6.0. Use in_taxon instead.')
-        taxons = get_taxons(taxons)
-        taxons.first ? prepare_taxon_conditions(taxons) : where(nil)
+      # Products in a collection (flat — collections have no hierarchy).
+      # Accepts a Collection record or a prefixed ID string (e.g. 'coll_xxx').
+      def self.in_collection(collection_or_id)
+        collection = collection_or_id.is_a?(String) ? Spree::Collection.find_by_prefix_id(collection_or_id) : collection_or_id
+        return none unless collection
+
+        joins(:product_collections).where(Spree::ProductCollection.table_name => { collection_id: collection.id }).distinct
       end
 
       scope :ascend_by_taxons_min_position, ->(taxon_ids) {
-        min_position_sql = "MIN(#{Classification.table_name}.position)"
+        min_position_sql = "MIN(#{Spree::ProductCategory.table_name}.position)"
 
-        joins(:classifications).
-          where(Classification.table_name => { taxon_id: taxon_ids }).
+        joins(:product_categories).
+          where(Spree::ProductCategory.table_name => { category_id: taxon_ids }).
           select("#{Product.table_name}.*", "#{min_position_sql} AS min_taxon_position").
           group("#{Product.table_name}.id").
           order(Arel.sql("#{min_position_sql} ASC"))
@@ -295,7 +273,7 @@ module Spree
       end
 
       def self.with_currency(currency)
-        joins(variants_including_master: :prices).
+        joins(variants: :prices).
           where(Price.table_name => { currency: currency.upcase }).
           where.not(Price.table_name => { amount: nil }).
           distinct
@@ -357,14 +335,6 @@ module Spree
         available(nil, currency)
       end
 
-      # Deprecated — remove in 6.0. Use active(currency).in_taxon(taxon) directly.
-      def self.for_filters(currency, taxon: nil)
-        Spree::Deprecation.warn('for_filters is deprecated and will be removed in Spree 6.0. Use active(currency).in_taxon(taxon) instead.')
-        scope = active(currency)
-        scope = scope.in_taxon(taxon) if taxon.present?
-        scope
-      end
-
       # Deprecated — remove in 6.0. Not used internally.
       def self.for_user(user = nil)
         Spree::Deprecation.warn('for_user is deprecated and will be removed in Spree 6.0.')
@@ -373,12 +343,6 @@ module Spree
         else
           not_deleted.where(status: 'active')
         end
-      end
-
-      # Deprecated — remove in 6.0. Not used internally.
-      def self.taxons_name_eq(name)
-        Spree::Deprecation.warn('taxons_name_eq is deprecated and will be removed in Spree 6.0.')
-        group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
       end
 
       # Orders products by best-selling metrics (+units_sold_count+, +revenue+)
@@ -399,26 +363,6 @@ module Spree
           order(revenue_expr.send(order_dir))
       }
 
-      # Deprecated — remove in 6.0. Use by_best_selling instead.
-      def self.descend_by_popularity
-        Spree::Deprecation.warn('descend_by_popularity is deprecated and will be removed in Spree 6.0. Use by_best_selling instead.')
-        joins(:master).
-          order(%Q{
-             COALESCE((
-               SELECT
-                 COUNT(#{LineItem.quoted_table_name}.id)
-               FROM
-                 #{LineItem.quoted_table_name}
-               JOIN
-                 #{Variant.quoted_table_name} AS popular_variants
-               ON
-                 popular_variants.id = #{LineItem.quoted_table_name}.variant_id
-               WHERE
-                 popular_variants.product_id = #{Product.quoted_table_name}.id
-             ), 0) DESC
-          })
-      end
-
       # .search_by_name — simple ILIKE on product name
       def self.search_by_name(query)
         i18n { name.lower.matches("%#{query.downcase}%") }
@@ -429,13 +373,6 @@ module Spree
       end
       private_class_method :price_table_name
 
-      # specifically avoid having an order for taxon search (conflicts with main order)
-      def self.prepare_taxon_conditions(taxons)
-        ids = taxons.map(&:cached_self_and_descendants_ids).flatten.uniq
-        joins(:classifications).where(Classification.table_name => { taxon_id: ids })
-      end
-      private_class_method :prepare_taxon_conditions
-
       # Produce an array of keywords for use in scopes.
       # Always return array with at least an empty string to avoid SQL errors
       def self.prepare_words(words)
@@ -445,20 +382,6 @@ module Spree
         a.any? ? a : ['']
       end
       private_class_method :prepare_words
-
-      def self.get_taxons(*ids_or_records_or_names)
-        ids_or_records_or_names.flatten.map do |t|
-          case t
-          when ApplicationRecord then t
-          else
-            Taxon.where(name: t).
-              or(Taxon.where(Taxon.arel_table[:id].eq(t))).
-              or(Taxon.where(Taxon.arel_table[:permalink].matches("%/#{t}/"))).
-              or(Taxon.where(Taxon.arel_table[:permalink].matches("#{t}/"))).first
-          end
-        end.compact.flatten.uniq
-      end
-      private_class_method :get_taxons
     end
   end
 end

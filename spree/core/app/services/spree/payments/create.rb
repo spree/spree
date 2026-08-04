@@ -14,7 +14,7 @@ module Spree
       protected
 
       def prepare_payment_attributes(order:, params:)
-        payment_method = order.collect_frontend_payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
+        payment_method = order.payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
 
         payment_attributes = {
           amount: params[:amount] || order.order_total_after_store_credit,
@@ -30,15 +30,15 @@ module Spree
         payment_method = payment_attributes[:payment_method]
 
         if payment_method&.source_required?
-          if order.user.present? && params[:source_id].present?
-            source = payment_method.payment_source_class.find_by(id: params[:source_id], user: order.user)
+          if order.customer.present? && params[:source_id].present?
+            source = payment_method.payment_source_class.find_by(id: params[:source_id], customer: order.customer)
 
             return failure(nil, :source_not_found) if source.nil?
           else
             result = Wallet::CreatePaymentSource.call(
               payment_method: payment_method,
               params: params.delete(:source_attributes),
-              user: order.user
+              user: order.customer
             )
 
             return failure(nil, result.error.value) if result.failure?

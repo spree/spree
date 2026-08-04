@@ -6,14 +6,14 @@ RSpec.describe Spree::ProductMetricsSubscriber do
   include ActiveJob::TestHelper
 
   describe '.subscription_patterns' do
-    it 'subscribes to order.completed event' do
-      expect(described_class.subscription_patterns).to include('order.completed')
+    it 'subscribes to order.placed event' do
+      expect(described_class.subscription_patterns).to include('order.placed')
     end
   end
 
   describe '.event_handlers' do
-    it 'routes order.completed to refresh_product_metrics' do
-      expect(described_class.event_handlers['order.completed']).to eq(:refresh_product_metrics)
+    it 'routes order.placed to refresh_product_metrics' do
+      expect(described_class.event_handlers['order.placed']).to eq(:refresh_product_metrics)
     end
   end
 
@@ -25,14 +25,14 @@ RSpec.describe Spree::ProductMetricsSubscriber do
 
     let(:order) do
       create(:completed_order_with_totals, store: store).tap do |o|
-        o.line_items.first.update!(product: product_1, variant: product_1.master)
-        create(:line_item, order: o, product: product_2, variant: product_2.master)
+        o.line_items.first.update!(product: product_1, variant: product_1.default_variant)
+        create(:line_item, order: o, product: product_2, variant: product_2.default_variant)
       end
     end
 
     let(:event) do
       Spree::Event.new(
-        name: 'order.completed',
+        name: 'order.placed',
         payload: { 'id' => order.id, 'store_id' => store.id }
       )
     end
@@ -53,7 +53,7 @@ RSpec.describe Spree::ProductMetricsSubscriber do
     context 'when order_id is missing' do
       let(:event) do
         Spree::Event.new(
-          name: 'order.completed',
+          name: 'order.placed',
           payload: { 'store_id' => store.id }
         )
       end
@@ -68,7 +68,7 @@ RSpec.describe Spree::ProductMetricsSubscriber do
     context 'when order does not exist' do
       let(:event) do
         Spree::Event.new(
-          name: 'order.completed',
+          name: 'order.placed',
           payload: { 'id' => 'non-existent-id', 'store_id' => store.id }
         )
       end
@@ -85,7 +85,7 @@ RSpec.describe Spree::ProductMetricsSubscriber do
 
       let(:event) do
         Spree::Event.new(
-          name: 'order.completed',
+          name: 'order.placed',
           payload: { 'id' => order_without_items.id, 'store_id' => store.id }
         )
       end
@@ -100,14 +100,14 @@ RSpec.describe Spree::ProductMetricsSubscriber do
     context 'when order has duplicate products' do
       let(:order_with_duplicates) do
         create(:completed_order_with_totals, store: store).tap do |o|
-          o.line_items.first.update!(product: product_1, variant: product_1.master)
-          create(:line_item, order: o, product: product_1, variant: product_1.master)
+          o.line_items.first.update!(product: product_1, variant: product_1.default_variant)
+          create(:line_item, order: o, product: product_1, variant: product_1.default_variant)
         end
       end
 
       let(:event) do
         Spree::Event.new(
-          name: 'order.completed',
+          name: 'order.placed',
           payload: { 'id' => order_with_duplicates.id, 'store_id' => store.id }
         )
       end

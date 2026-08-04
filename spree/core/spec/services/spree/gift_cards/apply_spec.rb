@@ -4,10 +4,10 @@ RSpec.describe Spree::GiftCards::Apply do
   subject { described_class.call(gift_card: gift_card, order: order) }
 
   let(:store) { Spree::Store.default }
-  let(:order) { create(:order, store: store, user: order_user) }
+  let(:order) { create(:order, store: store, customer: order_user) }
   let(:order_user) { create(:user) }
 
-  let(:gift_card) { create(:gift_card, amount: 50, store: store, user: gift_card_user) }
+  let(:gift_card) { create(:gift_card, amount: 50, store: store, customer: gift_card_user) }
   let(:gift_card_user) { nil }
   let(:store_credit_payment) { order.payments.store_credits.last }
   let(:store_credit) { store_credit_payment.source }
@@ -36,14 +36,14 @@ RSpec.describe Spree::GiftCards::Apply do
     expect(store_credit.originator).to eq(gift_card)
   end
 
-  it 'calls update_with_updater!' do
-    expect(order).to receive(:update_with_updater!)
+  it 'calls recalculate_totals!' do
+    expect(order).to receive(:recalculate_totals!)
     subject
   end
 
   context 'when the order has applied store credit' do
     let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
-    let!(:store_credit) { create(:store_credit, user: order.user, amount: 10, store: store) }
+    let!(:store_credit) { create(:store_credit, customer: order.user, amount: 10, store: store) }
 
     before do
       order.add_store_credit_payments
@@ -62,8 +62,8 @@ RSpec.describe Spree::GiftCards::Apply do
   end
 
   context 'when the gift card has a different currency' do
-    let(:gift_card) { create(:gift_card, amount: 50, store: store, user: gift_card_user, currency: 'USD') }
-    let(:order) { create(:order, store: store, user: order_user, currency: 'EUR') }
+    let(:gift_card) { create(:gift_card, amount: 50, store: store, customer: gift_card_user, currency: 'USD') }
+    let(:order) { create(:order, store: store, customer: order_user, currency: 'EUR') }
 
     it 'responds with an error' do
       expect(subject).to be_failure
@@ -82,8 +82,8 @@ RSpec.describe Spree::GiftCards::Apply do
         expect(subject).to be_success
       end
 
-      it 'calls update_with_updater!' do
-        expect(order).to receive(:update_with_updater!)
+      it 'calls recalculate_totals!' do
+        expect(order).to receive(:recalculate_totals!)
         subject
       end
     end
@@ -110,7 +110,7 @@ RSpec.describe Spree::GiftCards::Apply do
     let(:users) { Array.new(5) { create(:user) } }
     let(:orders) do
       users.map do |user|
-        order = create(:order, store: store, user: user)
+        order = create(:order, store: store, customer: user)
         order.update_columns(total: 80, item_total: 80)
         order
       end
@@ -149,8 +149,8 @@ RSpec.describe Spree::GiftCards::Apply do
 
   context 'when the order belongs to a non-default store' do
     let(:other_store) { create(:store, default: false) }
-    let(:order) { create(:order, store: other_store, user: order_user) }
-    let(:gift_card) { create(:gift_card, amount: 50, store: other_store, user: gift_card_user) }
+    let(:order) { create(:order, store: other_store, customer: order_user) }
+    let(:gift_card) { create(:gift_card, amount: 50, store: other_store, customer: gift_card_user) }
 
     it 'applies the gift card to the order' do
       expect { subject }.to change(Spree::StoreCredit, :count).by(1)

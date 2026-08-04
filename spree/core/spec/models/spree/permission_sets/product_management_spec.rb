@@ -27,7 +27,7 @@ RSpec.describe Spree::PermissionSets::ProductManagement do
     end
 
     it 'grants manage access to Taxon' do
-      expect(ability.can?(:manage, Spree::Taxon)).to be true
+      expect(ability.can?(:manage, Spree::Category)).to be true
     end
 
     it 'grants manage access to Taxonomy' do
@@ -35,7 +35,7 @@ RSpec.describe Spree::PermissionSets::ProductManagement do
     end
 
     it 'grants manage access to Classification' do
-      expect(ability.can?(:manage, Spree::Classification)).to be true
+      expect(ability.can?(:manage, Spree::ProductCategory)).to be true
     end
 
     it 'grants manage access to Price' do
@@ -51,7 +51,7 @@ RSpec.describe Spree::PermissionSets::ProductManagement do
     end
 
     it 'does not grant manage access to User' do
-      expect(ability.can?(:manage, Spree.user_class)).to be false
+      expect(ability.can?(:manage, Spree.customer_class)).to be false
     end
   end
 end

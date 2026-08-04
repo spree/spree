@@ -12,7 +12,7 @@ RSpec.describe Spree::Imports::Customers, type: :model do
 
   describe '#model_class' do
     it 'returns the user class' do
-      expect(import.model_class).to eq Spree.user_class
+      expect(import.model_class).to eq Spree.customer_class
     end
   end
 

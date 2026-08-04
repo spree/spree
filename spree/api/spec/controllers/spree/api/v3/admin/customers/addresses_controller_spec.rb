@@ -6,7 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
   include_context 'API v3 Admin authenticated'
 
   let(:customer) { create(:user) }
-  let!(:address) { create(:address, user: customer) }
+  let!(:address) { create(:address, customer: customer) }
 
   before { request.headers.merge!(headers) }
 
@@ -96,7 +96,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
     end
 
     it 'rotates the default billing flag' do
-      other = create(:address, user: customer)
+      other = create(:address, customer: customer)
       customer.update!(bill_address_id: other.id)
       target_id = address.id
 
@@ -107,7 +107,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
     end
 
     context 'when the address is referenced by a completed order' do
-      let!(:order) { create(:completed_order_with_totals, user: customer, ship_address: address) }
+      let!(:order) { create(:completed_order_with_totals, customer: customer, ship_address: address) }
 
       it 'edits a copy instead of mutating the historical order address in place' do
         original_id = address.id
@@ -177,13 +177,13 @@ RSpec.describe Spree::Api::V3::Admin::Customers::AddressesController, type: :con
       end
 
       context 'as the ship address' do
-        let!(:order) { create(:completed_order_with_totals, user: customer, ship_address: address) }
+        let!(:order) { create(:completed_order_with_totals, customer: customer, ship_address: address) }
 
         it_behaves_like 'soft-deletes the referenced address', :ship_address
       end
 
       context 'as the bill address' do
-        let!(:order) { create(:completed_order_with_totals, user: customer, bill_address: address) }
+        let!(:order) { create(:completed_order_with_totals, customer: customer, bill_address: address) }
 
         it_behaves_like 'soft-deletes the referenced address', :bill_address
       end

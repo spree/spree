@@ -7,7 +7,7 @@ describe Spree::Promotion::Rules::OneUsePerUser, type: :model do
     subject { rule.eligible?(order) }
 
     let(:order) { double Spree::Order, user: user }
-    let(:user) { double Spree::LegacyUser }
+    let(:user) { double Spree.customer_class }
     let(:promotion) { create(:promotion) }
     let(:used_by) { false }
 

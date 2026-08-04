@@ -11,6 +11,26 @@ RSpec.describe Spree::Api::V3::Store::NewsletterSubscribersController, type: :co
     request.headers['X-Spree-Api-Key'] = api_key.token
   end
 
+  describe 'DELETE #destroy' do
+    # Opt in via update_column, not the factory — setting accepts_email_marketing
+    # at create time auto-subscribes the customer and collides with our subscriber.
+    let(:marketing_customer) { create(:user) }
+    let!(:subscriber) do
+      create(:newsletter_subscriber, :verified, customer: marketing_customer, email: marketing_customer.email, store: store)
+    end
+
+    it 'destroys the subscription and clears the customer opt-in when none remain' do
+      marketing_customer.update_column(:accepts_email_marketing, true)
+      token = subscriber.generate_token_for(:unsubscribe)
+
+      delete :destroy, params: { id: subscriber.prefixed_id, token: token }
+
+      expect(response).to have_http_status(:no_content)
+      expect(Spree::NewsletterSubscriber.exists?(subscriber.id)).to be(false)
+      expect(marketing_customer.reload.accepts_email_marketing).to be(false)
+    end
+  end
+
   describe 'POST #request_unsubscribe' do
     context 'when the email matches a subscriber on the current store' do
       let!(:subscriber) { create(:newsletter_subscriber, :verified, store: store) }

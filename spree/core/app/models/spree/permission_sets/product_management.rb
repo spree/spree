@@ -11,12 +11,16 @@ module Spree
     class ProductManagement < Base
       def activate!
         can :manage, Spree::Product
+        can :manage, Spree::ProductType
         can :manage, Spree::Variant
         can :manage, Spree::OptionType
         can :manage, Spree::OptionValue
-        can :manage, Spree::Taxon
+        can :manage, Spree::Category
         can :manage, Spree::Taxonomy
-        can :manage, Spree::Classification
+        can :manage, Spree::ProductCategory
+        can :manage, Spree::Collection
+        can :manage, Spree::ProductCollection
+        can :manage, Spree::CollectionRule
         can :manage, Spree::Price
         can :manage, Spree::PriceList
         can :manage, Spree::PriceRule

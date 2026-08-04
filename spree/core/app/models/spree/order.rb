@@ -1,9 +1,3 @@
-require_dependency 'spree/order/checkout'
-require_dependency 'spree/order/currency_updater'
-require_dependency 'spree/order/digital'
-require_dependency 'spree/order/payments'
-require_dependency 'spree/order/store_credit'
-require_dependency 'spree/order/gift_card'
 
 module Spree
   class Order < Spree.base_class
@@ -15,23 +9,33 @@ module Spree
     self.ignored_columns += ['channel']
 
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
-    SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
+    FULFILLMENT_STATUSES = %w(backorder canceled partial pending ready fulfilled shipped)
+    # @deprecated legacy name — remove in 6.1 together with the 'shipped' value
+    SHIPMENT_STATES = FULFILLMENT_STATUSES
+    # @deprecated legacy machine vocabulary — line-item removability is
+    #   completion-based since 6.0; removed in 6.1.
     LINE_ITEM_REMOVABLE_STATES = %w(cart address delivery payment confirm resumed)
 
     extend Spree::DisplayMoney
 
-    include Spree::Order::Checkout
-    include Spree::Order::CurrencyUpdater
-    include Spree::Order::Digital
-    include Spree::Order::Payments
-    include Spree::Order::StoreCredit
-    include Spree::Order::AddressBook
-    include Spree::Order::Webhooks
+    include Spree::SingleStoreResource
+    include Spree::Purchase::Channel
+    include Spree::Purchase::Market
+    include Spree::Purchase::Currency
+    include Spree::Purchase::Locale
+    include Spree::Purchase::DigitalItems
+    include Spree::Purchase::Taxation
+    include Spree::Purchase::StoreCredits
+    include Spree::Purchase::GiftCards
+    include Spree::Purchase::LineItemCurrencies
+    include Spree::Purchase::PaymentProcessing
+    include Spree::Purchase::Addresses
+    include Spree::Purchase::Validations
+    include Spree::Purchase::Totals
+    include Spree::Purchase::Lifecycle
     include Spree::Core::NumberGenerator.new(prefix: 'R')
-    include Spree::Order::GiftCard
 
     include Spree::NumberIdentifier
-    include Spree::SingleStoreResource
 
     publishes_lifecycle_events
     include Spree::MemoizedData
@@ -52,15 +56,12 @@ module Spree
 
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
-                  :shipment_total,      :promo_total,          :total,
+                  :delivery_total,      :discount_total,       :total,
                   :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total,
                   :payment_total,       :amount_due
 
-    alias display_ship_total display_shipment_total
-    alias_attribute :ship_total, :shipment_total
-    def amount_due
-      [outstanding_balance - total_applied_store_credit, 0].max
-    end
+    alias display_ship_total display_delivery_total
+    alias_attribute :ship_total, :delivery_total
 
     # Transient warnings populated by remove_out_of_stock_items! and ensure_available_shipping_rates
     attribute :warnings, default: -> { [] }
@@ -69,9 +70,12 @@ module Spree
     # Returns self (reloaded if items were removed) with warnings set.
     # Captured before the call because removing items reloads the order, which
     # would drop warnings already recorded upstream.
+    # @deprecated Only Carts can auto remove out of stock items
     def remove_out_of_stock_items!
+      Spree::Deprecation.warn('Spree::Order#remove_out_of_stock_items! is deprecated and will be removed in Spree 6.1. This method now works only on Spree::Cart objects')
+
       existing_warnings = warnings
-      result = Spree::Cart::RemoveOutOfStockItems.call(order: self)
+      result = Spree::Carts::RemoveOutOfStockItems.call(cart: self)
       return self unless result.success?
 
       order, _messages, new_warnings = result.value
@@ -79,53 +83,39 @@ module Spree
       order
     end
 
-    # 5.5 API naming bridges (DB columns rename in 6.0)
-    alias_attribute :discount_total, :promo_total
-    alias display_discount_total display_promo_total
-    alias_attribute :customer_note, :special_instructions
-    alias_attribute :total_quantity, :item_count
+    # Standardized column names (renamed in 6.0); legacy readers stay as
+    # aliases one release.
+    alias_attribute :promo_total, :discount_total
+    alias display_promo_total display_discount_total
+    alias_attribute :item_count, :total_quantity
 
-    MONEY_THRESHOLD  = 100_000_000
-    MONEY_VALIDATION = {
-      presence: true,
-      numericality: {
-        greater_than: -MONEY_THRESHOLD,
-        less_than: MONEY_THRESHOLD,
-        allow_blank: true
-      },
-      format: { with: /\A-?\d+(?:\.\d{1,2})?\z/, allow_blank: true }
-    }.freeze
-
-    POSITIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
-      validation.fetch(:numericality)[:greater_than_or_equal_to] = 0
-    end.freeze
-
-    NEGATIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
-      validation.fetch(:numericality)[:less_than_or_equal_to] = 0
-    end.freeze
-
-    checkout_flow do
-      go_to_state :address
-      go_to_state :delivery, if: ->(order) { order.delivery_required? }
-      go_to_state :payment, if: ->(order) { order.payment? || order.payment_required? }
-      go_to_state :confirm, if: ->(order) { order.confirmation_required? }
-      go_to_state :complete
+    # @deprecated The column is +customer_note+ since 6.0; removed in 6.1.
+    def special_instructions
+      Spree::Deprecation.warn('Spree::Order#special_instructions is deprecated and will be removed in Spree 6.1. Use #customer_note instead.')
+      customer_note
     end
 
-    self.whitelisted_ransackable_associations = %w[shipments user created_by approver canceler promotions bill_address ship_address line_items store channel tags]
+    # @deprecated See {#special_instructions}; removed in 6.1.
+    def special_instructions=(value)
+      Spree::Deprecation.warn('Spree::Order#special_instructions= is deprecated and will be removed in Spree 6.1. Use #customer_note= instead.')
+      self.customer_note = value
+    end
+
+    # lock_version (renamed from state_lock_version) drives the API's manual
+    # optimistic concurrency (compare client-sent version, 409 on mismatch) —
+    # Rails auto-locking must not raise on internal saves.
+    self.lock_optimistically = false
+
+    self.whitelisted_ransackable_associations = %w[fulfillments shipments customer created_by approver canceler promotions bill_address ship_address line_items store channel tags]
     self.whitelisted_ransackable_attributes = %w[
-      completed_at email number state status payment_state shipment_state
-      total item_total item_count considered_risky channel_id currency
+      completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
+      total item_total total_quantity considered_risky channel_id currency coupon_code
     ]
     self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded search multi_search]
-
-    attr_reader :coupon_code
-    attr_accessor :temporary_address
 
     # Set to false on admin-initiated flows to suppress customer-facing emails.
     attr_accessor :notify_customer
 
-    attribute :state_machine_resumed, :boolean
 
     STATUSES = %w[draft placed canceled].freeze
 
@@ -143,31 +133,25 @@ module Spree
       self.tag_list = tags
     end
 
-    ASSOCIATED_USER_ATTRIBUTES = [:user_id, :email, :bill_address_id, :ship_address_id]
+    ASSOCIATED_CUSTOMER_ATTRIBUTES = [:customer_id, :email, :bill_address_id, :ship_address_id]
 
-    # 6.0 forward-compat: User→Customer rename. Column stays user_id in 5.x.
-    alias_attribute :customer_id, :user_id
+    # @deprecated Use {Spree::Purchase::PaymentProcessing#payment_methods};
+    #   removed in 6.1.
+    def collect_frontend_payment_methods
+      Spree::Deprecation.warn('Spree::Order#collect_frontend_payment_methods is deprecated and will be removed in Spree 6.1. Use #payment_methods instead.')
+      payment_methods
+    end
 
-    belongs_to :user, class_name: "::#{Spree.user_class}", optional: true, autosave: true
+    include Spree::DeprecatedCustomerAlias
+
+    belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true, autosave: true
+    # The cart this order was completed from (unique — the completion
+    # idempotency key). Backoffice draft orders have no cart.
+    belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :order
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
 
-    belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address',
-                              optional: true, dependent: :destroy
-    alias_method :billing_address, :bill_address
-    alias_method :billing_address=, :bill_address=
-    alias_attribute :billing_address_id, :bill_address_id
-
-    belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address',
-                              optional: true, dependent: :destroy
-    alias_method :shipping_address, :ship_address
-    alias_method :shipping_address=, :ship_address=
-    alias_attribute :shipping_address_id, :ship_address_id
-
-    belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :market, class_name: 'Spree::Market', optional: true
-    belongs_to :channel, class_name: 'Spree::Channel', optional: true
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
 
     with_options dependent: :destroy do
@@ -176,90 +160,71 @@ module Spree
       has_many :payments, class_name: 'Spree::Payment'
       has_many :payment_sessions, inverse_of: :order, class_name: 'Spree::PaymentSession'
       has_many :return_authorizations, inverse_of: :order, class_name: 'Spree::ReturnAuthorization'
-      has_many :adjustments, -> { order(:created_at) }, as: :adjustable, class_name: 'Spree::Adjustment'
+      has_many :returns, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Return'
+      has_many :exchanges, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Exchange'
+      has_many :claims, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Claim'
       has_many :cancellations, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderCancellation'
       has_many :approvals, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderApproval'
     end
     has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
     has_many :customer_returns, class_name: 'Spree::CustomerReturn', through: :return_authorizations
-    has_many :line_item_adjustments, through: :line_items, source: :adjustments
-    has_many :inventory_units, inverse_of: :order, class_name: 'Spree::InventoryUnit'
+    has_many :fulfillment_items, inverse_of: :order, class_name: 'Spree::FulfillmentItem'
+    has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :order, deprecated: true
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :order, dependent: :destroy
-    has_many :return_items, through: :inventory_units, class_name: 'Spree::ReturnItem'
+    has_many :return_items, through: :fulfillment_items, class_name: 'Spree::ReturnItem'
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :refunds, through: :payments
-    has_many :all_adjustments,
-             class_name: 'Spree::Adjustment',
-             foreign_key: :order_id,
-             dependent: :destroy,
-             inverse_of: :order
+
+    # Typed adjustment rows owned by this order (line-, fulfillment- and
+    # order-level). See docs/plans/6.0-split-adjustments.md.
+    has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :order
+    has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :order
+
+    has_many :line_item_tax_lines, through: :line_items, source: :tax_lines
+    has_many :line_item_discounts, through: :line_items, source: :discounts
 
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
 
-    has_many :shipments, class_name: 'Spree::Shipment', dependent: :destroy, inverse_of: :order do
+    has_many :fulfillments, class_name: 'Spree::Fulfillment', dependent: :destroy, inverse_of: :order do
       def states
-        pluck(:state).uniq
+        pluck(:status).uniq
       end
     end
-    has_many :shipment_adjustments, through: :shipments, source: :adjustments
+    has_many :fulfillment_tax_lines, through: :fulfillments, source: :tax_lines
+    has_many :fulfillment_discounts, through: :fulfillments, source: :discounts
 
     alias items line_items
-    alias discounts order_promotions
-    alias fulfillments shipments
-    alias_attribute :delivery_total, :shipment_total
-    alias display_delivery_total display_shipment_total
-    alias_attribute :fulfillment_status, :shipment_state
-    alias_attribute :payment_status, :payment_state
+    # Legacy names — removed in 6.1 (real names: fulfillments, delivery_total,
+    # fulfillment_status since 6.0)
+    has_many :shipments, class_name: 'Spree::Fulfillment', inverse_of: :order, deprecated: true
+    alias_attribute :shipment_total, :delivery_total
+    alias display_shipment_total display_delivery_total
+    alias_attribute :shipment_state, :fulfillment_status
+    # Deprecated alias — the column is payment_status since 6.0; remove in 6.1.
+    alias_attribute :payment_state, :payment_status
 
     delegate :has_markets?, to: :store, prefix: true
 
     accepts_nested_attributes_for :line_items
-    accepts_nested_attributes_for :bill_address
-    accepts_nested_attributes_for :ship_address
-    alias shipping_address_attributes= ship_address_attributes=
-    alias billing_address_attributes= bill_address_attributes=
     accepts_nested_attributes_for :payments, reject_if: :credit_card_nil_payment?
-    accepts_nested_attributes_for :shipments
-
-    # Needs to happen before save_permalink is called
-    before_validation :ensure_market_presence
-    before_validation :ensure_channel_presence
-    before_validation :ensure_currency_presence
-    before_validation :ensure_locale_presence
-    before_validation :resolve_market_from_currency, if: -> { persisted? && currency_changed? && !skip_market_resolution }
-
-    before_validation :clone_billing_address, if: :use_billing?
-    before_validation :clone_shipping_address, if: :use_shipping?
-    attr_accessor :use_billing, :use_shipping, :skip_market_resolution
+    accepts_nested_attributes_for :fulfillments
+    # @deprecated legacy writer — removed in 6.1
+    alias shipments_attributes= fulfillments_attributes=
 
     before_create :link_by_email
-    before_update :ensure_updated_shipments, :homogenize_line_item_currencies, if: :currency_changed?
+    before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
 
-    with_options presence: true do
-      # we want to have this case_sentive: true as changing it to false causes all SQL to use LOWER(slug)
-      # which is very costly and slow on large set of records
-      validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
-      validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
-      validates :store
-      validates :currency
-      validates :locale
-    end
-    validates :payment_state,        inclusion:    { in: PAYMENT_STATES, allow_blank: true }
-    validates :shipment_state,       inclusion:    { in: SHIPMENT_STATES, allow_blank: true }
-    validates :item_total,           POSITIVE_MONEY_VALIDATION
-    validates :adjustment_total,     MONEY_VALIDATION
-    validates :included_tax_total,   POSITIVE_MONEY_VALIDATION
-    validates :additional_tax_total, POSITIVE_MONEY_VALIDATION
-    validates :payment_total,        MONEY_VALIDATION
-    validates :shipment_total,       MONEY_VALIDATION
-    validates :promo_total,          NEGATIVE_MONEY_VALIDATION
-    validates :total,                MONEY_VALIDATION
-    validates :market, presence: true, if: :store_has_markets?
-    validate :currency_must_be_supported_by_store
-    validate :locale_must_be_supported_by_store
+    # Shared money/quantity validations live in Spree::Purchase::Validations;
+    # only order-specific rules stay here.
+    validates :email, presence: true, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
+    validates :payment_status,     inclusion: { in: PAYMENT_STATES, allow_blank: true }
+    validates :fulfillment_status, inclusion: { in: FULFILLMENT_STATUSES, allow_blank: true }
 
+    # @deprecated Both warn and run the full recalculation; use
+    #   {#recalculate_totals!}. Removed in 6.1.
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
     delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
@@ -271,12 +236,12 @@ module Spree
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
-    scope :canceled, -> { where(state: %w[canceled partially_canceled]) }
-    scope :not_canceled, -> { where.not(state: %w[canceled partially_canceled]) }
-    scope :ready_to_ship, -> { where(shipment_state: %w[ready pending]) }
-    scope :partially_shipped, -> { where(shipment_state: %w[partial]) }
-    scope :not_shipped, -> { where(shipment_state: %w[ready pending partial]) }
-    scope :shipped, -> { where(shipment_state: %w[shipped]) }
+    scope :canceled, -> { where(status: 'canceled') }
+    scope :not_canceled, -> { where.not(status: 'canceled') }
+    scope :ready_to_ship, -> { where(fulfillment_status: %w[ready pending]) }
+    scope :partially_shipped, -> { where(fulfillment_status: %w[partial]) }
+    scope :not_shipped, -> { where(fulfillment_status: %w[ready pending partial]) }
+    scope :shipped, -> { where(fulfillment_status: %w[fulfilled shipped]) }
     scope :refunded, lambda {
       joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) = #{Spree::Order.table_name}.total")
     }
@@ -347,6 +312,7 @@ module Spree
     # Use this method in other gems that wish to register their own custom logic
     # that should be called after Order#update
     def self.register_update_hook(hook)
+      Spree::Deprecation.warn('Order.register_update_hook is deprecated and will be removed in Spree 6.1')
       update_hooks.add(hook)
     end
 
@@ -355,24 +321,21 @@ module Spree
       line_items.inject(0.0) { |sum, li| sum + li.amount }
     end
 
-    # Sum of all line item amounts pre-tax
-    def pre_tax_item_amount
-      line_items.sum(:pre_tax_amount)
-    end
-
     # Sum of the eligible promotion adjustments applied to the order itself
-    # (whole-order discounts created by Promotion::Actions::CreateAdjustment),
-    # as opposed to promotions applied to individual line items or shipments.
-    # Zero or negative.
+    # (whole-order discounts created by Promotion::Actions::CreateAdjustment,
+    # distributed proportionally across line items), as opposed to promotions
+    # applied to individual line items or fulfillments. Zero or negative.
     #
     # @return [BigDecimal]
     def order_level_promo_total
-      adjustments.promotion.eligible.sum(:amount)
+      discounts.promotion.where(promotion_action_id: promotion_actions_of_scope(:order)).sum(:amount)
     end
 
-    # Sum of all line item and shipment pre-tax
-    def pre_tax_total
-      pre_tax_item_amount + shipments.sum(:pre_tax_amount)
+    # Promotion actions of the given discount scope, covering both the 6.0
+    # class names and the legacy STI names still present in the type column
+    # until the 6.1 data migration.
+    def promotion_actions_of_scope(scope)
+      Spree::PromotionAction.where(type: Spree::PromotionAction.types_for_discount_scope(scope))
     end
 
     # Returns the subtotal used for analytics integrations
@@ -382,20 +345,14 @@ module Spree
       (item_total + line_items.sum(:promo_total)).to_f
     end
 
+
+    # @deprecated Use {#fulfillment_discount}; removed in 6.1.
     def shipping_discount
-      shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
+      Spree::Deprecation.warn('Spree::Order#shipping_discount is deprecated and will be removed in Spree 6.1. Use #fulfillment_discount instead.')
+      fulfillment_discount
     end
 
-    def completed?
-      completed_at.present?
-    end
 
-    # True when the order is mid-checkout: past the `cart` state but not yet
-    # completed or canceled. Used by stock reservation hooks and any flow
-    # that should only run during the active checkout phase.
-    def in_checkout?
-      !cart? && !complete? && !canceled?
-    end
 
     def draft?
       status == 'draft'
@@ -405,10 +362,26 @@ module Spree
       status == 'placed'
     end
 
+    def canceled?
+      status == 'canceled'
+    end
+
+    # @deprecated machine vocabulary — data-derived bridge for the 6.0
+    #   transition, removed in 6.1. An order is "cart-like" while a draft
+    #   with no checkout data.
+    def cart?
+      draft? && !completed? && email.blank? && ship_address_id.blank?
+    end
+
+    # Derived, not stored (Decision 8): some but not all fulfillments canceled.
+    def partially_canceled?
+      !canceled? && fulfillments.canceled.any? && fulfillments.where.not(status: 'canceled').any?
+    end
+
     # Checks if the order is fully refunded
     # @return [Boolean]
     def order_refunded?
-      return false if item_count.zero?
+      return false if total_quantity.zero?
       return false if refunds_total.zero?
 
       payment_state.in?(%w[void failed]) || refunds_total == total_minus_store_credits - additional_tax_total.abs
@@ -421,7 +394,7 @@ module Spree
     # Checks if the order is partially refunded
     # @return [Boolean]
     def partially_refunded?
-      return false if item_count.zero?
+      return false if total_quantity.zero?
       return false if payment_state.in?(%w[void failed]) || refunds.empty?
 
       refunds_total < total_minus_store_credits - additional_tax_total.abs
@@ -435,33 +408,11 @@ module Spree
       line_items.exists?
     end
 
-    # Does this order require a delivery (physical or digital).
-    def delivery_required?
-      true # true for Spree, can be decorated
-    end
-
-    # Is this a free order in which case the payment step should be skipped
-    def payment_required?
-      total.to_f > 0.0
-    end
-
-    # If true, causes the confirmation step to happen during the checkout process
-    def confirmation_required?
-      Spree::Config[:always_include_confirm_step] ||
-        payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?) ||
-        # Little hacky fix for #4117
-        # If this wasn't here, order would transition to address state on confirm failure
-        # because there would be no valid payments any more.
-        confirm?
-    end
 
     def email_required?
       require_email
     end
 
-    def backordered?
-      shipments.any?(&:backordered?)
-    end
 
     # Check if the shipping address is a quick checkout address
     # quick checkout addresses are incomplete as wallet providers like Apple Pay and Google Pay
@@ -475,95 +426,84 @@ module Spree
     # Either fully digital or not digital at all
     # @return [Boolean]
     def quick_checkout_available?
-      payment_required? && shipments.count <= 1 && (digital? || !some_digital? || !delivery_required?)
+      payment_required? && fulfillments.count <= 1 && (digital? || !some_digital? || !delivery_step_required?)
     end
 
     # Check if quick checkout requires an address collection
-    # If the order is digital or not delivery required, then we don't need to collect an address
     # @return [Boolean]
     def quick_checkout_require_address?
-      !digital? && delivery_required?
+      shipping_address_required?
     end
 
-    # Returns the relevant zone (if any) to be used for taxation purposes.
-    # Uses default tax zone unless there is a specific match
-    def tax_zone
-      @tax_zone ||= Zone.match(tax_address) || Zone.default_tax
-    end
-
-    # Returns the address for taxation based on configuration
-    def tax_address
-      Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
-    end
-
+    # @deprecated Use {#recalculate_totals!} for money and {#update_statuses!}
+    #   for payment/fulfillment statuses; removed in 6.1.
     def updater
       @updater ||= Spree.order_updater.new(self)
     end
 
-    def update_with_updater!
-      updater.update
+    # Recomputes and persists money totals (item, tax, promotion, delivery)
+    # and derived item counts. Convenience for
+    # {Spree::Orders::RecalculateTotals}.
+    def recalculate_totals!
+      Spree.order_recalculate_totals_workflow.call(order: self)
     end
 
+    # Derives and persists payment_status / fulfillment_status from the
+    # order's payment, refund and fulfillment records. Convenience for
+    # {Spree::Orders::UpdateStatuses}, the sole status writer.
+    def update_statuses!
+      Spree.order_update_statuses_service.call(order: self)
+    end
+
+    # @deprecated Use {#recalculate_totals!}; removed in 6.1.
+    def update_with_updater!
+      Spree::Deprecation.warn('Spree::Order#update_with_updater! is deprecated and will be removed in Spree 6.1. Use #recalculate_totals! instead.')
+      recalculate_totals!
+    end
+
+    # @deprecated Use {Spree::Carts::Merge}; removed in 6.1.
     def merger
       @merger ||= Spree::OrderMerger.new(self)
     end
 
-    def ensure_store_presence
-      Spree::Deprecation.warn('Spree::Order#ensure_store_presence is deprecated and will be removed in Spree 6.0. ensure_store instead.')
-      ensure_store
-    end
-
-    def ensure_market_presence
-      self.market ||= Spree::Current.market || store&.default_market
-    end
-
-    def ensure_channel_presence
-      return if channel_id.present?
-
-      self.channel = store&.default_channel
-    end
-
-    # @return [Boolean] true when this order has no registered user and its
-    #   channel forbids guest checkout (see Spree::Channel::Gating). Enforced by
-    #   the checkout completion service and the v3 Store API so every completion
-    #   path (controller, payment webhook) is covered.
-    #
-    #   A +prices_hidden+ channel also disallows guest completion regardless of
-    #   the +guest_checkout+ flag — prices are withheld from guests, and a buyer
-    #   who cannot see prices cannot meaningfully place an order. This dissolves
-    #   the otherwise contradictory "prices hidden but guests may buy" config.
-    def guest_checkout_disallowed?
-      return false if user_id.present?
-      return false if channel.blank?
-      return true if channel.storefront_prices_hidden?
-
-      !channel.resolved_guest_checkout
-    end
 
     def allow_cancel?
       return false if !completed? || canceled?
 
-      shipment_state.nil? || %w{ready backorder pending canceled}.include?(shipment_state)
+      fulfillment_status.nil? || %w{ready backorder pending canceled}.include?(fulfillment_status)
     end
+    alias can_cancel? allow_cancel?
 
     def all_inventory_units_returned?
       inventory_units.all?(&:returned?)
     end
 
     # Associates the specified user with the order.
-    # Delegates to {Spree::Cart::Associate} service.
+    # Delegates to {Spree::Carts::Associate} service.
     #
-    # @param user [Spree.user_class] the user to associate with the order
-    # @param override_email [Boolean] whether to override the order email with the user's email
+    # @param customer [Spree.customer_class] the customer to associate with the order
+    # @param override_email [Boolean] whether to override the order email with the customer's email
     # @return [Spree::ServiceModule::Result]
-    def associate_user!(user, override_email = true)
-      Spree.cart_associate_service.call(guest_order: self, user: user, override_email: override_email)
+    def associate_customer!(customer, override_email = true)
+      Spree.cart_associate_service.call(guest_cart: self, customer: customer, override_email: override_email)
     end
 
-    def disassociate_user!
-      nullified_attributes = ASSOCIATED_USER_ATTRIBUTES.index_with(nil)
+    # @deprecated Use {#associate_customer!}; removed in 6.1.
+    def associate_user!(user, override_email = true)
+      Spree::Deprecation.warn('Spree::Order#associate_user! is deprecated and will be removed in Spree 6.1. Use #associate_customer! instead.')
+      associate_customer!(user, override_email)
+    end
+
+    def disassociate_customer!
+      nullified_attributes = ASSOCIATED_CUSTOMER_ATTRIBUTES.index_with(nil)
 
       update!(nullified_attributes)
+    end
+
+    # @deprecated Use {#disassociate_customer!}; removed in 6.1.
+    def disassociate_user!
+      Spree::Deprecation.warn('Spree::Order#disassociate_user! is deprecated and will be removed in Spree 6.1. Use #disassociate_customer! instead.')
+      disassociate_customer!
     end
 
     def quantity_of(variant, options = {})
@@ -578,15 +518,14 @@ module Spree
       end
     end
 
-    # Creates new tax charges if there are any applicable rates. If prices already
-    # include taxes then price adjustments are created instead.
+    # Re-estimates tax through the configured provider (writes TaxLine rows
+    # with replace-all semantics).
     def create_tax_charge!
-      Spree::TaxRate.adjust(self, line_items)
-      Spree::TaxRate.adjust(self, shipments) if shipments.any?
+      Spree.tax_provider.estimate(self)
     end
 
     def create_shipment_tax_charge!
-      Spree::TaxRate.adjust(self, shipments) if shipments.any?
+      Spree.tax_provider.estimate(self, fulfillments.to_a) if fulfillments.any?
     end
 
     def update_line_item_prices!
@@ -608,9 +547,6 @@ module Spree
       reimbursements.sum(&:paid_amount)
     end
 
-    def outstanding_balance?
-      outstanding_balance != 0
-    end
 
     def name
       if (address = bill_address || ship_address)
@@ -619,8 +555,8 @@ module Spree
     end
 
     def full_name
-      @full_name ||= if user.present? && user.name.present?
-                       user.full_name
+      @full_name ||= if customer.present? && customer.name.present?
+                       customer.full_name
                      else
                        billing_address&.full_name || email
                      end
@@ -651,57 +587,32 @@ module Spree
     end
 
     def can_ship?
-      complete? || resumed? || awaiting_return? || returned?
+      placed?
     end
 
     def uneditable?
-      complete? || canceled? || returned?
+      completed? || canceled?
     end
 
     # Finalizes an in progress order after checkout is complete.
     # Called after transition to complete state when payments will have been processed
+    # @deprecated Completion lives in {Spree::Orders::Complete} (checkout
+    #   reaches it through +Spree.carts_complete_workflow+). Removed in 6.1.
     def finalize!
-      # lock all adjustments (coupon promotions, etc.)
-      all_adjustments.each(&:close)
-
-      # update payment and shipment(s) states, and save
-      updater.update_payment_state
-      shipments.each do |shipment|
-        shipment.update!(self)
-        shipment.finalize!
-      end
-
-      updater.update_shipment_state
-      self.status = 'placed'
-      save!
-      updater.run_hooks
-
-      touch :completed_at
-
-      send_order_placed_webhook
-
-      consider_risk
-
-      publish_order_completed_event
+      Spree::Deprecation.warn('Spree::Order#finalize! is deprecated and will be removed in Spree 6.1. Completion runs through Spree.order_complete_workflow (Spree::Orders::Complete).')
+      Spree.order_complete_workflow.call(order: self, payment_pending: true)
     end
 
     def fulfill!
-      shipments.each { |shipment| shipment.update!(self) if shipment.persisted? }
-      updater.update_shipment_state
+      fulfillments.each { |shipment| shipment.update!(self) if shipment.persisted? }
       save!
+      update_statuses!
     end
 
-    # Helper methods for checkout steps
-    def paid?
-      payments.valid.completed.size == payments.valid.size && payments.valid.sum(:amount) >= total
-    end
 
-    def payment_methods
-      @payment_methods ||= store.payment_methods.active.available_on_front_end.select { |pm| pm.available_for_order?(self) }
-    end
 
     def available_payment_methods(store = nil)
-      Spree::Deprecation.warn('`Order#available_payment_methods` is deprecated and will be removed in Spree 5.5. Use `collect_frontend_payment_methods` instead.')
+      Spree::Deprecation.warn('`Order#available_payment_methods` is deprecated and will be removed in Spree 6.1. Use `payment_methods` instead.')
 
       @available_payment_methods ||= collect_payment_methods(store)
     end
@@ -713,9 +624,12 @@ module Spree
     ##
     # Check to see if any line item variants are discontinued.
     # If so add error and restart checkout.
+    # @deprecated Completion validation lives in
+    #   {Spree::Checkout::DefaultRequirements} (the +discontinued+ stock
+    #   error). Removed in 6.1.
     def ensure_line_item_variants_are_not_discontinued
+      Spree::Deprecation.warn('Spree::Order#ensure_line_item_variants_are_not_discontinued is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if line_items.any? { |li| !li.variant || li.variant.discontinued? }
-        restart_checkout_flow
         errors.add(:base, Spree.t(:discontinued_variants_present))
         false
       else
@@ -723,9 +637,12 @@ module Spree
       end
     end
 
+    # @deprecated Completion validation lives in
+    #   {Spree::Checkout::DefaultRequirements} (the +out_of_stock+ stock
+    #   error). Removed in 6.1.
     def ensure_line_items_are_in_stock
+      Spree::Deprecation.warn('Spree::Order#ensure_line_items_are_in_stock is deprecated and will be removed in Spree 6.1. Completion validation lives in Spree::Checkout::Requirements.')
       if insufficient_stock_lines.present?
-        restart_checkout_flow
         errors.add(:base, Spree.t(:insufficient_stock_lines_present))
         false
       else
@@ -733,33 +650,13 @@ module Spree
       end
     end
 
-    def empty!
-      raise Spree.t(:cannot_empty_completed_order) if completed?
-
-      result = Spree.cart_empty_service.call(order: self)
-      result.value
-    end
-
     def use_all_coupon_codes
+      Spree::Deprecation.warn('Spree::Order#use_all_coupon_codes is deprecated and will be removed in Spree 6.1. Use Spree::CouponCodes::CouponCodesHandler instead.')
       Spree::CouponCodes::CouponCodesHandler.new(order: self).use_all_codes
     end
 
-    def has_step?(step)
-      checkout_steps.include?(step)
-    end
-
-    def state_changed(name)
-      state = "#{name}_state"
-      if persisted?
-        old_state = send("#{state}_was")
-        new_state = send(state)
-        unless old_state == new_state
-          log_state_changes(state_name: name, old_state: old_state, new_state: new_state)
-        end
-      end
-    end
-
     def log_state_changes(state_name:, old_state:, new_state:)
+      Spree::Deprecation.warn('Spree::Order#log_state_changes is deprecated and will be removed in Spree 6.1.')
       state_changes.create(
         previous_state: old_state,
         next_state: new_state,
@@ -768,42 +665,71 @@ module Spree
       )
     end
 
-    def coupon_code=(code)
-      @coupon_code = begin
-        code.strip.downcase
-      rescue StandardError
-        nil
-      end
-    end
+    normalizes :coupon_code, with: ->(code) { code.to_s.strip.downcase.presence }
 
     def can_add_coupon?
+      Spree::Deprecation.warn('Spree::Order#can_add_coupon? is deprecated and will be removed in Spree 6.1. Use Spree::Promotion.order_activatable? instead.')
       Spree::Promotion.order_activatable?(self)
     end
 
     def shipped?
-      %w(partial shipped).include?(shipment_state)
+      %w(partial shipped fulfilled).include?(fulfillment_status)
     end
 
+    # True when every fulfillment reached the fulfilled status — the signal
+    # order.fulfilled publishes on.
+    def fully_fulfilled?
+      fulfillments.fulfilled.size == fulfillments.size
+    end
+
+    # @deprecated Use {#fully_fulfilled?}; removed in 6.1.
     def fully_shipped?
-      shipments.shipped.size == shipments.size
+      Spree::Deprecation.warn('Spree::Order#fully_shipped? is deprecated and will be removed in Spree 6.1. Use #fully_fulfilled? instead.')
+      fully_fulfilled?
     end
 
-    def create_proposed_shipments
-      all_adjustments.shipping.delete_all
+    def rebuild_fulfillments!
+      discounts.for_fulfillments.delete_all
+      tax_lines.for_fulfillments.delete_all
+      fees.for_fulfillments.delete_all
 
-      shipment_ids = shipments.map(&:id)
-      StateChange.where(stateful_type: 'Spree::Shipment', stateful_id: shipment_ids).delete_all
-      ShippingRate.where(shipment_id: shipment_ids).delete_all
+      shipment_ids = fulfillments.map(&:id)
+      StateChange.where(stateful_type: %w[Spree::Shipment Spree::Fulfillment], stateful_id: shipment_ids).delete_all
+      DeliveryRate.where(fulfillment_id: shipment_ids).delete_all
 
-      shipments.delete_all
+      fulfillments.delete_all
 
       # Inventory Units which are not associated to any shipment (unshippable)
       # and are not returned or shipped should be deleted
-      inventory_units.on_hand_or_backordered.delete_all
+      fulfillment_items.on_hand_or_backordered.delete_all
 
-      self.shipments = order_routing_strategy.for_allocation.map do |package|
+      self.fulfillments = order_routing_strategy.for_allocation.map do |package|
         package.to_shipment.tap { |s| s.address_id = ship_address_id }
       end
+    end
+
+    # @deprecated Use {#rebuild_fulfillments!}; removed in 6.1.
+    def create_proposed_fulfillments
+      Spree::Deprecation.warn('Spree::Order#create_proposed_fulfillments is deprecated and will be removed in Spree 6.1. Use #rebuild_fulfillments! instead.')
+      rebuild_fulfillments!
+    end
+
+    # @deprecated Use {#rebuild_fulfillments!}; removed in 6.1.
+    def create_proposed_shipments
+      Spree::Deprecation.warn('Spree::Order#create_proposed_shipments is deprecated and will be removed in Spree 6.1. Use #rebuild_fulfillments! instead.')
+      rebuild_fulfillments!
+    end
+
+    # @deprecated Use {#delivery_step_required?}; removed in 6.1.
+    def delivery_required?
+      Spree::Deprecation.warn('Spree::Order#delivery_required? is deprecated and will be removed in Spree 6.1. Use #delivery_step_required? (delivery-step applicability) or #shipping_address_required? (address collection) instead.')
+      delivery_step_required?
+    end
+
+    # @deprecated Use {#shipping_address_required?}; removed in 6.1.
+    def requires_ship_address?
+      Spree::Deprecation.warn('Spree::Order#requires_ship_address? is deprecated and will be removed in Spree 6.1. Use #shipping_address_required? instead.')
+      shipping_address_required?
     end
 
     # Resolves the routing strategy from the channel override first, then the
@@ -843,7 +769,7 @@ module Spree
     #
     # @return [Array<Spree::LineItem>]
     def line_items_without_shipping_rates
-      @line_items_without_shipping_rates ||= shipments.map do |shipment|
+      @line_items_without_shipping_rates ||= fulfillments.map do |shipment|
         shipment.manifest.map(&:line_item) if shipment.shipping_rates.blank?
       end.flatten.compact
     end
@@ -857,9 +783,7 @@ module Spree
 
     def apply_free_shipping_promotions
       Spree::PromotionHandler::FreeShipping.new(self).activate
-      shipments.each { |shipment| Spree::Adjustable::AdjustmentsUpdater.update(shipment) }
-      create_shipment_tax_charge!
-      update_with_updater!
+      recalculate_totals!
     end
 
     # Applies user promotions when login after filling the cart
@@ -867,55 +791,50 @@ module Spree
       ::Spree::PromotionHandler::Cart.new(self).activate
     end
 
-    # Clean shipments and make order back to address state
-    #
-    # At some point the might need to force the order to transition from address
-    # to delivery again so that proper updated shipments are created.
-    # e.g. customer goes back from payment step and changes order items
-    def ensure_updated_shipments
-      if shipments.any? && !completed?
-        shipments.destroy_all
-        update_column(:shipment_total, 0)
+    # Drops stale fulfillments so they are rebuilt from current items.
+    def ensure_updated_fulfillments
+      if fulfillments.any? && !completed?
+        fulfillments.destroy_all
+        update_column(:delivery_total, 0)
 
         # Manually publish update event since update_column bypasses callbacks
         publish_event('order.updated')
-
-        restart_checkout_flow
       end
     end
 
-    def restart_checkout_flow
-      update_columns(
-        state: 'cart',
-        updated_at: Time.current
-      )
-
-      # Manually publish update event since update_columns bypasses callbacks
-      publish_event('order.updated')
-
-      next! unless line_items.empty?
+    # @deprecated Use {#ensure_updated_fulfillments}; removed in 6.1.
+    def ensure_updated_shipments
+      Spree::Deprecation.warn('Spree::Order#ensure_updated_fulfillments is deprecated and will be removed in Spree 6.1. Use #ensure_updated_fulfillments instead.')
+      ensure_updated_fulfillments
     end
 
-    def refresh_shipment_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
-      shipments.map { |s| s.refresh_rates(shipping_method_filter) }
-    end
-
-    def shipping_eq_billing_address?
-      bill_address == ship_address
+    def refresh_shipment_rates(shipping_method_filter = DeliveryMethod::DISPLAY_ON_FRONT_END)
+      fulfillments.map { |s| s.refresh_rates(shipping_method_filter) }
     end
 
     def set_shipments_cost
-      shipments.each(&:update_amounts)
-      updater.update_shipment_total
-      updater.update_adjustment_total
-      persist_totals
+      Spree::Deprecation.warn('Spree::Order#set_shipments_cost is deprecated and will be removed in Spree 6.1l. Please use set_fulfillments_cost instead')
+      set_fulfillments_cost
+    end
+
+    def set_fulfillments_cost
+      fulfillments.each(&:update_amounts)
+      recalculate_totals!
     end
 
     def shipping_method
-      # This query will select the first available shipping method from the shipments.
-      # It will use subquery to first select the shipping method id from the shipments' selected_shipping_rate.
-      Spree::ShippingMethod.
-        where(id: shipments.with_selected_shipping_method.limit(1).pluck(:shipping_method_id)).
+      Spree::Deprecation.warn('Spree::Order#shipping_method is deprecated and will be removed in Spree 6.1. Please use Spree::Order#delivery_method')
+      delivery_method
+    end
+
+    # Returns first available delivery method from the fulfillments
+    # Useful for analytics and CSV exports
+    # @return [Spree::DeliveryMethod]
+    def delivery_method
+      # This query will select the first available delivery method from the fulfillments.
+      # It will use subquery to first select the delivery method id from the fulfillments' selected_delivery_rate.
+      Spree::DeliveryMethod.
+        where(id: fulfillments.with_selected_delivery_method.limit(1).pluck(:delivery_method_id)).
         limit(1).
         first
     end
@@ -927,17 +846,37 @@ module Spree
     # Cancels the order and records the canceler.
     # Delegates to {Spree::Orders::Cancel} service.
     #
-    # @param user [Spree.user_class, nil] the user who canceled the order
+    # @param user [Spree.customer_class, nil] the user who canceled the order
     # @param canceled_at [Time, nil] the time of cancellation (defaults to current time)
     # @return [Spree::ServiceModule::Result]
     def canceled_by(user, canceled_at = nil)
-      Spree.order_cancel_service.call(order: self, canceler: user, canceled_at: canceled_at)
+      Spree.order_cancel_workflow.call(order: self, canceler: user, canceled_at: canceled_at)
+    end
+
+    # Machine-free lifecycle: cancellation runs through the
+    # {Spree::Orders::Cancel} workflow (which also records a
+    # Spree::OrderCancellation row); resume flips +status+ back and runs
+    # the same side effects the machine transition ran.
+    def cancel
+      Spree.order_cancel_workflow.call(order: self).success?
+    end
+
+    def cancel!
+      cancel || raise(ActiveRecord::RecordInvalid.new(self))
+    end
+
+    def resume
+      Spree.order_resume_workflow.call(order: self).success?
+    end
+
+    def resume!
+      resume || raise(ActiveRecord::RecordInvalid.new(self))
     end
 
     # Approves the order and records the approver.
     # Delegates to {Spree::Orders::Approve} service.
     #
-    # @param user [Spree.user_class, nil] the user who approved the order
+    # @param user [Spree.customer_class, nil] the user who approved the order
     # @return [Spree::ServiceModule::Result]
     def approved_by(user = nil)
       Spree.order_approve_service.call(order: self, approver: user)
@@ -951,14 +890,6 @@ module Spree
       !approved?
     end
 
-    def can_be_destroyed?
-      Spree::Deprecation.warn('Spree::Order#can_be_destroyed? is deprecated and will be removed in the next major version. Use Spree::Order#can_be_deleted? instead.')
-      can_be_deleted?
-    end
-
-    def can_be_deleted?
-      !completed? && payments.completed.empty?
-    end
 
     def consider_risk
       considered_risky! if is_risky? && !approved?
@@ -979,13 +910,6 @@ module Spree
       Spree.order_approve_service.call(order: self)
     end
 
-    def tax_total
-      included_tax_total + additional_tax_total
-    end
-
-    def quantity
-      line_items.sum(:quantity)
-    end
 
     def has_non_reimbursement_related_refunds?
       refunds.non_reimbursement.exists? ||
@@ -996,9 +920,6 @@ module Spree
       store.payment_methods.active.available_on_back_end.select { |pm| pm.available_for_order?(self) }
     end
 
-    def collect_frontend_payment_methods
-      store.payment_methods.active.available_on_front_end.select { |pm| pm.available_for_order?(self) }
-    end
 
     # determines whether the inventory is fully discounted
     #
@@ -1023,9 +944,7 @@ module Spree
     # Returns the IDs of the valid promotions for the order
     # @return [Array<Integer>]
     def valid_promotion_ids
-      all_adjustments.eligible.nonzero.promotion.promotion.eligible.nonzero.promotion.
-        joins("INNER JOIN #{Spree::PromotionAction.table_name} ON #{Spree::PromotionAction.table_name}.id = #{Spree::Adjustment.table_name}.source_id").
-        pluck("#{Spree::PromotionAction.table_name}.promotion_id").compact.uniq
+      discounts.promotion.nonzero.where.not(promotion_id: nil).distinct.pluck(:promotion_id)
     end
 
     # Returns the valid coupon promotions for the order
@@ -1037,19 +956,15 @@ module Spree
     end
 
     # Returns item and whole order discount amount for Order
-    # without Shipment discounts (eg. Free Shipping)
+    # without fulfillment discounts (eg. Free Shipping)
     # @return [BigDecimal]
     def cart_promo_total
-      all_adjustments.eligible.nonzero.promotion.
-        where.not(adjustable_type: 'Spree::Shipment').
-        sum(:amount)
+      Spree::Deprecation.warn('Spree::Order#cart_promo_total is deprecated and will be removed in Spree 6.1. Please use order.cart.discount_total instead')
+      discounts.promotion.nonzero.for_line_items.sum(:amount)
     end
 
     def has_free_shipping?
-      shipment_adjustments.
-        joins(:promotion_action).
-        where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
-              spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
+      discounts.promotion.for_fulfillments.exists?
     end
 
     def to_csv(_store = nil)
@@ -1058,18 +973,15 @@ module Spree
       end
 
       csv_lines = []
-      all_line_items.each_with_index do |line_item, index|
+      line_items.each_with_index do |line_item, index|
         csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index, metafields_for_csv).call
       end
       csv_lines
     end
 
     def all_line_items
+      Spree::Deprecation.warn('Spree::Order#all_line_items is deprecated and will be removed in Spree 6.1. Please use Spree::Order#line_items instead')
       line_items
-    end
-
-    def requires_ship_address?
-      !digital?
     end
 
     private
@@ -1088,13 +1000,13 @@ module Spree
     end
 
     def link_by_email
-      self.email = user.email if user
+      self.email = customer.email if customer
     end
 
     # Determine if email is required (we don't want validation errors before we hit the checkout)
     # we need to add delivery to the list for quick checkouts
     def require_email
-      true unless new_record? || ['cart', 'address', 'delivery'].include?(state)
+      !new_record? && (completed? || placed?)
     end
 
     def ensure_line_items_present
@@ -1104,10 +1016,10 @@ module Spree
     end
 
     def ensure_available_shipping_rates
-      if shipments.empty? || line_items_without_shipping_rates.present?
+      if fulfillments.empty? || line_items_without_shipping_rates.present?
         # After this point, order redirects back to 'address' state and asks user to pick a proper address
         # Therefore, shipments are not necessary at this point.
-        shipments.destroy_all
+        fulfillments.destroy_all
 
         if line_items_without_shipping_rates.present?
           errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: line_items_without_shipping_rates.map(&:name).to_sentence))
@@ -1128,83 +1040,8 @@ module Spree
       end
     end
 
-    def after_cancel
-      update_column(:status, 'canceled')
-
-      shipments.each(&:cancel!)
-
-      # payments fully covered by gift card won't be refunded
-      # we want to only void the payment
-      if gift_card.present? && covered_by_store_credit?
-        payments.completed.store_credits.each(&:void!)
-      else
-        payments.completed.each(&:cancel!)
-        payments.incomplete.not_store_credits.each(&:void_transaction!)
-        payments.store_credits.pending.each(&:void!)
-      end
-
-      update_with_updater!
-      send_order_canceled_webhook
-    end
-
-    def after_resume
-      update_column(:status, 'placed')
-
-      shipments.each(&:resume!)
-      consider_risk
-      send_order_resumed_webhook
-      publish_order_resumed_event
-    end
-
-    def use_billing?
-      use_billing.in?([true, 'true', '1'])
-    end
-
-    def use_shipping?
-      use_shipping.in?([true, 'true', '1'])
-    end
-
-    def ensure_currency_presence
-      self.currency ||= store&.default_currency
-    end
-
-    # Sets the locale from Spree::Current.locale when not already set.
-    # Called as a before_validation callback, mirroring ensure_currency_presence.
-    def ensure_locale_presence
-      self.locale ||= Spree::Current.locale
-    end
-
-    def currency_must_be_supported_by_store
-      return if currency.blank? || store.blank?
-
-      supported_codes = store.supported_currencies_list.map(&:iso_code)
-      unless supported_codes.include?(currency)
-        errors.add(:currency, Spree.t(:currency_not_supported_by_store))
-      end
-    end
-
-    # Validates that the order's locale is within the store's supported locales.
-    # Mirrors currency_must_be_supported_by_store.
-    def locale_must_be_supported_by_store
-      return if locale.blank? || store.blank?
-
-      unless store.supported_locales_list.include?(locale)
-        errors.add(:locale, Spree.t(:locale_not_supported_by_store))
-      end
-    end
-
-    # When currency changes, auto-resolve the matching market.
-    # Only applies when the store has markets configured.
-    def resolve_market_from_currency
-      return unless store_has_markets?
-      return if market&.currency == currency
-
-      resolved = store.markets.find_by(currency: currency)
-      self.market = resolved if resolved
-    end
-
     def collect_payment_methods
-      Spree::Deprecation.warn('`Order#collect_payment_methods` is deprecated and will be removed in Spree 5.5. Use `collect_frontend_payment_methods` instead.')
+      Spree::Deprecation.warn('`Order#collect_payment_methods` is deprecated and will be removed in Spree 6.1. Use `payment_methods` instead.')
 
       store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
@@ -1214,7 +1051,7 @@ module Spree
     end
 
     def recalculate_store_credit_payment
-      updater.update_adjustment_total if using_store_credit?
+      recalculate_totals! if using_store_credit?
 
       if gift_card.present?
         recalculate_gift_card
@@ -1223,12 +1060,5 @@ module Spree
       end
     end
 
-    def publish_order_completed_event
-      publish_event('order.completed', event_payload.merge(notify_customer: notify_customer))
-    end
-
-    def publish_order_resumed_event
-      publish_event('order.resumed')
-    end
   end
 end

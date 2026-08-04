@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'spree/testing_support/order_walkthrough'
 
 module Spree
   describe OrderUpdater, type: :model do
@@ -10,7 +9,7 @@ module Spree
       before do
         create_list(:line_item, 2, order: order, price: 10)
         order.reload
-        order.update_with_updater!
+        order.recalculate_totals!
       end
 
       it 'updates payment totals' do
@@ -42,7 +41,8 @@ module Spree
 
         before do
           updater.update
-          create(:adjustment, source: promotion_action, adjustable: order, order: order)
+          promotion_action
+          order.promotions << promotion
           create(:line_item, order: order, price: 10) # in addition to the two already created
           order.reload
           updater.update
@@ -54,167 +54,167 @@ module Spree
       end
 
       it 'update order adjustments' do
-        # A line item will not have both additional and included tax,
-        # so please just humour me for now.
-        order.line_items.first.update_columns(adjustment_total: 10.05,
-                                              additional_tax_total: 0.05,
-                                              included_tax_total: 0.05)
+        # Tax is provider-written; stub it out so the synthetic tax line survives.
+        allow(Spree).to receive(:tax_provider).and_return(instance_double(Spree::TaxProvider::Internal, estimate: nil))
+
+        line_item = order.line_items.first
+        create(:discount, order: order, line_item: line_item, amount: -2.50, kind: 'manual')
+        create(:fee, order: order, amount: 5, kind: 'handling')
+        create(:tax_line, order: order, line_item: line_item, amount: 0.05, included: false)
+
         updater.update_adjustment_total
-        expect(order.adjustment_total).to eq(10.05)
+        expect(order.adjustment_total).to eq(2.55)
         expect(order.additional_tax_total).to eq(0.05)
-        expect(order.included_tax_total).to eq(0.05)
+        expect(order.fee_total).to eq(5)
+        expect(order.promo_total).to eq(0)
       end
     end
 
-    describe '#update_with_updater!' do
+    describe '#recalculate_totals!' do
       it 'updates item count' do
         create(:line_item, order: order)
         create(:line_item, order: order)
 
-        order.update_with_updater!
+        order.recalculate_totals!
 
         expect(order.item_count).to eq(2)
       end
     end
 
+    # The status shims delegate to Spree::Orders::UpdateStatuses, the sole
+    # writer of fulfillment_status — so these run against real fulfillments.
     context 'updating shipment state' do
-      before do
-        allow(order).to receive_messages backordered?: false
-        allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0)
-        allow(order).to receive_message_chain(:shipments, :ready, :count).and_return(0)
-        allow(order).to receive_message_chain(:shipments, :pending, :count).and_return(0)
-      end
+      # Fulfillment#determine_state re-derives each state from the order, so
+      # these need a placed order for the factory statuses to survive.
+      let(:order) { create(:completed_order_with_totals, line_items_count: 1) }
+
+      before { order.fulfillments.destroy_all }
 
       it 'is backordered' do
-        allow(order).to receive_messages backordered?: true
+        create(:fulfillment, order: order, status: 'pending')
+        allow(order).to receive(:backordered?).and_return(true)
+
         updater.update_shipment_state
 
-        expect(order.shipment_state).to eq('backorder')
+        expect(order.fulfillment_status).to eq('backorder')
       end
 
       it 'is nil' do
-        allow(order).to receive_message_chain(:shipments, :states).and_return([])
-        allow(order).to receive_message_chain(:shipments, :count).and_return(0)
-
         updater.update_shipment_state
-        expect(order.shipment_state).to be_nil
+
+        expect(order.fulfillment_status).to be_nil
       end
 
-      ['shipped', 'ready', 'pending'].each do |state|
-        it "is #{state}" do
-          allow(order).to receive_message_chain(:shipments, :states).and_return([state])
+      ['fulfilled', 'pending'].each do |status|
+        it "is #{status}" do
+          create(:fulfillment, order: order, status: status)
+
           updater.update_shipment_state
-          expect(order.shipment_state).to eq(state.to_s)
+
+          expect(order.fulfillment_status).to eq(status)
+        end
+      end
+
+      # Fulfillment#determine_state only yields 'ready' once the order is paid.
+      context 'when the order is paid' do
+        before { allow(order).to receive(:paid?).and_return(true) }
+
+        it 'is ready' do
+          create(:fulfillment, order: order, status: 'ready')
+
+          updater.update_shipment_state
+
+          expect(order.fulfillment_status).to eq('ready')
+        end
+
+        it 'rolls ready_for_pickup up as ready' do
+          create(:fulfillment, order: order, status: 'ready_for_pickup')
+
+          updater.update_shipment_state
+
+          expect(order.fulfillment_status).to eq('ready')
         end
       end
 
       it 'is partial' do
-        allow(order).to receive_message_chain(:shipments, :states).and_return(['pending', 'shipped'])
+        create(:fulfillment, order: order, status: 'pending')
+        create(:fulfillment, order: order, status: 'fulfilled')
+
         updater.update_shipment_state
-        expect(order.shipment_state).to eq('partial')
+
+        expect(order.fulfillment_status).to eq('partial')
       end
     end
 
+    # The status shims delegate to Spree::Orders::UpdateStatuses, the sole
+    # writer of payment_status — so these run against real payments and use
+    # its vocabulary (none/authorized/partially_paid/paid/refunded/voided),
+    # not the legacy balance_due/credit_owed/void names.
     context 'updating payment state' do
-      let(:order) { Order.new }
-      let(:updater) { order.updater }
+      let(:order) { create(:order_with_line_items, line_items_count: 1) }
+      let(:order_total) { order.total }
 
-      it 'is failed if no valid payments' do
-        allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(true)
-
+      it 'is none when there are no payments' do
         updater.update_payment_state
-        expect(order.payment_state).to eq('failed')
+
+        expect(order.payment_state).to eq('none')
       end
 
-      context 'payment total is greater than order total' do
-        it 'is credit_owed' do
-          order.payment_total = 2
-          order.total = 1
+      it 'is authorized when a payment is only pending' do
+        create(:payment, order: order, amount: order_total, state: 'pending')
 
-          expect do
-            updater.update_payment_state
-          end.to change(order, :payment_state).to 'credit_owed'
-        end
+        updater.update_payment_state
+
+        expect(order.payment_state).to eq('authorized')
       end
 
       context 'order total is greater than payment total' do
-        it 'is balance_due' do
-          order.payment_total = 1
-          order.total = 2
+        it 'is partially_paid' do
+          create(:payment, order: order, amount: order_total - 1, state: 'completed')
 
-          expect do
-            updater.update_payment_state
-          end.to change(order, :payment_state).to 'balance_due'
+          updater.update_payment_state
+
+          expect(order.payment_state).to eq('partially_paid')
         end
       end
 
       context 'order total equals payment total' do
         it 'is paid' do
-          order.payment_total = 30
-          order.total = 30
+          create(:payment, order: order, amount: order_total, state: 'completed')
 
-          expect do
-            updater.update_payment_state
-          end.to change(order, :payment_state).to 'paid'
+          updater.update_payment_state
+
+          expect(order.payment_state).to eq('paid')
         end
       end
 
       context 'order is canceled' do
-        before do
-          order.state = 'canceled'
-        end
+        before { order.update_columns(status: 'canceled') }
 
         context 'and is still unpaid' do
-          it 'is void' do
-            order.payment_total = 0
-            order.total = 30
-            expect do
-              updater.update_payment_state
-            end.to change(order, :payment_state).to 'void'
-          end
-        end
+          it 'is none' do
+            updater.update_payment_state
 
-        context 'and is paid' do
-          it 'is credit_owed' do
-            order.payment_total = 30
-            order.total = 30
-            allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(false)
-            allow(order).to receive_message_chain(:payments, :completed, :size).and_return(1)
-            expect do
-              updater.update_payment_state
-            end.to change(order, :payment_state).to 'credit_owed'
+            expect(order.payment_state).to eq('none')
           end
         end
 
         context 'and payment is refunded' do
-          it 'is void' do
-            order.payment_total = 0
-            order.total = 30
-            expect do
-              updater.update_payment_state
-            end.to change(order, :payment_state).to 'void'
+          it 'is voided' do
+            payment = create(:payment, order: order, amount: order_total, state: 'completed')
+            create(:refund, payment: payment, amount: order_total)
+
+            updater.update_payment_state
+
+            expect(order.payment_state).to eq('voided')
           end
         end
       end
     end
 
-    it 'state change' do
-      order.shipment_state = 'shipped'
-      state_changes = double
-      allow(order).to receive_messages state_changes: state_changes
-      expect(state_changes).to receive(:create).with(
-        previous_state: nil,
-        next_state: 'shipped',
-        name: 'shipment',
-        user_id: order.user_id
-      )
-
-      order.state_changed('shipment')
-    end
-
     shared_context 'with original shipping method gone backend only' do
       before do
-        order.shipments.first.shipping_method.update(display_on: :back_end)
+        order.fulfillments.first.delivery_method.update(display_on: :back_end)
         create(:shipping_method) # create frontend available shipping method
       end
     end
@@ -223,20 +223,9 @@ module Spree
       before { order.update(completed_at: Time.current) }
 
       describe '#update' do
-        it 'updates payment state' do
-          expect(updater).to receive(:update_payment_state)
-          updater.update
-        end
-
-        it 'updates shipment state' do
-          expect(updater).to receive(:update_shipment_state)
-          updater.update
-        end
-
-        it 'updates shipments total again after updating shipments' do
-          expect(updater).to receive(:update_shipment_total).ordered
-          expect(updater).to receive(:update_shipments).ordered
-          expect(updater).to receive(:update_shipment_total).ordered
+        it 'delegates to the RecalculateTotals workflow with a deprecation warning' do
+          expect(Spree::Deprecation).to receive(:warn).with(/updater#update is deprecated/i)
+          expect(Spree::Carts::RecalculateTotals).to receive(:call).with(cart: order).and_call_original
           updater.update
         end
       end
@@ -246,7 +235,7 @@ module Spree
         let(:shipments) { [shipment] }
 
         it 'updates each shipment' do
-          allow(order).to receive_messages shipments: shipments
+          allow(order).to receive_messages fulfillments: shipments
           allow(shipments).to receive_messages states: []
           allow(shipments).to receive_messages ready: []
           allow(shipments).to receive_messages pending: []
@@ -257,14 +246,14 @@ module Spree
         end
 
         it 'refreshes shipment rates' do
-          allow(order).to receive_messages shipments: shipments
+          allow(order).to receive_messages fulfillments: shipments
 
           expect(shipment).to receive(:refresh_rates)
           updater.update_shipments
         end
 
         it 'updates the shipment amount' do
-          allow(order).to receive_messages shipments: shipments
+          allow(order).to receive_messages fulfillments: shipments
 
           expect(shipment).to receive(:update_amounts)
           updater.update_shipments
@@ -274,8 +263,8 @@ module Spree
           include_context 'with original shipping method gone backend only'
           let(:order) { create(:completed_order_with_totals) }
 
-          it 'keeps the original shipping method' do
-            expect { updater.update_shipments }.not_to change { order.shipments.first.shipping_method }
+          it 'keeps the original delivery method' do
+            expect { updater.update_shipments }.not_to change { order.fulfillments.first.delivery_method }
           end
         end
       end
@@ -309,11 +298,11 @@ module Spree
 
       describe '#update_shipments' do
         include_context 'with original shipping method gone backend only'
-        let(:order) { ::OrderWalkthrough.up_to(:delivery) }
+        let(:order) { create(:cart_ready_for_delivery, store: @default_store) }
 
         it 'resets shipping method to frontend-available' do
-          order.updater.update_shipments
-          expect(order.shipments.first.shipping_method).to eq Spree::ShippingMethod.find_by(display_on: 'both')
+          Spree::OrderUpdater.new(order).update_shipments
+          expect(order.fulfillments.first.delivery_method).to eq Spree::ShippingMethod.find_by(display_on: 'both')
         end
       end
     end

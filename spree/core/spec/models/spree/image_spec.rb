@@ -43,11 +43,11 @@ describe Spree::Image, type: :model do
       let(:product) { create(:product) }
       let!(:variants) { create_list(:variant, 2, product: product) }
 
-      context 'when viewable is a master variant' do
-        let(:viewable) { product.reload.master }
+      context 'when viewable is a product-level asset' do
+        let(:viewable) { product }
 
         it 'touches product variants' do
-          image.viewable.product.reload
+          image.viewable.reload
           expect(image).to receive(:touch_product_variants)
           image.set_list_position(2)
         end
@@ -88,8 +88,8 @@ describe Spree::Image, type: :model do
     let(:product) { create(:product) }
     let(:variant) { create(:variant, product: product) }
 
-    it 'increments media_count when image is created on master' do
-      expect { create(:image, viewable: product.master) }.to change { product.reload.media_count }.by(1)
+    it 'increments media_count when image is created on the default variant' do
+      expect { create(:image, viewable: product.default_variant) }.to change { product.reload.media_count }.by(1)
     end
 
     it 'increments media_count when image is created on variant' do
@@ -103,7 +103,7 @@ describe Spree::Image, type: :model do
 
     it 'tracks media across all variants correctly' do
       expect(product.media_count).to eq(0)
-      create(:image, viewable: product.master)
+      create(:image, viewable: product.default_variant)
       create(:image, viewable: variant)
       create(:image, viewable: variant)
       expect(product.reload.media_count).to eq(3)
@@ -112,7 +112,7 @@ describe Spree::Image, type: :model do
 
   describe 'primary_media_id updates' do
     let(:product) { create(:product) }
-    let(:variant) { product.master }
+    let(:variant) { product.default_variant }
 
     it 'sets variant primary_media_id when first image is created' do
       expect(variant.primary_media_id).to be_nil

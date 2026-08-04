@@ -2,14 +2,14 @@ module Spree
   # spree:controller_decorator — generate a decorator file for an existing
   # Spree controller. Mirrors the model_decorator generator but handles
   # arbitrary namespace depth (Spree::ProductsController,
-  # Spree::Admin::ProductsController, Spree::Api::V3::Store::ProductsController).
+  # Spree::Api::V3::Store::ProductsController).
   #
   # @example
   #   bin/rails g spree:controller_decorator Spree::ProductsController
   #     => app/controllers/spree/products_controller_decorator.rb
   #
-  #   bin/rails g spree:controller_decorator Spree::Admin::ProductsController
-  #     => app/controllers/spree/admin/products_controller_decorator.rb
+  #   bin/rails g spree:controller_decorator Spree::Api::V3::Admin::ProductsController
+  #     => app/controllers/spree/api/v3/admin/products_controller_decorator.rb
   class ControllerDecoratorGenerator < Rails::Generators::NamedBase
     desc 'Creates a controller decorator for a Spree controller'
 
@@ -30,7 +30,7 @@ module Spree
     private
 
     # Strip a leading `Spree::` and split the remainder on `::`.
-    # `"Spree::Admin::ProductsController"` => `["Admin", "ProductsController"]`
+    # `"Spree::Api::V3::Admin::ProductsController"` => `["Api", "V3", "Admin", "ProductsController"]`
     def name_parts
       @name_parts ||= name.sub(/\ASpree::/, '').split('::').reject(&:empty?)
     end

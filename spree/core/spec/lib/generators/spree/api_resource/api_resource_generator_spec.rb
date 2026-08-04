@@ -54,10 +54,10 @@ RSpec.describe Spree::ApiResourceGenerator, type: :generator do
       expect(result[:migration]).to include('t.references :product, null: false, index: true, foreign_key: false')
     end
 
-    it 'respects Spree.user_class for user references' do
+    it 'respects Spree.customer_class for user references' do
       result = run_generator(['UserBrand', 'user:references', 'name:string'])
 
-      expect(result[:model]).to include('belongs_to :user, class_name: "::#{Spree.user_class}"')
+      expect(result[:model]).to include('belongs_to :user, class_name: "::#{Spree.customer_class}"')
     end
 
     it 'checks model_existed_before_run against destination_root, not process cwd' do

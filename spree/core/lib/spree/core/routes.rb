@@ -4,12 +4,10 @@ module Spree
       def self.add_routes(&block)
         @spree_routes ||= []
 
-        # Anything that causes the application's routes to be reloaded,
-        # will cause this method to be called more than once
-        # i.e. https://github.com/plataformatec/devise/blob/31971e69e6a1bcf6c7f01eaaa44f227c4af5d4d2/lib/devise/rails.rb#L14
-        # In the case of Devise, this *only* happens in the production env
-        # This coupled with Rails 4's insistence that routes are not drawn twice,
-        # poses quite a serious problem.
+        # Anything that causes the application's routes to be reloaded will cause
+        # this method to be called more than once (in some setups only in the
+        # production env). Coupled with Rails' insistence that routes are not
+        # drawn twice, that poses quite a serious problem.
         #
         # This is mainly why this whole file exists in the first place.
         #

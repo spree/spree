@@ -1,9 +1,11 @@
 class AddFirstNameAndLastNameToSpreeUsers < ActiveRecord::Migration[5.2]
   def change
-    if Spree.user_class.present?
-      users_table_name = Spree.user_class.table_name
-      add_column users_table_name, :first_name, :string unless column_exists?(users_table_name, :first_name)
-      add_column users_table_name, :last_name, :string unless column_exists?(users_table_name, :last_name)
-    end
+    return unless Spree.customer_class.present?
+
+    table = Spree.customer_class.table_name
+    return unless table_exists?(table)
+
+    add_column table, :first_name, :string unless column_exists?(table, :first_name)
+    add_column table, :last_name, :string unless column_exists?(table, :last_name)
   end
 end

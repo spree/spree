@@ -11,13 +11,14 @@ module Spree
     class DefaultCustomer < Base
       def activate!
         # Read-only access to catalog
+        can :read, Spree::Collection
         can :read, Spree::Country
         can :read, Spree::OptionType
         can :read, Spree::OptionValue
         can :read, Spree::Product
         can :read, Spree::State
         can :read, Spree::Store
-        can :read, Spree::Taxon
+        can :read, Spree::Category
         can :read, Spree::Taxonomy
         can :read, Spree::Variant
         can :read, Spree::Zone
@@ -28,26 +29,34 @@ module Spree
         # Order management for the user's own orders
         can :create, Spree::Order
         can :show, Spree::Order do |order, token|
-          order.user == user || order.token && token == order.token
+          order.customer == user || order.token && token == order.token
         end
         can :update, Spree::Order do |order, token|
-          !order.completed? && (order.user == user || order.token && token == order.token)
+          !order.completed? && (order.customer == user || order.token && token == order.token)
+        end
+
+        # Cart management — the checkout owner since the cart/order split
+        can :create, Spree::Cart
+        can :show, Spree::Cart do |cart, token|
+          cart.customer == user || cart.token && token == cart.token
+        end
+        can [:update, :destroy], Spree::Cart do |cart, token|
+          !cart.completed? && (cart.customer == user || cart.token && token == cart.token)
         end
 
         # Line item management
         can :create, Spree::LineItem do |line_item, token|
-          line_item.order.user == user || line_item.order.token && token == line_item.order.token
+          owner = line_item.owner
+          owner.customer == user || owner.token && token == owner.token
         end
-        can :update, Spree::LineItem do |line_item, token|
-          !line_item.order.completed? && (line_item.order.user == user || line_item.order.token && token == line_item.order.token)
-        end
-        can :destroy, Spree::LineItem do |line_item, token|
-          !line_item.order.completed? && (line_item.order.user == user || line_item.order.token && token == line_item.order.token)
+        can [:update, :destroy], Spree::LineItem do |line_item, token|
+          owner = line_item.owner
+          !owner.completed? && (owner.customer == user || owner.token && token == owner.token)
         end
 
         # User account management - available to all users (including guests for their own record)
-        can :create, Spree.user_class
-        can [:show, :update, :destroy], Spree.user_class, id: user.id
+        can :create, Spree.customer_class
+        can [:show, :update, :destroy], Spree.customer_class, id: user.id
 
         # Address management - only for persisted users with matching user_id
         can :manage, Spree::Address, user_id: user.id if user.persisted?
@@ -64,10 +73,10 @@ module Spree
         # Wishlist management
         can :manage, Spree::Wishlist, user_id: user.id
         can :show, Spree::Wishlist do |wishlist|
-          wishlist.user == user || wishlist.is_private == false
+          wishlist.customer == user || wishlist.is_private == false
         end
         can [:create, :update, :destroy], Spree::WishedItem do |wished_item|
-          wished_item.wishlist.user == user
+          wished_item.wishlist.customer == user
         end
 
         # Invitation acceptance

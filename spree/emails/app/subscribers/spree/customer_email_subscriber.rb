@@ -5,7 +5,7 @@ module Spree
     subscribes_to 'customer.password_reset_requested'
 
     def handle(event)
-      user = Spree.user_class.find_by(email: event.payload['email'])
+      user = Spree.customer_class.find_by(email: event.payload['email'])
       return unless user
 
       store = find_store(event)

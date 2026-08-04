@@ -1,30 +1,24 @@
 module Spree
   class Promotion
     module Actions
+      # Writes a fulfillment-attached Discount covering the fulfillment cost.
+      # The row persists even at zero amount — Order#has_free_shipping? tests
+      # row existence.
       class FreeShipping < Spree::PromotionAction
-        include Spree::AdjustmentSource
-
-        def perform(payload = {})
-          order = payload[:order]
-
-          create_unique_adjustments(order, order.shipments)
+        def discount_scope
+          :fulfillment
         end
 
-        def compute_amount(shipment)
-          shipment.cost * -1
+        def persist_at_zero?
+          true
         end
 
-        # we need to persist 0 amount adjustment
-        def create_adjustment(order, adjustable, included = false)
-          amount = compute_amount(adjustable)
+        def perform(options = {})
+          apply_via_adjuster(options)
+        end
 
-          adjustable.adjustments.new(
-            amount: amount,
-            included: included,
-            label: label,
-            order: order,
-            source: self
-          ).save
+        def compute_amount(fulfillment)
+          fulfillment.cost * -1
         end
       end
     end

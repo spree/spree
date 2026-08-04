@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Promotion::Rules::Taxon, type: :model do
+describe Spree::Promotion::Rules::Category, type: :model do
   let(:store) { @default_store }
   let(:promotion) { create(:promotion) }
   let(:rule) { create(:promotion_rule_taxon, promotion: promotion) }

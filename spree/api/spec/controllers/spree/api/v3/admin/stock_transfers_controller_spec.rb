@@ -67,7 +67,7 @@ RSpec.describe Spree::Api::V3::Admin::StockTransfersController, type: :controlle
     end
 
     it "drops variants belonging to another store and surfaces invalid_variants" do
-      foreign_variant = create(:product, store: create(:store)).master
+      foreign_variant = create(:product, store: create(:store)).default_variant
 
       expect do
         post :create, params: base_params.merge(

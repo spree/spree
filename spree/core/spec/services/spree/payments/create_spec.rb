@@ -5,7 +5,7 @@ module Spree
     subject { described_class }
 
     let(:store) { @default_store }
-    let(:order) { create(:order_with_totals, store: store, user: nil, email: 'john@snow.org') }
+    let(:order) { create(:order_with_totals, store: store, customer: nil, email: 'john@snow.org') }
 
     let(:execute) { subject.call(order: order, params: params) }
     let(:value) { execute.value }
@@ -53,7 +53,7 @@ module Spree
 
         context 'with user' do
           let(:user) { create(:user) }
-          let(:order) { create(:order_with_totals, store: store, user: user) }
+          let(:order) { create(:order_with_totals, store: store, customer: user) }
 
           include_context 'creates a payment'
           include_context 'creates a payment source'
@@ -77,8 +77,8 @@ module Spree
 
         context 'valid source' do
           let(:user) { create(:user) }
-          let(:order) { create(:order_with_totals, store: store, user: user) }
-          let!(:payment_source) { create(:credit_card, payment_method: payment_method, user: user) }
+          let(:order) { create(:order_with_totals, store: store, customer: user) }
+          let!(:payment_source) { create(:credit_card, payment_method: payment_method, customer: user) }
 
           include_context 'creates a payment'
 
@@ -87,8 +87,8 @@ module Spree
 
         context 'source assigned to a different user' do
           let(:user) { create(:user) }
-          let(:order) { create(:order_with_totals, store: store, user: user) }
-          let!(:payment_source) { create(:credit_card, payment_method: payment_method, user: create(:user)) }
+          let(:order) { create(:order_with_totals, store: store, customer: user) }
+          let!(:payment_source) { create(:credit_card, payment_method: payment_method, customer: create(:user)) }
 
           it { expect(execute.success?).to eq(false) }
           it { expect(execute.error.to_s).to eq('source_not_found') }
@@ -105,7 +105,7 @@ module Spree
         end
 
         let(:user) { create(:user) }
-        let(:order) { create(:order_with_totals, store: store, user: user) }
+        let(:order) { create(:order_with_totals, store: store, customer: user) }
 
         it { expect(execute.success?).to eq(false) }
         it { expect(execute.error.to_s).to eq('source_not_found') }

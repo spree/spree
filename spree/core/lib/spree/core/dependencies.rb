@@ -7,34 +7,41 @@ module Spree
         # ability
         ability_class: 'Spree::Ability',
 
-        # cart
+        # cart — the legacy Spree::Cart::* namespace is gone (Spree::Cart is the
+        # cart model since 6.0); surviving services live under Spree::Carts::.
+        # cart_create/update/estimate_shipping_rates/change_currency service
+        # registrations were removed with their dead implementations.
         cart_compare_line_items_service: 'Spree::CompareLineItems',
-        cart_create_service: 'Spree::Cart::Create',
-        cart_add_item_service: 'Spree::Cart::AddItem',
-        cart_update_service: 'Spree::Cart::Update',
-        cart_recalculate_service: 'Spree::Cart::Recalculate',
-        cart_remove_item_service: 'Spree::Cart::RemoveItem',
-        cart_remove_line_item_service: 'Spree::Cart::RemoveLineItem',
-        cart_set_item_quantity_service: 'Spree::Cart::SetQuantity',
-        cart_estimate_shipping_rates_service: 'Spree::Cart::EstimateShippingRates',
-        cart_empty_service: 'Spree::Cart::Empty',
-        cart_destroy_service: 'Spree::Cart::Destroy',
-        cart_associate_service: 'Spree::Cart::Associate',
-        cart_change_currency_service: 'Spree::Cart::ChangeCurrency',
-        cart_remove_out_of_stock_items_service: 'Spree::Cart::RemoveOutOfStockItems',
+        cart_add_item_workflow: 'Spree::Carts::AddItem',
+        cart_recalculate_workflow: 'Spree::Carts::Recalculate',
+        cart_recalculate_totals_workflow: 'Spree::Carts::RecalculateTotals',
+        order_recalculate_totals_workflow: 'Spree::Orders::RecalculateTotals',
+        cart_remove_item_service: 'Spree::Carts::RemoveItem',
+        cart_remove_line_item_service: 'Spree::Carts::RemoveLineItem',
+        cart_set_item_quantity_service: 'Spree::Carts::SetQuantity',
+
+        # draft orders (admin item editing) — cart twins split so the two
+        # sides can diverge; see Spree::Orders::AddItem
+        order_add_item_service: 'Spree::Orders::AddItem',
+        order_update_item_service: 'Spree::Orders::UpdateItem',
+        order_remove_line_item_service: 'Spree::Orders::RemoveLineItem',
+        order_remove_item_service: 'Spree::Orders::RemoveItem',
+        cart_empty_service: 'Spree::Carts::Empty',
+        cart_destroy_service: 'Spree::Carts::Destroy',
+        cart_associate_service: 'Spree::Carts::Associate',
+        cart_remove_out_of_stock_items_service: 'Spree::Carts::RemoveOutOfStockItems',
 
         # carts
-        carts_complete_service: 'Spree::Carts::Complete',
+        carts_complete_workflow: 'Spree::Carts::Complete',
+        carts_create_service: 'Spree::Carts::Create',
+        carts_update_service: 'Spree::Carts::Update',
+        carts_upsert_items_service: 'Spree::Carts::UpsertItems',
+        cart_merge_workflow: 'Spree::Carts::Merge',
 
         # checkout
-        checkout_next_service: 'Spree::Checkout::Next',
         checkout_advance_service: 'Spree::Checkout::Advance',
-        checkout_update_service: 'Spree::Checkout::Update',
-        checkout_complete_service: 'Spree::Checkout::Complete',
         checkout_add_store_credit_service: 'Spree::Checkout::AddStoreCredit',
         checkout_remove_store_credit_service: 'Spree::Checkout::RemoveStoreCredit',
-        checkout_get_shipping_rates_service: 'Spree::Checkout::GetShippingRates',
-        checkout_select_shipping_method_service: 'Spree::Checkout::SelectShippingMethod',
 
         # gift cards
         gift_card_apply_service: 'Spree::GiftCards::Apply',
@@ -43,79 +50,129 @@ module Spree
 
         # order
         order_approve_service: 'Spree::Orders::Approve',
-        order_cancel_service: 'Spree::Orders::Cancel',
-        order_complete_service: 'Spree::Orders::Complete',
+        order_cancel_workflow: 'Spree::Orders::Cancel',
+        order_resume_workflow: 'Spree::Orders::Resume',
+        order_complete_workflow: 'Spree::Orders::Complete',
+        order_discount_create_service: 'Spree::Orders::Discounts::Create',
+        order_discount_update_service: 'Spree::Orders::Discounts::Update',
+        order_discount_destroy_service: 'Spree::Orders::Discounts::Destroy',
+        order_fee_create_service: 'Spree::Orders::Fees::Create',
+        order_fee_update_service: 'Spree::Orders::Fees::Update',
+        order_fee_destroy_service: 'Spree::Orders::Fees::Destroy',
         order_create_service: 'Spree::Orders::Create',
         order_update_service: 'Spree::Orders::Update',
+        order_update_statuses_service: 'Spree::Orders::UpdateStatuses',
         order_updater: 'Spree::OrderUpdater',
 
         # fulfillment
-        fulfillment_create_service: 'Spree::Fulfillments::Create',
+        fulfillment_create_workflow: 'Spree::Fulfillments::Create',
+        fulfillment_update_service: 'Spree::Fulfillments::Update',
 
-        # shipment
-        shipment_change_state_service: 'Spree::Shipments::ChangeState',
-        shipment_create_service: 'Spree::Shipments::Create',
-        shipment_update_service: 'Spree::Shipments::Update',
-        shipment_add_item_service: 'Spree::Shipments::AddItem',
-        shipment_remove_item_service: 'Spree::Shipments::RemoveItem',
+        # returns
+        return_create_workflow: 'Spree::Returns::Create',
+        return_approve_workflow: 'Spree::Returns::Approve',
+        return_receive_workflow: 'Spree::Returns::Receive',
+        return_refund_workflow: 'Spree::Returns::Refund',
+        return_cancel_workflow: 'Spree::Returns::Cancel',
+
+        # exchanges
+        exchange_create_workflow: 'Spree::Exchanges::Create',
+        exchange_approve_workflow: 'Spree::Exchanges::Approve',
+        exchange_receive_workflow: 'Spree::Exchanges::Receive',
+        exchange_fulfill_workflow: 'Spree::Exchanges::Fulfill',
+        exchange_cancel_workflow: 'Spree::Exchanges::Cancel',
+
+        # claims
+        claim_create_workflow: 'Spree::Claims::Create',
+        claim_approve_workflow: 'Spree::Claims::Approve',
+        claim_resolve_workflow: 'Spree::Claims::Resolve',
+        claim_deny_workflow: 'Spree::Claims::Deny',
+        claim_cancel_workflow: 'Spree::Claims::Cancel',
 
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
-
-        # sorter
-        collection_sorter: 'Spree::BaseSorter',
-        order_sorter: 'Spree::BaseSorter',
-        posts_sorter: nil,
-        products_sorter: 'Spree::Products::Sort',
-        # paginator
-        collection_paginator: nil,
 
         # coupons
         # TODO: we should split this service into 2 separate - Add and Remove
         coupon_handler: 'Spree::PromotionHandler::Coupon',
 
-        # account
-        account_create_service: 'Spree::Account::Create',
-        account_update_service: 'Spree::Account::Update',
-
         # addresses
         address_create_service: 'Spree::Addresses::Create',
         address_update_service: 'Spree::Addresses::Update',
 
-        # credit cards
-        credit_cards_destroy_service: 'Spree::CreditCards::Destroy',
-
-        # classifications
-        classification_reposition_service: nil,
-
-        # line items
-        line_item_create_service: 'Spree::LineItems::Create',
-        line_item_update_service: 'Spree::LineItems::Update',
-        line_item_destroy_service: 'Spree::LineItems::Destroy',
-
         payment_create_service: 'Spree::Payments::Create',
-        payments_handle_webhook_service: 'Spree::Payments::HandleWebhook',
+        payment_capture_workflow: 'Spree::Payments::Capture',
+        payment_refund_workflow: 'Spree::Payments::Refund',
+        payments_handle_webhook_workflow: 'Spree::Payments::HandleWebhook',
 
         # finders
-        address_finder: 'Spree::Addresses::Find',
-        country_finder: 'Spree::Countries::Find',
-        cms_page_finder: nil, # LEGACY
-        menu_finder: nil, # LEGACY
-        current_order_finder: 'Spree::Orders::FindCurrent',
         current_store_finder: 'Spree::Stores::FindDefault',
-        completed_order_finder: 'Spree::Orders::FindComplete',
-        credit_card_finder: 'Spree::CreditCards::Find',
-        posts_finder: nil,
-        products_finder: 'Spree::Products::Find',
-        taxon_finder: 'Spree::Taxons::Find',
         line_item_by_variant_finder: 'Spree::LineItems::FindByVariant',
-        variant_finder: 'Spree::Variants::Find',
 
         # search
         search_product_presenter: 'Spree::SearchProvider::ProductPresenter'
       }.freeze
 
       include Spree::DependenciesHelper
+
+      # 6.0 tier rename: these seams resolve Spree::Workflow classes now.
+      # The old *_service names stay settable and readable one release so
+      # applications don't crash at boot — but a legacy write is stashed,
+      # NOT applied to the workflow seam: a class written against the old
+      # service contract is not interchangeable with the workflow the new
+      # call sites consume. Reads return the stashed value (legacy code
+      # calling its own class keeps working), falling back to the workflow
+      # class — safe for legacy callers, whose old keyword vocabulary the
+      # workflows accept through alias_argument bridges. Removed in 6.1.
+      LEGACY_WORKFLOW_KEYS = {
+        cart_add_item_service: :cart_add_item_workflow,
+        cart_recalculate_service: :cart_recalculate_workflow,
+        cart_merge_strategy: :cart_merge_workflow,
+        carts_complete_service: :carts_complete_workflow,
+        payments_handle_webhook_service: :payments_handle_webhook_workflow,
+        fulfillment_create_service: :fulfillment_create_workflow,
+        order_cancel_service: :order_cancel_workflow,
+        order_complete_service: :order_complete_workflow
+      }.freeze
+
+      # Same stash-don't-apply treatment for the 6.0 Shipment→Fulfillment
+      # service rename: the new class speaks the fulfillment keyword
+      # vocabulary (still accepting the old shipment keywords with a
+      # warning), but a legacy override written against the old keywords is
+      # not interchangeable with what the new call sites pass. Removed in 6.1.
+      LEGACY_SERVICE_KEYS = {
+        shipment_update_service: :fulfillment_update_service
+      }.freeze
+
+      def legacy_workflow_overrides
+        @legacy_workflow_overrides ||= {}
+      end
+
+      LEGACY_WORKFLOW_KEYS.merge(LEGACY_SERVICE_KEYS).each do |legacy, current|
+        define_method("#{legacy}=") do |value|
+          Spree::Deprecation.warn(
+            "Spree::Dependencies##{legacy}= is deprecated and NO LONGER CONSULTED by Spree — " \
+            "the override was not applied. Port the class to the #{current} contract and " \
+            "set #{current}= instead. The #{legacy} name is removed in Spree 6.1."
+          )
+          legacy_workflow_overrides[legacy] = value
+        end
+
+        define_method(legacy) do
+          Spree::Deprecation.warn("Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.1. Use #{current} instead.")
+          legacy_workflow_overrides.fetch(legacy) { send(current) }
+        end
+
+        define_method("#{legacy}_class") do
+          Spree::Deprecation.warn("Spree::Dependencies##{legacy} is deprecated and will be removed in Spree 6.1. Use #{current} instead.")
+          if legacy_workflow_overrides.key?(legacy)
+            value = legacy_workflow_overrides[legacy]
+            value.is_a?(String) ? value.constantize : value
+          else
+            send("#{current}_class")
+          end
+        end
+      end
     end
   end
 end

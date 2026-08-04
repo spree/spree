@@ -100,6 +100,16 @@ module Spree
             def serialize_resource(resource)
               serializer_class.new(resource, params: serializer_params).to_h
             end
+
+            protected
+
+            # Payment confirmation races cart completion (a webhook can finish
+            # checkout before the customer returns) — only the idempotent
+            # confirm replay resolves completed carts. Creating or updating a
+            # session on a finished checkout stays a 404.
+            def find_cart!
+              super(include_completed: action_name == 'complete')
+            end
           end
         end
       end

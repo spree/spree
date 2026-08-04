@@ -219,7 +219,7 @@ describe Spree::PriceList, type: :model do
     it 'creates prices for all supported currencies' do
       price_list.add_products([product1.id])
 
-      currencies = price_list.prices.where(variant_id: product1.master.id).pluck(:currency)
+      currencies = price_list.prices.where(variant_id: product1.default_variant.id).pluck(:currency)
       expect(currencies).to match_array(%w[USD EUR GBP])
     end
 
@@ -230,7 +230,7 @@ describe Spree::PriceList, type: :model do
     end
 
     it 'does not create duplicate prices for existing variants' do
-      price_list.prices.create!(variant: product1.master, currency: 'USD', amount: nil)
+      price_list.prices.create!(variant: product1.default_variant, currency: 'USD', amount: nil)
 
       expect {
         price_list.add_products([product1.id])
@@ -240,7 +240,7 @@ describe Spree::PriceList, type: :model do
     it 'enqueues a job to touch affected variants' do
       expect {
         price_list.add_products([product1.id])
-      }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.master.id])
+      }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.default_variant.id])
     end
 
     it 'touches the price list to bust cache' do
@@ -291,13 +291,13 @@ describe Spree::PriceList, type: :model do
 
     context 'when price already has amount set' do
       before do
-        price_list.prices.create!(variant: product1.master, currency: 'USD', amount: 49.99)
+        price_list.prices.create!(variant: product1.default_variant, currency: 'USD', amount: 49.99)
       end
 
       it 'does not overwrite existing price with amount' do
         price_list.add_products([product1.id])
 
-        price = price_list.prices.find_by(variant_id: product1.master.id, currency: 'USD')
+        price = price_list.prices.find_by(variant_id: product1.default_variant.id, currency: 'USD')
         expect(price.amount).to eq(49.99)
       end
 
@@ -376,7 +376,7 @@ describe Spree::PriceList, type: :model do
     it 'enqueues a job to touch affected variants' do
       expect {
         price_list.remove_products([product1.id])
-      }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.master.id])
+      }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.default_variant.id])
     end
 
     it 'touches the price list to bust cache' do
@@ -400,7 +400,7 @@ describe Spree::PriceList, type: :model do
       it 'allows re-adding a product that had prices with amounts set' do
         # Add product and set some prices
         price_list.add_products([product1.id])
-        price = price_list.prices.find_by(variant_id: product1.master.id, currency: 'USD')
+        price = price_list.prices.find_by(variant_id: product1.default_variant.id, currency: 'USD')
         price.update!(amount: 19.99)
 
         # Remove product
@@ -412,7 +412,7 @@ describe Spree::PriceList, type: :model do
         }.to change { price_list.prices.count }.by(3)
 
         # New prices should have nil amounts
-        expect(price_list.prices.where(variant_id: product1.master.id).pluck(:amount).uniq).to eq([nil])
+        expect(price_list.prices.where(variant_id: product1.default_variant.id).pluck(:amount).uniq).to eq([nil])
       end
     end
   end
@@ -421,8 +421,8 @@ describe Spree::PriceList, type: :model do
     let(:store) { create(:store, supported_currencies: 'USD,EUR') }
     let(:price_list) { create(:price_list, store: store) }
     let(:product) { create(:product) }
-    let!(:price1) { create(:price, variant: product.master, price_list: price_list, currency: 'USD', amount: nil) }
-    let!(:price2) { create(:price, variant: product.master, price_list: price_list, currency: 'EUR', amount: nil) }
+    let!(:price1) { create(:price, variant: product.default_variant, price_list: price_list, currency: 'USD', amount: nil) }
+    let!(:price2) { create(:price, variant: product.default_variant, price_list: price_list, currency: 'EUR', amount: nil) }
 
     it 'updates prices in bulk using upsert_all' do
       prices_attributes = [

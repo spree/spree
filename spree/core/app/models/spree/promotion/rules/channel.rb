@@ -2,7 +2,7 @@
 module Spree
   class Promotion
     module Rules
-      class Channel < PromotionRule
+      class Channel < Spree::PromotionRule
         # Stored as raw IDs. Accepts prefixed IDs (`ch_…`) from API
         # callers and decodes them on write so eligibility checks compare
         # against the order's raw `channel_id` directly. Scope confines the
@@ -15,7 +15,7 @@ module Spree
                    )
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def channels

@@ -7,12 +7,7 @@ module Spree
     include Spree::RansackableAttributes
 
     included do
-      # Wins over Devise's implementation regardless of module include order, so
-      # host apps that add `devise ...` after this concern still send admin auth
-      # emails through Spree's mailer.
-      prepend Spree::AdminUserMethods::DeviseNotifications
-
-      has_prefix_id :admin
+      has_prefix_id :adm
 
       has_person_name
 
@@ -21,10 +16,11 @@ module Spree
       # Token auto-invalidates when password changes (salt changes)
       # Expiration is configurable via Spree::Config.admin_password_reset_expires_in (in minutes)
       generates_token_for :password_reset, expires_in: Spree::Config.admin_password_reset_expires_in.minutes do
-        # `try` rather than `&.`: models without a password_salt method or
-        # column at all (modern Devise) must fall through to encrypted_password
-        # — a bare call would raise NameError before the fallback.
-        try(:password_salt)&.last(10) || encrypted_password&.last(10)
+        # `try` rather than `&.`: a model that lacks the method/column entirely
+        # must fall through rather than raise NameError. `password_salt` covers
+        # has_secure_password (which derives it from password_digest);
+        # `encrypted_password` covers a legacy bcrypt column on a custom model.
+        try(:password_salt)&.last(10) || try(:encrypted_password)&.last(10)
       end
 
       def self.find_by_password_reset_token(token)
@@ -101,26 +97,6 @@ module Spree
       # resources to destroy
       reports.destroy_all
       exports.destroy_all
-    end
-
-    # Routes Devise's auth notifications through Spree's own mailer so admin
-    # password reset and account confirmation emails carry the store design and
-    # locale instead of Devise's built-in templates. Other notification kinds
-    # (e.g. unlock instructions) fall through to Devise.
-    module DeviseNotifications
-      def send_devise_notification(notification, *args)
-        token = args.first
-        store = Spree::Current.store || Spree::Store.default
-
-        case notification
-        when :reset_password_instructions
-          Spree::AdminUserMailer.password_reset_email(self, token, store).deliver_later
-        when :confirmation_instructions
-          Spree::AdminUserMailer.confirmation_email(self, token, store).deliver_later
-        else
-          super
-        end
-      end
     end
   end
 end

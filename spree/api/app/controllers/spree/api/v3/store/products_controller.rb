@@ -37,7 +37,7 @@ module Spree
             [
               product_publications: [],
               primary_media: [attachment_attachment: :blob],
-              master: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
+              default_variant: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
               variants: [:prices, stock_items: [:stock_location, :active_stock_reservations]]
             ]
           end

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Shipment, type: :model do
   let(:order) { create(:order) }
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
-  let(:shipment) { create(:shipment, cost: 1, state: 'pending', stock_location: create(:stock_location), order: order) }
+  let(:shipment) { create(:shipment, cost: 1, status: 'pending', stock_location: create(:stock_location), order: order) }
 
   before do
     allow(order).to receive_messages backordered?: false,
@@ -12,23 +12,21 @@ describe Spree::Shipment, type: :model do
                                      paid?: false,
                                      touch_later: false
 
-    allow(shipment).to receive_messages shipping_method: shipping_method
+    allow(shipment).to receive_messages(delivery_method: shipping_method, shipping_method: shipping_method)
   end
 
-  ['ready', 'canceled'].each do |state|
-    context "from #{state}" do
+  ['ready', 'canceled'].each do |status|
+    context "from #{status}" do
       before do
         allow(order).to receive(:update_with_updater!)
-        allow(shipment).to receive_messages(require_inventory: false, update_order: true, state: state)
+        allow(shipment).to receive_messages(require_inventory: false, update_order: true, status: status)
       end
 
-      it 'publishes shipment.shipped event when shipping', events: true do
-        allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
-
+      it 'publishes shipment.shipped event when fulfilling', events: true do
         expect(shipment).to receive(:publish_event).with('shipment.shipped')
         allow(shipment).to receive(:publish_event).with(anything)
 
-        shipment.ship!
+        shipment.fulfill!
       end
     end
   end

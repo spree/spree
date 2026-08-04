@@ -1,15 +1,27 @@
 FactoryBot.define do
   factory :order, class: Spree::Order do
-    user
+    customer
     bill_address
     completed_at { nil }
-    email        { user&.email }
+    email        { customer&.email }
     currency     { 'USD' }
     locale       { 'en' }
 
     transient do
       line_items_price { BigDecimal(10) }
       attach_to_default_store { true }
+      # Legacy machine vocabulary shim — the state column is gone. 'complete'
+      # marks the order completed; every other value is ignored (mid-checkout
+      # entities are carts since 6.0).
+      state { nil }
+    end
+
+    after(:create) do |order, evaluator|
+      if evaluator.state.to_s == 'complete' && order.completed_at.blank?
+        order.update_columns(completed_at: Time.current, status: 'placed')
+      elsif evaluator.state.to_s == 'canceled'
+        order.update_columns(status: 'canceled', canceled_at: order.canceled_at || Time.current)
+      end
     end
 
     before(:create) do |order|
@@ -20,9 +32,6 @@ FactoryBot.define do
         end
         order.store = store || create(:store)
       end
-    end
-
-    factory :cart, class: Spree::Order do
     end
 
     factory :order_with_totals do
@@ -70,18 +79,16 @@ FactoryBot.define do
 
         stock_location = order.line_items&.first&.variant&.stock_items&.first&.stock_location || create(:stock_location)
         create(:shipment, order: order, cost: evaluator.shipment_cost, stock_location: stock_location)
-        order.shipments.reload
+        order.fulfillments.reload
 
-        order.update_with_updater!
+        order.recalculate_totals!
       end
 
       factory :completed_order_with_totals do
-        state { 'complete' }
-
         after(:create) do |order, evaluator|
           # Set completed_at before refreshing shipment rates so order.completed? returns true
           # This prevents the shipping rate selection from recalculating order totals
-          order.update_column(:completed_at, order.completed_at || Time.current)
+          order.update_columns(completed_at: order.completed_at || Time.current, status: 'placed')
           order.refresh_shipment_rates(evaluator.shipping_method_filter)
         end
 
@@ -93,7 +100,7 @@ FactoryBot.define do
 
         factory :completed_order_with_store_credit_payment do
           after(:create) do |order|
-            store_credit = create(:store_credit, amount: order.total, store: order.store, user: order.user)
+            store_credit = create(:store_credit, amount: order.total, store: order.store, customer: order.customer)
             payment_method = create(:store_credit_payment_method, store: order.store)
 
             create(:store_credit_payment, amount: order.total, order: order, source: store_credit, payment_method: payment_method)
@@ -111,21 +118,21 @@ FactoryBot.define do
           after(:create) do |order, evaluator|
             create(:payment, amount: order.total, order: order, state: 'completed') if evaluator.with_payment
 
-            order.shipments.each do |shipment|
-              shipment.inventory_units.update_all state: 'on_hand'
-              shipment.update_column('state', 'ready')
+            order.fulfillments.each do |shipment|
+              shipment.fulfillment_items.update_all state: 'on_hand'
+              shipment.update_column(:status, 'ready')
             end
             order.reload
           end
 
           factory :shipped_order do
-            shipment_state { 'shipped' }
+            shipment_state { 'fulfilled' }
 
             after(:create) do |order|
-              order.shipments.each do |shipment|
-                shipment.inventory_units.update_all state: 'shipped'
+              order.fulfillments.each do |shipment|
+                shipment.fulfillment_items.update_all status: 'shipped'
                 shipment.update_columns(
-                  state: 'shipped',
+                  status: 'fulfilled',
                   tracking: '1234567890'
                 )
               end

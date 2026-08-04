@@ -81,9 +81,6 @@ Rails.application.config.after_initialize do
   # Spree.export_types << Spree::Exports::Payments
   # Spree.reports << Spree::Reports::MassivelyOvercomplexReportForCfo
 
-  # Admin partials
-  # Spree.admin.partials.product_form << 'spree/admin/products/custom_section'
-
   # Role-based permissions
   # Configure which permission sets are assigned to each role
   # More on permission sets: https://spreecommerce.org/docs/developer/customization/permissions
@@ -133,5 +130,5 @@ end
 # Search provider
 # Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
 
-Spree.user_class = <%= (options[:user_class].blank? ? 'Spree::LegacyUser' : options[:user_class]).inspect %>
-Spree.admin_user_class = <%= (options[:admin_user_class].blank? ? (options[:user_class].blank? ? 'Spree::LegacyAdminUser' : options[:user_class]) : options[:admin_user_class]).inspect %>
+Spree.customer_class = <%= (options[:user_class].blank? ? 'Spree::Customer' : options[:user_class]).inspect %>
+Spree.admin_user_class = <%= (options[:admin_user_class].blank? ? (options[:user_class].blank? ? 'Spree::AdminUser' : options[:user_class]) : options[:admin_user_class]).inspect %>

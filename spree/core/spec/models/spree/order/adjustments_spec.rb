@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Order do
-  context 'when an order has an adjustment that zeroes the total, but another adjustment for shipping that raises it above zero' do
+  context 'when a discount zeroes the item total, but shipping raises the total above zero' do
     let!(:persisted_order) { create(:order) }
     let!(:line_item) { create(:line_item) }
     let!(:shipping_method) do
@@ -12,18 +12,16 @@ describe Spree::Order do
     end
 
     before do
-      # Don't care about available payment methods in this test
-      allow(persisted_order).to receive_messages(has_available_payment: false)
       persisted_order.line_items << line_item
-      create(:adjustment, amount: -line_item.amount, label: 'Promotion', adjustable: line_item, order: persisted_order)
-      persisted_order.state = 'delivery'
-      persisted_order.save # To ensure new state_change event
+      persisted_order.update!(ship_address: create(:address))
+      persisted_order.rebuild_fulfillments!
+      persisted_order.set_fulfillments_cost
+      create(:discount, order: persisted_order, line_item: line_item, amount: -line_item.amount, label: 'Promotion', kind: 'manual')
+      persisted_order.recalculate_totals!
     end
 
-    it 'transitions from delivery to payment' do
-      allow(persisted_order).to receive_messages(payment_required?: true)
-      persisted_order.next!
-      expect(persisted_order.state).to eq('payment')
+    it 'still requires payment (shipping keeps the total above zero)' do
+      expect(persisted_order.reload.payment_required?).to be(true)
     end
   end
 
@@ -48,7 +46,6 @@ describe Spree::Order do
     let!(:shipping_method) do
       sm = create(:shipping_method, tax_category: tax_category)
       sm.calculator.preferred_amount = 10
-      sm.zones = [zone]
       sm.save
       sm
     end
@@ -60,19 +57,18 @@ describe Spree::Order do
     before do
       order.line_items << line_item
       order.ship_address = address
-      order.create_proposed_shipments
+      order.rebuild_fulfillments!
       order.send :ensure_available_shipping_rates
-      order.set_shipments_cost
+      order.set_fulfillments_cost
       order.create_shipment_tax_charge!
     end
 
-    it 'removes the shipment tax adjustment' do
+    it 'removes the fulfillment tax lines' do
       order.coupon_code = free_shipping_promotion.code
       Spree::PromotionHandler::Coupon.new(order).apply
       order.apply_free_shipping_promotions
 
-      shipment_tax_adjustments = order.shipment_adjustments.where(source_type: 'Spree::TaxRate')
-      expect(shipment_tax_adjustments.blank?).to be true
+      expect(order.tax_lines.for_fulfillments).to be_blank
     end
   end
 end

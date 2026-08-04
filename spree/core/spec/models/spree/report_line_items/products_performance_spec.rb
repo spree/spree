@@ -18,12 +18,6 @@ RSpec.describe Spree::ReportLineItems::ProductsPerformance do
     end
   end
 
-  describe '#brand' do
-    it 'returns brand name from record' do
-      expect(subject.brand).to eq(variant.try(:brand_name))
-    end
-  end
-
   describe '#category_levels' do
     let(:taxonomy) { store.taxonomies.first || create(:taxonomy, name: 'Categories', store: store) }
     let(:taxon) { create(:taxon, name: 'Shoes', taxonomy: taxonomy) }

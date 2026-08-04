@@ -11,10 +11,18 @@ module Spree
 
           user = find_user_by_email(email)
           return failure('Invalid email or password') unless user
+          return failure('Account temporarily locked. Try again later.') if user.respond_to?(:locked?) && user.locked?
 
           if validate_password(user, password)
+            # Require the full lockout contract before touching the counter — a
+            # custom customer_class may implement one hook but not the other.
+            if user.respond_to?(:failed_attempts) && user.respond_to?(:reset_failed_attempts!) &&
+               user.failed_attempts.to_i.positive?
+              user.reset_failed_attempts!
+            end
             success(user)
           else
+            user.record_failed_attempt! if user.respond_to?(:record_failed_attempt!)
             failure('Invalid email or password')
           end
         rescue => e
@@ -29,14 +37,14 @@ module Spree
         private
 
         def validate_password(user, password)
-          # Try Devise's valid_password? method first (most common)
+          # Duck-typed so any customer_class works: prefer valid_password?
+          # (defined by the gem models and legacy/custom models alike), then
+          # fall back to has_secure_password's authenticate.
           if user.respond_to?(:valid_password?)
             user.valid_password?(password)
-          # Fallback to authenticate method (for has_secure_password)
           elsif user.respond_to?(:authenticate)
             user.authenticate(password).present?
           else
-            # No password authentication available
             Rails.logger.warn "User class #{user.class} does not implement password authentication"
             false
           end

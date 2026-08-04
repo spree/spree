@@ -4,6 +4,8 @@ export type { RequestOptions, RetryConfig } from '@spree/sdk-core'
 // Request infrastructure (re-export from sdk-core)
 export { SpreeError } from '@spree/sdk-core'
 export type {
+  AuthProvider,
+  AuthProvidersResponse,
   AuthTokens,
   DashboardAnalytics,
   LoginCredentials,

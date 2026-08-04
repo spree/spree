@@ -9,7 +9,7 @@ module Spree
 
         remaining_total = amount ? [amount, @order.outstanding_balance].min : @order.outstanding_balance
 
-        return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless @order.user&.store_credits&.any?
+        return failure(nil, Spree.t(:error_user_does_not_have_any_store_credits)) unless @order.customer&.store_credits&.any?
 
         ApplicationRecord.transaction do
           existing = @order.payments.store_credits.where(state: :checkout)
@@ -22,7 +22,8 @@ module Spree
         end
 
         if @order.reload.payments.store_credits.valid.any?
-          @order.updater.run_hooks
+          # Legacy update hooks are an order-side extension seam; carts have none.
+          @order.update_hooks.each { |hook| @order.send(hook) } if @order.respond_to?(:update_hooks)
           success(@order)
         else
           failure(@order)
@@ -55,7 +56,7 @@ module Spree
         payment_method = Spree::PaymentMethod::StoreCredit.available.first
         raise 'Store credit payment method could not be found' unless payment_method
 
-        @order.user.store_credits.for_store(@order.store).order_by_priority.each do |credit|
+        @order.customer.store_credits.for_store(@order.store).order_by_priority.each do |credit|
           break if remaining_total.zero?
           next if credit.amount_remaining.zero?
 

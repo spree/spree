@@ -14,23 +14,23 @@ RSpec.describe Spree::Subscriber, events: true do
   describe '.subscribes_to' do
     it 'registers subscription patterns' do
       subscriber_class = Class.new(described_class) do
-        subscribes_to 'order.completed'
+        subscribes_to 'order.placed'
       end
 
-      expect(subscriber_class.subscription_patterns).to eq(['order.completed'])
+      expect(subscriber_class.subscription_patterns).to eq(['order.placed'])
     end
 
     it 'accepts multiple patterns' do
       subscriber_class = Class.new(described_class) do
-        subscribes_to 'order.completed', 'order.canceled'
+        subscribes_to 'order.placed', 'order.canceled'
       end
 
-      expect(subscriber_class.subscription_patterns).to contain_exactly('order.completed', 'order.canceled')
+      expect(subscriber_class.subscription_patterns).to contain_exactly('order.placed', 'order.canceled')
     end
 
     it 'stores subscription options' do
       subscriber_class = Class.new(described_class) do
-        subscribes_to 'order.completed', async: false
+        subscribes_to 'order.placed', async: false
       end
 
       expect(subscriber_class.subscription_options).to eq({ async: false })
@@ -38,11 +38,11 @@ RSpec.describe Spree::Subscriber, events: true do
 
     it 'accumulates patterns from multiple calls' do
       subscriber_class = Class.new(described_class) do
-        subscribes_to 'order.completed'
+        subscribes_to 'order.placed'
         subscribes_to 'order.canceled'
       end
 
-      expect(subscriber_class.subscription_patterns).to contain_exactly('order.completed', 'order.canceled')
+      expect(subscriber_class.subscription_patterns).to contain_exactly('order.placed', 'order.canceled')
     end
   end
 
@@ -72,7 +72,7 @@ RSpec.describe Spree::Subscriber, events: true do
           end
         end
 
-        event = Spree::Event.new(name: 'order.completed', payload: {})
+        event = Spree::Event.new(name: 'order.placed', payload: {})
         subscriber_class.new.call(event)
 
         expect(handled_events).to eq([event])

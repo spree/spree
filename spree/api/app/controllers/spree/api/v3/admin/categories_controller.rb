@@ -52,6 +52,13 @@ module Spree
             Spree.api.admin_category_serializer
           end
 
+          # Categories exclude automatic (rule-based) rows, which still live in
+          # spree_categories until the Phase 4 migration moves them to Collections.
+          # No-op after migration; the .manual scope is removed in 6.1.
+          def scope
+            super.manual
+          end
+
           # Category-half attributes only. Deliberately excludes the
           # collection-bound fields (automatic, sort_order, rules_match_policy,
           # taxon_rules) and taxonomy_id — those belong to Spree::Collection

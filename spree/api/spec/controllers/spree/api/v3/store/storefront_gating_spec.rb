@@ -67,8 +67,8 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
   include_context 'API v3 Store'
 
   let(:channel) { store.default_channel }
-  let(:guest_cart) { create(:order, store: store, channel: channel, user: nil, email: 'guest@example.com') }
-  let(:user_cart) { create(:order, store: store, channel: channel, user: user) }
+  let(:guest_cart) { create(:order, store: store, channel: channel, customer: nil, email: 'guest@example.com') }
+  let(:user_cart) { create(:order, store: store, channel: channel, customer: user) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token

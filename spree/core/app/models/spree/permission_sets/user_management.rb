@@ -10,7 +10,7 @@ module Spree
   module PermissionSets
     class UserManagement < Base
       def activate!
-        can :manage, Spree.user_class
+        can :manage, Spree.customer_class
         can :manage, Spree::Address
         can :manage, Spree::CreditCard
         can [:read, :admin], Spree::Metafield

@@ -50,7 +50,7 @@ describe Spree::Country, type: :model do
   end
 
   describe '#current_market' do
-    let!(:market) { create(:market, store: store, countries: [america], currency: 'USD') }
+    let!(:market) { store.default_market }
 
     before do
       allow(Spree::Current).to receive(:store).and_return(store)

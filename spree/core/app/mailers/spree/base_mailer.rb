@@ -50,11 +50,6 @@ module Spree
     end
     helper_method :money
 
-    def frontend_available?
-      Spree::Core::Engine.frontend_available?
-    end
-    helper_method :frontend_available?
-
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host(headers[:store_url])
       return unless Spree::Config[:send_core_emails]
@@ -63,7 +58,7 @@ module Spree
         super
       else
         # Subclasses that call `mail` without wrapping their action in
-        # `with_store_locale` (e.g. Devise mailers, extensions) still get the
+        # `with_store_locale` (e.g. extension mailers) still get the
         # store default locale, as `mail` applied before Spree 5.6.
         with_store_locale(current_store) { super }
       end

@@ -3,13 +3,17 @@ module Spree
     class Reserve
       prepend Spree::ServiceModule::Base
 
-      def call(order:)
-        return success(order) unless Spree::Config[:stock_reservations_enabled]
+      def call(cart: nil, order: nil)
+        if order
+          Spree::Deprecation.warn('Calling Spree::StockReservations::Reserve with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
+          cart ||= order
+        end
+        return success(cart) unless Spree::Config[:stock_reservations_enabled]
 
-        expires_at = Time.current + Spree::StockReservation.ttl_for(order)
+        expires_at = Time.current + Spree::StockReservation.ttl_for(cart)
 
         ApplicationRecord.transaction do
-          targets = build_targets(order)
+          targets = build_targets(cart)
           break if targets.empty?
 
           # Pessimistic lock + fresh read of count_on_hand. The lock serializes
@@ -20,7 +24,7 @@ module Spree
             .lock
             .index_by(&:id)
 
-          held = held_by_others(locked_stock_items.keys, order.id)
+          held = held_by_others(locked_stock_items.keys, cart)
           existing = existing_reservations_for(targets)
 
           this_order_used = Hash.new(0)
@@ -45,27 +49,33 @@ module Spree
 
             reservation = existing[[stock_item.id, line_item.id]] ||
                           Spree::StockReservation.new(stock_item: stock_item, line_item: line_item)
-            reservation.order = order
+            if cart.is_a?(Spree::Cart)
+              reservation.cart = cart
+              reservation.order = nil
+            else
+              reservation.order = cart
+              reservation.cart = nil
+            end
             reservation.quantity = line_item.quantity
             reservation.expires_at = expires_at
             reservation.save!
           end
         end
 
-        success(order)
+        success(cart)
       rescue InsufficientStockError => e
         failure(e.line_item, e.message)
       end
 
       private
 
-      def build_targets(order)
-        order.line_items.includes(variant: { stock_items: :stock_location }).filter_map do |line_item|
+      def build_targets(cart)
+        cart.line_items.includes(variant: { stock_items: :stock_location }).filter_map do |line_item|
           variant = line_item.variant
           next unless variant&.should_track_inventory?
 
           stock_item = select_stock_item(variant)
-          # Backorderable and pre-order variants oversell past count_on_hand,
+          # Backorderable and pre-cart variants oversell past count_on_hand,
           # so a reservation capped at on-hand stock would wrongly reject them;
           # their cap is enforced by Stock::Quantifier#can_supply? instead.
           next if stock_item.nil? || stock_item.backorderable? || variant.preorder?
@@ -78,13 +88,14 @@ module Spree
         variant.stock_items.detect { |si| si.stock_location&.active? && si.available? }
       end
 
-      def held_by_others(stock_item_ids, exclude_order_id)
+      def held_by_others(stock_item_ids, owner)
         return {} if stock_item_ids.empty?
 
+        owner_column = owner.is_a?(Spree::Cart) ? :cart_id : :order_id
         Spree::StockReservation
           .active
           .where(stock_item_id: stock_item_ids)
-          .where.not(order_id: exclude_order_id)
+          .where.not(owner_column => owner.id)
           .group(:stock_item_id)
           .sum(:quantity)
       end

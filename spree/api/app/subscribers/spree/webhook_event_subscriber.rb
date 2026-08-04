@@ -12,7 +12,7 @@ module Spree
   #
   # @example
   #   # Webhooks are automatically delivered when events are published
-  #   Spree::Events.publish('order.completed', order: order)
+  #   Spree::Events.publish('order.placed', order: order)
   #
   class WebhookEventSubscriber < Spree::Subscriber
     subscribes_to '*'

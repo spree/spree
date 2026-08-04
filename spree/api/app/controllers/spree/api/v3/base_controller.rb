@@ -42,8 +42,30 @@ module Spree
 
         protected
 
+        # Guest authorization for a specific order or cart. Defined here
+        # because Store::BaseController and Store::ResourceController anchor
+        # parallel inheritance branches — both need it.
+        def order_token
+          request.headers['x-spree-token']
+        end
+
+        # Renders a failed service/workflow Result: validation errors become a
+        # 422 field-error payload, anything else a plain service error. Shared
+        # by both APIs — Store endpoints surface workflow failures (a rejected
+        # return, a vetoed cart add) the same way Admin ones do.
+        def render_result_error(result)
+          error = result.error
+          errors = error.respond_to?(:value) ? error.value : error
+
+          if errors.is_a?(ActiveModel::Errors)
+            render_validation_error(errors)
+          else
+            render_service_error(error)
+          end
+        end
+
         # Override to use current_user from JWT authentication
-        # @return [Spree.user_class]
+        # @return [Spree.customer_class]
         def spree_current_user
           current_user
         end

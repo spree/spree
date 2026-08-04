@@ -10,16 +10,10 @@ module Spree
       has_many :products
       has_many :shipping_method_categories
     end
-    has_many :shipping_methods, through: :shipping_method_categories
+    has_many :shipping_methods, through: :shipping_method_categories, class_name: 'Spree::DeliveryMethod'
 
     def self.digital
       find_by(name: DIGITAL_NAME)
-    end
-
-    # Returns true if this shipping category includes a digital shipping method
-    # @return [Boolean]
-    def includes_digital_shipping_method?
-      @includes_digital_shipping_method ||= shipping_methods.digital.exists?
     end
   end
 end

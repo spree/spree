@@ -71,8 +71,10 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
             allow(I18n).to receive(:default_locale).and_return(:de)
           end
 
-          it 'fallbacks to the default application locale' do
-            expect(controller.current_locale.to_s).to eq('de')
+          it 'still resolves through the bootstrap market locale' do
+            # Every store owns a default market in 6.0, so the application
+            # locale fallback no longer participates.
+            expect(controller.current_locale.to_s).to eq('en')
           end
         end
       end

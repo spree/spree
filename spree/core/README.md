@@ -53,7 +53,7 @@ Spree uses an event-driven architecture for decoupling components:
 
 ```ruby
 # Publishing events
-order.publish_event('order.completed')
+order.publish_event('order.placed')
 
 # Subscribing to events
 module Spree
@@ -98,7 +98,6 @@ Spree Core includes testing support utilities:
 ```ruby
 # spec/rails_helper.rb
 require 'spree/testing_support/factories'
-require 'spree/testing_support/authorization_helpers'
 ```
 
 To run the test suite:

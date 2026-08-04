@@ -144,14 +144,14 @@ RSpec.describe Spree::Api::V3::Admin::MediaController, type: :controller do
       end
     end
 
-    context 'with legacy master-pinned assets' do
-      let!(:legacy_master_image) { create(:image, viewable: product.master) }
+    context 'with legacy default-variant-pinned assets' do
+      let!(:legacy_variant_image) { create(:image, viewable: product.default_variant) }
 
       it 'still surfaces legacy assets in the listing' do
         get :index, params: { product_id: product.prefixed_id }, as: :json
 
         ids = json_response['data'].map { |a| a['id'] }
-        expect(ids).to include(legacy_master_image.prefixed_id)
+        expect(ids).to include(legacy_variant_image.prefixed_id)
       end
     end
   end

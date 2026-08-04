@@ -23,12 +23,12 @@ Gem::Specification.new do |s|
   s.required_ruby_version     = '>= 3.2'
   s.required_rubygems_version = '>= 1.8.23'
 
-  s.files        = Dir["{app,config,db,lib,vendor}/**/*", "spec/fixtures/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files        = Dir["{app,config,db,lib}/**/*", "spec/fixtures/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
   s.add_development_dependency 'i18n-tasks'
 
-  s.add_dependency 'rails', '>= 7.2', '< 8.2'
+  s.add_dependency 'rails', '>= 8.1', '< 8.2'
 
 
   s.add_dependency 'acts_as_list', '>= 0.8'

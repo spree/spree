@@ -25,7 +25,7 @@ RSpec.describe Spree::CSV::CustomerPresenter do
            ship_address: address,
            tag_list: ['premium', 'vip'])
   end
-  let!(:orders) { create_list(:completed_order_with_totals, 3, user: customer, store: store) }
+  let!(:orders) { create_list(:completed_order_with_totals, 3, customer: customer, store: store) }
   let(:presenter) { described_class.new(customer) }
 
   before do

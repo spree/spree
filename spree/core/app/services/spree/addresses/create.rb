@@ -14,7 +14,7 @@ module Spree
         address_params = fill_country_and_state_ids(address_params)
 
         address = Spree::Address.new(address_params)
-        address.user = user if user.present?
+        address.customer = user if user.present?
 
         ApplicationRecord.transaction do
           if address.save
@@ -42,7 +42,7 @@ module Spree
       private
 
       def assign_to_order(order:, address_id:)
-        order.update(ship_address_id: address_id, state: 'address')
+        order.update(ship_address_id: address_id)
       end
     end
   end

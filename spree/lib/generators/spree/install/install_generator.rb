@@ -16,7 +16,7 @@ module Spree
     class_option :admin_email, type: :string
     class_option :admin_password, type: :string
     class_option :enforce_available_locales, type: :boolean, default: nil
-    class_option :authentication, type: :string, default: 'devise'
+    class_option :authentication, type: :string, default: nil
 
     def self.source_paths
       paths = superclass.source_paths
@@ -41,11 +41,7 @@ module Spree
     end
 
     def install_authentication
-      if @authentication == 'devise'
-        generate 'spree:authentication:devise'
-      elsif @authentication == 'dummy'
-        generate 'spree:authentication:dummy'
-      end
+      generate 'spree:authentication:dummy' if @authentication == 'dummy'
     end
 
     def configure_application

@@ -135,7 +135,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         rule = Spree::Promotion.find_by_prefix_id(json_response['id']).rules.first
-        expect(rule).to be_a(Spree::Promotion::Rules::Taxon)
+        expect(rule).to be_a(Spree::Promotion::Rules::Category)
         expect(rule.taxon_ids).to eq([taxon.id])
       end
 
@@ -271,7 +271,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         rule = Spree::Promotion.find_by_prefix_id(json_response['id']).rules.first
-        expect(rule).to be_a(Spree::Promotion::Rules::Taxon)
+        expect(rule).to be_a(Spree::Promotion::Rules::Category)
         expect(rule.taxon_ids).to eq([taxon.id])
       end
 

@@ -136,7 +136,7 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
 
         expect {
           post :create, params: { provider: 'external_idp', token: 'valid-jwt' }
-        }.not_to change(Spree.user_class, :count)
+        }.not_to change(Spree.customer_class, :count)
 
         expect(json_response['user']['id']).to eq(first_user_id)
       end

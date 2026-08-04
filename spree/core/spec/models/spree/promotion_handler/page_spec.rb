@@ -14,9 +14,9 @@ module Spree
       end
 
       it 'activates at the right path' do
-        expect(order.line_item_adjustments.count).to eq(0)
+        expect(order.line_item_discounts.count).to eq(0)
         Spree::PromotionHandler::Page.new(order, '10off').activate
-        expect(order.line_item_adjustments.count).to eq(1)
+        expect(order.line_item_discounts.count).to eq(1)
       end
 
       context 'when promotion is expired' do
@@ -28,16 +28,16 @@ module Spree
         end
 
         it 'is not activated' do
-          expect(order.line_item_adjustments.count).to eq(0)
+          expect(order.line_item_discounts.count).to eq(0)
           Spree::PromotionHandler::Page.new(order, '10off').activate
-          expect(order.line_item_adjustments.count).to eq(0)
+          expect(order.line_item_discounts.count).to eq(0)
         end
       end
 
       it 'does not activate at the wrong path' do
-        expect(order.line_item_adjustments.count).to eq(0)
+        expect(order.line_item_discounts.count).to eq(0)
         Spree::PromotionHandler::Page.new(order, 'wrongpath').activate
-        expect(order.line_item_adjustments.count).to eq(0)
+        expect(order.line_item_discounts.count).to eq(0)
       end
     end
   end

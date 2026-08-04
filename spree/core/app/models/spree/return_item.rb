@@ -27,22 +27,26 @@ module Spree
 
     with_options inverse_of: :return_items do
       belongs_to :return_authorization
-      belongs_to :inventory_unit
+      belongs_to :fulfillment_item, class_name: 'Spree::FulfillmentItem'
       belongs_to :customer_return
       belongs_to :reimbursement
     end
-    has_many :exchange_inventory_units, class_name: 'Spree::InventoryUnit',
+    # @deprecated legacy names — remove in 6.1
+    alias_method :inventory_unit, :fulfillment_item
+    alias_method :inventory_unit=, :fulfillment_item=
+    alias_attribute :inventory_unit_id, :fulfillment_item_id
+    has_many :exchange_inventory_units, class_name: 'Spree::FulfillmentItem',
                                         foreign_key: :original_return_item_id,
                                         inverse_of: :original_return_item
     belongs_to :exchange_variant, class_name: 'Spree::Variant'
     belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
     belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
-    has_one :line_item, through: :inventory_unit
+    has_one :line_item, through: :fulfillment_item
 
     validate :eligible_exchange_variant
     validate :belongs_to_same_customer_order
     validate :validate_acceptance_status_for_reimbursement
-    validates :inventory_unit, presence: true
+    validates :fulfillment_item, presence: true
     validate :validate_no_other_completed_return_items, on: :create
     validates :return_quantity, numericality: { greater_than_or_equal_to: 1 }
     validate :sufficient_quantity_for_return
@@ -62,7 +66,7 @@ module Spree
     scope :not_reimbursed, -> { where(reimbursement_id: nil) }
     scope :exchange_requested, -> { where.not(exchange_variant: nil) }
     scope :exchange_processed, -> { joins(:exchange_inventory_units).distinct }
-    scope :exchange_required, -> { eager_load(:exchange_inventory_units).where(spree_inventory_units: { original_return_item_id: nil }).distinct }
+    scope :exchange_required, -> { eager_load(:exchange_inventory_units).where(Spree::FulfillmentItem.table_name => { original_return_item_id: nil }).distinct }
     scope :resellable, -> { where resellable: true }
 
     if Rails::VERSION::STRING >= '7.1.0'
@@ -134,8 +138,8 @@ module Spree
     end
 
     def self.from_inventory_unit(inventory_unit)
-      not_cancelled.find_by(inventory_unit: inventory_unit) ||
-        new(inventory_unit: inventory_unit).tap(&:set_default_pre_tax_amount)
+      not_cancelled.find_by(fulfillment_item: inventory_unit) ||
+        new(fulfillment_item: inventory_unit).tap(&:set_default_pre_tax_amount)
     end
 
     def exchange_requested?

@@ -18,11 +18,11 @@ module Spree
         return failure(:gift_card_mismatched_currency) if gift_card.currency != order.currency
 
         # gift card requires logged user
-        if gift_card.user.present?
+        if gift_card.customer.present?
           # user must be logged in
-          return failure(:gift_card_customer_not_logged_in) if order.user.blank?
+          return failure(:gift_card_customer_not_logged_in) if order.customer.blank?
           # user must be the same as the gift card user
-          return failure(:gift_card_mismatched_customer) if gift_card.user != order.user
+          return failure(:gift_card_mismatched_customer) if gift_card.customer != order.customer
         end
 
         store = order.store
@@ -37,7 +37,7 @@ module Spree
 
           store_credit = gift_card.store_credits.create!(
             store: store,
-            user: order.user,
+            customer: order.customer,
             amount: amount,
             currency: order.currency,
             originator: gift_card,
@@ -54,7 +54,7 @@ module Spree
             state: 'checkout',
             response_code: store_credit.generate_authorization_code
           )
-          order.update_with_updater!
+          order.recalculate_totals!
         end
 
         success(order.reload)

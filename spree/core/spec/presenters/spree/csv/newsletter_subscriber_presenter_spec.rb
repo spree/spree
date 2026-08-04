@@ -14,7 +14,7 @@ RSpec.describe Spree::CSV::NewsletterSubscriberPresenter do
     create(
       :newsletter_subscriber,
       email: 'subscriber@example.com',
-      user: user,
+      customer: user,
       user_id: user.id,
       verified_at: Time.current.change(usec: 0),
       created_at: 2.days.ago.change(usec: 0),
@@ -51,7 +51,7 @@ RSpec.describe Spree::CSV::NewsletterSubscriberPresenter do
         create(
           :newsletter_subscriber,
           email: 'nouser@example.com',
-          user: nil,
+          customer: nil,
           user_id: nil,
           verified_at: nil,
           created_at: 3.days.ago.change(usec: 0),

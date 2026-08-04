@@ -19,7 +19,7 @@ describe Spree::Promotion::Rules::CustomerGroup, type: :model do
   end
 
   describe '#eligible?' do
-    let(:order) { build(:order, user: user) }
+    let(:order) { build(:order, customer: user) }
 
     context 'when no customer groups are configured' do
       before { rule.preferred_customer_group_ids = [] }
@@ -30,7 +30,7 @@ describe Spree::Promotion::Rules::CustomerGroup, type: :model do
     end
 
     context 'when order has no user' do
-      let(:order) { build(:order, user: nil) }
+      let(:order) { build(:order, customer: nil) }
 
       before { rule.preferred_customer_group_ids = [customer_group.id] }
 

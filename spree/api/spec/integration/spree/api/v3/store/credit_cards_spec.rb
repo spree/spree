@@ -6,7 +6,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
   include_context 'API v3 Store'
 
   let(:payment_method) { create(:credit_card_payment_method, store: store) }
-  let!(:credit_card) { create(:credit_card, user: user, payment_method: payment_method) }
+  let!(:credit_card) { create(:credit_card, customer: user, payment_method: payment_method) }
 
   path '/api/v3/store/customers/me/credit_cards' do
     get 'List saved credit cards' do

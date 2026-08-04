@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Authentication::Strategies::BaseStrategy do
   let(:params) { { email: 'user@example.com', password: 'secret' } }
   let(:request_env) { {} }
-  let(:user_class) { Spree.user_class }
+  let(:user_class) { Spree.customer_class }
 
   subject(:strategy) do
     described_class.new(params: params, request_env: request_env, user_class: user_class)
@@ -27,8 +27,8 @@ describe Spree::Authentication::Strategies::BaseStrategy do
         described_class.new(params: params, request_env: request_env)
       end
 
-      it 'defaults to Spree.user_class' do
-        expect(strategy.user_class).to eq(Spree.user_class)
+      it 'defaults to Spree.customer_class' do
+        expect(strategy.user_class).to eq(Spree.customer_class)
       end
     end
   end
@@ -80,6 +80,25 @@ describe Spree::Authentication::Strategies::BaseStrategy do
     it 'returns nil when user not found' do
       result = strategy.send(:find_user_by_email, 'nonexistent@example.com')
       expect(result).to be_nil
+    end
+
+    it 'returns nil for a blank email rather than matching an arbitrary record' do
+      expect(strategy.send(:find_user_by_email, nil)).to be_nil
+      expect(strategy.send(:find_user_by_email, '')).to be_nil
+    end
+
+    # Email uniqueness is validated case-insensitively, so a differently-cased
+    # address is the same account and must still log in.
+    context 'when the stored email is capitalized' do
+      let!(:user) { create(:user, email: 'Ada@Example.com') }
+
+      it 'finds the user from a lowercase email' do
+        expect(strategy.send(:find_user_by_email, 'ada@example.com')).to eq(user)
+      end
+
+      it 'finds the user from a differently-cased email' do
+        expect(strategy.send(:find_user_by_email, 'ADA@EXAMPLE.COM')).to eq(user)
+      end
     end
   end
 

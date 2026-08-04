@@ -10,7 +10,7 @@ const endpoint = await client.webhookEndpoints.create({
   name: 'Order pipeline',
   url: 'https://example.com/webhooks/orders',
   active: true,
-  subscriptions: ['order.completed', 'order.canceled'],
+  subscriptions: ['order.placed', 'order.canceled'],
 })
 
 // The plaintext `secret_key` is returned exactly once on create — persist it

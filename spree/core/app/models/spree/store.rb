@@ -71,12 +71,13 @@ module Spree
     #
     # Associations
     #
-    has_many :carts, -> { incomplete }, class_name: 'Spree::Order', inverse_of: :store
+    has_many :carts, class_name: 'Spree::Cart', inverse_of: :store, dependent: :destroy
     has_many :checkouts, -> { incomplete }, class_name: 'Spree::Order', inverse_of: :store
     has_many :orders, class_name: 'Spree::Order'
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
     has_many :digital_links, through: :line_items, class_name: 'Spree::DigitalLink'
-    has_many :shipments, through: :orders, class_name: 'Spree::Shipment'
+    has_many :fulfillments, through: :orders, class_name: 'Spree::Fulfillment'
+    has_many :shipments, through: :orders, class_name: 'Spree::Fulfillment', source: :fulfillments, deprecated: true
     has_many :payments, through: :orders, class_name: 'Spree::Payment'
     has_many :return_authorizations, through: :orders, class_name: 'Spree::ReturnAuthorization'
     # has_many :reimbursements, through: :orders, class_name: 'Spree::Reimbursement' FIXME: we should fetch this via Customer Return
@@ -87,11 +88,12 @@ module Spree
 
     has_many :products, class_name: 'Spree::Product', dependent: :nullify
     has_many :product_publications, through: :channels, source: :publications, class_name: 'Spree::ProductPublication'
-    has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
+    has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants
     has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
     has_many :prices, through: :variants, class_name: 'Spree::Price'
     has_many :price_lists, class_name: 'Spree::PriceList', inverse_of: :store
-    has_many :inventory_units, through: :variants, class_name: 'Spree::InventoryUnit'
+    has_many :fulfillment_items, through: :variants, class_name: 'Spree::FulfillmentItem'
+    has_many :inventory_units, through: :variants, class_name: 'Spree::FulfillmentItem', source: :fulfillment_items, deprecated: true
     has_many :option_value_variants, through: :variants, class_name: 'Spree::OptionValueVariant'
     has_many :customer_returns, class_name: 'Spree::CustomerReturn', inverse_of: :store
 
@@ -99,9 +101,25 @@ module Spree
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
     has_many :taxonomies, class_name: 'Spree::Taxonomy'
-    has_many :taxons, class_name: 'Spree::Taxon'
-    has_many :categories, class_name: 'Spree::Category'
+    # Category surfaces exclude automatic (rule-based) rows. The manual scope is a
+    # no-op once the Phase 4 migration moves them to Collections; removed in 6.1.
+    has_many :categories, -> { manual }, class_name: 'Spree::Category'
+    has_many :collections, class_name: 'Spree::Collection', dependent: :destroy_async
 
+    # @deprecated Use #categories; removed in 6.1.
+    def taxons
+      Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')
+      categories
+    end
+
+    def taxons=(value)
+      Spree::Deprecation.warn('Spree::Store#taxons= is deprecated and will be removed in Spree 6.1. Use #categories= instead.')
+      self.categories = value
+    end
+
+    has_many :delivery_zones, class_name: 'Spree::DeliveryZone', dependent: :destroy
+    has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: :nullify
+    has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
     has_many :wishlists, class_name: 'Spree::Wishlist'
@@ -331,30 +349,24 @@ module Spree
       end
     end
 
-    # Returns countries covered by at least one shipping zone
-    # that has an active shipping method attached.
-    # Handles both country-type zones (direct membership) and
-    # state-type zones (country inferred from state).
+    # Returns countries covered by delivery methods. Methods without delivery
+    # zones are worldwide, so any such method means every country is covered;
+    # otherwise coverage is the union of the attached zones' country, state,
+    # and postal-code members.
     #
     # @return [ActiveRecord::Relation<Spree::Country>]
     def countries_with_shipping_coverage
-      zone_ids = Spree::Zone
-                 .joins(:shipping_methods)
-                 .select(:id)
+      return Spree::Country.order(:name) if Spree::DeliveryMethod.where.missing(:delivery_method_zones).exists?
 
-      country_zone_country_ids = Spree::ZoneMember
-                                 .where(zone_id: zone_ids, zoneable_type: 'Spree::Country')
-                                 .select(:zoneable_id)
+      zone_ids = Spree::DeliveryMethodZone.select(:delivery_zone_id)
+      members = Spree::DeliveryZoneMember.where(delivery_zone_id: zone_ids)
 
-      state_zone_country_ids = Spree::State
-                               .where(id: Spree::ZoneMember
-                                          .where(zone_id: zone_ids, zoneable_type: 'Spree::State')
-                                          .select(:zoneable_id))
-                               .select(:country_id)
+      country_ids = members.where(member_type: %w[country postal_code]).select(:country_id)
+      state_country_ids = Spree::State.where(id: members.where(member_type: 'state').select(:state_id)).select(:country_id)
 
       Spree::Country
-        .where(id: country_zone_country_ids)
-        .or(Spree::Country.where(id: state_zone_country_ids))
+        .where(id: country_ids)
+        .or(Spree::Country.where(id: state_country_ids))
         .order(:name)
     end
 

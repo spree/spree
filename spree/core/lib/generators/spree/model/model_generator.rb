@@ -52,7 +52,7 @@ module Spree
         "spree_#{super.delete_prefix('spree_')}"
       end
 
-      # Resolution: explicit class hint in attribute spec → Spree.user_class
+      # Resolution: explicit class hint in attribute spec → Spree.customer_class
       # for user-named columns → Spree.admin_user_class for admin-user-named
       # columns → Spree::<CamelCasedName> default. The Rails attribute parser
       # splits on `:` so explicit hints can only be unqualified names; users
@@ -63,7 +63,7 @@ module Spree
 
         case attribute.name
         when 'user', 'user_id'
-          '"::#{Spree.user_class}"'
+          '"::#{Spree.customer_class}"'
         when 'admin_user', 'admin_user_id', 'created_by', 'created_by_id',
              'approver', 'approver_id', 'canceler', 'canceler_id'
           '"::#{Spree.admin_user_class}"'

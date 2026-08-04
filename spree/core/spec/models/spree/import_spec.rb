@@ -120,7 +120,7 @@ RSpec.describe Spree::Import, :job, type: :model do
     context 'for Customers import' do
       it 'returns the user class' do
         import.type = 'Spree::Imports::Customers'
-        expect(import.model_class).to eq(Spree.user_class)
+        expect(import.model_class).to eq(Spree.customer_class)
       end
     end
   end
@@ -341,16 +341,18 @@ RSpec.describe Spree::Import, :job, type: :model do
   describe '#create_rows_async' do
     before { import.save! }
 
-    it 'enqueues CreateRowsJob' do
-      expect { import.create_rows_async }.to have_enqueued_job(Spree::Imports::CreateRowsJob).with(import.id)
+    it 'enqueues ProcessJob' do
+      expect { import.create_rows_async }
+        .to have_enqueued_job(Spree::Imports::ProcessJob).with(import.id).on_queue(Spree.queues.imports)
     end
   end
 
   describe '#process_rows_async' do
     before { import.save! }
 
-    it 'enqueues ProcessRowsJob' do
-      expect { import.process_rows_async }.to have_enqueued_job(Spree::Imports::ProcessRowsJob).with(import.id)
+    it 'enqueues ProcessJob, skipping row creation' do
+      expect { import.process_rows_async }
+        .to have_enqueued_job(Spree::Imports::ProcessJob).with(import.id, skip_row_creation: true)
     end
   end
 

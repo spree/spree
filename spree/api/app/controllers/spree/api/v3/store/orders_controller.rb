@@ -13,8 +13,12 @@ module Spree
 
           private
 
+          # The cart's prefixed id stays the client's stable checkout handle:
+          # after completion it resolves here to the order created from that
+          # cart (Order#cart_id is unique; the order copies the cart token).
           def find_order!
-            @order = scope.find_by_prefix_id!(params[:id])
+            cart_pk = Spree::Cart.decode_own_prefixed_id(params[:id])
+            @order = cart_pk ? scope.find_by!(cart_id: cart_pk) : scope.find_by_prefix_id!(params[:id])
             authorize!(:show, @order, order_token)
           end
 
@@ -22,7 +26,7 @@ module Spree
             base = current_store.orders.complete
 
             if current_user.present?
-              base.where(user: current_user)
+              base.where(customer: current_user)
             elsif order_token.present?
               base.where(token: order_token)
             else
@@ -32,10 +36,6 @@ module Spree
 
           def serializer_class
             Spree.api.order_serializer
-          end
-
-          def order_token
-            request.headers['x-spree-token']
           end
         end
       end

@@ -1,9 +1,0 @@
-<%= turbo_render_alerts %>
-
-<%= turbo_stream.replace 'order_adjustments' do %>
-  <%= render 'spree/admin/orders/adjustments' %>
-<% end %>
-
-<%= turbo_stream.replace 'order_tab_summary' do %>
-  <%= render 'spree/admin/orders/summary' %>
-<% end %>

@@ -31,7 +31,7 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
     end
 
     context 'when gift card has no user' do
-      let(:gift_card) { create(:gift_card, user: nil, store: store) }
+      let(:gift_card) { create(:gift_card, customer: nil, store: store) }
 
       it 'returns nil for customer fields' do
         expect(subject[7]).to be_nil  # Customer Email

@@ -29,7 +29,7 @@ module Spree
                 end
               end
 
-              user = Spree.user_class.find_by(email: params[:email])
+              user = Spree.customer_class.find_by(email: params[:email])
 
               if user
                 token = user.generate_token_for(:password_reset)
@@ -44,7 +44,7 @@ module Spree
 
             # PATCH /api/v3/store/password_resets/:id
             def update
-              user = Spree.user_class.find_by_password_reset_token(params[:id])
+              user = Spree.customer_class.find_by_password_reset_token(params[:id])
 
               unless user
                 return render_error(

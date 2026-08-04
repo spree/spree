@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+
 describe Spree::Checkout::AddStoreCredit, type: :service do
   let(:store) { @default_store }
 
@@ -10,7 +11,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
 
     before do
       create(:store_credit_payment_method)
-      allow(order.updater).to receive(:run_hooks)
     end
 
     context 'there is no store credit' do
@@ -31,7 +31,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       it 'returns error' do
         expect(subject.success?).to eq(false)
         expect(subject.error.to_s).to eq('User does not have any Store Credits available')
-        expect(order.updater).not_to have_received(:run_hooks)
       end
     end
 
@@ -39,7 +38,7 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       subject { described_class.call(order: order, amount: requested_amount) }
 
       let(:store_credit) { create(:store_credit, amount: order_total, store: store) }
-      let(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
+      let(:order) { create(:order, customer: store_credit.user, total: order_total, store: store) }
 
       context 'with no amount specified' do
         let(:requested_amount) { nil }
@@ -50,8 +49,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
           expect(order.reload.payments.count).to eq 1
           expect(order.payments.first).to be_store_credit
           expect(order.payments.first.amount).to eq order_total
-
-          expect(order.updater).to have_received(:run_hooks)
         end
       end
 
@@ -64,8 +61,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
           expect(order.reload.payments.count).to eq 1
           expect(order.payments.first).to be_store_credit
           expect(order.payments.first.amount).to eq requested_amount
-
-          expect(order.updater).to have_received(:run_hooks)
         end
       end
     end
@@ -74,7 +69,7 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       let(:expected_cc_total) { 100.0 }
       let(:store_credit_total) { order_total - expected_cc_total }
       let(:store_credit) { create(:store_credit, amount: store_credit_total, store: store) }
-      let(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
+      let(:order) { create(:order, customer: store_credit.user, total: order_total, store: store) }
       let!(:store_credit_2) { create(:store_credit, amount: 10) }
 
       before do
@@ -89,14 +84,12 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
         expect(order.reload.payments.count).to eq 1
         expect(order.payments.first).to be_store_credit
         expect(order.payments.first.amount).to eq store_credit_total
-
-        expect(order.updater).to have_received(:run_hooks)
       end
     end
 
     context 'when called again with an existing checkout store credit payment' do
       let(:store_credit) { create(:store_credit, amount: 500, store: store) }
-      let(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
+      let(:order) { create(:order, customer: store_credit.user, total: order_total, store: store) }
 
       before do
         order.update_column(:total, order_total)
@@ -139,10 +132,10 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
       let(:amount_difference) { 100 }
       let!(:primary_store_credit) { create(:store_credit, amount: (order_total - amount_difference), store: store) }
       let!(:secondary_store_credit) do
-        create(:store_credit, amount: order_total, user: primary_store_credit.user,
+        create(:store_credit, amount: order_total, customer: primary_store_credit.user,
                 credit_type: create(:secondary_credit_type), store: store)
       end
-      let(:order) { create(:order, user: primary_store_credit.user, total: order_total, store: store) }
+      let(:order) { create(:order, customer: primary_store_credit.user, total: order_total, store: store) }
 
       before do
         Timecop.scale(3600)
@@ -161,8 +154,6 @@ describe Spree::Checkout::AddStoreCredit, type: :service do
         expect(secondary_payment.source).to eq secondary_store_credit
         expect(primary_payment.amount).to eq(order_total - amount_difference)
         expect(secondary_payment.amount).to eq(amount_difference)
-
-        expect(order.updater).to have_received(:run_hooks)
       end
     end
   end

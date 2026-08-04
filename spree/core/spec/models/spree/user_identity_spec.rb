@@ -38,7 +38,7 @@ describe Spree::UserIdentity, type: :model do
       end
 
       it 'allows same uid for different user types' do
-        stub_const('Spree::AdminUser', Class.new(Spree.user_class))
+        stub_const('Spree::AdminUser', Class.new(Spree.customer_class))
 
         different_user_type = build(:user_identity, user_type: 'Spree::AdminUser', user_id: user.id, provider: 'email', uid: '12345')
         expect(different_user_type).to be_valid
@@ -73,7 +73,7 @@ describe Spree::UserIdentity, type: :model do
             info: info,
             tokens: tokens
           )
-        end.to change(Spree.user_class, :count).by(1)
+        end.to change(Spree.customer_class, :count).by(1)
            .and change(described_class, :count).by(1)
       end
 
@@ -151,7 +151,7 @@ describe Spree::UserIdentity, type: :model do
             info: info,
             tokens: tokens
           )
-        end.not_to change(Spree.user_class, :count)
+        end.not_to change(Spree.customer_class, :count)
       end
 
       it 'returns the existing user' do
@@ -201,7 +201,7 @@ describe Spree::UserIdentity, type: :model do
       before do
         allow(described_class).to receive(:find_by).and_call_original
         allow(described_class).to receive(:find_by)
-          .with(provider: provider, uid: uid, user_type: Spree.user_class.name)
+          .with(provider: provider, uid: uid, user_type: Spree.customer_class.name)
           .and_return(nil)
         allow(described_class).to receive(:create_user_from_oauth)
           .and_raise(ActiveRecord::RecordNotUnique)
@@ -248,14 +248,14 @@ describe Spree::UserIdentity, type: :model do
       end
 
       before do
-        allow_any_instance_of(Spree.user_class).to receive(:identities)
+        allow_any_instance_of(Spree.customer_class).to receive(:identities)
           .and_raise(ActiveRecord::RecordNotUnique)
       end
 
       it 'rolls back the user' do
         expect do
           expect { subject }.to raise_error(ActiveRecord::RecordNotUnique)
-        end.not_to change(Spree.user_class, :count)
+        end.not_to change(Spree.customer_class, :count)
       end
     end
   end

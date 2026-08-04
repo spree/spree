@@ -4,7 +4,7 @@ module Spree
   RSpec.describe Orders::UpsertItems do
     let(:store) { create(:store) }
     let(:user) { create(:user) }
-    let(:order) { create(:order, user: user, store: store) }
+    let(:order) { create(:order, customer: user, store: store) }
     let(:variant) { create(:variant) }
     let(:variant2) { create(:variant) }
 
@@ -162,7 +162,7 @@ module Spree
       end
 
       context 'with variant not available in order currency' do
-        let(:order) { create(:order, user: user, store: store, currency: 'GBP') }
+        let(:order) { create(:order, customer: user, store: store, currency: 'GBP') }
         let(:items) { [{ variant_id: variant.prefixed_id, quantity: 1 }] }
 
         it 'returns failure with descriptive message' do

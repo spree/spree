@@ -66,8 +66,6 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
         import_row.fail!
       end
 
-      # UI updates (add_row_to_import_view, update_footer_in_import_view)
-      # are now handled by Spree::Admin::ImportRowSubscriber
     end
 
     describe 'complete event' do
@@ -82,8 +80,6 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
         import_row.complete!
       end
 
-      # UI updates (add_row_to_import_view, update_footer_in_import_view)
-      # are now handled by Spree::Admin::ImportRowSubscriber
     end
   end
 

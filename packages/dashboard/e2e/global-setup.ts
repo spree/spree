@@ -55,7 +55,7 @@ const BOOTSTRAP_RUBY = [
   `taxonomy = s.taxonomies.find_or_create_by!(name: 'Categories')`,
   `category = taxonomy.taxons.where(name: '${FIXTURE_PROMO_TAXON}').first_or_create!(parent: taxonomy.root)`,
   `shipping_category = Spree::ShippingCategory.first || Spree::ShippingCategory.create!(name: 'Default')`,
-  `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(price: 19.99, shipping_category: shipping_category, stores: [s], status: 'active')`,
+  `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(price: 19.99, shipping_category: shipping_category, store: s, status: 'active')`,
   `product.taxons << category unless product.taxons.include?(category)`,
   // Stock the promo product on the store's default stock location so
   // order-creation tests can add it to a draft order without the
@@ -67,20 +67,20 @@ const BOOTSTRAP_RUBY = [
   // I → row-action clone/delete) so the serial suite can mutate them in any
   // order without poisoning siblings. All start `active` so the status spec
   // sees a clean transition.
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_A}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_B}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_C}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_D}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_E}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_F}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_G}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_H}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_I}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_J}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_K}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_L}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_M}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
-  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_N}').first_or_create!(price: 9.99, shipping_category: shipping_category, stores: [s], status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_A}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_B}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_C}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_D}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_E}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_F}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_G}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_H}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_I}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_J}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_K}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_L}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_M}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
+  `Spree::Product.where(name: '${FIXTURE_BULK_PRODUCT_N}').first_or_create!(price: 9.99, shipping_category: shipping_category, store: s, status: 'active').update!(status: 'active')`,
   // Second channel beyond the seeded default; the channels bulk-action
   // and filter specs need a non-default channel to add/remove against.
   `bulk_channel = s.channels.where(code: '${FIXTURE_BULK_CHANNEL_CODE}').first_or_create!(name: '${FIXTURE_BULK_CHANNEL_NAME}')`,

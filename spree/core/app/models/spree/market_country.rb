@@ -17,6 +17,10 @@ module Spree
 
       store = market.store
       return if store.blank?
+      # Bootstrap: a store gets its default market during its own creation —
+      # no delivery setup can constrain coverage for it yet.
+      return if market.bootstrap_default
+      return if Spree::DeliveryMethod.none?
 
       unless store.countries_with_shipping_coverage.exists?(id: country.id)
         errors.add(:country, :not_in_shipping_zone)

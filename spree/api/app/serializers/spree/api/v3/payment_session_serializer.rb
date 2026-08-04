@@ -5,7 +5,8 @@ module Spree
         typelize status: :string, amount: :string, currency: :string,
                  external_id: :string, external_data: 'Record<string, unknown>',
                  expires_at: [:string, nullable: true], customer_external_id: [:string, nullable: true],
-                 payment_method_id: :string, order_id: :string
+                 payment_method_id: :string, order_id: [:string, nullable: true],
+                 cart_id: [:string, nullable: true]
 
         attributes :status, :currency, :external_id, :external_data,
                    :customer_external_id,
@@ -19,8 +20,14 @@ module Spree
           session.payment_method&.prefixed_id
         end
 
+        # Bridge: reports the owner (cart during checkout, order after
+        # completion) until clients migrate to cart_id/order_id.
         attribute :order_id do |session|
-          session.order&.prefixed_id
+          session.owner&.prefixed_id
+        end
+
+        attribute :cart_id do |session|
+          session.cart&.prefixed_id
         end
 
         one :payment_method, resource: proc { Spree.api.payment_method_serializer }

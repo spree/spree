@@ -141,12 +141,9 @@ module Spree
       # `upsert_all` and `delete_all` skip the `Price -> Variant` and
       # `Variant -> Product` `touch:` chains otherwise.
       #
-      # We deliberately bypass AR callbacks: invoking `Variant#touch`
-      # would fire `after_commit :remove_prices_from_master_variant`,
-      # which `delete_all`s the master's prices whenever a non-master
-      # sibling has any prices — wiping exactly the rows the bulk
-      # upsert just persisted on a freshly-created list. `touch_all`
-      # gives us the cache bust without that side effect.
+      # We use `touch_all` rather than per-record `Variant#touch`: it bumps
+      # every affected row in a single UPDATE and skips AR callbacks, giving
+      # the cache bust without extra side effects.
       def touch_variants(variant_ids)
         return if variant_ids.empty?
 

@@ -18,7 +18,10 @@ import { Route as acceptInvitationDotinvitationIdRouteImport } from './../../das
 import { Route as authenticatedStoreIdRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId'
 import { Route as IndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/index'
 import { Route as SettingsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings'
+import { Route as ReturnsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/returns'
 import { Route as GettingStartedRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/getting-started'
+import { Route as ExchangesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/exchanges'
+import { Route as ClaimsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/claims'
 import { Route as SplatRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/$'
 import { Route as SettingsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/index'
 import { Route as PromotionsIndexRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/promotions/index'
@@ -31,9 +34,12 @@ import { Route as SettingsStoreRouteImport } from './../../dashboard/src/routes/
 import { Route as SettingsStockLocationsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/stock-locations'
 import { Route as SettingsStaffRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/staff'
 import { Route as SettingsProfileRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/profile'
+import { Route as SettingsProductTypesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/product-types'
 import { Route as SettingsPaymentMethodsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as SettingsMarketsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/markets'
 import { Route as SettingsEmailsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/emails'
+import { Route as SettingsDeliveryZonesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/delivery-zones'
+import { Route as SettingsDeliveryMethodsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/delivery-methods'
 import { Route as SettingsCustomFieldDefinitionsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/custom-field-definitions'
 import { Route as SettingsChannelsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/channels'
 import { Route as SettingsApiKeysRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/api-keys'
@@ -106,9 +112,24 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
+const ReturnsRoute = ReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
 const GettingStartedRoute = GettingStartedRouteImport.update({
   id: '/getting-started',
   path: '/getting-started',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ExchangesRoute = ExchangesRouteImport.update({
+  id: '/exchanges',
+  path: '/exchanges',
+  getParentRoute: () => authenticatedStoreIdRoute,
+} as any)
+const ClaimsRoute = ClaimsRouteImport.update({
+  id: '/claims',
+  path: '/claims',
   getParentRoute: () => authenticatedStoreIdRoute,
 } as any)
 const SplatRoute = SplatRouteImport.update({
@@ -171,6 +192,11 @@ const SettingsProfileRoute = SettingsProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsProductTypesRoute = SettingsProductTypesRouteImport.update({
+  id: '/product-types',
+  path: '/product-types',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsPaymentMethodsRoute = SettingsPaymentMethodsRouteImport.update({
   id: '/payment-methods',
   path: '/payment-methods',
@@ -184,6 +210,16 @@ const SettingsMarketsRoute = SettingsMarketsRouteImport.update({
 const SettingsEmailsRoute = SettingsEmailsRouteImport.update({
   id: '/emails',
   path: '/emails',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsDeliveryZonesRoute = SettingsDeliveryZonesRouteImport.update({
+  id: '/delivery-zones',
+  path: '/delivery-zones',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsDeliveryMethodsRoute = SettingsDeliveryMethodsRouteImport.update({
+  id: '/delivery-methods',
+  path: '/delivery-methods',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsCustomFieldDefinitionsRoute =
@@ -329,7 +365,10 @@ export interface FileRoutesByFullPath {
   '/$storeId': typeof authenticatedStoreIdRouteWithChildren
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/$storeId/$': typeof SplatRoute
+  '/$storeId/claims': typeof ClaimsRoute
+  '/$storeId/exchanges': typeof ExchangesRoute
   '/$storeId/getting-started': typeof GettingStartedRoute
+  '/$storeId/returns': typeof ReturnsRoute
   '/$storeId/settings': typeof SettingsRouteWithChildren
   '/$storeId/': typeof IndexRoute
   '/$storeId/brands/$brandId': typeof BrandsDotbrandIdRoute
@@ -349,9 +388,12 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
+  '/$storeId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
+  '/$storeId/settings/delivery-zones': typeof SettingsDeliveryZonesRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/$storeId/settings/profile': typeof SettingsProfileRoute
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
@@ -380,7 +422,10 @@ export interface FileRoutesByTo {
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/': typeof authenticatedIndexRoute
   '/$storeId/$': typeof SplatRoute
+  '/$storeId/claims': typeof ClaimsRoute
+  '/$storeId/exchanges': typeof ExchangesRoute
   '/$storeId/getting-started': typeof GettingStartedRoute
+  '/$storeId/returns': typeof ReturnsRoute
   '/$storeId': typeof IndexRoute
   '/$storeId/brands/$brandId': typeof BrandsDotbrandIdRoute
   '/$storeId/customers/$customerId': typeof CustomersCustomerIdRoute
@@ -399,9 +444,12 @@ export interface FileRoutesByTo {
   '/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/$storeId/settings/channels': typeof SettingsChannelsRoute
   '/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
+  '/$storeId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
+  '/$storeId/settings/delivery-zones': typeof SettingsDeliveryZonesRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/$storeId/settings/profile': typeof SettingsProfileRoute
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
@@ -433,7 +481,10 @@ export interface FileRoutesById {
   '/accept-invitation/$invitationId': typeof acceptInvitationDotinvitationIdRoute
   '/_authenticated/': typeof authenticatedIndexRoute
   '/_authenticated/$storeId/$': typeof SplatRoute
+  '/_authenticated/$storeId/claims': typeof ClaimsRoute
+  '/_authenticated/$storeId/exchanges': typeof ExchangesRoute
   '/_authenticated/$storeId/getting-started': typeof GettingStartedRoute
+  '/_authenticated/$storeId/returns': typeof ReturnsRoute
   '/_authenticated/$storeId/settings': typeof SettingsRouteWithChildren
   '/_authenticated/$storeId/': typeof IndexRoute
   '/_authenticated/$storeId/brands/$brandId': typeof BrandsDotbrandIdRoute
@@ -453,9 +504,12 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/api-keys': typeof SettingsApiKeysRoute
   '/_authenticated/$storeId/settings/channels': typeof SettingsChannelsRoute
   '/_authenticated/$storeId/settings/custom-field-definitions': typeof SettingsCustomFieldDefinitionsRoute
+  '/_authenticated/$storeId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
+  '/_authenticated/$storeId/settings/delivery-zones': typeof SettingsDeliveryZonesRoute
   '/_authenticated/$storeId/settings/emails': typeof SettingsEmailsRoute
   '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
+  '/_authenticated/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/_authenticated/$storeId/settings/profile': typeof SettingsProfileRoute
   '/_authenticated/$storeId/settings/staff': typeof SettingsStaffRoute
   '/_authenticated/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
@@ -487,7 +541,10 @@ export interface FileRouteTypes {
     | '/$storeId'
     | '/accept-invitation/$invitationId'
     | '/$storeId/$'
+    | '/$storeId/claims'
+    | '/$storeId/exchanges'
     | '/$storeId/getting-started'
+    | '/$storeId/returns'
     | '/$storeId/settings'
     | '/$storeId/'
     | '/$storeId/brands/$brandId'
@@ -507,9 +564,12 @@ export interface FileRouteTypes {
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
     | '/$storeId/settings/custom-field-definitions'
+    | '/$storeId/settings/delivery-methods'
+    | '/$storeId/settings/delivery-zones'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
+    | '/$storeId/settings/product-types'
     | '/$storeId/settings/profile'
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
@@ -538,7 +598,10 @@ export interface FileRouteTypes {
     | '/accept-invitation/$invitationId'
     | '/'
     | '/$storeId/$'
+    | '/$storeId/claims'
+    | '/$storeId/exchanges'
     | '/$storeId/getting-started'
+    | '/$storeId/returns'
     | '/$storeId'
     | '/$storeId/brands/$brandId'
     | '/$storeId/customers/$customerId'
@@ -557,9 +620,12 @@ export interface FileRouteTypes {
     | '/$storeId/settings/api-keys'
     | '/$storeId/settings/channels'
     | '/$storeId/settings/custom-field-definitions'
+    | '/$storeId/settings/delivery-methods'
+    | '/$storeId/settings/delivery-zones'
     | '/$storeId/settings/emails'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
+    | '/$storeId/settings/product-types'
     | '/$storeId/settings/profile'
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
@@ -590,7 +656,10 @@ export interface FileRouteTypes {
     | '/accept-invitation/$invitationId'
     | '/_authenticated/'
     | '/_authenticated/$storeId/$'
+    | '/_authenticated/$storeId/claims'
+    | '/_authenticated/$storeId/exchanges'
     | '/_authenticated/$storeId/getting-started'
+    | '/_authenticated/$storeId/returns'
     | '/_authenticated/$storeId/settings'
     | '/_authenticated/$storeId/'
     | '/_authenticated/$storeId/brands/$brandId'
@@ -610,9 +679,12 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/api-keys'
     | '/_authenticated/$storeId/settings/channels'
     | '/_authenticated/$storeId/settings/custom-field-definitions'
+    | '/_authenticated/$storeId/settings/delivery-methods'
+    | '/_authenticated/$storeId/settings/delivery-zones'
     | '/_authenticated/$storeId/settings/emails'
     | '/_authenticated/$storeId/settings/markets'
     | '/_authenticated/$storeId/settings/payment-methods'
+    | '/_authenticated/$storeId/settings/product-types'
     | '/_authenticated/$storeId/settings/profile'
     | '/_authenticated/$storeId/settings/staff'
     | '/_authenticated/$storeId/settings/stock-locations'
@@ -708,11 +780,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
+    '/_authenticated/$storeId/returns': {
+      id: '/_authenticated/$storeId/returns'
+      path: '/returns'
+      fullPath: '/$storeId/returns'
+      preLoaderRoute: typeof ReturnsRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
     '/_authenticated/$storeId/getting-started': {
       id: '/_authenticated/$storeId/getting-started'
       path: '/getting-started'
       fullPath: '/$storeId/getting-started'
       preLoaderRoute: typeof GettingStartedRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/exchanges': {
+      id: '/_authenticated/$storeId/exchanges'
+      path: '/exchanges'
+      fullPath: '/$storeId/exchanges'
+      preLoaderRoute: typeof ExchangesRouteImport
+      parentRoute: typeof authenticatedStoreIdRoute
+    }
+    '/_authenticated/$storeId/claims': {
+      id: '/_authenticated/$storeId/claims'
+      path: '/claims'
+      fullPath: '/$storeId/claims'
+      preLoaderRoute: typeof ClaimsRouteImport
       parentRoute: typeof authenticatedStoreIdRoute
     }
     '/_authenticated/$storeId/$': {
@@ -799,6 +892,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsProfileRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/product-types': {
+      id: '/_authenticated/$storeId/settings/product-types'
+      path: '/product-types'
+      fullPath: '/$storeId/settings/product-types'
+      preLoaderRoute: typeof SettingsProductTypesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/payment-methods': {
       id: '/_authenticated/$storeId/settings/payment-methods'
       path: '/payment-methods'
@@ -818,6 +918,20 @@ declare module '@tanstack/react-router' {
       path: '/emails'
       fullPath: '/$storeId/settings/emails'
       preLoaderRoute: typeof SettingsEmailsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/settings/delivery-zones': {
+      id: '/_authenticated/$storeId/settings/delivery-zones'
+      path: '/delivery-zones'
+      fullPath: '/$storeId/settings/delivery-zones'
+      preLoaderRoute: typeof SettingsDeliveryZonesRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/settings/delivery-methods': {
+      id: '/_authenticated/$storeId/settings/delivery-methods'
+      path: '/delivery-methods'
+      fullPath: '/$storeId/settings/delivery-methods'
+      preLoaderRoute: typeof SettingsDeliveryMethodsRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/custom-field-definitions': {
@@ -1010,9 +1124,12 @@ interface SettingsRouteChildren {
   SettingsApiKeysRoute: typeof SettingsApiKeysRoute
   SettingsChannelsRoute: typeof SettingsChannelsRoute
   SettingsCustomFieldDefinitionsRoute: typeof SettingsCustomFieldDefinitionsRoute
+  SettingsDeliveryMethodsRoute: typeof SettingsDeliveryMethodsRoute
+  SettingsDeliveryZonesRoute: typeof SettingsDeliveryZonesRoute
   SettingsEmailsRoute: typeof SettingsEmailsRoute
   SettingsMarketsRoute: typeof SettingsMarketsRoute
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
+  SettingsProductTypesRoute: typeof SettingsProductTypesRoute
   SettingsProfileRoute: typeof SettingsProfileRoute
   SettingsStaffRoute: typeof SettingsStaffRoute
   SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
@@ -1029,9 +1146,12 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsApiKeysRoute: SettingsApiKeysRoute,
   SettingsChannelsRoute: SettingsChannelsRoute,
   SettingsCustomFieldDefinitionsRoute: SettingsCustomFieldDefinitionsRoute,
+  SettingsDeliveryMethodsRoute: SettingsDeliveryMethodsRoute,
+  SettingsDeliveryZonesRoute: SettingsDeliveryZonesRoute,
   SettingsEmailsRoute: SettingsEmailsRoute,
   SettingsMarketsRoute: SettingsMarketsRoute,
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
+  SettingsProductTypesRoute: SettingsProductTypesRoute,
   SettingsProfileRoute: SettingsProfileRoute,
   SettingsStaffRoute: SettingsStaffRoute,
   SettingsStockLocationsRoute: SettingsStockLocationsRoute,
@@ -1050,7 +1170,10 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 
 interface authenticatedStoreIdRouteChildren {
   SplatRoute: typeof SplatRoute
+  ClaimsRoute: typeof ClaimsRoute
+  ExchangesRoute: typeof ExchangesRoute
   GettingStartedRoute: typeof GettingStartedRoute
+  ReturnsRoute: typeof ReturnsRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   IndexRoute: typeof IndexRoute
   BrandsDotbrandIdRoute: typeof BrandsDotbrandIdRoute
@@ -1081,7 +1204,10 @@ interface authenticatedStoreIdRouteChildren {
 
 const authenticatedStoreIdRouteChildren: authenticatedStoreIdRouteChildren = {
   SplatRoute: SplatRoute,
+  ClaimsRoute: ClaimsRoute,
+  ExchangesRoute: ExchangesRoute,
   GettingStartedRoute: GettingStartedRoute,
+  ReturnsRoute: ReturnsRoute,
   SettingsRoute: SettingsRouteWithChildren,
   IndexRoute: IndexRoute,
   BrandsDotbrandIdRoute: BrandsDotbrandIdRoute,

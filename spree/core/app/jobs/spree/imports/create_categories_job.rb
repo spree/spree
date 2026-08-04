@@ -11,8 +11,8 @@ module Spree
         store = Spree::Store.find(store_id)
 
         with_store_content_locale(store) do
-          taxons = taxon_pretty_names.filter_map { |taxon_pretty_name| find_or_create_taxon(store, taxon_pretty_name) }
-          product.taxons = taxons
+          categories = taxon_pretty_names.filter_map { |taxon_pretty_name| find_or_create_taxon(store, taxon_pretty_name) }
+          product.categories = categories
         end
       end
 

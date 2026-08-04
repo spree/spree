@@ -47,7 +47,7 @@ RSpec.describe Spree::PaymentSetupSession, type: :model do
     end
 
     it 'can have a payment_source (CreditCard)' do
-      credit_card = create(:credit_card, user: user)
+      credit_card = create(:credit_card, customer: user)
       payment_setup_session.update!(payment_source: credit_card)
       expect(payment_setup_session.payment_source).to eq(credit_card)
       expect(payment_setup_session.payment_source_type).to eq('Spree::CreditCard')

@@ -1,9 +1,0 @@
-<% content_for(:page_title) do %>
-  <%= Spree.t(:returns) %> & <%= Spree.t(:refunds) %>
-<% end %>
-
-<%= render_tab_navigation(:returns_tabs) %>
-
-<% content_for(:page_tabs) do %>
-  <%= render_admin_partials(:returns_and_refunds_nav_partials) %>
-<% end %>

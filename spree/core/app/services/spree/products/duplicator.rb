@@ -6,8 +6,10 @@ module Spree
       def call(product:, include_images: true)
         new_product = duplicate_product(product, include_images)
 
-        # don't dup the actual variants, just the characterising types
-        new_product.option_types = product.option_types if product.has_variants?
+        # don't dup the actual variants, just the characterising types. Gate on
+        # option_types (not has_variants?, which is >1) so a single option-bearing
+        # variant still carries its option types across.
+        new_product.option_types = product.option_types if product.option_types.any?
 
         # allow site to do some customization
         new_product.send(:duplicate_extra, product) if new_product.respond_to?(:duplicate_extra)
@@ -27,25 +29,14 @@ module Spree
 
           new_product.status = :draft
           new_product.name = "COPY OF #{product.name}"
-          new_product.taxons = product.taxons
+          new_product.categories = product.categories
           new_product.channels = product.channels
           new_product.created_at = nil
           new_product.deleted_at = nil
           new_product.updated_at = nil
           new_product.tag_list = product.tag_list
-          new_product.master = duplicate_master(product.master, include_images)
+          new_product.default_variant_id = nil
           new_product.variants = product.variants.map { |variant| duplicate_variant(variant, include_images) }
-        end
-      end
-
-      def duplicate_master(master, include_images)
-        master.dup.tap do |new_master|
-          new_master.sku = sku_generator(master.sku)
-          new_master.deleted_at = nil
-          new_master.prices = duplicate_prices(master.prices)
-          new_master.stock_items = duplicate_stock_items(master.stock_items)
-
-          master.images.each { |image| duplicate_image(image, new_master) } if include_images
         end
       end
 
@@ -96,7 +87,6 @@ module Spree
       def duplicate_error_message(new_product)
         errors = []
         errors << new_product.errors.full_messages
-        errors << new_product.master.errors.full_messages
 
         new_product.variants.each do |variant|
           errors << variant.errors.full_messages

@@ -15,6 +15,12 @@ module Spree
             Spree.api.category_serializer
           end
 
+          # Exclude automatic (rule-based) rows still living in spree_categories
+          # until the Phase 4 migration moves them to Collections (removed in 6.1).
+          def scope
+            super.manual
+          end
+
           # Find category by permalink or prefixed ID with i18n scope for SEO-friendly URLs
           # Falls back to default locale if category is not found in the current locale
           def find_resource

@@ -147,7 +147,7 @@ RSpec.describe Spree::GiftCard, type: :model do
 
   describe '#to_csv' do
     let(:user) { create(:user, first_name: 'John', last_name: 'Doe', email: 'john@example.com') }
-    let(:gift_card) { create(:gift_card, store: store, user: user, amount: 50.00) }
+    let(:gift_card) { create(:gift_card, store: store, customer: user, amount: 50.00) }
 
     subject { gift_card.to_csv }
 

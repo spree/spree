@@ -11,7 +11,7 @@ FactoryBot.define do
     association :promotion
   end
 
-  factory :promotion_rule_taxon, class: Spree::Promotion::Rules::Taxon do
+  factory :promotion_rule_taxon, class: Spree::Promotion::Rules::Category do
     association :promotion
   end
 

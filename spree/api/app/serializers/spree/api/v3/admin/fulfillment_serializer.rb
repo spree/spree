@@ -21,26 +21,29 @@ module Spree
           attributes :metadata, :adjustment_total, :pre_tax_amount,
                      created_at: :iso8601, updated_at: :iso8601
 
-          attribute :order_id do |shipment|
-            shipment.order&.prefixed_id
+          attribute :order_id do |fulfillment|
+            fulfillment.order&.prefixed_id
           end
 
-          attribute :stock_location_id do |shipment|
-            shipment.stock_location&.prefixed_id
+          attribute :stock_location_id do |fulfillment|
+            fulfillment.stock_location&.prefixed_id
           end
 
           # Override inherited associations to use admin serializers
-          one :shipping_method, key: :delivery_method, resource: proc { Spree.api.admin_delivery_method_serializer }, if: proc { expand?('delivery_method') }
+          one :delivery_method, resource: proc { Spree.api.admin_delivery_method_serializer }, if: proc { expand?('delivery_method') }
           one :stock_location, resource: proc { Spree.api.admin_stock_location_serializer }, if: proc { expand?('stock_location') }
-          many :shipping_rates, key: :delivery_rates, resource: proc { Spree.api.admin_delivery_rate_serializer }, if: proc { expand?('delivery_rates') }
+          many :delivery_rates, resource: proc { Spree.api.admin_delivery_rate_serializer }, if: proc { expand?('delivery_rates') }
+
+          # The units in this fulfillment — the dashboard needs them to offer
+          # what can actually be returned or exchanged.
+          many :fulfillment_items,
+               resource: proc { Spree.api.admin_fulfillment_item_serializer },
+               if: proc { expand?('fulfillment_items') }
 
           one :order,
               resource: proc { Spree.api.admin_order_serializer },
               if: proc { expand?('order') }
 
-          many :adjustments,
-               resource: proc { Spree.api.admin_adjustment_serializer },
-               if: proc { expand?('adjustments') }
         end
       end
     end

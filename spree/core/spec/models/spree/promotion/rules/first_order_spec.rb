@@ -6,7 +6,7 @@ describe Spree::Promotion::Rules::FirstOrder, type: :model do
   let(:user) { create(:user) }
 
   context 'without a user or email' do
-    let(:order) { create(:order, store: store, email: nil, user: nil) }
+    let(:order) { create(:order, store: store, email: nil, customer: nil) }
 
     it { expect(rule).not_to be_eligible(order) }
 
@@ -19,7 +19,7 @@ describe Spree::Promotion::Rules::FirstOrder, type: :model do
 
   context 'first order' do
     context 'for a signed user' do
-      let(:order) { create(:order, store: store, user: user) }
+      let(:order) { create(:order, store: store, customer: user) }
 
       context 'with no completed orders' do
         specify do
@@ -33,7 +33,7 @@ describe Spree::Promotion::Rules::FirstOrder, type: :model do
       end
 
       context 'with completed orders' do
-        let(:order) { create(:completed_order_with_totals, store: store, user: user) }
+        let(:order) { create(:completed_order_with_totals, store: store, customer: user) }
 
         it 'is eligible when checked against first completed order' do
           expect(rule).to be_eligible(order)
@@ -41,7 +41,7 @@ describe Spree::Promotion::Rules::FirstOrder, type: :model do
 
         context 'with another order' do
           before do
-            create(:completed_order_with_totals, user: user, store: store)
+            create(:completed_order_with_totals, customer: user, store: store)
           end
 
           it { expect(rule).not_to be_eligible(order) }
@@ -58,14 +58,14 @@ describe Spree::Promotion::Rules::FirstOrder, type: :model do
     context 'for a guest user' do
       let(:email) { 'user@spreecommerce.org' }
 
-      let(:order) { create(:order, store: store, email: email, user: nil) }
+      let(:order) { create(:order, store: store, email: email, customer: nil) }
 
       context 'with no other orders' do
         it { expect(rule).to be_eligible(order) }
       end
 
       context 'with another order' do
-        before { create(:completed_order_with_totals, email: email, store: store, user: nil) }
+        before { create(:completed_order_with_totals, email: email, store: store, customer: nil) }
 
         it { expect(rule).not_to be_eligible(order) }
 

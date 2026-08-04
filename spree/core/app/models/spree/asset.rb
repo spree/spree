@@ -161,14 +161,9 @@ module Spree
     def should_touch_product_variants?
       return false unless saved_change_to_position?
 
-      case viewable
-      when Spree::Product
-        true
-      when Spree::Variant
-        viewable.is_master? && viewable.product.has_variants?
-      else
-        false
-      end
+      # Variants fall back to product-level media, so only reordering a
+      # product-level asset changes what the variants display.
+      viewable.is_a?(Spree::Product)
     end
 
     def increment_viewable_media_count
