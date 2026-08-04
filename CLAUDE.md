@@ -94,13 +94,14 @@ Shipped plans:
 
 Development happens in **git worktrees** — every worktree is a self-contained native dev environment, no Docker: its own gitignored `server/` clone of spree-starter (monorepo gems loaded as path gems via `SPREE_PATH`), its own database on the shared Homebrew Postgres (:5432, copied in ~2 s from the seeded `spree_worktree_template`), and stable per-branch https URLs via [portless](https://github.com/vercel-labs/portless). Worktrees are managed with [worktrunk](https://worktrunk.dev) (`wt`): creating one runs `scripts/worktree/setup.sh` automatically (see `.config/wt.toml`), removing one drops its databases. The main checkout is for integration (merges, template rebuilds), not for running servers.
 
-```
+```bash
 wt switch -c feature-x       # create worktree + provisioned environment (~20 s)
 pnpm wt:dev                  # Rails → https://feature-x.spree.localhost  (/up, /api/v3, /jobs; jobs run inside Puma via Solid Queue)
 pnpm wt:dashboard            # admin UI → https://admin.feature-x.spree.localhost
 pnpm wt:e2e [spec...]        # Playwright on this worktree's own port block
 pnpm wt:template             # rebuild the template DB after schema-changing pulls
-wt merge main && wt remove   # ship + clean up (databases dropped automatically)
+wt merge main                # ship + clean up (worktree, branch and databases all removed)
+wt remove                    # abandon instead of shipping
 ```
 
 Admin login: `spree@example.com` / `spree123`. Both dev scripts run in the foreground and stream logs; `server/log/development.log` has the Rails log if the server runs detached. Start servers only in worktrees you're actively looking at — rspec/vitest/tsc need no servers.

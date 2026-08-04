@@ -11,9 +11,17 @@ PG_ARGS=(-h localhost -p "${DATABASE_PORT:-5432}" -U "${DATABASE_USERNAME:-postg
 
 worktree_root() { git rev-parse --show-toplevel; }
 
+branch_name() { echo "${WT_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"; }
+
+# Readable prefix plus a hash of the full branch name: normalization alone maps
+# feature/a, feature_a and feature.a onto one slug — and databases are dropped
+# by slug, so a collision means one worktree deleting another's data.
 branch_slug() {
-  local branch="${WT_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
-  printf '%s' "$branch" | tr '/_.' '-' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-' | cut -c1-40
+  local branch prefix hash
+  branch="$(branch_name)"
+  prefix=$(printf '%s' "$branch" | tr '/_.' '-' | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9-' | cut -c1-32)
+  hash=$(printf '%s' "$branch" | shasum | cut -c1-6)
+  echo "${prefix%-}-$hash"
 }
 
 db_name() { echo "spree_dev_$(branch_slug | tr '-' '_')"; }
@@ -32,11 +40,24 @@ dashboard_name() { echo "admin.$(branch_slug).spree"; }
 rails_url() { echo "https://$(rails_name).localhost$(url_suffix)"; }
 dashboard_url() { echo "https://$(dashboard_name).localhost$(url_suffix)"; }
 
-# Deterministic even-numbered base in 20000–29999: rails = base, vite = base+1.
+port_free() { ! lsof -iTCP:"$1" -sTCP:LISTEN -n -P >/dev/null 2>&1; }
+
+# Even-numbered base in 20000-29999 (rails = base, vite = base+1), derived from
+# the branch so repeat runs reuse it. The hash space is smaller than the set of
+# branch names, so step to the next free pair when another run already holds it.
 e2e_base_port() {
-  local hash
+  local hash base candidate offset
   hash=$(printf '%s' "$(branch_slug)" | cksum | cut -d' ' -f1)
-  echo $((20000 + (hash % 5000) * 2))
+  base=$((20000 + (hash % 5000) * 2))
+  for offset in $(seq 0 2 998); do
+    candidate=$(( 20000 + ((base - 20000 + offset) % 10000) ))
+    if port_free "$candidate" && port_free $((candidate + 1)); then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  echo "No free e2e port pair in 20000-29999." >&2
+  return 1
 }
 
 require_portless() {
