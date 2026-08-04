@@ -1,0 +1,8 @@
+# worktrunk project config — see CLAUDE.md "Worktrees" and scripts/worktree/.
+# pre-start blocks worktree creation until the environment (server/, database,
+# deps) exists, so `wt switch -c foo -x claude` lands agents in a working tree.
+
+[pre-start]
+setup = "scripts/worktree/setup.sh '{{ branch }}'"
+
+post-remove = "scripts/worktree/teardown.sh '{{ branch }}'"
