@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
 
   include_context 'API v3 Store'
 
-  let!(:gift_card) { create(:gift_card, user: user, store: store, amount: 100, amount_used: 25) }
+  let!(:gift_card) { create(:gift_card, customer: user, store: store, amount: 100, amount_used: 25) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
 
     it 'only returns gift cards belonging to the current user' do
       other_user = create(:user)
-      other_card = create(:gift_card, user: other_user, store: store)
+      other_card = create(:gift_card, customer: other_user, store: store)
 
       get :index
 
@@ -63,7 +63,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
 
     it 'only returns gift cards from the current store' do
       other_store = create(:store)
-      other_store_card = create(:gift_card, user: user, store: other_store)
+      other_store_card = create(:gift_card, customer: user, store: other_store)
 
       get :index
 
@@ -73,8 +73,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
     end
 
     it 'returns gift cards ordered by created_at desc' do
-      older_card = create(:gift_card, user: user, store: store, created_at: 1.day.ago)
-      newer_card = create(:gift_card, user: user, store: store, created_at: 1.day.from_now)
+      older_card = create(:gift_card, customer: user, store: store, created_at: 1.day.ago)
+      newer_card = create(:gift_card, customer: user, store: store, created_at: 1.day.from_now)
 
       get :index
 
@@ -84,7 +84,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
     end
 
     context 'with expired gift card' do
-      let!(:expired_card) { create(:gift_card, user: user, store: store, expires_at: 1.day.ago) }
+      let!(:expired_card) { create(:gift_card, customer: user, store: store, expires_at: 1.day.ago) }
 
       it 'includes expired gift cards' do
         get :index
@@ -104,7 +104,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
     end
 
     context 'with partially redeemed gift card' do
-      let!(:partial_card) { create(:gift_card, user: user, store: store, state: :partially_redeemed, amount: 50, amount_used: 20) }
+      let!(:partial_card) { create(:gift_card, customer: user, store: store, state: :partially_redeemed, amount: 50, amount_used: 20) }
 
       it 'shows correct state and amounts' do
         get :index
@@ -146,7 +146,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
 
     context 'when gift card belongs to another user' do
       let(:other_user) { create(:user) }
-      let(:other_card) { create(:gift_card, user: other_user, store: store) }
+      let(:other_card) { create(:gift_card, customer: other_user, store: store) }
 
       it 'returns not found' do
         get :show, params: { id: other_card.prefixed_id }
@@ -157,7 +157,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
 
     context 'when gift card belongs to another store' do
       let(:other_store) { create(:store) }
-      let(:other_store_card) { create(:gift_card, user: user, store: other_store) }
+      let(:other_store_card) { create(:gift_card, customer: user, store: other_store) }
 
       it 'returns not found' do
         get :show, params: { id: other_store_card.prefixed_id }

@@ -182,7 +182,7 @@ module Spree
     # eg. Spree::Exports::Products => Spree::Product
     def model_class
       if type == 'Spree::Exports::Customers'
-        Spree.user_class
+        Spree.customer_class
       else
         "Spree::#{type.demodulize.singularize}".constantize
       end

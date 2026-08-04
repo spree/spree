@@ -94,4 +94,94 @@ describe Spree::Authentication::StrategyRegistry do
       expect(registry.key?(:tampered)).to be false
     end
   end
+
+  describe '#build' do
+    let(:buildable_class) do
+      Class.new do
+        attr_reader :params, :request_env, :user_class
+
+        def initialize(params:, request_env:, user_class: nil)
+          @params = params
+          @request_env = request_env
+          @user_class = user_class
+        end
+      end
+    end
+
+    it 'instantiates a bare class entry' do
+      registry = described_class.new(email: buildable_class)
+
+      built = registry.build(:email, params: { a: 1 }, request_env: { b: 2 }, user_class: String)
+
+      expect(built).to be_a(buildable_class)
+      expect(built.params).to eq(a: 1)
+      expect(built.user_class).to eq(String)
+    end
+
+    # A configured factory lets one strategy class back several registrations
+    # with different settings — something a bare class cannot express.
+    it 'delegates to a factory entry that responds to #build' do
+      factory = double('factory', build: :built_instance)
+      registry = described_class.new(entra: factory)
+
+      expect(registry.build(:entra, params: {}, request_env: {})).to eq(:built_instance)
+    end
+
+    it 'returns nil for an unregistered key' do
+      expect(described_class.new.build(:nope, params: {}, request_env: {})).to be_nil
+    end
+  end
+
+  describe '#describe' do
+    let(:password_strategy) { double('password strategy', kind: :password, label: nil) }
+    let(:redirect_strategy) do
+      double('redirect strategy', kind: :redirect, label: 'Entra ID', authorization_url: 'https://idp/auth?state=xyz')
+    end
+
+    it 'describes a password provider without a label or URL' do
+      registry = described_class.new(email: password_strategy)
+
+      expect(registry.describe).to eq([{ key: 'email', kind: 'password' }])
+    end
+
+    it 'describes a redirect provider with its label and authorization URL' do
+      registry = described_class.new(entra: redirect_strategy)
+
+      expect(registry.describe { 'xyz' }).to eq(
+        [{ key: 'entra', kind: 'redirect', label: 'Entra ID', authorization_url: 'https://idp/auth?state=xyz' }]
+      )
+    end
+
+    # Each redirect provider gets its own state so one cannot be replayed against
+    # another provider's callback.
+    it 'mints a state per redirect provider' do
+      registry = described_class.new(email: password_strategy, entra: redirect_strategy)
+      seen = []
+
+      registry.describe { |key| seen << key; "state-for-#{key}" }
+
+      expect(seen).to eq([:entra])
+      expect(redirect_strategy).to have_received(:authorization_url).with(state: 'state-for-entra')
+    end
+
+    it 'degrades an entry that predates the kind/label contract to a password provider' do
+      bare = Class.new
+      registry = described_class.new(legacy: bare)
+
+      expect(registry.describe).to eq([{ key: 'legacy', kind: 'password' }])
+    end
+
+    # A misconfigured or unreachable provider must not take down the login page
+    # for every other provider.
+    it 'omits the URL when building it raises, keeping other providers usable' do
+      broken = double('broken strategy', kind: :redirect, label: 'Broken')
+      allow(broken).to receive(:authorization_url).and_raise(StandardError, 'unreachable')
+      registry = described_class.new(email: password_strategy, broken: broken)
+
+      described = registry.describe
+
+      expect(described).to include({ key: 'email', kind: 'password' })
+      expect(described.last).to eq(key: 'broken', kind: 'redirect', label: 'Broken')
+    end
+  end
 end

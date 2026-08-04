@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :payment_setup_session, class: 'Spree::PaymentSetupSession' do
-    customer { create(:user) }
+    customer { create(:customer) }
     payment_method { create(:credit_card_payment_method) }
     status { 'pending' }
     external_id { "seti_test_#{SecureRandom.hex(12)}" }
@@ -13,7 +13,7 @@ FactoryBot.define do
 
     trait :completed do
       status { 'completed' }
-      payment_source { create(:credit_card, user: customer) }
+      payment_source { create(:credit_card, customer: customer) }
     end
 
     trait :failed do

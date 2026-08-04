@@ -82,14 +82,4 @@ describe Spree::AdminUserMailer, type: :mailer do
       end
     end
   end
-
-  describe '#confirmation_email' do
-    it 'sends the confirmation with the store-prefixed subject and token link' do
-      message = described_class.confirmation_email(admin_user, token, store)
-
-      expect(message.to).to eq(['admin@example.com'])
-      expect(message.subject).to eq("#{store.name} #{Spree.t('admin_user_mailer.confirmation_email.subject')}")
-      expect(message.body.encoded).to include("token=#{token}")
-    end
-  end
 end

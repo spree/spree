@@ -26,7 +26,7 @@ module Spree
             base = current_store.orders.complete
 
             if current_user.present?
-              base.where(user: current_user)
+              base.where(customer: current_user)
             elsif order_token.present?
               base.where(token: order_token)
             else

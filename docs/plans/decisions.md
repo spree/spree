@@ -396,13 +396,13 @@ storefront customer (not an admin user).
 - `spree_payment_sources.user_id` → `customer_id`
 - `spree_newsletter_subscribers.user_id` → `customer_id`
 - `spree_promotion_rule_users.user_id` → `customer_id`
-- `spree_customer_group_users.user_id` → `customer_id`
+- `spree_customer_group_users.user_id` → `customer_id` (polymorphic — `user_type` also renames to `customer_type` so `belongs_to :customer, polymorphic: true` resolves)
 
 **Keep as `user_id`** (5 models — FK references Spree.admin_user_class or is polymorphic):
 - `spree_imports.user_id` — admin who ran the import
 - `spree_exports.user_id` — admin who ran the export
 - `spree_reports.user_id` — admin who generated the report
-- `spree_state_changes.user_id` — admin who triggered the change
+- `spree_state_changes.user_id` — references the order's **customer** (set from `order.customer_id`), not an admin. Kept as `user_id` because it's an internal state-audit log, not customer-facing API surface; the `belongs_to :user` association resolves to `Spree.customer_class`.
 - `spree_user_identities.user_id` — polymorphic (Customer or AdminUser)
 
 Single migration renames all 11 columns. Model associations updated:
@@ -607,6 +607,127 @@ same format `has_secure_password` reads — so the rake task migrating
 spree-starter installs onto `spree_customers` copies it to `password_digest`
 and **no customer resets their password** (task aborts loudly if
 `Devise.pepper` is set).
+
+## 2026-07-29: Phase 2 user→customer data migration — copy-preserving-id, in-place admins, single clash-aware migration
+
+Implementing Phase 2 of `6.0-platform-auth.md` settled several mechanics.
+
+**Customers are a row copy, admins are in place.** The 6.0 split is already
+two-table (`spree_users`=customers, `spree_admin_users`=admins; admin-ness is a
+polymorphic `spree_role_users.user_type`, not a table). So `spree_customers` is a
+**new** table and its data comes from copying `spree_users` — it cannot be a
+`rename_table` (the create migration always runs, so the target already exists;
+fresh installs have no `spree_users`; and `spree_users` carries Devise cruft).
+`spree_admin_users` keeps its table **and** its class name `Spree::AdminUser`, so
+admins never move — the task only backfills `password_digest` from the legacy
+`encrypted_password`.
+
+**Copy preserves primary keys** so the already-renamed `customer_id` FKs
+(2026-03-16 entry) still resolve with no id remap. This is the first repo task to
+insert explicit ids, so it also **resets the Postgres sequence** afterward
+(`reset_pk_sequence!`, guarded to PG) — no prior precedent because taxon→category
+preserved ids via `rename_table`. With ids preserved, the only polymorphic fixups
+are **type-string re-points** `Spree::User` → `Spree.customer_class` on
+`spree_role_users`, `spree_refresh_tokens`, `spree_user_identities`,
+`spree_api_keys` (`created_by_type` + `revoked_by_type`), and
+`spree_customer_group_users` (whose type column renamed `user_type` →
+`customer_type` with the 2026-03-16 FK rename — **must** be re-pointed too or
+memberships dangle); admin-typed rows stay. The task reads the legacy table **by
+name only** (never `LegacyUser`, deleted once all phases ship together), aborts on
+`Devise.pepper` (and, since Devise is gone in 6.0 and a pepper can't be
+introspected, aborts when Devise is absent unless `CONFIRM_NO_PEPPER=true`),
+preflight-aborts on blank-email or email-conflict rows (`SKIP_INVALID_ROWS=true`
+to skip), and leaves `spree_users` in place as a safety net.
+
+**Single clash-aware create migration.** The two Phase-1 create migrations merged
+into `20260728000000_create_spree_customers_and_admin_users` — a **non-colliding**
+name, because `install:migrations` de-dupes engine migrations by name and every
+existing app already has a `create_spree_admin_users`, so the gem's same-named
+migration is skipped and never runs on upgrades. The merged migration creates
+`spree_customers` cleanly and guards the admin side
+(`create … unless table_exists?`, `add_column :password_digest unless
+column_exists?`). `password_digest` is **added alongside** `encrypted_password`,
+never a rename — nothing is lost, and the backfill has both columns to read.
+
+**Path B is a recipe, not gem code.** Keeping a custom user model needs no new
+concern: on the app's own model, `include Spree::CustomerMethods` +
+`has_secure_password validations: false` + `alias_attribute :password_digest,
+:encrypted_password` (or a column rename). The alias must live on the app model —
+a blanket alias in `CustomerMethods` would shadow the default `Spree::Customer`'s
+real `password_digest` and break `has_secure_password` on it.
+
+The 5.6→6.0 upgrade guide (`docs/developer/upgrades/5.6-to-6.0.mdx`) doesn't exist
+yet (6.0 in-dev); Path A/B developer guidance currently lives in the task's `desc`,
+the `5_6_to_6_0` manifest notes, and this plan. It moves to the mdx when the full
+6.0 upgrade guide is authored.
+
+## 2026-07-29: Account lockout enforced in the auth strategy; thresholds config-driven
+
+Phase 4 of `6.0-platform-auth.md` was mostly already shipped (RefreshToken issue/rotate/revoke,
+login/refresh/logout endpoints, Rails `rate_limit` throttling). The remaining gap was that the
+lockout methods on Customer/AdminUser were **dead code** — nothing in the login path called them.
+
+Decisions made wiring it up:
+
+**Enforcement lives in `EmailPasswordStrategy`, not the controllers.** The strategy is the single
+point both store and admin login flow through, and it's the only layer that holds the user object on
+a *failed* password (the controllers get a generic failure). So `authenticate` checks `locked?`
+before validating, `record_failed_attempt!` on a bad password, and `reset_failed_attempts!` on
+success. All calls are `respond_to?`-guarded so a Path-B custom `customer_class` without the lockout
+methods still authenticates.
+
+**Thresholds moved to `Spree::Config`, logic to a shared concern.** The identical
+`locked?`/`record_failed_attempt!`/`reset_failed_attempts!` on both models (with hardcoded `5` /
+`30.minutes`) were extracted into `Spree::AccountLockout` (core concern) reading
+`Spree::Config[:max_failed_login_attempts]` (5) and `[:lockout_duration]` (1800s). These are **core**
+prefs (not `Spree::Api::Config`) because the concern lives on core models, which can't depend on the
+API config.
+
+**Distinct lockout message** ("Account temporarily locked. Try again later.") over a generic
+invalid-credentials response — industry-common, and login is already rate-limited so the marginal
+enumeration signal is low. It's a single return string, easily switched to the generic message if a
+stricter anti-enumeration posture is wanted (Spree's login/password-reset are otherwise
+anti-enumeration).
+
+**Refresh-token hashing at rest was declined** (tokens are already random + expiring; login
+throttled). **Admin `logout` gained a `rate_limit`** to match the store side. Following the repo's
+rate-limit spec convention, no throttle-*trip* test was added (those depend on the test cache store);
+the existing specs cover response format/headers/config.
+
+## 2026-07-29: Devise fully removed from core/api; legacy models deleted, table kept
+
+Phases 5 & 6 of `6.0-platform-auth.md`, scoped to `spree/core` + `spree/api` (spree/admin removed
+wholesale by `6.0-admin-spa.md`; the spree-starter / 5b changes are a separate pass).
+
+**Legacy models deleted, `spree_users` table retained.** `Spree::LegacyUser` /
+`Spree::LegacyAdminUser` are gone (no runtime fallback — `Spree.customer_class` has no default,
+`Role` is dynamic, and only four specs named the constant, all repointed to `Spree.customer_class`).
+The `spree_users` **table** is deliberately kept as the Phase 2 migration's safety net — its teardown
+is a separate later operator task, and the 4.3 baseline migration still materializes it on fresh
+installs.
+
+**Devise bridges removed, not kept.** Both `Spree::AdminUserMethods::DeviseNotifications` and
+`CustomerMethods::SkipPasswordValidation` were deleted. They were inert on the gem's
+`has_secure_password` models: admin auth emails flow through the `admin_user.password_reset_requested`
+event subscriber → `AdminUserMailer` (not `send_devise_notification`), and password-less
+admin-created customers rely on `has_secure_password validations: false` rather than a
+`password_required?` override. The `defined?(Devise)` guards in the migrate-users rake task are the
+one Devise reference kept — they're defensive checks for installs migrating *off* Devise.
+
+**`spree:install` scaffolds no auth by default.** With the generators deleted, the root-gem install
+generator's `--authentication` default moved to `nil` (was `devise`): a plain install writes no auth
+helpers because the gem owns auth (`Spree::Customer`/`Spree::AdminUser` + the initializer sets the
+class names). `dummy` stays available and is what the test harness passes explicitly via
+`common_rake`, so `test_app` is unaffected.
+
+**Deprecation aliases kept to 6.1.** The earlier Phase 6 plan to drop the `user_class` alias in 6.0
+is superseded — `Spree.user_class`, `Spree::UserMethods`, `Spree::DeprecatedCustomerAlias`, and the
+`:user`/`:admin_user` factory aliases all remain through 6.0 (in-code comments already tag them 6.1).
+
+**Docs.** The Devise-as-default pages were rewritten around gem-owned auth + the custom-model recipe,
+and `Spree.user_class` references swept to `Spree.customer_class`. `Spree::OauthAccessToken` is a
+no-op (extracted upstream). Deferred: the 6.0 upgrade guide, the `spree_users` teardown task, and the
+unrelated search-area `multi_search` alias removal.
 
 ## 2026-07-28: Core-rewrite implementation decisions (cart/order split + fulfillment + split adjustments)
 

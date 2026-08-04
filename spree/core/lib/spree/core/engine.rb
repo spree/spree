@@ -11,6 +11,7 @@ module Spree
                                :payment_methods,
                                :adjusters,
                                :tax_provider,
+                               :password_validator,
                                :fulfillment_providers,
                                :fulfillment_types,
                                :stock_splitters,
@@ -142,8 +143,8 @@ module Spree
       end
 
       # Promotion rules need to be evaluated on after initialize otherwise
-      # Spree.user_class would be nil and users might experience errors related
-      # to malformed model associations (Spree.user_class is only defined on
+      # Spree.customer_class would be nil and users might experience errors related
+      # to malformed model associations (Spree.customer_class is only defined on
       # the app initializer)
       config.after_initialize do
         Rails.application.config.spree.calculators.shipping_methods = [
@@ -173,6 +174,10 @@ module Spree
 
         # The sanctioned TaxLine writer (see docs/plans/6.0-tax-provider.md).
         Rails.application.config.spree.tax_provider = Spree::TaxProvider::Internal
+
+        # Password policy for the default auth models. Swap for corporate rules,
+        # breach-list lookups or entropy scoring.
+        Rails.application.config.spree.password_validator = Spree::PasswordLengthValidator
 
         Rails.application.config.spree.fulfillment_providers = [
           Spree::FulfillmentProvider::Manual,
@@ -327,7 +332,7 @@ module Spree
         Rails.application.config.spree.taggable_types = [
           'Spree::Product',
           'Spree::Order',
-          Spree.user_class.to_s
+          Spree.customer_class.to_s
         ]
 
         Rails.application.config.spree.metafields.types = [
@@ -369,7 +374,7 @@ module Spree
           Spree::Category,
           Spree::Taxonomy,
           Spree::Variant,
-          Spree.user_class
+          Spree.customer_class
         ]
 
         Rails.application.config.spree.analytics_events = {

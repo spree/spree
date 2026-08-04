@@ -53,6 +53,34 @@ steps:
       Idempotent. Multi-tenant installs run the per-tenant override shipped by
       spree_multi_tenant.
 
+  - id: migrate_users_to_customers
+    name: "Move users onto the gem-owned Customer/AdminUser models"
+    task: "spree:upgrade:migrate_users_to_customers"
+    notes: |
+      Copies the legacy Devise user table (default spree_users) into
+      spree_customers, preserving ids so the renamed customer_id foreign keys
+      still resolve and mapping encrypted_password -> password_digest, then
+      re-points every polymorphic reference that named the old customer class
+      (default Spree::User) to Spree::Customer — the user_type columns plus
+      customer_type on customer-group memberships — and backfills password_digest
+      on spree_admin_users.
+
+      Precondition: NO Devise pepper. encrypted_password is a plain bcrypt digest
+      that has_secure_password reads directly only when unpeppered; the task
+      aborts if Devise.pepper is set. Because Devise is gone in 6.0 a former
+      pepper can't be introspected, so when Devise is absent the task aborts until
+      you confirm none was used with CONFIRM_NO_PEPPER=true. Peppered / SSO /
+      non-bcrypt installs keep a custom customer_class instead (see the 5.6-to-6.0
+      upgrade guide) and skip this step.
+
+      Source rows with a blank email, or whose email is already owned by a
+      different customer, abort the task with their ids — reconcile them or pass
+      SKIP_INVALID_ROWS=true to skip and continue.
+
+      Idempotent. The source table is left in place as a safety net — drop it
+      manually once the migration is verified. Override the source with
+      SOURCE_USER_TABLE / SOURCE_USER_TYPE and batch size with BATCH_SIZE.
+
   - id: migrate_shipping_to_delivery
     name: "Backfill fulfillment & delivery naming"
     task: "spree:migrate_shipping_to_delivery"

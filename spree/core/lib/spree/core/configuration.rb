@@ -29,6 +29,10 @@ module Spree
       # Used by admin mailers; falls back to `http://localhost:5173` in dev
       # and the store's storefront URL otherwise. Set this in production.
       preference :admin_url, :string, default: nil
+      # Origin where the React dashboard is hosted (e.g. `https://dashboard.shop.com`).
+      # Where the SSO callback returns the browser after an identity provider
+      # redirect. Distinct from `admin_url`, which points at the legacy admin.
+      preference :dashboard_url, :string, default: nil
       preference :allow_checkout_on_gateway_error, :boolean, default: false
       preference :allow_empty_price_amount, :boolean, default: false
       preference :allow_guest_checkout, :boolean, default: true, deprecated: true # this is only used in the rails frontend, and is not implemented in API
@@ -123,6 +127,20 @@ module Spree
       # password reset
       preference :admin_password_reset_expires_in, :integer, default: 15 # admin password reset token expiration time in minutes
       preference :customer_password_reset_expires_in, :integer, default: 15 # password reset token expiration time in minutes
+
+      # account lockout
+      preference :max_failed_login_attempts, :integer, default: 5 # failed login attempts before an account is locked
+      preference :lockout_duration, :integer, default: 1800 # lockout duration in seconds (30 minutes)
+
+      # password policy
+      # NIST 800-63B recommends a length floor with no composition rules (no forced
+      # symbols/digits, which push users toward predictable substitutions).
+      preference :minimum_password_length, :integer, default: 8
+      # bcrypt silently truncates past 72 bytes — without a cap a long passphrase and
+      # its 72-byte prefix are the same password. A correctness guard, not policy.
+      preference :maximum_password_length, :integer, default: ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED
+      # To replace the policy itself, assign Spree.password_validator — a class,
+      # not a preference.
 
       # gift cards
       preference :gift_card_batch_web_limit, :integer, default: 500 # number of gift card codes to be generated in the web process, more than this will be generated in a background job

@@ -19,7 +19,8 @@ module Spree
     ALLOCATION_ACTION = 'allocation'.freeze
 
     belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :user, class_name: "::#{Spree.user_class}", foreign_key: 'user_id'
+    belongs_to :customer, class_name: "::#{Spree.customer_class}"
+    include Spree::DeprecatedCustomerAlias
     belongs_to :category, class_name: 'Spree::StoreCreditCategory', optional: true
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, foreign_key: 'created_by_id', optional: true
     belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id', optional: true
@@ -58,8 +59,8 @@ module Spree
       self[:amount] = Spree::LocalizedNumber.parse(amount)
     end
 
-    self.whitelisted_ransackable_attributes = %w[user_id created_by_id amount currency type_id]
-    self.whitelisted_ransackable_associations = %w[type user created_by]
+    self.whitelisted_ransackable_attributes = %w[customer_id customer_id created_by_id amount currency type_id]
+    self.whitelisted_ransackable_associations = %w[type customer created_by]
 
     def amount_remaining
       amount - amount_used - amount_authorized
@@ -208,7 +209,7 @@ module Spree
     def create_credit_record_params(amount)
       {
         amount: amount,
-        user_id: user_id,
+        customer_id: customer_id,
         category_id: category_id,
         created_by_id: created_by_id,
         currency: currency,
@@ -237,7 +238,7 @@ module Spree
       event.update!(
         amount: action_amount || amount,
         authorization_code: action_authorization_code || event.authorization_code || generate_authorization_code,
-        user_total_amount: user&.total_available_store_credit || 0,
+        user_total_amount: customer&.total_available_store_credit || 0,
         originator: action_originator
       )
     end

@@ -6,9 +6,9 @@ store = Spree::Store.default
 
 wholesale_group = store.customer_groups.find_or_create_by!(name: Spree::Seeds::CustomerGroups::WHOLESALE_NAME)
 
-buyer = Spree.user_class.find_by(email: 'wholesale@example.com')
+buyer = Spree.customer_class.find_by(email: 'wholesale@example.com')
 if buyer.nil?
-  buyer = Spree.user_class.new(
+  buyer = Spree.customer_class.new(
     email: 'wholesale@example.com',
     password: 'spree123',
     password_confirmation: 'spree123',

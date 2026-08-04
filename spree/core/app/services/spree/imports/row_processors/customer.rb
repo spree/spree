@@ -16,7 +16,7 @@ module Spree
           email = attributes['email'].to_s.strip.downcase
           raise ArgumentError, 'Email is required' if email.blank?
 
-          Spree.user_class.find_or_initialize_by(email: email)
+          Spree.customer_class.find_or_initialize_by(email: email)
         end
 
         def assign_user_attributes(user)

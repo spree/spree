@@ -8,8 +8,8 @@ namespace :common do
     # When using execute with a Hash, args IS the hash directly
     defaults = {
       authentication: 'dummy',
-      user_class: 'Spree::LegacyUser',
-      admin_user_class: 'Spree::LegacyAdminUser'
+      user_class: 'Spree::Customer',
+      admin_user_class: 'Spree::AdminUser',
     }
     # Rake::TaskArguments#with_defaults modifies in-place
     # ActiveSupport adds Hash#with_defaults which returns a new hash, so check for Rake::TaskArguments specifically
@@ -33,14 +33,6 @@ namespace :common do
     puts dummy_app_args
 
     Spree::DummyGenerator.start dummy_app_args
-
-    # install devise if it's not the legacy user
-    if args[:authentication] == 'devise' && args[:user_class] != 'Spree::LegacyUser'
-      system('bundle exec rails g devise:install --force --auto-accept')
-      system("bundle exec rails g devise #{args[:user_class]} --force --auto-accept")
-      system("bundle exec rails g devise #{args[:admin_user_class]} --force --auto-accept") if args[:admin_user_class].present? && args[:admin_user_class] != args[:user_class]
-      system('rm -rf spec') # we need to cleanup factories created by devise to avoid naming conflict
-    end
 
     # Run core Spree install generator
     # The spree:install generator lives in the root spree gem. Core gems (spree_core, spree_api)

@@ -69,10 +69,10 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
     end
 
     it 'creates a customer' do
-      expect { post :create, params: create_params, as: :json }.to change(Spree.user_class, :count).by(1)
+      expect { post :create, params: create_params, as: :json }.to change(Spree.customer_class, :count).by(1)
 
       expect(response).to have_http_status(:created)
-      created = Spree.user_class.find_by_prefix_id(json_response['id'])
+      created = Spree.customer_class.find_by_prefix_id(json_response['id'])
       expect(created.email).to eq('new-customer@example.com')
       expect(created.first_name).to eq('Sam')
       expect(created.tag_list).to contain_exactly('wholesale', 'priority')
@@ -88,17 +88,16 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
 
     # Admin-created customers don't pick a password upfront — the merchant
     # adds the profile and the customer claims the account via a separate
-    # password-reset flow. The host app's `Spree::User` is Devise-
-    # validatable; `Spree::UserMethods` exposes `skip_password_validation`
-    # so the admin controller can opt out of the presence check on create.
-    # The Store API registration path stays untouched (see store
+    # password-reset flow. The customer model uses `has_secure_password
+    # validations: false`, so password presence is not enforced on create.
+    # The Store API registration path enforces it separately (see store
     # customers_controller spec).
     context 'without password' do
       let(:no_password_params) { { email: 'no-password@example.com', first_name: 'Pat' } }
 
       it 'creates the customer' do
         expect { post :create, params: no_password_params, as: :json }.
-          to change(Spree.user_class, :count).by(1)
+          to change(Spree.customer_class, :count).by(1)
 
         expect(response).to have_http_status(:created)
       end
@@ -106,8 +105,8 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       it 'leaves the customer with no usable credential' do
         post :create, params: no_password_params, as: :json
 
-        created = Spree.user_class.find_by_prefix_id(json_response['id'])
-        expect(created.encrypted_password).to be_blank
+        created = Spree.customer_class.find_by_prefix_id(json_response['id'])
+        expect(created.password_digest).to be_blank
       end
     end
   end
@@ -155,21 +154,20 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       end
     end
 
-    # PATCH without a password must not blank an existing credential. Devise's
-    # `password_required?` already skips presence on persisted records when
-    # password is nil, so this is the regression guard for that contract —
-    # ensures a profile-only edit doesn't accidentally invalidate the
-    # customer's ability to log in.
+    # PATCH without a password must not blank an existing credential.
+    # has_secure_password only rewrites the digest when a non-blank password is
+    # supplied, so this is the regression guard — a profile-only edit must not
+    # accidentally invalidate the customer's ability to log in.
     context 'without password' do
       it 'updates profile fields without touching the existing credential' do
-        original_digest = customer.encrypted_password
+        original_digest = customer.password_digest
         expect(original_digest).to be_present
 
         patch :update, params: { id: customer.prefixed_id, first_name: 'Updated' }, as: :json
 
         expect(response).to have_http_status(:ok)
         expect(customer.reload.first_name).to eq('Updated')
-        expect(customer.encrypted_password).to eq(original_digest)
+        expect(customer.password_digest).to eq(original_digest)
       end
     end
   end
@@ -180,14 +178,14 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
 
       expect {
         delete :destroy, params: { id: target.prefixed_id }, as: :json
-      }.to change(Spree.user_class, :count).by(-1)
+      }.to change(Spree.customer_class, :count).by(-1)
 
       expect(response).to have_http_status(:no_content)
     end
 
     context 'when customer has completed orders' do
       let(:target) { create(:user) }
-      before { create(:completed_order_with_totals, user: target, store: store) }
+      before { create(:completed_order_with_totals, customer: target, store: store) }
 
       it 'returns 422 with error' do
         delete :destroy, params: { id: target.prefixed_id }, as: :json
@@ -295,7 +293,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomersController, type: :controller do
       expect(alice.reload.tag_list.count { |t| t == 'vip' }).to eq(1)
     end
 
-    # Users aren't store-scoped (`Spree.user_class.for_store` is a no-op by
+    # Users aren't store-scoped (`Spree.customer_class.for_store` is a no-op by
     # design — admins are users too), so cross-store filtering happens at
     # the ability layer, not the relation. Bulk endpoints follow suit and
     # apply tags to any user the admin can update.

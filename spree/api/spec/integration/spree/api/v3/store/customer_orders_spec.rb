@@ -42,8 +42,8 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
                 description: 'Comma-separated list of fields to include (e.g., total,amount_due,item_count). id is always included.'
 
       response '200', 'orders listed' do
-        let!(:completed_order) { create(:completed_order_with_totals, store: store, user: user) }
-        let!(:incomplete_order) { create(:order_with_line_items, store: store, user: user) }
+        let!(:completed_order) { create(:completed_order_with_totals, store: store, customer: user) }
+        let!(:incomplete_order) { create(:order_with_line_items, store: store, customer: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
@@ -92,7 +92,7 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
                 description: 'Comma-separated list of fields to include (e.g., total,amount_due,item_count). id is always included.'
 
       response '200', 'order found' do
-        let(:completed_order) { create(:completed_order_with_totals, store: store, user: user) }
+        let(:completed_order) { create(:completed_order_with_totals, store: store, customer: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { completed_order.to_param }
@@ -109,7 +109,7 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
 
       response '404', 'order belongs to another user' do
         let(:other_user) { create(:user) }
-        let(:other_order) { create(:completed_order_with_totals, store: store, user: other_user) }
+        let(:other_order) { create(:completed_order_with_totals, store: store, customer: other_user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { other_order.to_param }

@@ -275,6 +275,14 @@ en:
             base:
               card_expired: Card has expired
               expiry_invalid: Card expiration is invalid
+        spree/customer:
+          attributes:
+            bill_address_id:
+              belongs_to_other_user: belongs to other user
+              deprecated_in_completed_order: deprecated in completed order
+            ship_address_id:
+              belongs_to_other_user: belongs to other user
+              deprecated_in_completed_order: deprecated in completed order
         spree/exchange_line_item:
           attributes:
             new_variant:
@@ -574,45 +582,6 @@ en:
   address_book:
     save: Save
     successfully_created: New address has been successfully created
-  devise:
-    confirmations:
-      confirmed: Your account was successfully confirmed. You are now signed in.
-      send_instructions: You will receive an email with instructions about how to confirm your account in a few minutes.
-    failure:
-      inactive: Your account was not activated yet.
-      invalid: Invalid email or password.
-      invalid_token: Invalid authentication token.
-      locked: Your account is locked.
-      timeout: Your session expired, please sign in again to continue.
-      too_many_attempts: Too many attempts. Please wait a moment and try again.
-      unauthenticated: You need to sign in or sign up before continuing.
-      unconfirmed: You have to confirm your account before continuing.
-    mailer:
-      confirmation_instructions:
-        subject: Confirmation instructions
-      reset_password_instructions:
-        subject: Reset password instructions
-      unlock_instructions:
-        subject: Unlock Instructions
-    oauth_callbacks:
-      failure: Could not authorize you from %{kind} because "%{reason}".
-      success: Successfully authorized from %{kind} account.
-    unlocks:
-      send_instructions: You will receive an email with instructions about how to unlock your account in a few minutes.
-      unlocked: Your account was successfully unlocked. You are now signed in.
-    user_passwords:
-      user:
-        cannot_be_blank: Your password cannot be blank.
-        send_instructions: You will receive an email with instructions about how to reset your password in a few minutes.
-        updated: Your password was changed successfully. You are now signed in.
-    user_registrations:
-      destroyed: Bye! Your account was successfully cancelled. We hope to see you again soon.
-      inactive_signed_up: You have signed up successfully. However, we could not sign you in because your account is %{reason}.
-      signed_up: Welcome! You have signed up successfully.
-      updated: You updated your account successfully.
-    user_sessions:
-      signed_in: Signed in successfully.
-      signed_out: Signed out successfully.
   errors:
     messages:
       already_confirmed: was already confirmed
@@ -673,12 +642,6 @@ en:
     adjustments_deleted: Adjustments Deleted
     admin_locale: Admin locale
     admin_user_mailer:
-      confirmation_email:
-        action: Confirm Email
-        greeting: Hi %{name},
-        ignore_notice: If you did not create this account, you can safely ignore this email.
-        instructions: Please confirm the email address for your %{store_name} admin account by clicking the button below.
-        subject: Email Confirmation Instructions
       password_reset_email:
         action: Reset Password
         expiry_notice: This password reset link will expire shortly. If you did not request this, no action is needed.
@@ -935,6 +898,7 @@ en:
         channel_store_mismatch: must belong to the same store
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
         delivery_zone_postal_definition_required: postal code member requires a prefix or a from/to range
+        invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
         delivery_zone_range_inverted: must be greater than or equal to postal_code_from
         delivery_zone_range_not_supported: postal code ranges are not supported for this country — use prefixes
@@ -949,6 +913,10 @@ en:
         invalid_storefront_access: is not a valid storefront access level
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_pickup_point_provider: this delivery method has no pickup point provider configured
+        oidc_account_not_provisioned: This account is not authorized for this store. Ask an administrator for an invitation.
+        oidc_authentication_failed: We could not sign you in with this provider. Please try again.
+        oidc_missing_code: The identity provider did not return an authorization code.
+        oidc_requires_redirect: This provider requires signing in through its own login page.
         pickup_point_not_found: pickup point could not be found with this provider
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
         store_association_can_not_be_changed: The store association can not be changed

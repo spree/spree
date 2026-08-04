@@ -37,7 +37,7 @@ end
 describe 'core:migrate_newsletter_subscribers' do
   include_context 'rake'
 
-  before { allow_any_instance_of(Spree.user_class).to receive(:sync_newsletter_subscription_with_marketing_consent) }
+  before { allow_any_instance_of(Spree.customer_class).to receive(:sync_newsletter_subscription_with_marketing_consent) }
 
   let!(:user) { create(:user, accepts_email_marketing: true) }
   let(:conflicted_user) { create(:user, accepts_email_marketing: true) }
@@ -45,7 +45,7 @@ describe 'core:migrate_newsletter_subscribers' do
   before do
     create_list(:user, 5, accepts_email_marketing: true)
     create_list(:user, 5, accepts_email_marketing: false)
-    create(:newsletter_subscriber, :verified, email: conflicted_user.email, user: conflicted_user)
+    create(:newsletter_subscriber, :verified, email: conflicted_user.email, customer: conflicted_user)
   end
 
   it 'migrates newsletter subscribers' do
@@ -53,7 +53,7 @@ describe 'core:migrate_newsletter_subscribers' do
 
     expect(Spree::NewsletterSubscriber.unverified.count).to eq(0)
     expect(Spree::NewsletterSubscriber.verified.count).to eq(7)
-    expect(Spree::NewsletterSubscriber.find_by(user: user).attributes).to include(
+    expect(Spree::NewsletterSubscriber.find_by(customer: user).attributes).to include(
       'email' => user.email,
       'verified_at' => user.updated_at,
       'verification_token' => nil,

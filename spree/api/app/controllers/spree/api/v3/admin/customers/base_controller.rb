@@ -21,7 +21,7 @@ module Spree
             # global in Spree (`User.for_store` is a no-op), so the ability is
             # the only boundary here.
             def set_parent
-              @parent = Spree.user_class.
+              @parent = Spree.customer_class.
                         accessible_by(current_ability, parent_ability_action).
                         find_by_prefix_id!(params[:customer_id])
             end

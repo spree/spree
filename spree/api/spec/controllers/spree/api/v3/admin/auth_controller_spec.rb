@@ -297,4 +297,256 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
       expect(response.headers['Cache-Control']).to include('no-store')
     end
   end
+
+  describe 'GET #providers' do
+    let(:oidc_factory) do
+      Spree::Authentication::Strategies::OidcStrategy.configure(
+        issuer: 'https://idp.example.com',
+        client_id: 'client-id',
+        client_secret: 'client-secret',
+        redirect_uri: 'https://shop.example.com/api/v3/admin/auth/callback/entra',
+        label: 'Microsoft Entra ID'
+      )
+    end
+
+    it 'lists the email provider on a default install' do
+      get :providers
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['providers']).to eq([{ 'key' => 'email', 'kind' => 'password' }])
+    end
+
+    it 'does not require authentication' do
+      get :providers
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    context 'with a redirect provider registered' do
+      before do
+        allow_any_instance_of(Spree::Authentication::Strategies::OidcStrategy).
+          to receive(:discovery_document).
+          and_return('authorization_endpoint' => 'https://idp.example.com/authorize')
+
+        Spree.admin_authentication_strategies.add(:entra, oidc_factory)
+      end
+
+      after { Spree.admin_authentication_strategies.remove(:entra) }
+
+      it 'describes it with a label and an authorization URL' do
+        get :providers
+
+        entra = json_response['providers'].find { |provider| provider['key'] == 'entra' }
+        expect(entra['kind']).to eq('redirect')
+        expect(entra['label']).to eq('Microsoft Entra ID')
+        expect(entra['authorization_url']).to start_with('https://idp.example.com/authorize?')
+      end
+
+      # Unauthenticated endpoint — it must never leak credentials or internals.
+      it 'exposes no client secret or class name' do
+        get :providers
+
+        expect(response.body).not_to include('client-secret')
+        expect(response.body).not_to include('OidcStrategy')
+      end
+    end
+
+    context 'when the email strategy is removed (SSO-only store)' do
+      before { Spree.admin_authentication_strategies.remove(:email) }
+
+      after do
+        Spree.admin_authentication_strategies.add(:email, Spree::Authentication::Strategies::EmailPasswordStrategy)
+      end
+
+      it 'omits the password provider so the login page hides the form' do
+        get :providers
+
+        expect(json_response['providers'].map { |provider| provider['key'] }).not_to include('email')
+      end
+    end
+  end
+
+  describe 'GET #callback' do
+    let!(:admin) { create(:admin_user, email: 'ada@example.com') }
+    let(:oidc_factory) do
+      Spree::Authentication::Strategies::OidcStrategy.configure(
+        issuer: 'https://idp.example.com',
+        client_id: 'client-id',
+        client_secret: 'client-secret',
+        redirect_uri: 'https://shop.example.com/api/v3/admin/auth/callback/entra',
+        label: 'Microsoft Entra ID'
+      )
+    end
+
+    # The state binds to the provider it was minted for, so the callback can
+    # reject one provider's state replayed against another.
+    def state_for(provider, expires_in: 15.minutes)
+      Rails.application.message_verifier('spree/admin/oauth_state').generate(
+        { provider: provider.to_s, nonce: SecureRandom.hex(16) },
+        expires_in: expires_in
+      )
+    end
+
+    let(:valid_state) { state_for('entra') }
+
+    before { Spree.admin_authentication_strategies.add(:entra, oidc_factory) }
+
+    after { Spree.admin_authentication_strategies.remove(:entra) }
+
+    def stub_claims(claims)
+      allow_any_instance_of(Spree::Authentication::Strategies::OidcStrategy).
+        to receive(:exchange_code_for_tokens).and_return('id_token' => 'signed-token')
+      allow_any_instance_of(Spree::Authentication::Strategies::OidcStrategy).
+        to receive(:verify_id_token).and_return(claims)
+    end
+
+    context 'with a verified email matching an existing admin' do
+      before do
+        stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'true')
+      end
+
+      # The browser arrives here from the identity provider, so the response has
+      # to be a redirect — a JSON body would leave the admin staring at raw text.
+      it 'redirects the browser to the dashboard without an error' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).not_to include('error=')
+      end
+
+      # The SPA mints its access token from the cookie on load, so no token ever
+      # travels in the redirect URL.
+      it 'sets the refresh cookie and keeps tokens out of the URL' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(set_cookie_for('spree_admin_refresh_token')).to be_present
+        expect(response.location).not_to include('token')
+      end
+
+      it 'links the SSO identity to the existing account' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(admin.identities.find_by(provider: 'entra', uid: 'idp-subject-1')).to be_present
+      end
+    end
+
+    context 'when the IdP does not assert a verified email' do
+      before do
+        stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'false')
+      end
+
+      it 'refuses to claim the account' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to redirect_to(/error=account_not_provisioned/)
+        expect(admin.identities).to be_empty
+      end
+    end
+
+    context 'when no account matches' do
+      before do
+        stub_claims('sub' => 'idp-subject-9', 'email' => 'stranger@example.com', 'email_verified' => 'true')
+      end
+
+      it 'rejects with account_not_provisioned rather than creating an admin' do
+        expect {
+          get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+        }.not_to change(Spree.admin_user_class, :count)
+
+        expect(response).to redirect_to(/error=account_not_provisioned/)
+      end
+    end
+
+    # A technical failure must not tell the person to ask for an invitation —
+    # that advice only fits an authenticated subject with no authorized account.
+    context 'when the provider exchange fails' do
+      before do
+        allow_any_instance_of(Spree::Authentication::Strategies::OidcStrategy).
+          to receive(:exchange_code_for_tokens).and_raise(StandardError, 'token endpoint returned 500')
+      end
+
+      it 'redirects with authentication_failed, not account_not_provisioned' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to redirect_to(/error=authentication_failed/)
+      end
+    end
+
+    context 'when the identity provider returns no authorization code' do
+      it 'redirects with authentication_failed' do
+        get :callback, params: { provider: 'entra', state: valid_state }
+
+        expect(response).to redirect_to(/error=authentication_failed/)
+      end
+    end
+
+    # A throttled response must stay a redirect: the browser is mid-navigation
+    # from the identity provider and cannot act on a JSON body.
+    context 'when the request is rate limited' do
+      # Drive a real request through the throttled branch: the response has to be
+      # a redirect the browser can follow, never a JSON body.
+      before do
+        allow_any_instance_of(described_class).to receive(:callback) do |ctrl|
+          ctrl.instance_exec(&described_class::RATE_LIMITED_CALLBACK_RESPONSE)
+        end
+      end
+
+      it 'redirects to the login page instead of rendering JSON' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).to include('error=rate_limit_exceeded')
+        expect(response.body).not_to include('"error"')
+      end
+    end
+
+    describe 'CSRF state' do
+      before do
+        stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'true')
+      end
+
+      it 'rejects a forged state' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: 'forged' }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
+      it 'rejects a missing state' do
+        get :callback, params: { provider: 'entra', code: 'auth-code' }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
+      it 'rejects an expired state' do
+        expired = Timecop.travel(20.minutes.ago) { state_for('entra') }
+
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: expired }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
+      # A state minted for one provider must not authorize a different one.
+      it 'rejects a state minted for another provider' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: state_for('other') }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+    end
+
+    context 'with an unregistered provider' do
+      # State is provider-bound and checked first, so a state minted for another
+      # provider is rejected before the registry is ever consulted.
+      it 'rejects another provider\'s state before looking the provider up' do
+        get :callback, params: { provider: 'nope', code: 'auth-code', state: valid_state }
+
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
+      end
+
+      it 'redirects with invalid_provider once the state matches' do
+        get :callback, params: { provider: 'nope', code: 'auth-code', state: state_for('nope') }
+
+        expect(response).to redirect_to(/error=invalid_provider/)
+      end
+    end
+  end
 end

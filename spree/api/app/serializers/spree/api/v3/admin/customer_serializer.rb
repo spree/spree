@@ -5,10 +5,7 @@ module Spree
         # Admin API Customer Serializer
         # Full customer data including admin-only fields
         class CustomerSerializer < V3::CustomerSerializer
-          typelize login: [:string, nullable: true],
-                   last_sign_in_at: [:string, nullable: true], current_sign_in_at: [:string, nullable: true],
-                   sign_in_count: :number, failed_attempts: :number,
-                   last_sign_in_ip: [:string, nullable: true], current_sign_in_ip: [:string, nullable: true],
+          typelize failed_attempts: :number,
                    tags: [:string, multi: true],
                    internal_note_html: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
@@ -21,25 +18,8 @@ module Spree
                    customer_group_ids: [:string, multi: true]
 
           # Admin-only attributes
-          attributes :login, :metadata,
-                     last_sign_in_at: :iso8601, current_sign_in_at: :iso8601,
+          attributes :failed_attempts, :metadata,
                      created_at: :iso8601, updated_at: :iso8601
-
-          attribute :sign_in_count do |user|
-            user.sign_in_count
-          end
-
-          attribute :failed_attempts do |user|
-            user.failed_attempts
-          end
-
-          attribute :last_sign_in_ip do |user|
-            user.last_sign_in_ip
-          end
-
-          attribute :current_sign_in_ip do |user|
-            user.current_sign_in_ip
-          end
 
           attribute :tags do |user|
             user.tags.map(&:name) # not pluck as we preload tags

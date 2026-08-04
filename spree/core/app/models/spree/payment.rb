@@ -202,13 +202,13 @@ module Spree
                         payment_method.payment_source_class.new(source_attributes)
                       end
 
-        if source.user_id.present? && source.user_id != owner&.user_id
+        if source.customer_id.present? && source.customer_id != owner&.customer_id
           self.source = nil
           return
         end
 
         source.payment_method_id = payment_method.id if source.respond_to?(:payment_method_id)
-        source.user_id = owner.user_id if owner
+        source.customer_id = owner.customer_id if owner
       end
     end
 

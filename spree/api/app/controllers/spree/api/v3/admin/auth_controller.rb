@@ -4,13 +4,25 @@ module Spree
       module Admin
         class AuthController < Admin::BaseController
           include Spree::Api::V3::Admin::AuthCookies
+          include Spree::Api::V3::AuthenticationStrategies
 
           skip_scope_check!
 
-          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
-          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :refresh, with: RATE_LIMIT_RESPONSE
+          # The SSO callback answers a browser navigation, so a throttled request
+          # must return the person to the login page rather than a JSON body they
+          # cannot act on. It also gets its own bucket: completing a sign-in must
+          # not be refused because the login form was submitted a few times.
+          RATE_LIMITED_CALLBACK_RESPONSE = -> { redirect_to_dashboard(error: 'rate_limit_exceeded') }
 
-          skip_before_action :authenticate_admin!, only: [:create, :refresh, :logout]
+          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
+          # Each of these gets its own counter. The login page fetches providers on
+          # every load, so sharing the login budget would let ordinary page views —
+          # or an attacker hitting providers alone — lock staff out of signing in.
+          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :providers, with: RATE_LIMIT_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :callback, with: RATE_LIMITED_CALLBACK_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: [:refresh, :logout], with: RATE_LIMIT_RESPONSE
+
+          skip_before_action :authenticate_admin!, only: [:create, :refresh, :logout, :providers, :callback]
 
           # POST /api/v3/admin/auth/login
           def create
@@ -31,6 +43,49 @@ module Spree
                 status: :unauthorized
               )
             end
+          end
+
+          # GET /api/v3/admin/auth/providers
+          #
+          # Lists the registered authentication providers so the dashboard login
+          # page can render itself: the password form when :email is registered,
+          # a button per redirect provider. Unauthenticated — it is read before
+          # anyone can log in — so it exposes only provider keys, kinds, labels
+          # and authorization URLs.
+          def providers
+            described = Spree.admin_authentication_strategies.describe { |key| issue_oauth_state(key) }
+
+            render json: { providers: described }
+          end
+
+          # GET /api/v3/admin/auth/callback/:provider
+          #
+          # Completes a redirect (SSO) login.
+          #
+          # Reached by a full-page browser redirect from the identity provider, so
+          # it answers with a redirect rather than JSON — the browser must land on
+          # the dashboard, not on a response body. Success sets the same
+          # refresh-token cookie the password flow issues and the SPA mints its
+          # access token from it on load, so no token ever travels in a URL.
+          def callback
+            return redirect_to_dashboard(error: ERROR_CODES[:invalid_oauth_state]) unless valid_oauth_state?
+
+            strategy = Spree.admin_authentication_strategies.build(
+              params[:provider],
+              params: params,
+              request_env: request.headers.env,
+              user_class: Spree.admin_user_class
+            )
+            return redirect_to_dashboard(error: ERROR_CODES[:invalid_provider]) if strategy.nil?
+
+            result = strategy.callback
+
+            unless result.success?
+              return redirect_to_dashboard(error: callback_error_code(strategy))
+            end
+
+            set_refresh_cookie(Spree::RefreshToken.create_for(result.value, request_env: request_env_for_token))
+            redirect_to_dashboard
           end
 
           # POST /api/v3/admin/auth/refresh
@@ -74,24 +129,70 @@ module Spree
 
           private
 
-          def authentication_strategy
-            provider = params[:provider].presence || 'email'
-            strategy_class = Spree.admin_authentication_strategies[provider]
+          OAUTH_STATE_PURPOSE = 'spree/admin/oauth_state'.freeze
+          OAUTH_STATE_EXPIRY = 15.minutes
 
-            unless strategy_class
-              render_error(
-                code: ERROR_CODES[:invalid_provider],
-                message: "Unsupported authentication provider: #{provider}",
-                status: :bad_request
-              )
-              return nil
-            end
-
-            strategy_class.new(
-              params: params,
-              request_env: request.headers.env,
-              user_class: Spree.admin_user_class
+          # Signed, self-expiring CSRF token handed to the identity provider and
+          # echoed back to the callback. Signing it means no server-side session
+          # storage — the token proves the redirect started here, and a forged or
+          # expired value fails verification.
+          #
+          # The provider key is signed into the payload so a state minted for one
+          # provider cannot be replayed against another's callback.
+          def issue_oauth_state(provider)
+            Rails.application.message_verifier(OAUTH_STATE_PURPOSE).generate(
+              { provider: provider.to_s, nonce: SecureRandom.hex(16) },
+              expires_in: OAUTH_STATE_EXPIRY
             )
+          end
+
+          def valid_oauth_state?
+            state = params[:state]
+            return false if state.blank?
+
+            # The verifier round-trips through JSON, so payload keys come back as strings.
+            payload = Rails.application.message_verifier(OAUTH_STATE_PURPOSE).verified(state)
+            return false unless payload.is_a?(Hash)
+
+            payload['provider'].to_s == params[:provider].to_s
+          end
+
+          # Sends the browser back to the dashboard. On failure the login page
+          # reads +?error=+ and explains what happened; on success it has the
+          # refresh cookie and completes sign-in through its normal boot refresh.
+          def redirect_to_dashboard(error: nil)
+            target = dashboard_url
+            target = "#{target}/login?error=#{error}" if error.present?
+
+            redirect_to target, allow_other_host: true
+          end
+
+          # Where the React dashboard is hosted. Falls back to the Vite dev server
+          # in development, then to the store's own URL.
+          def dashboard_url
+            base = Spree::Config[:dashboard_url].presence ||
+                   (Rails.env.development? ? 'http://localhost:5173' : nil) ||
+                   current_store&.formatted_url
+
+            base.to_s.chomp('/')
+          end
+
+          # A technical SSO failure (missing code, token verification) must not be
+          # reported as "ask an administrator for an invitation".
+          def callback_error_code(strategy)
+            if strategy.respond_to?(:account_not_provisioned?) && strategy.account_not_provisioned?
+              ERROR_CODES[:account_not_provisioned]
+            else
+              ERROR_CODES[:authentication_failed]
+            end
+          end
+
+          def authentication_strategies
+            Spree.admin_authentication_strategies
+          end
+
+          def authentication_user_class
+            Spree.admin_user_class
           end
 
           def serializer_params

@@ -11,7 +11,8 @@ module Spree
     # Associations
     #
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
-    belongs_to :user, class_name: Spree.user_class.to_s, optional: true
+    belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
+    include Spree::DeprecatedCustomerAlias
 
     #
     # Validations
@@ -26,9 +27,9 @@ module Spree
     # Returns the gateway customer for the user.
     # @return [Spree::GatewayCustomer]
     def gateway_customer
-      return if user.blank?
+      return if customer.blank?
 
-      payment_method.gateway_customers.find_by(user: user)
+      payment_method.gateway_customers.find_by(customer: customer)
     end
   end
 end

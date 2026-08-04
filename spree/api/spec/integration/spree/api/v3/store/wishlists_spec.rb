@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:wishlist) { create(:wishlist, user: user, store: store, name: 'My Wishlist') }
+  let!(:wishlist) { create(:wishlist, customer: user, store: store, name: 'My Wishlist') }
   let!(:product) { create(:product) }
   let!(:variant) { product.default_variant }
   let!(:wished_item) { create(:wished_item, wishlist: wishlist, variant: variant) }

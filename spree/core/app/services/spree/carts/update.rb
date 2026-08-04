@@ -104,17 +104,17 @@ module Spree
       # customer is in checkout, blank address slots fill from their saved
       # defaults (assign_default_addresses! guards each slot itself).
       def assign_default_addresses
-        return unless cart.user
+        return unless cart.customer
         return unless cart.email.present? || cart.ship_address_id.present?
 
         cart.assign_default_addresses!
       end
 
       def resolve_address_id(prefixed_id)
-        return unless cart.user
+        return unless cart.customer
 
         decoded = Spree::Address.decode_prefixed_id(prefixed_id)
-        decoded ? cart.user.addresses.find_by(id: decoded)&.id : nil
+        decoded ? cart.customer.addresses.find_by(id: decoded)&.id : nil
       end
 
       def assign_market

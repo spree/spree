@@ -7,7 +7,7 @@ RSpec.describe 'Admin Customer Credit Cards API', type: :request, swagger_doc: '
 
   let!(:customer) { create(:user) }
   let!(:payment_method) { create(:credit_card_payment_method) }
-  let!(:credit_card) { create(:credit_card, user: customer, payment_method: payment_method) }
+  let!(:credit_card) { create(:credit_card, customer: customer, payment_method: payment_method) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/customers/{customer_id}/credit_cards' do

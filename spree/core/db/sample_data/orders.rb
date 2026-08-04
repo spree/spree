@@ -76,7 +76,7 @@ unless orders[1].line_items.any?
   ).save!
 end
 
-orders.each(&:create_proposed_fulfillments)
+orders.each(&:rebuild_fulfillments!)
 
 Spree::Order.where(id: orders.map(&:id)).update_all(status: 'placed', completed_at: Time.current - 1.day)
 
@@ -120,7 +120,7 @@ if method
   credit_card.save!
 
   orders.each do |order|
-    order.update_with_updater!
+    order.recalculate_totals!
     payment = order.payments.where(
       amount: BigDecimal(order.total, 4),
       source: credit_card.clone,

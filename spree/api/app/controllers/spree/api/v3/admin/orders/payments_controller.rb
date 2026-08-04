@@ -78,9 +78,9 @@ module Spree
             # to that customer to prevent attaching customer A's card to
             # customer B's order. Refuse if no customer is assigned.
             def find_source!(payment_method, source_id)
-              raise ActiveRecord::RecordNotFound unless @parent.user
+              raise ActiveRecord::RecordNotFound unless @parent.customer
 
-              @parent.user.credit_cards.find_by_prefix_id!(source_id)
+              @parent.customer.credit_cards.find_by_prefix_id!(source_id)
             end
           end
         end

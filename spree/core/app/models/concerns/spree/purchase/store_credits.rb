@@ -12,7 +12,7 @@ module Spree
       end
 
       def covered_by_store_credit?
-        user.present? && total_applied_store_credit.positive? && total_applied_store_credit >= total
+        customer.present? && total_applied_store_credit.positive? && total_applied_store_credit >= total
       end
       alias covered_by_store_credit covered_by_store_credit?
 
@@ -20,16 +20,16 @@ module Spree
       #
       # @return [BigDecimal]
       def total_available_store_credit
-        return 0.0 unless user
+        return 0.0 unless customer
 
-        user.total_available_store_credit(currency, store)
+        customer.total_available_store_credit(currency, store)
       end
 
       # @return [Array<Spree::StoreCredit>]
       def available_store_credits
-        return Spree::StoreCredit.none if user.nil?
+        return Spree::StoreCredit.none if customer.nil?
 
-        user.store_credits.for_store(store).where(currency: currency).available.sort_by(&:amount_remaining).reverse
+        customer.store_credits.for_store(store).where(currency: currency).available.sort_by(&:amount_remaining).reverse
       end
 
       def could_use_store_credit?
@@ -52,7 +52,7 @@ module Spree
         if completed? || payments.valid.any?
           total_applied_store_credit
         else
-          [total, user.try(:total_available_store_credit) || 0.0].min
+          [total, customer.try(:total_available_store_credit) || 0.0].min
         end
       end
 

@@ -6,8 +6,8 @@ RSpec.describe 'Admin Order Store Credits API', type: :request, swagger_doc: 'ap
   include_context 'API v3 Admin'
 
   let(:customer) { create(:user) }
-  let!(:order) { create(:order_with_line_items, store: store, user: customer) }
-  let!(:store_credit) { create(:store_credit, store: store, user: customer, amount: 50.00) }
+  let!(:order) { create(:order_with_line_items, store: store, customer: customer) }
+  let!(:store_credit) { create(:store_credit, store: store, customer: customer, amount: 50.00) }
   let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 

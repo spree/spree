@@ -16,7 +16,9 @@ module Spree
     #
     # Associations
     #
-    belongs_to :user, optional: true, class_name: Spree.user_class&.name
+    belongs_to :customer, optional: true, class_name: Spree.customer_class&.name
+
+    include Spree::DeprecatedCustomerAlias
 
     #
     # Validations
@@ -45,7 +47,7 @@ module Spree
     self.whitelisted_ransackable_scopes = %w[verified unverified]
 
     def accepts_email_marketing
-      return user.accepts_email_marketing if user.present?
+      return customer.accepts_email_marketing if customer.present?
 
       verified?
     end
@@ -58,12 +60,12 @@ module Spree
       Spree::CSV::NewsletterSubscriberPresenter.new(self).call
     end
 
-    def self.subscribe(email:, user: nil, store: nil, redirect_url: nil)
+    def self.subscribe(email:, customer: nil, store: nil, redirect_url: nil)
       store ||= Spree::Current.store
 
       Spree::Newsletter::Subscribe.new(
         email: email,
-        current_user: user,
+        current_user: customer,
         current_store: store,
         redirect_url: redirect_url
       ).call

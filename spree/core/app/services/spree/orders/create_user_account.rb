@@ -6,10 +6,10 @@ module Spree
       prepend ::Spree::ServiceModule::Base
 
       def call(order:, accepts_email_marketing: false)
-        existing_user = Spree.user_class.find_by(email: order.email)
+        existing_user = Spree.customer_class.find_by(email: order.email)
         if existing_user.present?
-          order.update_columns(user_id: existing_user.id, updated_at: Time.current)
-          order.user = existing_user
+          order.update_columns(customer_id: existing_user.id, updated_at: Time.current)
+          order.customer = existing_user
           return success(existing_user)
         end
 
@@ -21,8 +21,8 @@ module Spree
 
         # assign newly created user to the order
         # using update_columns to avoid running validations/callbacks
-        order.update_columns(user_id: user.id, updated_at: Time.current)
-        order.user = user
+        order.update_columns(customer_id: user.id, updated_at: Time.current)
+        order.customer = user
 
         # send welcome email
         user.send_welcome_email if user.respond_to?(:send_welcome_email)
@@ -40,7 +40,7 @@ module Spree
         # we need to generate a password for the user
         password = SecureRandom.base58(16)
 
-        user = Spree.user_class.new
+        user = Spree.customer_class.new
         user.email = order.email
         user.first_name = firstname if user.respond_to?(:first_name)
         user.last_name = lastname if user.respond_to?(:last_name)
@@ -56,7 +56,7 @@ module Spree
 
       def assign_bill_address(order, user)
         if order.bill_address.present?
-          order.bill_address.update_columns(user_id: user.id, updated_at: Time.current)
+          order.bill_address.update_columns(customer_id: user.id, updated_at: Time.current)
 
           user.update_columns(bill_address_id: order.bill_address_id, updated_at: Time.current) unless user.bill_address_id.present?
         end
@@ -64,7 +64,7 @@ module Spree
 
       def assign_ship_address(order, user)
         if order.ship_address.present?
-          order.ship_address.update_columns(user_id: user.id, updated_at: Time.current)
+          order.ship_address.update_columns(customer_id: user.id, updated_at: Time.current)
 
           user.update_columns(ship_address_id: order.ship_address_id, updated_at: Time.current) unless user.ship_address_id.present?
         end

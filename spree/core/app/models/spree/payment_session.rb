@@ -13,7 +13,7 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order', optional: true
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :payment_sessions
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
-    belongs_to :customer, class_name: Spree.user_class.to_s, optional: true
+    belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
 
     has_one :payment, class_name: 'Spree::Payment',
             foreign_key: :response_code,
@@ -162,7 +162,7 @@ module Spree
 
       self.amount ||= owner.total_minus_store_credits if amount.blank? || amount.zero?
       self.currency ||= owner.currency
-      self.customer ||= owner.user
+      self.customer ||= owner.customer
     end
   end
 end

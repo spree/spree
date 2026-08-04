@@ -6,14 +6,14 @@ describe Spree::Wishlist, type: :model do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
 
-  let(:wishlist) { create(:wishlist, user: user, name: 'My Wishlist', store: store, is_default: true) }
-  let(:wishlist_belonging_to_other_store) { create(:wishlist, user: user, name: 'My Wishlist', store: other_store, is_default: true) }
-  let(:wishlist_belonging_to_other_user) { create(:wishlist, user: other_user, name: 'My Wishlist', store: store, is_default: true) }
+  let(:wishlist) { create(:wishlist, customer: user, name: 'My Wishlist', store: store, is_default: true) }
+  let(:wishlist_belonging_to_other_store) { create(:wishlist, customer: user, name: 'My Wishlist', store: other_store, is_default: true) }
+  let(:wishlist_belonging_to_other_user) { create(:wishlist, customer: other_user, name: 'My Wishlist', store: store, is_default: true) }
 
   describe 'lifecycle events', events: true do
     describe 'wishlist.created' do
       it 'publishes created event when record is created' do
-        record = build(:wishlist, user: user, store: store)
+        record = build(:wishlist, customer: user, store: store)
         expect(record).to receive(:publish_event).with('wishlist.created')
         allow(record).to receive(:publish_event).with(anything)
 
@@ -34,7 +34,7 @@ describe Spree::Wishlist, type: :model do
 
     describe 'wishlist.deleted' do
       it 'publishes deleted event when record is destroyed' do
-        record = create(:wishlist, user: user, store: store)
+        record = create(:wishlist, customer: user, store: store)
         expect(record).to receive(:publish_event).with('wishlist.deleted', kind_of(Hash))
         allow(record).to receive(:publish_event).with(anything)
 
@@ -45,7 +45,7 @@ describe Spree::Wishlist, type: :model do
 
   describe '.ensure_default_exists_and_is_unique' do
     context 'when user creates a new default store' do
-      let(:new_wl) { create(:wishlist, name: 'My New WishList', user: user, store: store, is_default: true) }
+      let(:new_wl) { create(:wishlist, name: 'My New WishList', customer: user, store: store, is_default: true) }
 
       before do
         wishlist

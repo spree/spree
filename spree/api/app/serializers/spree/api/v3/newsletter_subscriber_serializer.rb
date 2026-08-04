@@ -19,7 +19,7 @@ module Spree
         end
 
         attribute :customer_id do |subscriber|
-          subscriber.user&.prefixed_id
+          subscriber.customer&.prefixed_id
         end
       end
     end

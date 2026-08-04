@@ -65,7 +65,7 @@ module Spree
           end
 
           attribute :customer_id do |order|
-            order.user&.prefixed_id
+            order.customer&.prefixed_id
           end
 
           # Override inherited associations to use admin serializers
@@ -91,8 +91,7 @@ module Spree
 
           many :payment_methods, resource: proc { Spree.api.admin_payment_method_serializer }, if: proc { expand?('payment_methods') }
 
-          one :user,
-              key: :customer,
+          one :customer,
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 

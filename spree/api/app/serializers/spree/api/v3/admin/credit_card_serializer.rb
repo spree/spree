@@ -8,7 +8,7 @@ module Spree
                    metadata: 'Record<string, unknown>'
 
           attribute :customer_id do |credit_card|
-            credit_card.user&.prefixed_id
+            credit_card.customer&.prefixed_id
           end
 
           attribute :payment_method_id do |credit_card|

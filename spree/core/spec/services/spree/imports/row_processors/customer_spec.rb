@@ -84,7 +84,7 @@ RSpec.describe Spree::Imports::RowProcessors::Customer, type: :service do
     it 'generates a random password for new users' do
       user = subject.process!
 
-      expect(user.encrypted_password).to be_present
+      expect(user.password_digest).to be_present
     end
   end
 
@@ -133,11 +133,11 @@ RSpec.describe Spree::Imports::RowProcessors::Customer, type: :service do
     end
 
     it 'does not overwrite the password' do
-      original_password = existing_user.encrypted_password
+      original_password = existing_user.password_digest
 
       subject.process!
 
-      expect(existing_user.reload.encrypted_password).to eq original_password
+      expect(existing_user.reload.password_digest).to eq original_password
     end
   end
 

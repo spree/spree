@@ -11,12 +11,12 @@ module Spree
     #
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :customer_groups
     has_many :customer_group_users, class_name: 'Spree::CustomerGroupUser', dependent: :destroy
-    has_many :users, through: :customer_group_users, source: :user, source_type: Spree.user_class.to_s
+    has_many :users, through: :customer_group_users, source: :customer, source_type: Spree.customer_class.to_s
     # `customers` is the public name across the v3 API; declaring it as its
     # own association (rather than `alias_method`) is what lets `customer_ids=`
     # exist and what makes the `PrefixedId` auto-decoder in `assign_attributes`
     # recognise the key — that lookup keys off `reflect_on_association(:customers)`.
-    has_many :customers, through: :customer_group_users, source: :user, source_type: Spree.user_class.to_s
+    has_many :customers, through: :customer_group_users, source: :customer, source_type: Spree.customer_class.to_s
 
     #
     # Validations
@@ -42,10 +42,10 @@ module Spree
       return 0 if user_ids.empty?
 
       # Get existing user IDs to avoid duplicates
-      existing_user_ids = customer_group_users.where(user_id: user_ids).pluck(:user_id).map(&:to_s).to_set
+      existing_user_ids = customer_group_users.where(customer_id: user_ids).pluck(:customer_id).map(&:to_s).to_set
 
       now = Time.current
-      user_type = Spree.user_class.to_s
+      user_type = Spree.customer_class.to_s
 
       records_to_insert = user_ids.filter_map do |user_id|
         next if existing_user_ids.include?(user_id)
@@ -78,7 +78,7 @@ module Spree
       user_ids = Array(user_ids).map(&:to_s).uniq
       return 0 if user_ids.empty?
 
-      deleted_count = customer_group_users.where(user_id: user_ids).delete_all
+      deleted_count = customer_group_users.where(customer_id: user_ids).delete_all
 
       if deleted_count > 0
         touch_users(user_ids)
@@ -93,7 +93,7 @@ module Spree
     def touch_users(user_ids)
       return if user_ids.blank?
 
-      Spree.user_class.where(id: user_ids).touch_all
+      Spree.customer_class.where(id: user_ids).touch_all
     end
   end
 end

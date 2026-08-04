@@ -112,7 +112,7 @@ module Spree
         @refunds = [
           Spree::StoreCredit.create!(
             store: claim.store,
-            user: claim.order.user,
+            customer: claim.order.customer,
             amount: @amount_to_refund,
             currency: claim.currency,
             category: Spree::StoreCreditCategory.default_reimbursement_category,

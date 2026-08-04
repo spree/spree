@@ -17,7 +17,7 @@ FactoryBot.define do
 
     factory :custom_payment, class: Spree::Payment do
       payment_method { create(:custom_payment_method, store: order.store) }
-      source { create(:payment_source, user: order.user, payment_method: payment_method) }
+      source { create(:payment_source, customer: order.customer, payment_method: payment_method) }
     end
   end
 
@@ -30,6 +30,6 @@ FactoryBot.define do
 
   factory :store_credit_payment, class: Spree::Payment, parent: :payment do
     payment_method { create(:store_credit_payment_method, store: (order || cart).store) }
-    source { create(:store_credit, store: (order || cart).store, user: (order || cart).customer) }
+    source { create(:store_credit, store: (order || cart).store, customer: (order || cart).customer) }
   end
 end

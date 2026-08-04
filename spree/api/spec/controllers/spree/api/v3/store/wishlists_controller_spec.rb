@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
   include_context 'API v3 Store'
 
-  let!(:wishlist) { create(:wishlist, user: user, store: store) }
+  let!(:wishlist) { create(:wishlist, customer: user, store: store) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -23,7 +23,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
     it 'does not return other users wishlists' do
       other_user = create(:user)
-      other_wishlist = create(:wishlist, user: other_user, store: store)
+      other_wishlist = create(:wishlist, customer: other_user, store: store)
 
       get :index
 
@@ -70,7 +70,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
       it 'returns not found for other users wishlist' do
         other_user = create(:user)
-        other_wishlist = create(:wishlist, user: other_user, store: store)
+        other_wishlist = create(:wishlist, customer: other_user, store: store)
 
         get :show, params: { id: other_wishlist.prefixed_id }
 
@@ -146,7 +146,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
     context 'error handling' do
       it 'returns not found for other users wishlist' do
         other_user = create(:user)
-        other_wishlist = create(:wishlist, user: other_user, store: store)
+        other_wishlist = create(:wishlist, customer: other_user, store: store)
 
         patch :update, params: { id: other_wishlist.prefixed_id, name: 'Hacked' }
 
@@ -176,7 +176,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
       it 'returns not found for other users wishlist' do
         other_user = create(:user)
-        other_wishlist = create(:wishlist, user: other_user, store: store)
+        other_wishlist = create(:wishlist, customer: other_user, store: store)
 
         delete :destroy, params: { id: other_wishlist.prefixed_id }
 

@@ -96,10 +96,10 @@ RSpec.describe Spree::ModelGenerator, type: :generator do
       expect(result[:model]).to include("belongs_to :product, class_name: 'Spree::Product'")
     end
 
-    it 'resolves to Spree.user_class for user/user_id attributes' do
+    it 'resolves to Spree.customer_class for user/user_id attributes' do
       result = run_generator(['UserPreference', 'user:references'])
 
-      expect(result[:model]).to include('belongs_to :user, class_name: "::#{Spree.user_class}"')
+      expect(result[:model]).to include('belongs_to :user, class_name: "::#{Spree.customer_class}"')
     end
 
     it 'resolves to Spree.admin_user_class for admin-user-shaped column names' do

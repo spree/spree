@@ -70,14 +70,14 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     end
 
     context 'with q[search] (full-text search)' do
-      # Factories auto-attach a user and a `before_create :link_by_email`
-      # callback resets `email` from `user.email`. Pass `user: nil` so our
+      # Factories auto-attach a customer and a `before_create :link_by_email`
+      # callback resets `email` from `customer.email`. Pass `customer: nil` so our
       # explicit email sticks for the email-match assertion.
       let!(:matching_order) do
-        create(:order, store: store, state: 'cart', user: nil, email: 'jane.doe@example.com')
+        create(:order, store: store, state: 'cart', customer: nil, email: 'jane.doe@example.com')
       end
       let!(:non_matching_order) do
-        create(:order, store: store, state: 'cart', user: nil, email: 'someone-else@example.com')
+        create(:order, store: store, state: 'cart', customer: nil, email: 'someone-else@example.com')
       end
 
       it 'matches by order number substring' do
@@ -193,7 +193,16 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:created)
         created_order = Spree::Order.find_by_prefix_id(json_response['id'])
-        expect(created_order.user).to eq(customer)
+        expect(created_order.customer).to eq(customer)
+      end
+
+      it 'refuses to attach a customer the principal is not allowed to see' do
+        restricted = Spree::Ability.new(admin_user)
+        restricted.cannot :show, Spree.customer_class, id: customer.id
+        allow_any_instance_of(described_class).to receive(:current_ability).and_return(restricted)
+
+        expect { subject }.not_to change(Spree::Order, :count)
+        expect(response).to have_http_status(:not_found)
       end
     end
 
@@ -429,7 +438,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     context 'with customer reassignment via customer_id' do
       let(:original_customer) { create(:user) }
       let(:new_customer) { create(:user) }
-      let!(:order) { create(:order, store: store, state: 'cart', user: original_customer) }
+      let!(:order) { create(:order, store: store, state: 'cart', customer: original_customer) }
 
       it 'reassigns to the new customer' do
         patch :update, params: { id: order.prefixed_id, customer_id: new_customer.prefixed_id }, as: :json

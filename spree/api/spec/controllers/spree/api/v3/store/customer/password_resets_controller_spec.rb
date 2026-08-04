@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::PasswordResetsController, type: 
       end
 
       it 'publishes customer.password_reset_requested event' do
-        expect_any_instance_of(Spree.user_class).to receive(:publish_event)
+        expect_any_instance_of(Spree.customer_class).to receive(:publish_event)
           .with('customer.password_reset_requested', hash_including(:reset_token))
 
         post :create, params: { email: user.email }
@@ -56,14 +56,14 @@ RSpec.describe Spree::Api::V3::Store::Customer::PasswordResetsController, type: 
         end
 
         it 'includes redirect_url in event payload' do
-          expect_any_instance_of(Spree.user_class).to receive(:publish_event)
+          expect_any_instance_of(Spree.customer_class).to receive(:publish_event)
             .with('customer.password_reset_requested', hash_including(redirect_url: 'https://myshop.com/reset-password'))
 
           post :create, params: { email: user.email, redirect_url: 'https://myshop.com/reset-password' }
         end
 
         it 'silently drops redirect_url when it does not match allowed origin' do
-          expect_any_instance_of(Spree.user_class).to receive(:publish_event)
+          expect_any_instance_of(Spree.customer_class).to receive(:publish_event)
             .with('customer.password_reset_requested', hash_not_including(:redirect_url))
 
           post :create, params: { email: user.email, redirect_url: 'https://evil.com/phishing' }
@@ -74,7 +74,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::PasswordResetsController, type: 
 
       context 'when store has no allowed origins' do
         it 'silently drops redirect_url to prevent open redirect' do
-          expect_any_instance_of(Spree.user_class).to receive(:publish_event)
+          expect_any_instance_of(Spree.customer_class).to receive(:publish_event)
             .with('customer.password_reset_requested', hash_not_including(:redirect_url))
 
           post :create, params: { email: user.email, redirect_url: 'https://anything.com/reset' }
@@ -85,7 +85,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::PasswordResetsController, type: 
 
       context 'without redirect_url' do
         it 'does not include redirect_url in event payload' do
-          expect_any_instance_of(Spree.user_class).to receive(:publish_event)
+          expect_any_instance_of(Spree.customer_class).to receive(:publish_event)
             .with('customer.password_reset_requested', hash_not_including(:redirect_url))
 
           post :create, params: { email: user.email }
@@ -126,7 +126,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::PasswordResetsController, type: 
       end
 
       it 'publishes customer.password_reset event' do
-        expect_any_instance_of(Spree.user_class).to receive(:publish_event)
+        expect_any_instance_of(Spree.customer_class).to receive(:publish_event)
           .with('customer.password_reset')
 
         patch :update, params: {

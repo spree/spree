@@ -10,7 +10,7 @@ module Spree
       @order = order
     end
 
-    def merge!(other_order, user = nil, discard_merged: true)
+    def merge!(other_order, customer = nil, discard_merged: true)
       handle_gift_card(other_order)
       other_order.line_items.each do |other_order_line_item|
         next unless other_order_line_item.currency == order.currency
@@ -19,7 +19,7 @@ module Spree
         handle_merge(current_line_item, other_order_line_item)
       end
 
-      set_user(user)
+      set_customer(customer)
       clear_addresses(other_order) if discard_merged
       persist_merge
 
@@ -44,8 +44,8 @@ module Spree
       end
     end
 
-    def set_user(user = nil)
-      order.associate_user!(user) if !order.user && !user.blank?
+    def set_customer(customer = nil)
+      order.associate_customer!(customer) if !order.customer && !customer.blank?
     end
 
     def clear_addresses(other_order)

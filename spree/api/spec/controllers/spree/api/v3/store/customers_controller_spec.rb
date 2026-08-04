@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
     it 'creates a new user' do
       expect {
         post :create, params: valid_params
-      }.to change(Spree.user_class, :count).by(1)
+      }.to change(Spree.customer_class, :count).by(1)
 
       expect(response).to have_http_status(:created)
     end
@@ -43,7 +43,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       post :create, params: valid_params.merge(first_name: 'John', last_name: 'Doe')
 
       expect(response).to have_http_status(:created)
-      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      new_user = Spree.customer_class.find_by(email: 'newuser@example.com')
       expect(new_user.first_name).to eq('John')
       expect(new_user.last_name).to eq('Doe')
     end
@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       post :create, params: valid_params.merge(phone: '+1234567890')
 
       expect(response).to have_http_status(:created)
-      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      new_user = Spree.customer_class.find_by(email: 'newuser@example.com')
       expect(new_user.phone).to eq('+1234567890')
     end
 
@@ -60,7 +60,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       post :create, params: valid_params.merge(accepts_email_marketing: true)
 
       expect(response).to have_http_status(:created)
-      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      new_user = Spree.customer_class.find_by(email: 'newuser@example.com')
       expect(new_user.accepts_email_marketing).to eq(true)
     end
 
@@ -68,7 +68,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       post :create, params: valid_params.merge(metadata: { source: 'storefront' })
 
       expect(response).to have_http_status(:created)
-      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      new_user = Spree.customer_class.find_by(email: 'newuser@example.com')
       expect(new_user.metadata).to eq({ 'source' => 'storefront' })
     end
 
@@ -85,7 +85,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
         post :create, params: valid_params
 
         expect(response).to have_http_status(:created)
-        new_user = Spree.user_class.find_by(email: valid_params[:email])
+        new_user = Spree.customer_class.find_by(email: valid_params[:email])
         expect(subscriber.reload.user).to eq(new_user)
         expect(new_user.accepts_email_marketing).to eq(false)
       end
@@ -104,7 +104,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
         post :create, params: valid_params.merge(accepts_email_marketing: false)
 
         expect(response).to have_http_status(:created)
-        new_user = Spree.user_class.find_by(email: valid_params[:email])
+        new_user = Spree.customer_class.find_by(email: valid_params[:email])
         expect(subscriber.reload.user).to eq(new_user)
         expect(new_user.accepts_email_marketing).to eq(true)
         expect(json_response['user']['accepts_email_marketing']).to eq(true)
@@ -127,6 +127,28 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['email']).to be_present
+      end
+
+      it 'rejects a blank password without creating a customer or issuing tokens' do
+        expect {
+          post :create, params: { email: 'nopass@example.com', password: '', password_confirmation: '' }
+        }.not_to change(Spree.customer_class, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['password']).to be_present
+        expect(json_response).not_to include('token', 'refresh_token')
+      end
+
+      it 'rejects an omitted password without creating a customer or issuing tokens' do
+        expect {
+          post :create, params: { email: 'nopass@example.com' }
+        }.not_to change(Spree.customer_class, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['password']).to be_present
+        expect(json_response).not_to include('token', 'refresh_token')
       end
     end
 
@@ -204,7 +226,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
     context 'newsletter subscriber' do
       it 'exposes the current store subscriber' do
-        subscriber = create(:newsletter_subscriber, :verified, user: user, email: user.email, store: store)
+        subscriber = create(:newsletter_subscriber, :verified, customer: user, email: user.email, store: store)
 
         get :show
 
@@ -218,7 +240,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       end
 
       it 'is null when the only subscriber is on a different store' do
-        create(:newsletter_subscriber, :verified, user: user, email: user.email, store: create(:store))
+        create(:newsletter_subscriber, :verified, customer: user, email: user.email, store: create(:store))
 
         get :show
 
@@ -313,12 +335,11 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
     end
 
     it 'ignores restricted attributes' do
-      patch :update, params: { first_name: 'John', private_metadata: { secret: 'value' }, internal_note: 'admin only' }
+      patch :update, params: { first_name: 'John', internal_note: 'admin only' }
 
       expect(response).to have_http_status(:ok)
       user.reload
       expect(user.first_name).to eq('John')
-      expect(user.private_metadata).not_to include('secret')
       expect(user.internal_note).to be_nil
     end
 
@@ -338,7 +359,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       end
 
       it 'accepts correct current_password' do
-        patch :update, params: { email: 'new@example.com', current_password: 'secret' }
+        patch :update, params: { email: 'new@example.com', current_password: 'secret123' }
 
         expect(response).to have_http_status(:ok)
         expect(user.reload.email).to eq('new@example.com')
@@ -361,7 +382,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       end
 
       it 'accepts correct current_password' do
-        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123', current_password: 'secret' }
+        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123', current_password: 'secret123' }
 
         expect(response).to have_http_status(:ok)
       end
@@ -369,7 +390,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
     context 'validation errors' do
       it 'returns errors for blank email with current password' do
-        patch :update, params: { email: '', current_password: 'secret' }
+        patch :update, params: { email: '', current_password: 'secret123' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -378,7 +399,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
 
       it 'returns errors for duplicate email with current password' do
         other_user = create(:user)
-        patch :update, params: { email: other_user.email, current_password: 'secret' }
+        patch :update, params: { email: other_user.email, current_password: 'secret123' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')

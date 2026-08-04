@@ -106,7 +106,7 @@ module Spree
     # Rails auto-locking must not raise on internal saves.
     self.lock_optimistically = false
 
-    self.whitelisted_ransackable_associations = %w[fulfillments shipments user created_by approver canceler promotions bill_address ship_address line_items store channel tags]
+    self.whitelisted_ransackable_associations = %w[fulfillments shipments customer created_by approver canceler promotions bill_address ship_address line_items store channel tags]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number status payment_status payment_state fulfillment_status shipment_state delivery_total
       total item_total total_quantity considered_risky channel_id currency coupon_code
@@ -133,7 +133,7 @@ module Spree
       self.tag_list = tags
     end
 
-    ASSOCIATED_USER_ATTRIBUTES = [:user_id, :email, :bill_address_id, :ship_address_id]
+    ASSOCIATED_CUSTOMER_ATTRIBUTES = [:customer_id, :email, :bill_address_id, :ship_address_id]
 
     # @deprecated Use {Spree::Purchase::PaymentProcessing#payment_methods};
     #   removed in 6.1.
@@ -142,12 +142,9 @@ module Spree
       payment_methods
     end
 
-    # 6.0 forward-compat: User→Customer rename. Column stays user_id in 5.x.
-    alias_attribute :customer_id, :user_id
+    include Spree::DeprecatedCustomerAlias
 
-    belongs_to :user, class_name: "::#{Spree.user_class}", optional: true, autosave: true
-    alias_method :customer, :user
-    alias_method :customer=, :user=
+    belongs_to :customer, class_name: "::#{Spree.customer_class}", optional: true, autosave: true
     # The cart this order was completed from (unique — the completion
     # idempotency key). Backoffice draft orders have no cart.
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :order
@@ -484,17 +481,29 @@ module Spree
     # Associates the specified user with the order.
     # Delegates to {Spree::Carts::Associate} service.
     #
-    # @param user [Spree.user_class] the user to associate with the order
-    # @param override_email [Boolean] whether to override the order email with the user's email
+    # @param customer [Spree.customer_class] the customer to associate with the order
+    # @param override_email [Boolean] whether to override the order email with the customer's email
     # @return [Spree::ServiceModule::Result]
-    def associate_user!(user, override_email = true)
-      Spree.cart_associate_service.call(guest_cart: self, user: user, override_email: override_email)
+    def associate_customer!(customer, override_email = true)
+      Spree.cart_associate_service.call(guest_cart: self, customer: customer, override_email: override_email)
     end
 
-    def disassociate_user!
-      nullified_attributes = ASSOCIATED_USER_ATTRIBUTES.index_with(nil)
+    # @deprecated Use {#associate_customer!}; removed in 6.1.
+    def associate_user!(user, override_email = true)
+      Spree::Deprecation.warn('Spree::Order#associate_user! is deprecated and will be removed in Spree 6.1. Use #associate_customer! instead.')
+      associate_customer!(user, override_email)
+    end
+
+    def disassociate_customer!
+      nullified_attributes = ASSOCIATED_CUSTOMER_ATTRIBUTES.index_with(nil)
 
       update!(nullified_attributes)
+    end
+
+    # @deprecated Use {#disassociate_customer!}; removed in 6.1.
+    def disassociate_user!
+      Spree::Deprecation.warn('Spree::Order#disassociate_user! is deprecated and will be removed in Spree 6.1. Use #disassociate_customer! instead.')
+      disassociate_customer!
     end
 
     def quantity_of(variant, options = {})
@@ -546,8 +555,8 @@ module Spree
     end
 
     def full_name
-      @full_name ||= if user.present? && user.name.present?
-                       user.full_name
+      @full_name ||= if customer.present? && customer.name.present?
+                       customer.full_name
                      else
                        billing_address&.full_name || email
                      end
@@ -837,7 +846,7 @@ module Spree
     # Cancels the order and records the canceler.
     # Delegates to {Spree::Orders::Cancel} service.
     #
-    # @param user [Spree.user_class, nil] the user who canceled the order
+    # @param user [Spree.customer_class, nil] the user who canceled the order
     # @param canceled_at [Time, nil] the time of cancellation (defaults to current time)
     # @return [Spree::ServiceModule::Result]
     def canceled_by(user, canceled_at = nil)
@@ -867,7 +876,7 @@ module Spree
     # Approves the order and records the approver.
     # Delegates to {Spree::Orders::Approve} service.
     #
-    # @param user [Spree.user_class, nil] the user who approved the order
+    # @param user [Spree.customer_class, nil] the user who approved the order
     # @return [Spree::ServiceModule::Result]
     def approved_by(user = nil)
       Spree.order_approve_service.call(order: self, approver: user)
@@ -991,7 +1000,7 @@ module Spree
     end
 
     def link_by_email
-      self.email = user.email if user
+      self.email = customer.email if customer
     end
 
     # Determine if email is required (we don't want validation errors before we hit the checkout)

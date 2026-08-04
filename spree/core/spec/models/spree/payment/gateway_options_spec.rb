@@ -24,7 +24,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     double(
       Spree::Order,
       email: 'test@email.com',
-      user_id: 144,
+      customer_id: 144,
       last_ip_address: '0.0.0.0',
       number: 'R1444',
       ship_total: '12.44'.to_d,

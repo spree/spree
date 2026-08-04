@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :order, class: Spree::Order do
-    user
+    customer
     bill_address
     completed_at { nil }
-    email        { user&.email }
+    email        { customer&.email }
     currency     { 'USD' }
     locale       { 'en' }
 
@@ -100,7 +100,7 @@ FactoryBot.define do
 
         factory :completed_order_with_store_credit_payment do
           after(:create) do |order|
-            store_credit = create(:store_credit, amount: order.total, store: order.store, user: order.user)
+            store_credit = create(:store_credit, amount: order.total, store: order.store, customer: order.customer)
             payment_method = create(:store_credit_payment_method, store: order.store)
 
             create(:store_credit_payment, amount: order.total, order: order, source: store_credit, payment_method: payment_method)

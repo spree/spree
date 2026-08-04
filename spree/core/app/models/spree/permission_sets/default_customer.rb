@@ -29,10 +29,10 @@ module Spree
         # Order management for the user's own orders
         can :create, Spree::Order
         can :show, Spree::Order do |order, token|
-          order.user == user || order.token && token == order.token
+          order.customer == user || order.token && token == order.token
         end
         can :update, Spree::Order do |order, token|
-          !order.completed? && (order.user == user || order.token && token == order.token)
+          !order.completed? && (order.customer == user || order.token && token == order.token)
         end
 
         # Cart management — the checkout owner since the cart/order split
@@ -47,18 +47,16 @@ module Spree
         # Line item management
         can :create, Spree::LineItem do |line_item, token|
           owner = line_item.owner
-          owner_user = owner.is_a?(Spree::Cart) ? owner.customer : owner.user
-          owner_user == user || owner.token && token == owner.token
+          owner.customer == user || owner.token && token == owner.token
         end
         can [:update, :destroy], Spree::LineItem do |line_item, token|
           owner = line_item.owner
-          owner_user = owner.is_a?(Spree::Cart) ? owner.customer : owner.user
-          !owner.completed? && (owner_user == user || owner.token && token == owner.token)
+          !owner.completed? && (owner.customer == user || owner.token && token == owner.token)
         end
 
         # User account management - available to all users (including guests for their own record)
-        can :create, Spree.user_class
-        can [:show, :update, :destroy], Spree.user_class, id: user.id
+        can :create, Spree.customer_class
+        can [:show, :update, :destroy], Spree.customer_class, id: user.id
 
         # Address management - only for persisted users with matching user_id
         can :manage, Spree::Address, user_id: user.id if user.persisted?
@@ -75,10 +73,10 @@ module Spree
         # Wishlist management
         can :manage, Spree::Wishlist, user_id: user.id
         can :show, Spree::Wishlist do |wishlist|
-          wishlist.user == user || wishlist.is_private == false
+          wishlist.customer == user || wishlist.is_private == false
         end
         can [:create, :update, :destroy], Spree::WishedItem do |wished_item|
-          wished_item.wishlist.user == user
+          wished_item.wishlist.customer == user
         end
 
         # Invitation acceptance

@@ -14,9 +14,9 @@ module Spree
 
       # @param cart [Spree::Cart] the surviving cart
       # @param other_cart [Spree::Cart, nil] the cart folded in and destroyed
-      # @param user [Object, nil] associated with the surviving cart when it
+      # @param customer [Object, nil] associated with the surviving cart when it
       #   has no customer yet
-      def perform(cart:, other_cart: nil, user: nil)
+      def perform(cart:, other_cart: nil, customer: nil)
         super
 
         halt!(cart) if other_cart.nil? || other_cart.id == cart.id
@@ -28,7 +28,7 @@ module Spree
 
         ApplicationRecord.transaction do
           step :move_line_items
-          step :associate_user
+          step :associate_customer
           step :destroy_drained_cart
         end
 
@@ -74,8 +74,8 @@ module Spree
         end
       end
 
-      def associate_user
-        cart.associate_user!(user) if user && cart.customer.blank?
+      def associate_customer
+        cart.associate_customer!(customer) if customer && cart.customer.blank?
       end
 
       def destroy_drained_cart

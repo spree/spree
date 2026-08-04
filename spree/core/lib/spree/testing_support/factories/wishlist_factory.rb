@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :wishlist, class: Spree::Wishlist do
-    user
+    customer
 
     sequence(:name) { |n| "Wishlist_#{n}" }
     is_private { true }

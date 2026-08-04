@@ -176,7 +176,7 @@ module Spree
             locale: cart.locale,
             market: cart.market,
             channel: cart.channel,
-            user: cart.customer,
+            customer: cart.customer,
             token: cart.token,
             accept_marketing: cart.accept_marketing,
             coupon_code: cart.read_attribute(:coupon_code),

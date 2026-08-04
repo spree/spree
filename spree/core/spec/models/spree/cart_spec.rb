@@ -308,7 +308,7 @@ describe Spree::Cart, type: :model do
       other_cart = create(:cart, store: store)
       workflow = class_double(Spree::Carts::Merge).as_stubbed_const
 
-      expect(workflow).to receive(:call).with(cart: cart, other_cart: other_cart, user: nil)
+      expect(workflow).to receive(:call).with(cart: cart, other_cart: other_cart, customer: nil)
 
       cart.merge!(other_cart)
     end

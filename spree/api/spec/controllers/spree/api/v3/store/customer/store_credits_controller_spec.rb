@@ -5,9 +5,9 @@ RSpec.describe Spree::Api::V3::Store::Customer::StoreCreditsController, type: :c
 
   include_context 'API v3 Store'
 
-  let!(:store_credit) { create(:store_credit, user: user, store: store, currency: 'USD', amount: 50) }
-  let!(:other_currency_credit) { create(:store_credit, user: user, store: store, currency: 'EUR', amount: 25) }
-  let!(:other_store_credit) { create(:store_credit, user: create(:user), store: store, currency: 'USD', amount: 100) }
+  let!(:store_credit) { create(:store_credit, customer: user, store: store, currency: 'USD', amount: 50) }
+  let!(:other_currency_credit) { create(:store_credit, customer: user, store: store, currency: 'EUR', amount: 25) }
+  let!(:other_store_credit) { create(:store_credit, customer: create(:user), store: store, currency: 'USD', amount: 100) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token

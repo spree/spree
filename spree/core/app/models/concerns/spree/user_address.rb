@@ -16,7 +16,7 @@ module Spree
       accepts_nested_attributes_for :ship_address, :bill_address
 
       has_many :addresses, -> { where(deleted_at: nil).order('updated_at DESC') },
-                           class_name: 'Spree::Address', foreign_key: :user_id
+                           class_name: 'Spree::Address', foreign_key: :customer_id
 
       validate :address_not_associated_with_other_user, :address_not_deprecated_in_completed_order
 
@@ -45,8 +45,8 @@ module Spree
       private
 
       def address_not_associated_with_other_user
-        errors.add(:bill_address_id, :belongs_to_other_user) if bill_address&.user_id && self != bill_address&.user
-        errors.add(:ship_address_id, :belongs_to_other_user) if ship_address&.user_id && self != ship_address&.user
+        errors.add(:bill_address_id, :belongs_to_other_user) if bill_address&.customer_id && self != bill_address&.customer
+        errors.add(:ship_address_id, :belongs_to_other_user) if ship_address&.customer_id && self != ship_address&.customer
       end
 
       def address_not_deprecated_in_completed_order

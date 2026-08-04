@@ -6,7 +6,7 @@ FactoryBot.define do
     store { Spree::Current.store || create(:store) }
 
     trait :with_user do
-      association :user, factory: :user
+      association :customer, factory: :customer
     end
 
     trait :verified do

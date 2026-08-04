@@ -26,7 +26,7 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id public_metadata private_metadata)
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label customer_id public_metadata private_metadata)
     if defined?(Spree::Security::Addresses)
       include Spree::Security::Addresses
     end
@@ -42,18 +42,19 @@ module Spree
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
     # we need a safe operator here as Address is added to metafield_enabled_resources in Engine
-    belongs_to :user, class_name: Spree.user_class&.name, optional: true, touch: true
+    belongs_to :customer, class_name: Spree.customer_class&.name, optional: true, touch: true
+    include Spree::DeprecatedCustomerAlias
 
     has_many :fulfillments, class_name: 'Spree::Fulfillment', inverse_of: :address
     has_many :shipments, class_name: 'Spree::Fulfillment', foreign_key: :address_id, deprecated: true
 
-    after_initialize :set_default_values, if: -> { new_record? && user.present? }
+    after_initialize :set_default_values, if: -> { new_record? && customer.present? }
 
     before_validation :normalize_country
     before_validation :normalize_state
     before_validation :clear_invalid_state_entities, if: -> { country.present? }, on: :update
 
-    after_create :set_user_attributes, if: -> { user.present? }
+    after_create :set_user_attributes, if: -> { customer.present? }
 
     after_commit :async_geocode
 
@@ -69,7 +70,7 @@ module Spree
     validate :address_validators, on: [:create, :update]
 
     validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
-                                    scope: :user_id,
+                                    scope: :customer_id,
                                     case_sensitive: false,
                                     allow_blank: true,
                                     allow_nil: true }
@@ -111,7 +112,7 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
-    self.whitelisted_ransackable_associations = %w[country state user]
+    self.whitelisted_ransackable_associations = %w[country state customer]
 
     def self.required_fields
       Spree::Address.validators.map do |v|
@@ -132,12 +133,12 @@ module Spree
     # In 6.0 these become real columns on Address, replacing User#bill_address_id / ship_address_id.
     # For now they delegate to the User FK so the API shape is stable.
     def is_default_billing?
-      user.present? && id == user.bill_address_id
+      customer.present? && id == customer.bill_address_id
     end
     alias_method :is_default_billing, :is_default_billing?
 
     def is_default_shipping?
-      user.present? && id == user.ship_address_id
+      customer.present? && id == customer.ship_address_id
     end
     alias_method :is_default_shipping, :is_default_shipping?
 
@@ -239,7 +240,7 @@ module Spree
 
     def check
       attrs = attributes.except('id', 'updated_at', 'created_at')
-      the_same_address = user&.addresses&.find_by(attrs)
+      the_same_address = customer&.addresses&.find_by(attrs)
       the_same_address || self
     end
 
@@ -271,9 +272,9 @@ module Spree
     end
 
     def set_default_values
-      self.firstname ||= user.first_name
-      self.lastname ||= user.last_name
-      self.phone ||= user.phone
+      self.firstname ||= customer.first_name
+      self.lastname ||= customer.last_name
+      self.phone ||= customer.phone
     end
 
     def normalize_country
@@ -309,13 +310,13 @@ module Spree
     end
 
     def set_user_attributes
-      if user.name.blank?
-        user.first_name = firstname
-        user.last_name = lastname
+      if customer.name.blank?
+        customer.first_name = firstname
+        customer.last_name = lastname
       end
-      user.phone = user.phone.presence || phone.presence
+      customer.phone = customer.phone.presence || phone.presence
 
-      user.save! if user.changed?
+      customer.save! if customer.changed?
     end
 
     def state_validate
@@ -364,24 +365,24 @@ module Spree
     end
 
     def assign_new_default_address_to_user
-      return unless user
+      return unless customer
 
-      user.reload
-      return if user.bill_address != self && user.ship_address != self
+      customer.reload
+      return if customer.bill_address != self && customer.ship_address != self
 
       last_address = assign_new_default_address_to_user_scope.find { |address| address.id != id && address.valid? }
 
-      user.bill_address = last_address if user.bill_address == self
-      user.ship_address = last_address if user.ship_address == self
-      user.save!
+      customer.bill_address = last_address if customer.bill_address == self
+      customer.ship_address = last_address if customer.ship_address == self
+      customer.save!
     end
 
     def assign_new_default_address_to_user_scope
-      user.addresses.not_quick_checkout.reorder(created_at: :desc)
+      customer.addresses.not_quick_checkout.reorder(created_at: :desc)
     end
 
     def unassign_from_incomplete_orders
-      orders = Spree::Order.incomplete.where(user_id: user_id)
+      orders = Spree::Order.incomplete.where(customer_id: customer_id)
       orders.where(ship_address_id: id).update_all(ship_address_id: nil, updated_at: Time.current)
       orders.where(bill_address_id: id).update_all(bill_address_id: nil, updated_at: Time.current)
     end

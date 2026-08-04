@@ -742,13 +742,13 @@ describe Spree::StoreCredit, type: :model do
         end
 
         context 'user has multiple store credits' do
-          subject { create(:store_credit, user: user, amount: additional_store_credit_amount, store: store) }
+          subject { create(:store_credit, customer: user, amount: additional_store_credit_amount, store: store) }
 
           let(:store_credit_amount) { 100.0 }
           let(:additional_store_credit_amount) { 200.0 }
 
           let(:user) { create(:user) }
-          let!(:store_credit) { create(:store_credit, user: user, amount: store_credit_amount, store: store) }
+          let!(:store_credit) { create(:store_credit, customer: user, amount: store_credit_amount, store: store) }
 
           it "saves the user's total store credit in the event" do
             amount = store_credit_amount + additional_store_credit_amount

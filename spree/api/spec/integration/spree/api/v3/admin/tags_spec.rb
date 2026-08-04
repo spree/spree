@@ -24,7 +24,7 @@ RSpec.describe 'Admin Tags API', type: :request, swagger_doc: 'api-reference/adm
                 description: 'Optional case-insensitive substring filter'
 
       response '200', 'tags found' do
-        let(:taggable_type) { Spree.user_class.to_s }
+        let(:taggable_type) { Spree.customer_class.to_s }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
         before do

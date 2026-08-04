@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Customer Store Credits API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:store_credit) { create(:store_credit, user: user, store: store, currency: 'USD', amount: 100) }
+  let!(:store_credit) { create(:store_credit, customer: user, store: store, currency: 'USD', amount: 100) }
 
   path '/api/v3/store/customers/me/store_credits' do
     get 'List store credits' do

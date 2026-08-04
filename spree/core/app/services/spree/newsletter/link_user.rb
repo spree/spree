@@ -15,7 +15,7 @@ module Spree
 
       def call
         return if subscriber.blank? || user.blank?
-        return if subscriber.user_id == user.id && !needs_marketing_propagation?
+        return if subscriber.customer_id == user.id && !needs_marketing_propagation?
 
         link_subscriber_to_user
         propagate_marketing_consent if needs_marketing_propagation?
@@ -28,9 +28,9 @@ module Spree
       attr_reader :subscriber, :user
 
       def link_subscriber_to_user
-        return if subscriber.user_id == user.id
+        return if subscriber.customer_id == user.id
 
-        return if subscriber.update(user: user)
+        return if subscriber.update(customer: user)
 
         Rails.logger.warn(
           "NewsletterSubscriber #{subscriber.id} link to user #{user.id} failed: #{subscriber.errors.full_messages.to_sentence}"

@@ -13,7 +13,8 @@ module Spree
     acts_as_paranoid
 
     belongs_to :payment_method
-    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id', optional: true
+    belongs_to :customer, class_name: Spree.customer_class.to_s, optional: true
+    include Spree::DeprecatedCustomerAlias
     belongs_to :gateway_customer, class_name: 'Spree::GatewayCustomer', optional: true
 
     has_many :payments, as: :source
@@ -187,7 +188,7 @@ module Spree
     # match must go through #by_fingerprint's decimal cast rather than a plain
     # equality (which Postgres rejects as `character varying = integer`).
     def fingerprint_not_duplicated
-      duplicates = self.class.where(user_id: user_id, payment_method_id: payment_method_id).
+      duplicates = self.class.where(customer_id: customer_id, payment_method_id: payment_method_id).
                    by_fingerprint(fingerprint, month, year)
       duplicates = duplicates.where.not(id: id) if persisted?
 
@@ -199,8 +200,8 @@ module Spree
     end
 
     def ensure_one_default
-      if user_id && default
-        CreditCard.where(default: true, user_id: user_id).where.not(id: id).
+      if customer_id && default
+        CreditCard.where(default: true, customer_id: customer_id).where.not(id: id).
           update_all(default: false)
       end
     end

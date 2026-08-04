@@ -6,7 +6,7 @@ describe Spree::Promotion::Rules::User, type: :model do
   let(:user_placing_order) { create :user }
 
   describe '#eligible?' do
-    let(:order) { build(:order, user: user_placing_order) }
+    let(:order) { build(:order, customer: user_placing_order) }
 
     it 'is not eligible if users are not provided' do
       expect(rule).not_to be_eligible(order)

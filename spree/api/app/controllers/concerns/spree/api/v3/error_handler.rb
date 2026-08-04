@@ -13,6 +13,10 @@ module Spree
           invalid_token: 'invalid_token',
           invalid_provider: 'invalid_provider',
           invalid_refresh_token: 'invalid_refresh_token',
+          # Distinct from authentication_failed: the person proved who they are to
+          # the identity provider, but no account here is authorized for them.
+          account_not_provisioned: 'account_not_provisioned',
+          invalid_oauth_state: 'invalid_oauth_state',
           current_password_invalid: 'current_password_invalid',
           password_reset_token_invalid: 'password_reset_token_invalid',
           redirect_url_not_allowed: 'redirect_url_not_allowed',

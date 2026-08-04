@@ -171,7 +171,15 @@
     "auth": {
       "login": {
         "title": "Bon retour",
-        "subtitle": "Connectez-vous à votre compte administrateur"
+        "subtitle": "Connectez-vous à votre compte administrateur",
+        "divider": "ou",
+        "sso_button": "Continuer avec {{provider}}",
+        "providers_error_title": "Connexion indisponible",
+        "providers_error_message": "Impossible de charger les options de connexion. Veuillez actualiser la page ou contacter votre administrateur.",
+        "account_not_provisioned": "Ce compte n'est pas autorisé pour cette boutique. Demandez une invitation à un administrateur.",
+        "sso_failed": "Nous n'avons pas pu vous connecter avec ce fournisseur. Veuillez réessayer.",
+        "invalid_oauth_state": "Cette session de connexion a expiré ou n'était pas valide. Veuillez recommencer.",
+        "rate_limit_exceeded": "Trop de tentatives de connexion. Veuillez patienter un instant et réessayer."
       },
       "forgot_password": {
         "link": "Mot de passe oublié ?",

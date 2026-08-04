@@ -76,7 +76,7 @@ module Spree
       def issue_store_credit
         credit = Spree::StoreCredit.create!(
           store: return_record.store,
-          user: return_record.order.user,
+          customer: return_record.order.customer,
           amount: @amount_to_refund,
           currency: return_record.currency,
           category: Spree::StoreCreditCategory.default_reimbursement_category,

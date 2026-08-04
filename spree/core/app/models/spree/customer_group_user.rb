@@ -4,13 +4,16 @@ module Spree
     # Associations
     #
     belongs_to :customer_group, class_name: 'Spree::CustomerGroup'
-    belongs_to :user, polymorphic: true
+    belongs_to :customer, polymorphic: true
+
+    include Spree::DeprecatedCustomerAlias
+    alias_attribute :user_type, :customer_type
 
     #
     # Validations
     #
     validates :customer_group, presence: true
-    validates :user, presence: true
-    validates :customer_group_id, uniqueness: { scope: [:user_id, :user_type] }
+    validates :customer, presence: true
+    validates :customer_group_id, uniqueness: { scope: [:customer_id, :customer_type] }
   end
 end

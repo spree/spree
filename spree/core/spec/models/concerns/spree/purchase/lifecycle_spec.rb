@@ -87,7 +87,7 @@ RSpec.describe Spree::Purchase::Lifecycle do
 
   context 'included in Spree::Order' do
     def new_record(customer: nil, **attributes)
-      build(:order, store: @default_store, user: customer, **attributes)
+      build(:order, store: @default_store, customer: customer, **attributes)
     end
 
     def new_record_with_line_items

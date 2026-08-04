@@ -19,7 +19,7 @@ module Spree
           attributes created_at: :iso8601, updated_at: :iso8601
 
           attribute :customer_id do |gift_card|
-            gift_card.user&.prefixed_id
+            gift_card.customer&.prefixed_id
           end
 
           attribute :created_by_id do |gift_card|
@@ -29,8 +29,7 @@ module Spree
           # Customer the card was issued to. Gated behind `expand?` to keep
           # the list payload thin — the SPA's list view passes
           # `expand=customer,created_by` to populate the row chips.
-          one :user,
-              key: :customer,
+          one :customer,
               resource: proc { Spree.api.admin_customer_serializer },
               if: proc { expand?('customer') }
 

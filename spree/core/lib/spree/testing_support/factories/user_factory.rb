@@ -1,21 +1,17 @@
 FactoryBot.define do
-  factory :user, class: Spree.user_class do
+  factory :customer, aliases: [:user], class: Spree.customer_class do
     email                 { generate(:random_email) }
-    login                 { email }
-    password              { 'secret' }
+    password              { 'secret123' }
     password_confirmation { password }
 
     first_name { FFaker::Name.first_name }
     last_name  { FFaker::Name.last_name }
 
-    public_metadata { {} }
-    private_metadata { {} }
-
-    factory :user_with_addresses, aliases: [:user_with_addreses] do
-      after(:create) do |user|
-        ship_address = create(:address, user: user)
-        bill_address = create(:address, user: user)
-        user.update_columns(ship_address_id: ship_address.id, bill_address_id: bill_address.id)
+    factory :customer_with_addresses, aliases: [:user_with_addresses, :user_with_addreses] do
+      after(:create) do |customer|
+        ship_address = create(:address, customer: customer)
+        bill_address = create(:address, customer: customer)
+        customer.update_columns(ship_address_id: ship_address.id, bill_address_id: bill_address.id)
       end
     end
   end
@@ -23,7 +19,7 @@ FactoryBot.define do
   factory :admin_user, class: Spree.admin_user_class do
     email                 { generate(:random_email) }
     login                 { email }
-    password              { 'secret' }
+    password              { 'secret123' }
     password_confirmation { password }
     first_name { FFaker::Name.first_name }
     last_name  { FFaker::Name.last_name }

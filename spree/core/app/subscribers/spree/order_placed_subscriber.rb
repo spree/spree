@@ -18,11 +18,11 @@ module Spree
     def subscribe_to_newsletter(order)
       return unless order.accept_marketing?
 
-      Spree::NewsletterSubscriber.subscribe(email: order.email, user: order.user, store: order.store)
+      Spree::NewsletterSubscriber.subscribe(email: order.email, customer: order.customer, store: order.store)
     end
 
     def create_user_record(order)
-      return if order.user.present?
+      return if order.customer.present?
       return unless order.signup_for_an_account?
 
       Spree::Orders::CreateUserAccount.call(order: order, accepts_email_marketing: order.accept_marketing?)
