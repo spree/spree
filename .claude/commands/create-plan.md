@@ -46,3 +46,11 @@ Then fold the answers back into the plan:
 
 Only skip the interactive pass if the draft genuinely raised no open questions —
 which is rare, and worth double-checking before concluding.
+
+## Recording decisions
+
+When a new plan settles something significant — a decision other plans will need
+to reference, or a constraint on how code elsewhere must be written — also add a
+dated entry to `docs/plans/decisions.md`, and add a superseding note to any
+existing plan whose Key Decisions it contradicts. A decision that lives in only
+one plan will be missed by whoever reads the other one.
