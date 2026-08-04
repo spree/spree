@@ -56,7 +56,6 @@ module Spree
       args << '--skip-action-mailbox'
       args << '--skip-jbuilder'
       args << '--skip-hotwire'
-      args << '--skip-action-mailbox'
       args << '--skip-action-cable'
 
       # API mode (implies skip-asset-pipeline, skip-javascript, skip-hotwire)

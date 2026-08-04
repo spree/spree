@@ -4,6 +4,6 @@
   <%= link_to spree_image_tag(image, variant: :small, alt: alt, width: 80, class: 'item_thumb'), product_url %>
 <% else %>
   <%= link_to product_url, 'aria-label': alt do %>
-    <%= image_placeholder_tag %>
+    <div class="item_thumb item_thumb_placeholder"></div>
   <% end %>
 <% end %>
