@@ -68,6 +68,16 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
         expect(response).to have_http_status(:not_found)
       end
     end
+
+    context 'when the cart is already completed' do
+      before { order.update_columns(completed_at: Time.current) }
+
+      it 'returns not found' do
+        post :create, params: { cart_id: order.prefixed_id, payment_method_id: payment_method.prefixed_id }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
   end
 
   describe 'GET #show' do
@@ -128,6 +138,16 @@ RSpec.describe Spree::Api::V3::Store::Carts::PaymentSessionsController, type: :c
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment_session.prefixed_id)
       expect(json_response['amount']).to eq('50.0')
+    end
+
+    context 'when the cart is already completed' do
+      before { order.update_columns(completed_at: Time.current) }
+
+      it 'returns not found' do
+        patch :update, params: { cart_id: order.prefixed_id, id: payment_session.to_param, amount: 50.00 }
+
+        expect(response).to have_http_status(:not_found)
+      end
     end
   end
 
