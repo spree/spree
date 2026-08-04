@@ -3,7 +3,16 @@
 <% if image.present? && image.attached? %>
   <%= link_to spree_image_tag(image, variant: :small, alt: alt, width: 80, class: 'item_thumb'), product_url %>
 <% else %>
-  <%= link_to product_url, 'aria-label': alt do %>
-    <div class="item_thumb item_thumb_placeholder"></div>
-  <% end %>
+  <%# Table + inline styles, not a styled div: Outlook collapses empty block
+      elements and ignores class-based height, and a div inside <a> is invalid
+      under the XHTML doctype the mailer layout declares. %>
+  <table class="item_thumb_placeholder" width="80" height="80" cellpadding="0" cellspacing="0" role="presentation"
+         style="width: 80px; height: 80px; background-color: #E4E4E4; border-radius: 12px;">
+    <tr>
+      <td width="80" height="80" style="width: 80px; height: 80px; line-height: 80px; font-size: 0;">
+        <%= link_to '&#160;'.html_safe, product_url, 'aria-label': alt,
+                    style: 'display: block; width: 80px; height: 80px; line-height: 80px; text-decoration: none;' %>
+      </td>
+    </tr>
+  </table>
 <% end %>
