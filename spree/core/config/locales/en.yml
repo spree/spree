@@ -898,7 +898,6 @@ en:
         channel_store_mismatch: must belong to the same store
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
         delivery_zone_postal_definition_required: postal code member requires a prefix or a from/to range
-        invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
         delivery_zone_range_inverted: must be greater than or equal to postal_code_from
         delivery_zone_range_not_supported: postal code ranges are not supported for this country — use prefixes
@@ -908,6 +907,7 @@ en:
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
         invalid_delivery_method_rule: is not a registered delivery method rule
+        invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
         invalid_storefront_access: is not a valid storefront access level
