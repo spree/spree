@@ -14,22 +14,26 @@ worktree_root() { git rev-parse --show-toplevel; }
 # Both pieces below arrived in spree/spree-starter#1376. A clone predating it
 # passes provisioning but then either shares the default database or rejects
 # every proxied request, so check both before touching anything.
+# Renders database.yml with sentinel values and applies the host rule, rather
+# than grepping for tokens: a comment, or the same token in the wrong YAML
+# entry, would otherwise vouch for a config that still points at the defaults.
+# Ruby only — no Rails boot, so this runs before `bundle install`.
 require_current_starter() {
   local missing=()
+  local report
 
-  # Anchored so DATABASE_NAME_TEST on the test line can't vouch for the
-  # development one — a half-patched file would share spree_development.
-  if ! grep -qE 'ENV\.fetch\("DATABASE_NAME"\)' server/config/database.yml; then
-    missing+=("config/database.yml: no DATABASE_NAME support — worktrees would share spree_development")
-  fi
+  report=$(cd server && DATABASE_NAME=__dev_probe__ DATABASE_NAME_TEST=__test_probe__ ruby -ryaml -rerb -e '
+    config = YAML.safe_load(ERB.new(File.read("config/database.yml")).result, aliases: true)
+    puts "dev"  if config.dig("development", "database") == "__dev_probe__"
+    puts "test" if config.dig("test", "database") == "__test_probe__"
+    puts "host" if File.read("config/environments/development.rb")
+                       .then { |src| src[/config\.hosts\s*<<\s*(\S+localhost\S+)/, 1] }
+                       &.then { |rule| eval(rule) =~ "feature-x.spree.localhost:1355" }
+  ' 2>/dev/null) || true
 
-  if ! grep -qE 'ENV\.fetch\("DATABASE_NAME_TEST"\)' server/config/database.yml; then
-    missing+=("config/database.yml: no DATABASE_NAME_TEST support — worktrees would share spree_test")
-  fi
-
-  if ! grep -q 'localhost(:' server/config/environments/development.rb; then
-    missing+=("config/environments/development.rb: no port-tolerant .localhost host rule — Rails would block proxied requests")
-  fi
+  grep -qx dev  <<<"$report" || missing+=("config/database.yml: the development entry ignores DATABASE_NAME — worktrees would share spree_development")
+  grep -qx test <<<"$report" || missing+=("config/database.yml: the test entry ignores DATABASE_NAME_TEST — worktrees would share spree_test")
+  grep -qx host <<<"$report" || missing+=("config/environments/development.rb: no host rule accepting proxied .localhost names — Rails would block every request")
 
   if [ ${#missing[@]} -gt 0 ]; then
     echo "This server/ clone predates spree-starter#1376:" >&2
