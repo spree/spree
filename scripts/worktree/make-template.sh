@@ -10,10 +10,9 @@ cd "$(worktree_root)"
 [ -d server ] || { echo "server/ missing — run pnpm server:create (or scripts/worktree/setup.sh) first." >&2; exit 1; }
 
 if ! grep -q 'DATABASE_NAME' server/config/database.yml; then
-  sed -i '' \
-    -e 's|database: spree_development|database: <%= ENV.fetch("DATABASE_NAME") { "spree_development" } %>|' \
-    -e 's|database: spree_test|database: <%= ENV.fetch("DATABASE_NAME_TEST") { "spree_test" } %>|' \
-    server/config/database.yml
+  echo "server/config/database.yml has no DATABASE_NAME support — update the spree-starter clone." >&2
+  echo "Without it, the template rebuild would target the default spree_development database." >&2
+  exit 1
 fi
 
 echo "▸ Rebuilding $TEMPLATE_DB (migrations + seeds, ~2-3 min)"
