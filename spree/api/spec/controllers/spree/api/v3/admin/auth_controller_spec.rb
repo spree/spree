@@ -405,18 +405,22 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
         stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'true')
       end
 
-      it 'signs the admin in with the same token pair as password login' do
+      # The browser arrives here from the identity provider, so the response has
+      # to be a redirect — a JSON body would leave the admin staring at raw text.
+      it 'redirects the browser to the dashboard without an error' do
         get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
 
-        expect(response).to have_http_status(:ok)
-        expect(json_response['token']).to be_present
-        expect(json_response['user']['email']).to eq(admin.email)
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).not_to include('error=')
       end
 
-      it 'sets the refresh cookie' do
+      # The SPA mints its access token from the cookie on load, so no token ever
+      # travels in the redirect URL.
+      it 'sets the refresh cookie and keeps tokens out of the URL' do
         get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
 
         expect(set_cookie_for('spree_admin_refresh_token')).to be_present
+        expect(response.location).not_to include('token')
       end
 
       it 'links the SSO identity to the existing account' do
@@ -434,7 +438,7 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
       it 'refuses to claim the account' do
         get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to redirect_to(/error=account_not_provisioned/)
         expect(admin.identities).to be_empty
       end
     end
@@ -449,8 +453,30 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
           get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
         }.not_to change(Spree.admin_user_class, :count)
 
-        expect(response).to have_http_status(:unauthorized)
-        expect(json_response['error']['code']).to eq('account_not_provisioned')
+        expect(response).to redirect_to(/error=account_not_provisioned/)
+      end
+    end
+
+    # A technical failure must not tell the person to ask for an invitation —
+    # that advice only fits an authenticated subject with no authorized account.
+    context 'when the provider exchange fails' do
+      before do
+        allow_any_instance_of(Spree::Authentication::Strategies::OidcStrategy).
+          to receive(:exchange_code_for_tokens).and_raise(StandardError, 'token endpoint returned 500')
+      end
+
+      it 'redirects with authentication_failed, not account_not_provisioned' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to redirect_to(/error=authentication_failed/)
+      end
+    end
+
+    context 'when the identity provider returns no authorization code' do
+      it 'redirects with authentication_failed' do
+        get :callback, params: { provider: 'entra', state: valid_state }
+
+        expect(response).to redirect_to(/error=authentication_failed/)
       end
     end
 
@@ -462,15 +488,13 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
       it 'rejects a forged state' do
         get :callback, params: { provider: 'entra', code: 'auth-code', state: 'forged' }
 
-        expect(response).to have_http_status(:unauthorized)
-        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
       end
 
       it 'rejects a missing state' do
         get :callback, params: { provider: 'entra', code: 'auth-code' }
 
-        expect(response).to have_http_status(:unauthorized)
-        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
       end
 
       it 'rejects an expired state' do
@@ -478,16 +502,14 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
 
         get :callback, params: { provider: 'entra', code: 'auth-code', state: expired }
 
-        expect(response).to have_http_status(:unauthorized)
-        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
       end
 
       # A state minted for one provider must not authorize a different one.
       it 'rejects a state minted for another provider' do
         get :callback, params: { provider: 'entra', code: 'auth-code', state: state_for('other') }
 
-        expect(response).to have_http_status(:unauthorized)
-        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
       end
     end
 
@@ -497,15 +519,13 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
       it 'rejects another provider\'s state before looking the provider up' do
         get :callback, params: { provider: 'nope', code: 'auth-code', state: valid_state }
 
-        expect(response).to have_http_status(:unauthorized)
-        expect(json_response['error']['code']).to eq('invalid_oauth_state')
+        expect(response).to redirect_to(/error=invalid_oauth_state/)
       end
 
-      it 'returns invalid_provider once the state matches' do
+      it 'redirects with invalid_provider once the state matches' do
         get :callback, params: { provider: 'nope', code: 'auth-code', state: state_for('nope') }
 
-        expect(response).to have_http_status(:bad_request)
-        expect(json_response['error']['code']).to eq('invalid_provider')
+        expect(response).to redirect_to(/error=invalid_provider/)
       end
     end
   end

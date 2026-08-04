@@ -97,6 +97,23 @@ describe Spree::Authentication::Strategies::OidcStrategy do
         expect { second.callback }.not_to change(Spree::UserIdentity, :count)
       end
 
+      # The models normalize email with squish but never downcase, so the match
+      # has to be case-insensitive on both sides or linking silently fails on a
+      # case-sensitive database.
+      context 'when the stored email differs only by case' do
+        let!(:admin) { create(:admin_user, email: 'Ada@Example.com') }
+        let(:claims) do
+          { 'sub' => 'idp-subject-1', 'email' => 'ada@example.com', 'email_verified' => 'true' }
+        end
+
+        it 'still links the identity to the existing admin' do
+          result = strategy.callback
+
+          expect(result).to be_success
+          expect(result.value).to eq(admin)
+        end
+      end
+
       context 'when the email is not verified by the provider' do
         let(:claims) do
           { 'sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'false' }

@@ -49,29 +49,32 @@ module Spree
 
           # GET /api/v3/admin/auth/callback/:provider
           #
-          # Completes a redirect (SSO) login. Terminates in the same access JWT +
-          # refresh-token cookie the password flow issues — no separate session
-          # mechanism for SSO.
+          # Completes a redirect (SSO) login.
+          #
+          # Reached by a full-page browser redirect from the identity provider, so
+          # it answers with a redirect rather than JSON — the browser must land on
+          # the dashboard, not on a response body. Success sets the same
+          # refresh-token cookie the password flow issues and the SPA mints its
+          # access token from it on load, so no token ever travels in a URL.
           def callback
-            return render_invalid_state unless valid_oauth_state?
+            return redirect_to_dashboard(error: ERROR_CODES[:invalid_oauth_state]) unless valid_oauth_state?
 
-            strategy = authentication_strategy(params[:provider])
-            return unless strategy
+            strategy = Spree.admin_authentication_strategies.build(
+              params[:provider],
+              params: params,
+              request_env: request.headers.env,
+              user_class: Spree.admin_user_class
+            )
+            return redirect_to_dashboard(error: ERROR_CODES[:invalid_provider]) if strategy.nil?
 
             result = strategy.callback
 
-            if result.success?
-              user = result.value
-              refresh_token = Spree::RefreshToken.create_for(user, request_env: request_env_for_token)
-              set_refresh_cookie(refresh_token)
-              render json: auth_response(user)
-            else
-              render_error(
-                code: ERROR_CODES[:account_not_provisioned],
-                message: result.error,
-                status: :unauthorized
-              )
+            unless result.success?
+              return redirect_to_dashboard(error: callback_error_code(strategy))
             end
+
+            set_refresh_cookie(Spree::RefreshToken.create_for(result.value, request_env: request_env_for_token))
+            redirect_to_dashboard
           end
 
           # POST /api/v3/admin/auth/refresh
@@ -143,12 +146,34 @@ module Spree
             payload['provider'].to_s == params[:provider].to_s
           end
 
-          def render_invalid_state
-            render_error(
-              code: ERROR_CODES[:invalid_oauth_state],
-              message: Spree.t('errors.messages.invalid_oauth_state'),
-              status: :unauthorized
-            )
+          # Sends the browser back to the dashboard. On failure the login page
+          # reads +?error=+ and explains what happened; on success it has the
+          # refresh cookie and completes sign-in through its normal boot refresh.
+          def redirect_to_dashboard(error: nil)
+            target = dashboard_url
+            target = "#{target}/login?error=#{error}" if error.present?
+
+            redirect_to target, allow_other_host: true
+          end
+
+          # Where the React dashboard is hosted. Falls back to the Vite dev server
+          # in development, then to the store's own URL.
+          def dashboard_url
+            base = Spree::Config[:dashboard_url].presence ||
+                   (Rails.env.development? ? 'http://localhost:5173' : nil) ||
+                   current_store&.formatted_url
+
+            base.to_s.chomp('/')
+          end
+
+          # A technical SSO failure (missing code, token verification) must not be
+          # reported as "ask an administrator for an invitation".
+          def callback_error_code(strategy)
+            if strategy.respond_to?(:account_not_provisioned?) && strategy.account_not_provisioned?
+              ERROR_CODES[:account_not_provisioned]
+            else
+              ERROR_CODES[:authentication_failed]
+            end
           end
 
           def authentication_strategies

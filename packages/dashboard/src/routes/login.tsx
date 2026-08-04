@@ -201,6 +201,8 @@ function ProvidersUnavailable() {
 const CALLBACK_ERROR_KEYS: Record<string, string> = {
   account_not_provisioned: 'admin.auth.login.account_not_provisioned',
   invalid_oauth_state: 'admin.auth.login.invalid_oauth_state',
+  invalid_provider: 'admin.auth.login.sso_failed',
+  authentication_failed: 'admin.auth.login.sso_failed',
 }
 
 function CallbackError({ code }: { code: string }) {

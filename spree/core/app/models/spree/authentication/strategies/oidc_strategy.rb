@@ -129,13 +129,22 @@ module Spree
         # @return [Spree::ServiceModule::Result]
         def callback
           code = params[:code]
-          return failure(Spree.t('errors.messages.oidc_missing_code')) if code.blank?
+          return authentication_failure(Spree.t('errors.messages.oidc_missing_code')) if code.blank?
 
           claims = verify_id_token(exchange_code_for_tokens(code).fetch('id_token'))
           resolve_user(claims)
         rescue StandardError => e
           Rails.logger.error("[Spree] OIDC callback failed for #{config[:label] || config[:issuer]}: #{e.message}")
-          failure(Spree.t('errors.messages.oidc_authentication_failed'))
+          authentication_failure(Spree.t('errors.messages.oidc_authentication_failed'))
+        end
+
+        # True when the last +#callback+ failed because no account here is
+        # authorized for an otherwise-authenticated IdP subject, as opposed to a
+        # technical failure (missing code, token verification). The two carry
+        # different error codes and very different advice for the person.
+        # @return [Boolean]
+        def account_not_provisioned?
+          @account_not_provisioned.present?
         end
 
         private
@@ -150,7 +159,7 @@ module Spree
         #    every member of a corporate tenant would become store staff.
         def resolve_user(claims)
           subject = claims['sub']
-          return failure(Spree.t('errors.messages.oidc_authentication_failed')) if subject.blank?
+          return authentication_failure(Spree.t('errors.messages.oidc_authentication_failed')) if subject.blank?
 
           identity = Spree::UserIdentity.find_by(
             provider: registry_key,
@@ -160,10 +169,20 @@ module Spree
           return success(identity.user) if identity
 
           user = find_linkable_user(claims)
-          return failure(Spree.t('errors.messages.oidc_account_not_provisioned')) if user.nil?
+          return not_provisioned_failure if user.nil?
 
           user.identities.create!(provider: registry_key, uid: subject, info: identity_info(claims))
           success(user)
+        end
+
+        def authentication_failure(message)
+          @account_not_provisioned = false
+          failure(message)
+        end
+
+        def not_provisioned_failure
+          @account_not_provisioned = true
+          failure(Spree.t('errors.messages.oidc_account_not_provisioned'))
         end
 
         # Only an email the provider asserts as verified may claim an existing
@@ -175,7 +194,10 @@ module Spree
           email = claims['email']
           return nil if email.blank?
 
-          user_class.find_by(email: email.downcase)
+          # Compared case-insensitively on both sides: the models normalize email
+          # with +squish+ but never downcase, so a stored "Ada@Example.com" would
+          # not match a lowercased claim on a case-sensitive database.
+          user_class.find_by(user_class.arel_table[:email].lower.eq(email.to_s.downcase))
         end
 
         def identity_info(claims)

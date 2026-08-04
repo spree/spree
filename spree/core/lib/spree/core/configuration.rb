@@ -29,6 +29,10 @@ module Spree
       # Used by admin mailers; falls back to `http://localhost:5173` in dev
       # and the store's storefront URL otherwise. Set this in production.
       preference :admin_url, :string, default: nil
+      # Origin where the React dashboard is hosted (e.g. `https://dashboard.shop.com`).
+      # Where the SSO callback returns the browser after an identity provider
+      # redirect. Distinct from `admin_url`, which points at the legacy admin.
+      preference :dashboard_url, :string, default: nil
       preference :allow_checkout_on_gateway_error, :boolean, default: false
       preference :allow_empty_price_amount, :boolean, default: false
       preference :allow_guest_checkout, :boolean, default: true, deprecated: true # this is only used in the rails frontend, and is not implemented in API
