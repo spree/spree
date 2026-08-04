@@ -8,7 +8,14 @@ module Spree
 
           skip_scope_check!
 
-          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: [:create, :providers, :callback], with: RATE_LIMIT_RESPONSE
+          # The SSO callback answers a browser navigation, so a throttled request
+          # must return the person to the login page rather than a JSON body they
+          # cannot act on. It also gets its own bucket: completing a sign-in must
+          # not be refused because the login form was submitted a few times.
+          RATE_LIMITED_CALLBACK_RESPONSE = -> { redirect_to_dashboard(error: 'rate_limit_exceeded') }
+
+          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: [:create, :providers], with: RATE_LIMIT_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :callback, with: RATE_LIMITED_CALLBACK_RESPONSE
           rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: [:refresh, :logout], with: RATE_LIMIT_RESPONSE
 
           skip_before_action :authenticate_admin!, only: [:create, :refresh, :logout, :providers, :callback]

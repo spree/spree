@@ -480,6 +480,26 @@ RSpec.describe Spree::Api::V3::Admin::AuthController, type: :controller do
       end
     end
 
+    # A throttled response must stay a redirect: the browser is mid-navigation
+    # from the identity provider and cannot act on a JSON body.
+    context 'when the request is rate limited' do
+      # Drive a real request through the throttled branch: the response has to be
+      # a redirect the browser can follow, never a JSON body.
+      before do
+        allow_any_instance_of(described_class).to receive(:callback) do |ctrl|
+          ctrl.instance_exec(&described_class::RATE_LIMITED_CALLBACK_RESPONSE)
+        end
+      end
+
+      it 'redirects to the login page instead of rendering JSON' do
+        get :callback, params: { provider: 'entra', code: 'auth-code', state: valid_state }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).to include('error=rate_limit_exceeded')
+        expect(response.body).not_to include('"error"')
+      end
+    end
+
     describe 'CSRF state' do
       before do
         stub_claims('sub' => 'idp-subject-1', 'email' => admin.email, 'email_verified' => 'true')
