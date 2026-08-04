@@ -178,7 +178,8 @@
         "providers_error_message": "Nie udało się wczytać opcji logowania. Odśwież stronę lub skontaktuj się z administratorem.",
         "account_not_provisioned": "To konto nie ma dostępu do tego sklepu. Poproś administratora o zaproszenie.",
         "sso_failed": "Nie udało się zalogować przez tego dostawcę. Spróbuj ponownie.",
-        "invalid_oauth_state": "Ta sesja logowania wygasła lub była nieprawidłowa. Zaloguj się ponownie."
+        "invalid_oauth_state": "Ta sesja logowania wygasła lub była nieprawidłowa. Zaloguj się ponownie.",
+        "rate_limit_exceeded": "Zbyt wiele prób logowania. Odczekaj chwilę i spróbuj ponownie."
       },
       "forgot_password": {
         "link": "Nie pamiętasz hasła?",

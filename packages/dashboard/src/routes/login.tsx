@@ -203,6 +203,8 @@ const CALLBACK_ERROR_KEYS: Record<string, string> = {
   invalid_oauth_state: 'admin.auth.login.invalid_oauth_state',
   invalid_provider: 'admin.auth.login.sso_failed',
   authentication_failed: 'admin.auth.login.sso_failed',
+  // Temporary and self-clearing — say so, rather than implying the provider is broken.
+  rate_limit_exceeded: 'admin.auth.login.rate_limit_exceeded',
 }
 
 function CallbackError({ code }: { code: string }) {

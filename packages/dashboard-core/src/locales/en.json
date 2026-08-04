@@ -178,7 +178,8 @@
         "providers_error_message": "We could not load the sign-in options. Please refresh the page or contact your administrator.",
         "account_not_provisioned": "This account is not authorized for this store. Ask an administrator for an invitation.",
         "sso_failed": "We could not sign you in with that provider. Please try again.",
-        "invalid_oauth_state": "That sign-in session expired or was invalid. Please start signing in again."
+        "invalid_oauth_state": "That sign-in session expired or was invalid. Please start signing in again.",
+        "rate_limit_exceeded": "Too many sign-in attempts. Please wait a moment and try again."
       },
       "forgot_password": {
         "link": "Forgot password?",

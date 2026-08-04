@@ -178,7 +178,8 @@
         "providers_error_message": "Die Anmeldeoptionen konnten nicht geladen werden. Bitte laden Sie die Seite neu oder wenden Sie sich an Ihren Administrator.",
         "account_not_provisioned": "Dieses Konto ist für diesen Shop nicht freigegeben. Bitten Sie einen Administrator um eine Einladung.",
         "sso_failed": "Die Anmeldung mit diesem Anbieter war nicht möglich. Bitte versuchen Sie es erneut.",
-        "invalid_oauth_state": "Die Anmeldesitzung ist abgelaufen oder ungültig. Bitte melden Sie sich erneut an."
+        "invalid_oauth_state": "Die Anmeldesitzung ist abgelaufen oder ungültig. Bitte melden Sie sich erneut an.",
+        "rate_limit_exceeded": "Zu viele Anmeldeversuche. Bitte warten Sie einen Moment und versuchen Sie es erneut."
       },
       "forgot_password": {
         "link": "Passwort vergessen?",
