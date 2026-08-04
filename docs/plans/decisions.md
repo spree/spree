@@ -1,3 +1,57 @@
+## 2026-08-04: Commerce-behavior globals move to Store preferences; app configuration stays global
+
+A full usage audit of `Spree::Config` (multi-agent trace with adversarial
+verification over all 68 preferences) found 38 genuinely live settings, 6 read
+only by subsystems 6.0 replaced, and 7 with zero read sites anywhere — one of
+which, `default_stock_reservation_ttl_minutes`, was *silently unreachable*
+because the Store preference it falls back from carries its own default and a
+`> 0` validation, so it is never blank. Both default to 10, so nobody noticed.
+That failure mode is the argument for the whole decision: two sources of truth
+for one behavior, where one quietly wins and the documentation becomes a lie.
+
+**The classification test:** would a second store on the same installation
+plausibly want a different value? Yes → the setting belongs on `Spree::Store`
+(an EU store needs `track_price_history`; its sibling doesn't). No → it stays
+in `Spree.config` (password length protects the app, not a shop).
+
+Nine globals move in 6.0 — `auto_capture` (the per-payment-method column still
+wins when set), `auto_capture_on_dispatch`, `allow_checkout_on_gateway_error`,
+`track_inventory_levels`, `stock_reservations_enabled`, `track_price_history`,
+`show_products_without_price`, `address_requires_phone`,
+`disable_sku_validation`. The store preference is **authoritative with no
+runtime fallback to the global**; existing installs carry over through
+`spree:store_settings:backfill_from_config` in the upgrade manifest, and the
+globals live one release as deprecated shells. A fallback chain was explicitly
+rejected — it is the shape that produced the unreachable TTL. This finishes the
+migration `company` → `Store#company_field_enabled` and `allow_guest_checkout`
+→ `Store#guest_checkout` already started.
+
+Two readers have no record-level store: `Address` (no association) and the
+class-level product availability scope. Both read `Spree::Current.store` and
+fall back to the declared default. The trade-off is accepted knowingly —
+validation or a catalog query outside a request uses the default — because the
+alternative, threading a store argument through every caller and breaking a
+public scope, is disproportionate. Jobs touching those paths must set
+`Spree::Current.store`.
+
+`track_price_history` goes to Store rather than Market despite Omnibus being
+per-country law: Market already owns `return_window_days` and the other legal
+settings, but prices are not market-scoped today, so a Market home needs design
+this plan won't carry. Noted as a 6.1 refinement. Two behavior-looking settings
+stay global: `credit_to_new_allocation` (ledger-shape convention — per-store
+variance corrupts one install's accounting) and `non_expiring_credit_types`
+(reference data).
+
+Corollary settled at the same time: **new behavior flags are born on Store** (or
+Market/Channel where regional), never in `Spree.config`. Also retired on the
+evidence: `reserve_stock_on` (the Cart/Order split wired reservations into the
+cart flows gated on `stock_reservations_enabled`; the trigger switch was never
+read — superseding note added to `6.0-stock-reservations.md`) and the confirm
+checkout step as a configuration concern (`confirm` is advertised, never
+enforced — a storefront renders a review screen when it wants one;
+`PaymentMethod#confirmation_required?` is the real, unrelated requirement).
+Plan: `6.0-store-scoped-configuration.md`.
+
 ## 2026-08-03: Return eligibility ships as a hook, not a policy engine — enforced in the workflow, scoped per market
 
 A survey of Shopify, Medusa, Saleor and Vendure settled how far 6.0 goes on
