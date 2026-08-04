@@ -4,9 +4,11 @@
 # Both hooks are declared as top-level keys: a bare key after a [table] header
 # would belong to that table, turning teardown into a second create hook.
 #
-# The guards keep worktrees branched from a base that predates these scripts
-# usable — the hook skips instead of failing worktree creation or removal.
+# The `! test -x` form skips (exit 0) only when the script is absent — which is
+# how worktrees branched from a base predating these scripts stay usable — while
+# a script that runs and fails still fails the hook, so nobody lands in a
+# half-provisioned worktree.
 
-pre-start = "test -x scripts/worktree/setup.sh && scripts/worktree/setup.sh '{{ branch }}' || echo 'scripts/worktree/setup.sh not on this branch — provision manually'"
+pre-start = "! test -x scripts/worktree/setup.sh && echo 'scripts/worktree/setup.sh not on this branch — provision manually' || scripts/worktree/setup.sh '{{ branch }}'"
 
-post-remove = "test -x scripts/worktree/teardown.sh && scripts/worktree/teardown.sh '{{ branch }}' || true"
+post-remove = "! test -x scripts/worktree/teardown.sh && echo 'scripts/worktree/teardown.sh not on this branch — drop databases manually' || scripts/worktree/teardown.sh '{{ branch }}'"

@@ -8,7 +8,9 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
 # Refuse to drop databases still claimed by a checked-out worktree — teardown
 # normally runs after the worktree is gone, so a live one means we were pointed
 # at the wrong branch.
-if git worktree list --porcelain | grep -qx "branch refs/heads/$(branch_name)"; then
+# -F matters: branch names may contain regex metacharacters, and a stray match
+# here would refuse a legitimate cleanup.
+if git worktree list --porcelain | grep -qxF "branch refs/heads/$(branch_name)"; then
   echo "Branch '$(branch_name)' is still checked out in a worktree — refusing to drop its databases." >&2
   echo "Remove the worktree first (wt remove), or drop them by hand if that is really what you want." >&2
   exit 1
