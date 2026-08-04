@@ -11,6 +11,34 @@ PG_ARGS=(-h localhost -p "${DATABASE_PORT:-5432}" -U "${DATABASE_USERNAME:-postg
 
 worktree_root() { git rev-parse --show-toplevel; }
 
+# Both pieces below arrived in spree/spree-starter#1376. A clone predating it
+# passes provisioning but then either shares the default database or rejects
+# every proxied request, so check both before touching anything.
+require_current_starter() {
+  local missing=()
+
+  # Anchored so DATABASE_NAME_TEST on the test line can't vouch for the
+  # development one — a half-patched file would share spree_development.
+  if ! grep -qE 'ENV\.fetch\("DATABASE_NAME"\)' server/config/database.yml; then
+    missing+=("config/database.yml: no DATABASE_NAME support — worktrees would share spree_development")
+  fi
+
+  if ! grep -qE 'ENV\.fetch\("DATABASE_NAME_TEST"\)' server/config/database.yml; then
+    missing+=("config/database.yml: no DATABASE_NAME_TEST support — worktrees would share spree_test")
+  fi
+
+  if ! grep -q 'localhost(:' server/config/environments/development.rb; then
+    missing+=("config/environments/development.rb: no port-tolerant .localhost host rule — Rails would block proxied requests")
+  fi
+
+  if [ ${#missing[@]} -gt 0 ]; then
+    echo "This server/ clone predates spree-starter#1376:" >&2
+    printf '  - %s\n' "${missing[@]}" >&2
+    echo "Refresh it: rm -rf server && re-run scripts/worktree/setup.sh" >&2
+    return 1
+  fi
+}
+
 branch_name() { echo "${WT_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"; }
 
 # Readable prefix plus a hash of the full branch name: normalization alone maps

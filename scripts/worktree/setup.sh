@@ -26,13 +26,7 @@ DATABASE_NAME_TEST=$(test_db_name)
 EOF
 fi
 
-# The starter carries DATABASE_NAME support and the port-tolerant .localhost
-# host rule since spree/spree-starter#1376 — fail loudly rather than silently
-# provisioning a worktree that would share the default database.
-if ! grep -q 'DATABASE_NAME' server/config/database.yml; then
-  echo "server/config/database.yml has no DATABASE_NAME support — update the spree-starter clone." >&2
-  exit 1
-fi
+require_current_starter
 
 if ! db_exists "$(db_name)"; then
   if ! db_exists "$TEMPLATE_DB"; then

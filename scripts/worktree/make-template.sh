@@ -9,9 +9,16 @@ cd "$(worktree_root)"
 
 [ -d server ] || { echo "server/ missing — run pnpm server:create (or scripts/worktree/setup.sh) first." >&2; exit 1; }
 
-if ! grep -q 'DATABASE_NAME' server/config/database.yml; then
-  echo "server/config/database.yml has no DATABASE_NAME support — update the spree-starter clone." >&2
-  echo "Without it, the template rebuild would target the default spree_development database." >&2
+require_current_starter
+
+# Prove Rails resolves DATABASE_NAME before dropping anything: this script
+# rebuilds from scratch, so a config that ignored it would destroy the
+# developer's own spree_development database.
+resolved=$(cd server && DATABASE_NAME="$TEMPLATE_DB" \
+  bin/rails runner 'print ActiveRecord::Base.connection_db_config.database' 2>/dev/null)
+if [ "$resolved" != "$TEMPLATE_DB" ]; then
+  echo "Rails resolved the development database to '${resolved:-<unknown>}', not '$TEMPLATE_DB'." >&2
+  echo "Refusing to rebuild — check server/config/database.yml and server/.env." >&2
   exit 1
 fi
 
