@@ -1058,6 +1058,37 @@ describe Spree::Product, type: :model do
       expect(product.reload.collections).to include(collection)
       expect(product.reload.collections).not_to include(foreign)
     end
+
+    # Automatic membership is materialized from rules: it must survive a write
+    # that doesn't mention it, and must not be settable by hand.
+    context 'with automatic collections' do
+      let!(:automatic) { create(:automatic_collection, store: store) }
+
+      before { Spree::ProductCollection.create!(collection: automatic, product: product) }
+
+      it 'preserves automatic membership when assigning manual collections' do
+        product.update!(collection_ids: [collection.id])
+
+        expect(product.reload.collections).to include(collection, automatic)
+      end
+
+      it 'ignores an automatic collection passed by hand' do
+        other_automatic = create(:automatic_collection, store: store)
+
+        product.update!(collection_ids: [collection.id, other_automatic.id])
+
+        expect(product.reload.collections).to include(collection, automatic)
+        expect(product.reload.collections).not_to include(other_automatic)
+      end
+
+      it 'clears manual membership on an empty array without touching automatic' do
+        product.update!(collection_ids: [collection.id])
+
+        product.update!(collection_ids: [])
+
+        expect(product.reload.collections).to eq([automatic])
+      end
+    end
   end
 
   describe '#primary_category' do
