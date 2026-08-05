@@ -53,7 +53,22 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
 
       it 'includes price' do
-        expect(xml).to include("<g:price>#{variant.amount_in(variant.cost_currency)} #{variant.cost_currency}</g:price>")
+        expect(xml).to include("<g:price>#{variant.amount_in(store.default_currency)} #{store.default_currency}</g:price>")
+      end
+
+      # The variant's own cost_currency is unrelated to the currency the feed
+      # quotes in, and may carry no price at all.
+      context "when the variant's cost_currency differs from the store currency" do
+        before { variant.update!(cost_currency: 'JPY') }
+
+        it 'quotes the price in the store currency' do
+          expect(xml).to include("<g:price>#{variant.amount_in(store.default_currency)} #{store.default_currency}</g:price>")
+        end
+
+        it 'emits no empty price' do
+          expect(xml).not_to include('<g:price> ')
+          expect(xml).not_to include('<g:price>JPY</g:price>')
+        end
       end
     end
 

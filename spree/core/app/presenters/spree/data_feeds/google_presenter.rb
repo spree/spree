@@ -43,10 +43,18 @@ module Spree
 
       def build_items(xml)
         products.includes(:primary_media, public_metafields: :metafield_definition, variants: [:primary_media, option_values: :option_type]).find_each do |product|
-          product.variants.active.each do |variant|
+          product.variants.active(feed_currency).each do |variant|
             build_item(xml, product, variant)
           end
         end
+      end
+
+      # The feed quotes every item in the store's currency, so variants are
+      # both selected and priced against it — a variant's own +cost_currency+
+      # may differ and carry no price here.
+      # @return [String]
+      def feed_currency
+        store.default_currency
       end
 
       def build_item(xml, product, variant)
@@ -66,7 +74,7 @@ module Spree
         xml['g'].description product.description || format_title(product, variant)
         xml['g'].link "#{store.storefront_url}/products/#{product.slug}"
         xml['g'].image_link image_url
-        xml['g'].price "#{variant.amount_in(variant.cost_currency)} #{variant.cost_currency}"
+        xml['g'].price "#{variant.amount_in(feed_currency)} #{feed_currency}"
         xml['g'].availability availability(product)
         xml['g'].availability_date product.available_on.xmlschema if product.available_on.present?
       end
