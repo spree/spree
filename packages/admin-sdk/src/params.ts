@@ -645,8 +645,11 @@ export interface CollectionUpdateParams {
   description?: string
   permalink?: string
   /**
-   * 0-based index among the store's collections. Collections are a flat list,
-   * so reordering is a plain update — there is no separate reposition action.
+   * 1-based position among the store's collections, written straight to the
+   * `acts_as_list` column — the first collection is `1`, and the server shifts
+   * its siblings. Collections are a flat list, so reordering is a plain update
+   * rather than a separate reposition action (which is where the `new_position`
+   * params, unlike this one, are 0-based indexes).
    */
   position?: number
   meta_title?: string
