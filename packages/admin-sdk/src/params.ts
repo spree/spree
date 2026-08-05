@@ -465,6 +465,12 @@ export interface ProductCreateParams {
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
   category_ids?: Array<string>
+  /**
+   * Collections this product belongs to. Assigning an automatic collection
+   * persists, but its next rule regeneration overwrites the member list — so
+   * in practice only manual collections belong here.
+   */
+  collection_ids?: Array<string>
   tags?: Array<string>
   /** Shorthand for a simple (no-options) product: prices ship alongside
    *  `name`/`status` and forward to the product's sole variant, so callers
@@ -484,6 +490,8 @@ export interface ProductUpdateParams {
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
   category_ids?: Array<string>
+  /** See `ProductCreateParams.collection_ids`. */
+  collection_ids?: Array<string>
   tags?: Array<string>
   /** Shorthand for a simple (no-options) product — see `ProductCreateParams.prices`. */
   prices?: VariantPrice[]
