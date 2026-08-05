@@ -501,30 +501,6 @@ describe 'Product scopes', type: :model do
     let!(:product) { create(:product, option_types: [option_type]) }
     let!(:variant) { create(:variant, product: product, option_values: [option_value]) }
 
-    describe '.with_option' do
-      subject(:with_option) { Spree::Product.method(:with_option) }
-
-      it "finds by an option type's name" do
-        expect(with_option.call(option_type.name).count).to eq(1)
-      end
-
-      it "doesn't find any option types with an unknown name" do
-        expect(with_option.call('fake').count).to eq(0)
-      end
-
-      it 'finds by an option type' do
-        expect(with_option.call(option_type).count).to eq(1)
-      end
-
-      it 'finds by an id' do
-        expect(with_option.call(option_type.id).count).to eq(1)
-      end
-
-      it 'cannot find an option type with an unknown id' do
-        expect(with_option.call(0).count).to eq(0)
-      end
-    end
-
     describe '.with_option_value' do
       subject(:with_option) { Spree::Product.method(:with_option_value) }
 

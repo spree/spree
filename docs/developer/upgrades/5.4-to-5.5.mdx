@@ -258,7 +258,7 @@ store.update!(preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::
 The Legacy strategy delegates to `Spree::Stock::Coordinator`, which is the exact pre-5.5 packing pipeline — every active stock location is packed, the Prioritizer distributes inventory units across the resulting packages, and no merchant routing rules are consulted. Your existing customizations on `Coordinator`, `Packer`, `Prioritizer`, and the splitters keep working unchanged.
 
 <Warning>
-`Spree::OrderRouting::Strategy::Legacy` and `Spree::Stock::Coordinator` are slated for removal in Spree 6.0. Use this only as a temporary escape hatch while you evaluate the new Rules strategy. New 5.5+ installations should stay on the default Rules strategy.
+`Spree::OrderRouting::Strategy::Legacy` **was removed in Spree 6.0**. It exists only on the 5.5/5.6 line, as a temporary escape hatch while you evaluate the Rules strategy. Stores still carrying this value fall back to the default Rules strategy on 6.0 (with a logged warning), so clear the preference before upgrading.
 </Warning>
 
 ## Behavior changes to review

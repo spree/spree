@@ -146,12 +146,6 @@ describe Spree::OptionType, type: :model do
       end
     end
 
-    describe '#color?' do
-      it 'is deprecated and delegates to color_swatch?' do
-        expect(Spree::Deprecation).to receive(:warn).with(/deprecated/)
-        expect(option_type.color?).to be true
-      end
-    end
   end
 
   context 'touching' do

@@ -395,7 +395,6 @@ en:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete Variants that are added to placed Orders. In such cases, please discontinue them.
-              no_default_variant_found_to_infer_price: No default variant found to infer price
         spree/webhook_endpoint:
           attributes:
             url:

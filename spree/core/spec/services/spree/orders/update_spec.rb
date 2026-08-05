@@ -221,7 +221,7 @@ module Spree
 
           order.reload
           expect(order.line_items.first.quantity).to eq(2)
-          expect(order.item_total).to eq(variant.price * 2)
+          expect(order.item_total).to eq(variant.amount_in(order.currency) * 2)
           expect(order.total).to eq(order.item_total + order.shipment_total + order.adjustment_total)
         end
       end

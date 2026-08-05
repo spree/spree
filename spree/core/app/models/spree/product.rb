@@ -331,15 +331,14 @@ module Spree
     # demand, so `product.sku = ...` still works before the product is persisted.
     [
       :sku, :barcode, :weight, :height, :width, :depth, :dimensions_unit, :weight_unit,
-      :price, :price_in, :amount_in, :compare_at_price, :compare_at_amount_in,
-      :currency, :cost_currency, :cost_price, :track_inventory
+      :price_in, :amount_in, :compare_at_amount_in,
+      :cost_currency, :cost_price, :track_inventory
     ].each do |method_name|
       delegate method_name, to: :default_variant, allow_nil: true
       delegate :"#{method_name}=", to: :find_or_build_default_variant
     end
 
-    delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, to: :default_variant, allow_nil: true
+    delegate :track_inventory?, :images, to: :default_variant, allow_nil: true
 
     state_machine :status, initial: :draft do
       event :activate do
@@ -437,24 +436,6 @@ module Spree
     # @return [Spree::Variant, nil]
     def variant_for_images
       @variant_for_images ||= find_variant_for_images
-    end
-
-    # @deprecated Use #primary_media instead.
-    def default_image
-      Spree::Deprecation.warn('Spree::Product#default_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
-    end
-
-    # @deprecated Use #primary_media instead.
-    def featured_image
-      Spree::Deprecation.warn('Spree::Product#featured_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
-    end
-
-    # @deprecated Use #primary_media instead.
-    def primary_image
-      Spree::Deprecation.warn('Spree::Product#primary_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
     end
 
     # Returns secondary media for Product (for hover effects).
@@ -575,13 +556,6 @@ module Spree
     # determine if any variant is out of stock and backorderable
     def backordered?
       variants.any?(&:backordered?)
-    end
-
-    def self.like_any(fields, values)
-      conditions = fields.product(values).map do |(field, value)|
-        arel_table[field].matches("%#{value}%")
-      end
-      where conditions.inject(:or)
     end
 
     # Suitable for displaying only variants that has at least one option value.
@@ -931,7 +905,6 @@ module Spree
     end
 
     def discontinue_on_must_be_later_than_make_active_at
-      Spree::Deprecation.warn('Spree::Product#discontinue_on_must_be_later_than_make_active_at is deprecated and will be removed in Spree 6.0.')
       if discontinue_on < make_active_at
         errors.add(:discontinue_on, :invalid_date_range)
       end

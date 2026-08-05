@@ -104,7 +104,7 @@ RSpec.describe Spree::Category, type: :model do
     end
   end
 
-  describe 'store auto-resolution (#set_store)' do
+  describe 'store auto-resolution (#ensure_store)' do
     it 'falls back to the current store when none is given' do
       Spree::Current.store = store
       category = described_class.create!(name: 'Kitchen')

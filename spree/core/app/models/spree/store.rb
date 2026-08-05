@@ -197,18 +197,9 @@ module Spree
       Spree::Current.store
     end
 
-    # @deprecated The or_initialize behavior will be removed in Spree 5.5.
+    # @return [Spree::Store, nil] the store flagged as default, if one exists
     def self.default
-      # workaround for Mobility bug with first_or_initialize
-      if where(default: true).any?
-        where(default: true).first
-      else
-        Spree::Deprecation.warn(
-          'Spree::Store.default returning a new unpersisted store when no default store exists is deprecated ' \
-          'and will be removed in Spree 6.0. Please ensure a default store is created before calling Store.default.'
-        )
-        new(default: true)
-      end
+      where(default: true).first
     end
 
     def self.available_locales
@@ -334,21 +325,6 @@ module Spree
       country.states.to_a
     end
 
-    # @deprecated Use {Spree::Zone.all} or {#countries_with_shipping_coverage} instead.
-    #   Will be removed in Spree 5.5.
-    def supported_shipping_zones
-      Spree::Deprecation.warn(
-        'Store#supported_shipping_zones is deprecated and will be removed in Spree 5.5. ' \
-        'Use Spree::Zone.all or Store#countries_with_shipping_coverage instead.'
-      )
-      zone = Spree::Zone.find_by(id: read_attribute(:checkout_zone_id))
-      if zone.present?
-        [zone]
-      else
-        Spree::Zone.includes(zone_members: :zoneable).all
-      end
-    end
-
     # Returns countries covered by delivery methods. Methods without delivery
     # zones are worldwide, so any such method means every country is covered;
     # otherwise coverage is the union of the attached zones' country, state,
@@ -380,12 +356,6 @@ module Spree
                                       country: default_country)
         end
       end
-    end
-
-    def admin_users
-      Spree::Deprecation.warn('Store#admin_users is deprecated and will be removed in Spree 5.5. Please use Store#users instead.')
-
-      users
     end
 
     def metric_unit_system?

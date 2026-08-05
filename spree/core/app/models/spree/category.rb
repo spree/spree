@@ -112,20 +112,6 @@ module Spree
       taxonomy_ids = Spree::Taxonomy.where(store_id: store_ids).select(:id)
       where(store_id: store_ids).or(where(store_id: nil, taxonomy_id: taxonomy_ids))
     }
-    scope :for_taxonomy, lambda { |taxonomy_name|
-      Spree::Deprecation.warn('Spree::Category.for_taxonomy is deprecated and will be removed in Spree 6. Please use for_store instead.')
-
-      if Spree.use_translations?
-        joins(:taxonomy)
-          .join_translation_table(Taxonomy)
-          .where(
-            Taxonomy.arel_table_alias[:name].lower.matches(taxonomy_name.downcase.strip)
-          )
-      else
-        joins(:taxonomy).where(Spree::Taxonomy.arel_table[:name].lower.matches(taxonomy_name.downcase.strip))
-      end
-    }
-
     #
     # Search
     #
@@ -450,11 +436,6 @@ module Spree
 
     def copy_taxonomy_from_parent
       self.taxonomy = parent.taxonomy if parent.present? && taxonomy.blank?
-    end
-
-    def set_store
-      Spree::Deprecation.warn('Spree::Category#set_store is deprecated and will be removed in Spree 6.0. ensure_store instead.')
-      ensure_store
     end
 
     # Every category is store-owned. Resolve the store from the taxonomy, then the

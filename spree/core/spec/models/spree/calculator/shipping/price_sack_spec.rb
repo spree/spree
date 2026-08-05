@@ -11,7 +11,7 @@ module Spree
         calculator
       end
 
-      let(:line_item) { build(:line_item, variant: variant, price: variant.price) }
+      let(:line_item) { build(:line_item, variant: variant, price: variant.amount_in(variant.cost_currency)) }
       let(:variant) { create(:variant, price: 2) }
 
       let(:inventory_unit1) {  }
