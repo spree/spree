@@ -29,7 +29,16 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
       get :index, params: {}, as: :json
 
       data = json_response['data'].find { |c| c['id'] == collection.prefixed_id }
-      expect(data).to include('automatic', 'rules_match_policy', 'rules', 'created_at', 'updated_at')
+      expect(data).to include('automatic', 'rules_match_policy', 'created_at', 'updated_at')
+    end
+
+    # Rules are expand-gated: a listing would otherwise serialize every
+    # collection's full rule set for callers that only need the basics.
+    it 'omits rules unless expanded' do
+      get :index, params: {}, as: :json
+
+      data = json_response['data'].find { |c| c['id'] == collection.prefixed_id }
+      expect(data).not_to have_key('rules')
     end
   end
 
@@ -37,8 +46,8 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
     let!(:automatic) { create(:automatic_collection, store: store, name: 'On Sale') }
     let!(:rule) { create(:tag_collection_rule, :contains, collection: automatic, value: 'summer') }
 
-    it 'returns the collection with its rules' do
-      get :show, params: { id: automatic.prefixed_id }, as: :json
+    it 'returns the collection with its rules when expanded' do
+      get :show, params: { id: automatic.prefixed_id, expand: 'rules' }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['automatic']).to be(true)
@@ -122,6 +131,29 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
         expect(automatic.rules.find_by(id: keep.id).value).to eq('kept')
         expect(Spree::CollectionRule.find_by(id: drop.id)).to be_nil
         expect(automatic.rules.map(&:type)).to include('Spree::CollectionRules::Sale')
+      end
+
+      # `/collection_rules/types` advertises the shorthand (`tag`), so writes
+      # must accept it as well as the STI class name.
+      it 'accepts the api_type shorthand for a rule type' do
+        patch :update, params: {
+          id: automatic.prefixed_id,
+          rules: [{ type: 'tag', value: 'summer', match_policy: 'contains' }]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(automatic.reload.rules.map(&:type)).to eq(['Spree::CollectionRules::Tag'])
+      end
+
+      # An unregistered class name must never reach the STI `type` column.
+      it 'rejects a rule type that is not registered' do
+        patch :update, params: {
+          id: automatic.prefixed_id,
+          rules: [{ type: 'Spree::Store', value: 'x', match_policy: 'is_equal_to' }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(automatic.reload.rules.map(&:type)).not_to include('Spree::Store')
       end
     end
   end

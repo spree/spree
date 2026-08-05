@@ -4,6 +4,7 @@ module Spree
       module Admin
         class ProductsController < ResourceController
           include Spree::Api::V3::BulkOperations
+          include Spree::Api::V3::Admin::ProductListing
 
           scoped_resource :products
 
@@ -125,16 +126,6 @@ module Spree
             Spree.api.admin_product_serializer
           end
 
-          def scope_includes
-            [
-              :tax_category,
-              product_publications: :channel,
-              primary_media: [attachment_attachment: :blob],
-              default_variant: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
-              variants: [:prices, stock_items: [:stock_location, :active_stock_reservations]]
-            ]
-          end
-
           # Use SearchProvider::Database for collection to handle price/best_selling
           # sorting correctly (counts before sorting, avoiding PG/Mobility issues).
           def collection
@@ -181,6 +172,17 @@ module Spree
               :promotionable, :digital,
               tags: [],
               category_ids: [],
+              # Manual collection membership only — the model setter ignores
+              # incoming automatic collections and preserves the product's
+              # existing ones, since those are materialized from their rules.
+              #
+              # Deliberately reachable with `write_products` rather than
+              # `write_collections`: filing a product into its groupings is part
+              # of maintaining the product, which is why `category_ids` and the
+              # bulk membership endpoints have always worked this way too.
+              # Creating or configuring a collection still needs
+              # `write_collections`.
+              collection_ids: [],
               metadata: {},
               prices: [:amount, :compare_at_amount, :currency],
               # Inline custom field values keyed by definition id. The model

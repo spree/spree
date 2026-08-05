@@ -739,6 +739,16 @@ en:
     close: Close
     closed: Closed
     code: Code
+    collection_rule_types:
+      available_on:
+        description: Products published within the last N days
+        name: Recently published
+      sale:
+        description: Products currently discounted below their compare-at price
+        name: On sale
+      tag:
+        description: Products carrying a matching tag
+        name: Tag
     color_code: Color Code
     colors: Colors
     company: Company

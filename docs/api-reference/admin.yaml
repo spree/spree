@@ -22564,7 +22564,7 @@ paths:
       - name: expand
         in: query
         required: false
-        description: Comma-separated associations to expand (e.g., custom_fields,
+        description: Comma-separated associations to expand (e.g., rules, custom_fields,
           translations).
         schema:
           type: string
@@ -22768,7 +22768,7 @@ paths:
       - name: expand
         in: query
         required: false
-        description: Comma-separated associations to expand (e.g., custom_fields,
+        description: Comma-separated associations to expand (e.g., rules, custom_fields,
           translations).
         schema:
           type: string
@@ -23198,6 +23198,49 @@ paths:
                   description: 0-based index among the collection's products
               required:
               - new_position
+  "/api/v3/admin/collection_rules/types":
+    get:
+      summary: List available collection rule types
+      tags:
+      - Collections
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |-
+        Enumerates the registered rule kinds with their labels and descriptions — drives the rule picker on an automatic collection. Plugins extend the list by registering `Spree::CollectionRule` subclasses via `config.spree.collection_rules`. The `type` returned here is the wire shorthand accepted when writing a collection's `rules`.
+
+        **Required scope:** `read_collections` (for API-key authentication).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: types found
+          content:
+            application/json:
+              example:
+                data:
+                - type: sale
+                  label: On sale
+                  description: Products currently discounted below their compare-at
+                    price
+                  preference_schema: []
+                - type: available_on
+                  label: Recently published
+                  description: Products published within the last N days
+                  preference_schema: []
+                - type: tag
+                  label: Tag
+                  description: Products carrying a matching tag
+                  preference_schema: []
   "/api/v3/admin/delivery_methods":
     get:
       summary: List delivery methods
@@ -24681,7 +24724,6 @@ components:
       - metadata
       - created_at
       - updated_at
-      - rules
       x-typelizer: true
     Country:
       type: object

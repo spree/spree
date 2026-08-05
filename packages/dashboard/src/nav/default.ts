@@ -105,6 +105,13 @@ nav.add({
       position: 300,
     },
     {
+      key: 'products.collections',
+      label: i18n.t('admin.nav.collections'),
+      path: '/products/collections',
+      subject: Subject.Collection,
+      position: 350,
+    },
+    {
       key: 'products.options',
       label: i18n.t('admin.nav.options'),
       path: '/products/options',

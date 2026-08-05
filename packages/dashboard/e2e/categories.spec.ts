@@ -103,6 +103,12 @@ test.describe('categories management', () => {
 
     // Remove it via the per-row remove button.
     await productRow.getByRole('button', { name: /remove from category/i }).click()
+    // Removing writes through immediately, so it confirms first. Scope to the
+    // dialog — the row button matches /remove/ too.
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^remove$/i })
+      .click()
     await expect(page.getByText(/no products in this category yet/i)).toBeVisible({
       timeout: 15_000,
     })

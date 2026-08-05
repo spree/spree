@@ -92,6 +92,11 @@ module Spree
     scope :automatic, -> { where(automatic: true) }
 
     #
+    # Ransack
+    #
+    self.whitelisted_ransackable_attributes = %w[permalink automatic sort_order products_count]
+
+    #
     # Automatic (rule-based) membership
     #
     after_commit :regenerate_products, on: [:update], if: -> { automatic? && (saved_change_to_automatic? || saved_change_to_rules_match_policy?) }
@@ -152,6 +157,25 @@ module Spree
       products
     end
 
+    # Maps a wire `type` onto a registered rule class name. Accepts both the
+    # `/collection_rules/types` shorthand (`tag`) and the STI class name,
+    # matching how every other subclassed resource is written.
+    #
+    # Matching is string-only against the in-memory registry — nothing from the
+    # wire is ever constantized. An unregistered value resolves to nil, which
+    # leaves the record as the abstract base class so it fails CollectionRule's
+    # type validation with a 422 (assigning it would make ActiveRecord raise
+    # SubclassNotFound, a 500).
+    #
+    # @param type [String, nil] wire shorthand or STI class name
+    # @return [String, nil] the registered class name, or nil when unregistered
+    def self.resolve_rule_type(type)
+      return nil if type.blank?
+
+      Rails.application.config.spree.collection_rules.
+        find { |klass| klass.to_s == type.to_s || klass.api_type == type.to_s }&.to_s
+    end
+
     # Syncs automatic rules from an array of attribute hashes by mutating the
     # in-memory `rules` association: hashes with an id update the matching rule
     # (accepting the prefixed `crule_` id), hashes without an id build a new
@@ -174,6 +198,7 @@ module Spree
       rules_params.each do |rule_data|
         data = rule_data.to_h.with_indifferent_access
         rule_id = data.delete(:id)
+        data[:type] = self.class.resolve_rule_type(data[:type]) if data.key?(:type)
 
         record = if rule_id.present?
                    existing_by_id[Spree::PrefixedId.decode_prefixed_id(rule_id) || rule_id] ||

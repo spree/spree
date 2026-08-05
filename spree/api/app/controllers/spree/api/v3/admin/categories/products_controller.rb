@@ -8,6 +8,8 @@ module Spree
           # Listing is ordered by the classification position so the merchant's
           # manual ordering round-trips; +reposition+ persists a drag-to-reorder.
           class ProductsController < ResourceController
+            include Spree::Api::V3::Admin::ProductListing
+
             scoped_resource :products
 
             # Skip the base single-resource load — membership actions resolve

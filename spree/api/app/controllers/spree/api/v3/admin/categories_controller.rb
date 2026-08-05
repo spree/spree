@@ -69,7 +69,7 @@ module Spree
             permitted = params.permit(
               :name, :description, :permalink,
               :meta_title, :meta_description, :meta_keywords,
-              :hide_from_nav, :image, :square_image,
+              :image, :square_image,
               # Inline custom field values keyed by definition id. The model
               # setter (Spree::Metafields#custom_fields=) validates each entry
               # against its definition. `value` is permitted as a scalar AND as

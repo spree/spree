@@ -264,13 +264,22 @@ module Spree
     end
 
     # Accepts both prefixed IDs and raw integer IDs. Only collections belonging
-    # to the product's own store are assigned; this overrides the generated setter
-    # and calls super.
+    # to the product's own store are assigned; this overrides the generated
+    # setter and calls super.
+    #
+    # This is a replace setter, so it governs manual membership only. Automatic
+    # collections are materialized from their rules, which means they must
+    # survive a write that doesn't mention them (otherwise saving a product
+    # would wipe rule-derived membership until the next regeneration) and must
+    # not be assignable by hand (a hand-set member would vanish at that
+    # regeneration). So incoming automatic ids are ignored, and the product's
+    # existing automatic memberships are carried over untouched.
     def collection_ids=(ids)
       decoded_ids = Array(ids).filter_map do |id|
         id.to_s.include?('_') ? Spree::Collection.decode_prefixed_id(id) : id
       end
-      super(Spree::Collection.for_store(assignable_store).where(id: decoded_ids).ids)
+      manual_ids = Spree::Collection.for_store(assignable_store).manual.where(id: decoded_ids).ids
+      super(manual_ids | collections.automatic.ids)
     end
 
     # Sync media inline. Entries with `id` patch the existing asset

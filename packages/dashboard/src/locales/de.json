@@ -154,6 +154,12 @@
         "picker_description": "Suchen und wählen Sie Produkte für diese Kategorie aus.",
         "picker_title": "Produkte zur Kategorie hinzufügen",
         "remove": "Aus Kategorie entfernen",
+        "remove_confirm": {
+          "message_named": "„{{name}}“ aus dieser Kategorie entfernen? Die Änderung wird sofort wirksam. Das Produkt bleibt im Katalog.",
+          "message_one": "{{count}} Produkt aus dieser Kategorie entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
+          "message_other": "{{count}} Produkte aus dieser Kategorie entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
+          "title": "Aus Kategorie entfernen"
+        },
         "remove_selected": "Entfernen",
         "search_placeholder": "Produkte suchen…",
         "select_all": "Alle auswählen",
@@ -177,6 +183,133 @@
         "deleted": "Kanal gelöscht",
         "updated": "Kanal aktualisiert"
       }
+    },
+    "collections": {
+      "add_cta": "Neue Kollektion",
+      "columns": {
+        "membership": "Zuordnung",
+        "products_count": "Produkte",
+        "sort_order": "Sortierung"
+      },
+      "delete_confirm": {
+        "message": "Kollektion „{{name}}“ löschen? Die Produkte bleiben im Katalog.",
+        "title": "Kollektion löschen"
+      },
+      "delete_label": "Kollektion löschen",
+      "empty": "Noch keine Kollektionen.",
+      "fields": {
+        "automatic": {
+          "label": "Produkte automatisch über Regeln zuordnen"
+        },
+        "rule_match_policy": {
+          "label": "Bedingung"
+        },
+        "rule_type": {
+          "label": "Regel"
+        },
+        "rule_value": {
+          "label": "Wert",
+          "placeholder": "Wert"
+        },
+        "rules_match_policy": {
+          "label": "Produkte müssen erfüllen"
+        },
+        "sort_order": {
+          "label": "Standardsortierung"
+        }
+      },
+      "images": {
+        "help": "Für Kollektions-Banner. Empfohlen 1920×1080.",
+        "label": "Bild",
+        "square_help": "Für die kompakte Navigation. Empfohlen 400×400.",
+        "square_label": "Quadratisches Bild",
+        "title": "Bilder"
+      },
+      "load_failed": "Kollektionen konnten nicht geladen werden. Bitte erneut versuchen.",
+      "membership": {
+        "automatic": "Automatisch",
+        "manual": "Manuell"
+      },
+      "messages": {
+        "created": "Kollektion erstellt",
+        "deleted": "Kollektion gelöscht",
+        "move_failed": "Kollektion konnte nicht verschoben werden",
+        "updated": "Kollektion aktualisiert"
+      },
+      "new_title": "Neue Kollektion",
+      "products": {
+        "add_cta": "Produkte hinzufügen",
+        "automatic_hint": "Die Produkte ergeben sich aus den Regeln oben und werden automatisch aktualisiert.",
+        "column_product": "Produkt",
+        "empty": "Noch keine Produkte in dieser Kollektion.",
+        "empty_automatic": "Noch keine Produkte erfüllen die Regeln.",
+        "filter_placeholder": "Produkte filtern…",
+        "no_matches": "Keine Produkte entsprechen dem Filter.",
+        "picker_description": "Produkte suchen und zu dieser Kollektion hinzufügen.",
+        "picker_title": "Produkte zur Kollektion hinzufügen",
+        "remove": "Aus Kollektion entfernen",
+        "remove_confirm": {
+          "message_named": "„{{name}}“ aus dieser Kollektion entfernen? Die Änderung wird sofort wirksam. Das Produkt bleibt im Katalog.",
+          "message_one": "{{count}} Produkt aus dieser Kollektion entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
+          "message_other": "{{count}} Produkte aus dieser Kollektion entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
+          "title": "Aus Kollektion entfernen"
+        },
+        "remove_selected": "Entfernen",
+        "search_placeholder": "Produkte suchen…",
+        "select_all": "Alle auswählen",
+        "select_row": "Produkt auswählen",
+        "title": "Produkte"
+      },
+      "rule_match_policies": {
+        "contains": "enthält",
+        "does_not_contain": "enthält nicht",
+        "is_equal_to": "ist gleich",
+        "is_not_equal_to": "ist ungleich"
+      },
+      "rule_types": {
+        "available_on": {
+          "description": "Produkte, die in den letzten N Tagen veröffentlicht wurden",
+          "name": "Kürzlich veröffentlicht"
+        },
+        "sale": {
+          "description": "Produkte, die derzeit unter ihrem Vergleichspreis liegen",
+          "name": "Im Angebot"
+        },
+        "tag": {
+          "description": "Produkte mit einem passenden Schlagwort",
+          "name": "Schlagwort"
+        }
+      },
+      "rules": {
+        "add": "Regel hinzufügen",
+        "description": "Produkte manuell auswählen oder die Kollektion per Regeln aktuell halten.",
+        "remove": "Regel entfernen",
+        "title": "Zuordnung"
+      },
+      "rules_match_policies": {
+        "all": "alle Bedingungen",
+        "any": "eine Bedingung"
+      },
+      "search_placeholder": "Kollektionen suchen…",
+      "seo": {
+        "preview_slug_placeholder": "kollektions-slug",
+        "title": "Suchmaschinenoptimierung"
+      },
+      "sort_order": {
+        "description": "Reihenfolge der Produkte im Shop, solange Käufer keine eigene Sortierung wählen.",
+        "title": "Standardsortierung"
+      },
+      "sort_orders": {
+        "available_on_asc": "Datum: älteste zuerst",
+        "available_on_desc": "Datum: neueste zuerst",
+        "best_selling": "Bestseller",
+        "manual": "Manuell",
+        "name_asc": "Name: A–Z",
+        "name_desc": "Name: Z–A",
+        "price_asc": "Preis: aufsteigend",
+        "price_desc": "Preis: absteigend"
+      },
+      "title": "Kollektionen"
     },
     "components": {
       "adjustment_action_editor": {
@@ -835,6 +968,10 @@
         "channels": {
           "label": "Verkaufskanäle"
         },
+        "collection_ids": {
+          "help": "Hier lassen sich nur manuelle Kollektionen setzen; automatische folgen ihren Regeln.",
+          "label": "Kollektionen"
+        },
         "description": {
           "label": "Beschreibung",
           "placeholder": "Schreiben Sie eine Produktbeschreibung…"
@@ -1292,6 +1429,7 @@
       "account": "Konto",
       "categories": "Kategorien",
       "claims": "Reklamationen",
+      "collections": "Kollektionen",
       "customer_groups": "Gruppen",
       "customers": "Kunden",
       "draft_orders": "Bestellentwürfe",
@@ -1823,6 +1961,7 @@
         "bulk": {
           "add_categories_action": "Zu Kategorien hinzufügen…",
           "add_channels_action": "Zu Verkaufskanälen hinzufügen…",
+          "add_collections_action": "Zu Kollektionen hinzufügen",
           "add_tags_action": "Tags hinzufügen…",
           "categories_add_description": "Wählen Sie die Kategorien, zu denen diese Produkte hinzugefügt werden sollen.",
           "categories_add_failed": "Produkte konnten nicht zu Kategorien hinzugefügt werden",
@@ -1840,6 +1979,14 @@
           "channels_remove_failed": "Produkte konnten nicht von Verkaufskanälen ausgelistet werden",
           "channels_remove_title": "Aus Verkaufskanälen entfernen",
           "channels_removed": "{n} Produkte von Verkaufskanälen ausgelistet",
+          "collections_add_description": "Die ausgewählten Produkte werden jeder gewählten Kollektion hinzugefügt.",
+          "collections_add_failed": "Produkte konnten nicht hinzugefügt werden",
+          "collections_add_title": "Zu Kollektionen hinzufügen",
+          "collections_added": "Produkte zu den Kollektionen hinzugefügt",
+          "collections_remove_description": "Die ausgewählten Produkte werden aus jeder gewählten Kollektion entfernt.",
+          "collections_remove_failed": "Produkte konnten nicht entfernt werden",
+          "collections_remove_title": "Aus Kollektionen entfernen",
+          "collections_removed": "Produkte aus den Kollektionen entfernt",
           "delete_confirm": {
             "message": "Ausgewählte Produkte werden entfernt. Diese Aktion kann nicht rückgängig gemacht werden.",
             "title": "{n} Produkte löschen?"
@@ -1848,6 +1995,7 @@
           "deleted": "{n} Produkte gelöscht",
           "remove_categories_action": "Aus Kategorien entfernen…",
           "remove_channels_action": "Aus Verkaufskanälen entfernen…",
+          "remove_collections_action": "Aus Kollektionen entfernen",
           "remove_tags_action": "Tags entfernen…",
           "set_status_action": "Status festlegen…",
           "status_sheet_description": "Wählen Sie den Status, der auf die ausgewählten Produkte angewendet werden soll.",
@@ -2426,6 +2574,7 @@
     },
     "products": {
       "category_search_placeholder": "Kategorien suchen…",
+      "collection_search_placeholder": "Kollektionen suchen…",
       "columns": {
         "in_stock": "Auf Lager",
         "price": "Preis",
@@ -2456,6 +2605,7 @@
         "upload_status_failed": "Fehlgeschlagen"
       },
       "no_categories_found": "Keine Kategorien gefunden",
+      "no_collections_found": "Keine Kollektionen gefunden",
       "options": {
         "add_cta": "Optionstyp hinzufügen",
         "count_one": "{{count}} Wert",
