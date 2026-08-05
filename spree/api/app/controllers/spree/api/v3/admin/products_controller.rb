@@ -184,6 +184,13 @@ module Spree
               # Manual collection membership only — the model setter ignores
               # incoming automatic collections and preserves the product's
               # existing ones, since those are materialized from their rules.
+              #
+              # Deliberately reachable with `write_products` rather than
+              # `write_collections`: filing a product into its groupings is part
+              # of maintaining the product, which is why `category_ids` and the
+              # bulk membership endpoints have always worked this way too.
+              # Creating or configuring a collection still needs
+              # `write_collections`.
               collection_ids: [],
               metadata: {},
               prices: [:amount, :compare_at_amount, :currency],
