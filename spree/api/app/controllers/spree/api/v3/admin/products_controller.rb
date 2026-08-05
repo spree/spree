@@ -181,9 +181,9 @@ module Spree
               :promotionable, :digital,
               tags: [],
               category_ids: [],
-              # Manual collection membership. Automatic collections are dropped
-              # by the model setter (their members come from their rules), the
-              # same way the bulk endpoints scope to `.manual`.
+              # Manual collection membership only — the model setter ignores
+              # incoming automatic collections and preserves the product's
+              # existing ones, since those are materialized from their rules.
               collection_ids: [],
               metadata: {},
               prices: [:amount, :compare_at_amount, :currency],
