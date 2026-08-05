@@ -7,9 +7,44 @@
 set -euo pipefail
 
 TEMPLATE_DB="spree_worktree_template"
-PG_ARGS=(-h localhost -p "${DATABASE_PORT:-5432}" -U "${DATABASE_USERNAME:-postgres}")
+# Same defaults as the starter's config/database.yml, so the psql tools and
+# Rails always agree on which server they are talking to. teardown runs after
+# the worktree (and its bundled Rails) is gone, so these cannot come from Rails.
+PG_ARGS=(-h "${DATABASE_HOST:-localhost}" -p "${DATABASE_PORT:-5432}" -U "${DATABASE_USERNAME:-postgres}")
 
 worktree_root() { git rev-parse --show-toplevel; }
+
+# Both pieces below arrived in spree/spree-starter#1376. A clone predating it
+# passes provisioning but then either shares the default database or rejects
+# every proxied request, so check both before touching anything.
+# Renders database.yml with sentinel values and applies the host rule, rather
+# than grepping for tokens: a comment, or the same token in the wrong YAML
+# entry, would otherwise vouch for a config that still points at the defaults.
+# Ruby only — no Rails boot, so this runs before `bundle install`.
+require_current_starter() {
+  local missing=()
+  local report
+
+  report=$(cd server && DATABASE_NAME=__dev_probe__ DATABASE_NAME_TEST=__test_probe__ ruby -ryaml -rerb -e '
+    config = YAML.safe_load(ERB.new(File.read("config/database.yml")).result, aliases: true)
+    puts "dev"  if config.dig("development", "database") == "__dev_probe__"
+    puts "test" if config.dig("test", "database") == "__test_probe__"
+    puts "host" if File.read("config/environments/development.rb")
+                       .then { |src| src[/config\.hosts\s*<<\s*(\S+localhost\S+)/, 1] }
+                       &.then { |rule| eval(rule) =~ "feature-x.spree.localhost:1355" }
+  ' 2>/dev/null) || true
+
+  grep -qx dev  <<<"$report" || missing+=("config/database.yml: the development entry ignores DATABASE_NAME — worktrees would share spree_development")
+  grep -qx test <<<"$report" || missing+=("config/database.yml: the test entry ignores DATABASE_NAME_TEST — worktrees would share spree_test")
+  grep -qx host <<<"$report" || missing+=("config/environments/development.rb: no host rule accepting proxied .localhost names — Rails would block every request")
+
+  if [ ${#missing[@]} -gt 0 ]; then
+    echo "This server/ clone predates spree-starter#1376:" >&2
+    printf '  - %s\n' "${missing[@]}" >&2
+    echo "Refresh it: rm -rf server && re-run scripts/worktree/setup.sh" >&2
+    return 1
+  fi
+}
 
 branch_name() { echo "${WT_BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"; }
 

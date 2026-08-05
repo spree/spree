@@ -26,24 +26,7 @@ DATABASE_NAME_TEST=$(test_db_name)
 EOF
 fi
 
-# The starter hardcodes database names; make them env-driven (defaults keep the
-# stock behavior). server/ is gitignored so the patch is invisible to git.
-# TODO: upstream this to spree-starter 6-0-dev, then drop the sed.
-if ! grep -q 'DATABASE_NAME' server/config/database.yml; then
-  sed -i '' \
-    -e 's|database: spree_development|database: <%= ENV.fetch("DATABASE_NAME") { "spree_development" } %>|' \
-    -e 's|database: spree_test|database: <%= ENV.fetch("DATABASE_NAME_TEST") { "spree_test" } %>|' \
-    server/config/database.yml
-fi
-
-# The Host header arrives from the portless proxy with its port attached
-# (foo.spree.localhost:1355 when the proxy isn't on 443), which Rails' default
-# ".localhost" rule rejects — allow .localhost hosts with or without a port.
-if [ ! -f server/config/initializers/worktree_hosts.rb ]; then
-  cat > server/config/initializers/worktree_hosts.rb <<'RUBY'
-Rails.application.config.hosts << /\A[a-z0-9-]+(\.[a-z0-9-]+)*\.localhost(:\d+)?\z/i
-RUBY
-fi
+require_current_starter
 
 if ! db_exists "$(db_name)"; then
   if ! db_exists "$TEMPLATE_DB"; then
