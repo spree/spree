@@ -814,8 +814,19 @@ module Spree
       ensure_updated_fulfillments
     end
 
+    # Re-quotes every fulfillment for the given audience.
+    #
+    # @param audience [Symbol] {Spree::DeliveryMethod::STOREFRONT} (default)
+    #   or {Spree::DeliveryMethod::BACKOFFICE}
+    # @return [Array<Array<Spree::DeliveryRate>>]
+    def refresh_delivery_rates(audience = DeliveryMethod::STOREFRONT)
+      fulfillments.map { |fulfillment| fulfillment.refresh_rates(audience) }
+    end
+
+    # @deprecated Use {#refresh_delivery_rates}; removed in 6.1.
     def refresh_shipment_rates(audience = DeliveryMethod::STOREFRONT)
-      fulfillments.map { |s| s.refresh_rates(audience) }
+      Spree::Deprecation.warn('Spree::Order#refresh_shipment_rates is deprecated and will be removed in Spree 6.1. Use #refresh_delivery_rates instead.')
+      refresh_delivery_rates(audience)
     end
 
     def set_shipments_cost

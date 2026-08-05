@@ -195,13 +195,31 @@ module Spree
     # An unrecognized audience raises rather than silently quoting storefront
     # rates — a typo must not narrow the offer set unnoticed.
     #
-    # @param audience [Symbol] {STOREFRONT} or {BACKOFFICE}
+    # @param audience [Symbol, Integer] {STOREFRONT} or {BACKOFFICE}; the
+    #   legacy DISPLAY_ON_* integers are accepted until 6.1
     # @return [Boolean]
     def available_to?(audience)
-      case audience
+      case self.class.normalize_audience(audience)
       when BACKOFFICE then true
-      when STOREFRONT then storefront_visible?
-      else raise ArgumentError, "unknown delivery audience #{audience.inspect} (expected #{STOREFRONT.inspect} or #{BACKOFFICE.inspect})"
+      else storefront_visible?
+      end
+    end
+
+    # Maps an audience onto {STOREFRONT}/{BACKOFFICE}, accepting the legacy
+    # DISPLAY_ON_* integers so callers holding the old constants keep working
+    # until 6.1. Anything else raises — a typo must not silently quote
+    # storefront-only rates.
+    #
+    # @param audience [Symbol, Integer]
+    # @return [Symbol]
+    def self.normalize_audience(audience)
+      case audience
+      when STOREFRONT, BACKOFFICE then audience
+      when DISPLAY_ON_FRONT_END, DISPLAY_ON_BACK_END
+        Spree::Deprecation.warn("Spree::DeliveryMethod::DISPLAY_ON_* audience filters are deprecated and will be removed in Spree 6.1. Use #{STOREFRONT.inspect} / #{BACKOFFICE.inspect} instead.")
+        audience == DISPLAY_ON_BACK_END ? BACKOFFICE : STOREFRONT
+      else
+        raise ArgumentError, "unknown delivery audience #{audience.inspect} (expected #{STOREFRONT.inspect} or #{BACKOFFICE.inspect})"
       end
     end
 
@@ -209,7 +227,7 @@ module Spree
     #   removed in 6.1.
     def available_to_display?(display_filter)
       Spree::Deprecation.warn('Spree::DeliveryMethod#available_to_display? is deprecated and will be removed in Spree 6.1. Use #available_to?(Spree::DeliveryMethod::STOREFRONT / BACKOFFICE) instead.')
-      available_to?(display_filter == DISPLAY_ON_BACK_END ? BACKOFFICE : STOREFRONT)
+      available_to?(display_filter)
     end
 
     def delivery_range

@@ -238,6 +238,33 @@ module Spree
           end
         end
       end
+
+      # Host apps override the eligibility seam to add their own rules. The
+      # 6.0 rename must not silently skip overrides written against the old
+      # name — that would quote rates the host meant to filter out.
+      describe 'eligibility seam overrides' do
+        let(:package) { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
+
+        it 'still invokes a legacy #shipping_methods override' do
+          called = false
+          estimator = Class.new(Estimator) do
+            define_method(:shipping_methods) { |_pkg, _audience| called = true; [] }
+          end.new(order)
+
+          estimator.delivery_rates(package)
+          expect(called).to be true
+        end
+
+        it 'invokes a modern #delivery_methods override' do
+          called = false
+          estimator = Class.new(Estimator) do
+            define_method(:delivery_methods) { |_pkg, _audience| called = true; [] }
+          end.new(order)
+
+          estimator.delivery_rates(package)
+          expect(called).to be true
+        end
+      end
     end
   end
 end

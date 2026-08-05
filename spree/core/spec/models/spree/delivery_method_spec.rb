@@ -222,6 +222,13 @@ describe Spree::DeliveryMethod, type: :model do
       expect(admin_only_delivery_method.available_to_display?(described_class::DISPLAY_ON_FRONT_END)).to be false
       expect(admin_only_delivery_method.available_to_display?(described_class::DISPLAY_ON_BACK_END)).to be true
     end
+
+    # A legacy caller holding the old constants must not crash mid-checkout.
+    it 'accepts the legacy integer filters in #available_to? as well' do
+      expect(admin_only_delivery_method.available_to?(described_class::DISPLAY_ON_FRONT_END)).to be false
+      expect(admin_only_delivery_method.available_to?(described_class::DISPLAY_ON_BACK_END)).to be true
+      expect(visible_delivery_method.available_to?(described_class::DISPLAY_ON_FRONT_END)).to be true
+    end
   end
 
   describe '#delivery_range' do

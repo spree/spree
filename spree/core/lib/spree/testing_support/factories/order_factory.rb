@@ -89,7 +89,7 @@ FactoryBot.define do
           # Set completed_at before refreshing shipment rates so order.completed? returns true
           # This prevents the shipping rate selection from recalculating order totals
           order.update_columns(completed_at: order.completed_at || Time.current, status: 'placed')
-          order.refresh_shipment_rates(evaluator.shipping_method_filter)
+          order.refresh_delivery_rates(evaluator.shipping_method_filter)
         end
 
         factory :completed_order_with_pending_payment do

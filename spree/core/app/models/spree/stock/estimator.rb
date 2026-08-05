@@ -69,8 +69,28 @@ module Spree
       end
 
       # The eligibility seam: every rate consumer (checkout, routing, cart
-      # estimates) filters through here.
+      # estimates) filters through here, and host apps override it to add
+      # their own rules.
+      #
+      # Dispatches through the legacy +shipping_methods+ name so overrides
+      # written against it keep running until 6.1 — without this, a host
+      # override would be silently skipped and checkout could quote rates
+      # the host meant to filter out.
       def delivery_methods(package, audience)
+        return shipping_methods(package, audience) if overrides_legacy_seam?
+
+        filter_delivery_methods(package, audience)
+      end
+
+      # @deprecated Call or override {#delivery_methods}; removed in 6.1.
+      # Only reached when a caller uses the old name directly — the override
+      # dispatch above goes straight to the override's own definition.
+      def shipping_methods(package, audience)
+        Spree::Deprecation.warn('Spree::Stock::Estimator#shipping_methods is deprecated and will be removed in Spree 6.1. Use #delivery_methods instead.')
+        filter_delivery_methods(package, audience)
+      end
+
+      def filter_delivery_methods(package, audience)
         methods = package.eligible_delivery_methods
         # Storeless orders exist only in specs; real orders always carry one.
         methods = methods.merge(order.store.delivery_methods) if order.store
@@ -88,10 +108,13 @@ module Spree
         end
       end
 
-      # @deprecated Use {#delivery_methods}; removed in 6.1.
-      def shipping_methods(package, audience)
-        Spree::Deprecation.warn('Spree::Stock::Estimator#shipping_methods is deprecated and will be removed in Spree 6.1. Use #delivery_methods instead.')
-        delivery_methods(package, audience)
+      # True when a subclass or decorator redefined the legacy seam, so its
+      # filtering still applies.
+      def overrides_legacy_seam?
+        return @overrides_legacy_seam if defined?(@overrides_legacy_seam)
+
+        @overrides_legacy_seam =
+          method(:shipping_methods).owner != Spree::Stock::Estimator
       end
     end
   end
