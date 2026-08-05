@@ -255,6 +255,8 @@ is reported through `Rails.error` so it's visible rather than mysterious.
 | `payments.refund` | `before_refund` | lifecycle | Immediately before the gateway call |
 | `payments.refund` | `after_refund` | lifecycle | After a successful refund |
 | `payments.handle_webhook` | `after_handle` | lifecycle | After the gateway callback is processed |
+| `customers.create` | `validate` | validate | After the customer is built, before it is saved — the registration-policy veto (bot screening, B2B approval) |
+| `customers.create` | `after_create` | lifecycle | After the customer is created and the newsletter subscriber linked |
 
 `before_cancel` and `before_resume` accept `reject!` like a `validate` hook.
 
