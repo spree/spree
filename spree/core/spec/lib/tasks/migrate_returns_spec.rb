@@ -23,6 +23,11 @@ RSpec.describe Spree::ReturnsMigrator do
     SQL
   end
 
+  # SQLite takes 1/0 for booleans, PostgreSQL does not — ask the adapter.
+  def quoted_true
+    ActiveRecord::Base.connection.quoted_true
+  end
+
   def insert_item(authorization_id, exchange_variant_id: nil, reception_status: 'awaiting',
                   reimbursement_id: nil, pre_tax_amount: 10.0)
     ActiveRecord::Base.connection.insert(<<~SQL.squish)
@@ -32,7 +37,7 @@ RSpec.describe Spree::ReturnsMigrator do
       VALUES
         (#{authorization_id}, #{fulfillment_item.id},
          #{exchange_variant_id || 'NULL'}, '#{reception_status}',
-         #{reimbursement_id || 'NULL'}, #{pre_tax_amount}, 1,
+         #{reimbursement_id || 'NULL'}, #{pre_tax_amount}, #{quoted_true},
          '#{1.day.ago.to_fs(:db)}', '#{1.day.ago.to_fs(:db)}')
     SQL
   end
