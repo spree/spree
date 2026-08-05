@@ -271,7 +271,7 @@ The single-currency accessors are gone from both `Variant` and `Product`:
 | `price_including_vat_for(opts)` | `price_in(currency).price_including_vat_for(opts)` |
 | `has_default_price?` | `prices.base_prices.exists?(currency: currency)` |
 
-`Variant#compare_at_price` (which resolves against `cost_currency`) and the `price_in` / `amount_in` / `compare_at_amount_in` readers are unchanged.
+The `compare_at_price` **reader** (which resolves against `cost_currency`) is unchanged on both `Variant` and `Product` — only the writer is gone. So are the `price_in` / `amount_in` / `compare_at_amount_in` readers.
 
 Also note:
 

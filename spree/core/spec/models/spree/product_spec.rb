@@ -190,6 +190,13 @@ describe Spree::Product, type: :model do
       end
     end
 
+    describe '#compare_at_price' do
+      it 'delegates to the default variant' do
+        product.default_variant.set_price(product.default_variant.cost_currency, 10, 20)
+        expect(product.compare_at_price).to eq(20)
+      end
+    end
+
     describe '#price_in' do
       # Regression test for #1173
       it 'strips non-price characters' do

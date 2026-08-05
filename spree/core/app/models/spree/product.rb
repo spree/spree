@@ -338,7 +338,9 @@ module Spree
       delegate :"#{method_name}=", to: :find_or_build_default_variant
     end
 
-    delegate :track_inventory?, :images, to: :default_variant, allow_nil: true
+    # Read-only delegations: these have no product-level writer. Prices are
+    # written per currency through the default variant's +set_price+.
+    delegate :compare_at_price, :track_inventory?, :images, to: :default_variant, allow_nil: true
 
     state_machine :status, initial: :draft do
       event :activate do
