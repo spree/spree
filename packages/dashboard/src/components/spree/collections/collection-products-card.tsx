@@ -151,8 +151,13 @@ export function CollectionProductsCard({
   async function handleBulkRemove() {
     const ids = [...selected]
     if (ids.length === 0) return
-    await removeProducts.mutateAsync(ids)
-    setSelected(new Set())
+    try {
+      await removeProducts.mutateAsync(ids)
+      setSelected(new Set())
+    } catch {
+      // The mutation toasts its own error; swallow the rethrow so the click
+      // handler doesn't reject, and keep the selection so the user can retry.
+    }
   }
 
   const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id))

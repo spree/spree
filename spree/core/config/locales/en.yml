@@ -740,8 +740,6 @@ en:
     close: Close
     closed: Closed
     code: Code
-    color_code: Color Code
-    colors: Colors
     collection_rule_types:
       available_on:
         description: Products published within the last N days
@@ -752,6 +750,8 @@ en:
       tag:
         description: Products carrying a matching tag
         name: Tag
+    color_code: Color Code
+    colors: Colors
     company: Company
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price

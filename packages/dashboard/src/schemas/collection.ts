@@ -46,6 +46,18 @@ const DEFAULT_RULE_TYPE = 'tag'
  * rules with their STI class name but accepts (and advertises) the shorthand,
  * so normalize on the way in.
  */
+/**
+ * Narrows a server-supplied match policy to one this build knows. The rule
+ * registry is server-driven, so an unrecognized policy falls back to the
+ * default rather than rendering an empty Select and failing validation on save.
+ */
+function knownMatchPolicy(value: string | null): CollectionRuleFormValues['match_policy'] {
+  const policies: readonly string[] = COLLECTION_RULE_MATCH_POLICIES
+  return policies.includes(value ?? '')
+    ? (value as CollectionRuleFormValues['match_policy'])
+    : 'is_equal_to'
+}
+
 function ruleTypeShorthand(type: string) {
   const leaf = type.split('::').pop() ?? type
   return leaf.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase()
@@ -144,7 +156,7 @@ export function collectionToForm(collection: Collection): CollectionFormValues {
         id: rule.id,
         type: ruleTypeShorthand(rule.type),
         value: rule.value ?? '',
-        match_policy: rule.match_policy as CollectionRuleFormValues['match_policy'],
+        match_policy: knownMatchPolicy(rule.match_policy),
       })) ?? [],
     custom_fields:
       collection.custom_fields?.map((cf) => ({

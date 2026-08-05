@@ -181,9 +181,9 @@ module Spree
               :promotionable, :digital,
               tags: [],
               category_ids: [],
-              # Collection membership. Assigning an automatic collection here
-              # persists, but its next rule regeneration overwrites the member
-              # list — so the dashboard only offers manual collections.
+              # Manual collection membership. Automatic collections are dropped
+              # by the model setter (their members come from their rules), the
+              # same way the bulk endpoints scope to `.manual`.
               collection_ids: [],
               metadata: {},
               prices: [:amount, :compare_at_amount, :currency],

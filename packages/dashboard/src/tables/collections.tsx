@@ -46,7 +46,13 @@ defineTable<Collection>('collections', {
       key: 'sort_order',
       label: i18n.t('admin.collections.columns.sort_order'),
       default: true,
-      render: (collection) => i18n.t(sortOrderLabelKey(collection.sort_order ?? 'manual')),
+      render: (collection) => {
+        // `sort_order` is an open string on the wire, so a value this build
+        // doesn't know would otherwise render its raw translation key.
+        const value = collection.sort_order ?? 'manual'
+        const key = sortOrderLabelKey(value)
+        return i18n.exists(key) ? i18n.t(key) : value
+      },
     },
     {
       key: 'products_count',

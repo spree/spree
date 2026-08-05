@@ -49,6 +49,13 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
     value: ruleType.type,
     label: typeLabel('collection_rule_types', ruleType.type, ruleType.label),
   }))
+
+  // Seed a new row from the registry so the Select always shows a real option,
+  // even on a deployment that doesn't register the schema's default kind.
+  const newRule = () => ({
+    ...blankCollectionRule(),
+    ...(typeOptions[0] ? { type: typeOptions[0].value } : {}),
+  })
   const matchPolicyOptions = COLLECTION_RULE_MATCH_POLICIES.map((value) => ({
     value,
     label: t(`admin.collections.rule_match_policies.${value}`),
@@ -77,7 +84,7 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
                   field.onChange(checked)
                   // Give an automatic collection something to fill in rather
                   // than an empty rule list that matches nothing.
-                  if (checked && rules.fields.length === 0) rules.append(blankCollectionRule())
+                  if (checked && rules.fields.length === 0) rules.append(newRule())
                 }}
               />
             )}
@@ -210,7 +217,7 @@ export function CollectionRulesCard({ form }: { form: UseFormReturn<CollectionFo
                 variant="outline"
                 size="sm"
                 className="self-start"
-                onClick={() => rules.append(blankCollectionRule())}
+                onClick={() => rules.append(newRule())}
               >
                 <PlusIcon className="size-4" />
                 {t('admin.collections.rules.add')}
