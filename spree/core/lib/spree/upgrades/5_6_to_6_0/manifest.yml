@@ -92,7 +92,9 @@ steps:
       become digital + the Digital provider) and copies the type onto existing
       fulfillments, assigns the Digital product type to products in
       digital-only shipping categories, and converts display_on into the
-      storefront_visible boolean. Idempotent.
+      storefront_visible boolean. Idempotent — the visibility conversion
+      clears display_on as it goes, so re-running never overwrites a
+      visibility change made in the admin after the upgrade.
 
       BREAKING — product CSV: the 'shipping_category' column is gone from both
       import and export, replaced by 'product_type'. Update saved import
