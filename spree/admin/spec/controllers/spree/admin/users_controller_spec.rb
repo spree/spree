@@ -41,6 +41,22 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
       expect(assigns(:collection).to_a).to eq([user_2])
     end
 
+    describe 'sorting' do
+      it 'sorts by the first name' do
+        get :index, params: { q: { s: 'first_name asc' } }
+
+        expect(response).to have_http_status(:ok)
+        expect(assigns(:collection).to_a).to eq([user_1, user_3, user_2])
+      end
+
+      it 'sorts by the last name' do
+        get :index, params: { q: { s: 'last_name asc' } }
+
+        expect(response).to have_http_status(:ok)
+        expect(assigns(:collection).to_a).to eq([user_3, user_1, user_2])
+      end
+    end
+
     describe 'search' do
       subject { get :index, params: { q: { search: search_param } } }
 
