@@ -1,3 +1,19 @@
+## 2026-08-05: v5 developer docs are frozen until the 6.0 release; 6.0 docs land under docs/v6
+
+The pages under `docs/developer/` document the stable 5.x line and stay
+untouched until 6.0 ships — even where they describe subsystems 6.0 has
+already replaced on main (the polymorphic `Adjustment` model, the
+`AdjustmentSource` concern, and similar). Any plan whose remaining work
+includes "update developer docs" fulfills it by writing a **v6 variant**
+under `docs/v6/developer/` (registered in `docs/docs.json` under the
+v6.x version), never by editing the v5 page. First applications: the
+typed-adjustments docs (`v6/developer/core-concepts/taxes-discounts-fees.mdx`
+already exists; promotions core-concepts and the custom-promotion how-to
+get v6 variants). Also renamed `6.0-split-adjustments.md` →
+`6.0-6.1-split-adjustments.md`: the implementation shipped for 6.0 and
+the remainder (legacy-table drop, promotion stacking) is 6.1 work, so
+the plan spans two releases like the other `X.Y-X.Z` plans.
+
 ## 2026-08-04: Commerce-behavior globals move to Store preferences; app configuration stays global
 
 A full usage audit of `Spree::Config` (multi-agent trace with adversarial
@@ -623,7 +639,7 @@ discount engine is being rewritten there anyway), retargeted to 6.1 the same
 day: stacking is **purely additive** — no schema change, no breaking window
 needed — and 6.0 is already the heaviest release in Spree's history. Deferring
 costs nothing structurally because the expensive prerequisites ship in 6.0
-regardless (`6.0-split-adjustments.md`): typed Discount tables that permit
+regardless (`6.0-6.1-split-adjustments.md`): typed Discount tables that permit
 multiple rows per adjustable, per-adjustable clamping, and
 prorate-over-the-remaining-discounted-base (needed for order-level
 distribution either way), with winner-only selection isolated in a single

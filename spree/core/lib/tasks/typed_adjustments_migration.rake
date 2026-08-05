@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # 5.6 → 6.0: convert legacy polymorphic spree_adjustments rows into the typed
-# TaxLine / Discount / Fee tables (docs/plans/6.0-split-adjustments.md, Wave 7).
+# TaxLine / Discount / Fee tables (docs/plans/6.0-6.1-split-adjustments.md, Wave 7).
 #
 # Contract:
 #   - Legacy rows are READ ONLY — spree_adjustments stays in place through 6.0
