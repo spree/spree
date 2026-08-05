@@ -66,3 +66,4 @@ packages/cli/templates/dashboard-starter
 .claude/worktrees
 *.tsbuildinfo
 .claude/scheduled_tasks.lock
+CLAUDE.local.md

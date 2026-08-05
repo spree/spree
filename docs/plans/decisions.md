@@ -343,6 +343,118 @@ only). The method itself can stay; nothing in core invokes it any more.
 
 Plan: `6.0-service-workflows.md` decision 13.
 
+## 2026-08-05: Tax provider contract carries treatments, identities and dates — refined after the #14056 community review
+
+The provider contract in `6.0-tax-provider.md` was reworked after two
+outside implementers (an EU VAT decision engine, a US rates API) reviewed
+the RFC on spree/spree#14056. Every concern was verified before adoption:
+against primary legal sources (the European e-invoicing standard, the VAT
+Directive, the EU verification service's own documentation — citations now
+live in the plan's **Regulatory background** section), the major provider
+APIs (Avalara, Stripe Tax, TaxJar, Vertex) and platform practice (Medusa,
+Saleor, commercetools, Shopify, Magento, Odoo). Decisions:
+
+**TaxLine carries a taxability reason, not just an amount.** A zero from
+reverse charge, an export and an exemption are different facts landing in
+different boxes of a tax return, and European e-invoices must state the
+category for every line. New `taxability_reason` column with an additive
+vocabulary (Stripe's enum pruned, plus `intra_community_supply` and
+`export` — Stripe's own values cannot tell cross-border goods from
+services, or an export from a domestic zero rate), plus a jurisdiction
+snapshot (`country_iso`/`state_code` — one-stop-shop returns are filed per
+destination country). The invoice category and exemption reason codes are
+deliberately NOT stored — they derive at invoicing time from the reason
+plus order facts (the Odoo pattern; no surveyed platform stores them).
+Core ships the reason→code lookup maps as code. Write contract: a row for
+every item the provider formed a treatment for, including zero amounts.
+
+**Buyer tax identity is a separate model, `Spree::TaxIdentifier`.**
+Stripe's shape (typed kinds, multiple per customer, verification state)
+with Magento's evidence discipline (VIES consultation number, validated
+country/value — VIES has no historical lookup, so entry-time evidence is
+the only proof that will ever exist). Dual-FK owner: customer (durable —
+sole proprietors will never have a Company), cart (override), order
+(completion snapshot, frozen via `readonly?`, `source`-stamped, no
+correction path); company/company_location FKs arrive with the B2B plan.
+Zero footprint on consumer orders. Live-read designs were rejected on
+documented drift pain (Shopify B2B, Odoo).
+
+**Validating a tax ID belongs to the identifier, not to a tax provider.**
+The registry that can answer is determined by the number's *kind* (EU VAT
+→ the EU service, UK → HMRC, and so on), never by a market — a customer
+saves a tax ID on a profile before any order exists, so a provider-hung
+`validate_tax_id` would force an arbitrary choice (a US sales-tax engine
+asked to check an EU number, or an EU market on Internal declining while
+a connected Avalara sits unused). The seam is therefore
+`Spree.tax_id_validators`, a registry keyed by kind and empty by default —
+core ships no registry client for any jurisdiction — so two extensions
+covering different kinds coexist where a single swappable service would
+let the second loaded silently disable the first. Validation splits the way Stripe's does: **format
+synchronously, the registry asynchronously, and the tax treatment depends
+on neither.** Format is a hard validation on save — whitespace/case
+normalization, presence, then the registered validator's class-level
+`valid_format?` (the `SearchProvider::Base.indexing_required?` shape) — so a
+typo is a field error and never persists. Core asserts no format rules of its
+own: a charset or length range spanning every tax regime would be an untestable
+guess whose failure mode is rejecting a real business customer. The registry check runs after
+commit on the address-geocoding precedent (`after_commit` enqueues, the job
+does the I/O, `update_columns` writes back, a non-answering registry is
+reported and recorded as `unavailable`), never during estimate, which reads
+the stored result. Reverse charge follows the number's format, not its
+verdict — Stripe applies it "regardless of its validity" — so a sale may
+complete with `pending` and still be treated correctly; the verdict is
+evidence, not arithmetic. **Magento's model was rejected:** synchronous
+registry validation gating the treatment through customer groups, whose own
+ecosystem documents the cost (a third-party module exists solely to add
+caching and offline fallback for the unstable registry, and per-transaction
+validation cannot run at all under external checkouts). A tax provider gem
+may register itself as the validator for kinds its service can check.
+
+**Exemption is a typed estimate input plus the TaxLine outcome — the
+boolean `exempt?(order)` is removed** (wrong arity: per jurisdiction, per
+item, and the reason is the audit artifact; no provider API exposes an
+exempt? query). `Spree::TaxExemption` value objects (mirroring the future
+certificate row, with typed per-item overrides) are assembled by the
+`tax_resolve_exemptions_service` dependency (default `[]`) — a seam because
+the real implementation, certificate filtering by active status and
+jurisdiction, is the B2B integration point. The identifier chain gets no
+seam: it is a fallback `||` and lives as `#resolved_tax_identifier` on the
+`Spree::Purchase::Taxation` concern beside `tax_address`. No exemption flags
+on customer, order or line items. The `set_tax_line_context` hook is NOT
+the channel for typed inputs — it narrows to untyped provider extras
+before the 6.0 hook freeze. `TaxExemptionCertificate` stays in the tax plan
+as its last phase, gated on Company existing, and gains `reason_code` — the
+field providers actually consume as an entity use code, missing from the
+original sketch.
+
+**Dates are explicit.** `estimate`/`refund` take the rates-effective tax
+date (unanimous provider practice, and legally the rate in force when the
+sale happened is the one that applies), kept distinct from the
+document/posting date. Refund becomes
+`refund(order, return_items, tax_date:)` — supports both recompute-at-
+original-date (Avalara/Vertex) and derive-from-recorded (Stripe/TaxJar);
+the Internal provider only ever derives (TaxRate rows are unversioned).
+The "credit note corrects the original filing period" claim from the
+thread was checked and not adopted: a return is reported in the period its
+credit note is issued, and only correcting a genuine error reopens the
+original period.
+
+**Capability honesty.** Providers declare unsupported domains; Internal
+declares no destination-based US local tax (state-level rates cannot
+express county/city/district stacking — silently under-collecting lands
+on the merchant), no OSS threshold tracking, no reverse charge (unvalidated
+ID → normal VAT, the protected default), no ID validation. `estimate`
+A runtime indeterminacy channel on `estimate` was
+considered and deferred: both cases the review raised (one-stop-shop
+thresholds, Internal against US local rates) are answered by the capability
+declarations at configuration time, nothing in core would consume a
+per-calculation verdict, and unlike a hook key a return value can be added
+later without breaking providers. `estimate` keeps its current signature —
+the rows it writes are its output. Per-Market provider selection is
+reworded to selection-not-construction: the market names the provider,
+providers stay stateless and argless (the shipped `Base` shape), the
+shipped global config class stays as the fallback.
+
 ## 2026-08-04: Commerce-behavior globals move to Store preferences; app configuration stays global
 
 A full usage audit of `Spree::Config` (multi-agent trace with adversarial
