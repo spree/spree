@@ -1,9 +1,9 @@
-import type { Customer } from '@spree/admin-sdk'
 import { ResourceMultiAutocomplete } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { customerAutocompleteProps } from '../../../hooks/use-customers'
+import type { RuleEmbedRecord } from '../../../schemas/price-list'
 import { EditorShell } from '../promotion-editors/editor-shell'
 import type { PriceRuleEditorContext } from './types'
 
@@ -20,7 +20,10 @@ export function CustomerRuleEditor({ draft, onSave, onClose }: PriceRuleEditorCo
   const [customerIds, setCustomerIds] = useState<string[]>(() =>
     (draft.customers ?? []).map((c) => c.id),
   )
-  const [customers, setCustomers] = useState<Customer[]>(draft.customers ?? [])
+  // RuleEmbedRecord, not Customer — the draft's embed fields are opaque to
+  // keep the SDK object graph out of the form type (see RuleEmbedRecord).
+  // The autocomplete still resolves full Customer records into this state.
+  const [customers, setCustomers] = useState<RuleEmbedRecord[]>(draft.customers ?? [])
 
   function handleSave() {
     onSave({

@@ -79,8 +79,9 @@ module Spree
     has_many :fulfillments, through: :orders, class_name: 'Spree::Fulfillment'
     has_many :shipments, through: :orders, class_name: 'Spree::Fulfillment', source: :fulfillments, deprecated: true
     has_many :payments, through: :orders, class_name: 'Spree::Payment'
-    has_many :return_authorizations, through: :orders, class_name: 'Spree::ReturnAuthorization'
-    # has_many :reimbursements, through: :orders, class_name: 'Spree::Reimbursement' FIXME: we should fetch this via Customer Return
+    has_many :returns, class_name: 'Spree::Return', inverse_of: :store
+    has_many :exchanges, class_name: 'Spree::Exchange', inverse_of: :store
+    has_many :claims, class_name: 'Spree::Claim', inverse_of: :store
 
     # :nullify (not :destroy) — clearing the collection must not cascade into
     # Promotion#not_used? / payment records; orphaned rows are detached, not deleted.
@@ -95,7 +96,6 @@ module Spree
     has_many :fulfillment_items, through: :variants, class_name: 'Spree::FulfillmentItem'
     has_many :inventory_units, through: :variants, class_name: 'Spree::FulfillmentItem', source: :fulfillment_items, deprecated: true
     has_many :option_value_variants, through: :variants, class_name: 'Spree::OptionValueVariant'
-    has_many :customer_returns, class_name: 'Spree::CustomerReturn', inverse_of: :store
 
     has_many :store_credits, class_name: 'Spree::StoreCredit'
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'

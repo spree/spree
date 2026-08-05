@@ -2,9 +2,8 @@ module Spree
   # A customer reports a problem — damaged, missing or wrong item — and the
   # merchant makes it right without necessarily asking for the goods back.
   #
-  # This has no equivalent in the legacy chain: merchants either created a
-  # manual order or faked it through a return authorization received
-  # immediately. Transitions are workflows
+  # New in 6.0 — there was previously no way to model "send a replacement
+  # without asking for the original back". Transitions are workflows
   # (docs/plans/6.0-returns-exchanges-claims.md).
   class Claim < Spree.base_class
     has_prefix_id :claim
@@ -13,6 +12,7 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
     include Spree::HasStatus
+    include Spree::Metafields
     include Spree::Metadata
 
     publishes_lifecycle_events
@@ -31,7 +31,7 @@ module Spree
 
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :claims
-    belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', optional: true
+    belongs_to :reason, class_name: 'Spree::ClaimReason', optional: true, inverse_of: :claims
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
 
     has_many :claim_line_items, class_name: 'Spree::ClaimLineItem',

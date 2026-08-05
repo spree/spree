@@ -8,12 +8,10 @@ module Spree
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
       belongs_to :order, class_name: 'Spree::Order'
       belongs_to :fulfillment, class_name: 'Spree::Fulfillment', touch: true, optional: true
-      has_many :return_items, class_name: 'Spree::ReturnItem', inverse_of: :fulfillment_item
-      has_many :return_authorizations, class_name: 'Spree::ReturnAuthorization', through: :return_items
+      has_many :return_line_items, class_name: 'Spree::ReturnLineItem', inverse_of: :fulfillment_item
+      has_many :returns, class_name: 'Spree::Return', through: :return_line_items
       belongs_to :line_item, class_name: 'Spree::LineItem'
     end
-
-    belongs_to :original_return_item, class_name: 'Spree::ReturnItem'
 
     scope :backordered, -> { where status: 'backordered' }
     scope :on_hand, -> { where status: 'on_hand' }
@@ -95,10 +93,6 @@ module Spree
       split_inventory!(1)
     end
 
-    def current_or_new_return_item
-      Spree::ReturnItem.from_inventory_unit(self)
-    end
-
     def additional_tax_total
       line_item.additional_tax_total * percentage_of_line_item
     end
@@ -108,17 +102,7 @@ module Spree
     end
 
     def required_quantity
-      return @required_quantity unless @required_quantity.nil?
-
-      @required_quantity = if exchanged_unit?
-                             original_return_item.return_quantity
-                           else
-                             line_item.quantity
-                           end
-    end
-
-    def exchanged_unit?
-      original_return_item_id?
+      @required_quantity ||= line_item.quantity
     end
 
     def charged_amount
@@ -138,10 +122,6 @@ module Spree
     def fulfill_order
       reload
       order.fulfill!
-    end
-
-    def current_return_item
-      return_items.not_cancelled.first
     end
   end
 end

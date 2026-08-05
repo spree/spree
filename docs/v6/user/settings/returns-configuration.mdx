@@ -1,0 +1,67 @@
+---
+title: "Returns Configuration"
+description: "Learn how to define return reasons, claim reasons, and refund reasons."
+---
+
+Returns management is a crucial part of ecommerce operations. It builds customer trust, streamlines support workflows, and helps maintain clarity around inventory and financial adjustments.
+
+Not all ecommerce platforms offer built-in tools for managing returns, but fortunately Spree does — no extra plugins or custom development needed.
+
+Before you start processing returns, it is worth setting up the three lists of reasons Spree uses. Each answers a different question, which is why they are kept apart: mixing them together makes your reporting far less useful.
+
+## Return Reasons
+
+Return reasons record why a customer is sending something back. They apply to both returns and exchanges.
+
+Typical examples are "Wrong size", "No longer needed", "Different from description", and "Arrived too late".
+
+Each reason has two fields:
+
+- **Name**: the reason itself, as your team and customers will see it.
+- **Status**: whether the reason is available for use. Setting a reason to inactive hides it from new returns without deleting the history of returns that already used it.
+
+## Claim Reasons
+
+Claim reasons record what went wrong with a delivery — problems on your end rather than a customer changing their mind.
+
+Typical examples are "Arrived damaged", "Never arrived", "Wrong item sent", and "Missing item from order".
+
+They have the same two fields as return reasons: a name and a status.
+
+<Note>
+  Claims also have a separate **type** field — damaged, missing, wrong item, or other — which is a broader grouping than the reason. Your developers can add more types if the standard four do not fit your business.
+</Note>
+
+## Refund Reasons
+
+Refund reasons explain why money was sent back. They are used internally for tracking, reporting, and communication across teams, and they apply to any refund, whether or not a return was involved.
+
+Typical examples are "Return processing" and "Order cancelled".
+
+Refund reasons have an extra setting:
+
+- **Mutable**: when set to no, the reason is locked and cannot be edited or deleted. Spree uses this to protect the built-in reasons it relies on, such as "Return processing", so that an accidental edit cannot break your returns flow.
+
+## Managing reasons
+
+All three lists live together under **Settings → Returns**. Spree seeds a starting set when your store is created, so returns, claims, and refunds work out of the box, and you can add, rename, deactivate, or delete entries from there.
+
+Each reason has two fields: its **name**, and whether it is **available on new records**. Turning that switch off retires a reason — it stops appearing when staff open a new return, claim, or refund, while every record that already used it keeps its explanation.
+
+A reason that is already attached to a record cannot be deleted, for exactly that reason. Deactivate it instead.
+
+<Note>
+  Some reasons are marked **Built in**. Spree looks these up by name — "Return processing" is attached to every refund issued through a return — so they cannot be renamed or deleted. You can still deactivate them.
+</Note>
+
+## What about return windows and restocking fees?
+
+Spree does not ship with a fixed return window, restocking fee, or final-sale setting. Return policy varies enormously between merchants, and often has to differ by country for legal reasons — the European Union, for example, requires a minimum withdrawal period that many other markets do not.
+
+Rather than guessing, Spree gives your developers a place to attach your own policy when a return is created. A common arrangement enforces the policy for customers opening returns themselves, while letting your staff override it, so a supervisor can accept a late return for a loyal customer without needing any code changes.
+
+## Processing Returns
+
+Once your reasons are set up, you are ready to handle returns, exchanges, and claims.
+
+To learn how, see [Returns → Returns Processing](https://spreecommerce.org/docs/user/returns/returns-processing).

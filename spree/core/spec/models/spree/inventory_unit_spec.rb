@@ -148,41 +148,6 @@ describe Spree::InventoryUnit, type: :model do
     end
   end
 
-  describe '#current_or_new_return_item' do
-    subject { inventory_unit.current_or_new_return_item }
-
-    before { allow(inventory_unit).to receive_messages(pre_tax_amount: 100.0) }
-
-    context 'associated with a return item' do
-      let(:return_item) { create(:return_item) }
-      let(:inventory_unit) { return_item.inventory_unit }
-
-      it 'returns a persisted return item' do
-        expect(subject).to be_persisted
-      end
-
-      it "returns it's associated return_item" do
-        expect(subject).to eq return_item
-      end
-
-      it 'connects return_authorizations' do
-        expect(inventory_unit.return_authorizations).to eq [return_item.return_authorization]
-      end
-    end
-
-    context 'no associated return item' do
-      let(:inventory_unit) { create(:inventory_unit) }
-
-      it 'returns a new return item' do
-        expect(subject).not_to be_persisted
-      end
-
-      it 'associates itself to the new return_item' do
-        expect(subject.inventory_unit).to eq inventory_unit
-      end
-    end
-  end
-
   describe '#additional_tax_total' do
     subject do
       build(:inventory_unit, line_item: line_item)

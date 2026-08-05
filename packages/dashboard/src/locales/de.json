@@ -2813,6 +2813,41 @@
         "prefix_required": "Präfix ist für Stapel mit mehreren Codes erforderlich"
       }
     },
+    "reasons": {
+      "title": "Rücksendungen",
+      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen und Rückerstattungen wählt.",
+      "add_cta": "Grund hinzufügen",
+      "add_sheet_title": "Grund hinzufügen",
+      "edit_sheet_title": "Grund bearbeiten",
+      "create_description": "Gründe erscheinen als Auswahl, wenn Mitarbeitende eine Rücksendung, Reklamation oder Rückerstattung anlegen.",
+      "name_placeholder": "z. B. Falsche Größe",
+      "active_label": "Für neue Vorgänge verfügbar",
+      "empty": "Noch keine Gründe",
+      "inactive": "Inaktiv",
+      "locked": "Vorgegeben",
+      "locked_help": "Spree sucht diesen Grund über den Namen. Er kann weder umbenannt noch gelöscht werden.",
+      "delete_confirm": {
+        "title": "Grund löschen?",
+        "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn."
+      },
+      "messages": {
+        "created": "Grund erstellt",
+        "updated": "Grund aktualisiert",
+        "deleted": "Grund gelöscht"
+      },
+      "return": {
+        "title": "Rücksendegründe",
+        "help": "Warum ein Kunde etwas zurückschickt. Gilt für Rücksendungen und Umtausch."
+      },
+      "claim": {
+        "title": "Reklamationsgründe",
+        "help": "Was bei der Lieferung schiefging – beschädigt, fehlend oder falscher Artikel."
+      },
+      "refund": {
+        "title": "Rückerstattungsgründe",
+        "help": "Warum Geld zurückging. Für Auswertungen über alle Rückerstattungen."
+      }
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -2846,6 +2881,7 @@
         "payment_methods": "Zahlungsmethoden",
         "product_types": "Produkttypen",
         "profile": "Profil",
+        "reasons": "Rücksendungen",
         "staff": "Mitarbeiter",
         "stock_locations": "Lagerstandorte",
         "store": "Shop",

@@ -2813,6 +2813,41 @@
         "prefix_required": "多代码批次需要前缀"
       }
     },
+    "reasons": {
+      "title": "退货",
+      "description": "团队处理退货、理赔和退款时可选择的原因列表。",
+      "add_cta": "添加原因",
+      "add_sheet_title": "添加原因",
+      "edit_sheet_title": "编辑原因",
+      "create_description": "员工创建退货、理赔或退款时，可从下拉列表中选择原因。",
+      "name_placeholder": "例如：尺码不合适",
+      "active_label": "可用于新记录",
+      "empty": "暂无原因",
+      "inactive": "已停用",
+      "locked": "内置",
+      "locked_help": "Spree 按名称查找此原因，因此无法重命名或删除。",
+      "delete_confirm": {
+        "title": "删除原因？",
+        "message": "将不再提供 {{name}}。已使用它的记录保持不变。"
+      },
+      "messages": {
+        "created": "原因已创建",
+        "updated": "原因已更新",
+        "deleted": "原因已删除"
+      },
+      "return": {
+        "title": "退货原因",
+        "help": "客户退回商品的原因。退货和换货共用。"
+      },
+      "claim": {
+        "title": "理赔原因",
+        "help": "配送出现的问题——商品损坏、缺失或发错。"
+      },
+      "refund": {
+        "title": "退款原因",
+        "help": "退款的原因。用于所有退款的统计分析。"
+      }
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -2846,6 +2881,7 @@
         "payment_methods": "支付方式",
         "product_types": "商品类型",
         "profile": "个人资料",
+        "reasons": "退货",
         "staff": "员工",
         "stock_locations": "库存地点",
         "store": "店铺",

@@ -6,7 +6,7 @@ module Spree
       class RefundSerializer < BaseSerializer
         typelize amount: [:string, nullable: true], transaction_id: [:string, nullable: true],
                  payment_id: [:string, nullable: true], refund_reason_id: [:string, nullable: true],
-                 reimbursement_id: [:string, nullable: true]
+                 originator_id: [:string, nullable: true], originator_type: [:string, nullable: true]
 
         attributes :transaction_id
 
@@ -22,8 +22,14 @@ module Spree
           refund.reason&.prefixed_id
         end
 
-        attribute :reimbursement_id do |refund|
-          refund.reimbursement&.prefixed_id
+        # What triggered this refund — a Return, Exchange or Claim; nil for a
+        # manual refund.
+        attribute :originator_id do |refund|
+          refund.originator&.prefixed_id
+        end
+
+        attribute :originator_type do |refund|
+          refund.originator_type
         end
       end
     end

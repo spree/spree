@@ -44,8 +44,6 @@ export type {
   Promotion,
   Refund,
   Return,
-  ReturnAuthorization,
-  ReturnItem,
   ReturnLineItem,
   State,
   StockLocation,

@@ -1635,8 +1635,8 @@
               {
                 "group": "Returns",
                 "pages": [
-                  "user/settings/returns-configuration",
-                  "user/returns/returns-processing"
+                  "v6/user/settings/returns-configuration",
+                  "v6/user/returns/returns-processing"
                 ]
               },
               {

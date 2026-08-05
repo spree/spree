@@ -1,9 +1,9 @@
-import type { Channel } from '@spree/admin-sdk'
 import { ResourceMultiAutocomplete } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { channelAutocompleteProps, useChannels } from '../../../hooks/use-channels'
+import type { RuleEmbedRecord } from '../../../schemas/price-list'
 import { EditorShell } from '../promotion-editors/editor-shell'
 import type { PriceRuleEditorContext } from './types'
 
@@ -25,7 +25,7 @@ export function ChannelRuleEditor({ draft, onSave, onClose }: PriceRuleEditorCon
   const [channelIds, setChannelIds] = useState<string[]>(() =>
     (draft.channels ?? []).map((c) => c.id),
   )
-  const [channels, setChannels] = useState<Channel[]>(draft.channels ?? [])
+  const [channels, setChannels] = useState<RuleEmbedRecord[]>(draft.channels ?? [])
 
   function handleSave() {
     onSave({

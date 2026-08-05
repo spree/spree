@@ -1,0 +1,19 @@
+<%= Spree.t('return_mailer.refunded_email.dear_customer', name: name_for(@order)) %>
+
+<%= Spree.t('return_mailer.refunded_email.instructions', number: @order.number) %>
+
+============================================================
+<%= Spree.t('return_mailer.refunded_email.refund_summary') %>
+============================================================
+<%= Spree.t('return_mailer.refunded_email.total_refunded', total: @return.display_refunded_total) %>
+
+============================================================
+<%= Spree.t('return_mailer.refunded_email.returned_items') %>
+============================================================
+<% @return.return_line_items.each do |line| %>
+  <%= line.variant.sku %> <%= line.variant.product.name %> <%= line.variant.options_text %>
+<% end %>
+============================================================
+
+<%= Spree.t('return_mailer.refunded_email.thanks') %>
+<%= Spree.t('return_mailer.refunded_email.store_team', store_name: current_store.name) %>

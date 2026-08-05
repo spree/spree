@@ -10,10 +10,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    with_options inverse_of: :refunds do
-      belongs_to :payment
-      belongs_to :reimbursement, optional: true
-    end
+    belongs_to :payment, inverse_of: :refunds
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
     belongs_to :refunder, class_name: Spree.admin_user_class.to_s, optional: true
     # What triggered this refund — a Spree::Return today, later an Exchange
@@ -34,8 +31,6 @@ module Spree
     after_create :perform!
     after_create :create_log_entry
 
-    scope :non_reimbursement, -> { where(reimbursement_id: nil) }
-
     attr_reader :response
 
     delegate :order, :currency, to: :payment
@@ -49,23 +44,17 @@ module Spree
     end
     alias display_amount money
 
-    class << self
-      def total_amount_reimbursed_for(reimbursement)
-        reimbursement.refunds.to_a.sum(&:amount)
-      end
-    end
-
     def description
       payment.payment_method.name
     end
 
-    # return items for the refund
+    # The lines this refund paid for, when it came from a return.
     #
-    # @return [Array<Spree::ReturnItem>]
-    def return_items
-      return [] unless reimbursement.present?
+    # @return [Array<Spree::ReturnLineItem>]
+    def return_line_items
+      return [] unless originator.is_a?(Spree::Return)
 
-      reimbursement.customer_return&.return_items || reimbursement.return_items
+      originator.return_line_items.to_a
     end
 
     # Returns true if the refund is editable.

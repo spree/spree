@@ -1,6 +1,6 @@
 module Spree
   # The trigger side of derive-then-persist statuses: any payment, refund,
-  # fulfillment or return-item change recomputes the owning order's
+  # fulfillment or return change recomputes the owning order's
   # payment_status / fulfillment_status through the single writer
   # (Spree::Orders::UpdateStatuses). Synchronous so API responses right
   # after a capture/void/fulfill already carry the fresh status. Cart-owned
@@ -10,7 +10,7 @@ module Spree
                   'payment.completed', 'payment.voided',
                   'refund.created', 'refund.updated',
                   'fulfillment.created', 'fulfillment.updated', 'fulfillment.deleted',
-                  'return_item.received', 'return_item.canceled', 'return_item.given',
+                  'return.received', 'return.refunded', 'return.canceled',
                   async: false
 
     def handle(event)
@@ -27,7 +27,7 @@ module Spree
         'payment' => Spree::Payment,
         'refund' => Spree::Refund,
         'fulfillment' => Spree::Fulfillment,
-        'return_item' => Spree::ReturnItem
+        'return' => Spree::Return
       }[event.resource_type]
       return if resource_class.nil?
 
@@ -38,7 +38,7 @@ module Spree
       return if record.nil?
 
       owner = record.try(:owner) || record.try(:order) ||
-              record.try(:payment)&.try(:owner) || record.try(:return_authorization)&.order
+              record.try(:payment)&.try(:owner)
       owner.is_a?(Spree::Order) ? owner : nil
     end
   end

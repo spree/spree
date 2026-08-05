@@ -10,7 +10,7 @@ module Spree
       # @param order [Spree::Order]
       # @param items [Array<Hash>] `[{ fulfillment_item:, new_variant:, quantity: }]`
       # @param stock_location [Spree::StockLocation, nil]
-      # @param reason [Spree::ReturnAuthorizationReason, nil]
+      # @param reason [Spree::ReturnReason, nil]
       # @param memo [String, nil]
       # @param created_by [Object, nil] nil for customer self-service
       def perform(order:, items:, stock_location: nil, reason: nil, memo: nil, created_by: nil)

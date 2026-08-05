@@ -22,7 +22,7 @@ module Spree
         Spree.subscribers.concat [
           Spree::OrderEmailSubscriber,
           Spree::FulfillmentEmailSubscriber,
-          Spree::ReimbursementEmailSubscriber,
+          Spree::ReturnEmailSubscriber,
           Spree::NewsletterSubscriberEmailSubscriber,
           Spree::CustomerEmailSubscriber
         ]

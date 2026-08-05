@@ -19,70 +19,46 @@ RSpec.describe Spree::Seeds::ReturnsEnvironment do
     end
   end
 
-  describe 'ReturnAuthorizationReason' do
-    let(:expected_reasons) do
-      [
-        'Better price available',
-        'Missed estimated delivery date',
-        'Missing parts or accessories',
-        'Damaged/Defective',
-        'Different from what was ordered',
-        'Different from description',
-        'No longer needed/wanted',
-        'Accidental order',
-        'Unauthorized purchase'
-      ]
-    end
+  describe 'ReturnReason' do
+    let(:expected_reasons) { described_class::RETURN_REASONS }
 
-    it 'creates all ReturnAuthorizationReasons' do
-      expect { subject }.to change(Spree::ReturnAuthorizationReason, :count).by(expected_reasons.count)
+    it 'creates all ReturnReasons' do
+      expect { subject }.to change(Spree::ReturnReason, :count).by(expected_reasons.count)
 
       expected_reasons.each do |reason|
-        expect(Spree::ReturnAuthorizationReason.find_by(name: reason)).to be_present
+        expect(Spree::ReturnReason.find_by(name: reason)).to be_present
       end
     end
 
-    context 'when ReturnAuthorizationReasons already exist' do
+    context 'when ReturnReasons already exist' do
       before do
-        expected_reasons.each do |reason|
-          Spree::ReturnAuthorizationReason.create!(name: reason)
-        end
+        expected_reasons.each { |reason| Spree::ReturnReason.create!(name: reason) }
       end
 
-      it "doesn't create new ReturnAuthorizationReasons" do
-        expect { subject }.not_to change(Spree::ReturnAuthorizationReason, :count)
+      it "doesn't create new ReturnReasons" do
+        expect { subject }.not_to change(Spree::ReturnReason, :count)
       end
     end
   end
 
-  describe 'ReimbursementType' do
-    let(:expected_types) do
-      [
-        { name: 'Store Credit', type: 'Spree::ReimbursementType::StoreCredit' },
-        { name: 'Exchange', type: 'Spree::ReimbursementType::Exchange' },
-        { name: 'Original payment', type: 'Spree::ReimbursementType::OriginalPayment' }
-      ]
-    end
+  describe 'ClaimReason' do
+    let(:expected_reasons) { described_class::CLAIM_REASONS }
 
-    it 'creates all ReimbursementTypes' do
-      expect { subject }.to change(Spree::ReimbursementType, :count).by(expected_types.count)
+    it 'creates all ClaimReasons' do
+      expect { subject }.to change(Spree::ClaimReason, :count).by(expected_reasons.count)
 
-      expected_types.each do |type_attrs|
-        reimbursement_type = Spree::ReimbursementType.find_by(name: type_attrs[:name])
-        expect(reimbursement_type).to be_present
-        expect(reimbursement_type.type).to eq(type_attrs[:type])
+      expected_reasons.each do |reason|
+        expect(Spree::ClaimReason.find_by(name: reason)).to be_present
       end
     end
 
-    context 'when ReimbursementTypes already exist' do
+    context 'when ClaimReasons already exist' do
       before do
-        expected_types.each do |type_attrs|
-          Spree::ReimbursementType.create!(name: type_attrs[:name], type: type_attrs[:type])
-        end
+        expected_reasons.each { |reason| Spree::ClaimReason.create!(name: reason) }
       end
 
-      it "doesn't create new ReimbursementTypes" do
-        expect { subject }.not_to change(Spree::ReimbursementType, :count)
+      it "doesn't create new ClaimReasons" do
+        expect { subject }.not_to change(Spree::ClaimReason, :count)
       end
     end
   end

@@ -68,10 +68,14 @@ export function useExchangeActions(orderId: string) {
     orderId,
     'order-exchanges',
     'exchanges',
-    (params: {
+    ({
+      reasonId,
+      ...params
+    }: {
       items: Array<{ fulfillment_item_id: string; new_variant_id: string; quantity: number }>
       memo?: string
-    }) => adminClient.orders.exchanges.create(orderId, params),
+      reasonId?: string
+    }) => adminClient.orders.exchanges.create(orderId, { ...params, reason_id: reasonId }),
   )
 
   const approve = usePostSaleMutation(
@@ -133,7 +137,11 @@ export function useClaimActions(orderId: string) {
       }>
       claim_type: string
       memo?: string
-    }) => adminClient.orders.claims.create(orderId, params),
+      reasonId?: string
+    }) => {
+      const { reasonId, ...rest } = params
+      return adminClient.orders.claims.create(orderId, { ...rest, reason_id: reasonId })
+    },
   )
 
   const approve = usePostSaleMutation(orderId, 'order-claims', 'claims', (claimId: string) =>

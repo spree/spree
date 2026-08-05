@@ -141,7 +141,7 @@ module Spree
             def reason_for_create
               return nil if create_params[:reason_id].blank?
 
-              Spree::ReturnAuthorizationReason.find_by_prefix_id!(create_params[:reason_id])
+              Spree::ClaimReason.find_by_prefix_id!(create_params[:reason_id])
             end
           end
         end

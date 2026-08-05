@@ -13,7 +13,7 @@ module Spree
       # @param items [Array<Hash>] `[{ line_item:, quantity:, description:,
       #   send_replacement:, replacement_variant:, refund_amount: }]`
       # @param claim_type [String] one of Spree::Claim.claim_types
-      # @param reason [Spree::ReturnAuthorizationReason, nil]
+      # @param reason [Spree::ClaimReason, nil]
       # @param memo [String, nil]
       # @param created_by [Object, nil] nil for customer self-service
       def perform(order:, items:, claim_type: 'other', reason: nil, memo: nil, created_by: nil)

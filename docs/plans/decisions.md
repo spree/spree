@@ -1,3 +1,127 @@
+## 2026-08-05: Dashboard form values must not embed SDK entity types
+
+The returns rework regenerated the admin SDK types, and the new `Order`
+embeds (`returns`/`exchanges`/`claims`, each carrying line items →
+variants and refunds → payments) enlarged Order's transitive type
+closure. That pushed TypeScript 6 over its relation-cache ceiling
+("RangeError: Map maximum size exceeded") — killing `tsc -b` for the
+whole dashboard — because the price-list form's rule drafts embedded
+`Customer[]` (→ `orders` → the enlarged graph) inside the react-hook-form
+values, and RHF's `Path<T>` enumerates every nested key of the form type.
+The old types were merely under the ceiling; the API embeds themselves
+are legitimate surface and were not changed.
+
+The rule this settles: **form-values types carry opaque display records,
+never SDK entity types.** `RuleEmbedRecord` (`{ id, name?, email?,
+code? }`) in `schemas/price-list.ts` is the pattern — full SDK records
+still flow in at runtime (covariant assignment), but the form type stays
+shallow, so path expansion is O(form fields) instead of O(SDK graph).
+`PromotionRuleFormDraft` embeds seven SDK types the same way and is one
+graph-growth away from the same failure — apply the pattern there when
+touched. Diagnostic note: `@typescript/native-preview` (tsgo) has no V8
+Map ceiling, so it *reports* the offending comparison with a line number
+instead of crashing — use it to locate this class of failure; keep tsc
+as the build compiler.
+
+
+## 2026-08-05: Reason CRUD ships admin-only; immutability moves onto the model
+
+Dropping the legacy Rails admin left return, claim and refund reasons with
+no editing surface at all, and the dashboard's create dialogs sent no
+`reason_id` as a result — every return, claim and refund was created
+reasonless, which quietly wasted the point of splitting return vocabulary
+from claim vocabulary. Closed with three `ResourceController` subclasses
+(`settings` scope), one combined **Settings → Reasons** page, and a reason
+picker on the three create dialogs.
+
+Two decisions worth recording:
+
+- **`mutable` is not a writable attribute.** Core seeds reasons it looks
+  up by name — `RefundReason.return_processing_reason` is attached to
+  every refund a return issues — so letting a client flip the flag would
+  hand it the ability to rename or delete the record the lookup depends
+  on. `permitted_params` covers `name` and `active` only.
+- **The immutability guard belongs on `Spree::NamedType`, not the ability
+  layer.** The existing `cannot [:edit, :update], …, mutable: false` rule
+  only fires for JWT users; secret API keys authorize by scope and never
+  consult CanCanCan, so that path could rename a locked reason freely.
+  The concern now carries `can_be_deleted?`, a rename validation and a
+  destroy guard, keyed off `has_attribute?(:mutable)` so NamedTypes
+  without the column are unaffected. This is the RBAC Axis A/B split
+  applied as intended: capabilities in permission sets, record-state
+  rules on the model.
+
+Reasons have no Store API surface — they are back-office vocabulary — so
+the serializers are admin-only and excluded from Store SDK generation.
+
+
+## 2026-08-05: Legacy returns chain removed — tables kept, three capability replacements
+
+The drop landed. Four decisions came out of doing it, each because
+deleting the legacy code would otherwise have quietly removed working
+behaviour:
+
+- **The legacy tables stay through 6.0.** Only the Ruby classes are
+  deleted. `spree_return_authorizations`, `spree_return_items`,
+  `spree_customer_returns`, `spree_reimbursements`,
+  `spree_reimbursement_types` and `spree_reimbursement_credits` remain as
+  the data migration's source and its rollback path; they drop in 6.1
+  once installs have run `spree:upgrade:migrate_returns`. A migration
+  that deletes its own source in the same release has no way back.
+- **`Order#outstanding_balance` drops the reimbursement term rather than
+  replacing it.** `payment_total` is already computed net of refunds by
+  `Carts::RecalculateTotals`, so returns and claims need no term of their
+  own — the legacy reimbursement payout was the only money movement that
+  sat outside that sum. A fully refunded order therefore shows its
+  balance as outstanding again, which is what the pre-existing
+  "refund without a reimbursement" test already asserted.
+- **`Return#refunded_total` counts store credit as well as refunds.**
+  Store credit is a separate ledger and never creates a `Spree::Refund`
+  row, so summing refunds alone reported zero for a store-credit refund —
+  wrong on the record, in the API, and in the customer's email.
+- **The reimbursement email is replaced, not dropped.**
+  `Spree::ReturnMailer#refunded_email` fires on `return.refunded`. The
+  legacy template's expedited-exchange section has no counterpart in the
+  new model and was not carried over.
+
+Also renamed `StoreCreditCategory.default_reimbursement_category` to
+`.default_refund_category` (deprecated alias kept one release), and
+repointed `OrderStatusSubscriber` from the `return_item.*` events to
+`return.received/refunded/canceled`.
+
+
+## 2026-08-05: Returns/exchanges/claims — legacy drop scope, permanent *LineItem names, reason renames
+
+The new returns system (`6.0-returns-exchanges-claims.md`) shipped to
+6-0-dev: three entities, fifteen workflows, admin + store v3 APIs,
+dashboard pages. Reviewing what remains settled four things:
+
+- **`ReturnLineItem` / `ExchangeLineItem` / `ClaimLineItem` are the
+  permanent names.** Chosen during implementation because legacy
+  `Spree::ReturnItem` was still in service, they stay after the drop:
+  they mirror `Spree::LineItem`, and renaming to the plan's shorter
+  `*Item` would cost a table rename plus serializer/SDK/dashboard churn
+  for nothing.
+- **Reasons:** `ReturnAuthorizationReason` → `ReturnReason` (model +
+  table rename, deprecated alias one release) plus a new `ClaimReason`
+  model — claim vocabulary ("arrived damaged", "never arrived") is a
+  different list from return vocabulary ("wrong size", "changed mind").
+  `RefundReason` stays.
+- **`spree:upgrade:migrate_returns` ships together with the legacy drop**,
+  on the same branch, reading legacy tables via lightweight anonymous AR
+  classes (the `migrate_users_to_customers` pattern) so it works after
+  the models are deleted. Riding Wave 7 would have blocked the drop.
+  Resumption needs no cursor, job or checkpoint table: the legacy
+  `number` carries onto the new record and is uniquely indexed there, so
+  the remaining work is a query rather than tracked state — which cannot
+  drift out of sync with what was actually written.
+- The drop scope: legacy models + STI reimbursement types + eligibility
+  validators + v3 legacy serializers + seeds + permission-set grants +
+  legacy tables (except `spree_return_items`, kept under its original
+  name for historical reference until 6.1). `Spree::Metafields` lands on
+  the three entities on the same branch.
+
+
 ## 2026-08-04: Commerce-behavior globals move to Store preferences; app configuration stays global
 
 A full usage audit of `Spree::Config` (multi-agent trace with adversarial

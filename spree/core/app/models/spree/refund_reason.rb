@@ -4,6 +4,8 @@ module Spree
 
     include Spree::NamedType
 
+    self.whitelisted_ransackable_attributes = %w[name active mutable]
+
     RETURN_PROCESSING_REASON = 'Return processing'
     ORDER_CANCELED_REASON = 'Order Canceled'
     SHIPMENT_CANCELED_REASON = 'Shipment Canceled'

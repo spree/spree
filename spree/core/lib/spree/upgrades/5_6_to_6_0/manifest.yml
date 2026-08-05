@@ -121,6 +121,37 @@ steps:
       migration. spree_adjustments stays intact as the rollback source.
       Idempotent — orders that already have typed rows are skipped.
 
+  - id: migrate_returns
+    name: "Move returns onto the new returns models"
+    task: "spree:upgrade:migrate_returns"
+    notes: |
+      Converts each ReturnAuthorization into a Spree::Return, or a
+      Spree::Exchange when any of its return items named an exchange variant,
+      copying line items with their received quantities and refundable
+      amounts. Refunds produced through a reimbursement are re-pointed at the
+      new record via the polymorphic originator, so the money history stays
+      visible in the admin.
+
+      Run AFTER migrate_adjustments_to_typed_rows, which freezes orders
+      carrying ReturnAuthorization adjustments for exactly this step.
+
+      Reads the legacy tables by name (the legacy models are gone in 6.0) and
+      writes history without validation, so rows referencing deleted variants
+      or stock locations still copy. The legacy tables stay in place as a
+      safety net and are dropped in 6.1.
+
+      Resumable by construction: the legacy number is copied onto the new
+      record and uniquely indexed there, so the task scopes itself to the
+      authorizations whose number isn't present yet. An interrupted run picks
+      up where it stopped and re-running when nothing is left is a no-op —
+      no cursor to track, no state to reset. Tune the load size with
+      BATCH_SIZE (default 500).
+
+      A row that can't be migrated is reported and skipped, not fatal — one
+      unconvertible authorization must not block a release. The task therefore
+      exits 0 even when rows failed, so read the printed list: every failure is
+      retried by simply running the task again.
+
   - id: backfill_delivery_and_stock_store_ids
     name: "Bind delivery methods and stock locations to the default store"
     task: "spree:backfill_delivery_and_stock_store_ids"

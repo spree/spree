@@ -16,7 +16,7 @@ module Spree
       # @param items [Array<Hash>] `[{ fulfillment_item:, quantity: }]`
       # @param stock_location [Spree::StockLocation, nil] where the goods come
       #   back to; defaults to the location that shipped them
-      # @param reason [Spree::ReturnAuthorizationReason, nil]
+      # @param reason [Spree::ReturnReason, nil]
       # @param memo [String, nil] customer- or staff-supplied note
       # @param created_by [Object, nil] the admin opening it; nil for
       #   customer self-service
