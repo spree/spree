@@ -51,7 +51,9 @@ describe '6.0 data migration tasks' do
       digital_method = create(:shipping_method)
       digital_method.calculator.destroy!
       Spree::Calculator::Shipping::DigitalDelivery.create!(calculable: digital_method)
-      digital_method.update_columns(fulfillment_type: nil, fulfillment_provider: nil, storefront_visible: nil, display_on: 'back_end')
+      # A 5.x row as it arrives post-migration: storefront_visible at the
+      # column default, display_on still holding the real value.
+      digital_method.update_columns(fulfillment_type: nil, fulfillment_provider: nil, storefront_visible: true, display_on: 'back_end')
 
       run_task('spree:migrate_shipping_to_delivery')
 

@@ -137,7 +137,7 @@ module Spree
           next unless fulfillment.persisted?
           next if fulfillment.fulfilled?
 
-          fulfillment.refresh_rates(Spree::DeliveryMethod::DISPLAY_ON_BACK_END)
+          fulfillment.refresh_rates(Spree::DeliveryMethod::BACKOFFICE)
           fulfillment.update_amounts
         end
       end

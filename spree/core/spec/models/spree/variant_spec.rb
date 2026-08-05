@@ -1553,4 +1553,24 @@ describe Spree::Variant, type: :model do
       expect(v.instance_variable_get(:@pending_options)).to eq([{ name: 'Color', value: 'Blue' }])
     end
   end
+
+  describe 'legacy shipping category bridge' do
+    let(:shipping_category) { create(:shipping_category, name: 'Legacy') }
+    let(:variant) { create(:variant) }
+
+    before do
+      variant.product.update_column(:shipping_category_id, shipping_category.id)
+      variant.product.reload
+    end
+
+    it 'still reads through to the product, with a deprecation warning' do
+      expect(Spree::Deprecation).to receive(:warn).at_least(:once)
+      expect(variant.shipping_category).to eq shipping_category
+    end
+
+    it 'still reads the id through to the product, with a deprecation warning' do
+      expect(Spree::Deprecation).to receive(:warn).at_least(:once)
+      expect(variant.shipping_category_id).to eq shipping_category.id
+    end
+  end
 end

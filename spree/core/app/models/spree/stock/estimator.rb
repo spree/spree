@@ -10,43 +10,53 @@ module Spree
         @currency = order.currency
       end
 
-      def shipping_rates(package, shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
-        rates = calculate_shipping_rates(package, shipping_method_filter)
-        choose_default_shipping_rate(rates)
-        sort_shipping_rates(rates)
+      # @param package [Spree::Stock::Package]
+      # @param audience [Symbol] {Spree::DeliveryMethod::STOREFRONT} (default)
+      #   or {Spree::DeliveryMethod::BACKOFFICE}
+      # @return [Array<Spree::DeliveryRate>]
+      def delivery_rates(package, audience = DeliveryMethod::STOREFRONT)
+        rates = calculate_delivery_rates(package, audience)
+        choose_default_delivery_rate(rates)
+        sort_delivery_rates(rates)
+      end
+
+      # @deprecated Use {#delivery_rates}; removed in 6.1.
+      def shipping_rates(package, audience = DeliveryMethod::STOREFRONT)
+        Spree::Deprecation.warn('Spree::Stock::Estimator#shipping_rates is deprecated and will be removed in Spree 6.1. Use #delivery_rates instead.')
+        delivery_rates(package, audience)
       end
 
       private
 
-      def choose_default_shipping_rate(shipping_rates)
-        unless shipping_rates.empty?
-          shipping_rates.min_by(&:cost).selected = true
+      def choose_default_delivery_rate(delivery_rates)
+        unless delivery_rates.empty?
+          delivery_rates.min_by(&:cost).selected = true
         end
       end
 
-      def sort_shipping_rates(shipping_rates)
-        shipping_rates.sort_by!(&:cost)
+      def sort_delivery_rates(delivery_rates)
+        delivery_rates.sort_by!(&:cost)
       end
 
-      def calculate_shipping_rates(package, ui_filter)
-        shipping_methods(package, ui_filter).map do |shipping_method|
-          cost = shipping_method.calculator.compute(package)
+      def calculate_delivery_rates(package, audience)
+        delivery_methods(package, audience).map do |delivery_method|
+          cost = delivery_method.calculator.compute(package)
 
           next unless cost
 
-          shipping_method.shipping_rates.new(
-            cost: gross_amount(cost, taxation_options_for(shipping_method)),
-            tax_rate: first_tax_rate_for(shipping_method.tax_category)
+          delivery_method.delivery_rates.new(
+            cost: gross_amount(cost, taxation_options_for(delivery_method)),
+            tax_rate: first_tax_rate_for(delivery_method.tax_category)
           )
         end.compact
       end
 
-      # Override this if you need the prices for shipping methods to be handled just like the
+      # Override this if you need the prices for delivery methods to be handled just like the
       # prices for products in terms of included tax manipulation.
       #
-      def taxation_options_for(shipping_method)
+      def taxation_options_for(delivery_method)
         {
-          tax_category: shipping_method.tax_category,
+          tax_category: delivery_method.tax_category,
           tax_zone: @order.tax_zone
         }
       end
@@ -58,22 +68,30 @@ module Spree
           potential_rates_for_zone(@order.tax_zone).first
       end
 
-      def shipping_methods(package, display_filter)
+      # The eligibility seam: every rate consumer (checkout, routing, cart
+      # estimates) filters through here.
+      def delivery_methods(package, audience)
         methods = package.eligible_delivery_methods
         # Storeless orders exist only in specs; real orders always carry one.
         methods = methods.merge(order.store.delivery_methods) if order.store
 
-        methods.select do |ship_method|
-          calculator = ship_method.calculator
+        methods.select do |delivery_method|
+          calculator = delivery_method.calculator
 
-          ship_method.available_to_display?(display_filter) &&
-            ship_method.include?(order.ship_address) &&
-            ship_method.serves_location?(package.stock_location) &&
-            ship_method.eligible_for_package?(package) &&
+          delivery_method.available_to?(audience) &&
+            delivery_method.include?(order.ship_address) &&
+            delivery_method.serves_location?(package.stock_location) &&
+            delivery_method.eligible_for_package?(package) &&
             calculator.available?(package) &&
             (calculator.preferences[:currency].blank? ||
              calculator.preferences[:currency] == currency)
         end
+      end
+
+      # @deprecated Use {#delivery_methods}; removed in 6.1.
+      def shipping_methods(package, audience)
+        Spree::Deprecation.warn('Spree::Stock::Estimator#shipping_methods is deprecated and will be removed in Spree 6.1. Use #delivery_methods instead.')
+        delivery_methods(package, audience)
       end
     end
   end

@@ -7,7 +7,6 @@ module Spree
     include Spree::CalculatedAdjustments
     include Spree::Metafields
     include Spree::Metadata
-    include Spree::DisplayOn
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
@@ -17,14 +16,18 @@ module Spree
 
     MEMOIZED_METHODS = %w[display_estimated_price]
 
-    # Used for #refresh_rates
+    # Audience a rate refresh is quoting for: the storefront sees only
+    # customer-facing methods, the backoffice sees every method.
+    STOREFRONT = :storefront
+    BACKOFFICE = :backoffice
+
+    # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.1.
     DISPLAY_ON_FRONT_END = 1
+    # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.1.
     DISPLAY_ON_BACK_END = 2
 
     default_scope { where(deleted_at: nil) }
 
-    has_many :shipping_method_categories, foreign_key: :shipping_method_id, dependent: :destroy
-    has_many :shipping_categories, through: :shipping_method_categories
     has_many :delivery_rates, class_name: 'Spree::DeliveryRate', inverse_of: :delivery_method
     has_many :fulfillments, through: :delivery_rates, class_name: 'Spree::Fulfillment'
 
@@ -40,7 +43,7 @@ module Spree
 
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory', optional: true
 
-    attribute :display_on, :string, default: 'both'
+    attribute :storefront_visible, :boolean, default: true
     attribute :fulfillment_type, :string, default: 'shipping'
 
     # Every method rates through a calculator; pickup/digital methods default
@@ -50,12 +53,27 @@ module Spree
 
     scope :by_fulfillment_type, ->(type) { where(fulfillment_type: type) }
 
+    # Customer-facing methods vs backoffice-only ones (manual courier entry,
+    # internal freight). The backoffice always sees every method.
+    scope :storefront_visible, -> { where(storefront_visible: true) }
+    scope :admin_only, -> { where(storefront_visible: false) }
+
     # Legacy association names — removed in 6.1.
     has_many :shipping_rates, class_name: 'Spree::DeliveryRate', foreign_key: :delivery_method_id, deprecated: true
     has_many :shipments, through: :delivery_rates, source: :fulfillment, deprecated: true
     has_many :zones, through: :delivery_method_zones, source: :delivery_zone, deprecated: true
 
-    validates :name, :display_on, :fulfillment_type, presence: true
+    # ShippingCategory eligibility is superseded by fulfillment types
+    # (ProductType#fulfillment_types); both tables drop in 6.1.
+    has_many :shipping_method_categories, foreign_key: :shipping_method_id, dependent: :destroy, deprecated: true
+    has_many :shipping_categories, through: :shipping_method_categories, deprecated: true
+
+    # Real column, so no ransacker is needed — only the allowlist entry the
+    # Spree::DisplayOn concern used to contribute.
+    self.whitelisted_ransackable_attributes = %w[storefront_visible fulfillment_type]
+
+    validates :name, :fulfillment_type, presence: true
+    validates :storefront_visible, inclusion: { in: [true, false] }
     # Strict vocabulary: an unregistered type silently matches no product
     # (empty intersection — no error, just missing rates), so typos must
     # fail loudly. Validated on change only: rows migrated with tokens not
@@ -172,9 +190,26 @@ module Spree
         select { |c| c.to_s.constantize < Spree::ShippingCalculator }
     end
 
+    # Whether this method may be quoted for the given audience. The
+    # backoffice sees every method; the storefront only customer-facing ones.
+    # An unrecognized audience raises rather than silently quoting storefront
+    # rates — a typo must not narrow the offer set unnoticed.
+    #
+    # @param audience [Symbol] {STOREFRONT} or {BACKOFFICE}
+    # @return [Boolean]
+    def available_to?(audience)
+      case audience
+      when BACKOFFICE then true
+      when STOREFRONT then storefront_visible?
+      else raise ArgumentError, "unknown delivery audience #{audience.inspect} (expected #{STOREFRONT.inspect} or #{BACKOFFICE.inspect})"
+      end
+    end
+
+    # @deprecated Use {#available_to?} with {STOREFRONT}/{BACKOFFICE};
+    #   removed in 6.1.
     def available_to_display?(display_filter)
-      (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
-        (backend? && display_filter == DISPLAY_ON_BACK_END)
+      Spree::Deprecation.warn('Spree::DeliveryMethod#available_to_display? is deprecated and will be removed in Spree 6.1. Use #available_to?(Spree::DeliveryMethod::STOREFRONT / BACKOFFICE) instead.')
+      available_to?(display_filter == DISPLAY_ON_BACK_END ? BACKOFFICE : STOREFRONT)
     end
 
     def delivery_range
@@ -216,15 +251,16 @@ module Spree
       fulfillment_type == 'digital'
     end
 
-    private
-
-    # Some shipping methods are only meant to be set via backend
-    def frontend?
-      display_on.in?(['both', 'front_end'])
+    # @deprecated Use {#storefront_visible}; removed in 6.1.
+    def display_on
+      Spree::Deprecation.warn('Spree::DeliveryMethod#display_on is deprecated and will be removed in Spree 6.1. Use #storefront_visible instead.')
+      storefront_visible? ? 'both' : 'back_end'
     end
 
-    def backend?
-      display_on.in?(['both', 'back_end'])
+    # @deprecated Use {#storefront_visible=}; removed in 6.1.
+    def display_on=(value)
+      Spree::Deprecation.warn('Spree::DeliveryMethod#display_on= is deprecated and will be removed in Spree 6.1. Use #storefront_visible= instead.')
+      self.storefront_visible = value.to_s != 'back_end'
     end
   end
 end

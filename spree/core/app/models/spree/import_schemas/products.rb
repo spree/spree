@@ -27,7 +27,6 @@ module Spree
         { name: 'inventory_backorderable', label: 'Inventory Backorderable' },
         { name: 'tax_category', label: 'Tax Category' },
         { name: 'product_type', label: 'Product Type' },
-        { name: 'shipping_category', label: 'Shipping Category (deprecated — use Product Type)' },
         { name: 'image1_src', label: 'Image 1 URL' },
         { name: 'image2_src', label: 'Image 2 URL' },
         { name: 'image3_src', label: 'Image 3 URL' },

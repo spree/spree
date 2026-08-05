@@ -98,9 +98,9 @@ module Spree
         subject.add build_inventory_unit, :backordered
 
         shipping_method = build(:shipping_method)
-        subject.shipping_rates = [Spree::DeliveryRate.new(delivery_method: shipping_method, cost: 10.00, selected: true)]
+        subject.delivery_rates = [Spree::DeliveryRate.new(delivery_method: shipping_method, cost: 10.00, selected: true)]
 
-        shipment = subject.to_shipment
+        shipment = subject.to_fulfillment
         expect(shipment.stock_location).to eq subject.stock_location
         expect(shipment.fulfillment_items.size).to eq 3
 

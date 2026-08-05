@@ -482,7 +482,7 @@ describe Spree::Shipment, type: :model do
     end
 
     context 'refresh_rates' do
-      let(:mock_estimator) { double('estimator', shipping_rates: shipping_rates) }
+      let(:mock_estimator) { double('estimator', delivery_rates: shipping_rates) }
 
       before { allow(shipment).to receive(:can_get_rates?).and_return(true) }
 

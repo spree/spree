@@ -31,7 +31,7 @@ RSpec.describe Spree::ReportLineItems::SalesTotal do
 
   describe '#total' do
     it 'returns money object with final amount plus shipping' do
-      total = Spree::Money.new(line_item.final_amount + line_item.shipping_cost, currency: line_item.currency)
+      total = Spree::Money.new(line_item.final_amount + line_item.delivery_cost, currency: line_item.currency)
       expect(sales_total.total).to eq(total)
     end
   end
@@ -50,7 +50,7 @@ RSpec.describe Spree::ReportLineItems::SalesTotal do
 
   describe '#shipment_total' do
     it 'returns display shipping cost' do
-      expect(sales_total.shipment_total).to eq(line_item.display_shipping_cost)
+      expect(sales_total.shipment_total).to eq(line_item.display_delivery_cost)
     end
   end
 

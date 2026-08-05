@@ -141,7 +141,7 @@ module Spree
     extend DisplayMoney
     money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price, :discounted_price,
                   :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total,
-                  :pre_tax_amount, :shipping_cost, :tax_total, :compare_at_amount
+                  :pre_tax_amount, :delivery_cost, :tax_total, :compare_at_amount
 
     alias single_money display_price
     alias single_display_amount display_price
@@ -247,31 +247,35 @@ module Spree
       fulfillment_items.all?(&:shipped?)
     end
 
-    # Returns the shipping cost for the line item
+    # This line item's share of its fulfillments' delivery cost, split
+    # proportionally by unit count.
     #
     # @return [BigDecimal]
-    def shipping_cost
-      fulfillments.sum do |shipment|
-        # Skip cancelled shipments
-        return BigDecimal('0') if shipment.canceled?
+    def delivery_cost
+      fulfillments.sum do |fulfillment|
+        return BigDecimal('0') if fulfillment.canceled?
+        return BigDecimal('0') if fulfillment.cost.zero?
 
-        # Skip shipments with no cost/zero cost
-        return BigDecimal('0') if shipment.cost.zero?
-
-        # Get total inventory units in this shipment
-        total_units = shipment.fulfillment_items
-
-        # Calculate proportional shipping cost
+        total_units = fulfillment.fulfillment_items
         return BigDecimal('0') if total_units.empty?
 
-        # Get all inventory units in this shipment for this line item
-        line_item_units = shipment.fulfillment_items.find_all { |unit| unit.line_item_id == id }.count
-
-        # Calculate proportional shipping cost
+        line_item_units = fulfillment.fulfillment_items.find_all { |unit| unit.line_item_id == id }.count
         return BigDecimal('0') if line_item_units.zero?
 
-        shipment.cost * (line_item_units.to_d / total_units.count)
+        fulfillment.cost * (line_item_units.to_d / total_units.count)
       end
+    end
+
+    # @deprecated Use {#delivery_cost}; removed in 6.1.
+    def shipping_cost
+      Spree::Deprecation.warn('Spree::LineItem#shipping_cost is deprecated and will be removed in Spree 6.1. Use #delivery_cost instead.')
+      delivery_cost
+    end
+
+    # @deprecated Use {#display_delivery_cost}; removed in 6.1.
+    def display_shipping_cost
+      Spree::Deprecation.warn('Spree::LineItem#display_shipping_cost is deprecated and will be removed in Spree 6.1. Use #display_delivery_cost instead.')
+      display_delivery_cost
     end
 
     def options=(options = {})

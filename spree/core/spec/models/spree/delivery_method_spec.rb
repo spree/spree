@@ -5,33 +5,25 @@ end
 
 describe Spree::DeliveryMethod, type: :model do
   let(:delivery_method) { create(:delivery_method) }
-  let(:frontend_delivery_method) { create :delivery_method, display_on: 'front_end' }
-  let(:backend_delivery_method) { create :delivery_method, display_on: 'back_end' }
-  let(:front_and_back_end_delivery_method) { create :delivery_method, display_on: 'both' }
+  let(:visible_delivery_method) { create :delivery_method, storefront_visible: true }
+  let(:admin_only_delivery_method) { create :delivery_method, storefront_visible: false }
 
   it_behaves_like 'metadata'
 
   describe 'scopes' do
-    let!(:delivery_methods) { create_list(:delivery_method, 2, display_on: 'both') }
-    let!(:frontend_delivery_methods) { create_list(:delivery_method, 2, display_on: 'front_end') }
-    let!(:backend_delivery_methods) { create_list(:delivery_method, 2, display_on: 'back_end') }
+    let!(:visible_delivery_methods) { create_list(:delivery_method, 2, storefront_visible: true) }
+    let!(:admin_only_delivery_methods) { create_list(:delivery_method, 2, storefront_visible: false) }
 
-    describe '.available' do
-      subject { described_class.available }
+    describe '.storefront_visible' do
+      subject { described_class.storefront_visible }
 
-      it { is_expected.to match_array(delivery_methods) }
+      it { is_expected.to match_array(visible_delivery_methods) }
     end
 
-    describe '.available_on_front_end' do
-      subject { described_class.available_on_front_end }
+    describe '.admin_only' do
+      subject { described_class.admin_only }
 
-      it { is_expected.to match_array(delivery_methods + frontend_delivery_methods) }
-    end
-
-    describe '.available_on_back_end' do
-      subject { described_class.available_on_back_end }
-
-      it { is_expected.to match_array(delivery_methods + backend_delivery_methods) }
+      it { is_expected.to match_array(admin_only_delivery_methods) }
     end
   end
 
@@ -164,12 +156,12 @@ describe Spree::DeliveryMethod, type: :model do
       expect(method.save).to be true
     end
 
-    it 'defaults display_on and rejects explicit blank' do
-      expect(subject.display_on).to eq('both')
+    it 'defaults to storefront visible and rejects a blank value' do
+      expect(subject.storefront_visible).to be true
 
-      subject.display_on = nil
+      subject.storefront_visible = nil
       subject.valid?
-      expect(subject.errors.messages[:display_on].size).not_to be_zero
+      expect(subject.errors.messages[:storefront_visible].size).not_to be_zero
     end
 
     context 'shipping method does not have a tracking URL mask on file' do
@@ -193,30 +185,43 @@ describe Spree::DeliveryMethod, type: :model do
     end
   end
 
-  describe '#available_to_display?' do
-    context 'when available on frontend' do
-      it { expect(frontend_delivery_method.available_to_display?(described_class::DISPLAY_ON_FRONT_END)).to be true }
-      it { expect(backend_delivery_method.available_to_display?(described_class::DISPLAY_ON_FRONT_END)).to be false }
-      it { expect(front_and_back_end_delivery_method.available_to_display?(described_class::DISPLAY_ON_FRONT_END)).to be true }
+  describe '#available_to?' do
+    context 'for the storefront' do
+      it { expect(visible_delivery_method.available_to?(described_class::STOREFRONT)).to be true }
+      it { expect(admin_only_delivery_method.available_to?(described_class::STOREFRONT)).to be false }
     end
 
-    context 'when available on backend' do
-      it { expect(frontend_delivery_method.available_to_display?(described_class::DISPLAY_ON_BACK_END)).to be false }
-      it { expect(backend_delivery_method.available_to_display?(described_class::DISPLAY_ON_BACK_END)).to be true }
-      it { expect(front_and_back_end_delivery_method.available_to_display?(described_class::DISPLAY_ON_BACK_END)).to be true }
+    context 'for the backoffice' do
+      it 'sees every method, visible or not' do
+        expect(visible_delivery_method.available_to?(described_class::BACKOFFICE)).to be true
+        expect(admin_only_delivery_method.available_to?(described_class::BACKOFFICE)).to be true
+      end
+    end
+
+    it 'raises on an unknown audience rather than silently narrowing the offer' do
+      expect { delivery_method.available_to?(:back_office) }.to raise_error(ArgumentError, /unknown delivery audience/)
     end
   end
 
-  describe '#frontend?' do
-    it { expect(frontend_delivery_method.send(:frontend?)).to be true }
-    it { expect(backend_delivery_method.send(:frontend?)).to be false }
-    it { expect(front_and_back_end_delivery_method.send(:frontend?)).to be true }
-  end
+  describe 'legacy display_on bridge' do
+    before { allow(Spree::Deprecation).to receive(:warn) }
 
-  describe '#backend?' do
-    it { expect(frontend_delivery_method.send(:backend?)).to be false }
-    it { expect(backend_delivery_method.send(:backend?)).to be true }
-    it { expect(front_and_back_end_delivery_method.send(:backend?)).to be true }
+    it 'bridges the old tri-state API onto the boolean' do
+      expect(visible_delivery_method.display_on).to eq('both')
+      expect(admin_only_delivery_method.display_on).to eq('back_end')
+
+      method = build(:delivery_method, display_on: 'back_end')
+      expect(method.storefront_visible).to be false
+
+      # front_end-only had no real workflow and folds into visible.
+      method.display_on = 'front_end'
+      expect(method.storefront_visible).to be true
+    end
+
+    it 'accepts the legacy integer filters in #available_to_display?' do
+      expect(admin_only_delivery_method.available_to_display?(described_class::DISPLAY_ON_FRONT_END)).to be false
+      expect(admin_only_delivery_method.available_to_display?(described_class::DISPLAY_ON_BACK_END)).to be true
+    end
   end
 
   describe '#delivery_range' do

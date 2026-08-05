@@ -62,7 +62,7 @@ FactoryBot.define do
         line_items_count       { 1 }
         without_line_items     { false }
         shipment_cost          { 100 }
-        shipping_method_filter { Spree::ShippingMethod::DISPLAY_ON_FRONT_END }
+        shipping_method_filter { Spree::DeliveryMethod::STOREFRONT }
         variants               { [] }
       end
 

@@ -94,6 +94,13 @@ steps:
       digital-only shipping categories, and converts display_on into the
       storefront_visible boolean. Idempotent.
 
+      BREAKING — product CSV: the 'shipping_category' column is gone from both
+      import and export, replaced by 'product_type'. Update saved import
+      templates and any integration reading the export. A stale file is
+      ignored rather than rejected, so it imports without delivery
+      eligibility. This task assigns types to existing digital products;
+      new imports must carry 'product_type' themselves.
+
   - id: migrate_zones_to_delivery_zones
     name: "Convert delivery zones"
     task: "spree:migrate_zones_to_delivery_zones"

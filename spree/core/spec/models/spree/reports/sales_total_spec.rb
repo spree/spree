@@ -97,7 +97,7 @@ RSpec.describe Spree::Reports::SalesTotal do
       expect(return_line_item.tax_total).to eq(line_item.display_tax_total)
       expect(return_line_item.promo_total).to eq(line_item.display_promo_total)
       expect(return_line_item.pre_tax_amount).to eq(line_item.display_pre_tax_amount)
-      expect(return_line_item.shipment_total).to eq(line_item.display_shipping_cost)
+      expect(return_line_item.shipment_total).to eq(line_item.display_delivery_cost)
     end
   end
 end

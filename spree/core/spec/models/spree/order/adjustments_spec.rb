@@ -58,7 +58,7 @@ describe Spree::Order do
       order.line_items << line_item
       order.ship_address = address
       order.rebuild_fulfillments!
-      order.send :ensure_available_shipping_rates
+      order.send :ensure_available_delivery_rates
       order.set_fulfillments_cost
       order.create_shipment_tax_charge!
     end

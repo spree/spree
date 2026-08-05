@@ -25,15 +25,15 @@ module Spree
 
         shared_examples_for 'shipping rate matches' do
           it 'returns shipping rates' do
-            shipping_rates = subject.shipping_rates(package)
-            expect(shipping_rates.first.cost).to eq 4.00
+            delivery_rates = subject.delivery_rates(package)
+            expect(delivery_rates.first.cost).to eq 4.00
           end
         end
 
         shared_examples_for "shipping rate doesn't match" do
           it 'does not return shipping rates' do
-            shipping_rates = subject.shipping_rates(package)
-            expect(shipping_rates).to eq([])
+            delivery_rates = subject.delivery_rates(package)
+            expect(delivery_rates).to eq([])
           end
         end
 
@@ -110,9 +110,9 @@ module Spree
           allow(shipping_methods[1]).to receive_message_chain(:calculator, :compute).and_return(3.00)
           allow(shipping_methods[2]).to receive_message_chain(:calculator, :compute).and_return(4.00)
 
-          allow(subject).to receive(:shipping_methods).and_return(shipping_methods)
+          allow(subject).to receive(:delivery_methods).and_return(shipping_methods)
 
-          expect(subject.shipping_rates(package).map(&:cost)).to eq [3.00, 4.00, 5.00]
+          expect(subject.delivery_rates(package).map(&:cost)).to eq [3.00, 4.00, 5.00]
         end
 
         context 'general shipping methods' do
@@ -122,23 +122,23 @@ module Spree
             allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)
             allow(shipping_methods[1]).to receive_message_chain(:calculator, :compute).and_return(3.00)
 
-            allow(subject).to receive(:shipping_methods).and_return(shipping_methods)
+            allow(subject).to receive(:delivery_methods).and_return(shipping_methods)
 
-            expect(subject.shipping_rates(package).sort_by(&:cost).map(&:selected)).to eq [true, false]
+            expect(subject.delivery_rates(package).sort_by(&:cost).map(&:selected)).to eq [true, false]
           end
 
           it "selects the most affordable shipping rate and doesn't raise exception over nil cost" do
             allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(1.00)
             allow(shipping_methods[1]).to receive_message_chain(:calculator, :compute).and_return(nil)
 
-            allow(subject).to receive(:shipping_methods).and_return(shipping_methods)
+            allow(subject).to receive(:delivery_methods).and_return(shipping_methods)
 
-            subject.shipping_rates(package)
+            subject.delivery_rates(package)
           end
         end
 
         context 'involves backend only shipping methods' do
-          let(:backend_method) { create(:shipping_method, display_on: 'back_end') }
+          let(:backend_method) { create(:shipping_method, storefront_visible: false) }
           let(:generic_method) { create(:shipping_method) }
 
           before do
@@ -148,12 +148,12 @@ module Spree
           end
 
           it 'does not return backend rates at all' do
-            expect(subject.shipping_rates(package).map(&:shipping_method_id)).to eq([generic_method.id])
+            expect(subject.delivery_rates(package).map(&:shipping_method_id)).to eq([generic_method.id])
           end
 
           # regression for #3287
           it "doesn't select backend rates even if they're more affordable" do
-            expect(subject.shipping_rates(package).map(&:selected)).to eq [true]
+            expect(subject.delivery_rates(package).map(&:selected)).to eq [true]
           end
         end
 
@@ -174,8 +174,8 @@ module Spree
           end
 
           it 'links the shipping rate and the tax rate' do
-            shipping_rates = subject.shipping_rates(package)
-            expect(shipping_rates.first.tax_rate).to eq(tax_rate)
+            delivery_rates = subject.delivery_rates(package)
+            expect(delivery_rates.first.tax_rate).to eq(tax_rate)
           end
         end
 
@@ -210,9 +210,9 @@ module Spree
             before { allow(order).to receive(:tax_zone).and_return(zone_without_vat) }
 
             it 'deducts the default VAT from the cost' do
-              shipping_rates = subject.shipping_rates(package)
+              delivery_rates = subject.delivery_rates(package)
               # deduct default vat: 4.00 / 1.2 = 3.33 (rounded)
-              expect(shipping_rates.first.cost).to eq(3.33)
+              expect(delivery_rates.first.cost).to eq(3.33)
             end
           end
 
@@ -229,11 +229,11 @@ module Spree
             before { allow(order).to receive(:tax_zone).and_return(other_vat_zone) }
 
             it 'deducts the default vat and applies the foreign vat to calculate the price' do
-              shipping_rates = subject.shipping_rates(package)
+              delivery_rates = subject.delivery_rates(package)
               #
               # deduct default vat: 4.00 / 1.2 = 3.33 (rounded)
               # apply foreign vat: 3.33 * 1.3 = 4.33 (rounded)
-              expect(shipping_rates.first.cost).to eq(4.33)
+              expect(delivery_rates.first.cost).to eq(4.33)
             end
           end
         end
