@@ -9,6 +9,8 @@ module Spree
           # persists a drag-to-reorder. Automatic (rule-based) membership is
           # materialized by the rules, not managed here.
           class ProductsController < ResourceController
+            include Spree::Api::V3::Admin::ProductListing
+
             scoped_resource :products
 
             # Skip the base single-resource load — membership actions resolve

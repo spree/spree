@@ -4,6 +4,7 @@ module Spree
       module Admin
         class ProductsController < ResourceController
           include Spree::Api::V3::BulkOperations
+          include Spree::Api::V3::Admin::ProductListing
 
           scoped_resource :products
 
@@ -123,16 +124,6 @@ module Spree
 
           def serializer_class
             Spree.api.admin_product_serializer
-          end
-
-          def scope_includes
-            [
-              :tax_category,
-              product_publications: :channel,
-              primary_media: [attachment_attachment: :blob],
-              default_variant: [:prices, stock_items: [:stock_location, :active_stock_reservations]],
-              variants: [:prices, stock_items: [:stock_location, :active_stock_reservations]]
-            ]
           end
 
           # Use SearchProvider::Database for collection to handle price/best_selling
