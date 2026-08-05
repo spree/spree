@@ -160,6 +160,44 @@ test.describe('collections management', () => {
     })
   })
 
+  test('flipping to rules hides the curation controls before saving', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)
+
+    const name = `E2E Toggle ${Date.now()}`
+    await createCollection(page, name)
+
+    // Curate one product so the panel has a row carrying the controls.
+    await page.getByRole('button', { name: /add products/i }).click()
+    const picker = page.getByRole('dialog')
+    await picker.getByRole('searchbox').fill(FIXTURE_PROMO_PRODUCT)
+    const option = picker
+      .getByRole('button', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+      .first()
+    await expect(option).toBeVisible({ timeout: 15_000 })
+    await option.click()
+    await picker.getByRole('button', { name: /^add 1$/i }).click()
+
+    const productRow = page.getByRole('row', { name: new RegExp(FIXTURE_PROMO_PRODUCT, 'i') })
+    await expect(productRow).toBeVisible({ timeout: 15_000 })
+    await expect(productRow.getByRole('button', { name: /remove from collection/i })).toBeVisible()
+
+    // Switching to rule-driven membership takes the curation affordances away
+    // immediately — no save required, because saving would hand membership to
+    // the rules and discard anything picked by hand.
+    await page.getByRole('switch', { name: /set members automatically/i }).click()
+
+    await expect(page.getByText(/members are set by the rules above/i)).toBeVisible()
+    await expect(page.getByRole('button', { name: /add products/i })).toHaveCount(0)
+    await expect(productRow.getByRole('button', { name: /remove from collection/i })).toHaveCount(0)
+    await expect(productRow.getByRole('checkbox')).toHaveCount(0)
+
+    // Switching back restores them.
+    await page.getByRole('switch', { name: /set members automatically/i }).click()
+    await expect(page.getByRole('button', { name: /add products/i })).toBeVisible()
+    await expect(productRow.getByRole('button', { name: /remove from collection/i })).toBeVisible()
+  })
+
   test('creates an automatic collection whose membership is read-only', async ({ page }) => {
     const creds = await login(page)
     await gotoIndex(page, COLLECTIONS_PATH(creds.store_id), CTA)

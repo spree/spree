@@ -49,6 +49,10 @@ export function CollectionMain({
 }) {
   const { t } = useTranslation()
   const { errors } = form.formState
+  // Live form value, not the persisted one: flipping the switch has to take the
+  // curation affordances away immediately, since a save would hand membership
+  // over to the rules and discard anything picked by hand in the meantime.
+  const automatic = form.watch('automatic')
 
   return (
     <>
@@ -91,10 +95,7 @@ export function CollectionMain({
 
       {collection && (
         <>
-          <CollectionProductsCard
-            collectionId={collection.id}
-            automatic={collection.automatic ?? false}
-          />
+          <CollectionProductsCard collectionId={collection.id} automatic={automatic} />
           <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Collection">
             <CustomFieldsInlineCard />
           </FormBackedCustomFieldsProvider>
