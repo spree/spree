@@ -550,7 +550,7 @@ Rails.application.config.after_initialize do
                                      displayable: false,
                                      default: false,
                                      position: 70,
-                                     ransack_attribute: 'bill_address_firstname'
+                                     ransack_attribute: 'first_name'
 
   Spree.admin.tables.users.add :last_name,
                                      label: :last_name,
@@ -560,7 +560,7 @@ Rails.application.config.after_initialize do
                                      displayable: false,
                                      default: false,
                                      position: 80,
-                                     ransack_attribute: 'bill_address_lastname'
+                                     ransack_attribute: 'last_name'
 
   Spree.admin.tables.users.add :tags,
                                      label: :tags,
