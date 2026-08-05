@@ -303,11 +303,8 @@ export function CollectionProductsCard({
                 </Table>
               </DndContext>
             )}
-            {meta && (
-              <div className="border-border border-t p-3">
-                <Pagination meta={meta} onPageChange={setPage} />
-              </div>
-            )}
+            {/* Pagination brings its own top border + padding. */}
+            {meta && <Pagination meta={meta} onPageChange={setPage} />}
           </>
         )}
       </CardContent>
