@@ -156,6 +156,14 @@
         "picker_description": "Wyszukaj i wybierz produkty do dodania do tej kategorii.",
         "picker_title": "Dodaj produkty do kategorii",
         "remove": "Usuń z kategorii",
+        "remove_confirm": {
+          "message_few": "Usunąć {{count}} produkty z tej kategorii? Zmiana zadziała natychmiast. Produkty pozostaną w katalogu.",
+          "message_many": "Usunąć {{count}} produktów z tej kategorii? Zmiana zadziała natychmiast. Produkty pozostaną w katalogu.",
+          "message_named": "Usunąć „{{name}}” z tej kategorii? Zmiana zadziała natychmiast. Produkt pozostanie w katalogu.",
+          "message_one": "Usunąć {{count}} produkt z tej kategorii? Zmiana zadziała natychmiast. Produkty pozostaną w katalogu.",
+          "message_other": "Usunąć {{count}} produktu z tej kategorii? Zmiana zadziała natychmiast. Produkty pozostaną w katalogu.",
+          "title": "Usuń z kategorii"
+        },
         "remove_selected": "Usuń",
         "search_placeholder": "Szukaj produktów…",
         "select_all": "Zaznacz wszystko",
@@ -244,6 +252,14 @@
         "picker_description": "Wyszukaj i wybierz produkty do dodania do tej kolekcji.",
         "picker_title": "Dodaj produkty do kolekcji",
         "remove": "Usuń z kolekcji",
+        "remove_confirm": {
+          "message_few": "Usunąć {{count}} produkty z tej kolekcji? Zmiana zadziała natychmiast. Produkty pozostaną w katalogu.",
+          "message_many": "Usunąć {{count}} produktów z tej kolekcji? Zmiana zadziała natychmiast. Produkty pozostaną w katalogu.",
+          "message_named": "Usunąć „{{name}}” z tej kolekcji? Zmiana zadziała natychmiast. Produkt pozostanie w katalogu.",
+          "message_one": "Usunąć {{count}} produkt z tej kolekcji? Zmiana zadziała natychmiast. Produkty pozostaną w katalogu.",
+          "message_other": "Usunąć {{count}} produktu z tej kolekcji? Zmiana zadziała natychmiast. Produkty pozostaną w katalogu.",
+          "title": "Usuń z kolekcji"
+        },
         "remove_selected": "Usuń",
         "search_placeholder": "Szukaj produktów…",
         "select_all": "Zaznacz wszystko",

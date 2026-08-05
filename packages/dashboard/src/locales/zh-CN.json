@@ -154,6 +154,12 @@
         "picker_description": "搜索并选择要添加到此分类的商品。",
         "picker_title": "向分类添加商品",
         "remove": "从分类中移除",
+        "remove_confirm": {
+          "message_named": "从该分类中移除“{{name}}”吗？将立即生效。商品仍保留在目录中。",
+          "message_one": "从该分类中移除 {{count}} 件商品吗？将立即生效。商品仍保留在目录中。",
+          "message_other": "从该分类中移除 {{count}} 件商品吗？将立即生效。商品仍保留在目录中。",
+          "title": "从分类中移除"
+        },
         "remove_selected": "移除",
         "search_placeholder": "搜索商品…",
         "select_all": "全选",
@@ -242,6 +248,12 @@
         "picker_description": "搜索并选择要添加到该系列的商品。",
         "picker_title": "向系列添加商品",
         "remove": "从系列中移除",
+        "remove_confirm": {
+          "message_named": "从该系列中移除“{{name}}”吗？将立即生效。商品仍保留在目录中。",
+          "message_one": "从该系列中移除 {{count}} 件商品吗？将立即生效。商品仍保留在目录中。",
+          "message_other": "从该系列中移除 {{count}} 件商品吗？将立即生效。商品仍保留在目录中。",
+          "title": "从系列中移除"
+        },
         "remove_selected": "移除",
         "search_placeholder": "搜索商品…",
         "select_all": "全选",

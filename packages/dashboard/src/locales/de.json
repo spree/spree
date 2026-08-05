@@ -154,6 +154,12 @@
         "picker_description": "Suchen und wählen Sie Produkte für diese Kategorie aus.",
         "picker_title": "Produkte zur Kategorie hinzufügen",
         "remove": "Aus Kategorie entfernen",
+        "remove_confirm": {
+          "message_named": "„{{name}}“ aus dieser Kategorie entfernen? Die Änderung wird sofort wirksam. Das Produkt bleibt im Katalog.",
+          "message_one": "{{count}} Produkt aus dieser Kategorie entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
+          "message_other": "{{count}} Produkte aus dieser Kategorie entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
+          "title": "Aus Kategorie entfernen"
+        },
         "remove_selected": "Entfernen",
         "search_placeholder": "Produkte suchen…",
         "select_all": "Alle auswählen",
@@ -242,6 +248,12 @@
         "picker_description": "Produkte suchen und zu dieser Kollektion hinzufügen.",
         "picker_title": "Produkte zur Kollektion hinzufügen",
         "remove": "Aus Kollektion entfernen",
+        "remove_confirm": {
+          "message_named": "„{{name}}“ aus dieser Kollektion entfernen? Die Änderung wird sofort wirksam. Das Produkt bleibt im Katalog.",
+          "message_one": "{{count}} Produkt aus dieser Kollektion entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
+          "message_other": "{{count}} Produkte aus dieser Kollektion entfernen? Die Änderung wird sofort wirksam. Die Produkte bleiben im Katalog.",
+          "title": "Aus Kollektion entfernen"
+        },
         "remove_selected": "Entfernen",
         "search_placeholder": "Produkte suchen…",
         "select_all": "Alle auswählen",

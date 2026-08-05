@@ -30,12 +30,14 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  Pagination,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  useConfirm,
 } from '@spree/dashboard-ui'
 import { Link, useParams } from '@tanstack/react-router'
 import { ImageIcon, PlusIcon, SearchIcon, Trash2Icon, XIcon } from 'lucide-react'
@@ -64,10 +66,13 @@ export function CollectionProductsCard({
   automatic: boolean
 }) {
   const { t } = useTranslation()
+  const confirm = useConfirm()
   const { storeId } = useParams({
     from: '/_authenticated/$storeId/products/collections/$collectionId',
   })
-  const { data, isLoading } = useCollectionProducts(collectionId)
+  const [page, setPage] = useState(1)
+  const { data, isLoading } = useCollectionProducts(collectionId, page)
+  const meta = data?.meta
   const addProducts = useAddCollectionProducts(collectionId)
   const removeProduct = useRemoveCollectionProduct(collectionId)
   const removeProducts = useRemoveCollectionProducts(collectionId)
@@ -121,7 +126,9 @@ export function CollectionProductsCard({
     const previousOrder = order
     setOrder(arrayMove(order, from, to)) // optimistic
     reposition.mutate(
-      { productId: String(active.id), new_position: to },
+      // `to` is an index within the current page; the endpoint wants a 0-based
+      // index across the whole collection. `meta.from` is 1-based.
+      { productId: String(active.id), new_position: (meta?.from ?? 1) - 1 + to },
       { onError: () => setOrder(previousOrder) }, // roll back if the move fails
     )
   }
@@ -148,9 +155,20 @@ export function CollectionProductsCard({
     })
   }
 
+  // Both removals fire straight from a click with no sheet to review, so each
+  // confirms first.
   async function handleBulkRemove() {
     const ids = [...selected]
     if (ids.length === 0) return
+
+    const ok = await confirm({
+      title: t('admin.collections.products.remove_confirm.title'),
+      message: t('admin.collections.products.remove_confirm.message', { count: ids.length }),
+      confirmLabel: t('admin.actions.remove'),
+      variant: 'destructive',
+    })
+    if (!ok) return
+
     try {
       await removeProducts.mutateAsync(ids)
       setSelected(new Set())
@@ -158,6 +176,20 @@ export function CollectionProductsCard({
       // The mutation toasts its own error; swallow the rethrow so the click
       // handler doesn't reject, and keep the selection so the user can retry.
     }
+  }
+
+  async function handleRemoveOne(product: Product) {
+    const ok = await confirm({
+      title: t('admin.collections.products.remove_confirm.title'),
+      message: t('admin.collections.products.remove_confirm.message_named', {
+        name: product.name ?? '',
+      }),
+      confirmLabel: t('admin.actions.remove'),
+      variant: 'destructive',
+    })
+    if (!ok) return
+
+    removeProduct.mutate(product.id)
   }
 
   const allSelected = visibleIds.length > 0 && visibleIds.every((id) => selected.has(id))
@@ -170,8 +202,8 @@ export function CollectionProductsCard({
         <div>
           <CardTitle>
             {t('admin.collections.products.title')}
-            {order.length > 0 && (
-              <span className="ml-2 font-normal text-muted-foreground text-sm">{order.length}</span>
+            {(meta?.count ?? 0) > 0 && (
+              <span className="ml-2 font-normal text-muted-foreground text-sm">{meta?.count}</span>
             )}
           </CardTitle>
           {automatic && (
@@ -263,13 +295,18 @@ export function CollectionProductsCard({
                           reorderable={curatable && !filtering}
                           selected={selected.has(product.id)}
                           onToggleSelected={() => toggleSelected(product.id)}
-                          onRemove={() => removeProduct.mutate(product.id)}
+                          onRemove={() => handleRemoveOne(product)}
                         />
                       ))}
                     </TableBody>
                   </SortableContext>
                 </Table>
               </DndContext>
+            )}
+            {meta && (
+              <div className="border-border border-t p-3">
+                <Pagination meta={meta} onPageChange={setPage} />
+              </div>
             )}
           </>
         )}

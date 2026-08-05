@@ -154,6 +154,12 @@
         "picker_description": "Search and select products to add to this category.",
         "picker_title": "Add products to category",
         "remove": "Remove from category",
+        "remove_confirm": {
+          "message_named": "Remove \"{{name}}\" from this category? This takes effect immediately. The product stays in your catalog.",
+          "message_one": "Remove {{count}} product from this category? This takes effect immediately. The products stay in your catalog.",
+          "message_other": "Remove {{count}} products from this category? This takes effect immediately. The products stay in your catalog.",
+          "title": "Remove from category"
+        },
         "remove_selected": "Remove",
         "search_placeholder": "Search products…",
         "select_all": "Select all",
@@ -242,6 +248,12 @@
         "picker_description": "Search and select products to add to this collection.",
         "picker_title": "Add products to collection",
         "remove": "Remove from collection",
+        "remove_confirm": {
+          "message_named": "Remove \"{{name}}\" from this collection? This takes effect immediately. The product stays in your catalog.",
+          "message_one": "Remove {{count}} product from this collection? This takes effect immediately. The products stay in your catalog.",
+          "message_other": "Remove {{count}} products from this collection? This takes effect immediately. The products stay in your catalog.",
+          "title": "Remove from collection"
+        },
         "remove_selected": "Remove",
         "search_placeholder": "Search products…",
         "select_all": "Select all",

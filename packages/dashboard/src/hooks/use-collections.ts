@@ -90,15 +90,21 @@ const collectionProductsKey = (collectionId: string) =>
   ['collections', collectionId, 'products'] as const
 
 /**
- * Products in a collection, ordered by membership position. Works for
- * automatic collections too — there the list is materialized from the rules
- * and is read-only.
+ * One page of a collection's products, ordered by membership position. Works
+ * for automatic collections too — there the list is materialized from the
+ * rules and is read-only.
+ *
+ * Paginated rather than capped: a collection can hold thousands of products,
+ * and a single truncated fetch would hide the rest with no way to reach them.
  */
-export function useCollectionProducts(collectionId: string | undefined) {
+export function useCollectionProducts(collectionId: string | undefined, page = 1, limit = 25) {
   return useQuery({
-    queryKey: useResourceKey('collections', collectionId ?? 'noop', 'products'),
-    queryFn: () => adminClient.collections.products.list(collectionId as string, { limit: 100 }),
+    queryKey: useResourceKey('collections', collectionId ?? 'noop', 'products', `${page}:${limit}`),
+    queryFn: () => adminClient.collections.products.list(collectionId as string, { page, limit }),
     enabled: !!collectionId,
+    // Keep the current page visible while the next one loads, so the table
+    // doesn't blank out between pages.
+    placeholderData: (previous) => previous,
   })
 }
 
