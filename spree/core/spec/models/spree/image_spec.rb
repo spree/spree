@@ -27,14 +27,6 @@ describe Spree::Image, type: :model do
     end
   end
 
-  describe '#styles' do
-    it 'will return all styles for the image' do
-      spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
-      spree_image.save!
-      expect(spree_image.styles).to be_kind_of(Array)
-    end
-  end
-
   context 'cache expiration' do
     let!(:image) { create(:image, position: 1, viewable: viewable) }
     let!(:image_2) { create(:image, position: 2, viewable: viewable) }

@@ -64,19 +64,6 @@ module Spree
       end
     end
 
-    # @deprecated Each mailer action now wraps its body in {#with_store_locale},
-    #   which also activates the store's translation fallbacks and restores the
-    #   previous locale afterwards. This method mutates `I18n.locale` for the rest
-    #   of the thread without restoring it. Will be removed in Spree 6.0.
-    def set_email_locale
-      Spree::Deprecation.warn(
-        'Spree::BaseMailer#set_email_locale is deprecated and will be removed in Spree 6.0. ' \
-        'Wrap the mailer action body in `with_store_locale(store, locale) { ... }` instead.'
-      )
-      locale = @order&.locale.presence || @order&.store&.default_locale || current_store&.default_locale
-      I18n.locale = locale if locale.present?
-    end
-
     protected
 
     # The "<store> <subject> #<number>" subject line shared by customer-facing

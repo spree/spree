@@ -4,7 +4,6 @@ module Spree
 
     include Support::ActiveStorage
     include Rails.application.routes.url_helpers
-    include Spree::ImageMethods # legacy, will be removed in Spree 6
     include Spree::Metafields
     include Spree::Metadata
 
@@ -133,22 +132,6 @@ module Spree
 
     def event_prefix
       'media'
-    end
-
-    # @deprecated
-    def styles
-      Spree::Deprecation.warn("Asset#styles is deprecated and will be removed in Spree 6.0. Please use active storage variants with cdn_image_url")
-
-      self.class.styles.map do |_, size|
-        width, height = size.chop.split('x').map(&:to_i)
-
-        {
-          url: generate_url(size: size),
-          size: size,
-          width: width,
-          height: height
-        }
-      end
     end
 
     private

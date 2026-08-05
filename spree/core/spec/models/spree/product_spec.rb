@@ -190,19 +190,23 @@ describe Spree::Product, type: :model do
       end
     end
 
-    describe '#price' do
-      # Regression test for #1173
-      it 'strips non-price characters' do
-        product.price = '$10'
-        expect(product.price).to eq(10.0)
+    describe '#compare_at_price' do
+      it 'delegates to the default variant' do
+        product.default_variant.set_price(product.default_variant.cost_currency, 10, 20)
+        expect(product.compare_at_price).to eq(20)
       end
     end
 
-    describe '#display_price' do
-      before { product.price = 10.55 }
+    describe '#price_in' do
+      # Regression test for #1173
+      it 'strips non-price characters' do
+        product.default_variant.set_price('USD', '$10')
+        expect(product.price_in('USD').amount).to eq(10.0)
+      end
 
       it 'shows the amount' do
-        expect(product.display_price.to_s).to eq('$10.55')
+        product.default_variant.set_price('USD', 10.55)
+        expect(product.price_in('USD').display_amount.to_s).to eq('$10.55')
       end
 
       context 'with currency set to JPY' do
@@ -211,7 +215,7 @@ describe Spree::Product, type: :model do
         end
 
         it 'displays the currency in yen' do
-          expect(product.default_variant.price_in('JPY').display_amount.to_s).to eq('¥11')
+          expect(product.price_in('JPY').display_amount.to_s).to eq('¥11')
         end
       end
     end
@@ -700,7 +704,7 @@ describe Spree::Product, type: :model do
       it 'converges delegated setters onto a single in-memory variant' do
         product = build(:empty_product)
         product.sku = 'PENDING'
-        product.price = 10
+        product.default_variant.set_price('USD', 10)
         product.weight = 2
 
         expect(product.variants.size).to eq(1)
@@ -1863,8 +1867,8 @@ describe Spree::Product, type: :model do
     context 'with hash params' do
       it 'creates new variants' do
         product.variants = [
-          { sku: 'V1', price: 10, options: [{ name: 'Size', value: 'S' }] },
-          { sku: 'V2', price: 20, options: [{ name: 'Size', value: 'M' }] }
+          { sku: 'V1', prices: [{ amount: 10, currency: 'USD' }], options: [{ name: 'Size', value: 'S' }] },
+          { sku: 'V2', prices: [{ amount: 20, currency: 'USD' }], options: [{ name: 'Size', value: 'M' }] }
         ]
 
         expect(product.variants.count).to eq(2)
@@ -1891,7 +1895,6 @@ describe Spree::Product, type: :model do
       it 'defers creation on new records' do
         new_product = Spree::Product.new(
           name: 'Deferred',
-          price: 10,
           shipping_category: shipping_category,
           store: store,
           variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }]
@@ -1939,15 +1942,15 @@ describe Spree::Product, type: :model do
           shipping_category: shipping_category,
           store: store,
           variants: [
-            { sku: 'FV-1', price: 10, options: [{ name: 'Size', value: 'S' }] },
-            { sku: 'FV-2', price: 20, options: [{ name: 'Size', value: 'M' }] }
+            { sku: 'FV-1', prices: [{ amount: 10, currency: 'USD' }], options: [{ name: 'Size', value: 'S' }] },
+            { sku: 'FV-2', prices: [{ amount: 20, currency: 'USD' }], options: [{ name: 'Size', value: 'M' }] }
           ]
         )
         new_product.save!
 
         expect(new_product.variant_count).to eq(2)
         expect(new_product.default_variant.sku).to eq('FV-1')
-        expect(new_product.price).to be_present
+        expect(new_product.price_in('USD').amount).to be_present
       end
 
       it 'reflects an options-less default variant in default_variant and price' do
@@ -1955,13 +1958,13 @@ describe Spree::Product, type: :model do
           name: 'Fresh Simple',
           shipping_category: shipping_category,
           store: store,
-          variants: [{ sku: 'FS-1', price: 15, options: [] }]
+          variants: [{ sku: 'FS-1', prices: [{ amount: 15, currency: 'USD' }], options: [] }]
         )
         new_product.save!
 
         expect(new_product.variant_count).to eq(1)
         expect(new_product.default_variant.sku).to eq('FS-1')
-        expect(new_product.price).to eq(15)
+        expect(new_product.price_in('USD').amount).to eq(15)
       end
     end
   end
@@ -2049,7 +2052,6 @@ describe Spree::Product, type: :model do
       it 'defers attachment until after the product is saved' do
         new_product = Spree::Product.new(
           name: 'Deferred Media',
-          price: 10,
           shipping_category: create(:shipping_category),
           store: store,
           media: [{ signed_id: blob.signed_id, alt: 'Pending', position: 1 }]
@@ -2091,7 +2093,6 @@ describe Spree::Product, type: :model do
     it 'does not overwrite explicit tax_category_id' do
       product = Spree::Product.new(
         name: 'Test',
-        price: 10,
         shipping_category: create(:shipping_category),
         store: store,
         tax_category_id: custom_tc.id
@@ -2104,7 +2105,6 @@ describe Spree::Product, type: :model do
     it 'assigns default when tax_category_id is not provided' do
       product = Spree::Product.new(
         name: 'Test',
-        price: 10,
         shipping_category: create(:shipping_category),
         store: store
       )

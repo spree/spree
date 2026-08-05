@@ -1,10 +1,8 @@
 require 'spec_helper'
 
-# Strategy::Rules must match Strategy::Legacy (= Spree::Stock::Coordinator)
-# on every routing-relevant scenario the legacy pipeline supported. This
-# file runs the same shared examples against both strategies; failures
-# under Rules are regressions vs. pre-5.5 behavior. Failures under Legacy
-# mean the expectation itself is wrong.
+# Strategy::Rules must preserve Spree::Stock::Coordinator behavior on every
+# routing-relevant scenario the pre-5.5 pipeline supported. Failures here are
+# regressions against that baseline.
 RSpec.describe 'OrderRouting strategy parity', type: :model do
   let(:store) { @default_store }
 
@@ -644,11 +642,6 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
         expect(total_backordered(packages)).to eq(0)
       end
     end
-  end
-
-  describe Spree::OrderRouting::Strategy::Legacy do
-    let(:strategy_class) { described_class }
-    it_behaves_like 'a routing strategy preserving Coordinator behavior'
   end
 
   describe Spree::OrderRouting::Strategy::Rules do

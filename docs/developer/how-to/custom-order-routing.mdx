@@ -234,9 +234,6 @@ First register the class so it's selectable (this is the allowlist the model val
 ```ruby
 # config/initializers/spree.rb
 Spree.order_routing.strategies << 'Acme::Oms::Strategy'.constantize
-
-# Optionally drop the legacy escape hatch:
-# Spree.order_routing.strategies.delete(Spree::OrderRouting::Strategy::Legacy)
 ```
 
 Then select it by class name string — set on `Spree::Store` (default) or `Spree::Channel` (override). Setting an unregistered class fails validation.

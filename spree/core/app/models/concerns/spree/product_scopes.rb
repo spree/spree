@@ -3,16 +3,6 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      cattr_accessor :search_scopes do
-        []
-      end
-
-      def self.add_search_scope(name, &block)
-        Spree::Deprecation.warn("add_search_scope is deprecated and will be removed in Spree 6.0. Use scope :#{name}, &block instead or use method instead")
-        singleton_class.send(:define_method, name.to_sym, &block)
-        search_scopes << name.to_sym
-      end
-
       scope :ascend_by_updated_at, -> { order("#{Product.quoted_table_name}.updated_at ASC") }
       scope :descend_by_updated_at, -> { order("#{Product.quoted_table_name}.updated_at DESC") }
       scope :ascend_by_name, -> { order("#{Product.quoted_table_name}.name ASC") }
@@ -169,20 +159,6 @@ module Spree
           order(Arel.sql("#{min_position_sql} ASC"))
       }
 
-      # Deprecated — remove in 6.0. Not used internally.
-      def self.with_option(option)
-        Spree::Deprecation.warn('with_option is deprecated and will be removed in Spree 6.0.')
-        if option.is_a?(OptionType)
-          joins(:option_types).where(spree_option_types: { id: option.id })
-        elsif option.is_a?(Integer)
-          joins(:option_types).where(spree_option_types: { id: option })
-        elsif OptionType.column_for_attribute('id').type == :uuid
-          joins(:option_types).where(spree_option_types: { name: option }).or(Product.joins(:option_types).where(spree_option_types: { id: option }))
-        else
-          joins(:option_types).where(OptionType.table_name => { name: option })
-        end
-      end
-
       scope :with_option_value, ->(option, value) {
         option_type_id = case option
                          when OptionType then option.id
@@ -226,37 +202,6 @@ module Spree
           scope = scope.where(id: matching_product_ids)
         end
         scope
-      end
-
-      # Deprecated — remove in 6.0. Not used internally.
-      def self.with(value)
-        Spree::Deprecation.warn('Product.with is deprecated and will be removed in Spree 6.0.')
-        includes(variants: :option_values).
-          where("#{OptionValue.table_name}.name = ?", value)
-      end
-
-      # Deprecated — remove in 6.0. Use .search scope instead.
-      def self.in_name(words)
-        Spree::Deprecation.warn('in_name is deprecated and will be removed in Spree 6.0. Use .search instead.')
-        like_any([:name], prepare_words(words))
-      end
-
-      # Deprecated — remove in 6.0. Use .search scope instead.
-      def self.in_name_or_keywords(words)
-        Spree::Deprecation.warn('in_name_or_keywords is deprecated and will be removed in Spree 6.0. Use .search instead.')
-        like_any([:name, :meta_keywords], prepare_words(words))
-      end
-
-      # Deprecated — remove in 6.0. Use .search scope instead.
-      def self.in_name_or_description(words)
-        Spree::Deprecation.warn('in_name_or_description is deprecated and will be removed in Spree 6.0. Use .search instead.')
-        like_any([:name, :description, :meta_description, :meta_keywords], prepare_words(words))
-      end
-
-      # Deprecated — remove in 6.0. Use where(id: ids) directly.
-      def self.with_ids(*ids)
-        Spree::Deprecation.warn('with_ids is deprecated and will be removed in Spree 6.0. Use where(id: ids) instead.')
-        where(id: ids)
       end
 
       scope :not_deleted, -> {
@@ -335,16 +280,6 @@ module Spree
         available(nil, currency)
       end
 
-      # Deprecated — remove in 6.0. Not used internally.
-      def self.for_user(user = nil)
-        Spree::Deprecation.warn('for_user is deprecated and will be removed in Spree 6.0.')
-        if user.try(:has_spree_role?, 'admin')
-          with_deleted
-        else
-          not_deleted.where(status: 'active')
-        end
-      end
-
       # Orders products by best-selling metrics (+units_sold_count+, +revenue+)
       # tracked directly on +spree_products+. Uses Arel::Nodes::As so that
       # ORDER BY expressions appear in SELECT and work with DISTINCT (same
@@ -373,15 +308,6 @@ module Spree
       end
       private_class_method :price_table_name
 
-      # Produce an array of keywords for use in scopes.
-      # Always return array with at least an empty string to avoid SQL errors
-      def self.prepare_words(words)
-        return [''] if words.blank?
-
-        a = words.split(/[,\s]/).map(&:strip)
-        a.any? ? a : ['']
-      end
-      private_class_method :prepare_words
     end
   end
 end

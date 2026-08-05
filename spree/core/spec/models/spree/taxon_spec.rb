@@ -54,7 +54,7 @@ describe Spree::Category, type: :model do
       end
     end
 
-    describe '#set_store' do
+    describe '#ensure_store' do
       it 'derives store from the taxonomy on create' do
         taxon = create(:taxon, taxonomy: taxonomy, parent: taxonomy.root)
         expect(taxon.store_id).to eq(taxonomy.store_id)
@@ -86,44 +86,6 @@ describe Spree::Category, type: :model do
   end
 
   context 'Scopes' do
-    describe '.for_taxonomy' do
-      let!(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') || create(:taxonomy, name: 'Categories') }
-      let!(:root_category) { create(:taxon, taxonomy: categories_taxonomy) }
-
-      context 'when translations are disabled' do
-        it 'returns the correct taxon' do
-          expect(described_class.for_taxonomy('Categories')).to contain_exactly(
-            root_category,
-            root_category.parent
-          )
-        end
-      end
-
-      context 'when translations are enabled' do
-        before do
-          taxonomy
-
-          Spree::Config.always_use_translations = true
-          I18n.locale = :de
-
-          categories_taxonomy.name = "Kategorien"
-          categories_taxonomy.save!
-        end
-
-        after do
-          Spree::Config.always_use_translations = false
-          I18n.locale = :en
-        end
-
-        it 'returns the correct taxon' do
-          expect(described_class.for_taxonomy('Kategorien')).to contain_exactly(
-            root_category,
-            root_category.parent
-          )
-        end
-      end
-    end
-
     describe '.with_matching_name' do
       let!(:taxon1) { create(:taxon, name: 'shoes', taxonomy: taxonomy) }
       let!(:taxon2) { create(:taxon, name: 'Premium Shoes', taxonomy: taxonomy) }
