@@ -43,17 +43,26 @@ random password): blank is the one unclaimed-account state — same as
 admin-created customers — `Customer#valid_password?` guards the blank digest,
 the account is claimed via password reset, and a generated value could fail a
 host's swapped-in `Spree.password_validator`. Self-registration still requires
-a password (`password_required:` keyword, defaulting on `order:` presence)
-because the caller issues a JWT on success.
+a password, because the caller issues a JWT on success. The
+`password_required:` keyword carries that rule: it defaults to **false when
+`order:` is present** (guest checkout collects no password) and **true
+otherwise**, and an explicit value always wins — which is how a future
+provisioning caller with no order (OIDC, invitations) waives the requirement
+deliberately rather than by faking an order.
 
 **The welcome email leaves core.** The only sender was the checkout path
 (`user.send_welcome_email if user.respond_to?` — self-registration never
 sent one, which was an accident of the split, not a choice). Signup email is
 host-app implementation via a `user.created` subscriber or the
 `after_create` hook — the same stance `spree/emails` already takes for
-headless storefronts owning consumer email. Upgrade note required: hosts
-defining `send_welcome_email` must move the send into a subscriber or hook
-handler.
+headless storefronts owning consumer email.
+
+**Upgrade step (host applications).** A host that relied on the checkout
+welcome email — i.e. defines `send_welcome_email` on its customer class — must
+move the send itself, since core no longer calls it. Either subscribe to
+`user.created` (fires on every creation path, including admin and imports) or
+register a handler on `customers.create.after_create` (storefront registration
+only). The method itself can stay; nothing in core invokes it any more.
 
 Plan: `6.0-service-workflows.md` decision 13.
 

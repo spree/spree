@@ -78,7 +78,7 @@ module Spree
         existing_customer = Spree.customer_class.find_by(email: order.email)
         return unless existing_customer
 
-        order.associate_customer!(existing_customer, false)
+        assign_order_to(existing_customer)
         halt!(existing_customer)
       end
 
@@ -126,7 +126,7 @@ module Spree
         return unless order
 
         adopt_addresses
-        order.associate_customer!(customer, false)
+        assign_order_to(customer)
       end
 
       # The order's addresses become the new account's defaults — but only
@@ -145,6 +145,18 @@ module Spree
         end
 
         customer.update_columns(addresses.transform_values(&:id).merge(updated_at: Time.current))
+      end
+
+      # Only the customer link is written. Deliberately NOT
+      # Order#associate_customer! — that backfills the cart's missing
+      # addresses from the customer's address book, which on an order the
+      # buyer already placed would rewrite historical data. The event is
+      # published by hand for the same reason Carts::Associate does it:
+      # update_columns bypasses callbacks.
+      def assign_order_to(account)
+        order.update_columns(customer_id: account.id, updated_at: Time.current)
+        order.customer = account
+        order.publish_event("#{order.event_prefix}.updated")
       end
 
       # Someone who subscribed to the newsletter before registering gets their

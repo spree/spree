@@ -150,6 +150,16 @@ RSpec.describe Spree::Customers::Create do
 
         expect(result).to be_success
       end
+
+      # The order is already placed — adopting it must never rewrite what
+      # the buyer actually checked out with.
+      it 'does not backfill order addresses from the adopting account' do
+        existing_customer.update!(bill_address: create(:address, country: store.default_country))
+        order.update_columns(bill_address_id: nil)
+
+        expect(result).to be_success
+        expect(order.reload.bill_address_id).to be_nil
+      end
     end
   end
 end
