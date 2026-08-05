@@ -1,73 +1,20 @@
-# this service creates a user account when someone places an order
-# and checks the box to create an account
 module Spree
   module Orders
+    # @deprecated Use {Spree::Customers::Create}; removed in 6.1. Note that
+    #   core no longer sends a welcome email — implement it on the
+    #   `user.created` event or the `customers.create.after_create` hook.
     class CreateUserAccount
-      prepend ::Spree::ServiceModule::Base
-
-      def call(order:, accepts_email_marketing: false)
-        existing_user = Spree.customer_class.find_by(email: order.email)
-        if existing_user.present?
-          order.update_columns(customer_id: existing_user.id, updated_at: Time.current)
-          order.customer = existing_user
-          return success(existing_user)
-        end
-
-        user = create_new_user(order, accepts_email_marketing)
-        return failure(:user_creation_failed) unless user.persisted?
-
-        assign_ship_address(order, user)
-        assign_bill_address(order, user)
-
-        # assign newly created user to the order
-        # using update_columns to avoid running validations/callbacks
-        order.update_columns(customer_id: user.id, updated_at: Time.current)
-        order.customer = user
-
-        # send welcome email
-        user.send_welcome_email if user.respond_to?(:send_welcome_email)
-
-        success(user.reload)
-      end
-
-      private
-
-      def create_new_user(order, accepts_email_marketing = false)
-        firstname = order.bill_address&.firstname || order.ship_address&.firstname
-        lastname = order.bill_address&.lastname || order.ship_address&.lastname
-        phone = order.bill_address&.phone || order.ship_address&.phone
-
-        # we need to generate a password for the user
-        password = SecureRandom.base58(16)
-
-        user = Spree.customer_class.new
-        user.email = order.email
-        user.first_name = firstname if user.respond_to?(:first_name)
-        user.last_name = lastname if user.respond_to?(:last_name)
-        user.phone = phone if user.respond_to?(:phone)
-        user.accepts_email_marketing = accepts_email_marketing.to_b if user.respond_to?(:accepts_email_marketing)
-        user.password = password if user.respond_to?(:password)
-        user.password_confirmation = password if user.respond_to?(:password_confirmation)
-
-        user.save
-
-        user
-      end
-
-      def assign_bill_address(order, user)
-        if order.bill_address.present?
-          order.bill_address.update_columns(customer_id: user.id, updated_at: Time.current)
-
-          user.update_columns(bill_address_id: order.bill_address_id, updated_at: Time.current) unless user.bill_address_id.present?
-        end
-      end
-
-      def assign_ship_address(order, user)
-        if order.ship_address.present?
-          order.ship_address.update_columns(customer_id: user.id, updated_at: Time.current)
-
-          user.update_columns(ship_address_id: order.ship_address_id, updated_at: Time.current) unless user.ship_address_id.present?
-        end
+      def self.call(order:, accepts_email_marketing: false)
+        Spree::Deprecation.warn(
+          'Spree::Orders::CreateUserAccount is deprecated and will be removed in Spree 6.1. ' \
+          'Use Spree::Customers::Create (Spree.customer_create_workflow) instead. ' \
+          'Core no longer sends a welcome email — send it from a user.created subscriber or the customers.create.after_create hook.'
+        )
+        Spree.customer_create_workflow.call(
+          store: order.store,
+          order: order,
+          accepts_email_marketing: accepts_email_marketing.to_b
+        )
       end
     end
   end

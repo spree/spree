@@ -89,6 +89,9 @@ module Spree
         claim_deny_workflow: 'Spree::Claims::Deny',
         claim_cancel_workflow: 'Spree::Claims::Cancel',
 
+        # customers
+        customer_create_workflow: 'Spree::Customers::Create',
+
         # tracking numbers
         tracking_number_service: 'Spree::TrackingNumbers::BaseService',
 

@@ -14,6 +14,49 @@ get v6 variants). Also renamed `6.0-split-adjustments.md` →
 the remainder (legacy-table drop, promotion stacking) is 6.1 work, so
 the plan spans two releases like the other `X.Y-X.Z` plans.
 
+## 2026-08-05: Customer registration graduates to a workflow; core sends no welcome email
+
+Customer creation today runs through three paths with three different
+side-effect sets: store self-registration links a matching newsletter
+subscriber but sends no email; the checkout "create an account" box
+(`Orders::CreateUserAccount`) adopts addresses and sends a welcome email but
+skips subscriber linking; Admin API create does neither. A fourth path —
+storefront OIDC auto-provisioning — is coming and would have reinvented all
+of it again.
+
+`Spree::Customers::Create` (seam `customer_create_workflow`, hooks
+`customers.create.validate` + `customers.create.after_create`) unifies the
+storefront paths. The `validate` hook is the point of the exercise:
+bot/disposable-email screening, fraud checks and B2B registration approval
+all need to *veto* a signup, which the `user.created` lifecycle event
+cannot do. The workflow takes an optional `order:` and absorbs
+`Orders::CreateUserAccount` entirely (one flow = one workflow — the
+Orders::Complete precedent); the old class stays as a deprecated one-release
+shell. Explicitly outside the workflow: Admin API create (plain CRUD — staff
+creation must not be blockable by registration-policy hooks; handlers that
+want to distinguish anyway read `created_by`, the return-eligibility
+pattern) and JWT/refresh-token issuance (HTTP session concern, stays in the
+controller).
+
+Checkout-created accounts are **password-less** (the old service generated a
+random password): blank is the one unclaimed-account state — same as
+admin-created customers — `Customer#valid_password?` guards the blank digest,
+the account is claimed via password reset, and a generated value could fail a
+host's swapped-in `Spree.password_validator`. Self-registration still requires
+a password (`password_required:` keyword, defaulting on `order:` presence)
+because the caller issues a JWT on success.
+
+**The welcome email leaves core.** The only sender was the checkout path
+(`user.send_welcome_email if user.respond_to?` — self-registration never
+sent one, which was an accident of the split, not a choice). Signup email is
+host-app implementation via a `user.created` subscriber or the
+`after_create` hook — the same stance `spree/emails` already takes for
+headless storefronts owning consumer email. Upgrade note required: hosts
+defining `send_welcome_email` must move the send into a subscriber or hook
+handler.
+
+Plan: `6.0-service-workflows.md` decision 13.
+
 ## 2026-08-04: Commerce-behavior globals move to Store preferences; app configuration stays global
 
 A full usage audit of `Spree::Config` (multi-agent trace with adversarial

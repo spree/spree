@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+# Deprecated shell — delegates to Spree::Customers::Create. The behavior
+# examples stay to prove the delegation preserves the old contract.
 describe Spree::Orders::CreateUserAccount do
   subject(:service) { described_class.call(order: order, accepts_email_marketing: accepts_email_marketing) }
 
@@ -8,6 +10,14 @@ describe Spree::Orders::CreateUserAccount do
   let(:address) { create(:address, country: store.default_country, firstname: 'John', lastname: 'Snow') }
   let(:order) do
     create(:completed_order_with_totals, bill_address: address, ship_address: address, store: store, customer: nil, email: 'new@customer.com')
+  end
+
+  before { allow(Spree::Deprecation).to receive(:warn) }
+
+  it 'warns about the deprecation' do
+    service
+
+    expect(Spree::Deprecation).to have_received(:warn).with(/Spree::Customers::Create/)
   end
 
   context 'when order has no user' do
