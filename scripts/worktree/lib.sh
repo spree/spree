@@ -7,7 +7,10 @@
 set -euo pipefail
 
 TEMPLATE_DB="spree_worktree_template"
-PG_ARGS=(-h localhost -p "${DATABASE_PORT:-5432}" -U "${DATABASE_USERNAME:-postgres}")
+# Same defaults as the starter's config/database.yml, so the psql tools and
+# Rails always agree on which server they are talking to. teardown runs after
+# the worktree (and its bundled Rails) is gone, so these cannot come from Rails.
+PG_ARGS=(-h "${DATABASE_HOST:-localhost}" -p "${DATABASE_PORT:-5432}" -U "${DATABASE_USERNAME:-postgres}")
 
 worktree_root() { git rev-parse --show-toplevel; }
 

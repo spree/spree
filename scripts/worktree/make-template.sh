@@ -30,10 +30,11 @@ if [ "$resolved" != "$TEMPLATE_DB" ]; then
 fi
 
 echo "▸ Rebuilding $TEMPLATE_DB (migrations + seeds, ~2-3 min)"
-dropdb "${PG_ARGS[@]}" --if-exists "$TEMPLATE_DB"
-createdb "${PG_ARGS[@]}" "$TEMPLATE_DB"
 
+# db:drop/db:create rather than dropdb/createdb: Rails connects using the config
+# just verified, so the destructive step cannot reach a different host or port
+# than the name check covered.
 (cd server && DATABASE_NAME="$TEMPLATE_DB" DATABASE_NAME_TEST="$TEMPLATE_DB" \
-  bin/rails spree:install:migrations db:prepare)
+  bin/rails db:drop db:create spree:install:migrations db:prepare)
 
 echo "✓ $TEMPLATE_DB ready — new worktrees copy it via createdb -T"
