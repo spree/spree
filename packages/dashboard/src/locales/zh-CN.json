@@ -178,6 +178,127 @@
         "updated": "渠道已更新"
       }
     },
+    "collections": {
+      "add_cta": "新建系列",
+      "columns": {
+        "membership": "商品来源",
+        "products_count": "商品",
+        "sort_order": "排序"
+      },
+      "delete_confirm": {
+        "message": "确定删除系列“{{name}}”吗？商品仍保留在目录中。",
+        "title": "删除系列"
+      },
+      "delete_label": "删除系列",
+      "empty": "暂无系列。",
+      "fields": {
+        "automatic": {
+          "label": "根据规则自动选入商品"
+        },
+        "rule_match_policy": {
+          "label": "条件"
+        },
+        "rule_type": {
+          "label": "规则"
+        },
+        "rule_value": {
+          "label": "值",
+          "placeholder": "值"
+        },
+        "rules_match_policy": {
+          "label": "商品需满足"
+        },
+        "sort_order": {
+          "label": "默认排序"
+        }
+      },
+      "images": {
+        "help": "用于系列横幅。建议 1920×1080。",
+        "label": "图片",
+        "square_help": "用于紧凑导航。建议 400×400。",
+        "square_label": "方形图片",
+        "title": "图片"
+      },
+      "load_failed": "加载系列失败，请重试。",
+      "membership": {
+        "automatic": "自动",
+        "manual": "手动"
+      },
+      "messages": {
+        "created": "系列已创建",
+        "deleted": "系列已删除",
+        "move_failed": "无法移动系列",
+        "updated": "系列已更新"
+      },
+      "new_title": "新建系列",
+      "products": {
+        "add_cta": "添加商品",
+        "automatic_hint": "商品由上方规则决定，并会自动更新。",
+        "column_product": "商品",
+        "empty": "该系列暂无商品。",
+        "empty_automatic": "暂无商品符合规则。",
+        "filter_placeholder": "筛选商品…",
+        "no_matches": "没有符合筛选条件的商品。",
+        "picker_description": "搜索并选择要添加到该系列的商品。",
+        "picker_title": "向系列添加商品",
+        "remove": "从系列中移除",
+        "remove_selected": "移除",
+        "search_placeholder": "搜索商品…",
+        "select_all": "全选",
+        "select_row": "选择商品",
+        "title": "商品"
+      },
+      "rule_match_policies": {
+        "contains": "包含",
+        "does_not_contain": "不包含",
+        "is_equal_to": "等于",
+        "is_not_equal_to": "不等于"
+      },
+      "rule_types": {
+        "available_on": {
+          "description": "最近 N 天内上架的商品",
+          "name": "近期上架"
+        },
+        "sale": {
+          "description": "当前价格低于对比价的商品",
+          "name": "特价中"
+        },
+        "tag": {
+          "description": "带有匹配标签的商品",
+          "name": "标签"
+        }
+      },
+      "rules": {
+        "add": "添加规则",
+        "description": "手动选择商品，或由规则自动维护系列。",
+        "remove": "删除规则",
+        "title": "商品来源"
+      },
+      "rules_match_policies": {
+        "all": "全部条件",
+        "any": "任一条件"
+      },
+      "search_placeholder": "搜索系列…",
+      "seo": {
+        "preview_slug_placeholder": "collection-slug",
+        "title": "搜索引擎优化"
+      },
+      "sort_order": {
+        "description": "除非顾客自行选择排序，否则店铺按此顺序展示商品。",
+        "title": "默认排序"
+      },
+      "sort_orders": {
+        "available_on_asc": "日期：从旧到新",
+        "available_on_desc": "日期：从新到旧",
+        "best_selling": "销量优先",
+        "manual": "手动",
+        "name_asc": "名称：A–Z",
+        "name_desc": "名称：Z–A",
+        "price_asc": "价格：从低到高",
+        "price_desc": "价格：从高到低"
+      },
+      "title": "系列"
+    },
     "components": {
       "adjustment_action_editor": {
         "calculator_label": "计算器",
@@ -835,6 +956,10 @@
         "channels": {
           "label": "销售渠道"
         },
+        "collection_ids": {
+          "help": "此处仅可设置手动系列；自动系列由其规则决定。",
+          "label": "系列"
+        },
         "description": {
           "label": "描述",
           "placeholder": "撰写产品描述…"
@@ -1292,6 +1417,7 @@
       "account": "账户",
       "categories": "分类",
       "claims": "索赔",
+      "collections": "系列",
       "customer_groups": "分组",
       "customers": "客户",
       "draft_orders": "草稿订单",
@@ -1823,6 +1949,7 @@
         "bulk": {
           "add_categories_action": "添加到分类…",
           "add_channels_action": "添加到销售渠道…",
+          "add_collections_action": "添加到系列",
           "add_tags_action": "添加标签…",
           "categories_add_description": "选择要将这些商品添加到的分类。",
           "categories_add_failed": "将商品添加到分类失败",
@@ -1840,6 +1967,14 @@
           "channels_remove_failed": "将商品从销售渠道下架失败",
           "channels_remove_title": "从销售渠道中移除",
           "channels_removed": "已将 {n} 个商品从销售渠道下架",
+          "collections_add_description": "所选商品将被添加到您选择的每个系列。",
+          "collections_add_failed": "无法将商品添加到系列",
+          "collections_add_title": "添加到系列",
+          "collections_added": "商品已添加到系列",
+          "collections_remove_description": "所选商品将从您选择的每个系列中移除。",
+          "collections_remove_failed": "无法从系列中移除商品",
+          "collections_remove_title": "从系列中移除",
+          "collections_removed": "商品已从系列中移除",
           "delete_confirm": {
             "message": "所选商品将被移除。此操作无法撤销。",
             "title": "删除 {n} 个商品？"
@@ -1848,6 +1983,7 @@
           "deleted": "已删除 {n} 个商品",
           "remove_categories_action": "从分类中移除…",
           "remove_channels_action": "从销售渠道中移除…",
+          "remove_collections_action": "从系列中移除",
           "remove_tags_action": "移除标签…",
           "set_status_action": "设置状态…",
           "status_sheet_description": "选择要应用到所选商品的状态。",
@@ -2426,6 +2562,7 @@
     },
     "products": {
       "category_search_placeholder": "搜索分类…",
+      "collection_search_placeholder": "搜索系列…",
       "columns": {
         "in_stock": "库存",
         "price": "价格",
@@ -2456,6 +2593,7 @@
         "upload_status_failed": "失败"
       },
       "no_categories_found": "未找到分类",
+      "no_collections_found": "未找到系列",
       "options": {
         "add_cta": "添加选项类型",
         "count_one": "{{count}} 个值",

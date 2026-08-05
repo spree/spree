@@ -57,8 +57,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
           permalink: { type: :string },
           meta_title: { type: :string },
           meta_description: { type: :string },
-          meta_keywords: { type: :string },
-          hide_from_nav: { type: :boolean, example: false }
+          meta_keywords: { type: :string }
         },
         required: %w[name]
       }
@@ -144,8 +143,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
           permalink: { type: :string },
           meta_title: { type: :string },
           meta_description: { type: :string },
-          meta_keywords: { type: :string },
-          hide_from_nav: { type: :boolean }
+          meta_keywords: { type: :string }
         }
       }
 

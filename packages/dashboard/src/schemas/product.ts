@@ -103,6 +103,7 @@ export const productFormSchema = z.object({
 
   // Categorization
   category_ids: z.array(z.string()).optional(),
+  collection_ids: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
 
   // Tax
@@ -149,6 +150,7 @@ export function newProductFormDefaults(): ProductFormValues {
     description: '',
     status: 'draft',
     category_ids: [],
+    collection_ids: [],
     tags: [],
     tax_category_id: null,
     product_type_id: null,

@@ -742,6 +742,16 @@ en:
     code: Code
     color_code: Color Code
     colors: Colors
+    collection_rule_types:
+      available_on:
+        description: Products published within the last N days
+        name: Recently published
+      sale:
+        description: Products currently discounted below their compare-at price
+        name: On sale
+      tag:
+        description: Products carrying a matching tag
+        name: Tag
     company: Company
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price

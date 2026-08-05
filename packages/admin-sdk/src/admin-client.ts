@@ -104,6 +104,9 @@ import type {
   ClaimCreateParams,
   ClaimResolveParams,
   ClaimUpdateParams,
+  CollectionCreateParams,
+  CollectionProductRepositionParams,
+  CollectionUpdateParams,
   CustomerAddressParams,
   CustomerCreateParams,
   CustomerGroupCreateParams,
@@ -200,6 +203,7 @@ import type {
   Category,
   Channel,
   Claim,
+  Collection,
   Country,
   CouponCode,
   CreditCard,
@@ -274,6 +278,7 @@ const CUSTOM_FIELD_OWNER_PATHS = {
   'Spree::Order': '/orders',
   'Spree::User': '/customers',
   'Spree::Category': '/categories',
+  'Spree::Collection': '/collections',
   'Spree::OptionType': '/option_types',
 } as const satisfies Record<Exclude<CustomFieldOwnerType, string & {}>, string>
 
@@ -667,6 +672,24 @@ export class AdminClient {
       options?: RequestOptions,
     ): Promise<{ product_count: number; category_count: number }> =>
       this.request('POST', '/products/bulk_remove_from_categories', { ...options, body: params }),
+
+    /**
+     * Attach every product in `ids` to every collection in `collection_ids`.
+     * Automatic collections are skipped (their membership comes from rules), so
+     * `collection_count` reports how many were actually applied.
+     */
+    bulkAddToCollections: (
+      params: { ids: string[]; collection_ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number; collection_count: number }> =>
+      this.request('POST', '/products/bulk_add_to_collections', { ...options, body: params }),
+
+    /** Detach every product in `ids` from every collection in `collection_ids`. */
+    bulkRemoveFromCollections: (
+      params: { ids: string[]; collection_ids: string[] },
+      options?: RequestOptions,
+    ): Promise<{ product_count: number; collection_count: number }> =>
+      this.request('POST', '/products/bulk_remove_from_collections', { ...options, body: params }),
 
     /** Publish every product in `ids` on every channel in `channel_ids`. */
     bulkAddToChannels: (
@@ -2547,6 +2570,101 @@ export class AdminClient {
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Category']),
 
     translations: this.parentScopedTranslations('/categories'),
+  }
+
+  // ============================================
+  // Collections
+  // ============================================
+
+  readonly collections = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Collection>> =>
+      this.request<PaginatedResponse<Collection>>('GET', '/collections', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<Collection> =>
+      this.request<Collection>('GET', `/collections/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    create: (params: CollectionCreateParams, options?: RequestOptions): Promise<Collection> =>
+      this.request<Collection>('POST', '/collections', { ...options, body: params }),
+
+    /**
+     * Collections are a flat list, so reordering one is a plain `position`
+     * update — `acts_as_list` shifts its siblings on save and there is no
+     * separate reposition action.
+     */
+    update: (
+      id: string,
+      params: CollectionUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Collection> =>
+      this.request<Collection>('PATCH', `/collections/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/collections/${id}`, options),
+
+    /**
+     * Manual product membership + ordering within a collection. `add`, `remove`
+     * and `reposition` are rejected on an automatic collection, whose members
+     * are materialized from its rules; `list` works on both.
+     */
+    products: {
+      list: (
+        collectionId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Product>> =>
+        this.request<PaginatedResponse<Product>>('GET', `/collections/${collectionId}/products`, {
+          ...options,
+          params: params ? transformListParams(params) : undefined,
+        }),
+
+      add: (collectionId: string, productId: string, options?: RequestOptions): Promise<Product> =>
+        this.request<Product>('POST', `/collections/${collectionId}/products`, {
+          ...options,
+          body: { product_id: productId },
+        }),
+
+      remove: (collectionId: string, productId: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/collections/${collectionId}/products/${productId}`, options),
+
+      reposition: (
+        collectionId: string,
+        productId: string,
+        params: CollectionProductRepositionParams,
+        options?: RequestOptions,
+      ): Promise<void> =>
+        this.request<void>(
+          'PATCH',
+          `/collections/${collectionId}/products/${productId}/reposition`,
+          { ...options, body: params },
+        ),
+    },
+
+    customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Collection']),
+
+    translations: this.parentScopedTranslations('/collections'),
+  }
+
+  /**
+   * Collection rule kinds. Read-only discovery — rules themselves are written
+   * through the owning collection's `rules` array on update. The list is
+   * registry-driven server-side, so plugin-registered rules appear here too.
+   */
+  readonly collectionRules = {
+    types: (options?: RequestOptions): Promise<{ data: ResourceTypeDefinition[] }> =>
+      this.request<{ data: ResourceTypeDefinition[] }>('GET', '/collection_rules/types', options),
   }
 
   // ============================================

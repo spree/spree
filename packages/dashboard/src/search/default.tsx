@@ -1,13 +1,15 @@
-import type { Category, Customer, Order, Product, Promotion } from '@spree/admin-sdk'
+import type { Category, Collection, Customer, Order, Product, Promotion } from '@spree/admin-sdk'
 import { adminClient, defineSearchEntry, Subject, searchRegistry } from '@spree/dashboard-core'
 import { StatusBadge } from '@spree/dashboard-ui'
 import {
   FolderTreeIcon,
+  LayersIcon,
   ShoppingCartIcon,
   TagIcon,
   TicketPercentIcon,
   UsersIcon,
 } from 'lucide-react'
+import type { ReactNode } from 'react'
 
 // Each entry teaches the command palette how to search one resource: how to
 // fetch matches, render a result row, and where a row navigates. Resources are
@@ -26,7 +28,7 @@ searchRegistry.add(
     getRoute: (p, storeId) => ({ to: `/${storeId}/products/${p.id}` }),
     renderRow: (p) => (
       <>
-        <ProductIconOrThumbnail thumbnailUrl={p.primary_media?.mini_url ?? null} />
+        <IconOrThumbnail thumbnailUrl={p.primary_media?.mini_url ?? null} icon={<TagIcon />} />
         <span className="flex-1 truncate">{p.name}</span>
         <StatusBadge status={p.status} />
       </>
@@ -51,8 +53,33 @@ searchRegistry.add(
     getRoute: (c, storeId) => ({ to: `/${storeId}/products/categories/${c.id}` }),
     renderRow: (c) => (
       <>
-        <CategoryIconOrThumbnail thumbnailUrl={c.square_image_url ?? c.image_url ?? null} />
+        <IconOrThumbnail
+          thumbnailUrl={c.square_image_url ?? c.image_url ?? null}
+          icon={<FolderTreeIcon />}
+        />
         <span className="flex-1 truncate">{c.pretty_name}</span>
+      </>
+    ),
+  }),
+)
+
+searchRegistry.add(
+  defineSearchEntry<Collection>({
+    key: 'collections',
+    headingKey: 'admin.nav.collections',
+    subject: Subject.Collection,
+    position: 160,
+    fetch: (search, limit) =>
+      adminClient.collections.list({ name_cont: search, limit, sort: 'name' }).then((r) => r.data),
+    getKey: (c) => c.id,
+    getRoute: (c, storeId) => ({ to: `/${storeId}/products/collections/${c.id}` }),
+    renderRow: (c) => (
+      <>
+        <IconOrThumbnail
+          thumbnailUrl={c.square_image_url ?? c.image_url ?? null}
+          icon={<LayersIcon />}
+        />
+        <span className="flex-1 truncate">{c.name}</span>
       </>
     ),
   }),
@@ -125,20 +152,9 @@ searchRegistry.add(
   }),
 )
 
-function ProductIconOrThumbnail({ thumbnailUrl }: { thumbnailUrl: string | null }) {
-  if (!thumbnailUrl) return <TagIcon />
-  return (
-    <img
-      src={thumbnailUrl}
-      alt=""
-      className="size-5 shrink-0 rounded object-cover"
-      loading="lazy"
-    />
-  )
-}
-
-function CategoryIconOrThumbnail({ thumbnailUrl }: { thumbnailUrl: string | null }) {
-  if (!thumbnailUrl) return <FolderTreeIcon />
+/** A result row's thumbnail, falling back to the resource's own icon. */
+function IconOrThumbnail({ thumbnailUrl, icon }: { thumbnailUrl: string | null; icon: ReactNode }) {
+  if (!thumbnailUrl) return icon
   return (
     <img
       src={thumbnailUrl}

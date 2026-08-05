@@ -178,6 +178,127 @@
         "updated": "تم تحديث القناة"
       }
     },
+    "collections": {
+      "add_cta": "مجموعة جديدة",
+      "columns": {
+        "membership": "العضوية",
+        "products_count": "المنتجات",
+        "sort_order": "الترتيب"
+      },
+      "delete_confirm": {
+        "message": "هل تريد حذف المجموعة «{{name}}»؟ ستبقى المنتجات في الكتالوج.",
+        "title": "حذف المجموعة"
+      },
+      "delete_label": "حذف المجموعة",
+      "empty": "لا توجد مجموعات بعد.",
+      "fields": {
+        "automatic": {
+          "label": "تحديد المنتجات تلقائيًا وفق قواعد"
+        },
+        "rule_match_policy": {
+          "label": "الشرط"
+        },
+        "rule_type": {
+          "label": "القاعدة"
+        },
+        "rule_value": {
+          "label": "القيمة",
+          "placeholder": "القيمة"
+        },
+        "rules_match_policy": {
+          "label": "يجب أن تطابق المنتجات"
+        },
+        "sort_order": {
+          "label": "الترتيب الافتراضي"
+        }
+      },
+      "images": {
+        "help": "تُستخدم في لافتات المجموعة. يُوصى بـ 1920×1080.",
+        "label": "صورة",
+        "square_help": "تُستخدم في التنقل المختصر. يُوصى بـ 400×400.",
+        "square_label": "صورة مربعة",
+        "title": "الصور"
+      },
+      "load_failed": "تعذر تحميل المجموعات. يرجى المحاولة مرة أخرى.",
+      "membership": {
+        "automatic": "تلقائي",
+        "manual": "يدوي"
+      },
+      "messages": {
+        "created": "تم إنشاء المجموعة",
+        "deleted": "تم حذف المجموعة",
+        "move_failed": "تعذر نقل المجموعة",
+        "updated": "تم تحديث المجموعة"
+      },
+      "new_title": "مجموعة جديدة",
+      "products": {
+        "add_cta": "إضافة منتجات",
+        "automatic_hint": "تُحدد المنتجات وفق القواعد أعلاه وتُحدَّث تلقائيًا.",
+        "column_product": "المنتج",
+        "empty": "لا توجد منتجات في هذه المجموعة بعد.",
+        "empty_automatic": "لا توجد منتجات مطابقة للقواعد بعد.",
+        "filter_placeholder": "تصفية المنتجات…",
+        "no_matches": "لا توجد منتجات مطابقة للتصفية.",
+        "picker_description": "ابحث واختر منتجات لإضافتها إلى هذه المجموعة.",
+        "picker_title": "إضافة منتجات إلى المجموعة",
+        "remove": "إزالة من المجموعة",
+        "remove_selected": "إزالة",
+        "search_placeholder": "ابحث عن منتجات…",
+        "select_all": "تحديد الكل",
+        "select_row": "تحديد المنتج",
+        "title": "المنتجات"
+      },
+      "rule_match_policies": {
+        "contains": "يحتوي على",
+        "does_not_contain": "لا يحتوي على",
+        "is_equal_to": "يساوي",
+        "is_not_equal_to": "لا يساوي"
+      },
+      "rule_types": {
+        "available_on": {
+          "description": "منتجات نُشرت خلال آخر N يومًا",
+          "name": "نُشرت حديثًا"
+        },
+        "sale": {
+          "description": "منتجات مخفّضة حاليًا دون سعر المقارنة",
+          "name": "في التخفيضات"
+        },
+        "tag": {
+          "description": "منتجات تحمل وسمًا مطابقًا",
+          "name": "وسم"
+        }
+      },
+      "rules": {
+        "add": "إضافة قاعدة",
+        "description": "اختر المنتجات يدويًا، أو دع القواعد تُبقي المجموعة محدَّثة.",
+        "remove": "إزالة القاعدة",
+        "title": "العضوية"
+      },
+      "rules_match_policies": {
+        "all": "جميع الشروط",
+        "any": "أي شرط"
+      },
+      "search_placeholder": "ابحث عن مجموعات…",
+      "seo": {
+        "preview_slug_placeholder": "معرف-المجموعة",
+        "title": "تحسين محركات البحث"
+      },
+      "sort_order": {
+        "description": "ترتيب المنتجات في المتجر ما لم يختر المتسوّق ترتيبًا آخر.",
+        "title": "الترتيب الافتراضي"
+      },
+      "sort_orders": {
+        "available_on_asc": "التاريخ: الأقدم أولاً",
+        "available_on_desc": "التاريخ: الأحدث أولاً",
+        "best_selling": "الأكثر مبيعًا",
+        "manual": "يدوي",
+        "name_asc": "الاسم: ألفبائيًا",
+        "name_desc": "الاسم: عكسيًا",
+        "price_asc": "السعر: من الأقل للأعلى",
+        "price_desc": "السعر: من الأعلى للأقل"
+      },
+      "title": "المجموعات"
+    },
     "components": {
       "adjustment_action_editor": {
         "calculator_label": "آلة حاسبة",
@@ -835,6 +956,10 @@
         "channels": {
           "label": "قنوات البيع"
         },
+        "collection_ids": {
+          "help": "يمكن تحديد المجموعات اليدوية فقط هنا؛ أما التلقائية فتتبع قواعدها.",
+          "label": "المجموعات"
+        },
         "description": {
           "label": "الوصف",
           "placeholder": "اكتب وصف المنتج…"
@@ -1292,6 +1417,7 @@
       "account": "الحساب",
       "categories": "الفئات",
       "claims": "المطالبات",
+      "collections": "المجموعات",
       "customer_groups": "المجموعات",
       "customers": "العملاء",
       "draft_orders": "مسودات الطلبات",
@@ -1823,6 +1949,7 @@
         "bulk": {
           "add_categories_action": "أضف إلى الفئات…",
           "add_channels_action": "أضف إلى قنوات البيع…",
+          "add_collections_action": "إضافة إلى مجموعات",
           "add_tags_action": "إضافة علامات…",
           "categories_add_description": "اختر الفئات التي تريد إضافة هذه المنتجات إليها.",
           "categories_add_failed": "فشلت إضافة المنتجات إلى الفئات",
@@ -1840,6 +1967,14 @@
           "channels_remove_failed": "فشل في إلغاء إدراج المنتجات من قنوات البيع",
           "channels_remove_title": "إزالة من قنوات البيع",
           "channels_removed": "منتجات {n} غير مدرجة من قنوات البيع",
+          "collections_add_description": "تُضاف المنتجات المحددة إلى كل مجموعة تختارها.",
+          "collections_add_failed": "تعذرت إضافة المنتجات إلى المجموعات",
+          "collections_add_title": "إضافة إلى مجموعات",
+          "collections_added": "تمت إضافة المنتجات إلى المجموعات",
+          "collections_remove_description": "تُزال المنتجات المحددة من كل مجموعة تختارها.",
+          "collections_remove_failed": "تعذرت إزالة المنتجات من المجموعات",
+          "collections_remove_title": "إزالة من مجموعات",
+          "collections_removed": "تمت إزالة المنتجات من المجموعات",
           "delete_confirm": {
             "message": "ستتم إزالة المنتجات المحددة. لا يمكن التراجع عن هذا الإجراء.",
             "title": "هل تريد حذف منتجات {n}؟"
@@ -1848,6 +1983,7 @@
           "deleted": "منتجات {n} المحذوفة",
           "remove_categories_action": "إزالة من الفئات…",
           "remove_channels_action": "إزالة من قنوات البيع…",
+          "remove_collections_action": "إزالة من مجموعات",
           "remove_tags_action": "إزالة العلامات…",
           "set_status_action": "تعيين الحالة…",
           "status_sheet_description": "اختر الحالة المراد تطبيقها على المنتجات المحددة.",
@@ -2426,6 +2562,7 @@
     },
     "products": {
       "category_search_placeholder": "فئات البحث…",
+      "collection_search_placeholder": "ابحث عن مجموعات…",
       "columns": {
         "in_stock": "In Stock",
         "price": "سعر",
@@ -2456,6 +2593,7 @@
         "upload_status_failed": "فشل"
       },
       "no_categories_found": "لم يتم العثور على فئات",
+      "no_collections_found": "لم يتم العثور على مجموعات",
       "options": {
         "add_cta": "إضافة نوع الخيار",
         "count_one": "قيمة {{count}}",

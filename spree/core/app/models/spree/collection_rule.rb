@@ -16,7 +16,51 @@ module Spree
 
     delegate :store, to: :collection
 
+    validate :type_must_be_registered
+
+    # @return [String] localized display name for the rule kind, used by admin pickers
+    def self.human_name
+      Spree.t("collection_rule_types.#{api_type}.name", default: api_type.titleize)
+    end
+
+    # @return [String] localized description for the rule kind
+    def self.human_description
+      Spree.t("collection_rule_types.#{api_type}.description", default: '')
+    end
+
+    # Feeds the `description` field of `subclasses_with_preference_schema`
+    # (the `/types` discovery payload), which only reads `.description`.
+    def self.description
+      human_description
+    end
+
+    def human_name = self.class.human_name
+    def human_description = self.class.human_description
+
+    # Routes Spree::PreferenceSchema's subclass discovery
+    # (`subclasses_with_preference_schema`, `find_by_api_type`) to the
+    # collection-rule registry, so a plugin-registered rule is discoverable
+    # by the dashboard without a core change.
+    module ClassMethods
+      private
+
+      def registered_subclasses
+        Rails.application.config.spree.collection_rules
+      end
+    end
+    extend ClassMethods
+
     private
+
+    # Guards against an arbitrary class name reaching the STI `type` column
+    # through the API.
+    def type_must_be_registered
+      return if type.blank?
+      return if Rails.application.config.spree.collection_rules.any? { |rule| rule.to_s == type }
+
+      errors.add(:type, Spree.t(:invalid_collection_rule, scope: [:errors, :messages],
+                                                          default: 'is not a registered collection rule'))
+    end
 
     def regenerate_collection_products
       collection.regenerate_products(only_once: true)

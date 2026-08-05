@@ -29,6 +29,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   FolderMinusIcon,
   FolderPlusIcon,
+  LayersIcon,
   PlusIcon,
   RadioTowerIcon,
   TagIcon,
@@ -42,15 +43,18 @@ import { z } from 'zod/v4'
 import { ImportWizardDialog } from '../../../../components/spree/imports/import-wizard-dialog'
 import { categoryAutocompleteProps, useCategories } from '../../../../hooks/use-categories'
 import { channelAutocompleteProps, useChannels } from '../../../../hooks/use-channels'
+import { collectionAutocompleteProps, useCollections } from '../../../../hooks/use-collections'
 import { useDeleteProduct } from '../../../../hooks/use-product'
 import {
   useBulkAddProductsToCategories,
   useBulkAddProductsToChannels,
+  useBulkAddProductsToCollections,
   useBulkAddProductTags,
   useBulkDestroyProducts,
   useBulkProductStatusUpdate,
   useBulkRemoveProductsFromCategories,
   useBulkRemoveProductsFromChannels,
+  useBulkRemoveProductsFromCollections,
   useBulkRemoveProductTags,
   useCloneProduct,
 } from '../../../../hooks/use-products'
@@ -78,6 +82,7 @@ export const Route = createFileRoute('/_authenticated/$storeId/products/')({
 type ProductStatus = 'draft' | 'active' | 'archived'
 type StatusFormValues = { status: ProductStatus }
 type CategoriesFormValues = { category_ids: string[] }
+type CollectionsFormValues = { collection_ids: string[] }
 type ChannelsFormValues = { channel_ids: string[] }
 type TagsFormValues = { tags: string[] }
 
@@ -101,6 +106,8 @@ function ProductsPage() {
   const bulkStatus = useBulkProductStatusUpdate()
   const bulkAddCategories = useBulkAddProductsToCategories()
   const bulkRemoveCategories = useBulkRemoveProductsFromCategories()
+  const bulkAddCollections = useBulkAddProductsToCollections()
+  const bulkRemoveCollections = useBulkRemoveProductsFromCollections()
   const bulkAddChannels = useBulkAddProductsToChannels()
   const bulkRemoveChannels = useBulkRemoveProductsFromChannels()
   const bulkAddTags = useBulkAddProductTags()
@@ -160,6 +167,46 @@ function ProductsPage() {
       invalidate: [['categories']],
       successMessage: t('admin.pages.products.bulk.categories_removed'),
       errorMessage: t('admin.pages.products.bulk.categories_remove_failed'),
+    }
+
+    const addCollections: BulkAction<CollectionsFormValues> = {
+      key: 'add-to-collections',
+      label: t('admin.pages.products.bulk.add_collections_action'),
+      icon: <LayersIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <CollectionPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.collections_add_title')}
+          description={t('admin.pages.products.bulk.collections_add_description')}
+          submitLabel={t('admin.actions.add')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkAddCollections.mutateAsync({ ids, collection_ids: formValues!.collection_ids }),
+      invalidate: [['collections']],
+      successMessage: t('admin.pages.products.bulk.collections_added'),
+      errorMessage: t('admin.pages.products.bulk.collections_add_failed'),
+    }
+
+    const removeCollections: BulkAction<CollectionsFormValues> = {
+      key: 'remove-from-collections',
+      label: t('admin.pages.products.bulk.remove_collections_action'),
+      icon: <LayersIcon className="size-4" />,
+      subject: Subject.Product,
+      form: (props) => (
+        <CollectionPickerSheet
+          {...props}
+          title={t('admin.pages.products.bulk.collections_remove_title')}
+          description={t('admin.pages.products.bulk.collections_remove_description')}
+          submitLabel={t('admin.actions.remove')}
+        />
+      ),
+      run: ({ ids, formValues }) =>
+        bulkRemoveCollections.mutateAsync({ ids, collection_ids: formValues!.collection_ids }),
+      invalidate: [['collections']],
+      successMessage: t('admin.pages.products.bulk.collections_removed'),
+      errorMessage: t('admin.pages.products.bulk.collections_remove_failed'),
     }
 
     const addChannels: BulkAction<ChannelsFormValues> = {
@@ -259,6 +306,8 @@ function ProductsPage() {
       statusAction,
       addCategories,
       removeCategories,
+      addCollections,
+      removeCollections,
       addChannels,
       removeChannels,
       addTags,
@@ -270,6 +319,8 @@ function ProductsPage() {
     bulkStatus,
     bulkAddCategories,
     bulkRemoveCategories,
+    bulkAddCollections,
+    bulkRemoveCollections,
     bulkAddChannels,
     bulkRemoveChannels,
     bulkAddTags,
@@ -485,6 +536,42 @@ function CategoryPickerSheet({
           initialItems={categoriesData?.data}
           value={categoryIds}
           onChange={setCategoryIds}
+        />
+      </Field>
+    </BulkDialog>
+  )
+}
+
+function CollectionPickerSheet({
+  onSubmit,
+  onCancel,
+  title,
+  description,
+  submitLabel,
+}: BulkActionFormProps<CollectionsFormValues> & CopyProps) {
+  const { t } = useTranslation()
+  const [collectionIds, setCollectionIds] = useState<string[]>([])
+  // Only manual collections are offered — an automatic collection's members
+  // come from its rules, and the API skips it on a bulk add.
+  const { data: collectionsData } = useCollections()
+  const manualCollections = collectionsData?.data.filter((c) => !c.automatic)
+
+  return (
+    <BulkDialog
+      title={title}
+      description={description}
+      submitLabel={submitLabel}
+      submitDisabled={collectionIds.length === 0}
+      onCancel={onCancel}
+      onSubmit={() => onSubmit({ collection_ids: collectionIds })}
+    >
+      <Field>
+        <FieldLabel>{t('admin.fields.product.collection_ids.label')}</FieldLabel>
+        <ResourceMultiAutocomplete
+          {...collectionAutocompleteProps('bulk-products-collection-picker')}
+          initialItems={manualCollections}
+          value={collectionIds}
+          onChange={setCollectionIds}
         />
       </Field>
     </BulkDialog>

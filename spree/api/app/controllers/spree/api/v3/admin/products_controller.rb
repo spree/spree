@@ -181,6 +181,10 @@ module Spree
               :promotionable, :digital,
               tags: [],
               category_ids: [],
+              # Collection membership. Assigning an automatic collection here
+              # persists, but its next rule regeneration overwrites the member
+              # list — so the dashboard only offers manual collections.
+              collection_ids: [],
               metadata: {},
               prices: [:amount, :compare_at_amount, :currency],
               # Inline custom field values keyed by definition id. The model

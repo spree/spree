@@ -7,7 +7,12 @@ import i18n from 'i18next'
  * back to the API's English string for custom/extension types that ship no
  * translation.
  */
-export type TypeFamily = 'rule_types' | 'action_types' | 'calculators' | 'order_routing_rule_types'
+export type TypeFamily =
+  | 'rule_types'
+  | 'action_types'
+  | 'calculators'
+  | 'order_routing_rule_types'
+  | 'collection_rule_types'
 
 function i18nKey(family: TypeFamily, code: string, facet: 'name' | 'description'): string {
   // Calculators expose a single flat string (no separate description), so
@@ -16,6 +21,7 @@ function i18nKey(family: TypeFamily, code: string, facet: 'name' | 'description'
   if (family === 'calculators') return `admin.calculators.${code}`
   if (family === 'order_routing_rule_types')
     return `admin.order_routing_rules.types.${code}.${facet}`
+  if (family === 'collection_rule_types') return `admin.collections.rule_types.${code}.${facet}`
   return `admin.promotions.${family}.${code}.${facet}`
 }
 

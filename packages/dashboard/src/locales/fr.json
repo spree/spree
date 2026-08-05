@@ -178,6 +178,127 @@
         "updated": "Canal mis à jour"
       }
     },
+    "collections": {
+      "add_cta": "Nouvelle collection",
+      "columns": {
+        "membership": "Composition",
+        "products_count": "Produits",
+        "sort_order": "Tri"
+      },
+      "delete_confirm": {
+        "message": "Supprimer la collection « {{name}} » ? Les produits restent dans votre catalogue.",
+        "title": "Supprimer la collection"
+      },
+      "delete_label": "Supprimer la collection",
+      "empty": "Aucune collection pour le moment.",
+      "fields": {
+        "automatic": {
+          "label": "Définir les produits automatiquement selon des règles"
+        },
+        "rule_match_policy": {
+          "label": "Condition"
+        },
+        "rule_type": {
+          "label": "Règle"
+        },
+        "rule_value": {
+          "label": "Valeur",
+          "placeholder": "Valeur"
+        },
+        "rules_match_policy": {
+          "label": "Les produits doivent respecter"
+        },
+        "sort_order": {
+          "label": "Tri par défaut"
+        }
+      },
+      "images": {
+        "help": "Utilisée pour les bannières de collection. Recommandé 1920×1080.",
+        "label": "Image",
+        "square_help": "Utilisée dans la navigation compacte. Recommandé 400×400.",
+        "square_label": "Image carrée",
+        "title": "Images"
+      },
+      "load_failed": "Échec du chargement des collections. Veuillez réessayer.",
+      "membership": {
+        "automatic": "Automatique",
+        "manual": "Manuelle"
+      },
+      "messages": {
+        "created": "Collection créée",
+        "deleted": "Collection supprimée",
+        "move_failed": "Impossible de déplacer la collection",
+        "updated": "Collection mise à jour"
+      },
+      "new_title": "Nouvelle collection",
+      "products": {
+        "add_cta": "Ajouter des produits",
+        "automatic_hint": "Les produits sont définis par les règles ci-dessus et se mettent à jour automatiquement.",
+        "column_product": "Produit",
+        "empty": "Aucun produit dans cette collection pour le moment.",
+        "empty_automatic": "Aucun produit ne correspond encore aux règles.",
+        "filter_placeholder": "Filtrer les produits…",
+        "no_matches": "Aucun produit ne correspond à votre filtre.",
+        "picker_description": "Recherchez et sélectionnez des produits à ajouter à cette collection.",
+        "picker_title": "Ajouter des produits à la collection",
+        "remove": "Retirer de la collection",
+        "remove_selected": "Retirer",
+        "search_placeholder": "Rechercher des produits…",
+        "select_all": "Tout sélectionner",
+        "select_row": "Sélectionner le produit",
+        "title": "Produits"
+      },
+      "rule_match_policies": {
+        "contains": "contient",
+        "does_not_contain": "ne contient pas",
+        "is_equal_to": "est égal à",
+        "is_not_equal_to": "est différent de"
+      },
+      "rule_types": {
+        "available_on": {
+          "description": "Produits publiés au cours des N derniers jours",
+          "name": "Publié récemment"
+        },
+        "sale": {
+          "description": "Produits actuellement remisés sous leur prix de référence",
+          "name": "En promotion"
+        },
+        "tag": {
+          "description": "Produits portant une étiquette correspondante",
+          "name": "Étiquette"
+        }
+      },
+      "rules": {
+        "add": "Ajouter une règle",
+        "description": "Choisissez les produits à la main ou laissez des règles tenir la collection à jour.",
+        "remove": "Supprimer la règle",
+        "title": "Composition"
+      },
+      "rules_match_policies": {
+        "all": "toutes les conditions",
+        "any": "au moins une condition"
+      },
+      "search_placeholder": "Rechercher des collections…",
+      "seo": {
+        "preview_slug_placeholder": "slug-collection",
+        "title": "Optimisation pour les moteurs de recherche"
+      },
+      "sort_order": {
+        "description": "Ordre des produits sur la boutique, sauf si le client choisit son propre tri.",
+        "title": "Tri par défaut"
+      },
+      "sort_orders": {
+        "available_on_asc": "Date : plus ancien d'abord",
+        "available_on_desc": "Date : plus récent d'abord",
+        "best_selling": "Meilleures ventes",
+        "manual": "Manuel",
+        "name_asc": "Nom : A–Z",
+        "name_desc": "Nom : Z–A",
+        "price_asc": "Prix : croissant",
+        "price_desc": "Prix : décroissant"
+      },
+      "title": "Collections"
+    },
     "components": {
       "adjustment_action_editor": {
         "calculator_label": "Calculateur",
@@ -835,6 +956,10 @@
         "channels": {
           "label": "Canaux de vente"
         },
+        "collection_ids": {
+          "help": "Seules les collections manuelles se définissent ici ; les automatiques suivent leurs règles.",
+          "label": "Collections"
+        },
         "description": {
           "label": "Description",
           "placeholder": "Rédigez une description du produit…"
@@ -1292,6 +1417,7 @@
       "account": "Compte",
       "categories": "Catégories",
       "claims": "Réclamations",
+      "collections": "Collections",
       "customer_groups": "Groupes",
       "customers": "Clients",
       "draft_orders": "Commandes provisoires",
@@ -1823,6 +1949,7 @@
         "bulk": {
           "add_categories_action": "Ajouter aux catégories…",
           "add_channels_action": "Ajouter aux canaux de vente…",
+          "add_collections_action": "Ajouter à des collections",
           "add_tags_action": "Ajouter des étiquettes…",
           "categories_add_description": "Choisissez les catégories auxquelles ajouter ces produits.",
           "categories_add_failed": "Échec de l'ajout des produits aux catégories",
@@ -1840,6 +1967,14 @@
           "channels_remove_failed": "Échec du retrait des produits des canaux de vente",
           "channels_remove_title": "Retirer des canaux de vente",
           "channels_removed": "{n} produits retirés des canaux de vente",
+          "collections_add_description": "Les produits sélectionnés sont ajoutés à chaque collection choisie.",
+          "collections_add_failed": "Impossible d'ajouter les produits aux collections",
+          "collections_add_title": "Ajouter à des collections",
+          "collections_added": "Produits ajoutés aux collections",
+          "collections_remove_description": "Les produits sélectionnés sont retirés de chaque collection choisie.",
+          "collections_remove_failed": "Impossible de retirer les produits des collections",
+          "collections_remove_title": "Retirer de collections",
+          "collections_removed": "Produits retirés des collections",
           "delete_confirm": {
             "message": "Les produits sélectionnés seront supprimés. Cette action est irréversible.",
             "title": "Supprimer {n} produits ?"
@@ -1848,6 +1983,7 @@
           "deleted": "{n} produits supprimés",
           "remove_categories_action": "Retirer des catégories…",
           "remove_channels_action": "Retirer des canaux de vente…",
+          "remove_collections_action": "Retirer de collections",
           "remove_tags_action": "Retirer des étiquettes…",
           "set_status_action": "Définir le statut…",
           "status_sheet_description": "Choisissez le statut à appliquer aux produits sélectionnés.",
@@ -2426,6 +2562,7 @@
     },
     "products": {
       "category_search_placeholder": "Rechercher des catégories…",
+      "collection_search_placeholder": "Rechercher des collections…",
       "columns": {
         "in_stock": "En stock",
         "price": "Prix",
@@ -2456,6 +2593,7 @@
         "upload_status_failed": "Échec"
       },
       "no_categories_found": "Aucune catégorie trouvée",
+      "no_collections_found": "Aucune collection trouvée",
       "options": {
         "add_cta": "Ajouter un type d'option",
         "count_one": "{{count}} valeur",

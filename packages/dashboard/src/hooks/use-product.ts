@@ -24,6 +24,7 @@ export function useProduct(id: string) {
           'variants.stock_items.stock_location',
           'option_types',
           'categories',
+          'collections',
           'tax_category',
           'product_publications',
           'channels',

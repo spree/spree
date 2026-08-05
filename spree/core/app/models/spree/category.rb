@@ -64,7 +64,6 @@ module Spree
     validates :permalink, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }, if: :requires_taxonomy?
     validates :name, uniqueness: { scope: %i[parent_id store_id], case_sensitive: false }, unless: :requires_taxonomy?
     validates :permalink, uniqueness: { scope: %i[parent_id store_id], case_sensitive: false }, unless: :requires_taxonomy?
-    validates :hide_from_nav, inclusion: { in: [true, false] }
     validate :check_for_root, on: :create
     validate :parent_belongs_to_same_taxonomy
     with_options length: { maximum: 255 }, allow_blank: true do
@@ -148,7 +147,7 @@ module Spree
     #
     self.whitelisted_ransackable_associations = %w[taxonomy parent]
     self.whitelisted_ransackable_attributes = %w[name permalink automatic depth is_root children_count
-                                                 products_count pretty_name hide_from_nav parent_id]
+                                                 products_count pretty_name parent_id]
 
     #
     # Translations

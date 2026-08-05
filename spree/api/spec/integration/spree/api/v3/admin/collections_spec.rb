@@ -333,4 +333,27 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       end
     end
   end
+
+  path '/api/v3/admin/collection_rules/types' do
+    get 'List available collection rule types' do
+      tags 'Collections'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Enumerates the registered rule kinds with their labels and descriptions — drives the rule picker on an automatic collection. Plugins extend the list by registering `Spree::CollectionRule` subclasses via `config.spree.collection_rules`. The `type` returned here is the wire shorthand accepted when writing a collection\'s `rules`.'
+      admin_scope :read, :collections
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'types found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |type| type['type'] }).to contain_exactly('tag', 'sale', 'available_on')
+          expect(data.first).to include('label', 'description', 'preference_schema')
+        end
+      end
+    end
+  end
 end

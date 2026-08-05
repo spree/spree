@@ -178,6 +178,127 @@
         "updated": "Channel updated"
       }
     },
+    "collections": {
+      "add_cta": "New collection",
+      "columns": {
+        "membership": "Membership",
+        "products_count": "Products",
+        "sort_order": "Sorting"
+      },
+      "delete_confirm": {
+        "message": "Delete the collection \"{{name}}\"? Products stay in your catalog.",
+        "title": "Delete collection"
+      },
+      "delete_label": "Delete collection",
+      "empty": "No collections yet.",
+      "fields": {
+        "automatic": {
+          "label": "Set members automatically from rules"
+        },
+        "rule_match_policy": {
+          "label": "Condition"
+        },
+        "rule_type": {
+          "label": "Rule"
+        },
+        "rule_value": {
+          "label": "Value",
+          "placeholder": "Value"
+        },
+        "rules_match_policy": {
+          "label": "Products must match"
+        },
+        "sort_order": {
+          "label": "Default sorting"
+        }
+      },
+      "images": {
+        "help": "Used in collection banners. Recommended 1920×1080.",
+        "label": "Image",
+        "square_help": "Used in compact navigation. Recommended 400×400.",
+        "square_label": "Square image",
+        "title": "Images"
+      },
+      "load_failed": "Failed to load collections. Please try again.",
+      "membership": {
+        "automatic": "Automatic",
+        "manual": "Manual"
+      },
+      "messages": {
+        "created": "Collection created",
+        "deleted": "Collection deleted",
+        "move_failed": "Could not move the collection",
+        "updated": "Collection updated"
+      },
+      "new_title": "New collection",
+      "products": {
+        "add_cta": "Add products",
+        "automatic_hint": "Members are set by the rules above and refresh automatically.",
+        "column_product": "Product",
+        "empty": "No products in this collection yet.",
+        "empty_automatic": "No products match the rules yet.",
+        "filter_placeholder": "Filter products…",
+        "no_matches": "No products match your filter.",
+        "picker_description": "Search and select products to add to this collection.",
+        "picker_title": "Add products to collection",
+        "remove": "Remove from collection",
+        "remove_selected": "Remove",
+        "search_placeholder": "Search products…",
+        "select_all": "Select all",
+        "select_row": "Select product",
+        "title": "Products"
+      },
+      "rule_match_policies": {
+        "contains": "contains",
+        "does_not_contain": "does not contain",
+        "is_equal_to": "is equal to",
+        "is_not_equal_to": "is not equal to"
+      },
+      "rule_types": {
+        "available_on": {
+          "description": "Products published within the last N days",
+          "name": "Recently published"
+        },
+        "sale": {
+          "description": "Products currently discounted below their compare-at price",
+          "name": "On sale"
+        },
+        "tag": {
+          "description": "Products carrying a matching tag",
+          "name": "Tag"
+        }
+      },
+      "rules": {
+        "add": "Add rule",
+        "description": "Choose products by hand, or let rules keep the collection up to date.",
+        "remove": "Remove rule",
+        "title": "Membership"
+      },
+      "rules_match_policies": {
+        "all": "all conditions",
+        "any": "any condition"
+      },
+      "search_placeholder": "Search collections…",
+      "seo": {
+        "preview_slug_placeholder": "collection-slug",
+        "title": "Search engine optimization"
+      },
+      "sort_order": {
+        "description": "How products are ordered on the storefront unless a shopper picks their own sorting.",
+        "title": "Default sorting"
+      },
+      "sort_orders": {
+        "available_on_asc": "Date: oldest first",
+        "available_on_desc": "Date: newest first",
+        "best_selling": "Best selling",
+        "manual": "Manual",
+        "name_asc": "Name: A–Z",
+        "name_desc": "Name: Z–A",
+        "price_asc": "Price: low to high",
+        "price_desc": "Price: high to low"
+      },
+      "title": "Collections"
+    },
     "components": {
       "adjustment_action_editor": {
         "calculator_label": "Calculator",
@@ -835,6 +956,10 @@
         "channels": {
           "label": "Sales channels"
         },
+        "collection_ids": {
+          "help": "Only manual collections can be set here; automatic ones follow their rules.",
+          "label": "Collections"
+        },
         "description": {
           "label": "Description",
           "placeholder": "Write a product description…"
@@ -1292,6 +1417,7 @@
       "account": "Account",
       "categories": "Categories",
       "claims": "Claims",
+      "collections": "Collections",
       "customer_groups": "Groups",
       "customers": "Customers",
       "draft_orders": "Draft Orders",
@@ -1823,6 +1949,7 @@
         "bulk": {
           "add_categories_action": "Add to categories…",
           "add_channels_action": "Add to sales channels…",
+          "add_collections_action": "Add to collections",
           "add_tags_action": "Add tags…",
           "categories_add_description": "Pick the categories to add these products to.",
           "categories_add_failed": "Failed to add products to categories",
@@ -1840,6 +1967,14 @@
           "channels_remove_failed": "Failed to unlist products from sales channels",
           "channels_remove_title": "Remove from sales channels",
           "channels_removed": "Unlisted {n} products from sales channels",
+          "collections_add_description": "The selected products are added to every collection you choose.",
+          "collections_add_failed": "Could not add the products to the collections",
+          "collections_add_title": "Add to collections",
+          "collections_added": "Products added to the collections",
+          "collections_remove_description": "The selected products are removed from every collection you choose.",
+          "collections_remove_failed": "Could not remove the products from the collections",
+          "collections_remove_title": "Remove from collections",
+          "collections_removed": "Products removed from the collections",
           "delete_confirm": {
             "message": "Selected products will be removed. This action cannot be undone.",
             "title": "Delete {n} products?"
@@ -1848,6 +1983,7 @@
           "deleted": "Deleted {n} products",
           "remove_categories_action": "Remove from categories…",
           "remove_channels_action": "Remove from sales channels…",
+          "remove_collections_action": "Remove from collections",
           "remove_tags_action": "Remove tags…",
           "set_status_action": "Set status…",
           "status_sheet_description": "Pick the status to apply to the selected products.",
@@ -2426,6 +2562,7 @@
     },
     "products": {
       "category_search_placeholder": "Search categories…",
+      "collection_search_placeholder": "Search collections…",
       "columns": {
         "in_stock": "In Stock",
         "price": "Price",
@@ -2456,6 +2593,7 @@
         "upload_status_failed": "Failed"
       },
       "no_categories_found": "No categories found",
+      "no_collections_found": "No collections found",
       "options": {
         "add_cta": "Add option type",
         "count_one": "{{count}} value",

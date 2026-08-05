@@ -139,6 +139,7 @@ function productToFormValues(
     description: product.description_html ?? '',
     status: (product.status as ProductFormValues['status']) ?? 'draft',
     category_ids: product.categories?.map((t) => t.id) ?? [],
+    collection_ids: product.collections?.map((c) => c.id) ?? [],
     tags: product.tags ?? [],
     tax_category_id: product.tax_category_id ?? null,
     product_type_id: product.product_type_id ?? null,

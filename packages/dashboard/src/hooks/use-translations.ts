@@ -20,6 +20,7 @@ export function useLocales() {
 const TRANSLATIONS_ACCESSORS = {
   product: adminClient.products.translations,
   category: adminClient.categories.translations,
+  collection: adminClient.collections.translations,
   option_type: adminClient.optionTypes.translations,
 } as const
 

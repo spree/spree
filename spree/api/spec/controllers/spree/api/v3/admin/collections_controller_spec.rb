@@ -123,6 +123,29 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
         expect(Spree::CollectionRule.find_by(id: drop.id)).to be_nil
         expect(automatic.rules.map(&:type)).to include('Spree::CollectionRules::Sale')
       end
+
+      # `/collection_rules/types` advertises the shorthand (`tag`), so writes
+      # must accept it as well as the STI class name.
+      it 'accepts the api_type shorthand for a rule type' do
+        patch :update, params: {
+          id: automatic.prefixed_id,
+          rules: [{ type: 'tag', value: 'summer', match_policy: 'contains' }]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(automatic.reload.rules.map(&:type)).to eq(['Spree::CollectionRules::Tag'])
+      end
+
+      # An unregistered class name must never reach the STI `type` column.
+      it 'rejects a rule type that is not registered' do
+        patch :update, params: {
+          id: automatic.prefixed_id,
+          rules: [{ type: 'Spree::Store', value: 'x', match_policy: 'is_equal_to' }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(automatic.reload.rules.map(&:type)).not_to include('Spree::Store')
+      end
     end
   end
 
