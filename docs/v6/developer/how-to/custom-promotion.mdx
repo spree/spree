@@ -29,7 +29,7 @@ module Spree
         preference :quantity, :integer, default: 5
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, options = {})
@@ -55,11 +55,15 @@ end
 
 | Method | Required | Description |
 |--------|----------|-------------|
-| `applicable?(promotable)` | Yes | Returns `true` if this rule type can evaluate the promotable (usually `promotable.is_a?(Spree::Order)`) |
+| `applicable?(promotable)` | Yes | Returns `true` if this rule type can evaluate the promotable — accept both carts and orders (see the note below) |
 | `eligible?(promotable, options = {})` | Yes | Returns `true` if the promotable meets this rule's conditions. Add messages to `eligibility_errors` to explain why not. |
 | `actionable?(line_item)` | No | Returns `true` if a specific line item should receive the promotion's discount. Defaults to `true`. Override this for rules that target specific items (like product or category rules). |
 
 The `options` hash passed to `eligible?` can include `:user`, `:email`, and other context from the checkout flow.
+
+<Warning>
+Accept **both** `Spree::Cart` and `Spree::Order` in `applicable?`. Promotions are evaluated on every cart change, long before the cart becomes an order, and in Spree 6 a cart is its own model rather than an unfinished order. A rule guarding on `Spree::Order` alone silently never applies during checkout — the promotion just appears not to work. Every built-in rule accepts both.
+</Warning>
 
 #### Using Preferences
 
@@ -113,7 +117,7 @@ module Spree
         preference :brand_names, :array, default: []
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Cart)
         end
 
         def eligible?(order, options = {})
