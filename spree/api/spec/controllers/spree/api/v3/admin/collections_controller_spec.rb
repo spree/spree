@@ -29,7 +29,16 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
       get :index, params: {}, as: :json
 
       data = json_response['data'].find { |c| c['id'] == collection.prefixed_id }
-      expect(data).to include('automatic', 'rules_match_policy', 'rules', 'created_at', 'updated_at')
+      expect(data).to include('automatic', 'rules_match_policy', 'created_at', 'updated_at')
+    end
+
+    # Rules are expand-gated: a listing would otherwise serialize every
+    # collection's full rule set for callers that only need the basics.
+    it 'omits rules unless expanded' do
+      get :index, params: {}, as: :json
+
+      data = json_response['data'].find { |c| c['id'] == collection.prefixed_id }
+      expect(data).not_to have_key('rules')
     end
   end
 
@@ -37,8 +46,8 @@ RSpec.describe Spree::Api::V3::Admin::CollectionsController, type: :controller d
     let!(:automatic) { create(:automatic_collection, store: store, name: 'On Sale') }
     let!(:rule) { create(:tag_collection_rule, :contains, collection: automatic, value: 'summer') }
 
-    it 'returns the collection with its rules' do
-      get :show, params: { id: automatic.prefixed_id }, as: :json
+    it 'returns the collection with its rules when expanded' do
+      get :show, params: { id: automatic.prefixed_id, expand: 'rules' }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['automatic']).to be(true)

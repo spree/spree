@@ -22564,7 +22564,7 @@ paths:
       - name: expand
         in: query
         required: false
-        description: Comma-separated associations to expand (e.g., custom_fields,
+        description: Comma-separated associations to expand (e.g., rules, custom_fields,
           translations).
         schema:
           type: string
@@ -22768,7 +22768,7 @@ paths:
       - name: expand
         in: query
         required: false
-        description: Comma-separated associations to expand (e.g., custom_fields,
+        description: Comma-separated associations to expand (e.g., rules, custom_fields,
           translations).
         schema:
           type: string
@@ -24724,7 +24724,6 @@ components:
       - metadata
       - created_at
       - updated_at
-      - rules
       x-typelizer: true
     Country:
       type: object

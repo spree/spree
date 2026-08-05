@@ -21,6 +21,9 @@ module Spree
           end
 
           # The serializer always renders the rule set — eager load it.
+          # Eager-loaded unconditionally (as PromotionsController does for its
+          # own rules): the write path reads the association through the `rules=`
+          # sync setter regardless of what the response expands.
           def scope_includes
             [:rules]
           end

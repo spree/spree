@@ -28,7 +28,10 @@ export function useCollectionRuleTypes() {
 export function useCollection(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('collections', id ?? 'noop'),
-    queryFn: () => adminClient.collections.get(id as string, { expand: ['custom_fields'] }),
+    // `rules` is expand-gated server-side; the edit form hydrates its rule
+    // editor from it, so the detail read has to ask for it explicitly.
+    queryFn: () =>
+      adminClient.collections.get(id as string, { expand: ['rules', 'custom_fields'] }),
     enabled: !!id,
   })
 }
