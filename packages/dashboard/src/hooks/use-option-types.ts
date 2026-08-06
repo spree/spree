@@ -53,7 +53,14 @@ export function useOptionTypesByIds(ids: string[] | undefined) {
   const idList = ids ?? []
   return useQuery({
     queryKey: useResourceKey('option-types', 'by-ids', idList),
-    queryFn: () => optionTypeAutocompleteProps('by-ids').hydrate(idList),
+    // Expands option_values, unlike the autocomplete's `hydrate`: callers here
+    // feed the values picker, which reads `option_type.option_values`.
+    queryFn: () =>
+      adminClient.optionTypes.list({
+        id_in: idList,
+        limit: idList.length,
+        expand: ['option_values'],
+      }),
     enabled: idList.length > 0,
     staleTime: 1000 * 60 * 5,
   })

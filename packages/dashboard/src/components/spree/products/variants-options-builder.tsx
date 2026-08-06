@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from '@spree/dashboard-ui'
 import { CheckIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
@@ -25,16 +25,31 @@ import type { SelectedOptionType } from './variants-matrix'
 interface Props {
   selected: SelectedOptionType[]
   onChange: (next: SelectedOptionType[]) => void
+  /**
+   * Option types resolved by id for the product's type. Merged over the paged
+   * registry so a type referencing one past the first page still renders its
+   * row and its values picker.
+   */
+  extraOptionTypes?: OptionType[]
 }
 
 // The options builder lets the merchant choose option types + values that
 // drive the variants matrix. It DOES NOT mutate the product itself — it
 // only updates the local `selected` state. The matrix component owns the
 // reconcile step that turns this state into RHF variant rows.
-export function VariantsOptionsBuilder({ selected, onChange }: Props) {
+export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }: Props) {
   const { t } = useTranslation()
   const { data: optionTypesData } = useOptionTypes({ limit: 100 })
-  const allOptionTypes = optionTypesData?.data ?? []
+  const allOptionTypes = useMemo(() => {
+    const paged = optionTypesData?.data ?? []
+    if (!extraOptionTypes?.length) return paged
+
+    const byId = new Map(paged.map((optionType) => [optionType.id, optionType]))
+    extraOptionTypes.forEach((optionType) => {
+      if (!byId.has(optionType.id)) byId.set(optionType.id, optionType)
+    })
+    return [...byId.values()]
+  }, [optionTypesData, extraOptionTypes])
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [isAdding, setIsAdding] = useState(false)
@@ -43,9 +58,17 @@ export function VariantsOptionsBuilder({ selected, onChange }: Props) {
   // product type seeds exactly that. Open the first one so the values picker
   // is in front of them instead of hidden behind a click. Only while nothing
   // else is being edited, so it never steals focus mid-interaction.
-  const firstEmptyIndex = selected.findIndex((optionType) => optionType.values.length === 0)
-  const expandedIndex =
-    editingIndex ?? (isAdding ? null : firstEmptyIndex >= 0 ? firstEmptyIndex : null)
+  //
+  // It is an offer they can decline: without tracking the dismissal, cancelling
+  // reopens the row on the next render (it is still empty, so it qualifies
+  // again) and its remove action stays unreachable.
+  const [dismissedAutoExpand, setDismissedAutoExpand] = useState<string | null>(null)
+  const firstEmpty = selected.find((optionType) => optionType.values.length === 0)
+  const autoExpandIndex =
+    isAdding || !firstEmpty || dismissedAutoExpand === firstEmpty.id
+      ? null
+      : selected.indexOf(firstEmpty)
+  const expandedIndex = editingIndex ?? autoExpandIndex
 
   const selectedIds = new Set(selected.map((s) => s.id))
   const availableTypes = allOptionTypes.filter((ot) => !selectedIds.has(ot.id))
@@ -77,7 +100,10 @@ export function VariantsOptionsBuilder({ selected, onChange }: Props) {
                   <OptionPicker
                     optionType={optionType}
                     initialValues={ot.values}
-                    onCancel={() => setEditingIndex(null)}
+                    onCancel={() => {
+                      setEditingIndex(null)
+                      if (ot.values.length === 0) setDismissedAutoExpand(ot.id)
+                    }}
                     onSave={(values) =>
                       upsertAt(i, {
                         id: optionType.id,

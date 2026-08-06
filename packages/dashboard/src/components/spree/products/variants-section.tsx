@@ -328,7 +328,11 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
         <CardTitle>{t('admin.products.variants.title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
-        <VariantsOptionsBuilder selected={selected} onChange={handleOptionsChange} />
+        <VariantsOptionsBuilder
+          selected={selected}
+          onChange={handleOptionsChange}
+          extraOptionTypes={typeOptionTypes}
+        />
 
         {orphanedKeys.length > 0 && (
           <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700 dark:bg-amber-950/40">

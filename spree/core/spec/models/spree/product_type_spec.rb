@@ -101,6 +101,7 @@ describe Spree::ProductType, type: :model do
       product_type.update(custom_field_definitions: [{ id: order_definition.prefixed_id }])
 
       expect(product_type.reload.custom_field_definitions).to eq([existing])
+      expect(product_type.errors[:custom_field_definitions]).to be_present
     end
   end
 end
