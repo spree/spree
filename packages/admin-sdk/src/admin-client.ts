@@ -1654,6 +1654,8 @@ export class AdminClient {
         name: string
         description: string
         preference_schema: PreferenceField[]
+        /** Association-backed config the rule accepts, e.g. `['product_ids']`. */
+        association_fields: string[]
       }>
     }> =>
       this.request<{
@@ -1662,6 +1664,7 @@ export class AdminClient {
           name: string
           description: string
           preference_schema: PreferenceField[]
+          association_fields: string[]
         }>
       }>('GET', '/delivery_method_rules/types', options),
   }

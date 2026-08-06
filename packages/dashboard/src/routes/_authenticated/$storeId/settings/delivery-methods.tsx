@@ -68,6 +68,18 @@ import {
 } from '../../../../schemas/delivery-method'
 import '../../../../tables/delivery-methods'
 
+/** One entry from the delivery-method-rule discovery endpoint. */
+type DeliveryMethodRuleType = Awaited<
+  ReturnType<typeof adminClient.deliveryMethods.ruleTypes>
+>['data'][number]
+
+/** Whether a rule kind is configured with a product list rather than preferences. */
+function takesProducts(ruleTypes: DeliveryMethodRuleType[] | undefined, type: string) {
+  return (
+    ruleTypes?.find((candidate) => candidate.type === type)?.association_fields ?? []
+  ).includes('product_ids')
+}
+
 const deliveryMethodsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
   new: z.coerce.boolean().optional(),
@@ -236,11 +248,13 @@ function EditDeliveryMethodSheet({
   const { t } = useTranslation()
   const { data: deliveryMethod, isLoading: methodLoading } = useDeliveryMethod(id)
   const { data: rules, isLoading: rulesLoading } = useDeliveryMethodRules(id)
+  const { data: ruleTypes, isLoading: ruleTypesLoading } = useDeliveryMethodRuleTypes()
   const updateMutation = useUpdateDeliveryMethod(id)
   // Saving sends the full rule set for reconciliation, so the form must not be
   // reachable until the existing rules have loaded — otherwise a quick save
-  // would submit an empty set and delete them all.
-  const isLoading = methodLoading || rulesLoading
+  // would submit an empty set and delete them all. Rule types are needed too,
+  // since they decide which rules carry a product list.
+  const isLoading = methodLoading || rulesLoading || ruleTypesLoading
 
   const form = useForm<DeliveryMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -251,7 +265,7 @@ function EditDeliveryMethodSheet({
   useEffect(() => {
     // Wait for rules too — seeding the form before they arrive would reset
     // again once they land, discarding anything already edited.
-    if (deliveryMethod && rules) {
+    if (deliveryMethod && rules && ruleTypes) {
       form.reset({
         name: deliveryMethod.name,
         admin_name: deliveryMethod.admin_name ?? '',
@@ -278,10 +292,11 @@ function EditDeliveryMethodSheet({
           type: rule.type,
           preferences: rule.preferences as Record<string, unknown>,
           product_ids: rule.product_ids,
+          takes_products: takesProducts(ruleTypes?.data, rule.type),
         })),
       })
     }
-  }, [deliveryMethod, rules, form])
+  }, [deliveryMethod, rules, ruleTypes, form])
 
   async function onSubmit(values: DeliveryMethodFormValues) {
     try {
@@ -368,7 +383,12 @@ function ConditionsSection({ form }: { form: UseFormReturn<DeliveryMethodFormVal
                 <DropdownMenuItem
                   key={type.type}
                   onClick={() =>
-                    rulesArray.append({ type: type.type, preferences: {}, product_ids: [] })
+                    rulesArray.append({
+                      type: type.type,
+                      preferences: {},
+                      product_ids: [],
+                      takes_products: type.association_fields.includes('product_ids'),
+                    })
                   }
                 >
                   {type.name}
@@ -390,15 +410,8 @@ function ConditionsSection({ form }: { form: UseFormReturn<DeliveryMethodFormVal
           key={field._key}
           form={form}
           index={index}
-          type={field.type}
-          label={
-            (ruleTypes?.data ?? []).find((candidate) => candidate.type === field.type)?.name ??
-            field.type
-          }
-          schema={
-            (ruleTypes?.data ?? []).find((candidate) => candidate.type === field.type)
-              ?.preference_schema ?? []
-          }
+          ruleType={(ruleTypes?.data ?? []).find((candidate) => candidate.type === field.type)}
+          fallbackLabel={field.type}
           onRemove={() => rulesArray.remove(index)}
         />
       ))}
@@ -409,22 +422,23 @@ function ConditionsSection({ form }: { form: UseFormReturn<DeliveryMethodFormVal
 function ConditionRuleRow({
   form,
   index,
-  type,
-  label,
-  schema,
+  ruleType,
+  fallbackLabel,
   onRemove,
 }: {
   form: UseFormReturn<DeliveryMethodFormValues>
   index: number
-  type: string
-  label: string
-  schema: PreferenceField[]
+  ruleType?: DeliveryMethodRuleType
+  fallbackLabel: string
   onRemove: () => void
 }) {
   const { t } = useTranslation()
-  // Association-backed rules are configured with a picker; every other kind
-  // renders its preference schema.
-  const productBacked = type === 'excluded_products_rule'
+  // Rules that take a product list get a picker; every other kind renders its
+  // preference schema. Driven by the discovery endpoint, so a plugin rule with
+  // the same shape works without a change here.
+  const productBacked = ruleType?.association_fields?.includes('product_ids') ?? false
+  const label = ruleType?.name ?? fallbackLabel
+  const schema = ruleType?.preference_schema ?? []
 
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">

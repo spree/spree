@@ -130,17 +130,20 @@ module Spree
           def resolved_rule_rows
             Array(permitted_params[:rules]).map do |row|
               row = row.to_h
-              next row if row['product_ids'].blank?
-
-              row.merge('product_ids' => accessible_product_ids(row['product_ids']))
+              row['product_ids'].blank? ? row : row.merge('product_ids' => accessible_product_ids(row['product_ids']))
             end
           end
 
+          # Plucks ids rather than hydrating Product rows just to read them
+          # back, and raises on anything the caller cannot reach so an
+          # unreachable id 404s instead of being silently dropped.
           def accessible_product_ids(ids)
-            current_store.products.
-              accessible_by(current_ability, :show).
-              find(decode_prefixed_ids(ids)).
-              map(&:id)
+            decoded = decode_prefixed_ids(ids)
+            found = current_store.products.accessible_by(current_ability, :show).where(id: decoded).pluck(:id)
+            missing = decoded.map(&:to_s) - found.map(&:to_s)
+            raise ActiveRecord::RecordNotFound, "Couldn't find Spree::Product with id=#{missing.join(',')}" if missing.any?
+
+            found
           end
 
           def assign_calculator(delivery_method)

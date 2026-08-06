@@ -4,14 +4,16 @@ export const FULFILLMENT_TYPES = ['shipping', 'digital', 'pickup', 'pickup_point
 
 /**
  * One eligibility rule as held in form state. `id` is absent for rules added
- * in this editing session; `product_ids` is only used by association-backed
- * kinds and stays empty elsewhere.
+ * in this editing session. `takes_products` comes from the rule-type discovery
+ * endpoint and decides whether `product_ids` is part of this rule's payload —
+ * it is display-only state, stripped before send.
  */
 export const deliveryMethodRuleSchema = z.object({
   id: z.string().optional(),
   type: z.string(),
   preferences: z.record(z.string(), z.unknown()),
   product_ids: z.array(z.string()),
+  takes_products: z.boolean(),
 })
 
 export type DeliveryMethodRuleDraft = z.infer<typeof deliveryMethodRuleSchema>
@@ -85,7 +87,7 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
       ...(rule.id ? { id: rule.id } : {}),
       type: rule.type,
       preferences: rule.preferences,
-      ...(rule.type === 'excluded_products_rule' ? { product_ids: rule.product_ids } : {}),
+      ...(rule.takes_products ? { product_ids: rule.product_ids } : {}),
     })),
   }
 }
