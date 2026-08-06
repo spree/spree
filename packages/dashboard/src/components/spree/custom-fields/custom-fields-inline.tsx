@@ -100,6 +100,12 @@ interface CustomFieldsMeta {
   resourceType: string
   /** Plural, human-readable resource name for empty-state copy (e.g. "orders"). */
   resourceLabel?: string
+  /**
+   * Definitions the resource's type marks as required. Advisory only — the
+   * backend never rejects a blank one (see Spree::Product), so this drives a
+   * visual marker and nothing else.
+   */
+  requiredDefinitionIds?: string[]
 }
 
 /**
@@ -183,6 +189,8 @@ interface FormBackedProviderProps<T extends CustomFieldsFormShape> {
    * to render every definition for the resource type.
    */
   definitionIds?: string[]
+  /** Subset of `definitionIds` the type marks required — shown with a marker. */
+  requiredDefinitionIds?: string[]
   children: ReactNode
 }
 
@@ -191,6 +199,7 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
   resourceType,
   resourceLabel,
   definitionIds,
+  requiredDefinitionIds,
   children,
 }: FormBackedProviderProps<T>) {
   // The provider only ever touches the `custom_fields` field; narrow to the
@@ -238,10 +247,10 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
     () => ({
       state: { values },
       actions: { setValue },
-      meta: { definitions, isLoading, resourceType, resourceLabel },
+      meta: { definitions, isLoading, resourceType, resourceLabel, requiredDefinitionIds },
       mode: { kind: 'form' },
     }),
-    [values, setValue, definitions, isLoading, resourceType, resourceLabel],
+    [values, setValue, definitions, isLoading, resourceType, resourceLabel, requiredDefinitionIds],
   )
 
   return <CustomFieldsContext value={ctx}>{children}</CustomFieldsContext>
@@ -539,7 +548,7 @@ function FieldsEditor({ onSetUp }: { onSetUp: () => void }) {
   const {
     state: { values },
     actions: { setValue },
-    meta: { definitions },
+    meta: { definitions, requiredDefinitionIds },
     mode,
   } = useCustomFieldsContext()
 
@@ -549,6 +558,7 @@ function FieldsEditor({ onSetUp }: { onSetUp: () => void }) {
         <CustomFieldRow
           key={def.id}
           definition={def}
+          required={requiredDefinitionIds?.includes(def.id)}
           value={values[def.id]}
           onChange={(next) => setValue(def.id, next)}
         />
@@ -745,11 +755,31 @@ function CreateDefinitionSheet({
 
 interface CustomFieldRowProps {
   definition: CustomFieldDefinition
+  /**
+   * The product type marks this field required. Advisory: it renders a marker,
+   * and nothing rejects a blank value — see Spree::Product.
+   */
+  required?: boolean
   value: unknown
   onChange: (value: unknown) => void
 }
 
-function CustomFieldRow({ definition, value, onChange }: CustomFieldRowProps) {
+// The product type's `required` flag is guidance, not a rule the API enforces
+// (Shopify behaves the same way), so this marks the field without blocking any
+// save.
+function RequiredMarker() {
+  const { t } = useTranslation()
+  return (
+    <span
+      className="ml-0.5 text-muted-foreground"
+      title={t('admin.components.custom_fields.required_hint')}
+    >
+      *
+    </span>
+  )
+}
+
+function CustomFieldRow({ definition, required, value, onChange }: CustomFieldRowProps) {
   const inputId = `custom-field-${definition.id}`
   const friendlyLabel = definition.label || definition.key
   // The `namespace.key` identifier matters to developers / API consumers but
@@ -791,6 +821,7 @@ function CustomFieldRow({ definition, value, onChange }: CustomFieldRowProps) {
         <div className="flex items-center justify-between gap-4">
           <FieldLabel htmlFor={inputId} title={technicalKey} className="cursor-pointer">
             {friendlyLabel}
+            {required && <RequiredMarker />}
           </FieldLabel>
           {widget}
         </div>
@@ -802,6 +833,7 @@ function CustomFieldRow({ definition, value, onChange }: CustomFieldRowProps) {
     <Field>
       <FieldLabel htmlFor={inputId} title={technicalKey}>
         {friendlyLabel}
+        {required && <RequiredMarker />}
       </FieldLabel>
       {widget}
     </Field>

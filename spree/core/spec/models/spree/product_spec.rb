@@ -504,73 +504,41 @@ describe Spree::Product, type: :model do
     end
   end
 
+  # Shopify mode: `required` on a type's custom field is guidance the dashboard
+  # surfaces, never a save-time rule. Spree writes a product and its custom
+  # fields in two steps (importers, API clients), so enforcing at save would
+  # reject the first of them — and enforcing later would break products whose
+  # type gained a required field after they were created.
   describe 'required custom fields from the product type' do
     let(:definition) { create(:custom_field_definition, name: 'Material') }
     let(:product_type) { create(:product_type) }
-    let(:product) { create(:product, product_type: product_type, status: 'draft') }
 
     before do
       create(:product_type_custom_field_definition, :required, product_type: product_type,
                                                                custom_field_definition: definition)
     end
 
-    it 'blocks activation while the field is missing' do
-      product.status = 'active'
-
-      expect(product).not_to be_valid
-      expect(product.errors.full_messages.join).to include('Missing required custom field: Material')
-    end
-
-    it 'allows activation once the field has a value' do
-      create(:metafield, resource: product, metafield_definition: definition, value: 'Cotton')
-
-      product.reload.status = 'active'
-
-      expect(product).to be_valid
-    end
-
-    it 'ignores optional fields' do
-      product_type.product_type_custom_field_definitions.update_all(required: false)
-
-      product.reload.status = 'active'
-
-      expect(product).to be_valid
-    end
-
-    it 'leaves an already-active product saveable when the type gains a required field' do
-      active_product = create(:product, product_type: create(:product_type), status: 'active')
-      create(:product_type_custom_field_definition, :required, product_type: active_product.product_type,
-                                                               custom_field_definition: create(:custom_field_definition))
-
-      active_product.reload.name = 'Renamed'
-
-      expect(active_product).to be_valid
-      expect(active_product.save).to be(true)
-    end
-
-    it 'ignores products without a type' do
-      typeless = create(:product, product_type: nil, status: 'draft')
-      typeless.status = 'active'
-
-      expect(typeless).to be_valid
-    end
-
-    # Importers and API clients save the product, then attach its custom fields.
-    # Blocking creation would reject the first of those two writes.
-    it 'allows an active product to be created before its fields are attached' do
+    it 'does not block creating an active product with the field missing' do
       product = build(:product, product_type: product_type, status: 'active')
 
       expect(product).to be_valid
       expect(product.save).to be(true)
     end
 
-    it 'still blocks a later activation of that product' do
-      product = create(:product, product_type: product_type, status: 'active')
-      product.update!(status: 'draft')
+    it 'does not block activating a product with the field missing' do
+      product = create(:product, product_type: product_type, status: 'draft')
 
       product.status = 'active'
 
-      expect(product).not_to be_valid
+      expect(product).to be_valid
+      expect(product.save).to be(true)
+    end
+
+    it 'keeps the flag readable so the dashboard can mark the field' do
+      join = product_type.product_type_custom_field_definitions.first
+
+      expect(join.required).to be(true)
+      expect(product_type.product_type_custom_field_definitions.required).to eq([join])
     end
   end
 

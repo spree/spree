@@ -329,6 +329,7 @@
         "manage_in_settings": "Manage in settings",
         "new_definition_description": "Define a custom field to store typed, structured information on your {{resource}}.",
         "new_definition_title": "New custom field",
+        "required_hint": "Recommended by this product type",
         "section_title": "Custom fields",
         "set_up": "Set up custom fields",
         "values_save_partial_failed": "Some custom fields could not be saved: {{fields}}",

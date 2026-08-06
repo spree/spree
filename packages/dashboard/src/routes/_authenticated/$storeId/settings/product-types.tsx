@@ -516,14 +516,18 @@ function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTyp
     () => new Map((definitions?.data ?? []).map((definition) => [definition.id, definition])),
     [definitions?.data],
   )
-  const selectedIds = fieldArray.fields.map((row) => row.id)
-  const selectedIdSet = new Set(selectedIds)
+  // `fieldArray.fields[].id` is React Hook Form's own row key, NOT our
+  // definition id — it overwrites any `id` in the row value. Read the
+  // definition ids from form state and keep the RHF key for React/dnd identity.
+  const rows = (form.watch('custom_field_definitions') ??
+    []) as ProductTypeFormValues['custom_field_definitions']
+  const selectedIdSet = new Set(rows.map((row) => row.id))
   const available = [...definitionsById.values()].filter(
     (definition) => !selectedIdSet.has(definition.id),
   )
-  const labelFor = (id: string) => {
-    const definition = definitionsById.get(id)
-    return definition?.label ?? definition?.key ?? id
+  const labelFor = (definitionId: string) => {
+    const definition = definitionsById.get(definitionId)
+    return definition?.label ?? definition?.key ?? definitionId
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -544,13 +548,16 @@ function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTyp
 
       {fieldArray.fields.length > 0 && (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={selectedIds} strategy={verticalListSortingStrategy}>
+          <SortableContext
+            items={fieldArray.fields.map((row) => row.id)}
+            strategy={verticalListSortingStrategy}
+          >
             <div className="flex flex-col gap-1 rounded-md border p-2">
               {fieldArray.fields.map((row, index) => (
                 <SortableCustomFieldRow
                   key={row.id}
                   sortableId={row.id}
-                  label={labelFor(row.id)}
+                  label={labelFor(rows[index]?.id ?? '')}
                   form={form}
                   index={index}
                   onRemove={() => fieldArray.remove(index)}

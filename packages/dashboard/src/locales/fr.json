@@ -329,6 +329,7 @@
         "manage_in_settings": "Gérer dans les paramètres",
         "new_definition_description": "Définissez un champ personnalisé pour stocker des informations typées et structurées sur vos {{resource}}.",
         "new_definition_title": "Nouveau champ personnalisé",
+        "required_hint": "Recommandé par ce type de produit",
         "section_title": "Champs personnalisés",
         "set_up": "Configurer les champs personnalisés",
         "values_save_partial_failed": "Certains champs personnalisés n’ont pas pu être enregistrés : {{fields}}",

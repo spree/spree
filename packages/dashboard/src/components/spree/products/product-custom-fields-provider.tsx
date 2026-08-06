@@ -36,11 +36,22 @@ export function ProductCustomFieldsProvider<T extends CustomFieldsFormShape>({
     [productType?.custom_field_definitions],
   )
 
+  // Marks the fields the type calls required. Nothing rejects a blank one —
+  // the marker is the whole enforcement.
+  const requiredDefinitionIds = useMemo(
+    () =>
+      productType?.custom_field_definitions
+        ?.filter((definition) => definition.required)
+        .map((definition) => definition.id),
+    [productType?.custom_field_definitions],
+  )
+
   return (
     <FormBackedCustomFieldsProvider
       form={form}
       resourceType="Spree::Product"
       definitionIds={definitionIds}
+      requiredDefinitionIds={requiredDefinitionIds}
     >
       {children}
     </FormBackedCustomFieldsProvider>

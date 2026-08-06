@@ -329,6 +329,7 @@
         "manage_in_settings": "在设置中管理",
         "new_definition_description": "定义自定义字段，以在您的{{resource}}上存储有类型的结构化信息。",
         "new_definition_title": "新建自定义字段",
+        "required_hint": "此商品类型建议填写",
         "section_title": "自定义字段",
         "set_up": "设置自定义字段",
         "values_save_partial_failed": "部分自定义字段无法保存：{{fields}}",

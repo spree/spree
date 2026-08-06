@@ -335,6 +335,7 @@
         "manage_in_settings": "Zarządzaj w ustawieniach",
         "new_definition_description": "Zdefiniuj pole niestandardowe, aby przechowywać typowane, ustrukturyzowane informacje dla: {{resource}}.",
         "new_definition_title": "Nowe pole niestandardowe",
+        "required_hint": "Zalecane przez ten typ produktu",
         "section_title": "Pola niestandardowe",
         "set_up": "Skonfiguruj pola niestandardowe",
         "values_save_partial_failed": "Niektórych pól niestandardowych nie udało się zapisać: {{fields}}",

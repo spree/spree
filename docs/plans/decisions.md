@@ -1,3 +1,36 @@
+## 2026-08-06: A product type's `required` custom field is advisory — no server-side enforcement
+
+Reverses the "enforced at activation" position taken earlier the same day
+in `6.0-product-types.md`. The flag stays on
+`ProductTypeCustomFieldDefinition`, ships in the Admin API, is editable
+in the type editor, and renders as a marker on the product form — but no
+model validation rejects a blank value.
+
+**Why.** Spree writes a product and its custom fields in *two* steps:
+the CSV importer saves at `product_variant.rb:88` and attaches
+metafields at `:93`, and API clients can do the same (a metafield needs
+a persisted parent, so `custom_fields=` stashes values until
+`after_save`). Any save-time rule fights that. Three triggers were tried
+and each failed: activation-only left a product created `active`
+permanently non-compliant, since status never changes again; excluding
+creation had the same hole; including creation broke the sample-data
+import twice and needed a staging shim inside the importer to work
+around the model's own rule.
+
+**Competitor check.** Shopify has no required flag on metafield
+definitions at all — validations cover length/range/regex only. Medusa
+and Vendure have no type-driven required concept. Only Saleor enforces
+(`valueRequired`), and it can because attributes exist *solely* through
+the product type and ride the product mutation atomically. Neither holds
+in Spree, where any definition can attach to any product independently
+of a type. Adopting the Shopify position deletes the most fragile code
+in the feature.
+
+**Constraint going forward:** never add a model validation for this. A
+dashboard-side nudge on the activation action is acceptable and
+reversible; a server rule is not.
+
+
 ## 2026-08-06: ProductType is a creation-time template, not a live sync; type changes are allowed; no Store API exposure
 
 Competitor review (Saleor / Shopify / Medusa / Vendure) reversed the

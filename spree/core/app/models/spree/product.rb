@@ -193,10 +193,6 @@ module Spree
 
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
-    # Activation only: a product type gaining a required field must never make
-    # already-active products unsaveable.
-    validate :required_custom_fields_present, if: :becoming_active?
-
     scope :for_store, ->(store) { where(store_id: store.id) }
     scope :draft, -> { where(status: 'draft') }
     scope :archived, -> { where(status: 'archived') }
@@ -849,43 +845,6 @@ module Spree
       self[:variant_count] = self.class.where(id: id).pick(:variant_count)
       variants.reset
       association(:default_variant).reset
-    end
-
-    # Activation of an existing product only. Creation is excluded on purpose:
-    # importers and API clients routinely save the product first and attach its
-    # custom fields immediately after, so a new record has no fair chance to
-    # carry them yet. The guard still fires the moment anyone activates a
-    # product that is missing required fields.
-    def becoming_active?
-      active? && !new_record? && status_changed?
-    end
-
-    def required_custom_fields_present
-      return if product_type.blank?
-
-      required = product_type.product_type_custom_field_definitions.required.
-                 joins(:custom_field_definition).pluck(:custom_field_definition_id, :name)
-      return if required.empty?
-
-      filled_definition_ids = filled_custom_field_definition_ids
-
-      required.each do |definition_id, name|
-        next if filled_definition_ids.include?(definition_id)
-
-        errors.add(:base, :missing_required_custom_field, name: name)
-      end
-    end
-
-    # Reads from memory when the association is already loaded (nested writes in
-    # the same save); otherwise asks the database for ids alone, since the
-    # association eager-loads every definition it touches.
-    def filled_custom_field_definition_ids
-      if metafields.loaded?
-        metafields.reject(&:marked_for_destruction?).
-          filter_map { |metafield| metafield.metafield_definition_id if metafield.value.present? }.to_set
-      else
-        metafields.where.not(value: [nil, '']).pluck(:metafield_definition_id).to_set
-      end
     end
 
     # Additive, unlike the legacy prototype callback which replaced both sets —

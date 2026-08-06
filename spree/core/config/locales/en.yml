@@ -243,7 +243,6 @@ en:
     errors:
       messages:
         blank: can't be blank
-        missing_required_custom_field: 'Missing required custom field: %{name}'
         must_apply_to_products: must be a custom field definition for products
         unregistered_fulfillment_types: 'contains unregistered fulfillment types: %{types}'
       models:

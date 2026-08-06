@@ -329,6 +329,7 @@
         "manage_in_settings": "الإدارة في الإعدادات",
         "new_definition_description": "حدّد حقلاً مخصصاً لتخزين معلومات مكتوبة ومنظمة في {{resource}} الخاصة بك.",
         "new_definition_title": "حقل مخصص جديد",
+        "required_hint": "موصى به من هذا النوع من المنتجات",
         "section_title": "الحقول المخصصة",
         "set_up": "إعداد الحقول المخصصة",
         "values_save_partial_failed": "تعذّر حفظ بعض الحقول المخصصة: {{fields}}",

@@ -329,6 +329,7 @@
         "manage_in_settings": "In den Einstellungen verwalten",
         "new_definition_description": "Definieren Sie ein benutzerdefiniertes Feld, um typisierte, strukturierte Informationen zu Ihren {{resource}} zu speichern.",
         "new_definition_title": "Neues benutzerdefiniertes Feld",
+        "required_hint": "Von diesem Produkttyp empfohlen",
         "section_title": "Benutzerdefinierte Felder",
         "set_up": "Benutzerdefinierte Felder einrichten",
         "values_save_partial_failed": "Einige benutzerdefinierte Felder konnten nicht gespeichert werden: {{fields}}",
