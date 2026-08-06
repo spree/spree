@@ -32,6 +32,8 @@ module Spree
         can :cancel, Spree::Order, &:allow_cancel?
         cannot :destroy, Spree::Order
         can :destroy, Spree::Order, &:can_be_deleted?
+
+        restrict_cancelled_order_management!
       end
     end
   end
