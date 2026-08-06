@@ -89,7 +89,8 @@ RSpec.describe Spree::Integration, type: :model do
       integration = TestIntegrations::Failing.new(store: @default_store, active: true)
 
       expect(integration).not_to be_valid
-      expect(integration.errors[:active]).to include('bad credentials')
+      expect(integration.errors[:base]).to include('bad credentials')
+      expect(integration.errors.full_messages).to include('bad credentials')
     end
 
     it 'does not re-verify an already active integration on unrelated saves' do
