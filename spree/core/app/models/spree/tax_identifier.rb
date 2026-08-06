@@ -11,8 +11,6 @@ module Spree
   class TaxIdentifier < Spree.base_class
     has_prefix_id :txi
 
-    include Spree::Metadata
-
     # Statuses the platform records rather than the buyer chooses: nil means
     # validation was never attempted, which includes having no validator
     # registered for the kind.
@@ -30,6 +28,10 @@ module Spree
     after_commit :async_validate, on: %i[create update]
 
     validates :kind, :value, presence: true
+    # One per kind for a customer — what the storefront upsert assumes, and what
+    # makes resolution deterministic. Cart and order rows are singular by their
+    # own associations.
+    validates :kind, uniqueness: { scope: :customer_id }, if: -> { customer_id.present? }
     # Data hygiene, not a format claim — no tax regime issues numbers this long.
     validates :value, length: { maximum: 64 }
     validates :validation_status, inclusion: { in: VALIDATION_STATUSES }, allow_nil: true

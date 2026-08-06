@@ -40,11 +40,14 @@ module Spree
     end
 
     def included_tax_amount(price_options)
-      country = price_options[:country] || country_from(price_options)
+      lookup = { tax_category: price_options[:tax_category] }
+      if price_options[:address]
+        lookup[:address] = price_options[:address]
+      else
+        lookup[:country] = price_options[:country] || country_from(price_options)
+      end
 
-      Spree::TaxRate.included_tax_amount_for(
-        country: country, tax_category: price_options[:tax_category]
-      ).to_f
+      Spree::TaxRate.included_tax_amount_for(lookup).to_f
     end
 
     def country_from(price_options)
@@ -57,12 +60,14 @@ module Spree
       zone&.countries&.first
     end
 
-    # The country whose VAT the catalogue prices already include — the market
-    # being browsed, or the store's own country when there is no market.
+    # The country whose VAT the catalogue prices already include. Deliberately
+    # the store's own country and NOT Spree::Current.market, which follows the
+    # buyer: reading the destination here would make every sale look domestic
+    # and the restatement would never fire.
     def default_tax_country
       return @default_tax_country if defined?(@default_tax_country)
 
-      @default_tax_country = Spree::Current.market&.default_country || Spree::Current.store&.default_country
+      @default_tax_country = Spree::Current.store&.default_country
     end
 
     def round_to_two_places(amount)

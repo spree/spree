@@ -31,7 +31,7 @@ module Spree
         end
 
         items.each do |item|
-          relevant_rates = rates.select { |rate| rate.tax_category_id == tax_category_id_for(item) }
+          relevant_rates = rates.select { |rate| rate.tax_category_id == tax_category_id_for(item, owner) }
 
           # A matched rate always produces a row, zero-amount ones included:
           # a zero rate is a treatment ("this is zero-rated"), which reporting
@@ -70,18 +70,21 @@ module Spree
         end
       end
 
-      def tax_category_id_for(item)
+      def tax_category_id_for(item, owner)
         if item.respond_to?(:tax_category_id) && item.tax_category_id
           item.tax_category_id
         else
-          default_tax_category&.id
+          default_tax_category(owner)&.id
         end
       end
 
-      def default_tax_category
+      # The owner's store's default, not any store's: defaults are per store
+      # since 6.0, and a foreign category id would match none of this store's
+      # rates, silently leaving the item untaxed.
+      def default_tax_category(owner)
         return @default_tax_category if defined?(@default_tax_category)
 
-        @default_tax_category = Spree::TaxCategory.find_by(is_default: true)
+        @default_tax_category = Spree::TaxCategory.default(owner.store)
       end
 
       def taxable_basis(item)

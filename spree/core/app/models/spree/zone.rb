@@ -4,10 +4,9 @@ module Spree
 
     include Spree::UniqueName
 
-    with_options dependent: :destroy, inverse_of: :zone do
-      has_many :zone_members, class_name: 'Spree::ZoneMember'
-      has_many :tax_rates
-    end
+    # Tax rates named their zone until 6.0; they carry their own country and
+    # state now, so a zone owns nothing tax-side.
+    has_many :zone_members, class_name: 'Spree::ZoneMember', dependent: :destroy, inverse_of: :zone
     with_options through: :zone_members, source: :zoneable do
       has_many :countries, source_type: 'Spree::Country'
       has_many :states, source_type: 'Spree::State'

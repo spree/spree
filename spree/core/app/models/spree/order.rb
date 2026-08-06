@@ -176,7 +176,9 @@ module Spree
     # Typed adjustment rows owned by this order (line-, fulfillment- and
     # order-level). See docs/plans/6.0-6.1-split-adjustments.md.
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
-    has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', dependent: :destroy, inverse_of: :order
+    # delete, not destroy: the snapshot is readonly once written, and destroy
+    # refuses readonly records. It has no dependents of its own.
+    has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', dependent: :delete, inverse_of: :order
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :order
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :order
 
@@ -519,11 +521,11 @@ module Spree
     # Re-estimates tax through the configured provider (writes TaxLine rows
     # with replace-all semantics).
     def create_tax_charge!
-      tax_provider.estimate(self, tax_date: Time.current)
+      tax_provider.estimate(self, **tax_estimate_inputs)
     end
 
     def create_shipment_tax_charge!
-      tax_provider.estimate(self, fulfillments.to_a, tax_date: Time.current) if fulfillments.any?
+      tax_provider.estimate(self, fulfillments.to_a, **tax_estimate_inputs) if fulfillments.any?
     end
 
     def update_line_item_prices!

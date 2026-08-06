@@ -33,6 +33,7 @@ module Spree
       validates :tax_category, :name
     end
 
+    before_validation :resolve_state_code
     validate :state_belongs_to_country
 
     # Rates that reach the given address: its own country and state, plus the
@@ -71,10 +72,11 @@ module Spree
       self.country = value.present? ? Spree::Country.by_iso(value) : nil
     end
 
-    # Looked up within the rate's own country, so assign the country first —
-    # state abbreviations repeat across countries.
+    # Resolved in a callback rather than here: state abbreviations repeat across
+    # countries, so the lookup needs the country — and a JSON body can name the
+    # state before the country.
     def state_code=(value)
-      self.state = value.blank? ? nil : Spree::State.where(country_id: country_id).find_by(abbr: value)
+      @state_code_input = value
     end
 
     # The rates that tax a sale delivered to this address.
@@ -96,6 +98,10 @@ module Spree
       return 0 unless country && options[:tax_category]
 
       scope = options[:address] ? for_address(options[:address]) : for_country(country)
+      # Per-store tax configuration is the norm since 6.0, so without this the
+      # sum would add up every store's rate for the same country.
+      store = options[:store] || Spree::Current.store
+      scope = scope.for_store(store) if store
       scope.included_in_price.for_tax_category(options[:tax_category]).sum(:amount)
     end
 
@@ -118,6 +124,13 @@ module Spree
     end
 
     private
+
+    def resolve_state_code
+      return unless defined?(@state_code_input)
+
+      self.state = @state_code_input.blank? ? nil : Spree::State.where(country_id: country_id).find_by(abbr: @state_code_input)
+      remove_instance_variable(:@state_code_input)
+    end
 
     # A state-level rate whose state sits in another country would never match
     # any address — the two columns have to agree.

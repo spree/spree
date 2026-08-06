@@ -33,6 +33,21 @@ module Spree
         market&.tax_provider_instance || Spree.tax_provider
       end
 
+      # The typed inputs every +estimate+ call carries. Assembled here rather
+      # than at each call site so a single-item re-estimate reaches the provider
+      # with the same buyer registration and exemption evidence as a full
+      # recalculation — the provider replaces the item's rows either way, so a
+      # partial call missing them would silently re-tax an exempt line.
+      #
+      # @return [Hash]
+      def tax_estimate_inputs
+        {
+          tax_date: Time.current,
+          tax_identifier: resolved_tax_identifier,
+          exemptions: Spree.tax_resolve_exemptions_service.new.call(order: self).value
+        }
+      end
+
       # The buyer's tax registration to compute against: a checkout-time
       # override first, then the customer's own. Nil means treat the sale as a
       # consumer sale, which is the legally safe default — charging normal tax

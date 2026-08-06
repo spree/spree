@@ -18,15 +18,17 @@ module Spree
         result = validator.to_s.constantize.new.call(tax_identifier: tax_identifier)
         persist(tax_identifier, result)
       rescue StandardError => error
-        # A validator that fails unexpectedly leaves the previous verdict
-        # standing — a number nobody could check is not a number known to be
-        # wrong. Reported rather than raised, as a failed geocode is.
+        # A number nobody could check is not a number known to be wrong, so it
+        # is recorded as unanswered rather than rejected — and recorded rather
+        # than left on the `pending` the enqueue stamped. Reported rather than
+        # raised, as a failed geocode is.
         Rails.error.report(
           ValidationError.new("Cannot validate tax identifier ID: #{tax_identifier.id} (#{error.message})"),
           handled: false,
           context: { tax_identifier_id: tax_identifier.id, kind: tax_identifier.kind },
           source: 'spree.core'
         )
+        persist(tax_identifier, unavailable_result(error.message))
         failure(tax_identifier, error.message)
       end
 
@@ -41,6 +43,10 @@ module Spree
 
       def unsupported_result
         Spree::TaxIdentifier::ValidationResult.new(status: 'unsupported', checked_at: Time.current)
+      end
+
+      def unavailable_result(message)
+        Spree::TaxIdentifier::ValidationResult.new(status: 'unavailable', message: message, checked_at: Time.current)
       end
     end
   end

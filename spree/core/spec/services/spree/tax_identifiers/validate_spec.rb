@@ -88,7 +88,7 @@ describe Spree::TaxIdentifiers::Validate do
       tax_identifier.update_columns(validation_status: 'verified')
     end
 
-    it 'reports the failure and keeps the previous verdict' do
+    it 'reports the failure and records that nobody could answer' do
       expect(Rails.error).to receive(:report).with(
         instance_of(Spree::TaxIdentifiers::ValidationError), hash_including(:context)
       )
@@ -96,7 +96,9 @@ describe Spree::TaxIdentifiers::Validate do
       result = described_class.call(tax_identifier: tax_identifier)
 
       expect(result).to be_failure
-      expect(tax_identifier.reload.validation_status).to eq('verified')
+      # Not left on the `pending` the enqueue stamped, and not called wrong.
+      expect(tax_identifier.reload.validation_status).to eq('unavailable')
+      expect(tax_identifier.validation_evidence['message']).to include('boom')
     end
   end
 end

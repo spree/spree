@@ -127,6 +127,31 @@ RSpec.shared_examples 'a taxation host' do
     end
   end
 
+  describe '#tax_estimate_inputs' do
+    let(:customer) { create(:user) }
+
+    before { record.update!(customer: customer) }
+
+    it 'carries the effective date, the buyer registration and the exemptions' do
+      identifier = create(:tax_identifier, customer: customer)
+      exemption = Spree::TaxExemption.new(reason_code: 'resale')
+      allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+        and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                   call: Spree::ServiceModule::Result.new(true, [exemption], nil)))
+
+      inputs = record.tax_estimate_inputs
+
+      expect(inputs[:tax_date]).to be_present
+      expect(inputs[:tax_identifier]).to eq(identifier)
+      expect(inputs[:exemptions]).to eq([exemption])
+    end
+
+    it 'is accepted whole by the provider contract' do
+      expect { Spree::TaxProvider::Internal.new.estimate(record, [], **record.tax_estimate_inputs) }.
+        not_to raise_error
+    end
+  end
+
   describe '#pre_tax_item_amount / #pre_tax_total' do
     it 'sums line item and fulfillment pre-tax amounts' do
       create(:line_item, record.is_a?(Spree::Cart) ? { cart: record, order: nil } : { order: record }).update_column(:pre_tax_amount, 7)

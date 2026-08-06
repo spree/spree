@@ -64,7 +64,7 @@ module Spree
       # original transaction rather than voiding and re-committing it.
       #
       # @param order [Spree::Order]
-      # @param return_items [Array<Spree::ReturnItem>]
+      # @param return_items [Array<Spree::ReturnLineItem>] the returned lines
       # @param tax_date [Time, nil] the original supply date; nil = order.completed_at
       # @return [void]
       def refund(order, return_items, tax_date: nil); end

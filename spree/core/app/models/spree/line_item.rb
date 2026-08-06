@@ -389,7 +389,7 @@ module Spree
     def update_tax_charge
       return unless owner
 
-      owner.tax_provider.estimate(owner, [self], tax_date: Time.current)
+      owner.tax_provider.estimate(owner, [self], **owner.tax_estimate_inputs)
     end
 
     def ensure_proper_currency

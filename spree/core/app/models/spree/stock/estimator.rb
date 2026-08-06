@@ -65,7 +65,9 @@ module Spree
       def first_tax_rate_for(tax_category)
         return unless @order.tax_address && tax_category
 
-        Spree::TaxRate.for_tax_category(tax_category).for_address(@order.tax_address).first
+        scope = Spree::TaxRate.for_tax_category(tax_category).for_address(@order.tax_address)
+        scope = scope.for_store(@order.store) if @order.store
+        scope.first
       end
 
       # The eligibility seam: every rate consumer (checkout, routing, cart

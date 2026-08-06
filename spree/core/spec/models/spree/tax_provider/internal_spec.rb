@@ -166,6 +166,25 @@ describe Spree::TaxProvider::Internal, type: :model do
       end
     end
 
+    context 'when another store holds the default tax category' do
+      let!(:rate) do
+        create(:tax_rate, country: country, amount: 0.1,
+                          tax_category: create(:tax_category, is_default: true), included_in_price: false)
+      end
+      let!(:fee) { create(:fee, order: order, amount: 5, kind: 'surcharge', label: 'Handling') }
+
+      it 'reads its own store default rather than any store default' do
+        other_store = create(:store)
+        Spree::Current.store = other_store
+        create(:tax_category, store: other_store, is_default: true)
+        Spree::Current.store = nil
+
+        provider.estimate(order, [fee])
+
+        expect(order.tax_lines.reload.sole.amount).to eq(0.5)
+      end
+    end
+
     context 'with a taxable fee' do
       let!(:rate) do
         create(:tax_rate, country: country, amount: 0.1, tax_category: create(:tax_category, is_default: true), included_in_price: false)
