@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+# Live sanity check against the EasyPost test API — verifies the exact
+# shipment.create call shape the DeliveryRateProvider uses, end to end.
+#
+#   EASYPOST_TEST_API_KEY=EZTK... bin/smoke
+
+require 'bundler/setup'
+require 'easypost'
+
+client = EasyPost::Client.new(api_key: ENV.fetch('EASYPOST_TEST_API_KEY'))
+
+puts '-> carrier_account.all (the can_connect? check)'
+client.carrier_account.all
+puts '   ok'
+
+puts '-> shipment.create (the estimate call)'
+shipment = client.shipment.create(
+  from_address: { street1: '417 Montgomery St', city: 'San Francisco', state: 'CA', zip: '94104', country: 'US' },
+  to_address: { street1: '1 E 161 St', city: 'Bronx', state: 'NY', zip: '10451', country: 'US' },
+  parcel: { weight: 16 }
+)
+
+shipment.rates.each do |rate|
+  puts format('   %-8s %-20s %8s  delivery: %s  (%s)', rate.carrier, rate.service, rate.rate, rate.delivery_date || '—', rate.id)
+end
+puts shipment.rates.any? ? 'ok: rates returned with the fields the provider reads' : 'WARNING: no rates — check carrier accounts on this test key'

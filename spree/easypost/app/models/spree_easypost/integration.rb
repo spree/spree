@@ -24,10 +24,12 @@ module SpreeEasyPost
 
     # A cheap authenticated read: fails with 401 on a bad key without
     # creating anything on the account.
+    # Rescues broadly, not just SDK errors — a DNS failure or timeout must
+    # surface as a clean activation error, never a 500.
     def can_connect?
       client.carrier_account.all
       true
-    rescue EasyPost::Errors::EasyPostError => e
+    rescue StandardError => e
       self.connection_error_message = e.message
       false
     end

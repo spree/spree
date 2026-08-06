@@ -31,3 +31,9 @@ bundle exec rspec
 ```
 
 Specs stub the EasyPost client — no network calls, no API key needed.
+
+To verify the real API contract (the exact calls the provider makes), run the live smoke check with a test key:
+
+```bash
+EASYPOST_TEST_API_KEY=EZTK... bin/smoke
+```

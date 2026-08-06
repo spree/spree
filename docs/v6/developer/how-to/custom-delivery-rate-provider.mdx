@@ -92,6 +92,8 @@ module SpreeAcmeCarrier
 end
 ```
 
+**Never let `estimate` raise.** It runs inside checkout's rate refresh, so an exception breaks the whole delivery step for the customer. Rescue your carrier's errors, report them (`Rails.error.report`), and return `nil` — the method disappears from the options while everything else keeps working.
+
 **Returning `nil` hides the delivery method** for that package. This is the same contract calculators follow, and it is how you express "this carrier does not serve this destination" — the method simply does not appear at checkout rather than appearing at a wrong price.
 
 `cost` is pre-tax and pre-VAT. Spree applies the gross-up and resolves the tax rate afterwards, exactly as it does for calculator output, so you never handle tax yourself.
