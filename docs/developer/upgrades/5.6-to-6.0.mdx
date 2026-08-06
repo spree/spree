@@ -230,7 +230,13 @@ Spree::Return.add_status('inspecting', after: 'received')
 Core ships exactly one policy rule — a return window read from `market.preferred_return_window_days` (default 30), per market because return windows are a regional legal matter. **Staff can override it**: when `created_by` is present the window is advisory, so a supervisor can accept a late return without a code change.
 
 <Warning>
-  `Spree::Config[:return_eligibility_number_of_days]` is **no longer read by anything**. The preference still exists so setting it won't crash, but it has no effect — move the value to your markets' `preferred_return_window_days`.
+  Four returns settings are **deprecated and read by nothing** — they still exist so applications don't crash at boot, but they have no effect and now emit a deprecation warning when read or written:
+
+  | Deprecated setting | Use instead |
+  |---|---|
+  | `return_eligibility_number_of_days` | `preferred_return_window_days` on `Spree::Market`, or a `returns.create.validate` hook |
+  | `restock_inventory` | `Spree::ReturnLineItem#resellable`, decided per line item at receiving |
+  | `expedited_exchanges`, `expedited_exchanges_days_window` | `Spree::Exchange` and the `Exchanges::Fulfill` workflow |
 </Warning>
 
 Replace it by swapping the handler:
