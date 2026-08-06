@@ -138,10 +138,14 @@ module Spree
       errors.add(:type, Spree.t('errors.messages.integration_type_not_registered'))
     end
 
+    # On :base, not :active — the vendor's message ("This api key is no
+    # longer active…") is a record-level failure, and an attribute error
+    # would render with the humanized attribute prepended ("Active This
+    # api key…").
     def must_connect_when_activating
       return if can_connect?
 
-      errors.add(:active, connection_error_message.presence || Spree.t('errors.messages.integration_connection_failed'))
+      errors.add(:base, connection_error_message.presence || Spree.t('errors.messages.integration_connection_failed'))
     end
   end
 end

@@ -48,7 +48,7 @@ RSpec.describe SpreeEasyPost::Integration do
       integration.active = true
 
       expect(integration).not_to be_valid
-      expect(integration.errors[:active]).to be_present
+      expect(integration.errors[:base]).to be_present
     end
   end
 end
