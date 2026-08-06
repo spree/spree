@@ -1007,12 +1007,25 @@
         }
       },
       "product_type": {
+        "categories": {
+          "help": "添加到使用此类型创建的商品。",
+          "label": "分类"
+        },
+        "custom_field_definitions": {
+          "help": "按此顺序显示在此类型每个商品的表单上。必填字段需在商品激活前填写。",
+          "label": "自定义字段",
+          "required": "必填"
+        },
         "fulfillment_types": {
           "help": "此类型商品的交付方式 — 配送、到店自提、自提点或数字交付。",
           "label": "履约方式"
         },
         "name": {
           "placeholder": "例如:T恤"
+        },
+        "option_types": {
+          "help": "添加到使用此类型创建的商品。商品之后可以再添加。",
+          "label": "选项类型"
         },
         "products_count": {
           "label": "商品数"
@@ -2556,6 +2569,18 @@
     "product_types": {
       "add_cta": "添加商品类型",
       "add_sheet_title": "新建商品类型",
+      "affects_new_only": {
+        "description": "编辑选项类型和分类只影响今后创建的商品。已使用此类型的商品保持不变。下方的自定义字段始终显示在此类型的每个商品上。",
+        "title": "更改仅影响新商品"
+      },
+      "apply_to_products": {
+        "confirm_label": "应用",
+        "cta_one": "应用到 {{count}} 个现有商品",
+        "cta_other": "应用到 {{count}} 个现有商品",
+        "message_one": "这将为 {{count}} 个商品添加此类型缺失的选项类型和分类。不会删除任何内容。",
+        "message_other": "这将为 {{count}} 个商品添加此类型缺失的选项类型和分类。不会删除任何内容。",
+        "title": "应用到现有商品"
+      },
       "create_description": "将商品分组并定义其交付方式。",
       "create_label": "创建商品类型",
       "delete_confirm": {
@@ -2566,10 +2591,13 @@
       "edit_sheet_title": "编辑商品类型",
       "empty": "暂无商品类型",
       "messages": {
+        "applied_to_products": "正在应用到现有商品",
         "created": "商品类型已创建",
         "deleted": "商品类型已删除",
         "updated": "商品类型已更新"
       },
+      "no_categories": "暂无分类",
+      "no_option_types": "暂无选项类型",
       "search_placeholder": "搜索商品类型"
     },
     "products": {

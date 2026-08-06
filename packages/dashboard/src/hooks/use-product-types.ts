@@ -51,6 +51,34 @@ export function useUpdateProductType(id: string) {
   })
 }
 
+/**
+ * Product custom field definitions — the pool a product type picks from.
+ */
+export function useProductCustomFieldDefinitions() {
+  return useQuery({
+    queryKey: useResourceKey('custom-field-definitions', { resource_type: 'Spree::Product' }),
+    queryFn: () =>
+      adminClient.customFieldDefinitions.list({
+        limit: 100,
+        filter: { resource_type_eq: 'Spree::Product' },
+      }),
+    staleTime: 1000 * 60 * 5,
+  })
+}
+
+/**
+ * Backfills a type's option types and categories onto products that already
+ * carry it. Additive — the only path from a type edit to existing products.
+ */
+export function useApplyProductTypeToProducts(id: string) {
+  return useResourceMutation<{ products_count: number }, Error, void>({
+    mutationFn: () => adminClient.productTypes.applyToProducts(id),
+    invalidate: [['product-types'], ['products']],
+    successMessage: i18n.t('admin.product_types.messages.applied_to_products'),
+    errorMessage: i18n.t('admin.errors.failed_to_update'),
+  })
+}
+
 export function useDeleteProductType() {
   const queryClient = useQueryClient()
   const buildKey = useResourceKeyBuilder()

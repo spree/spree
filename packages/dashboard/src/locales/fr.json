@@ -1007,12 +1007,25 @@
         }
       },
       "product_type": {
+        "categories": {
+          "help": "Ajoutées aux produits créés avec ce type.",
+          "label": "Catégories"
+        },
+        "custom_field_definitions": {
+          "help": "Affichés dans cet ordre sur le formulaire de tous les produits de ce type. Les champs obligatoires doivent être remplis avant d’activer un produit.",
+          "label": "Champs personnalisés",
+          "required": "Obligatoire"
+        },
         "fulfillment_types": {
           "help": "Comment les produits de ce type peuvent être livrés — expédition, retrait en magasin, point relais ou numérique.",
           "label": "Modes d'expédition"
         },
         "name": {
           "placeholder": "p. ex. T-Shirt"
+        },
+        "option_types": {
+          "help": "Ajoutés aux produits créés avec ce type. Les produits peuvent en ajouter d’autres ensuite.",
+          "label": "Types d’option"
         },
         "products_count": {
           "label": "Produits"
@@ -2556,6 +2569,18 @@
     "product_types": {
       "add_cta": "Ajouter un type de produit",
       "add_sheet_title": "Nouveau type de produit",
+      "affects_new_only": {
+        "description": "Modifier les types d’option et les catégories affecte les produits créés à partir de maintenant. Les produits ayant déjà ce type conservent ce qu’ils ont. Les champs personnalisés ci-dessous apparaissent toujours sur tous les produits de ce type.",
+        "title": "Les modifications s’appliquent aux nouveaux produits"
+      },
+      "apply_to_products": {
+        "confirm_label": "Appliquer",
+        "cta_one": "Appliquer à {{count}} produit existant",
+        "cta_other": "Appliquer à {{count}} produits existants",
+        "message_one": "Cela ajoute les types d’option et catégories manquants de ce type à {{count}} produit. Rien n’est supprimé.",
+        "message_other": "Cela ajoute les types d’option et catégories manquants de ce type à {{count}} produits. Rien n’est supprimé.",
+        "title": "Appliquer aux produits existants"
+      },
       "create_description": "Regroupez les produits et définissez leurs modes de livraison.",
       "create_label": "Créer le type de produit",
       "delete_confirm": {
@@ -2566,10 +2591,13 @@
       "edit_sheet_title": "Modifier le type de produit",
       "empty": "Aucun type de produit",
       "messages": {
+        "applied_to_products": "Application aux produits existants",
         "created": "Type de produit créé",
         "deleted": "Type de produit supprimé",
         "updated": "Type de produit mis à jour"
       },
+      "no_categories": "Aucune catégorie",
+      "no_option_types": "Aucun type d’option",
       "search_placeholder": "Rechercher des types de produit"
     },
     "products": {

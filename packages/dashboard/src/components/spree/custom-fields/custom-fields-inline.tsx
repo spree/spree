@@ -177,6 +177,12 @@ interface FormBackedProviderProps<T extends CustomFieldsFormShape> {
   resourceType: string
   /** Plural, human-readable resource name for empty-state copy. */
   resourceLabel?: string
+  /**
+   * Restricts and orders the rendered definitions — the product type's schema.
+   * Ids not in this list are hidden; the order given is the order shown. Omit
+   * to render every definition for the resource type.
+   */
+  definitionIds?: string[]
   children: ReactNode
 }
 
@@ -184,6 +190,7 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
   form,
   resourceType,
   resourceLabel,
+  definitionIds,
   children,
 }: FormBackedProviderProps<T>) {
   // The provider only ever touches the `custom_fields` field; narrow to the
@@ -194,7 +201,14 @@ export function FormBackedCustomFieldsProvider<T extends CustomFieldsFormShape>(
   // Memoize against the fetched array's identity. Without this the `?? []`
   // fallback returns a fresh array on every render, which propagates into the
   // context value and triggers every consumer to re-render unnecessarily.
-  const definitions = useMemo(() => definitionsResponse?.data ?? [], [definitionsResponse?.data])
+  const allDefinitions = useMemo(() => definitionsResponse?.data ?? [], [definitionsResponse?.data])
+  // When a schema is supplied (the product's type), it decides both which
+  // definitions appear and in what order.
+  const definitions = useMemo(() => {
+    if (!definitionIds) return allDefinitions
+
+    return definitionIds.flatMap((id) => allDefinitions.filter((def) => def.id === id))
+  }, [allDefinitions, definitionIds])
 
   const watchedCustomFields = cfForm.watch('custom_fields') ?? []
   const values = useMemo<Record<string, unknown>>(() => {

@@ -1007,12 +1007,25 @@
         }
       },
       "product_type": {
+        "categories": {
+          "help": "Werden Produkten hinzugefügt, die mit diesem Typ erstellt werden.",
+          "label": "Kategorien"
+        },
+        "custom_field_definitions": {
+          "help": "Erscheinen in dieser Reihenfolge im Produktformular aller Produkte dieses Typs. Pflichtfelder müssen ausgefüllt sein, bevor ein Produkt aktiviert werden kann.",
+          "label": "Benutzerdefinierte Felder",
+          "required": "Pflichtfeld"
+        },
         "fulfillment_types": {
           "help": "Wie Produkte dieses Typs geliefert werden können — Versand, Abholung im Geschäft, Abholstation oder digital.",
           "label": "Fulfillment-Arten"
         },
         "name": {
           "placeholder": "z. B. T-Shirt"
+        },
+        "option_types": {
+          "help": "Werden Produkten hinzugefügt, die mit diesem Typ erstellt werden. Produkte können später weitere hinzufügen.",
+          "label": "Optionstypen"
         },
         "products_count": {
           "label": "Produkte"
@@ -2556,6 +2569,18 @@
     "product_types": {
       "add_cta": "Produkttyp hinzufügen",
       "add_sheet_title": "Neuer Produkttyp",
+      "affects_new_only": {
+        "description": "Das Bearbeiten von Optionstypen und Kategorien wirkt sich auf ab jetzt erstellte Produkte aus. Produkte mit diesem Typ behalten, was sie haben. Die benutzerdefinierten Felder unten erscheinen immer bei allen Produkten dieses Typs.",
+        "title": "Änderungen gelten für neue Produkte"
+      },
+      "apply_to_products": {
+        "confirm_label": "Anwenden",
+        "cta_one": "Auf {{count}} bestehendes Produkt anwenden",
+        "cta_other": "Auf {{count}} bestehende Produkte anwenden",
+        "message_one": "Dies fügt {{count}} Produkt die fehlenden Optionstypen und Kategorien dieses Typs hinzu. Es wird nichts entfernt.",
+        "message_other": "Dies fügt {{count}} Produkten die fehlenden Optionstypen und Kategorien dieses Typs hinzu. Es wird nichts entfernt.",
+        "title": "Auf bestehende Produkte anwenden"
+      },
       "create_description": "Produkte gruppieren und festlegen, wie sie geliefert werden können.",
       "create_label": "Produkttyp erstellen",
       "delete_confirm": {
@@ -2566,10 +2591,13 @@
       "edit_sheet_title": "Produkttyp bearbeiten",
       "empty": "Noch keine Produkttypen",
       "messages": {
+        "applied_to_products": "Wird auf bestehende Produkte angewendet",
         "created": "Produkttyp erstellt",
         "deleted": "Produkttyp gelöscht",
         "updated": "Produkttyp aktualisiert"
       },
+      "no_categories": "Noch keine Kategorien",
+      "no_option_types": "Noch keine Optionstypen",
       "search_placeholder": "Produkttypen durchsuchen"
     },
     "products": {

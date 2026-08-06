@@ -1007,12 +1007,25 @@
         }
       },
       "product_type": {
+        "categories": {
+          "help": "Added to products created with this type.",
+          "label": "Categories"
+        },
+        "custom_field_definitions": {
+          "help": "Shown on the product form for every product of this type, in this order. Required fields must be filled before a product can be activated.",
+          "label": "Custom fields",
+          "required": "Required"
+        },
         "fulfillment_types": {
           "help": "How products of this type can be delivered — shipping, store pickup, pickup point, or digital.",
           "label": "Fulfillment types"
         },
         "name": {
           "placeholder": "e.g. T-Shirt"
+        },
+        "option_types": {
+          "help": "Added to products created with this type. Products can add more later.",
+          "label": "Option types"
         },
         "products_count": {
           "label": "Products"
@@ -2556,6 +2569,18 @@
     "product_types": {
       "add_cta": "Add product type",
       "add_sheet_title": "New product type",
+      "affects_new_only": {
+        "description": "Editing option types and categories shapes products created from now on. Products that already have this type keep what they have. The custom fields below always show on every product of this type.",
+        "title": "Changes apply to new products"
+      },
+      "apply_to_products": {
+        "confirm_label": "Apply",
+        "cta_one": "Apply to {{count}} existing product",
+        "cta_other": "Apply to {{count}} existing products",
+        "message_one": "This adds this type’s missing option types and categories to {{count}} product. Nothing is removed.",
+        "message_other": "This adds this type’s missing option types and categories to {{count}} products. Nothing is removed.",
+        "title": "Apply to existing products"
+      },
       "create_description": "Group products and define how they can be delivered.",
       "create_label": "Create product type",
       "delete_confirm": {
@@ -2566,10 +2591,13 @@
       "edit_sheet_title": "Edit product type",
       "empty": "No product types yet",
       "messages": {
+        "applied_to_products": "Applying to existing products",
         "created": "Product type created",
         "deleted": "Product type deleted",
         "updated": "Product type updated"
       },
+      "no_categories": "No categories yet",
+      "no_option_types": "No option types yet",
       "search_placeholder": "Search product types"
     },
     "products": {
