@@ -1,3 +1,31 @@
+## 2026-08-06: Return shipping labels are carrier output, not return state — cut from 6.0
+
+`Spree::Return` briefly carried a `return_label_url` column written by a
+`generate_label:` seam on `Returns::Approve`. The seam resolved its
+provider through `Spree.return_label_provider`, which was never
+registered in `Spree::Dependencies` — so the guard never passed and the
+column was written by unreachable code. Both are removed.
+
+The bug prompted the review; the market settled the direction. **No
+comparable platform stores a label URL on the return record.** Medusa
+returns `label_url` as part of a *fulfillment* (`FulfillmentLabel`) and
+its own integration docs concede the default return flow "does not
+provide enough data to create a full return shipment automatically";
+Saleor's `Fulfillment` object exposes only `trackingNumber`, with labels
+left to apps on webhooks; Vendure has no return-label concept at all,
+producing labels as a side effect of a `FulfillmentHandler` calling a
+courier API. A label is carrier output attached to a shipment, not a
+property of the return.
+
+Labels therefore ride with the carrier provider in
+`6.0-delivery-rate-provider.md`, where an EasyPost/Shippo provider exists
+to mint one and it can hang off a fulfillment like everywhere else. Until
+then a store puts the URL in the return's `metadata`. This is the same
+rule the return-policy decision (2026-08-03) applied: core ships a seam
+when there is a real implementation behind it, never a speculative column
+plus a provider key nobody declares.
+
+
 ## 2026-08-05: Dashboard form values must not embed SDK entity types
 
 The returns rework regenerated the admin SDK types, and the new `Order`

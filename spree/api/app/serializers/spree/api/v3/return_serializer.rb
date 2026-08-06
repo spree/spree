@@ -10,7 +10,6 @@ module Spree
                  status: :string,
                  order_id: [:string, nullable: true],
                  reason_id: [:string, nullable: true],
-                 return_label_url: [:string, nullable: true],
                  refund_total: :string,
                  display_refund_total: :string,
                  approved_at: [:string, nullable: true],
@@ -18,7 +17,7 @@ module Spree
                  refunded_at: [:string, nullable: true],
                  canceled_at: [:string, nullable: true]
 
-        attributes :number, :status, :return_label_url
+        attributes :number, :status
 
         attribute :order_id do |return_record|
           return_record.order&.prefixed_id

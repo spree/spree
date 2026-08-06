@@ -1102,16 +1102,8 @@ export class AdminClient {
           body: params,
         }),
 
-      approve: (
-        orderId: string,
-        id: string,
-        params?: { generate_label?: boolean },
-        options?: RequestOptions,
-      ): Promise<Return> =>
-        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/approve`, {
-          ...options,
-          body: params,
-        }),
+      approve: (orderId: string, id: string, options?: RequestOptions): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/approve`, options),
 
       receive: (
         orderId: string,

@@ -11,7 +11,6 @@ class CreateSpreeReturns < ActiveRecord::Migration[8.1]
       t.references :created_by
       t.string :status, null: false
       t.text :memo
-      t.string :return_label_url
       t.datetime :approved_at
       t.datetime :received_at
       t.datetime :refunded_at

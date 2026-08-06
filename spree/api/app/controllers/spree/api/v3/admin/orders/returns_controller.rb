@@ -46,9 +46,7 @@ module Spree
 
             # PATCH /api/v3/admin/orders/:order_id/returns/:id/approve
             def approve
-              run_workflow(Spree.return_approve_workflow,
-                           approver: try_spree_current_user,
-                           generate_label: ActiveModel::Type::Boolean.new.cast(params[:generate_label]))
+              run_workflow(Spree.return_approve_workflow, approver: try_spree_current_user)
             end
 
             # PATCH /api/v3/admin/orders/:order_id/returns/:id/receive

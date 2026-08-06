@@ -6,7 +6,6 @@ export const ReturnSchema = z.object({
   id: z.string(),
   number: z.string(),
   status: z.string(),
-  return_label_url: z.string().nullable(),
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),
   refund_total: z.string(),
