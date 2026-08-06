@@ -164,6 +164,22 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(excluded.products).to eq([product])
     end
 
+    it 'clears excluded products when an empty array is sent' do
+      product = create(:product)
+      rule = Spree::DeliveryMethodRules::ExcludedProductsRule.create!(
+        delivery_method: delivery_method, products: [product]
+      )
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        rules: [{ id: rule.prefixed_id, type: 'excluded_products_rule', product_ids: [] }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(rule.reload.products).to be_empty
+      expect(delivery_method.delivery_method_rules.reload.size).to eq(1)
+    end
+
     it 'rejects nested rule products from another store' do
       foreign_product = create(:product, store: create(:store))
 

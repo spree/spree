@@ -77,12 +77,15 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
     delivery_zone_ids: values.delivery_zone_ids,
     stock_location_ids: values.stock_location_ids,
     // Rules ride along with the method so one request saves the whole sheet.
-    // Omitting `id` marks a rule as new; dropping one from the array deletes it.
+    // Omitting `id` marks a rule as new; dropping one from the array deletes
+    // it. `product_ids` is always sent for association-backed rules — omitting
+    // an emptied array would read as "leave unchanged" and silently keep the
+    // exclusions the merchant just removed.
     rules: values.rules.map((rule) => ({
       ...(rule.id ? { id: rule.id } : {}),
       type: rule.type,
       preferences: rule.preferences,
-      ...(rule.product_ids.length > 0 ? { product_ids: rule.product_ids } : {}),
+      ...(rule.type === 'excluded_products_rule' ? { product_ids: rule.product_ids } : {}),
     })),
   }
 }

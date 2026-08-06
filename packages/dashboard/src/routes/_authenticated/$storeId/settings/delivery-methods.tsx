@@ -234,9 +234,13 @@ function EditDeliveryMethodSheet({
   onOpenChange: (open: boolean) => void
 }) {
   const { t } = useTranslation()
-  const { data: deliveryMethod, isLoading } = useDeliveryMethod(id)
-  const { data: rules } = useDeliveryMethodRules(id)
+  const { data: deliveryMethod, isLoading: methodLoading } = useDeliveryMethod(id)
+  const { data: rules, isLoading: rulesLoading } = useDeliveryMethodRules(id)
   const updateMutation = useUpdateDeliveryMethod(id)
+  // Saving sends the full rule set for reconciliation, so the form must not be
+  // reachable until the existing rules have loaded — otherwise a quick save
+  // would submit an empty set and delete them all.
+  const isLoading = methodLoading || rulesLoading
 
   const form = useForm<DeliveryMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -245,7 +249,9 @@ function EditDeliveryMethodSheet({
   })
 
   useEffect(() => {
-    if (deliveryMethod) {
+    // Wait for rules too — seeding the form before they arrive would reset
+    // again once they land, discarding anything already edited.
+    if (deliveryMethod && rules) {
       form.reset({
         name: deliveryMethod.name,
         admin_name: deliveryMethod.admin_name ?? '',
