@@ -39,6 +39,14 @@ export function VariantsOptionsBuilder({ selected, onChange }: Props) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [isAdding, setIsAdding] = useState(false)
 
+  // A row with no values yet is one the merchant still has to act on — the
+  // product type seeds exactly that. Open the first one so the values picker
+  // is in front of them instead of hidden behind a click. Only while nothing
+  // else is being edited, so it never steals focus mid-interaction.
+  const firstEmptyIndex = selected.findIndex((optionType) => optionType.values.length === 0)
+  const expandedIndex =
+    editingIndex ?? (isAdding ? null : firstEmptyIndex >= 0 ? firstEmptyIndex : null)
+
   const selectedIds = new Set(selected.map((s) => s.id))
   const availableTypes = allOptionTypes.filter((ot) => !selectedIds.has(ot.id))
 
@@ -62,7 +70,7 @@ export function VariantsOptionsBuilder({ selected, onChange }: Props) {
         <ul className="flex flex-col gap-2">
           {selected.map((ot, i) => {
             const optionType = allOptionTypes.find((t) => t.id === ot.id)
-            const isEditing = editingIndex === i
+            const isEditing = expandedIndex === i
             if (isEditing && optionType) {
               return (
                 <li key={ot.id} className="rounded-lg border border-border p-3">

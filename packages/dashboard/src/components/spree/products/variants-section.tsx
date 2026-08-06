@@ -187,6 +187,11 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
   const fields = variantsArray.fields
   const hasOptionTypes = selected.length > 0
   const isSimpleProduct = !hasOptionTypes && fields.length <= 1
+  // Options are being defined but none have values yet, so the only variant is
+  // the option-less placeholder. Showing it as "Default variant" next to a
+  // half-filled option row reads like a real row the merchant should edit.
+  const awaitingOptionValues =
+    hasOptionTypes && selected.every((optionType) => optionType.values.length === 0)
 
   const handleOptionsChange = (next: SelectedOptionType[]) => {
     // Keep the offered rows in step with the builder — including a removal,
@@ -353,7 +358,7 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
           </div>
         )}
 
-        {fields.length > 0 && (
+        {fields.length > 0 && !awaitingOptionValues && (
           <div className="overflow-hidden rounded-md border border-border">
             <DndContext
               sensors={sensors}
