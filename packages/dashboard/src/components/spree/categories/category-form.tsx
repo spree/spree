@@ -23,8 +23,8 @@ import {
   CustomFieldsInlineCard,
   FormBackedCustomFieldsProvider,
 } from '../custom-fields/custom-fields-inline'
+import { ResourceImageField } from '../resource-image-field'
 import { ResourceTranslationsCard } from '../translations/resource-translations-card'
-import { CategoryImageField } from './category-image-field'
 import { CategoryProductsCard } from './category-products-card'
 
 // Build the parent-picker filter for the edited category: a category can't be
@@ -127,12 +127,18 @@ export function CategorySidebar({
           <CardTitle>{t('admin.categories.images.title')}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
-          <CategoryImageField form={form} kind="image" serverUrl={category?.image_url ?? null} />
-          <CategoryImageField
+          <ResourceImageField
+            form={form}
+            kind="image"
+            serverUrl={category?.image_url ?? null}
+            translationNamespace="admin.categories"
+          />
+          <ResourceImageField
             form={form}
             kind="square_image"
             serverUrl={category?.square_image_url ?? null}
             square
+            translationNamespace="admin.categories"
           />
         </CardContent>
       </Card>

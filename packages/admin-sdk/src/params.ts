@@ -465,6 +465,12 @@ export interface ProductCreateParams {
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
   category_ids?: Array<string>
+  /**
+   * Collections this product belongs to. Assigning an automatic collection
+   * persists, but its next rule regeneration overwrites the member list — so
+   * in practice only manual collections belong here.
+   */
+  collection_ids?: Array<string>
   tags?: Array<string>
   /** Shorthand for a simple (no-options) product: prices ship alongside
    *  `name`/`status` and forward to the product's sole variant, so callers
@@ -484,6 +490,8 @@ export interface ProductUpdateParams {
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
   category_ids?: Array<string>
+  /** See `ProductCreateParams.collection_ids`. */
+  collection_ids?: Array<string>
   tags?: Array<string>
   /** Shorthand for a simple (no-options) product — see `ProductCreateParams.prices`. */
   prices?: VariantPrice[]
@@ -540,7 +548,6 @@ export interface CategoryCreateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  hide_from_nav?: boolean
   /** ActiveStorage signed_id of a directly-uploaded landscape image. */
   image?: string
   /** ActiveStorage signed_id of a directly-uploaded square image. */
@@ -556,7 +563,6 @@ export interface CategoryUpdateParams {
   meta_title?: string
   meta_description?: string
   meta_keywords?: string
-  hide_from_nav?: boolean
   /** ActiveStorage signed_id of a directly-uploaded landscape image, or null to remove it. */
   image?: string | null
   /** ActiveStorage signed_id of a directly-uploaded square image, or null to remove it. */
@@ -572,6 +578,100 @@ export interface CategoryRepositionParams {
 
 export interface CategoryProductRepositionParams {
   /** 0-based index among the category's products. */
+  new_position: number
+}
+
+/**
+ * Default product sort applied to a collection's storefront listing. A
+ * shopper's own `sort` param always wins over this; `manual` means the
+ * merchant's hand-set product order.
+ */
+export type CollectionSortOrder =
+  | 'manual'
+  | 'best_selling'
+  | 'price asc'
+  | 'price desc'
+  | 'available_on desc'
+  | 'available_on asc'
+  | 'name asc'
+  | 'name desc'
+
+export type CollectionRuleType =
+  | 'Spree::CollectionRules::Tag'
+  | 'Spree::CollectionRules::Sale'
+  | 'Spree::CollectionRules::AvailableOn'
+  | (string & {})
+
+export type CollectionRuleMatchPolicy =
+  | 'is_equal_to'
+  | 'is_not_equal_to'
+  | 'contains'
+  | 'does_not_contain'
+
+/**
+ * One rule of an automatic collection. Sent as part of the full `rules` set
+ * on create/update — see `CollectionUpdateParams['rules']`.
+ */
+export interface CollectionRuleParam {
+  /** Prefixed `crule_` ID. Omit to create a new rule. */
+  id?: string
+  type: CollectionRuleType
+  value: string
+  match_policy?: CollectionRuleMatchPolicy
+}
+
+export interface CollectionCreateParams {
+  name: string
+  description?: string
+  permalink?: string
+  meta_title?: string
+  meta_description?: string
+  meta_keywords?: string
+  /** ActiveStorage signed_id of a directly-uploaded landscape image. */
+  image?: string
+  /** ActiveStorage signed_id of a directly-uploaded square image. */
+  square_image?: string
+  /** Default product sort for the storefront listing. Defaults to `manual`. */
+  sort_order?: CollectionSortOrder
+  /** When true, membership is materialized from `rules` instead of curated by hand. */
+  automatic?: boolean
+  /** Whether a product must match all rules or any of them. Defaults to `all`. */
+  rules_match_policy?: 'all' | 'any'
+  rules?: CollectionRuleParam[]
+}
+
+export interface CollectionUpdateParams {
+  name?: string
+  description?: string
+  permalink?: string
+  /**
+   * 1-based position among the store's collections, written straight to the
+   * `acts_as_list` column — the first collection is `1`, and the server shifts
+   * its siblings. Collections are a flat list, so reordering is a plain update
+   * rather than a separate reposition action (which is where the `new_position`
+   * params, unlike this one, are 0-based indexes).
+   */
+  position?: number
+  meta_title?: string
+  meta_description?: string
+  meta_keywords?: string
+  /** ActiveStorage signed_id of a directly-uploaded landscape image, or null to remove it. */
+  image?: string | null
+  /** ActiveStorage signed_id of a directly-uploaded square image, or null to remove it. */
+  square_image?: string | null
+  sort_order?: CollectionSortOrder
+  automatic?: boolean
+  rules_match_policy?: 'all' | 'any'
+  /**
+   * The complete desired rule set — this is a sync setter, not a patch.
+   * Entries with an `id` are updated, entries without one are created, and
+   * any existing rule left out of the array is removed.
+   */
+  rules?: CollectionRuleParam[]
+}
+
+export interface CollectionProductRepositionParams {
+  /** 0-based index among the collection's products. */
   new_position: number
 }
 
@@ -1323,9 +1423,9 @@ export interface ImportCompleteMappingParams {
 
 /**
  * Owner type passed to the generic `client.customFields(ownerType, ownerId)`
- * escape hatch. The first-class six (products, variants, orders, customers,
- * categories, option_types) have dedicated `client.<resource>.customFields`
- * accessors and don't need this.
+ * escape hatch. The first-class seven (products, variants, orders, customers,
+ * categories, collections, option_types) have dedicated
+ * `client.<resource>.customFields` accessors and don't need this.
  */
 export type CustomFieldOwnerType =
   | 'Spree::Product'
@@ -1333,6 +1433,7 @@ export type CustomFieldOwnerType =
   | 'Spree::Order'
   | 'Spree::User'
   | 'Spree::Category'
+  | 'Spree::Collection'
   | 'Spree::OptionType'
   | (string & {})
 

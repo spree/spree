@@ -15,28 +15,6 @@ end
 describe Spree::BaseMailer, type: :mailer do
   let!(:store) { @default_store }
 
-  describe '#set_email_locale (deprecated)' do
-    subject(:mailer) { described_class.new }
-
-    before do
-      store.update!(default_locale: 'de')
-      allow(mailer).to receive(:current_store).and_return(store)
-    end
-    after { I18n.locale = :en }
-
-    it 'emits a deprecation warning' do
-      expect(Spree::Deprecation).to receive(:warn).with(/set_email_locale is deprecated/)
-      mailer.set_email_locale
-    end
-
-    it 'still sets I18n.locale from the store default for backwards compatibility' do
-      allow(Spree::Deprecation).to receive(:warn)
-      I18n.locale = :en
-      mailer.set_email_locale
-      expect(I18n.locale).to eq(:de)
-    end
-  end
-
   describe '#from_address' do
     subject(:mailer) { described_class.new }
 

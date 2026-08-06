@@ -25,7 +25,7 @@ module Spree
       return if order.customer.present?
       return unless order.signup_for_an_account?
 
-      Spree::Orders::CreateUserAccount.call(order: order, accepts_email_marketing: order.accept_marketing?)
+      Spree.customer_create_workflow.call(store: order.store, order: order)
     end
   end
 end

@@ -10,6 +10,7 @@ export type {
   Channel,
   Claim,
   ClaimLineItem,
+  Collection,
   Country,
   CreditCard,
   Currency,
@@ -134,6 +135,12 @@ export interface ProductListParams extends ListParams {
   in_category?: string
   /** Filter: products in any of the given categories (includes descendants, OR logic) */
   in_categories?: string[]
+  /**
+   * Filter: products in a collection (flat — collections have no hierarchy).
+   * Prefer `client.collections.products.list()` for a collection listing: it
+   * applies the collection's own `sort_order` as the default.
+   */
+  in_collection?: string
   /** Any additional Ransack predicate */
   [key: string]: string | number | boolean | (string | number)[] | undefined
 }
@@ -145,6 +152,15 @@ export interface CategoryListParams extends ListParams {
   name_cont?: string
   parent_id_eq?: string | number
   depth_eq?: number
+  /** Any additional Ransack predicate */
+  [key: string]: string | number | boolean | (string | number)[] | undefined
+}
+
+export interface CollectionListParams extends ListParams {
+  /** Sort order, e.g. 'position', 'name', '-created_at' */
+  sort?: string
+  /** Filter: name contains */
+  name_cont?: string
   /** Any additional Ransack predicate */
   [key: string]: string | number | boolean | (string | number)[] | undefined
 }

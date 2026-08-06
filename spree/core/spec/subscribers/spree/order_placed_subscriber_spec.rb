@@ -41,4 +41,28 @@ RSpec.describe Spree::OrderPlacedSubscriber do
       end
     end
   end
+
+  describe '#handle account creation on order.placed' do
+    let(:guest_order) do
+      create(:completed_order_with_totals, store: store, customer: nil, email: 'guest@example.com')
+    end
+
+    context 'when the order asked for an account' do
+      before { guest_order.update!(signup_for_an_account: true) }
+
+      it 'creates the account through the registration workflow' do
+        expect { subscriber.handle(mock_event(guest_order)) }.
+          to change { Spree.customer_class.count }.by(1)
+
+        expect(guest_order.reload.customer.email).to eq('guest@example.com')
+      end
+    end
+
+    context 'when the order did not ask for an account' do
+      it 'creates nothing' do
+        expect { subscriber.handle(mock_event(guest_order)) }.
+          not_to change { Spree.customer_class.count }
+      end
+    end
+  end
 end

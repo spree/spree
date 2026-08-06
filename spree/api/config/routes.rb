@@ -287,6 +287,11 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        # Subclass discovery for the collection rules editor, mirroring
+        # `/promotion_rules/types`. Top-level (and read-only) because rules are
+        # written through the collection's own `rules` setter, not nested CRUD.
+        get 'collection_rules/types', to: 'collection_rules#types'
+
         # Option Types (with nested option_values in payload)
         resources :option_types, concerns: [:custom_fieldable, :translatable]
 

@@ -87,6 +87,13 @@ export const fixtures = {
     permalink: 'clothing/shirts',
     position: 1,
   },
+  collection: {
+    id: 'coll_1',
+    name: 'Summer Sale',
+    permalink: 'summer-sale',
+    position: 1,
+    sort_order: 'best_selling',
+  },
   country: {
     iso: 'US',
     iso3: 'USA',
@@ -191,6 +198,17 @@ export const handlers = [
   ),
 
   http.get(`${API_PREFIX}/categories/:id`, () => HttpResponse.json(fixtures.category)),
+
+  // Collections
+  http.get(`${API_PREFIX}/collections`, () =>
+    HttpResponse.json({ data: [fixtures.collection], meta: paginationMeta }),
+  ),
+
+  http.get(`${API_PREFIX}/collections/:id/products`, () =>
+    HttpResponse.json({ data: [fixtures.product], meta: paginationMeta }),
+  ),
+
+  http.get(`${API_PREFIX}/collections/:id`, () => HttpResponse.json(fixtures.collection)),
 
   // Countries
   http.get(`${API_PREFIX}/countries`, () => HttpResponse.json({ data: [fixtures.country] })),

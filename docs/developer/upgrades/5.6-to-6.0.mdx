@@ -213,6 +213,73 @@ Removed keys (their classes no longer exist): `carts_validate_service` (completi
 
 If you override a workflow seam, subclass the shipped workflow (or implement the same `perform` keyword contract) — workflow arguments are plain Ruby keywords, so a mismatch raises `ArgumentError` at call time, not silently.
 
+## Removed in 6.0
+
+These were deprecated in 5.x and are **gone now** — there is no bridge, so calls raise `NoMethodError`. Most were one-line delegations to a replacement that already exists.
+
+| Removed | Use instead |
+|---|---|
+| `Product#default_image`, `#featured_image`, `#primary_image` | `#primary_media` |
+| `Variant#default_image`, `#primary_image` | `#primary_media` |
+| `Address#user_default_billing?`, `#user_default_shipping?` | `#is_default_billing?`, `#is_default_shipping?` |
+| `OptionType#color?` | `#color_swatch?` |
+| `Category#set_store` | `#ensure_store` |
+| `Category.for_taxonomy` | `.for_store` |
+| `Store#admin_users` | `#users` |
+| `Store#supported_shipping_zones` | `#countries_with_shipping_coverage` |
+| `Spree.searcher_class` | `Spree.search_provider` |
+| `Spree.admin_user_class.spree_admin_created?` | `.spree_admin.exists?` |
+| `BaseMailer#set_email_locale` | wrap the action body in `with_store_locale(store) { ... }` |
+| `Asset#styles`, `ImageMethods#generate_url`, `#original_url` | Active Storage variants with `cdn_image_url` |
+| `Spree::ImageMethods`, `Spree::NumberAsParam` (concerns) | deleted — `NumberAsParam` was already a no-op; prefixed IDs come from `Spree::PrefixedId` |
+| `Product.with_option`, `.with`, `.in_name`, `.in_name_or_keywords`, `.in_name_or_description`, `.with_ids`, `.for_user` | `.with_option_value`, `.search`, `where(id: ids)` |
+| `Product.add_search_scope` | plain `scope :name, -> { ... }` |
+| `Spree::Image::Configuration::ActiveStorage` | deleted — an empty no-op module; all logic lives in `Spree::Asset` |
+| `Spree::OrderRouting::Strategy::Legacy` | `Spree::OrderRouting::Strategy::Rules` (see below) |
+
+### The Legacy order-routing strategy is gone
+
+`Spree::OrderRouting::Strategy::Legacy` — the pre-5.5 escape hatch that delegated straight to `Spree::Stock::Coordinator` and consulted no routing rules — is removed and no longer registered in `Spree.order_routing.strategies`.
+
+A store or channel still carrying `preferred_order_routing_strategy: 'Spree::OrderRouting::Strategy::Legacy'` **keeps working**: `Order#order_routing_strategy` ignores unregistered classes, logs a warning, and falls back to `Strategy::Rules`. Clear the stale preference to silence the warning — note that saving such a record now fails validation, since the value is no longer in the registry.
+
+`Spree::Stock::Coordinator` itself stays — cart fulfillment building, exchanges, and claims still use it.
+
+### `Store.default` no longer builds a store
+
+`Spree::Store.default` returned an **unpersisted** `Store.new(default: true)` when no default store existed. It now returns `nil`.
+
+This matters more than it looks: `Spree::Current.store` falls back to `Store.default`, and every `Spree::SingleStoreResource` model resolves its own `store` from `Spree::Current.store`. Without a default store, those records now fail validation with "Store can't be blank" instead of silently attaching to a throwaway store.
+
+Make sure a default store exists before creating store-scoped records, and set `Spree::Current.store` in jobs, rake tasks, and tests that run outside a request.
+
+### The `DefaultPrice` concern is gone — `price_in` / `set_price` is the interface
+
+`Spree::DefaultPrice` and the `enable_legacy_default_price` setting are removed, along with the `has_one :default_price` association on `Variant`. Prices live in `spree_prices`, one row per currency, and a price is always an **amount plus a currency** — there is no longer an implicit "the" price.
+
+The single-currency accessors are gone from both `Variant` and `Product`:
+
+| Removed | Use instead |
+|---|---|
+| `variant.price`, `product.price` | `variant.price_in(currency).amount` or `amount_in(currency)` |
+| `variant.price = x`, `product.price = x` | `variant.set_price(currency, x)` |
+| `variant.default_price` | `variant.price_in(currency)` |
+| `variant.currency`, `product.currency` | the currency is an argument now — pass the one you mean |
+| `display_price`, `display_amount` | `price_in(currency).display_amount` |
+| `compare_at_price=` | `set_price(currency, amount, compare_at_amount)` |
+| `display_compare_at_price` | `price_in(currency).display_compare_at_amount` |
+| `price_including_vat_for(opts)` | `price_in(currency).price_including_vat_for(opts)` |
+| `has_default_price?` | `prices.base_prices.exists?(currency: currency)` |
+
+The `compare_at_price` **reader** (which resolves against `cost_currency`) is unchanged on both `Variant` and `Product` — only the writer is gone. So are the `price_in` / `amount_in` / `compare_at_amount_in` readers.
+
+Also note:
+
+- **Ransack:** `default_price` is no longer a searchable association on `Variant`; query `prices` instead.
+- **`Spree::PermittedAttributes`:** the dead `:price` and `:compare_at_price` entries are dropped from `product_attributes` and `variant_attributes`. Prices were already written as nested `prices: [{ amount:, currency: }]` under variants — the top-level keys had no writer behind them.
+- Localized number parsing still happens: `Spree::Price#amount=` runs `Spree::LocalizedNumber.parse`, so `set_price(currency, '1,599.99')` works as `price=` did.
+- The variant validation that inferred a missing price from the product's default variant is gone. Set prices explicitly (the product and variant factories already do).
+
 ## Deprecated in 6.0, removed in 6.1
 
 Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:

@@ -35,6 +35,9 @@ module Spree
               puts 'Loading sample product translations...'
               load_product_translations
 
+              puts 'Loading sample collections...'
+              load_ruby_file('collections')
+
               puts 'Loading sample customers...'
               load_customers
 

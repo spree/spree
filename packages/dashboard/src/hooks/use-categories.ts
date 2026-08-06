@@ -88,12 +88,21 @@ export function useDeleteCategory() {
 
 const categoryProductsKey = (categoryId: string) => ['categories', categoryId, 'products'] as const
 
-/** Products classified under a category, ordered by classification position. */
-export function useCategoryProducts(categoryId: string | undefined) {
+/**
+ * One page of the products classified under a category, ordered by
+ * classification position.
+ *
+ * Paginated rather than capped: a category can hold thousands of products, and
+ * a single truncated fetch would hide the rest with no way to reach them.
+ */
+export function useCategoryProducts(categoryId: string | undefined, page = 1, limit = 25) {
   return useQuery({
-    queryKey: useResourceKey('categories', categoryId ?? 'noop', 'products'),
-    queryFn: () => adminClient.categories.products.list(categoryId as string, { limit: 100 }),
+    queryKey: useResourceKey('categories', categoryId ?? 'noop', 'products', `${page}:${limit}`),
+    queryFn: () => adminClient.categories.products.list(categoryId as string, { page, limit }),
     enabled: !!categoryId,
+    // Keep the current page visible while the next one loads, so the table
+    // doesn't blank out between pages.
+    placeholderData: (previous) => previous,
   })
 }
 

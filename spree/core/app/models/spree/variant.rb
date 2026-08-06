@@ -30,9 +30,6 @@ module Spree
     before_destroy :ensure_not_in_complete_orders
     after_destroy :remove_line_items_from_incomplete_orders
 
-    # must include this after ensure_not_in_complete_orders to make sure price won't be deleted before validation
-    include Spree::DefaultPrice
-
     with_options inverse_of: :variant do
       has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem'
       has_many :line_items
@@ -75,11 +72,7 @@ module Spree
     before_validation :set_cost_currency
     before_validation :apply_pending_options, if: :pending_options?
 
-    validate :check_price, if: -> { Spree::Config.enable_legacy_default_price }
-
     validates :cost_price, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
-    validates :price, numericality: { greater_than_or_equal_to: 0, allow_nil: true },
-                      if: -> { Spree::Config.enable_legacy_default_price }
     validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
                     allow_blank: true, unless: :disable_sku_validation?
 
@@ -186,7 +179,7 @@ module Spree
       allow_destroy: false
     )
 
-    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
+    self.whitelisted_ransackable_associations = %w[option_values product tax_category prices]
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on cost_price cost_currency track_inventory
                                                  deleted_at product_id]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku search)
@@ -324,12 +317,6 @@ module Spree
       variant_media.exists?
     end
 
-    # @deprecated Use #primary_media instead.
-    def default_image
-      Spree::Deprecation.warn('Spree::Variant#default_image is deprecated and will be removed in Spree 6.0. Please use Spree::Variant#primary_media instead.')
-      primary_media
-    end
-
     # Updates primary_media_id to the first media item by position.
     # Called when media is added, removed, or reordered.
     # Uses gallery_media so product-level assets linked via VariantMedia are
@@ -339,24 +326,16 @@ module Spree
       update_column(:primary_media_id, first_media&.id)
     end
 
-    # Returns first Image for Variant.
-    # @deprecated Use #primary_media instead.
-    # @return [Spree::Image, nil]
-    def primary_image
-      Spree::Deprecation.warn('Spree::Variant#primary_image is deprecated and will be removed in Spree 6.0. Please use Spree::Variant#primary_media instead.')
-      primary_media
-    end
-
     # Returns second Image for Variant (for hover effects).
     # @return [Spree::Image, nil]
     def secondary_image
       images.second
     end
 
-    # Returns all images except the default image, combining variant and product images.
+    # Returns all images except the primary media, combining variant and product images.
     # @return [Array<Spree::Image>]
     def additional_images
-      @additional_images ||= (images + product.images).uniq.reject { |image| image.id == default_image&.id }
+      @additional_images ||= (images + product.images).uniq.reject { |image| image.id == primary_media&.id }
     end
 
     # Returns an array of hashes with the option type name, value and presentation
@@ -738,26 +717,6 @@ module Spree
 
     def quantifier
       Spree::Stock::Quantifier.new(self)
-    end
-
-    # Ensures a new variant takes the product's default variant price when price is not supplied
-    def check_price
-      return if prices.any?
-
-      infer_price_from_default_variant_if_needed
-    end
-
-    def infer_price_from_default_variant_if_needed
-      default_currency = Spree::Store.default.default_currency
-      current_price = price_in(default_currency).amount
-
-      if current_price.nil?
-        return errors.add(:base, :no_default_variant_found_to_infer_price) unless product&.default_variant
-
-        # The default variant may or may not have a price yet; use it when present.
-        inferred_price = product.default_variant.price_in(default_currency).amount
-        set_price(default_currency, inferred_price) if inferred_price.present?
-      end
     end
 
     def set_cost_currency

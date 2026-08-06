@@ -122,6 +122,74 @@ dashboard pages. Reviewing what remains settled four things:
   the three entities on the same branch.
 
 
+## 2026-08-05: v5 developer docs are frozen until the 6.0 release; 6.0 docs land under docs/v6
+
+The pages under `docs/developer/` document the stable 5.x line and stay
+untouched until 6.0 ships — even where they describe subsystems 6.0 has
+already replaced on main (the polymorphic `Adjustment` model, the
+`AdjustmentSource` concern, and similar). Any plan whose remaining work
+includes "update developer docs" fulfills it by writing a **v6 variant**
+under `docs/v6/developer/` (registered in `docs/docs.json` under the
+v6.x version), never by editing the v5 page. First applications: the
+typed-adjustments docs (`v6/developer/core-concepts/taxes-discounts-fees.mdx`
+already exists; promotions core-concepts and the custom-promotion how-to
+get v6 variants). Also renamed `6.0-split-adjustments.md` →
+`6.0-6.1-split-adjustments.md`: the implementation shipped for 6.0 and
+the remainder (legacy-table drop, promotion stacking) is 6.1 work, so
+the plan spans two releases like the other `X.Y-X.Z` plans.
+
+## 2026-08-05: Customer registration graduates to a workflow; core sends no welcome email
+
+Customer creation today runs through three paths with three different
+side-effect sets: store self-registration links a matching newsletter
+subscriber but sends no email; the checkout "create an account" box
+(`Orders::CreateUserAccount`) adopts addresses and sends a welcome email but
+skips subscriber linking; Admin API create does neither. A fourth path —
+storefront OIDC auto-provisioning — is coming and would have reinvented all
+of it again.
+
+`Spree::Customers::Create` (seam `customer_create_workflow`, hooks
+`customers.create.validate` + `customers.create.after_create`) unifies the
+storefront paths. The `validate` hook is the point of the exercise:
+bot/disposable-email screening, fraud checks and B2B registration approval
+all need to *veto* a signup, which the `user.created` lifecycle event
+cannot do. The workflow takes an optional `order:` and absorbs
+`Orders::CreateUserAccount` entirely (one flow = one workflow — the
+Orders::Complete precedent); the old class stays as a deprecated one-release
+shell. Explicitly outside the workflow: Admin API create (plain CRUD — staff
+creation must not be blockable by registration-policy hooks; handlers that
+want to distinguish anyway read `created_by`, the return-eligibility
+pattern) and JWT/refresh-token issuance (HTTP session concern, stays in the
+controller).
+
+Checkout-created accounts are **password-less** (the old service generated a
+random password): blank is the one unclaimed-account state — same as
+admin-created customers — `Customer#valid_password?` guards the blank digest,
+the account is claimed via password reset, and a generated value could fail a
+host's swapped-in `Spree.password_validator`. Self-registration still requires
+a password, because the caller issues a JWT on success. The
+`password_required:` keyword carries that rule: it defaults to **false when
+`order:` is present** (guest checkout collects no password) and **true
+otherwise**, and an explicit value always wins — which is how a future
+provisioning caller with no order (OIDC, invitations) waives the requirement
+deliberately rather than by faking an order.
+
+**The welcome email leaves core.** The only sender was the checkout path
+(`user.send_welcome_email if user.respond_to?` — self-registration never
+sent one, which was an accident of the split, not a choice). Signup email is
+host-app implementation via a `user.created` subscriber or the
+`after_create` hook — the same stance `spree/emails` already takes for
+headless storefronts owning consumer email.
+
+**Upgrade step (host applications).** A host that relied on the checkout
+welcome email — i.e. defines `send_welcome_email` on its customer class — must
+move the send itself, since core no longer calls it. Either subscribe to
+`user.created` (fires on every creation path, including admin and imports) or
+register a handler on `customers.create.after_create` (storefront registration
+only). The method itself can stay; nothing in core invokes it any more.
+
+Plan: `6.0-service-workflows.md` decision 13.
+
 ## 2026-08-04: Commerce-behavior globals move to Store preferences; app configuration stays global
 
 A full usage audit of `Spree::Config` (multi-agent trace with adversarial
@@ -747,7 +815,7 @@ discount engine is being rewritten there anyway), retargeted to 6.1 the same
 day: stacking is **purely additive** — no schema change, no breaking window
 needed — and 6.0 is already the heaviest release in Spree's history. Deferring
 costs nothing structurally because the expensive prerequisites ship in 6.0
-regardless (`6.0-split-adjustments.md`): typed Discount tables that permit
+regardless (`6.0-6.1-split-adjustments.md`): typed Discount tables that permit
 multiple rows per adjustable, per-adjustable clamping, and
 prorate-over-the-remaining-discounted-base (needed for order-level
 distribution either way), with winner-only selection isolated in a single

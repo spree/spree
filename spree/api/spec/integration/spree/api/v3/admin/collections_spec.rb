@@ -22,7 +22,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
       parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
       parameter name: :limit, in: :query, type: :integer, required: false, description: 'Number of records per page'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (e.g., custom_fields, translations).'
+                description: 'Comma-separated associations to expand (e.g., rules, custom_fields, translations).'
 
       response '200', 'collections found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -92,7 +92,9 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['name']).to eq('On Sale')
-          expect(data['rules'].length).to eq(1)
+          # `rules` is expand-gated, so the create echo mirrors a read: pass
+          # `?expand=rules` to see the persisted set back.
+          expect(data).not_to have_key('rules')
         end
       end
 
@@ -120,7 +122,7 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
                 description: 'Bearer token for admin authentication'
       parameter name: :id, in: :path, type: :string, required: true, description: 'Collection ID'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (e.g., custom_fields, translations).'
+                description: 'Comma-separated associations to expand (e.g., rules, custom_fields, translations).'
 
       response '200', 'collection found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
@@ -330,6 +332,29 @@ RSpec.describe 'Admin Collections API', type: :request, swagger_doc: 'api-refere
         before { Spree::ProductCollection.create!(collection: collection, product: product, position: 1) }
 
         run_test!
+      end
+    end
+  end
+
+  path '/api/v3/admin/collection_rules/types' do
+    get 'List available collection rule types' do
+      tags 'Collections'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Enumerates the registered rule kinds with their labels and descriptions — drives the rule picker on an automatic collection. Plugins extend the list by registering `Spree::CollectionRule` subclasses via `config.spree.collection_rules`. The `type` returned here is the wire shorthand accepted when writing a collection\'s `rules`.'
+      admin_scope :read, :collections
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true
+
+      response '200', 'types found' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)['data']
+          expect(data.map { |type| type['type'] }).to contain_exactly('tag', 'sale', 'available_on')
+          expect(data.first).to include('label', 'description', 'preference_schema')
+        end
       end
     end
   end

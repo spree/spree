@@ -51,6 +51,7 @@ export function useProducts({
 
 type BulkStatusParams = Parameters<typeof adminClient.products.bulkStatusUpdate>[0]
 type BulkCategoriesParams = Parameters<typeof adminClient.products.bulkAddToCategories>[0]
+type BulkCollectionsParams = Parameters<typeof adminClient.products.bulkAddToCollections>[0]
 type BulkChannelsParams = Parameters<typeof adminClient.products.bulkAddToChannels>[0]
 type BulkTagsParams = Parameters<typeof adminClient.products.bulkAddTags>[0]
 type BulkDestroyParams = Parameters<typeof adminClient.products.bulkDestroy>[0]
@@ -80,6 +81,18 @@ export function useBulkAddProductsToCategories() {
 export function useBulkRemoveProductsFromCategories() {
   return useBulkProductMutation((p: BulkCategoriesParams) =>
     adminClient.products.bulkRemoveFromCategories(p),
+  )
+}
+
+export function useBulkAddProductsToCollections() {
+  return useBulkProductMutation((p: BulkCollectionsParams) =>
+    adminClient.products.bulkAddToCollections(p),
+  )
+}
+
+export function useBulkRemoveProductsFromCollections() {
+  return useBulkProductMutation((p: BulkCollectionsParams) =>
+    adminClient.products.bulkRemoveFromCollections(p),
   )
 }
 

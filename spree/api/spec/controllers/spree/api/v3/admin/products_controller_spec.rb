@@ -824,6 +824,46 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       end
     end
 
+    context 'with collection_ids' do
+      let!(:manual_collection) { create(:collection, store: store) }
+
+      it 'assigns manual collections via prefixed IDs' do
+        patch :update, params: {
+          id: product.prefixed_id,
+          collection_ids: [manual_collection.prefixed_id]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.collections).to eq([manual_collection])
+      end
+
+      # Automatic membership is materialized from rules, so a hand-set member
+      # would vanish on the next regeneration — mirrors the bulk endpoints.
+      it 'ignores automatic collections' do
+        automatic = create(:automatic_collection, store: store)
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          collection_ids: [manual_collection.prefixed_id, automatic.prefixed_id]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.collections).to eq([manual_collection])
+      end
+
+      it "ignores a collection that belongs to another store" do
+        foreign = create(:collection, store: create(:store))
+
+        patch :update, params: {
+          id: product.prefixed_id,
+          collection_ids: [manual_collection.prefixed_id, foreign.prefixed_id]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(product.reload.collections).to eq([manual_collection])
+      end
+    end
+
     context 'with category_ids' do
       it 'assigns categories via prefixed IDs' do
         patch :update, params: {

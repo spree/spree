@@ -206,7 +206,7 @@ module Spree
         it 'line item price matches variant price' do
           expect(subject).to be_success
           line_item = cart.items.find_by(variant: variant)
-          expect(line_item.price).to eq(variant.price)
+          expect(line_item.price).to eq(variant.amount_in(cart.currency))
         end
       end
 
@@ -221,7 +221,7 @@ module Spree
         it 'updates cart item_total' do
           expect(subject).to be_success
           cart.reload
-          expected_total = (variant.price * 2) + variant2.price
+          expected_total = (variant.amount_in(cart.currency) * 2) + variant2.amount_in(cart.currency)
           expect(cart.item_total).to eq(expected_total)
         end
       end

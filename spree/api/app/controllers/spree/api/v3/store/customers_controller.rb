@@ -10,21 +10,18 @@ module Spree
           prepend_before_action :require_authentication!, only: [:show, :update]
 
           # POST /api/v3/store/customers
+          # Registration runs through the customer_create_workflow seam
+          # (password requirement, newsletter-subscriber linking, registration
+          # policy hooks); token issuance is an HTTP session concern and
+          # stays here.
           def create
-            user = Spree.customer_class.new(permitted_params.except(:current_password))
+            result = Spree.customer_create_workflow.call(
+              store: current_store,
+              **permitted_params.except(:current_password).to_h.symbolize_keys
+            )
 
-            # The model allows a blank password (admin-created customers claim
-            # their account via password reset), so self-registration — which
-            # issues a JWT + refresh token on success — must require one itself,
-            # otherwise a caller with the publishable key could obtain an
-            # authenticated session for any unclaimed email.
-            if user.password.blank?
-              user.errors.add(:password, :blank)
-              return render_errors(user.errors)
-            end
-
-            if user.save
-              link_matching_newsletter_subscriber!(user)
+            if result.success?
+              user = result.value
               refresh_token = Spree::RefreshToken.create_for(user, request_env: {
                 ip_address: request.remote_ip,
                 user_agent: request.user_agent&.truncate(255)
@@ -35,7 +32,7 @@ module Spree
                 user: user_serializer.new(user, params: serializer_params).to_h
               }, status: :created
             else
-              render_errors(user.errors)
+              render_result_error(result)
             end
           end
 
@@ -106,11 +103,6 @@ module Spree
 
           def user_serializer
             Spree.api.customer_serializer
-          end
-
-          def link_matching_newsletter_subscriber!(user)
-            subscriber = Spree::NewsletterSubscriber.find_by(email: user.email, store: current_store)
-            Spree::Newsletter::LinkUser.new(subscriber: subscriber, user: user).call
           end
         end
       end

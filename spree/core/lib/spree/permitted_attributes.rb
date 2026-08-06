@@ -177,10 +177,10 @@ module Spree
 
     @@product_attributes = [
       :name, :description, :available_on, :make_active_at, :discontinue_on, :permalink, :meta_description,
-      :meta_keywords, :meta_title, :price, :sku, :deleted_at,
+      :meta_keywords, :meta_title, :sku, :deleted_at,
       :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
-      :cost_currency, :cost_price, :compare_at_price,
+      :cost_currency, :cost_price,
       :slug, :track_inventory, :backorderable, :barcode, :status,
       :weight_unit, :dimensions_unit,
       {
@@ -275,7 +275,7 @@ module Spree
     @@tax_rate_attributes = [:name, :amount, :amount_percentage, :zone_id, :tax_category_id, :included_in_price, :show_rate_in_label, :calculator_type, calculator_attributes: {}]
 
     @@taxon_attributes = [
-      :name, :parent_id, :position, :icon, :description, :permalink, :hide_from_nav,
+      :name, :parent_id, :position, :icon, :description, :permalink,
       :taxonomy_id, :meta_description, :meta_keywords, :meta_title, :child_index,
       :automatic, :rules_match_policy, :sort_order,
       :image, :square_image, :description,
@@ -292,14 +292,13 @@ module Spree
     @@variant_attributes = [
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,
       :position, :track_inventory, :preorderable, :preorder_ships_at, :backorder_limit, :tax_category_id,
-      :product_id, :product, :option_values_attributes, :price, :compare_at_price,
+      :product_id, :product, :option_values_attributes,
       :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
       :weight_unit, :dimensions_unit,
       {
         options: [:id, :name, :option_value_presentation, :option_value_name, :position, :_destroy],
         stock_items_attributes: [:id, :count_on_hand, :stock_location_id, :backorderable, :_destroy],
         prices_attributes: [:id, :amount, :compare_at_amount, :currency, :_destroy],
-        price: {},
         option_value_variants_attributes: [:id, :option_value_id, :_destroy],
         option_value_ids: []
       }

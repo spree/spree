@@ -264,13 +264,22 @@ module Spree
     end
 
     # Accepts both prefixed IDs and raw integer IDs. Only collections belonging
-    # to the product's own store are assigned; this overrides the generated setter
-    # and calls super.
+    # to the product's own store are assigned; this overrides the generated
+    # setter and calls super.
+    #
+    # This is a replace setter, so it governs manual membership only. Automatic
+    # collections are materialized from their rules, which means they must
+    # survive a write that doesn't mention them (otherwise saving a product
+    # would wipe rule-derived membership until the next regeneration) and must
+    # not be assignable by hand (a hand-set member would vanish at that
+    # regeneration). So incoming automatic ids are ignored, and the product's
+    # existing automatic memberships are carried over untouched.
     def collection_ids=(ids)
       decoded_ids = Array(ids).filter_map do |id|
         id.to_s.include?('_') ? Spree::Collection.decode_prefixed_id(id) : id
       end
-      super(Spree::Collection.for_store(assignable_store).where(id: decoded_ids).ids)
+      manual_ids = Spree::Collection.for_store(assignable_store).manual.where(id: decoded_ids).ids
+      super(manual_ids | collections.automatic.ids)
     end
 
     # Sync media inline. Entries with `id` patch the existing asset
@@ -331,15 +340,16 @@ module Spree
     # demand, so `product.sku = ...` still works before the product is persisted.
     [
       :sku, :barcode, :weight, :height, :width, :depth, :dimensions_unit, :weight_unit,
-      :price, :price_in, :amount_in, :compare_at_price, :compare_at_amount_in,
-      :currency, :cost_currency, :cost_price, :track_inventory
+      :price_in, :amount_in, :compare_at_amount_in,
+      :cost_currency, :cost_price, :track_inventory
     ].each do |method_name|
       delegate method_name, to: :default_variant, allow_nil: true
       delegate :"#{method_name}=", to: :find_or_build_default_variant
     end
 
-    delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, to: :default_variant, allow_nil: true
+    # Read-only delegations: these have no product-level writer. Prices are
+    # written per currency through the default variant's +set_price+.
+    delegate :compare_at_price, :track_inventory?, :images, to: :default_variant, allow_nil: true
 
     state_machine :status, initial: :draft do
       event :activate do
@@ -437,24 +447,6 @@ module Spree
     # @return [Spree::Variant, nil]
     def variant_for_images
       @variant_for_images ||= find_variant_for_images
-    end
-
-    # @deprecated Use #primary_media instead.
-    def default_image
-      Spree::Deprecation.warn('Spree::Product#default_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
-    end
-
-    # @deprecated Use #primary_media instead.
-    def featured_image
-      Spree::Deprecation.warn('Spree::Product#featured_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
-    end
-
-    # @deprecated Use #primary_media instead.
-    def primary_image
-      Spree::Deprecation.warn('Spree::Product#primary_image is deprecated and will be removed in Spree 6.0. Please use Spree::Product#primary_media instead.')
-      primary_media
     end
 
     # Returns secondary media for Product (for hover effects).
@@ -575,13 +567,6 @@ module Spree
     # determine if any variant is out of stock and backorderable
     def backordered?
       variants.any?(&:backordered?)
-    end
-
-    def self.like_any(fields, values)
-      conditions = fields.product(values).map do |(field, value)|
-        arel_table[field].matches("%#{value}%")
-      end
-      where conditions.inject(:or)
     end
 
     # Suitable for displaying only variants that has at least one option value.
@@ -931,7 +916,6 @@ module Spree
     end
 
     def discontinue_on_must_be_later_than_make_active_at
-      Spree::Deprecation.warn('Spree::Product#discontinue_on_must_be_later_than_make_active_at is deprecated and will be removed in Spree 6.0.')
       if discontinue_on < make_active_at
         errors.add(:discontinue_on, :invalid_date_range)
       end

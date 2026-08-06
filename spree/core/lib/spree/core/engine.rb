@@ -192,10 +192,9 @@ module Spree
 
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
-        # their own (or remove Legacy) via this array.
+        # their own via this array.
         Rails.application.config.spree.order_routing.strategies.concat [
-          Spree::OrderRouting::Strategy::Rules,
-          Spree::OrderRouting::Strategy::Legacy
+          Spree::OrderRouting::Strategy::Rules
         ]
 
         # Available order routing rule kinds. STI dispatches at runtime via the

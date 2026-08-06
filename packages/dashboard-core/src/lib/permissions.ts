@@ -22,6 +22,7 @@ export const Subject = {
   // the Spree::Taxon subject, so the value stays 'Spree::Taxon' while the key
   // reads as the user-facing resource name.
   Category: 'Spree::Taxon',
+  Collection: 'Spree::Collection',
   OptionType: 'Spree::OptionType',
   OptionValue: 'Spree::OptionValue',
   TaxCategory: 'Spree::TaxCategory',

@@ -990,7 +990,7 @@
                       "developer/core-concepts/payments",
                       "developer/core-concepts/taxes",
                       "v6/developer/core-concepts/taxes-discounts-fees",
-                      "developer/core-concepts/promotions",
+                      "v6/developer/core-concepts/promotions",
                       "developer/core-concepts/store-credits-gift-cards"
                     ]
                   },
@@ -1132,7 +1132,7 @@
                     "group": "Promotions",
                     "icon": "tag",
                     "pages": [
-                      "developer/how-to/custom-promotion"
+                      "v6/developer/how-to/custom-promotion"
                     ]
                   },
                   {

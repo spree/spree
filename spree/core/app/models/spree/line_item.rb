@@ -334,7 +334,7 @@ module Spree
         self.price = (variant.price_in(currency).amount || 0) +
           variant.price_modifier_amount_in(currency, opts)
       else
-        self.price = variant.price +
+        self.price = (variant.price_in(self.currency).amount || 0) +
           variant.price_modifier_amount(opts)
       end
     end

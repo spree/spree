@@ -15,7 +15,8 @@ module Spree
                      created_at: :iso8601, updated_at: :iso8601
 
           many :rules,
-               resource: proc { Spree.api.admin_collection_rule_serializer }
+               resource: proc { Spree.api.admin_collection_rule_serializer },
+               if: proc { expand?('rules') }
 
           # Override inherited custom_fields to use the admin serializer.
           many :metafields,

@@ -76,6 +76,10 @@ module Spree
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { expand?('categories') }
 
+          many :collections,
+               resource: proc { Spree.api.admin_collection_serializer },
+               if: proc { expand?('collections') }
+
           many :metafields,
                key: :custom_fields,
                resource: proc { Spree.api.admin_custom_field_serializer },

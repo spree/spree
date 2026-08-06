@@ -86,13 +86,6 @@ module Spree
       kind == 'color_swatch'
     end
 
-    def color?
-      Spree::Deprecation.warn(
-        'Spree::OptionType#color? is deprecated. Use #color_swatch? instead. Will be removed in Spree 6.0.'
-      )
-      color_swatch?
-    end
-
     # Syncs option values from an array of hashes by mutating the in-memory
     # `option_values` association — built/assigned children get persisted by
     # `autosave: true` when the parent saves, and absent IDs get destroyed

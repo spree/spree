@@ -45,6 +45,7 @@ import { Controller, type UseFormReturn, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
+import { collectionAutocompleteProps, useCollections } from '../../../hooks/use-collections'
 import { useDeleteProductMedia } from '../../../hooks/use-product-media'
 import { useProductTypes } from '../../../hooks/use-product-types'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
@@ -645,8 +646,18 @@ export function StatusCard({ form }: FormCardProps) {
 export function CategorizationCard({ form }: FormCardProps) {
   const { t } = useTranslation()
   const { data: categoriesData } = useCategories()
+  const { data: collectionsData } = useCollections()
   const { data: productTypesData } = useProductTypes()
   const productTypes = productTypesData?.data ?? []
+  // Automatic collections rebuild their members from rules, so a hand-picked
+  // membership would be dropped on the next regeneration — offer manual only.
+  // Memoized: `initialItems` feeds a useEffect + useMemo inside
+  // ResourceMultiAutocomplete, so a fresh array each render would re-run both
+  // on every keystroke in the product form.
+  const manualCollections = useMemo(
+    () => collectionsData?.data.filter((collection) => !collection.automatic),
+    [collectionsData],
+  )
   return (
     <Card>
       <CardHeader>
@@ -697,6 +708,25 @@ export function CategorizationCard({ form }: FormCardProps) {
               />
             )}
           />
+        </Field>
+
+        <Field>
+          <FieldLabel>{t('admin.fields.product.collection_ids.label')}</FieldLabel>
+          <Controller
+            name="collection_ids"
+            control={form.control}
+            render={({ field }) => (
+              <ResourceMultiAutocomplete
+                {...collectionAutocompleteProps('product-edit-collection-picker')}
+                initialItems={manualCollections}
+                value={field.value ?? []}
+                onChange={field.onChange}
+              />
+            )}
+          />
+          <span className="text-muted-foreground text-xs">
+            {t('admin.fields.product.collection_ids.help')}
+          </span>
         </Field>
 
         <Field>

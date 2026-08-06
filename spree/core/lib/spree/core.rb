@@ -44,7 +44,7 @@ StateMachines::Machine.ignore_method_conflicts = true
 module Spree
   mattr_accessor :base_class, :customer_class, :admin_user_class,
                  :private_storage_service_name, :public_storage_service_name,
-                 :cdn_host, :root_domain, :searcher_class, :events_adapter_class, :queues,
+                 :cdn_host, :root_domain, :events_adapter_class, :queues,
                  :google_places_api_key
 
   def self.base_class(constantize: true)
@@ -137,16 +137,6 @@ module Spree
         categories
       end
     end
-  end
-
-  # @deprecated Spree.searcher_class is deprecated and will be removed in Spree 5.5. Use Spree.search_provider instead.
-  def self.searcher_class=(value)
-    Spree::Deprecation.warn('Spree.searcher_class is deprecated and will be removed in Spree 5.5. Use Spree.search_provider instead.')
-    @@searcher_class = value
-  end
-
-  def self.searcher_class(constantize: true)
-    @@searcher_class
   end
 
   # Search provider class name. Controls product search, filtering, and faceted navigation.

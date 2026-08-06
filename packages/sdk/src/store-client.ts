@@ -16,6 +16,8 @@ import type {
   CategoryListParams,
   Channel,
   Claim,
+  Collection,
+  CollectionListParams,
   CompletePaymentSessionParams,
   CompletePaymentSetupSessionParams,
   Country,
@@ -172,6 +174,57 @@ export class StoreClient {
         ...options,
         params: getParams(params),
       }),
+  }
+
+  /**
+   * Collections — flat, merchandising-driven product groupings ("Summer Sale",
+   * "New Arrivals"). Membership may be curated by the merchant or maintained
+   * automatically from rules; either way it reads the same from the storefront.
+   */
+  readonly collections = {
+    /**
+     * List collections
+     */
+    list: (
+      params?: CollectionListParams,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Collection>> =>
+      this.request<PaginatedResponse<Collection>>('GET', '/collections', {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
+
+    /**
+     * Get a collection by ID or permalink
+     */
+    get: (
+      idOrPermalink: string,
+      params?: { expand?: string[]; fields?: string[] },
+      options?: RequestOptions,
+    ): Promise<Collection> =>
+      this.request<Collection>('GET', `/collections/${idOrPermalink}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    products: {
+      /**
+       * List the products in a collection — the collection's product listing
+       * page. Accepts the same filters and sorts as `products.list`; when
+       * `sort` is omitted the collection's own `sort_order` applies, so a
+       * merchant's chosen ordering (including their manual arrangement) is
+       * what a shopper sees by default.
+       */
+      list: (
+        idOrPermalink: string,
+        params?: ProductListParams,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<Product>> =>
+        this.request<PaginatedResponse<Product>>('GET', `/collections/${idOrPermalink}/products`, {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+    },
   }
 
   // ============================================
