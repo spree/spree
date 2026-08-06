@@ -153,30 +153,60 @@ function IntegrationCard({
 
   return (
     <Card>
-      <CardContent className="flex items-center justify-between gap-3 p-4">
-        <div className="flex min-w-0 flex-col gap-1">
-          <span className="truncate font-medium text-sm">{type.name}</span>
-          {integration ? (
-            <Badge variant={integration.active ? 'default' : 'secondary'} className="w-fit">
-              {integration.active
-                ? t('admin.integrations.status.active')
-                : t('admin.integrations.status.connected_inactive')}
-            </Badge>
-          ) : (
-            <span className="text-muted-foreground text-xs">
-              {t('admin.integrations.status.not_connected')}
-            </span>
-          )}
+      <CardContent className="flex flex-col gap-3 p-4">
+        <div className="flex items-center gap-3">
+          <IntegrationLogo name={type.name} logoUrl={type.logo_url} />
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <span className="truncate font-medium text-sm">{type.name}</span>
+            {integration ? (
+              <Badge variant={integration.active ? 'default' : 'secondary'} className="w-fit">
+                {integration.active
+                  ? t('admin.integrations.status.active')
+                  : t('admin.integrations.status.connected_inactive')}
+              </Badge>
+            ) : (
+              <span className="text-muted-foreground text-xs">
+                {t('admin.integrations.status.not_connected')}
+              </span>
+            )}
+          </div>
+          <Button size="sm" variant={integration ? 'outline' : 'default'} onClick={onConfigure}>
+            {integration
+              ? t('admin.integrations.configure_cta')
+              : canWrite
+                ? t('admin.integrations.connect_cta')
+                : t('admin.integrations.view_cta')}
+          </Button>
         </div>
-        <Button size="sm" variant={integration ? 'outline' : 'default'} onClick={onConfigure}>
-          {integration
-            ? t('admin.integrations.configure_cta')
-            : canWrite
-              ? t('admin.integrations.connect_cta')
-              : t('admin.integrations.view_cta')}
-        </Button>
+        {type.description && (
+          <p className="line-clamp-2 text-muted-foreground text-xs">{type.description}</p>
+        )}
       </CardContent>
     </Card>
+  )
+}
+
+// Gem-declared logo (hosted URL or data URI), falling back to an
+// initial-letter avatar when none is declared — or when the URL fails to
+// load (offline, vendor moved the file) — so cards never show a broken image.
+function IntegrationLogo({ name, logoUrl }: { name: string; logoUrl: string | null }) {
+  const [failed, setFailed] = useState(false)
+
+  if (logoUrl && !failed) {
+    return (
+      <img
+        src={logoUrl}
+        alt=""
+        onError={() => setFailed(true)}
+        className="size-9 shrink-0 rounded-md object-contain"
+      />
+    )
+  }
+
+  return (
+    <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted font-medium text-muted-foreground text-sm">
+      {name.charAt(0).toUpperCase()}
+    </div>
   )
 }
 

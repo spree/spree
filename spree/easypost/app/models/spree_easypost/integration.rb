@@ -12,6 +12,16 @@ module SpreeEasyPost
       'EasyPost'
     end
 
+    def self.logo_url
+      'https://www.easypost.com/wp-content/uploads/2026/03/EasyPost-Logo.svg'
+    end
+
+    # Fallback for hosts without the gem's translations; the localized
+    # description in config/locales wins.
+    def self.description
+      'Live multi-carrier delivery rates at checkout through your EasyPost account.'
+    end
+
     # A cheap authenticated read: fails with 401 on a bad key without
     # creating anything on the account.
     def can_connect?

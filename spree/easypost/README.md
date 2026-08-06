@@ -19,6 +19,7 @@ Methods without the EasyPost provider keep pricing through their calculator — 
 
 - Weights are converted to ounces from the store's unit system (imperial → pounds, metric → grams).
 - Label purchase and tracking (a `FulfillmentProvider`) are not part of this gem yet — fulfillment stays manual.
+- The gallery card's logo is the official hosted EasyPost asset (`logo_url` — no asset pipeline involved; the dashboard falls back to a letter avatar if unreachable) and its description lives in `config/locales/`, resolved per the store's locale.
 
 ## Testing
 
