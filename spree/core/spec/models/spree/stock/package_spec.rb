@@ -60,8 +60,8 @@ module Spree
       # Replaces the ShippingCategory intersection (#2804) with the 6.0
       # fulfillment-type eligibility semantics.
       describe '#eligible_delivery_methods' do
-        let!(:shipping_dm) { create(:shipping_method) }
-        let!(:digital_dm) { create(:digital_shipping_method) }
+        let!(:shipping_dm) { create(:delivery_method) }
+        let!(:digital_dm) { create(:digital_delivery_method) }
 
         it 'returns methods whose fulfillment type every item supports' do
           variant1 = create(:product).default_variant
@@ -83,14 +83,8 @@ module Spree
           expect(package.eligible_delivery_methods).to be_empty
         end
 
-        it 'subtracts per-product exclusions' do
-          excluded = create(:shipping_method)
-          variant = create(:product, excluded_delivery_method_ids: [excluded.id]).default_variant
-          contents = [ContentItem.new(build(:inventory_unit, variant_id: variant.id))]
-
-          package = Package.new(stock_location, contents)
-          expect(package.eligible_delivery_methods).to eq([shipping_dm])
-        end
+        # Per-product exclusions moved to DeliveryMethodRules::ExcludedProductsRule,
+        # covered in delivery_method_rule_spec.rb.
       end
 
       it 'can convert to a fulfillment' do

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::DeliveryMethodRule, type: :model do
   let(:store) { @default_store }
-  let(:delivery_method) { create(:shipping_method) }
+  let(:delivery_method) { create(:delivery_method) }
   let(:package) do
     order = create(:order_with_line_items, store: store, line_items_price: 20)
     Spree::Stock::Coordinator.new(order).packages.first
@@ -51,6 +51,63 @@ describe Spree::DeliveryMethodRule, type: :model do
 
       rule.preferred_maximum_weight = package.weight - 1
       expect(rule.eligible?(package)).to be(false)
+    end
+  end
+
+  describe Spree::DeliveryMethodRules::ExcludedProductsRule do
+    it 'blocks packages containing an excluded product and fails open without products' do
+      rule = described_class.create!(delivery_method: delivery_method)
+      expect(rule.eligible?(package)).to be(true)
+
+      rule.products << package.contents.first.variant.product
+      expect(rule.eligible?(package)).to be(false)
+    end
+
+    it 'passes packages containing none of the excluded products' do
+      rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
+
+      expect(rule.eligible?(package)).to be(true)
+    end
+  end
+
+  # One PATCH saves the method and its conditions together, mirroring
+  # Promotion#rules= / PriceList#rules=.
+  describe 'Spree::DeliveryMethod#rules=' do
+    it 'creates rules alongside a new method in one save' do
+      method = Spree::DeliveryMethod.new(name: 'Express', store: store, fulfillment_type: 'shipping')
+      method.rules = [{ type: 'item_total_rule', preferences: { minimum_amount: 50 } }]
+      method.save!
+
+      expect(method.delivery_method_rules.reload.sole.preferred_minimum_amount).to eq(50)
+    end
+
+    it 'updates, adds and removes rules to match the payload' do
+      existing = Spree::DeliveryMethodRules::ItemTotalRule.create!(
+        delivery_method: delivery_method, preferences: { minimum_amount: 10 }
+      )
+
+      delivery_method.rules = [
+        { id: existing.prefixed_id, type: 'item_total_rule', preferences: { minimum_amount: 99 } },
+        { type: 'weight_rule', preferences: { maximum_weight: 5 } }
+      ]
+      delivery_method.save!
+
+      expect(delivery_method.delivery_method_rules.reload.size).to eq(2)
+      expect(existing.reload.preferred_minimum_amount).to eq(99)
+
+      delivery_method.rules = []
+      delivery_method.save!
+
+      expect(delivery_method.delivery_method_rules.reload).to be_empty
+    end
+
+    it 'assigns products on a brand-new association-backed rule' do
+      product = create(:product)
+      method = Spree::DeliveryMethod.new(name: 'Express', store: store, fulfillment_type: 'shipping')
+      method.rules = [{ type: 'excluded_products_rule', product_ids: [product.id] }]
+      method.save!
+
+      expect(method.delivery_method_rules.reload.sole.products).to eq([product])
     end
   end
 

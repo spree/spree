@@ -1607,7 +1607,13 @@ export class AdminClient {
 
       create: (
         deliveryMethodId: string,
-        params: { type: string; active?: boolean; preferences?: Record<string, unknown> },
+        params: {
+          type: string
+          active?: boolean
+          preferences?: Record<string, unknown>
+          /** Prefixed product IDs — association-backed rules (excluded_products_rule). */
+          product_ids?: string[]
+        },
         options?: RequestOptions,
       ): Promise<DeliveryMethodRule> =>
         this.request<DeliveryMethodRule>('POST', `/delivery_methods/${deliveryMethodId}/rules`, {
@@ -1618,7 +1624,12 @@ export class AdminClient {
       update: (
         deliveryMethodId: string,
         id: string,
-        params: { active?: boolean; preferences?: Record<string, unknown> },
+        params: {
+          active?: boolean
+          preferences?: Record<string, unknown>
+          /** Prefixed product IDs — association-backed rules (excluded_products_rule). */
+          product_ids?: string[]
+        },
         options?: RequestOptions,
       ): Promise<DeliveryMethodRule> =>
         this.request<DeliveryMethodRule>(
@@ -1640,6 +1651,8 @@ export class AdminClient {
         name: string
         description: string
         preference_schema: PreferenceField[]
+        /** Association-backed config the rule accepts, e.g. `['product_ids']`. */
+        association_fields: string[]
       }>
     }> =>
       this.request<{
@@ -1648,6 +1661,7 @@ export class AdminClient {
           name: string
           description: string
           preference_schema: PreferenceField[]
+          association_fields: string[]
         }>
       }>('GET', '/delivery_method_rules/types', options),
   }

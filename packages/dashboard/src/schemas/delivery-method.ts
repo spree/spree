@@ -2,6 +2,22 @@ import { z } from 'zod/v4'
 
 export const FULFILLMENT_TYPES = ['shipping', 'digital', 'pickup', 'pickup_point'] as const
 
+/**
+ * One eligibility rule as held in form state. `id` is absent for rules added
+ * in this editing session. `takes_products` comes from the rule-type discovery
+ * endpoint and decides whether `product_ids` is part of this rule's payload —
+ * it is display-only state, stripped before send.
+ */
+export const deliveryMethodRuleSchema = z.object({
+  id: z.string().optional(),
+  type: z.string(),
+  preferences: z.record(z.string(), z.unknown()),
+  product_ids: z.array(z.string()),
+  takes_products: z.boolean(),
+})
+
+export type DeliveryMethodRuleDraft = z.infer<typeof deliveryMethodRuleSchema>
+
 export const deliveryMethodFormSchema = z.object({
   name: z.string().min(1),
   admin_name: z.string().optional(),
@@ -17,6 +33,7 @@ export const deliveryMethodFormSchema = z.object({
   calculator_preferences: z.record(z.string(), z.unknown()).optional(),
   delivery_zone_ids: z.array(z.string()),
   stock_location_ids: z.array(z.string()),
+  rules: z.array(deliveryMethodRuleSchema),
 })
 
 export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormSchema>
@@ -36,6 +53,7 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   calculator_preferences: {},
   delivery_zone_ids: [],
   stock_location_ids: [],
+  rules: [],
 }
 
 export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
@@ -60,5 +78,16 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
       : {}),
     delivery_zone_ids: values.delivery_zone_ids,
     stock_location_ids: values.stock_location_ids,
+    // Rules ride along with the method so one request saves the whole sheet.
+    // Omitting `id` marks a rule as new; dropping one from the array deletes
+    // it. `product_ids` is always sent for association-backed rules — omitting
+    // an emptied array would read as "leave unchanged" and silently keep the
+    // exclusions the merchant just removed.
+    rules: values.rules.map((rule) => ({
+      ...(rule.id ? { id: rule.id } : {}),
+      type: rule.type,
+      preferences: rule.preferences,
+      ...(rule.takes_products ? { product_ids: rule.product_ids } : {}),
+    })),
   }
 }

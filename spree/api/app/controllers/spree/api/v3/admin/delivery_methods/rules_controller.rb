@@ -23,6 +23,7 @@ module Spree
 
               @resource = rule_class.new(delivery_method: parent, active: active_param)
               assign_rule_preferences(@resource)
+              assign_rule_products(@resource)
               authorize_resource!(@resource, :create)
 
               if @resource.save
@@ -35,6 +36,7 @@ module Spree
             def update
               @resource.active = active_param unless params[:active].nil?
               assign_rule_preferences(@resource)
+              assign_rule_products(@resource)
 
               if @resource.save
                 render json: serialize_resource(@resource)
@@ -58,7 +60,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:type, :active, preferences: {})
+              params.permit(:type, :active, preferences: {}, product_ids: [])
             end
 
             private
@@ -77,6 +79,20 @@ module Spree
 
                 rule.set_preference(key, value)
               end
+            end
+
+            # Association-backed rule config (ExcludedProductsRule). Products are
+            # looked up within the rule's store and through the caller's ability;
+            # ids that resolve to nothing are dropped rather than failing the
+            # save, since an unreachable product cannot become an exclusion. A
+            # nil param leaves the selection untouched; an empty array clears it.
+            def assign_rule_products(rule)
+              ids = permitted_params[:product_ids]
+              return if ids.nil? || !rule.respond_to?(:products)
+
+              rule.products = rule.store.products.
+                              accessible_by(current_ability, :show).
+                              where(id: decode_prefixed_ids(ids))
             end
           end
         end

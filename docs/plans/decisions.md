@@ -1344,3 +1344,66 @@ idempotency, sweeper resume) and its spec battery must pass unmodified
 after the retrofit. Durable flows compile onto ActiveJob Continuations
 in Phase 2 (imports, upgrade migrations, payout runs) and may land
 post-GA without blocking the DSL.
+
+
+## 2026-08-06 — Per-product delivery exclusions are a delivery-method rule, not a product column
+
+`spree_products.excluded_delivery_method_ids` (JSON array, shipped with
+the fulfillment rework but never writable through any API or UI) is
+dropped in favor of `Spree::DeliveryMethodRules::ExcludedProductsRule` —
+products attached through the concrete
+`spree_delivery_method_rule_products` join table. Rationale: an ID list
+in JSON is unqueryable and unindexable portably across the three
+supported databases, rots when delivery methods are deleted, and would
+have needed its own bespoke API/serializer/UI surface; the rules
+framework already ships the registry, nested admin CRUD, discovery
+endpoint and dashboard Conditions card. It also removes the second
+eligibility seam inside `Stock::Package#eligible_delivery_methods` —
+the rules plan mandates the Estimator's rule filter as the only one.
+Method-side exclusion matches Saleor (`excludedProducts`); Shopify and
+Medusa model the inverse via shipping profiles (≈ the retired
+ShippingCategory), Vendure is code-only. Companion convention — storage
+by cardinality: small reference sets (channels/markets/customer groups)
+stay `:array` preferences via `normalize_id_preference`; catalog-scale
+references (products) get a join table, per the
+`Promotion::Rules::Product`/`ProductPromotionRule` precedent. On the
+wire both travel as prefixed-ID params resolved through the store scope
+and `accessible_by(current_ability, :show)`. Plans updated:
+`6.0-delivery-method-rules.md` (owner),
+`6.0-fulfillment-and-delivery.md`, `6.0-core-rewrite-tasks.md`.
+
+
+## 2026-08-06 — STI rule families declare their subclass registry
+
+`Spree::PreferenceSchema.registered_subclasses` resolved a class's
+registered subclasses by matching two hardcoded class names
+(`Spree::PromotionAction`, `Spree::PromotionRule`) and otherwise
+returning `[]`. Four families had each worked around that with a private
+per-class override in three different idioms (`PriceRule`,
+`OrderRoutingRule`, `CollectionRule`, `DeliveryMethodRule`), and
+`5.7-payment-method-rules.md` specced a fifth. The empty-list fallback
+failed **silently**: `find_by_api_type` returned nil, so
+`TypedAssociations` dropped typed rows from a payload with no error and
+`subclasses_with_preference_schema` rendered empty admin pickers — the
+bug that broke `DeliveryMethod#rules=` on first attempt.
+
+Replaced with a declarative hook: each STI parent calls
+`registers_subclasses_via { <registry> }` (one line), stored in a
+`class_attribute` so STI subclasses inherit the parent's declaration —
+resolving on a subclass works, which it did not before under either
+scheme. A class that declares none raises
+`Spree::PreferenceSchema::UndeclaredRegistryError` (a **StandardError**,
+so host apps' `rescue => e` catches it — `NotImplementedError` descends
+from `ScriptError` and would slip past). Migrated in place:
+PromotionRule, PromotionAction, PriceRule, OrderRoutingRule,
+CollectionRule, DeliveryMethodRule, and **PaymentMethod** — gateways
+declare `registers_subclasses_via { providers }` rather than being a
+special case in the resolver, so there is exactly one resolution rule.
+`5.7-payment-method-rules.md` updated to the new form.
+
+Known debt: the registry is a lodger inside `PreferenceSchema` (which
+`Spree::Base` includes, so ~200 models carry class methods only six use),
+and `Spree::CalculatedAdjustments` resolves an equivalent registry
+separately. Extract a `Spree::RegisteredSubclasses` concern when a family
+needs the registry without preferences — that second consumer is the
+trigger, and it would absorb CalculatedAdjustments too.

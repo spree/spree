@@ -3,6 +3,8 @@ module Spree
   class PromotionRule < Spree.base_class
     has_prefix_id :prorule
 
+    registers_subclasses_via { Spree.promotions.rules }
+
     belongs_to :promotion, class_name: 'Spree::Promotion', inverse_of: :promotion_rules, touch: true
 
     delegate :stores, to: :promotion

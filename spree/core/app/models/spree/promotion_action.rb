@@ -4,6 +4,8 @@ module Spree
   class PromotionAction < Spree.base_class
     has_prefix_id :pact
 
+    registers_subclasses_via { Spree.promotions.actions }
+
     acts_as_paranoid
 
     belongs_to :promotion, class_name: 'Spree::Promotion', touch: true

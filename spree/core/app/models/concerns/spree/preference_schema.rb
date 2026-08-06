@@ -5,8 +5,27 @@ module Spree
   # Used by the admin API (`/payment_methods/types`, `/promotion_actions/types`,
   # `/promotion_rules/types`) so that admin UIs can render configuration forms
   # for any provider/action/rule subclass without hard-coding field lists.
+  #
+  # Also hosts the subclass registry (`registers_subclasses_via`) that
+  # `find_by_api_type` and `subclasses_with_preference_schema` resolve against.
+  # That is a lodger rather than a natural fit — the registry is its own
+  # concept, and `Spree::CalculatedAdjustments` resolves an equivalent one
+  # separately. Extract a `Spree::RegisteredSubclasses` concern when a family
+  # needs the registry without preferences.
   module PreferenceSchema
     extend ActiveSupport::Concern
+
+    # Raised when a class reaches registry resolution without declaring one.
+    # A StandardError so host apps' normal rescues catch it — NotImplementedError
+    # descends from ScriptError and slips past `rescue => e`.
+    class UndeclaredRegistryError < StandardError; end
+
+    included do
+      # Where this class's registered subclasses live, as a block evaluated on
+      # the class. `class_attribute` so STI subclasses inherit their parent's
+      # declaration.
+      class_attribute :subclass_registry, instance_accessor: false, default: nil
+    end
 
     delegate :preference_schema, :serialized_preference_schema, :password_preference_keys, to: :class
 
@@ -166,17 +185,30 @@ module Spree
         outer.delete_prefix('Spree').presence&.titleize || leaf.titleize
       end
 
+      # Declares where this STI parent's subclass registry lives, powering
+      # `find_by_api_type` and `subclasses_with_preference_schema`. The block
+      # is evaluated on the class, so it can read config that changes at boot:
+      #
+      #   registers_subclasses_via { Spree.delivery_method_rules }
+      #
+      # @return [void]
+      def registers_subclasses_via(&block)
+        self.subclass_registry = block
+      end
+
       private
 
-      # Each STI parent (PaymentMethod, PromotionAction, PromotionRule)
-      # already exposes its registry — we just route to the right one.
-      # Override in the including class to add support for custom parents.
+      # Resolves the declared registry.
+      #
+      # Raises rather than returning an empty list: a missing declaration used
+      # to mean `find_by_api_type` silently returned nil, so typed rows were
+      # dropped from a payload with no error and admin pickers rendered empty.
       def registered_subclasses
-        return providers if respond_to?(:providers)
-        return Spree.promotions.actions if name == 'Spree::PromotionAction'
-        return Spree.promotions.rules if name == 'Spree::PromotionRule'
+        raise UndeclaredRegistryError,
+              "#{name} has no subclass registry. Declare one with " \
+              '`registers_subclasses_via { ... }` returning the registered subclasses.' if subclass_registry.nil?
 
-        []
+        instance_exec(&subclass_registry)
       end
 
       # Defaults can be Procs that hit the database (e.g. `Spree::Store.default`);

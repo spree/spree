@@ -2573,6 +2573,10 @@
       "search_placeholder": "搜索商品类型"
     },
     "products": {
+      "autocomplete": {
+        "empty": "没有匹配的商品",
+        "placeholder": "按名称搜索商品…"
+      },
       "category_search_placeholder": "搜索分类…",
       "collection_search_placeholder": "搜索系列…",
       "columns": {

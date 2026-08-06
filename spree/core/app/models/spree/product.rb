@@ -111,6 +111,13 @@ module Spree
     has_many :product_collections, class_name: 'Spree::ProductCollection', dependent: :destroy_async, inverse_of: :product
     has_many :collections, through: :product_collections
 
+    # Dropped with the product so a deleted product stops excluding itself from
+    # delivery methods. Destroyed inline rather than async — a product sits in
+    # at most a handful of exclusion rules, and deferring it would leave the
+    # rule reporting an id the API can no longer resolve.
+    has_many :delivery_method_rule_products, class_name: 'Spree::DeliveryMethodRuleProduct',
+             dependent: :destroy, inverse_of: :product
+
     has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
     has_many :promotion_rules, through: :product_promotion_rules, class_name: 'Spree::PromotionRule'
 

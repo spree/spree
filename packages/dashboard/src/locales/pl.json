@@ -2605,6 +2605,10 @@
       "search_placeholder": "Szukaj typów produktów"
     },
     "products": {
+      "autocomplete": {
+        "empty": "Brak pasujących produktów",
+        "placeholder": "Szukaj produktów po nazwie…"
+      },
       "category_search_placeholder": "Szukaj kategorii…",
       "collection_search_placeholder": "Szukaj kolekcji…",
       "columns": {

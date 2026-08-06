@@ -8,7 +8,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
-    let!(:delivery_method) { create(:shipping_method, name: 'UPS Ground') }
+    let!(:delivery_method) { create(:delivery_method, name: 'UPS Ground') }
 
     it 'lists delivery methods with admin fields' do
       get :index, params: {}, as: :json
@@ -126,7 +126,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
   end
 
   describe 'PATCH #update' do
-    let!(:delivery_method) { create(:shipping_method, name: 'UPS Ground') }
+    let!(:delivery_method) { create(:delivery_method, name: 'UPS Ground') }
 
     it 'updates attributes and calculator preferences' do
       patch :update, params: {
@@ -139,10 +139,68 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.reload.name).to eq('UPS Ground v2')
       expect(delivery_method.calculator.preferred_amount).to eq(99)
     end
+
+    # The dashboard sheet saves basics and conditions together.
+    it 'saves nested eligibility rules alongside the method' do
+      product = create(:product)
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        name: 'Express',
+        rules: [
+          { type: 'item_total_rule', preferences: { minimum_amount: 25 } },
+          { type: 'excluded_products_rule', product_ids: [product.prefixed_id] }
+        ]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      delivery_method.reload
+      expect(delivery_method.name).to eq('Express')
+      expect(delivery_method.delivery_method_rules.count).to eq(2)
+
+      excluded = delivery_method.delivery_method_rules.detect do |rule|
+        rule.is_a?(Spree::DeliveryMethodRules::ExcludedProductsRule)
+      end
+      expect(excluded.products).to eq([product])
+    end
+
+    it 'clears excluded products when an empty array is sent' do
+      product = create(:product)
+      rule = Spree::DeliveryMethodRules::ExcludedProductsRule.create!(
+        delivery_method: delivery_method, products: [product]
+      )
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        rules: [{ id: rule.prefixed_id, type: 'excluded_products_rule', product_ids: [] }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(rule.reload.products).to be_empty
+      expect(delivery_method.delivery_method_rules.reload.size).to eq(1)
+    end
+
+    # An unreachable product cannot become an exclusion, but it must not fail
+    # the whole save either — the merchant would have no way to clear it.
+    it 'drops nested rule products from another store' do
+      foreign_product = create(:product, store: create(:store))
+      own_product = create(:product)
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        rules: [{
+          type: 'excluded_products_rule',
+          product_ids: [foreign_product.prefixed_id, own_product.prefixed_id]
+        }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(delivery_method.delivery_method_rules.sole.products).to eq([own_product])
+    end
   end
 
   describe 'DELETE #destroy' do
-    let!(:delivery_method) { create(:shipping_method) }
+    let!(:delivery_method) { create(:delivery_method) }
 
     it 'soft deletes the delivery method' do
       delete :destroy, params: { id: delivery_method.prefixed_id }, as: :json
