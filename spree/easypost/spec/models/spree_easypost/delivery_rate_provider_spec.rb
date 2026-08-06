@@ -93,3 +93,37 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
     end
   end
 end
+
+# Real client and integration, HTTP played back from spec/vcr — proves the
+# provider's shipment.create call shape and rate mapping against EasyPost's
+# wire format, not a hand-stubbed double.
+RSpec.describe SpreeEasyPost::DeliveryRateProvider, 'API contract (VCR)' do
+  let(:store) { @default_store }
+  let!(:integration) do
+    SpreeEasyPost::Integration.create!(
+      store: store,
+      preferences: { api_key: ENV.fetch('EASYPOST_TEST_API_KEY', 'EZTK-recorded') }
+    ).tap { |record| record.update_columns(active: true) }
+  end
+  let(:delivery_method) do
+    create(:delivery_method, store: store,
+                             rate_provider: described_class.to_s,
+                             metadata: { 'carrier' => 'USPS', 'service' => 'Priority' })
+  end
+  let(:order) { create(:order_with_line_items, store: store) }
+  let(:package) { order.fulfillments.first.to_package }
+
+  before { Spree::Current.reset }
+
+  it 'quotes a live rate end to end' do
+    VCR.use_cassette('create_shipment_rates') do
+      estimate = described_class.new(delivery_method).estimate(package)
+
+      expect(estimate.cost).to eq(BigDecimal('7.33'))
+      expect(estimate.carrier).to eq('USPS')
+      expect(estimate.service_level).to eq('Priority')
+      expect(estimate.estimated_delivery_date).to eq(Date.new(2026, 8, 8))
+      expect(estimate.metadata['easypost_shipment_id']).to eq('shp_recorded1')
+    end
+  end
+end
