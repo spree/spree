@@ -167,6 +167,7 @@ module Spree
     after_initialize :assign_default_tax_category
 
     after_create :sync_associations_from_product_type
+    after_update :sync_associations_from_product_type, if: :saved_change_to_product_type_id?
     after_create :apply_pending_variants, if: :pending_variants?
     after_create :ensure_default_variant
     after_create :set_default_variant
@@ -847,15 +848,19 @@ module Spree
     end
 
     # Additive, unlike the legacy prototype callback which replaced both sets —
-    # the type is a floor the product builds on, never a ceiling.
+    # the type seeds the product when attached (creation, later assignment,
+    # reassignment) and never removes anything; detaching seeds nothing.
+    # Presence guards query the join tables directly: the cached associations
+    # can be stale here (pending variants insert option-type joins through
+    # product_option_types within the same save).
     def sync_associations_from_product_type
       return unless product_type
 
       product_type.option_types.each do |option_type|
-        option_types << option_type unless option_types.include?(option_type)
+        option_types << option_type unless product_option_types.exists?(option_type_id: option_type.id)
       end
       product_type.categories.each do |category|
-        categories << category unless categories.include?(category)
+        categories << category unless product_categories.exists?(category_id: category.id)
       end
     end
 
