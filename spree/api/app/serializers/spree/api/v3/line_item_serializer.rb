@@ -59,6 +59,10 @@ module Spree
 
         many :option_values, resource: proc { Spree.api.option_value_serializer }
         many :digital_links, resource: proc { Spree.api.digital_link_serializer }
+        # Tax hangs off its adjustable, never off the cart or order: the
+        # exactly-one-adjustable rule makes the nested view complete, and the
+        # owner already carries the tax totals.
+        many :tax_lines, resource: proc { Spree.api.tax_line_serializer }, if: proc { expand?('tax_lines') }
       end
     end
   end

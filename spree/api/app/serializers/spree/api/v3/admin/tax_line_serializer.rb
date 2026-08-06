@@ -4,9 +4,23 @@ module Spree
       module Admin
         class TaxLineSerializer < V3::TaxLineSerializer
           typelize amount: [:string, nullable: false], display_amount: [:string, nullable: false],
-                   provider_id: [:string, nullable: true], metadata: ['Record<string, unknown>', nullable: true]
+                   provider_id: [:string, nullable: true], metadata: ['Record<string, unknown>', nullable: true],
+                   taxability_reason: [:string, nullable: true], country_iso: [:string, nullable: true],
+                   state_code: [:string, nullable: true], category_code: [:string, nullable: true],
+                   data: ['Record<string, unknown>', nullable: true]
 
-          attributes :provider_id, :metadata, created_at: :iso8601, updated_at: :iso8601
+          # The treatment and its jurisdiction stay admin-only: no surveyed
+          # platform shows a buyer a machine-readable tax reason, and `label`
+          # already covers what they need. `data` carries the provider's own
+          # breakdown, which is what an e-invoicing integration reads.
+          attributes :provider_id, :metadata, :taxability_reason, :country_iso, :state_code, :data,
+                     created_at: :iso8601, updated_at: :iso8601
+
+          # Derived from the reason at read time, never stored — the code lists
+          # are revised on someone else's schedule.
+          attribute :category_code do |tax_line|
+            tax_line.category_code
+          end
         end
       end
     end

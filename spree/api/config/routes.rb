@@ -51,6 +51,7 @@ Spree::Core::Engine.add_routes do
             end
           end
           resource :store_credits, only: [:create, :destroy], controller: 'carts/store_credits'
+          resource :tax_identifier, only: [:show, :update, :destroy], controller: 'carts/tax_identifiers'
         end
 
         # Delivery methods (pickup discovery)
@@ -67,6 +68,8 @@ Spree::Core::Engine.add_routes do
           # merchant approves, receives and refunds through the Admin API.
           resources :returns, only: [:index, :show, :create], controller: 'orders/returns'
           resources :claims, only: [:index, :show, :create], controller: 'orders/claims'
+          # Read-only — the registration frozen onto the order at completion.
+          resource :tax_identifier, only: [:show], controller: 'orders/tax_identifiers'
         end
 
         # Policies (return policy, privacy policy, terms of service, etc.)
@@ -100,6 +103,7 @@ Spree::Core::Engine.add_routes do
           resources :credit_cards, only: [:index, :show, :destroy]
           resources :gift_cards, only: [:index, :show]
           resources :store_credits, only: [:index, :show]
+          resource :tax_identifier, only: [:show, :update, :destroy], controller: 'tax_identifiers'
           resources :payment_setup_sessions, only: [:create, :show] do
             member do
               patch :complete
@@ -302,6 +306,9 @@ Spree::Core::Engine.add_routes do
         # Tax Categories
         resources :tax_categories
 
+        # Tax Rates — the internal tax provider's configuration
+        resources :tax_rates
+
         # Return / claim / refund reasons (dropdowns + settings management)
         resources :return_reasons
         resources :claim_reasons
@@ -369,6 +376,11 @@ Spree::Core::Engine.add_routes do
           resources :addresses, controller: 'customers/addresses'
           resources :credit_cards, controller: 'customers/credit_cards', only: [:index, :show, :destroy]
           resources :store_credits, controller: 'customers/store_credits'
+          resources :tax_identifiers, controller: 'customers/tax_identifiers' do
+            member do
+              post :validate
+            end
+          end
 
           collection do
             post :bulk_add_to_groups

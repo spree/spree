@@ -68,6 +68,10 @@ module Spree
               allow_nil: true
     validate :exactly_one_adjustable
 
+    # Tax reporting is the reason the treatment columns exist — "which country's
+    # tax was this, and which sales were reverse-charged" has to be answerable.
+    self.whitelisted_ransackable_attributes = %w[taxability_reason country_iso state_code included provider_id]
+
     scope :included_in_price, -> { where(included: true) }
     scope :additional, -> { where(included: false) }
     scope :for_line_items, -> { where.not(line_item_id: nil) }

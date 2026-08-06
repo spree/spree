@@ -55,6 +55,7 @@ module Spree
         one :delivery_method, resource: proc { Spree.api.delivery_method_serializer }
         one :stock_location, resource: proc { Spree.api.stock_location_serializer }
         many :delivery_rates, resource: proc { Spree.api.delivery_rate_serializer }
+        many :tax_lines, resource: proc { Spree.api.tax_line_serializer }, if: proc { expand?('tax_lines') }
       end
     end
   end
