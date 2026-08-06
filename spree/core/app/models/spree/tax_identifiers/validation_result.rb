@@ -1,5 +1,5 @@
 module Spree
-  class TaxIdentifier
+  module TaxIdentifiers
     # What a validator reports back about a registration. Ephemeral: the
     # validation service is what writes it onto the row.
     class ValidationResult

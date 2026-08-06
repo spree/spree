@@ -156,7 +156,7 @@ module Spree
   # no registry client, because VAT number rules live in 27 different statute
   # books and a guess would reject real business customers.
   #
-  #   Spree.tax_id_validators['eu_vat'] = 'SpreeEuVat::TaxIdValidator'
+  #   Spree.tax_identifier_validators['eu_vat'] = 'SpreeEuVat::TaxIdentifierValidator'
   #
   # Class names are stored as strings and constantized at call time, so an
   # initializer can register a validator before its class is autoloaded.
@@ -164,8 +164,8 @@ module Spree
   # reasons a registration has no verdict: unchecked, or uncheckable here.
   #
   # @return [Hash{String => String}]
-  def self.tax_id_validators
-    @@tax_id_validators ||= {}
+  def self.tax_identifier_validators
+    @@tax_identifier_validators ||= {}
   end
 
   # Returns the events adapter class used for publishing and subscribing to events.

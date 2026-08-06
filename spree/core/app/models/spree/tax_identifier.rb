@@ -17,7 +17,7 @@ module Spree
   # and core ships neither.
   #
   # It does have to match the key that validator is registered under in
-  # {Spree.tax_id_validators}, because that lookup is by exact string. A kind
+  # {Spree.tax_identifier_validators}, because that lookup is by exact string. A kind
   # nothing is registered for is stored and used as entered — never
   # format-checked, never sent to a registry — and {#validatable?} reports as
   # much. So a misspelled kind fails silently rather than loudly.
@@ -93,7 +93,7 @@ module Spree
     #
     # @return [Boolean]
     def validatable?
-      order_id.nil? && Spree.tax_id_validators.key?(kind)
+      order_id.nil? && Spree.tax_identifier_validators.key?(kind)
     end
 
     private
@@ -113,7 +113,7 @@ module Spree
     # and its failure mode is turning away a real business customer. Kinds with
     # no validator are accepted as entered.
     def value_format
-      validator = Spree.tax_id_validators[kind]
+      validator = Spree.tax_identifier_validators[kind]
       return if validator.blank?
       return if validator.to_s.constantize.valid_format?(value)
 

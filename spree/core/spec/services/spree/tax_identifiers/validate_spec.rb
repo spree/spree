@@ -6,16 +6,16 @@ describe Spree::TaxIdentifiers::Validate do
 
   def register(validator_class)
     stub_const('SpecRegistryValidator', validator_class)
-    Spree.tax_id_validators['eu_vat'] = 'SpecRegistryValidator'
+    Spree.tax_identifier_validators['eu_vat'] = 'SpecRegistryValidator'
   end
 
-  after { Spree.tax_id_validators.delete('eu_vat') }
+  after { Spree.tax_identifier_validators.delete('eu_vat') }
 
   context 'when the registry answers' do
     before do
-      register(Class.new(Spree::TaxIdValidator::Base) do
+      register(Class.new(Spree::TaxIdentifiers::Validator::Base) do
         def call(tax_identifier:)
-          Spree::TaxIdentifier::ValidationResult.new(
+          Spree::TaxIdentifiers::ValidationResult.new(
             status: 'verified',
             normalized_value: tax_identifier.value,
             checked_at: Time.current,
@@ -53,9 +53,9 @@ describe Spree::TaxIdentifiers::Validate do
 
   context 'when the registry cannot answer' do
     before do
-      register(Class.new(Spree::TaxIdValidator::Base) do
+      register(Class.new(Spree::TaxIdentifiers::Validator::Base) do
         def call(tax_identifier:)
-          Spree::TaxIdentifier::ValidationResult.new(status: 'unavailable', message: 'VIES timed out',
+          Spree::TaxIdentifiers::ValidationResult.new(status: 'unavailable', message: 'VIES timed out',
                                                     checked_at: Time.current)
         end
       end)
@@ -80,7 +80,7 @@ describe Spree::TaxIdentifiers::Validate do
 
   context 'when the validator raises' do
     before do
-      register(Class.new(Spree::TaxIdValidator::Base) do
+      register(Class.new(Spree::TaxIdentifiers::Validator::Base) do
         def call(tax_identifier:)
           raise 'boom'
         end

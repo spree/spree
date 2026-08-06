@@ -10,7 +10,7 @@ module Spree
       # @param tax_identifier [Spree::TaxIdentifier]
       # @return [Spree::TaxIdentifier]
       def call(tax_identifier:)
-        validator = Spree.tax_id_validators[tax_identifier.kind]
+        validator = Spree.tax_identifier_validators[tax_identifier.kind]
 
         # Narrow race: the validator was deregistered between enqueue and run.
         return persist(tax_identifier, unsupported_result) if validator.blank?
@@ -42,11 +42,11 @@ module Spree
       end
 
       def unsupported_result
-        Spree::TaxIdentifier::ValidationResult.new(status: 'unsupported', checked_at: Time.current)
+        Spree::TaxIdentifiers::ValidationResult.new(status: 'unsupported', checked_at: Time.current)
       end
 
       def unavailable_result(message)
-        Spree::TaxIdentifier::ValidationResult.new(status: 'unavailable', message: message, checked_at: Time.current)
+        Spree::TaxIdentifiers::ValidationResult.new(status: 'unavailable', message: message, checked_at: Time.current)
       end
     end
   end

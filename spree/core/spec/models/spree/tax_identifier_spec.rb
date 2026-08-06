@@ -57,7 +57,7 @@ describe Spree::TaxIdentifier, type: :model do
 
   describe 'format validation' do
     let(:validator) do
-      Class.new(Spree::TaxIdValidator::Base) do
+      Class.new(Spree::TaxIdentifiers::Validator::Base) do
         def self.valid_format?(value)
           value.start_with?('DE')
         end
@@ -67,10 +67,10 @@ describe Spree::TaxIdentifier, type: :model do
     before { stub_const('SpecEuVatValidator', validator) }
 
     around do |example|
-      Spree.tax_id_validators['eu_vat'] = 'SpecEuVatValidator'
+      Spree.tax_identifier_validators['eu_vat'] = 'SpecEuVatValidator'
       example.run
     ensure
-      Spree.tax_id_validators.delete('eu_vat')
+      Spree.tax_identifier_validators.delete('eu_vat')
     end
 
     it 'rejects a malformed number as a typo to fix' do
@@ -91,10 +91,10 @@ describe Spree::TaxIdentifier, type: :model do
 
   describe 'the registry check' do
     around do |example|
-      Spree.tax_id_validators['eu_vat'] = 'Spree::TaxIdValidator::Base'
+      Spree.tax_identifier_validators['eu_vat'] = 'Spree::TaxIdentifiers::Validator::Base'
       example.run
     ensure
-      Spree.tax_id_validators.delete('eu_vat')
+      Spree.tax_identifier_validators.delete('eu_vat')
     end
 
     it 'is queued when a checkable number is entered, and marked pending' do
@@ -137,10 +137,10 @@ describe Spree::TaxIdentifier, type: :model do
       identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
       expect(identifier).not_to be_validatable
 
-      Spree.tax_id_validators['eu_vat'] = 'Spree::TaxIdValidator::Base'
+      Spree.tax_identifier_validators['eu_vat'] = 'Spree::TaxIdentifiers::Validator::Base'
       expect(identifier).to be_validatable
     ensure
-      Spree.tax_id_validators.delete('eu_vat')
+      Spree.tax_identifier_validators.delete('eu_vat')
     end
   end
 end

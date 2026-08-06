@@ -70,10 +70,10 @@ RSpec.describe Spree::Api::V3::Admin::Customers::TaxIdentifiersController, type:
   describe 'POST #validate' do
     context 'when a validator is registered for the kind' do
       around do |example|
-        Spree.tax_id_validators['eu_vat'] = 'Spree::TaxIdValidator::Base'
+        Spree.tax_identifier_validators['eu_vat'] = 'Spree::TaxIdentifiers::Validator::Base'
         example.run
       ensure
-        Spree.tax_id_validators.delete('eu_vat')
+        Spree.tax_identifier_validators.delete('eu_vat')
       end
 
       it 'queues a fresh registry check' do

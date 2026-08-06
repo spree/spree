@@ -47,12 +47,12 @@ RSpec.describe 'Store tax identifiers', type: :request do
     end
 
     it 'rejects a malformed number when this installation can check the kind' do
-      stub_const('SpecStoreValidator', Class.new(Spree::TaxIdValidator::Base) do
+      stub_const('SpecStoreValidator', Class.new(Spree::TaxIdentifiers::Validator::Base) do
         def self.valid_format?(value)
           value.start_with?('DE')
         end
       end)
-      Spree.tax_id_validators['eu_vat'] = 'SpecStoreValidator'
+      Spree.tax_identifier_validators['eu_vat'] = 'SpecStoreValidator'
 
       put "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
           params: { kind: 'eu_vat', value: '123' },
@@ -60,7 +60,7 @@ RSpec.describe 'Store tax identifiers', type: :request do
 
       expect(response).to have_http_status(:unprocessable_content)
     ensure
-      Spree.tax_id_validators.delete('eu_vat')
+      Spree.tax_identifier_validators.delete('eu_vat')
     end
   end
 

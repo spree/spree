@@ -5,15 +5,15 @@ describe Spree::TaxIdentifiers::ValidateJob do
   let(:tax_identifier) { create(:tax_identifier, customer: customer, kind: 'eu_vat') }
 
   before do
-    stub_const('SpecJobValidator', Class.new(Spree::TaxIdValidator::Base) do
+    stub_const('SpecJobValidator', Class.new(Spree::TaxIdentifiers::Validator::Base) do
       def call(tax_identifier:)
-        Spree::TaxIdentifier::ValidationResult.new(status: 'verified', checked_at: Time.current)
+        Spree::TaxIdentifiers::ValidationResult.new(status: 'verified', checked_at: Time.current)
       end
     end)
-    Spree.tax_id_validators['eu_vat'] = 'SpecJobValidator'
+    Spree.tax_identifier_validators['eu_vat'] = 'SpecJobValidator'
   end
 
-  after { Spree.tax_id_validators.delete('eu_vat') }
+  after { Spree.tax_identifier_validators.delete('eu_vat') }
 
   it 'records the registry verdict on the row' do
     described_class.perform_now(tax_identifier.id)

@@ -386,7 +386,7 @@ saves a tax ID on a profile before any order exists, so a provider-hung
 `validate_tax_id` would force an arbitrary choice (a US sales-tax engine
 asked to check an EU number, or an EU market on Internal declining while
 a connected Avalara sits unused). The seam is therefore
-`Spree.tax_id_validators`, a registry keyed by kind and empty by default —
+`Spree.tax_identifier_validators`, a registry keyed by kind and empty by default —
 core ships no registry client for any jurisdiction — so two extensions
 covering different kinds coexist where a single swappable service would
 let the second loaded silently disable the first. Validation splits the way Stripe's does: **format
