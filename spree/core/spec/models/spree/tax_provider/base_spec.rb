@@ -42,6 +42,29 @@ describe Spree::TaxProvider::Base, type: :model do
     end
   end
 
+  describe 'self-description for the admin' do
+    it 'presents id, name, availability and limits' do
+      expect(Spree::TaxProvider::Internal.to_api_hash(order.store)).to eq(
+        id: 'Spree::TaxProvider::Internal',
+        name: 'Internal',
+        available: true,
+        unsupported_capabilities: %w[us_local_tax reverse_charge oss_thresholds],
+        default: true
+      )
+    end
+
+    it 'lets a provider gem name itself rather than wear a mangled class name' do
+      stub_const('SpreeTaxAvalara::TaxProvider', Class.new(described_class) do
+        def self.display_name
+          'Avalara AvaTax'
+        end
+      end)
+
+      expect(SpreeTaxAvalara::TaxProvider.to_api_hash(order.store)[:name]).to eq('Avalara AvaTax')
+      expect(SpreeTaxAvalara::TaxProvider.to_api_hash(order.store)[:default]).to be(false)
+    end
+  end
+
   describe 'the internal provider' do
     it 'declares the domains rate configuration cannot express' do
       expect(Spree::TaxProvider::Internal.unsupported_capabilities).to(

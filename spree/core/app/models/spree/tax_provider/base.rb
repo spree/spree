@@ -28,6 +28,31 @@ module Spree
         true
       end
 
+      # The name a merchant sees when choosing an engine. Override in a provider
+      # gem — a class name mangled into words rarely matches what the service is
+      # actually called.
+      #
+      # @return [String]
+      def self.display_name
+        name.demodulize.titleize
+      end
+
+      # How this engine describes itself to the admin, mirroring
+      # Spree::PreferenceSchema#subclasses_with_preference_schema: the class
+      # being described owns its own presentation, not the controller.
+      #
+      # @param store [Spree::Store]
+      # @return [Hash]
+      def self.to_api_hash(store)
+        {
+          id: name,
+          name: display_name,
+          available: available_for_store?(store),
+          unsupported_capabilities: unsupported_capabilities.map(&:to_s),
+          default: name == Rails.application.config.spree.tax_provider.to_s
+        }
+      end
+
       # Recomputes tax for the given items and writes the TaxLine rows.
       # Replace-all set semantics per target item, and one row for every item
       # the provider formed a treatment for — zero-amount treatments included.

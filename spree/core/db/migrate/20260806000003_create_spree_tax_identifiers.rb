@@ -34,6 +34,10 @@ class CreateSpreeTaxIdentifiers < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :spree_tax_identifiers, [:customer_id, :kind]
+    # One registration per kind for a customer. Cart and order rows leave
+    # customer_id null, and NULLs never collide in a unique index, so this
+    # constrains the profile rows only — which is where duplicates would make
+    # resolution ambiguous.
+    add_index :spree_tax_identifiers, [:customer_id, :kind], unique: true
   end
 end

@@ -4,7 +4,9 @@ module Spree
       module Admin
         # Which tax engines this installation can point a market at, and what
         # each of them cannot do. Discovery rather than CRUD: providers are
-        # classes registered in code, not rows.
+        # classes registered in code, not rows — so there is no serializer, and
+        # each class describes itself (`to_api_hash`), the same shape
+        # `/promotion_rules/types` and `/collection_rules/types` use.
         #
         # The capability list is the point — a merchant selling into US states
         # needs to be told at configuration time that the built-in engine has no
@@ -14,19 +16,7 @@ module Spree
 
           # GET /api/v3/admin/tax_providers
           def index
-            render json: { data: Spree.tax_providers.map { |provider| serialize_provider(provider) } }
-          end
-
-          private
-
-          def serialize_provider(provider)
-            {
-              id: provider.to_s,
-              name: provider.to_s.demodulize.titleize,
-              available: provider.available_for_store?(current_store),
-              unsupported_capabilities: provider.unsupported_capabilities.map(&:to_s),
-              default: provider.to_s == Rails.application.config.spree.tax_provider.to_s
-            }
+            render json: { data: Spree.tax_providers.map { |provider| provider.to_api_hash(current_store) } }
           end
         end
       end
