@@ -92,18 +92,17 @@ module Spree
       end
 
       # Delivery methods eligible to serve this package: the method's
-      # fulfillment_type must be supported by every item, minus any
-      # per-product exclusions. Replaces the ShippingCategory-based
-      # Package#shipping_methods.
+      # fulfillment_type must be supported by every item. Replaces the
+      # ShippingCategory-based Package#shipping_methods. Per-product
+      # exclusions are DeliveryMethodRules::ExcludedProductsRule, enforced
+      # with the other rules in the Estimator's method filter.
       #
       # @return [ActiveRecord::Relation<Spree::DeliveryMethod>]
       def eligible_delivery_methods
         types = fulfillment_types
         return Spree::DeliveryMethod.none if types.empty?
 
-        methods = Spree::DeliveryMethod.by_fulfillment_type(types)
-        excluded_ids = contents.flat_map { |item| item.variant.product.excluded_delivery_method_ids || [] }.uniq
-        excluded_ids.any? ? methods.where.not(id: excluded_ids) : methods
+        Spree::DeliveryMethod.by_fulfillment_type(types)
       end
 
       # @deprecated Use {#eligible_delivery_methods}; removed in 6.1.

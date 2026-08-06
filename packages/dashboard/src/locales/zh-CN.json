@@ -494,6 +494,8 @@
       "conditions": {
         "add": "添加条件",
         "empty": "无条件——只要区域匹配即提供该方式。",
+        "products_empty": "没有匹配的商品",
+        "products_placeholder": "按名称搜索商品…",
         "title": "条件"
       },
       "create_description": "配置订单送达客户的方式：物流、数字交付或自提。",

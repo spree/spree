@@ -54,6 +54,28 @@ describe Spree::DeliveryMethodRule, type: :model do
     end
   end
 
+  describe Spree::DeliveryMethodRules::ExcludedProductsRule do
+    it 'blocks packages containing an excluded product and fails open without products' do
+      rule = described_class.create!(delivery_method: delivery_method)
+      expect(rule.eligible?(package)).to be(true)
+
+      rule.products << package.contents.first.variant.product
+      expect(rule.eligible?(package)).to be(false)
+    end
+
+    it 'passes packages containing none of the excluded products' do
+      rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
+
+      expect(rule.eligible?(package)).to be(true)
+    end
+
+    it 'removes its product links with the rule' do
+      rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
+
+      expect { rule.destroy! }.to change(Spree::DeliveryMethodRuleProduct, :count).by(-1)
+    end
+  end
+
   describe 'Estimator enforcement' do
     let(:order) { create(:order_with_line_items, store: store, ship_address: create(:address)) }
 

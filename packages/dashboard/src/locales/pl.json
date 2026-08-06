@@ -502,6 +502,8 @@
       "conditions": {
         "add": "Dodaj warunek",
         "empty": "Brak warunków — metoda jest oferowana, gdy pasują jej strefy.",
+        "products_empty": "Brak pasujących produktów",
+        "products_placeholder": "Szukaj produktów po nazwie…",
         "title": "Warunki"
       },
       "create_description": "Skonfiguruj, jak zamówienia trafiają do klientów: wysyłka, dostawa cyfrowa lub odbiór.",

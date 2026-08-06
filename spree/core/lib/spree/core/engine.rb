@@ -209,7 +209,8 @@ module Spree
         # Delivery-method eligibility rule kinds (docs/plans/6.0-delivery-method-rules.md).
         Rails.application.config.spree.delivery_method_rules.concat [
           Spree::DeliveryMethodRules::ItemTotalRule,
-          Spree::DeliveryMethodRules::WeightRule
+          Spree::DeliveryMethodRules::WeightRule,
+          Spree::DeliveryMethodRules::ExcludedProductsRule
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [

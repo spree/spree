@@ -54,6 +54,34 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it 'creates an excluded-products rule from prefixed product ids' do
+      product = create(:product)
+
+      post :create, params: {
+        delivery_method_id: delivery_method.prefixed_id,
+        type: 'excluded_products_rule',
+        product_ids: [product.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['type']).to eq('excluded_products_rule')
+      expect(json_response['product_ids']).to eq([product.prefixed_id])
+      expect(delivery_method.delivery_method_rules.sole.products).to eq([product])
+    end
+
+    it 'rejects products belonging to another store' do
+      other_store_product = create(:product, store: create(:store))
+
+      post :create, params: {
+        delivery_method_id: delivery_method.prefixed_id,
+        type: 'excluded_products_rule',
+        product_ids: [other_store_product.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(delivery_method.delivery_method_rules.count).to eq(0)
+    end
   end
 
   describe 'PATCH #update' do
@@ -71,6 +99,24 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
       rule.reload
       expect(rule.active).to be(false)
       expect(rule.preferred_minimum_amount).to eq(50)
+    end
+
+    it 'replaces the excluded products' do
+      kept = create(:product)
+      dropped = create(:product)
+      excluded_rule = Spree::DeliveryMethodRules::ExcludedProductsRule.create!(
+        delivery_method: delivery_method, products: [dropped]
+      )
+
+      patch :update, params: {
+        delivery_method_id: delivery_method.prefixed_id,
+        id: excluded_rule.prefixed_id,
+        product_ids: [kept.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['product_ids']).to eq([kept.prefixed_id])
+      expect(excluded_rule.reload.products).to eq([kept])
     end
   end
 

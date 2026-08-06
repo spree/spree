@@ -494,6 +494,8 @@
       "conditions": {
         "add": "Ajouter une condition",
         "empty": "Aucune condition — la méthode est proposée dès que ses zones correspondent.",
+        "products_empty": "Aucun produit ne correspond",
+        "products_placeholder": "Rechercher des produits par nom…",
         "title": "Conditions"
       },
       "create_description": "Configurez comment les commandes parviennent aux clients : expédition, numérique ou retrait.",

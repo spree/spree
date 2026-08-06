@@ -840,6 +840,9 @@ en:
     deleted: Deleted
     delivery: Delivery
     delivery_method_rule_types:
+      excluded_products_rule:
+        description: Blocks the delivery method for packages containing the selected products
+        name: Excluded products
       item_total_rule:
         description: Limits the delivery method to carts within an item total range
         name: Item total

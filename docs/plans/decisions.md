@@ -1162,3 +1162,29 @@ idempotency, sweeper resume) and its spec battery must pass unmodified
 after the retrofit. Durable flows compile onto ActiveJob Continuations
 in Phase 2 (imports, upgrade migrations, payout runs) and may land
 post-GA without blocking the DSL.
+
+
+## 2026-08-06 — Per-product delivery exclusions are a delivery-method rule, not a product column
+
+`spree_products.excluded_delivery_method_ids` (JSON array, shipped with
+the fulfillment rework but never writable through any API or UI) is
+dropped in favor of `Spree::DeliveryMethodRules::ExcludedProductsRule` —
+products attached through the concrete
+`spree_delivery_method_rule_products` join table. Rationale: an ID list
+in JSON is unqueryable and unindexable portably across the three
+supported databases, rots when delivery methods are deleted, and would
+have needed its own bespoke API/serializer/UI surface; the rules
+framework already ships the registry, nested admin CRUD, discovery
+endpoint and dashboard Conditions card. It also removes the second
+eligibility seam inside `Stock::Package#eligible_delivery_methods` —
+the rules plan mandates the Estimator's rule filter as the only one.
+Method-side exclusion matches Saleor (`excludedProducts`); Shopify and
+Medusa model the inverse via shipping profiles (≈ the retired
+ShippingCategory), Vendure is code-only. Companion convention — storage
+by cardinality: small reference sets (channels/markets/customer groups)
+stay `:array` preferences via `normalize_id_preference`; catalog-scale
+references (products) get a join table, per the
+`Promotion::Rules::Product`/`ProductPromotionRule` precedent. On the
+wire both travel as prefixed-ID params resolved through
+`current_store`. Plans updated: `6.0-delivery-method-rules.md` (owner),
+`6.0-fulfillment-and-delivery.md`, `6.0-core-rewrite-tasks.md`.

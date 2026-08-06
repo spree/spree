@@ -1,15 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { DeliveryMethod, DeliveryMethodRule, PreferenceField } from '@spree/admin-sdk'
+import type { DeliveryMethod, DeliveryMethodRule, PreferenceField, Product } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
   mapSpreeErrorsToForm,
   PreferencesForm,
+  ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
   Subject,
   usePermissions,
   useResourceKeyBuilder,
+  useStore,
 } from '@spree/dashboard-core'
 import {
   Button,
@@ -341,8 +343,14 @@ function ConditionsSection({ deliveryMethodId }: { deliveryMethodId: string }) {
     onSuccess: invalidate,
   })
   const updateMutation = useMutation({
-    mutationFn: ({ id, preferences }: { id: string; preferences: Record<string, unknown> }) =>
-      adminClient.deliveryMethods.rules.update(deliveryMethodId, id, { preferences }),
+    mutationFn: ({
+      id,
+      ...params
+    }: {
+      id: string
+      preferences?: Record<string, unknown>
+      product_ids?: string[]
+    }) => adminClient.deliveryMethods.rules.update(deliveryMethodId, id, params),
     onSuccess: invalidate,
   })
   const removeMutation = useMutation({
@@ -388,7 +396,7 @@ function ConditionsSection({ deliveryMethodId }: { deliveryMethodId: string }) {
         <ConditionRuleRow
           key={rule.id}
           rule={rule}
-          onSave={(preferences) => updateMutation.mutate({ id: rule.id, preferences })}
+          onSave={(params) => updateMutation.mutate({ id: rule.id, ...params })}
           onRemove={() => removeMutation.mutate(rule.id)}
           saving={updateMutation.isPending}
         />
@@ -404,15 +412,21 @@ function ConditionRuleRow({
   saving,
 }: {
   rule: DeliveryMethodRule
-  onSave: (preferences: Record<string, unknown>) => void
+  onSave: (params: { preferences?: Record<string, unknown>; product_ids?: string[] }) => void
   onRemove: () => void
   saving: boolean
 }) {
   const { t } = useTranslation()
+  const { storeId } = useStore()
   const [values, setValues] = useState<Record<string, unknown>>(
     rule.preferences as Record<string, unknown>,
   )
-  const dirty = JSON.stringify(values) !== JSON.stringify(rule.preferences)
+  const [productIds, setProductIds] = useState<string[]>(rule.product_ids ?? [])
+  // Association-backed rule — configured with a product picker, not preferences.
+  const productBacked = rule.type === 'excluded_products_rule'
+  const dirty = productBacked
+    ? JSON.stringify(productIds) !== JSON.stringify(rule.product_ids ?? [])
+    : JSON.stringify(values) !== JSON.stringify(rule.preferences)
 
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">
@@ -428,9 +442,29 @@ function ConditionRuleRow({
           <Trash2Icon className="size-4" />
         </Button>
       </div>
-      <PreferencesForm schema={rule.preference_schema} values={values} onChange={setValues} />
+      {productBacked ? (
+        <ResourceMultiAutocomplete<Product>
+          queryKey={`${storeId}-delivery-method-rule-products-${rule.id}`}
+          value={productIds}
+          onChange={setProductIds}
+          search={(q) => adminClient.products.list({ name_cont: q, limit: 10, sort: 'name' })}
+          hydrate={(ids) => adminClient.products.list({ id_in: ids, limit: ids.length })}
+          getOptionLabel={(p) => p.name ?? p.id}
+          placeholder={t('admin.delivery_methods.conditions.products_placeholder')}
+          emptyText={t('admin.delivery_methods.conditions.products_empty')}
+        />
+      ) : (
+        <PreferencesForm schema={rule.preference_schema} values={values} onChange={setValues} />
+      )}
       {dirty && (
-        <Button type="button" size="sm" onClick={() => onSave(values)} disabled={saving}>
+        <Button
+          type="button"
+          size="sm"
+          onClick={() =>
+            onSave(productBacked ? { product_ids: productIds } : { preferences: values })
+          }
+          disabled={saving}
+        >
           {saving ? t('admin.actions.saving') : t('admin.actions.save')}
         </Button>
       )}

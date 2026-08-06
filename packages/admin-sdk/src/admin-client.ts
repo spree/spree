@@ -1610,7 +1610,13 @@ export class AdminClient {
 
       create: (
         deliveryMethodId: string,
-        params: { type: string; active?: boolean; preferences?: Record<string, unknown> },
+        params: {
+          type: string
+          active?: boolean
+          preferences?: Record<string, unknown>
+          /** Prefixed product IDs — association-backed rules (excluded_products_rule). */
+          product_ids?: string[]
+        },
         options?: RequestOptions,
       ): Promise<DeliveryMethodRule> =>
         this.request<DeliveryMethodRule>('POST', `/delivery_methods/${deliveryMethodId}/rules`, {
@@ -1621,7 +1627,12 @@ export class AdminClient {
       update: (
         deliveryMethodId: string,
         id: string,
-        params: { active?: boolean; preferences?: Record<string, unknown> },
+        params: {
+          active?: boolean
+          preferences?: Record<string, unknown>
+          /** Prefixed product IDs — association-backed rules (excluded_products_rule). */
+          product_ids?: string[]
+        },
         options?: RequestOptions,
       ): Promise<DeliveryMethodRule> =>
         this.request<DeliveryMethodRule>(

@@ -23,6 +23,7 @@ module Spree
 
               @resource = rule_class.new(delivery_method: parent, active: active_param)
               assign_rule_preferences(@resource)
+              assign_rule_products(@resource)
               authorize_resource!(@resource, :create)
 
               if @resource.save
@@ -35,6 +36,7 @@ module Spree
             def update
               @resource.active = active_param unless params[:active].nil?
               assign_rule_preferences(@resource)
+              assign_rule_products(@resource)
 
               if @resource.save
                 render json: serialize_resource(@resource)
@@ -58,7 +60,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:type, :active, preferences: {})
+              params.permit(:type, :active, preferences: {}, product_ids: [])
             end
 
             private
@@ -77,6 +79,20 @@ module Spree
 
                 rule.set_preference(key, value)
               end
+            end
+
+            # Association-backed rule config (ExcludedProductsRule). Prefixed
+            # IDs are resolved against the rule's store — a cross-store
+            # product 404s, same as any other lookup.
+            def assign_rule_products(rule)
+              return unless rule.respond_to?(:products)
+              return if params[:product_ids].nil?
+
+              resolver = Spree::DeliveryMethodRule.normalize_id_preference(
+                klass: Spree::Product,
+                scope: ->(owner) { owner.store.products }
+              )
+              rule.product_ids = resolver.call(permitted_params[:product_ids], rule)
             end
           end
         end
