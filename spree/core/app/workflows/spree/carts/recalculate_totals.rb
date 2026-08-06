@@ -58,7 +58,7 @@ module Spree
         Spree.adjusters.each { |adjuster| adjuster.adjust(cart) }
         refresh_discount_and_fee_columns
         @tax_line_context = run_hooks :set_tax_line_context
-        Spree.tax_provider.estimate(
+        cart.tax_provider.estimate(
           cart,
           tax_date: Time.current,
           exemptions: Spree.tax_resolve_exemptions_service.new.call(order: cart).value,

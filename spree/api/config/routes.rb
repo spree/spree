@@ -309,6 +309,9 @@ Spree::Core::Engine.add_routes do
         # Tax Rates — the internal tax provider's configuration
         resources :tax_rates
 
+        # Selectable tax engines and their declared limits (discovery only)
+        resources :tax_providers, only: [:index]
+
         # Return / claim / refund reasons (dropdowns + settings management)
         resources :return_reasons
         resources :claim_reasons

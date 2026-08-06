@@ -312,6 +312,15 @@ module Spree
         step :complete_order, with: -> { Spree.order_complete_workflow }
         step :complete_cart
         step :mark_coupon_codes_used
+        external_step :commit_tax
+      end
+
+      # Tells the tax engine the sale is final. A no-op for the built-in
+      # provider, whose rows are already the record; external engines file the
+      # document that a tax return is later built from. Outside the
+      # transaction — a remote call must not hold the completion open.
+      def commit_tax
+        order.tax_provider.commit(order)
       end
 
       def complete_cart

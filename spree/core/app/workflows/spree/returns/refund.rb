@@ -38,12 +38,21 @@ module Spree
           step :mark_refunded
         end
 
+        external_step :refund_tax
         run_hooks :after_refund
         return_record.publish_event('return.refunded')
         success(return_record.reload)
       end
 
       private
+
+      # Credits the returned items against the filed tax document, keyed to the
+      # original supply date rather than today's — the rate that applied then is
+      # the rate to credit back.
+      def refund_tax
+        order = return_record.order
+        order.tax_provider.refund(order, return_record.return_line_items.to_a, tax_date: order.completed_at)
+      end
 
       def internal_refund?
         refund_method.to_s == 'store_credit'

@@ -171,6 +171,19 @@ RSpec.describe 'Spree::Returns workflows' do
         expect(credit.amount).to eq(return_record.refund_total)
       end
 
+      it 'credits the returned items against the filed tax document' do
+        order = return_record.order
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        allow(order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+        Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
+
+        expect(provider).to have_received(:refund).with(
+          order, return_record.return_line_items.to_a, tax_date: order.completed_at
+        )
+      end
+
       it 'lets a validate handler veto before any credit is issued' do
         Spree.hooks.register('returns.refund.validate') { |flow| flow.reject!('refunds on hold') }
 

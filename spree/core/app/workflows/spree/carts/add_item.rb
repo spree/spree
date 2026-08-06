@@ -72,7 +72,7 @@ module Spree
 
         @line_item.reload.recalculate_price
 
-        ::Spree.tax_provider.estimate(@line_item.owner, [@line_item], tax_date: Time.current) if @line_item_created
+        @line_item.owner.tax_provider.estimate(@line_item.owner, [@line_item], tax_date: Time.current) if @line_item_created
       end
 
       def handle_stock_reservations

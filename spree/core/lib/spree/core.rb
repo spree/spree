@@ -304,6 +304,19 @@ module Spree
     Rails.application.config.spree.tax_provider = value
   end
 
+  # Tax engines a market can be pointed at. Provider gems append their own, so a
+  # merchant picks from what is actually installed rather than typing a class
+  # name and finding out at checkout.
+  #
+  # @return [Array<Class>]
+  def self.tax_providers
+    Rails.application.config.spree.tax_providers
+  end
+
+  def self.tax_providers=(value)
+    Rails.application.config.spree.tax_providers = value
+  end
+
   # Validator enforcing the password policy on the default auth models
   # ({Spree::Customer}, {Spree::AdminUser}). Defaults to
   # {Spree::PasswordLengthValidator}, which reads the configurable length bounds.

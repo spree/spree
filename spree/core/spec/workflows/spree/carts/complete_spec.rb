@@ -85,6 +85,18 @@ module Spree
       end
     end
 
+    describe 'tax lifecycle' do
+      it 'tells the tax engine the sale is final' do
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Cart).to receive(:tax_provider).and_return(provider)
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(provider).to have_received(:commit).with(order)
+      end
+    end
+
     describe 'tax identifier snapshot' do
       let(:customer) { create(:user) }
 

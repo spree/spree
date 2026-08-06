@@ -15,6 +15,15 @@ module Spree
         @tax_zone ||= Spree::Zone.match(tax_address) || Spree::Zone.default_tax
       end
 
+      # The tax engine for this sale, chosen by its market. Falls back to the
+      # store-wide default when the market names none, or when there is no
+      # market yet (an empty cart before currency resolution).
+      #
+      # @return [Spree::TaxProvider::Base]
+      def tax_provider
+        market&.tax_provider_instance || Spree.tax_provider
+      end
+
       # The buyer's tax registration to compute against: a checkout-time
       # override first, then the customer's own. Nil means treat the sale as a
       # consumer sale, which is the legally safe default — charging normal tax

@@ -275,4 +275,35 @@ RSpec.describe Spree::Market, type: :model do
       expect(market.prefixed_id).to start_with('mkt_')
     end
   end
+
+  describe '#tax_provider_instance' do
+    let(:market) { create(:market, store: store) }
+
+    it 'falls back to the store-wide default when the market names none' do
+      expect(market.tax_provider).to be_nil
+      expect(market.tax_provider_instance).to be_a(Spree::TaxProvider::Internal)
+    end
+
+    it 'builds the engine the market selected' do
+      stub_const('SpecMarketProvider', Class.new(Spree::TaxProvider::Base))
+      Spree.tax_providers << SpecMarketProvider
+
+      market.update!(tax_provider: 'SpecMarketProvider')
+
+      expect(market.tax_provider_instance).to be_a(SpecMarketProvider)
+    ensure
+      Spree.tax_providers.delete(SpecMarketProvider)
+    end
+
+    it 'builds a fresh instance per call, providers being stateless' do
+      expect(market.tax_provider_instance).not_to equal(market.tax_provider_instance)
+    end
+
+    it 'refuses an engine this installation does not have' do
+      market.tax_provider = 'MyApp::ImaginaryTaxProvider'
+
+      expect(market).not_to be_valid
+      expect(market.errors[:tax_provider]).to be_present
+    end
+  end
 end

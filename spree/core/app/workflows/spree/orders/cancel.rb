@@ -51,6 +51,7 @@ module Spree
         end
 
         external_step :settle_payments
+        external_step :void_tax
         step :recompute_totals, with: -> { Spree.order_recalculate_totals_workflow }
         step :update_statuses, with: -> { Spree.order_update_statuses_service }
         order.publish_event('order.canceled', order.event_payload.merge(notify_customer: notify_customer))
@@ -94,6 +95,12 @@ module Spree
       # Gateway I/O. Payments fully covered by a gift card are only voided,
       # never refunded; everything else cancels captured payments (void or
       # refund at the gateway's discretion) and voids what never completed.
+      # Reverses the filed tax document. The canceled sale must stop appearing
+      # in the merchant's tax liability.
+      def void_tax
+        order.tax_provider.void(order)
+      end
+
       def settle_payments
         if order.gift_card.present? && order.covered_by_store_credit?
           order.payments.completed.store_credits.each(&:void!)
