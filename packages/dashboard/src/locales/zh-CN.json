@@ -2964,7 +2964,7 @@
       }
     },
     "reasons": {
-      "title": "退货",
+      "title": "退货与原因",
       "description": "团队处理退货、理赔和退款时可选择的原因列表。",
       "add_cta": "添加原因",
       "add_sheet_title": "添加原因",
@@ -3031,7 +3031,7 @@
         "payment_methods": "支付方式",
         "product_types": "商品类型",
         "profile": "个人资料",
-        "reasons": "退货",
+        "reasons": "退货与原因",
         "staff": "员工",
         "stock_locations": "库存地点",
         "store": "店铺",

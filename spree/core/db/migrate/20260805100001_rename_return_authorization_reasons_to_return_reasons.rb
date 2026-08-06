@@ -11,6 +11,11 @@ class RenameReturnAuthorizationReasonsToReturnReasons < ActiveRecord::Migration[
       t.references :store, null: false
       t.boolean :active, null: false, default: true
       t.boolean :mutable, null: false, default: true
+      if t.respond_to?(:jsonb)
+        t.jsonb :metadata
+      else
+        t.json :metadata
+      end
       t.timestamps
     end
 

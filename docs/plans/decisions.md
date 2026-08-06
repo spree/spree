@@ -5,8 +5,10 @@
 two stores can each have their own "Damaged" or "Order Canceled".
 
 This is what makes the controller rule enforceable: every reason lookup
-reads `current_store.return_reasons` rather than the model constant, so a
-prefixed id from another store is a 404 instead of a silent success — the
+reads its matching association — `current_store.return_reasons`,
+`current_store.claim_reasons`, `current_store.refund_reasons` — rather
+than the model constant, so a prefixed id from another store is a 404
+instead of a silent success — the
 cheapest defence against IDOR, and now uniform across the returns surface
 alongside `current_store.stock_locations`.
 

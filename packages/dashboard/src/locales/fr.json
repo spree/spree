@@ -2964,7 +2964,7 @@
       }
     },
     "reasons": {
-      "title": "Retours",
+      "title": "Retours et motifs",
       "description": "Les listes dans lesquelles votre équipe choisit lors des retours, réclamations et remboursements.",
       "add_cta": "Ajouter un motif",
       "add_sheet_title": "Ajouter un motif",
@@ -3031,7 +3031,7 @@
         "payment_methods": "Modes de paiement",
         "product_types": "Types de produit",
         "profile": "Profil",
-        "reasons": "Retours",
+        "reasons": "Retours et motifs",
         "staff": "Personnel",
         "stock_locations": "Emplacements de stock",
         "store": "Boutique",

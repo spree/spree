@@ -8,10 +8,11 @@ module Spree
 
     include Spree::NamedType
     include Spree::SingleStoreResource
+    include Spree::Metadata
 
     # Names are unique per store, not globally — two stores can each have
     # their own "Damaged" without colliding.
-    validates :name, uniqueness: { case_sensitive: false, scope: :store_id }
+    validates :name, uniqueness: { case_sensitive: false, scope: [:store_id, *spree_base_uniqueness_scope] }
 
     self.whitelisted_ransackable_attributes = %w[name active mutable]
 

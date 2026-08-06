@@ -2964,7 +2964,7 @@
       }
     },
     "reasons": {
-      "title": "Returns",
+      "title": "Returns & reasons",
       "description": "The vocabularies your team picks from when handling returns, claims and refunds.",
       "add_cta": "Add reason",
       "add_sheet_title": "Add reason",
@@ -3031,7 +3031,7 @@
         "payment_methods": "Payment methods",
         "product_types": "Product types",
         "profile": "Profile",
-        "reasons": "Returns",
+        "reasons": "Returns & reasons",
         "staff": "Staff",
         "stock_locations": "Stock locations",
         "store": "Store",

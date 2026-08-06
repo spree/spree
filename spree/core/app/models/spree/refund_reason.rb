@@ -9,7 +9,7 @@ module Spree
 
     # Names are unique per store, not globally — two stores can each have
     # their own "Order Canceled" without colliding.
-    validates :name, uniqueness: { case_sensitive: false, scope: :store_id }
+    validates :name, uniqueness: { case_sensitive: false, scope: [:store_id, *spree_base_uniqueness_scope] }
 
     self.whitelisted_ransackable_attributes = %w[name active mutable]
 
@@ -17,7 +17,7 @@ module Spree
     ORDER_CANCELED_REASON = 'Order Canceled'.freeze
     SHIPMENT_CANCELED_REASON = 'Shipment Canceled'.freeze
 
-    has_many :refunds, dependent: :restrict_with_error
+    has_many :refunds, class_name: 'Spree::Refund', dependent: :restrict_with_error
 
     class << self
       # The seeded reasons core attaches to refunds it issues itself.

@@ -2756,6 +2756,7 @@ export class AdminClient {
   // Reasons — why a return, claim or refund happened
   // ============================================
 
+  /** Why a customer sent something back. Shared by returns and exchanges. */
   readonly returnReasons = {
     list: (
       params?: ListParams & Record<string, unknown>,
@@ -2783,6 +2784,7 @@ export class AdminClient {
       this.request<void>('DELETE', `/return_reasons/${id}`, options),
   }
 
+  /** What went wrong with a delivery — damaged, missing, wrong item. */
   readonly claimReasons = {
     list: (
       params?: ListParams & Record<string, unknown>,
@@ -2810,6 +2812,10 @@ export class AdminClient {
       this.request<void>('DELETE', `/claim_reasons/${id}`, options),
   }
 
+  /**
+   * Why money went back. Some rows are seeded and immutable: core looks
+   * them up by name, so `can_be_deleted` is false and renaming is refused.
+   */
   readonly refundReasons = {
     list: (
       params?: ListParams & Record<string, unknown>,

@@ -3000,7 +3000,7 @@
       }
     },
     "reasons": {
-      "title": "Zwroty",
+      "title": "Zwroty i powody",
       "description": "Listy, z których zespół wybiera przy zwrotach, reklamacjach i zwrotach pieniędzy.",
       "add_cta": "Dodaj powód",
       "add_sheet_title": "Dodaj powód",
@@ -3067,7 +3067,7 @@
         "payment_methods": "Metody płatności",
         "product_types": "Typy produktów",
         "profile": "Profil",
-        "reasons": "Zwroty",
+        "reasons": "Zwroty i powody",
         "staff": "Zespół",
         "stock_locations": "Lokalizacje magazynowe",
         "store": "Sklep",

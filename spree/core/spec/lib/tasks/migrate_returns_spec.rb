@@ -155,6 +155,26 @@ RSpec.describe Spree::ReturnsMigrator do
       expect(result[:failed]).to be_empty
       expect(result[:returns]).to eq(1)
     end
+
+    # `NULL NOT IN (...)` is UNKNOWN, so a numberless row is invisible to the
+    # number-based exclusion in both directions: it would never migrate at
+    # all, or — once forced through — migrate again on every run under a
+    # fresh generated number.
+    it 'migrates it exactly once across repeated runs' do
+      migrate
+
+      expect { described_class.new.call }.not_to change(Spree::Return, :count)
+    end
+
+    it 'records the legacy id so the row can be recognised again' do
+      migrate
+
+      # The column, not #metadata — that reader maps to private_metadata,
+      # which spree_returns does not have.
+      stamped = Spree::Return.last.read_attribute(:metadata)
+      stamped = JSON.parse(stamped) unless stamped.is_a?(Hash)
+      expect(stamped['legacy_return_authorization_id']).to be_present
+    end
   end
 
   context 'when the authorization has no items' do

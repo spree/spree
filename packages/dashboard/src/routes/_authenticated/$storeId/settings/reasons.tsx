@@ -41,7 +41,7 @@ import {
   useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute } from '@tanstack/react-router'
-import { PlusIcon, RotateCcwIcon } from 'lucide-react'
+import { PlusIcon, RotateCcwIcon, TriangleAlertIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -117,7 +117,7 @@ function ReasonSection({
   helpKey: string
 }) {
   const { t } = useTranslation()
-  const { data, isLoading } = useReasons(kind)
+  const { data, isLoading, isError } = useReasons(kind)
 
   const [creating, setCreating] = useState(false)
   const [editing, setEditing] = useState<Reason | null>(null)
@@ -144,6 +144,17 @@ function ReasonSection({
             <div className="p-4">
               <Skeleton className="h-10 w-full" />
             </div>
+          ) : isError ? (
+            // Distinct from the empty state: "no reasons yet" would tell an
+            // admin the list is empty when the request actually failed.
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <TriangleAlertIcon />
+                </EmptyMedia>
+                <EmptyTitle>{t('admin.errors.failed_to_load')}</EmptyTitle>
+              </EmptyHeader>
+            </Empty>
           ) : reasons.length === 0 ? (
             <Empty>
               <EmptyHeader>

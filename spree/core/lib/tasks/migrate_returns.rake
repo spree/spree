@@ -52,16 +52,50 @@ module Spree
       ActiveRecord::Base.connection
     end
 
-    # Authorizations whose number hasn't been carried across yet.
+    # Authorizations not yet carried across.
     #
     # Two subqueries rather than a plucked IN-list: on a resumed run over a
-    # large store the list would be every number already migrated, shipped back
-    # as bind params. Both sides hit the unique index on `number`. Same shape as
-    # migrate_users_to_customers' `where.not(id: customer_model.select(:id))`.
+    # large store the list would be every number already migrated, shipped
+    # back as bind params. Both sides hit the unique index on `number`. Same
+    # shape as migrate_users_to_customers' `where.not(id: model.select(:id))`.
+    #
+    # The NULL branch is load-bearing: `NULL NOT IN (...)` is UNKNOWN, not
+    # true, so a numberless legacy row would be filtered out by the two
+    # subqueries and never migrate at all. Those rows can't be matched by
+    # number, so `migrated_numberless_ids` tracks them by legacy id instead —
+    # otherwise a second run would copy them again under a fresh number.
     def pending
-      legacy_authorization.
-        where.not(number: Spree::Return.select(:number)).
-        where.not(number: Spree::Exchange.select(:number))
+      scope = legacy_authorization.
+              where.not(number: Spree::Return.select(:number)).
+              where.not(number: Spree::Exchange.select(:number))
+
+      numberless = legacy_authorization.where(number: nil).
+                   where.not(id: migrated_numberless_ids)
+
+      legacy_authorization.where(id: scope.select(:id)).or(
+        legacy_authorization.where(id: numberless.select(:id))
+      )
+    end
+
+    # Numberless rows are stamped with their legacy id at copy time, which is
+    # the only durable link back to the source row.
+    #
+    # Reads the `metadata` COLUMN, not `#metadata` — the Spree::Metadata
+    # concern maps that reader to `private_metadata`, which these tables do
+    # not have, so the accessor would silently return {}.
+    def migrated_numberless_ids
+      @migrated_numberless_ids ||=
+        (Spree::Return.where.not(metadata: nil).pluck(:metadata) +
+         Spree::Exchange.where.not(metadata: nil).pluck(:metadata)).
+        filter_map { |data| parse_metadata(data)['legacy_return_authorization_id'] }
+    end
+
+    def parse_metadata(data)
+      return data if data.is_a?(Hash)
+
+      JSON.parse(data.to_s)
+    rescue JSON::ParserError
+      {}
     end
 
     def legacy_authorization
@@ -148,9 +182,17 @@ module Spree
       # one would break resumption as well as lose the link to history.
       #
       # A legacy row with no number can't participate in either, so it falls
-      # back to a generated one: copying it once is better than refusing it,
-      # and the `skipped` tally below keeps a re-run from duplicating it.
-      record.number = authorization.number.presence || record.generate_permalink(klass)
+      # back to a generated one and records where it came from — that stamp is
+      # what `migrated_numberless_ids` reads to keep a re-run from copying it
+      # a second time under a different generated number.
+      if authorization.number.present?
+        record.number = authorization.number
+      else
+        record.number = record.generate_permalink(klass)
+        # write_attribute, not #metadata= — see migrated_numberless_ids.
+        record.write_attribute(:metadata, { 'legacy_return_authorization_id' => authorization.id })
+      end
+
       record.save!(validate: false)
       record
     end
