@@ -80,13 +80,21 @@ describe Spree::DeliveryMethodRule, type: :model do
     end
 
     # Rate estimation runs this per package, so the exclusion list must never
-    # be pulled into memory just to answer the question.
+    # be pulled into memory just to answer the question — on either outcome.
     it 'answers without loading the exclusion list' do
-      rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
-      reloaded = described_class.find(rule.id)
+      excluded_product = package.contents.first.variant.product
 
-      expect(reloaded.eligible?(package)).to be(true)
-      expect(reloaded.delivery_method_rule_products).not_to be_loaded
+      passing = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
+      passing = described_class.find(passing.id)
+      expect(passing.eligible?(package)).to be(true)
+      expect(passing.delivery_method_rule_products).not_to be_loaded
+
+      blocking = described_class.create!(
+        delivery_method: create(:shipping_method), products: [excluded_product]
+      )
+      blocking = described_class.find(blocking.id)
+      expect(blocking.eligible?(package)).to be(false)
+      expect(blocking.delivery_method_rule_products).not_to be_loaded
     end
 
     it 'removes its product links with the rule' do
