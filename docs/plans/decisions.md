@@ -1,3 +1,65 @@
+## 2026-08-06: ProductType is a creation-time template, not a live sync; type changes are allowed; no Store API exposure
+
+Competitor review (Saleor / Shopify / Medusa / Vendure) reversed the
+2026-07-27 "live template" and hard-immutability decisions in
+`6.0-product-types.md` before the unshipped Phase 2 built them. Saleor
+is the only platform with live propagation, and only because its
+attributes have no existence outside the type; Shopify — the largest
+merchant base on this problem — made category changes affect nothing
+retroactively. The settled semantics:
+
+- **Two regimes by data nature.** Custom-field form generation,
+  required-field validation, and `fulfillment_types` are **live by
+  reference** (read from the type at use time — no sync needed to be
+  "live"). Option types and categories are **seeded additively at
+  attach** (creation or later assignment); editing a type never mutates
+  existing products. No propagation callbacks, no locked option types,
+  no provenance tracking.
+- **One explicit bulk path:** `ProductTypes::ApplyToProducts` —
+  additive-only, idempotent, previewed with `products_count`, run as a
+  background job, shipping in 6.0 Phase 2. A deliberate bulk edit the
+  merchant asks for by name, never a side effect of editing a type.
+- **Required fields validate at activation only** — never on ordinary
+  saves of an already-active product, otherwise adding a required
+  definition to a type bricks every active product of that type on next
+  save (Shopify precedent: definition validations gate new writes only).
+- **A product's type is changeable**: explicit per-product detach and
+  reassign, both non-destructive (nothing deleted; custom-field values
+  survive as unstructured values; the new type seeds additively and its
+  required fields are checked at next activation). The immutability
+  guard was never shipped and will not be. Deleting a type in use stays
+  `restrict_with_error`.
+- **ProductType is back-office vocabulary — no Store API surface at
+  all** (no endpoint, no expand, no filter). Storefronts see categories
+  and collections only. The planned `expand=product_type` was never
+  implemented and is cancelled.
+- **Variant-level custom-field definitions deferred to 6.1** (no
+  speculative `level` column in the join).
+- **No shared value pools for custom fields — the plan's last open
+  question, closed.** Both roles it conflated are already served:
+  predicate search/sort/filter on custom-field strings shipped in 5.6
+  (`SearchProvider::MetafieldSchema` + `with_metafield_filters`,
+  storefront included) and stays string-based; faceted navigation over
+  canonical values with counts is the OptionType/OptionValue role
+  (disjunctive faceting shipped 5.4). Product-level descriptive facets
+  (Vendure Facet / Saleor non-variant attributes), if ever demanded,
+  get their own dedicated plan — never a custom-fields extension.
+
+Adjacent, same review: **ShippingCategory stays removed** despite the
+removal being unreleased. Medusa's ShippingProfile / Shopify's shipping
+profiles are the same design as the category, but the 6.0 stack already
+covers all three of its jobs (fulfillment-type eligibility matching,
+`Splitter::FulfillmentType`, `excluded_delivery_method_ids`). The one
+real loss — a *named* product grouping for delivery management — gets an
+if-needed 6.1 successor as a named eligibility set or a
+`DeliveryMethodRule` kind, recorded in `6.0-fulfillment-and-delivery.md`
+("Named delivery groups"). Also on record: Spree never had a
+variant-level shipping category (Solidus did), so product-level
+`fulfillment_types` granularity is not a regression; the mixed
+physical/digital product gap keeps a reserved relief valve (per-product
+or per-variant `fulfillment_types` override, 6.1-if-needed).
+
+
 ## 2026-08-06: All three reason vocabularies are store-owned
 
 `ReturnReason`, `ClaimReason` and now `RefundReason` include
