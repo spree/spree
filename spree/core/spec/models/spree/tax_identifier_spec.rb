@@ -143,10 +143,4 @@ describe Spree::TaxIdentifier, type: :model do
       Spree.tax_id_validators.delete('eu_vat')
     end
   end
-
-  it 'hands a provider the kind and number only' do
-    identifier = create(:tax_identifier, :verified, customer: customer, kind: 'eu_vat', value: 'DE123456789')
-
-    expect(identifier.to_provider_params).to eq(kind: 'eu_vat', value: 'DE123456789')
-  end
 end

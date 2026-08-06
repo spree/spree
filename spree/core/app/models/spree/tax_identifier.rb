@@ -8,6 +8,25 @@ module Spree
   # taken at completion). Orders keep a copy rather than a reference because a
   # registration can be changed or withdrawn later, and an invoice must still
   # show what was true when it was issued.
+  #
+  # == The +kind+ column
+  #
+  # Which registration this is — an EU VAT number, a UK one, an Australian
+  # business number. Any string is accepted, and nothing here narrows it: the
+  # kinds that exist are the ones somebody has a validator or a provider for,
+  # and core ships neither.
+  #
+  # It does have to match the key that validator is registered under in
+  # {Spree.tax_id_validators}, because that lookup is by exact string. A kind
+  # nothing is registered for is stored and used as entered — never
+  # format-checked, never sent to a registry — and {#validatable?} reports as
+  # much. So a misspelled kind fails silently rather than loudly.
+  #
+  # The kinds in circulation read as a region or country prefix plus the tax's
+  # name: +eu_vat+, +gb_vat+, +ch_vat+, +au_abn+. Matching that spares a
+  # validator gem and a storefront from having to agree with each other
+  # directly. It is a habit of the gems that use it, not a rule this model
+  # applies.
   class TaxIdentifier < Spree.base_class
     has_prefix_id :txi
 
@@ -55,14 +74,6 @@ module Spree
 
     def verified?
       validation_status == 'verified'
-    end
-
-    # The provider-facing shape: a provider reads the kind and the number, never
-    # the ownership or the verdict.
-    #
-    # @return [Hash]
-    def to_provider_params
-      { kind: kind, value: value }
     end
 
     # Queues the registry check. Public for the same reason
