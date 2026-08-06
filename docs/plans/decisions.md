@@ -1189,3 +1189,28 @@ wire both travel as prefixed-ID params resolved through the store scope
 and `accessible_by(current_ability, :show)`. Plans updated:
 `6.0-delivery-method-rules.md` (owner),
 `6.0-fulfillment-and-delivery.md`, `6.0-core-rewrite-tasks.md`.
+
+
+## 2026-08-06 — STI rule families declare their subclass registry
+
+`Spree::PreferenceSchema.registered_subclasses` resolved a class's
+registered subclasses by matching two hardcoded class names
+(`Spree::PromotionAction`, `Spree::PromotionRule`) and otherwise
+returning `[]`. Four families had each worked around that with a private
+per-class override in three different idioms (`PriceRule`,
+`OrderRoutingRule`, `CollectionRule`, `DeliveryMethodRule`), and
+`5.7-payment-method-rules.md` specced a fifth. The empty-list fallback
+failed **silently**: `find_by_api_type` returned nil, so
+`TypedAssociations` dropped typed rows from a payload with no error and
+`subclasses_with_preference_schema` rendered empty admin pickers — the
+bug that broke `DeliveryMethod#rules=` on first attempt.
+
+Replaced with a declarative hook: each STI parent calls
+`registers_subclasses_via { <registry> }` (one line), and a class that
+declares none **raises `NotImplementedError`** rather than reporting zero
+subclasses. Resolution walks the ancestor chain, so calling on an STI
+subclass works — it did not before, under either scheme. Gateways keep
+the `providers` path, which predates the hook. Migrated in place:
+PromotionRule, PromotionAction, PriceRule, OrderRoutingRule,
+CollectionRule, DeliveryMethodRule; `5.7-payment-method-rules.md`
+updated to the new form.
