@@ -20,7 +20,7 @@ import {
   useOptionTypes,
   useUpdateOptionType,
 } from '../../../hooks/use-option-types'
-import type { SelectedOptionType } from './variants-matrix'
+import { autoExpandIndex, type SelectedOptionType } from './variants-matrix'
 
 interface Props {
   selected: SelectedOptionType[]
@@ -62,18 +62,28 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
   // It is an offer they can decline: without tracking the dismissal, cancelling
   // reopens the row on the next render (it is still empty, so it qualifies
   // again) and its remove action stays unreachable.
-  const [dismissedAutoExpand, setDismissedAutoExpand] = useState<string | null>(null)
-  const firstEmpty = selected.find((optionType) => optionType.values.length === 0)
-  const autoExpandIndex =
-    isAdding || !firstEmpty || dismissedAutoExpand === firstEmpty.id
-      ? null
-      : selected.indexOf(firstEmpty)
-  const expandedIndex = editingIndex ?? autoExpandIndex
+  // A set, not one id: a type seeding two option types produces two empty rows,
+  // and declining the second must not re-open the first.
+  const [dismissedAutoExpand, setDismissedAutoExpand] = useState<ReadonlySet<string>>(new Set())
+  const offeredIndex = autoExpandIndex(selected, dismissedAutoExpand)
+  const expandedIndex = editingIndex ?? (isAdding || offeredIndex < 0 ? null : offeredIndex)
 
   const selectedIds = new Set(selected.map((s) => s.id))
   const availableTypes = allOptionTypes.filter((ot) => !selectedIds.has(ot.id))
 
   const removeAt = (index: number) => {
+    // Drop the dismissal with the row, so re-adding the same option type gets
+    // a fresh offer rather than inheriting a stale one.
+    const removed = selected[index]
+    if (removed) {
+      setDismissedAutoExpand((prev) => {
+        if (!prev.has(removed.id)) return prev
+
+        const next = new Set(prev)
+        next.delete(removed.id)
+        return next
+      })
+    }
     onChange(selected.filter((_, i) => i !== index))
   }
 
@@ -102,7 +112,9 @@ export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }:
                     initialValues={ot.values}
                     onCancel={() => {
                       setEditingIndex(null)
-                      if (ot.values.length === 0) setDismissedAutoExpand(ot.id)
+                      if (ot.values.length === 0) {
+                        setDismissedAutoExpand((prev) => new Set(prev).add(ot.id))
+                      }
                     }}
                     onSave={(values) =>
                       upsertAt(i, {

@@ -1,6 +1,6 @@
 import type { OptionType } from '@spree/admin-sdk'
 import { describe, expect, it } from 'vitest'
-import { composeOptionsText } from './variants-matrix'
+import { autoExpandIndex, composeOptionsText, type SelectedOptionType } from './variants-matrix'
 
 // composeOptionsText only reads name/label/position/option_values; cast minimal
 // fixtures rather than fabricating timestamps + ids that the helper ignores.
@@ -119,5 +119,36 @@ describe('composeOptionsText', () => {
         [COLOR],
       ),
     ).toBe('Color: Red, finish: matte, and pattern: striped')
+  })
+})
+
+describe('autoExpandIndex', () => {
+  const row = (id: string, values: string[] = []): SelectedOptionType => ({
+    id,
+    name: id,
+    label: id,
+    position: 0,
+    values: values.map((name) => ({ name })),
+  })
+
+  it('offers the first row still awaiting values', () => {
+    expect(autoExpandIndex([row('color', ['red']), row('size')], new Set())).toBe(1)
+  })
+
+  it('offers nothing once every row has values', () => {
+    expect(autoExpandIndex([row('color', ['red'])], new Set())).toBe(-1)
+  })
+
+  // A type seeding two option types produces two empty rows. Declining the
+  // second must not re-open the first.
+  it('moves past a dismissed row to the next empty one', () => {
+    const rows = [row('color'), row('size')]
+
+    expect(autoExpandIndex(rows, new Set(['color']))).toBe(1)
+    expect(autoExpandIndex(rows, new Set(['color', 'size']))).toBe(-1)
+  })
+
+  it('offers nothing when there are no rows', () => {
+    expect(autoExpandIndex([], new Set())).toBe(-1)
   })
 })
