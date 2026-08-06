@@ -38,15 +38,26 @@ module Spree
         delivery_rates.sort_by!(&:cost)
       end
 
+      # Quoting runs through the method's rate provider — Internal prices
+      # through the calculator, carrier providers call their API. A nil
+      # estimate suppresses the method, matching the calculator contract.
+      # Filtering, VAT gross-up, tax resolution and sorting stay here so
+      # every provider gets them identically.
       def calculate_delivery_rates(package, audience)
         delivery_methods(package, audience).map do |delivery_method|
-          cost = delivery_method.calculator.compute(package)
+          estimate = delivery_method.rate_provider_instance.estimate(package)
 
-          next unless cost
+          next if estimate.nil?
 
           delivery_method.delivery_rates.new(
-            cost: gross_amount(cost, taxation_options_for(delivery_method)),
-            tax_rate: first_tax_rate_for(delivery_method.tax_category)
+            cost: gross_amount(estimate.cost, taxation_options_for(delivery_method)),
+            tax_rate: first_tax_rate_for(delivery_method.tax_category),
+            carrier: estimate.carrier,
+            service_level: estimate.service_level,
+            estimated_delivery_date: estimate.estimated_delivery_date,
+            # presence: rates are rewritten on every refresh, so calculator-
+            # priced methods store NULL rather than an empty hash each time.
+            metadata: estimate.metadata.presence
           )
         end.compact
       end

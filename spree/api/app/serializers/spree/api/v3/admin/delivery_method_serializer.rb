@@ -5,6 +5,7 @@ module Spree
         class DeliveryMethodSerializer < V3::DeliveryMethodSerializer
           typelize admin_name: [:string, nullable: true], fulfillment_type: :string,
                    fulfillment_provider: :string, pickup_point_provider: [:string, nullable: true],
+                   rate_provider: [:string, nullable: true],
                    storefront_visible: :boolean, tracking_url: [:string, nullable: true],
                    tax_category_id: [:string, nullable: true],
                    delivery_zone_ids: [:string, multi: true],
@@ -13,7 +14,7 @@ module Spree
                    calculator_preferences: ['Record<string, unknown>', nullable: true]
 
           attributes :admin_name, :fulfillment_type, :fulfillment_provider, :pickup_point_provider,
-                     :storefront_visible, :tracking_url,
+                     :rate_provider, :storefront_visible, :tracking_url,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
 
           attribute :tax_category_id do |record|

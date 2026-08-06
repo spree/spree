@@ -325,6 +325,7 @@ Spree::Core::Engine.add_routes do
           collection do
             get :calculators
             get :fulfillment_providers
+            get :rate_providers
           end
           resources :rules, controller: 'delivery_methods/rules', only: [:index, :show, :create, :update, :destroy]
         end

@@ -51,6 +51,35 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     end
   end
 
+  describe 'GET #rate_providers' do
+    it 'lists the registered providers and the default' do
+      get :rate_providers, params: {}, as: :json
+
+      expect(response).to have_http_status(:ok)
+      internal = json_response['data'].find { |row| row['type'] == 'Spree::DeliveryRateProvider::Internal' }
+      expect(internal['name']).to eq('Internal')
+      expect(internal['integration_class']).to be_nil
+      expect(json_response['default']).to eq('Spree::DeliveryRateProvider::Internal')
+    end
+
+    # Offering a provider whose integration isn't connected would let an
+    # admin pick one that then fails to quote at checkout.
+    it 'hides providers unavailable to the current store' do
+      provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
+        def self.integration_class = 'Spree::Integrations::Unconnected'
+        def self.available_for_store?(_store) = false
+      end
+      stub_const('UnavailableRateProvider', provider_class)
+      Spree.delivery_rate_providers << provider_class
+
+      get :rate_providers, params: {}, as: :json
+
+      expect(json_response['data'].map { |row| row['type'] }).not_to include('UnavailableRateProvider')
+    ensure
+      Spree.delivery_rate_providers.delete(provider_class)
+    end
+  end
+
   describe 'POST #create' do
     let!(:zone) { create(:delivery_zone) }
 

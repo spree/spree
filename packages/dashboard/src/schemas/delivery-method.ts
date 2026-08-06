@@ -24,6 +24,8 @@ export const deliveryMethodFormSchema = z.object({
   code: z.string().optional(),
   fulfillment_type: z.enum(FULFILLMENT_TYPES),
   fulfillment_provider: z.string(),
+  // Empty string means the built-in Internal provider (calculator-priced).
+  rate_provider: z.string(),
   storefront_visible: z.boolean(),
   tracking_url: z.string().optional(),
   estimated_transit_business_days_min: z.string().optional(),
@@ -44,6 +46,7 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   code: '',
   fulfillment_type: 'shipping',
   fulfillment_provider: 'Spree::FulfillmentProvider::Manual',
+  rate_provider: '',
   storefront_visible: true,
   tracking_url: '',
   estimated_transit_business_days_min: '',
@@ -63,6 +66,7 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
     code: values.code || null,
     fulfillment_type: values.fulfillment_type,
     fulfillment_provider: values.fulfillment_provider,
+    rate_provider: values.rate_provider || null,
     storefront_visible: values.storefront_visible,
     tracking_url: values.tracking_url || null,
     estimated_transit_business_days_min: values.estimated_transit_business_days_min

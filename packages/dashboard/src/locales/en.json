@@ -709,6 +709,10 @@
         "fulfillment_type": {
           "label": "Fulfillment type"
         },
+        "rate_provider": {
+          "label": "Rate provider",
+          "help": "Where this method's prices come from. The built-in provider prices with the calculator below; carrier providers quote live rates."
+        },
         "pickup_locations": {
           "label": "Pickup locations"
         },

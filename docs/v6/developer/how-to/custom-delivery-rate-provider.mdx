@@ -1,0 +1,156 @@
+---
+title: Build a Custom Delivery Rate Provider
+description: Connect a carrier or rate aggregator to Spree so checkout quotes live delivery rates instead of calculator-based prices.
+---
+
+## Overview
+
+A delivery rate provider decides **where a delivery method's price comes from**. Spree ships with one built-in provider, `Spree::DeliveryRateProvider::Internal`, which prices through the method's calculator — flat rates, per-item rates, and the rest. That is the default, and stores that never install a carrier integration keep using it.
+
+A custom provider replaces that arithmetic with a live quote: you call a carrier or an aggregator, and the rate that reaches checkout carries the carrier name, the service level, and an estimated delivery date.
+
+Use a provider when the price comes from outside Spree. If you only need different arithmetic on values Spree already has, write a calculator instead — it is far less work. See [Fulfillments](/v6/developer/core-concepts/fulfillments) for how delivery methods, rates and fulfillments fit together.
+
+## What you will build
+
+Three pieces, each with one job:
+
+| Piece | Responsibility |
+|---|---|
+| `Spree::Integration` subclass | Holds the store's credentials, managed from the admin dashboard |
+| `Spree::DeliveryRateProvider::Base` subclass | Turns a package into a rate quote |
+| An initializer | Registers both so admins can select them |
+
+Providers are stateless strategy objects. They never store credentials themselves — that is the integration's job, which is what gives merchants one place to see everything connected to their store.
+
+## 1. Store credentials in an integration
+
+```ruby
+module SpreeAcmeCarrier
+  class Integration < Spree::Integration
+    preference :api_key, :password
+    preference :account_number, :string
+    preference :test_mode, :boolean, default: true
+
+    def self.integration_group = 'shipping'
+
+    # Called when an admin activates the integration. Returning false blocks
+    # activation and shows your message in the dashboard.
+    def can_connect?
+      client.ping
+      true
+    rescue StandardError => e
+      self.connection_error_message = e.message
+      false
+    end
+
+    def client
+      @client ||= AcmeCarrier::Client.new(api_key: preferred_api_key, test: preferred_test_mode)
+    end
+  end
+end
+```
+
+Declare secrets as `:password` preferences. Spree masks them on read and guards the round-trip on write, so an API key never leaves the server in plain text.
+
+## 2. Implement the provider
+
+Only `#estimate` is required. It receives a `Spree::Stock::Package` and returns an `Estimate` — or `nil`.
+
+```ruby
+module SpreeAcmeCarrier
+  class DeliveryRateProvider < Spree::DeliveryRateProvider::Base
+    def self.integration_class = 'SpreeAcmeCarrier::Integration'
+
+    def estimate(package)
+      quote = quotes_for(package).find { |q| q.service_code == delivery_method.metadata['service_code'] }
+      return if quote.nil?
+
+      Spree::DeliveryRateProvider::Estimate.new(
+        cost: quote.amount,
+        carrier: quote.carrier_name,
+        service_level: quote.service_name,
+        estimated_delivery_date: quote.delivery_date,
+        metadata: { quote_id: quote.id }
+      )
+    end
+
+    private
+
+    # One API call serves every delivery method sharing this provider within
+    # a request — carriers return all services in one response, so quoting
+    # five methods should not mean five round-trips.
+    def quotes_for(package)
+      key = [:acme_quotes, store.id, package.stock_location.id, package.order.id]
+      Spree::Current.provider_cache[key] ||= integration.client.rates(
+        from: package.stock_location,
+        to: package.order.ship_address,
+        parcel: { weight: package.weight }
+      )
+    end
+  end
+end
+```
+
+**Returning `nil` hides the delivery method** for that package. This is the same contract calculators follow, and it is how you express "this carrier does not serve this destination" — the method simply does not appear at checkout rather than appearing at a wrong price.
+
+`cost` is pre-tax and pre-VAT. Spree applies the gross-up and resolves the tax rate afterwards, exactly as it does for calculator output, so you never handle tax yourself.
+
+Declaring `integration_class` is all the availability wiring you need: Spree derives `available_for_store?` from it, so your provider is hidden from the admin picker — and rejected on save — until the merchant connects the integration.
+
+### Optional lifecycle hooks
+
+`book` and `release` are part of the provider contract but Spree does not invoke them yet — they are reserved for the rate booking flow. Until then, call `book` yourself from your gem's fulfillment provider when the label is purchased:
+
+```ruby
+# Reserve the quote once your fulfillment provider dispatches.
+def book(delivery_rate)
+  integration.client.book(delivery_rate.metadata['quote_id'])
+end
+
+# Release a quote that is no longer wanted.
+def release(delivery_rate)
+  integration.client.release(delivery_rate.metadata['quote_id'])
+end
+```
+
+## 3. Register both classes
+
+```ruby
+# config/initializers/spree.rb
+Spree.delivery_rate_providers << 'SpreeAcmeCarrier::DeliveryRateProvider'.constantize
+Spree.integrations << 'SpreeAcmeCarrier::Integration'
+```
+
+Registration is what makes a provider selectable: Spree validates `rate_provider` against this list, so a typo fails when the method is saved rather than deep inside checkout.
+
+## 4. Use it
+
+A merchant connects the integration under **Settings → Integrations**, then picks the provider on a delivery method under **Settings → Delivery methods**. The provider field only appears once more than one provider is available, so stores without a carrier integration never see it.
+
+One delivery method means one rate, so model each sellable service as its own method — "Acme Ground" and "Acme Express" are two methods sharing one provider, distinguished by the `service_code` metadata the example reads. Methods stay regional: a carrier serving two continents is two methods, each with its own delivery zones.
+
+Providers and calculators coexist freely. A store can price "Free shipping" with a flat-rate calculator, "Express" through your carrier, and "Local pickup" with neither.
+
+## Testing
+
+Your provider is a plain object, so test it directly:
+
+```ruby
+RSpec.describe SpreeAcmeCarrier::DeliveryRateProvider do
+  let(:delivery_method) { create(:delivery_method, rate_provider: described_class.to_s) }
+
+  it 'quotes the configured service' do
+    estimate = described_class.new(delivery_method).estimate(package)
+
+    expect(estimate.cost).to eq(BigDecimal('12.40'))
+    expect(estimate.carrier).to eq('Acme')
+  end
+
+  it 'hides the method when the carrier does not serve the destination' do
+    expect(described_class.new(delivery_method).estimate(unservable_package)).to be_nil
+  end
+end
+```
+
+Stub the carrier client rather than calling the real API — quoting runs on every checkout, so a slow or flaky test here is a slow or flaky suite everywhere.

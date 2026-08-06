@@ -52,6 +52,7 @@ import {
   useDeliveryMethod,
   useDeliveryMethodRules,
   useDeliveryMethodRuleTypes,
+  useDeliveryRateProviders,
   useFulfillmentProviders,
   useUpdateDeliveryMethod,
 } from '../../../../hooks/use-delivery-methods'
@@ -275,6 +276,7 @@ function EditDeliveryMethodSheet({
           'shipping',
         fulfillment_provider:
           deliveryMethod.fulfillment_provider ?? DELIVERY_METHOD_DEFAULTS.fulfillment_provider,
+        rate_provider: deliveryMethod.rate_provider ?? DELIVERY_METHOD_DEFAULTS.rate_provider,
         storefront_visible: deliveryMethod.storefront_visible,
         tracking_url: deliveryMethod.tracking_url ?? '',
         estimated_transit_business_days_min:
@@ -479,11 +481,57 @@ function ConditionRuleRow({
   )
 }
 
+function ProviderSelectField({
+  form,
+  name,
+  label,
+  help,
+  options,
+  fallbackValue,
+}: {
+  form: UseFormReturn<DeliveryMethodFormValues>
+  name: 'fulfillment_provider' | 'rate_provider'
+  label: string
+  help: string
+  options: { value: string; label: string }[]
+  fallbackValue?: string
+}) {
+  return (
+    <Field>
+      <FieldLabel>{label}</FieldLabel>
+      <Controller
+        name={name}
+        control={form.control}
+        render={({ field }) => (
+          <Select
+            items={options}
+            value={field.value || fallbackValue || ''}
+            onValueChange={field.onChange}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
+      <span className="text-muted-foreground text-xs">{help}</span>
+    </Field>
+  )
+}
+
 function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
   const { data: calculators } = useDeliveryCalculators()
   const { data: fulfillmentProviders } = useFulfillmentProviders()
+  const { data: rateProviders } = useDeliveryRateProviders()
   const { data: zones } = useDeliveryZones()
   const { data: stockLocations } = useStockLocations()
   const { data: taxCategories } = useTaxCategories()
@@ -515,6 +563,12 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
     [fulfillmentProviders, fulfillmentType],
   )
   const providerOptions = providersForType.map((provider) => ({
+    value: provider.type,
+    label: provider.name,
+  }))
+
+  const defaultRateProvider = rateProviders?.default ?? ''
+  const rateProviderOptions = (rateProviders?.data ?? []).map((provider) => ({
     value: provider.type,
     label: provider.name,
   }))
@@ -603,31 +657,29 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
         />
       </Field>
 
+      {/* Both provider fields render only when there is a real choice: with a
+          single registered provider the default applies and the field stays
+          hidden (for rate providers, until a carrier integration is
+          installed pricing is simply the calculator below). */}
       {providerOptions.length > 1 && (
-        <Field>
-          <FieldLabel>{t('admin.fields.delivery_method.fulfillment_provider.label')}</FieldLabel>
-          <Controller
-            name="fulfillment_provider"
-            control={form.control}
-            render={({ field }) => (
-              <Select items={providerOptions} value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {providerOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          <span className="text-muted-foreground text-xs">
-            {t('admin.fields.delivery_method.fulfillment_provider.help')}
-          </span>
-        </Field>
+        <ProviderSelectField
+          form={form}
+          name="fulfillment_provider"
+          label={t('admin.fields.delivery_method.fulfillment_provider.label')}
+          help={t('admin.fields.delivery_method.fulfillment_provider.help')}
+          options={providerOptions}
+        />
+      )}
+
+      {rateProviderOptions.length > 1 && (
+        <ProviderSelectField
+          form={form}
+          name="rate_provider"
+          label={t('admin.fields.delivery_method.rate_provider.label')}
+          help={t('admin.fields.delivery_method.rate_provider.help')}
+          options={rateProviderOptions}
+          fallbackValue={defaultRateProvider}
+        />
       )}
 
       {fulfillmentType === 'pickup' && (

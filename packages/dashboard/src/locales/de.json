@@ -709,6 +709,10 @@
         "fulfillment_type": {
           "label": "Fulfillment-Typ"
         },
+        "rate_provider": {
+          "label": "Tarifanbieter",
+          "help": "Woher die Preise dieser Methode stammen. Der integrierte Anbieter rechnet mit dem Kalkulator unten; Carrier-Anbieter liefern Echtzeit-Tarife."
+        },
         "pickup_locations": {
           "label": "Abholorte"
         },

@@ -333,4 +333,22 @@ RSpec.describe Spree::Current do
       expect(described_class.instance.instance_variable_get(:@default_tax_zone_loaded)).to be false
     end
   end
+
+  describe '#provider_cache' do
+    it 'defaults to a hash providers can memoize into' do
+      described_class.provider_cache[:quote] = 'cached'
+
+      expect(described_class.provider_cache[:quote]).to eq('cached')
+    end
+
+    # Carrier quotes are request-scoped; leaking them across requests would
+    # price one customer's checkout with another's destination.
+    it 'is cleared between requests' do
+      described_class.provider_cache[:quote] = 'cached'
+
+      described_class.reset
+
+      expect(described_class.provider_cache).to eq({})
+    end
+  end
 end

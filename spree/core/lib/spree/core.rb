@@ -339,6 +339,17 @@ module Spree
     Rails.application.config.spree.delivery_method_rules = value
   end
 
+  # Quoting strategies selectable on a delivery method.
+  #
+  # @return [Array<Class>]
+  def self.delivery_rate_providers
+    Rails.application.config.spree.delivery_rate_providers
+  end
+
+  def self.delivery_rate_providers=(value)
+    Rails.application.config.spree.delivery_rate_providers = value
+  end
+
   def self.order_routing
     Rails.application.config.spree.order_routing
   end

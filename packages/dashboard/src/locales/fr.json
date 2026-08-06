@@ -709,6 +709,10 @@
         "fulfillment_type": {
           "label": "Type de traitement"
         },
+        "rate_provider": {
+          "label": "Fournisseur de tarifs",
+          "help": "D'où proviennent les prix de cette méthode. Le fournisseur intégré calcule avec le calculateur ci-dessous ; les transporteurs fournissent des tarifs en temps réel."
+        },
         "pickup_locations": {
           "label": "Points de retrait"
         },

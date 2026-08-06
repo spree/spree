@@ -899,6 +899,7 @@ en:
         oidc_requires_redirect: This provider requires signing in through its own login page.
         pickup_point_not_found: pickup point could not be found with this provider
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
+        rate_provider_unavailable: is not available for this store — connect its integration first
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
       services:

@@ -22,6 +22,9 @@ module Spree
     STOREFRONT = :storefront
     BACKOFFICE = :backoffice
 
+    # Quoting strategy used when +rate_provider+ is blank.
+    DEFAULT_RATE_PROVIDER = 'Spree::DeliveryRateProvider::Internal'.freeze
+
     # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.1.
     DISPLAY_ON_FRONT_END = 1
     # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.1.
@@ -85,6 +88,17 @@ module Spree
               if: :fulfillment_type_changed?
     validates :estimated_transit_business_days_min, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
     validates :estimated_transit_business_days_max, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
+    # Same reasoning as fulfillment_type: an unregistered provider is a typo
+    # that would raise at quote time, deep inside checkout. Blank is valid —
+    # it means the Internal provider.
+    validates :rate_provider,
+              inclusion: { in: -> (_record) { Spree.delivery_rate_providers.map(&:to_s) } },
+              allow_blank: true,
+              if: :rate_provider_changed?
+    # The admin picker filters on availability, but a direct API write must
+    # not save a provider whose integration isn't connected — that breaks
+    # quoting at checkout, not at save time where the admin can see it.
+    validate :rate_provider_must_be_available, if: :rate_provider_changed?
 
     scope :digital, -> { by_fulfillment_type('digital') }
 
@@ -159,6 +173,21 @@ module Spree
     def provider
       @provider ||= (fulfillment_provider.presence || 'Spree::FulfillmentProvider::Manual').constantize.new
     end
+
+    # The DeliveryRateProvider strategy quoting this method. Blank means the
+    # Internal (calculator-backed) provider, so untouched rows keep their
+    # existing pricing.
+    #
+    # @return [Spree::DeliveryRateProvider::Base]
+    def rate_provider_instance
+      @rate_provider_instance ||= rate_provider_class.new(self)
+    end
+
+    # @return [Class]
+    def rate_provider_class
+      (rate_provider.presence || DEFAULT_RATE_PROVIDER).constantize
+    end
+
 
     # Flat-payload writer for `rules`, so one PATCH saves the method and its
     # conditions together. See
@@ -298,6 +327,17 @@ module Spree
 
     def apply_pending_rules
       flush_pending_typed_association(:delivery_method_rules)
+    end
+
+    # Only meaningful for registered providers — the inclusion validation
+    # already rejects anything else, so an unresolvable name must not raise
+    # here as well.
+    def rate_provider_must_be_available
+      return if rate_provider.blank?
+      return unless Spree.delivery_rate_providers.map(&:to_s).include?(rate_provider)
+      return if rate_provider_class.available_for_store?(store)
+
+      errors.add(:rate_provider, Spree.t('errors.messages.rate_provider_unavailable'))
     end
   end
 end
