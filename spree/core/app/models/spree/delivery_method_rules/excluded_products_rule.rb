@@ -15,16 +15,15 @@ module Spree
         [product_ids: []]
       end
 
-      # Excluded product ids in prefixed form, encoded from the join table's
-      # foreign keys — hydrating N Product rows just to re-encode their ids
-      # would be wasted I/O. Sorted so clients can compare a response against
-      # what they sent.
+      # Excluded product ids in prefixed form. Plucked rather than hydrating N
+      # Product rows just to re-encode their ids, but read through the products
+      # association so soft-deleted products drop out — a client resubmitting
+      # this list must not be told a product it never chose is unreachable.
+      # Sorted so clients can compare a response against what they sent.
       #
       # @return [Array<String>]
       def product_prefixed_ids
-        delivery_method_rule_products.pluck(:product_id).sort.map do |id|
-          Spree::Product.prefixed_id_for(id)
-        end
+        products.pluck(:id).sort.map { |id| Spree::Product.prefixed_id_for(id) }
       end
 
       # Asks whether any of the package's products is excluded, rather than

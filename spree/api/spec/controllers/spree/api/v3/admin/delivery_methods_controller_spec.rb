@@ -180,6 +180,28 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.delivery_method_rules.reload.size).to eq(1)
     end
 
+    # The sheet resubmits the ids it was served, so a deleted excluded product
+    # must not make the whole method unsaveable.
+    it 'still saves after an excluded product is deleted' do
+      product = create(:product)
+      rule = Spree::DeliveryMethodRules::ExcludedProductsRule.create!(
+        delivery_method: delivery_method, products: [product]
+      )
+      product.destroy
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        name: 'Renamed',
+        rules: [
+          { id: rule.prefixed_id, type: 'excluded_products_rule',
+            product_ids: rule.reload.product_prefixed_ids }
+        ]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(delivery_method.reload.name).to eq('Renamed')
+    end
+
     it 'rejects nested rule products from another store' do
       foreign_product = create(:product, store: create(:store))
 

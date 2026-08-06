@@ -97,6 +97,19 @@ describe Spree::DeliveryMethodRule, type: :model do
       expect(blocking.delivery_method_rule_products).not_to be_loaded
     end
 
+    # A deleted product must stop appearing in the payload: the dashboard
+    # resubmits whatever it was given, and an id the API can no longer resolve
+    # would 404 the whole save.
+    it 'clears its product links when the product is deleted' do
+      product = create(:product)
+      rule = described_class.create!(delivery_method: delivery_method, products: [product])
+
+      product.destroy
+
+      expect(Spree::DeliveryMethodRuleProduct.where(product_id: product.id)).to be_empty
+      expect(described_class.find(rule.id).product_prefixed_ids).to be_empty
+    end
+
     it 'removes its product links with the rule' do
       rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
 
