@@ -5,8 +5,27 @@ module Spree
   # Used by the admin API (`/payment_methods/types`, `/promotion_actions/types`,
   # `/promotion_rules/types`) so that admin UIs can render configuration forms
   # for any provider/action/rule subclass without hard-coding field lists.
+  #
+  # Also hosts the subclass registry (`registers_subclasses_via`) that
+  # `find_by_api_type` and `subclasses_with_preference_schema` resolve against.
+  # That is a lodger rather than a natural fit — the registry is its own
+  # concept, and `Spree::CalculatedAdjustments` resolves an equivalent one
+  # separately. Extract a `Spree::RegisteredSubclasses` concern when a family
+  # needs the registry without preferences.
   module PreferenceSchema
     extend ActiveSupport::Concern
+
+    # Raised when a class reaches registry resolution without declaring one.
+    # A StandardError so host apps' normal rescues catch it — NotImplementedError
+    # descends from ScriptError and slips past `rescue => e`.
+    class UndeclaredRegistryError < StandardError; end
+
+    included do
+      # Where this class's registered subclasses live, as a block evaluated on
+      # the class. `class_attribute` so STI subclasses inherit their parent's
+      # declaration.
+      class_attribute :subclass_registry, instance_accessor: false, default: nil
+    end
 
     delegate :preference_schema, :serialized_preference_schema, :password_preference_keys, to: :class
 
@@ -174,42 +193,22 @@ module Spree
       #
       # @return [void]
       def registers_subclasses_via(&block)
-        @subclass_registry = block
-      end
-
-      # @return [Proc, nil] this class's own declaration, if any.
-      def subclass_registry
-        @subclass_registry if defined?(@subclass_registry)
+        self.subclass_registry = block
       end
 
       private
 
-      # Resolves the declared registry. Gateways expose `providers` instead,
-      # which predates this hook.
+      # Resolves the declared registry.
       #
       # Raises rather than returning an empty list: a missing declaration used
       # to mean `find_by_api_type` silently returned nil, so typed rows were
       # dropped from a payload with no error and admin pickers rendered empty.
       def registered_subclasses
-        owner = subclass_registry_owner
-        return instance_exec(&owner.subclass_registry) if owner
-        return providers if respond_to?(:providers)
+        raise UndeclaredRegistryError,
+              "#{name} has no subclass registry. Declare one with " \
+              '`registers_subclasses_via { ... }` returning the registered subclasses.' if subclass_registry.nil?
 
-        raise NotImplementedError,
-              "#{name} includes Spree::PreferenceSchema but declares no subclass registry. " \
-              'Add `registers_subclasses_via { ... }` returning the registered subclasses.'
-      end
-
-      # The declaration lives on the STI parent, and class-level ivars are not
-      # inherited — so walk up to find whichever ancestor declared it.
-      def subclass_registry_owner
-        klass = self
-        while klass.respond_to?(:subclass_registry)
-          return klass if klass.subclass_registry
-
-          klass = klass.superclass
-        end
-        nil
+        instance_exec(&subclass_registry)
       end
 
       # Defaults can be Procs that hit the database (e.g. `Spree::Store.default`);

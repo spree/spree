@@ -36,6 +36,10 @@ module Spree
       Spree.payment_methods
     end
 
+    # Gateways predate `registers_subclasses_via` and expose their registry as
+    # `providers`; declaring it keeps subclass resolution to a single rule.
+    registers_subclasses_via { providers }
+
     def provider_class
       raise ::NotImplementedError, 'You must implement provider_class method for this gateway.'
     end
