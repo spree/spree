@@ -60,6 +60,16 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
       expect(provider.estimate(package)).to be_nil
     end
 
+    # A carrier outage must degrade to "method not offered", never break
+    # the rate refresh.
+    it 'suppresses the method and reports when the API call fails' do
+      allow(shipment_service).to receive(:create).and_raise(StandardError.new('timeout'))
+      allow(Rails.error).to receive(:report)
+
+      expect(provider.estimate(package)).to be_nil
+      expect(Rails.error).to have_received(:report)
+    end
+
     it 'suppresses the method when the integration is not connected' do
       allow(provider).to receive(:integration).and_return(nil)
 

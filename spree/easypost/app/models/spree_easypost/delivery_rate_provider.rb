@@ -8,13 +8,22 @@ module SpreeEasyPost
       'SpreeEasyPost::Integration'
     end
 
+    # A rating failure must never break checkout: any API error suppresses
+    # this method (the customer still sees calculator-priced options) and is
+    # reported for observability rather than raised into the rate refresh.
+    #
     # @param package [Spree::Stock::Package]
     # @return [Spree::DeliveryRateProvider::Estimate, nil]
     def estimate(package)
       return if integration.nil?
       return if package.order.ship_address.nil?
 
-      rate = matching_rate(package)
+      rate = begin
+        matching_rate(package)
+      rescue StandardError => e
+        Rails.error.report(e, context: { delivery_method_id: delivery_method.id }, source: 'spree_easypost.rating')
+        nil
+      end
       return if rate.nil?
 
       Spree::DeliveryRateProvider::Estimate.new(
