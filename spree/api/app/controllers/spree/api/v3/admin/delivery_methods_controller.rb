@@ -134,16 +134,17 @@ module Spree
             end
           end
 
-          # Plucks ids rather than hydrating Product rows just to read them
-          # back, and raises on anything the caller cannot reach so an
-          # unreachable id 404s instead of being silently dropped.
+          # Keeps only the products this caller can reach in this store, and
+          # plucks ids rather than hydrating rows to read them back. Ids that
+          # resolve to nothing — another store's, or a product deleted while
+          # the sheet was open — are dropped: they cannot become an exclusion,
+          # and failing the whole save over one would leave the merchant stuck
+          # with no way to clear it. Mirrors how price lists filter membership.
           def accessible_product_ids(ids)
-            decoded = decode_prefixed_ids(ids)
-            found = current_store.products.accessible_by(current_ability, :show).where(id: decoded).pluck(:id)
-            missing = decoded.map(&:to_s) - found.map(&:to_s)
-            raise ActiveRecord::RecordNotFound, "Couldn't find Spree::Product with id=#{missing.join(',')}" if missing.any?
-
-            found
+            current_store.products.
+              accessible_by(current_ability, :show).
+              where(id: decode_prefixed_ids(ids)).
+              pluck(:id)
           end
 
           def assign_calculator(delivery_method)

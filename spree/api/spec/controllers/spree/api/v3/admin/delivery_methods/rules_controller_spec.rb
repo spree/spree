@@ -70,7 +70,9 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
       expect(delivery_method.delivery_method_rules.sole.products).to eq([product])
     end
 
-    it 'rejects products belonging to another store' do
+    # Unreachable ids are dropped rather than failing the save — they cannot
+    # become an exclusion either way.
+    it 'drops products belonging to another store' do
       other_store_product = create(:product, store: create(:store))
 
       post :create, params: {
@@ -79,11 +81,11 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
         product_ids: [other_store_product.prefixed_id]
       }, as: :json
 
-      expect(response).to have_http_status(:not_found)
-      expect(delivery_method.delivery_method_rules.count).to eq(0)
+      expect(response).to have_http_status(:created)
+      expect(delivery_method.delivery_method_rules.sole.products).to be_empty
     end
 
-    it 'rejects products the caller is not allowed to see' do
+    it 'drops products the caller is not allowed to see' do
       product = create(:product)
       restricted_ability = Class.new do
         include CanCan::Ability
@@ -101,8 +103,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
         product_ids: [product.prefixed_id]
       }, as: :json
 
-      expect(response).to have_http_status(:not_found)
-      expect(delivery_method.delivery_method_rules.count).to eq(0)
+      expect(response).to have_http_status(:created)
+      expect(delivery_method.delivery_method_rules.sole.products).to be_empty
     end
   end
 

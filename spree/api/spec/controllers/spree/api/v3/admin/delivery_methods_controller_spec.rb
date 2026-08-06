@@ -202,16 +202,47 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.reload.name).to eq('Renamed')
     end
 
-    it 'rejects nested rule products from another store' do
-      foreign_product = create(:product, store: create(:store))
+    # A sheet opened before the deletion still holds the old id, so the save
+    # has to drop it and keep the rest rather than fail.
+    it 'saves with a stale product id from an already-open sheet' do
+      deleted_product = create(:product)
+      kept_product = create(:product)
+      rule = Spree::DeliveryMethodRules::ExcludedProductsRule.create!(
+        delivery_method: delivery_method, products: [deleted_product, kept_product]
+      )
+      stale_id = deleted_product.prefixed_id
+      deleted_product.destroy
 
       patch :update, params: {
         id: delivery_method.prefixed_id,
-        rules: [{ type: 'excluded_products_rule', product_ids: [foreign_product.prefixed_id] }]
+        name: 'Renamed',
+        rules: [
+          { id: rule.prefixed_id, type: 'excluded_products_rule',
+            product_ids: [stale_id, kept_product.prefixed_id] }
+        ]
       }, as: :json
 
-      expect(response).to have_http_status(:not_found)
-      expect(delivery_method.delivery_method_rules.count).to eq(0)
+      expect(response).to have_http_status(:ok)
+      expect(delivery_method.reload.name).to eq('Renamed')
+      expect(rule.reload.products).to eq([kept_product])
+    end
+
+    # An unreachable product cannot become an exclusion, but it must not fail
+    # the whole save either — the merchant would have no way to clear it.
+    it 'drops nested rule products from another store' do
+      foreign_product = create(:product, store: create(:store))
+      own_product = create(:product)
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        rules: [{
+          type: 'excluded_products_rule',
+          product_ids: [foreign_product.prefixed_id, own_product.prefixed_id]
+        }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(delivery_method.delivery_method_rules.sole.products).to eq([own_product])
     end
   end
 
