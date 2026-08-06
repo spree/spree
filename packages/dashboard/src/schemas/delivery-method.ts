@@ -1,6 +1,6 @@
 import { z } from 'zod/v4'
 
-export const FULFILLMENT_TYPES = ['shipping', 'digital', 'pickup', 'pickup_point'] as const
+export const FULFILLMENT_TYPES = ['shipping', 'digital', 'pickup'] as const
 
 /**
  * One eligibility rule as held in form state. `id` is absent for rules added

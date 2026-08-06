@@ -672,7 +672,7 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
         </Field>
       )}
 
-      {(fulfillmentType === 'shipping' || fulfillmentType === 'pickup_point') && (
+      {fulfillmentType === 'shipping' && (
         <>
           <Field>
             <FieldLabel>{t('admin.fields.delivery_method.calculator.label')}</FieldLabel>

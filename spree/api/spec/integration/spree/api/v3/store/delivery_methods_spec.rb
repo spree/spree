@@ -18,7 +18,7 @@ RSpec.describe 'Store Delivery Methods API', type: :request, swagger_doc: 'api-r
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :fulfillment_type, in: :query, type: :string, required: false,
-                description: 'Filter: shipping, digital, pickup, pickup_point'
+                description: 'Filter: shipping, digital, pickup'
 
       response '200', 'delivery methods found' do
         before do

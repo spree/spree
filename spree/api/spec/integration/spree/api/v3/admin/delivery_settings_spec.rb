@@ -36,7 +36,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Creates a delivery method. fulfillment_type is one of shipping, digital, pickup, pickup_point.'
+      description 'Creates a delivery method. fulfillment_type is one of shipping, digital, pickup.'
       admin_scope :write, :settings
 
       admin_sdk_example 'delivery-methods/create'
@@ -49,7 +49,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           name: { type: :string, example: 'Express' },
           admin_name: { type: :string, nullable: true },
           code: { type: :string, nullable: true },
-          fulfillment_type: { type: :string, enum: %w[shipping digital pickup pickup_point], example: 'shipping' },
+          fulfillment_type: { type: :string, enum: %w[shipping digital pickup], example: 'shipping' },
           storefront_visible: { type: :boolean, example: true },
           tracking_url: { type: :string, nullable: true },
           estimated_transit_business_days_min: { type: :integer, nullable: true },

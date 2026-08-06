@@ -178,6 +178,101 @@ when there is a real implementation behind it, never a speculative column
 plus a provider key nobody declares.
 
 
+## 2026-08-06: Integrations become the admin-managed credential surface; verify-before-activate
+
+`Spree::Integration` (shipped 5.x, previously zero subclasses, no API,
+no UI) becomes the single credential home for every provider seam —
+delivery rates, tax, fulfillment, pickup point networks. New plan:
+`6.0-integrations-admin.md`. Explicit `Spree.integrations` registry
+(house pattern, no descendants-scanning); Admin API v3 CRUD + types
+discovery reusing the `PreferenceSchema`/`Masking` machinery from
+payment methods (secrets are `:password`-typed preferences, masked on
+read, round-trip-guarded on write); dashboard `/settings/integrations`
+gallery grouped by `integration_group` — the one page showing what is
+connected to the current store. Semantics settled interactively:
+**verify before activate** (saving credentials never makes a network
+call; flipping `active: true` runs `can_connect?` and 422s on failure;
+`POST /:id/test` for diagnostics) and **ephemeral connection status**
+(no `last_checked_at`/`last_error` columns). Constraints now: new
+provider gems ship an Integration subclass — no env-var credential
+contracts for per-store providers; no per-provider credential UIs —
+provider pickers deep-link to the integrations page.
+
+## 2026-08-06: Pickup point provider contract hardened; no reference network gem in 6.0
+
+Decided before any concrete `PickupPointProvider` exists, precisely
+because none does: (1) providers are constructed with
+`new(delivery_method)` — the current zero-arg construction leaves no
+path to `store.integrations` for credentials; (2) `find_nearby` accepts
+`zipcode:`/`query:` alongside `latitude:`/`longitude:` (postcode/city
+search is the standard EU checkout pattern; map-widget storefronts skip
+`find_nearby` and only use server-side `find_by_external_id`
+validation). Both are free now and breaking later. **No reference
+network provider (InPost/Sendcloud) ships in 6.0** — community/later,
+with a how-to guide. The checkout flow itself is confirmed as
+shipped: point selected during checkout at the delivery step
+(`pickup_point_external_id` on rate selection, server-validated, frozen
+into `fulfillment.pickup_point_data`).
+
+**Amended 2026-08-06 (same day, Damian):** all pickup work beyond
+already-shipped code — including the contract hardening above — is
+**deferred to 6.1**; 6.0 is packed. The pickup point provider
+interface is **not documented in 6.0 at all** — the v6 developer docs
+cover only the delivery rate provider interface; a class-level comment
+on `PickupPointProvider::Base` notes the constructor and `find_nearby`
+signature change in 6.1, so the change breaks no sanctioned contract.
+Accepted trade-off, recorded in `6.0-fulfillment-and-delivery.md`
+(Implementation status + Phase 6). Constraint: no 6.0 doc or guide may
+cover the pickup point provider interface.
+
+**Second amendment 2026-08-06 (Damian):** `pickup_point` is also
+removed from the `Spree.fulfillment_types` registry and the dashboard
+`FULFILLMENT_TYPES` const — not selectable anywhere in 6.0; existing
+rows stay loadable (inclusion validates on change only) and the shipped
+endpoints still serve them; one-word re-registration in 6.1 restores
+the surface. `local_delivery` is removed the same way, but as a **cut,
+not a deferral**: it fails the plan's own modality-vs-segment test —
+identical address/zone/provider/lifecycle semantics to `shipping`; the
+local-delivery use case is a `shipping` method with a postal-code
+DeliveryZone. It returns only alongside real provider behavior
+(delivery windows, courier assignment). 6.0 built-in types:
+`shipping`, `pickup`, `digital`.
+
+## 2026-08-06: EasyPost is the reference delivery rate provider (Shippo pick reversed same day)
+
+Resolves the EasyPost-or-Shippo pick left open on 2026-07-29/30. The
+monorepo's reference `DeliveryRateProvider` (`6.0-delivery-rate-provider.md`
+Phase 5) is built on **Shippo**. Competitor survey: no platform ships
+direct per-carrier integrations in core — Shopify and WooCommerce built
+their in-house label services on an aggregator (both historically
+EasyPost-backed), BigCommerce leans on ShipperHQ, and the OSS field
+(Medusa, Saleor, Vendure) ships a provider interface with aggregator
+plugins, Medusa's ecosystem having standardized on Shippo. A direct
+UPS/USPS/FedEx trio was rejected: three churning carrier APIs to
+maintain, US-only coverage against Spree's heavily European base, and
+worse merchant onboarding than one aggregator account. Between the two
+aggregators, Shippo fits the reference provider's audience (default OSS
+install, SMB merchant): simpler API surface, pay-as-you-go pricing with
+no monthly fee, solid EU carrier set. The `spree_easypost` lineage
+carries no weight — it targets the pre-6.0 architecture and would be a
+rewrite regardless. The interface stays aggregator-agnostic; EasyPost,
+Sendcloud (EU-first, strong service-point coverage) or direct-carrier
+providers remain buildable as third-party gems on the same base class.
+
+**Reversed 2026-08-06 (same day, Damian): EasyPost.** Two factors the
+Shippo lean under-weighted: (1) **Spree's merchant profile skews
+larger** — merchants with negotiated UPS/FedEx contracts who want to
+connect their own carrier accounts, which is EasyPost's core BYOCA
+(bring-your-own-carrier-account) model, not Shippo's SMB
+default-account posture; (2) **Ruby SDK reality**: EasyPost maintains
+its official `easypost` gem (7.6.0, Feb 2026), while Shippo's official
+Ruby client last released in April 2020 and signals deprecation — for
+a Ruby-first reference implementation that difference is decisive (the
+Shippo path would mean hand-rolling and maintaining an HTTP client in
+the provider gem). Everything else in the original entry stands:
+aggregator over direct-carrier trio, aggregator-agnostic interface,
+third-party gems welcome on the same base class.
+
 ## 2026-08-05: Dashboard form values must not embed SDK entity types
 
 The returns rework regenerated the admin SDK types, and the new `Order`
@@ -300,7 +395,6 @@ dashboard pages. Reviewing what remains settled four things:
   legacy tables (except `spree_return_items`, kept under its original
   name for historical reference until 6.1). `Spree::Metafields` lands on
   the three entities on the same branch.
-
 
 ## 2026-08-05: v5 developer docs are frozen until the 6.0 release; 6.0 docs land under docs/v6
 

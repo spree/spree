@@ -188,7 +188,7 @@ module Spree
 
         # Open strings, no inclusion validation — extensions append their own
         # (e.g. 'same_day_courier').
-        Rails.application.config.spree.fulfillment_types = %w[shipping pickup pickup_point digital local_delivery]
+        Rails.application.config.spree.fulfillment_types = %w[shipping pickup digital]
 
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add
