@@ -554,6 +554,24 @@ describe Spree::Product, type: :model do
 
       expect(typeless).to be_valid
     end
+
+    # Importers and API clients save the product, then attach its custom fields.
+    # Blocking creation would reject the first of those two writes.
+    it 'allows an active product to be created before its fields are attached' do
+      product = build(:product, product_type: product_type, status: 'active')
+
+      expect(product).to be_valid
+      expect(product.save).to be(true)
+    end
+
+    it 'still blocks a later activation of that product' do
+      product = create(:product, product_type: product_type, status: 'active')
+      product.update!(status: 'draft')
+
+      product.status = 'active'
+
+      expect(product).not_to be_valid
+    end
   end
 
   describe 'assigning a product type to a persisted product' do

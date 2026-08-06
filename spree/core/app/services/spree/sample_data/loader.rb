@@ -26,6 +26,9 @@ module Spree
               puts 'Loading sample options...'
               load_ruby_file('options')
 
+              puts 'Loading sample product types...'
+              load_ruby_file('product_types')
+
               puts 'Loading sample products...'
               load_products
 
@@ -34,6 +37,9 @@ module Spree
 
               puts 'Loading sample product translations...'
               load_product_translations
+
+              puts 'Linking product types to categories...'
+              load_ruby_file('product_type_categories')
 
               puts 'Loading sample collections...'
               load_ruby_file('collections')

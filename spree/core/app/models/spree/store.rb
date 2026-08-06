@@ -109,6 +109,10 @@ module Spree
     has_many :categories, -> { manual }, class_name: 'Spree::Category'
     has_many :collections, class_name: 'Spree::Collection', dependent: :destroy_async
 
+    # restrict, not destroy — a type in use is refused deletion, so wiping a
+    # store's types out from under its products would contradict that guard.
+    has_many :product_types, class_name: 'Spree::ProductType', dependent: :restrict_with_error
+
     # @deprecated Use #categories; removed in 6.1.
     def taxons
       Spree::Deprecation.warn('Spree::Store#taxons is deprecated and will be removed in Spree 6.1. Use #categories instead.')

@@ -851,8 +851,13 @@ module Spree
       association(:default_variant).reset
     end
 
+    # Activation of an existing product only. Creation is excluded on purpose:
+    # importers and API clients routinely save the product first and attach its
+    # custom fields immediately after, so a new record has no fair chance to
+    # carry them yet. The guard still fires the moment anyone activates a
+    # product that is missing required fields.
     def becoming_active?
-      active? && (new_record? || status_changed?)
+      active? && !new_record? && status_changed?
     end
 
     def required_custom_fields_present

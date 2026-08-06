@@ -18,6 +18,51 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     expect(Spree::Product.where(product_type_id: nil)).to be_empty
   end
 
+  describe 'product types' do
+    # The seeds add Default and Digital; the sample data adds one type per family.
+    let(:sample_product_types) do
+      Spree::ProductType.where.not(name: [
+        I18n.t('spree.seed.product_types.default'), I18n.t('spree.seed.product_types.digital')
+      ])
+    end
+
+    it 'creates one type per product family rather than a single catch-all' do
+      expect(sample_product_types.pluck(:name)).to match_array(
+        ['Kitchen Appliance', 'Air Treatment', 'Garment Care', 'Vacuum Cleaner', 'Hair Styling', 'Grooming']
+      )
+    end
+
+    it 'gives every type a custom field schema' do
+      sample_product_types.find_each do |product_type|
+        expect(product_type.custom_field_definitions).to be_present
+        expect(product_type.product_type_custom_field_definitions.required).to be_present
+      end
+    end
+
+    it 'varies the schema between types' do
+      kitchen = Spree::ProductType.find_by(name: 'Kitchen Appliance')
+      grooming = Spree::ProductType.find_by(name: 'Grooming')
+
+      expect(kitchen.custom_field_definitions.map(&:key)).to include('capacity')
+      expect(grooming.product_type_custom_field_definitions.required.
+        map { |join| join.custom_field_definition.key }).to include('runtime')
+    end
+
+    it 'seeds the color option type and a category onto every type' do
+      sample_product_types.find_each do |product_type|
+        expect(product_type.option_types.map(&:name)).to eq(['color'])
+        expect(product_type.categories).to be_present
+      end
+    end
+
+    it 'fills the required fields on the imported products' do
+      product = Spree::Product.joins(:product_type).find_by(spree_product_types: { name: 'Kitchen Appliance' })
+
+      expect(product.metafields.map { |metafield| metafield.metafield_definition.key }).
+        to include('wattage', 'voltage', 'warranty')
+    end
+  end
+
   it 'creates variants' do
     expect(Spree::Variant.count).to be > 80
   end
