@@ -1206,11 +1206,22 @@ failed **silently**: `find_by_api_type` returned nil, so
 bug that broke `DeliveryMethod#rules=` on first attempt.
 
 Replaced with a declarative hook: each STI parent calls
-`registers_subclasses_via { <registry> }` (one line), and a class that
-declares none **raises `NotImplementedError`** rather than reporting zero
-subclasses. Resolution walks the ancestor chain, so calling on an STI
-subclass works — it did not before, under either scheme. Gateways keep
-the `providers` path, which predates the hook. Migrated in place:
+`registers_subclasses_via { <registry> }` (one line), stored in a
+`class_attribute` so STI subclasses inherit the parent's declaration —
+resolving on a subclass works, which it did not before under either
+scheme. A class that declares none raises
+`Spree::PreferenceSchema::UndeclaredRegistryError` (a **StandardError**,
+so host apps' `rescue => e` catches it — `NotImplementedError` descends
+from `ScriptError` and would slip past). Migrated in place:
 PromotionRule, PromotionAction, PriceRule, OrderRoutingRule,
-CollectionRule, DeliveryMethodRule; `5.7-payment-method-rules.md`
-updated to the new form.
+CollectionRule, DeliveryMethodRule, and **PaymentMethod** — gateways
+declare `registers_subclasses_via { providers }` rather than being a
+special case in the resolver, so there is exactly one resolution rule.
+`5.7-payment-method-rules.md` updated to the new form.
+
+Known debt: the registry is a lodger inside `PreferenceSchema` (which
+`Spree::Base` includes, so ~200 models carry class methods only six use),
+and `Spree::CalculatedAdjustments` resolves an equivalent registry
+separately. Extract a `Spree::RegisteredSubclasses` concern when a family
+needs the registry without preferences — that second consumer is the
+trigger, and it would absorb CalculatedAdjustments too.
