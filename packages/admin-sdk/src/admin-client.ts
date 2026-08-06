@@ -226,6 +226,7 @@ import type {
   CustomFieldDefinition,
   DeliveryMethod,
   DeliveryMethodRule,
+  DeliveryRateProviderOption,
   DeliveryZone,
   Discount,
   Exchange,
@@ -1601,6 +1602,16 @@ export class AdminClient {
       this.request<{ data: FulfillmentProviderOption[]; fulfillment_types: string[] }>(
         'GET',
         '/delivery_methods/fulfillment_providers',
+        options,
+      ),
+
+    /** Rate providers available to this store, plus the default when none is chosen. */
+    rateProviders: (
+      options?: RequestOptions,
+    ): Promise<{ data: DeliveryRateProviderOption[]; default: string }> =>
+      this.request<{ data: DeliveryRateProviderOption[]; default: string }>(
+        'GET',
+        '/delivery_methods/rate_providers',
         options,
       ),
 

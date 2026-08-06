@@ -8,7 +8,7 @@ export type {
   PaginationMeta,
 } from '@spree/sdk-core'
 // Hand-written discovery-endpoint types (controller-shaped, not generated)
-export type { FulfillmentProviderOption } from './fulfillment-providers'
+export type { DeliveryRateProviderOption, FulfillmentProviderOption } from './fulfillment-providers'
 // Admin-specific generated types
 export type { default as Address } from './generated/Address'
 export type { default as AdminUser } from './generated/AdminUser'

@@ -709,6 +709,10 @@
         "fulfillment_type": {
           "label": "履约类型"
         },
+        "rate_provider": {
+          "label": "费率提供方",
+          "help": "此方式的价格来源。内置提供方使用下方的计算器；承运商提供方提供实时费率。"
+        },
         "pickup_locations": {
           "label": "自提地点"
         },

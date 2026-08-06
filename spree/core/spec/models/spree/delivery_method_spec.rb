@@ -174,6 +174,60 @@ describe Spree::DeliveryMethod, type: :model do
     end
   end
 
+  describe '#rate_provider_instance' do
+    let(:delivery_method) { create(:delivery_method) }
+
+    it 'defaults to the Internal provider when unset' do
+      expect(delivery_method.rate_provider).to be_blank
+      expect(delivery_method.rate_provider_instance).to be_a(Spree::DeliveryRateProvider::Internal)
+    end
+
+    it 'constantizes the configured provider and passes itself to it' do
+      provider_class = Class.new(Spree::DeliveryRateProvider::Base)
+      stub_const('ConfiguredRateProvider', provider_class)
+      Spree.delivery_rate_providers << provider_class
+
+      delivery_method.update!(rate_provider: 'ConfiguredRateProvider')
+
+      expect(delivery_method.rate_provider_instance).to be_a(provider_class)
+      expect(delivery_method.rate_provider_instance.delivery_method).to eq(delivery_method)
+    ensure
+      Spree.delivery_rate_providers.delete(provider_class)
+    end
+
+    # An unregistered provider would otherwise raise at quote time, deep
+    # inside checkout.
+    it 'rejects a provider that is not registered' do
+      delivery_method.rate_provider = 'NotARegisteredProvider'
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:rate_provider]).to be_present
+    end
+
+    it 'keeps rows loadable when a registered provider is later removed' do
+      delivery_method.update_columns(rate_provider: 'GoneAwayProvider')
+
+      expect(delivery_method.reload).to be_valid
+    end
+
+    # The admin picker filters on availability, but a direct API write must
+    # not save a provider whose integration isn't connected.
+    it 'rejects a registered provider that is unavailable for the store' do
+      provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
+        def self.integration_class = 'Spree::Integrations::Unconnected'
+      end
+      stub_const('UnconnectedRateProvider', provider_class)
+      Spree.delivery_rate_providers << provider_class
+
+      delivery_method.rate_provider = 'UnconnectedRateProvider'
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:rate_provider]).to be_present
+    ensure
+      Spree.delivery_rate_providers.delete(provider_class)
+    end
+  end
+
   # Regression test for #4320
   context 'soft deletion' do
     let(:delivery_method) { create(:delivery_method) }

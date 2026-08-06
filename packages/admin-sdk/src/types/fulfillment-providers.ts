@@ -16,3 +16,20 @@ export interface FulfillmentProviderOption {
   /** Whether fulfillments handled by this provider ship to a customer address. */
   requires_address: boolean
 }
+
+/**
+ * A registered `Spree::DeliveryRateProvider` strategy, as returned by
+ * `GET /delivery_methods/rate_providers`. Rate providers decide where a
+ * method's price comes from — the built-in Internal provider prices through
+ * the method's calculator, while carrier providers quote live rates. Only
+ * providers usable by the current store are listed, so a carrier whose
+ * integration is not connected never appears.
+ */
+export interface DeliveryRateProviderOption {
+  /** Ruby class name, e.g. `Spree::DeliveryRateProvider::Internal`. */
+  type: string
+  /** Human-readable name for display. */
+  name: string
+  /** `Spree::Integration` subclass holding this provider's credentials, if any. */
+  integration_class: string | null
+}

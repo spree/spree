@@ -1674,10 +1674,16 @@ export interface DeliveryMethodParams {
   name?: string
   admin_name?: string | null
   code?: string | null
-  /** One of `shipping`, `digital`, `pickup`, `pickup_point`. */
+  /** One of `shipping`, `digital`, `pickup` (see `deliveryMethods.fulfillmentProviders()`). */
   fulfillment_type?: string
   fulfillment_provider?: string
   pickup_point_provider?: string | null
+  /**
+   * Quoting strategy class name (see `deliveryMethods.rateProviders()`).
+   * Omit or send null for the built-in Internal provider, which prices
+   * through the method's calculator.
+   */
+  rate_provider?: string | null
   storefront_visible?: boolean
   tracking_url?: string | null
   estimated_transit_business_days_min?: number | null
