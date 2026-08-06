@@ -54,14 +54,14 @@ RSpec.describe Spree::Integration, type: :model do
     end
 
     it 'falls back to the class description without a translation' do
-      expect(SpreeCarrier::Integration.localized_description).to eq('Fallback description')
+      expect(SpreeCarrier::Integration.human_description).to eq('Fallback description')
     end
 
     it 'prefers the Rails translation for the current locale' do
       translations = { spree: { integrations: { carrier: { description: 'Translated' } } } }
       I18n.backend.store_translations(:en, translations)
 
-      expect(SpreeCarrier::Integration.localized_description).to eq('Translated')
+      expect(SpreeCarrier::Integration.human_description).to eq('Translated')
     ensure
       I18n.backend.reload!
     end

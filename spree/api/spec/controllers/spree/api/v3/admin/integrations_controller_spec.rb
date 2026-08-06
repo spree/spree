@@ -34,24 +34,14 @@ RSpec.describe Spree::Api::V3::Admin::IntegrationsController, type: :controller 
   after { Spree.integrations.delete('TestIntegrations::Carrier') }
 
   describe 'GET #types' do
-    it 'lists registered types with schema and connected state' do
+    it 'lists registered types with their configuration schema' do
       get :types, as: :json
 
       expect(response).to have_http_status(:ok)
       entry = json_response['data'].find { |row| row['type'] == 'carrier' }
       expect(entry['name']).to eq('Carrier')
       expect(entry['group']).to eq('shipping')
-      expect(entry['connected']).to be false
       expect(entry['preference_schema'].map { |f| f['key'] }).to match_array(%w[api_key account_number])
-    end
-
-    it 'marks connected types for the current store' do
-      TestIntegrations::Carrier.create!(store: store, active: false)
-
-      get :types, as: :json
-
-      entry = json_response['data'].find { |row| row['type'] == 'carrier' }
-      expect(entry['connected']).to be true
     end
 
     describe 'gallery metadata' do

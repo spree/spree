@@ -92,7 +92,7 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
       tags 'Integrations'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Every registered integration type with its configuration schema and whether the current store has it connected. Registered types ship with provider gems.'
+      description 'Every registered integration type with its gallery metadata and configuration schema. Pure registry discovery — read live connection state from GET /integrations.'
       admin_scope :read, :integrations
 
       admin_sdk_example 'integrations/types'
@@ -104,7 +104,6 @@ RSpec.describe 'Admin Integrations API', type: :request, swagger_doc: 'api-refer
         run_test! do |response|
           data = JSON.parse(response.body)
           entry = data['data'].find { |row| row['type'] == 'carrier' }
-          expect(entry['connected']).to be false
           expect(entry['preference_schema']).to be_an(Array)
         end
       end

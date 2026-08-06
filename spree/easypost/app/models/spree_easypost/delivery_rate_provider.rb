@@ -59,15 +59,7 @@ module SpreeEasyPost
     end
 
     def address_params(source)
-      {
-        street1: source.address1,
-        street2: source.address2,
-        city: source.city,
-        state: source.respond_to?(:state_abbr) ? source.state_abbr : source.state&.abbr,
-        zip: source.zipcode,
-        country: source.country&.iso,
-        phone: source.phone
-      }.compact_blank
+      SpreeEasyPost.address_params(source)
     end
 
     def parcel_params(package)

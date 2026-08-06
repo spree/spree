@@ -13,6 +13,10 @@ module SpreeEasyPost
       'EasyPost'
     end
 
+    def self.integration_class
+      'SpreeEasyPost::Integration'
+    end
+
     # Buys the rate quoted at checkout when it is still valid; EasyPost
     # quotes expire, so a stale or missing quote is re-quoted from the
     # actual fulfillment and bought only when a rate for the method's exact
@@ -100,21 +104,8 @@ module SpreeEasyPost
       )
     end
 
-    def integration_for(fulfillment)
-      store = fulfillment.order&.store || fulfillment.cart&.store
-      store&.integrations&.active&.find_by(type: 'SpreeEasyPost::Integration')
-    end
-
     def address_params(source)
-      {
-        street1: source.address1,
-        street2: source.address2,
-        city: source.city,
-        state: source.respond_to?(:state_abbr) ? source.state_abbr : source.state&.abbr,
-        zip: source.zipcode,
-        country: source.country&.iso,
-        phone: source.phone
-      }.compact_blank
+      SpreeEasyPost.address_params(source)
     end
 
     def report(error, fulfillment)
