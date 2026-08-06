@@ -1614,3 +1614,18 @@ and `Spree::CalculatedAdjustments` resolves an equivalent registry
 separately. Extract a `Spree::RegisteredSubclasses` concern when a family
 needs the registry without preferences — that second consumer is the
 trigger, and it would absorb CalculatedAdjustments too.
+## 2026-08-06 — Converted-away columns outlive the release that converts them
+
+`spree_tax_rates.zone_id` stays in the schema through 6.0 even though
+nothing reads it, and is dropped in 6.1. The reason is ordering, and it
+generalizes: a data task named in the upgrade manifest runs *after*
+`db:migrate`, so a migration that removes the task's input column in the
+same release destroys the data the task exists to convert — and leaves a
+merchant no source to re-run from if the conversion needs repeating.
+Tax rates therefore gain `country_id`/`state_id`, every `zone_id` reader
+is severed (the association, the zone scopes, and `Zone#has_many
+:tax_rates`, whose `dependent: :destroy` would otherwise delete live
+rates when a shipping zone is destroyed), and the column is left in
+place, unread. `spree_adjustments` already worked this way under
+`migrate_adjustments_to_typed_rows`, which keeps the legacy table as its
+rollback source; treat that as the pattern rather than the exception.
