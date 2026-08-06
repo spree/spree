@@ -27,7 +27,8 @@ module Spree
                 type: klass.api_type,
                 name: klass.integration_name,
                 group: klass.integration_group,
-                icon: klass.icon_path,
+                description: klass.localized_description,
+                logo_url: klass.logo_url,
                 preference_schema: klass.serialized_preference_schema,
                 connected: connected_types.include?(klass.to_s)
               }

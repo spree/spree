@@ -38,6 +38,35 @@ RSpec.describe Spree::Integration, type: :model do
     end
   end
 
+  describe 'gallery metadata' do
+    let(:described_klass) do
+      Class.new(described_class) do
+        def self.name = 'SpreeCarrier::Integration'
+        def self.description = 'Fallback description'
+      end
+    end
+
+    before { stub_const('SpreeCarrier::Integration', described_klass) }
+
+    it 'declares no logo or description by default' do
+      expect(described_class.logo_url).to be_nil
+      expect(described_class.description).to be_nil
+    end
+
+    it 'falls back to the class description without a translation' do
+      expect(SpreeCarrier::Integration.localized_description).to eq('Fallback description')
+    end
+
+    it 'prefers the Rails translation for the current locale' do
+      translations = { spree: { integrations: { carrier: { description: 'Translated' } } } }
+      I18n.backend.store_translations(:en, translations)
+
+      expect(SpreeCarrier::Integration.localized_description).to eq('Translated')
+    ensure
+      I18n.backend.reload!
+    end
+  end
+
   describe 'verify before activate' do
     let(:failing_class) do
       Class.new(described_class) do

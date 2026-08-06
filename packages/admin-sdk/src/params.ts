@@ -1399,7 +1399,10 @@ export interface IntegrationTypeDefinition {
   name: string
   /** Display grouping, e.g. `shipping`, `tax`; null for ungrouped. */
   group: string | null
-  icon: string | null
+  /** One-line description, localized server-side from the gem's translations. */
+  description: string | null
+  /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI for self-contained gems. Render with a fallback — hosted logos are a courtesy, not a guarantee. */
+  logo_url: string | null
   preference_schema: { key: string; type: string; default: unknown }[]
   /** Whether the current store already holds credentials for this type. */
   connected: boolean
