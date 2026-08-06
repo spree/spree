@@ -51,15 +51,15 @@ module Spree
       @pending_custom_field_definitions = Array(rows).map { |row| row.to_h.with_indifferent_access }
     end
 
-    # @return [Array<String>] prefixed option type ids, encoded inline to avoid
-    #   hydrating the records just to serialize their ids
+    # @return [Array<String>] prefixed option type ids, encoded from the ids to
+    #   avoid hydrating the records just to serialize them
     def option_type_prefixed_ids
-      encode_prefixed_ids(Spree::OptionType, option_type_ids)
+      option_type_ids.map { |id| Spree::OptionType.prefixed_id_for(id) }
     end
 
     # @return [Array<String>] prefixed category ids
     def category_prefixed_ids
-      encode_prefixed_ids(Spree::Category, category_ids)
+      category_ids.map { |id| Spree::Category.prefixed_id_for(id) }
     end
 
     # @return [Boolean] true when products of this type are delivered digitally only
@@ -74,29 +74,28 @@ module Spree
 
     private
 
-    def encode_prefixed_ids(klass, ids)
-      prefix = klass._prefix_id_prefix
-      ids.map { |id| "#{prefix}_#{Spree::PrefixedId::SQIDS.encode([id])}" }
-    end
-
     # Applied after save so a newly created type has an id to join against.
+    # Ids arrive prefixed from the API and raw from console/importer callers, so
+    # each row is resolved once here and carried through both passes.
     def apply_pending_custom_field_definitions
       rows = @pending_custom_field_definitions
       @pending_custom_field_definitions = nil
 
-      definition_ids = rows.filter_map do |row|
-        Spree::MetafieldDefinition.find_by_prefix_id(row[:id])&.id
+      resolved = rows.filter_map do |row|
+        definition_id = Spree::MetafieldDefinition.find_by_prefix_id(row[:id])&.id
+        [definition_id, row] if definition_id
       end
 
-      product_type_custom_field_definitions.where.not(custom_field_definition_id: definition_ids).destroy_all
+      product_type_custom_field_definitions.
+        where.not(custom_field_definition_id: resolved.map(&:first)).destroy_all
 
-      rows.each_with_index do |row, index|
-        definition_id = Spree::MetafieldDefinition.find_by_prefix_id(row[:id])&.id
-        next if definition_id.nil?
+      existing_joins = product_type_custom_field_definitions.index_by(&:custom_field_definition_id)
 
-        join = product_type_custom_field_definitions.find_or_initialize_by(custom_field_definition_id: definition_id)
-        join.required = ActiveModel::Type::Boolean.new.cast(row[:required]) || false
-        join.sort_order = row.key?(:sort_order) ? row[:sort_order].to_i : index
+      resolved.each_with_index do |(definition_id, row), index|
+        join = existing_joins[definition_id] ||
+               product_type_custom_field_definitions.build(custom_field_definition_id: definition_id)
+        join.required = row[:required]
+        join.sort_order = row[:sort_order] || index
         join.save
       end
 

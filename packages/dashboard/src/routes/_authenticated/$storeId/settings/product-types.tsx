@@ -15,20 +15,23 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { ProductType, ProductTypeUpdateParams } from '@spree/admin-sdk'
+import type { ProductType } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
   mapSpreeErrorsToForm,
+  ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
   Subject,
+  useCustomFieldDefinitions,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
   cn,
+  DragHandle,
   Field,
   FieldError,
   FieldGroup,
@@ -45,19 +48,17 @@ import {
   useRowClickBridge,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { GripVerticalIcon, PlusIcon, XIcon } from 'lucide-react'
-import { type CSSProperties, useEffect } from 'react'
+import { PlusIcon, XIcon } from 'lucide-react'
+import { type CSSProperties, useEffect, useMemo } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
-import { useCategories } from '../../../../hooks/use-categories'
+import { categoryAutocompleteProps } from '../../../../hooks/use-categories'
 import { useFulfillmentProviders } from '../../../../hooks/use-delivery-methods'
-import { useOptionTypes } from '../../../../hooks/use-option-types'
 import {
   useApplyProductTypeToProducts,
   useCreateProductType,
   useDeleteProductType,
-  useProductCustomFieldDefinitions,
   useProductType,
   useUpdateProductType,
 } from '../../../../hooks/use-product-types'
@@ -88,7 +89,7 @@ const PRODUCT_TYPE_DEFAULTS: ProductTypeFormValues = {
 }
 
 /** Sort order is the row's index — never an input the merchant types. */
-function withSortOrder(values: ProductTypeFormValues): ProductTypeUpdateParams {
+function withSortOrder(values: ProductTypeFormValues) {
   return {
     ...values,
     custom_field_definitions: values.custom_field_definitions.map((row, index) => ({
@@ -202,7 +203,7 @@ function CreateProductTypeSheet({
 
   async function onSubmit(values: ProductTypeFormValues) {
     try {
-      await createMutation.mutateAsync({ ...withSortOrder(values), name: values.name })
+      await createMutation.mutateAsync(withSortOrder(values))
       form.reset(PRODUCT_TYPE_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -386,8 +387,6 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
   const { t } = useTranslation()
   const { errors } = form.formState
   const { data: fulfillmentProviders } = useFulfillmentProviders()
-  const { data: optionTypes } = useOptionTypes()
-  const { data: categories } = useCategories()
   // Registry-driven: extension-registered types appear without a dashboard
   // change; the shipped const only covers the pre-fetch render.
   const registeredFulfillmentTypes = fulfillmentProviders?.fulfillment_types ?? FULFILLMENT_TYPES
@@ -461,15 +460,15 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
           name="option_type_ids"
           control={form.control}
           render={({ field }) => (
-            <CheckboxList
-              items={(optionTypes?.data ?? []).map((optionType) => ({
-                id: optionType.id,
-                label: optionType.name ?? optionType.id,
-              }))}
-              selected={field.value}
+            <ResourceMultiAutocomplete
+              queryKey="product-type-option-types"
+              value={field.value}
               onChange={field.onChange}
-              emptyLabel={t('admin.product_types.no_option_types')}
-              idPrefix="option-type"
+              search={(q) => adminClient.optionTypes.list({ name_cont: q, limit: 20 })}
+              hydrate={(ids) => adminClient.optionTypes.list({ id_in: ids, limit: ids.length })}
+              getOptionLabel={(optionType) => optionType.name ?? optionType.id}
+              placeholder={t('admin.product_types.option_type_search_placeholder')}
+              emptyText={t('admin.product_types.no_option_types')}
             />
           )}
         />
@@ -484,15 +483,10 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
           name="category_ids"
           control={form.control}
           render={({ field }) => (
-            <CheckboxList
-              items={(categories?.data ?? []).map((category) => ({
-                id: category.id,
-                label: category.pretty_name ?? category.name ?? category.id,
-              }))}
-              selected={field.value}
+            <ResourceMultiAutocomplete
+              {...categoryAutocompleteProps('product-type-categories')}
+              value={field.value}
               onChange={field.onChange}
-              emptyLabel={t('admin.product_types.no_categories')}
-              idPrefix="category"
             />
           )}
         />
@@ -503,45 +497,6 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
   )
 }
 
-function CheckboxList({
-  items,
-  selected,
-  onChange,
-  emptyLabel,
-  idPrefix,
-}: {
-  items: Array<{ id: string; label: string }>
-  selected: string[]
-  onChange: (next: string[]) => void
-  emptyLabel: string
-  idPrefix: string
-}) {
-  if (items.length === 0) {
-    return <span className="text-muted-foreground text-sm">{emptyLabel}</span>
-  }
-
-  return (
-    <div className="flex max-h-48 flex-col gap-2 overflow-y-auto rounded-md border p-3">
-      {items.map((item) => (
-        <label
-          key={item.id}
-          htmlFor={`${idPrefix}-${item.id}`}
-          className="flex items-center gap-2 text-sm"
-        >
-          <Checkbox
-            id={`${idPrefix}-${item.id}`}
-            checked={selected.includes(item.id)}
-            onCheckedChange={(next) => {
-              onChange(next ? [...selected, item.id] : selected.filter((id) => id !== item.id))
-            }}
-          />
-          {item.label}
-        </label>
-      ))}
-    </div>
-  )
-}
-
 /**
  * Which custom fields a product of this type gets, in which order, and which
  * must be filled before it can be activated. Order is the row position — the
@@ -549,19 +504,25 @@ function CheckboxList({
  */
 function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTypeFormValues> }) {
   const { t } = useTranslation()
-  const { data: definitions } = useProductCustomFieldDefinitions()
+  const { data: definitions } = useCustomFieldDefinitions('Spree::Product')
   const fieldArray = useFieldArray({ control: form.control, name: 'custom_field_definitions' })
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   )
 
+  // One index over the pool — this list re-renders on every drag frame.
+  const definitionsById = useMemo(
+    () => new Map((definitions?.data ?? []).map((definition) => [definition.id, definition])),
+    [definitions?.data],
+  )
   const selectedIds = fieldArray.fields.map((row) => row.id)
-  const available = (definitions?.data ?? []).filter(
-    (definition) => !selectedIds.includes(definition.id),
+  const selectedIdSet = new Set(selectedIds)
+  const available = [...definitionsById.values()].filter(
+    (definition) => !selectedIdSet.has(definition.id),
   )
   const labelFor = (id: string) => {
-    const definition = definitions?.data?.find((candidate) => candidate.id === id)
+    const definition = definitionsById.get(id)
     return definition?.label ?? definition?.key ?? id
   }
 
@@ -651,15 +612,9 @@ function SortableCustomFieldRow({
         isDragging && 'relative z-10 bg-card opacity-80 shadow-lg',
       )}
     >
-      <button
-        type="button"
-        className="cursor-grab touch-none text-muted-foreground"
-        aria-label={t('admin.actions.reorder')}
-        {...attributes}
-        {...listeners}
-      >
-        <GripVerticalIcon className="size-4" />
-      </button>
+      <span className="w-8 touch-none">
+        <DragHandle attributes={attributes} listeners={listeners} />
+      </span>
 
       <span className="flex-1 truncate">{label}</span>
 

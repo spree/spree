@@ -858,35 +858,45 @@ module Spree
     def required_custom_fields_present
       return if product_type.blank?
 
-      required_definitions = product_type.product_type_custom_field_definitions.required.
-                             includes(:custom_field_definition).map(&:custom_field_definition)
-      return if required_definitions.empty?
+      required = product_type.product_type_custom_field_definitions.required.
+                 joins(:custom_field_definition).pluck(:custom_field_definition_id, :name)
+      return if required.empty?
 
-      filled_definition_ids = metafields.reject(&:marked_for_destruction?).
-                              filter_map { |metafield| metafield.metafield_definition_id if metafield.value.present? }
+      filled_definition_ids = filled_custom_field_definition_ids
 
-      required_definitions.each do |definition|
-        next if filled_definition_ids.include?(definition.id)
+      required.each do |definition_id, name|
+        next if filled_definition_ids.include?(definition_id)
 
-        errors.add(:base, :missing_required_custom_field, name: definition.name)
+        errors.add(:base, :missing_required_custom_field, name: name)
+      end
+    end
+
+    # Reads from memory when the association is already loaded (nested writes in
+    # the same save); otherwise asks the database for ids alone, since the
+    # association eager-loads every definition it touches.
+    def filled_custom_field_definition_ids
+      if metafields.loaded?
+        metafields.reject(&:marked_for_destruction?).
+          filter_map { |metafield| metafield.metafield_definition_id if metafield.value.present? }.to_set
+      else
+        metafields.where.not(value: [nil, '']).pluck(:metafield_definition_id).to_set
       end
     end
 
     # Additive, unlike the legacy prototype callback which replaced both sets —
     # the type seeds the product when attached (creation, later assignment,
     # reassignment) and never removes anything; detaching seeds nothing.
-    # Presence guards query the join tables directly: the cached associations
-    # can be stale here (pending variants insert option-type joins through
-    # product_option_types within the same save).
+    # The already-linked sets come from the join tables in one query each: the
+    # cached associations can be stale here (pending variants insert option-type
+    # joins through product_option_types within the same save).
     def sync_associations_from_product_type
       return unless product_type
 
-      product_type.option_types.each do |option_type|
-        option_types << option_type unless product_option_types.exists?(option_type_id: option_type.id)
-      end
-      product_type.categories.each do |category|
-        categories << category unless product_categories.exists?(category_id: category.id)
-      end
+      missing_option_type_ids = product_type.option_type_ids - product_option_types.pluck(:option_type_id)
+      Spree::OptionType.where(id: missing_option_type_ids).each { |option_type| option_types << option_type }
+
+      missing_category_ids = product_type.category_ids - product_categories.pluck(:category_id)
+      Spree::Category.where(id: missing_category_ids).each { |category| categories << category }
     end
 
     def any_variants_not_track_inventory?

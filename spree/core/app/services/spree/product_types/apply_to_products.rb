@@ -14,17 +14,30 @@ module Spree
       # @param product_type [Spree::ProductType]
       # @return [Spree::ServiceModule::Base::Result] count of products changed
       def call(product_type:)
-        option_types = product_type.option_types.to_a
-        categories = product_type.categories.to_a
+        option_type_ids = product_type.option_type_ids
+        category_ids = product_type.category_ids
 
-        return success(0) if option_types.empty? && categories.empty?
+        return success(0) if option_type_ids.empty? && category_ids.empty?
 
         changed_product_ids = Set.new
+        categorized_product_ids = Set.new
 
-        product_type.products.find_in_batches(batch_size: BATCH_SIZE) do |products|
-          changed_product_ids.merge(add_option_types(products, option_types))
-          changed_product_ids.merge(add_categories(products, categories))
+        # Only ids are ever needed — hydrating products would run their
+        # after_initialize callbacks for nothing.
+        product_type.products.select(:id).find_in_batches(batch_size: BATCH_SIZE) do |products|
+          product_ids = products.map(&:id)
+
+          changed_product_ids.merge(add_option_types(product_ids, option_type_ids))
+
+          newly_categorized = add_categories(product_ids, category_ids)
+          categorized_product_ids.merge(newly_categorized)
+          changed_product_ids.merge(newly_categorized)
         end
+
+        # Counter caches, branch counts and reindexing are settled once for the
+        # whole run rather than per category per batch — each is a subtree-wide
+        # recount or a job per product.
+        settle_category_bookkeeping(categorized_product_ids.to_a, category_ids)
 
         success(changed_product_ids.size)
       end
@@ -32,11 +45,8 @@ module Spree
       private
 
       # @return [Array] ids of products that gained at least one option type
-      def add_option_types(products, option_types)
-        return [] if option_types.empty?
-
-        product_ids = products.map(&:id)
-        option_type_ids = option_types.map(&:id)
+      def add_option_types(product_ids, option_type_ids)
+        return [] if option_type_ids.empty?
 
         existing = Spree::ProductOptionType.where(product_id: product_ids, option_type_id: option_type_ids).
                    pluck(:product_id, :option_type_id).to_set
@@ -46,6 +56,7 @@ module Spree
         highest_positions = Spree::ProductOptionType.where(product_id: product_ids).
                             group(:product_id).maximum(:position)
 
+        now = Time.current
         rows = product_ids.flat_map do |product_id|
           position = highest_positions[product_id].to_i
 
@@ -54,7 +65,7 @@ module Spree
 
             position += 1
             { product_id: product_id, option_type_id: option_type_id, position: position,
-              created_at: Time.current, updated_at: Time.current }
+              created_at: now, updated_at: now }
           end
         end
 
@@ -64,33 +75,51 @@ module Spree
         rows.pluck(:product_id).uniq
       end
 
-      # Delegates to the bulk category service, which owns the counter-cache,
-      # position and search-index bookkeeping that insert_all would skip.
-      #
       # @return [Array] ids of products that gained at least one category
-      def add_categories(products, categories)
-        return [] if categories.empty?
+      def add_categories(product_ids, category_ids)
+        return [] if category_ids.empty?
 
-        product_ids = products.map(&:id)
-        linked = Spree::ProductCategory.where(product_id: product_ids, category_id: categories.map(&:id)).
-                 pluck(:category_id, :product_id).group_by(&:first)
+        existing = Spree::ProductCategory.where(product_id: product_ids, category_id: category_ids).
+                   pluck(:product_id, :category_id).to_set
 
-        changed_product_ids = []
+        # acts_as_list scopes position per category here (unlike option types,
+        # which scope per product), so each category continues its own sequence.
+        highest_positions = Spree::ProductCategory.where(category_id: category_ids).
+                            group(:category_id).maximum(:position)
 
-        categories.each do |category|
-          already_linked = linked.fetch(category.id, []).map(&:last).to_set
-          missing = products.reject { |product| already_linked.include?(product.id) }
-          next if missing.empty?
+        now = Time.current
+        rows = category_ids.flat_map do |category_id|
+          position = highest_positions[category_id].to_i
 
-          missing_ids = missing.map(&:id)
-          Spree::Categories::AddProducts.call(
-            categories: Spree::Category.where(id: category.id),
-            products: Spree::Product.where(id: missing_ids)
-          )
-          changed_product_ids.concat(missing_ids)
+          product_ids.filter_map do |product_id|
+            next if existing.include?([product_id, category_id])
+
+            position += 1
+            { product_id: product_id, category_id: category_id, position: position,
+              created_at: now, updated_at: now }
+          end
         end
 
-        changed_product_ids.uniq
+        return [] if rows.empty?
+
+        Spree::ProductCategory.insert_all(rows)
+        rows.pluck(:product_id).uniq
+      end
+
+      # insert_all skips the ProductCategory callbacks, so the counts they
+      # maintain are recomputed here — once, for every product touched.
+      def settle_category_bookkeeping(product_ids, category_ids)
+        return if product_ids.empty?
+
+        counts = Spree::ProductCategory.where(product_id: product_ids).group(:product_id).count
+        counts.each do |product_id, count|
+          Spree::Product.where(id: product_id).update_all(categories_count: count)
+        end
+
+        Spree::Category.recalculate_products_count(category_ids)
+        Spree::Category.where(id: category_ids).touch_all
+
+        Spree::Product.where(id: product_ids).find_each(&:enqueue_search_index)
       end
     end
   end

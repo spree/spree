@@ -2598,6 +2598,7 @@
       },
       "no_categories": "暂无分类",
       "no_option_types": "暂无选项类型",
+      "option_type_search_placeholder": "搜索选项类型",
       "search_placeholder": "搜索商品类型"
     },
     "products": {

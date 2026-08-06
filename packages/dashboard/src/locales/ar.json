@@ -2598,6 +2598,7 @@
       },
       "no_categories": "لا توجد فئات بعد",
       "no_option_types": "لا توجد أنواع خيارات بعد",
+      "option_type_search_placeholder": "البحث في أنواع الخيارات",
       "search_placeholder": "ابحث في أنواع المنتجات"
     },
     "products": {

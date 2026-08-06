@@ -24,10 +24,8 @@ import { useEffect } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import {
-  CustomFieldsInlineCard,
-  FormBackedCustomFieldsProvider,
-} from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import {
   CategorizationCard,
   GeneralCard,
@@ -43,7 +41,6 @@ import { PublishingCard } from '../../../../components/spree/products/publishing
 import { ResourceTranslationsCard } from '../../../../components/spree/translations/resource-translations-card'
 import { useDeleteProduct, useProduct, useUpdateProduct } from '../../../../hooks/use-product'
 import { useProductMedia } from '../../../../hooks/use-product-media'
-import { useProductType } from '../../../../hooks/use-product-types'
 import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
 import {
   type ProductFormValues,
@@ -277,13 +274,7 @@ function ProductForm({ product }: { product: Product }) {
     },
   })
 
-  // The product type decides which custom fields the form shows and in which
-  // order. Read live — editing a type updates every product form of that type.
   const selectedProductTypeId = form.watch('product_type_id')
-  const { data: productType } = useProductType(selectedProductTypeId ?? undefined)
-  const typeCustomFieldDefinitionIds = productType?.custom_field_definitions?.map(
-    (definition) => definition.id,
-  )
 
   // Variants the MediaCard can assign uploaded images to. Only server-persisted
   // variants have an `id` that can ride media[].variant_ids on the PATCH, so we
@@ -451,13 +442,9 @@ function ProductForm({ product }: { product: Product }) {
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
               <PricesCard form={form} productName={product.name} />
               <InventoryCard form={form} storeId={storeId} />
-              <FormBackedCustomFieldsProvider
-                form={form}
-                resourceType="Spree::Product"
-                definitionIds={typeCustomFieldDefinitionIds}
-              >
+              <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
                 <CustomFieldsInlineCard />
-              </FormBackedCustomFieldsProvider>
+              </ProductCustomFieldsProvider>
               <ResourceTranslationsCard resourceType="product" resourceId={productId} />
               <MetadataCard
                 metadata={product.metadata}

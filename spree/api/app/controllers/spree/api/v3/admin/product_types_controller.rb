@@ -32,8 +32,21 @@ module Spree
             Spree.api.admin_product_type_serializer
           end
 
+          # The join tables, not the targets — the serializer reports association
+          # ids, so loading the option types and categories themselves would pay
+          # for records nothing reads.
           def collection_includes
-            [:option_types, :categories, { product_type_custom_field_definitions: :custom_field_definition }]
+            [
+              :option_type_product_types,
+              :product_type_categories,
+              { product_type_custom_field_definitions: :custom_field_definition }
+            ]
+          end
+
+          # Single-resource actions need the same eager-loading; without it every
+          # custom field row re-queries its definition.
+          def find_resource
+            scope.includes(collection_includes).find_by_prefix_id!(params[:id])
           end
 
           def permitted_params
@@ -44,18 +57,20 @@ module Spree
               category_ids: [],
               custom_field_definitions: [:id, :required, :sort_order]
             )
-            reject_foreign_associations(attrs)
+            scope_category_ids(attrs)
           end
 
           # `category_ids=` resolves prefixed ids with no store scoping, so a
           # type in this store could otherwise be pointed at another store's
-          # categories. (OptionType is global — nothing to scope there.)
-          def reject_foreign_associations(attrs)
-            if attrs[:category_ids].present?
-              resolved = Array(attrs[:category_ids]).filter_map { |id| Spree::Category.find_by_prefix_id(id)&.id }
-              attrs[:category_ids] = current_store.categories.where(id: resolved).pluck(:id)
-            end
+          # categories. Mirrors ProductsController#apply_categories.
+          # (OptionType is global — nothing to scope there.)
+          def scope_category_ids(attrs)
+            return attrs if attrs[:category_ids].blank?
 
+            category_ids = decode_ids(attrs[:category_ids], Spree::Category)
+            attrs[:category_ids] = current_store.categories.
+                                   accessible_by(current_ability, :update).
+                                   where(id: category_ids).pluck(:id)
             attrs
           end
         end

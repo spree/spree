@@ -30,6 +30,7 @@ export function useProductType(id: string | undefined) {
     queryKey: useResourceKey('product-types', id ?? 'noop'),
     queryFn: () => adminClient.productTypes.get(id as string),
     enabled: !!id,
+    staleTime: 1000 * 60 * 5,
   })
 }
 
@@ -48,21 +49,6 @@ export function useUpdateProductType(id: string) {
     invalidate: [['product-types'], ['product-types', id]],
     successMessage: i18n.t('admin.product_types.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
-  })
-}
-
-/**
- * Product custom field definitions — the pool a product type picks from.
- */
-export function useProductCustomFieldDefinitions() {
-  return useQuery({
-    queryKey: useResourceKey('custom-field-definitions', { resource_type: 'Spree::Product' }),
-    queryFn: () =>
-      adminClient.customFieldDefinitions.list({
-        limit: 100,
-        filter: { resource_type_eq: 'Spree::Product' },
-      }),
-    staleTime: 1000 * 60 * 5,
   })
 }
 

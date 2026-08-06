@@ -2634,6 +2634,7 @@
       },
       "no_categories": "Brak kategorii",
       "no_option_types": "Brak typów opcji",
+      "option_type_search_placeholder": "Szukaj typów opcji",
       "search_placeholder": "Szukaj typów produktów"
     },
     "products": {
