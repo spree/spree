@@ -992,6 +992,11 @@ export interface ProductTypeCustomFieldDefinitionParams {
   sort_order?: number
 }
 
+/**
+ * Creates a product type. Associations are a template for products created
+ * with this type — they never mutate products that already carry it. Use
+ * `productTypes.applyToProducts` to backfill those.
+ */
 export interface ProductTypeCreateParams {
   name: string
   /** Fulfillment types products of this type support (e.g. ['shipping', 'pickup']). */
@@ -1007,6 +1012,12 @@ export interface ProductTypeCreateParams {
   custom_field_definitions?: ProductTypeCustomFieldDefinitionParams[]
 }
 
+/**
+ * Updates a product type. `option_type_ids`, `category_ids` and
+ * `custom_field_definitions` are replace-sets: whatever is sent becomes the
+ * complete list, and anything omitted is removed from the type. Editing them
+ * leaves existing products untouched.
+ */
 export interface ProductTypeUpdateParams {
   name?: string
   fulfillment_types?: string[]

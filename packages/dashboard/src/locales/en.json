@@ -1013,7 +1013,7 @@
           "label": "Categories"
         },
         "custom_field_definitions": {
-          "help": "Shown on the product form for every product of this type, in this order. Required fields must be filled before a product can be activated.",
+          "help": "Shown on the product form for every product of this type, in this order. Required fields are marked as a recommendation — they are not enforced on save.",
           "label": "Custom fields",
           "required": "Required"
         },

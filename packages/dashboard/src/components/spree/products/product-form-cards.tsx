@@ -46,7 +46,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
 import { collectionAutocompleteProps, useCollections } from '../../../hooks/use-collections'
-import { useOptionTypes } from '../../../hooks/use-option-types'
+import { useOptionTypesByIds } from '../../../hooks/use-option-types'
 import { useDeleteProductMedia } from '../../../hooks/use-product-media'
 import { useProductType, useProductTypes } from '../../../hooks/use-product-types'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
@@ -652,8 +652,10 @@ export function CategorizationCard({ form }: FormCardProps) {
   const productTypes = productTypesData?.data ?? []
   const selectedProductTypeId = form.watch('product_type_id') as string | null | undefined
   const { data: selectedProductType } = useProductType(selectedProductTypeId ?? undefined)
-  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
-  const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
+  // Resolved by id: the type may reference option types beyond the first page
+  // of the global list, which would otherwise drop out of the hint.
+  const { data: typeOptionTypesData } = useOptionTypesByIds(selectedProductType?.option_type_ids)
+  const optionTypes = useMemo(() => typeOptionTypesData?.data ?? [], [typeOptionTypesData])
 
   // The server seeds the type's categories onto the product when it is saved.
   // Prefilling them here means the merchant sees what they are about to get and

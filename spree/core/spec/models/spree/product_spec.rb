@@ -584,6 +584,15 @@ describe Spree::Product, type: :model do
       end
     end
 
+    it 'does not seed a category from another store' do
+      foreign_category = create(:category, store: create(:store))
+      product_type.categories << foreign_category
+
+      product.update!(product_type: product_type)
+
+      expect(product.reload.categories).not_to include(foreign_category)
+    end
+
     context 'detaching the type' do
       it 'removes nothing' do
         product.update!(product_type: product_type)

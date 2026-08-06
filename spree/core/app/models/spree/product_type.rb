@@ -81,19 +81,33 @@ module Spree
       rows = @pending_custom_field_definitions
       @pending_custom_field_definitions = nil
 
-      resolved = rows.filter_map do |row|
-        definition_id = Spree::MetafieldDefinition.find_by_prefix_id(row[:id])&.id
-        [definition_id, row] if definition_id
+      resolved = rows.map do |row|
+        [Spree::MetafieldDefinition.find_by_prefix_id(row[:id]), row]
       end
 
+      # Validate the whole payload before touching anything. This runs inside
+      # the save's own transaction, so a rollback raised partway through would
+      # be swallowed — the only safe point to refuse is before the delete.
+      invalid = resolved.reject { |definition, _row| definition&.resource_type == 'Spree::Product' }
+      if invalid.any?
+        invalid.each do |definition, row|
+          errors.add(
+            :custom_field_definitions,
+            definition.nil? ? "unknown definition: #{row[:id]}" : "#{definition.key} is not a product custom field"
+          )
+        end
+        return
+      end
+
+      definition_ids = resolved.map { |definition, _row| definition.id }
       product_type_custom_field_definitions.
-        where.not(custom_field_definition_id: resolved.map(&:first)).destroy_all
+        where.not(custom_field_definition_id: definition_ids).destroy_all
 
       existing_joins = product_type_custom_field_definitions.index_by(&:custom_field_definition_id)
 
-      resolved.each_with_index do |(definition_id, row), index|
-        join = existing_joins[definition_id] ||
-               product_type_custom_field_definitions.build(custom_field_definition_id: definition_id)
+      resolved.each_with_index do |(definition, row), index|
+        join = existing_joins[definition.id] ||
+               product_type_custom_field_definitions.build(custom_field_definition_id: definition.id)
         join.required = row[:required]
         join.sort_order = row[:sort_order] || index
         join.save

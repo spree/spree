@@ -1,7 +1,9 @@
 module Spree
-  # Which custom field definitions a ProductType uses, whether each is required
-  # before a product of that type can be activated, and the order the dashboard
-  # renders them in. Read live by reference — no values are copied to products.
+  # Which custom field definitions a ProductType uses, the order the dashboard
+  # renders them in, and which it marks as required. `required` is advisory: the
+  # product form shows a marker, but nothing rejects a blank value (Spree writes
+  # a product and its custom fields in two steps — see the 2026-08-06 entry in
+  # docs/plans/decisions.md). Read live by reference; no values are copied.
   class ProductTypeCustomFieldDefinition < Spree.base_class
     belongs_to :product_type, class_name: 'Spree::ProductType'
     # Association and column carry the 6.0 custom-field vocabulary; the class is

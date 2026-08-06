@@ -5,7 +5,7 @@ FactoryBot.define do
   end
 
   factory :product_type_with_option_types, aliases: [:prototype_with_option_types], class: Spree::ProductType do
-    name         { 'Baseball Cap' }
+    sequence(:name) { |n| "Baseball Cap #{n}" }
     store        { Spree::Store.find_by(default: true) || association(:store) }
     option_types { [build(:option_type)] }
   end

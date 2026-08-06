@@ -60,8 +60,8 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
 
         `option_type_ids` and `category_ids` seed products created with this
         type. `custom_field_definitions` is a replace-set of the definitions the
-        product form renders, in `sort_order`; `required` ones must be filled
-        before a product of this type can be activated.
+        product form renders, in `sort_order`. `required` is advisory — the
+        dashboard marks the field, but a blank value is never rejected.
       DESC
       admin_scope :write, :products
 

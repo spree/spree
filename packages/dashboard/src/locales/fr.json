@@ -1013,7 +1013,7 @@
           "label": "Catégories"
         },
         "custom_field_definitions": {
-          "help": "Affichés dans cet ordre sur le formulaire de tous les produits de ce type. Les champs obligatoires doivent être remplis avant d’activer un produit.",
+          "help": "Affichés dans cet ordre sur le formulaire de tous les produits de ce type. Les champs obligatoires sont signalés à titre indicatif : ils ne sont pas imposés à l’enregistrement.",
           "label": "Champs personnalisés",
           "required": "Obligatoire"
         },

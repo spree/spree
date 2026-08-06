@@ -1021,7 +1021,7 @@
           "label": "Kategorie"
         },
         "custom_field_definitions": {
-          "help": "Widoczne w tej kolejności w formularzu każdego produktu tego typu. Pola wymagane trzeba wypełnić przed aktywacją produktu.",
+          "help": "Widoczne w tej kolejności w formularzu każdego produktu tego typu. Pola wymagane są oznaczone jako zalecane — nie są wymuszane przy zapisie.",
           "label": "Pola niestandardowe",
           "required": "Wymagane"
         },
@@ -2610,11 +2610,11 @@
         "confirm_label": "Zastosuj",
         "cta_few": "Zastosuj do {{count}} istniejących produktów",
         "cta_many": "Zastosuj do {{count}} istniejących produktów",
-        "cta_one": "Zastosuj do {{count}} istniejącego produktu",
+        "cta_one": "Zastosuj do 1 istniejącego produktu",
         "cta_other": "Zastosuj do {{count}} istniejącego produktu",
         "message_few": "To doda brakujące typy opcji i kategorie tego typu do {{count}} produktów. Nic nie zostanie usunięte.",
         "message_many": "To doda brakujące typy opcji i kategorie tego typu do {{count}} produktów. Nic nie zostanie usunięte.",
-        "message_one": "To doda brakujące typy opcji i kategorie tego typu do {{count}} produktu. Nic nie zostanie usunięte.",
+        "message_one": "To doda brakujące typy opcji i kategorie tego typu do 1 produktu. Nic nie zostanie usunięte.",
         "message_other": "To doda brakujące typy opcji i kategorie tego typu do {{count}} produktu. Nic nie zostanie usunięte.",
         "title": "Zastosuj do istniejących produktów"
       },

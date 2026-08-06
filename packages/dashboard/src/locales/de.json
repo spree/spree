@@ -1013,7 +1013,7 @@
           "label": "Kategorien"
         },
         "custom_field_definitions": {
-          "help": "Erscheinen in dieser Reihenfolge im Produktformular aller Produkte dieses Typs. Pflichtfelder müssen ausgefüllt sein, bevor ein Produkt aktiviert werden kann.",
+          "help": "Erscheinen in dieser Reihenfolge im Produktformular aller Produkte dieses Typs. Pflichtfelder werden als Empfehlung markiert und beim Speichern nicht erzwungen.",
           "label": "Benutzerdefinierte Felder",
           "required": "Pflichtfeld"
         },

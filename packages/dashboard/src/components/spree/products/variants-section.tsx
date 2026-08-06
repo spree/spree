@@ -35,7 +35,7 @@ import { PencilIcon, XIcon } from 'lucide-react'
 import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useFieldArray, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useOptionTypes } from '../../../hooks/use-option-types'
+import { useOptionTypes, useOptionTypesByIds } from '../../../hooks/use-option-types'
 import { useProductType } from '../../../hooks/use-product-types'
 import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
 import { VariantEditSheet } from './variant-edit-sheet'
@@ -124,6 +124,10 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
   const allOptionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
   const productTypeId = form.watch('product_type_id') as string | null | undefined
   const { data: productType } = useProductType(productTypeId ?? undefined)
+  // Resolved by id rather than read out of `allOptionTypes`, whose first page
+  // may not contain every option type the product type references.
+  const { data: typeOptionTypesData } = useOptionTypesByIds(productType?.option_type_ids)
+  const typeOptionTypes = useMemo(() => typeOptionTypesData?.data ?? [], [typeOptionTypesData])
 
   const variantsArray = useFieldArray<ProductFormValues, 'variants', '_key'>({
     control: form.control,
@@ -154,20 +158,29 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
   const [offeredForTypeId, setOfferedForTypeId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!seedFromType || !productTypeId || productTypeId === offeredForTypeId) return
+    // Clearing the type withdraws the offer; anything the merchant built is in
+    // `derived` and unaffected.
+    if (!productTypeId) {
+      if (offeredForTypeId !== null) {
+        setOfferedForTypeId(null)
+        setOfferedOptionTypes([])
+      }
+      return
+    }
+
+    if (!seedFromType || productTypeId === offeredForTypeId) return
     // Only on a product the merchant hasn't started building options for.
     if (derived.length > 0) return
+    // Both queries must have landed. Marking the type seeded off an empty
+    // registry would offer nothing and never retry once the data arrives.
+    if (!productType) return
+    // Nothing to offer until the type's own option types have resolved.
+    const configuredIds = productType.option_type_ids ?? []
+    if (configuredIds.length > 0 && typeOptionTypes.length === 0) return
 
     setOfferedForTypeId(productTypeId)
-    setOfferedOptionTypes(seedFromProductType(productType?.option_type_ids ?? [], allOptionTypes))
-  }, [
-    seedFromType,
-    productTypeId,
-    offeredForTypeId,
-    derived.length,
-    productType?.option_type_ids,
-    allOptionTypes,
-  ])
+    setOfferedOptionTypes(seedFromProductType(configuredIds, typeOptionTypes))
+  }, [seedFromType, productTypeId, offeredForTypeId, derived.length, productType, typeOptionTypes])
 
   const selected = derived.length > 0 ? derived : offeredOptionTypes
 

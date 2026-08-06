@@ -70,4 +70,37 @@ describe Spree::ProductType, type: :model do
       expect { product_type.destroy }.to change(Spree::OptionTypeProductType, :count).by(-1)
     end
   end
+  describe '#custom_field_definitions=' do
+    let(:product_type) { create(:product_type) }
+    let(:existing) { create(:custom_field_definition, key: 'wattage') }
+    let(:incoming) { create(:custom_field_definition, key: 'voltage') }
+
+    before do
+      create(:product_type_custom_field_definition, product_type: product_type,
+                                                    custom_field_definition: existing)
+    end
+
+    it 'replaces the set' do
+      product_type.update!(custom_field_definitions: [{ id: incoming.prefixed_id, required: true }])
+
+      expect(product_type.reload.custom_field_definitions).to eq([incoming])
+    end
+
+    # The removal and the writes are one unit — a rejected payload must not
+    # leave the type with neither its old joins nor its new ones.
+    it 'keeps the existing joins when the payload names an unknown definition' do
+      product_type.update(custom_field_definitions: [{ id: 'cfdef_nonexistent', required: true }])
+
+      expect(product_type.reload.custom_field_definitions).to eq([existing])
+      expect(product_type.errors[:custom_field_definitions]).to be_present
+    end
+
+    it 'keeps the existing joins when a definition is not for products' do
+      order_definition = create(:custom_field_definition, :for_order)
+
+      product_type.update(custom_field_definitions: [{ id: order_definition.prefixed_id }])
+
+      expect(product_type.reload.custom_field_definitions).to eq([existing])
+    end
+  end
 end

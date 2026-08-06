@@ -31,10 +31,16 @@ export function ProductCustomFieldsProvider<T extends CustomFieldsFormShape>({
 
   // Stable identity: the provider memoizes its definition list against this,
   // and a fresh array each render would defeat that memo on every keystroke.
-  const definitionIds = useMemo(
-    () => productType?.custom_field_definitions?.map((definition) => definition.id),
-    [productType?.custom_field_definitions],
-  )
+  //
+  // `undefined` means "no schema, show every definition", which is right for a
+  // typeless product but wrong while a type is still loading — that would flash
+  // the full list before narrowing. An empty array holds the space instead.
+  const definitionIds = useMemo(() => {
+    if (!productTypeId) return undefined
+    if (!productType) return []
+
+    return productType.custom_field_definitions?.map((definition) => definition.id) ?? []
+  }, [productTypeId, productType])
 
   // Marks the fields the type calls required. Nothing rejects a blank one —
   // the marker is the whole enforcement.

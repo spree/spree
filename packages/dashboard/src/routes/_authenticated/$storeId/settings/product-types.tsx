@@ -55,6 +55,7 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { categoryAutocompleteProps } from '../../../../hooks/use-categories'
 import { useFulfillmentProviders } from '../../../../hooks/use-delivery-methods'
+import { optionTypeAutocompleteProps } from '../../../../hooks/use-option-types'
 import {
   useApplyProductTypeToProducts,
   useCreateProductType,
@@ -461,14 +462,10 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
           control={form.control}
           render={({ field }) => (
             <ResourceMultiAutocomplete
-              queryKey="product-type-option-types"
+              {...optionTypeAutocompleteProps('product-type-option-types')}
+              placeholder={t('admin.product_types.option_type_search_placeholder')}
               value={field.value}
               onChange={field.onChange}
-              search={(q) => adminClient.optionTypes.list({ name_cont: q, limit: 20 })}
-              hydrate={(ids) => adminClient.optionTypes.list({ id_in: ids, limit: ids.length })}
-              getOptionLabel={(optionType) => optionType.name ?? optionType.id}
-              placeholder={t('admin.product_types.option_type_search_placeholder')}
-              emptyText={t('admin.product_types.no_option_types')}
             />
           )}
         />

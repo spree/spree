@@ -859,8 +859,11 @@ module Spree
       missing_option_type_ids = product_type.option_type_ids - product_option_types.pluck(:option_type_id)
       Spree::OptionType.where(id: missing_option_type_ids).each { |option_type| option_types << option_type }
 
+      # Scoped to the product's own store, matching `category_ids=`: a type
+      # pointing at another store's category must not drag it onto the product.
       missing_category_ids = product_type.category_ids - product_categories.pluck(:category_id)
-      Spree::Category.where(id: missing_category_ids).each { |category| categories << category }
+      Spree::Category.for_store(assignable_store).where(id: missing_category_ids).
+        each { |category| categories << category }
     end
 
     def any_variants_not_track_inventory?
