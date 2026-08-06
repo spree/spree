@@ -237,7 +237,11 @@ Spree::Core::Engine.add_routes do
         end
 
         # Products
-        resources :product_types
+        resources :product_types do
+          member do
+            post :apply_to_products
+          end
+        end
         resources :products, concerns: [:custom_fieldable, :translatable] do
           member do
             post :clone

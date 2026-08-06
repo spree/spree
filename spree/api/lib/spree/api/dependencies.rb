@@ -105,6 +105,7 @@ module Spree
         admin_order_serializer: 'Spree::Api::V3::Admin::OrderSerializer',
         admin_product_serializer: 'Spree::Api::V3::Admin::ProductSerializer',
         admin_product_type_serializer: 'Spree::Api::V3::Admin::ProductTypeSerializer',
+        admin_product_type_custom_field_definition_serializer: 'Spree::Api::V3::Admin::ProductTypeCustomFieldDefinitionSerializer',
         admin_variant_serializer: 'Spree::Api::V3::Admin::VariantSerializer',
         admin_price_serializer: 'Spree::Api::V3::Admin::PriceSerializer',
         admin_price_history_serializer: 'Spree::Api::V3::Admin::PriceHistorySerializer',

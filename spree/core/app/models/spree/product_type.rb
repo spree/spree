@@ -28,6 +28,8 @@ module Spree
     # invalidate its type-driven data, so types in use cannot be deleted
     has_many :products, class_name: 'Spree::Product', dependent: :restrict_with_error
 
+    after_save :apply_pending_custom_field_definitions, if: -> { @pending_custom_field_definitions }
+
     validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :store_id }
     validates :store, presence: true
     validates :fulfillment_types, presence: true
@@ -35,6 +37,30 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[name]
     self.whitelisted_ransackable_associations = %w[option_types]
+
+    # Replace-set writer for the flat API payload. Each entry is
+    # `{ id: 'cfdef_…', required: true, sort_order: 0 }` — rows not listed are
+    # removed from the type. Editing the list never touches products; the form
+    # is generated from it live.
+    #
+    # @param rows [Array<Hash>, nil]
+    # @return [void]
+    def custom_field_definitions=(rows)
+      return super if rows.blank? || rows.first.is_a?(Spree::MetafieldDefinition)
+
+      @pending_custom_field_definitions = Array(rows).map { |row| row.to_h.with_indifferent_access }
+    end
+
+    # @return [Array<String>] prefixed option type ids, encoded inline to avoid
+    #   hydrating the records just to serialize their ids
+    def option_type_prefixed_ids
+      encode_prefixed_ids(Spree::OptionType, option_type_ids)
+    end
+
+    # @return [Array<String>] prefixed category ids
+    def category_prefixed_ids
+      encode_prefixed_ids(Spree::Category, category_ids)
+    end
 
     # @return [Boolean] true when products of this type are delivered digitally only
     def digital?
@@ -47,6 +73,35 @@ module Spree
     end
 
     private
+
+    def encode_prefixed_ids(klass, ids)
+      prefix = klass._prefix_id_prefix
+      ids.map { |id| "#{prefix}_#{Spree::PrefixedId::SQIDS.encode([id])}" }
+    end
+
+    # Applied after save so a newly created type has an id to join against.
+    def apply_pending_custom_field_definitions
+      rows = @pending_custom_field_definitions
+      @pending_custom_field_definitions = nil
+
+      definition_ids = rows.filter_map do |row|
+        Spree::MetafieldDefinition.find_by_prefix_id(row[:id])&.id
+      end
+
+      product_type_custom_field_definitions.where.not(custom_field_definition_id: definition_ids).destroy_all
+
+      rows.each_with_index do |row, index|
+        definition_id = Spree::MetafieldDefinition.find_by_prefix_id(row[:id])&.id
+        next if definition_id.nil?
+
+        join = product_type_custom_field_definitions.find_or_initialize_by(custom_field_definition_id: definition_id)
+        join.required = ActiveModel::Type::Boolean.new.cast(row[:required]) || false
+        join.sort_order = row.key?(:sort_order) ? row[:sort_order].to_i : index
+        join.save
+      end
+
+      product_type_custom_field_definitions.reset
+    end
 
     # Strict vocabulary against Spree.fulfillment_types — an unregistered
     # token silently removes the product from every delivery method's

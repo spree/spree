@@ -984,15 +984,40 @@ export interface WebhookEndpointDisableParams {
   reason?: string
 }
 
+/** How one custom field definition is used by a product type. */
+export interface ProductTypeCustomFieldDefinitionParams {
+  /** Prefixed id of the custom field definition (`cfdef_…`). */
+  id: string
+  required?: boolean
+  sort_order?: number
+}
+
 export interface ProductTypeCreateParams {
   name: string
   /** Fulfillment types products of this type support (e.g. ['shipping', 'pickup']). */
   fulfillment_types?: string[]
+  /**
+   * Option types seeded onto products that get this type. Editing them never
+   * changes existing products — use `applyToProducts` for that.
+   */
+  option_type_ids?: string[]
+  /** Categories seeded onto products that get this type. */
+  category_ids?: string[]
+  /** Replace-set: definitions not listed are removed from the type. */
+  custom_field_definitions?: ProductTypeCustomFieldDefinitionParams[]
 }
 
 export interface ProductTypeUpdateParams {
   name?: string
   fulfillment_types?: string[]
+  option_type_ids?: string[]
+  category_ids?: string[]
+  custom_field_definitions?: ProductTypeCustomFieldDefinitionParams[]
+}
+
+/** Result of enqueueing a backfill of a type's associations onto its products. */
+export interface ProductTypeApplyToProductsResponse {
+  products_count: number
 }
 
 export interface TaxCategoryCreateParams {
