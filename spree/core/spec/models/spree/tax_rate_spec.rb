@@ -418,4 +418,23 @@ describe Spree::TaxRate, type: :model do
       end
     end
   end
+
+  describe 'store binding' do
+    it 'falls back to the current store' do
+      expect(create(:tax_rate).store).to eq(@default_store)
+    end
+
+    it 'keeps an explicitly assigned store' do
+      other_store = create(:store)
+      expect(create(:tax_rate, store: other_store).store).to eq(other_store)
+    end
+
+    it 'only returns rates of the given store' do
+      other_store = create(:store)
+      own_rate = create(:tax_rate)
+      create(:tax_rate, store: other_store)
+
+      expect(Spree::TaxRate.for_store(@default_store)).to eq([own_rate])
+    end
+  end
 end

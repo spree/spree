@@ -184,6 +184,19 @@ steps:
       their own records afterwards. The NOT NULL constraints land in 6.1.
       Idempotent.
 
+  - id: backfill_tax_store_ids
+    name: "Bind tax rates and tax categories to the default store"
+    task: "spree:backfill_tax_store_ids"
+    notes: |
+      Tax rates and tax categories carry a store_id in Spree 6 — they are the
+      internal tax provider's configuration and belong to a store like every
+      other commerce setting. Unassigned rows, soft-deleted ones included, go
+      to the default store; additional stores manage their own records
+      afterwards. Category names become unique per store rather than globally,
+      so installs that relied on global names may need to reconcile duplicates
+      once several stores hold tax configuration. The NOT NULL constraints land
+      in 6.1. Idempotent.
+
   - id: backfill_order_markets
     name: "Backfill order markets"
     task: "spree:backfill_order_markets"

@@ -17,7 +17,6 @@ module Spree
             # additional data
             ReturnsEnvironment.call
             StoreCreditCategories.call
-            TaxCategories.call
             DigitalDelivery.call
 
             # store & stock location
@@ -28,6 +27,7 @@ module Spree
 
             # add store resources
             PaymentMethods.call
+            TaxCategories.call
             ProductTypes.call
             CustomerGroups.call
             ApiKeys.call

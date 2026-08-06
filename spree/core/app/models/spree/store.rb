@@ -127,6 +127,9 @@ module Spree
     has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
+    has_many :tax_categories, class_name: 'Spree::TaxCategory', dependent: :destroy, inverse_of: :store
+    has_many :tax_rates, class_name: 'Spree::TaxRate', dependent: :destroy, inverse_of: :store
+
     has_many :wishlists, class_name: 'Spree::Wishlist'
 
     has_many :data_feeds, class_name: 'Spree::DataFeed'

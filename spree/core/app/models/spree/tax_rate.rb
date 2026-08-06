@@ -9,6 +9,7 @@ module Spree
 
     include Spree::Metafields
     include Spree::Metadata
+    include Spree::SingleStoreResource
 
     with_options inverse_of: :tax_rates do
       belongs_to :zone, class_name: 'Spree::Zone', optional: true

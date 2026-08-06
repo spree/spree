@@ -107,6 +107,34 @@ describe '6.0 data migration tasks' do
     end
   end
 
+  describe 'spree:backfill_tax_store_ids' do
+    it 'assigns the default store to unbound rows and skips bound ones' do
+      other_store = create(:store)
+      bound_category = create(:tax_category)
+      bound_category.update_columns(store_id: other_store.id)
+      legacy_category = create(:tax_category)
+      legacy_category.update_columns(store_id: nil)
+      legacy_rate = create(:tax_rate)
+      legacy_rate.update_columns(store_id: nil)
+
+      run_task('spree:backfill_tax_store_ids')
+
+      expect(legacy_category.reload.store_id).to eq(@default_store.id)
+      expect(legacy_rate.reload.store_id).to eq(@default_store.id)
+      expect(bound_category.reload.store_id).to eq(other_store.id)
+    end
+
+    it 'binds soft-deleted rows too' do
+      deleted_rate = create(:tax_rate)
+      deleted_rate.destroy
+      deleted_rate.update_columns(store_id: nil)
+
+      run_task('spree:backfill_tax_store_ids')
+
+      expect(Spree::TaxRate.with_deleted.find(deleted_rate.id).store_id).to eq(@default_store.id)
+    end
+  end
+
   describe 'spree:migrate_zones_to_delivery_zones' do
     let!(:country) { Spree::Country.find_by(iso: 'US') || create(:country_us) }
     let!(:zone) do
