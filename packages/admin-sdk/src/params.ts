@@ -1389,9 +1389,8 @@ export type PaymentMethodType = ResourceTypeDefinition
 
 /**
  * One entry returned by `GET /integrations/types` — every registered
- * integration with its configuration schema and whether the current store
- * has it connected. This is the gallery source for the integrations
- * settings page.
+ * integration with its gallery metadata and configuration schema. Pure
+ * registry discovery: read live connection state from `integrations.list()`.
  */
 export interface IntegrationTypeDefinition {
   /** Wire shorthand (`Spree::Integration.api_type`), not the Ruby class name. */
@@ -1404,8 +1403,6 @@ export interface IntegrationTypeDefinition {
   /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI for self-contained gems. Render with a fallback — hosted logos are a courtesy, not a guarantee. */
   logo_url: string | null
   preference_schema: { key: string; type: string; default: unknown }[]
-  /** Whether the current store already holds credentials for this type. */
-  connected: boolean
 }
 
 export interface IntegrationCreateParams {

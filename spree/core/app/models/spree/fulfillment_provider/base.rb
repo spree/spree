@@ -19,6 +19,16 @@ module Spree
         def provider_name
           name.demodulize.titleize
         end
+
+        # The Spree::Integration subclass holding this provider's credentials,
+        # as a class name string — same contract as
+        # {Spree::DeliveryRateProvider::Base.integration_class}. Providers
+        # without external credentials leave it nil.
+        #
+        # @return [String, nil]
+        def integration_class
+          nil
+        end
       end
 
       # @return [Boolean] whether the fulfillment may transition to fulfilled
@@ -67,6 +77,20 @@ module Spree
       # @return [Array] provider documents (labels, customs forms, ...)
       def documents(_fulfillment)
         []
+      end
+
+      private
+
+      # The connected, active integration carrying this provider's
+      # credentials, resolved from the fulfillment's store.
+      #
+      # @param fulfillment [Spree::Fulfillment]
+      # @return [Spree::Integration, nil]
+      def integration_for(fulfillment)
+        return if self.class.integration_class.blank?
+
+        store = fulfillment.order&.store || fulfillment.cart&.store
+        store&.integrations&.active&.find_by(type: self.class.integration_class)
       end
     end
   end

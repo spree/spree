@@ -16,25 +16,14 @@ module Spree
                          unknown_type_error: 'unknown_integration_type'
 
           # GET /api/v3/admin/integrations/types
-          # Every registered integration type with its configuration schema
-          # and whether the current store has it connected.
+          # Pure registry discovery — which integrations are installed and how
+          # they're configured. Deliberately carries no per-store connected
+          # state: clients cache this long-lived and read live connection
+          # state from the integrations list instead.
           def types
             authorize! :create, model_class
 
-            connected_types = current_store.integrations.pluck(:type)
-            data = Spree::Integration.registered_classes.map do |klass|
-              {
-                type: klass.api_type,
-                name: klass.integration_name,
-                group: klass.integration_group,
-                description: klass.localized_description,
-                logo_url: klass.logo_url,
-                preference_schema: klass.serialized_preference_schema,
-                connected: connected_types.include?(klass.to_s)
-              }
-            end
-
-            render json: { data: data }
+            render json: { data: Spree::Integration.discovery_entries }
           end
 
           # POST /api/v3/admin/integrations/:id/test

@@ -8,6 +8,9 @@ import {
   usePermissions,
 } from '@spree/dashboard-core'
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
   Badge,
   Button,
   Card,
@@ -28,7 +31,7 @@ import {
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlugIcon } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import {
@@ -128,6 +131,7 @@ function IntegrationsPage() {
 
       {configuringType && (
         <ConfigureIntegrationSheet
+          key={`${configuringType.type}:${integrationsByType.get(configuringType.type)?.id ?? 'new'}`}
           type={configuringType}
           integration={integrationsByType.get(configuringType.type)}
           open
@@ -186,27 +190,15 @@ function IntegrationCard({
   )
 }
 
-// Gem-declared logo (hosted URL or data URI), falling back to an
-// initial-letter avatar when none is declared — or when the URL fails to
-// load (offline, vendor moved the file) — so cards never show a broken image.
+// Gem-declared logo (hosted URL or data URI); the Avatar compound shows the
+// initial-letter fallback until the image loads, covering unset and
+// unreachable URLs alike — same pattern as the store switcher.
 function IntegrationLogo({ name, logoUrl }: { name: string; logoUrl: string | null }) {
-  const [failed, setFailed] = useState(false)
-
-  if (logoUrl && !failed) {
-    return (
-      <img
-        src={logoUrl}
-        alt=""
-        onError={() => setFailed(true)}
-        className="size-9 shrink-0 rounded-md object-contain"
-      />
-    )
-  }
-
   return (
-    <div className="flex size-9 shrink-0 items-center justify-center rounded-md bg-muted font-medium text-muted-foreground text-sm">
-      {name.charAt(0).toUpperCase()}
-    </div>
+    <Avatar className="size-9 shrink-0 rounded-md">
+      {logoUrl && <AvatarImage src={logoUrl} className="object-contain" />}
+      <AvatarFallback className="rounded-md">{name.charAt(0).toUpperCase()}</AvatarFallback>
+    </Avatar>
   )
 }
 
@@ -228,23 +220,15 @@ function ConfigureIntegrationSheet({
   const deleteMutation = useDeleteIntegration()
   const testMutation = useTestIntegration()
 
-  const [preferences, setPreferences] = useState<Record<string, unknown>>({})
-  const [active, setActive] = useState(false)
+  // Seeded once per mount — the parent keys this sheet by type + record, so
+  // switching integrations remounts with fresh state.
+  const [preferences, setPreferences] = useState<Record<string, unknown>>(() =>
+    integration
+      ? ((integration.preferences as Record<string, unknown>) ?? {})
+      : defaultPreferences(type.preference_schema),
+  )
+  const [active, setActive] = useState(integration?.active ?? false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const loadedIdRef = useRef<string | undefined>(undefined)
-
-  useEffect(() => {
-    if (integration) {
-      if (integration.id === loadedIdRef.current) return
-      setPreferences((integration.preferences as Record<string, unknown>) ?? {})
-      setActive(integration.active)
-      loadedIdRef.current = integration.id
-    } else {
-      setPreferences(defaultPreferences(type.preference_schema))
-      setActive(false)
-      loadedIdRef.current = undefined
-    }
-  }, [integration, type])
 
   const saving = createMutation.isPending || updateMutation.isPending
 

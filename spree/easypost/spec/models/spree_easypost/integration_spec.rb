@@ -16,7 +16,7 @@ RSpec.describe SpreeEasyPost::Integration do
   it 'declares gallery metadata' do
     expect(described_class.logo_url).to start_with('https://')
     # The gem's locale file wins over the class fallback.
-    expect(described_class.localized_description).to include('negotiated carrier contracts')
+    expect(described_class.human_description).to include('negotiated carrier contracts')
   end
 
   it 'masks the api key as a password preference' do

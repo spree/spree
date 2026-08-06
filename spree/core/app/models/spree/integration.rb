@@ -53,10 +53,6 @@ module Spree
       nil
     end
 
-    def self.icon_path
-      nil
-    end
-
     # Logo shown on the gallery card: an absolute URL to publicly hosted
     # brand assets, or a `data:` URI for gems that want to be self-contained
     # (works air-gapped, no CSP domain to allowlist). Anything an `<img src>`
@@ -80,19 +76,34 @@ module Spree
     end
 
     # Description for the current locale: the gem's Rails translation when
-    # present, otherwise the {.description} fallback.
+    # present, otherwise the {.description} fallback. Named per the
+    # human_name/human_description convention of the rule families.
     #
     # @return [String, nil]
-    def self.localized_description
+    def self.human_description
       Spree.t("integrations.#{api_type}.description", default: description)
+    end
+
+    # Wire entries for the admin types-discovery endpoint — every registered
+    # integration with its gallery metadata and configuration schema, stably
+    # ordered by name.
+    #
+    # @return [Array<Hash>]
+    def self.discovery_entries
+      registered_classes.map do |klass|
+        {
+          type: klass.api_type,
+          name: klass.integration_name,
+          group: klass.integration_group,
+          description: klass.human_description,
+          logo_url: klass.logo_url,
+          preference_schema: klass.serialized_preference_schema
+        }
+      end.sort_by { |entry| entry[:name] }
     end
 
     def self.integration_name
       name.demodulize.titleize.strip
-    end
-
-    def self.integration_key
-      name.demodulize.underscore
     end
 
     # Wire shorthand for the admin API. Provider gems follow the
@@ -111,10 +122,6 @@ module Spree
 
     def name
       self.class.integration_name
-    end
-
-    def key
-      self.class.integration_key
     end
 
     # Checks if the integration can establish a connection.

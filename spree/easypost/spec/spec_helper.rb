@@ -1,3 +1,19 @@
+if ENV['COVERAGE']
+  require 'simplecov'
+  require 'simplecov-cobertura'
+  SimpleCov.root(ENV.fetch('GITHUB_WORKSPACE', File.expand_path('../../..', __dir__)))
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
+  SimpleCov.start 'rails' do
+    add_group 'Models', 'app/models'
+    add_filter '/bin/'
+    add_filter '/spec/'
+
+    suffix = [ENV.fetch('CI_SHARD', '1'), ENV['TEST_ENV_NUMBER']].compact.reject(&:empty?).join('_')
+    coverage_dir "#{ENV['COVERAGE_DIR']}/easypost_#{suffix}" if ENV['COVERAGE_DIR']
+    command_name "easypost_shard_#{suffix}"
+  end
+end
+
 ENV['RAILS_ENV'] ||= 'test'
 
 begin
