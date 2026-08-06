@@ -617,6 +617,8 @@ describe Spree::LineItem, type: :model do
     end
 
     context 'when one fulfillment holds several of this line item units' do
+      let(:line_item) { create(:line_item, quantity: 2) }
+
       it 'counts that fulfillment once, not once per unit' do
         second_unit = create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
         shipment.fulfillment_items << second_unit
@@ -626,13 +628,20 @@ describe Spree::LineItem, type: :model do
     end
 
     context 'when a canceled fulfillment precedes an active one' do
+      let(:line_item) { create(:line_item, quantity: 2) }
+
+      # The canceled one must be visited first, otherwise a premature `return`
+      # would reach the active cost anyway and the guard would look correct.
       it 'still charges the active fulfillment' do
         shipment.update_columns(cost: 10, status: 'canceled')
 
         active = create(:shipment, cost: 10, order: shipment.order, stock_location: shipment.stock_location)
         active.fulfillment_items << create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
 
-        expect(line_item.reload.delivery_cost).to eq(10)
+        line_item.reload
+        expect(line_item.fulfillments.first).to eq(shipment)
+
+        expect(line_item.delivery_cost).to eq(10)
       end
     end
   end
