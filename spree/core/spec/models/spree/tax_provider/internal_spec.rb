@@ -129,6 +129,51 @@ describe Spree::TaxProvider::Internal, type: :model do
       end
     end
 
+    context 'with an exemption covering the sale' do
+      let!(:rate) { create(:tax_rate, zone: zone, amount: 0.1, tax_category: line_item.tax_category, included_in_price: false) }
+      let(:exemption) { Spree::TaxExemption.new(reason_code: 'resale', certificate_number: 'CERT-1') }
+
+      it 'writes a zero row recording the claim' do
+        provider.estimate(order, exemptions: [exemption])
+
+        tax_line = order.tax_lines.reload.sole
+        expect(tax_line.amount).to eq(0)
+        expect(tax_line.taxability_reason).to eq('customer_exempt')
+        expect(tax_line.category_code).to eq('E')
+        expect(tax_line.data['exemption']).to eq('reason_code' => 'resale', 'certificate_number' => 'CERT-1')
+      end
+
+      it 'ignores an exemption scoped to another jurisdiction' do
+        elsewhere = Spree::TaxExemption.new(reason_code: 'resale', country_iso: 'DE')
+
+        provider.estimate(order, exemptions: [elsewhere])
+
+        expect(order.tax_lines.reload.sole.amount).to eq(1.0)
+      end
+
+      it 'taxes a line the buyer carved out for their own use' do
+        carved_out = Spree::TaxExemption.new(
+          reason_code: 'resale',
+          item_overrides: [Spree::TaxExemption::ItemOverride.new(item_id: line_item.prefixed_id, exempt: false)]
+        )
+
+        provider.estimate(order, exemptions: [carved_out])
+
+        expect(order.tax_lines.reload.sole.taxability_reason).to eq('standard_rated')
+      end
+    end
+
+    context 'with an exemption against an included (VAT) rate' do
+      let!(:rate) { create(:tax_rate, zone: zone, amount: 0.2, tax_category: line_item.tax_category, included_in_price: true) }
+
+      it 'leaves the whole basis pre-tax, having no tax to back out' do
+        provider.estimate(order, exemptions: [Spree::TaxExemption.new(reason_code: 'government')])
+
+        expect(order.tax_lines.reload.sole.amount).to eq(0)
+        expect(line_item.reload.pre_tax_amount).to eq(10)
+      end
+    end
+
     context 'with a taxable fee' do
       let!(:rate) do
         create(:tax_rate, zone: zone, amount: 0.1, tax_category: create(:tax_category, is_default: true), included_in_price: false)

@@ -23,6 +23,7 @@ module Spree
         return if items.empty?
 
         rates = Spree::TaxRate.match(owner.tax_zone)
+        jurisdiction = jurisdiction_for(owner)
 
         items.group_by(&:class).each do |klass, group|
           # Replace-all set semantics per estimate: stale lines die with the
@@ -32,15 +33,23 @@ module Spree
 
         items.each do |item|
           relevant_rates = rates.select { |rate| rate.tax_category_id == tax_category_id_for(item) }
-          store_pre_tax_amount(item, relevant_rates)
+          exemption = exemption_for(item, exemptions, jurisdiction)
+          # An exempt item has no tax to back out of its price, so the whole
+          # basis is pre-tax.
+          store_pre_tax_amount(item, exemption ? [] : relevant_rates)
 
           # A matched rate always produces a row, zero-amount ones included:
           # a zero rate is a treatment ("this is zero-rated"), which reporting
           # and e-invoicing both need to see. No matched rate means no opinion,
           # and writes nothing.
           relevant_rates.each do |rate|
-            amount = compute_tax(rate, item, relevant_rates)
-            write_tax_line(owner, item, rate, amount, reason_for(rate))
+            if exemption
+              write_tax_line(owner, item, rate, 0, 'customer_exempt', jurisdiction,
+                             data: exemption_data(exemption, item))
+            else
+              write_tax_line(owner, item, rate, compute_tax(rate, item, relevant_rates),
+                             reason_for(rate), jurisdiction)
+            end
           end
         end
       end
@@ -115,7 +124,29 @@ module Spree
         { country_iso: address.country&.iso, state_code: address.state&.abbr }
       end
 
-      def write_tax_line(owner, item, rate, amount, reason)
+      # The first exemption entry that claims both this item and the
+      # jurisdiction being taxed. Multiple certificates mean multiple entries,
+      # and one claim is enough.
+      def exemption_for(item, exemptions, jurisdiction)
+        Array(exemptions).find do |exemption|
+          exemption.covers_item?(item) &&
+            exemption.covers_jurisdiction?(jurisdiction[:country_iso], jurisdiction[:state_code])
+        end
+      end
+
+      # Keeps the claim with the row it produced: the invoice exemption code for
+      # a genuinely exempt supply depends on which exemption applied, which the
+      # reason alone cannot say.
+      def exemption_data(exemption, item)
+        {
+          'exemption' => {
+            'reason_code' => exemption.reason_code_for(item),
+            'certificate_number' => exemption.certificate_number
+          }.compact
+        }
+      end
+
+      def write_tax_line(owner, item, rate, amount, reason, jurisdiction, data: {})
         owner_key = owner.is_a?(Spree::Order) ? :order : :cart
         Spree::TaxLine.create!(
           {
@@ -127,8 +158,9 @@ module Spree
             label: rate.adjustment_label,
             included: rate.included_in_price,
             provider_id: 'internal',
-            taxability_reason: reason
-          }.merge(jurisdiction_for(owner))
+            taxability_reason: reason,
+            data: data
+          }.merge(jurisdiction)
         )
       end
     end

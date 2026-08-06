@@ -113,7 +113,11 @@ module Spree
         line_item_by_variant_finder: 'Spree::LineItems::FindByVariant',
 
         # search
-        search_product_presenter: 'Spree::SearchProvider::ProductPresenter'
+        search_product_presenter: 'Spree::SearchProvider::ProductPresenter',
+
+        # tax — assembles the exemption evidence handed to the tax provider.
+        # Core resolves none; swap this to read wherever certificates live.
+        tax_resolve_exemptions_service: 'Spree::Tax::ResolveExemptions'
       }.freeze
 
       include Spree::DependenciesHelper
