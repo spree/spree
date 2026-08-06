@@ -25,9 +25,7 @@ export function optionTypeAutocompleteProps(queryKey: string) {
     hydrate: (ids: string[]) => adminClient.optionTypes.list({ id_in: ids, limit: ids.length }),
     getOptionLabel: (optionType: OptionType) =>
       optionType.label ?? optionType.name ?? optionType.id,
-    placeholder: i18n.t('admin.products.options.search_placeholder', {
-      defaultValue: 'Search option types…',
-    }),
+    placeholder: i18n.t('admin.product_types.option_type_search_placeholder'),
     emptyText: i18n.t('admin.product_types.no_option_types'),
   }
 }
@@ -55,7 +53,7 @@ export function useOptionTypesByIds(ids: string[] | undefined) {
   const idList = ids ?? []
   return useQuery({
     queryKey: useResourceKey('option-types', 'by-ids', idList),
-    queryFn: () => adminClient.optionTypes.list({ id_in: idList, limit: idList.length }),
+    queryFn: () => optionTypeAutocompleteProps('by-ids').hydrate(idList),
     enabled: idList.length > 0,
     staleTime: 1000 * 60 * 5,
   })

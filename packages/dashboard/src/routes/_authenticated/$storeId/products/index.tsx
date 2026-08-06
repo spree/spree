@@ -366,7 +366,7 @@ function ProductsPage() {
         tableKey="products"
         queryKey="products"
         queryFn={(params) => adminClient.products.list(params)}
-        defaultParams={{ expand: ['channels', 'product_type'] }}
+        defaultParams={{ expand: ['channels'] }}
         searchParams={searchParams}
         bulkActions={bulkActions}
         rowActions={renderRowActions}

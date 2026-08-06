@@ -463,7 +463,6 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
           render={({ field }) => (
             <ResourceMultiAutocomplete
               {...optionTypeAutocompleteProps('product-type-option-types')}
-              placeholder={t('admin.product_types.option_type_search_placeholder')}
               value={field.value}
               onChange={field.onChange}
             />

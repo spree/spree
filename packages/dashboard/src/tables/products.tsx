@@ -175,6 +175,9 @@ defineTable('products', {
       // attribute on Product, but product_type is a ransackable association.
       filterResource: productTypeAutocompleteProps('products-table-product-type-filter'),
       ransackAttribute: 'product_type_id',
+      // Requested only while the column is on — ResourceTable unions the
+      // expands of visible columns into the list request.
+      expand: 'product_type',
       default: false,
       className: 'text-sm text-muted-foreground',
       render: (product) => product.product_type?.name ?? '—',

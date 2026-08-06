@@ -19,8 +19,8 @@ definitions = Spree::MetafieldDefinition.where(
   resource_type: 'Spree::Product'
 ).index_by(&:key)
 
-# required: every product of the type must fill it before it can be activated.
-# optional: shown on the form, filled where it applies.
+# `required` is advisory — the dashboard marks the field, nothing rejects a
+# blank value. It still says which fields the type considers essential.
 product_types = [
   {
     name: 'Kitchen Appliance',
@@ -66,25 +66,19 @@ product_types.each do |attributes|
     product_type.option_types << color_option_type
   end
 
-  attributes[:required_fields].each_with_index do |key, index|
+  # One pass: required fields first, so sort_order falls out of the position
+  # in the merged list rather than needing an offset.
+  fields = attributes[:required_fields].map { |key| [key, true] } +
+           attributes[:optional_fields].map { |key| [key, false] }
+
+  fields.each_with_index do |(key, required), index|
     definition = definitions[key]
     next if definition.nil?
 
     join = product_type.product_type_custom_field_definitions.
            find_or_initialize_by(custom_field_definition_id: definition.id)
-    join.required = true
+    join.required = required
     join.sort_order = index
-    join.save!
-  end
-
-  attributes[:optional_fields].each_with_index do |key, index|
-    definition = definitions[key]
-    next if definition.nil?
-
-    join = product_type.product_type_custom_field_definitions.
-           find_or_initialize_by(custom_field_definition_id: definition.id)
-    join.required = false
-    join.sort_order = attributes[:required_fields].length + index
     join.save!
   end
 end
