@@ -36,8 +36,7 @@ describe Spree::DeliveryMethod, type: :model do
     it 'is decided by the fulfillment provider, not the fulfillment type' do
       [
         ['digital', 'Spree::FulfillmentProvider::Digital'],
-        ['pickup', 'Spree::FulfillmentProvider::Pickup'],
-        ['pickup_point', 'Spree::FulfillmentProvider::PickupPoint']
+        ['pickup', 'Spree::FulfillmentProvider::Pickup']
       ].each do |fulfillment_type, provider|
         method = create(:delivery_method, fulfillment_type: fulfillment_type, fulfillment_provider: provider)
 

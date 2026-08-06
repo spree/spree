@@ -25,7 +25,11 @@ describe Spree::FulfillmentProvider::Base, type: :model do
         Spree::FulfillmentProvider::Pickup,
         Spree::FulfillmentProvider::PickupPoint
       )
-      expect(Spree.fulfillment_types).to include('shipping', 'pickup', 'pickup_point', 'digital', 'local_delivery')
+      expect(Spree.fulfillment_types).to include('shipping', 'pickup', 'digital')
+      # Deferred to 6.1: pickup_point (provider ships, type unregistered) and
+      # local_delivery (no implementation — a shipping method with a
+      # postal-code zone covers the use case today).
+      expect(Spree.fulfillment_types).not_to include('pickup_point', 'local_delivery')
     end
   end
 
