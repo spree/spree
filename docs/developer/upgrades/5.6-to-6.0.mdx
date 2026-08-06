@@ -186,6 +186,74 @@ The full address surface is shared by Cart and Order through `Spree::Purchase::A
 - A signed-in customer entering checkout gets blank address slots **auto-filled from their saved defaults**.
 - **`use_billing` is deprecated** (removed in 6.1): the shipping address is canonical — use `use_shipping` to copy ship → bill.
 
+## Returns, exchanges and claims
+
+The `ReturnAuthorization → CustomerReturn → Reimbursement` chain is replaced by three first-class records that each belong directly to an order: **`Spree::Return`** (items come back, money goes back), **`Spree::Exchange`** (items come back, different items go out), and **`Spree::Claim`** (something went wrong in delivery — no items required back).
+
+The old classes are **gone with no bridge**, so calls raise `NameError`:
+
+| Removed | Use instead |
+|---|---|
+| `Spree::ReturnAuthorization` | `Spree::Return` or `Spree::Exchange` |
+| `Spree::CustomerReturn` | `Spree::Return` — receiving is a status on the same record |
+| `Spree::Reimbursement`, `Spree::ReimbursementType` | `Spree::Returns::Refund` (a workflow, not a model) |
+| `Spree::ReturnItem` | `Spree::ReturnLineItem` / `Spree::ExchangeLineItem` / `Spree::ClaimLineItem` |
+| `Spree::ReturnItem::EligibilityValidator::*` | the `validate` hook — see below |
+| `Spree::ReturnAuthorizationReason` | `Spree::ReturnReason` (constant alias kept until 6.1, with a warning) |
+
+<Note>
+  **The legacy tables are not dropped.** They stay through 6.1 as the data migration's source and rollback path. Run `spree:upgrade:migrate_returns` to copy the history onto the new models — it's resumable, and it aborts if any row fails so an upgrade can't silently proceed on partial history.
+</Note>
+
+### No state machines
+
+New records carry a plain `status` string with an inclusion validation. Every transition is a workflow — `Spree::Returns::Approve`, `Returns::Receive`, `Returns::Refund`, `Exchanges::Fulfill`, `Claims::Resolve`, and so on. **Nothing happens in a model callback or transition callback**, so code that hooked `before_transition` on the old machines has no equivalent; move it to a workflow hook or an event subscriber.
+
+Statuses are extensible but additive only, through `Spree::HasStatus`:
+
+```ruby
+Spree::Return.add_status('inspecting', after: 'received')
+```
+
+### Eligibility is a hook, not a validator chain
+
+`ReturnItem::EligibilityValidator::Default` chained five validators. Only one was policy; the rest were invariants, so they moved to different places:
+
+| Old validator | Where the rule lives now |
+|---|---|
+| `TimeSincePurchase` | `Spree::Returns::EligibilityValidator`, registered on the `validate` hook |
+| `OrderCompleted` | inline guard in `Returns::Create` |
+| `InventoryShipped` | structural — only fulfillment items can be returned, and quantities are checked against what shipped |
+| `NoReimbursements` | quantity math — prior return line items are subtracted, so units can't come back twice |
+| `RMARequired` | gone: the `Return` **is** the request, so there is nothing to require |
+
+Core ships exactly one policy rule — a return window read from `market.preferred_return_window_days` (default 30), per market because return windows are a regional legal matter. **Staff can override it**: when `created_by` is present the window is advisory, so a supervisor can accept a late return without a code change.
+
+<Warning>
+  `Spree::Config[:return_eligibility_number_of_days]` is **no longer read by anything**. The preference still exists so setting it won't crash, but it has no effect — move the value to your markets' `preferred_return_window_days`.
+</Warning>
+
+Replace it by swapping the handler:
+
+```ruby
+Spree.hooks.unregister('returns.create.validate', 'Spree::Returns::EligibilityValidator')
+Spree.hooks.register('returns.create.validate', 'MyStore::ReturnPolicy')
+```
+
+A handler receives the workflow (so it can read `order`, `items`, `created_by`, `order.market`) and calls `workflow.reject!(message)` to veto. Every one of the fifteen transitions has a leading `validate` hook, so the same seam gates approving, receiving and refunding.
+
+<Warning>
+  `requires_manual_intervention?` has no equivalent. The old validators could mark an item eligible-but-flagged for manual review; a handler now either accepts or vetoes. If you relied on that middle state, model it explicitly — an added status, or a metafield your handler sets.
+</Warning>
+
+### Other behavioral changes
+
+- **`Return#refunded_total` counts store credits.** Store credit is a separate ledger and never creates a `Spree::Refund` row, so the old sum reported zero for a store-credit refund.
+- **`Order#outstanding_balance` dropped its reimbursement term** rather than replacing it — refunds already net out of `payment_total`, so that term was double-counting.
+- **The reimbursement email is now `Spree::ReturnMailer#refunded_email`**, sent on `return.refunded` (in the optional `spree_emails` gem, like the other transactional mail).
+- **`Refund#originator`** points at the new records.
+- Events are `return.requested` / `.approved` / `.received` / `.refunded` / `.canceled`, and the matching `exchange.*` and `claim.*` families.
+
 ## Dependency injection changes
 
 6.0 introduces `*_workflow` keys for the flows that graduated to the workflow tier. The old `*_service` keys **stay settable and readable one release so applications don't crash at boot — but a legacy write is stashed, not applied**: a class written against the old service contract is not interchangeable with the workflow the new call sites consume. Reads return your stashed class (legacy code calling its own override keeps working), falling back to the workflow. Removed in 6.1.
