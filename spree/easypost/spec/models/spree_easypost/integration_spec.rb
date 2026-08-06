@@ -42,6 +42,28 @@ RSpec.describe SpreeEasyPost::Integration do
     end
   end
 
+  # Real client, HTTP played back from spec/vcr — exercises the SDK request
+  # path the stubs above bypass. Re-record with EASYPOST_TEST_API_KEY set.
+  describe 'API contract (VCR)' do
+    subject(:integration) do
+      described_class.new(store: @default_store,
+                          preferences: { api_key: ENV.fetch('EASYPOST_TEST_API_KEY', 'EZTK-recorded') })
+    end
+
+    it 'connects with a valid key' do
+      VCR.use_cassette('carrier_accounts') do
+        expect(integration.can_connect?).to be(true)
+      end
+    end
+
+    it 'captures the vendor message on a rejected key' do
+      VCR.use_cassette('carrier_accounts_unauthorized') do
+        expect(integration.can_connect?).to be(false)
+        expect(integration.connection_error_message).to be_present
+      end
+    end
+  end
+
   describe 'verify before activate' do
     it 'blocks activation when the connection fails' do
       allow(integration).to receive(:can_connect?).and_return(false)

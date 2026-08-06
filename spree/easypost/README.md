@@ -30,9 +30,9 @@ bundle exec rake test_app
 bundle exec rspec
 ```
 
-Specs stub the EasyPost client — no network calls, no API key needed.
+The suite runs offline: unit specs stub the client, and the API-contract specs replay recorded HTTP through VCR (`spec/vcr/`). To re-record the cassettes against the live EasyPost test API, delete them and run the suite with `EASYPOST_TEST_API_KEY` set — the key is filtered out of recordings.
 
-To verify the real API contract (the exact calls the provider makes), run the live smoke check with a test key:
+For a quick live sanity check outside the suite:
 
 ```bash
 EASYPOST_TEST_API_KEY=EZTK... bin/smoke

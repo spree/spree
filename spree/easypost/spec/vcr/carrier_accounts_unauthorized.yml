@@ -1,0 +1,23 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.easypost.com/v2/carrier_accounts
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - "<FILTERED>"
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: '{"error":{"code":"UNAUTHORIZED","message":"Invalid API Key.","errors":[]}}'
+  recorded_at: Thu, 06 Aug 2026 20:00:00 GMT
+recorded_with: VCR 6.3.1

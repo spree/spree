@@ -1,0 +1,25 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.easypost.com/v2/shipments
+    body:
+      encoding: UTF-8
+      string: '{"shipment":{}}'
+    headers:
+      Authorization:
+      - "<FILTERED>"
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: '{"id":"shp_recorded1","object":"Shipment","mode":"test","status":"unknown","created_at":"2026-08-06T12:00:00Z","updated_at":"2026-08-06T12:00:00Z","rates":[{"id":"rate_recorded1","object":"Rate","mode":"test","service":"Priority","carrier":"USPS","rate":"7.33","currency":"USD","retail_rate":"10.20","delivery_days":2,"delivery_date":"2026-08-08T00:00:00Z","delivery_date_guaranteed":false,"shipment_id":"shp_recorded1","carrier_account_id":"ca_recorded1"},{"id":"rate_recorded2","object":"Rate","mode":"test","service":"Ground","carrier":"UPS","rate":"8.99","currency":"USD","retail_rate":"12.50","delivery_days":3,"delivery_date":null,"delivery_date_guaranteed":false,"shipment_id":"shp_recorded1","carrier_account_id":"ca_recorded2"}]}'
+  recorded_at: Thu, 06 Aug 2026 20:00:00 GMT
+recorded_with: VCR 6.3.1
