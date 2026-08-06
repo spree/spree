@@ -11,6 +11,7 @@ module Spree
       include Spree::VendorConcern
     end
     include Spree::MemoizedData
+    include Spree::TypedAssociations
 
     extend Spree::DisplayMoney
 
@@ -49,6 +50,7 @@ module Spree
     # Every method rates through a calculator; pickup/digital methods default
     # to free so API/dashboard creation doesn't have to send one.
     before_validation :ensure_calculator, on: :create
+    after_save :apply_pending_rules, if: :pending_rules?
     attribute :fulfillment_provider, :string, default: 'Spree::FulfillmentProvider::Manual'
 
     scope :by_fulfillment_type, ->(type) { where(fulfillment_type: type) }
@@ -156,6 +158,17 @@ module Spree
     # Falls back to Manual for rows created before the 6.0 backfill ran.
     def provider
       @provider ||= (fulfillment_provider.presence || 'Spree::FulfillmentProvider::Manual').constantize.new
+    end
+
+    # Flat-payload writer for `rules`, so one PATCH saves the method and its
+    # conditions together. See
+    # {Spree::TypedAssociations#assign_typed_association}.
+    def rules=(rows)
+      assign_typed_association(:delivery_method_rules, rows)
+    end
+
+    def pending_rules?
+      @pending_delivery_method_rules.present?
     end
 
     # AND over the method's active rules; no rules = eligible everywhere.
@@ -279,6 +292,12 @@ module Spree
     def display_on=(value)
       Spree::Deprecation.warn('Spree::DeliveryMethod#display_on= is deprecated and will be removed in Spree 6.1. Use #storefront_visible= instead.')
       self.storefront_visible = value.to_s != 'back_end'
+    end
+
+    private
+
+    def apply_pending_rules
+      flush_pending_typed_association(:delivery_method_rules)
     end
   end
 end

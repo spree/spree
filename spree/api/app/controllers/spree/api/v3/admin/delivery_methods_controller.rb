@@ -75,14 +75,31 @@ module Spree
             Spree.api.admin_delivery_method_serializer
           end
 
+          # A single POST/PATCH can ship eligibility rules alongside the
+          # basics; `DeliveryMethod#rules=` reconciles to the desired set, so
+          # the dashboard saves the whole sheet in one round-trip.
           def permitted_params
             params.permit(
               :name, :admin_name, :code, :fulfillment_type, :fulfillment_provider,
               :pickup_point_provider, :storefront_visible, :tracking_url,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,
               :tax_category_id, :calculator_type,
-              delivery_zone_ids: [], stock_location_ids: [], calculator_preferences: {}
+              delivery_zone_ids: [], stock_location_ids: [], calculator_preferences: {},
+              rules: rule_attributes
             )
+          end
+
+          def rule_attributes
+            [:id, :type, :active, { preferences: {} }, *subclassed_rule_attributes]
+          end
+
+          # Association-backed rule config declares itself on the rule class
+          # (e.g. `[product_ids: []]`), so plugin-defined rules need no change
+          # here.
+          def subclassed_rule_attributes
+            Spree.delivery_method_rules.flat_map do |klass|
+              klass.respond_to?(:additional_permitted_attributes) ? klass.additional_permitted_attributes : []
+            end.uniq
           end
 
           def collection_includes
@@ -103,7 +120,27 @@ module Spree
             if params.key?(:stock_location_ids)
               attributes[:pickup_locations] = Array(params[:stock_location_ids]).map { |id| current_store.stock_locations.accessible_by(current_ability, :show).find_by_prefix_id!(id) }
             end
+            attributes[:rules] = resolved_rule_rows if params.key?(:rules)
             attributes
+          end
+
+          # `DeliveryMethod#rules=` decodes prefixed ids but applies no store
+          # or ability scoping, so resolve association-backed config here — a
+          # product the caller cannot reach 404s rather than silently linking.
+          def resolved_rule_rows
+            Array(permitted_params[:rules]).map do |row|
+              row = row.to_h
+              next row if row['product_ids'].blank?
+
+              row.merge('product_ids' => accessible_product_ids(row['product_ids']))
+            end
+          end
+
+          def accessible_product_ids(ids)
+            current_store.products.
+              accessible_by(current_ability, :show).
+              find(decode_prefixed_ids(ids)).
+              map(&:id)
           end
 
           def assign_calculator(delivery_method)

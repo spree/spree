@@ -139,6 +139,42 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.reload.name).to eq('UPS Ground v2')
       expect(delivery_method.calculator.preferred_amount).to eq(99)
     end
+
+    # The dashboard sheet saves basics and conditions together.
+    it 'saves nested eligibility rules alongside the method' do
+      product = create(:product)
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        name: 'Express',
+        rules: [
+          { type: 'item_total_rule', preferences: { minimum_amount: 25 } },
+          { type: 'excluded_products_rule', product_ids: [product.prefixed_id] }
+        ]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      delivery_method.reload
+      expect(delivery_method.name).to eq('Express')
+      expect(delivery_method.delivery_method_rules.count).to eq(2)
+
+      excluded = delivery_method.delivery_method_rules.detect do |rule|
+        rule.is_a?(Spree::DeliveryMethodRules::ExcludedProductsRule)
+      end
+      expect(excluded.products).to eq([product])
+    end
+
+    it 'rejects nested rule products from another store' do
+      foreign_product = create(:product, store: create(:store))
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        rules: [{ type: 'excluded_products_rule', product_ids: [foreign_product.prefixed_id] }]
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(delivery_method.delivery_method_rules.count).to eq(0)
+    end
   end
 
   describe 'DELETE #destroy' do

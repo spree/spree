@@ -25,6 +25,22 @@ module Spree
 
     scope :active, -> { where(active: true) }
 
+    # Extra params a subclass accepts beyond `type`/`active`/`preferences` —
+    # association-backed config declares itself here so the nested rules API
+    # stays generic (mirrors {Spree::PromotionRule.additional_permitted_attributes}).
+    #
+    # @return [Array]
+    def self.additional_permitted_attributes
+      []
+    end
+
+    # Routes PreferenceSchema's registry lookups (`find_by_api_type`, used by
+    # the flat-payload `DeliveryMethod#rules=` writer) at this rule set.
+    def self.registered_subclasses
+      Spree.delivery_method_rules
+    end
+    private_class_method :registered_subclasses
+
     # @return [String] localized display name for the rule kind, used by admin pickers
     def self.human_name
       Spree.t("delivery_method_rule_types.#{api_type}.name", default: api_type.titleize)

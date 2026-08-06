@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { DeliveryMethod, DeliveryMethodRule, PreferenceField, Product } from '@spree/admin-sdk'
+import type { DeliveryMethod, PreferenceField, Product } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
@@ -10,7 +10,6 @@ import {
   resourceSearchSchema,
   Subject,
   usePermissions,
-  useResourceKeyBuilder,
 } from '@spree/dashboard-core'
 import {
   Button,
@@ -40,11 +39,10 @@ import {
   useConfirm,
   useRowClickBridge,
 } from '@spree/dashboard-ui'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, Trash2Icon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { useEffect, useMemo } from 'react'
+import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import {
@@ -198,8 +196,11 @@ function CreateDeliveryMethodSheet({
           <SheetDescription>{t('admin.delivery_methods.create_description')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
-          <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-            <DeliveryMethodFormFields form={form} />
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+            <div className="flex flex-col gap-4 p-4">
+              <DeliveryMethodFormFields form={form} />
+            </div>
+            <ConditionsSection form={form} />
           </div>
           <SheetFooter>
             <Button
@@ -234,6 +235,7 @@ function EditDeliveryMethodSheet({
 }) {
   const { t } = useTranslation()
   const { data: deliveryMethod, isLoading } = useDeliveryMethod(id)
+  const { data: rules } = useDeliveryMethodRules(id)
   const updateMutation = useUpdateDeliveryMethod(id)
 
   const form = useForm<DeliveryMethodFormValues>({
@@ -265,9 +267,15 @@ function EditDeliveryMethodSheet({
           (deliveryMethod.calculator_preferences as Record<string, unknown>) ?? {},
         delivery_zone_ids: deliveryMethod.delivery_zone_ids ?? [],
         stock_location_ids: deliveryMethod.stock_location_ids ?? [],
+        rules: (rules?.data ?? []).map((rule) => ({
+          id: rule.id,
+          type: rule.type,
+          preferences: rule.preferences as Record<string, unknown>,
+          product_ids: rule.product_ids,
+        })),
       })
     }
-  }, [deliveryMethod, form])
+  }, [deliveryMethod, rules, form])
 
   async function onSubmit(values: DeliveryMethodFormValues) {
     try {
@@ -292,10 +300,12 @@ function EditDeliveryMethodSheet({
           <div className="p-4 text-sm text-muted-foreground">{t('admin.common.loading')}</div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
-              <DeliveryMethodFormFields form={form} />
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+              <div className="flex flex-col gap-4 p-4">
+                <DeliveryMethodFormFields form={form} />
+              </div>
+              <ConditionsSection form={form} />
             </div>
-            <ConditionsSection deliveryMethodId={id} />
             <SheetFooter>
               <Button
                 type="button"
@@ -322,43 +332,15 @@ function EditDeliveryMethodSheet({
 }
 
 // ---------------------------------------------------------------------------
-// Conditions (eligibility rules) — live-mutating, separate from the form
+// Conditions (eligibility rules) — held in form state, saved with the sheet
 // ---------------------------------------------------------------------------
 
-function ConditionsSection({ deliveryMethodId }: { deliveryMethodId: string }) {
+function ConditionsSection({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
-  const queryClient = useQueryClient()
-  const buildKey = useResourceKeyBuilder()
-  const { data: rules } = useDeliveryMethodRules(deliveryMethodId)
   const { data: ruleTypes } = useDeliveryMethodRuleTypes()
+  const rulesArray = useFieldArray({ control: form.control, name: 'rules', keyName: '_key' })
 
-  const invalidate = () =>
-    queryClient.invalidateQueries({
-      queryKey: buildKey('delivery-methods', deliveryMethodId, 'rules'),
-    })
-
-  const addMutation = useMutation({
-    mutationFn: (type: string) =>
-      adminClient.deliveryMethods.rules.create(deliveryMethodId, { type }),
-    onSuccess: invalidate,
-  })
-  const updateMutation = useMutation({
-    mutationFn: ({
-      id,
-      ...params
-    }: {
-      id: string
-      preferences?: Record<string, unknown>
-      product_ids?: string[]
-    }) => adminClient.deliveryMethods.rules.update(deliveryMethodId, id, params),
-    onSuccess: invalidate,
-  })
-  const removeMutation = useMutation({
-    mutationFn: (id: string) => adminClient.deliveryMethods.rules.delete(deliveryMethodId, id),
-    onSuccess: invalidate,
-  })
-
-  const existingTypes = new Set((rules?.data ?? []).map((rule) => rule.type))
+  const existingTypes = new Set(rulesArray.fields.map((rule) => rule.type))
   const availableTypes = (ruleTypes?.data ?? []).filter((type) => !existingTypes.has(type.type))
 
   return (
@@ -369,7 +351,7 @@ function ConditionsSection({ deliveryMethodId }: { deliveryMethodId: string }) {
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
-                <Button type="button" variant="outline" size="sm" disabled={addMutation.isPending}>
+                <Button type="button" variant="outline" size="sm">
                   <PlusIcon className="size-4" />
                   {t('admin.delivery_methods.conditions.add')}
                 </Button>
@@ -377,7 +359,12 @@ function ConditionsSection({ deliveryMethodId }: { deliveryMethodId: string }) {
             />
             <DropdownMenuContent align="end">
               {availableTypes.map((type) => (
-                <DropdownMenuItem key={type.type} onClick={() => addMutation.mutate(type.type)}>
+                <DropdownMenuItem
+                  key={type.type}
+                  onClick={() =>
+                    rulesArray.append({ type: type.type, preferences: {}, product_ids: [] })
+                  }
+                >
                   {type.name}
                 </DropdownMenuItem>
               ))}
@@ -386,63 +373,57 @@ function ConditionsSection({ deliveryMethodId }: { deliveryMethodId: string }) {
         )}
       </div>
 
-      {(rules?.data ?? []).length === 0 && (
+      {rulesArray.fields.length === 0 && (
         <p className="text-muted-foreground text-sm">
           {t('admin.delivery_methods.conditions.empty')}
         </p>
       )}
 
-      {(rules?.data ?? []).map((rule) => (
+      {rulesArray.fields.map((field, index) => (
         <ConditionRuleRow
-          key={rule.id}
-          rule={rule}
-          onSave={(params) => updateMutation.mutate({ id: rule.id, ...params })}
-          onRemove={() => removeMutation.mutate(rule.id)}
-          saving={updateMutation.isPending}
+          key={field._key}
+          form={form}
+          index={index}
+          type={field.type}
+          label={
+            (ruleTypes?.data ?? []).find((candidate) => candidate.type === field.type)?.name ??
+            field.type
+          }
+          schema={
+            (ruleTypes?.data ?? []).find((candidate) => candidate.type === field.type)
+              ?.preference_schema ?? []
+          }
+          onRemove={() => rulesArray.remove(index)}
         />
       ))}
     </div>
   )
 }
 
-type ConditionRuleRowProps = {
-  rule: DeliveryMethodRule
-  onSave: (params: { preferences?: Record<string, unknown>; product_ids?: string[] }) => void
-  onRemove: () => void
-  saving: boolean
-}
-
-function ConditionRuleRow(props: ConditionRuleRowProps) {
-  // Association-backed rules are configured with a picker; every other kind
-  // renders its preference schema.
-  return props.rule.type === 'excluded_products_rule' ? (
-    <ProductsConditionRow {...props} />
-  ) : (
-    <PreferencesConditionRow {...props} />
-  )
-}
-
-function ConditionRowShell({
-  rule,
+function ConditionRuleRow({
+  form,
+  index,
+  type,
+  label,
+  schema,
   onRemove,
-  dirty,
-  saving,
-  onSave,
-  children,
 }: {
-  rule: DeliveryMethodRule
+  form: UseFormReturn<DeliveryMethodFormValues>
+  index: number
+  type: string
+  label: string
+  schema: PreferenceField[]
   onRemove: () => void
-  dirty: boolean
-  saving: boolean
-  onSave: () => void
-  children: React.ReactNode
 }) {
   const { t } = useTranslation()
+  // Association-backed rules are configured with a picker; every other kind
+  // renders its preference schema.
+  const productBacked = type === 'excluded_products_rule'
 
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">
       <div className="flex items-center justify-between">
-        <span className="text-sm">{rule.name}</span>
+        <span className="text-sm">{label}</span>
         <Button
           type="button"
           variant="ghost"
@@ -453,57 +434,28 @@ function ConditionRowShell({
           <Trash2Icon className="size-4" />
         </Button>
       </div>
-      {children}
-      {dirty && (
-        <Button type="button" size="sm" onClick={onSave} disabled={saving}>
-          {saving ? t('admin.actions.saving') : t('admin.actions.save')}
-        </Button>
+      {productBacked ? (
+        <Controller
+          control={form.control}
+          name={`rules.${index}.product_ids`}
+          render={({ field }) => (
+            <ResourceMultiAutocomplete<Product>
+              {...productAutocompleteProps('delivery-method-rule-products')}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+      ) : (
+        <Controller
+          control={form.control}
+          name={`rules.${index}.preferences`}
+          render={({ field }) => (
+            <PreferencesForm schema={schema} values={field.value} onChange={field.onChange} />
+          )}
+        />
       )}
     </div>
-  )
-}
-
-function ProductsConditionRow({ rule, onSave, onRemove, saving }: ConditionRuleRowProps) {
-  const [productIds, setProductIds] = useState<string[]>(rule.product_ids)
-  // Selection order is not meaningful here, so compare as sets — otherwise the
-  // Save button lingers whenever the server returns the same products in a
-  // different order.
-  const dirty =
-    JSON.stringify([...productIds].sort()) !== JSON.stringify([...rule.product_ids].sort())
-
-  return (
-    <ConditionRowShell
-      rule={rule}
-      onRemove={onRemove}
-      dirty={dirty}
-      saving={saving}
-      onSave={() => onSave({ product_ids: productIds })}
-    >
-      <ResourceMultiAutocomplete<Product>
-        {...productAutocompleteProps('delivery-method-rule-products')}
-        value={productIds}
-        onChange={setProductIds}
-      />
-    </ConditionRowShell>
-  )
-}
-
-function PreferencesConditionRow({ rule, onSave, onRemove, saving }: ConditionRuleRowProps) {
-  const [values, setValues] = useState<Record<string, unknown>>(
-    rule.preferences as Record<string, unknown>,
-  )
-  const dirty = JSON.stringify(values) !== JSON.stringify(rule.preferences)
-
-  return (
-    <ConditionRowShell
-      rule={rule}
-      onRemove={onRemove}
-      dirty={dirty}
-      saving={saving}
-      onSave={() => onSave({ preferences: values })}
-    >
-      <PreferencesForm schema={rule.preference_schema} values={values} onChange={setValues} />
-    </ConditionRowShell>
   )
 }
 

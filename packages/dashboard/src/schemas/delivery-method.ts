@@ -2,6 +2,20 @@ import { z } from 'zod/v4'
 
 export const FULFILLMENT_TYPES = ['shipping', 'digital', 'pickup', 'pickup_point'] as const
 
+/**
+ * One eligibility rule as held in form state. `id` is absent for rules added
+ * in this editing session; `product_ids` is only used by association-backed
+ * kinds and stays empty elsewhere.
+ */
+export const deliveryMethodRuleSchema = z.object({
+  id: z.string().optional(),
+  type: z.string(),
+  preferences: z.record(z.string(), z.unknown()),
+  product_ids: z.array(z.string()),
+})
+
+export type DeliveryMethodRuleDraft = z.infer<typeof deliveryMethodRuleSchema>
+
 export const deliveryMethodFormSchema = z.object({
   name: z.string().min(1),
   admin_name: z.string().optional(),
@@ -17,6 +31,7 @@ export const deliveryMethodFormSchema = z.object({
   calculator_preferences: z.record(z.string(), z.unknown()).optional(),
   delivery_zone_ids: z.array(z.string()),
   stock_location_ids: z.array(z.string()),
+  rules: z.array(deliveryMethodRuleSchema),
 })
 
 export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormSchema>
@@ -36,6 +51,7 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   calculator_preferences: {},
   delivery_zone_ids: [],
   stock_location_ids: [],
+  rules: [],
 }
 
 export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
@@ -60,5 +76,13 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
       : {}),
     delivery_zone_ids: values.delivery_zone_ids,
     stock_location_ids: values.stock_location_ids,
+    // Rules ride along with the method so one request saves the whole sheet.
+    // Omitting `id` marks a rule as new; dropping one from the array deletes it.
+    rules: values.rules.map((rule) => ({
+      ...(rule.id ? { id: rule.id } : {}),
+      type: rule.type,
+      preferences: rule.preferences,
+      ...(rule.product_ids.length > 0 ? { product_ids: rule.product_ids } : {}),
+    })),
   }
 }

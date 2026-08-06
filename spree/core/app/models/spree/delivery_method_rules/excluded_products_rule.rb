@@ -11,6 +11,10 @@ module Spree
                inverse_of: :delivery_method_rule
       has_many :products, class_name: 'Spree::Product', through: :delivery_method_rule_products
 
+      def self.additional_permitted_attributes
+        [product_ids: []]
+      end
+
       # Excluded product ids in prefixed form, encoded from the join table's
       # foreign keys — hydrating N Product rows just to re-encode their ids
       # would be wasted I/O. Sorted so clients can compare a response against
