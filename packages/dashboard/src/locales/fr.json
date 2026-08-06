@@ -2974,8 +2974,8 @@
       "active_label": "Proposé sur les nouveaux enregistrements",
       "empty": "Aucun motif pour l'instant",
       "inactive": "Inactif",
-      "locked": "Intégré",
-      "locked_help": "Spree recherche ce motif par son nom : il ne peut être ni renommé ni supprimé.",
+      "in_use": "Utilisé",
+      "in_use_help": "Ce motif est déjà utilisé par des enregistrements existants, il ne peut donc pas être supprimé.",
       "delete_confirm": {
         "title": "Supprimer le motif ?",
         "message": "{{name}} ne sera plus proposé. Les enregistrements existants le conservent."

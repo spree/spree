@@ -11,13 +11,11 @@ FactoryBot.define do
   factory :default_refund_reason, class: Spree::RefundReason do
     name    { 'Return processing' }
     active  { true }
-    mutable { false }
   end
 
   factory :refund_reason, class: Spree::RefundReason do
     store { Spree::Store.find_by(default: true) || association(:store) }
     sequence(:name) { |n| "Refund for return #{n}" }
     active  { true }
-    mutable { false }
   end
 end

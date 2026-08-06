@@ -3010,8 +3010,8 @@
       "active_label": "Dostępny dla nowych zgłoszeń",
       "empty": "Brak powodów",
       "inactive": "Nieaktywny",
-      "locked": "Wbudowany",
-      "locked_help": "Spree wyszukuje ten powód po nazwie, więc nie można go zmienić ani usunąć.",
+      "in_use": "W użyciu",
+      "in_use_help": "Ten powód jest już używany przez istniejące rekordy, więc nie można go usunąć.",
       "delete_confirm": {
         "title": "Usunąć powód?",
         "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują."

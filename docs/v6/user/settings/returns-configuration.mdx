@@ -38,21 +38,13 @@ Refund reasons explain why money was sent back. They are used internally for tra
 
 Typical examples are "Return processing" and "Order cancelled".
 
-Refund reasons have an extra setting:
-
-- **Mutable**: when set to no, the reason is locked and cannot be edited or deleted. Spree uses this to protect the built-in reasons it relies on, such as "Return processing", so that an accidental edit cannot break your returns flow.
-
 ## Managing reasons
 
 All three lists live together under **Settings → Returns & reasons**. Spree seeds a starting set when your store is created, so returns, claims, and refunds work out of the box, and you can add, rename, deactivate, or delete entries from there.
 
 Each reason has two fields: its **name**, and whether it is **available on new records**. Turning that switch off retires a reason — it stops appearing when staff open a new return, claim, or refund, while every record that already used it keeps its explanation.
 
-A reason that is already attached to a record cannot be deleted, for exactly that reason. Deactivate it instead.
-
-<Note>
-  Some reasons are marked **Built in**. Spree looks these up by name — "Return processing" is attached to every refund issued through a return — so they cannot be renamed or deleted. You can still deactivate them.
-</Note>
+A reason that is already attached to a record cannot be deleted, because the records that used it would lose their explanation. Those reasons are marked **In use**. Deactivate one instead to retire it, and rename it at any time — every record pointing at it follows the new name.
 
 ## What about return windows and restocking fees?
 

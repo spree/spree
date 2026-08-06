@@ -201,10 +201,6 @@ module Spree
 
     @@refund_attributes = [:amount, :refund_reason_id]
 
-    # `mutable` is deliberately absent: core seeds reasons it looks up by name
-    # (RefundReason::RETURN_PROCESSING_REASON) and marks them immutable, so a
-    # client that could flip the flag could then rename or delete the record
-    # that lookup depends on.
     @@refund_reason_attributes = [:name, :active]
 
     @@report_attributes = [:type, :date_from, :date_to, :currency]

@@ -243,7 +243,6 @@ en:
     errors:
       messages:
         blank: can't be blank
-        immutable_named_type: cannot be changed because Spree depends on this record
         unregistered_fulfillment_types: 'contains unregistered fulfillment types: %{types}'
       models:
         spree/allowed_origin:
@@ -1090,7 +1089,6 @@ en:
     month: Month
     more: More
     move: Move
-    mutable: Mutable
     my_account: My Account
     my_orders: My Orders
     name: Name

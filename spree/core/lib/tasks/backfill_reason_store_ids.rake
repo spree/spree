@@ -5,10 +5,11 @@ namespace :spree do
       their store binding (Spree 6.0). Idempotent — rows that already carry a
       store_id are skipped.
 
-      Run this immediately after db:migrate. Core looks three refund reasons
-      up by name (RefundReason::RETURN_PROCESSING_REASON and friends) scoped
-      to a store, so until every row carries one those lookups miss and mint
-      a duplicate on the next refund.
+      The rename migration already backfills and then enforces NOT NULL, so
+      this is a safety net rather than the primary path: it covers installs
+      whose migration ran before any store existed, leaving rows unowned and
+      the constraint unapplied. Running it on an already-migrated store is a
+      no-op.
 
       Claim reasons need no backfill — the table is new in 6.0 and its rows
       are born with a store.

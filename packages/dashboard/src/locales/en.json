@@ -2974,8 +2974,8 @@
       "active_label": "Available on new records",
       "empty": "No reasons yet",
       "inactive": "Inactive",
-      "locked": "Built in",
-      "locked_help": "Spree looks this reason up by name, so it cannot be renamed or removed.",
+      "in_use": "In use",
+      "in_use_help": "This reason is already used by existing records, so it cannot be deleted.",
       "delete_confirm": {
         "title": "Delete reason?",
         "message": "{{name}} will no longer be offered. Records already using it keep it."

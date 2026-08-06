@@ -1011,9 +1011,7 @@ export interface TaxCategoryUpdateParams {
 
 /**
  * Return, claim and refund reasons share the same shape — a name and whether
- * it is offered on new records. `mutable` is deliberately absent: core seeds
- * reasons it looks up by name and marks immutable, and a client must not be
- * able to unlock one.
+ * it is offered on new records.
  */
 export interface ReasonCreateParams {
   name: string

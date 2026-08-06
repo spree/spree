@@ -17,7 +17,6 @@ module Spree
         can :cancel, Spree::Order, &:allow_cancel?
         cannot :destroy, Spree::Order
         can :destroy, Spree::Order, &:can_be_deleted?
-        cannot [:edit, :update], Spree::RefundReason, mutable: false
 
         # Protect the admin role from modification
         cannot [:update, :destroy], Spree::Role, name: ['admin']

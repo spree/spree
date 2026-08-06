@@ -41,30 +41,25 @@ RSpec.describe Spree::Api::V3::Admin::RefundReasonsController, type: :controller
     end
   end
 
-  # Core looks this one up by name to attach to every return refund.
-  context 'with the seeded return-processing reason' do
-    let!(:locked) { Spree::RefundReason.return_processing_reason }
+  context 'with a reason that is already used by a refund' do
+    let!(:in_use) { create(:refund, reason: reason, amount: 1).reason }
 
     it 'reports that it cannot be deleted' do
-      get :show, params: { id: locked.prefixed_id }, as: :json
+      get :show, params: { id: in_use.prefixed_id }, as: :json
 
       expect(json_response['can_be_deleted']).to be(false)
     end
 
-    # The ability layer denies :update on an immutable reason outright, and
-    # the v3 error handler renders that as 404 rather than leaking existence.
-    # The model guard below it is what protects the secret-key path, which
-    # authorizes by scope and never consults CanCanCan.
-    it 'refuses to rename it' do
-      patch :update, params: { id: locked.prefixed_id, name: 'Something else' }, as: :json
-
-      expect(response).to have_http_status(:not_found)
-      expect(locked.reload.name).to eq(Spree::RefundReason::RETURN_PROCESSING_REASON)
+    it 'refuses to delete it' do
+      expect { delete :destroy, params: { id: in_use.prefixed_id }, as: :json }.
+        not_to change(Spree::RefundReason, :count)
     end
 
-    it 'refuses to delete it' do
-      expect { delete :destroy, params: { id: locked.prefixed_id }, as: :json }.
-        not_to change(Spree::RefundReason, :count)
+    it 'still allows renaming it' do
+      patch :update, params: { id: in_use.prefixed_id, name: 'Something else' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(in_use.reload.name).to eq('Something else')
     end
   end
 end

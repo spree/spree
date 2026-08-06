@@ -10,10 +10,9 @@ module Spree
         # a shared parent would publish an abstract `Reason` type into the
         # admin SDK that no endpoint returns.
         class ClaimReasonSerializer < V3::BaseSerializer
-          typelize name: :string, active: :boolean, mutable: :boolean,
-                   can_be_deleted: :boolean
+          typelize name: :string, active: :boolean, can_be_deleted: :boolean
 
-          attributes :name, :active, :mutable,
+          attributes :name, :active,
                      created_at: :iso8601, updated_at: :iso8601
 
           # Lets the dashboard hide destructive controls instead of offering a

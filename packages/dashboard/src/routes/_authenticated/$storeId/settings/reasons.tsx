@@ -228,8 +228,8 @@ function ReasonRow({
         <span className="flex items-center gap-2 font-medium">
           {reason.name}
           {!reason.can_be_deleted && (
-            <Badge variant="outline" title={t('admin.reasons.locked_help')}>
-              {t('admin.reasons.locked')}
+            <Badge variant="outline" title={t('admin.reasons.in_use_help')}>
+              {t('admin.reasons.in_use')}
             </Badge>
           )}
         </span>
@@ -246,9 +246,7 @@ function ReasonRow({
           actions={[
             {
               key: 'edit',
-              // A locked reason is one core looks up by name; the API refuses
-              // the rename, so don't offer it.
-              visible: permissions.can('update', subject) && reason.can_be_deleted,
+              visible: permissions.can('update', subject),
               onSelect: () => onEdit(reason),
             },
             {

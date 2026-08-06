@@ -52,19 +52,6 @@ RSpec.describe Spree::PermissionSets::SuperUser do
       end
     end
 
-    context 'immutable types' do
-      let(:mutable_refund_reason) { build(:refund_reason, mutable: true) }
-      let(:immutable_refund_reason) { build(:refund_reason, mutable: false) }
-
-      it 'allows editing mutable refund reasons' do
-        expect(ability.can?(:edit, mutable_refund_reason)).to be true
-      end
-
-      it 'prevents editing immutable refund reasons' do
-        expect(ability.can?(:edit, immutable_refund_reason)).to be false
-      end
-    end
-
     context 'admin role protection' do
       let(:admin_role) { build(:role, name: 'admin') }
       let(:other_role) { build(:role, name: 'customer_service') }

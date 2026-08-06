@@ -5,12 +5,12 @@ RSpec.describe Spree::Seeds::ReturnsEnvironment do
 
   describe 'RefundReason' do
     it 'creates a Return processing RefundReason' do
-      expect { subject }.to change { Spree::RefundReason.where(name: 'Return processing', mutable: false).count }.by(1)
+      expect { subject }.to change { Spree::RefundReason.where(name: 'Return processing').count }.by(1)
     end
 
     context 'when the RefundReason already exists' do
       before do
-        Spree::RefundReason.create!(name: 'Return processing', mutable: false)
+        Spree::RefundReason.create!(name: 'Return processing')
       end
 
       it "doesn't create a new RefundReason" do

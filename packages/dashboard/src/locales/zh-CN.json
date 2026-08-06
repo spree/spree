@@ -2974,8 +2974,8 @@
       "active_label": "可用于新记录",
       "empty": "暂无原因",
       "inactive": "已停用",
-      "locked": "内置",
-      "locked_help": "Spree 按名称查找此原因，因此无法重命名或删除。",
+      "in_use": "使用中",
+      "in_use_help": "此原因已被现有记录使用，因此无法删除。",
       "delete_confirm": {
         "title": "删除原因？",
         "message": "将不再提供 {{name}}。已使用它的记录保持不变。"

@@ -2974,8 +2974,8 @@
       "active_label": "Für neue Vorgänge verfügbar",
       "empty": "Noch keine Gründe",
       "inactive": "Inaktiv",
-      "locked": "Vorgegeben",
-      "locked_help": "Spree sucht diesen Grund über den Namen. Er kann weder umbenannt noch gelöscht werden.",
+      "in_use": "In Verwendung",
+      "in_use_help": "Dieser Grund wird bereits von vorhandenen Datensätzen verwendet und kann daher nicht gelöscht werden.",
       "delete_confirm": {
         "title": "Grund löschen?",
         "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn."

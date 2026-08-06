@@ -85,14 +85,6 @@ RSpec.describe Spree::Api::V3::Admin::ReturnReasonsController, type: :controller
       expect(response).to have_http_status(:ok)
       expect(reason.reload.name).to eq('Too small')
     end
-
-    it 'does not allow unlocking a protected reason' do
-      locked = create(:return_reason, name: 'Locked', mutable: false)
-
-      patch :update, params: { id: locked.prefixed_id, mutable: true }, as: :json
-
-      expect(locked.reload.mutable).to be(false)
-    end
   end
 
   describe 'DELETE #destroy' do
@@ -108,13 +100,6 @@ RSpec.describe Spree::Api::V3::Admin::ReturnReasonsController, type: :controller
         not_to change(Spree::ReturnReason, :count)
 
       expect(return_record.reload.reason).to eq(reason)
-    end
-
-    it 'refuses to delete a protected reason' do
-      locked = create(:return_reason, name: 'Locked', mutable: false)
-
-      expect { delete :destroy, params: { id: locked.prefixed_id }, as: :json }.
-        not_to change(Spree::ReturnReason, :count)
     end
   end
 end

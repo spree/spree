@@ -5,19 +5,22 @@ module Spree
     has_prefix_id :rr
 
     include Spree::NamedType
-    include Spree::SingleStoreResource
 
-    # Names are unique per store, not globally — two stores can each have
-    # their own "Order Canceled" without colliding.
-    validates :name, uniqueness: { case_sensitive: false, scope: [:store_id, *spree_base_uniqueness_scope] }
-
-    self.whitelisted_ransackable_attributes = %w[name active mutable]
+    self.whitelisted_ransackable_attributes = %w[name active]
 
     RETURN_PROCESSING_REASON = 'Return processing'.freeze
     ORDER_CANCELED_REASON = 'Order Canceled'.freeze
     SHIPMENT_CANCELED_REASON = 'Shipment Canceled'.freeze
 
     has_many :refunds, class_name: 'Spree::Refund', dependent: :restrict_with_error
+
+    # Mirrors what `dependent: :restrict_with_error` enforces, so the dashboard
+    # can hide the delete control rather than offer one the model will refuse.
+    #
+    # @return [Boolean]
+    def can_be_deleted?
+      !refunds.exists?
+    end
 
     class << self
       # The seeded reasons core attaches to refunds it issues itself.
@@ -28,23 +31,15 @@ module Spree
       # no current store to fall back on — which would silently create the
       # reason against the wrong one.
       def return_processing_reason(store = Spree::Current.store)
-        seeded(RETURN_PROCESSING_REASON, store)
+        where(store: store).find_or_create_by(name: RETURN_PROCESSING_REASON)
       end
 
       def order_canceled_reason(store = Spree::Current.store)
-        seeded(ORDER_CANCELED_REASON, store)
+        where(store: store).find_or_create_by(name: ORDER_CANCELED_REASON)
       end
 
       def shipment_canceled_reason(store = Spree::Current.store)
-        seeded(SHIPMENT_CANCELED_REASON, store)
-      end
-
-      private
-
-      def seeded(name, store)
-        where(store: store).find_or_create_by(name: name) do |reason|
-          reason.mutable = false
-        end
+        where(store: store).find_or_create_by(name: SHIPMENT_CANCELED_REASON)
       end
     end
   end

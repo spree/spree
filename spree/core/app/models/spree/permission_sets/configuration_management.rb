@@ -55,11 +55,6 @@ module Spree
         can :manage, Spree::Channel
         can :manage, Spree::OrderRoutingRule
 
-        # Restrictions on immutable types
-        cannot [:edit, :update], Spree::RefundReason, mutable: false
-        cannot [:edit, :update], Spree::ReturnReason, mutable: false
-        cannot [:edit, :update], Spree::ClaimReason, mutable: false
-
         # Metafield configuration
         can :manage, Spree::MetafieldDefinition
 

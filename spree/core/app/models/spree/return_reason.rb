@@ -9,15 +9,18 @@ module Spree
     has_prefix_id :rar
 
     include Spree::NamedType
-    include Spree::SingleStoreResource
 
-    # Names are unique per store, not globally — two stores can each have
-    # their own "Damaged" without colliding.
-    validates :name, uniqueness: { case_sensitive: false, scope: [:store_id, *spree_base_uniqueness_scope] }
-
-    self.whitelisted_ransackable_attributes = %w[name active mutable]
+    self.whitelisted_ransackable_attributes = %w[name active]
 
     has_many :returns, class_name: 'Spree::Return', inverse_of: :reason, dependent: :restrict_with_error
     has_many :exchanges, class_name: 'Spree::Exchange', inverse_of: :reason, dependent: :restrict_with_error
+
+    # Mirrors what `dependent: :restrict_with_error` enforces, so the dashboard
+    # can hide the delete control rather than offer one the model will refuse.
+    #
+    # @return [Boolean]
+    def can_be_deleted?
+      !returns.exists? && !exchanges.exists?
+    end
   end
 end
