@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :metafield_definition, class: 'Spree::MetafieldDefinition' do
+  factory :metafield_definition, aliases: [:custom_field_definition], class: 'Spree::MetafieldDefinition' do
     namespace { 'custom' }
     sequence(:key) { |n| "custom_field_#{n}" }
     name { 'Custom Field' }

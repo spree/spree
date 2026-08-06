@@ -504,6 +504,58 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe 'required custom fields from the product type' do
+    let(:definition) { create(:custom_field_definition, name: 'Material') }
+    let(:product_type) { create(:product_type) }
+    let(:product) { create(:product, product_type: product_type, status: 'draft') }
+
+    before do
+      create(:product_type_custom_field_definition, :required, product_type: product_type,
+                                                               custom_field_definition: definition)
+    end
+
+    it 'blocks activation while the field is missing' do
+      product.status = 'active'
+
+      expect(product).not_to be_valid
+      expect(product.errors.full_messages.join).to include('Missing required custom field: Material')
+    end
+
+    it 'allows activation once the field has a value' do
+      create(:metafield, resource: product, metafield_definition: definition, value: 'Cotton')
+
+      product.reload.status = 'active'
+
+      expect(product).to be_valid
+    end
+
+    it 'ignores optional fields' do
+      product_type.product_type_custom_field_definitions.update_all(required: false)
+
+      product.reload.status = 'active'
+
+      expect(product).to be_valid
+    end
+
+    it 'leaves an already-active product saveable when the type gains a required field' do
+      active_product = create(:product, product_type: create(:product_type), status: 'active')
+      create(:product_type_custom_field_definition, :required, product_type: active_product.product_type,
+                                                               custom_field_definition: create(:custom_field_definition))
+
+      active_product.reload.name = 'Renamed'
+
+      expect(active_product).to be_valid
+      expect(active_product.save).to be(true)
+    end
+
+    it 'ignores products without a type' do
+      typeless = create(:product, product_type: nil, status: 'draft')
+      typeless.status = 'active'
+
+      expect(typeless).to be_valid
+    end
+  end
+
   describe 'assigning a product type to a persisted product' do
     let(:size) { create(:option_type, name: 'size') }
     let(:color) { create(:option_type, name: 'color') }

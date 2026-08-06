@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :product_type, aliases: [:prototype], class: Spree::ProductType do
-    name  { 'Baseball Cap' }
+    sequence(:name) { |n| "Baseball Cap #{n}" }
     store { Spree::Store.find_by(default: true) || association(:store) }
   end
 

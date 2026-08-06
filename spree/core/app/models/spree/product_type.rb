@@ -19,6 +19,11 @@ module Spree
     has_many :product_type_categories, class_name: 'Spree::ProductTypeCategory', dependent: :destroy
     has_many :categories, through: :product_type_categories, class_name: 'Spree::Category'
 
+    has_many :product_type_custom_field_definitions, -> { ordered },
+             class_name: 'Spree::ProductTypeCustomFieldDefinition', dependent: :destroy, inverse_of: :product_type
+    has_many :custom_field_definitions, through: :product_type_custom_field_definitions,
+             class_name: 'Spree::MetafieldDefinition'
+
     # restrict, not nullify — removing a product's type (deletion included) would
     # invalidate its type-driven data, so types in use cannot be deleted
     has_many :products, class_name: 'Spree::Product', dependent: :restrict_with_error

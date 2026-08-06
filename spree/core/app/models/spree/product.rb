@@ -193,6 +193,10 @@ module Spree
 
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
+    # Activation only: a product type gaining a required field must never make
+    # already-active products unsaveable.
+    validate :required_custom_fields_present, if: :becoming_active?
+
     scope :for_store, ->(store) { where(store_id: store.id) }
     scope :draft, -> { where(status: 'draft') }
     scope :archived, -> { where(status: 'archived') }
@@ -845,6 +849,27 @@ module Spree
       self[:variant_count] = self.class.where(id: id).pick(:variant_count)
       variants.reset
       association(:default_variant).reset
+    end
+
+    def becoming_active?
+      active? && (new_record? || status_changed?)
+    end
+
+    def required_custom_fields_present
+      return if product_type.blank?
+
+      required_definitions = product_type.product_type_custom_field_definitions.required.
+                             includes(:custom_field_definition).map(&:custom_field_definition)
+      return if required_definitions.empty?
+
+      filled_definition_ids = metafields.reject(&:marked_for_destruction?).
+                              filter_map { |metafield| metafield.metafield_definition_id if metafield.value.present? }
+
+      required_definitions.each do |definition|
+        next if filled_definition_ids.include?(definition.id)
+
+        errors.add(:base, :missing_required_custom_field, name: definition.name)
+      end
     end
 
     # Additive, unlike the legacy prototype callback which replaced both sets —
