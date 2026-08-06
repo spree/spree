@@ -21,6 +21,26 @@ RSpec.describe Spree::Api::V3::Admin::RefundReasonsController, type: :controller
       to change(Spree::RefundReason, :count).by(1)
   end
 
+  # The seeded reasons are per store now, so one store's "Return processing"
+  # is invisible to another rather than shared.
+  describe 'store scoping' do
+    let!(:other_store) { create(:store) }
+    let!(:other_store_reason) { Spree::RefundReason.return_processing_reason(other_store) }
+
+    it 'excludes another store\'s reason from the listing' do
+      get :index, as: :json
+
+      expect(json_response['data'].map { |r| r['id'] }).not_to include(other_store_reason.prefixed_id)
+    end
+
+    it 'gives each store its own seeded reason' do
+      mine = Spree::RefundReason.return_processing_reason(@default_store)
+
+      expect(mine.id).not_to eq(other_store_reason.id)
+      expect(mine.name).to eq(other_store_reason.name)
+    end
+  end
+
   # Core looks this one up by name to attach to every return refund.
   context 'with the seeded return-processing reason' do
     let!(:locked) { Spree::RefundReason.return_processing_reason }

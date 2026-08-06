@@ -15,6 +15,7 @@ FactoryBot.define do
   end
 
   factory :refund_reason, class: Spree::RefundReason do
+    store { Spree::Store.find_by(default: true) || association(:store) }
     sequence(:name) { |n| "Refund for return #{n}" }
     active  { true }
     mutable { false }

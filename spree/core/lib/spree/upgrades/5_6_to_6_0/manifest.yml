@@ -130,6 +130,17 @@ steps:
       migration. spree_adjustments stays intact as the rollback source.
       Idempotent — orders that already have typed rows are skipped.
 
+  - id: backfill_reason_store_ids
+    name: "Bind return and refund reasons to the default store"
+    task: "spree:upgrade:backfill_reason_store_ids"
+    notes: |
+      Return and refund reasons are store-owned in Spree 6. Unassigned rows go
+      to the default store; additional stores manage their own afterwards.
+
+      Run before migrate_returns. Core looks three refund reasons up by name
+      scoped to a store, so until every row carries one those lookups miss and
+      mint a duplicate on the next refund. Idempotent.
+
   - id: migrate_returns
     name: "Move returns onto the new returns models"
     task: "spree:upgrade:migrate_returns"

@@ -142,7 +142,7 @@ module Spree
 
           @refunds << payment.refunds.create!(
             amount: creditable,
-            reason: Spree::RefundReason.return_processing_reason,
+            reason: Spree::RefundReason.return_processing_reason(claim.store),
             refunder: resolver,
             originator: claim
           )

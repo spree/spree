@@ -141,7 +141,7 @@ One-time machine setup: Homebrew `postgresql@18` running on :5432 (with a `postg
 - Follow Rails conventions and the Rails Security Guide
 - RESTful routes and action names
 - CanCanCan for authorization: listings use `accessible_by(current_ability, :show)`, other actions use `authorize!`
-- Always use scope fetching for security (e.g. `current_store.orders` not `Spree::Order`)
+- Always use scope fetching for security (e.g. `current_store.orders` not `Spree::Order`). This applies to **every** lookup in a controller, including the incidental ones — resolving a `reason_id` or `stock_location_id` from a create param through the model constant accepts an id belonging to another store. Reading it through `current_store.<association>` turns that into a 404, which is the cheapest defence against IDOR. `accessible_by(current_ability, ...)` is not a substitute: it filters by role, not by tenant.
 - Ransack for filtering/searching, Pagy for pagination
 - Use services only when necessary — prefer standard Rails models and concerns
 - DO NOT call `Spree::User` directly, use `Spree.user_class`; same for `Spree.admin_user_class`

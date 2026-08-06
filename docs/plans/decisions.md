@@ -1,3 +1,31 @@
+## 2026-08-06: All three reason vocabularies are store-owned
+
+`ReturnReason`, `ClaimReason` and now `RefundReason` include
+`SingleStoreResource`. Name uniqueness moves from global to per-store, so
+two stores can each have their own "Damaged" or "Order Canceled".
+
+This is what makes the controller rule enforceable: every reason lookup
+reads `current_store.return_reasons` rather than the model constant, so a
+prefixed id from another store is a 404 instead of a silent success — the
+cheapest defence against IDOR, and now uniform across the returns surface
+alongside `current_store.stock_locations`.
+
+Refund reasons carried one wrinkle the others did not. Core looks three
+of them up by name (`RETURN_PROCESSING_REASON` and friends) to attach to
+refunds it issues itself, and a global `find_or_create_by(name:)` under a
+per-store unique index would either find another store's row or create a
+storeless one. The class methods therefore take the store explicitly —
+`return_processing_reason(store)` — defaulting to `Spree::Current.store`
+but never relying on it from a workflow, because a background job or
+console session has no current store and would bind the reason to the
+wrong one. All four call sites pass the store they already hold.
+
+Existing rows are backfilled by `spree:upgrade:backfill_reason_store_ids`,
+registered before `migrate_returns` in the 5.6→6.0 manifest. The
+migration only adds the column — data transformations stay in rake tasks,
+matching `backfill_delivery_and_stock_store_ids`.
+
+
 ## 2026-08-06: Return shipping labels are carrier output, not return state — cut from 6.0
 
 `Spree::Return` briefly carried a `return_label_url` column written by a
