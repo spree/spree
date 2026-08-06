@@ -25,6 +25,21 @@ export function useProductTypes({ page = 1, limit = 100 }: UseProductTypesParams
   })
 }
 
+/**
+ * Prop bundle for a `<ResourceMultiAutocomplete>` over product types. Pass a
+ * unique `queryKey` per instance so independent caches don't collide.
+ */
+export function productTypeAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (q: string) => adminClient.productTypes.list({ name_cont: q, limit: 20, sort: 'name' }),
+    hydrate: (ids: string[]) => adminClient.productTypes.list({ id_in: ids, limit: ids.length }),
+    getOptionLabel: (productType: ProductType) => productType.name ?? productType.id,
+    placeholder: i18n.t('admin.product_types.search_placeholder'),
+    emptyText: i18n.t('admin.product_types.empty'),
+  }
+}
+
 export function useProductType(id: string | undefined) {
   return useQuery({
     queryKey: useResourceKey('product-types', id ?? 'noop'),

@@ -2714,6 +2714,10 @@
           "ends_after_starts": "Musi być po dacie rozpoczęcia."
         }
       },
+      "product_type_adds_options_few": "Ten typ dodaje {{count}} opcje do nowych produktów.",
+      "product_type_adds_options_many": "Ten typ dodaje {{count}} opcji do nowych produktów.",
+      "product_type_adds_options_one": "Ten typ dodaje {{count}} opcję do nowych produktów.",
+      "product_type_adds_options_other": "Ten typ dodaje {{count}} opcji do nowych produktów.",
       "product_type_placeholder": "Brak typu produktu",
       "save_label": "Zapisz produkt",
       "seo": {

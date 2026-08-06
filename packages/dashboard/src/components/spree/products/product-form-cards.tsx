@@ -47,7 +47,7 @@ import { toast } from 'sonner'
 import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
 import { collectionAutocompleteProps, useCollections } from '../../../hooks/use-collections'
 import { useDeleteProductMedia } from '../../../hooks/use-product-media'
-import { useProductTypes } from '../../../hooks/use-product-types'
+import { useProductType, useProductTypes } from '../../../hooks/use-product-types'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
 import type { ProductFormValues } from '../../../schemas/product'
 import { ProductBulkPriceEditor } from '../bulk-price-editor/product-bulk-price-editor'
@@ -649,6 +649,23 @@ export function CategorizationCard({ form }: FormCardProps) {
   const { data: collectionsData } = useCollections()
   const { data: productTypesData } = useProductTypes()
   const productTypes = productTypesData?.data ?? []
+  const selectedProductTypeId = form.watch('product_type_id') as string | null | undefined
+  const { data: selectedProductType } = useProductType(selectedProductTypeId ?? undefined)
+
+  // The server seeds the type's categories onto the product when it is saved.
+  // Prefilling them here means the merchant sees what they are about to get and
+  // can still edit the list first. Additive, like the server: nothing they
+  // already picked is removed.
+  useEffect(() => {
+    const categoryIds = selectedProductType?.category_ids
+    if (!categoryIds?.length) return
+
+    const current = (form.getValues('category_ids') as string[] | undefined) ?? []
+    const missing = categoryIds.filter((id) => !current.includes(id))
+    if (missing.length === 0) return
+
+    form.setValue('category_ids', [...current, ...missing], { shouldDirty: true })
+  }, [selectedProductType, form])
   // Automatic collections rebuild their members from rules, so a hand-picked
   // membership would be dropped on the next regeneration — offer manual only.
   // Memoized: `initialItems` feeds a useEffect + useMemo inside
@@ -692,6 +709,13 @@ export function CategorizationCard({ form }: FormCardProps) {
           <span className="text-muted-foreground text-xs">
             {t('admin.fields.product.product_type_id.help')}
           </span>
+          {selectedProductType?.option_type_ids?.length ? (
+            <span className="text-muted-foreground text-xs">
+              {t('admin.products.product_type_adds_options', {
+                count: selectedProductType.option_type_ids.length,
+              })}
+            </span>
+          ) : null}
         </Field>
 
         <Field>

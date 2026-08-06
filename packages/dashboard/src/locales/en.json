@@ -2676,6 +2676,8 @@
           "ends_after_starts": "Must be after start date."
         }
       },
+      "product_type_adds_options_one": "This type adds {{count}} option to new products.",
+      "product_type_adds_options_other": "This type adds {{count}} options to new products.",
       "product_type_placeholder": "No product type",
       "save_label": "Save product",
       "seo": {

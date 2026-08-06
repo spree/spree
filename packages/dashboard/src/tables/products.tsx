@@ -6,6 +6,7 @@ import i18n from 'i18next'
 import { PackageIcon } from 'lucide-react'
 import { categoryAutocompleteProps } from '../hooks/use-categories'
 import { channelAutocompleteProps } from '../hooks/use-channels'
+import { productTypeAutocompleteProps } from '../hooks/use-product-types'
 
 defineTable('products', {
   title: i18n.t('admin.nav.products'),
@@ -162,6 +163,21 @@ defineTable('products', {
       ransackAttribute: 'channels_id',
       default: false,
       render: (product) => product.channels?.map((c: Channel) => c.name).join(', ') ?? '—',
+    },
+    {
+      key: 'product_type',
+      label: i18n.t('admin.fields.product.product_type_id.label'),
+      sortable: false,
+      filterable: true,
+      filterType: 'resource',
+      // Filters through the association (`product_type_id_in`), matching how
+      // categories and channels filter — product_type_id is not a ransackable
+      // attribute on Product, but product_type is a ransackable association.
+      filterResource: productTypeAutocompleteProps('products-table-product-type-filter'),
+      ransackAttribute: 'product_type_id',
+      default: false,
+      className: 'text-sm text-muted-foreground',
+      render: (product) => product.product_type?.name ?? '—',
     },
   ],
 })

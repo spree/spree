@@ -2676,6 +2676,8 @@
           "ends_after_starts": "Doit être postérieur à la date de début."
         }
       },
+      "product_type_adds_options_one": "Ce type ajoute {{count}} option aux nouveaux produits.",
+      "product_type_adds_options_other": "Ce type ajoute {{count}} options aux nouveaux produits.",
       "product_type_placeholder": "Aucun type de produit",
       "save_label": "Enregistrer le produit",
       "seo": {

@@ -2676,6 +2676,8 @@
           "ends_after_starts": "يجب أن يكون بعد تاريخ البدء."
         }
       },
+      "product_type_adds_options_one": "يضيف هذا النوع خيارًا واحدًا إلى المنتجات الجديدة.",
+      "product_type_adds_options_other": "يضيف هذا النوع {{count}} خيارات إلى المنتجات الجديدة.",
       "product_type_placeholder": "بدون نوع منتج",
       "save_label": "حفظ المنتج",
       "seo": {
