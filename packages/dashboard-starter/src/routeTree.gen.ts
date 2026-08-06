@@ -38,6 +38,7 @@ import { Route as SettingsReasonsRouteImport } from './../../dashboard/src/route
 import { Route as SettingsProductTypesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/product-types'
 import { Route as SettingsPaymentMethodsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/payment-methods'
 import { Route as SettingsMarketsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/markets'
+import { Route as SettingsIntegrationsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/integrations'
 import { Route as SettingsEmailsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/emails'
 import { Route as SettingsDeliveryZonesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/delivery-zones'
 import { Route as SettingsDeliveryMethodsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/delivery-methods'
@@ -214,6 +215,11 @@ const SettingsPaymentMethodsRoute = SettingsPaymentMethodsRouteImport.update({
 const SettingsMarketsRoute = SettingsMarketsRouteImport.update({
   id: '/markets',
   path: '/markets',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsIntegrationsRoute = SettingsIntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsEmailsRoute = SettingsEmailsRouteImport.update({
@@ -417,6 +423,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
   '/$storeId/settings/delivery-zones': typeof SettingsDeliveryZonesRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
+  '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
@@ -477,6 +484,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
   '/$storeId/settings/delivery-zones': typeof SettingsDeliveryZonesRoute
   '/$storeId/settings/emails': typeof SettingsEmailsRoute
+  '/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
@@ -541,6 +549,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/delivery-methods': typeof SettingsDeliveryMethodsRoute
   '/_authenticated/$storeId/settings/delivery-zones': typeof SettingsDeliveryZonesRoute
   '/_authenticated/$storeId/settings/emails': typeof SettingsEmailsRoute
+  '/_authenticated/$storeId/settings/integrations': typeof SettingsIntegrationsRoute
   '/_authenticated/$storeId/settings/markets': typeof SettingsMarketsRoute
   '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/_authenticated/$storeId/settings/product-types': typeof SettingsProductTypesRoute
@@ -605,6 +614,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/delivery-methods'
     | '/$storeId/settings/delivery-zones'
     | '/$storeId/settings/emails'
+    | '/$storeId/settings/integrations'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/product-types'
@@ -665,6 +675,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/delivery-methods'
     | '/$storeId/settings/delivery-zones'
     | '/$storeId/settings/emails'
+    | '/$storeId/settings/integrations'
     | '/$storeId/settings/markets'
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/product-types'
@@ -728,6 +739,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/delivery-methods'
     | '/_authenticated/$storeId/settings/delivery-zones'
     | '/_authenticated/$storeId/settings/emails'
+    | '/_authenticated/$storeId/settings/integrations'
     | '/_authenticated/$storeId/settings/markets'
     | '/_authenticated/$storeId/settings/payment-methods'
     | '/_authenticated/$storeId/settings/product-types'
@@ -970,6 +982,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsMarketsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/_authenticated/$storeId/settings/integrations': {
+      id: '/_authenticated/$storeId/settings/integrations'
+      path: '/integrations'
+      fullPath: '/$storeId/settings/integrations'
+      preLoaderRoute: typeof SettingsIntegrationsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/_authenticated/$storeId/settings/emails': {
       id: '/_authenticated/$storeId/settings/emails'
       path: '/emails'
@@ -1205,6 +1224,7 @@ interface SettingsRouteChildren {
   SettingsDeliveryMethodsRoute: typeof SettingsDeliveryMethodsRoute
   SettingsDeliveryZonesRoute: typeof SettingsDeliveryZonesRoute
   SettingsEmailsRoute: typeof SettingsEmailsRoute
+  SettingsIntegrationsRoute: typeof SettingsIntegrationsRoute
   SettingsMarketsRoute: typeof SettingsMarketsRoute
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
   SettingsProductTypesRoute: typeof SettingsProductTypesRoute
@@ -1228,6 +1248,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsDeliveryMethodsRoute: SettingsDeliveryMethodsRoute,
   SettingsDeliveryZonesRoute: SettingsDeliveryZonesRoute,
   SettingsEmailsRoute: SettingsEmailsRoute,
+  SettingsIntegrationsRoute: SettingsIntegrationsRoute,
   SettingsMarketsRoute: SettingsMarketsRoute,
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
   SettingsProductTypesRoute: SettingsProductTypesRoute,

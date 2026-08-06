@@ -7,6 +7,7 @@ import {
   MailIcon,
   MapIcon,
   PercentIcon,
+  PlugIcon,
   RadioTowerIcon,
   RotateCcwIcon,
   ShapesIcon,
@@ -150,6 +151,16 @@ settingsNav.add({
   group: 'fulfillment',
   position: 200,
   subject: Subject.ReturnReason,
+})
+
+settingsNav.add({
+  key: 'settings.integrations',
+  labelKey: 'admin.settings_nav.items.integrations',
+  path: '/integrations',
+  icon: PlugIcon,
+  group: 'store',
+  position: 175,
+  subject: Subject.Integration,
 })
 
 settingsNav.add({

@@ -342,6 +342,15 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        resources :integrations do
+          collection do
+            get :types
+          end
+          member do
+            post :test
+          end
+        end
+
         # Promotions, with nested actions/rules/coupon codes.
         resources :promotions do
           resources :promotion_actions, only: [:index, :show, :create, :update, :destroy]

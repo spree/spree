@@ -142,6 +142,9 @@ import type {
   GiftCardUpdateParams,
   ImportCompleteMappingParams,
   ImportCreateParams,
+  IntegrationCreateParams,
+  IntegrationTypeDefinition,
+  IntegrationUpdateParams,
   InvitationAcceptParams,
   InvitationCreateParams,
   LineItemCreateParams,
@@ -238,6 +241,7 @@ import type {
   GiftCardBatch,
   Import,
   ImportRow,
+  Integration,
   Invitation,
   LineItem,
   Locale,
@@ -1751,6 +1755,52 @@ export class AdminClient {
 
     types: (options?: RequestOptions): Promise<{ data: PaymentMethodType[] }> =>
       this.request<{ data: PaymentMethodType[] }>('GET', '/payment_methods/types', options),
+  }
+
+  // ============================================
+  // Integrations (admin-only — provider credentials per store)
+  // ============================================
+
+  readonly integrations = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Integration>> =>
+      this.request<PaginatedResponse<Integration>>('GET', '/integrations', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<Integration> =>
+      this.request<Integration>('GET', `/integrations/${id}`, options),
+
+    create: (params: IntegrationCreateParams, options?: RequestOptions): Promise<Integration> =>
+      this.request<Integration>('POST', '/integrations', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: IntegrationUpdateParams,
+      options?: RequestOptions,
+    ): Promise<Integration> =>
+      this.request<Integration>('PATCH', `/integrations/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/integrations/${id}`, options),
+
+    /** Registered integration types with schemas and per-store connected state. */
+    types: (options?: RequestOptions): Promise<{ data: IntegrationTypeDefinition[] }> =>
+      this.request<{ data: IntegrationTypeDefinition[] }>('GET', '/integrations/types', options),
+
+    /** Live connection check; nothing is persisted. */
+    test: (
+      id: string,
+      options?: RequestOptions,
+    ): Promise<{ connected: boolean; error_message: string | null }> =>
+      this.request<{ connected: boolean; error_message: string | null }>(
+        'POST',
+        `/integrations/${id}/test`,
+        options,
+      ),
   }
 
   // ============================================

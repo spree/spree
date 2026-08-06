@@ -30,6 +30,7 @@ export const Subject = {
   ClaimReason: 'Spree::ClaimReason',
   RefundReason: 'Spree::RefundReason',
   CustomFieldDefinition: 'Spree::CustomFieldDefinition',
+  Integration: 'Spree::Integration',
   PaymentMethod: 'Spree::PaymentMethod',
   DeliveryMethod: 'Spree::DeliveryMethod',
   DeliveryZone: 'Spree::DeliveryZone',
