@@ -82,14 +82,16 @@ module Spree
             end
 
             # Association-backed rule config (ExcludedProductsRule). Products are
-            # looked up within the rule's store, so a cross-store ID 404s like
-            # any other lookup. A nil param leaves the selection untouched; an
-            # empty array clears it.
+            # looked up within the rule's store and through the caller's ability,
+            # so an ID the caller cannot see 404s like any other lookup. A nil
+            # param leaves the selection untouched; an empty array clears it.
             def assign_rule_products(rule)
               ids = permitted_params[:product_ids]
               return if ids.nil? || !rule.respond_to?(:products)
 
-              rule.products = rule.store.products.find(decode_prefixed_ids(ids))
+              rule.products = rule.store.products.
+                              accessible_by(current_ability, :show).
+                              find(decode_prefixed_ids(ids))
             end
           end
         end

@@ -1185,6 +1185,7 @@ by cardinality: small reference sets (channels/markets/customer groups)
 stay `:array` preferences via `normalize_id_preference`; catalog-scale
 references (products) get a join table, per the
 `Promotion::Rules::Product`/`ProductPromotionRule` precedent. On the
-wire both travel as prefixed-ID params resolved through
-`current_store`. Plans updated: `6.0-delivery-method-rules.md` (owner),
+wire both travel as prefixed-ID params resolved through the store scope
+and `accessible_by(current_ability, :show)`. Plans updated:
+`6.0-delivery-method-rules.md` (owner),
 `6.0-fulfillment-and-delivery.md`, `6.0-core-rewrite-tasks.md`.

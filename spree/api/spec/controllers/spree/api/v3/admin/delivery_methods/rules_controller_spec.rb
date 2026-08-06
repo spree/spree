@@ -82,6 +82,28 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
       expect(response).to have_http_status(:not_found)
       expect(delivery_method.delivery_method_rules.count).to eq(0)
     end
+
+    it 'rejects products the caller is not allowed to see' do
+      product = create(:product)
+      restricted_ability = Class.new do
+        include CanCan::Ability
+
+        def initialize(_user = nil)
+          can :manage, :all
+          cannot :show, Spree::Product
+        end
+      end
+      allow(controller).to receive(:current_ability).and_return(restricted_ability.new)
+
+      post :create, params: {
+        delivery_method_id: delivery_method.prefixed_id,
+        type: 'excluded_products_rule',
+        product_ids: [product.prefixed_id]
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(delivery_method.delivery_method_rules.count).to eq(0)
+    end
   end
 
   describe 'PATCH #update' do
