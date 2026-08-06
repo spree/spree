@@ -13,10 +13,15 @@ module Spree
 
       # Asks whether any of the package's products is excluded, rather than
       # loading the whole exclusion list — the join table's composite index
-      # answers it without transferring rows.
+      # answers it without transferring rows. Unsaved rules can't be queried,
+      # so those fall back to the in-memory association.
       def eligible?(package)
         product_ids = package.contents.map { |item| item.variant.product_id }.uniq
         return true if product_ids.empty?
+
+        if new_record? || delivery_method_rule_products.any?(&:new_record?)
+          return delivery_method_rule_products.none? { |link| product_ids.include?(link.product_id) }
+        end
 
         !delivery_method_rule_products.exists?(product_id: product_ids)
       end

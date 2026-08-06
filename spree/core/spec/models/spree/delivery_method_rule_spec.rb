@@ -69,6 +69,16 @@ describe Spree::DeliveryMethodRule, type: :model do
       expect(rule.eligible?(package)).to be(true)
     end
 
+    # The admin controller assigns products before saving, so eligibility has
+    # to see them even though no join row exists yet.
+    it 'sees products assigned but not yet saved' do
+      rule = described_class.new(delivery_method: delivery_method)
+      expect(rule.eligible?(package)).to be(true)
+
+      rule.products << package.contents.first.variant.product
+      expect(rule.eligible?(package)).to be(false)
+    end
+
     it 'removes its product links with the rule' do
       rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
 
