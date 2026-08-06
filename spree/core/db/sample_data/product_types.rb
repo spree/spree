@@ -28,9 +28,11 @@ product_types = [
     optional_fields: %w[capacity]
   },
   {
+    # room_coverage is optional, not required: purifiers and humidifiers treat a
+    # room, fans just move air — so the type covers both without lying about one.
     name: 'Air Treatment',
-    required_fields: %w[wattage voltage warranty room_coverage],
-    optional_fields: %w[capacity noise_level connectivity]
+    required_fields: %w[wattage voltage warranty],
+    optional_fields: %w[room_coverage capacity noise_level connectivity]
   },
   {
     name: 'Garment Care',
