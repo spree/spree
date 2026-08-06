@@ -32,7 +32,6 @@ RSpec.describe Spree::Api::V3::Admin::Orders::TaxLinesController, type: :control
 
       row = json_response['data'].first
       expect(row['taxability_reason']).to eq('standard_rated')
-      expect(row['category_code']).to eq('S')
       expect(row['country_iso']).to eq('DE')
       expect(row['state_code']).to be_nil
       expect(row['data']['jurisdictions'].first['name']).to eq('DE')

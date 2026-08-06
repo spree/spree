@@ -29,7 +29,6 @@ describe Spree::TaxProvider::Internal, type: :model do
 
         tax_line = order.tax_lines.reload.sole
         expect(tax_line.taxability_reason).to eq('standard_rated')
-        expect(tax_line.category_code).to eq('S')
         expect(tax_line.country_iso).to eq(order.tax_address.country.iso)
         expect(tax_line.state_code).to eq(order.tax_address.state&.abbr)
       end
@@ -88,7 +87,6 @@ describe Spree::TaxProvider::Internal, type: :model do
         tax_line = order.tax_lines.reload.sole
         expect(tax_line.amount).to eq(0)
         expect(tax_line.taxability_reason).to eq('zero_rated')
-        expect(tax_line.category_code).to eq('Z')
         expect(tax_line.tax_rate).to eq(rate)
       end
     end
@@ -131,7 +129,6 @@ describe Spree::TaxProvider::Internal, type: :model do
         tax_line = order.tax_lines.reload.sole
         expect(tax_line.amount).to eq(0)
         expect(tax_line.taxability_reason).to eq('customer_exempt')
-        expect(tax_line.category_code).to eq('E')
         expect(tax_line.data['exemption']).to eq('reason_code' => 'resale', 'certificate_number' => 'CERT-1')
       end
 

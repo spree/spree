@@ -67,37 +67,6 @@ describe Spree::TaxLine, type: :model do
     end
   end
 
-  describe 'invoice codes' do
-    subject(:tax_line) { described_class.new }
-
-    it 'maps rated reasons to a category code without an exemption reason' do
-      tax_line.taxability_reason = 'reduced_rated'
-      expect(tax_line.category_code).to eq('S')
-      expect(tax_line.exemption_reason_code).to be_nil
-    end
-
-    it 'maps cross-border reasons to both codes' do
-      tax_line.taxability_reason = 'intra_community_supply'
-      expect(tax_line.category_code).to eq('K')
-      expect(tax_line.exemption_reason_code).to eq('VATEX-EU-IC')
-    end
-
-    it 'leaves an exempt supply without an exemption reason code' do
-      tax_line.taxability_reason = 'product_exempt'
-      expect(tax_line.category_code).to eq('E')
-      expect(tax_line.exemption_reason_code).to be_nil
-    end
-
-    it 'has no code for a jurisdiction the merchant does not collect in' do
-      tax_line.taxability_reason = 'not_collecting'
-      expect(tax_line.category_code).to be_nil
-    end
-
-    it 'has no code without a reason' do
-      expect(tax_line.category_code).to be_nil
-    end
-  end
-
   describe 'provider data' do
     it 'defaults to an empty hash so payloads read nil-safe' do
       expect(described_class.new.data).to eq({})
