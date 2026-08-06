@@ -49,7 +49,6 @@ module Spree
         # * `Spree::VatPriceCalculation#gross_amount`
         # * `Spree::LineItem#update_price`
         # * `Spree::Stock::Estimator#taxation_options_for`
-        # * Subclass the `DefaultTax` calculator
         #
         def current_price_options
           {

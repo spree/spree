@@ -6,7 +6,19 @@ module Spree
     # zone). Fees without a tax category are taxed with the default tax
     # category's rates.
     class Internal < Base
-      def estimate(owner, items = nil)
+      # Rates are configured per zone with no local-tax breakdown, no buyer
+      # registration handling and no distance-selling thresholds. Declared so a
+      # merchant pairing this with a market is told, rather than discovering it
+      # in a return.
+      def self.unsupported_capabilities
+        %i[us_local_tax reverse_charge oss_thresholds]
+      end
+
+      # +tax_date+ is accepted and ignored: TaxRate rows carry no validity
+      # period, so there is only ever one version of the configuration to read.
+      # +tax_identifier+ likewise — reverse charge is on the unsupported list,
+      # so a buyer registration changes nothing here.
+      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
         items ||= owner.line_items.to_a + owner.fulfillments.to_a + owner.fees.to_a
         return if items.empty?
 

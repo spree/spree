@@ -1357,7 +1357,7 @@ describe Spree::Order, type: :model do
       let!(:shipment) { create(:shipment, order: order) }
 
       it 'estimates tax over the fulfillments' do
-        expect(provider).to receive(:estimate).with(order, [shipment])
+        expect(provider).to receive(:estimate).with(order, [shipment], hash_including(:tax_date))
         order.create_shipment_tax_charge!
       end
     end

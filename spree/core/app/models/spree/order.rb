@@ -518,11 +518,11 @@ module Spree
     # Re-estimates tax through the configured provider (writes TaxLine rows
     # with replace-all semantics).
     def create_tax_charge!
-      Spree.tax_provider.estimate(self)
+      Spree.tax_provider.estimate(self, tax_date: Time.current)
     end
 
     def create_shipment_tax_charge!
-      Spree.tax_provider.estimate(self, fulfillments.to_a) if fulfillments.any?
+      Spree.tax_provider.estimate(self, fulfillments.to_a, tax_date: Time.current) if fulfillments.any?
     end
 
     def update_line_item_prices!

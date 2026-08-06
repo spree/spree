@@ -5,29 +5,69 @@ module Spree
     # target item (delete the item's stale lines, insert fresh ones); that is
     # what keeps tax correct after address or item changes. Commit/void/refund
     # are lifecycle no-ops for providers without a remote ledger.
+    #
+    # Providers are stateless and constructed without arguments, so anything
+    # request-specific arrives as an argument rather than through the instance.
     class Base
-      # Recomputes tax for the given items (defaults to all taxable items of
-      # the owner: line items, fulfillments and fees).
+      # Domains this provider cannot handle, so a merchant is warned when
+      # pairing it with a market instead of silently under-collecting. Declared
+      # on the class because core reads it while presenting the choice, before
+      # any provider is instantiated.
       #
-      # @param owner [Spree::Order, Spree::Cart]
+      # @return [Array<Symbol>]
+      def self.unsupported_capabilities
+        []
+      end
+
+      # Whether this provider can be selected for a store. External providers
+      # override it to require a connected integration or credentials.
+      #
+      # @param store [Spree::Store]
+      # @return [Boolean]
+      def self.available_for_store?(_store)
+        true
+      end
+
+      # Recomputes tax for the given items and writes the TaxLine rows.
+      # Replace-all set semantics per target item, and one row for every item
+      # the provider formed a treatment for — zero-amount treatments included.
+      # Never called on a completed order; the order-level money freeze gates it.
+      #
+      # @param owner [Spree::Cart, Spree::Order]
       # @param items [Array<Spree::LineItem, Spree::Fulfillment, Spree::Fee>, nil]
-      def estimate(owner, items = nil)
+      #   nil = every taxable item on the owner
+      # @param tax_date [Time, nil] date whose rates apply; nil = now
+      # @param tax_identifier [Spree::TaxIdentifier, nil] resolved buyer
+      #   registration, nil for a consumer sale
+      # @param exemptions [Array] exemption evidence to apply
+      # @param context [Hash] untyped provider extras from set_tax_line_context
+      # @return [void] the written rows are the output; raise when the
+      #   calculation cannot be completed
+      def estimate(owner, items = nil, tax_date: nil, tax_identifier: nil, exemptions: [], context: {})
         raise NotImplementedError, "Please implement 'estimate' in your tax provider: #{self.class.name}"
       end
 
-      # Finalizes tax with the provider at completion (no-op by default).
-      def commit(owner); end
+      # Finalizes tax with the provider when the order is placed. No-op for a
+      # provider without a remote ledger — the rows are already the record.
+      #
+      # @param order [Spree::Order]
+      # @return [void]
+      def commit(order); end
 
-      # Cancels a previously committed tax document (no-op by default).
-      def void(owner); end
+      # Reverses a committed tax document on cancellation.
+      #
+      # @param order [Spree::Order]
+      # @return [void]
+      def void(order); end
 
-      # Reports a refund against committed tax (no-op by default).
-      def refund(owner, amount); end
-
-      # @return [Boolean] whether the owner is tax-exempt
-      def exempt?(_owner)
-        false
-      end
+      # Reports a partial credit against the committed document, keyed to the
+      # original transaction rather than voiding and re-committing it.
+      #
+      # @param order [Spree::Order]
+      # @param return_items [Array<Spree::ReturnItem>]
+      # @param tax_date [Time, nil] the original supply date; nil = order.completed_at
+      # @return [void]
+      def refund(order, return_items, tax_date: nil); end
     end
   end
 end
