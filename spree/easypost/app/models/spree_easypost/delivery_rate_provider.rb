@@ -70,19 +70,8 @@ module SpreeEasyPost
       }.compact_blank
     end
 
-    # EasyPost expects ounces; Spree stores weight in the store's unit.
     def parcel_params(package)
-      { weight: weight_in_ounces(package.weight) }
-    end
-
-    OUNCES_PER_UNIT = {
-      'imperial' => 16.0,   # pounds
-      'metric' => 0.03527396 # grams
-    }.freeze
-
-    def weight_in_ounces(weight)
-      unit_system = store&.preferred_unit_system.presence || 'imperial'
-      (weight.to_f * OUNCES_PER_UNIT.fetch(unit_system.to_s, 16.0)).round(2)
+      { weight: SpreeEasyPost.ounces(package.weight, store) }
     end
   end
 end
