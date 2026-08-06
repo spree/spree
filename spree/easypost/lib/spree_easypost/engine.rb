@@ -16,6 +16,7 @@ module SpreeEasyPost
     config.after_initialize do
       Spree.integrations << 'SpreeEasyPost::Integration'
       Spree.delivery_rate_providers << SpreeEasyPost::DeliveryRateProvider
+      Spree.fulfillment_providers << SpreeEasyPost::FulfillmentProvider
     end
   end
 end
