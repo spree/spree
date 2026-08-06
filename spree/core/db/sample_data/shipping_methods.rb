@@ -27,17 +27,17 @@ asia = delivery_zone_from(Spree::Zone.find_by(name: 'Asia'))
 australia_and_oceania = delivery_zone_from(Spree::Zone.find_by(name: 'Australia and Oceania'))
 
 delivery_methods = [
-  { name: 'UPS Ground (USD)', delivery_zones: [north_america], display_on: 'both' },
-  { name: 'UPS Two Day (USD)', delivery_zones: [north_america], display_on: 'both' },
-  { name: 'UPS One Day (USD)', delivery_zones: [north_america], display_on: 'both' },
-  { name: 'UPS Ground (EU)', delivery_zones: [europe_vat], display_on: 'both' },
-  { name: 'UPS Ground (EUR)', delivery_zones: [europe_vat], display_on: 'both' },
-  { name: 'DHL Standard (Central America and Caribbean)', delivery_zones: [central_america_and_caribbean].compact, display_on: 'both' },
-  { name: 'DHL Standard (South America)', delivery_zones: [south_america].compact, display_on: 'both' },
-  { name: 'DHL Standard (Middle East)', delivery_zones: [middle_east].compact, display_on: 'both' },
-  { name: 'DHL Standard (Africa)', delivery_zones: [africa].compact, display_on: 'both' },
-  { name: 'DHL Standard (Asia)', delivery_zones: [asia].compact, display_on: 'both' },
-  { name: 'DHL Standard (Australia and Oceania)', delivery_zones: [australia_and_oceania].compact, display_on: 'both' }
+  { name: 'UPS Ground (USD)', delivery_zones: [north_america], storefront_visible: true },
+  { name: 'UPS Two Day (USD)', delivery_zones: [north_america], storefront_visible: true },
+  { name: 'UPS One Day (USD)', delivery_zones: [north_america], storefront_visible: true },
+  { name: 'UPS Ground (EU)', delivery_zones: [europe_vat], storefront_visible: true },
+  { name: 'UPS Ground (EUR)', delivery_zones: [europe_vat], storefront_visible: true },
+  { name: 'DHL Standard (Central America and Caribbean)', delivery_zones: [central_america_and_caribbean].compact, storefront_visible: true },
+  { name: 'DHL Standard (South America)', delivery_zones: [south_america].compact, storefront_visible: true },
+  { name: 'DHL Standard (Middle East)', delivery_zones: [middle_east].compact, storefront_visible: true },
+  { name: 'DHL Standard (Africa)', delivery_zones: [africa].compact, storefront_visible: true },
+  { name: 'DHL Standard (Asia)', delivery_zones: [asia].compact, storefront_visible: true },
+  { name: 'DHL Standard (Australia and Oceania)', delivery_zones: [australia_and_oceania].compact, storefront_visible: true }
 ]
 
 delivery_methods.each do |attributes|
@@ -46,7 +46,7 @@ delivery_methods.each do |attributes|
   Spree::DeliveryMethod.where(name: attributes[:name], store: Spree::Store.default).first_or_create! do |delivery_method|
     delivery_method.calculator = Spree::Calculator::Shipping::FlatRate.create!
     delivery_method.delivery_zones = attributes[:delivery_zones]
-    delivery_method.display_on = attributes[:display_on]
+    delivery_method.storefront_visible = attributes[:storefront_visible]
   end
 end
 

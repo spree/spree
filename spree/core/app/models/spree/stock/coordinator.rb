@@ -9,10 +9,16 @@ module Spree
         @inventory_units = inventory_units || InventoryUnitBuilder.new(order).units
       end
 
-      def shipments
+      def fulfillments
         packages.map do |package|
-          package.to_shipment.tap { |s| s.address_id = order.ship_address_id }
+          package.to_fulfillment.tap { |fulfillment| fulfillment.address_id = order.ship_address_id }
         end
+      end
+
+      # @deprecated Use {#fulfillments}; removed in 6.1.
+      def shipments
+        Spree::Deprecation.warn('Spree::Stock::Coordinator#shipments is deprecated and will be removed in Spree 6.1. Use #fulfillments instead.')
+        fulfillments
       end
 
       def packages
@@ -49,7 +55,7 @@ module Spree
       def estimate_packages(packages)
         estimator = Estimator.new(order)
         packages.each do |package|
-          package.shipping_rates = estimator.shipping_rates(package)
+          package.delivery_rates = estimator.delivery_rates(package)
         end
         packages
       end

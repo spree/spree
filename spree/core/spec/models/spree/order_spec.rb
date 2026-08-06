@@ -1102,7 +1102,7 @@ describe Spree::Order, type: :model do
     it 'assigns the routing strategy returned packages, mapped to shipments' do
       package = instance_double(Spree::Stock::Package)
       shipment = build(:shipment)
-      allow(package).to receive(:to_shipment).and_return(shipment)
+      allow(package).to receive(:to_fulfillment).and_return(shipment)
 
       strategy = instance_double(Spree::OrderRouting::Strategy::Rules)
       allow(strategy).to receive(:for_allocation).and_return([package])
@@ -2099,8 +2099,8 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#ensure_available_shipping_rates' do
-    subject { order.send(:ensure_available_shipping_rates) }
+  describe '#ensure_available_delivery_rates' do
+    subject { order.send(:ensure_available_delivery_rates) }
 
     let(:order) { create(:order_with_line_items) }
     let(:line_item) { order.line_items.first }
@@ -2129,6 +2129,14 @@ describe Spree::Order, type: :model do
 
       it 'deletes all the shipments' do
         expect { subject }.to change(order.shipments, :count).to(0)
+      end
+
+      # The list is derived from fulfillments, and this method destroys them —
+      # so it must be read fresh, never from a value cached across the destroy.
+      it 'reports no undeliverable line items once the fulfillments are gone' do
+        expect(order.line_items_without_delivery_rates).to be_present
+        subject
+        expect(order.line_items_without_delivery_rates).to be_empty
       end
     end
 

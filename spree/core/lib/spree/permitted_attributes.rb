@@ -52,7 +52,6 @@ module Spree
       :role_attributes,
       :shipment_attributes,
       :shipping_method_attributes,
-      :shipping_category_attributes,
       :channel_attributes,
       :source_attributes,
       :stock_item_attributes,
@@ -179,7 +178,7 @@ module Spree
       :name, :description, :available_on, :make_active_at, :discontinue_on, :permalink, :meta_description,
       :meta_keywords, :meta_title, :sku, :deleted_at,
       :weight, :height, :width, :depth,
-      :shipping_category_id, :tax_category_id,
+      :product_type_id, :tax_category_id,
       :cost_currency, :cost_price,
       :slug, :track_inventory, :backorderable, :barcode, :status,
       :weight_unit, :dimensions_unit,
@@ -221,14 +220,13 @@ module Spree
       :tracking, :address, :inventory_units, :selected_shipping_rate_id
     ]
 
-    @@shipping_category_attributes = [:name]
-
     @@channel_attributes = [:name, :code, :active, :default, :preferred_order_routing_strategy,
                             :preferred_storefront_access, :preferred_guest_checkout]
 
-    @@shipping_method_attributes = [:name, :admin_name, :code, :tracking_url, :tax_category_id, :display_on,
+    @@shipping_method_attributes = [:name, :admin_name, :code, :tracking_url, :tax_category_id, :storefront_visible,
+                                    :fulfillment_type, :fulfillment_provider,
                                     :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-                                    :calculator_type, :preferences, zone_ids: [], shipping_category_ids: [], calculator_attributes: {}]
+                                    :calculator_type, :preferences, delivery_zone_ids: [], calculator_attributes: {}]
 
     # month / year may be provided by some sources, or others may elect to use one field
     @@source_attributes = [

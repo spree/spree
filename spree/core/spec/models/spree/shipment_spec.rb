@@ -482,7 +482,7 @@ describe Spree::Shipment, type: :model do
     end
 
     context 'refresh_rates' do
-      let(:mock_estimator) { double('estimator', shipping_rates: shipping_rates) }
+      let(:mock_estimator) { double('estimator', delivery_rates: shipping_rates) }
 
       before { allow(shipment).to receive(:can_get_rates?).and_return(true) }
 
@@ -499,6 +499,20 @@ describe Spree::Shipment, type: :model do
         allow(shipment).to receive_messages(delivery_method: nil)
         expect(shipment.refresh_rates).to eq(shipping_rates)
         expect(shipment.reload.selected_shipping_rate).not_to be_nil
+      end
+
+      # The previously chosen method can drop out of the new quote (audience
+      # change, eligibility rule, zone edit). The fulfillment must fall back to
+      # the estimator's own pick rather than end up with nothing selected.
+      it 'falls back to the estimator default when the original method is no longer quoted' do
+        dropped_method = create(:shipping_method)
+        expect(Spree::Stock::Estimator).to receive(:new).with(shipment.order).and_return(mock_estimator)
+        allow(shipment).to receive_messages(delivery_method: dropped_method)
+
+        shipment.refresh_rates
+
+        expect(shipment.reload.selected_shipping_rate).not_to be_nil
+        expect(shipment.selected_shipping_rate.shipping_method_id).to eq(shipping_method1.id)
       end
 
       it 'does not refresh if shipment is shipped' do

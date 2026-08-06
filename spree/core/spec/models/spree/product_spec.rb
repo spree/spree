@@ -35,15 +35,15 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe 'shipping category' do
-    # ShippingCategory is retired from behavior in 6.0 (delivery eligibility
-    # comes from ProductType#fulfillment_types); the association is optional
-    # until the 6.1 column drop.
-    it 'is not required' do
-      product = build(:product, shipping_category: nil)
+  describe 'delivery eligibility' do
+    # ShippingCategory is retired from behavior in 6.0 — eligibility comes
+    # from ProductType#fulfillment_types, and a typeless product still ships.
+    it 'comes from the product type, defaulting to physical shipping' do
+      expect(build(:product, product_type: nil).fulfillment_types).to eq ['shipping']
 
-      expect(product).to be_valid
-      expect(product.shipping_category).to be_nil
+      digital = build(:product, product_type: build(:product_type, fulfillment_types: ['digital']))
+      expect(digital.fulfillment_types).to eq ['digital']
+      expect(digital).to be_digital
     end
   end
 
@@ -409,7 +409,7 @@ describe Spree::Product, type: :model do
   describe '#create' do
     let!(:product_type) { create(:product_type) }
     let!(:product) do
-      build(:product, name: 'Foo', price: 1.99, shipping_category: create(:shipping_category), product_type: product_type)
+      build(:product, name: 'Foo', price: 1.99, product_type: product_type)
     end
 
     context 'when a product type with option types is supplied' do
@@ -1893,7 +1893,6 @@ describe Spree::Product, type: :model do
 
   describe '#variants=' do
     let(:product) { create(:product) }
-    let(:shipping_category) { product.shipping_category }
 
     context 'with hash params' do
       it 'creates new variants' do
@@ -1926,7 +1925,6 @@ describe Spree::Product, type: :model do
       it 'defers creation on new records' do
         new_product = Spree::Product.new(
           name: 'Deferred',
-          shipping_category: shipping_category,
           store: store,
           variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }]
         )
@@ -1942,7 +1940,6 @@ describe Spree::Product, type: :model do
         # with options:[] and the backend creates exactly that one variant.
         new_product = Spree::Product.new(
           name: 'Simple SKU',
-          shipping_category: shipping_category,
           store: store,
           variants: [{ sku: 'SIMPLE-1', weight: 2, options: [] }]
         )
@@ -1970,7 +1967,6 @@ describe Spree::Product, type: :model do
       it 'reflects new option-bearing variants in variant_count and default_variant' do
         new_product = Spree::Product.new(
           name: 'Fresh Variants',
-          shipping_category: shipping_category,
           store: store,
           variants: [
             { sku: 'FV-1', prices: [{ amount: 10, currency: 'USD' }], options: [{ name: 'Size', value: 'S' }] },
@@ -1987,7 +1983,6 @@ describe Spree::Product, type: :model do
       it 'reflects an options-less default variant in default_variant and price' do
         new_product = Spree::Product.new(
           name: 'Fresh Simple',
-          shipping_category: shipping_category,
           store: store,
           variants: [{ sku: 'FS-1', prices: [{ amount: 15, currency: 'USD' }], options: [] }]
         )
@@ -2083,7 +2078,6 @@ describe Spree::Product, type: :model do
       it 'defers attachment until after the product is saved' do
         new_product = Spree::Product.new(
           name: 'Deferred Media',
-          shipping_category: create(:shipping_category),
           store: store,
           media: [{ signed_id: blob.signed_id, alt: 'Pending', position: 1 }]
         )
@@ -2124,7 +2118,6 @@ describe Spree::Product, type: :model do
     it 'does not overwrite explicit tax_category_id' do
       product = Spree::Product.new(
         name: 'Test',
-        shipping_category: create(:shipping_category),
         store: store,
         tax_category_id: custom_tc.id
       )
@@ -2136,7 +2129,6 @@ describe Spree::Product, type: :model do
     it 'assigns default when tax_category_id is not provided' do
       product = Spree::Product.new(
         name: 'Test',
-        shipping_category: create(:shipping_category),
         store: store
       )
 

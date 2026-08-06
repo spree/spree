@@ -418,7 +418,10 @@ module Spree
       ready? || pending?
     end
 
-    def refresh_rates(shipping_method_filter = DeliveryMethod::DISPLAY_ON_FRONT_END)
+    # @param audience [Symbol] {Spree::DeliveryMethod::STOREFRONT} (default)
+    #   or {Spree::DeliveryMethod::BACKOFFICE}
+    # @return [Array<Spree::DeliveryRate>]
+    def refresh_rates(audience = DeliveryMethod::STOREFRONT)
       return delivery_rates if fulfilled?
       return [] unless can_get_rates?
 
@@ -426,16 +429,18 @@ module Spree
       original_shipping_method_id = delivery_method.try(:id)
 
       self.delivery_rates = Stock::Estimator.new(owner).
-                            shipping_rates(to_package, shipping_method_filter)
+                            delivery_rates(to_package, audience)
 
       if delivery_method
-        selected_rate = delivery_rates.detect do |rate|
+        # Keep the previously chosen method when it is still quoted; otherwise
+        # fall back to the estimator's own pick (the cheapest rate, already
+        # flagged selected) rather than leaving the fulfillment unselected.
+        selected_rate =
           if original_shipping_method_id
-            rate.delivery_method_id == original_shipping_method_id
-          else
-            rate.selected
+            delivery_rates.detect { |rate| rate.delivery_method_id == original_shipping_method_id }
           end
-        end
+        selected_rate ||= delivery_rates.detect(&:selected)
+
         save!
         self.selected_shipping_rate_id = selected_rate.id if selected_rate
         reload

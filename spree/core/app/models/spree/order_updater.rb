@@ -115,7 +115,7 @@ module Spree
     def update_shipments
       Spree::Deprecation.warn('Spree::OrderUpdater#update_shipments is deprecated and will be removed in Spree 6.1. Use Spree::Orders::UpdateStatuses (fulfillment states) and Spree::Carts::Recalculate (delivery proposals) instead.')
 
-      shipping_method_filter = order.completed? ? DeliveryMethod::DISPLAY_ON_BACK_END : DeliveryMethod::DISPLAY_ON_FRONT_END
+      audience = order.completed? ? DeliveryMethod::BACKOFFICE : DeliveryMethod::STOREFRONT
 
       fulfillments.each do |fulfillment|
         next unless fulfillment.persisted?
@@ -123,7 +123,7 @@ module Spree
         fulfillment.update!(order)
         next if order.completed? && fulfillment.fulfilled?
 
-        fulfillment.refresh_rates(shipping_method_filter)
+        fulfillment.refresh_rates(audience)
         fulfillment.update_amounts
       end
     end

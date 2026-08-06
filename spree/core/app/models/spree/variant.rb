@@ -20,8 +20,8 @@ module Spree
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
-    delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :shipping_category_id,
-             :meta_description, :meta_keywords, :shipping_category, to: :product
+    delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :product_type_id,
+             :meta_description, :meta_keywords, :product_type, to: :product
 
     normalizes :sku, with: ->(value) { value&.to_s&.strip }
 
@@ -683,6 +683,18 @@ module Spree
 
     def with_digital_assets?
       digitals.any?
+    end
+
+    # @deprecated Delivery eligibility comes from {#product_type}; removed in 6.1.
+    def shipping_category
+      Spree::Deprecation.warn('Spree::Variant#shipping_category is deprecated and will be removed in Spree 6.1. Use #product_type instead.')
+      product.shipping_category
+    end
+
+    # @deprecated Delivery eligibility comes from {#product_type_id}; removed in 6.1.
+    def shipping_category_id
+      Spree::Deprecation.warn('Spree::Variant#shipping_category_id is deprecated and will be removed in Spree 6.1. Use #product_type_id instead.')
+      product.shipping_category_id
     end
 
     private

@@ -14,7 +14,7 @@ module Spree
       def create_for(store)
         digital_delivery_method = Spree::DeliveryMethod.find_or_initialize_by(name: Spree.t('digital.digital_delivery'), store: store)
 
-        digital_delivery_method.display_on = 'both'
+        digital_delivery_method.storefront_visible = true
         digital_delivery_method.fulfillment_type = 'digital'
         digital_delivery_method.fulfillment_provider = 'Spree::FulfillmentProvider::Digital'
         digital_delivery_method.calculator ||= Spree::Calculator::Shipping::DigitalDelivery.create!

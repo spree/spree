@@ -9,7 +9,7 @@ RSpec.describe Spree::Seeds::DigitalDelivery do
 
       delivery_method = Spree::DeliveryMethod.find_by(name: Spree.t('digital.digital_delivery'))
       expect(delivery_method).to be_present
-      expect(delivery_method.display_on).to eq('both')
+      expect(delivery_method.storefront_visible).to be true
       expect(delivery_method.fulfillment_type).to eq('digital')
       expect(delivery_method).to be_digital
       expect(delivery_method.calculator).to be_a(Spree::Calculator::Shipping::DigitalDelivery)
@@ -19,7 +19,7 @@ RSpec.describe Spree::Seeds::DigitalDelivery do
       before do
         Spree::DeliveryMethod.create!(
           name: Spree.t('digital.digital_delivery'),
-          display_on: 'both',
+          storefront_visible: true,
           fulfillment_type: 'digital',
           calculator: Spree::Calculator::Shipping::DigitalDelivery.create!
         )

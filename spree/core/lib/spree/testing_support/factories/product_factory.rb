@@ -7,7 +7,6 @@ FactoryBot.define do
   # convenience attributes.
   factory :empty_product, class: Spree::Product do
     sequence(:name)   { |n| "Empty Product #{n}#{Kernel.rand(9999)}" }
-    shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
     status            { 'active' }
     store             { Spree::Store.default || association(:store) }
 
@@ -32,7 +31,6 @@ FactoryBot.define do
     cost_price        { 17.00 }
     sku               { generate(:sku) }
     deleted_at        { nil }
-    shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
     status            { 'active' }
     store             { Spree::Store.default || association(:store) }
 

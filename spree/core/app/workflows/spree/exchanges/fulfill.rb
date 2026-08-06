@@ -77,7 +77,7 @@ module Spree
 
         failure(exchange, :nothing_to_fulfill) if units.empty?
 
-        @fulfillments = Spree::Stock::Coordinator.new(exchange.order, units).shipments
+        @fulfillments = Spree::Stock::Coordinator.new(exchange.order, units).fulfillments
         if @fulfillments.flat_map(&:fulfillment_items).sum(&:quantity) != units.sum(&:quantity)
           failure(exchange, :replacement_out_of_stock)
         end

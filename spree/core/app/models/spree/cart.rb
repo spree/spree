@@ -149,7 +149,7 @@ module Spree
       fulfillments.delete_all
       fulfillment_items.reset
 
-      self.fulfillments = Spree::Stock::Coordinator.new(self).shipments.map do |fulfillment|
+      self.fulfillments = Spree::Stock::Coordinator.new(self).fulfillments.map do |fulfillment|
         fulfillment.address_id = ship_address_id
         fulfillment.order = nil
         fulfillment.cart = self
@@ -161,7 +161,7 @@ module Spree
 
     # Drops proposals that found no delivery rates and surfaces a
     # delivery_unavailable warning per affected line item (parity with the
-    # order-side ensure_available_shipping_rates).
+    # order-side ensure_available_delivery_rates).
     def prune_undeliverable_fulfillments!
       undeliverable = fulfillments.reload.select { |fulfillment| fulfillment.delivery_rates.empty? }
       return if undeliverable.empty?
@@ -177,7 +177,7 @@ module Spree
       end
     end
 
-    def ensure_available_shipping_rates
+    def ensure_available_delivery_rates
       if fulfillments.empty? || fulfillments.any? { |fulfillment| fulfillment.delivery_rates.blank? }
         errors.add(:base, Spree.t(:items_cannot_be_shipped))
         return false

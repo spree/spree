@@ -12,8 +12,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
   before do
     import.create_mappings
     # Manually map fields since there's no CSV file attached
-    import.mappings.find_by(schema_field: 'shipping_category')&.update(file_column: 'shipping_category')
     import.mappings.find_by(schema_field: 'tax_category')&.update(file_column: 'tax_category')
+    import.mappings.find_by(schema_field: 'product_type')&.update(file_column: 'product_type')
   end
 
   # Matches how our production import will pass attributes
@@ -797,11 +797,11 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
-  context 'when importing with shipping_category' do
+  context 'when importing with product_type' do
     let(:product) { subject.process! }
 
-    context 'when shipping_category exists' do
-      let!(:digital_category) { create(:shipping_category, name: 'Digital') }
+    context 'when the product type exists' do
+      let!(:digital_type) { create(:product_type, name: 'Digital', store: store, fulfillment_types: ['digital']) }
 
       let(:row_data) do
         csv_row_hash(
@@ -810,37 +810,40 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
           'status' => 'active',
           'price' => '29.99',
           'currency' => 'USD',
-          'shipping_category' => 'Digital'
+          'product_type' => 'Digital'
         )
       end
 
-      it 'assigns the shipping category to the product' do
-        expect(product.shipping_category).to eq digital_category
+      it 'assigns it and inherits its fulfillment types' do
+        expect(product.product_type).to eq digital_type
+        expect(product.fulfillment_types).to eq ['digital']
       end
     end
 
-    context 'when shipping_category does not exist' do
+    context 'when the product type does not exist' do
       let(:row_data) do
         csv_row_hash(
-          'slug' => 'digital-product',
-          'name' => 'Digital Product',
+          'slug' => 'new-type-product',
+          'name' => 'New Type Product',
           'status' => 'active',
           'price' => '29.99',
           'currency' => 'USD',
-          'shipping_category' => 'NonExistent'
+          'product_type' => 'Apparel'
         )
       end
 
-      it 'leaves the shipping category unset' do
-        expect(product.shipping_category).to be_nil
+      it 'creates it in the store, defaulting to physical shipping' do
+        expect(product.product_type.name).to eq 'Apparel'
+        expect(product.product_type.store).to eq store
+        expect(product.fulfillment_types).to eq ['shipping']
       end
     end
 
-    context 'when updating product with different shipping_category' do
-      let!(:standard_category) { create(:shipping_category, name: 'Standard') }
-      let!(:digital_category) { create(:shipping_category, name: 'Digital') }
+    context 'when updating a product with a different product_type' do
+      let!(:apparel_type) { create(:product_type, name: 'Apparel', store: store) }
+      let!(:digital_type) { create(:product_type, name: 'Digital', store: store, fulfillment_types: ['digital']) }
       let!(:existing_product) do
-        create(:product, slug: 'product-to-update', name: 'Product', store: store, shipping_category: standard_category)
+        create(:product, slug: 'product-to-update', name: 'Product', store: store, product_type: apparel_type)
       end
 
       let(:row_data) do
@@ -850,20 +853,20 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
           'status' => 'active',
           'price' => '29.99',
           'currency' => 'USD',
-          'shipping_category' => 'Digital'
+          'product_type' => 'Digital'
         )
       end
 
-      it 'updates the shipping category' do
+      it 'updates the product type' do
         expect(product.id).to eq existing_product.id
-        expect(product.shipping_category).to eq digital_category
+        expect(product.product_type).to eq digital_type
       end
     end
 
-    context 'when shipping_category is not provided' do
+    context 'when product_type is not provided' do
       let(:row_data) do
         csv_row_hash(
-          'slug' => 'product-no-category',
+          'slug' => 'product-no-type',
           'name' => 'Product',
           'status' => 'active',
           'price' => '29.99',
@@ -871,8 +874,9 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         )
       end
 
-      it 'leaves the shipping category unset' do
-        expect(product.shipping_category).to be_nil
+      it 'leaves it unset and rides the physical shipping default' do
+        expect(product.product_type).to be_nil
+        expect(product.fulfillment_types).to eq ['shipping']
       end
     end
   end

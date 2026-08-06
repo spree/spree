@@ -98,7 +98,7 @@ module Spree
 
         failure(claim, :nothing_to_replace) if units.empty?
 
-        @fulfillments = Spree::Stock::Coordinator.new(claim.order, units).shipments
+        @fulfillments = Spree::Stock::Coordinator.new(claim.order, units).fulfillments
         if @fulfillments.flat_map(&:fulfillment_items).sum(&:quantity) != units.sum(&:quantity)
           failure(claim, :replacement_out_of_stock)
         end

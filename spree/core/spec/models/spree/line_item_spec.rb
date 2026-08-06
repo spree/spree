@@ -586,33 +586,62 @@ describe Spree::LineItem, type: :model do
     end
   end
 
-  describe '#shipping_cost' do
+  describe '#delivery_cost' do
     let(:line_item) { create(:line_item) }
     let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
     let(:shipment) { create(:shipment, inventory_units: [inventory_unit], cost: 10) }
 
     it 'returns the shipping cost for the line item' do
       shipment
-      expect(line_item.shipping_cost).to eq(10)
+      expect(line_item.delivery_cost).to eq(10)
     end
 
     context 'when the shipment is canceled' do
       it 'returns 0' do
         shipment.cancel!
-        expect(line_item.shipping_cost).to eq(0)
+        expect(line_item.delivery_cost).to eq(0)
       end
     end
 
     context 'when the shipment is not present' do
       it 'returns 0' do
-        expect(line_item.shipping_cost).to eq(0)
+        expect(line_item.delivery_cost).to eq(0)
       end
     end
 
     context 'when the shipment cost is 0' do
       it 'returns 0' do
         shipment.update(cost: 0)
-        expect(line_item.shipping_cost).to eq(0)
+        expect(line_item.delivery_cost).to eq(0)
+      end
+    end
+
+    context 'when one fulfillment holds several of this line item units' do
+      let(:line_item) { create(:line_item, quantity: 2) }
+
+      it 'counts that fulfillment once, not once per unit' do
+        second_unit = create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
+        shipment.fulfillment_items << second_unit
+
+        expect(line_item.reload.delivery_cost).to eq(10)
+      end
+    end
+
+    context 'when a canceled fulfillment precedes an active one' do
+      let(:line_item) { create(:line_item, quantity: 2) }
+
+      # The canceled one must be visited first, otherwise a premature `return`
+      # would reach the active cost anyway and the guard would look correct.
+      it 'still charges the active fulfillment' do
+        shipment.update_columns(cost: 10, status: 'canceled')
+
+        active = create(:shipment, cost: 10, order: shipment.order, stock_location: shipment.stock_location)
+        active.fulfillment_items << create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
+
+        line_item.reload
+        expect(line_item.fulfillments.first).to eq(shipment)
+
+        expect(line_item.delivery_cost).to eq(10)
       end
     end
   end
