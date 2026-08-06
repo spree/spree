@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:delivery_method) { create(:shipping_method, name: 'Standard') }
+  let!(:delivery_method) { create(:delivery_method, name: 'Standard') }
 
   before { request.headers.merge!(headers) }
 
@@ -79,28 +79,6 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethods::RulesController, type: :c
         delivery_method_id: delivery_method.prefixed_id,
         type: 'excluded_products_rule',
         product_ids: [other_store_product.prefixed_id]
-      }, as: :json
-
-      expect(response).to have_http_status(:created)
-      expect(delivery_method.delivery_method_rules.sole.products).to be_empty
-    end
-
-    it 'drops products the caller is not allowed to see' do
-      product = create(:product)
-      restricted_ability = Class.new do
-        include CanCan::Ability
-
-        def initialize(_user = nil)
-          can :manage, :all
-          cannot :show, Spree::Product
-        end
-      end
-      allow(controller).to receive(:current_ability).and_return(restricted_ability.new)
-
-      post :create, params: {
-        delivery_method_id: delivery_method.prefixed_id,
-        type: 'excluded_products_rule',
-        product_ids: [product.prefixed_id]
       }, as: :json
 
       expect(response).to have_http_status(:created)

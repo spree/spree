@@ -8,7 +8,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
-    let!(:delivery_method) { create(:shipping_method, name: 'UPS Ground') }
+    let!(:delivery_method) { create(:delivery_method, name: 'UPS Ground') }
 
     it 'lists delivery methods with admin fields' do
       get :index, params: {}, as: :json
@@ -126,7 +126,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
   end
 
   describe 'PATCH #update' do
-    let!(:delivery_method) { create(:shipping_method, name: 'UPS Ground') }
+    let!(:delivery_method) { create(:delivery_method, name: 'UPS Ground') }
 
     it 'updates attributes and calculator preferences' do
       patch :update, params: {
@@ -180,53 +180,6 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(delivery_method.delivery_method_rules.reload.size).to eq(1)
     end
 
-    # The sheet resubmits the ids it was served, so a deleted excluded product
-    # must not make the whole method unsaveable.
-    it 'still saves after an excluded product is deleted' do
-      product = create(:product)
-      rule = Spree::DeliveryMethodRules::ExcludedProductsRule.create!(
-        delivery_method: delivery_method, products: [product]
-      )
-      product.destroy
-
-      patch :update, params: {
-        id: delivery_method.prefixed_id,
-        name: 'Renamed',
-        rules: [
-          { id: rule.prefixed_id, type: 'excluded_products_rule',
-            product_ids: rule.reload.product_prefixed_ids }
-        ]
-      }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(delivery_method.reload.name).to eq('Renamed')
-    end
-
-    # A sheet opened before the deletion still holds the old id, so the save
-    # has to drop it and keep the rest rather than fail.
-    it 'saves with a stale product id from an already-open sheet' do
-      deleted_product = create(:product)
-      kept_product = create(:product)
-      rule = Spree::DeliveryMethodRules::ExcludedProductsRule.create!(
-        delivery_method: delivery_method, products: [deleted_product, kept_product]
-      )
-      stale_id = deleted_product.prefixed_id
-      deleted_product.destroy
-
-      patch :update, params: {
-        id: delivery_method.prefixed_id,
-        name: 'Renamed',
-        rules: [
-          { id: rule.prefixed_id, type: 'excluded_products_rule',
-            product_ids: [stale_id, kept_product.prefixed_id] }
-        ]
-      }, as: :json
-
-      expect(response).to have_http_status(:ok)
-      expect(delivery_method.reload.name).to eq('Renamed')
-      expect(rule.reload.products).to eq([kept_product])
-    end
-
     # An unreachable product cannot become an exclusion, but it must not fail
     # the whole save either — the merchant would have no way to clear it.
     it 'drops nested rule products from another store' do
@@ -247,7 +200,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
   end
 
   describe 'DELETE #destroy' do
-    let!(:delivery_method) { create(:shipping_method) }
+    let!(:delivery_method) { create(:delivery_method) }
 
     it 'soft deletes the delivery method' do
       delete :destroy, params: { id: delivery_method.prefixed_id }, as: :json

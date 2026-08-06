@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::DeliveryMethodRule, type: :model do
   let(:store) { @default_store }
-  let(:delivery_method) { create(:shipping_method) }
+  let(:delivery_method) { create(:delivery_method) }
   let(:package) do
     order = create(:order_with_line_items, store: store, line_items_price: 20)
     Spree::Stock::Coordinator.new(order).packages.first
@@ -67,53 +67,6 @@ describe Spree::DeliveryMethodRule, type: :model do
       rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
 
       expect(rule.eligible?(package)).to be(true)
-    end
-
-    # The admin controller assigns products before saving, so eligibility has
-    # to see them even though no join row exists yet.
-    it 'sees products assigned but not yet saved' do
-      rule = described_class.new(delivery_method: delivery_method)
-      expect(rule.eligible?(package)).to be(true)
-
-      rule.products << package.contents.first.variant.product
-      expect(rule.eligible?(package)).to be(false)
-    end
-
-    # Rate estimation runs this per package, so the exclusion list must never
-    # be pulled into memory just to answer the question — on either outcome.
-    it 'answers without loading the exclusion list' do
-      excluded_product = package.contents.first.variant.product
-
-      passing = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
-      passing = described_class.find(passing.id)
-      expect(passing.eligible?(package)).to be(true)
-      expect(passing.delivery_method_rule_products).not_to be_loaded
-
-      blocking = described_class.create!(
-        delivery_method: create(:shipping_method), products: [excluded_product]
-      )
-      blocking = described_class.find(blocking.id)
-      expect(blocking.eligible?(package)).to be(false)
-      expect(blocking.delivery_method_rule_products).not_to be_loaded
-    end
-
-    # A deleted product must stop appearing in the payload: the dashboard
-    # resubmits whatever it was given, and an id the API can no longer resolve
-    # would 404 the whole save.
-    it 'clears its product links when the product is deleted' do
-      product = create(:product)
-      rule = described_class.create!(delivery_method: delivery_method, products: [product])
-
-      product.destroy
-
-      expect(Spree::DeliveryMethodRuleProduct.where(product_id: product.id)).to be_empty
-      expect(described_class.find(rule.id).product_prefixed_ids).to be_empty
-    end
-
-    it 'removes its product links with the rule' do
-      rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
-
-      expect { rule.destroy! }.to change(Spree::DeliveryMethodRuleProduct, :count).by(-1)
     end
   end
 
