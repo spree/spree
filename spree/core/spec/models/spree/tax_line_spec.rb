@@ -25,6 +25,14 @@ describe Spree::TaxLine, type: :model do
     expect(tax_line).not_to be_valid
   end
 
+  it 'is owned by a cart during checkout' do
+    tax_line = create(:tax_line, :on_cart)
+
+    expect(tax_line.owner).to eq(tax_line.cart)
+    expect(tax_line.order).to be_nil
+    expect(tax_line.cart.tax_lines.reload).to include(tax_line)
+  end
+
   it 'stays meaningful without a tax rate' do
     tax_line = create(:tax_line, order: order, line_item: line_item, tax_rate: nil, provider_id: 'avalara', rate: 0.0825)
     expect(tax_line.reload.rate).to eq(0.0825)

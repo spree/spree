@@ -22,11 +22,13 @@ module Spree
           relevant_rates = rates.select { |rate| rate.tax_category_id == tax_category_id_for(item) }
           store_pre_tax_amount(item, relevant_rates)
 
+          # A matched rate always produces a row, zero-amount ones included:
+          # a zero rate is a treatment ("this is zero-rated"), which reporting
+          # and e-invoicing both need to see. No matched rate means no opinion,
+          # and writes nothing.
           relevant_rates.each do |rate|
             amount = compute_tax(rate, item, relevant_rates)
-            next if amount.zero?
-
-            write_tax_line(owner, item, rate, amount)
+            write_tax_line(owner, item, rate, amount, reason_for(rate))
           end
         end
       end
@@ -84,17 +86,37 @@ module Spree
         item.update_column(:pre_tax_amount, pre_tax_amount)
       end
 
-      def write_tax_line(owner, item, rate, amount)
+      # Finer distinctions — a reduced rate, an exempt supply — are a matter of
+      # rate configuration rather than something to infer from the number.
+      def reason_for(rate)
+        rate.amount.to_d.zero? ? 'zero_rated' : 'standard_rated'
+      end
+
+      # The jurisdiction that taxed the line. Read from the owner's tax address
+      # rather than its tax zone, because a Zone can span several countries and
+      # so has no single country to report. Rates carry their own country from
+      # the tax-side Zone decoupling onwards.
+      def jurisdiction_for(owner)
+        address = owner.tax_address
+        return {} if address.nil?
+
+        { country_iso: address.country&.iso, state_code: address.state&.abbr }
+      end
+
+      def write_tax_line(owner, item, rate, amount, reason)
         owner_key = owner.is_a?(Spree::Order) ? :order : :cart
         Spree::TaxLine.create!(
-          tax_line_foreign_key(item.class) => item.id,
-          owner_key => owner,
-          tax_rate: rate,
-          amount: amount,
-          rate: rate.amount,
-          label: rate.adjustment_label,
-          included: rate.included_in_price,
-          provider_id: 'internal'
+          {
+            tax_line_foreign_key(item.class) => item.id,
+            owner_key => owner,
+            tax_rate: rate,
+            amount: amount,
+            rate: rate.amount,
+            label: rate.adjustment_label,
+            included: rate.included_in_price,
+            provider_id: 'internal',
+            taxability_reason: reason
+          }.merge(jurisdiction_for(owner))
         )
       end
     end
