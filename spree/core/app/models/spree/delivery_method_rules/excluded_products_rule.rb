@@ -11,11 +11,14 @@ module Spree
                inverse_of: :delivery_method_rule
       has_many :products, class_name: 'Spree::Product', through: :delivery_method_rule_products
 
+      # Asks whether any of the package's products is excluded, rather than
+      # loading the whole exclusion list — the join table's composite index
+      # answers it without transferring rows.
       def eligible?(package)
-        excluded_ids = delivery_method_rule_products.pluck(:product_id)
-        return true if excluded_ids.empty?
+        product_ids = package.contents.map { |item| item.variant.product_id }.uniq
+        return true if product_ids.empty?
 
-        package.contents.none? { |item| excluded_ids.include?(item.variant.product_id) }
+        !delivery_method_rule_products.exists?(product_id: product_ids)
       end
     end
   end
