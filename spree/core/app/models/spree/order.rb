@@ -767,9 +767,13 @@ module Spree
 
     # Returns line items that have no delivery rates
     #
+    # Deliberately not memoized: callers destroy fulfillments between reads
+    # (see {#ensure_available_delivery_rates}), so a cached value would
+    # describe fulfillments that no longer exist.
+    #
     # @return [Array<Spree::LineItem>]
     def line_items_without_delivery_rates
-      @line_items_without_delivery_rates ||= fulfillments.map do |fulfillment|
+      fulfillments.map do |fulfillment|
         fulfillment.manifest.map(&:line_item) if fulfillment.delivery_rates.blank?
       end.flatten.compact
     end
@@ -1033,14 +1037,18 @@ module Spree
     end
 
     def ensure_available_delivery_rates
-      if fulfillments.empty? || line_items_without_delivery_rates.present?
+      # Captured before destroy_all — afterwards there are no fulfillments
+      # left to derive the undeliverable items from.
+      undeliverable_line_items = line_items_without_delivery_rates
+
+      if fulfillments.empty? || undeliverable_line_items.present?
         # After this point, order redirects back to 'address' state and asks user to pick a proper address
         # Therefore, shipments are not necessary at this point.
         fulfillments.destroy_all
 
-        if line_items_without_delivery_rates.present?
-          errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: line_items_without_delivery_rates.map(&:name).to_sentence))
-          self.warnings |= line_items_without_delivery_rates.map do |line_item|
+        if undeliverable_line_items.present?
+          errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: undeliverable_line_items.map(&:name).to_sentence))
+          self.warnings |= undeliverable_line_items.map do |line_item|
             {
               code: 'delivery_unavailable',
               message: Spree.t('cart_line_item.delivery_unavailable', li_name: line_item.name),

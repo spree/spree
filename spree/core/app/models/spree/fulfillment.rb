@@ -432,13 +432,15 @@ module Spree
                             delivery_rates(to_package, audience)
 
       if delivery_method
-        selected_rate = delivery_rates.detect do |rate|
+        # Keep the previously chosen method when it is still quoted; otherwise
+        # fall back to the estimator's own pick (the cheapest rate, already
+        # flagged selected) rather than leaving the fulfillment unselected.
+        selected_rate =
           if original_shipping_method_id
-            rate.delivery_method_id == original_shipping_method_id
-          else
-            rate.selected
+            delivery_rates.detect { |rate| rate.delivery_method_id == original_shipping_method_id }
           end
-        end
+        selected_rate ||= delivery_rates.detect(&:selected)
+
         save!
         self.selected_shipping_rate_id = selected_rate.id if selected_rate
         reload

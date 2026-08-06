@@ -615,6 +615,26 @@ describe Spree::LineItem, type: :model do
         expect(line_item.delivery_cost).to eq(0)
       end
     end
+
+    context 'when one fulfillment holds several of this line item units' do
+      it 'counts that fulfillment once, not once per unit' do
+        second_unit = create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
+        shipment.fulfillment_items << second_unit
+
+        expect(line_item.reload.delivery_cost).to eq(10)
+      end
+    end
+
+    context 'when a canceled fulfillment precedes an active one' do
+      it 'still charges the active fulfillment' do
+        shipment.update_columns(cost: 10, status: 'canceled')
+
+        active = create(:shipment, cost: 10, order: shipment.order, stock_location: shipment.stock_location)
+        active.fulfillment_items << create(:inventory_unit, line_item: line_item, variant: inventory_unit.variant)
+
+        expect(line_item.reload.delivery_cost).to eq(10)
+      end
+    end
   end
 
   describe '#amount' do

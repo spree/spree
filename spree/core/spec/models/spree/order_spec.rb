@@ -2169,6 +2169,14 @@ describe Spree::Order, type: :model do
       it 'deletes all the shipments' do
         expect { subject }.to change(order.shipments, :count).to(0)
       end
+
+      # The list is derived from fulfillments, and this method destroys them —
+      # so it must be read fresh, never from a value cached across the destroy.
+      it 'reports no undeliverable line items once the fulfillments are gone' do
+        expect(order.line_items_without_delivery_rates).to be_present
+        subject
+        expect(order.line_items_without_delivery_rates).to be_empty
+      end
     end
 
     context 'when order has shipments with shipping rates' do

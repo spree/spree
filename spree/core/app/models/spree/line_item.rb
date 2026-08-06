@@ -252,17 +252,21 @@ module Spree
     #
     # @return [BigDecimal]
     def delivery_cost
-      fulfillments.sum do |fulfillment|
-        return BigDecimal('0') if fulfillment.canceled?
-        return BigDecimal('0') if fulfillment.cost.zero?
+      # distinct: the has_many :through yields one row per fulfillment item,
+      # so a fulfillment holding several of this line item's units would
+      # otherwise be counted once per unit.
+      fulfillments.distinct.sum do |fulfillment|
+        # next, never return — a return here would abandon the whole sum, so
+        # one skippable fulfillment would zero out every other one.
+        next BigDecimal('0') if fulfillment.canceled? || fulfillment.cost.zero?
 
-        total_units = fulfillment.fulfillment_items
-        return BigDecimal('0') if total_units.empty?
+        units = fulfillment.fulfillment_items
+        next BigDecimal('0') if units.empty?
 
-        line_item_units = fulfillment.fulfillment_items.find_all { |unit| unit.line_item_id == id }.count
-        return BigDecimal('0') if line_item_units.zero?
+        line_item_units = units.count { |unit| unit.line_item_id == id }
+        next BigDecimal('0') if line_item_units.zero?
 
-        fulfillment.cost * (line_item_units.to_d / total_units.count)
+        fulfillment.cost * (line_item_units.to_d / units.count)
       end
     end
 
