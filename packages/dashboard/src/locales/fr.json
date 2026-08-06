@@ -2965,7 +2965,7 @@
     },
     "reasons": {
       "title": "Retours et motifs",
-      "description": "Les listes dans lesquelles votre équipe choisit lors des retours, réclamations et remboursements.",
+      "description": "Les listes de motifs que votre équipe utilise pour les retours, réclamations et remboursements.",
       "add_cta": "Ajouter un motif",
       "add_sheet_title": "Ajouter un motif",
       "edit_sheet_title": "Modifier le motif",

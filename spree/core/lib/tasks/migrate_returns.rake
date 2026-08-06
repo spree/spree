@@ -287,6 +287,12 @@ namespace :spree do
       legacy models themselves are deleted in 6.0. The tables stay in place as
       a rollback safety net and drop in 6.1.
 
+      A row that can't be converted is reported and skipped so one bad
+      authorization doesn't stop the batch, but the task then aborts, because
+      an upgrade must not continue on top of incomplete returns history.
+      Re-run to retry those rows, or pass SKIP_FAILED_ROWS=true to accept the
+      gap and continue.
+
       Set BATCH_SIZE to tune how many authorizations are loaded at a time
       (default 500).
     DESC
@@ -302,9 +308,18 @@ namespace :spree do
       puts "  Migrated #{result[:returns]} return(s) and #{result[:exchanges]} exchange(s); " \
            "skipped #{result[:skipped]}."
 
-      if result[:failed].any?
-        puts "  #{result[:failed].size} row(s) could not be migrated — re-run to retry them:"
-        result[:failed].each { |line| puts "  #{line}" }
+      next if result[:failed].empty?
+
+      # Aborts so upgrade automation stops here rather than carrying on with
+      # returns history that is missing rows. Every failure is retried by
+      # simply re-running — the task scopes itself to what isn't migrated yet.
+      puts "  #{result[:failed].size} row(s) could not be migrated:"
+      result[:failed].each { |line| puts "  #{line}" }
+
+      if ENV['SKIP_FAILED_ROWS'] == 'true'
+        puts '  Continuing anyway (SKIP_FAILED_ROWS=true).'
+      else
+        abort '  Re-run to retry them, or pass SKIP_FAILED_ROWS=true to accept the gap and continue.'
       end
     end
   end
