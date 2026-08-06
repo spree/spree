@@ -494,8 +494,6 @@
       "conditions": {
         "add": "Bedingung hinzufügen",
         "empty": "Keine Bedingungen — die Methode wird angeboten, sobald ihre Zonen passen.",
-        "products_empty": "Keine passenden Produkte",
-        "products_placeholder": "Produkte nach Namen suchen…",
         "title": "Bedingungen"
       },
       "create_description": "Konfiguriere, wie Bestellungen die Kundschaft erreichen: Versand, digital oder Abholung.",
@@ -2575,6 +2573,10 @@
       "search_placeholder": "Produkttypen durchsuchen"
     },
     "products": {
+      "autocomplete": {
+        "empty": "Keine passenden Produkte",
+        "placeholder": "Produkte nach Namen suchen…"
+      },
       "category_search_placeholder": "Kategorien suchen…",
       "collection_search_placeholder": "Kollektionen suchen…",
       "columns": {

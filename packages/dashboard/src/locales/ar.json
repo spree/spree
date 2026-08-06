@@ -494,8 +494,6 @@
       "conditions": {
         "add": "إضافة شرط",
         "empty": "لا توجد شروط — تُعرض الطريقة متى تطابقت مناطقها.",
-        "products_empty": "لا توجد منتجات متطابقة",
-        "products_placeholder": "البحث عن المنتجات بالاسم…",
         "title": "الشروط"
       },
       "create_description": "حدّد كيفية وصول الطلبات إلى العملاء: شحن أو تسليم رقمي أو استلام.",
@@ -2575,6 +2573,10 @@
       "search_placeholder": "ابحث في أنواع المنتجات"
     },
     "products": {
+      "autocomplete": {
+        "empty": "لا توجد منتجات متطابقة",
+        "placeholder": "البحث عن المنتجات بالاسم…"
+      },
       "category_search_placeholder": "فئات البحث…",
       "collection_search_placeholder": "ابحث عن مجموعات…",
       "columns": {

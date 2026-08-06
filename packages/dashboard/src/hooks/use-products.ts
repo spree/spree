@@ -1,3 +1,4 @@
+import type { Product } from '@spree/admin-sdk'
 import type { FilterRule } from '@spree/dashboard-core'
 import {
   adminClient,
@@ -15,6 +16,21 @@ interface UseProductsParams {
   sort?: string
   search?: string
   filters?: FilterRule[]
+}
+
+/**
+ * Shared config for any `<ResourceMultiAutocomplete>` over products.
+ * Pass a unique `queryKey` per instance.
+ */
+export function productAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (q: string) => adminClient.products.list({ name_cont: q, limit: 10, sort: 'name' }),
+    hydrate: (ids: string[]) => adminClient.products.list({ id_in: ids, limit: ids.length }),
+    getOptionLabel: (product: Product) => product.name ?? product.id,
+    placeholder: i18n.t('admin.products.autocomplete.placeholder'),
+    emptyText: i18n.t('admin.products.autocomplete.empty'),
+  }
 }
 
 export function useProducts({

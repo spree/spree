@@ -81,18 +81,15 @@ module Spree
               end
             end
 
-            # Association-backed rule config (ExcludedProductsRule). Prefixed
-            # IDs are resolved against the rule's store — a cross-store
-            # product 404s, same as any other lookup.
+            # Association-backed rule config (ExcludedProductsRule). Products are
+            # looked up within the rule's store, so a cross-store ID 404s like
+            # any other lookup. A nil param leaves the selection untouched; an
+            # empty array clears it.
             def assign_rule_products(rule)
-              return unless rule.respond_to?(:products)
-              return if params[:product_ids].nil?
+              ids = permitted_params[:product_ids]
+              return if ids.nil? || !rule.respond_to?(:products)
 
-              resolver = Spree::DeliveryMethodRule.normalize_id_preference(
-                klass: Spree::Product,
-                scope: ->(owner) { owner.store.products }
-              )
-              rule.product_ids = resolver.call(permitted_params[:product_ids], rule)
+              rule.products = rule.store.products.find(decode_prefixed_ids(ids))
             end
           end
         end

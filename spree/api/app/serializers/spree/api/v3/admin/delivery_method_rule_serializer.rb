@@ -29,10 +29,9 @@ module Spree
           attribute :preference_schema, &:serialized_preference_schema
 
           # Association-backed config (ExcludedProductsRule); empty for
-          # preference-only rules. Same name read and written. Ordered so
-          # clients can compare a response against what they sent.
+          # preference-only rules. Same name read and written.
           attribute :product_ids do |rule|
-            rule.respond_to?(:products) ? rule.products.order(:id).map(&:prefixed_id) : []
+            rule.respond_to?(:product_prefixed_ids) ? rule.product_prefixed_ids : []
           end
         end
       end

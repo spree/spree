@@ -11,18 +11,33 @@ module Spree
                inverse_of: :delivery_method_rule
       has_many :products, class_name: 'Spree::Product', through: :delivery_method_rule_products
 
+      # Excluded product ids in prefixed form, encoded from the join table's
+      # foreign keys — hydrating N Product rows just to re-encode their ids
+      # would be wasted I/O. Sorted so clients can compare a response against
+      # what they sent.
+      #
+      # @return [Array<String>]
+      def product_prefixed_ids
+        delivery_method_rule_products.pluck(:product_id).sort.map do |id|
+          Spree::Product.prefixed_id_for(id)
+        end
+      end
+
       # Asks whether any of the package's products is excluded, rather than
       # loading the whole exclusion list — the join table's composite index
-      # answers it without transferring rows. Unsaved rules can't be queried,
-      # so those fall back to the in-memory association.
+      # answers it without transferring rows.
       def eligible?(package)
         product_ids = package.contents.map { |item| item.variant.product_id }.uniq
         return true if product_ids.empty?
 
-        # `target` is whatever is already in memory — reading it never triggers
-        # a load, so the persisted path stays a single indexed existence check.
-        pending_links = delivery_method_rule_products.target.select(&:new_record?)
-        return false if pending_links.any? { |link| product_ids.include?(link.product_id) }
+        # `target` is whatever is already in memory, so reading it never
+        # triggers a load. It covers links assigned but not yet saved — the
+        # admin controller assigns products before saving the rule.
+        return false if delivery_method_rule_products.target.any? { |link|
+          link.new_record? && product_ids.include?(link.product_id)
+        }
+        # An unsaved rule has no rows to query, and asking would still cost a
+        # round trip.
         return true if new_record?
 
         !delivery_method_rule_products.exists?(product_id: product_ids)

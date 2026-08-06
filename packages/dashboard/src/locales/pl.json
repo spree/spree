@@ -502,8 +502,6 @@
       "conditions": {
         "add": "Dodaj warunek",
         "empty": "Brak warunków — metoda jest oferowana, gdy pasują jej strefy.",
-        "products_empty": "Brak pasujących produktów",
-        "products_placeholder": "Szukaj produktów po nazwie…",
         "title": "Warunki"
       },
       "create_description": "Skonfiguruj, jak zamówienia trafiają do klientów: wysyłka, dostawa cyfrowa lub odbiór.",
@@ -2607,6 +2605,10 @@
       "search_placeholder": "Szukaj typów produktów"
     },
     "products": {
+      "autocomplete": {
+        "empty": "Brak pasujących produktów",
+        "placeholder": "Szukaj produktów po nazwie…"
+      },
       "category_search_placeholder": "Szukaj kategorii…",
       "collection_search_placeholder": "Szukaj kolekcji…",
       "columns": {

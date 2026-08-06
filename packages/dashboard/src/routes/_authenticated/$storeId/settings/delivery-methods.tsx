@@ -11,7 +11,6 @@ import {
   Subject,
   usePermissions,
   useResourceKeyBuilder,
-  useStore,
 } from '@spree/dashboard-core'
 import {
   Button,
@@ -59,6 +58,7 @@ import {
   useUpdateDeliveryMethod,
 } from '../../../../hooks/use-delivery-methods'
 import { useDeliveryZones } from '../../../../hooks/use-delivery-zones'
+import { productAutocompleteProps } from '../../../../hooks/use-products'
 import { useStockLocations } from '../../../../hooks/use-stock-locations'
 import { useTaxCategories } from '../../../../hooks/use-tax-categories'
 import {
@@ -405,32 +405,39 @@ function ConditionsSection({ deliveryMethodId }: { deliveryMethodId: string }) {
   )
 }
 
-function ConditionRuleRow({
-  rule,
-  onSave,
-  onRemove,
-  saving,
-}: {
+type ConditionRuleRowProps = {
   rule: DeliveryMethodRule
   onSave: (params: { preferences?: Record<string, unknown>; product_ids?: string[] }) => void
   onRemove: () => void
   saving: boolean
+}
+
+function ConditionRuleRow(props: ConditionRuleRowProps) {
+  // Association-backed rules are configured with a picker; every other kind
+  // renders its preference schema.
+  return props.rule.type === 'excluded_products_rule' ? (
+    <ProductsConditionRow {...props} />
+  ) : (
+    <PreferencesConditionRow {...props} />
+  )
+}
+
+function ConditionRowShell({
+  rule,
+  onRemove,
+  dirty,
+  saving,
+  onSave,
+  children,
+}: {
+  rule: DeliveryMethodRule
+  onRemove: () => void
+  dirty: boolean
+  saving: boolean
+  onSave: () => void
+  children: React.ReactNode
 }) {
   const { t } = useTranslation()
-  const { storeId } = useStore()
-  const [values, setValues] = useState<Record<string, unknown>>(
-    rule.preferences as Record<string, unknown>,
-  )
-  const [productIds, setProductIds] = useState<string[]>(rule.product_ids ?? [])
-  // Association-backed rule — configured with a product picker, not preferences.
-  const productBacked = rule.type === 'excluded_products_rule'
-  // Selection order is not meaningful here, so compare as sets — otherwise the
-  // Save button lingers whenever the server returns the same products in a
-  // different order.
-  const dirty = productBacked
-    ? JSON.stringify([...productIds].sort()) !==
-      JSON.stringify([...(rule.product_ids ?? [])].sort())
-    : JSON.stringify(values) !== JSON.stringify(rule.preferences)
 
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">
@@ -446,33 +453,57 @@ function ConditionRuleRow({
           <Trash2Icon className="size-4" />
         </Button>
       </div>
-      {productBacked ? (
-        <ResourceMultiAutocomplete<Product>
-          queryKey={`${storeId}-delivery-method-rule-products-${rule.id}`}
-          value={productIds}
-          onChange={setProductIds}
-          search={(q) => adminClient.products.list({ name_cont: q, limit: 10, sort: 'name' })}
-          hydrate={(ids) => adminClient.products.list({ id_in: ids, limit: ids.length })}
-          getOptionLabel={(p) => p.name ?? p.id}
-          placeholder={t('admin.delivery_methods.conditions.products_placeholder')}
-          emptyText={t('admin.delivery_methods.conditions.products_empty')}
-        />
-      ) : (
-        <PreferencesForm schema={rule.preference_schema} values={values} onChange={setValues} />
-      )}
+      {children}
       {dirty && (
-        <Button
-          type="button"
-          size="sm"
-          onClick={() =>
-            onSave(productBacked ? { product_ids: productIds } : { preferences: values })
-          }
-          disabled={saving}
-        >
+        <Button type="button" size="sm" onClick={onSave} disabled={saving}>
           {saving ? t('admin.actions.saving') : t('admin.actions.save')}
         </Button>
       )}
     </div>
+  )
+}
+
+function ProductsConditionRow({ rule, onSave, onRemove, saving }: ConditionRuleRowProps) {
+  const [productIds, setProductIds] = useState<string[]>(rule.product_ids)
+  // Selection order is not meaningful here, so compare as sets — otherwise the
+  // Save button lingers whenever the server returns the same products in a
+  // different order.
+  const dirty =
+    JSON.stringify([...productIds].sort()) !== JSON.stringify([...rule.product_ids].sort())
+
+  return (
+    <ConditionRowShell
+      rule={rule}
+      onRemove={onRemove}
+      dirty={dirty}
+      saving={saving}
+      onSave={() => onSave({ product_ids: productIds })}
+    >
+      <ResourceMultiAutocomplete<Product>
+        {...productAutocompleteProps('delivery-method-rule-products')}
+        value={productIds}
+        onChange={setProductIds}
+      />
+    </ConditionRowShell>
+  )
+}
+
+function PreferencesConditionRow({ rule, onSave, onRemove, saving }: ConditionRuleRowProps) {
+  const [values, setValues] = useState<Record<string, unknown>>(
+    rule.preferences as Record<string, unknown>,
+  )
+  const dirty = JSON.stringify(values) !== JSON.stringify(rule.preferences)
+
+  return (
+    <ConditionRowShell
+      rule={rule}
+      onRemove={onRemove}
+      dirty={dirty}
+      saving={saving}
+      onSave={() => onSave({ preferences: values })}
+    >
+      <PreferencesForm schema={rule.preference_schema} values={values} onChange={setValues} />
+    </ConditionRowShell>
   )
 }
 
