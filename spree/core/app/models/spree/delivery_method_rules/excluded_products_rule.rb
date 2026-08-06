@@ -19,9 +19,11 @@ module Spree
         product_ids = package.contents.map { |item| item.variant.product_id }.uniq
         return true if product_ids.empty?
 
-        if new_record? || delivery_method_rule_products.any?(&:new_record?)
-          return delivery_method_rule_products.none? { |link| product_ids.include?(link.product_id) }
-        end
+        # `target` is whatever is already in memory — reading it never triggers
+        # a load, so the persisted path stays a single indexed existence check.
+        pending_links = delivery_method_rule_products.target.select(&:new_record?)
+        return false if pending_links.any? { |link| product_ids.include?(link.product_id) }
+        return true if new_record?
 
         !delivery_method_rule_products.exists?(product_id: product_ids)
       end

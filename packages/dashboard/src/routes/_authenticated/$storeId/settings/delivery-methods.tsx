@@ -424,8 +424,12 @@ function ConditionRuleRow({
   const [productIds, setProductIds] = useState<string[]>(rule.product_ids ?? [])
   // Association-backed rule — configured with a product picker, not preferences.
   const productBacked = rule.type === 'excluded_products_rule'
+  // Selection order is not meaningful here, so compare as sets — otherwise the
+  // Save button lingers whenever the server returns the same products in a
+  // different order.
   const dirty = productBacked
-    ? JSON.stringify(productIds) !== JSON.stringify(rule.product_ids ?? [])
+    ? JSON.stringify([...productIds].sort()) !==
+      JSON.stringify([...(rule.product_ids ?? [])].sort())
     : JSON.stringify(values) !== JSON.stringify(rule.preferences)
 
   return (

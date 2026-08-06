@@ -79,6 +79,16 @@ describe Spree::DeliveryMethodRule, type: :model do
       expect(rule.eligible?(package)).to be(false)
     end
 
+    # Rate estimation runs this per package, so the exclusion list must never
+    # be pulled into memory just to answer the question.
+    it 'answers without loading the exclusion list' do
+      rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
+      reloaded = described_class.find(rule.id)
+
+      expect(reloaded.eligible?(package)).to be(true)
+      expect(reloaded.delivery_method_rule_products).not_to be_loaded
+    end
+
     it 'removes its product links with the rule' do
       rule = described_class.create!(delivery_method: delivery_method, products: [create(:product)])
 
