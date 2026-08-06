@@ -26,10 +26,16 @@ module Spree
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :tax_identifier
     belongs_to :order, class_name: 'Spree::Order', optional: true, inverse_of: :tax_identifier
 
+    before_validation :normalize_value
+    after_commit :async_validate, on: %i[create update]
+
     validates :kind, :value, presence: true
+    # Data hygiene, not a format claim — no tax regime issues numbers this long.
+    validates :value, length: { maximum: 64 }
     validates :validation_status, inclusion: { in: VALIDATION_STATUSES }, allow_nil: true
     validates :source, inclusion: { in: SOURCES }, allow_nil: true
     validate :exactly_one_owner
+    validate :value_format
 
     scope :for_kind, ->(kind) { where(kind: kind) }
     scope :verified, -> { where(validation_status: 'verified') }
@@ -57,7 +63,56 @@ module Spree
       { kind: kind, value: value }
     end
 
+    # Queues the registry check. Public for the same reason
+    # {Spree::Address#async_geocode} is: an admin re-validate action calls it.
+    def async_validate
+      return unless should_validate?
+
+      # update_columns, not update — this runs inside after_commit, and the
+      # verdict columns are never the buyer's input.
+      update_columns(validation_status: 'pending', validated_at: nil, updated_at: Time.current)
+      Spree::TaxIdentifiers::ValidateJob.perform_later(id)
+    end
+
+    # Whether this installation can check a number of this kind at all. What
+    # tells the admin apart the two reasons a row has no verdict: not attempted
+    # yet, or nothing here knows how to ask.
+    #
+    # @return [Boolean]
+    def validatable?
+      order_id.nil? && Spree.tax_id_validators.key?(kind)
+    end
+
     private
+
+    # Whitespace and case only. Punctuation is deliberately kept: for several
+    # kinds it is part of the canonical number (Switzerland's CHE-123.456.789
+    # MWST, Canada's PST-1234-5678), and the buyer's own spelling is what they
+    # will recognise on an invoice. A validator needing a different wire format
+    # produces it itself.
+    def normalize_value
+      self.value = value&.gsub(/\s+/, '')&.upcase
+    end
+
+    # Format knowledge lives entirely in the registered validator. Core asserts
+    # nothing about the shape of a number whose rules live in someone else's
+    # statute book: a rule spanning every tax regime on earth would be a guess,
+    # and its failure mode is turning away a real business customer. Kinds with
+    # no validator are accepted as entered.
+    def value_format
+      validator = Spree.tax_id_validators[kind]
+      return if validator.blank?
+      return if validator.to_s.constantize.valid_format?(value)
+
+      errors.add(:value, :invalid)
+    end
+
+    # Mirrors Address#should_geocode? — only when the number itself changed,
+    # never for an order snapshot, and only when a validator exists. A stock
+    # install registers none, so it never enqueues a job with nothing to do.
+    def should_validate?
+      validatable? && (saved_changes.key?('value') || saved_changes.key?('kind'))
+    end
 
     def exactly_one_owner
       return if [customer, cart, order].compact.one?

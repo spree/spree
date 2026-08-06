@@ -129,7 +129,8 @@ module Spree
       payment_webhooks: :default,
       api_keys: :default,
       search: :default,
-      stock_reservations: :default
+      stock_reservations: :default,
+      tax_identifiers: :default
     ).tap do |queues|
       # @deprecated The taxons queue was renamed to categories in 6.0; removed in 6.1.
       queues.define_singleton_method(:taxons) do
@@ -149,6 +150,22 @@ module Spree
 
   def self.search_provider=(value)
     @@search_provider = value.to_s
+  end
+
+  # Tax ID validators, keyed by registration kind. Empty by default: core ships
+  # no registry client, because VAT number rules live in 27 different statute
+  # books and a guess would reject real business customers.
+  #
+  #   Spree.tax_id_validators['eu_vat'] = 'SpreeEuVat::TaxIdValidator'
+  #
+  # Class names are stored as strings and constantized at call time, so an
+  # initializer can register a validator before its class is autoloaded.
+  # Whether a kind has a validator is also what tells the admin apart the two
+  # reasons a registration has no verdict: unchecked, or uncheckable here.
+  #
+  # @return [Hash{String => String}]
+  def self.tax_id_validators
+    @@tax_id_validators ||= {}
   end
 
   # Returns the events adapter class used for publishing and subscribing to events.
