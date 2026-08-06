@@ -2677,8 +2677,8 @@
           "ends_after_starts": "必须晚于开始日期。"
         }
       },
-      "product_type_adds_options_one": "此类型会为新商品添加 {{count}} 个选项。",
-      "product_type_adds_options_other": "此类型会为新商品添加 {{count}} 个选项。",
+      "product_type_adds_options_one": "此类型会为新商品添加{{options}}。",
+      "product_type_adds_options_other": "此类型会为新商品添加{{options}}。",
       "product_type_placeholder": "无商品类型",
       "save_label": "保存产品",
       "seo": {

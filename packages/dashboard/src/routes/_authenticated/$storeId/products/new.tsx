@@ -176,7 +176,7 @@ function NewProductPage() {
           main={
             <>
               <GeneralCard form={form} />
-              <VariantsCard form={form} />
+              <VariantsCard form={form} seedFromType />
               {/* Form-backed media uploader — files are uploaded to ActiveStorage
                 pre-save and their signed_ids ride the product POST. */}
               <MediaCard form={form} />

@@ -2677,8 +2677,8 @@
           "ends_after_starts": "Muss nach dem Startdatum liegen."
         }
       },
-      "product_type_adds_options_one": "Dieser Typ fügt neuen Produkten {{count}} Option hinzu.",
-      "product_type_adds_options_other": "Dieser Typ fügt neuen Produkten {{count}} Optionen hinzu.",
+      "product_type_adds_options_one": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",
+      "product_type_adds_options_other": "Dieser Typ fügt neuen Produkten {{options}} hinzu.",
       "product_type_placeholder": "Kein Produkttyp",
       "save_label": "Produkt speichern",
       "seo": {

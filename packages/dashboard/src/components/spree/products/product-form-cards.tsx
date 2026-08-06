@@ -46,6 +46,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
 import { collectionAutocompleteProps, useCollections } from '../../../hooks/use-collections'
+import { useOptionTypes } from '../../../hooks/use-option-types'
 import { useDeleteProductMedia } from '../../../hooks/use-product-media'
 import { useProductType, useProductTypes } from '../../../hooks/use-product-types'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
@@ -108,8 +109,8 @@ export function GeneralCard({ form }: FormCardProps) {
 // Variants (just a passthrough so the page composition reads top-down)
 // ---------------------------------------------------------------------------
 
-export function VariantsCard({ form }: FormCardProps) {
-  return <VariantsSection form={form} />
+export function VariantsCard({ form, seedFromType }: FormCardProps & { seedFromType?: boolean }) {
+  return <VariantsSection form={form} seedFromType={seedFromType} />
 }
 
 // ---------------------------------------------------------------------------
@@ -651,11 +652,25 @@ export function CategorizationCard({ form }: FormCardProps) {
   const productTypes = productTypesData?.data ?? []
   const selectedProductTypeId = form.watch('product_type_id') as string | null | undefined
   const { data: selectedProductType } = useProductType(selectedProductTypeId ?? undefined)
+  const { data: optionTypesData } = useOptionTypes({ limit: 100 })
+  const optionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
 
   // The server seeds the type's categories onto the product when it is saved.
   // Prefilling them here means the merchant sees what they are about to get and
   // can still edit the list first. Additive, like the server: nothing they
   // already picked is removed.
+  // Named rather than counted: on a product that already has variants the
+  // builder won't surface these, so the name is the only signal the merchant
+  // gets about what the type contributes.
+  const typeOptionTypeNames = useMemo(() => {
+    const ids = selectedProductType?.option_type_ids ?? []
+    return ids
+      .map((id) => optionTypes.find((optionType) => optionType.id === id))
+      .filter((optionType) => optionType !== undefined)
+      .map((optionType) => optionType.label ?? optionType.name ?? '')
+      .filter(Boolean)
+  }, [selectedProductType?.option_type_ids, optionTypes])
+
   useEffect(() => {
     const categoryIds = selectedProductType?.category_ids
     if (!categoryIds?.length) return
@@ -709,13 +724,14 @@ export function CategorizationCard({ form }: FormCardProps) {
           <span className="text-muted-foreground text-xs">
             {t('admin.fields.product.product_type_id.help')}
           </span>
-          {selectedProductType?.option_type_ids?.length ? (
+          {typeOptionTypeNames.length > 0 && (
             <span className="text-muted-foreground text-xs">
               {t('admin.products.product_type_adds_options', {
-                count: selectedProductType.option_type_ids.length,
+                options: typeOptionTypeNames.join(', '),
+                count: typeOptionTypeNames.length,
               })}
             </span>
-          ) : null}
+          )}
         </Field>
 
         <Field>
