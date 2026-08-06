@@ -3160,6 +3160,7 @@
         "allowed_origins": "允许的来源",
         "api_keys": "API 密钥",
         "channels": "销售渠道",
+        "integrations": "集成",
         "custom_field_definitions": "自定义字段",
         "delivery_methods": "配送方式",
         "delivery_zones": "配送区域",
@@ -3341,6 +3342,50 @@
       "saved": "翻译已保存",
       "source": "源",
       "title": "翻译"
+    },
+    "integrations": {
+      "title": "集成",
+      "description": "将服务提供方连接到此商店。凭据按商店存储，供配送、税务及其他提供方使用。",
+      "empty": {
+        "title": "未安装任何集成",
+        "description": "集成随提供方扩展一起提供。安装提供方 gem 后,其集成将显示在此处。"
+      },
+      "status": {
+        "active": "已启用",
+        "connected_inactive": "已连接(未启用)",
+        "not_connected": "未连接"
+      },
+      "connect_cta": "连接",
+      "configure_cta": "配置",
+      "view_cta": "查看",
+      "connect_description": "输入此提供方的凭据。保存即存储;启用时会验证连接。",
+      "edit_description": "更新凭据或启用状态。机密值已被遮盖;保持不变即可保留已存储的机密。",
+      "active_toggle": {
+        "label": "启用",
+        "help": "启用会验证连接,并使该集成可供提供方使用。"
+      },
+      "test": {
+        "label": "连接",
+        "run": "测试连接",
+        "testing": "正在测试…",
+        "success": "连接成功。",
+        "failure": "连接失败。"
+      },
+      "disconnect": "断开连接",
+      "disconnect_confirm": {
+        "title": "断开集成",
+        "message": "断开 {{name}}?其存储的凭据将被删除,使用它的提供方将停止工作。"
+      },
+      "messages": {
+        "connected": "集成已连接",
+        "updated": "集成已更新",
+        "disconnected": "集成已断开"
+      },
+      "groups": {
+        "shipping": "配送",
+        "tax": "税务",
+        "other": "其他"
+      }
     }
   }
 }

@@ -3160,6 +3160,7 @@
         "allowed_origins": "Zugelassene Ursprünge",
         "api_keys": "API-Schlüssel",
         "channels": "Verkaufskanäle",
+        "integrations": "Integrationen",
         "custom_field_definitions": "Benutzerdefinierte Felder",
         "delivery_methods": "Versandarten",
         "delivery_zones": "Lieferzonen",
@@ -3341,6 +3342,50 @@
       "saved": "Übersetzungen gespeichert",
       "source": "Quelle",
       "title": "Übersetzungen"
+    },
+    "integrations": {
+      "title": "Integrationen",
+      "description": "Verbinden Sie Anbieterdienste mit diesem Shop. Zugangsdaten werden pro Shop gespeichert und von Versand-, Steuer- und anderen Anbietern genutzt.",
+      "empty": {
+        "title": "Keine Integrationen installiert",
+        "description": "Integrationen werden mit Anbieter-Erweiterungen ausgeliefert. Installieren Sie ein Anbieter-Gem, und die Integrationen erscheinen hier."
+      },
+      "status": {
+        "active": "Aktiv",
+        "connected_inactive": "Verbunden (inaktiv)",
+        "not_connected": "Nicht verbunden"
+      },
+      "connect_cta": "Verbinden",
+      "configure_cta": "Konfigurieren",
+      "view_cta": "Ansehen",
+      "connect_description": "Geben Sie die Zugangsdaten für diesen Anbieter ein. Speichern legt sie ab; das Aktivieren prüft die Verbindung.",
+      "edit_description": "Zugangsdaten oder Aktivierung ändern. Geheime Werte sind maskiert; unverändert lassen, um das gespeicherte Geheimnis zu behalten.",
+      "active_toggle": {
+        "label": "Aktiv",
+        "help": "Die Aktivierung prüft die Verbindung und stellt die Integration den Anbietern zur Verfügung."
+      },
+      "test": {
+        "label": "Verbindung",
+        "run": "Verbindung testen",
+        "testing": "Wird getestet…",
+        "success": "Verbindung erfolgreich.",
+        "failure": "Verbindung fehlgeschlagen."
+      },
+      "disconnect": "Trennen",
+      "disconnect_confirm": {
+        "title": "Integration trennen",
+        "message": "{{name}} trennen? Die gespeicherten Zugangsdaten werden gelöscht und Anbieter, die sie nutzen, funktionieren nicht mehr."
+      },
+      "messages": {
+        "connected": "Integration verbunden",
+        "updated": "Integration aktualisiert",
+        "disconnected": "Integration getrennt"
+      },
+      "groups": {
+        "shipping": "Versand",
+        "tax": "Steuern",
+        "other": "Sonstige"
+      }
     }
   }
 }

@@ -1388,6 +1388,41 @@ export interface PaymentMethodUpdateParams {
 export type PaymentMethodType = ResourceTypeDefinition
 
 /**
+ * One entry returned by `GET /integrations/types` — every registered
+ * integration with its configuration schema and whether the current store
+ * has it connected. This is the gallery source for the integrations
+ * settings page.
+ */
+export interface IntegrationTypeDefinition {
+  /** Wire shorthand (`Spree::Integration.api_type`), not the Ruby class name. */
+  type: string
+  name: string
+  /** Display grouping, e.g. `shipping`, `tax`; null for ungrouped. */
+  group: string | null
+  icon: string | null
+  preference_schema: { key: string; type: string; default: unknown }[]
+  /** Whether the current store already holds credentials for this type. */
+  connected: boolean
+}
+
+export interface IntegrationCreateParams {
+  /** Wire shorthand from `integrations.types()`. */
+  type: string
+  /** Activation runs the connection check server-side and 422s on failure. */
+  active?: boolean
+  /**
+   * Credential values; secret (`password`-typed) preferences come back
+   * masked, and submitting a masked value back keeps the stored secret.
+   */
+  preferences?: Record<string, unknown>
+}
+
+export interface IntegrationUpdateParams {
+  active?: boolean
+  preferences?: Record<string, unknown>
+}
+
+/**
  * API shorthand for an export type (`Spree::Export.api_type`), not the Ruby
  * class name. The server validates `type` against the configured allowlist
  * (`Spree::Export.available_types`); a plugin can register additional types,

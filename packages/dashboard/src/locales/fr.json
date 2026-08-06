@@ -3160,6 +3160,7 @@
         "allowed_origins": "Origines autorisées",
         "api_keys": "Clés API",
         "channels": "Canaux de vente",
+        "integrations": "Intégrations",
         "custom_field_definitions": "Champs personnalisés",
         "delivery_methods": "Méthodes de livraison",
         "delivery_zones": "Zones de livraison",
@@ -3341,6 +3342,50 @@
       "saved": "Traductions enregistrées",
       "source": "Source",
       "title": "Traductions"
+    },
+    "integrations": {
+      "title": "Intégrations",
+      "description": "Connectez des services fournisseurs à cette boutique. Les identifiants sont stockés par boutique et utilisés par les fournisseurs de livraison, de taxes et autres.",
+      "empty": {
+        "title": "Aucune intégration installée",
+        "description": "Les intégrations sont fournies par les extensions. Installez une gem fournisseur et ses intégrations apparaîtront ici."
+      },
+      "status": {
+        "active": "Active",
+        "connected_inactive": "Connectée (inactive)",
+        "not_connected": "Non connectée"
+      },
+      "connect_cta": "Connecter",
+      "configure_cta": "Configurer",
+      "view_cta": "Voir",
+      "connect_description": "Saisissez les identifiants de ce fournisseur. L'enregistrement les stocke ; l'activation vérifie la connexion.",
+      "edit_description": "Modifiez les identifiants ou l'activation. Les valeurs secrètes sont masquées ; laissez-les inchangées pour conserver le secret stocké.",
+      "active_toggle": {
+        "label": "Active",
+        "help": "L'activation vérifie la connexion et rend l'intégration disponible pour les fournisseurs."
+      },
+      "test": {
+        "label": "Connexion",
+        "run": "Tester la connexion",
+        "testing": "Test en cours…",
+        "success": "Connexion réussie.",
+        "failure": "Échec de la connexion."
+      },
+      "disconnect": "Déconnecter",
+      "disconnect_confirm": {
+        "title": "Déconnecter l'intégration",
+        "message": "Déconnecter {{name}} ? Ses identifiants stockés seront supprimés et les fournisseurs qui les utilisent cesseront de fonctionner."
+      },
+      "messages": {
+        "connected": "Intégration connectée",
+        "updated": "Intégration mise à jour",
+        "disconnected": "Intégration déconnectée"
+      },
+      "groups": {
+        "shipping": "Livraison",
+        "tax": "Taxes",
+        "other": "Autres"
+      }
     }
   }
 }

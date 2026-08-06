@@ -3160,6 +3160,7 @@
         "allowed_origins": "Allowed origins",
         "api_keys": "API keys",
         "channels": "Sales channels",
+        "integrations": "Integrations",
         "custom_field_definitions": "Custom fields",
         "delivery_methods": "Delivery methods",
         "delivery_zones": "Delivery zones",
@@ -3341,6 +3342,50 @@
       "saved": "Translations saved",
       "source": "Source",
       "title": "Translations"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "description": "Connect provider services to this store. Credentials are stored per store and used by delivery, tax and other providers.",
+      "empty": {
+        "title": "No integrations installed",
+        "description": "Integrations ship with provider extensions. Install a provider gem and its integrations appear here."
+      },
+      "status": {
+        "active": "Active",
+        "connected_inactive": "Connected (inactive)",
+        "not_connected": "Not connected"
+      },
+      "connect_cta": "Connect",
+      "configure_cta": "Configure",
+      "view_cta": "View",
+      "connect_description": "Enter the credentials for this provider. Saving stores them; switching it active verifies the connection.",
+      "edit_description": "Update credentials or activation. Secret values are masked; leave them unchanged to keep the stored secret.",
+      "active_toggle": {
+        "label": "Active",
+        "help": "Activation verifies the connection and makes the integration available to providers."
+      },
+      "test": {
+        "label": "Connection",
+        "run": "Test connection",
+        "testing": "Testing…",
+        "success": "Connection successful.",
+        "failure": "Connection failed."
+      },
+      "disconnect": "Disconnect",
+      "disconnect_confirm": {
+        "title": "Disconnect integration",
+        "message": "Disconnect {{name}}? Its stored credentials are deleted and providers using it stop working."
+      },
+      "messages": {
+        "connected": "Integration connected",
+        "updated": "Integration updated",
+        "disconnected": "Integration disconnected"
+      },
+      "groups": {
+        "shipping": "Shipping",
+        "tax": "Tax",
+        "other": "Other"
+      }
     }
   }
 }
