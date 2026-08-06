@@ -86,9 +86,30 @@ namespace :spree do
       end
     end
 
-    # 5. display_on → storefront_visible boolean.
-    Spree::DeliveryMethod.unscoped.where(storefront_visible: nil).where(display_on: 'back_end').update_all(storefront_visible: false)
-    Spree::DeliveryMethod.unscoped.where(storefront_visible: nil).update_all(storefront_visible: true)
+    # 5. display_on → storefront_visible boolean. The new column defaults to
+    # true, so only back_end rows need flipping. Each converted row has its
+    # legacy display_on cleared, which makes the conversion strictly one-shot:
+    # a re-run finds nothing left to convert, so a later admin change to
+    # storefront_visible is never undone.
+    if Spree::DeliveryMethod.column_names.include?('display_on')
+      # front_end-only had no real workflow and folds into visible — but it
+      # also means staff can now see those methods, so name them explicitly
+      # before the value is cleared.
+      front_end_only = Spree::DeliveryMethod.unscoped.where(display_on: 'front_end').pluck(:id, :name)
+
+      count = Spree::DeliveryMethod.unscoped.
+        where(display_on: 'back_end').
+        update_all(storefront_visible: false, display_on: nil)
+      say.call "spree_delivery_methods.storefront_visible: #{count} back_end rows set to false"
+
+      converted = Spree::DeliveryMethod.unscoped.where.not(display_on: nil).update_all(display_on: nil)
+      say.call "spree_delivery_methods.display_on: #{converted} remaining rows cleared (conversion is one-shot)"
+
+      if front_end_only.any?
+        say.call "spree_delivery_methods: #{front_end_only.size} front_end-only rows are now visible to staff as well as customers:"
+        front_end_only.each { |id, name| say.call "  - ##{id} #{name}" }
+      end
+    end
 
     say.call 'migrate_shipping_to_delivery done.'
   end

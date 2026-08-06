@@ -55,8 +55,8 @@ module Spree
 
     # API naming bridge — internal columns rename in 6.0. `label` matches
     # OptionType/OptionValue conventions. (`storefront_visible` lives on
-    # the `Spree::DisplayOn` concern, shared with PaymentMethod + ShippingMethod —
-    # see docs/plans/5.5-6.0-display-on-to-boolean.md.)
+    # the `Spree::DisplayOn` concern, shared with PaymentMethod; DeliveryMethod
+    # already owns a real column — see docs/plans/5.5-6.0-display-on-to-boolean.md.)
     alias_attribute :label, :name
 
     # API-facing token for the STI subclass name stored in `metafield_type`.

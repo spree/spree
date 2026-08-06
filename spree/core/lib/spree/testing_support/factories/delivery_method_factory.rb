@@ -2,10 +2,9 @@ FactoryBot.define do
   # Delivery methods are worldwide by default — geographic restriction is
   # opt-in via an explicit :delivery_zone (empty zone list = no restriction).
   factory :base_delivery_method, aliases: [:base_shipping_method], class: Spree::DeliveryMethod do
-    name       { 'UPS Ground' }
-    code       { 'UPS_GROUND' }
-    display_on { 'both' }
-    store      { Spree::Store.find_by(default: true) || association(:store) }
+    name  { 'UPS Ground' }
+    code  { 'UPS_GROUND' }
+    store { Spree::Store.find_by(default: true) || association(:store) }
 
     factory :delivery_method, aliases: [:shipping_method], class: Spree::DeliveryMethod do
       association(:calculator, factory: :shipping_calculator, strategy: :build)

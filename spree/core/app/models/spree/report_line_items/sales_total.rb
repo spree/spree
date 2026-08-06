@@ -26,7 +26,7 @@ module Spree
       end
 
       def total
-        Spree::Money.new(record.final_amount + record.shipping_cost, currency: record.currency)
+        Spree::Money.new(record.final_amount + record.delivery_cost, currency: record.currency)
       end
 
       def promo_total
@@ -38,7 +38,7 @@ module Spree
       end
 
       def shipment_total
-        record.display_shipping_cost
+        record.display_delivery_cost
       end
 
       def tax_total

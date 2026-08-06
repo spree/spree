@@ -3,9 +3,9 @@
 require 'spec_helper'
 
 RSpec.describe Spree::DisplayOn do
-  # PaymentMethod is the simplest factory-backed host; ShippingMethod
-  # and MetafieldDefinition include the concern identically and inherit
-  # this behaviour.
+  # PaymentMethod and MetafieldDefinition are the remaining hosts and
+  # include the concern identically. DeliveryMethod moved off it in 6.0 —
+  # it owns a real storefront_visible column.
   let(:payment_method) { build(:check_payment_method) }
 
   describe '#storefront_visible' do

@@ -63,7 +63,7 @@ module Spree
     alias display_ship_total display_delivery_total
     alias_attribute :ship_total, :delivery_total
 
-    # Transient warnings populated by remove_out_of_stock_items! and ensure_available_shipping_rates
+    # Transient warnings populated by remove_out_of_stock_items! and ensure_available_delivery_rates
     attribute :warnings, default: -> { [] }
 
     # Removes out-of-stock/discontinued items and populates warnings.
@@ -704,7 +704,7 @@ module Spree
       fulfillment_items.on_hand_or_backordered.delete_all
 
       self.fulfillments = order_routing_strategy.for_allocation.map do |package|
-        package.to_shipment.tap { |s| s.address_id = ship_address_id }
+        package.to_fulfillment.tap { |fulfillment| fulfillment.address_id = ship_address_id }
       end
     end
 
@@ -765,20 +765,30 @@ module Spree
       @total_weight ||= line_items.joins(:variant).includes(:variant).map(&:item_weight).sum
     end
 
-    # Returns line items that have no shipping rates
+    # Returns line items that have no delivery rates
+    #
+    # Deliberately not memoized: callers destroy fulfillments between reads
+    # (see {#ensure_available_delivery_rates}), so a cached value would
+    # describe fulfillments that no longer exist.
     #
     # @return [Array<Spree::LineItem>]
-    def line_items_without_shipping_rates
-      @line_items_without_shipping_rates ||= fulfillments.map do |shipment|
-        shipment.manifest.map(&:line_item) if shipment.shipping_rates.blank?
+    def line_items_without_delivery_rates
+      fulfillments.map do |fulfillment|
+        fulfillment.manifest.map(&:line_item) if fulfillment.delivery_rates.blank?
       end.flatten.compact
+    end
+
+    # @deprecated Use {#line_items_without_delivery_rates}; removed in 6.1.
+    def line_items_without_shipping_rates
+      Spree::Deprecation.warn('Spree::Order#line_items_without_shipping_rates is deprecated and will be removed in Spree 6.1. Use #line_items_without_delivery_rates instead.')
+      line_items_without_delivery_rates
     end
 
     # Checks if all line items cannot be shipped
     #
     # @returns Boolean
     def all_line_items_invalid?
-      line_items_without_shipping_rates.size == line_items.count
+      line_items_without_delivery_rates.size == line_items.count
     end
 
     def apply_free_shipping_promotions
@@ -808,8 +818,19 @@ module Spree
       ensure_updated_fulfillments
     end
 
-    def refresh_shipment_rates(shipping_method_filter = DeliveryMethod::DISPLAY_ON_FRONT_END)
-      fulfillments.map { |s| s.refresh_rates(shipping_method_filter) }
+    # Re-quotes every fulfillment for the given audience.
+    #
+    # @param audience [Symbol] {Spree::DeliveryMethod::STOREFRONT} (default)
+    #   or {Spree::DeliveryMethod::BACKOFFICE}
+    # @return [Array<Array<Spree::DeliveryRate>>]
+    def refresh_delivery_rates(audience = DeliveryMethod::STOREFRONT)
+      fulfillments.map { |fulfillment| fulfillment.refresh_rates(audience) }
+    end
+
+    # @deprecated Use {#refresh_delivery_rates}; removed in 6.1.
+    def refresh_shipment_rates(audience = DeliveryMethod::STOREFRONT)
+      Spree::Deprecation.warn('Spree::Order#refresh_shipment_rates is deprecated and will be removed in Spree 6.1. Use #refresh_delivery_rates instead.')
+      refresh_delivery_rates(audience)
     end
 
     def set_shipments_cost
@@ -1015,15 +1036,19 @@ module Spree
       end
     end
 
-    def ensure_available_shipping_rates
-      if fulfillments.empty? || line_items_without_shipping_rates.present?
+    def ensure_available_delivery_rates
+      # Captured before destroy_all — afterwards there are no fulfillments
+      # left to derive the undeliverable items from.
+      undeliverable_line_items = line_items_without_delivery_rates
+
+      if fulfillments.empty? || undeliverable_line_items.present?
         # After this point, order redirects back to 'address' state and asks user to pick a proper address
         # Therefore, shipments are not necessary at this point.
         fulfillments.destroy_all
 
-        if line_items_without_shipping_rates.present?
-          errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: line_items_without_shipping_rates.map(&:name).to_sentence))
-          self.warnings |= line_items_without_shipping_rates.map do |line_item|
+        if undeliverable_line_items.present?
+          errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: undeliverable_line_items.map(&:name).to_sentence))
+          self.warnings |= undeliverable_line_items.map do |line_item|
             {
               code: 'delivery_unavailable',
               message: Spree.t('cart_line_item.delivery_unavailable', li_name: line_item.name),

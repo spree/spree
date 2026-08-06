@@ -121,9 +121,12 @@ module Spree
                                                              source: :promotion
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
-    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products, optional: true
     belongs_to :product_type, class_name: 'Spree::ProductType', optional: true, counter_cache: :products_count
-    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::DeliveryMethod'
+
+    # Delivery eligibility moved to ProductType#fulfillment_types in 6.0;
+    # both of these die with spree_shipping_categories in 6.1.
+    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products, optional: true, deprecated: true
+    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::DeliveryMethod', deprecated: true
 
     # Every product has at least one variant. `default_variant` is the "face" of
     # the product (price display, default add-to-cart, property delegation).
@@ -327,7 +330,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
     self.whitelisted_ransackable_associations = %w[categories collections store channels variants default_variant tags labels
-                                                   shipping_category product_categories option_types]
+                                                   product_type product_categories option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon in_category in_categories in_collection price_between
                                              price_lte price_gte
                                              search multi_search in_stock out_of_stock with_option_value_ids

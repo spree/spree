@@ -51,7 +51,9 @@ describe '6.0 data migration tasks' do
       digital_method = create(:shipping_method)
       digital_method.calculator.destroy!
       Spree::Calculator::Shipping::DigitalDelivery.create!(calculable: digital_method)
-      digital_method.update_columns(fulfillment_type: nil, fulfillment_provider: nil, storefront_visible: nil, display_on: 'back_end')
+      # A 5.x row as it arrives post-migration: storefront_visible at the
+      # column default, display_on still holding the real value.
+      digital_method.update_columns(fulfillment_type: nil, fulfillment_provider: nil, storefront_visible: true, display_on: 'back_end')
 
       run_task('spree:migrate_shipping_to_delivery')
 
@@ -59,6 +61,22 @@ describe '6.0 data migration tasks' do
       expect(digital_method.fulfillment_type).to eq('digital')
       expect(digital_method.fulfillment_provider).to eq('Spree::FulfillmentProvider::Digital')
       expect(digital_method.read_attribute(:storefront_visible)).to be(false)
+    end
+
+    # The conversion is one-shot: it clears display_on as it goes, so a later
+    # re-run cannot undo a visibility change an admin made in the meantime.
+    it 'does not revert a later admin visibility change on re-run' do
+      method = create(:shipping_method)
+      method.update_columns(storefront_visible: true, display_on: 'back_end')
+
+      run_task('spree:migrate_shipping_to_delivery')
+      expect(method.reload.read_attribute(:storefront_visible)).to be(false)
+      expect(method.read_attribute(:display_on)).to be_nil
+
+      method.update_columns(storefront_visible: true)
+      run_task('spree:migrate_shipping_to_delivery')
+
+      expect(method.reload.read_attribute(:storefront_visible)).to be(true)
     end
 
     it 'is idempotent' do

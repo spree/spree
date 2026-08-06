@@ -214,8 +214,8 @@ module Spree
 
     shared_context 'with original shipping method gone backend only' do
       before do
-        order.fulfillments.first.delivery_method.update(display_on: :back_end)
-        create(:shipping_method) # create frontend available shipping method
+        order.fulfillments.first.delivery_method.update(storefront_visible: false)
+        create(:shipping_method) # create a storefront-visible shipping method
       end
     end
 
@@ -300,9 +300,9 @@ module Spree
         include_context 'with original shipping method gone backend only'
         let(:order) { create(:cart_ready_for_delivery, store: @default_store) }
 
-        it 'resets shipping method to frontend-available' do
+        it 'resets shipping method to a storefront-visible one' do
           Spree::OrderUpdater.new(order).update_shipments
-          expect(order.fulfillments.first.delivery_method).to eq Spree::ShippingMethod.find_by(display_on: 'both')
+          expect(order.fulfillments.first.delivery_method).to eq Spree::DeliveryMethod.find_by(storefront_visible: true)
         end
       end
     end

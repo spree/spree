@@ -360,14 +360,14 @@ describe Spree::Cart, type: :model do
       end
     end
 
-    describe '#ensure_available_shipping_rates' do
+    describe '#ensure_available_delivery_rates' do
       it 'errors when there are no deliverable proposals' do
-        expect(cart.ensure_available_shipping_rates).to be(false)
+        expect(cart.ensure_available_delivery_rates).to be(false)
         expect(cart.errors[:base]).to be_present
 
         cart.errors.clear
         cart.rebuild_fulfillments!
-        expect(cart.ensure_available_shipping_rates).to be(true)
+        expect(cart.ensure_available_delivery_rates).to be(true)
       end
     end
 

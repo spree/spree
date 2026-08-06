@@ -74,7 +74,7 @@ module Spree
 
         def estimate_rates(packages)
           estimator = Spree::Stock::Estimator.new(order)
-          packages.each { |pkg| pkg.shipping_rates = estimator.shipping_rates(pkg) }
+          packages.each { |pkg| pkg.delivery_rates = estimator.delivery_rates(pkg) }
           packages
         end
       end

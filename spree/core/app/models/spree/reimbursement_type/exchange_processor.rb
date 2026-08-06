@@ -24,7 +24,7 @@ module Spree
 
       def perform!
         new_exchange_inventory_units = @reimbursement_objects.map(&:build_default_exchange_inventory_unit)
-        shipments = Spree::Stock::Coordinator.new(@order, new_exchange_inventory_units).shipments
+        shipments = Spree::Stock::Coordinator.new(@order, new_exchange_inventory_units).fulfillments
         shipments_units = shipments.flat_map(&:fulfillment_items)
 
         if shipments_units.sum(&:quantity) != new_exchange_inventory_units.sum(&:quantity)

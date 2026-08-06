@@ -93,27 +93,27 @@ module Spree
         end
       end
 
-      it 'can convert to a shipment' do
+      it 'can convert to a fulfillment' do
         2.times { subject.add build_inventory_unit }
         subject.add build_inventory_unit, :backordered
 
-        shipping_method = build(:shipping_method)
-        subject.shipping_rates = [Spree::DeliveryRate.new(delivery_method: shipping_method, cost: 10.00, selected: true)]
+        delivery_method = build(:delivery_method)
+        subject.delivery_rates = [Spree::DeliveryRate.new(delivery_method: delivery_method, cost: 10.00, selected: true)]
 
-        shipment = subject.to_shipment
-        expect(shipment.stock_location).to eq subject.stock_location
-        expect(shipment.fulfillment_items.size).to eq 3
+        fulfillment = subject.to_fulfillment
+        expect(fulfillment.stock_location).to eq subject.stock_location
+        expect(fulfillment.fulfillment_items.size).to eq 3
 
-        first_unit = shipment.fulfillment_items.first
+        first_unit = fulfillment.fulfillment_items.first
         expect(first_unit.variant).to eq variant
         expect(first_unit.state).to eq 'on_hand'
         expect(first_unit).to be_pending
 
-        last_unit = shipment.fulfillment_items.last
+        last_unit = fulfillment.fulfillment_items.last
         expect(last_unit.variant).to eq variant
         expect(last_unit.state).to eq 'backordered'
 
-        expect(shipment.shipping_method).to eq shipping_method
+        expect(fulfillment.delivery_method).to eq delivery_method
       end
 
       describe '#add_multiple' do

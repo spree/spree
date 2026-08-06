@@ -2,12 +2,24 @@ module Spree
   module Stock
     class Package
       attr_reader :stock_location, :contents
-      attr_accessor :shipping_rates
+      attr_accessor :delivery_rates
 
       def initialize(stock_location, contents = [])
         @stock_location = stock_location
         @contents = contents
-        @shipping_rates = []
+        @delivery_rates = []
+      end
+
+      # @deprecated Use {#delivery_rates}; removed in 6.1.
+      def shipping_rates
+        Spree::Deprecation.warn('Spree::Stock::Package#shipping_rates is deprecated and will be removed in Spree 6.1. Use #delivery_rates instead.')
+        delivery_rates
+      end
+
+      # @deprecated Use {#delivery_rates=}; removed in 6.1.
+      def shipping_rates=(rates)
+        Spree::Deprecation.warn('Spree::Stock::Package#shipping_rates= is deprecated and will be removed in Spree 6.1. Use #delivery_rates= instead.')
+        self.delivery_rates = rates
       end
 
       def add(inventory_unit, state = :on_hand)
@@ -106,7 +118,7 @@ module Spree
         end.join(' / ')
       end
 
-      def to_shipment
+      def to_fulfillment
         # At this point we should only have one content item per inventory unit
         # across the entire set of inventory units to be shipped, which has been
         # taken care of by the Prioritizer
@@ -114,9 +126,15 @@ module Spree
 
         Spree::Fulfillment.new(
           stock_location: stock_location,
-          delivery_rates: shipping_rates,
+          delivery_rates: delivery_rates,
           fulfillment_items: contents.map(&:inventory_unit)
         )
+      end
+
+      # @deprecated Use {#to_fulfillment}; removed in 6.1.
+      def to_shipment
+        Spree::Deprecation.warn('Spree::Stock::Package#to_shipment is deprecated and will be removed in Spree 6.1. Use #to_fulfillment instead.')
+        to_fulfillment
       end
 
       def volume
