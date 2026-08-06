@@ -24,8 +24,8 @@ Rails.application.config.after_initialize do
     store_excluded = %w[
       Asset CartPromotion OrderPromotion
       StockItem StockMovement StockTransfer ShippingCategory
-      Reimbursement Report Export Import ImportRow
-      TaxCategory CustomerReturn
+      Report Export Import ImportRow
+      TaxCategory Exchange ExchangeLineItem
     ].to_set
 
     # Store SDK — no prefix, package provides namespace

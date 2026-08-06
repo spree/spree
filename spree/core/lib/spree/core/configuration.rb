@@ -51,8 +51,8 @@ module Spree
       preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation
       preference :disable_store_presence_validation, :boolean, default: false, deprecated: true # when turned off disables Store presence validation for Products and Payment Methods
       preference :events_log_enabled, :boolean, default: true # Log all Spree events to Rails logger
-      preference :expedited_exchanges, :boolean, default: false # NOTE this requires payment profiles to be supported on your gateway of choice as well as a delayed job handler to be configured with activejob. kicks off an exchange shipment upon return authorization save. charge customer if they do not return items within timely manner.
-      preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged
+      preference :expedited_exchanges, :boolean, default: false, deprecated: 'Exchanges are their own record in Spree 6 — see Spree::Exchange and the Exchanges::Fulfill workflow'
+      preference :expedited_exchanges_days_window, :integer, default: 14, deprecated: 'Exchanges are their own record in Spree 6 — see Spree::Exchange and the Exchanges::Fulfill workflow'
       preference :geocode_addresses, :boolean, default: true
       preference :images_save_from_url_job_attempts, :integer, default: 5
       preference :max_image_download_size, :integer, default: 20_971_520 # 20 MB in bytes
@@ -92,8 +92,8 @@ module Spree
       preference :max_level_in_taxons_menu, :integer, deprecated: true
       preference :non_expiring_credit_types, :array, default: []
       preference :products_per_page, :integer, default: 12
-      preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
-      preference :return_eligibility_number_of_days, :integer, default: 365
+      preference :restock_inventory, :boolean, default: true, deprecated: 'Restocking is decided per line item by Spree::ReturnLineItem#resellable'
+      preference :return_eligibility_number_of_days, :integer, default: 365, deprecated: 'Use the return_window_days preference on Spree::Market, or a returns.create.validate hook'
       preference :reserve_stock_on, :string, default: 'checkout' # 'checkout' (default) or 'cart' — landing in 6.0 alongside Cart/Order split
       preference :stock_reservations_enabled, :boolean, default: true # Hold stock during checkout to prevent overselling
       preference :default_stock_reservation_ttl_minutes, :integer, default: 10 # Fallback TTL when a Store doesn't override

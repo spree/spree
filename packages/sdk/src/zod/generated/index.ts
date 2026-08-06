@@ -21,8 +21,6 @@ export { DeliveryZoneMemberSchema, type DeliveryZoneMember } from './DeliveryZon
 export { DigitalSchema, type Digital } from './Digital';
 export { DigitalLinkSchema, type DigitalLink } from './DigitalLink';
 export { DiscountSchema, type Discount } from './Discount';
-export { ExchangeSchema, type Exchange } from './Exchange';
-export { ExchangeLineItemSchema, type ExchangeLineItem } from './ExchangeLineItem';
 export { FeeSchema, type Fee } from './Fee';
 export { FulfillmentSchema, type Fulfillment } from './Fulfillment';
 export { GiftCardSchema, type GiftCard } from './GiftCard';
@@ -59,8 +57,6 @@ export { ProductTypeSchema, type ProductType } from './ProductType';
 export { PromotionSchema, type Promotion } from './Promotion';
 export { RefundSchema, type Refund } from './Refund';
 export { ReturnSchema, type Return } from './Return';
-export { ReturnAuthorizationSchema, type ReturnAuthorization } from './ReturnAuthorization';
-export { ReturnItemSchema, type ReturnItem } from './ReturnItem';
 export { ReturnLineItemSchema, type ReturnLineItem } from './ReturnLineItem';
 export { StateSchema, type State } from './State';
 export { StockLocationSchema, type StockLocation } from './StockLocation';

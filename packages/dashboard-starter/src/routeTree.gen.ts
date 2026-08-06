@@ -33,6 +33,7 @@ import { Route as SettingsTaxCategoriesRouteImport } from './../../dashboard/src
 import { Route as SettingsStoreRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/store'
 import { Route as SettingsStockLocationsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/stock-locations'
 import { Route as SettingsStaffRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/staff'
+import { Route as SettingsReasonsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/reasons'
 import { Route as SettingsProfileRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/profile'
 import { Route as SettingsProductTypesRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/product-types'
 import { Route as SettingsPaymentMethodsRouteImport } from './../../dashboard/src/routes/_authenticated/$storeId/settings/payment-methods'
@@ -188,6 +189,11 @@ const SettingsStockLocationsRoute = SettingsStockLocationsRouteImport.update({
 const SettingsStaffRoute = SettingsStaffRouteImport.update({
   id: '/staff',
   path: '/staff',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsReasonsRoute = SettingsReasonsRouteImport.update({
+  id: '/reasons',
+  path: '/reasons',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsProfileRoute = SettingsProfileRouteImport.update({
@@ -415,6 +421,7 @@ export interface FileRoutesByFullPath {
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/$storeId/settings/profile': typeof SettingsProfileRoute
+  '/$storeId/settings/reasons': typeof SettingsReasonsRoute
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
@@ -474,6 +481,7 @@ export interface FileRoutesByTo {
   '/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/$storeId/settings/profile': typeof SettingsProfileRoute
+  '/$storeId/settings/reasons': typeof SettingsReasonsRoute
   '/$storeId/settings/staff': typeof SettingsStaffRoute
   '/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/$storeId/settings/store': typeof SettingsStoreRoute
@@ -537,6 +545,7 @@ export interface FileRoutesById {
   '/_authenticated/$storeId/settings/payment-methods': typeof SettingsPaymentMethodsRoute
   '/_authenticated/$storeId/settings/product-types': typeof SettingsProductTypesRoute
   '/_authenticated/$storeId/settings/profile': typeof SettingsProfileRoute
+  '/_authenticated/$storeId/settings/reasons': typeof SettingsReasonsRoute
   '/_authenticated/$storeId/settings/staff': typeof SettingsStaffRoute
   '/_authenticated/$storeId/settings/stock-locations': typeof SettingsStockLocationsRoute
   '/_authenticated/$storeId/settings/store': typeof SettingsStoreRoute
@@ -600,6 +609,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/product-types'
     | '/$storeId/settings/profile'
+    | '/$storeId/settings/reasons'
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
@@ -659,6 +669,7 @@ export interface FileRouteTypes {
     | '/$storeId/settings/payment-methods'
     | '/$storeId/settings/product-types'
     | '/$storeId/settings/profile'
+    | '/$storeId/settings/reasons'
     | '/$storeId/settings/staff'
     | '/$storeId/settings/stock-locations'
     | '/$storeId/settings/store'
@@ -721,6 +732,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$storeId/settings/payment-methods'
     | '/_authenticated/$storeId/settings/product-types'
     | '/_authenticated/$storeId/settings/profile'
+    | '/_authenticated/$storeId/settings/reasons'
     | '/_authenticated/$storeId/settings/staff'
     | '/_authenticated/$storeId/settings/stock-locations'
     | '/_authenticated/$storeId/settings/store'
@@ -921,6 +933,13 @@ declare module '@tanstack/react-router' {
       path: '/staff'
       fullPath: '/$storeId/settings/staff'
       preLoaderRoute: typeof SettingsStaffRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/_authenticated/$storeId/settings/reasons': {
+      id: '/_authenticated/$storeId/settings/reasons'
+      path: '/reasons'
+      fullPath: '/$storeId/settings/reasons'
+      preLoaderRoute: typeof SettingsReasonsRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/_authenticated/$storeId/settings/profile': {
@@ -1190,6 +1209,7 @@ interface SettingsRouteChildren {
   SettingsPaymentMethodsRoute: typeof SettingsPaymentMethodsRoute
   SettingsProductTypesRoute: typeof SettingsProductTypesRoute
   SettingsProfileRoute: typeof SettingsProfileRoute
+  SettingsReasonsRoute: typeof SettingsReasonsRoute
   SettingsStaffRoute: typeof SettingsStaffRoute
   SettingsStockLocationsRoute: typeof SettingsStockLocationsRoute
   SettingsStoreRoute: typeof SettingsStoreRoute
@@ -1212,6 +1232,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsPaymentMethodsRoute: SettingsPaymentMethodsRoute,
   SettingsProductTypesRoute: SettingsProductTypesRoute,
   SettingsProfileRoute: SettingsProfileRoute,
+  SettingsReasonsRoute: SettingsReasonsRoute,
   SettingsStaffRoute: SettingsStaffRoute,
   SettingsStockLocationsRoute: SettingsStockLocationsRoute,
   SettingsStoreRoute: SettingsStoreRoute,

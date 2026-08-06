@@ -1046,45 +1046,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#has_non_reimbursement_related_refunds?' do
-    subject do
-      order.has_non_reimbursement_related_refunds?
-    end
-
-    context 'no refunds exist' do
-      it { is_expected.to eq false }
-    end
-
-    context 'a non-reimbursement related refund exists' do
-      let(:order) { refund.payment.order }
-      let(:refund) { create(:refund, reimbursement_id: nil, amount: 5) }
-
-      it { is_expected.to eq true }
-    end
-
-    context 'an old-style refund exists' do
-      let(:order) { create(:order_ready_to_ship) }
-      let(:payment) { order.payments.first.tap { |p| allow(p).to receive_messages(profiles_supported: false) } }
-      let!(:refund_payment) do
-        build(:payment, amount: -1, order: order, state: 'completed', source: payment).tap do |p|
-          allow(p).to receive_messages(profiles_supported?: false)
-          allow(p).to receive_messages(payment_method_available_for_order: nil)
-          p.save!
-        end
-      end
-
-      it { is_expected.to eq true }
-    end
-
-    context 'a reimbursement related refund exists' do
-      let(:order) { refund.payment.order }
-      let(:reimbursement) { create(:reimbursement) }
-      let(:refund) { create(:refund, reimbursement_id: reimbursement.id, amount: 5) }
-
-      it { is_expected.to eq false }
-    end
-  end
-
   describe '#rebuild_fulfillments!' do
     context 'has unassociated inventory units' do
       let!(:inventory_unit) { create(:inventory_unit, order: subject) }

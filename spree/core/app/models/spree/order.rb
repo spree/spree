@@ -159,19 +159,16 @@ module Spree
       has_many :line_items, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::LineItem'
       has_many :payments, class_name: 'Spree::Payment'
       has_many :payment_sessions, inverse_of: :order, class_name: 'Spree::PaymentSession'
-      has_many :return_authorizations, inverse_of: :order, class_name: 'Spree::ReturnAuthorization'
       has_many :returns, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Return'
       has_many :exchanges, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Exchange'
       has_many :claims, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::Claim'
       has_many :cancellations, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderCancellation'
       has_many :approvals, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::OrderApproval'
     end
-    has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
-    has_many :customer_returns, class_name: 'Spree::CustomerReturn', through: :return_authorizations
     has_many :fulfillment_items, inverse_of: :order, class_name: 'Spree::FulfillmentItem'
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', inverse_of: :order, deprecated: true
     has_many :stock_reservations, class_name: 'Spree::StockReservation', inverse_of: :order, dependent: :destroy
-    has_many :return_items, through: :fulfillment_items, class_name: 'Spree::ReturnItem'
+    has_many :return_line_items, through: :returns, class_name: 'Spree::ReturnLineItem', source: :return_line_items
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :refunds, through: :payments
@@ -535,16 +532,16 @@ module Spree
       end
     end
 
+    # Refunds are already netted out of payment_total by
+    # Spree::Carts::RecalculateTotals, so returns and claims need no separate
+    # term here — the legacy reimbursement payout was the only one that sat
+    # outside that sum.
     def outstanding_balance
       if canceled?
         -1 * payment_total
       else
-        total - (payment_total + reimbursement_paid_total)
+        total - payment_total
       end
-    end
-
-    def reimbursement_paid_total
-      reimbursements.sum(&:paid_amount)
     end
 
 
@@ -929,12 +926,6 @@ module Spree
     # @return [Spree::ServiceModule::Result]
     def approve!
       Spree.order_approve_service.call(order: self)
-    end
-
-
-    def has_non_reimbursement_related_refunds?
-      refunds.non_reimbursement.exists? ||
-        payments.offset_payment.exists? # how old versions of spree stored refunds
     end
 
     def collect_backend_payment_methods

@@ -105,6 +105,32 @@ RSpec.describe 'Spree::Exchanges workflows' do
       expect(result).to be_success
       expect(result.value).to be_fulfilled
     end
+
+    # The guard only matters when money moves: a cheaper replacement owes the
+    # customer the difference, and an unrecognised method would otherwise fall
+    # through to the gateway instead of store credit.
+    context 'when the replacement is cheaper, so a credit is due' do
+      let(:cheap_exchange) do
+        exchange.exchange_line_items.each do |line|
+          line.new_variant.stock_items.first&.set_count_on_hand(10)
+          line.new_variant.prices.first&.update!(amount: 1)
+        end
+        exchange
+      end
+
+      it 'refuses an unknown refund method' do
+        result = Spree::Exchanges::Fulfill.call(exchange: cheap_exchange, refund_method: 'crypto')
+
+        expect(result).to be_failure
+        expect(result.error.value[:base].join).to include('original_payment')
+      end
+
+      it 'accepts store credit' do
+        result = Spree::Exchanges::Fulfill.call(exchange: cheap_exchange, refund_method: 'store_credit')
+
+        expect(result).to be_success
+      end
+    end
   end
 
   describe Spree::Exchanges::Cancel do

@@ -17,9 +17,6 @@ module Spree
         can [:read, :admin], Spree::Discount
         can [:read, :admin], Spree::Fee
         can [:read, :admin], Spree::LineItem
-        can [:read, :admin], Spree::ReturnAuthorization
-        can [:read, :admin], Spree::CustomerReturn
-        can [:read, :admin], Spree::Reimbursement
         can [:read, :admin], Spree::Return
         can [:read, :admin], Spree::Exchange
         can [:read, :admin], Spree::Claim

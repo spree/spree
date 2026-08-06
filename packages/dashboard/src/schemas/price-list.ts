@@ -1,8 +1,4 @@
 import type {
-  Channel,
-  Customer,
-  CustomerGroup,
-  Market,
   PreferenceField,
   PriceListCreateParams,
   PriceListUpdateParams,
@@ -39,10 +35,29 @@ export interface PriceRuleFormDraft {
    * reads "Customer groups: VIPs, Wholesale" instead of "cg_…". Never
    * sent to the API — `priceListValuesToParams` strips them.
    */
-  customers?: Customer[]
-  customer_groups?: CustomerGroup[]
-  markets?: Market[]
-  channels?: Channel[]
+  customers?: RuleEmbedRecord[]
+  customer_groups?: RuleEmbedRecord[]
+  markets?: RuleEmbedRecord[]
+  channels?: RuleEmbedRecord[]
+}
+
+/**
+ * Display-only slice of an embed record — enough to render a label,
+ * nothing more. Deliberately NOT the SDK types (`Customer`, `Channel`, …):
+ * this interface is part of the form values, and react-hook-form's
+ * `Path<T>` enumerates every nested key of the form type. The SDK types
+ * embed the whole object graph (`Customer` → `orders[]` → `payments[]` →
+ * `source` → …), which turns the path union into millions of keys and
+ * overflows TypeScript's relation cache ("RangeError: Map maximum size
+ * exceeded" on TS 6). Assigning a full SDK record INTO one of these
+ * fields is fine — the editors do exactly that — but the form type must
+ * stay shallow.
+ */
+export interface RuleEmbedRecord {
+  id: string
+  name?: string | null
+  email?: string | null
+  code?: string | null
 }
 
 const priceRuleDraftSchema: z.ZodType<PriceRuleFormDraft> = z.object({

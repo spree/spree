@@ -8,6 +8,7 @@ import {
   MapIcon,
   PercentIcon,
   RadioTowerIcon,
+  RotateCcwIcon,
   ShapesIcon,
   StoreIcon,
   TagIcon,
@@ -134,6 +135,16 @@ settingsNav.add({
   group: 'fulfillment',
   position: 100,
   subject: Subject.StockLocation,
+})
+
+settingsNav.add({
+  key: 'settings.reasons',
+  labelKey: 'admin.settings_nav.items.reasons',
+  path: '/reasons',
+  icon: RotateCcwIcon,
+  group: 'fulfillment',
+  position: 200,
+  subject: Subject.ReturnReason,
 })
 
 settingsNav.add({

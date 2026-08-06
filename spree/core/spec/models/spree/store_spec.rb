@@ -67,13 +67,13 @@ describe Spree::Store, type: :model, without_global_store: true do
         it { expect(subject.shipments).to eq([shipment]) }
       end
 
-      describe '#return_authorizations' do
+      describe '#returns' do
         let!(:order) { create(:shipped_order, store: subject) }
         let!(:order_2) { create(:shipped_order, store: create(:store)) }
-        let!(:return_authorization) { create(:return_authorization, order: order) }
-        let!(:return_authorization_2) { create(:return_authorization, order: order_2) }
+        let!(:return_record) { create(:return, order: order, store: subject) }
+        let!(:return_record_2) { create(:return, order: order_2, store: order_2.store) }
 
-        it { expect(subject.return_authorizations).to eq([return_authorization]) }
+        it { expect(subject.returns).to eq([return_record]) }
       end
 
       describe '#inventory_units' do

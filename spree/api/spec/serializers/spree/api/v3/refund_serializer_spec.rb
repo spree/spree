@@ -12,8 +12,18 @@ RSpec.describe Spree::Api::V3::RefundSerializer do
 
   it 'includes all expected attributes' do
     expect(subject.keys).to match_array(%w[
-      id amount transaction_id payment_id refund_reason_id reimbursement_id
+      id amount transaction_id payment_id refund_reason_id originator_id originator_type
     ])
+  end
+
+  context 'when the refund was issued for a return' do
+    let(:return_record) { create(:received_return) }
+    let(:refund) { create(:refund, payment: payment, amount: 10, originator: return_record) }
+
+    it 'names what triggered it' do
+      expect(subject['originator_id']).to eq(return_record.prefixed_id)
+      expect(subject['originator_type']).to eq('Spree::Return')
+    end
   end
 
   it 'returns the prefixed id' do

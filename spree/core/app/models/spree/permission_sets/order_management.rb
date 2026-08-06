@@ -17,9 +17,6 @@ module Spree
         can :manage, Spree::Discount
         can :manage, Spree::Fee
         can :manage, Spree::LineItem
-        can :manage, Spree::ReturnAuthorization
-        can :manage, Spree::CustomerReturn
-        can :manage, Spree::Reimbursement
         can :manage, Spree::Return
         can :manage, Spree::Exchange
         can :manage, Spree::Claim

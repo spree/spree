@@ -8,8 +8,6 @@ module Spree
     # a pure database write outside the transaction would open a window where
     # a crash leaves a refunded return with no credit issued.
     class Refund < Spree::Workflow
-      METHODS = %w[original_payment store_credit].freeze
-
       hooks :validate, :before_refund, :after_refund
 
       # Refunds created by this run — hook handlers read them.
@@ -52,7 +50,14 @@ module Spree
       end
 
       def ensure_refundable
-        failure(return_record, :invalid_refund_method) unless METHODS.include?(refund_method.to_s)
+        unless Spree::RefundMethods.valid?(refund_method)
+          # :base, not :refund_method — it is a workflow argument, not an
+          # attribute, and ActiveModel raises when an error names one that
+          # does not exist on the record.
+          return_record.errors.add(:base, :invalid_refund_method,
+                           message: Spree.t('errors.messages.invalid_refund_method'))
+          failure(return_record)
+        end
         failure(return_record, :not_received) unless return_record.received?
       end
 
@@ -79,7 +84,7 @@ module Spree
           customer: return_record.order.customer,
           amount: @amount_to_refund,
           currency: return_record.currency,
-          category: Spree::StoreCreditCategory.default_reimbursement_category,
+          category: Spree::StoreCreditCategory.default_refund_category,
           created_by: refunder,
           originator: return_record,
           memo: "Return #{return_record.number}"
@@ -102,7 +107,7 @@ module Spree
 
           @refunds << payment.refunds.create!(
             amount: creditable,
-            reason: Spree::RefundReason.return_processing_reason,
+            reason: Spree::RefundReason.return_processing_reason(return_record.store),
             refunder: refunder,
             originator: return_record
           )

@@ -67,6 +67,24 @@ RSpec.describe 'Spree::Claims workflows' do
       expect(Spree::Claims::Resolve.call(claim: claim, resolution: 'apologize')).to be_failure
     end
 
+    # Unguarded, an unrecognised method falls through internal_refund? to the
+    # gateway branch — money moving by a route the caller never asked for.
+    it 'refuses an unknown refund method when refunding' do
+      result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund', refund_method: 'crypto')
+
+      expect(result).to be_failure
+      expect(result.error.value[:base].join).to include('original_payment')
+    end
+
+    it 'ignores the refund method when the resolution moves no money' do
+      replacing = create(:approved_claim, store: store, order: order, send_replacement: true)
+      replacing.claim_line_items.each { |line| line.variant.stock_items.first&.set_count_on_hand(10) }
+
+      result = Spree::Claims::Resolve.call(claim: replacing, resolution: 'replacement', refund_method: 'crypto')
+
+      expect(result).to be_success
+    end
+
     it 'refunds to store credit' do
       result = Spree::Claims::Resolve.call(claim: claim, resolution: 'refund')
 

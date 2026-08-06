@@ -2999,6 +2999,41 @@
         "prefix_required": "Prefiks jest wymagany dla partii wielu kodów"
       }
     },
+    "reasons": {
+      "title": "Zwroty i powody",
+      "description": "Listy, z których zespół wybiera przy zwrotach, reklamacjach i zwrotach pieniędzy.",
+      "add_cta": "Dodaj powód",
+      "add_sheet_title": "Dodaj powód",
+      "edit_sheet_title": "Edytuj powód",
+      "create_description": "Powody pojawiają się na liście przy tworzeniu zwrotu, reklamacji lub zwrotu pieniędzy.",
+      "name_placeholder": "np. Zły rozmiar",
+      "active_label": "Dostępny dla nowych zgłoszeń",
+      "empty": "Brak powodów",
+      "inactive": "Nieaktywny",
+      "in_use": "W użyciu",
+      "in_use_help": "Ten powód jest już używany przez istniejące rekordy, więc nie można go usunąć.",
+      "delete_confirm": {
+        "title": "Usunąć powód?",
+        "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują."
+      },
+      "messages": {
+        "created": "Powód utworzony",
+        "updated": "Powód zaktualizowany",
+        "deleted": "Powód usunięty"
+      },
+      "return": {
+        "title": "Powody zwrotu",
+        "help": "Dlaczego klient odsyła towar. Wspólne dla zwrotów i wymian."
+      },
+      "claim": {
+        "title": "Powody reklamacji",
+        "help": "Co poszło nie tak z dostawą — uszkodzony, brakujący lub zły towar."
+      },
+      "refund": {
+        "title": "Powody zwrotu pieniędzy",
+        "help": "Dlaczego pieniądze wróciły. Używane w raportach o wszystkich zwrotach."
+      }
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -3032,6 +3067,7 @@
         "payment_methods": "Metody płatności",
         "product_types": "Typy produktów",
         "profile": "Profil",
+        "reasons": "Zwroty i powody",
         "staff": "Zespół",
         "stock_locations": "Lokalizacje magazynowe",
         "store": "Sklep",

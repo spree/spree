@@ -130,6 +130,51 @@ steps:
       migration. spree_adjustments stays intact as the rollback source.
       Idempotent — orders that already have typed rows are skipped.
 
+  - id: backfill_reason_store_ids
+    name: "Bind return and refund reasons to the default store"
+    task: "spree:upgrade:backfill_reason_store_ids"
+    notes: |
+      Return and refund reasons are store-owned in Spree 6. The rename
+      migration backfills them and enforces NOT NULL, so this is a safety net
+      for installs whose migration ran before any store existed.
+
+      Run before migrate_returns. Core looks three refund reasons up by name
+      scoped to a store, so a row without one is invisible to those lookups
+      and would mint a duplicate on the next refund. Idempotent — a no-op on
+      an already-migrated store.
+
+  - id: migrate_returns
+    name: "Move returns onto the new returns models"
+    task: "spree:upgrade:migrate_returns"
+    notes: |
+      Converts each ReturnAuthorization into a Spree::Return, or a
+      Spree::Exchange when any of its return items named an exchange variant,
+      copying line items with their received quantities and refundable
+      amounts. Refunds produced through a reimbursement are re-pointed at the
+      new record via the polymorphic originator, so the money history stays
+      visible in the admin.
+
+      Run AFTER migrate_adjustments_to_typed_rows, which freezes orders
+      carrying ReturnAuthorization adjustments for exactly this step.
+
+      Reads the legacy tables by name (the legacy models are gone in 6.0) and
+      writes history without validation, so rows referencing deleted variants
+      or stock locations still copy. The legacy tables stay in place as a
+      safety net and are dropped in 6.1.
+
+      Resumable by construction: the legacy number is copied onto the new
+      record and uniquely indexed there, so the task scopes itself to the
+      authorizations whose number isn't present yet. An interrupted run picks
+      up where it stopped and re-running when nothing is left is a no-op —
+      no cursor to track, no state to reset. Tune the load size with
+      BATCH_SIZE (default 500).
+
+      A row that can't be migrated is reported and skipped so one unconvertible
+      authorization doesn't stop the batch, but the task then aborts rather than
+      letting the upgrade proceed on top of incomplete returns history. Re-run
+      to retry those rows — the task only looks at what isn't migrated yet — or
+      pass SKIP_FAILED_ROWS=true to accept the gap and continue.
+
   - id: backfill_delivery_and_stock_store_ids
     name: "Bind delivery methods and stock locations to the default store"
     task: "spree:backfill_delivery_and_stock_store_ids"

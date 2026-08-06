@@ -2963,6 +2963,41 @@
         "prefix_required": "Le préfixe est requis pour les lots de plusieurs codes"
       }
     },
+    "reasons": {
+      "title": "Retours et motifs",
+      "description": "Les listes de motifs que votre équipe utilise pour les retours, réclamations et remboursements.",
+      "add_cta": "Ajouter un motif",
+      "add_sheet_title": "Ajouter un motif",
+      "edit_sheet_title": "Modifier le motif",
+      "create_description": "Les motifs apparaissent dans une liste déroulante lors de la création d'un retour, d'une réclamation ou d'un remboursement.",
+      "name_placeholder": "ex. Mauvaise taille",
+      "active_label": "Proposé sur les nouveaux enregistrements",
+      "empty": "Aucun motif pour l'instant",
+      "inactive": "Inactif",
+      "in_use": "Utilisé",
+      "in_use_help": "Ce motif est déjà utilisé par des enregistrements existants, il ne peut donc pas être supprimé.",
+      "delete_confirm": {
+        "title": "Supprimer le motif ?",
+        "message": "{{name}} ne sera plus proposé. Les enregistrements existants le conservent."
+      },
+      "messages": {
+        "created": "Motif créé",
+        "updated": "Motif mis à jour",
+        "deleted": "Motif supprimé"
+      },
+      "return": {
+        "title": "Motifs de retour",
+        "help": "Pourquoi un client renvoie un article. Partagé par les retours et les échanges."
+      },
+      "claim": {
+        "title": "Motifs de réclamation",
+        "help": "Ce qui s'est mal passé à la livraison — endommagé, manquant ou article incorrect."
+      },
+      "refund": {
+        "title": "Motifs de remboursement",
+        "help": "Pourquoi l'argent a été rendu. Utilisé pour le suivi de tous les remboursements."
+      }
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -2996,6 +3031,7 @@
         "payment_methods": "Modes de paiement",
         "product_types": "Types de produit",
         "profile": "Profil",
+        "reasons": "Retours et motifs",
         "staff": "Personnel",
         "stock_locations": "Emplacements de stock",
         "store": "Boutique",

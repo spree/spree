@@ -1,3 +1,185 @@
+## 2026-08-06: All three reason vocabularies are store-owned
+
+`ReturnReason`, `ClaimReason` and now `RefundReason` include
+`SingleStoreResource`. Name uniqueness moves from global to per-store, so
+two stores can each have their own "Damaged" or "Order Canceled".
+
+This is what makes the controller rule enforceable: every reason lookup
+reads its matching association — `current_store.return_reasons`,
+`current_store.claim_reasons`, `current_store.refund_reasons` — rather
+than the model constant, so a prefixed id from another store is a 404
+instead of a silent success — the
+cheapest defence against IDOR, and now uniform across the returns surface
+alongside `current_store.stock_locations`.
+
+Refund reasons carried one wrinkle the others did not. Core looks three
+of them up by name (`RETURN_PROCESSING_REASON` and friends) to attach to
+refunds it issues itself, and a global `find_or_create_by(name:)` under a
+per-store unique index would either find another store's row or create a
+storeless one. The class methods therefore take the store explicitly —
+`return_processing_reason(store)` — defaulting to `Spree::Current.store`
+but never relying on it from a workflow, because a background job or
+console session has no current store and would bind the reason to the
+wrong one. All four call sites pass the store they already hold.
+
+Existing rows are backfilled by `spree:upgrade:backfill_reason_store_ids`,
+registered before `migrate_returns` in the 5.6→6.0 manifest. The
+migration only adds the column — data transformations stay in rake tasks,
+matching `backfill_delivery_and_stock_store_ids`.
+
+
+## 2026-08-06: Return shipping labels are carrier output, not return state — cut from 6.0
+
+`Spree::Return` briefly carried a `return_label_url` column written by a
+`generate_label:` seam on `Returns::Approve`. The seam resolved its
+provider through `Spree.return_label_provider`, which was never
+registered in `Spree::Dependencies` — so the guard never passed and the
+column was written by unreachable code. Both are removed.
+
+The bug prompted the review; the market settled the direction. **No
+comparable platform stores a label URL on the return record.** Medusa
+returns `label_url` as part of a *fulfillment* (`FulfillmentLabel`) and
+its own integration docs concede the default return flow "does not
+provide enough data to create a full return shipment automatically";
+Saleor's `Fulfillment` object exposes only `trackingNumber`, with labels
+left to apps on webhooks; Vendure has no return-label concept at all,
+producing labels as a side effect of a `FulfillmentHandler` calling a
+courier API. A label is carrier output attached to a shipment, not a
+property of the return.
+
+Labels therefore ride with the carrier provider in
+`6.0-delivery-rate-provider.md`, where an EasyPost/Shippo provider exists
+to mint one and it can hang off a fulfillment like everywhere else. Until
+then a store puts the URL in the return's `metadata`. This is the same
+rule the return-policy decision (2026-08-03) applied: core ships a seam
+when there is a real implementation behind it, never a speculative column
+plus a provider key nobody declares.
+
+
+## 2026-08-05: Dashboard form values must not embed SDK entity types
+
+The returns rework regenerated the admin SDK types, and the new `Order`
+embeds (`returns`/`exchanges`/`claims`, each carrying line items →
+variants and refunds → payments) enlarged Order's transitive type
+closure. That pushed TypeScript 6 over its relation-cache ceiling
+("RangeError: Map maximum size exceeded") — killing `tsc -b` for the
+whole dashboard — because the price-list form's rule drafts embedded
+`Customer[]` (→ `orders` → the enlarged graph) inside the react-hook-form
+values, and RHF's `Path<T>` enumerates every nested key of the form type.
+The old types were merely under the ceiling; the API embeds themselves
+are legitimate surface and were not changed.
+
+The rule this settles: **form-values types carry opaque display records,
+never SDK entity types.** `RuleEmbedRecord` (`{ id, name?, email?,
+code? }`) in `schemas/price-list.ts` is the pattern — full SDK records
+still flow in at runtime (covariant assignment), but the form type stays
+shallow, so path expansion is O(form fields) instead of O(SDK graph).
+`PromotionRuleFormDraft` embeds seven SDK types the same way and is one
+graph-growth away from the same failure — apply the pattern there when
+touched. Diagnostic note: `@typescript/native-preview` (tsgo) has no V8
+Map ceiling, so it *reports* the offending comparison with a line number
+instead of crashing — use it to locate this class of failure; keep tsc
+as the build compiler.
+
+
+## 2026-08-05: Reason CRUD ships admin-only; immutability moves onto the model
+
+Dropping the legacy Rails admin left return, claim and refund reasons with
+no editing surface at all, and the dashboard's create dialogs sent no
+`reason_id` as a result — every return, claim and refund was created
+reasonless, which quietly wasted the point of splitting return vocabulary
+from claim vocabulary. Closed with three `ResourceController` subclasses
+(`settings` scope), one combined **Settings → Reasons** page, and a reason
+picker on the three create dialogs.
+
+Two decisions worth recording:
+
+- **`mutable` is not a writable attribute.** Core seeds reasons it looks
+  up by name — `RefundReason.return_processing_reason` is attached to
+  every refund a return issues — so letting a client flip the flag would
+  hand it the ability to rename or delete the record the lookup depends
+  on. `permitted_params` covers `name` and `active` only.
+- **The immutability guard belongs on `Spree::NamedType`, not the ability
+  layer.** The existing `cannot [:edit, :update], …, mutable: false` rule
+  only fires for JWT users; secret API keys authorize by scope and never
+  consult CanCanCan, so that path could rename a locked reason freely.
+  The concern now carries `can_be_deleted?`, a rename validation and a
+  destroy guard, keyed off `has_attribute?(:mutable)` so NamedTypes
+  without the column are unaffected. This is the RBAC Axis A/B split
+  applied as intended: capabilities in permission sets, record-state
+  rules on the model.
+
+Reasons have no Store API surface — they are back-office vocabulary — so
+the serializers are admin-only and excluded from Store SDK generation.
+
+
+## 2026-08-05: Legacy returns chain removed — tables kept, three capability replacements
+
+The drop landed. Four decisions came out of doing it, each because
+deleting the legacy code would otherwise have quietly removed working
+behaviour:
+
+- **The legacy tables stay through 6.0.** Only the Ruby classes are
+  deleted. `spree_return_authorizations`, `spree_return_items`,
+  `spree_customer_returns`, `spree_reimbursements`,
+  `spree_reimbursement_types` and `spree_reimbursement_credits` remain as
+  the data migration's source and its rollback path; they drop in 6.1
+  once installs have run `spree:upgrade:migrate_returns`. A migration
+  that deletes its own source in the same release has no way back.
+- **`Order#outstanding_balance` drops the reimbursement term rather than
+  replacing it.** `payment_total` is already computed net of refunds by
+  `Carts::RecalculateTotals`, so returns and claims need no term of their
+  own — the legacy reimbursement payout was the only money movement that
+  sat outside that sum. A fully refunded order therefore shows its
+  balance as outstanding again, which is what the pre-existing
+  "refund without a reimbursement" test already asserted.
+- **`Return#refunded_total` counts store credit as well as refunds.**
+  Store credit is a separate ledger and never creates a `Spree::Refund`
+  row, so summing refunds alone reported zero for a store-credit refund —
+  wrong on the record, in the API, and in the customer's email.
+- **The reimbursement email is replaced, not dropped.**
+  `Spree::ReturnMailer#refunded_email` fires on `return.refunded`. The
+  legacy template's expedited-exchange section has no counterpart in the
+  new model and was not carried over.
+
+Also renamed `StoreCreditCategory.default_reimbursement_category` to
+`.default_refund_category` (deprecated alias kept one release), and
+repointed `OrderStatusSubscriber` from the `return_item.*` events to
+`return.received/refunded/canceled`.
+
+
+## 2026-08-05: Returns/exchanges/claims — legacy drop scope, permanent *LineItem names, reason renames
+
+The new returns system (`6.0-returns-exchanges-claims.md`) shipped to
+6-0-dev: three entities, fifteen workflows, admin + store v3 APIs,
+dashboard pages. Reviewing what remains settled four things:
+
+- **`ReturnLineItem` / `ExchangeLineItem` / `ClaimLineItem` are the
+  permanent names.** Chosen during implementation because legacy
+  `Spree::ReturnItem` was still in service, they stay after the drop:
+  they mirror `Spree::LineItem`, and renaming to the plan's shorter
+  `*Item` would cost a table rename plus serializer/SDK/dashboard churn
+  for nothing.
+- **Reasons:** `ReturnAuthorizationReason` → `ReturnReason` (model +
+  table rename, deprecated alias one release) plus a new `ClaimReason`
+  model — claim vocabulary ("arrived damaged", "never arrived") is a
+  different list from return vocabulary ("wrong size", "changed mind").
+  `RefundReason` stays.
+- **`spree:upgrade:migrate_returns` ships together with the legacy drop**,
+  on the same branch, reading legacy tables via lightweight anonymous AR
+  classes (the `migrate_users_to_customers` pattern) so it works after
+  the models are deleted. Riding Wave 7 would have blocked the drop.
+  Resumption needs no cursor, job or checkpoint table: the legacy
+  `number` carries onto the new record and is uniquely indexed there, so
+  the remaining work is a query rather than tracked state — which cannot
+  drift out of sync with what was actually written.
+- The drop scope: legacy models + STI reimbursement types + eligibility
+  validators + v3 legacy serializers + seeds + permission-set grants +
+  legacy tables (except `spree_return_items`, kept under its original
+  name for historical reference until 6.1). `Spree::Metafields` lands on
+  the three entities on the same branch.
+
+
 ## 2026-08-05: v5 developer docs are frozen until the 6.0 release; 6.0 docs land under docs/v6
 
 The pages under `docs/developer/` document the stable 5.x line and stay

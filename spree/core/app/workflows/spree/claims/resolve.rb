@@ -61,6 +61,14 @@ module Spree
 
       def ensure_resolvable
         failure(claim, :invalid_resolution) unless Spree::Claim::RESOLUTIONS.include?(resolution.to_s)
+        if refunding? && !Spree::RefundMethods.valid?(refund_method)
+          # :base, not :refund_method — it is a workflow argument, not an
+          # attribute, and ActiveModel raises when an error names one that
+          # does not exist on the record.
+          claim.errors.add(:base, :invalid_refund_method,
+                           message: Spree.t('errors.messages.invalid_refund_method'))
+          failure(claim)
+        end
         failure(claim, :not_approved) unless claim.approved?
       end
 
@@ -115,7 +123,7 @@ module Spree
             customer: claim.order.customer,
             amount: @amount_to_refund,
             currency: claim.currency,
-            category: Spree::StoreCreditCategory.default_reimbursement_category,
+            category: Spree::StoreCreditCategory.default_refund_category,
             created_by: resolver,
             originator: claim,
             memo: "Claim #{claim.number}"
@@ -134,7 +142,7 @@ module Spree
 
           @refunds << payment.refunds.create!(
             amount: creditable,
-            reason: Spree::RefundReason.return_processing_reason,
+            reason: Spree::RefundReason.return_processing_reason(claim.store),
             refunder: resolver,
             originator: claim
           )

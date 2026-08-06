@@ -5,7 +5,6 @@ module Spree
         class RefundSerializer < V3::RefundSerializer
           typelize payment_id: [:string, nullable: true],
                    refund_reason_id: [:string, nullable: true],
-                   reimbursement_id: [:string, nullable: true],
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata,
@@ -14,10 +13,6 @@ module Spree
           one :payment,
               resource: proc { Spree.api.admin_payment_serializer },
               if: proc { expand?('payment') }
-
-          one :reimbursement,
-              resource: proc { Spree.api.admin_reimbursement_serializer },
-              if: proc { expand?('reimbursement') }
         end
       end
     end
