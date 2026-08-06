@@ -57,6 +57,14 @@ module Spree
       end
 
       def ensure_fulfillable
+        if credit_due? && !Spree::RefundMethods.valid?(refund_method)
+          # :base, not :refund_method — it is a workflow argument, not an
+          # attribute, and ActiveModel raises when an error names one that
+          # does not exist on the record.
+          exchange.errors.add(:base, :invalid_refund_method,
+                           message: Spree.t('errors.messages.invalid_refund_method'))
+          failure(exchange)
+        end
         failure(exchange, :not_received) unless exchange.received?
       end
 

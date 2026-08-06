@@ -127,14 +127,14 @@ module Spree
             def stock_location_for_create
               return nil if create_params[:stock_location_id].blank?
 
-              Spree::StockLocation.accessible_by(current_ability, :show).
+              current_store.stock_locations.accessible_by(current_ability, :show).
                 find_by_prefix_id!(create_params[:stock_location_id])
             end
 
             def reason_for_create
               return nil if create_params[:reason_id].blank?
 
-              Spree::ReturnReason.find_by_prefix_id!(create_params[:reason_id])
+              current_store.return_reasons.find_by_prefix_id!(create_params[:reason_id])
             end
           end
         end

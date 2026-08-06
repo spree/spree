@@ -96,7 +96,7 @@ module Spree
             def reason_for_create
               return nil if create_params[:reason_id].blank?
 
-              Spree::ReturnReason.find_by_prefix_id!(create_params[:reason_id])
+              current_store.return_reasons.find_by_prefix_id!(create_params[:reason_id])
             end
           end
         end

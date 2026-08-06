@@ -28,6 +28,24 @@ RSpec.describe Spree::Api::V3::Admin::ReturnReasonsController, type: :controller
     end
   end
 
+  # The reason lookup on create is scoped to current_store, so a reason id
+  # from another store is simply not found rather than silently accepted.
+  describe 'store scoping' do
+    let!(:other_store_reason) { create(:return_reason, store: create(:store), name: 'Other store reason') }
+
+    it 'excludes another store\'s reasons from the listing' do
+      get :index, as: :json
+
+      expect(json_response['data'].map { |r| r['id'] }).not_to include(other_store_reason.prefixed_id)
+    end
+
+    it 'cannot fetch another store\'s reason by id' do
+      get :show, params: { id: other_store_reason.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe 'GET #show' do
     it 'returns the reason' do
       get :show, params: { id: reason.prefixed_id }, as: :json

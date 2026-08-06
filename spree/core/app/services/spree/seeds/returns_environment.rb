@@ -31,8 +31,11 @@ module Spree
         # silently create a second, unfindable reason if the name ever moves.
         Spree::RefundReason.return_processing_reason
 
-        RETURN_REASONS.each { |name| Spree::ReturnReason.find_or_create_by!(name: name) }
-        CLAIM_REASONS.each { |name| Spree::ClaimReason.find_or_create_by!(name: name) }
+        # Reasons are store-owned, so every store gets its own vocabulary.
+        Spree::Store.all.find_each do |store|
+          RETURN_REASONS.each { |name| Spree::ReturnReason.where(store: store).find_or_create_by!(name: name) }
+          CLAIM_REASONS.each { |name| Spree::ClaimReason.where(store: store).find_or_create_by!(name: name) }
+        end
       end
     end
   end

@@ -893,6 +893,7 @@ en:
         invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
+        invalid_refund_method: must be one of original_payment, store_credit
         invalid_storefront_access: is not a valid storefront access level
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_pickup_point_provider: this delivery method has no pickup point provider configured

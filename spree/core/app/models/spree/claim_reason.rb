@@ -7,6 +7,11 @@ module Spree
     has_prefix_id :clr
 
     include Spree::NamedType
+    include Spree::SingleStoreResource
+
+    # Names are unique per store, not globally — two stores can each have
+    # their own "Damaged" without colliding.
+    validates :name, uniqueness: { case_sensitive: false, scope: :store_id }
 
     self.whitelisted_ransackable_attributes = %w[name active mutable]
 

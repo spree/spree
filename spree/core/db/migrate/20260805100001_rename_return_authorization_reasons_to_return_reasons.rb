@@ -8,11 +8,19 @@ class RenameReturnAuthorizationReasonsToReturnReasons < ActiveRecord::Migration[
     # generic reason_id; it now points here instead of at return reasons.
     create_table :spree_claim_reasons do |t|
       t.string :name, null: false
+      t.references :store, null: false
       t.boolean :active, null: false, default: true
       t.boolean :mutable, null: false, default: true
       t.timestamps
     end
 
-    add_index :spree_claim_reasons, :name, unique: true
+    # Store-owned like every other reason vocabulary, so two stores can each
+    # have their own "Damaged" without colliding. The uniqueness scope moves
+    # with it: name is unique per store, not globally.
+    add_reference :spree_return_reasons, :store
+
+    remove_index :spree_return_reasons, :name
+    add_index :spree_return_reasons, [:store_id, :name], unique: true
+    add_index :spree_claim_reasons, [:store_id, :name], unique: true
   end
 end
