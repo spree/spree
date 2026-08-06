@@ -224,9 +224,8 @@ module Spree
 
         context 'for an order with taxable line items' do
           let!(:order)         { create(:order, line_items_price: 0.0, store: store) }
-          let!(:zone)          { create(:zone_with_country, default_tax: true) }
           let!(:tax_category)  { create(:tax_category, name: 'Taxable Foo') }
-          let!(:rate)          { create(:tax_rate, amount: 0.10, tax_category: tax_category, zone: zone) }
+          let!(:rate)          { create(:tax_rate, amount: 0.10, tax_category: tax_category, country: @default_country) }
 
 
           context 'and the product price is less than promo discount' do

@@ -2,11 +2,11 @@ module Spree
   module TaxProvider
     # Computes tax directly from TaxRate configuration: rate × discounted
     # base, with VAT included-in-price math backed out of the gross basis.
-    # Zone matching is unchanged from 5.x (TaxRate.match over the owner's tax
-    # zone). Fees without a tax category are taxed with the default tax
-    # category's rates.
+    # Rates are matched on the owner's tax address, each naming its own country
+    # and optionally a state. Fees without a tax category are taxed with the
+    # default tax category's rates.
     class Internal < Base
-      # Rates are configured per zone with no local-tax breakdown, no buyer
+      # Rates are configured per country or state with no local-tax breakdown, no buyer
       # registration handling and no distance-selling thresholds. Declared so a
       # merchant pairing this with a market is told, rather than discovering it
       # in a return.
@@ -22,8 +22,7 @@ module Spree
         items ||= owner.line_items.to_a + owner.fulfillments.to_a + owner.fees.to_a
         return if items.empty?
 
-        rates = Spree::TaxRate.match(owner.tax_zone)
-        jurisdiction = jurisdiction_for(owner)
+        rates = Spree::TaxRate.for_store(owner.store).for_jurisdiction(owner.tax_country, owner.tax_address&.state).to_a
 
         items.group_by(&:class).each do |klass, group|
           # Replace-all set semantics per estimate: stale lines die with the
@@ -33,16 +32,22 @@ module Spree
 
         items.each do |item|
           relevant_rates = rates.select { |rate| rate.tax_category_id == tax_category_id_for(item) }
-          exemption = exemption_for(item, exemptions, jurisdiction)
-          # An exempt item has no tax to back out of its price, so the whole
-          # basis is pre-tax.
-          store_pre_tax_amount(item, exemption ? [] : relevant_rates)
 
           # A matched rate always produces a row, zero-amount ones included:
           # a zero rate is a treatment ("this is zero-rated"), which reporting
           # and e-invoicing both need to see. No matched rate means no opinion,
           # and writes nothing.
-          relevant_rates.each do |rate|
+          taxed = relevant_rates.map do |rate|
+            jurisdiction = jurisdiction_for(rate, owner)
+            [rate, jurisdiction, exemption_for(item, exemptions, jurisdiction)]
+          end
+
+          # An exempt item has no tax to back out of its price, so its whole
+          # basis is pre-tax.
+          exempt_rates = taxed.select { |_rate, _jurisdiction, exemption| exemption }.map(&:first)
+          store_pre_tax_amount(item, relevant_rates - exempt_rates)
+
+          taxed.each do |rate, jurisdiction, exemption|
             if exemption
               write_tax_line(owner, item, rate, 0, 'customer_exempt', jurisdiction,
                              data: exemption_data(exemption, item))
@@ -113,15 +118,14 @@ module Spree
         rate.amount.to_d.zero? ? 'zero_rated' : 'standard_rated'
       end
 
-      # The jurisdiction that taxed the line. Read from the owner's tax address
-      # rather than its tax zone, because a Zone can span several countries and
-      # so has no single country to report. Rates carry their own country from
-      # the tax-side Zone decoupling onwards.
-      def jurisdiction_for(owner)
-        address = owner.tax_address
-        return {} if address.nil?
-
-        { country_iso: address.country&.iso, state_code: address.state&.abbr }
+      # The jurisdiction that taxed the line, read off the rate that matched.
+      # A rate covering every country falls back to the address, so the row can
+      # still say where the sale was taxed.
+      def jurisdiction_for(rate, owner)
+        {
+          country_iso: (rate.country || owner.tax_country)&.iso,
+          state_code: (rate.state || owner.tax_address&.state)&.abbr
+        }
       end
 
       # The first exemption entry that claims both this item and the

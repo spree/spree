@@ -8,11 +8,6 @@ RSpec.describe 'Admin tax configuration', type: :request do
 
   let(:country) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
   let(:address) { create(:address, country: country, state: nil, state_name: 'Berlin') }
-  let(:zone) do
-    create(:zone, kind: 'country', default_tax: true).tap do |zone|
-      zone.members.create!(zoneable: country)
-    end
-  end
   let(:tax_category) { create(:tax_category) }
 
   let(:cart) do
@@ -22,13 +17,16 @@ RSpec.describe 'Admin tax configuration', type: :request do
     end
   end
 
+  # Prices are quoted including German VAT, so the market is Germany.
+  before { store.default_market.update!(countries: [country]) }
+
   # The publishable key the storefront reads with.
   let(:store_headers) { { 'x-spree-api-key' => create(:api_key, :publishable, store: store).token } }
 
   it 'configures a rate and produces the tax it describes' do
     post '/api/v3/admin/tax_rates',
          params: { name: 'German VAT', amount_percentage: 19, included_in_price: true,
-                   tax_category_id: tax_category.prefixed_id, zone_id: zone.prefixed_id },
+                   tax_category_id: tax_category.prefixed_id, country_iso: 'DE' },
          headers: headers, as: :json
 
     expect(response).to have_http_status(:created)
@@ -45,7 +43,7 @@ RSpec.describe 'Admin tax configuration', type: :request do
   it 'still records a treatment when the rate is zero' do
     post '/api/v3/admin/tax_rates',
          params: { name: 'German VAT', amount_percentage: 19, included_in_price: true,
-                   tax_category_id: tax_category.prefixed_id, zone_id: zone.prefixed_id },
+                   tax_category_id: tax_category.prefixed_id, country_iso: 'DE' },
          headers: headers, as: :json
     rate_id = JSON.parse(response.body)['id']
 
@@ -64,7 +62,7 @@ RSpec.describe 'Admin tax configuration', type: :request do
   it 'shows the storefront the tax on a line, without the admin treatment fields' do
     post '/api/v3/admin/tax_rates',
          params: { name: 'German VAT', amount_percentage: 19, included_in_price: true,
-                   tax_category_id: tax_category.prefixed_id, zone_id: zone.prefixed_id },
+                   tax_category_id: tax_category.prefixed_id, country_iso: 'DE' },
          headers: headers, as: :json
 
     Spree::Carts::RecalculateTotals.call(cart: cart)

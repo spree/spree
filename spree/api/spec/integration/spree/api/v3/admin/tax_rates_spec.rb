@@ -6,8 +6,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
   include_context 'API v3 Admin'
 
   let!(:tax_category) { create(:tax_category) }
-  let!(:zone) { create(:zone, kind: 'country') }
-  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, zone: zone, amount: 0.19, included_in_price: true) }
+  let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
+  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, country: germany, amount: 0.19, included_in_price: true) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/tax_rates' do
@@ -17,9 +17,10 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Returns the store's tax rates. Rates are the entire configuration of
-        the built-in tax provider: each pairs a tax category with a zone and a
-        percentage, and decides whether the tax is already included in the
-        product price (VAT-style) or added on top (US-style).
+        the built-in tax provider: each pairs a tax category with a jurisdiction
+        (a country, optionally narrowed to one state) and a percentage, and
+        decides whether the tax is already included in the product price
+        (VAT-style) or added on top (US-style).
 
         Markets using an external tax provider ignore these rows — that
         provider carries its own jurisdiction data.
@@ -68,6 +69,9 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
         Creates a tax rate for the current store. Give either `amount` as a
         decimal (`0.19`) or `amount_percentage` as a percentage (`19`).
 
+        Name the jurisdiction with `country_iso` (and `state_code` for a
+        state-level rate). Omitting the country makes the rate apply everywhere.
+
         Set `included_in_price` for VAT-style pricing, where the rate is backed
         out of the displayed price rather than added to it.
       DESC
@@ -85,7 +89,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
           included_in_price: { type: :boolean },
           show_rate_in_label: { type: :boolean },
           tax_category_id: { type: :string },
-          zone_id: { type: :string }
+          country_iso: { type: :string, description: 'ISO code, e.g. "DE". Omit for every country.' },
+          state_code: { type: :string, description: 'State abbreviation within that country, e.g. "CA".' }
         },
         required: %w[name tax_category_id]
       }
@@ -94,7 +99,7 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) do
           { name: 'VAT', amount_percentage: 19, included_in_price: true,
-            tax_category_id: tax_category.prefixed_id, zone_id: zone.prefixed_id }
+            tax_category_id: tax_category.prefixed_id, country_iso: 'DE' }
         end
 
         schema '$ref' => '#/components/schemas/TaxRate'
@@ -160,7 +165,8 @@ RSpec.describe 'Admin Tax Rates API', type: :request, swagger_doc: 'api-referenc
           included_in_price: { type: :boolean },
           show_rate_in_label: { type: :boolean },
           tax_category_id: { type: :string },
-          zone_id: { type: :string }
+          country_iso: { type: :string },
+          state_code: { type: :string }
         }
       }
 

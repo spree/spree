@@ -6,8 +6,9 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
   include_context 'API v3 Admin authenticated'
 
   let!(:tax_category) { create(:tax_category) }
-  let!(:zone) { create(:zone, kind: 'country') }
-  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, zone: zone, amount: 0.19, included_in_price: true) }
+  let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
+  let!(:berlin) { create(:state, country: germany, abbr: 'BE', name: 'Berlin') }
+  let!(:tax_rate) { create(:tax_rate, tax_category: tax_category, country: germany, amount: 0.19, included_in_price: true) }
 
   before { request.headers.merge!(headers) }
 
@@ -34,7 +35,10 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
       expect(json_response['amount_percentage']).to eq(19.0)
       expect(json_response['included_in_price']).to be(true)
       expect(json_response['tax_category_id']).to eq(tax_category.prefixed_id)
-      expect(json_response['zone_id']).to eq(zone.prefixed_id)
+      expect(json_response['country_id']).to eq(germany.id)
+      expect(json_response['country_iso']).to eq('DE')
+      expect(json_response['state_id']).to be_nil
+      expect(json_response['state_code']).to be_nil
       expect(json_response['store_id']).to eq(@default_store.prefixed_id)
     end
   end
@@ -42,7 +46,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
   describe 'POST #create' do
     let(:create_params) do
       { name: 'German VAT', amount: 0.19, included_in_price: true,
-        tax_category_id: tax_category.prefixed_id, zone_id: zone.prefixed_id }
+        tax_category_id: tax_category.prefixed_id, country_iso: 'DE' }
     end
 
     it 'creates a rate bound to the current store' do
@@ -58,6 +62,23 @@ RSpec.describe Spree::Api::V3::Admin::TaxRatesController, type: :controller do
 
       expect(response).to have_http_status(:created)
       expect(Spree::TaxRate.last.amount).to eq(0.07)
+    end
+
+    it 'accepts a state-level rate by its code' do
+      post :create, params: create_params.merge(state_code: 'BE'), as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['state_code']).to eq('BE')
+      expect(Spree::TaxRate.last.state).to eq(berlin)
+    end
+
+    it 'rejects a state that is not in the named country' do
+      france = create(:country, iso: 'FR', name: 'France')
+
+      post :create, params: create_params.merge(country_iso: 'FR', state_id: berlin.id), as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(france.reload).to be_present
     end
 
     it 'rejects a rate with no category' do

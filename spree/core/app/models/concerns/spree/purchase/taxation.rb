@@ -15,6 +15,15 @@ module Spree
         @tax_zone ||= Spree::Zone.match(tax_address) || Spree::Zone.default_tax
       end
 
+      # The country whose tax applies. Before the customer enters an address
+      # that is the market's own country, which is what lets a storefront show
+      # tax-inclusive prices from the first page view.
+      #
+      # @return [Spree::Country, nil]
+      def tax_country
+        tax_address&.country || market&.default_country || store&.default_country
+      end
+
       # The tax engine for this sale, chosen by its market. Falls back to the
       # store-wide default when the market names none, or when there is no
       # market yet (an empty cart before currency resolution).

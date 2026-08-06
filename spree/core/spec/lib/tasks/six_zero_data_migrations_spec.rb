@@ -10,6 +10,7 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'products.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'order_market_backfill.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'store_binding_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
   end
 
   let(:store) { @default_store }
@@ -132,6 +133,67 @@ describe '6.0 data migration tasks' do
       run_task('spree:backfill_tax_store_ids')
 
       expect(Spree::TaxRate.with_deleted.find(deleted_rate.id).store_id).to eq(@default_store.id)
+    end
+  end
+
+  describe 'spree:migrate_tax_zones' do
+    let(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
+    let(:france) { Spree::Country.find_by(iso: 'FR') || create(:country, iso: 'FR', name: 'France') }
+
+    def zone_with(*zoneables)
+      zone = Spree::Zone.create!(name: "Tax Zone #{Time.current.to_f}#{rand(1000)}", kind: 'country')
+      zoneables.each { |zoneable| zone.zone_members.create!(zoneable: zoneable) }
+      zone
+    end
+
+    def unconverted_rate(zone, **attributes)
+      create(:tax_rate, **attributes).tap do |rate|
+        rate.update_columns(country_id: nil, state_id: nil, zone_id: zone.id)
+      end
+    end
+
+    it 'copies a single-country zone onto the rate' do
+      rate = unconverted_rate(zone_with(germany))
+
+      run_task('spree:migrate_tax_zones')
+
+      expect(rate.reload.country).to eq(germany)
+      expect(rate.state).to be_nil
+    end
+
+    it 'splits a multi-country zone into one rate per country' do
+      rate = unconverted_rate(zone_with(germany, france), amount: 0.19)
+
+      expect { run_task('spree:migrate_tax_zones') }.to change(Spree::TaxRate, :count).by(1)
+
+      countries = Spree::TaxRate.where(name: rate.name).map(&:country)
+      expect(countries).to contain_exactly(germany, france)
+      expect(Spree::TaxRate.where(name: rate.name).map(&:amount).uniq).to eq([0.19])
+    end
+
+    it 'keeps a state member as a country and state pair' do
+      state = create(:state, country: germany, abbr: 'BE', name: 'Berlin')
+      rate = unconverted_rate(zone_with(state))
+
+      run_task('spree:migrate_tax_zones')
+
+      expect(rate.reload.country).to eq(germany)
+      expect(rate.state).to eq(state)
+    end
+
+    it 'leaves a memberless zone as an every-country rate' do
+      rate = unconverted_rate(zone_with)
+
+      run_task('spree:migrate_tax_zones')
+
+      expect(rate.reload.country).to be_nil
+    end
+
+    it 'is idempotent' do
+      unconverted_rate(zone_with(germany, france))
+      run_task('spree:migrate_tax_zones')
+
+      expect { run_task('spree:migrate_tax_zones') }.not_to change(Spree::TaxRate, :count)
     end
   end
 

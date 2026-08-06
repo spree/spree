@@ -18,12 +18,13 @@ module Spree
           end
 
           def collection_includes
-            [:tax_category, :zone]
+            [:tax_category, :country, :state]
           end
 
           def permitted_params
             params.permit(:name, :amount, :amount_percentage, :included_in_price,
-                          :show_rate_in_label, :tax_category_id, :zone_id, metadata: {})
+                          :show_rate_in_label, :tax_category_id,
+                          :country_id, :state_id, :country_iso, :state_code, metadata: {})
           end
         end
       end
