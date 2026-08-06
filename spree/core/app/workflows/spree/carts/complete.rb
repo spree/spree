@@ -192,6 +192,7 @@ module Spree
           fulfillment_map = copy_fulfillments!(cart, order, line_item_map)
           copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
           copy_promotions!(cart, order)
+          copy_tax_identifier!(cart, order)
           repoint_money_records!(cart, order)
 
           order.update_columns(
@@ -210,6 +211,20 @@ module Spree
           )
         end
         order
+      end
+
+      # Freezes the buyer's tax registration onto the order, stamped with which
+      # link of the chain won. A copy rather than a reference: the customer can
+      # change or withdraw the number later, and the placed order's tax still
+      # has to be explainable. Consumer sales copy nothing.
+      def copy_tax_identifier!(cart, order)
+        resolved = cart.resolved_tax_identifier
+        return if resolved.nil?
+
+        attributes = resolved.attributes.except('id', 'customer_id', 'cart_id', 'created_at', 'updated_at')
+        order.create_tax_identifier!(
+          attributes.merge('source' => resolved.cart_id.present? ? 'override' : 'customer')
+        )
       end
 
       def copy_line_items!(cart, order)

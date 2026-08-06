@@ -15,6 +15,26 @@ module Spree
         @tax_zone ||= Spree::Zone.match(tax_address) || Spree::Zone.default_tax
       end
 
+      # The buyer's tax registration to compute against: a checkout-time
+      # override first, then the customer's own. Nil means treat the sale as a
+      # consumer sale, which is the legally safe default — charging normal tax
+      # to an unidentified buyer is a presumption EU law explicitly protects.
+      #
+      # A completed order reads its own frozen snapshot instead of resolving
+      # again, so its tax can still be explained after the customer edits or
+      # withdraws the registration.
+      #
+      # Among a customer's registrations a verified one wins, then the most
+      # recent — a plain fallback chain, which is why this is an overridable
+      # method rather than a Dependencies seam.
+      #
+      # @return [Spree::TaxIdentifier, nil]
+      def resolved_tax_identifier
+        return tax_identifier if is_a?(Spree::Order) && completed?
+
+        tax_identifier || customer_tax_identifier
+      end
+
       def tax_total
         included_tax_total + additional_tax_total
       end
@@ -27,6 +47,13 @@ module Spree
       # Sum of all line item and fulfillment amounts pre-tax
       def pre_tax_total
         pre_tax_item_amount + fulfillments.sum(:pre_tax_amount)
+      end
+
+      private
+
+      def customer_tax_identifier
+        identifiers = customer&.tax_identifiers.to_a
+        identifiers.find(&:verified?) || identifiers.max_by(&:created_at)
       end
     end
   end

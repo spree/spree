@@ -176,6 +176,7 @@ module Spree
     # Typed adjustment rows owned by this order (line-, fulfillment- and
     # order-level). See docs/plans/6.0-6.1-split-adjustments.md.
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :order
+    has_one :tax_identifier, class_name: 'Spree::TaxIdentifier', dependent: :destroy, inverse_of: :order
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :order
     has_many :fees, class_name: 'Spree::Fee', dependent: :destroy, inverse_of: :order
 

@@ -892,6 +892,7 @@ en:
         discount_value_type_invalid: value_type must be flat or percent
         exactly_one_adjustable: must be attached to exactly one adjustable
         exactly_one_of_cart_or_order: must belong to exactly one of cart or order
+        exactly_one_tax_identifier_owner: must belong to exactly one of customer, cart or order
         invalid_delivery_method_rule: is not a registered delivery method rule
         invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         invalid_order_routing_rule: is not a registered order routing rule

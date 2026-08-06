@@ -85,6 +85,39 @@ module Spree
       end
     end
 
+    describe 'tax identifier snapshot' do
+      let(:customer) { create(:user) }
+
+      before { ready_cart.update!(customer: customer) }
+
+      it 'freezes the customer registration onto the order' do
+        create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE123456789')
+
+        order = described_class.call(cart: ready_cart).value
+
+        snapshot = order.tax_identifier
+        expect(snapshot.value).to eq('DE123456789')
+        expect(snapshot.source).to eq('customer')
+        expect(snapshot).to be_readonly
+      end
+
+      it 'records a checkout override as such' do
+        create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE123456789')
+        create(:tax_identifier, customer: nil, cart: ready_cart, kind: 'eu_vat', value: 'DE999999999')
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.tax_identifier.value).to eq('DE999999999')
+        expect(order.tax_identifier.source).to eq('override')
+      end
+
+      it 'copies nothing for a consumer sale' do
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.tax_identifier).to be_nil
+      end
+    end
+
     describe 'guest checkout policy' do
       it 'fails when the channel forbids guest checkout and the cart has no customer' do
         allow_any_instance_of(Spree::Cart).to receive(:guest_checkout_disallowed?).and_return(true)

@@ -96,6 +96,37 @@ RSpec.shared_examples 'a taxation host' do
     end
   end
 
+  describe '#resolved_tax_identifier' do
+    let(:customer) { create(:user) }
+
+    before { record.update!(customer: customer) }
+
+    it 'treats a buyer with no registration as a consumer' do
+      expect(record.resolved_tax_identifier).to be_nil
+    end
+
+    it 'falls back to the customer registration' do
+      identifier = create(:tax_identifier, customer: customer)
+
+      expect(record.resolved_tax_identifier).to eq(identifier)
+    end
+
+    it 'prefers a verified registration over a newer unverified one' do
+      verified = create(:tax_identifier, :verified, customer: customer, kind: 'eu_vat')
+      create(:tax_identifier, customer: customer, kind: 'gb_vat')
+
+      expect(record.resolved_tax_identifier).to eq(verified)
+    end
+
+    it 'prefers the record own override over the customer registration' do
+      create(:tax_identifier, customer: customer)
+      owner_key = record.is_a?(Spree::Cart) ? :cart : :order
+      override = create(:tax_identifier, { customer: nil, kind: 'eu_vat', value: 'DE555555555', owner_key => record })
+
+      expect(record.resolved_tax_identifier).to eq(override)
+    end
+  end
+
   describe '#pre_tax_item_amount / #pre_tax_total' do
     it 'sums line item and fulfillment pre-tax amounts' do
       create(:line_item, record.is_a?(Spree::Cart) ? { cart: record, order: nil } : { order: record }).update_column(:pre_tax_amount, 7)
@@ -117,5 +148,19 @@ RSpec.describe Spree::Purchase::Taxation do
     let(:record) { create(:order, store: store, ship_address: ship_address, bill_address: bill_address) }
 
     it_behaves_like 'a taxation host'
+
+    describe '#resolved_tax_identifier on a placed order' do
+      let(:customer) { create(:user) }
+      let(:record) { create(:completed_order_with_totals, customer: customer) }
+
+      it 'reads its own snapshot and never re-resolves' do
+        create(:tax_identifier, customer: customer)
+
+        expect(record.resolved_tax_identifier).to be_nil
+
+        snapshot = create(:tax_identifier, :on_order, order: record)
+        expect(record.reload.resolved_tax_identifier).to eq(snapshot)
+      end
+    end
   end
 end
