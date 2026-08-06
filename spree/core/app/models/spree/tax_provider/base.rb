@@ -37,6 +37,22 @@ module Spree
         name.demodulize.titleize
       end
 
+      # The declared limits with the strings a merchant can act on. A capability
+      # with no translation degrades to its humanized key rather than a missing
+      # translation, so an extension that declares one without shipping strings
+      # still reads sensibly.
+      #
+      # @return [Array<Hash>]
+      def self.unsupported_capability_details
+        unsupported_capabilities.map do |capability|
+          {
+            key: capability.to_s,
+            label: Spree.t("tax_capabilities.#{capability}.label", default: capability.to_s.humanize),
+            description: Spree.t("tax_capabilities.#{capability}.description", default: nil)
+          }.compact
+        end
+      end
+
       # How this engine describes itself to the admin, mirroring
       # Spree::PreferenceSchema#subclasses_with_preference_schema: the class
       # being described owns its own presentation, not the controller.
@@ -48,7 +64,7 @@ module Spree
           id: name,
           name: display_name,
           available: available_for_store?(store),
-          unsupported_capabilities: unsupported_capabilities.map(&:to_s),
+          unsupported_capabilities: unsupported_capability_details,
           default: name == Rails.application.config.spree.tax_provider.to_s
         }
       end

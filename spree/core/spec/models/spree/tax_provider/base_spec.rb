@@ -44,13 +44,36 @@ describe Spree::TaxProvider::Base, type: :model do
 
   describe 'self-description for the admin' do
     it 'presents id, name, availability and limits' do
-      expect(Spree::TaxProvider::Internal.to_api_hash(order.store)).to eq(
-        id: 'Spree::TaxProvider::Internal',
-        name: 'Internal',
-        available: true,
-        unsupported_capabilities: %w[us_local_tax reverse_charge oss_thresholds],
-        default: true
+      hash = Spree::TaxProvider::Internal.to_api_hash(order.store)
+
+      expect(hash[:id]).to eq('Spree::TaxProvider::Internal')
+      expect(hash[:name]).to eq('Internal')
+      expect(hash[:available]).to be(true)
+      expect(hash[:default]).to be(true)
+      expect(hash[:unsupported_capabilities].map { |capability| capability[:key] }).to eq(
+        %w[us_local_tax reverse_charge oss_thresholds]
       )
+    end
+
+    it 'says what each limit costs the merchant, not just its name' do
+      local_tax = Spree::TaxProvider::Internal.unsupported_capability_details.
+                  find { |capability| capability[:key] == 'us_local_tax' }
+
+      expect(local_tax[:label]).to eq('US local tax')
+      expect(local_tax[:description]).to include('County, city and district')
+    end
+
+    it 'falls back to a humanized key for a capability with no strings' do
+      stub_const('SpecOddProvider', Class.new(described_class) do
+        def self.unsupported_capabilities
+          [:margin_scheme_goods]
+        end
+      end)
+
+      capability = SpecOddProvider.unsupported_capability_details.sole
+
+      expect(capability[:label]).to eq('Margin scheme goods')
+      expect(capability).not_to have_key(:description)
     end
 
     it 'lets a provider gem name itself rather than wear a mangled class name' do

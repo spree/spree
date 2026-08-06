@@ -1513,6 +1513,16 @@ en:
     supported_locales: Supported Locales
     tags: Tags
     tax: Tax
+    tax_capabilities:
+      oss_thresholds:
+        description: Crossing the EU-wide cross-border threshold does not switch to destination-country rates automatically, because it depends on annual turnover across every destination rather than on any single order.
+        label: Distance-selling thresholds
+      reverse_charge:
+        description: A VAT-registered business buyer is charged tax instead of receiving a zero-rated invoice. Their registration number is recorded but does not change the tax.
+        label: EU reverse charge
+      us_local_tax:
+        description: County, city and district rates are not applied — only the rates configured per country or state. Sales into US states that levy local tax will be under-collected.
+        label: US local tax
     tax_category: Tax Category
     tax_code: Tax Code
     tax_inclusive: Tax inclusive

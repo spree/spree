@@ -16,7 +16,19 @@ RSpec.describe Spree::Api::V3::Admin::TaxProvidersController, type: :controller 
       expect(internal['name']).to eq('Internal')
       expect(internal['available']).to be(true)
       expect(internal['default']).to be(true)
-      expect(internal['unsupported_capabilities']).to contain_exactly('us_local_tax', 'reverse_charge', 'oss_thresholds')
+      expect(internal['unsupported_capabilities'].map { |capability| capability['key'] }).to(
+        contain_exactly('us_local_tax', 'reverse_charge', 'oss_thresholds')
+      )
+    end
+
+    it 'gives each limit a label and the consequence a merchant can act on' do
+      get :index, as: :json
+
+      internal = json_response['data'].find { |provider| provider['id'] == 'Spree::TaxProvider::Internal' }
+      reverse_charge = internal['unsupported_capabilities'].find { |c| c['key'] == 'reverse_charge' }
+
+      expect(reverse_charge['label']).to eq('EU reverse charge')
+      expect(reverse_charge['description']).to include('charged tax instead of receiving a zero-rated invoice')
     end
 
     it 'reports an engine whose credentials are missing as unavailable' do
