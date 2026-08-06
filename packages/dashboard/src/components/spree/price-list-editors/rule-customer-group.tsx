@@ -1,4 +1,3 @@
-import type { CustomerGroup } from '@spree/admin-sdk'
 import { ResourceMultiAutocomplete } from '@spree/dashboard-core'
 import { Field, FieldGroup, FieldLabel } from '@spree/dashboard-ui'
 import { useState } from 'react'
@@ -7,6 +6,7 @@ import {
   customerGroupAutocompleteProps,
   useCustomerGroups,
 } from '../../../hooks/use-customer-groups'
+import type { RuleEmbedRecord } from '../../../schemas/price-list'
 import { EditorShell } from '../promotion-editors/editor-shell'
 import type { PriceRuleEditorContext } from './types'
 
@@ -21,7 +21,9 @@ export function CustomerGroupRuleEditor({ draft, onSave, onClose }: PriceRuleEdi
   const [groupIds, setGroupIds] = useState<string[]>(() =>
     (draft.customer_groups ?? []).map((g) => g.id),
   )
-  const [customerGroups, setCustomerGroups] = useState<CustomerGroup[]>(draft.customer_groups ?? [])
+  const [customerGroups, setCustomerGroups] = useState<RuleEmbedRecord[]>(
+    draft.customer_groups ?? [],
+  )
 
   function handleSave() {
     onSave({

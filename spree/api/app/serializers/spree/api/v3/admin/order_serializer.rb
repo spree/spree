@@ -108,13 +108,17 @@ module Spree
               if: proc { expand?('created_by') }
 
 
-          many :return_authorizations,
-               resource: proc { Spree.api.admin_return_authorization_serializer },
-               if: proc { expand?('return_authorizations') }
+          many :returns,
+               resource: proc { Spree.api.admin_return_serializer },
+               if: proc { expand?('returns') }
 
-          many :reimbursements,
-               resource: proc { Spree.api.admin_reimbursement_serializer },
-               if: proc { expand?('reimbursements') }
+          many :exchanges,
+               resource: proc { Spree.api.admin_exchange_serializer },
+               if: proc { expand?('exchanges') }
+
+          many :claims,
+               resource: proc { Spree.api.admin_claim_serializer },
+               if: proc { expand?('claims') }
         end
       end
     end

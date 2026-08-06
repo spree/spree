@@ -53,7 +53,7 @@ describe Spree.admin_user_class, type: :model do
       let!(:gift_card_batches) { create_list(:gift_card_batch, 2, created_by: admin_user, amount: 100, prefix: 'TEST') }
       let!(:gift_cards) { create_list(:gift_card, 2, created_by: admin_user) }
       let!(:refunds) { create_list(:refund, 2, refunder: admin_user, amount: 1) }
-      let!(:reimbursements) { create_list(:reimbursement, 2, performed_by: admin_user) }
+      let!(:returns) { create_list(:return, 2, created_by: admin_user) }
       let!(:reports) { create_list(:report, 2, user: admin_user) }
       let!(:store_credits) { create_list(:store_credit, 2, created_by: admin_user) }
       let!(:exports) { create_list(:export, 2, user: admin_user) }
@@ -66,7 +66,7 @@ describe Spree.admin_user_class, type: :model do
         expect(gift_card_batches.all? { |batch| batch.reload.created_by_id.nil? }).to be_truthy
         expect(gift_cards.all? { |gift_card| gift_card.reload.created_by_id.nil? }).to be_truthy
         expect(refunds.all? { |refund| refund.reload.refunder_id.nil? }).to be_truthy
-        expect(reimbursements.all? { |reimbursement| reimbursement.reload.performed_by_id.nil? }).to be_truthy
+        expect(returns.all? { |return_record| return_record.reload.created_by_id.nil? }).to be_truthy
         expect(store_credits.all? { |store_credit| store_credit.reload.created_by_id.nil? }).to be_truthy
       end
     end

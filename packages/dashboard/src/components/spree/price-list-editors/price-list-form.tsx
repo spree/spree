@@ -65,6 +65,7 @@ import {
   type PriceRuleFormDraft,
   priceListFormSchema,
   priceListValuesToParams,
+  type RuleEmbedRecord,
   ruleDraftFromRule,
   ruleDraftFromType,
 } from '../../../schemas/price-list'
@@ -337,12 +338,21 @@ function ActivationButtons({ priceList }: { priceList: PriceList }) {
 
   async function handleDeactivate() {
     const isScheduled = priceList.status === 'scheduled'
-    const namespace = isScheduled
-      ? 'admin.pages.products.price_lists.unschedule_confirm'
-      : 'admin.pages.products.price_lists.deactivate_confirm'
+    // Whole keys, not `${namespace}.title` — a template literal built from a
+    // union of prefixes makes TypeScript cross-product that union against
+    // i18next's full key union, which exhausts the checker's relation cache
+    // (`RangeError: Map maximum size exceeded`) on TS 6.
     const ok = await confirm({
-      title: t(`${namespace}.title`),
-      message: t(`${namespace}.message`, { name: priceList.name }),
+      title: isScheduled
+        ? t('admin.pages.products.price_lists.unschedule_confirm.title')
+        : t('admin.pages.products.price_lists.deactivate_confirm.title'),
+      message: isScheduled
+        ? t('admin.pages.products.price_lists.unschedule_confirm.message', {
+            name: priceList.name,
+          })
+        : t('admin.pages.products.price_lists.deactivate_confirm.message', {
+            name: priceList.name,
+          }),
       // Not destructive — flips status; primary confirm button keeps default styling.
       confirmLabel: t(
         isScheduled
@@ -605,29 +615,40 @@ function RuleRow({
 // Display embeds the API ships alongside each rule. The preference key
 // is skipped in the generic prefs dump below so the row preview reads
 // "VIPs, Wholesale" instead of "Customer group ids: cg_…".
-const RULE_EMBEDS = [
+//
+// RULE_EMBEDS carries an explicit homogeneous type: letting inference
+// build a union of four function-bearing literals makes the checker's
+// subtype reduction compare every embed array against every other (12
+// ordered pairs), which is its own relation-cache blowup on TS 6 —
+// separate from the Path-expansion one documented on RuleEmbedRecord.
+interface RuleEmbed {
+  prefKey: string
+  pick: (draft: PriceRuleFormDraft) => RuleEmbedRecord[] | undefined
+  label: (record: RuleEmbedRecord) => string
+}
+
+const RULE_EMBEDS: readonly RuleEmbed[] = [
   {
     prefKey: 'customer_group_ids',
-    pick: (d: PriceRuleFormDraft) => d.customer_groups,
-    label: (g: { name?: string | null; id: string }) => g.name ?? g.id,
+    pick: (d) => d.customer_groups,
+    label: (g) => g.name ?? g.id,
   },
   {
     prefKey: 'user_ids',
-    pick: (d: PriceRuleFormDraft) => d.customers,
-    label: (c: { email?: string | null; id: string }) => c.email ?? c.id,
+    pick: (d) => d.customers,
+    label: (c) => c.email ?? c.id,
   },
   {
     prefKey: 'market_ids',
-    pick: (d: PriceRuleFormDraft) => d.markets,
-    label: (m: { name?: string | null; id: string }) => m.name ?? m.id,
+    pick: (d) => d.markets,
+    label: (m) => m.name ?? m.id,
   },
   {
     prefKey: 'channel_ids',
-    pick: (d: PriceRuleFormDraft) => d.channels,
-    label: (c: { name?: string | null; code?: string | null; id: string }) =>
-      c.name ?? c.code ?? c.id,
+    pick: (d) => d.channels,
+    label: (c) => c.name ?? c.code ?? c.id,
   },
-] as const
+]
 
 const PREFS_SHOWN_VIA_EMBED: ReadonlySet<string> = new Set(RULE_EMBEDS.map((e) => e.prefKey))
 
@@ -636,8 +657,7 @@ function RuleSummary({ draft }: { draft: PriceRuleFormDraft }) {
   const parts: string[] = []
 
   for (const embed of RULE_EMBEDS) {
-    const items = embed.pick(draft) as Array<{ id: string }> | undefined
-    const rendered = nameList(items, embed.label as (item: { id: string }) => string, t)
+    const rendered = nameList(embed.pick(draft), embed.label, t)
     if (rendered) parts.push(rendered)
   }
 

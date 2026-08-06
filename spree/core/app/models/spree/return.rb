@@ -1,10 +1,9 @@
 module Spree
   # A customer sends items back and gets their money back.
   #
-  # Replaces the ReturnAuthorization → CustomerReturn → Reimbursement chain
-  # with one record that owns the whole operation
-  # (docs/plans/6.0-returns-exchanges-claims.md). The legacy chain still
-  # exists and is untouched; this is the surface new code should use.
+  # One record owns the whole operation — permission, physical receipt and
+  # money back (docs/plans/6.0-returns-exchanges-claims.md), replacing the
+  # ReturnAuthorization → CustomerReturn → Reimbursement chain removed in 6.0.
   #
   # The model holds associations, validations and pure reads only. Every
   # transition is a workflow — `Spree::Returns::Receive.call(...)`, never
@@ -18,6 +17,7 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
     include Spree::HasStatus
+    include Spree::Metafields
     include Spree::Metadata
 
     publishes_lifecycle_events
@@ -28,7 +28,7 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :returns
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
-    belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', optional: true
+    belongs_to :reason, class_name: 'Spree::ReturnReason', optional: true, inverse_of: :returns
     # Staff only. Customer-initiated returns leave this nil — the requester
     # is always order.customer, so no second association is needed.
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
@@ -36,6 +36,7 @@ module Spree
     has_many :return_line_items, class_name: 'Spree::ReturnLineItem',
                                  dependent: :destroy, inverse_of: :return
     has_many :refunds, class_name: 'Spree::Refund', as: :originator, dependent: :nullify
+    has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator, dependent: :nullify
 
     validates :order, :stock_location, presence: true
     validates :return_line_items, presence: true, on: :create
@@ -53,9 +54,10 @@ module Spree
     end
 
     # What has actually been refunded so far — a return can be refunded in
-    # more than one step (part to store credit, part to the card).
+    # more than one step (part to store credit, part to the card), and store
+    # credit is its own ledger rather than a Spree::Refund row.
     def refunded_total
-      refunds.sum(:amount)
+      refunds.sum(:amount) + store_credits.sum(:amount)
     end
 
     def refundable_total
@@ -64,6 +66,10 @@ module Spree
 
     def display_refund_total
       Spree::Money.new(refund_total, currency: currency)
+    end
+
+    def display_refunded_total
+      Spree::Money.new(refunded_total, currency: currency)
     end
   end
 end

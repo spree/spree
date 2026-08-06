@@ -7,7 +7,8 @@ export const RefundSchema = z.object({
   amount: z.string().nullable(),
   payment_id: z.string().nullable(),
   refund_reason_id: z.string().nullable(),
-  reimbursement_id: z.string().nullable(),
+  originator_id: z.string().nullable(),
+  originator_type: z.string().nullable(),
 });
 
 export type Refund = z.infer<typeof RefundSchema>;

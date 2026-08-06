@@ -2967,6 +2967,41 @@
         "prefix_required": "Prefix is required for multi-code batches"
       }
     },
+    "reasons": {
+      "title": "Returns & reasons",
+      "description": "The vocabularies your team picks from when handling returns, claims and refunds.",
+      "add_cta": "Add reason",
+      "add_sheet_title": "Add reason",
+      "edit_sheet_title": "Edit reason",
+      "create_description": "Reasons appear in a dropdown when staff open a return, claim or refund.",
+      "name_placeholder": "e.g. Wrong size",
+      "active_label": "Available on new records",
+      "empty": "No reasons yet",
+      "inactive": "Inactive",
+      "in_use": "In use",
+      "in_use_help": "This reason is already used by existing records, so it cannot be deleted.",
+      "delete_confirm": {
+        "title": "Delete reason?",
+        "message": "{{name}} will no longer be offered. Records already using it keep it."
+      },
+      "messages": {
+        "created": "Reason created",
+        "updated": "Reason updated",
+        "deleted": "Reason deleted"
+      },
+      "return": {
+        "title": "Return reasons",
+        "help": "Why a customer is sending something back. Shared by returns and exchanges."
+      },
+      "claim": {
+        "title": "Claim reasons",
+        "help": "What went wrong with a delivery — damaged, missing or wrong item."
+      },
+      "refund": {
+        "title": "Refund reasons",
+        "help": "Why money went back. Used for reporting across every refund."
+      }
+    },
     "settings": {
       "webhooks": {
         "errors": {
@@ -3000,6 +3035,7 @@
         "payment_methods": "Payment methods",
         "product_types": "Product types",
         "profile": "Profile",
+        "reasons": "Returns & reasons",
         "staff": "Staff",
         "stock_locations": "Stock locations",
         "store": "Store",

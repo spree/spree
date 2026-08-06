@@ -176,6 +176,8 @@ import type {
   PromotionRuleCreateParams,
   PromotionRuleUpdateParams,
   PromotionUpdateParams,
+  ReasonCreateParams,
+  ReasonUpdateParams,
   ResourceTypeDefinition,
   ReturnCreateParams,
   ReturnReceiveParams,
@@ -203,6 +205,7 @@ import type {
   Category,
   Channel,
   Claim,
+  ClaimReason,
   Collection,
   Country,
   CouponCode,
@@ -242,9 +245,11 @@ import type {
   PromotionAction,
   PromotionRule,
   Refund,
+  RefundReason,
   ResourceTranslations,
   ResourceTranslationsNode,
   Return,
+  ReturnReason,
   Role,
   StockItem,
   StockLocation,
@@ -1097,16 +1102,8 @@ export class AdminClient {
           body: params,
         }),
 
-      approve: (
-        orderId: string,
-        id: string,
-        params?: { generate_label?: boolean },
-        options?: RequestOptions,
-      ): Promise<Return> =>
-        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/approve`, {
-          ...options,
-          body: params,
-        }),
+      approve: (orderId: string, id: string, options?: RequestOptions): Promise<Return> =>
+        this.request<Return>('PATCH', `/orders/${orderId}/returns/${id}/approve`, options),
 
       receive: (
         orderId: string,
@@ -2767,6 +2764,97 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/tax_categories/${id}`, options),
+  }
+
+  // ============================================
+  // Reasons — why a return, claim or refund happened
+  // ============================================
+
+  /** Why a customer sent something back. Shared by returns and exchanges. */
+  readonly returnReasons = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ReturnReason>> =>
+      this.request<PaginatedResponse<ReturnReason>>('GET', '/return_reasons', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<ReturnReason> =>
+      this.request<ReturnReason>('GET', `/return_reasons/${id}`, options),
+
+    create: (params: ReasonCreateParams, options?: RequestOptions): Promise<ReturnReason> =>
+      this.request<ReturnReason>('POST', '/return_reasons', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: ReasonUpdateParams,
+      options?: RequestOptions,
+    ): Promise<ReturnReason> =>
+      this.request<ReturnReason>('PATCH', `/return_reasons/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/return_reasons/${id}`, options),
+  }
+
+  /** What went wrong with a delivery — damaged, missing, wrong item. */
+  readonly claimReasons = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<ClaimReason>> =>
+      this.request<PaginatedResponse<ClaimReason>>('GET', '/claim_reasons', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<ClaimReason> =>
+      this.request<ClaimReason>('GET', `/claim_reasons/${id}`, options),
+
+    create: (params: ReasonCreateParams, options?: RequestOptions): Promise<ClaimReason> =>
+      this.request<ClaimReason>('POST', '/claim_reasons', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: ReasonUpdateParams,
+      options?: RequestOptions,
+    ): Promise<ClaimReason> =>
+      this.request<ClaimReason>('PATCH', `/claim_reasons/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/claim_reasons/${id}`, options),
+  }
+
+  /**
+   * Why money went back. Some rows are seeded and immutable: core looks
+   * them up by name, so `can_be_deleted` is false and renaming is refused.
+   */
+  readonly refundReasons = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<RefundReason>> =>
+      this.request<PaginatedResponse<RefundReason>>('GET', '/refund_reasons', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<RefundReason> =>
+      this.request<RefundReason>('GET', `/refund_reasons/${id}`, options),
+
+    create: (params: ReasonCreateParams, options?: RequestOptions): Promise<RefundReason> =>
+      this.request<RefundReason>('POST', '/refund_reasons', { ...options, body: params }),
+
+    update: (
+      id: string,
+      params: ReasonUpdateParams,
+      options?: RequestOptions,
+    ): Promise<RefundReason> =>
+      this.request<RefundReason>('PATCH', `/refund_reasons/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/refund_reasons/${id}`, options),
   }
 
   // ============================================

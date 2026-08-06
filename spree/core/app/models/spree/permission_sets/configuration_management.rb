@@ -48,16 +48,12 @@ module Spree
 
         # General configuration
         can :manage, Spree::RefundReason
-        can :manage, Spree::ReimbursementType
         can :manage, Spree::ReturnReason
+        can :manage, Spree::ClaimReason
 
         # Channels + per-channel order routing rules
         can :manage, Spree::Channel
         can :manage, Spree::OrderRoutingRule
-
-        # Restrictions on immutable types
-        cannot [:edit, :update], Spree::RefundReason, mutable: false
-        cannot [:edit, :update], Spree::ReimbursementType, mutable: false
 
         # Metafield configuration
         can :manage, Spree::MetafieldDefinition

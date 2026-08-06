@@ -150,7 +150,7 @@ RSpec.describe 'Spree::Returns workflows' do
       result = Spree::Returns::Refund.call(return_record: return_record, refund_method: 'crypto')
 
       expect(result).to be_failure
-      expect(result.error.value).to eq(:invalid_refund_method)
+      expect(result.error.value[:base].join).to include('original_payment')
     end
 
     it 'refuses more than the return is owed' do

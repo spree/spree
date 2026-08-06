@@ -20,6 +20,7 @@ import {
 } from '@spree/dashboard-ui'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { type ReasonKind, useReasons } from '../../hooks/use-reasons'
 
 /** A fulfilled unit the customer could send back. */
 export type FulfilledUnit = {
@@ -84,6 +85,54 @@ function QuantityPicker({
   )
 }
 
+/**
+ * Reason dropdown. Optional by design — the API accepts a record without one,
+ * and a merchant mid-return should not be blocked because nobody has curated
+ * the list yet. Inactive reasons are excluded so retired vocabulary stops
+ * appearing on new records.
+ */
+function ReasonField({
+  kind,
+  value,
+  onChange,
+}: {
+  kind: ReasonKind
+  value: string
+  onChange: (value: string) => void
+}) {
+  const { t } = useTranslation()
+  const { data } = useReasons(kind)
+
+  // Filtered in memory rather than through the query so this shares the
+  // settings page's cache entry — the lists are a handful of rows.
+  const reasons = (data?.data ?? []).filter((reason) => reason.active)
+  if (reasons.length === 0) return null
+
+  // Base UI's <Select> needs `items` to resolve the trigger label; without it
+  // the closed trigger renders the raw id (see CLAUDE.md).
+  const options = reasons.map((reason) => ({ value: reason.id, label: reason.name }))
+
+  return (
+    <Field>
+      <FieldLabel htmlFor={`reason-${kind}`}>
+        {t('admin.pages.orders.detail.returns.reason')}
+      </FieldLabel>
+      <Select items={options} value={value} onValueChange={onChange}>
+        <SelectTrigger id={`reason-${kind}`}>
+          <SelectValue placeholder={t('admin.common.select_placeholder')} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </Field>
+  )
+}
+
 function selectedItems(selection: Selection): Array<[string, number]> {
   return Object.entries(selection).filter(([, quantity]) => quantity > 0)
 }
@@ -98,12 +147,14 @@ export function CreateReturnDialog({
   onSubmit: (params: {
     items: Array<{ fulfillment_item_id: string; quantity: number }>
     memo?: string
+    reasonId?: string
   }) => void
 }) {
   const { t } = useTranslation()
   const units = fulfilledUnits(order)
   const [selection, setSelection] = useState<Selection>({})
   const [memo, setMemo] = useState('')
+  const [reasonId, setReasonId] = useState('')
 
   const chosen = selectedItems(selection)
 
@@ -115,6 +166,7 @@ export function CreateReturnDialog({
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
           <QuantityPicker units={units} selection={selection} onChange={setSelection} />
+          <ReasonField kind="return-reasons" value={reasonId} onChange={setReasonId} />
           <Field>
             <FieldLabel htmlFor="return-memo">
               {t('admin.pages.orders.detail.returns.memo')}
@@ -139,6 +191,7 @@ export function CreateReturnDialog({
                   quantity,
                 })),
                 memo: memo || undefined,
+                reasonId: reasonId || undefined,
               })
             }
           >
@@ -165,6 +218,7 @@ export function CreateExchangeDialog({
   onSubmit: (params: {
     items: Array<{ fulfillment_item_id: string; new_variant_id: string; quantity: number }>
     memo?: string
+    reasonId?: string
   }) => void
 }) {
   const { t } = useTranslation()
@@ -172,6 +226,7 @@ export function CreateExchangeDialog({
   const [selection, setSelection] = useState<Selection>({})
   const [replacements, setReplacements] = useState<Record<string, string>>({})
   const [memo, setMemo] = useState('')
+  const [reasonId, setReasonId] = useState('')
 
   const chosen = selectedItems(selection)
   const ready = chosen.length > 0 && chosen.every(([id]) => replacements[id]?.trim())
@@ -218,6 +273,7 @@ export function CreateExchangeDialog({
               )}
             </div>
           ))}
+          <ReasonField kind="return-reasons" value={reasonId} onChange={setReasonId} />
           <Field>
             <FieldLabel htmlFor="exchange-memo">
               {t('admin.pages.orders.detail.returns.memo')}
@@ -243,6 +299,7 @@ export function CreateExchangeDialog({
                   quantity,
                 })),
                 memo: memo || undefined,
+                reasonId: reasonId || undefined,
               })
             }
           >
@@ -273,6 +330,7 @@ export function CreateClaimDialog({
     }>
     claim_type: string
     memo?: string
+    reasonId?: string
   }) => void
 }) {
   const { t } = useTranslation()
@@ -281,6 +339,7 @@ export function CreateClaimDialog({
   const [amounts, setAmounts] = useState<Record<string, string>>({})
   const [claimType, setClaimType] = useState<string>('damaged')
   const [memo, setMemo] = useState('')
+  const [reasonId, setReasonId] = useState('')
 
   const chosen = selectedItems(selection)
   const typeOptions = CLAIM_TYPES.map((value) => ({
@@ -367,6 +426,7 @@ export function CreateClaimDialog({
             })}
           </div>
 
+          <ReasonField kind="claim-reasons" value={reasonId} onChange={setReasonId} />
           <Field>
             <FieldLabel htmlFor="claim-memo">
               {t('admin.pages.orders.detail.returns.memo')}
@@ -393,6 +453,7 @@ export function CreateClaimDialog({
                 })),
                 claim_type: claimType,
                 memo: memo || undefined,
+                reasonId: reasonId || undefined,
               })
             }
           >

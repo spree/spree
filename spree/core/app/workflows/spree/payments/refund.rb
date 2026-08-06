@@ -61,7 +61,7 @@ module Spree
       def issue_refund
         @refund = payment.refunds.create!(
           amount: @amount_to_refund,
-          reason: reason || Spree::RefundReason.return_processing_reason,
+          reason: reason || Spree::RefundReason.return_processing_reason(payment.order&.store),
           refunder: refunder
         )
       rescue Spree::Core::GatewayError => error

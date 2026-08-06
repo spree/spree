@@ -1,0 +1,22 @@
+<%= render 'spree/shared/purchased_items_styles' %>
+
+<%= render layout: 'spree/shared/mailer_hero' do %>
+  <h1><%= Spree.t('return_mailer.refunded_email.subject') %></h1>
+  <p class="greeting"><%= Spree.t('return_mailer.refunded_email.dear_customer', name: name_for(@order)) %></p>
+  <p><%= Spree.t('return_mailer.refunded_email.instructions', number: @order.number) %></p>
+<% end %>
+
+<table class="section" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+  <tr>
+    <td>
+      <h3 class="f-fallback"><%= Spree.t('return_mailer.refunded_email.refund_summary') %></h3>
+      <p class="strong f-fallback"><%= Spree.t('return_mailer.refunded_email.total_refunded', total: @return.display_refunded_total) %></p>
+    </td>
+  </tr>
+</table>
+
+<%= render 'spree/shared/order_summary_section',
+           heading: Spree.t('return_mailer.refunded_email.returned_items'),
+           line_items: @return.return_line_items.map(&:line_item),
+           order: @order,
+           totals: false %>

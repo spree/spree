@@ -298,6 +298,11 @@ Spree::Core::Engine.add_routes do
         # Tax Categories
         resources :tax_categories
 
+        # Return / claim / refund reasons (dropdowns + settings management)
+        resources :return_reasons
+        resources :claim_reasons
+        resources :refund_reasons
+
         # Markets
         resources :markets
 

@@ -32,16 +32,16 @@ RSpec.describe Spree::PermissionSets::OrderManagement do
       expect(ability.can?(:manage, Spree::LineItem)).to be true
     end
 
-    it 'grants manage access to ReturnAuthorization' do
-      expect(ability.can?(:manage, Spree::ReturnAuthorization)).to be true
+    it 'grants manage access to Return' do
+      expect(ability.can?(:manage, Spree::Return)).to be true
     end
 
-    it 'grants manage access to CustomerReturn' do
-      expect(ability.can?(:manage, Spree::CustomerReturn)).to be true
+    it 'grants manage access to Exchange' do
+      expect(ability.can?(:manage, Spree::Exchange)).to be true
     end
 
-    it 'grants manage access to Reimbursement' do
-      expect(ability.can?(:manage, Spree::Reimbursement)).to be true
+    it 'grants manage access to Claim' do
+      expect(ability.can?(:manage, Spree::Claim)).to be true
     end
 
     it 'grants manage access to Refund' do

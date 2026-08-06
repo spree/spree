@@ -50,8 +50,6 @@ en:
       spree/customer_group:
         description: Description
         name: Name
-      spree/customer_return:
-        stock_location_id: Stock Location
       spree/gift_card:
         amount_used: Amount used
         expires_at: Expires at
@@ -169,8 +167,6 @@ en:
       spree/property:
         name: Name
         presentation: Presentation
-      spree/return_authorization:
-        amount: Amount
       spree/role:
         name: Name
       spree/shipment:
@@ -350,16 +346,6 @@ en:
           attributes:
             amount:
               greater_than_allowed: is greater than the allowed amount.
-        spree/reimbursement:
-          attributes:
-            base:
-              return_items_order_id_does_not_match: One or more of the return items specified do not belong to the same order as the reimbursement.
-        spree/return_item:
-          attributes:
-            inventory_unit:
-              other_completed_return_item_exists: "%{inventory_unit_id} has already been taken by return item %{return_item_id}"
-            reimbursement:
-              cannot_be_associated_unless_accepted: cannot be associated to a return item that is not accepted.
         spree/shipping_method:
           attributes:
             base:
@@ -428,9 +414,6 @@ en:
       spree/customer_group_user:
         one: Customer Group User
         other: Customer Group Users
-      spree/customer_return:
-        one: Customer Return
-        other: Customer Returns
       spree/digital:
         one: Digital asset
         other: Digital assets
@@ -500,18 +483,12 @@ en:
       spree/refund_reason:
         one: Refund Reason
         other: Refund Reasons
-      spree/reimbursement:
-        one: Reimbursement
-        other: Reimbursements
-      spree/reimbursement_type:
-        one: Reimbursement Type
-        other: Reimbursement Types
-      spree/return_authorization:
-        one: Return Authorization
-        other: Return Authorizations
-      spree/return_authorization_reason:
-        one: Return Authorization Reason
-        other: Return Authorization Reasons
+      spree/return:
+        one: Return
+        other: Returns
+      spree/return_reason:
+        one: Return Reason
+        other: Return Reasons
       spree/role:
         one: Roles
         other: Roles
@@ -790,7 +767,6 @@ en:
     coupon_codes: Coupon codes
     create: Create
     create_new: Create new
-    create_reimbursement: Create reimbursement
     created_at: Created at
     created_by: Created by
     credit: Credit
@@ -816,8 +792,6 @@ en:
         ignore_notice: If you did not request a password reset, you can safely ignore this email. Your password will not be changed.
         instructions: We received a request to reset your password. Click the button below to choose a new password.
         subject: Password Reset Instructions
-    customer_return: Customer Return
-    customer_returns: Customer Returns
     customer_support_email: Customer Support Email
     customers: Customers
     cut: Cut
@@ -830,7 +804,6 @@ en:
     default_country: Default Country
     default_currency: Default currency
     default_locale: Default locale
-    default_refund_amount: Default Refund Amount
     default_shipping_address: Default shipping address
     default_stock_location_name: Shop location
     default_tax: Default Tax
@@ -922,6 +895,7 @@ en:
         invalid_oauth_state: Invalid or expired authentication state. Please start the sign-in again.
         invalid_order_routing_rule: is not a registered order routing rule
         invalid_order_routing_strategy: is not a registered order routing strategy
+        invalid_refund_method: must be one of original_payment, store_credit
         invalid_storefront_access: is not a valid storefront access level
         must_be_origin_only: must be an origin (scheme and host) without path, query, or fragment
         no_pickup_point_provider: this delivery method has no pickup point provider configured
@@ -1115,11 +1089,9 @@ en:
     min: Min
     min_quantity: Min Quantity
     minimal_amount: Minimal Amount
-    missing_return_authorization: Missing Return Authorization for %{item_name}.
     month: Month
     more: More
     move: Move
-    mutable: Mutable
     my_account: My Account
     my_orders: My Orders
     name: Name
@@ -1134,7 +1106,6 @@ en:
     new_price_list: New Price List
     new_product: New Product
     new_promotion: New Promotion
-    new_return_authorization: New Return Authorization
     new_state: New State
     new_user: New User
     new_variant: New Variant
@@ -1250,7 +1221,6 @@ en:
     powered_by: Powered by
     pre_tax_amount: Pre-Tax Amount
     pre_tax_total: Pre-Tax Total
-    preferred_reimbursement_type: Preferred Reimbursement Type
     presentation: Presentation
     preview: Preview
     previous: Previous
@@ -1358,22 +1328,6 @@ en:
     registration: Registration
     reimburse: Reimburse
     reimbursed: Reimbursed
-    reimbursement: Reimbursement
-    reimbursement_mailer:
-      reimbursement_email:
-        days_to_send: You have %{days} days to send back any items awaiting exchange.
-        dear_customer: Dear %{name},
-        exchange_summary: Exchange Summary
-        instructions: Your reimbursement has been processed.
-        refund_summary: Refund Summary
-        store_team: "%{store_name} Team"
-        subject: Reimbursement Notification
-        thanks: Thank you for your business.
-        total_refunded: 'Total refunded: %{total}'
-    reimbursement_status: Reimbursement status
-    reimbursement_type: Reimbursement type
-    reimbursement_types: Reimbursement Types
-    reimbursements: Reimbursements
     reject: Reject
     rejected: Rejected
     remember_me: Remember me
@@ -1401,18 +1355,18 @@ en:
     resume: resume
     resumed: Resumed
     return: return
-    return_authorization: Return Authorization
-    return_authorization_canceled: Return authorization canceled
-    return_authorizations: Return Authorizations
     return_errors:
       outside_window: This order is outside the %{days}-day return window
-    return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
-    return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed
-    return_item_order_not_completed: Return item's order must be completed
-    return_item_rma_ineligible: Return item requires an RMA
-    return_item_time_period_ineligible: Return item is outside the eligible time period
-    return_items: Return Items
-    return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
+    return_mailer:
+      refunded_email:
+        dear_customer: Dear %{name},
+        instructions: Your return for order %{number} has been refunded.
+        refund_summary: Refund Summary
+        returned_items: Returned Items
+        store_team: "%{store_name} Team"
+        subject: Return Refunded
+        thanks: Thank you for your business.
+        total_refunded: 'Total refunded: %{total}'
     return_quantity: Return Quantity
     returned: Returned
     returns: Returns

@@ -1,9 +1,8 @@
 module Spree
   # One line on a {Spree::Return} — a quantity of a fulfilled item coming back.
   #
-  # Named ReturnLineItem rather than ReturnItem because the legacy
-  # Spree::ReturnItem (part of the ReturnAuthorization chain) is still in
-  # service; the two coexist until the legacy chain is dropped.
+  # Named for {Spree::LineItem}, which it mirrors: `quantity` is what the
+  # customer said was coming, `received_quantity` what the warehouse counted.
   class ReturnLineItem < Spree.base_class
     has_prefix_id :rli
 

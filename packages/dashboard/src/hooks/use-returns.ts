@@ -55,8 +55,14 @@ export function useReturnActions(orderId: string) {
   // so staff-created and self-service returns share one path.
   const create = useReturnMutation(
     orderId,
-    (params: { items: Array<{ fulfillment_item_id: string; quantity: number }>; memo?: string }) =>
-      adminClient.orders.returns.create(orderId, params),
+    ({
+      reasonId,
+      ...params
+    }: {
+      items: Array<{ fulfillment_item_id: string; quantity: number }>
+      memo?: string
+      reasonId?: string
+    }) => adminClient.orders.returns.create(orderId, { ...params, reason_id: reasonId }),
   )
 
   const approve = useReturnMutation(orderId, (returnId: string) =>

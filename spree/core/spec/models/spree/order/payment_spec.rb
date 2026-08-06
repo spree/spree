@@ -148,27 +148,26 @@ module Spree
         expect(order.outstanding_balance).to be_within(0.001).of(-2.00)
       end
 
-      it 'incorporates refund reimbursements' do
-        # Creates an order w/total 20
-        reimbursement = create :reimbursement
-        order = reimbursement.order
-        # Sync totals (the factory leaves the delivery repricing unapplied),
-        # then set the payment amount to the order total of 20
+      # Refunds — whatever triggered them — are netted out of payment_total by
+      # the totals workflow, so the money handed back reappears as balance the
+      # order no longer has covered. There is no separate reimbursement term.
+      it 'treats a refund issued for a return as reducing what was paid' do
+        order = create(:completed_order_with_totals)
+        calculator = order.fulfillments.first.delivery_method.calculator
+
+        calculator.set_preference(:amount, order.fulfillments.first.cost)
+        calculator.save!
+
+        order.payments << create(:payment, state: :completed, order: order, amount: order.total)
+        return_record = create(:received_return, order: order, store: order.store)
+
+        create(:refund, amount: 10, payment: order.payments.first, originator: return_record)
         order.recalculate_totals!
-        order.payments.first.update_column :amount, order.total
-        # Creates a refund of 20
-        create :refund, amount: order.total,
-                        payment: order.payments.first,
-                        reimbursement: reimbursement
-        order = reimbursement.order.reload
-        # Update the order totals so payment_total goes to 0 reflecting the refund..
-        order.recalculate_totals!
-        # Order Total - (Payment Total + Reimbursed)
-        # 20 - (0 + 20) = 0
-        expect(order.outstanding_balance).to eq 0
+
+        expect(order.outstanding_balance).to eq 10
       end
 
-      it 'does not incorporate refunds without a reimbursement' do
+      it 'treats a manual refund the same way' do
         order = create(:completed_order_with_totals)
         calculator = order.fulfillments.first.delivery_method.calculator
 
@@ -179,8 +178,7 @@ module Spree
 
         create(:refund, amount: 10, payment: order.payments.first)
         order.recalculate_totals!
-        # Order Total - (Payment Total + Reimbursed)
-        # 10 - (0 + 0) = 0
+
         expect(order.outstanding_balance).to eq 10
       end
     end

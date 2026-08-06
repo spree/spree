@@ -188,28 +188,21 @@ describe Spree::Refund, type: :model do
     end
   end
 
-  describe 'total_amount_reimbursed_for' do
-    subject { Spree::Refund.total_amount_reimbursed_for(reimbursement) }
+  describe '#return_line_items' do
+    subject { refund.return_line_items }
 
-    let(:customer_return) { reimbursement.customer_return }
-    let(:reimbursement) { create(:reimbursement) }
-    let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
+    let(:refund) { create(:refund, amount: 10, originator: originator) }
 
-    context 'with reimbursements performed' do
-      before { reimbursement.perform! }
+    context 'when the refund came from a return' do
+      let(:originator) { create(:received_return) }
 
-      it 'returns the total amount' do
-        amount = Spree::Refund.total_amount_reimbursed_for(reimbursement)
-        expect(amount).to be > 0
-        expect(amount).to eq reimbursement.total
-      end
+      it { is_expected.to match_array(originator.return_line_items) }
     end
 
-    context 'without reimbursements performed' do
-      it 'returns zero' do
-        amount = Spree::Refund.total_amount_reimbursed_for(reimbursement)
-        expect(amount).to eq 0
-      end
+    context 'when the refund was issued manually' do
+      let(:originator) { nil }
+
+      it { is_expected.to eq([]) }
     end
   end
 end

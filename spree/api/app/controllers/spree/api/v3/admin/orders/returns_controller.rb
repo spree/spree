@@ -46,9 +46,7 @@ module Spree
 
             # PATCH /api/v3/admin/orders/:order_id/returns/:id/approve
             def approve
-              run_workflow(Spree.return_approve_workflow,
-                           approver: try_spree_current_user,
-                           generate_label: ActiveModel::Type::Boolean.new.cast(params[:generate_label]))
+              run_workflow(Spree.return_approve_workflow, approver: try_spree_current_user)
             end
 
             # PATCH /api/v3/admin/orders/:order_id/returns/:id/receive
@@ -137,14 +135,14 @@ module Spree
             def stock_location_for_create
               return nil if create_params[:stock_location_id].blank?
 
-              Spree::StockLocation.accessible_by(current_ability, :show).
+              current_store.stock_locations.accessible_by(current_ability, :show).
                 find_by_prefix_id!(create_params[:stock_location_id])
             end
 
             def reason_for_create
               return nil if create_params[:reason_id].blank?
 
-              Spree::ReturnAuthorizationReason.find_by_prefix_id!(create_params[:reason_id])
+              current_store.return_reasons.find_by_prefix_id!(create_params[:reason_id])
             end
           end
         end

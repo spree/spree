@@ -11,7 +11,6 @@ module Spree
       :cms_section_attributes,
       :custom_domain_attributes,
       :customer_group_attributes,
-      :customer_return_attributes,
       :digital_attributes,
       :digital_link_attributes,
       :export_attributes,
@@ -47,11 +46,9 @@ module Spree
       :promotion_action_attributes,
       :refund_attributes,
       :refund_reason_attributes,
-      :reimbursement_attributes,
-      :reimbursement_type_attributes,
       :report_attributes,
-      :return_authorization_attributes,
-      :return_authorization_reason_attributes,
+      :return_reason_attributes,
+      :claim_reason_attributes,
       :role_attributes,
       :shipment_attributes,
       :shipping_method_attributes,
@@ -111,11 +108,6 @@ module Spree
     @@custom_domain_attributes = [:url, :default]
 
     @@customer_group_attributes = [:name, :description]
-
-    @@customer_return_attributes = [:stock_location_id, {
-      return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount,
-                                :acceptance_status, :exchange_variant_id, :resellable, :return_quantity]
-    }]
 
     @@digital_attributes = [:attachment, :variant_id]
 
@@ -209,30 +201,13 @@ module Spree
 
     @@refund_attributes = [:amount, :refund_reason_id]
 
-    @@refund_reason_attributes = [:name, :active, :mutable]
-
-    @@reimbursement_attributes = [return_items_attributes: [:id, :override_reimbursement_type_id, :pre_tax_amount, :exchange_variant_id]]
-
-    @@reimbursement_type_attributes = [:name, :type, :active, :mutable]
+    @@refund_reason_attributes = [:name, :active]
 
     @@report_attributes = [:type, :date_from, :date_to, :currency]
 
-    @@return_authorization_attributes = [
-      :amount, :memo, :stock_location_id, :inventory_units_attributes,
-      :return_authorization_reason_id, {
-        return_items_attributes: [
-          :_destroy,
-          :id, :inventory_unit_id,
-          :preferred_reimbursement_type_id,
-          :return_authorization_id, :returned, :pre_tax_amount,
-          :acceptance_status, :exchange_variant_id, :resellable, :return_quantity
-        ]
-      }
-    ]
+    @@return_reason_attributes = [:name, :active]
 
-    @@return_authorization_reason_attributes = [:name, :active]
-
-    @@return_item_attributes = [:inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable, :return_quantity]
+    @@claim_reason_attributes = [:name, :active]
 
     @@role_attributes = [:name]
 

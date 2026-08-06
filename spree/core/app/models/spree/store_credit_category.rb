@@ -35,8 +35,16 @@ module Spree
     end
 
     class << self
-      def default_reimbursement_category(_options = {})
+      # The category store credit is issued under when a return, exchange or
+      # claim pays the customer back internally.
+      def default_refund_category(_options = {})
         Spree::StoreCreditCategory.first
+      end
+
+      # @deprecated use {.default_refund_category}
+      def default_reimbursement_category(options = {})
+        Spree::Deprecation.warn('Spree::StoreCreditCategory.default_reimbursement_category is deprecated and will be removed in Spree 6.1. Use .default_refund_category instead.')
+        default_refund_category(options)
       end
     end
   end

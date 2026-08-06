@@ -1009,6 +1009,20 @@ export interface TaxCategoryUpdateParams {
   is_default?: boolean
 }
 
+/**
+ * Return, claim and refund reasons share the same shape — a name and whether
+ * it is offered on new records.
+ */
+export interface ReasonCreateParams {
+  name: string
+  active?: boolean
+}
+
+export interface ReasonUpdateParams {
+  name?: string
+  active?: boolean
+}
+
 export interface MarketCreateParams {
   /** Display name (unique per store, e.g. "Europe"). */
   name: string

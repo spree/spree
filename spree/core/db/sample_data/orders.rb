@@ -134,6 +134,17 @@ end
 # event subscribers, so recompute explicitly.
 orders.each { |order| order.reload.update_statuses! }
 
-# Reimbursement
+# A return in progress, so the admin has something to look at. Built through
+# the workflows rather than by direct writes — they own every transition.
 first_complete_order = Spree::Order.complete.first
-Spree::Reimbursement.create(order: first_complete_order) if first_complete_order
+if first_complete_order && first_complete_order.fulfillment_items.any?
+  fulfillment_item = first_complete_order.fulfillment_items.first
+
+  Spree::Returns::Create.call(
+    order: first_complete_order,
+    items: [{ fulfillment_item: fulfillment_item, quantity: 1 }],
+    stock_location: fulfillment_item.fulfillment&.stock_location || Spree::StockLocation.first,
+    reason: Spree::ReturnReason.first,
+    memo: 'Sample return'
+  )
+end

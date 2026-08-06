@@ -2,10 +2,9 @@ module Spree
   # A customer sends items back and gets different ones — a different size,
   # colour or product.
   #
-  # First-class rather than the legacy "a ReturnItem that happens to carry an
-  # exchange_variant_id, processed through ReimbursementType::Exchange": you
-  # can now ask for all exchanges this month, or every exchange awaiting
-  # fulfillment, without digging through return items.
+  # A first-class record rather than a return item that happens to name a
+  # replacement variant, so "all exchanges this month" and "every exchange
+  # awaiting fulfillment" are ordinary queries.
   #
   # Transitions are workflows (docs/plans/6.0-returns-exchanges-claims.md).
   class Exchange < Spree.base_class
@@ -15,6 +14,7 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
     include Spree::HasStatus
+    include Spree::Metafields
     include Spree::Metadata
 
     publishes_lifecycle_events
@@ -25,7 +25,7 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :exchanges
     belongs_to :stock_location, class_name: 'Spree::StockLocation'
-    belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', optional: true
+    belongs_to :reason, class_name: 'Spree::ReturnReason', optional: true, inverse_of: :exchanges
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
 
     has_many :exchange_line_items, class_name: 'Spree::ExchangeLineItem',
