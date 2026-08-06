@@ -166,17 +166,50 @@ module Spree
         outer.delete_prefix('Spree').presence&.titleize || leaf.titleize
       end
 
+      # Declares where this STI parent's subclass registry lives, powering
+      # `find_by_api_type` and `subclasses_with_preference_schema`. The block
+      # is evaluated on the class, so it can read config that changes at boot:
+      #
+      #   registers_subclasses_via { Spree.delivery_method_rules }
+      #
+      # @return [void]
+      def registers_subclasses_via(&block)
+        @subclass_registry = block
+      end
+
+      # @return [Proc, nil] this class's own declaration, if any.
+      def subclass_registry
+        @subclass_registry if defined?(@subclass_registry)
+      end
+
       private
 
-      # Each STI parent (PaymentMethod, PromotionAction, PromotionRule)
-      # already exposes its registry — we just route to the right one.
-      # Override in the including class to add support for custom parents.
+      # Resolves the declared registry. Gateways expose `providers` instead,
+      # which predates this hook.
+      #
+      # Raises rather than returning an empty list: a missing declaration used
+      # to mean `find_by_api_type` silently returned nil, so typed rows were
+      # dropped from a payload with no error and admin pickers rendered empty.
       def registered_subclasses
+        owner = subclass_registry_owner
+        return instance_exec(&owner.subclass_registry) if owner
         return providers if respond_to?(:providers)
-        return Spree.promotions.actions if name == 'Spree::PromotionAction'
-        return Spree.promotions.rules if name == 'Spree::PromotionRule'
 
-        []
+        raise NotImplementedError,
+              "#{name} includes Spree::PreferenceSchema but declares no subclass registry. " \
+              'Add `registers_subclasses_via { ... }` returning the registered subclasses.'
+      end
+
+      # The declaration lives on the STI parent, and class-level ivars are not
+      # inherited — so walk up to find whichever ancestor declared it.
+      def subclass_registry_owner
+        klass = self
+        while klass.respond_to?(:subclass_registry)
+          return klass if klass.subclass_registry
+
+          klass = klass.superclass
+        end
+        nil
       end
 
       # Defaults can be Procs that hit the database (e.g. `Spree::Store.default`);

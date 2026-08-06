@@ -34,12 +34,7 @@ module Spree
       []
     end
 
-    # Routes PreferenceSchema's registry lookups (`find_by_api_type`, used by
-    # the flat-payload `DeliveryMethod#rules=` writer) at this rule set.
-    def self.registered_subclasses
-      Spree.delivery_method_rules
-    end
-    private_class_method :registered_subclasses
+    registers_subclasses_via { Spree.delivery_method_rules }
 
     # @return [String] localized display name for the rule kind, used by admin pickers
     def self.human_name

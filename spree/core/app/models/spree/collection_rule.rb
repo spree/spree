@@ -37,18 +37,7 @@ module Spree
     def human_name = self.class.human_name
     def human_description = self.class.human_description
 
-    # Routes Spree::PreferenceSchema's subclass discovery
-    # (`subclasses_with_preference_schema`, `find_by_api_type`) to the
-    # collection-rule registry, so a plugin-registered rule is discoverable
-    # by the dashboard without a core change.
-    module ClassMethods
-      private
-
-      def registered_subclasses
-        Rails.application.config.spree.collection_rules
-      end
-    end
-    extend ClassMethods
+    registers_subclasses_via { Rails.application.config.spree.collection_rules }
 
     private
 

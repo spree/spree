@@ -28,11 +28,6 @@ module Spree
       ''
     end
 
-    # Pull the rule registry off the global pricing config so
-    # PreferenceSchema's `.subclasses_with_preference_schema` can power
-    # the admin's "Add rule" picker.
-    def self.registered_subclasses
-      Array(Spree.pricing&.rules)
-    end
+    registers_subclasses_via { Array(Spree.pricing&.rules) }
   end
 end

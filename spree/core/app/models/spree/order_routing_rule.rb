@@ -80,17 +80,7 @@ module Spree
       raise NotImplementedError, "#{self.class} must implement #rank(order, locations)"
     end
 
-    # Routes Spree::PreferenceSchema's subclass discovery
-    # (`subclasses_with_preference_schema`, `find_by_api_type`) to the
-    # order-routing rule registry.
-    module ClassMethods
-      private
-
-      def registered_subclasses
-        Spree.order_routing.rules
-      end
-    end
-    extend ClassMethods
+    registers_subclasses_via { Spree.order_routing.rules }
 
     private
 
