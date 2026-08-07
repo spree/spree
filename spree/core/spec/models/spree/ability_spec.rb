@@ -155,6 +155,87 @@ describe Spree::Ability, type: :model do
         expect(staff_ability.permission_keys).to eq(Spree.permissions.catalog_keys)
       end
     end
+
+    context 'with overlapping keys across roles' do
+      before do
+        admin.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders]), resource: store)
+        admin.role_users.create!(role: create(:role, name: 'manager', permissions: %w[write_orders read_orders]), resource: store)
+      end
+
+      it 'deduplicates into one expanded key set' do
+        expect(staff_ability.permission_keys).to eq(%w[read_orders write_orders])
+        expect(staff_ability).to be_able_to :manage, Spree::Order.new
+      end
+    end
+
+    context 'with roles held on different stores' do
+      let(:store_b) { create(:store) }
+
+      before do
+        admin.role_users.create!(role: create(:role, name: 'a_orders', permissions: %w[write_orders]), resource: store)
+        admin.role_users.create!(role: create(:role, name: 'b_products', permissions: %w[write_products]), resource: store_b)
+      end
+
+      it 'activates only the current store assignments' do
+        expect(staff_ability).to be_able_to :manage, Spree::Order.new
+        expect(staff_ability).not_to be_able_to :read, store.products.new
+        expect(staff_ability.permission_keys).to eq(%w[read_orders write_orders])
+      end
+
+      it 'flips with the store context' do
+        ability_b = Spree::Ability.new(admin, store: store_b)
+
+        expect(ability_b).to be_able_to :manage, store.products.new
+        expect(ability_b).not_to be_able_to :read, Spree::Order.new
+        expect(ability_b.permission_keys).to eq(%w[read_products write_products])
+      end
+    end
+
+    context 'as admin on one store and limited staff on another' do
+      let(:store_b) { create(:store) }
+
+      before do
+        admin.role_users.create!(role: Spree::Role.default_admin_role, resource: store)
+        admin.role_users.create!(role: create(:role, name: 'b_viewer', permissions: %w[read_orders]), resource: store_b)
+      end
+
+      it 'does not leak admin authority into the limited store' do
+        expect(staff_ability).to be_able_to :manage, :all
+
+        ability_b = Spree::Ability.new(admin, store: store_b)
+        expect(ability_b).not_to be_able_to :manage, :all
+        expect(ability_b).not_to be_able_to :update, Spree::Order.new
+        expect(ability_b.permission_keys).to eq(%w[read_orders])
+      end
+    end
+
+    context 'with the same role assigned on two stores' do
+      let(:store_b) { create(:store) }
+      let(:role) { create(:role, name: 'shared', permissions: %w[write_orders]) }
+
+      before do
+        admin.role_users.create!(role: role, resource: store)
+        admin.role_users.create!(role: role, resource: store_b)
+      end
+
+      it 'grants the same keys on each store' do
+        expect(staff_ability.permission_keys).to eq(%w[read_orders write_orders])
+        expect(Spree::Ability.new(admin, store: store_b).permission_keys).to eq(%w[read_orders write_orders])
+      end
+    end
+
+    context 'with stale keys the catalog no longer knows' do
+      before do
+        role = create(:role, name: 'stale', permissions: %w[read_orders])
+        role.update_column(:permissions, %w[read_orders write_bogus])
+        admin.role_users.create!(role: role, resource: store)
+      end
+
+      it 'activates the known keys and drops the rest' do
+        expect(staff_ability).to be_able_to :read, Spree::Order.new
+        expect(staff_ability.permission_keys).to eq(%w[read_orders])
+      end
+    end
   end
 
   describe 'shared customer/admin user class' do

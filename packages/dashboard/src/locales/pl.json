@@ -2591,6 +2591,10 @@
         "orders": "Zamówienia",
         "settings": "Ustawienia"
       },
+      "labels": {
+        "read": "Podgląd: {{resource}}",
+        "write": "Zarządzanie: {{resource}}"
+      },
       "resources": {
         "api_keys": "Klucze API",
         "categories": "Kategorie",

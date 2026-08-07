@@ -217,11 +217,11 @@ module Spree
     # Kept only to fail loudly with directions instead of a bare NoMethodError.
     def assign(*)
       raise PermissionSetsRemovedError,
-            'Permission sets were removed in Spree 6.0. Create roles and edit their ' \
-            'permissions in the dashboard (Settings → Roles), via the Admin API, or in ' \
-            'seeds (`Spree::Role#permissions` holds catalog keys). For record-level ' \
-            'custom rules use Spree::Ability.register_ability. ' \
-            'See https://spreecommerce.org/docs/developer/customization/permissions'
+            'Permission sets were removed in Spree 6.0. Remove the permission lines from ' \
+            'config/initializers/spree.rb — roles and their permissions are data now, ' \
+            'managed in the dashboard (Settings → Roles), via the Admin API, or in seeds. ' \
+            'For record-level custom rules use Spree::Ability.register_ability. ' \
+            "Upgrade guide: https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0"
     end
 
     private

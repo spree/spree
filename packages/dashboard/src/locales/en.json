@@ -2559,6 +2559,10 @@
         "orders": "Orders",
         "settings": "Settings"
       },
+      "labels": {
+        "read": "View {{resource}}",
+        "write": "Manage {{resource}}"
+      },
       "resources": {
         "api_keys": "API keys",
         "categories": "Categories",

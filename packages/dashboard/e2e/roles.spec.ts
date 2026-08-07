@@ -32,11 +32,11 @@ test.describe('roles', () => {
     await page.getByRole('checkbox', { name: /view customers/i }).check()
     await page.getByRole('button', { name: /^save$/i }).click()
 
-    // Back on the list with the new role and its permission badges.
+    // Back on the list with the new role and its human-readable permission badges.
     await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toBeVisible({
       timeout: 15_000,
     })
-    await expect(page.getByText('read_orders')).toBeVisible()
+    await expect(page.getByText('View Orders').first()).toBeVisible()
 
     // Round-trip: open the editor, grant manage on orders, save.
     await page.getByRole('cell', { name: new RegExp(name, 'i') }).click()

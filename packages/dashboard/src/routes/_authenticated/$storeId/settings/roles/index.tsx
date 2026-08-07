@@ -24,7 +24,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { CopyIcon, LockIcon, PlusIcon, ShieldIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { useDeleteRole, useRoles } from '../../../../../hooks/use-roles'
+import { permissionKeyLabel } from '../../../../../components/spree/permission-picker'
+import { useDeleteRole, usePermissionCatalog, useRoles } from '../../../../../hooks/use-roles'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/roles/')({
   component: RolesSettingsPage,
@@ -186,6 +187,7 @@ const PERMISSION_PREVIEW_COUNT = 3
 
 function PermissionSummary({ role }: { role: Role }) {
   const { t } = useTranslation()
+  const { data: catalog } = usePermissionCatalog()
 
   if (role.name === 'admin') {
     return <Badge>{t('admin.roles.badges.full_access')}</Badge>
@@ -199,8 +201,8 @@ function PermissionSummary({ role }: { role: Role }) {
   return (
     <div className="flex flex-wrap items-center gap-1">
       {preview.map((key) => (
-        <Badge key={key} className="font-mono text-[10px]">
-          {key}
+        <Badge key={key} variant="secondary">
+          {permissionKeyLabel(t, catalog?.data, key)}
         </Badge>
       ))}
       {overflow > 0 && (

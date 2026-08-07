@@ -76,6 +76,20 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
         expect(json_response.dig('error', 'details', 'excess_permissions')).to include('write_products')
         expect(Spree::Role.find_by(name: 'sneaky')).to be_nil
       end
+
+      # Privileges held on OTHER stores don't count: the caller's grant is
+      # their roles on the store the request runs against.
+      it 'ignores keys the caller holds only on a different store' do
+        store_b = create(:store)
+        staffer.role_users.create!(
+          role: create(:role, name: 'b_products', permissions: %w[write_products]),
+          resource: store_b
+        )
+
+        post :create, params: { name: 'sneaky', permissions: %w[write_products] }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
     end
 
     context 'via a secret API key with limited scopes' do

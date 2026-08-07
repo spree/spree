@@ -2559,6 +2559,10 @@
         "orders": "Bestellungen",
         "settings": "Einstellungen"
       },
+      "labels": {
+        "read": "{{resource}} ansehen",
+        "write": "{{resource}} verwalten"
+      },
       "resources": {
         "api_keys": "API-Schlüssel",
         "categories": "Kategorien",

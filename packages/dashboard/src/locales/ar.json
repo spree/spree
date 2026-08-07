@@ -2559,6 +2559,10 @@
         "orders": "الطلبات",
         "settings": "الإعدادات"
       },
+      "labels": {
+        "read": "عرض {{resource}}",
+        "write": "إدارة {{resource}}"
+      },
       "resources": {
         "api_keys": "API مفاتيح",
         "categories": "فئات",

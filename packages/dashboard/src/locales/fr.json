@@ -2559,6 +2559,10 @@
         "orders": "Commandes",
         "settings": "Paramètres"
       },
+      "labels": {
+        "read": "Voir {{resource}}",
+        "write": "Gérer {{resource}}"
+      },
       "resources": {
         "api_keys": "Clés API",
         "categories": "Catégories",

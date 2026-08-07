@@ -2559,6 +2559,10 @@
         "orders": "订单",
         "settings": "设置"
       },
+      "labels": {
+        "read": "查看{{resource}}",
+        "write": "管理{{resource}}"
+      },
       "resources": {
         "api_keys": "API keys",
         "categories": "分类",

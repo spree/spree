@@ -2,122 +2,266 @@
 title: Permissions
 ---
 
-Spree authorizes staff through **roles** that hold flat **permission keys** from a single catalog. Merchants manage everything in the dashboard — no Ruby required — and the same vocabulary powers secret API key scopes, so a role grant and a key scope always mean the same thing.
+Spree uses [CanCanCan](https://github.com/CanCanCommunity/cancancan) for authorization. The permission system allows you to define granular access control for different user roles.
 
-## The permission catalog
+## Permission Sets (Recommended)
 
-Every grantable capability is a key of the form `read_<resource>` or `write_<resource>` — `read_orders`, `write_products`, `write_staff`, and so on. Each resource covers a slice of the Admin API and the models behind it; `write_*` implies the matching `read_*`.
+Permission Sets provide a clean, modular way to manage permissions. Each permission set is a reusable group of permissions that can be assigned to roles.
 
-Discover the catalog at runtime:
+### How It Works
 
-```bash
-GET /api/v3/admin/permissions
-```
+1. **Roles** - Determine which permission sets govern a user's access (e.g., `admin`, `customer_service`)
+2. **Permission Sets** - Contain the logic defining what actions users can perform on resources
+3. **Role Configuration** - Associates roles with their corresponding permission sets
 
-Each entry describes the key, its resource, its `read`/`write` kind, a UI group, and localized labels — the role editor and the API-key scope picker are both rendered from this endpoint.
+### Configuring Roles
 
-The important granularity choice: keys are **per resource, not per action**. There is no `cancel_orders` — `write_orders` covers all order writes. The money-adjacent areas are separate resources (`payments`, `refunds`, `gift_cards`, `store_credits`), so "customer service can view orders but cannot refund" is simply `read_orders` without `write_refunds`.
-
-## Managing roles
-
-Roles are data. Create and edit them in the dashboard under **Settings → Roles**: each role has a name, a description, and a permission grid; staff are assigned roles per store from **Settings → Staff**.
-
-The same surface exists on the Admin API:
-
-```bash
-GET    /api/v3/admin/roles
-POST   /api/v3/admin/roles      # { name, description, permissions: ["read_orders", ...] }
-PATCH  /api/v3/admin/roles/:id
-DELETE /api/v3/admin/roles/:id
-```
-
-For reproducible environments, seed roles with plain ActiveRecord:
+In your `config/initializers/spree.rb`, configure which permission sets are assigned to each role:
 
 ```ruby
-# db/seeds.rb
-Spree::Role.find_or_create_by!(name: 'support')
-  .update!(permissions: %w[read_orders read_customers], description: 'Read-only support')
-```
+Rails.application.config.after_initialize do
+  # Default permissions for all users (guests and logged-in customers)
+  Spree.permissions.assign(:default, [Spree::PermissionSets::DefaultCustomer])
 
-A few rules the server enforces everywhere:
+  # Full admin access
+  Spree.permissions.assign(:admin, [Spree::PermissionSets::SuperUser])
 
-- **The `admin` role is protected.** It always grants everything and cannot be renamed, re-permissioned, or deleted.
-- **Locked roles.** A role with `mutable: false` (set from seeds or the console) renders read-only in the dashboard — for roles a host application does not want store staff to edit.
-- **A role in use cannot be deleted.** Reassign staff and revoke pending invitations first.
-- **No privilege escalation.** A caller can only grant permissions they effectively hold — when creating or editing roles, assigning roles to staff, inviting staff, or minting API keys. Only admins can grant the `admin` role.
+  # Custom role with specific permissions
+  Spree.permissions.assign(:customer_service, [
+    Spree::PermissionSets::DashboardDisplay,
+    Spree::PermissionSets::OrderManagement,
+    Spree::PermissionSets::UserDisplay
+  ])
 
-## How enforcement works
-
-Every Admin API controller declares the resource it belongs to. On each request the principal's keys — a staff member's role permissions, or a secret key's scopes — are checked against `read_<resource>` or `write_<resource>` depending on the action. A missing key produces a 403 that names it:
-
-```json
-{
-  "error": {
-    "code": "access_denied",
-    "message": "Missing permission: write_orders",
-    "details": { "required_permission": "write_orders" }
-  }
-}
-```
-
-Behind that gate, keys compile to [CanCanCan](https://github.com/CanCanCommunity/cancancan) rules (a read key grants `can [:read, :admin]` on the resource's models; a write key grants `can :manage`), which handle record-level concerns. `GET /api/v3/admin/me` returns both views — the rule dump the dashboard mirrors for UI gating, and `permission_keys`, the flat list of keys the user holds on the current store.
-
-Storefront customers are **not** part of this system. Customer authorization is ownership — carts and orders by token or account, addresses by `user_id` — enforced by a fixed internal baseline and the Store API's scoped lookups. There is nothing to configure.
-
-## Extensions: registering permissions
-
-An extension registers its resources into the catalog once. The keys appear in the role editor, become mintable API-key scopes, and gate the extension's admin endpoints — no further wiring:
-
-```ruby
-# in your engine's initializer
-Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
-  [SpreeReviews::Review]
-})
-```
-
-- `group` places the row in the permission pickers (`:orders`, `:catalog`, `:marketing`, `:customers`, `:settings`, `:access`, `:analytics` — or your own).
-- `subjects` is a lambda returning the CanCanCan subjects the keys grant; it resolves lazily, so load order does not matter.
-- Pass `write: false` for read-only resources (like the analytics dashboard).
-
-Localize the labels in your engine's locale file:
-
-```yaml
-en:
-  spree:
-    permissions_catalog:
-      resources:
-        reviews:
-          label: Reviews
-          description: Moderate and reply to product reviews
-```
-
-Your admin controllers then declare the same resource:
-
-```ruby
-class SpreeReviews::Admin::ReviewsController < Spree::Api::V3::Admin::ResourceController
-  scoped_resource :reviews
+  # Merchandiser role for product management
+  Spree.permissions.assign(:merchandiser, [
+    Spree::PermissionSets::DashboardDisplay,
+    Spree::PermissionSets::ProductManagement,
+    Spree::PermissionSets::StockManagement
+  ])
 end
 ```
 
-## Advanced: record-level custom rules
+### Built-in Permission Sets
 
-The catalog is deliberately flat. When a host application needs rules the catalog cannot express — regional restrictions, ownership conditions — register a plain `CanCan::Ability` class; its rules merge into every ability:
+| Permission Set | Description |
+|---------------|-------------|
+| `SuperUser` | Full admin access with safety restrictions |
+| `DefaultCustomer` | Basic storefront permissions (browse, checkout, manage own account) |
+| `DashboardDisplay` | View admin dashboard |
+| `OrderDisplay` | Read-only access to orders |
+| `OrderManagement` | Full order management (view, edit, refund, etc.) |
+| `ProductDisplay` | Read-only access to products and catalog |
+| `ProductManagement` | Full catalog management (products, variants, taxonomies) |
+| `UserDisplay` | Read-only access to users |
+| `UserManagement` | Full user management |
+| `StockDisplay` | Read-only access to inventory |
+| `StockManagement` | Full inventory management |
+| `PromotionManagement` | Manage promotions and coupon codes |
+| `ConfigurationManagement` | Manage store settings, shipping, taxes, etc. |
+| `RoleManagement` | Manage roles (except the protected admin role) |
+
+### Creating Custom Permission Sets
+
+Create a new permission set in `app/models/spree/permission_sets/`:
 
 ```ruby
-# app/models/regional_support_ability.rb
-class RegionalSupportAbility
+# app/models/spree/permission_sets/warehouse_management.rb
+module Spree
+  module PermissionSets
+    class WarehouseManagement < Base
+      def activate!
+        can :manage, Spree::StockItem
+        can :manage, Spree::StockLocation
+        can :manage, Spree::StockMovement
+        can :manage, Spree::Shipment
+        can [:read, :admin], Spree::Order
+      end
+    end
+  end
+end
+```
+
+Then assign it to a role:
+
+```ruby
+Spree.permissions.assign(:warehouse_staff, [
+  Spree::PermissionSets::DashboardDisplay,
+  Spree::PermissionSets::WarehouseManagement
+])
+```
+
+### Permission Set API
+
+Within a permission set, you have access to:
+
+- `can(action, subject, conditions = {})` - Grant permission
+- `cannot(action, subject, conditions = {})` - Deny permission
+- `can?(action, subject)` - Check if permission exists
+- `user` - The current user
+- `store` - The current store (for multi-store setups)
+
+```ruby
+module Spree
+  module PermissionSets
+    class OrderManagementForOwnOrders < Base
+      def activate!
+        # Users can only manage orders they created
+        can :manage, Spree::Order, created_by_id: user.id
+
+        # But cannot cancel any order
+        cannot :cancel, Spree::Order
+
+        # Unless it's cancellable
+        can :cancel, Spree::Order, &:allow_cancel?
+      end
+    end
+  end
+end
+```
+
+### Managing Permission Configuration
+
+```ruby
+# Assign permission sets to a role
+Spree.permissions.assign(:customer_service, [
+  Spree::PermissionSets::OrderDisplay,
+  Spree::PermissionSets::UserManagement
+])
+
+# Add more permission sets to an existing role
+Spree.permissions.assign(:customer_service, [
+  Spree::PermissionSets::StockDisplay
+])
+
+# Clear all permission sets from a role
+Spree.permissions.clear(:customer_service)
+
+# Check what permission sets a role has
+Spree.permissions.permission_sets_for(:customer_service)
+# => [Spree::PermissionSets::OrderDisplay, ...]
+
+# Check if a role is configured
+Spree.permissions.role_configured?(:customer_service)
+# => true
+```
+
+## Users and Roles
+
+Spree comes with an `admin` role by default. You can create more roles in the Admin Panel or via Rails console:
+
+```ruby
+Spree::Role.find_or_create_by(name: 'customer_service')
+Spree::Role.find_or_create_by(name: 'merchandiser')
+Spree::Role.find_or_create_by(name: 'warehouse_staff')
+```
+
+Assign a role to a user:
+
+```ruby
+user = Spree.user_class.find_by(email: 'john@example.com')
+role = Spree::Role.find_by(name: 'customer_service')
+user.spree_roles << role
+```
+
+### Default Role Behavior
+
+- Users with **no roles assigned** automatically get the `:default` role permissions
+- No `RoleUser` records are created for regular customers
+- Only users with special permissions need explicit role assignments
+
+## Legacy Approach: Custom Ability Classes
+
+<Note>
+The permission sets approach above is recommended for new projects. The legacy approach below is supported for backward compatibility.
+</Note>
+
+### Adding Custom Permissions via Decorator
+
+Create a new ability class in `app/models/customer_service_ability.rb`:
+
+```ruby
+class CustomerServiceAbility
   include CanCan::Ability
 
   def initialize(user)
-    return unless user.respond_to?(:market_id) && user.market_id
-
-    cannot :manage, Spree::Order
-    can [:read, :admin], Spree::Order, market_id: user.market_id
+    if user.respond_to?(:has_spree_role?) && user.has_spree_role?('customer_service')
+      can :manage, Spree::Order
+    end
   end
 end
-
-# config/initializers/spree.rb
-Spree::Ability.register_ability(RegionalSupportAbility)
 ```
 
-Keep record-state rules ("a completed order cannot be deleted") out of abilities entirely — they belong on models and workflows, where every caller hits them, including secret API keys that never consult CanCanCan.
+Register it via a decorator in `app/models/spree/ability_decorator.rb`:
+
+```ruby
+module Spree
+  module AbilityDecorator
+    def abilities_to_register
+      [CustomerServiceAbility]
+    end
+  end
+
+  Ability.prepend(AbilityDecorator)
+end
+```
+
+### Replacing the Ability Class
+
+You can replace the entire ability class via [Dependencies](/developer/customization/dependencies):
+
+```ruby
+# config/initializers/spree.rb
+Spree::Dependencies.ability_class = 'CustomAbility'
+```
+
+```ruby
+# app/models/custom_ability.rb
+class CustomAbility < Spree::Ability
+  def initialize(user, options = {})
+    alias_cancan_delete_action
+
+    @user = user || Spree.user_class.new
+    @store = options[:store] || Spree::Current.store
+
+    if @user.respond_to?(:has_spree_role?) && @user.has_spree_role?('admin')
+      apply_admin_permissions(@user, options)
+    elsif @user.respond_to?(:has_spree_role?) && @user.has_spree_role?(:customer_service)
+      apply_customer_service_permissions(@user)
+    else
+      apply_user_permissions(@user, options)
+    end
+
+    protect_admin_role
+  end
+
+  protected
+
+  def apply_customer_service_permissions(user)
+    can :manage, Spree::Order
+    can [:read, :admin], Spree.user_class
+  end
+end
+```
+
+## CanCanCan Reference
+
+Spree's permission system is built on CanCanCan. Key concepts:
+
+- `can :action, Subject` - Grant permission
+- `can :manage, Subject` - Grant all actions (create, read, update, destroy)
+- `cannot :action, Subject` - Explicitly deny permission
+- `can :action, Subject, conditions` - Conditional permission
+
+```ruby
+# Examples
+can :read, Spree::Product                           # Can read any product
+can :manage, Spree::Order, user_id: user.id        # Can manage own orders
+can :update, Spree::Order do |order|               # Block conditions
+  order.user == user && !order.completed?
+end
+cannot :destroy, Spree::Order                       # Cannot destroy any order
+can :destroy, Spree::Order, &:can_be_deleted?      # Unless it's deletable
+```
+
+See the [CanCanCan documentation](https://github.com/CanCanCommunity/cancancan) for more details.

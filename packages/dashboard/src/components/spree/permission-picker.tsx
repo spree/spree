@@ -1,5 +1,6 @@
 import type { Permission } from '@spree/admin-sdk'
 import { Checkbox, cn } from '@spree/dashboard-ui'
+import type { TFunction } from 'i18next'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -47,6 +48,25 @@ export function allReadKeys(entries: Permission[]): string[] {
 /** Every write key in the catalog (read is implied) plus read-only resources' read keys. */
 export function allWriteKeys(entries: Permission[]): string[] {
   return buildPermissionRows(entries).map((row) => row.writeKey ?? row.readKey)
+}
+
+/**
+ * Human label for a catalog key — "View Orders", "Manage Products" — in the
+ * admin's UI language, falling back to the raw key while the catalog loads or
+ * for keys it no longer knows.
+ */
+export function permissionKeyLabel(
+  t: TFunction,
+  entries: Permission[] | undefined,
+  key: string,
+): string {
+  const entry = entries?.find((candidate) => candidate.key === key)
+  if (!entry) return key
+
+  const resource = t(`admin.permissions.resources.${entry.resource}`, {
+    defaultValue: entry.label,
+  })
+  return t(`admin.permissions.labels.${entry.kind}`, { resource, defaultValue: key })
 }
 
 /**
