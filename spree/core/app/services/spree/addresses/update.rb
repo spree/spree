@@ -84,7 +84,7 @@ module Spree
       # the edit forms post a partial set of fields.
       def prepare_address_params!(address, address_params)
         address_params[:customer_id] = address&.customer_id
-        address_params[:country_id] ||= address.country_id unless address_params[:country_iso].present?
+        address_params[:country_iso] ||= address.country_iso
         address_params.transform_values!(&:presence)
       end
 
