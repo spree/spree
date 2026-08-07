@@ -25,10 +25,13 @@ export function useAutoCollapseSidebar(active: boolean) {
 
   useEffect(() => {
     // On mobile the primary nav is an overlay sheet, not a column competing
-    // for width, so there is nothing to reclaim. Clearing the snapshot on the
-    // way through matters: crossing the breakpoint mid-settings would
-    // otherwise leave a stale value to restore from later.
+    // for width, so there is nothing to reclaim. Undo any collapse this hook
+    // already made before bailing out: `useIsMobile` reports false on its
+    // first render, so a phone loading straight into settings collapses the
+    // rail and only then learns it is mobile. Dropping the snapshot without
+    // restoring would strand the rail collapsed for the whole session.
     if (isMobile) {
+      if (restoreTo.current) setOpenTransient(true)
       restoreTo.current = null
       return
     }

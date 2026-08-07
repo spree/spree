@@ -263,44 +263,6 @@
 }
 
 @layer base {
-  /* Reduced motion. Movement is what the setting asks us to drop, so
-     `transform` transitions collapse to near-zero while colour, shadow and
-     opacity keep their timing — those aid comprehension rather than moving
-     anything, and killing them outright makes the UI feel broken rather than
-     calm (the setting means gentler, not none).
-
-     Looping decorative animations are held at their first frame; a spinner is
-     the deliberate exception, since it communicates that work is ongoing and
-     has no static equivalent.
-
-     Components needing more than this — where suppressing a transition would
-     leave a jump rather than remove a movement — read the preference directly
-     via `usePrefersReducedMotion` and hold position instead. */
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      /* Restricting the property list is what removes the movement:
-         `transform` is absent, so no element can animate position or scale no
-         matter what it asks for. The listed properties keep a normal duration
-         — they change appearance in place rather than moving anything, and
-         killing them too would read as broken rather than calm. */
-      transition-property: color, background-color, border-color, box-shadow, opacity, fill, stroke;
-      transition-duration: 100ms;
-      /* Holds looping decorative animations at their first frame. */
-      animation-duration: 0.01ms;
-      animation-iteration-count: 1;
-      scroll-behavior: auto;
-    }
-
-    /* Spinners are the deliberate exception: they signal that work is still
-       running and have no static equivalent. */
-    .animate-spin {
-      animation-duration: 1s;
-      animation-iteration-count: infinite;
-    }
-  }
-
   :root {
     --scrollbar-thumb: oklch(0.7 0 0); /* gray-400-ish */
     --scrollbar-thumb-hover: oklch(0.55 0 0);
@@ -425,5 +387,40 @@
       0 5px,
       5px -5px,
       -5px 0;
+  }
+}
+
+/* Reduced motion. Deliberately NOT inside `@layer base`: unlayered CSS always
+   outranks layered CSS, so a base-layer rule loses to every `transition-*`
+   utility and the preference would be silently ignored. Unlayered and last in
+   the file, this wins on source order instead.
+
+   Movement is what the setting asks us to drop, so `transform`, `translate`
+   and `scale` are absent from the property list below — no element can animate
+   position or size however it is styled. Colour, shadow and opacity keep their
+   normal timing: they change appearance in place rather than moving anything,
+   and killing them too reads as broken rather than calm.
+
+   Components needing more than this — where suppressing a transition leaves a
+   jump rather than removing a movement — read the preference directly via
+   `usePrefersReducedMotion` and hold position, or opt out with a
+   `motion-reduce:` utility. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-property: color, background-color, border-color, box-shadow, opacity, fill, stroke;
+    transition-duration: 100ms;
+    /* Holds looping decorative animations at their first frame. */
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    scroll-behavior: auto;
+  }
+
+  /* Spinners are the deliberate exception: they signal that work is ongoing
+     and have no static equivalent. */
+  .animate-spin {
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
   }
 }
