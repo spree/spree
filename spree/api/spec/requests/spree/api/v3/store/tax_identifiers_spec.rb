@@ -33,6 +33,48 @@ RSpec.describe 'Store tax identifiers', type: :request do
   describe 'a checkout override on the cart' do
     let(:cart) { create(:cart_with_line_items, line_items_count: 1, store: store, customer: user) }
 
+    it 'reads the customer registration when the cart has no override' do
+      create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
+
+      get "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
+          headers: headers.merge('x-spree-token' => cart.token), as: :json
+
+      # What the provider will be handed, which is the question a checkout asks.
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)['value']).to eq('DE123456789')
+    end
+
+    it 'prefers the cart override over the customer registration' do
+      create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, customer: nil, cart: cart, kind: 'eu_vat', value: 'DE999999999')
+
+      get "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
+          headers: headers.merge('x-spree-token' => cart.token), as: :json
+
+      expect(JSON.parse(response.body)['value']).to eq('DE999999999')
+    end
+
+    it 'clears only the override, leaving the customer registration alone' do
+      profile = create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, customer: nil, cart: cart, kind: 'eu_vat', value: 'DE999999999')
+
+      delete "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
+             headers: headers.merge('x-spree-token' => cart.token), as: :json
+
+      expect(response).to have_http_status(:no_content)
+      expect(profile.reload).to be_present
+      expect(cart.reload.tax_identifier).to be_nil
+    end
+
+    it 'has nothing of its own to delete when the registration is inherited' do
+      create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
+
+      delete "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
+             headers: headers.merge('x-spree-token' => cart.token), as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'is stored against the cart and read back' do
       put "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
           params: { kind: 'eu_vat', value: 'DE555555555' },

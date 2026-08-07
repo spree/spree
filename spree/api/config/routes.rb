@@ -497,6 +497,8 @@ Spree::Core::Engine.add_routes do
           end
           resources :refunds, controller: 'orders/refunds', only: [:index, :create]
           resources :tax_lines, controller: 'orders/tax_lines', only: [:index, :show]
+          # Read-only — the registration frozen onto the order at completion.
+          resource :tax_identifier, controller: 'orders/tax_identifiers', only: [:show]
           resources :discounts, controller: 'orders/discounts', only: [:index, :show, :create, :update, :destroy]
           resources :discount_codes, controller: 'orders/discount_codes', only: [:create, :destroy]
           resources :fees, controller: 'orders/fees', only: [:index, :show, :create, :update, :destroy]
