@@ -103,7 +103,8 @@ module Spree
     has_many :store_credits, class_name: 'Spree::StoreCredit'
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
-    has_many :taxonomies, class_name: 'Spree::Taxonomy'
+    # @deprecated Taxonomy is data-only in 6.0 and dropped in 6.1; use #categories.
+    has_many :taxonomies, class_name: 'Spree::Taxonomy', deprecated: true
     has_many :categories, class_name: 'Spree::Category'
     has_many :collections, class_name: 'Spree::Collection', dependent: :destroy_async
 

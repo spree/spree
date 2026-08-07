@@ -13,40 +13,7 @@ describe Spree::Category, type: :model do
     it { is_expected.to eql taxon.permalink }
   end
 
-  context 'Validations' do
-    describe '#check_for_root' do
-      let(:valid_taxon) { build(:taxon, name: 'Vaild Rails', parent_id: taxonomy.root.id, taxonomy: taxonomy) }
-
-      it 'does not validate the taxon' do
-        expect(taxon.valid?).to eq false
-      end
-
-      it 'validates the taxon' do
-        expect(valid_taxon.valid?).to eq true
-      end
-    end
-
-    describe '#parent_belongs_to_same_taxonomy' do
-      let(:valid_parent) { create(:taxon, name: 'Valid Parent', taxonomy: taxonomy) }
-      let(:invalid_parent) { create(:taxon, name: 'Invalid Parent', taxonomy: create(:taxonomy, store: store)) }
-
-      it 'does not validate the taxon' do
-        expect(build(:taxon, taxonomy: taxonomy, parent: invalid_parent).valid?).to eq false
-      end
-
-      it 'validates the taxon' do
-        expect(build(:taxon, taxonomy: taxonomy, parent: valid_parent).valid?).to eq true
-      end
-    end
-  end
-
   context 'Store ownership' do
-    describe '#requires_taxonomy?' do
-      it 'is false — a Category is owned via store_id, not a taxonomy' do
-        expect(described_class.new.requires_taxonomy?).to be(false)
-      end
-    end
-
     describe 'taxonomy presence' do
       it 'is valid without a taxonomy when store-owned' do
         category = described_class.new(name: 'Standalone', store: store)
@@ -261,58 +228,6 @@ describe Spree::Category, type: :model do
 
     it { expect(taxon.valid?).to eq(true) }
     it { expect { taxon.save! }.to change(taxon, :taxonomy).to(taxonomy) }
-  end
-
-  describe '#sync_taxonomy_name' do
-    let!(:taxonomy) { create(:taxonomy, name: 'Soft Goods', store: store) }
-    let!(:taxon) { create(:taxon, taxonomy: taxonomy, name: 'Socks' ) }
-
-    context 'when none root taxon name is updated' do
-      it 'does not update the taxonomy name' do
-        taxon.update!(name: 'Shoes')
-        taxonomy.reload
-
-        expect(taxonomy.name).not_to eql taxon.name
-        expect(taxonomy.name).to eql 'Soft Goods'
-      end
-    end
-
-    context 'when root taxon name is updated' do
-      it 'updates the taxonomy name' do
-        root_taxon = described_class.find_by(name: 'Soft Goods')
-
-        root_taxon.update!(name: 'Hard Goods')
-        taxonomy.reload
-
-        expect(taxonomy.name).not_to eql 'Soft Goods'
-        expect(taxonomy.name).to eql root_taxon.name
-      end
-    end
-
-    context 'when root taxon name is updated with special characters' do
-      it 'updates the taxonomy name' do
-        root_taxon = described_class.find_by(name: 'Soft Goods')
-
-        root_taxon.update!(name: 'spÉcial Numérique ƒ ˙ ¨ πø∆©')
-        taxonomy.reload
-
-        expect(taxonomy.name).not_to eql 'Soft Goods'
-        expect(taxonomy.name).to eql root_taxon.name
-      end
-    end
-
-    context 'when root taxon attribute other than name is updated' do
-      it 'does not update the taxonomy name' do
-        root_taxon = described_class.find_by(name: 'Soft Goods')
-
-        expect {
-          root_taxon.update!(permalink: 'something-else')
-          taxonomy.reload
-        }.not_to change { taxonomy.name }
-
-        expect(root_taxon.permalink).to eql 'something-else'
-      end
-    end
   end
 
   describe '#localized_slugs_for_store' do

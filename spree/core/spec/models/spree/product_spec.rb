@@ -1883,28 +1883,25 @@ describe Spree::Product, type: :model do
   describe 'after_touch :touch_categories' do
     subject { product.touch }
 
-    let!(:product) { create(:product, taxons: taxons) }
+    let!(:product) { create(:product, categories: categories) }
 
-    context 'without taxons' do
-      let(:taxons) { [] }
+    context 'without categories' do
+      let(:categories) { [] }
 
-      it 'skips enqueuing a job for touching the taxons' do
+      it 'skips enqueuing a job for touching the categories' do
         expect { subject }.not_to have_enqueued_job(Spree::Products::TouchCategoriesJob)
       end
     end
 
-    context 'with taxons' do
-      let(:taxons) { [taxon_1, taxon_2] }
+    context 'with categories' do
+      let(:categories) { [child_category] }
 
-      let!(:taxon_1) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
-      let!(:taxon_2) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
+      let!(:parent_category) { create(:category) }
+      let!(:child_category) { create(:category, parent: parent_category) }
 
-      let(:taxonomy) { create(:taxonomy) }
-
-      it 'enqueues a job for touching the taxons' do
+      it 'enqueues a job for touching the categories and their ancestors' do
         expect { subject }.to have_enqueued_job(Spree::Products::TouchCategoriesJob).with(
-          [taxonomy.root.id, taxon_1.id, taxon_2.id],
-          [taxonomy.id]
+          [parent_category.id, child_category.id]
         )
       end
     end

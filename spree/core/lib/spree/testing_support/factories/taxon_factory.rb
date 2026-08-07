@@ -1,5 +1,8 @@
 FactoryBot.define do
-  factory :taxon, class: Spree::Category, aliases: [:category] do
+  # Legacy taxonomy-backed category, retained for the upgrade-path specs that
+  # exercise the taxonomy severing migration. New specs use :category, which is
+  # store-owned and creates no taxonomy. Removed in 6.1 with Spree::Taxonomy.
+  factory :taxon, class: Spree::Category do
     sequence(:name) { |n| "taxon_#{n}" }
 
     association :taxonomy, strategy: :create

@@ -31,8 +31,8 @@ export const FIXTURE_BULK_PRODUCT_K = 'E2E Bulk Product K'
 export const FIXTURE_BULK_PRODUCT_L = 'E2E Bulk Product L'
 export const FIXTURE_BULK_PRODUCT_M = 'E2E Bulk Product M'
 export const FIXTURE_BULK_PRODUCT_N = 'E2E Bulk Product N'
-// Dedicated category seeded for the bulk-add-to-categories test; lives under
-// the `Categories` taxonomy alongside `FIXTURE_PROMO_TAXON`.
+// Dedicated category seeded for the bulk-add-to-categories test; a top-level
+// store category alongside `FIXTURE_PROMO_TAXON`.
 export const FIXTURE_BULK_CATEGORY = 'E2E Bulk Category'
 // Second channel beyond the seeded default `online`. Used by the
 // channels bulk-action and filter specs.

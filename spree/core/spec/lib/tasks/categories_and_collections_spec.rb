@@ -124,4 +124,72 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
       expect(Spree::Collection.where(store: store).count).to eq(1)
     end
   end
+
+  # Pre-6.0 permalinks were unique per taxonomy, so one store could hold two
+  # identical permalinks under different taxonomies. In 6.0 the permalink is the
+  # category's full path and must be unique per store — without disambiguation the
+  # backfill trips the unique index and aborts the task, leaving a half-migrated store.
+  describe 'colliding permalinks' do
+    # Builds +count+ taxonomies whose roots share a permalink, each keeping a child
+    # so the childless-root sweep can't quietly resolve the collision for us.
+    def build_colliding_roots(count, permalink: 'catalog')
+      taxonomies = Array.new(count) { |i| create(:taxonomy, name: "Shop #{i}", store: store) }
+
+      taxonomies.each_with_index do |taxonomy, index|
+        Spree::Category.new(name: "Child #{index}", taxonomy_id: taxonomy.id, parent_id: taxonomy.root.id).
+          save!(validate: false)
+      end
+
+      # Clear store_id first — that is the genuine pre-upgrade state, and it is what
+      # keeps these rows out of the store-scoped index while we set up the collision.
+      Spree::Category.unscoped.update_all(store_id: nil)
+
+      taxonomies.each do |taxonomy|
+        Spree::Category.unscoped.where(id: taxonomy.root.id).update_all(permalink: permalink)
+      end
+
+      taxonomies
+    end
+
+    def permalinks
+      Spree::Category.unscoped.pluck(:permalink).compact
+    end
+
+    it 'completes instead of aborting on the store-scoped unique index' do
+      build_colliding_roots(2)
+
+      expect { subject.invoke }.not_to raise_error
+      expect(permalinks).to include('catalog', 'catalog-shop-1')
+    end
+
+    it 'gives every category a distinct permalink when more than two collide' do
+      build_colliding_roots(3)
+      subject.invoke
+
+      expect(permalinks.uniq.size).to eq(permalinks.size)
+    end
+
+    it 'leaves categories with distinct permalinks alone' do
+      taxonomy = create(:taxonomy, name: 'Solo', store: store)
+      # A child keeps the root alive past the childless-root sweep.
+      Spree::Category.new(name: 'Child', taxonomy_id: taxonomy.id, parent_id: taxonomy.root.id).
+        save!(validate: false)
+      Spree::Category.unscoped.where(id: taxonomy.root.id).update_all(permalink: 'untouched')
+
+      subject.invoke
+
+      expect(permalinks).to include('untouched')
+    end
+
+    it 'leaves the rewritten permalinks untouched on a second run' do
+      build_colliding_roots(2)
+      subject.invoke
+      snapshot = Spree::Category.unscoped.order(:id).pluck(:id, :name, :permalink, :store_id)
+
+      subject.reenable
+      subject.invoke
+
+      expect(Spree::Category.unscoped.order(:id).pluck(:id, :name, :permalink, :store_id)).to eq(snapshot)
+    end
+  end
 end

@@ -30,10 +30,6 @@ RSpec.describe Spree::PermissionSets::ProductManagement do
       expect(ability.can?(:manage, Spree::Category)).to be true
     end
 
-    it 'grants manage access to Taxonomy' do
-      expect(ability.can?(:manage, Spree::Taxonomy)).to be true
-    end
-
     it 'grants manage access to Classification' do
       expect(ability.can?(:manage, Spree::ProductCategory)).to be true
     end

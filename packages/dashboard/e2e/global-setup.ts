@@ -52,8 +52,7 @@ const BOOTSTRAP_RUBY = [
   's.add_user(admin, Spree::Role.default_admin_role) unless s.role_users.exists?(user: admin)',
   // Idempotent fixtures for promotion rule/action editor specs. Customer
   // groups have no admin UI yet, so this is the only path to seed one.
-  `taxonomy = s.taxonomies.find_or_create_by!(name: 'Categories')`,
-  `category = taxonomy.taxons.where(name: '${FIXTURE_PROMO_TAXON}').first_or_create!(parent: taxonomy.root)`,
+  `category = s.categories.where(name: '${FIXTURE_PROMO_TAXON}').first_or_create!(parent: nil)`,
   `shipping_category = Spree::ShippingCategory.first || Spree::ShippingCategory.create!(name: 'Default')`,
   `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(shipping_category: shipping_category, store: s, status: 'active')`,
   `product.default_variant.set_price(s.default_currency, 19.99)`,
@@ -88,9 +87,8 @@ const BOOTSTRAP_RUBY = [
   // Pre-list M/N on the bulk channel so the remove-from-channels test
   // has something to undo.
   `bulk_channel.add_products([Spree::Product.find_by(name: '${FIXTURE_BULK_PRODUCT_M}').id, Spree::Product.find_by(name: '${FIXTURE_BULK_PRODUCT_N}').id])`,
-  // Category used by the bulk-add-to-categories test. Sits in the same
-  // `Categories` taxonomy as the promo taxon above.
-  `taxonomy.taxons.where(name: '${FIXTURE_BULK_CATEGORY}').first_or_create!(parent: taxonomy.root)`,
+  // Category used by the bulk-add-to-categories test.
+  `s.categories.where(name: '${FIXTURE_BULK_CATEGORY}').first_or_create!(parent: nil)`,
   `Spree.user_class.where(email: '${FIXTURE_PROMO_CUSTOMER_EMAIL}').first_or_create! { |u| u.password = 'customer123'; u.password_confirmation = 'customer123'; u.first_name = '${FIXTURE_PROMO_CUSTOMER_FIRST_NAME}'; u.last_name = '${FIXTURE_PROMO_CUSTOMER_LAST_NAME}' }`,
   `s.customer_groups.where(name: '${FIXTURE_PROMO_CUSTOMER_GROUP}').first_or_create!`,
   // Make the store multi-currency so the money-entry forms (store credit,

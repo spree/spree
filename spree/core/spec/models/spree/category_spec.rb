@@ -3,20 +3,49 @@ require 'spec_helper'
 RSpec.describe Spree::Category, type: :model do
   let(:store) { @default_store }
 
-  describe 'uniqueness across stores' do
-    it 'allows the same top-level name/permalink in different stores' do
+  # The permalink is the category's full path, so it alone identifies a category
+  # within a store. Names are unconstrained — the path disambiguates them.
+  describe 'permalink uniqueness' do
+    it 'allows the same permalink in different stores' do
       other = create(:store)
       described_class.create!(name: 'Shoes', store: store)
-      duplicate = described_class.new(name: 'Shoes', store: other)
 
-      expect(duplicate).to be_valid
+      expect(described_class.new(name: 'Shoes', store: other)).to be_valid
     end
 
-    it 'still rejects a duplicate name within the same store' do
+    it 'rejects a duplicate permalink within the same store' do
       described_class.create!(name: 'Shoes', store: store)
-      duplicate = described_class.new(name: 'Shoes', store: store)
 
-      expect(duplicate).not_to be_valid
+      expect(described_class.new(name: 'Shoes', store: store)).not_to be_valid
+    end
+
+    # Guards the index itself, not the validation: top-level categories have
+    # parent_id IS NULL, and the previous (permalink, parent_id, taxonomy_id)
+    # index left them unconstrained because unique indexes treat NULLs as distinct.
+    it 'enforces it at the database level, including for top-level categories' do
+      described_class.create!(name: 'Shoes', store: store)
+      duplicate = described_class.new(name: 'Boots', permalink: 'shoes', store: store)
+
+      expect { duplicate.save!(validate: false) }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it 'allows the same name under different parents, since the paths differ' do
+      men = described_class.create!(name: 'Men', store: store)
+      women = described_class.create!(name: 'Women', store: store)
+      described_class.create!(name: 'Shoes', parent: men, store: store)
+
+      sibling = described_class.new(name: 'Shoes', parent: women, store: store)
+
+      expect(sibling).to be_valid
+      expect { sibling.save! }.not_to raise_error
+      expect(sibling.reload.permalink).to eq('women/shoes')
+    end
+
+    it 'rejects two categories sharing a parent and a name, whose paths collide' do
+      men = described_class.create!(name: 'Men', store: store)
+      described_class.create!(name: 'Shoes', parent: men, store: store)
+
+      expect(described_class.new(name: 'Shoes', parent: men, store: store)).not_to be_valid
     end
   end
 
@@ -95,12 +124,6 @@ RSpec.describe Spree::Category, type: :model do
 
       expect(child.store).to eq(store)
       expect(child.taxonomy).to be_nil
-    end
-  end
-
-  describe '#requires_taxonomy?' do
-    it 'is false' do
-      expect(described_class.new.requires_taxonomy?).to be(false)
     end
   end
 

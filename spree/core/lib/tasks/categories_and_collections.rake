@@ -1,3 +1,54 @@
+# Rewrites permalinks that would collide once every category in a store shares one
+# namespace. Pre-6.0 permalinks were unique per taxonomy, so one store could hold
+# two "catalog" roots under different taxonomies; in 6.0 the permalink is the
+# category's full path and must be unique per store. The first category of each
+# (store, permalink) group keeps its permalink; the rest get their taxonomy's name
+# appended, then a numeric suffix if that is taken too.
+#
+# @return [void]
+def disambiguate_colliding_permalinks
+  renamed = 0
+
+  Spree::Taxonomy.distinct.pluck(:store_id).compact.each do |store_id|
+    categories = Spree::Category.unscoped.
+                 where(taxonomy_id: Spree::Taxonomy.where(store_id: store_id).select(:id)).
+                 order(:id).to_a
+    next if categories.size < 2
+
+    # Permalinks are unique store-wide, so already-migrated rows count as taken.
+    seen = Spree::Category.unscoped.
+           where(store_id: store_id).
+           where.not(id: categories.map(&:id)).pluck(:permalink).compact.to_set
+
+    categories.each do |category|
+      permalink = category.read_attribute(:permalink)
+      next if permalink.blank?
+
+      if seen.include?(permalink)
+        candidate = unique_permalink(permalink, category, seen)
+        Spree::Category.unscoped.where(id: category.id).update_all(permalink: candidate)
+        seen << candidate
+        renamed += 1
+      else
+        seen << permalink
+      end
+    end
+  end
+
+  puts "  disambiguated #{renamed} colliding category permalinks." if renamed.positive?
+end
+
+# @return [String] the first non-colliding variant of +permalink+
+def unique_permalink(permalink, category, seen)
+  suffix = category.taxonomy&.read_attribute(:name).presence&.parameterize
+  candidate = suffix.present? ? "#{permalink}-#{suffix}" : permalink
+  return candidate unless seen.include?(candidate)
+
+  counter = 2
+  counter += 1 while seen.include?("#{candidate}-#{counter}")
+  "#{candidate}-#{counter}"
+end
+
 namespace :spree do
   # Migrates rule-based (automatic) categories to Spree::Collection and rewrites the
   # class-name strings that Phase 3 renamed. Idempotent (each automatic category is
@@ -133,20 +184,29 @@ namespace :spree do
     # categories are store-owned; Taxonomy + the taxonomy_id column drop in 6.1.
     puts 'Severing taxonomy links from surviving categories...'
 
-    # Backfill store_id from the taxonomy first so nulling taxonomy_id never orphans a
-    # category (belt-and-suspenders alongside spree:taxons:backfill_store_id).
-    Spree::Taxonomy.find_each do |taxonomy|
-      Spree::Category.unscoped.where(store_id: nil, taxonomy_id: taxonomy.id).
-        update_all(store_id: taxonomy.store_id)
-    end
-
     # Drop legacy taxonomy roots (parentless, taxonomy-backed containers) left with no
     # children after the automatic migration; non-empty roots stay as top-level categories.
+    # Runs BEFORE the store_id backfill so throwaway roots can't trip the store-scoped
+    # unique index on their way out.
     parent_ids = Spree::Category.unscoped.where.not(parent_id: nil).distinct.pluck(:parent_id)
     childless_root_ids = Spree::Category.unscoped.where.not(taxonomy_id: nil).
                          where(parent_id: nil).where.not(id: parent_ids).ids
     Spree::Category.unscoped.where(id: childless_root_ids).find_each(&:destroy!)
     puts "  dropped #{childless_root_ids.size} childless taxonomy roots."
+
+    # Pre-6.0 permalinks were unique per taxonomy, so one store could hold two
+    # identical permalinks under different taxonomies — which collide once the
+    # permalink becomes store-unique. Rewrite the losers before the backfill,
+    # otherwise the unique index aborts this task midway and leaves the store
+    # half-migrated.
+    disambiguate_colliding_permalinks
+
+    # Backfill store_id from the taxonomy so nulling taxonomy_id never orphans a
+    # category (belt-and-suspenders alongside spree:taxons:backfill_store_id).
+    Spree::Taxonomy.find_each do |taxonomy|
+      Spree::Category.unscoped.where(store_id: nil, taxonomy_id: taxonomy.id).
+        update_all(store_id: taxonomy.store_id)
+    end
 
     # Null the taxonomy link on everything that remains — categories are store-owned now.
     severed = Spree::Category.unscoped.where.not(taxonomy_id: nil).update_all(taxonomy_id: nil)
