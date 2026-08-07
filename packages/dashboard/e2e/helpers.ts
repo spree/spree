@@ -8,6 +8,9 @@ import { CREDENTIALS_FILE } from './paths'
  * by name to make matching deterministic.
  */
 export const FIXTURE_PROMO_TAXON = 'E2E Promo Category'
+// Permalinks are unique per store, names are not — the seed looks fixtures up by
+// permalink so it can never match an unrelated category.
+export const FIXTURE_PROMO_TAXON_PERMALINK = 'e2e-promo-category'
 export const FIXTURE_PROMO_PRODUCT = 'E2E Promo Product'
 // Active products used by products-bulk.spec.ts. Each test owns a disjoint
 // pair so the serial suite doesn't cross-contaminate (status mutations on
@@ -34,6 +37,7 @@ export const FIXTURE_BULK_PRODUCT_N = 'E2E Bulk Product N'
 // Dedicated category seeded for the bulk-add-to-categories test; a top-level
 // store category alongside `FIXTURE_PROMO_TAXON`.
 export const FIXTURE_BULK_CATEGORY = 'E2E Bulk Category'
+export const FIXTURE_BULK_CATEGORY_PERMALINK = 'e2e-bulk-category'
 // Second channel beyond the seeded default `online`. Used by the
 // channels bulk-action and filter specs.
 export const FIXTURE_BULK_CHANNEL_CODE = 'e2e-bulk'

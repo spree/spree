@@ -3,6 +3,7 @@ import { unlinkSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import {
   FIXTURE_BULK_CATEGORY,
+  FIXTURE_BULK_CATEGORY_PERMALINK,
   FIXTURE_BULK_CHANNEL_CODE,
   FIXTURE_BULK_CHANNEL_NAME,
   FIXTURE_BULK_PRODUCT_A,
@@ -25,6 +26,7 @@ import {
   FIXTURE_PROMO_CUSTOMER_GROUP,
   FIXTURE_PROMO_PRODUCT,
   FIXTURE_PROMO_TAXON,
+  FIXTURE_PROMO_TAXON_PERMALINK,
 } from './helpers'
 import { ASYNC_JOBS_INITIALIZER, CREDENTIALS_FILE, E2E_DIR, RAILS_PID_FILE } from './paths'
 
@@ -52,7 +54,9 @@ const BOOTSTRAP_RUBY = [
   's.add_user(admin, Spree::Role.default_admin_role) unless s.role_users.exists?(user: admin)',
   // Idempotent fixtures for promotion rule/action editor specs. Customer
   // groups have no admin UI yet, so this is the only path to seed one.
-  `category = s.categories.where(name: '${FIXTURE_PROMO_TAXON}').first_or_create!(parent: nil)`,
+  // Looked up by permalink, not name: category names are not unique, so a name
+  // lookup could match an unrelated (or child) category.
+  `category = s.categories.where(permalink: '${FIXTURE_PROMO_TAXON_PERMALINK}').first_or_create!(name: '${FIXTURE_PROMO_TAXON}', parent: nil)`,
   `shipping_category = Spree::ShippingCategory.first || Spree::ShippingCategory.create!(name: 'Default')`,
   `product = Spree::Product.where(name: '${FIXTURE_PROMO_PRODUCT}').first_or_create!(shipping_category: shipping_category, store: s, status: 'active')`,
   `product.default_variant.set_price(s.default_currency, 19.99)`,
@@ -87,8 +91,9 @@ const BOOTSTRAP_RUBY = [
   // Pre-list M/N on the bulk channel so the remove-from-channels test
   // has something to undo.
   `bulk_channel.add_products([Spree::Product.find_by(name: '${FIXTURE_BULK_PRODUCT_M}').id, Spree::Product.find_by(name: '${FIXTURE_BULK_PRODUCT_N}').id])`,
-  // Category used by the bulk-add-to-categories test.
-  `s.categories.where(name: '${FIXTURE_BULK_CATEGORY}').first_or_create!(parent: nil)`,
+  // Category used by the bulk-add-to-categories test, found by permalink for the
+  // same reason as the promo category above.
+  `s.categories.where(permalink: '${FIXTURE_BULK_CATEGORY_PERMALINK}').first_or_create!(name: '${FIXTURE_BULK_CATEGORY}', parent: nil)`,
   `Spree.user_class.where(email: '${FIXTURE_PROMO_CUSTOMER_EMAIL}').first_or_create! { |u| u.password = 'customer123'; u.password_confirmation = 'customer123'; u.first_name = '${FIXTURE_PROMO_CUSTOMER_FIRST_NAME}'; u.last_name = '${FIXTURE_PROMO_CUSTOMER_LAST_NAME}' }`,
   `s.customer_groups.where(name: '${FIXTURE_PROMO_CUSTOMER_GROUP}').first_or_create!`,
   // Make the store multi-currency so the money-entry forms (store credit,
