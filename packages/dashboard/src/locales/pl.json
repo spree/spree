@@ -2041,6 +2041,10 @@
         "edit": {
           "bulk_prices": {
             "no_variants": "Dodaj co najmniej jeden wariant, aby rozpocząć edycję cen."
+          },
+          "bulk_shipping": {
+            "no_variants": "Dodaj co najmniej jeden wariant, aby edytować dane wysyłki.",
+            "grid_aria": "Arkusz wysyłki wariantów"
           }
         },
         "inventory": {

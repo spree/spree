@@ -2029,6 +2029,10 @@
         "edit": {
           "bulk_prices": {
             "no_variants": "至少添加一个变体以开始编辑价格。"
+          },
+          "bulk_shipping": {
+            "no_variants": "请至少添加一个变体以编辑运输信息。",
+            "grid_aria": "变体运输表格"
           }
         },
         "inventory": {

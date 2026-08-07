@@ -140,8 +140,9 @@ interface MoneyCellProps extends BaseCellProps {
    *  `"12,50"` are fine, the backend's `Spree::LocalizedNumber` does the
    *  parsing. `null` only when the user explicitly blanks the field. */
   onChange: (next: string | null) => void
-  /** Currency symbol rendered as a non-editable prefix (`$`, `€`, `kr`, …). */
-  symbol: string
+  /** Currency symbol rendered as a non-editable prefix (`$`, `€`, `kr`, …).
+   *  Omit for a plain decimal cell with no prefix. */
+  symbol?: string
   /**
    * Locale decimal separator used only for display (canonical `.` →
    * locale char). Whatever the user types is shipped as-is; the
@@ -252,12 +253,14 @@ export function MoneyCell({
         isEditing && 'bg-card ring-2 ring-blue-500 ring-inset',
       )}
     >
-      <span
-        className="pl-3 text-muted-foreground pointer-events-none select-none tabular-nums"
-        aria-hidden
-      >
-        {symbol}
-      </span>
+      {symbol != null && (
+        <span
+          className="pl-3 text-muted-foreground pointer-events-none select-none tabular-nums"
+          aria-hidden
+        >
+          {symbol}
+        </span>
+      )}
       <input
         ref={inputRef}
         type="text"
@@ -279,12 +282,20 @@ export function MoneyCell({
         }}
         aria-label={ariaLabel}
         className={cn(
-          'block h-9 w-full cursor-cell border-0 bg-transparent pl-1 pr-3 text-right tabular-nums outline-none',
+          'block h-9 w-full cursor-cell border-0 bg-transparent pr-3 text-right tabular-nums outline-none',
+          symbol != null ? 'pl-1' : 'pl-3',
           isEditing && 'cursor-text',
         )}
       />
     </div>
   )
+}
+
+/** Editable decimal cell — `MoneyCell` without the currency prefix. Keeps
+ *  decimals (unlike `NumberCell`, which truncates to integers); for
+ *  measurements like weight and dimensions. */
+export function DecimalCell(props: Omit<MoneyCellProps, 'symbol'>) {
+  return <MoneyCell {...props} />
 }
 
 interface SwitchCellProps extends BaseCellProps {
