@@ -108,6 +108,18 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
       end
     end
 
+    # Uniqueness is on the permalink, so two different names that normalize to
+    # the same slug are the same category as far as the database is concerned.
+    it 'reuses a category whose name differs but whose slug matches' do
+      existing = Spree::Category.create!(name: 'Foo Bar', store: store)
+
+      expect {
+        described_class.perform_now(product.id, store.id, ['Foo-Bar'])
+      }.not_to change { Spree::Category.unscoped.count }
+
+      expect(product.reload.categories).to eq([existing])
+    end
+
     # An installation that has not run the upgrade task still has categories with
     # a NULL store_id resolving their store through a taxonomy. The import has to
     # find those, or it builds a parallel tree beside the merchant's own.

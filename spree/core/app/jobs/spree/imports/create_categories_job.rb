@@ -31,9 +31,23 @@ module Spree
         return if category_names.empty?
 
         category_names.inject(nil) do |parent, category_name|
-          Spree::Category.for_store(store).where(parent: parent).with_matching_name(category_name).first ||
+          siblings = Spree::Category.for_store(store).where(parent: parent)
+
+          siblings.with_matching_name(category_name).first ||
+            find_by_permalink(siblings, parent, category_name) ||
             store.categories.create!(name: category_name, parent: parent)
         end
+      end
+
+      # Uniqueness is on the permalink, and distinct names can normalize to the
+      # same slug ("Foo Bar" and "Foo-Bar" both become "foo-bar"). Matching on
+      # name alone would miss that row and then fail creating a duplicate.
+      def find_by_permalink(siblings, parent, category_name)
+        slug = category_name.to_s.to_url
+        return if slug.blank?
+
+        permalink = parent.present? ? "#{parent.permalink}/#{slug}" : slug
+        siblings.find_by(permalink: permalink)
       end
     end
   end
