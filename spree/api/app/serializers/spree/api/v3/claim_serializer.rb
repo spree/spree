@@ -51,6 +51,8 @@ module Spree
           claim.canceled_at&.iso8601
         end
 
+        one :reason, resource: proc { Spree.api.claim_reason_serializer }, if: proc { expand?('reason') }
+
         many :claim_line_items,
              resource: proc { Spree.api.claim_line_item_serializer },
              if: proc { expand?('claim_line_items') }

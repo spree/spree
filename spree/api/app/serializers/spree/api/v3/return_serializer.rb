@@ -51,6 +51,8 @@ module Spree
           return_record.canceled_at&.iso8601
         end
 
+        one :reason, resource: proc { Spree.api.return_reason_serializer }, if: proc { expand?('reason') }
+
         many :return_line_items,
              resource: proc { Spree.api.return_line_item_serializer },
              if: proc { expand?('return_line_items') }

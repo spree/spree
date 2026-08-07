@@ -19,6 +19,7 @@ module Spree
                resource: proc { Spree.api.admin_claim_line_item_serializer },
                if: proc { expand?('claim_line_items') }
 
+          one :reason, resource: proc { Spree.api.admin_claim_reason_serializer }, if: proc { expand?('reason') }
           one :order, resource: proc { Spree.api.admin_order_serializer }, if: proc { expand?('order') }
           many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }
         end

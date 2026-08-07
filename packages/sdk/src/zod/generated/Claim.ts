@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { ClaimLineItemSchema } from './ClaimLineItem';
+import { ClaimReasonSchema } from './ClaimReason';
 
 export const ClaimSchema = z.object({
   id: z.string(),
@@ -15,6 +16,7 @@ export const ClaimSchema = z.object({
   resolved_at: z.string().nullable(),
   denied_at: z.string().nullable(),
   canceled_at: z.string().nullable(),
+  reason: ClaimReasonSchema.optional(),
   claim_line_items: z.array(ClaimLineItemSchema).optional(),
 });
 
