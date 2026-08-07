@@ -239,6 +239,25 @@ when there is a real implementation behind it, never a speculative column
 plus a provider key nobody declares.
 
 
+## 2026-08-07: Provider gems live under spree/providers/
+
+Established with the easypost move (`spree/easypost` →
+`spree/providers/easypost`) while exactly one provider gem existed and
+none had published. Rationale: the provider roster (easypost, stripe,
+adyen, avalara, inpost, possibly meilisearch) will outnumber the four
+platform gems (core/api/emails/dashboard), and a flat `spree/` stops
+communicating what is load-bearing versus optional — Medusa's monorepo
+draws the same line. Kept under `spree/` (not top-level) so the
+`spree/**` CI path filters, gem-cache keys and starter globs keep
+working. Gem names stay flat (`spree_easypost`, never
+`spree_provider_easypost`) — the directory groups, the gem name is the
+public identity. Mechanical consequences: CI matrix entries carry a
+`dir:` field when it differs from the project name, and Bundler path
+blocks need `glob: '{,*,*/*,*/*/*}.gemspec'` to reach the third level
+(applied in the worktree server Gemfile; spree-starter needs the same
+line when providers ship). `6.0-payment-gateways-monorepo.md` retargeted
+to `spree/providers/stripe` / `spree/providers/adyen`.
+
 ## 2026-08-06: Integrations become the admin-managed credential surface; verify-before-activate
 
 `Spree::Integration` (shipped 5.x, previously zero subclasses, no API,
