@@ -56,7 +56,7 @@ describe Spree::Address, type: :model do
                         phone: FFaker::PhoneNumber.short_phone_number,
                         state_id: state.id,
                         state_name: state.name,
-                        zipcode: FFaker::AddressUS.zip_code)
+                        zipcode: Spree::TestingSupport::CountryPool.postal_code_for(Spree::Country.first&.iso))
 
       cloned = original.clone
 
@@ -95,7 +95,7 @@ describe Spree::Address, type: :model do
 
       context '#country_iso_name' do
         it 'return proper country_iso_name' do
-          expect(address.country_iso_name).to eq 'UNITED STATES'
+          expect(address.country_iso_name).to eq 'UNITED STATES OF AMERICA'
         end
       end
 
@@ -175,6 +175,8 @@ describe Spree::Address, type: :model do
       address.state = state
       address.state_name = 'maryland'
       address.country = create(:country, states_required: true)
+      # The postal format travels with the country.
+      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for(address.country.iso)
       expect(address).to be_valid
       expect(address.state_id).to be_nil
     end
