@@ -24,7 +24,7 @@ Methods without the EasyPost provider keep pricing through their calculator — 
 ## Testing
 
 ```bash
-cd spree/easypost
+cd spree/providers/easypost
 bundle install
 bundle exec rake test_app
 bundle exec rspec

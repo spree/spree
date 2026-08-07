@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require_relative '../core/lib/spree/core/version.rb'
+require_relative '../../core/lib/spree/core/version.rb'
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
