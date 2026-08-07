@@ -75,7 +75,7 @@ module Spree
     has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
     has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory', dependent: :delete_all, inverse_of: :product
-    has_many :categories, -> { manual }, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
+    has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
     has_many :taxonomies, through: :categories
 
     # @deprecated The classification_count column was renamed to categories_count in 6.0.

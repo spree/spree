@@ -22,6 +22,7 @@ module Spree
       def call(product_type:)
         return success(0) if nothing_to_apply?(product_type)
 
+        store = product_type.store
         changed_product_ids = Set.new
         categorized_product_ids = Set.new
 
@@ -33,7 +34,7 @@ module Spree
           categorized_product_ids.merge(result[:categorized_ids])
         end
 
-        settle_category_bookkeeping(categorized_product_ids.to_a, product_type.category_ids)
+        settle_category_bookkeeping(store, categorized_product_ids.to_a, product_type.category_ids)
 
         success(changed_product_ids.size)
       end
@@ -48,57 +49,69 @@ module Spree
       #
       # @return [Hash] :changed_ids and :categorized_ids for this batch
       def apply_batch(product_type, product_ids)
-        changed = add_option_types(product_ids, product_type.option_type_ids)
-        categorized = add_categories(product_ids, product_type.category_ids)
+        store = product_type.store
+        # Only ids that belong to this store — a type pointing at another
+        # store's category must not drag it onto a product.
+        category_ids = Spree::Category.for_store(store).where(id: product_type.category_ids).ids
+
+        changed = add_option_types(store, product_ids, product_type.option_type_ids)
+        categorized = add_categories(store, product_ids, category_ids)
 
         { changed_ids: changed | categorized, categorized_ids: categorized }
       end
 
       # insert_all skips the ProductCategory callbacks, so the per-product
       # counts they maintain are recomputed here. Safe to call per batch.
-      def settle_product_counters(product_ids)
+      def settle_product_counters(store, product_ids)
         return if product_ids.empty?
 
-        counts = Spree::ProductCategory.where(product_id: product_ids).group(:product_id).count
+        products = store.products.where(id: product_ids)
+        counts = Spree::ProductCategory.where(product_id: products.select(:id)).group(:product_id).count
         counts.each do |product_id, count|
-          Spree::Product.where(id: product_id).update_all(categories_count: count)
+          store.products.where(id: product_id).update_all(categories_count: count)
         end
 
-        Spree::Product.where(id: product_ids).find_each(&:enqueue_search_index)
+        products.find_each(&:enqueue_search_index)
       end
 
       # The category side settles once for the whole run: `products_count` is a
       # subtree-wide recount over each category and its ancestors, so repeating
       # it per batch would cost more than the backfill.
-      def settle_category_counters(category_ids)
+      def settle_category_counters(store, category_ids)
         return if category_ids.empty?
 
-        Spree::Category.recalculate_products_count(category_ids)
-        Spree::Category.where(id: category_ids).touch_all
+        categories = Spree::Category.for_store(store).where(id: category_ids)
+        Spree::Category.recalculate_products_count(categories.ids)
+        categories.touch_all
       end
 
       # Both halves, for callers that run the backfill in one pass.
-      def settle_category_bookkeeping(product_ids, category_ids)
-        settle_product_counters(product_ids)
-        settle_category_counters(category_ids) if product_ids.any?
+      def settle_category_bookkeeping(store, product_ids, category_ids)
+        settle_product_counters(store, product_ids)
+        settle_category_counters(store, category_ids) if product_ids.any?
       end
 
       private
 
       # @return [Array] ids of products that gained at least one option type
-      def add_option_types(product_ids, option_type_ids)
+      def add_option_types(store, product_ids, option_type_ids)
         return [] if option_type_ids.empty?
 
-        existing = Spree::ProductOptionType.where(product_id: product_ids, option_type_id: option_type_ids).
+        # Ids come from the type's own products, but re-scoping through the
+        # store keeps a stale or cross-store id from reaching an insert.
+        scoped_ids = store.products.where(id: product_ids).ids
+        return [] if scoped_ids.empty?
+
+        existing = Spree::ProductOptionType.where(product_id: scoped_ids, option_type_id: option_type_ids).
                    pluck(:product_id, :option_type_id).to_set
 
         # acts_as_list scopes position per product, so continue each product's
         # own sequence rather than restarting at 1.
-        highest_positions = Spree::ProductOptionType.where(product_id: product_ids).
+        highest_positions = Spree::ProductOptionType.where(product_id: scoped_ids).
                             group(:product_id).maximum(:position)
 
         now = Time.current
-        rows = product_ids.flat_map do |product_id|
+        rows = scoped_ids.flat_map do |product_id|
           position = highest_positions[product_id].to_i
 
           option_type_ids.filter_map do |option_type_id|
@@ -117,10 +130,13 @@ module Spree
       end
 
       # @return [Array] ids of products that gained at least one category
-      def add_categories(product_ids, category_ids)
+      def add_categories(store, product_ids, category_ids)
         return [] if category_ids.empty?
 
-        existing = Spree::ProductCategory.where(product_id: product_ids, category_id: category_ids).
+        scoped_ids = store.products.where(id: product_ids).ids
+        return [] if scoped_ids.empty?
+
+        existing = Spree::ProductCategory.where(product_id: scoped_ids, category_id: category_ids).
                    pluck(:product_id, :category_id).to_set
 
         # acts_as_list scopes position per category here (unlike option types,
@@ -132,7 +148,7 @@ module Spree
         rows = category_ids.flat_map do |category_id|
           position = highest_positions[category_id].to_i
 
-          product_ids.filter_map do |product_id|
+          scoped_ids.filter_map do |product_id|
             next if existing.include?([product_id, category_id])
 
             position += 1

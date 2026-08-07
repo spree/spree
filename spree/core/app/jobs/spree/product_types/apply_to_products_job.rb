@@ -57,15 +57,17 @@ module Spree
         return if category_ids.empty?
 
         service = Spree::ProductTypes::ApplyToProducts.new
+        store = @product_type.store
+
         # Per-product counters batch — the whole point of the cursor is not
         # holding a catalog-sized id list in memory.
         @product_type.products.select(:id).
           find_in_batches(batch_size: Spree::ProductTypes::ApplyToProducts::BATCH_SIZE) do |products|
-          service.settle_product_counters(products.map(&:id))
+          service.settle_product_counters(store, products.map(&:id))
         end
 
         # The subtree-wide category recount runs once.
-        service.settle_category_counters(category_ids)
+        service.settle_category_counters(store, category_ids)
       end
     end
   end

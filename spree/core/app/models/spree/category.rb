@@ -150,8 +150,9 @@ module Spree
     # Categories are manual only in 6.0 — rule-based (automatic) membership lives on
     # Spree::Collection. The automatic/rules_match_policy/sort_order columns and the
     # spree_taxon_rules table are retained for the Phase 4 data migration and dropped
-    # in 6.1. The manual scope stays as a guard against any stray automatic row on the
-    # category surfaces (a no-op once the migration clears them).
+    # in 6.1. Nothing creates an automatic category any more, so the model
+    # associations carry no scope; the API controllers still apply it as a
+    # boundary guard against rows an install has yet to migrate.
     scope :manual, -> { where.not(automatic: true) }
 
     def manual?

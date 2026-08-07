@@ -106,4 +106,29 @@ RSpec.describe Spree::ProductTypes::ApplyToProducts do
 
     expect(apply.value).to eq(1)
   end
+  describe 'store boundaries' do
+    let(:other_store) { create(:store) }
+
+    it 'does not attach a category belonging to another store' do
+      foreign_category = create(:category, store: other_store)
+      product_type.categories << foreign_category
+      product_type.categories << category
+      product = create(:product)
+      product.update_column(:product_type_id, product_type.id)
+
+      apply
+
+      expect(product.reload.categories).to eq([category])
+    end
+
+    it 'leaves another store\'s products alone even if they carry the type' do
+      product_type.option_types << size
+      foreign_product = create(:product, store: other_store)
+      foreign_product.update_column(:product_type_id, product_type.id)
+
+      apply
+
+      expect(foreign_product.reload.option_types).to be_empty
+    end
+  end
 end
