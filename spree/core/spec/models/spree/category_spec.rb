@@ -41,6 +41,20 @@ RSpec.describe Spree::Category, type: :model do
       expect(sibling.reload.permalink).to eq('women/shoes')
     end
 
+    # The model validation is case-insensitive while the database index is not,
+    # so a case variant has to be caught before it reaches the index.
+    it 'rejects a permalink that differs only by case' do
+      described_class.create!(name: 'Shoes', store: store)
+      duplicate = described_class.new(name: 'Other', permalink: 'SHOES', store: store)
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:permalink]).to be_present
+    end
+
+    it 'generates lowercase permalinks, so mixed-case names cannot collide by case alone' do
+      expect(described_class.create!(name: 'Mixed Case Name', store: store).permalink).to eq('mixed-case-name')
+    end
+
     it 'rejects two categories sharing a parent and a name, whose paths collide' do
       men = described_class.create!(name: 'Men', store: store)
       described_class.create!(name: 'Shoes', parent: men, store: store)
@@ -267,9 +281,12 @@ RSpec.describe Spree::Category, type: :model do
   it_behaves_like 'metadata'
 
   describe '#to_param' do
-    subject { super().to_param }
+    it 'is the permalink, so category URLs use the full path' do
+      category = create(:category, name: 'Ruby on Rails')
 
-    it { is_expected.to eql category.permalink }
+      expect(category.to_param).to eq(category.permalink)
+      expect(category.to_param).to eq('ruby-on-rails')
+    end
   end
 
 
