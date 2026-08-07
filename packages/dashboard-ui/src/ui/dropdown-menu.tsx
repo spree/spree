@@ -83,7 +83,7 @@ function DropdownMenuContent({
           className={cn(
             // `origin-(--transform-origin)` so the menu grows out of its
             // trigger rather than its own centre.
-            'z-50 max-h-[var(--available-height)] min-w-40 max-w-80 overflow-x-hidden overflow-y-auto rounded-2xl border border-border bg-popover p-1 text-popover-foreground shadow-lg origin-(--transform-origin) duration-100 ease-out data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform]',
+            'z-50 max-h-[var(--available-height)] min-w-40 max-w-80 overflow-x-hidden overflow-y-auto rounded-2xl border border-border bg-popover p-1 text-popover-foreground shadow-lg origin-(--transform-origin) duration-100 ease-out data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform,scale]',
             className,
           )}
           {...props}
@@ -321,7 +321,7 @@ function DropdownMenuSubContent({
           className={cn(
             // `origin-(--transform-origin)` so the submenu grows out of its
             // parent item rather than its own centre.
-            'z-50 min-w-[96px] overflow-hidden rounded-2xl border border-border bg-popover p-1 text-popover-foreground shadow-lg origin-(--transform-origin) duration-100 ease-out data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform]',
+            'z-50 min-w-[96px] overflow-hidden rounded-2xl border border-border bg-popover p-1 text-popover-foreground shadow-lg origin-(--transform-origin) duration-100 ease-out data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform,scale]',
             className,
           )}
           {...props}

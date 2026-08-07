@@ -122,7 +122,10 @@ function SheetContent({
         data-side={side}
         dir={dir}
         className={cn(
-          'fixed z-50 flex flex-col border border-border bg-card text-foreground text-sm shadow-lg transition-[opacity,transform] duration-250 ease-out',
+          // `translate` listed explicitly — the open/close motion below is
+          // driven by `translate-x/y-*`, which Tailwind v4 compiles to the
+          // standalone `translate` property rather than into `transform`.
+          'fixed z-50 flex flex-col border border-border bg-card text-foreground text-sm shadow-lg transition-[opacity,transform,translate] duration-250 ease-out',
           'data-[side=right]:inset-y-0 data-[side=right]:right-0 data-[side=right]:h-[calc(100dvh-1rem)] data-[side=right]:max-h-[calc(100dvh-1rem)] data-[side=right]:w-[calc(100vw-1rem)] data-[side=right]:max-w-[600px] data-[side=right]:min-w-[320px] data-[side=right]:m-2 data-[side=right]:rounded-xl',
           'data-[side=left]:inset-y-0 data-[side=left]:left-0 data-[side=left]:h-full data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:sm:max-w-sm',
           'data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:border-t',

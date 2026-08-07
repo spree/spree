@@ -151,7 +151,12 @@ export function PageHeader({
     <header
       className={cn(
         'sticky top-header-height z-20 -mx-4 -mt-4 flex items-start gap-3 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 px-4 pt-4 pb-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
-        'transition-[transform,box-shadow] duration-200 ease-out',
+        // `translate` is listed explicitly: Tailwind v4 compiles
+        // `-translate-y-*` to the standalone `translate` property, so a
+        // `transform`-only transition never animates it and the header would
+        // jump to its raised position while the TopBar slid — the exact desync
+        // this pairing exists to avoid.
+        'transition-[transform,translate,box-shadow] duration-200 ease-out',
         // Reduced motion: hold position rather than teleport. Suppressing only
         // the transition would leave the 58px jump this pairing exists to avoid.
         'motion-reduce:transition-none motion-reduce:translate-y-0',
