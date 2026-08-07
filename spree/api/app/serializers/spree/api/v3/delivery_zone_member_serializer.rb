@@ -9,11 +9,8 @@ module Spree
                  postal_code_from: [:string, nullable: true],
                  postal_code_to: [:string, nullable: true]
 
-        attributes :member_type, :postal_code_prefix, :postal_code_from, :postal_code_to
-
-        attribute :country_iso do |record|
-          record.country&.iso
-        end
+        attributes :member_type, :country_iso, :state_abbr,
+                   :postal_code_prefix, :postal_code_from, :postal_code_to
 
         # Admin zone summaries list countries by name; without this every
         # client would have to carry its own ISO-to-name table.
@@ -21,12 +18,10 @@ module Spree
           record.country&.name
         end
 
-        attribute :state_abbr do |record|
-          record.state&.abbr
-        end
-
+        # The subdivision's name is reference data rather than something the
+        # member stores, so it is looked up from its country and code.
         attribute :state_name do |record|
-          record.state&.name
+          Spree::IsoData.subdivision_name(record.country_iso, record.state_abbr) if record.state_abbr.present?
         end
       end
     end

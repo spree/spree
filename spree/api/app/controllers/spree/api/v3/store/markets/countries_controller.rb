@@ -3,17 +3,15 @@ module Spree
     module V3
       module Store
         module Markets
+          # Uncached for the same reason as the top-level countries endpoint.
           class CountriesController < Store::BaseController
             allow_guest_storefront_access!
-            include Spree::Api::V3::HttpCaching
 
             before_action :load_market
 
             # GET /api/v3/store/markets/:market_id/countries
             def index
               countries = @market.countries.order(:name)
-
-              return unless cache_collection(countries)
 
               render json: {
                 data: countries.map { |country| serialize_country(country) }
@@ -23,8 +21,6 @@ module Spree
             # GET /api/v3/store/markets/:market_id/countries/:id
             def show
               country = @market.countries.find_by!(iso: params[:id].upcase)
-
-              return unless cache_resource(country)
 
               render json: serialize_country(country)
             end
