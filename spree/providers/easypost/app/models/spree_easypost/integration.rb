@@ -4,6 +4,16 @@ module SpreeEasyPost
   class Integration < Spree::Integration
     preference :api_key, :password
 
+    # EasyPost's own documentation example address — used only to prove the
+    # key authenticates.
+    VERIFICATION_ADDRESS = {
+      street1: '417 Montgomery Street',
+      city: 'San Francisco',
+      state: 'CA',
+      zip: '94104',
+      country: 'US'
+    }.freeze
+
     def self.integration_group
       'shipping'
     end
@@ -22,12 +32,17 @@ module SpreeEasyPost
       'Live multi-carrier delivery rates at checkout through your EasyPost account.'
     end
 
-    # A cheap authenticated read: fails with 401 on a bad key without
-    # creating anything on the account.
+    # Verifies the key by creating an address — the one authenticated call
+    # that works in both modes. Account-management endpoints
+    # (`carrier_account.all`, `api_key.all`) are production-only and reject a
+    # valid test key with "This resource requires a production API Key",
+    # which would block merchants from connecting a test key at all.
+    # Addresses are inert: no shipment, no charge, nothing to clean up.
+    #
     # Rescues broadly, not just SDK errors — a DNS failure or timeout must
     # surface as a clean activation error, never a 500.
     def can_connect?
-      client.carrier_account.all
+      client.address.create(VERIFICATION_ADDRESS)
       true
     rescue StandardError => e
       self.connection_error_message = e.message

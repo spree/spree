@@ -24,17 +24,26 @@ RSpec.describe SpreeEasyPost::Integration do
   end
 
   describe '#can_connect?' do
-    let(:carrier_account_service) { double(all: []) }
-    let(:client) { instance_double(EasyPost::Client, carrier_account: carrier_account_service) }
+    let(:address_service) { double(create: double(id: 'adr_1')) }
+    let(:client) { instance_double(EasyPost::Client, address: address_service) }
 
     before { allow(integration).to receive(:client).and_return(client) }
 
-    it 'is true when an authenticated read succeeds' do
+    it 'is true when the authenticated call succeeds' do
       expect(integration.can_connect?).to be(true)
     end
 
+    # Account-management endpoints reject test keys outright; the check must
+    # use a call both modes allow so a merchant can connect a test key.
+    it 'verifies through an address create, not a production-only endpoint' do
+      integration.can_connect?
+
+      expect(address_service).to have_received(:create).with(described_class::VERIFICATION_ADDRESS)
+      expect(client).not_to respond_to(:carrier_account)
+    end
+
     it 'captures the vendor message on failure' do
-      allow(carrier_account_service).to receive(:all).
+      allow(address_service).to receive(:create).
         and_raise(EasyPost::Errors::EasyPostError.new('unauthorized'))
 
       expect(integration.can_connect?).to be(false)
@@ -51,13 +60,13 @@ RSpec.describe SpreeEasyPost::Integration do
     end
 
     it 'connects with a valid key' do
-      VCR.use_cassette('carrier_accounts') do
+      VCR.use_cassette('verify_api_key') do
         expect(integration.can_connect?).to be(true)
       end
     end
 
     it 'captures the vendor message on a rejected key' do
-      VCR.use_cassette('carrier_accounts_unauthorized') do
+      VCR.use_cassette('verify_api_key_unauthorized') do
         expect(integration.can_connect?).to be(false)
         expect(integration.connection_error_message).to be_present
       end

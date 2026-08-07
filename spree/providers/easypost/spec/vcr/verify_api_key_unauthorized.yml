@@ -1,14 +1,16 @@
 ---
 http_interactions:
 - request:
-    method: get
-    uri: https://api.easypost.com/v2/carrier_accounts
+    method: post
+    uri: https://api.easypost.com/v2/addresses
     body:
-      encoding: US-ASCII
-      string: ''
+      encoding: UTF-8
+      string: '{"address":{"street1":"417 Montgomery Street","city":"San Francisco","state":"CA","zip":"94104","country":"US"}}'
     headers:
       Authorization:
       - "<FILTERED>"
+      Content-Type:
+      - application/json
   response:
     status:
       code: 401
@@ -19,5 +21,5 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"error":{"code":"UNAUTHORIZED","message":"Invalid API Key.","errors":[]}}'
-  recorded_at: Thu, 06 Aug 2026 20:00:00 GMT
+  recorded_at: Fri, 07 Aug 2026 09:00:00 GMT
 recorded_with: VCR 6.3.1
