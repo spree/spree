@@ -57,7 +57,7 @@ module Spree
           end
 
           def collection_includes
-            [members: [:country, :state]]
+            [:members]
           end
 
           private
@@ -66,22 +66,38 @@ module Spree
             permitted_params.except(:members)
           end
 
+          # Members are stored as codes. A subdivision may be given by code or
+          # by name, and a state member without a country has its country
+          # inferred — a code alone is ambiguous ("CA" is California and
+          # several other places), so an inference matching more than one
+          # country is rejected rather than guessed at.
           def build_members(zone)
             Array(permitted_params[:members]).each do |member|
               attributes = member.to_h.symbolize_keys
-              country_iso = attributes.delete(:country_iso)
-              state_abbr = attributes.delete(:state_abbr)
+              country_iso = attributes[:country_iso].presence&.to_s&.upcase
+              state_value = attributes[:state_abbr].presence
 
-              country = Spree::Country.find_by!(iso: country_iso.to_s.upcase) if country_iso.present?
-              attributes[:country] = country if country
-              if state_abbr.present?
-                scope = country ? country.states : Spree::State
-                attributes[:state] = scope.find_by(abbr: state_abbr) || scope.find_by!(name: state_abbr)
-                attributes[:country] ||= attributes[:state].country
+              if state_value.present?
+                country_iso ||= infer_country_iso_for_state(state_value)
+                attributes[:state_abbr] = Spree::IsoData.subdivision_code(country_iso, state_value) if country_iso
               end
 
+              attributes[:country_iso] = country_iso
               zone.members.build(attributes)
             end
+          end
+
+          # Returns nil when the code is ambiguous, which leaves the member
+          # without a country for its presence validation to reject — better
+          # than silently picking one of several matching countries.
+          #
+          # @return [String, nil] the only country whose subdivisions match, if exactly one does
+          def infer_country_iso_for_state(state_value)
+            matches = Spree::IsoData.countries.map(&:alpha2).select do |iso|
+              Spree::IsoData.subdivision_code(iso, state_value).present?
+            end
+
+            matches.one? ? matches.first : nil
           end
         end
       end
