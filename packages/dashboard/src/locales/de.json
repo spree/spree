@@ -1180,6 +1180,10 @@
         "preferred_weight_unit": {
           "label": "Gewichtseinheit"
         },
+        "preferred_default_package_weight": {
+          "label": "Standard-Paketgewicht",
+          "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird, in der Gewichtseinheit des Shops. 0 deaktiviert es."
+        },
         "storefront_access": {
           "help": "Store-weite Vorgabe dafür, was anonyme Besucher sehen. Vertriebskanäle können dies überschreiben. Wenn Preise verborgen sind, müssen Gäste sich zum Bezahlen anmelden.",
           "label": "Storefront-Zugriff",

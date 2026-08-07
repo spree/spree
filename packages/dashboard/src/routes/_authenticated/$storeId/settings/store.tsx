@@ -18,6 +18,7 @@ import {
   CardTitle,
   ErrorState,
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -86,6 +87,7 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_timezone: store.preferred_timezone,
     preferred_unit_system: (store.preferred_unit_system as 'metric' | 'imperial') ?? 'metric',
     preferred_weight_unit: store.preferred_weight_unit,
+    preferred_default_package_weight: Number(store.preferred_default_package_weight ?? 0),
     preferred_storefront_access:
       (store.preferred_storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
     preferred_guest_checkout: store.preferred_guest_checkout ?? true,
@@ -163,6 +165,7 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_timezone: values.preferred_timezone,
         preferred_unit_system: values.preferred_unit_system,
         preferred_weight_unit: values.preferred_weight_unit,
+        preferred_default_package_weight: values.preferred_default_package_weight,
         preferred_storefront_access: values.preferred_storefront_access,
         preferred_guest_checkout: values.preferred_guest_checkout,
         ...extensionValues,
@@ -312,6 +315,24 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       control={form.control}
                       options={weightOptions}
                     />
+                    <Field>
+                      <FieldLabel htmlFor="store-default-package-weight">
+                        {t('admin.fields.store.preferred_default_package_weight.label')}
+                      </FieldLabel>
+                      <Input
+                        id="store-default-package-weight"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        {...form.register('preferred_default_package_weight')}
+                      />
+                      <FieldDescription>
+                        {t('admin.fields.store.preferred_default_package_weight.help')}
+                      </FieldDescription>
+                      <FieldError
+                        errors={[form.formState.errors.preferred_default_package_weight]}
+                      />
+                    </Field>
                   </FieldGroup>
                 </CardContent>
               </Card>

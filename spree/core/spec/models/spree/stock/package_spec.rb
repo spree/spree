@@ -18,6 +18,25 @@ module Spree
         expect(subject.weight).to eq(100.0)
       end
 
+      # The tare applies at this single seam so every weight consumer —
+      # calculators, rate providers, weight rules, the weight splitter —
+      # inherits it without knowing the preference exists.
+      it 'adds the store default package weight on top of the contents' do
+        order.store.update!(preferred_default_package_weight: 2.5)
+
+        4.times { subject.add build_inventory_unit }
+
+        expect(subject.weight).to eq(102.5)
+      end
+
+      it 'applies the tare once per package, not per item' do
+        order.store.update!(preferred_default_package_weight: 2.5)
+
+        subject.add build_inventory_unit
+
+        expect(subject.weight).to eq(27.5)
+      end
+
       context 'currency' do
         let(:unit) { build_inventory_unit }
 

@@ -1180,6 +1180,10 @@
         "preferred_weight_unit": {
           "label": "重量单位"
         },
+        "preferred_default_package_weight": {
+          "label": "默认包裹重量",
+          "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物),使用商店的重量单位。设为 0 可停用。"
+        },
         "storefront_access": {
           "help": "店铺范围内的默认设置，控制匿名访客可以看到的内容。渠道可以覆盖此设置。隐藏价格时，访客须登录后才能结账。",
           "label": "店铺访问权限",

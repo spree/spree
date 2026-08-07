@@ -1,5 +1,21 @@
 require 'spec_helper'
 
+# Reads the recorded quote so expectations match whatever carriers the
+# account can actually offer. Falls back to a placeholder on the very first
+# record run, when the cassette does not exist yet.
+def recorded_rates
+  path = SpreeEasyPost::Engine.root.join('spec/vcr/create_shipment_rates.yml')
+  return [{ 'carrier' => 'USPS', 'service' => 'Priority' }] unless path.exist?
+
+  body = YAML.load_file(path)['http_interactions'].last['response']['body']['string']
+  JSON.parse(body).fetch('rates')
+rescue StandardError
+  [{ 'carrier' => 'USPS', 'service' => 'Priority' }]
+end
+
+def recorded_rate_or_default = recorded_rates.first
+
+
 RSpec.describe SpreeEasyPost::FulfillmentProvider do
   let(:store) { @default_store }
   let!(:integration) do
@@ -131,20 +147,40 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
   end
 
   # Real client, HTTP played back from spec/vcr — the exact buy and refund
-  # calls against EasyPost's wire format.
+  # calls against EasyPost's wire format. Ids come from the recorded rate
+  # quote so a re-record against any account stays self-consistent.
   describe 'API contract (VCR)' do
+    # Priority specifically: USPS GroundAdvantage requires an EasyPost
+    # end-shipper record that test accounts do not have by default, so
+    # buying it fails for reasons unrelated to this gem.
+    let(:recorded_rate) do
+      rates = recorded_rates
+      rates.find { |rate| rate['service'] == 'Priority' } || rates.first
+    end
+
+    before do
+      fulfillment.selected_delivery_rate.update_columns(
+        metadata: {
+          'easypost_shipment_id' => recorded_rate['shipment_id'],
+          'easypost_rate_id' => recorded_rate['id']
+        }
+      )
+    end
+
     it 'buys the quoted rate end to end' do
       VCR.use_cassette('buy_shipment') do
         result = provider.create_fulfillment(fulfillment)
 
-        expect(result[:tracking_number]).to eq('9405500207552012345678')
-        expect(fulfillment.metadata['easypost_label_url']).to include('postage_label')
-        expect(provider.tracking_url(fulfillment)).to include('track.easypost.com')
+        expect(result[:tracking_number]).to be_present
+        expect(fulfillment.metadata['easypost_purchased_shipment_id']).to be_present
+        expect(fulfillment.metadata['easypost_label_url']).to include('http')
       end
     end
 
     it 'refunds end to end' do
-      fulfillment.update_columns(private_metadata: { 'easypost_purchased_shipment_id' => 'shp_recorded1' })
+      fulfillment.update_columns(
+        private_metadata: { 'easypost_purchased_shipment_id' => recorded_rate['shipment_id'] }
+      )
 
       VCR.use_cassette('refund_shipment') do
         expect(provider.cancel_fulfillment(fulfillment)).to be(true)

@@ -1180,6 +1180,10 @@
         "preferred_weight_unit": {
           "label": "Unité de poids"
         },
+        "preferred_default_package_weight": {
+          "label": "Poids de colis par défaut",
+          "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison, dans l'unité de poids de la boutique. 0 pour désactiver."
+        },
         "storefront_access": {
           "help": "Valeur par défaut à l'échelle de la boutique pour ce que les visiteurs anonymes peuvent voir. Les canaux peuvent la remplacer. Lorsque les prix sont masqués, les invités doivent se connecter pour passer à la caisse.",
           "label": "Accès à la vitrine",

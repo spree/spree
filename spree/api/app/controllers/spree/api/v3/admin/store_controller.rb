@@ -47,6 +47,7 @@ module Spree
               :preferred_admin_locale,
               :preferred_timezone,
               :preferred_weight_unit,
+              :preferred_default_package_weight,
               :preferred_unit_system,
               :preferred_storefront_access,
               :preferred_storefront_url,
