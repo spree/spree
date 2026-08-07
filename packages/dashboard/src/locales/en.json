@@ -1180,6 +1180,10 @@
         "preferred_weight_unit": {
           "label": "Weight unit"
         },
+        "preferred_default_package_weight": {
+          "label": "Default package weight",
+          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates, in the store's weight unit. Set to 0 to disable."
+        },
         "storefront_access": {
           "help": "Store-wide default for what anonymous visitors can see. Channels can override this. When prices are hidden, guests must sign in to check out.",
           "label": "Storefront access",

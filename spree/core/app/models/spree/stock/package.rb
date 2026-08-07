@@ -50,8 +50,15 @@ module Spree
         contents.sum(&:amount)
       end
 
+      # Content weight plus the store's default package weight (packaging
+      # tare). This is the single seam every weight consumer reads —
+      # calculators, rate providers, weight rules and the weight splitter —
+      # so the tare applies everywhere without any of them knowing about it.
       def weight
-        contents.sum(&:weight)
+        contents_weight = contents.sum(&:weight)
+        tare = order&.store&.preferred_default_package_weight.to_f
+
+        contents_weight + tare
       end
 
       def on_hand

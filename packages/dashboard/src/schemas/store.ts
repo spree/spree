@@ -23,6 +23,7 @@ export const storeSettingsFormSchema = z.object({
   preferred_timezone: z.string().min(1, { error: requiredMessage('store.preferred_timezone') }),
   preferred_unit_system: z.enum(['metric', 'imperial']),
   preferred_weight_unit: z.enum(ALL_WEIGHT_UNITS),
+  preferred_default_package_weight: z.coerce.number().min(0),
   preferred_storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
   preferred_guest_checkout: z.boolean(),
 })

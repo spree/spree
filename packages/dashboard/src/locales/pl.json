@@ -1188,6 +1188,10 @@
         "preferred_weight_unit": {
           "label": "Jednostka wagi"
         },
+        "preferred_default_package_weight": {
+          "label": "Domyślna waga paczki",
+          "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy, w jednostce wagi sklepu. 0 wyłącza."
+        },
         "storefront_access": {
           "help": "Domyślne ustawienie dla całego sklepu określające, co widzą anonimowi odwiedzający. Kanały mogą je nadpisać. Gdy ceny są ukryte, goście muszą się zalogować, aby sfinalizować zakup.",
           "label": "Dostęp do sklepu",

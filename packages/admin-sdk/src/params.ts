@@ -6,6 +6,8 @@ export interface StoreUpdateParams {
   preferred_admin_locale?: string
   preferred_timezone?: string
   preferred_weight_unit?: string
+  /** Packaging tare added to every package's content weight for rate calculation, in the store's weight unit. */
+  preferred_default_package_weight?: number
   preferred_unit_system?: string
   /**
    * Store-wide default storefront posture: `public`, `prices_hidden`, or

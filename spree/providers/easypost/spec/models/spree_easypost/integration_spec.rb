@@ -65,10 +65,14 @@ RSpec.describe SpreeEasyPost::Integration do
       end
     end
 
+    # Deliberately invalid, never the env key — re-recording this cassette
+    # must capture a real 401, not another success.
     it 'captures the vendor message on a rejected key' do
+      rejected = described_class.new(store: @default_store, preferences: { api_key: 'EZTK-invalid-key' })
+
       VCR.use_cassette('verify_api_key_unauthorized') do
-        expect(integration.can_connect?).to be(false)
-        expect(integration.connection_error_message).to be_present
+        expect(rejected.can_connect?).to be(false)
+        expect(rejected.connection_error_message).to be_present
       end
     end
   end
