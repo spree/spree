@@ -15,7 +15,6 @@ module Spree
             Roles.call
 
             # additional data
-            ReturnsEnvironment.call
             StoreCreditCategories.call
             TaxCategories.call
             DigitalDelivery.call
@@ -30,6 +29,7 @@ module Spree
             PaymentMethods.call
             ProductTypes.call
             CustomerGroups.call
+            ReturnsEnvironment.call
             ApiKeys.call
             AllowedOrigins.call
           end
