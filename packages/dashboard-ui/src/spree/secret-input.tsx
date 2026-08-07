@@ -1,4 +1,3 @@
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
@@ -20,11 +19,9 @@ interface SecretInputProps {
   value: unknown
   onChange: (value: unknown) => void
   /**
-   * When true, a value that arrives carrying the server's mask token
-   * (`••••3K9z`) is treated as "already stored" — show the masked badge
-   * with a Replace button instead of an editable input. Cancel restores
-   * the original masked value so the backend's round-trip guard keeps
-   * the existing secret.
+   * @deprecated Masked values always render as the stored badge — there is
+   * nothing to reveal, since the server never sends the secret. Retained so
+   * existing callers keep compiling; the prop has no effect.
    */
   redactWhenMasked?: boolean
   /** Replaces the default "Stored on the server. Click Replace to rotate." caption. */
@@ -34,12 +31,13 @@ interface SecretInputProps {
 }
 
 /**
- * Stripe-style credential field. When the value comes back from the API
- * masked (`••••3K9z`), display it as a read-only badge with a "Replace"
- * button. Replace switches to a password input pre-filled empty so the
- * admin opts in to rotation; Cancel reverts to the masked badge so the
- * next save preserves the existing secret via the backend's masked
- * round-trip guard.
+ * Stripe-style credential field. A stored secret arrives from the API as a
+ * mask (`••••3K9z`) and renders as a read-only badge with a "Replace"
+ * button — never as an input, and never with a reveal toggle, because the
+ * server does not send the secret and there is nothing to unhide. Replace
+ * switches to an empty password input so the admin opts in to rotation;
+ * Cancel reverts to the badge so the next save preserves the existing
+ * secret via the backend's masked round-trip guard.
  *
  * Domain-agnostic — used by `<PreferencesForm>` for `:password`-typed
  * preferences, but also suitable for any other secret that round-trips
@@ -50,7 +48,6 @@ export function SecretInput({
   label,
   value,
   onChange,
-  redactWhenMasked = false,
   helpText,
   placeholder,
 }: SecretInputProps) {
@@ -59,10 +56,11 @@ export function SecretInput({
   // Captured at click time so Cancel can restore the original mask even
   // after `onChange('')` has cleared the parent value.
   const [pendingMask, setPendingMask] = useState<string | null>(null)
-  const [revealed, setRevealed] = useState(false)
   const replacing = pendingMask !== null
 
-  if (redactWhenMasked && storedMask && !replacing) {
+  // A stored secret always renders as the badge: the server sent a mask,
+  // not the value, so there is nothing a reveal toggle could show.
+  if (storedMask && !replacing) {
     return (
       <Field>
         <FieldLabel htmlFor={id}>{label}</FieldLabel>
@@ -95,28 +93,17 @@ export function SecretInput({
     <Field>
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <div className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <Input
-            id={id}
-            type={revealed ? 'text' : 'password'}
-            autoComplete="new-password"
-            placeholder={
-              replacing ? t('admin.components.secret_input.new_value_placeholder') : placeholder
-            }
-            value={(value as string) ?? ''}
-            onChange={(e) => onChange(e.target.value)}
-            className="pr-9"
-          />
-          <button
-            type="button"
-            aria-label={revealed ? t('admin.a11y.hide_value') : t('admin.a11y.show_value')}
-            aria-pressed={revealed}
-            onClick={() => setRevealed((v) => !v)}
-            className="absolute inset-y-0 right-0 flex items-center px-2.5 text-muted-foreground hover:text-foreground"
-          >
-            {revealed ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
-          </button>
-        </div>
+        <Input
+          id={id}
+          type="password"
+          autoComplete="new-password"
+          placeholder={
+            replacing ? t('admin.components.secret_input.new_value_placeholder') : placeholder
+          }
+          value={(value as string) ?? ''}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex-1"
+        />
         {replacing && (
           <Button
             type="button"
@@ -125,7 +112,6 @@ export function SecretInput({
             onClick={() => {
               onChange(pendingMask)
               setPendingMask(null)
-              setRevealed(false)
             }}
           >
             {t('admin.actions.cancel')}

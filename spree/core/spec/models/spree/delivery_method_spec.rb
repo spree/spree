@@ -236,6 +236,46 @@ describe Spree::DeliveryMethod, type: :model do
     end
   end
 
+  describe 'provider / fulfillment type compatibility' do
+    let(:delivery_method) { create(:delivery_method) }
+    let(:shipping_only_provider) do
+      Class.new(Spree::DeliveryRateProvider::Base) do
+        def self.fulfillment_types = ['shipping']
+        def self.provider_name = 'ShippingOnly'
+      end
+    end
+
+    before do
+      stub_const('ShippingOnlyRateProvider', shipping_only_provider)
+      Spree.delivery_rate_providers << shipping_only_provider
+    end
+
+    after { Spree.delivery_rate_providers.delete(shipping_only_provider) }
+
+    # A carrier that only quotes parcels cannot serve a digital method — the
+    # mismatch would surface as missing rates at checkout, not at save time.
+    it 'rejects a provider that does not handle the chosen fulfillment type' do
+      delivery_method.assign_attributes(rate_provider: 'ShippingOnlyRateProvider', fulfillment_type: 'digital')
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:rate_provider].join).to include('ShippingOnly')
+    end
+
+    it 'accepts a type the provider declares' do
+      delivery_method.assign_attributes(rate_provider: 'ShippingOnlyRateProvider', fulfillment_type: 'shipping')
+
+      expect(delivery_method).to be_valid
+    end
+
+    # An empty declaration means "any type" — Internal and Manual price and
+    # dispatch anything.
+    it 'accepts any type for providers that declare none' do
+      delivery_method.assign_attributes(rate_provider: '', fulfillment_type: 'digital')
+
+      expect(delivery_method).to be_valid
+    end
+  end
+
   # Regression test for #4320
   context 'soft deletion' do
     let(:delivery_method) { create(:delivery_method) }

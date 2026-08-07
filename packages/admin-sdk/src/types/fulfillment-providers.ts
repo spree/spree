@@ -32,4 +32,8 @@ export interface DeliveryRateProviderOption {
   name: string
   /** `Spree::Integration` subclass holding this provider's credentials, if any. */
   integration_class: string | null
+  /** Fulfillment types this provider can quote; empty means any type. */
+  fulfillment_types: string[]
+  /** Whether the method's calculator sets the price. False for carrier providers, which quote live rates. */
+  uses_calculator: boolean
 }

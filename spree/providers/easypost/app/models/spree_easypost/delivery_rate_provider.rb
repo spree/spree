@@ -8,6 +8,15 @@ module SpreeEasyPost
       'SpreeEasyPost::Integration'
     end
 
+    def self.provider_name
+      SpreeEasyPost::PROVIDER_NAME
+    end
+
+    # EasyPost quotes parcel carriers only.
+    def self.fulfillment_types
+      ['shipping']
+    end
+
     # A rating failure must never break checkout: any API error suppresses
     # this method (the customer still sees calculator-priced options) and is
     # reported for observability rather than raised into the rate refresh.

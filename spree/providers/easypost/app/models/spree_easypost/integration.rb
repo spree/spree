@@ -19,7 +19,7 @@ module SpreeEasyPost
     end
 
     def self.integration_name
-      'EasyPost'
+      SpreeEasyPost::PROVIDER_NAME
     end
 
     def self.logo_url
