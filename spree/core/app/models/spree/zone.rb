@@ -12,18 +12,45 @@ module Spree
     alias members zone_members
 
     # The countries the zone contained — directly, or through its states for a
-    # state-kind zone. Resolved through the live tables so a member pointing at
-    # a deleted country or state drops out.
+    # state-kind zone.
+    #
+    # Reads spree_countries and spree_states directly: countries and states are
+    # reference data rather than records in 6.0
+    # (docs/plans/6.0-drop-country-state-models.md), so the ids these members
+    # hold can only be resolved against the tables the upgrade keeps. A member
+    # pointing at a row that no longer exists drops out.
+    #
+    # @return [Array<Spree::Country>]
     def country_list
-      Spree::Country.where(
-        id: zone_members.where(zoneable_type: 'Spree::Country').select(:zoneable_id)
-      ).or(
-        Spree::Country.where(
-          id: Spree::State.where(
-            id: zone_members.where(zoneable_type: 'Spree::State').select(:zoneable_id)
-          ).select(:country_id)
-        )
+      connection = self.class.connection
+      return [] unless connection.table_exists?('spree_countries')
+
+      country_ids = zone_members.where(zoneable_type: 'Spree::Country').pluck(:zoneable_id)
+      state_ids = zone_members.where(zoneable_type: 'Spree::State').pluck(:zoneable_id)
+
+      isos = []
+      isos.concat(isos_for_country_ids(connection, country_ids)) if country_ids.any?
+      isos.concat(isos_for_state_ids(connection, state_ids)) if state_ids.any?
+
+      isos.uniq.filter_map { |iso| Spree::Country.by_iso(iso) }
+    end
+
+    private
+
+    def isos_for_country_ids(connection, ids)
+      connection.select_values(
+        "SELECT iso FROM spree_countries WHERE id IN (#{ids.map { |id| connection.quote(id) }.join(', ')})"
       )
+    end
+
+    def isos_for_state_ids(connection, ids)
+      return [] unless connection.table_exists?('spree_states')
+
+      connection.select_values(<<~SQL.squish)
+        SELECT spree_countries.iso FROM spree_states
+        INNER JOIN spree_countries ON spree_countries.id = spree_states.country_id
+        WHERE spree_states.id IN (#{ids.map { |id| connection.quote(id) }.join(', ')})
+      SQL
     end
   end
 end

@@ -33,17 +33,40 @@ module Spree
 
     scope :not_deleted, -> { where(deleted_at: nil) }
 
-    # Matches a subdivision by code or by name. The code is stored on the
-    # address; the name only ever lived on the state record.
+    # Matches a subdivision by code or by name. Only the code is stored, so a
+    # name is resolved to the codes it could mean before querying.
     scope :by_state_name_or_abbr, lambda { |state_name|
-      where(state_abbr: state_name).
-        or(where(state_id: Spree::State.where(name: state_name).select(:id)))
+      codes = Spree::IsoData.countries.filter_map do |country|
+        Spree::IsoData.subdivision_code(country.alpha2, state_name)
+      end.uniq
+
+      where(state_abbr: ([state_name] + codes).uniq)
     }
 
     scope :not_quick_checkout, -> { where(quick_checkout: false) }
 
-    belongs_to :country, class_name: 'Spree::Country'
-    belongs_to :state, class_name: 'Spree::State', optional: true
+    # Geography is reference data, so these read through the registry rather
+    # than being associations. Assigning either one sets its code.
+    def country
+      @country = nil if @country && @country.iso != country_iso
+      @country ||= Spree::Country.by_iso(country_iso) if country_iso.present?
+    end
+
+    def country=(value)
+      @country = value
+      self[:country_iso] = value&.iso
+    end
+
+    def state
+      @state = nil if @state && (@state.abbr != state_abbr || @state.country_iso != country_iso)
+      @state ||= Spree::State.resolve(country_iso, state_abbr) if country_iso.present? && state_abbr.present?
+    end
+
+    def state=(value)
+      @state = value
+      self[:state_abbr] = value&.abbr
+      self[:country_iso] ||= value.country_iso if value
+    end
     # we need a safe operator here as Address is added to custom_field_enabled_resources in Engine
     belongs_to :customer, class_name: Spree.customer_class&.name, optional: true, touch: true
     include Spree::DeprecatedCustomerAlias
@@ -126,11 +149,10 @@ module Spree
       if params[:state_abbr].present?
         params[:state_abbr] = params[:state_abbr].to_s.upcase
       elsif country_iso && params[:state_name].present?
-        country = Spree::Country.by_iso(country_iso)
-        matched = country&.states&.find_by(name: params[:state_name])
+        matched = Spree::IsoData.subdivision_code(country_iso, params[:state_name])
 
         if matched
-          params[:state_abbr] = matched.abbr
+          params[:state_abbr] = matched
           params.delete(:state_name)
         end
       end
@@ -138,23 +160,10 @@ module Spree
       params
     end
 
-    # +country_iso+ and +state_abbr+ are columns. The country and state
-    # associations are kept in step with them until they are dropped in 6.1,
-    # so code still reading through the association sees the same geography.
-    #
-    # The readers fall back to the association because the two are only
-    # reconciled on validation: an address built with +country:+ and not yet
-    # saved has no code of its own to report.
-    def country_iso
-      super.presence || country&.iso
-    end
-
+    # +country_iso+ and +state_abbr+ are the columns the address stores its
+    # geography in; +country+ and +state+ read through them.
     def country_iso=(value)
       super(value.presence&.to_s&.upcase)
-    end
-
-    def state_abbr
-      super.presence || state&.abbr
     end
 
     def state_abbr=(value)
@@ -162,7 +171,7 @@ module Spree
     end
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS + %w[country_iso state_abbr]
-    self.whitelisted_ransackable_associations = %w[country state customer]
+    self.whitelisted_ransackable_associations = %w[customer]
 
     def self.required_fields
       Spree::Address.validators.map do |v|
@@ -351,46 +360,32 @@ module Spree
       end
     end
 
-    # Resolves the state from whichever handle the caller supplied: the
-    # +state_abbr+ writer, or a +state_name+ that names a real state of this
-    # country. A +state_name+ that matches nothing is left alone — countries
-    # without states keep it as free text, and +state_validate+ decides
-    # whether that is acceptable.
+    # Resolves the subdivision code from whichever handle the caller supplied:
+    # +state_abbr+ (which may be a retired code), or a +state_name+ that names
+    # a real subdivision of this country. A name matching nothing is left
+    # alone — countries without subdivisions keep it as free text, and
+    # +state_validate+ decides whether that is acceptable.
     def normalize_state
-      return if country.blank?
+      return if country_iso.blank?
 
-      # Reads the column rather than +state_abbr+, whose association fallback
-      # would report a state left over from a country the address just moved off.
       submitted_abbr = self[:state_abbr].presence
 
       if submitted_abbr.present?
-        matched = state&.abbr == submitted_abbr && state.country_id == country.id ? state : country.states.find_by(abbr: submitted_abbr)
+        resolved = Spree::IsoData.subdivision_code(country_iso, submitted_abbr)
 
         # A code that means nothing in this country is stale — it came from the
         # country the address just moved off — so drop it and let the other
         # handles (a state_name, or nothing) decide.
-        if matched
-          self.state = matched
-          return
-        end
-
-        self.state = nil
-        self[:state_abbr] = nil
-      end
-
-      # A state assigned directly (rather than by code) supplies the code.
-      if state.present? && state.country_id == country.id
-        self[:state_abbr] = state.abbr
-        return
+        self[:state_abbr] = resolved
+        return if resolved
       end
 
       return if state_name.blank?
 
-      matched = country.states.find_by(name: state_name)
+      matched = Spree::IsoData.subdivision_code(country_iso, state_name)
       return if matched.blank?
 
-      self.state = matched
-      self[:state_abbr] = matched.abbr
+      self[:state_abbr] = matched
       self.state_name = nil
     end
 
@@ -404,11 +399,12 @@ module Spree
     end
 
     def clear_invalid_state_entities
-      if state.present? && (state.country != country)
-        clear_state
-      elsif state_name.present? && !country.states_required? && country.states.empty?
-        clear_state_name
-      end
+      # A subdivision that means nothing in this country was already dropped by
+      # normalize_state; what is left is free text on a country that has no
+      # subdivisions to match it against.
+      return unless state_name.present? && !country.states_required? && country.states.empty?
+
+      clear_state_name
     end
 
     def set_user_attributes
@@ -421,37 +417,27 @@ module Spree
       customer.save! if customer.changed?
     end
 
+    # normalize_state has already resolved the code, so what is left to check
+    # is whether a country that requires a subdivision actually got one.
     def state_validate
       # Skip state validation without country (also required).
       # Whether a state is required is the country's call.
       return if country.blank?
       return unless country.states_required
 
-      # ensure associated state belongs to country
-      if state.present?
-        if state.country == country
-          clear_state_name # not required as we have a valid state and country combo
-        elsif state_name.present?
-          clear_state
-        else
-          errors.add(:state, :invalid)
-        end
+      if state_abbr.present?
+        clear_state_name
+        return
       end
 
-      # ensure state_name belongs to country without states, or that it matches a predefined state name/abbr
-      if state_name.present? && country.states.present?
-        states = country.states.find_all_by_name_or_abbr(state_name)
-
-        if states.size == 1
-          self.state = states.first
-          clear_state_name
-        else
-          errors.add(:state, :invalid)
-        end
+      # A name is only acceptable when it names nothing the country knows —
+      # otherwise normalize_state would have turned it into a code.
+      if state_name.present?
+        errors.add(:state, :invalid) if country.states.any?
+        return
       end
 
-      # ensure at least one state field is populated
-      errors.add :state, :blank if state.blank? && state_name.blank?
+      errors.add :state, :blank
     end
 
     def postal_code_validate

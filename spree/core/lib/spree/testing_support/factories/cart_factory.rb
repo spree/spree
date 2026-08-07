@@ -28,10 +28,7 @@ FactoryBot.define do
         after(:create) do |cart, evaluator|
           create(:check_payment_method, store: cart.store) if Spree::PaymentMethod.none?
 
-          zone = create(:zone)
-          country = create(:country)
-          zone.members.create!(zoneable: country)
-          create(:state, country: country)
+          country = Spree::Country.by_iso('US')
 
           if Spree::DeliveryMethod.none?
             create(:shipping_method).tap do |delivery_method|

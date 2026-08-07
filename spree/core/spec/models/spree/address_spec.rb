@@ -128,17 +128,19 @@ describe Spree::Address, type: :model do
   end
 
   context 'validation' do
-    let(:country) { create(:country, states: [state], states_required: true) }
-    let(:state) { create(:state, name: 'maryland', abbr: 'md') }
-    let(:address) { build(:address, country: country) }
-
-    before do
-      allow(Spree::State).to receive(:find_all_by_name_or_abbr) { [state] }
-    end
+    # Countries and subdivisions are reference data now, so these are real
+    # places rather than invented ones: Maryland is a subdivision of the US,
+    # and Poland requires no subdivision at all.
+    let(:country) { Spree::Country.by_iso('US') }
+    let(:state) { Spree::State.resolve('US', 'MD') }
+    let(:stateless_country) { Spree::Country.by_iso('PL') }
+    let(:address) { build(:address, country: country, state: nil) }
 
     it 'state_name is not nil and country does not have any states' do
+      address.country = stateless_country
+      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('PL')
       address.state = nil
-      address.state_name = 'alabama'
+      address.state_name = 'Somewhere'
       expect(address).to be_valid
     end
 
@@ -149,9 +151,7 @@ describe Spree::Address, type: :model do
     end
 
     it 'full state name is in state_name and country does contain that state' do
-      address.state_name = 'alabama'
-      # called by state_validate to set up state_id.
-      # Perhaps this should be a before_validation instead?
+      address.state_name = 'Maryland'
       expect(address).to be_valid
       expect(address.state).not_to be_nil
       expect(address.state_name).to be_nil
@@ -160,25 +160,27 @@ describe Spree::Address, type: :model do
     it 'state abbr is in state_name and country does contain that state' do
       address.state_name = state.abbr
       expect(address).to be_valid
-      expect(address.state_id).not_to be_nil
+      expect(address.state_abbr).to eq('MD')
       expect(address.state_name).to be_nil
     end
 
     it 'state is entered but country does not contain that state' do
       address.state = state
-      address.country = create(:country, states_required: true)
+      address.country = Spree::Country.by_iso('CA')
+      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('CA')
       address.valid?
-      expect(address.errors['state']).to eq(['is invalid'])
+      # The Maryland code means nothing in Canada, so it is dropped and the
+      # address is left with no subdivision at all.
+      expect(address.errors['state']).to eq(["can't be blank"])
     end
 
     it 'both state and state_name are entered but country does not contain the state' do
       address.state = state
       address.state_name = 'maryland'
-      address.country = create(:country, states_required: true)
-      # The postal format travels with the country.
-      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for(address.country.iso)
+      address.country = stateless_country
+      address.zipcode = Spree::TestingSupport::CountryPool.postal_code_for('PL')
       expect(address).to be_valid
-      expect(address.state_id).to be_nil
+      expect(address.state_abbr).to be_nil
     end
 
     it 'both state and state_name are entered and country does contain the state' do

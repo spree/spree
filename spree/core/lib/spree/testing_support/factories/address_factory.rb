@@ -12,7 +12,7 @@ FactoryBot.define do
     # A real US/NY pair, so generated OpenAPI examples carry plausible fields
     # and address validation has a subdivision it recognises. Specs needing a
     # different place pass country/state (or country_iso/state_abbr) explicitly.
-    country { Spree::Country.find_by(iso: 'US') || create(:country_us) }
+    country { Spree::Country.by_iso('US') }
 
     # NY only when the country is actually the US — specs that pass a different
     # country get one of its own subdivisions instead of an invalid pairing.

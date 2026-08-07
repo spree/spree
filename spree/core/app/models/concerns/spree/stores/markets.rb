@@ -21,13 +21,13 @@ module Spree
         end
       end
 
-      # Returns the default country ID, derived from the default market
-      # @return [Integer, nil]
-      def default_country_id
+      # Returns the default country's ISO code, derived from the default market
+      # @return [String, nil]
+      def default_country_iso_code
         if has_markets?
-          default_country&.id
+          default_country&.iso
         else
-          read_attribute(:default_country_id)
+          read_attribute(:default_country_iso_code)
         end
       end
 
@@ -121,16 +121,15 @@ module Spree
       private
 
       # Every store owns a default market — Cart and Order require one.
-      # Resolution order: the country given at creation, the legacy
-      # default_country column, then US (created if the countries table is
-      # empty, e.g. bare test databases).
+      # Resolution order: the country given at creation, the stored default,
+      # then the US. Countries are reference data, so the last one always
+      # resolves — there is nothing to create.
       def ensure_default_market
         return if markets.exists?
 
         country = @default_country_for_market ||
-          Spree::Country.find_by(id: read_attribute(:default_country_id)) ||
-          Spree::Country.by_iso('US') ||
-          create_fallback_country
+          Spree::Country.by_iso(read_attribute(:default_country_iso_code)) ||
+          Spree::Country.by_iso('US')
 
         iso_country = ISO3166::Country[country.iso]
 
@@ -174,19 +173,6 @@ module Spree
         @supported_locales_list = nil
         @supported_locales = nil
         @has_markets = nil
-      end
-
-      def create_fallback_country
-        iso_country = ISO3166::Country['US']
-        Spree::Country.create!(
-          iso_name: iso_country.local_name.upcase,
-          iso: iso_country.alpha2,
-          iso3: iso_country.alpha3,
-          name: iso_country.local_name,
-          numcode: iso_country.number,
-          states_required: false,
-          zipcode_required: true
-        )
       end
 
       def legacy_supported_currencies_list

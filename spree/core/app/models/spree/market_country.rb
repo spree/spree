@@ -3,23 +3,24 @@ module Spree
     self.table_name = 'spree_market_countries'
 
     belongs_to :market, class_name: 'Spree::Market'
-    belongs_to :country, class_name: 'Spree::Country'
 
-    before_validation :normalize_country_iso
+    # Countries are reference data, so the row stores a code and reads the
+    # object back through the registry.
+    def country
+      Spree::Country.by_iso(country_iso) if country_iso.present?
+    end
 
-    validates :market, :country, presence: true
+    def country=(value)
+      self.country_iso = value&.iso
+    end
+
+    validates :market, presence: true
     validates :country_iso, presence: true
     validates :country_iso, uniqueness: { scope: :market_id }
     validate :country_covered_by_shipping_zone
     validate :country_unique_per_store
 
     private
-
-    # The country association is still how markets are assigned; the code is
-    # what the row stores. Kept in step until the association goes in 6.1.
-    def normalize_country_iso
-      self.country_iso = country.iso if country_iso.blank? && country.present?
-    end
 
     def country_covered_by_shipping_zone
       return if market.blank? || country.blank?

@@ -15,8 +15,25 @@ module Spree
     ].freeze
 
     belongs_to :delivery_zone, class_name: 'Spree::DeliveryZone', inverse_of: :members
-    belongs_to :country, class_name: 'Spree::Country', optional: true
-    belongs_to :state, class_name: 'Spree::State', optional: true
+
+    # Geography is reference data: a member stores codes and reads the objects
+    # back through the registry.
+    def country
+      Spree::Country.by_iso(country_iso) if country_iso.present?
+    end
+
+    def country=(value)
+      self.country_iso = value&.iso
+    end
+
+    def state
+      Spree::State.resolve(country_iso, state_abbr) if country_iso.present? && state_abbr.present?
+    end
+
+    def state=(value)
+      self.state_abbr = value&.abbr
+      self.country_iso ||= value.country_iso if value
+    end
 
     normalizes :postal_code_prefix, :postal_code_from, :postal_code_to,
                with: ->(value) { Spree::Address.normalize_zipcode(value).presence }

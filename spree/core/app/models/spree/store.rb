@@ -178,7 +178,12 @@ module Spree
 
     has_many :data_feeds, class_name: 'Spree::DataFeed'
 
-    belongs_to :default_country, class_name: 'Spree::Country'
+    # Countries are reference data, so this is a plain writer over the stored
+    # code. Reading goes through Spree::Stores::Markets#default_country, which
+    # prefers the default market's country when the store has markets.
+    def default_country=(value)
+      self[:default_country_iso_code] = value&.iso
+    end
 
     has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
@@ -303,24 +308,10 @@ module Spree
       return if iso.blank?
 
       @default_country_iso = iso
-
       country = Spree::Country.by_iso(iso)
+      return if country.nil?
 
-      unless country
-        iso_country = ::Country[iso]
-        return unless iso_country
-
-        country = Spree::Country.create!(
-          iso_name: iso_country.local_name&.upcase,
-          iso: iso_country.alpha2,
-          iso3: iso_country.alpha3,
-          name: iso_country.local_name,
-          numcode: iso_country.number,
-          states_required: Spree::Address::STATES_REQUIRED.include?(iso),
-          zipcode_required: !Spree::Address::NO_ZIPCODE_ISO_CODES.include?(iso)
-        )
-      end
-
+      self[:default_country_iso_code] = country.iso
       @default_country_for_market = country
     end
 

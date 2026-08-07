@@ -28,8 +28,24 @@ module Spree
     has_many :variants, through: :stock_items
     has_many :stock_movements, through: :stock_items
 
-    belongs_to :state, class_name: 'Spree::State', optional: true
-    belongs_to :country, class_name: 'Spree::Country'
+    # Geography is reference data, read back through the registry from the
+    # codes this row stores.
+    def country
+      Spree::Country.by_iso(country_iso) if country_iso.present?
+    end
+
+    def country=(value)
+      self.country_iso = value&.iso
+    end
+
+    def state
+      Spree::State.resolve(country_iso, state_abbr) if country_iso.present? && state_abbr.present?
+    end
+
+    def state=(value)
+      self.state_abbr = value&.abbr
+      self.country_iso ||= value.country_iso if value
+    end
 
     validates :kind, presence: true
     validates :pickup_stock_policy, inclusion: { in: PICKUP_STOCK_POLICIES }
