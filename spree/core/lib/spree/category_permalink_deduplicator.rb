@@ -101,8 +101,13 @@ module Spree
     # cases have to be resolved before the unique index sees them.
     #
     # @return [Array<Array(Integer, String)>] (store_id, permalink) pairs appearing more than once
+    # Shallowest paths first. A parent must be rewritten before its children, so
+    # the subtree re-prefix in #rewrite fixes them; otherwise a child rewritten
+    # first gets a suffix of its own and is then re-prefixed too, leaving paths
+    # like "catalog-shop-b/kids-shop-b". SQL returns groups in no defined order.
     def duplicate_groups
-      connection.select_rows(taxonomies_table? ? DUPLICATE_GROUPS_WITH_TAXONOMY_SQL : DUPLICATE_GROUPS_SQL)
+      rows = connection.select_rows(taxonomies_table? ? DUPLICATE_GROUPS_WITH_TAXONOMY_SQL : DUPLICATE_GROUPS_SQL)
+      rows.sort_by { |_store_id, permalink| permalink.to_s.count('/') }
     end
 
     def ids_for(store_id, permalink)
@@ -235,8 +240,10 @@ module Spree
     end
 
     # Every (store, locale, permalink) appearing more than once, across all stores.
+    # Shallowest first, for the same reason as #duplicate_groups.
     def translation_duplicate_groups
-      connection.select_rows(taxonomies_table? ? TRANSLATION_GROUPS_WITH_TAXONOMY_SQL : TRANSLATION_GROUPS_SQL)
+      rows = connection.select_rows(taxonomies_table? ? TRANSLATION_GROUPS_WITH_TAXONOMY_SQL : TRANSLATION_GROUPS_SQL)
+      rows.sort_by { |_store_id, _locale, permalink| permalink.to_s.count('/') }
     end
 
     def translation_rows_for(store_id, locale, permalink)

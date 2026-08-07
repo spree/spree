@@ -123,4 +123,29 @@ RSpec.describe Spree::CategoryPermalinkDeduplicator do
 
     expect(child_path).to start_with("#{moved_root}/")
   end
+
+  # SQL returns duplicate groups in no defined order. If a colliding child is
+  # rewritten before its colliding parent, it gets a suffix of its own and is
+  # then re-prefixed by the parent's cascade, yielding "catalog-b/kids-b".
+  it 'rewrites a parent before its children, whatever order the groups arrive in' do
+    taxonomy_a = create(:taxonomy, name: 'Shop A', store: store)
+    taxonomy_b = create(:taxonomy, name: 'Shop B', store: store)
+    kids_a = create(:category, name: 'Kids', taxonomy: taxonomy_a, parent: taxonomy_a.root)
+    kids_b = create(:category, name: 'Kids', taxonomy: taxonomy_b, parent: taxonomy_b.root)
+
+    # Parents collide, and so do their children.
+    stage(taxonomy_a.root, 'catalog')
+    stage(taxonomy_b.root, 'catalog')
+    stage(kids_a, 'catalog/kids')
+    stage(kids_b, 'catalog/kids')
+
+    described_class.new.call
+
+    permalinks = Spree::Category.unscoped.pluck(:id, :permalink).to_h
+    expect(permalinks[kids_b.id]).to eq("#{permalinks[taxonomy_b.root.id]}/kids")
+    expect(permalinks[kids_a.id]).to eq("#{permalinks[taxonomy_a.root.id]}/kids")
+
+    all = permalinks.values.compact
+    expect(all.uniq.size).to eq(all.size)
+  end
 end
