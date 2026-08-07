@@ -95,12 +95,6 @@ module Spree
       # Gateway I/O. Payments fully covered by a gift card are only voided,
       # never refunded; everything else cancels captured payments (void or
       # refund at the gateway's discretion) and voids what never completed.
-      # Reverses the filed tax document. The canceled sale must stop appearing
-      # in the merchant's tax liability.
-      def void_tax
-        order.tax_provider.void(order)
-      end
-
       def settle_payments
         if order.gift_card.present? && order.covered_by_store_credit?
           order.payments.completed.store_credits.each(&:void!)
@@ -109,6 +103,12 @@ module Spree
           order.payments.incomplete.not_store_credits.each(&:void_transaction!)
           order.payments.store_credits.pending.each(&:void!)
         end
+      end
+
+      # Reverses the filed tax document. The canceled sale must stop appearing
+      # in the merchant's tax liability.
+      def void_tax
+        order.tax_provider.void(order)
       end
     end
   end

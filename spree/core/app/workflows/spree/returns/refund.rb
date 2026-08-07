@@ -49,9 +49,16 @@ module Spree
       # Credits the returned items against the filed tax document, keyed to the
       # original supply date rather than today's — the rate that applied then is
       # the rate to credit back.
+      #
+      # Only lines that actually arrived are credited, matching what
+      # +received_total+ refunds: a customer who announced three items and sent
+      # two must not have tax credited on the third.
       def refund_tax
+        received = return_record.return_line_items.select { |line| line.received_quantity.to_i.positive? }
+        return if received.empty?
+
         order = return_record.order
-        order.tax_provider.refund(order, return_record.return_line_items.to_a, tax_date: order.completed_at)
+        order.tax_provider.refund(order, received, tax_date: order.completed_at)
       end
 
       def internal_refund?

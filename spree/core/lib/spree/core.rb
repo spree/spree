@@ -300,6 +300,16 @@ module Spree
     Rails.application.config.spree.tax_provider.new
   end
 
+  # The store-wide default engine as a class, for callers that need to name it
+  # rather than use it — market selection constantizing its own choice, and the
+  # admin marking which entry is the default. Instantiating just to read a class
+  # name is what this avoids.
+  #
+  # @return [Class]
+  def self.default_tax_provider_class
+    Rails.application.config.spree.tax_provider
+  end
+
   def self.tax_provider=(value)
     Rails.application.config.spree.tax_provider = value
   end

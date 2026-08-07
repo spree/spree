@@ -65,7 +65,7 @@ module Spree
           name: display_name,
           available: available_for_store?(store),
           unsupported_capabilities: unsupported_capability_details,
-          default: name == Rails.application.config.spree.tax_provider.to_s
+          default: name == Spree.default_tax_provider_class.to_s
         }
       end
 
