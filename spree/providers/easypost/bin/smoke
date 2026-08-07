@@ -9,8 +9,8 @@ require 'easypost'
 
 client = EasyPost::Client.new(api_key: ENV.fetch('EASYPOST_TEST_API_KEY'))
 
-puts '-> carrier_account.all (the can_connect? check)'
-client.carrier_account.all
+puts '-> address.create (the can_connect? check — works with test and production keys)'
+client.address.create(street1: '417 Montgomery Street', city: 'San Francisco', state: 'CA', zip: '94104', country: 'US')
 puts '   ok'
 
 puts '-> shipment.create (the estimate call)'

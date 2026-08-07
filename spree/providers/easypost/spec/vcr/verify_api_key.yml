@@ -1,0 +1,25 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.easypost.com/v2/addresses
+    body:
+      encoding: UTF-8
+      string: '{"address":{"street1":"417 Montgomery Street","city":"San Francisco","state":"CA","zip":"94104","country":"US"}}'
+    headers:
+      Authorization:
+      - "<FILTERED>"
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: '{"id":"adr_recorded1","object":"Address","mode":"test","street1":"417 Montgomery Street","city":"San Francisco","state":"CA","zip":"94104","country":"US","created_at":"2026-08-07T09:00:00Z","updated_at":"2026-08-07T09:00:00Z"}'
+  recorded_at: Fri, 07 Aug 2026 09:00:00 GMT
+recorded_with: VCR 6.3.1
