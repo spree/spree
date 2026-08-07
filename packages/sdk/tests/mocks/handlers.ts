@@ -50,7 +50,7 @@ export const fixtures = {
     id: 'claim_1',
     number: 'CLM123456789',
     status: 'open',
-    claim_type: 'damaged',
+    reason_id: 'clr_1',
     order_id: 'or_1',
     refund_total: '19.99',
     display_refund_total: '$19.99',

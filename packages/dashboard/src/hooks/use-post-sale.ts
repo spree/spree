@@ -135,7 +135,6 @@ export function useClaimActions(orderId: string) {
         description?: string
         refund_amount?: string
       }>
-      claim_type: string
       memo?: string
       reasonId?: string
     }) => {

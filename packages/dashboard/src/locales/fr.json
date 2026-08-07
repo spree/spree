@@ -1870,15 +1870,8 @@
               "create": "Nouvelle réclamation",
               "resolve": "Résoudre"
             },
-            "types": {
-              "damaged": "Endommagé",
-              "missing": "Manquant",
-              "wrong_item": "Mauvais article",
-              "other": "Autre"
-            },
             "empty": "Aucune réclamation pour cette commande.",
             "create_title": "Nouvelle réclamation",
-            "claim_type": "Problème",
             "refund_amount": "Montant du remboursement",
             "resolve_title": "Résoudre la réclamation",
             "resolution": "Mode de résolution",
@@ -1933,6 +1926,7 @@
             },
             "empty": "Aucun retour pour cette commande.",
             "memo": "Note",
+            "reason": "Motif",
             "create_title": "Nouveau retour",
             "empty_no_units": "Cette commande n’a aucun enregistrement de traitement sur lequel baser un retour."
           },

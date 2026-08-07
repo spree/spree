@@ -1870,15 +1870,8 @@
               "create": "Neue Reklamation",
               "resolve": "Lösen"
             },
-            "types": {
-              "damaged": "Beschädigt",
-              "missing": "Fehlt",
-              "wrong_item": "Falscher Artikel",
-              "other": "Sonstiges"
-            },
             "empty": "Keine Reklamationen für diese Bestellung.",
             "create_title": "Neue Reklamation",
-            "claim_type": "Problem",
             "refund_amount": "Erstattungsbetrag",
             "resolve_title": "Reklamation lösen",
             "resolution": "Lösungsweg",
@@ -1933,6 +1926,7 @@
             },
             "empty": "Keine Retouren für diese Bestellung.",
             "memo": "Notiz",
+            "reason": "Grund",
             "create_title": "Neue Retoure",
             "empty_no_units": "Für diese Bestellung gibt es keine Fulfillment-Einträge, auf die sich eine Retoure beziehen könnte."
           },

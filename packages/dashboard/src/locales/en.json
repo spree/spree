@@ -1870,15 +1870,8 @@
               "create": "New claim",
               "resolve": "Resolve"
             },
-            "types": {
-              "damaged": "Damaged",
-              "missing": "Missing",
-              "wrong_item": "Wrong item",
-              "other": "Other"
-            },
             "empty": "No claims for this order.",
             "create_title": "New claim",
-            "claim_type": "Problem",
             "refund_amount": "Refund amount",
             "resolve_title": "Resolve claim",
             "resolution": "How to resolve",
@@ -1933,6 +1926,7 @@
             },
             "empty": "No returns for this order.",
             "memo": "Note",
+            "reason": "Reason",
             "create_title": "New return",
             "empty_no_units": "This order has no fulfillment records to return against."
           },

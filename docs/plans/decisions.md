@@ -1,3 +1,30 @@
+## 2026-08-07: `Claim#claim_type` dropped — the reason vocabulary is the only "what went wrong" axis
+
+Reverses the two-axis design in `6.0-returns-exchanges-claims.md`, which
+paired a fixed `claim_type` (damaged / missing / wrong_item / other) with
+the merchant-owned `Spree::ClaimReason`. The column, its
+`class_attribute` list, the validation, the API field and the dashboard
+"Problem" picker are all removed; `reason` stays, still optional.
+
+**Why.** The two fields asked the merchant the same question twice. The
+seeded claim reasons made it plain — "Arrived damaged" next to type
+`damaged`, "Wrong item sent" next to `wrong_item`. Worse, `claim_type`
+was required and unmodifiable while earning nothing: no code ever
+branched on it (the model comment conceded "pure labels with no per-type
+behaviour"), unlike `resolution`, which is closed precisely because each
+value drives `Claims::Resolve`. Return and Exchange already carry a
+reason and no type column, so dropping it makes all three consistent.
+
+The coarse-fixed-axis-for-reporting argument is real but unearned here:
+nothing reported on it. A future reporting need is better served by
+grouping reasons than by a second required field.
+
+**Migration.** `spree_claims.claim_type` is dropped in
+`20260807120001_remove_claim_type_from_spree_claims.rb`. The 6.0 tables
+are unreleased, but the creating migration already shipped to `6-0-dev`
+and `main`, so this is a follow-up drop rather than an edit in place.
+The Store API claims endpoint gains `reason_id`, which it never accepted.
+
 ## 2026-08-06: A product type's `required` custom field is advisory — no server-side enforcement
 
 Reverses the "enforced at activation" position taken earlier the same day

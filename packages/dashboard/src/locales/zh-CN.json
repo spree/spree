@@ -1870,15 +1870,8 @@
               "create": "新建索赔",
               "resolve": "解决"
             },
-            "types": {
-              "damaged": "已损坏",
-              "missing": "缺失",
-              "wrong_item": "商品错误",
-              "other": "其他"
-            },
             "empty": "此订单暂无索赔。",
             "create_title": "新建索赔",
-            "claim_type": "问题",
             "refund_amount": "退款金额",
             "resolve_title": "解决索赔",
             "resolution": "解决方式",
@@ -1933,6 +1926,7 @@
             },
             "empty": "此订单暂无退货。",
             "memo": "备注",
+            "reason": "原因",
             "create_title": "新建退货",
             "empty_no_units": "此订单没有可用于退货的履约记录。"
           },

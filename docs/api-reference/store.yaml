@@ -9806,6 +9806,20 @@ components:
       bearerFormat: JWT
       description: JWT token for authenticated customers
   schemas:
+    ClaimReason:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+      required:
+      - id
+      - name
+      - active
+      x-typelizer: true
     PaginationMeta:
       type: object
       properties:
@@ -10587,8 +10601,6 @@ components:
           type: string
         status:
           type: string
-        claim_type:
-          type: string
         resolution:
           type: string
           nullable: true
@@ -10614,6 +10626,8 @@ components:
         canceled_at:
           type: string
           nullable: true
+        reason:
+          "$ref": "#/components/schemas/ClaimReason"
         claim_line_items:
           type: array
           items:
@@ -10622,7 +10636,6 @@ components:
       - id
       - number
       - status
-      - claim_type
       - resolution
       - order_id
       - reason_id
@@ -12578,6 +12591,8 @@ components:
         canceled_at:
           type: string
           nullable: true
+        reason:
+          "$ref": "#/components/schemas/ReturnReason"
         return_line_items:
           type: array
           items:
@@ -12594,6 +12609,20 @@ components:
       - received_at
       - refunded_at
       - canceled_at
+      x-typelizer: true
+    ReturnReason:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+      required:
+      - id
+      - name
+      - active
       x-typelizer: true
     State:
       type: object

@@ -1,6 +1,6 @@
 module Spree
   module Claims
-    # Opens a claim: the customer reports damaged, missing or wrong items.
+    # Opens a claim: the customer reports a problem with what arrived.
     #
     # No goods come back — that is the point of a claim — so there is nothing
     # to receive and nothing to restock.
@@ -12,11 +12,10 @@ module Spree
       # @param order [Spree::Order]
       # @param items [Array<Hash>] `[{ line_item:, quantity:, description:,
       #   send_replacement:, replacement_variant:, refund_amount: }]`
-      # @param claim_type [String] one of Spree::Claim.claim_types
       # @param reason [Spree::ClaimReason, nil]
       # @param memo [String, nil]
       # @param created_by [Object, nil] nil for customer self-service
-      def perform(order:, items:, claim_type: 'other', reason: nil, memo: nil, created_by: nil)
+      def perform(order:, items:, reason: nil, memo: nil, created_by: nil)
         super
 
         step :ensure_claimable
@@ -38,7 +37,6 @@ module Spree
         failure(order, :order_not_completed) unless order.completed?
         failure(order, :order_canceled) if order.canceled?
         failure(order, :no_items_to_claim) if items.blank?
-        failure(order, :invalid_claim_type) unless Spree::Claim.claim_types.include?(claim_type.to_s)
       end
 
       def normalize_items
@@ -57,7 +55,6 @@ module Spree
       def build_claim
         @claim = order.claims.new(
           store: order.store,
-          claim_type: claim_type,
           reason: reason,
           memo: memo,
           created_by: created_by,

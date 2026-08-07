@@ -14,7 +14,7 @@ module Spree
               result = Spree.claim_create_workflow.call(
                 order: @parent,
                 items: items_for_create,
-                claim_type: create_params[:claim_type] || 'other',
+                reason: reason_for_create,
                 memo: create_params[:memo]
               )
 
@@ -72,7 +72,7 @@ module Spree
             end
 
             def create_params
-              @create_params ||= params.permit(:memo, :claim_type,
+              @create_params ||= params.permit(:memo, :reason_id,
                                                items: [:line_item_id, :quantity, :description])
             end
 
@@ -86,6 +86,14 @@ module Spree
                   description: item[:description]
                 }
               end
+            end
+
+            # Read through the store so a reason belonging to another store
+            # 404s rather than being silently attached.
+            def reason_for_create
+              return nil if create_params[:reason_id].blank?
+
+              current_store.claim_reasons.find_by_prefix_id!(create_params[:reason_id])
             end
           end
         end

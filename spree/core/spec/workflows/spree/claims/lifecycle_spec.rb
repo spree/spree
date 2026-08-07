@@ -11,7 +11,6 @@ RSpec.describe 'Spree::Claims workflows' do
   def create_claim(**overrides)
     Spree::Claims::Create.call(
       order: order,
-      claim_type: 'damaged',
       items: [{ line_item: line_item, quantity: 1, description: 'Cracked', refund_amount: line_item.price }],
       **overrides
     )
@@ -23,11 +22,12 @@ RSpec.describe 'Spree::Claims workflows' do
 
       expect(result).to be_success
       expect(result.value).to be_open
-      expect(result.value.claim_type).to eq('damaged')
     end
 
-    it 'refuses an unknown claim type' do
-      expect(create_claim(claim_type: 'teleported')).to be_failure
+    it 'records the reason it was given' do
+      reason = create(:claim_reason, store: store)
+
+      expect(create_claim(reason: reason).value.reason).to eq(reason)
     end
 
     it 'refuses claiming more than was ordered' do

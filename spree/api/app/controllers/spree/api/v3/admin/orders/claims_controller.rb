@@ -16,7 +16,6 @@ module Spree
               result = Spree.claim_create_workflow.call(
                 order: @order,
                 items: items_for_create,
-                claim_type: create_params[:claim_type] || 'other',
                 reason: reason_for_create,
                 memo: create_params[:memo],
                 created_by: try_spree_current_user
@@ -86,12 +85,12 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:memo, :reason_id, :claim_type, metadata: {})
+              params.permit(:memo, :reason_id, metadata: {})
             end
 
             def create_params
               @create_params ||= params.permit(
-                :memo, :reason_id, :claim_type,
+                :memo, :reason_id,
                 items: [:line_item_id, :quantity, :description, :send_replacement,
                         :replacement_variant_id, :refund_amount]
               )

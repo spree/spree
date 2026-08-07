@@ -74,6 +74,8 @@ module Spree
         exchange_line_item_serializer: 'Spree::Api::V3::ExchangeLineItemSerializer',
         claim_serializer: 'Spree::Api::V3::ClaimSerializer',
         claim_line_item_serializer: 'Spree::Api::V3::ClaimLineItemSerializer',
+        return_reason_serializer: 'Spree::Api::V3::ReturnReasonSerializer',
+        claim_reason_serializer: 'Spree::Api::V3::ClaimReasonSerializer',
         digital_serializer: 'Spree::Api::V3::DigitalSerializer',
         export_serializer: 'Spree::Api::V3::ExportSerializer',
         gift_card_batch_serializer: 'Spree::Api::V3::GiftCardBatchSerializer',

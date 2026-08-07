@@ -25036,8 +25036,6 @@ components:
           type: string
         status:
           type: string
-        claim_type:
-          type: string
         resolution:
           type: string
           nullable: true
@@ -25063,6 +25061,8 @@ components:
         canceled_at:
           type: string
           nullable: true
+        reason:
+          "$ref": "#/components/schemas/ClaimReason"
         claim_line_items:
           type: array
           items:
@@ -25089,7 +25089,6 @@ components:
       - id
       - number
       - status
-      - claim_type
       - resolution
       - order_id
       - reason_id
@@ -25946,6 +25945,8 @@ components:
         canceled_at:
           type: string
           nullable: true
+        reason:
+          "$ref": "#/components/schemas/ReturnReason"
         exchange_line_items:
           type: array
           items:
@@ -28147,6 +28148,8 @@ components:
         canceled_at:
           type: string
           nullable: true
+        reason:
+          "$ref": "#/components/schemas/ReturnReason"
         return_line_items:
           type: array
           items:

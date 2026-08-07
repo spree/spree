@@ -1882,15 +1882,8 @@
               "create": "Nowa reklamacja",
               "resolve": "Rozwiąż"
             },
-            "types": {
-              "damaged": "Uszkodzony",
-              "missing": "Brakujący",
-              "wrong_item": "Niewłaściwy produkt",
-              "other": "Inne"
-            },
             "empty": "Brak reklamacji dla tego zamówienia.",
             "create_title": "Nowa reklamacja",
-            "claim_type": "Problem",
             "refund_amount": "Kwota zwrotu",
             "resolve_title": "Rozwiąż reklamację",
             "resolution": "Sposób rozwiązania",
@@ -1945,6 +1938,7 @@
             },
             "empty": "Brak zwrotów dla tego zamówienia.",
             "memo": "Notatka",
+            "reason": "Powód",
             "create_title": "Nowy zwrot",
             "empty_no_units": "To zamówienie nie ma pozycji realizacji, do których można odnieść zwrot."
           },

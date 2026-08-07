@@ -201,8 +201,6 @@ export interface ClaimCreateParams {
     replacement_variant_id?: string
     refund_amount?: string | number
   }>
-  /** One of the store's configured claim types */
-  claim_type?: string
   reason_id?: string
   memo?: string
 }
@@ -210,7 +208,6 @@ export interface ClaimCreateParams {
 export interface ClaimUpdateParams {
   memo?: string
   reason_id?: string
-  claim_type?: string
   metadata?: Record<string, unknown>
 }
 
