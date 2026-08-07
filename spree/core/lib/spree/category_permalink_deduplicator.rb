@@ -68,21 +68,44 @@ module Spree
 
       renamed = 0
 
-      duplicate_groups.each do |store_id, permalink|
-        ids = ids_for(store_id, permalink)
-        # The first row keeps the permalink; the rest have to move.
-        ids.drop(1).each do |id|
-          candidate = unique_permalink(permalink, id, store_id)
-          rewrite(id, permalink, candidate)
-          permalinks_for(store_id) << candidate
-          renamed += 1
-        end
+      # Re-queried each round rather than snapshotted once: re-prefixing a
+      # subtree can move a descendant onto a path some other row already holds,
+      # and that collision has to be resolved too or the unique index cannot be
+      # created. Each round strictly reduces the duplicates, so this terminates.
+      while (groups = duplicate_groups).any?
+        # A cascade rewrites descendants directly, so the cached permalink sets
+        # are stale by the end of a round.
+        @permalinks_by_store.clear
+        moved = resolve_groups(groups)
+        break if moved.zero? # defensive: never spin if a group cannot be moved
+
+        renamed += moved
       end
 
       # Independent of the base pass: a store whose base permalinks are already
       # unique can still hold colliding translated ones, and the storefront
       # resolves categories through that table.
       renamed + rewrite_translations
+    end
+
+    private
+
+    # @return [Integer] rows moved in this round
+    def resolve_groups(groups)
+      moved = 0
+
+      groups.each do |store_id, permalink|
+        ids = ids_for(store_id, permalink)
+        # The first row keeps the permalink; the rest have to move.
+        ids.drop(1).each do |id|
+          candidate = unique_permalink(permalink, id, store_id)
+          rewrite(id, permalink, candidate)
+          permalinks_for(store_id) << candidate
+          moved += 1
+        end
+      end
+
+      moved
     end
 
     private
@@ -196,7 +219,21 @@ module Spree
 
       renamed = 0
 
-      translation_duplicate_groups.each do |store_id, locale, permalink|
+      while (groups = translation_duplicate_groups).any?
+        moved = resolve_translation_groups(groups)
+        break if moved.zero?
+
+        renamed += moved
+      end
+
+      renamed
+    end
+
+    # @return [Integer] translation rows moved in this round
+    def resolve_translation_groups(groups)
+      renamed = 0
+
+      groups.each do |store_id, locale, permalink|
         rows = translation_rows_for(store_id, locale, permalink)
         taken = translation_permalinks_for(store_id, locale)
 

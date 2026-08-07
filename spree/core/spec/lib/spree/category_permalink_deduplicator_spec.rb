@@ -148,4 +148,26 @@ RSpec.describe Spree::CategoryPermalinkDeduplicator do
     all = permalinks.values.compact
     expect(all.uniq.size).to eq(all.size)
   end
+
+  # Re-prefixing a subtree can move a descendant onto a path another row already
+  # holds. That collision is created *by* the dedup pass, so a single snapshot of
+  # the duplicate groups never sees it — and the unique index then cannot be
+  # created, which is the exact failure this class exists to prevent.
+  it 'resolves collisions its own cascade creates' do
+    taxonomy_a = create(:taxonomy, name: 'Shop A', store: store)
+    taxonomy_b = create(:taxonomy, name: 'Shop B', store: store)
+    kids = create(:category, name: 'Kids', taxonomy: taxonomy_b, parent: taxonomy_b.root)
+    squatter = create(:category, name: 'Squatter', taxonomy: taxonomy_a, parent: taxonomy_a.root)
+
+    stage(taxonomy_a.root, 'catalog')
+    stage(taxonomy_b.root, 'catalog')
+    stage(kids, 'catalog/kids')
+    # Already sits on the path the cascade will move `kids` onto.
+    stage(squatter, 'catalog-shop-b/kids')
+
+    described_class.new.call
+
+    permalinks = Spree::Category.unscoped.pluck(:permalink).compact
+    expect(permalinks.uniq.size).to eq(permalinks.size)
+  end
 end
