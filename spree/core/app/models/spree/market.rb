@@ -70,9 +70,11 @@ module Spree
     def self.for_country(country, store:)
       return nil unless country && store
 
+      iso = country.respond_to?(:iso) ? country.iso : country.to_s
+
       joins(:market_countries)
         .where(store_id: store.id)
-        .where(spree_market_countries: { country_id: country.id })
+        .where(spree_market_countries: { country_iso: iso })
         .take
     end
 
@@ -126,8 +128,11 @@ module Spree
     # currently assigned to the market.
     #
     # @return [Array<String>]
+    # Reads through +countries+ rather than the join rows: assigning
+    # +country_isos=+ replaces that collection, which would leave a cached
+    # market_countries association reporting the old set.
     def country_isos
-      countries.map(&:iso).compact.sort
+      countries.filter_map(&:iso).sort
     end
 
     # Accepts an Array of 2-letter ISO codes and resolves them to the matching
