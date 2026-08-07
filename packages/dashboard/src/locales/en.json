@@ -1182,7 +1182,7 @@
         },
         "preferred_default_package_weight": {
           "label": "Default package weight",
-          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates, in the store's weight unit. Set to 0 to disable."
+          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable."
         },
         "preferred_default_package_dimensions": {
           "label": "Default package dimensions",
@@ -2341,6 +2341,8 @@
           "subtitle": "General configuration and store-wide defaults.",
           "tab_general": "General",
           "tab_standards": "Standards and formats",
+          "tab_default_package": "Default package",
+          "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "tab_storefront_access": "Storefront access",
           "title": "Store settings"
         },
