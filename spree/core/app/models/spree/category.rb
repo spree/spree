@@ -30,7 +30,13 @@ module Spree
     #
     # Associations
     #
-    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons, deprecated: true
+    # Not flagged `deprecated: true`: 6.0 still reads this association on
+    # supported paths (#store, #ensure_store, #copy_taxonomy_from_parent, the
+    # .for_store fallback and the store categories preload), and Rails cannot
+    # tell our own reads from an extension's — under the :raise mode it aborts
+    # a plain category save. The association goes away with Spree::Taxonomy in
+    # 6.1; until then the deprecation is documented rather than enforced.
+    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
     has_many :product_categories, -> { order(:position) }, class_name: 'Spree::ProductCategory', dependent: :destroy_async, inverse_of: :category
     has_many :products, through: :product_categories
 
