@@ -40,12 +40,6 @@ describe Spree::Payment, type: :model do
   end
 
   before do
-    # Rails >= 5.0.3 returns new object for association so we ugly mock it
-    allow(payment).to receive(:log_entries).and_return(payment.log_entries)
-
-    # So it doesn't create log entries every time a processing method is called
-    allow(payment.log_entries).to receive(:create!)
-
     allow(payment).to receive(:payment_method_available_for_order).and_return(nil)
   end
 
@@ -338,12 +332,6 @@ describe Spree::Payment, type: :model do
         payment.authorize!
       end
 
-      it 'logs the response' do
-        payment.save!
-        expect(payment.log_entries).to receive(:create!).with(details: anything)
-        payment.authorize!
-      end
-
       context 'if successful' do
         before do
           expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
@@ -395,12 +383,6 @@ describe Spree::Payment, type: :model do
     describe '#purchase!' do
       it 'calls purchase on the gateway with the payment amount' do
         expect(gateway).to receive(:purchase).with(amount_in_cents, card, anything).and_return(success_response)
-        payment.purchase!
-      end
-
-      it 'logs the response' do
-        payment.save!
-        expect(payment.log_entries).to receive(:create!).with(details: anything)
         payment.purchase!
       end
 
@@ -618,7 +600,6 @@ describe Spree::Payment, type: :model do
         it 'does nothing' do
           expect(payment).not_to receive(:complete)
           expect(payment.payment_method).not_to receive(:capture)
-          expect(payment.log_entries).not_to receive(:create!)
           payment.capture!
         end
       end
@@ -644,11 +625,6 @@ describe Spree::Payment, type: :model do
           expect(gateway).to receive(:void).with('123', anything).and_return(success_response)
           payment.void_transaction!
         end
-      end
-
-      it 'logs the response' do
-        expect(payment.log_entries).to receive(:create!).with(details: anything)
-        payment.void_transaction!
       end
 
       context 'if successful' do
@@ -1187,21 +1163,6 @@ describe Spree::Payment, type: :model do
 
         it { expect(payment.editable?).to eq(false) }
       end
-    end
-  end
-
-  # Regression test for #4072 (kinda)
-  # The need for this was discovered in the research for #4072
-  context 'state changes' do
-    it 'are logged to the database' do
-      expect(payment.state_changes).to be_empty
-      expect(payment.process!).to be_a(Spree::PaymentCaptureEvent)
-      expect(payment.state_changes.count).to eq(2)
-      changes = payment.state_changes.map { |change| { change.previous_state => change.next_state } }
-      expect(changes).to match_array([
-                                       { 'checkout' => 'processing' },
-                                       { 'processing' => 'completed' }
-                                     ])
     end
   end
 

@@ -14,7 +14,7 @@ module Spree
   # event_serializer_class to point to the parent serializer.
   #
   # @example Disabling events for a specific model
-  #   class Spree::LogEntry < Spree.base_class
+  #   class Spree::StockMovement < Spree.base_class
   #     self.publish_events = false
   #   end
   #
@@ -93,7 +93,7 @@ module Spree
       # Disable lifecycle events for this model
       #
       # @example
-      #   class Spree::LogEntry < Spree.base_class
+      #   class Spree::StockMovement < Spree.base_class
       #     skip_lifecycle_events
       #   end
       #

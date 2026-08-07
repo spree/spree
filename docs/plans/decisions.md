@@ -1502,3 +1502,30 @@ and `Spree::CalculatedAdjustments` resolves an equivalent registry
 separately. Extract a `Spree::RegisteredSubclasses` concern when a family
 needs the registry without preferences — that second consumer is the
 trigger, and it would absorb CalculatedAdjustments too.
+
+## 2026-08-07 — StateChange and LogEntry removed; lifecycle events are the only audit
+
+**Decision:** Delete `Spree::StateChange` and `Spree::LogEntry` in 6.0 — models,
+associations, state-machine writers, `Payment::Processing#record_response`,
+`Refund#create_log_entry` and the `Order#log_state_changes` shell. This
+supersedes the cart/order-split note that payment/fulfillment machines keep
+their `StateChange` rows.
+
+**Why:** Both were write-only. Nothing in the 6.0 codebase — no serializer, no
+API endpoint, no dashboard page, no event payload — ever read them back; the
+legacy Rails admin screens that displayed them are gone. Lifecycle events
+(`payment.completed`/`voided`, `fulfillment.ready`/`fulfilled`/`canceled`/
+`resumed`, `order.*`) are the sanctioned audit, the same call already made for
+Order rows. Removing LogEntry also retires YAML-serialized gateway responses
+in the database (a historic deserialization CVE surface); gateway dashboards
+and `PaymentSession` own transaction forensics now.
+
+**Tables survive to 6.1:** `spree_state_changes` and `spree_log_entries` stay
+(same pattern as the returns-chain tables). The 5.6→6.0 upgrade tasks that
+touch legacy rows (`migrate_incomplete_orders_to_carts`,
+`migrate_shipping_to_delivery`) read the table through anonymous ActiveRecord
+classes. Both tables drop in 6.1 alongside `spree_adjustments`.
+
+**Kept:** `Spree::PaymentCaptureEvent` — functional money data, not audit:
+`Payment#captured_amount` sums it, partial capture and capture-on-dispatch
+depend on it, and the Admin API exposes `captured_amount`.

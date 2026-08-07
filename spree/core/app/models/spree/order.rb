@@ -155,7 +155,6 @@ module Spree
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
 
     with_options dependent: :destroy do
-      has_many :state_changes, as: :stateful, class_name: 'Spree::StateChange'
       has_many :line_items, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::LineItem'
       has_many :payments, class_name: 'Spree::Payment'
       has_many :payment_sessions, inverse_of: :order, class_name: 'Spree::PaymentSession'
@@ -652,16 +651,6 @@ module Spree
       Spree::CouponCodes::CouponCodesHandler.new(order: self).use_all_codes
     end
 
-    def log_state_changes(state_name:, old_state:, new_state:)
-      Spree::Deprecation.warn('Spree::Order#log_state_changes is deprecated and will be removed in Spree 6.1.')
-      state_changes.create(
-        previous_state: old_state,
-        next_state: new_state,
-        name: state_name,
-        user_id: user_id
-      )
-    end
-
     normalizes :coupon_code, with: ->(code) { code.to_s.strip.downcase.presence }
 
     def can_add_coupon?
@@ -691,7 +680,6 @@ module Spree
       fees.for_fulfillments.delete_all
 
       shipment_ids = fulfillments.map(&:id)
-      StateChange.where(stateful_type: %w[Spree::Shipment Spree::Fulfillment], stateful_id: shipment_ids).delete_all
       DeliveryRate.where(fulfillment_id: shipment_ids).delete_all
 
       fulfillments.delete_all

@@ -174,14 +174,6 @@ en:
       spree/state:
         abbr: Abbreviation
         name: Name
-      spree/state_change:
-        state_changes: State changes
-        state_from: State from
-        state_to: State to
-        timestamp: Timestamp
-        type: Type
-        updated: Updated
-        user: User
       spree/store:
         address: Address
         contact_phone: Contact Phone
@@ -505,9 +497,6 @@ en:
       spree/state:
         one: State
         other: States
-      spree/state_change:
-        one: State Change
-        other: State Changes
       spree/stock_item:
         one: Stock Item
         other: Stock Items
@@ -1059,7 +1048,6 @@ en:
     locale_not_supported_by_store: is not supported by this store
     location: Location
     lock: Lock
-    log_entries: Log Entries
     logged_in_successfully: Logged in successfully
     login: Login
     logo: Logo
@@ -1464,7 +1452,6 @@ en:
     start: Start
     starts_at: Starts at
     state: State
-    state_changes: State Changes
     states: States
     states_required: States Required
     status: Status

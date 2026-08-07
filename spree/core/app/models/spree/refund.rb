@@ -18,8 +18,6 @@ module Spree
     # small and closed, and refunds are never bulk-queried in a hot path.
     belongs_to :originator, polymorphic: true, optional: true
 
-    has_many :log_entries, as: :source
-
     with_options presence: true do
       validates :payment, :reason
       # can't require this on create because the perform! in after_create needs to run first
@@ -29,7 +27,6 @@ module Spree
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create, if: :amount
 
     after_create :perform!
-    after_create :create_log_entry
 
     attr_reader :response
 
@@ -111,10 +108,6 @@ module Spree
 
     def track_order_as_refunded(credit_cents)
       # You can track refunds here
-    end
-
-    def create_log_entry
-      log_entries.create!(details: @response.to_yaml)
     end
 
     def amount_is_less_than_or_equal_to_allowed_amount

@@ -80,10 +80,6 @@ erDiagram
         integer refund_reason_id
     }
 
-    LogEntry {
-        text details
-    }
-
     Order ||--o{ Payment : "has many"
     Order ||--o{ PaymentSession : "has many"
     Payment }o--|| PaymentMethod : "belongs to"
@@ -91,7 +87,6 @@ erDiagram
     Payment }o--o| PaymentSource : "source"
     Payment }o--o| StoreCredit : "source"
     Payment ||--o| PaymentSession : "linked via response_code"
-    Payment ||--o{ LogEntry : "has many"
     Payment ||--o{ Refund : "has many"
     PaymentMethod ||--o{ PaymentSession : "has many"
     PaymentMethod ||--o{ PaymentSetupSession : "has many"
@@ -513,12 +508,8 @@ Each payment update also recalculates the order's `payment_state`:
 | `paid` | This order has been paid for in full |
 
 <Warning>
-You may want to keep tabs on the number of orders with a `payment_state` of `failed`. A sudden increase could indicate a problem with your payment gateway and most likely a serious problem affecting customer satisfaction. Check the latest `log_entries` for the most recent payments if this is happening.
+You may want to keep tabs on the number of orders with a `payment_state` of `failed`. A sudden increase could indicate a problem with your payment gateway and most likely a serious problem affecting customer satisfaction. Check your payment gateway's dashboard for the most recent transactions if this is happening.
 </Warning>
-
-### Log Entries
-
-Responses from payment gateways are stored as log entries for debugging purposes. These can be viewed in the Admin Panel on the payment detail page.
 
 ## Payment Sources
 
