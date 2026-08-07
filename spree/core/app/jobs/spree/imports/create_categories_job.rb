@@ -20,12 +20,18 @@ module Spree
 
       # Walks a "Men -> Clothing -> Shirts" path, creating each missing level as a
       # store-owned category. The first segment becomes a top-level category.
+      #
+      # Looks up through .for_store rather than store.categories: an installation
+      # that has not yet run the upgrade task still has categories with a NULL
+      # store_id that resolve their store through a taxonomy, and store.categories
+      # cannot see them — so an import would build a parallel tree beside the one
+      # the merchant already has.
       def find_or_create_category(store, taxon_pretty_name)
         category_names = taxon_pretty_name.strip.split('->').map(&:strip).map(&:presence).compact
         return if category_names.empty?
 
         category_names.inject(nil) do |parent, category_name|
-          store.categories.where(parent: parent).with_matching_name(category_name).first ||
+          Spree::Category.for_store(store).where(parent: parent).with_matching_name(category_name).first ||
             store.categories.create!(name: category_name, parent: parent)
         end
       end

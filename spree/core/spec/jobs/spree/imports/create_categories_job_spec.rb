@@ -107,5 +107,20 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
         end
       end
     end
+
+    # An installation that has not run the upgrade task still has categories with
+    # a NULL store_id resolving their store through a taxonomy. The import has to
+    # find those, or it builds a parallel tree beside the merchant's own.
+    it 'reuses a legacy pre-backfill category instead of creating a duplicate' do
+      taxonomy = create(:taxonomy, name: 'Men', store: store)
+      legacy = create(:category, name: 'Clothing', taxonomy: taxonomy, store: store)
+      Spree::Category.unscoped.where(id: legacy.id).update_all(store_id: nil)
+
+      expect {
+        described_class.perform_now(product.id, store.id, ['Clothing'])
+      }.not_to change { Spree::Category.unscoped.count }
+
+      expect(product.reload.categories).to eq([legacy])
+    end
   end
 end

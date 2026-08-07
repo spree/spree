@@ -76,4 +76,22 @@ RSpec.describe Spree::CategoryPermalinkDeduplicator do
     expect(described_class.new.call).to eq(0)
     expect(Spree::Category.unscoped.where(id: taxonomy.root.id).pick(:permalink)).to eq('untouched')
   end
+
+  # The storefront resolves a category through the translations table, which has
+  # no uniqueness constraint — so a collision there survives the base-column pass
+  # and makes the localized lookup return whichever row it reaches first.
+  it 'separates colliding translated permalinks' do
+    taxonomy_a = create(:taxonomy, name: 'Shop A', store: store)
+    taxonomy_b = create(:taxonomy, name: 'Shop B', store: store)
+
+    Spree::Category::Translation.create!(spree_category_id: taxonomy_a.root.id, locale: 'pl', permalink: 'katalog')
+    Spree::Category::Translation.create!(spree_category_id: taxonomy_b.root.id, locale: 'pl', permalink: 'katalog')
+    stage(taxonomy_a.root, 'catalog')
+    stage(taxonomy_b.root, 'catalog')
+
+    described_class.new.call
+
+    translated = Spree::Category::Translation.where(locale: 'pl').pluck(:permalink)
+    expect(translated.uniq.size).to eq(translated.size)
+  end
 end

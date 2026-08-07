@@ -48,8 +48,10 @@ module Spree
       return 0 unless connection.table_exists?('spree_categories')
 
       renamed = 0
+      stores = []
 
       duplicate_groups.each do |store_id, permalink|
+        stores << store_id
         ids = ids_for(store_id, permalink)
         # The first row keeps the permalink; the rest have to move.
         ids.drop(1).each do |id|
@@ -59,6 +61,10 @@ module Spree
           renamed += 1
         end
       end
+
+      # Translated permalinks live in their own table with no uniqueness
+      # constraint, and the storefront resolves categories through it.
+      stores.uniq.each { |store_id| renamed += rewrite_translations(store_id) }
 
       renamed
     end
@@ -174,9 +180,9 @@ module Spree
         taken = translation_permalinks_for(store_id, locale)
 
         ids.drop(1).each do |translation_id|
-          candidate = permalink
           counter = 2
-          counter += 1 while taken.include?(candidate = "#{permalink}-#{counter}")
+          counter += 1 while taken.include?("#{permalink}-#{counter}")
+          candidate = "#{permalink}-#{counter}"
           taken << candidate
 
           connection.update(
