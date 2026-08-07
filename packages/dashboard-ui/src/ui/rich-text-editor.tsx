@@ -139,7 +139,7 @@ export function RichTextEditor({
     <div
       ref={wrapperRef}
       className={cn(
-        'rounded-lg border border-border bg-card text-foreground shadow-xs transition-all duration-100 ease-in-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]',
+        'rounded-lg border border-border bg-card text-foreground shadow-xs transition-[color,background-color,border-color,box-shadow] duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]',
         disabled && 'pointer-events-none bg-muted border-border',
         className,
       )}

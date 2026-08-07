@@ -47,6 +47,7 @@ export * from './components/top-bar'
 // Infra hooks
 // ---------------------------------------------------------------------------
 export * from './hooks/use-auth'
+export * from './hooks/use-auto-collapse-sidebar'
 export * from './hooks/use-command-palette'
 export * from './hooks/use-countries'
 export * from './hooks/use-custom-fields'
@@ -94,4 +95,5 @@ export * from './plugin'
 // ---------------------------------------------------------------------------
 export * from './providers/auth-provider'
 export * from './providers/permission-provider'
+export * from './providers/sticky-header-provider'
 export * from './providers/store-provider'

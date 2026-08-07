@@ -3,8 +3,10 @@ import {
   adminClient,
   CommandPaletteProvider,
   SettingsSidebar,
+  StickyHeaderProvider,
   StoreProvider,
   TopBar,
+  useAutoCollapseSidebar,
 } from '@spree/dashboard-core'
 import { SidebarInset, SidebarProvider } from '@spree/dashboard-ui'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
@@ -31,27 +33,44 @@ function StoreLayout() {
   return (
     <StoreProvider storeId={storeId}>
       <CommandPaletteProvider>
-        <SidebarProvider>
-          <AppSidebar />
-          {/* `flex-row` so the secondary sidebar can sit flush against the
-              primary and span full height. The TopBar moves into the content
-              column so the secondary sidebar can extend above it. */}
-          <SidebarInset className="flex-row">
-            <SettingsSidebar open={inSettings} />
-            <div className="flex min-w-0 flex-1 flex-col">
-              <TopBar uiLocales={UI_LOCALES} />
-              {inSettings ? (
-                <Outlet />
-              ) : (
-                <div className="container mx-auto flex flex-1 flex-col gap-4 p-4 lg:p-6">
-                  <Outlet />
-                </div>
-              )}
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
-        <CommandPalette />
+        <StickyHeaderProvider>
+          <SidebarProvider>
+            <StoreShell inSettings={inSettings} />
+          </SidebarProvider>
+          <CommandPalette />
+        </StickyHeaderProvider>
       </CommandPaletteProvider>
     </StoreProvider>
+  )
+}
+
+/**
+ * Inside `SidebarProvider` so it can drive the primary nav's collapsed state:
+ * the settings area brings its own full-width nav, so the primary one folds to
+ * icons while the merchant is in there.
+ */
+function StoreShell({ inSettings }: { inSettings: boolean }) {
+  useAutoCollapseSidebar(inSettings)
+
+  return (
+    <>
+      <AppSidebar />
+      {/* `flex-row` so the secondary sidebar can sit flush against the
+          primary and span full height. The TopBar moves into the content
+          column so the secondary sidebar can extend above it. */}
+      <SidebarInset className="flex-row">
+        <SettingsSidebar open={inSettings} />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <TopBar uiLocales={UI_LOCALES} />
+          {inSettings ? (
+            <Outlet />
+          ) : (
+            <div className="container mx-auto flex flex-1 flex-col gap-4 p-4 lg:p-6">
+              <Outlet />
+            </div>
+          )}
+        </div>
+      </SidebarInset>
+    </>
   )
 }
