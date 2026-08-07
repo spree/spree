@@ -7,7 +7,8 @@ export type {
   PaginatedResponse,
   PaginationMeta,
 } from '@spree/sdk-core'
-// Hand-written discovery-endpoint types (controller-shaped, not generated)
+// Hand-written discovery-endpoint types (controller-shaped, not generated):
+// entries returned by the delivery-method provider discovery endpoints.
 export type { DeliveryRateProviderOption, FulfillmentProviderOption } from './fulfillment-providers'
 // Admin-specific generated types
 export type { default as Address } from './generated/Address'

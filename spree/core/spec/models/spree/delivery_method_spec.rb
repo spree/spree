@@ -210,6 +210,14 @@ describe Spree::DeliveryMethod, type: :model do
       expect(delivery_method.reload).to be_valid
     end
 
+    # Uninstalling a provider gem leaves its name on existing rows; quoting
+    # must fall back rather than raise inside checkout.
+    it 'falls back to the default when the stored provider no longer resolves' do
+      delivery_method.update_columns(rate_provider: 'GoneAwayProvider')
+
+      expect(delivery_method.reload.rate_provider_instance).to be_a(Spree::DeliveryRateProvider::Internal)
+    end
+
     # The admin picker filters on availability, but a direct API write must
     # not save a provider whose integration isn't connected.
     it 'rejects a registered provider that is unavailable for the store' do

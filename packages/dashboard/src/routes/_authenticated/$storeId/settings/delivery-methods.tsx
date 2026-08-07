@@ -487,14 +487,12 @@ function ProviderSelectField({
   label,
   help,
   options,
-  fallbackValue,
 }: {
   form: UseFormReturn<DeliveryMethodFormValues>
   name: 'fulfillment_provider' | 'rate_provider'
   label: string
   help: string
   options: { value: string; label: string }[]
-  fallbackValue?: string
 }) {
   return (
     <Field>
@@ -503,11 +501,7 @@ function ProviderSelectField({
         name={name}
         control={form.control}
         render={({ field }) => (
-          <Select
-            items={options}
-            value={field.value || fallbackValue || ''}
-            onValueChange={field.onChange}
-          >
+          <Select items={options} value={field.value || ''} onValueChange={field.onChange}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -568,6 +562,18 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
   }))
 
   const defaultRateProvider = rateProviders?.default ?? ''
+
+  // The select displayed the server default while submitting a blank value —
+  // harmless (blank resolves to Internal) but the shown and saved values
+  // disagreed. Seed it once the default is known, leaving a touched field or
+  // a loaded record alone.
+  const rateProvider = form.watch('rate_provider')
+  const rateProviderDirty = !!form.formState.dirtyFields.rate_provider
+  useEffect(() => {
+    if (!defaultRateProvider || rateProvider || rateProviderDirty) return
+
+    form.setValue('rate_provider', defaultRateProvider)
+  }, [defaultRateProvider, rateProvider, rateProviderDirty, form])
   const rateProviderOptions = (rateProviders?.data ?? []).map((provider) => ({
     value: provider.type,
     label: provider.name,
@@ -678,7 +684,6 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
           label={t('admin.fields.delivery_method.rate_provider.label')}
           help={t('admin.fields.delivery_method.rate_provider.help')}
           options={rateProviderOptions}
-          fallbackValue={defaultRateProvider}
         />
       )}
 
