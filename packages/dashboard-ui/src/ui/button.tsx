@@ -4,7 +4,7 @@ import { cn } from '../lib/utils'
 import { Slot } from './slot'
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-transparent text-sm font-medium whitespace-nowrap cursor-pointer select-none no-underline transition-[color,background-color,border-color,box-shadow,transform] duration-100 ease-out outline-none active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:border-blue-500 focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-transparent text-sm font-medium whitespace-nowrap cursor-pointer select-none no-underline transition-[color,background-color,border-color,box-shadow,transform,translate,scale] duration-100 ease-out outline-none active:scale-[0.98] motion-reduce:active:scale-100 focus-visible:border-blue-500 focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] disabled:pointer-events-none disabled:opacity-70 disabled:cursor-not-allowed aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
