@@ -2029,6 +2029,10 @@
         "edit": {
           "bulk_prices": {
             "no_variants": "Add at least one variant to start editing prices."
+          },
+          "bulk_shipping": {
+            "no_variants": "Add at least one variant to start editing shipping.",
+            "grid_aria": "Variant shipping spreadsheet"
           }
         },
         "inventory": {

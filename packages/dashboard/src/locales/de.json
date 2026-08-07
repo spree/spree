@@ -2029,6 +2029,10 @@
         "edit": {
           "bulk_prices": {
             "no_variants": "Fügen Sie mindestens eine Variante hinzu, um die Preisbearbeitung zu starten."
+          },
+          "bulk_shipping": {
+            "no_variants": "Füge mindestens eine Variante hinzu, um Versanddaten zu bearbeiten.",
+            "grid_aria": "Versandtabelle der Varianten"
           }
         },
         "inventory": {

@@ -33,6 +33,7 @@ import {
   MediaCard,
   PricesCard,
   SEOCard,
+  ShippingCard,
   StatusCard,
   TaxCard,
   VariantsCard,
@@ -443,6 +444,7 @@ function ProductForm({ product }: { product: Product }) {
               <VariantsCard form={form} />
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
               <PricesCard form={form} productName={product.name} />
+              <ShippingCard form={form} />
               <InventoryCard form={form} storeId={storeId} />
               <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
                 <CustomFieldsInlineCard />
