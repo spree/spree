@@ -159,6 +159,69 @@ module Spree
       end
     end
 
+    # The storefront resolves a category by its *translated* permalink
+    # (`scope.i18n.find_by!(permalink:)`), and that table carries no uniqueness
+    # constraint — so a collision there survives the base-column pass and makes
+    # the lookup return whichever row it happens to reach first. Each locale is a
+    # separate namespace, so each is deduplicated on its own.
+    def rewrite_translations(store_id)
+      return 0 unless connection.table_exists?('spree_category_translations')
+
+      renamed = 0
+
+      translation_duplicate_groups(store_id).each do |locale, permalink|
+        ids = translation_ids_for(store_id, locale, permalink)
+        taken = translation_permalinks_for(store_id, locale)
+
+        ids.drop(1).each do |translation_id|
+          candidate = permalink
+          counter = 2
+          counter += 1 while taken.include?(candidate = "#{permalink}-#{counter}")
+          taken << candidate
+
+          connection.update(
+            sanitize('UPDATE spree_category_translations SET permalink = ? WHERE id = ?', candidate, translation_id)
+          )
+          renamed += 1
+        end
+      end
+
+      renamed
+    end
+
+    def translation_duplicate_groups(store_id)
+      connection.select_rows(sanitize(<<~SQL, store_id))
+        SELECT tr.locale, tr.permalink
+        FROM spree_category_translations tr
+        INNER JOIN spree_categories c ON c.id = tr.spree_category_id
+        #{taxonomy_join}
+        WHERE tr.permalink IS NOT NULL AND #{effective_store_id} = ?
+        GROUP BY tr.locale, tr.permalink
+        HAVING COUNT(*) > 1
+      SQL
+    end
+
+    def translation_ids_for(store_id, locale, permalink)
+      connection.select_values(sanitize(<<~SQL, store_id, locale, permalink))
+        SELECT tr.id
+        FROM spree_category_translations tr
+        INNER JOIN spree_categories c ON c.id = tr.spree_category_id
+        #{taxonomy_join}
+        WHERE #{effective_store_id} = ? AND tr.locale = ? AND tr.permalink = ?
+        ORDER BY tr.id
+      SQL
+    end
+
+    def translation_permalinks_for(store_id, locale)
+      connection.select_values(sanitize(<<~SQL, store_id, locale)).compact.to_set
+        SELECT tr.permalink
+        FROM spree_category_translations tr
+        INNER JOIN spree_categories c ON c.id = tr.spree_category_id
+        #{taxonomy_join}
+        WHERE #{effective_store_id} = ? AND tr.locale = ? AND tr.permalink IS NOT NULL
+      SQL
+    end
+
     # Walks the parent chain rather than using lft/rgt, which may be stale on rows
     # an installation has not rebuilt. One query per depth level, not per node.
     #

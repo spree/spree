@@ -316,9 +316,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     before { request.headers.merge!(headers) }
 
     let(:tax_category) { create(:tax_category) }
-    let(:taxonomy) { create(:taxonomy, store: store) }
-    let(:category1) { create(:taxon, taxonomy: taxonomy) }
-    let(:category2) { create(:taxon, taxonomy: taxonomy) }
+    let(:category1) { create(:category) }
+    let(:category2) { create(:category) }
 
     it 'creates a minimal product' do
       expect {
@@ -712,10 +711,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
   describe 'PATCH #update' do
     before { request.headers.merge!(headers) }
-
-    let(:taxonomy) { create(:taxonomy, store: store) }
-    let(:category1) { create(:taxon, taxonomy: taxonomy) }
-    let(:category2) { create(:taxon, taxonomy: taxonomy) }
+    let(:category1) { create(:category) }
+    let(:category2) { create(:category) }
     let(:tax_category) { create(:tax_category) }
 
     it 'updates basic product attributes' do
@@ -872,42 +869,42 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(product.reload.taxons).to match_array([category1, category2])
+        expect(product.reload.categories).to match_array([category1, category2])
       end
 
       it 'replaces existing categories' do
-        product.taxons << category1
+        product.categories << category1
         patch :update, params: {
           id: product.prefixed_id,
           category_ids: [category2.prefixed_id]
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(product.reload.taxons.where(taxonomy: taxonomy)).to eq([category2])
+        expect(product.reload.categories).to eq([category2])
       end
 
       it 'clears categories when empty array' do
-        product.taxons << category1
+        product.categories << category1
         patch :update, params: {
           id: product.prefixed_id,
           category_ids: []
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(product.reload.taxons.where(taxonomy: taxonomy)).to be_empty
+        expect(product.reload.categories).to be_empty
       end
 
-      it "ignores a category that belongs to another store's taxonomy" do
-        foreign_taxon = create(:taxon, taxonomy: create(:taxonomy, store: create(:store)))
+      it 'ignores a category that belongs to another store' do
+        foreign_category = create(:category, store: create(:store))
 
         patch :update, params: {
           id: product.prefixed_id,
-          category_ids: [category1.prefixed_id, foreign_taxon.prefixed_id]
+          category_ids: [category1.prefixed_id, foreign_category.prefixed_id]
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(product.reload.taxons).to include(category1)
-        expect(product.reload.taxons).not_to include(foreign_taxon)
+        expect(product.reload.categories).to include(category1)
+        expect(product.reload.categories).not_to include(foreign_category)
       end
     end
 
@@ -1510,9 +1507,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
   end
 
   describe 'POST #bulk_add_to_categories' do
-    let(:taxonomy) { create(:taxonomy, store: store) }
-    let(:category) { create(:taxon, taxonomy: taxonomy) }
-    let(:other_category) { create(:taxon, taxonomy: taxonomy) }
+    let(:category) { create(:category) }
+    let(:other_category) { create(:category) }
     let!(:second_product) { create(:product) }
 
     before { request.headers.merge!(headers) }
@@ -1525,8 +1521,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response).to eq('product_count' => 2, 'category_count' => 2)
-      expect(product.reload.taxons).to include(category, other_category)
-      expect(second_product.reload.taxons).to include(category, other_category)
+      expect(product.reload.categories).to include(category, other_category)
+      expect(second_product.reload.categories).to include(category, other_category)
     end
 
     it 'attaches to a taxonomy-less, store-owned category' do
@@ -1541,12 +1537,11 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['category_count']).to eq(1)
-      expect(product.reload.taxons).to include(store_category)
+      expect(product.reload.categories).to include(store_category)
     end
 
     it 'silently ignores categories from other stores' do
-      foreign_taxonomy = create(:taxonomy, store: create(:store))
-      foreign_category = create(:taxon, taxonomy: foreign_taxonomy)
+      foreign_category = create(:category, store: create(:store))
 
       post :bulk_add_to_categories, params: {
         ids: [product.prefixed_id],
@@ -1555,8 +1550,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['category_count']).to eq(1)
-      expect(product.reload.taxons).to include(category)
-      expect(product.reload.taxons).not_to include(foreign_category)
+      expect(product.reload.categories).to include(category)
+      expect(product.reload.categories).not_to include(foreign_category)
     end
 
     it 'silently drops products from other stores' do
@@ -1570,17 +1565,17 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['product_count']).to eq(1)
-      expect(other_store_product.reload.taxons).to be_empty
+      expect(other_store_product.reload.categories).to be_empty
     end
 
     it 'is idempotent — re-adding existing categories is a no-op' do
-      product.taxons << category
+      product.categories << category
 
       expect do
         post :bulk_add_to_categories, params: {
           ids: [product.prefixed_id], category_ids: [category.prefixed_id]
         }, as: :json
-      end.not_to change { product.reload.taxons.count }
+      end.not_to change { product.reload.categories.count }
 
       expect(response).to have_http_status(:ok)
     end
@@ -1592,7 +1587,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response).to eq('product_count' => 1, 'category_count' => 0)
-      expect(product.reload.taxons).to be_empty
+      expect(product.reload.categories).to be_empty
     end
 
     it 'is a no-op when ids is empty' do
@@ -1648,15 +1643,14 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
   end
 
   describe 'POST #bulk_remove_from_categories' do
-    let(:taxonomy) { create(:taxonomy, store: store) }
-    let(:category) { create(:taxon, taxonomy: taxonomy) }
-    let(:other_category) { create(:taxon, taxonomy: taxonomy) }
+    let(:category) { create(:category) }
+    let(:other_category) { create(:category) }
     let!(:second_product) { create(:product) }
 
     before do
       request.headers.merge!(headers)
-      product.taxons << [category, other_category]
-      second_product.taxons << category
+      product.categories << [category, other_category]
+      second_product.categories << category
     end
 
     it 'detaches every product from every category' do
@@ -1667,9 +1661,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response).to eq('product_count' => 2, 'category_count' => 1)
-      expect(product.reload.taxons).not_to include(category)
-      expect(product.reload.taxons).to include(other_category)
-      expect(second_product.reload.taxons).not_to include(category)
+      expect(product.reload.categories).not_to include(category)
+      expect(product.reload.categories).to include(other_category)
+      expect(second_product.reload.categories).not_to include(category)
     end
 
     it 'is a no-op for products not in the category' do
@@ -1680,7 +1674,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(stray.reload.taxons).to be_empty
+      expect(stray.reload.categories).to be_empty
     end
 
     it 'touches the products' do
@@ -1718,8 +1712,8 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     it 'reassigns the positions of surviving products on the category list' do
       survivor = create(:product)
       latecomer = create(:product)
-      survivor.taxons << category
-      latecomer.taxons << category
+      survivor.categories << category
+      latecomer.categories << category
 
       post :bulk_remove_from_categories, params: {
         ids: [product.prefixed_id, second_product.prefixed_id],

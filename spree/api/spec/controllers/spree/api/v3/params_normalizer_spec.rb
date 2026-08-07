@@ -50,12 +50,12 @@ RSpec.describe Spree::Api::V3::ParamsNormalizer do
     end
 
     it 'decodes _ids array params' do
-      taxon1 = create(:taxon)
-      taxon2 = create(:taxon)
-      hash = { 'taxon_ids' => [taxon1.prefixed_id, taxon2.prefixed_id] }.with_indifferent_access
+      category1 = create(:category)
+      category2 = create(:category)
+      hash = { 'category_ids' => [category1.prefixed_id, category2.prefixed_id] }.with_indifferent_access
       result = controller.resolve_prefixed_ids(hash)
 
-      expect(result['taxon_ids']).to eq([taxon1.id, taxon2.id])
+      expect(result['category_ids']).to eq([category1.id, category2.id])
     end
 
     it 'recurses into nested hashes' do

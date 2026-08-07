@@ -288,11 +288,11 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
     end
 
     context 'with a category parent' do
-      # Regression: the parent map keyed taxons by `taxon`, but the routes
+      # Regression: the parent map keyed taxons by `category`, but the routes
       # expose `category_id` — category custom-field endpoints 404'd for
       # every caller until the `category` alias was added.
       let(:granted_scope) { 'write_categories' }
-      let(:category) { create(:taxon) }
+      let(:category) { create(:category) }
       let(:category_definition) do
         create(:metafield_definition, :short_text_field, resource_type: 'Spree::Category')
       end

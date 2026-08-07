@@ -19,18 +19,18 @@ RSpec.describe Spree::ReportLineItems::ProductsPerformance do
   end
 
   describe '#category_levels' do
-    let(:taxonomy) { store.taxonomies.first || create(:taxonomy, name: 'Categories', store: store) }
-    let(:taxon) { create(:taxon, name: 'Shoes', taxonomy: taxonomy) }
+    let(:category) { create(:category, name: 'Shoes') }
 
     context 'when product has taxons' do
       before do
-        product.taxons << taxon
+        product.categories << category
         product.save!
       end
 
       it 'returns mapped category levels' do
-        expect(subject.category_lvl0).to eq('Categories')
-        expect(subject.category_lvl1).to eq('Shoes')
+        # A top-level category is level 0 — there is no taxonomy root above it.
+        expect(subject.category_lvl0).to eq('Shoes')
+        expect(subject.category_lvl1).to be_nil
         expect(subject.category_lvl2).to be_nil
       end
     end

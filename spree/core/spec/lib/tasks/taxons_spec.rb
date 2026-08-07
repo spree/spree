@@ -17,17 +17,17 @@ describe 'spree:taxons:backfill_store_id' do
 
   # ensure_store stamps store_id on create, so null it to reproduce a row
   # created before the column existed.
-  def downgrade!(taxon)
-    taxon.update_columns(store_id: nil)
-    taxon
+  def downgrade!(category)
+    category.update_columns(store_id: nil)
+    category
   end
 
-  context 'taxonomy-backed taxon' do
+  context 'taxonomy-backed category' do
     let(:taxonomy) { create(:taxonomy, store: store) }
-    let!(:taxon) { downgrade!(create(:taxon, taxonomy: taxonomy)) }
+    let!(:category) { downgrade!(create(:category, taxonomy: taxonomy)) }
 
     it 'backfills store_id from the taxonomy' do
-      expect { subject.invoke }.to change { taxon.reload.store_id }.from(nil).to(store.id)
+      expect { subject.invoke }.to change { category.reload.store_id }.from(nil).to(store.id)
     end
   end
 
@@ -53,9 +53,9 @@ describe 'spree:taxons:backfill_store_id' do
   end
 
   context 'when nothing needs backfilling' do
-    # Every taxon already has a store_id — the task must still run cleanly.
+    # Every category already has a store_id — the task must still run cleanly.
     # The buggy join-update raised at SQL-parse time even with zero matching rows.
-    let!(:taxon) { create(:taxon, taxonomy: create(:taxonomy, store: store)) }
+    let!(:category) { create(:category, taxonomy: create(:taxonomy, store: store)) }
 
     it 'is a safe no-op' do
       expect { subject.invoke }.not_to raise_error

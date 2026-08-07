@@ -19,9 +19,8 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   let(:index_name) { "#{store.code}_products" }
 
   # Categories
-  let(:taxonomy) { create(:taxonomy, store: store) }
-  let(:clothing_category) { create(:taxon, name: 'Clothing', taxonomy: taxonomy) }
-  let(:shoes_category) { create(:taxon, name: 'Shoes', taxonomy: taxonomy) }
+  let(:clothing_category) { create(:category, name: 'Clothing') }
+  let(:shoes_category) { create(:category, name: 'Shoes') }
 
   # Option types
   let(:color_option) { create(:option_type, name: 'color', presentation: 'Color', filterable: true) }
@@ -43,7 +42,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
 
   # Products with different attributes
   let!(:cheap_red_shirt) do
-    p = create(:product, name: 'Red Cotton Shirt', status: 'active', store: store, taxons: [clothing_category])
+    p = create(:product, name: 'Red Cotton Shirt', status: 'active', store: store, categories: [clothing_category])
     p.option_types << color_option
     p.option_types << size_option
     v = create(:variant, product: p, option_values: [red, small])
@@ -53,7 +52,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   end
 
   let!(:expensive_blue_shirt) do
-    p = create(:product, name: 'Blue Silk Shirt', status: 'active', store: store, taxons: [clothing_category])
+    p = create(:product, name: 'Blue Silk Shirt', status: 'active', store: store, categories: [clothing_category])
     p.option_types << color_option
     v = create(:variant, product: p, option_values: [blue, large])
     v.prices.find_or_create_by!(currency: 'USD').update!(amount: 89.99)
@@ -62,7 +61,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   end
 
   let!(:blue_shoes) do
-    p = create(:product, name: 'Blue Running Shoes', status: 'active', store: store, taxons: [shoes_category])
+    p = create(:product, name: 'Blue Running Shoes', status: 'active', store: store, categories: [shoes_category])
     p.option_types << color_option
     p.option_types << size_option
     v = create(:variant, product: p, option_values: [blue, small])
@@ -260,7 +259,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     end
     # Product with neither metafield — exercises missing-attribute sort placement.
     let!(:missing_metafield_product) do
-      create(:product, name: 'Green Linen Shirt', status: 'active', store: store, taxons: [clothing_category])
+      create(:product, name: 'Green Linen Shirt', status: 'active', store: store, categories: [clothing_category])
     end
 
     before do

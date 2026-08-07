@@ -9,7 +9,6 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
   let!(:category) { Spree::Category.create!(name: 'Clothing', store: store) }
   # A legacy taxonomy is still needed to host automatic (collection) taxons,
   # which the category API must exclude.
-  let(:taxonomy) { create(:taxonomy, store: store) }
 
   before { request.headers.merge!(headers) }
 
@@ -18,7 +17,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
   end
 
   describe 'GET #index' do
-    let!(:automatic) { create(:automatic_taxon, name: 'On Sale', taxonomy: taxonomy, parent: taxonomy.root) }
+    let!(:automatic) { Spree::Category.create!(name: 'On Sale', store: store, automatic: true) }
 
     it 'lists manual categories and excludes automatic (collection) taxons' do
       get :index, params: {}, as: :json
@@ -39,7 +38,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
     end
 
     it 'exposes the product count' do
-      create_list(:product, 2).each { |p| p.taxons << category }
+      create_list(:product, 2).each { |p| p.categories << category }
       get :show, params: { id: category.prefixed_id }, as: :json
 
       expect(json_response['products_count']).to eq(2)
@@ -55,8 +54,8 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(json_response['products_count']).to eq(2) # 1 direct + 1 from child
     end
 
-    it 'does not expose an automatic (collection) taxon as a category' do
-      automatic = create(:automatic_taxon, taxonomy: taxonomy, parent: taxonomy.root)
+    it 'does not expose an automatic (collection) category as a category' do
+      automatic = Spree::Category.create!(name: "On Sale #{SecureRandom.hex(4)}", store: store, automatic: true)
       get :show, params: { id: automatic.prefixed_id }, as: :json
       expect(response).to have_http_status(:not_found)
     end
@@ -102,16 +101,16 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(category.reload.name).to eq('Apparel')
     end
 
-    it 'cannot target an automatic (collection) taxon' do
-      automatic = create(:automatic_taxon, taxonomy: taxonomy, parent: taxonomy.root)
+    it 'cannot target an automatic (collection) category' do
+      automatic = Spree::Category.create!(name: "On Sale #{SecureRandom.hex(4)}", store: store, automatic: true)
       patch :update, params: { id: automatic.prefixed_id, name: 'Hijacked' }, as: :json
       expect(response).to have_http_status(:not_found)
     end
 
     it 'purges the image when image is set to null' do
-      # Attach reliably persists on a factory-built taxon; the controller treats
+      # Attach reliably persists on a factory-built category; the controller treats
       # it the same as a store-owned Category (both resolve through `scope`).
-      imaged = create(:taxon, :with_header_image, taxonomy: taxonomy, parent: taxonomy.root)
+      imaged = create(:category, :with_header_image)
       expect(imaged.reload.image).to be_attached
 
       patch :update, params: { id: imaged.prefixed_id, image: nil }, as: :json
@@ -198,8 +197,8 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(Spree::Category.find_by_prefix_id(category.prefixed_id)).to be_nil
     end
 
-    it 'cannot delete an automatic (collection) taxon' do
-      automatic = create(:automatic_taxon, taxonomy: taxonomy, parent: taxonomy.root)
+    it 'cannot delete an automatic (collection) category' do
+      automatic = Spree::Category.create!(name: "On Sale #{SecureRandom.hex(4)}", store: store, automatic: true)
       delete :destroy, params: { id: automatic.prefixed_id }, as: :json
       expect(response).to have_http_status(:not_found)
     end
@@ -273,8 +272,8 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
         expect(response).to have_http_status(:unprocessable_content)
       end
 
-      it 'cannot reposition an automatic (collection) taxon' do
-        automatic = create(:automatic_taxon, taxonomy: taxonomy, parent: taxonomy.root)
+      it 'cannot reposition an automatic (collection) category' do
+        automatic = Spree::Category.create!(name: "On Sale #{SecureRandom.hex(4)}", store: store, automatic: true)
 
         patch :reposition, params: { id: automatic.prefixed_id, new_position: 0 }, as: :json
 

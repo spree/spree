@@ -18,8 +18,8 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
   describe 'automatic categories -> collections' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let!(:category) do
-      create(:automatic_taxon, taxonomy: taxonomy, store: store, name: 'On Sale',
-                               sort_order: 'price asc', rules_match_policy: 'all')
+      Spree::Category.create!(taxonomy: taxonomy, store: store, name: 'On Sale', automatic: true,
+                              sort_order: 'price asc', rules_match_policy: 'all')
     end
     let!(:rule) { create(:tag_taxon_rule, taxon: category, value: 'sale', match_policy: 'is_equal_to') }
     let!(:product) { create(:product, store: store) }
@@ -50,7 +50,8 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
 
   describe 'manual categories' do
     let(:taxonomy) { create(:taxonomy, store: store) }
-    let!(:category) { create(:taxon, taxonomy: taxonomy, store: store) }
+    # A child of the root, so the root survives the childless-root sweep.
+    let!(:category) { create(:category, taxonomy: taxonomy, store: store, parent: taxonomy.root) }
 
     it 'keeps them as store-owned categories, severs taxonomy_id, creates no collection' do
       root = taxonomy.root
@@ -97,7 +98,7 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
   describe 'ActionText descriptions on surviving categories' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let!(:category) do
-      create(:taxon, taxonomy: taxonomy, store: store).tap do |c|
+      create(:category, taxonomy: taxonomy, store: store, parent: taxonomy.root).tap do |c|
         c.update!(description: '<div>Kept description</div>')
         # simulate a pre-6.0 row still typed as Spree::Taxon
         ActionText::RichText.where(record_id: c.id, name: 'description').update_all(record_type: 'Spree::Taxon')
@@ -113,7 +114,7 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
 
   describe 'idempotency' do
     let(:taxonomy) { create(:taxonomy, store: store) }
-    let!(:category) { create(:automatic_taxon, taxonomy: taxonomy, store: store) }
+    let!(:category) { Spree::Category.create!(taxonomy: taxonomy, store: store, name: 'On Sale', automatic: true) }
     let!(:rule) { create(:tag_taxon_rule, taxon: category, value: 'sale', match_policy: 'is_equal_to') }
 
     it 'is safe to run twice without duplicating collections' do
@@ -136,7 +137,7 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
       taxonomies = Array.new(count) { |i| create(:taxonomy, name: "Shop #{i}", store: store) }
 
       taxonomies.each_with_index do |taxonomy, index|
-        create(:taxon, name: "Child #{index}", taxonomy: taxonomy, parent: taxonomy.root)
+        create(:category, name: "Child #{index}", taxonomy: taxonomy, parent: taxonomy.root)
       end
 
       # Clear store_id first — that is the genuine pre-upgrade state, and it is what
@@ -171,7 +172,7 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
     it 'leaves categories with distinct permalinks alone' do
       taxonomy = create(:taxonomy, name: 'Solo', store: store)
       # A child keeps the root alive past the childless-root sweep.
-      create(:taxon, name: 'Child', taxonomy: taxonomy, parent: taxonomy.root)
+      create(:category, name: 'Child', taxonomy: taxonomy, parent: taxonomy.root)
       Spree::Category.unscoped.where(id: taxonomy.root.id).update_all(permalink: 'untouched')
 
       subject.invoke

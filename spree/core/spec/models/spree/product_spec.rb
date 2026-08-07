@@ -1127,21 +1127,20 @@ describe Spree::Product, type: :model do
 
   describe '#category_ids=' do
     let(:product) { create(:product, store: store) }
-    let(:taxonomy) { create(:taxonomy, store: store) }
-    let(:category) { create(:taxon, taxonomy: taxonomy) }
+    let(:category) { create(:category, store: store) }
 
     it 'assigns categories belonging to the product store' do
       product.update!(category_ids: [category.prefixed_id])
-      expect(product.reload.taxons).to include(category)
+      expect(product.reload.categories).to include(category)
     end
 
-    it "ignores categories from another store's taxonomy" do
-      foreign_taxon = create(:taxon, taxonomy: create(:taxonomy, store: create(:store)))
+    it 'ignores categories belonging to another store' do
+      foreign_category = create(:category, store: create(:store))
 
-      product.update!(category_ids: [category.prefixed_id, foreign_taxon.prefixed_id])
+      product.update!(category_ids: [category.prefixed_id, foreign_category.prefixed_id])
 
-      expect(product.reload.taxons).to include(category)
-      expect(product.reload.taxons).not_to include(foreign_taxon)
+      expect(product.reload.categories).to include(category)
+      expect(product.reload.categories).not_to include(foreign_category)
     end
   end
 
@@ -1197,8 +1196,7 @@ describe Spree::Product, type: :model do
 
   describe '#primary_category' do
     let(:product) { create(:product, store: store) }
-    let(:taxonomy) { create(:taxonomy, store: store) }
-    let(:category) { create(:taxon, taxonomy: taxonomy) }
+    let(:category) { create(:category) }
 
     it 'returns the first assigned category' do
       product.update!(category_ids: [category.prefixed_id])
@@ -1319,10 +1317,10 @@ describe Spree::Product, type: :model do
   describe '#to_csv' do
     let(:store) { Spree::Store.default }
     let(:product) { create(:product) }
-    let(:taxon) { create(:taxon, name: 'My Taxon') }
+    let(:category) { create(:category, name: 'My Taxon') }
 
     before do
-      product.taxons << taxon
+      product.categories << category
     end
 
     context 'when product has no variants' do

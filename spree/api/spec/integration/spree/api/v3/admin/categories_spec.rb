@@ -290,7 +290,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
         let(:category_id) { category.prefixed_id }
         let(:id) { product.prefixed_id }
 
-        before { Spree::ProductCategory.create!(taxon: category, product: product, position: 1) }
+        before { Spree::ProductCategory.create!(category: category, product: product, position: 1) }
 
         run_test!
       end
@@ -324,7 +324,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
         let(:id) { product.prefixed_id }
         let(:body) { { new_position: 0 } }
 
-        before { Spree::ProductCategory.create!(taxon: category, product: product, position: 1) }
+        before { Spree::ProductCategory.create!(category: category, product: product, position: 1) }
 
         run_test!
       end

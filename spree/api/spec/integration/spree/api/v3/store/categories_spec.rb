@@ -4,15 +4,12 @@ require 'swagger_helper'
 
 RSpec.describe 'Categories API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
-
-  let!(:taxonomy) { create(:taxonomy, store: store) }
-  let!(:root_taxon) { taxonomy.root }
-  let!(:category) { create(:taxon, taxonomy: taxonomy, parent: root_taxon) }
-  let!(:child_category) { create(:taxon, taxonomy: taxonomy, parent: category) }
-  let!(:product) { create(:product, status: 'active', taxons: [category]) }
+  let!(:root_category) { create(:category, name: 'Catalog', store: store) }
+  let!(:category) { create(:category, parent: root_category) }
+  let!(:child_category) { create(:category, parent: category) }
+  let!(:product) { create(:product, status: 'active', categories: [category]) }
   let!(:other_store) { create(:store) }
-  let!(:other_taxonomy) { create(:taxonomy, store: other_store) }
-  let!(:other_category) { create(:taxon, taxonomy: other_taxonomy) }
+  let!(:other_category) { create(:category, store: other_store) }
 
   path '/api/v3/store/categories' do
     get 'List categories' do

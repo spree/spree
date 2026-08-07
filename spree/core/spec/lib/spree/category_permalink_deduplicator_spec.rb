@@ -18,8 +18,8 @@ RSpec.describe Spree::CategoryPermalinkDeduplicator do
     taxonomy_a = create(:taxonomy, name: 'Shop A', store: store)
     taxonomy_b = create(:taxonomy, name: 'Shop B', store: store)
 
-    child_a = create(:taxon, name: 'Kids A', taxonomy: taxonomy_a, parent: taxonomy_a.root)
-    child_b = create(:taxon, name: 'Kids B', taxonomy: taxonomy_b, parent: taxonomy_b.root)
+    child_a = create(:category, name: 'Kids A', taxonomy: taxonomy_a, parent: taxonomy_a.root)
+    child_b = create(:category, name: 'Kids B', taxonomy: taxonomy_b, parent: taxonomy_b.root)
 
     # Both taxonomies own a "catalog" root — legal before 6.0, colliding after.
     stage(taxonomy_a.root, 'catalog')

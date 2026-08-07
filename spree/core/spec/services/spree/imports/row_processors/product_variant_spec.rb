@@ -296,12 +296,11 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     it 'preserves product taxons' do
-      men_taxonomy = store.taxonomies.find_by(name: 'Men') || create(:taxonomy, name: 'Men', store: store)
-      clothing_taxon = create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root)
-      product.update!(taxons: [clothing_taxon])
+      clothing_category = create(:category, name: 'Clothing')
+      product.update!(categories: [clothing_category])
 
       subject.process!
-      expect(product.reload.taxons).to eq [clothing_taxon]
+      expect(product.reload.categories).to eq [clothing_category]
     end
 
     it 'preserves product metafields' do

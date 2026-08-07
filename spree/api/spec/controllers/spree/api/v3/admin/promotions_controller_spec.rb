@@ -121,14 +121,13 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       end
 
       it 'creates a Taxon rule with prefixed category_ids' do
-        taxonomy = create(:taxonomy, store: store)
-        taxon = create(:taxon, taxonomy: taxonomy)
+        category = create(:category)
 
         post :create,
              params: base_params.merge(
                rules: [{
                  type: 'category',
-                 category_ids: [taxon.prefixed_id]
+                 category_ids: [category.prefixed_id]
                }]
              ),
              as: :json
@@ -136,7 +135,7 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
         expect(response).to have_http_status(:created)
         rule = Spree::Promotion.find_by_prefix_id(json_response['id']).rules.first
         expect(rule).to be_a(Spree::Promotion::Rules::Category)
-        expect(rule.taxon_ids).to eq([taxon.id])
+        expect(rule.category_ids).to eq([category.id])
       end
 
       it 'creates multiple rules of different types in one request' do
@@ -260,19 +259,18 @@ RSpec.describe Spree::Api::V3::Admin::PromotionsController, type: :controller do
       end
 
       it 'resolves shorthand for rules with overridden api_type' do
-        taxonomy = create(:taxonomy, store: store)
-        taxon = create(:taxon, taxonomy: taxonomy)
+        category = create(:category)
 
         post :create,
              params: base_params.merge(
-               rules: [{ type: 'category', category_ids: [taxon.prefixed_id] }]
+               rules: [{ type: 'category', category_ids: [category.prefixed_id] }]
              ),
              as: :json
 
         expect(response).to have_http_status(:created)
         rule = Spree::Promotion.find_by_prefix_id(json_response['id']).rules.first
         expect(rule).to be_a(Spree::Promotion::Rules::Category)
-        expect(rule.taxon_ids).to eq([taxon.id])
+        expect(rule.category_ids).to eq([category.id])
       end
 
       it 'resolves shorthand for actions and calculators' do

@@ -12,7 +12,7 @@ describe Spree::BaseHelper, type: :helper do
 
   describe '#spree_storefront_resource_url' do
     let!(:store) { @default_store }
-    let!(:taxon) { create(:taxon) }
+    let!(:category) { create(:category) }
     let!(:product) { create(:product) }
 
     before do
@@ -59,10 +59,10 @@ describe Spree::BaseHelper, type: :helper do
     end
 
     context 'for Taxon URL' do
-      it { expect(helper.spree_storefront_resource_url(taxon)).to eq("http://www.example.com/t/#{taxon.permalink}") }
+      it { expect(helper.spree_storefront_resource_url(category)).to eq("http://www.example.com/t/#{category.permalink}") }
 
       context 'when a locale is passed' do
-        it { expect(helper.spree_storefront_resource_url(taxon, locale: :de)).to eq("http://www.example.com/de/t/#{taxon.permalink}") }
+        it { expect(helper.spree_storefront_resource_url(category, locale: :de)).to eq("http://www.example.com/de/t/#{category.permalink}") }
       end
 
       context 'when locale_param is present' do
@@ -70,7 +70,7 @@ describe Spree::BaseHelper, type: :helper do
           allow(helper).to receive(:locale_param).and_return(:fr)
         end
 
-        it { expect(helper.spree_storefront_resource_url(taxon)).to eq("http://www.example.com/fr/t/#{taxon.permalink}") }
+        it { expect(helper.spree_storefront_resource_url(category)).to eq("http://www.example.com/fr/t/#{category.permalink}") }
       end
     end
   end

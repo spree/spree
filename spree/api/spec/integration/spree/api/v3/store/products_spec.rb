@@ -5,21 +5,20 @@ require 'swagger_helper'
 RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let(:taxonomy) { create(:taxonomy, store: store) }
-  let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-  let(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxon, name: 'Shirts') }
+  let(:category) { create(:category) }
+  let(:child_category) { create(:category, parent: category, name: 'Shirts') }
 
   let(:option_type) { create(:option_type, name: 'size', presentation: 'Size', filterable: true) }
   let(:option_value_small) { create(:option_value, option_type: option_type, name: 'small', presentation: 'S') }
 
   let!(:product) do
-    create(:product, status: 'active', taxons: [child_taxon],
+    create(:product, status: 'active', categories: [child_category],
            description: '<p>A <strong>comfortable</strong> cotton t-shirt.</p>').tap do |p|
       p.option_types << option_type
       create(:variant, product: p, option_values: [option_value_small])
     end
   end
-  let!(:product2) { create(:product, status: 'active', taxons: [child_taxon]) }
+  let!(:product2) { create(:product, status: 'active', categories: [child_category]) }
   let!(:draft_product) { create(:product, status: 'draft') }
   let!(:other_store) { create(:store) }
   let!(:other_store_product) { create(:product, store: other_store) }
@@ -291,7 +290,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
       response '200', 'filters scoped to category' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:category_id) { taxon.prefixed_id }
+        let(:category_id) { category.prefixed_id }
 
         schema type: :object,
                properties: {
