@@ -7,6 +7,7 @@ import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboa
 import { useMutation, useQuery } from '@tanstack/react-query'
 import i18n from 'i18next'
 
+/** Integrations connected to the current store, with secrets masked. */
 export function useIntegrations() {
   return useQuery({
     queryKey: useResourceKey('integrations'),
@@ -14,6 +15,7 @@ export function useIntegrations() {
   })
 }
 
+/** Registered integration types and their configuration schemas — static registry discovery, cached long. */
 export function useIntegrationTypes() {
   return useQuery({
     queryKey: useResourceKey('integrations', 'types'),
@@ -22,6 +24,7 @@ export function useIntegrationTypes() {
   })
 }
 
+/** Connects an integration type to the store. Activating verifies the connection server-side. */
 export function useCreateIntegration() {
   return useResourceMutation<Integration, Error, IntegrationCreateParams>({
     mutationFn: (params) => adminClient.integrations.create(params),
@@ -31,6 +34,7 @@ export function useCreateIntegration() {
   })
 }
 
+/** Updates credentials or activation. Masked secrets round-trip safely. */
 export function useUpdateIntegration(id: string) {
   return useResourceMutation<Integration, Error, IntegrationUpdateParams>({
     mutationFn: (params) => adminClient.integrations.update(id, params),
@@ -40,6 +44,7 @@ export function useUpdateIntegration(id: string) {
   })
 }
 
+/** Disconnects an integration, deleting its stored credentials. */
 export function useDeleteIntegration() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.integrations.delete(id),

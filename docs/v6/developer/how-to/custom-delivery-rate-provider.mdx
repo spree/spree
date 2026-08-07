@@ -73,6 +73,10 @@ module SpreeAcmeCarrier
         estimated_delivery_date: quote.delivery_date,
         metadata: { quote_id: quote.id }
       )
+    rescue AcmeCarrier::Error => e
+      # Never raise into checkout: report and hide this method instead.
+      Rails.error.report(e, context: { delivery_method_id: delivery_method.id }, source: 'acme.rating')
+      nil
     end
 
     private

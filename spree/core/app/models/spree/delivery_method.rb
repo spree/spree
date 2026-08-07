@@ -183,9 +183,13 @@ module Spree
       @rate_provider_instance ||= rate_provider_class.new(self)
     end
 
+    # Falls back to the default when the stored provider no longer resolves —
+    # a gem can be uninstalled while its rows remain, and raising here would
+    # surface as a checkout error rather than a missing carrier option.
+    #
     # @return [Class]
     def rate_provider_class
-      (rate_provider.presence || DEFAULT_RATE_PROVIDER).constantize
+      (rate_provider.presence || DEFAULT_RATE_PROVIDER).safe_constantize || DEFAULT_RATE_PROVIDER.constantize
     end
 
 
