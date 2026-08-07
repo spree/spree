@@ -121,6 +121,10 @@ module Spree
           return unless ability.respond_to?(:permission_keys)
 
           required = "#{action_kind}_#{resource}"
+          # Scope names outside the catalog (the exports/imports `:all`
+          # fallback, host-registered types) defer to CanCanCan's `authorize!`
+          # — the caller stays gated per subject, just not by key.
+          return unless Spree.permissions.key?(required)
           return if ability.permission_keys.include?(required)
 
           Rails.logger.info do

@@ -131,6 +131,22 @@ RSpec.describe Spree::PermissionConfiguration do
     end
   end
 
+  describe '#resource_for_subject' do
+    it 'resolves a model class to its owning resource' do
+      expect(configuration.resource_for_subject(Spree::Order).name).to eq(:orders)
+      expect(configuration.resource_for_subject(Spree::OptionType).name).to eq(:products)
+    end
+
+    it 'matches by ancestry so subclasses resolve to the base subject' do
+      expect(configuration.resource_for_subject(Spree::Gateway).name).to eq(:settings)
+    end
+
+    it 'returns nil for classes no resource covers' do
+      expect(configuration.resource_for_subject(Spree::Country)).to be_nil
+      expect(configuration.resource_for_subject('not a class')).to be_nil
+    end
+  end
+
   describe '#reset!' do
     it 'restores the default catalog' do
       configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])

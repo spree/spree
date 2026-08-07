@@ -99,6 +99,21 @@ module Spree
       @resources[name.to_s.to_sym]
     end
 
+    # The catalog resource whose subjects cover the given model class —
+    # matching by ancestry so subclasses (e.g. a Gateway under PaymentMethod)
+    # resolve to their base subject's resource. Used to derive the required
+    # permission for polymorphic endpoints (translations, custom fields).
+    #
+    # @param klass [Class]
+    # @return [Resource, nil]
+    def resource_for_subject(klass)
+      return nil unless klass.is_a?(Class)
+
+      resources.find do |candidate|
+        candidate.subjects.any? { |subject| subject.is_a?(Class) && klass <= subject }
+      end
+    end
+
     # One grantable key with its kind and owning resource — the unit the
     # `/admin/permissions` discovery endpoint serializes.
     class Entry
