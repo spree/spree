@@ -2,72 +2,24 @@
 http_interactions:
 - request:
     method: post
-    uri: https://api.easypost.com/v2/shipments/shp_ec8e990eade941088f494cb55d5eea92/refund
+    uri: https://api.easypost.com/v2/shipments/shp_recorded1/refund
     body:
       encoding: UTF-8
-      string: "{}"
+      string: '{}'
     headers:
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-      User-Agent:
-      - EasyPost/v2 RubyClient/7.7.0 Ruby/4.0.1-p0 OS/Darwin OSVersion/23 OSArch/arm64
-      Host:
-      - api.easypost.com
-      Content-Type:
-      - application/json
       Authorization:
       - "<FILTERED>"
+      Content-Type:
+      - application/json
   response:
     status:
-      code: 422
-      message: Unprocessable Entity
+      code: 200
+      message: OK
     headers:
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Xss-Protection:
-      - 1; mode=block
-      X-Content-Type-Options:
-      - nosniff
-      X-Download-Options:
-      - noopen
-      X-Permitted-Cross-Domain-Policies:
-      - none
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-      Easypost-Api-Version:
-      - '2015-01-01'
-      Vary:
-      - EasyPost-Api-Version
-      X-Ep-Request-Uuid:
-      - da774db46a75af2cff0dee7d018b914b
-      Cache-Control:
-      - private, no-cache, no-store
-      Pragma:
-      - no-cache
-      Expires:
-      - '0'
       Content-Type:
       - application/json; charset=utf-8
-      X-Runtime:
-      - '0.028488'
-      Transfer-Encoding:
-      - chunked
-      X-Node:
-      - bigweb57nuq
-      X-Version-Label:
-      - easypost-202608061828-a3cb37e702-main
-      X-Backend:
-      - easypost
-      X-Proxied:
-      - extlb2nuq 1318c68dc0
-      - intlb3nuq d4a20a271b
-      Strict-Transport-Security:
-      - max-age=31536000; includeSubDomains; preload
     body:
-      encoding: ASCII-8BIT
-      string: '{"error":{"code":"SHIPMENT.REFUND.UNAVAILABLE","message":"Unable to
-        request refund for shipment without a postage label.","errors":[]}}'
-  recorded_at: Fri, 07 Aug 2026 10:10:52 GMT
-recorded_with: VCR 6.4.0
+      encoding: UTF-8
+      string: '{"id":"shp_recorded1","object":"Shipment","mode":"test","status":"purchased","refund_status":"submitted","rates":[]}'
+  recorded_at: Thu, 06 Aug 2026 20:06:00 GMT
+recorded_with: VCR 6.3.1
