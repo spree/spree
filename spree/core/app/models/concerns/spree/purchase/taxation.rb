@@ -30,7 +30,7 @@ module Spree
       #
       # @return [Spree::TaxProvider::Base]
       def tax_provider
-        market&.tax_provider_instance || Spree.tax_provider
+        market&.tax_provider_instance || Spree.default_tax_provider.new
       end
 
       # The typed inputs every +estimate+ call carries. Assembled here rather

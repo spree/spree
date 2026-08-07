@@ -1,6 +1,6 @@
 module Spree
   # A single tax charge on a line item, fulfillment or fee. Written exclusively
-  # by the tax provider (see Spree.tax_provider) with replace-all set semantics
+  # by the tax provider (see Spree::Purchase::Taxation#tax_provider) with replace-all set semantics
   # per estimate. Snapshot columns (+rate+, +label+, +provider_id+) keep rows
   # self-describing after a TaxRate is deleted or when an external provider
   # computed them.

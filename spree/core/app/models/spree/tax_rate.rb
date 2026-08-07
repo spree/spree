@@ -1,7 +1,7 @@
 module Spree
   # Pure tax configuration read by the internal tax provider
   # (Spree::TaxProvider::Internal). Since 6.0 tax rates have no write path of
-  # their own — TaxLine rows are written exclusively by Spree.tax_provider.
+  # their own — TaxLine rows are written exclusively by the sale's tax provider.
   class TaxRate < Spree.base_class
     has_prefix_id :tax
 

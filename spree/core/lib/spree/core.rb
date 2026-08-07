@@ -291,27 +291,26 @@ module Spree
     Rails.application.config.spree.adjusters = value
   end
 
-  # The configured tax provider instance — the only sanctioned writer of
-  # {Spree::TaxLine} rows. Global default is {Spree::TaxProvider::Internal};
-  # per-Market resolution arrives with docs/plans/6.0-tax-provider.md.
+  # The tax engine used when a market names none — the fallback behind
+  # {Spree::Purchase::Taxation#tax_provider}, which is what call sites actually
+  # use. Defaults to {Spree::TaxProvider::Internal}.
   #
-  # @return [Spree::TaxProvider::Base]
-  def self.tax_provider
-    Rails.application.config.spree.tax_provider.new
-  end
-
-  # The store-wide default engine as a class, for callers that need to name it
-  # rather than use it — market selection constantizing its own choice, and the
-  # admin marking which entry is the default. Instantiating just to read a class
-  # name is what this avoids.
+  #   Spree.default_tax_provider = SpreeTaxAvalara::TaxProvider
+  #
+  # Returns the class rather than an instance: callers that want one say `.new`,
+  # and the ones that only need to name it (market selection constantizing its
+  # own choice, the admin marking which entry is the default) do not pay for an
+  # object they discard. A String or Symbol is accepted and constantized, so an
+  # initializer can name a provider before its class is autoloaded.
   #
   # @return [Class]
-  def self.default_tax_provider_class
-    Rails.application.config.spree.tax_provider
+  def self.default_tax_provider
+    provider = Rails.application.config.spree.default_tax_provider
+    provider.is_a?(Class) ? provider : provider.to_s.constantize
   end
 
-  def self.tax_provider=(value)
-    Rails.application.config.spree.tax_provider = value
+  def self.default_tax_provider=(value)
+    Rails.application.config.spree.default_tax_provider = value
   end
 
   # Tax engines a market can be pointed at. Provider gems append their own, so a

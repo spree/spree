@@ -88,6 +88,26 @@ describe Spree::TaxProvider::Base, type: :model do
     end
   end
 
+  describe 'Spree.default_tax_provider' do
+    it 'is the internal provider out of the box' do
+      expect(Spree.default_tax_provider).to eq(Spree::TaxProvider::Internal)
+    end
+
+    it 'returns a class, so a caller that only names it pays for no instance' do
+      expect(Spree.default_tax_provider).to be_a(Class)
+    end
+
+    it 'accepts a class name, for an initializer naming a provider before autoload' do
+      original = Rails.application.config.spree.default_tax_provider
+      Spree.default_tax_provider = 'Spree::TaxProvider::Internal'
+
+      expect(Spree.default_tax_provider).to eq(Spree::TaxProvider::Internal)
+      expect(Spree.default_tax_provider.new).to be_a(Spree::TaxProvider::Internal)
+    ensure
+      Spree.default_tax_provider = original
+    end
+  end
+
   describe 'the internal provider' do
     it 'declares the domains rate configuration cannot express' do
       expect(Spree::TaxProvider::Internal.unsupported_capabilities).to(

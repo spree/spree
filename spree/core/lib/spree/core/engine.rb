@@ -10,7 +10,7 @@ module Spree
                                :dependencies,
                                :payment_methods,
                                :adjusters,
-                               :tax_provider,
+                               :default_tax_provider,
                                :tax_providers,
                                :password_validator,
                                :fulfillment_providers,
@@ -173,8 +173,8 @@ module Spree
           Spree::Adjusters::Promotion
         ]
 
-        # The sanctioned TaxLine writer (see docs/plans/6.0-tax-provider.md).
-        Rails.application.config.spree.tax_provider = Spree::TaxProvider::Internal
+        # The fallback engine when a market names none (see docs/plans/6.0-tax-provider.md).
+        Rails.application.config.spree.default_tax_provider = Spree::TaxProvider::Internal
 
         # Engines a market can select. Provider gems append their own.
         Rails.application.config.spree.tax_providers = [Spree::TaxProvider::Internal]

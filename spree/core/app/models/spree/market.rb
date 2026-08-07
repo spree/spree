@@ -108,7 +108,7 @@ module Spree
     #
     # @return [Spree::TaxProvider::Base]
     def tax_provider_instance
-      (tax_provider.presence || Spree.default_tax_provider_class.to_s).constantize.new
+      (tax_provider.presence || Spree.default_tax_provider.to_s).constantize.new
     end
 
     # Returns supported locales as an array, always including default_locale
