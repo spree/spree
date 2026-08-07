@@ -1190,7 +1190,7 @@
         },
         "preferred_default_package_weight": {
           "label": "Domyślna waga paczki",
-          "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy, w jednostce wagi sklepu. 0 wyłącza."
+          "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza."
         },
         "preferred_default_package_dimensions": {
           "label": "Domyślne wymiary paczki",
@@ -2367,6 +2367,8 @@
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
           "tab_general": "Ogólne",
           "tab_standards": "Standardy i formaty",
+          "tab_default_package": "Domyślna paczka",
+          "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
           "tab_storefront_access": "Dostęp do sklepu",
           "title": "Ustawienia sklepu"
         },

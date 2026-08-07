@@ -1182,7 +1182,7 @@
         },
         "preferred_default_package_weight": {
           "label": "默认包裹重量",
-          "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物),使用商店的重量单位。设为 0 可停用。"
+          "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。"
         },
         "preferred_default_package_dimensions": {
           "label": "默认包裹尺寸",
@@ -2341,6 +2341,8 @@
           "subtitle": "通用配置与店铺级默认设置。",
           "tab_general": "通用",
           "tab_standards": "标准与格式",
+          "tab_default_package": "默认包裹",
+          "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
           "tab_storefront_access": "店铺访问权限",
           "title": "店铺设置"
         },

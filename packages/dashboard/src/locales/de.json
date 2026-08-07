@@ -1182,7 +1182,7 @@
         },
         "preferred_default_package_weight": {
           "label": "Standard-Paketgewicht",
-          "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird, in der Gewichtseinheit des Shops. 0 deaktiviert es."
+          "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird. 0 deaktiviert es."
         },
         "preferred_default_package_dimensions": {
           "label": "Standard-Paketabmessungen",
@@ -2341,6 +2341,8 @@
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
           "tab_general": "Allgemein",
           "tab_standards": "Standards und Formate",
+          "tab_default_package": "Standardpaket",
+          "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
           "tab_storefront_access": "Storefront-Zugriff",
           "title": "Shop-Einstellungen"
         },
