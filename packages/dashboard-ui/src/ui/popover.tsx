@@ -59,7 +59,7 @@ function PopoverContent({
             'z-50 w-auto rounded-lg border border-border bg-popover p-3 text-popover-foreground shadow-md',
             // `origin-(--transform-origin)` (published by Base UI's Positioner)
             // so the panel grows out of its trigger rather than its own centre.
-            'origin-(--transform-origin) duration-100 ease-out data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform,scale]',
+            'origin-(--transform-origin) duration-100 ease-out data-[starting-style]:opacity-0 data-[starting-style]:scale-95 data-[ending-style]:opacity-0 data-[ending-style]:scale-95 transition-[opacity,transform,translate,scale]',
             className,
           )}
           {...props}
