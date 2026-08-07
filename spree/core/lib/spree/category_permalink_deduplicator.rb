@@ -25,6 +25,25 @@ module Spree
       HAVING COUNT(*) > 1
     SQL
 
+    TRANSLATION_GROUPS_WITH_TAXONOMY_SQL = <<~SQL.freeze
+      SELECT COALESCE(c.store_id, t.store_id) AS sid, tr.locale, tr.permalink
+      FROM spree_category_translations tr
+      INNER JOIN spree_categories c ON c.id = tr.spree_category_id
+      LEFT JOIN spree_taxonomies t ON t.id = c.taxonomy_id
+      WHERE tr.permalink IS NOT NULL AND COALESCE(c.store_id, t.store_id) IS NOT NULL
+      GROUP BY COALESCE(c.store_id, t.store_id), tr.locale, tr.permalink
+      HAVING COUNT(*) > 1
+    SQL
+
+    TRANSLATION_GROUPS_SQL = <<~SQL.freeze
+      SELECT c.store_id AS sid, tr.locale, tr.permalink
+      FROM spree_category_translations tr
+      INNER JOIN spree_categories c ON c.id = tr.spree_category_id
+      WHERE tr.permalink IS NOT NULL AND c.store_id IS NOT NULL
+      GROUP BY c.store_id, tr.locale, tr.permalink
+      HAVING COUNT(*) > 1
+    SQL
+
     DUPLICATE_GROUPS_SQL = <<~SQL.freeze
       SELECT c.store_id AS sid, c.permalink
       FROM spree_categories c
@@ -48,10 +67,8 @@ module Spree
       return 0 unless connection.table_exists?('spree_categories')
 
       renamed = 0
-      stores = []
 
       duplicate_groups.each do |store_id, permalink|
-        stores << store_id
         ids = ids_for(store_id, permalink)
         # The first row keeps the permalink; the rest have to move.
         ids.drop(1).each do |id|
@@ -62,11 +79,10 @@ module Spree
         end
       end
 
-      # Translated permalinks live in their own table with no uniqueness
-      # constraint, and the storefront resolves categories through it.
-      stores.uniq.each { |store_id| renamed += rewrite_translations(store_id) }
-
-      renamed
+      # Independent of the base pass: a store whose base permalinks are already
+      # unique can still hold colliding translated ones, and the storefront
+      # resolves categories through that table.
+      renamed + rewrite_translations
     end
 
     private
@@ -170,24 +186,26 @@ module Spree
     # constraint — so a collision there survives the base-column pass and makes
     # the lookup return whichever row it happens to reach first. Each locale is a
     # separate namespace, so each is deduplicated on its own.
-    def rewrite_translations(store_id)
+    def rewrite_translations
       return 0 unless connection.table_exists?('spree_category_translations')
 
       renamed = 0
 
-      translation_duplicate_groups(store_id).each do |locale, permalink|
-        ids = translation_ids_for(store_id, locale, permalink)
+      translation_duplicate_groups.each do |store_id, locale, permalink|
+        rows = translation_rows_for(store_id, locale, permalink)
         taken = translation_permalinks_for(store_id, locale)
 
-        ids.drop(1).each do |translation_id|
+        # The first row keeps the permalink; the rest have to move.
+        rows.drop(1).each do |translation_id, category_id|
           counter = 2
           counter += 1 while taken.include?("#{permalink}-#{counter}")
           candidate = "#{permalink}-#{counter}"
           taken << candidate
 
-          connection.update(
-            sanitize('UPDATE spree_category_translations SET permalink = ? WHERE id = ?', candidate, translation_id)
-          )
+          move_translation(translation_id, candidate)
+          # Children's translated paths are built from the parent's, so they have
+          # to follow it exactly as they do on the base column.
+          reprefix_descendant_translations(category_id, locale, permalink, candidate)
           renamed += 1
         end
       end
@@ -195,21 +213,35 @@ module Spree
       renamed
     end
 
-    def translation_duplicate_groups(store_id)
-      connection.select_rows(sanitize(<<~SQL, store_id))
-        SELECT tr.locale, tr.permalink
-        FROM spree_category_translations tr
-        INNER JOIN spree_categories c ON c.id = tr.spree_category_id
-        #{taxonomy_join}
-        WHERE tr.permalink IS NOT NULL AND #{effective_store_id} = ?
-        GROUP BY tr.locale, tr.permalink
-        HAVING COUNT(*) > 1
-      SQL
+    def move_translation(translation_id, permalink)
+      connection.update(
+        sanitize('UPDATE spree_category_translations SET permalink = ? WHERE id = ?', permalink, translation_id)
+      )
     end
 
-    def translation_ids_for(store_id, locale, permalink)
-      connection.select_values(sanitize(<<~SQL, store_id, locale, permalink))
-        SELECT tr.id
+    def reprefix_descendant_translations(category_id, locale, old_permalink, new_permalink)
+      descendants(category_id).each do |descendant_id, _base_permalink|
+        row = connection.select_rows(sanitize(<<~SQL, descendant_id, locale)).first
+          SELECT id, permalink FROM spree_category_translations
+          WHERE spree_category_id = ? AND locale = ?
+        SQL
+        next if row.nil?
+
+        translation_id, current = row
+        next if current.blank? || !current.start_with?("#{old_permalink}/")
+
+        move_translation(translation_id, current.sub("#{old_permalink}/", "#{new_permalink}/"))
+      end
+    end
+
+    # Every (store, locale, permalink) appearing more than once, across all stores.
+    def translation_duplicate_groups
+      connection.select_rows(taxonomies_table? ? TRANSLATION_GROUPS_WITH_TAXONOMY_SQL : TRANSLATION_GROUPS_SQL)
+    end
+
+    def translation_rows_for(store_id, locale, permalink)
+      connection.select_rows(sanitize(<<~SQL, store_id, locale, permalink))
+        SELECT tr.id, tr.spree_category_id
         FROM spree_category_translations tr
         INNER JOIN spree_categories c ON c.id = tr.spree_category_id
         #{taxonomy_join}

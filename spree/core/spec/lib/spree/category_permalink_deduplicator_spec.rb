@@ -94,4 +94,33 @@ RSpec.describe Spree::CategoryPermalinkDeduplicator do
     translated = Spree::Category::Translation.where(locale: 'pl').pluck(:permalink)
     expect(translated.uniq.size).to eq(translated.size)
   end
+
+  it 'separates translated permalinks even when the base column is already unique' do
+    alpha = create(:category, name: 'Alpha', store: store)
+    beta = create(:category, name: 'Beta', store: store)
+    Spree::Category::Translation.create!(spree_category_id: alpha.id, locale: 'pl', permalink: 'dup')
+    Spree::Category::Translation.create!(spree_category_id: beta.id, locale: 'pl', permalink: 'dup')
+
+    described_class.new.call
+
+    translated = Spree::Category::Translation.where(locale: 'pl').pluck(:permalink)
+    expect(translated.uniq.size).to eq(translated.size)
+  end
+
+  it 'cascades child translations when a translated parent permalink moves' do
+    alpha = create(:category, name: 'Alpha', store: store)
+    beta = create(:category, name: 'Beta', store: store)
+    child = create(:category, name: 'Kids', parent: beta, store: store)
+
+    Spree::Category::Translation.create!(spree_category_id: alpha.id, locale: 'pl', permalink: 'katalog')
+    Spree::Category::Translation.create!(spree_category_id: beta.id, locale: 'pl', permalink: 'katalog')
+    Spree::Category::Translation.create!(spree_category_id: child.id, locale: 'pl', permalink: 'katalog/dzieci')
+
+    described_class.new.call
+
+    moved_root = Spree::Category::Translation.find_by(spree_category_id: beta.id, locale: 'pl').permalink
+    child_path = Spree::Category::Translation.find_by(spree_category_id: child.id, locale: 'pl').permalink
+
+    expect(child_path).to start_with("#{moved_root}/")
+  end
 end
