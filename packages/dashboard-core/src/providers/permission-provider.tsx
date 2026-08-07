@@ -1,5 +1,13 @@
 import type { PermissionRule } from '@spree/admin-sdk'
-import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { adminClient } from '../client'
 import { useAuth } from '../hooks/use-auth'
 import type { ActionName, SubjectName } from '../lib/permissions'
@@ -24,7 +32,18 @@ export interface Permissions {
 interface PermissionContextValue {
   permissions: Permissions
   rules: PermissionRule[]
+  /**
+   * The flat expanded catalog permission keys the user holds on the current
+   * store (`read_orders`, `write_products`, …) — the same vocabulary as API
+   * key scopes and the role editor.
+   */
+  permissionKeys: string[]
   isLoading: boolean
+  /**
+   * Reloads `/me`. Permissions are store-scoped (roles are held per store),
+   * so the store route calls this whenever the active store changes.
+   */
+  refresh: () => Promise<void>
 }
 
 const PermissionContext = createContext<PermissionContextValue | null>(null)
@@ -72,11 +91,27 @@ const EMPTY_PERMISSIONS: Permissions = {
 export function PermissionProvider({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth()
   const [rules, setRules] = useState<PermissionRule[]>([])
+  const [permissionKeys, setPermissionKeys] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
+
+  const refresh = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const res = await adminClient.me.get()
+      setRules(res.permissions)
+      setPermissionKeys(res.permission_keys ?? [])
+    } catch {
+      setRules([])
+      setPermissionKeys([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     if (!isAuthenticated) {
       setRules([])
+      setPermissionKeys([])
       return
     }
 
@@ -85,10 +120,14 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
     adminClient.me
       .get()
       .then((res) => {
-        if (!cancelled) setRules(res.permissions)
+        if (cancelled) return
+        setRules(res.permissions)
+        setPermissionKeys(res.permission_keys ?? [])
       })
       .catch(() => {
-        if (!cancelled) setRules([])
+        if (cancelled) return
+        setRules([])
+        setPermissionKeys([])
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false)
@@ -105,7 +144,7 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
   )
 
   return (
-    <PermissionContext.Provider value={{ permissions, rules, isLoading }}>
+    <PermissionContext.Provider value={{ permissions, rules, permissionKeys, isLoading, refresh }}>
       {children}
     </PermissionContext.Provider>
   )

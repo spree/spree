@@ -101,21 +101,18 @@ function ReportsPage() {
 
 The same `permissions` object backs the nav registry's `if` predicate, so you can move logic between the two without changing behaviour. For declarative gating, `<Can I="update" a="Spree::Order">…</Can>` (also from `@spree/dashboard-core`) renders children only when the check passes.
 
-## Custom abilities
+## Custom permissions
 
-If your customization introduces a new model on the backend, extend the CanCanCan ability there (typically a decorator on `Spree::PermissionSets::DefaultCustomer` or `Spree::PermissionSets::DashboardManagement`):
+If your customization introduces a new model on the backend, register it as a permission catalog resource so its keys become grantable to roles (and mintable as API-key scopes):
 
 ```ruby
-# config/initializers/spree.rb (host app)
-Spree::PermissionSets::DashboardManagement.class_eval do
-  def activate!
-    super
-    can :manage, MyApp::Report
-  end
-end
+# in your engine's initializer (host app or extension)
+Spree.permissions.register_resource(:reports, group: :analytics, subjects: -> {
+  [MyApp::Report]
+})
 ```
 
-After that, `permissions.can('read', 'MyApp::Report')` resolves in the dashboard exactly like a first-party check — the abilities ship to the dashboard with the current-user response (`GET /api/v3/admin/me`) at sign-in.
+After that, any role granted `read_reports` makes `permissions.can('read', 'MyApp::Report')` resolve in the dashboard exactly like a first-party check — the abilities ship to the dashboard with the current-user response (`GET /api/v3/admin/me`) at sign-in, alongside `permission_keys`, the flat key list. For record-level rules the catalog can't express, register a plain `CanCan::Ability` class via `Spree::Ability.register_ability` — see [Permissions](/developer/customization/permissions).
 
 ## Reference
 

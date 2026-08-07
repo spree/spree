@@ -65,30 +65,8 @@
         "full_access_label": "Full access (write_all)",
         "read_all_hint": "- اقرأ على كل مورد",
         "read_all_label": "Read all (read_all)",
-        "read_aria": "إقرأ {{resource}}",
-        "read_header": "يقرأ",
-        "resource_header": "الموارد",
-        "resources": {
-          "api_keys": "API مفاتيح",
-          "categories": "فئات",
-          "customers": "العملاء",
-          "dashboard": "Dashboard",
-          "fulfillments": "Fulfillments",
-          "gift_cards": "بطاقات الهدايا",
-          "orders": "طلبات",
-          "payments": "المدفوعات",
-          "products": "منتجات",
-          "promotions": "الترقيات",
-          "refunds": "المبالغ المستردة",
-          "settings": "إعدادات",
-          "stock": "مخزون",
-          "store_credits": "Store credits",
-          "webhooks": "Webhooks"
-        },
         "show_more_aria_one": "أظهر {{count}} نطاقًا أكبر",
-        "show_more_aria_other": "عرض {{count}} المزيد من النطاقات",
-        "write_aria": "اكتب {{resource}}",
-        "write_header": "يكتب"
+        "show_more_aria_other": "عرض {{count}} المزيد من النطاقات"
       },
       "scopes_immutable_help": "Scopes لا يمكن تغييره بعد إنشاء المفتاح. لتغييرها، قم بإنشاء مفتاح جديد بالنطاقات التي تحتاجها وقم بإبطال هذا المفتاح.",
       "validation": {
@@ -725,8 +703,8 @@
           "label": "مناطق التوصيل"
         },
         "fulfillment_provider": {
-          "label": "مزود التنفيذ",
-          "help": "كيفية معالجة عمليات التنفيذ لهذه الطريقة وتتبعها."
+          "help": "كيفية معالجة عمليات التنفيذ لهذه الطريقة وتتبعها.",
+          "label": "مزود التنفيذ"
         },
         "fulfillment_type": {
           "label": "نوع التنفيذ"
@@ -1092,6 +1070,16 @@
         "usage_limit": {
           "label": "حد الاستخدام",
           "placeholder": "غير محدود"
+        }
+      },
+      "role": {
+        "description": {
+          "label": "الوصف",
+          "placeholder": "ما الغرض من هذا الدور؟"
+        },
+        "name": {
+          "label": "الاسم",
+          "placeholder": "مثال: مدير الطلبات"
         }
       },
       "role_id": {
@@ -1864,23 +1852,23 @@
           },
           "claims": {
             "actions": {
-              "resolve_refund": "الحل بالاسترداد",
-              "resolve_replacement": "الحل بالاستبدال",
-              "deny": "رفض",
               "create": "مطالبة جديدة",
-              "resolve": "حل"
+              "deny": "رفض",
+              "resolve": "حل",
+              "resolve_refund": "الحل بالاسترداد",
+              "resolve_replacement": "الحل بالاستبدال"
             },
-            "empty": "لا توجد مطالبات لهذا الطلب.",
             "create_title": "مطالبة جديدة",
+            "empty": "لا توجد مطالبات لهذا الطلب.",
             "refund_amount": "مبلغ الاسترداد",
-            "resolve_title": "حل المطالبة",
-            "resolution": "طريقة الحل",
             "replacement_items": "إرسال بديل لـ",
+            "resolution": "طريقة الحل",
             "resolutions": {
               "refund": "استرداد",
-              "replacement": "استبدال",
-              "refund_and_replacement": "استرداد واستبدال"
-            }
+              "refund_and_replacement": "استرداد واستبدال",
+              "replacement": "استبدال"
+            },
+            "resolve_title": "حل المطالبة"
           },
           "dialogs": {
             "approve_title": "الموافقة على الطلب؟",
@@ -1892,43 +1880,43 @@
           "empty_shipments": "لا توجد شحنات حتى الآن.",
           "exchanges": {
             "actions": {
-              "fulfill": "شحن البديل",
-              "create": "استبدال جديد"
+              "create": "استبدال جديد",
+              "fulfill": "شحن البديل"
             },
-            "price_difference": "فرق السعر",
-            "empty": "لا توجد استبدالات لهذا الطلب.",
             "create_title": "استبدال جديد",
+            "empty": "لا توجد استبدالات لهذا الطلب.",
+            "price_difference": "فرق السعر",
             "replacement_variant": "معرّف النسخة البديلة"
           },
           "no_delivery_method": "لم يتم اختيار طريقة توصيل.",
           "returns": {
             "actions": {
               "approve": "موافقة",
+              "create": "مرتجع جديد",
               "receive": "استلام العناصر",
-              "refund": "استرداد",
-              "create": "مرتجع جديد"
+              "refund": "استرداد"
             },
             "confirm": {
               "cancel": "إلغاء هذا المرتجع؟ لن تتم إعادة أي مخزون ولن يتم تحويل أي مبلغ."
             },
-            "refund_total": "إجمالي الاسترداد",
-            "received_of": "تم استلام {{received}} من {{requested}}",
+            "create_title": "مرتجع جديد",
+            "empty": "لا توجد مرتجعات لهذا الطلب.",
+            "empty_no_units": "لا توجد سجلات تنفيذ في هذا الطلب يمكن الرجوع إليها.",
+            "memo": "ملاحظة",
             "not_resellable": "غير قابل لإعادة البيع",
+            "reason": "السبب",
             "receive_title": "استلام العناصر المرتجعة",
+            "received_of": "تم استلام {{received}} من {{requested}}",
             "received_quantity": "المستلم",
-            "resellable": "قابل لإعادة البيع",
-            "refund_title": "استرداد المرتجع",
             "refund_amount": "المبلغ",
             "refund_method": "استرداد إلى",
             "refund_methods": {
               "original_payment": "الدفعة الأصلية",
               "store_credit": "رصيد المتجر"
             },
-            "empty": "لا توجد مرتجعات لهذا الطلب.",
-            "memo": "ملاحظة",
-            "reason": "السبب",
-            "create_title": "مرتجع جديد",
-            "empty_no_units": "لا توجد سجلات تنفيذ في هذا الطلب يمكن الرجوع إليها."
+            "refund_title": "استرداد المرتجع",
+            "refund_total": "إجمالي الاسترداد",
+            "resellable": "قابل لإعادة البيع"
           },
           "section_billing_address": "عنوان إرسال الفواتير",
           "section_claims": "المطالبات",
@@ -2249,6 +2237,19 @@
         "loading": "جارٍ تحميل العرض الترويجي…",
         "new_title": "ترقية جديدة"
       },
+      "roles": {
+        "add_cta": "إضافة دور",
+        "empty": "لا توجد أدوار بعد",
+        "empty_description": "أنشئ دورًا لمنح أعضاء الفريق وصولًا محددًا.",
+        "new_title": "دور جديد",
+        "subtitle": "حدد ما يمكن لكل دور من أدوار الفريق رؤيته والقيام به",
+        "table": {
+          "members": "الأعضاء",
+          "permissions": "الأذونات",
+          "role": "الدور"
+        },
+        "title": "الأدوار"
+      },
       "settings": {
         "allowed_origins": {
           "add_sheet_title": "أضف الأصل المسموح به",
@@ -2522,21 +2523,77 @@
       },
       "title": "Payment Methods"
     },
+    "permissions": {
+      "descriptions": {
+        "api_keys": "إنشاء بيانات اعتماد API وإلغاؤها",
+        "categories": "شجرة الفئات والتصنيفات",
+        "collections": "مجموعات المنتجات اليدوية والقائمة على القواعد",
+        "customers": "حسابات العملاء والعناوين والبطاقات والمجموعات",
+        "dashboard": "تحليلات المبيعات والأداء",
+        "fulfillments": "تجهيز الطلبات وشحنها وتتبعها",
+        "gift_cards": "بطاقات الهدايا ودفعاتها",
+        "orders": "الطلبات وبنودها والإرجاعات والاستبدالات والمطالبات",
+        "payments": "مدفوعات الطلبات وتحصيلها",
+        "products": "المنتجات والمتغيرات والخيارات والأسعار والوسائط",
+        "promotions": "العروض الترويجية والقواعد وأكواد الخصم",
+        "refunds": "إصدار المبالغ المستردة وعرضها",
+        "settings": "إعدادات المتجر والدفع والتوصيل والضرائب والقنوات",
+        "staff": "أعضاء الفريق والدعوات والأدوار وأذوناتها",
+        "stock": "مستويات المخزون والمواقع والحركات والتحويلات",
+        "store_credits": "أرصدة المتجر للعملاء",
+        "webhooks": "نقاط الويب هوك وعمليات التسليم"
+      },
+      "grid": {
+        "read_aria": "عرض {{resource}}",
+        "read_header": "عرض",
+        "resource_header": "المورد",
+        "write_aria": "إدارة {{resource}}",
+        "write_header": "إدارة"
+      },
+      "groups": {
+        "access": "الوصول",
+        "analytics": "التحليلات",
+        "catalog": "الكتالوج",
+        "customers": "العملاء",
+        "marketing": "التسويق",
+        "orders": "الطلبات",
+        "settings": "الإعدادات"
+      },
+      "resources": {
+        "api_keys": "API مفاتيح",
+        "categories": "فئات",
+        "collections": "المجموعات",
+        "customers": "العملاء",
+        "dashboard": "Dashboard",
+        "fulfillments": "Fulfillments",
+        "gift_cards": "بطاقات الهدايا",
+        "orders": "طلبات",
+        "payments": "المدفوعات",
+        "products": "منتجات",
+        "promotions": "الترقيات",
+        "refunds": "المبالغ المستردة",
+        "settings": "إعدادات",
+        "staff": "الفريق والأدوار",
+        "stock": "مخزون",
+        "store_credits": "Store credits",
+        "webhooks": "Webhooks"
+      }
+    },
     "post_sale": {
-      "search_placeholder": "البحث بالرقم…",
-      "returns_empty": "لا توجد مرتجعات بعد.",
-      "exchanges_empty": "لا توجد استبدالات بعد.",
       "claims_empty": "لا توجد مطالبات بعد.",
+      "exchanges_empty": "لا توجد استبدالات بعد.",
+      "returns_empty": "لا توجد مرتجعات بعد.",
+      "search_placeholder": "البحث بالرقم…",
       "statuses": {
-        "requested": "مطلوب",
-        "open": "مفتوحة",
         "approved": "تمت الموافقة",
+        "canceled": "ملغى",
+        "denied": "مرفوضة",
+        "fulfilled": "تم الشحن",
+        "open": "مفتوحة",
         "received": "تم الاستلام",
         "refunded": "تم الاسترداد",
-        "fulfilled": "تم الشحن",
-        "resolved": "تم الحل",
-        "denied": "مرفوضة",
-        "canceled": "ملغى"
+        "requested": "مطلوب",
+        "resolved": "تم الحل"
       }
     },
     "preferences": {
@@ -3000,38 +3057,83 @@
       }
     },
     "reasons": {
-      "title": "المرتجعات والأسباب",
-      "description": "القوائم التي يختار منها فريقك عند معالجة المرتجعات والمطالبات والمبالغ المستردة.",
+      "active_label": "متاح للسجلات الجديدة",
       "add_cta": "إضافة سبب",
       "add_sheet_title": "إضافة سبب",
-      "edit_sheet_title": "تعديل السبب",
+      "claim": {
+        "help": "ما حدث من خطأ في التسليم — تالف أو مفقود أو منتج خاطئ.",
+        "title": "أسباب المطالبة"
+      },
       "create_description": "تظهر الأسباب في قائمة منسدلة عند إنشاء مرتجع أو مطالبة أو مبلغ مسترد.",
-      "name_placeholder": "مثال: مقاس غير مناسب",
-      "active_label": "متاح للسجلات الجديدة",
+      "delete_confirm": {
+        "message": "لن يعود {{name}} متاحًا. تحتفظ به السجلات التي تستخدمه بالفعل.",
+        "title": "حذف السبب؟"
+      },
+      "description": "القوائم التي يختار منها فريقك عند معالجة المرتجعات والمطالبات والمبالغ المستردة.",
+      "edit_sheet_title": "تعديل السبب",
       "empty": "لا توجد أسباب بعد",
-      "inactive": "غير نشط",
       "in_use": "قيد الاستخدام",
       "in_use_help": "هذا السبب مستخدم بالفعل في سجلات قائمة، لذا لا يمكن حذفه.",
-      "delete_confirm": {
-        "title": "حذف السبب؟",
-        "message": "لن يعود {{name}} متاحًا. تحتفظ به السجلات التي تستخدمه بالفعل."
-      },
+      "inactive": "غير نشط",
       "messages": {
         "created": "تم إنشاء السبب",
-        "updated": "تم تحديث السبب",
-        "deleted": "تم حذف السبب"
+        "deleted": "تم حذف السبب",
+        "updated": "تم تحديث السبب"
+      },
+      "name_placeholder": "مثال: مقاس غير مناسب",
+      "refund": {
+        "help": "سبب إعادة الأموال. يُستخدم في تقارير جميع المبالغ المستردة.",
+        "title": "أسباب رد المبلغ"
       },
       "return": {
-        "title": "أسباب الإرجاع",
-        "help": "سبب إعادة العميل للمنتج. مشترك بين المرتجعات والاستبدال."
+        "help": "سبب إعادة العميل للمنتج. مشترك بين المرتجعات والاستبدال.",
+        "title": "أسباب الإرجاع"
       },
-      "claim": {
-        "title": "أسباب المطالبة",
-        "help": "ما حدث من خطأ في التسليم — تالف أو مفقود أو منتج خاطئ."
+      "title": "المرتجعات والأسباب"
+    },
+    "roles": {
+      "badges": {
+        "full_access": "وصول كامل",
+        "more": "+{{count}} أخرى",
+        "none": "لا توجد أذونات",
+        "protected": "محمي"
       },
-      "refund": {
-        "title": "أسباب رد المبلغ",
-        "help": "سبب إعادة الأموال. يُستخدم في تقارير جميع المبالغ المستردة."
+      "confirm": {
+        "delete_message": "هل تريد حذف الدور \"{{name}}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+        "delete_title": "حذف الدور"
+      },
+      "duplicate_name": "نسخة {{name}}",
+      "errors": {
+        "failed_to_delete": "فشل حذف الدور"
+      },
+      "form": {
+        "details_section": "التفاصيل",
+        "locked_hint": "هذا الدور محمي ولا يمكن تعديله.",
+        "members": "الأعضاء",
+        "more_members": "+{{count}} أخرى",
+        "permissions_count": "الأذونات",
+        "permissions_section": "الأذونات",
+        "summary_section": "الملخص"
+      },
+      "manage_roles_link": "إدارة الأدوار",
+      "messages": {
+        "created": "تم إنشاء الدور",
+        "deleted": "تم حذف الدور",
+        "updated": "تم تحديث الدور"
+      },
+      "presets": {
+        "clear": "مسح",
+        "full_access": "وصول كامل",
+        "read_only": "قراءة فقط"
+      },
+      "templates": {
+        "merchandiser": "مسؤول المنتجات",
+        "order_manager": "مدير الطلبات",
+        "start_from": "ابدأ من:",
+        "support": "الدعم"
+      },
+      "validation": {
+        "name_required": "الاسم مطلوب"
       }
     },
     "settings": {
@@ -3068,6 +3170,7 @@
         "product_types": "أنواع المنتجات",
         "profile": "الملف الشخصي",
         "reasons": "المرتجعات والأسباب",
+        "roles": "الأدوار",
         "staff": "الموظفون",
         "stock_locations": "مواقع المخزون",
         "store": "المتجر",

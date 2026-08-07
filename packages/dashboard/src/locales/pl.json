@@ -65,32 +65,10 @@
         "full_access_label": "Pełny dostęp (write_all)",
         "read_all_hint": "– odczyt dla każdego zasobu",
         "read_all_label": "Odczyt wszystkiego (read_all)",
-        "read_aria": "Odczyt: {{resource}}",
-        "read_header": "Odczyt",
-        "resource_header": "Zasób",
-        "resources": {
-          "api_keys": "Klucze API",
-          "categories": "Kategorie",
-          "customers": "Klienci",
-          "dashboard": "Panel",
-          "fulfillments": "Realizacje",
-          "gift_cards": "Karty podarunkowe",
-          "orders": "Zamówienia",
-          "payments": "Płatności",
-          "products": "Produkty",
-          "promotions": "Promocje",
-          "refunds": "Zwroty pieniędzy",
-          "settings": "Ustawienia",
-          "stock": "Stan magazynowy",
-          "store_credits": "Środki w sklepie",
-          "webhooks": "Webhooki"
-        },
         "show_more_aria_few": "Pokaż {{count}} dodatkowe zakresy",
         "show_more_aria_many": "Pokaż {{count}} dodatkowych zakresów",
         "show_more_aria_one": "Pokaż {{count}} dodatkowy zakres",
-        "show_more_aria_other": "Pokaż {{count}} dodatkowych zakresów",
-        "write_aria": "Zapis: {{resource}}",
-        "write_header": "Zapis"
+        "show_more_aria_other": "Pokaż {{count}} dodatkowych zakresów"
       },
       "scopes_immutable_help": "Zakresów nie można zmienić po utworzeniu klucza. Aby je zmienić, utwórz nowy klucz z potrzebnymi zakresami, a ten unieważnij.",
       "validation": {
@@ -733,8 +711,8 @@
           "label": "Strefy dostawy"
         },
         "fulfillment_provider": {
-          "label": "Dostawca realizacji",
-          "help": "Jak realizacje tej metody są przetwarzane i śledzone."
+          "help": "Jak realizacje tej metody są przetwarzane i śledzone.",
+          "label": "Dostawca realizacji"
         },
         "fulfillment_type": {
           "label": "Typ realizacji"
@@ -1100,6 +1078,16 @@
         "usage_limit": {
           "label": "Limit użyć",
           "placeholder": "Bez ograniczeń"
+        }
+      },
+      "role": {
+        "description": {
+          "label": "Opis",
+          "placeholder": "Do czego służy ta rola?"
+        },
+        "name": {
+          "label": "Nazwa",
+          "placeholder": "np. Menedżer zamówień"
         }
       },
       "role_id": {
@@ -1876,23 +1864,23 @@
           },
           "claims": {
             "actions": {
-              "resolve_refund": "Rozwiąż zwrotem płatności",
-              "resolve_replacement": "Rozwiąż zamiennikiem",
-              "deny": "Odrzuć",
               "create": "Nowa reklamacja",
-              "resolve": "Rozwiąż"
+              "deny": "Odrzuć",
+              "resolve": "Rozwiąż",
+              "resolve_refund": "Rozwiąż zwrotem płatności",
+              "resolve_replacement": "Rozwiąż zamiennikiem"
             },
-            "empty": "Brak reklamacji dla tego zamówienia.",
             "create_title": "Nowa reklamacja",
+            "empty": "Brak reklamacji dla tego zamówienia.",
             "refund_amount": "Kwota zwrotu",
-            "resolve_title": "Rozwiąż reklamację",
-            "resolution": "Sposób rozwiązania",
             "replacement_items": "Wyślij zamiennik dla",
+            "resolution": "Sposób rozwiązania",
             "resolutions": {
               "refund": "Zwrot płatności",
-              "replacement": "Zamiennik",
-              "refund_and_replacement": "Zwrot i zamiennik"
-            }
+              "refund_and_replacement": "Zwrot i zamiennik",
+              "replacement": "Zamiennik"
+            },
+            "resolve_title": "Rozwiąż reklamację"
           },
           "dialogs": {
             "approve_title": "Zatwierdzić zamówienie?",
@@ -1904,43 +1892,43 @@
           "empty_shipments": "Brak przesyłek.",
           "exchanges": {
             "actions": {
-              "fulfill": "Wyślij zamiennik",
-              "create": "Nowa wymiana"
+              "create": "Nowa wymiana",
+              "fulfill": "Wyślij zamiennik"
             },
-            "price_difference": "Różnica w cenie",
-            "empty": "Brak wymian dla tego zamówienia.",
             "create_title": "Nowa wymiana",
+            "empty": "Brak wymian dla tego zamówienia.",
+            "price_difference": "Różnica w cenie",
             "replacement_variant": "ID wariantu zamiennego"
           },
           "no_delivery_method": "Nie wybrano metody dostawy.",
           "returns": {
             "actions": {
               "approve": "Zatwierdź",
+              "create": "Nowy zwrot",
               "receive": "Przyjmij produkty",
-              "refund": "Zwróć płatność",
-              "create": "Nowy zwrot"
+              "refund": "Zwróć płatność"
             },
             "confirm": {
               "cancel": "Anulować ten zwrot? Nic nie wróci do magazynu i żadne pieniądze nie zostaną zwrócone."
             },
-            "refund_total": "Kwota zwrotu",
-            "received_of": "Otrzymano {{received}} z {{requested}}",
+            "create_title": "Nowy zwrot",
+            "empty": "Brak zwrotów dla tego zamówienia.",
+            "empty_no_units": "To zamówienie nie ma pozycji realizacji, do których można odnieść zwrot.",
+            "memo": "Notatka",
             "not_resellable": "Nie nadaje się do sprzedaży",
+            "reason": "Powód",
             "receive_title": "Przyjmij zwrócone produkty",
+            "received_of": "Otrzymano {{received}} z {{requested}}",
             "received_quantity": "Otrzymano",
-            "resellable": "Nadaje się do sprzedaży",
-            "refund_title": "Zwrot płatności",
             "refund_amount": "Kwota",
             "refund_method": "Zwróć na",
             "refund_methods": {
               "original_payment": "Pierwotna płatność",
               "store_credit": "Kredyt sklepowy"
             },
-            "empty": "Brak zwrotów dla tego zamówienia.",
-            "memo": "Notatka",
-            "reason": "Powód",
-            "create_title": "Nowy zwrot",
-            "empty_no_units": "To zamówienie nie ma pozycji realizacji, do których można odnieść zwrot."
+            "refund_title": "Zwrot płatności",
+            "refund_total": "Kwota zwrotu",
+            "resellable": "Nadaje się do sprzedaży"
           },
           "section_billing_address": "Adres rozliczeniowy",
           "section_claims": "Reklamacje",
@@ -2275,6 +2263,19 @@
         "loading": "Ładowanie promocji…",
         "new_title": "Nowa promocja"
       },
+      "roles": {
+        "add_cta": "Dodaj rolę",
+        "empty": "Brak ról",
+        "empty_description": "Utwórz rolę, aby nadać członkom zespołu ograniczony dostęp.",
+        "new_title": "Nowa rola",
+        "subtitle": "Określ, co każda rola personelu może widzieć i robić",
+        "table": {
+          "members": "Członkowie",
+          "permissions": "Uprawnienia",
+          "role": "Rola"
+        },
+        "title": "Role"
+      },
       "settings": {
         "allowed_origins": {
           "add_sheet_title": "Dodaj dozwolone źródło",
@@ -2554,21 +2555,77 @@
       },
       "title": "Metody płatności"
     },
+    "permissions": {
+      "descriptions": {
+        "api_keys": "Tworzenie i unieważnianie kluczy API",
+        "categories": "Drzewo kategorii i taksonomie",
+        "collections": "Kolekcje ręczne i oparte na regułach",
+        "customers": "Konta klientów, adresy, karty i grupy",
+        "dashboard": "Analizy sprzedaży i wyników",
+        "fulfillments": "Pakowanie, wysyłka i śledzenie realizacji",
+        "gift_cards": "Karty podarunkowe i ich partie",
+        "orders": "Zamówienia, pozycje, zwroty, wymiany i reklamacje",
+        "payments": "Płatności zamówień i pobieranie płatności",
+        "products": "Produkty, warianty, opcje, ceny i media",
+        "promotions": "Promocje, reguły i kody rabatowe",
+        "refunds": "Wystawianie i podgląd zwrotów środków",
+        "settings": "Konfiguracja sklepu, płatności, dostaw, podatków i kanałów",
+        "staff": "Członkowie zespołu, zaproszenia, role i ich uprawnienia",
+        "stock": "Stany magazynowe, lokalizacje, ruchy i transfery",
+        "store_credits": "Salda środków sklepowych klientów",
+        "webhooks": "Punkty końcowe i dostarczenia webhooków"
+      },
+      "grid": {
+        "read_aria": "Podgląd: {{resource}}",
+        "read_header": "Podgląd",
+        "resource_header": "Zasób",
+        "write_aria": "Zarządzanie: {{resource}}",
+        "write_header": "Zarządzanie"
+      },
+      "groups": {
+        "access": "Dostęp",
+        "analytics": "Analityka",
+        "catalog": "Katalog",
+        "customers": "Klienci",
+        "marketing": "Marketing",
+        "orders": "Zamówienia",
+        "settings": "Ustawienia"
+      },
+      "resources": {
+        "api_keys": "Klucze API",
+        "categories": "Kategorie",
+        "collections": "Kolekcje",
+        "customers": "Klienci",
+        "dashboard": "Panel",
+        "fulfillments": "Realizacje",
+        "gift_cards": "Karty podarunkowe",
+        "orders": "Zamówienia",
+        "payments": "Płatności",
+        "products": "Produkty",
+        "promotions": "Promocje",
+        "refunds": "Zwroty pieniędzy",
+        "settings": "Ustawienia",
+        "staff": "Zespół i role",
+        "stock": "Stan magazynowy",
+        "store_credits": "Środki w sklepie",
+        "webhooks": "Webhooki"
+      }
+    },
     "post_sale": {
-      "search_placeholder": "Szukaj po numerze…",
-      "returns_empty": "Brak zwrotów.",
-      "exchanges_empty": "Brak wymian.",
       "claims_empty": "Brak reklamacji.",
+      "exchanges_empty": "Brak wymian.",
+      "returns_empty": "Brak zwrotów.",
+      "search_placeholder": "Szukaj po numerze…",
       "statuses": {
-        "requested": "Zgłoszony",
-        "open": "Otwarta",
         "approved": "Zatwierdzony",
+        "canceled": "Anulowany",
+        "denied": "Odrzucona",
+        "fulfilled": "Wysłany",
+        "open": "Otwarta",
         "received": "Otrzymany",
         "refunded": "Zwrócony",
-        "fulfilled": "Wysłany",
-        "resolved": "Rozwiązana",
-        "denied": "Odrzucona",
-        "canceled": "Anulowany"
+        "requested": "Zgłoszony",
+        "resolved": "Rozwiązana"
       }
     },
     "preferences": {
@@ -3036,38 +3093,83 @@
       }
     },
     "reasons": {
-      "title": "Zwroty i powody",
-      "description": "Listy, z których zespół wybiera przy zwrotach, reklamacjach i zwrotach pieniędzy.",
+      "active_label": "Dostępny dla nowych zgłoszeń",
       "add_cta": "Dodaj powód",
       "add_sheet_title": "Dodaj powód",
-      "edit_sheet_title": "Edytuj powód",
+      "claim": {
+        "help": "Co poszło nie tak z dostawą — uszkodzony, brakujący lub zły towar.",
+        "title": "Powody reklamacji"
+      },
       "create_description": "Powody pojawiają się na liście przy tworzeniu zwrotu, reklamacji lub zwrotu pieniędzy.",
-      "name_placeholder": "np. Zły rozmiar",
-      "active_label": "Dostępny dla nowych zgłoszeń",
+      "delete_confirm": {
+        "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują.",
+        "title": "Usunąć powód?"
+      },
+      "description": "Listy, z których zespół wybiera przy zwrotach, reklamacjach i zwrotach pieniędzy.",
+      "edit_sheet_title": "Edytuj powód",
       "empty": "Brak powodów",
-      "inactive": "Nieaktywny",
       "in_use": "W użyciu",
       "in_use_help": "Ten powód jest już używany przez istniejące rekordy, więc nie można go usunąć.",
-      "delete_confirm": {
-        "title": "Usunąć powód?",
-        "message": "{{name}} nie będzie już proponowany. Istniejące zgłoszenia go zachowują."
-      },
+      "inactive": "Nieaktywny",
       "messages": {
         "created": "Powód utworzony",
-        "updated": "Powód zaktualizowany",
-        "deleted": "Powód usunięty"
+        "deleted": "Powód usunięty",
+        "updated": "Powód zaktualizowany"
+      },
+      "name_placeholder": "np. Zły rozmiar",
+      "refund": {
+        "help": "Dlaczego pieniądze wróciły. Używane w raportach o wszystkich zwrotach.",
+        "title": "Powody zwrotu pieniędzy"
       },
       "return": {
-        "title": "Powody zwrotu",
-        "help": "Dlaczego klient odsyła towar. Wspólne dla zwrotów i wymian."
+        "help": "Dlaczego klient odsyła towar. Wspólne dla zwrotów i wymian.",
+        "title": "Powody zwrotu"
       },
-      "claim": {
-        "title": "Powody reklamacji",
-        "help": "Co poszło nie tak z dostawą — uszkodzony, brakujący lub zły towar."
+      "title": "Zwroty i powody"
+    },
+    "roles": {
+      "badges": {
+        "full_access": "Pełny dostęp",
+        "more": "+{{count}} więcej",
+        "none": "Brak uprawnień",
+        "protected": "Chroniona"
       },
-      "refund": {
-        "title": "Powody zwrotu pieniędzy",
-        "help": "Dlaczego pieniądze wróciły. Używane w raportach o wszystkich zwrotach."
+      "confirm": {
+        "delete_message": "Usunąć rolę „{{name}}”? Tej akcji nie można cofnąć.",
+        "delete_title": "Usuń rolę"
+      },
+      "duplicate_name": "{{name}} kopia",
+      "errors": {
+        "failed_to_delete": "Nie udało się usunąć roli"
+      },
+      "form": {
+        "details_section": "Szczegóły",
+        "locked_hint": "Ta rola jest chroniona i nie można jej edytować.",
+        "members": "Członkowie",
+        "more_members": "+{{count}} więcej",
+        "permissions_count": "Uprawnienia",
+        "permissions_section": "Uprawnienia",
+        "summary_section": "Podsumowanie"
+      },
+      "manage_roles_link": "Zarządzaj rolami",
+      "messages": {
+        "created": "Rola utworzona",
+        "deleted": "Rola usunięta",
+        "updated": "Rola zaktualizowana"
+      },
+      "presets": {
+        "clear": "Wyczyść",
+        "full_access": "Pełny dostęp",
+        "read_only": "Tylko odczyt"
+      },
+      "templates": {
+        "merchandiser": "Merchandiser",
+        "order_manager": "Menedżer zamówień",
+        "start_from": "Zacznij od:",
+        "support": "Wsparcie"
+      },
+      "validation": {
+        "name_required": "Nazwa jest wymagana"
       }
     },
     "settings": {
@@ -3104,6 +3206,7 @@
         "product_types": "Typy produktów",
         "profile": "Profil",
         "reasons": "Zwroty i powody",
+        "roles": "Role",
         "staff": "Zespół",
         "stock_locations": "Lokalizacje magazynowe",
         "store": "Sklep",

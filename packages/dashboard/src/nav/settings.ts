@@ -10,6 +10,7 @@ import {
   RadioTowerIcon,
   RotateCcwIcon,
   ShapesIcon,
+  ShieldCheckIcon,
   StoreIcon,
   TagIcon,
   TruckIcon,
@@ -165,6 +166,16 @@ settingsNav.add({
   group: 'team',
   position: 100,
   subject: Subject.AdminUser,
+})
+
+settingsNav.add({
+  key: 'settings.roles',
+  labelKey: 'admin.settings_nav.items.roles',
+  path: '/roles',
+  icon: ShieldCheckIcon,
+  group: 'team',
+  position: 150,
+  subject: Subject.Role,
 })
 
 settingsNav.add({

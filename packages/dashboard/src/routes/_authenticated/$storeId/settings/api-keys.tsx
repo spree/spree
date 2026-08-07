@@ -73,6 +73,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod/v4'
+import { PermissionGrid } from '../../../../components/spree/permission-picker'
 import {
   useApiKeys,
   useCreateApiKey,
@@ -81,33 +82,11 @@ import {
   useUpdateApiKey,
 } from '../../../../hooks/use-api-keys'
 import { useChannels } from '../../../../hooks/use-channels'
+import { usePermissionCatalog } from '../../../../hooks/use-roles'
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/api-keys')({
   component: ApiKeysSettingsPage,
 })
-
-// Scope resource families, in display order — the `read_*` / `write_*` pairs
-// recognised by `Spree::ApiKey::SCOPES`. Labels resolve at render time from
-// `admin.api_keys.scope_picker.resources.<resource>`. We only render
-// `write_*` for resources that ship a write scope (dashboard is read-only).
-// Keep this in sync with the server-side allowlist.
-const SCOPE_GROUPS: Array<{ resource: string; readOnly?: boolean }> = [
-  { resource: 'orders' },
-  { resource: 'products' },
-  { resource: 'promotions' },
-  { resource: 'customers' },
-  { resource: 'payments' },
-  { resource: 'fulfillments' },
-  { resource: 'refunds' },
-  { resource: 'gift_cards' },
-  { resource: 'store_credits' },
-  { resource: 'stock' },
-  { resource: 'categories' },
-  { resource: 'settings' },
-  { resource: 'webhooks' },
-  { resource: 'api_keys' },
-  { resource: 'dashboard', readOnly: true },
-]
 
 // ---------------------------------------------------------------------------
 // Page
@@ -882,12 +861,9 @@ function ScopePicker({
   disabled?: boolean
 }) {
   const { t } = useTranslation()
+  const { data: catalog } = usePermissionCatalog()
   const hasWriteAll = value.includes('write_all')
   const hasReadAll = value.includes('read_all')
-
-  function toggleScope(scope: string) {
-    onChange?.(value.includes(scope) ? value.filter((v) => v !== scope) : [...value, scope])
-  }
 
   function setAllRead(checked: boolean) {
     let next = value.filter((v) => v !== 'read_all' && !v.startsWith('read_'))
@@ -938,91 +914,24 @@ function ScopePicker({
       </div>
 
       <div
-        className={cn(
-          'grid grid-cols-[1fr_auto_auto] gap-x-4 gap-y-2 p-3 text-sm',
-          !disabled && (hasWriteAll || hasReadAll) && 'pointer-events-none opacity-50',
-        )}
+        className={cn(!disabled && (hasWriteAll || hasReadAll) && 'pointer-events-none opacity-50')}
       >
-        <span className="font-medium text-muted-foreground">
-          {t('admin.api_keys.scope_picker.resource_header')}
-        </span>
-        <span className="font-medium text-muted-foreground">
-          {t('admin.api_keys.scope_picker.read_header')}
-        </span>
-        <span className="font-medium text-muted-foreground">
-          {t('admin.api_keys.scope_picker.write_header')}
-        </span>
-        {SCOPE_GROUPS.map((group) => {
-          const readScope = `read_${group.resource}`
-          const writeScope = `write_${group.resource}`
-          const hasRead = value.includes(readScope) || value.includes(writeScope)
-          const hasWrite = value.includes(writeScope)
-          return (
-            <ScopeRow
-              key={group.resource}
-              label={t(`admin.api_keys.scope_picker.resources.${group.resource}`)}
-              hasRead={hasRead}
-              hasWrite={hasWrite}
-              readOnly={group.readOnly}
-              disabled={disabled}
-              onToggleRead={() => toggleScope(readScope)}
-              onToggleWrite={() => {
-                // Toggling write also implies read on the server, but we keep
-                // them as separate checkboxes to make the user's intent
-                // explicit. If they tick write without read, the server
-                // grants read implicitly via `has_scope?`.
-                toggleScope(writeScope)
-              }}
-            />
-          )
-        })}
+        {catalog ? (
+          <PermissionGrid
+            entries={catalog.data}
+            value={value}
+            onChange={(next) => onChange?.(next)}
+            disabled={disabled}
+          />
+        ) : (
+          <div className="flex flex-col gap-2 p-3">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-6 w-full" />
+          </div>
+        )}
       </div>
     </div>
-  )
-}
-
-function ScopeRow({
-  label,
-  hasRead,
-  hasWrite,
-  readOnly,
-  disabled,
-  onToggleRead,
-  onToggleWrite,
-}: {
-  label: string
-  hasRead: boolean
-  hasWrite: boolean
-  readOnly?: boolean
-  disabled?: boolean
-  onToggleRead: () => void
-  onToggleWrite: () => void
-}) {
-  const { t } = useTranslation()
-  return (
-    <>
-      <span>{label}</span>
-      <Checkbox
-        checked={hasRead}
-        onCheckedChange={onToggleRead}
-        // Checking write implies read; reflect that here so the UI doesn't
-        // look out of sync with what the server will enforce.
-        disabled={disabled || hasWrite}
-        aria-label={t('admin.api_keys.scope_picker.read_aria', { resource: label })}
-        className="justify-self-center"
-      />
-      {readOnly ? (
-        <span className="text-xs text-muted-foreground justify-self-center">—</span>
-      ) : (
-        <Checkbox
-          checked={hasWrite}
-          onCheckedChange={onToggleWrite}
-          disabled={disabled}
-          aria-label={t('admin.api_keys.scope_picker.write_aria', { resource: label })}
-          className="justify-self-center"
-        />
-      )}
-    </>
   )
 }
 

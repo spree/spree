@@ -65,30 +65,8 @@
         "full_access_label": "Accès complet (write_all)",
         "read_all_hint": "– lecture sur chaque ressource",
         "read_all_label": "Tout lire (read_all)",
-        "read_aria": "Lire {{resource}}",
-        "read_header": "Lecture",
-        "resource_header": "Ressource",
-        "resources": {
-          "api_keys": "Clés API",
-          "categories": "Catégories",
-          "customers": "Clients",
-          "dashboard": "Tableau de bord",
-          "fulfillments": "Exécutions des commandes",
-          "gift_cards": "Cartes cadeaux",
-          "orders": "Commandes",
-          "payments": "Paiements",
-          "products": "Produits",
-          "promotions": "Promotions",
-          "refunds": "Remboursements",
-          "settings": "Paramètres",
-          "stock": "Stock",
-          "store_credits": "Avoirs en boutique",
-          "webhooks": "Webhooks"
-        },
         "show_more_aria_one": "Afficher {{count}} portée supplémentaire",
-        "show_more_aria_other": "Afficher {{count}} portées supplémentaires",
-        "write_aria": "Écrire {{resource}}",
-        "write_header": "Écriture"
+        "show_more_aria_other": "Afficher {{count}} portées supplémentaires"
       },
       "scopes_immutable_help": "Les portées ne peuvent pas être modifiées après la création d'une clé. Pour les modifier, créez une nouvelle clé avec les portées dont vous avez besoin et révoquez celle-ci.",
       "validation": {
@@ -725,8 +703,8 @@
           "label": "Zones de livraison"
         },
         "fulfillment_provider": {
-          "label": "Fournisseur d'expédition",
-          "help": "Comment les expéditions de cette méthode sont traitées et suivies."
+          "help": "Comment les expéditions de cette méthode sont traitées et suivies.",
+          "label": "Fournisseur d'expédition"
         },
         "fulfillment_type": {
           "label": "Type de traitement"
@@ -1092,6 +1070,16 @@
         "usage_limit": {
           "label": "Limite d'utilisation",
           "placeholder": "Illimité"
+        }
+      },
+      "role": {
+        "description": {
+          "label": "Description",
+          "placeholder": "À quoi sert ce rôle ?"
+        },
+        "name": {
+          "label": "Nom",
+          "placeholder": "ex. Gestionnaire de commandes"
         }
       },
       "role_id": {
@@ -1864,23 +1852,23 @@
           },
           "claims": {
             "actions": {
-              "resolve_refund": "Résoudre par remboursement",
-              "resolve_replacement": "Résoudre par remplacement",
-              "deny": "Refuser",
               "create": "Nouvelle réclamation",
-              "resolve": "Résoudre"
+              "deny": "Refuser",
+              "resolve": "Résoudre",
+              "resolve_refund": "Résoudre par remboursement",
+              "resolve_replacement": "Résoudre par remplacement"
             },
-            "empty": "Aucune réclamation pour cette commande.",
             "create_title": "Nouvelle réclamation",
+            "empty": "Aucune réclamation pour cette commande.",
             "refund_amount": "Montant du remboursement",
-            "resolve_title": "Résoudre la réclamation",
-            "resolution": "Mode de résolution",
             "replacement_items": "Envoyer un remplacement pour",
+            "resolution": "Mode de résolution",
             "resolutions": {
               "refund": "Remboursement",
-              "replacement": "Remplacement",
-              "refund_and_replacement": "Remboursement et remplacement"
-            }
+              "refund_and_replacement": "Remboursement et remplacement",
+              "replacement": "Remplacement"
+            },
+            "resolve_title": "Résoudre la réclamation"
           },
           "dialogs": {
             "approve_title": "Approuver la commande ?",
@@ -1892,43 +1880,43 @@
           "empty_shipments": "Aucune expédition pour le moment.",
           "exchanges": {
             "actions": {
-              "fulfill": "Expédier le remplacement",
-              "create": "Nouvel échange"
+              "create": "Nouvel échange",
+              "fulfill": "Expédier le remplacement"
             },
-            "price_difference": "Différence de prix",
-            "empty": "Aucun échange pour cette commande.",
             "create_title": "Nouvel échange",
+            "empty": "Aucun échange pour cette commande.",
+            "price_difference": "Différence de prix",
             "replacement_variant": "ID de la variante de remplacement"
           },
           "no_delivery_method": "Aucune méthode de livraison sélectionnée.",
           "returns": {
             "actions": {
               "approve": "Approuver",
+              "create": "Nouveau retour",
               "receive": "Réceptionner les articles",
-              "refund": "Rembourser",
-              "create": "Nouveau retour"
+              "refund": "Rembourser"
             },
             "confirm": {
               "cancel": "Annuler ce retour ? Aucun article ne sera remis en stock et aucun montant ne sera remboursé."
             },
-            "refund_total": "Total du remboursement",
-            "received_of": "{{received}} sur {{requested}} reçus",
+            "create_title": "Nouveau retour",
+            "empty": "Aucun retour pour cette commande.",
+            "empty_no_units": "Cette commande n’a aucun enregistrement de traitement sur lequel baser un retour.",
+            "memo": "Note",
             "not_resellable": "Non revendable",
+            "reason": "Motif",
             "receive_title": "Réceptionner les articles retournés",
+            "received_of": "{{received}} sur {{requested}} reçus",
             "received_quantity": "Reçu",
-            "resellable": "Revendable",
-            "refund_title": "Rembourser le retour",
             "refund_amount": "Montant",
             "refund_method": "Rembourser sur",
             "refund_methods": {
               "original_payment": "Paiement d’origine",
               "store_credit": "Avoir"
             },
-            "empty": "Aucun retour pour cette commande.",
-            "memo": "Note",
-            "reason": "Motif",
-            "create_title": "Nouveau retour",
-            "empty_no_units": "Cette commande n’a aucun enregistrement de traitement sur lequel baser un retour."
+            "refund_title": "Rembourser le retour",
+            "refund_total": "Total du remboursement",
+            "resellable": "Revendable"
           },
           "section_billing_address": "Adresse de facturation",
           "section_claims": "Réclamations",
@@ -2249,6 +2237,19 @@
         "loading": "Chargement de la promotion…",
         "new_title": "Nouvelle promotion"
       },
+      "roles": {
+        "add_cta": "Ajouter un rôle",
+        "empty": "Aucun rôle pour le moment",
+        "empty_description": "Créez un rôle pour donner un accès ciblé aux membres de l’équipe.",
+        "new_title": "Nouveau rôle",
+        "subtitle": "Définissez ce que chaque rôle du personnel peut voir et faire",
+        "table": {
+          "members": "Membres",
+          "permissions": "Permissions",
+          "role": "Rôle"
+        },
+        "title": "Rôles"
+      },
       "settings": {
         "allowed_origins": {
           "add_sheet_title": "Ajouter une origine autorisée",
@@ -2522,21 +2523,77 @@
       },
       "title": "Moyens de paiement"
     },
+    "permissions": {
+      "descriptions": {
+        "api_keys": "Créer et révoquer des identifiants API",
+        "categories": "Arborescence des catégories et taxonomies",
+        "collections": "Collections manuelles et basées sur des règles",
+        "customers": "Comptes clients, adresses, cartes et groupes",
+        "dashboard": "Analyses des ventes et des performances",
+        "fulfillments": "Préparer, expédier et suivre les commandes",
+        "gift_cards": "Cartes cadeaux et lots de cartes cadeaux",
+        "orders": "Commandes, articles, retours, échanges et réclamations",
+        "payments": "Paiements des commandes et capture des paiements",
+        "products": "Produits, variantes, options, prix et médias",
+        "promotions": "Promotions, règles et codes promo",
+        "refunds": "Émettre et consulter les remboursements",
+        "settings": "Configuration boutique, paiement, livraison, taxes et canaux",
+        "staff": "Membres de l’équipe, invitations, rôles et leurs permissions",
+        "stock": "Niveaux de stock, emplacements, mouvements et transferts",
+        "store_credits": "Avoirs des clients",
+        "webhooks": "Points de terminaison et livraisons de webhooks"
+      },
+      "grid": {
+        "read_aria": "Voir {{resource}}",
+        "read_header": "Voir",
+        "resource_header": "Ressource",
+        "write_aria": "Gérer {{resource}}",
+        "write_header": "Gérer"
+      },
+      "groups": {
+        "access": "Accès",
+        "analytics": "Analyses",
+        "catalog": "Catalogue",
+        "customers": "Clients",
+        "marketing": "Marketing",
+        "orders": "Commandes",
+        "settings": "Paramètres"
+      },
+      "resources": {
+        "api_keys": "Clés API",
+        "categories": "Catégories",
+        "collections": "Collections",
+        "customers": "Clients",
+        "dashboard": "Tableau de bord",
+        "fulfillments": "Exécutions des commandes",
+        "gift_cards": "Cartes cadeaux",
+        "orders": "Commandes",
+        "payments": "Paiements",
+        "products": "Produits",
+        "promotions": "Promotions",
+        "refunds": "Remboursements",
+        "settings": "Paramètres",
+        "staff": "Équipe et rôles",
+        "stock": "Stock",
+        "store_credits": "Avoirs en boutique",
+        "webhooks": "Webhooks"
+      }
+    },
     "post_sale": {
-      "search_placeholder": "Rechercher par numéro…",
-      "returns_empty": "Aucun retour pour l’instant.",
-      "exchanges_empty": "Aucun échange pour l’instant.",
       "claims_empty": "Aucune réclamation pour l’instant.",
+      "exchanges_empty": "Aucun échange pour l’instant.",
+      "returns_empty": "Aucun retour pour l’instant.",
+      "search_placeholder": "Rechercher par numéro…",
       "statuses": {
-        "requested": "Demandé",
-        "open": "Ouvert",
         "approved": "Approuvé",
+        "canceled": "Annulé",
+        "denied": "Refusé",
+        "fulfilled": "Expédié",
+        "open": "Ouvert",
         "received": "Reçu",
         "refunded": "Remboursé",
-        "fulfilled": "Expédié",
-        "resolved": "Résolu",
-        "denied": "Refusé",
-        "canceled": "Annulé"
+        "requested": "Demandé",
+        "resolved": "Résolu"
       }
     },
     "preferences": {
@@ -2994,38 +3051,83 @@
       }
     },
     "reasons": {
-      "title": "Retours et motifs",
-      "description": "Les listes de motifs que votre équipe utilise pour les retours, réclamations et remboursements.",
+      "active_label": "Proposé sur les nouveaux enregistrements",
       "add_cta": "Ajouter un motif",
       "add_sheet_title": "Ajouter un motif",
-      "edit_sheet_title": "Modifier le motif",
+      "claim": {
+        "help": "Ce qui s'est mal passé à la livraison — endommagé, manquant ou article incorrect.",
+        "title": "Motifs de réclamation"
+      },
       "create_description": "Les motifs apparaissent dans une liste déroulante lors de la création d'un retour, d'une réclamation ou d'un remboursement.",
-      "name_placeholder": "ex. Mauvaise taille",
-      "active_label": "Proposé sur les nouveaux enregistrements",
+      "delete_confirm": {
+        "message": "{{name}} ne sera plus proposé. Les enregistrements existants le conservent.",
+        "title": "Supprimer le motif ?"
+      },
+      "description": "Les listes de motifs que votre équipe utilise pour les retours, réclamations et remboursements.",
+      "edit_sheet_title": "Modifier le motif",
       "empty": "Aucun motif pour l'instant",
-      "inactive": "Inactif",
       "in_use": "Utilisé",
       "in_use_help": "Ce motif est déjà utilisé par des enregistrements existants, il ne peut donc pas être supprimé.",
-      "delete_confirm": {
-        "title": "Supprimer le motif ?",
-        "message": "{{name}} ne sera plus proposé. Les enregistrements existants le conservent."
-      },
+      "inactive": "Inactif",
       "messages": {
         "created": "Motif créé",
-        "updated": "Motif mis à jour",
-        "deleted": "Motif supprimé"
+        "deleted": "Motif supprimé",
+        "updated": "Motif mis à jour"
+      },
+      "name_placeholder": "ex. Mauvaise taille",
+      "refund": {
+        "help": "Pourquoi l'argent a été rendu. Utilisé pour le suivi de tous les remboursements.",
+        "title": "Motifs de remboursement"
       },
       "return": {
-        "title": "Motifs de retour",
-        "help": "Pourquoi un client renvoie un article. Partagé par les retours et les échanges."
+        "help": "Pourquoi un client renvoie un article. Partagé par les retours et les échanges.",
+        "title": "Motifs de retour"
       },
-      "claim": {
-        "title": "Motifs de réclamation",
-        "help": "Ce qui s'est mal passé à la livraison — endommagé, manquant ou article incorrect."
+      "title": "Retours et motifs"
+    },
+    "roles": {
+      "badges": {
+        "full_access": "Accès complet",
+        "more": "+{{count}} de plus",
+        "none": "Aucune permission",
+        "protected": "Protégé"
       },
-      "refund": {
-        "title": "Motifs de remboursement",
-        "help": "Pourquoi l'argent a été rendu. Utilisé pour le suivi de tous les remboursements."
+      "confirm": {
+        "delete_message": "Supprimer le rôle « {{name}} » ? Cette action est irréversible.",
+        "delete_title": "Supprimer le rôle"
+      },
+      "duplicate_name": "{{name}} copie",
+      "errors": {
+        "failed_to_delete": "Échec de la suppression du rôle"
+      },
+      "form": {
+        "details_section": "Détails",
+        "locked_hint": "Ce rôle est protégé et ne peut pas être modifié.",
+        "members": "Membres",
+        "more_members": "+{{count}} de plus",
+        "permissions_count": "Permissions",
+        "permissions_section": "Permissions",
+        "summary_section": "Résumé"
+      },
+      "manage_roles_link": "Gérer les rôles",
+      "messages": {
+        "created": "Rôle créé",
+        "deleted": "Rôle supprimé",
+        "updated": "Rôle mis à jour"
+      },
+      "presets": {
+        "clear": "Effacer",
+        "full_access": "Accès complet",
+        "read_only": "Lecture seule"
+      },
+      "templates": {
+        "merchandiser": "Merchandiser",
+        "order_manager": "Gestionnaire de commandes",
+        "start_from": "Partir de :",
+        "support": "Support"
+      },
+      "validation": {
+        "name_required": "Le nom est requis"
       }
     },
     "settings": {
@@ -3062,6 +3164,7 @@
         "product_types": "Types de produit",
         "profile": "Profil",
         "reasons": "Retours et motifs",
+        "roles": "Rôles",
         "staff": "Personnel",
         "stock_locations": "Emplacements de stock",
         "store": "Boutique",

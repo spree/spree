@@ -17,9 +17,10 @@ export function useInvitations() {
 }
 
 export function useRoles() {
-  // Roles are global across stores; no storeId scope.
+  // Role definitions are global, but `users_count` is computed for the
+  // current store — so the cache is store-scoped like every other resource.
   return useQuery({
-    queryKey: ['roles'],
+    queryKey: useResourceKey('roles'),
     queryFn: () => adminClient.roles.list({ limit: 100 }),
     staleTime: 5 * 60 * 1000,
   })
@@ -28,7 +29,8 @@ export function useRoles() {
 export function useUpdateStaff() {
   return useResourceMutation<unknown, Error, { id: string; params: AdminUserUpdateParams }>({
     mutationFn: ({ id, params }) => adminClient.adminUsers.update(id, params),
-    invalidate: [['staff']],
+    // Role assignments change each role's users_count on the roles page.
+    invalidate: [['staff'], ['roles']],
     successMessage: false,
     errorMessage: false,
   })
@@ -41,7 +43,7 @@ export function useUpdateStaff() {
 export function useRemoveStaff() {
   return useResourceMutation<unknown, Error, string>({
     mutationFn: (id) => adminClient.adminUsers.delete(id),
-    invalidate: [['staff']],
+    invalidate: [['staff'], ['roles']],
     successMessage: false,
     errorMessage: false,
   })
