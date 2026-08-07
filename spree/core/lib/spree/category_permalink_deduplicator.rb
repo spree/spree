@@ -12,8 +12,10 @@ module Spree
   # migration, where the model's callbacks, validations and default scopes may not
   # match the schema on disk.
   class CategoryPermalinkDeduplicator
-    # Two fixed variants rather than one interpolated query: spree_taxonomies is
-    # gone in 6.1, and a constant is verifiably free of interpolated input.
+    # Spelled out per schema rather than interpolated from #effective_store_id:
+    # this query binds no values, so writing it as constants keeps it provably
+    # free of interpolated input (Brakeman flags the assembled form). The queries
+    # below interpolate the same fragments but bind their values via #sanitize.
     DUPLICATE_GROUPS_WITH_TAXONOMY_SQL = <<~SQL.freeze
       SELECT COALESCE(c.store_id, t.store_id) AS sid, c.permalink
       FROM spree_categories c
@@ -34,6 +36,7 @@ module Spree
     # @param connection [ActiveRecord::ConnectionAdapters::AbstractAdapter]
     def initialize(connection = ActiveRecord::Base.connection)
       @connection = connection
+      @permalinks_by_store = {}
     end
 
     # Rewrites every duplicate permalink, keeping the lowest-id row in each group
@@ -42,7 +45,7 @@ module Spree
     #
     # @return [Integer] number of categories whose permalink changed
     def call
-      return 0 unless table_exists?
+      return 0 unless connection.table_exists?('spree_categories')
 
       renamed = 0
 
@@ -51,7 +54,8 @@ module Spree
         # The first row keeps the permalink; the rest have to move.
         ids.drop(1).each do |id|
           candidate = unique_permalink(permalink, id, store_id)
-          rewrite(id, candidate)
+          rewrite(id, permalink, candidate)
+          permalinks_for(store_id) << candidate
           renamed += 1
         end
       end
@@ -62,10 +66,6 @@ module Spree
     private
 
     attr_reader :connection
-
-    def table_exists?
-      connection.table_exists?('spree_categories')
-    end
 
     # Binds values as parameters rather than interpolating them, so no user- or
     # data-derived string is ever spliced into SQL text.
@@ -120,7 +120,7 @@ module Spree
     end
 
     def taxonomy_suffix(id)
-      return nil unless connection.table_exists?('spree_taxonomies')
+      return nil unless taxonomies_table?
 
       name = connection.select_value(sanitize(<<~SQL, id))
         SELECT t.name FROM spree_taxonomies t
@@ -132,21 +132,26 @@ module Spree
     end
 
     def taken?(permalink, store_id)
-      connection.select_value(sanitize(<<~SQL, store_id, permalink)).to_i.positive?
-        SELECT COUNT(*) FROM spree_categories c
+      permalinks_for(store_id).include?(permalink)
+    end
+
+    # Every permalink in the store, loaded once. COALESCE on store_id defeats the
+    # index, so testing candidates in memory beats a scan per candidate — and the
+    # numeric-suffix loop tries several per collision.
+    def permalinks_for(store_id)
+      @permalinks_by_store[store_id] ||= connection.select_values(sanitize(<<~SQL, store_id)).compact.to_set
+        SELECT c.permalink FROM spree_categories c
         #{taxonomy_join}
-        WHERE #{effective_store_id} = ? AND c.permalink = ?
+        WHERE #{effective_store_id} = ? AND c.permalink IS NOT NULL
       SQL
     end
 
     # Moves the row and re-prefixes its subtree, so a child of "catalog" becomes a
     # child of "catalog-shop-b" rather than keeping the old parent's path.
-    def rewrite(id, candidate)
-      old_permalink = permalink_for(id)
+    def rewrite(id, old_permalink, candidate)
       connection.update(sanitize('UPDATE spree_categories SET permalink = ? WHERE id = ?', candidate, id))
 
-      descendant_ids(id).each do |descendant_id|
-        current = permalink_for(descendant_id)
+      descendants(id).each do |descendant_id, current|
         next if current.blank? || !current.start_with?("#{old_permalink}/")
 
         moved = current.sub("#{old_permalink}/", "#{candidate}/")
@@ -154,24 +159,22 @@ module Spree
       end
     end
 
-    def permalink_for(id)
-      connection.select_value(sanitize('SELECT permalink FROM spree_categories WHERE id = ?', id))
-    end
-
     # Walks the parent chain rather than using lft/rgt, which may be stale on rows
-    # an installation has not rebuilt.
-    def descendant_ids(id)
+    # an installation has not rebuilt. One query per depth level, not per node.
+    #
+    # @return [Array<Array(Integer, String)>] (id, permalink) of every descendant
+    def descendants(id)
       collected = []
       frontier = [id]
 
       until frontier.empty?
-        children = connection.select_values(
-          sanitize('SELECT id FROM spree_categories WHERE parent_id IN (?)', frontier)
+        rows = connection.select_rows(
+          sanitize('SELECT id, permalink FROM spree_categories WHERE parent_id IN (?)', frontier)
         )
-        break if children.empty?
+        break if rows.empty?
 
-        collected.concat(children)
-        frontier = children
+        collected.concat(rows)
+        frontier = rows.map(&:first)
       end
 
       collected

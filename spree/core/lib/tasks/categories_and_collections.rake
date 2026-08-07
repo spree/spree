@@ -145,12 +145,12 @@ namespace :spree do
     Spree::Category.unscoped.where(id: childless_root_ids).find_each(&:destroy!)
     puts "  dropped #{childless_root_ids.size} childless taxonomy roots."
 
-    # Pre-6.0 permalinks were unique per taxonomy, so one store could hold two
-    # identical permalinks under different taxonomies. The migration resolved the
-    # rows that already had a store_id; this catches the ones the backfill below is
-    # about to give one — the deduplicator groups by the store a category belongs
-    # to *or resolves through its taxonomy*, so it sees them before the backfill
-    # would trip the unique index on assignment.
+    # Normally a no-op: the migration deduplicates over this same row set (it too
+    # groups by the store a category belongs to *or resolves through its
+    # taxonomy*). It runs again because db:migrate is not part of the upgrade
+    # manifest — the deploy pipeline owns it — so this task can be invoked against
+    # a database whose migrations have not run, where the backfill below would
+    # otherwise trip over duplicates that nothing has resolved yet.
     renamed = Spree::CategoryPermalinkDeduplicator.new.call
     puts "  resolved #{renamed} duplicate category permalinks." if renamed.positive?
 

@@ -410,8 +410,7 @@ module Spree
 
     # A tree belongs to one store. Reads #store rather than the raw column so
     # legacy rows that still resolve their store through a taxonomy compare
-    # correctly. Replaces the taxonomy-scoped parent check removed in 6.0, which
-    # enforced this only as a side effect of taxonomy ownership.
+    # correctly.
     def parent_belongs_to_same_store
       return if parent.blank?
 

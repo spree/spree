@@ -25,9 +25,7 @@ module Spree
         return if category_names.empty?
 
         category_names.inject(nil) do |parent, category_name|
-          siblings = store.categories.where(parent: parent)
-
-          siblings.with_matching_name(category_name).first ||
+          store.categories.where(parent: parent).with_matching_name(category_name).first ||
             store.categories.create!(name: category_name, parent: parent)
         end
       end
