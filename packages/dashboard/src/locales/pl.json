@@ -335,6 +335,7 @@
         "manage_in_settings": "Zarządzaj w ustawieniach",
         "new_definition_description": "Zdefiniuj pole niestandardowe, aby przechowywać typowane, ustrukturyzowane informacje dla: {{resource}}.",
         "new_definition_title": "Nowe pole niestandardowe",
+        "required_hint": "Zalecane przez ten typ produktu",
         "section_title": "Pola niestandardowe",
         "set_up": "Skonfiguruj pola niestandardowe",
         "values_save_partial_failed": "Niektórych pól niestandardowych nie udało się zapisać: {{fields}}",
@@ -1015,12 +1016,25 @@
         }
       },
       "product_type": {
+        "categories": {
+          "help": "Dodawane do produktów tworzonych z tym typem.",
+          "label": "Kategorie"
+        },
+        "custom_field_definitions": {
+          "help": "Widoczne w tej kolejności w formularzu każdego produktu tego typu. Pola wymagane są oznaczone jako zalecane — nie są wymuszane przy zapisie.",
+          "label": "Pola niestandardowe",
+          "required": "Wymagane"
+        },
         "fulfillment_types": {
           "help": "Jak produkty tego typu mogą być dostarczane — wysyłka, odbiór w sklepie, punkt odbioru lub cyfrowo.",
           "label": "Sposoby realizacji"
         },
         "name": {
           "placeholder": "np. T-Shirt"
+        },
+        "option_types": {
+          "help": "Dodawane do produktów tworzonych z tym typem. Produkty mogą później dodać kolejne.",
+          "label": "Typy opcji"
         },
         "products_count": {
           "label": "Produkty"
@@ -2588,6 +2602,22 @@
     "product_types": {
       "add_cta": "Dodaj typ produktu",
       "add_sheet_title": "Nowy typ produktu",
+      "affects_new_only": {
+        "description": "Edycja typów opcji i kategorii wpływa na produkty tworzone od teraz. Produkty, które już mają ten typ, zachowują to, co mają. Pola niestandardowe poniżej zawsze pojawiają się przy każdym produkcie tego typu.",
+        "title": "Zmiany dotyczą nowych produktów"
+      },
+      "apply_to_products": {
+        "confirm_label": "Zastosuj",
+        "cta_few": "Zastosuj do {{count}} istniejących produktów",
+        "cta_many": "Zastosuj do {{count}} istniejących produktów",
+        "cta_one": "Zastosuj do 1 istniejącego produktu",
+        "cta_other": "Zastosuj do {{count}} istniejącego produktu",
+        "message_few": "To doda brakujące typy opcji i kategorie tego typu do {{count}} produktów. Nic nie zostanie usunięte.",
+        "message_many": "To doda brakujące typy opcji i kategorie tego typu do {{count}} produktów. Nic nie zostanie usunięte.",
+        "message_one": "To doda brakujące typy opcji i kategorie tego typu do 1 produktu. Nic nie zostanie usunięte.",
+        "message_other": "To doda brakujące typy opcji i kategorie tego typu do {{count}} produktu. Nic nie zostanie usunięte.",
+        "title": "Zastosuj do istniejących produktów"
+      },
       "create_description": "Grupuj produkty i określ, jak mogą być dostarczane.",
       "create_label": "Utwórz typ produktu",
       "delete_confirm": {
@@ -2598,10 +2628,14 @@
       "edit_sheet_title": "Edytuj typ produktu",
       "empty": "Brak typów produktów",
       "messages": {
+        "applied_to_products": "Stosowanie do istniejących produktów",
         "created": "Utworzono typ produktu",
         "deleted": "Usunięto typ produktu",
         "updated": "Zaktualizowano typ produktu"
       },
+      "no_categories": "Brak kategorii",
+      "no_option_types": "Brak typów opcji",
+      "option_type_search_placeholder": "Szukaj typów opcji",
       "search_placeholder": "Szukaj typów produktów"
     },
     "products": {
@@ -2681,6 +2715,10 @@
           "ends_after_starts": "Musi być po dacie rozpoczęcia."
         }
       },
+      "product_type_adds_options_few": "Ten typ dodaje {{options}} do nowych produktów.",
+      "product_type_adds_options_many": "Ten typ dodaje {{options}} do nowych produktów.",
+      "product_type_adds_options_one": "Ten typ dodaje {{options}} do nowych produktów.",
+      "product_type_adds_options_other": "Ten typ dodaje {{options}} do nowych produktów.",
       "product_type_placeholder": "Brak typu produktu",
       "save_label": "Zapisz produkt",
       "seo": {

@@ -504,6 +504,106 @@ describe Spree::Product, type: :model do
     end
   end
 
+  # Shopify mode: `required` on a type's custom field is guidance the dashboard
+  # surfaces, never a save-time rule. Spree writes a product and its custom
+  # fields in two steps (importers, API clients), so enforcing at save would
+  # reject the first of them — and enforcing later would break products whose
+  # type gained a required field after they were created.
+  describe 'required custom fields from the product type' do
+    let(:definition) { create(:custom_field_definition, name: 'Material') }
+    let(:product_type) { create(:product_type) }
+
+    before do
+      create(:product_type_custom_field_definition, :required, product_type: product_type,
+                                                               custom_field_definition: definition)
+    end
+
+    it 'does not block creating an active product with the field missing' do
+      product = build(:product, product_type: product_type, status: 'active')
+
+      expect(product).to be_valid
+      expect(product.save).to be(true)
+    end
+
+    it 'does not block activating a product with the field missing' do
+      product = create(:product, product_type: product_type, status: 'draft')
+
+      product.status = 'active'
+
+      expect(product).to be_valid
+      expect(product.save).to be(true)
+    end
+
+    it 'keeps the flag readable so the dashboard can mark the field' do
+      join = product_type.product_type_custom_field_definitions.first
+
+      expect(join.required).to be(true)
+      expect(product_type.product_type_custom_field_definitions.required).to eq([join])
+    end
+  end
+
+  describe 'assigning a product type to a persisted product' do
+    let(:size) { create(:option_type, name: 'size') }
+    let(:color) { create(:option_type, name: 'color') }
+    let(:category) { create(:category) }
+    let(:product_type) { create(:product_type, option_types: [size], categories: [category]) }
+    let(:product) { create(:product) }
+
+    it 'seeds the type option types and categories' do
+      product.update!(product_type: product_type)
+
+      expect(product.reload.option_types).to include(size)
+      expect(product.categories).to include(category)
+    end
+
+    it 'keeps associations the product already had' do
+      product.option_types << color
+      product.update!(product_type: product_type)
+
+      expect(product.reload.option_types).to match_array([color, size])
+    end
+
+    it 'seeds nothing when an unrelated attribute changes' do
+      product.update!(product_type: product_type)
+      product_type.option_types << create(:option_type, name: 'material')
+
+      product.update!(name: 'Renamed')
+
+      expect(product.reload.option_types).to match_array([size])
+    end
+
+    context 'reassigning to another type' do
+      let(:other_type) { create(:product_type, name: 'Other Type', option_types: [color]) }
+
+      it 'seeds the new type additively and removes nothing' do
+        product.update!(product_type: product_type)
+        product.update!(product_type: other_type)
+
+        expect(product.reload.option_types).to match_array([size, color])
+        expect(product.categories).to include(category)
+      end
+    end
+
+    it 'does not seed a category from another store' do
+      foreign_category = create(:category, store: create(:store))
+      product_type.categories << foreign_category
+
+      product.update!(product_type: product_type)
+
+      expect(product.reload.categories).not_to include(foreign_category)
+    end
+
+    context 'detaching the type' do
+      it 'removes nothing' do
+        product.update!(product_type: product_type)
+        product.update!(product_type: nil)
+
+        expect(product.reload.option_types).to match_array([size])
+        expect(product.categories).to include(category)
+      end
+    end
+  end
+
   describe '#variants= on a persisted product' do
     let!(:product) { create(:product) }
     let!(:default_variant) { product.default_variant }

@@ -46,8 +46,9 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
 import { collectionAutocompleteProps, useCollections } from '../../../hooks/use-collections'
+import { useOptionTypesByIds } from '../../../hooks/use-option-types'
 import { useDeleteProductMedia } from '../../../hooks/use-product-media'
-import { useProductTypes } from '../../../hooks/use-product-types'
+import { useProductType, useProductTypes } from '../../../hooks/use-product-types'
 import { useTaxCategories } from '../../../hooks/use-tax-categories'
 import type { ProductFormValues } from '../../../schemas/product'
 import { ProductBulkPriceEditor } from '../bulk-price-editor/product-bulk-price-editor'
@@ -108,8 +109,8 @@ export function GeneralCard({ form }: FormCardProps) {
 // Variants (just a passthrough so the page composition reads top-down)
 // ---------------------------------------------------------------------------
 
-export function VariantsCard({ form }: FormCardProps) {
-  return <VariantsSection form={form} />
+export function VariantsCard({ form, seedFromType }: FormCardProps & { seedFromType?: boolean }) {
+  return <VariantsSection form={form} seedFromType={seedFromType} />
 }
 
 // ---------------------------------------------------------------------------
@@ -649,6 +650,39 @@ export function CategorizationCard({ form }: FormCardProps) {
   const { data: collectionsData } = useCollections()
   const { data: productTypesData } = useProductTypes()
   const productTypes = productTypesData?.data ?? []
+  const selectedProductTypeId = form.watch('product_type_id') as string | null | undefined
+  const { data: selectedProductType } = useProductType(selectedProductTypeId ?? undefined)
+  // Resolved by id: the type may reference option types beyond the first page
+  // of the global list, which would otherwise drop out of the hint.
+  const { data: typeOptionTypesData } = useOptionTypesByIds(selectedProductType?.option_type_ids)
+  const optionTypes = useMemo(() => typeOptionTypesData?.data ?? [], [typeOptionTypesData])
+
+  // The server seeds the type's categories onto the product when it is saved.
+  // Prefilling them here means the merchant sees what they are about to get and
+  // can still edit the list first. Additive, like the server: nothing they
+  // already picked is removed.
+  // Named rather than counted: on a product that already has variants the
+  // builder won't surface these, so the name is the only signal the merchant
+  // gets about what the type contributes.
+  const typeOptionTypeNames = useMemo(() => {
+    const ids = selectedProductType?.option_type_ids ?? []
+    return ids
+      .map((id) => optionTypes.find((optionType) => optionType.id === id))
+      .filter((optionType) => optionType !== undefined)
+      .map((optionType) => optionType.label ?? optionType.name ?? '')
+      .filter(Boolean)
+  }, [selectedProductType?.option_type_ids, optionTypes])
+
+  useEffect(() => {
+    const categoryIds = selectedProductType?.category_ids
+    if (!categoryIds?.length) return
+
+    const current = (form.getValues('category_ids') as string[] | undefined) ?? []
+    const missing = categoryIds.filter((id) => !current.includes(id))
+    if (missing.length === 0) return
+
+    form.setValue('category_ids', [...current, ...missing], { shouldDirty: true })
+  }, [selectedProductType, form])
   // Automatic collections rebuild their members from rules, so a hand-picked
   // membership would be dropped on the next regeneration — offer manual only.
   // Memoized: `initialItems` feeds a useEffect + useMemo inside
@@ -692,6 +726,14 @@ export function CategorizationCard({ form }: FormCardProps) {
           <span className="text-muted-foreground text-xs">
             {t('admin.fields.product.product_type_id.help')}
           </span>
+          {typeOptionTypeNames.length > 0 && (
+            <span className="text-muted-foreground text-xs">
+              {t('admin.products.product_type_adds_options', {
+                options: typeOptionTypeNames.join(', '),
+                count: typeOptionTypeNames.length,
+              })}
+            </span>
+          )}
         </Field>
 
         <Field>

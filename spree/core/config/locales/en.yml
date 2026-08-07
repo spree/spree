@@ -243,6 +243,7 @@ en:
     errors:
       messages:
         blank: can't be blank
+        must_apply_to_products: must be a custom field definition for products
         unregistered_fulfillment_types: 'contains unregistered fulfillment types: %{types}'
       models:
         spree/allowed_origin:

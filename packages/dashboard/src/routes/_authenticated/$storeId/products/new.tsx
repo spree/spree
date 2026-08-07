@@ -11,10 +11,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import {
-  CustomFieldsInlineCard,
-  FormBackedCustomFieldsProvider,
-} from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import {
   CategorizationCard,
   GeneralCard,
@@ -178,7 +176,7 @@ function NewProductPage() {
           main={
             <>
               <GeneralCard form={form} />
-              <VariantsCard form={form} />
+              <VariantsCard form={form} seedFromType />
               {/* Form-backed media uploader — files are uploaded to ActiveStorage
                 pre-save and their signed_ids ride the product POST. */}
               <MediaCard form={form} />
@@ -187,9 +185,12 @@ function NewProductPage() {
                 productName={form.watch('name') || t('admin.pages.products.new.title')}
               />
               <InventoryCard form={form} storeId={storeId} />
-              <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Product">
+              <ProductCustomFieldsProvider
+                form={form}
+                productTypeId={form.watch('product_type_id')}
+              >
                 <CustomFieldsInlineCard />
-              </FormBackedCustomFieldsProvider>
+              </ProductCustomFieldsProvider>
             </>
           }
           sidebar={

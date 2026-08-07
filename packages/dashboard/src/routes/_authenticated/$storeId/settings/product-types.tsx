@@ -1,17 +1,37 @@
+import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { ProductType } from '@spree/admin-sdk'
 import {
   adminClient,
   Can,
   mapSpreeErrorsToForm,
+  ResourceMultiAutocomplete,
   ResourceTable,
   resourceSearchSchema,
   Subject,
+  useCustomFieldDefinitions,
   usePermissions,
 } from '@spree/dashboard-core'
 import {
   Button,
   Checkbox,
+  cn,
+  DragHandle,
   Field,
   FieldError,
   FieldGroup,
@@ -28,13 +48,16 @@ import {
   useRowClickBridge,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
-import { useEffect } from 'react'
-import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
+import { PlusIcon, XIcon } from 'lucide-react'
+import { type CSSProperties, useEffect, useMemo } from 'react'
+import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { categoryAutocompleteProps } from '../../../../hooks/use-categories'
 import { useFulfillmentProviders } from '../../../../hooks/use-delivery-methods'
+import { optionTypeAutocompleteProps } from '../../../../hooks/use-option-types'
 import {
+  useApplyProductTypeToProducts,
   useCreateProductType,
   useDeleteProductType,
   useProductType,
@@ -46,6 +69,14 @@ import '../../../../tables/product-types'
 const productTypeFormSchema = z.object({
   name: z.string().min(1),
   fulfillment_types: z.array(z.string()).min(1),
+  option_type_ids: z.array(z.string()),
+  category_ids: z.array(z.string()),
+  custom_field_definitions: z.array(
+    z.object({
+      id: z.string(),
+      required: z.boolean(),
+    }),
+  ),
 })
 
 type ProductTypeFormValues = z.infer<typeof productTypeFormSchema>
@@ -53,6 +84,20 @@ type ProductTypeFormValues = z.infer<typeof productTypeFormSchema>
 const PRODUCT_TYPE_DEFAULTS: ProductTypeFormValues = {
   name: '',
   fulfillment_types: ['shipping'],
+  option_type_ids: [],
+  category_ids: [],
+  custom_field_definitions: [],
+}
+
+/** Sort order is the row's index — never an input the merchant types. */
+function withSortOrder(values: ProductTypeFormValues) {
+  return {
+    ...values,
+    custom_field_definitions: values.custom_field_definitions.map((row, index) => ({
+      ...row,
+      sort_order: index,
+    })),
+  }
 }
 
 const productTypesSearchSchema = resourceSearchSchema.extend({
@@ -159,7 +204,7 @@ function CreateProductTypeSheet({
 
   async function onSubmit(values: ProductTypeFormValues) {
     try {
-      await createMutation.mutateAsync(values)
+      await createMutation.mutateAsync(withSortOrder(values))
       form.reset(PRODUCT_TYPE_DEFAULTS)
       onOpenChange(false)
     } catch (err) {
@@ -230,13 +275,21 @@ function EditProductTypeSheet({
       form.reset({
         name: productType.name,
         fulfillment_types: productType.fulfillment_types ?? ['shipping'],
+        option_type_ids: productType.option_type_ids ?? [],
+        category_ids: productType.category_ids ?? [],
+        custom_field_definitions: (productType.custom_field_definitions ?? []).map(
+          (definition) => ({
+            id: definition.id,
+            required: definition.required,
+          }),
+        ),
       })
     }
   }, [productType, form])
 
   async function onSubmit(values: ProductTypeFormValues) {
     try {
-      await updateMutation.mutateAsync(values)
+      await updateMutation.mutateAsync(withSortOrder(values))
       form.reset(values)
       onOpenChange(false)
     } catch (err) {
@@ -257,6 +310,7 @@ function EditProductTypeSheet({
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
               <ProductTypeFormFields form={form} />
+              <ApplyToProductsSection id={id} productType={productType} />
             </div>
             <SheetFooter>
               <Button
@@ -280,6 +334,53 @@ function EditProductTypeSheet({
         )}
       </SheetContent>
     </Sheet>
+  )
+}
+
+/**
+ * Type edits only shape products created from here on. This is the one action
+ * that reaches back to products that already carry the type — additive, so it
+ * never removes anything.
+ */
+function ApplyToProductsSection({
+  id,
+  productType,
+}: {
+  id: string
+  productType: ProductType | undefined
+}) {
+  const { t } = useTranslation()
+  const confirm = useConfirm()
+  const applyMutation = useApplyProductTypeToProducts(id)
+  const productsCount = productType?.products_count ?? 0
+
+  async function handleApply() {
+    const ok = await confirm({
+      title: t('admin.product_types.apply_to_products.title'),
+      message: t('admin.product_types.apply_to_products.message', { count: productsCount }),
+      confirmLabel: t('admin.product_types.apply_to_products.confirm_label'),
+    })
+    if (!ok) return
+    await applyMutation.mutateAsync().catch(() => undefined)
+  }
+
+  return (
+    <div className="flex flex-col gap-2 rounded-md border border-dashed p-3">
+      <span className="font-medium text-sm">{t('admin.product_types.affects_new_only.title')}</span>
+      <span className="text-muted-foreground text-xs">
+        {t('admin.product_types.affects_new_only.description')}
+      </span>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="self-start"
+        disabled={productsCount === 0 || applyMutation.isPending}
+        onClick={handleApply}
+      >
+        {t('admin.product_types.apply_to_products.cta', { count: productsCount })}
+      </Button>
+    </div>
   )
 }
 
@@ -350,6 +451,198 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
         />
         <FieldError errors={[errors.fulfillment_types]} />
       </Field>
+
+      <Field>
+        <FieldLabel>{t('admin.fields.product_type.option_types.label')}</FieldLabel>
+        <span className="text-muted-foreground text-xs">
+          {t('admin.fields.product_type.option_types.help')}
+        </span>
+        <Controller
+          name="option_type_ids"
+          control={form.control}
+          render={({ field }) => (
+            <ResourceMultiAutocomplete
+              {...optionTypeAutocompleteProps('product-type-option-types')}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+      </Field>
+
+      <Field>
+        <FieldLabel>{t('admin.fields.product_type.categories.label')}</FieldLabel>
+        <span className="text-muted-foreground text-xs">
+          {t('admin.fields.product_type.categories.help')}
+        </span>
+        <Controller
+          name="category_ids"
+          control={form.control}
+          render={({ field }) => (
+            <ResourceMultiAutocomplete
+              {...categoryAutocompleteProps('product-type-categories')}
+              value={field.value}
+              onChange={field.onChange}
+            />
+          )}
+        />
+      </Field>
+
+      <CustomFieldDefinitionsEditor form={form} />
     </FieldGroup>
+  )
+}
+
+/**
+ * Which custom fields a product of this type gets, in which order, and which
+ * must be filled before it can be activated. Order is the row position — the
+ * sort order is never typed in.
+ */
+function CustomFieldDefinitionsEditor({ form }: { form: UseFormReturn<ProductTypeFormValues> }) {
+  const { t } = useTranslation()
+  const { data: definitions } = useCustomFieldDefinitions('Spree::Product')
+  const fieldArray = useFieldArray({ control: form.control, name: 'custom_field_definitions' })
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  // One index over the pool — this list re-renders on every drag frame.
+  const definitionsById = useMemo(
+    () => new Map((definitions?.data ?? []).map((definition) => [definition.id, definition])),
+    [definitions?.data],
+  )
+  // `fieldArray.fields[].id` is React Hook Form's own row key, NOT our
+  // definition id — it overwrites any `id` in the row value. Read the
+  // definition ids from form state and keep the RHF key for React/dnd identity.
+  const rows = (form.watch('custom_field_definitions') ??
+    []) as ProductTypeFormValues['custom_field_definitions']
+  const selectedIdSet = new Set(rows.map((row) => row.id))
+  const available = [...definitionsById.values()].filter(
+    (definition) => !selectedIdSet.has(definition.id),
+  )
+  const labelFor = (definitionId: string) => {
+    const definition = definitionsById.get(definitionId)
+    return definition?.label ?? definition?.key ?? definitionId
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const from = fieldArray.fields.findIndex((row) => row.id === active.id)
+    const to = fieldArray.fields.findIndex((row) => row.id === over.id)
+    if (from >= 0 && to >= 0) fieldArray.move(from, to)
+  }
+
+  return (
+    <Field>
+      <FieldLabel>{t('admin.fields.product_type.custom_field_definitions.label')}</FieldLabel>
+      <span className="text-muted-foreground text-xs">
+        {t('admin.fields.product_type.custom_field_definitions.help')}
+      </span>
+
+      {fieldArray.fields.length > 0 && (
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext
+            items={fieldArray.fields.map((row) => row.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="flex flex-col gap-1 rounded-md border p-2">
+              {fieldArray.fields.map((row, index) => (
+                <SortableCustomFieldRow
+                  key={row.id}
+                  sortableId={row.id}
+                  label={labelFor(rows[index]?.id ?? '')}
+                  form={form}
+                  index={index}
+                  onRemove={() => fieldArray.remove(index)}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      )}
+
+      {available.length > 0 && (
+        <div className="flex flex-wrap gap-2 pt-2">
+          {available.map((definition) => (
+            <Button
+              key={definition.id}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => fieldArray.append({ id: definition.id, required: false })}
+            >
+              <PlusIcon className="size-3" />
+              {definition.label ?? definition.key}
+            </Button>
+          ))}
+        </div>
+      )}
+    </Field>
+  )
+}
+
+function SortableCustomFieldRow({
+  sortableId,
+  label,
+  form,
+  index,
+  onRemove,
+}: {
+  sortableId: string
+  label: string
+  form: UseFormReturn<ProductTypeFormValues>
+  index: number
+  onRemove: () => void
+}) {
+  const { t } = useTranslation()
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: sortableId,
+  })
+  const style: CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        'flex items-center gap-2 rounded-md px-1 py-1.5 text-sm',
+        isDragging && 'relative z-10 bg-card opacity-80 shadow-lg',
+      )}
+    >
+      <span className="w-8 touch-none">
+        <DragHandle attributes={attributes} listeners={listeners} />
+      </span>
+
+      <span className="flex-1 truncate">{label}</span>
+
+      <Controller
+        name={`custom_field_definitions.${index}.required` as const}
+        control={form.control}
+        render={({ field }) => (
+          <label
+            htmlFor={`cfdef-required-${sortableId}`}
+            className="flex items-center gap-1.5 text-muted-foreground text-xs"
+          >
+            <Checkbox
+              id={`cfdef-required-${sortableId}`}
+              checked={field.value}
+              onCheckedChange={(next) => field.onChange(!!next)}
+            />
+            {t('admin.fields.product_type.custom_field_definitions.required')}
+          </label>
+        )}
+      />
+
+      <Button type="button" variant="ghost" size="sm" onClick={onRemove}>
+        <XIcon className="size-4" />
+        <span className="sr-only">{t('admin.actions.remove')}</span>
+      </Button>
+    </div>
   )
 }

@@ -984,15 +984,51 @@ export interface WebhookEndpointDisableParams {
   reason?: string
 }
 
+/** How one custom field definition is used by a product type. */
+export interface ProductTypeCustomFieldDefinitionParams {
+  /** Prefixed id of the custom field definition (`cfdef_…`). */
+  id: string
+  required?: boolean
+  sort_order?: number
+}
+
+/**
+ * Creates a product type. Associations are a template for products created
+ * with this type — they never mutate products that already carry it. Use
+ * `productTypes.applyToProducts` to backfill those.
+ */
 export interface ProductTypeCreateParams {
   name: string
   /** Fulfillment types products of this type support (e.g. ['shipping', 'pickup']). */
   fulfillment_types?: string[]
+  /**
+   * Option types seeded onto products that get this type. Editing them never
+   * changes existing products — use `applyToProducts` for that.
+   */
+  option_type_ids?: string[]
+  /** Categories seeded onto products that get this type. */
+  category_ids?: string[]
+  /** Replace-set: definitions not listed are removed from the type. */
+  custom_field_definitions?: ProductTypeCustomFieldDefinitionParams[]
 }
 
+/**
+ * Updates a product type. `option_type_ids`, `category_ids` and
+ * `custom_field_definitions` are replace-sets: whatever is sent becomes the
+ * complete list, and anything omitted is removed from the type. Editing them
+ * leaves existing products untouched.
+ */
 export interface ProductTypeUpdateParams {
   name?: string
   fulfillment_types?: string[]
+  option_type_ids?: string[]
+  category_ids?: string[]
+  custom_field_definitions?: ProductTypeCustomFieldDefinitionParams[]
+}
+
+/** Result of enqueueing a backfill of a type's associations onto its products. */
+export interface ProductTypeApplyToProductsResponse {
+  products_count: number
 }
 
 export interface TaxCategoryCreateParams {

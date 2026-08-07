@@ -92,6 +92,10 @@ module Spree
           many :channels,
                resource: proc { Spree.api.admin_channel_serializer },
                if: proc { expand?('channels') }
+
+          one :product_type,
+              resource: proc { Spree.api.admin_product_type_serializer },
+              if: proc { expand?('product_type') }
         end
       end
     end

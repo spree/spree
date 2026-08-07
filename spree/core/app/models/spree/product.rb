@@ -75,7 +75,7 @@ module Spree
     has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
     has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory', dependent: :delete_all, inverse_of: :product
-    has_many :categories, -> { manual }, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
+    has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
     has_many :taxonomies, through: :categories
 
     # @deprecated The classification_count column was renamed to categories_count in 6.0.
@@ -167,6 +167,7 @@ module Spree
     after_initialize :assign_default_tax_category
 
     after_create :sync_associations_from_product_type
+    after_update :sync_associations_from_product_type, if: :saved_change_to_product_type_id?
     after_create :apply_pending_variants, if: :pending_variants?
     after_create :ensure_default_variant
     after_create :set_default_variant
@@ -847,16 +848,22 @@ module Spree
     end
 
     # Additive, unlike the legacy prototype callback which replaced both sets —
-    # the type is a floor the product builds on, never a ceiling.
+    # the type seeds the product when attached (creation, later assignment,
+    # reassignment) and never removes anything; detaching seeds nothing.
+    # The already-linked sets come from the join tables in one query each: the
+    # cached associations can be stale here (pending variants insert option-type
+    # joins through product_option_types within the same save).
     def sync_associations_from_product_type
       return unless product_type
 
-      product_type.option_types.each do |option_type|
-        option_types << option_type unless option_types.include?(option_type)
-      end
-      product_type.categories.each do |category|
-        categories << category unless categories.include?(category)
-      end
+      missing_option_type_ids = product_type.option_type_ids - product_option_types.pluck(:option_type_id)
+      Spree::OptionType.where(id: missing_option_type_ids).each { |option_type| option_types << option_type }
+
+      # Scoped to the product's own store, matching `category_ids=`: a type
+      # pointing at another store's category must not drag it onto the product.
+      missing_category_ids = product_type.category_ids - product_categories.pluck(:category_id)
+      Spree::Category.for_store(assignable_store).where(id: missing_category_ids).
+        each { |category| categories << category }
     end
 
     def any_variants_not_track_inventory?

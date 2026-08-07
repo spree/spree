@@ -166,6 +166,7 @@ import type {
   PriceListUpdateParams,
   PriceUpdateParams,
   ProductCreateParams,
+  ProductTypeApplyToProductsResponse,
   ProductTypeCreateParams,
   ProductTypeUpdateParams,
   ProductUpdateParams,
@@ -2730,6 +2731,21 @@ export class AdminClient {
 
     delete: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('DELETE', `/product_types/${id}`, options),
+
+    /**
+     * Backfills the type's option types and categories onto the products that
+     * already carry it. Additive — nothing is removed. Runs in the background;
+     * the response reports how many products are affected.
+     */
+    applyToProducts: (
+      id: string,
+      options?: RequestOptions,
+    ): Promise<ProductTypeApplyToProductsResponse> =>
+      this.request<ProductTypeApplyToProductsResponse>(
+        'POST',
+        `/product_types/${id}/apply_to_products`,
+        options,
+      ),
   }
 
   readonly taxCategories = {

@@ -32,10 +32,11 @@ import {
   TableRow,
 } from '@spree/dashboard-ui'
 import { PencilIcon, XIcon } from 'lucide-react'
-import { type CSSProperties, useMemo, useState } from 'react'
+import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 import { type UseFormReturn, useFieldArray, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useOptionTypes } from '../../../hooks/use-option-types'
+import { useOptionTypes, useOptionTypesByIds } from '../../../hooks/use-option-types'
+import { useProductType } from '../../../hooks/use-product-types'
 import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
 import { VariantEditSheet } from './variant-edit-sheet'
 import {
@@ -50,6 +51,12 @@ import { VariantsOptionsBuilder } from './variants-options-builder'
 interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<ProductFormValues, any, any>
+  /**
+   * Offer the product type's option types as empty rows when the product has
+   * none of its own. New products only — a saved product's option set is
+   * whatever it already has.
+   */
+  seedFromType?: boolean
 }
 
 // Derive the initial selected option types from current variant rows so the
@@ -90,10 +97,37 @@ function deriveSelectedFromVariants(
     .filter((x): x is SelectedOptionType => x !== null)
 }
 
-export function VariantsSection({ form }: Props) {
+// Empty rows for a product type's option types — a starting point, not state.
+function seedFromProductType(
+  optionTypeIds: string[],
+  allOptionTypes: OptionType[],
+): SelectedOptionType[] {
+  return optionTypeIds
+    .map<SelectedOptionType | null>((id, idx) => {
+      const optionType = allOptionTypes.find((candidate) => candidate.id === id)
+      if (!optionType) return null
+
+      return {
+        id: optionType.id,
+        name: optionType.name,
+        label: optionType.label,
+        position: optionType.position ?? idx,
+        values: [],
+      }
+    })
+    .filter((entry): entry is SelectedOptionType => entry !== null)
+}
+
+export function VariantsSection({ form, seedFromType = false }: Props) {
   const { t } = useTranslation()
   const { data: optionTypesData } = useOptionTypes({ limit: 100 })
   const allOptionTypes = useMemo(() => optionTypesData?.data ?? [], [optionTypesData])
+  const productTypeId = form.watch('product_type_id') as string | null | undefined
+  const { data: productType } = useProductType(productTypeId ?? undefined)
+  // Resolved by id rather than read out of `allOptionTypes`, whose first page
+  // may not contain every option type the product type references.
+  const { data: typeOptionTypesData } = useOptionTypesByIds(productType?.option_type_ids)
+  const typeOptionTypes = useMemo(() => typeOptionTypesData?.data ?? [], [typeOptionTypesData])
 
   const variantsArray = useFieldArray<ProductFormValues, 'variants', '_key'>({
     control: form.control,
@@ -110,16 +144,60 @@ export function VariantsSection({ form }: Props) {
   // RHF variants → next render derives `selected` from the new variants. No
   // local state to drift out of sync.
   const watchedVariants = useWatch({ control: form.control, name: 'variants' })
-  const selected = useMemo(
+  const derived = useMemo(
     () => deriveSelectedFromVariants(watchedVariants ?? [], allOptionTypes),
     [watchedVariants, allOptionTypes],
   )
 
+  // A product type's option types are *offered* as empty rows, once, when the
+  // merchant picks the type on a new product. They live in local state rather
+  // than being derived every render: an empty row writes no variants, so a
+  // derived version would regenerate itself the moment the merchant removed it.
+  // Once any row has values the variants array takes over as the source.
+  const [offeredOptionTypes, setOfferedOptionTypes] = useState<SelectedOptionType[]>([])
+  const [offeredForTypeId, setOfferedForTypeId] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Clearing the type withdraws the offer; anything the merchant built is in
+    // `derived` and unaffected.
+    if (!productTypeId) {
+      if (offeredForTypeId !== null) {
+        setOfferedForTypeId(null)
+        setOfferedOptionTypes([])
+      }
+      return
+    }
+
+    if (!seedFromType || productTypeId === offeredForTypeId) return
+    // Only on a product the merchant hasn't started building options for.
+    if (derived.length > 0) return
+    // Both queries must have landed. Marking the type seeded off an empty
+    // registry would offer nothing and never retry once the data arrives.
+    if (!productType) return
+    // Nothing to offer until the type's own option types have resolved.
+    const configuredIds = productType.option_type_ids ?? []
+    if (configuredIds.length > 0 && typeOptionTypes.length === 0) return
+
+    setOfferedForTypeId(productTypeId)
+    setOfferedOptionTypes(seedFromProductType(configuredIds, typeOptionTypes))
+  }, [seedFromType, productTypeId, offeredForTypeId, derived.length, productType, typeOptionTypes])
+
+  const selected = derived.length > 0 ? derived : offeredOptionTypes
+
   const fields = variantsArray.fields
   const hasOptionTypes = selected.length > 0
   const isSimpleProduct = !hasOptionTypes && fields.length <= 1
+  // Options are being defined but none have values yet, so the only variant is
+  // the option-less placeholder. Showing it as "Default variant" next to a
+  // half-filled option row reads like a real row the merchant should edit.
+  const awaitingOptionValues =
+    hasOptionTypes && selected.every((optionType) => optionType.values.length === 0)
 
   const handleOptionsChange = (next: SelectedOptionType[]) => {
+    // Keep the offered rows in step with the builder — including a removal,
+    // which must not be undone by the seeding effect above.
+    setOfferedOptionTypes(next)
+
     const combinations = generateVariantCombinations(next)
     const existing = form.getValues('variants') ?? []
     if (combinations.length === 0) {
@@ -250,7 +328,11 @@ export function VariantsSection({ form }: Props) {
         <CardTitle>{t('admin.products.variants.title')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
-        <VariantsOptionsBuilder selected={selected} onChange={handleOptionsChange} />
+        <VariantsOptionsBuilder
+          selected={selected}
+          onChange={handleOptionsChange}
+          extraOptionTypes={typeOptionTypes}
+        />
 
         {orphanedKeys.length > 0 && (
           <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700 dark:bg-amber-950/40">
@@ -280,7 +362,7 @@ export function VariantsSection({ form }: Props) {
           </div>
         )}
 
-        {fields.length > 0 && (
+        {fields.length > 0 && !awaitingOptionValues && (
           <div className="overflow-hidden rounded-md border border-border">
             <DndContext
               sensors={sensors}

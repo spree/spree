@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from '@spree/dashboard-ui'
 import { CheckIcon, PencilIcon, PlusIcon, XIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import {
@@ -20,29 +20,70 @@ import {
   useOptionTypes,
   useUpdateOptionType,
 } from '../../../hooks/use-option-types'
-import type { SelectedOptionType } from './variants-matrix'
+import { autoExpandIndex, type SelectedOptionType } from './variants-matrix'
 
 interface Props {
   selected: SelectedOptionType[]
   onChange: (next: SelectedOptionType[]) => void
+  /**
+   * Option types resolved by id for the product's type. Merged over the paged
+   * registry so a type referencing one past the first page still renders its
+   * row and its values picker.
+   */
+  extraOptionTypes?: OptionType[]
 }
 
 // The options builder lets the merchant choose option types + values that
 // drive the variants matrix. It DOES NOT mutate the product itself — it
 // only updates the local `selected` state. The matrix component owns the
 // reconcile step that turns this state into RHF variant rows.
-export function VariantsOptionsBuilder({ selected, onChange }: Props) {
+export function VariantsOptionsBuilder({ selected, onChange, extraOptionTypes }: Props) {
   const { t } = useTranslation()
   const { data: optionTypesData } = useOptionTypes({ limit: 100 })
-  const allOptionTypes = optionTypesData?.data ?? []
+  const allOptionTypes = useMemo(() => {
+    const paged = optionTypesData?.data ?? []
+    if (!extraOptionTypes?.length) return paged
+
+    const byId = new Map(paged.map((optionType) => [optionType.id, optionType]))
+    extraOptionTypes.forEach((optionType) => {
+      if (!byId.has(optionType.id)) byId.set(optionType.id, optionType)
+    })
+    return [...byId.values()]
+  }, [optionTypesData, extraOptionTypes])
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [isAdding, setIsAdding] = useState(false)
+
+  // A row with no values yet is one the merchant still has to act on — the
+  // product type seeds exactly that. Open the first one so the values picker
+  // is in front of them instead of hidden behind a click. Only while nothing
+  // else is being edited, so it never steals focus mid-interaction.
+  //
+  // It is an offer they can decline: without tracking the dismissal, cancelling
+  // reopens the row on the next render (it is still empty, so it qualifies
+  // again) and its remove action stays unreachable.
+  // A set, not one id: a type seeding two option types produces two empty rows,
+  // and declining the second must not re-open the first.
+  const [dismissedAutoExpand, setDismissedAutoExpand] = useState<ReadonlySet<string>>(new Set())
+  const offeredIndex = autoExpandIndex(selected, dismissedAutoExpand)
+  const expandedIndex = editingIndex ?? (isAdding || offeredIndex < 0 ? null : offeredIndex)
 
   const selectedIds = new Set(selected.map((s) => s.id))
   const availableTypes = allOptionTypes.filter((ot) => !selectedIds.has(ot.id))
 
   const removeAt = (index: number) => {
+    // Drop the dismissal with the row, so re-adding the same option type gets
+    // a fresh offer rather than inheriting a stale one.
+    const removed = selected[index]
+    if (removed) {
+      setDismissedAutoExpand((prev) => {
+        if (!prev.has(removed.id)) return prev
+
+        const next = new Set(prev)
+        next.delete(removed.id)
+        return next
+      })
+    }
     onChange(selected.filter((_, i) => i !== index))
   }
 
@@ -62,14 +103,19 @@ export function VariantsOptionsBuilder({ selected, onChange }: Props) {
         <ul className="flex flex-col gap-2">
           {selected.map((ot, i) => {
             const optionType = allOptionTypes.find((t) => t.id === ot.id)
-            const isEditing = editingIndex === i
+            const isEditing = expandedIndex === i
             if (isEditing && optionType) {
               return (
                 <li key={ot.id} className="rounded-lg border border-border p-3">
                   <OptionPicker
                     optionType={optionType}
                     initialValues={ot.values}
-                    onCancel={() => setEditingIndex(null)}
+                    onCancel={() => {
+                      setEditingIndex(null)
+                      if (ot.values.length === 0) {
+                        setDismissedAutoExpand((prev) => new Set(prev).add(ot.id))
+                      }
+                    }}
                     onSave={(values) =>
                       upsertAt(i, {
                         id: optionType.id,

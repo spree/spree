@@ -24,10 +24,8 @@ import { useEffect } from 'react'
 import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import {
-  CustomFieldsInlineCard,
-  FormBackedCustomFieldsProvider,
-} from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import {
   CategorizationCard,
   GeneralCard,
@@ -276,6 +274,8 @@ function ProductForm({ product }: { product: Product }) {
     },
   })
 
+  const selectedProductTypeId = form.watch('product_type_id')
+
   // Variants the MediaCard can assign uploaded images to. Only server-persisted
   // variants have an `id` that can ride media[].variant_ids on the PATCH, so we
   // start from `product.variants`. But the merchant may have queued one of those
@@ -442,9 +442,9 @@ function ProductForm({ product }: { product: Product }) {
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
               <PricesCard form={form} productName={product.name} />
               <InventoryCard form={form} storeId={storeId} />
-              <FormBackedCustomFieldsProvider form={form} resourceType="Spree::Product">
+              <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
                 <CustomFieldsInlineCard />
-              </FormBackedCustomFieldsProvider>
+              </ProductCustomFieldsProvider>
               <ResourceTranslationsCard resourceType="product" resourceId={productId} />
               <MetadataCard
                 metadata={product.metadata}

@@ -14,6 +14,22 @@ interface UseOptionTypesParams {
   q?: Record<string, unknown>
 }
 
+/**
+ * Prop bundle for a `<ResourceMultiAutocomplete>` over option types. Pass a
+ * unique `queryKey` per instance so independent caches don't collide.
+ */
+export function optionTypeAutocompleteProps(queryKey: string) {
+  return {
+    queryKey,
+    search: (q: string) => adminClient.optionTypes.list({ name_cont: q, limit: 20, sort: 'name' }),
+    hydrate: (ids: string[]) => adminClient.optionTypes.list({ id_in: ids, limit: ids.length }),
+    getOptionLabel: (optionType: OptionType) =>
+      optionType.label ?? optionType.name ?? optionType.id,
+    placeholder: i18n.t('admin.product_types.option_type_search_placeholder'),
+    emptyText: i18n.t('admin.product_types.no_option_types'),
+  }
+}
+
 export function useOptionTypes({ page = 1, limit = 100, q }: UseOptionTypesParams = {}) {
   return useQuery({
     queryKey: useResourceKey('option-types', { page, limit, q }),
@@ -24,6 +40,28 @@ export function useOptionTypes({ page = 1, limit = 100, q }: UseOptionTypesParam
         q,
         expand: ['option_values'],
       }),
+    staleTime: 1000 * 60 * 5,
+  })
+}
+
+/**
+ * Resolves a specific set of option type ids, regardless of where they fall in
+ * the global list — a product type can reference option types past the first
+ * page, which a plain `useOptionTypes()` would silently omit.
+ */
+export function useOptionTypesByIds(ids: string[] | undefined) {
+  const idList = ids ?? []
+  return useQuery({
+    queryKey: useResourceKey('option-types', 'by-ids', idList),
+    // Expands option_values, unlike the autocomplete's `hydrate`: callers here
+    // feed the values picker, which reads `option_type.option_values`.
+    queryFn: () =>
+      adminClient.optionTypes.list({
+        id_in: idList,
+        limit: idList.length,
+        expand: ['option_values'],
+      }),
+    enabled: idList.length > 0,
     staleTime: 1000 * 60 * 5,
   })
 }

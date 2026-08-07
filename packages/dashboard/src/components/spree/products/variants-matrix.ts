@@ -24,6 +24,23 @@ export interface SelectedOptionType {
   values: SelectedOptionValue[]
 }
 
+/**
+ * Which option row the builder should open on its own: the first one still
+ * awaiting values that the merchant hasn't already dismissed. A product type
+ * seeds exactly such rows, so this puts the values picker in front of them
+ * without a click — while leaving them able to close it.
+ *
+ * @returns the row's index, or -1 when nothing should auto-expand.
+ */
+export function autoExpandIndex(
+  selected: SelectedOptionType[],
+  dismissedIds: ReadonlySet<string>,
+): number {
+  return selected.findIndex(
+    (optionType) => optionType.values.length === 0 && !dismissedIds.has(optionType.id),
+  )
+}
+
 export interface VariantCombination {
   options: { name: string; value: string }[]
 }

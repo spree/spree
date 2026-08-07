@@ -104,10 +104,12 @@ module Spree
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
     has_many :taxonomies, class_name: 'Spree::Taxonomy'
-    # Category surfaces exclude automatic (rule-based) rows. The manual scope is a
-    # no-op once the Phase 4 migration moves them to Collections; removed in 6.1.
-    has_many :categories, -> { manual }, class_name: 'Spree::Category'
+    has_many :categories, class_name: 'Spree::Category'
     has_many :collections, class_name: 'Spree::Collection', dependent: :destroy_async
+
+    # restrict, not destroy — a type in use is refused deletion, so wiping a
+    # store's types out from under its products would contradict that guard.
+    has_many :product_types, class_name: 'Spree::ProductType', dependent: :restrict_with_error
 
     # @deprecated Use #categories; removed in 6.1.
     def taxons

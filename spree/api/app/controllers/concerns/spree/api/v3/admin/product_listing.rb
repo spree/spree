@@ -31,6 +31,7 @@ module Spree
           def product_listing_includes
             [
               :tax_category,
+              :product_type,
               { product_publications: :channel },
               { primary_media: [attachment_attachment: :blob] },
               { default_variant: [:prices, { stock_items: [:stock_location, :active_stock_reservations] }] },
