@@ -20,7 +20,7 @@ RSpec.describe Spree::Addresses::Update do
           address1: FFaker::Address.street_address,
           city: FFaker::Address.city,
           phone: FFaker::PhoneNumber.phone_number,
-          zipcode: FFaker::AddressUS.zip_code,
+          zipcode: Spree::TestingSupport::CountryPool.postal_code_for(country.iso),
           state_name: state.name,
           country_iso: country.iso
         }

@@ -94,7 +94,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
         last_name: 'Doe',
         address1: '123 Main St',
         city: 'New York',
-        postal_code: '10001',
+        postal_code: Spree::TestingSupport::CountryPool.postal_code_for(country.iso),
         phone: '555-1234',
         country_iso: country.iso,
         state_abbr: state.abbr
@@ -201,7 +201,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
           last_name: 'Smith',
           address1: '456 Oak Ave',
           city: 'Chicago',
-          postal_code: '60601',
+          postal_code: Spree::TestingSupport::CountryPool.postal_code_for(country.iso),
           phone: '555-9999',
           country_iso: country.iso,
           state_abbr: state.abbr
