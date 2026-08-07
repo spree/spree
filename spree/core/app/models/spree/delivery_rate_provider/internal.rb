@@ -10,6 +10,11 @@ module Spree
     # core doesn't have, and guessing one would put a wrong date in front of
     # customers. Carrier-backed providers return the real date.
     class Internal < Base
+      # The calculator is the whole point of this provider.
+      def self.uses_calculator?
+        true
+      end
+
       # @param package [Spree::Stock::Package]
       # @return [Spree::DeliveryRateProvider::Estimate, nil]
       def estimate(package)

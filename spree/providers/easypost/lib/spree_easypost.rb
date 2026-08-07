@@ -3,6 +3,9 @@ require 'spree_core'
 require 'spree_easypost/engine'
 
 module SpreeEasyPost
+  # Vendor branding, shared by both providers and the integration.
+  PROVIDER_NAME = 'EasyPost'.freeze
+
   OUNCES_PER_UNIT = {
     'imperial' => 16.0,   # pounds
     'metric' => 0.03527396 # grams

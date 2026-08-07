@@ -15,9 +15,42 @@ module Spree
       attr_reader :delivery_method
 
       class << self
-        # @return [String] human-readable name for admin UIs
+        # Human-readable name for admin UIs. Provider gems follow the
+        # `SpreeEasyPost::DeliveryRateProvider` convention, where demodulizing
+        # yields the useless class name ("Delivery Rate Provider") — so those
+        # derive the label from the gem's outer module instead
+        # (`SpreeEasyPost` → "EasyPost"), matching Spree::Integration.api_type.
+        #
+        # @return [String]
         def provider_name
-          name.demodulize.titleize
+          leaf = name.demodulize
+          outer = name.deconstantize.delete_prefix('Spree')
+
+          return leaf.titleize if outer.blank? || !leaf.end_with?('Provider')
+
+          # Not `titleize` — it would split the gem's own casing
+          # ("SpreeEasyPost" → "Easy Post"). Brands that need more than the
+          # module name override this method.
+          outer.delete_prefix('::')
+        end
+
+        # Fulfillment types this provider can quote, so admin UIs narrow the
+        # type field once a provider is chosen. An empty list means "any
+        # type" — the Internal (calculator) provider prices anything.
+        #
+        # @return [Array<String>]
+        def fulfillment_types
+          []
+        end
+
+        # Whether the method's calculator decides the price. False for
+        # carrier providers, which quote live rates — their methods still
+        # carry a calculator (the Estimator consults `available?`) but its
+        # amount is never used, so admin UIs hide the pricing form.
+        #
+        # @return [Boolean]
+        def uses_calculator?
+          false
         end
 
         # The Spree::Integration subclass holding this provider's credentials,

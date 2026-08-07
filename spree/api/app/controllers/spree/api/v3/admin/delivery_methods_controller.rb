@@ -56,7 +56,9 @@ module Spree
               {
                 type: provider_class.to_s,
                 name: provider_class.provider_name,
-                integration_class: provider_class.integration_class
+                integration_class: provider_class.integration_class,
+                fulfillment_types: provider_class.fulfillment_types,
+                uses_calculator: provider_class.uses_calculator?
               }
             end
 

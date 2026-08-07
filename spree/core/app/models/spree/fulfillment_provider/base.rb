@@ -15,9 +15,23 @@ module Spree
           []
         end
 
-        # @return [String] human-readable name for admin UIs
+        # Human-readable name for admin UIs. Provider gems follow the
+        # `SpreeEasyPost::DeliveryRateProvider` convention, where demodulizing
+        # yields the useless class name ("Delivery Rate Provider") — so those
+        # derive the label from the gem's outer module instead
+        # (`SpreeEasyPost` → "EasyPost"), matching Spree::Integration.api_type.
+        #
+        # @return [String]
         def provider_name
-          name.demodulize.titleize
+          leaf = name.demodulize
+          outer = name.deconstantize.delete_prefix('Spree')
+
+          return leaf.titleize if outer.blank? || !leaf.end_with?('Provider')
+
+          # Not `titleize` — it would split the gem's own casing
+          # ("SpreeEasyPost" → "Easy Post"). Brands that need more than the
+          # module name override this method.
+          outer.delete_prefix('::')
         end
 
         # The Spree::Integration subclass holding this provider's credentials,

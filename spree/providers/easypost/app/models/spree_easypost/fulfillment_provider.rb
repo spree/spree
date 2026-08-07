@@ -9,12 +9,12 @@ module SpreeEasyPost
       ['shipping']
     end
 
-    def self.provider_name
-      'EasyPost'
-    end
-
     def self.integration_class
       'SpreeEasyPost::Integration'
+    end
+
+    def self.provider_name
+      SpreeEasyPost::PROVIDER_NAME
     end
 
     # Buys the rate quoted at checkout when it is still valid; EasyPost
