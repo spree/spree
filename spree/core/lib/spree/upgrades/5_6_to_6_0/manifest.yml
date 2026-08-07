@@ -115,6 +115,24 @@ steps:
       shipping zones are logged and skipped. Idempotent via a
       migrated_from_zone_id marker.
 
+  - id: migrate_country_state_isos
+    name: "Name countries and states by ISO code"
+    task: "spree:upgrade:migrate_country_state_isos"
+    notes: |
+      Countries and states stop being database records in Spree 6. Addresses,
+      delivery zone members, market countries, stock locations and stores name
+      them by ISO code instead, and this fills those columns from the existing
+      foreign keys.
+
+      Delivery zone members that name a state also gain their country, which
+      the state row used to supply — a subdivision code is only unique within
+      its country, so the pair is what makes a member resolvable on its own.
+
+      Run after migrate_zones_to_delivery_zones so converted members are
+      present to be backfilled. Idempotent and resumable: each table is filled
+      with one statement scoped to the rows still missing a code, so an
+      interrupted run picks up where it stopped.
+
   - id: migrate_adjustments_to_typed_rows
     name: "Convert adjustments to typed rows"
     task: "spree:migrate_adjustments_to_typed_rows"
