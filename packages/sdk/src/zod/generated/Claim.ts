@@ -6,7 +6,6 @@ export const ClaimSchema = z.object({
   id: z.string(),
   number: z.string(),
   status: z.string(),
-  claim_type: z.string(),
   resolution: z.string().nullable(),
   order_id: z.string().nullable(),
   reason_id: z.string().nullable(),

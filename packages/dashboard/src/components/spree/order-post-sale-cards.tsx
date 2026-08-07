@@ -240,11 +240,6 @@ export function OrderClaimsCard({ order }: { order: Order }) {
                 <div className="flex items-center gap-2">
                   <StatusBadge status={claim.status} />
                   <span className="text-sm font-medium">{claim.number}</span>
-                  <Badge variant="outline">
-                    {t(`admin.pages.orders.detail.claims.types.${claim.claim_type}`, {
-                      defaultValue: claim.claim_type,
-                    })}
-                  </Badge>
                 </div>
 
                 {CLAIM_ACTIONABLE.includes(claim.status) && (

@@ -14,25 +14,38 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ClaimsController, type: :controlle
     it 'opens a claim' do
       post :create, params: {
         order_id: order.prefixed_id,
-        claim_type: 'damaged',
         memo: 'Arrived cracked',
         items: [{ line_item_id: line_item.prefixed_id, quantity: 1, description: 'Cracked screen' }]
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['status']).to eq('open')
-      expect(json_response['claim_type']).to eq('damaged')
       expect(json_response['number']).to start_with('CLM')
     end
 
-    it 'rejects an unknown claim type' do
+    it 'records a reason from the store' do
+      reason = create(:claim_reason, store: store)
+
       post :create, params: {
         order_id: order.prefixed_id,
-        claim_type: 'teleported',
+        reason_id: reason.prefixed_id,
         items: [{ line_item_id: line_item.prefixed_id, quantity: 1 }]
       }, as: :json
 
-      expect(response).to have_http_status(:unprocessable_content)
+      expect(response).to have_http_status(:created)
+      expect(json_response['reason_id']).to eq(reason.prefixed_id)
+    end
+
+    it 'rejects a reason belonging to another store' do
+      foreign = create(:claim_reason, store: create(:store))
+
+      post :create, params: {
+        order_id: order.prefixed_id,
+        reason_id: foreign.prefixed_id,
+        items: [{ line_item_id: line_item.prefixed_id, quantity: 1 }]
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 

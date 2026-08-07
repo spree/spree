@@ -10587,8 +10587,6 @@ components:
           type: string
         status:
           type: string
-        claim_type:
-          type: string
         resolution:
           type: string
           nullable: true
@@ -10622,7 +10620,6 @@ components:
       - id
       - number
       - status
-      - claim_type
       - resolution
       - order_id
       - reason_id

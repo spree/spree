@@ -1870,15 +1870,8 @@
               "create": "مطالبة جديدة",
               "resolve": "حل"
             },
-            "types": {
-              "damaged": "تالف",
-              "missing": "مفقود",
-              "wrong_item": "منتج خاطئ",
-              "other": "أخرى"
-            },
             "empty": "لا توجد مطالبات لهذا الطلب.",
             "create_title": "مطالبة جديدة",
-            "claim_type": "المشكلة",
             "refund_amount": "مبلغ الاسترداد",
             "resolve_title": "حل المطالبة",
             "resolution": "طريقة الحل",

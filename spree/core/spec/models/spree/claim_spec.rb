@@ -16,23 +16,17 @@ RSpec.describe Spree::Claim do
     expect(claim.order.reload.claims).to include(claim)
   end
 
-  describe 'claim types' do
-    around do |example|
-      original = described_class.claim_types
-      example.run
-      described_class.claim_types = original
+  describe 'reason' do
+    it 'records the merchant-owned reason' do
+      reason = create(:claim_reason, store: store, name: 'Arrived damaged')
+
+      expect(create(:claim, store: store, reason: reason).reason).to eq(reason)
     end
 
-    it 'rejects a type outside the configured list' do
-      expect(build(:claim, store: store, claim_type: 'teleported')).not_to be_valid
-    end
-
-    # Types are labels with no per-type behaviour, so extending needs no
-    # accompanying workflow.
-    it 'accepts a type an extension added' do
-      described_class.claim_types += ['late_delivery']
-
-      expect(create(:claim, store: store, claim_type: 'late_delivery')).to be_persisted
+    # A merchant mid-claim should not be blocked because nobody has curated
+    # the vocabulary yet.
+    it 'is optional' do
+      expect(create(:claim, store: store, reason: nil).reason).to be_nil
     end
   end
 

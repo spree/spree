@@ -7,7 +7,6 @@ module Spree
       class ClaimSerializer < BaseSerializer
         typelize number: :string,
                  status: :string,
-                 claim_type: :string,
                  resolution: [:string, nullable: true],
                  order_id: [:string, nullable: true],
                  reason_id: [:string, nullable: true],
@@ -18,7 +17,7 @@ module Spree
                  denied_at: [:string, nullable: true],
                  canceled_at: [:string, nullable: true]
 
-        attributes :number, :status, :claim_type, :resolution
+        attributes :number, :status, :resolution
 
         attribute :order_id do |claim|
           claim.order&.prefixed_id

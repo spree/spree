@@ -1870,15 +1870,8 @@
               "create": "Neue Reklamation",
               "resolve": "Lösen"
             },
-            "types": {
-              "damaged": "Beschädigt",
-              "missing": "Fehlt",
-              "wrong_item": "Falscher Artikel",
-              "other": "Sonstiges"
-            },
             "empty": "Keine Reklamationen für diese Bestellung.",
             "create_title": "Neue Reklamation",
-            "claim_type": "Problem",
             "refund_amount": "Erstattungsbetrag",
             "resolve_title": "Reklamation lösen",
             "resolution": "Lösungsweg",

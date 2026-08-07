@@ -311,8 +311,6 @@ export function CreateExchangeDialog({
   )
 }
 
-const CLAIM_TYPES = ['damaged', 'missing', 'wrong_item', 'other'] as const
-
 /** A claim is against ordered line items — nothing has to have shipped. */
 export function CreateClaimDialog({
   order,
@@ -328,7 +326,6 @@ export function CreateClaimDialog({
       description?: string
       refund_amount?: string
     }>
-    claim_type: string
     memo?: string
     reasonId?: string
   }) => void
@@ -337,15 +334,10 @@ export function CreateClaimDialog({
   const items = order.items ?? []
   const [selection, setSelection] = useState<Selection>({})
   const [amounts, setAmounts] = useState<Record<string, string>>({})
-  const [claimType, setClaimType] = useState<string>('damaged')
   const [memo, setMemo] = useState('')
   const [reasonId, setReasonId] = useState('')
 
   const chosen = selectedItems(selection)
-  const typeOptions = CLAIM_TYPES.map((value) => ({
-    value,
-    label: t(`admin.pages.orders.detail.claims.types.${value}`),
-  }))
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -354,24 +346,6 @@ export function CreateClaimDialog({
           <DialogTitle>{t('admin.pages.orders.detail.claims.create_title')}</DialogTitle>
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
-          <Field>
-            <FieldLabel htmlFor="claim-type">
-              {t('admin.pages.orders.detail.claims.claim_type')}
-            </FieldLabel>
-            <Select items={typeOptions} value={claimType} onValueChange={setClaimType}>
-              <SelectTrigger id="claim-type">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {typeOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
-
           <div className="flex flex-col gap-2">
             {items.map((item) => {
               const label = [item.name, item.options_text].filter(Boolean).join(' — ') || item.id
@@ -451,7 +425,6 @@ export function CreateClaimDialog({
                   quantity,
                   refund_amount: amounts[id] || undefined,
                 })),
-                claim_type: claimType,
                 memo: memo || undefined,
                 reasonId: reasonId || undefined,
               })

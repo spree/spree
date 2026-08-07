@@ -1870,15 +1870,8 @@
               "create": "New claim",
               "resolve": "Resolve"
             },
-            "types": {
-              "damaged": "Damaged",
-              "missing": "Missing",
-              "wrong_item": "Wrong item",
-              "other": "Other"
-            },
             "empty": "No claims for this order.",
             "create_title": "New claim",
-            "claim_type": "Problem",
             "refund_amount": "Refund amount",
             "resolve_title": "Resolve claim",
             "resolution": "How to resolve",
