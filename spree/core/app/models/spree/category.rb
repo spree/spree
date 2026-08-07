@@ -36,7 +36,7 @@ module Spree
 
     # @deprecated Use #product_categories; removed in 6.1.
     def classifications
-      Spree::Deprecation.warn('Spree::Category#classifications are deprecated and will be removed in Spree 6.1. Please use Spree::Category#category_products instead')
+      Spree::Deprecation.warn('Spree::Category#classifications is deprecated and will be removed in Spree 6.1. Use Spree::Category#product_categories instead.')
       product_categories
     end
 
@@ -61,6 +61,7 @@ module Spree
     # Names carry no such constraint: two categories may share a name as long as
     # they sit in different branches, which their permalinks reflect.
     validates :permalink, uniqueness: { scope: :store_id, case_sensitive: false }
+    validate :parent_belongs_to_same_store
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
       validates :meta_description
@@ -405,6 +406,19 @@ module Spree
     # 6.1 with Spree::Taxonomy.
     def copy_taxonomy_from_parent
       self.taxonomy = parent.taxonomy if parent.present? && taxonomy.blank?
+    end
+
+    # A tree belongs to one store. Reads #store rather than the raw column so
+    # legacy rows that still resolve their store through a taxonomy compare
+    # correctly. Replaces the taxonomy-scoped parent check removed in 6.0, which
+    # enforced this only as a side effect of taxonomy ownership.
+    def parent_belongs_to_same_store
+      return if parent.blank?
+
+      parent_store = parent.store
+      return if parent_store.blank? || store.blank? || parent_store.id == store.id
+
+      errors.add(:parent, :must_belong_to_same_store)
     end
 
     # Every category is store-owned. Resolve the store from the taxonomy, then the

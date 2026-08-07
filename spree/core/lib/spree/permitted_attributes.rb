@@ -268,7 +268,7 @@ module Spree
     @@category_attributes = [
       :name, :parent_id, :position, :icon, :description, :permalink,
       :meta_description, :meta_keywords, :meta_title, :child_index,
-      :image, :square_image, :description
+      :image, :square_image
     ]
 
     @@theme_attributes = [:name, :type, :default]

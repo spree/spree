@@ -136,8 +136,7 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
       taxonomies = Array.new(count) { |i| create(:taxonomy, name: "Shop #{i}", store: store) }
 
       taxonomies.each_with_index do |taxonomy, index|
-        Spree::Category.new(name: "Child #{index}", taxonomy_id: taxonomy.id, parent_id: taxonomy.root.id).
-          save!(validate: false)
+        create(:taxon, name: "Child #{index}", taxonomy: taxonomy, parent: taxonomy.root)
       end
 
       # Clear store_id first — that is the genuine pre-upgrade state, and it is what
@@ -172,8 +171,7 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
     it 'leaves categories with distinct permalinks alone' do
       taxonomy = create(:taxonomy, name: 'Solo', store: store)
       # A child keeps the root alive past the childless-root sweep.
-      Spree::Category.new(name: 'Child', taxonomy_id: taxonomy.id, parent_id: taxonomy.root.id).
-        save!(validate: false)
+      create(:taxon, name: 'Child', taxonomy: taxonomy, parent: taxonomy.root)
       Spree::Category.unscoped.where(id: taxonomy.root.id).update_all(permalink: 'untouched')
 
       subject.invoke

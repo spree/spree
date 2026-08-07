@@ -49,6 +49,22 @@ RSpec.describe Spree::Category, type: :model do
     end
   end
 
+  describe 'parent store boundary' do
+    it 'rejects a parent owned by another store' do
+      foreign_parent = described_class.create!(name: 'Foreign', store: create(:store))
+      child = described_class.new(name: 'Child', store: store, parent: foreign_parent)
+
+      expect(child).not_to be_valid
+      expect(child.errors[:parent]).to include('must belong to the same store')
+    end
+
+    it 'accepts a parent in the same store' do
+      parent = described_class.create!(name: 'Local', store: store)
+
+      expect(described_class.new(name: 'Child', store: store, parent: parent)).to be_valid
+    end
+  end
+
   describe 'products_count on destroy' do
     it 'decrements ancestors when a subcategory is destroyed' do
       parent = described_class.create!(name: 'Electronics', store: store)
