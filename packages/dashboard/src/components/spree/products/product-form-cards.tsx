@@ -54,7 +54,6 @@ import type { ProductFormValues } from '../../../schemas/product'
 import { ProductBulkPriceEditor } from '../bulk-price-editor/product-bulk-price-editor'
 import { InventorySection } from './inventory-section'
 import { MediaEditSheet } from './media-edit-sheet'
-import { ProductBulkShippingEditor } from './product-bulk-shipping-editor'
 import { VariantsSection } from './variants-section'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -148,27 +147,6 @@ export function PricesCard({ form, productName }: FormCardProps & { productName:
       </CardHeader>
       <CardContent>
         <ProductBulkPriceEditor form={form} currency={currency} productName={productName} />
-      </CardContent>
-    </Card>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Shipping — inline form-backed spreadsheet of per-variant weight and
-// dimensions. Same model as PricesCard: edits ride the parent product
-// form's Save.
-// ---------------------------------------------------------------------------
-
-export function ShippingCard({ form }: FormCardProps) {
-  const { t } = useTranslation()
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.fields.shipping.label')}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ProductBulkShippingEditor form={form} />
       </CardContent>
     </Card>
   )

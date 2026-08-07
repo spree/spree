@@ -20,7 +20,6 @@ import {
   MediaCard,
   PricesCard,
   SEOCard,
-  ShippingCard,
   StatusCard,
   TaxCard,
   VariantsCard,
@@ -185,7 +184,6 @@ function NewProductPage() {
                 form={form}
                 productName={form.watch('name') || t('admin.pages.products.new.title')}
               />
-              <ShippingCard form={form} />
               <InventoryCard form={form} storeId={storeId} />
               <ProductCustomFieldsProvider
                 form={form}

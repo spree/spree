@@ -2029,10 +2029,6 @@
         "edit": {
           "bulk_prices": {
             "no_variants": "أضف متغيرًا واحدًا على الأقل لبدء تعديل الأسعار."
-          },
-          "bulk_shipping": {
-            "no_variants": "أضف متغيرًا واحدًا على الأقل لبدء تعديل بيانات الشحن.",
-            "grid_aria": "جدول شحن المتغيرات"
           }
         },
         "inventory": {
@@ -2833,7 +2829,12 @@
           "tax_category_placeholder": "ترث من المنتج"
         },
         "title": "المتغيرات",
-        "variant_label": "البديل"
+        "variant_label": "البديل",
+        "bulk_edit": {
+          "trigger": "تحرير جماعي",
+          "title": "تحرير المتغيرات جماعيًا",
+          "grid_aria": "جدول التحرير الجماعي للمتغيرات"
+        }
       }
     },
     "promotions": {

@@ -1,4 +1,12 @@
-export { DecimalCell, MoneyCell, NumberCell, ReadOnlyCell, SelectCell, SwitchCell } from './cells'
+export {
+  DecimalCell,
+  MoneyCell,
+  NumberCell,
+  ReadOnlyCell,
+  SelectCell,
+  SwitchCell,
+  TextCell,
+} from './cells'
 export { useDataGridContext } from './context'
 export { DataGrid } from './data-grid'
 export { editableRowIndex } from './helpers'
