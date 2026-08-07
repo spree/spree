@@ -24,6 +24,9 @@ export const storeSettingsFormSchema = z.object({
   preferred_unit_system: z.enum(['metric', 'imperial']),
   preferred_weight_unit: z.enum(ALL_WEIGHT_UNITS),
   preferred_default_package_weight: z.coerce.number().min(0),
+  preferred_default_package_length: z.coerce.number().min(0),
+  preferred_default_package_width: z.coerce.number().min(0),
+  preferred_default_package_height: z.coerce.number().min(0),
   preferred_storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
   preferred_guest_checkout: z.boolean(),
 })

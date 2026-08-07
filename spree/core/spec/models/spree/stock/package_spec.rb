@@ -37,6 +37,28 @@ module Spree
         expect(subject.weight).to eq(27.5)
       end
 
+      describe '#dimensions' do
+        it 'is nil until the store configures a full default package' do
+          subject.add build_inventory_unit
+          expect(subject.dimensions).to be_nil
+
+          order.store.update!(preferred_default_package_length: 12, preferred_default_package_width: 9)
+          expect(subject.dimensions).to be_nil
+        end
+
+        it 'returns the configured box verbatim, never derived from items' do
+          order.store.update!(
+            preferred_default_package_length: 12,
+            preferred_default_package_width: 9,
+            preferred_default_package_height: 4
+          )
+
+          subject.add build_inventory_unit
+
+          expect(subject.dimensions).to eq(length: 12.0, width: 9.0, height: 4.0)
+        end
+      end
+
       context 'currency' do
         let(:unit) { build_inventory_unit }
 

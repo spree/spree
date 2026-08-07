@@ -24,11 +24,47 @@ module SpreeEasyPost
   # @param weight [Numeric, nil]
   # @param store [Spree::Store, nil]
   # @return [Float]
+  CM_PER_INCH = 2.54
+
+  # EasyPost expects parcel dimensions in inches; the store's default
+  # package records them in the unit its unit system implies (in/cm).
+  #
+  # @param value [Numeric, nil]
+  # @param store [Spree::Store, nil]
+  # @return [Float]
+  def self.inches(value, store)
+    metric = store&.preferred_unit_system.to_s == 'metric'
+    inches = metric ? value.to_f / CM_PER_INCH : value.to_f
+
+    inches.round(2)
+  end
+
   def self.ounces(weight, store)
     unit_system = store&.preferred_unit_system.presence || 'imperial'
     converted = (weight.to_f * OUNCES_PER_UNIT.fetch(unit_system.to_s, 16.0)).round(2)
 
     [converted, MINIMUM_OUNCES].max
+  end
+
+  # EasyPost parcel payload for a package: weight always, dimensions when
+  # the store configured a default package — carriers bill dimensional
+  # weight above size thresholds, so a weight-only parcel under-quotes
+  # bulky-but-light shipments.
+  #
+  # @param package [Spree::Stock::Package]
+  # @param store [Spree::Store, nil]
+  # @return [Hash]
+  def self.parcel_params(package, store)
+    params = { weight: ounces(package.weight, store) }
+
+    dimensions = package.dimensions
+    return params if dimensions.nil?
+
+    params.merge(
+      length: inches(dimensions[:length], store),
+      width: inches(dimensions[:width], store),
+      height: inches(dimensions[:height], store)
+    )
   end
 
   # EasyPost address payload from a Spree address or stock location.

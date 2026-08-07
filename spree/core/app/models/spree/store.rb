@@ -42,10 +42,16 @@ module Spree
     preference :admin_locale, :string
     preference :timezone, :string, default: Time.zone.name
     preference :weight_unit, :string, default: 'lb'
-    # Packaging tare (box + filler) added to every package's content weight
-    # for rate calculation, in the store's weight unit — Shopify's "default
-    # package weight". Zero keeps historical behavior.
+    # Default package (Shopify-style): the box a store usually ships in.
+    # Weight is the packaging tare (box + filler) added to every package's
+    # content weight for rate calculation, in the store's weight unit; the
+    # dimensions are the box itself, used verbatim by carrier rate providers
+    # for dimensional-weight pricing — inches when the unit system is
+    # imperial, centimeters when metric. Zeros keep historical behavior.
     preference :default_package_weight, :decimal, default: 0
+    preference :default_package_length, :decimal, default: 0
+    preference :default_package_width, :decimal, default: 0
+    preference :default_package_height, :decimal, default: 0
     preference :unit_system, :string, default: 'imperial'
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true

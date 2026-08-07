@@ -51,7 +51,6 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
   before do
     allow(integration).to receive(:client).and_return(client)
     allow(provider).to receive(:integration).and_return(integration)
-    Spree::Current.reset
   end
 
   it 'registers itself and declares its integration' do
@@ -90,6 +89,34 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
       allow(provider).to receive(:integration).and_return(nil)
 
       expect(provider.estimate(package)).to be_nil
+    end
+
+    describe 'parcel dimensions' do
+      before do
+        store.update!(
+          preferred_default_package_length: 12,
+          preferred_default_package_width: 9,
+          preferred_default_package_height: 4
+        )
+      end
+
+      it 'sends the default package dimensions with the quote' do
+        provider.estimate(package)
+
+        expect(shipment_service).to have_received(:create).with(
+          hash_including(parcel: hash_including(length: 12.0, width: 9.0, height: 4.0))
+        )
+      end
+
+      it 'converts metric dimensions to inches' do
+        store.update!(preferred_unit_system: 'metric')
+
+        provider.estimate(package)
+
+        expect(shipment_service).to have_received(:create).with(
+          hash_including(parcel: hash_including(length: 4.72, width: 3.54, height: 1.57))
+        )
+      end
     end
 
     # The whole point of the shared shipment call: several methods quoting
@@ -135,8 +162,6 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider, 'API contract (VCR)' do
   end
   let(:order) { create(:order_with_line_items, store: store) }
   let(:package) { order.fulfillments.first.to_package }
-
-  before { Spree::Current.reset }
 
   it 'quotes a live rate end to end' do
     VCR.use_cassette('create_shipment_rates') do
