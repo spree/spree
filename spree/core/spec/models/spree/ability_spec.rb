@@ -12,11 +12,7 @@ describe Spree::Ability, type: :model do
     let(:resource) { Object.new }
 
     context 'with admin user' do
-      before do
-        allow(user).to receive(:persisted?).and_return(true)
-        allow(user).to receive(:spree_roles).and_return(Spree::Role.where(name: 'admin'))
-        allow(user).to receive(:spree_admin?).and_return(true)
-      end
+      let(:user) { create(:admin_user) }
 
       it_behaves_like 'access granted'
       it_behaves_like 'index allowed'
@@ -30,19 +26,15 @@ describe Spree::Ability, type: :model do
 
   context 'for admin protected resources' do
     let(:resource) { Object.new }
-    let(:resource_shipment) { Spree::Shipment.new }
     let(:resource_product) { store.products.new }
     let(:resource_user) { create(:user) }
     let(:resource_order) { create(:order, customer: resource_user) }
-    let(:fakedispatch_user) { create(:user) }
-    let(:fakedispatch_ability) { Spree::Ability.new(fakedispatch_user) }
 
     context 'with admin user' do
       context 'admin user role' do
+        let(:user) { create(:admin_user) }
+
         it 'is able to admin' do
-          allow(user).to receive(:persisted?).and_return(true)
-          allow(user).to receive(:spree_roles).and_return(Spree::Role.where(name: 'admin'))
-          allow(user).to receive(:spree_admin?).and_return(true)
           expect(ability).to be_able_to :admin, resource
           expect(ability).to be_able_to :index, resource_order
           expect(ability).to be_able_to :show, resource_product
@@ -50,20 +42,18 @@ describe Spree::Ability, type: :model do
         end
       end
 
-      context 'admin user class' do
+      context 'admin user class with no role rows (spree_admin? fallback)' do
         let(:user) { Spree::DummyModel.create(name: 'admin') }
 
         before do
           @original_admin_user_class = Spree.admin_user_class(constantize: false)
           Spree.admin_user_class = 'Spree::DummyModel'
+          allow(user).to receive(:spree_admin?).and_return(true)
         end
 
         after { Spree.admin_user_class = @original_admin_user_class }
 
         it 'is able to admin' do
-          allow(user).to receive(:persisted?).and_return(true)
-          allow(user).to receive(:spree_roles).and_return(Spree::Role.where(name: 'admin'))
-          allow(user).to receive(:spree_admin?).and_return(true)
           expect(ability).to be_able_to :admin, resource
           expect(ability).to be_able_to :index, resource_order
           expect(ability).to be_able_to :show, resource_product
@@ -79,6 +69,111 @@ describe Spree::Ability, type: :model do
         expect(ability).not_to be_able_to :admin, resource_product
         expect(ability).not_to be_able_to :admin, resource_user
       end
+
+      it 'is not able to admin even with an admin role assignment' do
+        user.save!
+        user.spree_roles << Spree::Role.default_admin_role
+
+        expect(Spree::Ability.new(user)).not_to be_able_to :admin, resource
+      end
+    end
+  end
+
+  describe 'staff permissions from catalog keys' do
+    let(:admin) { create(:admin_user, :without_admin_role) }
+    let(:staff_ability) { Spree::Ability.new(admin, store: store) }
+
+    context 'with a role granting a read key' do
+      before do
+        admin.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders]), resource: store)
+      end
+
+      it 'grants read and admin on the resource subjects' do
+        expect(staff_ability).to be_able_to :read, Spree::Order.new
+        expect(staff_ability).to be_able_to :admin, Spree::Order.new
+        expect(staff_ability).not_to be_able_to :update, Spree::Order.new
+      end
+
+      it 'does not grant other resources' do
+        expect(staff_ability).not_to be_able_to :read, store.products.new
+      end
+
+      it 'reports the expanded permission keys' do
+        expect(staff_ability.permission_keys).to eq(%w[read_orders])
+      end
+    end
+
+    context 'with a role granting a write key' do
+      before do
+        admin.role_users.create!(role: create(:role, name: 'manager', permissions: %w[write_orders]), resource: store)
+      end
+
+      it 'grants manage on the resource subjects' do
+        expect(staff_ability).to be_able_to :manage, Spree::Order.new
+        expect(staff_ability).to be_able_to :read, Spree::Order.new
+      end
+
+      it 'reports write and implied read keys' do
+        expect(staff_ability.permission_keys).to eq(%w[read_orders write_orders])
+      end
+    end
+
+    context 'with multiple roles' do
+      before do
+        admin.role_users.create!(role: create(:role, name: 'support', permissions: %w[read_orders]), resource: store)
+        admin.role_users.create!(role: create(:role, name: 'merch', permissions: %w[write_products]), resource: store)
+      end
+
+      it 'combines keys from all roles' do
+        expect(staff_ability).to be_able_to :read, Spree::Order.new
+        expect(staff_ability).to be_able_to :manage, store.products.new
+        expect(staff_ability).not_to be_able_to :update, Spree::Order.new
+      end
+    end
+
+    context 'with a role granting no keys' do
+      before do
+        admin.role_users.create!(role: create(:role, name: 'empty'), resource: store)
+      end
+
+      it 'grants only the staff baseline' do
+        expect(staff_ability).not_to be_able_to :read, Spree::Order.new
+        expect(staff_ability).not_to be_able_to :manage, store.products.new
+        expect(staff_ability).to be_able_to :read, Spree::Country.new
+        expect(staff_ability).to be_able_to :read, Spree::State.new
+        expect(staff_ability).to be_able_to :read, store
+      end
+    end
+
+    context 'with the admin role' do
+      before do
+        admin.role_users.create!(role: Spree::Role.default_admin_role, resource: store)
+      end
+
+      it 'grants everything and reports the full catalog' do
+        expect(staff_ability).to be_able_to :manage, :all
+        expect(staff_ability.permission_keys).to eq(Spree.permissions.catalog_keys)
+      end
+    end
+  end
+
+  describe '.register_ability' do
+    let(:custom_ability_class) do
+      Class.new do
+        include CanCan::Ability
+
+        def initialize(user)
+          can :read, Spree::Order if user
+        end
+      end
+    end
+
+    after { Spree::Ability.remove_ability(custom_ability_class) }
+
+    it 'merges registered ability rules into every ability' do
+      Spree::Ability.register_ability(custom_ability_class)
+
+      expect(Spree::Ability.new(create(:user))).to be_able_to :read, Spree::Order.new
     end
   end
 

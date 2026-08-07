@@ -212,6 +212,10 @@ module Spree
 
     before_create :link_by_email
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
+    # Record-state deletion eligibility is enforced here, not in ability rules —
+    # secret-key API requests never consult CanCanCan (Axis A/B split,
+    # docs/plans/decisions.md 2026-08-05).
+    before_destroy :ensure_can_be_deleted
 
     # Shared money/quantity validations live in Spree::Purchase::Validations;
     # only order-specific rules stay here.
@@ -985,6 +989,13 @@ module Spree
     end
 
     private
+
+    def ensure_can_be_deleted
+      return true if can_be_deleted?
+
+      errors.add(:base, Spree.t(:order_cannot_be_deleted))
+      throw :abort
+    end
 
     def valid_order_routing_strategy_class(klass_name)
       return if klass_name.blank?

@@ -73,15 +73,20 @@ module Spree
           resolve_current_api_key_for_scope_check!
 
           unless current_api_key
-            return unless secret_key_request?
+            if secret_key_request?
+              # A secret-key token was presented but did not resolve to a live key
+              # for this store — reject rather than silently skip the scope check.
+              return render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_token],
+                message: 'Valid secret API key required',
+                status: :unauthorized
+              )
+            end
 
-            # A secret-key token was presented but did not resolve to a live key
-            # for this store — reject rather than silently skip the scope check.
-            return render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_token],
-              message: 'Valid secret API key required',
-              status: :unauthorized
-            )
+            # JWT staff pass through the same key gate as secret keys: their
+            # roles' catalog keys play the role scopes play for keys, so both
+            # principals share one enforcement contract per controller.
+            return authorize_staff_permission!
           end
 
           resource = scoped_resource_name
@@ -98,6 +103,36 @@ module Spree
             message: "API key lacks scope: #{required}",
             status: :forbidden,
             details: { required_scope: required }
+          )
+        end
+
+        # The JWT half of the key gate. The staffer's expanded role keys come
+        # from Spree::Ability#permission_keys; a custom ability class without
+        # that method falls back to plain CanCanCan `authorize!` enforcement.
+        def authorize_staff_permission!
+          return unless current_user
+
+          resource = scoped_resource_name
+          # Fail closed, mirroring the secret-key path: admin controllers must
+          # declare their scope (or skip explicitly).
+          raise MissingScopedResource, self.class unless resource
+
+          ability = current_ability
+          return unless ability.respond_to?(:permission_keys)
+
+          required = "#{action_kind}_#{resource}"
+          return if ability.permission_keys.include?(required)
+
+          Rails.logger.info do
+            "[Spree] Access denied: user=#{current_user.id} required=#{required} " \
+              "held=#{ability.permission_keys.join(',')}"
+          end
+
+          render_error(
+            code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+            message: "Missing permission: #{required}",
+            status: :forbidden,
+            details: { required_permission: required }
           )
         end
 

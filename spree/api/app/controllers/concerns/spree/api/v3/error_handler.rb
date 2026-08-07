@@ -166,8 +166,21 @@ module Spree
           render_error(
             code: ERROR_CODES[:access_denied],
             message: exception.message,
-            status: :forbidden
+            status: :forbidden,
+            details: access_denied_details
           )
+        end
+
+        # Names the catalog permission the failed request needed, derived from
+        # the controller's `scoped_resource` declaration — the JWT twin of the
+        # scope check's `required_scope` (docs/plans/6.0-admin-rbac.md).
+        def access_denied_details
+          return unless respond_to?(:scoped_resource_name, true)
+
+          resource = scoped_resource_name
+          return unless resource
+
+          { required_permission: "#{action_kind}_#{resource}" }
         end
 
         def handle_gateway_error(exception)

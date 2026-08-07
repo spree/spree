@@ -166,6 +166,7 @@ module Spree
         admin_webhook_delivery_serializer: 'Spree::Api::V3::Admin::WebhookDeliverySerializer',
         admin_invitation_serializer: 'Spree::Api::V3::Admin::InvitationSerializer',
         admin_role_serializer: 'Spree::Api::V3::Admin::RoleSerializer',
+        admin_permission_serializer: 'Spree::Api::V3::Admin::PermissionSerializer',
         admin_export_serializer: 'Spree::Api::V3::Admin::ExportSerializer',
         admin_import_serializer: 'Spree::Api::V3::Admin::ImportSerializer',
         admin_import_row_serializer: 'Spree::Api::V3::Admin::ImportRowSerializer',

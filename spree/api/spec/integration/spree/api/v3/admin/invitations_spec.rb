@@ -17,7 +17,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns invitations for the current store, including pending and accepted.'
-      admin_scope :read, :settings
+      admin_scope :read, :staff
 
       admin_sdk_example 'invitations/list'
 
@@ -42,7 +42,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
       security [api_key: [], bearer_auth: []]
       description 'Invites a teammate by email. The invitation is scoped to the current store and carries the chosen role; ' \
                   'on accept, a `RoleUser` is created via the invitation\'s `after_accept` callback.'
-      admin_scope :write, :settings
+      admin_scope :write, :staff
 
       admin_sdk_example 'invitations/create'
 
@@ -77,7 +77,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
     delete 'Revoke an invitation' do
       tags 'Staff'
       security [api_key: [], bearer_auth: []]
-      admin_scope :write, :settings
+      admin_scope :write, :staff
 
       admin_sdk_example 'invitations/delete'
 
@@ -101,7 +101,7 @@ RSpec.describe 'Admin Invitations API', type: :request, swagger_doc: 'api-refere
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Issues a fresh token and dispatches the invitation email again.'
-      admin_scope :write, :settings
+      admin_scope :write, :staff
 
       admin_sdk_example 'invitations/resend'
 

@@ -3,7 +3,11 @@ module Spree
     module V3
       module Admin
         class CountriesController < ResourceController
-          scoped_resource :settings
+          # Public reference data (the storefront serves the same list) — exempt
+          # from the key gate like `/tags`, so address forms work for any staff
+          # member or key. CanCanCan still applies for JWT principals via the
+          # staff baseline's Country read grant.
+          skip_scope_check!
 
           # Override base index to skip pagination — there are ~250 countries
           # and address-form dropdowns need them all at once. Pagy's global

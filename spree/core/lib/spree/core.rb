@@ -520,18 +520,16 @@ module Spree
     end
   end
 
-  # Permission configuration accessor for managing role-to-permission-set mappings.
+  # The permission catalog — the grant vocabulary shared by staff roles and
+  # secret API key scopes. Roles themselves are data (Spree::Role#permissions);
+  # code only registers the vocabulary.
   #
-  # @example Assigning permission sets to a role
-  #   Spree.permissions.assign(:customer_service, [
-  #     Spree::PermissionSets::OrderDisplay,
-  #     Spree::PermissionSets::UserManagement
-  #   ])
+  # @example Registering a resource from an extension
+  #   Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
+  #     [SpreeReviews::Review]
+  #   })
   #
-  # @example Clearing permission sets from a role
-  #   Spree.permissions.clear(:customer_service)
-  #
-  # @return [Spree::PermissionConfiguration] the permission configuration instance
+  # @return [Spree::PermissionConfiguration] the permission catalog
   def self.permissions
     @permissions ||= PermissionConfiguration.new
   end

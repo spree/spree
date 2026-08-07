@@ -888,6 +888,22 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#destroy record-state guard' do
+    it 'refuses to destroy a completed order' do
+      order = create(:completed_order_with_pending_payment)
+
+      expect(order.destroy).to be false
+      expect(order.errors[:base]).to be_present
+      expect(order.reload).to be_persisted
+    end
+
+    it 'destroys an incomplete order without settled payments' do
+      order = create(:order)
+
+      expect(order.destroy).to be_truthy
+    end
+  end
+
   describe '#uneditable?' do
     let(:order) { create(:order) }
 

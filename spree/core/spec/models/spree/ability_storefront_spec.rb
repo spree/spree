@@ -1,0 +1,200 @@
+require 'spec_helper'
+require 'cancan/matchers'
+
+# The fixed storefront baseline customers and guests get from Spree::Ability —
+# formerly the DefaultCustomer permission set, now internal ability code.
+RSpec.describe Spree::Ability, 'storefront baseline', type: :model do
+  let(:user) { create(:user) }
+  let(:ability) { Spree::Ability.new(user) }
+
+  context 'catalog read access' do
+    it 'grants read access to Country' do
+      expect(ability.can?(:read, Spree::Country)).to be true
+    end
+
+    it 'grants read access to Product' do
+      expect(ability.can?(:read, Spree::Product)).to be true
+    end
+
+    it 'grants read access to Variant' do
+      expect(ability.can?(:read, Spree::Variant)).to be true
+    end
+
+    it 'grants read access to Category' do
+      expect(ability.can?(:read, Spree::Category)).to be true
+    end
+
+    it 'grants read access to Store' do
+      expect(ability.can?(:read, Spree::Store)).to be true
+    end
+  end
+
+  context 'order permissions' do
+    it 'allows creating orders' do
+      expect(ability.can?(:create, Spree::Order)).to be true
+    end
+
+    context 'with user order' do
+      let(:order) { build(:order, customer: user) }
+
+      it 'allows viewing own order' do
+        expect(ability.can?(:show, order)).to be true
+      end
+
+      it 'allows updating own incomplete order' do
+        allow(order).to receive(:completed?).and_return(false)
+        expect(ability.can?(:update, order)).to be true
+      end
+
+      it 'prevents updating own completed order' do
+        allow(order).to receive(:completed?).and_return(true)
+        expect(ability.can?(:update, order)).to be false
+      end
+    end
+
+    context 'with token' do
+      let(:order) { build(:order, customer: nil, token: 'secret') }
+
+      it 'allows viewing order with correct token' do
+        expect(ability.can?(:show, order, 'secret')).to be true
+      end
+
+      it 'allows updating incomplete order with correct token' do
+        allow(order).to receive(:completed?).and_return(false)
+        expect(ability.can?(:update, order, 'secret')).to be true
+      end
+
+      it 'prevents viewing order with incorrect token' do
+        expect(ability.can?(:show, order, 'wrong')).to be false
+      end
+    end
+  end
+
+  context 'user account permissions' do
+    it 'allows viewing own user' do
+      expect(ability.can?(:show, user)).to be true
+    end
+
+    it 'allows updating own user' do
+      expect(ability.can?(:update, user)).to be true
+    end
+
+    it 'allows destroying own user' do
+      expect(ability.can?(:destroy, user)).to be true
+    end
+
+    it 'prevents viewing other user' do
+      other_user = create(:user)
+      expect(ability.can?(:show, other_user)).to be false
+    end
+
+    it 'allows creating new user' do
+      expect(ability.can?(:create, Spree.customer_class)).to be true
+    end
+  end
+
+  context 'with non-persisted user' do
+    let(:guest_user) { build(:user) }
+    let(:guest_ability) { Spree::Ability.new(guest_user) }
+
+    it 'allows viewing self' do
+      expect(guest_ability.can?(:show, guest_user)).to be true
+    end
+
+    it 'allows updating self' do
+      expect(guest_ability.can?(:update, guest_user)).to be true
+    end
+  end
+
+  context 'address permissions' do
+    let(:own_address) { build(:address, user_id: user.id) }
+    let(:other_address) { build(:address, user_id: create(:user).id) }
+
+    it 'allows managing own address' do
+      expect(ability.can?(:manage, own_address)).to be true
+    end
+
+    it 'prevents managing other user address' do
+      expect(ability.can?(:manage, other_address)).to be false
+    end
+
+    context 'with guest user (non-persisted)' do
+      let(:guest_user) { Spree.customer_class.new }
+      let(:guest_ability) { Spree::Ability.new(guest_user) }
+      let(:guest_address) { build(:address, user_id: nil) }
+      let(:other_guest_address) { create(:address, user_id: nil) }
+
+      it 'prevents guest user from managing addresses with nil user_id (IDOR protection)' do
+        expect(guest_ability.can?(:manage, guest_address)).to be false
+      end
+
+      it 'prevents guest user from editing other guest addresses (IDOR protection)' do
+        expect(guest_ability.can?(:edit, other_guest_address)).to be false
+      end
+
+      it 'prevents guest user from updating other guest addresses (IDOR protection)' do
+        expect(guest_ability.can?(:update, other_guest_address)).to be false
+      end
+
+      it 'prevents guest user from reading other guest addresses (IDOR protection)' do
+        expect(guest_ability.can?(:read, other_guest_address)).to be false
+      end
+    end
+  end
+
+  context 'credit card permissions' do
+    let(:own_card) { build(:credit_card, user_id: user.id) }
+    let(:other_card) { build(:credit_card, user_id: create(:user).id) }
+
+    it 'allows reading own credit card' do
+      expect(ability.can?(:read, own_card)).to be true
+    end
+
+    it 'allows destroying own credit card' do
+      expect(ability.can?(:destroy, own_card)).to be true
+    end
+
+    it 'prevents reading other user credit card' do
+      expect(ability.can?(:read, other_card)).to be false
+    end
+  end
+
+  context 'wishlist permissions' do
+    let(:own_wishlist) { build(:wishlist, customer: user) }
+    let(:public_wishlist) { build(:wishlist, customer: create(:user), is_private: false) }
+    let(:private_wishlist) { build(:wishlist, customer: create(:user), is_private: true) }
+
+    it 'allows managing own wishlist' do
+      expect(ability.can?(:manage, own_wishlist)).to be true
+    end
+
+    it 'allows viewing public wishlist' do
+      expect(ability.can?(:show, public_wishlist)).to be true
+    end
+
+    it 'prevents viewing private wishlist' do
+      expect(ability.can?(:show, private_wishlist)).to be false
+    end
+  end
+
+  context 'admin permissions' do
+    it 'does not grant admin access' do
+      expect(ability.can?(:admin, :all)).to be false
+    end
+
+    it 'does not grant manage access to Product' do
+      expect(ability.can?(:manage, Spree::Product)).to be false
+    end
+
+    it 'never resolves roles for customer principals' do
+      role = create(:role, name: 'support', permissions: %w[write_orders])
+      user.spree_roles << role
+
+      expect(Spree::Ability.new(user).can?(:manage, Spree::Order)).to be false
+    end
+  end
+
+  it 'reports no permission keys' do
+    expect(ability.permission_keys).to eq([])
+  end
+end

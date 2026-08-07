@@ -1,170 +1,151 @@
 require 'spec_helper'
+require 'cancan'
 
 RSpec.describe Spree::PermissionConfiguration do
-  subject(:config) { described_class.new }
+  subject(:configuration) { described_class.new }
 
-  # Create test permission set classes
-  let(:permission_set_a) { Class.new(Spree::PermissionSets::Base) { def activate!; can :read, Spree::Order; end } }
-  let(:permission_set_b) { Class.new(Spree::PermissionSets::Base) { def activate!; can :manage, Spree::Order; end } }
-  let(:permission_set_c) { Class.new(Spree::PermissionSets::Base) { def activate!; can :read, Spree::Product; end } }
-
-  describe '#assign' do
-    it 'assigns a single permission set to a role' do
-      config.assign(:customer_service, permission_set_a)
-
-      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_a)
+  describe 'default catalog' do
+    it 'registers the core resources' do
+      expect(configuration.resource(:orders)).to be_present
+      expect(configuration.resource(:products)).to be_present
+      expect(configuration.resource(:staff)).to be_present
+      expect(configuration.resource(:dashboard)).to be_present
     end
 
-    it 'assigns multiple permission sets to a role' do
-      config.assign(:customer_service, [permission_set_a, permission_set_b])
-
-      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_a, permission_set_b)
+    it 'yields read and write keys per resource' do
+      expect(configuration.catalog_keys).to include('read_orders', 'write_orders', 'read_staff', 'write_staff')
     end
 
-    it 'adds to existing permission sets when called multiple times' do
-      config.assign(:customer_service, permission_set_a)
-      config.assign(:customer_service, permission_set_b)
-
-      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_a, permission_set_b)
-    end
-
-    it 'does not duplicate permission sets' do
-      config.assign(:customer_service, permission_set_a)
-      config.assign(:customer_service, permission_set_a)
-
-      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_a)
-    end
-
-    it 'normalizes role names to symbols' do
-      config.assign('Customer_Service', permission_set_a)
-
-      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_a)
+    it 'yields no write key for read-only resources' do
+      expect(configuration.catalog_keys).to include('read_dashboard')
+      expect(configuration.catalog_keys).not_to include('write_dashboard')
     end
   end
 
-  describe '#unassign' do
-    it 'removes a specific permission set from a role' do
-      config.assign(:customer_service, [permission_set_a, permission_set_b])
-      config.unassign(:customer_service, permission_set_a)
+  describe '#register_resource' do
+    it 'registers a resource with lazy subjects and yields its keys' do
+      configuration.register_resource(:reviews, group: :catalog, subjects: -> { [Spree::Product] })
 
-      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_b)
+      expect(configuration.catalog_keys).to include('read_reviews', 'write_reviews')
+      expect(configuration.resource(:reviews).subjects).to eq([Spree::Product])
+      expect(configuration.resource(:reviews).group).to eq(:catalog)
     end
 
-    it 'removes multiple permission sets from a role' do
-      config.assign(:customer_service, [permission_set_a, permission_set_b, permission_set_c])
-      config.unassign(:customer_service, [permission_set_a, permission_set_c])
+    it 'replaces an existing registration with the same name' do
+      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
+      configuration.register_resource(:reviews, group: :marketing, subjects: [Spree::Order])
 
-      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_b)
-    end
-
-    it 'returns an empty array for non-existent roles' do
-      expect(config.unassign(:nonexistent, permission_set_a)).to eq([])
-    end
-
-    it 'normalizes role names' do
-      config.assign(:customer_service, [permission_set_a, permission_set_b])
-      config.unassign('Customer_Service', permission_set_a)
-
-      expect(config.permission_sets_for(:customer_service)).to contain_exactly(permission_set_b)
+      expect(configuration.resource(:reviews).group).to eq(:marketing)
     end
   end
 
-  describe '#clear' do
-    it 'removes all permission sets from a role' do
-      config.assign(:customer_service, [permission_set_a, permission_set_b])
-      config.clear(:customer_service)
+  describe '#unregister_resource' do
+    it 'removes the resource and its keys' do
+      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
+      configuration.unregister_resource(:reviews)
 
-      expect(config.permission_sets_for(:customer_service)).to be_empty
-    end
-
-    it 'returns the removed permission sets' do
-      config.assign(:customer_service, [permission_set_a, permission_set_b])
-
-      expect(config.clear(:customer_service)).to contain_exactly(permission_set_a, permission_set_b)
-    end
-
-    it 'returns nil for non-existent roles' do
-      expect(config.clear(:nonexistent)).to be_nil
+      expect(configuration.resource(:reviews)).to be_nil
+      expect(configuration.catalog_keys).not_to include('read_reviews')
     end
   end
 
-  describe '#permission_sets_for' do
-    it 'returns an empty array for non-configured roles' do
-      expect(config.permission_sets_for(:unknown)).to eq([])
+  describe '#resolve_key' do
+    it 'resolves read and write keys' do
+      kind, resource = configuration.resolve_key('write_orders')
+      expect(kind).to eq(:write)
+      expect(resource.name).to eq(:orders)
+
+      kind, resource = configuration.resolve_key('read_gift_cards')
+      expect(kind).to eq(:read)
+      expect(resource.name).to eq(:gift_cards)
     end
 
-    it 'returns the assigned permission sets' do
-      config.assign(:admin, permission_set_a)
-
-      expect(config.permission_sets_for(:admin)).to contain_exactly(permission_set_a)
+    it 'returns nil for unknown keys' do
+      expect(configuration.resolve_key('write_bogus')).to be_nil
+      expect(configuration.resolve_key('read_bogus')).to be_nil
+      expect(configuration.resolve_key('bogus')).to be_nil
     end
 
-    it 'normalizes role names' do
-      config.assign(:admin, permission_set_a)
-
-      expect(config.permission_sets_for('ADMIN')).to contain_exactly(permission_set_a)
-    end
-  end
-
-  describe '#permission_sets_for_roles' do
-    it 'combines permission sets from multiple roles' do
-      config.assign(:admin, permission_set_a)
-      config.assign(:merchandiser, permission_set_b)
-
-      expect(config.permission_sets_for_roles([:admin, :merchandiser])).to contain_exactly(permission_set_a, permission_set_b)
-    end
-
-    it 'deduplicates permission sets shared across roles' do
-      config.assign(:admin, permission_set_a)
-      config.assign(:merchandiser, [permission_set_a, permission_set_b])
-
-      expect(config.permission_sets_for_roles([:admin, :merchandiser])).to contain_exactly(permission_set_a, permission_set_b)
-    end
-
-    it 'returns empty array when no roles have permission sets' do
-      expect(config.permission_sets_for_roles([:unknown1, :unknown2])).to eq([])
+    it 'returns nil for a write key on a read-only resource' do
+      expect(configuration.resolve_key('write_dashboard')).to be_nil
     end
   end
 
-  describe '#roles' do
-    it 'returns all configured roles' do
-      config.assign(:admin, permission_set_a)
-      config.assign(:customer_service, permission_set_b)
+  describe '#activate_key' do
+    let(:ability_class) do
+      Class.new do
+        include CanCan::Ability
 
-      expect(config.roles).to contain_exactly(:admin, :customer_service)
+        def initialize; end
+      end
+    end
+    let(:ability) { ability_class.new }
+
+    it 'grants read and admin for a read key' do
+      configuration.activate_key(ability, 'read_orders')
+
+      expect(ability.can?(:read, Spree::Order)).to be true
+      expect(ability.can?(:admin, Spree::Order)).to be true
+      expect(ability.can?(:update, Spree::Order)).to be false
     end
 
-    it 'returns empty array when no roles are configured' do
-      expect(config.roles).to eq([])
+    it 'grants manage for a write key' do
+      configuration.activate_key(ability, 'write_orders')
+
+      expect(ability.can?(:manage, Spree::Order)).to be true
+    end
+
+    it 'returns false for unknown keys' do
+      expect(configuration.activate_key(ability, 'write_bogus')).to be false
     end
   end
 
-  describe '#role_configured?' do
-    it 'returns true for configured roles' do
-      config.assign(:admin, permission_set_a)
-
-      expect(config.role_configured?(:admin)).to be true
+  describe '#expand_keys' do
+    it 'expands write keys to include the read key' do
+      expect(configuration.expand_keys(%w[write_orders])).to eq(%w[read_orders write_orders])
     end
 
-    it 'returns false for non-configured roles' do
-      expect(config.role_configured?(:unknown)).to be false
+    it 'keeps read keys as-is' do
+      expect(configuration.expand_keys(%w[read_orders])).to eq(%w[read_orders])
     end
 
-    it 'returns false for cleared roles' do
-      config.assign(:admin, permission_set_a)
-      config.clear(:admin)
+    it 'drops unknown keys' do
+      expect(configuration.expand_keys(%w[read_orders bogus write_nothing])).to eq(%w[read_orders])
+    end
 
-      expect(config.role_configured?(:admin)).to be false
+    it 'expands write_all to the whole catalog' do
+      expect(configuration.expand_keys(%w[write_all])).to eq(configuration.catalog_keys)
+    end
+
+    it 'expands read_all to every read key' do
+      expanded = configuration.expand_keys(%w[read_all])
+
+      expect(expanded).to include('read_orders', 'read_products', 'read_dashboard')
+      expect(expanded.grep(/\Awrite_/)).to be_empty
+    end
+
+    it 'preserves catalog order' do
+      expect(configuration.expand_keys(%w[write_products read_orders])).to eq(
+        %w[read_orders read_products write_products]
+      )
     end
   end
 
   describe '#reset!' do
-    it 'clears all role permissions' do
-      config.assign(:admin, permission_set_a)
-      config.assign(:customer_service, permission_set_b)
-      config.reset!
+    it 'restores the default catalog' do
+      configuration.register_resource(:reviews, group: :catalog, subjects: [Spree::Product])
+      configuration.reset!
 
-      expect(config.roles).to eq([])
+      expect(configuration.resource(:reviews)).to be_nil
+      expect(configuration.resource(:orders)).to be_present
+    end
+  end
+
+  describe '#assign' do
+    it 'raises with upgrade directions — permission sets were removed in 6.0' do
+      expect { configuration.assign(:admin, []) }.to raise_error(
+        Spree::PermissionConfiguration::PermissionSetsRemovedError, /removed in Spree 6\.0/
+      )
     end
   end
 end

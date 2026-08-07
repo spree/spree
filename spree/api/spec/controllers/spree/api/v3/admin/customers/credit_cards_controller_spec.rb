@@ -47,13 +47,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::CreditCardsController, type: :c
     context 'with a limited-role admin that cannot read customers' do
       include_context 'API v3 Admin with custom permissions'
 
-      let(:custom_permission_set) do
-        Class.new(Spree::PermissionSets::Base) do
-          def activate!
-            can [:read, :admin], Spree::Product
-          end
-        end
-      end
+      let(:custom_permissions) { %w[read_products] }
 
       it 'cannot read another customer\'s credit cards' do
         get :index, params: { customer_id: customer.prefixed_id }, as: :json
