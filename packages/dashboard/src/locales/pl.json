@@ -1192,6 +1192,13 @@
           "label": "Domyślna waga paczki",
           "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy, w jednostce wagi sklepu. 0 wyłącza."
         },
+        "preferred_default_package_dimensions": {
+          "label": "Domyślne wymiary paczki",
+          "length": "Długość",
+          "width": "Szerokość",
+          "height": "Wysokość",
+          "help": "Karton, w którym zwykle wysyłasz, używany przez przewoźników do wyceny wagi wymiarowej — cale dla systemu imperialnego, centymetry dla metrycznego. Działa dopiero po podaniu wszystkich trzech."
+        },
         "storefront_access": {
           "help": "Domyślne ustawienie dla całego sklepu określające, co widzą anonimowi odwiedzający. Kanały mogą je nadpisać. Gdy ceny są ukryte, goście muszą się zalogować, aby sfinalizować zakup.",
           "label": "Dostęp do sklepu",

@@ -8,6 +8,10 @@ export interface StoreUpdateParams {
   preferred_weight_unit?: string
   /** Packaging tare added to every package's content weight for rate calculation, in the store's weight unit. */
   preferred_default_package_weight?: number
+  /** Default package (box) dimensions for carrier dimensional-weight pricing — inches when imperial, centimeters when metric. All three required to take effect. */
+  preferred_default_package_length?: number
+  preferred_default_package_width?: number
+  preferred_default_package_height?: number
   preferred_unit_system?: string
   /**
    * Store-wide default storefront posture: `public`, `prices_hidden`, or

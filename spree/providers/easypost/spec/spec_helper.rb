@@ -44,6 +44,20 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
 
+  # Same as core's spec_helper: Spree::Current (and its provider_cache,
+  # which memoizes carrier calls) must not leak between examples — under
+  # SQLite, rolled-back transactions reuse row ids, so a stale cache entry
+  # can collide with a later example's records.
+  #
+  # @default_store is one shared instance created outside the per-example
+  # transaction: an update! inside an example rolls back in the database
+  # but stays mutated in memory, and the next example's save re-persists
+  # the stale preferences. Reload drops the leak.
+  config.before do
+    Spree::Current.reset
+    @default_store.reload if defined?(@default_store) && @default_store&.persisted?
+  end
+
   config.before(:suite) do
     Spree::Events.disable!
   end

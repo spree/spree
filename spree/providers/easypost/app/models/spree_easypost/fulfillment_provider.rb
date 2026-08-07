@@ -83,7 +83,7 @@ module SpreeEasyPost
       shipment = integration.client.shipment.create(
         from_address: address_params(fulfillment.stock_location),
         to_address: address_params(address),
-        parcel: { weight: SpreeEasyPost.ounces(fulfillment.to_package.weight, fulfillment.order&.store) }
+        parcel: requote_parcel(fulfillment)
       )
       rate = shipment.rates.find do |candidate|
         candidate.carrier == delivery_method.metadata['carrier'] &&
@@ -92,6 +92,10 @@ module SpreeEasyPost
       return if rate.nil?
 
       integration.client.shipment.buy(shipment.id, rate: { id: rate.id })
+    end
+
+    def requote_parcel(fulfillment)
+      SpreeEasyPost.parcel_params(fulfillment.to_package, fulfillment.order&.store)
     end
 
     def remember_purchase(fulfillment, shipment)

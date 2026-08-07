@@ -72,7 +72,7 @@ module SpreeEasyPost
     end
 
     def parcel_params(package)
-      { weight: SpreeEasyPost.ounces(package.weight, store) }
+      SpreeEasyPost.parcel_params(package, store)
     end
   end
 end

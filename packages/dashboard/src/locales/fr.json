@@ -1184,6 +1184,13 @@
           "label": "Poids de colis par défaut",
           "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison, dans l'unité de poids de la boutique. 0 pour désactiver."
         },
+        "preferred_default_package_dimensions": {
+          "label": "Dimensions de colis par défaut",
+          "length": "Longueur",
+          "width": "Largeur",
+          "height": "Hauteur",
+          "help": "Le carton habituel d'expédition, utilisé par les transporteurs pour le poids volumétrique — pouces en impérial, centimètres en métrique. Les trois valeurs sont requises."
+        },
         "storefront_access": {
           "help": "Valeur par défaut à l'échelle de la boutique pour ce que les visiteurs anonymes peuvent voir. Les canaux peuvent la remplacer. Lorsque les prix sont masqués, les invités doivent se connecter pour passer à la caisse.",
           "label": "Accès à la vitrine",
