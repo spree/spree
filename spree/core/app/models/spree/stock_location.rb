@@ -39,7 +39,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[
       name active default kind pickup_enabled
-      country_id state_id created_at updated_at
+      country_iso state_abbr country_id state_id created_at updated_at
     ]
 
     scope :active, -> { where(active: true) }
@@ -53,22 +53,30 @@ module Spree
     after_save :ensure_one_default
     after_update :conditional_touch_records
 
-    delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true, allow_nil: true
-    delegate :abbr, to: :state, prefix: true, allow_nil: true
+    delegate :name, :iso3, :iso_name, to: :country, prefix: true, allow_nil: true
 
-    # Writer methods for API convenience — accept ISO/abbr codes instead of FK IDs.
-    # Mirrors Spree::Address: SDK clients use country_iso/state_abbr because
-    # Country/State don't expose prefixed IDs (their `iso` is the public handle).
+    # Geography is stored as codes, mirroring Spree::Address. The country and
+    # state associations are kept in step until they are dropped in 6.1.
+    # SDK clients use country_iso/state_abbr because Country/State don't expose
+    # prefixed IDs — their `iso` is the public handle.
+    def country_iso
+      super.presence || country&.iso
+    end
+
     def country_iso=(value)
-      @country_iso_input = value
+      super(value.presence&.to_s&.upcase)
+    end
+
+    def state_abbr
+      super.presence || state&.abbr
     end
 
     def state_abbr=(value)
-      @state_abbr_input = value
+      super(value.presence&.to_s&.upcase)
     end
 
     def state_text
-      state.try(:abbr) || state.try(:name) || state_name
+      state_abbr.presence || state.try(:name) || state_name
     end
 
     # Wrapper for creating a new stock item respecting the backorderable config
@@ -209,20 +217,29 @@ module Spree
 
     private
 
+    # Reads the columns rather than the accessors, whose association fallback
+    # would make the first branch always taken once a country is assigned.
     def normalize_country
-      iso = @country_iso_input
-      return if iso.blank?
+      submitted_iso = self[:country_iso].presence
 
-      self.country = Spree::Country.by_iso(iso)
-      @country_iso_input = nil
+      if submitted_iso.present?
+        self.country = Spree::Country.by_iso(submitted_iso) unless country&.iso == submitted_iso
+        self[:country_iso] = country.iso if country
+      elsif country.present?
+        self[:country_iso] = country.iso
+      end
     end
 
     def normalize_state
-      abbr = @state_abbr_input
-      return if abbr.blank? || country.blank?
+      return if country.blank?
 
-      self.state = country.states.find_by(abbr: abbr)
-      @state_abbr_input = nil
+      submitted_abbr = self[:state_abbr].presence
+
+      if submitted_abbr.present?
+        self.state = country.states.find_by(abbr: submitted_abbr) unless state&.abbr == submitted_abbr
+      elsif state.present? && state.country_id == country.id
+        self[:state_abbr] = state.abbr
+      end
     end
 
     def create_stock_items

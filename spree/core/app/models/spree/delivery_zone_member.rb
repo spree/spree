@@ -21,18 +21,24 @@ module Spree
     normalizes :postal_code_prefix, :postal_code_from, :postal_code_to,
                with: ->(value) { Spree::Address.normalize_zipcode(value).presence }
 
+    before_validation :normalize_iso_codes
+
     validates :member_type, presence: true, inclusion: { in: MEMBER_TYPES }
-    validates :country, presence: true, if: -> { member_type.in?(%w[country postal_code]) }
-    validates :state, presence: true, if: -> { member_type == 'state' }
+    validates :country_iso, presence: true, if: -> { member_type.in?(MEMBER_TYPES) }
+    validates :state_abbr, presence: true, if: -> { member_type == 'state' }
     validate :postal_definition, if: -> { member_type == 'postal_code' }
 
     # @param address [Spree::Address]
     # @return [Boolean] whether the address falls inside this member
+    #
+    # A state member compares the country too: a subdivision code is only
+    # unique within its country, so "CA" alone would match California and
+    # several other places.
     def match?(address)
       case member_type
-      when 'country' then address.country_id == country_id
-      when 'state' then address.state_id == state_id
-      when 'postal_code' then address.country_id == country_id && postal_match?(address.normalized_zipcode)
+      when 'country' then same_country?(address)
+      when 'state' then same_country?(address) && address.state_abbr.present? && address.state_abbr == state_abbr
+      when 'postal_code' then same_country?(address) && postal_match?(address.normalized_zipcode)
       else false
       end
     end
@@ -43,6 +49,22 @@ module Spree
     end
 
     private
+
+    def same_country?(address)
+      country_iso.present? && address.country_iso == country_iso
+    end
+
+    # Members can still be built from country/state records, so the codes are
+    # filled from them until those associations go in 6.1. A state supplies its
+    # country as well — see +match?+.
+    def normalize_iso_codes
+      self.country_iso = country.iso if country_iso.blank? && country.present?
+
+      return if state.blank?
+
+      self.state_abbr = state.abbr if state_abbr.blank?
+      self.country_iso = state.country&.iso if country_iso.blank?
+    end
 
     # Stored values are normalized on assignment (see +normalizes+ above), so
     # matching compares normalized against normalized.
@@ -67,7 +89,7 @@ module Spree
         return
       end
 
-      unless country&.iso.present? && range_capable_country_isos.include?(country.iso)
+      unless country_iso.present? && range_capable_country_isos.include?(country_iso)
         errors.add(:base, Spree.t('errors.messages.delivery_zone_range_not_supported'))
         return
       end
