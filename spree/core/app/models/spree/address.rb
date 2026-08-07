@@ -101,6 +101,35 @@ module Spree
       self.class.normalize_zipcode(zipcode)
     end
 
+    # Swaps the +country_iso+ / +state_abbr+ handles for the columns they name,
+    # so a params hash can be handed to query builders like +find_or_create_by+
+    # that accept only real attributes. Assignment doesn't need this — the
+    # writers and their +before_validation+ callbacks already resolve both.
+    #
+    # @param params [Hash]
+    # @return [Hash] params with the ISO handles replaced by country/state ids
+    def self.resolve_geo_params(params)
+      params = params.to_h.symbolize_keys
+      country_iso = params.delete(:country_iso)
+      state_abbr = params.delete(:state_abbr)
+
+      country = Spree::Country.by_iso(country_iso) if country_iso.present?
+      country ||= Spree::Country.find_by(id: params[:country_id]) if params[:country_id].present?
+      params[:country_id] = country.id if country
+
+      if country && state_abbr.present?
+        params[:state_id] = country.states.find_by(abbr: state_abbr)&.id
+      elsif country && params[:state_name].present?
+        matched = country.states.find_by(name: params[:state_name])
+        if matched
+          params[:state_id] = matched.id
+          params.delete(:state_name)
+        end
+      end
+
+      params
+    end
+
     # Writer methods for API convenience - these set country/state from ISO/abbr codes
     # The reader methods (country_iso, state_abbr) are delegates to country.iso and state.abbr
     def country_iso=(value)
@@ -275,12 +304,31 @@ module Spree
       @country_iso_input = nil
     end
 
+    # Resolves the state from whichever handle the caller supplied: the
+    # +state_abbr+ writer, or a +state_name+ that names a real state of this
+    # country. A +state_name+ that matches nothing is left alone — countries
+    # without states keep it as free text, and +state_validate+ decides
+    # whether that is acceptable.
     def normalize_state
-      abbr = @state_abbr_input
-      return if abbr.blank? || country.blank?
+      return if country.blank?
 
-      self.state = country.states.find_by(abbr: abbr)
-      @state_abbr_input = nil
+      abbr = @state_abbr_input
+      if abbr.present?
+        self.state = country.states.find_by(abbr: abbr)
+        @state_abbr_input = nil
+        return
+      end
+
+      return if state_name.blank?
+      # A state already belonging to this country wins; one left over from a
+      # previous country does not, or switching country would keep the old state.
+      return if state.present? && state.country_id == country.id
+
+      matched = country.states.find_by(name: state_name)
+      return if matched.blank?
+
+      self.state = matched
+      self.state_name = nil
     end
 
     def clear_state

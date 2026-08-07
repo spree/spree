@@ -90,7 +90,8 @@ RSpec.describe Spree::Addresses::Update do
         it 'updates address' do
           expect { result }.not_to change(Spree::Address, :count)
           expect(result).to be_success
-          expect(value).to have_attributes(new_address_params)
+          # state_name is promoted to the matching state record, so it clears
+          expect(value).to have_attributes(new_address_params.except(:state_name))
           expect(value.country).to eq(country)
           expect(value.state).to eq(state)
         end
@@ -158,7 +159,8 @@ RSpec.describe Spree::Addresses::Update do
           it 'creates new address and soft-deletes the previous one' do
             expect { result }.to change(Spree::Address.unscoped, :count).by 1
             expect(result).to be_success
-            expect(value).to have_attributes(new_address_params)
+            # state_name is promoted to the matching state record, so it clears
+            expect(value).to have_attributes(new_address_params.except(:state_name))
             expect(value.id).not_to eq(address.id)
             expect(value.country).to eq(country)
             expect(value.state).to eq(state)
