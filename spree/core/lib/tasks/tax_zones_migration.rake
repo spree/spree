@@ -55,5 +55,53 @@ namespace :spree do
 
     puts "  Converted #{converted} tax rates, split #{duplicated} extra rate(s) off multi-jurisdiction zones, " \
          "skipped #{skipped}."
+
+    # Price lists could also be restricted by zone. Those rules now decide by
+    # country, so restate each one as the countries its zones contained. A
+    # zone that named individual states becomes those states' countries, which
+    # widens the rule — reported below so the merchant can narrow it by hand.
+    # Both id lists go through their model, so a member pointing at a deleted
+    # country or state drops out instead of being written back as a live
+    # reference.
+    countries_for = lambda do |zone_ids|
+      members = Spree::ZoneMember.where(zone_id: zone_ids)
+      country_ids = Spree::Country.where(
+        id: members.where(zoneable_type: 'Spree::Country').pluck(:zoneable_id)
+      ).pluck(:id)
+      state_country_ids = Spree::State.where(
+        id: members.where(zoneable_type: 'Spree::State').pluck(:zoneable_id)
+      ).pluck(:country_id)
+
+      [(country_ids + state_country_ids).uniq.map(&:to_s), state_country_ids.any?]
+    end
+
+    rules_converted = 0
+    rules_widened = 0
+    rules_unrestricted = 0
+
+    Spree::PriceRules::ZoneRule.find_each do |rule|
+      stored = rule.preferences.with_indifferent_access
+      zone_ids = Array(stored[:zone_ids]).reject(&:blank?)
+      next if stored[:country_ids].present? || zone_ids.empty?
+
+      country_ids, from_states = countries_for.call(zone_ids)
+      rule.update_columns(
+        preferences: stored.except(:zone_ids).merge(country_ids: country_ids).to_h.symbolize_keys,
+        updated_at: Time.current
+      )
+      rules_converted += 1
+      rules_widened += 1 if from_states
+      # A zone that was deleted, or had no members, leaves nothing to restrict
+      # by, so the rule stops narrowing its price list at all. Called out
+      # because it is the one outcome here a merchant would not predict.
+      rules_unrestricted += 1 if country_ids.empty?
+    end
+
+    puts "  Restated #{rules_converted} zone price rule(s) as countries " \
+         "(#{rules_widened} widened from state-level zones — review those price lists)."
+    if rules_unrestricted.positive?
+      puts "  #{rules_unrestricted} of them named zones that no longer resolve to any country, so " \
+           'those price lists now apply everywhere — set their countries by hand.'
+    end
   end
 end

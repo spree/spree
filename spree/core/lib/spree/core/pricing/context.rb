@@ -1,24 +1,24 @@
 module Spree
   module Pricing
     class Context
-      attr_reader :variant, :currency, :store, :zone, :market, :channel, :user, :quantity, :date, :order
+      attr_reader :variant, :currency, :store, :country, :market, :channel, :user, :quantity, :date, :order
 
       # Initializes the context
       # @param variant [Spree::Variant]
       # @param currency [String]
       # @param store [Spree::Store]
-      # @param zone [Spree::Zone]
+      # @param country [Spree::Country] where the buyer is taxed
       # @param market [Spree::Market]
       # @param channel [Spree::Channel]
       # @param user [Spree::User]
       # @param quantity [Integer]
       # @param date [Time]
       # @param order [Spree::Order]
-      def initialize(variant: nil, currency:, store: nil, zone: nil, market: nil, channel: nil, user: nil, quantity: nil, date: nil, order: nil)
+      def initialize(variant: nil, currency:, store: nil, country: nil, market: nil, channel: nil, user: nil, quantity: nil, date: nil, order: nil)
         @variant = variant
         @currency = currency
         @store = store || Spree::Current.store
-        @zone = zone || Spree::Current.zone
+        @country = country || Spree::Current.tax_country
         @market = market || Spree::Current.market
         @channel = channel || Spree::Current.channel
         @user = user
@@ -40,7 +40,7 @@ module Spree
           variant: variant,
           currency: order.currency,
           store: order.store,
-          zone: order.tax_zone || Spree::Zone.default_tax,
+          country: order.tax_country,
           channel: order.channel,
           user: order.user,
           quantity: quantity || order.line_items.find_by(variant: variant)&.quantity,
@@ -57,7 +57,7 @@ module Spree
           variant.id,
           currency,
           store&.id,
-          zone&.id,
+          country&.id,
           market&.id,
           channel&.id,
           user&.id,

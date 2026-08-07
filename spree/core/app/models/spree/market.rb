@@ -93,14 +93,6 @@ module Spree
       countries.order(:name).first
     end
 
-    # Returns the tax zone matching this market's default country.
-    # Used by Spree::Current to determine the browsing tax zone before a customer enters an address.
-    #
-    # @return [Spree::Zone, nil]
-    def tax_zone
-      @tax_zone ||= Spree::Zone.match(default_country)
-    end
-
     # The tax engine that computes for this market. A fresh instance per call:
     # providers are stateless and argless, so the market selects which class
     # rather than constructing state — everything request-specific arrives as an

@@ -41,74 +41,32 @@ RSpec.describe Spree::Current do
     end
   end
 
-  describe '#zone' do
-    context 'when zone is set' do
-      let(:zone) { create(:zone) }
+  describe '#tax_country' do
+    context 'when tax_country is set' do
+      let(:country) { create(:country) }
 
-      before { described_class.zone = zone }
+      before { described_class.tax_country = country }
 
-      it 'returns the set zone' do
-        expect(described_class.zone).to eq(zone)
+      it 'returns the set country' do
+        expect(described_class.tax_country).to eq(country)
       end
     end
 
-    context 'when zone is not set' do
-      let!(:default_zone) { create(:zone, default_tax: true) }
+    context 'when tax_country is not set' do
+      let!(:store) { create(:store, default: true) }
+      let(:market) { create(:market, store: store) }
 
-      it 'returns the default tax zone' do
-        expect(described_class.zone).to eq(default_zone)
-      end
-    end
+      it 'falls back to the market being browsed' do
+        described_class.market = market
 
-    context 'when zone is not set and no default tax zone exists' do
-      before do
-        Spree::Zone.update_all(default_tax: false)
+        expect(described_class.tax_country).to eq(market.default_country)
       end
 
-      it 'returns nil' do
-        expect(described_class.zone).to be_nil
-      end
-    end
-  end
+      it 'falls back to the store country when the market has none' do
+        allow(market).to receive(:default_country).and_return(nil)
+        described_class.market = market
 
-  describe '#default_tax_zone' do
-    context 'when default_tax_zone is explicitly set' do
-      let(:zone) { create(:zone) }
-
-      before { described_class.default_tax_zone = zone }
-
-      it 'returns the set zone' do
-        expect(described_class.default_tax_zone).to eq(zone)
-      end
-    end
-
-    context 'when default_tax_zone is not set' do
-      let!(:default_zone) { create(:zone, default_tax: true) }
-
-      it 'returns the default tax zone from the database' do
-        expect(described_class.default_tax_zone).to eq(default_zone)
-      end
-
-      it 'memoizes the result' do
-        described_class.default_tax_zone
-
-        expect(Spree::Zone).not_to receive(:find_by)
-        described_class.default_tax_zone
-      end
-    end
-
-    context 'when no default tax zone exists' do
-      before { Spree::Zone.update_all(default_tax: false) }
-
-      it 'returns nil' do
-        expect(described_class.default_tax_zone).to be_nil
-      end
-
-      it 'does not re-query on subsequent calls' do
-        described_class.default_tax_zone
-
-        expect(Spree::Zone).not_to receive(:find_by)
-        described_class.default_tax_zone
+        expect(described_class.tax_country).to eq(store.default_country)
       end
     end
   end
@@ -203,13 +161,11 @@ RSpec.describe Spree::Current do
 
   describe '#global_pricing_context' do
     let!(:store) { create(:store, default: true, default_currency: 'USD') }
-    let(:zone) { create(:zone, default_tax: true) }
     let(:market) { create(:market, store: store) }
 
     before do
       described_class.store = store
       described_class.currency = 'USD'
-      described_class.zone = zone
       described_class.market = market
     end
 
@@ -225,8 +181,15 @@ RSpec.describe Spree::Current do
       expect(described_class.global_pricing_context.currency).to eq('USD')
     end
 
-    it 'uses the current zone' do
-      expect(described_class.global_pricing_context.zone).to eq(zone)
+    it 'uses the country whose tax applies' do
+      described_class.tax_country = create(:country, iso: 'PT', name: 'Portugal')
+
+      expect(described_class.global_pricing_context.country.iso).to eq('PT')
+    end
+
+    it 'falls back to the market country when none was set' do
+      expect(described_class.global_pricing_context.country).to eq(market.default_country)
+      expect(described_class.global_pricing_context.country).to be_present
     end
 
     it 'uses the current market' do
@@ -282,12 +245,12 @@ RSpec.describe Spree::Current do
 
   describe '.reset' do
     let(:store) { create(:store) }
-    let(:zone) { create(:zone) }
+    let(:country) { create(:country) }
 
     before do
       described_class.store = store
       described_class.currency = 'EUR'
-      described_class.zone = zone
+      described_class.tax_country = country
     end
 
     it 'resets all attributes' do
@@ -300,8 +263,8 @@ RSpec.describe Spree::Current do
       # Currency falls back to store default
       expect(described_class.currency).not_to eq('EUR')
 
-      # Zone falls back to default tax zone
-      expect(described_class.zone).not_to eq(zone)
+      # Tax country falls back to the store's own
+      expect(described_class.tax_country).not_to eq(country)
     end
 
     it 'clears memoized price_lists' do
@@ -322,15 +285,6 @@ RSpec.describe Spree::Current do
 
       # After reset, global_pricing_context should be fetched fresh
       expect(described_class.instance_variable_get(:@global_pricing_context)).to be_nil
-    end
-
-    it 'clears memoized default_tax_zone' do
-      create(:zone, default_tax: true)
-      described_class.default_tax_zone
-
-      described_class.reset
-
-      expect(described_class.instance.instance_variable_get(:@default_tax_zone_loaded)).to be false
     end
   end
 end

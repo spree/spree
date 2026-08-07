@@ -38,7 +38,6 @@ module Spree
     include Spree::NumberIdentifier
 
     publishes_lifecycle_events
-    include Spree::MemoizedData
     include Spree::Metafields
     include Spree::Metadata
     include Spree::Searchable
@@ -51,8 +50,6 @@ module Spree
 
     has_secure_token :token, length: 35
     has_rich_text :internal_note
-
-    MEMOIZED_METHODS = %w(tax_zone)
 
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,

@@ -22,10 +22,6 @@ module Spree
 
     self.whitelisted_ransackable_attributes = ['description']
 
-    def self.default_tax
-      Spree::Current.default_tax_zone
-    end
-
     def self.potential_matching_zones(zone)
       if zone.country?
         # Match zones of the same kind with similar countries

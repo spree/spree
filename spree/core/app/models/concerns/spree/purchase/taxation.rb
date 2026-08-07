@@ -10,11 +10,6 @@ module Spree
         Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
       end
 
-      # @return [Spree::Zone, nil]
-      def tax_zone
-        @tax_zone ||= Spree::Zone.match(tax_address) || Spree::Zone.default_tax
-      end
-
       # The country whose tax applies. Before the customer enters an address
       # that is the market's own country, which is what lets a storefront show
       # tax-inclusive prices from the first page view.

@@ -71,7 +71,6 @@ module Spree
     def thumbnail
       variant.primary_media || product.primary_media
     end
-    delegate :tax_zone, to: :owner
     delegate :digital?, :can_supply?, to: :variant
 
     scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }

@@ -147,23 +147,6 @@ describe Spree::Zone, type: :model do
     end
   end
 
-  context '.default_tax' do
-    context 'when there is a default tax zone specified' do
-      before { @foo_zone = create(:zone, name: 'whatever', default_tax: true) }
-
-      it 'is the correct zone' do
-        create(:zone, name: 'foo')
-        expect(Spree::Zone.default_tax).to eq(@foo_zone)
-      end
-    end
-
-    context 'when there is no default tax zone specified' do
-      it 'is nil' do
-        expect(Spree::Zone.default_tax).to be_nil
-      end
-    end
-  end
-
   context '#contains?' do
     let(:country1) { create(:country) }
     let(:country2) { create(:country) }

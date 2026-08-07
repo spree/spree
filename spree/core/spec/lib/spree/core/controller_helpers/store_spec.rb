@@ -110,76 +110,44 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
 
     after { Spree::Current.reset }
 
-    context 'when there is a default tax zone' do
-      let(:default_zone) { Spree::Zone.new }
+    context 'without a current order' do
+      let(:browsing_country) { create(:country) }
 
-      before do
-        allow(Spree::Zone).to receive(:default_tax).and_return(default_zone)
+      it 'falls back to the browsing context' do
+        Spree::Current.tax_country = browsing_country
+
+        expect(subject).to include(country: browsing_country)
       end
 
-      context 'when there is no current order' do
-        it 'returns the default tax zone' do
-          expect(subject).to include(tax_zone: default_zone)
-        end
-
-        it 'sets Spree::Current.zone to the default tax zone' do
-          subject
-          expect(Spree::Current.zone).to eq(default_zone)
-        end
+      # The resolved country is written back so everything later in the request
+      # prices against the same one.
+      it 'resolves and publishes the store country when nothing is set yet' do
+        expect(subject[:country]).to eq(Spree::Store.default.default_country)
+        expect(Spree::Current.attributes[:tax_country]).to eq(subject[:country])
       end
 
-      context 'when there is a current order' do
-        let(:other_zone) { Spree::Zone.new }
-        let(:current_order) { Spree::Order.new }
+      it 'reports no country when there is none to resolve' do
+        allow(Spree::Current).to receive(:tax_country).and_return(nil)
 
-        before do
-          allow(current_order).to receive(:tax_zone).and_return(other_zone)
-          allow(controller).to receive(:current_order).and_return(current_order)
-          controller.instance_variable_set(:@current_order, current_order)
-        end
-
-        it { is_expected.to include(tax_zone: other_zone) }
-
-        it 'sets Spree::Current.zone to the order tax zone' do
-          subject
-          expect(Spree::Current.zone).to eq(other_zone)
-        end
+        expect(subject).to include(country: nil)
       end
     end
 
-    context 'when there is no default tax zone' do
+    context 'with a current order' do
+      let(:order_country) { create(:country) }
+      let(:current_order) { Spree::Order.new }
+
       before do
-        allow(Spree::Zone).to receive(:default_tax).and_return(nil)
+        allow(current_order).to receive(:tax_country).and_return(order_country)
+        allow(controller).to receive(:current_order).and_return(current_order)
+        controller.instance_variable_set(:@current_order, current_order)
       end
 
-      context 'when there is no current order' do
-        it 'returns nil when asked for the current tax zone' do
-          expect(current_price_options[:tax_zone]).to be_nil
-        end
+      it { is_expected.to include(country: order_country) }
 
-        it 'sets Spree::Current.zone to nil' do
-          subject
-          # Spree::Current.zone will call default_tax again, so we check the attributes hash
-          expect(Spree::Current.attributes[:zone]).to be_nil
-        end
-      end
-
-      context 'when there is a current order' do
-        let(:other_zone) { Spree::Zone.new }
-        let(:current_order) { Spree::Order.new }
-
-        before do
-          allow(current_order).to receive(:tax_zone).and_return(other_zone)
-          allow(controller).to receive(:current_order).and_return(current_order)
-          controller.instance_variable_set(:@current_order, current_order)
-        end
-
-        it { is_expected.to include(tax_zone: other_zone) }
-
-        it 'sets Spree::Current.zone to the order tax zone' do
-          subject
-          expect(Spree::Current.zone).to eq(other_zone)
-        end
+      it 'publishes the order country to the request context' do
+        subject
+        expect(Spree::Current.tax_country).to eq(order_country)
       end
     end
   end

@@ -1,3 +1,40 @@
+## 2026-08-07: The pricing zone dimension ships with the tax provider, but the price-rule design stays with delivery-zones
+
+`6.0-delivery-zones.md`'s ownership table gives the `Pricing::Context` zone
+dimension and the `Spree::Current` zone attribute to that plan, "with
+tax-provider". It landed in the tax provider work instead, because the two
+cannot be separated: `Pricing::Context.from_order` read `order.tax_zone`, so it
+broke the moment `Purchase::Taxation#tax_zone` was removed — which the same
+table assigns to the tax plan.
+
+`Spree::Current.tax_country` returns a `Spree::Country` rather than the ISO
+string that plan's constraints section specified, matching the already-shipped
+`Purchase::Taxation#tax_country`. An ISO code would mean a country lookup on
+every read, and the price rule compares stored ids.
+
+**Where the line was drawn.** `PriceRules::ZoneRule` also reads the zone
+dimension, so it had to change or crash. It now decides by country, keeps its
+class name (the `type` column persists it), stays out of the rule registry, and
+`spree:migrate_tax_zones` restates each row's stored zones as the countries they
+contained — state-level zones widen to the whole country, which the task
+reports. What was **not** done: promoting it to a first-class `CountryRule` with
+a factory and a registry entry. That is a customer-visible pricing feature no
+plan called for, and it belongs to the plan that owns Zone's removal.
+
+**Constraint going forward:** "something must change or it crashes" licenses the
+minimum that keeps it working, not a redesign. When a forced edit reaches into
+another plan's surface, do the minimum and hand the design decision back in that
+plan's own document.
+
+**Corollary (2026-08-07).** The same reasoning ruled out guarding the window
+between `db:migrate` and the data task. A review found that an unconverted rule
+matches every country, and the first fix made such a row refuse to apply. That
+was also scope creep: the 6.0 data tasks are steps in the upgrade manifest, so
+"code deployed, task not yet run" is not a state Spree supports, and inventing
+behaviour for it adds a permanent branch to a hot path to cover a transient.
+Don't design for half-upgraded installs; make the task correct and say what it
+did.
+
 ## 2026-08-06: A product type's `required` custom field is advisory — no server-side enforcement
 
 Reverses the "enforced at activation" position taken earlier the same day

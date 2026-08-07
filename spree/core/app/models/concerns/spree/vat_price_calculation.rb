@@ -31,8 +31,7 @@ module Spree
       amount * (1 + foreign_vat(price_options))
     end
 
-    # Whether the price has to be restated at all. The zone in price_options is
-    # the browsing context's; what matters for tax is the country behind it.
+    # Whether the price has to be restated at all.
     def outside_default_vat_zone?(price_options)
       country = country_from(price_options)
 
@@ -44,20 +43,24 @@ module Spree
       if price_options[:address]
         lookup[:address] = price_options[:address]
       else
-        lookup[:country] = price_options[:country] || country_from(price_options)
+        lookup[:country] = country_from(price_options)
       end
 
       Spree::TaxRate.included_tax_amount_for(lookup).to_f
     end
 
+    # +current_price_options+ is documented as an override point, so an app may
+    # still be handing us the pre-6.0 zone. Say so instead of quietly reporting
+    # no country, which would leave a foreign customer looking at home VAT.
     def country_from(price_options)
-      return price_options[:country] if price_options[:country]
-      return price_options[:address].country if price_options[:address]
+      if price_options[:tax_zone].present? && price_options[:country].blank? && price_options[:address].blank?
+        Spree::Deprecation.warn(
+          'Passing tax_zone: in price options no longer determines tax and is ignored. ' \
+          'Pass country: (a Spree::Country) or address: instead.'
+        )
+      end
 
-      # A zone can span several countries; its own country list is the only
-      # thing to read, and a single-country zone is the case that matters here.
-      zone = price_options[:tax_zone]
-      zone&.countries&.first
+      price_options[:country] || price_options[:address]&.country
     end
 
     # The country whose VAT the catalogue prices already include. Deliberately

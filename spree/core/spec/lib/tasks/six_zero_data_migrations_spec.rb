@@ -195,6 +195,66 @@ describe '6.0 data migration tasks' do
 
       expect { run_task('spree:migrate_tax_zones') }.not_to change(Spree::TaxRate, :count)
     end
+
+    context 'price rules restricted by zone' do
+      let(:price_list) { create(:price_list) }
+
+      def legacy_rule(zone)
+        create(:zone_price_rule, price_list: price_list).tap do |rule|
+          rule.update_columns(preferences: { zone_ids: [zone.id.to_s] })
+        end
+      end
+
+      it 'restates the zone as the countries it contained' do
+        rule = legacy_rule(zone_with(germany, france))
+
+        run_task('spree:migrate_tax_zones')
+
+        expect(rule.reload.preferred_country_ids).to contain_exactly(germany.id.to_s, france.id.to_s)
+      end
+
+      # A state-level zone can only be expressed as its states' countries,
+      # which lets the rule through for the rest of that country too.
+      it 'widens a state-level zone to the country' do
+        state = create(:state, country: germany, abbr: 'BE', name: 'Berlin')
+        rule = legacy_rule(zone_with(state))
+
+        run_task('spree:migrate_tax_zones')
+
+        expect(rule.reload.preferred_country_ids).to eq([germany.id.to_s])
+      end
+
+      it 'is idempotent over a legacy row' do
+        rule = legacy_rule(zone_with(germany))
+        run_task('spree:migrate_tax_zones')
+        converted = rule.reload.preferred_country_ids
+
+        run_task('spree:migrate_tax_zones')
+
+        expect(rule.reload.preferred_country_ids).to eq(converted)
+        expect(rule.reload.preferences).not_to have_key(:zone_ids)
+      end
+
+      it 'leaves a rule the merchant already set countries on alone' do
+        rule = create(:zone_price_rule, price_list: price_list, country_ids: [france.id])
+
+        run_task('spree:migrate_tax_zones')
+
+        expect(rule.reload.preferred_country_ids).to eq([france.id.to_s])
+      end
+
+      # A zone that was deleted and one that never had members both leave no
+      # country to restrict by, so the rule stops narrowing its price list.
+      # The task reports the count; there is nothing to fall back on.
+      it 'clears a rule whose zones resolve to no country' do
+        rule = legacy_rule(zone_with)
+
+        run_task('spree:migrate_tax_zones')
+
+        expect(rule.reload.preferred_country_ids).to be_empty
+        expect(rule.preferences).not_to have_key(:zone_ids)
+      end
+    end
   end
 
   describe 'spree:migrate_zones_to_delivery_zones' do

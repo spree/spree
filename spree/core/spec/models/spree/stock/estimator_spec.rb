@@ -158,11 +158,6 @@ module Spree
         end
 
         context 'includes tax adjustments if applicable' do
-          let!(:default_tax_zone) do
-            create(:zone, default_tax: true, kind: 'country').tap do |zone|
-              zone.zone_members.create!(zoneable: ship_address.country)
-            end
-          end
           let!(:tax_rate) { create(:tax_rate, country: order.tax_address.country) }
 
           before do

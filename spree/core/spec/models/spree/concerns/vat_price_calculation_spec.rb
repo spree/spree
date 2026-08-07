@@ -70,22 +70,6 @@ module Spree
             gross_amount
           end
         end
-
-        context 'and the destination came in as a zone' do
-          let(:price_options) { { tax_zone: zone, tax_category: tax_category } }
-          let(:zone) do
-            create(:zone, kind: 'country').tap { |zone| zone.zone_members.create!(zoneable: destination) }
-          end
-
-          it 'still restates the price, reading the country off the zone' do
-            create(:tax_rate, country: home_country, tax_category: tax_category, amount: 0.19,
-                              included_in_price: true)
-            create(:tax_rate, country: destination, tax_category: tax_category, amount: 0.25,
-                              included_in_price: true)
-
-            expect(gross_amount).to eq(105.04)
-          end
-        end
       end
     end
   end

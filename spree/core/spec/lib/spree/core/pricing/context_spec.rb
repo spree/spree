@@ -6,7 +6,7 @@ module Spree
       let(:variant) { create(:variant) }
       let(:currency) { 'USD' }
       let(:store) { @default_store }
-      let(:zone) { create(:zone) }
+      let(:country) { create(:country) }
       let(:market) { create(:market, store: store) }
       let(:channel) { create(:channel, store: store) }
       let(:user) { create(:user) }
@@ -22,7 +22,7 @@ module Spree
               variant: variant,
               currency: currency,
               store: store,
-              zone: zone,
+              country: country,
               market: market,
               channel: channel,
               user: user,
@@ -35,7 +35,7 @@ module Spree
             expect(subject.variant).to eq(variant)
             expect(subject.currency).to eq(currency)
             expect(subject.store).to eq(store)
-            expect(subject.zone).to eq(zone)
+            expect(subject.country).to eq(country)
             expect(subject.market).to eq(market)
             expect(subject.channel).to eq(channel)
             expect(subject.user).to eq(user)
@@ -58,8 +58,8 @@ module Spree
             expect(subject.store).to eq(Spree::Current.store)
           end
 
-          it 'defaults zone to Spree::Current.zone' do
-            expect(subject.zone).to eq(Spree::Current.zone)
+          it 'defaults country to Spree::Current.tax_country' do
+            expect(subject.country).to eq(Spree::Current.tax_country)
           end
 
           it 'defaults market to Spree::Current.market' do
@@ -95,17 +95,17 @@ module Spree
           end
         end
 
-        context 'when Spree::Current.zone is set' do
-          let(:current_zone) { create(:zone) }
+        context 'when Spree::Current.tax_country is set' do
+          let(:current_country) { create(:country) }
 
-          before { Spree::Current.zone = current_zone }
+          before { Spree::Current.tax_country = current_country }
 
           subject do
             described_class.new(variant: variant, currency: currency)
           end
 
-          it 'uses Spree::Current.zone as default' do
-            expect(subject.zone).to eq(current_zone)
+          it 'uses Spree::Current.tax_country as default' do
+            expect(subject.country).to eq(current_country)
           end
         end
 
@@ -180,27 +180,30 @@ module Spree
           expect(subject.quantity).to eq(order_quantity)
         end
 
-        context 'with zone from order tax_zone' do
-          let(:tax_zone) { create(:zone) }
+        context 'with country from order tax_country' do
+          let(:tax_country) { create(:country) }
 
           before do
-            allow(order).to receive(:tax_zone).and_return(tax_zone)
+            allow(order).to receive(:tax_country).and_return(tax_country)
           end
 
-          it 'sets zone from order tax_zone' do
-            expect(subject.zone).to eq(tax_zone)
+          it 'sets country from order tax_country' do
+            expect(subject.country).to eq(tax_country)
           end
         end
 
-        context 'when order has no tax zone' do
-          let!(:default_tax_zone) { create(:zone, default_tax: true) }
+        context 'when the order has no tax country' do
+          let!(:browsing_country) { create(:country, iso: 'PT', name: 'Portugal') }
 
           before do
-            allow(order).to receive(:tax_zone).and_return(nil)
+            allow(order).to receive(:tax_country).and_return(nil)
+            Spree::Current.tax_country = browsing_country
           end
 
-          it 'falls back to default tax zone' do
-            expect(subject.zone).to eq(default_tax_zone)
+          after { Spree::Current.reset }
+
+          it 'falls back to the browsing context' do
+            expect(subject.country).to eq(browsing_country)
           end
         end
 
@@ -232,7 +235,7 @@ module Spree
               variant: variant,
               currency: currency,
               store: store,
-              zone: zone,
+              country: country,
               market: market,
               channel: channel,
               user: user,
@@ -248,7 +251,7 @@ module Spree
               variant.id,
               currency,
               store.id,
-              zone.id,
+              country.id,
               market.id,
               channel.id,
               user.id,
@@ -274,7 +277,7 @@ module Spree
                 currency,
                 Spree::Current.store.id
               ]
-              expected_parts << Spree::Current.zone.id if Spree::Current.zone
+              expected_parts << Spree::Current.tax_country.id if Spree::Current.tax_country
               expected_parts << Spree::Current.market.id if Spree::Current.market
               expected_parts << Spree::Current.channel.id if Spree::Current.channel
               expected_parts << Time.current.to_i
@@ -303,7 +306,7 @@ module Spree
                 currency,
                 Spree::Current.store.id
               ]
-              expected_parts << Spree::Current.zone.id if Spree::Current.zone
+              expected_parts << Spree::Current.tax_country.id if Spree::Current.tax_country
               expected_parts << Spree::Current.market.id if Spree::Current.market
               expected_parts << Spree::Current.channel.id if Spree::Current.channel
               expected_parts << user.id
