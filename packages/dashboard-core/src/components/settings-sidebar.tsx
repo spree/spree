@@ -56,9 +56,12 @@ export function SettingsSidebar({ open }: { open: boolean }) {
           : 'lg:w-0 border-e-0 border-transparent',
       )}
     >
+      {/* `quiet-scrollbar` rather than the browser default: this nav is an
+          inset panel beside the primary sidebar, and a full-width native
+          scrollbar cuts a heavy grey stripe down the middle of the chrome. */}
       <div
         className={cn(
-          'flex h-full w-(--spacing-sidebar-width) flex-col gap-2 overflow-y-auto py-2 transition-opacity duration-200',
+          'quiet-scrollbar flex h-full w-(--spacing-sidebar-width) flex-col gap-2 overflow-y-auto py-2 transition-opacity duration-200',
           open ? 'opacity-100 delay-100' : 'pointer-events-none opacity-0',
         )}
       >

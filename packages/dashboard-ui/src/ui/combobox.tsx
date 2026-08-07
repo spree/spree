@@ -100,6 +100,12 @@ function ComboboxContent({
           data-slot="combobox-content"
           data-chips={!!anchor}
           className={cn(
+            // Deliberately keeps `animate-in`/`animate-out` keyframes where the
+            // other floating surfaces use transitions. Converting this one to
+            // `data-[starting-style]` transitions broke the multi-select chips
+            // picker: the list re-renders as the user filters, and options
+            // arriving mid-transition sit at `opacity-0` long enough to be
+            // unclickable. The keyframes make the panel opaque immediately.
             'group/combobox-content relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) overflow-hidden rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[chips=true]:min-w-(--anchor-width) data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 *:data-[slot=input-group]:m-1 *:data-[slot=input-group]:mb-0 *:data-[slot=input-group]:h-8 *:data-[slot=input-group]:border-input/30 *:data-[slot=input-group]:bg-input/30 *:data-[slot=input-group]:shadow-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
             className,
           )}
@@ -197,7 +203,13 @@ function ComboboxChips({
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
       className={cn(
-        'flex flex-wrap items-center gap-1 rounded-lg border border-border bg-card text-foreground shadow-xs px-2.5 py-1.5 text-base transition-all duration-100 ease-in-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:px-1',
+        // Keeps `transition-all` where the sibling inputs narrowed theirs: this
+        // element is the popup's anchor, and adding a chip reflows it
+        // (`flex-wrap`, `has-data-[slot=combobox-chip]:px-1`). Animating that
+        // resize lets the positioner follow the anchor smoothly; making it
+        // instant jumps the open popup out from under the pointer, so the next
+        // option click lands on nothing.
+        'flex flex-wrap items-center gap-1 rounded-lg border border-border bg-card text-foreground shadow-xs px-2.5 py-1.5 text-base transition-all duration-100 ease-out focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] has-aria-invalid:border-destructive has-data-[slot=combobox-chip]:px-1',
         className,
       )}
       {...props}

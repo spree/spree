@@ -3,6 +3,7 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,6 +13,7 @@ import {
   LanguageMenuItems,
   SidebarTrigger,
   ThemeMenuItems,
+  usePrefersReducedMotion,
 } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import {
@@ -30,6 +32,7 @@ import { useSwitchAdminLocale } from '../hooks/use-switch-admin-locale'
 import { getInitials } from '../lib/formatters'
 import { i18n } from '../lib/i18n'
 import { storefrontHref } from '../lib/storefront'
+import { useStickyHeader } from '../providers/sticky-header-provider'
 import { useStore } from '../providers/store-provider'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
@@ -52,8 +55,31 @@ export function TopBar({
 }: {
   uiLocales?: ReadonlyArray<{ code: string; name: string }>
 }) {
+  // Give the vertical space back to the page: once the user scrolls a detail
+  // page, the PageHeader below carries the title and the primary actions, so
+  // the search/account bar retreats out of the viewport rather than parking a
+  // second band of chrome above it. The provider owns this flag so both bars
+  // move off one signal; it stays false on pages with no PageHeader to take
+  // over (list views), where hiding the bar would cost a header and give
+  // nothing back.
+  const { collapsed } = useStickyHeader()
+  const prefersReducedMotion = usePrefersReducedMotion()
+  // Under reduced motion the bar simply stays — sliding it is the movement
+  // the setting asks us to drop, and cutting only the transition would
+  // replace the slide with a jump, which is worse.
+  const hidden = collapsed && !prefersReducedMotion
+
   return (
-    <header className="sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header
+      className={cn(
+        'sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/75',
+        'transition-transform duration-200 ease-out motion-reduce:transition-none',
+        hidden && '-translate-y-full',
+      )}
+      // Hidden from assistive tech and out of the tab order while off-screen,
+      // so keyboard focus can't land on a control the user cannot see.
+      inert={hidden || undefined}
+    >
       <SidebarTrigger className="-ml-1 h-8 w-8" />
 
       <div className="flex flex-1 justify-center">

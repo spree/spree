@@ -22,7 +22,15 @@ const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 type SidebarContextProps = {
   state: 'expanded' | 'collapsed'
   open: boolean
+  /** Sets the state and remembers it as the user's preference. */
   setOpen: (open: boolean) => void
+  /**
+   * Sets the state without remembering it. For collapses the app imposes on
+   * the user's behalf (e.g. the settings area folding the nav to icons to make
+   * room for its own): the merchant's own choice, made through the trigger,
+   * must survive it.
+   */
+  setOpenTransient: (open: boolean) => void
   openMobile: boolean
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
@@ -64,19 +72,34 @@ function SidebarProvider({
     return defaultOpen
   })
   const open = openProp ?? _open
+
+  // The updater form needs the current value, but reading it from a ref rather
+  // than closing over it keeps the setters referentially stable — effects that
+  // depend on them (e.g. the settings auto-collapse) must fire on their own
+  // trigger, not again on every toggle.
+  const openRef = React.useRef(open)
+  openRef.current = open
+  const setOpenPropRef = React.useRef(setOpenProp)
+  setOpenPropRef.current = setOpenProp
+
+  const setOpenTransient = React.useCallback((value: boolean | ((value: boolean) => boolean)) => {
+    const openState = typeof value === 'function' ? value(openRef.current) : value
+    if (setOpenPropRef.current) {
+      setOpenPropRef.current(openState)
+    } else {
+      _setOpen(openState)
+    }
+    return openState
+  }, [])
+
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
-      const openState = typeof value === 'function' ? value(open) : value
-      if (setOpenProp) {
-        setOpenProp(openState)
-      } else {
-        _setOpen(openState)
-      }
+      const openState = setOpenTransient(value)
 
       // This sets the cookie to keep the sidebar state.
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
     },
-    [setOpenProp, open],
+    [setOpenTransient],
   )
 
   // Helper to toggle the sidebar.
@@ -106,12 +129,13 @@ function SidebarProvider({
       state,
       open,
       setOpen,
+      setOpenTransient,
       isMobile,
       openMobile,
       setOpenMobile,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+    [state, open, setOpen, setOpenTransient, isMobile, openMobile, setOpenMobile, toggleSidebar],
   )
 
   return (
@@ -273,7 +297,7 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'button'>) {
       onClick={toggleSidebar}
       title={i18n.t('admin.a11y.toggle_sidebar')}
       className={cn(
-        'absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2',
+        'absolute inset-y-0 z-20 hidden w-4 transition-colors duration-100 ease-out group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:start-1/2 after:w-[2px] hover:after:bg-sidebar-border sm:flex ltr:-translate-x-1/2 rtl:-translate-x-1/2',
         'in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize',
         '[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize',
         'group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full hover:group-data-[collapsible=offcanvas]:bg-sidebar',
@@ -454,7 +478,12 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  'peer/menu-button group/menu-button flex gap-2 w-full items-center overflow-hidden rounded-xl p-1 text-left text-base text-sidebar-foreground/80 outline-hidden transition-colors duration-100 ease-in-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-visible group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:[&>span:last-child]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-foreground data-active:bg-sidebar-accent data-active:text-foreground data-active:font-semibold [&>span:last-child]:truncate',
+  // `whitespace-nowrap` matters during the collapse: the width animates over
+  // 200ms, and mid-transition the row is too narrow for a label plus a trailing
+  // badge. Without it the flex line wraps and the label visibly squashes to two
+  // lines inside the fixed height until the animation lands. Labels clip
+  // instead — which is what the `truncate` below already intends.
+  'peer/menu-button group/menu-button flex gap-2 w-full items-center overflow-hidden whitespace-nowrap rounded-xl p-1 text-left text-base text-sidebar-foreground/80 outline-hidden transition-colors duration-100 ease-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-visible group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:[&>span:last-child]:hidden hover:bg-sidebar-accent hover:text-sidebar-foreground focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-foreground data-active:bg-sidebar-accent data-active:text-foreground data-active:font-semibold [&>span:last-child]:truncate',
   {
     variants: {
       variant: {
