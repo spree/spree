@@ -2029,10 +2029,6 @@
         "edit": {
           "bulk_prices": {
             "no_variants": "Ajoutez au moins une variante pour commencer à modifier les prix."
-          },
-          "bulk_shipping": {
-            "no_variants": "Ajoutez au moins une variante pour modifier les données d'expédition.",
-            "grid_aria": "Tableau d'expédition des variantes"
           }
         },
         "inventory": {
@@ -2827,7 +2823,12 @@
           "tax_category_placeholder": "Hériter du produit"
         },
         "title": "Variantes",
-        "variant_label": "Variante"
+        "variant_label": "Variante",
+        "bulk_edit": {
+          "trigger": "Édition groupée",
+          "title": "Modifier les variantes en masse",
+          "grid_aria": "Tableau d'édition groupée des variantes"
+        }
       }
     },
     "promotions": {

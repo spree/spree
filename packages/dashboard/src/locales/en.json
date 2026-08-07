@@ -2029,10 +2029,6 @@
         "edit": {
           "bulk_prices": {
             "no_variants": "Add at least one variant to start editing prices."
-          },
-          "bulk_shipping": {
-            "no_variants": "Add at least one variant to start editing shipping.",
-            "grid_aria": "Variant shipping spreadsheet"
           }
         },
         "inventory": {
@@ -2827,7 +2823,12 @@
           "tax_category_placeholder": "Inherit from product"
         },
         "title": "Variants",
-        "variant_label": "Variant"
+        "variant_label": "Variant",
+        "bulk_edit": {
+          "trigger": "Bulk edit",
+          "title": "Bulk edit variants",
+          "grid_aria": "Variant bulk edit spreadsheet"
+        }
       }
     },
     "promotions": {
