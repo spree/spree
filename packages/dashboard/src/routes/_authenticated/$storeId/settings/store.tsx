@@ -24,9 +24,6 @@ import {
   FieldLabel,
   FormActions,
   Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
   ResourceLayout,
   Select,
   SelectContent,
@@ -341,65 +338,60 @@ function StoreSettingsForm({ store }: { store: Store }) {
                     <FieldDescription>
                       {t('admin.pages.settings.store.default_package_description')}
                     </FieldDescription>
-                    <Field>
-                      <FieldLabel htmlFor="store-default-package-weight">
-                        {t('admin.fields.store.preferred_default_package_weight.label')}
-                      </FieldLabel>
-                      <InputGroup>
-                        <InputGroupInput
+                    <div className="grid grid-cols-[1fr_120px] gap-3">
+                      <Field>
+                        <FieldLabel htmlFor="store-default-package-weight">
+                          {t('admin.fields.store.preferred_default_package_weight.label')}
+                        </FieldLabel>
+                        <Input
                           id="store-default-package-weight"
                           type="number"
                           min="0"
                           step="0.01"
                           {...form.register('preferred_default_package_weight')}
                         />
-                        <InputGroupAddon align="inline-end">
-                          <span className="text-muted-foreground text-sm">{weightUnit}</span>
-                        </InputGroupAddon>
-                      </InputGroup>
-                      <FieldDescription>
-                        {t('admin.fields.store.preferred_default_package_weight.help')}
-                      </FieldDescription>
-                      <FieldError
-                        errors={[form.formState.errors.preferred_default_package_weight]}
-                      />
-                    </Field>
-                    <Field>
-                      <FieldLabel htmlFor="store-default-package-length">
-                        {t('admin.fields.store.preferred_default_package_dimensions.label')}
-                      </FieldLabel>
-                      <div className="grid grid-cols-3 gap-2">
-                        {(
-                          [
-                            ['length', 'store-default-package-length'],
-                            ['width', 'store-default-package-width'],
-                            ['height', 'store-default-package-height'],
-                          ] as const
-                        ).map(([side, id]) => (
-                          <InputGroup key={side}>
-                            <InputGroupInput
-                              id={id}
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              aria-label={t(
-                                `admin.fields.store.preferred_default_package_dimensions.${side}`,
-                              )}
-                              placeholder={t(
-                                `admin.fields.store.preferred_default_package_dimensions.${side}`,
-                              )}
-                              {...form.register(`preferred_default_package_${side}`)}
-                            />
-                            <InputGroupAddon align="inline-end">
-                              <span className="text-muted-foreground text-sm">{dimensionUnit}</span>
-                            </InputGroupAddon>
-                          </InputGroup>
-                        ))}
-                      </div>
-                      <FieldDescription>
-                        {t('admin.fields.store.preferred_default_package_dimensions.help')}
-                      </FieldDescription>
-                    </Field>
+                        <FieldError
+                          errors={[form.formState.errors.preferred_default_package_weight]}
+                        />
+                      </Field>
+                      <Field>
+                        <FieldLabel htmlFor="store-default-package-weight-unit">
+                          {t('admin.fields.variant.weight_unit.label')}
+                        </FieldLabel>
+                        <Input id="store-default-package-weight-unit" value={weightUnit} disabled />
+                      </Field>
+                    </div>
+                    <div className="grid grid-cols-[1fr_1fr_1fr_120px] gap-3">
+                      {(
+                        [
+                          ['length', 'store-default-package-length'],
+                          ['width', 'store-default-package-width'],
+                          ['height', 'store-default-package-height'],
+                        ] as const
+                      ).map(([side, id]) => (
+                        <Field key={side}>
+                          <FieldLabel htmlFor={id}>
+                            {t(`admin.fields.store.preferred_default_package_dimensions.${side}`)}
+                          </FieldLabel>
+                          <Input
+                            id={id}
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            {...form.register(`preferred_default_package_${side}`)}
+                          />
+                        </Field>
+                      ))}
+                      <Field>
+                        <FieldLabel htmlFor="store-default-package-dim-unit">
+                          {t('admin.fields.variant.dimensions_unit.label')}
+                        </FieldLabel>
+                        <Input id="store-default-package-dim-unit" value={dimensionUnit} disabled />
+                      </Field>
+                    </div>
+                    <FieldDescription>
+                      {t('admin.fields.store.preferred_default_package_dimensions.help')}
+                    </FieldDescription>
                   </FieldGroup>
                 </CardContent>
               </Card>
