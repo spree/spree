@@ -1945,6 +1945,7 @@
             },
             "empty": "Brak zwrotów dla tego zamówienia.",
             "memo": "Notatka",
+            "reason": "Powód",
             "create_title": "Nowy zwrot",
             "empty_no_units": "To zamówienie nie ma pozycji realizacji, do których można odnieść zwrot."
           },

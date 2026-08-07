@@ -1933,6 +1933,7 @@
             },
             "empty": "Aucun retour pour cette commande.",
             "memo": "Note",
+            "reason": "Motif",
             "create_title": "Nouveau retour",
             "empty_no_units": "Cette commande n’a aucun enregistrement de traitement sur lequel baser un retour."
           },

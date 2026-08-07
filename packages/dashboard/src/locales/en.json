@@ -1933,6 +1933,7 @@
             },
             "empty": "No returns for this order.",
             "memo": "Note",
+            "reason": "Reason",
             "create_title": "New return",
             "empty_no_units": "This order has no fulfillment records to return against."
           },

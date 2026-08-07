@@ -1933,6 +1933,7 @@
             },
             "empty": "Keine Retouren für diese Bestellung.",
             "memo": "Notiz",
+            "reason": "Grund",
             "create_title": "Neue Retoure",
             "empty_no_units": "Für diese Bestellung gibt es keine Fulfillment-Einträge, auf die sich eine Retoure beziehen könnte."
           },

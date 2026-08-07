@@ -1933,6 +1933,7 @@
             },
             "empty": "此订单暂无退货。",
             "memo": "备注",
+            "reason": "原因",
             "create_title": "新建退货",
             "empty_no_units": "此订单没有可用于退货的履约记录。"
           },
