@@ -1556,3 +1556,65 @@ classes. Both tables drop in 6.1 alongside `spree_adjustments`.
 **Kept:** `Spree::PaymentCaptureEvent` — functional money data, not audit:
 `Payment#captured_amount` sums it, partial capture and capture-on-dispatch
 depend on it, and the Admin API exposes `captured_amount`.
+
+## 2026-08-07 — Admin RBAC: one grant system, staff-only, catalog = scope vocabulary
+
+**Decision:** (from spree/spree#14164; plan `6.0-admin-rbac.md`) Role
+permissions become database-backed as flat `read_<resource>` /
+`write_<resource>` keys — the same vocabulary secret API keys use. One
+declarative catalog (resource → CanCanCan subjects → UI group) is the single
+source of truth: `Spree::ApiKey::SCOPES` derives from it, and the dashboard
+role editor and API-key scope picker share one `PermissionPicker` fed by
+`GET /admin/permissions`. **Permission sets are deleted at 6.0 with NO
+compatibility bridge** — a deliberate exception to the one-release-bridge
+convention: this is a system removal, not a rename, and a shim would carry the
+runtime-union machinery the removal exists to kill. Old initializers fail
+loudly at boot (`NameError` on the deleted constants; `assign` raises with an
+upgrade-guide pointer). **Roles are pure data:** no `Spree.permissions.grant`,
+no runtime merge, no union — the editor is WYSIWYG; "roles as code" is seeds
+(plain ActiveRecord) or the Admin API; extensions register catalog resources,
+never roles (matching Saleor/Vendure/Shopify — roles are rows everywhere). A
+`mutable` column (NamedType pattern) covers locked roles: admin seeds
+`mutable: false`; hosts can lock compliance roles the same way. Record-level
+custom rules migrate to `register_ability`, the single low-level escape hatch.
+Upgrade is fail-closed: pre-existing custom role rows come up with empty
+permissions until filled in the editor. Enforcement unifies on
+the key gate: `ScopedAuthorization` generalizes so every admin request — JWT
+staff or secret key — checks its principal key set against
+`<read|write>_<scoped_resource>`; CanCanCan is demoted to internal plumbing
+behind it (still compiled from keys; nothing public configures it; dropping it
+from the admin path is a 6.1 option, not a goal). A new `staff` pair splits
+out of `settings`; admin-role protection moves onto the `Spree::Role` model
+(NamedType precedent — sk principals never consult CanCanCan). Resource
+granularity reaffirmed; full-page editor; client-side templates, no seeds.
+
+**The system is staff-only.** The storefront has no roles: `:default` /
+`DefaultCustomer` cease to be public concepts and the customer baseline
+(ownership conditions, guest tokens) becomes internal ability code, with
+scope-fetching the primary enforcement. Role resolution runs only for
+admin-user principals (aligns with the platform-auth Customer/Staff split, and
+drops a per-request `role_users` query for customers). B2B company-account
+roles (buyer/approver, hierarchies, spend limits — Enterprise) are explicitly
+a separate future system: the vocabulary must not be shared (`write_orders`
+means "manage the store's orders" to staff and "place my company's orders" to
+a purchaser), matching commercetools/Shopify B2B/Medusa, which all keep
+account roles apart from staff RBAC. Catalog/product visibility per customer
+group or company is data scoping, never a permission key.
+
+**Why:** the hard parts already shipped — the scope vocabulary and
+per-controller `scoped_resource` declarations (5.5), the `RoleGrantGuard`
+escalation check, store-scoped `RoleUser` assignments resolved per store by
+`Spree::Ability`, and the `/me` rules dump the SPA mirrors. Unifying on them
+turns "build an RBAC system" into "expose the one that exists". Two softer
+designs were drafted and rejected the same day: sets kept as bundles over the
+catalog, then a one-release `assign` bridge with an import task — each
+preserved grant-source duality (union semantics, locked "granted in code"
+rows, mixed escalation math) purely for back-compat comfort, in the release
+whose point is the breaking window, for a migration that is genuinely a
+five-minute UI task.
+
+**Reviewer constraints:** no new `PermissionSets::` classes or `assign` calls
+anywhere; every model a new admin controller authorizes must be covered by a
+catalog entry, or custom roles cannot reach the endpoint; new sensitive
+resources get their own catalog resource instead of riding `settings`;
+storefront code must never consult `Spree::Role` or the catalog.
