@@ -74,7 +74,6 @@ module Spree
             # Standard void usage
             response = payment_method.void(response_code, gateway_options)
           end
-          record_response(response)
 
           if response.success?
             self.response_code = response.authorization
@@ -142,8 +141,6 @@ module Spree
       end
 
       def handle_response(response, success_state, failure_state)
-        record_response(response)
-
         if response.success?
           unless response.authorization.nil?
             self.response_code = response.authorization
@@ -159,10 +156,6 @@ module Spree
           send(failure_state)
           gateway_error(response)
         end
-      end
-
-      def record_response(response)
-        log_entries.create!(details: response.to_yaml)
       end
 
       def protect_from_connection_error

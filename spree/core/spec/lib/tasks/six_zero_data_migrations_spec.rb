@@ -31,17 +31,20 @@ describe '6.0 data migration tasks' do
   describe 'spree:migrate_shipping_to_delivery' do
     let!(:order) { create(:order_with_line_items, store: store) }
     let(:fulfillment) { order.fulfillments.first }
+    # The StateChange model is gone; legacy rows are reached the same way the
+    # task reaches them.
+    let(:state_changes) { Class.new(ActiveRecord::Base) { self.table_name = 'spree_state_changes' } }
 
     it 'renames stored class-name strings and the shipped status' do
       fulfillment.update_columns(status: 'shipped', fulfillment_type: nil)
-      Spree::StateChange.create!(stateful_type: 'Spree::Shipment', stateful_id: fulfillment.id,
-                                 name: 'shipment', previous_state: 'ready', next_state: 'shipped')
+      state_changes.create!(stateful_type: 'Spree::Shipment', stateful_id: fulfillment.id,
+                            name: 'shipment', previous_state: 'ready', next_state: 'shipped')
 
       run_task('spree:migrate_shipping_to_delivery')
 
       expect(fulfillment.reload.status).to eq('fulfilled')
       expect(fulfillment.fulfillment_type).to eq('shipping')
-      change = Spree::StateChange.where(stateful_id: fulfillment.id).last
+      change = state_changes.where(stateful_id: fulfillment.id).last
       expect(change.stateful_type).to eq('Spree::Fulfillment')
       expect(change.name).to eq('fulfillment')
       expect(change.next_state).to eq('fulfilled')

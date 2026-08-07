@@ -15,6 +15,10 @@ namespace :spree do
     batch_size = ENV.fetch('BATCH_SIZE', 250).to_i
     stats = Hash.new(0)
 
+    # spree_state_changes has no model anymore (removed in 6.0; the table
+    # survives until 6.1 as legacy data), so read it anonymously.
+    state_changes = Class.new(ActiveRecord::Base) { self.table_name = 'spree_state_changes' }
+
     incomplete = Spree::Order.unscoped.where(completed_at: nil, canceled_at: nil)
     with_sessions_ids = incomplete.joins(:payment_sessions).distinct.ids
     plain_ids = incomplete.where.not(id: with_sessions_ids).ids
@@ -72,7 +76,7 @@ namespace :spree do
         # Order-owned support rows that don't survive the conversion: the
         # order row must go, and these reference it without a cart leg.
         Spree::FulfillmentItem.unscoped.where(order_id: order.id).update_all(order_id: nil)
-        Spree::StateChange.where(stateful_type: 'Spree::Order', stateful_id: order.id).delete_all
+        state_changes.where(stateful_type: 'Spree::Order', stateful_id: order.id).delete_all
 
         order.delete
         stats[:converted] += 1

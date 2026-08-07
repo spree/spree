@@ -33,8 +33,6 @@ module Spree
     validate :exactly_one_owner
 
     has_many :offsets, -> { offset_payment }, class_name: 'Spree::Payment', foreign_key: :source_id
-    has_many :log_entries, as: :source
-    has_many :state_changes, as: :stateful
     has_many :capture_events, class_name: 'Spree::PaymentCaptureEvent'
     has_many :refunds, inverse_of: :payment
 
@@ -133,14 +131,6 @@ module Spree
       # when the card brand isn't supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
-      end
-
-      after_transition do |payment, transition|
-        payment.state_changes.create!(
-          previous_state: transition.from,
-          next_state: transition.to,
-          name: 'payment'
-        )
       end
     end
 
