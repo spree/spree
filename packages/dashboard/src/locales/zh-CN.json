@@ -3098,7 +3098,8 @@
       },
       "duplicate_name": "{{name}} 副本",
       "errors": {
-        "failed_to_delete": "删除角色失败"
+        "failed_to_delete": "删除角色失败",
+        "failed_to_save": "保存角色失败"
       },
       "form": {
         "details_section": "详情",

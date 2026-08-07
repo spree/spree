@@ -3098,7 +3098,8 @@
       },
       "duplicate_name": "{{name}} copie",
       "errors": {
-        "failed_to_delete": "Échec de la suppression du rôle"
+        "failed_to_delete": "Échec de la suppression du rôle",
+        "failed_to_save": "Échec de l'enregistrement du rôle"
       },
       "form": {
         "details_section": "Détails",

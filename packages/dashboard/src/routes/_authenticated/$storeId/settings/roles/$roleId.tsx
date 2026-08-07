@@ -1,4 +1,4 @@
-import { PageHeader } from '@spree/dashboard-core'
+import { PageHeader, usePermissions } from '@spree/dashboard-core'
 import { Badge, Button, ErrorState, Skeleton } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
@@ -15,6 +15,7 @@ function EditRolePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { storeId, roleId } = Route.useParams()
+  const { permissions } = usePermissions()
   const { data: role, isLoading, isError } = useRole(roleId)
   const updateMutation = useUpdateRole()
   const deleteMutation = useDeleteRole()
@@ -67,7 +68,7 @@ function EditRolePage() {
     )
   }
 
-  const readOnly = !role.mutable
+  const readOnly = !role.mutable || permissions.cannot('update', 'Spree::Role')
 
   return (
     <div className="flex flex-col gap-6">
@@ -79,7 +80,11 @@ function EditRolePage() {
           readOnly ? <Badge variant="secondary">{t('admin.roles.badges.protected')}</Badge> : null
         }
         resource={role}
-        onDelete={role.mutable && role.users_count === 0 ? handleDelete : undefined}
+        onDelete={
+          role.mutable && role.users_count === 0 && permissions.can('destroy', 'Spree::Role')
+            ? handleDelete
+            : undefined
+        }
         actions={
           !readOnly && (
             <Button

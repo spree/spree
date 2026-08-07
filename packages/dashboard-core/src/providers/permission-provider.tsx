@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import { adminClient } from '../client'
@@ -93,50 +94,39 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
   const [rules, setRules] = useState<PermissionRule[]>([])
   const [permissionKeys, setPermissionKeys] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  // Guards against out-of-order `/me` responses: a rapid store switch (or a
+  // logout) bumps the generation, and any response from a superseded request
+  // is dropped instead of overwriting the current store's permissions.
+  const requestGeneration = useRef(0)
 
   const refresh = useCallback(async () => {
+    const generation = ++requestGeneration.current
     setIsLoading(true)
     try {
       const res = await adminClient.me.get()
+      if (generation !== requestGeneration.current) return
       setRules(res.permissions)
       setPermissionKeys(res.permission_keys ?? [])
     } catch {
+      if (generation !== requestGeneration.current) return
       setRules([])
       setPermissionKeys([])
     } finally {
-      setIsLoading(false)
+      if (generation === requestGeneration.current) setIsLoading(false)
     }
   }, [])
 
   useEffect(() => {
     if (!isAuthenticated) {
+      requestGeneration.current += 1
       setRules([])
       setPermissionKeys([])
+      setIsLoading(false)
       return
     }
 
-    let cancelled = false
-    setIsLoading(true)
-    adminClient.me
-      .get()
-      .then((res) => {
-        if (cancelled) return
-        setRules(res.permissions)
-        setPermissionKeys(res.permission_keys ?? [])
-      })
-      .catch(() => {
-        if (cancelled) return
-        setRules([])
-        setPermissionKeys([])
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [isAuthenticated])
+    void refresh()
+  }, [isAuthenticated, refresh])
 
   const permissions = useMemo(
     () => (rules.length > 0 ? buildPermissions(rules) : EMPTY_PERMISSIONS),

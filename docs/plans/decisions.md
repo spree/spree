@@ -1565,7 +1565,7 @@ permissions become database-backed as flat `read_<resource>` /
 declarative catalog (resource → CanCanCan subjects → UI group) is the single
 source of truth: `Spree::ApiKey::SCOPES` derives from it, and the dashboard
 role editor and API-key scope picker share one `PermissionPicker` fed by
-`GET /admin/permissions`. **Permission sets are deleted at 6.0 with NO
+`GET /api/v3/admin/permissions`. **Permission sets are deleted at 6.0 with NO
 compatibility bridge** — a deliberate exception to the one-release-bridge
 convention: this is a system removal, not a rename, and a shim would carry the
 runtime-union machinery the removal exists to kill. Old initializers fail

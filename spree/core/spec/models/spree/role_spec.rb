@@ -30,6 +30,13 @@ describe Spree::Role do
       expect(role.permissions).to eq(%w[read_orders write_products])
     end
 
+    it 'reads NULL column values as an empty array' do
+      role = create(:role)
+      role.update_column(:permissions, nil)
+
+      expect(role.reload.permissions).to eq([])
+    end
+
     it 'rejects unknown catalog keys' do
       role = build(:role, permissions: %w[read_orders write_bogus])
 
@@ -80,6 +87,12 @@ describe Spree::Role do
 
     it 'cannot be renamed' do
       locked_role.name = 'renamed'
+
+      expect(locked_role).not_to be_valid
+    end
+
+    it 'cannot change its description' do
+      locked_role.description = 'edited'
 
       expect(locked_role).not_to be_valid
     end

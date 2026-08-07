@@ -3098,7 +3098,8 @@
       },
       "duplicate_name": "{{name}} copy",
       "errors": {
-        "failed_to_delete": "Failed to delete role"
+        "failed_to_delete": "Failed to delete role",
+        "failed_to_save": "Failed to save role"
       },
       "form": {
         "details_section": "Details",

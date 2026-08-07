@@ -87,7 +87,9 @@ export function submitRole(
         toast.error(err.message)
         return
       }
-      throw err
+      // Network and other unexpected failures still deserve feedback —
+      // rethrowing from a submit handler would surface nothing.
+      toast.error(i18n.t('admin.roles.errors.failed_to_save'))
     }
   })
 }

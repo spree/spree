@@ -3098,7 +3098,8 @@
       },
       "duplicate_name": "{{name}} Kopie",
       "errors": {
-        "failed_to_delete": "Rolle konnte nicht gelöscht werden"
+        "failed_to_delete": "Rolle konnte nicht gelöscht werden",
+        "failed_to_save": "Rolle konnte nicht gespeichert werden"
       },
       "form": {
         "details_section": "Details",

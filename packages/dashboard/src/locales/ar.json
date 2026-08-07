@@ -3104,7 +3104,8 @@
       },
       "duplicate_name": "نسخة {{name}}",
       "errors": {
-        "failed_to_delete": "فشل حذف الدور"
+        "failed_to_delete": "فشل حذف الدور",
+        "failed_to_save": "فشل حفظ الدور"
       },
       "form": {
         "details_section": "التفاصيل",

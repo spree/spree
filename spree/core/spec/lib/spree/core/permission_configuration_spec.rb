@@ -37,6 +37,12 @@ RSpec.describe Spree::PermissionConfiguration do
 
       expect(configuration.resource(:reviews).group).to eq(:marketing)
     end
+
+    it 'reserves all — its keys would collide with the wildcard aliases' do
+      expect {
+        configuration.register_resource(:all, group: :catalog, subjects: [Spree::Product])
+      }.to raise_error(ArgumentError, /reserved/)
+    end
   end
 
   describe '#unregister_resource' do

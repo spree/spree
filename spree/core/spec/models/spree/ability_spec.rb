@@ -157,6 +157,40 @@ describe Spree::Ability, type: :model do
     end
   end
 
+  describe 'shared customer/admin user class' do
+    # The install generator falls back to `user_class` for the admin user class
+    # when a host provides only one — persisted customers are then admin-class
+    # principals and must keep the storefront baseline alongside role resolution.
+    around do |example|
+      original = Spree.admin_user_class(constantize: false)
+      Spree.admin_user_class = Spree.customer_class.to_s
+      example.run
+    ensure
+      Spree.admin_user_class = original
+    end
+
+    it 'keeps the storefront baseline for persisted customers' do
+      customer = create(:user)
+      shared_ability = Spree::Ability.new(customer, store: store)
+
+      expect(shared_ability).to be_able_to :read, Spree::Product
+      expect(shared_ability).to be_able_to :create, Spree::Order
+      expect(shared_ability).not_to be_able_to :manage, Spree::Order.new
+    end
+
+    it 'resolves staff roles without losing the storefront baseline' do
+      manager = create(:user)
+      manager.role_users.create!(
+        role: create(:role, name: 'shared_manager', permissions: %w[write_orders]),
+        resource: store
+      )
+      shared_ability = Spree::Ability.new(manager, store: store)
+
+      expect(shared_ability).to be_able_to :manage, Spree::Order.new
+      expect(shared_ability).to be_able_to :read, Spree::Product
+    end
+  end
+
   describe '.register_ability' do
     let(:custom_ability_class) do
       Class.new do

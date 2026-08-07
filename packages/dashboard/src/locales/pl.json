@@ -3140,7 +3140,8 @@
       },
       "duplicate_name": "{{name}} kopia",
       "errors": {
-        "failed_to_delete": "Nie udało się usunąć roli"
+        "failed_to_delete": "Nie udało się usunąć roli",
+        "failed_to_save": "Nie udało się zapisać roli"
       },
       "form": {
         "details_section": "Szczegóły",

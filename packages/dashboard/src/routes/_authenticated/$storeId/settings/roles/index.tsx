@@ -34,6 +34,7 @@ function RolesSettingsPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { storeId } = Route.useParams()
+  const { permissions } = usePermissions()
   const { data, isLoading } = useRoles()
   const roles = data?.data ?? []
 
@@ -43,13 +44,15 @@ function RolesSettingsPage() {
         title={t('admin.pages.roles.title')}
         subtitle={t('admin.pages.roles.subtitle')}
         actions={
-          <Button
-            size="sm"
-            onClick={() => navigate({ to: '/$storeId/settings/roles/new', params: { storeId } })}
-          >
-            <PlusIcon className="size-4" />
-            {t('admin.pages.roles.add_cta')}
-          </Button>
+          permissions.can('create', 'Spree::Role') && (
+            <Button
+              size="sm"
+              onClick={() => navigate({ to: '/$storeId/settings/roles/new', params: { storeId } })}
+            >
+              <PlusIcon className="size-4" />
+              {t('admin.pages.roles.add_cta')}
+            </Button>
+          )
         }
       />
 
@@ -152,6 +155,7 @@ function RoleRow({ role }: { role: Role }) {
               key: 'duplicate',
               label: t('admin.actions.duplicate'),
               icon: <CopyIcon className="size-4" />,
+              visible: permissions.can('create', 'Spree::Role'),
               onSelect: () =>
                 navigate({
                   to: '/$storeId/settings/roles/new',

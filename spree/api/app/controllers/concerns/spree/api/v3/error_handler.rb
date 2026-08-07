@@ -173,14 +173,24 @@ module Spree
 
         # Names the catalog permission the failed request needed, derived from
         # the controller's `scoped_resource` declaration — the JWT twin of the
-        # scope check's `required_scope` (docs/plans/6.0-admin-rbac.md).
+        # scope check's `required_scope` (docs/plans/6.0-admin-rbac.md). Only
+        # reported when the caller genuinely lacks the key: a denial the caller
+        # is capability-authorized for is a record- or store-level condition,
+        # and naming a permission they already hold would mislead.
         def access_denied_details
           return unless respond_to?(:scoped_resource_name, true)
 
           resource = scoped_resource_name
           return unless resource
 
-          { required_permission: "#{action_kind}_#{resource}" }
+          required = "#{action_kind}_#{resource}"
+          return unless Spree.permissions.key?(required)
+
+          ability = current_ability
+          return unless ability.respond_to?(:permission_keys)
+          return if ability.permission_keys.include?(required)
+
+          { required_permission: required }
         end
 
         def handle_gateway_error(exception)

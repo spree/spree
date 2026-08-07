@@ -12,6 +12,12 @@ module Spree
     # always grants everything.
     attribute :permissions, default: []
 
+    # Rows predating the column (or raw inserts) hold NULL — the array
+    # contract holds regardless.
+    def permissions
+      super || []
+    end
+
     def permissions=(value)
       super(Array(value).map(&:to_s).reject(&:blank?).uniq)
     end
@@ -30,6 +36,7 @@ module Spree
     validate :permissions_must_be_known, if: :permissions_changed?
     validate :name_immutable, on: :update, if: :name_changed?
     validate :permissions_immutable, on: :update, if: :permissions_changed?
+    validate :description_immutable, on: :update, if: :description_changed?
 
     #
     # Callbacks
@@ -90,6 +97,10 @@ module Spree
 
     def permissions_immutable
       errors.add(:permissions, Spree.t(:role_immutable)) unless mutable_was_and_not_admin?
+    end
+
+    def description_immutable
+      errors.add(:description, Spree.t(:role_immutable)) unless mutable_was_and_not_admin?
     end
 
     # Guards compare against the persisted state so flipping `mutable` in the

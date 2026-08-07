@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { type ApiKey, type ApiKeyCreateParams, SpreeError } from '@spree/admin-sdk'
-import { mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
+import { mapSpreeErrorsToForm, PageHeader, usePermissions } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -68,7 +68,7 @@ import {
   PencilIcon,
   PlusIcon,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -862,8 +862,24 @@ function ScopePicker({
 }) {
   const { t } = useTranslation()
   const { data: catalog } = usePermissionCatalog()
+  const { permissionKeys } = usePermissions()
   const hasWriteAll = value.includes('write_all')
   const hasReadAll = value.includes('read_all')
+
+  // A staffer can only mint scopes within their own grant (the server's
+  // anti-amplification guard) — don't offer keys it would reject. A caller
+  // holding the whole catalog (admin) is unrestricted, including the aliases.
+  const blockedKeys = useMemo(() => {
+    if (!catalog) return undefined
+    const blocked = new Set(
+      catalog.data.filter((entry) => !permissionKeys.includes(entry.key)).map((entry) => entry.key),
+    )
+    return blocked.size > 0 ? blocked : undefined
+  }, [catalog, permissionKeys])
+  const writeAllBlocked = blockedKeys !== undefined
+  const readAllBlocked =
+    !!catalog &&
+    catalog.data.some((entry) => entry.kind === 'read' && !permissionKeys.includes(entry.key))
 
   function setAllRead(checked: boolean) {
     let next = value.filter((v) => v !== 'read_all' && !v.startsWith('read_'))
@@ -892,7 +908,7 @@ function ScopePicker({
             id="scope-write-all"
             checked={hasWriteAll}
             onCheckedChange={setAllWrite}
-            disabled={disabled}
+            disabled={disabled || writeAllBlocked}
           />
           <span className="font-medium">{t('admin.api_keys.scope_picker.full_access_label')}</span>
           <span className="text-xs text-muted-foreground">
@@ -904,7 +920,7 @@ function ScopePicker({
             id="scope-read-all"
             checked={hasReadAll}
             onCheckedChange={setAllRead}
-            disabled={disabled || hasWriteAll}
+            disabled={disabled || hasWriteAll || readAllBlocked}
           />
           <span className="font-medium">{t('admin.api_keys.scope_picker.read_all_label')}</span>
           <span className="text-xs text-muted-foreground">
@@ -922,6 +938,7 @@ function ScopePicker({
             value={value}
             onChange={(next) => onChange?.(next)}
             disabled={disabled}
+            disabledKeys={blockedKeys}
           />
         ) : (
           <div className="flex flex-col gap-2 p-3">

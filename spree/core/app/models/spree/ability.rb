@@ -67,11 +67,8 @@ module Spree
       @store = options[:store] || Spree::Current.store
       @permission_keys = []
 
-      if staff_principal?
-        apply_staff_permissions
-      else
-        apply_storefront_permissions
-      end
+      apply_storefront_permissions if storefront_principal?
+      apply_staff_permissions if staff_principal?
 
       merge_registered_abilities
     end
@@ -101,6 +98,14 @@ module Spree
     # role_users query on every storefront request.
     def staff_principal?
       @user.persisted? && @user.is_a?(Spree.admin_user_class)
+    end
+
+    # Customers and guests get the storefront baseline. When the host shares
+    # one class between customers and admin users (the install generator does
+    # this when only `user_class` is provided), a persisted user is both — the
+    # baseline applies alongside staff role resolution.
+    def storefront_principal?
+      !staff_principal? || Spree.admin_user_class == Spree.customer_class
     end
 
     # --- staff ---

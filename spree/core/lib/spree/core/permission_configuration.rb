@@ -78,6 +78,10 @@ module Spree
     # @param write [Boolean]
     # @return [Resource]
     def register_resource(name, group:, subjects:, write: true)
+      # `read_all` / `write_all` are the API-key wildcard aliases — a resource
+      # named `all` would silently mint keys that grant the whole catalog.
+      raise ArgumentError, "the permission resource name 'all' is reserved" if name.to_s == 'all'
+
       resource = Resource.new(name: name, group: group, subjects: subjects, write: write)
       @resources[resource.name] = resource
     end
