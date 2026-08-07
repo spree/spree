@@ -36,18 +36,21 @@ module Spree
     before_validation :resolve_state_code
     validate :state_belongs_to_country
 
-    # Rates that reach the given address: its own country and state, plus the
-    # broader rates that cover everywhere.
-    scope :for_address, lambda { |address|
-      where(country_id: [address&.country_id, nil].uniq).
-        where(state_id: [address&.state_id, nil].uniq)
-    }
-    scope :for_country, ->(country) { where(country_id: [country&.id, nil].uniq) }
-    # Country and state named directly — the shape the provider matches on,
-    # since tax can apply before a customer has given an address at all.
+    # The primitive: rates that reach a jurisdiction, which is a country and
+    # optionally one of its states. Rates naming neither are included, since a
+    # rate with no country taxes everywhere. Takes the pair rather than an
+    # address because tax applies before a customer has given one — the
+    # provider falls back to the market's country (see
+    # Spree::Purchase::Taxation#tax_country).
     scope :for_jurisdiction, lambda { |country, state = nil|
       where(country_id: [country&.id, nil].uniq).where(state_id: [state&.id, nil].uniq)
     }
+    # The same question asked with an address in hand.
+    scope :for_address, ->(address) { for_jurisdiction(address&.country, address&.state) }
+    # Country-wide: unlike for_jurisdiction(country, nil) this leaves the state
+    # unconstrained, so it sums a country's state-level rates too. Used where the
+    # state is irrelevant — backing VAT out of a gross price.
+    scope :for_country, ->(country) { where(country_id: [country&.id, nil].uniq) }
     scope :for_tax_category,
           ->(category) { where(tax_category_id: category.try(:id)) }
     scope :included_in_price, -> { where(included_in_price: true) }
@@ -77,16 +80,6 @@ module Spree
     # state before the country.
     def state_code=(value)
       @state_code_input = value
-    end
-
-    # The rates that tax a sale delivered to this address.
-    #
-    # @param address [Spree::Address, nil]
-    # @return [ActiveRecord::Relation<Spree::TaxRate>]
-    def self.match(address)
-      return none if address.nil?
-
-      for_address(address)
     end
 
     # The included-in-price rate to back out of a gross price.

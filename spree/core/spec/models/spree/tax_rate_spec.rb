@@ -1,35 +1,47 @@
 require 'spec_helper'
 
 describe Spree::TaxRate, type: :model do
-  describe '.match' do
+  describe 'jurisdiction matching' do
     let(:germany) { create(:country, iso: 'DE', name: 'Germany') }
     let(:berlin) { create(:state, country: germany, abbr: 'BE', name: 'Berlin') }
     let(:france) { create(:country, iso: 'FR', name: 'France') }
     let(:tax_category) { create(:tax_category) }
     let(:german_address) { create(:address, country: germany, state: nil, state_name: 'Berlin') }
 
-    it 'matches nothing without an address' do
-      expect(described_class.match(nil)).to be_empty
+    it 'falls back to rates that tax everywhere when the jurisdiction is unknown' do
+      worldwide = create(:tax_rate, :worldwide, tax_category: tax_category)
+      create(:tax_rate, country: germany, tax_category: tax_category)
+
+      # A rate naming no country taxes everywhere, so it still applies when we
+      # cannot say where the sale is — a country-specific one does not.
+      expect(described_class.for_jurisdiction(nil)).to eq([worldwide])
+    end
+
+    it 'reads a jurisdiction off an address, or takes the pair directly' do
+      rate = create(:tax_rate, country: germany, tax_category: tax_category)
+
+      expect(described_class.for_address(german_address)).to eq([rate])
+      expect(described_class.for_jurisdiction(germany)).to eq([rate])
     end
 
     it 'matches a rate for the address country' do
       rate = create(:tax_rate, country: germany, tax_category: tax_category)
       create(:tax_rate, country: france, tax_category: tax_category)
 
-      expect(described_class.match(german_address)).to eq([rate])
+      expect(described_class.for_address(german_address)).to eq([rate])
     end
 
     it 'matches every rate configured for that country' do
       standard = create(:tax_rate, country: germany, amount: 0.19, tax_category: tax_category)
       reduced = create(:tax_rate, country: germany, amount: 0.07, tax_category: create(:tax_category))
 
-      expect(described_class.match(german_address)).to match_array([standard, reduced])
+      expect(described_class.for_address(german_address)).to match_array([standard, reduced])
     end
 
     it 'matches a rate that taxes every country' do
       worldwide = create(:tax_rate, :worldwide, tax_category: tax_category)
 
-      expect(described_class.match(german_address)).to eq([worldwide])
+      expect(described_class.for_address(german_address)).to eq([worldwide])
     end
 
     context 'with state-level rates' do
@@ -39,20 +51,20 @@ describe Spree::TaxRate, type: :model do
         country_rate = create(:tax_rate, country: germany, tax_category: tax_category)
         state_rate = create(:tax_rate, country: germany, state: berlin, tax_category: create(:tax_category))
 
-        expect(described_class.match(berlin_address)).to match_array([country_rate, state_rate])
+        expect(described_class.for_address(berlin_address)).to match_array([country_rate, state_rate])
       end
 
       it 'does not match another state rate' do
         hamburg = create(:state, country: germany, abbr: 'HH', name: 'Hamburg')
         create(:tax_rate, country: germany, state: hamburg, tax_category: tax_category)
 
-        expect(described_class.match(berlin_address)).to be_empty
+        expect(described_class.for_address(berlin_address)).to be_empty
       end
 
       it 'does not match a state rate for an address with no state' do
         create(:tax_rate, country: germany, state: berlin, tax_category: tax_category)
 
-        expect(described_class.match(german_address)).to be_empty
+        expect(described_class.for_address(german_address)).to be_empty
       end
     end
 
