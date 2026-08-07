@@ -5,9 +5,9 @@ RSpec.describe Spree::Api::V3::Store::MarketsController, type: :controller do
 
   include_context 'API v3 Store'
 
-  let!(:usa) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US', name: 'United States') }
-  let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
-  let!(:france) { Spree::Country.find_by(iso: 'FR') || create(:country, iso: 'FR', name: 'France') }
+  let!(:usa) { Spree::Country.by_iso('US') }
+  let!(:germany) { Spree::Country.by_iso('DE') }
+  let!(:france) { Spree::Country.by_iso('FR') }
 
   # The store's bootstrap market already owns the US country — reshape it
   # into the North America fixture instead of colliding with it.

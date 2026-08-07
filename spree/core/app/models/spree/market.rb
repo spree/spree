@@ -103,7 +103,7 @@ module Spree
     #
     # @return [Spree::Country, nil]
     def default_country
-      countries.order(:name).first
+      countries.first
     end
 
     # The tax engine that computes for this market. A fresh instance per call:

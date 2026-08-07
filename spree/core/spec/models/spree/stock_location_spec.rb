@@ -419,7 +419,7 @@ module Spree
     end
 
     describe '#country_iso=' do
-      let(:country) { Spree::Country.first || create(:country, iso: 'US') }
+      let(:country) { Spree::Country.by_iso('US') }
       let(:stock_location) { build(:stock_location, country: nil, state: nil) }
 
       it 'resolves the country from an ISO code on validation' do
@@ -437,8 +437,8 @@ module Spree
     end
 
     describe '#state_abbr=' do
-      let(:country) { Spree::Country.first || create(:country, iso: 'US') }
-      let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+      let(:country) { Spree::Country.by_iso('US') }
+      let!(:state) { Spree::State.resolve(country.iso, 'NY') }
       let(:stock_location) { build(:stock_location, country: country, state: nil) }
 
       it 'resolves the state from an abbreviation scoped to the country' do

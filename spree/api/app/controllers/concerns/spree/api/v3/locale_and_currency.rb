@@ -174,7 +174,7 @@ module Spree
           country_iso = request.headers['x-spree-country'].presence || params[:country].presence
           return unless country_iso
 
-          country = Spree::Country.find_by(iso: country_iso.upcase)
+          country = Spree::Country.by_iso(country_iso)
           return unless country
 
           market = current_store&.market_for_country(country)

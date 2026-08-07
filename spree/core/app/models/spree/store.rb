@@ -391,16 +391,16 @@ module Spree
     #
     # @return [ActiveRecord::Relation<Spree::Country>]
     def countries_with_shipping_coverage
-      return Spree::Country.order(:name) if Spree::DeliveryMethod.where(delivery_zone_id: nil).exists?
+      return Spree::Country.all.sort_by(&:name) if Spree::DeliveryMethod.where(delivery_zone_id: nil).exists?
 
       zone_ids = Spree::DeliveryMethod.where.not(delivery_zone_id: nil).select(:delivery_zone_id)
 
       # Every member carries its own country, including state members, so
       # coverage no longer has to resolve a subdivision back to its country.
       country_isos = Spree::DeliveryZoneMember.where(delivery_zone_id: zone_ids).
-                     where.not(country_iso: nil).select(:country_iso)
+                     where.not(country_iso: nil).distinct.pluck(:country_iso)
 
-      Spree::Country.where(iso: country_isos).order(:name)
+      country_isos.filter_map { |iso| Spree::Country.by_iso(iso) }.sort_by(&:name)
     end
 
     # Returns the default stock location for the store or creates a new one if it doesn't exist

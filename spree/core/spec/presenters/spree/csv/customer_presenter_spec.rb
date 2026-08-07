@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::CSV::CustomerPresenter do
   let(:store) { @default_store }
   let(:country) { store.default_country || create(:country, name: 'United States', iso: 'US') }
-  let(:state) { country.states.find_by(name: 'California') || create(:state, name: 'California', abbr: 'CA', country: country) }
+  let(:state) { Spree::State.resolve(country.iso, 'California') }
   let(:address) do
     create(:address,
            company: 'Test Company',

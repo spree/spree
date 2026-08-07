@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:country) { Spree::Country.find_by(iso: 'US') || create(:country_us) }
+  let!(:country) { Spree::Country.by_iso('US') }
 
   before { request.headers.merge!(headers) }
 

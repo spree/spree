@@ -359,7 +359,7 @@ describe '6.0 data migration tasks' do
   end
 
   describe 'spree:migrate_zones_to_delivery_zones' do
-    let!(:country) { Spree::Country.find_by(iso: 'US') || create(:country_us) }
+    let!(:country) { Spree::Country.by_iso('US') }
     let!(:zone) do
       create(:zone, name: "Legacy Ship Zone #{Time.current.to_f}", kind: 'shipping').tap do |zone|
         create(:zone_member, zone: zone, zoneable: country)

@@ -21,7 +21,9 @@ module Spree
 
           # GET /api/v3/store/countries/:id
           def show
-            country = current_store.countries_from_markets.find_by!(iso: params[:id].upcase)
+            iso = params[:id].to_s.upcase
+            country = current_store.countries_from_markets.find { |candidate| candidate.iso == iso }
+            raise ActiveRecord::RecordNotFound if country.nil?
 
             render json: serialize_country(country)
           end

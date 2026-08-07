@@ -60,12 +60,14 @@ module Spree
         Spree::Market.for_country(country, store: self)
       end
 
-      # Returns countries from all markets as an ActiveRecord relation
-      # @return [ActiveRecord::Relation<Spree::Country>]
+      # Returns the countries covered by this store's markets, by name
+      # @return [Array<Spree::Country>]
       def countries_from_markets
-        Spree::Country
-                  .where(id: Spree::Country.joins(market_countries: :market).where(Spree::Market.table_name => { store_id: id, deleted_at: nil }).select(:id))
-                  .order(:name)
+        isos = Spree::MarketCountry.joins(:market).
+               where(Spree::Market.table_name => { store_id: id, deleted_at: nil }).
+               distinct.pluck(:country_iso)
+
+        isos.filter_map { |iso| Spree::Country.by_iso(iso) }.sort_by(&:name)
       end
 
       # Returns the countries available for checkout, derived from markets
@@ -75,7 +77,7 @@ module Spree
           if has_markets?
             markets.flat_map(&:countries).uniq.sort_by(&:name)
           else
-            Spree::Country.all.to_a
+            Spree::Country.all
           end
         end
       end

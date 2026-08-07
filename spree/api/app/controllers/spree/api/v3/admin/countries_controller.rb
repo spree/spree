@@ -12,8 +12,12 @@ module Spree
           # Override base index to skip pagination — there are ~250 countries
           # and address-form dropdowns need them all at once. Pagy's global
           # max_limit (100) prevents using the paginated path for this.
+          #
+          # Countries are reference data rather than records, so this reads
+          # from the registry and needs no authorization beyond the admin
+          # credential the base controller already checked: the list is the
+          # same for every store and carries nothing store-specific.
           def index
-            authorize!(:read, model_class)
             @collection = scope
             render json: { data: serialize_collection(@collection), meta: { count: @collection.size } }
           end
@@ -29,11 +33,11 @@ module Spree
           end
 
           def scope
-            Spree::Country.all.order(:name).preload_associations_lazily
+            Spree::Country.all.sort_by(&:name)
           end
 
           def find_resource
-            scope.find_by!(iso: params[:id].upcase)
+            Spree::Country.find_by_iso!(params[:id])
           end
         end
       end

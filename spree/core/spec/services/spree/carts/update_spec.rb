@@ -160,7 +160,7 @@ module Spree
         end
 
         context 'auto-switches market to match currency' do
-          let(:us_country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+          let(:us_country) { Spree::Country.by_iso('US') }
           let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
           let!(:us_market) { store.default_market }
           let!(:eu_market) { create(:market, :eu, store: store, countries: [de_country]) }
@@ -201,7 +201,7 @@ module Spree
       end
 
       describe 'updating market' do
-        let(:us_country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+        let(:us_country) { Spree::Country.by_iso('US') }
         let(:de_country) { create(:country, iso: 'DE', name: 'Germany') }
         # The store's bootstrap market already owns the US country.
         let!(:us_market) { store.default_market }
@@ -225,7 +225,7 @@ module Spree
         end
 
         context 'when shipping address country is not in the new market' do
-          let!(:us_state) { us_country.states.find_by(abbr: 'NY') || create(:state, country: us_country, abbr: 'NY', name: 'New York') }
+          let!(:us_state) { us_Spree::State.resolve(country.iso, 'NY') }
           let(:us_address) { create(:address, country: us_country, state: us_state) }
           let(:cart) { create(:cart_with_line_items, customer: user, store: store, market: us_market, ship_address: us_address, email: 'buyer@example.com') }
           let(:params) { { market_id: eu_market.prefixed_id } }
@@ -257,8 +257,8 @@ module Spree
       end
 
       describe 'updating addresses' do
-        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-        let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+        let(:country) { Spree::Country.by_iso('US') }
+        let!(:state) { Spree::State.resolve(country.iso, 'NY') }
 
         shared_examples 'address update' do |address_type|
           let(:address_key) { address_type }
@@ -464,8 +464,8 @@ module Spree
       end
 
       describe 'billing address does not reset checkout state' do
-        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-        let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+        let(:country) { Spree::Country.by_iso('US') }
+        let!(:state) { Spree::State.resolve(country.iso, 'NY') }
         let(:cart) { create(:cart_with_line_items, customer: user, store: store, email: 'buyer@example.com', ship_address: create(:address, user: user)) }
 
         let(:params) do
@@ -495,8 +495,8 @@ module Spree
       end
 
       describe 'use_shipping (billing same as shipping)' do
-        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-        let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+        let(:country) { Spree::Country.by_iso('US') }
+        let!(:state) { Spree::State.resolve(country.iso, 'NY') }
 
         let(:shipping_address) do
           {
@@ -613,8 +613,8 @@ module Spree
       end
 
       describe 'updating multiple fields' do
-        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-        let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+        let(:country) { Spree::Country.by_iso('US') }
+        let!(:state) { Spree::State.resolve(country.iso, 'NY') }
 
         let(:params) do
           {
@@ -744,8 +744,8 @@ module Spree
         subject { described_class.call(cart: cart, params: params) }
 
         let(:cart) { create(:cart_with_line_items, store: store) }
-        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-        let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+        let(:country) { Spree::Country.by_iso('US') }
+        let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
         let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
         let!(:shipping_method) { create(:shipping_method) }
         let(:address_params) do
@@ -823,8 +823,8 @@ module Spree
 
         let!(:cart) { create(:cart_with_line_items, store: store) }
         let!(:shipping_method) { create(:shipping_method) }
-        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-        let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+        let(:country) { Spree::Country.by_iso('US') }
+        let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
         let(:params) do
           { email: 'buyer@example.com',
             shipping_address: {

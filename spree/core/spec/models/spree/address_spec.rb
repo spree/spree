@@ -49,14 +49,14 @@ describe Spree::Address, type: :model do
                         address2: FFaker::Address.secondary_address,
                         alternative_phone: FFaker::PhoneNumberAU.mobile_phone_number,
                         city: FFaker::AddressUS.city,
-                        country: Spree::Country.first,
+                        country: Spree::Country.by_iso('US'),
                         firstname: FFaker::Name.first_name,
                         lastname: FFaker::Name.last_name,
                         company: FFaker::Company.name,
                         phone: FFaker::PhoneNumber.short_phone_number,
                         state_id: state.id,
                         state_name: state.name,
-                        zipcode: Spree::TestingSupport::CountryPool.postal_code_for(Spree::Country.first&.iso))
+                        zipcode: Spree::TestingSupport::CountryPool.postal_code_for('US'))
 
       cloned = original.clone
 
@@ -361,52 +361,42 @@ describe Spree::Address, type: :model do
   end
 
   context '#state_text' do
+    # Virginia is a real US subdivision, so the code is what gets stored.
+    let(:virginia) { Spree::State.resolve('US', 'VA') }
+
     context 'state is blank' do
-      let(:address) { create(:address, state: nil, state_name: 'virginia') }
+      # A country that requires no subdivision keeps free text as-is.
+      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Mazovia') }
 
-      specify { expect(address.state_text).to eq('virginia') }
+      specify { expect(address.state_text).to eq('Mazovia') }
     end
 
-    context 'both name and abbr is present' do
-      let(:state) { create(:state, name: 'virginia', abbr: 'va') }
-      let(:address) { create(:address, state: state) }
+    context 'the subdivision is known' do
+      let(:address) { create(:address, state: virginia) }
 
-      specify { expect(address.state_text).to eq('va') }
-    end
-
-    context 'only name is present' do
-      let(:state) { create(:state, name: 'virginia', abbr: nil) }
-      let(:address) { create(:address, state: state) }
-
-      specify { expect(address.state_text).to eq('virginia') }
+      specify { expect(address.state_text).to eq('VA') }
     end
   end
 
   context '#state_name_text' do
-    context 'state_name is blank' do
-      let(:state) { create(:state, name: 'virginia', abbr: nil) }
-      let(:address) { create(:address, state: state, state_name: nil) }
+    let(:virginia) { Spree::State.resolve('US', 'VA') }
 
-      specify { expect(address.state_name_text).to eq('virginia') }
+    context 'state_name is blank' do
+      let(:address) { create(:address, state: virginia, state_name: nil) }
+
+      specify { expect(address.state_name_text).to eq('Virginia') }
     end
 
     context 'state is blank' do
-      let(:address) { create(:address, state: nil, state_name: 'virginia') }
+      let(:address) { create(:address, country: Spree::Country.by_iso('PL'), zipcode: '00-001', state: nil, state_name: 'Mazovia') }
 
-      specify { expect(address.state_name_text).to eq('virginia') }
-    end
-
-    context 'state and state_name are present' do
-      let(:state) { create(:state, name: 'virginia', abbr: nil) }
-      let(:address) { create(:address, state: state, state_name: 'virginia') }
-
-      specify { expect(address.state_name_text).to eq('virginia') }
+      specify { expect(address.state_name_text).to eq('Mazovia') }
     end
   end
 
   describe '#country_iso' do
     let(:address) { build(:address, country: country) }
-    let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+    let(:country) { Spree::Country.by_iso('US') }
 
     it 'returns the country iso' do
       expect(address.country_iso).to eq('US')
@@ -491,7 +481,7 @@ describe Spree::Address, type: :model do
 
       context 'when country has no states and state is required' do
         before do
-          address.country = create(:country, states_required: true)
+          address.country = Spree::Country.by_iso('US')
           clear_state_entities
         end
 
@@ -511,7 +501,7 @@ describe Spree::Address, type: :model do
 
       context 'when country has no states and state is not required' do
         before do
-          address.country = create(:country, states_required: false)
+          address.country = Spree::Country.by_iso('PL')
           address.state_name = state.name
           clear_state_entities
         end
@@ -812,8 +802,8 @@ describe Spree::Address, type: :model do
   end
 
   describe 'country_iso= and state_abbr= writer methods' do
-    let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-    let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+    let(:country) { Spree::Country.by_iso('US') }
+    let!(:state) { Spree::State.resolve(country.iso, 'NY') }
 
     describe '#country_iso=' do
       it 'sets country from ISO code on validation' do

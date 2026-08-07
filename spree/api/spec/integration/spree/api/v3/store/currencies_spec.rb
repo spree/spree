@@ -5,8 +5,8 @@ require 'swagger_helper'
 RSpec.describe 'Currencies API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:usa) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US', name: 'United States') }
-  let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
+  let!(:usa) { Spree::Country.by_iso('US') }
+  let!(:germany) { Spree::Country.by_iso('DE') }
 
   let!(:na_market) do
     store.default_market.tap do |market|

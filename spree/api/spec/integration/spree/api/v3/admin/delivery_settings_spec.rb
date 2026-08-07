@@ -144,7 +144,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       }
 
       response '201', 'delivery zone created' do
-        before { Spree::Country.find_by(iso: 'US') || create(:country_us) }
+        before { Spree::Country.by_iso('US') }
 
         let(:expand) { 'members' }
         let(:body) do

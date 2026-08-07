@@ -18,9 +18,9 @@ module Spree
 
         def countries
           isos = preferred_country_isos.presence || [preferred_country_iso].compact_blank
-          return Spree::Country.none if isos.blank?
+          return [] if isos.blank?
 
-          Spree::Country.where(iso: isos.map { |s| s.to_s.upcase })
+          isos.filter_map { |iso| Spree::Country.by_iso(iso) }
         end
 
         def eligible?(order, options = {})
@@ -47,11 +47,6 @@ module Spree
         def compute_eligible_country_isos(order)
           return preferred_country_isos.map { |v| v.to_s.upcase } if preferred_country_isos.present?
           return [preferred_country_iso.to_s.upcase] if preferred_country_iso.present?
-
-          if preferred_country_id.present?
-            iso = Spree::Country.where(id: preferred_country_id).pick(:iso)
-            return [iso.to_s.upcase] if iso.present?
-          end
 
           return [] if order.nil?
 

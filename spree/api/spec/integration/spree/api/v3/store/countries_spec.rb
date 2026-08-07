@@ -5,10 +5,10 @@ require 'swagger_helper'
 RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:usa) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US', name: 'United States', states_required: true) }
+  let!(:usa) { Spree::Country.by_iso('US') }
   let!(:california) { Spree::State.find_by(abbr: 'CA', country: usa) || create(:state, country: usa, name: 'California', abbr: 'CA') }
   let!(:new_york) { Spree::State.find_by(abbr: 'NY', country: usa) || create(:state, country: usa, name: 'New York', abbr: 'NY') }
-  let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany', states_required: false) }
+  let!(:germany) { Spree::Country.by_iso('DE') }
 
   let!(:na_market) do
     store.default_market.tap do |market|

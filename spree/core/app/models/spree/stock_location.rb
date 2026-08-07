@@ -55,15 +55,12 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[
       name active default kind pickup_enabled
-      country_iso state_abbr country_id state_id created_at updated_at
+      country_iso state_abbr created_at updated_at
     ]
 
     scope :active, -> { where(active: true) }
     scope :pickup_enabled, -> { where(pickup_enabled: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
-
-    before_validation :normalize_country
-    before_validation :normalize_state
 
     after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default
@@ -71,20 +68,10 @@ module Spree
 
     delegate :name, :iso3, :iso_name, to: :country, prefix: true, allow_nil: true
 
-    # Geography is stored as codes, mirroring Spree::Address. The country and
-    # state associations are kept in step until they are dropped in 6.1.
     # SDK clients use country_iso/state_abbr because Country/State don't expose
     # prefixed IDs — their `iso` is the public handle.
-    def country_iso
-      super.presence || country&.iso
-    end
-
     def country_iso=(value)
       super(value.presence&.to_s&.upcase)
-    end
-
-    def state_abbr
-      super.presence || state&.abbr
     end
 
     def state_abbr=(value)
@@ -232,31 +219,6 @@ module Spree
     end
 
     private
-
-    # Reads the columns rather than the accessors, whose association fallback
-    # would make the first branch always taken once a country is assigned.
-    def normalize_country
-      submitted_iso = self[:country_iso].presence
-
-      if submitted_iso.present?
-        self.country = Spree::Country.by_iso(submitted_iso) unless country&.iso == submitted_iso
-        self[:country_iso] = country.iso if country
-      elsif country.present?
-        self[:country_iso] = country.iso
-      end
-    end
-
-    def normalize_state
-      return if country.blank?
-
-      submitted_abbr = self[:state_abbr].presence
-
-      if submitted_abbr.present?
-        self.state = country.states.find_by(abbr: submitted_abbr) unless state&.abbr == submitted_abbr
-      elsif state.present? && state.country_id == country.id
-        self[:state_abbr] = state.abbr
-      end
-    end
 
     def create_stock_items
       Spree::StockLocations::StockItems::CreateJob.perform_later(self)

@@ -11,16 +11,16 @@ module Spree
 
             # GET /api/v3/store/markets/:market_id/countries
             def index
-              countries = @market.countries.order(:name)
-
               render json: {
-                data: countries.map { |country| serialize_country(country) }
+                data: @market.countries.map { |country| serialize_country(country) }
               }
             end
 
             # GET /api/v3/store/markets/:market_id/countries/:id
             def show
-              country = @market.countries.find_by!(iso: params[:id].upcase)
+              iso = params[:id].to_s.upcase
+              country = @market.countries.find { |candidate| candidate.iso == iso }
+              raise ActiveRecord::RecordNotFound if country.nil?
 
               render json: serialize_country(country)
             end

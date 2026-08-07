@@ -509,8 +509,8 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
     context 'auto-advance' do
       let(:user) { create(:user_with_addresses) }
       let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
-      let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-      let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+      let(:country) { Spree::Country.by_iso('US') }
+      let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
       let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
       let!(:shipping_method) { create(:shipping_method) }
 
@@ -595,8 +595,8 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
   describe 'PATCH #update' do
     let(:user) { create(:user_with_addresses) }
     let!(:order) { create(:cart_with_line_items, store: store, customer: user) }
-    let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-    let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+    let(:country) { Spree::Country.by_iso('US') }
+    let!(:us_state) { Spree::State.resolve(country.iso, 'NY') }
     let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
     let!(:shipping_method) { create(:shipping_method) }
 

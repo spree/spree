@@ -32,7 +32,7 @@ module Spree
       return if market.bootstrap_default
       return if Spree::DeliveryMethod.none?
 
-      unless store.countries_with_shipping_coverage.exists?(iso: country_iso)
+      unless store.countries_with_shipping_coverage.any? { |country| country.iso == country_iso }
         errors.add(:country, :not_in_shipping_zone)
       end
     end
