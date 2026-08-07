@@ -1,3 +1,40 @@
+## 2026-08-07: The tax plan builds the minimal Company tree; the B2B release keeps Catalog
+
+Exemption certificates need an entity to hang off, and `Spree::Company` does not
+exist — `6.1-channels-catalogs-b2b.md` targets 6.1. Rather than leave the tax
+plan's last phase blocked behind a release, `6.0-tax-provider.md` Phase 7 builds
+**Company → CompanyLocation → CompanyContact** plus
+`Spree::TaxExemptionCertificate`, and the B2B release inherits those models
+instead of defining them.
+
+**Why the whole tree and not just Company.** The contact record is what lets a
+logged-in B2B buyer's own cart resolve a company without staff touching the
+order. Company alone would mean exemption works only on admin-created orders —
+the wrong limitation for a self-serve wholesale channel. The location is what
+the Cart and Order reference (`company_location_id` on both, following
+`channel_id`/`market_id`), because that is the FK the B2B plan already specifies
+for orders; a direct `company_id` would save one hop now and cost a schema
+reversal later.
+
+**Supersedes the B2B plan on one point: no `tax_exempt` boolean.** That plan's
+Company and CompanyLocation sketches both carry one. It is not being built. A
+flag cannot say which jurisdiction it holds in or which lines it covers, and
+removing the boolean `exempt?` from the provider contract was the substance of
+the 2026-08-05 refinement — reintroducing it a layer down would undo it.
+Exemption is a certificate resolved into a typed `Spree::TaxExemption` entry.
+**`6.1-channels-catalogs-b2b.md` still needs this note added to its own Key
+Decisions** — deliberately not edited yet, at the author's instruction.
+
+**Explicitly not pulled forward:** Catalog, CatalogProduct, CatalogAssignment,
+`default_catalog_id`, per-company pricing, `Products::ForContext` visibility, the
+Company → CustomerGroup link, and roles/approvals/purchase limits/invoicing.
+Certificates hang off Company scoped by their own country/state columns, so no
+per-location duplication.
+
+**Constraint going forward:** pulling a model forward out of another plan takes
+the model, not the feature. If a field only makes sense for the deferred feature,
+it waits with it.
+
 ## 2026-08-07: The pricing zone dimension ships with the tax provider, but the price-rule design stays with delivery-zones
 
 `6.0-delivery-zones.md`'s ownership table gives the `Pricing::Context` zone
