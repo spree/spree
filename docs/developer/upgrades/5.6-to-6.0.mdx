@@ -354,6 +354,16 @@ Also note:
 - Localized number parsing still happens: `Spree::Price#amount=` runs `Spree::LocalizedNumber.parse`, so `set_price(currency, '1,599.99')` works as `price=` did.
 - The variant validation that inferred a missing price from the product's default variant is gone. Set prices explicitly (the product and variant factories already do).
 
+### `StateChange` and `LogEntry` are gone
+
+`Spree::StateChange` and `Spree::LogEntry` are removed — the models, the `state_changes` associations on `Order`, `Payment` and `Fulfillment`, the `log_entries` associations on `Payment` and `Refund`, and everything that wrote to them. Both were write-only: nothing in Spree read the rows back, and the admin screens that displayed them are gone.
+
+**Events are the audit trail now.** Instead of querying state-change rows, subscribe to the lifecycle events that already fire on every meaningful transition: `order.placed`, `order.canceled`, `payment.completed`, `payment.voided`, `fulfillment.ready`, `fulfillment.fulfilled`, `fulfillment.canceled`, `fulfillment.resumed`, and the rest. If you need a persistent history, write it from a subscriber.
+
+**Gateway responses are no longer stored in your database.** `LogEntry` kept every gateway response as serialized YAML. For transaction forensics, use your payment provider's dashboard — `Payment#gateway_dashboard_payment_url` links straight to the transaction — or `Spree::PaymentSession`, which holds the gateway-side state for session-based providers.
+
+The `spree_state_changes` and `spree_log_entries` tables are **not dropped until 6.1**, so your existing rows survive the upgrade. If you want the history long-term, export it before upgrading to 6.1.
+
 ## Deprecated in 6.0, removed in 6.1
 
 Every rename keeps the legacy name working for one release with a deprecation warning. The notable ones:
