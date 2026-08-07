@@ -12,6 +12,25 @@ module Spree
   # migration, where the model's callbacks, validations and default scopes may not
   # match the schema on disk.
   class CategoryPermalinkDeduplicator
+    # Two fixed variants rather than one interpolated query: spree_taxonomies is
+    # gone in 6.1, and a constant is verifiably free of interpolated input.
+    DUPLICATE_GROUPS_WITH_TAXONOMY_SQL = <<~SQL.freeze
+      SELECT COALESCE(c.store_id, t.store_id) AS sid, c.permalink
+      FROM spree_categories c
+      LEFT JOIN spree_taxonomies t ON t.id = c.taxonomy_id
+      WHERE c.permalink IS NOT NULL AND COALESCE(c.store_id, t.store_id) IS NOT NULL
+      GROUP BY COALESCE(c.store_id, t.store_id), c.permalink
+      HAVING COUNT(*) > 1
+    SQL
+
+    DUPLICATE_GROUPS_SQL = <<~SQL.freeze
+      SELECT c.store_id AS sid, c.permalink
+      FROM spree_categories c
+      WHERE c.permalink IS NOT NULL AND c.store_id IS NOT NULL
+      GROUP BY c.store_id, c.permalink
+      HAVING COUNT(*) > 1
+    SQL
+
     # @param connection [ActiveRecord::ConnectionAdapters::AbstractAdapter]
     def initialize(connection = ActiveRecord::Base.connection)
       @connection = connection
@@ -48,8 +67,10 @@ module Spree
       connection.table_exists?('spree_categories')
     end
 
-    def quote(value)
-      connection.quote(value)
+    # Binds values as parameters rather than interpolating them, so no user- or
+    # data-derived string is ever spliced into SQL text.
+    def sanitize(sql, *binds)
+      ActiveRecord::Base.sanitize_sql_array([sql, *binds])
     end
 
     # Groups by the store a category belongs to *or is about to*: rows still
@@ -59,21 +80,14 @@ module Spree
     #
     # @return [Array<Array(Integer, String)>] (store_id, permalink) pairs appearing more than once
     def duplicate_groups
-      connection.select_rows(<<~SQL)
-        SELECT #{effective_store_id} AS sid, c.permalink
-        FROM spree_categories c
-        #{taxonomy_join}
-        WHERE c.permalink IS NOT NULL AND #{effective_store_id} IS NOT NULL
-        GROUP BY #{effective_store_id}, c.permalink
-        HAVING COUNT(*) > 1
-      SQL
+      connection.select_rows(taxonomies_table? ? DUPLICATE_GROUPS_WITH_TAXONOMY_SQL : DUPLICATE_GROUPS_SQL)
     end
 
     def ids_for(store_id, permalink)
-      connection.select_values(<<~SQL)
+      connection.select_values(sanitize(<<~SQL, store_id, permalink))
         SELECT c.id FROM spree_categories c
         #{taxonomy_join}
-        WHERE #{effective_store_id} = #{quote(store_id)} AND c.permalink = #{quote(permalink)}
+        WHERE #{effective_store_id} = ? AND c.permalink = ?
         ORDER BY c.id
       SQL
     end
@@ -108,36 +122,40 @@ module Spree
     def taxonomy_suffix(id)
       return nil unless connection.table_exists?('spree_taxonomies')
 
-      name = connection.select_value(<<~SQL)
+      name = connection.select_value(sanitize(<<~SQL, id))
         SELECT t.name FROM spree_taxonomies t
         INNER JOIN spree_categories c ON c.taxonomy_id = t.id
-        WHERE c.id = #{quote(id)}
+        WHERE c.id = ?
       SQL
 
       name.presence && name.to_s.parameterize.presence
     end
 
     def taken?(permalink, store_id)
-      connection.select_value(<<~SQL).to_i.positive?
+      connection.select_value(sanitize(<<~SQL, store_id, permalink)).to_i.positive?
         SELECT COUNT(*) FROM spree_categories c
         #{taxonomy_join}
-        WHERE #{effective_store_id} = #{quote(store_id)} AND c.permalink = #{quote(permalink)}
+        WHERE #{effective_store_id} = ? AND c.permalink = ?
       SQL
     end
 
     # Moves the row and re-prefixes its subtree, so a child of "catalog" becomes a
     # child of "catalog-shop-b" rather than keeping the old parent's path.
     def rewrite(id, candidate)
-      old_permalink = connection.select_value("SELECT permalink FROM spree_categories WHERE id = #{quote(id)}")
-      connection.update("UPDATE spree_categories SET permalink = #{quote(candidate)} WHERE id = #{quote(id)}")
+      old_permalink = permalink_for(id)
+      connection.update(sanitize('UPDATE spree_categories SET permalink = ? WHERE id = ?', candidate, id))
 
       descendant_ids(id).each do |descendant_id|
-        current = connection.select_value("SELECT permalink FROM spree_categories WHERE id = #{quote(descendant_id)}")
+        current = permalink_for(descendant_id)
         next if current.blank? || !current.start_with?("#{old_permalink}/")
 
         moved = current.sub("#{old_permalink}/", "#{candidate}/")
-        connection.update("UPDATE spree_categories SET permalink = #{quote(moved)} WHERE id = #{quote(descendant_id)}")
+        connection.update(sanitize('UPDATE spree_categories SET permalink = ? WHERE id = ?', moved, descendant_id))
       end
+    end
+
+    def permalink_for(id)
+      connection.select_value(sanitize('SELECT permalink FROM spree_categories WHERE id = ?', id))
     end
 
     # Walks the parent chain rather than using lft/rgt, which may be stale on rows
@@ -148,7 +166,7 @@ module Spree
 
       until frontier.empty?
         children = connection.select_values(
-          "SELECT id FROM spree_categories WHERE parent_id IN (#{frontier.map { |i| quote(i) }.join(',')})"
+          sanitize('SELECT id FROM spree_categories WHERE parent_id IN (?)', frontier)
         )
         break if children.empty?
 

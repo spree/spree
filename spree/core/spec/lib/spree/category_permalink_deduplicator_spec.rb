@@ -3,58 +3,79 @@ require 'spree/category_permalink_deduplicator'
 
 RSpec.describe Spree::CategoryPermalinkDeduplicator do
   let(:store) { @default_store }
-  let(:index_name) { 'index_spree_categories_on_permalink_and_store_id' }
 
-  # The duplicates being fixed can only exist while the index is absent — which is
-  # exactly the pre-migration state this class runs against.
-  around do |example|
-    conn = ActiveRecord::Base.connection
-    conn.remove_index :spree_categories, name: index_name, if_exists: true
-    example.run
-    conn.add_index :spree_categories, %i[permalink store_id], name: index_name, unique: true, if_not_exists: true
+  # Rows are staged with store_id NULL — the genuine pre-backfill state of a store
+  # upgrading from 5.5. The unique index tolerates them (NULLs compare distinct),
+  # while the deduplicator still sees the collision because it resolves each
+  # category's store through its taxonomy. Dropping the index instead would issue
+  # DDL inside the example's transaction, which MySQL commits implicitly and so
+  # destroys the savepoint the suite rolls back to.
+  def stage(category, permalink)
+    Spree::Category.unscoped.where(id: category.id).update_all(permalink: permalink, store_id: nil)
   end
 
   it 'separates duplicate permalinks and cascades to descendants' do
-    tax_a = create(:taxonomy, name: 'Shop A', store: store)
-    tax_b = create(:taxonomy, name: 'Shop B', store: store)
+    taxonomy_a = create(:taxonomy, name: 'Shop A', store: store)
+    taxonomy_b = create(:taxonomy, name: 'Shop B', store: store)
 
-    # A 5.6 store post-backfill: store_id populated, two "catalog" roots, each
-    # with a child whose permalink is prefixed by its parent.
-    root_a, root_b = tax_a.root, tax_b.root
-    child_a = Spree::Category.new(name: 'Kids A', taxonomy_id: tax_a.id, parent_id: root_a.id, store_id: store.id)
+    child_a = Spree::Category.new(name: 'Kids A', taxonomy_id: taxonomy_a.id, parent_id: taxonomy_a.root.id)
     child_a.save!(validate: false)
-    child_b = Spree::Category.new(name: 'Kids B', taxonomy_id: tax_b.id, parent_id: root_b.id, store_id: store.id)
+    child_b = Spree::Category.new(name: 'Kids B', taxonomy_id: taxonomy_b.id, parent_id: taxonomy_b.root.id)
     child_b.save!(validate: false)
 
-    Spree::Category.unscoped.where(id: root_a.id).update_all(permalink: 'catalog', store_id: store.id)
-    Spree::Category.unscoped.where(id: root_b.id).update_all(permalink: 'catalog', store_id: store.id)
-    Spree::Category.unscoped.where(id: child_a.id).update_all(permalink: 'catalog/kids-a', store_id: store.id)
-    Spree::Category.unscoped.where(id: child_b.id).update_all(permalink: 'catalog/kids-b', store_id: store.id)
+    # Both taxonomies own a "catalog" root — legal before 6.0, colliding after.
+    stage(taxonomy_a.root, 'catalog')
+    stage(taxonomy_b.root, 'catalog')
+    stage(child_a, 'catalog/kids-a')
+    stage(child_b, 'catalog/kids-b')
 
-    renamed = described_class.new.call
-    puts "renamed: #{renamed}"
+    expect(described_class.new.call).to eq(1)
 
-    permalinks = Spree::Category.unscoped.where(store_id: store.id).pluck(:id, :permalink).to_h
-    puts "root_a:  #{permalinks[root_a.id].inspect}"
-    puts "root_b:  #{permalinks[root_b.id].inspect}"
-    puts "child_a: #{permalinks[child_a.id].inspect}"
-    puts "child_b: #{permalinks[child_b.id].inspect}"
+    permalinks = Spree::Category.unscoped.pluck(:id, :permalink).to_h
+    expect(permalinks[taxonomy_a.root.id]).to eq('catalog')
+    expect(permalinks[taxonomy_b.root.id]).to eq('catalog-shop-b')
 
-    all = Spree::Category.unscoped.where(store_id: store.id).pluck(:permalink).compact
-    expect(all.uniq.size).to eq(all.size), "duplicates remain: #{all.inspect}"
+    # The moved root's child follows it rather than keeping a path its parent
+    # no longer has.
+    expect(permalinks[child_b.id]).to eq('catalog-shop-b/kids-b')
+    expect(permalinks[child_a.id]).to eq('catalog/kids-a')
+  end
 
-    # The moved root's child must follow it, not keep the old prefix.
-    expect(permalinks[child_b.id]).to start_with("#{permalinks[root_b.id]}/")
+  it 'falls back to a numeric suffix when the taxonomy-named variant is taken' do
+    taxonomy_a = create(:taxonomy, name: 'Shop A', store: store)
+    taxonomy_b = create(:taxonomy, name: 'Shop B', store: store)
+    # An unrelated category already occupies the name the suffix would produce.
+    squatter = create(:taxonomy, name: 'Squatter', store: store)
+
+    stage(taxonomy_a.root, 'catalog')
+    stage(taxonomy_b.root, 'catalog')
+    stage(squatter.root, 'catalog-shop-b')
+
+    described_class.new.call
+
+    permalinks = Spree::Category.unscoped.pluck(:permalink).compact
+    expect(permalinks.uniq.size).to eq(permalinks.size)
+    expect(permalinks).to include('catalog-shop-b-2')
   end
 
   it 'is idempotent' do
-    tax_a = create(:taxonomy, name: 'A', store: store)
-    tax_b = create(:taxonomy, name: 'B', store: store)
-    Spree::Category.unscoped.where(id: [tax_a.root.id, tax_b.root.id]).update_all(permalink: 'dup', store_id: store.id)
+    taxonomy_a = create(:taxonomy, name: 'A', store: store)
+    taxonomy_b = create(:taxonomy, name: 'B', store: store)
+    stage(taxonomy_a.root, 'dup')
+    stage(taxonomy_b.root, 'dup')
 
     described_class.new.call
-    first = Spree::Category.unscoped.order(:id).pluck(:id, :permalink)
+    after_first_run = Spree::Category.unscoped.order(:id).pluck(:id, :permalink)
+
     expect(described_class.new.call).to eq(0)
-    expect(Spree::Category.unscoped.order(:id).pluck(:id, :permalink)).to eq(first)
+    expect(Spree::Category.unscoped.order(:id).pluck(:id, :permalink)).to eq(after_first_run)
+  end
+
+  it 'leaves distinct permalinks untouched' do
+    taxonomy = create(:taxonomy, name: 'Solo', store: store)
+    stage(taxonomy.root, 'untouched')
+
+    expect(described_class.new.call).to eq(0)
+    expect(Spree::Category.unscoped.where(id: taxonomy.root.id).pick(:permalink)).to eq('untouched')
   end
 end
