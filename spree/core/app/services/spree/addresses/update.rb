@@ -4,8 +4,6 @@ module Spree
       prepend Spree::ServiceModule::Base
       include Spree::Addresses::Helper
 
-      attr_accessor :country
-
       def call(address:, address_params:, **opts)
         ApplicationRecord.transaction do
           perform(address: address, address_params: address_params, **opts)
@@ -82,10 +80,11 @@ module Spree
         end
       end
 
+      # An update that names no country keeps the one already on the address —
+      # the edit forms post a partial set of fields.
       def prepare_address_params!(address, address_params)
         address_params[:customer_id] = address&.customer_id
-        address_params[:country_id] ||= address.country_id
-        address_params = fill_country_and_state_ids(address_params)
+        address_params[:country_id] ||= address.country_id unless address_params[:country_iso].present?
         address_params.transform_values!(&:presence)
       end
 
@@ -104,8 +103,12 @@ module Spree
         )
       end
 
+      # +find_or_create_by+ builds a WHERE clause from every key, so the ISO
+      # handles have to be resolved to the columns they stand for first.
       def new_address(address_params = {})
-        @new_address ||= ::Spree::Address.not_deleted.find_or_create_by(address_params.except(:id, :updated_at, :created_at))
+        @new_address ||= ::Spree::Address.not_deleted.find_or_create_by(
+          Spree::Address.resolve_geo_params(address_params.except(:id, :updated_at, :created_at))
+        )
       end
     end
   end
