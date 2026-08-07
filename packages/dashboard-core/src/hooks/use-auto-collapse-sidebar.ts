@@ -25,18 +25,30 @@ export function useAutoCollapseSidebar(active: boolean) {
 
   useEffect(() => {
     // On mobile the primary nav is an overlay sheet, not a column competing
-    // for width, so there is nothing to reclaim.
-    if (isMobile) return
+    // for width, so there is nothing to reclaim. Clearing the snapshot on the
+    // way through matters: crossing the breakpoint mid-settings would
+    // otherwise leave a stale value to restore from later.
+    if (isMobile) {
+      restoreTo.current = null
+      return
+    }
 
     if (active) {
-      restoreTo.current = openRef.current
+      // Only snapshot on the way in. Re-running while already active (e.g.
+      // navigating between two settings pages) must not re-capture a state
+      // this hook itself imposed.
+      if (restoreTo.current === null) restoreTo.current = openRef.current
       if (openRef.current) setOpenTransient(false)
       return
     }
 
     if (restoreTo.current !== null) {
-      if (restoreTo.current) setOpenTransient(true)
+      const wasOpenOnEntry = restoreTo.current
       restoreTo.current = null
+      // Restore only if the rail is still collapsed — i.e. still as this hook
+      // left it. A merchant who expanded it during settings has said what they
+      // want, and forcing the entry-time value back would overrule them.
+      if (wasOpenOnEntry && !openRef.current) setOpenTransient(true)
     }
   }, [active, isMobile, setOpenTransient])
 }

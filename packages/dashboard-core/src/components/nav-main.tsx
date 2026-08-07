@@ -151,15 +151,16 @@ function CollapsedDropdown({
         {/* biome-ignore lint/a11y/noStaticElementInteractions: hover trigger for collapsed nav */}
         <div onMouseLeave={closeSoon}>{children}</div>
       </DropdownMenuTrigger>
-      {/* `sideOffset={0}` closes the dead zone the pointer used to cross: at
-          4px the gap belonged to neither surface, so travelling to the menu
-          read as leaving both. The visual separation comes from `ms-1`
-          padding on the panel instead, which stays inside its hover area. */}
+      {/* `sideOffset={0}` plus inline-start *padding* closes the dead zone the
+          pointer used to cross: an offset (or a margin) puts those pixels
+          outside both elements, so travelling to the menu reads as leaving
+          both. Padding keeps the gap inside the panel's own hover area, so the
+          visual inset costs nothing in reachability. */}
       <DropdownMenuContent
         side="right"
         align="start"
         sideOffset={0}
-        className="ms-1"
+        className="ps-1"
         onMouseLeave={closeSoon}
         onMouseEnter={openNow}
       >
@@ -267,6 +268,13 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
   // One controller for the whole rail so only a single hover menu is ever open.
   const hoverMenu = useHoverMenuController()
 
+  // Expanding the rail unmounts the dropdowns but leaves `openKey` set, so
+  // collapsing again would restore a menu the user never opened.
+  const { closeNow } = hoverMenu
+  useEffect(() => {
+    if (!isCollapsed) closeNow()
+  }, [isCollapsed, closeNow])
+
   return (
     <>
       <SidebarGroup>
@@ -293,7 +301,10 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
-                    <Link to={item.url}>
+                    {/* `aria-label` for the same reason as the main nav above:
+                        collapsed mode hides the label, and Settings lives here
+                        — the one place the rail is collapsed by default. */}
+                    <Link to={item.url} aria-label={isCollapsed ? item.title : undefined}>
                       <NavIcon icon={item.icon} isActive={isActive} />
                       <span>{item.title}</span>
                     </Link>
