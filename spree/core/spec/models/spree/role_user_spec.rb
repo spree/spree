@@ -51,6 +51,22 @@ describe Spree::RoleUser do
 
         expect(role_user.store).to eq(store)
       end
+
+      it 'binds the store to a store resource, not the current store' do
+        other_store = create(:store)
+        role_user = described_class.new(role: role, user: spree_user, resource: other_store)
+        expect(role_user.valid?).to be_truthy
+
+        expect(role_user.store).to eq(other_store)
+      end
+
+      it 'defaults the resource to an explicitly assigned store' do
+        store = create(:store)
+        role_user = described_class.new(role: role, user: spree_user, store: store)
+        expect(role_user.valid?).to be_truthy
+
+        expect(role_user.resource).to eq(store)
+      end
     end
   end
 

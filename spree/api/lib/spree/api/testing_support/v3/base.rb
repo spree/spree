@@ -70,23 +70,16 @@ shared_context 'API v3 Admin authenticated' do
   let(:headers) { bearer_headers }
 end
 
-# Authenticates as an admin whose ability is restricted to a single custom
-# permission set, so authorization specs can assert what a limited role can and
-# cannot do. Define `custom_permission_set` (a Spree::PermissionSets::Base
-# subclass) in the including example. The global permission registry is saved
-# and restored around each example so it doesn't leak into other specs.
+# Authenticates as an admin whose ability is restricted to specific catalog
+# permission keys, so authorization specs can assert what a limited role can
+# and cannot do. Define `custom_permissions` (an array of catalog keys, e.g.
+# `%w[read_orders write_products]`) in the including example. Roles are data,
+# so nothing global is mutated.
 shared_context 'API v3 Admin with custom permissions' do
   include_context 'API v3 Admin'
 
-  around do |example|
-    saved = Spree.permissions.dup
-    Spree.permissions.reset!
-    example.run
-  ensure
-    Spree.permissions.replace(saved)
-  end
-
-  let(:custom_role) { create(:role, name: 'limited') }
+  let(:custom_permissions) { [] }
+  let(:custom_role) { create(:role, name: 'limited', permissions: custom_permissions) }
   let(:custom_admin) { create(:admin_user, :without_admin_role) }
   let(:headers) do
     { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(custom_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
@@ -94,7 +87,6 @@ shared_context 'API v3 Admin with custom permissions' do
 
   before do
     custom_admin.spree_roles << custom_role
-    Spree.permissions.assign(:limited, custom_permission_set)
   end
 end
 

@@ -1139,6 +1139,7 @@ en:
     or: or
     order: Order
     order_canceled: Order canceled
+    order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
     order_mailer:
       cancel_email:
         dear_customer: Hey %{name},
@@ -1209,6 +1210,70 @@ en:
     percent_per_item: Percent Per Item
     permalink: Permalink
     permissions: Permissions
+    permissions_catalog:
+      groups:
+        access: Access
+        analytics: Analytics
+        catalog: Catalog
+        customers: Customers
+        marketing: Marketing
+        orders: Orders
+        settings: Settings
+      kinds:
+        read: View
+        write: Manage
+      resources:
+        api_keys:
+          description: Create and revoke API credentials
+          label: API keys
+        categories:
+          description: Category tree and taxonomies
+          label: Categories
+        collections:
+          description: Manual and rule-based product collections
+          label: Collections
+        customers:
+          description: Customer accounts, addresses, cards and groups
+          label: Customers
+        dashboard:
+          description: Sales and performance analytics
+          label: Analytics dashboard
+        fulfillments:
+          description: Pack, ship and track order fulfillments
+          label: Fulfillments
+        gift_cards:
+          description: Gift cards and gift card batches
+          label: Gift cards
+        orders:
+          description: Orders, line items, returns, exchanges and claims
+          label: Orders
+        payments:
+          description: Order payments and payment capture
+          label: Payments
+        products:
+          description: Products, variants, options, prices and media
+          label: Products
+        promotions:
+          description: Promotions, rules and coupon codes
+          label: Promotions
+        refunds:
+          description: Issue and view refunds
+          label: Refunds
+        settings:
+          description: Store, payment, delivery, tax and channel configuration
+          label: Store settings
+        staff:
+          description: Team members, invitations, roles and their permissions
+          label: Staff & roles
+        stock:
+          description: Stock levels, locations, movements and transfers
+          label: Inventory
+        store_credits:
+          description: Customer store credit balances
+          label: Store credits
+        webhooks:
+          description: Webhook endpoints and deliveries
+          label: Webhooks
     phone: Phone
     policies: Policies
     powered_by: Powered by
@@ -1367,7 +1432,10 @@ en:
     review: Review
     risk: Risk
     risky: Risky
+    role_cannot_be_deleted: This role is protected or still referenced by staff members or pending invitations and cannot be deleted
     role_id: Role ID
+    role_immutable: cannot be changed on a protected role
+    role_permissions_unknown: 'contains unknown permissions: %{keys}'
     roles: Roles
     row: Row
     rules: Rules

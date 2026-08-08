@@ -1,33 +1,54 @@
-# Implementation class for Cancan gem. Permissions are configured through
-# permission sets — see Spree::PermissionSets::Base for details on creating
-# custom ones.
+# CanCanCan ability for staff (back-office) authorization only: admin-user
+# principals are authorized through the permission catalog — their
+# store-scoped roles hold flat `read_<resource>` / `write_<resource>` keys
+# (see Spree::PermissionConfiguration and docs/plans/6.0-admin-rbac.md),
+# which compile to CanCanCan rules here. The `admin` role grants everything.
 #
-# @example Configuring role permissions
-#   Spree.permissions.assign(:customer_service, [
-#     Spree::PermissionSets::OrderDisplay,
-#     Spree::PermissionSets::UserManagement
-#   ])
+# Customers and guests never touch CanCanCan: the Store API authorizes by
+# ownership-scoped queries plus Spree::Storefront::AccessPolicy (carried by
+# `Spree::Dependencies.storefront_access_policy_class`). An ability built for
+# a customer principal simply has no rules.
 #
-# See https://github.com/CanCanCommunity/cancancan for more details.
+# Replace the whole class via `Spree::Dependencies.ability_class` when an
+# application needs rules the catalog cannot express.
 require 'cancan'
 
 module Spree
   class Ability
     include CanCan::Ability
 
-    # @return [Object] the current user
+    # @return [Object] the current user (a customer, an admin user, or a new
+    #   customer instance for guests)
     attr_reader :user
 
     # @return [Spree::Store, nil] the current store
     attr_reader :store
+
+    # @return [Array<String>] the expanded catalog keys this ability activated
+    #   (empty for non-staff principals). Feeds `/me` and the admin key gate.
+    attr_reader :permission_keys
 
     def initialize(user, options = {})
       alias_cancan_delete_action
 
       @user = user || Spree.customer_class.new
       @store = options[:store] || Spree::Current.store
+      @permission_keys = []
 
-      apply_permissions_from_sets
+      apply_staff_permissions if staff_principal?
+    end
+
+    # Applies a single catalog key's grants and records it as activated.
+    # Public so host subclasses can grant catalog capabilities in the same
+    # currency the key gate checks.
+    #
+    # @param key [String, Symbol] a catalog key (`'write_orders'`)
+    # @return [Boolean] whether the key resolved
+    def activate_permission(key)
+      return false unless Spree.permissions.activate_key(self, key)
+
+      @permission_keys |= Spree.permissions.expand_keys([key])
+      true
     end
 
     protected
@@ -37,46 +58,66 @@ module Spree
       alias_action :create, :update, :destroy, to: :modify
     end
 
-    # Applies permissions based on the user's roles and the configured permission sets.
-    def apply_permissions_from_sets
-      role_names = determine_role_names
-      permission_sets = Spree.permissions.permission_sets_for_roles(role_names)
-      activate_permission_sets(permission_sets)
+    # Staff = a persisted admin-user principal. Customers never resolve roles
+    # (storefront authorization is ownership, not RBAC), which also spares a
+    # role_users query on every storefront request.
+    def staff_principal?
+      @user.persisted? && @user.is_a?(Spree.admin_user_class)
     end
 
-    # Determines the role names for the current user, scoped to the current
-    # store. A +Spree::RoleUser+ is bound to a store via its +store_id+ (set from
-    # the role's resource), so a role held on one store does not apply on another,
-    # independent of the polymorphic +resource+ the role is attached to.
-    #
-    # @return [Array<Symbol>] the role names
-    def determine_role_names
-      return [:default] unless @user.persisted?
+    # --- staff ---
 
-      if @user.respond_to?(:role_users)
-        role_names = @user.role_users.where(store: @store).
-                     joins(:role).
-                     pluck("#{Spree::Role.table_name}.name").map(&:to_sym).uniq
-        return role_names if role_names.any?
-      end
+    def apply_staff_permissions
+      roles = staff_roles
 
-      # Fall back to checking spree_admin? for backward compatibility
-      # This supports cases where roles are mocked or admin status is determined differently
-      if @user.try(:spree_admin?, @store)
-        [:admin]
+      if roles.any? { |role| role.name == Spree::Role::ADMIN_ROLE } || implicit_admin?(roles)
+        activate_full_access
       else
-        [:default]
+        apply_staff_baseline
+        Spree.permissions.expand_keys(roles.flat_map(&:permissions)).each do |key|
+          activate_permission(key)
+        end
       end
     end
 
-    # Activates the given permission sets.
+    # The user's store-admin roles on the current store.
     #
-    # @param permission_sets [Array<Class>] the permission set classes to activate
-    def activate_permission_sets(permission_sets)
-      permission_sets.each do |permission_set_class|
-        permission_set = permission_set_class.new(self)
-        permission_set.activate!
-      end
+    # Assignments are matched on the store AND on a store resource: a
+    # `RoleUser` scoped to a non-store resource (a marketplace vendor, say)
+    # binds to that resource's store, so matching on `store_id` alone would
+    # let a vendor's own staff role grant store-wide admin capability. Those
+    # assignments belong to their own panel's ability, not this one.
+    #
+    # @return [Array<Spree::Role>]
+    def staff_roles
+      return [] unless @user.respond_to?(:role_users)
+
+      @staff_roles ||= @user.role_users.
+                       where(store: @store, resource_type: Spree::Store.to_s).
+                       includes(:role).map(&:role)
     end
+
+    # Backward-compatible fallback for principals with no role rows whose
+    # admin status is determined differently (e.g. mocked in specs).
+    def implicit_admin?(roles)
+      roles.empty? && @user.try(:spree_admin?, @store)
+    end
+
+    # Full access. Record-state safety (order cancel/destroy eligibility, the
+    # admin role's immutability) is enforced by model and workflow guards, not
+    # ability rules — see the Axis A/B split in docs/plans/decisions.md.
+    def activate_full_access
+      can :manage, :all
+      @permission_keys = Spree.permissions.catalog_keys
+    end
+
+    # Reference data every staff member can read regardless of keys — address
+    # forms need countries/states, and the dashboard shell reads the store.
+    def apply_staff_baseline
+      can :read, Spree::Country
+      can :read, Spree::State
+      can :read, Spree::Store
+    end
+
   end
 end

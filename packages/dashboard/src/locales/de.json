@@ -65,30 +65,8 @@
         "full_access_label": "Vollzugriff (write_all)",
         "read_all_hint": "– Lesen für jede Ressource",
         "read_all_label": "Alles lesen (read_all)",
-        "read_aria": "{{resource}} lesen",
-        "read_header": "Lesen",
-        "resource_header": "Ressource",
-        "resources": {
-          "api_keys": "API-Schlüssel",
-          "categories": "Kategorien",
-          "customers": "Kunden",
-          "dashboard": "Dashboard",
-          "fulfillments": "Fulfillments",
-          "gift_cards": "Geschenkkarten",
-          "orders": "Bestellungen",
-          "payments": "Zahlungen",
-          "products": "Produkte",
-          "promotions": "Aktionen",
-          "refunds": "Rückerstattungen",
-          "settings": "Einstellungen",
-          "stock": "Bestand",
-          "store_credits": "Guthaben",
-          "webhooks": "Webhooks"
-        },
         "show_more_aria_one": "{{count}} weiteren Geltungsbereich anzeigen",
-        "show_more_aria_other": "{{count}} weitere Geltungsbereiche anzeigen",
-        "write_aria": "{{resource}} schreiben",
-        "write_header": "Schreiben"
+        "show_more_aria_other": "{{count}} weitere Geltungsbereiche anzeigen"
       },
       "scopes_immutable_help": "Berechtigungen können nach der Erstellung eines Schlüssels nicht mehr geändert werden. Um sie zu ändern, erstellen Sie einen neuen Schlüssel mit den benötigten Berechtigungen und widerrufen Sie diesen.",
       "validation": {
@@ -725,8 +703,8 @@
           "label": "Lieferzonen"
         },
         "fulfillment_provider": {
-          "label": "Fulfillment-Anbieter",
-          "help": "Wie Sendungen dieser Methode abgewickelt und verfolgt werden."
+          "help": "Wie Sendungen dieser Methode abgewickelt und verfolgt werden.",
+          "label": "Fulfillment-Anbieter"
         },
         "fulfillment_type": {
           "label": "Fulfillment-Typ"
@@ -1092,6 +1070,16 @@
         "usage_limit": {
           "label": "Nutzungslimit",
           "placeholder": "Unbegrenzt"
+        }
+      },
+      "role": {
+        "description": {
+          "label": "Beschreibung",
+          "placeholder": "Wofür ist diese Rolle gedacht?"
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "z. B. Bestellmanager"
         }
       },
       "role_id": {
@@ -1864,23 +1852,23 @@
           },
           "claims": {
             "actions": {
-              "resolve_refund": "Mit Erstattung lösen",
-              "resolve_replacement": "Mit Ersatz lösen",
-              "deny": "Ablehnen",
               "create": "Neue Reklamation",
-              "resolve": "Lösen"
+              "deny": "Ablehnen",
+              "resolve": "Lösen",
+              "resolve_refund": "Mit Erstattung lösen",
+              "resolve_replacement": "Mit Ersatz lösen"
             },
-            "empty": "Keine Reklamationen für diese Bestellung.",
             "create_title": "Neue Reklamation",
+            "empty": "Keine Reklamationen für diese Bestellung.",
             "refund_amount": "Erstattungsbetrag",
-            "resolve_title": "Reklamation lösen",
-            "resolution": "Lösungsweg",
             "replacement_items": "Ersatz senden für",
+            "resolution": "Lösungsweg",
             "resolutions": {
               "refund": "Erstattung",
-              "replacement": "Ersatz",
-              "refund_and_replacement": "Erstattung und Ersatz"
-            }
+              "refund_and_replacement": "Erstattung und Ersatz",
+              "replacement": "Ersatz"
+            },
+            "resolve_title": "Reklamation lösen"
           },
           "dialogs": {
             "approve_title": "Bestellung genehmigen?",
@@ -1892,43 +1880,43 @@
           "empty_shipments": "Noch keine Sendungen.",
           "exchanges": {
             "actions": {
-              "fulfill": "Ersatz versenden",
-              "create": "Neuer Umtausch"
+              "create": "Neuer Umtausch",
+              "fulfill": "Ersatz versenden"
             },
-            "price_difference": "Preisdifferenz",
-            "empty": "Kein Umtausch für diese Bestellung.",
             "create_title": "Neuer Umtausch",
+            "empty": "Kein Umtausch für diese Bestellung.",
+            "price_difference": "Preisdifferenz",
             "replacement_variant": "Varianten-ID des Ersatzes"
           },
           "no_delivery_method": "Keine Versandmethode ausgewählt.",
           "returns": {
             "actions": {
               "approve": "Genehmigen",
+              "create": "Neue Retoure",
               "receive": "Artikel annehmen",
-              "refund": "Erstatten",
-              "create": "Neue Retoure"
+              "refund": "Erstatten"
             },
             "confirm": {
               "cancel": "Diese Retoure stornieren? Es wird nichts eingelagert und kein Geld bewegt."
             },
-            "refund_total": "Erstattungssumme",
-            "received_of": "{{received}} von {{requested}} erhalten",
+            "create_title": "Neue Retoure",
+            "empty": "Keine Retouren für diese Bestellung.",
+            "empty_no_units": "Für diese Bestellung gibt es keine Fulfillment-Einträge, auf die sich eine Retoure beziehen könnte.",
+            "memo": "Notiz",
             "not_resellable": "Nicht wiederverkäuflich",
+            "reason": "Grund",
             "receive_title": "Retournierte Artikel annehmen",
+            "received_of": "{{received}} von {{requested}} erhalten",
             "received_quantity": "Erhalten",
-            "resellable": "Wiederverkäuflich",
-            "refund_title": "Retoure erstatten",
             "refund_amount": "Betrag",
             "refund_method": "Erstatten an",
             "refund_methods": {
               "original_payment": "Ursprüngliche Zahlung",
               "store_credit": "Guthaben"
             },
-            "empty": "Keine Retouren für diese Bestellung.",
-            "memo": "Notiz",
-            "reason": "Grund",
-            "create_title": "Neue Retoure",
-            "empty_no_units": "Für diese Bestellung gibt es keine Fulfillment-Einträge, auf die sich eine Retoure beziehen könnte."
+            "refund_title": "Retoure erstatten",
+            "refund_total": "Erstattungssumme",
+            "resellable": "Wiederverkäuflich"
           },
           "section_billing_address": "Rechnungsadresse",
           "section_claims": "Reklamationen",
@@ -2249,6 +2237,20 @@
         "loading": "Aktion wird geladen…",
         "new_title": "Neue Aktion"
       },
+      "roles": {
+        "add_cta": "Rolle hinzufügen",
+        "edit_sheet_title": "Rolle bearbeiten",
+        "empty": "Noch keine Rollen",
+        "empty_description": "Erstelle eine Rolle, um Teammitgliedern gezielten Zugriff zu geben.",
+        "new_title": "Neue Rolle",
+        "subtitle": "Lege fest, was jede Mitarbeiterrolle sehen und tun darf",
+        "table": {
+          "members": "Mitglieder",
+          "permissions": "Berechtigungen",
+          "role": "Rolle"
+        },
+        "title": "Rollen"
+      },
       "settings": {
         "allowed_origins": {
           "add_sheet_title": "Erlaubten Ursprung hinzufügen",
@@ -2522,21 +2524,81 @@
       },
       "title": "Zahlungsarten"
     },
+    "permissions": {
+      "descriptions": {
+        "api_keys": "API-Zugangsdaten erstellen und widerrufen",
+        "categories": "Kategoriebaum und Taxonomien",
+        "collections": "Manuelle und regelbasierte Produktkollektionen",
+        "customers": "Kundenkonten, Adressen, Karten und Gruppen",
+        "dashboard": "Umsatz- und Leistungsanalysen",
+        "fulfillments": "Bestellungen packen, versenden und verfolgen",
+        "gift_cards": "Geschenkkarten und Geschenkkarten-Chargen",
+        "orders": "Bestellungen, Positionen, Retouren, Umtausch und Reklamationen",
+        "payments": "Zahlungen und Zahlungserfassung",
+        "products": "Produkte, Varianten, Optionen, Preise und Medien",
+        "promotions": "Aktionen, Regeln und Gutscheincodes",
+        "refunds": "Erstattungen ausstellen und einsehen",
+        "settings": "Shop-, Zahlungs-, Liefer-, Steuer- und Kanalkonfiguration",
+        "staff": "Teammitglieder, Einladungen, Rollen und ihre Berechtigungen",
+        "stock": "Bestände, Lagerorte, Bewegungen und Transfers",
+        "store_credits": "Guthaben der Kunden",
+        "webhooks": "Webhook-Endpunkte und Zustellungen"
+      },
+      "grid": {
+        "read_aria": "{{resource}} ansehen",
+        "read_header": "Ansehen",
+        "resource_header": "Ressource",
+        "write_aria": "{{resource}} verwalten",
+        "write_header": "Verwalten"
+      },
+      "groups": {
+        "access": "Zugriff",
+        "analytics": "Analysen",
+        "catalog": "Katalog",
+        "customers": "Kunden",
+        "marketing": "Marketing",
+        "orders": "Bestellungen",
+        "settings": "Einstellungen"
+      },
+      "labels": {
+        "read": "{{resource}} ansehen",
+        "write": "{{resource}} verwalten"
+      },
+      "resources": {
+        "api_keys": "API-Schlüssel",
+        "categories": "Kategorien",
+        "collections": "Kollektionen",
+        "customers": "Kunden",
+        "dashboard": "Dashboard",
+        "fulfillments": "Fulfillments",
+        "gift_cards": "Geschenkkarten",
+        "orders": "Bestellungen",
+        "payments": "Zahlungen",
+        "products": "Produkte",
+        "promotions": "Aktionen",
+        "refunds": "Rückerstattungen",
+        "settings": "Einstellungen",
+        "staff": "Team & Rollen",
+        "stock": "Bestand",
+        "store_credits": "Guthaben",
+        "webhooks": "Webhooks"
+      }
+    },
     "post_sale": {
-      "search_placeholder": "Nach Nummer suchen…",
-      "returns_empty": "Noch keine Retouren.",
-      "exchanges_empty": "Noch kein Umtausch.",
       "claims_empty": "Noch keine Reklamationen.",
+      "exchanges_empty": "Noch kein Umtausch.",
+      "returns_empty": "Noch keine Retouren.",
+      "search_placeholder": "Nach Nummer suchen…",
       "statuses": {
-        "requested": "Angefragt",
-        "open": "Offen",
         "approved": "Genehmigt",
+        "canceled": "Storniert",
+        "denied": "Abgelehnt",
+        "fulfilled": "Versandt",
+        "open": "Offen",
         "received": "Erhalten",
         "refunded": "Erstattet",
-        "fulfilled": "Versandt",
-        "resolved": "Gelöst",
-        "denied": "Abgelehnt",
-        "canceled": "Storniert"
+        "requested": "Angefragt",
+        "resolved": "Gelöst"
       }
     },
     "preferences": {
@@ -2994,38 +3056,80 @@
       }
     },
     "reasons": {
-      "title": "Rücksendungen & Gründe",
-      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen und Rückerstattungen wählt.",
+      "active_label": "Für neue Vorgänge verfügbar",
       "add_cta": "Grund hinzufügen",
       "add_sheet_title": "Grund hinzufügen",
-      "edit_sheet_title": "Grund bearbeiten",
+      "claim": {
+        "help": "Was bei der Lieferung schiefging – beschädigt, fehlend oder falscher Artikel.",
+        "title": "Reklamationsgründe"
+      },
       "create_description": "Gründe erscheinen als Auswahl, wenn Mitarbeitende eine Rücksendung, Reklamation oder Rückerstattung anlegen.",
-      "name_placeholder": "z. B. Falsche Größe",
-      "active_label": "Für neue Vorgänge verfügbar",
+      "delete_confirm": {
+        "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn.",
+        "title": "Grund löschen?"
+      },
+      "description": "Die Auswahllisten, aus denen Ihr Team bei Rücksendungen, Reklamationen und Rückerstattungen wählt.",
+      "edit_sheet_title": "Grund bearbeiten",
       "empty": "Noch keine Gründe",
-      "inactive": "Inaktiv",
       "in_use": "In Verwendung",
       "in_use_help": "Dieser Grund wird bereits von vorhandenen Datensätzen verwendet und kann daher nicht gelöscht werden.",
-      "delete_confirm": {
-        "title": "Grund löschen?",
-        "message": "{{name}} wird nicht mehr angeboten. Bestehende Vorgänge behalten ihn."
-      },
+      "inactive": "Inaktiv",
       "messages": {
         "created": "Grund erstellt",
-        "updated": "Grund aktualisiert",
-        "deleted": "Grund gelöscht"
+        "deleted": "Grund gelöscht",
+        "updated": "Grund aktualisiert"
+      },
+      "name_placeholder": "z. B. Falsche Größe",
+      "refund": {
+        "help": "Warum Geld zurückging. Für Auswertungen über alle Rückerstattungen.",
+        "title": "Rückerstattungsgründe"
       },
       "return": {
-        "title": "Rücksendegründe",
-        "help": "Warum ein Kunde etwas zurückschickt. Gilt für Rücksendungen und Umtausch."
+        "help": "Warum ein Kunde etwas zurückschickt. Gilt für Rücksendungen und Umtausch.",
+        "title": "Rücksendegründe"
       },
-      "claim": {
-        "title": "Reklamationsgründe",
-        "help": "Was bei der Lieferung schiefging – beschädigt, fehlend oder falscher Artikel."
+      "title": "Rücksendungen & Gründe"
+    },
+    "roles": {
+      "badges": {
+        "full_access": "Vollzugriff",
+        "more": "+{{count}} weitere",
+        "none": "Keine Berechtigungen",
+        "protected": "Geschützt"
       },
-      "refund": {
-        "title": "Rückerstattungsgründe",
-        "help": "Warum Geld zurückging. Für Auswertungen über alle Rückerstattungen."
+      "confirm": {
+        "delete_message": "Rolle \"{{name}}\" löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+        "delete_title": "Rolle löschen"
+      },
+      "duplicate_name": "{{name}} Kopie",
+      "errors": {
+        "failed_to_delete": "Rolle konnte nicht gelöscht werden",
+        "failed_to_save": "Rolle konnte nicht gespeichert werden"
+      },
+      "form": {
+        "description": "Lege fest, was diese Rolle ansehen und verwalten darf.",
+        "locked_hint": "Diese Rolle ist geschützt und kann nicht bearbeitet werden.",
+        "permissions_section": "Berechtigungen"
+      },
+      "manage_roles_link": "Rollen verwalten",
+      "messages": {
+        "created": "Rolle erstellt",
+        "deleted": "Rolle gelöscht",
+        "updated": "Rolle aktualisiert"
+      },
+      "presets": {
+        "clear": "Leeren",
+        "full_access": "Vollzugriff",
+        "read_only": "Nur Lesen"
+      },
+      "templates": {
+        "merchandiser": "Merchandiser",
+        "order_manager": "Bestellmanager",
+        "start_from": "Vorlage:",
+        "support": "Support"
+      },
+      "validation": {
+        "name_required": "Name ist erforderlich"
       }
     },
     "settings": {
@@ -3062,6 +3166,7 @@
         "product_types": "Produkttypen",
         "profile": "Profil",
         "reasons": "Rücksendungen & Gründe",
+        "roles": "Rollen",
         "staff": "Mitarbeiter",
         "stock_locations": "Lagerstandorte",
         "store": "Shop",

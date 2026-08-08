@@ -37,6 +37,48 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsController, type: :controller 
     end
   end
 
+  # The per-parent scope resolves through the catalog: an option type's
+  # translations ride the `products` permission, not a literal
+  # `option_types` scope that no key or role could ever hold.
+  describe 'key gate over polymorphic parents' do
+    let!(:option_type) { create(:option_type) }
+
+    context 'as a staffer holding read_products' do
+      let(:staffer) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          user.role_users.create!(role: create(:role, name: 'catalog_viewer', permissions: %w[read_products]), resource: store)
+        end
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+
+      it 'reads an option type translation matrix' do
+        get :index, params: { option_type_id: option_type.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'as a staffer without a products permission' do
+      let(:staffer) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          user.role_users.create!(role: create(:role, name: 'orders_only', permissions: %w[read_orders]), resource: store)
+        end
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+
+      it 'is denied with the products permission named' do
+        get :index, params: { option_type_id: option_type.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response.dig('error', 'details', 'required_permission')).to eq('read_products')
+      end
+    end
+  end
+
   context 'when the parent has translatable children (option type → values)' do
     let!(:option_type) { create(:option_type, name: 'size', presentation: 'Size') }
     let!(:option_value) { create(:option_value, name: 'small', presentation: 'Small', option_type: option_type) }

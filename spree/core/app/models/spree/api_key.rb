@@ -8,28 +8,18 @@ module Spree
     PREFIXES = { 'publishable' => 'pk_', 'secret' => 'sk_' }.freeze
     TOKEN_LENGTH = 24
 
-    # Admin API authorization scopes. Granted to secret keys at creation; checked
-    # by ScopedAuthorization on every admin request. See
-    # docs/plans/5.5-admin-api-key-scopes.md for the full design.
-    SCOPES = %w[
-      read_orders write_orders
-      read_products write_products
-      read_promotions write_promotions
-      read_customers write_customers
-      read_payments write_payments
-      read_fulfillments write_fulfillments
-      read_refunds write_refunds
-      read_gift_cards write_gift_cards
-      read_store_credits write_store_credits
-      read_stock write_stock
-      read_categories write_categories
-      read_collections write_collections
-      read_settings write_settings
-      read_webhooks write_webhooks
-      read_api_keys write_api_keys
-      read_dashboard
-      read_all write_all
-    ].freeze
+    # Convenience aliases expanded at check time (never stored expanded).
+    ALIAS_SCOPES = %w[read_all write_all].freeze
+
+    # Admin API authorization scopes — the permission catalog keys plus the
+    # aliases. Derived from the catalog so an extension registering a resource
+    # (`Spree.permissions.register_resource`) makes its keys mintable on secret
+    # keys with no further wiring. See docs/plans/6.0-admin-rbac.md.
+    #
+    # @return [Array<String>]
+    def self.known_scopes
+      Spree.permissions.catalog_keys + ALIAS_SCOPES
+    end
 
     # Scopes are stored in a JSON column (jsonb on PostgreSQL, json elsewhere).
     # The DB driver handles array <-> JSON conversion; no `serialize` needed.
@@ -160,7 +150,7 @@ module Spree
     end
 
     def validate_known_scopes
-      invalid = scopes - SCOPES
+      invalid = scopes - self.class.known_scopes
       errors.add(:scopes, "contains unknown scopes: #{invalid.join(', ')}") if invalid.any?
     end
 

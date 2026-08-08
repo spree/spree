@@ -28,9 +28,6 @@ module Spree
               Spree.api.store_credit_serializer
             end
 
-            # Authorization is handled by set_parent scoping to current_user
-            def authorize_resource!(*)
-            end
           end
         end
       end

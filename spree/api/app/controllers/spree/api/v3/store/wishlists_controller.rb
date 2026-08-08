@@ -20,7 +20,7 @@ module Spree
           protected
 
           def scope
-            current_user.wishlists.for_store(current_store)
+            storefront_access_policy.scope(Spree::Wishlist.for_store(current_store))
           end
 
           def model_class

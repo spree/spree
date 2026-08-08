@@ -63,8 +63,15 @@ module Spree
           def me_response
             {
               user: admin_user_serializer.new(current_user, params: serializer_params).to_h,
-              permissions: serialize_permissions(current_ability)
+              permissions: serialize_permissions(current_ability),
+              permission_keys: serialize_permission_keys(current_ability)
             }
+          end
+
+          # The flat expanded catalog keys the user holds on the current store —
+          # the same currency the key gate enforces and the role editor grants.
+          def serialize_permission_keys(ability)
+            ability.respond_to?(:permission_keys) ? ability.permission_keys : []
           end
 
           # Serializes CanCanCan's rules into a flat, JSON-safe list of permission rules.

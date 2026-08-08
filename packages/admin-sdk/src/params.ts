@@ -941,6 +941,25 @@ export interface StockTransferCreateParams {
   variants: Array<{ variant_id: string; quantity: number }>
 }
 
+export interface RoleCreateParams {
+  /** Unique role name (machine identifier shown capitalized in the UI). */
+  name: string
+  /** Optional human description shown in the roles list. */
+  description?: string | null
+  /**
+   * Catalog permission keys (`read_orders`, `write_products`, …) — discover
+   * them via `client.permissions.list()`. A caller may only grant keys they
+   * effectively hold.
+   */
+  permissions?: string[]
+}
+
+export interface RoleUpdateParams {
+  name?: string
+  description?: string | null
+  permissions?: string[]
+}
+
 export interface AllowedOriginCreateParams {
   /**
    * Origin to allow in admin CORS preflight checks. Must be a bare

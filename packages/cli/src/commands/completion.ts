@@ -38,7 +38,8 @@ const RANSACK_PREDICATES = [
 
 const API_VERBS = ['get', 'post', 'patch', 'delete', 'endpoints', 'schema', 'status']
 
-// Keep in sync with `Spree::ApiKey::SCOPES` (spree/core/app/models/spree/api_key.rb).
+// Keep in sync with `Spree::ApiKey.known_scopes` — the permission catalog keys
+// plus aliases (spree/core/lib/spree/core/permission_configuration.rb).
 // Not derived from the bundled spec: the spec only annotates per-endpoint
 // scopes, so the aggregate scopes (read_all/write_all/read_dashboard) wouldn't
 // appear. Hand-maintained, hence this pointer.
@@ -67,12 +68,16 @@ const SCOPES = [
   'write_stock',
   'read_categories',
   'write_categories',
+  'read_collections',
+  'write_collections',
   'read_settings',
   'write_settings',
   'read_webhooks',
   'write_webhooks',
   'read_api_keys',
   'write_api_keys',
+  'read_staff',
+  'write_staff',
   'read_dashboard',
 ]
 

@@ -44,6 +44,8 @@ export const Subject = {
   PromotionAction: 'Spree::PromotionAction',
   PromotionRule: 'Spree::PromotionRule',
   GiftCard: 'Spree::GiftCard',
+  Role: 'Spree::Role',
+  Invitation: 'Spree::Invitation',
   Market: 'Spree::Market',
   WebhookEndpoint: 'Spree::WebhookEndpoint',
   WebhookDelivery: 'Spree::WebhookDelivery',

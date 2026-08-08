@@ -1,5 +1,14 @@
 import type { PermissionRule } from '@spree/admin-sdk'
-import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { adminClient } from '../client'
 import { useAuth } from '../hooks/use-auth'
 import type { ActionName, SubjectName } from '../lib/permissions'
@@ -24,7 +33,18 @@ export interface Permissions {
 interface PermissionContextValue {
   permissions: Permissions
   rules: PermissionRule[]
+  /**
+   * The flat expanded catalog permission keys the user holds on the current
+   * store (`read_orders`, `write_products`, …) — the same vocabulary as API
+   * key scopes and the role editor.
+   */
+  permissionKeys: string[]
   isLoading: boolean
+  /**
+   * Reloads `/me`. Permissions are store-scoped (roles are held per store),
+   * so the store route calls this whenever the active store changes.
+   */
+  refresh: () => Promise<void>
 }
 
 const PermissionContext = createContext<PermissionContextValue | null>(null)
@@ -72,32 +92,41 @@ const EMPTY_PERMISSIONS: Permissions = {
 export function PermissionProvider({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useAuth()
   const [rules, setRules] = useState<PermissionRule[]>([])
+  const [permissionKeys, setPermissionKeys] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  // Guards against out-of-order `/me` responses: a rapid store switch (or a
+  // logout) bumps the generation, and any response from a superseded request
+  // is dropped instead of overwriting the current store's permissions.
+  const requestGeneration = useRef(0)
+
+  const refresh = useCallback(async () => {
+    const generation = ++requestGeneration.current
+    setIsLoading(true)
+    try {
+      const res = await adminClient.me.get()
+      if (generation !== requestGeneration.current) return
+      setRules(res.permissions)
+      setPermissionKeys(res.permission_keys ?? [])
+    } catch {
+      if (generation !== requestGeneration.current) return
+      setRules([])
+      setPermissionKeys([])
+    } finally {
+      if (generation === requestGeneration.current) setIsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     if (!isAuthenticated) {
+      requestGeneration.current += 1
       setRules([])
+      setPermissionKeys([])
+      setIsLoading(false)
       return
     }
 
-    let cancelled = false
-    setIsLoading(true)
-    adminClient.me
-      .get()
-      .then((res) => {
-        if (!cancelled) setRules(res.permissions)
-      })
-      .catch(() => {
-        if (!cancelled) setRules([])
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false)
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [isAuthenticated])
+    void refresh()
+  }, [isAuthenticated, refresh])
 
   const permissions = useMemo(
     () => (rules.length > 0 ? buildPermissions(rules) : EMPTY_PERMISSIONS),
@@ -105,7 +134,7 @@ export function PermissionProvider({ children }: { children: ReactNode }) {
   )
 
   return (
-    <PermissionContext.Provider value={{ permissions, rules, isLoading }}>
+    <PermissionContext.Provider value={{ permissions, rules, permissionKeys, isLoading, refresh }}>
       {children}
     </PermissionContext.Provider>
   )

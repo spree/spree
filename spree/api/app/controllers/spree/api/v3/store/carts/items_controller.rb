@@ -73,7 +73,7 @@ module Spree
             private
 
             def variant
-              @variant ||= current_store.variants.accessible_by(current_ability).find_by_prefix_id!(permitted_params[:variant_id])
+              @variant ||= current_store.variants.find_by_prefix_id!(permitted_params[:variant_id])
             end
 
             def permitted_params

@@ -134,7 +134,10 @@ module Spree
       scope = model_class
       scope = scope.for_store(store) if model_class.respond_to?(:for_store)
       scope = scope.for_vendor(vendor) if model_class.respond_to?(:for_vendor) && vendor.present?
-      scope.accessible_by(current_ability)
+      # A staff-created export only contains what its creator may read; a
+      # userless export (console, system jobs) is unfiltered.
+      scope = scope.accessible_by(current_ability) if user.present?
+      scope
     end
 
     def records_to_export

@@ -52,7 +52,7 @@ import {
   useConfirm,
   useCopyToClipboard,
 } from '@spree/dashboard-ui'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import {
   BanIcon,
@@ -555,6 +555,7 @@ function EditStaffSheet({
   member: AdminUser
 }) {
   const { t } = useTranslation()
+  const { storeId } = Route.useParams()
   const { data: roles } = useRoles()
   const updateMutation = useUpdateStaff()
 
@@ -650,6 +651,13 @@ function EditStaffSheet({
                 )}
               />
               <FieldError errors={[form.formState.errors.role_ids]} />
+              <Link
+                to="/$storeId/settings/roles"
+                params={{ storeId }}
+                className="text-xs text-muted-foreground underline-offset-4 hover:underline"
+              >
+                {t('admin.roles.manage_roles_link')}
+              </Link>
             </Field>
           </div>
           <SheetFooter>

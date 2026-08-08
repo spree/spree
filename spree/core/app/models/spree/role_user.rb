@@ -30,10 +30,25 @@ module Spree
 
     private
 
-    # Set the default resource to the default store if the resource is not set
-    # this will allow a graceful migration from the old roles system to the new one
+    # Set the default resource to the assignment's store (falling back to the
+    # default store) if the resource is not set — this allows a graceful
+    # migration from the old roles system to the new one.
     def set_default_resource
-      self.resource ||= Spree::Store.current
+      self.resource ||= store || Spree::Store.current
+    end
+
+    # Overrides the SingleStoreResource fallback: the store binding follows
+    # the resource — a store-resourced assignment applies on that store, a
+    # vendor-resourced one on the vendor's store. Without this, a console or
+    # seed assignment for another store would silently bind to
+    # Spree::Current.store. An explicitly assigned store still wins, and
+    # resources without a store keep the Current.store fallback.
+    def ensure_store
+      self.store ||= resource_bound_store || Spree::Current.store
+    end
+
+    def resource_bound_store
+      resource.is_a?(Spree::Store) ? resource : resource.try(:store)
     end
   end
 end

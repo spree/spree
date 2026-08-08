@@ -210,7 +210,8 @@ Spree::Core::Engine.add_routes do
             end
           end
         end
-        resources :roles, only: [:index, :show]
+        resources :roles, only: [:index, :show, :create, :update, :destroy]
+        resources :permissions, only: [:index]
 
         # Direct Uploads (Active Storage)
         resources :direct_uploads, only: [:create]

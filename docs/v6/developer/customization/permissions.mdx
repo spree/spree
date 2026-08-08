@@ -1,0 +1,70 @@
+---
+title: Permissions
+description: The permission catalog, staff roles, and how extensions register their own permissions.
+---
+
+Staff roles and their permissions are managed as data — in the dashboard under **Settings → Roles**, through the Admin API (`/api/v3/admin/roles`), or in seeds. There is nothing to configure in Ruby for day-to-day permission management. This page covers what extension and host-application developers can plug into.
+
+## The permission catalog
+
+Every grantable capability is a flat key of the form `read_<resource>` or `write_<resource>` — the same vocabulary secret API keys use as scopes. `write_*` implies the matching `read_*`. Discover the catalog at runtime with `GET /api/v3/admin/permissions`; the role editor and the API-key scope picker are both rendered from it.
+
+Keys are per resource, not per action. The money-adjacent areas (`payments`, `refunds`, `gift_cards`, `store_credits`) are separate resources from `orders`, so "view orders but don't refund" needs no special casing.
+
+Roles as code is plain ActiveRecord:
+
+```ruby
+# db/seeds.rb
+Spree::Role.find_or_create_by!(name: 'support')
+  .update!(permissions: %w[read_orders read_customers], description: 'Read-only support')
+```
+
+A role with `mutable: false` (set from seeds or the console) renders read-only in the dashboard — for roles the application does not want store staff to edit. The `admin` role is always protected.
+
+## Registering extension permissions
+
+Register your models as a catalog resource once; the keys appear in the role editor and become mintable API-key scopes with no further wiring:
+
+```ruby
+# in your engine's initializer
+Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
+  [SpreeReviews::Review]
+})
+```
+
+- `group` places the row in the permission pickers (`:orders`, `:catalog`, `:marketing`, `:customers`, `:settings`, `:access`, `:analytics` — or your own).
+- `subjects` is a lambda returning the CanCanCan subjects the keys grant; it resolves lazily, so load order does not matter.
+- Pass `write: false` for read-only resources.
+
+Localize the labels in your engine's locale file under `spree.permissions_catalog.resources.<name>` (`label` and `description`), and declare the same resource on your admin controllers with `scoped_resource :reviews`.
+
+## Beyond the catalog
+
+The catalog is deliberately flat: it answers "may this role touch this kind of record", and that is the whole grant vocabulary. Two rules that do *not* belong in it:
+
+- **Record-state rules** ("a completed order cannot be deleted") live on models and workflows, so they bind every caller — including secret API keys, which never consult CanCanCan.
+- **Row-level restrictions** (a support agent limited to one market) are not expressible as keys. Replace the ability class outright:
+
+```ruby
+# config/initializers/spree.rb
+Spree::Dependencies.ability_class = 'MyApp::Ability'
+```
+
+```ruby
+# app/models/my_app/ability.rb
+class MyApp::Ability < Spree::Ability
+  def initialize(user, options = {})
+    super
+    return unless user.respond_to?(:market_id) && user.market_id
+
+    cannot :manage, Spree::Order
+    can [:read, :admin], Spree::Order, market_id: user.market_id
+  end
+end
+```
+
+## How enforcement works
+
+Every Admin API controller declares its resource (`scoped_resource :orders`). Each request checks the principal's keys — a staff member's role permissions on the current store, or a secret key's scopes — against `read_<resource>` or `write_<resource>` for the action. A missing key produces a 403 naming it in `details.required_permission`. Behind that gate, keys compile to CanCanCan rules for record-level concerns, and `GET /api/v3/admin/me` returns both the rule dump the dashboard mirrors and `permission_keys`, the flat key list.
+
+Storefront customers are not part of this system — customer authorization is ownership, enforced by the Store API's scoped lookups, with nothing to configure. The one swappable piece is `Spree::Storefront::AccessPolicy` (via `Spree::Dependencies.storefront_access_policy_class`): a generic `readable?` / `writable?` / `scope` protocol that defaults to "the caller owns the record", with carts and orders adding guest-token access. Replace it only when access must widen beyond the owner, such as company accounts sharing purchases or wishlists.

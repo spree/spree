@@ -5,7 +5,10 @@ module Spree
         module Orders
           # Claims on a completed order.
           class ClaimsController < BaseController
-            scoped_resource :claims
+            # Claims are a subject of the `orders` catalog resource, so
+            # `read_orders`/`write_orders` gate these endpoints. `:claims`
+            # would name a key no catalog knows.
+            scoped_resource :orders
 
             before_action :set_resource, only: [:show, :update, :approve, :resolve, :deny, :cancel]
 

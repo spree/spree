@@ -115,9 +115,8 @@ module Spree
           def find_owned_subscriber
             return unless current_user
 
-            Spree::NewsletterSubscriber.
-              for_store(current_store).
-              accessible_by(current_ability, :destroy).
+            storefront_access_policy.
+              scope(Spree::NewsletterSubscriber.for_store(current_store)).
               find_by_prefix_id(params[:id])
           end
 

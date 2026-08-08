@@ -26,13 +26,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
     context 'with a limited-role admin that cannot read customers' do
       include_context 'API v3 Admin with custom permissions'
 
-      let(:custom_permission_set) do
-        Class.new(Spree::PermissionSets::Base) do
-          def activate!
-            can [:read, :admin], Spree::Product
-          end
-        end
-      end
+      let(:custom_permissions) { %w[read_products] }
 
       it 'cannot read another customer\'s store credits' do
         get :index, params: { customer_id: customer.prefixed_id }, as: :json
@@ -49,14 +43,7 @@ RSpec.describe Spree::Api::V3::Admin::Customers::StoreCreditsController, type: :
   describe 'write authorization with a read-only customer role' do
     include_context 'API v3 Admin with custom permissions'
 
-    let(:custom_permission_set) do
-      Class.new(Spree::PermissionSets::Base) do
-        def activate!
-          can [:read, :admin], Spree.customer_class
-          can :manage, Spree::StoreCredit
-        end
-      end
-    end
+    let(:custom_permissions) { %w[read_customers write_store_credits] }
 
     it 'allows reading the customer\'s store credits' do
       get :index, params: { customer_id: customer.prefixed_id }, as: :json

@@ -37,24 +37,18 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ItemsController, type: :controller
     end
 
     # Authorization bypass: a read-only order role must not be able to mutate
-    # an order it can only view. `authorize_order_access!` requires :update for
-    # writes, so OrderDisplay (read-only) is rejected.
+    # an order it can only view — the key gate rejects the write with the same
+    # 403 the read-only secret key gets below.
     context 'with a read-only order role' do
       include_context 'API v3 Admin with custom permissions'
 
-      let(:custom_permission_set) do
-        Class.new(Spree::PermissionSets::Base) do
-          def activate!
-            can [:read, :admin], Spree::Order
-            can [:read, :admin], Spree::LineItem
-          end
-        end
-      end
+      let(:custom_permissions) { %w[read_orders] }
 
       it 'forbids adding a line item' do
         expect { subject }.not_to change(order.line_items, :count)
 
         expect(response).to have_http_status(:forbidden)
+        expect(json_response.dig('error', 'details', 'required_permission')).to eq('write_orders')
       end
     end
 

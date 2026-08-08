@@ -15,6 +15,25 @@ module Spree
             authenticate_admin!
           end
 
+          # CanCanCan lives on the admin branch only. The shared base leaves
+          # these as no-ops because the Store API authorizes by ownership
+          # scoping; back-office callers are authorized per record and per
+          # collection by their role's catalog keys.
+          def scope
+            base_scope = super
+            return base_scope if @parent.present?
+
+            base_scope.accessible_by(current_ability, ability_action_for_request)
+          end
+
+          def authorize_resource!(resource = @resource, action = action_name.to_sym)
+            authorize!(action, resource)
+          end
+
+          def authorize_parent!(parent)
+            authorize!(parent_ability_action, parent)
+          end
+
           # Render error from ServiceModule::Result, extracting ActiveModel::Errors
           # from the ResultError wrapper to get proper validation_error responses.
           def decode_ids(ids, klass)

@@ -9,7 +9,9 @@ module Spree
         class InvitationsController < ResourceController
           include Spree::Api::V3::Admin::RoleGrantGuard
 
-          scoped_resource :settings
+          # Staff management is the escalation path — its own scope pair,
+          # grantable separately from store configuration (6.0-admin-rbac.md).
+          scoped_resource :staff
 
           # POST /api/v3/admin/invitations
           # Guards against inviting a new staff member straight into the admin
