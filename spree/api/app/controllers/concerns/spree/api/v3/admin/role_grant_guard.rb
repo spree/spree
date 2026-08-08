@@ -107,9 +107,12 @@ module Spree
               end
           end
 
-          # The caller's store-scoped roles, fetched once per request. Scoped
-          # by store_id so the caller's own privileges are recognized even when
-          # their role is held on a non-store resource bound to this store.
+          # The caller's store-admin roles, fetched once per request. Matched
+          # on the store AND a store resource, mirroring
+          # `Spree::Ability#staff_roles`: an assignment scoped to another
+          # resource (a marketplace vendor) binds to that resource's store but
+          # confers no store-admin authority, so it must not widen what the
+          # caller may grant.
           #
           # @return [Array<Spree::Role>]
           def caller_roles
@@ -118,7 +121,9 @@ module Spree
             user = try_spree_current_user
             @caller_roles =
               if user.respond_to?(:role_users)
-                user.role_users.where(store: current_store).includes(:role).map(&:role)
+                user.role_users.
+                  where(store: current_store, resource_type: Spree::Store.to_s).
+                  includes(:role).map(&:role)
               else
                 []
               end

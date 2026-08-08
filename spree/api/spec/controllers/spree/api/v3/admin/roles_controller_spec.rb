@@ -77,6 +77,21 @@ RSpec.describe Spree::Api::V3::Admin::RolesController, type: :controller do
         expect(Spree::Role.find_by(name: 'sneaky')).to be_nil
       end
 
+      # Authority scoped to a non-store resource (a marketplace vendor) binds
+      # to that resource's store but confers nothing in the store admin, so it
+      # must not widen what the caller may grant.
+      it 'ignores keys the caller holds only on a non-store resource' do
+        staffer.role_users.create!(
+          role: create(:role, name: 'vendor_catalog', permissions: %w[write_products]),
+          resource: Spree::DummyModel.create!(name: 'Vendor A')
+        )
+
+        post :create, params: { name: 'sneaky', permissions: %w[write_products] }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(Spree::Role.find_by(name: 'sneaky')).to be_nil
+      end
+
       # Privileges held on OTHER stores don't count: the caller's grant is
       # their roles on the store the request runs against.
       it 'ignores keys the caller holds only on a different store' do

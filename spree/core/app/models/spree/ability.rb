@@ -123,13 +123,21 @@ module Spree
       end
     end
 
-    # The user's roles on the current store.
+    # The user's store-admin roles on the current store.
+    #
+    # Assignments are matched on the store AND on a store resource: a
+    # `RoleUser` scoped to a non-store resource (a marketplace vendor, say)
+    # binds to that resource's store, so matching on `store_id` alone would
+    # let a vendor's own staff role grant store-wide admin capability. Those
+    # assignments belong to their own panel's ability, not this one.
     #
     # @return [Array<Spree::Role>]
     def staff_roles
       return [] unless @user.respond_to?(:role_users)
 
-      @staff_roles ||= @user.role_users.where(store: @store).includes(:role).map(&:role)
+      @staff_roles ||= @user.role_users.
+                       where(store: @store, resource_type: Spree::Store.to_s).
+                       includes(:role).map(&:role)
     end
 
     # Backward-compatible fallback for principals with no role rows whose

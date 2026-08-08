@@ -15,7 +15,7 @@ import {
 import { Link, useRouterState } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
 import { type ComponentType, useCallback, useEffect, useRef, useState } from 'react'
-import type { SubjectName } from '../lib/permissions'
+import type { ActionName, SubjectName } from '../lib/permissions'
 
 export type NavItem = {
   title: string
@@ -23,12 +23,15 @@ export type NavItem = {
   icon: LucideIcon
   /** CanCanCan subject required to see this item. If omitted, item is always visible. */
   subject?: SubjectName
+  /** Action checked against `subject`. Defaults to `'read'`. */
+  action?: ActionName
   /** Component rendered after the label (e.g. a count badge). May return null. */
   badge?: ComponentType
   items?: {
     title: string
     url: string
     subject?: SubjectName
+    action?: ActionName
     /** Component rendered after the label, same contract as the parent's. */
     badge?: ComponentType
   }[]

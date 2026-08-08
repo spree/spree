@@ -114,10 +114,12 @@ export function RoleSheet({
       form.reset({
         name: t('admin.roles.duplicate_name', { name: source.name }),
         description: source.description ?? '',
-        permissions: source.permissions,
+        // Drop keys the caller cannot grant — the grid renders them disabled,
+        // so carrying them over would submit a role the API rejects.
+        permissions: source.permissions.filter((key) => permissionKeys.includes(key)),
       })
     }
-  }, [role, source, form, t])
+  }, [role, source, permissionKeys, form, t])
 
   // Keys the current admin cannot grant (the API would reject them) render
   // disabled. An admin holding the full catalog is never restricted.

@@ -24,6 +24,9 @@ nav.add({
   icon: MapIcon,
   position: 50,
   subject: Subject.Store,
+  // Store setup is settings work — every staffer can READ the store (shell
+  // data), so gate on the authority the tasks actually need.
+  action: 'update',
   // Legacy-admin parity: the entry disappears once every setup task is done.
   if: ({ store }) => !!(store as Store | null)?.setup_tasks?.some((task) => !task.done),
   badge: GettingStartedNavBadge,

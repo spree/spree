@@ -224,6 +224,32 @@ describe Spree::Ability, type: :model do
       end
     end
 
+    # A marketplace vendor's staff hold roles scoped to the vendor, which binds
+    # to the vendor's store. Store-admin authority must come only from
+    # store-resourced assignments, or a vendor picker would inherit the whole
+    # store — including, for an `admin`-named vendor role, full access.
+    context 'with an assignment scoped to a non-store resource' do
+      let(:vendor_like) { Spree::DummyModel.create!(name: 'Vendor A') }
+
+      it 'grants nothing in the store admin' do
+        admin.role_users.create!(
+          role: create(:role, name: 'vendor_catalog', permissions: %w[write_products]),
+          resource: vendor_like
+        )
+
+        expect(staff_ability).not_to be_able_to :manage, store.products.new
+        expect(staff_ability).not_to be_able_to :read, store.products.new
+        expect(staff_ability.permission_keys).to eq([])
+      end
+
+      it 'does not confer full access through an admin-named role' do
+        admin.role_users.create!(role: Spree::Role.default_admin_role, resource: vendor_like)
+
+        expect(staff_ability).not_to be_able_to :manage, :all
+        expect(staff_ability.permission_keys).to eq([])
+      end
+    end
+
     context 'with stale keys the catalog no longer knows' do
       before do
         role = create(:role, name: 'stale', permissions: %w[read_orders])

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
+import { __getNavEntries, __resetNavRegistry, nav } from '../src/lib/nav-registry'
 import {
   __resetSettingsNavRegistry,
   hasVisibleSettingsEntries,
@@ -81,3 +82,48 @@ describe('settings nav visibility', () => {
     expect(hasVisibleSettingsEntries(undefined)).toBe(false)
   })
 })
+
+describe('main nav visibility', () => {
+  afterEach(() => __resetNavRegistry())
+
+  // Getting Started walks a merchant through store setup, so it needs the
+  // authority those tasks require — not the store read every staffer has.
+  it('hides update-gated entries from a role that can only read the subject', () => {
+    nav.add({
+      key: 'getting-started',
+      label: 'Getting Started',
+      path: '/getting-started',
+      subject: 'Spree::Store',
+      action: 'update',
+    })
+    nav.add({ key: 'orders', label: 'Orders', path: '/orders', subject: 'Spree::Order' })
+
+    const orderManager = permissionsFor([
+      ['read', 'Spree::Store'],
+      ['read', 'Spree::Order'],
+    ])
+    const visible = navEntriesFor(orderManager)
+
+    expect(visible).toContain('orders')
+    expect(visible).not.toContain('getting-started')
+  })
+
+  it('shows them to a role that can update the subject', () => {
+    nav.add({
+      key: 'getting-started',
+      label: 'Getting Started',
+      path: '/getting-started',
+      subject: 'Spree::Store',
+      action: 'update',
+    })
+
+    expect(navEntriesFor(permissionsFor([['update', 'Spree::Store']]))).toContain('getting-started')
+  })
+})
+
+/** Mirrors AppSidebar's filter: `action` defaults to `read`. */
+function navEntriesFor(permissions: { can: (action: string, subject: string) => boolean }) {
+  return __getNavEntries()
+    .filter((e) => !e.subject || permissions.can(e.action ?? 'read', e.subject))
+    .map((e) => e.key)
+}
