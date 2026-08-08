@@ -2,10 +2,15 @@ import type { MeResponse, MeUpdateParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
 import { useQuery } from '@tanstack/react-query'
 
-export function useProfile() {
+/**
+ * @param enabled Defer the request until it's needed. The edit-profile dialog
+ *   is mounted on every store page but only fetches once it opens.
+ */
+export function useProfile(enabled = true) {
   return useQuery({
     queryKey: useResourceKey('profile'),
     queryFn: () => adminClient.me.get(),
+    enabled,
   })
 }
 

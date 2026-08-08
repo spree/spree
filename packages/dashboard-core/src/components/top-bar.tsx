@@ -15,7 +15,6 @@ import {
   ThemeMenuItems,
   usePrefersReducedMotion,
 } from '@spree/dashboard-ui'
-import { Link } from '@tanstack/react-router'
 import {
   BookOpenIcon,
   ExternalLinkIcon,
@@ -49,11 +48,17 @@ const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(naviga
  * @param uiLocales Admin UI languages for the in-menu switcher. The app owns
  *   which locale bundles ship (see the dashboard's `getAvailableUiLocales`) and
  *   injects them here, so this core component stays free of bundle knowledge.
+ * @param onEditProfile Opens the app's edit-profile dialog. Injected the same
+ *   way as `uiLocales` — the profile form lives in the app package (its hooks,
+ *   schema and locale list do), so core only offers the menu entry. The item is
+ *   hidden when no handler is supplied.
  */
 export function TopBar({
   uiLocales = [],
+  onEditProfile,
 }: {
   uiLocales?: ReadonlyArray<{ code: string; name: string }>
+  onEditProfile?: () => void
 }) {
   // Give the vertical space back to the page: once the user scrolls a detail
   // page, the PageHeader below carries the title and the primary actions, so
@@ -88,7 +93,7 @@ export function TopBar({
 
       <div className="flex items-center gap-2">
         <ViewStoreLink />
-        <TopBarUser uiLocales={uiLocales} />
+        <TopBarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
       </div>
     </header>
   )
@@ -141,10 +146,15 @@ function ViewStoreLink() {
 // User menu
 // ---------------------------------------------------------------------------
 
-function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; name: string }> }) {
+function TopBarUser({
+  uiLocales,
+  onEditProfile,
+}: {
+  uiLocales: ReadonlyArray<{ code: string; name: string }>
+  onEditProfile?: () => void
+}) {
   const { t } = useTranslation()
   const { user, logout } = useAuth()
-  const { store } = useStore()
   const switchAdminLocale = useSwitchAdminLocale()
   if (!user) return null
 
@@ -203,19 +213,15 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
           onSelect={handleSelectLocale}
         />
         <DropdownMenuSeparator />
-        {store && (
-          <DropdownMenuItem asChild>
-            <Link
-              to="/$storeId/settings/profile"
-              params={{ storeId: store.id }}
-              className="no-underline"
-            >
+        {onEditProfile && (
+          <>
+            <DropdownMenuItem onClick={onEditProfile}>
               <UserIcon className="size-4" />
               {t('admin.account.edit_profile')}
-            </Link>
-          </DropdownMenuItem>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
         )}
-        <DropdownMenuSeparator />
         <DropdownMenuItem>
           <BookOpenIcon className="size-4" />
           {t('admin.account.documentation')}

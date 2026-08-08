@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { login } from './helpers'
+import { login, openProfileDialog } from './helpers'
 
 const STORE_PATH = (storeId: string) => `/${storeId}/settings/store`
 const EMAILS_PATH = (storeId: string) => `/${storeId}/settings/emails`
@@ -72,18 +72,16 @@ test.describe('store settings — general', () => {
     // provider reverts a localStorage-only switch back to the saved language on
     // the next session bootstrap. German here; the store switch to Polish below
     // must win over it and survive a reload.
-    await page.goto(`/${creds.store_id}/settings/profile`)
-    await expect(page.locator('#profile-language')).toBeVisible({ timeout: 15_000 })
+    await openProfileDialog(page)
     await page.locator('#profile-language').click()
     await page.getByRole('option', { name: /^deutsch$/i }).click()
-    // Save only if the selection dirtied the form — a prior run may have already
-    // left the account on German, in which case the button stays disabled.
-    const saveProfile = page.getByRole('button', { name: /^(save|speichern)$/i })
-    if (await saveProfile.isEnabled()) await saveProfile.click()
-    // Saving a new language reloads into it; the profile heading is now German.
-    await expect(page.getByText('Persönliche Daten', { exact: true })).toBeVisible({
-      timeout: 15_000,
-    })
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: /^save$/i })
+      .click()
+    // Saving a new language closes the dialog and reloads into it; the nav is
+    // now German.
+    await expect(page.getByRole('link', { name: /^produkte$/i })).toBeVisible({ timeout: 15_000 })
 
     await page.goto(STORE_PATH(creds.store_id))
     await expect(page.locator('#store-admin-locale')).toBeVisible({ timeout: 15_000 })
