@@ -186,7 +186,7 @@ RSpec.describe Spree::Category, type: :model do
   end
 
   describe '.for_store / .for_stores' do
-    it 'finds taxonomy-less categories by store_id' do
+    it 'finds categories by store_id' do
       category = described_class.create!(name: 'Kitchen', store: store)
       expect(described_class.for_store(store)).to include(category)
     end
@@ -459,17 +459,6 @@ RSpec.describe Spree::Category, type: :model do
     it { expect(category.cached_self_and_descendants_ids).to eq(category.self_and_descendants.ids) }
   end
 
-  # Legacy path: a category created under a not-yet-migrated taxonomy-backed
-  # parent inherits its taxonomy, so #ensure_store can still resolve a store.
-  describe '#copy_taxonomy_from_parent' do
-    let!(:taxonomy) { create(:taxonomy, store: store) }
-    let!(:parent) { create(:category, taxonomy: taxonomy) }
-    let(:category) { build(:category, parent: parent) }
-
-    it { expect(category.valid?).to eq(true) }
-    it { expect { category.save! }.to change(category, :taxonomy).to(taxonomy) }
-  end
-
   describe '#localized_slugs_for_store' do
     let(:store) { create(:store, default_locale: 'fr', supported_locales: 'en,pl,fr') }
     let!(:root_category) { create(:category, name: 'Categories', store: store) }
@@ -719,18 +708,6 @@ RSpec.describe Spree::Category, type: :model do
       it 'sets the pretty name' do
         expect(category.reload.pretty_name).to eq(category.name)
       end
-    end
-  end
-
-  describe '#store' do
-    # Pre-upgrade fallback: a row whose store_id was never backfilled still
-    # resolves its store through the taxonomy.
-    it 'returns the store from the taxonomy when store_id is blank' do
-      taxonomy = create(:taxonomy, store: store)
-      category = create(:category, taxonomy: taxonomy, parent: taxonomy.root)
-      category.update_columns(store_id: nil)
-
-      expect(category.reload.store).to eq(store)
     end
   end
 

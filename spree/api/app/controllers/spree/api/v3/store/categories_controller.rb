@@ -32,9 +32,6 @@ module Spree
             end
           end
 
-          def collection_includes
-            [:taxonomy]
-          end
         end
       end
     end

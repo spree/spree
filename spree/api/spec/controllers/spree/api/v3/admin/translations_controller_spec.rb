@@ -76,16 +76,6 @@ RSpec.describe Spree::Api::V3::Admin::TranslationsController, type: :controller 
       get :index, params: { category_id: taxonomy.root.prefixed_id }, as: :json
       expect(response).to have_http_status(:ok)
     end
-
-    it 'resolves a legacy taxonomy-backed category whose store_id was never backfilled' do
-      # Regression: for_store must fall back to the taxonomy join for rows with
-      # store_id IS NULL, otherwise the parent lookup 404s.
-      category.update_columns(store_id: nil)
-
-      get :index, params: { category_id: category.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:ok)
-    end
   end
 
   context 'when the parent param resolves to nothing translatable' do

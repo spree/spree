@@ -35,13 +35,9 @@ module Spree
     #
     # Associations
     #
-    # Not flagged `deprecated: true`: 6.0 still reads this association on
-    # supported paths (#store, #ensure_store, #copy_taxonomy_from_parent, the
-    # .for_store fallback and the store categories preload), and Rails cannot
-    # tell our own reads from an extension's — under the :raise mode it aborts
-    # a plain category save. The association goes away with Spree::Taxonomy in
-    # 6.1; until then the deprecation is documented rather than enforced.
-    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
+    # @deprecated Read only by the 5.6 -> 6.0 upgrade task, which needs the
+    #   column to find the rows it migrates. Removed in 6.1 with Spree::Taxonomy.
+    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons, deprecated: true
     has_many :product_categories, -> { order(:position) }, class_name: 'Spree::ProductCategory', dependent: :destroy_async, inverse_of: :category
     has_many :products, through: :product_categories
 
@@ -84,7 +80,6 @@ module Spree
     # Callbacks
     #
     before_validation :set_permalink, if: :name
-    before_validation :copy_taxonomy_from_parent
     before_save :set_pretty_name
     after_save :touch_ancestors
     after_touch :touch_ancestors
@@ -109,14 +104,8 @@ module Spree
     #
     # Scopes
     #
-    # Prefer the direct store_id column; fall back to the taxonomy join for rows
-    # not yet backfilled (store_id IS NULL) so legacy behaviour is preserved.
     scope :for_store, ->(store) { for_stores([store]) }
-    scope :for_stores, lambda { |stores|
-      store_ids = Array(stores).map(&:id)
-      taxonomy_ids = Spree::Taxonomy.where(store_id: store_ids).select(:id)
-      where(store_id: store_ids).or(where(store_id: nil, taxonomy_id: taxonomy_ids))
-    }
+    scope :for_stores, ->(stores) { where(store_id: Array(stores).map(&:id)) }
     #
     # Search
     #
@@ -163,12 +152,6 @@ module Spree
 
     def manual?
       !automatic?
-    end
-
-    # The owning store. Prefers the direct +store_id+; falls back to the
-    # taxonomy's store for legacy rows not yet backfilled.
-    def store
-      super || taxonomy&.store
     end
 
     def active_products_with_descendants
@@ -415,13 +398,7 @@ module Spree
     # taxonomy, so #ensure_store and the .for_store fallback can still resolve a
     # store for installs that have not yet run the 6.0 upgrade task. Removed in
     # 6.1 with Spree::Taxonomy.
-    def copy_taxonomy_from_parent
-      self.taxonomy = parent.taxonomy if parent.present? && taxonomy.blank?
-    end
-
-    # A tree belongs to one store. Reads #store rather than the raw column so
-    # legacy rows that still resolve their store through a taxonomy compare
-    # correctly.
+    # A tree belongs to one store.
     def parent_belongs_to_same_store
       return if parent.blank?
 
@@ -431,14 +408,13 @@ module Spree
       errors.add(:parent, :must_belong_to_same_store)
     end
 
-    # Every category is store-owned. Resolve the store from the taxonomy, then the
-    # parent, finally the current store — so the direct column is always
-    # populated for new records. Guards on the raw +store_id+ column rather than
-    # +#store+, whose reader masks an unset column with the taxonomy fallback.
+    # Every category is store-owned, so a new record always gets a store_id:
+    # from its parent, or the current store. This is what lets the rest of the
+    # model treat store_id as always present.
     def ensure_store
       return if store_id.present?
 
-      self.store = taxonomy&.store || parent&.store || Spree::Store.current
+      self.store = parent&.store || Spree::Store.current
     end
 
     def regenerate_translations_pretty_name_and_permalink
