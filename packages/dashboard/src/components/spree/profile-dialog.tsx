@@ -138,11 +138,9 @@ function ProfileForm({
       // immediately instead of waiting for the next token refresh.
       updateUser(updated.user)
       toast.success(t('admin.messages.profile_updated'))
-      // Drop the consumed signed_id so a second save can't re-attach it, but
-      // KEEP avatar_cleared: forcing it false here would make the field fall
-      // back to the still-cached (stale) avatar_url and briefly re-show a
-      // just-removed photo. The re-hydrate effect resets it once the profile
-      // refetch lands.
+      // Closing unmounts the form, so the avatar state doesn't need preserving
+      // across the save — the reopened dialog re-hydrates from the mutation
+      // response that `useUpdateProfile` writes into the cache.
       form.reset({ ...values, avatar_signed_id: null })
       onOpenChange(false)
       // Apply a changed admin language by reloading in the new language.
@@ -164,7 +162,7 @@ function ProfileForm({
   )
   const showLanguagePicker = localeOptions.length >= 2
 
-  const { errors, isSubmitting } = form.formState
+  const { errors, isDirty, isSubmitting } = form.formState
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="contents">
@@ -261,7 +259,10 @@ function ProfileForm({
         >
           {t('admin.actions.cancel')}
         </Button>
-        <Button type="submit" size="sm" disabled={isSubmitting}>
+        {/* Gated on `isDirty` to match `FormActions` (what the page this
+            replaced used) — without it a pristine Save PATCHes and toasts
+            success having changed nothing. */}
+        <Button type="submit" size="sm" disabled={!isDirty || isSubmitting}>
           {isSubmitting ? t('admin.actions.saving') : t('admin.actions.save')}
         </Button>
       </DialogFooter>

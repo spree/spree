@@ -72,15 +72,19 @@ test.describe('store settings — general', () => {
     // provider reverts a localStorage-only switch back to the saved language on
     // the next session bootstrap. German here; the store switch to Polish below
     // must win over it and survive a reload.
-    await openProfileDialog(page)
+    // A prior run may have already left the account on German, so the dialog
+    // may open in either language — match both, here and on the buttons below.
+    await openProfileDialog(page, /user menu|benutzermenü/i, /edit profile|profil bearbeiten/i)
     await page.locator('#profile-language').click()
     await page.getByRole('option', { name: /^deutsch$/i }).click()
-    await page
-      .getByRole('dialog')
-      .getByRole('button', { name: /^save$/i })
-      .click()
-    // Saving a new language closes the dialog and reloads into it; the nav is
-    // now German.
+    // Save only if the selection dirtied the form; when it didn't, the account
+    // is already German and the button stays disabled, so just close.
+    const dialog = page.getByRole('dialog')
+    const saveProfile = dialog.getByRole('button', { name: /^(save|speichern)$/i })
+    if (await saveProfile.isEnabled()) await saveProfile.click()
+    else await dialog.getByRole('button', { name: /^(cancel|abbrechen)$/i }).click()
+    // Either way the dialog closes and the admin is on German: saving reloads
+    // into it, and the disabled branch means it was already German.
     await expect(page.getByRole('link', { name: /^produkte$/i })).toBeVisible({ timeout: 15_000 })
 
     await page.goto(STORE_PATH(creds.store_id))

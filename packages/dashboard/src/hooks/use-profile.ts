@@ -1,6 +1,6 @@
 import type { MeResponse, MeUpdateParams } from '@spree/admin-sdk'
 import { adminClient, useResourceKey, useResourceMutation } from '@spree/dashboard-core'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 /**
  * @param enabled Defer the request until it's needed. The edit-profile dialog
@@ -15,10 +15,19 @@ export function useProfile(enabled = true) {
 }
 
 export function useUpdateProfile() {
+  const queryClient = useQueryClient()
+  const profileKey = useResourceKey('profile')
+
   return useResourceMutation<MeResponse, Error, MeUpdateParams>({
     mutationFn: (params) => adminClient.me.update(params),
     invalidate: [['profile']],
-    successMessage: false, // the page toasts success itself
-    errorMessage: false, // the page maps 422s inline via mapSpreeErrorsToForm
+    successMessage: false, // the dialog toasts success itself
+    errorMessage: false, // the dialog maps 422s inline via mapSpreeErrorsToForm
+    // Write the response into the cache instead of leaning on the invalidation
+    // alone. The dialog disables the profile query while closed, and an
+    // invalidated query with no enabled observer goes stale without refetching
+    // — so a reopen would otherwise render the pre-save profile (flashing back
+    // an avatar the admin just removed).
+    onSuccess: (updated) => queryClient.setQueryData(profileKey, updated),
   })
 }
