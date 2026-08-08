@@ -279,6 +279,7 @@ module Spree
       register_resource(:webhooks, group: :settings, subjects: -> {
         [Spree::WebhookEndpoint, Spree::WebhookDelivery]
       })
+      register_resource(:integrations, group: :settings, subjects: -> { [Spree::Integration] })
 
       register_resource(:api_keys, group: :access, subjects: -> { [Spree::ApiKey] })
       register_resource(:staff, group: :access, subjects: -> {
