@@ -79,6 +79,7 @@ module Spree
           promotion_action_line_items.each do |item|
             line_item = order.find_line_item_by_variant(item.variant)
             next unless line_item.present?
+            next unless order.promotions.include?(promotion)
 
             remove_service = order.is_a?(Spree::Cart) ? Spree.cart_remove_item_service : Spree.order_remove_item_service
             remove_service.call(**{ (order.is_a?(Spree::Cart) ? :cart : :order) => order },

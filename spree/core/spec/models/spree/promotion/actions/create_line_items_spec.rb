@@ -136,4 +136,47 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       end
     end
   end
+
+  describe '#revert' do
+    before do
+      action.promotion_action_line_items.create!(
+        variant: mug,
+        quantity: 1
+      )
+    end
+
+    context 'when promotion was never activated on the order' do
+      before do
+        allow(promotion).to receive(:eligible?).and_return(false)
+      end
+
+      it 'does not remove a user-added line item' do
+        Spree::Cart::AddItem.call(order: order, variant: mug, quantity: 1)
+        expect(order.line_items.count).to eq(1)
+
+        action.revert(order: order)
+
+        order.line_items.reload
+        expect(order.line_items.count).to eq(1)
+        expect(order.line_items.first.variant).to eq(mug)
+      end
+    end
+
+    context 'when promotion was previously activated on the order' do
+      before do
+        order.promotions << promotion
+        allow(promotion).to receive(:eligible?).and_return(false)
+      end
+
+      it 'removes the promotion-added line item' do
+        Spree::Cart::AddItem.call(order: order, variant: mug, quantity: 1)
+        expect(order.line_items.count).to eq(1)
+
+        action.revert(order: order)
+
+        order.line_items.reload
+        expect(order.line_items.count).to eq(0)
+      end
+    end
+  end
 end
