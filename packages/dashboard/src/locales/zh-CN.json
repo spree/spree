@@ -709,6 +709,10 @@
         "fulfillment_type": {
           "label": "履约类型"
         },
+        "rate_provider": {
+          "label": "费率提供方",
+          "help": "此方式的价格来源。内置提供方使用下方的计算器；承运商提供方提供实时费率。"
+        },
         "pickup_locations": {
           "label": "自提地点"
         },
@@ -1175,6 +1179,17 @@
         },
         "preferred_weight_unit": {
           "label": "重量单位"
+        },
+        "preferred_default_package_weight": {
+          "label": "默认包裹重量",
+          "help": "计算配送费率时加到每个包裹内容上的包装重量(纸箱与填充物)。设为 0 可停用。"
+        },
+        "preferred_default_package_dimensions": {
+          "label": "默认包裹尺寸",
+          "length": "长",
+          "width": "宽",
+          "height": "高",
+          "help": "常用的发货纸箱尺寸,承运商费率提供方据此计算体积重量——英制为英寸,公制为厘米。三项都填写后才生效。"
         },
         "storefront_access": {
           "help": "店铺范围内的默认设置，控制匿名访客可以看到的内容。渠道可以覆盖此设置。隐藏价格时，访客须登录后才能结账。",
@@ -2326,6 +2341,8 @@
           "subtitle": "通用配置与店铺级默认设置。",
           "tab_general": "通用",
           "tab_standards": "标准与格式",
+          "tab_default_package": "默认包裹",
+          "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
           "tab_storefront_access": "店铺访问权限",
           "title": "店铺设置"
         },
@@ -2533,6 +2550,7 @@
         "dashboard": "销售与业绩分析",
         "fulfillments": "打包、发货并跟踪订单履约",
         "gift_cards": "礼品卡及其批次",
+        "integrations": "服务商凭据与连接",
         "orders": "订单、订单项、退货、换货与索赔",
         "payments": "订单付款与扣款",
         "products": "商品、变体、选项、价格与媒体",
@@ -2572,6 +2590,7 @@
         "dashboard": "仪表盘",
         "fulfillments": "履约",
         "gift_cards": "礼品卡",
+        "integrations": "集成",
         "orders": "订单",
         "payments": "支付",
         "products": "商品",
@@ -2806,7 +2825,12 @@
           "tax_category_placeholder": "继承自商品"
         },
         "title": "变体",
-        "variant_label": "变体"
+        "variant_label": "变体",
+        "bulk_edit": {
+          "trigger": "批量编辑",
+          "title": "批量编辑变体",
+          "grid_aria": "变体批量编辑表格"
+        }
       }
     },
     "promotions": {
@@ -3156,6 +3180,7 @@
         "allowed_origins": "允许的来源",
         "api_keys": "API 密钥",
         "channels": "销售渠道",
+        "integrations": "集成",
         "custom_field_definitions": "自定义字段",
         "delivery_methods": "配送方式",
         "delivery_zones": "配送区域",
@@ -3337,6 +3362,50 @@
       "saved": "翻译已保存",
       "source": "源",
       "title": "翻译"
+    },
+    "integrations": {
+      "title": "集成",
+      "description": "将服务提供方连接到此商店。凭据按商店存储，供配送、税务及其他提供方使用。",
+      "empty": {
+        "title": "未安装任何集成",
+        "description": "集成随提供方扩展一起提供。安装提供方 gem 后,其集成将显示在此处。"
+      },
+      "status": {
+        "active": "已启用",
+        "connected_inactive": "已连接(未启用)",
+        "not_connected": "未连接"
+      },
+      "connect_cta": "连接",
+      "configure_cta": "配置",
+      "view_cta": "查看",
+      "connect_description": "输入此提供方的凭据。保存即存储;启用时会验证连接。",
+      "edit_description": "更新凭据或启用状态。机密值已被遮盖;保持不变即可保留已存储的机密。",
+      "active_toggle": {
+        "label": "启用",
+        "help": "启用会验证连接,并使该集成可供提供方使用。"
+      },
+      "test": {
+        "label": "连接",
+        "run": "测试连接",
+        "testing": "正在测试…",
+        "success": "连接成功。",
+        "failure": "连接失败。"
+      },
+      "disconnect": "断开连接",
+      "disconnect_confirm": {
+        "title": "断开集成",
+        "message": "断开 {{name}}?其存储的凭据将被删除,使用它的提供方将停止工作。"
+      },
+      "messages": {
+        "connected": "集成已连接",
+        "updated": "集成已更新",
+        "disconnected": "集成已断开"
+      },
+      "groups": {
+        "shipping": "配送",
+        "tax": "税务",
+        "other": "其他"
+      }
     }
   }
 }

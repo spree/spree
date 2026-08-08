@@ -2,6 +2,11 @@ module Spree
   class DeliveryRate < Spree.base_class
     has_prefix_id :dr
 
+    # Carrier payload from the rate provider (quote ids, service codes) —
+    # a plain single column per the house rule for new columns, not the
+    # legacy public/private Metadata pair.
+    serialize :metadata, coder: Spree::Metadata::HashSerializer
+
     belongs_to :fulfillment, class_name: 'Spree::Fulfillment'
     belongs_to :tax_rate, -> { with_deleted }, class_name: 'Spree::TaxRate'
     belongs_to :delivery_method, -> { with_deleted }, class_name: 'Spree::DeliveryMethod', inverse_of: :delivery_rates

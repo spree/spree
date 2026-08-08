@@ -717,6 +717,10 @@
         "fulfillment_type": {
           "label": "Typ realizacji"
         },
+        "rate_provider": {
+          "label": "Dostawca stawek",
+          "help": "Skąd pochodzą ceny tej metody. Wbudowany dostawca liczy według kalkulatora poniżej; dostawcy przewoźników podają stawki na żywo."
+        },
         "pickup_locations": {
           "label": "Punkty odbioru"
         },
@@ -1183,6 +1187,17 @@
         },
         "preferred_weight_unit": {
           "label": "Jednostka wagi"
+        },
+        "preferred_default_package_weight": {
+          "label": "Domyślna waga paczki",
+          "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza."
+        },
+        "preferred_default_package_dimensions": {
+          "label": "Domyślne wymiary paczki",
+          "length": "Długość",
+          "width": "Szerokość",
+          "height": "Wysokość",
+          "help": "Karton, w którym zwykle wysyłasz, używany przez przewoźników do wyceny wagi wymiarowej — cale dla systemu imperialnego, centymetry dla metrycznego. Działa dopiero po podaniu wszystkich trzech."
         },
         "storefront_access": {
           "help": "Domyślne ustawienie dla całego sklepu określające, co widzą anonimowi odwiedzający. Kanały mogą je nadpisać. Gdy ceny są ukryte, goście muszą się zalogować, aby sfinalizować zakup.",
@@ -2352,6 +2367,8 @@
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
           "tab_general": "Ogólne",
           "tab_standards": "Standardy i formaty",
+          "tab_default_package": "Domyślna paczka",
+          "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
           "tab_storefront_access": "Dostęp do sklepu",
           "title": "Ustawienia sklepu"
         },
@@ -2565,6 +2582,7 @@
         "dashboard": "Analizy sprzedaży i wyników",
         "fulfillments": "Pakowanie, wysyłka i śledzenie realizacji",
         "gift_cards": "Karty podarunkowe i ich partie",
+        "integrations": "Dane dostępowe i połączenia dostawców",
         "orders": "Zamówienia, pozycje, zwroty, wymiany i reklamacje",
         "payments": "Płatności zamówień i pobieranie płatności",
         "products": "Produkty, warianty, opcje, ceny i media",
@@ -2604,6 +2622,7 @@
         "dashboard": "Panel",
         "fulfillments": "Realizacje",
         "gift_cards": "Karty podarunkowe",
+        "integrations": "Integracje",
         "orders": "Zamówienia",
         "payments": "Płatności",
         "products": "Produkty",
@@ -2848,7 +2867,12 @@
           "tax_category_placeholder": "Dziedzicz z produktu"
         },
         "title": "Warianty",
-        "variant_label": "Wariant"
+        "variant_label": "Wariant",
+        "bulk_edit": {
+          "trigger": "Edycja zbiorcza",
+          "title": "Edytuj warianty zbiorczo",
+          "grid_aria": "Arkusz zbiorczej edycji wariantów"
+        }
       }
     },
     "promotions": {
@@ -3198,6 +3222,7 @@
         "allowed_origins": "Dozwolone źródła",
         "api_keys": "Klucze API",
         "channels": "Kanały sprzedaży",
+        "integrations": "Integracje",
         "custom_field_definitions": "Pola niestandardowe",
         "delivery_methods": "Metody dostawy",
         "delivery_zones": "Strefy dostawy",
@@ -3379,6 +3404,50 @@
       "saved": "Tłumaczenia zapisane",
       "source": "Źródło",
       "title": "Tłumaczenia"
+    },
+    "integrations": {
+      "title": "Integracje",
+      "description": "Połącz usługi dostawców z tym sklepem. Dane dostępowe są przechowywane per sklep i używane przez dostawców dostaw, podatków i innych.",
+      "empty": {
+        "title": "Brak zainstalowanych integracji",
+        "description": "Integracje pochodzą z rozszerzeń dostawców. Zainstaluj gem dostawcy, a jego integracje pojawią się tutaj."
+      },
+      "status": {
+        "active": "Aktywna",
+        "connected_inactive": "Połączona (nieaktywna)",
+        "not_connected": "Niepołączona"
+      },
+      "connect_cta": "Połącz",
+      "configure_cta": "Konfiguruj",
+      "view_cta": "Zobacz",
+      "connect_description": "Wprowadź dane dostępowe tego dostawcy. Zapis je przechowuje; aktywacja weryfikuje połączenie.",
+      "edit_description": "Zmień dane dostępowe lub aktywację. Wartości tajne są maskowane; pozostaw je bez zmian, aby zachować zapisany sekret.",
+      "active_toggle": {
+        "label": "Aktywna",
+        "help": "Aktywacja weryfikuje połączenie i udostępnia integrację dostawcom."
+      },
+      "test": {
+        "label": "Połączenie",
+        "run": "Testuj połączenie",
+        "testing": "Testowanie…",
+        "success": "Połączenie udane.",
+        "failure": "Połączenie nieudane."
+      },
+      "disconnect": "Rozłącz",
+      "disconnect_confirm": {
+        "title": "Rozłącz integrację",
+        "message": "Rozłączyć {{name}}? Zapisane dane dostępowe zostaną usunięte, a korzystający z nich dostawcy przestaną działać."
+      },
+      "messages": {
+        "connected": "Integracja połączona",
+        "updated": "Integracja zaktualizowana",
+        "disconnected": "Integracja rozłączona"
+      },
+      "groups": {
+        "shipping": "Dostawa",
+        "tax": "Podatki",
+        "other": "Inne"
+      }
     }
   }
 }

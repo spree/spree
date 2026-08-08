@@ -42,6 +42,29 @@ module Spree
             render json: { data: data, fulfillment_types: Spree.fulfillment_types }
           end
 
+          # GET /api/v3/admin/delivery_methods/rate_providers
+          # Registered DeliveryRateProvider strategies, filtered to those the
+          # current store can actually use — a carrier provider whose
+          # integration isn't connected must not be offered, since choosing it
+          # would break quoting at checkout.
+          def rate_providers
+            authorize! :create, model_class
+
+            data = Spree.delivery_rate_providers.
+                   select { |provider_class| provider_class.available_for_store?(current_store) }.
+                   map do |provider_class|
+              {
+                type: provider_class.to_s,
+                name: provider_class.provider_name,
+                integration_class: provider_class.integration_class,
+                fulfillment_types: provider_class.fulfillment_types,
+                uses_calculator: provider_class.uses_calculator?
+              }
+            end
+
+            render json: { data: data, default: Spree::DeliveryMethod::DEFAULT_RATE_PROVIDER }
+          end
+
           def create
             @resource = model_class.new(assignable_params)
             authorize_resource!(@resource, :create)
@@ -81,7 +104,7 @@ module Spree
           def permitted_params
             params.permit(
               :name, :admin_name, :code, :fulfillment_type, :fulfillment_provider,
-              :pickup_point_provider, :storefront_visible, :tracking_url,
+              :pickup_point_provider, :rate_provider, :storefront_visible, :tracking_url,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,
               :tax_category_id, :calculator_type,
               delivery_zone_ids: [], stock_location_ids: [], calculator_preferences: {},

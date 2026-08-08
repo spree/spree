@@ -6,6 +6,12 @@ export interface StoreUpdateParams {
   preferred_admin_locale?: string
   preferred_timezone?: string
   preferred_weight_unit?: string
+  /** Packaging tare added to every package's content weight for rate calculation, in the store's weight unit. */
+  preferred_default_package_weight?: number
+  /** Default package (box) dimensions for carrier dimensional-weight pricing — inches when imperial, centimeters when metric. All three required to take effect. */
+  preferred_default_package_length?: number
+  preferred_default_package_width?: number
+  preferred_default_package_height?: number
   preferred_unit_system?: string
   /**
    * Store-wide default storefront posture: `public`, `prices_hidden`, or
@@ -1388,6 +1394,41 @@ export interface PaymentMethodUpdateParams {
 export type PaymentMethodType = ResourceTypeDefinition
 
 /**
+ * One entry returned by `GET /integrations/types` — every registered
+ * integration with its gallery metadata and configuration schema. Pure
+ * registry discovery: read live connection state from `integrations.list()`.
+ */
+export interface IntegrationTypeDefinition {
+  /** Wire shorthand (`Spree::Integration.api_type`), not the Ruby class name. */
+  type: string
+  name: string
+  /** Display grouping, e.g. `shipping`, `tax`; null for ungrouped. */
+  group: string | null
+  /** One-line description, localized server-side from the gem's translations. */
+  description: string | null
+  /** Gallery logo: an absolute URL to hosted brand assets, or a `data:` URI for self-contained gems. Render with a fallback — hosted logos are a courtesy, not a guarantee. */
+  logo_url: string | null
+  preference_schema: { key: string; type: string; default: unknown }[]
+}
+
+export interface IntegrationCreateParams {
+  /** Wire shorthand from `integrations.types()`. */
+  type: string
+  /** Activation runs the connection check server-side and 422s on failure. */
+  active?: boolean
+  /**
+   * Credential values; secret (`password`-typed) preferences come back
+   * masked, and submitting a masked value back keeps the stored secret.
+   */
+  preferences?: Record<string, unknown>
+}
+
+export interface IntegrationUpdateParams {
+  active?: boolean
+  preferences?: Record<string, unknown>
+}
+
+/**
  * API shorthand for an export type (`Spree::Export.api_type`), not the Ruby
  * class name. The server validates `type` against the configured allowlist
  * (`Spree::Export.available_types`); a plugin can register additional types,
@@ -1664,10 +1705,16 @@ export interface DeliveryMethodParams {
   name?: string
   admin_name?: string | null
   code?: string | null
-  /** One of `shipping`, `digital`, `pickup`, `pickup_point`. */
+  /** One of `shipping`, `digital`, `pickup` (see `deliveryMethods.fulfillmentProviders()`). */
   fulfillment_type?: string
   fulfillment_provider?: string
   pickup_point_provider?: string | null
+  /**
+   * Quoting strategy class name (see `deliveryMethods.rateProviders()`).
+   * Omit or send null for the built-in Internal provider, which prices
+   * through the method's calculator.
+   */
+  rate_provider?: string | null
   storefront_visible?: boolean
   tracking_url?: string | null
   estimated_transit_business_days_min?: number | null

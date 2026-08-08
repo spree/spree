@@ -1,0 +1,25 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.easypost.com/v2/shipments/shp_recorded1/buy
+    body:
+      encoding: UTF-8
+      string: '{"rate":{"id":"rate_recorded1"}}'
+    headers:
+      Authorization:
+      - "<FILTERED>"
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: '{"id":"shp_recorded1","object":"Shipment","mode":"test","status":"purchased","tracking_code":"9405500207552012345678","created_at":"2026-08-06T12:00:00Z","updated_at":"2026-08-06T12:05:00Z","selected_rate":{"id":"rate_recorded1","object":"Rate","carrier":"USPS","service":"Priority","rate":"7.33","currency":"USD"},"postage_label":{"id":"pl_recorded1","object":"PostageLabel","label_url":"https://easypost-files.s3.amazonaws.com/files/postage_label/recorded1.png","label_file_type":"image/png"},"tracker":{"id":"trk_recorded1","object":"Tracker","tracking_code":"9405500207552012345678","public_url":"https://track.easypost.com/djE7recorded1","status":"pre_transit"},"rates":[]}'
+  recorded_at: Thu, 06 Aug 2026 20:05:00 GMT
+recorded_with: VCR 6.3.1

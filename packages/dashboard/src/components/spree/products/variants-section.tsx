@@ -38,6 +38,7 @@ import { useTranslation } from 'react-i18next'
 import { useOptionTypes, useOptionTypesByIds } from '../../../hooks/use-option-types'
 import { useProductType } from '../../../hooks/use-product-types'
 import type { ProductFormValues, VariantFormValues } from '../../../schemas/product'
+import { BulkVariantsDialog } from './bulk-variants-dialog'
 import { VariantEditSheet } from './variant-edit-sheet'
 import {
   generateVariantCombinations,
@@ -137,6 +138,7 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [bulkOpen, setBulkOpen] = useState(false)
   const [orphanedKeys, setOrphanedKeys] = useState<string[]>([])
 
   // `selected` is fully derived from the current variants array + the global
@@ -324,8 +326,13 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
         <CardTitle>{t('admin.products.variants.title')}</CardTitle>
+        {fields.length > 0 && (
+          <Button type="button" variant="outline" size="sm" onClick={() => setBulkOpen(true)}>
+            {t('admin.products.variants.bulk_edit.trigger')}
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <VariantsOptionsBuilder
@@ -408,6 +415,8 @@ export function VariantsSection({ form, seedFromType = false }: Props) {
           </div>
         )}
       </CardContent>
+
+      <BulkVariantsDialog form={form} open={bulkOpen} onOpenChange={setBulkOpen} />
 
       {editingIndex !== null && (
         <VariantEditSheet

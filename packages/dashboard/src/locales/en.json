@@ -709,6 +709,10 @@
         "fulfillment_type": {
           "label": "Fulfillment type"
         },
+        "rate_provider": {
+          "label": "Rate provider",
+          "help": "Where this method's prices come from. The built-in provider prices with the calculator below; carrier providers quote live rates."
+        },
         "pickup_locations": {
           "label": "Pickup locations"
         },
@@ -1175,6 +1179,17 @@
         },
         "preferred_weight_unit": {
           "label": "Weight unit"
+        },
+        "preferred_default_package_weight": {
+          "label": "Default package weight",
+          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable."
+        },
+        "preferred_default_package_dimensions": {
+          "label": "Default package dimensions",
+          "length": "Length",
+          "width": "Width",
+          "height": "Height",
+          "help": "The box you usually ship in, used by carrier rate providers for dimensional-weight pricing — inches for imperial, centimeters for metric. All three are needed to take effect."
         },
         "storefront_access": {
           "help": "Store-wide default for what anonymous visitors can see. Channels can override this. When prices are hidden, guests must sign in to check out.",
@@ -2326,6 +2341,8 @@
           "subtitle": "General configuration and store-wide defaults.",
           "tab_general": "General",
           "tab_standards": "Standards and formats",
+          "tab_default_package": "Default package",
+          "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "tab_storefront_access": "Storefront access",
           "title": "Store settings"
         },
@@ -2533,6 +2550,7 @@
         "dashboard": "Sales and performance analytics",
         "fulfillments": "Pack, ship and track order fulfillments",
         "gift_cards": "Gift cards and gift card batches",
+        "integrations": "Provider credentials and connections",
         "orders": "Orders, line items, returns, exchanges and claims",
         "payments": "Order payments and payment capture",
         "products": "Products, variants, options, prices and media",
@@ -2572,6 +2590,7 @@
         "dashboard": "Dashboard",
         "fulfillments": "Fulfillments",
         "gift_cards": "Gift cards",
+        "integrations": "Integrations",
         "orders": "Orders",
         "payments": "Payments",
         "products": "Products",
@@ -2806,7 +2825,12 @@
           "tax_category_placeholder": "Inherit from product"
         },
         "title": "Variants",
-        "variant_label": "Variant"
+        "variant_label": "Variant",
+        "bulk_edit": {
+          "trigger": "Bulk edit",
+          "title": "Bulk edit variants",
+          "grid_aria": "Variant bulk edit spreadsheet"
+        }
       }
     },
     "promotions": {
@@ -3156,6 +3180,7 @@
         "allowed_origins": "Allowed origins",
         "api_keys": "API keys",
         "channels": "Sales channels",
+        "integrations": "Integrations",
         "custom_field_definitions": "Custom fields",
         "delivery_methods": "Delivery methods",
         "delivery_zones": "Delivery zones",
@@ -3337,6 +3362,50 @@
       "saved": "Translations saved",
       "source": "Source",
       "title": "Translations"
+    },
+    "integrations": {
+      "title": "Integrations",
+      "description": "Connect provider services to this store. Credentials are stored per store and used by delivery, tax and other providers.",
+      "empty": {
+        "title": "No integrations installed",
+        "description": "Integrations ship with provider extensions. Install a provider gem and its integrations appear here."
+      },
+      "status": {
+        "active": "Active",
+        "connected_inactive": "Connected (inactive)",
+        "not_connected": "Not connected"
+      },
+      "connect_cta": "Connect",
+      "configure_cta": "Configure",
+      "view_cta": "View",
+      "connect_description": "Enter the credentials for this provider. Saving stores them; switching it active verifies the connection.",
+      "edit_description": "Update credentials or activation. Secret values are masked; leave them unchanged to keep the stored secret.",
+      "active_toggle": {
+        "label": "Active",
+        "help": "Activation verifies the connection and makes the integration available to providers."
+      },
+      "test": {
+        "label": "Connection",
+        "run": "Test connection",
+        "testing": "Testing…",
+        "success": "Connection successful.",
+        "failure": "Connection failed."
+      },
+      "disconnect": "Disconnect",
+      "disconnect_confirm": {
+        "title": "Disconnect integration",
+        "message": "Disconnect {{name}}? Its stored credentials are deleted and providers using it stop working."
+      },
+      "messages": {
+        "connected": "Integration connected",
+        "updated": "Integration updated",
+        "disconnected": "Integration disconnected"
+      },
+      "groups": {
+        "shipping": "Shipping",
+        "tax": "Tax",
+        "other": "Other"
+      }
     }
   }
 }

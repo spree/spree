@@ -709,6 +709,10 @@
         "fulfillment_type": {
           "label": "Fulfillment-Typ"
         },
+        "rate_provider": {
+          "label": "Tarifanbieter",
+          "help": "Woher die Preise dieser Methode stammen. Der integrierte Anbieter rechnet mit dem Kalkulator unten; Carrier-Anbieter liefern Echtzeit-Tarife."
+        },
         "pickup_locations": {
           "label": "Abholorte"
         },
@@ -1175,6 +1179,17 @@
         },
         "preferred_weight_unit": {
           "label": "Gewichtseinheit"
+        },
+        "preferred_default_package_weight": {
+          "label": "Standard-Paketgewicht",
+          "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird. 0 deaktiviert es."
+        },
+        "preferred_default_package_dimensions": {
+          "label": "Standard-Paketabmessungen",
+          "length": "Länge",
+          "width": "Breite",
+          "height": "Höhe",
+          "help": "Der übliche Versandkarton, von Carrier-Tarifanbietern für Volumengewicht-Preise genutzt — Zoll bei imperial, Zentimeter bei metrisch. Wirksam nur mit allen drei Werten."
         },
         "storefront_access": {
           "help": "Store-weite Vorgabe dafür, was anonyme Besucher sehen. Vertriebskanäle können dies überschreiben. Wenn Preise verborgen sind, müssen Gäste sich zum Bezahlen anmelden.",
@@ -2326,6 +2341,8 @@
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
           "tab_general": "Allgemein",
           "tab_standards": "Standards und Formate",
+          "tab_default_package": "Standardpaket",
+          "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
           "tab_storefront_access": "Storefront-Zugriff",
           "title": "Shop-Einstellungen"
         },
@@ -2533,6 +2550,7 @@
         "dashboard": "Umsatz- und Leistungsanalysen",
         "fulfillments": "Bestellungen packen, versenden und verfolgen",
         "gift_cards": "Geschenkkarten und Geschenkkarten-Chargen",
+        "integrations": "Anbieter-Zugangsdaten und Verbindungen",
         "orders": "Bestellungen, Positionen, Retouren, Umtausch und Reklamationen",
         "payments": "Zahlungen und Zahlungserfassung",
         "products": "Produkte, Varianten, Optionen, Preise und Medien",
@@ -2572,6 +2590,7 @@
         "dashboard": "Dashboard",
         "fulfillments": "Fulfillments",
         "gift_cards": "Geschenkkarten",
+        "integrations": "Integrationen",
         "orders": "Bestellungen",
         "payments": "Zahlungen",
         "products": "Produkte",
@@ -2806,7 +2825,12 @@
           "tax_category_placeholder": "Vom Produkt übernehmen"
         },
         "title": "Varianten",
-        "variant_label": "Variante"
+        "variant_label": "Variante",
+        "bulk_edit": {
+          "trigger": "Massenbearbeitung",
+          "title": "Varianten massenbearbeiten",
+          "grid_aria": "Tabelle zur Massenbearbeitung der Varianten"
+        }
       }
     },
     "promotions": {
@@ -3156,6 +3180,7 @@
         "allowed_origins": "Zugelassene Ursprünge",
         "api_keys": "API-Schlüssel",
         "channels": "Verkaufskanäle",
+        "integrations": "Integrationen",
         "custom_field_definitions": "Benutzerdefinierte Felder",
         "delivery_methods": "Versandarten",
         "delivery_zones": "Lieferzonen",
@@ -3337,6 +3362,50 @@
       "saved": "Übersetzungen gespeichert",
       "source": "Quelle",
       "title": "Übersetzungen"
+    },
+    "integrations": {
+      "title": "Integrationen",
+      "description": "Verbinden Sie Anbieterdienste mit diesem Shop. Zugangsdaten werden pro Shop gespeichert und von Versand-, Steuer- und anderen Anbietern genutzt.",
+      "empty": {
+        "title": "Keine Integrationen installiert",
+        "description": "Integrationen werden mit Anbieter-Erweiterungen ausgeliefert. Installieren Sie ein Anbieter-Gem, und die Integrationen erscheinen hier."
+      },
+      "status": {
+        "active": "Aktiv",
+        "connected_inactive": "Verbunden (inaktiv)",
+        "not_connected": "Nicht verbunden"
+      },
+      "connect_cta": "Verbinden",
+      "configure_cta": "Konfigurieren",
+      "view_cta": "Ansehen",
+      "connect_description": "Geben Sie die Zugangsdaten für diesen Anbieter ein. Speichern legt sie ab; das Aktivieren prüft die Verbindung.",
+      "edit_description": "Zugangsdaten oder Aktivierung ändern. Geheime Werte sind maskiert; unverändert lassen, um das gespeicherte Geheimnis zu behalten.",
+      "active_toggle": {
+        "label": "Aktiv",
+        "help": "Die Aktivierung prüft die Verbindung und stellt die Integration den Anbietern zur Verfügung."
+      },
+      "test": {
+        "label": "Verbindung",
+        "run": "Verbindung testen",
+        "testing": "Wird getestet…",
+        "success": "Verbindung erfolgreich.",
+        "failure": "Verbindung fehlgeschlagen."
+      },
+      "disconnect": "Trennen",
+      "disconnect_confirm": {
+        "title": "Integration trennen",
+        "message": "{{name}} trennen? Die gespeicherten Zugangsdaten werden gelöscht und Anbieter, die sie nutzen, funktionieren nicht mehr."
+      },
+      "messages": {
+        "connected": "Integration verbunden",
+        "updated": "Integration aktualisiert",
+        "disconnected": "Integration getrennt"
+      },
+      "groups": {
+        "shipping": "Versand",
+        "tax": "Steuern",
+        "other": "Sonstige"
+      }
     }
   }
 }

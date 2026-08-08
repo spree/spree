@@ -52,6 +52,7 @@ import {
   useDeliveryMethod,
   useDeliveryMethodRules,
   useDeliveryMethodRuleTypes,
+  useDeliveryRateProviders,
   useFulfillmentProviders,
   useUpdateDeliveryMethod,
 } from '../../../../hooks/use-delivery-methods'
@@ -275,6 +276,7 @@ function EditDeliveryMethodSheet({
           'shipping',
         fulfillment_provider:
           deliveryMethod.fulfillment_provider ?? DELIVERY_METHOD_DEFAULTS.fulfillment_provider,
+        rate_provider: deliveryMethod.rate_provider ?? DELIVERY_METHOD_DEFAULTS.rate_provider,
         storefront_visible: deliveryMethod.storefront_visible,
         tracking_url: deliveryMethod.tracking_url ?? '',
         estimated_transit_business_days_min:
@@ -479,64 +481,134 @@ function ConditionRuleRow({
   )
 }
 
+function ProviderSelectField({
+  form,
+  name,
+  label,
+  help,
+  options,
+}: {
+  form: UseFormReturn<DeliveryMethodFormValues>
+  name: 'fulfillment_provider' | 'rate_provider'
+  label: string
+  help: string
+  options: { value: string; label: string }[]
+}) {
+  return (
+    <Field>
+      <FieldLabel>{label}</FieldLabel>
+      <Controller
+        name={name}
+        control={form.control}
+        render={({ field }) => (
+          <Select items={options} value={field.value || ''} onValueChange={field.onChange}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
+      <span className="text-muted-foreground text-xs">{help}</span>
+    </Field>
+  )
+}
+
 function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
   const { data: calculators } = useDeliveryCalculators()
   const { data: fulfillmentProviders } = useFulfillmentProviders()
+  const { data: rateProviders } = useDeliveryRateProviders()
   const { data: zones } = useDeliveryZones()
   const { data: stockLocations } = useStockLocations()
   const { data: taxCategories } = useTaxCategories()
 
   const fulfillmentType = form.watch('fulfillment_type')
   const calculatorType = form.watch('calculator_type')
-
-  // Registry-driven: extension-registered types appear without a dashboard
-  // change; the shipped const only covers the pre-fetch render.
-  const registeredFulfillmentTypes = fulfillmentProviders?.fulfillment_types ?? FULFILLMENT_TYPES
-  const fulfillmentTypeOptions = registeredFulfillmentTypes.map((value) => ({
-    value,
-    label: t(`admin.delivery_methods.fulfillment_types.${value}`, { defaultValue: value }),
-  }))
+  const fulfillmentProvider = form.watch('fulfillment_provider')
+  const rateProvider = form.watch('rate_provider')
 
   const calculatorOptions = (calculators?.data ?? []).map((calculator) => ({
     value: calculator.type,
     label: calculator.name,
   }))
 
-  // Providers with no declared types (Manual) handle anything.
-  const providersForType = useMemo(
-    () =>
-      (fulfillmentProviders?.data ?? []).filter(
-        (provider) =>
-          provider.fulfillment_types.length === 0 ||
-          provider.fulfillment_types.includes(fulfillmentType),
-      ),
-    [fulfillmentProviders, fulfillmentType],
-  )
-  const providerOptions = providersForType.map((provider) => ({
+  const providerOptions = (fulfillmentProviders?.data ?? []).map((provider) => ({
     value: provider.type,
     label: provider.name,
   }))
 
-  // Suggest a provider whenever the admin picks a fulfillment type: prefer one
-  // that declares that type (Pickup for pickup), since the generic Manual
-  // fallback would otherwise keep dispatch and address rules wrong. Only the
-  // untouched field is steered — an explicit choice is never overwritten.
-  const fulfillmentProvider = form.watch('fulfillment_provider')
-  const providerDirty = !!form.formState.dirtyFields.fulfillment_provider
+  const defaultRateProvider = rateProviders?.default ?? ''
+  const rateProviderOptions = (rateProviders?.data ?? []).map((provider) => ({
+    value: provider.type,
+    label: provider.name,
+  }))
+
+  // Providers declare which fulfillment types they handle, so the type field
+  // offers only what the chosen providers can actually deliver — an empty
+  // declaration means "any type" (Manual, Internal). Picking a provider
+  // narrows the type rather than the other way around.
+  const selectedFulfillmentProvider = useMemo(
+    () => (fulfillmentProviders?.data ?? []).find((p) => p.type === fulfillmentProvider),
+    [fulfillmentProviders, fulfillmentProvider],
+  )
+  const selectedRateProvider = useMemo(
+    () => (rateProviders?.data ?? []).find((p) => p.type === (rateProvider || defaultRateProvider)),
+    [rateProviders, rateProvider, defaultRateProvider],
+  )
+
+  const registeredFulfillmentTypes = fulfillmentProviders?.fulfillment_types ?? FULFILLMENT_TYPES
+  const fulfillmentTypeOptions = useMemo(() => {
+    const handled = [
+      selectedFulfillmentProvider?.fulfillment_types,
+      selectedRateProvider?.fulfillment_types,
+    ].filter((types): types is string[] => !!types && types.length > 0)
+
+    const available = registeredFulfillmentTypes.filter((value) =>
+      handled.every((types) => types.includes(value)),
+    )
+
+    return (available.length > 0 ? available : registeredFulfillmentTypes).map((value) => ({
+      value,
+      label: t(`admin.delivery_methods.fulfillment_types.${value}`, { defaultValue: value }),
+    }))
+  }, [selectedFulfillmentProvider, selectedRateProvider, registeredFulfillmentTypes, t])
+
+  // Carrier providers quote live rates, so the calculator's amount is never
+  // read — the field is hidden rather than offering pricing that does nothing.
+  // (The record still carries a calculator: the Estimator consults its
+  // `available?`, which the API fills in with a free-rate default.)
+  const usesCalculator = selectedRateProvider?.uses_calculator ?? true
+
+  // Keep the type valid as providers change: an EasyPost method cannot stay
+  // `digital`. Only steers when the current value is no longer offered.
   useEffect(() => {
-    if (providersForType.length === 0) return
+    if (fulfillmentTypeOptions.length === 0) return
+    if (fulfillmentTypeOptions.some((option) => option.value === fulfillmentType)) return
 
-    const stillValid = providersForType.some((provider) => provider.type === fulfillmentProvider)
-    if (stillValid && providerDirty) return
+    form.setValue(
+      'fulfillment_type',
+      fulfillmentTypeOptions[0].value as DeliveryMethodFormValues['fulfillment_type'],
+    )
+  }, [fulfillmentTypeOptions, fulfillmentType, form])
 
-    const specific = providersForType.find((provider) => provider.fulfillment_types.length > 0)
-    const suggested = specific ?? providersForType[0]
-    if (suggested.type === fulfillmentProvider) return
+  // The select displayed the server default while submitting a blank value —
+  // harmless (blank resolves to Internal) but the shown and saved values
+  // disagreed. Seed it once the default is known, leaving a touched field or
+  // a loaded record alone.
+  const rateProviderDirty = !!form.formState.dirtyFields.rate_provider
+  useEffect(() => {
+    if (!defaultRateProvider || rateProvider || rateProviderDirty) return
 
-    form.setValue('fulfillment_provider', suggested.type)
-  }, [providersForType, fulfillmentProvider, providerDirty, form])
+    form.setValue('rate_provider', defaultRateProvider)
+  }, [defaultRateProvider, rateProvider, rateProviderDirty, form])
 
   const selectedCalculator = (calculators?.data ?? []).find((c) => c.type === calculatorType)
   const preferenceSchema = (selectedCalculator?.preference_schema ?? []) as PreferenceField[]
@@ -577,6 +649,30 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
         </Field>
       </div>
 
+      {/* Both provider fields render only when there is a real choice: with a
+          single registered provider the default applies and the field stays
+          hidden (for rate providers, until a carrier integration is
+          installed pricing is simply the calculator below). */}
+      {providerOptions.length > 1 && (
+        <ProviderSelectField
+          form={form}
+          name="fulfillment_provider"
+          label={t('admin.fields.delivery_method.fulfillment_provider.label')}
+          help={t('admin.fields.delivery_method.fulfillment_provider.help')}
+          options={providerOptions}
+        />
+      )}
+
+      {rateProviderOptions.length > 1 && (
+        <ProviderSelectField
+          form={form}
+          name="rate_provider"
+          label={t('admin.fields.delivery_method.rate_provider.label')}
+          help={t('admin.fields.delivery_method.rate_provider.help')}
+          options={rateProviderOptions}
+        />
+      )}
+
       <Field>
         <FieldLabel>{t('admin.fields.delivery_method.fulfillment_type.label')}</FieldLabel>
         <Controller
@@ -602,33 +698,6 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
           )}
         />
       </Field>
-
-      {providerOptions.length > 1 && (
-        <Field>
-          <FieldLabel>{t('admin.fields.delivery_method.fulfillment_provider.label')}</FieldLabel>
-          <Controller
-            name="fulfillment_provider"
-            control={form.control}
-            render={({ field }) => (
-              <Select items={providerOptions} value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {providerOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          <span className="text-muted-foreground text-xs">
-            {t('admin.fields.delivery_method.fulfillment_provider.help')}
-          </span>
-        </Field>
-      )}
 
       {fulfillmentType === 'pickup' && (
         <Field>
@@ -672,7 +741,7 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
         </Field>
       )}
 
-      {(fulfillmentType === 'shipping' || fulfillmentType === 'pickup_point') && (
+      {fulfillmentType === 'shipping' && usesCalculator && (
         <>
           <Field>
             <FieldLabel>{t('admin.fields.delivery_method.calculator.label')}</FieldLabel>

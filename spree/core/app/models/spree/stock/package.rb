@@ -50,8 +50,34 @@ module Spree
         contents.sum(&:amount)
       end
 
+      # Content weight plus the store's default package weight (packaging
+      # tare). This is the single seam every weight consumer reads —
+      # calculators, rate providers, weight rules and the weight splitter —
+      # so the tare applies everywhere without any of them knowing about it.
       def weight
-        contents.sum(&:weight)
+        contents_weight = contents.sum(&:weight)
+        tare = order&.store&.preferred_default_package_weight.to_f
+
+        contents_weight + tare
+      end
+
+      # The store's default package dimensions (the box this package ships
+      # in), used verbatim by carrier rate providers for dimensional-weight
+      # pricing. Item dimensions are deliberately not summed — items don't
+      # stack into a box shape. Nil until the store configures all three,
+      # in the unit implied by the store's unit system (in/cm).
+      #
+      # @return [Hash{Symbol => Float}, nil]
+      def dimensions
+        store = order&.store
+        return if store.nil?
+
+        length = store.preferred_default_package_length.to_f
+        width = store.preferred_default_package_width.to_f
+        height = store.preferred_default_package_height.to_f
+        return if [length, width, height].any?(&:zero?)
+
+        { length: length, width: width, height: height }
       end
 
       def on_hand

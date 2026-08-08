@@ -709,6 +709,10 @@
         "fulfillment_type": {
           "label": "Type de traitement"
         },
+        "rate_provider": {
+          "label": "Fournisseur de tarifs",
+          "help": "D'où proviennent les prix de cette méthode. Le fournisseur intégré calcule avec le calculateur ci-dessous ; les transporteurs fournissent des tarifs en temps réel."
+        },
         "pickup_locations": {
           "label": "Points de retrait"
         },
@@ -1175,6 +1179,17 @@
         },
         "preferred_weight_unit": {
           "label": "Unité de poids"
+        },
+        "preferred_default_package_weight": {
+          "label": "Poids de colis par défaut",
+          "help": "Poids d'emballage (carton et calage) ajouté au contenu de chaque colis lors du calcul des tarifs de livraison. 0 pour désactiver."
+        },
+        "preferred_default_package_dimensions": {
+          "label": "Dimensions de colis par défaut",
+          "length": "Longueur",
+          "width": "Largeur",
+          "height": "Hauteur",
+          "help": "Le carton habituel d'expédition, utilisé par les transporteurs pour le poids volumétrique — pouces en impérial, centimètres en métrique. Les trois valeurs sont requises."
         },
         "storefront_access": {
           "help": "Valeur par défaut à l'échelle de la boutique pour ce que les visiteurs anonymes peuvent voir. Les canaux peuvent la remplacer. Lorsque les prix sont masqués, les invités doivent se connecter pour passer à la caisse.",
@@ -2326,6 +2341,8 @@
           "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
           "tab_general": "Général",
           "tab_standards": "Normes et formats",
+          "tab_default_package": "Colis par défaut",
+          "default_package_description": "Le carton habituel d'expédition. Les transporteurs ajoutent son poids à chaque colis et utilisent ses dimensions pour le poids volumétrique.",
           "tab_storefront_access": "Accès à la vitrine",
           "title": "Paramètres de la boutique"
         },
@@ -2533,6 +2550,7 @@
         "dashboard": "Analyses des ventes et des performances",
         "fulfillments": "Préparer, expédier et suivre les commandes",
         "gift_cards": "Cartes cadeaux et lots de cartes cadeaux",
+        "integrations": "Identifiants et connexions des fournisseurs",
         "orders": "Commandes, articles, retours, échanges et réclamations",
         "payments": "Paiements des commandes et capture des paiements",
         "products": "Produits, variantes, options, prix et médias",
@@ -2572,6 +2590,7 @@
         "dashboard": "Tableau de bord",
         "fulfillments": "Exécutions des commandes",
         "gift_cards": "Cartes cadeaux",
+        "integrations": "Intégrations",
         "orders": "Commandes",
         "payments": "Paiements",
         "products": "Produits",
@@ -2806,7 +2825,12 @@
           "tax_category_placeholder": "Hériter du produit"
         },
         "title": "Variantes",
-        "variant_label": "Variante"
+        "variant_label": "Variante",
+        "bulk_edit": {
+          "trigger": "Édition groupée",
+          "title": "Modifier les variantes en masse",
+          "grid_aria": "Tableau d'édition groupée des variantes"
+        }
       }
     },
     "promotions": {
@@ -3156,6 +3180,7 @@
         "allowed_origins": "Origines autorisées",
         "api_keys": "Clés API",
         "channels": "Canaux de vente",
+        "integrations": "Intégrations",
         "custom_field_definitions": "Champs personnalisés",
         "delivery_methods": "Méthodes de livraison",
         "delivery_zones": "Zones de livraison",
@@ -3337,6 +3362,50 @@
       "saved": "Traductions enregistrées",
       "source": "Source",
       "title": "Traductions"
+    },
+    "integrations": {
+      "title": "Intégrations",
+      "description": "Connectez des services fournisseurs à cette boutique. Les identifiants sont stockés par boutique et utilisés par les fournisseurs de livraison, de taxes et autres.",
+      "empty": {
+        "title": "Aucune intégration installée",
+        "description": "Les intégrations sont fournies par les extensions. Installez une gem fournisseur et ses intégrations apparaîtront ici."
+      },
+      "status": {
+        "active": "Active",
+        "connected_inactive": "Connectée (inactive)",
+        "not_connected": "Non connectée"
+      },
+      "connect_cta": "Connecter",
+      "configure_cta": "Configurer",
+      "view_cta": "Voir",
+      "connect_description": "Saisissez les identifiants de ce fournisseur. L'enregistrement les stocke ; l'activation vérifie la connexion.",
+      "edit_description": "Modifiez les identifiants ou l'activation. Les valeurs secrètes sont masquées ; laissez-les inchangées pour conserver le secret stocké.",
+      "active_toggle": {
+        "label": "Active",
+        "help": "L'activation vérifie la connexion et rend l'intégration disponible pour les fournisseurs."
+      },
+      "test": {
+        "label": "Connexion",
+        "run": "Tester la connexion",
+        "testing": "Test en cours…",
+        "success": "Connexion réussie.",
+        "failure": "Échec de la connexion."
+      },
+      "disconnect": "Déconnecter",
+      "disconnect_confirm": {
+        "title": "Déconnecter l'intégration",
+        "message": "Déconnecter {{name}} ? Ses identifiants stockés seront supprimés et les fournisseurs qui les utilisent cesseront de fonctionner."
+      },
+      "messages": {
+        "connected": "Intégration connectée",
+        "updated": "Intégration mise à jour",
+        "disconnected": "Intégration déconnectée"
+      },
+      "groups": {
+        "shipping": "Livraison",
+        "tax": "Taxes",
+        "other": "Autres"
+      }
     }
   }
 }

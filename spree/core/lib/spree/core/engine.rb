@@ -16,6 +16,7 @@ module Spree
                                :fulfillment_types,
                                :stock_splitters,
                                :delivery_method_rules,
+                               :delivery_rate_providers,
                                :order_routing,
                                :promotions,
                                :pricing,
@@ -120,6 +121,10 @@ module Spree
         app.config.spree.delivery_method_rules = []
       end
 
+      initializer 'spree.register.delivery_rate_providers', before: :load_config_initializers do |app|
+        app.config.spree.delivery_rate_providers = []
+      end
+
       initializer 'spree.register.metafields' do |app|
         app.config.spree.metafields = MetafieldsEnvironment.new
         app.config.spree.metafields.types = []
@@ -186,9 +191,16 @@ module Spree
           Spree::FulfillmentProvider::PickupPoint
         ]
 
-        # Open strings, no inclusion validation — extensions append their own
-        # (e.g. 'same_day_courier').
-        Rails.application.config.spree.fulfillment_types = %w[shipping pickup pickup_point digital local_delivery]
+        # Registered vocabulary — DeliveryMethod and ProductType validate
+        # against it on change. Extensions append their own
+        # (e.g. 'same_day_courier') from an initializer.
+        Rails.application.config.spree.fulfillment_types = %w[shipping pickup digital]
+
+        # Quoting strategies selectable on a delivery method. Internal prices
+        # through the method's calculator; carrier gems append theirs.
+        Rails.application.config.spree.delivery_rate_providers.concat [
+          Spree::DeliveryRateProvider::Internal
+        ]
 
         # Selectable order routing strategies. The internal Reducer collaborator
         # is intentionally NOT listed — it is not a Strategy::Base. Plugins add

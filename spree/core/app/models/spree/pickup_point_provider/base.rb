@@ -4,6 +4,11 @@ module Spree
     # ServicePoints, ...). Points are ephemeral value objects — never
     # persisted; the selected point is validated via +find_by_external_id+
     # and frozen into +fulfillment.pickup_point_data+.
+    #
+    # Not yet a stable extension point: in 6.1 the constructor becomes
+    # +new(delivery_method)+ (credential access via the method's store
+    # integrations) and +find_nearby+ gains +zipcode:+/+query:+ params.
+    # Build third-party providers against 6.1, not this shape.
     class Base
       # @return [Array<Spree::PickupPointOption>]
       def find_nearby(latitude:, longitude:, limit: 20)

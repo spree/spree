@@ -265,6 +265,74 @@ module Spree
           expect(called).to be true
         end
       end
+
+      # Quoting dispatches through the method's rate provider, so a carrier
+      # provider replaces calculator pricing while the surrounding filtering,
+      # tax and sorting behavior stays identical.
+      describe 'rate provider dispatch' do
+        let(:delivery_method) { create(:delivery_method) }
+        let(:package) { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
+
+        before do
+          allow(package).to receive_messages(eligible_delivery_methods: [delivery_method])
+        end
+
+        it 'defaults to the Internal provider, pricing through the calculator' do
+          expect(delivery_method.rate_provider_instance).to be_a(Spree::DeliveryRateProvider::Internal)
+
+          allow(delivery_method.calculator).to receive(:compute).and_return(7.00)
+
+          expect(subject.delivery_rates(package).first.cost).to eq(7.00)
+        end
+
+        it 'prices through a configured external provider instead of the calculator' do
+          provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
+            def estimate(_package)
+              Spree::DeliveryRateProvider::Estimate.new(cost: BigDecimal('9.99'), carrier: 'UPS')
+            end
+          end
+          stub_const('CarrierRateProvider', provider_class)
+
+          allow(delivery_method).to receive(:rate_provider_instance).and_return(provider_class.new(delivery_method))
+          expect(delivery_method.calculator).not_to receive(:compute)
+
+          expect(subject.delivery_rates(package).first.cost).to eq(BigDecimal('9.99'))
+        end
+
+        it 'carries the carrier metadata from the estimate onto the rate' do
+          provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
+            def estimate(_package)
+              Spree::DeliveryRateProvider::Estimate.new(
+                cost: BigDecimal('9.99'),
+                carrier: 'UPS',
+                service_level: 'Ground',
+                estimated_delivery_date: Date.new(2026, 8, 20),
+                metadata: { 'quote_id' => 'rate_123' }
+              )
+            end
+          end
+          stub_const('EnrichedRateProvider', provider_class)
+
+          allow(delivery_method).to receive(:rate_provider_instance).and_return(provider_class.new(delivery_method))
+
+          rate = subject.delivery_rates(package).first
+          expect(rate.carrier).to eq('UPS')
+          expect(rate.service_level).to eq('Ground')
+          expect(rate.estimated_delivery_date).to eq(Date.new(2026, 8, 20))
+          expect(rate.metadata['quote_id']).to eq('rate_123')
+        end
+
+        it 'suppresses the method when the provider returns no estimate' do
+          provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
+            def estimate(_package) = nil
+          end
+          stub_const('EmptyRateProvider', provider_class)
+
+          allow(delivery_method).to receive(:rate_provider_instance).and_return(provider_class.new(delivery_method))
+
+          expect(subject.delivery_rates(package)).to be_empty
+        end
+      end
     end
   end
 end

@@ -15,9 +15,33 @@ module Spree
           []
         end
 
-        # @return [String] human-readable name for admin UIs
+        # Human-readable name for admin UIs. Provider gems follow the
+        # `SpreeEasyPost::DeliveryRateProvider` convention, where demodulizing
+        # yields the useless class name ("Delivery Rate Provider") — so those
+        # derive the label from the gem's outer module instead
+        # (`SpreeEasyPost` → "EasyPost"), matching Spree::Integration.api_type.
+        #
+        # @return [String]
         def provider_name
-          name.demodulize.titleize
+          leaf = name.demodulize
+          outer = name.deconstantize.delete_prefix('Spree')
+
+          return leaf.titleize if outer.blank? || !leaf.end_with?('Provider')
+
+          # Not `titleize` — it would split the gem's own casing
+          # ("SpreeEasyPost" → "Easy Post"). Brands that need more than the
+          # module name override this method.
+          outer.delete_prefix('::')
+        end
+
+        # The Spree::Integration subclass holding this provider's credentials,
+        # as a class name string — same contract as
+        # {Spree::DeliveryRateProvider::Base.integration_class}. Providers
+        # without external credentials leave it nil.
+        #
+        # @return [String, nil]
+        def integration_class
+          nil
         end
       end
 
@@ -67,6 +91,20 @@ module Spree
       # @return [Array] provider documents (labels, customs forms, ...)
       def documents(_fulfillment)
         []
+      end
+
+      private
+
+      # The connected, active integration carrying this provider's
+      # credentials, resolved from the fulfillment's store.
+      #
+      # @param fulfillment [Spree::Fulfillment]
+      # @return [Spree::Integration, nil]
+      def integration_for(fulfillment)
+        return if self.class.integration_class.blank?
+
+        store = fulfillment.order&.store || fulfillment.cart&.store
+        store&.integrations&.active&.find_by(type: self.class.integration_class)
       end
     end
   end
