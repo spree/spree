@@ -110,6 +110,24 @@ export async function gotoIndex(page: Page, path: string, ctaButtonName: RegExp)
 }
 
 /**
+ * Open the edit-profile dialog from the top-bar user menu. The profile has no
+ * page of its own, so every profile assertion starts here.
+ *
+ * @param menuLabel Accessible name of the user-menu button — pass a translated
+ *   pattern when the dashboard is running in another language.
+ * @param itemLabel Accessible name of the "Edit profile" menu item.
+ */
+export async function openProfileDialog(
+  page: Page,
+  menuLabel: RegExp = /user menu/i,
+  itemLabel: RegExp = /edit profile/i,
+) {
+  await page.getByRole('button', { name: menuLabel }).click()
+  await page.getByRole('menuitem', { name: itemLabel }).click()
+  await expect(page.locator('#profile-first-name')).toBeVisible({ timeout: 15_000 })
+}
+
+/**
  * Open the row-action kebab menu for the row whose cell text contains
  * `rowText`. Mirrors the universal `admin.row_actions.menu_label` aria-label
  * ("Open actions") across every resource table.

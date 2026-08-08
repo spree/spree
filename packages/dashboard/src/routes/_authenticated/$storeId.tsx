@@ -10,8 +10,9 @@ import {
 } from '@spree/dashboard-core'
 import { SidebarInset, SidebarProvider } from '@spree/dashboard-ui'
 import { createFileRoute, Outlet, useRouterState } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { CommandPalette } from '../../components/spree/command-palette/command-palette'
+import { ProfileDialog } from '../../components/spree/profile-dialog'
 import { getAvailableUiLocales } from '../../i18n-setup'
 
 // Derived once from the shipped locale bundles — stable for the app lifetime.
@@ -51,6 +52,10 @@ function StoreLayout() {
  */
 function StoreShell({ inSettings }: { inSettings: boolean }) {
   useAutoCollapseSidebar(inSettings)
+  // The profile is edited in a dialog rather than a page, so the shell owns its
+  // open state — the trigger sits in the TopBar's user menu, which is mounted
+  // here and stays put across route changes.
+  const [profileOpen, setProfileOpen] = useState(false)
 
   return (
     <>
@@ -61,7 +66,8 @@ function StoreShell({ inSettings }: { inSettings: boolean }) {
       <SidebarInset className="flex-row">
         <SettingsSidebar open={inSettings} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar uiLocales={UI_LOCALES} />
+          <TopBar uiLocales={UI_LOCALES} onEditProfile={() => setProfileOpen(true)} />
+          <ProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
           {inSettings ? (
             <Outlet />
           ) : (
