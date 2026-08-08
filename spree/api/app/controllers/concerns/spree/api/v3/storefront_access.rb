@@ -18,17 +18,17 @@ module Spree
         end
 
         # @raise [Spree::Storefront::AccessDenied] when the caller can neither
-        #   prove ownership nor present the purchase's guest token
-        def authorize_purchase_read!(purchase, token)
-          return if storefront_access_policy.purchase_readable?(purchase, token: token)
+        #   prove ownership nor (for carts/orders) present the guest token
+        def authorize_storefront_read!(record, token: nil)
+          return if storefront_access_policy.readable?(record, token: token)
 
           raise Spree::Storefront::AccessDenied
         end
 
-        # @raise [Spree::Storefront::AccessDenied] when unreadable or already
-        #   completed
-        def authorize_purchase_write!(purchase, token)
-          return if storefront_access_policy.purchase_writable?(purchase, token: token)
+        # @raise [Spree::Storefront::AccessDenied] when unreadable — or, for
+        #   carts and orders, already completed
+        def authorize_storefront_write!(record, token: nil)
+          return if storefront_access_policy.writable?(record, token: token)
 
           raise Spree::Storefront::AccessDenied
         end

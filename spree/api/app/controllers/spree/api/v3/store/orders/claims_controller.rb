@@ -59,7 +59,7 @@ module Spree
             end
 
             def order_scope
-              storefront_access_policy.orders_scope(current_store.orders.complete, token: order_token)
+              storefront_access_policy.scope(current_store.orders.complete, token: order_token)
             end
 
             def create_params

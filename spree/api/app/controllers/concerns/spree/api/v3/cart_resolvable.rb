@@ -12,7 +12,7 @@ module Spree
         # @return [Spree::Cart]
         def find_cart(include_completed: false)
           @cart = resolve_cart(include_completed: include_completed)
-          authorize_purchase_read!(@cart, cart_token)
+          authorize_storefront_read!(@cart, token: cart_token)
           @cart
         end
 
@@ -24,9 +24,9 @@ module Spree
           @cart = resolve_cart(include_completed: include_completed)
 
           if @cart.completed?
-            authorize_purchase_read!(@cart, cart_token)
+            authorize_storefront_read!(@cart, token: cart_token)
           else
-            authorize_purchase_write!(@cart, cart_token)
+            authorize_storefront_write!(@cart, token: cart_token)
           end
 
           @cart

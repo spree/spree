@@ -90,7 +90,7 @@ module Spree
           # is already the caller's own.
           def associate
             @cart = find_cart_for_association
-            authorize_purchase_write!(@cart, cart_token)
+            authorize_storefront_write!(@cart, token: cart_token)
             require_cart_token!
 
             result = Spree.cart_associate_service.call(guest_cart: @cart, customer: current_user, guest_only: true)
@@ -130,7 +130,7 @@ module Spree
             # prefixes never decode against carts, so this only fires for
             # order_ ids (or genuinely unknown ids, which 404 below).
             @cart = current_store.orders.complete.find_by_prefix_id!(params[:id])
-            authorize_purchase_read!(@cart, cart_token)
+            authorize_storefront_read!(@cart, token: cart_token)
 
             render_order
           end
@@ -151,7 +151,9 @@ module Spree
           # Explicit by-ID lookups (show/update) stay cross-channel so a shared
           # checkout can load any cart the caller is authorized for.
           def scope
-            current_store.carts.incomplete.where(customer: current_user, channel: current_channel).order(updated_at: :desc)
+            storefront_access_policy.
+              scope(current_store.carts.incomplete.where(channel: current_channel)).
+              order(updated_at: :desc)
           end
 
           private

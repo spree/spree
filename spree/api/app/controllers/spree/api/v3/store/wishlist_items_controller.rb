@@ -8,7 +8,10 @@ module Spree
           protected
 
           def set_parent
-            @parent = current_user.wishlists.find_by_prefix_id!(params[:wishlist_id])
+            @parent = storefront_access_policy.
+                      scope(Spree::Wishlist.for_store(current_store)).
+                      find_by_prefix_id!(params[:wishlist_id])
+            authorize_storefront_write!(@parent)
           end
 
           def parent_association

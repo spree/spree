@@ -1644,7 +1644,7 @@ AND an `authorize!` for the same fact. Second, the Enterprise B2B module
 (`6.1-channels-catalogs-b2b.md`) must extend storefront authority without
 decorating controllers, and a policy object is the right seam: **access
 widening** (approver sees company-location purchases) = subclass the policy and
-override `orders_scope`/`purchase_readable?`; **action vetoes** (approvals,
+override `scope`/`readable?`/`writable?`; **action vetoes** (approvals,
 spending limits) = checkout workflow `validate` hooks; **catalog visibility**
 (per-location catalogs) = the products-for-context data scoping. Enterprise
 implements, open source owns the seams. Competitors ship no storefront rule
@@ -1656,3 +1656,20 @@ server-side roles.
 workflow instead. The admin side is untouched: staff JWT + CanCanCan, secret
 keys + scopes. `register_ability`/`remove_ability` are gone with the sets
 (`Spree::Dependencies.ability_class` is the admin-side escape hatch).
+
+**Alternative considered and rejected (2026-08-08):** a dedicated storefront
+ability class fed by permission sets — two abilities, staff (catalog keys) and
+storefront (sets/code). Rejected on three grounds: a storefront rule engine
+only means something if store controllers consult it, which restores the
+scope-plus-`authorize!` dual bookkeeping across the store surface; OSS
+customers are all identical, so a storefront set registry would hold exactly
+one configuration (the old `DefaultCustomer`) — code plus registry
+indirection; and the B2B requirement itself decides it — a company admin
+managing roles/employees in a UI needs **data** roles (Enterprise
+`CompanyRole` with capability keys, the commercetools associate-roles shape),
+which code-defined sets cannot provide. The policy protocol is generic
+(`readable?`/`writable?`/`scope` with an ownership default), so wishlists,
+newsletter subscriptions and any new resource route through the same seam
+with no wiring; `/customers/me/*` endpoints stay owner-scoped by definition.
+Full B2B architecture: `6.1-channels-catalogs-b2b.md` → "Company roles and
+approvals".
