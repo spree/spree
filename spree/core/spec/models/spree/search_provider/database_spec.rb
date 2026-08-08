@@ -201,6 +201,10 @@ module Spree
           # Positions deliberately differ from id/creation order so the assertion
           # proves position ordering (not incidental default order). Positions span
           # the parent AND its descendant — manual sort collapses the subtree by MIN.
+          #
+          # Built directly rather than through :product_category: the factory sets
+          # a position, which makes acts_as_list renumber siblings on each insert
+          # and overwrite the explicit values below.
           Spree::ProductCategory.create!(category: parent_category, product: product_2).update_column(:position, 1)
           Spree::ProductCategory.create!(category: child_category,  product: product_1).update_column(:position, 2)
           Spree::ProductCategory.create!(category: parent_category, product: product_3).update_column(:position, 3)

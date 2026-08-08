@@ -83,7 +83,7 @@ RSpec.describe Spree::Category, type: :model do
     it 'decrements ancestors when a subcategory is destroyed' do
       parent = described_class.create!(name: 'Electronics', store: store)
       child = described_class.create!(name: 'Phones', parent: parent)
-      Spree::ProductCategory.create!(category: child, product: create(:product, store: store))
+      create(:product_category, category: child, product: create(:product, store: store))
       expect(parent.reload.products_count).to eq(1)
 
       child.destroy
@@ -95,8 +95,8 @@ RSpec.describe Spree::Category, type: :model do
       parent = described_class.create!(name: 'Electronics', store: store)
       phones = described_class.create!(name: 'Phones', parent: parent)
       laptops = described_class.create!(name: 'Laptops', parent: parent)
-      Spree::ProductCategory.create!(category: phones, product: create(:product, store: store))
-      Spree::ProductCategory.create!(category: laptops, product: create(:product, store: store))
+      create(:product_category, category: phones, product: create(:product, store: store))
+      create(:product_category, category: laptops, product: create(:product, store: store))
       expect(parent.reload.products_count).to eq(2)
 
       phones.destroy
@@ -108,7 +108,7 @@ RSpec.describe Spree::Category, type: :model do
       root = described_class.create!(name: 'Root', store: store)
       mid = described_class.create!(name: 'Mid', parent: root)
       leaf = described_class.create!(name: 'Leaf', parent: mid)
-      Spree::ProductCategory.create!(category: leaf, product: create(:product, store: store))
+      create(:product_category, category: leaf, product: create(:product, store: store))
       expect(root.reload.products_count).to eq(1)
 
       mid.destroy # removes the mid + leaf subtree
@@ -121,8 +121,8 @@ RSpec.describe Spree::Category, type: :model do
       a = described_class.create!(name: 'A', parent: root)
       b = described_class.create!(name: 'B', parent: root)
       product = create(:product, store: store)
-      Spree::ProductCategory.create!(category: a, product: product)
-      Spree::ProductCategory.create!(category: b, product: product)
+      create(:product_category, category: a, product: product)
+      create(:product_category, category: b, product: product)
       expect(root.reload.products_count).to eq(1)
 
       a.destroy
@@ -257,7 +257,7 @@ RSpec.describe Spree::Category, type: :model do
 
     it 'maintains the count on a direct Classification create/destroy' do
       product = create(:product, store: store)
-      classification = Spree::ProductCategory.create!(category: phones, product: product)
+      classification = create(:product_category, category: phones, product: product)
       expect(electronics.reload.products_count).to eq(1)
 
       classification.destroy

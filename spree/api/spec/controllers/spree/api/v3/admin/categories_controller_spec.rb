@@ -6,9 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
   include_context 'API v3 Admin authenticated'
 
   # A top-level category — parentless, store-owned, no taxonomy.
-  let!(:category) { Spree::Category.create!(name: 'Clothing', store: store) }
-  # A legacy taxonomy is still needed to host automatic (collection) taxons,
-  # which the category API must exclude.
+  let!(:category) { create(:category, name: 'Clothing', store: store) }
 
   before { request.headers.merge!(headers) }
 
@@ -17,15 +15,11 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
   end
 
   describe 'GET #index' do
-    let!(:automatic) { Spree::Category.create!(name: 'On Sale', store: store, automatic: true) }
-
-    it 'lists manual categories and excludes automatic (collection) taxons' do
+    it 'lists the store categories' do
       get :index, params: {}, as: :json
 
       expect(response).to have_http_status(:ok)
-      ids = json_response['data'].map { |c| c['id'] }
-      expect(ids).to include(category.prefixed_id)
-      expect(ids).not_to include(automatic.prefixed_id)
+      expect(json_response['data'].map { |c| c['id'] }).to include(category.prefixed_id)
     end
   end
 
@@ -45,19 +39,13 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
     end
 
     it 'rolls subcategory products up into the product count' do
-      child = Spree::Category.create!(name: 'Shirts', parent: category)
+      child = create(:category, name: 'Shirts', parent: category)
       create(:product).taxons << category
       create(:product).taxons << child
 
       get :show, params: { id: category.prefixed_id }, as: :json
 
       expect(json_response['products_count']).to eq(2) # 1 direct + 1 from child
-    end
-
-    it 'does not expose an automatic (collection) category as a category' do
-      automatic = Spree::Category.create!(name: "On Sale #{SecureRandom.hex(4)}", store: store, automatic: true)
-      get :show, params: { id: automatic.prefixed_id }, as: :json
-      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -84,13 +72,6 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       post :create, params: { name: '', parent_id: category.prefixed_id }, as: :json
       expect(response).to have_http_status(:unprocessable_content)
     end
-
-    it 'ignores collection-bound params (automatic stays false)' do
-      post :create, params: { name: 'Sale-ish', parent_id: category.prefixed_id, automatic: true, sort_order: 'best_selling' }, as: :json
-
-      expect(response).to have_http_status(:created)
-      expect(created_category.automatic).to be(false)
-    end
   end
 
   describe 'PATCH #update' do
@@ -99,12 +80,6 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(category.reload.name).to eq('Apparel')
-    end
-
-    it 'cannot target an automatic (collection) category' do
-      automatic = Spree::Category.create!(name: "On Sale #{SecureRandom.hex(4)}", store: store, automatic: true)
-      patch :update, params: { id: automatic.prefixed_id, name: 'Hijacked' }, as: :json
-      expect(response).to have_http_status(:not_found)
     end
 
     it 'purges the image when image is set to null' do
@@ -196,19 +171,13 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(response).to have_http_status(:no_content)
       expect(Spree::Category.find_by_prefix_id(category.prefixed_id)).to be_nil
     end
-
-    it 'cannot delete an automatic (collection) category' do
-      automatic = Spree::Category.create!(name: "On Sale #{SecureRandom.hex(4)}", store: store, automatic: true)
-      delete :destroy, params: { id: automatic.prefixed_id }, as: :json
-      expect(response).to have_http_status(:not_found)
-    end
   end
 
   describe 'PATCH #reposition' do
     # Top-level categories (parentless, store-owned) created in order.
-    let!(:first)  { Spree::Category.create!(name: 'A First', store: store) }
-    let!(:second) { Spree::Category.create!(name: 'B Second', store: store) }
-    let!(:third)  { Spree::Category.create!(name: 'C Third', store: store) }
+    let!(:first)  { create(:category, name: 'A First', store: store) }
+    let!(:second) { create(:category, name: 'B Second', store: store) }
+    let!(:third)  { create(:category, name: 'C Third', store: store) }
 
     # Helper: ordered ids of a parent's children (nested-set order).
     def child_ids(parent)
@@ -225,7 +194,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       end
 
       it 'inserts among existing children at the requested index' do
-        existing = Spree::Category.create!(name: 'Existing', parent: first)
+        existing = create(:category, name: 'Existing', parent: first)
 
         patch :reposition, params: { id: third.prefixed_id, new_parent_id: first.prefixed_id, new_position: 0 }, as: :json
 
@@ -234,8 +203,8 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       end
 
       it 'reorders among an existing parent\'s children' do
-        a = Spree::Category.create!(name: 'A', parent: first)
-        b = Spree::Category.create!(name: 'B', parent: first)
+        a = create(:category, name: 'A', parent: first)
+        b = create(:category, name: 'B', parent: first)
 
         patch :reposition, params: { id: b.prefixed_id, new_parent_id: first.prefixed_id, new_position: 0 }, as: :json
 
@@ -247,7 +216,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
         # Regression: new_position past the child count dereferenced a nil
         # sibling and returned 404. With second already a child, moving third in
         # at an out-of-range index must succeed (append) rather than 404.
-        Spree::Category.create!(name: 'Existing child', parent: first)
+        create(:category, name: 'Existing child', parent: first)
 
         patch :reposition, params: { id: third.prefixed_id, new_parent_id: first.prefixed_id, new_position: 999 }, as: :json
 
@@ -256,7 +225,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       end
 
       it 'promotes a nested category to the top level when no parent is given' do
-        nested = Spree::Category.create!(name: 'Nested', parent: first)
+        nested = create(:category, name: 'Nested', parent: first)
 
         patch :reposition, params: { id: nested.prefixed_id, new_position: 0 }, as: :json
 
@@ -265,19 +234,11 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       end
 
       it 'returns 422 for an impossible move (into its own descendant)' do
-        child = Spree::Category.create!(name: 'Child', parent: first)
+        child = create(:category, name: 'Child', parent: first)
 
         patch :reposition, params: { id: first.prefixed_id, new_parent_id: child.prefixed_id, new_position: 0 }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
-      end
-
-      it 'cannot reposition an automatic (collection) category' do
-        automatic = Spree::Category.create!(name: "On Sale #{SecureRandom.hex(4)}", store: store, automatic: true)
-
-        patch :reposition, params: { id: automatic.prefixed_id, new_position: 0 }, as: :json
-
-        expect(response).to have_http_status(:not_found)
       end
     end
 

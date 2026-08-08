@@ -1528,7 +1528,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
     it 'attaches to a taxonomy-less, store-owned category' do
       # Regression: categories were scoped via the through-taxonomy association,
       # which misses store-owned categories that have no taxonomy.
-      store_category = Spree::Category.create!(name: 'Store Owned', store: store)
+      store_category = create(:category, name: 'Store Owned', store: store)
 
       post :bulk_add_to_categories, params: {
         ids: [product.prefixed_id],

@@ -18,12 +18,12 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
   describe 'automatic categories -> collections' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let!(:category) do
-      Spree::Category.create!(taxonomy: taxonomy, store: store, name: 'On Sale', automatic: true,
+      create(:category, taxonomy: taxonomy, store: store, name: 'On Sale', automatic: true,
                               sort_order: 'price asc', rules_match_policy: 'all')
     end
     let!(:rule) { create(:tag_taxon_rule, taxon: category, value: 'sale', match_policy: 'is_equal_to') }
     let!(:product) { create(:product, store: store) }
-    let!(:membership) { Spree::ProductCategory.create!(category: category, product: product, position: 1) }
+    let!(:membership) { create(:product_category, category: category, product: product, position: 1) }
 
     it 'creates a Collection mirroring the category and deletes the category' do
       permalink = category[:permalink]
@@ -114,7 +114,7 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
 
   describe 'idempotency' do
     let(:taxonomy) { create(:taxonomy, store: store) }
-    let!(:category) { Spree::Category.create!(taxonomy: taxonomy, store: store, name: 'On Sale', automatic: true) }
+    let!(:category) { create(:category, taxonomy: taxonomy, store: store, name: 'On Sale', automatic: true) }
     let!(:rule) { create(:tag_taxon_rule, taxon: category, value: 'sale', match_policy: 'is_equal_to') }
 
     it 'is safe to run twice without duplicating collections' do

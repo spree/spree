@@ -111,7 +111,7 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
     # Uniqueness is on the permalink, so two different names that normalize to
     # the same slug are the same category as far as the database is concerned.
     it 'reuses a category whose name differs but whose slug matches' do
-      existing = Spree::Category.create!(name: 'Foo Bar', store: store)
+      existing = create(:category, name: 'Foo Bar', store: store)
 
       expect {
         described_class.perform_now(product.id, store.id, ['Foo-Bar'])

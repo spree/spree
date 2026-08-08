@@ -34,9 +34,9 @@ describe 'spree:taxons:backfill_store_id' do
   context 'taxonomy-less taxons in a parent chain' do
     # Root keeps its store (resolved via the taxonomy pass or pre-existing);
     # descendants must inherit it down the chain.
-    let!(:root) { Spree::Category.create!(name: 'Root', store: store) }
-    let!(:mid) { downgrade!(Spree::Category.create!(name: 'Mid', parent: root)) }
-    let!(:leaf) { downgrade!(Spree::Category.create!(name: 'Leaf', parent: mid)) }
+    let!(:root) { create(:category, name: 'Root', store: store) }
+    let!(:mid) { downgrade!(create(:category, name: 'Mid', parent: root)) }
+    let!(:leaf) { downgrade!(create(:category, name: 'Leaf', parent: mid)) }
 
     it 'resolves every level from the nearest resolved ancestor' do
       subject.invoke
@@ -67,7 +67,7 @@ describe 'spree:taxons:backfill_store_id' do
     # resolve it against, so the row is intentionally left untouched rather than
     # defaulted (ensure_store's current-store fallback needs request context the
     # task doesn't have).
-    let!(:orphan) { downgrade!(Spree::Category.create!(name: 'Orphan', store: store)) }
+    let!(:orphan) { downgrade!(create(:category, name: 'Orphan', store: store)) }
 
     it 'leaves store_id nil' do
       expect { subject.invoke }.not_to change { orphan.reload.store_id }.from(nil)
