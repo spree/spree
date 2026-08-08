@@ -1,4 +1,5 @@
 require 'factory_bot'
+require 'spree/testing_support/country_pool'
 
 Spree::Zone.class_eval do
   def self.global

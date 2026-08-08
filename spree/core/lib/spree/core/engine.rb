@@ -142,6 +142,18 @@ module Spree
         app.config.spree.pricing.rules = []
       end
 
+      # Country and subdivision names are translated by the countries gem, which
+      # only loads the locales it is told about. This runs after initialization
+      # because Spree.available_locales reads i18n configuration that is not
+      # populated while initializers are still running.
+      config.after_initialize do
+        ISO3166.configure do |iso_config|
+          iso_config.locales = (Spree.available_locales.map { |locale| locale.to_s.downcase } << 'en').uniq
+        end
+
+        Spree::IsoData.reset!
+      end
+
       # Promotion rules need to be evaluated on after initialize otherwise
       # Spree.customer_class would be nil and users might experience errors related
       # to malformed model associations (Spree.customer_class is only defined on

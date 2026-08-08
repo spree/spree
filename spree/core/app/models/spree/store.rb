@@ -341,15 +341,13 @@ module Spree
       return Spree::Country.order(:name) if Spree::DeliveryMethod.where.missing(:delivery_method_zones).exists?
 
       zone_ids = Spree::DeliveryMethodZone.select(:delivery_zone_id)
-      members = Spree::DeliveryZoneMember.where(delivery_zone_id: zone_ids)
 
-      country_ids = members.where(member_type: %w[country postal_code]).select(:country_id)
-      state_country_ids = Spree::State.where(id: members.where(member_type: 'state').select(:state_id)).select(:country_id)
+      # Every member carries its own country, including state members, so
+      # coverage no longer has to resolve a subdivision back to its country.
+      country_isos = Spree::DeliveryZoneMember.where(delivery_zone_id: zone_ids).
+                     where.not(country_iso: nil).select(:country_iso)
 
-      Spree::Country
-        .where(id: country_ids)
-        .or(Spree::Country.where(id: state_country_ids))
-        .order(:name)
+      Spree::Country.where(iso: country_isos).order(:name)
     end
 
     # Returns the default stock location for the store or creates a new one if it doesn't exist

@@ -179,7 +179,8 @@ module Spree
             {
               firstname: 'Bob', lastname: 'Stone',
               address1: '99 New Street', city: 'Other City',
-              zipcode: '99999', phone: '555-000-9999',
+              zipcode: Spree::TestingSupport::CountryPool.postal_code_for(other_country.iso),
+              phone: '555-000-9999',
               country_id: other_country.id, state_id: other_state.id
             }
           end
@@ -253,7 +254,8 @@ module Spree
             ship_address_attributes: {
               firstname: 'Bob', lastname: 'Stone',
               address1: '99 New Street', city: 'Other City',
-              zipcode: '99999', phone: '555-000-9999',
+              zipcode: Spree::TestingSupport::CountryPool.postal_code_for(other_country.iso),
+              phone: '555-000-9999',
               country_id: other_country.id, state_id: other_state.id
             }
           })

@@ -6,25 +6,29 @@ FactoryBot.define do
     sequence(:address1) { |n| "#{n} Lovely Street" }
     address2          { 'Northwest' }
     city              { 'New York' }
-    zipcode           { '10118' }
     phone             { '555-555-0199' }
     alternative_phone { '555-555-0199' }
 
-    # Default to a real US/NY pair (cached via find_or_create_by) so generated
-    # OpenAPI examples carry plausible country/state fields. Tests that need a
-    # different state/country pass them explicitly.
-    country do
-      Spree::Country.find_or_create_by!(iso: 'US') do |c|
-        c.iso3 = 'USA'
-        c.name = 'United States of America'
-        c.iso_name = 'UNITED STATES'
-        c.numcode = 840
-        c.states_required = true
+    # A real US/NY pair, so generated OpenAPI examples carry plausible fields
+    # and address validation has a subdivision it recognises. Specs needing a
+    # different place pass country/state (or country_iso/state_abbr) explicitly.
+    country { Spree::Country.find_by(iso: 'US') || create(:country_us) }
+
+    # NY only when the country is actually the US — specs that pass a different
+    # country get one of its own subdivisions instead of an invalid pairing.
+    state do
+      if country.nil?
+        nil
+      elsif country.iso == 'US'
+        create(:state, country: country, abbr: 'NY')
+      else
+        create(:state, country: country)
       end
     end
 
-    state do |address|
-      (address.country || Spree::Country.find_by(iso: 'US'))&.states&.find_or_create_by!(abbr: 'NY') { |s| s.name = 'New York' }
-    end
+    # Countries now carry their real postal formats, so a US ZIP would be
+    # rejected everywhere else. Specs that care about a particular code pass
+    # one; the rest just need something the country accepts.
+    zipcode { Spree::TestingSupport::CountryPool.postal_code_for(country&.iso) }
   end
 end
