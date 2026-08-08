@@ -24,20 +24,47 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { CopyIcon, LockIcon, PlusIcon, ShieldIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { permissionKeyLabel } from '../../../../../components/spree/permission-picker'
-import { useDeleteRole, usePermissionCatalog, useRoles } from '../../../../../hooks/use-roles'
+import { z } from 'zod/v4'
+import { permissionKeyLabel } from '../../../../components/spree/permission-picker'
+import { RoleSheet } from '../../../../components/spree/role-sheet'
+import { useDeleteRole, usePermissionCatalog, useRoles } from '../../../../hooks/use-roles'
 
-export const Route = createFileRoute('/_authenticated/$storeId/settings/roles/')({
+// `edit` carries the role being edited, `new` opens an empty sheet, and
+// `from` pre-fills a new role from an existing one (duplicate).
+const rolesSearchSchema = z.object({
+  edit: z.string().optional(),
+  new: z.coerce.boolean().optional(),
+  from: z.string().optional(),
+})
+
+export const Route = createFileRoute('/_authenticated/$storeId/settings/roles')({
+  validateSearch: rolesSearchSchema,
   component: RolesSettingsPage,
 })
 
 function RolesSettingsPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { storeId } = Route.useParams()
+  const search = Route.useSearch()
   const { permissions } = usePermissions()
   const { data, isLoading } = useRoles()
   const roles = data?.data ?? []
+
+  const closeSheet = () =>
+    navigate({
+      search: (prev: Record<string, unknown>) => {
+        const { edit: _edit, new: _new, from: _from, ...rest } = prev
+        return rest as never
+      },
+    })
+
+  const openCreate = (from?: string) =>
+    navigate({
+      search: (prev: Record<string, unknown>) => ({ ...prev, new: true, from }) as never,
+    })
+
+  const openEdit = (id: string) =>
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
 
   return (
     <div className="flex flex-col gap-6">
@@ -46,10 +73,7 @@ function RolesSettingsPage() {
         subtitle={t('admin.pages.roles.subtitle')}
         actions={
           permissions.can('create', 'Spree::Role') && (
-            <Button
-              size="sm"
-              onClick={() => navigate({ to: '/$storeId/settings/roles/new', params: { storeId } })}
-            >
+            <Button size="sm" onClick={() => openCreate()}>
               <PlusIcon className="size-4" />
               {t('admin.pages.roles.add_cta')}
             </Button>
@@ -86,31 +110,44 @@ function RolesSettingsPage() {
               </TableHeader>
               <TableBody>
                 {roles.map((role) => (
-                  <RoleRow key={role.id} role={role} />
+                  <RoleRow
+                    key={role.id}
+                    role={role}
+                    onEdit={() => openEdit(role.id)}
+                    onDuplicate={() => openCreate(role.id)}
+                  />
                 ))}
               </TableBody>
             </Table>
           )}
         </CardContent>
       </Card>
+
+      {(search.new || search.edit) && (
+        <RoleSheet
+          open
+          roleId={search.edit}
+          duplicateFromId={search.new ? search.from : undefined}
+          onOpenChange={(next) => !next && closeSheet()}
+        />
+      )}
     </div>
   )
 }
 
-function RoleRow({ role }: { role: Role }) {
+function RoleRow({
+  role,
+  onEdit,
+  onDuplicate,
+}: {
+  role: Role
+  onEdit: () => void
+  onDuplicate: () => void
+}) {
   const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { storeId } = Route.useParams()
   const { permissions } = usePermissions()
   const deleteMutation = useDeleteRole()
   const confirm = useConfirm()
-
-  function openEditor() {
-    navigate({
-      to: '/$storeId/settings/roles/$roleId',
-      params: { storeId, roleId: role.id },
-    })
-  }
 
   async function handleDelete() {
     const ok = await confirm({
@@ -130,7 +167,7 @@ function RoleRow({ role }: { role: Role }) {
   }
 
   return (
-    <TableRow className="cursor-pointer" onClick={openEditor}>
+    <TableRow className="cursor-pointer" onClick={onEdit}>
       <TableCell>
         <div className="flex flex-col">
           <span className="flex items-center gap-1.5 font-medium capitalize">
@@ -151,18 +188,13 @@ function RoleRow({ role }: { role: Role }) {
       <TableCell className="text-right" onClick={(event) => event.stopPropagation()}>
         <RowActions
           actions={[
-            { key: 'edit', onSelect: openEditor },
+            { key: 'edit', onSelect: onEdit },
             {
               key: 'duplicate',
               label: t('admin.actions.duplicate'),
               icon: <CopyIcon className="size-4" />,
               visible: permissions.can('create', 'Spree::Role'),
-              onSelect: () =>
-                navigate({
-                  to: '/$storeId/settings/roles/new',
-                  params: { storeId },
-                  search: { from: role.id },
-                }),
+              onSelect: onDuplicate,
             },
             {
               key: 'delete',

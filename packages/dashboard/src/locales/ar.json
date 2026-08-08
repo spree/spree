@@ -2239,6 +2239,7 @@
       },
       "roles": {
         "add_cta": "إضافة دور",
+        "edit_sheet_title": "تعديل الدور",
         "empty": "لا توجد أدوار بعد",
         "empty_description": "أنشئ دورًا لمنح أعضاء الفريق وصولًا محددًا.",
         "new_title": "دور جديد",
@@ -3112,13 +3113,9 @@
         "failed_to_save": "فشل حفظ الدور"
       },
       "form": {
-        "details_section": "التفاصيل",
+        "description": "اختر ما يمكن لهذا الدور عرضه وإدارته.",
         "locked_hint": "هذا الدور محمي ولا يمكن تعديله.",
-        "members": "الأعضاء",
-        "more_members": "+{{count}} أخرى",
-        "permissions_count": "الأذونات",
-        "permissions_section": "الأذونات",
-        "summary_section": "الملخص"
+        "permissions_section": "الأذونات"
       },
       "manage_roles_link": "إدارة الأدوار",
       "messages": {

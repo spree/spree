@@ -8,6 +8,10 @@ async function gotoRoles(page: Page, storeId: string) {
   await expect(page.getByRole('button', { name: /add role/i })).toBeVisible({ timeout: 15_000 })
 }
 
+function sheet(page: Page) {
+  return page.getByRole('dialog')
+}
+
 test.describe('roles', () => {
   test('lists roles with the protected admin role', async ({ page }) => {
     const creds = await login(page)
@@ -24,43 +28,57 @@ test.describe('roles', () => {
     const name = `e2e-support-${Date.now()}`
 
     await page.getByRole('button', { name: /add role/i }).click()
-    await expect(page.getByRole('heading', { name: /new role/i })).toBeVisible()
+    await expect(sheet(page)).toBeVisible()
 
     await page.locator('#role-name').fill(name)
     await page.locator('#role-description').fill('Read-only support role')
-    await page.getByRole('checkbox', { name: /view orders/i }).check()
-    await page.getByRole('checkbox', { name: /view customers/i }).check()
-    await page.getByRole('button', { name: /^save$/i }).click()
+    await sheet(page)
+      .getByRole('checkbox', { name: /view orders/i })
+      .check()
+    await sheet(page)
+      .getByRole('checkbox', { name: /view customers/i })
+      .check()
+    await sheet(page)
+      .getByRole('button', { name: /^save$/i })
+      .click()
 
-    // Back on the list with the new role and its human-readable permission badges.
-    await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toBeVisible({
-      timeout: 15_000,
-    })
+    // Sheet closes; the new role and its human-readable badges show in the list.
+    await expect(sheet(page)).toHaveCount(0, { timeout: 15_000 })
+    await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toBeVisible()
     await expect(page.getByText('View Orders').first()).toBeVisible()
 
-    // Round-trip: open the editor, grant manage on orders, save.
+    // Round-trip: reopen the row, grant manage on orders, save.
     await page.getByRole('cell', { name: new RegExp(name, 'i') }).click()
-    await expect(page.getByRole('heading', { name: new RegExp(name, 'i') })).toBeVisible()
+    await expect(sheet(page).locator('#role-name')).toHaveValue(name, { timeout: 15_000 })
 
-    const manageOrders = page.getByRole('checkbox', { name: /manage orders/i })
-    await manageOrders.check()
-    await page.getByRole('button', { name: /^save$/i }).click()
+    await sheet(page)
+      .getByRole('checkbox', { name: /manage orders/i })
+      .check()
+    await sheet(page)
+      .getByRole('button', { name: /^save$/i })
+      .click()
+
     await expect(page.getByText(/role updated/i)).toBeVisible({ timeout: 15_000 })
+    await expect(sheet(page)).toHaveCount(0)
   })
 
-  test('starts from a template on the create page', async ({ page }) => {
+  test('starts from a template', async ({ page }) => {
     const creds = await login(page)
     await gotoRoles(page, creds.store_id)
 
     await page.getByRole('button', { name: /add role/i }).click()
-    await page.getByRole('button', { name: /^support$/i }).click()
+    await sheet(page)
+      .getByRole('button', { name: /^support$/i })
+      .click()
 
     // The template pre-fills the grid; "view orders" is part of Support.
-    await expect(page.getByRole('checkbox', { name: /view orders/i })).toBeChecked()
+    await expect(sheet(page).getByRole('checkbox', { name: /view orders/i })).toBeChecked()
 
     const name = `e2e-template-${Date.now()}`
     await page.locator('#role-name').fill(name)
-    await page.getByRole('button', { name: /^save$/i }).click()
+    await sheet(page)
+      .getByRole('button', { name: /^save$/i })
+      .click()
 
     await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toBeVisible({
       timeout: 15_000,
@@ -75,9 +93,44 @@ test.describe('roles', () => {
       .getByRole('cell', { name: /^admin/i })
       .first()
       .click()
-    await expect(page.getByText(/protected/i).first()).toBeVisible()
-    await expect(page.getByRole('button', { name: /^save$/i })).toHaveCount(0)
-    await expect(page.locator('#role-name')).toBeDisabled()
+    await expect(
+      sheet(page)
+        .getByText(/protected/i)
+        .first(),
+    ).toBeVisible({ timeout: 15_000 })
+    await expect(sheet(page).getByRole('button', { name: /^save$/i })).toHaveCount(0)
+    await expect(sheet(page).locator('#role-name')).toBeDisabled()
+  })
+
+  test('duplicates a role', async ({ page }) => {
+    const creds = await login(page)
+    await gotoRoles(page, creds.store_id)
+
+    const name = `e2e-dup-src-${Date.now()}`
+    await page.getByRole('button', { name: /add role/i }).click()
+    await page.locator('#role-name').fill(name)
+    await sheet(page)
+      .getByRole('checkbox', { name: /view orders/i })
+      .check()
+    await sheet(page)
+      .getByRole('button', { name: /^save$/i })
+      .click()
+    await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page
+      .getByRole('row', { name: new RegExp(name, 'i') })
+      .getByRole('button')
+      .last()
+      .click()
+    await page.getByRole('menuitem', { name: /duplicate/i }).click()
+
+    // The copy carries the source's permissions and a distinct name.
+    await expect(sheet(page).getByRole('checkbox', { name: /view orders/i })).toBeChecked({
+      timeout: 15_000,
+    })
+    await expect(sheet(page).locator('#role-name')).toHaveValue(new RegExp(name, 'i'))
   })
 
   test('blocks deleting a role while staff hold it, allows after unassign', async ({ page }) => {
@@ -88,8 +141,12 @@ test.describe('roles', () => {
     await gotoRoles(page, creds.store_id)
     await page.getByRole('button', { name: /add role/i }).click()
     await page.locator('#role-name').fill(name)
-    await page.getByRole('checkbox', { name: /view orders/i }).check()
-    await page.getByRole('button', { name: /^save$/i }).click()
+    await sheet(page)
+      .getByRole('checkbox', { name: /view orders/i })
+      .check()
+    await sheet(page)
+      .getByRole('button', { name: /^save$/i })
+      .click()
     await expect(page.getByRole('cell', { name: new RegExp(name, 'i') })).toBeVisible({
       timeout: 15_000,
     })
@@ -123,7 +180,6 @@ test.describe('roles', () => {
     await page.getByRole('menuitem', { name: /edit/i }).click()
     await page.getByRole('checkbox', { name: new RegExp(name, 'i') }).uncheck()
     await page.getByRole('button', { name: /^save$/i }).click()
-    // The sheet closes on success and the badge leaves the staff row.
     await expect(
       page.getByRole('row', { name: /spree@example\.com/i }).getByText(new RegExp(name, 'i')),
     ).toHaveCount(0, { timeout: 15_000 })

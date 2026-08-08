@@ -2239,6 +2239,7 @@
       },
       "roles": {
         "add_cta": "添加角色",
+        "edit_sheet_title": "编辑角色",
         "empty": "暂无角色",
         "empty_description": "创建角色，为团队成员授予相应的访问权限。",
         "new_title": "新建角色",
@@ -3106,13 +3107,9 @@
         "failed_to_save": "保存角色失败"
       },
       "form": {
-        "details_section": "详情",
+        "description": "选择该角色可以查看和管理的内容。",
         "locked_hint": "该角色受保护，无法编辑。",
-        "members": "成员",
-        "more_members": "+{{count}} 位",
-        "permissions_count": "权限",
-        "permissions_section": "权限",
-        "summary_section": "摘要"
+        "permissions_section": "权限"
       },
       "manage_roles_link": "管理角色",
       "messages": {

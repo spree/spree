@@ -2239,6 +2239,7 @@
       },
       "roles": {
         "add_cta": "Rolle hinzufügen",
+        "edit_sheet_title": "Rolle bearbeiten",
         "empty": "Noch keine Rollen",
         "empty_description": "Erstelle eine Rolle, um Teammitgliedern gezielten Zugriff zu geben.",
         "new_title": "Neue Rolle",
@@ -3106,13 +3107,9 @@
         "failed_to_save": "Rolle konnte nicht gespeichert werden"
       },
       "form": {
-        "details_section": "Details",
+        "description": "Lege fest, was diese Rolle ansehen und verwalten darf.",
         "locked_hint": "Diese Rolle ist geschützt und kann nicht bearbeitet werden.",
-        "members": "Mitglieder",
-        "more_members": "+{{count}} weitere",
-        "permissions_count": "Berechtigungen",
-        "permissions_section": "Berechtigungen",
-        "summary_section": "Zusammenfassung"
+        "permissions_section": "Berechtigungen"
       },
       "manage_roles_link": "Rollen verwalten",
       "messages": {

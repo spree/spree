@@ -2239,6 +2239,7 @@
       },
       "roles": {
         "add_cta": "Ajouter un rôle",
+        "edit_sheet_title": "Modifier le rôle",
         "empty": "Aucun rôle pour le moment",
         "empty_description": "Créez un rôle pour donner un accès ciblé aux membres de l’équipe.",
         "new_title": "Nouveau rôle",
@@ -3106,13 +3107,9 @@
         "failed_to_save": "Échec de l'enregistrement du rôle"
       },
       "form": {
-        "details_section": "Détails",
+        "description": "Choisissez ce que ce rôle peut voir et gérer.",
         "locked_hint": "Ce rôle est protégé et ne peut pas être modifié.",
-        "members": "Membres",
-        "more_members": "+{{count}} de plus",
-        "permissions_count": "Permissions",
-        "permissions_section": "Permissions",
-        "summary_section": "Résumé"
+        "permissions_section": "Permissions"
       },
       "manage_roles_link": "Gérer les rôles",
       "messages": {

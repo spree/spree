@@ -2265,6 +2265,7 @@
       },
       "roles": {
         "add_cta": "Dodaj rolę",
+        "edit_sheet_title": "Edytuj rolę",
         "empty": "Brak ról",
         "empty_description": "Utwórz rolę, aby nadać członkom zespołu ograniczony dostęp.",
         "new_title": "Nowa rola",
@@ -3148,13 +3149,9 @@
         "failed_to_save": "Nie udało się zapisać roli"
       },
       "form": {
-        "details_section": "Szczegóły",
+        "description": "Wybierz, co ta rola może przeglądać i którymi obszarami zarządzać.",
         "locked_hint": "Ta rola jest chroniona i nie można jej edytować.",
-        "members": "Członkowie",
-        "more_members": "+{{count}} więcej",
-        "permissions_count": "Uprawnienia",
-        "permissions_section": "Uprawnienia",
-        "summary_section": "Podsumowanie"
+        "permissions_section": "Uprawnienia"
       },
       "manage_roles_link": "Zarządzaj rolami",
       "messages": {

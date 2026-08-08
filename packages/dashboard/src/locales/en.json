@@ -2239,6 +2239,7 @@
       },
       "roles": {
         "add_cta": "Add role",
+        "edit_sheet_title": "Edit role",
         "empty": "No roles yet",
         "empty_description": "Create a role to give staff members scoped access.",
         "new_title": "New role",
@@ -3106,13 +3107,9 @@
         "failed_to_save": "Failed to save role"
       },
       "form": {
-        "details_section": "Details",
+        "description": "Choose what this role can view and manage.",
         "locked_hint": "This role is protected and cannot be edited.",
-        "members": "Members",
-        "more_members": "+{{count}} more",
-        "permissions_count": "Permissions",
-        "permissions_section": "Permissions",
-        "summary_section": "Summary"
+        "permissions_section": "Permissions"
       },
       "manage_roles_link": "Manage roles",
       "messages": {
