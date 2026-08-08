@@ -62,7 +62,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
       context 'when no store is present' do
-        object = Spree::Taxonomy.new
+        object = Spree::Collection.new
 
         it 'sets the current_store' do
           controller.ensure_current_store(object)
@@ -72,7 +72,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context 'when an object already has a store assigned' do
-        object = Spree::Taxonomy.new
+        object = Spree::Collection.new
 
         it 'raises an exception' do
           object.store = store_2
@@ -83,7 +83,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context 'when an object already has a store assigned and the same store is re-assigned' do
-        object = Spree::Taxonomy.new
+        object = Spree::Collection.new
 
         it 'no exception is raised' do
           object.store = store

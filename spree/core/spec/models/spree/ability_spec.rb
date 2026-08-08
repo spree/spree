@@ -181,14 +181,6 @@ describe Spree::Ability, type: :model do
       end
     end
 
-    context 'for Taxonomy' do
-      let(:resource) { Spree::Taxonomy.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
     context 'for User' do
       context 'requested by same user' do
         let(:resource) { user }

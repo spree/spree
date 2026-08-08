@@ -38,7 +38,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids category_and_ancestors
+    MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
                           default_variant_id tax_category default_variant variant_for_images
                           primary_category
                           purchasable? in_stock? backorderable? digital?]
@@ -76,7 +76,7 @@ module Spree
     has_many :option_types, through: :product_option_types
     has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory', dependent: :delete_all, inverse_of: :product
     has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
-    has_many :taxonomies, through: :categories
+    has_many :taxonomies, through: :categories, deprecated: true
 
     # @deprecated The classification_count column was renamed to categories_count in 6.0.
     alias_attribute :classification_count, :categories_count
@@ -911,12 +911,12 @@ module Spree
       @category_and_ancestors ||= categories.map(&:self_and_ancestors).flatten.uniq
     end
 
-    # Iterate through this product's categories and taxonomies and touch their timestamps in a batch
+    # Iterate through this product's categories and touch their timestamps in a batch
     def touch_categories
       if categories.any?
         Spree::Products::TouchCategoriesJob.
           set(wait: 5.seconds).
-          perform_later(category_and_ancestors.map(&:id), taxonomy_ids.uniq)
+          perform_later(category_and_ancestors.map(&:id))
       end
     end
 

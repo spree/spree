@@ -72,7 +72,7 @@ module Spree
     # we use the record's own +store_id+ (Product, Customer, Order, …). The
     # multi-store extension overrides this to fan out across every store the
     # record is attached to. Falling back to +Spree::Store.default+ covers
-    # records like categories/taxonomies that don't have a +store_id+ column.
+    # records that don't have a +store_id+ column at all.
     def store_ids_for_indexing
       return [store_id] if respond_to?(:store_id) && store_id.present?
 

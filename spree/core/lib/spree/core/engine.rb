@@ -318,7 +318,6 @@ module Spree
           Spree::ProductType,
           Spree::Collection,
           Spree::Category,
-          Spree::Taxonomy,
           Spree::Store,
           Spree::Policy
         ]
@@ -374,7 +373,6 @@ module Spree
           Spree::StoreCredit,
           Spree::TaxRate,
           Spree::Category,
-          Spree::Taxonomy,
           Spree::Variant,
           Spree.customer_class
         ]

@@ -950,7 +950,7 @@ describe Spree::Promotion, type: :model do
     let(:promotion) { create(:promotion) }
     let(:product) { create(:product) }
     let(:other_product) { create(:product) }
-    let(:taxon) { create(:taxon) }
+    let(:category) { create(:category) }
 
     it 'builds a rule from a {type, preferences} hash' do
       promotion.rules = [{ type: 'item_total', preferences: { amount_min: 50 } }]
@@ -1034,13 +1034,13 @@ describe Spree::Promotion, type: :model do
       expect(promotion.rules.first.products).to contain_exactly(other_product)
     end
 
-    it 'builds a Taxon rule with taxon_ids' do
-      promotion.rules = [{ type: 'category', taxon_ids: [taxon.id] }]
+    it 'builds a Taxon rule with category_ids' do
+      promotion.rules = [{ type: 'category', category_ids: [category.id] }]
       promotion.reload
 
       rule = promotion.rules.first
       expect(rule).to be_a(Spree::Promotion::Rules::Category)
-      expect(rule.taxons).to contain_exactly(taxon)
+      expect(rule.taxons).to contain_exactly(category)
     end
 
     # Regression: `category_ids=` on Rules::Taxon is a custom setter (not a
@@ -1049,12 +1049,12 @@ describe Spree::Promotion, type: :model do
     # an association name.
     it 'builds a Taxon rule on a new promotion using category_ids (custom setter)' do
       fresh = build(:promotion)
-      fresh.rules = [{ type: 'category', category_ids: [taxon.id] }]
+      fresh.rules = [{ type: 'category', category_ids: [category.id] }]
       fresh.save!
 
       rule = fresh.reload.rules.first
       expect(rule).to be_a(Spree::Promotion::Rules::Category)
-      expect(rule.taxons).to contain_exactly(taxon)
+      expect(rule.taxons).to contain_exactly(category)
     end
 
     it 'defers application until after_save on a new promotion record' do

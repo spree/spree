@@ -420,7 +420,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description <<~DESC
-        Attaches each product in `ids` to every category (taxon) in `category_ids`.
+        Attaches each product in `ids` to every category (category) in `category_ids`.
         Categories from sibling stores are silently ignored.
       DESC
       admin_scope :write, :products
@@ -440,8 +440,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       response '200', 'products added to categories' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:category) { create(:taxon, taxonomy: taxonomy) }
+        let(:category) { create(:category) }
         let(:body) { { ids: [product.prefixed_id], category_ids: [category.prefixed_id] } }
 
         schema type: :object, properties: {
@@ -452,7 +451,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data).to eq('product_count' => 1, 'category_count' => 1)
-          expect(product.reload.taxons).to include(category)
+          expect(product.reload.categories).to include(category)
         end
       end
     end
@@ -482,16 +481,15 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
 
       response '200', 'products removed from categories' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:category) { create(:taxon, taxonomy: taxonomy) }
+        let(:category) { create(:category) }
         let(:body) { { ids: [product.prefixed_id], category_ids: [category.prefixed_id] } }
 
-        before { product.taxons << category }
+        before { product.categories << category }
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data).to eq('product_count' => 1, 'category_count' => 1)
-          expect(product.reload.taxons).not_to include(category)
+          expect(product.reload.categories).not_to include(category)
         end
       end
     end

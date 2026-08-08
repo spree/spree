@@ -118,23 +118,22 @@ module Spree
       end
 
       context 'with in_category filter' do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:parent_taxon) { create(:taxon, taxonomy: taxonomy, name: 'Clothing') }
-        let(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: parent_taxon, name: 'Shirts') }
+        let(:parent_category) { create(:category, name: 'Clothing') }
+        let(:child_category) { create(:category, parent: parent_category, name: 'Shirts') }
 
         before do
-          product_1.taxons << child_taxon
-          product_2.taxons << parent_taxon
+          product_1.categories << child_category
+          product_2.categories << parent_category
         end
 
         it 'returns products directly in the category' do
-          result = provider.search_and_filter(scope: scope, filters: { 'in_category' => child_taxon.prefixed_id })
+          result = provider.search_and_filter(scope: scope, filters: { 'in_category' => child_category.prefixed_id })
           expect(result.products).to include(product_1)
           expect(result.products).not_to include(product_2, product_3)
         end
 
         it 'returns products in descendant categories when filtering by parent' do
-          result = provider.search_and_filter(scope: scope, filters: { 'in_category' => parent_taxon.prefixed_id })
+          result = provider.search_and_filter(scope: scope, filters: { 'in_category' => parent_category.prefixed_id })
           expect(result.products).to include(product_1, product_2)
           expect(result.products).not_to include(product_3)
         end
@@ -147,13 +146,12 @@ module Spree
       end
 
       context 'with in_categories filter (multiple, OR logic)' do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:shirts_taxon) { create(:taxon, taxonomy: taxonomy, name: 'Shirts') }
-        let(:pants_taxon) { create(:taxon, taxonomy: taxonomy, name: 'Pants') }
+        let(:shirts_taxon) { create(:category, name: 'Shirts') }
+        let(:pants_taxon) { create(:category, name: 'Pants') }
 
         before do
-          product_1.taxons << shirts_taxon
-          product_2.taxons << pants_taxon
+          product_1.categories << shirts_taxon
+          product_2.categories << pants_taxon
         end
 
         it 'returns products in any of the given categories' do
@@ -196,14 +194,17 @@ module Spree
       end
 
       context "with 'manual' sort by category" do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:parent_category) { create(:taxon, taxonomy: taxonomy, name: 'Clothing') }
-        let(:child_category) { create(:taxon, taxonomy: taxonomy, parent: parent_category, name: 'Shirts') }
+        let(:parent_category) { create(:category, name: 'Clothing') }
+        let(:child_category) { create(:category, parent: parent_category, name: 'Shirts') }
 
         before do
           # Positions deliberately differ from id/creation order so the assertion
           # proves position ordering (not incidental default order). Positions span
           # the parent AND its descendant — manual sort collapses the subtree by MIN.
+          #
+          # Built directly rather than through :product_category: the factory sets
+          # a position, which makes acts_as_list renumber siblings on each insert
+          # and overwrite the explicit values below.
           Spree::ProductCategory.create!(category: parent_category, product: product_2).update_column(:position, 1)
           Spree::ProductCategory.create!(category: child_category,  product: product_1).update_column(:position, 2)
           Spree::ProductCategory.create!(category: parent_category, product: product_3).update_column(:position, 3)
@@ -231,8 +232,7 @@ module Spree
       end
 
       context 'with no sort param on a category page' do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:category) { create(:taxon, taxonomy: taxonomy, name: 'Clothing') }
+        let(:category) { create(:category, name: 'Clothing') }
 
         before do
           Spree::ProductCategory.create!(category: category, product: product_2).update_column(:position, 1)

@@ -255,6 +255,10 @@ en:
               values_should_be_percent: Tier values should all be percentages between 0% and 100%
             preferred_tiers:
               should_be_hash: should be a hash
+        spree/category:
+          attributes:
+            parent:
+              must_belong_to_same_store: must belong to the same store
         spree/classification:
           attributes:
             taxon_id:

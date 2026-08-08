@@ -69,13 +69,13 @@ RSpec.describe Spree::PrefixedId do
     end
 
     context 'with has_many _ids setters' do
-      let(:taxon1) { create(:taxon) }
-      let(:taxon2) { create(:taxon, taxonomy: taxon1.taxonomy) }
+      let(:category1) { create(:category) }
+      let(:category2) { create(:category) }
 
       it 'resolves prefixed IDs for has_many associations' do
         product = create(:product)
-        product.assign_attributes(taxon_ids: [taxon1.prefixed_id, taxon2.prefixed_id])
-        expect(product.taxon_ids).to contain_exactly(taxon1.id, taxon2.id)
+        product.assign_attributes(category_ids: [category1.prefixed_id, category2.prefixed_id])
+        expect(product.category_ids).to contain_exactly(category1.id, category2.id)
       end
 
       it 'passes through values for non-existent associations' do

@@ -54,13 +54,13 @@ RSpec.describe Spree::CSV::OrderLineItemPresenter do
   end
 
   describe '#taxon_dict' do
-    let(:taxon) { build(:taxon, pretty_name: 'Category -> Subcategory -> Product') }
+    let(:category) { build(:category, pretty_name: 'Category -> Subcategory -> Product') }
 
-    it 'splits taxon pretty name into array' do
-      expect(presenter.send(:taxon_dict, taxon)).to eq(['Category', 'Subcategory', 'Product'])
+    it 'splits category pretty name into array' do
+      expect(presenter.send(:taxon_dict, category)).to eq(['Category', 'Subcategory', 'Product'])
     end
 
-    it 'returns empty array for nil taxon' do
+    it 'returns empty array for nil category' do
       expect(presenter.send(:taxon_dict, nil)).to eq([])
     end
   end

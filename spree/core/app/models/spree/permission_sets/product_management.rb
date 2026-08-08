@@ -1,7 +1,7 @@
 # Permission set for full product and catalog management.
 #
 # This permission set provides complete access to manage products, variants,
-# and related catalog models like taxonomies and properties.
+# and related catalog models like categories and properties.
 #
 # @example
 #   Spree.permissions.assign(:merchandiser, Spree::PermissionSets::ProductManagement)
@@ -16,7 +16,6 @@ module Spree
         can :manage, Spree::OptionType
         can :manage, Spree::OptionValue
         can :manage, Spree::Category
-        can :manage, Spree::Taxonomy
         can :manage, Spree::ProductCategory
         can :manage, Spree::Collection
         can :manage, Spree::ProductCollection

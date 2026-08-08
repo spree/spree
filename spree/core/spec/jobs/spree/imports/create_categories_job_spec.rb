@@ -5,36 +5,43 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
   let!(:product) { create(:product) }
 
   describe '#perform' do
-    it 'creates taxonomies and taxons and assigns them to the product' do
+    it 'creates categories and assigns them to the product' do
       described_class.perform_now(product.id, store.id, ['Men -> Clothing -> Shirts', 'Brands -> Nike'])
 
       product.reload
-      expect(product.taxons.map(&:pretty_name)).to contain_exactly(
+      expect(product.categories.map(&:pretty_name)).to contain_exactly(
         'Men -> Clothing -> Shirts',
         'Brands -> Nike'
       )
 
-      men_taxonomy = store.taxonomies.find_by(name: 'Men')
-      expect(men_taxonomy).to be_present
-      expect(men_taxonomy.taxons.find_by(name: 'Clothing')).to be_present
-      expect(men_taxonomy.taxons.find_by(name: 'Shirts')).to be_present
+      men = store.categories.find_by(name: 'Men')
+      expect(men).to be_present
+      expect(men.parent).to be_nil
+      expect(store.categories.find_by(name: 'Clothing').parent).to eq(men)
+      expect(store.categories.find_by(name: 'Shirts').parent).to eq(store.categories.find_by(name: 'Clothing'))
 
-      brands_taxonomy = store.taxonomies.find_by(name: 'Brands')
-      expect(brands_taxonomy).to be_present
-      expect(brands_taxonomy.taxons.find_by(name: 'Nike')).to be_present
+      brands = store.categories.find_by(name: 'Brands')
+      expect(brands).to be_present
+      expect(store.categories.find_by(name: 'Nike').parent).to eq(brands)
+    end
+
+    it 'does not create taxonomies' do
+      expect {
+        described_class.perform_now(product.id, store.id, ['Men -> Clothing -> Shirts'])
+      }.not_to change { Spree::Taxonomy.count }
     end
 
     it 'skips invalid category paths' do
       described_class.perform_now(product.id, store.id, ['Men -> -> Shirts', ' -> ', '   '])
 
-      expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly('Men -> Shirts')
+      expect(product.reload.categories.map(&:pretty_name)).to contain_exactly('Men -> Shirts')
     end
 
     it 'is idempotent' do
       described_class.perform_now(product.id, store.id, ['Men -> Clothing'])
       described_class.perform_now(product.id, store.id, ['Men -> Clothing'])
 
-      expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly('Men -> Clothing')
+      expect(product.reload.categories.map(&:pretty_name)).to contain_exactly('Men -> Clothing')
     end
 
     context "when the store's default locale differs from I18n.default_locale" do
@@ -46,60 +53,71 @@ RSpec.describe Spree::Imports::CreateCategoriesJob, type: :job do
           described_class.perform_now(product.id, store.id, ['Men -> Clothing'])
         end
 
-        taxon = product.reload.taxons.first
-        expect(taxon).to be_present
+        category = product.reload.categories.first
+        expect(category).to be_present
         # The raw NOT NULL base columns (not the translation) must be populated.
-        expect(taxon.read_attribute(:name)).to eq('Clothing')
-        expect(taxon.taxonomy.read_attribute(:name)).to eq('Men')
+        expect(category.read_attribute(:name)).to eq('Clothing')
+        expect(category.parent.read_attribute(:name)).to eq('Men')
       end
 
-      it "keeps Spree::Taxon's Mobility.with_locale(nil) permalink regeneration working" do
+      it "keeps Spree::Category's Mobility.with_locale(nil) permalink regeneration working" do
         I18n.with_locale(:de) do
           described_class.perform_now(product.id, store.id, ['Men -> Clothing'])
         end
 
-        taxon = product.reload.taxons.first
-        expect(taxon.read_attribute(:permalink)).to eq('men/clothing')
-        expect(taxon.read_attribute(:pretty_name)).to eq('Men -> Clothing')
+        category = product.reload.categories.first
+        expect(category.read_attribute(:permalink)).to eq('men/clothing')
+        expect(category.read_attribute(:pretty_name)).to eq('Men -> Clothing')
       end
     end
 
-    context 'when taxonomies and taxons already exist' do
-      let!(:men_taxonomy) { create(:taxonomy, name: 'Men', store: store) }
-      let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: men_taxonomy, parent: men_taxonomy.root) }
-      let!(:shirts_taxon) { create(:taxon, name: 'Shirts', taxonomy: men_taxonomy, parent: clothing_taxon) }
+    context 'when categories already exist' do
+      let!(:men_category) { create(:category, name: 'Men', store: store, parent: nil) }
+      let!(:clothing_category) { create(:category, name: 'Clothing', store: store, parent: men_category) }
+      let!(:shirts_category) { create(:category, name: 'Shirts', store: store, parent: clothing_category) }
 
-      it 'reuses existing taxonomies and taxons' do
+      it 'reuses existing categories' do
         expect {
           described_class.perform_now(product.id, store.id, ['Men -> Clothing -> Shirts'])
         }.not_to change { Spree::Category.count }
 
-        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+        expect(product.reload.categories.map(&:pretty_name)).to contain_exactly(
           'Men -> Clothing -> Shirts'
         )
       end
 
-      it 'matches taxonomies and taxons by case insensitive name' do
-
+      it 'matches categories by case insensitive name' do
         described_class.perform_now(product.id, store.id, ['men -> clothing -> shirts'])
 
-        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+        expect(product.reload.categories.map(&:pretty_name)).to contain_exactly(
           'Men -> Clothing -> Shirts'
         )
       end
 
       context 'when given an empty list' do
         before do
-          product.taxons = [shirts_taxon]
+          product.categories = [shirts_category]
           product.save!
         end
 
-        it 'clears existing taxons' do
+        it 'clears existing categories' do
           expect {
             described_class.perform_now(product.id, store.id, [])
-          }.to change { product.reload.taxons.count }.from(1).to(0)
+          }.to change { product.reload.categories.count }.from(1).to(0)
         end
       end
+    end
+
+    # Uniqueness is on the permalink, so two different names that normalize to
+    # the same slug are the same category as far as the database is concerned.
+    it 'reuses a category whose name differs but whose slug matches' do
+      existing = create(:category, name: 'Foo Bar', store: store)
+
+      expect {
+        described_class.perform_now(product.id, store.id, ['Foo-Bar'])
+      }.not_to change { Spree::Category.unscoped.count }
+
+      expect(product.reload.categories).to eq([existing])
     end
   end
 end

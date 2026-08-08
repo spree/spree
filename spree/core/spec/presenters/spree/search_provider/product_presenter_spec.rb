@@ -56,29 +56,29 @@ module Spree
       end
 
       context 'with categories' do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-        let(:product) { create(:product, name: 'Test Shirt', taxons: [taxon]) }
+        let(:root_category) { create(:category, store: store, name: 'Apparel') }
+        let(:category) { create(:category, store: store, parent: root_category) }
+        let(:product) { create(:product, name: 'Test Shirt', categories: [category]) }
 
         it 'indexes category_ids as prefixed IDs including ancestors' do
           doc = documents.first
-          expect(doc[:category_ids]).to include(taxon.prefixed_id)
-          expect(doc[:category_ids]).to include(taxonomy.root.prefixed_id)
+          expect(doc[:category_ids]).to include(category.prefixed_id)
+          expect(doc[:category_ids]).to include(root_category.prefixed_id)
           doc[:category_ids].each { |id| expect(id).to start_with('ctg_') }
         end
       end
 
       context 'with nested categories' do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:parent) { create(:taxon, taxonomy: taxonomy, name: 'Men') }
-        let(:child) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Jackets') }
-        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], taxons: [child]) }
+        let(:root_category) { create(:category, store: store, name: 'Apparel') }
+        let(:parent) { create(:category, store: store, parent: root_category, name: 'Men') }
+        let(:child) { create(:category, store: store, parent: parent, name: 'Jackets') }
+        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], categories: [child]) }
 
         it 'indexes all ancestor category IDs so parent-level filtering works' do
           doc = documents.first
           expect(doc[:category_ids]).to include(child.prefixed_id)
           expect(doc[:category_ids]).to include(parent.prefixed_id)
-          expect(doc[:category_ids]).to include(taxonomy.root.prefixed_id)
+          expect(doc[:category_ids]).to include(root_category.prefixed_id)
         end
       end
 
@@ -118,11 +118,10 @@ module Spree
       end
 
       context 'category membership positions (subtree-MIN)' do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:parent) { create(:taxon, taxonomy: taxonomy, name: 'Men') }
-        let(:jackets) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Jackets') }
-        let(:coats) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Coats') }
-        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], taxons: [jackets, coats]) }
+        let(:parent) { create(:category, store: store, name: 'Men') }
+        let(:jackets) { create(:category, store: store, parent: parent, name: 'Jackets') }
+        let(:coats) { create(:category, store: store, parent: parent, name: 'Coats') }
+        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], categories: [jackets, coats]) }
 
         before do
           Spree::ProductCategory.where(product: product, category: jackets).update_all(position: 5)

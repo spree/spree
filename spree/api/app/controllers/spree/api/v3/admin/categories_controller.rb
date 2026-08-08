@@ -110,10 +110,11 @@ module Spree
           end
 
           # Positions the node at +index+ among the store's root categories.
-          # awesome_nested_set's move_to_child_with_index(:root, ...) can't be
-          # used here: its +roots+ are global (every parentless taxon across all
-          # stores and taxonomies), whereas we order only this store's manual
-          # roots (the +scope+). So position relative to the target root sibling.
+          # Deliberately not move_to_child_with_index(:root, ...): that indexes
+          # into awesome_nested_set's class-level +roots+, which stays global
+          # across stores even though the set is scoped per store. Positioning
+          # relative to the target sibling keeps the index meaning what the
+          # caller computed it from — this store's roots.
           def move_to_root_at_index(node, index)
             others = scope.where(parent_id: nil).where.not(id: node.id).order(:lft).to_a
             target = others[index]

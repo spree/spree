@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
 
   include_context 'API v3 Admin authenticated'
 
-  let!(:category) { Spree::Category.create!(name: 'Clothing', store: store) }
+  let!(:category) { create(:category, name: 'Clothing', store: store) }
 
   before { request.headers.merge!(headers) }
 
@@ -18,14 +18,14 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
     let!(:product_b) { create(:product, store: store) }
     let!(:product_c) { create(:product, store: store) }
     let!(:other_category_product) { create(:product, store: store) }
-    let!(:other_category) { Spree::Category.create!(name: 'Other', store: store) }
+    let!(:other_category) { create(:category, name: 'Other', store: store) }
 
     before do
-      Spree::ProductCategory.create!(taxon: category, product: product_b, position: 1)
-      Spree::ProductCategory.create!(taxon: category, product: product_a, position: 2)
-      Spree::ProductCategory.create!(taxon: category, product: product_c, position: 3)
+      create(:product_category, category: category, product: product_b, position: 1)
+      create(:product_category, category: category, product: product_a, position: 2)
+      create(:product_category, category: category, product: product_c, position: 3)
       # A product in a different category must not leak into this list.
-      Spree::ProductCategory.create!(taxon: other_category, product: other_category_product, position: 1)
+      create(:product_category, category: other_category, product: other_category_product, position: 1)
     end
 
     it 'lists only the category products, ordered by classification position' do
@@ -40,30 +40,11 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
     end
 
     it 'returns an empty list for a category with no products' do
-      empty = Spree::Category.create!(name: 'Empty', store: store)
+      empty = create(:category, name: 'Empty', store: store)
       get :index, params: { category_id: empty.prefixed_id }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data']).to eq([])
-    end
-  end
-
-  # Automatic (rule-based) rows are hidden by the categories CRUD controller and
-  # migrate to Spree::Collection; membership can't be read or mutated here either.
-  describe 'automatic (rule-based) categories' do
-    let!(:automatic_category) { Spree::Category.create!(name: 'On Sale', store: store, automatic: true) }
-    let!(:product) { create(:product, store: store) }
-
-    it 'are not listable through the nested products endpoint' do
-      get :index, params: { category_id: automatic_category.prefixed_id }, as: :json
-      expect(response).to have_http_status(:not_found)
-    end
-
-    it 'do not accept product membership' do
-      post :create, params: { category_id: automatic_category.prefixed_id, product_id: product.prefixed_id }, as: :json
-
-      expect(response).to have_http_status(:not_found)
-      expect(Spree::ProductCategory.where(category_id: automatic_category.id)).to be_empty
     end
   end
 
@@ -88,7 +69,7 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
   describe 'DELETE #destroy' do
     let!(:product) { create(:product, store: store) }
 
-    before { Spree::ProductCategory.create!(taxon: category, product: product, position: 1) }
+    before { create(:product_category, category: category, product: product, position: 1) }
 
     it 'removes the product from the category' do
       delete :destroy, params: { category_id: category.prefixed_id, id: product.prefixed_id }, as: :json
@@ -111,9 +92,9 @@ RSpec.describe Spree::Api::V3::Admin::Categories::ProductsController, type: :con
     let!(:third)  { create(:product, store: store) }
 
     before do
-      Spree::ProductCategory.create!(taxon: category, product: first, position: 1)
-      Spree::ProductCategory.create!(taxon: category, product: second, position: 2)
-      Spree::ProductCategory.create!(taxon: category, product: third, position: 3)
+      create(:product_category, category: category, product: first, position: 1)
+      create(:product_category, category: category, product: second, position: 2)
+      create(:product_category, category: category, product: third, position: 3)
     end
 
     it 'moves a product to the requested index' do

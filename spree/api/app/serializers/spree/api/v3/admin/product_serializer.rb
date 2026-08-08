@@ -71,7 +71,7 @@ module Spree
           many :categories,
                proc { |categories, params|
                  store_id = params[:store].id
-                 categories.select { |c| c.store_id == store_id || c.taxonomy&.store_id == store_id }
+                 categories.select { |c| c.store_id == store_id }
                },
                resource: proc { Spree.api.admin_category_serializer },
                if: proc { expand?('categories') }
