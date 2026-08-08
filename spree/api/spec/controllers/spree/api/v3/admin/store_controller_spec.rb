@@ -49,19 +49,35 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    # The shell-data exemption is JWT-only: a scope-limited integration key
+    # has no business reading operational settings (support/notification
+    # emails, routing) it was never granted, so secret keys still need
+    # `read_settings`.
     context 'via a secret API key without a settings scope' do
       let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[read_orders]) }
       let(:headers) { { 'x-spree-api-key' => secret_api_key.plaintext_token } }
 
-      it 'still reads the store' do
+      it 'is denied' do
         subject
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['details']['required_scope']).to eq('read_settings')
       end
 
       it 'cannot update it' do
         patch :update, params: { name: 'Renamed' }, as: :json
 
         expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'via a secret API key with the settings scope' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[read_settings]) }
+      let(:headers) { { 'x-spree-api-key' => secret_api_key.plaintext_token } }
+
+      it 'reads the store' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(json_response['name']).to eq(store.name)
       end
     end
 

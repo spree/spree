@@ -122,14 +122,18 @@ module Spree
 
       # --- everything else: ownership ---
 
+      # Ownership keys on `customer_id`, the canonical column since the
+      # user_id -> customer_id rename (a record with no such column is owned by
+      # no one, so the check fails closed). Deliberately not the deprecated
+      # `user_id` alias, which disappears with the shim in 6.1.
       def owned?(record)
-        user.present? && record.respond_to?(:user_id) && record.user_id == user.id
+        user.present? && record.respond_to?(:customer_id) && record.customer_id == user.id
       end
 
       def owned_scope(base)
         return base.none if user.blank?
 
-        base.where(user_id: user.id)
+        base.where(customer_id: user.id)
       end
     end
   end

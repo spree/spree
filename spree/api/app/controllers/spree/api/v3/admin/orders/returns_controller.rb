@@ -9,7 +9,13 @@ module Spree
           # quantities the warehouse counted, refunding carries a method and
           # an amount.
           class ReturnsController < BaseController
-            scoped_resource :returns
+            # Returns are a subject of the `orders` catalog resource (see
+            # Spree::PermissionConfiguration), so `read_orders`/`write_orders`
+            # gate these endpoints — matching the cross-order ReturnsController.
+            # Declaring `:returns` here would name a key no catalog knows: the
+            # JWT gate would silently no-op and a `write_orders` secret key
+            # would be wrongly denied.
+            scoped_resource :orders
 
             before_action :set_resource, only: [:show, :update, :approve, :receive, :refund, :cancel]
 

@@ -7,9 +7,12 @@ module Spree
 
           # Reading the current store is shell data — the dashboard needs the
           # name, logo, timezone, currency and locales to render anything at
-          # all, so every authenticated staff member can read it regardless of
-          # their permissions. Writing still requires `write_settings`.
-          skip_scope_check! only: :show
+          # all, so every signed-in staff member can read it regardless of
+          # their permissions. Secret keys still need `read_settings`: a
+          # scope-limited integration has no business reading operational
+          # settings (support/notification emails, routing) it wasn't granted.
+          # Writing always requires `write_settings`.
+          skip_scope_check! only: :show, jwt_only: true
 
           # GET /api/v3/admin/store
           def show
