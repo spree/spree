@@ -798,4 +798,38 @@ RSpec.describe Spree::Category, type: :model do
       end
     end
   end
+
+  # acts_as_nested_set is scoped by store, so each store owns an independent
+  # tree rather than sharing one global lft/rgt sequence.
+  describe 'per-store nested set' do
+    let(:other_store) { create(:store) }
+
+    it 'numbers each store from the start instead of continuing the previous one' do
+      create(:category, name: 'A', store: store)
+      other_root = create(:category, name: 'B', store: other_store)
+
+      expect(other_root.reload.lft).to eq(1)
+    end
+
+    it 'leaves another store untouched when a tree is reordered' do
+      first = create(:category, name: 'A1', store: store)
+      create(:category, name: 'A2', store: store)
+      other_root = create(:category, name: 'B1', store: other_store)
+      create(:category, name: 'B2', parent: other_root, store: other_store)
+
+      before_bounds = described_class.unscoped.where(store: other_store).order(:id).pluck(:lft, :rgt)
+      first.reload.move_to_root
+      after_bounds = described_class.unscoped.where(store: other_store).order(:id).pluck(:lft, :rgt)
+
+      expect(after_bounds).to eq(before_bounds)
+    end
+
+    it 'keeps subtree reads inside the owning store' do
+      root = create(:category, name: 'Root', store: store)
+      child = create(:category, name: 'Child', parent: root, store: store)
+      create(:category, name: 'Foreign', store: other_store)
+
+      expect(root.reload.self_and_descendants).to contain_exactly(root, child)
+    end
+  end
 end

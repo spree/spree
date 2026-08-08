@@ -16,15 +16,19 @@ describe 'spree:taxons:backfill_store_id' do
   let!(:store) { Spree::Store.default || create(:store, default: true) }
 
   # ensure_store stamps store_id on create, so null it to reproduce a row
-  # created before the column existed.
-  def downgrade!(category)
-    category.update_columns(store_id: nil)
-    category
+  # created before the column existed. Build the tree first and downgrade
+  # afterwards: store_id scopes the nested set, so a child cannot be created
+  # under a parent whose store has already been cleared.
+  def downgrade!(*categories)
+    Spree::Category.unscoped.where(id: categories.map(&:id)).update_all(store_id: nil)
+    categories.each(&:reload)
+    categories.one? ? categories.first : categories
   end
 
   context 'taxonomy-backed category' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let!(:category) { downgrade!(create(:category, taxonomy: taxonomy)) }
+
 
     it 'backfills store_id from the taxonomy' do
       expect { subject.invoke }.to change { category.reload.store_id }.from(nil).to(store.id)
@@ -35,8 +39,12 @@ describe 'spree:taxons:backfill_store_id' do
     # Root keeps its store (resolved via the taxonomy pass or pre-existing);
     # descendants must inherit it down the chain.
     let!(:root) { create(:category, name: 'Root', store: store) }
-    let!(:mid) { downgrade!(create(:category, name: 'Mid', parent: root)) }
-    let!(:leaf) { downgrade!(create(:category, name: 'Leaf', parent: mid)) }
+    let!(:mid) { create(:category, name: 'Mid', parent: root) }
+    let!(:leaf) { create(:category, name: 'Leaf', parent: mid) }
+
+    # Downgrade only once the chain exists, so each child is built under a
+    # parent that still has its store.
+    before { downgrade!(mid, leaf) }
 
     it 'resolves every level from the nearest resolved ancestor' do
       subject.invoke

@@ -25,7 +25,12 @@ module Spree
     #
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
-    acts_as_nested_set dependent: :destroy, counter_cache: :children_count
+    # scope: :store — each store owns an independent tree, so lft/rgt are
+    # numbered per store and a move in one store never renumbers another's.
+    # Safe because every category has a store_id: pre-5.6 rows are backfilled
+    # from their taxonomy by spree:taxons:backfill_store_id (5.5 -> 5.6), and
+    # from 5.6 on #ensure_store stamps one at creation.
+    acts_as_nested_set scope: :store, dependent: :destroy, counter_cache: :children_count
 
     #
     # Associations
