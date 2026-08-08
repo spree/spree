@@ -60,7 +60,7 @@ module Spree
             return @pickup_cart = nil if params[:cart_id].blank?
 
             cart = current_store.carts.incomplete.find_by_prefix_id!(params[:cart_id])
-            authorize!(:show, cart, request.headers['x-spree-token'])
+            authorize_purchase_read!(cart, request.headers['x-spree-token'])
             @pickup_cart = cart
           end
 

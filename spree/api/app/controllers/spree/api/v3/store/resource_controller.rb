@@ -8,6 +8,7 @@ module Spree
         class ResourceController < Spree::Api::V3::ResourceController
           include Spree::Api::V3::ChannelResolution
           include Spree::Api::V3::StorefrontGating
+          include Spree::Api::V3::StorefrontAccess
 
           # The inherited +set_parent+/+set_resource+ callbacks were registered
           # before the two concerns above, so they'd run resource lookups ahead

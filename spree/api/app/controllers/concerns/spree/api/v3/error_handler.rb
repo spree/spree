@@ -90,6 +90,7 @@ module Spree
           # Override base controller error handlers
           rescue_from ActiveRecord::RecordNotFound, with: :handle_record_not_found
           rescue_from CanCan::AccessDenied, with: :handle_access_denied
+          rescue_from Spree::Storefront::AccessDenied, with: :handle_access_denied
           rescue_from Spree::Core::GatewayError, with: :handle_gateway_error
           rescue_from ActionController::ParameterMissing, with: :handle_parameter_missing
           rescue_from ActiveRecord::RecordInvalid, with: :handle_record_invalid

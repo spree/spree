@@ -90,7 +90,7 @@ module Spree
           # is already the caller's own.
           def associate
             @cart = find_cart_for_association
-            authorize!(:update, @cart, cart_token)
+            authorize_purchase_write!(@cart, cart_token)
             require_cart_token!
 
             result = Spree.cart_associate_service.call(guest_cart: @cart, customer: current_user, guest_only: true)
@@ -130,7 +130,7 @@ module Spree
             # prefixes never decode against carts, so this only fires for
             # order_ ids (or genuinely unknown ids, which 404 below).
             @cart = current_store.orders.complete.find_by_prefix_id!(params[:id])
-            authorize!(:show, @cart, cart_token)
+            authorize_purchase_read!(@cart, cart_token)
 
             render_order
           end
@@ -198,7 +198,7 @@ module Spree
           def require_cart_token!
             valid = cart_token.present? && cart_token == @cart.token
 
-            raise CanCan::AccessDenied.new(nil, :update, @cart) unless valid
+            raise Spree::Storefront::AccessDenied unless valid
           end
         end
       end

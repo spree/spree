@@ -4,8 +4,12 @@ module Spree
   module Core
     class Dependencies
       INJECTION_POINTS_WITH_DEFAULTS = {
-        # ability
+        # ability (staff / back-office authorization)
         ability_class: 'Spree::Ability',
+
+        # storefront record access (ownership + guest tokens); the B2B seam —
+        # see Spree::Storefront::AccessPolicy
+        storefront_access_policy_class: 'Spree::Storefront::AccessPolicy',
 
         # cart — the legacy Spree::Cart::* namespace is gone (Spree::Cart is the
         # cart model since 6.0); surviving services live under Spree::Carts::.

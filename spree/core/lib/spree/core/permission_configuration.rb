@@ -220,7 +220,6 @@ module Spree
             'Permission sets were removed in Spree 6.0. Remove the permission lines from ' \
             'config/initializers/spree.rb — roles and their permissions are data now, ' \
             'managed in the dashboard (Settings → Roles), via the Admin API, or in seeds. ' \
-            'For record-level custom rules use Spree::Ability.register_ability. ' \
             "Upgrade guide: https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0"
     end
 
@@ -248,7 +247,7 @@ module Spree
          Spree::Asset, Spree::ProductPublication, Spree::Metafield]
       })
       register_resource(:categories, group: :catalog, subjects: -> {
-        [Spree::Category, Spree::Taxonomy, Spree::ProductCategory]
+        [Spree::Category, Spree::ProductCategory]
       })
       register_resource(:collections, group: :catalog, subjects: -> {
         [Spree::Collection, Spree::ProductCollection, Spree::CollectionRule]

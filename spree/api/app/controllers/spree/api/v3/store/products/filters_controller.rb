@@ -59,7 +59,7 @@ module Spree
               scope = current_store.products.available(Time.current, current_currency, include_preorderable: true)
               scope = scope.in_category(category) if category.present?
               scope = scope.in_collection(collection) if collection.present?
-              scope.accessible_by(current_ability, :show)
+              scope
             end
 
             def category

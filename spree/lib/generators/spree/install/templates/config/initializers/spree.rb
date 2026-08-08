@@ -91,8 +91,8 @@ Rails.application.config.after_initialize do
   # Extensions can register additional permission resources:
   # Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> { [MyApp::Review] })
   #
-  # For record-level custom rules, register a plain CanCan::Ability class:
-  # Spree::Ability.register_ability(MyApp::RegionalSupportAbility)
+  # To customize authorization beyond the catalog, replace the ability class:
+  # Spree::Dependencies.ability_class = 'MyApp::Ability'
   #
   # More: https://spreecommerce.org/docs/developer/customization/permissions
 end

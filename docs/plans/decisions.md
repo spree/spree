@@ -1576,7 +1576,9 @@ no runtime merge, no union — the editor is WYSIWYG; "roles as code" is seeds
 never roles (matching Saleor/Vendure/Shopify — roles are rows everywhere). A
 `mutable` column (NamedType pattern) covers locked roles: admin seeds
 `mutable: false`; hosts can lock compliance roles the same way. Record-level
-custom rules migrate to `register_ability`, the single low-level escape hatch.
+custom rules migrate to a `Spree::Dependencies.ability_class` swap — the one
+low-level escape hatch (`register_ability` was dropped with the sets, 6.0
+having no undocumented registration API to inherit).
 Upgrade is fail-closed: pre-existing custom role rows come up with empty
 permissions until filled in the editor. Enforcement unifies on
 the key gate: `ScopedAuthorization` generalizes so every admin request — JWT
@@ -1618,3 +1620,39 @@ anywhere; every model a new admin controller authorizes must be covered by a
 catalog entry, or custom roles cannot reach the endpoint; new sensitive
 resources get their own catalog resource instead of riding `settings`;
 storefront code must never consult `Spree::Role` or the catalog.
+
+## 2026-08-08 — Store API drops CanCanCan; storefront access is a swappable policy
+
+**Decision:** The Store API (v3) no longer consults CanCanCan anywhere.
+`Spree::Ability` is staff-only — a customer principal's ability has no rules —
+and the generic `authorize_resource!`/`authorize_parent!` hooks plus the
+`accessible_by` collection filter moved from the shared v3 `ResourceController`
+down to the Admin branch. Storefront authorization is ownership: account
+controllers read through `current_user` (scope-fetching, unchanged), catalog
+endpoints have no per-record check (the old `accessible_by` calls sat on
+unconditional `can :read` grants — no-op filters), and the two checks a scope
+cannot express — cart/order access proven by JWT ownership OR a guest token,
+plus the guest-token order-listing scope — live in
+`Spree::Storefront::AccessPolicy`, swappable via
+`Spree::Dependencies.storefront_access_policy_class`. Denials raise
+`Spree::Storefront::AccessDenied`, rendered identically to CanCan's 403.
+
+**Why:** Two reasons converged. First, the storefront never needed a rule
+engine — its "rules" were ownership conditions and token blocks, and CanCanCan
+block rules can't power `accessible_by`, so controllers carried both a scope
+AND an `authorize!` for the same fact. Second, the Enterprise B2B module
+(`6.1-channels-catalogs-b2b.md`) must extend storefront authority without
+decorating controllers, and a policy object is the right seam: **access
+widening** (approver sees company-location purchases) = subclass the policy and
+override `orders_scope`/`purchase_readable?`; **action vetoes** (approvals,
+spending limits) = checkout workflow `validate` hooks; **catalog visibility**
+(per-location catalogs) = the products-for-context data scoping. Enterprise
+implements, open source owns the seams. Competitors ship no storefront rule
+engine (Medusa/Saleor/Vendure); Shopify B2B contact permissions are fixed
+server-side roles.
+
+**Consequences:** Extensions must not add storefront `can` rules or call
+`authorize!` in Store API controllers — widen the access policy or hook a
+workflow instead. The admin side is untouched: staff JWT + CanCanCan, secret
+keys + scopes. `register_ability`/`remove_ability` are gone with the sets
+(`Spree::Dependencies.ability_class` is the admin-side escape hatch).

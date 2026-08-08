@@ -117,7 +117,7 @@ module Spree
 
             Spree::NewsletterSubscriber.
               for_store(current_store).
-              accessible_by(current_ability, :destroy).
+              where(user_id: current_user.id).
               find_by_prefix_id(params[:id])
           end
 

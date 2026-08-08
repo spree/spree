@@ -267,7 +267,7 @@ describe Spree::Ability, type: :model do
   describe 'shared customer/admin user class' do
     # The install generator falls back to `user_class` for the admin user class
     # when a host provides only one — persisted customers are then admin-class
-    # principals and must keep the storefront baseline alongside role resolution.
+    # principals and resolve staff roles like any admin user.
     around do |example|
       original = Spree.admin_user_class(constantize: false)
       Spree.admin_user_class = Spree.customer_class.to_s
@@ -276,16 +276,15 @@ describe Spree::Ability, type: :model do
       Spree.admin_user_class = original
     end
 
-    it 'keeps the storefront baseline for persisted customers' do
+    it 'grants nothing to customers holding no roles' do
       customer = create(:user)
       shared_ability = Spree::Ability.new(customer, store: store)
 
-      expect(shared_ability).to be_able_to :read, Spree::Product
-      expect(shared_ability).to be_able_to :create, Spree::Order
       expect(shared_ability).not_to be_able_to :manage, Spree::Order.new
+      expect(shared_ability.permission_keys).to eq([])
     end
 
-    it 'resolves staff roles without losing the storefront baseline' do
+    it 'resolves staff roles for persisted customers' do
       manager = create(:user)
       manager.role_users.create!(
         role: create(:role, name: 'shared_manager', permissions: %w[write_orders]),
@@ -294,206 +293,18 @@ describe Spree::Ability, type: :model do
       shared_ability = Spree::Ability.new(manager, store: store)
 
       expect(shared_ability).to be_able_to :manage, Spree::Order.new
-      expect(shared_ability).to be_able_to :read, Spree::Product
     end
   end
 
-  describe '.register_ability' do
-    let(:custom_ability_class) do
-      Class.new do
-        include CanCan::Ability
+  context 'as a customer or guest principal' do
+    it 'has no rules at all — the Store API authorizes by ownership scoping' do
+      customer_ability = Spree::Ability.new(create(:user))
+      guest_ability = Spree::Ability.new(nil)
 
-        def initialize(user)
-          can :read, Spree::Order if user
-        end
-      end
-    end
-
-    after { Spree::Ability.remove_ability(custom_ability_class) }
-
-    it 'merges registered ability rules into every ability' do
-      Spree::Ability.register_ability(custom_ability_class)
-
-      expect(Spree::Ability.new(create(:user))).to be_able_to :read, Spree::Order.new
-    end
-  end
-
-  context 'as Guest User' do
-    context 'for Country' do
-      let(:resource) { Spree::Country.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for OptionType' do
-      let(:resource) { Spree::OptionType.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for OptionValue' do
-      let(:resource) { Spree::OptionType.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for Order' do
-      let(:resource) { Spree::Order.new }
-
-      context 'requested by same user' do
-        before { resource.user = user }
-
-        it_behaves_like 'access granted'
-        it_behaves_like 'no index allowed'
-      end
-
-      context 'requested by other user' do
-        before { resource.user = Spree.customer_class.new }
-
-        it_behaves_like 'create only'
-      end
-
-      context 'requested with proper token' do
-        let(:token) { 'TOKEN123' }
-
-        before { allow(resource).to receive_messages token: token }
-
-        it_behaves_like 'access granted'
-        it_behaves_like 'no index allowed'
-      end
-
-      context 'requested with improper token' do
-        let(:token) { 'FAIL' }
-
-        before { allow(resource).to receive_messages token: token }
-
-        it_behaves_like 'create only'
-      end
-    end
-
-    context 'for Product' do
-      let(:resource) { store.products.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for ProductProperty' do
-      let(:resource) { store.products.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for Property' do
-      let(:resource) { store.products.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for State' do
-      let(:resource) { Spree::State.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for Taxons' do
-      let(:resource) { Spree::Category.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for User' do
-      context 'requested by same user' do
-        let(:resource) { user }
-
-        it_behaves_like 'access granted'
-        it_behaves_like 'no index allowed'
-      end
-
-      context 'requested by other user' do
-        let(:resource) { create(:user) }
-
-        it_behaves_like 'create only'
-      end
-    end
-
-    context 'for Variant' do
-      let(:resource) { Spree::Variant.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for Zone' do
-      let(:resource) { Spree::Zone.new }
-
-      context 'requested by any user' do
-        it_behaves_like 'read only'
-      end
-    end
-
-    context 'for Address (IDOR vulnerability prevention)' do
-      let(:guest_address) { create(:address, user_id: nil) }
-
-      context 'with non-persisted guest user' do
-        let(:guest_user) { Spree.customer_class.new }
-        let(:guest_ability) { Spree::Ability.new(guest_user) }
-
-        it 'cannot read guest addresses with nil user_id' do
-          expect(guest_ability).not_to be_able_to :read, guest_address
-        end
-
-        it 'cannot edit guest addresses with nil user_id' do
-          expect(guest_ability).not_to be_able_to :edit, guest_address
-        end
-
-        it 'cannot update guest addresses with nil user_id' do
-          expect(guest_ability).not_to be_able_to :update, guest_address
-        end
-
-        it 'cannot destroy guest addresses with nil user_id' do
-          expect(guest_ability).not_to be_able_to :destroy, guest_address
-        end
-
-        it 'cannot manage any address' do
-          expect(guest_ability).not_to be_able_to :manage, guest_address
-        end
-      end
-
-      context 'with persisted user' do
-        let(:persisted_user) { create(:user) }
-        let(:persisted_ability) { Spree::Ability.new(persisted_user) }
-        let(:own_address) { create(:address, user_id: persisted_user.id) }
-
-        it 'can manage own address' do
-          expect(persisted_ability).to be_able_to :manage, own_address
-        end
-
-        it 'cannot manage guest addresses' do
-          expect(persisted_ability).not_to be_able_to :manage, guest_address
-        end
-
-        it 'cannot manage other user addresses' do
-          other_user = create(:user)
-          other_address = create(:address, user_id: other_user.id)
-          expect(persisted_ability).not_to be_able_to :manage, other_address
-        end
+      [customer_ability, guest_ability].each do |ability|
+        expect(ability).not_to be_able_to :read, store.products.new
+        expect(ability).not_to be_able_to :create, Spree::Order
+        expect(ability.permission_keys).to eq([])
       end
     end
   end

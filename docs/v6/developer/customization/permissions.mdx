@@ -38,29 +38,33 @@ Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
 
 Localize the labels in your engine's locale file under `spree.permissions_catalog.resources.<name>` (`label` and `description`), and declare the same resource on your admin controllers with `scoped_resource :reviews`.
 
-## Record-level custom rules
+## Beyond the catalog
 
-The catalog is deliberately flat. For rules it cannot express — regional restrictions, ownership conditions — register a plain `CanCan::Ability` class; its rules merge into every ability:
+The catalog is deliberately flat: it answers "may this role touch this kind of record", and that is the whole grant vocabulary. Two rules that do *not* belong in it:
+
+- **Record-state rules** ("a completed order cannot be deleted") live on models and workflows, so they bind every caller — including secret API keys, which never consult CanCanCan.
+- **Row-level restrictions** (a support agent limited to one market) are not expressible as keys. Replace the ability class outright:
 
 ```ruby
-class RegionalSupportAbility
-  include CanCan::Ability
+# config/initializers/spree.rb
+Spree::Dependencies.ability_class = 'MyApp::Ability'
+```
 
-  def initialize(user)
+```ruby
+# app/models/my_app/ability.rb
+class MyApp::Ability < Spree::Ability
+  def initialize(user, options = {})
+    super
     return unless user.respond_to?(:market_id) && user.market_id
 
     cannot :manage, Spree::Order
     can [:read, :admin], Spree::Order, market_id: user.market_id
   end
 end
-
-Spree::Ability.register_ability(RegionalSupportAbility)
 ```
-
-Keep record-state rules ("a completed order cannot be deleted") on models and workflows instead — they must bind every caller, including secret API keys that never consult CanCanCan.
 
 ## How enforcement works
 
 Every Admin API controller declares its resource (`scoped_resource :orders`). Each request checks the principal's keys — a staff member's role permissions on the current store, or a secret key's scopes — against `read_<resource>` or `write_<resource>` for the action. A missing key produces a 403 naming it in `details.required_permission`. Behind that gate, keys compile to CanCanCan rules for record-level concerns, and `GET /api/v3/admin/me` returns both the rule dump the dashboard mirrors and `permission_keys`, the flat key list.
 
-Storefront customers are not part of this system — customer authorization is ownership, enforced by the Store API's scoped lookups, with nothing to configure.
+Storefront customers are not part of this system — customer authorization is ownership, enforced by the Store API's scoped lookups, with nothing to configure. The one swappable piece is `Spree::Storefront::AccessPolicy` (via `Spree::Dependencies.storefront_access_policy_class`), which decides cart and order access for owners and guest-token bearers; replace it only when access must widen beyond the owner, such as company accounts.

@@ -396,7 +396,7 @@ Permission sets are **removed with no bridge**. Staff roles now hold flat permis
 |---|---|
 | `Spree::PermissionSets::*` (all classes) | catalog keys on the role row: `Spree::Role#permissions` |
 | `Spree.permissions.assign(:role, [sets])` | the role editor, `POST /api/v3/admin/roles`, or plain ActiveRecord in seeds |
-| Custom permission sets with record-level rules | `Spree::Ability.register_ability(MyAbility)` — a plain `CanCan::Ability` class |
+| Custom permission sets with record-level rules | Replace the ability class: `Spree::Dependencies.ability_class = 'MyApp::Ability'` |
 | `Spree::ApiKey::SCOPES` | `Spree::ApiKey.known_scopes` (derived from the catalog) |
 
 Old initializers fail loudly at boot: the set constants raise `NameError`, and `Spree.permissions.assign` raises with directions. **Recreate your custom roles before deploying** — a pre-existing role row comes up with no permissions, so staff holding it are locked out (fail closed) until its permissions are filled in:
@@ -407,7 +407,7 @@ Spree::Role.find_or_create_by!(name: 'support')
   .update!(permissions: %w[read_orders read_customers])
 ```
 
-Storefront customers are not part of this system: the old `:default` role and `DefaultCustomer` set became internal ability code, and customers never resolve roles. Extensions register their resources into the catalog once, which makes them grantable to roles **and** mintable as API-key scopes:
+Storefront customers are not part of this system: the old `:default` role and `DefaultCustomer` set are gone, customers never resolve roles, and the Store API no longer consults CanCanCan at all — customer authorization is ownership-scoped queries plus `Spree::Storefront::AccessPolicy` (swappable via `Spree::Dependencies.storefront_access_policy_class`). If an extension added storefront `can` rules, move them into an access-policy subclass or a checkout workflow `validate` hook. Extensions register their resources into the catalog once, which makes them grantable to roles **and** mintable as API-key scopes:
 
 ```ruby
 Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> { [SpreeReviews::Review] })
