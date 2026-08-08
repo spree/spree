@@ -452,7 +452,8 @@ RSpec.describe Spree::Category, type: :model do
   end
 
   context 'ransackable_associations' do
-    it { expect(described_class.whitelisted_ransackable_associations).to include('taxonomy') }
+    it { expect(described_class.whitelisted_ransackable_associations).to include('parent') }
+    it { expect(described_class.whitelisted_ransackable_associations).not_to include('taxonomy') }
   end
 
   describe '#cached_self_and_descendants_ids' do

@@ -126,7 +126,7 @@ module Spree
     #
     #  Ransack
     #
-    self.whitelisted_ransackable_associations = %w[taxonomy parent]
+    self.whitelisted_ransackable_associations = %w[parent]
     self.whitelisted_ransackable_attributes = %w[name permalink automatic depth is_root children_count
                                                  products_count pretty_name parent_id]
 
