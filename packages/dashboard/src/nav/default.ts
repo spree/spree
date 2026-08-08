@@ -1,5 +1,5 @@
 import type { Store } from '@spree/admin-sdk'
-import { i18n, nav, Subject } from '@spree/dashboard-core'
+import { hasVisibleSettingsEntries, i18n, nav, Subject } from '@spree/dashboard-core'
 import {
   BarChart3Icon,
   HomeIcon,
@@ -177,7 +177,10 @@ nav.add({
   label: i18n.t('admin.nav.settings'),
   path: '/settings',
   icon: SettingsIcon,
-  subject: Subject.Store,
+  // No `subject`: every staff member can read the store record (shell data),
+  // so a Store check would show Settings to roles with nothing inside it.
+  // Visible only when at least one settings page is reachable.
+  if: ({ permissions }) => hasVisibleSettingsEntries(permissions),
   section: 'bottom',
   position: 100,
 })

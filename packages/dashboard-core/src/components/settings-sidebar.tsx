@@ -132,7 +132,7 @@ function filterByPermissions(
   const groups = snapshot.groups
     .map(({ group, entries }) => ({
       group,
-      entries: entries.filter((e) => !e.subject || permissions.can('read', e.subject)),
+      entries: entries.filter((e) => !e.subject || permissions.can(e.action ?? 'read', e.subject)),
     }))
     .filter((g) => g.entries.length > 0)
   return {

@@ -19,6 +19,52 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       expect(response).to have_http_status(:ok)
     end
 
+    # The dashboard shell (store name, logo, timezone, currencies, locales)
+    # can't render without this, so reading the store is not gated on the
+    # settings permission — only writing is.
+    context 'as a staffer without any settings permission' do
+      let(:staffer) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          user.role_users.create!(
+            role: create(:role, name: 'orders_only', permissions: %w[write_orders]),
+            resource: store
+          )
+        end
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+
+      it 'still reads the store' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(json_response['name']).to eq(store.name)
+      end
+
+      it 'cannot update it' do
+        patch :update, params: { name: 'Renamed' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        expect(store.reload.name).not_to eq('Renamed')
+      end
+    end
+
+    context 'via a secret API key without a settings scope' do
+      let(:secret_api_key) { create(:api_key, :secret, store: store, scopes: %w[read_orders]) }
+      let(:headers) { { 'x-spree-api-key' => secret_api_key.plaintext_token } }
+
+      it 'still reads the store' do
+        subject
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'cannot update it' do
+        patch :update, params: { name: 'Renamed' }, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
     it 'serializes the prefixed id, not the raw integer DB id' do
       # Regression: a previous version of the serializer listed `:id` in
       # `attributes`, which overrode `BaseSerializer#id` and exposed the
