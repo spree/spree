@@ -144,6 +144,23 @@ describe 'spree:upgrade:migrate_users_to_customers' do
       expect(group_membership.reload.customer_type).to eq('Spree::Customer')
     end
 
+    # Internal notes, so spree:migrate_rich_text_to_columns finds them under the
+    # new class name. Inserted directly — Spree::User is gone in 6.0, so Action
+    # Text cannot resolve the polymorphic owner.
+    it 'flips internal-note Action Text rows to Spree::Customer' do
+      ActionText::RichText.insert!(
+        {
+          name: 'internal_note', body: '<p>VIP</p>', locale: 'en',
+          record_type: 'Spree::User', record_id: 1,
+          created_at: Time.current, updated_at: Time.current
+        }
+      )
+
+      subject.invoke
+
+      expect(ActionText::RichText.where(name: 'internal_note').pick(:record_type)).to eq('Spree::Customer')
+    end
+
     it 'leaves admin references untouched' do
       admin_token = create(:refresh_token, :for_admin)
 

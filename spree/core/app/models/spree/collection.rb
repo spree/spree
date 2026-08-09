@@ -26,6 +26,7 @@ module Spree
     include Spree::TranslatableResourceSlug
     include Spree::HasCustomFields
     include Spree::Metadata
+    include Spree::SanitizableRichText
 
     #
     # Slug / permalink — FriendlyId with history (mirrors Spree::Category; flat, no hierarchy).
@@ -38,14 +39,20 @@ module Spree
     friendly_id :permalink, slug_column: :permalink, use: :history
 
     TRANSLATABLE_FIELDS = %i[name description permalink].freeze
+    RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     #
-    # Action Text
+    # Rich text
     #
-    # Interim: description via ActionText (mirrors Spree::Category). 6.0-rich-text-descriptions.md
-    # migrates both Category and Collection off ActionText later.
-    translates :description, backend: :action_text
+    sanitizes_rich_text :description
+    rich_text_html_accessor :description
+
+    self::Translation.class_eval do
+      include Spree::SanitizableRichText
+
+      sanitizes_rich_text :description
+    end
 
     #
     # Associations

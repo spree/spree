@@ -4,6 +4,7 @@ module Spree
 
     extend FriendlyId
     include Spree::TranslatableResource
+    include Spree::SanitizableRichText
 
     UNIQUENESS_SCOPE = %i[owner_id owner_type].freeze
 
@@ -25,9 +26,16 @@ module Spree
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     #
-    # ActionText
+    # Rich text
     #
-    translates :body, backend: :action_text
+    sanitizes_rich_text :body
+    rich_text_html_accessor :body
+
+    self::Translation.class_eval do
+      include Spree::SanitizableRichText
+
+      sanitizes_rich_text :body
+    end
 
     #
     # Validations
@@ -39,8 +47,8 @@ module Spree
     #
     # Scopes
     #
-    scope :with_body, -> { joins(:rich_text_body).distinct }
-    scope :without_body, -> { where.missing(:rich_text_body) }
+    scope :with_body, -> { where.not(body: [nil, '']) }
+    scope :without_body, -> { where(body: [nil, '']) }
     scope :with_matching_name, ->(name_to_match) do
       value = name_to_match.to_s.strip.downcase
 

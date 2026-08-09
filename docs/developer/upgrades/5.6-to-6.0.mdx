@@ -89,6 +89,26 @@ bundle exec rake spree:migrate_taxons_to_categories_and_collections
 
 Taxons become `Spree::Category` (hierarchy) and automatic taxons become `Spree::Collection` (flat, rule-based). `Spree::Taxon` remains as an alias for one release.
 
+### Move rich text out of Action Text
+
+```bash
+bundle exec rake spree:migrate_rich_text_to_columns
+```
+
+Category and collection descriptions, policy bodies, and order and customer internal notes move from `action_text_rich_texts` into text columns on their own tables. Per-locale rows land in the model's translation table. Run this **after** the categories step, which re-points the rows from `Spree::Taxon` to `Spree::Category` so this one can still find them.
+
+Content is sanitized on the way in, and **the 6.0 allowlist is much narrower than 5.6's**: it permits only what the dashboard's editor emits — paragraphs, headings, `strong`/`em`/`s`/`u`/`code`, `pre`, `blockquote`, lists, `hr`, `br` and links. Tables, images, `div`/`span`, inline `style` and arbitrary `class` attributes are no longer permitted. Text inside a stripped tag survives; its formatting does not.
+
+If your descriptions rely on richer markup, permit it in an initializer **before** running the task and before saving anything under 6.0:
+
+```ruby
+# config/initializers/spree.rb
+Spree::RichTextSanitizer.allowed_tags += %w[table thead tbody tr th td img]
+Spree::RichTextSanitizer.allowed_attributes += %w[src alt colspan rowspan]
+```
+
+The Action Text rows are left in place as a rollback path and are dropped with the tables in 6.1.
+
 ### Backfill order coupon codes
 
 ```bash
@@ -439,6 +459,21 @@ Two enforcement changes on the Admin API:
 
 - **JWT staff pass the same per-controller key gate as secret keys.** A request whose principal lacks `<read|write>_<resource>` gets a 403 with `details.required_permission` naming the missing key.
 - **Staff endpoints moved out of the `settings` scope.** `/admin_users`, `/invitations`, and `/roles` now require the new `read_staff` / `write_staff` scopes; secret keys minted with `settings` before 6.0 lose those endpoints. `/countries` and `/locales` became scope-exempt reference data.
+
+### Rich text is written as `*_html`
+
+Reads are unchanged — the plain field still returns text and `*_html` still returns markup — but writes move to the `*_html` name, so reading and writing finally use the same field:
+
+| Resource | Was | Now |
+| --- | --- | --- |
+| Product, Category, Collection | `description` | `description_html` |
+| Order, Customer | `internal_note` | `internal_note_html` |
+
+A write that still sends the plain name is **ignored rather than stored** — it is no longer a permitted parameter, so nothing 422s and the value silently doesn't persist. Audit any integration that writes descriptions or internal notes.
+
+Both internal-note serializers now return the pair. Previously orders exposed only plain text and customers only HTML.
+
+Stored markup is also held to a narrower allowlist than 5.6 — see [the rich-text migration](#move-rich-text-out-of-action-text) for what is permitted and how to widen it.
 
 ## For extension authors
 

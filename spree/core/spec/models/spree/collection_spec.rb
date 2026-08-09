@@ -86,11 +86,12 @@ RSpec.describe Spree::Collection, type: :model do
     end
   end
 
-  describe 'description (ActionText)' do
+  describe 'description' do
     it 'round-trips rich text' do
-      collection = create(:collection, description: '<p>Hello <strong>world</strong></p>')
+      collection = create(:collection, description_html: '<p>Hello <strong>world</strong></p>')
 
-      expect(collection.reload.description.to_plain_text).to eq('Hello world')
+      expect(collection.reload.description_html).to eq('<p>Hello <strong>world</strong></p>')
+      expect(Spree::RichTextHelper.to_plain_text(collection.description)).to eq('Hello world')
     end
   end
 

@@ -2634,7 +2634,9 @@ function InternalNoteCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
 
   const [editing, setEditing] = useState(false)
-  const mutation = useOrderMutation(orderId, (params: { internal_note: string }) =>
+  // Rich text is written as `internal_note_html`; the plain `internal_note`
+  // field is read-only.
+  const mutation = useOrderMutation(orderId, (params: { internal_note_html: string }) =>
     adminClient.orders.update(orderId, params),
   )
 
@@ -2642,7 +2644,7 @@ function InternalNoteCard({ order }: { order: Order }) {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
     mutation.mutate(
-      { internal_note: fd.get('internal_note') as string },
+      { internal_note_html: fd.get('internal_note') as string },
       { onSuccess: () => setEditing(false) },
     )
   }

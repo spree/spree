@@ -99,16 +99,25 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let!(:category) do
       create(:category, taxonomy: taxonomy, store: store, parent: taxonomy.root).tap do |c|
-        c.update!(description: '<div>Kept description</div>')
-        # simulate a pre-6.0 row still typed as Spree::Taxon
-        ActionText::RichText.where(record_id: c.id, name: 'description').update_all(record_type: 'Spree::Taxon')
+        # A pre-6.0 install holds the description in an Action Text row typed as
+        # Spree::Taxon. Categories store description in their own column now, so
+        # the legacy row is written directly rather than through the model.
+        ActionText::RichText.create!(
+          name: 'description', body: '<div>Kept description</div>',
+          record_type: 'Spree::Taxon', record_id: c.id
+        )
       end
     end
 
+    # The rows themselves are copied into the description column later, by
+    # spree:migrate_rich_text_to_columns — this task only has to retype them so
+    # that copy can still find them after the rename.
     it 'backfills record_type so the rich-text description survives the rename' do
       subject.invoke
 
-      expect(category.reload.description.to_plain_text).to eq('Kept description')
+      row = ActionText::RichText.find_by(record_id: category.id, name: 'description')
+      expect(row.record_type).to eq('Spree::Category')
+      expect(row.body.to_plain_text).to eq('Kept description')
     end
   end
 

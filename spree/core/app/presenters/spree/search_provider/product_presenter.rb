@@ -57,7 +57,9 @@ module Spree
           currency: currency,
           # Translated fields — with fallback to default locale
           name: translated(product, :name, fallback_locale),
-          description: translated(product, :description, fallback_locale),
+          # Indexed as plain text — HTML tag names would otherwise become
+          # searchable tokens.
+          description: Spree::RichTextHelper.to_plain_text(translated(product, :description, fallback_locale)),
           slug: translated(product, :slug, fallback_locale),
           # Price in this currency
           price: lowest_price(currency)&.to_f,

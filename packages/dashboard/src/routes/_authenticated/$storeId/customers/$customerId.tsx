@@ -829,7 +829,10 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
                 size="sm"
                 disabled={mutation.isPending}
                 onClick={() =>
-                  mutation.mutate({ internal_note: note }, { onSuccess: () => setEditing(false) })
+                  mutation.mutate(
+                    { internal_note_html: note },
+                    { onSuccess: () => setEditing(false) },
+                  )
                 }
               >
                 {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}

@@ -405,7 +405,9 @@ function NewCustomerSheet({
     if (values.first_name.trim()) payload.first_name = values.first_name.trim()
     if (values.last_name.trim()) payload.last_name = values.last_name.trim()
     if (values.phone.trim()) payload.phone = values.phone.trim()
-    if (values.internal_note.trim()) payload.internal_note = values.internal_note.trim()
+    // Rich text is written as `internal_note_html`; the plain `internal_note`
+    // field is read-only.
+    if (values.internal_note.trim()) payload.internal_note_html = values.internal_note.trim()
     if (values.tags.length) payload.tags = values.tags
 
     try {

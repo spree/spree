@@ -19,6 +19,7 @@ module Spree
     extend Spree::DisplayMoney
 
     include Spree::SingleStoreResource
+    include Spree::SanitizableRichText
     include Spree::Purchase::Channel
     include Spree::Purchase::Market
     include Spree::Purchase::Currency
@@ -50,7 +51,9 @@ module Spree
     end
 
     has_secure_token :token, length: 35
-    has_rich_text :internal_note
+
+    sanitizes_rich_text :internal_note
+    rich_text_html_accessor :internal_note
 
     MEMOIZED_METHODS = %w(tax_zone)
 

@@ -354,7 +354,7 @@ RSpec.describe Spree::Category, type: :model do
       expect(category_pl_translation.name).to eq('PL name')
       expect(category_pl_translation.permalink).to eq('pl-parent/pl-name')
 
-      expect(category.description_pl.to_plain_text).to eq('PL description')
+      expect(category.description_pl).to eq('PL description')
     end
   end
 

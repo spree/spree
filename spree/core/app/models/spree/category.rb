@@ -17,6 +17,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::MemoizedData
+    include Spree::SanitizableRichText
 
     MEMOIZED_METHODS = %w[cached_self_and_descendants_ids].freeze
 
@@ -138,9 +139,10 @@ module Spree
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     #
-    # Action Text
+    # Rich text
     #
-    translates :description, backend: :action_text
+    sanitizes_rich_text :description
+    rich_text_html_accessor :description
 
     # Categories are manual only in 6.0 — rule-based (automatic) membership lives on
     # Spree::Collection. The automatic/rules_match_policy/sort_order columns and the
@@ -194,6 +196,10 @@ module Spree
     end
 
     self::Translation.class_eval do
+      include Spree::SanitizableRichText
+
+      sanitizes_rich_text :description
+
       before_save :set_permalink
       before_save :set_pretty_name
       after_save :regenerate_pretty_name_and_permalink, if: :should_regenerate_pretty_name_and_permalink?

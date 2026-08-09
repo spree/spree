@@ -66,7 +66,7 @@ RSpec.describe Spree::Policy, type: :model do
       expect(policy.name).to eq('Privacy Policy')
       I18n.with_locale(:es) do
         expect(policy.name).to eq('Política de Privacidad')
-        expect(policy.body.to_plain_text).to eq('Política de Privacidad')
+        expect(policy.body).to eq('Política de Privacidad')
       end
     end
 

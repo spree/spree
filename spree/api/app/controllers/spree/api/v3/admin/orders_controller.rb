@@ -129,7 +129,7 @@ module Spree
           end
 
           def collection_includes
-            [:line_items, :customer, :channel, :rich_text_internal_note]
+            [:line_items, :customer, :channel]
           end
 
           private
@@ -148,7 +148,7 @@ module Spree
               params.permit(
                 :email, :customer_id, :user_id, :use_customer_default_address,
                 :currency, :market_id, :channel_id, :locale,
-                :customer_note, :internal_note,
+                :customer_note, :internal_note_html,
                 :shipping_address_id, :billing_address_id,
                 :preferred_stock_location_id,
                 :coupon_code,
@@ -165,7 +165,7 @@ module Spree
             normalize_params(
               params.permit(
                 :email, :customer_id, :user_id,
-                :customer_note, :internal_note,
+                :customer_note, :internal_note_html,
                 :currency, :locale, :market_id, :channel_id,
                 :preferred_stock_location_id,
                 metadata: {},

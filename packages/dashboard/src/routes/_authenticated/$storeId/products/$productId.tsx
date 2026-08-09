@@ -132,8 +132,8 @@ function productToFormValues(
     name: product.name,
     // Hydrate the Tiptap editor from the HTML field, not `description` — the
     // serializer squishes that one to tag-stripped plain text, which would
-    // collapse paragraphs/line breaks on every reload. Write still goes back
-    // through the `description` param (the API accepts HTML there).
+    // collapse paragraphs/line breaks on every reload. Writes go back through
+    // `description_html` (see onSubmit).
     description: product.description_html ?? '',
     status: (product.status as ProductFormValues['status']) ?? 'draft',
     category_ids: product.categories?.map((t) => t.id) ?? [],
@@ -333,11 +333,17 @@ function ProductForm({ product }: { product: Product }) {
   }, [mediaItems, form])
 
   const onSubmit = async (data: ProductFormValues) => {
-    const { variants, media, ...rest } = data
+    const { variants, media, description, ...rest } = data
     // Extension fields come from live form state: the Zod parse behind
     // `data` strips keys the first-party schema doesn't know.
     const extensionValues = extensionSubmitValues('product', form)
-    const payload: Record<string, unknown> = { ...rest, ...extensionValues }
+    // Rich text is written as `description_html`; the plain `description` param
+    // is read-only.
+    const payload: Record<string, unknown> = {
+      ...rest,
+      description_html: description,
+      ...extensionValues,
+    }
 
     if (variants && variants.length > 0) {
       payload.variants = variants.map((v, i) => variantToWirePayload(v, i))

@@ -172,7 +172,9 @@ export function collectionToForm(collection: Collection): CollectionFormValues {
 export function collectionToParams(values: CollectionFormValues) {
   return {
     name: values.name,
-    description: values.description,
+    // Rich text is written as `*_html`; the API reads back `description`
+    // (plain) alongside it.
+    description_html: values.description,
     permalink: values.permalink,
     meta_title: values.meta_title,
     meta_description: values.meta_description,

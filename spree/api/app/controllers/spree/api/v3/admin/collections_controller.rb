@@ -35,7 +35,7 @@ module Spree
           # +rules+ to +rules_attributes+ and route past the setter).
           def permitted_params
             params.permit(
-              :name, :description, :permalink, :position,
+              :name, :description_html, :permalink, :position,
               :meta_title, :meta_description, :meta_keywords,
               :image, :square_image,
               :automatic, :rules_match_policy, :sort_order,

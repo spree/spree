@@ -7,7 +7,7 @@ module Spree
         class CustomerSerializer < V3::CustomerSerializer
           typelize failed_attempts: :number,
                    tags: [:string, multi: true],
-                   internal_note_html: [:string, nullable: true],
+                   internal_note: [:string, nullable: true], internal_note_html: [:string, nullable: true],
                    metadata: 'Record<string, unknown>',
                    orders_count: :number,
                    total_spent: :string,
@@ -25,8 +25,12 @@ module Spree
             user.tags.map(&:name) # not pluck as we preload tags
           end
 
+          attribute :internal_note do |user|
+            user.respond_to?(:internal_note) ? Spree::RichTextHelper.to_plain_text(user.internal_note).presence : nil
+          end
+
           attribute :internal_note_html do |user|
-            user.respond_to?(:internal_note) ? user.internal_note&.body&.to_s.presence : nil
+            user.respond_to?(:internal_note) ? user.internal_note.presence : nil
           end
 
           attribute :default_billing_address_id do |user|

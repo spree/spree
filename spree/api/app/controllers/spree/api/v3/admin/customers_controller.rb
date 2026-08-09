@@ -73,7 +73,7 @@ module Spree
           # `customer_groups` is preloaded because the serializer's always-on
           # `customer_group_ids` attribute reads it for every row.
           def collection_includes
-            [:rich_text_internal_note, :customer_groups, taggings: :tag]
+            [:customer_groups, taggings: :tag]
           end
 
           private
@@ -93,7 +93,7 @@ module Spree
             params.permit(
               :email, :first_name, :last_name, :phone,
               :password, :password_confirmation, :selected_locale,
-              :avatar, :accepts_email_marketing, :internal_note,
+              :avatar, :accepts_email_marketing, :internal_note_html,
               metadata: {}, tags: [], customer_group_ids: []
             )
           end

@@ -80,7 +80,9 @@ export function categoryToParams(values: CategoryFormValues) {
     // null keeps an existing child category at the top level on update; create
     // treats null/undefined the same (no parent).
     parent_id: values.parent_id,
-    description: values.description,
+    // Rich text is written as `*_html`; the API reads back `description`
+    // (plain) alongside it.
+    description_html: values.description,
     permalink: values.permalink,
     meta_title: values.meta_title,
     meta_description: values.meta_description,

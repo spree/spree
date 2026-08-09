@@ -8,11 +8,11 @@ module Spree
         attributes :name, :slug
 
         attribute :body do |policy|
-          policy.body&.to_plain_text
+          Spree::RichTextHelper.to_plain_text(policy.body)
         end
 
         attribute :body_html do |policy|
-          policy.body&.body&.to_s.to_s
+          policy.body_html
         end
 
       end
