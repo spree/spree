@@ -46,6 +46,10 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       manual = json_response['data'].find { |row| row['type'] == 'Spree::FulfillmentProvider::Manual' }
       expect(manual['fulfillment_types']).to eq([])
       expect(manual['requires_address']).to be true
+      # Providers without credentials are always available; carrier ones are
+      # listed with available: false until their integration is connected.
+      expect(manual['available']).to be true
+      expect(manual['integration_class']).to be_nil
 
       expect(json_response['fulfillment_types']).to eq(Spree.fulfillment_types)
     end

@@ -43,6 +43,19 @@ module Spree
         def integration_class
           nil
         end
+
+        # Whether the store can use this provider — false while a carrier
+        # provider's integration is unconnected. Admin UIs surface it as a
+        # connect prompt rather than hiding the provider, so the merchant can
+        # see what a connection would unlock.
+        #
+        # @param store [Spree::Store, nil]
+        # @return [Boolean]
+        def available_for_store?(store)
+          return true if integration_class.blank?
+
+          store.present? && store.integrations.active.exists?(type: integration_class)
+        end
       end
 
       # @return [Boolean] whether the fulfillment may transition to fulfilled

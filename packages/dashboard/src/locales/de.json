@@ -499,13 +499,6 @@
       "no_zones_hint": "Noch keine Lieferzonen definiert — die Methode gilt überall.",
       "pickup_locations_hint": "Ohne Auswahl werden alle abholfähigen Lagerorte angeboten.",
       "search_placeholder": "Versandarten durchsuchen…",
-      "add_option": "Versandoption hinzufügen",
-      "live_rates": "Live-Tarife",
-      "free": "Kostenlos",
-      "hidden": "Ausgeblendet",
-      "everywhere": "Überall",
-      "everywhere_hint": "Optionen ohne Zonenbeschränkung — vom Carrier bepreiste Optionen gelten überall, wo der Carrier zustellt.",
-      "zone_empty": "Noch keine Versandoptionen in dieser Zone.",
       "connect_provider_hint": "{{name}} kann Live-Carrier-Tarife anbieten — zum Aktivieren verbinden.",
       "carrier_services": {
         "label": "Carrier-Services",
@@ -515,7 +508,8 @@
         "carrier": "Carrier",
         "service": "Service",
         "custom_label": "Eigene Bezeichnung für {{service}}"
-      }
+      },
+      "provider_needs_connection": "{{name}} verbinden, um es zu nutzen"
     },
     "delivery_zones": {
       "add_cta": "Lieferzone hinzufügen",

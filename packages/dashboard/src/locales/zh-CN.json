@@ -499,13 +499,6 @@
       "no_zones_hint": "尚未定义配送区域——该方式适用于所有地区。",
       "pickup_locations_hint": "未选择时，将提供所有启用自提的库存地点。",
       "search_placeholder": "搜索配送方式…",
-      "add_option": "添加配送选项",
-      "live_rates": "实时运费",
-      "free": "免费",
-      "hidden": "已隐藏",
-      "everywhere": "全部地区",
-      "everywhere_hint": "无区域限制的选项 — 承运商计价的选项在承运商可送达的任何地区生效。",
-      "zone_empty": "该区域还没有配送选项。",
       "connect_provider_hint": "{{name}} 可提供实时承运商运费 — 连接后即可启用。",
       "carrier_services": {
         "label": "承运商服务",
@@ -515,7 +508,8 @@
         "carrier": "承运商",
         "service": "服务",
         "custom_label": "{{service}} 的自定义名称"
-      }
+      },
+      "provider_needs_connection": "连接 {{name}} 后即可使用"
     },
     "delivery_zones": {
       "add_cta": "添加配送区域",

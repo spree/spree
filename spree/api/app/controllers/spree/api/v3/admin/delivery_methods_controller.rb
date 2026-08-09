@@ -34,6 +34,8 @@ module Spree
               {
                 type: provider_class.to_s,
                 name: provider_class.provider_name,
+                integration_class: provider_class.integration_class,
+                available: provider_class.available_for_store?(current_store),
                 fulfillment_types: provider_class.fulfillment_types,
                 requires_address: provider_class.new.requires_address?
               }

@@ -7,24 +7,19 @@ import type {
   Product,
 } from '@spree/admin-sdk'
 import {
-  type adminClient,
+  adminClient,
   Can,
   mapSpreeErrorsToForm,
-  PageHeader,
   PreferencesForm,
   ResourceMultiAutocomplete,
+  ResourceTable,
   resourceSearchSchema,
   Subject,
   usePermissions,
   useResourceKey,
 } from '@spree/dashboard-core'
 import {
-  Badge,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
@@ -47,9 +42,9 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  Skeleton,
   Switch,
   useConfirm,
+  useRowClickBridge,
 } from '@spree/dashboard-ui'
 import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -60,7 +55,6 @@ import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { ConfigureIntegrationSheet } from '../../../../components/spree/integrations/configure-integration-sheet'
 import {
-  useAllDeliveryMethods,
   useCreateDeliveryMethod,
   useDeleteDeliveryMethod,
   useDeliveryCalculators,
@@ -72,7 +66,7 @@ import {
   useUpdateDeliveryMethod,
 } from '../../../../hooks/use-delivery-methods'
 import { useDeliveryZones } from '../../../../hooks/use-delivery-zones'
-import { useIntegrationTypes } from '../../../../hooks/use-integrations'
+import { useIntegrations, useIntegrationTypes } from '../../../../hooks/use-integrations'
 import { productAutocompleteProps } from '../../../../hooks/use-products'
 import { useStockLocations } from '../../../../hooks/use-stock-locations'
 import { useTaxCategories } from '../../../../hooks/use-tax-categories'
@@ -83,6 +77,7 @@ import {
   deliveryMethodValuesToParams,
   FULFILLMENT_TYPES,
 } from '../../../../schemas/delivery-method'
+import '../../../../tables/delivery-methods'
 
 /** One entry from the delivery-method-rule discovery endpoint. */
 type DeliveryMethodRuleType = Awaited<
@@ -105,7 +100,6 @@ function takesProducts(ruleTypes: DeliveryMethodRuleType[] | undefined, type: st
 const deliveryMethodsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
   new: z.coerce.boolean().optional(),
-  zone: z.string().optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/delivery-methods')({
@@ -113,9 +107,6 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/delivery
   component: DeliveryMethodsPage,
 })
 
-// Shopify-style presentation: delivery zones as cards with their methods
-// nested underneath, plus an "Everywhere" card for methods without zones
-// (carrier-priced methods let the carrier decide serviceability).
 function DeliveryMethodsPage() {
   const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof deliveryMethodsSearchSchema>
@@ -123,30 +114,25 @@ function DeliveryMethodsPage() {
   const confirm = useConfirm()
   const deleteMutation = useDeleteDeliveryMethod()
   const { permissions } = usePermissions()
-  const { data: zonesResponse, isLoading: zonesLoading } = useDeliveryZones()
-  const { data: methods, isLoading: methodsLoading } = useAllDeliveryMethods()
-  const { data: rateProviders } = useDeliveryRateProviders()
 
   const editId = search.edit
   const isCreating = !!search.new
-  const isLoading = zonesLoading || methodsLoading
 
   const closeSheet = () =>
     navigate({
       search: (prev: Record<string, unknown>) => {
-        const { edit: _e, new: _n, zone: _z, ...rest } = prev
+        const { edit: _e, new: _n, ...rest } = prev
         return rest as never
       },
     })
 
-  const openCreate = (zoneId?: string) =>
-    navigate({
-      search: (prev: Record<string, unknown>) =>
-        ({ ...prev, new: true, ...(zoneId ? { zone: zoneId } : {}) }) as never,
-    })
+  const openCreate = () =>
+    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, new: true }) as never })
 
   const openEdit = (id: string) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
+
+  useRowClickBridge('data-delivery-method-id', openEdit)
 
   async function handleDelete(deliveryMethod: DeliveryMethod) {
     const ok = await confirm({
@@ -161,176 +147,58 @@ function DeliveryMethodsPage() {
     await deleteMutation.mutateAsync(deliveryMethod.id).catch(() => undefined)
   }
 
-  const zones = zonesResponse?.data ?? []
-  const allMethods = methods ?? []
-  const zonelessMethods = allMethods.filter(
-    (method) => (method.delivery_zone_ids ?? []).length === 0,
-  )
-
-  // A method priced by a live-rate provider shows "Live rates" instead of a
-  // flat amount; the lookup keys off the discovery payload.
-  const liveRateProviderTypes = useMemo(
-    () =>
-      new Set(
-        (rateProviders?.data ?? [])
-          .filter((provider) => !provider.uses_calculator)
-          .map((provider) => provider.type),
-      ),
-    [rateProviders],
-  )
-
-  const priceBadge = (method: DeliveryMethod) => {
-    if (method.rate_provider && liveRateProviderTypes.has(method.rate_provider)) {
-      return t('admin.delivery_methods.live_rates')
-    }
-    const preferences = (method.calculator_preferences ?? {}) as Record<string, unknown>
-    const amount = preferences.amount
-    if (amount === undefined || amount === null || amount === '') return null
-    const numeric = Number(amount)
-    if (Number.isNaN(numeric)) return null
-    if (numeric === 0) return t('admin.delivery_methods.free')
-    return `${numeric} ${(preferences.currency as string) ?? ''}`.trim()
-  }
-
-  const methodRow = (method: DeliveryMethod) => (
-    <div
-      key={method.id}
-      className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-muted/40"
-    >
-      <button
-        type="button"
-        onClick={() => openEdit(method.id)}
-        className="flex min-w-0 flex-1 cursor-pointer flex-col items-start text-left"
-      >
-        <span className="truncate text-sm font-medium">{method.name}</span>
-        {method.admin_name && (
-          <span className="truncate text-xs text-muted-foreground">{method.admin_name}</span>
-        )}
-      </button>
-      <div className="flex shrink-0 items-center gap-2">
-        {priceBadge(method) && <Badge variant="secondary">{priceBadge(method)}</Badge>}
-        {!method.storefront_visible && (
-          <Badge variant="outline">{t('admin.delivery_methods.hidden')}</Badge>
-        )}
-        <RowActions
-          actions={[
-            { key: 'edit', onSelect: () => openEdit(method.id) },
-            {
-              key: 'delete',
-              destructive: true,
-              visible: permissions.can('destroy', Subject.DeliveryMethod),
-              disabled: deleteMutation.isPending,
-              onSelect: () => handleDelete(method),
-            },
-          ]}
-        />
-      </div>
-    </div>
-  )
-
-  const zoneCard = (
-    title: string,
-    description: string | null,
-    zoneMethods: DeliveryMethod[],
-    zoneId?: string,
-  ) => (
-    <Card key={zoneId ?? 'everywhere'}>
-      <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
-        <div className="flex min-w-0 flex-col">
-          <CardTitle>{title}</CardTitle>
-          {description && (
-            <span className="truncate text-xs text-muted-foreground">{description}</span>
-          )}
-        </div>
-        <Can I="create" a={Subject.DeliveryMethod}>
-          <Button size="sm" variant="outline" onClick={() => openCreate(zoneId)}>
-            <PlusIcon className="size-4" />
-            {t('admin.delivery_methods.add_option')}
-          </Button>
-        </Can>
-      </CardHeader>
-      <CardContent className="p-0">
-        {zoneMethods.length === 0 ? (
-          <p className="px-4 pb-4 text-sm text-muted-foreground">
-            {t('admin.delivery_methods.zone_empty')}
-          </p>
-        ) : (
-          <div className="divide-y border-t">{zoneMethods.map(methodRow)}</div>
-        )}
-      </CardContent>
-    </Card>
-  )
-
   return (
-    <div className="flex flex-col gap-4">
-      <PageHeader
-        title={t('admin.settings_nav.items.delivery_methods')}
+    <>
+      <ResourceTable<DeliveryMethod>
+        tableKey="delivery-methods"
+        queryKey="delivery-methods"
+        queryFn={(params) => adminClient.deliveryMethods.list(params)}
+        searchParams={search}
+        rowActions={(deliveryMethod) => (
+          <RowActions
+            actions={[
+              { key: 'edit', onSelect: () => openEdit(deliveryMethod.id) },
+              {
+                key: 'delete',
+                destructive: true,
+                visible: permissions.can('destroy', Subject.DeliveryMethod),
+                disabled: deleteMutation.isPending,
+                onSelect: () => handleDelete(deliveryMethod),
+              },
+            ]}
+          />
+        )}
         actions={
           <Can I="create" a={Subject.DeliveryMethod}>
-            <Button size="sm" onClick={() => openCreate()}>
+            <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
               <PlusIcon className="size-4" />
               {t('admin.delivery_methods.add_cta')}
             </Button>
           </Can>
         }
       />
-      {isLoading ? (
-        <div className="flex flex-col gap-4">
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
-        </div>
-      ) : (
-        <>
-          {zones.map((zone) =>
-            zoneCard(
-              zone.name,
-              zone.description ?? null,
-              allMethods.filter((method) => (method.delivery_zone_ids ?? []).includes(zone.id)),
-              zone.id,
-            ),
-          )}
-          {(zonelessMethods.length > 0 || zones.length === 0) &&
-            zoneCard(
-              t('admin.delivery_methods.everywhere'),
-              t('admin.delivery_methods.everywhere_hint'),
-              zonelessMethods,
-            )}
-        </>
-      )}
 
-      {isCreating && (
-        <CreateDeliveryMethodSheet
-          open
-          onOpenChange={(o) => !o && closeSheet()}
-          initialZoneId={search.zone}
-        />
-      )}
+      {isCreating && <CreateDeliveryMethodSheet open onOpenChange={(o) => !o && closeSheet()} />}
       {editId && (
         <EditDeliveryMethodSheet id={editId} open onOpenChange={(o) => !o && closeSheet()} />
       )}
-    </div>
+    </>
   )
 }
 
 function CreateDeliveryMethodSheet({
   open,
   onOpenChange,
-  initialZoneId,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
-  /** Pre-selects the zone when creating from a zone card's Add option. */
-  initialZoneId?: string
 }) {
   const { t } = useTranslation()
   const createMutation = useCreateDeliveryMethod()
   const form = useForm<DeliveryMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(deliveryMethodFormSchema) as any,
-    defaultValues: {
-      ...DELIVERY_METHOD_DEFAULTS,
-      delivery_zone_ids: initialZoneId ? [initialZoneId] : [],
-    },
+    defaultValues: DELIVERY_METHOD_DEFAULTS,
   })
 
   async function onSubmit(values: DeliveryMethodFormValues) {
@@ -650,7 +518,7 @@ function ProviderSelectField({
   name: 'fulfillment_provider' | 'rate_provider'
   label: string
   help: string
-  options: { value: string; label: string }[]
+  options: { value: string; label: string; disabled?: boolean }[]
 }) {
   return (
     <Field>
@@ -665,7 +533,7 @@ function ProviderSelectField({
             </SelectTrigger>
             <SelectContent>
               {options.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem key={option.value} value={option.value} disabled={option.disabled}>
                   {option.label}
                 </SelectItem>
               ))}
@@ -698,9 +566,15 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
     label: calculator.name,
   }))
 
+  // An unconnected carrier provider stays listed but unselectable, with a
+  // connect prompt below — hiding it would leave the merchant wondering
+  // where their carrier went.
   const providerOptions = (fulfillmentProviders?.data ?? []).map((provider) => ({
     value: provider.type,
-    label: provider.name,
+    label: provider.available
+      ? provider.name
+      : t('admin.delivery_methods.provider_needs_connection', { name: provider.name }),
+    disabled: !provider.available,
   }))
 
   const defaultRateProvider = rateProviders?.default ?? ''
@@ -708,24 +582,31 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
     () => (rateProviders?.data ?? []).filter((provider) => provider.available),
     [rateProviders],
   )
-  // Unconnected carrier providers surface as an inline connect hint instead
-  // of disappearing — the merchant connects the integration without leaving
-  // the form.
-  const unavailableRateProviders = useMemo(
-    () =>
-      (rateProviders?.data ?? []).filter(
-        (provider) => !provider.available && provider.integration_class,
-      ),
-    [rateProviders],
-  )
-  const rateProviderOptions = availableRateProviders.map((provider) => ({
-    value: provider.type,
-    label: provider.name,
-  }))
+  // Every installed shipping integration that isn't connected yet, straight
+  // from the integrations registry — a carrier gem is offered here even
+  // before it registers a provider, so the merchant never has to discover
+  // Settings → Integrations on their own.
   const { data: integrationTypes } = useIntegrationTypes()
+  const { data: connectedIntegrations } = useIntegrations()
+  const connectableIntegrations = useMemo(() => {
+    const connected = new Set(
+      (connectedIntegrations?.data ?? []).filter((row) => row.active).map((row) => row.type),
+    )
+    return (integrationTypes?.data ?? []).filter(
+      (type) => type.group === 'shipping' && !connected.has(type.type),
+    )
+  }, [integrationTypes, connectedIntegrations])
+  const rateProviderOptions = (rateProviders?.data ?? []).map((provider) => ({
+    value: provider.type,
+    label: provider.available
+      ? provider.name
+      : t('admin.delivery_methods.provider_needs_connection', { name: provider.name }),
+    disabled: !provider.available,
+  }))
   const [connectingType, setConnectingType] = useState<IntegrationTypeDefinition | null>(null)
   const queryClient = useQueryClient()
   const rateProvidersKey = useResourceKey('delivery-methods', 'rate-providers')
+  const fulfillmentProvidersKey = useResourceKey('delivery-methods', 'fulfillment-providers')
 
   // Providers declare which fulfillment types they handle, so the type field
   // offers only what the chosen providers can actually deliver — an empty
@@ -849,32 +730,26 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
         />
       )}
 
-      {unavailableRateProviders.map((provider) => {
-        const typeDefinition = (integrationTypes?.data ?? []).find(
-          (candidate) => candidate.type === provider.integration_class,
-        )
-        if (!typeDefinition) return null
-        return (
-          <div
-            key={provider.type}
-            className="flex items-center justify-between gap-3 rounded-md border border-dashed p-3"
-          >
-            <span className="text-sm text-muted-foreground">
-              {t('admin.delivery_methods.connect_provider_hint', { name: provider.name })}
-            </span>
-            <Can I="create" a={Subject.Integration}>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setConnectingType(typeDefinition)}
-              >
-                {t('admin.integrations.connect_cta')}
-              </Button>
-            </Can>
-          </div>
-        )
-      })}
+      {connectableIntegrations.map((integrationType) => (
+        <div
+          key={integrationType.type}
+          className="flex items-center justify-between gap-3 rounded-md border border-dashed p-3"
+        >
+          <span className="text-sm text-muted-foreground">
+            {t('admin.delivery_methods.connect_provider_hint', { name: integrationType.name })}
+          </span>
+          <Can I="create" a={Subject.Integration}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setConnectingType(integrationType)}
+            >
+              {t('admin.integrations.connect_cta')}
+            </Button>
+          </Can>
+        </div>
+      ))}
 
       {connectingType && (
         <ConfigureIntegrationSheet
@@ -883,9 +758,10 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
           onOpenChange={(next) => {
             if (next) return
             setConnectingType(null)
-            // The provider list is cached for half an hour — a fresh connect
-            // must surface the provider in the select immediately.
+            // Provider lists are cached for half an hour — a fresh connect
+            // must surface the provider in both selects immediately.
             queryClient.invalidateQueries({ queryKey: rateProvidersKey })
+            queryClient.invalidateQueries({ queryKey: fulfillmentProvidersKey })
           }}
         />
       )}

@@ -11,6 +11,10 @@ export interface FulfillmentProviderOption {
   type: string
   /** Human-readable name for display. */
   name: string
+  /** `Spree::Integration` subclass holding this provider's credentials, if any. */
+  integration_class: string | null
+  /** False when the provider's integration isn't connected for this store — connect it to enable the provider. */
+  available: boolean
   /** Fulfillment types this provider handles; empty means any type. */
   fulfillment_types: string[]
   /** Whether fulfillments handled by this provider ship to a customer address. */
