@@ -61,13 +61,17 @@ module SpreeStripe
       ActiveRecord::Base.connection
     end
 
-    # A payment method could be joined to several keys historically; the most
-    # recent one is the endpoint Stripe would be signing with today.
+    # A payment method could be joined to several keys historically. The most
+    # recently *linked* one is the endpoint Stripe signs with today — which is
+    # not always the newest key, since an older key could be linked later.
     def legacy_key_for(gateway)
-      key_ids = join_model.where(payment_method_id: gateway.id).order(:created_at).pluck(:webhook_key_id)
-      return if key_ids.empty?
+      join = join_model.
+             where(payment_method_id: gateway.id).
+             order(created_at: :desc, id: :desc).
+             first
+      return if join.nil?
 
-      key_model.where(id: key_ids).order(:created_at).last
+      key_model.find_by(id: join.webhook_key_id)
     end
 
     def key_model
