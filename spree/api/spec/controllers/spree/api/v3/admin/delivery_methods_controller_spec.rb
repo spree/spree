@@ -16,7 +16,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(response).to have_http_status(:ok)
       data = json_response['data'].find { |row| row['name'] == 'UPS Ground' }
       expect(data).to be_present
-      expect(data['fulfillment_type']).to eq('shipping')
+      expect(data['delivery_profile_id']).to be_present
       expect(data['calculator_type']).to be_present
     end
   end
@@ -34,24 +34,23 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
   end
 
   describe 'GET #fulfillment_providers' do
-    it 'lists registered providers with the fulfillment types they handle' do
+    it 'lists registered providers with their class predicates' do
       get :fulfillment_providers, params: {}, as: :json
 
       expect(response).to have_http_status(:ok)
       pickup = json_response['data'].find { |row| row['type'] == 'Spree::FulfillmentProvider::Pickup' }
       expect(pickup['name']).to eq('Pickup')
-      expect(pickup['fulfillment_types']).to eq(['pickup'])
+      expect(pickup['pickup']).to be true
       expect(pickup['requires_address']).to be false
 
       manual = json_response['data'].find { |row| row['type'] == 'Spree::FulfillmentProvider::Manual' }
-      expect(manual['fulfillment_types']).to eq([])
+      expect(manual['digital']).to be false
+      expect(manual['pickup']).to be false
       expect(manual['requires_address']).to be true
       # Providers without credentials are always available; carrier ones are
       # listed with available: false until their integration is connected.
       expect(manual['available']).to be true
       expect(manual['integration_class']).to be_nil
-
-      expect(json_response['fulfillment_types']).to eq(Spree.fulfillment_types)
     end
   end
 
@@ -134,16 +133,17 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
   describe 'POST #create' do
     let!(:zone) { create(:delivery_zone) }
 
-    it 'rejects an unregistered fulfillment type with 422' do
-      post :create, params: { name: 'Typo', fulfillment_type: 'pickpu' }, as: :json
+    it 'rejects a cross-store delivery profile with 404' do
+      other_store_profile = create(:delivery_profile, store: create(:store))
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      post :create, params: { name: 'Sneaky', delivery_profile_id: other_store_profile.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:not_found)
     end
 
     it 'persists the chosen fulfillment provider' do
       post :create, params: {
         name: 'Store pickup',
-        fulfillment_type: 'pickup',
         fulfillment_provider: 'Spree::FulfillmentProvider::Pickup'
       }, as: :json
 
@@ -151,20 +151,20 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(json_response['fulfillment_provider']).to eq('Spree::FulfillmentProvider::Pickup')
     end
 
-    it 'creates a delivery method with calculator and zones' do
+    it 'creates a delivery method with calculator and zone' do
       post :create, params: {
         name: 'Express',
-        fulfillment_type: 'shipping',
         storefront_visible: true,
         calculator_type: 'Spree::Calculator::Shipping::FlatRate',
         calculator_preferences: { amount: 12.5 },
-        delivery_zone_ids: [zone.prefixed_id]
+        delivery_zone_id: zone.prefixed_id
       }, as: :json
 
       expect(response).to have_http_status(:created)
       expect(json_response['name']).to eq('Express')
       expect(json_response['calculator_type']).to eq('Spree::Calculator::Shipping::FlatRate')
-      expect(json_response['delivery_zone_ids']).to eq([zone.prefixed_id])
+      expect(json_response['delivery_zone_id']).to eq(zone.prefixed_id)
+      expect(json_response['delivery_profile_id']).to be_present
 
       delivery_method = Spree::DeliveryMethod.find_by_prefix_id(json_response['id'])
       expect(delivery_method.calculator.preferred_amount).to eq(12.5)
@@ -173,12 +173,12 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'creates a pickup method without a calculator requirement' do
       post :create, params: {
         name: 'Store pickup',
-        fulfillment_type: 'pickup',
+        fulfillment_provider: 'Spree::FulfillmentProvider::Pickup',
         calculator_type: 'Spree::Calculator::Shipping::FlatRate'
       }, as: :json
 
       expect(response).to have_http_status(:created)
-      expect(json_response['fulfillment_type']).to eq('pickup')
+      expect(json_response['fulfillment_provider']).to eq('Spree::FulfillmentProvider::Pickup')
     end
 
     it 'assigns configured pickup locations' do
@@ -186,7 +186,7 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
 
       post :create, params: {
         name: 'Counter pickup',
-        fulfillment_type: 'pickup',
+        fulfillment_provider: 'Spree::FulfillmentProvider::Pickup',
         stock_location_ids: [location.prefixed_id]
       }, as: :json
 
@@ -197,7 +197,6 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
     it 'rejects unknown calculator types' do
       post :create, params: {
         name: 'Sneaky',
-        fulfillment_type: 'shipping',
         calculator_type: 'Kernel'
       }, as: :json
 

@@ -36,13 +36,13 @@ describe Spree::Product, type: :model do
   end
 
   describe 'delivery eligibility' do
-    # ShippingCategory is retired from behavior in 6.0 — eligibility comes
-    # from ProductType#fulfillment_types, and a typeless product still ships.
-    it 'comes from the product type, defaulting to physical shipping' do
-      expect(build(:product, product_type: nil).fulfillment_types).to eq ['shipping']
+    # Eligibility comes from the delivery profile; a product without one
+    # falls back to the store's default (physical) profile.
+    it 'comes from the delivery profile, defaulting to physical shipping' do
+      expect(create(:product)).not_to be_digital
 
-      digital = build(:product, product_type: build(:product_type, fulfillment_types: ['digital']))
-      expect(digital.fulfillment_types).to eq ['digital']
+      digital = create(:digital_product)
+      expect(digital.delivery_profile).to be_a(Spree::DeliveryProfiles::Digital)
       expect(digital).to be_digital
     end
   end
@@ -1298,18 +1298,16 @@ describe Spree::Product, type: :model do
     end
 
     describe '#digital?' do
-      context 'when the product type is digital-only' do
+      context 'when the product belongs to a digital profile' do
         let(:product) { create(:digital_product) }
 
         it { expect(product.digital?).to eq(true) }
-        it { expect(product.fulfillment_types).to eq(['digital']) }
       end
 
-      context 'when the product has no type' do
+      context 'when the product belongs to the default profile' do
         let(:product) { create(:product) }
 
         it { expect(product.digital?).to eq(false) }
-        it { expect(product.fulfillment_types).to eq(['shipping']) }
       end
     end
   end

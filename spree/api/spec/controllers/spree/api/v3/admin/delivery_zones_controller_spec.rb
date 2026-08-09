@@ -86,4 +86,32 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryZonesController, type: :controller
       expect(Spree::DeliveryZone.exists?(zone.id)).to be(false)
     end
   end
+
+  # The edit form replaces the full member set on save, so a GET that omits
+  # members would make the very next save wipe them (dashboard bug, 2026-08-09:
+  # the edit sheet fetched without expand and Save emptied the zone).
+  describe 'member round-trip' do
+    it 'returns members on show when expanded, and preserves them when echoed back' do
+      zone = create(:delivery_zone, store: store)
+      us = Spree::Country.find_by(iso: 'US') || create(:country_us)
+      de = Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany')
+      zone.members.create!(member_type: 'country', country: us)
+      zone.members.create!(member_type: 'country', country: de)
+
+      get :show, params: { id: zone.prefixed_id, expand: 'members' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      members = json_response['members']
+      expect(members.map { |member| member['country_iso'] }).to match_array(%w[US DE])
+
+      patch :update, params: {
+        id: zone.prefixed_id,
+        members: members.map { |member| { member_type: member['member_type'], country_iso: member['country_iso'] } }
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(zone.reload.members.count).to eq(2)
+    end
+  end
+
 end

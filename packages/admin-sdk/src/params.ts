@@ -472,6 +472,8 @@ export interface ProductCreateParams {
   slug?: string
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
+  /** Fulfillment profile deciding how this product ships (fp_...); null falls back to the store default. */
+  delivery_profile_id?: string | null
   category_ids?: Array<string>
   /**
    * Collections this product belongs to. Assigning an automatic collection
@@ -498,6 +500,8 @@ export interface ProductUpdateParams {
   slug?: string
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
+  /** See `ProductCreateParams.delivery_profile_id`. */
+  delivery_profile_id?: string | null
   category_ids?: Array<string>
   /** See `ProductCreateParams.collection_ids`. */
   collection_ids?: Array<string>
@@ -1031,8 +1035,8 @@ export interface ProductTypeCustomFieldDefinitionParams {
  */
 export interface ProductTypeCreateParams {
   name: string
-  /** Fulfillment types products of this type support (e.g. ['shipping', 'pickup']). */
-  fulfillment_types?: string[]
+  /** Fulfillment profile stamped onto products created with this type (fp_...); null leaves them on the store default. */
+  delivery_profile_id?: string | null
   /**
    * Option types seeded onto products that get this type. Editing them never
    * changes existing products — use `applyToProducts` for that.
@@ -1052,7 +1056,7 @@ export interface ProductTypeCreateParams {
  */
 export interface ProductTypeUpdateParams {
   name?: string
-  fulfillment_types?: string[]
+  delivery_profile_id?: string | null
   option_type_ids?: string[]
   category_ids?: string[]
   custom_field_definitions?: ProductTypeCustomFieldDefinitionParams[]
@@ -1151,6 +1155,8 @@ export interface ChannelCreateParams {
    * store-level preference.
    */
   preferred_guest_checkout?: boolean | null
+  /** Fulfillment-origin allowlist (sloc_...); replaces the full set. Empty means every store location serves this channel. */
+  stock_location_ids?: string[]
 }
 
 export interface ChannelUpdateParams {
@@ -1169,6 +1175,8 @@ export interface ChannelUpdateParams {
    * store-level preference.
    */
   preferred_guest_checkout?: boolean | null
+  /** Fulfillment-origin allowlist (sloc_...); replaces the full set. Empty means every store location serves this channel. */
+  stock_location_ids?: string[]
 }
 
 export interface CustomerGroupUpdateParams {
@@ -1711,13 +1719,43 @@ export interface PromotionRuleUpdateParams {
   customer_ids?: string[]
 }
 
+/**
+ * Creates or updates a delivery profile — the grouping that decides how a
+ * set of products ships (origins, zones, methods). `stock_location_ids` is a
+ * replace-set; empty means every store location.
+ */
+export interface DeliveryProfileParams {
+  name?: string
+  /** Registered profile kind (`shipping`, `digital`, extension kinds); create-only, defaults to shipping. */
+  kind?: string
+  /** Promotes this profile to the store default; the previous default is demoted. */
+  default?: boolean
+  position?: number
+  /** Prefixed stock location IDs (`sloc_...`); replaces the full set. Empty means every store location. */
+  stock_location_ids?: string[]
+}
+
+/**
+ * Creates or updates an origin group — the partition of a profile's
+ * fulfillment origins that its zones and methods hang off. `stock_location_ids`
+ * is a replace-set; empty means every store location.
+ */
+export interface DeliveryOriginGroupParams {
+  name?: string | null
+  position?: number
+  /** Prefixed stock location IDs (`sloc_...`); replaces the full set. Empty means every store location. */
+  stock_location_ids?: string[]
+}
+
 export interface DeliveryMethodParams {
   name?: string
   admin_name?: string | null
   code?: string | null
-  /** One of `shipping`, `digital`, `pickup` (see `deliveryMethods.fulfillmentProviders()`). */
-  fulfillment_type?: string
   fulfillment_provider?: string
+  /** Delivery profile this method belongs to (fp_...); defaults to the store default profile. */
+  delivery_profile_id?: string
+  /** Origin group offering this method (og_...); defaults to the zone's group, else the profile's default group. */
+  delivery_origin_group_id?: string
   pickup_point_provider?: string | null
   /**
    * Quoting strategy class name (see `deliveryMethods.rateProviders()`).
@@ -1731,13 +1769,11 @@ export interface DeliveryMethodParams {
   estimated_transit_business_days_max?: number | null
   /** Prefixed tax category ID (`taxcat_...`), or null to clear. */
   tax_category_id?: string | null
-  /** Product type prefixed ID (pt_...); drives fulfillment eligibility. */
-  product_type_id?: string | null
   /** Delivery calculator class name (see `deliveryMethods.calculators()`). */
   calculator_type?: string
   calculator_preferences?: Record<string, unknown>
-  /** Prefixed delivery zone IDs (`dz_...`); replaces the full set. */
-  delivery_zone_ids?: string[]
+  /** Prefixed delivery zone ID (`dz_...`) narrowing destinations, or null for no restriction. Must belong to the method's profile. */
+  delivery_zone_id?: string | null
   /**
    * Method-level percentage handling fee added on top of provider-quoted
    * rates. Ignored for calculator-priced methods.
@@ -1783,6 +1819,8 @@ export interface DeliveryZoneMemberParams {
 export interface DeliveryZoneParams {
   name?: string
   description?: string | null
+  /** Fulfillment profile this zone belongs to (fp_...); create-only, defaults to the store default profile. */
+  delivery_profile_id?: string
   /** Replaces the zone's full member set atomically. */
   members?: DeliveryZoneMemberParams[]
 }

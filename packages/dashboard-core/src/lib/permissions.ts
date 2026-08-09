@@ -34,6 +34,7 @@ export const Subject = {
   PaymentMethod: 'Spree::PaymentMethod',
   DeliveryMethod: 'Spree::DeliveryMethod',
   DeliveryZone: 'Spree::DeliveryZone',
+  DeliveryProfile: 'Spree::DeliveryProfile',
   /** @deprecated Use Subject.DeliveryMethod — removed in Spree 6.1. */
   ShippingMethod: 'Spree::ShippingMethod',
   StockLocation: 'Spree::StockLocation',

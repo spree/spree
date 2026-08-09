@@ -123,14 +123,14 @@ steps:
     notes: |
       Rewrites stored 'Spree::Shipment' class-name strings (state changes,
       stock movements, legacy adjustments), renames the terminal fulfillment
-      status 'shipped' -> 'fulfilled', backfills fulfillment_type and the
-      fulfillment provider on delivery methods (DigitalDelivery calculators
-      become digital + the Digital provider) and copies the type onto existing
-      fulfillments, assigns the Digital product type to products in
-      digital-only shipping categories, and converts display_on into the
-      storefront_visible boolean. Idempotent — the visibility conversion
-      clears display_on as it goes, so re-running never overwrites a
-      visibility change made in the admin after the upgrade.
+      status 'shipped' -> 'fulfilled', backfills the fulfillment provider on
+      delivery methods (DigitalDelivery calculators become the Digital
+      provider) and copies the provider-derived type onto existing
+      fulfillments, and converts display_on into the storefront_visible
+      boolean. Idempotent — the visibility conversion clears display_on as it
+      goes, so re-running never overwrites a visibility change made in the
+      admin after the upgrade. Digital shipping categories are handled by
+      migrate_delivery_profiles.
 
       BREAKING — product CSV: the 'shipping_category' column is gone from both
       import and export, replaced by 'product_type'. Update saved import
@@ -138,6 +138,26 @@ steps:
       ignored rather than rejected, so it imports without delivery
       eligibility. This task assigns types to existing digital products;
       new imports must carry 'product_type' themselves.
+
+  - id: migrate_delivery_profiles
+    name: "Promote shipping categories to delivery profiles"
+    task: "spree:migrate_delivery_profiles"
+    notes: |
+      The schema migration renames spree_shipping_categories to
+      spree_delivery_profiles in place, so 5.x product assignments carry
+      over without copying. This task makes the judgement calls: assigns each
+      legacy row its store (duplicating rows shared across stores), detects
+      digital categories (linked only to Digital-provider methods) as
+      Digital-kind profiles, folds categories that don't narrow the store's
+      method set into the store default profile, and moves each solely-linked
+      delivery method into its category's profile. A method linked to several
+      categories stays in the default profile with a loud warning — the
+      single-parent model cannot express the old m:n; recreate the method
+      inside the other profile if both links were intended. Run after
+      migrate_shipping_to_delivery (it reads the backfilled fulfillment
+      providers). Idempotent — processed rows gain a store_id and drop out of
+      the work set. spree_shipping_method_categories survives to 6.1 as the
+      source and rollback reference.
 
   - id: migrate_zones_to_delivery_zones
     name: "Convert delivery zones"

@@ -145,7 +145,6 @@ en:
         more_than: More than
         name: Name
         on_hand: On Hand
-        shipping_category: Shipping Category
         tax_category: Tax Category
       spree/product_type:
         name: Name
@@ -236,7 +235,6 @@ en:
       messages:
         blank: can't be blank
         must_apply_to_products: must be a custom field definition for products
-        unregistered_fulfillment_types: 'contains unregistered fulfillment types: %{types}'
       models:
         spree/allowed_origin:
           attributes:
@@ -343,10 +341,6 @@ en:
           attributes:
             amount:
               greater_than_allowed: is greater than the allowed amount.
-        spree/shipping_method:
-          attributes:
-            base:
-              required_shipping_category: You must select at least one shipping category
         spree/store:
           attributes:
             base:
@@ -492,9 +486,6 @@ en:
       spree/shipment:
         one: Shipment
         other: Shipments
-      spree/shipping_category:
-        one: Shipping Category
-        other: Shipping Categories
       spree/shipping_method:
         one: Shipping Method
         other: Shipping Methods
@@ -809,6 +800,9 @@ en:
     deleted: Deleted
     delivery: Delivery
     delivery_method_rule_types:
+      channel_rule:
+        description: Offers the delivery method only on the selected channels
+        name: Channel
       excluded_products_rule:
         description: Blocks the delivery method for packages containing the selected products
         name: Excluded products
@@ -878,6 +872,8 @@ en:
         cart_currency_mismatch: carts in different currencies cannot be merged
         channel_store_mismatch: must belong to the same store
         coupon_code_frozen_after_completion: coupon codes cannot be changed on a completed order — add a manual discount instead
+        delivery_zone_not_in_origin_group: must belong to the delivery method's origin group
+        delivery_zone_not_in_profile: must belong to the delivery method's delivery profile
         delivery_zone_postal_definition_required: postal code member requires a prefix or a from/to range
         delivery_zone_prefix_and_range_exclusive: cannot be combined with a from/to range
         delivery_zone_range_inverted: must be greater than or equal to postal_code_from
@@ -902,8 +898,9 @@ en:
         oidc_missing_code: The identity provider did not return an authorization code.
         oidc_requires_redirect: This provider requires signing in through its own login page.
         pickup_point_not_found: pickup point could not be found with this provider
+        profile_does_not_accept_provider: "%{provider} deliveries cannot join the %{profile} profile"
         promotion_discount_not_editable: promotion discounts are managed by recalculation and cannot be edited
-        provider_does_not_handle_fulfillment_type: "%{provider} does not handle %{fulfillment_type} fulfillments"
+        rate_provider_requires_shipping: "%{provider} quotes shipments, so this method must ship to an address"
         rate_provider_unavailable: is not available for this store — connect its integration first
         store_association_can_not_be_changed: The store association can not be changed
         store_is_already_set: Store is already set
@@ -1279,6 +1276,8 @@ en:
           description: Webhook endpoints and deliveries
           label: Webhooks
     phone: Phone
+    pickup:
+      store_pickup: Store Pickup
     policies: Policies
     powered_by: Powered by
     pre_tax_amount: Pre-Tax Amount
@@ -1455,6 +1454,8 @@ en:
     search_by: 'Search by:'
     security: Security
     seed:
+      delivery_profiles:
+        digital: Digital
       product_types:
         default: Default
         digital: Digital
@@ -1488,8 +1489,6 @@ en:
     shipped: Shipped
     shipping: Shipping
     shipping_address: Shipping Address
-    shipping_categories: Shipping Categories
-    shipping_category: Shipping Category
     shipping_flat_rate_per_item: Flat rate per package item
     shipping_flat_rate_per_order: Flat rate
     shipping_flexible_rate: Flexible Rate per package item

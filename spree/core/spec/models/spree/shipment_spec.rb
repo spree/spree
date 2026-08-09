@@ -36,7 +36,7 @@ describe Spree::Shipment, type: :model do
 
   describe '#digital?' do
     it 'returns true if the delivery method is digital' do
-      shipment.delivery_method.fulfillment_type = 'digital'
+      shipment.delivery_method.fulfillment_provider = 'Spree::FulfillmentProvider::Digital'
       expect(shipment.digital?).to eq(true)
     end
 

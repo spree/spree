@@ -52,12 +52,24 @@ module Spree
           def permitted_params
             attrs = params.permit(
               :name,
-              fulfillment_types: [],
+              :delivery_profile_id,
               option_type_ids: [],
               category_ids: [],
               custom_field_definitions: [:id, :required, :sort_order]
             )
+            attrs = scope_delivery_profile(attrs)
             scope_category_ids(attrs)
+          end
+
+          # The template profile must belong to this store — a cross-store id
+          # 404s instead of silently linking.
+          def scope_delivery_profile(attrs)
+            return attrs unless params.key?(:delivery_profile_id)
+
+            attrs[:delivery_profile] = if params[:delivery_profile_id].present?
+                                            current_store.delivery_profiles.accessible_by(current_ability, :show).find_by_prefix_id!(params[:delivery_profile_id])
+                                          end
+            attrs.except(:delivery_profile_id)
           end
 
           # `category_ids=` resolves prefixed ids with no store scoping, so a

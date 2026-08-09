@@ -4,8 +4,8 @@ module Spree
     # discovery and validation live on the delivery method's
     # PickupPointProvider; hand-over mechanics default to manual.
     class PickupPoint < Base
-      def self.fulfillment_types
-        ['pickup_point']
+      def self.pickup_point?
+        true
       end
 
       def requires_address?

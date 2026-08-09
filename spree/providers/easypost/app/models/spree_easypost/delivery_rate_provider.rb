@@ -13,9 +13,10 @@ module SpreeEasyPost
       SpreeEasyPost::PROVIDER_NAME
     end
 
-    # EasyPost quotes parcel carriers only.
-    def self.fulfillment_types
-      ['shipping']
+    # EasyPost quotes real parcel shipments, so it only prices methods that
+    # ship to an address.
+    def self.requires_address?
+      true
     end
 
     # Domestic destination + nominal parcel for the service-listing probe
@@ -79,6 +80,7 @@ module SpreeEasyPost
       rates.map do |rate|
         Spree::DeliveryRateProvider::Estimate.new(
           cost: rate.rate,
+          currency: rate.currency,
           carrier: rate.carrier,
           service_level: rate.service,
           estimated_delivery_date: rate.delivery_date,

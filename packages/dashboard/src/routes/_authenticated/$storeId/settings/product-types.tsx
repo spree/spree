@@ -38,6 +38,11 @@ import {
   FieldLabel,
   Input,
   RowActions,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -54,7 +59,7 @@ import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-ho
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
 import { categoryAutocompleteProps } from '../../../../hooks/use-categories'
-import { useFulfillmentProviders } from '../../../../hooks/use-delivery-methods'
+import { useDeliveryProfiles } from '../../../../hooks/use-delivery-profiles'
 import { optionTypeAutocompleteProps } from '../../../../hooks/use-option-types'
 import {
   useApplyProductTypeToProducts,
@@ -63,12 +68,12 @@ import {
   useProductType,
   useUpdateProductType,
 } from '../../../../hooks/use-product-types'
-import { FULFILLMENT_TYPES } from '../../../../schemas/delivery-method'
 import '../../../../tables/product-types'
 
 const productTypeFormSchema = z.object({
   name: z.string().min(1),
-  fulfillment_types: z.array(z.string()).min(1),
+  // Empty means products created with this type stay on the store default.
+  delivery_profile_id: z.string(),
   option_type_ids: z.array(z.string()),
   category_ids: z.array(z.string()),
   custom_field_definitions: z.array(
@@ -83,7 +88,7 @@ type ProductTypeFormValues = z.infer<typeof productTypeFormSchema>
 
 const PRODUCT_TYPE_DEFAULTS: ProductTypeFormValues = {
   name: '',
-  fulfillment_types: ['shipping'],
+  delivery_profile_id: '',
   option_type_ids: [],
   category_ids: [],
   custom_field_definitions: [],
@@ -93,6 +98,7 @@ const PRODUCT_TYPE_DEFAULTS: ProductTypeFormValues = {
 function withSortOrder(values: ProductTypeFormValues) {
   return {
     ...values,
+    delivery_profile_id: values.delivery_profile_id || null,
     custom_field_definitions: values.custom_field_definitions.map((row, index) => ({
       ...row,
       sort_order: index,
@@ -274,7 +280,7 @@ function EditProductTypeSheet({
     if (productType) {
       form.reset({
         name: productType.name,
-        fulfillment_types: productType.fulfillment_types ?? ['shipping'],
+        delivery_profile_id: productType.delivery_profile_id ?? '',
         option_type_ids: productType.option_type_ids ?? [],
         category_ids: productType.category_ids ?? [],
         custom_field_definitions: (productType.custom_field_definitions ?? []).map(
@@ -387,10 +393,14 @@ function ApplyToProductsSection({
 function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormValues> }) {
   const { t } = useTranslation()
   const { errors } = form.formState
-  const { data: fulfillmentProviders } = useFulfillmentProviders()
-  // Registry-driven: extension-registered types appear without a dashboard
-  // change; the shipped const only covers the pre-fetch render.
-  const registeredFulfillmentTypes = fulfillmentProviders?.fulfillment_types ?? FULFILLMENT_TYPES
+  const { data: deliveryProfiles } = useDeliveryProfiles()
+  const profileOptions = [
+    { value: '', label: t('admin.product_types.default_delivery_profile') },
+    ...(deliveryProfiles?.data ?? []).map((profile) => ({
+      value: profile.id,
+      label: profile.name,
+    })),
+  ]
 
   return (
     <FieldGroup>
@@ -412,44 +422,28 @@ function ProductTypeFormFields({ form }: { form: UseFormReturn<ProductTypeFormVa
       </Field>
 
       <Field>
-        <FieldLabel>{t('admin.fields.product_type.fulfillment_types.label')}</FieldLabel>
+        <FieldLabel>{t('admin.fields.product_type.delivery_profile_id.label')}</FieldLabel>
         <span className="text-muted-foreground text-xs">
-          {t('admin.fields.product_type.fulfillment_types.help')}
+          {t('admin.fields.product_type.delivery_profile_id.help')}
         </span>
         <Controller
-          name="fulfillment_types"
+          name="delivery_profile_id"
           control={form.control}
           render={({ field }) => (
-            <div className="flex flex-col gap-2">
-              {registeredFulfillmentTypes.map((fulfillmentType) => {
-                const checked = field.value.includes(fulfillmentType)
-                return (
-                  <label
-                    key={fulfillmentType}
-                    htmlFor={`fulfillment-type-${fulfillmentType}`}
-                    className="flex items-center gap-2 text-sm"
-                  >
-                    <Checkbox
-                      id={`fulfillment-type-${fulfillmentType}`}
-                      checked={checked}
-                      onCheckedChange={(next) => {
-                        field.onChange(
-                          next
-                            ? [...field.value, fulfillmentType]
-                            : field.value.filter((value) => value !== fulfillmentType),
-                        )
-                      }}
-                    />
-                    {t(`admin.delivery_methods.fulfillment_types.${fulfillmentType}`, {
-                      defaultValue: fulfillmentType,
-                    })}
-                  </label>
-                )
-              })}
-            </div>
+            <Select items={profileOptions} value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {profileOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
         />
-        <FieldError errors={[errors.fulfillment_types]} />
       </Field>
 
       <Field>

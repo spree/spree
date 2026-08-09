@@ -20,5 +20,24 @@ RSpec.describe Spree::Seeds::All do
       expect(Spree::RefundReason.where(store: store)).to exist
       expect(Spree::ProductType.where(store: store)).to exist
     end
+
+    it 'gives the seeded store a digital profile holding the digital delivery method' do
+      subject
+
+      store = Spree::Store.find_by(default: true)
+      profile = Spree::DeliveryProfiles::Digital.find_by(store: store)
+
+      expect(profile).to be_present
+      expect(profile.delivery_methods.map(&:fulfillment_provider)).to eq(['Spree::FulfillmentProvider::Digital'])
+    end
+
+    it 'gives the seeded store a pickup method with a collectable location' do
+      subject
+
+      store = Spree::Store.find_by(default: true)
+
+      expect(store.delivery_methods.select(&:pickup?)).to be_present
+      expect(store.stock_locations.where(pickup_enabled: true)).to exist
+    end
   end
 end

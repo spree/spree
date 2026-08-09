@@ -117,9 +117,6 @@ module Spree
           # counter, so the warehouse-sourced package is collectable.
           pickup_location.update!(pickup_stock_policy: 'any')
           no_address_cart = create(:cart_with_line_items, customer: user, store: store, ship_address: nil)
-          # Pickup is only offered when every item's product type supports it.
-          pickup_capable_type = create(:product_type, fulfillment_types: %w[shipping pickup])
-          no_address_cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_capable_type) }
 
           result = described_class.call(
             cart: no_address_cart,
@@ -129,7 +126,7 @@ module Spree
           expect(result).to be_success
           fulfillments = result.value.reload.fulfillments
           expect(fulfillments).to be_present
-          expect(fulfillments.flat_map(&:delivery_rates).map(&:delivery_method)).to all(have_attributes(fulfillment_type: 'pickup'))
+          expect(fulfillments.flat_map(&:delivery_rates).map(&:delivery_method)).to all(be_pickup)
         end
       end
 
@@ -775,11 +772,11 @@ module Spree
               phone: '555-0100'
             } }
         end
-        # no delivery method serves the pickup fulfillment type in this suite
-        let(:pickup_only_type) { create(:product_type, name: "Pickup #{SecureRandom.hex(4)}", fulfillment_types: ['pickup']) }
+        # a profile with no delivery methods cannot fulfill anything
+        let(:empty_profile) { create(:delivery_profile, store: store, name: "Empty #{SecureRandom.hex(4)}") }
 
         before do
-          cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_only_type) }
+          cart.line_items.each { |line_item| line_item.variant.product.update!(delivery_profile: empty_profile) }
           cart.reload
         end
 

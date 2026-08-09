@@ -468,54 +468,92 @@
       }
     },
     "delivery_methods": {
-      "add_cta": "Add delivery method",
       "add_sheet_title": "New delivery method",
+      "cards": {
+        "general": "General",
+        "pricing": "Pricing",
+        "providers": "Providers",
+        "zone": "Zone"
+      },
+      "carrier_services": {
+        "add_service": "Add service",
+        "all_hint": "Every service the carrier returns is offered, named by the carrier.",
+        "carrier": "Carrier",
+        "catalog_unavailable": "Could not list this carrier’s services ({{message}}). Enter carrier and service identifiers manually, or leave empty to offer everything the carrier quotes.",
+        "choose_specific": "Choose specific services",
+        "edit_service": "Edit {{service}}",
+        "label": "Carrier services",
+        "narrowed_hint": "Only the {{count}} selected services are offered.",
+        "offer_all": "Offer all services",
+        "service": "Service"
+      },
+      "collection_locations": {
+        "all": "All pickup-enabled locations",
+        "none_enabled": "No location accepts pickup yet — enable one on the delivery profile.",
+        "specific": "Specific locations",
+        "title": "Collection locations"
+      },
       "conditions": {
         "add": "Add condition",
-        "empty": "No conditions — this method is offered whenever its zones match.",
+        "empty": "No conditions — this method is offered wherever it applies.",
         "title": "Conditions"
       },
-      "create_description": "Configure how orders reach customers: shipping, digital delivery or pickup.",
+      "connect_provider_hint": "{{name}} can quote live carrier rates — connect it to enable.",
       "create_label": "Create delivery method",
       "delete_confirm": {
         "message": "Delete \"{{name}}\"? Storefronts will stop offering it immediately.",
         "title": "Delete delivery method"
       },
-      "edit_description": "Update this delivery method’s configuration.",
+      "detail": {},
       "edit_sheet_title": "Edit delivery method",
-      "empty": "No delivery methods yet.",
-      "fulfillment_types": {
-        "digital": "Digital",
-        "local_delivery": "Local delivery",
-        "pickup": "Pickup",
-        "pickup_point": "Pickup point",
-        "shipping": "Shipping"
-      },
+      "free": "Free",
       "messages": {
         "created": "Delivery method created",
         "deleted": "Delivery method deleted",
         "updated": "Delivery method updated"
       },
-      "no_zones_hint": "No delivery zones defined yet — the method applies everywhere.",
-      "pickup_locations_hint": "No selection means every pickup-enabled stock location is offered.",
-      "search_placeholder": "Search delivery methods…",
-      "connect_provider_hint": "{{name}} can quote live carrier rates — connect it to enable.",
-      "carrier_services": {
-        "label": "Carrier services",
-        "all_hint": "Every service the carrier returns is offered, named by the carrier.",
-        "narrowed_hint": "Only the {{count}} selected services are offered.",
-        "add_service": "Add service",
-        "carrier": "Carrier",
-        "service": "Service",
-        "custom_label": "Custom label for {{service}}",
-        "catalog_unavailable": "Could not list this carrier’s services ({{message}}). Enter carrier and service identifiers manually, or leave empty to offer everything the carrier quotes."
+      "no_zone_restriction": "No restriction",
+      "pricing": {
+        "amount_in_currency": "Amount in {{currency}}",
+        "currency_amounts_help": "Currencies left blank are not offered this delivery method."
       },
-      "provider_needs_connection": "Connect {{name}} to use it"
+      "provider_needs_connection": "Connect {{name}} to use it",
+      "rule_summary": {
+        "separator": " · ",
+        "total_between": "{{min}}–{{max}}",
+        "total_max": "Under {{max}}",
+        "total_min": "{{min}} and up",
+        "weight_between": "{{min}}–{{max}}{{unit}}",
+        "weight_max": "Under {{max}}{{unit}}",
+        "weight_min": "{{min}}{{unit}} and up"
+      }
+    },
+    "delivery_origin_groups": {
+      "delete_confirm": {
+        "message": "Delete \"{{name}}\"? Move its zones and methods to another group first.",
+        "title": "Delete origin group"
+      },
+      "edit_description": "Rename this group or change which locations it ships from.",
+      "edit_title": "Edit origin group",
+      "messages": {
+        "created": "Origin group created",
+        "deleted": "Origin group deleted",
+        "updated": "Origin group updated"
+      },
+      "no_locations_hint": "Select at least one location, or choose all locations.",
+      "ships_from": "Ships from: {{locations}}",
+      "ships_from_all": "Ships from all locations",
+      "ships_from_label": "Ships from",
+      "split_cta": "Split shipping origins",
+      "split_description": "Ship the same products from a second warehouse with its own zones and rates.",
+      "split_title": "Split shipping origins"
     },
     "delivery_zones": {
+      "add_countries_in_markets": "Add more countries in Markets",
       "add_cta": "Add delivery zone",
-      "add_member": "Add member",
+      "add_postal_rule": "Add rule",
       "add_sheet_title": "New delivery zone",
+      "all_states": "All states",
       "create_description": "Group countries, states or postal codes into an area served by delivery methods.",
       "create_label": "Create delivery zone",
       "delete_confirm": {
@@ -524,26 +562,34 @@
       },
       "edit_description": "Members below replace the zone’s full member list on save.",
       "edit_sheet_title": "Edit delivery zone",
-      "empty": "No delivery zones yet.",
       "from_placeholder": "From",
-      "member_types": {
-        "country": "Country",
-        "postal_code": "Postal code",
-        "state": "State"
-      },
-      "members_column": "Members",
-      "members_count": "{{count}} members",
+      "in_another_zone": "In another zone",
+      "member_separator": ", ",
+      "members_more_one": "{{count}} more",
+      "members_more_other": "{{count}} more",
       "messages": {
         "created": "Delivery zone created",
         "deleted": "Delivery zone deleted",
         "updated": "Delivery zone updated"
       },
-      "no_members_hint": "No members yet — add countries, states or postal code rules.",
+      "no_postal_rules_hint": "No postal code rules yet.",
+      "no_regions_found": "No countries match your search.",
+      "no_states": "This country has no states.",
+      "not_in_any_market": "Not in any market",
+      "postal_rules_count_one": "{{count}} rule",
+      "postal_rules_count_other": "{{count}} rules",
+      "postal_rules_title": "Postal code rules",
       "prefix_placeholder": "Prefix",
-      "search_placeholder": "Search delivery zones…",
+      "region_search_placeholder": "Search countries and regions to ship to",
+      "regions_title": "Countries and regions",
+      "remove_postal_rule": "Remove rule",
       "select_country": "Select country",
-      "state_placeholder": "State code or name",
-      "to_placeholder": "To"
+      "selection_summary": "{{countries}} countries, {{states}} states, {{rules}} postal code rules",
+      "states_selected_one": "{{count}} state",
+      "states_selected_other": "{{count}} states",
+      "states_summary": "{{selected}} of {{total}} states",
+      "to_placeholder": "To",
+      "toggle_states": "Show states of {{country}}"
     },
     "errors": {
       "forbidden_description": "You don’t have permission to view this page.",
@@ -591,6 +637,13 @@
         "default": {
           "help": "Exactly one channel per store is the default. Used as the fallback when no channel is selected and as the auto-publish target for new products.",
           "label": "Default channel"
+        },
+        "fulfillment_locations": {
+          "all": "All locations",
+          "help": "Which warehouses and pickup counters fulfill orders placed on this sales channel.",
+          "label": "Fulfillment locations",
+          "none_selected_hint": "Pick at least one location, or choose \"All locations\".",
+          "selected": "Selected locations"
         },
         "guest_checkout": {
           "help": "Whether shoppers can check out without an account on this channel. Leave blank to inherit the store setting.",
@@ -711,22 +764,27 @@
         "code": {
           "label": "Code"
         },
-        "delivery_zones": {
-          "label": "Delivery zones"
+        "delivery_zone": {
+          "help": "Where this method is offered. Without a zone it applies wherever the profile reaches.",
+          "label": "Delivery zone"
         },
         "fulfillment_provider": {
           "help": "How fulfillments for this method are dispatched and tracked.",
           "label": "Fulfillment provider"
         },
-        "fulfillment_type": {
-          "label": "Fulfillment type"
+        "markup_flat": {
+          "label": "Markup (flat)"
+        },
+        "markup_percent": {
+          "help": "Handling fee added on top of carrier rates. Per-service values override these defaults.",
+          "label": "Markup %"
         },
         "rate_provider": {
-          "label": "Rate provider",
-          "help": "Where this method's prices come from. The built-in provider prices with the calculator below; carrier providers quote live rates."
+          "help": "Where this method's prices come from. The built-in provider prices with the calculator below; carrier providers quote live rates.",
+          "label": "Rate provider"
         },
-        "pickup_locations": {
-          "label": "Pickup locations"
+        "service_label": {
+          "label": "Custom label"
         },
         "storefront_visible": {
           "help": "Customers can select this method at checkout."
@@ -742,16 +800,33 @@
         },
         "transit_days_min": {
           "label": "Transit days (min)"
+        }
+      },
+      "delivery_origin_group": {
+        "name": {
+          "help": "Leave blank to call this group \"All locations\".",
+          "label": "Name"
+        }
+      },
+      "delivery_profile": {
+        "capabilities": {
+          "label": "Capabilities"
         },
-        "markup_percent": {
-          "label": "Markup %",
-          "help": "Handling fee added on top of carrier rates. Per-service values override these defaults."
+        "kind": {
+          "help": "Decides which fulfillment providers this profile’s methods can use.",
+          "label": "Kind"
         },
-        "markup_flat": {
-          "label": "Markup (flat)"
+        "methods_count": {
+          "label": "Methods"
         },
-        "service_label": {
-          "label": "Custom label"
+        "origins": {
+          "label": "Ships from"
+        },
+        "products_count": {
+          "label": "Products"
+        },
+        "zones_count": {
+          "label": "Zones"
         }
       },
       "gift_card": {
@@ -984,6 +1059,10 @@
         "discontinue_on": {
           "label": "Discontinue on"
         },
+        "delivery_profile_id": {
+          "help": "Decides which zones and delivery methods reach this product.",
+          "label": "Shipping profile"
+        },
         "make_active_at": {
           "label": "Make active at"
         },
@@ -1021,9 +1100,9 @@
           "label": "Custom fields",
           "required": "Required"
         },
-        "fulfillment_types": {
-          "help": "How products of this type can be delivered — shipping, store pickup, pickup point, or digital.",
-          "label": "Fulfillment types"
+        "delivery_profile_id": {
+          "help": "Stamped onto products created with this type. Changing it never moves products that already carry the type.",
+          "label": "Shipping profile template"
         },
         "name": {
           "placeholder": "e.g. T-Shirt"
@@ -1188,6 +1267,17 @@
           "label": "Admin language",
           "placeholder": "Use the default language"
         },
+        "preferred_default_package_dimensions": {
+          "height": "Height",
+          "help": "The box you usually ship in, used by carrier rate providers for dimensional-weight pricing — inches for imperial, centimeters for metric. All three are needed to take effect.",
+          "label": "Default package dimensions",
+          "length": "Length",
+          "width": "Width"
+        },
+        "preferred_default_package_weight": {
+          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable.",
+          "label": "Default package weight"
+        },
         "preferred_send_consumer_transactional_emails": {
           "help": "When off, no order confirmation, shipping, or refund emails are sent.",
           "label": "Send transactional emails to customers"
@@ -1201,17 +1291,6 @@
         },
         "preferred_weight_unit": {
           "label": "Weight unit"
-        },
-        "preferred_default_package_weight": {
-          "label": "Default package weight",
-          "help": "Packaging weight (box and filler) added to every package's contents when calculating delivery rates. Set to 0 to disable."
-        },
-        "preferred_default_package_dimensions": {
-          "label": "Default package dimensions",
-          "length": "Length",
-          "width": "Width",
-          "height": "Height",
-          "help": "The box you usually ship in, used by carrier rate providers for dimensional-weight pricing — inches for imperial, centimeters for metric. All three are needed to take effect."
         },
         "storefront_access": {
           "help": "Store-wide default for what anonymous visitors can see. Channels can override this. When prices are hidden, guests must sign in to check out.",
@@ -1321,6 +1400,67 @@
         }
       }
     },
+    "delivery_profiles": {
+      "add_cta": "Add profile",
+      "add_dialog_title": "New delivery profile",
+      "all_locations": "All locations",
+      "capabilities": {
+        "digital": "Digital",
+        "pickup": "Pickup",
+        "ships": "Ships"
+      },
+      "create_description": "Group products that ship the same way, with their own locations, zones and delivery methods.",
+      "create_label": "Create profile",
+      "default_badge": "Default",
+      "default_confirm": {
+        "message": "Products without a profile of their own will start shipping on “{{name}}”.",
+        "title": "Make this the default profile"
+      },
+      "delete_confirm": {
+        "message": "Delete “{{name}}”? Its zones and delivery methods go with it.",
+        "title": "Delete shipping profile"
+      },
+      "detail": {
+        "add_digital_method": "Add digital method",
+        "add_method": "Add method",
+        "collect_from": "Collect from",
+        "collect_from_hint": "Locations customers can collect from. Changes take effect immediately.",
+        "delete_label": "Delete profile",
+        "digital_empty": "No digital delivery method yet.",
+        "digital_hint": "Delivered without shipping or collection.",
+        "digital_title": "Digital delivery",
+        "general_title": "General",
+        "hidden_badge": "Hidden",
+        "load_failed_title": "Could not load this shipping profile",
+        "no_methods": "No delivery methods here yet.",
+        "no_stock_locations": "No locations yet — add one under Settings → Locations.",
+        "no_zone_hint": "These methods are offered wherever this profile reaches.",
+        "no_zone_title": "No zone restriction",
+        "no_zones": "No zones yet — add one to start offering delivery methods.",
+        "offer_pickup": "Offer pickup",
+        "origins_title": "Ships from",
+        "pickup_empty": "No pickup method yet — customers cannot collect orders on this profile.",
+        "pickup_hint": "Customers collect these orders in person. Pickup has no destination, so zones do not apply.",
+        "pickup_title": "Pickup",
+        "zones_title": "Zones and delivery methods"
+      },
+      "empty": "No delivery profiles yet.",
+      "is_default_hint": "Products without a profile of their own ship on this one.",
+      "kind_immutable_hint": "The kind is fixed when the profile is created.",
+      "kinds": {
+        "digital": "Digital",
+        "shipping": "Shipping"
+      },
+      "locations_count": "{{count}} locations",
+      "make_default": "Make default",
+      "messages": {
+        "created": "Shipping profile created",
+        "deleted": "Shipping profile deleted",
+        "updated": "Shipping profile updated"
+      },
+      "search_placeholder": "Search delivery profiles…",
+      "selected_locations": "Selected locations"
+    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "No batches match",
@@ -1417,6 +1557,50 @@
         "products": "Products"
       },
       "wizard_title": "Import"
+    },
+    "integrations": {
+      "active_toggle": {
+        "help": "Activation verifies the connection and makes the integration available to providers.",
+        "label": "Active"
+      },
+      "configure_cta": "Configure",
+      "connect_cta": "Connect",
+      "connect_description": "Enter the credentials for this provider. Saving stores them; switching it active verifies the connection.",
+      "description": "Connect provider services to this store. Credentials are stored per store and used by delivery, tax and other providers.",
+      "disconnect": "Disconnect",
+      "disconnect_confirm": {
+        "message": "Disconnect {{name}}? Its stored credentials are deleted and providers using it stop working.",
+        "title": "Disconnect integration"
+      },
+      "edit_description": "Update credentials or activation. Secret values are masked; leave them unchanged to keep the stored secret.",
+      "empty": {
+        "description": "Integrations ship with provider extensions. Install a provider gem and its integrations appear here.",
+        "title": "No integrations installed"
+      },
+      "groups": {
+        "other": "Other",
+        "shipping": "Shipping",
+        "tax": "Tax"
+      },
+      "messages": {
+        "connected": "Integration connected",
+        "disconnected": "Integration disconnected",
+        "updated": "Integration updated"
+      },
+      "status": {
+        "active": "Active",
+        "connected_inactive": "Connected (inactive)",
+        "not_connected": "Not connected"
+      },
+      "test": {
+        "failure": "Connection failed.",
+        "label": "Connection",
+        "run": "Test connection",
+        "success": "Connection successful.",
+        "testing": "Testing…"
+      },
+      "title": "Integrations",
+      "view_cta": "View"
     },
     "invitation": {
       "accepting": "Accepting…",
@@ -2360,11 +2544,11 @@
           "search_placeholder": "Search stock locations…"
         },
         "store": {
+          "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "subtitle": "General configuration and store-wide defaults.",
+          "tab_default_package": "Default package",
           "tab_general": "General",
           "tab_standards": "Standards and formats",
-          "tab_default_package": "Default package",
-          "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "tab_storefront_access": "Storefront access",
           "title": "Store settings"
         },
@@ -2681,6 +2865,8 @@
       },
       "create_description": "Group products and define how they can be delivered.",
       "create_label": "Create product type",
+      "custom_delivery_profile": "Custom",
+      "default_delivery_profile": "Store default profile",
       "delete_confirm": {
         "message": "Are you sure you want to delete “{{name}}”? Types still used by products cannot be deleted.",
         "title": "Delete product type"
@@ -2823,6 +3009,11 @@
       },
       "variants": {
         "add_option": "Add option",
+        "bulk_edit": {
+          "grid_aria": "Variant bulk edit spreadsheet",
+          "title": "Bulk edit variants",
+          "trigger": "Bulk edit"
+        },
         "create_option_type": "Create new option type",
         "create_option_type_title": "New option type",
         "create_value": "New value",
@@ -2847,12 +3038,7 @@
           "tax_category_placeholder": "Inherit from product"
         },
         "title": "Variants",
-        "variant_label": "Variant",
-        "bulk_edit": {
-          "trigger": "Bulk edit",
-          "title": "Bulk edit variants",
-          "grid_aria": "Variant bulk edit spreadsheet"
-        }
+        "variant_label": "Variant"
       }
     },
     "promotions": {
@@ -3202,12 +3388,11 @@
         "allowed_origins": "Allowed origins",
         "api_keys": "API keys",
         "channels": "Sales channels",
-        "integrations": "Integrations",
         "custom_field_definitions": "Custom fields",
-        "delivery_methods": "Delivery methods",
-        "delivery_zones": "Delivery zones",
+        "delivery_profiles": "Delivery profiles",
         "emails": "Emails",
         "imports": "Imports",
+        "integrations": "Integrations",
         "markets": "Markets",
         "payment_methods": "Payment methods",
         "product_types": "Product types",
@@ -3384,50 +3569,6 @@
       "saved": "Translations saved",
       "source": "Source",
       "title": "Translations"
-    },
-    "integrations": {
-      "title": "Integrations",
-      "description": "Connect provider services to this store. Credentials are stored per store and used by delivery, tax and other providers.",
-      "empty": {
-        "title": "No integrations installed",
-        "description": "Integrations ship with provider extensions. Install a provider gem and its integrations appear here."
-      },
-      "status": {
-        "active": "Active",
-        "connected_inactive": "Connected (inactive)",
-        "not_connected": "Not connected"
-      },
-      "connect_cta": "Connect",
-      "configure_cta": "Configure",
-      "view_cta": "View",
-      "connect_description": "Enter the credentials for this provider. Saving stores them; switching it active verifies the connection.",
-      "edit_description": "Update credentials or activation. Secret values are masked; leave them unchanged to keep the stored secret.",
-      "active_toggle": {
-        "label": "Active",
-        "help": "Activation verifies the connection and makes the integration available to providers."
-      },
-      "test": {
-        "label": "Connection",
-        "run": "Test connection",
-        "testing": "Testing…",
-        "success": "Connection successful.",
-        "failure": "Connection failed."
-      },
-      "disconnect": "Disconnect",
-      "disconnect_confirm": {
-        "title": "Disconnect integration",
-        "message": "Disconnect {{name}}? Its stored credentials are deleted and providers using it stop working."
-      },
-      "messages": {
-        "connected": "Integration connected",
-        "updated": "Integration updated",
-        "disconnected": "Integration disconnected"
-      },
-      "groups": {
-        "shipping": "Shipping",
-        "tax": "Tax",
-        "other": "Other"
-      }
     }
   }
 }

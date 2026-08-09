@@ -36,7 +36,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Creates a delivery method. fulfillment_type is one of shipping, digital, pickup.'
+      description 'Creates a delivery method inside a delivery profile (defaults to the store default profile). Delivery behavior comes from the fulfillment provider.'
       admin_scope :write, :settings
 
       admin_sdk_example 'delivery-methods/create'
@@ -49,7 +49,8 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           name: { type: :string, example: 'Express' },
           admin_name: { type: :string, nullable: true },
           code: { type: :string, nullable: true },
-          fulfillment_type: { type: :string, enum: %w[shipping digital pickup], example: 'shipping' },
+          fulfillment_provider: { type: :string, nullable: true, example: 'Spree::FulfillmentProvider::Manual' },
+          delivery_profile_id: { type: :string, nullable: true, example: 'fp_86Rf07xd4z' },
           storefront_visible: { type: :boolean, example: true },
           tracking_url: { type: :string, nullable: true },
           estimated_transit_business_days_min: { type: :integer, nullable: true },
@@ -57,7 +58,7 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
           tax_category_id: { type: :string, nullable: true },
           calculator_type: { type: :string, example: 'Spree::Calculator::Shipping::FlatRate' },
           calculator_preferences: { type: :object, example: { amount: 12.5 } },
-          delivery_zone_ids: { type: :array, items: { type: :string } }
+          delivery_zone_id: { type: :string, nullable: true }
         },
         required: %w[name]
       }
@@ -66,7 +67,6 @@ RSpec.describe 'Admin Delivery Settings API', type: :request, swagger_doc: 'api-
         let(:body) do
           {
             name: 'Express',
-            fulfillment_type: 'shipping',
             storefront_visible: true,
             calculator_type: 'Spree::Calculator::Shipping::FlatRate',
             calculator_preferences: { amount: 12.5 }

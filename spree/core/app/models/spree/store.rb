@@ -135,6 +135,13 @@ module Spree
 
     has_many :delivery_zones, class_name: 'Spree::DeliveryZone', dependent: :destroy
     has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: :nullify
+    has_many :delivery_profiles, class_name: 'Spree::DeliveryProfile', dependent: :destroy
+    has_many :delivery_origin_groups, through: :delivery_profiles, class_name: 'Spree::DeliveryOriginGroup'
+
+    # @return [Spree::DeliveryProfile, nil]
+    def default_delivery_profile
+      Spree::DeliveryProfile.default_for(self)
+    end
     has_many :stock_locations, class_name: 'Spree::StockLocation', dependent: :nullify
     has_many :promotions, class_name: 'Spree::Promotion', dependent: :nullify
 
@@ -199,6 +206,7 @@ module Spree
     before_validation :normalize_preferred_storefront_url
     before_save :ensure_default_exists_and_is_unique
     after_create :create_default_policies
+    after_create :create_default_delivery_profile
 
     #
     # Scopes
@@ -348,9 +356,9 @@ module Spree
     #
     # @return [ActiveRecord::Relation<Spree::Country>]
     def countries_with_shipping_coverage
-      return Spree::Country.order(:name) if Spree::DeliveryMethod.where.missing(:delivery_method_zones).exists?
+      return Spree::Country.order(:name) if Spree::DeliveryMethod.where(delivery_zone_id: nil).exists?
 
-      zone_ids = Spree::DeliveryMethodZone.select(:delivery_zone_id)
+      zone_ids = Spree::DeliveryMethod.where.not(delivery_zone_id: nil).select(:delivery_zone_id)
       members = Spree::DeliveryZoneMember.where(delivery_zone_id: zone_ids)
 
       country_ids = members.where(member_type: %w[country postal_code]).select(:country_id)
@@ -379,6 +387,12 @@ module Spree
     end
 
     private
+
+    # Products without a profile fall back to this one, so it must exist
+    # from the store's first moment.
+    def create_default_delivery_profile
+      Spree::DeliveryProfiles::Shipping.create!(store: self, name: 'General', default: true)
+    end
 
     def create_default_policies
       Spree::Events.disable do

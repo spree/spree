@@ -537,8 +537,8 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
         cart.update!(email: 'customer@example.com', ship_address: address)
         cart.fulfillments.delete_all
         # Give the products a fulfillment type no delivery method serves.
-        unserved_type = create(:product_type, name: 'Pickup Only', fulfillment_types: ['pickup'])
-        cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: unserved_type) }
+        unserved_profile = create(:delivery_profile, store: store, name: "Unserved #{SecureRandom.hex(4)}")
+        cart.line_items.each { |line_item| line_item.variant.product.update!(delivery_profile: unserved_profile) }
         cart.reload
 
         get :show, params: { id: cart.prefixed_id }
@@ -637,11 +637,11 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
     context 'when a line item cannot be delivered to the address' do
       let(:address) { user.addresses.first || create(:address, user: user, country: country, state: us_state) }
-      let(:unserved_type) { create(:product_type, name: 'Pickup Only', fulfillment_types: ['pickup']) }
+      let(:unserved_profile) { create(:delivery_profile, store: store, name: "Unserved #{SecureRandom.hex(4)}") }
 
       before do
         order.update!(email: 'customer@example.com')
-        order.line_items.each { |line_item| line_item.variant.product.update!(product_type: unserved_type) }
+        order.line_items.each { |line_item| line_item.variant.product.update!(delivery_profile: unserved_profile) }
       end
 
       it 'returns ok with a delivery_unavailable warning, an unmet delivery requirement, and no fulfillments' do

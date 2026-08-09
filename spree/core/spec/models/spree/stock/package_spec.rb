@@ -98,13 +98,13 @@ module Spree
         expect(item.quantity).to eq 1
       end
 
-      # Replaces the ShippingCategory intersection (#2804) with the 6.0
-      # fulfillment-type eligibility semantics.
+      # Candidate methods are exactly the package's delivery profile's —
+      # the profile splitter guarantees homogeneous packages.
       describe '#eligible_delivery_methods' do
         let!(:shipping_dm) { create(:delivery_method) }
         let!(:digital_dm) { create(:digital_delivery_method) }
 
-        it 'returns methods whose fulfillment type every item supports' do
+        it 'returns the methods of the items resolved profile' do
           variant1 = create(:product).default_variant
           variant2 = create(:product).default_variant
           contents = [ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
@@ -114,14 +114,12 @@ module Spree
           expect(package.eligible_delivery_methods).to eq([shipping_dm])
         end
 
-        it 'returns nothing when the items share no fulfillment type' do
-          physical = create(:product).default_variant
+        it 'returns the digital profile methods for a digital package' do
           digital = create(:digital_product).default_variant
-          contents = [ContentItem.new(build(:inventory_unit, variant_id: physical.id)),
-                      ContentItem.new(build(:inventory_unit, variant_id: digital.id))]
+          contents = [ContentItem.new(build(:inventory_unit, variant_id: digital.id))]
 
           package = Package.new(stock_location, contents)
-          expect(package.eligible_delivery_methods).to be_empty
+          expect(package.eligible_delivery_methods).to eq([digital_dm])
         end
 
         # Per-product exclusions moved to DeliveryMethodRules::ExcludedProductsRule,

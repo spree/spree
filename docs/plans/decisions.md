@@ -59,26 +59,73 @@ never in metadata.
 
 Plan: `docs/plans/6.0-consolidate-metadata-columns.md`.
 
+## 2026-08-09: Origin groups and per-currency delivery pricing in 6.0
+
+Two same-day additions to the delivery-profiles model, both Damian-approved
+mid-review of PR #14404.
+
+**`Spree::DeliveryOriginGroup` (pulled forward from the 6.1 open
+question).** Zones are per-profile (the profile-based platforms' shape;
+sharing across profiles was considered and rejected — editing a shared zone
+would silently change other profiles' coverage). Within a profile, origin
+groups partition the fulfillment origins: every zone and method belongs to
+one group, so "same products, different warehouse, different rates" is one
+profile with two groups instead of hand-narrowed method duplicates. The
+auto-created nameless default group (no members = all locations) keeps the
+layer invisible for single-origin stores. The profile ↔ stock-location join
+is replaced by group membership (profile coverage = union of its groups);
+per-method ships-from narrowing retires for shipping methods, and
+`DeliveryMethodStockLocation` stays pickup-only (collection counters).
+Admin API: nested origin_groups CRUD under delivery_profiles; the
+profile-level `stock_location_ids` shorthand reads/writes the default
+group.
+
+**Per-currency delivery pricing (kills method-per-currency).** Amount-based
+shipping calculators (FlatRate, PerItem, DigitalDelivery) gain an `amounts`
+hash — one explicit amount per currency, no FX, mirroring product prices;
+a currency without an amount hides the method for those carts. The legacy
+single `amount`+`currency` pair stays as the fallback for its own currency,
+so upgraded 5.x stores quote unchanged. Percent calculators are
+currency-agnostic and drop the currency gate; PriceSack/FlexiRate keep
+strict single-currency matching. The Estimator consults
+`calculator.supports_currency?` instead of exact-matching the currency
+preference. Carrier quotes: `DeliveryRateProvider::Estimate` gains
+`currency`, EasyPost passes the carrier's `rate.currency` through, and the
+Estimator drops estimates quoted in another currency than the cart's — a
+number in the wrong currency must never reach checkout (EasyPost has no
+quote-currency parameter; multi-currency carrier setups use
+per-currency carrier accounts). The pricing card renders one amount per
+supported store currency; the default currency maps to the legacy amount
+preference.
+
 ## 2026-08-09: Fulfillment profiles — ShippingCategory promoted, not removed
 
 Reverses three recorded decisions inside the 6.0 window: "fulfillment types
 are NOT a model", "named delivery groups are the 6.1-if-needed successor to
 profiles" (both `6.0-fulfillment-and-delivery.md`), and live-by-reference
 `fulfillment_types` on ProductType (`6.0-product-types.md`). Full design in
-`6.0-fulfillment-profiles.md`.
+`6.0-delivery-profiles.md`.
 
-**The model.** `Spree::FulfillmentProfile` — store-scoped, one default per
-store — groups products for delivery: profile ↔ stock locations (origins,
-empty = all), profile → delivery zones (destinations), profile → delivery
-methods (each with a `modality` — the renamed `fulfillment_type` column —
-an optional single zone, and optional ships-from narrowing via the
-generalized method↔location join). Products carry `fulfillment_profile_id`
-directly; ProductType stamps its template profile at creation and never
-manages it afterwards. Carts split per profile; capabilities derive
-(`digital?`, pickupable, address requirement) from the profile's methods
-instead of being declared product-side. A location-group layer was
-considered and dropped — per-method narrowing covers multi-origin stores,
-and groups can arrive additively later.
+**The model.** `Spree::DeliveryProfile` — store-scoped STI, one default
+per store, kinds registered via `Spree.delivery_profile_types`
+(`DeliveryProfiles::Shipping` default, `::Digital`) — groups products
+for delivery: profile ↔ stock locations (origins, empty = all), profile →
+delivery zones (destinations), profile → delivery methods (each with an
+optional single zone and optional ships-from narrowing via the generalized
+method↔location join). Products carry `delivery_profile_id` directly;
+ProductType stamps its template profile at creation and never manages it
+afterwards. Carts split per profile. **Classes only, no string
+vocabularies (refined same day):** the method's `fulfillment_type` column
+is dropped (not renamed to modality), `Spree.fulfillment_types` and the
+ProductType array are deleted; behavior routes through class predicates —
+`FulfillmentProvider` subclasses answer `digital?`/`pickup?`/
+`pickup_point?`/`requires_address?`, rate providers declare
+`requires_address?` instead of type lists, and the profile kind declares
+`digital?`/`requires_shipping_address?` and validates composition (a
+Digital profile accepts only digital-provider methods; a carrier rate
+provider only prices methods that ship to an address). A location-group
+layer was considered and dropped — per-method narrowing covers
+multi-origin stores, and groups can arrive additively later.
 
 **Why reverse now.** No rewrite window after 6.0; custom string types were
 second-class (provider declarations could never include them, so a custom
@@ -87,16 +134,15 @@ exist for shipping methods; and the fulfillment_types array was the sole
 live-by-reference exception to the product-type template doctrine.
 
 **Migration by rename.** `spree_shipping_categories` →
-`spree_fulfillment_profiles` and `spree_products.shipping_category_id` →
-`fulfillment_profile_id`: 5.x products arrive assigned, the 5.x Digital
-category becomes the Digital profile. `spree:upgrade:migrate_fulfillment_profiles`
-handles what a rename cannot: store assignment for the formerly-global
-categories (duplicate + remap when shared), default flagging, and
-collapsing the method m:n (`spree_shipping_method_categories`, kept to 6.1
-as source) into the single method FK — loud warnings wherever flattening
-loses information. The `Spree.fulfillment_types` registry and the
-ProductType array are deleted outright; modality vocabulary lives on
-`Spree::DeliveryMethod.modalities`.
+`spree_delivery_profiles` and `spree_products.shipping_category_id` →
+`delivery_profile_id`: 5.x products arrive assigned, the 5.x Digital
+category becomes the Digital profile. `spree:migrate_delivery_profiles`
+(5.6→6.0 manifest) handles what a rename cannot: store assignment for the
+formerly-global categories (duplicate + remap when shared), folding
+non-narrowing categories into the store default profile, digital-kind
+detection, and collapsing the method m:n
+(`spree_shipping_method_categories`, kept to 6.1 as source) into the
+single method FK — loud warnings wherever flattening loses information.
 
 
 ## 2026-08-09: Dynamic carrier rates — one delivery method, many named rates
@@ -894,7 +940,7 @@ certain markets) plus a four-platform review (OSS platform C channel-scoped
 PaymentMethods + `PaymentMethodEligibilityChecker`, OSS platform A region-scoped
 payment providers, OSS platform B per-channel payment apps, the hosted leader's Payment Customization Functions + the May-2026 per-market multi-entity payments product) settled three things:
 
-1. **`5.7-payment-method-rules.md`** — `Spree::PaymentMethodRule` STI
+1. **`6.0-payment-method-rules.md`** — `Spree::PaymentMethodRule` STI
    (Channel / Market / OrderTotal / CustomerGroup rules), mirroring the
    PromotionRule/PriceRule/OrderRoutingRule house pattern; enforced through
    the single `Order#collect_frontend_payment_methods` seam; storefront-only
@@ -902,7 +948,7 @@ payment providers, OSS platform B per-channel payment apps, the hosted leader's 
    distribution concept" rationale in
    `5.6-6.0-single-store-promotions-payment-methods.md` — the single-store FK
    stands, eligibility is layered on via rules.
-2. **`5.7-channel-markets.md`** — optional Channel→Markets allowlist
+2. **`6.0-channel-markets.md`** — optional Channel→Markets allowlist
    (`spree_channel_markets`, empty = all markets), enforced in market
    resolution, the Store API markets reference endpoints, and order
    validation. Composes with `MarketRule` above.
@@ -1506,7 +1552,7 @@ maps naturally onto several delivery zones — standard / remote / oversized).
 Spree already carries a stronger coordination guardrail than the disjoint
 camp: `MarketCountry#country_covered_by_shipping_zone` refuses market
 countries the store cannot deliver to. The channel axis heads the Saleor
-direction separately via `5.7-channel-markets.md`. If more convenience is
+direction separately via `6.0-channel-markets.md`. If more convenience is
 ever wanted, it is a dashboard affordance ("create delivery zone from this
 market's countries"), never a schema link.
 
@@ -1548,7 +1594,7 @@ ShippingMethod an eligibility-checker strategy parallel to its calculator.
 
 **Decision:** `Spree::DeliveryMethodRule` STI on DeliveryMethod — the fifth
 instance of the house rule pattern and the symmetric sibling of
-`5.7-payment-method-rules.md` (ItemTotal + Weight first; Channel/Market/
+`6.0-payment-method-rules.md` (ItemTotal + Weight first; Channel/Market/
 CustomerGroup later, in lockstep with the payment set). One enforcement
 seam: the Estimator's method filter, so calculator- and provider-priced
 methods obey the same eligibility; no admin-bypass concept (the Estimator is
@@ -1679,7 +1725,7 @@ domains are deliberately opposite:
   store.** Two Stripe accounts are two merchants of record (separate
   settlement and liability), selected per market at checkout — exactly
   what PaymentMethod rows model, gated by MarketRule once
-  `5.7-payment-method-rules.md` lands. Credentials stay on the method
+  `6.0-payment-method-rules.md` lands. Credentials stay on the method
   row; converging them onto Integration would fight its store+type
   uniqueness and is explicitly NOT planned.
 
@@ -1760,7 +1806,7 @@ registered subclasses by matching two hardcoded class names
 returning `[]`. Four families had each worked around that with a private
 per-class override in three different idioms (`PriceRule`,
 `OrderRoutingRule`, `CollectionRule`, `DeliveryMethodRule`), and
-`5.7-payment-method-rules.md` specced a fifth. The empty-list fallback
+`6.0-payment-method-rules.md` specced a fifth. The empty-list fallback
 failed **silently**: `find_by_api_type` returned nil, so
 `TypedAssociations` dropped typed rows from a payload with no error and
 `subclasses_with_preference_schema` rendered empty admin pickers — the
@@ -1778,7 +1824,7 @@ PromotionRule, PromotionAction, PriceRule, OrderRoutingRule,
 CollectionRule, DeliveryMethodRule, and **PaymentMethod** — gateways
 declare `registers_subclasses_via { providers }` rather than being a
 special case in the resolver, so there is exactly one resolution rule.
-`5.7-payment-method-rules.md` updated to the new form.
+`6.0-payment-method-rules.md` updated to the new form.
 
 Known debt: the registry is a lodger inside `PreferenceSchema` (which
 `Spree::Base` includes, so ~200 models carry class methods only six use),

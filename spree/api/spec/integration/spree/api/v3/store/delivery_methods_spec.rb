@@ -23,7 +23,7 @@ RSpec.describe 'Store Delivery Methods API', type: :request, swagger_doc: 'api-r
       response '200', 'delivery methods found' do
         before do
           create(:shipping_method, name: 'Standard')
-          create(:shipping_method, name: 'Store pickup').update!(fulfillment_type: 'pickup')
+          create(:pickup_delivery_method, name: 'Store pickup')
         end
 
         let(:fulfillment_type) { 'pickup' }
@@ -51,7 +51,7 @@ RSpec.describe 'Store Delivery Methods API', type: :request, swagger_doc: 'api-r
 
       response '200', 'pickup locations found' do
         let(:pickup_method) do
-          create(:shipping_method, name: 'Store pickup').tap { |dm| dm.update!(fulfillment_type: 'pickup') }
+          create(:pickup_delivery_method, name: 'Store pickup')
         end
         let(:id) { pickup_method.prefixed_id }
 

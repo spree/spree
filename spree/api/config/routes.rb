@@ -336,6 +336,14 @@ Spree::Core::Engine.add_routes do
         end
         resources :delivery_zones
 
+        resources :delivery_profiles do
+          collection do
+            get :kinds
+          end
+          resources :origin_groups, controller: 'delivery_profiles/origin_groups',
+                                    only: [:index, :show, :create, :update, :destroy]
+        end
+
         resources :payment_methods do
           collection do
             get :types

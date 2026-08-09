@@ -46,6 +46,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { categoryAutocompleteProps, useCategories } from '../../../hooks/use-categories'
 import { collectionAutocompleteProps, useCollections } from '../../../hooks/use-collections'
+import { useDeliveryProfiles } from '../../../hooks/use-delivery-profiles'
 import { useOptionTypesByIds } from '../../../hooks/use-option-types'
 import { useDeleteProductMedia } from '../../../hooks/use-product-media'
 import { useProductType, useProductTypes } from '../../../hooks/use-product-types'
@@ -650,6 +651,11 @@ export function CategorizationCard({ form }: FormCardProps) {
   const { data: collectionsData } = useCollections()
   const { data: productTypesData } = useProductTypes()
   const productTypes = productTypesData?.data ?? []
+  const { data: deliveryProfilesData } = useDeliveryProfiles()
+  const deliveryProfiles = useMemo(() => deliveryProfilesData?.data ?? [], [deliveryProfilesData])
+  // A product with no profile of its own ships on the store default, so the
+  // select shows that rather than an empty trigger the merchant has to guess at.
+  const defaultDeliveryProfileId = deliveryProfiles.find((profile) => profile.default)?.id
   const selectedProductTypeId = form.watch('product_type_id') as string | null | undefined
   const { data: selectedProductType } = useProductType(selectedProductTypeId ?? undefined)
   // Resolved by id: the type may reference option types beyond the first page
@@ -734,6 +740,36 @@ export function CategorizationCard({ form }: FormCardProps) {
               })}
             </span>
           )}
+        </Field>
+
+        <Field>
+          <FieldLabel>{t('admin.fields.product.delivery_profile_id.label')}</FieldLabel>
+          <Controller
+            name="delivery_profile_id"
+            control={form.control}
+            render={({ field }) => (
+              <Select
+                value={field.value ?? defaultDeliveryProfileId ?? ''}
+                onValueChange={(v) => field.onChange(v || null)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue>
+                    {(v) => deliveryProfiles.find((profile) => profile.id === v)?.name ?? ''}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {deliveryProfiles.map((profile) => (
+                    <SelectItem key={profile.id} value={profile.id}>
+                      {profile.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          <span className="text-muted-foreground text-xs">
+            {t('admin.fields.product.delivery_profile_id.help')}
+          </span>
         </Field>
 
         <Field>

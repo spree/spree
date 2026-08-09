@@ -5,7 +5,6 @@ import {
   GlobeLockIcon,
   KeyRoundIcon,
   MailIcon,
-  MapIcon,
   PercentIcon,
   PlugIcon,
   RadioTowerIcon,
@@ -114,23 +113,13 @@ settingsNav.add({
 })
 
 settingsNav.add({
-  key: 'settings.delivery-methods',
-  labelKey: 'admin.settings_nav.items.delivery_methods',
-  path: '/delivery-methods',
+  key: 'settings.delivery-profiles',
+  labelKey: 'admin.settings_nav.items.delivery_profiles',
+  path: '/delivery-profiles',
   icon: TruckIcon,
   group: 'fulfillment',
   position: 80,
-  subject: Subject.DeliveryMethod,
-})
-
-settingsNav.add({
-  key: 'settings.delivery-zones',
-  labelKey: 'admin.settings_nav.items.delivery_zones',
-  path: '/delivery-zones',
-  icon: MapIcon,
-  group: 'fulfillment',
-  position: 90,
-  subject: Subject.DeliveryZone,
+  subject: Subject.DeliveryProfile,
 })
 
 settingsNav.add({

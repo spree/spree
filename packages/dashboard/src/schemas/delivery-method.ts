@@ -1,7 +1,5 @@
 import { z } from 'zod/v4'
 
-export const FULFILLMENT_TYPES = ['shipping', 'digital', 'pickup'] as const
-
 /**
  * One eligibility rule as held in form state. `id` is absent for rules added
  * in this editing session. `takes_products` comes from the rule-type discovery
@@ -38,7 +36,6 @@ export const deliveryMethodFormSchema = z.object({
   name: z.string().min(1),
   admin_name: z.string().optional(),
   code: z.string().optional(),
-  fulfillment_type: z.enum(FULFILLMENT_TYPES),
   fulfillment_provider: z.string(),
   // Empty string means the built-in Internal provider (calculator-priced).
   rate_provider: z.string(),
@@ -49,7 +46,9 @@ export const deliveryMethodFormSchema = z.object({
   tax_category_id: z.string().optional(),
   calculator_type: z.string().optional(),
   calculator_preferences: z.record(z.string(), z.unknown()).optional(),
-  delivery_zone_ids: z.array(z.string()),
+  // Empty string means no destination restriction — the method serves
+  // everywhere its profile reaches.
+  delivery_zone_id: z.string(),
   stock_location_ids: z.array(z.string()),
   rules: z.array(deliveryMethodRuleSchema),
   markup_flat: z.string().optional(),
@@ -63,7 +62,6 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   name: '',
   admin_name: '',
   code: '',
-  fulfillment_type: 'shipping',
   fulfillment_provider: 'Spree::FulfillmentProvider::Manual',
   rate_provider: '',
   storefront_visible: true,
@@ -73,7 +71,7 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   tax_category_id: '',
   calculator_type: '',
   calculator_preferences: {},
-  delivery_zone_ids: [],
+  delivery_zone_id: '',
   stock_location_ids: [],
   rules: [],
   markup_flat: '',
@@ -86,7 +84,6 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
     name: values.name,
     admin_name: values.admin_name || null,
     code: values.code || null,
-    fulfillment_type: values.fulfillment_type,
     fulfillment_provider: values.fulfillment_provider,
     rate_provider: values.rate_provider || null,
     storefront_visible: values.storefront_visible,
@@ -102,9 +99,9 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
     ...(values.calculator_preferences && Object.keys(values.calculator_preferences).length > 0
       ? { calculator_preferences: values.calculator_preferences }
       : {}),
-    delivery_zone_ids: values.delivery_zone_ids,
+    delivery_zone_id: values.delivery_zone_id || null,
     stock_location_ids: values.stock_location_ids,
-    // Rules ride along with the method so one request saves the whole sheet.
+    // Rules ride along with the method so one request saves the whole page.
     // Omitting `id` marks a rule as new; dropping one from the array deletes
     // it. `product_ids` is always sent for association-backed rules — omitting
     // an emptied array would read as "leave unchanged" and silently keep the

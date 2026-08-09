@@ -13,10 +13,10 @@ module Spree
                                :tax_provider,
                                :password_validator,
                                :fulfillment_providers,
-                               :fulfillment_types,
                                :stock_splitters,
                                :delivery_method_rules,
                                :delivery_rate_providers,
+                               :delivery_profile_types,
                                :order_routing,
                                :promotions,
                                :pricing,
@@ -125,6 +125,10 @@ module Spree
         app.config.spree.delivery_rate_providers = []
       end
 
+      initializer 'spree.register.delivery_profile_types', before: :load_config_initializers do |app|
+        app.config.spree.delivery_profile_types = []
+      end
+
       initializer 'spree.register.custom_fields' do |app|
         app.config.spree.custom_fields = CustomFieldsEnvironment.new
         app.config.spree.custom_fields.types = []
@@ -162,7 +166,7 @@ module Spree
         ]
 
         Rails.application.config.spree.stock_splitters = [
-          Spree::Stock::Splitter::FulfillmentType,
+          Spree::Stock::Splitter::DeliveryProfile,
           Spree::Stock::Splitter::Backordered
         ]
 
@@ -191,15 +195,18 @@ module Spree
           Spree::FulfillmentProvider::PickupPoint
         ]
 
-        # Registered vocabulary — DeliveryMethod and ProductType validate
-        # against it on change. Extensions append their own
-        # (e.g. 'same_day_courier') from an initializer.
-        Rails.application.config.spree.fulfillment_types = %w[shipping pickup digital]
 
         # Quoting strategies selectable on a delivery method. Internal prices
         # through the method's calculator; carrier gems append theirs.
         Rails.application.config.spree.delivery_rate_providers.concat [
           Spree::DeliveryRateProvider::Internal
+        ]
+
+        # Profile kinds selectable when creating a delivery profile;
+        # extension kinds append theirs.
+        Rails.application.config.spree.delivery_profile_types.concat [
+          Spree::DeliveryProfiles::Shipping,
+          Spree::DeliveryProfiles::Digital
         ]
 
         # Selectable order routing strategies. The internal Reducer collaborator
@@ -222,7 +229,8 @@ module Spree
         Rails.application.config.spree.delivery_method_rules.concat [
           Spree::DeliveryMethodRules::ItemTotalRule,
           Spree::DeliveryMethodRules::WeightRule,
-          Spree::DeliveryMethodRules::ExcludedProductsRule
+          Spree::DeliveryMethodRules::ExcludedProductsRule,
+          Spree::DeliveryMethodRules::ChannelRule
         ]
 
         Rails.application.config.spree.calculators.promotion_actions_create_adjustments = [

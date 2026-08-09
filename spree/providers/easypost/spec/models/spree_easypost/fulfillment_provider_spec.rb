@@ -37,7 +37,9 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
 
   it 'registers as a shipping fulfillment provider' do
     expect(Spree.fulfillment_providers).to include(described_class)
-    expect(described_class.fulfillment_types).to eq(['shipping'])
+    expect(described_class.digital?).to be false
+    expect(described_class.pickup?).to be false
+    expect(described_class.new.requires_address?).to be true
     expect(described_class.provider_name).to eq('EasyPost')
   end
 
@@ -62,7 +64,9 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
       result = provider.create_fulfillment(fulfillment)
 
       expect(result[:tracking_number]).to eq('9405500207552012345678')
-      expect(fulfillment.metadata['easypost_purchased_shipment_id']).to eq('shp_recorded1')
+      # update_columns silently no-ops on an unknown column, so a rename
+      # upstream would leave the label details unwritten rather than raise.
+      expect(fulfillment.reload.metadata['easypost_purchased_shipment_id']).to eq('shp_recorded1')
       expect(fulfillment.metadata['easypost_label_url']).to eq('https://example.com/label.png')
       expect(provider.documents(fulfillment)).to eq([{ kind: 'label', url: 'https://example.com/label.png' }])
       expect(provider.tracking_url(fulfillment)).to eq('https://track.easypost.com/abc')
@@ -125,7 +129,7 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
     before { allow_any_instance_of(SpreeEasyPost::Integration).to receive(:client).and_return(client) }
 
     it 'refunds the purchased label' do
-      fulfillment.update_columns(private_metadata: { 'easypost_purchased_shipment_id' => 'shp_recorded1' })
+      fulfillment.update_columns(metadata: { 'easypost_purchased_shipment_id' => 'shp_recorded1' })
       allow(shipment_service).to receive(:refund).with('shp_recorded1').and_return(double)
 
       expect(provider.cancel_fulfillment(fulfillment)).to be(true)
@@ -137,7 +141,7 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
     end
 
     it 'never blocks cancellation on a refund failure' do
-      fulfillment.update_columns(private_metadata: { 'easypost_purchased_shipment_id' => 'shp_recorded1' })
+      fulfillment.update_columns(metadata: { 'easypost_purchased_shipment_id' => 'shp_recorded1' })
       allow(shipment_service).to receive(:refund).and_raise(StandardError.new('boom'))
       allow(Rails.error).to receive(:report)
 
@@ -179,7 +183,7 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
 
     it 'refunds end to end' do
       fulfillment.update_columns(
-        private_metadata: { 'easypost_purchased_shipment_id' => recorded_rate['shipment_id'] }
+        metadata: { 'easypost_purchased_shipment_id' => recorded_rate['shipment_id'] }
       )
 
       VCR.use_cassette('refund_shipment') do

@@ -35,11 +35,11 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
   subject(:provider) { described_class.new(delivery_method) }
 
   let(:ground_rate) do
-    double(carrier: 'UPS', service: 'Ground', rate: '8.99',
+    double(carrier: 'UPS', service: 'Ground', rate: '8.99', currency: 'USD',
            delivery_date: '2026-08-12', id: 'rate_1', shipment_id: 'shp_1')
   end
   let(:express_rate) do
-    double(carrier: 'UPS', service: 'Express', rate: '24.99',
+    double(carrier: 'UPS', service: 'Express', rate: '24.99', currency: 'USD',
            delivery_date: '2026-08-08', id: 'rate_2', shipment_id: 'shp_1')
   end
   let(:easypost_shipment) { double(rates: [ground_rate, express_rate]) }

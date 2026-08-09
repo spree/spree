@@ -6,11 +6,7 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
   include_context 'API v3 Store'
 
   let!(:shipping_method) { create(:shipping_method, name: 'Standard', storefront_visible: true) }
-  let!(:pickup_method) do
-    create(:shipping_method, name: 'Store pickup', storefront_visible: true).tap do |dm|
-      dm.update!(fulfillment_type: 'pickup')
-    end
-  end
+  let!(:pickup_method) { create(:pickup_delivery_method, name: 'Store pickup', storefront_visible: true) }
   let!(:hidden_method) { create(:shipping_method, name: 'Internal', storefront_visible: false) }
 
   before { request.headers['X-Spree-Api-Key'] = api_key.token }
@@ -92,13 +88,8 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
     context 'with a cart' do
       let(:cart) { create(:cart_with_line_items, store: store, customer: user) }
       let(:variant) { cart.line_items.first.variant }
-      let(:pickup_capable_type) { create(:product_type, name: 'Collectable', fulfillment_types: %w[shipping pickup]) }
-
       before do
         request.headers['x-spree-token'] = cart.token
-        # Coverage only counts pickup-collectable items, so the cart's
-        # products must support pickup for the stock checks to matter.
-        cart.line_items.each { |line_item| line_item.variant.product.update!(product_type: pickup_capable_type) }
       end
 
       it 'keeps locations that can fulfill the whole cart from local stock' do
@@ -120,8 +111,8 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
       it 'ignores items the counter will never hand over (mixed cart with a tracked digital item)' do
         pickup_location.stock_item_or_create(variant).set_count_on_hand(10)
 
-        digital_type = create(:product_type, name: 'Digital good', fulfillment_types: ['digital'])
-        digital_product = create(:product, product_type: digital_type, store: store)
+        digital_product = create(:digital_product, store: store)
+        digital_product.default_variant.update!(track_inventory: true)
         create(:line_item, cart: cart, order: nil, variant: digital_product.default_variant)
 
         get :pickup_locations, params: { id: pickup_method.prefixed_id, cart_id: cart.prefixed_id }, as: :json
@@ -155,7 +146,7 @@ RSpec.describe Spree::Api::V3::Store::DeliveryMethodsController, type: :controll
         # update_columns: 'pickup_point' is deferred to 6.1 and no longer a
         # registered fulfillment type, but the endpoint still serves rows
         # carrying it (created before the deferral or via an extension).
-        pickup_method.update_columns(fulfillment_type: 'pickup_point', pickup_point_provider: 'TestPickupPointProvider')
+        pickup_method.update_columns(fulfillment_provider: 'Spree::FulfillmentProvider::PickupPoint', pickup_point_provider: 'TestPickupPointProvider')
       end
 
       it 'returns nearby points' do

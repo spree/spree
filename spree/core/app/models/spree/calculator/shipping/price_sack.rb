@@ -8,6 +8,12 @@ module Spree
       preference :discount_amount, :decimal, default: 0
       preference :currency, :string, default: -> { Spree::Store.default.default_currency }
 
+      # Single-currency amounts: quoting another currency would mislabel
+      # the configured numbers, so the method stays hidden there.
+      def supports_currency?(currency)
+        preferred_currency.blank? || preferred_currency.casecmp(currency.to_s).zero?
+      end
+
       def self.description
         Spree.t(:shipping_price_sack)
       end

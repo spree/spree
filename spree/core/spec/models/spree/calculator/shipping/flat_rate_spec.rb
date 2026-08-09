@@ -1,6 +1,35 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Calculator::Shipping::FlatRate, type: :model do
+  describe 'per-currency amounts' do
+    subject { described_class.new(preferred_amount: 5, preferred_currency: 'USD') }
+
+    let(:usd_package) { double(currency: 'USD', weight: 1, item_total: 50) }
+    let(:eur_package) { double(currency: 'EUR', weight: 1, item_total: 50) }
+
+    it 'quotes each currency its own amount and hides currencies without one' do
+      subject.preferred_amounts = { 'EUR' => 4 }
+
+      expect(subject.compute_package(usd_package)).to eq(5)
+      expect(subject.compute_package(eur_package)).to eq(4)
+      expect(subject.supports_currency?('USD')).to be true
+      expect(subject.supports_currency?('EUR')).to be true
+      expect(subject.supports_currency?('GBP')).to be false
+    end
+
+    it 'keeps the legacy single amount+currency pair working unchanged' do
+      expect(subject.compute_package(usd_package)).to eq(5)
+      expect(subject.supports_currency?('EUR')).to be false
+      expect(subject.compute_package(eur_package)).to be_nil
+    end
+
+    it 'lets the per-currency hash override the legacy amount for the same currency' do
+      subject.preferred_amounts = { 'usd' => 7 }
+
+      expect(subject.compute_package(usd_package)).to eq(7)
+    end
+  end
+
   let(:variant1) { create(:variant, price: 10, weight: 0.75) }
   let(:variant2) { create(:variant, price: 15, weight: 2.5) }
 

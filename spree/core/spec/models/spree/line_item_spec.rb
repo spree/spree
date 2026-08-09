@@ -129,8 +129,10 @@ describe Spree::LineItem, type: :model do
   # issues one link per fulfillment unit. Tracking is decided per variant by
   # should_track_inventory?, never by the order being all-digital.
   describe 'inventory verification on a digital order' do
-    let(:digital_type) { create(:product_type, name: 'Licence', fulfillment_types: ['digital'], store: store) }
-    let(:licence_product) { create(:product, product_type: digital_type, store: store) }
+    let(:digital_profile) do
+      Spree::DeliveryProfiles::Digital.find_by(store: store) || create(:digital_delivery_profile, store: store)
+    end
+    let(:licence_product) { create(:product, delivery_profile: digital_profile, store: store) }
     let(:licence_variant) do
       licence_product.default_variant.tap do |variant|
         variant.update!(track_inventory: true)
@@ -154,7 +156,7 @@ describe Spree::LineItem, type: :model do
     end
 
     it 'builds fulfillment items for a stock-limited digital variant' do
-      second_licence = create(:product, product_type: digital_type, store: store).default_variant
+      second_licence = create(:product, delivery_profile: digital_profile, store: store).default_variant
       second_licence.update!(track_inventory: true)
 
       line_item = create(:line_item, order: order, variant: second_licence, quantity: 2)
@@ -163,7 +165,7 @@ describe Spree::LineItem, type: :model do
     end
 
     it 'decrements stock for a tracked digital variant' do
-      second_licence = create(:product, product_type: digital_type, store: store).default_variant
+      second_licence = create(:product, delivery_profile: digital_profile, store: store).default_variant
       second_licence.update!(track_inventory: true)
       stock_item = second_licence.stock_items.first
       stock_item.set_count_on_hand(5)

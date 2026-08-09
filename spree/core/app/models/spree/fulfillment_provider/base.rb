@@ -6,13 +6,19 @@ module Spree
     # ShipmentHandler name-constantize mechanism.
     class Base
       class << self
-        # Fulfillment types this provider can handle, so admin UIs can offer
-        # only the providers that fit the chosen type. An empty list means
-        # "any type".
-        #
-        # @return [Array<String>]
-        def fulfillment_types
-          []
+        # Behavior predicates — the class hierarchy IS the vocabulary.
+        # Subclasses override the one that describes their mechanics; admin
+        # UIs and profile kinds compose against these, never string lists.
+        def digital?
+          false
+        end
+
+        def pickup?
+          false
+        end
+
+        def pickup_point?
+          false
         end
 
         # Human-readable name for admin UIs. Provider gems follow the
@@ -77,11 +83,15 @@ module Spree
         true
       end
 
-      # Whether the method can serve a package sourced from the given stock
-      # location. Shipping-like providers dispatch from anywhere; merchant
-      # pickup overrides this to require an eligible pickup location.
-      def serves_location?(_delivery_method, _stock_location)
-        true
+      # Whether packages originating from this stock location may use the
+      # method — answered by the method's origin group (no group or no
+      # members means every location). Pickup overrides with its own policy
+      # semantics (pickup-enabled counters, ship-to-store transfers).
+      def serves_location?(delivery_method, stock_location)
+        group = delivery_method.delivery_origin_group
+        return true if group.nil?
+
+        group.covers_location?(stock_location)
       end
 
       # Performs the provider-side dispatch when a fulfillment fulfills.

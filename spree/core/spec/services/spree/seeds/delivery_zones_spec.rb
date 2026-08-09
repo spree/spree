@@ -21,11 +21,11 @@ RSpec.describe Spree::Seeds::DeliveryZones do
     expect(international.members.map(&:country)).not_to include(store.default_country)
 
     standard = store.delivery_methods.find_by(name: 'Standard')
-    expect(standard.delivery_zones).to eq([domestic])
+    expect(standard.delivery_zone).to eq(domestic)
     expect(standard.calculator.preferred_amount).to eq(5)
 
     international_method = store.delivery_methods.find_by(name: 'International Shipping')
-    expect(international_method.delivery_zones).to eq([international])
+    expect(international_method.delivery_zone).to eq(international)
   end
 
   it 'is idempotent' do

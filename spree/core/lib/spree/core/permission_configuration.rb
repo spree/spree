@@ -270,7 +270,7 @@ module Spree
       register_resource(:settings, group: :settings, subjects: -> {
         [Spree::Store, Spree::PaymentMethod, Spree::Gateway, Spree::DeliveryMethod,
          Spree::DeliveryMethodRule, Spree::DeliveryZone, Spree::DeliveryZoneMember,
-         Spree::StockLocation, Spree::ShippingCategory, Spree::Zone, Spree::ZoneMember,
+         Spree::StockLocation, Spree::DeliveryProfile, Spree::Zone, Spree::ZoneMember,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
          Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason, Spree::Channel,
          Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy,

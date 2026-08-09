@@ -58,7 +58,6 @@ product_types = [
 
 product_types.each do |attributes|
   product_type = store.product_types.find_or_initialize_by(name: attributes[:name])
-  product_type.fulfillment_types = ['shipping']
   product_type.save!
 
   # Seeded onto products created with this type — every demo product varies by color.

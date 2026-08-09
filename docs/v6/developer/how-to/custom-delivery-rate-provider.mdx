@@ -68,6 +68,10 @@ module SpreeAcmeCarrier
       quotes_for(package).map do |quote|
         Spree::DeliveryRateProvider::Estimate.new(
           cost: quote.amount,
+          # ISO code of the currency the carrier quoted in. Estimates in a
+          # different currency than the cart's are dropped — never convert
+          # silently; nil means the store's own currency.
+          currency: quote.currency,
           carrier: quote.carrier_name,
           service_level: quote.service_name,
           estimated_delivery_date: quote.delivery_date,

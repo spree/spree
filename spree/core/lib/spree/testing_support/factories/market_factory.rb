@@ -9,7 +9,7 @@ FactoryBot.define do
     after(:build) do |market|
       # Delivery methods are worldwide by default (no zones), so serving the
       # market's countries only requires that a method exists at all.
-      if market.countries.any? && !Spree::DeliveryMethod.where.missing(:delivery_method_zones).exists?
+      if market.countries.any? && !Spree::DeliveryMethod.where(delivery_zone_id: nil).exists?
         FactoryBot.create(:delivery_method)
       end
     end

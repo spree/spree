@@ -35,12 +35,14 @@ module Spree
         end
 
         # Fulfillment types this provider can quote, so admin UIs narrow the
-        # type field once a provider is chosen. An empty list means "any
-        # type" — the Internal (calculator) provider prices anything.
+        # Whether this provider quotes real shipments to an address — true
+        # for carriers, which therefore can only price methods whose
+        # fulfillment provider ships. The Internal (calculator) provider
+        # prices anything.
         #
-        # @return [Array<String>]
-        def fulfillment_types
-          []
+        # @return [Boolean]
+        def requires_address?
+          false
         end
 
         # Whether the method's calculator decides the price. False for

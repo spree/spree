@@ -2,9 +2,9 @@
  * A registered `Spree::FulfillmentProvider` strategy, as returned by
  * `GET /delivery_methods/fulfillment_providers`. Providers perform the
  * mechanics of a fulfillment (dispatch, tracking, cancellation) — which is a
- * separate choice from the delivery method's `fulfillment_type`, since one
- * type can be handled by several providers (a shipping method might be
- * fulfilled manually, or through a carrier integration).
+ * separate choice from the method's delivery profile — one profile can
+ * hold methods fulfilled manually, by a carrier integration, or over the
+ * counter.
  */
 export interface FulfillmentProviderOption {
   /** Ruby class name, e.g. `Spree::FulfillmentProvider::Pickup`. */
@@ -17,8 +17,12 @@ export interface FulfillmentProviderOption {
   integration_type: string | null
   /** False when the provider's integration isn't connected for this store — connect it to enable the provider. */
   available: boolean
-  /** Fulfillment types this provider handles; empty means any type. */
-  fulfillment_types: string[]
+  /** Whether this provider delivers digitally. */
+  digital: boolean
+  /** Whether this provider hands goods over at a merchant counter. */
+  pickup: boolean
+  /** Whether this provider delivers to third-party pickup points. */
+  pickup_point: boolean
   /** Whether fulfillments handled by this provider ship to a customer address. */
   requires_address: boolean
 }
@@ -42,8 +46,8 @@ export interface DeliveryRateProviderOption {
   integration_type: string | null
   /** False when the provider's integration isn't connected for this store — connect it to enable the provider. */
   available: boolean
-  /** Fulfillment types this provider can quote; empty means any type. */
-  fulfillment_types: string[]
+  /** Whether this provider quotes real shipments — it can only price methods that ship to an address. */
+  requires_address: boolean
   /** Whether the method's calculator sets the price. False for carrier providers, which quote live rates. */
   uses_calculator: boolean
   /**

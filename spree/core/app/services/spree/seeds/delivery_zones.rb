@@ -14,13 +14,17 @@ module Spree
           domestic_country = store.default_country
           next if domestic_country.nil?
 
+          profile = store.default_delivery_profile || Spree::DeliveryProfiles::Shipping.create!(store: store, name: 'General', default: true)
+
           domestic = store.delivery_zones.where(name: 'Domestic').first_or_create! do |zone|
             zone.description = domestic_country.name
+            zone.delivery_profile = profile
           end
           domestic.members.where(member_type: 'country', country: domestic_country).first_or_create!
 
           international = store.delivery_zones.where(name: 'International').first_or_create! do |zone|
             zone.description = 'Everywhere else'
+            zone.delivery_profile = profile
           end
           add_country_members(international, Spree::Country.where.not(id: domestic_country.id))
 
@@ -53,7 +57,8 @@ module Spree
           delivery_method.calculator = Spree::Calculator::Shipping::FlatRate.new(
             preferences: { amount: amount, currency: store.default_currency }
           )
-          delivery_method.delivery_zones = [zone]
+          delivery_method.delivery_profile = zone.delivery_profile
+          delivery_method.delivery_zone = zone
         end
       end
     end

@@ -313,13 +313,6 @@ module Spree
     Rails.application.config.spree.fulfillment_providers = value
   end
 
-  def self.fulfillment_types
-    Rails.application.config.spree.fulfillment_types
-  end
-
-  def self.fulfillment_types=(value)
-    Rails.application.config.spree.fulfillment_types = value
-  end
 
   def self.stock_splitters
     Rails.application.config.spree.stock_splitters
@@ -346,6 +339,17 @@ module Spree
 
   def self.delivery_rate_providers=(value)
     Rails.application.config.spree.delivery_rate_providers = value
+  end
+
+  # Fulfillment profile kinds selectable when creating a profile.
+  #
+  # @return [Array<Class>]
+  def self.delivery_profile_types
+    Rails.application.config.spree.delivery_profile_types
+  end
+
+  def self.delivery_profile_types=(value)
+    Rails.application.config.spree.delivery_profile_types = value
   end
 
   def self.order_routing

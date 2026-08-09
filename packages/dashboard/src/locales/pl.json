@@ -476,54 +476,92 @@
       }
     },
     "delivery_methods": {
-      "add_cta": "Dodaj metodę dostawy",
       "add_sheet_title": "Nowa metoda dostawy",
+      "cards": {
+        "general": "Ogólne",
+        "pricing": "Ceny",
+        "providers": "Dostawcy",
+        "zone": "Strefa"
+      },
+      "carrier_services": {
+        "add_service": "Dodaj usługę",
+        "all_hint": "Oferowane są wszystkie usługi zwracane przez przewoźnika, z nazwami przewoźnika.",
+        "carrier": "Przewoźnik",
+        "catalog_unavailable": "Nie udało się pobrać usług tego przewoźnika ({{message}}). Wpisz identyfikatory przewoźnika i usługi ręcznie albo zostaw puste, aby oferować wszystko, co wycenia przewoźnik.",
+        "choose_specific": "Wybierz konkretne usługi",
+        "edit_service": "Edytuj {{service}}",
+        "label": "Usługi przewoźnika",
+        "narrowed_hint": "Oferowane są tylko wybrane usługi ({{count}}).",
+        "offer_all": "Oferuj wszystkie usługi",
+        "service": "Usługa"
+      },
+      "collection_locations": {
+        "all": "Wszystkie lokalizacje z odbiorem",
+        "none_enabled": "Żadna lokalizacja nie obsługuje odbioru — włącz jedną w profilu dostawy.",
+        "specific": "Wybrane lokalizacje",
+        "title": "Lokalizacje odbioru"
+      },
       "conditions": {
         "add": "Dodaj warunek",
-        "empty": "Brak warunków — metoda jest oferowana, gdy pasują jej strefy.",
+        "empty": "Brak warunków — ta metoda jest oferowana wszędzie tam, gdzie obowiązuje.",
         "title": "Warunki"
       },
-      "create_description": "Skonfiguruj, jak zamówienia trafiają do klientów: wysyłka, dostawa cyfrowa lub odbiór.",
+      "connect_provider_hint": "{{name}} może podawać stawki przewoźników na żywo — połącz, aby włączyć.",
       "create_label": "Utwórz metodę dostawy",
       "delete_confirm": {
         "message": "Usunąć „{{name}}”? Sklepy natychmiast przestaną ją oferować.",
         "title": "Usuń metodę dostawy"
       },
-      "edit_description": "Zaktualizuj konfigurację tej metody dostawy.",
+      "detail": {},
       "edit_sheet_title": "Edytuj metodę dostawy",
-      "empty": "Brak metod dostawy.",
-      "fulfillment_types": {
-        "digital": "Cyfrowa",
-        "local_delivery": "Dostawa lokalna",
-        "pickup": "Odbiór",
-        "pickup_point": "Punkt odbioru",
-        "shipping": "Wysyłka"
-      },
+      "free": "Za darmo",
       "messages": {
         "created": "Utworzono metodę dostawy",
         "deleted": "Usunięto metodę dostawy",
         "updated": "Zaktualizowano metodę dostawy"
       },
-      "no_zones_hint": "Brak stref dostawy — metoda obowiązuje wszędzie.",
-      "pickup_locations_hint": "Brak wyboru oznacza, że oferowane są wszystkie lokalizacje z włączonym odbiorem.",
-      "search_placeholder": "Szukaj metod dostawy…",
-      "connect_provider_hint": "{{name}} może podawać stawki przewoźników na żywo — połącz, aby włączyć.",
-      "carrier_services": {
-        "label": "Usługi przewoźnika",
-        "all_hint": "Oferowane są wszystkie usługi zwracane przez przewoźnika, z nazwami przewoźnika.",
-        "narrowed_hint": "Oferowane są tylko wybrane usługi ({{count}}).",
-        "add_service": "Dodaj usługę",
-        "carrier": "Przewoźnik",
-        "service": "Usługa",
-        "custom_label": "Własna etykieta dla {{service}}",
-        "catalog_unavailable": "Nie udało się pobrać usług tego przewoźnika ({{message}}). Wpisz identyfikatory przewoźnika i usługi ręcznie albo zostaw puste, aby oferować wszystko, co wycenia przewoźnik."
+      "no_zone_restriction": "Bez ograniczeń",
+      "pricing": {
+        "amount_in_currency": "Kwota w {{currency}}",
+        "currency_amounts_help": "Waluty bez kwoty nie mają oferowanej tej metody dostawy."
       },
-      "provider_needs_connection": "Połącz {{name}}, aby użyć"
+      "provider_needs_connection": "Połącz {{name}}, aby użyć",
+      "rule_summary": {
+        "separator": " · ",
+        "total_between": "{{min}}–{{max}}",
+        "total_max": "Poniżej {{max}}",
+        "total_min": "Od {{min}}",
+        "weight_between": "{{min}}–{{max}} {{unit}}",
+        "weight_max": "Poniżej {{max}} {{unit}}",
+        "weight_min": "Od {{min}} {{unit}}"
+      }
+    },
+    "delivery_origin_groups": {
+      "delete_confirm": {
+        "message": "Usunąć „{{name}}”? Najpierw przenieś jej strefy i metody do innej grupy.",
+        "title": "Usuń grupę miejsc wysyłki"
+      },
+      "edit_description": "Zmień nazwę tej grupy lub to, z których lokalizacji wysyła.",
+      "edit_title": "Edytuj grupę miejsc wysyłki",
+      "messages": {
+        "created": "Grupa miejsc wysyłki utworzona",
+        "deleted": "Grupa miejsc wysyłki usunięta",
+        "updated": "Grupa miejsc wysyłki zaktualizowana"
+      },
+      "no_locations_hint": "Wybierz co najmniej jedną lokalizację lub zaznacz wszystkie lokalizacje.",
+      "ships_from": "Wysyłka z: {{locations}}",
+      "ships_from_all": "Wysyłka ze wszystkich lokalizacji",
+      "ships_from_label": "Wysyłka z",
+      "split_cta": "Podziel miejsca wysyłki",
+      "split_description": "Wysyłaj te same produkty z drugiego magazynu z własnymi strefami i stawkami.",
+      "split_title": "Podziel miejsca wysyłki"
     },
     "delivery_zones": {
+      "add_countries_in_markets": "Dodaj więcej krajów w sekcji Rynki",
       "add_cta": "Dodaj strefę dostawy",
-      "add_member": "Dodaj członka",
+      "add_postal_rule": "Dodaj regułę",
       "add_sheet_title": "Nowa strefa dostawy",
+      "all_states": "Wszystkie regiony",
       "create_description": "Pogrupuj kraje, regiony lub kody pocztowe w obszar obsługiwany przez metody dostawy.",
       "create_label": "Utwórz strefę dostawy",
       "delete_confirm": {
@@ -532,26 +570,40 @@
       },
       "edit_description": "Poniżsi członkowie zastąpią przy zapisie pełną listę strefy.",
       "edit_sheet_title": "Edytuj strefę dostawy",
-      "empty": "Brak stref dostawy.",
       "from_placeholder": "Od",
-      "member_types": {
-        "country": "Kraj",
-        "postal_code": "Kod pocztowy",
-        "state": "Region"
-      },
-      "members_column": "Członkowie",
-      "members_count": "{{count}} członków",
+      "in_another_zone": "W innej strefie",
+      "member_separator": ", ",
+      "members_more_few": "jeszcze {{count}}",
+      "members_more_many": "jeszcze {{count}}",
+      "members_more_one": "jeszcze {{count}}",
+      "members_more_other": "jeszcze {{count}}",
       "messages": {
         "created": "Utworzono strefę dostawy",
         "deleted": "Usunięto strefę dostawy",
         "updated": "Zaktualizowano strefę dostawy"
       },
-      "no_members_hint": "Brak członków — dodaj kraje, regiony lub reguły kodów pocztowych.",
+      "no_postal_rules_hint": "Brak reguł kodów pocztowych.",
+      "no_regions_found": "Żaden kraj nie pasuje do wyszukiwania.",
+      "no_states": "Ten kraj nie ma regionów.",
+      "not_in_any_market": "Poza wszystkimi rynkami",
+      "postal_rules_count_few": "{{count}} reguły",
+      "postal_rules_count_many": "{{count}} reguł",
+      "postal_rules_count_one": "{{count}} reguła",
+      "postal_rules_count_other": "{{count}} reguły",
+      "postal_rules_title": "Reguły kodów pocztowych",
       "prefix_placeholder": "Prefiks",
-      "search_placeholder": "Szukaj stref dostawy…",
+      "region_search_placeholder": "Szukaj krajów i regionów do wysyłki",
+      "regions_title": "Kraje i regiony",
+      "remove_postal_rule": "Usuń regułę",
       "select_country": "Wybierz kraj",
-      "state_placeholder": "Kod lub nazwa regionu",
-      "to_placeholder": "Do"
+      "selection_summary": "Kraje: {{countries}}, regiony: {{states}}, reguły kodów pocztowych: {{rules}}",
+      "states_selected_few": "{{count}} regiony",
+      "states_selected_many": "{{count}} regionów",
+      "states_selected_one": "{{count}} region",
+      "states_selected_other": "{{count}} regionu",
+      "states_summary": "{{selected}} z {{total}} regionów",
+      "to_placeholder": "Do",
+      "toggle_states": "Pokaż regiony kraju {{country}}"
     },
     "errors": {
       "forbidden_description": "Nie masz uprawnień do wyświetlenia tej strony.",
@@ -599,6 +651,13 @@
         "default": {
           "help": "Dokładnie jeden kanał na sklep jest domyślny. Używany jako rozwiązanie zastępcze, gdy nie wybrano żadnego kanału, oraz jako cel automatycznej publikacji nowych produktów.",
           "label": "Kanał domyślny"
+        },
+        "fulfillment_locations": {
+          "all": "Wszystkie lokalizacje",
+          "help": "Które magazyny i punkty odbioru realizują zamówienia z tego kanału sprzedaży.",
+          "label": "Lokalizacje realizacji",
+          "none_selected_hint": "Wybierz co najmniej jedną lokalizację lub opcję „Wszystkie lokalizacje”.",
+          "selected": "Wybrane lokalizacje"
         },
         "guest_checkout": {
           "help": "Czy klienci mogą składać zamówienia bez konta w tym kanale. Pozostaw puste, aby dziedziczyć ustawienie sklepu.",
@@ -719,22 +778,27 @@
         "code": {
           "label": "Kod"
         },
-        "delivery_zones": {
-          "label": "Strefy dostawy"
+        "delivery_zone": {
+          "help": "Gdzie ta metoda jest oferowana. Bez strefy obowiązuje wszędzie, gdzie sięga profil.",
+          "label": "Strefa dostawy"
         },
         "fulfillment_provider": {
           "help": "Jak realizacje tej metody są przetwarzane i śledzone.",
           "label": "Dostawca realizacji"
         },
-        "fulfillment_type": {
-          "label": "Typ realizacji"
+        "markup_flat": {
+          "label": "Narzut (kwotowy)"
+        },
+        "markup_percent": {
+          "help": "Opłata manipulacyjna doliczana do stawek przewoźnika. Wartości per usługa nadpisują te domyślne.",
+          "label": "Narzut %"
         },
         "rate_provider": {
-          "label": "Dostawca stawek",
-          "help": "Skąd pochodzą ceny tej metody. Wbudowany dostawca liczy według kalkulatora poniżej; dostawcy przewoźników podają stawki na żywo."
+          "help": "Skąd pochodzą ceny tej metody. Wbudowany dostawca liczy według kalkulatora poniżej; dostawcy przewoźników podają stawki na żywo.",
+          "label": "Dostawca stawek"
         },
-        "pickup_locations": {
-          "label": "Punkty odbioru"
+        "service_label": {
+          "label": "Własna etykieta"
         },
         "storefront_visible": {
           "help": "Klienci mogą wybrać tę metodę przy kasie."
@@ -750,16 +814,33 @@
         },
         "transit_days_min": {
           "label": "Dni dostawy (min)"
+        }
+      },
+      "delivery_origin_group": {
+        "name": {
+          "help": "Pozostaw puste, aby nazwać tę grupę „Wszystkie lokalizacje”.",
+          "label": "Nazwa"
+        }
+      },
+      "delivery_profile": {
+        "capabilities": {
+          "label": "Możliwości"
         },
-        "markup_percent": {
-          "label": "Narzut %",
-          "help": "Opłata manipulacyjna doliczana do stawek przewoźnika. Wartości per usługa nadpisują te domyślne."
+        "kind": {
+          "help": "Decyduje, z których dostawców realizacji mogą korzystać metody tego profilu.",
+          "label": "Rodzaj"
         },
-        "markup_flat": {
-          "label": "Narzut (kwotowy)"
+        "methods_count": {
+          "label": "Metody"
         },
-        "service_label": {
-          "label": "Własna etykieta"
+        "origins": {
+          "label": "Wysyłka z"
+        },
+        "products_count": {
+          "label": "Produkty"
+        },
+        "zones_count": {
+          "label": "Strefy"
         }
       },
       "gift_card": {
@@ -992,6 +1073,10 @@
         "discontinue_on": {
           "label": "Wycofaj z dniem"
         },
+        "delivery_profile_id": {
+          "help": "Decyduje, które strefy i metody dostawy obejmują ten produkt.",
+          "label": "Profil wysyłki"
+        },
         "make_active_at": {
           "label": "Aktywuj o"
         },
@@ -1029,9 +1114,9 @@
           "label": "Pola niestandardowe",
           "required": "Wymagane"
         },
-        "fulfillment_types": {
-          "help": "Jak produkty tego typu mogą być dostarczane — wysyłka, odbiór w sklepie, punkt odbioru lub cyfrowo.",
-          "label": "Sposoby realizacji"
+        "delivery_profile_id": {
+          "help": "Przypisywany produktom tworzonym z tym typem. Istniejące produkty pozostają bez zmian.",
+          "label": "Szablon profilu wysyłki"
         },
         "name": {
           "placeholder": "np. T-Shirt"
@@ -1196,6 +1281,17 @@
           "label": "Język panelu administracyjnego",
           "placeholder": "Użyj języka domyślnego"
         },
+        "preferred_default_package_dimensions": {
+          "height": "Wysokość",
+          "help": "Karton, w którym zwykle wysyłasz, używany przez przewoźników do wyceny wagi wymiarowej — cale dla systemu imperialnego, centymetry dla metrycznego. Działa dopiero po podaniu wszystkich trzech.",
+          "label": "Domyślne wymiary paczki",
+          "length": "Długość",
+          "width": "Szerokość"
+        },
+        "preferred_default_package_weight": {
+          "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza.",
+          "label": "Domyślna waga paczki"
+        },
         "preferred_send_consumer_transactional_emails": {
           "help": "Gdy wyłączone, nie są wysyłane żadne wiadomości z potwierdzeniem zamówienia, wysyłki ani zwrotu.",
           "label": "Wysyłaj wiadomości transakcyjne do klientów"
@@ -1209,17 +1305,6 @@
         },
         "preferred_weight_unit": {
           "label": "Jednostka wagi"
-        },
-        "preferred_default_package_weight": {
-          "label": "Domyślna waga paczki",
-          "help": "Waga opakowania (karton i wypełnienie) dodawana do zawartości każdej paczki przy wyliczaniu stawek dostawy. 0 wyłącza."
-        },
-        "preferred_default_package_dimensions": {
-          "label": "Domyślne wymiary paczki",
-          "length": "Długość",
-          "width": "Szerokość",
-          "height": "Wysokość",
-          "help": "Karton, w którym zwykle wysyłasz, używany przez przewoźników do wyceny wagi wymiarowej — cale dla systemu imperialnego, centymetry dla metrycznego. Działa dopiero po podaniu wszystkich trzech."
         },
         "storefront_access": {
           "help": "Domyślne ustawienie dla całego sklepu określające, co widzą anonimowi odwiedzający. Kanały mogą je nadpisać. Gdy ceny są ukryte, goście muszą się zalogować, aby sfinalizować zakup.",
@@ -1329,6 +1414,67 @@
         }
       }
     },
+    "delivery_profiles": {
+      "add_cta": "Dodaj profil",
+      "add_dialog_title": "Nowy profil dostawy",
+      "all_locations": "Wszystkie lokalizacje",
+      "capabilities": {
+        "digital": "Cyfrowa",
+        "pickup": "Odbiór",
+        "ships": "Wysyłka"
+      },
+      "create_description": "Zgrupuj produkty wysyłane w ten sam sposób, z własnymi lokalizacjami, strefami i metodami dostawy.",
+      "create_label": "Utwórz profil",
+      "default_badge": "Domyślny",
+      "default_confirm": {
+        "message": "Produkty bez własnego profilu będą wysyłane według profilu „{{name}}”.",
+        "title": "Ustaw jako profil domyślny"
+      },
+      "delete_confirm": {
+        "message": "Usunąć „{{name}}”? Jego strefy i metody dostawy zostaną usunięte razem z nim.",
+        "title": "Usuń profil wysyłki"
+      },
+      "detail": {
+        "add_digital_method": "Dodaj metodę cyfrową",
+        "add_method": "Dodaj metodę",
+        "collect_from": "Odbiór z",
+        "collect_from_hint": "Lokalizacje, z których klienci mogą odbierać zamówienia. Zmiany działają natychmiast.",
+        "delete_label": "Usuń profil",
+        "digital_empty": "Brak metody dostawy cyfrowej.",
+        "digital_hint": "Dostarczane bez wysyłki i odbioru.",
+        "digital_title": "Dostawa cyfrowa",
+        "general_title": "Ogólne",
+        "hidden_badge": "Ukryta",
+        "load_failed_title": "Nie udało się wczytać tego profilu wysyłki",
+        "no_methods": "Brak metod dostawy w tym miejscu.",
+        "no_stock_locations": "Brak lokalizacji — dodaj jedną w Ustawienia → Lokalizacje.",
+        "no_zone_hint": "Te metody są oferowane wszędzie, gdzie sięga ten profil.",
+        "no_zone_title": "Bez ograniczenia strefy",
+        "no_zones": "Brak stref — dodaj jedną, aby oferować metody dostawy.",
+        "offer_pickup": "Zaoferuj odbiór",
+        "origins_title": "Wysyłka z",
+        "pickup_empty": "Brak metody odbioru — klienci nie mogą odbierać zamówień w tym profilu.",
+        "pickup_hint": "Klienci odbierają te zamówienia osobiście. Odbiór nie ma miejsca docelowego, więc strefy nie mają zastosowania.",
+        "pickup_title": "Odbiór osobisty",
+        "zones_title": "Strefy i metody dostawy"
+      },
+      "empty": "Brak profili dostawy.",
+      "is_default_hint": "Produkty bez własnego profilu są wysyłane według tego profilu.",
+      "kind_immutable_hint": "Rodzaj jest ustalany przy tworzeniu profilu.",
+      "kinds": {
+        "digital": "Cyfrowa",
+        "shipping": "Wysyłka"
+      },
+      "locations_count": "Lokalizacje: {{count}}",
+      "make_default": "Ustaw jako domyślny",
+      "messages": {
+        "created": "Utworzono profil wysyłki",
+        "deleted": "Usunięto profil wysyłki",
+        "updated": "Zaktualizowano profil wysyłki"
+      },
+      "search_placeholder": "Szukaj profili dostawy…",
+      "selected_locations": "Wybrane lokalizacje"
+    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "Brak pasujących partii",
@@ -1425,6 +1571,50 @@
         "products": "Produkty"
       },
       "wizard_title": "Import"
+    },
+    "integrations": {
+      "active_toggle": {
+        "help": "Aktywacja weryfikuje połączenie i udostępnia integrację dostawcom.",
+        "label": "Aktywna"
+      },
+      "configure_cta": "Konfiguruj",
+      "connect_cta": "Połącz",
+      "connect_description": "Wprowadź dane dostępowe tego dostawcy. Zapis je przechowuje; aktywacja weryfikuje połączenie.",
+      "description": "Połącz usługi dostawców z tym sklepem. Dane dostępowe są przechowywane per sklep i używane przez dostawców dostaw, podatków i innych.",
+      "disconnect": "Rozłącz",
+      "disconnect_confirm": {
+        "message": "Rozłączyć {{name}}? Zapisane dane dostępowe zostaną usunięte, a korzystający z nich dostawcy przestaną działać.",
+        "title": "Rozłącz integrację"
+      },
+      "edit_description": "Zmień dane dostępowe lub aktywację. Wartości tajne są maskowane; pozostaw je bez zmian, aby zachować zapisany sekret.",
+      "empty": {
+        "description": "Integracje pochodzą z rozszerzeń dostawców. Zainstaluj gem dostawcy, a jego integracje pojawią się tutaj.",
+        "title": "Brak zainstalowanych integracji"
+      },
+      "groups": {
+        "other": "Inne",
+        "shipping": "Dostawa",
+        "tax": "Podatki"
+      },
+      "messages": {
+        "connected": "Integracja połączona",
+        "disconnected": "Integracja rozłączona",
+        "updated": "Integracja zaktualizowana"
+      },
+      "status": {
+        "active": "Aktywna",
+        "connected_inactive": "Połączona (nieaktywna)",
+        "not_connected": "Niepołączona"
+      },
+      "test": {
+        "failure": "Połączenie nieudane.",
+        "label": "Połączenie",
+        "run": "Testuj połączenie",
+        "success": "Połączenie udane.",
+        "testing": "Testowanie…"
+      },
+      "title": "Integracje",
+      "view_cta": "Zobacz"
     },
     "invitation": {
       "accepting": "Akceptowanie…",
@@ -2386,11 +2576,11 @@
           "search_placeholder": "Szukaj lokalizacji magazynowych…"
         },
         "store": {
+          "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
+          "tab_default_package": "Domyślna paczka",
           "tab_general": "Ogólne",
           "tab_standards": "Standardy i formaty",
-          "tab_default_package": "Domyślna paczka",
-          "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
           "tab_storefront_access": "Dostęp do sklepu",
           "title": "Ustawienia sklepu"
         },
@@ -2717,6 +2907,8 @@
       },
       "create_description": "Grupuj produkty i określ, jak mogą być dostarczane.",
       "create_label": "Utwórz typ produktu",
+      "custom_delivery_profile": "Własny",
+      "default_delivery_profile": "Domyślny profil sklepu",
       "delete_confirm": {
         "message": "Czy na pewno usunąć „{{name}}”? Typów używanych przez produkty nie można usunąć.",
         "title": "Usuń typ produktu"
@@ -2863,6 +3055,11 @@
       },
       "variants": {
         "add_option": "Dodaj opcję",
+        "bulk_edit": {
+          "grid_aria": "Arkusz zbiorczej edycji wariantów",
+          "title": "Edytuj warianty zbiorczo",
+          "trigger": "Edycja zbiorcza"
+        },
         "create_option_type": "Utwórz nowy typ opcji",
         "create_option_type_title": "Nowy typ opcji",
         "create_value": "Nowa wartość",
@@ -2889,12 +3086,7 @@
           "tax_category_placeholder": "Dziedzicz z produktu"
         },
         "title": "Warianty",
-        "variant_label": "Wariant",
-        "bulk_edit": {
-          "trigger": "Edycja zbiorcza",
-          "title": "Edytuj warianty zbiorczo",
-          "grid_aria": "Arkusz zbiorczej edycji wariantów"
-        }
+        "variant_label": "Wariant"
       }
     },
     "promotions": {
@@ -3244,12 +3436,11 @@
         "allowed_origins": "Dozwolone źródła",
         "api_keys": "Klucze API",
         "channels": "Kanały sprzedaży",
-        "integrations": "Integracje",
         "custom_field_definitions": "Pola niestandardowe",
-        "delivery_methods": "Metody dostawy",
-        "delivery_zones": "Strefy dostawy",
+        "delivery_profiles": "Profile dostawy",
         "emails": "Wiadomości e-mail",
         "imports": "Importy",
+        "integrations": "Integracje",
         "markets": "Rynki",
         "payment_methods": "Metody płatności",
         "product_types": "Typy produktów",
@@ -3426,50 +3617,6 @@
       "saved": "Tłumaczenia zapisane",
       "source": "Źródło",
       "title": "Tłumaczenia"
-    },
-    "integrations": {
-      "title": "Integracje",
-      "description": "Połącz usługi dostawców z tym sklepem. Dane dostępowe są przechowywane per sklep i używane przez dostawców dostaw, podatków i innych.",
-      "empty": {
-        "title": "Brak zainstalowanych integracji",
-        "description": "Integracje pochodzą z rozszerzeń dostawców. Zainstaluj gem dostawcy, a jego integracje pojawią się tutaj."
-      },
-      "status": {
-        "active": "Aktywna",
-        "connected_inactive": "Połączona (nieaktywna)",
-        "not_connected": "Niepołączona"
-      },
-      "connect_cta": "Połącz",
-      "configure_cta": "Konfiguruj",
-      "view_cta": "Zobacz",
-      "connect_description": "Wprowadź dane dostępowe tego dostawcy. Zapis je przechowuje; aktywacja weryfikuje połączenie.",
-      "edit_description": "Zmień dane dostępowe lub aktywację. Wartości tajne są maskowane; pozostaw je bez zmian, aby zachować zapisany sekret.",
-      "active_toggle": {
-        "label": "Aktywna",
-        "help": "Aktywacja weryfikuje połączenie i udostępnia integrację dostawcom."
-      },
-      "test": {
-        "label": "Połączenie",
-        "run": "Testuj połączenie",
-        "testing": "Testowanie…",
-        "success": "Połączenie udane.",
-        "failure": "Połączenie nieudane."
-      },
-      "disconnect": "Rozłącz",
-      "disconnect_confirm": {
-        "title": "Rozłącz integrację",
-        "message": "Rozłączyć {{name}}? Zapisane dane dostępowe zostaną usunięte, a korzystający z nich dostawcy przestaną działać."
-      },
-      "messages": {
-        "connected": "Integracja połączona",
-        "updated": "Integracja zaktualizowana",
-        "disconnected": "Integracja rozłączona"
-      },
-      "groups": {
-        "shipping": "Dostawa",
-        "tax": "Podatki",
-        "other": "Inne"
-      }
     }
   }
 }

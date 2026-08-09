@@ -127,6 +127,8 @@ import type {
   CustomFieldOwnerType,
   CustomFieldUpdateParams,
   DeliveryMethodParams,
+  DeliveryOriginGroupParams,
+  DeliveryProfileParams,
   DeliveryZoneParams,
   DirectUploadCreateParams,
   ExchangeCreateParams,
@@ -229,6 +231,8 @@ import type {
   CustomFieldDefinition,
   DeliveryMethod,
   DeliveryMethodRule,
+  DeliveryOriginGroup,
+  DeliveryProfile,
   DeliveryRateProviderOption,
   DeliveryZone,
   Discount,
@@ -1602,8 +1606,8 @@ export class AdminClient {
      */
     fulfillmentProviders: (
       options?: RequestOptions,
-    ): Promise<{ data: FulfillmentProviderOption[]; fulfillment_types: string[] }> =>
-      this.request<{ data: FulfillmentProviderOption[]; fulfillment_types: string[] }>(
+    ): Promise<{ data: FulfillmentProviderOption[] }> =>
+      this.request<{ data: FulfillmentProviderOption[] }>(
         'GET',
         '/delivery_methods/fulfillment_providers',
         options,
@@ -1692,6 +1696,96 @@ export class AdminClient {
       }>('GET', '/delivery_method_rules/types', options),
   }
 
+  readonly deliveryProfiles = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DeliveryProfile>> =>
+      this.request<PaginatedResponse<DeliveryProfile>>('GET', '/delivery_profiles', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, options?: RequestOptions): Promise<DeliveryProfile> =>
+      this.request<DeliveryProfile>('GET', `/delivery_profiles/${id}`, options),
+
+    create: (
+      params: DeliveryProfileParams & { name: string },
+      options?: RequestOptions,
+    ): Promise<DeliveryProfile> =>
+      this.request<DeliveryProfile>('POST', '/delivery_profiles', {
+        ...options,
+        body: params,
+      }),
+
+    /** `stock_location_ids` replaces the profile's full location set. */
+    update: (
+      id: string,
+      params: DeliveryProfileParams,
+      options?: RequestOptions,
+    ): Promise<DeliveryProfile> =>
+      this.request<DeliveryProfile>('PATCH', `/delivery_profiles/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    /** The default profile and profiles still referenced by products cannot be deleted. */
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/delivery_profiles/${id}`, options),
+
+    /** Registered profile kinds (shipping, digital, extension kinds). */
+    kinds: (options?: RequestOptions): Promise<{ data: Array<{ type: string; kind: string }> }> =>
+      this.request<{ data: Array<{ type: string; kind: string }> }>(
+        'GET',
+        '/delivery_profiles/kinds',
+        options,
+      ),
+
+    /** Origin groups partition a profile's fulfillment origins; its zones and methods each belong to one. */
+    originGroups: {
+      list: (
+        deliveryProfileId: string,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DeliveryOriginGroup>> =>
+        this.request<PaginatedResponse<DeliveryOriginGroup>>(
+          'GET',
+          `/delivery_profiles/${deliveryProfileId}/origin_groups`,
+          options,
+        ),
+
+      create: (
+        deliveryProfileId: string,
+        params: DeliveryOriginGroupParams,
+        options?: RequestOptions,
+      ): Promise<DeliveryOriginGroup> =>
+        this.request<DeliveryOriginGroup>(
+          'POST',
+          `/delivery_profiles/${deliveryProfileId}/origin_groups`,
+          { ...options, body: params },
+        ),
+
+      update: (
+        deliveryProfileId: string,
+        id: string,
+        params: DeliveryOriginGroupParams,
+        options?: RequestOptions,
+      ): Promise<DeliveryOriginGroup> =>
+        this.request<DeliveryOriginGroup>(
+          'PATCH',
+          `/delivery_profiles/${deliveryProfileId}/origin_groups/${id}`,
+          { ...options, body: params },
+        ),
+
+      /** The last group, or one still holding zones or methods, cannot be deleted. */
+      delete: (deliveryProfileId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>(
+          'DELETE',
+          `/delivery_profiles/${deliveryProfileId}/origin_groups/${id}`,
+          options,
+        ),
+    },
+  }
+
   readonly deliveryZones = {
     list: (
       params?: ListParams & Record<string, unknown>,
@@ -1702,8 +1796,16 @@ export class AdminClient {
         params: params ? transformListParams(params) : undefined,
       }),
 
-    get: (id: string, options?: RequestOptions): Promise<DeliveryZone> =>
-      this.request<DeliveryZone>('GET', `/delivery_zones/${id}`, options),
+    /** Members are expand-gated; pass `{ expand: ['members'] }` to edit a zone. */
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<DeliveryZone> =>
+      this.request<DeliveryZone>('GET', `/delivery_zones/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
 
     create: (params: DeliveryZoneParams, options?: RequestOptions): Promise<DeliveryZone> =>
       this.request<DeliveryZone>('POST', '/delivery_zones', { ...options, body: params }),

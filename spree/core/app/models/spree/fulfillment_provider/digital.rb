@@ -5,8 +5,8 @@ module Spree
     # legacy non-idempotent checkout callback that created one link per line
     # item regardless of quantity.
     class Digital < Base
-      def self.fulfillment_types
-        ['digital']
+      def self.digital?
+        true
       end
 
       def auto_fulfill?

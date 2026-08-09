@@ -8,16 +8,18 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
   end
 
   describe '#compute_package' do
-    it 'ignores the passed in object' do
-      expect do
-        subject.compute_package(double)
-      end.not_to raise_error
+    it 'quotes the package currency from the per-currency amounts' do
+      subject.preferred_amounts = { 'EUR' => 3.5 }
+
+      expect(subject.compute_package(double(currency: 'EUR'))).to eq(3.5)
     end
 
-    it 'alwayses return the preferred_amount' do
-      amount_double = double
-      expect(subject).to receive(:preferred_amount).and_return(amount_double)
-      expect(subject.compute_package(double)).to eq(amount_double)
+    it 'falls back to the legacy single amount for its own currency' do
+      subject.preferred_amount = 2
+      subject.preferred_currency = 'USD'
+
+      expect(subject.compute_package(double(currency: 'USD'))).to eq(2)
+      expect(subject.compute_package(double(currency: 'EUR'))).to be_nil
     end
   end
 

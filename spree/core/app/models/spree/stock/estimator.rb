@@ -50,6 +50,12 @@ module Spree
 
           provider.estimates(package).filter_map do |estimate|
             next unless delivery_method.offers_service?(estimate)
+            # A quote in another currency (a USD carrier account under a EUR
+            # cart) is unusable — mislabeling it would misprice checkout.
+            if estimate.currency.present? && estimate.currency.casecmp(currency) != 0
+              Rails.logger.debug { "Spree::Stock::Estimator: dropping #{delivery_method.name} estimate quoted in #{estimate.currency} for a #{currency} order" }
+              next
+            end
 
             service_row = delivery_method.service_for(estimate)
             cost = apply_markup(estimate.cost, delivery_method, service_row, provider)
@@ -140,8 +146,7 @@ module Spree
             delivery_method.serves_location?(package.stock_location) &&
             delivery_method.eligible_for_package?(package) &&
             calculator.available?(package) &&
-            (calculator.preferences[:currency].blank? ||
-             calculator.preferences[:currency] == currency)
+            calculator.supports_currency?(currency)
         end
       end
 

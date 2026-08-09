@@ -78,20 +78,15 @@ describe Spree::DeliveryMethod, type: :model do
       expect(delivery_method.requires_zone_check?).to be true
     end
 
-    it 'is decided by the fulfillment provider, not the fulfillment type' do
-      [
-        ['digital', 'Spree::FulfillmentProvider::Digital'],
-        ['pickup', 'Spree::FulfillmentProvider::Pickup']
-      ].each do |fulfillment_type, provider|
-        method = create(:delivery_method, fulfillment_type: fulfillment_type, fulfillment_provider: provider)
-
+    it 'is decided by the fulfillment provider' do
+      [create(:digital_delivery_method), create(:pickup_delivery_method)].each do |method|
         expect(method.requires_address?).to be false
         expect(method.requires_zone_check?).to be false
       end
     end
 
-    it 'is true for the Manual provider whatever the fulfillment type' do
-      method = create(:delivery_method, fulfillment_type: 'pickup')
+    it 'is true for the Manual provider' do
+      method = create(:delivery_method)
 
       expect(method.fulfillment_provider).to eq('Spree::FulfillmentProvider::Manual')
       expect(method.requires_address?).to be true
@@ -177,29 +172,6 @@ describe Spree::DeliveryMethod, type: :model do
       expect(subject.errors.messages[:name].size).to eq(1)
     end
 
-    it 'rejects a fulfillment type outside the Spree.fulfillment_types registry' do
-      method = build(:delivery_method, fulfillment_type: 'pickpu')
-
-      expect(method).not_to be_valid
-      expect(method.errors[:fulfillment_type]).to be_present
-    end
-
-    it 'accepts a custom type once registered' do
-      Spree.fulfillment_types << 'same_day_courier'
-
-      expect(build(:delivery_method, fulfillment_type: 'same_day_courier')).to be_valid
-    ensure
-      Spree.fulfillment_types.delete('same_day_courier')
-    end
-
-    it 'leaves persisted rows with unregistered types loadable and savable' do
-      method = create(:delivery_method)
-      method.update_column(:fulfillment_type, 'legacy_freight')
-
-      method.reload.name = 'Renamed'
-      expect(method.save).to be true
-    end
-
     it 'defaults to storefront visible and rejects a blank value' do
       expect(subject.storefront_visible).to be true
 
@@ -281,43 +253,44 @@ describe Spree::DeliveryMethod, type: :model do
     end
   end
 
-  describe 'provider / fulfillment type compatibility' do
+  describe 'rate provider / fulfillment provider compatibility' do
     let(:delivery_method) { create(:delivery_method) }
-    let(:shipping_only_provider) do
+    let(:carrier_provider) do
       Class.new(Spree::DeliveryRateProvider::Base) do
-        def self.fulfillment_types = ['shipping']
-        def self.provider_name = 'ShippingOnly'
+        def self.requires_address? = true
+        def self.provider_name = 'Carrier'
       end
     end
 
     before do
-      stub_const('ShippingOnlyRateProvider', shipping_only_provider)
-      Spree.delivery_rate_providers << shipping_only_provider
+      stub_const('CarrierRateProvider', carrier_provider)
+      Spree.delivery_rate_providers << carrier_provider
     end
 
-    after { Spree.delivery_rate_providers.delete(shipping_only_provider) }
+    after { Spree.delivery_rate_providers.delete(carrier_provider) }
 
-    # A carrier that only quotes parcels cannot serve a digital method — the
-    # mismatch would surface as missing rates at checkout, not at save time.
-    it 'rejects a provider that does not handle the chosen fulfillment type' do
-      delivery_method.assign_attributes(rate_provider: 'ShippingOnlyRateProvider', fulfillment_type: 'digital')
+    # A carrier quotes parcels to an address, so it cannot price a method
+    # whose fulfillment provider never ships one — the mismatch would surface
+    # as missing rates at checkout, not at save time.
+    it 'rejects a shipment-quoting rate provider when the method does not ship to an address' do
+      profile = create(:digital_delivery_profile, store: delivery_method.store)
+      method = build(:digital_delivery_method, store: delivery_method.store,
+                     delivery_profile: profile, rate_provider: 'CarrierRateProvider')
 
-      expect(delivery_method).not_to be_valid
-      expect(delivery_method.errors[:rate_provider].join).to include('ShippingOnly')
+      expect(method).not_to be_valid
+      expect(method.errors[:rate_provider].join).to include('Carrier')
     end
 
-    it 'accepts a type the provider declares' do
-      delivery_method.assign_attributes(rate_provider: 'ShippingOnlyRateProvider', fulfillment_type: 'shipping')
+    it 'accepts a shipment-quoting rate provider on a shipping method' do
+      delivery_method.rate_provider = 'CarrierRateProvider'
 
       expect(delivery_method).to be_valid
     end
 
-    # An empty declaration means "any type" — Internal and Manual price and
-    # dispatch anything.
-    it 'accepts any type for providers that declare none' do
-      delivery_method.assign_attributes(rate_provider: '', fulfillment_type: 'digital')
-
-      expect(delivery_method).to be_valid
+    # Internal prices anything — pickup and digital methods keep their
+    # calculators.
+    it 'accepts any fulfillment provider for rate providers that do not quote shipments' do
+      expect(build(:pickup_delivery_method, rate_provider: '')).to be_valid
     end
   end
 

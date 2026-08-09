@@ -26,7 +26,8 @@ delivery_methods.each do |attributes|
     record.calculator = Spree::Calculator::Shipping::FlatRate.create!(
       preferences: { amount: attributes[:amount], currency: currency }
     )
-    record.delivery_zones = [attributes[:zone]]
+    record.delivery_profile = attributes[:zone].delivery_profile
+    record.delivery_zone = attributes[:zone]
     record.storefront_visible = true
   end
 

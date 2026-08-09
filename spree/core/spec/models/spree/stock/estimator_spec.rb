@@ -16,6 +16,7 @@ module Spree
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return(currency: currency)
+          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :supports_currency?) { |quoted| currency.blank? || quoted == currency }
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :marked_for_destruction?)
 
           allow(package).to receive_messages(eligible_delivery_methods: [shipping_method])
@@ -46,7 +47,7 @@ module Spree
             other_country = create(:country, iso: 'XZ', iso3: 'XZZ', name: 'Elsewhere', iso_name: 'ELSEWHERE')
             zone = create(:delivery_zone)
             zone.members.create!(member_type: 'country', country: other_country)
-            shipping_method.delivery_zones = [zone]
+            shipping_method.update!(delivery_zone: zone)
           end
 
           it_behaves_like "shipping rate doesn't match"
@@ -236,6 +237,30 @@ module Spree
               expect(delivery_rates.first.cost).to eq(4.33)
             end
           end
+        end
+      end
+
+      # Per-channel rates: one profile, one warehouse, different prices for
+      # different buyers (docs/plans/6.0-channel-delivery.md).
+      describe 'channel-restricted methods' do
+        it 'quotes a channel-restricted method only to that channel' do
+          wholesale = create(:channel, store: @default_store, name: "Wholesale #{SecureRandom.hex(3)}")
+          retail = create(:channel, store: @default_store, name: "Retail #{SecureRandom.hex(3)}")
+
+          wholesale_rate = create(:delivery_method, store: @default_store, name: 'Wholesale Rate')
+          wholesale_rate.rules = [{ type: 'channel_rule', preferences: { channel_ids: [wholesale.id] } }]
+          wholesale_rate.save!
+
+          wholesale_order = create(:order_with_line_items, store: @default_store, channel: wholesale)
+          retail_order = create(:order_with_line_items, store: @default_store, channel: retail)
+
+          wholesale_names = Spree::Stock::Coordinator.new(wholesale_order).packages.
+            flat_map { |package| package.delivery_rates.map(&:name) }
+          retail_names = Spree::Stock::Coordinator.new(retail_order).packages.
+            flat_map { |package| package.delivery_rates.map(&:name) }
+
+          expect(wholesale_names).to include('Wholesale Rate')
+          expect(retail_names).not_to include('Wholesale Rate')
         end
       end
 

@@ -5,10 +5,6 @@ module SpreeEasyPost
   # without a label (the admin buys one manually, exactly as with the
   # Manual provider).
   class FulfillmentProvider < Spree::FulfillmentProvider::Base
-    def self.fulfillment_types
-      ['shipping']
-    end
-
     def self.integration_class
       'SpreeEasyPost::Integration'
     end
@@ -101,7 +97,7 @@ module SpreeEasyPost
 
     def remember_purchase(fulfillment, shipment)
       fulfillment.update_columns(
-        private_metadata: fulfillment.private_metadata.merge(
+        metadata: fulfillment.metadata.merge(
           'easypost_purchased_shipment_id' => shipment.id,
           'easypost_label_url' => shipment.postage_label&.label_url,
           'easypost_tracker_url' => shipment.tracker&.public_url

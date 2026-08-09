@@ -11,6 +11,11 @@ module Spree
       include ActiveModel::Attributes
 
       attribute :cost, :decimal
+      # ISO code of the currency the provider quoted in. Nil means the
+      # store's own currency (Internal); carrier quotes come back in the
+      # carrier account's currency and are dropped when it differs from the
+      # cart's — a number in the wrong currency must never reach checkout.
+      attribute :currency, :string
       attribute :carrier, :string
       attribute :service_level, :string
       # Optional display name; when blank the Estimator derives one from

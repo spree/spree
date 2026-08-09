@@ -104,31 +104,34 @@ module Spree
         quantity.zero?
       end
 
+      # Pre-completion packages belong to a cart, where #order walks to nil —
+      # the line items carry the purchase currency either way.
       def currency
-        order.currency
+        order&.currency ||
+          contents.filter_map { |item| item.try(:inventory_unit)&.line_item&.currency }.first ||
+          Spree::Current.currency
       end
 
-      # The fulfillment types every item in this package supports — the
-      # intersection across products (splitters keep packages homogeneous,
-      # so this is normally one product-type's set).
+      # The delivery profile every item in this package belongs to.
+      # Splitters keep packages profile-homogeneous, so the first item's
+      # profile is the package's.
       #
-      # @return [Array<String>]
-      def fulfillment_types
-        contents.map { |item| item.variant.product.fulfillment_types }.reduce(:&) || []
+      # @return [Spree::DeliveryProfile, nil]
+      def delivery_profile
+        contents.first&.variant&.product&.resolved_delivery_profile
       end
 
-      # Delivery methods eligible to serve this package: the method's
-      # fulfillment_type must be supported by every item. Replaces the
-      # ShippingCategory-based Package#shipping_methods. Per-product
-      # exclusions are DeliveryMethodRules::ExcludedProductsRule, enforced
-      # with the other rules in the Estimator's method filter.
+      # Delivery methods eligible to serve this package: exactly the
+      # package's profile's methods. Per-product exclusions are
+      # DeliveryMethodRules::ExcludedProductsRule, enforced with the other
+      # rules in the Estimator's method filter.
       #
       # @return [ActiveRecord::Relation<Spree::DeliveryMethod>]
       def eligible_delivery_methods
-        types = fulfillment_types
-        return Spree::DeliveryMethod.none if types.empty?
+        profile = delivery_profile
+        return Spree::DeliveryMethod.none if profile.nil?
 
-        Spree::DeliveryMethod.by_fulfillment_type(types)
+        profile.delivery_methods
       end
 
       # @deprecated Use {#eligible_delivery_methods}; removed in 6.1.
