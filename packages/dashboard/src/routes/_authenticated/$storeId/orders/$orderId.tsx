@@ -44,6 +44,7 @@ import {
   MetadataCard,
   RelativeTime,
   ResourceLayout,
+  RichTextEditor,
   Select,
   SelectContent,
   SelectItem,
@@ -188,7 +189,9 @@ function OrderDetailPage() {
           <TagsCard order={order} />
           <DiscountsCard order={order} />
           <SpecialInstructionsCard order={order} />
-          <InternalNoteCard order={order} />
+          {/* Key on `updated_at` so the editor's local state resets after a
+              refetch (e.g. another mutation invalidates the order). */}
+          <InternalNoteCard key={order.updated_at} order={order} />
           <Slot name="order.form_sidebar" context={{ order }} />
         </>
       }
@@ -2634,19 +2637,17 @@ function InternalNoteCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
 
   const [editing, setEditing] = useState(false)
-  // Rich text is written as `internal_note_html`; the plain `internal_note`
-  // field is read-only.
+  // Edit the HTML, not the plain-text projection: `internal_note` has its
+  // markup stripped, so round-tripping it through the `internal_note_html`
+  // write would flatten an existing note on a save that changed nothing.
+  const [note, setNote] = useState(order.internal_note_html ?? '')
   const mutation = useOrderMutation(orderId, (params: { internal_note_html: string }) =>
     adminClient.orders.update(orderId, params),
   )
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    mutation.mutate(
-      { internal_note_html: fd.get('internal_note') as string },
-      { onSuccess: () => setEditing(false) },
-    )
+    mutation.mutate({ internal_note_html: note }, { onSuccess: () => setEditing(false) })
   }
 
   return (
@@ -2662,9 +2663,21 @@ function InternalNoteCard({ order }: { order: Order }) {
       <CardContent>
         {editing ? (
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <Textarea name="internal_note" defaultValue={order.internal_note ?? ''} />
+            <RichTextEditor
+              ariaLabel={t('admin.orders.detail.section_internal_note')}
+              value={note}
+              onChange={setNote}
+            />
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => setEditing(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setNote(order.internal_note_html ?? '')
+                  setEditing(false)
+                }}
+              >
                 {t('admin.actions.cancel')}
               </Button>
               <Button type="submit" size="sm" disabled={mutation.isPending}>
@@ -2672,8 +2685,12 @@ function InternalNoteCard({ order }: { order: Order }) {
               </Button>
             </div>
           </form>
-        ) : order.internal_note ? (
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.internal_note}</p>
+        ) : order.internal_note_html ? (
+          <div
+            className="prose prose-sm max-w-none text-muted-foreground dark:prose-invert"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: HTML is sanitized server-side via the rich-text pipeline
+            dangerouslySetInnerHTML={{ __html: order.internal_note_html }}
+          />
         ) : (
           <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
         )}

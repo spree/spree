@@ -42,6 +42,7 @@ import {
   MetadataCard,
   RelativeTime,
   ResourceLayout,
+  RichTextEditor,
   Select,
   SelectContent,
   SelectItem,
@@ -806,10 +807,10 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
       <CardContent>
         {editing ? (
           <div className="flex flex-col gap-3">
-            <Textarea
-              rows={4}
+            <RichTextEditor
+              ariaLabel={t('admin.pages.customers.detail.section_internal_note')}
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={setNote}
               placeholder={t('admin.fields.customer.internal_note.placeholder')}
             />
             <div className="flex gap-2 justify-end">

@@ -11,4 +11,4 @@ Spree 6.0 stores rich text as sanitized HTML in plain text columns instead of Ac
 - `internal_note` → `internal_note_html` on order and customer create/update.
 - `internal_note_html` is now readable on `Order`, and `internal_note` (plain text) on `Customer`. Previously the order serializer returned only plain text and the customer serializer only HTML.
 
-Writes that still pass the plain field name are ignored rather than stored, so anything sending HTML under `description` or `internal_note` needs updating.
+A write that still passes the plain field name **succeeds with 200 and stores nothing** — the parameter is no longer permitted, and Rails drops unpermitted parameters rather than rejecting them, so there is no 422 to alert you. Audit any integration writing descriptions or internal notes.

@@ -82,6 +82,25 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(category.reload.name).to eq('Apparel')
     end
 
+    it 'writes rich text through description_html and reads back both shapes' do
+      patch :update, params: { id: category.prefixed_id, description_html: '<p>Soft <strong>cotton</strong></p>' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['description_html']).to eq('<p>Soft <strong>cotton</strong></p>')
+      expect(json_response['description']).to eq('Soft cotton')
+    end
+
+    # The plain field is read-only, and Rails drops unpermitted params rather
+    # than rejecting them — so this succeeds while storing nothing.
+    it 'ignores a write to the plain description param' do
+      category.update!(description: '<p>original</p>')
+
+      patch :update, params: { id: category.prefixed_id, description: '<p>attempted</p>' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(category.reload.description).to eq('<p>original</p>')
+    end
+
     it 'purges the image when image is set to null' do
       # Attach reliably persists on a factory-built category; the controller treats
       # it the same as a store-owned Category (both resolve through `scope`).
