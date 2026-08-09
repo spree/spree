@@ -92,6 +92,22 @@ RSpec.describe Spree::Policy, type: :model do
   end
 
   describe 'Scopes' do
+    # These read the body column directly since 6.0 — they used to join the
+    # Action Text association, so the rewrite needs its own coverage.
+    describe '.with_body / .without_body' do
+      let!(:with_body) { create(:policy, owner: store, body: '<p>Terms</p>') }
+      let!(:blank_body) { create(:policy, owner: store, body: '') }
+      let!(:nil_body) { create(:policy, owner: store, body: nil) }
+
+      # Scoped to these ids — the seeded store ships policies of its own.
+      let(:ids) { [with_body.id, blank_body.id, nil_body.id] }
+
+      it 'partitions policies on whether the body holds content' do
+        expect(described_class.where(id: ids).with_body).to contain_exactly(with_body)
+        expect(described_class.where(id: ids).without_body).to contain_exactly(blank_body, nil_body)
+      end
+    end
+
     describe '.for_store' do
       let(:other_store) { create(:store) }
       let!(:store1_policy) { create(:policy, owner: store) }
