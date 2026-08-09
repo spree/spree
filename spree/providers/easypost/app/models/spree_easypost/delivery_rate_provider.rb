@@ -18,14 +18,46 @@ module SpreeEasyPost
       ['shipping']
     end
 
-    # Static catalog for the admin service picker. EasyPost's live
-    # carrier-account listing needs a production key, and the service names
-    # are stable — so the gem ships the common set; a service missing here
-    # still quotes fine (service rows are free-form, the catalog is a
-    # convenience).
-    def self.service_catalog(_integration)
-      SpreeEasyPost::SERVICE_CATALOG
+    # Domestic destination + nominal parcel for the service-listing probe
+    # quote; never charged, nothing to clean up.
+    PROBE_DESTINATION = {
+      street1: '179 N Harbor Dr',
+      city: 'Redondo Beach',
+      state: 'CA',
+      zip: '90277',
+      country: 'US',
+      name: 'Service catalog probe'
+    }.freeze
+    PROBE_OUNCES = 16
+
+    # The carrier services this account can actually sell.
+    #
+    # Read from a throwaway quote rather than the carrier-accounts endpoint:
+    # the latter is production-only (a test key is rejected outright), while
+    # a quote works on both key tiers and reports carrier names exactly as
+    # they arrive on real rates — which is what service rows must match.
+    # Costs one API call, made only when an admin opens the picker.
+    def self.service_catalog(integration)
+      return Spree::DeliveryRateProvider::ServiceCatalog.none if integration.nil?
+
+      shipment = integration.client.shipment.create(
+        from_address: SpreeEasyPost::Integration::VERIFICATION_ADDRESS,
+        to_address: PROBE_DESTINATION,
+        parcel: { weight: PROBE_OUNCES }
+      )
+      Spree::DeliveryRateProvider::ServiceCatalog.listing(services_from(shipment.rates))
+    rescue StandardError => e
+      Spree::DeliveryRateProvider::ServiceCatalog.unavailable(e.message)
     end
+
+    # One entry per (carrier, service) the probe quoted, deduplicated and
+    # ordered for a stable picker.
+    def self.services_from(rates)
+      rates.map { |rate| [rate.carrier, rate.service] }.uniq.sort.map do |carrier, service|
+        { carrier: carrier, service: service, label: "#{carrier} #{service.to_s.titleize}" }
+      end
+    end
+    private_class_method :services_from
 
     # A rating failure must never break checkout: any API error suppresses
     # this method (the customer still sees calculator-priced options) and is

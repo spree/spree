@@ -6,30 +6,6 @@ module SpreeEasyPost
   # Vendor branding, shared by both providers and the integration.
   PROVIDER_NAME = 'EasyPost'.freeze
 
-  # Common carrier services for the admin service picker, keyed by EasyPost's
-  # own identifiers. Shipped statically: the live carrier-account endpoint
-  # needs a production key, and these names are stable. The picker is a
-  # convenience — service rows accept any carrier/service pair, so an
-  # account-specific service missing here still works.
-  SERVICE_CATALOG = [
-    { carrier: 'USPS', service: 'GroundAdvantage', label: 'USPS Ground Advantage' },
-    { carrier: 'USPS', service: 'Priority', label: 'USPS Priority Mail' },
-    { carrier: 'USPS', service: 'Express', label: 'USPS Priority Mail Express' },
-    { carrier: 'USPS', service: 'MediaMail', label: 'USPS Media Mail' },
-    { carrier: 'UPS', service: 'Ground', label: 'UPS Ground' },
-    { carrier: 'UPS', service: '3DaySelect', label: 'UPS 3 Day Select' },
-    { carrier: 'UPS', service: '2ndDayAir', label: 'UPS 2nd Day Air' },
-    { carrier: 'UPS', service: 'NextDayAir', label: 'UPS Next Day Air' },
-    { carrier: 'UPS', service: 'NextDayAirSaver', label: 'UPS Next Day Air Saver' },
-    { carrier: 'FedEx', service: 'FEDEX_GROUND', label: 'FedEx Ground' },
-    { carrier: 'FedEx', service: 'GROUND_HOME_DELIVERY', label: 'FedEx Home Delivery' },
-    { carrier: 'FedEx', service: 'FEDEX_2_DAY', label: 'FedEx 2Day' },
-    { carrier: 'FedEx', service: 'FEDEX_EXPRESS_SAVER', label: 'FedEx Express Saver' },
-    { carrier: 'FedEx', service: 'STANDARD_OVERNIGHT', label: 'FedEx Standard Overnight' },
-    { carrier: 'FedEx', service: 'PRIORITY_OVERNIGHT', label: 'FedEx Priority Overnight' },
-    { carrier: 'DHLExpress', service: 'ExpressWorldwide', label: 'DHL Express Worldwide' }
-  ].map(&:freeze).freeze
-
   OUNCES_PER_UNIT = {
     'imperial' => 16.0,   # pounds
     'metric' => 0.03527396 # grams

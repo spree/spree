@@ -507,7 +507,8 @@
         "add_service": "添加服务",
         "carrier": "承运商",
         "service": "服务",
-        "custom_label": "{{service}} 的自定义名称"
+        "custom_label": "{{service}} 的自定义名称",
+        "catalog_unavailable": "无法获取该承运商的服务列表（{{message}}）。请手动填写承运商与服务标识，或留空以提供承运商报价的全部服务。"
       },
       "provider_needs_connection": "连接 {{name}} 后即可使用"
     },

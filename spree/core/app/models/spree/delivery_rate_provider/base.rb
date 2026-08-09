@@ -74,15 +74,25 @@ module Spree
           store.present? && store.integrations.active.exists?(type: integration_class)
         end
 
-        # The carrier services this provider can quote, for the admin service
-        # picker. An empty list means the provider exposes no catalog and
-        # every returned rate is offered. Providers with a stable service set
-        # return `[{ carrier:, service:, label: }]`.
+        # The carrier services this store can offer, for the admin service
+        # picker. Fetch them live from the carrier wherever the API allows —
+        # a hardcoded list shows services the merchant has not enabled and
+        # hides the ones they have.
+        #
+        # Return {ServiceCatalog.listing} with `[{ carrier:, service:,
+        # label: }]`, {ServiceCatalog.unavailable} with the vendor's message
+        # when the listing cannot be fetched (unconnected integration,
+        # credential tier without access, carrier outage), or
+        # {ServiceCatalog.none} — the default — when the provider lists no
+        # services and the merchant types identifiers free-form.
+        #
+        # Never raise: the picker degrades to free-form entry, and a failed
+        # listing must not block configuring a delivery method.
         #
         # @param _integration [Spree::Integration, nil]
-        # @return [Array<Hash>]
+        # @return [Spree::DeliveryRateProvider::ServiceCatalog]
         def service_catalog(_integration)
-          []
+          ServiceCatalog.none
         end
       end
 

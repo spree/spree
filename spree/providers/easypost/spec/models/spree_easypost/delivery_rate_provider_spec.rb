@@ -56,10 +56,35 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
     expect(described_class.integration_class).to eq('SpreeEasyPost::Integration')
   end
 
-  it 'ships a static service catalog for the admin picker' do
-    entry = described_class.service_catalog(integration).first
+  describe '.service_catalog' do
+    it 'lists every carrier service the account can quote' do
+      catalog = described_class.service_catalog(integration)
 
-    expect(entry).to include(:carrier, :service, :label)
+      expect(catalog).to be_available
+      expect(catalog.services).to eq(
+        [
+          { carrier: 'UPS', service: 'Express', label: 'UPS Express' },
+          { carrier: 'UPS', service: 'Ground', label: 'UPS Ground' }
+        ]
+      )
+    end
+
+    # A carrier outage or a rejected key must say why, so the picker does
+    # not imply the merchant simply has no carriers.
+    it 'reports the carrier message when the probe quote fails' do
+      allow(shipment_service).to receive(:create).
+        and_raise(StandardError.new('This resource requires a production API Key to access.'))
+
+      catalog = described_class.service_catalog(integration)
+
+      expect(catalog).not_to be_available
+      expect(catalog.error_message).to include('production API Key')
+      expect(catalog.services).to eq([])
+    end
+
+    it 'lists nothing when the integration is not connected' do
+      expect(described_class.service_catalog(nil).services).to eq([])
+    end
   end
 
   describe '#estimates' do

@@ -99,7 +99,24 @@ end
 
 **Never let `estimates` raise.** It runs inside checkout's rate refresh, so an exception breaks the whole delivery step for the customer. Rescue your carrier's errors, report them (`Rails.error.report`), and return `[]` — the method disappears from the options while everything else keeps working.
 
-Optionally declare `def self.service_catalog(integration)` returning `[{ carrier:, service:, label: }]` — the admin service picker renders it as a checkbox list. Without a catalog the merchant enters carrier/service identifiers free-form.
+Optionally implement `def self.service_catalog(integration)` so the admin service picker can list the carrier's services as checkboxes. Fetch them live — a hardcoded list offers services the merchant has not enabled and hides the ones they have. Return one of three shapes, and never raise:
+
+```ruby
+def self.service_catalog(integration)
+  return Spree::DeliveryRateProvider::ServiceCatalog.none if integration.nil?
+
+  services = integration.client.services.map do |service|
+    { carrier: service.carrier, service: service.code, label: service.name }
+  end
+  Spree::DeliveryRateProvider::ServiceCatalog.listing(services)
+rescue AcmeCarrier::Error => e
+  # The merchant sees the carrier's own words — "no services" and "we
+  # could not ask" are different problems.
+  Spree::DeliveryRateProvider::ServiceCatalog.unavailable(e.message)
+end
+```
+
+`ServiceCatalog.none` is the default: the provider lists nothing and the merchant types identifiers free-form, which also stays available when a listing fails. Carrier and service values must match what your rates carry — the picker's rows are matched against quoted rates by exactly those two fields.
 
 **Returning `nil` hides the delivery method** for that package. This is the same contract calculators follow, and it is how you express "this carrier does not serve this destination" — the method simply does not appear at checkout rather than appearing at a wrong price.
 

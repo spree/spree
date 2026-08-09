@@ -515,7 +515,8 @@
         "add_service": "Dodaj usługę",
         "carrier": "Przewoźnik",
         "service": "Usługa",
-        "custom_label": "Własna etykieta dla {{service}}"
+        "custom_label": "Własna etykieta dla {{service}}",
+        "catalog_unavailable": "Nie udało się pobrać usług tego przewoźnika ({{message}}). Wpisz identyfikatory przewoźnika i usługi ręcznie albo zostaw puste, aby oferować wszystko, co wycenia przewoźnik."
       },
       "provider_needs_connection": "Połącz {{name}}, aby użyć"
     },

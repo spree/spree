@@ -49,14 +49,18 @@ test.describe('delivery methods', () => {
     await expect(page.getByRole('heading', { name: /new delivery method/i })).toBeVisible()
 
     await page.locator('#name').fill(name)
-    // Fulfillment type select — first combobox in the sheet form.
-    await page.getByRole('combobox').first().click()
+
+    // Target selects through their labels — the sheet renders several, and
+    // positional lookups break whenever a field is added.
+    const selectFor = (label: RegExp) =>
+      page.locator('[data-slot="field"]').filter({ hasText: label }).getByRole('combobox').first()
+
+    await selectFor(/fulfillment type/i).click()
     await page.getByRole('option', { name: /^pickup$/i }).click()
 
-    // Choosing pickup reveals the provider field (several providers handle the
-    // type) and suggests the one that actually does pickup, not generic Manual.
-    await expect(page.getByText(/fulfillment provider/i)).toBeVisible()
-    await expect(page.getByRole('combobox').nth(1)).toHaveText(/pickup/i)
+    // Choosing pickup steers the fulfillment provider to the one that
+    // actually does pickup, not generic Manual.
+    await expect(selectFor(/fulfillment provider/i)).toHaveText(/pickup/i)
 
     await page.getByRole('button', { name: /create delivery method/i }).click()
 

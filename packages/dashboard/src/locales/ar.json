@@ -507,7 +507,8 @@
         "add_service": "إضافة خدمة",
         "carrier": "الناقل",
         "service": "الخدمة",
-        "custom_label": "تسمية مخصصة لـ {{service}}"
+        "custom_label": "تسمية مخصصة لـ {{service}}",
+        "catalog_unavailable": "تعذّر جلب خدمات هذا الناقل ({{message}}). أدخل معرّفات الناقل والخدمة يدويًا، أو اتركها فارغة لعرض كل ما يسعّره الناقل."
       },
       "provider_needs_connection": "اربط {{name}} لاستخدامه"
     },

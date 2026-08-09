@@ -12,7 +12,7 @@ Live multi-carrier delivery rates for Spree via [EasyPost](https://www.easypost.
 
 1. Add the gem: `bundle add spree_easypost`
 2. In the admin dashboard, open **Settings → Integrations**, connect **EasyPost**, and activate it (activation verifies the key against the EasyPost API).
-3. Create ONE delivery method (**Settings → Delivery methods**) with **EasyPost** as its rate and fulfillment provider. That's enough — customers see every service EasyPost quotes. Optionally narrow the offered services, rename them ("UPS 1 day"), or add a handling-fee markup, per service or method-wide.
+3. Create ONE delivery method (**Settings → Delivery methods**) with **EasyPost** as its rate and fulfillment provider. The service picker lists what your EasyPost account can actually quote — read from a throwaway quote rather than the carrier-accounts endpoint, which is production-only and reports no service levels. That's enough — customers see every service EasyPost quotes. Optionally narrow the offered services, rename them ("UPS 1 day"), or add a handling-fee markup, per service or method-wide.
 
 Methods without the EasyPost provider keep pricing through their calculator — the two coexist freely per store.
 

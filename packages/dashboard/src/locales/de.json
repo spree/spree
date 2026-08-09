@@ -507,7 +507,8 @@
         "add_service": "Service hinzufügen",
         "carrier": "Carrier",
         "service": "Service",
-        "custom_label": "Eigene Bezeichnung für {{service}}"
+        "custom_label": "Eigene Bezeichnung für {{service}}",
+        "catalog_unavailable": "Die Services dieses Carriers konnten nicht geladen werden ({{message}}). Gib Carrier- und Service-Kennungen manuell ein oder lasse das Feld leer, um alle angebotenen Services zu nutzen."
       },
       "provider_needs_connection": "{{name}} verbinden, um es zu nutzen"
     },

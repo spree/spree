@@ -507,7 +507,8 @@
         "add_service": "Ajouter un service",
         "carrier": "Transporteur",
         "service": "Service",
-        "custom_label": "Libellé personnalisé pour {{service}}"
+        "custom_label": "Libellé personnalisé pour {{service}}",
+        "catalog_unavailable": "Impossible de lister les services de ce transporteur ({{message}}). Saisissez les identifiants manuellement, ou laissez vide pour proposer tout ce que le transporteur cote."
       },
       "provider_needs_connection": "Connectez {{name}} pour l’utiliser"
     },

@@ -35,6 +35,7 @@ module Spree
                 type: provider_class.to_s,
                 name: provider_class.provider_name,
                 integration_class: provider_class.integration_class,
+                integration_type: integration_api_type(provider_class),
                 available: provider_class.available_for_store?(current_store),
                 fulfillment_types: provider_class.fulfillment_types,
                 requires_address: provider_class.new.requires_address?
@@ -56,15 +57,21 @@ module Spree
             data = Spree.delivery_rate_providers.map do |provider_class|
               integration = provider_class.integration_class.presence &&
                 current_store.integrations.active.find_by(type: provider_class.integration_class)
+              catalog = provider_class.service_catalog(integration)
 
               {
                 type: provider_class.to_s,
                 name: provider_class.provider_name,
                 integration_class: provider_class.integration_class,
+                integration_type: integration_api_type(provider_class),
                 available: provider_class.available_for_store?(current_store),
                 fulfillment_types: provider_class.fulfillment_types,
                 uses_calculator: provider_class.uses_calculator?,
-                service_catalog: provider_class.service_catalog(integration)
+                service_catalog: catalog.services,
+                # Present when the provider could not list services (e.g. a
+                # credential tier without access) — the picker shows it
+                # instead of an empty list.
+                service_catalog_error: catalog.error_message
               }
             end
 
@@ -95,6 +102,14 @@ module Spree
           end
 
           protected
+
+          # Wire shorthand of the provider's integration (`easy_post`), so the
+          # dashboard can tie a provider to the integration it needs without
+          # translating Ruby class names client-side.
+          def integration_api_type(provider_class)
+            klass = provider_class.integration_class.presence&.safe_constantize
+            klass&.api_type
+          end
 
           def model_class
             Spree::DeliveryMethod

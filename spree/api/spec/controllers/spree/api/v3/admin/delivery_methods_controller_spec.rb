@@ -64,6 +64,8 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       expect(internal['name']).to eq('Internal')
       expect(internal['integration_class']).to be_nil
       expect(internal['service_catalog']).to eq([])
+      expect(internal['service_catalog_error']).to be_nil
+      expect(internal['integration_type']).to be_nil
       expect(json_response['default']).to eq('Spree::DeliveryRateProvider::Internal')
     end
 

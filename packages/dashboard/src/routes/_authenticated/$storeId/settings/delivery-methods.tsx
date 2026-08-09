@@ -604,9 +604,13 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
     disabled: !provider.available,
   }))
   const [connectingType, setConnectingType] = useState<IntegrationTypeDefinition | null>(null)
+  // Set when a connect finishes, so the effect below can select the
+  // providers that integration unlocks once the refreshed lists arrive.
+  const [justConnected, setJustConnected] = useState<string | null>(null)
   const queryClient = useQueryClient()
   const rateProvidersKey = useResourceKey('delivery-methods', 'rate-providers')
   const fulfillmentProvidersKey = useResourceKey('delivery-methods', 'fulfillment-providers')
+  const integrationsKey = useResourceKey('integrations')
 
   // Providers declare which fulfillment types they handle, so the type field
   // offers only what the chosen providers can actually deliver — an empty
@@ -616,6 +620,29 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
     () => (fulfillmentProviders?.data ?? []).find((p) => p.type === fulfillmentProvider),
     [fulfillmentProviders, fulfillmentProvider],
   )
+  // Connecting an integration from this form is an act of intent: select
+  // the providers it unlocks once the refreshed lists arrive, so the
+  // merchant does not have to find and set them by hand afterwards.
+  useEffect(() => {
+    if (!justConnected) return
+
+    const unlockedRateProvider = (rateProviders?.data ?? []).find(
+      (provider) => provider.integration_type === justConnected && provider.available,
+    )
+    const unlockedFulfillmentProvider = (fulfillmentProviders?.data ?? []).find(
+      (provider) => provider.integration_type === justConnected && provider.available,
+    )
+    if (!unlockedRateProvider && !unlockedFulfillmentProvider) return
+
+    if (unlockedRateProvider) {
+      form.setValue('rate_provider', unlockedRateProvider.type, { shouldDirty: true })
+    }
+    if (unlockedFulfillmentProvider) {
+      form.setValue('fulfillment_provider', unlockedFulfillmentProvider.type, { shouldDirty: true })
+    }
+    setJustConnected(null)
+  }, [justConnected, rateProviders, fulfillmentProviders, form])
+
   const selectedRateProvider = useMemo(
     () => availableRateProviders.find((p) => p.type === (rateProvider || defaultRateProvider)),
     [availableRateProviders, rateProvider, defaultRateProvider],
@@ -643,6 +670,22 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
   // (The record still carries a calculator: the Estimator consults its
   // `available?`, which the API fills in with a free-rate default.)
   const usesCalculator = selectedRateProvider?.uses_calculator ?? true
+
+  // Steer the provider as the type changes. A provider declaring no types
+  // (Manual) handles anything, so it never becomes invalid — but a type with
+  // a dedicated provider should land on it, since picking Pickup and leaving
+  // Manual is almost never what the merchant means. Only moves off a
+  // generalist, so an explicit choice is never overwritten.
+  useEffect(() => {
+    if (!fulfillmentType) return
+    const handled = selectedFulfillmentProvider?.fulfillment_types ?? []
+    if (handled.includes(fulfillmentType)) return
+
+    const specialist = (fulfillmentProviders?.data ?? []).find(
+      (provider) => provider.available && provider.fulfillment_types.includes(fulfillmentType),
+    )
+    if (specialist) form.setValue('fulfillment_provider', specialist.type, { shouldDirty: true })
+  }, [fulfillmentType, selectedFulfillmentProvider, fulfillmentProviders, form])
 
   // Keep the type valid as providers change: an EasyPost method cannot stay
   // `digital`. Only steers when the current value is no longer offered.
@@ -710,25 +753,21 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
           single registered provider the default applies and the field stays
           hidden (for rate providers, until a carrier integration is
           installed pricing is simply the calculator below). */}
-      {providerOptions.length > 1 && (
-        <ProviderSelectField
-          form={form}
-          name="fulfillment_provider"
-          label={t('admin.fields.delivery_method.fulfillment_provider.label')}
-          help={t('admin.fields.delivery_method.fulfillment_provider.help')}
-          options={providerOptions}
-        />
-      )}
+      <ProviderSelectField
+        form={form}
+        name="fulfillment_provider"
+        label={t('admin.fields.delivery_method.fulfillment_provider.label')}
+        help={t('admin.fields.delivery_method.fulfillment_provider.help')}
+        options={providerOptions}
+      />
 
-      {rateProviderOptions.length > 1 && (
-        <ProviderSelectField
-          form={form}
-          name="rate_provider"
-          label={t('admin.fields.delivery_method.rate_provider.label')}
-          help={t('admin.fields.delivery_method.rate_provider.help')}
-          options={rateProviderOptions}
-        />
-      )}
+      <ProviderSelectField
+        form={form}
+        name="rate_provider"
+        label={t('admin.fields.delivery_method.rate_provider.label')}
+        help={t('admin.fields.delivery_method.rate_provider.help')}
+        options={rateProviderOptions}
+      />
 
       {connectableIntegrations.map((integrationType) => (
         <div
@@ -757,11 +796,13 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
           open
           onOpenChange={(next) => {
             if (next) return
+            setJustConnected(connectingType.type)
             setConnectingType(null)
             // Provider lists are cached for half an hour — a fresh connect
             // must surface the provider in both selects immediately.
             queryClient.invalidateQueries({ queryKey: rateProvidersKey })
             queryClient.invalidateQueries({ queryKey: fulfillmentProvidersKey })
+            queryClient.invalidateQueries({ queryKey: integrationsKey })
           }}
         />
       )}
@@ -917,7 +958,11 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
       )}
 
       {fulfillmentType === 'shipping' && !usesCalculator && (
-        <CarrierServicesSection form={form} catalog={selectedRateProvider?.service_catalog ?? []} />
+        <CarrierServicesSection
+          form={form}
+          catalog={selectedRateProvider?.service_catalog ?? []}
+          catalogError={selectedRateProvider?.service_catalog_error ?? null}
+        />
       )}
 
       <div className="grid grid-cols-2 gap-3">
@@ -1018,9 +1063,12 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
 function CarrierServicesSection({
   form,
   catalog,
+  catalogError,
 }: {
   form: UseFormReturn<DeliveryMethodFormValues>
   catalog: DeliveryRateProviderCatalogEntry[]
+  /** Why the carrier's service list is missing, when it is. */
+  catalogError: string | null
 }) {
   const { t } = useTranslation()
   const servicesArray = useFieldArray({ control: form.control, name: 'services', keyName: '_key' })
@@ -1056,6 +1104,14 @@ function CarrierServicesSection({
             : t('admin.delivery_methods.carrier_services.narrowed_hint', { count: rows.length })}
         </span>
       </div>
+
+      {catalogError && (
+        <p className="rounded-md bg-muted p-2 text-xs text-muted-foreground">
+          {t('admin.delivery_methods.carrier_services.catalog_unavailable', {
+            message: catalogError,
+          })}
+        </p>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         <Field>

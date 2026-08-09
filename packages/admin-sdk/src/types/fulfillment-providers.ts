@@ -13,6 +13,8 @@ export interface FulfillmentProviderOption {
   name: string
   /** `Spree::Integration` subclass holding this provider's credentials, if any. */
   integration_class: string | null
+  /** Wire shorthand of the required integration (`easy_post`), matching `integrations.types()`; null when the provider needs no credentials. */
+  integration_type: string | null
   /** False when the provider's integration isn't connected for this store — connect it to enable the provider. */
   available: boolean
   /** Fulfillment types this provider handles; empty means any type. */
@@ -36,6 +38,8 @@ export interface DeliveryRateProviderOption {
   name: string
   /** `Spree::Integration` subclass holding this provider's credentials, if any. */
   integration_class: string | null
+  /** Wire shorthand of the required integration (`easy_post`), matching `integrations.types()`; null when the provider needs no credentials. */
+  integration_type: string | null
   /** False when the provider's integration isn't connected for this store — connect it to enable the provider. */
   available: boolean
   /** Fulfillment types this provider can quote; empty means any type. */
@@ -43,11 +47,14 @@ export interface DeliveryRateProviderOption {
   /** Whether the method's calculator sets the price. False for carrier providers, which quote live rates. */
   uses_calculator: boolean
   /**
-   * Carrier services this provider can quote, for the service picker.
-   * Empty when the provider exposes no catalog — service rows then accept
-   * free-form carrier/service values.
+   * Carrier services this store can offer, fetched live from the carrier.
+   * Empty when the provider lists none, or when the listing failed — see
+   * `service_catalog_error`. Service rows accept free-form values either
+   * way, so a method stays configurable.
    */
   service_catalog: DeliveryRateProviderCatalogEntry[]
+  /** Why the services could not be listed (the vendor's own message), or null when they were. */
+  service_catalog_error: string | null
 }
 
 /** One carrier service in a rate provider's catalog. */
