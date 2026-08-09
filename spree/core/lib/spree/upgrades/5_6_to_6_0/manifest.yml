@@ -412,3 +412,21 @@ steps:
       nothing until the index is rebuilt.
 
       Safe to run at any time and safe to repeat; it re-enqueues every product.
+
+  - id: migrate_stripe_webhook_keys
+    name: "Move Stripe webhook signing secrets onto the gateway"
+    task: "spree:upgrade:migrate_stripe_webhook_keys"
+    optional: true
+    notes: |
+      Only runs when spree_stripe is installed; skipped otherwise.
+
+      Signing secrets used to live in spree_stripe_webhook_keys, joined to
+      payment methods many-to-many because a payment method could be shared
+      across stores. A payment method belongs to exactly one store in 6.0, so
+      there is a single endpoint per gateway and the secret moves onto the
+      gateway's own preferences.
+
+      Until this runs, a gateway carrying a pre-6.0 endpoint has no signing
+      secret and rejects incoming webhooks. Idempotent — gateways that already
+      hold a secret are skipped, and the legacy tables stay in place as a
+      rollback path until they are dropped in 6.1.

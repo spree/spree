@@ -1,0 +1,223 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/customers
+    body:
+      encoding: UTF-8
+      string: address[city]=New+York&address[line1]=100+Main+Street&address[line2]=Apt+2&address[postal_code]=10001&address[country]=United+States+of+America&address[state]=New+York&email=test%40example.com&name=Jane+Moe
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/5.0.0.alpha (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 09 Jul 2025 15:57:25 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '808'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=fUFLn2j3-z1KRjfv-RqEG2Ofz6n0nWjCTMyvKvs725XG6scQDIgIR8pVWADHKt5iG7GUjgI34J2Q2aO6
+      Idempotency-Key:
+      - 4af89f33-ce96-4bd4-999e-27727ae57e64
+      Original-Request:
+      - req_WawpLvjm2VOo92
+      Request-Id:
+      - req_WawpLvjm2VOo92
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - ABGHIJ
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "cus_SeIzmCh2MX8eaK",
+          "object": "customer",
+          "address": {
+            "city": "New York",
+            "country": "United States of America",
+            "line1": "100 Main Street",
+            "line2": "Apt 2",
+            "postal_code": "10001",
+            "state": "New York"
+          },
+          "balance": 0,
+          "created": 1752076645,
+          "currency": null,
+          "default_source": null,
+          "delinquent": false,
+          "description": null,
+          "discount": null,
+          "email": "test@example.com",
+          "invoice_prefix": "X8FIIPUY",
+          "invoice_settings": {
+            "custom_fields": null,
+            "default_payment_method": null,
+            "footer": null,
+            "rendering_options": null
+          },
+          "livemode": false,
+          "metadata": {},
+          "name": "Jane Moe",
+          "next_invoice_sequence": 1,
+          "phone": null,
+          "preferred_locales": [],
+          "shipping": null,
+          "tax_exempt": "none",
+          "test_clock": null
+        }
+  recorded_at: Wed, 09 Jul 2025 15:57:25 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/customers/cus_SeIzmCh2MX8eaK
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/5.0.0.alpha (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Wed, 09 Jul 2025 15:57:26 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '808'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=KSCC9H4qQqlr4QQxL7khV-wCePHI5Qo_uyaDc_-XK3WkGCY3KR-O6juNZkrDVH91J8lKz9k0ybBbDgqU
+      Request-Id:
+      - req_LJibUszP78tF55
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - ABGHIJ
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "cus_SeIzmCh2MX8eaK",
+          "object": "customer",
+          "address": {
+            "city": "New York",
+            "country": "United States of America",
+            "line1": "100 Main Street",
+            "line2": "Apt 2",
+            "postal_code": "10001",
+            "state": "New York"
+          },
+          "balance": 0,
+          "created": 1752076645,
+          "currency": null,
+          "default_source": null,
+          "delinquent": false,
+          "description": null,
+          "discount": null,
+          "email": "test@example.com",
+          "invoice_prefix": "X8FIIPUY",
+          "invoice_settings": {
+            "custom_fields": null,
+            "default_payment_method": null,
+            "footer": null,
+            "rendering_options": null
+          },
+          "livemode": false,
+          "metadata": {},
+          "name": "Jane Moe",
+          "next_invoice_sequence": 1,
+          "phone": null,
+          "preferred_locales": [],
+          "shipping": null,
+          "tax_exempt": "none",
+          "test_clock": null
+        }
+  recorded_at: Wed, 09 Jul 2025 15:57:26 GMT
+recorded_with: VCR 6.3.1

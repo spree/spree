@@ -1,0 +1,275 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/customers
+    body:
+      encoding: UTF-8
+      string: address[city]=Herndon&address[line1]=1+Lovely+Street&address[line2]=Northwest&address[postal_code]=35005&address[country]=United+States&email=tarsha.moore%40senger.com&name=John+Doe
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/1.0.0 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Fri, 20 Dec 2024 08:29:07 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '801'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; upgrade-insecure-requests;
+        report-uri /csp-violation https://q.stripe.com/csp-violation?q=i3YC0SESJ3NIQgsdBRrnQt3h9PXszFYiRUmSibQA2z9HLF2W5A0gFHEZlroogSCud6mEtjgiMg%3D%3D
+      Cross-Origin-Opener-Policy-Report-Only:
+      - same-origin; report-to="coop"
+      Idempotency-Key:
+      - bc0ed289-fef0-4860-b160-e3c283528edb
+      Original-Request:
+      - req_iI2K6TeFaMmy5J
+      Report-To:
+      - '{"group":"coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - coop="https://q.stripe.com/coop-report"
+      Request-Id:
+      - req_iI2K6TeFaMmy5J
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - AB
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "cus_RQtMxdcMhzDlNf",
+          "object": "customer",
+          "address": {
+            "city": "Herndon",
+            "country": "United States",
+            "line1": "1 Lovely Street",
+            "line2": "Northwest",
+            "postal_code": "35005",
+            "state": null
+          },
+          "balance": 0,
+          "created": 1734683346,
+          "currency": null,
+          "default_source": null,
+          "delinquent": false,
+          "description": null,
+          "discount": null,
+          "email": "tarsha.moore@senger.com",
+          "invoice_prefix": "E2394B7E",
+          "invoice_settings": {
+            "custom_fields": null,
+            "default_payment_method": null,
+            "footer": null,
+            "rendering_options": null
+          },
+          "livemode": false,
+          "metadata": {},
+          "name": "John Doe",
+          "next_invoice_sequence": 1,
+          "phone": null,
+          "preferred_locales": [],
+          "shipping": null,
+          "tax_exempt": "none",
+          "test_clock": null
+        }
+  recorded_at: Fri, 20 Dec 2024 08:29:07 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/payment_intents
+    body:
+      encoding: UTF-8
+      string: payment_method_options[card][setup_future_usage]=off_session&amount=100&customer=cus_RQtMxdcMhzDlNf&currency=USD&statement_descriptor_suffix=vitae&automatic_payment_methods[enabled]=true
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/1.0.0 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_iI2K6TeFaMmy5J","request_duration_ms":448}}'
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Fri, 20 Dec 2024 08:29:07 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1565'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; upgrade-insecure-requests;
+        report-uri /csp-violation https://q.stripe.com/csp-violation?q=IFHODJStsDdtfRhiSMgbxyktHQHgN2CU2zECfRb0vcxKsZjlJWUFahBeaAXZ01I6Ovwf3H0_bg%3D%3D
+      Cross-Origin-Opener-Policy-Report-Only:
+      - same-origin; report-to="coop"
+      Idempotency-Key:
+      - 4cb4c0bb-84b6-4d5b-8913-6c7521b907aa
+      Original-Request:
+      - req_CylwLS0fyvaM7s
+      Report-To:
+      - '{"group":"coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - coop="https://q.stripe.com/coop-report"
+      Request-Id:
+      - req_CylwLS0fyvaM7s
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - AB
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pi_3QY1a32ESifGlJez0k9YRZnS",
+          "object": "payment_intent",
+          "amount": 100,
+          "amount_capturable": 0,
+          "amount_details": {
+            "tip": {}
+          },
+          "amount_received": 0,
+          "application": null,
+          "application_fee_amount": null,
+          "automatic_payment_methods": {
+            "allow_redirects": "always",
+            "enabled": true
+          },
+          "canceled_at": null,
+          "cancellation_reason": null,
+          "capture_method": "automatic",
+          "client_secret": "pi_3QY1a32ESifGlJez0k9YRZnS_secret_lxba1Pvpo3y9Flh2OaAWrHpjc",
+          "confirmation_method": "automatic",
+          "created": 1734683347,
+          "currency": "usd",
+          "customer": "cus_RQtMxdcMhzDlNf",
+          "description": null,
+          "invoice": null,
+          "last_payment_error": null,
+          "latest_charge": null,
+          "livemode": false,
+          "metadata": {},
+          "next_action": null,
+          "on_behalf_of": null,
+          "payment_method": null,
+          "payment_method_configuration_details": {
+            "id": "pmc_1QVa9x2ESifGlJezRC5fgLVg",
+            "parent": null
+          },
+          "payment_method_options": {
+            "card": {
+              "installments": null,
+              "mandate_options": null,
+              "network": null,
+              "request_three_d_secure": "automatic",
+              "setup_future_usage": "off_session"
+            },
+            "link": {
+              "persistent_token": null
+            }
+          },
+          "payment_method_types": [
+            "card",
+            "link"
+          ],
+          "processing": null,
+          "receipt_email": null,
+          "review": null,
+          "setup_future_usage": null,
+          "shipping": null,
+          "source": null,
+          "statement_descriptor": null,
+          "statement_descriptor_suffix": "vitae",
+          "status": "requires_payment_method",
+          "transfer_data": null,
+          "transfer_group": null
+        }
+  recorded_at: Fri, 20 Dec 2024 08:29:07 GMT
+recorded_with: VCR 6.2.0

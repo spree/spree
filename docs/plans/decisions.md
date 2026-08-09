@@ -705,6 +705,54 @@ means splitting first, and split-then-ship inside an `after_transition` callback
 is exactly the shape `6.0-service-workflows.md` prohibits. The workflow wraps the
 machine as a low-level mechanic, mirroring how `Fulfillments::Create` already
 wraps `mark_shipped`.
+## 2026-08-09 — Stripe moves into the monorepo as a payment-session-only gem, with no tables
+
+`spree_stripe` ships from `spree/providers/stripe` in the monorepo, per
+`6.0-payment-gateways-monorepo.md`. Three things were decided during the port
+that the plan had left open or assumed differently.
+
+**Scope is the payment-session API, not the whole gateway.** The plan's
+keep-set was "the v3 half of the repo"; the sharper line is the session flow.
+The six money verbs (`authorize`/`purchase`/`capture`/`credit`/`void`/`cancel`)
+stay, because core's payment lifecycle calls them after a session completes —
+`Spree::Gateway::Bogus`, core's own reference session gateway, implements the
+same six. What left is the machinery around them: creating intents for payments
+that never had a session, off-session confirmation, the storefront
+redirect/confirm controllers, `SpreeStripe::CompleteOrder` (`Carts::Complete`
+owns completion now), and the `stripe_event` engine with its four webhook
+handlers — webhooks arrive at core's v3 endpoint and route through
+`#parse_webhook_event`. Stripe Tax is dropped outright and revisits as a
+`TaxProvider`.
+
+**The webhook-key tables collapse into preferences, and the gem ends up with no
+schema at all.** `spree_stripe_webhook_keys` plus its join table existed to map
+signing secrets to payment methods many-to-many — a shape that only made sense
+while a payment method could be shared across stores. `belongs_to :store` means
+one endpoint per gateway, so the secret is a `:password` preference. Worth
+stating plainly, because the plan called this an "encrypted preferences" move
+and it is not: `spree_payment_methods.preferences` is serialized YAML with no
+encryption at rest, while the dropped model declared
+`encrypts … deterministic: true`. It is not a new exposure — the Stripe secret
+key, a more powerful credential, has always sat in that same column — but
+encrypting the preferences column is now a live core-wide question rather than
+something this port solved. `spree:upgrade:migrate_stripe_webhook_keys` carries
+existing secrets across.
+
+**Manifest steps from optional gems need an `optional: true` flag.** The
+upgrade runner resolves each step with `Rake::Task[…]`, which raises when the
+task isn't defined — so an unconditional Stripe step in core's 5.6→6.0 manifest
+would break `rake spree:upgrade` for every install without the gem. The flag
+makes the runner skip with a note. Every future gateway gem contributing a
+backfill uses it.
+
+**Consequences:** gateway configuration lives in payment-method preferences,
+never in new tables — a gateway that thinks it needs one should first check
+whether single-store ownership removed the reason. Gem-contributed upgrade
+steps are always `optional: true`. Two committed VCR cassettes were found
+carrying real webhook signing secrets (the sensitive-data filters covered
+request keys but not response bodies) and were redacted; cassettes now default
+to `record: :none`, since record-by-default turns renaming a `:vcr` example
+into a live API call.
 
 ## 2026-08-09: Metadata consolidated to one column — `public_metadata` dropped, `private_metadata` renamed
 

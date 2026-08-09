@@ -56,7 +56,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost providers/meilisearch dashboard opentelemetry; do
+          for project in core api emails providers/easypost providers/meilisearch providers/stripe dashboard opentelemetry; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -101,7 +101,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails providers/easypost providers/meilisearch dashboard opentelemetry; do
+          for project in core api emails providers/easypost providers/meilisearch providers/stripe dashboard opentelemetry; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -133,7 +133,7 @@ jobs:
           # The suites are small, so a runner each cost more in queue time than
           # they saved. This is also the only job with the Meilisearch service,
           # so spree_meilisearch's integration spec runs here.
-          - { project: providers, dirs: "providers/easypost providers/meilisearch", shard: 1, total_shards: 1, procs: 2 }
+          - { project: providers, dirs: "providers/easypost providers/meilisearch providers/stripe", shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
           - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
           # opentelemetry: 1 runner × 2 procs (tiny suite — optional tracing gem)
@@ -293,7 +293,7 @@ jobs:
           # providers: 1 runner × 2 procs — every provider gem shares a lane.
           # No Meilisearch service here, so spree_meilisearch's integration spec
           # skips itself; its unit specs still run against MySQL.
-          - { project: providers, dirs: "providers/easypost providers/meilisearch", shard: 1, total_shards: 1, procs: 2 }
+          - { project: providers, dirs: "providers/easypost providers/meilisearch providers/stripe", shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
           - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
           # opentelemetry: 1 runner × 2 procs (tiny suite — optional tracing gem)

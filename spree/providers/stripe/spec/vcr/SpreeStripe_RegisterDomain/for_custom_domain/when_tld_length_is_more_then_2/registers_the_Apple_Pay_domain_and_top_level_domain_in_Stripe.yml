@@ -1,0 +1,781 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/apple_pay/domains
+    body:
+      encoding: UTF-8
+      string: domain_name=shop.store-with-apple-pay.com
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 PayRails/7.1.0 (https://github.com/pay-rails/pay)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_C8N8oANwwicBoO","request_duration_ms":353}}'
+      Idempotency-Key:
+      - 30a16f4f-95ec-46c7-aa4f-a1dd5c68ebe4
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 15 Feb 2024 09:46:06 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '171'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET,HEAD,PUT,PATCH,POST,DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - report-uri https://q.stripe.com/csp-report?p=v1%2Fapple_pay%2Fdomains; block-all-mixed-content;
+        default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'
+      Idempotency-Key:
+      - 30a16f4f-95ec-46c7-aa4f-a1dd5c68ebe4
+      Original-Request:
+      - req_z1L95Y1eeucosu
+      Request-Id:
+      - req_z1L95Y1eeucosu
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "apwc_1OhVNaIhR0gIegIea5bTfT3R",
+          "object": "apple_pay_domain",
+          "created": 1707390174,
+          "domain_name": "shop.store-with-apple-pay.com",
+          "livemode": false
+        }
+  recorded_at: Thu, 15 Feb 2024 09:46:06 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/apple_pay/domains
+    body:
+      encoding: UTF-8
+      string: domain_name=store-with-apple-pay.com
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 PayRails/7.1.0 (https://github.com/pay-rails/pay)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_z1L95Y1eeucosu","request_duration_ms":245}}'
+      Idempotency-Key:
+      - 84248bdb-f430-4c5f-8f68-acce3bb60809
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 15 Feb 2024 09:46:06 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '166'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET,HEAD,PUT,PATCH,POST,DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - report-uri https://q.stripe.com/csp-report?p=v1%2Fapple_pay%2Fdomains; block-all-mixed-content;
+        default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'
+      Idempotency-Key:
+      - 84248bdb-f430-4c5f-8f68-acce3bb60809
+      Original-Request:
+      - req_XRRPlbEPkGFZHo
+      Request-Id:
+      - req_XRRPlbEPkGFZHo
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "apwc_1OhWNdIhR0gIegIe8QpNWSqX",
+          "object": "apple_pay_domain",
+          "created": 1707394021,
+          "domain_name": "store-with-apple-pay.com",
+          "livemode": false
+        }
+  recorded_at: Thu, 15 Feb 2024 09:46:06 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/apple_pay/domains?domain_name=shop.store-with-apple-pay.com
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 PayRails/7.1.0 (https://github.com/pay-rails/pay)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_XRRPlbEPkGFZHo","request_duration_ms":250}}'
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 15 Feb 2024 09:46:07 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '294'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET,HEAD,PUT,PATCH,POST,DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - report-uri https://q.stripe.com/csp-report?p=v1%2Fapple_pay%2Fdomains; block-all-mixed-content;
+        default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'
+      Request-Id:
+      - req_pxtwCV6Lsq6VVF
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "object": "list",
+          "data": [
+            {
+              "id": "apwc_1OhVNaIhR0gIegIea5bTfT3R",
+              "object": "apple_pay_domain",
+              "created": 1707390174,
+              "domain_name": "shop.store-with-apple-pay.com",
+              "livemode": false
+            }
+          ],
+          "has_more": false,
+          "url": "/v1/apple_pay/domains"
+        }
+  recorded_at: Thu, 15 Feb 2024 09:46:06 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/apple_pay/domains?domain_name=store-with-apple-pay.com
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 PayRails/7.1.0 (https://github.com/pay-rails/pay)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_pxtwCV6Lsq6VVF","request_duration_ms":233}}'
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Thu, 15 Feb 2024 09:46:07 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '289'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET,HEAD,PUT,PATCH,POST,DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - report-uri https://q.stripe.com/csp-report?p=v1%2Fapple_pay%2Fdomains; block-all-mixed-content;
+        default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'
+      Request-Id:
+      - req_7Fz4Iub2PMVlr3
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "object": "list",
+          "data": [
+            {
+              "id": "apwc_1OhWNdIhR0gIegIe8QpNWSqX",
+              "object": "apple_pay_domain",
+              "created": 1707394021,
+              "domain_name": "store-with-apple-pay.com",
+              "livemode": false
+            }
+          ],
+          "has_more": false,
+          "url": "/v1/apple_pay/domains"
+        }
+  recorded_at: Thu, 15 Feb 2024 09:46:07 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/payment_method_domains
+    body:
+      encoding: UTF-8
+      string: domain_name=shop.store-with-apple-pay.com
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/1.0.0 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Tue, 31 Dec 2024 09:41:47 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '413'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; upgrade-insecure-requests;
+        report-uri /csp-violation https://q.stripe.com/csp-violation?q=sx-GsN2cWpi7dFBpMr-DfZ2F6jTEvhCu2C2EvQMSjyQeijgA8FQWDX_o7rRwsVr-z8k0LxwgRw%3D%3D
+      Cross-Origin-Opener-Policy-Report-Only:
+      - same-origin; report-to="coop"
+      Idempotency-Key:
+      - b5226b62-65ca-4969-9a39-9757e171bfb9
+      Original-Request:
+      - req_s0QoJ38kGv6V6C
+      Report-To:
+      - '{"group":"coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - coop="https://q.stripe.com/coop-report"
+      Request-Id:
+      - req_s0QoJ38kGv6V6C
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - AB
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pmd_1Qc1xO2ESifGlJezySi9qH6t",
+          "object": "payment_method_domain",
+          "amazon_pay": {
+            "status": "active"
+          },
+          "apple_pay": {
+            "status": "active"
+          },
+          "created": 1735638106,
+          "domain_name": "shop.store-with-apple-pay.com",
+          "enabled": true,
+          "google_pay": {
+            "status": "active"
+          },
+          "link": {
+            "status": "active"
+          },
+          "livemode": false,
+          "paypal": {
+            "status": "active"
+          }
+        }
+  recorded_at: Tue, 31 Dec 2024 09:41:47 GMT
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/payment_method_domains
+    body:
+      encoding: UTF-8
+      string: domain_name=store-with-apple-pay.com
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/1.0.0 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_s0QoJ38kGv6V6C","request_duration_ms":726}}'
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Tue, 31 Dec 2024 09:41:47 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '408'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; upgrade-insecure-requests;
+        report-uri /csp-violation https://q.stripe.com/csp-violation?q=sx-GsN2cWpi7dFBpMr-DfZ2F6jTEvhCu2C2EvQMSjyQeijgA8FQWDX_o7rRwsVr-z8k0LxwgRw%3D%3D
+      Cross-Origin-Opener-Policy-Report-Only:
+      - same-origin; report-to="coop"
+      Idempotency-Key:
+      - c9aceb45-b08c-4ac9-8d5b-c61dc4dbe716
+      Original-Request:
+      - req_NOXd5iE53skZPp
+      Report-To:
+      - '{"group":"coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - coop="https://q.stripe.com/coop-report"
+      Request-Id:
+      - req_NOXd5iE53skZPp
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - AB
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pmd_1Qc1xM2ESifGlJez2fLCZgBp",
+          "object": "payment_method_domain",
+          "amazon_pay": {
+            "status": "active"
+          },
+          "apple_pay": {
+            "status": "active"
+          },
+          "created": 1735638104,
+          "domain_name": "store-with-apple-pay.com",
+          "enabled": true,
+          "google_pay": {
+            "status": "active"
+          },
+          "link": {
+            "status": "active"
+          },
+          "livemode": false,
+          "paypal": {
+            "status": "active"
+          }
+        }
+  recorded_at: Tue, 31 Dec 2024 09:41:47 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/payment_method_domains?domain_name=shop.store-with-apple-pay.com
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/1.0.0 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_hLSQFCkPJIpimU","request_duration_ms":303}}'
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Api-Version:
+      - '2023-10-16'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Tue, 31 Dec 2024 09:41:47 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '605'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; upgrade-insecure-requests;
+        report-uri /csp-violation https://q.stripe.com/csp-violation?q=PsSIrpspD12C7yCoMcpVgJpYO3BWDbCrSWo2LGT6VyAXzd35uTrlD_gDlCV4mKpBVCNyOPkRhA%3D%3D
+      Cross-Origin-Opener-Policy-Report-Only:
+      - same-origin; report-to="coop"
+      Report-To:
+      - '{"group":"coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - coop="https://q.stripe.com/coop-report"
+      Request-Id:
+      - req_2lQ7RHl1bgo61c
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - AB
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "object": "list",
+          "data": [
+            {
+              "id": "pmd_1Qc1xO2ESifGlJezySi9qH6t",
+              "object": "payment_method_domain",
+              "amazon_pay": {
+                "status": "active"
+              },
+              "apple_pay": {
+                "status": "active"
+              },
+              "created": 1735638106,
+              "domain_name": "shop.store-with-apple-pay.com",
+              "enabled": true,
+              "google_pay": {
+                "status": "active"
+              },
+              "link": {
+                "status": "active"
+              },
+              "livemode": false,
+              "paypal": {
+                "status": "active"
+              }
+            }
+          ],
+          "has_more": false,
+          "url": "/v1/payment_method_domains"
+        }
+  recorded_at: Tue, 31 Dec 2024 09:41:47 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/payment_method_domains?domain_name=store-with-apple-pay.com
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/1.0.0 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_2lQ7RHl1bgo61c","request_duration_ms":384}}'
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Api-Version:
+      - '2023-10-16'
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Tue, 31 Dec 2024 09:41:48 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '600'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; upgrade-insecure-requests;
+        report-uri /csp-violation https://q.stripe.com/csp-violation?q=PsSIrpspD12C7yCoMcpVgJpYO3BWDbCrSWo2LGT6VyAXzd35uTrlD_gDlCV4mKpBVCNyOPkRhA%3D%3D
+      Cross-Origin-Opener-Policy-Report-Only:
+      - same-origin; report-to="coop"
+      Report-To:
+      - '{"group":"coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - coop="https://q.stripe.com/coop-report"
+      Request-Id:
+      - req_ZONtgAiSWfhine
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - AB
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "object": "list",
+          "data": [
+            {
+              "id": "pmd_1Qc1xM2ESifGlJez2fLCZgBp",
+              "object": "payment_method_domain",
+              "amazon_pay": {
+                "status": "active"
+              },
+              "apple_pay": {
+                "status": "active"
+              },
+              "created": 1735638104,
+              "domain_name": "store-with-apple-pay.com",
+              "enabled": true,
+              "google_pay": {
+                "status": "active"
+              },
+              "link": {
+                "status": "active"
+              },
+              "livemode": false,
+              "paypal": {
+                "status": "active"
+              }
+            }
+          ],
+          "has_more": false,
+          "url": "/v1/payment_method_domains"
+        }
+  recorded_at: Tue, 31 Dec 2024 09:41:48 GMT
+recorded_with: VCR 6.2.0

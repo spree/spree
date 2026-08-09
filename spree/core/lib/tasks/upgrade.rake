@@ -133,10 +133,7 @@ module Spree
           print_manifest_header(manifest)
           manifest['steps'].each_with_index do |step, i|
             print_step(step, i + 1, manifest['steps'].size)
-            unless dry_run
-              invoke(step)
-              print_step_complete(step)
-            end
+            print_step_complete(step) if !dry_run && invoke(step)
           end
         end
 
@@ -164,10 +161,7 @@ module Spree
         manifest, step = matches.first
         print_manifest_header(manifest)
         print_step(step, 1, 1)
-        unless dry_run
-          invoke(step)
-          print_step_complete(step)
-        end
+        print_step_complete(step) if !dry_run && invoke(step)
 
         puts
         puts dry_run ? '  (dry run — nothing executed)' : "  Step '#{step_id}' complete."
@@ -195,6 +189,16 @@ module Spree
 
       def invoke(step)
         task = step.fetch('task')
+
+        # Steps contributed by optional gems (payment gateways, for instance)
+        # are absent unless that gem is installed. Skipping keeps the upgrade
+        # runnable on installs that never had the gem, while an install that
+        # does have it still gets the backfill.
+        if step['optional'] && !Rake::Task.task_defined?(task)
+          puts "    Skipping #{task} — not installed."
+          return false
+        end
+
         puts "    Running #{task}..."
 
         # Rake caches invoked tasks in-process; explicit reenable lets a
@@ -205,6 +209,7 @@ module Spree
         rake_task = Rake::Task[task]
         rake_task.reenable
         rake_task.invoke
+        true
       end
     end
   end

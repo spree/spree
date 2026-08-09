@@ -1,0 +1,368 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.stripe.com/v1/payment_intents
+    body:
+      encoding: UTF-8
+      string: payment_method=pm_1QXmPJ2ESifGlJezC2py6ZqS&off_session=true&confirm=true&amount=1000&customer=cus_RQdclxFVLH4oau&currency=USD&statement_descriptor_suffix=R111098765+sapiente&automatic_payment_methods[enabled]=true&transfer_group=R111098765&metadata[spree_order_id]=09840627-957a-4acc-b0cd-b6a60cb79294&shipping[address][city]=Herndon&shipping[address][country]=US&shipping[address][line1]=2+Lovely+Street&shipping[address][line2]=Northwest&shipping[address][postal_code]=35005&shipping[address][state]=STATE_ABBR_2&shipping[name]=John+Doe
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/1.0.0 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Fri, 20 Dec 2024 08:53:55 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '1935'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; upgrade-insecure-requests;
+        report-uri /csp-violation https://q.stripe.com/csp-violation?q=Nt939IZg8FBkb3mpZHxy4hOum94u6IWPnC7dBOdo4_hNEc4L_GqdfS4wiQXAT-16KcD79SydLA%3D%3D
+      Cross-Origin-Opener-Policy-Report-Only:
+      - same-origin; report-to="coop"
+      Idempotency-Key:
+      - 55810c27-0ca0-444a-8e51-cfaa7daa932e
+      Original-Request:
+      - req_rt5eMyr4HhuPYS
+      Report-To:
+      - '{"group":"coop","max_age":8640,"endpoints":[{"url":"https://q.stripe.com/coop-report"}],"include_subdomains":true}'
+      Reporting-Endpoints:
+      - coop="https://q.stripe.com/coop-report"
+      Request-Id:
+      - req_rt5eMyr4HhuPYS
+      Stripe-Should-Retry:
+      - 'false'
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - AB
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pi_3QY1y22ESifGlJez12haN8ah",
+          "object": "payment_intent",
+          "amount": 1000,
+          "amount_capturable": 0,
+          "amount_details": {
+            "tip": {}
+          },
+          "amount_received": 1000,
+          "application": null,
+          "application_fee_amount": null,
+          "automatic_payment_methods": {
+            "allow_redirects": "always",
+            "enabled": true
+          },
+          "canceled_at": null,
+          "cancellation_reason": null,
+          "capture_method": "automatic",
+          "client_secret": "pi_3QY1y22ESifGlJez12haN8ah_secret_P7VkZ3YZ5cWrlZ31iPyI0vnkh",
+          "confirmation_method": "automatic",
+          "created": 1734684834,
+          "currency": "usd",
+          "customer": "cus_RQdclxFVLH4oau",
+          "description": null,
+          "invoice": null,
+          "last_payment_error": null,
+          "latest_charge": "ch_3QY1y22ESifGlJez1rJunOIg",
+          "livemode": false,
+          "metadata": {
+            "spree_order_id": "09840627-957a-4acc-b0cd-b6a60cb79294"
+          },
+          "next_action": null,
+          "on_behalf_of": null,
+          "payment_method": "pm_1QXmPJ2ESifGlJezC2py6ZqS",
+          "payment_method_configuration_details": {
+            "id": "pmc_1QVa9x2ESifGlJezRC5fgLVg",
+            "parent": null
+          },
+          "payment_method_options": {
+            "card": {
+              "installments": null,
+              "mandate_options": null,
+              "network": null,
+              "request_three_d_secure": "automatic"
+            },
+            "link": {
+              "persistent_token": null
+            }
+          },
+          "payment_method_types": [
+            "card",
+            "link"
+          ],
+          "processing": null,
+          "receipt_email": null,
+          "review": null,
+          "setup_future_usage": null,
+          "shipping": {
+            "address": {
+              "city": "Herndon",
+              "country": "US",
+              "line1": "2 Lovely Street",
+              "line2": "Northwest",
+              "postal_code": "35005",
+              "state": "STATE_ABBR_2"
+            },
+            "carrier": null,
+            "name": "John Doe",
+            "phone": null,
+            "tracking_number": null
+          },
+          "source": null,
+          "statement_descriptor": null,
+          "statement_descriptor_suffix": "R111098765 sapiente",
+          "status": "succeeded",
+          "transfer_data": null,
+          "transfer_group": "R111098765"
+        }
+  recorded_at: Fri, 20 Dec 2024 08:53:55 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/payment_intents/pi_3QY1y22ESifGlJez12haN8ah?expand%5B%5D=payment_method
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/5.1.1 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      X-Stripe-Client-Telemetry:
+      - '{"last_request_metrics":{"request_id":"req_rt5eMyr4HhuPYS","request_duration_ms":122}}'
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Fri, 05 Dec 2025 16:23:19 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '3187'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=xWE6qyTJsno7iNx7zpX4mmGa0zffvSHgCWfgdQyf8FGmluweBVTq-8xVfzeZy40-dPZ2qQ6rJ-95nYeb
+      Request-Id:
+      - req_mb4t6awPrTRb55
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - ABGHIJ
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pi_3QY1y22ESifGlJez12haN8ah",
+          "object": "payment_intent",
+          "amount": 1000,
+          "amount_capturable": 0,
+          "amount_details": {
+            "tip": {}
+          },
+          "amount_received": 1000,
+          "application": null,
+          "application_fee_amount": null,
+          "automatic_payment_methods": {
+            "allow_redirects": "always",
+            "enabled": true
+          },
+          "canceled_at": null,
+          "cancellation_reason": null,
+          "capture_method": "automatic",
+          "client_secret": "pi_3QY1y22ESifGlJez12haN8ah_secret_P7VkZ3YZ5cWrlZ31iPyI0vnkh",
+          "confirmation_method": "automatic",
+          "created": 1734684834,
+          "currency": "usd",
+          "customer": "cus_RQdclxFVLH4oau",
+          "description": null,
+          "excluded_payment_method_types": null,
+          "invoice": null,
+          "last_payment_error": null,
+          "latest_charge": "ch_3QY1y22ESifGlJez1rJunOIg",
+          "livemode": false,
+          "metadata": {
+            "spree_order_id": "09840627-957a-4acc-b0cd-b6a60cb79294"
+          },
+          "next_action": null,
+          "on_behalf_of": null,
+          "payment_method": {
+            "id": "pm_1QXmPJ2ESifGlJezC2py6ZqS",
+            "object": "payment_method",
+            "allow_redisplay": "unspecified",
+            "billing_details": {
+              "address": {
+                "city": "San Francisco",
+                "country": "US",
+                "line1": "100 California Street",
+                "line2": null,
+                "postal_code": "94111",
+                "state": "CA"
+              },
+              "email": "lukas.adamczyk+stripe@getvendo.com",
+              "name": "John Doe",
+              "phone": null,
+              "tax_id": null
+            },
+            "card": {
+              "brand": "visa",
+              "checks": {
+                "address_line1_check": "pass",
+                "address_postal_code_check": "pass",
+                "cvc_check": "pass"
+              },
+              "country": "US",
+              "display_brand": "visa",
+              "exp_month": 2,
+              "exp_year": 2027,
+              "fingerprint": "taGjeBd4Wh4btmTn",
+              "funding": "credit",
+              "generated_from": null,
+              "last4": "4242",
+              "networks": {
+                "available": [
+                  "visa"
+                ],
+                "preferred": null
+              },
+              "regulated_status": "unregulated",
+              "three_d_secure_usage": {
+                "supported": true
+              },
+              "wallet": null
+            },
+            "created": 1734625021,
+            "customer": "cus_RQdclxFVLH4oau",
+            "livemode": false,
+            "metadata": {},
+            "type": "card"
+          },
+          "payment_method_configuration_details": {
+            "id": "pmc_1QVa9x2ESifGlJezRC5fgLVg",
+            "parent": null
+          },
+          "payment_method_options": {
+            "card": {
+              "installments": null,
+              "mandate_options": null,
+              "network": null,
+              "request_three_d_secure": "automatic"
+            },
+            "link": {
+              "persistent_token": null
+            }
+          },
+          "payment_method_types": [
+            "card",
+            "link"
+          ],
+          "processing": null,
+          "receipt_email": null,
+          "review": null,
+          "setup_future_usage": null,
+          "shipping": {
+            "address": {
+              "city": "Herndon",
+              "country": "US",
+              "line1": "2 Lovely Street",
+              "line2": "Northwest",
+              "postal_code": "35005",
+              "state": "STATE_ABBR_2"
+            },
+            "carrier": null,
+            "name": "John Doe",
+            "phone": null,
+            "tracking_number": null
+          },
+          "source": null,
+          "statement_descriptor": null,
+          "statement_descriptor_suffix": "R111098765 sapiente",
+          "status": "succeeded",
+          "transfer_data": null,
+          "transfer_group": "R111098765"
+        }
+  recorded_at: Fri, 05 Dec 2025 16:23:19 GMT
+recorded_with: VCR 6.3.1

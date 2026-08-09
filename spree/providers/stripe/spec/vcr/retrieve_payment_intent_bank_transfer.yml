@@ -1,0 +1,533 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/payment_intents/pi_3ScPMjFmGsiQWfE61qMaWSFF?expand%5B%5D=payment_method
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/5.2.1 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Tue, 09 Dec 2025 12:22:14 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '5299'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=l--2UhR30u698AZakjIG1OPal_S8HLn4iji_-eS19k4ppciJ5ewqpsZferinr6AXNlvgllFWWbM2BaSu
+      Request-Id:
+      - req_iojWJUbliLu5iq
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - ABGHIJ
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pi_3ScPMjFmGsiQWfE61qMaWSFF",
+          "object": "payment_intent",
+          "amount": 4000,
+          "amount_capturable": 0,
+          "amount_details": {
+            "tip": {}
+          },
+          "amount_received": 0,
+          "application": null,
+          "application_fee_amount": null,
+          "automatic_payment_methods": {
+            "allow_redirects": "always",
+            "enabled": true
+          },
+          "canceled_at": null,
+          "cancellation_reason": null,
+          "capture_method": "automatic",
+          "client_secret": "pi_3ScPMjFmGsiQWfE61qMaWSFF_secret_Cl5waHuNY3QiBpa0Kl5Xt03EK",
+          "confirmation_method": "automatic",
+          "created": 1765280761,
+          "currency": "usd",
+          "customer": "cus_TZFk4Fxe9gABNI",
+          "customer_account": null,
+          "description": null,
+          "excluded_payment_method_types": null,
+          "invoice": null,
+          "last_payment_error": null,
+          "latest_charge": null,
+          "livemode": false,
+          "metadata": {
+            "spree_order_id": "159"
+          },
+          "next_action": {
+            "display_bank_transfer_instructions": {
+              "amount_remaining": 4000,
+              "currency": "usd",
+              "financial_addresses": [
+                {
+                  "aba": {
+                    "account_holder_address": {
+                      "city": "South San Francisco",
+                      "country": "US",
+                      "line1": "354 Oyster Point Blvd",
+                      "line2": null,
+                      "postal_code": "94080",
+                      "state": "CA"
+                    },
+                    "account_holder_name": "UFC Meals",
+                    "account_number": "11119958118330123",
+                    "account_type": "checking",
+                    "bank_address": {
+                      "city": "San Francisco",
+                      "country": "US",
+                      "line1": "420 Montgomery Street",
+                      "line2": null,
+                      "postal_code": "94104",
+                      "state": "CA"
+                    },
+                    "bank_name": "US Test Bank",
+                    "routing_number": "999999999"
+                  },
+                  "supported_networks": [
+                    "ach",
+                    "domestic_wire_us"
+                  ],
+                  "type": "aba"
+                },
+                {
+                  "supported_networks": [
+                    "swift"
+                  ],
+                  "swift": {
+                    "account_holder_address": {
+                      "city": "South San Francisco",
+                      "country": "US",
+                      "line1": "354 Oyster Point Blvd",
+                      "line2": null,
+                      "postal_code": "94080",
+                      "state": "CA"
+                    },
+                    "account_holder_name": "UFC Meals",
+                    "account_number": "11119958118330123",
+                    "account_type": "checking",
+                    "bank_address": {
+                      "city": "San Francisco",
+                      "country": "US",
+                      "line1": "420 Montgomery Street",
+                      "line2": null,
+                      "postal_code": "94104",
+                      "state": "CA"
+                    },
+                    "bank_name": "US Test Bank",
+                    "swift_code": "TESTUS99XXX"
+                  },
+                  "type": "swift"
+                }
+              ],
+              "hosted_instructions_url": "https://payments.stripe.com/bank_transfers/instructions/test_YWNjdF8xUk1uMnBGbUdzaVFXZkU2LF9UWllVdEJiN2NEMzlVTGc0V1hPTXJNbENKY2sxaThn01006xj2lWnQ",
+              "reference": "SCBJWXEZAFH8",
+              "type": "us_bank_transfer"
+            },
+            "type": "display_bank_transfer_instructions"
+          },
+          "on_behalf_of": null,
+          "payment_method": {
+            "id": "pm_1ScPNbFmGsiQWfE6IQ5cXwYc",
+            "object": "payment_method",
+            "allow_redisplay": "unspecified",
+            "billing_details": {
+              "address": {
+                "city": "San Francisco",
+                "country": "US",
+                "line1": "100 California Street",
+                "line2": null,
+                "postal_code": "94111",
+                "state": "CA"
+              },
+              "email": "lukas.adamczyk@getvendo.com",
+              "name": "Johnathan Doe",
+              "phone": null,
+              "tax_id": null
+            },
+            "created": 1765280815,
+            "customer": null,
+            "customer_account": null,
+            "customer_balance": {},
+            "livemode": false,
+            "metadata": {},
+            "type": "customer_balance"
+          },
+          "payment_method_configuration_details": {
+            "id": "pmc_1RMn31FmGsiQWfE6vaR9S4rU",
+            "parent": null
+          },
+          "payment_method_options": {
+            "card": {
+              "installments": null,
+              "mandate_options": null,
+              "network": null,
+              "request_three_d_secure": "automatic",
+              "setup_future_usage": "off_session"
+            },
+            "customer_balance": {
+              "bank_transfer": {
+                "type": "us_bank_transfer"
+              },
+              "funding_type": "bank_transfer"
+            },
+            "link": {
+              "persistent_token": null
+            },
+            "us_bank_account": {
+              "financial_connections": {
+                "permissions": [
+                  "payment_method"
+                ],
+                "prefetch": []
+              },
+              "mandate_options": {},
+              "verification_method": "automatic"
+            }
+          },
+          "payment_method_types": [
+            "card",
+            "link",
+            "us_bank_account",
+            "customer_balance"
+          ],
+          "processing": null,
+          "receipt_email": null,
+          "review": null,
+          "setup_future_usage": null,
+          "shipping": {
+            "address": {
+              "city": "San Francisco",
+              "country": "US",
+              "line1": "100 California Street",
+              "line2": null,
+              "postal_code": "94111",
+              "state": "CA"
+            },
+            "carrier": null,
+            "name": "Johnathan Doe",
+            "phone": null,
+            "tracking_number": null
+          },
+          "source": null,
+          "statement_descriptor": null,
+          "statement_descriptor_suffix": "R209095837",
+          "status": "requires_action",
+          "transfer_data": null,
+          "transfer_group": "R209095837"
+        }
+  recorded_at: Tue, 09 Dec 2025 12:22:14 GMT
+- request:
+    method: get
+    uri: https://api.stripe.com/v1/payment_intents/pi_3ScPMjFmGsiQWfE61qMaWSFF?expand%5B%5D=payment_method
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Stripe/v1 RubyBindings/10.1.0 Spree Stripe/5.2.1 (https://spreecommerce.org)
+      Authorization:
+      - Bearer <STRIPE_SECRET_KEY>
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Stripe-Version:
+      - '2023-10-16'
+      X-Stripe-Client-User-Agent:
+      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Tue, 09 Dec 2025 12:49:35 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '5299'
+      Connection:
+      - keep-alive
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Methods:
+      - GET, HEAD, PUT, PATCH, POST, DELETE
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - Request-Id, Stripe-Manage-Version, Stripe-Should-Retry, X-Stripe-External-Auth-Required,
+        X-Stripe-Privileged-Session-Required
+      Access-Control-Max-Age:
+      - '300'
+      Cache-Control:
+      - no-cache, no-store
+      Content-Security-Policy:
+      - base-uri 'none'; default-src 'none'; form-action 'none'; frame-ancestors 'none';
+        img-src 'self'; script-src 'self' 'report-sample'; style-src 'self'; worker-src
+        'none'; upgrade-insecure-requests; report-uri https://q.stripe.com/csp-violation?q=j7qxfBdPbGyc38CROozdnnHAswKzbE-mfXn4ay1Z_A0ZmUnHltqsaZKDSys_qcsNFw3IVBC4Nk-mlarO
+      Request-Id:
+      - req_KaFkqwsJofAUlD
+      Stripe-Version:
+      - '2023-10-16'
+      Vary:
+      - Origin
+      X-Stripe-Priority-Routing-Enabled:
+      - 'true'
+      X-Stripe-Routing-Context-Priority-Tier:
+      - api-testmode
+      X-Wc:
+      - ABGHIJ
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "pi_3ScPMjFmGsiQWfE61qMaWSFF",
+          "object": "payment_intent",
+          "amount": 4000,
+          "amount_capturable": 0,
+          "amount_details": {
+            "tip": {}
+          },
+          "amount_received": 0,
+          "application": null,
+          "application_fee_amount": null,
+          "automatic_payment_methods": {
+            "allow_redirects": "always",
+            "enabled": true
+          },
+          "canceled_at": null,
+          "cancellation_reason": null,
+          "capture_method": "automatic",
+          "client_secret": "pi_3ScPMjFmGsiQWfE61qMaWSFF_secret_Cl5waHuNY3QiBpa0Kl5Xt03EK",
+          "confirmation_method": "automatic",
+          "created": 1765280761,
+          "currency": "usd",
+          "customer": "cus_TZFk4Fxe9gABNI",
+          "customer_account": null,
+          "description": null,
+          "excluded_payment_method_types": null,
+          "invoice": null,
+          "last_payment_error": null,
+          "latest_charge": null,
+          "livemode": false,
+          "metadata": {
+            "spree_order_id": "159"
+          },
+          "next_action": {
+            "display_bank_transfer_instructions": {
+              "amount_remaining": 4000,
+              "currency": "usd",
+              "financial_addresses": [
+                {
+                  "aba": {
+                    "account_holder_address": {
+                      "city": "South San Francisco",
+                      "country": "US",
+                      "line1": "354 Oyster Point Blvd",
+                      "line2": null,
+                      "postal_code": "94080",
+                      "state": "CA"
+                    },
+                    "account_holder_name": "UFC Meals",
+                    "account_number": "11119958118330123",
+                    "account_type": "checking",
+                    "bank_address": {
+                      "city": "San Francisco",
+                      "country": "US",
+                      "line1": "420 Montgomery Street",
+                      "line2": null,
+                      "postal_code": "94104",
+                      "state": "CA"
+                    },
+                    "bank_name": "US Test Bank",
+                    "routing_number": "999999999"
+                  },
+                  "supported_networks": [
+                    "ach",
+                    "domestic_wire_us"
+                  ],
+                  "type": "aba"
+                },
+                {
+                  "supported_networks": [
+                    "swift"
+                  ],
+                  "swift": {
+                    "account_holder_address": {
+                      "city": "South San Francisco",
+                      "country": "US",
+                      "line1": "354 Oyster Point Blvd",
+                      "line2": null,
+                      "postal_code": "94080",
+                      "state": "CA"
+                    },
+                    "account_holder_name": "UFC Meals",
+                    "account_number": "11119958118330123",
+                    "account_type": "checking",
+                    "bank_address": {
+                      "city": "San Francisco",
+                      "country": "US",
+                      "line1": "420 Montgomery Street",
+                      "line2": null,
+                      "postal_code": "94104",
+                      "state": "CA"
+                    },
+                    "bank_name": "US Test Bank",
+                    "swift_code": "TESTUS99XXX"
+                  },
+                  "type": "swift"
+                }
+              ],
+              "hosted_instructions_url": "https://payments.stripe.com/bank_transfers/instructions/test_YWNjdF8xUk1uMnBGbUdzaVFXZkU2LF9UWllVdEJiN2NEMzlVTGc0V1hPTXJNbENKY2sxaThn01006xj2lWnQ",
+              "reference": "SCBJWXEZAFH8",
+              "type": "us_bank_transfer"
+            },
+            "type": "display_bank_transfer_instructions"
+          },
+          "on_behalf_of": null,
+          "payment_method": {
+            "id": "pm_1ScPNbFmGsiQWfE6IQ5cXwYc",
+            "object": "payment_method",
+            "allow_redisplay": "unspecified",
+            "billing_details": {
+              "address": {
+                "city": "San Francisco",
+                "country": "US",
+                "line1": "100 California Street",
+                "line2": null,
+                "postal_code": "94111",
+                "state": "CA"
+              },
+              "email": "lukas.adamczyk@getvendo.com",
+              "name": "Johnathan Doe",
+              "phone": null,
+              "tax_id": null
+            },
+            "created": 1765280815,
+            "customer": null,
+            "customer_account": null,
+            "customer_balance": {},
+            "livemode": false,
+            "metadata": {},
+            "type": "customer_balance"
+          },
+          "payment_method_configuration_details": {
+            "id": "pmc_1RMn31FmGsiQWfE6vaR9S4rU",
+            "parent": null
+          },
+          "payment_method_options": {
+            "card": {
+              "installments": null,
+              "mandate_options": null,
+              "network": null,
+              "request_three_d_secure": "automatic",
+              "setup_future_usage": "off_session"
+            },
+            "customer_balance": {
+              "bank_transfer": {
+                "type": "us_bank_transfer"
+              },
+              "funding_type": "bank_transfer"
+            },
+            "link": {
+              "persistent_token": null
+            },
+            "us_bank_account": {
+              "financial_connections": {
+                "permissions": [
+                  "payment_method"
+                ],
+                "prefetch": []
+              },
+              "mandate_options": {},
+              "verification_method": "automatic"
+            }
+          },
+          "payment_method_types": [
+            "card",
+            "link",
+            "us_bank_account",
+            "customer_balance"
+          ],
+          "processing": null,
+          "receipt_email": null,
+          "review": null,
+          "setup_future_usage": null,
+          "shipping": {
+            "address": {
+              "city": "San Francisco",
+              "country": "US",
+              "line1": "100 California Street",
+              "line2": null,
+              "postal_code": "94111",
+              "state": "CA"
+            },
+            "carrier": null,
+            "name": "Johnathan Doe",
+            "phone": null,
+            "tracking_number": null
+          },
+          "source": null,
+          "statement_descriptor": null,
+          "statement_descriptor_suffix": "R209095837",
+          "status": "requires_action",
+          "transfer_data": null,
+          "transfer_group": "R209095837"
+        }
+  recorded_at: Tue, 09 Dec 2025 12:49:35 GMT
+recorded_with: VCR 6.3.1
