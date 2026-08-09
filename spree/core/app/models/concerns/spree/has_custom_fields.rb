@@ -83,14 +83,15 @@ module Spree
 
       scope :with_custom_field_key, ->(key_with_namespace) {
         namespace, key = extract_namespace_and_key(key_with_namespace)
-        joins(custom_fields: :custom_field_definition).where(spree_custom_field_definitions: { namespace: namespace, key: key })
+        joins(custom_fields: :custom_field_definition).
+          where(Spree::CustomFieldDefinition.table_name => { namespace: namespace, key: key })
       }
       scope :with_custom_field_key_value, ->(key_with_namespace, value) {
         namespace, key = extract_namespace_and_key(key_with_namespace)
 
         joins(custom_fields: :custom_field_definition)
-          .where(spree_custom_field_definitions: { namespace: namespace, key: key })
-          .where(spree_custom_fields: { value: value })
+          .where(Spree::CustomFieldDefinition.table_name => { namespace: namespace, key: key })
+          .where(Spree::CustomField.table_name => { value: value })
       }
 
       def extract_namespace_and_key(key_with_namespace)
@@ -233,7 +234,7 @@ module Spree
         attributes.each_with_index do |raw, index|
           attrs = raw.respond_to?(:to_h) ? raw.to_h : raw
           attrs = attrs.with_indifferent_access
-          definition_id = attrs[:custom_field_definition_id] || attrs[:custom_field_definition_id]
+          definition_id = attrs[:custom_field_definition_id] || attrs[:metafield_definition_id]
           next if definition_id.blank?
 
           begin
@@ -298,10 +299,11 @@ module Spree
           return existing.id
         end
 
-        # Bare numeric id ("42"). Reject anything else outright.
+        # Bare numeric id ("42"). Reject anything else outright. Returned as
+        # the original string — casting would rewrite zero-padded ids.
         raise ArgumentError, "Invalid custom field definition reference: #{value.inspect}" unless /\A\d+\z/.match?(value)
 
-        value.to_i
+        value
       end
     end
   end

@@ -73,7 +73,10 @@ module Spree
     #
     scope :storefront_visible, -> { joins(:custom_field_definition).merge(Spree::CustomFieldDefinition.storefront_visible) }
     scope :admin_only, -> { joins(:custom_field_definition).merge(Spree::CustomFieldDefinition.admin_only) }
-    scope :with_key, ->(namespace, key) { joins(:custom_field_definition).where(spree_custom_field_definitions: { namespace: namespace, key: key }) }
+    scope :with_key, ->(namespace, key) {
+      joins(:custom_field_definition).
+        where(Spree::CustomFieldDefinition.table_name => { namespace: namespace, key: key })
+    }
 
     def serialize_value
       value

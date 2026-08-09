@@ -29,7 +29,8 @@ RSpec.describe 'RenameMetafieldsToCustomFields migration' do
 
       rich_text_table = ActionText::RichText.table_name
       connection.update(
-        "UPDATE #{rich_text_table} SET record_type = 'Spree::Metafield' WHERE record_id = #{custom_field.id}"
+        "UPDATE #{rich_text_table} SET record_type = 'Spree::Metafield' " \
+        "WHERE record_id = #{custom_field.id} AND record_type = 'Spree::CustomField'"
       )
       expect(Spree::CustomField.find(custom_field.id).value.body).to be_nil
 
