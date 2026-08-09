@@ -241,11 +241,8 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
 
     context 'auto-destroy custom_fields with empty values' do
       let!(:custom_field) do
-        product.custom_fields.create!(
-          custom_field_definition: definition,
-          value: 'initial value',
-          type: definition.field_type_class_name
-        )
+        create(:custom_field, resource: product, custom_field_definition: definition,
+                             value: 'initial value', type: definition.field_type_class_name)
       end
 
       it 'destroys existing custom_field when value is set to empty string' do
@@ -299,11 +296,8 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
 
       it 'handles multiple custom_fields correctly' do
         other_definition = create(:custom_field_definition, namespace: 'custom', key: 'bar', resource_type: 'Spree::Product')
-        other_custom_field = product.custom_fields.create!(
-          custom_field_definition: other_definition,
-          value: 'other value',
-          type: other_definition.field_type_class_name
-        )
+        other_custom_field = create(:custom_field, resource: product, custom_field_definition: other_definition,
+                                                   value: 'other value', type: other_definition.field_type_class_name)
 
         attrs = {
           custom_fields_attributes: [

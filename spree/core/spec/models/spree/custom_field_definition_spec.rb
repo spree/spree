@@ -100,6 +100,32 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
     end
   end
 
+  describe 'field_type= with an extension-registered class' do
+    # Extensions register their own custom-field classes, which have no token
+    # in the built-in vocabulary — they are addressed by class name.
+    before do
+      stub_const('PluginExtension::CustomFields::Color', Class.new(Spree::CustomField))
+      allow(Spree.custom_fields).to receive(:types).
+        and_return(described_class.available_types + [PluginExtension::CustomFields::Color])
+    end
+
+    it 'accepts the registered class name' do
+      definition = build(:custom_field_definition, resource_type: 'Spree::Product')
+      definition.field_type = 'PluginExtension::CustomFields::Color'
+
+      expect(definition).to be_valid
+      expect(definition.field_type).to eq('PluginExtension::CustomFields::Color')
+    end
+
+    it 'rejects a class name that is not registered' do
+      definition = build(:custom_field_definition, resource_type: 'Spree::Product')
+      definition.field_type = 'Unregistered::CustomFields::Color'
+
+      expect(definition).not_to be_valid
+      expect(definition.errors[:field_type]).to be_present
+    end
+  end
+
   describe '.searchable_field_type_tokens / .sortable_field_type_tokens' do
     it 'derives tokens from custom_field type class capabilities' do
       expect(described_class.searchable_field_type_tokens).to match_array(%w[short_text long_text number])

@@ -60,11 +60,12 @@ module Spree
     def field_type=(value)
       string_value = value.to_s
       mapped = Spree::CustomField::TYPE_TOKENS[string_value]
-      # An input is "recognized" when it's either a known token (mapped to a
-      # class) or already a known class name. Anything else gets surfaced as
-      # an error on `field_type` so API clients get a token-vocabulary
-      # message instead of a raw class-name inclusion error.
-      @field_type_input_recognized = !mapped.nil? || Spree::CustomField::TYPE_CLASS_TO_TOKEN.key?(string_value)
+      # An input is "recognized" when it's a known token (mapped to a class) or
+      # any registered class name — extensions register their own types, which
+      # have no token. Anything else gets surfaced as an error on `field_type`
+      # so API clients get a token-vocabulary message instead of a raw
+      # class-name inclusion error.
+      @field_type_input_recognized = !mapped.nil? || valid_available_types.include?(string_value)
       super(mapped || value)
     end
 

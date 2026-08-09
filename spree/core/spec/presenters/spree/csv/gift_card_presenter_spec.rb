@@ -77,10 +77,8 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
              key: 'purchase_location')
     end
     let!(:custom_field) do
-      gift_card.custom_fields.create!(
-        custom_field_definition: custom_field_definition,
-        value: 'Online Store'
-      )
+      create(:custom_field, resource: gift_card, custom_field_definition: custom_field_definition,
+             value: 'Online Store')
     end
 
     it 'includes custom_field values at the end of the array' do

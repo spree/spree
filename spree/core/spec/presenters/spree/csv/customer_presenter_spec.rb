@@ -137,10 +137,8 @@ RSpec.describe Spree::CSV::CustomerPresenter do
              key: 'loyalty_points')
     end
     let!(:custom_field) do
-      customer.custom_fields.create!(
-        custom_field_definition: custom_field_definition,
-        value: '500'
-      )
+      create(:custom_field, resource: customer, custom_field_definition: custom_field_definition,
+             value: '500')
     end
 
     it 'includes custom_field values at the end of the array' do

@@ -89,10 +89,8 @@ RSpec.describe Spree::CSV::NewsletterSubscriberPresenter do
              key: 'subscription_source')
     end
     let!(:custom_field) do
-      newsletter_subscriber.custom_fields.create!(
-        custom_field_definition: custom_field_definition,
-        value: 'Homepage Popup'
-      )
+      create(:custom_field, resource: newsletter_subscriber, custom_field_definition: custom_field_definition,
+             value: 'Homepage Popup')
     end
 
     it 'includes custom_field values at the end of the array' do
