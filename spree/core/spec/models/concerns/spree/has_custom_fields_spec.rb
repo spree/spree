@@ -329,4 +329,26 @@ RSpec.describe Spree::HasCustomFields, type: :concern do
       end
     end
   end
+
+  describe '#metafields_attributes=' do
+    let(:definition) { create(:custom_field_definition, namespace: 'custom', key: 'legacy', resource_type: 'Spree::Product') }
+
+    # Legacy payloads name the foreign key `metafield_definition_id`, which the
+    # current writer would otherwise reject and silently drop.
+    it 'accepts the legacy definition key' do
+      expect {
+        product.metafields_attributes = [{ metafield_definition_id: definition.id, value: 'legacy value' }]
+        product.save!
+      }.to change { product.custom_fields.count }.by(1)
+
+      expect(product.get_custom_field('custom.legacy').value).to eq('legacy value')
+    end
+
+    it 'still accepts the current definition key' do
+      expect {
+        product.metafields_attributes = [{ custom_field_definition_id: definition.id, value: 'current value' }]
+        product.save!
+      }.to change { product.custom_fields.count }.by(1)
+    end
+  end
 end

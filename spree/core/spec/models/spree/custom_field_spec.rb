@@ -104,4 +104,37 @@ RSpec.describe Spree::CustomField, type: :model do
       end
     end
   end
+
+  describe 'resource type validation' do
+    let(:product) { create(:product) }
+
+    it 'rejects a definition belonging to another resource type' do
+      variant_definition = create(:custom_field_definition, :for_variant)
+      custom_field = build(:custom_field, resource: product, custom_field_definition: variant_definition)
+
+      expect(custom_field).not_to be_valid
+      expect(custom_field.errors[:resource_type]).to be_present
+    end
+
+    it 'accepts a definition naming an STI subclass of the resource' do
+      # Images store `Spree::Asset` in the polymorphic column, while the
+      # definition names the concrete `Spree::Image`.
+      image_definition = create(:custom_field_definition, resource_type: 'Spree::Image', key: 'sti_key')
+      custom_field = build(:custom_field, custom_field_definition: image_definition, value: 'x')
+      custom_field.resource_type = 'Spree::Asset'
+
+      custom_field.valid?
+      expect(custom_field.errors[:resource_type]).to be_empty
+    end
+  end
+
+  describe 'deprecated definition writer' do
+    it 'assigns through metafield_definition=' do
+      definition = create(:custom_field_definition)
+      custom_field = Spree::CustomField.new
+      custom_field.metafield_definition = definition
+
+      expect(custom_field.custom_field_definition).to eq(definition)
+    end
+  end
 end

@@ -28,6 +28,11 @@ class RenameMetafieldsToCustomFields < ActiveRecord::Migration[7.2]
       execute_type_rename(:spree_custom_field_definitions, :field_type, from, to)
     end
 
+    # RichText values live in Action Text, which keys rows by the owner's STI
+    # base class — Spree::Metafield, not the RichText subclass. Without this
+    # the bodies are orphaned by the class rename.
+    rename_action_text_owner('Spree::Metafield', 'Spree::CustomField')
+
     # display_on (both/front_end/back_end) collapses to a boolean. Only
     # back_end meant "hide from the storefront"; front_end-only was never a
     # supported value on definitions.
@@ -50,6 +55,8 @@ class RenameMetafieldsToCustomFields < ActiveRecord::Migration[7.2]
     add_index :spree_custom_field_definitions, :display_on
     remove_column :spree_custom_field_definitions, :storefront_visible
 
+    rename_action_text_owner('Spree::CustomField', 'Spree::Metafield')
+
     TYPE_RENAMES.each do |from, to|
       execute_type_rename(:spree_custom_fields, :type, to, from)
       execute_type_rename(:spree_custom_field_definitions, :field_type, to, from)
@@ -67,6 +74,13 @@ class RenameMetafieldsToCustomFields < ActiveRecord::Migration[7.2]
   end
 
   private
+
+  # Action Text is optional — installs without it have no table to rewrite.
+  def rename_action_text_owner(from, to)
+    return unless connection.table_exists?(:action_text_rich_texts)
+
+    execute_type_rename(:action_text_rich_texts, :record_type, from, to)
+  end
 
   def execute_type_rename(table, column, from, to)
     execute(<<~SQL.squish)

@@ -174,9 +174,20 @@ module Spree
         has_custom_field?(key_with_namespace)
       end
 
+      # Legacy payloads key the definition as `metafield_definition_id`, which
+      # the new writer rejects — translate rather than silently dropping them.
       def metafields_attributes=(attributes)
         Spree::Deprecation.warn('#metafields_attributes= is deprecated and will be removed in Spree 6.1. Use #custom_fields_attributes= instead.')
-        self.custom_fields_attributes = attributes
+
+        attributes = attributes.values if attributes.is_a?(Hash)
+        translated = attributes.map do |attrs|
+          attrs = attrs.respond_to?(:to_h) ? attrs.to_h : attrs
+          attrs = attrs.with_indifferent_access
+          attrs[:custom_field_definition_id] ||= attrs.delete(:metafield_definition_id)
+          attrs
+        end
+
+        self.custom_fields_attributes = translated
       end
 
       private

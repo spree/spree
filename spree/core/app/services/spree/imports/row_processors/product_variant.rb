@@ -309,7 +309,7 @@ module Spree
             nested_attrs << custom_field_attrs
           end
 
-          product.update(custom_fields_attributes: nested_attrs) unless nested_attrs.empty?
+          product.update!(custom_fields_attributes: nested_attrs) unless nested_attrs.empty?
         end
 
         def handle_tags(product)

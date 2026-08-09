@@ -66,6 +66,7 @@ module Spree
     validates :custom_field_definition, :type, :resource, :value, presence: true
     validates :custom_field_definition_id, uniqueness: { scope: [:resource_type, :resource_id] }
     validate :type_must_match_custom_field_definition
+    validate :resource_type_must_match_custom_field_definition
 
     #
     # Scopes
@@ -100,6 +101,11 @@ module Spree
       self.custom_field_definition_id = value
     end
 
+    def metafield_definition=(value)
+      Spree::Deprecation.warn('#metafield_definition= is deprecated and will be removed in Spree 6.1. Use #custom_field_definition= instead.')
+      self.custom_field_definition = value
+    end
+
     def name
       Spree::Deprecation.warn('#name is deprecated and will be removed in Spree 6.1. Use #label instead.')
       label
@@ -117,6 +123,21 @@ module Spree
       return if custom_field_definition.blank?
 
       errors.add(:type, 'must match custom field definition') unless type == custom_field_definition.field_type_class_name
+    end
+
+    # A definition belongs to one resource type; attaching it to a different
+    # one produces a row no lookup for either type would return. STI resources
+    # store their base class in the polymorphic column (an Image row reads
+    # `Spree::Asset`) while definitions name the concrete class, so compare
+    # against the definition's base class too.
+    def resource_type_must_match_custom_field_definition
+      return if custom_field_definition.blank? || resource_type.blank?
+
+      definition_type = custom_field_definition.resource_type
+      return if resource_type == definition_type
+      return if definition_type.safe_constantize&.base_class&.name == resource_type
+
+      errors.add(:resource_type, 'must match custom field definition')
     end
   end
 end
