@@ -1,8 +1,9 @@
 module Spree
+  # Private, schemaless developer data. Deliberately does NOT pull in
+  # {Spree::HasCustomFields} — custom fields are the separate, public,
+  # schema-defined system. Models that want both include both.
   module Metadata
     extend ActiveSupport::Concern
-
-    include Spree::HasCustomFields unless included_modules.include?(Spree::HasCustomFields)
 
     included do
       attribute :metadata, default: {}

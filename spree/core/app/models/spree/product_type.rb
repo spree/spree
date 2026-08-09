@@ -2,6 +2,7 @@ module Spree
   class ProductType < Spree.base_class
     has_prefix_id :pt
 
+    include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::TranslatableResource
     include Spree::SingleStoreResource

@@ -20,7 +20,6 @@ module Spree
 
           # Override inherited custom_fields to use the admin serializer.
           many :custom_fields,
-               key: :custom_fields,
                resource: proc { Spree.api.admin_custom_field_serializer },
                if: proc { expand?('custom_fields') }
         end
