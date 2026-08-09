@@ -189,9 +189,7 @@ function OrderDetailPage() {
           <TagsCard order={order} />
           <DiscountsCard order={order} />
           <SpecialInstructionsCard order={order} />
-          {/* Key on `updated_at` so the editor's local state resets after a
-              refetch (e.g. another mutation invalidates the order). */}
-          <InternalNoteCard key={order.updated_at} order={order} />
+          <InternalNoteCard order={order} />
           <Slot name="order.form_sidebar" context={{ order }} />
         </>
       }
@@ -2641,6 +2639,15 @@ function InternalNoteCard({ order }: { order: Order }) {
   // markup stripped, so round-tripping it through the `internal_note_html`
   // write would flatten an existing note on a save that changed nothing.
   const [note, setNote] = useState(order.internal_note_html ?? '')
+  const serverNote = order.internal_note_html ?? ''
+
+  // Track the server value only while the editor is closed. Any order mutation
+  // refetches this record, and adopting the incoming value mid-edit would throw
+  // away whatever the user is part-way through typing.
+  useEffect(() => {
+    if (!editing) setNote(serverNote)
+  }, [editing, serverNote])
+
   const mutation = useOrderMutation(orderId, (params: { internal_note_html: string }) =>
     adminClient.orders.update(orderId, params),
   )
@@ -2674,7 +2681,7 @@ function InternalNoteCard({ order }: { order: Order }) {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setNote(order.internal_note_html ?? '')
+                  setNote(serverNote)
                   setEditing(false)
                 }}
               >

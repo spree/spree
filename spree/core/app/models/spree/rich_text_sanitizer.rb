@@ -40,6 +40,11 @@ module Spree
     # so every other value is stripped rather than trusted.
     class_attribute :allowed_class_pattern, default: /\Alanguage-[a-z0-9+#-]+\z/i
 
+    # Elements allowed to carry a class at all. Only the code block needs one,
+    # and keeping the list tight stops +language-*+ from becoming a way to put a
+    # class on arbitrary markup.
+    class_attribute :classable_tags, default: %w[code].freeze
+
     # Tags whose *contents* are dropped along with the tag. Stripping only the
     # tag would leave the script body or stylesheet behind as visible text.
     class_attribute :pruned_tags, default: %w[script style].freeze
@@ -63,11 +68,13 @@ module Spree
     # narrows +class+ to the code-block language hint in the same pass.
     def self.prune_scrubber
       tags = pruned_tags
+      classable = classable_tags
       pattern = allowed_class_pattern
 
       Loofah::Scrubber.new(direction: :top_down) do |node|
         next node.remove if tags.include?(node.name)
         next unless node.element? && node.key?('class')
+        next node.delete('class') unless classable.include?(node.name)
 
         kept = node['class'].split.select { |name| pattern.match?(name) }
         kept.empty? ? node.delete('class') : node['class'] = kept.join(' ')

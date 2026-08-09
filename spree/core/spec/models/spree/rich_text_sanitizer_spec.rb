@@ -74,6 +74,14 @@ describe Spree::RichTextSanitizer do
       end
     end
 
+    # The language hint is a code-block concern, so it must not double as a way
+    # to put a class on arbitrary markup.
+    context 'with a language class on something other than code' do
+      let(:html) { '<p class="language-ruby">x</p><a href="/y" class="language-js">z</a>' }
+
+      it { is_expected.to eq('<p>x</p><a href="/y">z</a>') }
+    end
+
     # Legacy TinyMCE descriptions carry markup the Tiptap set has no node for.
     # Formatting is lost on the next save, but the words are not.
     context 'with legacy markup outside the editor set' do
