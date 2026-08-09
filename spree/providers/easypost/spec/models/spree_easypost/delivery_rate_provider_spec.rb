@@ -174,4 +174,24 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider, 'API contract (VCR)' do
       expect(estimate.metadata['easypost_shipment_id']).to be_present
     end
   end
+
+  # The whole path with nothing stubbed: Stock::Estimator resolves the
+  # integration from the database, the provider quotes over recorded HTTP,
+  # and the carrier fields land on the Spree::DeliveryRate the storefront
+  # reads.
+  it 'sets carrier and service level on the delivery rate end to end' do
+    delivery_method # lazy let — must exist before the estimator queries methods
+
+    VCR.use_cassette('create_shipment_rates') do
+      rates = Spree::Stock::Estimator.new(order).delivery_rates(package)
+      rate = rates.find { |candidate| candidate.delivery_method_id == delivery_method.id }
+
+      expect(rate).to be_a(Spree::DeliveryRate)
+      expect(rate.cost).to be > 0
+      expect(rate.carrier).to eq(recorded_rate['carrier'])
+      expect(rate.service_level).to eq(recorded_rate['service'])
+      expect(rate.metadata['easypost_rate_id']).to be_present
+      expect(rate.metadata['easypost_shipment_id']).to be_present
+    end
+  end
 end
