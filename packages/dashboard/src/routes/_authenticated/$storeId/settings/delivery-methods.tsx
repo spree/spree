@@ -1,18 +1,30 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { DeliveryMethod, PreferenceField, Product } from '@spree/admin-sdk'
+import type {
+  DeliveryMethod,
+  DeliveryRateProviderCatalogEntry,
+  IntegrationTypeDefinition,
+  PreferenceField,
+  Product,
+} from '@spree/admin-sdk'
 import {
-  adminClient,
+  type adminClient,
   Can,
   mapSpreeErrorsToForm,
+  PageHeader,
   PreferencesForm,
   ResourceMultiAutocomplete,
-  ResourceTable,
   resourceSearchSchema,
   Subject,
   usePermissions,
+  useResourceKey,
 } from '@spree/dashboard-core'
 import {
+  Badge,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
@@ -35,17 +47,20 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Skeleton,
   Switch,
   useConfirm,
-  useRowClickBridge,
 } from '@spree/dashboard-ui'
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, Trash2Icon } from 'lucide-react'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, type UseFormReturn, useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod/v4'
+import { ConfigureIntegrationSheet } from '../../../../components/spree/integrations/configure-integration-sheet'
 import {
+  useAllDeliveryMethods,
   useCreateDeliveryMethod,
   useDeleteDeliveryMethod,
   useDeliveryCalculators,
@@ -57,6 +72,7 @@ import {
   useUpdateDeliveryMethod,
 } from '../../../../hooks/use-delivery-methods'
 import { useDeliveryZones } from '../../../../hooks/use-delivery-zones'
+import { useIntegrationTypes } from '../../../../hooks/use-integrations'
 import { productAutocompleteProps } from '../../../../hooks/use-products'
 import { useStockLocations } from '../../../../hooks/use-stock-locations'
 import { useTaxCategories } from '../../../../hooks/use-tax-categories'
@@ -67,12 +83,17 @@ import {
   deliveryMethodValuesToParams,
   FULFILLMENT_TYPES,
 } from '../../../../schemas/delivery-method'
-import '../../../../tables/delivery-methods'
 
 /** One entry from the delivery-method-rule discovery endpoint. */
 type DeliveryMethodRuleType = Awaited<
   ReturnType<typeof adminClient.deliveryMethods.ruleTypes>
 >['data'][number]
+
+/** API decimals arrive as strings ("0.0"); show blank instead of a noisy zero. */
+function decimalToForm(value: string | null | undefined) {
+  if (value === null || value === undefined || value === '') return ''
+  return Number(value) === 0 ? '' : String(value)
+}
 
 /** Whether a rule kind is configured with a product list rather than preferences. */
 function takesProducts(ruleTypes: DeliveryMethodRuleType[] | undefined, type: string) {
@@ -84,6 +105,7 @@ function takesProducts(ruleTypes: DeliveryMethodRuleType[] | undefined, type: st
 const deliveryMethodsSearchSchema = resourceSearchSchema.extend({
   edit: z.string().optional(),
   new: z.coerce.boolean().optional(),
+  zone: z.string().optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/$storeId/settings/delivery-methods')({
@@ -91,6 +113,9 @@ export const Route = createFileRoute('/_authenticated/$storeId/settings/delivery
   component: DeliveryMethodsPage,
 })
 
+// Shopify-style presentation: delivery zones as cards with their methods
+// nested underneath, plus an "Everywhere" card for methods without zones
+// (carrier-priced methods let the carrier decide serviceability).
 function DeliveryMethodsPage() {
   const { t } = useTranslation()
   const search = Route.useSearch() as z.infer<typeof deliveryMethodsSearchSchema>
@@ -98,25 +123,30 @@ function DeliveryMethodsPage() {
   const confirm = useConfirm()
   const deleteMutation = useDeleteDeliveryMethod()
   const { permissions } = usePermissions()
+  const { data: zonesResponse, isLoading: zonesLoading } = useDeliveryZones()
+  const { data: methods, isLoading: methodsLoading } = useAllDeliveryMethods()
+  const { data: rateProviders } = useDeliveryRateProviders()
 
   const editId = search.edit
   const isCreating = !!search.new
+  const isLoading = zonesLoading || methodsLoading
 
   const closeSheet = () =>
     navigate({
       search: (prev: Record<string, unknown>) => {
-        const { edit: _e, new: _n, ...rest } = prev
+        const { edit: _e, new: _n, zone: _z, ...rest } = prev
         return rest as never
       },
     })
 
-  const openCreate = () =>
-    navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, new: true }) as never })
+  const openCreate = (zoneId?: string) =>
+    navigate({
+      search: (prev: Record<string, unknown>) =>
+        ({ ...prev, new: true, ...(zoneId ? { zone: zoneId } : {}) }) as never,
+    })
 
   const openEdit = (id: string) =>
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, edit: id }) as never })
-
-  useRowClickBridge('data-delivery-method-id', openEdit)
 
   async function handleDelete(deliveryMethod: DeliveryMethod) {
     const ok = await confirm({
@@ -131,58 +161,176 @@ function DeliveryMethodsPage() {
     await deleteMutation.mutateAsync(deliveryMethod.id).catch(() => undefined)
   }
 
-  return (
-    <>
-      <ResourceTable<DeliveryMethod>
-        tableKey="delivery-methods"
-        queryKey="delivery-methods"
-        queryFn={(params) => adminClient.deliveryMethods.list(params)}
-        searchParams={search}
-        rowActions={(deliveryMethod) => (
-          <RowActions
-            actions={[
-              { key: 'edit', onSelect: () => openEdit(deliveryMethod.id) },
-              {
-                key: 'delete',
-                destructive: true,
-                visible: permissions.can('destroy', Subject.DeliveryMethod),
-                disabled: deleteMutation.isPending,
-                onSelect: () => handleDelete(deliveryMethod),
-              },
-            ]}
-          />
+  const zones = zonesResponse?.data ?? []
+  const allMethods = methods ?? []
+  const zonelessMethods = allMethods.filter(
+    (method) => (method.delivery_zone_ids ?? []).length === 0,
+  )
+
+  // A method priced by a live-rate provider shows "Live rates" instead of a
+  // flat amount; the lookup keys off the discovery payload.
+  const liveRateProviderTypes = useMemo(
+    () =>
+      new Set(
+        (rateProviders?.data ?? [])
+          .filter((provider) => !provider.uses_calculator)
+          .map((provider) => provider.type),
+      ),
+    [rateProviders],
+  )
+
+  const priceBadge = (method: DeliveryMethod) => {
+    if (method.rate_provider && liveRateProviderTypes.has(method.rate_provider)) {
+      return t('admin.delivery_methods.live_rates')
+    }
+    const preferences = (method.calculator_preferences ?? {}) as Record<string, unknown>
+    const amount = preferences.amount
+    if (amount === undefined || amount === null || amount === '') return null
+    const numeric = Number(amount)
+    if (Number.isNaN(numeric)) return null
+    if (numeric === 0) return t('admin.delivery_methods.free')
+    return `${numeric} ${(preferences.currency as string) ?? ''}`.trim()
+  }
+
+  const methodRow = (method: DeliveryMethod) => (
+    <div
+      key={method.id}
+      className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-muted/40"
+    >
+      <button
+        type="button"
+        onClick={() => openEdit(method.id)}
+        className="flex min-w-0 flex-1 cursor-pointer flex-col items-start text-left"
+      >
+        <span className="truncate text-sm font-medium">{method.name}</span>
+        {method.admin_name && (
+          <span className="truncate text-xs text-muted-foreground">{method.admin_name}</span>
         )}
+      </button>
+      <div className="flex shrink-0 items-center gap-2">
+        {priceBadge(method) && <Badge variant="secondary">{priceBadge(method)}</Badge>}
+        {!method.storefront_visible && (
+          <Badge variant="outline">{t('admin.delivery_methods.hidden')}</Badge>
+        )}
+        <RowActions
+          actions={[
+            { key: 'edit', onSelect: () => openEdit(method.id) },
+            {
+              key: 'delete',
+              destructive: true,
+              visible: permissions.can('destroy', Subject.DeliveryMethod),
+              disabled: deleteMutation.isPending,
+              onSelect: () => handleDelete(method),
+            },
+          ]}
+        />
+      </div>
+    </div>
+  )
+
+  const zoneCard = (
+    title: string,
+    description: string | null,
+    zoneMethods: DeliveryMethod[],
+    zoneId?: string,
+  ) => (
+    <Card key={zoneId ?? 'everywhere'}>
+      <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
+        <div className="flex min-w-0 flex-col">
+          <CardTitle>{title}</CardTitle>
+          {description && (
+            <span className="truncate text-xs text-muted-foreground">{description}</span>
+          )}
+        </div>
+        <Can I="create" a={Subject.DeliveryMethod}>
+          <Button size="sm" variant="outline" onClick={() => openCreate(zoneId)}>
+            <PlusIcon className="size-4" />
+            {t('admin.delivery_methods.add_option')}
+          </Button>
+        </Can>
+      </CardHeader>
+      <CardContent className="p-0">
+        {zoneMethods.length === 0 ? (
+          <p className="px-4 pb-4 text-sm text-muted-foreground">
+            {t('admin.delivery_methods.zone_empty')}
+          </p>
+        ) : (
+          <div className="divide-y border-t">{zoneMethods.map(methodRow)}</div>
+        )}
+      </CardContent>
+    </Card>
+  )
+
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        title={t('admin.settings_nav.items.delivery_methods')}
         actions={
           <Can I="create" a={Subject.DeliveryMethod}>
-            <Button size="sm" className="h-[2.125rem]" onClick={openCreate}>
+            <Button size="sm" onClick={() => openCreate()}>
               <PlusIcon className="size-4" />
               {t('admin.delivery_methods.add_cta')}
             </Button>
           </Can>
         }
       />
+      {isLoading ? (
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-32 w-full" />
+        </div>
+      ) : (
+        <>
+          {zones.map((zone) =>
+            zoneCard(
+              zone.name,
+              zone.description ?? null,
+              allMethods.filter((method) => (method.delivery_zone_ids ?? []).includes(zone.id)),
+              zone.id,
+            ),
+          )}
+          {(zonelessMethods.length > 0 || zones.length === 0) &&
+            zoneCard(
+              t('admin.delivery_methods.everywhere'),
+              t('admin.delivery_methods.everywhere_hint'),
+              zonelessMethods,
+            )}
+        </>
+      )}
 
-      {isCreating && <CreateDeliveryMethodSheet open onOpenChange={(o) => !o && closeSheet()} />}
+      {isCreating && (
+        <CreateDeliveryMethodSheet
+          open
+          onOpenChange={(o) => !o && closeSheet()}
+          initialZoneId={search.zone}
+        />
+      )}
       {editId && (
         <EditDeliveryMethodSheet id={editId} open onOpenChange={(o) => !o && closeSheet()} />
       )}
-    </>
+    </div>
   )
 }
 
 function CreateDeliveryMethodSheet({
   open,
   onOpenChange,
+  initialZoneId,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** Pre-selects the zone when creating from a zone card's Add option. */
+  initialZoneId?: string
 }) {
   const { t } = useTranslation()
   const createMutation = useCreateDeliveryMethod()
   const form = useForm<DeliveryMethodFormValues>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(deliveryMethodFormSchema) as any,
-    defaultValues: DELIVERY_METHOD_DEFAULTS,
+    defaultValues: {
+      ...DELIVERY_METHOD_DEFAULTS,
+      delivery_zone_ids: initialZoneId ? [initialZoneId] : [],
+    },
   })
 
   async function onSubmit(values: DeliveryMethodFormValues) {
@@ -289,6 +437,16 @@ function EditDeliveryMethodSheet({
           (deliveryMethod.calculator_preferences as Record<string, unknown>) ?? {},
         delivery_zone_ids: deliveryMethod.delivery_zone_ids ?? [],
         stock_location_ids: deliveryMethod.stock_location_ids ?? [],
+        markup_flat: decimalToForm(deliveryMethod.markup_flat),
+        markup_percent: decimalToForm(deliveryMethod.markup_percent),
+        services: (deliveryMethod.services ?? []).map((row) => ({
+          id: row.id,
+          carrier: row.carrier,
+          service: row.service,
+          label: row.label ?? '',
+          markup_flat: decimalToForm(row.markup_flat),
+          markup_percent: decimalToForm(row.markup_percent),
+        })),
         rules: (rules?.data ?? []).map((rule) => ({
           id: rule.id,
           type: rule.type,
@@ -546,10 +704,28 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
   }))
 
   const defaultRateProvider = rateProviders?.default ?? ''
-  const rateProviderOptions = (rateProviders?.data ?? []).map((provider) => ({
+  const availableRateProviders = useMemo(
+    () => (rateProviders?.data ?? []).filter((provider) => provider.available),
+    [rateProviders],
+  )
+  // Unconnected carrier providers surface as an inline connect hint instead
+  // of disappearing — the merchant connects the integration without leaving
+  // the form.
+  const unavailableRateProviders = useMemo(
+    () =>
+      (rateProviders?.data ?? []).filter(
+        (provider) => !provider.available && provider.integration_class,
+      ),
+    [rateProviders],
+  )
+  const rateProviderOptions = availableRateProviders.map((provider) => ({
     value: provider.type,
     label: provider.name,
   }))
+  const { data: integrationTypes } = useIntegrationTypes()
+  const [connectingType, setConnectingType] = useState<IntegrationTypeDefinition | null>(null)
+  const queryClient = useQueryClient()
+  const rateProvidersKey = useResourceKey('delivery-methods', 'rate-providers')
 
   // Providers declare which fulfillment types they handle, so the type field
   // offers only what the chosen providers can actually deliver — an empty
@@ -560,8 +736,8 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
     [fulfillmentProviders, fulfillmentProvider],
   )
   const selectedRateProvider = useMemo(
-    () => (rateProviders?.data ?? []).find((p) => p.type === (rateProvider || defaultRateProvider)),
-    [rateProviders, rateProvider, defaultRateProvider],
+    () => availableRateProviders.find((p) => p.type === (rateProvider || defaultRateProvider)),
+    [availableRateProviders, rateProvider, defaultRateProvider],
   )
 
   const registeredFulfillmentTypes = fulfillmentProviders?.fulfillment_types ?? FULFILLMENT_TYPES
@@ -670,6 +846,47 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
           label={t('admin.fields.delivery_method.rate_provider.label')}
           help={t('admin.fields.delivery_method.rate_provider.help')}
           options={rateProviderOptions}
+        />
+      )}
+
+      {unavailableRateProviders.map((provider) => {
+        const typeDefinition = (integrationTypes?.data ?? []).find(
+          (candidate) => candidate.type === provider.integration_class,
+        )
+        if (!typeDefinition) return null
+        return (
+          <div
+            key={provider.type}
+            className="flex items-center justify-between gap-3 rounded-md border border-dashed p-3"
+          >
+            <span className="text-sm text-muted-foreground">
+              {t('admin.delivery_methods.connect_provider_hint', { name: provider.name })}
+            </span>
+            <Can I="create" a={Subject.Integration}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setConnectingType(typeDefinition)}
+              >
+                {t('admin.integrations.connect_cta')}
+              </Button>
+            </Can>
+          </div>
+        )
+      })}
+
+      {connectingType && (
+        <ConfigureIntegrationSheet
+          type={connectingType}
+          open
+          onOpenChange={(next) => {
+            if (next) return
+            setConnectingType(null)
+            // The provider list is cached for half an hour — a fresh connect
+            // must surface the provider in the select immediately.
+            queryClient.invalidateQueries({ queryKey: rateProvidersKey })
+          }}
         />
       )}
 
@@ -823,6 +1040,10 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
         </>
       )}
 
+      {fulfillmentType === 'shipping' && !usesCalculator && (
+        <CarrierServicesSection form={form} catalog={selectedRateProvider?.service_catalog ?? []} />
+      )}
+
       <div className="grid grid-cols-2 gap-3">
         <Field>
           <FieldLabel htmlFor="estimated_transit_business_days_min">
@@ -909,5 +1130,188 @@ function DeliveryMethodFormFields({ form }: { form: UseFormReturn<DeliveryMethod
         </div>
       </Field>
     </FieldGroup>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Carrier services — which provider services this method offers, with
+// per-service label + markup overrides. No rows = everything the carrier
+// returns, named by the carrier.
+// ---------------------------------------------------------------------------
+
+function CarrierServicesSection({
+  form,
+  catalog,
+}: {
+  form: UseFormReturn<DeliveryMethodFormValues>
+  catalog: DeliveryRateProviderCatalogEntry[]
+}) {
+  const { t } = useTranslation()
+  const servicesArray = useFieldArray({ control: form.control, name: 'services', keyName: '_key' })
+  const rows = form.watch('services') ?? []
+
+  const rowIndex = (entry: DeliveryRateProviderCatalogEntry) =>
+    rows.findIndex((row) => row.carrier === entry.carrier && row.service === entry.service)
+
+  const toggleEntry = (entry: DeliveryRateProviderCatalogEntry, next: boolean) => {
+    const index = rowIndex(entry)
+    if (next && index === -1) {
+      servicesArray.append({
+        carrier: entry.carrier,
+        service: entry.service,
+        label: '',
+        markup_flat: '',
+        markup_percent: '',
+      })
+    } else if (!next && index >= 0) {
+      servicesArray.remove(index)
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3 rounded-md border p-3">
+      <div className="flex flex-col">
+        <span className="font-medium text-sm">
+          {t('admin.delivery_methods.carrier_services.label')}
+        </span>
+        <span className="text-xs text-muted-foreground">
+          {rows.length === 0
+            ? t('admin.delivery_methods.carrier_services.all_hint')
+            : t('admin.delivery_methods.carrier_services.narrowed_hint', { count: rows.length })}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field>
+          <FieldLabel htmlFor="markup_percent">
+            {t('admin.fields.delivery_method.markup_percent.label')}
+          </FieldLabel>
+          <Input
+            id="markup_percent"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="0"
+            {...form.register('markup_percent')}
+          />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="markup_flat">
+            {t('admin.fields.delivery_method.markup_flat.label')}
+          </FieldLabel>
+          <Input
+            id="markup_flat"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="0"
+            {...form.register('markup_flat')}
+          />
+        </Field>
+      </div>
+      <span className="text-xs text-muted-foreground">
+        {t('admin.fields.delivery_method.markup_percent.help')}
+      </span>
+
+      {catalog.length > 0 ? (
+        <div className="flex flex-col gap-1">
+          {catalog.map((entry) => {
+            const index = rowIndex(entry)
+            const checked = index >= 0
+            const key = `${entry.carrier}/${entry.service}`
+            return (
+              <div key={key} className="flex flex-col gap-2 py-1">
+                <label htmlFor={`service-${key}`} className="flex items-center gap-2 text-sm">
+                  <Checkbox
+                    id={`service-${key}`}
+                    checked={checked}
+                    onCheckedChange={(next) => toggleEntry(entry, !!next)}
+                  />
+                  {entry.label}
+                </label>
+                {checked && (
+                  <div className="ml-6 grid grid-cols-3 gap-2">
+                    <Input
+                      aria-label={t('admin.delivery_methods.carrier_services.custom_label', {
+                        service: entry.label,
+                      })}
+                      placeholder={entry.label}
+                      {...form.register(`services.${index}.label`)}
+                    />
+                    <Input
+                      aria-label={t('admin.fields.delivery_method.markup_percent.label')}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder={t('admin.fields.delivery_method.markup_percent.label')}
+                      {...form.register(`services.${index}.markup_percent`)}
+                    />
+                    <Input
+                      aria-label={t('admin.fields.delivery_method.markup_flat.label')}
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder={t('admin.fields.delivery_method.markup_flat.label')}
+                      {...form.register(`services.${index}.markup_flat`)}
+                    />
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {servicesArray.fields.map((row, index) => (
+            <div key={row._key} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2">
+              <Input
+                aria-label={t('admin.delivery_methods.carrier_services.carrier')}
+                placeholder={t('admin.delivery_methods.carrier_services.carrier')}
+                {...form.register(`services.${index}.carrier`)}
+              />
+              <Input
+                aria-label={t('admin.delivery_methods.carrier_services.service')}
+                placeholder={t('admin.delivery_methods.carrier_services.service')}
+                {...form.register(`services.${index}.service`)}
+              />
+              <Input
+                aria-label={t('admin.delivery_methods.carrier_services.custom_label', {
+                  service: '',
+                })}
+                placeholder={t('admin.fields.delivery_method.service_label.label')}
+                {...form.register(`services.${index}.label`)}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label={t('admin.actions.remove')}
+                onClick={() => servicesArray.remove(index)}
+              >
+                <Trash2Icon className="size-4" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="self-start"
+            onClick={() =>
+              servicesArray.append({
+                carrier: '',
+                service: '',
+                label: '',
+                markup_flat: '',
+                markup_percent: '',
+              })
+            }
+          >
+            <PlusIcon className="size-4" />
+            {t('admin.delivery_methods.carrier_services.add_service')}
+          </Button>
+        </div>
+      )}
+    </div>
   )
 }

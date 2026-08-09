@@ -498,7 +498,24 @@
       },
       "no_zones_hint": "No delivery zones defined yet — the method applies everywhere.",
       "pickup_locations_hint": "No selection means every pickup-enabled stock location is offered.",
-      "search_placeholder": "Search delivery methods…"
+      "search_placeholder": "Search delivery methods…",
+      "add_option": "Add shipping option",
+      "live_rates": "Live rates",
+      "free": "Free",
+      "hidden": "Hidden",
+      "everywhere": "Everywhere",
+      "everywhere_hint": "Options without zone restrictions — carrier-priced options serve wherever the carrier delivers.",
+      "zone_empty": "No shipping options in this zone yet.",
+      "connect_provider_hint": "{{name}} can quote live carrier rates — connect it to enable.",
+      "carrier_services": {
+        "label": "Carrier services",
+        "all_hint": "Every service the carrier returns is offered, named by the carrier.",
+        "narrowed_hint": "Only the {{count}} selected services are offered.",
+        "add_service": "Add service",
+        "carrier": "Carrier",
+        "service": "Service",
+        "custom_label": "Custom label for {{service}}"
+      }
     },
     "delivery_zones": {
       "add_cta": "Add delivery zone",
@@ -730,6 +747,16 @@
         },
         "transit_days_min": {
           "label": "Transit days (min)"
+        },
+        "markup_percent": {
+          "label": "Markup %",
+          "help": "Handling fee added on top of carrier rates. Per-service values override these defaults."
+        },
+        "markup_flat": {
+          "label": "Markup (flat)"
+        },
+        "service_label": {
+          "label": "Custom label"
         }
       },
       "gift_card": {

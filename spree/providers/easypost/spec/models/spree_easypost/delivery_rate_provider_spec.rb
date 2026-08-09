@@ -27,9 +27,7 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
     end
   end
   let(:delivery_method) do
-    create(:delivery_method, store: store,
-                             rate_provider: described_class.to_s,
-                             metadata: { 'carrier' => 'UPS', 'service' => 'Ground' })
+    create(:delivery_method, store: store, rate_provider: described_class.to_s)
   end
   let(:order) { create(:order_with_line_items, store: store) }
   let(:package) { order.fulfillments.first.to_package }
@@ -58,37 +56,39 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
     expect(described_class.integration_class).to eq('SpreeEasyPost::Integration')
   end
 
-  describe '#estimate' do
-    it 'quotes the configured carrier service with enriched fields' do
-      estimate = provider.estimate(package)
+  it 'ships a static service catalog for the admin picker' do
+    entry = described_class.service_catalog(integration).first
 
-      expect(estimate.cost).to eq(BigDecimal('8.99'))
-      expect(estimate.carrier).to eq('UPS')
-      expect(estimate.service_level).to eq('Ground')
-      expect(estimate.estimated_delivery_date).to eq(Date.new(2026, 8, 12))
-      expect(estimate.metadata['easypost_rate_id']).to eq('rate_1')
-    end
+    expect(entry).to include(:carrier, :service, :label)
+  end
 
-    it 'suppresses the method when no rate matches the configured service' do
-      delivery_method.metadata['service'] = 'Overnight'
+  describe '#estimates' do
+    it 'maps every returned rate to an enriched estimate' do
+      estimates = provider.estimates(package)
 
-      expect(provider.estimate(package)).to be_nil
+      expect(estimates.size).to eq(2)
+      ground = estimates.detect { |estimate| estimate.service_level == 'Ground' }
+      expect(ground.cost).to eq(BigDecimal('8.99'))
+      expect(ground.carrier).to eq('UPS')
+      expect(ground.estimated_delivery_date).to eq(Date.new(2026, 8, 12))
+      expect(ground.metadata['easypost_rate_id']).to eq('rate_1')
+      expect(ground.metadata['easypost_shipment_id']).to eq('shp_1')
     end
 
     # A carrier outage must degrade to "method not offered", never break
     # the rate refresh.
-    it 'suppresses the method and reports when the API call fails' do
+    it 'returns nothing and reports when the API call fails' do
       allow(shipment_service).to receive(:create).and_raise(StandardError.new('timeout'))
       allow(Rails.error).to receive(:report)
 
-      expect(provider.estimate(package)).to be_nil
+      expect(provider.estimates(package)).to eq([])
       expect(Rails.error).to have_received(:report)
     end
 
-    it 'suppresses the method when the integration is not connected' do
+    it 'returns nothing when the integration is not connected' do
       allow(provider).to receive(:integration).and_return(nil)
 
-      expect(provider.estimate(package)).to be_nil
+      expect(provider.estimates(package)).to eq([])
     end
 
     describe 'parcel dimensions' do
@@ -101,7 +101,7 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
       end
 
       it 'sends the default package dimensions with the quote' do
-        provider.estimate(package)
+        provider.estimates(package)
 
         expect(shipment_service).to have_received(:create).with(
           hash_including(parcel: hash_including(length: 12.0, width: 9.0, height: 4.0))
@@ -111,7 +111,7 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
       it 'converts metric dimensions to inches' do
         store.update!(preferred_unit_system: 'metric')
 
-        provider.estimate(package)
+        provider.estimates(package)
 
         expect(shipment_service).to have_received(:create).with(
           hash_including(parcel: hash_including(length: 4.72, width: 3.54, height: 1.57))
@@ -122,17 +122,15 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
     # The whole point of the shared shipment call: several methods quoting
     # through this provider must cost one API round-trip, not one each.
     it 'reuses the shipment across methods within a request' do
-      express_method = create(:delivery_method, store: store,
-                                                rate_provider: described_class.to_s,
-                                                metadata: { 'carrier' => 'UPS', 'service' => 'Express' })
-      express_provider = described_class.new(express_method)
-      allow(express_provider).to receive(:integration).and_return(integration)
+      other_method = create(:delivery_method, store: store, rate_provider: described_class.to_s)
+      other_provider = described_class.new(other_method)
+      allow(other_provider).to receive(:integration).and_return(integration)
 
-      provider.estimate(package)
-      express_estimate = express_provider.estimate(package)
+      provider.estimates(package)
+      other_estimates = other_provider.estimates(package)
 
       expect(shipment_service).to have_received(:create).once
-      expect(express_estimate.cost).to eq(BigDecimal('24.99'))
+      expect(other_estimates.size).to eq(2)
     end
   end
 end
@@ -148,50 +146,47 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider, 'API contract (VCR)' do
       preferences: { api_key: ENV.fetch('EASYPOST_TEST_API_KEY', 'EZTK-recorded') }
     ).tap { |record| record.update_columns(active: true) }
   end
-  # Read from the cassette rather than hardcoded: which carriers a test
-  # account can quote depends on the carrier accounts enabled on it, so
-  # pinning one would break on re-record against a different account.
-  let(:recorded_rate) { recorded_rate_or_default }
   let(:delivery_method) do
-    create(:delivery_method, store: store,
-                             rate_provider: described_class.to_s,
-                             metadata: {
-                               'carrier' => recorded_rate['carrier'],
-                               'service' => recorded_rate['service']
-                             })
+    create(:delivery_method, store: store, rate_provider: described_class.to_s)
   end
   let(:order) { create(:order_with_line_items, store: store) }
   let(:package) { order.fulfillments.first.to_package }
 
-  it 'quotes a live rate end to end' do
-    VCR.use_cassette('create_shipment_rates') do
-      estimate = described_class.new(delivery_method).estimate(package)
-
-      expect(estimate.cost).to be > 0
-      expect(estimate.carrier).to eq(recorded_rate['carrier'])
-      expect(estimate.service_level).to eq(recorded_rate['service'])
-      expect(estimate.metadata['easypost_rate_id']).to be_present
-      expect(estimate.metadata['easypost_shipment_id']).to be_present
-    end
-  end
-
-  # The whole path with nothing stubbed: Stock::Estimator resolves the
-  # integration from the database, the provider quotes over recorded HTTP,
-  # and the carrier fields land on the Spree::DeliveryRate the storefront
-  # reads.
-  it 'sets carrier and service level on the delivery rate end to end' do
+  it 'quotes every recorded carrier service end to end' do
     delivery_method # lazy let — must exist before the estimator queries methods
 
     VCR.use_cassette('create_shipment_rates') do
       rates = Spree::Stock::Estimator.new(order).delivery_rates(package)
-      rate = rates.find { |candidate| candidate.delivery_method_id == delivery_method.id }
+                                     .select { |rate| rate.delivery_method_id == delivery_method.id }
 
-      expect(rate).to be_a(Spree::DeliveryRate)
-      expect(rate.cost).to be > 0
-      expect(rate.carrier).to eq(recorded_rate['carrier'])
-      expect(rate.service_level).to eq(recorded_rate['service'])
-      expect(rate.metadata['easypost_rate_id']).to be_present
-      expect(rate.metadata['easypost_shipment_id']).to be_present
+      expect(rates.size).to eq(recorded_rates.size)
+      expect(rates.map(&:carrier)).to match_array(recorded_rates.map { |rate| rate['carrier'] })
+      rates.each do |rate|
+        expect(rate.name).to eq("#{rate.carrier} #{rate.service_level}")
+        expect(rate.cost).to be > 0
+        expect(rate.metadata['easypost_rate_id']).to be_present
+      end
+    end
+  end
+
+  # The merchant controls: rows narrow the offer, labels rename, markup
+  # applies — all through the estimator with recorded HTTP.
+  it 'narrows, renames and marks up services through service rows' do
+    picked = recorded_rate_or_default
+    delivery_method.update!(markup_percent: 10)
+    delivery_method.services.create!(
+      carrier: picked['carrier'], service: picked['service'], label: 'Custom fast shipping'
+    )
+
+    VCR.use_cassette('create_shipment_rates') do
+      rates = Spree::Stock::Estimator.new(order).delivery_rates(package)
+                                     .select { |rate| rate.delivery_method_id == delivery_method.id }
+
+      expect(rates.size).to eq(1)
+      rate = rates.first
+      expect(rate.name).to eq('Custom fast shipping')
+      expect(rate.service_level).to eq(picked['service'])
+      expect(rate.cost).to eq((BigDecimal(picked['rate'].to_s) * BigDecimal('1.1')).round(2))
     end
   end
 end

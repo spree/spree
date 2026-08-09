@@ -23,6 +23,7 @@ module Spree
             Stores.call
             Channels.call
             StockLocations.call
+            DeliveryZones.call
             AdminUser.call
 
             # add store resources

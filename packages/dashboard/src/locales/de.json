@@ -498,7 +498,24 @@
       },
       "no_zones_hint": "Noch keine Lieferzonen definiert — die Methode gilt überall.",
       "pickup_locations_hint": "Ohne Auswahl werden alle abholfähigen Lagerorte angeboten.",
-      "search_placeholder": "Versandarten durchsuchen…"
+      "search_placeholder": "Versandarten durchsuchen…",
+      "add_option": "Versandoption hinzufügen",
+      "live_rates": "Live-Tarife",
+      "free": "Kostenlos",
+      "hidden": "Ausgeblendet",
+      "everywhere": "Überall",
+      "everywhere_hint": "Optionen ohne Zonenbeschränkung — vom Carrier bepreiste Optionen gelten überall, wo der Carrier zustellt.",
+      "zone_empty": "Noch keine Versandoptionen in dieser Zone.",
+      "connect_provider_hint": "{{name}} kann Live-Carrier-Tarife anbieten — zum Aktivieren verbinden.",
+      "carrier_services": {
+        "label": "Carrier-Services",
+        "all_hint": "Alle vom Carrier zurückgegebenen Services werden angeboten, benannt vom Carrier.",
+        "narrowed_hint": "Nur die {{count}} ausgewählten Services werden angeboten.",
+        "add_service": "Service hinzufügen",
+        "carrier": "Carrier",
+        "service": "Service",
+        "custom_label": "Eigene Bezeichnung für {{service}}"
+      }
     },
     "delivery_zones": {
       "add_cta": "Lieferzone hinzufügen",
@@ -730,6 +747,16 @@
         },
         "transit_days_min": {
           "label": "Laufzeit (min. Tage)"
+        },
+        "markup_percent": {
+          "label": "Aufschlag %",
+          "help": "Bearbeitungsgebühr auf Carrier-Tarife. Werte pro Service überschreiben diese Vorgaben."
+        },
+        "markup_flat": {
+          "label": "Aufschlag (fix)"
+        },
+        "service_label": {
+          "label": "Eigene Bezeichnung"
         }
       },
       "gift_card": {

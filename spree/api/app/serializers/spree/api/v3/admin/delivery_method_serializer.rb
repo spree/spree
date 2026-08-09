@@ -11,11 +11,16 @@ module Spree
                    delivery_zone_ids: [:string, multi: true],
                    stock_location_ids: [:string, multi: true],
                    calculator_type: [:string, nullable: true],
-                   calculator_preferences: ['Record<string, unknown>', nullable: true]
+                   calculator_preferences: ['Record<string, unknown>', nullable: true],
+                   markup_flat: [:string, nullable: true],
+                   markup_percent: [:string, nullable: true]
 
           attributes :admin_name, :fulfillment_type, :fulfillment_provider, :pickup_point_provider,
                      :rate_provider, :storefront_visible, :tracking_url,
+                     :markup_flat, :markup_percent,
                      created_at: :iso8601, updated_at: :iso8601, deleted_at: :iso8601
+
+          many :services, resource: proc { Spree.api.admin_delivery_method_service_serializer }
 
           attribute :tax_category_id do |record|
             record.tax_category&.prefixed_id

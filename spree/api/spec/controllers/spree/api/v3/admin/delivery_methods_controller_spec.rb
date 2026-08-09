@@ -59,12 +59,14 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
       internal = json_response['data'].find { |row| row['type'] == 'Spree::DeliveryRateProvider::Internal' }
       expect(internal['name']).to eq('Internal')
       expect(internal['integration_class']).to be_nil
+      expect(internal['service_catalog']).to eq([])
       expect(json_response['default']).to eq('Spree::DeliveryRateProvider::Internal')
     end
 
-    # Offering a provider whose integration isn't connected would let an
-    # admin pick one that then fails to quote at checkout.
-    it 'hides providers unavailable to the current store' do
+    # Unconnected providers are listed but flagged, so the dashboard can
+    # offer connecting the integration inline; DeliveryMethod still rejects
+    # an unavailable provider on save.
+    it 'marks providers unavailable to the current store' do
       provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
         def self.integration_class = 'Spree::Integrations::Unconnected'
         def self.available_for_store?(_store) = false
@@ -74,9 +76,52 @@ RSpec.describe Spree::Api::V3::Admin::DeliveryMethodsController, type: :controll
 
       get :rate_providers, params: {}, as: :json
 
-      expect(json_response['data'].map { |row| row['type'] }).not_to include('UnavailableRateProvider')
+      row = json_response['data'].find { |entry| entry['type'] == 'UnavailableRateProvider' }
+      expect(row['available']).to be false
+      expect(json_response['data'].find { |entry| entry['type'] == 'Spree::DeliveryRateProvider::Internal' }['available']).to be true
     ensure
       Spree.delivery_rate_providers.delete(provider_class)
+    end
+  end
+
+
+  describe 'carrier services' do
+    let(:delivery_method) { create(:delivery_method, store: store) }
+
+    it 'creates service rows with markup and label from a flat payload' do
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        markup_percent: 5,
+        services: [
+          { carrier: 'UPS', service: 'Ground', label: 'UPS standard' },
+          { carrier: 'USPS', service: 'Priority', markup_flat: '2.5' }
+        ]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['markup_percent']).to eq('5.0')
+      services = json_response['services']
+      expect(services.size).to eq(2)
+      ups = services.find { |row| row['carrier'] == 'UPS' }
+      expect(ups['label']).to eq('UPS standard')
+      expect(ups['id']).to start_with('dms_')
+    end
+
+    it 'reconciles rows: keeps by id, drops the omitted' do
+      delivery_method.services = [
+        { carrier: 'UPS', service: 'Ground' },
+        { carrier: 'USPS', service: 'Priority' }
+      ]
+      kept = delivery_method.services.find_by(carrier: 'UPS')
+
+      patch :update, params: {
+        id: delivery_method.prefixed_id,
+        services: [{ id: kept.prefixed_id, carrier: 'UPS', service: 'Ground', label: 'Renamed' }]
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(delivery_method.services.reload.map(&:carrier)).to eq(['UPS'])
+      expect(kept.reload.label).to eq('Renamed')
     end
   end
 

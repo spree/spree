@@ -43,22 +43,26 @@ module Spree
           end
 
           # GET /api/v3/admin/delivery_methods/rate_providers
-          # Registered DeliveryRateProvider strategies, filtered to those the
-          # current store can actually use — a carrier provider whose
-          # integration isn't connected must not be offered, since choosing it
-          # would break quoting at checkout.
+          # Registered DeliveryRateProvider strategies. Providers whose
+          # integration isn't connected come back with `available: false` so
+          # the dashboard can offer connecting it inline — DeliveryMethod
+          # still rejects an unavailable provider on save. `service_catalog`
+          # feeds the carrier-services picker (empty = free-form).
           def rate_providers
             authorize! :create, model_class
 
-            data = Spree.delivery_rate_providers.
-                   select { |provider_class| provider_class.available_for_store?(current_store) }.
-                   map do |provider_class|
+            data = Spree.delivery_rate_providers.map do |provider_class|
+              integration = provider_class.integration_class.presence &&
+                current_store.integrations.active.find_by(type: provider_class.integration_class)
+
               {
                 type: provider_class.to_s,
                 name: provider_class.provider_name,
                 integration_class: provider_class.integration_class,
+                available: provider_class.available_for_store?(current_store),
                 fulfillment_types: provider_class.fulfillment_types,
-                uses_calculator: provider_class.uses_calculator?
+                uses_calculator: provider_class.uses_calculator?,
+                service_catalog: provider_class.service_catalog(integration)
               }
             end
 
@@ -98,17 +102,19 @@ module Spree
             Spree.api.admin_delivery_method_serializer
           end
 
-          # A single POST/PATCH can ship eligibility rules alongside the
-          # basics; `DeliveryMethod#rules=` reconciles to the desired set, so
-          # the dashboard saves the whole sheet in one round-trip.
+          # A single POST/PATCH can ship eligibility rules and carrier service
+          # rows alongside the basics; `DeliveryMethod#rules=` / `#services=`
+          # reconcile to the desired set, so the dashboard saves the whole
+          # sheet in one round-trip.
           def permitted_params
             params.permit(
               :name, :admin_name, :code, :fulfillment_type, :fulfillment_provider,
               :pickup_point_provider, :rate_provider, :storefront_visible, :tracking_url,
               :estimated_transit_business_days_min, :estimated_transit_business_days_max,
-              :tax_category_id, :calculator_type,
+              :tax_category_id, :calculator_type, :markup_flat, :markup_percent,
               delivery_zone_ids: [], stock_location_ids: [], calculator_preferences: {},
-              rules: rule_attributes
+              rules: rule_attributes,
+              services: [:id, :carrier, :service, :label, :markup_flat, :markup_percent, :position]
             )
           end
 

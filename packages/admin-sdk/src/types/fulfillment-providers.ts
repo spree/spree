@@ -32,8 +32,26 @@ export interface DeliveryRateProviderOption {
   name: string
   /** `Spree::Integration` subclass holding this provider's credentials, if any. */
   integration_class: string | null
+  /** False when the provider's integration isn't connected for this store — connect it to enable the provider. */
+  available: boolean
   /** Fulfillment types this provider can quote; empty means any type. */
   fulfillment_types: string[]
   /** Whether the method's calculator sets the price. False for carrier providers, which quote live rates. */
   uses_calculator: boolean
+  /**
+   * Carrier services this provider can quote, for the service picker.
+   * Empty when the provider exposes no catalog — service rows then accept
+   * free-form carrier/service values.
+   */
+  service_catalog: DeliveryRateProviderCatalogEntry[]
+}
+
+/** One carrier service in a rate provider's catalog. */
+export interface DeliveryRateProviderCatalogEntry {
+  /** Carrier identifier as the provider's API knows it, e.g. `UPS`. */
+  carrier: string
+  /** Service identifier as the provider's API knows it, e.g. `Ground`. */
+  service: string
+  /** Human-readable label for display, e.g. `UPS Ground`. */
+  label: string
 }

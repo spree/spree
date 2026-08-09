@@ -36,4 +36,10 @@ FactoryBot.define do
       association(:calculator, factory: :shipping_no_amount_calculator, strategy: :build)
     end
   end
+
+  factory :delivery_method_service, class: Spree::DeliveryMethodService do
+    delivery_method
+    carrier { 'UPS' }
+    service { 'Ground' }
+  end
 end

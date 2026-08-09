@@ -1738,6 +1738,37 @@ export interface DeliveryMethodParams {
   calculator_preferences?: Record<string, unknown>
   /** Prefixed delivery zone IDs (`dz_...`); replaces the full set. */
   delivery_zone_ids?: string[]
+  /**
+   * Method-level percentage handling fee added on top of provider-quoted
+   * rates. Ignored for calculator-priced methods.
+   */
+  markup_percent?: number | string | null
+  /** Method-level flat handling fee added on top of provider-quoted rates. */
+  markup_flat?: number | string | null
+  /**
+   * Carrier service rows: which provider services this method offers, each
+   * with an optional display label and markup override. Replaces the full
+   * set — omitted rows are removed; no rows means every service the
+   * provider returns is offered.
+   */
+  services?: DeliveryMethodServiceParams[]
+}
+
+/** One carrier service row on a delivery method. */
+export interface DeliveryMethodServiceParams {
+  /** Prefixed row ID (`dms_...`) when updating an existing row. */
+  id?: string
+  /** Carrier identifier as the provider's API knows it, e.g. `UPS`. */
+  carrier: string
+  /** Service identifier as the provider's API knows it, e.g. `Ground`. */
+  service: string
+  /** Display label shown to customers instead of the carrier-derived name. */
+  label?: string | null
+  /** Overrides the method-level flat markup for this service. */
+  markup_flat?: number | string | null
+  /** Overrides the method-level percentage markup for this service. */
+  markup_percent?: number | string | null
+  position?: number
 }
 
 export interface DeliveryZoneMemberParams {

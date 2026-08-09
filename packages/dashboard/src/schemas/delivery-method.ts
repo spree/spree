@@ -18,6 +18,22 @@ export const deliveryMethodRuleSchema = z.object({
 
 export type DeliveryMethodRuleDraft = z.infer<typeof deliveryMethodRuleSchema>
 
+/**
+ * One carrier service row: a service the method offers, with an optional
+ * customer-facing label and markup override. No rows on a provider-priced
+ * method means "offer everything the carrier returns".
+ */
+export const deliveryMethodServiceSchema = z.object({
+  id: z.string().optional(),
+  carrier: z.string().min(1),
+  service: z.string().min(1),
+  label: z.string().optional(),
+  markup_flat: z.string().optional(),
+  markup_percent: z.string().optional(),
+})
+
+export type DeliveryMethodServiceDraft = z.infer<typeof deliveryMethodServiceSchema>
+
 export const deliveryMethodFormSchema = z.object({
   name: z.string().min(1),
   admin_name: z.string().optional(),
@@ -36,6 +52,9 @@ export const deliveryMethodFormSchema = z.object({
   delivery_zone_ids: z.array(z.string()),
   stock_location_ids: z.array(z.string()),
   rules: z.array(deliveryMethodRuleSchema),
+  markup_flat: z.string().optional(),
+  markup_percent: z.string().optional(),
+  services: z.array(deliveryMethodServiceSchema),
 })
 
 export type DeliveryMethodFormValues = z.infer<typeof deliveryMethodFormSchema>
@@ -57,6 +76,9 @@ export const DELIVERY_METHOD_DEFAULTS: DeliveryMethodFormValues = {
   delivery_zone_ids: [],
   stock_location_ids: [],
   rules: [],
+  markup_flat: '',
+  markup_percent: '',
+  services: [],
 }
 
 export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
@@ -92,6 +114,19 @@ export function deliveryMethodValuesToParams(values: DeliveryMethodFormValues) {
       type: rule.type,
       preferences: rule.preferences,
       ...(rule.takes_products ? { product_ids: rule.product_ids } : {}),
+    })),
+    markup_flat: values.markup_flat || null,
+    markup_percent: values.markup_percent || null,
+    // Service rows follow the rules convention: the array replaces the full
+    // set, omitted rows are removed, and an empty array clears them (back to
+    // "offer every service").
+    services: values.services.map((row) => ({
+      ...(row.id ? { id: row.id } : {}),
+      carrier: row.carrier,
+      service: row.service,
+      label: row.label || null,
+      markup_flat: row.markup_flat || null,
+      markup_percent: row.markup_percent || null,
     })),
   }
 }

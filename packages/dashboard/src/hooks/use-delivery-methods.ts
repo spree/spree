@@ -41,6 +41,26 @@ export function useDeliveryRateProviders() {
   })
 }
 
+/**
+ * Every delivery method of the store, across pages — the zone-grouped
+ * settings view renders all of them at once, Shopify-style, so a silent
+ * page-one cap would hide methods from the merchant.
+ */
+export function useAllDeliveryMethods() {
+  return useQuery({
+    queryKey: useResourceKey('delivery-methods', 'all'),
+    queryFn: async () => {
+      const first = await adminClient.deliveryMethods.list({ page: 1, limit: 100 })
+      const rest = await Promise.all(
+        Array.from({ length: (first.meta?.pages ?? 1) - 1 }, (_, index) =>
+          adminClient.deliveryMethods.list({ page: index + 2, limit: 100 }),
+        ),
+      )
+      return [...first.data, ...rest.flatMap((page) => page.data)]
+    },
+  })
+}
+
 export function useCreateDeliveryMethod() {
   return useResourceMutation<DeliveryMethod, Error, DeliveryMethodParams>({
     mutationFn: (params) => adminClient.deliveryMethods.create(params),

@@ -506,7 +506,24 @@
       },
       "no_zones_hint": "Brak stref dostawy — metoda obowiązuje wszędzie.",
       "pickup_locations_hint": "Brak wyboru oznacza, że oferowane są wszystkie lokalizacje z włączonym odbiorem.",
-      "search_placeholder": "Szukaj metod dostawy…"
+      "search_placeholder": "Szukaj metod dostawy…",
+      "add_option": "Dodaj opcję wysyłki",
+      "live_rates": "Stawki na żywo",
+      "free": "Darmowa",
+      "hidden": "Ukryta",
+      "everywhere": "Wszędzie",
+      "everywhere_hint": "Opcje bez ograniczeń stref — opcje wyceniane przez przewoźnika działają wszędzie, gdzie ten dostarcza.",
+      "zone_empty": "Brak opcji wysyłki w tej strefie.",
+      "connect_provider_hint": "{{name}} może podawać stawki przewoźników na żywo — połącz, aby włączyć.",
+      "carrier_services": {
+        "label": "Usługi przewoźnika",
+        "all_hint": "Oferowane są wszystkie usługi zwracane przez przewoźnika, z nazwami przewoźnika.",
+        "narrowed_hint": "Oferowane są tylko wybrane usługi ({{count}}).",
+        "add_service": "Dodaj usługę",
+        "carrier": "Przewoźnik",
+        "service": "Usługa",
+        "custom_label": "Własna etykieta dla {{service}}"
+      }
     },
     "delivery_zones": {
       "add_cta": "Dodaj strefę dostawy",
@@ -738,6 +755,16 @@
         },
         "transit_days_min": {
           "label": "Dni dostawy (min)"
+        },
+        "markup_percent": {
+          "label": "Narzut %",
+          "help": "Opłata manipulacyjna doliczana do stawek przewoźnika. Wartości per usługa nadpisują te domyślne."
+        },
+        "markup_flat": {
+          "label": "Narzut (kwotowy)"
+        },
+        "service_label": {
+          "label": "Własna etykieta"
         }
       },
       "gift_card": {

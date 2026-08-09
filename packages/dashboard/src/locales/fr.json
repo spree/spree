@@ -498,7 +498,24 @@
       },
       "no_zones_hint": "Aucune zone définie — la méthode s’applique partout.",
       "pickup_locations_hint": "Sans sélection, tous les entrepôts avec retrait activé sont proposés.",
-      "search_placeholder": "Rechercher des méthodes…"
+      "search_placeholder": "Rechercher des méthodes…",
+      "add_option": "Ajouter une option d'expédition",
+      "live_rates": "Tarifs en direct",
+      "free": "Gratuit",
+      "hidden": "Masqué",
+      "everywhere": "Partout",
+      "everywhere_hint": "Options sans restriction de zone — les options tarifées par le transporteur s'appliquent partout où il livre.",
+      "zone_empty": "Aucune option d'expédition dans cette zone pour l'instant.",
+      "connect_provider_hint": "{{name}} peut proposer des tarifs transporteur en direct — connectez-le pour l’activer.",
+      "carrier_services": {
+        "label": "Services transporteur",
+        "all_hint": "Tous les services renvoyés par le transporteur sont proposés, nommés par le transporteur.",
+        "narrowed_hint": "Seuls les {{count}} services sélectionnés sont proposés.",
+        "add_service": "Ajouter un service",
+        "carrier": "Transporteur",
+        "service": "Service",
+        "custom_label": "Libellé personnalisé pour {{service}}"
+      }
     },
     "delivery_zones": {
       "add_cta": "Ajouter une zone",
@@ -730,6 +747,16 @@
         },
         "transit_days_min": {
           "label": "Délai (jours min)"
+        },
+        "markup_percent": {
+          "label": "Majoration %",
+          "help": "Frais de traitement ajoutés aux tarifs transporteur. Les valeurs par service remplacent ces valeurs par défaut."
+        },
+        "markup_flat": {
+          "label": "Majoration (fixe)"
+        },
+        "service_label": {
+          "label": "Libellé personnalisé"
         }
       },
       "gift_card": {

@@ -73,6 +73,17 @@ module Spree
 
           store.present? && store.integrations.active.exists?(type: integration_class)
         end
+
+        # The carrier services this provider can quote, for the admin service
+        # picker. An empty list means the provider exposes no catalog and
+        # every returned rate is offered. Providers with a stable service set
+        # return `[{ carrier:, service:, label: }]`.
+        #
+        # @param _integration [Spree::Integration, nil]
+        # @return [Array<Hash>]
+        def service_catalog(_integration)
+          []
+        end
       end
 
       # @param delivery_method [Spree::DeliveryMethod]
@@ -80,7 +91,20 @@ module Spree
         @delivery_method = delivery_method
       end
 
-      # Quotes this delivery method for a package.
+      # Every quote this delivery method yields for a package — the entry
+      # point the Estimator calls. Carrier providers override this to return
+      # one Estimate per service ("UPS Ground", "UPS Express", …) from a
+      # single API call; single-quote providers implement {#estimate} and get
+      # wrapped automatically. An empty array offers nothing.
+      #
+      # @param package [Spree::Stock::Package]
+      # @return [Array<Spree::DeliveryRateProvider::Estimate>]
+      def estimates(package)
+        Array(estimate(package)).compact
+      end
+
+      # Quotes this delivery method for a package, for providers that yield a
+      # single rate.
       #
       # Returning nil suppresses the method, matching the calculator contract
       # where a nil cost hides it — that equivalence is what lets FlatRate's
@@ -89,7 +113,7 @@ module Spree
       # @param _package [Spree::Stock::Package]
       # @return [Spree::DeliveryRateProvider::Estimate, nil]
       def estimate(_package)
-        raise NotImplementedError, "Please implement 'estimate' in your delivery rate provider: #{self.class.name}"
+        raise NotImplementedError, "Please implement 'estimate' or 'estimates' in your delivery rate provider: #{self.class.name}"
       end
 
       # Reserves the quote with the carrier once a customer selects it.

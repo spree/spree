@@ -42,6 +42,8 @@ module Spree
              dependent: :destroy, inverse_of: :delivery_method
     has_many :delivery_method_rules, class_name: 'Spree::DeliveryMethodRule',
              dependent: :destroy, inverse_of: :delivery_method
+    has_many :services, -> { order(:position) }, class_name: 'Spree::DeliveryMethodService',
+             dependent: :destroy, inverse_of: :delivery_method
     has_many :pickup_locations, through: :delivery_method_stock_locations, source: :stock_location
 
     has_many :delivery_method_zones, class_name: 'Spree::DeliveryMethodZone',
@@ -59,6 +61,7 @@ module Spree
     # free rate, so neither the API nor the dashboard has to send one.
     before_validation :ensure_calculator, on: :create
     after_save :apply_pending_rules, if: :pending_rules?
+    after_save :apply_pending_services, if: :pending_services?
     attribute :fulfillment_provider, :string, default: 'Spree::FulfillmentProvider::Manual'
 
     scope :by_fulfillment_type, ->(type) { where(fulfillment_type: type) }
@@ -220,6 +223,44 @@ module Spree
       assign_typed_association(:delivery_method_rules, rows)
     end
 
+    # Flat-payload writer for carrier service rows, so one PATCH saves the
+    # method and its services together. Rows update by id, match by
+    # (carrier, service), or create; rows omitted from the payload are
+    # destroyed. Assigning model instances (or an empty array) falls through
+    # to the standard association writer.
+    def services=(rows)
+      first = Array(rows).first
+      return super if first.nil? || first.is_a?(Spree.base_class)
+
+      pending = Array(rows).map { |row| row.to_h.with_indifferent_access }
+      if new_record?
+        @pending_services = pending
+      else
+        reconcile_services(pending)
+      end
+    end
+
+    def pending_services?
+      @pending_services.present?
+    end
+
+    # The service row matching an estimate's carrier + service identity.
+    #
+    # @param estimate [Spree::DeliveryRateProvider::Estimate]
+    # @return [Spree::DeliveryMethodService, nil]
+    def service_for(estimate)
+      services.detect { |row| row.carrier == estimate.carrier && row.service == estimate.service_level }
+    end
+
+    # Whether the method offers this estimate: no service rows means every
+    # service the provider returns, rows mean exactly those.
+    #
+    # @param estimate [Spree::DeliveryRateProvider::Estimate]
+    # @return [Boolean]
+    def offers_service?(estimate)
+      services.empty? || service_for(estimate).present?
+    end
+
     def pending_rules?
       @pending_delivery_method_rules.present?
     end
@@ -351,6 +392,29 @@ module Spree
 
     def apply_pending_rules
       flush_pending_typed_association(:delivery_method_rules)
+    end
+
+    def apply_pending_services
+      pending = @pending_services
+      @pending_services = nil
+      reconcile_services(pending)
+    end
+
+    def reconcile_services(rows)
+      kept_ids = rows.filter_map do |row|
+        record =
+          if row[:id].present?
+            id = Spree::PrefixedId.prefixed_id?(row[:id]) ? Spree::PrefixedId.decode_prefixed_id(row[:id]) : row[:id]
+            services.find_by(id: id)
+          end
+        record ||= services.find_or_initialize_by(carrier: row[:carrier], service: row[:service])
+        record.assign_attributes(row.slice(:carrier, :service, :label, :markup_flat, :markup_percent, :position).to_h)
+        record.save!
+        record.id
+      end
+
+      services.where.not(id: kept_ids).destroy_all
+      services.reset
     end
 
     # Only meaningful for registered providers — the inclusion validation

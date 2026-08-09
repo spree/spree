@@ -322,6 +322,87 @@ module Spree
           expect(rate.metadata['quote_id']).to eq('rate_123')
         end
 
+        # One carrier method now yields one rate per service (decisions.md
+        # 2026-08-09) — the provider returns several estimates and the
+        # estimator fans them out, names them, and applies merchant controls.
+        describe 'multi-rate providers' do
+          let(:multi_rate_provider_class) do
+            Class.new(Spree::DeliveryRateProvider::Base) do
+              def estimates(_package)
+                [
+                  Spree::DeliveryRateProvider::Estimate.new(
+                    cost: BigDecimal('9.40'), carrier: 'UPS', service_level: 'Ground'
+                  ),
+                  Spree::DeliveryRateProvider::Estimate.new(
+                    cost: BigDecimal('28.10'), carrier: 'UPS', service_level: 'NextDayAir'
+                  )
+                ]
+              end
+            end
+          end
+
+          before do
+            stub_const('MultiRateProvider', multi_rate_provider_class)
+            allow(delivery_method).to receive(:rate_provider_instance).and_return(MultiRateProvider.new(delivery_method))
+          end
+
+          it 'builds one named rate per estimate from a single method' do
+            rates = subject.delivery_rates(package)
+
+            expect(rates.map(&:name)).to contain_exactly('UPS Ground', 'UPS NextDayAir')
+            expect(rates.map(&:delivery_method_id).uniq).to eq([delivery_method.id])
+            expect(rates.map(&:cost)).to contain_exactly(BigDecimal('9.40'), BigDecimal('28.10'))
+          end
+
+          it 'offers only the services with rows when the method narrows them' do
+            delivery_method.services.create!(carrier: 'UPS', service: 'Ground')
+
+            rates = subject.delivery_rates(package)
+
+            expect(rates.map(&:name)).to eq(['UPS Ground'])
+          end
+
+          it 'renames a service through its row label' do
+            delivery_method.services.create!(carrier: 'UPS', service: 'NextDayAir', label: 'UPS 1 day')
+
+            rates = subject.delivery_rates(package)
+
+            expect(rates.map(&:name)).to eq(['UPS 1 day'])
+          end
+
+          it 'applies the method-level markup to every service' do
+            delivery_method.update!(markup_percent: 10, markup_flat: 1)
+
+            rates = subject.delivery_rates(package)
+
+            expect(rates.map(&:cost)).to contain_exactly(BigDecimal('11.34'), BigDecimal('31.91'))
+          end
+
+          it 'lets a service row override the method markup' do
+            delivery_method.update!(markup_percent: 10)
+            delivery_method.services.create!(carrier: 'UPS', service: 'Ground', markup_percent: 0, markup_flat: 2)
+            delivery_method.services.create!(carrier: 'UPS', service: 'NextDayAir')
+
+            rates = subject.delivery_rates(package)
+
+            ground = rates.detect { |rate| rate.service_level == 'Ground' }
+            express = rates.detect { |rate| rate.service_level == 'NextDayAir' }
+            expect(ground.cost).to eq(BigDecimal('11.40'))
+            expect(express.cost).to eq(BigDecimal('30.91'))
+          end
+        end
+
+        it 'never applies markup to calculator-priced methods' do
+          delivery_method.update!(markup_percent: 50, markup_flat: 10)
+          allow(delivery_method.calculator).to receive(:compute).and_return(7.00)
+
+          rate = subject.delivery_rates(package).first
+
+          expect(rate.cost).to eq(7.00)
+          expect(rate[:name]).to be_nil
+          expect(rate.name).to eq(delivery_method.name)
+        end
+
         it 'suppresses the method when the provider returns no estimate' do
           provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
             def estimate(_package) = nil

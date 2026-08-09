@@ -79,9 +79,9 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
           with('shp_recorded1', rate: { id: 'rate_recorded1' }).
           and_raise(EasyPost::Errors::EasyPostError.new('rate expired'))
         allow(shipment_service).to receive(:create).and_return(fresh_shipment)
-        fulfillment.delivery_method.update_columns(
-          private_metadata: { 'carrier' => 'UPS', 'service' => 'Ground' }
-        )
+        # The selected rate carries the carrier service the customer chose —
+        # the re-quote must buy exactly that.
+        fulfillment.selected_delivery_rate.update_columns(carrier: 'UPS', service_level: 'Ground')
       end
 
       it 'requotes and buys the matching service' do

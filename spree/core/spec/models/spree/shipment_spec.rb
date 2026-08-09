@@ -515,6 +515,30 @@ describe Spree::Shipment, type: :model do
         expect(shipment.selected_shipping_rate.shipping_method_id).to eq(shipping_method1.id)
       end
 
+      # A carrier method yields one rate per service, so re-quoting must keep
+      # the customer's chosen SERVICE, not just any rate from the same method.
+      it 'keeps the previously selected carrier service across a re-quote' do
+        shipment.shipping_rates.delete_all
+        shipment.delivery_rates.create!(delivery_method: shipping_method1, cost: 9.40,
+                                        carrier: 'UPS', service_level: 'Ground', name: 'UPS Ground')
+        shipment.delivery_rates.create!(delivery_method: shipping_method1, cost: 28.10, selected: true,
+                                        carrier: 'UPS', service_level: 'NextDayAir', name: 'UPS NextDayAir')
+
+        fresh_ground = Spree::DeliveryRate.new(delivery_method: shipping_method1, cost: 9.90,
+                                               carrier: 'UPS', service_level: 'Ground', name: 'UPS Ground')
+        fresh_express = Spree::DeliveryRate.new(delivery_method: shipping_method1, cost: 29.00,
+                                                carrier: 'UPS', service_level: 'NextDayAir', name: 'UPS NextDayAir')
+        fresh_estimator = double('estimator', delivery_rates: [fresh_ground, fresh_express])
+        expect(Spree::Stock::Estimator).to receive(:new).with(shipment.order).and_return(fresh_estimator)
+        allow(shipment).to receive_messages(delivery_method: shipping_method1)
+
+        shipment.refresh_rates
+
+        selected = shipment.reload.selected_delivery_rate
+        expect(selected.service_level).to eq('NextDayAir')
+        expect(selected.cost).to eq(29.00)
+      end
+
       it 'does not refresh if shipment is shipped' do
         expect(Spree::Stock::Estimator).not_to receive(:new)
         shipment.shipping_rates.delete_all

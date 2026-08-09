@@ -59,6 +59,42 @@ never in metadata.
 
 Plan: `docs/plans/6.0-consolidate-metadata-columns.md`.
 
+## 2026-08-09: Dynamic carrier rates — one delivery method, many named rates
+
+Supersedes the one-rate-per-method model in `6.0-delivery-rate-provider.md`
+(its unique-index gate is hereby exercised): a carrier-backed DeliveryMethod
+is the carrier connection, `DeliveryRateProvider::Base#estimates(package)`
+returns one Estimate per service, and every service becomes its own named
+`DeliveryRate` at checkout ("UPS Ground", "USPS Priority Mail"). This also
+finally delivers the "one Carrier shipping method per market, the provider
+returns whatever serves the address" aspiration recorded in the 2026-07-29
+aggregator survey, which the previous schema could not.
+
+**Merchant controls** (Shopify's knob set plus label overrides, which
+Shopify lacks): a new `Spree::DeliveryMethodService` row model — one row per
+carrier service, unique on (method, carrier, service) — narrows which
+services are offered (no rows = everything, current and future) and carries
+per-service `label`, `markup_flat`, `markup_percent`; method-level markup
+columns are the fallback. Rows, not preferences: independent per-service
+controls need a real model with real validation and API round-tripping.
+
+**Consequences.** `spree_delivery_rates` lost its unique
+(fulfillment, delivery_method) index and gained `name` (nil for calculator
+rates — `DeliveryRate#name` falls back to the method name, preserving the
+old delegate behavior). Selection across re-quotes and EasyPost label
+purchase key off the selected rate's carrier/service, not method config.
+The EasyPost method-metadata carrier/service binding is deleted. Seeds and
+sample data reshaped Shopify-style: Domestic + International delivery zones
+per store with basic flat-rate methods, replacing the continental sprawl.
+
+**Competitive grounding** (researched 2026-08-09): Shopify persists service
+selection + handling fee on the zone's carrier-rate entry and quotes live
+(labels not renamable); Medusa materializes one ShippingOption per service
+from the provider catalog; Saleor delegates everything to apps; Vendure is
+one-method-one-quote. The two-entity method→services shape is the
+normalized version of what Shopify/Woo store as config blobs, and Spree
+ends up expressing all four models.
+
 ## 2026-08-07: `Claim#claim_type` dropped — the reason vocabulary is the only "what went wrong" axis
 
 Reverses the two-axis design in `6.0-returns-exchanges-claims.md`, which

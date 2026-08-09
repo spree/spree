@@ -55,28 +55,29 @@ Declare secrets as `:password` preferences. Spree masks them on read and guards 
 
 ## 2. Implement the provider
 
-Only `#estimate` is required. It receives a `Spree::Stock::Package` and returns an `Estimate` — or `nil`.
+Implement `#estimates` — it receives a `Spree::Stock::Package` and returns an array of `Estimate` objects, one per carrier service you can quote. Every estimate becomes its own named option at checkout ("Acme Ground", "Acme Express"), and the merchant narrows, renames, or marks up individual services from the delivery method's carrier-services card. An empty array hides the method.
+
+(Single-quote providers can implement `#estimate` returning one `Estimate` or `nil` instead — the base class wraps it.)
 
 ```ruby
 module SpreeAcmeCarrier
   class DeliveryRateProvider < Spree::DeliveryRateProvider::Base
     def self.integration_class = 'SpreeAcmeCarrier::Integration'
 
-    def estimate(package)
-      quote = quotes_for(package).find { |q| q.service_code == delivery_method.metadata['service_code'] }
-      return if quote.nil?
-
-      Spree::DeliveryRateProvider::Estimate.new(
-        cost: quote.amount,
-        carrier: quote.carrier_name,
-        service_level: quote.service_name,
-        estimated_delivery_date: quote.delivery_date,
-        metadata: { quote_id: quote.id }
-      )
+    def estimates(package)
+      quotes_for(package).map do |quote|
+        Spree::DeliveryRateProvider::Estimate.new(
+          cost: quote.amount,
+          carrier: quote.carrier_name,
+          service_level: quote.service_name,
+          estimated_delivery_date: quote.delivery_date,
+          metadata: { quote_id: quote.id }
+        )
+      end
     rescue AcmeCarrier::Error => e
       # Never raise into checkout: report and hide this method instead.
       Rails.error.report(e, context: { delivery_method_id: delivery_method.id }, source: 'acme.rating')
-      nil
+      []
     end
 
     private
@@ -96,7 +97,9 @@ module SpreeAcmeCarrier
 end
 ```
 
-**Never let `estimate` raise.** It runs inside checkout's rate refresh, so an exception breaks the whole delivery step for the customer. Rescue your carrier's errors, report them (`Rails.error.report`), and return `nil` — the method disappears from the options while everything else keeps working.
+**Never let `estimates` raise.** It runs inside checkout's rate refresh, so an exception breaks the whole delivery step for the customer. Rescue your carrier's errors, report them (`Rails.error.report`), and return `[]` — the method disappears from the options while everything else keeps working.
+
+Optionally declare `def self.service_catalog(integration)` returning `[{ carrier:, service:, label: }]` — the admin service picker renders it as a checkbox list. Without a catalog the merchant enters carrier/service identifiers free-form.
 
 **Returning `nil` hides the delivery method** for that package. This is the same contract calculators follow, and it is how you express "this carrier does not serve this destination" — the method simply does not appear at checkout rather than appearing at a wrong price.
 
@@ -134,7 +137,7 @@ Registration is what makes a provider selectable: Spree validates `rate_provider
 
 A merchant connects the integration under **Settings → Integrations**, then picks the provider on a delivery method under **Settings → Delivery methods**. The provider field only appears once more than one provider is available, so stores without a carrier integration never see it.
 
-One delivery method means one rate, so model each sellable service as its own method — "Acme Ground" and "Acme Express" are two methods sharing one provider, distinguished by the `service_code` metadata the example reads. Methods stay regional: a carrier serving two continents is two methods, each with its own delivery zones.
+One delivery method is the carrier connection: every service your provider returns becomes its own option at checkout, so a single "Acme shipping" method is usually all a merchant creates. The method's carrier-services card narrows which services are offered, renames them ("Acme 1 day"), and adds per-service or method-wide markup.
 
 Providers and calculators coexist freely. A store can price "Free shipping" with a flat-rate calculator, "Express" through your carrier, and "Local pickup" with neither.
 
@@ -146,15 +149,15 @@ Your provider is a plain object, so test it directly:
 RSpec.describe SpreeAcmeCarrier::DeliveryRateProvider do
   let(:delivery_method) { create(:delivery_method, rate_provider: described_class.to_s) }
 
-  it 'quotes the configured service' do
-    estimate = described_class.new(delivery_method).estimate(package)
+  it 'quotes every service the carrier returns' do
+    estimates = described_class.new(delivery_method).estimates(package)
 
-    expect(estimate.cost).to eq(BigDecimal('12.40'))
-    expect(estimate.carrier).to eq('Acme')
+    expect(estimates.map(&:service_level)).to contain_exactly('Ground', 'Express')
+    expect(estimates.first.carrier).to eq('Acme')
   end
 
   it 'hides the method when the carrier does not serve the destination' do
-    expect(described_class.new(delivery_method).estimate(unservable_package)).to be_nil
+    expect(described_class.new(delivery_method).estimates(unservable_package)).to eq([])
   end
 end
 ```

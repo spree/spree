@@ -13,8 +13,22 @@ module Spree
       attribute :cost, :decimal
       attribute :carrier, :string
       attribute :service_level, :string
+      # Optional display name; when blank the Estimator derives one from
+      # carrier + service_level (or falls back to the method name).
+      attribute :name, :string
       attribute :estimated_delivery_date, :date
       attribute :metadata, default: -> { {} }
+
+      # Stable identity of the carrier service within a method — what
+      # DeliveryMethodService rows match against for selection filtering and
+      # label/markup overrides.
+      #
+      # @return [String, nil]
+      def service_key
+        return if carrier.blank? && service_level.blank?
+
+        [carrier, service_level].compact.join('/')
+      end
     end
   end
 end

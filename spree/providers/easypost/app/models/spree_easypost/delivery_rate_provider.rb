@@ -1,8 +1,9 @@
 module SpreeEasyPost
-  # Quotes a delivery method from EasyPost. Each method maps to one carrier
-  # service (metadata: `carrier` + `service`, e.g. UPS/Ground) — "Ground" and
-  # "Express" are two DeliveryMethods sharing this provider, and the shared
-  # shipment call below means quoting both costs one API round-trip.
+  # Quotes a delivery method from EasyPost. One method is the carrier
+  # connection: every service EasyPost returns for the address becomes its
+  # own rate ("UPS Ground", "USPS Priority", ...), and the method's service
+  # rows narrow, rename or mark up individual services. Methods sharing this
+  # provider within a request reuse one shipment-create API call.
   class DeliveryRateProvider < Spree::DeliveryRateProvider::Base
     def self.integration_class
       'SpreeEasyPost::Integration'
@@ -17,44 +18,44 @@ module SpreeEasyPost
       ['shipping']
     end
 
+    # Static catalog for the admin service picker. EasyPost's live
+    # carrier-account listing needs a production key, and the service names
+    # are stable — so the gem ships the common set; a service missing here
+    # still quotes fine (service rows are free-form, the catalog is a
+    # convenience).
+    def self.service_catalog(_integration)
+      SpreeEasyPost::SERVICE_CATALOG
+    end
+
     # A rating failure must never break checkout: any API error suppresses
     # this method (the customer still sees calculator-priced options) and is
     # reported for observability rather than raised into the rate refresh.
     #
     # @param package [Spree::Stock::Package]
-    # @return [Spree::DeliveryRateProvider::Estimate, nil]
-    def estimate(package)
-      return if integration.nil?
-      return if package.order.ship_address.nil?
+    # @return [Array<Spree::DeliveryRateProvider::Estimate>]
+    def estimates(package)
+      return [] if integration.nil?
+      return [] if package.order.ship_address.nil?
 
-      rate = begin
-        matching_rate(package)
+      rates = begin
+        easypost_shipment(package).rates
       rescue StandardError => e
         Rails.error.report(e, context: { delivery_method_id: delivery_method.id }, source: 'spree_easypost.rating')
-        nil
+        []
       end
-      return if rate.nil?
 
-      Spree::DeliveryRateProvider::Estimate.new(
-        cost: rate.rate,
-        carrier: rate.carrier,
-        service_level: rate.service,
-        estimated_delivery_date: rate.delivery_date,
-        metadata: { 'easypost_rate_id' => rate.id, 'easypost_shipment_id' => rate.shipment_id }
-      )
+      rates.map do |rate|
+        Spree::DeliveryRateProvider::Estimate.new(
+          cost: rate.rate,
+          carrier: rate.carrier,
+          service_level: rate.service,
+          estimated_delivery_date: rate.delivery_date,
+          metadata: { 'easypost_rate_id' => rate.id, 'easypost_shipment_id' => rate.shipment_id }
+        )
+      end
     end
 
     private
-
-    def matching_rate(package)
-      carrier = delivery_method.metadata['carrier']
-      service = delivery_method.metadata['service']
-      return if carrier.blank? || service.blank?
-
-      easypost_shipment(package).rates.find do |rate|
-        rate.carrier == carrier && rate.service == service
-      end
-    end
 
     # One shipment-create returns rates for every carrier and service, so all
     # delivery methods sharing this provider within a request reuse it.

@@ -19,9 +19,9 @@ module SpreeEasyPost
 
     # Buys the rate quoted at checkout when it is still valid; EasyPost
     # quotes expire, so a stale or missing quote is re-quoted from the
-    # actual fulfillment and bought only when a rate for the method's exact
-    # carrier/service comes back — silently shipping a different service
-    # than the customer paid for is worse than no label.
+    # actual fulfillment and bought only when a rate for the exact
+    # carrier/service the customer selected comes back — silently shipping a
+    # different service than the customer paid for is worse than no label.
     def create_fulfillment(fulfillment)
       integration = integration_for(fulfillment)
       return {} if integration.nil?
@@ -76,9 +76,11 @@ module SpreeEasyPost
     end
 
     def requote_and_buy(integration, fulfillment)
-      delivery_method = fulfillment.delivery_method
+      # The selected rate carries the carrier service the customer chose —
+      # the delivery method no longer pins one (it offers many).
+      selected = fulfillment.selected_delivery_rate
       address = fulfillment.address || fulfillment.order&.ship_address
-      return if delivery_method.nil? || address.nil?
+      return if selected&.carrier.blank? || selected.service_level.blank? || address.nil?
 
       shipment = integration.client.shipment.create(
         from_address: address_params(fulfillment.stock_location),
@@ -86,8 +88,7 @@ module SpreeEasyPost
         parcel: requote_parcel(fulfillment)
       )
       rate = shipment.rates.find do |candidate|
-        candidate.carrier == delivery_method.metadata['carrier'] &&
-          candidate.service == delivery_method.metadata['service']
+        candidate.carrier == selected.carrier && candidate.service == selected.service_level
       end
       return if rate.nil?
 

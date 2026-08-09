@@ -5,16 +5,16 @@ Live multi-carrier delivery rates for Spree via [EasyPost](https://www.easypost.
 ## What it does
 
 - **`SpreeEasyPost::Integration`** holds the store's EasyPost API key (a masked `:password` preference), managed from the dashboard's Settings → Integrations page. The key decides the mode — EasyPost issues separate test and production keys.
-- **`SpreeEasyPost::DeliveryRateProvider`** quotes delivery methods live at checkout. Each delivery method maps to one carrier service via method metadata (`carrier` + `service`, e.g. `UPS` / `Ground`); several methods sharing the provider cost a single EasyPost API call per package, and quotes carry the carrier, service level, and estimated delivery date onto the rate.
-- **`SpreeEasyPost::FulfillmentProvider`** buys the label when a fulfillment ships — the rate quoted at checkout when still valid, otherwise a fresh quote bought only for the exact carrier/service the customer paid for. Tracking lands on the fulfillment, the label is served via `documents`, and cancelling files a refund request. A purchase failure never blocks shipping — it is reported and the admin buys the label manually.
+- **`SpreeEasyPost::DeliveryRateProvider`** quotes live at checkout. One delivery method is the carrier connection: every service EasyPost returns for the address becomes its own named rate ("UPS Ground", "USPS Priority Mail", …) carrying the carrier, service level and estimated delivery date. The method's service rows optionally narrow which services are offered, rename them, or add a markup per service; with no rows, everything EasyPost returns is offered and the method-level markup applies. One EasyPost API call per package, however many services come back.
+- **`SpreeEasyPost::FulfillmentProvider`** buys the label when a fulfillment ships — the rate quoted at checkout when still valid, otherwise a fresh quote bought only for the exact carrier service the customer selected. Tracking lands on the fulfillment, the label is served via `documents`, and cancelling files a refund request. A purchase failure never blocks shipping — it is reported and the admin buys the label manually.
 
 ## Setup
 
 1. Add the gem: `bundle add spree_easypost`
 2. In the admin dashboard, open **Settings → Integrations**, connect **EasyPost**, and activate it (activation verifies the key against the EasyPost API).
-3. On a delivery method (**Settings → Delivery methods**), pick **EasyPost** as the rate provider and the **EasyPost** fulfillment provider, and set the method's metadata `carrier` and `service` to the EasyPost identifiers of the service it sells.
+3. Create ONE delivery method (**Settings → Delivery methods**) with **EasyPost** as its rate and fulfillment provider. That's enough — customers see every service EasyPost quotes. Optionally narrow the offered services, rename them ("UPS 1 day"), or add a handling-fee markup, per service or method-wide.
 
-Methods without the EasyPost provider keep pricing through their calculator — the two coexist freely per method.
+Methods without the EasyPost provider keep pricing through their calculator — the two coexist freely per store.
 
 ## Notes
 

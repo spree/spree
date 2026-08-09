@@ -4,6 +4,51 @@ class DummyShippingCalculator < Spree::ShippingCalculator
 end
 
 describe Spree::DeliveryMethod, type: :model do
+
+  describe 'carrier services' do
+    let(:delivery_method) { create(:delivery_method) }
+
+    describe '#services=' do
+      it 'creates, updates by id, and destroys omitted rows from a flat payload' do
+        delivery_method.services = [
+          { carrier: 'UPS', service: 'Ground' },
+          { carrier: 'UPS', service: 'NextDayAir', label: 'UPS 1 day' }
+        ]
+        ground = delivery_method.services.find_by(service: 'Ground')
+
+        delivery_method.services = [
+          { id: ground.prefixed_id, carrier: 'UPS', service: 'Ground', markup_flat: 2.5 }
+        ]
+
+        expect(delivery_method.services.reload.map(&:service)).to eq(['Ground'])
+        expect(ground.reload.markup_flat).to eq(2.5)
+      end
+
+      it 'defers rows on a new record until the method is saved' do
+        method = build(:delivery_method)
+        method.services = [{ carrier: 'USPS', service: 'Priority' }]
+
+        expect(method.pending_services?).to be true
+        method.save!
+
+        expect(method.services.reload.map(&:service_key)).to eq(['USPS/Priority'])
+      end
+    end
+
+    describe '#offers_service?' do
+      let(:estimate) { Spree::DeliveryRateProvider::Estimate.new(carrier: 'UPS', service_level: 'Ground') }
+
+      it 'offers everything when no rows exist' do
+        expect(delivery_method.offers_service?(estimate)).to be true
+      end
+
+      it 'offers only listed services when rows exist' do
+        delivery_method.services.create!(carrier: 'USPS', service: 'Priority')
+
+        expect(delivery_method.offers_service?(estimate)).to be false
+      end
+    end
+  end
   let(:delivery_method) { create(:delivery_method) }
   let(:visible_delivery_method) { create :delivery_method, storefront_visible: true }
   let(:admin_only_delivery_method) { create :delivery_method, storefront_visible: false }

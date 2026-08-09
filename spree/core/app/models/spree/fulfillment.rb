@@ -418,15 +418,30 @@ module Spree
 
       # StockEstimator.new assignment below will replace the current delivery_method
       original_shipping_method_id = delivery_method.try(:id)
+      # A carrier method quotes several rates (one per service), so the
+      # method id alone no longer identifies the customer's choice — capture
+      # the selected rate's carrier service too.
+      original_selection = selected_delivery_rate
+      original_carrier = original_selection&.carrier
+      original_service_level = original_selection&.service_level
 
       self.delivery_rates = Stock::Estimator.new(owner).
                             delivery_rates(to_package, audience)
 
       if delivery_method
-        # Keep the previously chosen method when it is still quoted; otherwise
-        # fall back to the estimator's own pick (the cheapest rate, already
-        # flagged selected) rather than leaving the fulfillment unselected.
+        # Keep the previously chosen carrier service when it is still quoted,
+        # then the previously chosen method, then the estimator's own pick
+        # (the cheapest rate, already flagged selected) rather than leaving
+        # the fulfillment unselected.
         selected_rate =
+          if original_shipping_method_id && original_carrier
+            delivery_rates.detect do |rate|
+              rate.delivery_method_id == original_shipping_method_id &&
+                rate.carrier == original_carrier &&
+                rate.service_level == original_service_level
+            end
+          end
+        selected_rate ||=
           if original_shipping_method_id
             delivery_rates.detect { |rate| rate.delivery_method_id == original_shipping_method_id }
           end
