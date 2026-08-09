@@ -1,6 +1,6 @@
 module Spree
-  module Metafields
-    class Boolean < Spree::Metafield
+  module CustomFields
+    class Boolean < Spree::CustomField
       normalizes :value, with: ->(value) { value.to_b.to_s }
 
       def csv_value

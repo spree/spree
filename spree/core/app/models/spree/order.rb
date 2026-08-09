@@ -39,7 +39,7 @@ module Spree
 
     publishes_lifecycle_events
     include Spree::MemoizedData
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::Searchable
     if defined?(Spree::Security::Orders)
@@ -972,13 +972,13 @@ module Spree
     end
 
     def to_csv(_store = nil)
-      metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
-        metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
+      custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
+        custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
       end
 
       csv_lines = []
       line_items.each_with_index do |line_item, index|
-        csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index, metafields_for_csv).call
+        csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index, custom_fields_for_csv).call
       end
       csv_lines
     end

@@ -291,7 +291,7 @@ describe Spree::PaymentMethod::StoreCredit do
   end
 
   describe '#available_for_order?' do
-    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
 
     context 'when user have store credits' do
       let(:store) { @default_store }

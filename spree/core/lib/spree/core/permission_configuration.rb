@@ -231,7 +231,7 @@ module Spree
     def register_default_resources
       register_resource(:orders, group: :orders, subjects: -> {
         [Spree::Order, Spree::LineItem, Spree::TaxLine, Spree::Discount, Spree::Fee,
-         Spree::Return, Spree::Exchange, Spree::Claim, Spree::Metafield]
+         Spree::Return, Spree::Exchange, Spree::Claim, Spree::CustomField]
       })
       register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment] })
       register_resource(:fulfillments, group: :orders, subjects: -> { [Spree::Fulfillment] })
@@ -244,7 +244,7 @@ module Spree
       register_resource(:products, group: :catalog, subjects: -> {
         [Spree::Product, Spree::ProductType, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
-         Spree::Asset, Spree::ProductPublication, Spree::Metafield]
+         Spree::Asset, Spree::ProductPublication, Spree::CustomField]
       })
       register_resource(:categories, group: :catalog, subjects: -> {
         [Spree::Category, Spree::ProductCategory]
@@ -259,12 +259,12 @@ module Spree
 
       register_resource(:promotions, group: :marketing, subjects: -> {
         [Spree::Promotion, Spree::PromotionRule, Spree::PromotionAction,
-         Spree::PromotionCategory, Spree::CouponCode, Spree::Metafield]
+         Spree::PromotionCategory, Spree::CouponCode, Spree::CustomField]
       })
 
       register_resource(:customers, group: :customers, subjects: -> {
         [Spree.customer_class, Spree::Address, Spree::CreditCard, Spree::CustomerGroup,
-         Spree::Metafield]
+         Spree::CustomField]
       })
 
       register_resource(:settings, group: :settings, subjects: -> {
@@ -273,7 +273,7 @@ module Spree
          Spree::StockLocation, Spree::ShippingCategory, Spree::Zone, Spree::ZoneMember,
          Spree::Market, Spree::TaxCategory, Spree::TaxRate, Spree::AllowedOrigin,
          Spree::RefundReason, Spree::ReturnReason, Spree::ClaimReason, Spree::Channel,
-         Spree::OrderRoutingRule, Spree::MetafieldDefinition, Spree::Policy,
+         Spree::OrderRoutingRule, Spree::CustomFieldDefinition, Spree::Policy,
          Spree::StoreCreditCategory]
       })
       register_resource(:webhooks, group: :settings, subjects: -> {

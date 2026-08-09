@@ -186,9 +186,9 @@ module Spree
               metadata: {},
               prices: [:amount, :compare_at_amount, :currency],
               # Inline custom field values keyed by definition id. The model
-              # setter (`Spree::Metafields#custom_fields=`) validates each
+              # setter (`Spree::HasCustomFields#custom_fields=`) validates each
               # entry against its definition. We permit `value` as a scalar AND
-              # as `value: []` / `value: {}` so JSON metafields round-trip
+              # as `value: []` / `value: {}` so JSON custom_fields round-trip
               # whether the parsed payload is an array or an object, while
               # text/number/boolean ship scalars.
               custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }],

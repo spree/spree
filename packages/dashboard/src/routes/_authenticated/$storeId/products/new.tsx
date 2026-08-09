@@ -67,7 +67,7 @@ function NewProductPage() {
       ...extensionSubmitValues('product', form),
     }
     // Only ship custom_fields when there are some — empty arrays are noise
-    // and Spree::Metafields#custom_fields= already no-ops on empty input.
+    // and Spree::HasCustomFields#custom_fields= already no-ops on empty input.
     if (custom_fields && custom_fields.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(payload as any).custom_fields = custom_fields

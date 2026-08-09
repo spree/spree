@@ -6,11 +6,11 @@ module Spree
       end
 
       def scope_includes
-        [:user, { metafields: :metafield_definition }]
+        [:user, { custom_fields: :custom_field_definition }]
       end
 
       def csv_headers
-        Spree::CSV::NewsletterSubscriberPresenter::HEADERS + metafields_headers
+        Spree::CSV::NewsletterSubscriberPresenter::HEADERS + custom_fields_headers
       end
     end
   end

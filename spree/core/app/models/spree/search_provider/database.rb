@@ -52,7 +52,7 @@ module Spree
                              end
 
         filter_facets = build_facets(scope_with_options, category: category, sort_order: collection&.sort_order, option_value_ids: option_value_ids, scope_before_options: scope_before_options)
-        filter_facets[:sort_options] = filter_facets[:sort_options] + metafield_sort_options
+        filter_facets[:sort_options] = filter_facets[:sort_options] + custom_field_sort_options
 
         FiltersResult.new(
           filters: filter_facets[:filters],
@@ -68,7 +68,7 @@ module Spree
         scope = scope.search(query) if query.present?
 
         filters = filters.to_unsafe_h if filters.respond_to?(:to_unsafe_h)
-        scope, filters = scope.with_metafield_filters(filters, schema: metafield_schema)
+        scope, filters = scope.with_custom_field_filters(filters, schema: custom_field_schema)
 
         ransack_filters = sanitize_filters(filters)
         if ransack_filters.present?
@@ -115,8 +115,8 @@ module Spree
         scope_method = CUSTOM_SORT_SCOPES[sort]
         if scope_method
           scope.reorder(nil).send(scope_method)
-        elsif (parsed = metafield_schema.parse_sort(sort))
-          apply_metafield_sort(scope, parsed)
+        elsif (parsed = custom_field_schema.parse_sort(sort))
+          apply_custom_field_sort(scope, parsed)
         else
           # Standard Ransack sort: 'name' → 'name asc', '-name' → 'name desc'
           ransack_sort = sort.split(',').map { |field|
@@ -171,29 +171,29 @@ module Spree
 
       # Project the ORDER BY expression into the SELECT list so PostgreSQL
       # accepts it when DISTINCT is applied. Null-rank keeps products without
-      # the metafield last for both ASC and DESC.
-      def apply_metafield_sort(scope, parsed)
-        definition = metafield_schema.entry_for(parsed[:attribute])
+      # the custom_field last for both ASC and DESC.
+      def apply_custom_field_sort(scope, parsed)
+        definition = custom_field_schema.entry_for(parsed[:attribute])
         return scope unless definition
 
         products = Spree::Product.arel_table
         # Aliased so this join can't collide with the `filter_cf` correlated
         # subquery when a cf_* filter and a cf_* sort are combined.
-        metafields = Spree::Metafield.arel_table.alias('sort_cf')
+        custom_fields = Spree::CustomField.arel_table.alias('sort_cf')
 
-        sort_expr = Spree::Product.metafield_value_expression(metafields[:value], definition.field_type)
-        # NULL-rank so products missing the metafield sort last (Meilisearch parity).
+        sort_expr = Spree::Product.custom_field_value_expression(custom_fields[:value], definition.field_type)
+        # NULL-rank so products missing the custom_field sort last (Meilisearch parity).
         # Projected as cf_sort_missing because PostgreSQL rejects (alias IS NULL) in ORDER BY.
         null_rank = sort_expr.eq(nil)
 
         direction = parsed[:direction] == 'desc' ? :desc : :asc
 
         join = products.
-               outer_join(metafields).
+               outer_join(custom_fields).
                on(
-                 metafields[:resource_type].eq('Spree::Product').
-                 and(metafields[:resource_id].eq(products[:id])).
-                 and(metafields[:metafield_definition_id].eq(definition.id))
+                 custom_fields[:resource_type].eq('Spree::Product').
+                 and(custom_fields[:resource_id].eq(products[:id])).
+                 and(custom_fields[:custom_field_definition_id].eq(definition.id))
                ).
                join_sources
 
@@ -209,8 +209,8 @@ module Spree
         %w[price -price best_selling name -name -available_on available_on].map { |id| { id: id, label: nil } }
       end
 
-      def metafield_sort_options
-        metafield_schema.sort_options
+      def custom_field_sort_options
+        custom_field_schema.sort_options
       end
     end
   end

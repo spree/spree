@@ -1,7 +1,7 @@
 module Spree
   class <%= class_name.demodulize %> < <%= parent_class_name %>
-<% if metafields? -%>
-    include Spree::Metafields
+<% if custom_fields? -%>
+    include Spree::HasCustomFields
     include Spree::Metadata
 
 <% end -%>

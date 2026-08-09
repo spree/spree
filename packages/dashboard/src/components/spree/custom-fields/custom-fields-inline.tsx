@@ -146,7 +146,7 @@ function useCustomFieldsContext() {
 }
 
 // Deep-equality check for custom-field values. Reference equality (`===`) is
-// wrong for JSON metafields because each query refetch hands back a fresh
+// wrong for JSON custom fields because each query refetch hands back a fresh
 // object reference even when the content hasn't changed — every blur would
 // then re-commit a no-op mutation. Canonical JSON stringification handles
 // scalars (returns the same canonical form for "a" / 1 / true / null) and

@@ -29,7 +29,7 @@ export const Subject = {
   ReturnReason: 'Spree::ReturnReason',
   ClaimReason: 'Spree::ClaimReason',
   RefundReason: 'Spree::RefundReason',
-  CustomFieldDefinition: 'Spree::MetafieldDefinition',
+  CustomFieldDefinition: 'Spree::CustomFieldDefinition',
   PaymentMethod: 'Spree::PaymentMethod',
   DeliveryMethod: 'Spree::DeliveryMethod',
   DeliveryZone: 'Spree::DeliveryZone',

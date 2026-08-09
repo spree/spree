@@ -510,7 +510,7 @@ describe Spree::Product, type: :model do
   # reject the first of them — and enforcing later would break products whose
   # type gained a required field after they were created.
   describe 'required custom fields from the product type' do
-    let(:definition) { create(:custom_field_definition, name: 'Material') }
+    let(:definition) { create(:custom_field_definition, label: 'Material') }
     let(:product_type) { create(:product_type) }
 
     before do
@@ -2366,16 +2366,16 @@ describe Spree::Product, type: :model do
     let!(:matching) { create(:product, name: 'Unrelated Name', store: store) }
     let!(:other) { create(:product, name: 'Other Product', store: store) }
     let!(:definition) do
-      create(:metafield_definition, :short_text_field, :searchable,
+      create(:custom_field_definition, :short_text_field, :searchable,
              namespace: 'custom', key: 'pinyin_name')
     end
 
     before do
-      matching.set_metafield(definition, 'hong-ku-zi')
-      other.set_metafield(definition, 'something-else')
+      matching.set_custom_field(definition, 'hong-ku-zi')
+      other.set_custom_field(definition, 'something-else')
     end
 
-    it 'finds products by searchable metafield value via plain SQL' do
+    it 'finds products by searchable custom_field value via plain SQL' do
       expect(described_class.search('hong-ku')).to include(matching)
       expect(described_class.search('hong-ku')).not_to include(other)
     end

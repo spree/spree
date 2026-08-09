@@ -10,7 +10,7 @@ module Spree
   #
   # Inherits from Spree::ModelGenerator (model + migration with Spree
   # conventions: prefixed IDs, spree_-prefixed tables, null: false, optional
-  # acts_as_paranoid + Spree::Metafields). Adds on top:
+  # acts_as_paranoid + Spree::HasCustomFields). Adds on top:
   #
   #   - Store + Admin controllers     (managed — overwrite on re-run)
   #   - Store + Admin serializers     (managed — overwrite on re-run)

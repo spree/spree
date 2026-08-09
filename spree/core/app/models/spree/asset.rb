@@ -4,7 +4,7 @@ module Spree
 
     include Support::ActiveStorage
     include Rails.application.routes.url_helpers
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
 
     # Legacy styles support (was in Spree::Image::Configuration::ActiveStorage)
@@ -21,7 +21,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    EXTERNAL_URL_METAFIELD_KEY = 'external.url'
+    EXTERNAL_URL_CUSTOM_FIELD_KEY = 'external.url'
     MEDIA_TYPES = %w[image video external_video].freeze
 
     after_initialize { self.media_type ||= 'image' }
@@ -74,7 +74,7 @@ module Spree
     scope :with_session_uploaded_assets_uuid, lambda { |uuid|
       where(session_id: uuid)
     }
-    scope :with_external_url, ->(url) { url.present? ? with_metafield_key_value(EXTERNAL_URL_METAFIELD_KEY, url.strip) : none }
+    scope :with_external_url, ->(url) { url.present? ? with_custom_field_key_value(EXTERNAL_URL_CUSTOM_FIELD_KEY, url.strip) : none }
 
     # Callbacks merged from Spree::Image
     after_commit :touch_product_variants, if: :should_touch_product_variants?, on: :update
@@ -119,11 +119,11 @@ module Spree
     end
 
     def external_url
-      get_metafield(EXTERNAL_URL_METAFIELD_KEY)&.value
+      get_custom_field(EXTERNAL_URL_CUSTOM_FIELD_KEY)&.value
     end
 
     def external_url=(url)
-      set_metafield(EXTERNAL_URL_METAFIELD_KEY, url.strip)
+      set_custom_field(EXTERNAL_URL_CUSTOM_FIELD_KEY, url.strip)
     end
 
     def skip_import?

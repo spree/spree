@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe Spree::Metafields::LongText, type: :model do
+describe Spree::CustomFields::LongText, type: :model do
   describe '.searchable? / .sortable?' do
     it 'is searchable but not sortable' do
       expect(described_class.searchable?).to eq(true)

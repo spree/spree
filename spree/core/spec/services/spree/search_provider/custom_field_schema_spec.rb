@@ -2,13 +2,13 @@
 
 require 'spec_helper'
 
-RSpec.describe Spree::SearchProvider::MetafieldSchema do
+RSpec.describe Spree::SearchProvider::CustomFieldSchema do
   subject(:schema) { described_class.new }
 
   describe 'accessors' do
     it 'exposes definitions by cf_* key' do
-      definition = create(:metafield_definition, :number_field, :sortable, :searchable,
-                          namespace: 'custom', key: 'weight', name: 'Weight')
+      definition = create(:custom_field_definition, :number_field, :sortable, :searchable,
+                          namespace: 'custom', key: 'weight', label: 'Weight')
 
       entry = schema.entry_for('cf_custom_weight')
 
@@ -20,8 +20,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
 
   describe '#entries' do
     it 'exposes participating definitions keyed by filter_key' do
-      label = create(:metafield_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label')
-      priority = create(:metafield_definition, :number_field, :sortable, namespace: 'custom', key: 'priority')
+      label = create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label')
+      priority = create(:custom_field_definition, :number_field, :sortable, namespace: 'custom', key: 'priority')
 
       expect(schema.entries).to include(
         'cf_custom_label' => label,
@@ -32,7 +32,7 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
 
   describe '#parse_sort' do
     before do
-      create(:metafield_definition, :short_text_field, :sortable, namespace: 'custom', key: 'name')
+      create(:custom_field_definition, :short_text_field, :sortable, namespace: 'custom', key: 'name')
     end
 
     it 'parses ascending and descending cf_* sorts' do
@@ -41,7 +41,7 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
     end
 
     it 'returns nil for unknown or non-sortable keys' do
-      create(:metafield_definition, :short_text_field, :searchable, namespace: 'custom', key: 'notes')
+      create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'notes')
 
       expect(schema.parse_sort('cf_custom_unknown')).to be_nil
       expect(schema.parse_sort('name')).to be_nil
@@ -50,8 +50,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
   end
 
   describe '#parse_filter' do
-    let!(:label) { create(:metafield_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label') }
-    let!(:weight) { create(:metafield_definition, :number_field, :sortable, namespace: 'custom', key: 'weight') }
+    let!(:label) { create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label') }
+    let!(:weight) { create(:custom_field_definition, :number_field, :sortable, namespace: 'custom', key: 'weight') }
 
     it 'splits a cf_* predicate key into definition and predicate' do
       expect(schema.parse_filter('cf_custom_label_cont')).to eq(definition: label, predicate: 'cont')
@@ -74,7 +74,7 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
     # `label` + the `eq` predicate. Longest-key-first resolution makes the
     # more specific definition win.
     it 'prefers the longest matching search key when a key ends in a predicate name' do
-      label_eq = create(:metafield_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label_eq')
+      label_eq = create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label_eq')
 
       expect(schema.parse_filter('cf_custom_label_eq_cont')).to eq(definition: label_eq, predicate: 'cont')
       expect(schema.parse_filter('cf_custom_label_eq')).to eq(definition: label, predicate: 'eq')
@@ -83,8 +83,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
 
   describe '#filterable_attribute_keys' do
     it 'returns every participating search key' do
-      create(:metafield_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label')
-      create(:metafield_definition, :number_field, :sortable, namespace: 'custom', key: 'weight')
+      create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'label')
+      create(:custom_field_definition, :number_field, :sortable, namespace: 'custom', key: 'weight')
 
       expect(schema.filterable_attribute_keys).to contain_exactly('cf_custom_label', 'cf_custom_weight')
     end
@@ -92,8 +92,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
 
   describe '#sort_ids' do
     before do
-      create(:metafield_definition, :short_text_field, :sortable, namespace: 'custom', key: 'color')
-      create(:metafield_definition, :number_field, :sortable, namespace: 'custom', key: 'weight')
+      create(:custom_field_definition, :short_text_field, :sortable, namespace: 'custom', key: 'color')
+      create(:custom_field_definition, :number_field, :sortable, namespace: 'custom', key: 'weight')
     end
 
     it 'returns both ascending and descending variants' do
@@ -106,8 +106,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
 
   describe '#sort_options' do
     it 'returns labeled ascending and descending options for text fields' do
-      create(:metafield_definition, :short_text_field, :sortable,
-             namespace: 'custom', key: 'label', name: 'Material')
+      create(:custom_field_definition, :short_text_field, :sortable,
+             namespace: 'custom', key: 'label', label: 'Material')
 
       expect(schema.sort_options).to include(
         { id: 'cf_custom_label', label: "Material (#{Spree.t(:sort_a_to_z)})" },
@@ -116,8 +116,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
     end
 
     it 'returns low-high labels for number fields' do
-      create(:metafield_definition, :number_field, :sortable,
-             namespace: 'custom', key: 'weight', name: 'Weight')
+      create(:custom_field_definition, :number_field, :sortable,
+             namespace: 'custom', key: 'weight', label: 'Weight')
 
       expect(schema.sort_options).to include(
         { id: 'cf_custom_weight', label: "Weight (#{Spree.t(:sort_low_to_high)})" },
@@ -126,8 +126,8 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
     end
 
     it 'translates direction suffixes for the current locale' do
-      create(:metafield_definition, :number_field, :sortable,
-             namespace: 'custom', key: 'weight', name: 'Weight')
+      create(:custom_field_definition, :number_field, :sortable,
+             namespace: 'custom', key: 'weight', label: 'Weight')
 
       I18n.backend.store_translations(:pl, spree: {
                                         sort_low_to_high: 'od najniższej',
@@ -148,7 +148,7 @@ RSpec.describe Spree::SearchProvider::MetafieldSchema do
 
   describe '#schema_version' do
     it 'returns a stamp derived from participating entries' do
-      definition = create(:metafield_definition, :short_text_field, :sortable,
+      definition = create(:custom_field_definition, :short_text_field, :sortable,
                           namespace: 'custom', key: 'weight')
 
       version = schema.schema_version

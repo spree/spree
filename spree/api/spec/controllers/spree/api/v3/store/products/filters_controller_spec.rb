@@ -100,12 +100,12 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       )
     end
 
-    it 'invalidates cached sort options when a metafield definition becomes sortable' do
+    it 'invalidates cached sort options when a custom_field definition becomes sortable' do
       get :index
       expect(json_response['sort_options'].map { |s| s['id'] }).not_to include('cf_custom_weight')
 
-      create(:metafield_definition, :number_field, :sortable,
-             namespace: 'custom', key: 'weight', name: 'Weight')
+      create(:custom_field_definition, :number_field, :sortable,
+             namespace: 'custom', key: 'weight', label: 'Weight')
 
       get :index
       expect(json_response['sort_options'].map { |s| s['id'] }).to include(

@@ -2,7 +2,7 @@ module Spree
   class CreditCard < Spree.base_class
     has_prefix_id :card  # Stripe: card_
 
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::PaymentSourceConcern
 

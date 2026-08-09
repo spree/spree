@@ -180,6 +180,8 @@ interface ResourceTableProps<T> {
    * `filter_key` (`cf_*`), which the backend accepts as sort and
    * filter attributes.
    */
+  customFieldColumns?: ColumnDef<T>[]
+  /** @deprecated Use `customFieldColumns` — removed in Spree 6.1. */
   metafieldColumns?: ColumnDef<T>[]
 }
 
@@ -204,6 +206,7 @@ export function ResourceTable<T extends Record<string, any>>({
   reorder,
   bulkActions,
   rowActions,
+  customFieldColumns,
   metafieldColumns,
 }: ResourceTableProps<T>) {
   const table = getTable<T>(tableKey)
@@ -244,11 +247,12 @@ export function ResourceTable<T extends Record<string, any>>({
   const [searchInput, setSearchInput] = useState(search ?? '')
   const deferredSearch = useDeferredValue(searchInput)
 
-  // Registry columns + dynamic metafield columns. Memoized so the toolbar's
+  // Registry columns + dynamic custom-field columns. Memoized so the toolbar's
   // internal memos (FilterPanel `items` stability) keep stable deps.
+  const extraColumns = customFieldColumns ?? metafieldColumns
   const allColumns = useMemo(
-    () => [...table.columns, ...(metafieldColumns ?? [])],
-    [table, metafieldColumns],
+    () => [...table.columns, ...(extraColumns ?? [])],
+    [table, extraColumns],
   )
   const displayableColumns = useMemo(
     () => allColumns.filter((c) => c.displayable !== false),

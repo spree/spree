@@ -1,6 +1,6 @@
 module Spree
-  module Metafields
-    class Number < Spree::Metafield
+  module CustomFields
+    class Number < Spree::CustomField
       validates :value, numericality: true
 
       def self.searchable?

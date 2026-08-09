@@ -1,6 +1,6 @@
 module Spree
-  module Metafields
-    class Json < Spree::Metafield
+  module CustomFields
+    class Json < Spree::CustomField
       validate :value_must_be_valid_json
 
       # Accept either a JSON-serialized String (from CSV / Admin UI text

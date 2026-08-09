@@ -2,7 +2,7 @@ module Spree
   class Refund < Spree.base_class
     has_prefix_id :re  # Stripe: re_
 
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     if defined?(Spree::Security::Refunds)
       include Spree::Security::Refunds

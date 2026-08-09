@@ -2,7 +2,7 @@ module Spree
   class NewsletterSubscriber < Spree.base_class
     has_prefix_id :sub
 
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::SingleStoreResource
 
     publishes_lifecycle_events

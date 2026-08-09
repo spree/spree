@@ -1,7 +1,7 @@
 module Spree
   module CSV
     class GiftCardPresenter
-      include Spree::CSV::MetafieldsHelper
+      include Spree::CSV::CustomFieldsHelper
 
       HEADERS = [
         'Code',
@@ -40,7 +40,7 @@ module Spree
           gift_card.updated_at&.strftime('%Y-%m-%d %H:%M:%S')
         ]
 
-        csv += metafields_for_csv(gift_card)
+        csv += custom_fields_for_csv(gift_card)
 
         csv
       end

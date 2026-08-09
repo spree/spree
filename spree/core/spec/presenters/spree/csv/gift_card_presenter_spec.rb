@@ -69,30 +69,28 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
     end
   end
 
-  describe 'metafields' do
-    let!(:metafield_definition) do
-      create(:metafield_definition,
+  describe 'custom_fields' do
+    let!(:custom_field_definition) do
+      create(:custom_field_definition,
              resource_type: 'Spree::GiftCard',
              namespace: 'custom',
              key: 'purchase_location')
     end
-    let!(:metafield) do
-      gift_card.metafields.create!(
-        metafield_definition: metafield_definition,
-        value: 'Online Store'
-      )
+    let!(:custom_field) do
+      create(:custom_field, resource: gift_card, custom_field_definition: custom_field_definition,
+             value: 'Online Store')
     end
 
-    it 'includes metafield values at the end of the array' do
+    it 'includes custom_field values at the end of the array' do
       result = presenter.call
       expect(result.last).to eq 'Online Store'
     end
 
-    context 'when gift card has no metafield value' do
-      let(:gift_card_without_metafield) { create(:gift_card, store: store) }
-      let(:presenter) { described_class.new(gift_card_without_metafield) }
+    context 'when gift card has no custom_field value' do
+      let(:gift_card_without_custom_field) { create(:gift_card, store: store) }
+      let(:presenter) { described_class.new(gift_card_without_custom_field) }
 
-      it 'returns nil for metafield' do
+      it 'returns nil for custom_field' do
         result = presenter.call
         expect(result.last).to be_nil
       end

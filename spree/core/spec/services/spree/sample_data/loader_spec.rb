@@ -58,13 +58,13 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     # A required field with no value in the CSV would block the merchant from
     # re-activating that product in the dashboard.
     it 'backs every required field with a value on every product of the type' do
-      incomplete = Spree::Product.includes(:product_type, metafields: :metafield_definition).select do |product|
+      incomplete = Spree::Product.includes(:product_type, custom_fields: :custom_field_definition).select do |product|
         next false if product.product_type.nil?
 
         required_ids = product.product_type.product_type_custom_field_definitions.required.
                        map(&:custom_field_definition_id)
-        filled_ids = product.metafields.select { |metafield| metafield.value.present? }.
-                     map(&:metafield_definition_id)
+        filled_ids = product.custom_fields.select { |custom_field| custom_field.value.present? }.
+                     map(&:custom_field_definition_id)
         (required_ids - filled_ids).any?
       end
 
@@ -74,7 +74,7 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     it 'fills the required fields on the imported products' do
       product = Spree::Product.joins(:product_type).find_by(spree_product_types: { name: 'Kitchen Appliance' })
 
-      expect(product.metafields.map { |metafield| metafield.metafield_definition.key }).
+      expect(product.custom_fields.map { |custom_field| custom_field.custom_field_definition.key }).
         to include('wattage', 'voltage', 'warranty')
     end
   end

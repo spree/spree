@@ -59,14 +59,14 @@ module Spree
         'Notes'
       ].freeze
 
-      def initialize(order, line_item, index, metafields = [])
+      def initialize(order, line_item, index, custom_fields = [])
         @order = order
         @line_item = line_item
         @index = index
-        @metafields = metafields
+        @custom_fields = custom_fields
       end
 
-      attr_accessor :order, :line_item, :index, :metafields
+      attr_accessor :order, :line_item, :index, :custom_fields
 
       def call
         csv = [
@@ -128,7 +128,7 @@ module Spree
         ]
 
         if index.zero?
-          csv += metafields
+          csv += custom_fields
         end
 
         csv

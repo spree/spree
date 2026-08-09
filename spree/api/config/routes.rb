@@ -122,7 +122,7 @@ Spree::Core::Engine.add_routes do
 
       namespace :admin do
         # Mounts a nested `custom_fields` resource on parents that include
-        # Spree::Metafields. See docs/plans/5.4-6.0-custom-fields-rename.md.
+        # Spree::HasCustomFields. See docs/plans/5.4-6.0-custom-fields-rename.md.
         concern :custom_fieldable do
           resources :custom_fields
         end

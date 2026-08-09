@@ -12,7 +12,7 @@ module Spree
                    key: :string,
                    namespace: :string,
                    label: :string,
-                   field_type: Spree::Metafield::FIELD_TYPE_TOKENS,
+                   field_type: Spree::CustomField::FIELD_TYPE_TOKENS,
                    required: :boolean,
                    sort_order: :number
 

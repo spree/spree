@@ -25,8 +25,8 @@ module Spree
     include Spree::TranslatableResource
     include Spree::MemoizedData
     include Spree::SanitizableRichText
-    include Spree::Metafields
-    include Spree::MetafieldFilterable
+    include Spree::HasCustomFields
+    include Spree::CustomFieldFilterable
     include Spree::Metadata
     include Spree::Searchable
     include Spree::Product::Slugs
@@ -210,22 +210,22 @@ module Spree
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
 
-      searchable_definitions = Spree::MetafieldDefinition.
+      searchable_definitions = Spree::CustomFieldDefinition.
                                for_resource_type('Spree::Product').
                                searchable
 
-      # Only pay for the metafield scan when some definition opts into search;
-      # the leading-wildcard LIKE over spree_metafields can't use an index.
-      metafield_ids = if searchable_definitions.exists?
-                        joins(metafields: :metafield_definition).
+      # Only pay for the custom_field scan when some definition opts into search;
+      # the leading-wildcard LIKE over spree_custom_fields can't use an index.
+      custom_field_ids = if searchable_definitions.exists?
+                        joins(custom_fields: :custom_field_definition).
                           merge(searchable_definitions).
-                          where(search_condition(Spree::Metafield, :value, query)).
+                          where(search_condition(Spree::CustomField, :value, query)).
                           unscope(:order).distinct.pluck(:id)
                       else
                         []
                       end
 
-      where(id: (product_ids + metafield_ids).uniq.compact)
+      where(id: (product_ids + custom_field_ids).uniq.compact)
     }
 
     # Backward compatibility alias — remove in Spree 6.0
@@ -677,8 +677,8 @@ module Spree
                            else
                              []
                            end
-      metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
-        metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
+      custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
+        custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
       end
       categories_for_csv ||= categories.reorder(depth: :desc).first(3).pluck(:pretty_name)
       categories_for_csv.fill(nil, categories_for_csv.size...3)
@@ -691,7 +691,7 @@ module Spree
       # Primary rows in the store's default currency
       all_variants.each_with_index do |variant, index|
         csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, categories_for_csv, store,
-                                                             metafields_for_csv).call
+                                                             custom_fields_for_csv).call
       end
 
       # Price-only rows for each additional currency

@@ -96,21 +96,21 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
 
     # Category custom-field definitions are stored under Spree::Category (the
     # category route maps to the Taxon class). The dashboard ships values inline
-    # with the category form, persisted via Spree::Metafields#custom_fields=.
+    # with the category form, persisted via Spree::HasCustomFields#custom_fields=.
     context 'with inline custom fields' do
       let!(:fabric_definition) do
-        create(:metafield_definition,
+        create(:custom_field_definition,
                resource_type: 'Spree::Category',
                namespace: 'category',
                key: 'fabric',
-               metafield_type: 'Spree::Metafields::ShortText')
+               field_type: 'Spree::CustomFields::ShortText')
       end
       let!(:specs_definition) do
-        create(:metafield_definition,
+        create(:custom_field_definition,
                resource_type: 'Spree::Category',
                namespace: 'category',
                key: 'specs',
-               metafield_type: 'Spree::Metafields::Json')
+               field_type: 'Spree::CustomFields::Json')
       end
 
       it 'round-trips an array-shaped JSON custom field value' do
@@ -122,7 +122,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        stored = category.reload.metafields.find_by(metafield_definition: specs_definition)
+        stored = category.reload.custom_fields.find_by(custom_field_definition: specs_definition)
         expect(stored.serialize_value).to eq(%w[a b c])
       end
 
@@ -135,7 +135,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        stored = category.reload.metafields.find_by(metafield_definition: specs_definition)
+        stored = category.reload.custom_fields.find_by(custom_field_definition: specs_definition)
         expect(stored.serialize_value).to eq('color' => 'red')
       end
 
@@ -147,19 +147,19 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
               { custom_field_definition_id: fabric_definition.prefixed_id, value: 'Linen' }
             ]
           }, as: :json
-        }.to change(Spree::Metafield, :count).by(1)
+        }.to change(Spree::CustomField, :count).by(1)
 
         expect(response).to have_http_status(:ok)
-        expect(category.reload.metafields.find_by(metafield_definition: fabric_definition).value).to eq('Linen')
+        expect(category.reload.custom_fields.find_by(custom_field_definition: fabric_definition).value).to eq('Linen')
       end
 
       it 'leaves existing values untouched when custom_fields is omitted' do
-        category.metafields.create!(metafield_definition: fabric_definition, value: 'Wool')
+        category.custom_fields.create!(custom_field_definition: fabric_definition, value: 'Wool')
 
         patch :update, params: { id: category.prefixed_id, name: 'Apparel' }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(category.reload.metafields.find_by(metafield_definition: fabric_definition).value).to eq('Wool')
+        expect(category.reload.custom_fields.find_by(custom_field_definition: fabric_definition).value).to eq('Wool')
       end
     end
   end

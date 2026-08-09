@@ -60,10 +60,10 @@ RSpec.describe Spree::ModelGenerator, type: :generator do
       expect(result[:model]).to include('acts_as_paranoid')
     end
 
-    it 'includes Metafields concerns when --metafields is set' do
-      result = run_generator(['Brand', 'name:string', '--metafields'])
+    it 'includes CustomFields concerns when --custom_fields is set' do
+      result = run_generator(['Brand', 'name:string', '--custom_fields'])
 
-      expect(result[:model]).to include('include Spree::Metafields')
+      expect(result[:model]).to include('include Spree::HasCustomFields')
       expect(result[:model]).to include('include Spree::Metadata')
     end
 
@@ -117,7 +117,7 @@ RSpec.describe Spree::ModelGenerator, type: :generator do
     end
 
     it 'omits class_name and emits polymorphic: true for polymorphic references' do
-      result = run_generator(['Metafield', 'resource:references{polymorphic}'])
+      result = run_generator(['CustomField', 'resource:references{polymorphic}'])
 
       expect(result[:model]).to include('belongs_to :resource, polymorphic: true')
       expect(result[:model]).not_to include('class_name:')
@@ -146,7 +146,7 @@ RSpec.describe Spree::ModelGenerator, type: :generator do
     end
 
     it 'preserves polymorphic: true on polymorphic references' do
-      result = run_generator(['Metafield', 'resource:references{polymorphic}'])
+      result = run_generator(['CustomField', 'resource:references{polymorphic}'])
 
       expect(result[:migration]).to include('polymorphic: true')
     end

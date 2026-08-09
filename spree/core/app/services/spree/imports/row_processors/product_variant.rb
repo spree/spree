@@ -90,7 +90,7 @@ module Spree
 
             handle_tags(product) if attributes['tags'].present?
             if has_product_attributes?
-              handle_metafields(product)
+              handle_custom_fields(product)
               handle_categories(product)
             end
 
@@ -264,52 +264,52 @@ module Spree
           %w[name status description category1 category2 category3].any? { |key| attributes[key].present? }
         end
 
-        def handle_metafields(product)
-          return unless product.class.included_modules.include?(Spree::Metafields)
+        def handle_custom_fields(product)
+          return unless product.class.included_modules.include?(Spree::HasCustomFields)
 
-          metafield_attributes = attributes.select { |key, _value| key.to_s.start_with?('metafield.') }
-          return if metafield_attributes.empty?
+          custom_field_attributes = attributes.select { |key, _value| key.to_s.start_with?('custom_field.') }
+          return if custom_field_attributes.empty?
 
-          # Build nested attributes for metafields
+          # Build nested attributes for custom_fields
           nested_attrs = []
 
-          metafield_attributes.each do |attribute_key, value|
-            # Extract namespace.key from "metafield.namespace.key"
-            full_key = attribute_key.to_s.sub(/^metafield\./, '')
+          custom_field_attributes.each do |attribute_key, value|
+            # Extract namespace.key from "custom_field.namespace.key"
+            full_key = attribute_key.to_s.sub(/^custom_field\./, '')
             namespace, key = product.extract_namespace_and_key(full_key)
 
-            # Find or initialize metafield definition
-            metafield_definition = cached_lookup(:metafield_definition, namespace, key, product.class.name) do
-              Spree::MetafieldDefinition.find_by(
+            # Find or initialize custom_field definition
+            custom_field_definition = cached_lookup(:custom_field_definition, namespace, key, product.class.name) do
+              Spree::CustomFieldDefinition.find_by(
                 namespace: namespace,
                 key: key,
                 resource_type: product.class.name
               )
             end
 
-            next unless metafield_definition
+            next unless custom_field_definition
 
-            # Find existing metafield if product is persisted
-            existing_metafield = product.persisted? ? product.metafields.find_by(metafield_definition: metafield_definition) : nil
+            # Find existing custom_field if product is persisted
+            existing_custom_field = product.persisted? ? product.custom_fields.find_by(custom_field_definition: custom_field_definition) : nil
 
-            # Skip blank values for new metafields
-            next if value.blank? && existing_metafield.nil?
+            # Skip blank values for new custom_fields
+            next if value.blank? && existing_custom_field.nil?
 
-            # For existing metafields with blank values, we'll mark them for destruction
-            # For new metafields, we skip them (handled above)
-            # For existing or new metafields with values, we create/update them
-            metafield_attrs = {
-              metafield_definition_id: metafield_definition.id,
+            # For existing custom_fields with blank values, we'll mark them for destruction
+            # For new custom_fields, we skip them (handled above)
+            # For existing or new custom_fields with values, we create/update them
+            custom_field_attrs = {
+              custom_field_definition_id: custom_field_definition.id,
               value: value.to_s.strip,
-              type: metafield_definition.metafield_type
+              type: custom_field_definition.field_type_class_name
             }
 
-            metafield_attrs[:id] = existing_metafield.id if existing_metafield
+            custom_field_attrs[:id] = existing_custom_field.id if existing_custom_field
 
-            nested_attrs << metafield_attrs
+            nested_attrs << custom_field_attrs
           end
 
-          product.update(metafields_attributes: nested_attrs) unless nested_attrs.empty?
+          product.update!(custom_fields_attributes: nested_attrs) unless nested_attrs.empty?
         end
 
         def handle_tags(product)

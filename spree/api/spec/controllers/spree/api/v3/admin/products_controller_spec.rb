@@ -37,20 +37,20 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     context 'with custom field filtering and sorting' do
       let!(:material) do
-        create(:metafield_definition, :short_text_field, :searchable,
+        create(:custom_field_definition, :short_text_field, :searchable,
                namespace: 'custom', key: 'material')
       end
       let!(:weight) do
-        create(:metafield_definition, :number_field, :sortable,
+        create(:custom_field_definition, :number_field, :sortable,
                namespace: 'custom', key: 'weight')
       end
       let!(:other_product) { create(:product, name: 'Unique Widget') }
 
       before do
-        product.set_metafield(material, 'wool')
-        product.set_metafield(weight, '10')
-        other_product.set_metafield(material, 'cotton')
-        other_product.set_metafield(weight, '2')
+        product.set_custom_field(material, 'wool')
+        product.set_custom_field(weight, '10')
+        other_product.set_custom_field(material, 'cotton')
+        other_product.set_custom_field(weight, '2')
       end
 
       it 'filters by a cf_* text predicate' do
@@ -461,18 +461,18 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     context 'with inline custom fields' do
       let!(:material_definition) do
-        create(:metafield_definition,
+        create(:custom_field_definition,
                resource_type: 'Spree::Product',
                namespace: 'product',
                key: 'material',
-               metafield_type: 'Spree::Metafields::ShortText')
+               field_type: 'Spree::CustomFields::ShortText')
       end
       let!(:waterproof_definition) do
-        create(:metafield_definition,
+        create(:custom_field_definition,
                resource_type: 'Spree::Product',
                namespace: 'product',
                key: 'waterproof',
-               metafield_type: 'Spree::Metafields::Boolean')
+               field_type: 'Spree::CustomFields::Boolean')
       end
 
       it 'persists custom_fields inline on create' do
@@ -485,15 +485,15 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
             ]
           }, as: :json
         }.to change(Spree::Product, :count).by(1)
-                                            .and change(Spree::Metafield, :count).by(2)
+                                            .and change(Spree::CustomField, :count).by(2)
 
         expect(response).to have_http_status(:created)
 
         created = Spree::Product.find_by(name: 'Custom Fields Product')
-        material = created.metafields.find_by(metafield_definition: material_definition)
-        waterproof = created.metafields.find_by(metafield_definition: waterproof_definition)
+        material = created.custom_fields.find_by(custom_field_definition: material_definition)
+        waterproof = created.custom_fields.find_by(custom_field_definition: waterproof_definition)
         expect(material.value).to eq('Cotton')
-        # Boolean metafields store the value as a serialized string ("f"/"t"
+        # Boolean custom_fields store the value as a serialized string ("f"/"t"
         # on SQLite). The dashboard reads them back via the API which casts.
         expect(waterproof.value).to be_in(['false', 'f', false])
       end
@@ -508,12 +508,12 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
             ]
           }, as: :json
         }.to change(Spree::Product, :count).by(1)
-                                            .and change(Spree::Metafield, :count).by(1)
+                                            .and change(Spree::CustomField, :count).by(1)
 
         expect(response).to have_http_status(:created)
         created = Spree::Product.find_by(name: 'Half-Filled Custom Fields')
-        expect(created.metafields.find_by(metafield_definition: material_definition).value).to eq('Cotton')
-        expect(created.metafields.find_by(metafield_definition: waterproof_definition)).to be_nil
+        expect(created.custom_fields.find_by(custom_field_definition: material_definition).value).to eq('Cotton')
+        expect(created.custom_fields.find_by(custom_field_definition: waterproof_definition)).to be_nil
       end
 
       it 'skips entries with a missing custom_field_definition_id' do
@@ -526,20 +526,20 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
             ]
           }, as: :json
         }.to change(Spree::Product, :count).by(1)
-                                            .and change(Spree::Metafield, :count).by(1)
+                                            .and change(Spree::CustomField, :count).by(1)
 
         expect(response).to have_http_status(:created)
         created = Spree::Product.find_by(name: 'Custom Fields No Def')
-        expect(created.metafields.find_by(metafield_definition: material_definition).value).to eq('Silk')
+        expect(created.custom_fields.find_by(custom_field_definition: material_definition).value).to eq('Silk')
       end
 
       it 'persists a Hash value for a JSON-typed custom field' do
         json_definition = create(
-          :metafield_definition,
+          :custom_field_definition,
           resource_type: 'Spree::Product',
           namespace: 'product',
           key: 'spec',
-          metafield_type: 'Spree::Metafields::Json'
+          field_type: 'Spree::CustomFields::Json'
         )
 
         post :create, params: {
@@ -551,9 +551,9 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:created)
         created = Spree::Product.find_by(name: 'JSON Custom Field Product')
-        mf = created.metafields.find_by(metafield_definition: json_definition)
+        mf = created.custom_fields.find_by(custom_field_definition: json_definition)
         expect(mf).to be_present
-        # Json metafields store the hash as serialized JSON. We only care
+        # Json custom_fields store the hash as serialized JSON. We only care
         # that the content survived strong-params (would be nil if dropped)
         # — the precise on-disk representation depends on the type.
         parsed = mf.value.is_a?(Hash) ? mf.value : JSON.parse(mf.value.to_s)
@@ -1052,25 +1052,25 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
     context 'with inline custom fields' do
       let!(:material_definition) do
-        create(:metafield_definition,
+        create(:custom_field_definition,
                resource_type: 'Spree::Product',
                namespace: 'product',
                key: 'material',
-               metafield_type: 'Spree::Metafields::ShortText')
+               field_type: 'Spree::CustomFields::ShortText')
       end
       let!(:fit_definition) do
-        create(:metafield_definition,
+        create(:custom_field_definition,
                resource_type: 'Spree::Product',
                namespace: 'product',
                key: 'fit',
-               metafield_type: 'Spree::Metafields::ShortText')
+               field_type: 'Spree::CustomFields::ShortText')
       end
       let!(:waterproof_definition) do
-        create(:metafield_definition,
+        create(:custom_field_definition,
                resource_type: 'Spree::Product',
                namespace: 'product',
                key: 'waterproof',
-               metafield_type: 'Spree::Metafields::Boolean')
+               field_type: 'Spree::CustomFields::Boolean')
       end
 
       it 'creates new custom field values on PATCH' do
@@ -1081,16 +1081,16 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               { custom_field_definition_id: material_definition.prefixed_id, value: 'Wool' }
             ]
           }, as: :json
-        }.to change(Spree::Metafield, :count).by(1)
+        }.to change(Spree::CustomField, :count).by(1)
 
         expect(response).to have_http_status(:ok)
-        metafield = product.metafields.find_by(metafield_definition: material_definition)
-        expect(metafield.value).to eq('Wool')
+        custom_field = product.custom_fields.find_by(custom_field_definition: material_definition)
+        expect(custom_field.value).to eq('Wool')
       end
 
       it 'upserts an existing custom field value by definition id' do
-        existing = product.metafields.create!(
-          metafield_definition: material_definition,
+        existing = product.custom_fields.create!(
+          custom_field_definition: material_definition,
           value: 'Cotton'
         )
 
@@ -1103,12 +1103,12 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(existing.reload.value).to eq('Polyester')
-        expect(product.metafields.where(metafield_definition: material_definition).count).to eq(1)
+        expect(product.custom_fields.where(custom_field_definition: material_definition).count).to eq(1)
       end
 
       it 'leaves unrelated custom fields untouched on partial PATCH' do
-        product.metafields.create!(metafield_definition: material_definition, value: 'Cotton')
-        product.metafields.create!(metafield_definition: fit_definition, value: 'Regular')
+        product.custom_fields.create!(custom_field_definition: material_definition, value: 'Cotton')
+        product.custom_fields.create!(custom_field_definition: fit_definition, value: 'Regular')
 
         patch :update, params: {
           id: product.prefixed_id,
@@ -1118,14 +1118,14 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(product.metafields.count).to eq(2)
-        expect(product.metafields.find_by(metafield_definition: material_definition).value).to eq('Cotton')
-        expect(product.metafields.find_by(metafield_definition: fit_definition).value).to eq('Slim')
+        expect(product.custom_fields.count).to eq(2)
+        expect(product.custom_fields.find_by(custom_field_definition: material_definition).value).to eq('Cotton')
+        expect(product.custom_fields.find_by(custom_field_definition: fit_definition).value).to eq('Slim')
       end
 
       it 'destroys an existing custom field when value is blank on PATCH' do
-        existing = product.metafields.create!(
-          metafield_definition: material_definition,
+        existing = product.custom_fields.create!(
+          custom_field_definition: material_definition,
           value: 'Cotton'
         )
 
@@ -1136,15 +1136,15 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               { custom_field_definition_id: material_definition.prefixed_id, value: '' }
             ]
           }, as: :json
-        }.to change(Spree::Metafield, :count).by(-1)
+        }.to change(Spree::CustomField, :count).by(-1)
 
         expect(response).to have_http_status(:ok)
-        expect(Spree::Metafield.find_by(id: existing.id)).to be_nil
+        expect(Spree::CustomField.find_by(id: existing.id)).to be_nil
       end
 
       it 'persists a Boolean false value instead of treating it as blank' do
-        existing = product.metafields.create!(
-          metafield_definition: waterproof_definition,
+        existing = product.custom_fields.create!(
+          custom_field_definition: waterproof_definition,
           value: true
         )
 
@@ -1155,10 +1155,10 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               { custom_field_definition_id: waterproof_definition.prefixed_id, value: false }
             ]
           }, as: :json
-        }.not_to change(Spree::Metafield, :count)
+        }.not_to change(Spree::CustomField, :count)
 
         expect(response).to have_http_status(:ok)
-        # Boolean metafields store as a stringified value; the entry should
+        # Boolean custom_fields store as a stringified value; the entry should
         # still exist with the new false value.
         expect(existing.reload.value).to be_in(['false', 'f', false])
       end
@@ -1172,10 +1172,10 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
               { custom_field_definition_id: material_definition.prefixed_id, value: 'Linen' }
             ]
           }, as: :json
-        }.to change(Spree::Metafield, :count).by(1)
+        }.to change(Spree::CustomField, :count).by(1)
 
         expect(response).to have_http_status(:ok)
-        expect(product.metafields.find_by(metafield_definition: material_definition).value).to eq('Linen')
+        expect(product.custom_fields.find_by(custom_field_definition: material_definition).value).to eq('Linen')
       end
 
       it 'accepts a raw (non-prefixed) custom_field_definition_id' do
@@ -1187,7 +1187,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(product.metafields.find_by(metafield_definition: material_definition).value).to eq('Velvet')
+        expect(product.custom_fields.find_by(custom_field_definition: material_definition).value).to eq('Velvet')
       end
     end
 

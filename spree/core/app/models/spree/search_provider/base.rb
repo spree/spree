@@ -13,9 +13,15 @@ module Spree
         @store = store
       end
 
-      # @return [MetafieldSchema]
+      # @return [CustomFieldSchema]
+      def custom_field_schema
+        @custom_field_schema ||= CustomFieldSchema.new
+      end
+
+      # Deprecated 6.0 name, removed in 6.1.
       def metafield_schema
-        @metafield_schema ||= MetafieldSchema.new
+        Spree::Deprecation.warn('#metafield_schema is deprecated and will be removed in Spree 6.1. Use #custom_field_schema instead.')
+        custom_field_schema
       end
 
       # Search and paginate products. Does NOT compute filter facets — use #filters for that.

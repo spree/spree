@@ -34,7 +34,7 @@ module Spree
                                :reports,
                                :translatable_resources,
                                :taggable_types,
-                               :metafields,
+                               :custom_fields,
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations,
@@ -46,7 +46,7 @@ module Spree
       PricingEnvironment = Struct.new(:rules)
       OrderRoutingEnvironment = Struct.new(:strategies, :rules)
       SpreeValidators = Struct.new(:addresses)
-      MetafieldsEnvironment = Struct.new(:types, :enabled_resources)
+      CustomFieldsEnvironment = Struct.new(:types, :enabled_resources)
       isolate_namespace Spree
       engine_name 'spree'
 
@@ -120,10 +120,10 @@ module Spree
         app.config.spree.delivery_method_rules = []
       end
 
-      initializer 'spree.register.metafields' do |app|
-        app.config.spree.metafields = MetafieldsEnvironment.new
-        app.config.spree.metafields.types = []
-        app.config.spree.metafields.enabled_resources = []
+      initializer 'spree.register.custom_fields' do |app|
+        app.config.spree.custom_fields = CustomFieldsEnvironment.new
+        app.config.spree.custom_fields.types = []
+        app.config.spree.custom_fields.enabled_resources = []
       end
 
       # We need to define promotions rules here so extensions and existing apps
@@ -334,16 +334,16 @@ module Spree
           Spree.customer_class.to_s
         ]
 
-        Rails.application.config.spree.metafields.types = [
-          Spree::Metafields::ShortText,
-          Spree::Metafields::LongText,
-          Spree::Metafields::RichText,
-          Spree::Metafields::Number,
-          Spree::Metafields::Boolean,
-          Spree::Metafields::Json
+        Rails.application.config.spree.custom_fields.types = [
+          Spree::CustomFields::ShortText,
+          Spree::CustomFields::LongText,
+          Spree::CustomFields::RichText,
+          Spree::CustomFields::Number,
+          Spree::CustomFields::Boolean,
+          Spree::CustomFields::Json
         ]
 
-        Rails.application.config.spree.metafields.enabled_resources = [
+        Rails.application.config.spree.custom_fields.enabled_resources = [
           Spree::Address,
           Spree::Asset,
           Spree::Claim,

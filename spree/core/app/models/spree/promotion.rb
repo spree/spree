@@ -3,7 +3,7 @@ module Spree
     has_prefix_id :promo  # Spree-specific: promotion
 
     include Spree::SingleStoreResource
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     if defined?(Spree::Security::Promotions)
       include Spree::Security::Promotions

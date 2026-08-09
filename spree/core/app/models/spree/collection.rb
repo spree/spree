@@ -24,6 +24,7 @@ module Spree
 
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug
+    include Spree::HasCustomFields
     include Spree::Metadata
 
     #

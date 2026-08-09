@@ -1,27 +1,27 @@
 require 'spec_helper'
 
-describe Spree::Metafields::Boolean, type: :model do
-  let(:metafield_definition) { create(:metafield_definition, :boolean_field) }
-  let(:metafield) { described_class.new(metafield_definition: metafield_definition, value: 'true') }
+describe Spree::CustomFields::Boolean, type: :model do
+  let(:custom_field_definition) { create(:custom_field_definition, :boolean_field) }
+  let(:custom_field) { described_class.new(custom_field_definition: custom_field_definition, value: 'true') }
 
   describe 'normalizes' do
     it 'normalizes the boolean value' do
-      metafield.value = '0'
-      expect(metafield.value).to eq('false')
-      metafield.value = '1'
-      expect(metafield.value).to eq('true')
+      custom_field.value = '0'
+      expect(custom_field.value).to eq('false')
+      custom_field.value = '1'
+      expect(custom_field.value).to eq('true')
     end
   end
 
   describe '#serialize_value' do
     it 'returns the boolean value' do
-      expect(metafield.serialize_value).to eq(true)
+      expect(custom_field.serialize_value).to eq(true)
     end
   end
 
   describe '#csv_value' do
     it 'returns the boolean value' do
-      expect(metafield.csv_value).to eq('Yes')
+      expect(custom_field.csv_value).to eq('Yes')
     end
   end
 

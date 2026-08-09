@@ -56,7 +56,7 @@ describe '6.0 data migration tasks' do
       Spree::Calculator::Shipping::DigitalDelivery.create!(calculable: digital_method)
       # A 5.x row as it arrives post-migration: storefront_visible at the
       # column default, display_on still holding the real value.
-      digital_method.update_columns(fulfillment_type: nil, fulfillment_provider: nil, storefront_visible: true, display_on: 'back_end')
+      digital_method.update_columns(fulfillment_type: nil, fulfillment_provider: nil, storefront_visible: true, storefront_visible: false)
 
       run_task('spree:migrate_shipping_to_delivery')
 
@@ -70,7 +70,7 @@ describe '6.0 data migration tasks' do
     # re-run cannot undo a visibility change an admin made in the meantime.
     it 'does not revert a later admin visibility change on re-run' do
       method = create(:shipping_method)
-      method.update_columns(storefront_visible: true, display_on: 'back_end')
+      method.update_columns(storefront_visible: true, storefront_visible: false)
 
       run_task('spree:migrate_shipping_to_delivery')
       expect(method.reload.read_attribute(:storefront_visible)).to be(false)

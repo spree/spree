@@ -8,7 +8,7 @@ module Spree
     has_prefix_id :ch
 
     include Spree::SingleStoreResource
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::OrderRouting::HasStrategyPreference
     include Spree::Channel::Gating

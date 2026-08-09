@@ -9,7 +9,7 @@ module Spree
         class CustomFieldsController < ResourceController
           # POST /api/v3/admin/<parent>/<parent_id>/custom_fields
           def create
-            @resource = @parent.metafields.new(permitted_params)
+            @resource = @parent.custom_fields.new(permitted_params)
             authorize_resource!(@resource, :create)
 
             if @resource.save
@@ -44,7 +44,7 @@ module Spree
           end
 
           def parent_association
-            :metafields
+            :custom_fields
           end
 
           def set_parent
@@ -104,7 +104,7 @@ module Spree
           # and `'category'` because the routes expose taxons as categories
           # (5.5 rename) while the model's element is still `'taxon'`.
           def parent_route_map
-            @parent_route_map ||= Spree.metafields.enabled_resources.each_with_object({}) do |klass, m|
+            @parent_route_map ||= Spree.custom_fields.enabled_resources.each_with_object({}) do |klass, m|
               m[klass.model_name.element.to_s] = klass.name
             end.merge('customer' => Spree.customer_class.name, 'category' => 'Spree::Category')
           end
