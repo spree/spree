@@ -169,8 +169,6 @@ RSpec.describe Spree::ReturnsMigrator do
     it 'records the legacy id so the row can be recognised again' do
       migrate
 
-      # The column, not #metadata — that reader maps to private_metadata,
-      # which spree_returns does not have.
       stamped = Spree::Return.last.read_attribute(:metadata)
       stamped = JSON.parse(stamped) unless stamped.is_a?(Hash)
       expect(stamped['legacy_return_authorization_id']).to be_present

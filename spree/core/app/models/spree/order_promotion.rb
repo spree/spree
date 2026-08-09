@@ -8,7 +8,7 @@ module Spree
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :order_promotions
     belongs_to :promotion, class_name: 'Spree::Promotion'
 
-    delegate :name, :description, :code, :public_metadata, to: :promotion
+    delegate :name, :description, :code, to: :promotion
     delegate :currency, to: :owner
 
     validates :promotion, presence: true

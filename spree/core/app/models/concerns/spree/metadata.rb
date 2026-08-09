@@ -5,31 +5,26 @@ module Spree
     include Spree::Metafields unless included_modules.include?(Spree::Metafields)
 
     included do
-      attribute :public_metadata, default: {}
-      attribute :private_metadata, default: {}
+      attribute :metadata, default: {}
 
-      serialize :public_metadata, coder: HashSerializer
-      serialize :private_metadata, coder: HashSerializer
+      serialize :metadata, coder: HashSerializer
     end
 
-    # `metadata` is the primary API-facing accessor.
-    # It maps to `private_metadata` under the hood (Stripe-style: write-only, never returned in Store API).
-    def metadata
-      private_metadata
+    # Deprecated alias for the renamed `metadata` column. Removed in Spree 6.1.
+    #
+    # Only the reader and writer are bridged. The column is gone, so the attribute
+    # methods Active Record generated alongside it — `private_metadata?`,
+    # `private_metadata_changed?`, `private_metadata_was`,
+    # `private_metadata_before_type_cast` and the rest of the dirty-tracking family
+    # — no longer exist and raise NoMethodError. Call the `metadata` equivalents.
+    def private_metadata
+      Spree::Deprecation.warn('private_metadata is deprecated and will be removed in Spree 6.1. Use metadata instead.')
+      metadata
     end
 
-    def metadata=(value)
-      self.private_metadata = value
-    end
-
-    def public_metadata=(value)
-      unless value.blank? || value == {}
-        Spree::Deprecation.warn(
-          'public_metadata is deprecated and will be removed in Spree 6.0. ' \
-          'Use metadata instead. For customer-visible structured data, use metafields with display_on: \'both\'.'
-        )
-      end
-      super
+    def private_metadata=(value)
+      Spree::Deprecation.warn('private_metadata= is deprecated and will be removed in Spree 6.1. Use metadata= instead.')
+      self.metadata = value
     end
 
     # https://nandovieira.com/using-postgresql-and-jsonb-with-ruby-on-rails

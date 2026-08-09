@@ -224,7 +224,7 @@ RSpec.shared_examples 'an addresses host' do
             firstname: 'New name',
             **address.attributes.except(
               'firstname', 'created_at', 'updated_at', 'deleted_at', 'quick_checkout',
-              'public_metadata', 'private_metadata', 'latitude', 'longitude', 'preferences'
+              'metadata', 'latitude', 'longitude', 'preferences'
             )
           }
         )

@@ -10,14 +10,13 @@ module Spree
       # @param cart [Spree::Cart, Spree::Order] draft orders ride the same pipeline
       # @param variant [Spree::Variant]
       # @param quantity [Integer, nil] defaults to 1
-      # @param metadata [Hash] primary API param (maps to private metadata)
-      def perform(variant:, cart: nil, order: nil, quantity: nil, metadata: {}, public_metadata: {}, private_metadata: {}, options: {})
+      # @param metadata [Hash] schemaless developer metadata stored on the line item
+      def perform(variant:, cart: nil, order: nil, quantity: nil, metadata: {}, options: {})
         if order
           Spree::Deprecation.warn('Calling Spree::Carts::AddItem with order: is deprecated and will be removed in Spree 6.1. Pass cart: instead.')
           cart ||= order
         end
-        super(cart: cart, variant: variant, quantity: quantity, metadata: metadata,
-              public_metadata: public_metadata, private_metadata: private_metadata, options: options)
+        super(cart: cart, variant: variant, quantity: quantity, metadata: metadata, options: options)
 
         # Veto point — purchase limits, B2B eligibility, per-group rules.
         # Outside the transaction: nothing has been written yet, so a
@@ -62,11 +61,7 @@ module Spree
         target = item_options[:fulfillment] || item_options[:shipment]
         @line_item.target_fulfillment = target if target
 
-        # `metadata` is the primary API param (maps to private_metadata).
-        # Legacy `public_metadata`/`private_metadata` params kept for backward compatibility.
-        resolved_metadata = metadata.presence || private_metadata
-        @line_item.metadata = resolved_metadata.to_h if resolved_metadata.present?
-        @line_item.public_metadata = public_metadata.to_h if public_metadata.present?
+        @line_item.metadata = metadata.to_h if metadata.present?
 
         failure(@line_item) unless @line_item.save
 

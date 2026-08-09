@@ -1,3 +1,64 @@
+## 2026-08-09: Metadata consolidated to one column — `public_metadata` dropped, `private_metadata` renamed
+
+Implements the 2026-03-16 consolidation decision. All thirty metadata-carrying
+tables lose `public_metadata` and have `private_metadata` renamed to `metadata`,
+so the column, the accessor and the API field finally share one name.
+`Spree::Metadata` keeps its place but collapses to a single attribute plus the
+`HashSerializer` — the alias indirection that made `metadata` a method forwarding
+to another column is gone. `Spree::Collection`, which had been declaring its own
+consolidated column to sidestep the concern, now just includes it.
+
+**Three shape decisions.**
+
+*`public_metadata` data is preserved, not discarded.* The original note called the
+column unused, which holds for Spree's own code — nothing read it, and it was
+never exposed in the Store API — but is not provably true of host applications
+that had a writable JSON column sitting there for four years. A dropped column has
+no rollback, so `spree:upgrade:consolidate_metadata` merges it into
+`private_metadata` first, private winning on key collision since that is the side
+the accessor and the API always read.
+
+*The merge lives inside the migration, not in a manifest step.* The obvious home
+was a pre-migration upgrade task, but `spree:upgrade` runs manifests *after*
+`db:migrate` — both the rake runner and the CLI's upgrade command sequence it that
+way. A merge scheduled there would find `public_metadata` already dropped and
+silently do nothing, losing exactly the data it existed to protect. Documentation
+telling operators to run a step "before migrate" would have been asking them to
+fight their own tooling. `spree:upgrade:consolidate_metadata` stays in the manifest
+as a safety net for schemas changed out of band, not as the primary path.
+
+*The rename is `rename_column`, not add-and-backfill.* Instant on PostgreSQL and
+MySQL, data stays in place.
+
+*No hardcoded table lists, in either direction.* Legacy tables are discovered by
+column: the pair was added across a dozen migrations and several of those tables have
+since been renamed (`spree_shipping_methods`, `spree_prototypes`, `spree_taxons`), so
+a static list would already be wrong. Rollback needs the inverse answer, and shape
+cannot supply it — a table we renamed and one born with a single `metadata` column look
+identical afterwards. An early version hardcoded the exclusions and was doubly wrong:
+it missed `spree_customers`, and it would have swept up `active_storage_blobs`, whose
+unrelated `metadata` column a shape-based rollback would have renamed, breaking every
+attachment. `up` now records what it renames and `down` reverses exactly that.
+
+Both the migration and the task use raw SQL rather than Active Record. Beyond the
+models already pointing at the new name, PostgreSQL has no equality operator for
+`json`, so `where.not(public_metadata: [nil, {}])` raises `PG::UndefinedFunction` —
+green on SQLite, broken on the databases most production installs actually run.
+
+**No bridge for `public_metadata`** — a recorded exception to the "every 6.0 rename
+keeps the legacy name one release" convention. The column is being removed rather
+than renamed, and it already carried a deprecation warning through 5.x.
+`private_metadata` does get the usual one-release bridge with a warning.
+
+**What this does not change.** Metadata and metafields stay two systems. Metadata
+is the schemaless developer escape hatch — no definition, write-only from the
+Store API's perspective, for integration ids and sync state. Metafields (custom
+fields) stay merchant-defined structured data with types, definitions and
+storefront visibility. Customer-visible structured data belongs in a metafield,
+never in metadata.
+
+Plan: `docs/plans/6.0-consolidate-metadata-columns.md`.
+
 ## 2026-08-07: `Claim#claim_type` dropped — the reason vocabulary is the only "what went wrong" axis
 
 Reverses the two-axis design in `6.0-returns-exchanges-claims.md`, which
@@ -926,6 +987,13 @@ Matches OSS platform C (`public: boolean`) and OSS platform B (`visibleInStorefr
 Ships with the 6.0 model rename wave. See `5.4-6.0-custom-fields-rename.md`.
 
 ## 2026-03-16: Consolidate metadata — drop public_metadata, keep metadata JSON column
+
+> **Amended 2026-08-09 on one point:** `public_metadata` is **merged into
+> `metadata`, not discarded**. "Unused" holds for Spree's own code but is not
+> provably true of host applications, and a dropped column has no rollback. The
+> merge runs inside the migration. Everything else below stands — see the
+> 2026-08-09 entry at the top of this file.
+
 Drop `public_metadata` column (never exposed in Store API, unused). Rename
 `private_metadata` → `metadata` in the database. Simplify the `Spree::Metadata`
 concern to a single `metadata` JSON column with no alias indirection.

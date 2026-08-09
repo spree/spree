@@ -8,7 +8,7 @@
 #     and remains the rollback source.
 #   - Order totals are never touched; a per-order reconciliation asserts the
 #     typed sums match the order's stored totals. Orders that do not reconcile
-#     are logged and marked recalculation-frozen (private_metadata flag), never
+#     are logged and marked recalculation-frozen (metadata flag), never
 #     force-balanced.
 #   - Idempotent: orders with any typed rows already present are skipped.
 namespace :spree do
@@ -104,7 +104,7 @@ namespace :spree do
 
           if frozen_reason
             order.update_columns(
-              private_metadata: (order.private_metadata || {}).merge(
+              metadata: (order.metadata || {}).merge(
                 'typed_adjustments_frozen' => frozen_reason,
                 'typed_adjustments_frozen_at' => Time.current.iso8601
               )
