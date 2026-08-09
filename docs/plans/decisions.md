@@ -59,6 +59,46 @@ never in metadata.
 
 Plan: `docs/plans/6.0-consolidate-metadata-columns.md`.
 
+## 2026-08-09: Fulfillment profiles — ShippingCategory promoted, not removed
+
+Reverses three recorded decisions inside the 6.0 window: "fulfillment types
+are NOT a model", "named delivery groups are the 6.1-if-needed successor to
+profiles" (both `6.0-fulfillment-and-delivery.md`), and live-by-reference
+`fulfillment_types` on ProductType (`6.0-product-types.md`). Full design in
+`6.0-fulfillment-profiles.md`.
+
+**The model.** `Spree::FulfillmentProfile` — store-scoped, one default per
+store — groups products for delivery: profile ↔ stock locations (origins,
+empty = all), profile → delivery zones (destinations), profile → delivery
+methods (each with a `modality` — the renamed `fulfillment_type` column —
+an optional single zone, and optional ships-from narrowing via the
+generalized method↔location join). Products carry `fulfillment_profile_id`
+directly; ProductType stamps its template profile at creation and never
+manages it afterwards. Carts split per profile; capabilities derive
+(`digital?`, pickupable, address requirement) from the profile's methods
+instead of being declared product-side. A location-group layer was
+considered and dropped — per-method narrowing covers multi-origin stores,
+and groups can arrive additively later.
+
+**Why reverse now.** No rewrite window after 6.0; custom string types were
+second-class (provider declarations could never include them, so a custom
+type could not use carrier rate providers); the origin axis simply did not
+exist for shipping methods; and the fulfillment_types array was the sole
+live-by-reference exception to the product-type template doctrine.
+
+**Migration by rename.** `spree_shipping_categories` →
+`spree_fulfillment_profiles` and `spree_products.shipping_category_id` →
+`fulfillment_profile_id`: 5.x products arrive assigned, the 5.x Digital
+category becomes the Digital profile. `spree:upgrade:migrate_fulfillment_profiles`
+handles what a rename cannot: store assignment for the formerly-global
+categories (duplicate + remap when shared), default flagging, and
+collapsing the method m:n (`spree_shipping_method_categories`, kept to 6.1
+as source) into the single method FK — loud warnings wherever flattening
+loses information. The `Spree.fulfillment_types` registry and the
+ProductType array are deleted outright; modality vocabulary lives on
+`Spree::DeliveryMethod.modalities`.
+
+
 ## 2026-08-09: Dynamic carrier rates — one delivery method, many named rates
 
 Supersedes the one-rate-per-method model in `6.0-delivery-rate-provider.md`
