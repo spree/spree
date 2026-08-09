@@ -204,7 +204,7 @@ end
 - Target version: existing migrations keep their `ActiveRecord::Migration[7.2]` marker; new 6.0 migrations may target `[8.1]` — the 6.0 line requires Rails 8.1 (decisions.md 2026-07-29)
 - No foreign key constraints
 - No default values on string/status columns (statuses are set by the creating workflow); integer, decimal and boolean columns DO carry defaults (`quantity` 1, amounts 0) so raw inserts can't produce nulls
-- New tables get a single `metadata` JSON column — no `public_metadata`/`private_metadata` split (legacy tables keep theirs)
+- Every metadata-carrying table has a single `metadata` JSON column — the `public_metadata`/`private_metadata` split was consolidated in 6.0
 - Always add `null: false` on required columns
 - One migration per feature when possible
 - Data transformations go in rake tasks, never in migrations
@@ -343,11 +343,11 @@ The Store API is a customer-facing surface. The Admin API is a back-office surfa
 - Computed display values (`display_total`, `purchasable`, `in_stock`)
 - Customer-facing pricing (`price`, `compare_at_price`, `prior_price` for EU Omnibus)
 - **No timestamps** (`created_at`, `updated_at`, `deleted_at`) — these leak operational info and aren't useful to customers
-- **No internal state** — never expose `cost_price`, internal status flags, soft-delete columns, audit logs, internal notes, private metadata, or admin-only relations (vendors, fulfillment providers)
+- **No internal state** — never expose `cost_price`, internal status flags, soft-delete columns, audit logs, internal notes, `metadata`, or admin-only relations (vendors, fulfillment providers)
 
 **Admin serializer (back-office):**
 - Always include `created_at`, `updated_at`, and `deleted_at` (when paranoid)
-- Cost price, margins, internal notes, private metadata
+- Cost price, margins, internal notes, `metadata`
 - Internal status, audit fields (`approved_by_id`, `cancelled_by_id`)
 - Operational relations (stock movements, fulfillment providers, internal customer tags)
 - Anything an admin needs to see but a customer must not
@@ -364,8 +364,8 @@ end
 # Admin serializer — extends store, adds back-office attributes + timestamps
 module Spree::Api::V3::Admin
   class ProductSerializer < V3::ProductSerializer
-    typelize cost_price: 'number | null', private_metadata: 'Record<string, unknown> | null'
-    attributes :status, :cost_price, :private_metadata, :created_at, :updated_at, :deleted_at
+    typelize cost_price: 'number | null', metadata: 'Record<string, unknown> | null'
+    attributes :status, :cost_price, :metadata, :created_at, :updated_at, :deleted_at
   end
 end
 ```

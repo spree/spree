@@ -24,12 +24,7 @@ module Spree
 
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug
-    include Spree::Metafields
-
-    # Single consolidated metadata JSON column (drops public_metadata; see
-    # docs/plans/decisions.md 2026-03-16 "Consolidate metadata"). Write-only
-    # developer escape hatch — never exposed in the Store API.
-    attribute :metadata, default: -> { {} }
+    include Spree::Metadata
 
     #
     # Slug / permalink — FriendlyId with history (mirrors Spree::Category; flat, no hierarchy).

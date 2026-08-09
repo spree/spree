@@ -120,7 +120,7 @@ module Spree
       end
 
       context 'merging metadata on existing line item' do
-        let!(:existing_line_item) { create(:line_item, order: order, variant: variant, quantity: 1, private_metadata: { 'existing' => 'val' }) }
+        let!(:existing_line_item) { create(:line_item, order: order, variant: variant, quantity: 1, metadata: { 'existing' => 'val' }) }
 
         let(:items) do
           [{ variant_id: variant.prefixed_id, quantity: 2, metadata: { 'new_key' => 'new_val' } }]

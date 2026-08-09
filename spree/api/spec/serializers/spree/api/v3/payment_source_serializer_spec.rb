@@ -25,8 +25,7 @@ RSpec.describe Spree::Api::V3::PaymentSourceSerializer do
   end
 
   it 'does not expose metadata in Store API responses' do
-    payment_source.update!(public_metadata: { 'email' => 'user@example.com' })
-    expect(subject).not_to have_key('public_metadata')
+    payment_source.update!(metadata: { 'email' => 'user@example.com' })
     expect(subject).not_to have_key('metadata')
   end
 end

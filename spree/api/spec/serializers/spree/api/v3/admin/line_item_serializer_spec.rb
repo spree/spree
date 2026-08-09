@@ -10,7 +10,7 @@ RSpec.describe Spree::Api::V3::Admin::LineItemSerializer do
 
   describe 'metadata' do
     context 'when line item has metadata' do
-      before { line_item.update!(private_metadata: { 'gift_note' => 'Happy Birthday!', 'engraving' => 'J.D.' }) }
+      before { line_item.update!(metadata: { 'gift_note' => 'Happy Birthday!', 'engraving' => 'J.D.' }) }
 
       it 'returns the metadata' do
         expect(subject['metadata']).to eq({ 'gift_note' => 'Happy Birthday!', 'engraving' => 'J.D.' })

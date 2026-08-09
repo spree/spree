@@ -20,6 +20,21 @@ to: "6.0"
 docs: "https://spreecommerce.org/docs/developer/upgrades/5.6-to-6.0"
 
 steps:
+  - id: consolidate_metadata
+    name: "Check for leftover split metadata columns"
+    task: "spree:upgrade:consolidate_metadata"
+    notes: |
+      Spree 6.0 collapses the public_metadata / private_metadata column pair into a
+      single metadata column. The migration performs the merge itself, before it
+      drops public_metadata, so a normal db:migrate needs nothing from this step.
+
+      This is a safety net for installs whose schema was changed out of band — a
+      manually dropped column, a half-applied migration, or an extension table that
+      adopted the same pair and was skipped. It reports and merges anything still
+      carrying both columns.
+
+      Idempotent, and a no-op on an already-consolidated schema.
+
   - id: remove_master_variant
     name: "Migrate products off the master variant"
     task: "spree:remove_master_variant"

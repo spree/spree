@@ -184,7 +184,7 @@ describe '6.0 data migration tasks' do
       expect(fee.kind).to eq('surcharge')
 
       expect(order.reload.attributes.slice('total', 'discount_total', 'additional_tax_total')).to eq(totals_before)
-      expect(order.private_metadata['typed_adjustments_frozen']).to be_nil
+      expect(order.metadata['typed_adjustments_frozen']).to be_nil
     end
 
     it 'freezes orders whose typed sums do not reconcile' do
@@ -195,7 +195,7 @@ describe '6.0 data migration tasks' do
 
       run_task('spree:migrate_adjustments_to_typed_rows')
 
-      expect(order.reload.private_metadata['typed_adjustments_frozen']).to eq('totals_do_not_reconcile')
+      expect(order.reload.metadata['typed_adjustments_frozen']).to eq('totals_do_not_reconcile')
     end
 
     it 'skips orders that already carry typed rows' do
