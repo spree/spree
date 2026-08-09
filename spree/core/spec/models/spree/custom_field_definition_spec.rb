@@ -103,6 +103,10 @@ RSpec.describe Spree::CustomFieldDefinition, type: :model do
   describe 'field_type= with an extension-registered class' do
     # Extensions register their own custom-field classes, which have no token
     # in the built-in vocabulary — they are addressed by class name.
+    #
+    # The double is deliberately defined outside the Spree namespace: it stands
+    # in for a third-party extension's class, which is exactly the case that
+    # regressed. Namespacing it under Spree would not exercise it.
     before do
       stub_const('PluginExtension::CustomFields::Color', Class.new(Spree::CustomField))
       allow(Spree.custom_fields).to receive(:types).
