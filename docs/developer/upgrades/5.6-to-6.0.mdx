@@ -99,7 +99,7 @@ Category and collection descriptions, policy bodies, and order and customer inte
 
 Run this **after** two earlier steps, both load-bearing: the categories step re-points the rows from `Spree::Taxon` to `Spree::Category` so this one can still find them, and the customers step populates `spree_customers` — a note is copied onto the customer row it belongs to, so running before those rows exist would treat every legacy customer note as orphaned and skip it for good. Following the manifest order handles this for you.
 
-Content is sanitized on the way in, and **the 6.0 allowlist is much narrower than 5.6's**: it permits only what the dashboard's editor emits — paragraphs, headings, `strong`/`em`/`s`/`u`/`code`, `pre`, `blockquote`, lists, `hr`, `br` and links. Tables, images, `div`/`span`, inline `style` and arbitrary `class` attributes are no longer permitted. Text inside a stripped tag survives; its formatting does not.
+Content is sanitized on the way in, and **the 6.0 allowlist is much narrower than 5.6's**: it permits only what the dashboard's editor emits — paragraphs, headings, `strong`/`em`/`s`/`u`/`code`, `pre`, `blockquote`, lists, `hr`, `br` and links. Tables, images, `div`/`span`, inline `style` and arbitrary `class` attributes are no longer permitted. Text inside a stripped tag survives; its formatting does not. The exceptions are `script` and `style`, which are removed along with their contents — a script body would otherwise reappear as visible text.
 
 If your descriptions rely on richer markup, permit it in an initializer **before** running the task and before saving anything under 6.0:
 
