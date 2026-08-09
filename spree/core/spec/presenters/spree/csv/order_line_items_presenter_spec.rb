@@ -5,8 +5,8 @@ RSpec.describe Spree::CSV::OrderLineItemPresenter do
   let(:order) { create(:completed_order_with_totals, store: store) }
   let(:line_item) { order.line_items.first }
   let(:index) { 0 }
-  let(:metafields) { [] }
-  let(:presenter) { described_class.new(order, line_item, index, metafields) }
+  let(:custom_fields) { [] }
+  let(:presenter) { described_class.new(order, line_item, index, custom_fields) }
 
   describe '#call' do
     subject { presenter.call }
@@ -79,12 +79,12 @@ RSpec.describe Spree::CSV::OrderLineItemPresenter do
     end
   end
 
-  describe 'metafields' do
+  describe 'custom_fields' do
     context 'when index is zero' do
-      let(:metafields) { ['loyalty_tier', '100'] }
-      let(:presenter) { described_class.new(order, line_item, 0, metafields) }
+      let(:custom_fields) { ['loyalty_tier', '100'] }
+      let(:presenter) { described_class.new(order, line_item, 0, custom_fields) }
 
-      it 'includes metafields at the end of the array' do
+      it 'includes custom_fields at the end of the array' do
         result = presenter.call
         expect(result[-2]).to eq 'loyalty_tier'
         expect(result[-1]).to eq '100'
@@ -92,10 +92,10 @@ RSpec.describe Spree::CSV::OrderLineItemPresenter do
     end
 
     context 'when index is not zero' do
-      let(:metafields) { ['loyalty_tier', '100'] }
-      let(:presenter) { described_class.new(order, line_item, 1, metafields) }
+      let(:custom_fields) { ['loyalty_tier', '100'] }
+      let(:presenter) { described_class.new(order, line_item, 1, custom_fields) }
 
-      it 'does not include metafields' do
+      it 'does not include custom_fields' do
         result = presenter.call
         expect(result).not_to include('loyalty_tier')
         expect(result).not_to include('100')

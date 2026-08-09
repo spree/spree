@@ -2,8 +2,8 @@
 
 module Spree
   module SearchProvider
-    # Product metafield definitions that participate in search/sort.
-    class MetafieldSchema
+    # Product custom_field definitions that participate in search/sort.
+    class CustomFieldSchema
       # Ransack-style predicates accepted per field type. Mirrors the operator
       # sets the admin dashboard's filter panel offers for string/number columns
       # (see packages/dashboard-core/src/components/table-toolbar.tsx).
@@ -15,7 +15,7 @@ module Spree
       ORDERED_FILTER_PREDICATES = (TEXT_FILTER_PREDICATES | NUMBER_FILTER_PREDICATES).
                                   sort_by { |predicate| -predicate.length }.freeze
 
-      # @return [Hash{String => Spree::MetafieldDefinition}]
+      # @return [Hash{String => Spree::CustomFieldDefinition}]
       def entries
         @entries ||= product_definitions.index_by(&:filter_key)
       end
@@ -35,7 +35,7 @@ module Spree
       end
 
       # @param attribute_key [String]
-      # @return [Spree::MetafieldDefinition, nil]
+      # @return [Spree::CustomFieldDefinition, nil]
       def entry_for(attribute_key)
         entries[attribute_key.to_s]
       end
@@ -126,7 +126,7 @@ module Spree
       private
 
       def product_definitions
-        scope = Spree::MetafieldDefinition.for_resource_type('Spree::Product')
+        scope = Spree::CustomFieldDefinition.for_resource_type('Spree::Product')
         scope.where(searchable: true).or(scope.where(sortable: true))
       end
 

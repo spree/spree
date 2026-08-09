@@ -3,7 +3,7 @@ module Spree
     has_prefix_id :credit
 
     include Spree::SingleStoreResource
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
 
     publishes_lifecycle_events

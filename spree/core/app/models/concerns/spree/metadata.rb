@@ -2,7 +2,7 @@ module Spree
   module Metadata
     extend ActiveSupport::Concern
 
-    include Spree::Metafields unless included_modules.include?(Spree::Metafields)
+    include Spree::HasCustomFields unless included_modules.include?(Spree::HasCustomFields)
 
     included do
       attribute :metadata, default: {}

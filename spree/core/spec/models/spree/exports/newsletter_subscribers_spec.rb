@@ -5,7 +5,7 @@ RSpec.describe Spree::Exports::NewsletterSubscribers, type: :model do
   let(:export) { described_class.new(store: store) }
 
   describe '#csv_headers' do
-    context 'when no metafields exist' do
+    context 'when no custom_fields exist' do
       it 'returns newsletter subscriber headers' do
         expected_headers = [
           'Email',
@@ -20,15 +20,15 @@ RSpec.describe Spree::Exports::NewsletterSubscribers, type: :model do
       end
     end
 
-    context 'when metafields exist' do
-      let!(:metafield_definition) do
-        create(:metafield_definition,
+    context 'when custom_fields exist' do
+      let!(:custom_field_definition) do
+        create(:custom_field_definition,
                resource_type: 'Spree::NewsletterSubscriber',
                namespace: 'custom',
                key: 'subscription_source')
       end
 
-      it 'includes metafield headers' do
+      it 'includes custom_field headers' do
         expected_headers = [
           'Email',
           'Customer Name',
@@ -37,7 +37,7 @@ RSpec.describe Spree::Exports::NewsletterSubscribers, type: :model do
           'Verified At',
           'Created At',
           'Updated At',
-          'metafield.custom.subscription_source'
+          'custom_field.custom.subscription_source'
         ]
         expect(export.csv_headers).to eq(expected_headers)
       end

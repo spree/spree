@@ -6,7 +6,7 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
     include Spree::NumberIdentifier
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     if defined?(Spree::Security::Payments)
       include Spree::Security::Payments
@@ -257,19 +257,19 @@ module Spree
     end
 
     def add_gateway_processing_error(error_message)
-      if has_metafield?('gateway.processing_errors')
-        errors = JSON.parse(get_metafield('gateway.processing_errors').value)
+      if has_custom_field?('gateway.processing_errors')
+        errors = JSON.parse(get_custom_field('gateway.processing_errors').value)
         errors << { message: error_message }
 
-        set_metafield('gateway.processing_errors', errors.to_json)
+        set_custom_field('gateway.processing_errors', errors.to_json)
       else
-        set_metafield('gateway.processing_errors', [{ message: error_message }].to_json)
+        set_custom_field('gateway.processing_errors', [{ message: error_message }].to_json)
       end
     end
 
     def gateway_processing_error_messages
       @gateway_processing_error_messages ||= begin
-        errors = JSON.parse(get_metafield('gateway.processing_errors')&.value || '[]')
+        errors = JSON.parse(get_custom_field('gateway.processing_errors')&.value || '[]')
         errors.map { |error| error['message'] }
       rescue JSON::ParserError
         []

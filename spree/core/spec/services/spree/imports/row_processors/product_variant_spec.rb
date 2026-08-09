@@ -303,17 +303,17 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(product.reload.categories).to eq [clothing_category]
     end
 
-    it 'preserves product metafields' do
-      create(:metafield_definition, namespace: 'custom', key: 'brand', name: 'Brand',
-                                     resource_type: 'Spree::Product', metafield_type: 'Spree::Metafields::ShortText')
-      product.set_metafield('custom.brand', 'Awesome Brand')
-      expect(product.reload.metafields.count).to eq 1
+    it 'preserves product custom_fields' do
+      create(:custom_field_definition, namespace: 'custom', key: 'brand', label: 'Brand',
+                                     resource_type: 'Spree::Product', field_type: 'Spree::CustomFields::ShortText')
+      product.set_custom_field('custom.brand', 'Awesome Brand')
+      expect(product.reload.custom_fields.count).to eq 1
 
       subject.process!
 
       product.reload
-      expect(product.metafields.count).to eq 1
-      expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+      expect(product.custom_fields.count).to eq 1
+      expect(product.get_custom_field('custom.brand').value).to eq 'Awesome Brand'
     end
 
     context 'with compare_at_price' do
@@ -596,23 +596,23 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
-  context 'with metafields' do
-    let!(:brand_metafield_definition) do
-      create(:metafield_definition,
+  context 'with custom_fields' do
+    let!(:brand_custom_field_definition) do
+      create(:custom_field_definition,
              namespace: 'custom',
              key: 'brand',
-             name: 'Brand',
+             label: 'Brand',
              resource_type: 'Spree::Product',
-             metafield_type: 'Spree::Metafields::ShortText')
+             field_type: 'Spree::CustomFields::ShortText')
     end
 
-    let!(:material_metafield_definition) do
-      create(:metafield_definition,
+    let!(:material_custom_field_definition) do
+      create(:custom_field_definition,
              namespace: 'custom',
              key: 'material',
-             name: 'Material',
+             label: 'Material',
              resource_type: 'Spree::Product',
-             metafield_type: 'Spree::Metafields::ShortText')
+             field_type: 'Spree::CustomFields::ShortText')
     end
 
     let(:row_data) do
@@ -623,62 +623,62 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         'price' => '62.99',
         'currency' => 'USD'
       )
-      # Add metafield keys directly to the hash
+      # Add custom_field keys directly to the hash
       base_data.merge(
-        'metafield.custom.brand' => 'Awesome Brand',
-        'metafield.custom.material' => 'Cotton'
+        'custom_field.custom.brand' => 'Awesome Brand',
+        'custom_field.custom.material' => 'Cotton'
       )
     end
 
-    # Override the top-level before to create mappings after metafield definitions exist
+    # Override the top-level before to create mappings after custom_field definitions exist
     before do
       import.create_mappings
     end
 
     let(:product) { subject.process! }
 
-    it 'creates mappings for metafields automatically' do
-      expect(import.mappings.where(schema_field: 'metafield.custom.brand').exists?).to be true
-      expect(import.mappings.where(schema_field: 'metafield.custom.material').exists?).to be true
+    it 'creates mappings for custom_fields automatically' do
+      expect(import.mappings.where(schema_field: 'custom_field.custom.brand').exists?).to be true
+      expect(import.mappings.where(schema_field: 'custom_field.custom.material').exists?).to be true
     end
 
-    it 'auto-assigns file_column for metafield mappings when CSV headers match' do
-      # Verify CSV headers include metafield keys
-      expect(import.csv_headers).to include('metafield.custom.brand', 'metafield.custom.material')
+    it 'auto-assigns file_column for custom_field mappings when CSV headers match' do
+      # Verify CSV headers include custom_field keys
+      expect(import.csv_headers).to include('custom_field.custom.brand', 'custom_field.custom.material')
 
-      brand_mapping = import.mappings.find_by(schema_field: 'metafield.custom.brand')
-      material_mapping = import.mappings.find_by(schema_field: 'metafield.custom.material')
+      brand_mapping = import.mappings.find_by(schema_field: 'custom_field.custom.brand')
+      material_mapping = import.mappings.find_by(schema_field: 'custom_field.custom.material')
 
-      expect(brand_mapping.file_column).to eq('metafield.custom.brand')
-      expect(material_mapping.file_column).to eq('metafield.custom.material')
+      expect(brand_mapping.file_column).to eq('custom_field.custom.brand')
+      expect(material_mapping.file_column).to eq('custom_field.custom.material')
       expect(brand_mapping.mapped?).to be true
       expect(material_mapping.mapped?).to be true
     end
 
-    it 'sets metafields on the product' do
+    it 'sets custom_fields on the product' do
       expect(product).to be_persisted
-      expect(product.has_metafield?('custom.brand')).to be true
-      expect(product.has_metafield?('custom.material')).to be true
-      expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
-      expect(product.get_metafield('custom.material').value).to eq 'Cotton'
+      expect(product.has_custom_field?('custom.brand')).to be true
+      expect(product.has_custom_field?('custom.material')).to be true
+      expect(product.get_custom_field('custom.brand').value).to eq 'Awesome Brand'
+      expect(product.get_custom_field('custom.material').value).to eq 'Cotton'
     end
 
-    context 'when updating an existing product with metafields' do
+    context 'when updating an existing product with custom_fields' do
       let!(:existing_product) do
         p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
-        p.set_metafield('custom.brand', 'Old Brand')
-        p.set_metafield('custom.material', 'Old Material')
+        p.set_custom_field('custom.brand', 'Old Brand')
+        p.set_custom_field('custom.material', 'Old Material')
         p
       end
 
-      it 'updates existing metafields' do
+      it 'updates existing custom_fields' do
         expect(product.id).to eq existing_product.id
-        expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
-        expect(product.get_metafield('custom.material').value).to eq 'Cotton'
+        expect(product.get_custom_field('custom.brand').value).to eq 'Awesome Brand'
+        expect(product.get_custom_field('custom.material').value).to eq 'Cotton'
       end
     end
 
-    context 'when metafield value is blank' do
+    context 'when custom_field value is blank' do
       let(:row_data) do
         base_data = csv_row_hash(
           'slug' => 'denim-shirt',
@@ -688,23 +688,23 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
           'currency' => 'USD'
         )
         base_data.merge(
-          'metafield.custom.brand' => 'Awesome Brand',
-          'metafield.custom.material' => ''
+          'custom_field.custom.brand' => 'Awesome Brand',
+          'custom_field.custom.material' => ''
         )
       end
 
-      it 'skips blank metafield values' do
-        expect(product.has_metafield?('custom.brand')).to be true
-        expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
-        expect(product.has_metafield?('custom.material')).to be false
+      it 'skips blank custom_field values' do
+        expect(product.has_custom_field?('custom.brand')).to be true
+        expect(product.get_custom_field('custom.brand').value).to eq 'Awesome Brand'
+        expect(product.has_custom_field?('custom.material')).to be false
       end
     end
 
-    context 'when updating existing product metafields with blank values' do
+    context 'when updating existing product custom_fields with blank values' do
       let!(:existing_product) do
         p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
-        p.set_metafield('custom.brand', 'Old Brand')
-        p.set_metafield('custom.material', 'Old Material')
+        p.set_custom_field('custom.brand', 'Old Brand')
+        p.set_custom_field('custom.material', 'Old Material')
         p
       end
 
@@ -717,22 +717,22 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
           'currency' => 'USD'
         )
         base_data.merge(
-          'metafield.custom.brand' => 'New Brand',
-          'metafield.custom.material' => ''
+          'custom_field.custom.brand' => 'New Brand',
+          'custom_field.custom.material' => ''
         )
       end
 
-      it 'removes existing metafield when empty value is uploaded' do
-        expect(existing_product.metafields.count).to eq 2
+      it 'removes existing custom_field when empty value is uploaded' do
+        expect(existing_product.custom_fields.count).to eq 2
 
         expect(product.id).to eq existing_product.id
-        expect(product.has_metafield?('custom.brand')).to be true
-        expect(product.get_metafield('custom.brand').value).to eq 'New Brand'
-        expect(product.has_metafield?('custom.material')).to be false
-        expect(product.metafields.count).to eq 1
+        expect(product.has_custom_field?('custom.brand')).to be true
+        expect(product.get_custom_field('custom.brand').value).to eq 'New Brand'
+        expect(product.has_custom_field?('custom.material')).to be false
+        expect(product.custom_fields.count).to eq 1
       end
 
-      context 'when all metafields have blank values' do
+      context 'when all custom_fields have blank values' do
         let(:row_data) do
           base_data = csv_row_hash(
             'slug' => 'denim-shirt',
@@ -742,18 +742,18 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
             'currency' => 'USD'
           )
           base_data.merge(
-            'metafield.custom.brand' => '',
-            'metafield.custom.material' => ''
+            'custom_field.custom.brand' => '',
+            'custom_field.custom.material' => ''
           )
         end
 
-        it 'removes all existing metafields' do
-          expect(existing_product.metafields.count).to eq 2
+        it 'removes all existing custom_fields' do
+          expect(existing_product.custom_fields.count).to eq 2
 
           expect(product.id).to eq existing_product.id
-          expect(product.has_metafield?('custom.brand')).to be false
-          expect(product.has_metafield?('custom.material')).to be false
-          expect(product.metafields.count).to eq 0
+          expect(product.has_custom_field?('custom.brand')).to be false
+          expect(product.has_custom_field?('custom.material')).to be false
+          expect(product.custom_fields.count).to eq 0
         end
       end
     end
@@ -761,8 +761,8 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     context 'when processing a variant row' do
       let!(:existing_product) do
         p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt')
-        p.set_metafield('custom.brand', 'Awesome Brand')
-        p.set_metafield('custom.material', 'Cotton')
+        p.set_custom_field('custom.brand', 'Awesome Brand')
+        p.set_custom_field('custom.material', 'Cotton')
         p
       end
 
@@ -776,22 +776,22 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
           'option1_value' => 'Blue',
           'option2_name' => 'Size',
           'option2_value' => 'XS',
-          'metafield.custom.brand' => '',
-          'metafield.custom.material' => ''
+          'custom_field.custom.brand' => '',
+          'custom_field.custom.material' => ''
         )
       end
 
-      it 'does not clear out existing metafield values' do
-        expect(existing_product.metafields.count).to eq 2
+      it 'does not clear out existing custom_field values' do
+        expect(existing_product.custom_fields.count).to eq 2
 
         product = variant.product
 
         expect(product.id).to eq existing_product.id
-        expect(product.has_metafield?('custom.brand')).to be true
-        expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
-        expect(product.has_metafield?('custom.material')).to be true
-        expect(product.get_metafield('custom.material').value).to eq 'Cotton'
-        expect(product.metafields.count).to eq 2
+        expect(product.has_custom_field?('custom.brand')).to be true
+        expect(product.get_custom_field('custom.brand').value).to eq 'Awesome Brand'
+        expect(product.has_custom_field?('custom.material')).to be true
+        expect(product.get_custom_field('custom.material').value).to eq 'Cotton'
+        expect(product.custom_fields.count).to eq 2
       end
     end
   end

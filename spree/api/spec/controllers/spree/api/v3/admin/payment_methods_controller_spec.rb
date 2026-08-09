@@ -31,10 +31,10 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
 
     context 'when filtering by storefront_visible' do
       let!(:storefront_visible_method) do
-        create(:check_payment_method, store: store, display_on: 'both')
+        create(:check_payment_method, store: store)
       end
       let!(:admin_only_method) do
-        create(:check_payment_method, store: store, display_on: 'back_end')
+        create(:check_payment_method, store: store, storefront_visible: false)
       end
 
       it 'returns only storefront-visible methods when q[storefront_visible_eq]=true' do
@@ -196,7 +196,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
   describe 'storefront_visible' do
     context 'GET #show' do
       it 'returns storefront_visible: false when display_on is back_end' do
-        payment_method.update!(display_on: 'back_end')
+        payment_method.update!(storefront_visible: false)
 
         get :show, params: { id: payment_method.prefixed_id }, as: :json
 
@@ -224,7 +224,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
       end
 
       it 'maps storefront_visible: true to display_on: both' do
-        payment_method.update!(display_on: 'back_end')
+        payment_method.update!(storefront_visible: false)
 
         patch :update,
               params: { id: payment_method.prefixed_id, storefront_visible: true },

@@ -183,11 +183,11 @@ RSpec.describe Spree::Import, :job, type: :model do
                                          'category1',
                                          'category2',
                                          'category3',
-                                         'metafield.properties.fit',
-                                         'metafield.properties.manufacturer',
-                                         'metafield.properties.material',
-                                         'metafield.custom.brand',
-                                         'metafield.custom.material'
+                                         'custom_field.properties.fit',
+                                         'custom_field.properties.manufacturer',
+                                         'custom_field.properties.material',
+                                         'custom_field.custom.brand',
+                                         'custom_field.custom.material'
                                        ])
     end
 
@@ -203,19 +203,19 @@ RSpec.describe Spree::Import, :job, type: :model do
   end
 
   describe '#schema_fields' do
-    context 'when model supports metafields' do
-      let!(:metafield_definition1) do
-        create(:metafield_definition,
+    context 'when model supports custom_fields' do
+      let!(:custom_field_definition1) do
+        create(:custom_field_definition,
                namespace: 'properties',
                key: 'manufacturer',
-               name: 'Manufacturer',
+               label: 'Manufacturer',
                resource_type: 'Spree::Product')
       end
-      let!(:metafield_definition2) do
-        create(:metafield_definition,
+      let!(:custom_field_definition2) do
+        create(:custom_field_definition,
                namespace: 'custom',
                key: 'brand',
-               name: 'Brand',
+               label: 'Brand',
                resource_type: 'Spree::Product')
       end
 
@@ -224,7 +224,7 @@ RSpec.describe Spree::Import, :job, type: :model do
       end
 
       it 'returns base fields from schema' do
-        base_fields = import.schema_fields.select { |f| !f[:name].start_with?('metafield.') }
+        base_fields = import.schema_fields.select { |f| !f[:name].start_with?('custom_field.') }
         expect(base_fields).to include(
           { name: 'slug', label: 'Slug', required: true },
           { name: 'sku', label: 'SKU', required: true },
@@ -232,34 +232,34 @@ RSpec.describe Spree::Import, :job, type: :model do
         )
       end
 
-      it 'includes metafield fields' do
-        metafield_fields = import.schema_fields.select { |f| f[:name].start_with?('metafield.') }
-        expect(metafield_fields).to include(
-          { name: 'metafield.properties.manufacturer', label: 'Manufacturer' },
-          { name: 'metafield.custom.brand', label: 'Brand' }
+      it 'includes custom_field fields' do
+        custom_field_fields = import.schema_fields.select { |f| f[:name].start_with?('custom_field.') }
+        expect(custom_field_fields).to include(
+          { name: 'custom_field.properties.manufacturer', label: 'Manufacturer' },
+          { name: 'custom_field.custom.brand', label: 'Brand' }
         )
       end
 
-      it 'combines base fields and metafield fields' do
+      it 'combines base fields and custom_field fields' do
         all_fields = import.schema_fields
         base_field_count = Spree::ImportSchemas::Products::FIELDS.count
-        metafield_count = 2
+        custom_field_count = 2
 
-        expect(all_fields.count).to eq(base_field_count + metafield_count)
+        expect(all_fields.count).to eq(base_field_count + custom_field_count)
       end
 
-      it 'has correct structure for metafield fields' do
-        metafield_field = import.schema_fields.find { |f| f[:name] == 'metafield.properties.manufacturer' }
-        expect(metafield_field).to eq(
-          { name: 'metafield.properties.manufacturer', label: 'Manufacturer' }
+      it 'has correct structure for custom_field fields' do
+        custom_field_field = import.schema_fields.find { |f| f[:name] == 'custom_field.properties.manufacturer' }
+        expect(custom_field_field).to eq(
+          { name: 'custom_field.properties.manufacturer', label: 'Manufacturer' }
         )
       end
     end
 
-    context 'when model does not support metafields' do
+    context 'when model does not support custom_fields' do
       before do
         import.type = 'Spree::Imports::Products'
-        # Mock model_class to return a class that doesn't include Metafields
+        # Mock model_class to return a class that doesn't include CustomFields
         allow(import).to receive(:model_class).and_return(double('ModelClass', included_modules: []))
       end
 
@@ -268,17 +268,17 @@ RSpec.describe Spree::Import, :job, type: :model do
         expect(fields).to eq(Spree::ImportSchemas::Products::FIELDS)
       end
 
-      it 'does not include any metafield fields' do
-        metafield_fields = import.schema_fields.select { |f| f[:name].start_with?('metafield.') }
-        expect(metafield_fields).to be_empty
+      it 'does not include any custom_field fields' do
+        custom_field_fields = import.schema_fields.select { |f| f[:name].start_with?('custom_field.') }
+        expect(custom_field_fields).to be_empty
       end
     end
 
-    context 'when model supports metafields but has no metafield definitions' do
+    context 'when model supports custom_fields but has no custom_field definitions' do
       before do
         import.type = 'Spree::Imports::Products'
-        # Ensure no metafield definitions exist
-        Spree::MetafieldDefinition.where(resource_type: 'Spree::Product').delete_all
+        # Ensure no custom_field definitions exist
+        Spree::CustomFieldDefinition.where(resource_type: 'Spree::Product').delete_all
       end
 
       it 'returns only base fields' do
@@ -311,7 +311,7 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
 
     it 'returns columns that are not mapped' do
-      expect(import.unmapped_file_columns).to include('vendor_name', 'brand_name', 'labels', 'metafield.properties.fit', 'metafield.properties.manufacturer', 'metafield.properties.material')
+      expect(import.unmapped_file_columns).to include('vendor_name', 'brand_name', 'labels', 'custom_field.properties.fit', 'custom_field.properties.manufacturer', 'custom_field.properties.material')
       expect(import.unmapped_file_columns).not_to include('slug')
     end
   end

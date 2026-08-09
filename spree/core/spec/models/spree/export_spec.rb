@@ -120,12 +120,12 @@ RSpec.describe Spree::Export, :job, type: :model do
     # Ransack alone has no such attribute.
     context 'with a custom field filter' do
       let!(:definition) do
-        create(:metafield_definition, :short_text_field, :searchable, namespace: 'custom', key: 'material')
+        create(:custom_field_definition, :short_text_field, :searchable, namespace: 'custom', key: 'material')
       end
       let(:target) { matching_products.first }
       let(:search_params) { { cf_custom_material_i_cont: 'wool' }.to_json }
 
-      before { target.set_metafield(definition, 'Wool-Blend') }
+      before { target.set_custom_field(definition, 'Wool-Blend') }
 
       it 'applies the custom field predicate' do
         expect(export.records_to_export).to contain_exactly(target)

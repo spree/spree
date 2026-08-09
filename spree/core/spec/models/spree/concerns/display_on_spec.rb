@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::DisplayOn do
-  # PaymentMethod and MetafieldDefinition are the remaining hosts and
+  # PaymentMethod and CustomFieldDefinition are the remaining hosts and
   # include the concern identically. DeliveryMethod moved off it in 6.0 —
   # it owns a real storefront_visible column.
   let(:payment_method) { build(:check_payment_method) }
@@ -56,8 +56,8 @@ RSpec.describe Spree::DisplayOn do
   end
 
   describe 'scopes' do
-    let!(:storefront_method) { create(:check_payment_method, display_on: 'both') }
-    let!(:admin_only_method) { create(:check_payment_method, display_on: 'back_end') }
+    let!(:storefront_method) { create(:check_payment_method) }
+    let!(:admin_only_method) { create(:check_payment_method, storefront_visible: false) }
 
     describe '.storefront_visible' do
       it 'returns methods where display_on != back_end' do

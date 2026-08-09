@@ -6,10 +6,10 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
   include_context 'API v3 Admin'
 
   let!(:product_definition) do
-    create(:metafield_definition, :short_text_field, namespace: 'specs', key: 'fabric')
+    create(:custom_field_definition, :short_text_field, namespace: 'specs', key: 'fabric')
   end
   let!(:order_definition) do
-    create(:metafield_definition, :for_order)
+    create(:custom_field_definition, :for_order)
   end
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
@@ -75,7 +75,7 @@ RSpec.describe 'Admin Custom Field Definitions API', type: :request, swagger_doc
           },
           storefront_visible: {
             type: :boolean,
-            description: 'When false, definition is admin-only (was `display_on: back_end`)'
+            description: 'When false, the definition is admin-only and never exposed in the Store API'
           },
           searchable: {
             type: :boolean,

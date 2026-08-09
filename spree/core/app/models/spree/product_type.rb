@@ -22,7 +22,7 @@ module Spree
     has_many :product_type_custom_field_definitions, -> { ordered },
              class_name: 'Spree::ProductTypeCustomFieldDefinition', dependent: :destroy, inverse_of: :product_type
     has_many :custom_field_definitions, through: :product_type_custom_field_definitions,
-             class_name: 'Spree::MetafieldDefinition'
+             class_name: 'Spree::CustomFieldDefinition'
 
     # restrict, not nullify — removing a product's type (deletion included) would
     # invalidate its type-driven data, so types in use cannot be deleted
@@ -46,7 +46,7 @@ module Spree
     # @param rows [Array<Hash>, nil]
     # @return [void]
     def custom_field_definitions=(rows)
-      return super if rows.blank? || rows.first.is_a?(Spree::MetafieldDefinition)
+      return super if rows.blank? || rows.first.is_a?(Spree::CustomFieldDefinition)
 
       @pending_custom_field_definitions = Array(rows).map { |row| row.to_h.with_indifferent_access }
     end
@@ -82,7 +82,7 @@ module Spree
       @pending_custom_field_definitions = nil
 
       resolved = rows.map do |row|
-        [Spree::MetafieldDefinition.find_by_prefix_id(row[:id]), row]
+        [Spree::CustomFieldDefinition.find_by_prefix_id(row[:id]), row]
       end
 
       # Validate the whole payload before touching anything. This runs inside

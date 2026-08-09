@@ -91,7 +91,7 @@ module Spree
 
         many :option_values, resource: proc { Spree.api.option_value_serializer }
 
-        many :public_metafields,
+        many :storefront_custom_fields,
              key: :custom_fields,
              resource: proc { Spree.api.custom_field_serializer },
              if: proc { expand?('custom_fields') }

@@ -13,9 +13,9 @@ module Spree
         @store = store
       end
 
-      # @return [MetafieldSchema]
-      def metafield_schema
-        @metafield_schema ||= MetafieldSchema.new
+      # @return [CustomFieldSchema]
+      def custom_field_schema
+        @custom_field_schema ||= CustomFieldSchema.new
       end
 
       # Search and paginate products. Does NOT compute filter facets — use #filters for that.

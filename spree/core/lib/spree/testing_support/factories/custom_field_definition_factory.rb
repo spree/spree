@@ -1,56 +1,52 @@
 FactoryBot.define do
-  factory :metafield_definition, aliases: [:custom_field_definition], class: 'Spree::MetafieldDefinition' do
+  factory :custom_field_definition, aliases: [:metafield_definition], class: 'Spree::CustomFieldDefinition' do
     namespace { 'custom' }
     sequence(:key) { |n| "custom_field_#{n}" }
-    name { 'Custom Field' }
-    metafield_type { 'Spree::Metafields::ShortText' }
+    label { 'Custom Field' }
+    field_type { 'Spree::CustomFields::ShortText' }
     resource_type { 'Spree::Product' }
-    display_on { 'both' }
+    storefront_visible { true }
     searchable { false }
     sortable { false }
 
-    trait :front_end_only do
-      display_on { 'front_end' }
-    end
-
-    trait :back_end_only do
-      display_on { 'back_end' }
+    trait :admin_only do
+      storefront_visible { false }
     end
 
     trait :short_text_field do
-      metafield_type { 'Spree::Metafields::ShortText' }
+      field_type { 'Spree::CustomFields::ShortText' }
       key { 'title' }
-      name { 'Title' }
+      label { 'Title' }
     end
 
     trait :long_text_field do
-      metafield_type { 'Spree::Metafields::LongText' }
+      field_type { 'Spree::CustomFields::LongText' }
       key { 'description' }
-      name { 'Description' }
+      label { 'Description' }
     end
 
     trait :rich_text_field do
-      metafield_type { 'Spree::Metafields::RichText' }
+      field_type { 'Spree::CustomFields::RichText' }
       key { 'content' }
-      name { 'Content' }
+      label { 'Content' }
     end
 
     trait :number_field do
-      metafield_type { 'Spree::Metafields::Number' }
+      field_type { 'Spree::CustomFields::Number' }
       key { 'priority' }
-      name { 'Priority' }
+      label { 'Priority' }
     end
 
     trait :boolean_field do
-      metafield_type { 'Spree::Metafields::Boolean' }
+      field_type { 'Spree::CustomFields::Boolean' }
       key { 'featured' }
-      name { 'Featured' }
+      label { 'Featured' }
     end
 
     trait :json_field do
-      metafield_type { 'Spree::Metafields::Json' }
+      field_type { 'Spree::CustomFields::Json' }
       key { 'metadata' }
-      name { 'Metadata' }
+      label { 'Metadata' }
     end
 
     trait :searchable do
@@ -64,19 +60,19 @@ FactoryBot.define do
     trait :for_variant do
       resource_type { 'Spree::Variant' }
       key { 'variant_custom' }
-      name { 'Variant Custom Field' }
+      label { 'Variant Custom Field' }
     end
 
     trait :for_order do
       resource_type { 'Spree::Order' }
       key { 'order_notes' }
-      name { 'Order Notes' }
+      label { 'Order Notes' }
     end
 
     trait :for_user do
       resource_type { Spree.customer_class.name }
       key { 'user_preference' }
-      name { 'User Preference' }
+      label { 'User Preference' }
     end
   end
 end

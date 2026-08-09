@@ -81,33 +81,33 @@ RSpec.describe Spree::CSV::NewsletterSubscriberPresenter do
     end
   end
 
-  describe 'metafields' do
-    let!(:metafield_definition) do
-      create(:metafield_definition,
+  describe 'custom_fields' do
+    let!(:custom_field_definition) do
+      create(:custom_field_definition,
              resource_type: 'Spree::NewsletterSubscriber',
              namespace: 'custom',
              key: 'subscription_source')
     end
-    let!(:metafield) do
-      newsletter_subscriber.metafields.create!(
-        metafield_definition: metafield_definition,
+    let!(:custom_field) do
+      newsletter_subscriber.custom_fields.create!(
+        custom_field_definition: custom_field_definition,
         value: 'Homepage Popup'
       )
     end
 
-    it 'includes metafield values at the end of the array' do
+    it 'includes custom_field values at the end of the array' do
       result = presenter.call
       expect(result.last).to eq 'Homepage Popup'
     end
 
-    context 'when subscriber has no metafield value' do
-      let(:subscriber_without_metafield) do
+    context 'when subscriber has no custom_field value' do
+      let(:subscriber_without_custom_field) do
         create(:newsletter_subscriber,
                email: 'nofield@example.com')
       end
-      let(:presenter) { described_class.new(subscriber_without_metafield) }
+      let(:presenter) { described_class.new(subscriber_without_custom_field) }
 
-      it 'returns nil for metafield' do
+      it 'returns nil for custom_field' do
         result = presenter.call
         expect(result.last).to be_nil
       end

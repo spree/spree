@@ -71,9 +71,9 @@ module Spree
               :meta_title, :meta_description, :meta_keywords,
               :image, :square_image,
               # Inline custom field values keyed by definition id. The model
-              # setter (Spree::Metafields#custom_fields=) validates each entry
+              # setter (Spree::HasCustomFields#custom_fields=) validates each entry
               # against its definition. `value` is permitted as a scalar AND as
-              # `value: []` / `value: {}` so JSON metafields round-trip whether
+              # `value: []` / `value: {}` so JSON custom_fields round-trip whether
               # the parsed payload is an array or an object, while
               # text/number/boolean ship scalars.
               custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }]

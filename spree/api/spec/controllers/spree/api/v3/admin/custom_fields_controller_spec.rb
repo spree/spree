@@ -6,14 +6,14 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
   include_context 'API v3 Admin authenticated'
 
   let(:product) { create(:product) }
-  let(:short_text_definition) { create(:metafield_definition, :short_text_field) }
-  let(:long_text_definition) { create(:metafield_definition, :long_text_field) }
+  let(:short_text_definition) { create(:custom_field_definition, :short_text_field) }
+  let(:long_text_definition) { create(:custom_field_definition, :long_text_field) }
 
   before { request.headers.merge!(headers) }
 
   describe 'GET #index' do
     let!(:custom_field) do
-      create(:metafield, resource: product, metafield_definition: short_text_definition, value: 'wool')
+      create(:custom_field, resource: product, custom_field_definition: short_text_definition, value: 'wool')
     end
 
     it 'returns the parent custom fields' do
@@ -33,8 +33,8 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
 
     it 'scopes the collection to the parent — sibling products are not returned' do
       other_product = create(:product)
-      create(:metafield, resource: other_product, metafield_definition: long_text_definition,
-                         type: 'Spree::Metafields::LongText', value: 'unrelated')
+      create(:custom_field, resource: other_product, custom_field_definition: long_text_definition,
+                         type: 'Spree::CustomFields::LongText', value: 'unrelated')
 
       get :index, params: { product_id: product.prefixed_id }, as: :json
 
@@ -55,7 +55,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
 
     it 'creates a custom field on the parent' do
       expect { post :create, params: create_params, as: :json }.
-        to change { product.metafields.count }.by(1)
+        to change { product.custom_fields.count }.by(1)
 
       expect(response).to have_http_status(:created)
       expect(json_response['value']).to eq('wool')
@@ -80,7 +80,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
 
     context 'when a custom field for the same definition already exists' do
       before do
-        create(:metafield, resource: product, metafield_definition: short_text_definition, value: 'cotton')
+        create(:custom_field, resource: product, custom_field_definition: short_text_definition, value: 'cotton')
       end
 
       it 'returns 422 (uniqueness on definition + resource)' do
@@ -101,7 +101,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
 
   describe 'PATCH #update' do
     let!(:custom_field) do
-      create(:metafield, resource: product, metafield_definition: short_text_definition, value: 'wool')
+      create(:custom_field, resource: product, custom_field_definition: short_text_definition, value: 'wool')
     end
 
     it "updates the custom field's value" do
@@ -125,13 +125,13 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
             as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(custom_field.reload.metafield_definition_id).to eq(short_text_definition.id)
+      expect(custom_field.reload.custom_field_definition_id).to eq(short_text_definition.id)
     end
 
     it 'returns 404 when the custom field does not belong to the parent' do
       sibling = create(:product)
-      foreign = create(:metafield, resource: sibling, metafield_definition: long_text_definition,
-                                   type: 'Spree::Metafields::LongText', value: 'foreign')
+      foreign = create(:custom_field, resource: sibling, custom_field_definition: long_text_definition,
+                                   type: 'Spree::CustomFields::LongText', value: 'foreign')
 
       patch :update,
             params: { product_id: product.prefixed_id, id: foreign.prefixed_id, value: 'x' },
@@ -143,7 +143,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
 
   describe 'DELETE #destroy' do
     let!(:custom_field) do
-      create(:metafield, resource: product, metafield_definition: short_text_definition, value: 'wool')
+      create(:custom_field, resource: product, custom_field_definition: short_text_definition, value: 'wool')
     end
 
     it 'destroys the custom field' do
@@ -155,8 +155,8 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
 
     it 'does not destroy a custom field that belongs to a sibling parent' do
       sibling = create(:product)
-      foreign = create(:metafield, resource: sibling, metafield_definition: long_text_definition,
-                                   type: 'Spree::Metafields::LongText', value: 'foreign')
+      foreign = create(:custom_field, resource: sibling, custom_field_definition: long_text_definition,
+                                   type: 'Spree::CustomFields::LongText', value: 'foreign')
 
       delete :destroy, params: { product_id: product.prefixed_id, id: foreign.prefixed_id }, as: :json
 
@@ -169,7 +169,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
     let(:other_store) { create(:store) }
     let(:other_product) { create(:product, store: other_store) }
     let!(:foreign_field) do
-      create(:metafield, resource: other_product, metafield_definition: short_text_definition, value: 'secret')
+      create(:custom_field, resource: other_product, custom_field_definition: short_text_definition, value: 'secret')
     end
 
     it 'does not list custom fields of another store\'s product' do
@@ -187,7 +187,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
                value: 'injected'
              },
              as: :json
-      }.not_to change { other_product.metafields.count }
+      }.not_to change { other_product.custom_fields.count }
 
       expect(response).to have_http_status(:not_found)
     end
@@ -227,7 +227,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
       let(:granted_scope) { 'read_products' }
 
       it 'allows reading' do
-        create(:metafield, resource: product, metafield_definition: short_text_definition, value: 'wool')
+        create(:custom_field, resource: product, custom_field_definition: short_text_definition, value: 'wool')
 
         get :index, params: { product_id: product.prefixed_id }, as: :json
 
@@ -271,7 +271,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
       let(:granted_scope) { 'write_products' }
       let(:variant) { create(:variant) }
       let(:variant_definition) do
-        create(:metafield_definition, :short_text_field, resource_type: 'Spree::Variant')
+        create(:custom_field_definition, :short_text_field, resource_type: 'Spree::Variant')
       end
 
       it 'allows creating a variant custom field with write_products' do
@@ -294,7 +294,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
       let(:granted_scope) { 'write_categories' }
       let(:category) { create(:category) }
       let(:category_definition) do
-        create(:metafield_definition, :short_text_field, resource_type: 'Spree::Category')
+        create(:custom_field_definition, :short_text_field, resource_type: 'Spree::Category')
       end
 
       it 'resolves the parent and gates by the categories scope' do

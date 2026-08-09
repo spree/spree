@@ -3,7 +3,7 @@ module Spree
     has_prefix_id :optval  # Spree-specific: option value
 
     include Spree::ParameterizableName
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     # presentation column, exposed publicly as `label` + translated via Mobility.
     include Spree::PresentationTranslatable

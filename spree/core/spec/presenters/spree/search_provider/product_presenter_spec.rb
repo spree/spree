@@ -242,27 +242,27 @@ module Spree
         end
       end
 
-      context 'with searchable / sortable metafields' do
+      context 'with searchable / sortable custom_fields' do
         let!(:searchable_def) do
-          create(:metafield_definition, :short_text_field, :searchable,
-                 namespace: 'custom', key: 'pinyin_name', name: 'Pinyin')
+          create(:custom_field_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'pinyin_name', label: 'Pinyin')
         end
         let!(:sortable_def) do
-          create(:metafield_definition, :number_field, :sortable,
-                 namespace: 'custom', key: 'priority', name: 'Priority')
+          create(:custom_field_definition, :number_field, :sortable,
+                 namespace: 'custom', key: 'priority', label: 'Priority')
         end
         let!(:ignored_def) do
-          create(:metafield_definition, :short_text_field,
-                 namespace: 'custom', key: 'internal_note', name: 'Note')
+          create(:custom_field_definition, :short_text_field,
+                 namespace: 'custom', key: 'internal_note', label: 'Note')
         end
 
         before do
-          product.set_metafield(searchable_def, 'mao-tai')
-          product.set_metafield(sortable_def, '10')
-          product.set_metafield(ignored_def, 'secret')
+          product.set_custom_field(searchable_def, 'mao-tai')
+          product.set_custom_field(sortable_def, '10')
+          product.set_custom_field(ignored_def, 'secret')
         end
 
-        it 'indexes searchable and sortable metafield values as cf_* attributes' do
+        it 'indexes searchable and sortable custom_field values as cf_* attributes' do
           doc = documents.first
           expect(doc['cf_custom_pinyin_name']).to eq('mao-tai')
           expect(doc['cf_custom_priority']).to eq(10.0)
@@ -283,25 +283,25 @@ module Spree
           end
         end
 
-        it 'casts number metafield values to Float' do
-          decimal_def = create(:metafield_definition, :number_field, :sortable,
-                               namespace: 'custom', key: 'rating', name: 'Rating')
-          product.set_metafield(decimal_def, '42.5')
+        it 'casts number custom_field values to Float' do
+          decimal_def = create(:custom_field_definition, :number_field, :sortable,
+                               namespace: 'custom', key: 'rating', label: 'Rating')
+          product.set_custom_field(decimal_def, '42.5')
 
           doc = described_class.new(product.reload, store).call.first
           expect(doc['cf_custom_rating']).to eq(42.5)
         end
 
         it 'omits registered keys when the product has no value' do
-          create(:metafield_definition, :short_text_field, :searchable,
-                 namespace: 'custom', key: 'origin', name: 'Origin')
+          create(:custom_field_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'origin', label: 'Origin')
 
           doc = described_class.new(product.reload, store).call.first
           expect(doc).not_to have_key('cf_custom_origin')
         end
 
         it 'includes no cf_* attributes when no definitions are searchable or sortable' do
-          Spree::MetafieldDefinition.destroy_all
+          Spree::CustomFieldDefinition.destroy_all
 
           doc = described_class.new(product.reload, store).call.first
           expect(doc.keys.grep(/\Acf_/)).to be_empty

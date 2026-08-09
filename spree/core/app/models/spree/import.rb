@@ -256,20 +256,20 @@ module Spree
     end
 
     # Returns the fields for the import schema
-    # If model supports metafields, it will include the metafield definitions for this model
+    # If model supports custom_fields, it will include the custom_field definitions for this model
     # @return [Array<Hash>]
     def schema_fields
       base_fields = import_schema.fields
 
-      # Dynamically add metafield definitions if the model supports metafields
-      if model_class_supports_metafields?
-        metafield_fields = metafield_definitions_for_model.map do |definition|
+      # Dynamically add custom_field definitions if the model supports custom_fields
+      if model_class_supports_custom_fields?
+        custom_field_fields = custom_field_definitions_for_model.map do |definition|
           {
             name: definition.csv_header_name,
-            label: definition.name
+            label: definition.label
           }
         end
-        base_fields + metafield_fields
+        base_fields + custom_field_fields
       else
         base_fields
       end
@@ -385,7 +385,7 @@ module Spree
 
     # Per-instance cache shared by row processors within a single processing job.
     # Group jobs funnel every row through the same Import instance, so lookups of
-    # shared records (tax/shipping categories, option types, metafield definitions)
+    # shared records (tax/shipping categories, option types, custom_field definitions)
     # resolve once per job instead of once per row.
     # @return [Hash]
     def row_lookup_cache
@@ -486,16 +486,16 @@ module Spree
       errors.add(:attachment, :content_type) unless attachment.content_type.in?(%w[text/csv])
     end
 
-    def model_class_supports_metafields?
+    def model_class_supports_custom_fields?
       return false unless model_class.present?
 
-      model_class.included_modules.include?(Spree::Metafields)
+      model_class.included_modules.include?(Spree::HasCustomFields)
     end
 
-    def metafield_definitions_for_model
+    def custom_field_definitions_for_model
       return [] unless model_class.present?
 
-      Spree::MetafieldDefinition.for_resource_type(model_class.name)
+      Spree::CustomFieldDefinition.for_resource_type(model_class.name)
     end
   end
 end

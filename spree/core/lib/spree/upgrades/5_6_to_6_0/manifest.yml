@@ -62,7 +62,7 @@ steps:
       taxonomy roots left childless, and nulls taxonomy_id on the survivors
       (categories are store-owned in 6.0). Finally backfills the renamed
       class-name strings ('Spree::Taxon*' -> 'Spree::Category*') across the
-      metafield, attachment, ActionText, friendly_id slug and promotion-rule
+      custom-field, attachment, ActionText, friendly_id slug and promotion-rule
       columns.
 
       Idempotent. Multi-tenant installs run the per-tenant override shipped by

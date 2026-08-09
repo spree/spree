@@ -1,7 +1,7 @@
 module Spree
   module CSV
     class NewsletterSubscriberPresenter
-      include Spree::CSV::MetafieldsHelper
+      include Spree::CSV::CustomFieldsHelper
 
       HEADERS = [
         'Email',
@@ -30,7 +30,7 @@ module Spree
           newsletter_subscriber.updated_at
         ]
 
-        csv += metafields_for_csv(newsletter_subscriber)
+        csv += custom_fields_for_csv(newsletter_subscriber)
 
         csv
       end

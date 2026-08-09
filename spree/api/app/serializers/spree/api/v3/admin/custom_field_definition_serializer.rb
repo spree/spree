@@ -8,7 +8,7 @@ module Spree
           typelize namespace: :string,
                    key: :string,
                    label: :string,
-                   field_type: Spree::Metafield::FIELD_TYPE_TOKENS,
+                   field_type: Spree::CustomField::FIELD_TYPE_TOKENS,
                    resource_type: :string,
                    storefront_visible: :boolean,
                    searchable: :boolean,

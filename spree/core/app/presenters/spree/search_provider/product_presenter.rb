@@ -84,21 +84,21 @@ module Spree
           available_on: product.available_on&.iso8601,
           created_at: product.created_at&.iso8601,
           updated_at: product.updated_at&.iso8601
-        }.merge(metafield_document_attributes)
+        }.merge(custom_field_document_attributes)
       end
 
-      # Flat cf_* hash for searchable ∪ sortable metafields (Meilisearch docs).
-      def metafield_document_attributes
-        @metafield_document_attributes ||= product.metafields.filter_map do |metafield|
-          definition = metafield.metafield_definition
+      # Flat cf_* hash for searchable ∪ sortable custom_fields (Meilisearch docs).
+      def custom_field_document_attributes
+        @custom_field_document_attributes ||= product.custom_fields.filter_map do |custom_field|
+          definition = custom_field.custom_field_definition
           next unless definition&.searchable? || definition&.sortable?
 
-          [definition.filter_key, metafield_index_value(metafield, definition.field_type)]
+          [definition.filter_key, custom_field_index_value(custom_field, definition.field_type)]
         end.to_h
       end
 
-      def metafield_index_value(metafield, field_type)
-        serialized = metafield.serialize_value
+      def custom_field_index_value(custom_field, field_type)
+        serialized = custom_field.serialize_value
         case field_type
         when 'number'
           serialized.to_f

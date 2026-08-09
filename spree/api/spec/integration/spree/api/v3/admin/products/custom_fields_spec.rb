@@ -6,9 +6,9 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
   include_context 'API v3 Admin'
 
   let!(:product) { create(:product) }
-  let!(:definition) { create(:metafield_definition, :short_text_field) }
+  let!(:definition) { create(:custom_field_definition, :short_text_field) }
   let!(:custom_field) do
-    create(:metafield, resource: product, metafield_definition: definition, value: 'wool')
+    create(:custom_field, resource: product, custom_field_definition: definition, value: 'wool')
   end
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
@@ -69,7 +69,7 @@ RSpec.describe 'Admin Product Custom Fields API', type: :request, swagger_doc: '
 
       response '201', 'custom field created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:other_definition) { create(:metafield_definition, :long_text_field) }
+        let(:other_definition) { create(:custom_field_definition, :long_text_field) }
         let(:body) do
           {
             custom_field_definition_id: other_definition.prefixed_id,

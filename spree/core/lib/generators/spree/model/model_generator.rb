@@ -20,10 +20,10 @@ module Spree
                  default: false,
                  desc: 'Enable acts_as_paranoid soft-delete (adds deleted_at column + index)'
 
-    class_option :metafields,
+    class_option :custom_fields,
                  type: :boolean,
                  default: false,
-                 desc: 'Include Spree::Metafields and Spree::Metadata concerns'
+                 desc: 'Include Spree::HasCustomFields and Spree::Metadata concerns'
 
     desc 'Creates a new Spree model with prefixed IDs and Spree.base_class parent'
 
@@ -40,8 +40,8 @@ module Spree
         options[:paranoid]
       end
 
-      def metafields?
-        options[:metafields]
+      def custom_fields?
+        options[:custom_fields]
       end
 
       def class_path

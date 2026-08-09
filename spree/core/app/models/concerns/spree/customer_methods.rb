@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     include Spree::PrefixedId
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::UserAddress
     include Spree::UserPaymentSource
     include Spree::UserReporting

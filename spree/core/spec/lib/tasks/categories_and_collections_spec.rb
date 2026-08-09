@@ -80,8 +80,8 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
   end
 
   describe 'backfilling renamed class-name strings' do
-    let!(:metafield) do
-      create(:metafield).tap { |m| m.update_column(:resource_type, 'Spree::Taxon') }
+    let!(:custom_field) do
+      create(:custom_field).tap { |m| m.update_column(:resource_type, 'Spree::Taxon') }
     end
     let!(:promotion_rule) do
       create(:promotion_rule_taxon).tap { |r| r.update_column(:type, 'Spree::Promotion::Rules::Taxon') }
@@ -90,7 +90,7 @@ describe 'spree:migrate_taxons_to_categories_and_collections' do
     it 'rewrites Spree::Taxon* strings to Spree::Category*' do
       subject.invoke
 
-      expect(metafield.reload.resource_type).to eq('Spree::Category')
+      expect(custom_field.reload.resource_type).to eq('Spree::Category')
       expect(Spree::PromotionRule.where(id: promotion_rule.id).pick(:type)).to eq('Spree::Promotion::Rules::Category')
     end
   end

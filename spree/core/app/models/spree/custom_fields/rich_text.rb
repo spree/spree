@@ -1,7 +1,7 @@
 module Spree
-  module Metafields
-    class RichText < Spree::Metafield
-      # Avoid collision with the `value` column used by other metafield types
+  module CustomFields
+    class RichText < Spree::CustomField
+      # Avoid collision with the `value` column used by other custom_field types
       self.ignored_columns = %w[value]
 
       has_rich_text :value

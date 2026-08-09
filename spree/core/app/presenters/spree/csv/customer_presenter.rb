@@ -1,7 +1,7 @@
 module Spree
   module CSV
     class CustomerPresenter
-      include Spree::CSV::MetafieldsHelper
+      include Spree::CSV::CustomFieldsHelper
 
       HEADERS = [
         'First Name',
@@ -50,7 +50,7 @@ module Spree
           customer.tag_list
         ]
 
-        csv += metafields_for_csv(customer)
+        csv += custom_fields_for_csv(customer)
 
         csv
       end

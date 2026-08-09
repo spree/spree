@@ -506,9 +506,9 @@ module Spree
       end
     end
 
-    describe 'metafield searchable / sortable settings' do
+    describe 'custom_field searchable / sortable settings' do
       let!(:definition) do
-        create(:metafield_definition, :short_text_field, :searchable, :sortable,
+        create(:custom_field_definition, :short_text_field, :searchable, :sortable,
                namespace: 'custom', key: 'label')
       end
 
@@ -528,17 +528,17 @@ module Spree
       end
     end
 
-    describe 'metafield filter conditions' do
+    describe 'custom_field filter conditions' do
       let!(:label) do
-        create(:metafield_definition, :short_text_field, :searchable,
+        create(:custom_field_definition, :short_text_field, :searchable,
                namespace: 'custom', key: 'label')
       end
       let!(:weight) do
-        create(:metafield_definition, :number_field, :sortable,
+        create(:custom_field_definition, :number_field, :sortable,
                namespace: 'custom', key: 'weight')
       end
 
-      it 'builds equality conditions for text metafields' do
+      it 'builds equality conditions for text custom_fields' do
         expect(provider.send(:build_filter_condition, 'cf_custom_label_eq', 'wool')).to eq("cf_custom_label = 'wool'")
         expect(provider.send(:build_filter_condition, 'cf_custom_label_not_eq', 'wool')).to eq("cf_custom_label != 'wool'")
       end
@@ -547,7 +547,7 @@ module Spree
         expect(provider.send(:build_filter_condition, 'cf_custom_label_eq', "o'brien\\x")).to eq("cf_custom_label = 'o\\'brien\\\\x'")
       end
 
-      it 'builds range conditions for number metafields' do
+      it 'builds range conditions for number custom_fields' do
         expect(provider.send(:build_filter_condition, 'cf_custom_weight_gteq', '3.5')).to eq('cf_custom_weight >= 3.5')
         expect(provider.send(:build_filter_condition, 'cf_custom_weight_lt', '10')).to eq('cf_custom_weight < 10.0')
       end
@@ -569,7 +569,7 @@ module Spree
         expect(provider.send(:build_filter_condition, 'cf_bogus_field_eq', 'x')).to be_nil
       end
 
-      it 'passes metafield conditions through to the Meilisearch query' do
+      it 'passes custom_field conditions through to the Meilisearch query' do
         ms_response = { 'hits' => [], 'estimatedTotalHits' => 0, 'facetDistribution' => {} }
         expect(mock_index).to receive(:search).with(anything, hash_including(
           filter: include('cf_custom_weight >= 3.5')

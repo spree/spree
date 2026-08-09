@@ -434,8 +434,13 @@ module Spree
     Rails.application.config.spree.translatable_resources = value
   end
 
+  def self.custom_fields
+    Rails.application.config.spree.custom_fields
+  end
+
   def self.metafields
-    Rails.application.config.spree.metafields
+    Spree::Deprecation.warn('Spree.metafields is deprecated and will be removed in Spree 6.1. Use Spree.custom_fields instead.') if defined?(Spree::Deprecation)
+    custom_fields
   end
 
   def self.integrations

@@ -310,6 +310,18 @@ These were deprecated in 5.x and are **gone now** — there is no bridge, so cal
 | `Product.add_search_scope` | plain `scope :name, -> { ... }` |
 | `Spree::Image::Configuration::ActiveStorage` | deleted — an empty no-op module; all logic lives in `Spree::Asset` |
 | `Spree::OrderRouting::Strategy::Legacy` | `Spree::OrderRouting::Strategy::Rules` (see below) |
+| `private_metafields` association | read `custom_fields` and filter, or query `Spree::CustomField.admin_only` |
+
+### Custom fields replace metafields
+
+The metafields system is now custom fields: `Spree::CustomField` and `Spree::CustomFieldDefinition`, stored in `spree_custom_fields` and `spree_custom_field_definitions`. The legacy class names, the concern, and the reader methods all keep working for one release with a deprecation warning (see the table further down), so most applications need no code change to upgrade.
+
+Two things do change under you, both handled by `db:migrate`:
+
+- **Visibility is a boolean.** The tri-state `display_on` column collapses into `storefront_visible`. Definitions that were `back_end` become `storefront_visible: false`; everything else becomes `true`. The `front_end`-only value never meant hidden-from-staff and folds into `true`.
+- **Two columns are renamed.** `name` becomes `label`, and `metafield_type` becomes `field_type`. Reading `field_type` returns the API token (`short_text`) rather than the Ruby class name; use `field_type_class_name` when you need the class.
+
+**BREAKING — product CSV.** Custom-field columns are now prefixed `custom_field.` instead of `metafield.` (for example `custom_field.custom.material`). Exports emit the new prefix and imports only recognise the new prefix, so update any saved import templates and any integration that reads the export. A file still using the old prefix imports without its custom-field values rather than failing.
 
 ### The Legacy order-routing strategy is gone
 
@@ -387,6 +399,13 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `order.completed` event | `order.placed` |
 | Calling cart services with `order:` kwargs | `cart:` kwargs |
 | `OrderWalkthrough` (testing support) | factories: `:cart_ready_for_delivery`, `:cart_ready_to_complete`, `:completed_order_with_totals` |
+| `Spree::Metafield`, `Spree::MetafieldDefinition`, `Spree::Metafields::*` | `Spree::CustomField`, `Spree::CustomFieldDefinition`, `Spree::CustomFields::*` |
+| `include Spree::Metafields` | `include Spree::HasCustomFields` |
+| `#set_metafield`, `#get_metafield`, `#has_metafield?` | `#set_custom_field`, `#get_custom_field`, `#has_custom_field?` |
+| `metafields` / `public_metafields` associations | `custom_fields` / `storefront_custom_fields` |
+| `.with_metafield_key`, `.with_metafield_key_value` | `.with_custom_field_key`, `.with_custom_field_key_value` |
+| `Spree.metafields` | `Spree.custom_fields` |
+| `CustomFieldDefinition#name`, `#metafield_type`, `#display_on` | `#label`, `#field_type`, `#storefront_visible` (columns renamed) |
 
 ## Staff permissions: roles are data
 

@@ -4,7 +4,7 @@ module Spree
 
     require 'validates_zipcode'
 
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
 
     serialize :preferences, type: Hash, coder: YAML, default: {}
@@ -41,7 +41,7 @@ module Spree
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
-    # we need a safe operator here as Address is added to metafield_enabled_resources in Engine
+    # we need a safe operator here as Address is added to custom_field_enabled_resources in Engine
     belongs_to :customer, class_name: Spree.customer_class&.name, optional: true, touch: true
     include Spree::DeprecatedCustomerAlias
 

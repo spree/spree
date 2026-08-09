@@ -20,9 +20,6 @@ module Spree
             Spree.api.admin_custom_field_definition_serializer
           end
 
-          # `label`, `field_type`, `storefront_visible` are model-side aliases
-          # (alias_attribute / accessors) on Spree::CustomFieldDefinition. The
-          # API → DB column rename lands in 6.0 and this controller stays flat.
           def permitted_params
             params.permit(:namespace, :key, :label, :field_type,
                           :resource_type, :storefront_visible,

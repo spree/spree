@@ -159,21 +159,21 @@ RSpec.describe Spree::ImportMapping, type: :model do
       end
     end
 
-    context 'when schema_field is a metafield' do
-      let!(:metafield_definition) do
-        create(:metafield_definition,
+    context 'when schema_field is a custom_field' do
+      let!(:custom_field_definition) do
+        create(:custom_field_definition,
                namespace: 'properties',
                key: 'manufacturer',
-               name: 'Manufacturer',
+               label: 'Manufacturer',
                resource_type: 'Spree::Product')
       end
       let(:mapping) do
         create(:import_mapping,
                import: import,
-               schema_field: 'metafield.properties.manufacturer')
+               schema_field: 'custom_field.properties.manufacturer')
       end
 
-      it 'returns the metafield definition name' do
+      it 'returns the custom_field definition name' do
         expect(mapping.schema_field_label).to eq('Manufacturer')
       end
     end

@@ -255,33 +255,33 @@ module Spree
         end
       end
 
-      context 'with searchable metafields' do
+      context 'with searchable custom_fields' do
         let!(:definition) do
-          create(:metafield_definition, :short_text_field, :searchable,
+          create(:custom_field_definition, :short_text_field, :searchable,
                  namespace: 'custom', key: 'label')
         end
 
         before do
-          product_2.set_metafield(definition, 'wool-blend')
+          product_2.set_custom_field(definition, 'wool-blend')
         end
 
-        it 'finds products by searchable metafield value' do
+        it 'finds products by searchable custom_field value' do
           result = provider.search_and_filter(scope: scope, query: 'wool')
           expect(result.products).to include(product_2)
           expect(result.products).not_to include(product_1, product_3)
         end
       end
 
-      context 'with sortable metafields' do
+      context 'with sortable custom_fields' do
         let!(:definition) do
-          create(:metafield_definition, :short_text_field, :sortable,
+          create(:custom_field_definition, :short_text_field, :sortable,
                  namespace: 'custom', key: 'label')
         end
 
         before do
-          product_1.set_metafield(definition, 'charlie')
-          product_2.set_metafield(definition, 'alpha')
-          product_3.set_metafield(definition, 'bravo')
+          product_1.set_custom_field(definition, 'charlie')
+          product_2.set_custom_field(definition, 'alpha')
+          product_3.set_custom_field(definition, 'bravo')
         end
 
         it 'sorts ascending by cf_* attribute' do
@@ -303,9 +303,9 @@ module Spree
           expect(result.products.map(&:id)).to eq([product_3.id, product_1.id])
         end
 
-        context 'with missing metafield values' do
+        context 'with missing custom_field values' do
           before do
-            product_2.metafields.destroy_all
+            product_2.custom_fields.destroy_all
           end
 
           it 'keeps missing values last when sorting ascending' do
@@ -320,22 +320,22 @@ module Spree
         end
       end
 
-      context 'with metafield filters' do
+      context 'with custom_field filters' do
         let!(:material) do
-          create(:metafield_definition, :short_text_field, :searchable,
+          create(:custom_field_definition, :short_text_field, :searchable,
                  namespace: 'custom', key: 'material')
         end
         let!(:weight) do
-          create(:metafield_definition, :number_field, :sortable,
+          create(:custom_field_definition, :number_field, :sortable,
                  namespace: 'custom', key: 'weight')
         end
 
         before do
-          product_1.set_metafield(material, 'wool-blend')
-          product_2.set_metafield(material, 'cotton')
-          product_1.set_metafield(weight, '10')
-          product_2.set_metafield(weight, '2')
-          product_3.set_metafield(weight, '3.5')
+          product_1.set_custom_field(material, 'wool-blend')
+          product_2.set_custom_field(material, 'cotton')
+          product_1.set_custom_field(weight, '10')
+          product_2.set_custom_field(weight, '2')
+          product_3.set_custom_field(weight, '3.5')
         end
 
         it 'filters text values with cont' do
@@ -383,7 +383,7 @@ module Spree
           expect(result.products).to contain_exactly(product_3)
         end
 
-        it 'combines metafield and ransack filters' do
+        it 'combines custom_field and ransack filters' do
           result = provider.search_and_filter(
             scope: scope,
             filters: { 'name_cont' => 'Blue', 'cf_custom_weight_gteq' => '5' }
@@ -391,7 +391,7 @@ module Spree
           expect(result.products).to contain_exactly(product_1)
         end
 
-        it 'combines metafield filters with metafield sort' do
+        it 'combines custom_field filters with custom_field sort' do
           result = provider.search_and_filter(
             scope: scope,
             filters: { 'cf_custom_weight_gteq' => '3' },
@@ -421,16 +421,16 @@ module Spree
         end
       end
 
-      context 'with sortable number metafields' do
+      context 'with sortable number custom_fields' do
         let!(:definition) do
-          create(:metafield_definition, :number_field, :sortable,
+          create(:custom_field_definition, :number_field, :sortable,
                  namespace: 'custom', key: 'weight')
         end
 
         before do
-          product_1.set_metafield(definition, '10')
-          product_2.set_metafield(definition, '2')
-          product_3.set_metafield(definition, '3')
+          product_1.set_custom_field(definition, '10')
+          product_2.set_custom_field(definition, '2')
+          product_3.set_custom_field(definition, '3')
         end
 
         it 'sorts ascending numerically rather than lexicographically' do
@@ -460,18 +460,18 @@ module Spree
         expect(ids).to include('price', '-price', 'best_selling')
       end
 
-      context 'with sortable metafield definitions' do
+      context 'with sortable custom_field definitions' do
         let!(:definition) do
-          create(:metafield_definition, :short_text_field, :sortable,
-                 namespace: 'custom', key: 'label', name: 'Material')
+          create(:custom_field_definition, :short_text_field, :sortable,
+                 namespace: 'custom', key: 'label', label: 'Material')
         end
 
-        it 'includes metafield sort options' do
+        it 'includes custom_field sort options' do
           ids = result.sort_options.map { |o| o[:id] }
           expect(ids).to include('cf_custom_label', '-cf_custom_label')
         end
 
-        it 'includes human-readable labels for metafield sort options' do
+        it 'includes human-readable labels for custom_field sort options' do
           by_id = result.sort_options.index_by { |o| o[:id] }
           expect(by_id['cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_a_to_z)})")
           expect(by_id['-cf_custom_label'][:label]).to eq("Material (#{Spree.t(:sort_z_to_a)})")

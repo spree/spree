@@ -12,10 +12,10 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
 
   shared_examples 'parent-from-route inference' do |parent_factory:, definition_trait:, param_key:|
     let!(:parent) { create(parent_factory) }
-    let!(:definition) { create(:metafield_definition, definition_trait) }
+    let!(:definition) { create(:custom_field_definition, definition_trait) }
     let!(:custom_field) do
-      create(:metafield, resource: parent, metafield_definition: definition,
-                         type: definition.metafield_type,
+      create(:custom_field, resource: parent, custom_field_definition: definition,
+                         type: definition.field_type_class_name,
                          value: 'value-for-parent')
     end
 
@@ -55,18 +55,18 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldsController, type: :controller 
   # route must still resolve in that case.
   describe 'when enabled_resources does not contain Spree.customer_class' do
     let!(:parent) { create(:user) }
-    let!(:definition) { create(:metafield_definition, :for_user) }
+    let!(:definition) { create(:custom_field_definition, :for_user) }
     let!(:custom_field) do
-      create(:metafield, resource: parent, metafield_definition: definition,
-                         type: definition.metafield_type, value: 'value-for-parent')
+      create(:custom_field, resource: parent, custom_field_definition: definition,
+                         type: definition.field_type_class_name, value: 'value-for-parent')
     end
 
     before do
-      @original_resources = Rails.application.config.spree.metafields.enabled_resources
-      Rails.application.config.spree.metafields.enabled_resources = @original_resources - [Spree.customer_class]
+      @original_resources = Rails.application.config.spree.custom_fields.enabled_resources
+      Rails.application.config.spree.custom_fields.enabled_resources = @original_resources - [Spree.customer_class]
     end
 
-    after { Rails.application.config.spree.metafields.enabled_resources = @original_resources }
+    after { Rails.application.config.spree.custom_fields.enabled_resources = @original_resources }
 
     it 'returns the customer\'s custom fields' do
       get :index, params: { customer_id: parent.prefixed_id }, as: :json

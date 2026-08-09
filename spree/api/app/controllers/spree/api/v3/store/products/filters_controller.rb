@@ -46,7 +46,7 @@ module Spree
                 search_filters&.sort_by(&:first)&.to_json,
                 max_updated,
                 product_count,
-                search_provider.metafield_schema.schema_version
+                search_provider.custom_field_schema.schema_version
               ]
 
               parts.compact.join('/')

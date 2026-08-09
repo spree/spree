@@ -337,7 +337,7 @@ function ProductsPage() {
   // Searchable/sortable custom fields become full table columns: displayable
   // (opt-in via the column selector), sortable when the definition allows it,
   // and filterable with the operator set matching the field type.
-  const metafieldColumns = useMemo<ColumnDef<Product>[]>(() => {
+  const customFieldColumns = useMemo<ColumnDef<Product>[]>(() => {
     const definitions = definitionsResponse?.data ?? []
     return definitions
       .filter(
@@ -370,7 +370,7 @@ function ProductsPage() {
         searchParams={searchParams}
         bulkActions={bulkActions}
         rowActions={renderRowActions}
-        metafieldColumns={metafieldColumns}
+        customFieldColumns={customFieldColumns}
         actions={(ctx) => (
           <>
             <ImportButton

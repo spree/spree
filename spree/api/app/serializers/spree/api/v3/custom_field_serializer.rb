@@ -6,8 +6,8 @@ module Spree
       class CustomFieldSerializer < BaseSerializer
         typelize key: :string,
                  label: :string,
-                 type: [:string, deprecated: 'Use `field_type` instead. The legacy `type` field returns the Ruby STI class name (e.g. `Spree::Metafields::ShortText`) and will be removed in a future minor.'],
-                 field_type: Spree::Metafield::FIELD_TYPE_TOKENS,
+                 type: [:string, deprecated: 'Use `field_type` instead. The legacy `type` field returns the Ruby STI class name (e.g. `Spree::CustomFields::ShortText`) and will be removed in a future minor.'],
+                 field_type: Spree::CustomField::FIELD_TYPE_TOKENS,
                  value: :any
 
         attributes :label, :type, :field_type

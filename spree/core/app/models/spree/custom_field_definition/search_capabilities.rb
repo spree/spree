@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Spree
-  class MetafieldDefinition
+  class CustomFieldDefinition
     module SearchCapabilities
       extend ActiveSupport::Concern
 
@@ -29,13 +29,13 @@ module Spree
 
         private
 
-        # Builds API tokens from {Spree::MetafieldDefinition.available_types}
-        # (`Spree.metafields.types` — in-memory registry, not a DB query).
+        # Builds API tokens from {Spree::CustomFieldDefinition.available_types}
+        # (`Spree.custom_fields.types` — in-memory registry, not a DB query).
         def build_field_type_tokens(&block)
           available_types.filter_map do |klass|
             next unless block.call(klass)
 
-            Spree::Metafield::TYPE_CLASS_TO_TOKEN[klass.to_s] || klass.to_s
+            Spree::CustomField::TYPE_CLASS_TO_TOKEN[klass.to_s] || klass.to_s
           end
         end
       end
@@ -73,14 +73,14 @@ module Spree
         errors.add(:key, :taken) if scope.exists?
       end
 
-      def metafield_type_class
-        metafield_type.presence&.safe_constantize
+      def field_type_class
+        field_type_class_name.presence&.safe_constantize
       end
 
       def search_sort_capabilities_compatible_with_type
         return unless searchable? || sortable?
 
-        klass = metafield_type_class
+        klass = field_type_class
         return if klass.nil?
 
         %i[searchable sortable].each do |capability|
