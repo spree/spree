@@ -4,10 +4,15 @@ namespace :spree do
     in Spree 6.0 — category and collection descriptions, policy bodies, and the
     order and customer internal notes.
 
-    Run through +spree:upgrade+. It must run AFTER
-    spree:migrate_taxons_to_categories_and_collections, which retypes the
-    Action Text rows from Spree::Taxon to Spree::Category so they can still be
-    found here.
+    Run through +spree:upgrade+. Two steps must come first:
+
+    - spree:migrate_taxons_to_categories_and_collections, which retypes the
+      Action Text rows from Spree::Taxon to Spree::Category so they stay
+      findable here.
+    - spree:upgrade:migrate_users_to_customers, which populates spree_customers.
+      A note is copied onto the customer row it belongs to, so running before
+      those rows exist would count every legacy customer note as orphaned and
+      skip it permanently.
 
     Only copies where an Action Text row exists, so a description already living
     in the column is never overwritten with a blank. Per-locale rows land in the
@@ -29,9 +34,9 @@ namespace :spree do
     # +translation_class+ is nil for models whose field isn't translated.
     #
     # +record_types+ lists the class names to match in action_text_rich_texts.
-    # migrate_users_to_customers retypes those rows, but customers match the
-    # legacy name too so this step is safe to run before it — or on an install
-    # that ran an earlier build of that task, which did not retype them.
+    # migrate_users_to_customers retypes those rows; matching the legacy name as
+    # well covers an install that ran an earlier build of that task, before it
+    # retyped them. It does NOT make this step safe to run first — see above.
     targets = [
       { model: Spree::Category, translation_class: Spree::Category::Translation, name: 'description', column: :description },
       { model: Spree::Collection, translation_class: Spree::Collection::Translation, name: 'description', column: :description },

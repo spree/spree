@@ -68,25 +68,6 @@ steps:
       Idempotent. Multi-tenant installs run the per-tenant override shipped by
       spree_multi_tenant.
 
-  - id: migrate_rich_text_to_columns
-    name: "Move rich text out of Action Text into its own columns"
-    task: "spree:migrate_rich_text_to_columns"
-    notes: |
-      Copies category and collection descriptions, policy bodies, and the order
-      and customer internal notes out of action_text_rich_texts into the text
-      columns that own them in 6.0. Content is sanitized on the way in and
-      per-locale rows land in the model's translation table.
-
-      Run AFTER migrate_taxons_to_categories_and_collections, which retypes the
-      Action Text rows from 'Spree::Taxon' to 'Spree::Category' so this step can
-      still find them. Order against migrate_users_to_customers does not matter:
-      that step retypes customer notes, and this one matches the legacy class
-      name as well, so either order finds them.
-
-      Only copies where an Action Text row exists, so content already in the
-      column is never overwritten. Source rows are left in place as the rollback
-      path and are dropped with the Action Text tables in 6.1. Idempotent.
-
   - id: migrate_users_to_customers
     name: "Move users onto the gem-owned Customer/AdminUser models"
     task: "spree:upgrade:migrate_users_to_customers"
@@ -114,6 +95,27 @@ steps:
       Idempotent. The source table is left in place as a safety net — drop it
       manually once the migration is verified. Override the source with
       SOURCE_USER_TABLE / SOURCE_USER_TYPE and batch size with BATCH_SIZE.
+
+  - id: migrate_rich_text_to_columns
+    name: "Move rich text out of Action Text into its own columns"
+    task: "spree:migrate_rich_text_to_columns"
+    notes: |
+      Copies category and collection descriptions, policy bodies, and the order
+      and customer internal notes out of action_text_rich_texts into the text
+      columns that own them in 6.0. Content is sanitized on the way in and
+      per-locale rows land in the model's translation table.
+
+      Ordering is load-bearing in both directions. Run AFTER
+      migrate_taxons_to_categories_and_collections, which retypes the Action Text
+      rows from 'Spree::Taxon' to 'Spree::Category' so they stay findable. Run
+      AFTER migrate_users_to_customers too: a note is copied onto the customer
+      row it belongs to, and those rows do not exist until that step populates
+      spree_customers — running earlier would count every legacy customer note as
+      orphaned and skip it for good.
+
+      Only copies where an Action Text row exists, so content already in the
+      column is never overwritten. Source rows are left in place as the rollback
+      path and are dropped with the Action Text tables in 6.1. Idempotent.
 
   - id: migrate_shipping_to_delivery
     name: "Backfill fulfillment & delivery naming"

@@ -95,7 +95,9 @@ Taxons become `Spree::Category` (hierarchy) and automatic taxons become `Spree::
 bundle exec rake spree:migrate_rich_text_to_columns
 ```
 
-Category and collection descriptions, policy bodies, and order and customer internal notes move from `action_text_rich_texts` into text columns on their own tables. Per-locale rows land in the model's translation table. Run this **after** the categories step, which re-points the rows from `Spree::Taxon` to `Spree::Category` so this one can still find them.
+Category and collection descriptions, policy bodies, and order and customer internal notes move from `action_text_rich_texts` into text columns on their own tables. Per-locale rows land in the model's translation table.
+
+Run this **after** two earlier steps, both load-bearing: the categories step re-points the rows from `Spree::Taxon` to `Spree::Category` so this one can still find them, and the customers step populates `spree_customers` — a note is copied onto the customer row it belongs to, so running before those rows exist would treat every legacy customer note as orphaned and skip it for good. Following the manifest order handles this for you.
 
 Content is sanitized on the way in, and **the 6.0 allowlist is much narrower than 5.6's**: it permits only what the dashboard's editor emits — paragraphs, headings, `strong`/`em`/`s`/`u`/`code`, `pre`, `blockquote`, lists, `hr`, `br` and links. Tables, images, `div`/`span`, inline `style` and arbitrary `class` attributes are no longer permitted. Text inside a stripped tag survives; its formatting does not.
 
