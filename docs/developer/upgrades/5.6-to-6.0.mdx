@@ -320,6 +320,9 @@ Two things do change under you, both handled by `db:migrate`:
 
 - **Visibility is a boolean.** The tri-state `display_on` column collapses into `storefront_visible`. Definitions that were `back_end` become `storefront_visible: false`; everything else becomes `true`. The `front_end`-only value never meant hidden-from-staff and folds into `true`.
 - **Two columns are renamed.** `name` becomes `label`, and `metafield_type` becomes `field_type`. Reading `field_type` returns the API token (`short_text`) rather than the Ruby class name; use `field_type_class_name` when you need the class.
+- **Rich-text values leave Action Text.** `Spree::CustomFields::RichText` stores sanitized HTML in the same `value` column as every other type, so reading `value` returns a String rather than an `ActionText::RichText`. Existing bodies are copied across by the migration; the Action Text rows stay behind as a rollback path until 6.1. Code calling `custom_field.value.body` should read `value` directly.
+
+Two behavior notes for extension authors: `Spree::Metadata` no longer includes the custom-fields concern (metadata is the private, schemaless system — include `Spree::HasCustomFields` explicitly if a model needs both), and rich-text values are now sanitized on save, so markup outside the allowlist is stripped rather than stored.
 
 **BREAKING — product CSV.** Custom-field columns are now prefixed `custom_field.` instead of `metafield.` (for example `custom_field.custom.material`). Exports emit the new prefix and imports only recognise the new prefix, so update any saved import templates and any integration that reads the export. A file still using the old prefix imports without its custom-field values rather than failing.
 

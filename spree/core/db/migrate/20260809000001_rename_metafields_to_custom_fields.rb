@@ -28,10 +28,12 @@ class RenameMetafieldsToCustomFields < ActiveRecord::Migration[7.2]
       execute_type_rename(:spree_custom_field_definitions, :field_type, from, to)
     end
 
-    # RichText values live in Action Text, which keys rows by the owner's STI
-    # base class — Spree::Metafield, not the RichText subclass. Without this
-    # the bodies are orphaned by the class rename.
-    rename_action_text_owner('Spree::Metafield', 'Spree::CustomField')
+    # Rich-text values move out of Action Text and into the shared `value`
+    # column (docs/plans/6.0-rich-text-descriptions.md). Action Text keys rows
+    # by the owner's STI base class, so they are found under the pre-rename
+    # class name. The source rows are left in place as the rollback path; the
+    # table is dropped in 6.1.
+    copy_action_text_bodies_into_values
 
     # display_on (both/front_end/back_end) collapses to a boolean. Only
     # back_end meant "hide from the storefront"; front_end-only was never a
@@ -55,7 +57,9 @@ class RenameMetafieldsToCustomFields < ActiveRecord::Migration[7.2]
     add_index :spree_custom_field_definitions, :display_on
     remove_column :spree_custom_field_definitions, :storefront_visible
 
-    rename_action_text_owner('Spree::CustomField', 'Spree::Metafield')
+    # The Action Text rows were never deleted, so rolling back only needs to
+    # clear the copied column.
+    clear_rich_text_values
 
     TYPE_RENAMES.each do |from, to|
       execute_type_rename(:spree_custom_fields, :type, to, from)
@@ -75,11 +79,37 @@ class RenameMetafieldsToCustomFields < ActiveRecord::Migration[7.2]
 
   private
 
-  # Action Text is optional — installs without it have no table to rewrite.
-  def rename_action_text_owner(from, to)
+  RICH_TEXT_TYPE = 'Spree::CustomFields::RichText'.freeze
+  # Action Text stores the owner's STI base class, so rows written before this
+  # migration are filed under the pre-rename name.
+  LEGACY_ACTION_TEXT_OWNER = 'Spree::Metafield'.freeze
+
+  # A correlated subquery rather than UPDATE ... FROM / UPDATE ... JOIN, which
+  # are spelled differently on PostgreSQL, MySQL and SQLite.
+  def copy_action_text_bodies_into_values
     return unless connection.table_exists?(:action_text_rich_texts)
 
-    execute_type_rename(:action_text_rich_texts, :record_type, from, to)
+    body = <<~SQL.squish
+      SELECT #{quote_column_name('body')} FROM #{quote_table_name('action_text_rich_texts')}
+      WHERE #{quote_table_name('action_text_rich_texts')}.#{quote_column_name('record_id')} = #{quote_table_name('spree_custom_fields')}.#{quote_column_name('id')}
+        AND #{quote_table_name('action_text_rich_texts')}.#{quote_column_name('record_type')} = #{quote(LEGACY_ACTION_TEXT_OWNER)}
+        AND #{quote_table_name('action_text_rich_texts')}.#{quote_column_name('name')} = #{quote('value')}
+    SQL
+
+    execute(<<~SQL.squish)
+      UPDATE #{quote_table_name('spree_custom_fields')}
+      SET #{quote_column_name('value')} = (#{body})
+      WHERE #{quote_column_name('type')} = #{quote(RICH_TEXT_TYPE)}
+        AND EXISTS (#{body})
+    SQL
+  end
+
+  def clear_rich_text_values
+    execute(<<~SQL.squish)
+      UPDATE #{quote_table_name('spree_custom_fields')}
+      SET #{quote_column_name('value')} = NULL
+      WHERE #{quote_column_name('type')} = #{quote(RICH_TEXT_TYPE)}
+    SQL
   end
 
   def execute_type_rename(table, column, from, to)

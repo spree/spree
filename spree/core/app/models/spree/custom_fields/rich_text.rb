@@ -1,17 +1,22 @@
 module Spree
   module CustomFields
+    # Stores sanitized HTML in the shared `value` text column like every other
+    # custom field type. ActionText is gone in 6.0
+    # (docs/plans/6.0-rich-text-descriptions.md) — it round-tripped Tiptap
+    # markup through Trix's narrower allowlist, corrupting content on save.
     class RichText < Spree::CustomField
-      # Avoid collision with the `value` column used by other custom_field types
-      self.ignored_columns = %w[value]
+      include Spree::SanitizableRichText
 
-      has_rich_text :value
+      sanitizes_rich_text :value
 
       def serialize_value
-        value&.body&.to_s
+        value
       end
 
       def csv_value
-        value&.body&.to_plain_text || ''
+        return '' if value.blank?
+
+        Nokogiri::HTML.fragment(value).text
       end
     end
   end
