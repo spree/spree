@@ -52,8 +52,7 @@ module Spree
 
     has_secure_token :token, length: 35
 
-    sanitizes_rich_text :internal_note
-    rich_text_html_reader :internal_note
+    has_spree_rich_text :internal_note
 
     MEMOIZED_METHODS = %w(tax_zone)
 

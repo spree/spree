@@ -22,8 +22,7 @@ module Spree
     include Spree::SanitizableRichText
 
 <% attributes.select(&:rich_text?).each do |attribute| -%>
-    sanitizes_rich_text :<%= attribute.name %>
-    rich_text_html_reader :<%= attribute.name %>
+    has_spree_rich_text :<%= attribute.name %>
 <% end -%>
 <% end -%>
 <% attributes.select(&:attachment?).each do |attribute| -%>

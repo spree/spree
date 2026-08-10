@@ -26,4 +26,22 @@ describe Spree::SanitizableRichText do
 
     expect(product.reload.get_field_with_locale(:fr, :description)).not_to include('<script')
   end
+
+  describe '.has_spree_rich_text' do
+    it 'exposes the stored markup as field_html' do
+      product.update!(description: '<p>Soft <strong>cotton</strong></p>')
+
+      expect(product.reload.description_html).to eq('<p>Soft <strong>cotton</strong></p>')
+    end
+
+    it 'reads an empty string rather than nil when unset' do
+      expect(create(:product, store: store, description: nil).description_html).to eq('')
+    end
+
+    # There is one way to write rich text: the plain attribute. A second setter
+    # would be a second spelling of the same thing.
+    it 'defines no field_html writer' do
+      expect(product).not_to respond_to(:description_html=)
+    end
+  end
 end
