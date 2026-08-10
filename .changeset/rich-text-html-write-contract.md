@@ -1,14 +1,15 @@
 ---
-'@spree/admin-sdk': minor
+'@spree/admin-sdk': patch
 '@spree/cli': patch
 ---
 
-Rich text is written as `*_html`.
+Rich-text fields read as plain text plus HTML.
 
-Spree 6.0 stores rich text as sanitized HTML in plain text columns instead of Action Text. Reads are unchanged — `description` is still plain text and `description_html` still holds the markup — but the **write** params are renamed, so reading and writing now use the same field name.
+Spree 6.0 stores rich text as sanitized HTML in plain text columns instead of Action Text. The write params are unchanged — `description` and `internal_note` still take the value, and that value is HTML.
 
-- `description` → `description_html` on product, category and collection create/update.
-- `internal_note` → `internal_note_html` on order and customer create/update.
-- `internal_note_html` is now readable on `Order`, and `internal_note` (plain text) on `Customer`. Previously the order serializer returned only plain text and the customer serializer only HTML.
+What changed is the read side:
 
-A write that still passes the plain field name **succeeds with 200 and stores nothing** — the parameter is no longer permitted, and Rails drops unpermitted parameters rather than rejecting them, so there is no 422 to alert you. Audit any integration writing descriptions or internal notes.
+- `internal_note_html` is now readable on `Order`, and `internal_note` (plain text) on `Customer`. Previously the order serializer returned only plain text and the customer serializer only HTML; both now return the pair.
+- `description` returns tag-stripped plain text, with the markup under `description_html`. Hydrate an editor from `description_html`, not `description`.
+
+The field stores HTML, so send markup — a plain-text value with newlines in it renders as one run-on line.

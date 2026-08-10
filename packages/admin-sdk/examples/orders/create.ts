@@ -26,9 +26,9 @@ const order = await client.orders.create({
   preferred_stock_location_id: 'sloc_UkLWZg9DAJ',
 
   customer_note: 'Please leave at the front desk.',
-  // Rich text is written as `*_html`. Reads return `internal_note` (plain
-  // text) alongside `internal_note_html`.
-  internal_note_html: '<p>VIP customer — handle with care.</p>',
+  // Rich text: send HTML. Reads return this as plain text, plus
+  // `internal_note_html` with the markup.
+  internal_note: '<p>VIP customer — handle with care.</p>',
   metadata: {
     external_reference: 'subscription_invoice_2026_04',
     source: 'recurring-engine',

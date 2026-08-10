@@ -60,6 +60,15 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect { subject.process! }.to have_enqueued_job(Spree::Imports::AssignTagsJob).with(anything, 'ECO, Gold')
     end
 
+    # The description column holds HTML: the cell is stored as-is, sanitized.
+    it 'sanitizes the description cell' do
+      row_data['description'] = '<p>Soft cotton</p><script>alert(1)</script>'
+
+      subject.process!
+
+      expect(Spree::Product.find_by(slug: 'denim-shirt').description).to eq('<p>Soft cotton</p>')
+    end
+
     it 'does not touch the store when associating the product' do
       expect { subject.process! }.not_to change { store.reload.updated_at }
     end

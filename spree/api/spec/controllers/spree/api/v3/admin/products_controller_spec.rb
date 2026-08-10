@@ -332,7 +332,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
       let(:product_params) do
         {
           name: 'Premium T-Shirt',
-          description_html: 'A premium cotton t-shirt',
+          description: 'A premium cotton t-shirt',
           status: 'draft',
           tax_category_id: tax_category.prefixed_id,
           category_ids: [category1.prefixed_id, category2.prefixed_id],
@@ -754,7 +754,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         {
           id: product_to_update.prefixed_id,
           name: 'Updated Premium Shirt',
-          description_html: 'Updated description for the premium shirt',
+          description: 'Updated description for the premium shirt',
           status: 'active',
           slug: 'updated-premium-shirt',
           meta_title: 'Updated Premium Shirt | Shop',

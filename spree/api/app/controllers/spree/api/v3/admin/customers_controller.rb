@@ -93,7 +93,7 @@ module Spree
             params.permit(
               :email, :first_name, :last_name, :phone,
               :password, :password_confirmation, :selected_locale,
-              :avatar, :accepts_email_marketing, :internal_note_html,
+              :avatar, :accepts_email_marketing, :internal_note,
               metadata: {}, tags: [], customer_group_ids: []
             )
           end

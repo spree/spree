@@ -405,11 +405,10 @@ function NewCustomerSheet({
     if (values.first_name.trim()) payload.first_name = values.first_name.trim()
     if (values.last_name.trim()) payload.last_name = values.last_name.trim()
     if (values.phone.trim()) payload.phone = values.phone.trim()
-    // Rich text is written as `internal_note_html`; the plain `internal_note`
-    // field is read-only. The editor emits an empty paragraph once it has been
-    // focused and cleared, which is not a note.
+    // The editor emits an empty paragraph once it has been focused and cleared,
+    // which is not a note.
     const internalNote = values.internal_note.trim()
-    if (internalNote && internalNote !== '<p></p>') payload.internal_note_html = internalNote
+    if (internalNote && internalNote !== '<p></p>') payload.internal_note = internalNote
     if (values.tags.length) payload.tags = values.tags
 
     try {

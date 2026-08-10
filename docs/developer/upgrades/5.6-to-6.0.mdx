@@ -469,16 +469,21 @@ Two enforcement changes on the Admin API:
 - **JWT staff pass the same per-controller key gate as secret keys.** A request whose principal lacks `<read|write>_<resource>` gets a 403 with `details.required_permission` naming the missing key.
 - **Staff endpoints moved out of the `settings` scope.** `/admin_users`, `/invitations`, and `/roles` now require the new `read_staff` / `write_staff` scopes; secret keys minted with `settings` before 6.0 lose those endpoints. `/countries` and `/locales` became scope-exempt reference data.
 
-### Rich text is written as `*_html`
+### Rich-text fields read as plain text plus HTML
 
-Reads are unchanged — the plain field still returns text and `*_html` still returns markup — but writes move to the `*_html` name, so reading and writing finally use the same field:
+**Writes are unchanged.** `description` and `internal_note` still take the value, and that value is still HTML — the same as 5.6, so no integration needs updating.
 
-| Resource | Was | Now |
+Reads are where 6.0 differs. Every rich-text field now returns both shapes:
+
+| Resource | Plain text | HTML |
 | --- | --- | --- |
 | Product, Category, Collection | `description` | `description_html` |
 | Order, Customer | `internal_note` | `internal_note_html` |
 
-A write that still sends the plain name is **ignored rather than stored** — it is no longer a permitted parameter, so nothing 422s and the value silently doesn't persist. Audit any integration that writes descriptions or internal notes.
+Two consequences worth checking in your own code:
+
+- **Hydrate editors from `*_html`.** The plain field is tag-stripped, so binding an editor to `description` and saving it back would flatten the markup on every save.
+- **The field holds HTML.** That is true of every writer — the Admin API, CSV import, the console — so send markup, not plain text with newlines in it.
 
 Both internal-note serializers now return the pair. Previously orders exposed only plain text and customers only HTML.
 

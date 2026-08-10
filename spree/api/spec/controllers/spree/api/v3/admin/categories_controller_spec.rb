@@ -82,23 +82,21 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(category.reload.name).to eq('Apparel')
     end
 
-    it 'writes rich text through description_html and reads back both shapes' do
-      patch :update, params: { id: category.prefixed_id, description_html: '<p>Soft <strong>cotton</strong></p>' }, as: :json
+    # `description` carries HTML in and reads back as both shapes: the plain
+    # field tag-stripped, the markup under description_html.
+    it 'stores the description as HTML and reads back both shapes' do
+      patch :update, params: { id: category.prefixed_id, description: '<p>Soft <strong>cotton</strong></p>' }, as: :json
 
       expect(response).to have_http_status(:ok)
       expect(json_response['description_html']).to eq('<p>Soft <strong>cotton</strong></p>')
       expect(json_response['description']).to eq('Soft cotton')
     end
 
-    # The plain field is read-only, and Rails drops unpermitted params rather
-    # than rejecting them — so this succeeds while storing nothing.
-    it 'ignores a write to the plain description param' do
-      category.update!(description: '<p>original</p>')
-
-      patch :update, params: { id: category.prefixed_id, description: '<p>attempted</p>' }, as: :json
+    it 'sanitizes the description on write' do
+      patch :update, params: { id: category.prefixed_id, description: '<p>ok</p><script>alert(1)</script>' }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(category.reload.description).to eq('<p>original</p>')
+      expect(json_response['description_html']).to eq('<p>ok</p>')
     end
 
     it 'purges the image when image is set to null' do

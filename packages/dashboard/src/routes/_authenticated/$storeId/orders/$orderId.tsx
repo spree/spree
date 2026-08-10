@@ -2648,13 +2648,13 @@ function InternalNoteCard({ order }: { order: Order }) {
     if (!editing) setNote(serverNote)
   }, [editing, serverNote])
 
-  const mutation = useOrderMutation(orderId, (params: { internal_note_html: string }) =>
+  const mutation = useOrderMutation(orderId, (params: { internal_note: string }) =>
     adminClient.orders.update(orderId, params),
   )
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    mutation.mutate({ internal_note_html: note }, { onSuccess: () => setEditing(false) })
+    mutation.mutate({ internal_note: note }, { onSuccess: () => setEditing(false) })
   }
 
   return (

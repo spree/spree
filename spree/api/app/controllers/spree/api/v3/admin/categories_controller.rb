@@ -67,7 +67,7 @@ module Spree
           # can't be targeted).
           def permitted_params
             permitted = params.permit(
-              :name, :description_html, :permalink,
+              :name, :description, :permalink,
               :meta_title, :meta_description, :meta_keywords,
               :image, :square_image,
               # Inline custom field values keyed by definition id. The model

@@ -269,8 +269,8 @@ export interface OrderCreateParams {
   preferred_stock_location_id?: string
   locale?: string
   customer_note?: string
-  /** Rich text HTML. Reads come back as `internal_note` (plain) + `internal_note_html`. */
-  internal_note_html?: string
+  /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
+  internal_note?: string
   metadata?: Record<string, unknown>
   shipping_address?: AddressInputParams
   shipping_address_id?: string
@@ -289,8 +289,8 @@ export interface OrderUpdateParams {
   email?: string
   customer_id?: string
   customer_note?: string
-  /** Rich text HTML. Reads come back as `internal_note` (plain) + `internal_note_html`. */
-  internal_note_html?: string
+  /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
+  internal_note?: string
   ship_address?: AddressInputParams
   bill_address?: AddressInputParams
   line_items?: Array<{
@@ -367,8 +367,8 @@ export interface CustomerCreateParams {
   last_name?: string
   phone?: string
   accepts_email_marketing?: boolean
-  /** Rich text HTML. Reads come back as `internal_note` (plain) + `internal_note_html`. */
-  internal_note_html?: string
+  /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
+  internal_note?: string
   metadata?: Record<string, unknown>
   tags?: string[]
   /** Prefixed customer group IDs. Replaces the customer's group membership. */
@@ -381,8 +381,8 @@ export interface CustomerUpdateParams {
   last_name?: string
   phone?: string
   accepts_email_marketing?: boolean
-  /** Rich text HTML. Reads come back as `internal_note` (plain) + `internal_note_html`. */
-  internal_note_html?: string
+  /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
+  internal_note?: string
   metadata?: Record<string, unknown>
   tags?: string[]
   /** Prefixed customer group IDs. Replaces the customer's group membership. */
@@ -461,8 +461,8 @@ export interface ProductPublicationInput {
 
 export interface ProductCreateParams {
   name: string
-  /** Rich text HTML. Reads come back as `description` (plain) + `description_html`. */
-  description_html?: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
+  description?: string
   slug?: string
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
@@ -487,8 +487,8 @@ export interface ProductCreateParams {
 
 export interface ProductUpdateParams {
   name?: string
-  /** Rich text HTML. Reads come back as `description` (plain) + `description_html`. */
-  description_html?: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
+  description?: string
   slug?: string
   status?: 'draft' | 'active' | 'archived'
   tax_category_id?: string
@@ -546,8 +546,8 @@ export interface CategoryCreateParams {
   name: string
   /** Prefixed ID of the parent category. Omit or null for a top-level category. */
   parent_id?: string | null
-  /** Rich text HTML. Reads come back as `description` (plain) + `description_html`. */
-  description_html?: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
+  description?: string
   permalink?: string
   meta_title?: string
   meta_description?: string
@@ -562,8 +562,8 @@ export interface CategoryUpdateParams {
   name?: string
   /** Prefixed ID of the parent category, or null to move it to the top level. */
   parent_id?: string | null
-  /** Rich text HTML. Reads come back as `description` (plain) + `description_html`. */
-  description_html?: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
+  description?: string
   permalink?: string
   meta_title?: string
   meta_description?: string
@@ -627,8 +627,8 @@ export interface CollectionRuleParam {
 
 export interface CollectionCreateParams {
   name: string
-  /** Rich text HTML. Reads come back as `description` (plain) + `description_html`. */
-  description_html?: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
+  description?: string
   permalink?: string
   meta_title?: string
   meta_description?: string
@@ -648,8 +648,8 @@ export interface CollectionCreateParams {
 
 export interface CollectionUpdateParams {
   name?: string
-  /** Rich text HTML. Reads come back as `description` (plain) + `description_html`. */
-  description_html?: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
+  description?: string
   permalink?: string
   /**
    * 1-based position among the store's collections, written straight to the
