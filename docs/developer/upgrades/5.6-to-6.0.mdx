@@ -111,6 +111,13 @@ Spree::RichTextSanitizer.allowed_attributes += %w[src alt colspan rowspan]
 
 The Action Text rows are left in place as a rollback path and are dropped with the tables in 6.1.
 
+Once this has run, **Spree no longer loads Action Text.** `spree_core` dropped `require 'action_text/engine'` — along with `action_cable/engine`, which nothing in Spree used — and a fresh install no longer creates the tables. The rake task requires Action Text itself, so the upgrade works either way. If your own code uses `has_rich_text`, Action Text view helpers, or Action Cable, require what you need in `config/application.rb` (apps generated from the Spree starter already do):
+
+```ruby
+require 'action_text/engine'
+require 'action_cable/engine'
+```
+
 ### Backfill order coupon codes
 
 ```bash

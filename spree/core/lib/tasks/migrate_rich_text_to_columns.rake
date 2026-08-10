@@ -25,7 +25,17 @@ namespace :spree do
     are dropped with the Action Text tables in 6.1.
   DESC
   task migrate_rich_text_to_columns: :environment do
-    unless defined?(ActionText::RichText) && ActionText::RichText.table_exists?
+    # Action Text is not loaded by Spree any more — 6.0 stores rich text in its
+    # own columns. It ships with Rails, so this one-off copy pulls it in itself
+    # rather than making every app carry the engine for a task it runs once.
+    loaded = begin
+      require 'action_text/engine'
+      ActionText::RichText.table_exists?
+    rescue LoadError, NameError, ActiveRecord::StatementInvalid
+      false
+    end
+
+    unless loaded
       puts '  No action_text_rich_texts table — nothing to migrate.'
       next
     end

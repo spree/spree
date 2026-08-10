@@ -5,8 +5,6 @@ require 'active_job/railtie'
 require 'active_model/railtie'
 require 'active_record/railtie'
 require 'active_storage/engine'
-require 'action_text/engine'
-require 'action_cable/engine'
 require 'pagy'
 
 require 'mail'

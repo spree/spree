@@ -2,6 +2,8 @@ require 'spec_helper'
 require 'rake'
 
 describe 'spree:migrate_taxons_to_categories_and_collections' do
+  include_context 'with legacy Action Text'
+
   subject { Rake::Task[task_name] }
 
   let(:task_name) { 'spree:migrate_taxons_to_categories_and_collections' }

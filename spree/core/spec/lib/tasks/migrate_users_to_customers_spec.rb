@@ -2,6 +2,8 @@ require 'spec_helper'
 require 'rake'
 
 describe 'spree:upgrade:migrate_users_to_customers' do
+  include_context 'with legacy Action Text'
+
   subject { Rake::Task[task_name] }
 
   let(:task_name) { 'spree:upgrade:migrate_users_to_customers' }

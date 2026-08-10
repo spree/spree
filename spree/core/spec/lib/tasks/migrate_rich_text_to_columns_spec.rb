@@ -6,6 +6,8 @@ describe 'spree:migrate_rich_text_to_columns' do
 
   let(:task_name) { 'spree:migrate_rich_text_to_columns' }
 
+  include_context 'with legacy Action Text'
+
   before(:all) do
     Rake::Task.define_task(:environment)
     load Spree::Core::Engine.root.join('lib', 'tasks', 'migrate_rich_text_to_columns.rake')
