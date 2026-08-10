@@ -40,6 +40,7 @@ import {
   PlusIcon,
   RotateCcwIcon,
   SplitIcon,
+  TagIcon,
   TruckIcon,
   XCircleIcon,
 } from 'lucide-react'
@@ -47,6 +48,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
 import { useStockLocations } from '../../../hooks/use-stock-locations'
+import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 
 /**
  * A unit sitting in one fulfillment. Splitting moves units per variant rather
@@ -82,113 +84,6 @@ function orderUnits(order: Order): Array<{ itemId: string; label: string; quanti
     label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
     quantity: item.quantity,
   }))
-}
-
-/**
- * The delivery options a fulfillment can be moved between. Each rate is a
- * priced service — with a carrier provider one method yields several, so the
- * rate rather than the method is what a merchant picks.
- */
-function RateSelect({
-  fulfillment,
-  orderId,
-  disabled,
-}: {
-  fulfillment: Fulfillment
-  orderId: string
-  disabled: boolean
-}) {
-  const { t } = useTranslation()
-  const { update } = useFulfillmentActions(orderId)
-
-  const rates = fulfillment.delivery_rates ?? []
-  if (rates.length === 0) return null
-
-  const options = rates.map((rate) => ({
-    value: rate.id,
-    label: `${rate.name} — ${
-      Number.parseFloat(rate.cost) === 0
-        ? t('admin.orders.detail.fulfillments.free')
-        : rate.display_cost
-    }`,
-  }))
-
-  return (
-    <Field>
-      <FieldLabel htmlFor={`rate-${fulfillment.id}`}>
-        {t('admin.orders.detail.fulfillments.delivery_method')}
-      </FieldLabel>
-      <Select
-        items={options}
-        value={fulfillment.selected_delivery_rate_id ?? ''}
-        disabled={disabled || update.isPending}
-        onValueChange={(value) =>
-          update.mutate({
-            fulfillmentId: fulfillment.id,
-            selected_delivery_rate_id: value as string,
-          })
-        }
-      >
-        <SelectTrigger id={`rate-${fulfillment.id}`} size="sm">
-          <SelectValue placeholder={t('admin.common.select_placeholder')} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </Field>
-  )
-}
-
-/** Where the fulfillment ships from. Changing it re-prices against that origin. */
-function StockLocationSelect({
-  fulfillment,
-  orderId,
-  disabled,
-}: {
-  fulfillment: Fulfillment
-  orderId: string
-  disabled: boolean
-}) {
-  const { t } = useTranslation()
-  const { update } = useFulfillmentActions(orderId)
-  const { data } = useStockLocations()
-
-  const locations = data?.data ?? []
-  if (locations.length === 0) return null
-
-  const options = locations.map((location) => ({ value: location.id, label: location.name }))
-
-  return (
-    <Field>
-      <FieldLabel htmlFor={`location-${fulfillment.id}`}>
-        {t('admin.orders.detail.fulfillments.ships_from')}
-      </FieldLabel>
-      <Select
-        items={options}
-        value={fulfillment.stock_location_id ?? ''}
-        disabled={disabled || update.isPending}
-        onValueChange={(value) =>
-          update.mutate({ fulfillmentId: fulfillment.id, stock_location_id: value as string })
-        }
-      >
-        <SelectTrigger id={`location-${fulfillment.id}`} size="sm">
-          <SelectValue placeholder={t('admin.common.select_placeholder')} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </Field>
-  )
 }
 
 function EditTrackingDialog({
@@ -546,6 +441,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const orderId = order.id
   const { fulfill, cancel, resume } = useFulfillmentActions(orderId)
 
+  const [editOpen, setEditOpen] = useState(false)
   const [trackingOpen, setTrackingOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
 
@@ -566,8 +462,15 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            {editable && (
+              <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                <PencilIcon className="size-4" />
+                {t('admin.actions.edit')}
+              </DropdownMenuItem>
+            )}
+
             <DropdownMenuItem onClick={() => setTrackingOpen(true)}>
-              <PencilIcon className="size-4" />
+              <TagIcon className="size-4" />
               {fulfillment.tracking
                 ? t('admin.orders.detail.tracking.edit_title')
                 : t('admin.orders.detail.tracking.add_title')}
@@ -632,29 +535,20 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         </DropdownMenu>
       </div>
 
-      {editable ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          <RateSelect fulfillment={fulfillment} orderId={orderId} disabled={!editable} />
-          <StockLocationSelect fulfillment={fulfillment} orderId={orderId} disabled={!editable} />
+      {(fulfillment.delivery_method || Number.parseFloat(fulfillment.cost) > 0) && (
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-muted-foreground">
+            {fulfillment.delivery_method?.name ?? t('admin.pages.orders.detail.no_delivery_method')}
+          </span>
+          <span>{fulfillment.display_cost}</span>
         </div>
-      ) : (
-        <>
-          {(fulfillment.delivery_method || Number.parseFloat(fulfillment.cost) > 0) && (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">
-                {fulfillment.delivery_method?.name ??
-                  t('admin.pages.orders.detail.no_delivery_method')}
-              </span>
-              <span>{fulfillment.display_cost}</span>
-            </div>
-          )}
-          {fulfillment.stock_location && (
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <MapPinIcon className="size-3" />
-              {fulfillment.stock_location.name}
-            </div>
-          )}
-        </>
+      )}
+
+      {fulfillment.stock_location && (
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <MapPinIcon className="size-3" />
+          {fulfillment.stock_location.name}
+        </div>
       )}
 
       {fulfillment.tracking && (
@@ -685,6 +579,15 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
             fallback=""
           />
         </span>
+      )}
+
+      {editOpen && (
+        <FulfillmentEditDialog
+          order={order}
+          fulfillment={fulfillment}
+          open={editOpen}
+          onOpenChange={setEditOpen}
+        />
       )}
 
       {trackingOpen && (
