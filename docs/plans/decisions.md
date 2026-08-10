@@ -705,6 +705,35 @@ means splitting first, and split-then-ship inside an `after_transition` callback
 is exactly the shape `6.0-service-workflows.md` prohibits. The workflow wraps the
 machine as a low-level mechanic, mirroring how `Fulfillments::Create` already
 wraps `mark_shipped`.
+## 2026-08-10 — Stripe drops Apple Pay domain registration; payment intents are not a subsystem
+
+Two removals from the Stripe port, both from the same question: what does a
+headless backend actually know?
+
+**Apple Pay / Google Pay domain registration is gone.** The gateway registered
+`store.url` with Stripe on create, and re-registered whenever a store code or
+custom domain changed. That only works when Spree serves the storefront. Headless,
+the storefront is someone else's deployment on a domain the backend never sees,
+so the call registers the wrong host — worse than not running, because it looks
+like it worked. Merchants register domains in the Stripe dashboard, which is
+where a headless setup has to do it regardless. Removes `RegisterDomain`, its
+job, the `CustomDomain` decorator and the `stripe_apple_pay_domain_id` /
+`stripe_top_level_domain_id` accessors.
+
+**Payment intents are not a parallel system.** A `Gateway::PaymentIntents`
+concern alongside `Gateway::PaymentSessions` implied two paths, one of them
+legacy. There is one: creating a payment session *is* creating a Stripe payment
+intent, and the session stores the intent id as its external id. The intent
+calls now live in `Gateway::PaymentSessions`, with payload building private to
+it. `PaymentIntentPresenter` went too — it presented nothing, it built a request
+body, and `update_payment_intent` proved the framing wrong by constructing the
+full create-payload only to `slice` most of it away.
+
+**Consequences:** the gem no longer touches storefront domains at all, and there
+is no "intents" vocabulary suggesting a second code path. Net −2,000 lines
+against the initial port. A gateway that wants to register domains needs the
+storefront's real host as configuration, not `store.url`.
+
 ## 2026-08-09 — Stripe moves into the monorepo as a payment-session-only gem, with no tables
 
 `spree_stripe` ships from `spree/providers/stripe` in the monorepo, per

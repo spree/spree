@@ -3,7 +3,6 @@ module SpreeStripe
   # created and confirmed through sessions; core's payment lifecycle then drives
   # capture, refund and cancellation against the resulting intent.
   class Gateway < ::Spree::Gateway
-    include SpreeStripe::Gateway::PaymentIntents
     include SpreeStripe::Gateway::PaymentSessions
     include SpreeStripe::Gateway::PaymentSetupSessions
     include SpreeStripe::Gateway::Webhooks
@@ -13,8 +12,6 @@ module SpreeStripe
 
     validates :preferred_secret_key, :preferred_publishable_key, presence: true
     validate :validate_secret_key, unless: -> { Rails.env.test? }, if: -> { preferred_secret_key.present? }
-
-    after_commit :register_domains, on: :create
 
     def provider_class
       self.class
@@ -217,19 +214,6 @@ module SpreeStripe
                    end
 
         success(response.id, response)
-      end
-    end
-
-    # Apple Pay and Google Pay only appear on domains registered with Stripe.
-    def register_domains
-      return if store.blank?
-
-      SpreeStripe::RegisterDomainJob.perform_later(store.id, 'store')
-
-      return unless defined?(Spree::CustomDomain)
-
-      store.custom_domains.each do |custom_domain|
-        SpreeStripe::RegisterDomainJob.perform_later(custom_domain.id, 'custom_domain')
       end
     end
 

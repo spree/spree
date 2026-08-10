@@ -1,7 +1,17 @@
 module SpreeStripe
   class Gateway < ::Spree::Gateway
+    # A Stripe payment session is a Stripe payment intent: creating the session
+    # creates the intent, and the session stores its id as the external id.
+    # Intents are Stripe-side API objects — there is no intent record in Spree.
     module PaymentSessions
       extend ActiveSupport::Concern
+
+      # Banks confirm these asynchronously, so `processing` is as good as accepted.
+      DELAYED_NOTIFICATION_PAYMENT_METHOD_TYPES = %w[sepa_debit us_bank_account].freeze
+      # Funds arrive out of band, leaving the intent in `requires_action`.
+      BANK_PAYMENT_METHOD_TYPES = %w[customer_balance us_bank_account].freeze
+      MANUAL_CAPTURE_METHOD = 'manual'.freeze
+      SETUP_FUTURE_USAGE = 'off_session'.freeze
 
       def session_required?
         true
@@ -105,7 +115,137 @@ module SpreeStripe
         payment_session
       end
 
+      def retrieve_payment_intent(payment_intent_id)
+        send_request { |opts| Stripe::PaymentIntent.retrieve({ id: payment_intent_id, expand: ['payment_method'] }, opts) }
+      end
+
+      def confirm_payment_intent(payment_intent_id)
+        send_request { |opts| Stripe::PaymentIntent.confirm(payment_intent_id, {}, opts) }
+      end
+
+      def capture_payment_intent(payment_intent_id, amount_in_cents)
+        send_request { |opts| Stripe::PaymentIntent.capture(payment_intent_id, { amount_to_capture: amount_in_cents }, opts) }
+      end
+
+      def cancel_payment_intent(payment_intent_id)
+        send_request { |opts| Stripe::PaymentIntent.cancel(payment_intent_id, {}, opts) }
+      end
+
+      # Whether the intent has progressed far enough to record a payment. The
+      # acceptable statuses depend on how the money moves: manual capture stops
+      # at `requires_capture`, delayed-notification banks sit in `processing`,
+      # and bank transfers wait for funds in `requires_action`.
+      def payment_intent_accepted?(payment_intent)
+        statuses = %w[succeeded]
+        statuses << 'requires_capture' if payment_intent_manual_capture?(payment_intent)
+        statuses << 'processing' if payment_intent_type_in?(payment_intent, DELAYED_NOTIFICATION_PAYMENT_METHOD_TYPES)
+        statuses << 'requires_action' if payment_intent_charge_not_required?(payment_intent)
+
+        payment_intent.status.in?(statuses)
+      end
+
+      def payment_intent_successful?(payment_intent)
+        payment_intent.status == 'succeeded'
+      end
+
+      def payment_intent_requires_capture?(payment_intent)
+        payment_intent.status == 'requires_capture'
+      end
+
+      # Bank transfers settle without a charge object, so the payment source has
+      # to be built from the intent instead.
+      def payment_intent_charge_not_required?(payment_intent)
+        payment_intent_type_in?(payment_intent, BANK_PAYMENT_METHOD_TYPES)
+      end
+
+      def payment_intent_manual_capture?(payment_intent)
+        payment_intent.respond_to?(:capture_method) && payment_intent.capture_method == MANUAL_CAPTURE_METHOD
+      end
+
       private
+
+      # @param order [Spree::Cart, Spree::Order]
+      # @return [Spree::PaymentResponse]
+      def create_payment_intent(amount_in_cents, order, payment_method_id: nil, customer_profile_id: nil)
+        payload = {
+          amount: amount_in_cents,
+          currency: order.currency,
+          customer: customer_profile_id,
+          payment_method: payment_method_id,
+          capture_method: (MANUAL_CAPTURE_METHOD unless auto_capture?),
+          statement_descriptor_suffix: statement_descriptor_suffix_for(order),
+          automatic_payment_methods: { enabled: true },
+          transfer_group: order.number,
+          metadata: { spree_order_id: order.id },
+          shipping: shipping_payload(order.ship_address)
+        }.compact
+
+        # A saved payment method is already tokenized; a new one is stored so it
+        # can be charged off-session later.
+        payload[:payment_method_options] = {
+          card: { setup_future_usage: SETUP_FUTURE_USAGE },
+          sepa_debit: { setup_future_usage: SETUP_FUTURE_USAGE }
+        } if payment_method_id.blank?
+
+        protect_from_error do
+          response = send_request { |opts| Stripe::PaymentIntent.create(payload, opts) }
+
+          success(response.id, response)
+        end
+      end
+
+      # Only the fields that can legitimately change while a session is pending.
+      def update_payment_intent(payment_intent_id, amount_in_cents, order, payment_method_id = nil)
+        protect_from_error do
+          payload = {
+            amount: amount_in_cents,
+            currency: order.currency,
+            customer: fetch_or_create_customer(order: order)&.profile_id,
+            payment_method: payment_method_id,
+            shipping: shipping_payload(order.ship_address)
+          }.compact
+
+          response = send_request { |opts| Stripe::PaymentIntent.update(payment_intent_id, payload, opts) }
+
+          success(response.id, response)
+        end
+      end
+
+      # Stripe requires address1 on a shipping address; Spree does not always
+      # demand one, so an incomplete address is omitted rather than rejected.
+      #
+      # @return [Hash, nil]
+      def shipping_payload(ship_address)
+        return if ship_address.blank?
+
+        if ship_address.invalid? || ship_address.address1.blank?
+          ship_address.errors.clear
+          return
+        end
+
+        {
+          address: {
+            city: ship_address.city,
+            country: ship_address.country_iso,
+            line1: ship_address.address1,
+            line2: ship_address.address2,
+            postal_code: ship_address.zipcode,
+            state: ship_address.state_abbr
+          },
+          name: ship_address.full_name
+        }
+      end
+
+      def statement_descriptor_suffix_for(order)
+        SpreeStripe::StatementDescriptorSuffixPresenter.new(order_description: order.number).call
+      end
+
+      def payment_intent_type_in?(payment_intent, types)
+        payment_method = payment_intent.payment_method
+        return false unless payment_method.respond_to?(:type)
+
+        payment_method.type.in?(types)
+      end
 
       # Quick checkout (Apple Pay / Google Pay) confirms payment before the
       # storefront has a billing address, so it arrives on the Stripe charge.

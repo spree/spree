@@ -149,46 +149,6 @@ RSpec.describe SpreeStripe::Gateway do
     end
   end
 
-  describe '#payment_intent_delayed_notification?' do
-    subject { gateway.payment_intent_delayed_notification?(stripe_payment_intent) }
-
-    let(:stripe_payment_intent) do
-      Stripe::StripeObject.construct_from(
-        id: 'pi_123',
-        status: 'succeeded',
-        payment_method: stripe_payment_method
-      )
-    end
-
-    let(:stripe_payment_method) do
-      { type: payment_method_type }
-    end
-
-    context 'for a card payment method' do
-      let(:payment_method_type) { 'card' }
-
-      it { is_expected.to be(false) }
-    end
-
-    context 'for a sepa debit payment method' do
-      let(:payment_method_type) { 'sepa_debit' }
-
-      it { is_expected.to be(true) }
-    end
-
-    context 'when the payment method is not expanded' do
-      let(:stripe_payment_method) { 'pm_1234567890' }
-
-      it { is_expected.to be(false) }
-    end
-
-    context 'when the payment method type is not provided' do
-      let(:stripe_payment_method) { nil }
-
-      it { is_expected.to be(false) }
-    end
-  end
-
   describe '#payment_intent_charge_not_required?' do
     subject { gateway.payment_intent_charge_not_required?(stripe_payment_intent) }
 
@@ -285,24 +245,8 @@ RSpec.describe SpreeStripe::Gateway do
     end
   end
 
-  describe '#after_commit :register_domains' do
-    subject(:create_gateway) { gateway }
-
-    it 'schedules a job to register the Apple Pay store domain' do
-      expect { create_gateway }.to have_enqueued_job(SpreeStripe::RegisterDomainJob).once.with(store.id, 'store')
-    end
-
-    context 'on update' do
-      before { create_gateway }
-
-      it 'does nothing' do
-        expect { gateway.update!(name: 'test') }.not_to have_enqueued_job(SpreeStripe::RegisterDomainJob)
-      end
-    end
-  end
-
-  describe '#create_payment_intent' do
-    subject { gateway.create_payment_intent(amount, order) }
+  describe 'creating the payment intent' do
+    subject { gateway.send(:create_payment_intent, amount, order) }
 
     let(:order) { create(:order_with_line_items, store: store) }
 
@@ -338,11 +282,7 @@ RSpec.describe SpreeStripe::Gateway do
     context 'when auto_capture is false on the gateway' do
       before { gateway.update!(auto_capture: false) }
 
-      it 'forwards capture_method: manual to the PaymentIntentPresenter' do
-        expect(SpreeStripe::PaymentIntentPresenter).to receive(:new).with(
-          hash_including(capture_method: 'manual')
-        ).and_call_original
-
+      it 'asks Stripe for manual capture' do
         VCR.use_cassette('create_payment_intent_manual_capture') do
           expect(subject.success?).to be(true)
           expect(subject.params['capture_method']).to eq('manual')
@@ -354,20 +294,17 @@ RSpec.describe SpreeStripe::Gateway do
     context 'when auto_capture is true on the gateway' do
       before { gateway.update!(auto_capture: true) }
 
-      it 'does not forward capture_method to the PaymentIntentPresenter' do
-        expect(SpreeStripe::PaymentIntentPresenter).to receive(:new).with(
-          hash_including(capture_method: nil)
-        ).and_call_original
-
+      it 'leaves the capture method to Stripe' do
         VCR.use_cassette('create_payment_intent') do
           expect(subject.success?).to be(true)
+          expect(subject.params['capture_method']).to eq('automatic')
         end
       end
     end
   end
 
-  describe '#update_payment_intent' do
-    subject { gateway.update_payment_intent(payment_intent_id, amount, order, payment_method_id) }
+  describe 'updating the payment intent' do
+    subject { gateway.send(:update_payment_intent, payment_intent_id, amount, order, payment_method_id) }
 
     let!(:gateway_customer) { create(:gateway_customer, customer: order.customer, payment_method: gateway, profile_id: customer_id) }
     let(:order) { create(:order_with_line_items, store: store) }
