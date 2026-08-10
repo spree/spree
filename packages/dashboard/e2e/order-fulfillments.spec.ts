@@ -61,4 +61,23 @@ test.describe('order fulfillments', () => {
     await expect(card.getByRole('button', { name: /^add fulfillment$/i })).toHaveCount(0)
     await expect(card.getByRole('button', { name: /^add item$/i })).toBeVisible()
   })
+
+  // The item menus are the only route to editing a quantity or removing a line
+  // item now that the Items card is gone, and a type-clean refactor once left
+  // them off every row inside a fulfillment. Drive one to keep that honest.
+  test('offers edit and remove on an item row', async ({ page }) => {
+    const creds = await login(page)
+    await createDraftOrder(page, creds.store_id)
+
+    const card = fulfillmentsCard(page)
+    await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
+
+    await card
+      .getByRole('button', { name: /actions for/i })
+      .first()
+      .click()
+
+    await expect(page.getByRole('menuitem', { name: /edit quantity/i })).toBeVisible()
+    await expect(page.getByRole('menuitem', { name: /^remove$/i })).toBeVisible()
+  })
 })

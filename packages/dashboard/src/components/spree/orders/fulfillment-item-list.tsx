@@ -9,13 +9,12 @@ import {
 } from '@spree/dashboard-ui'
 import { EllipsisVerticalIcon, PackageIcon, PencilIcon, TrashIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import type { FulfillmentItemRow } from '../../../lib/fulfillment-items'
+import { type FulfillmentItemRow, isRemovableRow } from '../../../lib/fulfillment-items'
 
 /**
  * One item inside a fulfillment group: what it looks like, what it costs and
- * how many units this group holds. The row-level menu is optional — only the
- * unfulfilled group can still edit or remove a line item, since units already
- * handed to a fulfillment are edited through the fulfillment itself.
+ * how many units this group holds. Editing quantity and removing act on the
+ * underlying line item, so they are offered wherever that line item shows up.
  */
 function ItemRow({
   row,
@@ -23,12 +22,15 @@ function ItemRow({
   onRemove,
 }: {
   row: FulfillmentItemRow
-  onEdit?: (row: FulfillmentItemRow) => void
-  onRemove?: (row: FulfillmentItemRow) => void
+  // Required, like on the exported list: making these optional once let a
+  // caller render rows with no menu at all, which silently removed the only
+  // route to editing or removing a line item.
+  onEdit: (row: FulfillmentItemRow) => void
+  onRemove: (row: FulfillmentItemRow) => void
 }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
-  const hasMenu = !!onEdit || !!onRemove
+  const hasMenu = !!row.lineItem
 
   return (
     <div className="flex items-center gap-3 py-3">
@@ -73,14 +75,14 @@ function ItemRow({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {onEdit && (
+            {row.lineItem && (
               <DropdownMenuItem onClick={() => onEdit(row)}>
                 <PencilIcon className="size-4" />
                 {t('admin.orders.detail.dropdown.edit_quantity')}
               </DropdownMenuItem>
             )}
-            {onEdit && onRemove && <DropdownMenuSeparator />}
-            {onRemove && (
+            {isRemovableRow(row) && <DropdownMenuSeparator />}
+            {isRemovableRow(row) && (
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
                 onClick={async () => {
@@ -109,31 +111,30 @@ function ItemRow({
 /**
  * The item list rendered inside a fulfillment group.
  *
- * @param canRemove decides per row whether removal is offered at all; a row it
- *   rejects shows no remove action rather than one that would do nothing.
+ * Every row that still maps to a line item can have its quantity edited and be
+ * removed — those act on the order's line item, which exists whichever group
+ * the row happens to be displayed in. Removal is withheld only when the row
+ * shows part of a line item whose other units sit elsewhere, since deleting
+ * would take those too.
+ *
+ * @param onEdit opens the quantity dialog for the row's line item
+ * @param onRemove deletes the row's line item from the order
  */
 export function FulfillmentItemList({
   rows,
   onEdit,
   onRemove,
-  canRemove,
 }: {
   rows: FulfillmentItemRow[]
-  onEdit?: (row: FulfillmentItemRow) => void
-  onRemove?: (row: FulfillmentItemRow) => void
-  canRemove?: (row: FulfillmentItemRow) => boolean
+  onEdit: (row: FulfillmentItemRow) => void
+  onRemove: (row: FulfillmentItemRow) => void
 }) {
   if (rows.length === 0) return null
 
   return (
     <div className="divide-y">
       {rows.map((row) => (
-        <ItemRow
-          key={row.key}
-          row={row}
-          onEdit={onEdit}
-          onRemove={onRemove && (!canRemove || canRemove(row)) ? onRemove : undefined}
-        />
+        <ItemRow key={row.key} row={row} onEdit={onEdit} onRemove={onRemove} />
       ))}
     </div>
   )

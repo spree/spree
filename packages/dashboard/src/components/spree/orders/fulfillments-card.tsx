@@ -446,7 +446,25 @@ const CAN_SHIP = ['ready', 'ready_for_pickup']
 const CAN_CANCEL = ['pending', 'ready', 'ready_for_pickup']
 const CAN_EDIT = ['pending', 'ready', 'ready_for_pickup']
 
-function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
+/**
+ * Editing a line item is an order-level operation, so one set of handlers is
+ * shared by every group that displays that line item rather than each group
+ * owning its own dialog and mutation.
+ */
+type LineItemActions = {
+  edit: (row: FulfillmentItemRow) => void
+  remove: (row: FulfillmentItemRow) => void
+}
+
+function FulfillmentRow({
+  order,
+  fulfillment,
+  itemActions,
+}: {
+  order: Order
+  fulfillment: Fulfillment
+  itemActions: LineItemActions
+}) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const orderId = order.id
@@ -592,7 +610,11 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         </span>
       )}
 
-      <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
+      <FulfillmentItemList
+        rows={fulfillmentItemRows(fulfillment, order.items ?? [])}
+        onEdit={itemActions.edit}
+        onRemove={itemActions.remove}
+      />
 
       {editOpen && (
         <FulfillmentEditDialog
@@ -627,23 +649,16 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
 /**
  * Units nobody has put into a fulfillment yet. Reads like a fulfillment group
  * so the eye can compare it against the real ones, minus the status and number
- * it does not have. Line items are still editable here — once units belong to
- * a fulfillment they are edited through that fulfillment instead.
+ * it does not have.
  */
 function UnfulfilledGroup({
-  orderId,
   rows,
-  onEditItem,
+  itemActions,
 }: {
-  orderId: string
   rows: FulfillmentItemRow[]
-  onEditItem: (row: FulfillmentItemRow) => void
+  itemActions: LineItemActions
 }) {
   const { t } = useTranslation()
-
-  const deleteMutation = useOrderMutation(orderId, (lineItemId: string) =>
-    adminClient.orders.items.delete(orderId, lineItemId),
-  )
 
   const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
 
@@ -656,15 +671,7 @@ function UnfulfilledGroup({
         </span>
       </div>
 
-      <FulfillmentItemList
-        rows={rows}
-        onEdit={onEditItem}
-        onRemove={(row) => row.lineItem && deleteMutation.mutate(row.lineItem.id)}
-        // Removal deletes the whole line item, so it is only offered while
-        // every one of its units is still unclaimed — otherwise it would
-        // silently pull units out of an existing fulfillment too.
-        canRemove={(row) => !!row.lineItem && row.quantity === row.lineItem.quantity}
-      />
+      <FulfillmentItemList rows={rows} onEdit={itemActions.edit} onRemove={itemActions.remove} />
     </div>
   )
 }
@@ -688,6 +695,18 @@ export function FulfillmentsCard({ order }: { order: Order }) {
   const fulfillments = order.fulfillments ?? []
   const lineItems = order.items ?? []
   const unfulfilled = unfulfilledItemRows(lineItems, fulfillments)
+
+  const deleteMutation = useOrderMutation(order.id, (lineItemId: string) =>
+    adminClient.orders.items.delete(order.id, lineItemId),
+  )
+
+  // Shared by every group: the row shows units, but both actions act on the
+  // line item behind them, which is the same record wherever it is displayed.
+  const itemActions: LineItemActions = {
+    edit: (row) =>
+      row.lineItem && setEditItem({ id: row.lineItem.id, quantity: row.lineItem.quantity }),
+    remove: (row) => row.lineItem && deleteMutation.mutate(row.lineItem.id),
+  }
 
   // Manual creation is a completed-order operation: Fulfillments::Create
   // rejects it otherwise ("Fulfillments can only be created manually on
@@ -730,17 +749,15 @@ export function FulfillmentsCard({ order }: { order: Order }) {
         ) : (
           <CardContent className="flex flex-col gap-4">
             {unfulfilled.length > 0 && (
-              <UnfulfilledGroup
-                orderId={order.id}
-                rows={unfulfilled}
-                onEditItem={(row) =>
-                  row.lineItem &&
-                  setEditItem({ id: row.lineItem.id, quantity: row.lineItem.quantity })
-                }
-              />
+              <UnfulfilledGroup rows={unfulfilled} itemActions={itemActions} />
             )}
             {fulfillments.map((fulfillment) => (
-              <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
+              <FulfillmentRow
+                key={fulfillment.id}
+                order={order}
+                fulfillment={fulfillment}
+                itemActions={itemActions}
+              />
             ))}
           </CardContent>
         )}
