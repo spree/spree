@@ -4,10 +4,10 @@ module SpreeStripe
   class CreatePayment
     # @param owner [Spree::Cart, Spree::Order]
     # @param payment_session [Spree::PaymentSessions::Stripe]
-    # @param gateway [SpreeStripe::Gateway]
-    def initialize(owner:, payment_session:, gateway: nil, amount: nil)
+    # @param gateway [SpreeStripe::Gateway] the session's payment method
+    def initialize(owner:, payment_session:, gateway:, amount: nil)
       @owner = owner
-      @gateway = gateway || owner.store.stripe_gateway
+      @gateway = gateway
       @payment_session = payment_session
       @amount = amount || owner.total_minus_store_credits
     end

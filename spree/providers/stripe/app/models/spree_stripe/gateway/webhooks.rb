@@ -30,6 +30,11 @@ module SpreeStripe
         after_commit :create_webhook_endpoint_async, on: %i[create update]
       end
 
+      # Translates a Stripe event into the normalized shape core's webhook
+      # controller and `Spree::Payments::HandleWebhook` consume. Everything
+      # after this — idempotency, locking, payment creation, order completion —
+      # belongs to core.
+      #
       # @param raw_body [String]
       # @param headers [Hash]
       # @return [Hash, nil] nil for events this gateway does not act on
@@ -46,7 +51,7 @@ module SpreeStripe
         )
         return nil unless payment_session
 
-        { action: action, payment_session: payment_session, metadata: { stripe_event: event } }
+        { action: action, payment_session: payment_session }
       end
 
       def create_webhook_endpoint
