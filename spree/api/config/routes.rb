@@ -403,7 +403,11 @@ Spree::Core::Engine.add_routes do
         # parent and then addressed directly, so a caller holding a branch id
         # does not have to know which company it belongs to.
         resources :companies do
-          resources :locations, controller: 'companies/locations', only: [:index, :show, :create]
+          # Listed and created under the company you arrived from; read and
+          # written by their own id below, which has to exist anyway as the
+          # parent path for contacts (three levels of nesting is over the cap —
+          # docs/plans/6.0-admin-api.md).
+          resources :locations, controller: 'companies/locations', only: [:index, :create]
 
           # The business's own registration — the number on its invoices, which
           # outranks the buyer's own. Same shape as the customer's.
@@ -426,7 +430,7 @@ Spree::Core::Engine.add_routes do
         end
 
         resources :company_locations, only: [:show, :update, :destroy] do
-          resources :contacts, controller: 'company_locations/contacts', only: [:index, :show, :create]
+          resources :contacts, controller: 'company_locations/contacts', only: [:index, :create]
         end
 
         resources :company_contacts, only: [:show, :destroy]
