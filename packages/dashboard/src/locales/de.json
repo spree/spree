@@ -1811,6 +1811,7 @@
           "resume_failed": "Auftrag konnte nicht wieder aufgenommen werden"
         },
         "fulfillments": {
+          "add_item": "Artikel hinzufügen",
           "confirm_split": "Diese Einheiten in eine neue Sendung verschieben? Die Änderung wird sofort wirksam.",
           "create_description": "Erstellt eine Sendung und verschiebt die gewählten Mengen hinein.",
           "create_items": "Artikel",
@@ -1830,7 +1831,9 @@
           "split_item": "Produkt",
           "split_quantity": "Zu verschiebende Menge",
           "split_title": "Sendung aufteilen",
-          "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung."
+          "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung.",
+          "unfulfilled_one": "Nicht versandt ({{count}})",
+          "unfulfilled_other": "Nicht versandt ({{count}})"
         },
         "gift_card_section": {
           "applied_suffix": "angewendet",
@@ -1845,9 +1848,7 @@
           "title": "Rabatte & Guthaben"
         },
         "items_table": {
-          "item": "Artikel",
-          "price": "Preis",
-          "qty": "Anz."
+          "item_actions": "Aktionen für {{name}}"
         },
         "load_failed_message": "Auftrag {{orderId}} konnte nicht geladen werden.",
         "messages": {
@@ -1861,7 +1862,6 @@
           "voided": "Zahlung storniert"
         },
         "no_customer": "Keine Kundeninformationen",
-        "no_line_items": "Keine Positionen",
         "payment_form": {
           "amount_help": "Leer lassen, um standardmäßig den offenen Saldo zu verwenden.",
           "capture_immediately": "Sofort einziehen",
@@ -2169,7 +2169,6 @@
           "section_fulfillments": "Fulfillments",
           "section_history": "Verlauf",
           "section_internal_note": "Interne Notiz",
-          "section_items": "Artikel",
           "section_payments": "Zahlungen",
           "section_returns": "Retouren",
           "section_shipping_address": "Lieferadresse",

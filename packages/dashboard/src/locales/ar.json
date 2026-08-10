@@ -1822,6 +1822,7 @@
           "resume_failed": "فشل في استئناف الطلب"
         },
         "fulfillments": {
+          "add_item": "إضافة عنصر",
           "confirm_split": "نقل هذه الوحدات إلى شحنة جديدة؟ يسري هذا فوراً.",
           "create_description": "تنشئ شحنة وتنقل إليها الكميات المختارة.",
           "create_items": "العناصر",
@@ -1841,7 +1842,8 @@
           "split_item": "المنتج",
           "split_quantity": "الكمية المراد نقلها",
           "split_title": "تقسيم الشحنة",
-          "split_would_empty": "اترك وحدة واحدة على الأقل، أو غيّر مصدر الشحنة بالكامل بدلاً من ذلك."
+          "split_would_empty": "اترك وحدة واحدة على الأقل، أو غيّر مصدر الشحنة بالكامل بدلاً من ذلك.",
+          "unfulfilled_other": "غير مُنفَّذ ({{count}})"
         },
         "gift_card_section": {
           "applied_suffix": "مُطبَّق",
@@ -1856,9 +1858,7 @@
           "title": "الخصومات والرصيد"
         },
         "items_table": {
-          "item": "غرض",
-          "price": "سعر",
-          "qty": "الكمية"
+          "item_actions": "إجراءات لـ {{name}}"
         },
         "load_failed_message": "لم نتمكن من تحميل الطلب {{orderId}}.",
         "messages": {
@@ -1872,7 +1872,6 @@
           "voided": "تم إلغاء الدفع"
         },
         "no_customer": "لا توجد معلومات العميل",
-        "no_line_items": "لا توجد عناصر",
         "payment_form": {
           "amount_help": "اتركه فارغًا لتقصير الرصيد المستحق.",
           "capture_immediately": "التقط على الفور",
@@ -2180,7 +2179,6 @@
           "section_fulfillments": "عمليات التنفيذ",
           "section_history": "تاريخ",
           "section_internal_note": "ملاحظة داخلية",
-          "section_items": "أغراض",
           "section_payments": "المدفوعات",
           "section_returns": "المرتجعات",
           "section_shipping_address": "عنوان الشحن",

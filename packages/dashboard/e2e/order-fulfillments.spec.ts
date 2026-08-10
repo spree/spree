@@ -25,35 +25,40 @@ async function createDraftOrder(page: Page, storeId: string) {
 
 /**
  * The Fulfillments card. Filtering `div` by contained text would match every
- * ancestor too — including the page wrapper, whose first "Add" button belongs
- * to the Items card — so anchor on the card element itself.
+ * ancestor too, so anchor on the card element itself.
  */
 function fulfillmentsCard(page: Page) {
+  // The title holds an icon and a count badge beside the word, so match the
+  // text loosely; anchoring on the card element keeps sibling cards out.
   return page.locator('[data-slot="card"]').filter({
-    has: page.getByText(/^fulfillments$/i),
+    has: page.locator('[data-slot="card-title"]', { hasText: /fulfillments/i }),
   })
 }
 
 test.describe('order fulfillments', () => {
-  test('shows the empty state on a draft with no shipping address', async ({ page }) => {
+  // A draft carries no fulfillments, so its line item has nobody to claim it
+  // and lands in the unfulfilled group at the top of the card — which is what
+  // tells the merchant the goods still need shipping.
+  test('lists the unclaimed line item on a draft with no shipping address', async ({ page }) => {
     const creds = await login(page)
     await createDraftOrder(page, creds.store_id)
 
-    await expect(page.getByText(/no fulfillments on this order yet/i)).toBeVisible({
-      timeout: 15_000,
-    })
+    const card = fulfillmentsCard(page)
+    await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
+    await expect(card.getByText(new RegExp(FIXTURE_PROMO_PRODUCT, 'i')).first()).toBeVisible()
   })
 
   // Manual creation is a completed-order operation — Spree::Fulfillments::Create
   // rejects it otherwise — so the card must not offer an action that can only
-  // fail. A draft's fulfillments come from the delivery step instead.
+  // fail. A draft's fulfillments come from the delivery step instead. "Add
+  // item" sits in the same header and stays available.
   test('does not offer manual creation on an incomplete order', async ({ page }) => {
     const creds = await login(page)
     await createDraftOrder(page, creds.store_id)
 
-    await expect(page.getByText(/no fulfillments on this order yet/i)).toBeVisible({
-      timeout: 15_000,
-    })
-    await expect(fulfillmentsCard(page).getByRole('button', { name: /^add$/i })).toHaveCount(0)
+    const card = fulfillmentsCard(page)
+    await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
+    await expect(card.getByRole('button', { name: /^add fulfillment$/i })).toHaveCount(0)
+    await expect(card.getByRole('button', { name: /^add item$/i })).toBeVisible()
   })
 })

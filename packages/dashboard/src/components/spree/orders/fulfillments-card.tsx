@@ -1,4 +1,5 @@
 import type { Fulfillment, Order } from '@spree/admin-sdk'
+import { adminClient } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -36,6 +37,7 @@ import {
 import {
   EllipsisVerticalIcon,
   MapPinIcon,
+  PackageIcon,
   PencilIcon,
   PlusIcon,
   RotateCcwIcon,
@@ -47,8 +49,17 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
+import { useOrderMutation } from '../../../hooks/use-order'
 import { useStockLocations } from '../../../hooks/use-stock-locations'
+import {
+  type FulfillmentItemRow,
+  fulfillmentItemRows,
+  hasFulfillableUnits,
+  unfulfilledItemRows,
+} from '../../../lib/fulfillment-items'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
+import { FulfillmentItemList } from './fulfillment-item-list'
+import { AddLineItemDialog, EditQuantityDialog } from './line-item-dialogs'
 
 /**
  * A unit sitting in one fulfillment. Splitting moves units per variant rather
@@ -581,6 +592,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         </span>
       )}
 
+      <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
+
       {editOpen && (
         <FulfillmentEditDialog
           order={order}
@@ -612,20 +625,78 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
 }
 
 /**
+ * Units nobody has put into a fulfillment yet. Reads like a fulfillment group
+ * so the eye can compare it against the real ones, minus the status and number
+ * it does not have. Line items are still editable here — once units belong to
+ * a fulfillment they are edited through that fulfillment instead.
+ */
+function UnfulfilledGroup({
+  orderId,
+  rows,
+  onEditItem,
+}: {
+  orderId: string
+  rows: FulfillmentItemRow[]
+  onEditItem: (row: FulfillmentItemRow) => void
+}) {
+  const { t } = useTranslation()
+
+  const deleteMutation = useOrderMutation(orderId, (lineItemId: string) =>
+    adminClient.orders.items.delete(orderId, lineItemId),
+  )
+
+  const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
+
+  return (
+    <div className="rounded-lg border p-4 flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        <PackageIcon className="size-4 text-muted-foreground" />
+        <span className="text-sm font-medium">
+          {t('admin.orders.detail.fulfillments.unfulfilled', { count: totalUnits })}
+        </span>
+      </div>
+
+      <FulfillmentItemList
+        rows={rows}
+        onEdit={onEditItem}
+        onRemove={(row) => row.lineItem && deleteMutation.mutate(row.lineItem.id)}
+        // Removal deletes the whole line item, so it is only offered while
+        // every one of its units is still unclaimed — otherwise it would
+        // silently pull units out of an existing fulfillment too.
+        canRemove={(row) => !!row.lineItem && row.quantity === row.lineItem.quantity}
+      />
+    </div>
+  )
+}
+
+/**
  * Fulfillments on an order, editable while they are still open: which priced
  * service carries them, where they ship from, and how the units are grouped.
  * Once shipped or canceled they read back flat, since the backend refuses the
  * writes anyway.
+ *
+ * Each group lists the items it carries, so a multi-fulfillment order says
+ * which goods went where rather than leaving that to be inferred from a
+ * separate basket-wide list.
  */
 export function FulfillmentsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const [createOpen, setCreateOpen] = useState(false)
+  const [addItemOpen, setAddItemOpen] = useState(false)
+  const [editItem, setEditItem] = useState<{ id: string; quantity: number } | null>(null)
 
   const fulfillments = order.fulfillments ?? []
+  const lineItems = order.items ?? []
+  const unfulfilled = unfulfilledItemRows(lineItems, fulfillments)
+
   // Manual creation is a completed-order operation: Fulfillments::Create
   // rejects it otherwise ("Fulfillments can only be created manually on
   // completed orders"). A draft's fulfillments come from the delivery step.
-  const canCreate = (order.items ?? []).length > 0 && !!order.completed_at
+  // It also needs units it can actually move — offering it on a fully shipped
+  // order would only ever produce an empty fulfillment.
+  const canCreate = !!order.completed_at && hasFulfillableUnits(lineItems, fulfillments)
+
+  const groupCount = fulfillments.length + (unfulfilled.length > 0 ? 1 : 0)
 
   return (
     <>
@@ -634,19 +705,23 @@ export function FulfillmentsCard({ order }: { order: Order }) {
           <CardTitle>
             <TruckIcon className="size-4" />
             {t('admin.pages.orders.detail.section_fulfillments')}
-            {fulfillments.length > 0 && <Badge variant="outline">{fulfillments.length}</Badge>}
+            {groupCount > 0 && <Badge variant="outline">{groupCount}</Badge>}
           </CardTitle>
           <CardAction className="flex items-center gap-2">
             {order.fulfillment_status && <StatusBadge status={order.fulfillment_status} />}
+            <Button size="sm" variant="outline" onClick={() => setAddItemOpen(true)}>
+              <PlusIcon data-icon="inline-start" />
+              {t('admin.orders.detail.fulfillments.add_item')}
+            </Button>
             {canCreate && (
               <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)}>
                 <PlusIcon data-icon="inline-start" />
-                {t('admin.actions.add')}
+                {t('admin.orders.detail.fulfillments.create_title')}
               </Button>
             )}
           </CardAction>
         </CardHeader>
-        {fulfillments.length === 0 ? (
+        {groupCount === 0 ? (
           <CardContent>
             <p className="text-center text-muted-foreground py-8">
               {t('admin.orders.detail.fulfillments.empty')}
@@ -654,6 +729,16 @@ export function FulfillmentsCard({ order }: { order: Order }) {
           </CardContent>
         ) : (
           <CardContent className="flex flex-col gap-4">
+            {unfulfilled.length > 0 && (
+              <UnfulfilledGroup
+                orderId={order.id}
+                rows={unfulfilled}
+                onEditItem={(row) =>
+                  row.lineItem &&
+                  setEditItem({ id: row.lineItem.id, quantity: row.lineItem.quantity })
+                }
+              />
+            )}
             {fulfillments.map((fulfillment) => (
               <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
             ))}
@@ -663,6 +748,18 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 
       {createOpen && (
         <CreateFulfillmentDialog order={order} open={createOpen} onOpenChange={setCreateOpen} />
+      )}
+
+      <AddLineItemDialog orderId={order.id} open={addItemOpen} onOpenChange={setAddItemOpen} />
+
+      {editItem && (
+        <EditQuantityDialog
+          orderId={order.id}
+          lineItemId={editItem.id}
+          currentQuantity={editItem.quantity}
+          open={!!editItem}
+          onOpenChange={(open) => !open && setEditItem(null)}
+        />
       )}
     </>
   )

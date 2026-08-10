@@ -1811,6 +1811,7 @@
           "resume_failed": "Failed to resume order"
         },
         "fulfillments": {
+          "add_item": "Add item",
           "confirm_split": "Move these units into a new fulfillment? This takes effect immediately.",
           "create_description": "Creates a fulfillment and moves the chosen quantities into it.",
           "create_items": "Items",
@@ -1830,7 +1831,9 @@
           "split_item": "Product",
           "split_quantity": "Quantity to move",
           "split_title": "Split fulfillment",
-          "split_would_empty": "Leave at least one unit behind, or change the origin of the whole fulfillment instead."
+          "split_would_empty": "Leave at least one unit behind, or change the origin of the whole fulfillment instead.",
+          "unfulfilled_one": "Unfulfilled ({{count}})",
+          "unfulfilled_other": "Unfulfilled ({{count}})"
         },
         "gift_card_section": {
           "applied_suffix": "applied",
@@ -1845,9 +1848,7 @@
           "title": "Discounts & Credit"
         },
         "items_table": {
-          "item": "Item",
-          "price": "Price",
-          "qty": "Qty"
+          "item_actions": "Actions for {{name}}"
         },
         "load_failed_message": "We couldn't load order {{orderId}}.",
         "messages": {
@@ -1861,7 +1862,6 @@
           "voided": "Payment voided"
         },
         "no_customer": "No customer information",
-        "no_line_items": "No line items",
         "payment_form": {
           "amount_help": "Leave blank to default to the outstanding balance.",
           "capture_immediately": "Capture immediately",
@@ -2169,7 +2169,6 @@
           "section_fulfillments": "Fulfillments",
           "section_history": "History",
           "section_internal_note": "Internal note",
-          "section_items": "Items",
           "section_payments": "Payments",
           "section_returns": "Returns",
           "section_shipping_address": "Shipping address",

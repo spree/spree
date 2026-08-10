@@ -1808,6 +1808,7 @@
           "resume_failed": "恢复订单失败"
         },
         "fulfillments": {
+          "add_item": "添加商品",
           "confirm_split": "将这些数量移入新的发货单？此操作立即生效。",
           "create_description": "创建发货单并将所选数量移入其中。",
           "create_items": "商品项",
@@ -1827,7 +1828,8 @@
           "split_item": "商品",
           "split_quantity": "移动数量",
           "split_title": "拆分发货单",
-          "split_would_empty": "请至少保留一件，或改为修改整个发货单的发货地。"
+          "split_would_empty": "请至少保留一件，或改为修改整个发货单的发货地。",
+          "unfulfilled_other": "未发货（{{count}}）"
         },
         "gift_card_section": {
           "applied_suffix": "已应用",
@@ -1842,9 +1844,7 @@
           "title": "折扣与余额"
         },
         "items_table": {
-          "item": "商品",
-          "price": "价格",
-          "qty": "数量"
+          "item_actions": "{{name}} 的操作"
         },
         "load_failed_message": "无法加载订单 {{orderId}}。",
         "messages": {
@@ -1858,7 +1858,6 @@
           "voided": "付款已作废"
         },
         "no_customer": "无客户信息",
-        "no_line_items": "无订单项",
         "payment_form": {
           "amount_help": "留空则默认为未结清的余额。",
           "capture_immediately": "立即扣款",
@@ -2166,7 +2165,6 @@
           "section_fulfillments": "履约单",
           "section_history": "历史记录",
           "section_internal_note": "内部备注",
-          "section_items": "商品",
           "section_payments": "付款",
           "section_returns": "退货",
           "section_shipping_address": "收货地址",

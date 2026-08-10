@@ -1827,6 +1827,7 @@
           "resume_failed": "Nie udało się wznowić zamówienia"
         },
         "fulfillments": {
+          "add_item": "Dodaj pozycję",
           "confirm_split": "Przenieść te sztuki do nowej przesyłki? Zmiana zadziała natychmiast.",
           "create_description": "Tworzy przesyłkę i przenosi do niej wybrane ilości.",
           "create_items": "Pozycje",
@@ -1846,7 +1847,11 @@
           "split_item": "Produkt",
           "split_quantity": "Liczba do przeniesienia",
           "split_title": "Podziel przesyłkę",
-          "split_would_empty": "Pozostaw co najmniej jedną sztukę albo zmień miejsce wysyłki całej przesyłki."
+          "split_would_empty": "Pozostaw co najmniej jedną sztukę albo zmień miejsce wysyłki całej przesyłki.",
+          "unfulfilled_few": "Niezrealizowane ({{count}})",
+          "unfulfilled_many": "Niezrealizowane ({{count}})",
+          "unfulfilled_one": "Niezrealizowane ({{count}})",
+          "unfulfilled_other": "Niezrealizowane ({{count}})"
         },
         "gift_card_section": {
           "applied_suffix": "zastosowano",
@@ -1861,9 +1866,7 @@
           "title": "Rabaty i środki"
         },
         "items_table": {
-          "item": "Pozycja",
-          "price": "Cena",
-          "qty": "Ilość"
+          "item_actions": "Akcje dla {{name}}"
         },
         "load_failed_message": "Nie udało się załadować zamówienia {{orderId}}.",
         "messages": {
@@ -1877,7 +1880,6 @@
           "voided": "Płatność unieważniona"
         },
         "no_customer": "Brak informacji o kliencie",
-        "no_line_items": "Brak pozycji",
         "payment_form": {
           "amount_help": "Pozostaw puste, aby użyć domyślnie pozostałego salda.",
           "capture_immediately": "Pobierz natychmiast",
@@ -2187,7 +2189,6 @@
           "section_fulfillments": "Realizacje",
           "section_history": "Historia",
           "section_internal_note": "Notatka wewnętrzna",
-          "section_items": "Pozycje",
           "section_payments": "Płatności",
           "section_returns": "Zwroty",
           "section_shipping_address": "Adres dostawy",

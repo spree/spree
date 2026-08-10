@@ -1811,6 +1811,7 @@
           "resume_failed": "Échec de la reprise de la commande"
         },
         "fulfillments": {
+          "add_item": "Ajouter un article",
           "confirm_split": "Déplacer ces unités vers une nouvelle expédition ? L'effet est immédiat.",
           "create_description": "Crée une expédition et y déplace les quantités choisies.",
           "create_items": "Articles",
@@ -1830,7 +1831,9 @@
           "split_item": "Produit",
           "split_quantity": "Quantité à déplacer",
           "split_title": "Diviser l'expédition",
-          "split_would_empty": "Laissez au moins une unité, ou modifiez plutôt l'origine de toute l'expédition."
+          "split_would_empty": "Laissez au moins une unité, ou modifiez plutôt l'origine de toute l'expédition.",
+          "unfulfilled_one": "Non expédié ({{count}})",
+          "unfulfilled_other": "Non expédiés ({{count}})"
         },
         "gift_card_section": {
           "applied_suffix": "appliqué",
@@ -1845,9 +1848,7 @@
           "title": "Remises et avoirs"
         },
         "items_table": {
-          "item": "Article",
-          "price": "Prix",
-          "qty": "Qté"
+          "item_actions": "Actions pour {{name}}"
         },
         "load_failed_message": "Impossible de charger la commande {{orderId}}.",
         "messages": {
@@ -1861,7 +1862,6 @@
           "voided": "Paiement annulé"
         },
         "no_customer": "Aucune information client",
-        "no_line_items": "Aucun article",
         "payment_form": {
           "amount_help": "Laissez vide pour utiliser par défaut le solde restant dû.",
           "capture_immediately": "Capturer immédiatement",
@@ -2169,7 +2169,6 @@
           "section_fulfillments": "Traitements",
           "section_history": "Historique",
           "section_internal_note": "Note interne",
-          "section_items": "Articles",
           "section_payments": "Paiements",
           "section_returns": "Retours",
           "section_shipping_address": "Adresse de livraison",
