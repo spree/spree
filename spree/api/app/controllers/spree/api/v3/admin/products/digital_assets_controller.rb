@@ -13,6 +13,7 @@ module Spree
             def update
               return render_private_storage_error unless uploaded_blob_private?
 
+              @resource.variant = requested_variant if params[:variant_id].present?
               attach_uploaded_file(@resource)
 
               super
@@ -48,10 +49,12 @@ module Spree
               [:variant, { attachment_attachment: :blob }]
             end
 
-            # signed_id names an already-uploaded blob rather than a column, so
-            # it is attached separately instead of being assigned.
+            # variant_id is resolved through the parent rather than assigned:
+            # mass-assigning it would let a caller point an asset at a variant
+            # of any product, in any store. signed_id likewise names a blob
+            # rather than a column, so it is attached separately.
             def permitted_params
-              params.permit(:variant_id, :authorized_clicks, :authorized_days)
+              params.permit(:authorized_clicks, :authorized_days)
             end
 
             private
@@ -60,9 +63,18 @@ module Spree
             # variant, mirroring how the rest of the admin treats such products.
             def build_resource
               digital_asset = super
-              digital_asset.variant ||= @parent.default_variant
+              digital_asset.variant = requested_variant || @parent.default_variant
               attach_uploaded_file(digital_asset)
               digital_asset
+            end
+
+            # Scoped to the parent, not merely to the store: an asset reached
+            # through a product's route has no business pointing at another
+            # product's variant. An id from anywhere else is a 404.
+            def requested_variant
+              return if params[:variant_id].blank?
+
+              @parent.variants.find_by_prefix_id!(params[:variant_id])
             end
 
             def attach_uploaded_file(digital_asset)
