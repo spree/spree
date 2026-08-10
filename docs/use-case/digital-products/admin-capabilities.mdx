@@ -11,12 +11,13 @@ Below is a breakdown of the key capabilities available to store administrators.
 
 - Configure any product to be digital-only, physical, or a hybrid (e.g., physical textbook with downloadable companion PDF).
 - Attach digital files (PDFs, ZIPs, etc.) to any product variant — including variants of physical products, so a manual or warranty document ships alongside the goods.
+- Upload, replace and remove files from the **Digital files** card on the product page. Replacing a file updates it for everyone who already bought it; nobody loses access.
 
 ## Download Access Management
 
-- Limit how long a download link stays valid and how many times it can be used.
-- Set those limits once for the whole store, or override either of them on an individual file — so an evergreen download and a time-limited course can live in the same catalog.
-- Reset a customer's download link when they run out of attempts.
+- Limit how long a download link stays valid and how many times it can be used, from **Settings → Store**.
+- Override either limit on an individual file, so an evergreen download and a time-limited course can live in the same catalog. Leave a file's limits blank and the store settings apply.
+- Restore a customer's access from the order page when they run out of attempts or a download failed.
 
 ## Delivery Step Bypass
 
@@ -26,11 +27,12 @@ Below is a breakdown of the key capabilities available to store administrators.
 ## Automated Digital Delivery
 
 - Digital items are fulfilled automatically when the order is placed — download links are ready immediately, with no manual step.
-- Customers access their downloads through your storefront or app, which reads the links from the order.
+- Customers are emailed their download links as soon as the order is placed, and you can re-send that email from the order page at any time.
+- Signed-in customers can also retrieve everything they have bought from your storefront or app, across all their orders.
 
 ## Download Visibility
 
-- Every download increments a counter on the link, so you can see how many times a file has been fetched.
+- The order page shows each file a buyer received: how many downloads they have used, when access lapses, and whether it has run out.
 - A `digital_link.downloaded` event fires on each successful download, so you can feed downloads into your own auditing, analytics, or fraud tooling via webhooks.
 
 ## Security and Permissions
