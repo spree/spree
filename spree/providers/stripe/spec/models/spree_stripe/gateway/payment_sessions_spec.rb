@@ -213,13 +213,12 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
 
     context 'when the payment intent is accepted and succeeded' do
       let(:stripe_pi) { Stripe::StripeObject.construct_from(id: 'pi_complete_123', status: 'succeeded', latest_charge: 'ch_test_123', payment_method: { type: 'card' }) }
+      let(:payment) { create(:payment, order: order, payment_method: gateway, amount: order.total, state: 'checkout') }
 
       before do
         allow(gateway).to receive(:retrieve_payment_intent).and_return(stripe_pi)
         allow(gateway).to receive(:retrieve_charge).and_return(stripe_charge)
-        allow(payment_session).to receive(:find_or_create_payment!).and_return(
-          create(:payment, order: order, payment_method: gateway, amount: order.total, state: 'checkout')
-        )
+        allow(payment_session).to receive(:find_or_create_payment!).and_return(payment)
       end
 
       it 'completes the session' do
@@ -227,9 +226,11 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
         expect(payment_session.reload.status).to eq('completed')
       end
 
-      it 'creates a payment record' do
-        expect(payment_session).to receive(:find_or_create_payment!)
+      it 'completes the payment with a capture event' do
         gateway.complete_payment_session(payment_session: payment_session)
+
+        expect(payment.reload).to be_completed
+        expect(payment.capture_events.sum(:amount)).to eq(payment.amount)
       end
 
       describe 'wallet billing address patching' do
@@ -385,12 +386,13 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
         allow(gateway).to receive(:retrieve_charge).and_return(stripe_charge)
         allow(gateway).to receive(:payment_intent_accepted?).and_return(true)
         allow(payment_session).to receive(:find_or_create_payment!).and_return(payment)
-        allow(payment_session).to receive(:payment).and_return(payment)
       end
 
-      it 'authorizes the payment instead of processing' do
-        expect(payment).to receive(:authorize!)
+      it 'pends the payment instead of capturing it' do
         gateway.complete_payment_session(payment_session: payment_session)
+
+        expect(payment.reload).to be_pending
+        expect(payment.capture_events).to be_empty
       end
     end
 
@@ -427,14 +429,64 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
       before do
         allow(gateway).to receive(:retrieve_payment_intent).and_return(stripe_pi)
         allow(payment_session).to receive(:find_or_create_payment!).and_return(payment)
-        allow(payment_session).to receive(:payment).and_return(payment)
       end
 
-      it 'completes the session and authorizes the payment without capturing' do
-        expect(payment).to receive(:authorize!)
-        expect(payment).not_to receive(:process!)
+      it 'completes the session with the payment pending, not captured' do
         gateway.complete_payment_session(payment_session: payment_session)
+
         expect(payment_session.reload.status).to eq('completed')
+        expect(payment.reload).to be_pending
+        expect(payment.capture_events).to be_empty
+      end
+    end
+
+    # Regression: settlement used to route through the gateway's authorize and
+    # purchase verbs, which look the owner up in store.orders — a lookup that
+    # can never find a cart, so every checkout-time (cart-owned) settlement
+    # failed with 'Order not found'.
+    context 'when the session is owned by a cart' do
+      let(:cart) { create(:cart_with_line_items, store: store, customer: customer) }
+      let(:payment_session) do
+        create(:stripe_payment_session, owner: cart, payment_method: gateway, amount: cart.total)
+      end
+      let(:stripe_pi) do
+        Stripe::StripeObject.construct_from(
+          id: payment_session.external_id,
+          status: 'succeeded',
+          latest_charge: 'ch_cart_123',
+          payment_method: { type: 'card' }
+        )
+      end
+      let(:cart_charge) do
+        Stripe::StripeObject.construct_from(
+          id: 'ch_cart_123',
+          payment_method: 'pm_cart_123',
+          billing_details: {
+            name: 'John Doe', email: 'john@example.com', phone: nil,
+            address: { line1: '100 California Street', line2: nil, city: 'San Francisco',
+                       state: 'CA', postal_code: '94111', country: 'US' }
+          },
+          payment_method_details: {
+            type: 'card',
+            card: { brand: 'visa', last4: '4242', exp_month: 12, exp_year: 2035, fingerprint: 'fp_cart',
+                    checks: nil, wallet: nil }
+          }
+        )
+      end
+
+      before do
+        allow(gateway).to receive(:retrieve_payment_intent).and_return(stripe_pi)
+        allow(gateway).to receive(:retrieve_charge).and_return(cart_charge)
+        allow(gateway).to receive(:fetch_or_create_customer).and_return(nil)
+      end
+
+      it 'settles the payment on the cart' do
+        gateway.complete_payment_session(payment_session: payment_session)
+
+        expect(payment_session.reload.status).to eq('completed')
+        payment = cart.payments.last
+        expect(payment).to be_completed
+        expect(payment.response_code).to eq(payment_session.external_id)
       end
     end
 

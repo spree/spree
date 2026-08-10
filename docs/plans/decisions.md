@@ -705,6 +705,34 @@ means splitting first, and split-then-ship inside an `after_transition` callback
 is exactly the shape `6.0-service-workflows.md` prohibits. The workflow wraps the
 machine as a low-level mechanic, mirroring how `Fulfillments::Create` already
 wraps `mark_shipped`.
+## 2026-08-10 — One payment settlement path: PaymentSession#settle_payment!
+
+A settled payment session is noticed on two routes — the storefront's confirm
+call and the gateway webhook — and they settled the payment differently. The
+webhook path called `Payment#confirm!`, a local state move guessed from the
+`auto_capture?` setting. The Stripe sync path called `process!`/`authorize!`,
+which route through `gateway_action` back into the gateway's authorize/purchase
+verbs: a second Stripe round trip to learn what `complete_payment_session` had
+just read from the intent. Worse, those verbs look the owner up in
+`store.orders`, which can never find a cart — so checkout-time (cart-owned)
+settlement failed with "Order not found". The specs missed it because they
+built order-owned sessions.
+
+Now both routes call `PaymentSession#settle_payment!(captured:)` — find or
+create the payment, skip if completed, then `confirm!(captured:)`. The
+`captured` flag carries what the gateway actually reported instead of the
+config guess: `Payment#confirm!` gained the keyword (nil keeps the old
+auto_capture fallback for any other caller). Stripe passes intent status
+`succeeded`; the webhook path passes `action == :captured`. That also fixes the
+dashboard-capture edge: a manual-capture payment captured directly in the
+Stripe dashboard now completes on webhook instead of pending forever.
+
+**Consequences:** gateway `complete_payment_session` implementations settle via
+`settle_payment!` and never call `process!`/`authorize!` — those verbs remain
+core's fallback for payments not covered at completion time, where the owner is
+already an Order. A gateway reports facts (`captured` or not); core owns what
+the payment does with them.
+
 ## 2026-08-10 — Stripe drops Apple Pay domain registration; payment intents are not a subsystem
 
 Two removals from the Stripe port, both from the same question: what does a

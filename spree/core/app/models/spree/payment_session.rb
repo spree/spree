@@ -101,6 +101,22 @@ module Spree
       )
     end
 
+    # The one place a session settles its payment — used by both routes a
+    # settled session is noticed on (the storefront confirm call and the
+    # gateway webhook), so the two can never drift apart.
+    #
+    # @param captured [Boolean] whether the gateway reports the funds as
+    #   captured; false means authorized only, so the payment pends
+    # @param metadata [Hash] gateway-specific metadata for payment creation
+    # @return [Spree::Payment, nil]
+    def settle_payment!(captured:, metadata: {})
+      settled_payment = find_or_create_payment!(metadata)
+      return settled_payment if settled_payment.blank? || settled_payment.completed?
+
+      settled_payment.confirm!(captured: captured)
+      settled_payment
+    end
+
     # @return [Spree::Cart, Spree::Order, nil]
     def owner
       order || cart

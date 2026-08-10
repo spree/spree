@@ -97,19 +97,12 @@ module SpreeStripe
         charge = payment_session.stripe_charge
         patch_wallet_address(payment_session.owner, charge) if charge.present?
 
-        payment_session.find_or_create_payment!
-
-        payment = payment_session.payment
-        if payment.present? && !payment.completed?
-          # The `else` covers requires_capture (manual capture), processing
-          # (delayed-notification banks) and requires_action (bank transfer
-          # awaiting funds) — all authorization-only states.
-          if payment_intent_successful?(stripe_payment_intent)
-            payment.process!
-          else
-            payment.authorize!
-          end
-        end
+        # `succeeded` is the only status where funds have moved. The other
+        # accepted statuses — requires_capture (manual capture), processing
+        # (delayed-notification banks), requires_action (bank transfer awaiting
+        # funds) — settle as authorization-only, completed later by webhook or
+        # explicit capture.
+        payment_session.settle_payment!(captured: payment_intent_successful?(stripe_payment_intent))
 
         payment_session.complete unless payment_session.completed?
         payment_session

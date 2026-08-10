@@ -28,13 +28,19 @@ module Spree
         handle_payment_preconditions { process_purchase }
       end
 
-      # Confirms a payment by completing it or pending it depending on when the
-      # payment method charges. Useful for payments that are authorized/captured
-      # with SDK/Drop-in elements
-      def confirm!
+      # Confirms a payment already authorized or captured on the gateway side
+      # (SDK / Drop-in / payment session flows) — the local state move only, no
+      # gateway call.
+      #
+      # @param captured [Boolean, nil] whether the gateway reports the funds as
+      #   captured. Callers who know the gateway state pass it; nil falls back
+      #   to when the payment method charges.
+      def confirm!(captured: nil)
+        captured = payment_method&.capture_at_checkout? if captured.nil?
+
         started_processing! if checkout?
 
-        if payment_method&.capture_at_checkout? && can_complete?
+        if captured && can_complete?
           complete!
           capture_events.create!(amount: amount)
         elsif can_pend?

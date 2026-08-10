@@ -65,12 +65,12 @@ module Spree
         failure(payment_session, error.message)
       end
 
-      # Spree::Payment#confirm! honors when the payment method charges:
-      # charging at checkout completes and records a capture event, otherwise
-      # the payment pends (auth-only, payment_state=balance_due).
+      # :captured means the gateway reports the funds as moved, so the payment
+      # completes with a capture event; :authorized pends it (auth-only,
+      # payment_state=balance_due) until an explicit capture. The webhook's
+      # action decides, not the method's capture timing.
       def ensure_payment
-        @payment = payment_session.find_or_create_payment!(metadata)
-        payment.confirm! if payment.present? && !payment.completed?
+        @payment = payment_session.settle_payment!(captured: action == :captured, metadata: metadata)
       end
 
       def complete_session
