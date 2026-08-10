@@ -654,6 +654,24 @@ export interface ProductMediaInput {
   variant_ids?: Array<string>
 }
 
+export interface DigitalAssetCreateParams {
+  /** Signed blob id from a `private: true` direct upload. */
+  signed_id: string
+  /** Defaults to the product's default variant when omitted. */
+  variant_id?: string
+  /** Null (or omitted) means the store's download settings apply. */
+  authorized_clicks?: number | null
+  authorized_days?: number | null
+}
+
+export interface DigitalAssetUpdateParams {
+  /** Replaces the file for everyone who already bought it. */
+  signed_id?: string
+  variant_id?: string
+  authorized_clicks?: number | null
+  authorized_days?: number | null
+}
+
 export interface MediaUpdateParams {
   alt?: string
   position?: number

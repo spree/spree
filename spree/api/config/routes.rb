@@ -316,6 +316,16 @@ Spree::Core::Engine.add_routes do
             resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
           end
           resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
+          resources :digital_assets, controller: 'products/digital_assets',
+                                     only: [:index, :create, :show, :update, :destroy]
+        end
+
+        # Digital download grants — read and reset only; they are created by
+        # order completion, never by hand.
+        resources :digital_links, only: [:index, :show] do
+          member do
+            patch :reset
+          end
         end
 
         # Media library — every file in the store, placed or not. Files are put

@@ -137,6 +137,8 @@ import type {
   DeliveryOriginGroupParams,
   DeliveryProfileParams,
   DeliveryZoneParams,
+  DigitalAssetCreateParams,
+  DigitalAssetUpdateParams,
   DirectUploadCreateParams,
   ExchangeCreateParams,
   ExchangeFulfillParams,
@@ -278,6 +280,8 @@ import type {
   DeliveryProfile,
   DeliveryRateProviderOption,
   DeliveryZone,
+  DigitalAsset,
+  DigitalLink,
   Discount,
   Exchange,
   Export,
@@ -900,6 +904,46 @@ export class AdminClient {
         this.request<void>('DELETE', `/products/${productId}/media/${id}`, options),
     },
 
+    digitalAssets: {
+      list: (
+        productId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<DigitalAsset>> =>
+        this.request<PaginatedResponse<DigitalAsset>>(
+          'GET',
+          `/products/${productId}/digital_assets`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
+
+      create: (
+        productId: string,
+        params: DigitalAssetCreateParams,
+        options?: RequestOptions,
+      ): Promise<DigitalAsset> =>
+        this.request<DigitalAsset>('POST', `/products/${productId}/digital_assets`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        productId: string,
+        id: string,
+        params: DigitalAssetUpdateParams,
+        options?: RequestOptions,
+      ): Promise<DigitalAsset> =>
+        this.request<DigitalAsset>('PATCH', `/products/${productId}/digital_assets/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/products/${productId}/digital_assets/${id}`, options),
+    },
+
     variants: {
       list: (
         productId: string,
@@ -1002,6 +1046,31 @@ export class AdminClient {
     customFields: this.parentScopedCustomFields(CUSTOM_FIELD_OWNER_PATHS['Spree::Product']),
 
     translations: this.parentScopedTranslations('/products'),
+  }
+
+  // ============================================
+  // Digital links
+  // ============================================
+
+  /**
+   * Download grants issued to customers when an order is placed. They are never
+   * created by hand — `reset` gives a customer their allowance back.
+   */
+  readonly digitalLinks = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<DigitalLink>> =>
+      this.request<PaginatedResponse<DigitalLink>>('GET', '/digital_links', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    retrieve: (id: string, options?: RequestOptions): Promise<DigitalLink> =>
+      this.request<DigitalLink>('GET', `/digital_links/${id}`, options),
+
+    reset: (id: string, options?: RequestOptions): Promise<DigitalLink> =>
+      this.request<DigitalLink>('PATCH', `/digital_links/${id}/reset`, options),
   }
 
   // ============================================
