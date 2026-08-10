@@ -23,8 +23,8 @@ module Spree
             location.company_contacts.size
           end
 
-          one :billing_address, resource: proc { Spree.api.address_serializer }
-          one :shipping_address, resource: proc { Spree.api.address_serializer }
+          one :billing_address, resource: proc { Spree.api.admin_address_serializer }
+          one :shipping_address, resource: proc { Spree.api.admin_address_serializer }
 
           many :company_contacts,
                resource: proc { Spree.api.admin_company_contact_serializer },
