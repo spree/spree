@@ -28,10 +28,16 @@ module Spree
 
       private
 
+      # Shipping is what "delivery" means unless someone chooses otherwise, so
+      # the cheapest *shipped* rate wins by default. Picking the cheapest of
+      # all rates handed every order to free store pickup the moment a pickup
+      # method existed. Profiles offering nothing shipped (pickup-only,
+      # digital) still get their cheapest rate.
       def choose_default_delivery_rate(delivery_rates)
-        unless delivery_rates.empty?
-          delivery_rates.min_by(&:cost).selected = true
-        end
+        return if delivery_rates.empty?
+
+        shipped = delivery_rates.select { |rate| rate.delivery_method&.requires_address? }
+        (shipped.presence || delivery_rates).min_by(&:cost).selected = true
       end
 
       def sort_delivery_rates(delivery_rates)

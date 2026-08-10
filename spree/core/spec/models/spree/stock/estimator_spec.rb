@@ -11,6 +11,42 @@ module Spree
       let(:order)            { build(:order_with_line_items, ship_address: ship_address) }
       let(:inventory_units)  { order.inventory_units }
 
+      # A free pickup option must not silently become every order's delivery
+      # method — "delivery" means shipping unless the buyer says otherwise.
+      describe 'default rate selection' do
+        # Pickup only quotes from a counter customers may collect at, and the
+        # package's location must be the persisted one the method serves.
+        let(:counter) { create(:stock_location, pickup_enabled: true) }
+        let(:package) do
+          build(:stock_package, stock_location: counter,
+                                contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) })
+        end
+        let(:pickup) { create(:pickup_delivery_method, name: 'Store Pickup') }
+
+        before do
+          pickup.calculator.update!(preferences: { amount: 0, currency: 'USD' })
+          shipping_method.calculator.update!(preferences: { amount: 5, currency: 'USD' })
+        end
+
+        it 'selects the cheapest rate that ships, not a cheaper pickup rate' do
+          allow(package).to receive_messages(eligible_delivery_methods: [pickup, shipping_method])
+
+          rates = subject.delivery_rates(package)
+
+          # Pickup is free and therefore sorts first, but shipping is default.
+          expect(rates.first.delivery_method).to eq(pickup)
+          expect(rates.detect(&:selected).delivery_method).to eq(shipping_method)
+        end
+
+        it 'falls back to the cheapest rate when nothing ships' do
+          allow(package).to receive_messages(eligible_delivery_methods: [pickup])
+
+          rates = subject.delivery_rates(package)
+
+          expect(rates.detect(&:selected).delivery_method).to eq(pickup)
+        end
+      end
+
       context '#shipping rates' do
         before do
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
