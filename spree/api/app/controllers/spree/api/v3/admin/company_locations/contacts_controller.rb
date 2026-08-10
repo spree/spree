@@ -7,6 +7,11 @@ module Spree
           class ContactsController < ResourceController
             scoped_resource :customers
 
+            # Overriding `scope` bypasses the base class's `accessible_by`, so
+            # without this a role with no customer permission could still list
+            # who buys for a branch — and contacts carry customer emails.
+            before_action :authorize_parent_access!
+
             protected
 
             def model_class
@@ -17,10 +22,18 @@ module Spree
               Spree.api.admin_company_contact_serializer
             end
 
+            # Filtered by ability as well as by store: a branch the caller may
+            # not act on is not found rather than refused, so its existence
+            # doesn't leak.
             def set_parent
               @parent = Spree::CompanyLocation.
                         where(company_id: current_store.companies.select(:id)).
+                        accessible_by(current_ability, parent_ability_action).
                         find_by_prefix_id!(params[:company_location_id])
+            end
+
+            def authorize_parent_access!
+              authorize_parent!(@parent)
             end
 
             def scope

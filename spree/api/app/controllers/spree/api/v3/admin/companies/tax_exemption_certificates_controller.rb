@@ -19,8 +19,6 @@ module Spree
 
             # PATCH /api/v3/admin/companies/:company_id/tax_exemption_certificates/:id/verify
             def verify
-              authorize_resource!(@resource, :update)
-
               result = Spree.tax_exemption_certificate_verify_workflow.call(
                 certificate: @resource,
                 verified_by: try_spree_current_user
@@ -35,8 +33,6 @@ module Spree
 
             # PATCH .../:id/revoke — withdrawing evidence that was accepted.
             def revoke
-              authorize_resource!(@resource, :update)
-
               if @resource.update(status: 'revoked')
                 render json: serialize_resource(@resource.reload)
               else
@@ -47,7 +43,6 @@ module Spree
             # GET .../:id/download — streamed rather than redirected, so the
             # document is never reachable without admin credentials.
             def download
-              authorize_resource!(@resource, :show)
 
               unless @resource.document.attached?
                 return render_error(
@@ -66,6 +61,20 @@ module Spree
             end
 
             protected
+
+            # Fetching the document is a read of the certificate, so it takes the
+            # read scope and the :show ability rather than being classed as a
+            # write because it isn't index or show. Without this a key holding
+            # read_customers is refused its own certificate.
+            READ_ACTIONS = %w[index show download].freeze
+
+            def read_actions
+              READ_ACTIONS
+            end
+
+            def action_kind
+              READ_ACTIONS.include?(action_name) ? 'read' : 'write'
+            end
 
             def model_class
               Spree::TaxExemptionCertificate
@@ -97,6 +106,18 @@ module Spree
 
             def build_resource
               super.tap { |certificate| certificate.status ||= 'pending' }
+            end
+
+            # The custom actions are not permissions of their own: accepting or
+            # withdrawing is updating, fetching the document is reading.
+            def authorize_resource!(resource = @resource, action = action_name.to_sym)
+              mapped = case action
+                       when :verify, :revoke then :update
+                       when :download then :show
+                       else action
+                       end
+
+              authorize!(mapped, resource)
             end
 
             private

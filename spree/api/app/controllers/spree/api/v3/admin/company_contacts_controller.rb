@@ -20,7 +20,7 @@ module Spree
           def scope
             Spree::CompanyContact.where(
               company_location_id: Spree::CompanyLocation.where(company_id: current_store.companies.select(:id)).select(:id)
-            )
+            ).accessible_by(current_ability, ability_action_for_request)
           end
         end
       end

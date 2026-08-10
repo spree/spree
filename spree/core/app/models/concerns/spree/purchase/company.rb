@@ -36,6 +36,10 @@ module Spree
       #
       # @return [Spree::CompanyLocation, nil]
       def resolved_company_location
+        # A placed order answers from what it was stamped with, never by
+        # resolving again — otherwise adding a buyer to a company months later
+        # would reach back and exempt an order that legitimately charged tax.
+        return company_location if is_a?(Spree::Order) && completed?
         return company_location if company_location_id.present?
 
         sole_customer_location
@@ -43,6 +47,11 @@ module Spree
 
       private
 
+      # Deliberately not memoized. An instance variable survives #reload, so a
+      # value cached before a contact was added stays stale for the life of the
+      # object — which silently dropped the branch at completion. Caching this
+      # safely needs the reset-on-reload machinery; the repeated query is the
+      # cheaper problem.
       def sole_customer_location
         return nil if customer.nil?
 

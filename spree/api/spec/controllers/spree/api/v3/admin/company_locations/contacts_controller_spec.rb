@@ -34,6 +34,30 @@ RSpec.describe Spree::Api::V3::Admin::CompanyLocations::ContactsController, type
     end
   end
 
+  # Overriding `scope` bypasses the base class's ability filter, so this has to
+  # be asserted rather than assumed: contacts carry customer emails.
+  describe 'a role without customer permission' do
+    include_context 'API v3 Admin with custom permissions'
+
+    let(:custom_permission_set) do
+      Class.new(Spree::PermissionSets::Base) do
+        def activate!
+          can :manage, Spree::Product
+        end
+      end
+    end
+
+    it 'cannot list who buys for a branch' do
+      create(:company_contact, company_location: location, customer: customer)
+
+      get :index, params: { company_location_id: location.prefixed_id }, as: :json
+
+      # Not found rather than forbidden, so the branch's existence doesn't leak.
+      expect(response).to have_http_status(:not_found)
+      expect(response.body).not_to include('buyer@acme.test')
+    end
+  end
+
   describe 'POST #create' do
     it 'authorises a customer to buy for the branch' do
       post :create, params: {

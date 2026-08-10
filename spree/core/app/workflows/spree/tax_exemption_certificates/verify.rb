@@ -40,7 +40,7 @@ module Spree
         certificate.update!(
           status: 'verified',
           verified_at: Time.current,
-          verified_by: certificate.verified_by || verified_by
+          verified_by: verified_by || certificate.verified_by
         )
       end
     end

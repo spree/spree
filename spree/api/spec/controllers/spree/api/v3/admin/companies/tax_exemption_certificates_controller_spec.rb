@@ -9,6 +9,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
   let(:germany) { create(:country, iso: 'DE', name: 'Germany') }
 
   before { request.headers.merge!(headers) }
+  after { Spree.hooks.clear! }
 
   def pdf_blob
     ActiveStorage::Blob.create_and_upload!(
@@ -128,7 +129,6 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(certificate.reload).to be_pending
-      Spree.hooks.clear!
     end
   end
 

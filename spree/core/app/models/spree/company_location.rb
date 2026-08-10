@@ -16,8 +16,10 @@ module Spree
     belongs_to :billing_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
     belongs_to :shipping_address, class_name: 'Spree::Address', optional: true, dependent: :destroy
 
-    accepts_nested_attributes_for :billing_address
-    accepts_nested_attributes_for :shipping_address
+    # update_only, so editing one field of an existing address changes that
+    # row instead of building a replacement and orphaning the old one.
+    accepts_nested_attributes_for :billing_address, update_only: true
+    accepts_nested_attributes_for :shipping_address, update_only: true
 
     # The API reads and writes these under the same name, so the writer takes
     # either a record or the nested hash a client sends.

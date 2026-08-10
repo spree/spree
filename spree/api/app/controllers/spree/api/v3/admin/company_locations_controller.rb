@@ -20,7 +20,8 @@ module Spree
           end
 
           def scope
-            Spree::CompanyLocation.where(company_id: current_store.companies.select(:id))
+            Spree::CompanyLocation.where(company_id: current_store.companies.select(:id)).
+              accessible_by(current_ability, ability_action_for_request)
           end
 
           def collection_includes

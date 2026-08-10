@@ -35,7 +35,29 @@ RSpec.describe Spree::Api::V3::Admin::CompanyLocationsController, type: :control
       expect(location.reload.name).to eq('Berlin Mitte')
     end
 
-    it 'replaces the billing address inline' do
+    context 'with an address already on file' do
+      let!(:existing) { create(:address, address1: 'Alte Str 1', city: 'Berlin') }
+
+      before { location.update!(billing_address: existing) }
+
+      # Rebuilding would leave the old row behind and make one-field edits
+      # impossible, since the replacement starts blank.
+      it 'edits the address in place rather than replacing it' do
+        expect {
+          patch :update, params: {
+            id: location.prefixed_id,
+            billing_address: { address1: 'Neue Str 5' }
+          }, as: :json
+        }.not_to change(Spree::Address, :count)
+
+        expect(response).to have_http_status(:ok)
+        expect(location.reload.billing_address_id).to eq(existing.id)
+        expect(existing.reload.address1).to eq('Neue Str 5')
+        expect(existing.city).to eq('Berlin')
+      end
+    end
+
+    it 'sets an address on a branch that had none' do
       germany = create(:country, iso: 'DE', name: 'Germany')
 
       patch :update, params: {

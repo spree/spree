@@ -64,6 +64,41 @@ end
 RSpec.describe Spree::Purchase::Company do
   let(:customer) { create(:customer) }
 
+  # A placed order's tax has to stay explainable, so it answers from what it was
+  # stamped with — otherwise adding this buyer to a company later would reach
+  # back and exempt a sale that legitimately charged tax.
+  describe 'a completed order' do
+    let(:store) { @default_store }
+    let(:order) { create(:completed_order_with_totals, store: store, customer: customer) }
+
+    it 'does not acquire a company it was never placed for' do
+      expect(order.b2b?).to be(false)
+
+      location = create(:company_location, company: create(:company, store: store))
+      create(:company_contact, company_location: location, customer: customer)
+
+      expect(Spree::Order.find(order.id).b2b?).to be(false)
+      expect(Spree::Order.find(order.id).company).to be_nil
+    end
+
+    it 'keeps the branch it was stamped with' do
+      location = create(:company_location, company: create(:company, store: store))
+      order.update_columns(company_location_id: location.id)
+
+      expect(Spree::Order.find(order.id).resolved_company_location).to eq(location)
+    end
+
+    it 'does not lose it when the buyer later joins a second branch' do
+      company = create(:company, store: store)
+      location = create(:company_location, company: company)
+      order.update_columns(company_location_id: location.id)
+      create(:company_contact, company_location: location, customer: customer)
+      create(:company_contact, company_location: create(:company_location, company: company), customer: customer)
+
+      expect(Spree::Order.find(order.id).company).to eq(company)
+    end
+  end
+
   context 'included in Spree::Cart' do
     let(:record) { create(:cart, store: @default_store, customer: customer) }
 

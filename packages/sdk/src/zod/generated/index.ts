@@ -8,7 +8,6 @@ export { ChannelSchema, type Channel } from './Channel';
 export { ClaimSchema, type Claim } from './Claim';
 export { ClaimLineItemSchema, type ClaimLineItem } from './ClaimLineItem';
 export { CollectionSchema, type Collection } from './Collection';
-export { CompanySchema, type Company } from './Company';
 export { CountrySchema, type Country } from './Country';
 export { CreditCardSchema, type CreditCard } from './CreditCard';
 export { CurrencySchema, type Currency } from './Currency';

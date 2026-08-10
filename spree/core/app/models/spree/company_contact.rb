@@ -12,7 +12,7 @@ module Spree
 
     has_one :company, through: :company_location
 
-    validates :customer_id, uniqueness: { scope: :company_location_id }
+    validates :customer_id, uniqueness: { scope: [:company_location_id, *spree_base_uniqueness_scope] }
 
     delegate :store, :store_id, to: :company_location
 

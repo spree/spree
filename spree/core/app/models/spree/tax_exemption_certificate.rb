@@ -38,8 +38,14 @@ module Spree
     # sweeper writing 'expired' would only restate it. Matches how gift cards
     # and stock reservations treat their own deadlines.
     scope :active, -> { verified.where('expires_at IS NULL OR expires_at > ?', Time.current) }
+    scope :expired, -> { where(status: 'expired').or(where('expires_at <= ?', Time.current)) }
+    # No address means no jurisdiction to match, which is not the same as
+    # "matches the certificates valid everywhere" — a swapped-in resolver
+    # calling this without a destination must not be handed a claim.
     scope :for_address, lambda { |address|
-      where(country: [address&.country, nil].uniq).where(state: [address&.state, nil].uniq)
+      next none if address.nil?
+
+      where(country: [address.country, nil].uniq).where(state: [address.state, nil].uniq)
     }
 
     self.whitelisted_ransackable_attributes = %w[certificate_number reason_code status expires_at]
@@ -67,6 +73,14 @@ module Spree
     # Whether the date has passed, regardless of what the column says.
     def lapsed?
       expires_at.present? && expires_at <= Time.current
+    end
+
+    # Nothing writes the 'expired' status — the date is the fact — so the
+    # predicate and scope HasStatus generated would answer false and empty
+    # forever. Both derive instead, the way Spree::GiftCard does, so a caller
+    # reaching for the obvious name gets the truth.
+    def expired?
+      status == 'expired' || lapsed?
     end
 
     private
