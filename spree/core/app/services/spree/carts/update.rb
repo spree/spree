@@ -68,25 +68,40 @@ module Spree
 
       def assign_address(address_type)
         address_id_param = params[:"#{address_type}_id"]
+        return resolve_and_assign(address_type, address_id_param) if address_id_param.present?
+
         address_params = params[address_type]
-
-        if address_id_param.present?
-          address_id = resolve_address_id(address_id_param)
-          cart.public_send(:"#{address_type}_id=", address_id) if address_id
-          return
-        end
-
         return unless address_params.is_a?(Hash)
 
         if address_params[:id].present?
-          address_id = resolve_address_id(address_params[:id])
-          cart.public_send(:"#{address_type}_id=", address_id) if address_id
+          resolve_and_assign(address_type, address_params[:id])
         else
-          # Only a shipping-address change invalidates delivery proposals;
-          # billing updates (e.g. during payment) must not rebuild them.
-          @address_invalidated = true if address_type == :shipping_address
-          cart.public_send(:"#{address_type}_attributes=", address_params)
+          with_address_recalc_tracking(address_type) do
+            cart.public_send(:"#{address_type}_attributes=", address_params)
+          end
         end
+      end
+
+      def resolve_and_assign(address_type, prefixed_id)
+        address_id = resolve_address_id(prefixed_id)
+        assign_address_id(address_type, address_id) if address_id
+      end
+
+      def assign_address_id(address_type, address_id)
+        return if cart.public_send(:"#{address_type}_id") == address_id
+
+        with_address_recalc_tracking(address_type) do
+          cart.public_send(:"#{address_type}_id=", address_id)
+        end
+      end
+
+      def with_address_recalc_tracking(address_type)
+        tax_address_was = cart.tax_address
+        yield
+
+        # Shipping changes always affect delivery proposals; billing changes only
+        # matter when they shift which address computes tax.
+        @address_invalidated = true if address_type == :shipping_address || cart.tax_address != tax_address_was
       end
 
       def process_items

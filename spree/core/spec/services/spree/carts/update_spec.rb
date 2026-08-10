@@ -359,10 +359,72 @@ module Spree
               end
             end
           end
+
+          context 'with top-level shipping_address_id' do
+            let(:existing_address) { create(:address, user: user) }
+            let(:params) { { shipping_address_id: existing_address.prefixed_id } }
+
+            it 'recalculates when shipping address is picked by id' do
+              expect(cart).to receive(:recalculate_for_address_change!)
+
+              expect(subject).to be_success
+              expect(cart.reload.ship_address_id).to eq(existing_address.id)
+            end
+          end
         end
 
         describe 'billing_address' do
           include_examples 'address update', :billing_address
+
+          context 'with top-level billing_address_id' do
+            around do |example|
+              previous = Spree::Config[:tax_using_ship_address]
+              example.run
+            ensure
+              Spree::Config.set(tax_using_ship_address: previous)
+            end
+
+            let(:existing_bill) { create(:address, user: user) }
+            let(:other_bill) { create(:address, user: user) }
+            let(:cart) do
+              create(
+                :cart_with_line_items,
+                customer: user,
+                store: store,
+                currency: 'USD',
+                bill_address: existing_bill
+              )
+            end
+
+            context 'when tax is computed from the billing address' do
+              before { Spree::Config.set(tax_using_ship_address: false) }
+
+              it 'recalculates when the tax address is picked by id' do
+                expect(cart).to receive(:recalculate_for_address_change!)
+
+                result = described_class.call(cart: cart, params: { billing_address_id: other_bill.prefixed_id })
+
+                expect(result).to be_success
+                expect(cart.reload.bill_address_id).to eq(other_bill.id)
+              end
+            end
+
+            context 'when tax is computed from the shipping address' do
+              before { Spree::Config.set(tax_using_ship_address: true) }
+
+              it 'does not rebuild delivery proposals' do
+                cart.rebuild_fulfillments!
+                fulfillment_ids = cart.fulfillments.pluck(:id)
+
+                expect(cart).not_to receive(:recalculate_for_address_change!)
+
+                result = described_class.call(cart: cart, params: { billing_address_id: other_bill.prefixed_id })
+
+                expect(result).to be_success
+                expect(cart.reload.fulfillments.pluck(:id)).to eq(fulfillment_ids)
+              end
+            end
+          end
         end
       end
 
