@@ -25,6 +25,7 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
+import { DigitalAssetsCard } from '../../../../components/spree/products/digital-assets-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import {
   CategorizationCard,
@@ -457,6 +458,7 @@ function ProductForm({ product }: { product: Product }) {
               <GeneralCard form={form} />
               <VariantsCard form={form} />
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
+              <DigitalAssetsCard productId={productId} variants={assignableVariants} />
               <PricesCard form={form} productName={product.name} />
               <InventoryCard form={form} storeId={storeId} />
               <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>

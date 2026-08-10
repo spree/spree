@@ -148,7 +148,10 @@
       "store_credit_saved": "Zapisano kredyt sklepowy",
       "store_credit_removed": "Usunięto kredyt sklepowy",
       "copied_to_clipboard": "Skopiowano do schowka",
-      "profile_updated": "Zaktualizowano profil"
+      "profile_updated": "Zaktualizowano profil",
+      "digital_asset_saved": "Plik zapisany",
+      "digital_asset_removed": "Plik usunięty",
+      "digital_link_reset": "Przywrócono dostęp do pobierania"
     },
     "errors": {
       "required": "To pole jest wymagane",

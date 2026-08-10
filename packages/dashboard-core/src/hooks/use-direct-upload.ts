@@ -51,7 +51,16 @@ function sameOriginIfRailsDisk(url: string): string {
   }
 }
 
-export function useDirectUpload() {
+interface DirectUploadOptions {
+  /**
+   * Upload to private storage instead of the public bucket. Required for files
+   * that are only ever served through an authorized, signed link — attaching a
+   * blob never moves it between services, so this has to be decided up front.
+   */
+  private?: boolean
+}
+
+export function useDirectUpload(options: DirectUploadOptions = {}) {
   return useMutation({
     mutationFn: async (file: File): Promise<UploadResult> => {
       const checksum = await computeMD5Checksum(file)
@@ -69,6 +78,7 @@ export function useDirectUpload() {
             checksum,
             content_type: file.type || 'application/octet-stream',
           },
+          ...(options.private ? { private: true } : {}),
         })
       } catch (err) {
         throw new Error(`Presign failed: ${err instanceof Error ? err.message : err}`)

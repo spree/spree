@@ -148,7 +148,10 @@
       "store_credit_saved": "Avoir enregistré",
       "store_credit_removed": "Avoir supprimé",
       "copied_to_clipboard": "Copié dans le presse-papiers",
-      "profile_updated": "Profil mis à jour"
+      "profile_updated": "Profil mis à jour",
+      "digital_asset_saved": "Fichier enregistré",
+      "digital_asset_removed": "Fichier supprimé",
+      "digital_link_reset": "Accès au téléchargement rétabli"
     },
     "errors": {
       "required": "Ce champ est obligatoire",

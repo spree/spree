@@ -41,6 +41,10 @@ module Spree
                    preferred_order_number_suffix: :string,
                    preferred_order_number_sequence_start: :number,
                    order_number_sequence_started: :boolean,
+                   preferred_limit_digital_download_count: :boolean,
+                   preferred_digital_asset_authorized_clicks: :number,
+                   preferred_limit_digital_download_days: :boolean,
+                   preferred_digital_asset_authorized_days: :number,
                    metadata: 'Record<string, unknown>'
 
           attributes :metadata,
@@ -78,6 +82,10 @@ module Spree
                      :preferred_order_number_prefix,
                      :preferred_order_number_suffix,
                      :preferred_order_number_sequence_start,
+                     :preferred_limit_digital_download_count,
+                     :preferred_digital_asset_authorized_clicks,
+                     :preferred_limit_digital_download_days,
+                     :preferred_digital_asset_authorized_days,
                      created_at: :iso8601, updated_at: :iso8601
 
           # Once the counter has issued a number the starting value no longer

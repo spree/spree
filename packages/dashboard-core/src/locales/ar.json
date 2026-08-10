@@ -148,7 +148,10 @@
       "store_credit_saved": "تم حفظ رصيد المتجر",
       "store_credit_removed": "تمت إزالة رصيد المتجر",
       "copied_to_clipboard": "تم النسخ إلى الحافظة",
-      "profile_updated": "تم تحديث الملف الشخصي"
+      "profile_updated": "تم تحديث الملف الشخصي",
+      "digital_asset_saved": "تم حفظ الملف",
+      "digital_asset_removed": "تمت إزالة الملف",
+      "digital_link_reset": "تمت استعادة إمكانية التنزيل"
     },
     "errors": {
       "required": "هذا الحقل مطلوب",

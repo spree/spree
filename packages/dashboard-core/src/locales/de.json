@@ -148,7 +148,10 @@
       "store_credit_saved": "Guthaben gespeichert",
       "store_credit_removed": "Guthaben entfernt",
       "copied_to_clipboard": "In die Zwischenablage kopiert",
-      "profile_updated": "Profil aktualisiert"
+      "profile_updated": "Profil aktualisiert",
+      "digital_asset_saved": "Datei gespeichert",
+      "digital_asset_removed": "Datei entfernt",
+      "digital_link_reset": "Download-Zugriff wiederhergestellt"
     },
     "errors": {
       "required": "Dieses Feld ist erforderlich",

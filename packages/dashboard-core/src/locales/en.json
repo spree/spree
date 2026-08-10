@@ -148,7 +148,10 @@
       "store_credit_saved": "Store credit saved",
       "store_credit_removed": "Store credit removed",
       "copied_to_clipboard": "Copied to clipboard",
-      "profile_updated": "Profile updated"
+      "profile_updated": "Profile updated",
+      "digital_asset_saved": "File saved",
+      "digital_asset_removed": "File removed",
+      "digital_link_reset": "Download access restored"
     },
     "errors": {
       "required": "This field is required",
