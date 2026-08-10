@@ -46,6 +46,35 @@ RSpec.shared_examples 'a taxation host' do
       expect(record.resolved_tax_identifier).to eq(verified)
     end
 
+    context 'when the sale is for a business' do
+      let(:company) { create(:company, store: store) }
+      let(:location) { create(:company_location, company: company) }
+
+      before { record.update!(company_location: location) }
+
+      # The invoice is addressed to the entity, so its registration wins.
+      it 'prefers the company registration over the buyer own' do
+        create(:tax_identifier, customer: customer, kind: 'eu_vat', value: 'DE111111111')
+        company_identifier = create(:tax_identifier, customer: nil, company: company,
+                                                     kind: 'eu_vat', value: 'DE222222222')
+
+        expect(record.resolved_tax_identifier).to eq(company_identifier)
+      end
+
+      it 'still falls back to the buyer when the company has none' do
+        identifier = create(:tax_identifier, customer: customer)
+
+        expect(record.resolved_tax_identifier).to eq(identifier)
+      end
+
+      it 'prefers a verified company registration' do
+        verified = create(:tax_identifier, :verified, customer: nil, company: company, kind: 'eu_vat')
+        create(:tax_identifier, customer: nil, company: company, kind: 'gb_vat')
+
+        expect(record.resolved_tax_identifier).to eq(verified)
+      end
+    end
+
     it 'prefers the record own override over the customer registration' do
       create(:tax_identifier, customer: customer)
       owner_key = record.is_a?(Spree::Cart) ? :cart : :order

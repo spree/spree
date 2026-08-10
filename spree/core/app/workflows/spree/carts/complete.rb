@@ -222,10 +222,18 @@ module Spree
         resolved = cart.resolved_tax_identifier
         return if resolved.nil?
 
-        attributes = resolved.attributes.except('id', 'customer_id', 'cart_id', 'created_at', 'updated_at')
-        order.create_tax_identifier!(
-          attributes.merge('source' => resolved.cart_id.present? ? 'override' : 'customer')
-        )
+        attributes = resolved.attributes.except('id', 'customer_id', 'company_id', 'cart_id',
+                                                'created_at', 'updated_at')
+        order.create_tax_identifier!(attributes.merge('source' => source_of(resolved)))
+      end
+
+      # Which link of the chain produced the snapshot, so a placed order's tax
+      # treatment names its own reason.
+      def source_of(resolved)
+        return 'override' if resolved.cart_id.present?
+        return 'company' if resolved.company_id.present?
+
+        'customer'
       end
 
       def copy_line_items!(cart, order)

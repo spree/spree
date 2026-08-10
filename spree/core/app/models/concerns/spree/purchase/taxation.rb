@@ -52,15 +52,17 @@ module Spree
       # again, so its tax can still be explained after the customer edits or
       # withdraws the registration.
       #
-      # Among a customer's registrations a verified one wins, then the most
-      # recent — a plain fallback chain, which is why this is an overridable
-      # method rather than a Dependencies seam.
+      # A business customer's own registration outranks the buyer's, because the
+      # invoice is addressed to the entity rather than the person who placed the
+      # order. Among a customer's registrations a verified one wins, then the
+      # most recent — a plain fallback chain, which is why this is an
+      # overridable method rather than a Dependencies seam.
       #
       # @return [Spree::TaxIdentifier, nil]
       def resolved_tax_identifier
         return tax_identifier if is_a?(Spree::Order) && completed?
 
-        tax_identifier || customer_tax_identifier
+        tax_identifier || company_tax_identifier || customer_tax_identifier
       end
 
       def tax_total
@@ -79,8 +81,16 @@ module Spree
 
       private
 
+      def company_tax_identifier
+        best_of(company&.tax_identifiers)
+      end
+
       def customer_tax_identifier
-        identifiers = customer&.tax_identifiers.to_a
+        best_of(customer&.tax_identifiers)
+      end
+
+      def best_of(identifiers)
+        identifiers = identifiers.to_a
         identifiers.find(&:verified?) || identifiers.max_by(&:created_at)
       end
     end

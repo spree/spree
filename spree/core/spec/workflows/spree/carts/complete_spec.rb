@@ -154,6 +154,21 @@ module Spree
         expect(order.tax_identifier.source).to eq('override')
       end
 
+      it 'stamps a company registration as such' do
+        company = create(:company, store: store)
+        location = create(:company_location, company: company)
+        ready_cart.update!(company_location: location)
+        create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat', value: 'DE777777777')
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.tax_identifier.value).to eq('DE777777777')
+        expect(order.tax_identifier.source).to eq('company')
+        # The copy must not carry the company along, or the order row would
+        # have two owners.
+        expect(order.tax_identifier.company_id).to be_nil
+      end
+
       it 'copies nothing for a consumer sale' do
         order = described_class.call(cart: ready_cart).value
 

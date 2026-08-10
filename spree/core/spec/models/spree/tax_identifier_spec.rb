@@ -143,4 +143,30 @@ describe Spree::TaxIdentifier, type: :model do
       Spree.tax_identifier_validators.delete('eu_vat')
     end
   end
+
+  describe 'a company owner' do
+    let(:company) { create(:company, store: @default_store) }
+
+    it 'is a valid sole owner' do
+      expect(build(:tax_identifier, customer: nil, company: company)).to be_valid
+    end
+
+    it 'is rejected alongside another owner' do
+      identifier = build(:tax_identifier, company: company, customer: create(:customer))
+
+      expect(identifier).not_to be_valid
+    end
+
+    it 'holds one registration per kind' do
+      create(:tax_identifier, customer: nil, company: company, kind: 'eu_vat')
+
+      expect(build(:tax_identifier, customer: nil, company: company, kind: 'eu_vat')).not_to be_valid
+    end
+
+    it 'reports the company as its owner' do
+      identifier = create(:tax_identifier, customer: nil, company: company)
+
+      expect(identifier.owner).to eq(company)
+    end
+  end
 end
