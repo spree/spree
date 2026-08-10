@@ -133,6 +133,21 @@ export interface FulfillmentUpdateParams {
   /** Carrier tracking number or a full `https://` tracking link; see {@link FulfillmentCreateParams.tracking} */
   tracking?: string
   selected_delivery_rate_id?: string
+  /** Move the fulfillment to another origin (sloc_...); re-prices it against that location's rates. */
+  stock_location_id?: string
+}
+
+/**
+ * Moves `quantity` units of one variant out of a fulfillment into a new one.
+ * Splitting is per variant — a fulfillment holding several variants needs one
+ * call each.
+ */
+export interface FulfillmentSplitParams {
+  /** The variant being moved out (variant_...) */
+  variant_id: string
+  quantity: number
+  /** Origin of the new fulfillment (sloc_...); defaults to the source fulfillment's location. */
+  stock_location_id?: string
 }
 
 export interface ReturnCreateParams {

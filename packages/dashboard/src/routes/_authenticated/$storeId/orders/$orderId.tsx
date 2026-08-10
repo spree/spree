@@ -78,7 +78,6 @@ import {
   EllipsisVerticalIcon,
   ExternalLinkIcon,
   MailIcon,
-  MapPinIcon,
   PackageIcon,
   PencilIcon,
   PlusIcon,
@@ -86,7 +85,6 @@ import {
   ShieldCheckIcon,
   ShoppingCartIcon,
   TrashIcon,
-  TruckIcon,
   XCircleIcon,
 } from 'lucide-react'
 import { type FormEvent, type ReactNode, useEffect, useState } from 'react'
@@ -100,6 +98,7 @@ import {
   OrderExchangesCard,
 } from '../../../../components/spree/order-post-sale-cards'
 import { OrderReturnsCard } from '../../../../components/spree/order-returns-card'
+import { FulfillmentsCard } from '../../../../components/spree/orders/fulfillments-card'
 import {
   orderQueryKey,
   useOrder,
@@ -727,235 +726,6 @@ function LineItemsCard({ order }: { order: Order }) {
           currentQuantity={editItem.quantity}
           open={!!editItem}
           onOpenChange={(open) => !open && setEditItem(null)}
-        />
-      )}
-    </>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Fulfillments
-// ---------------------------------------------------------------------------
-
-function EditTrackingDialog({
-  orderId,
-  fulfillmentId,
-  currentTracking,
-  open,
-  onOpenChange,
-}: {
-  orderId: string
-  fulfillmentId: string
-  currentTracking: string | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) {
-  const { t } = useTranslation()
-  const mutation = useOrderMutation(orderId, (params: { tracking: string }) =>
-    adminClient.orders.fulfillments.update(orderId, fulfillmentId, params),
-  )
-
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    mutation.mutate(
-      { tracking: fd.get('tracking') as string },
-      { onSuccess: () => onOpenChange(false) },
-    )
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.orders.detail.tracking.edit_title')}</DialogTitle>
-          <DialogDescription>{t('admin.orders.detail.tracking.description')}</DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <DialogBody>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="tracking">
-                  {t('admin.orders.detail.tracking.label')}
-                </FieldLabel>
-                <Input id="tracking" name="tracking" defaultValue={currentTracking ?? ''} />
-              </Field>
-            </FieldGroup>
-          </DialogBody>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              {t('admin.actions.cancel')}
-            </Button>
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  )
-}
-
-function FulfillmentsCard({ order }: { order: Order }) {
-  const { t } = useTranslation()
-  const { orderId } = Route.useParams()
-  const confirm = useConfirm()
-
-  const fulfillments = order.fulfillments ?? []
-  const [editTracking, setEditTracking] = useState<{
-    id: string
-    tracking: string | null
-  } | null>(null)
-
-  const fulfillMutation = useOrderMutation(orderId, (fulfillmentId: string) =>
-    adminClient.orders.fulfillments.fulfill(orderId, fulfillmentId, {}),
-  )
-  const cancelFulfillmentMutation = useOrderMutation(orderId, (fulfillmentId: string) =>
-    adminClient.orders.fulfillments.cancel(orderId, fulfillmentId, {}),
-  )
-
-  if (fulfillments.length === 0) return null
-
-  return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            <TruckIcon className="size-4" />
-            {t('admin.pages.orders.detail.section_fulfillments')}
-            <Badge variant="outline">{fulfillments.length}</Badge>
-          </CardTitle>
-          <CardAction className="flex items-center gap-2">
-            {order.fulfillment_status && <StatusBadge status={order.fulfillment_status} />}
-          </CardAction>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          {fulfillments.map((fulfillment) => (
-            <div key={fulfillment.id} className="rounded-lg border p-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <StatusBadge status={fulfillment.status} />
-                  <span className="text-sm font-medium">{fulfillment.number}</span>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon-xs">
-                      <EllipsisVerticalIcon className="size-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onClick={() =>
-                        setEditTracking({ id: fulfillment.id, tracking: fulfillment.tracking })
-                      }
-                    >
-                      <PencilIcon className="size-4" />
-                      {fulfillment.tracking
-                        ? t('admin.orders.detail.tracking.edit_title')
-                        : t('admin.orders.detail.tracking.add_title')}
-                    </DropdownMenuItem>
-                    {fulfillment.status === 'ready' && (
-                      <DropdownMenuItem
-                        onClick={async () => {
-                          if (
-                            await confirm({
-                              message: t('admin.orders.detail.confirm.ship_message'),
-                              variant: 'default',
-                              confirmLabel: t('admin.pages.orders.detail.actions.ship'),
-                            })
-                          ) {
-                            fulfillMutation.mutate(fulfillment.id)
-                          }
-                        }}
-                      >
-                        <TruckIcon className="size-4" />
-                        {t('admin.pages.orders.detail.actions.ship')}
-                      </DropdownMenuItem>
-                    )}
-                    {['pending', 'ready'].includes(fulfillment.status) && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={async () => {
-                            if (
-                              await confirm({
-                                message: t('admin.orders.detail.confirm.cancel_shipment_message'),
-                                variant: 'destructive',
-                                confirmLabel: t('admin.actions.cancel'),
-                              })
-                            ) {
-                              cancelFulfillmentMutation.mutate(fulfillment.id)
-                            }
-                          }}
-                        >
-                          <XCircleIcon className="size-4" />
-                          {t('admin.actions.cancel')}
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              {(fulfillment.delivery_method || Number.parseFloat(fulfillment.cost) > 0) && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">
-                    {fulfillment.delivery_method?.name ??
-                      t('admin.pages.orders.detail.no_delivery_method')}
-                  </span>
-                  <span>{fulfillment.display_cost}</span>
-                </div>
-              )}
-
-              {fulfillment.stock_location && (
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <MapPinIcon className="size-3" />
-                  {fulfillment.stock_location.name}
-                </div>
-              )}
-
-              {fulfillment.tracking && (
-                <div className="text-sm">
-                  <span className="text-muted-foreground">
-                    {t('admin.orders.detail.tracking.prefix')}:{' '}
-                  </span>
-                  {fulfillment.tracking_url ? (
-                    <a
-                      href={fulfillment.tracking_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      {fulfillment.tracking}
-                    </a>
-                  ) : (
-                    <span>{fulfillment.tracking}</span>
-                  )}
-                </div>
-              )}
-
-              {fulfillment.fulfilled_at && (
-                <span className="text-xs text-muted-foreground">
-                  <RelativeTime
-                    iso={fulfillment.fulfilled_at}
-                    prefix={t('admin.orders.detail.tracking.shipped_prefix')}
-                    fallback=""
-                  />
-                </span>
-              )}
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {editTracking && (
-        <EditTrackingDialog
-          orderId={orderId}
-          fulfillmentId={editTracking.id}
-          currentTracking={editTracking.tracking}
-          open={!!editTracking}
-          onOpenChange={(open) => !open && setEditTracking(null)}
         />
       )}
     </>

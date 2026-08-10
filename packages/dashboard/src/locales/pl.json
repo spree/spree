@@ -1826,6 +1826,22 @@
           "confirmation_send_failed": "Nie udało się wysłać potwierdzenia",
           "resume_failed": "Nie udało się wznowić zamówienia"
         },
+        "fulfillments": {
+          "confirm_split": "Przenieść te sztuki do nowej przesyłki? Zmiana zadziała natychmiast.",
+          "create_description": "Tworzy przesyłkę i przenosi do niej wybrane ilości.",
+          "create_items": "Pozycje",
+          "create_title": "Dodaj przesyłkę",
+          "delivery_method": "Sposób dostawy",
+          "empty": "Brak przesyłek dla tego zamówienia.",
+          "free": "Za darmo",
+          "ships_from": "Wysyłka z",
+          "split": "Podziel",
+          "split_description": "Przenieś część sztuk do nowej przesyłki. Po jednym produkcie naraz.",
+          "split_item": "Produkt",
+          "split_quantity": "Liczba do przeniesienia",
+          "split_title": "Podziel przesyłkę",
+          "split_would_empty": "Pozostaw co najmniej jedną sztukę albo zmień miejsce wysyłki całej przesyłki."
+        },
         "gift_card_section": {
           "applied_suffix": "zastosowano",
           "apply_balance": "Zastosuj dostępne saldo klienta",

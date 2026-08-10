@@ -1807,6 +1807,22 @@
           "confirmation_send_failed": "发送确认失败",
           "resume_failed": "恢复订单失败"
         },
+        "fulfillments": {
+          "confirm_split": "将这些数量移入新的发货单？此操作立即生效。",
+          "create_description": "创建发货单并将所选数量移入其中。",
+          "create_items": "商品项",
+          "create_title": "添加发货单",
+          "delivery_method": "配送方式",
+          "empty": "此订单暂无发货单。",
+          "free": "免费",
+          "ships_from": "发货地",
+          "split": "拆分",
+          "split_description": "将部分数量移入新的发货单。每次操作一个商品。",
+          "split_item": "商品",
+          "split_quantity": "移动数量",
+          "split_title": "拆分发货单",
+          "split_would_empty": "请至少保留一件，或改为修改整个发货单的发货地。"
+        },
         "gift_card_section": {
           "applied_suffix": "已应用",
           "apply_balance": "应用客户的可用余额",

@@ -1821,6 +1821,22 @@
           "confirmation_send_failed": "فشل في إرسال التأكيد",
           "resume_failed": "فشل في استئناف الطلب"
         },
+        "fulfillments": {
+          "confirm_split": "نقل هذه الوحدات إلى شحنة جديدة؟ يسري هذا فوراً.",
+          "create_description": "تنشئ شحنة وتنقل إليها الكميات المختارة.",
+          "create_items": "العناصر",
+          "create_title": "إضافة شحنة",
+          "delivery_method": "طريقة التوصيل",
+          "empty": "لا توجد شحنات لهذا الطلب بعد.",
+          "free": "مجاني",
+          "ships_from": "الشحن من",
+          "split": "تقسيم",
+          "split_description": "انقل بعض الوحدات إلى شحنة جديدة. منتج واحد في كل مرة.",
+          "split_item": "المنتج",
+          "split_quantity": "الكمية المراد نقلها",
+          "split_title": "تقسيم الشحنة",
+          "split_would_empty": "اترك وحدة واحدة على الأقل، أو غيّر مصدر الشحنة بالكامل بدلاً من ذلك."
+        },
         "gift_card_section": {
           "applied_suffix": "مُطبَّق",
           "apply_balance": "قم بتطبيق الرصيد المتاح لـ العميل",

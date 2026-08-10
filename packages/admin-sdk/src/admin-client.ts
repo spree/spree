@@ -137,6 +137,7 @@ import type {
   ExchangeUpdateParams,
   ExportCreateParams,
   FulfillmentCreateParams,
+  FulfillmentSplitParams,
   FulfillmentUpdateParams,
   GiftCardApplyParams,
   GiftCardBatchCreateParams,
@@ -1067,16 +1068,23 @@ export class AdminClient {
       resume: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/resume`, options),
 
+      // Returns every fulfillment on the order, since a split re-shapes the
+      // source as well as creating the new one (and destroys the source when
+      // it is fully drained).
       split: (
         orderId: string,
         id: string,
-        params: { quantity: number; line_item_id?: string },
+        params: FulfillmentSplitParams,
         options?: RequestOptions,
-      ): Promise<Fulfillment> =>
-        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/split`, {
-          ...options,
-          body: params,
-        }),
+      ): Promise<{ data: Fulfillment[] }> =>
+        this.request<{ data: Fulfillment[] }>(
+          'PATCH',
+          `/orders/${orderId}/fulfillments/${id}/split`,
+          {
+            ...options,
+            body: params,
+          },
+        ),
     },
 
     returns: {

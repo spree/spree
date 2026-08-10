@@ -1810,6 +1810,22 @@
           "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden",
           "resume_failed": "Auftrag konnte nicht wieder aufgenommen werden"
         },
+        "fulfillments": {
+          "confirm_split": "Diese Einheiten in eine neue Sendung verschieben? Die Änderung wird sofort wirksam.",
+          "create_description": "Erstellt eine Sendung und verschiebt die gewählten Mengen hinein.",
+          "create_items": "Artikel",
+          "create_title": "Sendung hinzufügen",
+          "delivery_method": "Versandart",
+          "empty": "Noch keine Sendungen für diese Bestellung.",
+          "free": "Kostenlos",
+          "ships_from": "Versand ab",
+          "split": "Aufteilen",
+          "split_description": "Verschieben Sie einzelne Einheiten in eine neue Sendung. Ein Produkt nach dem anderen.",
+          "split_item": "Produkt",
+          "split_quantity": "Zu verschiebende Menge",
+          "split_title": "Sendung aufteilen",
+          "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung."
+        },
         "gift_card_section": {
           "applied_suffix": "angewendet",
           "apply_balance": "Verfügbares Guthaben des Kunden anwenden",
