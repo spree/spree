@@ -1,5 +1,6 @@
-import type { LineItem, Order } from '@spree/admin-sdk'
-import { adminClient, PageHeader } from '@spree/dashboard-core'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { type Order, SpreeError, type Variant } from '@spree/admin-sdk'
+import { adminClient, formatPrice, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -8,116 +9,31 @@ import {
   CardTitle,
   cn,
   ErrorState,
+  FormActions,
   ResourceLayout,
   Separator,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  useConfirm,
+  useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
-import { createFileRoute } from '@tanstack/react-router'
-import { PackageIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react'
-import { type ReactNode, useState } from 'react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { PlusIcon } from 'lucide-react'
+import { type ReactNode, useEffect, useState } from 'react'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import {
-  AddLineItemDialog,
-  EditQuantityDialog,
-} from '../../../../../components/spree/orders/line-item-dialogs'
+import { toast } from 'sonner'
+import { AddLineItemDialog } from '../../../../../components/spree/orders/line-item-dialogs'
+import { OrderEditItemsTable } from '../../../../../components/spree/orders/order-edit-items-table'
 import { useOrder, useOrderMutation } from '../../../../../hooks/use-order'
+import {
+  buildOrderItemsPayload,
+  type OrderEditFormValues,
+  type OrderItemsPayload,
+  orderEditFormSchema,
+  orderToEditForm,
+} from '../../../../../schemas/order'
 
 export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId/edit')({
   component: OrderEditPage,
 })
-
-/**
- * One row of the items table. Every action fires its own request against the
- * line-item endpoints and the order re-reads from the server — there is no
- * pending-edit buffer, so totals only move once a write has landed.
- */
-function LineItemRow({ orderId, item }: { orderId: string; item: LineItem }) {
-  const { t } = useTranslation()
-  const confirm = useConfirm()
-  const [editingQuantity, setEditingQuantity] = useState(false)
-
-  const removeMutation = useOrderMutation(orderId, () =>
-    adminClient.orders.items.delete(orderId, item.id),
-  )
-
-  async function handleRemove() {
-    const confirmed = await confirm({
-      title: t('admin.orders.edit.confirm.remove_title'),
-      message: t('admin.orders.edit.confirm.remove_message', { name: item.name }),
-      confirmLabel: t('admin.orders.edit.actions.remove'),
-      variant: 'destructive',
-    })
-    if (confirmed) removeMutation.mutate(undefined)
-  }
-
-  return (
-    <>
-      <TableRow>
-        <TableCell>
-          <div className="flex items-center gap-3">
-            {item.thumbnail_url ? (
-              <img
-                src={item.thumbnail_url}
-                alt={item.name}
-                className="size-12 shrink-0 rounded-lg border object-cover"
-              />
-            ) : (
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-lg border bg-muted">
-                <PackageIcon className="size-5 text-muted-foreground" />
-              </div>
-            )}
-            <div className="min-w-0">
-              <div className="truncate text-sm font-medium">{item.name}</div>
-              {item.options_text && (
-                <div className="truncate text-xs text-muted-foreground">{item.options_text}</div>
-              )}
-            </div>
-          </div>
-        </TableCell>
-        <TableCell className="text-right whitespace-nowrap">{item.display_price}</TableCell>
-        <TableCell className="text-right">{item.quantity}</TableCell>
-        <TableCell className="text-right whitespace-nowrap">{item.display_total}</TableCell>
-        <TableCell className="text-right">
-          <div className="flex items-center justify-end gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setEditingQuantity(true)}
-              aria-label={t('admin.orders.edit.actions.edit_quantity_for', { name: item.name })}
-            >
-              <PencilIcon className="size-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleRemove}
-              disabled={removeMutation.isPending}
-              aria-label={t('admin.orders.edit.actions.remove_item', { name: item.name })}
-            >
-              <Trash2Icon className="size-4 text-destructive" />
-            </Button>
-          </div>
-        </TableCell>
-      </TableRow>
-
-      {editingQuantity && (
-        <EditQuantityDialog
-          orderId={orderId}
-          lineItemId={item.id}
-          currentQuantity={item.quantity}
-          open={editingQuantity}
-          onOpenChange={setEditingQuantity}
-        />
-      )}
-    </>
-  )
-}
 
 function TotalRow({ label, value, bold }: { label: string; value: ReactNode; bold?: boolean }) {
   return (
@@ -187,14 +103,99 @@ function OrderTotalsCard({ order }: { order: Order }) {
 }
 
 /**
- * Post-placement line-item management: add a product, change a quantity,
- * remove an item. Each interaction is one request, immediately applied.
+ * Post-placement line-item management. Quantity changes, removals and picker
+ * additions are staged in form state and applied together on Save, which is a
+ * single `PATCH /orders/:id` the server runs in one transaction.
  */
 function OrderEditPage() {
   const { t } = useTranslation()
   const { storeId, orderId } = Route.useParams()
+  const navigate = useNavigate()
   const { data: order, isLoading, error, refetch } = useOrder(orderId)
   const [addingItem, setAddingItem] = useState(false)
+
+  const form = useForm<OrderEditFormValues>({
+    resolver: zodResolver(orderEditFormSchema),
+    defaultValues: { items: [] },
+  })
+
+  const { fields, append } = useFieldArray({ control: form.control, name: 'items' })
+
+  // Hydrate (and re-baseline after save) from the server rows, unless the
+  // merchant has staged edits in flight.
+  useEffect(() => {
+    if (!order || form.formState.isDirty) return
+    form.reset(orderToEditForm(order.items ?? []))
+  }, [order, form])
+
+  const saveMutation = useOrderMutation(orderId, (items: OrderItemsPayload) =>
+    adminClient.orders.update(orderId, { items }),
+  )
+
+  async function onSubmit(values: OrderEditFormValues) {
+    // Rows the merchant staged and then unstaged net out to nothing, so the
+    // payload can legitimately be empty even on a dirty form.
+    const payload = buildOrderItemsPayload(values.items)
+
+    try {
+      if (payload.length > 0) await saveMutation.mutateAsync(payload)
+      // Drop the rows that are gone and re-baseline the rest, so the form is
+      // pristine before the refetch lands — leaving it dirty would trip the
+      // unsaved-changes guard on the way out.
+      form.reset({
+        items: values.items
+          .filter((item) => !item.removed)
+          .map((item) => ({ ...item, added: false, saved_quantity: item.quantity })),
+      })
+      // Editing is a detour from the order, not a place to stay: hand the
+      // merchant back the view that shows what the edit did.
+      navigate({ to: '/$storeId/orders/$orderId', params: { storeId, orderId } })
+    } catch (err) {
+      if (mapSpreeErrorsToForm(err, form.setError)) return
+      if (err instanceof SpreeError) throw err
+      toast.error(t('admin.errors.failed_to_save'))
+    }
+  }
+
+  useFormSubmitShortcut(form, onSubmit)
+
+  /**
+   * Stages a picked variant. Picking one the order already carries (or one that
+   * is sitting removed) bumps the existing row rather than adding a duplicate —
+   * the endpoint is keyed by variant, so two rows for one variant could not both
+   * survive a save.
+   */
+  function stageVariant(variant: Variant, quantity: number) {
+    const items = form.getValues('items')
+    const existingIndex = items.findIndex((item) => item.variant_id === variant.id)
+
+    if (existingIndex >= 0) {
+      const existing = items[existingIndex]
+      form.setValue(
+        `items.${existingIndex}`,
+        {
+          ...existing,
+          removed: false,
+          quantity: existing.removed ? quantity : existing.quantity + quantity,
+        },
+        { shouldDirty: true, shouldValidate: true },
+      )
+      return
+    }
+
+    append({
+      variant_id: variant.id,
+      quantity,
+      removed: false,
+      added: true,
+      saved_quantity: 0,
+      name: variant.product_name,
+      options_text: variant.options_text ?? '',
+      thumbnail_url: variant.thumbnail_url,
+      display_price: formatPrice(variant.price),
+      display_total: '',
+    })
+  }
 
   if (!order && isLoading) return null
 
@@ -209,66 +210,55 @@ function OrderEditPage() {
     )
   }
 
-  const items = order.items ?? []
-
   return (
     <>
-      <ResourceLayout
-        header={
-          <PageHeader
-            title={t('admin.orders.edit.title')}
-            subtitle={t('admin.orders.edit.subtitle', { number: order.number })}
-            backTo={`${storeId}/orders/${orderId}`}
-            actions={
-              <Button onClick={() => setAddingItem(true)}>
-                <PlusIcon className="size-4" />
-                {t('admin.orders.edit.actions.add_product')}
-              </Button>
-            }
-          />
-        }
-        main={
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('admin.orders.edit.items_title')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {items.length === 0 ? (
-                <p className="py-8 text-center text-muted-foreground">
-                  {t('admin.orders.edit.empty')}
-                </p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t('admin.orders.edit.columns.product')}</TableHead>
-                      <TableHead className="text-right">
-                        {t('admin.orders.edit.columns.unit_price')}
-                      </TableHead>
-                      <TableHead className="text-right">
-                        {t('admin.fields.quantity.label')}
-                      </TableHead>
-                      <TableHead className="text-right">
-                        {t('admin.orders.edit.columns.line_total')}
-                      </TableHead>
-                      <TableHead className="w-24" />
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {items.map((item) => (
-                      <LineItemRow key={item.id} orderId={orderId} item={item} />
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        }
-        sidebar={<OrderTotalsCard order={order} />}
-      />
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {form.formState.errors.root?.message && (
+          <p className="text-sm text-destructive" role="alert">
+            {form.formState.errors.root.message}
+          </p>
+        )}
+        <ResourceLayout
+          header={
+            <PageHeader
+              title={t('admin.orders.edit.title')}
+              subtitle={t('admin.orders.edit.subtitle', { number: order.number })}
+              backTo={`${storeId}/orders/${orderId}`}
+              actions={
+                <>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setAddingItem(true)}
+                  >
+                    <PlusIcon className="size-4" />
+                    {t('admin.orders.edit.actions.add_product')}
+                  </Button>
+                  <FormActions
+                    form={form}
+                    onDiscard={() => form.reset(orderToEditForm(order.items ?? []))}
+                  />
+                </>
+              }
+            />
+          }
+          main={
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('admin.orders.edit.items_title')}</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <OrderEditItemsTable form={form} fields={fields} />
+              </CardContent>
+            </Card>
+          }
+          sidebar={<OrderTotalsCard order={order} />}
+        />
+      </form>
 
       {addingItem && (
-        <AddLineItemDialog orderId={orderId} open={addingItem} onOpenChange={setAddingItem} />
+        <AddLineItemDialog open={addingItem} onOpenChange={setAddingItem} onSelect={stageVariant} />
       )}
     </>
   )
