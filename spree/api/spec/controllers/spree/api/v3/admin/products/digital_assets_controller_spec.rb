@@ -69,6 +69,23 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
       expect(response).to have_http_status(:unprocessable_entity)
     end
 
+    # Dev and test collapse both storage services onto one, so the distinction
+    # only exists in a deployed configuration — stub it to exercise the guard.
+    it 'refuses a file uploaded to public storage' do
+      # The blob is built first, then the expected service is changed, so the
+      # already-uploaded file looks like it landed on the wrong bucket.
+      signed_id = blob.signed_id
+      allow(Spree).to receive(:private_storage_service_name).and_return(:private_bucket)
+
+      post :create, params: {
+        product_id: product.prefixed_id,
+        signed_id: signed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(Spree::DigitalAsset.count).to eq(0)
+    end
+
     it 'rejects a non-positive limit' do
       post :create, params: {
         product_id: product.prefixed_id,

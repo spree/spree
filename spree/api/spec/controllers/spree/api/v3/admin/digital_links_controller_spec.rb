@@ -65,4 +65,26 @@ RSpec.describe Spree::Api::V3::Admin::DigitalLinksController, type: :controller 
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  # Reset is a write: the catalog grants :manage for write_orders, so no
+  # per-action mapping is needed — but the deny path is worth pinning.
+  describe 'scope enforcement' do
+    it 'denies reset to a read-only key' do
+      read_key = create(:api_key, :secret, store: store, scopes: ['read_orders'])
+      request.headers['x-spree-api-key'] = read_key.plaintext_token
+
+      patch :reset, params: { id: digital_link.prefixed_id }
+
+      expect(response.status).to be_in([401, 403])
+    end
+
+    it 'allows reset with a write key' do
+      write_key = create(:api_key, :secret, store: store, scopes: ['write_orders', 'read_orders'])
+      request.headers['x-spree-api-key'] = write_key.plaintext_token
+
+      patch :reset, params: { id: digital_link.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end

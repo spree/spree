@@ -36,9 +36,14 @@ module Spree
         line_items.joins(:variant).with_digital_assets.distinct
       end
 
-      # @return [Array<Spree::DigitalLink>]
+      # One query rather than one per line item — this is read for every
+      # digital order's email. `reorder(nil)` drops the line-item default order:
+      # PostgreSQL rejects SELECT DISTINCT ordered by a column that is not in
+      # the select list, and ordering a subquery buys nothing anyway.
+      #
+      # @return [ActiveRecord::Relation<Spree::DigitalLink>]
       def digital_links
-        digital_line_items.map(&:digital_links).flatten
+        Spree::DigitalLink.where(line_item_id: digital_line_items.reorder(nil).select(:id))
       end
 
       # Whether the customer must choose a delivery option in checkout —

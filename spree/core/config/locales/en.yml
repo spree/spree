@@ -883,6 +883,7 @@ en:
         subject: Your files are ready
         thanks: Thank you for your business.
     digital_assets: Digital assets
+    digital_assets_attachment_must_be_private: Upload the file to private storage before attaching it
     discontinue_on: Discontinue On
     discontinued: Discontinued
     discontinued_variants_present: Some line items in this order have products that are no longer available.

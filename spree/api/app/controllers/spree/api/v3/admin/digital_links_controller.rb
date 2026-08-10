@@ -35,10 +35,6 @@ module Spree
           def scope_includes
             [:line_item, digital_asset: { attachment_attachment: :blob }]
           end
-
-          def authorize_resource!(resource = @resource, action = action_name.to_sym)
-            authorize!(action == :reset ? :update : action, resource)
-          end
         end
       end
     end

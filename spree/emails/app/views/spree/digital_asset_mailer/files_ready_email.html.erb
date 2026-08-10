@@ -8,7 +8,7 @@
   <% @digital_links.each do |digital_link| %>
     <tr>
       <td style="padding: 8px 0;">
-        <a href="<%= digital_link_download_url(digital_link) %>"><%= digital_link.filename %></a>
+        <a href="<%= digital_link_download_url(digital_link, @download_host) %>"><%= digital_link.filename %></a>
         <% if digital_link.expires_at %>
           <div style="font-size: 12px; color: #666;">
             <%= Spree.t('digital_asset_mailer.files_ready_email.available_until', date: l(digital_link.expires_at.to_date, format: :long)) %>

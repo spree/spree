@@ -19,15 +19,23 @@ module Spree
               Spree.api.digital_link_serializer
             end
 
-            def scope
-              Spree::DigitalLink.
-                joins(line_item: :order).
-                where(spree_orders: { id: current_user.orders.complete.where(store: current_store) }).
-                order(created_at: :desc)
+            def set_parent
+              @parent = current_user
             end
 
+            def parent_association
+              :digital_links
+            end
+
+            def scope
+              super.where(spree_orders: { store_id: current_store.id }).order(created_at: :desc)
+            end
+
+            # The serializer asks each link whether it is still authorizable,
+            # which reads its order's store and its asset's limits — without
+            # both preloads that is four queries per row.
             def scope_includes
-              [digital_asset: { attachment_attachment: :blob }]
+              [{ line_item: :order }, { digital_asset: { attachment_attachment: :blob } }]
             end
           end
         end

@@ -9,7 +9,7 @@ module Spree
         attributes :access_counter, :filename, :content_type
 
         attribute :download_url do |digital_link|
-          Spree::Core::Engine.routes.url_helpers.api_v3_store_digital_link_download_path(token: digital_link.token)
+          Spree::Api::DigitalLinkUrls.download_path(digital_link)
         end
 
         attribute :expires_at do |digital_link|
