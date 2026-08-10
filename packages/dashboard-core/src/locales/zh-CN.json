@@ -151,7 +151,8 @@
       "profile_updated": "个人资料已更新",
       "digital_asset_saved": "文件已保存",
       "digital_asset_removed": "文件已删除",
-      "digital_link_reset": "下载权限已恢复"
+      "digital_link_reset": "下载权限已恢复",
+      "digital_links_email_sent": "下载邮件已发送"
     },
     "errors": {
       "required": "此字段为必填项",

@@ -151,7 +151,8 @@
       "profile_updated": "تم تحديث الملف الشخصي",
       "digital_asset_saved": "تم حفظ الملف",
       "digital_asset_removed": "تمت إزالة الملف",
-      "digital_link_reset": "تمت استعادة إمكانية التنزيل"
+      "digital_link_reset": "تمت استعادة إمكانية التنزيل",
+      "digital_links_email_sent": "تم إرسال بريد التنزيل"
     },
     "errors": {
       "required": "هذا الحقل مطلوب",

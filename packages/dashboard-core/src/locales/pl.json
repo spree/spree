@@ -151,7 +151,8 @@
       "profile_updated": "Zaktualizowano profil",
       "digital_asset_saved": "Plik zapisany",
       "digital_asset_removed": "Plik usunięty",
-      "digital_link_reset": "Przywrócono dostęp do pobierania"
+      "digital_link_reset": "Przywrócono dostęp do pobierania",
+      "digital_links_email_sent": "Wysłano e-mail z pobraniami"
     },
     "errors": {
       "required": "To pole jest wymagane",

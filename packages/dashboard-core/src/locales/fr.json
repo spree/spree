@@ -151,7 +151,8 @@
       "profile_updated": "Profil mis à jour",
       "digital_asset_saved": "Fichier enregistré",
       "digital_asset_removed": "Fichier supprimé",
-      "digital_link_reset": "Accès au téléchargement rétabli"
+      "digital_link_reset": "Accès au téléchargement rétabli",
+      "digital_links_email_sent": "E-mail de téléchargement envoyé"
     },
     "errors": {
       "required": "Ce champ est obligatoire",

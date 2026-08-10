@@ -766,6 +766,7 @@
         "status": "Status"
       },
       "never_expires": "Kein Ablauf",
+      "resend_email": "E-Mail erneut senden",
       "reset": "Zurücksetzen",
       "reset_description": "Der Kunde erhält neue Downloads für „{{name}}“ und die Ablauffrist beginnt von vorn.",
       "reset_title": "Download-Zugriff wiederherstellen?",

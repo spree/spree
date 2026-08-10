@@ -151,7 +151,8 @@
       "profile_updated": "Profile updated",
       "digital_asset_saved": "File saved",
       "digital_asset_removed": "File removed",
-      "digital_link_reset": "Download access restored"
+      "digital_link_reset": "Download access restored",
+      "digital_links_email_sent": "Download email sent"
     },
     "errors": {
       "required": "This field is required",

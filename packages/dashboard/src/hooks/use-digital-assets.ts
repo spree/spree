@@ -48,6 +48,13 @@ export function useDeleteDigitalAsset(productId: string) {
   })
 }
 
+export function useResendDigitalLinks(orderId: string) {
+  return useResourceMutation({
+    mutationFn: () => adminClient.orders.resendDigitalLinks(orderId),
+    successMessage: i18n.t('admin.messages.digital_links_email_sent'),
+  })
+}
+
 export function useResetDigitalLink(orderId: string) {
   const { storeId } = useStore()
 

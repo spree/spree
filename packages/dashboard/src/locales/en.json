@@ -766,6 +766,7 @@
         "status": "Status"
       },
       "never_expires": "No expiry",
+      "resend_email": "Resend email",
       "reset": "Reset",
       "reset_description": "The customer gets a fresh set of downloads for \"{{name}}\" and the expiry clock restarts.",
       "reset_title": "Restore download access?",
