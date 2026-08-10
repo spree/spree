@@ -26,6 +26,8 @@ RSpec.describe 'Admin Company Contacts API', type: :request, swagger_doc: 'api-r
       description 'Returns the customers authorised to purchase for a branch. A customer may act for more than one branch.'
       admin_scope :read, :customers
 
+      admin_sdk_example 'company-locations/contacts-list'
+
       response '200', 'contacts found' do
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -45,6 +47,8 @@ RSpec.describe 'Admin Company Contacts API', type: :request, swagger_doc: 'api-r
         the order, because guessing would invoice the wrong business.
       DESC
       admin_scope :write, :customers
+
+      admin_sdk_example 'company-locations/contacts-create'
 
       parameter name: :body, in: :body, schema: {
         type: :object,
@@ -86,6 +90,8 @@ RSpec.describe 'Admin Company Contacts API', type: :request, swagger_doc: 'api-r
       security [api_key: [], bearer_auth: []]
       admin_scope :read, :customers
 
+      admin_sdk_example 'company-contacts/get'
+
       response '200', 'contact found' do
         run_test! do |response|
           expect(JSON.parse(response.body)['email']).to eq('buyer@acme.test')
@@ -99,6 +105,8 @@ RSpec.describe 'Admin Company Contacts API', type: :request, swagger_doc: 'api-r
       security [api_key: [], bearer_auth: []]
       description 'Withdraws the customer\'s authority to purchase for the branch. The customer account itself is untouched.'
       admin_scope :write, :customers
+
+      admin_sdk_example 'company-contacts/delete'
 
       response '204', 'contact deleted' do
         run_test!

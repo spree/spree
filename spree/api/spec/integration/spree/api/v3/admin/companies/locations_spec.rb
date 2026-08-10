@@ -20,6 +20,8 @@ RSpec.describe 'Admin Company Locations API', type: :request, swagger_doc: 'api-
       description 'Returns the branches of a business customer. Each branch owns its own addresses and the buyers authorised to purchase for it.'
       admin_scope :read, :customers
 
+      admin_sdk_example 'companies/locations-list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
       parameter name: :company_id, in: :path, type: :string, required: true
@@ -41,6 +43,8 @@ RSpec.describe 'Admin Company Locations API', type: :request, swagger_doc: 'api-
       security [api_key: [], bearer_auth: []]
       description 'Creates a branch. Addresses are supplied inline and belong to the branch, so editing one later changes the branch\'s own record rather than an address the buyer also uses.'
       admin_scope :write, :customers
+
+      admin_sdk_example 'companies/locations-create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
@@ -104,6 +108,8 @@ RSpec.describe 'Admin Company Locations API', type: :request, swagger_doc: 'api-
       description 'Branches are addressed by their own id once you hold one — the company id is not needed.'
       admin_scope :read, :customers
 
+      admin_sdk_example 'company-locations/get'
+
       response '200', 'location found' do
         run_test! do |response|
           expect(JSON.parse(response.body)['name']).to eq('Berlin')
@@ -118,6 +124,8 @@ RSpec.describe 'Admin Company Locations API', type: :request, swagger_doc: 'api-
       security [api_key: [], bearer_auth: []]
       description 'Address fields sent here edit the branch\'s existing address in place; send only what changes.'
       admin_scope :write, :customers
+
+      admin_sdk_example 'company-locations/update'
 
       parameter name: :body, in: :body, schema: {
         type: :object,
@@ -142,6 +150,8 @@ RSpec.describe 'Admin Company Locations API', type: :request, swagger_doc: 'api-
       security [api_key: [], bearer_auth: []]
       description 'Removes the branch, its buyers and the addresses it owned.'
       admin_scope :write, :customers
+
+      admin_sdk_example 'company-locations/delete'
 
       response '204', 'location deleted' do
         run_test!

@@ -40,6 +40,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
       DESC
       admin_scope :read, :customers
 
+      admin_sdk_example 'tax-exemption-certificates/list'
+
       response '200', 'certificates found' do
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -62,6 +64,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
         signed blob id obtained from `POST /api/v3/admin/direct_uploads`.
       DESC
       admin_scope :write, :customers
+
+      admin_sdk_example 'tax-exemption-certificates/create'
 
       parameter name: :body, in: :body, schema: {
         type: :object,
@@ -128,6 +132,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
       DESC
       admin_scope :write, :customers
 
+      admin_sdk_example 'tax-exemption-certificates/verify'
+
       response '200', 'certificate verified' do
         run_test! do |response|
           expect(JSON.parse(response.body)['status']).to eq('verified')
@@ -152,6 +158,8 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
       security [api_key: [], bearer_auth: []]
       description 'Withdraws accepted evidence. A verified certificate cannot be deleted — how a sale was taxed has to remain explainable — so revoking is the way out.'
       admin_scope :write, :customers
+
+      admin_sdk_example 'tax-exemption-certificates/revoke'
 
       response '200', 'certificate revoked' do
         run_test! do |response|

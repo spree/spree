@@ -17,6 +17,8 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
       description 'Returns the business customers of the current store.'
       admin_scope :read, :customers
 
+      admin_sdk_example 'companies/list'
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true
 
@@ -37,6 +39,8 @@ RSpec.describe 'Admin Companies API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Creates a business customer. Exemption certificates and tax registrations hang off it.'
       admin_scope :write, :customers
+
+      admin_sdk_example 'companies/create'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :Authorization, in: :header, type: :string, required: true

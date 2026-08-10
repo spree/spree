@@ -107,6 +107,9 @@ import type {
   CollectionCreateParams,
   CollectionProductRepositionParams,
   CollectionUpdateParams,
+  CompanyContactParams,
+  CompanyLocationParams,
+  CompanyParams,
   CustomerAddressParams,
   CustomerCreateParams,
   CustomerGroupCreateParams,
@@ -192,6 +195,9 @@ import type {
   StoreUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
+  TaxExemptionCertificateParams,
+  TaxIdentifierParams,
+  TaxRateParams,
   VariantCreateParams,
   VariantUpdateParams,
   WebhookEndpointCreateParams,
@@ -208,6 +214,9 @@ import type {
   Claim,
   ClaimReason,
   Collection,
+  Company,
+  CompanyContact,
+  CompanyLocation,
   Country,
   CouponCode,
   CreditCard,
@@ -259,7 +268,10 @@ import type {
   StoreCredit,
   StoreCreditCategory,
   TaxCategory,
+  TaxExemptionCertificate,
+  TaxIdentifier,
   TaxLine,
+  TaxRate,
   TranslatableResource,
   TranslationBatchEntry,
   Variant,
@@ -2205,6 +2217,349 @@ export class AdminClient {
 
     create: (params: GiftCardBatchCreateParams, options?: RequestOptions): Promise<GiftCardBatch> =>
       this.request<GiftCardBatch>('POST', '/gift_card_batches', { ...options, body: params }),
+  }
+
+  // ============================================
+  // Tax configuration
+  // ============================================
+
+  /**
+   * Tax rates for the built-in engine. A rate names the jurisdiction it
+   * applies to — a country and optionally one of its states — rather than a
+   * zone; one naming no country taxes everywhere.
+   */
+  readonly taxRates = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<TaxRate>> =>
+      this.request<PaginatedResponse<TaxRate>>('GET', '/tax_rates', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<TaxRate> =>
+      this.request<TaxRate>('GET', `/tax_rates/${id}`, { ...options, params: getParams(params) }),
+
+    create: (params: TaxRateParams, options?: RequestOptions): Promise<TaxRate> =>
+      this.request<TaxRate>('POST', '/tax_rates', { ...options, body: params }),
+
+    update: (id: string, params: TaxRateParams, options?: RequestOptions): Promise<TaxRate> =>
+      this.request<TaxRate>('PATCH', `/tax_rates/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/tax_rates/${id}`, options),
+  }
+
+  /**
+   * The tax engines this installation has available, each declaring the
+   * domains it cannot handle — so a dashboard can warn that pairing the
+   * built-in engine with a US market means no local sales tax, rather than
+   * letting a merchant discover it at checkout.
+   */
+  readonly taxProviders = {
+    list: (options?: RequestOptions): Promise<PaginatedResponse<Record<string, unknown>>> =>
+      this.request<PaginatedResponse<Record<string, unknown>>>('GET', '/tax_providers', options),
+  }
+
+  // ============================================
+  // Companies (business customers)
+  // ============================================
+
+  /**
+   * Business customers, their branches and the buyers authorised to purchase
+   * for each. A company holds the tax registration that goes on its invoices
+   * and the exemption certificates that decide whether its purchases are
+   * taxed; a sale points at a branch, and the company follows from it.
+   *
+   * Branches and buyers are listed and created under their parent, then read
+   * and written by their own id via `companyLocations` and `companyContacts` —
+   * nesting a buyer under both a company and a branch would exceed the API's
+   * two-level limit.
+   */
+  readonly companies = {
+    list: (
+      params?: ListParams & Record<string, unknown>,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<Company>> =>
+      this.request<PaginatedResponse<Company>>('GET', '/companies', {
+        ...options,
+        params: params ? transformListParams(params) : undefined,
+      }),
+
+    get: (id: string, params?: { expand?: string[] }, options?: RequestOptions): Promise<Company> =>
+      this.request<Company>('GET', `/companies/${id}`, { ...options, params: getParams(params) }),
+
+    create: (params: CompanyParams, options?: RequestOptions): Promise<Company> =>
+      this.request<Company>('POST', '/companies', { ...options, body: params }),
+
+    update: (id: string, params: CompanyParams, options?: RequestOptions): Promise<Company> =>
+      this.request<Company>('PATCH', `/companies/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/companies/${id}`, options),
+
+    locations: {
+      list: (
+        companyId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CompanyLocation>> =>
+        this.request<PaginatedResponse<CompanyLocation>>(
+          'GET',
+          `/companies/${companyId}/locations`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
+
+      create: (
+        companyId: string,
+        params: CompanyLocationParams,
+        options?: RequestOptions,
+      ): Promise<CompanyLocation> =>
+        this.request<CompanyLocation>('POST', `/companies/${companyId}/locations`, {
+          ...options,
+          body: params,
+        }),
+    },
+
+    /**
+     * The business's own tax registrations, one per kind. A company
+     * registration takes precedence over the buyer's own when a sale is for
+     * that business, because the invoice is addressed to the entity rather
+     * than the person who placed the order.
+     */
+    taxIdentifiers: {
+      list: (
+        companyId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<TaxIdentifier>> =>
+        this.request<PaginatedResponse<TaxIdentifier>>(
+          'GET',
+          `/companies/${companyId}/tax_identifiers`,
+          {
+            ...options,
+            params: params ? transformListParams(params) : undefined,
+          },
+        ),
+
+      get: (companyId: string, id: string, options?: RequestOptions): Promise<TaxIdentifier> =>
+        this.request<TaxIdentifier>(
+          'GET',
+          `/companies/${companyId}/tax_identifiers/${id}`,
+          options,
+        ),
+
+      create: (
+        companyId: string,
+        params: TaxIdentifierParams,
+        options?: RequestOptions,
+      ): Promise<TaxIdentifier> =>
+        this.request<TaxIdentifier>('POST', `/companies/${companyId}/tax_identifiers`, {
+          ...options,
+          body: params,
+        }),
+
+      update: (
+        companyId: string,
+        id: string,
+        params: TaxIdentifierParams,
+        options?: RequestOptions,
+      ): Promise<TaxIdentifier> =>
+        this.request<TaxIdentifier>('PATCH', `/companies/${companyId}/tax_identifiers/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/companies/${companyId}/tax_identifiers/${id}`, options),
+
+      /**
+       * Asks the registry again. A registry answers only "valid now", so a
+       * number verified last year may have been deregistered since. Returns
+       * `202` with the check queued.
+       */
+      validate: (companyId: string, id: string, options?: RequestOptions): Promise<TaxIdentifier> =>
+        this.request<TaxIdentifier>(
+          'POST',
+          `/companies/${companyId}/tax_identifiers/${id}/validate`,
+          options,
+        ),
+    },
+
+    /**
+     * Exemption evidence. Certificates start `pending` and exempt nothing
+     * until verified; `active` — not `status` — answers whether one exempts a
+     * sale, since a verified certificate stops counting once its expiry date
+     * passes.
+     *
+     * Upload the document via `directUploads.create()` first and pass the
+     * returned `signed_id` as `document`. To read it back, fetch
+     * `document_url` with the `Authorization` header and drive the browser
+     * download from a Blob — the bytes are streamed through the API rather
+     * than served from storage, so a top-level navigation carrying no JWT
+     * will not work.
+     */
+    taxExemptionCertificates: {
+      list: (
+        companyId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<TaxExemptionCertificate>> =>
+        this.request<PaginatedResponse<TaxExemptionCertificate>>(
+          'GET',
+          `/companies/${companyId}/tax_exemption_certificates`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      get: (
+        companyId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions,
+      ): Promise<TaxExemptionCertificate> =>
+        this.request<TaxExemptionCertificate>(
+          'GET',
+          `/companies/${companyId}/tax_exemption_certificates/${id}`,
+          { ...options, params: getParams(params) },
+        ),
+
+      create: (
+        companyId: string,
+        params: TaxExemptionCertificateParams,
+        options?: RequestOptions,
+      ): Promise<TaxExemptionCertificate> =>
+        this.request<TaxExemptionCertificate>(
+          'POST',
+          `/companies/${companyId}/tax_exemption_certificates`,
+          { ...options, body: params },
+        ),
+
+      update: (
+        companyId: string,
+        id: string,
+        params: TaxExemptionCertificateParams,
+        options?: RequestOptions,
+      ): Promise<TaxExemptionCertificate> =>
+        this.request<TaxExemptionCertificate>(
+          'PATCH',
+          `/companies/${companyId}/tax_exemption_certificates/${id}`,
+          { ...options, body: params },
+        ),
+
+      /**
+       * Accepts the certificate, which is what makes it exempt sales. Only a
+       * pending certificate can be accepted. An installation that checks
+       * numbers against a registry, or requires a second approval, can refuse
+       * here — the refusal arrives as a validation error.
+       */
+      verify: (
+        companyId: string,
+        id: string,
+        options?: RequestOptions,
+      ): Promise<TaxExemptionCertificate> =>
+        this.request<TaxExemptionCertificate>(
+          'PATCH',
+          `/companies/${companyId}/tax_exemption_certificates/${id}/verify`,
+          options,
+        ),
+
+      /**
+       * Withdraws accepted evidence. A verified certificate cannot be deleted
+       * — how a sale was taxed has to stay explainable — so this is the way
+       * out.
+       */
+      revoke: (
+        companyId: string,
+        id: string,
+        options?: RequestOptions,
+      ): Promise<TaxExemptionCertificate> =>
+        this.request<TaxExemptionCertificate>(
+          'PATCH',
+          `/companies/${companyId}/tax_exemption_certificates/${id}/revoke`,
+          options,
+        ),
+
+      /** Only a certificate still awaiting a decision can be deleted. */
+      delete: (companyId: string, id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>(
+          'DELETE',
+          `/companies/${companyId}/tax_exemption_certificates/${id}`,
+          options,
+        ),
+    },
+  }
+
+  /** Branches addressed by their own id, with the buyers who purchase for them. */
+  readonly companyLocations = {
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions,
+    ): Promise<CompanyLocation> =>
+      this.request<CompanyLocation>('GET', `/company_locations/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    /**
+     * Address fields sent here edit the branch's existing address in place, so
+     * send only what changes.
+     */
+    update: (
+      id: string,
+      params: CompanyLocationParams,
+      options?: RequestOptions,
+    ): Promise<CompanyLocation> =>
+      this.request<CompanyLocation>('PATCH', `/company_locations/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    /** Removes the branch, its buyers and the addresses it owned. */
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/company_locations/${id}`, options),
+
+    contacts: {
+      list: (
+        companyLocationId: string,
+        params?: ListParams & Record<string, unknown>,
+        options?: RequestOptions,
+      ): Promise<PaginatedResponse<CompanyContact>> =>
+        this.request<PaginatedResponse<CompanyContact>>(
+          'GET',
+          `/company_locations/${companyLocationId}/contacts`,
+          { ...options, params: params ? transformListParams(params) : undefined },
+        ),
+
+      /**
+       * Authorises a customer to purchase for a branch. A customer acting for
+       * exactly one branch has their orders attributed to it automatically;
+       * one acting for several needs the branch set on the order, because
+       * guessing would invoice the wrong business.
+       */
+      create: (
+        companyLocationId: string,
+        params: CompanyContactParams,
+        options?: RequestOptions,
+      ): Promise<CompanyContact> =>
+        this.request<CompanyContact>('POST', `/company_locations/${companyLocationId}/contacts`, {
+          ...options,
+          body: params,
+        }),
+    },
+  }
+
+  readonly companyContacts = {
+    get: (id: string, options?: RequestOptions): Promise<CompanyContact> =>
+      this.request<CompanyContact>('GET', `/company_contacts/${id}`, options),
+
+    /** Withdraws the buyer's authority. The customer account is untouched. */
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/company_contacts/${id}`, options),
   }
 
   // ============================================

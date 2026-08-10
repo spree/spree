@@ -30,6 +30,8 @@ RSpec.describe 'Admin Company Tax Identifiers API', type: :request, swagger_doc:
       DESC
       admin_scope :read, :customers
 
+      admin_sdk_example 'company-tax-identifiers/list'
+
       response '200', 'registrations found' do
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -49,6 +51,8 @@ RSpec.describe 'Admin Company Tax Identifiers API', type: :request, swagger_doc:
         leaving the status unattempted.
       DESC
       admin_scope :write, :customers
+
+      admin_sdk_example 'company-tax-identifiers/create'
 
       parameter name: :body, in: :body, schema: {
         type: :object,
@@ -96,6 +100,8 @@ RSpec.describe 'Admin Company Tax Identifiers API', type: :request, swagger_doc:
         cannot otherwise be retried without editing the number.
       DESC
       admin_scope :write, :customers
+
+      admin_sdk_example 'company-tax-identifiers/validate'
 
       response '422', 'no validator installed for this kind' do
         run_test! do |response|
