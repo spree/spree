@@ -837,12 +837,16 @@
       "delete_description": "\"{{name}}\" will no longer be downloadable by anyone who bought it. This takes effect immediately.",
       "delete_title": "Delete this file?",
       "description": "Files buyers can download after purchase. Attach them to a digital product, or to a physical one to deliver a manual or warranty alongside the goods.",
+      "download": "Download",
       "empty": "No files yet",
+      "limit_invalid": "Limits must be whole numbers of 1 or more, or blank.",
       "limits_help": "Leave the download and day limits blank to use the store's settings.",
+      "store_default": "{{count}} (store default)",
       "title": "Digital files",
       "untitled": "Untitled file",
       "upload": "Add file",
-      "uploading": "Uploading {{name}}…"
+      "uploading": "Uploading {{name}}…",
+      "uploading_short": "Uploading…"
     },
     "digital_links": {
       "columns": {

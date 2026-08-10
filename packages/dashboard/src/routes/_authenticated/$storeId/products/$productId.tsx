@@ -283,7 +283,6 @@ function ProductForm({ product }: { product: Product }) {
               <GeneralCard form={form} descriptionEditor={MediaRichTextEditor} />
               <VariantsCard form={form} />
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
-              <DigitalAssetsCard productId={productId} variants={assignableVariants} />
               <PricesCard form={form} productName={product.name} />
               <InventoryCard
                 form={form}
@@ -291,6 +290,7 @@ function ProductForm({ product }: { product: Product }) {
                   `/${storeId}/settings/stock-locations?edit=${encodeURIComponent(id)}`
                 }
               />
+              <DigitalAssetsCard productId={productId} variants={assignableVariants} />
               <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
                 <CustomFieldsInlineCard />
               </ProductCustomFieldsProvider>

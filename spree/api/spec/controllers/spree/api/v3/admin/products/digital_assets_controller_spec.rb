@@ -29,6 +29,12 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
       expect(json_response['data'].map { |a| a['id'] }).to include(digital_asset.prefixed_id)
     end
 
+    it 'gives each file a download link so the merchant can check it' do
+      get :index, params: { product_id: product.prefixed_id }
+
+      expect(json_response['data'].first['download_url']).to be_present
+    end
+
     it 'does not list assets belonging to another product' do
       other = create(:digital_asset)
 

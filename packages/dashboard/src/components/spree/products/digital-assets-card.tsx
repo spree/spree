@@ -3,16 +3,13 @@ import { formatFileSize, useDirectUpload } from '@spree/dashboard-core'
 import {
   Button,
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
-  Input,
+  FileTypeIcon,
   Pagination,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  RowActions,
   Skeleton,
   Table,
   TableBody,
@@ -22,17 +19,15 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { FileIcon, Trash2Icon, UploadIcon } from 'lucide-react'
+import { DownloadIcon, FileIcon, UploadIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   useCreateDigitalAsset,
   useDeleteDigitalAsset,
   useDigitalAssets,
-  useUpdateDigitalAsset,
 } from '../../../hooks/use-digital-assets'
-
-type LimitField = 'authorized_clicks' | 'authorized_days'
+import { DigitalAssetEditSheet } from './digital-asset-edit-sheet'
 
 export function DigitalAssetsCard({
   productId,
@@ -44,16 +39,15 @@ export function DigitalAssetsCard({
   const { t } = useTranslation()
   const confirm = useConfirm()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [uploadingName, setUploadingName] = useState<string | null>(null)
-  const [selectedVariantId, setSelectedVariantId] = useState<string>('')
+  const [uploading, setUploading] = useState(false)
   const [page, setPage] = useState(1)
+  const [editing, setEditing] = useState<DigitalAsset | null>(null)
 
   // Digital files live on private storage: they are only ever served through an
   // authorized, signed link, never from the public bucket.
   const directUpload = useDirectUpload({ private: true })
   const { data, isLoading } = useDigitalAssets(productId ?? '', page, Boolean(productId))
   const createAsset = useCreateDigitalAsset(productId ?? '')
-  const updateAsset = useUpdateDigitalAsset(productId ?? '')
   const deleteAsset = useDeleteDigitalAsset(productId ?? '')
 
   const assets: DigitalAsset[] = data?.data ?? []
@@ -65,16 +59,13 @@ export function DigitalAssetsCard({
     event.target.value = ''
     if (!file || !productId) return
 
-    setUploadingName(file.name)
+    setUploading(true)
     try {
       const { signedId } = await directUpload.mutateAsync(file)
-      await createAsset.mutateAsync({
-        signed_id: signedId,
-        ...(selectedVariantId ? { variant_id: selectedVariantId } : {}),
-      })
+      await createAsset.mutateAsync({ signed_id: signedId })
       setPage(1)
     } finally {
-      setUploadingName(null)
+      setUploading(false)
     }
   }
 
@@ -89,40 +80,10 @@ export function DigitalAssetsCard({
     if (confirmed) await deleteAsset.mutateAsync(asset.id)
   }
 
-  // Blank means "use the store setting", so an empty box is a real value.
-  function handleLimitChange(asset: DigitalAsset, field: LimitField, raw: string) {
-    const parsed = raw.trim() === '' ? null : Number(raw)
-    if (parsed !== null && (!Number.isFinite(parsed) || parsed < 1)) return
-
-    updateAsset.mutate({ id: asset.id, [field]: parsed })
-  }
-
-  function LimitCell({
-    asset,
-    field,
-    effective,
-  }: {
-    asset: DigitalAsset
-    field: LimitField
-    effective: number
-  }) {
-    const label = t(
-      field === 'authorized_clicks'
-        ? 'admin.digital_assets.columns.downloads'
-        : 'admin.digital_assets.columns.days',
-    )
-
-    return (
-      <Input
-        type="number"
-        min={1}
-        className="w-24"
-        defaultValue={asset[field] ?? ''}
-        placeholder={String(effective)}
-        aria-label={label}
-        onBlur={(e) => handleLimitChange(asset, field, e.target.value)}
-      />
-    )
+  // A blank limit means the store's setting applies — show the number actually
+  // in force rather than an empty cell.
+  function limitLabel(own: number | null | undefined, effective: number) {
+    return own == null ? t('admin.digital_assets.store_default', { count: effective }) : String(own)
   }
 
   if (!productId) return null
@@ -131,7 +92,23 @@ export function DigitalAssetsCard({
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.digital_assets.title')}</CardTitle>
+        <CardAction>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <UploadIcon className="mr-2 size-4" />
+            {uploading
+              ? t('admin.digital_assets.uploading_short')
+              : t('admin.digital_assets.upload')}
+          </Button>
+          <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelected} />
+        </CardAction>
       </CardHeader>
+
       <CardContent className="flex flex-col gap-4">
         <p className="text-muted-foreground text-sm">{t('admin.digital_assets.description')}</p>
 
@@ -143,8 +120,8 @@ export function DigitalAssetsCard({
             <p className="text-muted-foreground text-sm">{t('admin.digital_assets.empty')}</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
+          <div className="overflow-hidden rounded-md border border-border">
+            <Table className="border-collapse [&_td]:rounded-none [&_td]:border [&_th]:border [&_td]:border-border [&_th]:border-border">
               <TableHeader>
                 <TableRow>
                   <TableHead>{t('admin.digital_assets.columns.file')}</TableHead>
@@ -161,7 +138,25 @@ export function DigitalAssetsCard({
                 {assets.map((asset) => (
                   <TableRow key={asset.id}>
                     <TableCell className="font-medium">
-                      {asset.filename ?? t('admin.digital_assets.untitled')}
+                      <span className="flex items-center gap-2">
+                        <FileTypeIcon
+                          filename={asset.filename}
+                          contentType={asset.content_type}
+                          className="text-muted-foreground size-4 shrink-0"
+                        />
+                        {asset.download_url ? (
+                          <a
+                            href={asset.download_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="hover:underline"
+                          >
+                            {asset.filename ?? t('admin.digital_assets.untitled')}
+                          </a>
+                        ) : (
+                          (asset.filename ?? t('admin.digital_assets.untitled'))
+                        )}
+                      </span>
                     </TableCell>
                     {hasVariants && (
                       <TableCell className="text-muted-foreground">
@@ -171,30 +166,30 @@ export function DigitalAssetsCard({
                     <TableCell className="tabular-nums">
                       {asset.byte_size ? formatFileSize(asset.byte_size) : '—'}
                     </TableCell>
-                    <TableCell>
-                      <LimitCell
-                        asset={asset}
-                        field="authorized_clicks"
-                        effective={asset.effective_authorized_clicks}
-                      />
+                    <TableCell className="tabular-nums">
+                      {limitLabel(asset.authorized_clicks, asset.effective_authorized_clicks)}
                     </TableCell>
-                    <TableCell>
-                      <LimitCell
-                        asset={asset}
-                        field="authorized_days"
-                        effective={asset.effective_authorized_days}
-                      />
+                    <TableCell className="tabular-nums">
+                      {limitLabel(asset.authorized_days, asset.effective_authorized_days)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        aria-label={t('admin.common.delete')}
-                        onClick={() => handleDelete(asset)}
-                      >
-                        <Trash2Icon className="size-4" />
-                      </Button>
+                      <RowActions
+                        actions={[
+                          {
+                            key: 'download',
+                            label: t('admin.digital_assets.download'),
+                            icon: <DownloadIcon className="size-4" />,
+                            visible: Boolean(asset.download_url),
+                            onSelect: () => window.open(asset.download_url ?? '', '_blank'),
+                          },
+                          { key: 'edit', onSelect: () => setEditing(asset) },
+                          {
+                            key: 'delete',
+                            destructive: true,
+                            onSelect: () => handleDelete(asset),
+                          },
+                        ]}
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -203,45 +198,15 @@ export function DigitalAssetsCard({
             {meta && <Pagination meta={meta} onPageChange={setPage} />}
           </div>
         )}
-
-        <div className="flex flex-wrap items-center gap-2">
-          {hasVariants && (
-            <Select value={selectedVariantId} onValueChange={setSelectedVariantId}>
-              <SelectTrigger className="w-56">
-                <SelectValue placeholder={t('admin.digital_assets.all_variants')}>
-                  {(value) =>
-                    variants?.find((v) => v.id === value)?.options_text ??
-                    t('admin.digital_assets.all_variants')
-                  }
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {variants?.map((variant) => (
-                  <SelectItem key={variant.id} value={variant.id}>
-                    {variant.options_text || variant.sku}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-
-          <Button
-            type="button"
-            variant="outline"
-            disabled={Boolean(uploadingName)}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <UploadIcon className="mr-2 size-4" />
-            {uploadingName
-              ? t('admin.digital_assets.uploading', { name: uploadingName })
-              : t('admin.digital_assets.upload')}
-          </Button>
-
-          <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelected} />
-        </div>
-
-        <p className="text-muted-foreground text-xs">{t('admin.digital_assets.limits_help')}</p>
       </CardContent>
+
+      <DigitalAssetEditSheet
+        productId={productId}
+        asset={editing}
+        variants={variants}
+        open={Boolean(editing)}
+        onOpenChange={(open) => !open && setEditing(null)}
+      />
     </Card>
   )
 }

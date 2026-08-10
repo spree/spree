@@ -832,12 +832,16 @@
       "delete_description": "购买过“{{name}}”的人将无法再下载它。此操作立即生效。",
       "delete_title": "删除此文件？",
       "description": "买家购买后可下载的文件。可附加到数字商品，也可附加到实体商品以随货提供说明书或保修卡。",
+      "download": "下载",
       "empty": "暂无文件",
+      "limit_invalid": "限制必须是不小于 1 的整数，或留空。",
       "limits_help": "将下载次数和天数限制留空即可使用商店设置。",
+      "store_default": "{{count}}（商店默认）",
       "title": "数字文件",
       "untitled": "未命名文件",
       "upload": "添加文件",
-      "uploading": "正在上传 {{name}}…"
+      "uploading": "正在上传 {{name}}…",
+      "uploading_short": "上传中…"
     },
     "digital_links": {
       "columns": {

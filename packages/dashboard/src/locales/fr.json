@@ -837,12 +837,16 @@
       "delete_description": "« {{name}} » ne sera plus téléchargeable par les personnes qui l'ont acheté. Effet immédiat.",
       "delete_title": "Supprimer ce fichier ?",
       "description": "Fichiers que les acheteurs peuvent télécharger après l'achat. Associez-les à un produit numérique, ou à un produit physique pour livrer un manuel ou une garantie.",
+      "download": "Télécharger",
       "empty": "Aucun fichier pour le moment",
+      "limit_invalid": "Les limites doivent être des entiers supérieurs ou égaux à 1, ou vides.",
       "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
+      "store_default": "{{count}} (par défaut)",
       "title": "Fichiers numériques",
       "untitled": "Fichier sans nom",
       "upload": "Ajouter un fichier",
-      "uploading": "Téléversement de {{name}}…"
+      "uploading": "Téléversement de {{name}}…",
+      "uploading_short": "Téléversement…"
     },
     "digital_links": {
       "columns": {
