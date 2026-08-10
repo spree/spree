@@ -38,6 +38,12 @@ RSpec.describe Spree::Api::V3::DigitalAssetSerializer do
       )
     end
 
+    # Event payloads serialize outside a request, where the Disk service has no
+    # host to build a URL from — that must degrade, not raise.
+    it 'leaves the download url blank when there is no request context' do
+      expect(subject['download_url']).to be_nil
+    end
+
     it 'exposes the store fallback in the effective limits' do
       store.update!(preferred_digital_asset_authorized_clicks: 5)
 

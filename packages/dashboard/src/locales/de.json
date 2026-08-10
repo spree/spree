@@ -750,12 +750,16 @@
       "delete_description": "„{{name}}“ kann von niemandem mehr heruntergeladen werden, der sie gekauft hat. Dies wirkt sofort.",
       "delete_title": "Diese Datei löschen?",
       "description": "Dateien, die Käufer nach dem Kauf herunterladen können. Fügen Sie sie einem digitalen Produkt hinzu oder einem physischen, um eine Anleitung oder Garantie mitzuliefern.",
+      "download": "Herunterladen",
       "empty": "Noch keine Dateien",
+      "limit_invalid": "Limits müssen ganze Zahlen ab 1 sein oder leer bleiben.",
       "limits_help": "Lassen Sie die Download- und Tageslimits leer, um die Einstellungen des Shops zu verwenden.",
+      "store_default": "{{count}} (Shop-Standard)",
       "title": "Digitale Dateien",
       "untitled": "Unbenannte Datei",
       "upload": "Datei hinzufügen",
-      "uploading": "{{name}} wird hochgeladen…"
+      "uploading": "{{name}} wird hochgeladen…",
+      "uploading_short": "Wird hochgeladen…"
     },
     "digital_links": {
       "columns": {

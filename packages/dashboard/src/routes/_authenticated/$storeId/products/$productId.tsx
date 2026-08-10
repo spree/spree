@@ -458,9 +458,9 @@ function ProductForm({ product }: { product: Product }) {
               <GeneralCard form={form} />
               <VariantsCard form={form} />
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
-              <DigitalAssetsCard productId={productId} variants={assignableVariants} />
               <PricesCard form={form} productName={product.name} />
               <InventoryCard form={form} storeId={storeId} />
+              <DigitalAssetsCard productId={productId} variants={assignableVariants} />
               <ProductCustomFieldsProvider form={form} productTypeId={selectedProductTypeId}>
                 <CustomFieldsInlineCard />
               </ProductCustomFieldsProvider>

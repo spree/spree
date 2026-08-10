@@ -35,6 +35,7 @@ export * from './spree/copy-to-clipboard-button'
 export * from './spree/country-flag'
 export * from './spree/data-grid'
 export * from './spree/drag-handle'
+export * from './spree/file-type-icon'
 export * from './spree/form-actions'
 
 // JsonPreviewDrawer and JsonValueView are intentionally NOT re-exported from

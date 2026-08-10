@@ -766,12 +766,16 @@
       "delete_description": "„{{name}}” nie będzie już dostępny do pobrania dla osób, które go kupiły. Zmiana działa natychmiast.",
       "delete_title": "Usunąć ten plik?",
       "description": "Pliki, które kupujący mogą pobrać po zakupie. Dołącz je do produktu cyfrowego lub do fizycznego, aby dostarczyć instrukcję albo gwarancję.",
+      "download": "Pobierz",
       "empty": "Brak plików",
+      "limit_invalid": "Limity muszą być liczbami całkowitymi od 1 lub puste.",
       "limits_help": "Pozostaw limity pobrań i dni puste, aby użyć ustawień sklepu.",
+      "store_default": "{{count}} (domyślne sklepu)",
       "title": "Pliki cyfrowe",
       "untitled": "Plik bez nazwy",
       "upload": "Dodaj plik",
-      "uploading": "Przesyłanie {{name}}…"
+      "uploading": "Przesyłanie {{name}}…",
+      "uploading_short": "Przesyłanie…"
     },
     "digital_links": {
       "columns": {
