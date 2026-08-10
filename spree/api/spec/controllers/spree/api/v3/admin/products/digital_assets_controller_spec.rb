@@ -36,6 +36,20 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
 
       expect(json_response['data'].map { |a| a['id'] }).not_to include(other.prefixed_id)
     end
+
+    # Assets reach the product through `variants`, which orders by the variants
+    # table — combined with the collection's DISTINCT that is invalid on
+    # PostgreSQL, so the listing must order by the assets' own table. Asserting
+    # the order keeps this honest on SQLite too, where the bad query still runs.
+    it 'returns the assets oldest first, across variants' do
+      second_variant = create(:variant, product: product)
+      newer = create(:digital_asset, variant: second_variant, created_at: 1.hour.from_now)
+
+      get :index, params: { product_id: product.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].map { |a| a['id'] }).to eq([digital_asset.prefixed_id, newer.prefixed_id])
+    end
   end
 
   describe 'POST #create' do

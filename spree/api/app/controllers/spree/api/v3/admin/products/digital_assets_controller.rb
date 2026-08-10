@@ -45,6 +45,16 @@ module Spree
               :digital_assets
             end
 
+            # The parent association reaches assets through `variants`, which
+            # carries an ORDER BY on the variants table. Combined with the
+            # collection's DISTINCT, PostgreSQL rejects the query outright
+            # (ordering columns must appear in the select list), so order by
+            # the assets' own table instead. SQLite accepts either form, so
+            # this only fails on a real deployment.
+            def scope
+              super.reorder(created_at: :asc)
+            end
+
             def scope_includes
               [:variant, { attachment_attachment: :blob }]
             end
