@@ -148,4 +148,60 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  # variant_id arrives from the client, so it must be resolved through the
+  # parent product rather than trusted — otherwise an asset can be planted on
+  # another product's (or another store's) variant, and its files would be
+  # issued and emailed to that store's customers.
+  describe 'variant scoping' do
+    let(:other_store) { create(:store) }
+    let(:foreign_variant) { create(:product, store: other_store).default_variant }
+    let(:sibling_variant) { create(:product, store: store).default_variant }
+
+    it 'refuses to create an asset on another store\'s variant' do
+      post :create, params: {
+        product_id: product.prefixed_id,
+        signed_id: blob.signed_id,
+        variant_id: foreign_variant.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(Spree::DigitalAsset.where(variant_id: foreign_variant.id)).to be_empty
+    end
+
+    it 'refuses to create an asset on a variant of another product in the same store' do
+      post :create, params: {
+        product_id: product.prefixed_id,
+        signed_id: blob.signed_id,
+        variant_id: sibling_variant.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(Spree::DigitalAsset.where(variant_id: sibling_variant.id)).to be_empty
+    end
+
+    it 'refuses to relocate an existing asset onto a foreign variant' do
+      digital_asset = create(:digital_asset, variant: variant)
+
+      patch :update, params: {
+        product_id: product.prefixed_id,
+        id: digital_asset.prefixed_id,
+        variant_id: foreign_variant.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+      expect(digital_asset.reload.variant_id).to eq(variant.id)
+    end
+
+    it 'accepts a variant that belongs to the parent product' do
+      post :create, params: {
+        product_id: product.prefixed_id,
+        signed_id: blob.signed_id,
+        variant_id: variant.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['variant_id']).to eq(variant.prefixed_id)
+    end
+  end
 end
