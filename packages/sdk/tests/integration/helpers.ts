@@ -57,11 +57,16 @@ export async function buildCart(throughStep: 'item' | 'address' | 'delivery' | '
   if (throughStep === 'address') return { c, cart: withAddr, opts, creds }
 
   const ful = withAddr.fulfillments[0]
+  // Rates come back cheapest first, and the seeded store offers free store
+  // pickup — so the first rate costs nothing. Pick a paid one, since callers
+  // assert that choosing a rate moves the delivery total.
+  const paidRate = ful.delivery_rates.find((rate) => Number(rate.cost) > 0)
+  const chosenRate = paidRate ?? ful.delivery_rates[0]
   const withRate = await c.carts.fulfillments.update(
     cart.id,
     ful.id,
     {
-      selected_delivery_rate_id: ful.delivery_rates[0].id,
+      selected_delivery_rate_id: chosenRate.id,
     },
     opts,
   )

@@ -7,6 +7,19 @@ RSpec.describe Spree::Seeds::All do
     expect { subject }.not_to raise_error
   end
 
+  # CI seeds a fresh app and re-seeds on rerun; a seed whose finder includes
+  # mutable attributes stops matching once anything edits them and then tries
+  # to create a duplicate.
+  it 'is idempotent when the seeded data has since been edited' do
+    subject
+
+    store = Spree::Store.find_by(default: true)
+    store.stock_locations.update_all(pickup_enabled: true, active: false)
+
+    expect { described_class.call }.not_to raise_error
+    expect(store.stock_locations.where(name: Spree.t(:default_stock_location_name)).count).to eq(1)
+  end
+
   # Store-scoped seeds iterate `Spree::Store.all`, so one ordered before
   # `Stores` silently creates nothing on a fresh install. The per-seed specs
   # can't catch it — they run against a suite that already has a store.
