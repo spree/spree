@@ -405,6 +405,14 @@ Spree::Core::Engine.add_routes do
         resources :companies do
           resources :locations, controller: 'companies/locations', only: [:index, :show, :create]
 
+          # The business's own registration — the number on its invoices, which
+          # outranks the buyer's own. Same shape as the customer's.
+          resources :tax_identifiers, controller: 'companies/tax_identifiers' do
+            member do
+              post :validate
+            end
+          end
+
           # Exemption evidence. Accepting or withdrawing one is its own action —
           # never mass assignment — and a verified certificate is revoked
           # rather than deleted.
