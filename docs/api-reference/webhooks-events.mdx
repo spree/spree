@@ -763,22 +763,29 @@ Events: `newsletter_subscriber.created`, `newsletter_subscriber.updated`, `newsl
 }
 ```
 
-## Digital Product Events
+## Digital Asset Events
 
-Events: `digital.created`, `digital.updated`, `digital.deleted`
+Events: `digital_asset.created`, `digital_asset.updated`, `digital_asset.deleted`
+
+The legacy `digital.created` / `digital.updated` / `digital.deleted` names are
+still emitted alongside these for one release and are removed in Spree 6.1 —
+subscribe to the `digital_asset.*` names.
 
 ```json
 {
   "id": "dig_3xLq8nRt",
   "variant_id": "var_k5nR8xLq",
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-01-01T00:00:00Z"
+  "filename": "ebook.pdf",
+  "content_type": "application/pdf"
 }
 ```
 
 ## Digital Link Events
 
-Events: `digital_link.created`, `digital_link.updated`, `digital_link.deleted`
+Events: `digital_link.created`, `digital_link.updated`, `digital_link.deleted`, `digital_link.downloaded`
+
+`digital_link.downloaded` fires each time a customer successfully downloads the
+file, after the access counter has been incremented.
 
 ```json
 {
@@ -786,7 +793,8 @@ Events: `digital_link.created`, `digital_link.updated`, `digital_link.deleted`
   "access_counter": 3,
   "filename": "ebook.pdf",
   "content_type": "application/pdf",
-  "download_url": "/api/v3/store/digital_downloads/abc123",
+  "download_url": "/api/v3/store/digital_links/abc123",
+  "expires_at": "2025-01-22T10:30:00Z",
   "authorizable": true,
   "expired": false,
   "access_limit_exceeded": false,

@@ -291,6 +291,8 @@ A handler receives the workflow (so it can read `order`, `items`, `created_by`, 
 - **Digital downloads redirect instead of streaming.** The download endpoint now answers `302` with a short-lived signed URL rather than sending the file bytes directly, so a large download no longer occupies a web worker. Clients that read the response body must follow redirects (most HTTP clients and every browser already do). The link's own lifetime is unchanged; `digital_asset_link_expire_time` (default 300 seconds) — previously unused — now sets how long the signed URL stays valid, and is capped at one hour because that URL is a bearer credential. The signed URL is additionally clamped so it can never outlive the download link that issued it.
 - **Download limits can be set per asset.** `authorized_clicks` and `authorized_days` on a digital asset override the store's download settings; left blank, the store settings apply as before.
 - **A successful download publishes `digital_link.downloaded`**, so downloads are visible to webhooks and subscribers for the first time.
+- **Customers are emailed their download links** when the order is placed, from the new `Spree::DigitalAssetMailer` in the optional `spree_emails` gem. Hosts that already send their own download email should either suppress it (`send_consumer_transactional_emails`) or drop their own. The dashboard's order page can re-send it.
+- **Digital assets are managed through the Admin API and dashboard**, and signed-in customers can list everything they have bought at `GET /api/v3/store/customers/me/digital_links`.
 
 ## Dependency injection changes
 
