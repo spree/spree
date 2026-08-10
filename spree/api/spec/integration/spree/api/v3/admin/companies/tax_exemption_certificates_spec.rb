@@ -178,6 +178,10 @@ RSpec.describe 'Admin Tax Exemption Certificates API', type: :request, swagger_d
     parameter name: :company_id, in: :path, type: :string, required: true
     parameter name: :id, in: :path, type: :string, required: true
 
+    # No SDK sample: the client has no download method by design, matching
+    # exports — the caller fetches document_url with the Authorization header
+    # and drives the browser download from a Blob, because a top-level
+    # navigation cannot carry an in-memory JWT.
     get 'Download a certificate document' do
       tags 'Companies'
       produces 'application/octet-stream'
