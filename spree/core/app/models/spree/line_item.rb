@@ -388,8 +388,8 @@ module Spree
     # itself returns early unless the order is completed.
     #
     # No digitality gate: digital items get fulfillment items too (the
-    # Digital provider issues one link per unit), and stock-limited digitals
-    # — licences, seats, tickets — must decrement like anything else.
+    # Digital provider issues one link per unit), and stock-limited digital
+    # items — licences, seats, tickets — must decrement like anything else.
     # Tracking is decided per variant by should_track_inventory?.
     def update_inventory
       if (saved_changes? || target_fulfillment.present?) && order.present?

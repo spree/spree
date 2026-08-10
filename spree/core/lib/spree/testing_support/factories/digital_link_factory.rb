@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :digital_link, class: Spree::DigitalLink do
-    digital
+    digital_asset
     line_item
   end
 end

@@ -19,7 +19,7 @@ export type {
   CustomField,
   DeliveryMethod,
   DeliveryRate,
-  Digital,
+  DigitalAsset,
   DigitalLink,
   Discount,
   Fulfillment,

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Digital auto-fulfillment on order completion', type: :model do
   let(:store) { @default_store }
   let(:digital_product) { create(:digital_product, store: store) }
-  let(:digital_variant) { create(:variant, product: digital_product, digitals: [create(:digital)]) }
+  let(:digital_variant) { create(:variant, product: digital_product, digitals: [create(:digital_asset)]) }
   let(:order) { create(:order_with_line_items, store: store, variants: [digital_variant], line_items_count: 1) }
 
   before do

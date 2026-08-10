@@ -4,7 +4,7 @@ RSpec.shared_examples 'a digital items host' do
   let(:digital_product) { create(:digital_product) }
 
   def digital_variant
-    create(:variant, digitals: [create(:digital)], product: digital_product)
+    create(:variant, digitals: [create(:digital_asset)], product: digital_product)
   end
 
   context 'line_item analysis' do
@@ -27,7 +27,7 @@ RSpec.shared_examples 'a digital items host' do
 
     it 'understands that not all products are digital' do
       3.times { add_line_item(record, digital_variant, 1) }
-      add_line_item(record, create(:variant, digitals: [create(:digital)]), 1) # analog product with assets
+      add_line_item(record, create(:variant, digitals: [create(:digital_asset)]), 1) # analog product with assets
 
       expect(record.digital?).to be false
     end
@@ -70,14 +70,14 @@ RSpec.shared_examples 'a digital items host' do
   end
 
   describe '#digital_links' do
-    let(:digitals) { 2.times.map { create(:digital) } }
+    let(:digital_assets) { 2.times.map { create(:digital_asset) } }
 
     it 'correctly loads the links' do
-      digitals.each { |digital| add_line_item(record, create(:variant, digitals: [digital]), 1) }
+      digital_assets.each { |digital_asset| add_line_item(record, create(:variant, digital_assets: [digital_asset]), 1) }
       add_line_item(record, create(:variant), 1)
 
       links = record.digital_links
-      links_from_digitals = digitals.map(&:reload).map(&:digital_links).flatten
+      links_from_digitals = digital_assets.map(&:reload).map(&:digital_links).flatten
       expect(links.size).to eq(links_from_digitals.size)
       links.each { |link| expect(links_from_digitals).to include(link) }
     end

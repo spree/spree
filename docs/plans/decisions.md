@@ -1074,6 +1074,42 @@ request keys but not response bodies) and were redacted; cassettes now default
 to `record: :none`, since record-by-default turns renaming a `:vcr` example
 into a live API call.
 
+## 2026-08-10: `Spree::Digital` → `Spree::DigitalAsset`; digital assets get an admin surface, delivery mailer, and per-asset limit fallback
+
+Plan: `6.0-digital-assets.md`. Full rename at 6.0 — class, `spree_digitals` →
+`spree_digital_assets` table, and `digital_id` → `digital_asset_id` FK — with
+the standard one-release bridges (constant alias, deprecated twin
+associations, dual-emitted `digital.*`/`digital_asset.*` events).
+`Spree::DigitalLink` keeps its name. The plan also builds the missing
+management surface (Admin API v3 + dashboard, catalog placement: assets under
+`:products`, link reset under `:orders`), a dedicated
+`Spree::DigitalAssetMailer` (never a section in the order confirmation), a
+customer `GET /store/account/digital_links` endpoint, a
+`digital_link.downloaded` domain event, and signed-URL download transport
+(the previously dead `digital_asset_link_expire_time` preference becomes the
+signed-URL TTL instead of being deleted).
+
+**Why:** the engine shipped in 6.0's fulfillment rework is complete but has
+no admin API, no dashboard page, no delivery email and no download
+visibility; the model name `Digital` never matched the docs, the
+`digital_asset_*` preferences, or the deleted legacy admin's vocabulary.
+Renaming before the admin endpoints exist is the cheap moment.
+
+**Recorded exception:** digital assets carry nullable `authorized_clicks` /
+`authorized_days` that fall back to the store's download settings at read
+time. This is a deliberate, documented exception to the
+`6.0-store-scoped-configuration.md` "store preference is authoritative, no
+runtime fallback" rule — the fallback is record → its store's setting only,
+never a chain through global `Spree::Config`, and the store setting remains
+the authoritative default.
+
+**Consequences:** new code uses `DigitalAsset`/`digital_assets` names only;
+admin controllers for these models land with their permission catalog
+entries; nothing outside the model may assume an attachment is always
+present (external/provider-backed asset kinds and license-key pools are
+groomed for 6.1); emailed download URLs must keep resolving across renames
+for at least one release.
+
 ## 2026-08-09: Metadata consolidated to one column — `public_metadata` dropped, `private_metadata` renamed
 
 Implements the 2026-03-16 consolidation decision. All thirty metadata-carrying

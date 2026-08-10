@@ -288,6 +288,9 @@ A handler receives the workflow (so it can read `order`, `items`, `created_by`, 
 - **The reimbursement email is now `Spree::ReturnMailer#refunded_email`**, sent on `return.refunded` (in the optional `spree_emails` gem, like the other transactional mail).
 - **`Refund#originator`** points at the new records.
 - Events are `return.requested` / `.approved` / `.received` / `.refunded` / `.canceled`, and the matching `exchange.*` and `claim.*` families.
+- **Digital downloads redirect instead of streaming.** The download endpoint now answers `302` with a short-lived signed URL rather than sending the file bytes directly, so a large download no longer occupies a web worker. Clients that read the response body must follow redirects (most HTTP clients and every browser already do). The link's own lifetime is unchanged; `digital_asset_link_expire_time` (default 300 seconds) — previously unused — now sets how long the signed URL stays valid, and is capped at one hour because that URL is a bearer credential. The signed URL is additionally clamped so it can never outlive the download link that issued it.
+- **Download limits can be set per asset.** `authorized_clicks` and `authorized_days` on a digital asset override the store's download settings; left blank, the store settings apply as before.
+- **A successful download publishes `digital_link.downloaded`**, so downloads are visible to webhooks and subscribers for the first time.
 
 ## Dependency injection changes
 
@@ -553,6 +556,11 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `CustomFieldDefinition#name`, `#metafield_type`, `#display_on` | `#label`, `#field_type`, `#storefront_visible` (columns renamed) |
 | `Spree::SearchProvider::Meilisearch` | `SpreeMeilisearch::SearchProvider` (moved to the `spree_meilisearch` gem) |
 | `Spree::SearchProvider::ProductPresenter` | `SpreeMeilisearch::ProductPresenter` (moved to the `spree_meilisearch` gem) |
+| `Spree::Digital` | `Spree::DigitalAsset` (table `spree_digitals` → `spree_digital_assets`, `digital_id` → `digital_asset_id`) |
+| `Variant#digitals`, `Product#digitals`, `DigitalLink#digital` | `#digital_assets` / `#digital_asset` |
+| `digital.created` / `.updated` / `.deleted` events | `digital_asset.*` (both emitted for one release) |
+| `PermittedAttributes.digital_attributes` | `.digital_asset_attributes` |
+| `GET /api/v3/store/digitals/:token` | `GET /api/v3/store/digital_links/:token` (old path keeps working) |
 
 ## Meilisearch moved to its own gem
 
