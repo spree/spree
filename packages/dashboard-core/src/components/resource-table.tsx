@@ -34,6 +34,7 @@ import {
   TableEmpty,
   TableHead,
   TableHeader,
+  TableHeaderRow,
   TableRow,
 } from '@spree/dashboard-ui'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -45,7 +46,6 @@ import {
   useDeferredValue,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -218,9 +218,8 @@ export function ResourceTable<T extends Record<string, any>>({
   const selectionEnabled = !!bulkActions?.length && !reorder
   const rowActionsEnabled = !!rowActions
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
-  // Used by +BulkActionBar+ to anchor itself within the table card on
-  // desktop (instead of free-floating at the viewport bottom).
-  const cardRef = useRef<HTMLDivElement | null>(null)
+  // Whether the bulk bar is covering the column labels.
+  const bulkActive = selectionEnabled && selectedIds.size > 0
 
   const {
     page,
@@ -457,7 +456,7 @@ export function ResourceTable<T extends Record<string, any>>({
       : actions
 
   return (
-    <Card ref={cardRef} className="rounded-xl">
+    <Card className="rounded-xl">
       <TableToolbar
         columns={displayableColumns}
         visibleColumns={visibleColumnKeys}
@@ -487,7 +486,7 @@ export function ResourceTable<T extends Record<string, any>>({
             >
               <Table>
                 <TableHeader>
-                  <tr>
+                  <TableHeaderRow>
                     <TableHead className="w-8" />
                     {headerColumns.map((col) => (
                       <TableHead key={col.key} className={col.headerClassName}>
@@ -499,7 +498,7 @@ export function ResourceTable<T extends Record<string, any>>({
                         <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
                       </TableHead>
                     )}
-                  </tr>
+                  </TableHeaderRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
@@ -541,7 +540,12 @@ export function ResourceTable<T extends Record<string, any>>({
         ) : (
           <Table>
             <TableHeader>
-              <tr>
+              {/* Column headers stay mounted with rows selected, and the bulk
+                  bar is laid over them. Swapping them for one `colSpan` cell
+                  instead would drop the width constraints they impose on an
+                  auto-layout table, and every column would resize the moment a
+                  row was ticked. `bulkActive` only hides the labels. */}
+              <TableHeaderRow>
                 {selectionEnabled && (
                   <TableHead className="w-8">
                     <Checkbox
@@ -553,16 +557,57 @@ export function ResourceTable<T extends Record<string, any>>({
                   </TableHead>
                 )}
                 {headerColumns.map((col) => (
-                  <TableHead key={col.key} className={col.headerClassName}>
+                  <TableHead
+                    key={col.key}
+                    className={cn(
+                      col.headerClassName,
+                      'transition-opacity duration-150 ease-out',
+                      bulkActive && 'opacity-0',
+                    )}
+                  >
                     {col.label}
                   </TableHead>
                 ))}
                 {rowActionsEnabled && (
-                  <TableHead className="w-12">
+                  <TableHead className={cn('w-12', bulkActive && 'opacity-0')}>
                     <span className="sr-only">{t('admin.row_actions.menu_label')}</span>
                   </TableHead>
                 )}
-              </tr>
+                {/* Anchored to the row, not a cell: a cell is the containing
+                    block for its own absolute children and clips them to its
+                    width, so the bar could never reach past the first column.
+                    The row carries the sticky, so the bar rides along with it.
+                    `left` clears the checkbox column. */}
+                {bulkActive && (
+                  <th
+                    className={cn(
+                      // Covers the whole row, checkbox column included, so no
+                      // seam shows at the left edge. The rule is the same inset
+                      // shadow the cells underneath use — matching it exactly
+                      // keeps the line continuous instead of doubling it.
+                      'absolute inset-0 z-10 flex items-center gap-3 pl-4 pr-4',
+                      'bg-muted shadow-[inset_0_-1px_0_0_var(--color-border)]',
+                    )}
+                  >
+                    {selectionEnabled && (
+                      <Checkbox
+                        checked={allPageSelected}
+                        indeterminate={somePageSelected}
+                        onCheckedChange={togglePage}
+                        aria-label={t('admin.a11y.select_all_rows')}
+                      />
+                    )}
+                    <BulkActionBar
+                      selectedIds={Array.from(selectedIds)}
+                      actions={bulkActions!}
+                      onDone={() => {
+                        setSelectedIds(new Set())
+                        queryClient.invalidateQueries({ queryKey: queryKeyPrefix })
+                      }}
+                    />
+                  </th>
+                )}
+              </TableHeaderRow>
             </TableHeader>
             <TableBody>
               {isLoading ? (
@@ -629,18 +674,6 @@ export function ResourceTable<T extends Record<string, any>>({
             meta={meta}
             onPageChange={(p) => updateSearch({ page: p })}
             onPageSizeChange={(size) => updateSearch({ limit: size, page: 1 })}
-          />
-        )}
-        {selectionEnabled && (
-          <BulkActionBar
-            selectedIds={Array.from(selectedIds)}
-            actions={bulkActions!}
-            anchorRef={cardRef}
-            onClear={() => setSelectedIds(new Set())}
-            onDone={() => {
-              setSelectedIds(new Set())
-              queryClient.invalidateQueries({ queryKey: queryKeyPrefix })
-            }}
           />
         )}
       </CardContent>

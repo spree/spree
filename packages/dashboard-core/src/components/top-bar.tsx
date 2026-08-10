@@ -111,11 +111,11 @@ function SearchTrigger() {
     <button
       type="button"
       onClick={() => setOpen(true)}
-      className="flex w-full max-w-md items-center gap-2 rounded-lg border border-border bg-muted/40 px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted"
+      className="flex w-full max-w-md items-center gap-2 rounded-xl border border-border bg-muted/40 px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted"
     >
       <SearchIcon className="size-4" />
       <span className="flex-1 text-left">{t('admin.components.command_palette.placeholder')}</span>
-      <kbd className="hidden rounded border bg-background px-1.5 py-0.5 font-mono text-xs sm:inline-flex">
+      <kbd className="hidden rounded-lg border bg-background px-2 py-1 font-mono text-xs sm:inline-flex shadow-xs">
         {IS_MAC ? '⌘K' : 'Ctrl+K'}
       </kbd>
     </button>
