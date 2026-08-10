@@ -26,6 +26,8 @@ module Spree
     has_many :company_contacts, through: :company_locations
     has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', dependent: :destroy,
                                inverse_of: :company
+    has_many :tax_exemption_certificates, class_name: 'Spree::TaxExemptionCertificate',
+                                          dependent: :destroy, inverse_of: :company
 
     validates :name, presence: true
     # Paired with the partial unique index, per the convention — without it a

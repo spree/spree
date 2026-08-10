@@ -89,6 +89,8 @@ module Spree
         claim_deny_workflow: 'Spree::Claims::Deny',
         claim_cancel_workflow: 'Spree::Claims::Cancel',
 
+        tax_exemption_certificate_verify_workflow: 'Spree::TaxExemptionCertificates::Verify',
+
         # customers
         customer_create_workflow: 'Spree::Customers::Create',
 

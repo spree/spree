@@ -152,6 +152,41 @@ describe Spree::TaxProvider::Internal, type: :model do
       end
     end
 
+    # The whole chain: a certificate the company holds, resolved by the real
+    # service, reaching the provider as a claim.
+    context 'with a certificate the buyer company holds' do
+      let!(:rate) { create(:tax_rate, country: country, amount: 0.1, tax_category: line_item.tax_category, included_in_price: false) }
+      let(:company) { create(:company, store: @default_store) }
+      let(:location) { create(:company_location, company: company) }
+
+      before { order.update!(company_location: location) }
+
+      def resolved_exemptions
+        Spree.tax_resolve_exemptions_service.new.call(order: order.reload).value
+      end
+
+      it 'exempts the sale instead of taxing it' do
+        create(:tax_exemption_certificate, :verified, company: company,
+                                                      reason_code: 'resale', certificate_number: 'CERT-9',
+                                                      country: country)
+
+        provider.estimate(order, exemptions: resolved_exemptions)
+
+        tax_line = order.tax_lines.reload.sole
+        expect(tax_line.amount).to eq(0)
+        expect(tax_line.taxability_reason).to eq('customer_exempt')
+        expect(tax_line.data['exemption']).to eq('reason_code' => 'resale', 'certificate_number' => 'CERT-9')
+      end
+
+      it 'taxes normally while the certificate is still awaiting verification' do
+        create(:tax_exemption_certificate, company: company, country: country)
+
+        provider.estimate(order, exemptions: resolved_exemptions)
+
+        expect(order.tax_lines.reload.sole.amount).to eq(1.0)
+      end
+    end
+
     context 'with an exemption against an included (VAT) rate' do
       let!(:rate) { create(:tax_rate, country: country, amount: 0.2, tax_category: line_item.tax_category, included_in_price: true) }
 

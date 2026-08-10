@@ -3,26 +3,39 @@ module Spree
     # Assembles the exemption evidence for a sale, handed to the tax provider
     # as +estimate+'s +exemptions:+ input.
     #
-    # Returns nothing yet, because core has nothing to read: exemption
-    # certificates arrive with +Spree::TaxExemptionCertificate+, which is gated
-    # on the B2B Company model (docs/plans/6.0-tax-provider.md, Phase 7). This
-    # body then becomes the certificate lookup it is standing in for, and the
-    # provider contract does not change — which is the reason the seam ships
-    # first rather than alongside.
+    # Reads the certificates the buyer's company holds for where the goods are
+    # going. Only active ones count — verified, and not past their date — so
+    # lifecycle is a filter here rather than something the provider has to
+    # reason about. Multiple certificates mean multiple entries; one claim
+    # reaching an item is enough to exempt it.
     #
-    # Until then, exemption works two ways without core storing anything:
-    # through the provider's own certificate store (Avalara's, for instance),
-    # or by swapping this service through
-    # +Spree.tax_resolve_exemptions_service+ to read wherever the merchant's
-    # certificates already live. Inventing a claim here would be worse than
-    # collecting the tax.
+    # A consumer sale, or a cart with no destination yet, resolves nothing and
+    # is taxed normally. Inventing a claim would be worse than collecting the
+    # tax.
+    #
+    # Swap through +Spree.tax_resolve_exemptions_service+ to read certificates
+    # that live somewhere else — a provider's own store (Avalara keeps them),
+    # or wherever the merchant already keeps them.
     class ResolveExemptions
       prepend Spree::ServiceModule::Base
 
       # @param order [Spree::Cart, Spree::Order]
       # @return [Array<Spree::TaxExemption>]
       def call(order:)
-        success([])
+        company = order.company
+        address = order.tax_address
+        return success([]) if company.nil? || address.nil?
+
+        success(
+          company.tax_exemption_certificates.active.for_address(address).map do |certificate|
+            Spree::TaxExemption.new(
+              reason_code: certificate.reason_code,
+              certificate_number: certificate.certificate_number,
+              country_iso: certificate.country&.iso,
+              state_code: certificate.state&.abbr
+            )
+          end
+        )
       end
     end
   end

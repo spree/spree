@@ -3,11 +3,72 @@ require 'spec_helper'
 describe Spree::Tax::ResolveExemptions do
   let(:order) { create(:order_with_line_items, line_items_count: 1) }
 
-  it 'resolves nothing, core storing no certificates' do
+  it 'resolves nothing for a consumer sale' do
     result = described_class.call(order: order)
 
     expect(result).to be_success
     expect(result.value).to eq([])
+  end
+
+  context 'for a business customer' do
+    let(:store) { @default_store }
+    let(:company) { create(:company, store: store) }
+    let(:location) { create(:company_location, company: company) }
+    let(:germany) { create(:country, iso: 'DE', name: 'Germany') }
+    let(:berlin) { create(:state, country: germany, abbr: 'BE', name: 'Berlin') }
+
+    before do
+      order.update!(company_location: location,
+                    ship_address: create(:address, country: germany, state: berlin),
+                    bill_address: create(:address, country: germany, state: berlin))
+    end
+
+    it 'turns an active certificate into a claim' do
+      create(:tax_exemption_certificate, :verified, company: company,
+                                                    reason_code: 'resale', certificate_number: 'DE-RESALE-1',
+                                                    country: germany, state: berlin)
+
+      exemption = described_class.call(order: order.reload).value.sole
+
+      expect(exemption.reason_code).to eq('resale')
+      expect(exemption.certificate_number).to eq('DE-RESALE-1')
+      expect(exemption.country_iso).to eq('DE')
+      expect(exemption.state_code).to eq('BE')
+    end
+
+    it 'returns one entry per certificate' do
+      create(:tax_exemption_certificate, :verified, company: company, reason_code: 'resale')
+      create(:tax_exemption_certificate, :verified, company: company, reason_code: 'government')
+
+      expect(described_class.call(order: order.reload).value.map(&:reason_code)).
+        to contain_exactly('resale', 'government')
+    end
+
+    it 'ignores a certificate awaiting verification' do
+      create(:tax_exemption_certificate, company: company)
+
+      expect(described_class.call(order: order.reload).value).to eq([])
+    end
+
+    it 'ignores one whose date has passed' do
+      create(:tax_exemption_certificate, :expired, company: company)
+
+      expect(described_class.call(order: order.reload).value).to eq([])
+    end
+
+    it 'ignores one held for another jurisdiction' do
+      create(:tax_exemption_certificate, :verified, company: company, country: create(:country, iso: 'FR'))
+
+      expect(described_class.call(order: order.reload).value).to eq([])
+    end
+
+    # Tax needs a destination before an exemption can be scoped to one.
+    it 'resolves nothing before the buyer gives an address' do
+      order.update!(ship_address: nil, bill_address: nil)
+      create(:tax_exemption_certificate, :verified, company: company)
+
+      expect(described_class.call(order: order.reload).value).to eq([])
+    end
   end
 
   it 'is the registered seam merchants swap' do
