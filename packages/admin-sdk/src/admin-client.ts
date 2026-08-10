@@ -1125,6 +1125,10 @@ export class AdminClient {
     resendConfirmation: (id: string, options?: RequestOptions): Promise<void> =>
       this.request<void>('POST', `/orders/${id}/resend_confirmation`, options),
 
+    /** Re-sends the "your files are ready" email. No-op when the order has no downloads. */
+    resendDigitalLinks: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('POST', `/orders/${id}/resend_digital_links`, options),
+
     giftCards: {
       apply: (
         orderId: string,

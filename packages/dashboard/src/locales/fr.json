@@ -853,6 +853,7 @@
         "status": "Statut"
       },
       "never_expires": "Pas d'expiration",
+      "resend_email": "Renvoyer l'e-mail",
       "reset": "Réinitialiser",
       "reset_description": "Le client obtient de nouveaux téléchargements pour « {{name}} » et le délai d'expiration repart à zéro.",
       "reset_title": "Rétablir l'accès au téléchargement ?",

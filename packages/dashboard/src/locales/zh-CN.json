@@ -848,6 +848,7 @@
         "status": "状态"
       },
       "never_expires": "不过期",
+      "resend_email": "重新发送邮件",
       "reset": "重置",
       "reset_description": "客户将获得“{{name}}”的全新下载次数，过期时间重新开始计算。",
       "reset_title": "恢复下载权限？",

@@ -874,6 +874,14 @@ en:
     developers: Developers
     digital:
       digital_delivery: Digital Delivery
+    digital_asset_mailer:
+      files_ready_email:
+        available_until: Available until %{date}
+        dear_customer: Dear %{name},
+        instructions: The files from your order %{number} are ready to download.
+        store_team: "%{store_name} Team"
+        subject: Your files are ready
+        thanks: Thank you for your business.
     digital_assets: Digital assets
     discontinue_on: Discontinue On
     discontinued: Discontinued

@@ -871,6 +871,7 @@
         "status": "Status"
       },
       "never_expires": "Bez wygaśnięcia",
+      "resend_email": "Wyślij e-mail ponownie",
       "reset": "Zresetuj",
       "reset_description": "Klient otrzyma nowe pobrania pliku „{{name}}”, a czas wygaśnięcia zacznie biec od nowa.",
       "reset_title": "Przywrócić dostęp do pobierania?",

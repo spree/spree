@@ -4,6 +4,7 @@ import {
   Badge,
   Button,
   Card,
+  CardAction,
   CardContent,
   CardHeader,
   CardTitle,
@@ -15,9 +16,9 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { RotateCcwIcon } from 'lucide-react'
+import { MailIcon, RotateCcwIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useResetDigitalLink } from '../../hooks/use-digital-assets'
+import { useResendDigitalLinks, useResetDigitalLink } from '../../hooks/use-digital-assets'
 
 interface LinkRow {
   link: DigitalLink
@@ -29,6 +30,7 @@ export function OrderDigitalLinksCard({ order }: { order: Order }) {
   const { timezone } = useStore()
   const confirm = useConfirm()
   const resetLink = useResetDigitalLink(order.id)
+  const resendEmail = useResendDigitalLinks(order.id)
 
   const rows: LinkRow[] = (order.items ?? []).flatMap((item) =>
     (item.digital_links ?? []).map((link) => ({ link, itemName: item.name })),
@@ -58,6 +60,18 @@ export function OrderDigitalLinksCard({ order }: { order: Order }) {
     <Card>
       <CardHeader>
         <CardTitle>{t('admin.digital_links.title')}</CardTitle>
+        <CardAction>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={resendEmail.isPending}
+            onClick={() => resendEmail.mutate(undefined)}
+          >
+            <MailIcon className="mr-2 size-4" />
+            {t('admin.digital_links.resend_email')}
+          </Button>
+        </CardAction>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">

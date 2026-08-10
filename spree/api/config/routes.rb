@@ -111,6 +111,7 @@ Spree::Core::Engine.add_routes do
           # upserting one kind without knowing whether it exists yet.
           resources :tax_identifiers, only: [:index], controller: 'tax_identifiers'
           resource :tax_identifier, only: [:show, :update, :destroy], controller: 'tax_identifiers'
+          resources :digital_links, only: [:index, :show]
           resources :payment_setup_sessions, only: [:create, :show] do
             member do
               patch :complete
@@ -660,6 +661,7 @@ Spree::Core::Engine.add_routes do
             patch :approve
             patch :resume
             post :resend_confirmation
+            post :resend_digital_links
           end
 
           resources :items, only: [:index, :show, :create, :update, :destroy], controller: 'orders/items'
