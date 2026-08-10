@@ -29,43 +29,61 @@
    Adapted from spree/admin Tailwind design system to match look & feel.
    ============================================================================ */
 
+/* Brand palette, taken from spreecommerce.org.
+ *
+ * The marketing site is built on a warm sand neutral ramp (hue ~80) rather
+ * than a pure greyscale, with a single blue accent. Neutrals below carry a
+ * small amount of chroma on that hue so surfaces, borders and text read as
+ * one family; the accent is the only saturated colour in the palette.
+ *
+ * Primary CTAs stay near-black rather than adopting the site's blue button:
+ * in a dense admin UI the blue has to stay meaningful as a selection and
+ * focus signal, which it stops being once every page renders a saturated
+ * blue button. */
 :root {
-  /* Vercel/Geist-style neutral palette — pure greyscale. */
-  --background: oklch(0.985 0 0); /* #fafafa — gray-50 */
-  --foreground: oklch(0.145 0 0); /* near-black */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --brand-blue: oklch(0.5967 0.2212 258); /* #0077ff — site accent */
+  --brand-blue-strong: oklch(0.5106 0.1868 257.7); /* #0060ce — site link hover */
+
+  --background: oklch(0.9858 0.0045 78.3); /* #fcfaf7 — site page background */
+  --foreground: oklch(0.2136 0.0555 255.9); /* #061932 — site body text */
+  --card: oklch(1 0 0); /* white cards, as on the site */
+  --card-foreground: oklch(0.2136 0.0555 255.9);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0 0 0); /* pure black for primary CTAs */
+  --popover-foreground: oklch(0.2136 0.0555 255.9);
+  --primary: oklch(0.2136 0.0555 255.9); /* near-black navy for primary CTAs */
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.97 0 0); /* #f5f5f5 — gray-100 */
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.985 0 0); /* #fafafa — gray-50 */
-  --muted-foreground: oklch(0.4685 0 0); /* #737373 — Vercel #666 */
-  --accent: oklch(0.97 0 0); /* #f5f5f5 */
-  --accent-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.9709 0.0045 78.3); /* #f7f5f2 — site raised surface */
+  --secondary-foreground: oklch(0.2136 0.0555 255.9);
+  --muted: oklch(0.9709 0.0045 78.3); /* #f7f5f2 */
+  --muted-foreground: oklch(0.5232 0.0122 76.5); /* warm mid-grey on the same ramp */
+  /* Hover/highlight for menu items and table rows. Deliberately a lighter step
+     than the site's #e9e5dd: these sit on white surfaces, where that value is
+     a ~8% drop in lightness and reads as a pressed state rather than a hover.
+     The sidebar keeps the stronger tone via --sidebar-accent, since it sits on
+     the sand sidebar rather than on white. */
+  --accent: oklch(0.965 0.006 84.6);
+  --accent-foreground: oklch(0.2136 0.0555 255.9);
   --destructive: oklch(0.58 0.22 27); /* red-600 */
   --destructive-foreground: oklch(1 0 0); /* #ffffff */
-  --border: oklch(0.928 0 0); /* #eaeaea — Vercel border */
-  --input: oklch(0.928 0 0);
-  --ring: oklch(0.546 0.245 262.881); /* blue-500 focus ring (UNCHANGED) */
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
+  --border: oklch(0.904 0.01 87.5); /* #e2dfd8 — site border */
+  --input: oklch(0.904 0.01 87.5);
+  --ring: var(--brand-blue);
+  --chart-1: oklch(0.7663 0.1067 254.4);
+  --chart-2: oklch(0.5967 0.2212 258); /* brand blue */
+  --chart-3: oklch(0.5106 0.1868 257.7);
+  --chart-4: oklch(0.4232 0.1524 257.4);
+  --chart-5: oklch(0.3358 0.118 257.1);
   --radius: 0.75rem;
 
-  /* Sidebar — slightly muted off-white surface. */
-  --sidebar: oklch(0.985 0 0); /* #fafafa */
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0 0 0);
+  /* Sidebar — the site's raised warm surface, one step off the page. */
+  --sidebar: oklch(0.9709 0.0045 78.3); /* #f7f5f2 */
+  --sidebar-foreground: oklch(0.2136 0.0555 255.9);
+  --sidebar-primary: oklch(0.2136 0.0555 255.9);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.945 0 0); /* slightly darker than sidebar bg for hover */
-  --sidebar-accent-foreground: oklch(0.145 0 0);
-  --sidebar-border: oklch(0.928 0 0);
-  --sidebar-ring: oklch(0.546 0.245 262.881); /* blue-500 focus ring (UNCHANGED) */
+  --sidebar-accent: oklch(0.9228 0.0116 84.6); /* #e9e5dd — site nav hover */
+  --sidebar-accent-foreground: oklch(0.2136 0.0555 255.9);
+  --sidebar-border: oklch(0.904 0.01 87.5);
+  --sidebar-ring: var(--brand-blue);
 }
 
 .dark {
@@ -76,11 +94,18 @@
   --card-foreground: oklch(0.95 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.95 0 0); /* light-on-dark primary */
-  --primary-foreground: oklch(0 0 0);
-  --secondary: oklch(0.205 0 0); /* #1a1a1a */
+  /* Mirrors the light theme's primary: there a navy fill carries white text,
+     so here the two swap rather than the button taking on its own colour. */
+  --primary: oklch(0.95 0 0);
+  --primary-foreground: oklch(0.2136 0.0555 255.9); /* #061932 — light theme's primary */
+  /* Above --card, not equal to or below it. These fill elements that sit *on*
+     a card (combobox chips, badges, secondary buttons, table header rows), so
+     a value at or under the card's lightness erases them. Dark mode raises
+     where light mode lowers, since a surface reads as raised by getting
+     lighter here. */
+  --secondary: oklch(0.235 0 0);
   --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.18 0 0); /* #161616 */
+  --muted: oklch(0.235 0 0);
   --muted-foreground: oklch(0.62 0 0); /* #888 */
   --accent: oklch(0.27 0 0); /* hover surface */
   --accent-foreground: oklch(0.95 0 0);
@@ -96,7 +121,7 @@
   --sidebar: oklch(0.145 0 0); /* #0a0a0a — slightly elevated from background */
   --sidebar-foreground: oklch(0.95 0 0);
   --sidebar-primary: oklch(0.95 0 0);
-  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-primary-foreground: oklch(0.2136 0.0555 255.9);
   --sidebar-accent: oklch(0.27 0 0);
   --sidebar-accent-foreground: oklch(0.95 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
@@ -175,6 +200,16 @@
   --color-warning: var(--color-yellow-500);
   --color-info: var(--color-sky-500);
   --color-danger: var(--color-rose-500);
+
+  /* Re-point Tailwind's blue ramp at the brand accent. Interactive blue is
+     used throughout the component layer for focus borders, checked states and
+     selected calendar days (`border-blue-500`, `bg-blue-500/15`, …); mapping
+     the palette entry keeps every one of those on the site's accent without
+     each component having to know the token name. Only the interactive steps
+     are overridden — the rest of the ramp keeps Tailwind's values for
+     incidental use such as charts and illustrations. */
+  --color-blue-500: var(--brand-blue);
+  --color-blue-600: var(--brand-blue-strong);
 }
 
 @utility focus-ring {
@@ -264,8 +299,8 @@
 
 @layer base {
   :root {
-    --scrollbar-thumb: oklch(0.7 0 0); /* gray-400-ish */
-    --scrollbar-thumb-hover: oklch(0.55 0 0);
+    --scrollbar-thumb: oklch(0.78 0.012 84.6); /* warm sand, sits on the brand ramp */
+    --scrollbar-thumb-hover: oklch(0.62 0.014 84.6);
   }
   .dark {
     --scrollbar-thumb: oklch(0.35 0 0); /* zinc-700-ish */
