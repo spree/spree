@@ -138,6 +138,26 @@ export interface FulfillmentUpdateParams {
 }
 
 /**
+ * Ships some or all of a fulfillment. A fulfillment has one origin, one
+ * carrier and one tracking number, so shipping a subset splits it first: the
+ * chosen quantities move into a new fulfillment which is the one that ships,
+ * and the remainder stays behind, still open.
+ */
+export interface FulfillmentFulfillParams {
+  /** Line item quantities to ship; omit to ship everything the fulfillment holds */
+  items?: Array<{ item_id: string; quantity: number }>
+  /** Carrier tracking number or a full `https://` tracking link, stored on the fulfillment that ships */
+  tracking?: string
+  /**
+   * Whether the customer gets the shipment email. Defaults to true; pass false
+   * to suppress it for this dispatch only (a correction, a re-ship, goods
+   * handed over in person). The store's own transactional-email preference
+   * still applies on top.
+   */
+  notify_customer?: boolean
+}
+
+/**
  * Moves `quantity` units of one variant out of a fulfillment into a new one.
  * Splitting is per variant — a fulfillment holding several variants needs one
  * call each.

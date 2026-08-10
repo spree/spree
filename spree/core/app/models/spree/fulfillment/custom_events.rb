@@ -25,12 +25,27 @@ module Spree
         publish_event('fulfillment.ready')
       end
 
+      # Whether the customer should be told this fulfillment shipped. Set by
+      # the caller (see Spree::Fulfillments::Fulfill) and carried in the event
+      # metadata rather than the payload — it is an instruction to subscribers
+      # about this one dispatch, not a property of the fulfillment.
+      #
+      # Defaults to true: anything fulfilling a shipment without expressing an
+      # opinion gets the historic behavior.
+      attr_writer :notify_customer
+
+      def notify_customer?
+        @notify_customer.nil? ? true : !!@notify_customer
+      end
+
       def publish_fulfillment_fulfilled_event
         return unless Spree::Events.enabled?
 
-        publish_event('fulfillment.fulfilled')
+        metadata = { notify_customer: notify_customer? }
+
+        publish_event('fulfillment.fulfilled', nil, metadata)
         # Legacy name — removed in 6.1
-        publish_event('shipment.shipped')
+        publish_event('shipment.shipped', nil, metadata)
 
         # Force reload of fulfillments association to see the new status
         order.fulfillments.reset

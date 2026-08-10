@@ -199,6 +199,94 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('fulfilled')
     end
+
+    it 'stores the tracking number passed with the shipment' do
+      patch :fulfill, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        tracking: '1Z999'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(shipment.reload.tracking).to eq('1Z999')
+    end
+
+    it 'passes the notification flag through to the workflow' do
+      expect(Spree.fulfillment_fulfill_workflow).to receive(:call).
+        with(hash_including(notify_customer: false)).
+        and_call_original
+
+      patch :fulfill, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        notify_customer: false
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'notifies by default when the flag is omitted' do
+      expect(Spree.fulfillment_fulfill_workflow).to receive(:call).
+        with(hash_including(notify_customer: true)).
+        and_call_original
+
+      patch :fulfill, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    context 'with a subset of items' do
+      let!(:order) do
+        create(:order_ready_to_ship, store: store, line_items_count: 2).tap do |placed|
+          placed.line_items.each { |line_item| line_item.update_columns(quantity: 2) }
+          placed.fulfillments.first.fulfillment_items.update_all(quantity: 2)
+          placed.reload
+        end
+      end
+
+      # The response is the newly split fulfillment, not the one addressed in
+      # the URL — that one keeps the remainder and stays open.
+      it 'ships only the requested quantity and returns the shipped fulfillment' do
+        patch :fulfill, params: {
+          order_id: order.prefixed_id,
+          id: shipment.prefixed_id,
+          items: [{ item_id: order.line_items.first.prefixed_id, quantity: 1 }]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['status']).to eq('fulfilled')
+        expect(json_response['id']).not_to eq(shipment.prefixed_id)
+
+        expect(shipment.reload).not_to be_fulfilled
+        expect(order.reload.fulfillment_status).to eq('partial')
+      end
+
+      it 'rejects a quantity the fulfillment does not hold' do
+        patch :fulfill, params: {
+          order_id: order.prefixed_id,
+          id: shipment.prefixed_id,
+          items: [{ item_id: order.line_items.first.prefixed_id, quantity: 99 }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(shipment.reload).not_to be_fulfilled
+      end
+
+      it '404s on a line item belonging to another order' do
+        other_item = create(:order_with_line_items, store: store).line_items.first
+
+        patch :fulfill, params: {
+          order_id: order.prefixed_id,
+          id: shipment.prefixed_id,
+          items: [{ item_id: other_item.prefixed_id, quantity: 1 }]
+        }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
   end
 
   describe 'PATCH #cancel' do

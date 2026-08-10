@@ -137,6 +137,7 @@ import type {
   ExchangeUpdateParams,
   ExportCreateParams,
   FulfillmentCreateParams,
+  FulfillmentFulfillParams,
   FulfillmentSplitParams,
   FulfillmentUpdateParams,
   GiftCardApplyParams,
@@ -1055,12 +1056,19 @@ export class AdminClient {
           body: params,
         }),
 
-      fulfill: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
-        this.request<Fulfillment>(
-          'PATCH',
-          `/orders/${orderId}/fulfillments/${id}/fulfill`,
-          options,
-        ),
+      // Passing `items` ships only those quantities: they are split into a new
+      // fulfillment, which is what comes back — the addressed fulfillment keeps
+      // the remainder and stays open.
+      fulfill: (
+        orderId: string,
+        id: string,
+        params?: FulfillmentFulfillParams,
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/fulfill`, {
+          ...options,
+          body: params,
+        }),
 
       cancel: (orderId: string, id: string, options?: RequestOptions): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/cancel`, options),

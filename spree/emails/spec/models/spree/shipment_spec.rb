@@ -23,8 +23,9 @@ describe Spree::Shipment, type: :model do
       end
 
       it 'publishes shipment.shipped event when fulfilling', events: true do
-        expect(shipment).to receive(:publish_event).with('shipment.shipped')
-        allow(shipment).to receive(:publish_event).with(anything)
+        expect(shipment).to receive(:publish_event).
+          with('shipment.shipped', nil, hash_including(notify_customer: true))
+        allow(shipment).to receive(:publish_event).with(any_args)
 
         shipment.fulfill!
       end

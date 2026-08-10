@@ -56,32 +56,50 @@ module Spree
             end
 
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/fulfill
+            #
+            # Marks the fulfillment as fulfilled. Passing `items` ships only
+            # those quantities: they are split into a new fulfillment which is
+            # the one that ships and is returned, leaving the remainder open.
             def fulfill
               with_order_lock do
-                @resource.fulfill!
-                render json: serialize_resource(@resource.reload)
-              rescue StateMachines::InvalidTransition => e
-                render_service_error(e.message)
+                result = Spree.fulfillment_fulfill_workflow.call(
+                  fulfillment: @resource,
+                  items: items_for_fulfill,
+                  tracking: fulfill_params[:tracking],
+                  notify_customer: notify_customer_for_fulfill
+                )
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
               end
             end
 
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/cancel
             def cancel
               with_order_lock do
-                @resource.cancel!
-                render json: serialize_resource(@resource.reload)
-              rescue StateMachines::InvalidTransition => e
-                render_service_error(e.message)
+                result = Spree.fulfillment_cancel_workflow.call(fulfillment: @resource)
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
               end
             end
 
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/resume
             def resume
               with_order_lock do
-                @resource.resume!
-                render json: serialize_resource(@resource.reload)
-              rescue StateMachines::InvalidTransition => e
-                render_service_error(e.message)
+                result = Spree.fulfillment_resume_workflow.call(fulfillment: @resource)
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
               end
             end
 
@@ -152,6 +170,27 @@ module Spree
               return if create_params[:items].nil?
 
               create_params[:items].map do |item|
+                {
+                  line_item: @order.line_items.find_by_prefix_id!(item[:item_id]),
+                  quantity: Integer(item[:quantity].to_s, exception: false)
+                }
+              end
+            end
+
+            def fulfill_params
+              @fulfill_params ||= params.permit(:tracking, :notify_customer, items: [:item_id, :quantity])
+            end
+
+            # Only an explicit false suppresses the email — an omitted flag, and
+            # anything unparseable, keeps the historic behavior of sending it.
+            def notify_customer_for_fulfill
+              !ActiveModel::Type::Boolean.new.cast(fulfill_params[:notify_customer]).equal?(false)
+            end
+
+            def items_for_fulfill
+              return if fulfill_params[:items].nil?
+
+              fulfill_params[:items].map do |item|
                 {
                   line_item: @order.line_items.find_by_prefix_id!(item[:item_id]),
                   quantity: Integer(item[:quantity].to_s, exception: false)
