@@ -153,6 +153,32 @@ module Spree
       end
     end
 
+    # The files-ready email subscribes to order.placed and bails when the order
+    # has no links, so link creation moving after the publish would turn into
+    # silence rather than a failure. Pin the ordering here.
+    describe 'digital links and order.placed' do
+      let(:digital_variant) { create(:variant) }
+      let!(:digital_asset) { create(:digital_asset, variant: digital_variant) }
+
+      before do
+        order.line_items.create!(variant: digital_variant, quantity: 2, price: 10)
+        order.recalculate_totals!
+      end
+
+      it 'has created the links by the time order.placed fires' do
+        links_at_publish = nil
+
+        allow_any_instance_of(Spree::Order).to receive(:publish_event).and_wrap_original do |original, *args|
+          links_at_publish ||= original.receiver.digital_links.count if args.first == 'order.placed'
+          original.call(*args)
+        end
+
+        described_class.call(order: order, payment_pending: true)
+
+        expect(links_at_publish).to eq(2)
+      end
+    end
+
     context 'order is not considered risky' do
       before do
         allow(order).to receive_messages(is_risky?: false)

@@ -1,13 +1,13 @@
 import type { DigitalLink, Order } from '@spree/admin-sdk'
 import { formatStoreDateTime, useStore } from '@spree/dashboard-core'
 import {
-  Badge,
   Button,
   Card,
   CardAction,
   CardContent,
   CardHeader,
   CardTitle,
+  StatusBadge,
   Table,
   TableBody,
   TableCell,
@@ -46,14 +46,12 @@ export function OrderDigitalLinksCard({ order }: { order: Order }) {
     if (confirmed) await resetLink.mutateAsync(row.link.id)
   }
 
-  function statusBadge(link: DigitalLink) {
-    if (link.expired) {
-      return <Badge variant="destructive">{t('admin.digital_links.status.expired')}</Badge>
-    }
-    if (link.access_limit_exceeded) {
-      return <Badge variant="destructive">{t('admin.digital_links.status.used_up')}</Badge>
-    }
-    return <Badge variant="secondary">{t('admin.digital_links.status.available')}</Badge>
+  // `authorizable` already folds both refusal reasons; the specific one is
+  // what the merchant needs to see, so it is named rather than inferred.
+  function statusFor(link: DigitalLink): 'expired' | 'used_up' | 'available' {
+    if (link.expired) return 'expired'
+    if (link.access_limit_exceeded) return 'used_up'
+    return 'available'
   }
 
   return (
@@ -97,7 +95,12 @@ export function OrderDigitalLinksCard({ order }: { order: Order }) {
                       ? formatStoreDateTime(row.link.expires_at, timezone)
                       : t('admin.digital_links.never_expires')}
                   </TableCell>
-                  <TableCell>{statusBadge(row.link)}</TableCell>
+                  <TableCell>
+                    <StatusBadge
+                      status={statusFor(row.link)}
+                      label={t(`admin.digital_links.status.${statusFor(row.link)}`)}
+                    />
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button
                       type="button"

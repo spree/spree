@@ -8,10 +8,13 @@ module Spree
     # replaces the confirmation email does not silently lose the links.
     def files_ready_email(order, resend = false)
       @order = order.respond_to?(:id) ? order : Spree::Order.find(order)
-      @digital_links = @order.digital_links
+      # The template reads each link's filename and expiry, both of which reach
+      # through the asset — preload rather than paying per link.
+      @digital_links = @order.digital_links.includes(digital_asset: { attachment_attachment: :blob })
       return if @digital_links.empty?
 
       current_store = @order.store
+      @download_host = current_store.formatted_url
       with_store_locale(current_store, @order.locale) do
         subject = order_email_subject(
           current_store,

@@ -1,5 +1,5 @@
 import type { DigitalAsset, Variant } from '@spree/admin-sdk'
-import { useDirectUpload } from '@spree/dashboard-core'
+import { formatFileSize, useDirectUpload } from '@spree/dashboard-core'
 import {
   Button,
   Card,
@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  Pagination,
   Select,
   SelectContent,
   SelectItem,
@@ -31,17 +32,7 @@ import {
   useUpdateDigitalAsset,
 } from '../../../hooks/use-digital-assets'
 
-function formatFileSize(bytes: number | null | undefined): string {
-  if (!bytes) return '—'
-  const units = ['B', 'KB', 'MB', 'GB']
-  let value = bytes
-  let unit = 0
-  while (value >= 1024 && unit < units.length - 1) {
-    value /= 1024
-    unit++
-  }
-  return `${value.toFixed(unit === 0 ? 0 : 1)} ${units[unit]}`
-}
+type LimitField = 'authorized_clicks' | 'authorized_days'
 
 export function DigitalAssetsCard({
   productId,
@@ -55,16 +46,18 @@ export function DigitalAssetsCard({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadingName, setUploadingName] = useState<string | null>(null)
   const [selectedVariantId, setSelectedVariantId] = useState<string>('')
+  const [page, setPage] = useState(1)
 
   // Digital files live on private storage: they are only ever served through an
   // authorized, signed link, never from the public bucket.
   const directUpload = useDirectUpload({ private: true })
-  const { data, isLoading } = useDigitalAssets(productId ?? '', Boolean(productId))
+  const { data, isLoading } = useDigitalAssets(productId ?? '', page, Boolean(productId))
   const createAsset = useCreateDigitalAsset(productId ?? '')
   const updateAsset = useUpdateDigitalAsset(productId ?? '')
   const deleteAsset = useDeleteDigitalAsset(productId ?? '')
 
   const assets: DigitalAsset[] = data?.data ?? []
+  const meta = data?.meta
   const hasVariants = (variants?.length ?? 0) > 1
 
   async function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
@@ -79,6 +72,7 @@ export function DigitalAssetsCard({
         signed_id: signedId,
         ...(selectedVariantId ? { variant_id: selectedVariantId } : {}),
       })
+      setPage(1)
     } finally {
       setUploadingName(null)
     }
@@ -95,14 +89,40 @@ export function DigitalAssetsCard({
     if (confirmed) await deleteAsset.mutateAsync(asset.id)
   }
 
-  function handleLimitChange(asset: DigitalAsset, field: 'clicks' | 'days', raw: string) {
+  // Blank means "use the store setting", so an empty box is a real value.
+  function handleLimitChange(asset: DigitalAsset, field: LimitField, raw: string) {
     const parsed = raw.trim() === '' ? null : Number(raw)
     if (parsed !== null && (!Number.isFinite(parsed) || parsed < 1)) return
 
-    updateAsset.mutate({
-      id: asset.id,
-      ...(field === 'clicks' ? { authorized_clicks: parsed } : { authorized_days: parsed }),
-    })
+    updateAsset.mutate({ id: asset.id, [field]: parsed })
+  }
+
+  function LimitCell({
+    asset,
+    field,
+    effective,
+  }: {
+    asset: DigitalAsset
+    field: LimitField
+    effective: number
+  }) {
+    const label = t(
+      field === 'authorized_clicks'
+        ? 'admin.digital_assets.columns.downloads'
+        : 'admin.digital_assets.columns.days',
+    )
+
+    return (
+      <Input
+        type="number"
+        min={1}
+        className="w-24"
+        defaultValue={asset[field] ?? ''}
+        placeholder={String(effective)}
+        aria-label={label}
+        onBlur={(e) => handleLimitChange(asset, field, e.target.value)}
+      />
+    )
   }
 
   if (!productId) return null
@@ -149,28 +169,20 @@ export function DigitalAssetsCard({
                       </TableCell>
                     )}
                     <TableCell className="tabular-nums">
-                      {formatFileSize(asset.byte_size)}
+                      {asset.byte_size ? formatFileSize(asset.byte_size) : '—'}
                     </TableCell>
                     <TableCell>
-                      <Input
-                        type="number"
-                        min={1}
-                        className="w-24"
-                        defaultValue={asset.authorized_clicks ?? ''}
-                        placeholder={String(asset.effective_authorized_clicks)}
-                        aria-label={t('admin.digital_assets.columns.downloads')}
-                        onBlur={(e) => handleLimitChange(asset, 'clicks', e.target.value)}
+                      <LimitCell
+                        asset={asset}
+                        field="authorized_clicks"
+                        effective={asset.effective_authorized_clicks}
                       />
                     </TableCell>
                     <TableCell>
-                      <Input
-                        type="number"
-                        min={1}
-                        className="w-24"
-                        defaultValue={asset.authorized_days ?? ''}
-                        placeholder={String(asset.effective_authorized_days)}
-                        aria-label={t('admin.digital_assets.columns.days')}
-                        onBlur={(e) => handleLimitChange(asset, 'days', e.target.value)}
+                      <LimitCell
+                        asset={asset}
+                        field="authorized_days"
+                        effective={asset.effective_authorized_days}
                       />
                     </TableCell>
                     <TableCell className="text-right">
@@ -188,6 +200,7 @@ export function DigitalAssetsCard({
                 ))}
               </TableBody>
             </Table>
+            {meta && <Pagination meta={meta} onPageChange={setPage} />}
           </div>
         )}
 

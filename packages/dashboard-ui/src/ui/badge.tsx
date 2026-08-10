@@ -83,6 +83,7 @@ const statusVariantMap: Record<string, VariantProps<typeof badgeVariants>['varia
   revoked: 'destructive',
   expired: 'destructive',
   ready: 'warning',
+  available: 'success',
   draft: 'outline',
   pending: 'warning',
   processing: 'warning',
@@ -104,6 +105,7 @@ const statusVariantMap: Record<string, VariantProps<typeof badgeVariants>['varia
   void: 'destructive',
   error: 'destructive',
   rejected: 'destructive',
+  used_up: 'destructive',
 }
 
 /**

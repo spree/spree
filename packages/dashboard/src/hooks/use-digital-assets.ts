@@ -4,14 +4,12 @@ import { useQuery } from '@tanstack/react-query'
 type DigitalAssetCreateParams = Parameters<typeof adminClient.products.digitalAssets.create>[1]
 type DigitalAssetUpdateParams = Parameters<typeof adminClient.products.digitalAssets.update>[2]
 
-export type { DigitalAssetCreateParams, DigitalAssetUpdateParams }
-
-export function useDigitalAssets(productId: string, enabled = true) {
+export function useDigitalAssets(productId: string, page = 1, enabled = true) {
   const { storeId } = useStore()
 
   return useQuery({
-    queryKey: [storeId, 'products', productId, 'digital-assets'],
-    queryFn: () => adminClient.products.digitalAssets.list(productId, { per_page: 100 }),
+    queryKey: [storeId, 'products', productId, 'digital-assets', page],
+    queryFn: () => adminClient.products.digitalAssets.list(productId, { page, per_page: 25 }),
     enabled: enabled && Boolean(productId),
   })
 }

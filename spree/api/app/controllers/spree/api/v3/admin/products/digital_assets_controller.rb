@@ -11,7 +11,16 @@ module Spree
             # Replacing the file keeps every already-issued link working, since
             # links resolve through the asset rather than the blob.
             def update
+              return render_private_storage_error unless uploaded_blob_private?
+
               attach_uploaded_file(@resource)
+
+              super
+            end
+
+            # POST /api/v3/admin/products/:product_id/digital_assets
+            def create
+              return render_private_storage_error unless uploaded_blob_private?
 
               super
             end
@@ -60,6 +69,20 @@ module Spree
               return if params[:signed_id].blank?
 
               digital_asset.attachment.attach(params[:signed_id])
+            end
+
+            # Attaching never moves a blob between storage services, so a file
+            # uploaded to the public bucket would stay publicly readable while
+            # looking attached. Refuse it rather than storing it wrongly.
+            def uploaded_blob_private?
+              return true if params[:signed_id].blank?
+
+              blob = ActiveStorage::Blob.find_signed(params[:signed_id])
+              blob.present? && blob.service_name.to_s == Spree.private_storage_service_name.to_s
+            end
+
+            def render_private_storage_error
+              render_validation_error(Spree.t('digital_assets.attachment_must_be_private'))
             end
           end
         end

@@ -4,7 +4,7 @@
 
 <% @digital_links.each do |digital_link| %>
 <%= digital_link.filename %>
-<%= digital_link_download_url(digital_link) %>
+<%= digital_link_download_url(digital_link, @download_host) %>
 <% if digital_link.expires_at %><%= Spree.t('digital_asset_mailer.files_ready_email.available_until', date: l(digital_link.expires_at.to_date, format: :long)) %>
 <% end %>
 <% end %>

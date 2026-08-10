@@ -1084,9 +1084,6 @@ export class StoreClient {
         }),
 
       /**
-       * Get one download by ID.
-       */
-      /**
        * Get one download by ID. Each record carries a `download_url` — point the
        * browser at it; the response redirects to short-lived storage, so follow
        * redirects rather than reading the body.
