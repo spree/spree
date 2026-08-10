@@ -1,3 +1,100 @@
+## 2026-08-10: Fulfillment side effects move to workflows; the state machine keeps the status column
+
+Answers "should Fulfillment follow Order and lose its state machine?" with
+**partly, deliberately**. The side effects move; the machine stays.
+
+`Fulfillment#after_cancel` restocked every unit **and** called
+`provider.cancel_fulfillment` — network I/O (an EasyPost label refund, a 3PL
+stand-down) running inside the save transaction that held the stock movements.
+That is precisely the failure `6.0-service-workflows.md` cites as the reason
+transition callbacks are the wrong place for side effects: a slow carrier holds
+row locks, and a failing one rolls back a restock that already happened at the
+warehouse.
+
+`Spree::Fulfillments::Cancel` and `::Resume` now own that work — restock and
+status inside one transaction, the provider call as an `external_step` after it
+commits. `Fulfillments::Fulfill` (added the same day for partial shipments)
+gained an explicit unstock for the `canceled -> fulfilled` path the resume
+callback used to cover; missing it would have shipped goods without taking them
+off the shelf.
+
+**What the machine keeps:** the status column, the transition graph and its
+guards, and the `publish_*_event` callbacks. Publishing an event *describes* the
+status change rather than being a side effect of it, so it belongs where the
+transition is. The graph is real validation work — the narrow exception
+`6.0-service-workflows.md` already allows.
+
+**Why not remove the machine outright.** Four other models still carry machines
+(Payment, InventoryUnit, ReturnAuthorization, GiftCard). Removing one at a time
+means re-litigating the same design in five separate rounds, and Fulfillment's
+`ready`/`resume` guards are conditional on `determine_state`, so replacing them
+is not mechanical. A full removal is a planned wave with its own document, not a
+refactor folded into fulfillment UI work. This also amends
+`6.0-fulfillment-and-delivery.md` resolved question 1, which had promised all
+transition hooks were preserved.
+
+**Composition constraint, and the wrong turn taken first.** `Orders::Cancel`
+and `Orders::Resume` cancel or resume every fulfillment from inside the order's
+own transaction, and a nested `external_step` raises `ContractError` by design.
+The first attempt worked around this by putting the restock bodies on the model
+as public `#restock_units`/`#unstock_units` and having both layers call them.
+That was wrong twice over: it violates the rule that workflows write behavior
+inline as named steps rather than delegating to model business methods, and it
+plants new public model surface that would have to be torn out again when the
+machine is eventually removed — the opposite of the direction the model is
+moving.
+
+The right shape: the stock movements are written inline in the workflow steps,
+and `Fulfillments::Cancel` takes a `notify_provider:` flag so a caller that
+already holds a transaction can suppress the external step and batch the
+carrier calls into its own. `Orders::Cancel` passes `notify_provider: false`
+and notifies after commit; `Orders::Resume` nests cleanly because Resume has no
+external step. **The general rule: when a workflow with an `external_step` must
+run inside another's transaction, give it a flag to defer the external half —
+do not push the shared behavior down onto the model.**
+
+## 2026-08-10: Order editing splits from fulfillment management; two OrderChange questions resolved
+
+The 6.0 admin order detail page grows a **separate edit screen** at
+`/orders/$orderId/edit` owning post-placement line-item mutation — add, remove,
+change quantity. The order detail page keeps fulfillment management (what ships,
+from where, under which delivery method); it no longer offers line-item editing.
+The split follows the reference layout and, more importantly, matches how
+`6.1-order-change-substrate.md` Phase 3 wants to wrap the edit surface in a
+change set without disturbing fulfillment UI.
+
+The 6.0 screen **writes immediately and shows no totals delta**. Projecting
+totals without writing rows is impossible before the OrderChange substrate
+lands, and the alternative — buffering edits in React state so the UI can fake a
+preview — is a per-domain draft living in the browser, which the substrate plan
+explicitly forbids. The money math still goes through a value-object-returning
+service so Phase 3 re-points it at `OrderChanges::Preview` without touching
+callers.
+
+Two of that plan's open questions are settled as a consequence:
+
+*A change set belongs to one `Order`, never to an `OrderGroup`.* Multi-vendor
+fans a cart into N child orders under one group, and the marketplace plan's
+Decision 8 keeps line items, fulfillments and totals on the children — the group
+holds only customer, payment and addresses. Change sets mutate child-owned rows,
+so they bind to the child. Cross-vendor edits are N change sets, which is also
+where the money belongs: each vendor settles against its own order.
+
+*A pending change set does not hold stock.* Stock reservations are scoped to
+checkout — held against a cart, extended by customer activity, expired by a job.
+An admin editing a placed order is neither, so reusing that machinery would
+create reservations with no expiry trigger. `add_item` takes stock at confirm,
+and confirm is where an out-of-stock action fails.
+
+Also settled for the backend: **partial fulfillment ships as a
+`Spree::Fulfillments::Fulfill` workflow**, not by extending the state machine.
+`Spree::Fulfillment` keeps its machine (preserved deliberately per
+`6.0-fulfillment-and-delivery.md` resolved question 1), but shipping a *subset*
+means splitting first, and split-then-ship inside an `after_transition` callback
+is exactly the shape `6.0-service-workflows.md` prohibits. The workflow wraps the
+machine as a low-level mechanic, mirroring how `Fulfillments::Create` already
+wraps `mark_shipped`.
+
 ## 2026-08-09: Metadata consolidated to one column — `public_metadata` dropped, `private_metadata` renamed
 
 Implements the 2026-03-16 consolidation decision. All thirty metadata-carrying
