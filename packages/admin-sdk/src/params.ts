@@ -334,9 +334,17 @@ export interface OrderUpdateParams {
   internal_note?: string
   ship_address?: AddressInputParams
   bill_address?: AddressInputParams
-  line_items?: Array<{
-    variant_id?: string
-    quantity?: number
+  /**
+   * Line items to upsert, keyed by variant. An entry sets that variant's
+   * quantity, creating the line item when the order has none; `quantity: 0`
+   * removes it. Only the variants you send are touched — omitting one leaves
+   * it alone — so a whole edited order can be submitted in a single request
+   * and applied in one transaction.
+   */
+  items?: Array<{
+    variant_id: string
+    quantity: number
+    metadata?: Record<string, unknown>
   }>
 }
 
