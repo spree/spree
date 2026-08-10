@@ -79,7 +79,8 @@ module Spree
 
     has_many :wished_items, dependent: :destroy
 
-    has_many :digitals
+    has_many :digital_assets, class_name: 'Spree::DigitalAsset', dependent: :destroy
+    has_many :digitals, class_name: 'Spree::DigitalAsset', deprecated: true
 
     before_validation :set_cost_currency
     before_validation :apply_pending_options, if: :pending_options?
@@ -177,7 +178,7 @@ module Spree
       joins(:option_values).where(Spree::OptionValue.table_name => { name: option_value, option_type_id: option_type_ids })
     }
 
-    scope :with_digital_assets, -> { joins(:digitals) }
+    scope :with_digital_assets, -> { joins(:digital_assets) }
 
     # Free-text variant search: SKU, parent product name, and any
     # option-value presentation (e.g. "Red", "XL"). The 3-char floor
@@ -916,7 +917,7 @@ module Spree
     end
 
     def with_digital_assets?
-      digitals.any?
+      digital_assets.any?
     end
 
     private

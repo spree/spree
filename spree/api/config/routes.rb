@@ -148,7 +148,9 @@ Spree::Core::Engine.add_routes do
 
         # Digital Downloads
         # Access via token in URL
-        get 'digitals/:token', to: 'digitals#show', as: :digital_download
+        get 'digital_links/:token', to: 'digital_links#show', as: :digital_link_download
+        # Legacy path — emailed and bookmarked URLs outlive the rename. Removed in 6.1.
+        get 'digitals/:token', to: 'digital_links#show', as: :digital_download
 
         # Data Feeds (public, no auth required)
         resources :feeds, only: [:show], controller: 'data_feeds', param: :slug

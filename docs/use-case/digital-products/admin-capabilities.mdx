@@ -3,47 +3,40 @@ title: "Digital Products Admin Capabilities"
 description: "Learn about the digital product features available in the Spree admin dashboard."
 ---
 
-Spree Commerce provides robust tools for managing digital products, offering flexibility and control over how files are configured, delivered, and accessed. Whether you're selling standalone digital goods or bundling them with physical items, Spree helps you streamline digital product operations while maintaining security and customer satisfaction.
+Spree Commerce provides tools for managing digital products, offering flexibility and control over how files are configured, delivered, and accessed. Whether you're selling standalone digital goods or bundling them with physical items, Spree helps you streamline digital product operations while maintaining security and customer satisfaction.
 
 Below is a breakdown of the key capabilities available to store administrators.
 
 ## Flexible Product Configuration
 
 - Configure any product to be digital-only, physical, or a hybrid (e.g., physical textbook with downloadable companion PDF).
-- Attach digital files (PDFs, ZIPs, etc.) directly to the product variant or order.
-- File management UI in the admin dashboard for uploading, replacing, and associating files.
+- Attach digital files (PDFs, ZIPs, etc.) to any product variant — including variants of physical products, so a manual or warranty document ships alongside the goods.
 
 ## Download Access Management
 
-- Set download link expiration (e.g., 3 days) and/or maximum number of downloads (e.g., 5 per order).
-- Control when download links become available:
-  - Immediately after payment
-  - Manually after admin approval
-  - Upon fulfillment or other triggers
+- Limit how long a download link stays valid and how many times it can be used.
+- Set those limits once for the whole store, or override either of them on an individual file — so an evergreen download and a time-limited course can live in the same catalog.
+- Reset a customer's download link when they run out of attempts.
 
-## Shipping Step Bypass
+## Delivery Step Bypass
 
-- Assign a “Digital Delivery” shipping category to digital products.
-- If a cart only contains digital items, the shipping step is skipped entirely for faster checkout.
+- Digital products are delivered by the built-in Digital delivery method, which needs no shipping address.
+- If a cart only contains digital items, the delivery step is skipped entirely for faster checkout.
 
 ## Automated Digital Delivery
 
-- Send download links by email after order placement.
-- Customers can also access downloads from their “My Account” dashboard after logging in.
-- Admins can resend download emails or regenerate download links when needed.
+- Digital items are fulfilled automatically when the order is placed — download links are ready immediately, with no manual step.
+- Customers access their downloads through your storefront or app, which reads the links from the order.
 
-## Order and Access Logs
+## Download Visibility
 
-- Track and manage:
-  - Which files were downloaded
-  - How many times
-  - By whom (customer email/account)
-- Useful for fraud prevention or usage auditing.
+- Every download increments a counter on the link, so you can see how many times a file has been fetched.
+- A `digital_link.downloaded` event fires on each successful download, so you can feed downloads into your own auditing, analytics, or fraud tooling via webhooks.
 
 ## Security and Permissions
 
-- Files are stored securely and served via protected, time-limited download URLs.
-- Non-public file access prevents direct linking or unauthorized downloads.
+- Files are stored privately and served through protected, time-limited download URLs.
+- Each link is unique to a single purchased unit, and non-public file storage prevents direct linking or unauthorized downloads.
 
 ## Bundling & Promotions
 
@@ -52,8 +45,8 @@ Below is a breakdown of the key capabilities available to store administrators.
 
 ## Custom Rules & Logic (Optional)
 
-- Use Spree’s flexible architecture to create custom workflows, such as:
-  - Requiring customer approval for certain file types
+- Use Spree's flexible architecture to create custom workflows, such as:
+  - Sending your own download emails by subscribing to order and download events
   - Generating personalized files (e.g., license keys or certificates)
   - Integrating with external file storage or DRM systems
 

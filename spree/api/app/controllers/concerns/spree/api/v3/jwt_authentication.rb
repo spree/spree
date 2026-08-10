@@ -73,7 +73,7 @@ module Spree
           return header.split(' ').last if header.present? && header.start_with?('Bearer ')
 
           # Restricted fallback: only for digital download endpoints
-          params[:token] if controller_name == 'digitals'
+          params[:token] if controller_name == 'digital_links'
         end
 
         def decode_jwt(token)

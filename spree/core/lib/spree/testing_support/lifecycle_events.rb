@@ -40,8 +40,13 @@ shared_examples_for 'lifecycle events' do |factory: nil, event_prefix: nil|
     describe "#{described_class.event_prefix}.deleted" do
       it 'publishes deleted event when record is deleted' do
         record = create(lifecycle_factory)
-        expect(record).to receive(:publish_event).with("#{lifecycle_event_prefix}.deleted", kind_of(Hash))
         allow(record).to receive(:publish_event).with(anything)
+        # Legacy delete twins (renamed models) also pass a payload — allow them
+        # without weakening the assertion below, which is declared last so it wins.
+        allow(record).to receive(:publish_event).with(
+          satisfy { |name| name != "#{lifecycle_event_prefix}.deleted" }, anything
+        )
+        expect(record).to receive(:publish_event).with("#{lifecycle_event_prefix}.deleted", kind_of(Hash))
 
         record.destroy!
       end

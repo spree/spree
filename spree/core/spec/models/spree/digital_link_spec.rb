@@ -2,35 +2,35 @@ require 'spec_helper'
 
 describe Spree::DigitalLink, type: :model do
   let(:store) { @default_store }
-  let(:digital) { create(:digital) }
-  let(:variant) { digital.variant }
+  let(:digital_asset) { create(:digital_asset) }
+  let(:variant) { digital_asset.variant }
   let(:line_item) { create(:line_item, variant: variant) }
 
   it_behaves_like 'lifecycle events'
 
-  it 'validates presence of digital and line_item' do
-    expect(described_class.new(digital: digital, line_item: line_item)).to be_valid
+  it 'validates presence of digital_asset and line_item' do
+    expect(described_class.new(digital_asset: digital_asset, line_item: line_item)).to be_valid
   end
 
   it 'validates presence of line_item' do
-    expect(described_class.new(digital: digital)).not_to be_valid
+    expect(described_class.new(digital_asset: digital_asset)).not_to be_valid
   end
 
-  it 'validates presence of digital' do
+  it 'validates presence of digital_asset' do
     expect(described_class.new(line_item: line_item)).not_to be_valid
   end
 
   context 'validates access_counter' do
     it 'validates access_counter numericality' do
-      expect(described_class.new(digital: digital, line_item: line_item, access_counter: 'string')).not_to be_valid
+      expect(described_class.new(digital_asset: digital_asset, line_item: line_item, access_counter: 'string')).not_to be_valid
     end
 
     it 'validates access_counter 0 or greater' do
-      expect(described_class.new(digital: digital, line_item: line_item, access_counter: -3)).not_to be_valid
+      expect(described_class.new(digital_asset: digital_asset, line_item: line_item, access_counter: -3)).not_to be_valid
     end
 
     it 'validates access_counter 0 is valid' do
-      expect(described_class.new(digital: digital, line_item: line_item, access_counter: 0)).to be_valid
+      expect(described_class.new(digital_asset: digital_asset, line_item: line_item, access_counter: 0)).to be_valid
     end
   end
 

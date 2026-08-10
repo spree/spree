@@ -9,7 +9,7 @@ describe Spree::FulfillmentProvider::Digital, type: :model do
 
   describe '#create_fulfillment' do
     let(:digital_product) { create(:digital_product) }
-    let(:variant) { create(:variant, product: digital_product, digitals: [create(:digital), create(:digital)]) }
+    let(:variant) { create(:variant, product: digital_product, digitals: [create(:digital_asset), create(:digital_asset)]) }
     let(:order) { create(:order) }
     let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 3) }
     let!(:fulfillment) { create(:fulfillment, order: order) }
@@ -18,10 +18,10 @@ describe Spree::FulfillmentProvider::Digital, type: :model do
       fulfillment.fulfillment_items.create!(order: order, line_item: line_item, variant: variant, quantity: 3)
     end
 
-    it 'creates one link per digital per unit of quantity' do
+    it 'creates one link per digital asset per unit of quantity' do
       provider.create_fulfillment(fulfillment)
 
-      expect(line_item.digital_links.reload.group(:digital_id).count.values).to eq([3, 3])
+      expect(line_item.digital_links.reload.group(:digital_asset_id).count.values).to eq([3, 3])
     end
 
     it 'is idempotent' do

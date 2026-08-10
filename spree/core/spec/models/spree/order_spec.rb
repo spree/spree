@@ -2216,7 +2216,7 @@ describe Spree::Order, type: :model do
 
   context 'quick checkout' do
     let(:digital_product) { create(:digital_product) }
-    let(:digital_variant) { create(:variant, product: digital_product, digitals: [create(:digital)]) }
+    let(:digital_variant) { create(:variant, product: digital_product, digitals: [create(:digital_asset)]) }
     let(:digital_line_item) { create(:line_item, variant: digital_variant, quantity: 1, order: order) }
     let(:physical_line_item) { create(:line_item, quantity: 1, order: order) }
     let(:order) { create(:order) }

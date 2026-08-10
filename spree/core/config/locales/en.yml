@@ -427,7 +427,7 @@ en:
       spree/customer_group_user:
         one: Customer Group User
         other: Customer Group Users
-      spree/digital:
+      spree/digital_asset:
         one: Digital asset
         other: Digital assets
       spree/export:

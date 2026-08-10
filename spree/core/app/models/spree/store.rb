@@ -265,6 +265,10 @@ module Spree
     end
     validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
+    # Sized for starting a transfer, not for keeping the file reachable — the
+    # signed URL it governs is a bearer credential.
+    validates :preferred_digital_asset_link_expire_time,
+              numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 1.hour.to_i }
     validates :preferred_stock_reservation_ttl_minutes, numericality: { only_integer: true, greater_than: 0 }
     # A fraction, not a percentage: 0.21 is 21%. Bounded because the value is
     # multiplied straight into what a seller is charged, so a negative would
