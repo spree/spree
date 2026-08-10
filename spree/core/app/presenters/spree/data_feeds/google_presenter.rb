@@ -71,7 +71,7 @@ module Spree
         xml['g'].id variant.id
         xml['g'].item_group_id product.id
         xml['g'].title format_title(product, variant)
-        xml['g'].description product.description || format_title(product, variant)
+        xml['g'].description plain_description(product).presence || format_title(product, variant)
         xml['g'].link "#{store.storefront_url}/products/#{product.slug}"
         xml['g'].image_link image_url
         xml['g'].price "#{variant.amount_in(feed_currency)} #{feed_currency}"
@@ -94,6 +94,14 @@ module Spree
         node.namespace = parent.namespace_scopes.find { |ns| ns.prefix == 'g' }
         node.content = value
         parent << node
+      end
+
+      # Google expects plain text in g:description, not markup. Memoized per
+      # product: this is called once per variant, and stripping the markup
+      # parses the whole description each time.
+      def plain_description(product)
+        @plain_descriptions ||= {}
+        @plain_descriptions[product.id] ||= Spree::RichTextHelper.to_plain_text(product.description)
       end
 
       def format_title(product, variant)

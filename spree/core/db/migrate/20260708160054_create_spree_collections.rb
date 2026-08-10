@@ -49,8 +49,8 @@ class CreateSpreeCollections < ActiveRecord::Migration[7.2]
     add_column :spree_products, :collections_count, :integer, null: false, default: 0
 
     # Mobility table-backend translations (mirrors spree_taxon_translations) for the
-    # table-backed translatable fields. NOT ActionText-specific: the ActionText-backed
-    # `description` is stored in the shared global action_text_rich_texts table.
+    # table-backed translatable fields. `description` is added here by a later
+    # migration, once collections moved off Action Text.
     create_table :spree_collection_translations do |t|
       t.string :name
       t.string :permalink

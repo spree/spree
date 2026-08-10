@@ -18,11 +18,11 @@ module Spree
         end
 
         attribute :description do |category|
-          category.description&.to_plain_text.to_s
+          Spree::RichTextHelper.to_plain_text(category.description)
         end
 
         attribute :description_html do |category|
-          category.description&.body&.to_s.to_s
+          category.description_html
         end
 
         attribute :image_url do |category|

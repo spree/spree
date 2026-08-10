@@ -16,11 +16,11 @@ module Spree
                    :meta_title, :meta_description, :meta_keywords, :products_count
 
         attribute :description do |collection|
-          collection.description&.to_plain_text.to_s
+          Spree::RichTextHelper.to_plain_text(collection.description)
         end
 
         attribute :description_html do |collection|
-          collection.description&.body&.to_s.to_s
+          collection.description_html
         end
 
         attribute :image_url do |collection|

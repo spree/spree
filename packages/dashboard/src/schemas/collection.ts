@@ -172,6 +172,8 @@ export function collectionToForm(collection: Collection): CollectionFormValues {
 export function collectionToParams(values: CollectionFormValues) {
   return {
     name: values.name,
+    // HTML in, HTML stored. The API reads it back as plain `description`
+    // plus `description_html`.
     description: values.description,
     permalink: values.permalink,
     meta_title: values.meta_title,

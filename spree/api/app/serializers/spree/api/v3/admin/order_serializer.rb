@@ -24,7 +24,8 @@ module Spree
                    last_ip_address: [:string, nullable: true],
                    considered_risky: :boolean, confirmation_delivered: :boolean,
                    store_owner_notification_delivered: :boolean,
-                   internal_note: [:string, nullable: true], approver_id: [:string, nullable: true],
+                   internal_note: [:string, nullable: true], internal_note_html: [:string, nullable: true],
+                   approver_id: [:string, nullable: true],
                    canceler_id: [:string, nullable: true], created_by_id: [:string, nullable: true],
                    customer_id: [:string, nullable: true],
                    preferred_stock_location_id: [:string, nullable: true],
@@ -49,7 +50,11 @@ module Spree
           end
 
           attribute :internal_note do |order|
-            order.internal_note&.to_plain_text.presence
+            Spree::RichTextHelper.to_plain_text(order.internal_note).presence
+          end
+
+          attribute :internal_note_html do |order|
+            order.internal_note.presence
           end
 
           attribute :approver_id do |order|

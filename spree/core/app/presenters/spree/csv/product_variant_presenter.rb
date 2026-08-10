@@ -83,7 +83,7 @@ module Spree
           product.slug,
           index.zero? ? product.status : nil,
           index.zero? ? product.try(:vendor_name) : nil,
-          index.zero? ? product.description&.html_safe : nil,
+          index.zero? ? product.description : nil,
           index.zero? ? product.meta_title : nil,
           index.zero? ? product.meta_description : nil,
           index.zero? ? product.meta_keywords : nil,

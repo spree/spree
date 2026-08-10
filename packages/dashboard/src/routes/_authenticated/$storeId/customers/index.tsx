@@ -23,6 +23,7 @@ import {
   FieldGroup,
   FieldLabel,
   Input,
+  RichTextEditor,
   RowActions,
   Sheet,
   SheetContent,
@@ -30,7 +31,6 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  Textarea,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { useMutation } from '@tanstack/react-query'
@@ -405,7 +405,10 @@ function NewCustomerSheet({
     if (values.first_name.trim()) payload.first_name = values.first_name.trim()
     if (values.last_name.trim()) payload.last_name = values.last_name.trim()
     if (values.phone.trim()) payload.phone = values.phone.trim()
-    if (values.internal_note.trim()) payload.internal_note = values.internal_note.trim()
+    // The editor emits an empty paragraph once it has been focused and cleared,
+    // which is not a note.
+    const internalNote = values.internal_note.trim()
+    if (internalNote && internalNote !== '<p></p>') payload.internal_note = internalNote
     if (values.tags.length) payload.tags = values.tags
 
     try {
@@ -506,12 +509,18 @@ function NewCustomerSheet({
                 <FieldLabel htmlFor="internal_note">
                   {t('admin.fields.customer.internal_note.label')}
                 </FieldLabel>
-                <Textarea
-                  id="internal_note"
-                  rows={4}
-                  placeholder={t('admin.fields.customer.internal_note.placeholder')}
-                  aria-invalid={!!form.formState.errors.internal_note || undefined}
-                  {...form.register('internal_note')}
+                <Controller
+                  control={form.control}
+                  name="internal_note"
+                  render={({ field }) => (
+                    <RichTextEditor
+                      id="internal_note"
+                      ariaLabel={t('admin.fields.customer.internal_note.label')}
+                      placeholder={t('admin.fields.customer.internal_note.placeholder')}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
                 <FieldError errors={[form.formState.errors.internal_note]} />
               </Field>

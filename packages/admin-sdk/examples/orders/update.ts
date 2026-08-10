@@ -8,8 +8,9 @@ const client = createAdminClient({
 // region:example
 const order = await client.orders.update('or_UkLWZg9DAJ', {
   email: 'updated@example.com',
-  internal_note: 'VIP — gift wrap on next order',
+  internal_note: '<p>VIP — gift wrap on next order</p>',
 })
+
 // endregion:example
 
 export { order }

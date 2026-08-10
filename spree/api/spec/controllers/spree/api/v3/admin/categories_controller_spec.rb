@@ -82,6 +82,23 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(category.reload.name).to eq('Apparel')
     end
 
+    # `description` carries HTML in and reads back as both shapes: the plain
+    # field tag-stripped, the markup under description_html.
+    it 'stores the description as HTML and reads back both shapes' do
+      patch :update, params: { id: category.prefixed_id, description: '<p>Soft <strong>cotton</strong></p>' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['description_html']).to eq('<p>Soft <strong>cotton</strong></p>')
+      expect(json_response['description']).to eq('Soft cotton')
+    end
+
+    it 'sanitizes the description on write' do
+      patch :update, params: { id: category.prefixed_id, description: '<p>ok</p><script>alert(1)</script>' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['description_html']).to eq('<p>ok</p>')
+    end
+
     it 'purges the image when image is set to null' do
       # Attach reliably persists on a factory-built category; the controller treats
       # it the same as a store-owned Category (both resolve through `scope`).

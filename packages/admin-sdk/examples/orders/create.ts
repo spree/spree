@@ -11,12 +11,12 @@ const client = createAdminClient({
 // except `email` is optional.
 const order = await client.orders.create({
   email: 'jane@example.com',
-  customer_id: 'cus_UkLWZg9DAJ',           // Existing customer; omit for guest orders
-  use_customer_default_address: false,     // true to copy the customer's saved addresses
+  customer_id: 'cus_UkLWZg9DAJ', // Existing customer; omit for guest orders
+  use_customer_default_address: false, // true to copy the customer's saved addresses
 
   currency: 'USD',
   market_id: 'mkt_UkLWZg9DAJ',
-  channel_id: 'ch_UkLWZg9DAJ',             // Optional — defaults to the store's primary channel
+  channel_id: 'ch_UkLWZg9DAJ', // Optional — defaults to the store's primary channel
   locale: 'en-US',
 
   // Pin the order's preferred fulfillment location. Order Routing's
@@ -26,7 +26,9 @@ const order = await client.orders.create({
   preferred_stock_location_id: 'sloc_UkLWZg9DAJ',
 
   customer_note: 'Please leave at the front desk.',
-  internal_note: 'VIP customer — handle with care.',
+  // Rich text: send HTML. Reads return this as plain text, plus
+  // `internal_note_html` with the markup.
+  internal_note: '<p>VIP customer — handle with care.</p>',
   metadata: {
     external_reference: 'subscription_invoice_2026_04',
     source: 'recurring-engine',
@@ -68,6 +70,7 @@ const order = await client.orders.create({
   // Optional. Invalid codes are non-fatal — the order is created either way.
   coupon_code: 'WELCOME10',
 })
+
 // endregion:example
 
 export { order }

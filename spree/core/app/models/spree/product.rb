@@ -55,7 +55,7 @@ module Spree
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
-    sanitizes_rich_text :description
+    has_spree_rich_text :description
 
     # Translated descriptions live on the Mobility translation table, so writes
     # through locale accessors or +upsert_translations+ never touch the base

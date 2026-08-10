@@ -127,7 +127,15 @@ namespace :spree do
         user_identities:      Spree::UserIdentity.where(user_type: old_type).update_all(user_type: new_type),
         customer_group_users: Spree::CustomerGroupUser.where(customer_type: old_type).update_all(customer_type: new_type),
         api_keys_created_by:  Spree::ApiKey.where(created_by_type: old_type).update_all(created_by_type: new_type),
-        api_keys_revoked_by:  Spree::ApiKey.where(revoked_by_type: old_type).update_all(revoked_by_type: new_type)
+        api_keys_revoked_by:  Spree::ApiKey.where(revoked_by_type: old_type).update_all(revoked_by_type: new_type),
+        # Internal notes, so migrate_rich_text_to_columns can find them under
+        # the new class name whichever order the two steps run in. Action Text
+        # is optional, hence the defined? guard.
+        rich_texts: if defined?(ActionText::RichText) && ActionText::RichText.table_exists?
+                      ActionText::RichText.where(record_type: old_type).update_all(record_type: new_type)
+                    else
+                      0
+                    end
       }
 
       # Admins stay in spree_admin_users (in place) — backfill the digest from

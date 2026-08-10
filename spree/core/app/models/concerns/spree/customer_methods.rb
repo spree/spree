@@ -11,6 +11,7 @@ module Spree
     include Spree::RansackableAttributes
     include Spree::Searchable
     include Spree::Publishable
+    include Spree::SanitizableRichText
 
     included do
       has_prefix_id :cust  # Stripe: cus_
@@ -85,7 +86,8 @@ module Spree
       # Attachments
       #
       has_one_attached :avatar, service: Spree.public_storage_service_name
-      has_rich_text :internal_note
+
+      has_spree_rich_text :internal_note
 
       #
       # Attributes

@@ -39,7 +39,14 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
 
       it 'includes description' do
-        expect(xml).to include("<g:description>#{product.description}</g:description>")
+        expect(xml).to include("<g:description>#{Spree::RichTextHelper.to_plain_text(product.description)}</g:description>")
+      end
+
+      it 'strips markup from the description, since Google expects plain text' do
+        product.update!(description: '<p>Soft cotton.</p><p>Machine <strong>washable</strong>.</p>')
+
+        expect(xml).to include('<g:description>Soft cotton.
+Machine washable.</g:description>')
       end
 
       it 'includes link' do

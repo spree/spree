@@ -269,6 +269,7 @@ export interface OrderCreateParams {
   preferred_stock_location_id?: string
   locale?: string
   customer_note?: string
+  /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   metadata?: Record<string, unknown>
   shipping_address?: AddressInputParams
@@ -288,6 +289,7 @@ export interface OrderUpdateParams {
   email?: string
   customer_id?: string
   customer_note?: string
+  /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   ship_address?: AddressInputParams
   bill_address?: AddressInputParams
@@ -365,6 +367,7 @@ export interface CustomerCreateParams {
   last_name?: string
   phone?: string
   accepts_email_marketing?: boolean
+  /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   metadata?: Record<string, unknown>
   tags?: string[]
@@ -378,6 +381,7 @@ export interface CustomerUpdateParams {
   last_name?: string
   phone?: string
   accepts_email_marketing?: boolean
+  /** Rich text HTML. Reads come back as this plus `internal_note_html`. */
   internal_note?: string
   metadata?: Record<string, unknown>
   tags?: string[]
@@ -457,6 +461,7 @@ export interface ProductPublicationInput {
 
 export interface ProductCreateParams {
   name: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
   description?: string
   slug?: string
   status?: 'draft' | 'active' | 'archived'
@@ -482,6 +487,7 @@ export interface ProductCreateParams {
 
 export interface ProductUpdateParams {
   name?: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
   description?: string
   slug?: string
   status?: 'draft' | 'active' | 'archived'
@@ -540,6 +546,7 @@ export interface CategoryCreateParams {
   name: string
   /** Prefixed ID of the parent category. Omit or null for a top-level category. */
   parent_id?: string | null
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
   description?: string
   permalink?: string
   meta_title?: string
@@ -555,6 +562,7 @@ export interface CategoryUpdateParams {
   name?: string
   /** Prefixed ID of the parent category, or null to move it to the top level. */
   parent_id?: string | null
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
   description?: string
   permalink?: string
   meta_title?: string
@@ -619,6 +627,7 @@ export interface CollectionRuleParam {
 
 export interface CollectionCreateParams {
   name: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
   description?: string
   permalink?: string
   meta_title?: string
@@ -639,6 +648,7 @@ export interface CollectionCreateParams {
 
 export interface CollectionUpdateParams {
   name?: string
+  /** Rich text HTML. Reads come back as this (plain text) plus `description_html`. */
   description?: string
   permalink?: string
   /**

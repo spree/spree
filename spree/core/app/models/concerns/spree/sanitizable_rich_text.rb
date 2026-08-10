@@ -12,9 +12,34 @@ module Spree
     extend ActiveSupport::Concern
 
     class_methods do
+      # Declares a rich text attribute: sanitized on save, and readable as
+      # +field_html+ for the raw markup. This is what a model wants.
+      #
+      #   has_spree_rich_text :description
+      #
+      # A translated attribute needs the same declaration on the +Translation+
+      # class, because Mobility writes bypass the parent's callbacks — but only
+      # to sanitize, since the reader belongs on the parent:
+      #
+      #   self::Translation.class_eval do
+      #     include Spree::SanitizableRichText
+      #     sanitizes_rich_text :description
+      #   end
+      #
+      # @param attributes [Array<Symbol>] rich text attribute names
+      # @return [void]
+      def has_spree_rich_text(*attributes)
+        sanitizes_rich_text(*attributes)
+        rich_text_html_reader(*attributes)
+      end
+
       # Installs a +before_save+ pass sanitizing each named attribute. Only
       # attributes that actually changed are rewritten, so unrelated saves
       # never touch stored content.
+      #
+      # Prefer {#has_spree_rich_text} — reach for this alone only where the
+      # +field_html+ reader doesn't belong, i.e. on a Mobility +Translation+
+      # class or a model that serializes the value some other way.
       #
       # @param attributes [Array<Symbol>] rich text attribute names
       # @return [void]
@@ -30,6 +55,22 @@ module Spree
 
             self[attribute] = Spree::RichTextSanitizer.sanitize(value)
           end
+        end
+      end
+
+      # Defines +field_html+, the raw stored markup. The API exposes it beside
+      # the plain +field+, which serializers render as text — writes use the
+      # plain name, since the value is HTML either way.
+      #
+      # Reads through the attribute's own reader rather than +self[]+, so a
+      # translated field still goes through Mobility and resolves against the
+      # active locale.
+      #
+      # @param attributes [Array<Symbol>] rich text attribute names
+      # @return [void]
+      def rich_text_html_reader(*attributes)
+        attributes.each do |attribute|
+          define_method(:"#{attribute}_html") { public_send(attribute).to_s }
         end
       end
     end

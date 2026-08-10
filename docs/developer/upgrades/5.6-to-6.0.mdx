@@ -89,6 +89,35 @@ bundle exec rake spree:migrate_taxons_to_categories_and_collections
 
 Taxons become `Spree::Category` (hierarchy) and automatic taxons become `Spree::Collection` (flat, rule-based). `Spree::Taxon` remains as an alias for one release.
 
+### Move rich text out of Action Text
+
+```bash
+bundle exec rake spree:migrate_rich_text_to_columns
+```
+
+Category and collection descriptions, policy bodies, and order and customer internal notes move from `action_text_rich_texts` into text columns on their own tables. Per-locale rows land in the model's translation table.
+
+Run this **after** two earlier steps, both load-bearing: the categories step re-points the rows from `Spree::Taxon` to `Spree::Category` so this one can still find them, and the customers step populates `spree_customers` — a note is copied onto the customer row it belongs to, so running before those rows exist would treat every legacy customer note as orphaned and skip it for good. Following the manifest order handles this for you.
+
+Content is sanitized on the way in, and **the 6.0 allowlist is much narrower than 5.6's**: it permits only what the dashboard's editor emits — paragraphs, headings, `strong`/`em`/`s`/`u`/`code`, `pre`, `blockquote`, lists, `hr`, `br` and links. Tables, images, `div`/`span`, inline `style` and arbitrary `class` attributes are no longer permitted. Text inside a stripped tag survives; its formatting does not. The exceptions are `script` and `style`, which are removed along with their contents — a script body would otherwise reappear as visible text.
+
+If your descriptions rely on richer markup, permit it in an initializer **before** running the task and before saving anything under 6.0:
+
+```ruby
+# config/initializers/spree.rb
+Spree::RichTextSanitizer.allowed_tags += %w[table thead tbody tr th td img]
+Spree::RichTextSanitizer.allowed_attributes += %w[src alt colspan rowspan]
+```
+
+The Action Text rows are left in place as a rollback path and are dropped with the tables in 6.1.
+
+Once this has run, **Spree no longer loads Action Text.** `spree_core` dropped `require 'action_text/engine'` — along with `action_cable/engine`, which nothing in Spree used — and a fresh install no longer creates the tables. The rake task requires Action Text itself, so the upgrade works either way. If your own code uses `has_rich_text`, Action Text view helpers, or Action Cable, require what you need in `config/application.rb` (apps generated from the Spree starter already do):
+
+```ruby
+require 'action_text/engine'
+require 'action_cable/engine'
+```
+
 ### Backfill order coupon codes
 
 ```bash
@@ -439,6 +468,26 @@ Two enforcement changes on the Admin API:
 
 - **JWT staff pass the same per-controller key gate as secret keys.** A request whose principal lacks `<read|write>_<resource>` gets a 403 with `details.required_permission` naming the missing key.
 - **Staff endpoints moved out of the `settings` scope.** `/admin_users`, `/invitations`, and `/roles` now require the new `read_staff` / `write_staff` scopes; secret keys minted with `settings` before 6.0 lose those endpoints. `/countries` and `/locales` became scope-exempt reference data.
+
+### Rich-text fields read as plain text plus HTML
+
+**Writes are unchanged.** `description` and `internal_note` still take the value, and that value is still HTML — the same as 5.6, so no integration needs updating.
+
+Reads are where 6.0 differs. Every rich-text field now returns both shapes:
+
+| Resource | Plain text | HTML |
+| --- | --- | --- |
+| Product, Category, Collection | `description` | `description_html` |
+| Order, Customer | `internal_note` | `internal_note_html` |
+
+Two consequences worth checking in your own code:
+
+- **Hydrate editors from `*_html`.** The plain field is tag-stripped, so binding an editor to `description` and saving it back would flatten the markup on every save.
+- **The field holds HTML.** That is true of every writer — the Admin API, CSV import, the console — so send markup, not plain text with newlines in it.
+
+Both internal-note serializers now return the pair. Previously orders exposed only plain text and customers only HTML.
+
+Stored markup is also held to a narrower allowlist than 5.6 — see [the rich-text migration](#move-rich-text-out-of-action-text) for what is permitted and how to widen it.
 
 ## For extension authors
 

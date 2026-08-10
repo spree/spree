@@ -4,6 +4,8 @@ require 'spec_helper'
 # bodies out of Action Text. All of it is data no model can reach once the
 # classes are renamed, so it is covered here rather than through a model.
 RSpec.describe 'RenameMetafieldsToCustomFields migration' do
+  include_context 'with legacy Action Text'
+
   let(:migration) do
     require Spree::Core::Engine.root.join('db', 'migrate', '20260809000001_rename_metafields_to_custom_fields.rb')
     RenameMetafieldsToCustomFields.new
