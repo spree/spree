@@ -85,6 +85,31 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
     end
 
     # Without the rescue this is a 500.
+    # The URL has to be our own streaming endpoint, not a storage link — that is
+    # what makes admin credentials apply to every read of a confidential document.
+    it 'points the document at the download endpoint' do
+      post :create, params: {
+        company_id: company.prefixed_id,
+        certificate_number: 'DE-1', reason_code: 'resale',
+        document: pdf_blob.signed_id
+      }, as: :json
+
+      certificate = company.tax_exemption_certificates.sole
+      expect(json_response['document_url']).to eq(
+        "/api/v3/admin/companies/#{company.prefixed_id}/tax_exemption_certificates/#{certificate.prefixed_id}/download"
+      )
+      expect(json_response['document_url']).not_to include('rails/active_storage')
+    end
+
+    it 'reports no document url when nothing is attached' do
+      post :create, params: {
+        company_id: company.prefixed_id, certificate_number: 'DE-2', reason_code: 'resale'
+      }, as: :json
+
+      expect(json_response['document_url']).to be_nil
+      expect(json_response['document_filename']).to be_nil
+    end
+
     it 'rejects a tampered signed id with a validation error' do
       post :create, params: {
         company_id: company.prefixed_id,
