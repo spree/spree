@@ -151,16 +151,6 @@ export function unfulfilledItemRows(
 }
 
 /**
- * Whether removing this row would delete only the units it displays. Removal
- * acts on the whole line item, so a row showing part of one — the rest sitting
- * in another group — would take those other units with it. Offering removal
- * only on whole line items keeps the action honest about its blast radius.
- */
-export function isRemovableRow(row: FulfillmentItemRow): boolean {
-  return !!row.lineItem && row.quantity === row.lineItem.quantity
-}
-
-/**
  * Whether anything is left to put into a new fulfillment: either units nobody
  * has claimed, or units sitting in a fulfillment that has not shipped yet and
  * can therefore still be moved. Without this the create workflow would happily

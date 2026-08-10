@@ -50,8 +50,7 @@ test.describe('order fulfillments', () => {
 
   // Manual creation is a completed-order operation — Spree::Fulfillments::Create
   // rejects it otherwise — so the card must not offer an action that can only
-  // fail. A draft's fulfillments come from the delivery step instead. "Add
-  // item" sits in the same header and stays available.
+  // fail. A draft's fulfillments come from the delivery step instead.
   test('does not offer manual creation on an incomplete order', async ({ page }) => {
     const creds = await login(page)
     await createDraftOrder(page, creds.store_id)
@@ -59,25 +58,18 @@ test.describe('order fulfillments', () => {
     const card = fulfillmentsCard(page)
     await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
     await expect(card.getByRole('button', { name: /^add fulfillment$/i })).toHaveCount(0)
-    await expect(card.getByRole('button', { name: /^add item$/i })).toBeVisible()
   })
 
-  // The item menus are the only route to editing a quantity or removing a line
-  // item now that the Items card is gone, and a type-clean refactor once left
-  // them off every row inside a fulfillment. Drive one to keep that honest.
-  test('offers edit and remove on an item row', async ({ page }) => {
+  // Changing what an order contains after placement belongs to the order edit
+  // screen, so the card's item rows are read-only: they still say what ships
+  // where, but carry no per-row menu.
+  test('lists item rows without per-row actions', async ({ page }) => {
     const creds = await login(page)
     await createDraftOrder(page, creds.store_id)
 
     const card = fulfillmentsCard(page)
     await expect(card.getByText(/unfulfilled \(\d+\)/i)).toBeVisible({ timeout: 15_000 })
-
-    await card
-      .getByRole('button', { name: /actions for/i })
-      .first()
-      .click()
-
-    await expect(page.getByRole('menuitem', { name: /edit quantity/i })).toBeVisible()
-    await expect(page.getByRole('menuitem', { name: /^remove$/i })).toBeVisible()
+    await expect(card.getByText(new RegExp(FIXTURE_PROMO_PRODUCT, 'i')).first()).toBeVisible()
+    await expect(card.getByRole('button', { name: /actions for/i })).toHaveCount(0)
   })
 })

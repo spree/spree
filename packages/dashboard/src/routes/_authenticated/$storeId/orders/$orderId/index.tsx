@@ -84,13 +84,13 @@ import { useTranslation } from 'react-i18next'
 import {
   CustomFieldsInlineCard,
   EditableApiCustomFieldsProvider,
-} from '../../../../components/spree/custom-fields/custom-fields-inline'
+} from '../../../../../components/spree/custom-fields/custom-fields-inline'
 import {
   OrderClaimsCard,
   OrderExchangesCard,
-} from '../../../../components/spree/order-post-sale-cards'
-import { OrderReturnsCard } from '../../../../components/spree/order-returns-card'
-import { FulfillmentsCard } from '../../../../components/spree/orders/fulfillments-card'
+} from '../../../../../components/spree/order-post-sale-cards'
+import { OrderReturnsCard } from '../../../../../components/spree/order-returns-card'
+import { FulfillmentsCard } from '../../../../../components/spree/orders/fulfillments-card'
 import {
   orderQueryKey,
   useOrder,
@@ -99,11 +99,11 @@ import {
   useOrderFees,
   useOrderMutation,
   useOrderTaxLines,
-} from '../../../../hooks/use-order'
-import { spreeJsonLinkResolver } from '../../../../lib/json-link-resolver'
-import { FEE_KINDS } from '../../../../schemas/order'
+} from '../../../../../hooks/use-order'
+import { spreeJsonLinkResolver } from '../../../../../lib/json-link-resolver'
+import { FEE_KINDS } from '../../../../../schemas/order'
 
-export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId')({
+export const Route = createFileRoute('/_authenticated/$storeId/orders/$orderId/')({
   component: OrderDetailPage,
 })
 
@@ -342,6 +342,14 @@ function OrderHeader({ order }: { order: Order }) {
       subtitle={subtitle}
       backTo={backFallback}
       badges={badges}
+      actions={
+        <Button asChild variant="outline">
+          <Link to="/$storeId/orders/$orderId/edit" params={{ storeId, orderId }}>
+            <PencilIcon className="size-4" />
+            {t('admin.orders.edit.action_label')}
+          </Link>
+        </Button>
+      }
       dropdownItems={dropdownItems}
       resource={{ id: order.id, number: order.number }}
       jsonPreview={{

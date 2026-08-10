@@ -1822,7 +1822,6 @@
           "resume_failed": "فشل في استئناف الطلب"
         },
         "fulfillments": {
-          "add_item": "إضافة عنصر",
           "confirm_split": "نقل هذه الوحدات إلى شحنة جديدة؟ يسري هذا فوراً.",
           "create_description": "تنشئ شحنة وتنقل إليها الكميات المختارة.",
           "create_items": "العناصر",
@@ -1856,9 +1855,6 @@
           "requires_customer": "يتطلب العميل",
           "store_credit_label": "Store credit",
           "title": "الخصومات والرصيد"
-        },
-        "items_table": {
-          "item_actions": "إجراءات لـ {{name}}"
         },
         "load_failed_message": "لم نتمكن من تحميل الطلب {{orderId}}.",
         "messages": {
@@ -1903,10 +1899,6 @@
           "tax_included": "الضريبة (متضمنة)"
         },
         "tracking": {
-          "add_title": "Add Tracking",
-          "description": "قم بتحديث رقم التتبع لهذه الشحنة.",
-          "edit_title": "Edit Tracking",
-          "label": "Tracking الرقم",
           "prefix": "Tracking",
           "shipped_prefix": "تم الشحن"
         },
@@ -1916,6 +1908,46 @@
           "label": "متغير البحث",
           "placeholder": "اكتب اسم المنتج أو SKU (3 أحرف على الأقل)…",
           "sku_prefix": "SKU"
+        }
+      },
+      "edit": {
+        "action_label": "تعديل الطلب",
+        "actions": {
+          "add_product": "إضافة منتج",
+          "edit_quantity_for": "تعديل كمية {{name}}",
+          "remove": "إزالة",
+          "remove_item": "إزالة {{name}}"
+        },
+        "columns": {
+          "line_total": "إجمالي السطر",
+          "product": "المنتج",
+          "unit_price": "سعر الوحدة"
+        },
+        "confirm": {
+          "remove_message": "إزالة \"{{name}}\" من هذا الطلب؟ يسري هذا فوراً ويُعاد احتساب إجماليات الطلب.",
+          "remove_title": "إزالة السطر"
+        },
+        "empty": "لا يحتوي هذا الطلب على أي عناصر.",
+        "items_title": "العناصر",
+        "subtitle": "الطلب {{number}}",
+        "title": "تعديل الطلب",
+        "totals_hint": "يُعيد الخادم احتساب الإجماليات بعد كل تغيير.",
+        "totals_title": "الإجماليات"
+      },
+      "fulfill": {
+        "action": "وضع علامة كمشحون",
+        "empty": "لا تحتوي هذه الشحنة على عناصر قابلة للشحن.",
+        "include_item": "شحن {{name}}",
+        "notify_customer": "إرسال إشعار الشحن إلى العميل",
+        "of_units": "من {{count}}",
+        "partial_hint": "تنتقل الوحدات المختارة إلى شحنة جديدة تُشحن الآن، ويبقى الباقي في هذه الشحنة وهي ما زالت مفتوحة.",
+        "quantity_for": "الكمية المراد شحنها من {{name}}",
+        "submit": "شحن العناصر",
+        "tracking_label": "رقم التتبع",
+        "tracking_placeholder": "رقم التتبع أو الرابط",
+        "units_selected": "الوحدات المراد شحنها",
+        "validation": {
+          "quantity_invalid": "أدخل عددًا صحيحًا من الوحدات."
         }
       },
       "fulfillment_statuses": {

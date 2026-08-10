@@ -1827,7 +1827,6 @@
           "resume_failed": "Nie udało się wznowić zamówienia"
         },
         "fulfillments": {
-          "add_item": "Dodaj pozycję",
           "confirm_split": "Przenieść te sztuki do nowej przesyłki? Zmiana zadziała natychmiast.",
           "create_description": "Tworzy przesyłkę i przenosi do niej wybrane ilości.",
           "create_items": "Pozycje",
@@ -1864,9 +1863,6 @@
           "requires_customer": "Wymaga klienta",
           "store_credit_label": "Kredyt sklepowy",
           "title": "Rabaty i środki"
-        },
-        "items_table": {
-          "item_actions": "Akcje dla {{name}}"
         },
         "load_failed_message": "Nie udało się załadować zamówienia {{orderId}}.",
         "messages": {
@@ -1911,10 +1907,6 @@
           "tax_included": "Podatek (wliczony)"
         },
         "tracking": {
-          "add_title": "Dodaj śledzenie",
-          "description": "Zaktualizuj numer śledzenia dla tej przesyłki.",
-          "edit_title": "Edytuj śledzenie",
-          "label": "Numer śledzenia",
           "prefix": "Śledzenie",
           "shipped_prefix": "Wysłano"
         },
@@ -1924,6 +1916,46 @@
           "label": "Wyszukaj wariant",
           "placeholder": "Wpisz nazwę produktu lub SKU (min. 3 znaki)…",
           "sku_prefix": "SKU"
+        }
+      },
+      "edit": {
+        "action_label": "Edytuj zamówienie",
+        "actions": {
+          "add_product": "Dodaj produkt",
+          "edit_quantity_for": "Edytuj ilość dla {{name}}",
+          "remove": "Usuń",
+          "remove_item": "Usuń {{name}}"
+        },
+        "columns": {
+          "line_total": "Wartość pozycji",
+          "product": "Produkt",
+          "unit_price": "Cena jednostkowa"
+        },
+        "confirm": {
+          "remove_message": "Usunąć „{{name}}” z tego zamówienia? Zmiana zostanie zastosowana natychmiast, a sumy zamówienia zostaną przeliczone.",
+          "remove_title": "Usuń pozycję"
+        },
+        "empty": "To zamówienie nie zawiera pozycji.",
+        "items_title": "Pozycje",
+        "subtitle": "Zamówienie {{number}}",
+        "title": "Edytuj zamówienie",
+        "totals_hint": "Sumy są przeliczane przez serwer po każdej zmianie.",
+        "totals_title": "Sumy"
+      },
+      "fulfill": {
+        "action": "Oznacz jako wysłane",
+        "empty": "Ta przesyłka nie zawiera pozycji, które można wysłać.",
+        "include_item": "Wyślij: {{name}}",
+        "notify_customer": "Wyślij klientowi powiadomienie o wysyłce",
+        "of_units": "z {{count}}",
+        "partial_hint": "Wybrane sztuki trafią do nowej przesyłki, która zostanie wysłana teraz. Reszta pozostanie w tej przesyłce, wciąż otwartej.",
+        "quantity_for": "Liczba sztuk do wysłania: {{name}}",
+        "submit": "Wyślij pozycje",
+        "tracking_label": "Numer śledzenia",
+        "tracking_placeholder": "Numer śledzenia lub link",
+        "units_selected": "Sztuki do wysłania",
+        "validation": {
+          "quantity_invalid": "Podaj całkowitą liczbę sztuk."
         }
       },
       "fulfillment_statuses": {

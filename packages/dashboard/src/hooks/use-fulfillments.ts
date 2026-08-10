@@ -1,4 +1,9 @@
-import type { FulfillmentCreateParams, FulfillmentSplitParams } from '@spree/admin-sdk'
+import {
+  type FulfillmentCreateParams,
+  type FulfillmentFulfillParams,
+  type FulfillmentSplitParams,
+  SpreeError,
+} from '@spree/admin-sdk'
 import { adminClient, useResourceKeyBuilder } from '@spree/dashboard-core'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -7,6 +12,9 @@ import { toast } from 'sonner'
  * A fulfillment mutation refreshes the order itself — every one of these moves
  * units, re-prices the fulfillment, or both, and the order totals and
  * fulfillment status are derived from that.
+ *
+ * A 422 is left untoasted: the caller is a form that renders the same message
+ * next to the offending input, so toasting it too would say it twice.
  */
 function useFulfillmentMutation<TParams>(
   orderId: string,
@@ -21,6 +29,7 @@ function useFulfillmentMutation<TParams>(
       queryClient.invalidateQueries({ queryKey: buildKey('orders', orderId) })
     },
     onError: (error) => {
+      if (error instanceof SpreeError && error.status === 422) return
       toast.error(error instanceof Error ? error.message : String(error))
     },
   })
@@ -55,8 +64,19 @@ export function useFulfillmentActions(orderId: string) {
       adminClient.orders.fulfillments.split(orderId, fulfillmentId, params),
   )
 
-  const fulfill = useFulfillmentMutation(orderId, (fulfillmentId: string) =>
-    adminClient.orders.fulfillments.fulfill(orderId, fulfillmentId),
+  // Accepts a bare id (ship everything) or an id plus the quantities to ship,
+  // the tracking number and whether the customer is notified. Passing items
+  // splits them off into a new fulfillment which is the one that ships, so the
+  // response's id is not the one that was addressed.
+  const fulfill = useFulfillmentMutation(
+    orderId,
+    (params: string | ({ fulfillmentId: string } & FulfillmentFulfillParams)) => {
+      if (typeof params === 'string') {
+        return adminClient.orders.fulfillments.fulfill(orderId, params)
+      }
+      const { fulfillmentId, ...rest } = params
+      return adminClient.orders.fulfillments.fulfill(orderId, fulfillmentId, rest)
+    },
   )
 
   const cancel = useFulfillmentMutation(orderId, (fulfillmentId: string) =>

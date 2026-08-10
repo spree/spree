@@ -1811,7 +1811,6 @@
           "resume_failed": "Failed to resume order"
         },
         "fulfillments": {
-          "add_item": "Add item",
           "confirm_split": "Move these units into a new fulfillment? This takes effect immediately.",
           "create_description": "Creates a fulfillment and moves the chosen quantities into it.",
           "create_items": "Items",
@@ -1846,9 +1845,6 @@
           "requires_customer": "Requires a customer",
           "store_credit_label": "Store credit",
           "title": "Discounts & Credit"
-        },
-        "items_table": {
-          "item_actions": "Actions for {{name}}"
         },
         "load_failed_message": "We couldn't load order {{orderId}}.",
         "messages": {
@@ -1893,10 +1889,6 @@
           "tax_included": "Tax (included)"
         },
         "tracking": {
-          "add_title": "Add Tracking",
-          "description": "Update the tracking number for this shipment.",
-          "edit_title": "Edit Tracking",
-          "label": "Tracking Number",
           "prefix": "Tracking",
           "shipped_prefix": "Shipped"
         },
@@ -1906,6 +1898,46 @@
           "label": "Search variant",
           "placeholder": "Type product name or SKU (min 3 chars)…",
           "sku_prefix": "SKU"
+        }
+      },
+      "edit": {
+        "action_label": "Edit order",
+        "actions": {
+          "add_product": "Add product",
+          "edit_quantity_for": "Edit quantity of {{name}}",
+          "remove": "Remove",
+          "remove_item": "Remove {{name}}"
+        },
+        "columns": {
+          "line_total": "Line total",
+          "product": "Product",
+          "unit_price": "Unit price"
+        },
+        "confirm": {
+          "remove_message": "Remove \"{{name}}\" from this order? This takes effect immediately and the order totals are recalculated.",
+          "remove_title": "Remove line item"
+        },
+        "empty": "This order has no items.",
+        "items_title": "Items",
+        "subtitle": "Order {{number}}",
+        "title": "Edit order",
+        "totals_hint": "Totals are recalculated by the server after each change.",
+        "totals_title": "Totals"
+      },
+      "fulfill": {
+        "action": "Mark as fulfilled",
+        "empty": "This fulfillment holds no items that can be shipped.",
+        "include_item": "Ship {{name}}",
+        "notify_customer": "Send shipment notification to customer",
+        "of_units": "of {{count}}",
+        "partial_hint": "The units you picked move into a new fulfillment that ships now. The rest stay on this one, still open.",
+        "quantity_for": "Quantity to ship of {{name}}",
+        "submit": "Fulfill items",
+        "tracking_label": "Tracking number",
+        "tracking_placeholder": "Tracking number or link",
+        "units_selected": "Units to ship",
+        "validation": {
+          "quantity_invalid": "Enter a whole number of units."
         }
       },
       "fulfillment_statuses": {

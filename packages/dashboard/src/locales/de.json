@@ -1811,7 +1811,6 @@
           "resume_failed": "Auftrag konnte nicht wieder aufgenommen werden"
         },
         "fulfillments": {
-          "add_item": "Artikel hinzufügen",
           "confirm_split": "Diese Einheiten in eine neue Sendung verschieben? Die Änderung wird sofort wirksam.",
           "create_description": "Erstellt eine Sendung und verschiebt die gewählten Mengen hinein.",
           "create_items": "Artikel",
@@ -1846,9 +1845,6 @@
           "requires_customer": "Erfordert einen Kunden",
           "store_credit_label": "Guthaben",
           "title": "Rabatte & Guthaben"
-        },
-        "items_table": {
-          "item_actions": "Aktionen für {{name}}"
         },
         "load_failed_message": "Auftrag {{orderId}} konnte nicht geladen werden.",
         "messages": {
@@ -1893,10 +1889,6 @@
           "tax_included": "Steuer (inklusive)"
         },
         "tracking": {
-          "add_title": "Sendungsverfolgung hinzufügen",
-          "description": "Aktualisieren Sie die Sendungsnummer für diese Lieferung.",
-          "edit_title": "Sendungsverfolgung bearbeiten",
-          "label": "Sendungsnummer",
           "prefix": "Tracking",
           "shipped_prefix": "Versendet"
         },
@@ -1906,6 +1898,46 @@
           "label": "Variante suchen",
           "placeholder": "Produktname oder SKU eingeben (min. 3 Zeichen)…",
           "sku_prefix": "SKU"
+        }
+      },
+      "edit": {
+        "action_label": "Bestellung bearbeiten",
+        "actions": {
+          "add_product": "Produkt hinzufügen",
+          "edit_quantity_for": "Menge von {{name}} bearbeiten",
+          "remove": "Entfernen",
+          "remove_item": "{{name}} entfernen"
+        },
+        "columns": {
+          "line_total": "Positionssumme",
+          "product": "Produkt",
+          "unit_price": "Einzelpreis"
+        },
+        "confirm": {
+          "remove_message": "„{{name}}“ aus dieser Bestellung entfernen? Dies wird sofort wirksam und die Bestellsummen werden neu berechnet.",
+          "remove_title": "Position entfernen"
+        },
+        "empty": "Diese Bestellung enthält keine Artikel.",
+        "items_title": "Artikel",
+        "subtitle": "Bestellung {{number}}",
+        "title": "Bestellung bearbeiten",
+        "totals_hint": "Die Summen werden nach jeder Änderung vom Server neu berechnet.",
+        "totals_title": "Summen"
+      },
+      "fulfill": {
+        "action": "Als versendet markieren",
+        "empty": "Diese Sendung enthält keine versandfähigen Artikel.",
+        "include_item": "{{name}} versenden",
+        "notify_customer": "Versandbenachrichtigung an Kundin oder Kunden senden",
+        "of_units": "von {{count}}",
+        "partial_hint": "Die ausgewählten Einheiten wandern in eine neue Sendung, die jetzt versendet wird. Der Rest bleibt offen in dieser Sendung.",
+        "quantity_for": "Zu versendende Menge von {{name}}",
+        "submit": "Artikel versenden",
+        "tracking_label": "Sendungsnummer",
+        "tracking_placeholder": "Sendungsnummer oder Link",
+        "units_selected": "Zu versendende Einheiten",
+        "validation": {
+          "quantity_invalid": "Bitte eine ganze Zahl an Einheiten eingeben."
         }
       },
       "fulfillment_statuses": {

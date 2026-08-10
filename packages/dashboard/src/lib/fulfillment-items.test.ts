@@ -4,7 +4,6 @@ import {
   type GroupableFulfillment,
   type GroupableLineItem,
   hasFulfillableUnits,
-  isRemovableRow,
   unfulfilledItemRows,
 } from './fulfillment-items'
 
@@ -147,37 +146,6 @@ describe('unfulfilledItemRows', () => {
     )
 
     expect(rows[0].quantity).toBe(2)
-  })
-})
-
-describe('isRemovableRow', () => {
-  it('allows removing a row holding every unit of its line item', () => {
-    const [row] = fulfillmentItemRows(
-      fulfillment({ fulfillment_items: [{ line_item_id: 'li_1', quantity: 2 }] }),
-      [lineItem({ quantity: 2 })],
-    )
-
-    expect(isRemovableRow(row)).toBe(true)
-  })
-
-  // The other units live in a different group; deleting the line item would
-  // silently take those too.
-  it('refuses a row holding only part of its line item', () => {
-    const [row] = fulfillmentItemRows(
-      fulfillment({ fulfillment_items: [{ line_item_id: 'li_1', quantity: 1 }] }),
-      [lineItem({ quantity: 3 })],
-    )
-
-    expect(isRemovableRow(row)).toBe(false)
-  })
-
-  it('refuses a row with no line item behind it', () => {
-    const [row] = fulfillmentItemRows(
-      fulfillment({ fulfillment_items: [{ variant_id: 'variant_9', quantity: 1 }] }),
-      [],
-    )
-
-    expect(isRemovableRow(row)).toBe(false)
   })
 })
 

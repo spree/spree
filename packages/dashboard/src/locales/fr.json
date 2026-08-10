@@ -1811,7 +1811,6 @@
           "resume_failed": "Échec de la reprise de la commande"
         },
         "fulfillments": {
-          "add_item": "Ajouter un article",
           "confirm_split": "Déplacer ces unités vers une nouvelle expédition ? L'effet est immédiat.",
           "create_description": "Crée une expédition et y déplace les quantités choisies.",
           "create_items": "Articles",
@@ -1846,9 +1845,6 @@
           "requires_customer": "Nécessite un client",
           "store_credit_label": "Avoir",
           "title": "Remises et avoirs"
-        },
-        "items_table": {
-          "item_actions": "Actions pour {{name}}"
         },
         "load_failed_message": "Impossible de charger la commande {{orderId}}.",
         "messages": {
@@ -1893,10 +1889,6 @@
           "tax_included": "Taxe (incluse)"
         },
         "tracking": {
-          "add_title": "Ajouter un suivi",
-          "description": "Mettez à jour le numéro de suivi de cet envoi.",
-          "edit_title": "Modifier le suivi",
-          "label": "Numéro de suivi",
           "prefix": "Suivi",
           "shipped_prefix": "Expédié"
         },
@@ -1906,6 +1898,46 @@
           "label": "Rechercher une variante",
           "placeholder": "Saisissez le nom du produit ou le SKU (3 caractères min.)…",
           "sku_prefix": "SKU"
+        }
+      },
+      "edit": {
+        "action_label": "Modifier la commande",
+        "actions": {
+          "add_product": "Ajouter un produit",
+          "edit_quantity_for": "Modifier la quantité de {{name}}",
+          "remove": "Retirer",
+          "remove_item": "Retirer {{name}}"
+        },
+        "columns": {
+          "line_total": "Total de la ligne",
+          "product": "Produit",
+          "unit_price": "Prix unitaire"
+        },
+        "confirm": {
+          "remove_message": "Retirer « {{name}} » de cette commande ? Cela prend effet immédiatement et les totaux de la commande sont recalculés.",
+          "remove_title": "Retirer la ligne"
+        },
+        "empty": "Cette commande ne contient aucun article.",
+        "items_title": "Articles",
+        "subtitle": "Commande {{number}}",
+        "title": "Modifier la commande",
+        "totals_hint": "Les totaux sont recalculés par le serveur après chaque modification.",
+        "totals_title": "Totaux"
+      },
+      "fulfill": {
+        "action": "Marquer comme expédié",
+        "empty": "Cette expédition ne contient aucun article expédiable.",
+        "include_item": "Expédier {{name}}",
+        "notify_customer": "Envoyer la notification d'expédition au client",
+        "of_units": "sur {{count}}",
+        "partial_hint": "Les unités choisies passent dans une nouvelle expédition qui part maintenant. Le reste demeure sur celle-ci, toujours ouverte.",
+        "quantity_for": "Quantité à expédier de {{name}}",
+        "submit": "Expédier des articles",
+        "tracking_label": "Numéro de suivi",
+        "tracking_placeholder": "Numéro de suivi ou lien",
+        "units_selected": "Unités à expédier",
+        "validation": {
+          "quantity_invalid": "Saisissez un nombre entier d'unités."
         }
       },
       "fulfillment_statuses": {

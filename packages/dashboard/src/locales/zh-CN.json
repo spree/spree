@@ -1808,7 +1808,6 @@
           "resume_failed": "恢复订单失败"
         },
         "fulfillments": {
-          "add_item": "添加商品",
           "confirm_split": "将这些数量移入新的发货单？此操作立即生效。",
           "create_description": "创建发货单并将所选数量移入其中。",
           "create_items": "商品项",
@@ -1842,9 +1841,6 @@
           "requires_customer": "需要客户",
           "store_credit_label": "店铺积分",
           "title": "折扣与余额"
-        },
-        "items_table": {
-          "item_actions": "{{name}} 的操作"
         },
         "load_failed_message": "无法加载订单 {{orderId}}。",
         "messages": {
@@ -1889,10 +1885,6 @@
           "tax_included": "税（含）"
         },
         "tracking": {
-          "add_title": "添加物流单号",
-          "description": "更新此发货单的物流单号。",
-          "edit_title": "编辑物流单号",
-          "label": "物流单号",
           "prefix": "物流",
           "shipped_prefix": "已发货"
         },
@@ -1902,6 +1894,46 @@
           "label": "搜索变体",
           "placeholder": "输入商品名称或 SKU（至少 3 个字符）…",
           "sku_prefix": "SKU"
+        }
+      },
+      "edit": {
+        "action_label": "编辑订单",
+        "actions": {
+          "add_product": "添加商品",
+          "edit_quantity_for": "编辑 {{name}} 的数量",
+          "remove": "移除",
+          "remove_item": "移除 {{name}}"
+        },
+        "columns": {
+          "line_total": "小计",
+          "product": "商品",
+          "unit_price": "单价"
+        },
+        "confirm": {
+          "remove_message": "要从此订单中移除“{{name}}”吗？此操作将立即生效，订单金额会重新计算。",
+          "remove_title": "移除订单行"
+        },
+        "empty": "此订单没有商品。",
+        "items_title": "商品",
+        "subtitle": "订单 {{number}}",
+        "title": "编辑订单",
+        "totals_hint": "每次更改后，服务器都会重新计算金额。",
+        "totals_title": "金额"
+      },
+      "fulfill": {
+        "action": "标记为已发货",
+        "empty": "此发货单中没有可发货的商品。",
+        "include_item": "发货 {{name}}",
+        "notify_customer": "向客户发送发货通知",
+        "of_units": "共 {{count}}",
+        "partial_hint": "所选数量将移入一个新的发货单并立即发货，其余部分留在当前发货单中并保持开启。",
+        "quantity_for": "{{name}} 的发货数量",
+        "submit": "发货商品",
+        "tracking_label": "物流单号",
+        "tracking_placeholder": "物流单号或链接",
+        "units_selected": "待发货数量",
+        "validation": {
+          "quantity_invalid": "请输入整数数量。"
         }
       },
       "fulfillment_statuses": {

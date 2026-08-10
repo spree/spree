@@ -1,5 +1,4 @@
 import type { Fulfillment, Order } from '@spree/admin-sdk'
-import { adminClient } from '@spree/dashboard-core'
 import {
   Badge,
   Button,
@@ -42,14 +41,12 @@ import {
   PlusIcon,
   RotateCcwIcon,
   SplitIcon,
-  TagIcon,
   TruckIcon,
   XCircleIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
-import { useOrderMutation } from '../../../hooks/use-order'
 import { useStockLocations } from '../../../hooks/use-stock-locations'
 import {
   type FulfillmentItemRow,
@@ -58,8 +55,8 @@ import {
   unfulfilledItemRows,
 } from '../../../lib/fulfillment-items'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
+import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentItemList } from './fulfillment-item-list'
-import { AddLineItemDialog, EditQuantityDialog } from './line-item-dialogs'
 
 /**
  * A unit sitting in one fulfillment. Splitting moves units per variant rather
@@ -95,62 +92,6 @@ function orderUnits(order: Order): Array<{ itemId: string; label: string; quanti
     label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
     quantity: item.quantity,
   }))
-}
-
-function EditTrackingDialog({
-  orderId,
-  fulfillment,
-  open,
-  onOpenChange,
-}: {
-  orderId: string
-  fulfillment: Fulfillment
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) {
-  const { t } = useTranslation()
-  const { update } = useFulfillmentActions(orderId)
-  const [tracking, setTracking] = useState(fulfillment.tracking ?? '')
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.orders.detail.tracking.edit_title')}</DialogTitle>
-          <DialogDescription>{t('admin.orders.detail.tracking.description')}</DialogDescription>
-        </DialogHeader>
-        <DialogBody>
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="tracking">{t('admin.orders.detail.tracking.label')}</FieldLabel>
-              <Input
-                id="tracking"
-                value={tracking}
-                onChange={(event) => setTracking(event.target.value)}
-              />
-            </Field>
-          </FieldGroup>
-        </DialogBody>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            {t('admin.actions.cancel')}
-          </Button>
-          <Button
-            type="button"
-            disabled={update.isPending}
-            onClick={() =>
-              update.mutate(
-                { fulfillmentId: fulfillment.id, tracking },
-                { onSuccess: () => onOpenChange(false) },
-              )
-            }
-          >
-            {update.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
 }
 
 /**
@@ -440,42 +381,25 @@ function CreateFulfillmentDialog({
   )
 }
 
-// Which transitions the backend's state machine actually offers, so the menu
+// Which transitions the backend's state machine actually offers, so the card
 // does not present an action that can only 422.
 const CAN_SHIP = ['ready', 'ready_for_pickup']
 const CAN_CANCEL = ['pending', 'ready', 'ready_for_pickup']
 const CAN_EDIT = ['pending', 'ready', 'ready_for_pickup']
 
-/**
- * Editing a line item is an order-level operation, so one set of handlers is
- * shared by every group that displays that line item rather than each group
- * owning its own dialog and mutation.
- */
-type LineItemActions = {
-  edit: (row: FulfillmentItemRow) => void
-  remove: (row: FulfillmentItemRow) => void
-}
-
-function FulfillmentRow({
-  order,
-  fulfillment,
-  itemActions,
-}: {
-  order: Order
-  fulfillment: Fulfillment
-  itemActions: LineItemActions
-}) {
+function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const orderId = order.id
-  const { fulfill, cancel, resume } = useFulfillmentActions(orderId)
+  const { cancel, resume } = useFulfillmentActions(orderId)
 
   const [editOpen, setEditOpen] = useState(false)
-  const [trackingOpen, setTrackingOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
+  const [fulfilling, setFulfilling] = useState(false)
 
   const editable = CAN_EDIT.includes(fulfillment.status)
   const splittable = editable && unitsOf(fulfillment).length > 0
+  const shippable = CAN_SHIP.includes(fulfillment.status)
 
   return (
     <div className="rounded-lg border p-4 flex flex-col gap-3">
@@ -498,36 +422,10 @@ function FulfillmentRow({
               </DropdownMenuItem>
             )}
 
-            <DropdownMenuItem onClick={() => setTrackingOpen(true)}>
-              <TagIcon className="size-4" />
-              {fulfillment.tracking
-                ? t('admin.orders.detail.tracking.edit_title')
-                : t('admin.orders.detail.tracking.add_title')}
-            </DropdownMenuItem>
-
             {splittable && (
               <DropdownMenuItem onClick={() => setSplitOpen(true)}>
                 <SplitIcon className="size-4" />
                 {t('admin.orders.detail.fulfillments.split')}
-              </DropdownMenuItem>
-            )}
-
-            {CAN_SHIP.includes(fulfillment.status) && (
-              <DropdownMenuItem
-                onClick={async () => {
-                  if (
-                    await confirm({
-                      message: t('admin.orders.detail.confirm.ship_message'),
-                      variant: 'default',
-                      confirmLabel: t('admin.pages.orders.detail.actions.ship'),
-                    })
-                  ) {
-                    fulfill.mutate(fulfillment.id)
-                  }
-                }}
-              >
-                <TruckIcon className="size-4" />
-                {t('admin.pages.orders.detail.actions.ship')}
               </DropdownMenuItem>
             )}
 
@@ -580,7 +478,7 @@ function FulfillmentRow({
         </div>
       )}
 
-      {fulfillment.tracking && (
+      {fulfillment.tracking && !fulfilling && (
         <div className="text-sm">
           <span className="text-muted-foreground">
             {t('admin.orders.detail.tracking.prefix')}:{' '}
@@ -610,11 +508,26 @@ function FulfillmentRow({
         </span>
       )}
 
-      <FulfillmentItemList
-        rows={fulfillmentItemRows(fulfillment, order.items ?? [])}
-        onEdit={itemActions.edit}
-        onRemove={itemActions.remove}
-      />
+      {fulfilling ? (
+        <FulfillmentFulfillForm
+          order={order}
+          fulfillment={fulfillment}
+          onDone={() => setFulfilling(false)}
+        />
+      ) : (
+        <>
+          <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
+
+          {shippable && (
+            <div className="flex justify-end">
+              <Button type="button" size="sm" onClick={() => setFulfilling(true)}>
+                <TruckIcon data-icon="inline-start" />
+                {t('admin.orders.fulfill.action')}
+              </Button>
+            </div>
+          )}
+        </>
+      )}
 
       {editOpen && (
         <FulfillmentEditDialog
@@ -622,15 +535,6 @@ function FulfillmentRow({
           fulfillment={fulfillment}
           open={editOpen}
           onOpenChange={setEditOpen}
-        />
-      )}
-
-      {trackingOpen && (
-        <EditTrackingDialog
-          orderId={orderId}
-          fulfillment={fulfillment}
-          open={trackingOpen}
-          onOpenChange={setTrackingOpen}
         />
       )}
 
@@ -651,13 +555,7 @@ function FulfillmentRow({
  * so the eye can compare it against the real ones, minus the status and number
  * it does not have.
  */
-function UnfulfilledGroup({
-  rows,
-  itemActions,
-}: {
-  rows: FulfillmentItemRow[]
-  itemActions: LineItemActions
-}) {
+function UnfulfilledGroup({ rows }: { rows: FulfillmentItemRow[] }) {
   const { t } = useTranslation()
 
   const totalUnits = rows.reduce((sum, row) => sum + row.quantity, 0)
@@ -671,7 +569,7 @@ function UnfulfilledGroup({
         </span>
       </div>
 
-      <FulfillmentItemList rows={rows} onEdit={itemActions.edit} onRemove={itemActions.remove} />
+      <FulfillmentItemList rows={rows} />
     </div>
   )
 }
@@ -689,24 +587,10 @@ function UnfulfilledGroup({
 export function FulfillmentsCard({ order }: { order: Order }) {
   const { t } = useTranslation()
   const [createOpen, setCreateOpen] = useState(false)
-  const [addItemOpen, setAddItemOpen] = useState(false)
-  const [editItem, setEditItem] = useState<{ id: string; quantity: number } | null>(null)
 
   const fulfillments = order.fulfillments ?? []
   const lineItems = order.items ?? []
   const unfulfilled = unfulfilledItemRows(lineItems, fulfillments)
-
-  const deleteMutation = useOrderMutation(order.id, (lineItemId: string) =>
-    adminClient.orders.items.delete(order.id, lineItemId),
-  )
-
-  // Shared by every group: the row shows units, but both actions act on the
-  // line item behind them, which is the same record wherever it is displayed.
-  const itemActions: LineItemActions = {
-    edit: (row) =>
-      row.lineItem && setEditItem({ id: row.lineItem.id, quantity: row.lineItem.quantity }),
-    remove: (row) => row.lineItem && deleteMutation.mutate(row.lineItem.id),
-  }
 
   // Manual creation is a completed-order operation: Fulfillments::Create
   // rejects it otherwise ("Fulfillments can only be created manually on
@@ -728,10 +612,6 @@ export function FulfillmentsCard({ order }: { order: Order }) {
           </CardTitle>
           <CardAction className="flex items-center gap-2">
             {order.fulfillment_status && <StatusBadge status={order.fulfillment_status} />}
-            <Button size="sm" variant="outline" onClick={() => setAddItemOpen(true)}>
-              <PlusIcon data-icon="inline-start" />
-              {t('admin.orders.detail.fulfillments.add_item')}
-            </Button>
             {canCreate && (
               <Button size="sm" variant="outline" onClick={() => setCreateOpen(true)}>
                 <PlusIcon data-icon="inline-start" />
@@ -748,16 +628,9 @@ export function FulfillmentsCard({ order }: { order: Order }) {
           </CardContent>
         ) : (
           <CardContent className="flex flex-col gap-4">
-            {unfulfilled.length > 0 && (
-              <UnfulfilledGroup rows={unfulfilled} itemActions={itemActions} />
-            )}
+            {unfulfilled.length > 0 && <UnfulfilledGroup rows={unfulfilled} />}
             {fulfillments.map((fulfillment) => (
-              <FulfillmentRow
-                key={fulfillment.id}
-                order={order}
-                fulfillment={fulfillment}
-                itemActions={itemActions}
-              />
+              <FulfillmentRow key={fulfillment.id} order={order} fulfillment={fulfillment} />
             ))}
           </CardContent>
         )}
@@ -765,18 +638,6 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 
       {createOpen && (
         <CreateFulfillmentDialog order={order} open={createOpen} onOpenChange={setCreateOpen} />
-      )}
-
-      <AddLineItemDialog orderId={order.id} open={addItemOpen} onOpenChange={setAddItemOpen} />
-
-      {editItem && (
-        <EditQuantityDialog
-          orderId={order.id}
-          lineItemId={editItem.id}
-          currentQuantity={editItem.quantity}
-          open={!!editItem}
-          onOpenChange={(open) => !open && setEditItem(null)}
-        />
       )}
     </>
   )
