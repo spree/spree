@@ -39,6 +39,7 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { CustomFieldsInlineCard } from '../../../../components/spree/custom-fields/custom-fields-inline'
 import { MediaRichTextEditor } from '../../../../components/spree/media-rich-text-editor'
+import { DigitalAssetsCard } from '../../../../components/spree/products/digital-assets-card'
 import { ProductCustomFieldsProvider } from '../../../../components/spree/products/product-custom-fields-provider'
 import { ProductReviewActions } from '../../../../components/spree/products/product-review-actions'
 import { ProductSellerCard } from '../../../../components/spree/products/product-seller-card'
@@ -282,6 +283,7 @@ function ProductForm({ product }: { product: Product }) {
               <GeneralCard form={form} descriptionEditor={MediaRichTextEditor} />
               <VariantsCard form={form} />
               <MediaCard productId={productId} variants={assignableVariants} form={form} />
+              <DigitalAssetsCard productId={productId} variants={assignableVariants} />
               <PricesCard form={form} productName={product.name} />
               <InventoryCard
                 form={form}

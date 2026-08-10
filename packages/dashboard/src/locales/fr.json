@@ -825,6 +825,44 @@
       "to_placeholder": "À",
       "toggle_states": "Afficher les régions de {{country}}"
     },
+    "digital_assets": {
+      "all_variants": "Toutes les variantes",
+      "columns": {
+        "file": "Fichier",
+        "variant": "Variante",
+        "size": "Taille",
+        "downloads": "Téléchargements",
+        "days": "Jours"
+      },
+      "delete_description": "« {{name}} » ne sera plus téléchargeable par les personnes qui l'ont acheté. Effet immédiat.",
+      "delete_title": "Supprimer ce fichier ?",
+      "description": "Fichiers que les acheteurs peuvent télécharger après l'achat. Associez-les à un produit numérique, ou à un produit physique pour livrer un manuel ou une garantie.",
+      "empty": "Aucun fichier pour le moment",
+      "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
+      "title": "Fichiers numériques",
+      "untitled": "Fichier sans nom",
+      "upload": "Ajouter un fichier",
+      "uploading": "Téléversement de {{name}}…"
+    },
+    "digital_links": {
+      "columns": {
+        "file": "Fichier",
+        "item": "Article",
+        "downloads": "Téléchargements utilisés",
+        "expires": "Expire le",
+        "status": "Statut"
+      },
+      "never_expires": "Pas d'expiration",
+      "reset": "Réinitialiser",
+      "reset_description": "Le client obtient de nouveaux téléchargements pour « {{name}} » et le délai d'expiration repart à zéro.",
+      "reset_title": "Rétablir l'accès au téléchargement ?",
+      "status": {
+        "available": "Disponible",
+        "expired": "Expiré",
+        "used_up": "Plus de téléchargements"
+      },
+      "title": "Téléchargements"
+    },
     "enterprise": {
       "learn_more": "En savoir plus sur Spree Enterprise"
     },
@@ -1874,6 +1912,20 @@
         "track_price_history": {
           "help": "Conserver les anciens prix afin d’afficher le prix le plus bas des 30 derniers jours, comme l’exige la réglementation européenne.",
           "label": "Enregistrer l’historique des prix"
+        },
+        "limit_digital_download_count": {
+          "help": "Désactivé, les acheteurs peuvent télécharger autant de fois qu'ils le souhaitent.",
+          "label": "Limiter le nombre de téléchargements"
+        },
+        "digital_asset_authorized_clicks": {
+          "label": "Téléchargements autorisés"
+        },
+        "limit_digital_download_days": {
+          "help": "Désactivé, les liens de téléchargement n'expirent jamais.",
+          "label": "Limiter la période de téléchargement"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Jours de disponibilité"
         }
       },
       "store_credit": {
@@ -3219,7 +3271,9 @@
           "tab_payments": "Paiements",
           "tab_standards": "Normes et formats",
           "tab_storefront_access": "Accès à la vitrine",
-          "title": "Paramètres de la boutique"
+          "title": "Paramètres de la boutique",
+          "tab_downloads": "Téléchargements numériques",
+          "downloads_help": "Durée de validité d'un lien de téléchargement et nombre d'utilisations possibles. Chaque fichier peut remplacer ces valeurs."
         },
         "tax_categories": {
           "add_sheet_title": "Ajouter une catégorie de taxe",

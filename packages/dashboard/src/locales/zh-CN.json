@@ -820,6 +820,44 @@
       "to_placeholder": "止",
       "toggle_states": "显示 {{country}} 的省/州"
     },
+    "digital_assets": {
+      "all_variants": "所有变体",
+      "columns": {
+        "file": "文件",
+        "variant": "变体",
+        "size": "大小",
+        "downloads": "下载次数",
+        "days": "天数"
+      },
+      "delete_description": "购买过“{{name}}”的人将无法再下载它。此操作立即生效。",
+      "delete_title": "删除此文件？",
+      "description": "买家购买后可下载的文件。可附加到数字商品，也可附加到实体商品以随货提供说明书或保修卡。",
+      "empty": "暂无文件",
+      "limits_help": "将下载次数和天数限制留空即可使用商店设置。",
+      "title": "数字文件",
+      "untitled": "未命名文件",
+      "upload": "添加文件",
+      "uploading": "正在上传 {{name}}…"
+    },
+    "digital_links": {
+      "columns": {
+        "file": "文件",
+        "item": "商品",
+        "downloads": "已用下载次数",
+        "expires": "到期时间",
+        "status": "状态"
+      },
+      "never_expires": "不过期",
+      "reset": "重置",
+      "reset_description": "客户将获得“{{name}}”的全新下载次数，过期时间重新开始计算。",
+      "reset_title": "恢复下载权限？",
+      "status": {
+        "available": "可用",
+        "expired": "已过期",
+        "used_up": "下载次数已用完"
+      },
+      "title": "下载"
+    },
     "enterprise": {
       "learn_more": "了解 Spree Enterprise"
     },
@@ -1869,6 +1907,20 @@
         "track_price_history": {
           "help": "保留历史价格，以便店铺按欧盟规定显示最近 30 天的最低价。",
           "label": "记录价格历史"
+        },
+        "limit_digital_download_count": {
+          "help": "关闭后，买家可以不限次数下载。",
+          "label": "限制下载次数"
+        },
+        "digital_asset_authorized_clicks": {
+          "label": "允许的下载次数"
+        },
+        "limit_digital_download_days": {
+          "help": "关闭后，下载链接永不过期。",
+          "label": "限制下载期限"
+        },
+        "digital_asset_authorized_days": {
+          "label": "可用天数"
         }
       },
       "store_credit": {
@@ -3211,7 +3263,9 @@
           "tab_payments": "支付",
           "tab_standards": "标准与格式",
           "tab_storefront_access": "店铺访问权限",
-          "title": "店铺设置"
+          "title": "店铺设置",
+          "tab_downloads": "数字下载",
+          "downloads_help": "下载链接的有效期以及可使用的次数。单个文件可覆盖这些数值。"
         },
         "tax_categories": {
           "add_sheet_title": "添加税收类别",

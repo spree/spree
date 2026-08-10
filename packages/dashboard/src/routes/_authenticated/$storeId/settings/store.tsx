@@ -148,6 +148,10 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_order_number_sequence_start: Number(
       store.preferred_order_number_sequence_start ?? 1001,
     ),
+    preferred_limit_digital_download_count: store.preferred_limit_digital_download_count ?? true,
+    preferred_digital_asset_authorized_clicks: store.preferred_digital_asset_authorized_clicks ?? 5,
+    preferred_limit_digital_download_days: store.preferred_limit_digital_download_days ?? true,
+    preferred_digital_asset_authorized_days: store.preferred_digital_asset_authorized_days ?? 7,
   }
 }
 
@@ -272,6 +276,10 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_order_number_prefix: values.preferred_order_number_prefix,
         preferred_order_number_suffix: values.preferred_order_number_suffix,
         preferred_order_number_sequence_start: values.preferred_order_number_sequence_start,
+        preferred_limit_digital_download_count: values.preferred_limit_digital_download_count,
+        preferred_digital_asset_authorized_clicks: values.preferred_digital_asset_authorized_clicks,
+        preferred_limit_digital_download_days: values.preferred_limit_digital_download_days,
+        preferred_digital_asset_authorized_days: values.preferred_digital_asset_authorized_days,
         ...extensionValues,
       })
       toastManager.add({ type: 'success', title: t('admin.messages.store_settings_updated') })
@@ -821,6 +829,102 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       name="preferred_disable_sku_validation"
                       control={form.control}
                     />
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_downloads')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <p className="text-muted-foreground text-sm">
+                      {t('admin.pages.settings.store.downloads_help')}
+                    </p>
+                    <Field>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col">
+                          <FieldLabel
+                            htmlFor="store-limit-download-count"
+                            className="cursor-pointer"
+                          >
+                            {t('admin.fields.store.limit_digital_download_count.label')}
+                          </FieldLabel>
+                          <span className="text-muted-foreground text-xs">
+                            {t('admin.fields.store.limit_digital_download_count.help')}
+                          </span>
+                        </div>
+                        <Controller
+                          name="preferred_limit_digital_download_count"
+                          control={form.control}
+                          render={({ field }) => (
+                            <Switch
+                              id="store-limit-download-count"
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          )}
+                        />
+                      </div>
+                    </Field>
+                    {form.watch('preferred_limit_digital_download_count') && (
+                      <Field>
+                        <FieldLabel htmlFor="store-authorized-clicks">
+                          {t('admin.fields.store.digital_asset_authorized_clicks.label')}
+                        </FieldLabel>
+                        <Input
+                          id="store-authorized-clicks"
+                          type="number"
+                          min={1}
+                          {...form.register('preferred_digital_asset_authorized_clicks')}
+                        />
+                        <FieldError
+                          errors={[form.formState.errors.preferred_digital_asset_authorized_clicks]}
+                        />
+                      </Field>
+                    )}
+                    <Field>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col">
+                          <FieldLabel
+                            htmlFor="store-limit-download-days"
+                            className="cursor-pointer"
+                          >
+                            {t('admin.fields.store.limit_digital_download_days.label')}
+                          </FieldLabel>
+                          <span className="text-muted-foreground text-xs">
+                            {t('admin.fields.store.limit_digital_download_days.help')}
+                          </span>
+                        </div>
+                        <Controller
+                          name="preferred_limit_digital_download_days"
+                          control={form.control}
+                          render={({ field }) => (
+                            <Switch
+                              id="store-limit-download-days"
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          )}
+                        />
+                      </div>
+                    </Field>
+                    {form.watch('preferred_limit_digital_download_days') && (
+                      <Field>
+                        <FieldLabel htmlFor="store-authorized-days">
+                          {t('admin.fields.store.digital_asset_authorized_days.label')}
+                        </FieldLabel>
+                        <Input
+                          id="store-authorized-days"
+                          type="number"
+                          min={1}
+                          {...form.register('preferred_digital_asset_authorized_days')}
+                        />
+                        <FieldError
+                          errors={[form.formState.errors.preferred_digital_asset_authorized_days]}
+                        />
+                      </Field>
+                    )}
                   </FieldGroup>
                 </CardContent>
               </Card>

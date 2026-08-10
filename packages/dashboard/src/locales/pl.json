@@ -843,6 +843,44 @@
       "to_placeholder": "Do",
       "toggle_states": "Pokaż regiony kraju {{country}}"
     },
+    "digital_assets": {
+      "all_variants": "Wszystkie warianty",
+      "columns": {
+        "file": "Plik",
+        "variant": "Wariant",
+        "size": "Rozmiar",
+        "downloads": "Pobrania",
+        "days": "Dni"
+      },
+      "delete_description": "„{{name}}” nie będzie już dostępny do pobrania dla osób, które go kupiły. Zmiana działa natychmiast.",
+      "delete_title": "Usunąć ten plik?",
+      "description": "Pliki, które kupujący mogą pobrać po zakupie. Dołącz je do produktu cyfrowego lub do fizycznego, aby dostarczyć instrukcję albo gwarancję.",
+      "empty": "Brak plików",
+      "limits_help": "Pozostaw limity pobrań i dni puste, aby użyć ustawień sklepu.",
+      "title": "Pliki cyfrowe",
+      "untitled": "Plik bez nazwy",
+      "upload": "Dodaj plik",
+      "uploading": "Przesyłanie {{name}}…"
+    },
+    "digital_links": {
+      "columns": {
+        "file": "Plik",
+        "item": "Pozycja",
+        "downloads": "Wykorzystane pobrania",
+        "expires": "Wygasa",
+        "status": "Status"
+      },
+      "never_expires": "Bez wygaśnięcia",
+      "reset": "Zresetuj",
+      "reset_description": "Klient otrzyma nowe pobrania pliku „{{name}}”, a czas wygaśnięcia zacznie biec od nowa.",
+      "reset_title": "Przywrócić dostęp do pobierania?",
+      "status": {
+        "available": "Dostępne",
+        "expired": "Wygasło",
+        "used_up": "Brak pobrań"
+      },
+      "title": "Pobrania"
+    },
     "enterprise": {
       "learn_more": "Dowiedz się więcej o Spree Enterprise"
     },
@@ -1892,6 +1930,20 @@
         "track_price_history": {
           "help": "Przechowuj poprzednie ceny, aby sklep mógł pokazać najniższą cenę z ostatnich 30 dni, zgodnie z przepisami UE.",
           "label": "Zapisuj historię cen"
+        },
+        "limit_digital_download_count": {
+          "help": "Wyłączone oznacza, że kupujący mogą pobierać dowolną liczbę razy.",
+          "label": "Ogranicz liczbę pobrań"
+        },
+        "digital_asset_authorized_clicks": {
+          "label": "Dozwolone pobrania"
+        },
+        "limit_digital_download_days": {
+          "help": "Wyłączone oznacza, że linki do pobrania nigdy nie wygasają.",
+          "label": "Ogranicz okres pobierania"
+        },
+        "digital_asset_authorized_days": {
+          "label": "Dostępne dni"
         }
       },
       "store_credit": {
@@ -3265,7 +3317,9 @@
           "tab_payments": "Płatności",
           "tab_standards": "Standardy i formaty",
           "tab_storefront_access": "Dostęp do sklepu",
-          "title": "Ustawienia sklepu"
+          "title": "Ustawienia sklepu",
+          "tab_downloads": "Pobrania cyfrowe",
+          "downloads_help": "Jak długo działa link do pobrania i ile razy można go użyć. Poszczególne pliki mogą nadpisać te wartości."
         },
         "tax_categories": {
           "add_sheet_title": "Dodaj kategorię podatkową",

@@ -72,6 +72,14 @@ export interface StoreUpdateParams {
   preferred_order_number_suffix?: string
   /** First sequential order number. Only applies before the store's first order. */
   preferred_order_number_sequence_start?: number
+  /** When false, buyers can download their files as often as they like. */
+  preferred_limit_digital_download_count?: boolean
+  /** Downloads allowed per purchased file, unless the file overrides it. */
+  preferred_digital_asset_authorized_clicks?: number
+  /** When false, download links never expire. */
+  preferred_limit_digital_download_days?: boolean
+  /** Days a download link stays valid, unless the file overrides it. */
+  preferred_digital_asset_authorized_days?: number
   /** Sender address used on all transactional emails (required by the model). */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront/email footer. */
@@ -581,6 +589,12 @@ export interface DirectUploadCreateParams {
     checksum: string
     content_type: string
   }
+  /**
+   * Upload to private storage rather than the public bucket. Needed for files
+   * only ever served through a signed link (digital assets) — attaching a blob
+   * never moves it between services, so this is decided at upload time.
+   */
+  private?: boolean
 }
 
 export type MediaType = 'image' | 'video' | 'external_video'
