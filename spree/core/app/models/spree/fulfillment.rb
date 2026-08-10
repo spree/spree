@@ -118,7 +118,11 @@ module Spree
       event :cancel do
         transition to: :canceled, from: %i(pending ready ready_for_pickup)
       end
-      after_transition to: :canceled, do: [:after_cancel, :publish_fulfillment_canceled_event]
+      # Restocking and the provider call live in Spree::Fulfillments::Cancel,
+      # not here: they are stock movements and network I/O, which have no
+      # business running inside the save transaction. Only the event publish
+      # stays, because it describes the status change itself.
+      after_transition to: :canceled, do: :publish_fulfillment_canceled_event
 
       event :resume do
         transition from: :canceled, to: :ready, if: lambda { |fulfillment|
@@ -126,7 +130,8 @@ module Spree
         }
         transition from: :canceled, to: :pending
       end
-      after_transition from: :canceled, to: %i(pending ready fulfilled), do: [:after_resume, :publish_fulfillment_resumed_event]
+      # Re-unstocking lives in Spree::Fulfillments::Resume — see above.
+      after_transition from: :canceled, to: %i(pending ready fulfilled), do: :publish_fulfillment_resumed_event
     end
 
     # @deprecated Use {#fulfill}; removed in 6.1.
@@ -213,12 +218,19 @@ module Spree
       add_delivery_method(delivery_method, selected)
     end
 
+    # @deprecated Cancel through {Spree::Fulfillments::Cancel}; removed in 6.1.
+    #   Restocking and the provider call are workflow steps now, so this no
+    #   longer runs as a transition callback. Kept only so a host app that
+    #   called it directly keeps working for one release.
     def after_cancel
+      Spree::Deprecation.warn('Spree::Fulfillment#after_cancel is deprecated and will be removed in Spree 6.1. Cancel through Spree::Fulfillments::Cancel instead.')
       manifest.each { |item| manifest_restock(item) }
       provider.cancel_fulfillment(self)
     end
 
+    # @deprecated Resume through {Spree::Fulfillments::Resume}; removed in 6.1.
     def after_resume
+      Spree::Deprecation.warn('Spree::Fulfillment#after_resume is deprecated and will be removed in Spree 6.1. Resume through Spree::Fulfillments::Resume instead.')
       manifest.each { |item| manifest_unstock(item) }
     end
 

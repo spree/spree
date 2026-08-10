@@ -699,17 +699,23 @@ describe Spree::Shipment, type: :model do
   describe '#cancel' do
     let(:inventory_unit) { create(:inventory_unit, state: 'on_hand', line_item: line_item, variant: variant, quantity: 1) }
 
+    # Restocking is no longer a transition callback — it belongs to
+    # Spree::Fulfillments::Cancel, so the event only moves the status.
     it 'cancels the shipment' do
       allow(shipment.order).to receive(:recalculate_totals!)
 
       shipment.state = 'pending'
-      expect(shipment).to receive(:after_cancel)
+      expect(shipment).not_to receive(:after_cancel)
       shipment.cancel!
       expect(shipment.state).to eq 'canceled'
     end
 
-    it 'restocks the items' do
+    # Restocking belongs to Spree::Fulfillments::Cancel now; the deprecated
+    # shell is all that survives on the model. Covered by
+    # spec/workflows/spree/fulfillments/cancel_spec.rb.
+    it 'restocks the items through the deprecated shell' do
       allow(shipment).to receive(:fulfillment_items).and_return([inventory_unit])
+      allow(shipment).to receive(:provider).and_return(instance_double(Spree::FulfillmentProvider::Manual, cancel_fulfillment: true))
       shipment.stock_location = create(:stock_location)
       expect(shipment.stock_location).to receive(:restock).with(variant, 1, shipment)
       shipment.after_cancel
@@ -752,7 +758,7 @@ describe Spree::Shipment, type: :model do
 
       shipment.state = 'canceled'
       expect(shipment).to receive(:determine_state).and_return('ready')
-      expect(shipment).to receive(:after_resume)
+      expect(shipment).not_to receive(:after_resume)
       shipment.resume!
       expect(shipment.state).to eq 'ready'
     end
@@ -762,7 +768,7 @@ describe Spree::Shipment, type: :model do
 
       shipment.state = 'canceled'
       expect(shipment).to receive(:determine_state).and_return('pending')
-      expect(shipment).to receive(:after_resume)
+      expect(shipment).not_to receive(:after_resume)
       shipment.resume!
       # Shipment is pending because order is already paid
       expect(shipment.state).to eq 'pending'
@@ -797,9 +803,11 @@ describe Spree::Shipment, type: :model do
         allow(shipment_with_inventory_units).to receive_messages(require_inventory: false, update_order: true)
       end
 
-      it 'unstocks them items' do
-
-        expect(shipment_with_inventory_units.stock_location).to receive(:unstock)
+      # Taking the units back off the shelf moved to
+      # Spree::Fulfillments::Fulfill, so the bare transition no longer does it.
+      # See spec/workflows/spree/fulfillments/fulfill_spec.rb for the behavior.
+      it 'does not unstock on the bare transition' do
+        expect(shipment_with_inventory_units.stock_location).not_to receive(:unstock)
         subject
       end
     end
@@ -1163,9 +1171,12 @@ describe Spree::Shipment, type: :model do
     describe 'shipped state transition' do
       before { shipment.update_column(:tracking, 'TRACK123') }
 
+      # The fulfilled event carries notify_customer metadata so an admin can
+      # suppress the shipment email for one dispatch.
       it 'publishes shipment.shipped event' do
-        expect(shipment).to receive(:publish_event).with('shipment.shipped')
-        allow(shipment).to receive(:publish_event).with(anything)
+        expect(shipment).to receive(:publish_event).
+          with('shipment.shipped', nil, hash_including(notify_customer: true))
+        allow(shipment).to receive(:publish_event).with(any_args)
 
         shipment.ship!
       end

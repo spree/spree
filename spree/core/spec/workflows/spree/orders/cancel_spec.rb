@@ -9,6 +9,46 @@ module Spree
 
     let(:result) { subject.call(order: order, canceler: user) }
 
+    # Cancelling the order cancels its fulfillments through the fulfillment
+    # workflow rather than reimplementing the restock, so extension hooks and
+    # guards registered there apply to an order cancellation too.
+    describe 'fulfillments' do
+      let(:order) { create(:order_ready_to_ship, line_items_count: 1) }
+
+      before { Spree.hooks.clear! }
+      after { Spree.hooks.clear! }
+
+      it 'cancels each fulfillment through Fulfillments::Cancel' do
+        seen = []
+        Spree.hooks.register('fulfillments.cancel.after_cancel') { |flow| seen << flow.fulfillment }
+
+        subject.call(order: order, canceler: user)
+
+        expect(seen).to eq(order.fulfillments.to_a)
+        expect(order.fulfillments.reload).to all(be_canceled)
+      end
+
+      it 'puts the units back on the shelf' do
+        fulfillment = order.fulfillments.first
+        variant = fulfillment.fulfillment_items.first.variant
+        stock_item = fulfillment.stock_location.stock_item(variant)
+
+        expect { subject.call(order: order, canceler: user) }.
+          to change { stock_item.reload.count_on_hand }.by(
+            fulfillment.fulfillment_items.where(variant_id: variant.id).sum(:quantity)
+          )
+      end
+
+      # The carrier calls are batched after the order transaction commits, so
+      # they must still happen — just not from inside the fulfillment workflow.
+      it 'tells each provider to stand down' do
+        expect_any_instance_of(Spree::FulfillmentProvider::Manual).
+          to receive(:cancel_fulfillment).at_least(:once)
+
+        subject.call(order: order, canceler: user)
+      end
+    end
+
     shared_examples 'tries to cancel' do
       context 'completed order' do
         it { expect(result).to be_success }

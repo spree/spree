@@ -72,6 +72,8 @@ module Spree
         fulfillment_create_workflow: 'Spree::Fulfillments::Create',
         fulfillment_update_workflow: 'Spree::Fulfillments::Update',
         fulfillment_fulfill_workflow: 'Spree::Fulfillments::Fulfill',
+        fulfillment_cancel_workflow: 'Spree::Fulfillments::Cancel',
+        fulfillment_resume_workflow: 'Spree::Fulfillments::Resume',
 
         # returns
         return_create_workflow: 'Spree::Returns::Create',
