@@ -423,6 +423,41 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
       expect(json_response['email']).to eq('updated@example.com')
     end
 
+    # Staff assigning the business an order is for — the only route to an
+    # exemption for a buyer who acts for several companies, until session-level
+    # selection is settled with channels and catalogs.
+    context 'assigning the business the order is for' do
+      let(:company) { create(:company, store: store) }
+      let(:location) { create(:company_location, company: company) }
+
+      it 'sets the branch and reports the company' do
+        patch :update, params: { id: order.prefixed_id, company_location_id: location.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['company_location_id']).to eq(location.prefixed_id)
+        expect(json_response['company_id']).to eq(company.prefixed_id)
+        expect(order.reload.company).to eq(company)
+      end
+
+      it 'refuses a branch belonging to another store' do
+        elsewhere = create(:company_location, company: create(:company, store: create(:store)))
+
+        patch :update, params: { id: order.prefixed_id, company_location_id: elsewhere.prefixed_id }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(order.reload.company_location_id).to be_nil
+      end
+
+      it 'clears the branch when passed nothing' do
+        order.update!(company_location: location)
+
+        patch :update, params: { id: order.prefixed_id, company_location_id: nil }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.company_location_id).to be_nil
+      end
+    end
+
     context 'with customer assignment via customer_id' do
       let(:customer) { create(:user) }
 

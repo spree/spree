@@ -6,6 +6,9 @@ module Spree
         # Full order data including admin-only fields
         class OrderSerializer < V3::OrderSerializer
 
+          typelize company_location_id: [:string, nullable: true],
+                   company_id: [:string, nullable: true]
+
           # The Admin API has no guest gating — money fields inherited from the
           # store serializer are always present, so override their nullability.
           typelize item_total: [:string, nullable: false], display_item_total: [:string, nullable: false],
@@ -42,6 +45,17 @@ module Spree
 
           attribute :preferred_stock_location_id do |order|
             order.preferred_stock_location&.prefixed_id
+          end
+
+          # Which business the order is for, so the dashboard can show and change
+          # it. Read back from the column rather than #resolved_company_location:
+          # a placed order must report what it was stamped with.
+          attribute :company_location_id do |order|
+            order.company_location&.prefixed_id
+          end
+
+          attribute :company_id do |order|
+            order.company_location&.company&.prefixed_id
           end
 
           attribute :tags do |order|

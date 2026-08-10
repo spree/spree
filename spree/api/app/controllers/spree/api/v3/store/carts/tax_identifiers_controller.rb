@@ -6,6 +6,14 @@ module Spree
           # A registration entered during checkout, overriding whatever the
           # customer's profile holds — the buyer paying through a different
           # company than the one on their account.
+          #
+          # The override is a copy of the number, not a link: a cart row and a
+          # customer row cannot both own one identifier, so this takes `kind` and
+          # `value`. A buyer picking from their own registrations (see
+          # `GET /store/customers/me/tax_identifiers`) resends the number. The
+          # copy is therefore checked in its own right, and does not follow later
+          # corrections to the profile — deliberately, since a claim must not
+          # change under a sale in progress.
           class TaxIdentifiersController < Store::BaseController
             include Spree::Api::V3::CartResolvable
 

@@ -48,6 +48,23 @@ RSpec.shared_examples 'a company host' do
     end
   end
 
+  describe 'the branch must belong to the same store' do
+    it 'refuses a branch from another store' do
+      elsewhere = create(:company_location, company: create(:company, store: create(:store)))
+
+      record.company_location = elsewhere
+
+      expect(record).not_to be_valid
+      expect(record.errors[:company_location]).to be_present
+    end
+
+    it 'accepts one from its own store' do
+      record.company_location = location
+
+      expect(record).to be_valid
+    end
+  end
+
   describe '#b2b?' do
     it 'is true once a branch resolves' do
       record.update!(company_location: location)

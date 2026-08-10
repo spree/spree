@@ -3,10 +3,23 @@ module Spree
     module V3
       module Store
         module Customer
-          # The signed-in customer's own tax registration. Singular: one
-          # registration per kind, and the storefront deals in one at a time.
+          # The signed-in customer's own tax registrations — one per kind, since a
+          # business can be registered under more than one regime.
+          #
+          # Reads come in two shapes: the list, for a checkout page offering the
+          # buyer a choice, and the singular one for reading or upserting a given
+          # kind without knowing whether it exists yet.
           class TaxIdentifiersController < Store::BaseController
             prepend_before_action :require_authentication!
+
+            # GET /api/v3/store/customers/me/tax_identifiers
+            #
+            # Everything the buyer could choose between at checkout. Small and
+            # unpaginated by nature — a business has a handful of registrations,
+            # not a page of them.
+            def index
+              render json: { data: serialize_collection(current_user.tax_identifiers.to_a) }
+            end
 
             # GET /api/v3/store/customers/me/tax_identifier
             def show

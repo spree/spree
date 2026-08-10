@@ -103,6 +103,9 @@ Spree::Core::Engine.add_routes do
           resources :credit_cards, only: [:index, :show, :destroy]
           resources :gift_cards, only: [:index, :show]
           resources :store_credits, only: [:index, :show]
+          # Plural for the list a checkout page offers; singular for reading or
+          # upserting one kind without knowing whether it exists yet.
+          resources :tax_identifiers, only: [:index], controller: 'tax_identifiers'
           resource :tax_identifier, only: [:show, :update, :destroy], controller: 'tax_identifiers'
           resources :payment_setup_sessions, only: [:create, :show] do
             member do

@@ -9,6 +9,12 @@ module Spree
 
       included do
         belongs_to :company_location, class_name: 'Spree::CompanyLocation', optional: true
+
+        # Guarded on the model rather than in the controller so every path is
+        # covered — the admin write, a future storefront one, and the console.
+        # Companies are store-scoped, so a branch from another store would tax
+        # this sale against a business the merchant does not trade as.
+        validate :company_location_belongs_to_store
       end
 
       # @return [Spree::Company, nil]
@@ -28,11 +34,18 @@ module Spree
       # and no exemption is claimed — refusing to guess, because guessing would
       # invoice one business for another's purchase.
       #
-      # **Provisional.** Choosing between several branches is the same question
-      # docs/plans/6.1-channels-catalogs-b2b.md leaves open for product
-      # visibility (its `user_company_location` helper is referenced but never
-      # defined), and that plan defers buyer authority to a dedicated B2B plan.
-      # Whatever it settles on should replace this.
+      # **Provisional — revisit when channels and catalogs are implemented.**
+      # That work (docs/plans/6.1-channels-catalogs-b2b.md — filed as 6.1 today,
+      # expected to land in 6.0) has the identical question and no answer either:
+      # its `Products::ForContext` calls `user_company_location(user, store)`,
+      # singular, which the plan never defines. Catalog, negotiated pricing and
+      # tax all need the same answer, so it must be settled once and read from
+      # one place — otherwise a buyer could browse one company's catalog at its
+      # prices while being taxed as another.
+      #
+      # Until then, staff can set the branch explicitly through the admin order
+      # API. A buyer acting for several businesses who checks out unaided gets no
+      # company and no exemption, which is why this must not stay as it is.
       #
       # @return [Spree::CompanyLocation, nil]
       def resolved_company_location
@@ -46,6 +59,13 @@ module Spree
       end
 
       private
+
+      def company_location_belongs_to_store
+        return if company_location.nil? || store_id.nil?
+        return if company_location.store_id == store_id
+
+        errors.add(:company_location, :invalid)
+      end
 
       # Deliberately not memoized. An instance variable survives #reload, so a
       # value cached before a contact was added stays stale for the life of the
