@@ -70,7 +70,7 @@ module Spree
 
         # fulfillment
         fulfillment_create_workflow: 'Spree::Fulfillments::Create',
-        fulfillment_update_service: 'Spree::Fulfillments::Update',
+        fulfillment_update_workflow: 'Spree::Fulfillments::Update',
 
         # returns
         return_create_workflow: 'Spree::Returns::Create',
@@ -148,7 +148,8 @@ module Spree
       # warning), but a legacy override written against the old keywords is
       # not interchangeable with what the new call sites pass. Removed in 6.1.
       LEGACY_SERVICE_KEYS = {
-        shipment_update_service: :fulfillment_update_service
+        shipment_update_service: :fulfillment_update_workflow,
+        fulfillment_update_service: :fulfillment_update_workflow
       }.freeze
 
       def legacy_workflow_overrides
