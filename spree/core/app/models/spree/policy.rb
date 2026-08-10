@@ -29,7 +29,7 @@ module Spree
     # Rich text
     #
     sanitizes_rich_text :body
-    rich_text_html_accessor :body
+    rich_text_html_reader :body
 
     self::Translation.class_eval do
       include Spree::SanitizableRichText

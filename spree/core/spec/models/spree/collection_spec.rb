@@ -88,10 +88,16 @@ RSpec.describe Spree::Collection, type: :model do
 
   describe 'description' do
     it 'round-trips rich text' do
-      collection = create(:collection, description_html: '<p>Hello <strong>world</strong></p>')
+      collection = create(:collection, description: '<p>Hello <strong>world</strong></p>')
 
-      expect(collection.reload.description_html).to eq('<p>Hello <strong>world</strong></p>')
+      expect(collection.reload.description).to eq('<p>Hello <strong>world</strong></p>')
       expect(Spree::RichTextHelper.to_plain_text(collection.description)).to eq('Hello world')
+    end
+
+    it 'sanitizes on write' do
+      collection = create(:collection, description: '<p>ok</p><script>alert(1)</script>')
+
+      expect(collection.reload.description).to eq('<p>ok</p>')
     end
   end
 

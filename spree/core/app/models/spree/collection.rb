@@ -46,7 +46,7 @@ module Spree
     # Rich text
     #
     sanitizes_rich_text :description
-    rich_text_html_accessor :description
+    rich_text_html_reader :description
 
     self::Translation.class_eval do
       include Spree::SanitizableRichText

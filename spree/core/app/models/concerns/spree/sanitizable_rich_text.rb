@@ -33,24 +33,19 @@ module Spree
         end
       end
 
-      # Declares the API's read/write pair for a rich text attribute: reads
-      # expose +field+ (plain text) and +field_html+ (HTML), and writes go
-      # through +field_html+. The model owns this bridge so clients never have
-      # to translate field names between reading and writing.
+      # Defines +field_html+, the raw stored markup. The API exposes it beside
+      # the plain +field+, which serializers render as text — writes use the
+      # plain name, since the value is HTML either way.
       #
-      # Pair with {#sanitizes_rich_text} — the writer only assigns, leaving the
-      # +before_save+ pass as the single place sanitization happens.
-      #
-      # Both sides delegate to the plain attribute's own accessors rather than
-      # +self[]+, so translated fields keep going through Mobility and resolve
-      # against the active locale.
+      # Reads through the attribute's own reader rather than +self[]+, so a
+      # translated field still goes through Mobility and resolves against the
+      # active locale.
       #
       # @param attributes [Array<Symbol>] rich text attribute names
       # @return [void]
-      def rich_text_html_accessor(*attributes)
+      def rich_text_html_reader(*attributes)
         attributes.each do |attribute|
           define_method(:"#{attribute}_html") { public_send(attribute).to_s }
-          define_method(:"#{attribute}_html=") { |value| public_send(:"#{attribute}=", value) }
         end
       end
     end

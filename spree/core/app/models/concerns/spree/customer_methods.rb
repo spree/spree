@@ -88,7 +88,7 @@ module Spree
       has_one_attached :avatar, service: Spree.public_storage_service_name
 
       sanitizes_rich_text :internal_note
-      rich_text_html_accessor :internal_note
+      rich_text_html_reader :internal_note
 
       #
       # Attributes

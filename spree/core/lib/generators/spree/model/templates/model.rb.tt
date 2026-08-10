@@ -23,7 +23,7 @@ module Spree
 
 <% attributes.select(&:rich_text?).each do |attribute| -%>
     sanitizes_rich_text :<%= attribute.name %>
-    rich_text_html_accessor :<%= attribute.name %>
+    rich_text_html_reader :<%= attribute.name %>
 <% end -%>
 <% end -%>
 <% attributes.select(&:attachment?).each do |attribute| -%>

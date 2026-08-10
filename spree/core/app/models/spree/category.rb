@@ -142,7 +142,7 @@ module Spree
     # Rich text
     #
     sanitizes_rich_text :description
-    rich_text_html_accessor :description
+    rich_text_html_reader :description
 
     # Categories are manual only in 6.0 — rule-based (automatic) membership lives on
     # Spree::Collection. The automatic/rules_match_policy/sort_order columns and the

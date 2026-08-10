@@ -56,7 +56,7 @@ module Spree
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     sanitizes_rich_text :description
-    rich_text_html_accessor :description
+    rich_text_html_reader :description
 
     # Translated descriptions live on the Mobility translation table, so writes
     # through locale accessors or +upsert_translations+ never touch the base
