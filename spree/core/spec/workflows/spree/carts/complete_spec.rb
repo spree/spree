@@ -97,6 +97,37 @@ module Spree
       end
     end
 
+    describe 'business customer' do
+      let(:customer) { create(:customer) }
+      let(:company) { create(:company, store: store) }
+      let(:location) { create(:company_location, company: company) }
+
+      before { ready_cart.update!(customer: customer) }
+
+      # Without this the exemption applies during checkout and vanishes from the
+      # placed order, so commit and refund work from different facts.
+      it 'carries the branch onto the order' do
+        ready_cart.update!(company_location: location)
+
+        order = described_class.call(cart: ready_cart).value
+
+        expect(order.company_location).to eq(location)
+        expect(order.company).to eq(company)
+      end
+
+      it 'carries a branch the buyer resolved to without naming it' do
+        create(:company_contact, company_location: location, customer: customer)
+
+        order = described_class.call(cart: ready_cart.reload).value
+
+        expect(order.company_location).to eq(location)
+      end
+
+      it 'leaves a consumer order with no branch' do
+        expect(described_class.call(cart: ready_cart).value.company_location).to be_nil
+      end
+    end
+
     describe 'tax identifier snapshot' do
       let(:customer) { create(:user) }
 

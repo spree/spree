@@ -154,6 +154,8 @@ module Spree
 
     has_many :customer_groups, class_name: 'Spree::CustomerGroup', dependent: :destroy, inverse_of: :store
 
+    has_many :companies, class_name: 'Spree::Company', dependent: :destroy, inverse_of: :store
+
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
     has_many :allowed_origins, class_name: 'Spree::AllowedOrigin', dependent: :destroy
 

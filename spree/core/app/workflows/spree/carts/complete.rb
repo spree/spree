@@ -176,6 +176,7 @@ module Spree
             locale: cart.locale,
             market: cart.market,
             channel: cart.channel,
+            company_location: cart.resolved_company_location,
             customer: cart.customer,
             token: cart.token,
             accept_marketing: cart.accept_marketing,

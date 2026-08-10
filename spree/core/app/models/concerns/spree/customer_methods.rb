@@ -70,6 +70,9 @@ module Spree
       # One per registration kind — a business can hold both an EU and a UK VAT number.
       has_many :tax_identifiers, class_name: 'Spree::TaxIdentifier', foreign_key: :customer_id,
                                  dependent: :destroy, inverse_of: :customer
+      has_many :company_contacts, class_name: 'Spree::CompanyContact', foreign_key: :customer_id,
+                                  dependent: :destroy, inverse_of: :customer
+      has_many :company_locations, through: :company_contacts
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
