@@ -280,7 +280,7 @@ module Spree
       register_resource(:orders, group: :orders, audiences: %i[seller], subjects: -> {
         [Spree::Order, Spree::OrderGroup, Spree::LineItem, Spree::TaxLine, Spree::Discount, Spree::Fee,
          Spree::Return, Spree::Exchange, Spree::Claim, Spree::TaxIdentifier,
-         Spree::CustomField]
+         Spree::CustomField, Spree::DigitalLink]
       })
       register_resource(:payments, group: :orders, subjects: -> { [Spree::Payment, Spree::PaymentSplit] })
       register_resource(:fulfillments, group: :orders, audiences: %i[seller], subjects: -> { [Spree::Fulfillment] })
@@ -293,7 +293,8 @@ module Spree
       register_resource(:products, group: :catalog, audiences: %i[seller], subjects: -> {
         [Spree::Product, Spree::ProductType, Spree::Variant, Spree::OptionType,
          Spree::OptionValue, Spree::Price, Spree::PriceList, Spree::PriceRule,
-         Spree::Media, Spree::ProductPublication, Spree::CustomField]
+         Spree::Media, Spree::ProductPublication, Spree::CustomField,
+         Spree::DigitalAsset]
       })
       register_resource(:categories, group: :catalog, subjects: -> {
         [Spree::Category, Spree::ProductCategory]
