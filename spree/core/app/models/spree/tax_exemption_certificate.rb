@@ -31,6 +31,9 @@ module Spree
 
     validates :certificate_number, :reason_code, presence: true
 
+    before_validation :resolve_state_code
+    validate :state_belongs_to_country
+
     # Expiry is decided here rather than persisted: the date is the fact, and a
     # sweeper writing 'expired' would only restate it. Matches how gift cards
     # and stock reservations treat their own deadlines.
@@ -43,6 +46,18 @@ module Spree
 
     delegate :store, :store_id, to: :company
 
+    # The jurisdiction is written in the same vocabulary it is read in, mirroring
+    # Spree::TaxRate. State abbreviations repeat across countries, so the state
+    # is resolved in a callback once the country is known — a JSON body may name
+    # the state first.
+    def country_iso=(value)
+      self.country = value.present? ? Spree::Country.by_iso(value) : nil
+    end
+
+    def state_code=(value)
+      @state_code_input = value
+    end
+
     # Accepting a certificate is a decision on record; withdrawing it is
     # revocation, not deletion.
     def can_be_deleted?
@@ -52,6 +67,23 @@ module Spree
     # Whether the date has passed, regardless of what the column says.
     def lapsed?
       expires_at.present? && expires_at <= Time.current
+    end
+
+    private
+
+    def resolve_state_code
+      return unless defined?(@state_code_input)
+
+      self.state = @state_code_input.blank? ? nil : Spree::State.where(country_id: country_id).find_by(abbr: @state_code_input)
+      remove_instance_variable(:@state_code_input)
+    end
+
+    # A certificate whose state sits in another country would never match an
+    # address — the two columns have to agree.
+    def state_belongs_to_country
+      return if state.nil? || country.nil? || state.country_id == country_id
+
+      errors.add(:state, :invalid)
     end
   end
 end

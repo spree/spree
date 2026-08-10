@@ -13,6 +13,10 @@ module Spree
         can :manage, Spree.customer_class
         can :manage, Spree::Address
         can :manage, Spree::CreditCard
+        can :manage, Spree::Company
+        can :manage, Spree::CompanyLocation
+        can :manage, Spree::CompanyContact
+        can :manage, Spree::TaxExemptionCertificate
         can [:read, :admin], Spree::Metafield
       end
     end

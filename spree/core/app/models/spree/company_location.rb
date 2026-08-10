@@ -19,6 +19,14 @@ module Spree
     accepts_nested_attributes_for :billing_address
     accepts_nested_attributes_for :shipping_address
 
+    # The API reads and writes these under the same name, so the writer takes
+    # either a record or the nested hash a client sends.
+    %i[billing_address shipping_address].each do |name|
+      define_method(:"#{name}=") do |value|
+        value.is_a?(Hash) || value.is_a?(ActionController::Parameters) ? send(:"#{name}_attributes=", value) : super(value)
+      end
+    end
+
     has_many :company_contacts, class_name: 'Spree::CompanyContact', dependent: :destroy,
                                 inverse_of: :company_location
     has_many :customers, through: :company_contacts, source: :customer

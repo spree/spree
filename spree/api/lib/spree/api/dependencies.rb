@@ -140,6 +140,12 @@ module Spree
         admin_tax_category_serializer: 'Spree::Api::V3::Admin::TaxCategorySerializer',
         admin_tax_rate_serializer: 'Spree::Api::V3::Admin::TaxRateSerializer',
         admin_tax_identifier_serializer: 'Spree::Api::V3::Admin::TaxIdentifierSerializer',
+
+        company_serializer: 'Spree::Api::V3::CompanySerializer',
+        admin_company_serializer: 'Spree::Api::V3::Admin::CompanySerializer',
+        admin_company_location_serializer: 'Spree::Api::V3::Admin::CompanyLocationSerializer',
+        admin_company_contact_serializer: 'Spree::Api::V3::Admin::CompanyContactSerializer',
+        admin_tax_exemption_certificate_serializer: 'Spree::Api::V3::Admin::TaxExemptionCertificateSerializer',
         admin_admin_user_serializer: 'Spree::Api::V3::Admin::AdminUserSerializer',
         admin_address_serializer: 'Spree::Api::V3::Admin::AddressSerializer',
         admin_channel_serializer: 'Spree::Api::V3::Admin::ChannelSerializer',

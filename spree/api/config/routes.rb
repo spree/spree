@@ -396,6 +396,30 @@ Spree::Core::Engine.add_routes do
         # Customer groups (segmentation; used by promotion rules + bulk customer ops)
         resources :customer_groups
 
+        # Business customers. Branches and their buyers are created under their
+        # parent and then addressed directly, so a caller holding a branch id
+        # does not have to know which company it belongs to.
+        resources :companies do
+          resources :locations, controller: 'companies/locations', only: [:index, :show, :create]
+
+          # Exemption evidence. Accepting or withdrawing one is its own action —
+          # never mass assignment — and a verified certificate is revoked
+          # rather than deleted.
+          resources :tax_exemption_certificates, controller: 'companies/tax_exemption_certificates' do
+            member do
+              patch :verify
+              patch :revoke
+              get :download
+            end
+          end
+        end
+
+        resources :company_locations, only: [:show, :update, :destroy] do
+          resources :contacts, controller: 'company_locations/contacts', only: [:index, :show, :create]
+        end
+
+        resources :company_contacts, only: [:show, :destroy]
+
         # Price lists
         resources :price_lists do
           collection do
