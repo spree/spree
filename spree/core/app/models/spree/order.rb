@@ -186,7 +186,7 @@ module Spree
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
 
-    has_many :fulfillments, class_name: 'Spree::Fulfillment', dependent: :destroy, inverse_of: :order do
+    has_many :fulfillments, -> { order(:created_at, :id) }, class_name: 'Spree::Fulfillment', dependent: :destroy, inverse_of: :order do
       def states
         pluck(:status).uniq
       end
