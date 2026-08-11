@@ -60,7 +60,12 @@ module Spree
     after_save :update_inventory
     after_save :update_adjustments
 
-    after_create :update_tax_charge
+    # Set on copies whose tax is already known — the completion copy carries the
+    # cart's tax rows over verbatim, so re-estimating would discard the answer
+    # and, with an external engine, spend a remote call per line item.
+    attr_accessor :skip_tax_estimation
+
+    after_create :update_tax_charge, unless: :skip_tax_estimation
 
     delegate :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, :option_values, to: :variant
     delegate :name, :description, :brand, :category, to: :product

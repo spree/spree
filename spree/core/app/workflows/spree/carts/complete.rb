@@ -236,10 +236,18 @@ module Spree
         'customer'
       end
 
+      # Copies carry skip_tax_estimation: the cart's tax rows are copied onto the
+      # order a few lines below, so estimating per copied item would ask the
+      # provider a question whose answer is discarded — and for an external
+      # engine that is a billable remote call per line item, inside the
+      # completion lock.
       def copy_line_items!(cart, order)
         cart.line_items.reload.index_with do |cart_line_item|
           attributes = cart_line_item.attributes.except('id', 'cart_id', 'created_at', 'updated_at')
-          order.line_items.create!(attributes.merge('order_id' => order.id))
+          line_item = order.line_items.new(attributes.merge('order_id' => order.id))
+          line_item.skip_tax_estimation = true
+          line_item.save!
+          line_item
         end
       end
 
@@ -271,6 +279,8 @@ module Spree
         end
       end
 
+      # The cart's rows are the record of what the sale was costed at, so the
+      # order receives them verbatim rather than being re-estimated.
       def copy_typed_lines!(cart, order, line_item_map, fulfillment_map)
         line_item_id_map = line_item_map.transform_keys(&:id).transform_values(&:id)
 

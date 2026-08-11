@@ -95,6 +95,62 @@ module Spree
 
         expect(provider).to have_received(:commit).with(order)
       end
+
+      it 'does not re-estimate while copying the cart onto the order' do
+        provider = instance_double(Spree::TaxProvider::Internal, estimate: nil, commit: nil)
+        allow_any_instance_of(Spree::Order).to receive(:tax_provider).and_return(provider)
+
+        described_class.call(cart: ready_cart)
+
+        # Only commit files the sale. An estimate here would be a remote call per
+        # line item for an external engine, and its answer is discarded anyway.
+        expect(provider).not_to have_received(:estimate)
+      end
+
+      # The copy is the source of truth: whatever the cart was taxed is what the
+      # order owes. Left to itself, creating the order's line items fires
+      # LineItem#update_tax_charge and writes a second row per item — the order's
+      # own totals still read correctly, so the damage lands on whatever reads
+      # the rows: an invoice, an e-invoicing export, a tax return.
+      context 'when the cart carries tax rows' do
+        let(:tax_category) { create(:tax_category) }
+        let!(:rate) do
+          create(:tax_rate, store: store, country: ready_cart.tax_country, amount: 0.1,
+                            included_in_price: false, tax_category: tax_category)
+        end
+
+        before do
+          # The line item copies its category from the variant on every save, so
+          # the variant is where it has to be set.
+          ready_cart.line_items.each do |line_item|
+            line_item.variant.update!(tax_category: tax_category)
+            line_item.reload.update!(tax_category: tax_category)
+          end
+          ready_cart.recalculate_totals!
+        end
+
+        # Queried directly rather than through order.tax_lines: the association
+        # is loaded during the copy and reports the cart's rows here.
+        def order_rows(order)
+          Spree::TaxLine.where(order_id: order.id)
+        end
+
+        it 'gives the order exactly one tax row per taxed line item' do
+          expect(ready_cart.tax_lines.reload.where.not(line_item_id: nil).count).to eq(1)
+
+          order = described_class.call(cart: ready_cart).value
+          rows = order_rows(order).where.not(line_item_id: nil)
+
+          expect(rows.count).to eq(1)
+          expect(rows.pluck(:line_item_id).uniq.length).to eq(1)
+        end
+
+        it 'keeps the summed rows equal to the order additional tax total' do
+          order = described_class.call(cart: ready_cart).value
+
+          expect(order_rows(order).sum(:amount)).to eq(order.additional_tax_total)
+        end
+      end
     end
 
     describe 'business customer' do
