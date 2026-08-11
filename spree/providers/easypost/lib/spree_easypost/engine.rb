@@ -13,6 +13,25 @@ module SpreeEasyPost
       end
     end
 
+    # One line per EasyPost API call in the Rails log, so a checkout that
+    # quotes no rates can be read instead of guessed at. Development only by
+    # default; set SPREE_EASYPOST_HTTP_LOG=1 to turn it on elsewhere. The
+    # request body is deliberately not logged — it carries customer addresses.
+    initializer 'spree_easypost.http_logging' do
+      next unless Rails.env.development? || ENV['SPREE_EASYPOST_HTTP_LOG'].present?
+
+      EasyPost::Hooks.subscribe(:response, :spree_rails_logger, lambda { |context|
+        duration_ms = ((context.response_timestamp - context.request_timestamp) * 1000).round
+        line = "[EasyPost] #{context.method.to_s.upcase} #{context.path} -> #{context.http_status} (#{duration_ms}ms)"
+
+        if (400..599).cover?(context.http_status.to_i)
+          Rails.logger.warn("#{line} #{context.response_body.to_s.truncate(500)}")
+        else
+          Rails.logger.info(line)
+        end
+      })
+    end
+
     config.after_initialize do
       Spree.integrations << 'SpreeEasyPost::Integration'
       Spree.delivery_rate_providers << SpreeEasyPost::DeliveryRateProvider
