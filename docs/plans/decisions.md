@@ -1,3 +1,41 @@
+## 2026-08-11: Fulfillment status model — two axes, `delivered` first-class, machine removed (supersedes part of 2026-08-10)
+
+`Fulfillment#status` collapses to `unfulfilled → fulfilled → delivered` plus
+`canceled`, plain string via `HasStatus`, state machine deleted. `pending` and
+`ready` were payment and stock facts wearing a fulfillment costume —
+`determine_state` re-derived them from `order.paid?` on every recalculation, so
+a refund flipped a fulfillment's status with no physical change, and merchants
+never understood them. That gating becomes a validate guard in
+`Fulfillments::Fulfill` (rejects with a reason, staff-overridable).
+`ready_for_pickup` dies as a status: pickup `fulfilled` means "ready at the
+counter", `delivered` means picked up, presentation is modality-aware.
+
+`delivered` is the new terminal state — confirmed receipt, the thing merchants
+kept asking for (the lifecycle used to end at handover). Set by carrier
+tracking, a staff button, or later customer confirmation, via
+`Fulfillments::MarkDelivered` (`delivered_at`, `fulfillment.delivered` event).
+The returns eligibility window and the EU 14-day withdrawal period anchor on
+`delivered_at`.
+
+Carrier truth is a second axis, data not a machine: `tracking_status` +
+`tracking_details` + `estimated_delivery_at`, overwritten per update
+(`pre_transit … delivered, return_to_sender, failure`), written by
+`Fulfillments::UpdateTracking`. Bounces and failed attempts surface there
+without mutating `status`. The EasyPost gem feeds it from tracker webhooks —
+every purchased label already has a tracker whose updates were being thrown
+away; trackers for hand-entered numbers cost money each, so opt-in.
+
+This supersedes the 2026-08-10 "the dangerous callbacks move, the machine
+stays" conclusion: with `pending`/`ready` gone the machine held two transitions
+and its event publishes, which is what `HasStatus` + workflows already do for
+Return/Exchange/Claim. The side-effect relocation stands and made removal
+cheap. The FulfillmentItem machine and the other machines (Payment,
+ReturnAuthorization, GiftCard) are unaffected. Status mapping for existing
+rows: `pending|ready → unfulfilled`, `ready_for_pickup → fulfilled`,
+pickup-modality `fulfilled → delivered`, shipping-modality `fulfilled` stays.
+Plan: `6.0-fulfillment-and-delivery.md` (Key Decisions → "Status model — two
+axes", Resolved Question 14, Phase 7).
+
 ## 2026-08-11: The order edit screen stages edits and saves in bulk (reverses 2026-08-10)
 
 The 6.0 admin order edit screen was specified to write immediately — one
