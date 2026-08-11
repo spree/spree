@@ -135,6 +135,45 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  # The guards are stated negatively — anything not yet handed over can be
+  # fulfilled or canceled — precisely so a status an extension inserts before
+  # `fulfilled` works with the core workflows out of the box.
+  describe 'an added custom status' do
+    around do |example|
+      original = Spree::Fulfillment.statuses
+      Spree::Fulfillment.add_status('in_production', after: 'unfulfilled')
+      example.run
+    ensure
+      Spree::Fulfillment.statuses = original
+    end
+
+    it 'is valid, with a predicate and a scope' do
+      shipment.status = 'in_production'
+
+      expect(shipment).to be_valid
+      expect(shipment).to be_in_production
+      expect(Spree::Fulfillment.statuses).to include('in_production')
+    end
+
+    it 'can still be handed over' do
+      shipment.update!(status: 'in_production')
+
+      expect(shipment.can_fulfill?).to be true
+    end
+
+    it 'can still be recalled' do
+      shipment.update!(status: 'in_production')
+
+      expect(shipment.can_cancel?).to be true
+    end
+
+    it 'cannot skip straight to confirmed receipt' do
+      shipment.update!(status: 'in_production')
+
+      expect(shipment.can_mark_delivered?).to be false
+    end
+  end
+
   describe 'tracking_status' do
     it 'accepts a carrier status' do
       shipment.tracking_status = 'in_transit'

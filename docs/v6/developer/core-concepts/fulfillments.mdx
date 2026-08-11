@@ -157,6 +157,15 @@ await adminClient.orders.fulfillments.update('or_xxx', 'ful_xxx', {
 })
 await adminClient.orders.fulfillments.fulfill('or_xxx', 'ful_xxx')
 
+// Ship only some of it — the chosen units split off and ship,
+// the rest stays open
+await adminClient.orders.fulfillments.fulfill('or_xxx', 'ful_xxx', {
+  items: [{ item_id: 'li_xxx', quantity: 1 }],
+})
+
+// Ship against an unpaid invoice — your call, not the API's
+await adminClient.orders.fulfillments.fulfill('or_xxx', 'ful_xxx', { force: true })
+
 // Record receipt yourself when no carrier reports it for you
 await adminClient.orders.fulfillments.markDelivered('or_xxx', 'ful_xxx')
 
@@ -208,6 +217,63 @@ Delivery zones cover delivery only. Tax is handled separately — see [Taxes](/d
 Delivery is priced either by a rule you configure in the dashboard — flat rate, per item, price bands — or by asking a carrier for live rates.
 
 Methods can also carry conditions that decide when they're offered at all: free shipping over a certain order value, or heavy items excluded from letter post. These are applied in one place, so both kinds of pricing respect them.
+
+## Adding your own statuses
+
+A made-to-order business — print on demand, furniture built after purchase —
+has a stage between "order placed" and "handed to the carrier". There are two
+ways to model it, and the lighter one is usually right.
+
+**Track production in your own model, gate handover with a hook.** A production
+pipeline usually has more resolution than one word — queued, printing, quality
+check, packed — and that detail belongs in your own tables or your
+integration's metadata, not in the parcel's lifecycle vocabulary. What core
+needs to know is only *whether the parcel may go out yet*, and that is exactly
+what the fulfill workflow's validate hook expresses:
+
+```ruby
+Spree.hooks.register('fulfillments.fulfill.validate') do |flow|
+  work_order = MyApp::WorkOrder.find_by(fulfillment: flow.fulfillment)
+  flow.reject!('still in production') unless work_order&.completed?
+end
+```
+
+The fulfillment stays `unfulfilled` while you build the thing; your storefront
+renders "we're making your furniture" as presentation, the same way pickup
+orders render `fulfilled` as "ready for pickup".
+
+**Add a real status when merchants need to act on the stage.** If staff filter
+by it, reports group by it, or webhooks fire on entering it, make it a
+first-class status:
+
+```ruby
+# an initializer
+Spree::Fulfillment.add_status('in_production', after: 'unfulfilled')
+```
+
+That gives you the `in_production?` predicate, the `.in_production` scope and
+a valid value. Moving into it is deliberately not declarative — write a small
+workflow, which is also where the printer submission or the workshop handoff
+belongs:
+
+```ruby
+class MyApp::Fulfillments::StartProduction < Spree::Workflow
+  def perform(fulfillment:)
+    super
+    step :ensure_startable      # refuse unless fulfillment.unfulfilled?
+    step :mark_in_production    # update!(status: 'in_production') + publish an event
+    external_step :submit_to_printer
+    success(fulfillment.reload)
+  end
+end
+```
+
+Core's own actions keep working on your status without overrides: the guards
+ask whether the parcel has *already gone out*, not whether it holds one of the
+built-in values, so an `in_production` fulfillment can still be fulfilled or
+canceled. Statuses are additive only — core workflows guard on core statuses,
+so removing one would silently break them — and confirmed receipt still only
+follows handover.
 
 ## Events
 

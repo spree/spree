@@ -146,14 +146,23 @@ module Spree
     # rule with the provider's own veto; the payment and stock side of the
     # question belongs to Spree::Fulfillments::Fulfill, which can report why.
     #
+    # Stated negatively — anything that has not already gone out can go out —
+    # so a status an extension adds before `fulfilled` (an `in_production`
+    # stage, say) is fulfillable without overriding anything. Whether it
+    # SHOULD go out yet is the fulfill workflow's validate hook's question.
+    #
     # @return [Boolean]
     def can_fulfill?
-      (unfulfilled? || canceled?) && provider.can_fulfill?(self)
+      !fulfilled_or_delivered? && provider.can_fulfill?(self)
     end
 
-    # @return [Boolean] whether the package can still be recalled
+    # Whether the package can still be recalled: anything that has neither
+    # gone out nor already been recalled. Negative for the same reason as
+    # {#can_fulfill?} — custom pre-handover statuses stay cancelable.
+    #
+    # @return [Boolean]
     def can_cancel?
-      unfulfilled?
+      !fulfilled_or_delivered? && !canceled?
     end
 
     # @return [Boolean] whether a canceled fulfillment can be reinstated
