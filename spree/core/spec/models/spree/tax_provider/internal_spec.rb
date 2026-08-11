@@ -217,6 +217,45 @@ describe Spree::TaxProvider::Internal, type: :model do
       end
     end
 
+    context 'with a classified delivery charge' do
+      let(:fulfillment) { order.fulfillments.first }
+      let(:reduced_rate_category) { create(:tax_category, name: "Reduced #{Time.current.to_f}") }
+      let(:delivery_method) { create(:shipping_method, tax_category: reduced_rate_category) }
+
+      before do
+        fulfillment.delivery_rates.destroy_all
+        create(:delivery_rate, fulfillment: fulfillment, delivery_method: delivery_method, selected: true)
+        # update_columns: the cost is the tax basis here, not an occasion to
+        # recalculate the order and estimate tax a second time.
+        fulfillment.update_columns(cost: 10)
+        # A store default exists, so falling back to it is a visible wrong answer.
+        create(:tax_rate, country: country, amount: 0.2, included_in_price: false,
+                          tax_category: create(:tax_category, is_default: true))
+        fulfillment.reload
+      end
+
+      it "taxes delivery at its delivery method's category" do
+        reduced_rate = create(:tax_rate, country: country, amount: 0.05, included_in_price: false,
+                                         tax_category: reduced_rate_category)
+
+        provider.estimate(order, [fulfillment])
+
+        tax_line = order.tax_lines.reload.sole
+        expect(tax_line.fulfillment).to eq(fulfillment)
+        expect(tax_line.tax_rate).to eq(reduced_rate)
+        expect(tax_line.amount).to eq(0.5)
+      end
+
+      # The classification is the merchant's answer even where they configured no
+      # rate for it. Taxing delivery at the default category's standard rate
+      # instead would over-collect with nothing to show it happened.
+      it 'writes no delivery tax when no rate covers that classification' do
+        provider.estimate(order, [fulfillment])
+
+        expect(order.tax_lines.reload).to be_empty
+      end
+    end
+
     context 'with a taxable fee' do
       let!(:rate) do
         create(:tax_rate, country: country, amount: 0.1, tax_category: create(:tax_category, is_default: true), included_in_price: false)
