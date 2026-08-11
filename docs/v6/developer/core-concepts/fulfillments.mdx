@@ -42,15 +42,39 @@ erDiagram
 
 ## Statuses
 
+A fulfillment's status says what **you** did with the parcel — nothing else.
+
 | Value | Meaning |
 |---|---|
-| `pending` | Not ready yet — awaiting payment, or items are on backorder |
-| `ready` | Everything in stock and paid for; the warehouse can pick it |
-| `backorder` | Waiting on stock |
-| `fulfilled` | It went out |
+| `unfulfilled` | Still with you. Nothing has left |
+| `fulfilled` | It went out — handed to the carrier, or waiting at the counter for a pickup order |
+| `delivered` | The customer has it |
 | `canceled` | It won't be sent |
 
-One rule only ever moves one way: once something has gone out, it stays gone out. A later payment problem changes the order's [payment status](/v6/developer/core-concepts/orders#statuses) and leaves the fulfillment alone.
+Statuses only move forward: once something has gone out it stays gone out, and a later payment problem changes the order's [payment status](/v6/developer/core-concepts/orders#statuses) rather than the fulfillment.
+
+Whether a fulfillment *can* go out — the order is paid, nothing is on backorder — is checked when you fulfill it, and the answer comes back with a reason. It is not baked into the status, so a refund never moves a parcel backwards. Staff who need to ship against an invoice can pass `force`.
+
+### Where the parcel actually is
+
+Carrier reports live on a second field, `tracking_status`, and never change `status`:
+
+| Value | Meaning |
+|---|---|
+| `pre_transit` | Label made, carrier hasn't got it yet |
+| `in_transit` | On its way |
+| `out_for_delivery` | On the van |
+| `available_for_pickup` | Waiting at a carrier location |
+| `delivered` | Carrier says it arrived |
+| `return_to_sender` | Coming back to you |
+| `failure` | Delivery failed — a bad address, damage, a refused parcel |
+| `unknown` | The carrier said something we don't recognise |
+
+Keeping the two apart is the point. A parcel that bounces still shows `fulfilled`, because you did hand it over; the trouble shows up as `return_to_sender` and you decide what to do about it. The one report that crosses over is delivery, which also sets `delivered` and `delivered_at`.
+
+`delivered_at` is what return windows and the EU withdrawal period count from, so it records when the carrier says the parcel arrived rather than when you heard about it.
+
+Carriers set this through their provider's webhook. With no carrier integration, staff mark receipt by hand — `markDelivered` in the Admin SDK — which is also how pickup orders get closed out.
 
 ## Delivery types
 
@@ -124,7 +148,7 @@ curl 'https://api.mystore.com/api/v3/store/delivery_methods/dm_xxx/pickup_locati
 <CodeGroup>
 
 ```typescript Admin SDK
-// What's ready to pick
+// What's still with you
 const fulfillments = await adminClient.orders.fulfillments.list('or_xxx')
 
 // Add tracking, then mark it sent
@@ -132,6 +156,9 @@ await adminClient.orders.fulfillments.update('or_xxx', 'ful_xxx', {
   tracking: '1Z999AA10123456784',
 })
 await adminClient.orders.fulfillments.fulfill('or_xxx', 'ful_xxx')
+
+// Record receipt yourself when no carrier reports it for you
+await adminClient.orders.fulfillments.markDelivered('or_xxx', 'ful_xxx')
 
 // Split it when only part can go now
 await adminClient.orders.fulfillments.split('or_xxx', 'ful_xxx', {
@@ -184,7 +211,7 @@ Methods can also carry conditions that decide when they're offered at all: free 
 
 ## Events
 
-Fulfillments publish [events](/developer/core-concepts/events) — `fulfillment.created`, `fulfillment.fulfilled`, `fulfillment.canceled` — which also reach [webhooks](/developer/core-concepts/webhooks). Use them to notify a customer, push to a warehouse system, or send tracking emails.
+Fulfillments publish [events](/developer/core-concepts/events) — `fulfillment.created`, `fulfillment.fulfilled`, `fulfillment.delivered`, `fulfillment.canceled` — which also reach [webhooks](/developer/core-concepts/webhooks). Use them to notify a customer, push to a warehouse system, or send tracking emails.
 
 ## Related
 

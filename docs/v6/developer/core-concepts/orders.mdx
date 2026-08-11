@@ -68,12 +68,14 @@ An order tracks payment and delivery separately, because they genuinely move at 
 
 | Value | Meaning |
 |---|---|
-| `pending` | Not ready to send yet |
-| `ready` | Everything in stock and paid for |
+| `unfulfilled` | Nothing has gone out yet |
 | `backorder` | Waiting on stock |
 | `partial` | Some of it has gone out |
 | `fulfilled` | Everything has gone out |
+| `delivered` | The customer has all of it |
 | `canceled` | Nothing will be sent |
+
+A canceled parcel is ignored while others are still live, so an order whose second parcel was recalled is described by the first.
 
 Both are worked out automatically from the order's payments, refunds and fulfillments. You change an order's status by acting on those — taking a payment, sending a parcel, issuing a refund — never by setting the status yourself.
 
@@ -108,7 +110,7 @@ Back-office work happens through the Admin API.
 ```typescript Admin SDK
 // Find orders needing attention
 const orders = await adminClient.orders.list({
-  filter: { payment_status_eq: 'paid', fulfillment_status_eq: 'ready' },
+  filter: { payment_status_eq: 'paid', fulfillment_status_eq: 'unfulfilled' },
 })
 
 // Cancel an order
