@@ -27,6 +27,8 @@ export const fulfillItemsFormSchema = z.object({
     }),
   ),
   tracking: z.string(),
+  // '' = detect from the number; slugs come from trackingCarriers.list().
+  tracking_carrier: z.string(),
   notify_customer: z.boolean(),
 })
 

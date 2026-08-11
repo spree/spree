@@ -10,6 +10,11 @@ import {
   Field,
   FieldLabel,
   Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Thumbnail,
 } from '@spree/dashboard-ui'
 import { PackageIcon, TriangleAlertIcon } from 'lucide-react'
@@ -17,6 +22,7 @@ import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
+import { useTrackingCarriers } from '../../../hooks/use-tracking-carriers'
 import { type FulfillmentItemRow, fulfillmentItemRows } from '../../../lib/fulfillment-items'
 import { type FulfillItemsFormValues, fulfillItemsFormSchema } from '../../../schemas/fulfillment'
 
@@ -136,6 +142,12 @@ export function FulfillmentFulfillForm({
 }) {
   const { t } = useTranslation()
   const { fulfill } = useFulfillmentActions(order.id)
+  const { data: carriersData } = useTrackingCarriers()
+
+  const carrierOptions = [
+    { value: '', label: t('admin.orders.detail.fulfillments.carrier_auto') },
+    ...(carriersData?.data ?? []).map((carrier) => ({ value: carrier.id, label: carrier.name })),
+  ]
 
   const idPrefix = `fulfill-${fulfillment.id}`
   const rows = fulfillableRows(fulfillmentItemRows(fulfillment, order.items ?? []))
@@ -145,6 +157,7 @@ export function FulfillmentFulfillForm({
     defaultValues: {
       items: rows.map((row) => ({ item_id: row.itemId, selected: true, quantity: row.quantity })),
       tracking: fulfillment.tracking ?? '',
+      tracking_carrier: fulfillment.tracking_carrier ?? '',
       notify_customer: true,
     },
   })
@@ -199,6 +212,7 @@ export function FulfillmentFulfillForm({
         fulfillmentId: fulfillment.id,
         items: everything ? undefined : items,
         tracking: tracking || undefined,
+        tracking_carrier: values.tracking_carrier || undefined,
         notify_customer: values.notify_customer,
       })
       onDone()
@@ -232,16 +246,46 @@ export function FulfillmentFulfillForm({
         </div>
       )}
 
-      <Field className="p-3 border-t">
-        <FieldLabel htmlFor={`${idPrefix}-tracking`}>
-          {t('admin.orders.fulfill.tracking_label')}
-        </FieldLabel>
-        <Input
-          id={`${idPrefix}-tracking`}
-          placeholder={t('admin.orders.fulfill.tracking_placeholder')}
-          {...form.register('tracking')}
-        />
-      </Field>
+      <div className="grid grid-cols-1 gap-4 p-3 border-t sm:grid-cols-2">
+        <Field>
+          <FieldLabel htmlFor={`${idPrefix}-tracking`}>
+            {t('admin.orders.fulfill.tracking_label')}
+          </FieldLabel>
+          <Input
+            id={`${idPrefix}-tracking`}
+            placeholder={t('admin.orders.fulfill.tracking_placeholder')}
+            {...form.register('tracking')}
+          />
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor={`${idPrefix}-tracking-carrier`}>
+            {t('admin.orders.detail.fulfillments.carrier_label')}
+          </FieldLabel>
+          <Controller
+            control={form.control}
+            name="tracking_carrier"
+            render={({ field }) => (
+              <Select
+                items={carrierOptions}
+                value={field.value}
+                onValueChange={(value) => field.onChange(value ?? '')}
+              >
+                <SelectTrigger id={`${idPrefix}-tracking-carrier`}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {carrierOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </Field>
+      </div>
 
       <Controller
         control={form.control}

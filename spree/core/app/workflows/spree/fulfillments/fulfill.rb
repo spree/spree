@@ -31,6 +31,8 @@ module Spree
       #   to ship; nil or empty fulfills every unit the fulfillment holds
       # @param tracking [String, nil] carrier tracking number or full tracking URL,
       #   stored on the fulfillment that ships
+      # @param tracking_carrier [String, nil] which carrier the number belongs
+      #   to (a Spree.tracking_carriers slug); detected from the number when omitted
       # @param notify_customer [Boolean] whether the shipment email goes out;
       #   false suppresses it for this dispatch only
       # @param force [Boolean] dispatch even when the order is unpaid or holds
@@ -38,7 +40,7 @@ module Spree
       #   against an invoice is ordinary trade, and the old pending/ready
       #   statuses made it impossible to express.
       # @return [Spree::ServiceModule::Result] the fulfilled fulfillment on success
-      def perform(fulfillment:, items: nil, tracking: nil, notify_customer: true, force: false)
+      def perform(fulfillment:, items: nil, tracking: nil, tracking_carrier: nil, notify_customer: true, force: false)
         super
 
         @source = fulfillment
@@ -86,8 +88,18 @@ module Spree
       def ensure_fulfillable
         failure(@source, Spree.t('fulfillments.errors.cannot_fulfill')) unless @source.can_fulfill?
 
+        ensure_order_placed
         ensure_ready_to_hand_over
         ensure_requested_units_available
+      end
+
+      # Not skippable by force. Forcing past an unpaid invoice is ordinary
+      # trade; a draft is not a commitment yet — nothing has been agreed, so
+      # there is nothing to hand over. Completing the draft is the way out.
+      def ensure_order_placed
+        return unless @source.order&.draft?
+
+        failure(@source, Spree.t('fulfillments.errors.order_draft'))
       end
 
       # What the pending/ready statuses used to encode, asked once at the
@@ -178,10 +190,15 @@ module Spree
       # (run_provider_create_fulfillment) sees an admin-entered number and
       # leaves it alone, and so the shipment email carries it.
       #
+      # update! rather than update_columns so the carrier-detection callback
+      # runs — a number typed without a carrier still gets its badge and URL.
       def apply_tracking
-        return if tracking.blank?
+        attributes = {}
+        attributes[:tracking] = tracking.to_s.squish if tracking.present?
+        attributes[:tracking_carrier] = tracking_carrier if tracking_carrier.present?
+        return if attributes.empty?
 
-        @fulfillment.update_columns(tracking: tracking.to_s.squish, updated_at: Time.current)
+        @fulfillment.update!(attributes)
       end
 
       # The suppression flag rides on the record because the event publisher

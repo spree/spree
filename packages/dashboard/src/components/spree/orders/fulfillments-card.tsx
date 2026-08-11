@@ -405,7 +405,9 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
 
   const editable = CAN_EDIT.includes(fulfillment.status)
   const splittable = editable && unitsOf(fulfillment).length > 0
-  const shippable = CAN_SHIP.includes(fulfillment.status)
+  // A draft is not a commitment yet — nothing has been agreed, so nothing can
+  // ship. The backend refuses too; this just keeps the button honest.
+  const shippable = CAN_SHIP.includes(fulfillment.status) && order.status !== 'draft'
   // Confirming receipt is the merchant's next move on a parcel that has gone
   // out, so it sits in the card rather than behind the menu. Adding tracking
   // joins it as the primary action while the number is still missing.

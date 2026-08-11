@@ -970,6 +970,7 @@ en:
         no_items_to_fulfill: Order has no unfulfilled items
         not_in_fulfillment: Requested quantity (%{requested}) for item %{item} exceeds the %{available} held by this fulfillment
         order_canceled: Fulfillments cannot be created on a canceled order
+        order_draft: Draft orders cannot be fulfilled — complete the order first
         order_not_completed: Fulfillments can only be created manually on completed orders
         order_not_paid: This order is not paid for yet
         unknown_tracking_status: "%{status} is not a known tracking status"

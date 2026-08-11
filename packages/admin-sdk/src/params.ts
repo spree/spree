@@ -162,6 +162,8 @@ export interface FulfillmentFulfillParams {
   items?: Array<{ item_id: string; quantity: number }>
   /** Carrier tracking number or a full `https://` tracking link, stored on the fulfillment that ships */
   tracking?: string
+  /** Which carrier the number belongs to (a `trackingCarriers.list()` slug); detected from the number when omitted */
+  tracking_carrier?: string
   /**
    * Whether the customer gets the shipment email. Defaults to true; pass false
    * to suppress it for this dispatch only (a correction, a re-ship, goods

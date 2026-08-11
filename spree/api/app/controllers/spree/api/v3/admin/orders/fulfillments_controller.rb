@@ -66,6 +66,7 @@ module Spree
                   fulfillment: @resource,
                   items: items_for_fulfill,
                   tracking: fulfill_params[:tracking],
+                  tracking_carrier: fulfill_params[:tracking_carrier],
                   notify_customer: notify_customer?(fulfill_params[:notify_customer]),
                   force: ActiveModel::Type::Boolean.new.cast(fulfill_params[:force]).present?
                 )
@@ -200,7 +201,7 @@ module Spree
             end
 
             def fulfill_params
-              @fulfill_params ||= params.permit(:tracking, :notify_customer, :force, items: [:item_id, :quantity])
+              @fulfill_params ||= params.permit(:tracking, :tracking_carrier, :notify_customer, :force, items: [:item_id, :quantity])
             end
 
             def mark_delivered_params

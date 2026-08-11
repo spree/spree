@@ -105,6 +105,18 @@ module Spree
         expect(fulfillment.reload).to be_fulfilled
       end
 
+      # force exists for unpaid invoices; a draft has not been agreed at all,
+      # so not even force hands its goods over.
+      it 'refuses a draft order, even with force' do
+        order.update_columns(status: 'draft', completed_at: nil)
+
+        result = subject.call(fulfillment: fulfillment, force: true)
+
+        expect(result.success?).to eq(false)
+        expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.order_draft'))
+        expect(fulfillment.reload).not_to be_fulfilled
+      end
+
       it 'refuses a fulfillment already fulfilled' do
         fulfillment.update!(status: 'fulfilled')
 
@@ -213,6 +225,21 @@ module Spree
 
         expect(Spree::Events).to have_received(:publish).
           with('shipment.shipped', anything, hash_including(notify_customer: false))
+      end
+    end
+
+    describe 'tracking carrier' do
+      it 'stores an explicit carrier beside the number' do
+        subject.call(fulfillment: fulfillment, tracking: '421432', tracking_carrier: 'inpost')
+
+        expect(fulfillment.reload.tracking_carrier).to eq('inpost')
+        expect(fulfillment.tracking_url).to include('inpost.pl')
+      end
+
+      it 'detects the carrier from a recognisable number' do
+        subject.call(fulfillment: fulfillment, tracking: '1Z879E930346834440')
+
+        expect(fulfillment.reload.tracking_carrier).to eq('ups')
       end
     end
 
