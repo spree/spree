@@ -12282,6 +12282,9 @@ paths:
       description: |-
         Cancels a completed order.
 
+        Set `notify_customer: true` to send the order cancellation email.
+
+
         **Required scope:** `write_orders` (for API-key authentication).
       x-codeSamples:
       - lang: javascript
@@ -12393,6 +12396,15 @@ paths:
                 canceler_id: adm_UkLWZg9DAJ
                 created_by_id:
                 customer_id: cust_UkLWZg9DAJ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notify_customer:
+                  type: boolean
+                  description: Send the order cancellation email after canceling.
   "/api/v3/admin/orders/{id}/approve":
     patch:
       summary: Approve an order

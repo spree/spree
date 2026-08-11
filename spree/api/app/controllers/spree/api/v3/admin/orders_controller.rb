@@ -49,7 +49,7 @@ module Spree
             with_order_lock do
               result = Spree.order_complete_service.call(
                 order: @resource,
-                payment_pending: ActiveModel::Type::Boolean.new.cast(params[:payment_pending]),
+                payment_pending: ActiveModel::Type::Boolean.new.cast(params[:payment_pending]) || false,
                 notify_customer: ActiveModel::Type::Boolean.new.cast(params[:notify_customer])
               )
 
@@ -64,8 +64,17 @@ module Spree
           # PATCH /api/v3/admin/orders/:id/cancel
           def cancel
             with_order_lock do
-              @resource.canceled_by(try_spree_current_user)
-              render json: serialize_resource(@resource.reload)
+              result = Spree.order_cancel_workflow.call(
+                order: @resource,
+                canceler: try_spree_current_user,
+                notify_customer: ActiveModel::Type::Boolean.new.cast(params[:notify_customer]) || false
+              )
+
+              if result.success?
+                render json: serialize_resource(@resource.reload)
+              else
+                render_service_error(@resource.errors.presence || result.error)
+              end
             end
           end
 
