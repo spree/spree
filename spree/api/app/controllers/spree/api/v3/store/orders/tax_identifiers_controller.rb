@@ -22,30 +22,21 @@ module Spree
             private
 
             # The order is the customer's own — by JWT or by guest token,
-            # mirroring Store::Orders::ReturnsController.
+            # mirroring Store::Orders::ReturnsController. The scope is the
+            # enforcement: an order the caller does not own is simply not found.
             def order
               @order ||= begin
                 cart_pk = Spree::Cart.decode_own_prefixed_id(params[:order_id])
-                found = if cart_pk
-                          order_scope.find_by!(cart_id: cart_pk)
-                        else
-                          order_scope.find_by_prefix_id!(params[:order_id])
-                        end
-                authorize!(:show, found, order_token)
-                found
+                if cart_pk
+                  order_scope.find_by!(cart_id: cart_pk)
+                else
+                  order_scope.find_by_prefix_id!(params[:order_id])
+                end
               end
             end
 
             def order_scope
-              base = current_store.orders.complete
-
-              if current_user.present?
-                base.where(customer: current_user)
-              elsif order_token.present?
-                base.where(token: order_token)
-              else
-                base.none
-              end
+              storefront_access_policy.scope(current_store.orders.complete, token: order_token)
             end
           end
         end

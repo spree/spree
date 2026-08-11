@@ -6,7 +6,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
   include_context 'API v3 Admin'
 
   # A top-level category — parentless, store-owned, no taxonomy.
-  let!(:category) { Spree::Category.create!(name: 'Clothing', store: store) }
+  let!(:category) { create(:category, name: 'Clothing', store: store) }
   let(:Authorization) { "Bearer #{admin_jwt_token}" }
 
   path '/api/v3/admin/categories' do
@@ -204,7 +204,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
       }
 
       response '200', 'category repositioned' do
-        let!(:other) { Spree::Category.create!(name: 'Footwear', store: store) }
+        let!(:other) { create(:category, name: 'Footwear', store: store) }
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { other.prefixed_id }
         let(:body) { { new_parent_id: category.prefixed_id, new_position: 0 } }
@@ -290,7 +290,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
         let(:category_id) { category.prefixed_id }
         let(:id) { product.prefixed_id }
 
-        before { Spree::ProductCategory.create!(taxon: category, product: product, position: 1) }
+        before { create(:product_category, category: category, product: product, position: 1) }
 
         run_test!
       end
@@ -324,7 +324,7 @@ RSpec.describe 'Admin Categories API', type: :request, swagger_doc: 'api-referen
         let(:id) { product.prefixed_id }
         let(:body) { { new_position: 0 } }
 
-        before { Spree::ProductCategory.create!(taxon: category, product: product, position: 1) }
+        before { create(:product_category, category: category, product: product, position: 1) }
 
         run_test!
       end

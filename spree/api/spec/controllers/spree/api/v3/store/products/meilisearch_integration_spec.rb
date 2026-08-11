@@ -19,9 +19,8 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   let(:index_name) { "#{store.code}_products" }
 
   # Categories
-  let(:taxonomy) { create(:taxonomy, store: store) }
-  let(:clothing_category) { create(:taxon, name: 'Clothing', taxonomy: taxonomy) }
-  let(:shoes_category) { create(:taxon, name: 'Shoes', taxonomy: taxonomy) }
+  let(:clothing_category) { create(:category, name: 'Clothing') }
+  let(:shoes_category) { create(:category, name: 'Shoes') }
 
   # Option types
   let(:color_option) { create(:option_type, name: 'color', presentation: 'Color', filterable: true) }
@@ -43,7 +42,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
 
   # Products with different attributes
   let!(:cheap_red_shirt) do
-    p = create(:product, name: 'Red Cotton Shirt', status: 'active', store: store, taxons: [clothing_category])
+    p = create(:product, name: 'Red Cotton Shirt', status: 'active', store: store, categories: [clothing_category])
     p.option_types << color_option
     p.option_types << size_option
     v = create(:variant, product: p, option_values: [red, small])
@@ -53,7 +52,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   end
 
   let!(:expensive_blue_shirt) do
-    p = create(:product, name: 'Blue Silk Shirt', status: 'active', store: store, taxons: [clothing_category])
+    p = create(:product, name: 'Blue Silk Shirt', status: 'active', store: store, categories: [clothing_category])
     p.option_types << color_option
     v = create(:variant, product: p, option_values: [blue, large])
     v.prices.find_or_create_by!(currency: 'USD').update!(amount: 89.99)
@@ -62,7 +61,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
   end
 
   let!(:blue_shoes) do
-    p = create(:product, name: 'Blue Running Shoes', status: 'active', store: store, taxons: [shoes_category])
+    p = create(:product, name: 'Blue Running Shoes', status: 'active', store: store, categories: [shoes_category])
     p.option_types << color_option
     p.option_types << size_option
     v = create(:variant, product: p, option_values: [blue, small])
@@ -249,40 +248,40 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     end
   end
 
-  describe 'searchable / sortable metafields' do
+  describe 'searchable / sortable custom_fields' do
     let!(:label_definition) do
-      create(:metafield_definition, :short_text_field, :searchable, :sortable,
+      create(:custom_field_definition, :short_text_field, :searchable, :sortable,
              namespace: 'custom', key: 'label')
     end
     let!(:weight_definition) do
-      create(:metafield_definition, :number_field, :sortable,
+      create(:custom_field_definition, :number_field, :sortable,
              namespace: 'custom', key: 'weight')
     end
-    # Product with neither metafield — exercises missing-attribute sort placement.
-    let!(:missing_metafield_product) do
-      create(:product, name: 'Green Linen Shirt', status: 'active', store: store, taxons: [clothing_category])
+    # Product with neither custom_field — exercises missing-attribute sort placement.
+    let!(:missing_custom_field_product) do
+      create(:product, name: 'Green Linen Shirt', status: 'active', store: store, categories: [clothing_category])
     end
 
     before do
-      cheap_red_shirt.set_metafield(label_definition, 'Apple')
-      expensive_blue_shirt.set_metafield(label_definition, 'Cherry')
-      # blue_shoes left without label metafield
+      cheap_red_shirt.set_custom_field(label_definition, 'Apple')
+      expensive_blue_shirt.set_custom_field(label_definition, 'Cherry')
+      # blue_shoes left without label custom_field
 
-      cheap_red_shirt.set_metafield(weight_definition, '10')
-      expensive_blue_shirt.set_metafield(weight_definition, '2')
-      blue_shoes.set_metafield(weight_definition, '3')
+      cheap_red_shirt.set_custom_field(weight_definition, '10')
+      expensive_blue_shirt.set_custom_field(weight_definition, '2')
+      blue_shoes.set_custom_field(weight_definition, '3')
 
       provider.reindex(store.products)
       wait_for_meilisearch_indexing!
     end
 
-    it 'includes metafield keys in searchable and sortable settings' do
+    it 'includes custom_field keys in searchable and sortable settings' do
       settings = ::Meilisearch::Client.new(ENV['MEILISEARCH_URL']).index(index_name).get_settings
       expect(settings['searchableAttributes']).to include('cf_custom_label')
       expect(settings['sortableAttributes']).to include('cf_custom_label', 'cf_custom_weight')
     end
 
-    it 'finds products by searchable metafield value' do
+    it 'finds products by searchable custom_field value' do
       get :index, params: { q: { search: 'Apple' } }
 
       expect(response).to have_http_status(:ok)
@@ -291,7 +290,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
       expect(names).not_to include('Blue Silk Shirt')
     end
 
-    it 'sorts by short_text metafield ascending and descending with missing values last' do
+    it 'sorts by short_text custom_field ascending and descending with missing values last' do
       get :index, params: { sort: 'cf_custom_label' }
       expect(response).to have_http_status(:ok)
       asc_names = json_response['data'].map { |p| p['name'] }
@@ -305,7 +304,7 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
       expect(desc_names.last(2)).to match_array(['Green Linen Shirt', 'Blue Running Shoes'])
     end
 
-    it 'sorts by number metafield numerically' do
+    it 'sorts by number custom_field numerically' do
       get :index, params: { sort: 'cf_custom_weight' }
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].map { |p| p['name'] }.first(3)).to eq(
@@ -320,16 +319,16 @@ RSpec.describe 'Meilisearch Integration', type: :controller, if: ENV['MEILISEARC
     end
   end
 
-  describe 'sorting by a newly sortable metafield' do
+  describe 'sorting by a newly sortable custom_field' do
     it 'self-heals when the sort attribute is not yet configured on the index' do
-      definition = create(:metafield_definition, :short_text_field, :sortable,
+      definition = create(:custom_field_definition, :short_text_field, :sortable,
                           namespace: 'custom', key: 'label')
-      cheap_red_shirt.set_metafield(definition, 'aaa')
-      expensive_blue_shirt.set_metafield(definition, 'zzz')
+      cheap_red_shirt.set_custom_field(definition, 'aaa')
+      expensive_blue_shirt.set_custom_field(definition, 'zzz')
       provider.reindex(store.products)
       wait_for_meilisearch_indexing!
 
-      # Strip the metafield from sortable attributes so the next sort request
+      # Strip the custom_field from sortable attributes so the next sort request
       # hits invalid_search_sort and must refresh settings + retry.
       client = ::Meilisearch::Client.new(ENV['MEILISEARCH_URL'])
       client.index(index_name).update_sortable_attributes(%w[name price created_at available_on units_sold_count]).await

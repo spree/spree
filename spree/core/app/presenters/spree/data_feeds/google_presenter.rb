@@ -4,7 +4,7 @@ module Spree
   module DataFeeds
     class GooglePresenter < BasePresenter
       # Optional Google Merchant Center product attributes sourced from
-      # metafields. See https://support.google.com/merchants/answer/7052112
+      # custom_fields. See https://support.google.com/merchants/answer/7052112
       OPTIONAL_ATTRIBUTES = %w[
         brand gtin mpn identifier_exists condition adult multipack is_bundle
         age_group color gender material pattern size size_type size_system
@@ -42,7 +42,7 @@ module Spree
       end
 
       def build_items(xml)
-        products.includes(:primary_media, public_metafields: :metafield_definition, variants: [:primary_media, option_values: :option_type]).find_each do |product|
+        products.includes(:primary_media, storefront_custom_fields: :custom_field_definition, variants: [:primary_media, option_values: :option_type]).find_each do |product|
           product.variants.active(feed_currency).each do |variant|
             build_item(xml, product, variant)
           end
@@ -71,7 +71,7 @@ module Spree
         xml['g'].id variant.id
         xml['g'].item_group_id product.id
         xml['g'].title format_title(product, variant)
-        xml['g'].description product.description || format_title(product, variant)
+        xml['g'].description plain_description(product).presence || format_title(product, variant)
         xml['g'].link "#{store.storefront_url}/products/#{product.slug}"
         xml['g'].image_link image_url
         xml['g'].price "#{variant.amount_in(feed_currency)} #{feed_currency}"
@@ -80,11 +80,11 @@ module Spree
       end
 
       def build_optional_attributes(xml, product)
-        product.public_metafields.each do |metafield|
-          key = metafield.metafield_definition.key.parameterize.underscore
+        product.storefront_custom_fields.each do |custom_field|
+          key = custom_field.custom_field_definition.key.parameterize.underscore
           next unless OPTIONAL_ATTRIBUTES.include?(key)
 
-          append_g_element(xml, key, metafield.value)
+          append_g_element(xml, key, custom_field.value)
         end
       end
 
@@ -94,6 +94,14 @@ module Spree
         node.namespace = parent.namespace_scopes.find { |ns| ns.prefix == 'g' }
         node.content = value
         parent << node
+      end
+
+      # Google expects plain text in g:description, not markup. Memoized per
+      # product: this is called once per variant, and stripping the markup
+      # parses the whole description each time.
+      def plain_description(product)
+        @plain_descriptions ||= {}
+        @plain_descriptions[product.id] ||= Spree::RichTextHelper.to_plain_text(product.description)
       end
 
       def format_title(product, variant)

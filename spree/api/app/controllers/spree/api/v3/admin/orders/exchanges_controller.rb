@@ -6,7 +6,10 @@ module Spree
           # Exchanges on a completed order. Each status change is its own
           # member action, because each carries different arguments.
           class ExchangesController < BaseController
-            scoped_resource :exchanges
+            # Exchanges are a subject of the `orders` catalog resource, so
+            # `read_orders`/`write_orders` gate these endpoints. `:exchanges`
+            # would name a key no catalog knows.
+            scoped_resource :orders
 
             before_action :set_resource, only: [:show, :update, :approve, :receive, :fulfill, :cancel]
 

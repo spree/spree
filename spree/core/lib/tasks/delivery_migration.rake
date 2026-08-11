@@ -10,9 +10,13 @@ namespace :spree do
 
     say = ->(message) { puts message }
 
-    # 1. Stored polymorphic class names.
+    # 1. Stored polymorphic class names. spree_state_changes has no model
+    # anymore (removed in 6.0; the table survives until 6.1 as legacy data),
+    # so it is read through an anonymous ActiveRecord class.
+    state_changes = Class.new(ActiveRecord::Base) { self.table_name = 'spree_state_changes' }
+
     {
-      Spree::StateChange => :stateful_type,
+      state_changes => :stateful_type,
       Spree::StockMovement => :originator_type
     }.each do |klass, column|
       count = klass.where(column => 'Spree::Shipment').in_batches(of: batch_size).update_all(column => 'Spree::Fulfillment')
@@ -25,12 +29,12 @@ namespace :spree do
       say.call "spree_adjustments.adjustable_type: #{count} rows Spree::Shipment → Spree::Fulfillment"
     end
 
-    # StateChange#name distinguishes the machine ('shipment' rows become
+    # The name column distinguishes the machine ('shipment' rows become
     # 'fulfillment'); the recorded states keep their history except the
     # renamed terminal value.
-    Spree::StateChange.where(name: 'shipment').in_batches(of: batch_size).update_all(name: 'fulfillment')
-    Spree::StateChange.where(name: 'fulfillment', previous_state: 'shipped').in_batches(of: batch_size).update_all(previous_state: 'fulfilled')
-    Spree::StateChange.where(name: 'fulfillment', next_state: 'shipped').in_batches(of: batch_size).update_all(next_state: 'fulfilled')
+    state_changes.where(name: 'shipment').in_batches(of: batch_size).update_all(name: 'fulfillment')
+    state_changes.where(name: 'fulfillment', previous_state: 'shipped').in_batches(of: batch_size).update_all(previous_state: 'fulfilled')
+    state_changes.where(name: 'fulfillment', next_state: 'shipped').in_batches(of: batch_size).update_all(next_state: 'fulfilled')
 
     # 2. Status value rename on fulfillments ('shipped' → 'fulfilled').
     count = Spree::Fulfillment.unscoped.where(status: 'shipped').in_batches(of: batch_size).update_all(status: 'fulfilled')

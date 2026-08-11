@@ -3,6 +3,8 @@ module Spree
     module V3
       module Admin
         class ApiKeysController < ResourceController
+          include Spree::Api::V3::Admin::RoleGrantGuard
+
           # Dedicated scope — key management is credential-administration, not
           # store configuration. A `write_settings` key must not be able to
           # revoke or destroy higher-privileged keys.
@@ -13,14 +15,19 @@ module Spree
           skip_scope_check! only: :current
 
           # POST /api/v3/admin/api_keys
-          # Prevents scope amplification: a key minted via a secret API key can
-          # only carry scopes that key already holds. A JWT admin is governed by
-          # CanCanCan (not scopes) and may grant any valid scope — so when a JWT
-          # user authenticated the request, `current_ability` ignores the API key
-          # (see AdminAuthentication#current_ability) and we skip the scope cap
-          # too, even if an `X-Spree-Api-Key` header was also sent.
+          # Prevents scope amplification for BOTH principals: a key minted via a
+          # secret API key can only carry scopes that key already holds, and a
+          # JWT staffer can only mint scopes within their own roles' permission
+          # keys (admin-role holders are unbounded). Scopes and role permissions
+          # share the catalog vocabulary, so both compare as expanded key sets.
           def create
-            if scope_limited_principal? && (excess = requested_scopes.reject { |s| current_api_key.has_scope?(s) }).any?
+            if scope_limited_principal?
+              excess = requested_scopes.reject { |s| current_api_key.has_scope?(s) }
+            else
+              excess = excess_permission_keys(requested_scopes)
+            end
+
+            if excess.any?
               return render_error(
                 code: ERROR_CODES[:access_denied],
                 message: "Cannot grant scopes beyond your own: #{excess.join(', ')}",

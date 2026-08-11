@@ -3,24 +3,24 @@ require 'spec_helper'
 RSpec.describe Spree::Api::V3::CustomFieldSerializer do
   let(:store) { @default_store }
   let(:product) { create(:product) }
-  let(:metafield_definition) { create(:metafield_definition, resource_type: 'Spree::Product', display_on: 'both') }
-  let(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'test value') }
+  let(:custom_field_definition) { create(:custom_field_definition, resource_type: 'Spree::Product') }
+  let(:custom_field) { create(:custom_field, resource: product, custom_field_definition: custom_field_definition, value: 'test value') }
   let(:base_params) { { store: store, currency: 'USD' } }
 
   describe 'store serializer' do
-    subject { described_class.new(metafield, params: base_params).to_h }
+    subject { described_class.new(custom_field, params: base_params).to_h }
 
     it 'includes key as full_key' do
-      expect(subject['key']).to eq(metafield.full_key)
+      expect(subject['key']).to eq(custom_field.full_key)
       expect(subject['key']).to include('.')
     end
 
     it 'includes label' do
-      expect(subject['label']).to eq(metafield.label)
+      expect(subject['label']).to eq(custom_field.label)
     end
 
     it 'includes type' do
-      expect(subject['type']).to eq(metafield.type)
+      expect(subject['type']).to eq(custom_field.type)
     end
 
     it 'includes serialized value' do
@@ -36,30 +36,30 @@ end
 RSpec.describe Spree::Api::V3::Admin::CustomFieldSerializer do
   let(:store) { @default_store }
   let(:product) { create(:product) }
-  let(:metafield_definition) { create(:metafield_definition, resource_type: 'Spree::Product', display_on: 'back_end') }
-  let(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'admin value') }
+  let(:custom_field_definition) { create(:custom_field_definition, resource_type: 'Spree::Product', storefront_visible: false) }
+  let(:custom_field) { create(:custom_field, resource: product, custom_field_definition: custom_field_definition, value: 'admin value') }
   let(:base_params) { { store: store, currency: 'USD' } }
 
   describe 'admin serializer' do
-    subject { described_class.new(metafield, params: base_params).to_h }
+    subject { described_class.new(custom_field, params: base_params).to_h }
 
     it 'includes standard attributes' do
       expect(subject).to include(
-        'key' => metafield.full_key,
-        'label' => metafield.label,
-        'type' => metafield.type,
+        'key' => custom_field.full_key,
+        'label' => custom_field.label,
+        'type' => custom_field.type,
         'value' => 'admin value'
       )
     end
 
-    it 'includes storefront_visible as false for back_end display_on' do
+    it 'includes storefront_visible as false for admin-only definitions' do
       expect(subject['storefront_visible']).to be false
     end
 
-    it 'includes storefront_visible as true for both display_on' do
-      public_definition = create(:metafield_definition, resource_type: 'Spree::Product', display_on: 'both')
-      public_metafield = create(:metafield, resource: product, metafield_definition: public_definition, value: 'public value')
-      result = described_class.new(public_metafield, params: base_params).to_h
+    it 'includes storefront_visible as true for storefront-visible definitions' do
+      public_definition = create(:custom_field_definition, resource_type: 'Spree::Product')
+      public_custom_field = create(:custom_field, resource: product, custom_field_definition: public_definition, value: 'public value')
+      result = described_class.new(public_custom_field, params: base_params).to_h
       expect(result['storefront_visible']).to be true
     end
 

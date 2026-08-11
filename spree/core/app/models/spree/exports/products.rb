@@ -3,8 +3,8 @@ module Spree
     class Products < Spree::Export
       # to avoid N+1 queries
       def scope_includes
-        includes = [:tax_category, :option_types, { taxons: :taxonomy }, { variants: variant_includes }]
-        includes << { metafields: :metafield_definition }
+        includes = [:tax_category, :option_types, :categories, { variants: variant_includes }]
+        includes << { custom_fields: :custom_field_definition }
         includes
       end
 
@@ -27,7 +27,7 @@ module Spree
 
       def csv_headers
         headers = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.dup
-        headers += metafields_headers
+        headers += custom_fields_headers
         @csv_headers ||= headers
       end
     end

@@ -56,29 +56,29 @@ module Spree
       end
 
       context 'with categories' do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-        let(:product) { create(:product, name: 'Test Shirt', taxons: [taxon]) }
+        let(:root_category) { create(:category, store: store, name: 'Apparel') }
+        let(:category) { create(:category, store: store, parent: root_category) }
+        let(:product) { create(:product, name: 'Test Shirt', categories: [category]) }
 
         it 'indexes category_ids as prefixed IDs including ancestors' do
           doc = documents.first
-          expect(doc[:category_ids]).to include(taxon.prefixed_id)
-          expect(doc[:category_ids]).to include(taxonomy.root.prefixed_id)
+          expect(doc[:category_ids]).to include(category.prefixed_id)
+          expect(doc[:category_ids]).to include(root_category.prefixed_id)
           doc[:category_ids].each { |id| expect(id).to start_with('ctg_') }
         end
       end
 
       context 'with nested categories' do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:parent) { create(:taxon, taxonomy: taxonomy, name: 'Men') }
-        let(:child) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Jackets') }
-        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], taxons: [child]) }
+        let(:root_category) { create(:category, store: store, name: 'Apparel') }
+        let(:parent) { create(:category, store: store, parent: root_category, name: 'Men') }
+        let(:child) { create(:category, store: store, parent: parent, name: 'Jackets') }
+        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], categories: [child]) }
 
         it 'indexes all ancestor category IDs so parent-level filtering works' do
           doc = documents.first
           expect(doc[:category_ids]).to include(child.prefixed_id)
           expect(doc[:category_ids]).to include(parent.prefixed_id)
-          expect(doc[:category_ids]).to include(taxonomy.root.prefixed_id)
+          expect(doc[:category_ids]).to include(root_category.prefixed_id)
         end
       end
 
@@ -118,11 +118,10 @@ module Spree
       end
 
       context 'category membership positions (subtree-MIN)' do
-        let(:taxonomy) { create(:taxonomy, store: store) }
-        let(:parent) { create(:taxon, taxonomy: taxonomy, name: 'Men') }
-        let(:jackets) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Jackets') }
-        let(:coats) { create(:taxon, taxonomy: taxonomy, parent: parent, name: 'Coats') }
-        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], taxons: [jackets, coats]) }
+        let(:parent) { create(:category, store: store, name: 'Men') }
+        let(:jackets) { create(:category, store: store, parent: parent, name: 'Jackets') }
+        let(:coats) { create(:category, store: store, parent: parent, name: 'Coats') }
+        let(:product) { create(:product, name: 'Test Jacket', channels: [store.default_channel], categories: [jackets, coats]) }
 
         before do
           Spree::ProductCategory.where(product: product, category: jackets).update_all(position: 5)
@@ -243,27 +242,27 @@ module Spree
         end
       end
 
-      context 'with searchable / sortable metafields' do
+      context 'with searchable / sortable custom_fields' do
         let!(:searchable_def) do
-          create(:metafield_definition, :short_text_field, :searchable,
-                 namespace: 'custom', key: 'pinyin_name', name: 'Pinyin')
+          create(:custom_field_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'pinyin_name', label: 'Pinyin')
         end
         let!(:sortable_def) do
-          create(:metafield_definition, :number_field, :sortable,
-                 namespace: 'custom', key: 'priority', name: 'Priority')
+          create(:custom_field_definition, :number_field, :sortable,
+                 namespace: 'custom', key: 'priority', label: 'Priority')
         end
         let!(:ignored_def) do
-          create(:metafield_definition, :short_text_field,
-                 namespace: 'custom', key: 'internal_note', name: 'Note')
+          create(:custom_field_definition, :short_text_field,
+                 namespace: 'custom', key: 'internal_note', label: 'Note')
         end
 
         before do
-          product.set_metafield(searchable_def, 'mao-tai')
-          product.set_metafield(sortable_def, '10')
-          product.set_metafield(ignored_def, 'secret')
+          product.set_custom_field(searchable_def, 'mao-tai')
+          product.set_custom_field(sortable_def, '10')
+          product.set_custom_field(ignored_def, 'secret')
         end
 
-        it 'indexes searchable and sortable metafield values as cf_* attributes' do
+        it 'indexes searchable and sortable custom_field values as cf_* attributes' do
           doc = documents.first
           expect(doc['cf_custom_pinyin_name']).to eq('mao-tai')
           expect(doc['cf_custom_priority']).to eq(10.0)
@@ -284,25 +283,25 @@ module Spree
           end
         end
 
-        it 'casts number metafield values to Float' do
-          decimal_def = create(:metafield_definition, :number_field, :sortable,
-                               namespace: 'custom', key: 'rating', name: 'Rating')
-          product.set_metafield(decimal_def, '42.5')
+        it 'casts number custom_field values to Float' do
+          decimal_def = create(:custom_field_definition, :number_field, :sortable,
+                               namespace: 'custom', key: 'rating', label: 'Rating')
+          product.set_custom_field(decimal_def, '42.5')
 
           doc = described_class.new(product.reload, store).call.first
           expect(doc['cf_custom_rating']).to eq(42.5)
         end
 
         it 'omits registered keys when the product has no value' do
-          create(:metafield_definition, :short_text_field, :searchable,
-                 namespace: 'custom', key: 'origin', name: 'Origin')
+          create(:custom_field_definition, :short_text_field, :searchable,
+                 namespace: 'custom', key: 'origin', label: 'Origin')
 
           doc = described_class.new(product.reload, store).call.first
           expect(doc).not_to have_key('cf_custom_origin')
         end
 
         it 'includes no cf_* attributes when no definitions are searchable or sortable' do
-          Spree::MetafieldDefinition.destroy_all
+          Spree::CustomFieldDefinition.destroy_all
 
           doc = described_class.new(product.reload, store).call.first
           expect(doc.keys.grep(/\Acf_/)).to be_empty

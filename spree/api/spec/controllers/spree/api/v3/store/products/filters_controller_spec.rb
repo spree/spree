@@ -5,10 +5,9 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
   include_context 'API v3 Store'
 
-  let(:taxonomy) { create(:taxonomy, store: store) }
-  let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
-  let!(:child_taxon1) { create(:taxon, taxonomy: taxonomy, parent: taxon, name: 'Shirts') }
-  let!(:child_taxon2) { create(:taxon, taxonomy: taxonomy, parent: taxon, name: 'Pants') }
+  let!(:category) { create(:category) }
+  let!(:child_taxon1) { create(:category, parent: category, name: 'Shirts') }
+  let!(:child_taxon2) { create(:category, parent: category, name: 'Pants') }
 
   let(:option_type_size) { create(:option_type, name: 'size', presentation: 'Size', filterable: true, position: 1) }
   let(:option_type_color) { create(:option_type, name: 'color', presentation: 'Color', filterable: true, position: 2) }
@@ -18,7 +17,7 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
   let(:option_value_blue) { create(:option_value, option_type: option_type_color, name: 'blue', presentation: 'Blue', position: 2) }
 
   let!(:product1) do
-    create(:product, status: 'active', taxons: [child_taxon1]).tap do |p|
+    create(:product, status: 'active', categories: [child_taxon1]).tap do |p|
       p.option_types << option_type_size
       p.option_types << option_type_color
       create(:variant, product: p, option_values: [option_value_small, option_value_red])
@@ -26,14 +25,14 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
   end
 
   let!(:product2) do
-    create(:product, status: 'active', taxons: [child_taxon1]).tap do |p|
+    create(:product, status: 'active', categories: [child_taxon1]).tap do |p|
       p.option_types << option_type_size
       create(:variant, product: p, option_values: [option_value_medium])
     end
   end
 
   let!(:product3) do
-    create(:product, status: 'active', taxons: [child_taxon2]).tap do |p|
+    create(:product, status: 'active', categories: [child_taxon2]).tap do |p|
       p.option_types << option_type_color
       create(:variant, product: p, option_values: [option_value_blue])
     end
@@ -101,12 +100,12 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       )
     end
 
-    it 'invalidates cached sort options when a metafield definition becomes sortable' do
+    it 'invalidates cached sort options when a custom_field definition becomes sortable' do
       get :index
       expect(json_response['sort_options'].map { |s| s['id'] }).not_to include('cf_custom_weight')
 
-      create(:metafield_definition, :number_field, :sortable,
-             namespace: 'custom', key: 'weight', name: 'Weight')
+      create(:custom_field_definition, :number_field, :sortable,
+             namespace: 'custom', key: 'weight', label: 'Weight')
 
       get :index
       expect(json_response['sort_options'].map { |s| s['id'] }).to include(
@@ -128,7 +127,7 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       end
 
       it 'returns child categories as filter options' do
-        get :index, params: { category_id: taxon.prefixed_id }
+        get :index, params: { category_id: category.prefixed_id }
 
         category_filter = json_response['filters'].find { |f| f['type'] == 'category' }
         expect(category_filter).to be_present
@@ -138,9 +137,9 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       end
 
       it 'defaults a category to manual sort (category does not drive default_sort in 6.0)' do
-        taxon.update!(sort_order: 'price asc')
+        category.update!(sort_order: 'price asc')
 
-        get :index, params: { category_id: taxon.prefixed_id }
+        get :index, params: { category_id: category.prefixed_id }
 
         expect(json_response['default_sort']).to eq('manual')
       end

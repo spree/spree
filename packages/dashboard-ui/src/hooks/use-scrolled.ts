@@ -8,11 +8,16 @@ import * as React from 'react'
  *
  * Listens passively to `window` scroll. Default threshold is 4px to avoid
  * flickering at the boundary on devices that report fractional scroll
- * positions. Initial value is computed synchronously on mount so the first
- * paint matches the actual scroll position (e.g., after browser scroll
- * restoration on navigation).
+ * positions.
+ *
+ * @param threshold Scroll offset, in pixels, at which the state flips to true.
+ * @param releaseThreshold Offset the user must scroll back above before it
+ *   flips to false again. Defaults to `threshold` (no hysteresis). Set it
+ *   lower than `threshold` when the flag drives motion: a single boundary
+ *   makes a slow scroll across it toggle repeatedly, and anything animating
+ *   off this flag then flickers.
  */
-export function useScrolled(threshold = 4) {
+export function useScrolled(threshold = 4, releaseThreshold = threshold) {
   // Always start `false` so a future SSR render and the first client paint
   // agree (no hydration mismatch). The effect below resyncs against the
   // actual scroll position on mount, so any restored scroll position is
@@ -20,11 +25,18 @@ export function useScrolled(threshold = 4) {
   const [scrolled, setScrolled] = React.useState(false)
 
   React.useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > threshold)
+    const onScroll = () =>
+      // Reading the previous value here (rather than from a dependency) keeps
+      // the listener stable while still letting the two thresholds apply
+      // directionally: past `threshold` to engage, back above
+      // `releaseThreshold` to disengage.
+      setScrolled((wasScrolled) =>
+        wasScrolled ? window.scrollY > releaseThreshold : window.scrollY > threshold,
+      )
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [threshold])
+  }, [threshold, releaseThreshold])
 
   return scrolled
 }

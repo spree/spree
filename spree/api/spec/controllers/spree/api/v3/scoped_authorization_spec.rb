@@ -86,17 +86,54 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
   end
 
   describe 'JWT-authenticated request' do
-    # JWT bypasses scope checks; CanCanCan abilities apply instead.
+    # JWT staff pass through the same key gate: their roles' catalog keys play
+    # the role scopes play for secret keys (docs/plans/6.0-admin-rbac.md).
     before do
       request.headers['X-Spree-Api-Key'] = nil
-      request.headers['Authorization'] = "Bearer #{admin_jwt_token}"
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
     end
 
-    let(:scopes) { ['read_customers'] } # irrelevant — JWT auth doesn't read scopes
+    let(:scopes) { ['read_customers'] } # irrelevant — JWT auth doesn't read key scopes
 
-    it 'bypasses scope checks' do
-      get :index, as: :json
-      expect(response).to have_http_status(:ok)
+    context 'as a full admin' do
+      let(:jwt_token) { admin_jwt_token }
+
+      it 'passes the key gate' do
+        get :index, as: :json
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'as a staffer whose roles grant the required key' do
+      let(:staffer) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          user.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[read_orders]), resource: store)
+        end
+      end
+      let(:jwt_token) { Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN) }
+
+      it 'allows the read' do
+        get :index, as: :json
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'as a staffer whose roles lack the required key' do
+      let(:staffer) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          user.role_users.create!(role: create(:role, name: 'other', permissions: %w[read_customers]), resource: store)
+        end
+      end
+      let(:jwt_token) { Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN) }
+
+      it 'denies with the missing permission named' do
+        get :index, as: :json
+
+        expect(response).to have_http_status(:forbidden)
+        body = JSON.parse(response.body)
+        expect(body['error']['code']).to eq('access_denied')
+        expect(body['error']['details']['required_permission']).to eq('read_orders')
+      end
     end
   end
 end
@@ -176,7 +213,7 @@ RSpec.describe Spree::Api::V3::Admin::DashboardController, type: :controller do
       request.headers['Authorization'] = "Bearer #{admin_jwt_token}"
     end
 
-    it 'passes the scope guard (CanCanCan applies instead)' do
+    it 'passes the key gate (admin holds the full catalog)' do
       get :analytics, as: :json
       expect(response).to have_http_status(:ok)
     end

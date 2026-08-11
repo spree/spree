@@ -5,8 +5,6 @@ require 'active_job/railtie'
 require 'active_model/railtie'
 require 'active_record/railtie'
 require 'active_storage/engine'
-require 'action_text/engine'
-require 'action_cable/engine'
 require 'pagy'
 
 require 'mail'
@@ -473,8 +471,13 @@ module Spree
     Rails.application.config.spree.translatable_resources = value
   end
 
+  def self.custom_fields
+    Rails.application.config.spree.custom_fields
+  end
+
   def self.metafields
-    Rails.application.config.spree.metafields
+    Spree::Deprecation.warn('Spree.metafields is deprecated and will be removed in Spree 6.1. Use Spree.custom_fields instead.') if defined?(Spree::Deprecation)
+    custom_fields
   end
 
   def self.integrations
@@ -559,18 +562,16 @@ module Spree
     end
   end
 
-  # Permission configuration accessor for managing role-to-permission-set mappings.
+  # The permission catalog — the grant vocabulary shared by staff roles and
+  # secret API key scopes. Roles themselves are data (Spree::Role#permissions);
+  # code only registers the vocabulary.
   #
-  # @example Assigning permission sets to a role
-  #   Spree.permissions.assign(:customer_service, [
-  #     Spree::PermissionSets::OrderDisplay,
-  #     Spree::PermissionSets::UserManagement
-  #   ])
+  # @example Registering a resource from an extension
+  #   Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> {
+  #     [SpreeReviews::Review]
+  #   })
   #
-  # @example Clearing permission sets from a role
-  #   Spree.permissions.clear(:customer_service)
-  #
-  # @return [Spree::PermissionConfiguration] the permission configuration instance
+  # @return [Spree::PermissionConfiguration] the permission catalog
   def self.permissions
     @permissions ||= PermissionConfiguration.new
   end

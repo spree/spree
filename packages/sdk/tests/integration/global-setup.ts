@@ -30,7 +30,7 @@ const CREDENTIALS_RUBY = [
   'sec = Spree::Api::Config[:jwt_secret_key].presence || Rails.application.credentials.jwt_secret_key || ENV["JWT_SECRET_KEY"] || Rails.application.secret_key_base',
   'jwt = JWT.encode({ user_id: u.id, user_type: "customer", jti: SecureRandom.uuid, iss: "spree", aud: "store_api", exp: 1.hour.from_now.to_i }, sec, "HS256")',
   'p = s.products.available.first',
-  'c = s.taxonomies.first&.root&.children&.first',
+  'c = s.categories.first',
   'port = ENV.fetch("PORT", 3010)',
   'puts JSON.generate(base_url: "http://localhost:#{port}", publishable_key: k.token, jwt_token: jwt, user_email: u.email, user_password: "spree123", product_slug: p&.slug, product_id: p&.prefixed_id, variant_id: p&.default_variant&.prefixed_id, category_id: c&.prefixed_id, category_permalink: c&.permalink, country_iso: "US", store_name: s.name, bogus_payment_method_id: pm.prefixed_id, check_payment_method_id: check.prefixed_id)',
 ].join('; ')

@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import { useSyncExternalStore } from 'react'
-import type { SubjectName } from './permissions'
+import type { ActionName, SubjectName } from './permissions'
 
 /**
  * Registry for the settings sub-shell sidebar. Mirrors `nav-registry.ts` but
@@ -36,6 +36,13 @@ export interface SettingsNavEntry {
   position?: number
   /** CanCanCan subject required to see this item. Omit for always-visible. */
   subject?: SubjectName
+  /**
+   * Action checked against `subject`. Defaults to `'read'`. Settings pages
+   * that only exist to *change* something (store settings, emails) should
+   * declare `'update'` — every staff member can read the store record for
+   * shell data, so a read check would show them a page they cannot use.
+   */
+  action?: ActionName
   /** When true, the page is disabled in the sidebar with a "Soon" badge. */
   comingSoon?: boolean
 }
@@ -148,6 +155,21 @@ function getSnapshot() {
 
 export function useSettingsNav() {
   return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+}
+
+/**
+ * Whether any settings entry is reachable for these permissions. The Settings
+ * launcher in the primary sidebar uses this so a role with no settings
+ * authority never opens an empty shell.
+ */
+export function hasVisibleSettingsEntries(permissions: unknown): boolean {
+  const can = (permissions as { can?: (action: string, subject: string) => boolean } | undefined)
+    ?.can
+  if (typeof can !== 'function') return false
+
+  return getSnapshot().all.some(
+    (entry) => !entry.subject || can(entry.action ?? 'read', entry.subject),
+  )
 }
 
 /** Test-only: clear the registry. */

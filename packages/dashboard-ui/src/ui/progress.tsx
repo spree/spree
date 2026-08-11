@@ -41,7 +41,10 @@ function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.
     <ProgressPrimitive.Indicator
       data-slot="progress-indicator"
       className={cn(
-        'h-full rounded-full bg-primary transition-all',
+        // `width` is a layout property, but it's the right one here: a
+        // determinate bar has to grow, and `scaleX` would distort the fill's
+        // rounded ends. Narrowed from `transition-all` so only width animates.
+        'h-full rounded-full bg-primary transition-[width] duration-200 ease-out',
         'data-[indeterminate]:w-1/3 data-[indeterminate]:animate-pulse',
         className,
       )}

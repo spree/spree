@@ -4,7 +4,7 @@ module Spree
 
     extend DisplayMoney
     include Spree::SingleStoreResource
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
     publishes_lifecycle_events

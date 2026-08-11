@@ -75,10 +75,6 @@ describe Spree::Refund, type: :model do
         expect(subject.reload.amount).to eq amount
       end
 
-      it 'creates a log entry' do
-        expect(subject.log_entries).to be_present
-      end
-
       it 'does not attempt to process a transaction' do
         expect(payment.payment_method).not_to receive(:credit)
         subject
@@ -102,10 +98,6 @@ describe Spree::Refund, type: :model do
 
       it 'saves the passed amount as the refund amount' do
         expect(subject.amount).to eq amount
-      end
-
-      it 'creates a log entry' do
-        expect(subject.log_entries).to be_present
       end
 
       it 'attempts to process a transaction' do

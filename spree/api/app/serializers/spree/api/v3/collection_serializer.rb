@@ -16,11 +16,11 @@ module Spree
                    :meta_title, :meta_description, :meta_keywords, :products_count
 
         attribute :description do |collection|
-          collection.description&.to_plain_text.to_s
+          Spree::RichTextHelper.to_plain_text(collection.description)
         end
 
         attribute :description_html do |collection|
-          collection.description&.body&.to_s.to_s
+          collection.description_html
         end
 
         attribute :image_url do |collection|
@@ -31,7 +31,7 @@ module Spree
           image_url_for(collection.square_image)
         end
 
-        many :public_metafields,
+        many :storefront_custom_fields,
              key: :custom_fields,
              resource: proc { Spree.api.custom_field_serializer },
              if: proc { expand?('custom_fields') }

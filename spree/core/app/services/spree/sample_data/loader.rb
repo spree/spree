@@ -20,8 +20,8 @@ module Spree
               puts 'Loading sample channels...'
               load_ruby_file('channels')
 
-              puts 'Loading sample metafield definitions...'
-              load_ruby_file('metafield_definitions')
+              puts 'Loading sample custom_field definitions...'
+              load_ruby_file('custom_field_definitions')
 
               puts 'Loading sample options...'
               load_ruby_file('options')

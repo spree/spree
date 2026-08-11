@@ -5,7 +5,7 @@ RSpec.describe Spree::Exports::Customers, type: :model do
   let(:export) { described_class.new(store: store) }
 
   describe '#csv_headers' do
-    context 'when no metafields exist' do
+    context 'when no custom_fields exist' do
       it 'returns customer headers' do
         expected_headers = [
           'First Name',
@@ -30,15 +30,15 @@ RSpec.describe Spree::Exports::Customers, type: :model do
       end
     end
 
-    context 'when metafields exist' do
-      let!(:metafield_definition) do
-        create(:metafield_definition,
+    context 'when custom_fields exist' do
+      let!(:custom_field_definition) do
+        create(:custom_field_definition,
                resource_type: export.model_class.to_s,
                namespace: 'custom',
                key: 'loyalty_points')
       end
 
-      it 'includes metafield headers' do
+      it 'includes custom_field headers' do
         expected_headers = [
           'First Name',
           'Last Name',
@@ -57,7 +57,7 @@ RSpec.describe Spree::Exports::Customers, type: :model do
           'Total Spent',
           'Total Orders',
           'Tags',
-          'metafield.custom.loyalty_points'
+          'custom_field.custom.loyalty_points'
         ]
         expect(export.csv_headers).to eq(expected_headers)
       end

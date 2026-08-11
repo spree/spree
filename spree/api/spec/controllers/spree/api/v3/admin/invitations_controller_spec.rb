@@ -15,7 +15,7 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
     # a secret API key (which has no human inviter) is the strictest principal
     # to assert the guard against.
     context 'authenticated via a secret API key (no human identity)' do
-      let(:caller_key) { create(:api_key, :secret, store: store, scopes: ['write_settings']) }
+      let(:caller_key) { create(:api_key, :secret, store: store, scopes: ['write_staff']) }
       let(:headers) { { 'x-spree-api-key' => caller_key.plaintext_token } }
 
       it 'forbids inviting straight into the admin role' do
@@ -28,31 +28,13 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
     end
 
     context 'authenticated as a non-admin staff JWT' do
-      around do |example|
-        saved = Spree.permissions.dup
-        Spree.permissions.reset!
-        example.run
-      ensure
-        Spree.permissions.replace(saved)
-      end
-
-      let(:inviter_set) do
-        Class.new(Spree::PermissionSets::Base) do
-          def activate!
-            can :manage, Spree::Invitation
-            can [:read, :admin], Spree::Role
-          end
-        end
-      end
-
+      let(:inviter_role) { create(:role, name: 'team_manager', permissions: %w[write_staff]) }
       let(:staff_admin) do
-        create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: staff_role, resource: store) }
+        create(:admin_user, :without_admin_role).tap { |u| u.role_users.create!(role: inviter_role, resource: store) }
       end
       let(:headers) do
         api_key_headers.merge('Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staff_admin, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}")
       end
-
-      before { Spree.permissions.assign(:staff, inviter_set) }
 
       it 'forbids a non-admin from inviting into the admin role' do
         expect {
@@ -71,9 +53,8 @@ RSpec.describe Spree::Api::V3::Admin::InvitationsController, type: :controller d
         expect(Spree::Invitation.last.role).to eq(staff_role)
       end
 
-      it 'forbids inviting into a SuperUser-equivalent custom role' do
-        owner_role = create(:role, name: 'owner')
-        Spree.permissions.assign(:owner, Spree::PermissionSets::SuperUser)
+      it 'forbids inviting into a role whose permissions exceed its own' do
+        owner_role = create(:role, name: 'owner', permissions: Spree.permissions.catalog_keys)
 
         expect {
           post :create, params: { email: 'attacker@evil.com', role_id: owner_role.prefixed_id }, as: :json

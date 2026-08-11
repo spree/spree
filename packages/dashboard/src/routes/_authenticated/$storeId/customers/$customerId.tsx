@@ -42,6 +42,7 @@ import {
   MetadataCard,
   RelativeTime,
   ResourceLayout,
+  RichTextEditor,
   Select,
   SelectContent,
   SelectItem,
@@ -214,9 +215,7 @@ function CustomerBody({ customer }: { customer: Customer }) {
           <ProfileCard customer={customer} />
           <CustomerGroupsCard customer={customer} />
           <AddressesCard customer={customer} />
-          {/* Key on `updated_at` so the textarea's local state resets after a
-              refetch (e.g. another mutation invalidates the customer). */}
-          <InternalNoteCard key={customer.updated_at} customer={customer} />
+          <InternalNoteCard customer={customer} />
           <Slot name="customer.form_sidebar" context={{ customer }} />
         </>
       }
@@ -787,6 +786,13 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
   const { t } = useTranslation()
   const [editing, setEditing] = useState(false)
   const [note, setNote] = useState(customer.internal_note_html ?? '')
+  const serverNote = customer.internal_note_html ?? ''
+
+  // Track the server value only while the editor is closed, so a refetch from
+  // an unrelated mutation can't discard a note the user is part-way through.
+  useEffect(() => {
+    if (!editing) setNote(serverNote)
+  }, [editing, serverNote])
 
   const mutation = useUpdateCustomer(customer.id)
 
@@ -806,10 +812,10 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
       <CardContent>
         {editing ? (
           <div className="flex flex-col gap-3">
-            <Textarea
-              rows={4}
+            <RichTextEditor
+              ariaLabel={t('admin.pages.customers.detail.section_internal_note')}
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={setNote}
               placeholder={t('admin.fields.customer.internal_note.placeholder')}
             />
             <div className="flex gap-2 justify-end">
@@ -819,7 +825,7 @@ function InternalNoteCard({ customer }: { customer: Customer }) {
                 size="sm"
                 onClick={() => {
                   setEditing(false)
-                  setNote(customer.internal_note_html ?? '')
+                  setNote(serverNote)
                 }}
               >
                 {t('admin.actions.cancel')}

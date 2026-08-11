@@ -82,29 +82,19 @@ Rails.application.config.after_initialize do
   # Spree.reports << Spree::Reports::MassivelyOvercomplexReportForCfo
 
   # Role-based permissions
-  # Configure which permission sets are assigned to each role
-  # More on permission sets: https://spreecommerce.org/docs/developer/customization/permissions
-  Spree.permissions.assign(:default, [Spree::PermissionSets::DefaultCustomer])
-  Spree.permissions.assign(:admin, [Spree::PermissionSets::SuperUser])
-
-  # Example: Create a custom role with specific permissions
-  # Spree.permissions.assign(:customer_service, [
-  #   Spree::PermissionSets::DashboardDisplay,
-  #   Spree::PermissionSets::OrderManagement,
-  #   Spree::PermissionSets::UserDisplay
-  # ])
+  # Staff roles and their permissions are managed as data — in the dashboard
+  # (Settings → Roles), via the Admin API, or in db/seeds.rb:
   #
-  # Available permission sets:
-  # - Spree::PermissionSets::SuperUser (full admin access)
-  # - Spree::PermissionSets::DefaultCustomer (storefront access)
-  # - Spree::PermissionSets::DashboardDisplay (view admin dashboard)
-  # - Spree::PermissionSets::OrderDisplay / OrderManagement
-  # - Spree::PermissionSets::ProductDisplay / ProductManagement
-  # - Spree::PermissionSets::UserDisplay / UserManagement
-  # - Spree::PermissionSets::StockDisplay / StockManagement
-  # - Spree::PermissionSets::PromotionManagement
-  # - Spree::PermissionSets::ConfigurationManagement
-  # - Spree::PermissionSets::RoleManagement
+  #   Spree::Role.find_or_create_by!(name: 'support')
+  #     .update!(permissions: %w[read_orders read_customers])
+  #
+  # Extensions can register additional permission resources:
+  # Spree.permissions.register_resource(:reviews, group: :catalog, subjects: -> { [MyApp::Review] })
+  #
+  # To customize authorization beyond the catalog, replace the ability class:
+  # Spree::Dependencies.ability_class = 'MyApp::Ability'
+  #
+  # More: https://spreecommerce.org/docs/developer/customization/permissions
 end
 
 # Background job queue configuration

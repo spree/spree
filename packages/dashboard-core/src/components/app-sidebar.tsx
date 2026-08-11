@@ -17,23 +17,27 @@ function entryToNavItem(entry: NavEntry, storeId: string): NavItem {
     url: pathFor(entry.path),
     icon: entry.icon ?? PackageIcon,
     subject: entry.subject,
+    action: entry.action,
     badge: entry.badge,
     items: entry.children?.map((child) => ({
       title: child.label,
       url: pathFor(child.path),
       subject: child.subject,
+      action: child.action,
       badge: child.badge,
     })),
   }
 }
 
-/** Hide items the user can't `read`. */
+/** Hide items the user can't act on — `read` unless the entry says otherwise. */
 function filterByPermissions(items: NavItem[], permissions: Permissions): NavItem[] {
   return items
-    .filter((item) => !item.subject || permissions.can('read', item.subject))
+    .filter((item) => !item.subject || permissions.can(item.action ?? 'read', item.subject))
     .map((item) => ({
       ...item,
-      items: item.items?.filter((sub) => !sub.subject || permissions.can('read', sub.subject)),
+      items: item.items?.filter(
+        (sub) => !sub.subject || permissions.can(sub.action ?? 'read', sub.subject),
+      ),
     }))
 }
 

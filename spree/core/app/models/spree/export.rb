@@ -113,11 +113,11 @@ module Spree
       raise NotImplementedError, 'csv_headers must be implemented'
     end
 
-    # Returns an array of metafield headers for the model
+    # Returns an array of custom_field headers for the model
     #
     # @return [Array<String>]
-    def metafields_headers
-      @metafields_headers ||= Spree::MetafieldDefinition.for_resource_type(model_class.to_s).order(:namespace, :key).map(&:csv_header_name)
+    def custom_fields_headers
+      @custom_fields_headers ||= Spree::CustomFieldDefinition.for_resource_type(model_class.to_s).order(:namespace, :key).map(&:csv_header_name)
     end
 
     def build_csv_line(_record)
@@ -134,7 +134,10 @@ module Spree
       scope = model_class
       scope = scope.for_store(store) if model_class.respond_to?(:for_store)
       scope = scope.for_vendor(vendor) if model_class.respond_to?(:for_vendor) && vendor.present?
-      scope.accessible_by(current_ability)
+      # A staff-created export only contains what its creator may read; a
+      # userless export (console, system jobs) is unfiltered.
+      scope = scope.accessible_by(current_ability) if user.present?
+      scope
     end
 
     def records_to_export
@@ -145,8 +148,8 @@ module Spree
 
       # `cf_*` custom-field predicates aren't Ransack attributes — resolve them
       # first so an export of a filtered list matches what the admin sees.
-      filtered_scope, params = if scope.respond_to?(:with_metafield_filters)
-                                scope.with_metafield_filters(params)
+      filtered_scope, params = if scope.respond_to?(:with_custom_field_filters)
+                                scope.with_custom_field_filters(params)
                               else
                                 [scope, params]
                               end

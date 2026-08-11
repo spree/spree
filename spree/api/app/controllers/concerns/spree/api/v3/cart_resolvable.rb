@@ -6,23 +6,29 @@ module Spree
 
         protected
 
-        # Find cart by prefixed ID and authorize access via CanCanCan.
-        # Completed carts are not carts anymore — they 404 unless the caller
-        # opts in (idempotent completion, payment-session confirm races).
+        # Find cart by prefixed ID and authorize read access (owner or guest
+        # token). Completed carts are not carts anymore — they 404 unless the
+        # caller opts in (idempotent completion, payment-session confirm races).
         # @return [Spree::Cart]
         def find_cart(include_completed: false)
           @cart = resolve_cart(include_completed: include_completed)
-          authorize!(:show, @cart, cart_token)
+          authorize_storefront_read!(@cart, token: cart_token)
           @cart
         end
 
-        # Find the cart and authorize it for update. A completed cart resolves
-        # only for opted-in flows, where mutation is impossible — :show is the
-        # right check there (the ability denies :update once completed).
+        # Find the cart and authorize it for mutation. A completed cart
+        # resolves only for opted-in flows, where mutation is impossible — a
+        # read check is the right bar there.
         # @return [Spree::Cart]
         def find_cart!(include_completed: false)
           @cart = resolve_cart(include_completed: include_completed)
-          authorize!(@cart.completed? ? :show : :update, @cart, cart_token)
+
+          if @cart.completed?
+            authorize_storefront_read!(@cart, token: cart_token)
+          else
+            authorize_storefront_write!(@cart, token: cart_token)
+          end
+
           @cart
         end
 

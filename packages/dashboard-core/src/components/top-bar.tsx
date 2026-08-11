@@ -3,6 +3,7 @@ import {
   AvatarFallback,
   AvatarImage,
   Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,8 +13,8 @@ import {
   LanguageMenuItems,
   SidebarTrigger,
   ThemeMenuItems,
+  usePrefersReducedMotion,
 } from '@spree/dashboard-ui'
-import { Link } from '@tanstack/react-router'
 import {
   BookOpenIcon,
   ExternalLinkIcon,
@@ -30,6 +31,7 @@ import { useSwitchAdminLocale } from '../hooks/use-switch-admin-locale'
 import { getInitials } from '../lib/formatters'
 import { i18n } from '../lib/i18n'
 import { storefrontHref } from '../lib/storefront'
+import { useStickyHeader } from '../providers/sticky-header-provider'
 import { useStore } from '../providers/store-provider'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform ?? '')
@@ -46,14 +48,43 @@ const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(naviga
  * @param uiLocales Admin UI languages for the in-menu switcher. The app owns
  *   which locale bundles ship (see the dashboard's `getAvailableUiLocales`) and
  *   injects them here, so this core component stays free of bundle knowledge.
+ * @param onEditProfile Opens the app's edit-profile dialog. Injected the same
+ *   way as `uiLocales` — the profile form lives in the app package (its hooks,
+ *   schema and locale list do), so core only offers the menu entry. The item is
+ *   hidden when no handler is supplied.
  */
 export function TopBar({
   uiLocales = [],
+  onEditProfile,
 }: {
   uiLocales?: ReadonlyArray<{ code: string; name: string }>
+  onEditProfile?: () => void
 }) {
+  // Give the vertical space back to the page: once the user scrolls a detail
+  // page, the PageHeader below carries the title and the primary actions, so
+  // the search/account bar retreats out of the viewport rather than parking a
+  // second band of chrome above it. The provider owns this flag so both bars
+  // move off one signal; it stays false on pages with no PageHeader to take
+  // over (list views), where hiding the bar would cost a header and give
+  // nothing back.
+  const { collapsed } = useStickyHeader()
+  const prefersReducedMotion = usePrefersReducedMotion()
+  // Under reduced motion the bar simply stays — sliding it is the movement
+  // the setting asks us to drop, and cutting only the transition would
+  // replace the slide with a jump, which is worse.
+  const hidden = collapsed && !prefersReducedMotion
+
   return (
-    <header className="sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header
+      className={cn(
+        'sticky top-0 z-40 flex h-header-height shrink-0 items-center gap-3 bg-background/90 px-4 border-b border-border/50 backdrop-blur supports-[backdrop-filter]:bg-background/75',
+        'transition-transform duration-200 ease-out motion-reduce:transition-none',
+        hidden && '-translate-y-full',
+      )}
+      // Hidden from assistive tech and out of the tab order while off-screen,
+      // so keyboard focus can't land on a control the user cannot see.
+      inert={hidden || undefined}
+    >
       <SidebarTrigger className="-ml-1 h-8 w-8" />
 
       <div className="flex flex-1 justify-center">
@@ -62,7 +93,7 @@ export function TopBar({
 
       <div className="flex items-center gap-2">
         <ViewStoreLink />
-        <TopBarUser uiLocales={uiLocales} />
+        <TopBarUser uiLocales={uiLocales} onEditProfile={onEditProfile} />
       </div>
     </header>
   )
@@ -115,10 +146,15 @@ function ViewStoreLink() {
 // User menu
 // ---------------------------------------------------------------------------
 
-function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; name: string }> }) {
+function TopBarUser({
+  uiLocales,
+  onEditProfile,
+}: {
+  uiLocales: ReadonlyArray<{ code: string; name: string }>
+  onEditProfile?: () => void
+}) {
   const { t } = useTranslation()
   const { user, logout } = useAuth()
-  const { store } = useStore()
   const switchAdminLocale = useSwitchAdminLocale()
   if (!user) return null
 
@@ -177,19 +213,15 @@ function TopBarUser({ uiLocales }: { uiLocales: ReadonlyArray<{ code: string; na
           onSelect={handleSelectLocale}
         />
         <DropdownMenuSeparator />
-        {store && (
-          <DropdownMenuItem asChild>
-            <Link
-              to="/$storeId/settings/profile"
-              params={{ storeId: store.id }}
-              className="no-underline"
-            >
+        {onEditProfile && (
+          <>
+            <DropdownMenuItem onClick={onEditProfile}>
               <UserIcon className="size-4" />
               {t('admin.account.edit_profile')}
-            </Link>
-          </DropdownMenuItem>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
         )}
-        <DropdownMenuSeparator />
         <DropdownMenuItem>
           <BookOpenIcon className="size-4" />
           {t('admin.account.documentation')}

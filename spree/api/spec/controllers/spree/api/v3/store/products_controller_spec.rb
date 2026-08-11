@@ -57,13 +57,13 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     # predicates as the Admin API — both route through the search provider.
     context 'with custom field filtering and sorting' do
       let!(:definition) do
-        create(:metafield_definition, :short_text_field, :searchable, :sortable,
+        create(:custom_field_definition, :short_text_field, :searchable, :sortable,
                namespace: 'custom', key: 'warranty')
       end
 
       before do
-        product.set_metafield(definition, '2 Years')
-        product2.set_metafield(definition, '90 Days')
+        product.set_custom_field(definition, '2 Years')
+        product2.set_custom_field(definition, '90 Days')
       end
 
       it 'filters by a cf_* predicate' do

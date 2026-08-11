@@ -79,10 +79,6 @@ module Spree
 
     # Numberless rows are stamped with their legacy id at copy time, which is
     # the only durable link back to the source row.
-    #
-    # Reads the `metadata` COLUMN, not `#metadata` — the Spree::Metadata
-    # concern maps that reader to `private_metadata`, which these tables do
-    # not have, so the accessor would silently return {}.
     def migrated_numberless_ids
       @migrated_numberless_ids ||=
         (Spree::Return.where.not(metadata: nil).pluck(:metadata) +

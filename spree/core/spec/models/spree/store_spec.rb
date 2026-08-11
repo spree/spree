@@ -1027,8 +1027,8 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     context 'when the only non-store-credit methods are admin-only' do
       before do
-        create(:credit_card_payment_method, store: store, display_on: 'back_end')
-        create(:check_payment_method, store: store, display_on: 'back_end')
+        create(:credit_card_payment_method, store: store, storefront_visible: false)
+        create(:check_payment_method, store: store, storefront_visible: false)
       end
 
       it 'stays pending' do

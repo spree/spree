@@ -785,14 +785,13 @@ export class StoreClient {
         }),
 
       /**
-       * @param params.claim_type one of the store's configured claim types
-       *   (`damaged`, `missing`, `wrong_item`, `other` by default)
+       * @param params.reason_id one of the store's claim reasons
        */
       create: (
         orderId: string,
         params: {
           items: Array<{ line_item_id: string; quantity: number; description?: string }>
-          claim_type?: string
+          reason_id?: string
           memo?: string
         },
         options?: RequestOptions,

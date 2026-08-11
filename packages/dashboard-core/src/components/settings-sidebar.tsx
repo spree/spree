@@ -56,9 +56,12 @@ export function SettingsSidebar({ open }: { open: boolean }) {
           : 'lg:w-0 border-e-0 border-transparent',
       )}
     >
+      {/* `quiet-scrollbar` rather than the browser default: this nav is an
+          inset panel beside the primary sidebar, and a full-width native
+          scrollbar cuts a heavy grey stripe down the middle of the chrome. */}
       <div
         className={cn(
-          'flex h-full w-(--spacing-sidebar-width) flex-col gap-2 overflow-y-auto py-2 transition-opacity duration-200',
+          'quiet-scrollbar flex h-full w-(--spacing-sidebar-width) flex-col gap-2 overflow-y-auto py-2 transition-opacity duration-200',
           open ? 'opacity-100 delay-100' : 'pointer-events-none opacity-0',
         )}
       >
@@ -129,7 +132,7 @@ function filterByPermissions(
   const groups = snapshot.groups
     .map(({ group, entries }) => ({
       group,
-      entries: entries.filter((e) => !e.subject || permissions.can('read', e.subject)),
+      entries: entries.filter((e) => !e.subject || permissions.can(e.action ?? 'read', e.subject)),
     }))
     .filter((g) => g.entries.length > 0)
   return {

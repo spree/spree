@@ -126,6 +126,16 @@
   --spacing-sidebar-width: 220px;
   --spacing-header-height: 58px;
 
+  /* Easing. Overrides Tailwind's built-in `ease-out`, so every `ease-out`
+     utility in the app picks this up: the stock curve is too weak to read as
+     deliberate on anything larger than a colour change. `ease-out` is the
+     right default for UI — it starts fast, so the moment the user is watching
+     happens immediately. Movement across the screen wants `ease-in-out`
+     instead; `ease-in` is wrong for UI at any size, since it delays that
+     same moment. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
   /* Color mappings */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -200,6 +210,49 @@
     border: 2px solid transparent;
     border-radius: 9999px;
     background-clip: padding-box;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+@utility quiet-scrollbar {
+  /* Like `themed-scrollbar`, but the thumb stays invisible until the element
+     is hovered. For navigation panels and other chrome, where a permanently
+     visible track draws a heavy stripe down an otherwise calm surface. The
+     gutter is reserved either way, so revealing the thumb never reflows the
+     content. */
+  /* `scrollbar-color` is not animatable, so the Firefox path snaps between
+     states; the webkit thumb below fades. Both are acceptable — the reveal is
+     incidental, not something the user is watching for. */
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
+
+  &:hover,
+  &:focus-within {
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    background-clip: padding-box;
+    transition: background-color 150ms ease-out;
+  }
+  &:hover::-webkit-scrollbar-thumb,
+  &:focus-within::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
   }
   &::-webkit-scrollbar-thumb:hover {
     background-color: var(--scrollbar-thumb-hover);
@@ -334,5 +387,40 @@
       0 5px,
       5px -5px,
       -5px 0;
+  }
+}
+
+/* Reduced motion. Deliberately NOT inside `@layer base`: unlayered CSS always
+   outranks layered CSS, so a base-layer rule loses to every `transition-*`
+   utility and the preference would be silently ignored. Unlayered and last in
+   the file, this wins on source order instead.
+
+   Movement is what the setting asks us to drop, so `transform`, `translate`
+   and `scale` are absent from the property list below — no element can animate
+   position or size however it is styled. Colour, shadow and opacity keep their
+   normal timing: they change appearance in place rather than moving anything,
+   and killing them too reads as broken rather than calm.
+
+   Components needing more than this — where suppressing a transition leaves a
+   jump rather than removing a movement — read the preference directly via
+   `usePrefersReducedMotion` and hold position, or opt out with a
+   `motion-reduce:` utility. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-property: color, background-color, border-color, box-shadow, opacity, fill, stroke;
+    transition-duration: 100ms;
+    /* Holds looping decorative animations at their first frame. */
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    scroll-behavior: auto;
+  }
+
+  /* Spinners are the deliberate exception: they signal that work is ongoing
+     and have no static equivalent. */
+  .animate-spin {
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
   }
 }

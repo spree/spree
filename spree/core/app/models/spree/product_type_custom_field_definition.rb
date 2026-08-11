@@ -7,8 +7,8 @@ module Spree
   class ProductTypeCustomFieldDefinition < Spree.base_class
     belongs_to :product_type, class_name: 'Spree::ProductType'
     # Association and column carry the 6.0 custom-field vocabulary; the class is
-    # still named MetafieldDefinition until the rename wave lands.
-    belongs_to :custom_field_definition, class_name: 'Spree::MetafieldDefinition'
+    # still named CustomFieldDefinition until the rename wave lands.
+    belongs_to :custom_field_definition, class_name: 'Spree::CustomFieldDefinition'
 
     validates :product_type, :custom_field_definition, presence: true
     validates :custom_field_definition_id, uniqueness: { scope: :product_type_id }

@@ -26,7 +26,7 @@ export const categoryFormSchema = z.object({
   meta_title: z.string(),
   meta_description: z.string(),
   // Inline custom field values keyed by definition id, upserted server-side via
-  // Spree::Metafields#custom_fields= (the categories controller permits them).
+  // Spree::HasCustomFields#custom_fields= (the categories controller permits them).
   // Persisted with the rest of the category on the page's Save button.
   custom_fields: z.array(customFieldFormSchema).optional(),
   ...imageFields,
@@ -80,6 +80,8 @@ export function categoryToParams(values: CategoryFormValues) {
     // null keeps an existing child category at the top level on update; create
     // treats null/undefined the same (no parent).
     parent_id: values.parent_id,
+    // HTML in, HTML stored. The API reads it back as plain `description`
+    // plus `description_html`.
     description: values.description,
     permalink: values.permalink,
     meta_title: values.meta_title,

@@ -17,7 +17,7 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::SingleStoreResource
     include Spree::HasStatus
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
 
     publishes_lifecycle_events

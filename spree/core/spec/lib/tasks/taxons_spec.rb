@@ -16,27 +16,35 @@ describe 'spree:taxons:backfill_store_id' do
   let!(:store) { Spree::Store.default || create(:store, default: true) }
 
   # ensure_store stamps store_id on create, so null it to reproduce a row
-  # created before the column existed.
-  def downgrade!(taxon)
-    taxon.update_columns(store_id: nil)
-    taxon
+  # created before the column existed. Build the tree first and downgrade
+  # afterwards: store_id scopes the nested set, so a child cannot be created
+  # under a parent whose store has already been cleared.
+  def downgrade!(*categories)
+    Spree::Category.unscoped.where(id: categories.map(&:id)).update_all(store_id: nil)
+    categories.each(&:reload)
+    categories.one? ? categories.first : categories
   end
 
-  context 'taxonomy-backed taxon' do
+  context 'taxonomy-backed category' do
     let(:taxonomy) { create(:taxonomy, store: store) }
-    let!(:taxon) { downgrade!(create(:taxon, taxonomy: taxonomy)) }
+    let!(:category) { downgrade!(create(:category, taxonomy: taxonomy)) }
+
 
     it 'backfills store_id from the taxonomy' do
-      expect { subject.invoke }.to change { taxon.reload.store_id }.from(nil).to(store.id)
+      expect { subject.invoke }.to change { category.reload.store_id }.from(nil).to(store.id)
     end
   end
 
   context 'taxonomy-less taxons in a parent chain' do
     # Root keeps its store (resolved via the taxonomy pass or pre-existing);
     # descendants must inherit it down the chain.
-    let!(:root) { Spree::Category.create!(name: 'Root', store: store) }
-    let!(:mid) { downgrade!(Spree::Category.create!(name: 'Mid', parent: root)) }
-    let!(:leaf) { downgrade!(Spree::Category.create!(name: 'Leaf', parent: mid)) }
+    let!(:root) { create(:category, name: 'Root', store: store) }
+    let!(:mid) { create(:category, name: 'Mid', parent: root) }
+    let!(:leaf) { create(:category, name: 'Leaf', parent: mid) }
+
+    # Downgrade only once the chain exists, so each child is built under a
+    # parent that still has its store.
+    before { downgrade!(mid, leaf) }
 
     it 'resolves every level from the nearest resolved ancestor' do
       subject.invoke
@@ -53,9 +61,9 @@ describe 'spree:taxons:backfill_store_id' do
   end
 
   context 'when nothing needs backfilling' do
-    # Every taxon already has a store_id — the task must still run cleanly.
+    # Every category already has a store_id — the task must still run cleanly.
     # The buggy join-update raised at SQL-parse time even with zero matching rows.
-    let!(:taxon) { create(:taxon, taxonomy: create(:taxonomy, store: store)) }
+    let!(:category) { create(:category, taxonomy: create(:taxonomy, store: store)) }
 
     it 'is a safe no-op' do
       expect { subject.invoke }.not_to raise_error
@@ -67,7 +75,7 @@ describe 'spree:taxons:backfill_store_id' do
     # resolve it against, so the row is intentionally left untouched rather than
     # defaulted (ensure_store's current-store fallback needs request context the
     # task doesn't have).
-    let!(:orphan) { downgrade!(Spree::Category.create!(name: 'Orphan', store: store)) }
+    let!(:orphan) { downgrade!(create(:category, name: 'Orphan', store: store)) }
 
     it 'leaves store_id nil' do
       expect { subject.invoke }.not_to change { orphan.reload.store_id }.from(nil)

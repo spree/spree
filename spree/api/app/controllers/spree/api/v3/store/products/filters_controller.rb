@@ -46,7 +46,7 @@ module Spree
                 search_filters&.sort_by(&:first)&.to_json,
                 max_updated,
                 product_count,
-                search_provider.metafield_schema.schema_version
+                search_provider.custom_field_schema.schema_version
               ]
 
               parts.compact.join('/')
@@ -59,7 +59,7 @@ module Spree
               scope = current_store.products.available(Time.current, current_currency, include_preorderable: true)
               scope = scope.in_category(category) if category.present?
               scope = scope.in_collection(collection) if collection.present?
-              scope.accessible_by(current_ability, :show)
+              scope
             end
 
             def category

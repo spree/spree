@@ -74,7 +74,6 @@ module Spree
       say_status :copying, 'migrations'
       silence_stream(STDOUT) do
         silence_warnings { rake 'active_storage:install:migrations' }
-        silence_warnings { rake 'action_text:install:migrations' }
         silence_warnings { rake 'spree:install:migrations' }
       end
     end

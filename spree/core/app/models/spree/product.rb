@@ -25,8 +25,8 @@ module Spree
     include Spree::TranslatableResource
     include Spree::MemoizedData
     include Spree::SanitizableRichText
-    include Spree::Metafields
-    include Spree::MetafieldFilterable
+    include Spree::HasCustomFields
+    include Spree::CustomFieldFilterable
     include Spree::Metadata
     include Spree::Searchable
     include Spree::Product::Slugs
@@ -38,7 +38,7 @@ module Spree
 
     publishes_lifecycle_events
 
-    MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids category_and_ancestors
+    MEMOIZED_METHODS = %w[total_on_hand category_and_ancestors
                           default_variant_id tax_category default_variant variant_for_images
                           primary_category
                           purchasable? in_stock? backorderable? digital?]
@@ -55,7 +55,7 @@ module Spree
     RICH_TEXT_TRANSLATABLE_FIELDS = %i[description].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
-    sanitizes_rich_text :description
+    has_spree_rich_text :description
 
     # Translated descriptions live on the Mobility translation table, so writes
     # through locale accessors or +upsert_translations+ never touch the base
@@ -76,7 +76,7 @@ module Spree
     has_many :option_types, through: :product_option_types
     has_many :product_categories, -> { order(created_at: :asc) }, class_name: 'Spree::ProductCategory', dependent: :delete_all, inverse_of: :product
     has_many :categories, through: :product_categories, class_name: 'Spree::Category', source: :category, before_remove: :remove_category
-    has_many :taxonomies, through: :categories
+    has_many :taxonomies, through: :categories, deprecated: true
 
     # @deprecated The classification_count column was renamed to categories_count in 6.0.
     alias_attribute :classification_count, :categories_count
@@ -210,22 +210,22 @@ module Spree
 
       product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
 
-      searchable_definitions = Spree::MetafieldDefinition.
+      searchable_definitions = Spree::CustomFieldDefinition.
                                for_resource_type('Spree::Product').
                                searchable
 
-      # Only pay for the metafield scan when some definition opts into search;
-      # the leading-wildcard LIKE over spree_metafields can't use an index.
-      metafield_ids = if searchable_definitions.exists?
-                        joins(metafields: :metafield_definition).
+      # Only pay for the custom_field scan when some definition opts into search;
+      # the leading-wildcard LIKE over spree_custom_fields can't use an index.
+      custom_field_ids = if searchable_definitions.exists?
+                        joins(custom_fields: :custom_field_definition).
                           merge(searchable_definitions).
-                          where(search_condition(Spree::Metafield, :value, query)).
+                          where(search_condition(Spree::CustomField, :value, query)).
                           unscope(:order).distinct.pluck(:id)
                       else
                         []
                       end
 
-      where(id: (product_ids + metafield_ids).uniq.compact)
+      where(id: (product_ids + custom_field_ids).uniq.compact)
     }
 
     # Backward compatibility alias — remove in Spree 6.0
@@ -677,8 +677,8 @@ module Spree
                            else
                              []
                            end
-      metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
-        metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
+      custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
+        custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
       end
       categories_for_csv ||= categories.reorder(depth: :desc).first(3).pluck(:pretty_name)
       categories_for_csv.fill(nil, categories_for_csv.size...3)
@@ -691,7 +691,7 @@ module Spree
       # Primary rows in the store's default currency
       all_variants.each_with_index do |variant, index|
         csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, categories_for_csv, store,
-                                                             metafields_for_csv).call
+                                                             custom_fields_for_csv).call
       end
 
       # Price-only rows for each additional currency
@@ -911,12 +911,12 @@ module Spree
       @category_and_ancestors ||= categories.map(&:self_and_ancestors).flatten.uniq
     end
 
-    # Iterate through this product's categories and taxonomies and touch their timestamps in a batch
+    # Iterate through this product's categories and touch their timestamps in a batch
     def touch_categories
       if categories.any?
         Spree::Products::TouchCategoriesJob.
           set(wait: 5.seconds).
-          perform_later(category_and_ancestors.map(&:id), taxonomy_ids.uniq)
+          perform_later(category_and_ancestors.map(&:id))
       end
     end
 

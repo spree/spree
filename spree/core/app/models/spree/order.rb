@@ -19,6 +19,7 @@ module Spree
     extend Spree::DisplayMoney
 
     include Spree::SingleStoreResource
+    include Spree::SanitizableRichText
     include Spree::Purchase::Channel
     include Spree::Purchase::Company
     include Spree::Purchase::Market
@@ -39,7 +40,7 @@ module Spree
     include Spree::NumberIdentifier
 
     publishes_lifecycle_events
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::Searchable
     if defined?(Spree::Security::Orders)
@@ -50,7 +51,8 @@ module Spree
     end
 
     has_secure_token :token, length: 35
-    has_rich_text :internal_note
+
+    has_spree_rich_text :internal_note
 
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
@@ -153,7 +155,6 @@ module Spree
     belongs_to :preferred_stock_location, class_name: 'Spree::StockLocation', optional: true
 
     with_options dependent: :destroy do
-      has_many :state_changes, as: :stateful, class_name: 'Spree::StateChange'
       has_many :line_items, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::LineItem'
       has_many :payments, class_name: 'Spree::Payment'
       has_many :payment_sessions, inverse_of: :order, class_name: 'Spree::PaymentSession'
@@ -214,6 +215,10 @@ module Spree
 
     before_create :link_by_email
     before_update :ensure_updated_fulfillments, :homogenize_line_item_currencies, if: :currency_changed?
+    # Record-state deletion eligibility is enforced here, not in ability rules —
+    # secret-key API requests never consult CanCanCan (Axis A/B split,
+    # docs/plans/decisions.md 2026-08-05).
+    before_destroy :ensure_can_be_deleted
 
     # Shared money/quantity validations live in Spree::Purchase::Validations;
     # only order-specific rules stay here.
@@ -653,16 +658,6 @@ module Spree
       Spree::CouponCodes::CouponCodesHandler.new(order: self).use_all_codes
     end
 
-    def log_state_changes(state_name:, old_state:, new_state:)
-      Spree::Deprecation.warn('Spree::Order#log_state_changes is deprecated and will be removed in Spree 6.1.')
-      state_changes.create(
-        previous_state: old_state,
-        next_state: new_state,
-        name: state_name,
-        user_id: user_id
-      )
-    end
-
     normalizes :coupon_code, with: ->(code) { code.to_s.strip.downcase.presence }
 
     def can_add_coupon?
@@ -692,7 +687,6 @@ module Spree
       fees.for_fulfillments.delete_all
 
       shipment_ids = fulfillments.map(&:id)
-      StateChange.where(stateful_type: %w[Spree::Shipment Spree::Fulfillment], stateful_id: shipment_ids).delete_all
       DeliveryRate.where(fulfillment_id: shipment_ids).delete_all
 
       fulfillments.delete_all
@@ -981,13 +975,13 @@ module Spree
     end
 
     def to_csv(_store = nil)
-      metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
-        metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
+      custom_fields_for_csv ||= Spree::CustomFieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
+        custom_fields.find { |mf| mf.custom_field_definition_id == mf_def.id }&.csv_value
       end
 
       csv_lines = []
       line_items.each_with_index do |line_item, index|
-        csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index, metafields_for_csv).call
+        csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index, custom_fields_for_csv).call
       end
       csv_lines
     end
@@ -998,6 +992,13 @@ module Spree
     end
 
     private
+
+    def ensure_can_be_deleted
+      return true if can_be_deleted?
+
+      errors.add(:base, Spree.t(:order_cannot_be_deleted))
+      throw :abort
+    end
 
     def valid_order_routing_strategy_class(klass_name)
       return if klass_name.blank?

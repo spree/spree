@@ -32,17 +32,20 @@ describe '6.0 data migration tasks' do
   describe 'spree:migrate_shipping_to_delivery' do
     let!(:order) { create(:order_with_line_items, store: store) }
     let(:fulfillment) { order.fulfillments.first }
+    # The StateChange model is gone; legacy rows are reached the same way the
+    # task reaches them.
+    let(:state_changes) { Class.new(ActiveRecord::Base) { self.table_name = 'spree_state_changes' } }
 
     it 'renames stored class-name strings and the shipped status' do
       fulfillment.update_columns(status: 'shipped', fulfillment_type: nil)
-      Spree::StateChange.create!(stateful_type: 'Spree::Shipment', stateful_id: fulfillment.id,
-                                 name: 'shipment', previous_state: 'ready', next_state: 'shipped')
+      state_changes.create!(stateful_type: 'Spree::Shipment', stateful_id: fulfillment.id,
+                            name: 'shipment', previous_state: 'ready', next_state: 'shipped')
 
       run_task('spree:migrate_shipping_to_delivery')
 
       expect(fulfillment.reload.status).to eq('fulfilled')
       expect(fulfillment.fulfillment_type).to eq('shipping')
-      change = Spree::StateChange.where(stateful_id: fulfillment.id).last
+      change = state_changes.where(stateful_id: fulfillment.id).last
       expect(change.stateful_type).to eq('Spree::Fulfillment')
       expect(change.name).to eq('fulfillment')
       expect(change.next_state).to eq('fulfilled')
@@ -54,7 +57,7 @@ describe '6.0 data migration tasks' do
       Spree::Calculator::Shipping::DigitalDelivery.create!(calculable: digital_method)
       # A 5.x row as it arrives post-migration: storefront_visible at the
       # column default, display_on still holding the real value.
-      digital_method.update_columns(fulfillment_type: nil, fulfillment_provider: nil, storefront_visible: true, display_on: 'back_end')
+      digital_method.update_columns(fulfillment_type: nil, fulfillment_provider: nil, storefront_visible: true, storefront_visible: false)
 
       run_task('spree:migrate_shipping_to_delivery')
 
@@ -68,7 +71,7 @@ describe '6.0 data migration tasks' do
     # re-run cannot undo a visibility change an admin made in the meantime.
     it 'does not revert a later admin visibility change on re-run' do
       method = create(:shipping_method)
-      method.update_columns(storefront_visible: true, display_on: 'back_end')
+      method.update_columns(storefront_visible: true, storefront_visible: false)
 
       run_task('spree:migrate_shipping_to_delivery')
       expect(method.reload.read_attribute(:storefront_visible)).to be(false)
@@ -331,7 +334,7 @@ describe '6.0 data migration tasks' do
       expect(fee.kind).to eq('surcharge')
 
       expect(order.reload.attributes.slice('total', 'discount_total', 'additional_tax_total')).to eq(totals_before)
-      expect(order.private_metadata['typed_adjustments_frozen']).to be_nil
+      expect(order.metadata['typed_adjustments_frozen']).to be_nil
     end
 
     it 'freezes orders whose typed sums do not reconcile' do
@@ -342,7 +345,7 @@ describe '6.0 data migration tasks' do
 
       run_task('spree:migrate_adjustments_to_typed_rows')
 
-      expect(order.reload.private_metadata['typed_adjustments_frozen']).to eq('totals_do_not_reconcile')
+      expect(order.reload.metadata['typed_adjustments_frozen']).to eq('totals_do_not_reconcile')
     end
 
     it 'skips orders that already carry typed rows' do

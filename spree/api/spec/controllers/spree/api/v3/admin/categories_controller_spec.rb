@@ -6,10 +6,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
   include_context 'API v3 Admin authenticated'
 
   # A top-level category — parentless, store-owned, no taxonomy.
-  let!(:category) { Spree::Category.create!(name: 'Clothing', store: store) }
-  # A legacy taxonomy is still needed to host automatic (collection) taxons,
-  # which the category API must exclude.
-  let(:taxonomy) { create(:taxonomy, store: store) }
+  let!(:category) { create(:category, name: 'Clothing', store: store) }
 
   before { request.headers.merge!(headers) }
 
@@ -18,15 +15,11 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
   end
 
   describe 'GET #index' do
-    let!(:automatic) { create(:automatic_taxon, name: 'On Sale', taxonomy: taxonomy, parent: taxonomy.root) }
-
-    it 'lists manual categories and excludes automatic (collection) taxons' do
+    it 'lists the store categories' do
       get :index, params: {}, as: :json
 
       expect(response).to have_http_status(:ok)
-      ids = json_response['data'].map { |c| c['id'] }
-      expect(ids).to include(category.prefixed_id)
-      expect(ids).not_to include(automatic.prefixed_id)
+      expect(json_response['data'].map { |c| c['id'] }).to include(category.prefixed_id)
     end
   end
 
@@ -39,26 +32,20 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
     end
 
     it 'exposes the product count' do
-      create_list(:product, 2).each { |p| p.taxons << category }
+      create_list(:product, 2).each { |p| p.categories << category }
       get :show, params: { id: category.prefixed_id }, as: :json
 
       expect(json_response['products_count']).to eq(2)
     end
 
     it 'rolls subcategory products up into the product count' do
-      child = Spree::Category.create!(name: 'Shirts', parent: category)
+      child = create(:category, name: 'Shirts', parent: category)
       create(:product).taxons << category
       create(:product).taxons << child
 
       get :show, params: { id: category.prefixed_id }, as: :json
 
       expect(json_response['products_count']).to eq(2) # 1 direct + 1 from child
-    end
-
-    it 'does not expose an automatic (collection) taxon as a category' do
-      automatic = create(:automatic_taxon, taxonomy: taxonomy, parent: taxonomy.root)
-      get :show, params: { id: automatic.prefixed_id }, as: :json
-      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -85,13 +72,6 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       post :create, params: { name: '', parent_id: category.prefixed_id }, as: :json
       expect(response).to have_http_status(:unprocessable_content)
     end
-
-    it 'ignores collection-bound params (automatic stays false)' do
-      post :create, params: { name: 'Sale-ish', parent_id: category.prefixed_id, automatic: true, sort_order: 'best_selling' }, as: :json
-
-      expect(response).to have_http_status(:created)
-      expect(created_category.automatic).to be(false)
-    end
   end
 
   describe 'PATCH #update' do
@@ -102,16 +82,27 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(category.reload.name).to eq('Apparel')
     end
 
-    it 'cannot target an automatic (collection) taxon' do
-      automatic = create(:automatic_taxon, taxonomy: taxonomy, parent: taxonomy.root)
-      patch :update, params: { id: automatic.prefixed_id, name: 'Hijacked' }, as: :json
-      expect(response).to have_http_status(:not_found)
+    # `description` carries HTML in and reads back as both shapes: the plain
+    # field tag-stripped, the markup under description_html.
+    it 'stores the description as HTML and reads back both shapes' do
+      patch :update, params: { id: category.prefixed_id, description: '<p>Soft <strong>cotton</strong></p>' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['description_html']).to eq('<p>Soft <strong>cotton</strong></p>')
+      expect(json_response['description']).to eq('Soft cotton')
+    end
+
+    it 'sanitizes the description on write' do
+      patch :update, params: { id: category.prefixed_id, description: '<p>ok</p><script>alert(1)</script>' }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['description_html']).to eq('<p>ok</p>')
     end
 
     it 'purges the image when image is set to null' do
-      # Attach reliably persists on a factory-built taxon; the controller treats
+      # Attach reliably persists on a factory-built category; the controller treats
       # it the same as a store-owned Category (both resolve through `scope`).
-      imaged = create(:taxon, :with_header_image, taxonomy: taxonomy, parent: taxonomy.root)
+      imaged = create(:category, :with_header_image)
       expect(imaged.reload.image).to be_attached
 
       patch :update, params: { id: imaged.prefixed_id, image: nil }, as: :json
@@ -122,21 +113,21 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
 
     # Category custom-field definitions are stored under Spree::Category (the
     # category route maps to the Taxon class). The dashboard ships values inline
-    # with the category form, persisted via Spree::Metafields#custom_fields=.
+    # with the category form, persisted via Spree::HasCustomFields#custom_fields=.
     context 'with inline custom fields' do
       let!(:fabric_definition) do
-        create(:metafield_definition,
+        create(:custom_field_definition,
                resource_type: 'Spree::Category',
                namespace: 'category',
                key: 'fabric',
-               metafield_type: 'Spree::Metafields::ShortText')
+               field_type: 'Spree::CustomFields::ShortText')
       end
       let!(:specs_definition) do
-        create(:metafield_definition,
+        create(:custom_field_definition,
                resource_type: 'Spree::Category',
                namespace: 'category',
                key: 'specs',
-               metafield_type: 'Spree::Metafields::Json')
+               field_type: 'Spree::CustomFields::Json')
       end
 
       it 'round-trips an array-shaped JSON custom field value' do
@@ -148,7 +139,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        stored = category.reload.metafields.find_by(metafield_definition: specs_definition)
+        stored = category.reload.custom_fields.find_by(custom_field_definition: specs_definition)
         expect(stored.serialize_value).to eq(%w[a b c])
       end
 
@@ -161,7 +152,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
         }, as: :json
 
         expect(response).to have_http_status(:ok)
-        stored = category.reload.metafields.find_by(metafield_definition: specs_definition)
+        stored = category.reload.custom_fields.find_by(custom_field_definition: specs_definition)
         expect(stored.serialize_value).to eq('color' => 'red')
       end
 
@@ -173,19 +164,19 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
               { custom_field_definition_id: fabric_definition.prefixed_id, value: 'Linen' }
             ]
           }, as: :json
-        }.to change(Spree::Metafield, :count).by(1)
+        }.to change(Spree::CustomField, :count).by(1)
 
         expect(response).to have_http_status(:ok)
-        expect(category.reload.metafields.find_by(metafield_definition: fabric_definition).value).to eq('Linen')
+        expect(category.reload.custom_fields.find_by(custom_field_definition: fabric_definition).value).to eq('Linen')
       end
 
       it 'leaves existing values untouched when custom_fields is omitted' do
-        category.metafields.create!(metafield_definition: fabric_definition, value: 'Wool')
+        category.custom_fields.create!(custom_field_definition: fabric_definition, value: 'Wool')
 
         patch :update, params: { id: category.prefixed_id, name: 'Apparel' }, as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(category.reload.metafields.find_by(metafield_definition: fabric_definition).value).to eq('Wool')
+        expect(category.reload.custom_fields.find_by(custom_field_definition: fabric_definition).value).to eq('Wool')
       end
     end
   end
@@ -197,19 +188,13 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       expect(response).to have_http_status(:no_content)
       expect(Spree::Category.find_by_prefix_id(category.prefixed_id)).to be_nil
     end
-
-    it 'cannot delete an automatic (collection) taxon' do
-      automatic = create(:automatic_taxon, taxonomy: taxonomy, parent: taxonomy.root)
-      delete :destroy, params: { id: automatic.prefixed_id }, as: :json
-      expect(response).to have_http_status(:not_found)
-    end
   end
 
   describe 'PATCH #reposition' do
     # Top-level categories (parentless, store-owned) created in order.
-    let!(:first)  { Spree::Category.create!(name: 'A First', store: store) }
-    let!(:second) { Spree::Category.create!(name: 'B Second', store: store) }
-    let!(:third)  { Spree::Category.create!(name: 'C Third', store: store) }
+    let!(:first)  { create(:category, name: 'A First', store: store) }
+    let!(:second) { create(:category, name: 'B Second', store: store) }
+    let!(:third)  { create(:category, name: 'C Third', store: store) }
 
     # Helper: ordered ids of a parent's children (nested-set order).
     def child_ids(parent)
@@ -226,7 +211,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       end
 
       it 'inserts among existing children at the requested index' do
-        existing = Spree::Category.create!(name: 'Existing', parent: first)
+        existing = create(:category, name: 'Existing', parent: first)
 
         patch :reposition, params: { id: third.prefixed_id, new_parent_id: first.prefixed_id, new_position: 0 }, as: :json
 
@@ -235,8 +220,8 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       end
 
       it 'reorders among an existing parent\'s children' do
-        a = Spree::Category.create!(name: 'A', parent: first)
-        b = Spree::Category.create!(name: 'B', parent: first)
+        a = create(:category, name: 'A', parent: first)
+        b = create(:category, name: 'B', parent: first)
 
         patch :reposition, params: { id: b.prefixed_id, new_parent_id: first.prefixed_id, new_position: 0 }, as: :json
 
@@ -248,7 +233,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
         # Regression: new_position past the child count dereferenced a nil
         # sibling and returned 404. With second already a child, moving third in
         # at an out-of-range index must succeed (append) rather than 404.
-        Spree::Category.create!(name: 'Existing child', parent: first)
+        create(:category, name: 'Existing child', parent: first)
 
         patch :reposition, params: { id: third.prefixed_id, new_parent_id: first.prefixed_id, new_position: 999 }, as: :json
 
@@ -257,7 +242,7 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       end
 
       it 'promotes a nested category to the top level when no parent is given' do
-        nested = Spree::Category.create!(name: 'Nested', parent: first)
+        nested = create(:category, name: 'Nested', parent: first)
 
         patch :reposition, params: { id: nested.prefixed_id, new_position: 0 }, as: :json
 
@@ -266,19 +251,11 @@ RSpec.describe Spree::Api::V3::Admin::CategoriesController, type: :controller do
       end
 
       it 'returns 422 for an impossible move (into its own descendant)' do
-        child = Spree::Category.create!(name: 'Child', parent: first)
+        child = create(:category, name: 'Child', parent: first)
 
         patch :reposition, params: { id: first.prefixed_id, new_parent_id: child.prefixed_id, new_position: 0 }, as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
-      end
-
-      it 'cannot reposition an automatic (collection) taxon' do
-        automatic = create(:automatic_taxon, taxonomy: taxonomy, parent: taxonomy.root)
-
-        patch :reposition, params: { id: automatic.prefixed_id, new_position: 0 }, as: :json
-
-        expect(response).to have_http_status(:not_found)
       end
     end
 

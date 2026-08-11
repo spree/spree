@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import { type ComponentType, useSyncExternalStore } from 'react'
-import type { SubjectName } from './permissions'
+import type { ActionName, SubjectName } from './permissions'
 
 // ============================================================================
 // Types
@@ -33,6 +33,13 @@ export interface NavEntry {
   position?: number
   /** CanCanCan subject required to see this item. Omit for always-visible. */
   subject?: SubjectName
+  /**
+   * Action checked against `subject`. Defaults to `'read'`. Entries for pages
+   * that only exist to *change* something should declare `'update'` — every
+   * staff member can read the store record for shell data, so a read gate on
+   * `Spree::Store` shows the item to everyone.
+   */
+  action?: ActionName
   /**
    * State-based visibility gate evaluated at render (top-level entries only),
    * e.g. hide Getting Started once the store's setup tasks are all done.

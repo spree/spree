@@ -6,7 +6,9 @@ module Spree
         # current store (its supported_locales_list), so the dashboard's locale
         # switcher enumerates locales instead of hardcoding them.
         class LocalesController < Admin::BaseController
-          scoped_resource :settings
+          # Reference data the dashboard shell needs regardless of the caller's
+          # grant — exempt from the key gate like `/tags` and `/countries`.
+          skip_scope_check!
 
           # GET /api/v3/admin/locales
           def index

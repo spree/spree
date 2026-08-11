@@ -37,7 +37,15 @@ module Spree
           # tags, etc.) or for specific actions (`only: :index`) when an
           # action authorizes another way, e.g. by filtering its collection
           # per-type (exports).
-          def skip_scope_check!(only: nil)
+          #
+          # `jwt_only: true` narrows the exemption to JWT staff: secret API
+          # keys still have their scope enforced. Use it for shell data a
+          # signed-in staff member reads to render the dashboard (the store
+          # itself) but which a scope-limited integration key has no business
+          # reading outside its granted scope.
+          def skip_scope_check!(only: nil, jwt_only: false)
+            self._scope_check_skip_jwt_only = jwt_only
+
             if only
               self._scope_check_skipped_actions = Array(only).map(&:to_s)
             else
@@ -50,6 +58,7 @@ module Spree
           class_attribute :_scoped_resource, instance_accessor: false
           class_attribute :_scope_check_skipped, instance_accessor: false, default: false
           class_attribute :_scope_check_skipped_actions, instance_accessor: false
+          class_attribute :_scope_check_skip_jwt_only, instance_accessor: false, default: false
           before_action :authorize_api_key_scope!
         end
 
@@ -58,9 +67,12 @@ module Spree
         def authorize_api_key_scope!
           # Endpoints explicitly exempt from the scope mechanism (auth, me, public
           # invitation acceptance, per-type-filtered exports, etc.) opt out first,
-          # before any key resolution or enforcement.
-          return if self.class._scope_check_skipped
-          return if self.class._scope_check_skipped_actions&.include?(action_name)
+          # before any key resolution or enforcement. A `jwt_only` skip is the
+          # exception: it exempts JWT staff but still enforces scope for secret
+          # keys, so it must fall through to key resolution below.
+          if scope_check_skipped_for_action? && !self.class._scope_check_skip_jwt_only
+            return
+          end
 
           # Fail CLOSED, not open. A nil `current_api_key` legitimately means a
           # non-secret-key request (JWT admin / publishable) authorized by other
@@ -73,15 +85,25 @@ module Spree
           resolve_current_api_key_for_scope_check!
 
           unless current_api_key
-            return unless secret_key_request?
+            if secret_key_request?
+              # A secret-key token was presented but did not resolve to a live key
+              # for this store — reject rather than silently skip the scope check.
+              return render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_token],
+                message: 'Valid secret API key required',
+                status: :unauthorized
+              )
+            end
 
-            # A secret-key token was presented but did not resolve to a live key
-            # for this store — reject rather than silently skip the scope check.
-            return render_error(
-              code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:invalid_token],
-              message: 'Valid secret API key required',
-              status: :unauthorized
-            )
+            # A `jwt_only` skip exempts the JWT/publishable principal we now know
+            # this is (no secret key resolved) — shell data the dashboard reads
+            # without a specific scope.
+            return if scope_check_skipped_for_action? && self.class._scope_check_skip_jwt_only
+
+            # JWT staff pass through the same key gate as secret keys: their
+            # roles' catalog keys play the role scopes play for keys, so both
+            # principals share one enforcement contract per controller.
+            return authorize_staff_permission!
           end
 
           resource = scoped_resource_name
@@ -99,6 +121,48 @@ module Spree
             status: :forbidden,
             details: { required_scope: required }
           )
+        end
+
+        # The JWT half of the key gate. The staffer's expanded role keys come
+        # from Spree::Ability#permission_keys; a custom ability class without
+        # that method falls back to plain CanCanCan `authorize!` enforcement.
+        def authorize_staff_permission!
+          return unless current_user
+
+          resource = scoped_resource_name
+          # Fail closed, mirroring the secret-key path: admin controllers must
+          # declare their scope (or skip explicitly).
+          raise MissingScopedResource, self.class unless resource
+
+          ability = current_ability
+          return unless ability.respond_to?(:permission_keys)
+
+          required = "#{action_kind}_#{resource}"
+          # Scope names outside the catalog (the exports/imports `:all`
+          # fallback, host-registered types) defer to CanCanCan's `authorize!`
+          # — the caller stays gated per subject, just not by key.
+          return unless Spree.permissions.key?(required)
+          return if ability.permission_keys.include?(required)
+
+          Rails.logger.info do
+            "[Spree] Access denied: user=#{current_user.id} required=#{required} " \
+              "held=#{ability.permission_keys.join(',')}"
+          end
+
+          render_error(
+            code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:access_denied],
+            message: "Missing permission: #{required}",
+            status: :forbidden,
+            details: { required_permission: required }
+          )
+        end
+
+        # Whether the current action opted out of scope checks via
+        # `skip_scope_check!` (whole-controller or `only:`). Independent of the
+        # `jwt_only` qualifier, which the caller weighs separately.
+        def scope_check_skipped_for_action?
+          self.class._scope_check_skipped ||
+            self.class._scope_check_skipped_actions&.include?(action_name) || false
         end
 
         # True when the request presents a secret API key token (`sk_` prefix),

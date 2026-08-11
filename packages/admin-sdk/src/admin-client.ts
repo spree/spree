@@ -87,6 +87,13 @@ export interface MeResponse {
     avatar_url: string | null
   }
   permissions: PermissionRule[]
+  /**
+   * The flat expanded catalog permission keys the user holds on the current
+   * store (`read_orders`, `write_products`, …) — the same vocabulary as API
+   * key scopes and the role editor. `write_x` is always accompanied by its
+   * implied `read_x`.
+   */
+  permission_keys: string[]
 }
 
 import type {
@@ -187,6 +194,8 @@ import type {
   ReturnReceiveParams,
   ReturnRefundParams,
   ReturnUpdateParams,
+  RoleCreateParams,
+  RoleUpdateParams,
   StockItemUpdateParams,
   StockLocationCreateParams,
   StockLocationUpdateParams,
@@ -247,6 +256,7 @@ import type {
   OrderRoutingRule,
   Payment,
   PaymentMethod,
+  Permission,
   Price,
   PriceList,
   Product,
@@ -3838,7 +3848,7 @@ export class AdminClient {
   }
 
   // ============================================
-  // Roles (read-only — for staff role pickers)
+  // Roles (staff roles + catalog permissions)
   // ============================================
 
   readonly roles = {
@@ -3856,6 +3866,24 @@ export class AdminClient {
         ...options,
         params: getParams(params),
       }),
+
+    create: (params: RoleCreateParams, options?: RequestOptions): Promise<Role> =>
+      this.request<Role>('POST', '/roles', { ...options, body: params }),
+
+    update: (id: string, params: RoleUpdateParams, options?: RequestOptions): Promise<Role> =>
+      this.request<Role>('PATCH', `/roles/${id}`, { ...options, body: params }),
+
+    delete: (id: string, options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', `/roles/${id}`, options),
+  }
+
+  // ============================================
+  // Permissions (the grant vocabulary — read-only catalog)
+  // ============================================
+
+  readonly permissions = {
+    list: (options?: RequestOptions): Promise<{ data: Permission[]; meta: { count: number } }> =>
+      this.request<{ data: Permission[]; meta: { count: number } }>('GET', '/permissions', options),
   }
 }
 

@@ -65,30 +65,8 @@
         "full_access_label": "Full access (write_all)",
         "read_all_hint": "— read on every resource",
         "read_all_label": "Read all (read_all)",
-        "read_aria": "Read {{resource}}",
-        "read_header": "Read",
-        "resource_header": "Resource",
-        "resources": {
-          "api_keys": "API keys",
-          "categories": "Categories",
-          "customers": "Customers",
-          "dashboard": "Dashboard",
-          "fulfillments": "Fulfillments",
-          "gift_cards": "Gift cards",
-          "orders": "Orders",
-          "payments": "Payments",
-          "products": "Products",
-          "promotions": "Promotions",
-          "refunds": "Refunds",
-          "settings": "Settings",
-          "stock": "Stock",
-          "store_credits": "Store credits",
-          "webhooks": "Webhooks"
-        },
         "show_more_aria_one": "Show {{count}} more scope",
-        "show_more_aria_other": "Show {{count}} more scopes",
-        "write_aria": "Write {{resource}}",
-        "write_header": "Write"
+        "show_more_aria_other": "Show {{count}} more scopes"
       },
       "scopes_immutable_help": "Scopes can't be changed after a key is created. To change them, create a new key with the scopes you need and revoke this one.",
       "validation": {
@@ -725,8 +703,8 @@
           "label": "Delivery zones"
         },
         "fulfillment_provider": {
-          "label": "Fulfillment provider",
-          "help": "How fulfillments for this method are dispatched and tracked."
+          "help": "How fulfillments for this method are dispatched and tracked.",
+          "label": "Fulfillment provider"
         },
         "fulfillment_type": {
           "label": "Fulfillment type"
@@ -1092,6 +1070,16 @@
         "usage_limit": {
           "label": "Usage limit",
           "placeholder": "Unlimited"
+        }
+      },
+      "role": {
+        "description": {
+          "label": "Description",
+          "placeholder": "What is this role for?"
+        },
+        "name": {
+          "label": "Name",
+          "placeholder": "e.g. Order manager"
         }
       },
       "role_id": {
@@ -1864,30 +1852,23 @@
           },
           "claims": {
             "actions": {
-              "resolve_refund": "Resolve with refund",
-              "resolve_replacement": "Resolve with replacement",
-              "deny": "Deny",
               "create": "New claim",
-              "resolve": "Resolve"
+              "deny": "Deny",
+              "resolve": "Resolve",
+              "resolve_refund": "Resolve with refund",
+              "resolve_replacement": "Resolve with replacement"
             },
-            "types": {
-              "damaged": "Damaged",
-              "missing": "Missing",
-              "wrong_item": "Wrong item",
-              "other": "Other"
-            },
-            "empty": "No claims for this order.",
             "create_title": "New claim",
-            "claim_type": "Problem",
+            "empty": "No claims for this order.",
             "refund_amount": "Refund amount",
-            "resolve_title": "Resolve claim",
-            "resolution": "How to resolve",
             "replacement_items": "Send a replacement for",
+            "resolution": "How to resolve",
             "resolutions": {
               "refund": "Refund",
-              "replacement": "Replacement",
-              "refund_and_replacement": "Refund and replacement"
-            }
+              "refund_and_replacement": "Refund and replacement",
+              "replacement": "Replacement"
+            },
+            "resolve_title": "Resolve claim"
           },
           "dialogs": {
             "approve_title": "Approve order?",
@@ -1899,42 +1880,43 @@
           "empty_shipments": "No shipments yet.",
           "exchanges": {
             "actions": {
-              "fulfill": "Ship replacement",
-              "create": "New exchange"
+              "create": "New exchange",
+              "fulfill": "Ship replacement"
             },
-            "price_difference": "Price difference",
-            "empty": "No exchanges for this order.",
             "create_title": "New exchange",
+            "empty": "No exchanges for this order.",
+            "price_difference": "Price difference",
             "replacement_variant": "Replacement variant ID"
           },
           "no_delivery_method": "No delivery method selected.",
           "returns": {
             "actions": {
               "approve": "Approve",
+              "create": "New return",
               "receive": "Receive items",
-              "refund": "Refund",
-              "create": "New return"
+              "refund": "Refund"
             },
             "confirm": {
               "cancel": "Cancel this return? Nothing will be restocked and no money will move."
             },
-            "refund_total": "Refund total",
-            "received_of": "{{received}} of {{requested}} received",
+            "create_title": "New return",
+            "empty": "No returns for this order.",
+            "empty_no_units": "This order has no fulfillment records to return against.",
+            "memo": "Note",
             "not_resellable": "Not resellable",
+            "reason": "Reason",
             "receive_title": "Receive returned items",
+            "received_of": "{{received}} of {{requested}} received",
             "received_quantity": "Received",
-            "resellable": "Resellable",
-            "refund_title": "Refund return",
             "refund_amount": "Amount",
             "refund_method": "Refund to",
             "refund_methods": {
               "original_payment": "Original payment",
               "store_credit": "Store credit"
             },
-            "empty": "No returns for this order.",
-            "memo": "Note",
-            "create_title": "New return",
-            "empty_no_units": "This order has no fulfillment records to return against."
+            "refund_title": "Refund return",
+            "refund_total": "Refund total",
+            "resellable": "Resellable"
           },
           "section_billing_address": "Billing address",
           "section_claims": "Claims",
@@ -2255,6 +2237,20 @@
         "loading": "Loading promotion…",
         "new_title": "New promotion"
       },
+      "roles": {
+        "add_cta": "Add role",
+        "edit_sheet_title": "Edit role",
+        "empty": "No roles yet",
+        "empty_description": "Create a role to give staff members scoped access.",
+        "new_title": "New role",
+        "subtitle": "Define what each staff role can see and do",
+        "table": {
+          "members": "Members",
+          "permissions": "Permissions",
+          "role": "Role"
+        },
+        "title": "Roles"
+      },
       "settings": {
         "allowed_origins": {
           "add_sheet_title": "Add allowed origin",
@@ -2528,21 +2524,81 @@
       },
       "title": "Payment Methods"
     },
+    "permissions": {
+      "descriptions": {
+        "api_keys": "Create and revoke API credentials",
+        "categories": "Category tree and taxonomies",
+        "collections": "Manual and rule-based product collections",
+        "customers": "Customer accounts, addresses, cards and groups",
+        "dashboard": "Sales and performance analytics",
+        "fulfillments": "Pack, ship and track order fulfillments",
+        "gift_cards": "Gift cards and gift card batches",
+        "orders": "Orders, line items, returns, exchanges and claims",
+        "payments": "Order payments and payment capture",
+        "products": "Products, variants, options, prices and media",
+        "promotions": "Promotions, rules and coupon codes",
+        "refunds": "Issue and view refunds",
+        "settings": "Store, payment, delivery, tax and channel configuration",
+        "staff": "Team members, invitations, roles and their permissions",
+        "stock": "Stock levels, locations, movements and transfers",
+        "store_credits": "Customer store credit balances",
+        "webhooks": "Webhook endpoints and deliveries"
+      },
+      "grid": {
+        "read_aria": "View {{resource}}",
+        "read_header": "View",
+        "resource_header": "Resource",
+        "write_aria": "Manage {{resource}}",
+        "write_header": "Manage"
+      },
+      "groups": {
+        "access": "Access",
+        "analytics": "Analytics",
+        "catalog": "Catalog",
+        "customers": "Customers",
+        "marketing": "Marketing",
+        "orders": "Orders",
+        "settings": "Settings"
+      },
+      "labels": {
+        "read": "View {{resource}}",
+        "write": "Manage {{resource}}"
+      },
+      "resources": {
+        "api_keys": "API keys",
+        "categories": "Categories",
+        "collections": "Collections",
+        "customers": "Customers",
+        "dashboard": "Dashboard",
+        "fulfillments": "Fulfillments",
+        "gift_cards": "Gift cards",
+        "orders": "Orders",
+        "payments": "Payments",
+        "products": "Products",
+        "promotions": "Promotions",
+        "refunds": "Refunds",
+        "settings": "Settings",
+        "staff": "Staff & roles",
+        "stock": "Stock",
+        "store_credits": "Store credits",
+        "webhooks": "Webhooks"
+      }
+    },
     "post_sale": {
-      "search_placeholder": "Search by number…",
-      "returns_empty": "No returns yet.",
-      "exchanges_empty": "No exchanges yet.",
       "claims_empty": "No claims yet.",
+      "exchanges_empty": "No exchanges yet.",
+      "returns_empty": "No returns yet.",
+      "search_placeholder": "Search by number…",
       "statuses": {
-        "requested": "Requested",
-        "open": "Open",
         "approved": "Approved",
+        "canceled": "Canceled",
+        "denied": "Denied",
+        "fulfilled": "Fulfilled",
+        "open": "Open",
         "received": "Received",
         "refunded": "Refunded",
-        "fulfilled": "Fulfilled",
-        "resolved": "Resolved",
-        "denied": "Denied",
-        "canceled": "Canceled"
+        "requested": "Requested",
+        "resolved": "Resolved"
       }
     },
     "preferences": {
@@ -3000,38 +3056,80 @@
       }
     },
     "reasons": {
-      "title": "Returns & reasons",
-      "description": "The vocabularies your team picks from when handling returns, claims and refunds.",
+      "active_label": "Available on new records",
       "add_cta": "Add reason",
       "add_sheet_title": "Add reason",
-      "edit_sheet_title": "Edit reason",
+      "claim": {
+        "help": "What went wrong with a delivery — damaged, missing or wrong item.",
+        "title": "Claim reasons"
+      },
       "create_description": "Reasons appear in a dropdown when staff open a return, claim or refund.",
-      "name_placeholder": "e.g. Wrong size",
-      "active_label": "Available on new records",
+      "delete_confirm": {
+        "message": "{{name}} will no longer be offered. Records already using it keep it.",
+        "title": "Delete reason?"
+      },
+      "description": "The vocabularies your team picks from when handling returns, claims and refunds.",
+      "edit_sheet_title": "Edit reason",
       "empty": "No reasons yet",
-      "inactive": "Inactive",
       "in_use": "In use",
       "in_use_help": "This reason is already used by existing records, so it cannot be deleted.",
-      "delete_confirm": {
-        "title": "Delete reason?",
-        "message": "{{name}} will no longer be offered. Records already using it keep it."
-      },
+      "inactive": "Inactive",
       "messages": {
         "created": "Reason created",
-        "updated": "Reason updated",
-        "deleted": "Reason deleted"
+        "deleted": "Reason deleted",
+        "updated": "Reason updated"
+      },
+      "name_placeholder": "e.g. Wrong size",
+      "refund": {
+        "help": "Why money went back. Used for reporting across every refund.",
+        "title": "Refund reasons"
       },
       "return": {
-        "title": "Return reasons",
-        "help": "Why a customer is sending something back. Shared by returns and exchanges."
+        "help": "Why a customer is sending something back. Shared by returns and exchanges.",
+        "title": "Return reasons"
       },
-      "claim": {
-        "title": "Claim reasons",
-        "help": "What went wrong with a delivery — damaged, missing or wrong item."
+      "title": "Returns & reasons"
+    },
+    "roles": {
+      "badges": {
+        "full_access": "Full access",
+        "more": "+{{count}} more",
+        "none": "No permissions",
+        "protected": "Protected"
       },
-      "refund": {
-        "title": "Refund reasons",
-        "help": "Why money went back. Used for reporting across every refund."
+      "confirm": {
+        "delete_message": "Delete the role \"{{name}}\"? This action cannot be undone.",
+        "delete_title": "Delete role"
+      },
+      "duplicate_name": "{{name}} copy",
+      "errors": {
+        "failed_to_delete": "Failed to delete role",
+        "failed_to_save": "Failed to save role"
+      },
+      "form": {
+        "description": "Choose what this role can view and manage.",
+        "locked_hint": "This role is protected and cannot be edited.",
+        "permissions_section": "Permissions"
+      },
+      "manage_roles_link": "Manage roles",
+      "messages": {
+        "created": "Role created",
+        "deleted": "Role deleted",
+        "updated": "Role updated"
+      },
+      "presets": {
+        "clear": "Clear",
+        "full_access": "Full access",
+        "read_only": "Read only"
+      },
+      "templates": {
+        "merchandiser": "Merchandiser",
+        "order_manager": "Order manager",
+        "start_from": "Start from:",
+        "support": "Support"
+      },
+      "validation": {
+        "name_required": "Name is required"
       }
     },
     "settings": {
@@ -3068,6 +3166,7 @@
         "product_types": "Product types",
         "profile": "Profile",
         "reasons": "Returns & reasons",
+        "roles": "Roles",
         "staff": "Staff",
         "stock_locations": "Stock locations",
         "store": "Store",

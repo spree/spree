@@ -13,6 +13,7 @@ module Spree
           # ResourceController ones. Public endpoints opt out with
           # +allow_guest_storefront_access!+.
           include Spree::Api::V3::StorefrontGating
+          include Spree::Api::V3::StorefrontAccess
 
           # Require publishable API key for all Store API requests. Prepended so
           # the key is authenticated BEFORE ChannelResolution's

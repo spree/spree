@@ -160,20 +160,6 @@ defineTable<Claim>('claims', {
       render: (c) => numberCell(c),
     },
     statusColumn(['open', 'approved', 'resolved', 'denied', 'canceled']),
-    {
-      key: 'claim_type',
-      label: i18n.t('admin.pages.orders.detail.claims.claim_type'),
-      sortable: true,
-      filterable: true,
-      default: true,
-      render: (c) => (
-        <Badge variant="outline">
-          {i18n.t(`admin.pages.orders.detail.claims.types.${c.claim_type}`, {
-            defaultValue: c.claim_type,
-          })}
-        </Badge>
-      ),
-    },
     orderColumn<Claim>(),
     createdColumn<Claim>(),
   ],

@@ -46,7 +46,7 @@ module Spree
         'category3',
       ].freeze
 
-      def initialize(product, variant, index = 0, properties = [], categories = [], store = nil, metafields = [], currency = nil)
+      def initialize(product, variant, index = 0, properties = [], categories = [], store = nil, custom_fields = [], currency = nil)
         @product = product
         @variant = variant
         @index = index
@@ -55,10 +55,10 @@ module Spree
         @store = store || product.store
         @currency = currency || @store.default_currency
         @price_only = @currency != @store.default_currency
-        @metafields = metafields
+        @custom_fields = custom_fields
       end
 
-      attr_accessor :product, :variant, :index, :properties, :categories, :store, :currency, :price_only, :metafields
+      attr_accessor :product, :variant, :index, :properties, :categories, :store, :currency, :price_only, :custom_fields
 
       ##
       # Generates an array representing a CSV row of product variant data.
@@ -83,7 +83,7 @@ module Spree
           product.slug,
           index.zero? ? product.status : nil,
           index.zero? ? product.try(:vendor_name) : nil,
-          index.zero? ? product.description&.html_safe : nil,
+          index.zero? ? product.description : nil,
           index.zero? ? product.meta_title : nil,
           index.zero? ? product.meta_description : nil,
           index.zero? ? product.meta_keywords : nil,
@@ -119,7 +119,7 @@ module Spree
         if index.zero?
           csv += categories
           csv += properties
-          csv += metafields
+          csv += custom_fields
         end
 
         csv

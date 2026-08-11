@@ -12,7 +12,7 @@ module Spree
     has_prefix_id :cert
 
     include Spree::HasStatus
-    include Spree::Metafields
+    include Spree::HasCustomFields
 
     attribute :metadata, default: -> { {} }
 

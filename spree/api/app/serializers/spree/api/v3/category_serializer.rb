@@ -18,11 +18,11 @@ module Spree
         end
 
         attribute :description do |category|
-          category.description&.to_plain_text.to_s
+          Spree::RichTextHelper.to_plain_text(category.description)
         end
 
         attribute :description_html do |category|
-          category.description&.body&.to_s.to_s
+          category.description_html
         end
 
         attribute :image_url do |category|
@@ -60,7 +60,7 @@ module Spree
              resource: proc { Spree.api.category_serializer },
              if: proc { expand?('ancestors') }
 
-        many :public_metafields,
+        many :storefront_custom_fields,
              key: :custom_fields,
              resource: proc { Spree.api.custom_field_serializer },
              if: proc { expand?('custom_fields') }

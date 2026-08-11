@@ -138,7 +138,7 @@ RSpec.shared_examples 'a payment processing host' do
     it 'lists active front-end methods available for this record' do
       available = create(:credit_card_payment_method, store: store)
       inactive = create(:credit_card_payment_method, store: store, active: false)
-      back_office_only = create(:credit_card_payment_method, store: store, display_on: 'back_end')
+      back_office_only = create(:credit_card_payment_method, store: store, storefront_visible: false)
 
       expect(record.payment_methods).to include(available)
       expect(record.payment_methods).not_to include(inactive)

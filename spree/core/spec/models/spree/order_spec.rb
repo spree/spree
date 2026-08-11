@@ -485,22 +485,22 @@ describe Spree::Order, type: :model do
     let(:order_from_different_store) { create(:order, user: user, store: store_2) }
 
     it 'includes frontend payment methods' do
-      payment_method = store.payment_methods.create!(name: 'Fake', active: true, display_on: 'front_end')
+      payment_method = store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: true)
       expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
     it "includes 'both' payment methods" do
-      payment_method = store.payment_methods.create!(name: 'Fake', active: true, display_on: 'both')
+      payment_method = store.payment_methods.create!(name: 'Fake', active: true)
       expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
     it 'does not include backend payment method' do
-      store.payment_methods.create!(name: 'Fake', active: true, display_on: 'back_end')
+      store.payment_methods.create!(name: 'Fake', active: true, storefront_visible: false)
       expect(order.collect_frontend_payment_methods.count).to eq(0)
     end
 
     it 'does not include inactive payment methods' do
-      store.payment_methods.create!(name: 'Fake', active: false, display_on: 'front_end')
+      store.payment_methods.create!(name: 'Fake', active: false, storefront_visible: true)
       expect(order.collect_frontend_payment_methods.count).to eq(0)
     end
 
@@ -511,7 +511,7 @@ describe Spree::Order, type: :model do
     end
 
     it 'does not include a payment method from different stores' do
-      payment_method = store_2.payment_methods.create!(name: 'Fake', active: true, display_on: 'both')
+      payment_method = store_2.payment_methods.create!(name: 'Fake', active: true)
       expect(order.collect_frontend_payment_methods).not_to include(payment_method)
 
       expect(order_from_different_store.collect_frontend_payment_methods).to include(payment_method)
@@ -885,6 +885,22 @@ describe Spree::Order, type: :model do
       it 'can be destroyed' do
         expect(order.can_be_deleted?).to be true
       end
+    end
+  end
+
+  describe '#destroy record-state guard' do
+    it 'refuses to destroy a completed order' do
+      order = create(:completed_order_with_pending_payment)
+
+      expect(order.destroy).to be false
+      expect(order.errors[:base]).to be_present
+      expect(order.reload).to be_persisted
+    end
+
+    it 'destroys an incomplete order without settled payments' do
+      order = create(:order)
+
+      expect(order.destroy).to be_truthy
     end
   end
 
@@ -1339,9 +1355,9 @@ describe Spree::Order, type: :model do
 
   describe '#collect_backend_payment_methods' do
     let!(:order) { create(:order_with_line_items, line_items_count: 2) }
-    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both') }
-    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
-    let!(:inactive_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both', active: false) }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method) }
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
+    let!(:inactive_payment_method) { create(:simple_credit_card_payment_method, active: false) }
 
     it { expect(order.collect_backend_payment_methods).to include(credit_card_payment_method) }
     it { expect(order.collect_backend_payment_methods).not_to include(store_credit_payment_method) }

@@ -47,6 +47,10 @@ en:
         number: Number
         verification_value: Verification Value
         year: Year
+      spree/custom_field_definition:
+        namespace: Namespace
+        searchable: Searchable
+        sortable: Sortable
       spree/customer_group:
         description: Description
         name: Name
@@ -67,10 +71,6 @@ en:
       spree/line_item:
         price: Price
         quantity: Quantity
-      spree/metafield_definition:
-        namespace: Namespace
-        searchable: Searchable
-        sortable: Sortable
       spree/option_type:
         filterable: Filterable
         kind: Kind
@@ -174,14 +174,6 @@ en:
       spree/state:
         abbr: Abbreviation
         name: Name
-      spree/state_change:
-        state_changes: State changes
-        state_from: State from
-        state_to: State to
-        timestamp: Timestamp
-        type: Type
-        updated: Updated
-        user: User
       spree/store:
         address: Address
         contact_phone: Contact Phone
@@ -263,6 +255,10 @@ en:
               values_should_be_percent: Tier values should all be percentages between 0% and 100%
             preferred_tiers:
               should_be_hash: should be a hash
+        spree/category:
+          attributes:
+            parent:
+              must_belong_to_same_store: must belong to the same store
         spree/classification:
           attributes:
             taxon_id:
@@ -505,9 +501,6 @@ en:
       spree/state:
         one: State
         other: States
-      spree/state_change:
-        one: State Change
-        other: State Changes
       spree/stock_item:
         one: Stock Item
         other: Stock Items
@@ -782,6 +775,8 @@ en:
     currency_not_supported_by_store: is not supported by this store
     current: Current
     current_password: Current password
+    custom_field_definitions: Custom Field Definitions
+    custom_fields: Custom Fields
     customer: Customer
     customer_group: Customer Group
     customer_groups: Customer Groups
@@ -1060,7 +1055,6 @@ en:
     locale_not_supported_by_store: is not supported by this store
     location: Location
     lock: Lock
-    log_entries: Log Entries
     logged_in_successfully: Logged in successfully
     login: Login
     logo: Logo
@@ -1086,8 +1080,6 @@ en:
     meta_keywords: Meta Keywords
     meta_title: Meta Title
     metadata: Metadata
-    metafield_definitions: Metafield Definitions
-    metafields: Metafields
     min: Min
     min_quantity: Min Quantity
     minimal_amount: Minimal Amount
@@ -1148,6 +1140,7 @@ en:
     or: or
     order: Order
     order_canceled: Order canceled
+    order_cannot_be_deleted: Completed orders and orders with settled payments cannot be deleted
     order_mailer:
       cancel_email:
         dear_customer: Hey %{name},
@@ -1218,6 +1211,70 @@ en:
     percent_per_item: Percent Per Item
     permalink: Permalink
     permissions: Permissions
+    permissions_catalog:
+      groups:
+        access: Access
+        analytics: Analytics
+        catalog: Catalog
+        customers: Customers
+        marketing: Marketing
+        orders: Orders
+        settings: Settings
+      kinds:
+        read: View
+        write: Manage
+      resources:
+        api_keys:
+          description: Create and revoke API credentials
+          label: API keys
+        categories:
+          description: Category tree and taxonomies
+          label: Categories
+        collections:
+          description: Manual and rule-based product collections
+          label: Collections
+        customers:
+          description: Customer accounts, addresses, cards and groups
+          label: Customers
+        dashboard:
+          description: Sales and performance analytics
+          label: Analytics dashboard
+        fulfillments:
+          description: Pack, ship and track order fulfillments
+          label: Fulfillments
+        gift_cards:
+          description: Gift cards and gift card batches
+          label: Gift cards
+        orders:
+          description: Orders, line items, returns, exchanges and claims
+          label: Orders
+        payments:
+          description: Order payments and payment capture
+          label: Payments
+        products:
+          description: Products, variants, options, prices and media
+          label: Products
+        promotions:
+          description: Promotions, rules and coupon codes
+          label: Promotions
+        refunds:
+          description: Issue and view refunds
+          label: Refunds
+        settings:
+          description: Store, payment, delivery, tax and channel configuration
+          label: Store settings
+        staff:
+          description: Team members, invitations, roles and their permissions
+          label: Staff & roles
+        stock:
+          description: Stock levels, locations, movements and transfers
+          label: Inventory
+        store_credits:
+          description: Customer store credit balances
+          label: Store credits
+        webhooks:
+          description: Webhook endpoints and deliveries
+          label: Webhooks
     phone: Phone
     policies: Policies
     powered_by: Powered by
@@ -1376,7 +1433,10 @@ en:
     review: Review
     risk: Risk
     risky: Risky
+    role_cannot_be_deleted: This role is protected or still referenced by staff members or pending invitations and cannot be deleted
     role_id: Role ID
+    role_immutable: cannot be changed on a protected role
+    role_permissions_unknown: 'contains unknown permissions: %{keys}'
     roles: Roles
     row: Row
     rules: Rules
@@ -1465,7 +1525,6 @@ en:
     start: Start
     starts_at: Starts at
     state: State
-    state_changes: State Changes
     states: States
     states_required: States Required
     status: Status

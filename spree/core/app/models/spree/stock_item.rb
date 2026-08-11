@@ -4,7 +4,7 @@ module Spree
 
     acts_as_paranoid
 
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
 
     publishes_lifecycle_events

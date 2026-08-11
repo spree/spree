@@ -188,13 +188,13 @@ describe Spree::Asset, type: :model do
 
   context 'external URL' do
     before do
-      create(:metafield_definition, namespace: 'external', key: 'url', resource_type: 'Spree::Asset')
+      create(:custom_field_definition, namespace: 'external', key: 'url', resource_type: 'Spree::Asset')
     end
 
     describe '.with_external_url' do
       it 'returns assets with the given external URL' do
         asset = create(:asset)
-        asset.set_metafield('external.url', 'https://example.com/Example-Image-001.png')
+        asset.set_custom_field('external.url', 'https://example.com/Example-Image-001.png')
         expect(described_class.with_external_url('https://example.com/Example-Image-001.png')).to include(asset)
       end
 
@@ -206,7 +206,7 @@ describe Spree::Asset, type: :model do
     describe '#external_url' do
       it 'returns the external URL' do
         asset = create(:asset)
-        asset.set_metafield('external.url', 'https://example.com/Example-Image-001.png')
+        asset.set_custom_field('external.url', 'https://example.com/Example-Image-001.png')
         expect(asset.external_url).to eq('https://example.com/Example-Image-001.png')
       end
 

@@ -10,6 +10,7 @@ import {
   RadioTowerIcon,
   RotateCcwIcon,
   ShapesIcon,
+  ShieldCheckIcon,
   StoreIcon,
   TagIcon,
   TruckIcon,
@@ -45,6 +46,9 @@ settingsNav.add({
   group: 'store',
   position: 100,
   subject: Subject.Store,
+  // Every staff member can READ the store (shell data: name, logo, timezone,
+  // currencies); only settings managers should see the page that edits it.
+  action: 'update',
 })
 
 settingsNav.add({
@@ -55,6 +59,7 @@ settingsNav.add({
   group: 'store',
   position: 125,
   subject: Subject.Store,
+  action: 'update',
 })
 
 settingsNav.add({
@@ -168,6 +173,16 @@ settingsNav.add({
 })
 
 settingsNav.add({
+  key: 'settings.roles',
+  labelKey: 'admin.settings_nav.items.roles',
+  path: '/roles',
+  icon: ShieldCheckIcon,
+  group: 'team',
+  position: 150,
+  subject: Subject.Role,
+})
+
+settingsNav.add({
   key: 'settings.api-keys',
   labelKey: 'admin.settings_nav.items.api_keys',
   path: '/api-keys',
@@ -197,8 +212,9 @@ settingsNav.add({
   subject: Subject.AllowedOrigin,
 })
 
-// No `subject`: the page spans import types and the API already filters what
-// the caller can see.
+// The page spans import types and the API filters rows per type, but a
+// merchant with no write permission anywhere can't run any import — gate the
+// entry on products, the most common import subject.
 settingsNav.add({
   key: 'settings.imports',
   labelKey: 'admin.settings_nav.items.imports',
@@ -206,4 +222,6 @@ settingsNav.add({
   icon: UploadIcon,
   group: 'audit',
   position: 100,
+  subject: Subject.Product,
+  action: 'update',
 })

@@ -74,12 +74,11 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     end
 
     describe 'nested expand on aliased associations (key differs from name)' do
-      let!(:taxonomy) { create(:taxonomy, store: store) }
-      let!(:parent_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
-      let!(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: parent_taxon) }
+      let!(:parent_category) { create(:category) }
+      let!(:child_category) { create(:category, parent: parent_category) }
 
       before do
-        product.taxons << child_taxon
+        product.categories << child_category
       end
 
       it 'expands categories with nested ancestors' do

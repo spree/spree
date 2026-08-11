@@ -6,7 +6,7 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
     include Spree::NumberIdentifier
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     if defined?(Spree::Security::Payments)
       include Spree::Security::Payments
@@ -33,8 +33,6 @@ module Spree
     validate :exactly_one_owner
 
     has_many :offsets, -> { offset_payment }, class_name: 'Spree::Payment', foreign_key: :source_id
-    has_many :log_entries, as: :source
-    has_many :state_changes, as: :stateful
     has_many :capture_events, class_name: 'Spree::PaymentCaptureEvent'
     has_many :refunds, inverse_of: :payment
 
@@ -133,14 +131,6 @@ module Spree
       # when the card brand isn't supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
-      end
-
-      after_transition do |payment, transition|
-        payment.state_changes.create!(
-          previous_state: transition.from,
-          next_state: transition.to,
-          name: 'payment'
-        )
       end
     end
 
@@ -267,19 +257,19 @@ module Spree
     end
 
     def add_gateway_processing_error(error_message)
-      if has_metafield?('gateway.processing_errors')
-        errors = JSON.parse(get_metafield('gateway.processing_errors').value)
+      if has_custom_field?('gateway.processing_errors')
+        errors = JSON.parse(get_custom_field('gateway.processing_errors').value)
         errors << { message: error_message }
 
-        set_metafield('gateway.processing_errors', errors.to_json)
+        set_custom_field('gateway.processing_errors', errors.to_json)
       else
-        set_metafield('gateway.processing_errors', [{ message: error_message }].to_json)
+        set_custom_field('gateway.processing_errors', [{ message: error_message }].to_json)
       end
     end
 
     def gateway_processing_error_messages
       @gateway_processing_error_messages ||= begin
-        errors = JSON.parse(get_metafield('gateway.processing_errors')&.value || '[]')
+        errors = JSON.parse(get_custom_field('gateway.processing_errors')&.value || '[]')
         errors.map { |error| error['message'] }
       rescue JSON::ParserError
         []

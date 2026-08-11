@@ -48,7 +48,7 @@ module Spree
             return @collection if @collection.present?
 
             result = search_provider.search_and_filter(
-              scope: scope.includes(collection_includes).preload_associations_lazily.accessible_by(current_ability, :show),
+              scope: scope.includes(collection_includes).preload_associations_lazily,
               query: search_query,
               filters: search_filters,
               sort: sort_param,

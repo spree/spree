@@ -11,7 +11,7 @@ module Spree
     has_prefix_id :comp
 
     include Spree::SingleStoreResource
-    include Spree::Metafields
+    include Spree::HasCustomFields
 
     publishes_lifecycle_events
 

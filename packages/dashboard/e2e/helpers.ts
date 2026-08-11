@@ -8,6 +8,9 @@ import { CREDENTIALS_FILE } from './paths'
  * by name to make matching deterministic.
  */
 export const FIXTURE_PROMO_TAXON = 'E2E Promo Category'
+// Permalinks are unique per store, names are not — the seed looks fixtures up by
+// permalink so it can never match an unrelated category.
+export const FIXTURE_PROMO_TAXON_PERMALINK = 'e2e-promo-category'
 export const FIXTURE_PROMO_PRODUCT = 'E2E Promo Product'
 // Active products used by products-bulk.spec.ts. Each test owns a disjoint
 // pair so the serial suite doesn't cross-contaminate (status mutations on
@@ -31,9 +34,10 @@ export const FIXTURE_BULK_PRODUCT_K = 'E2E Bulk Product K'
 export const FIXTURE_BULK_PRODUCT_L = 'E2E Bulk Product L'
 export const FIXTURE_BULK_PRODUCT_M = 'E2E Bulk Product M'
 export const FIXTURE_BULK_PRODUCT_N = 'E2E Bulk Product N'
-// Dedicated category seeded for the bulk-add-to-categories test; lives under
-// the `Categories` taxonomy alongside `FIXTURE_PROMO_TAXON`.
+// Dedicated category seeded for the bulk-add-to-categories test; a top-level
+// store category alongside `FIXTURE_PROMO_TAXON`.
 export const FIXTURE_BULK_CATEGORY = 'E2E Bulk Category'
+export const FIXTURE_BULK_CATEGORY_PERMALINK = 'e2e-bulk-category'
 // Second channel beyond the seeded default `online`. Used by the
 // channels bulk-action and filter specs.
 export const FIXTURE_BULK_CHANNEL_CODE = 'e2e-bulk'
@@ -103,6 +107,24 @@ export async function login(page: Page): Promise<E2ECredentials> {
 export async function gotoIndex(page: Page, path: string, ctaButtonName: RegExp) {
   await page.goto(path)
   await expect(page.getByRole('button', { name: ctaButtonName })).toBeVisible({ timeout: 15_000 })
+}
+
+/**
+ * Open the edit-profile dialog from the top-bar user menu. The profile has no
+ * page of its own, so every profile assertion starts here.
+ *
+ * @param menuLabel Accessible name of the user-menu button — pass a translated
+ *   pattern when the dashboard is running in another language.
+ * @param itemLabel Accessible name of the "Edit profile" menu item.
+ */
+export async function openProfileDialog(
+  page: Page,
+  menuLabel: RegExp = /user menu/i,
+  itemLabel: RegExp = /edit profile/i,
+) {
+  await page.getByRole('button', { name: menuLabel }).click()
+  await page.getByRole('menuitem', { name: itemLabel }).click()
+  await expect(page.locator('#profile-first-name')).toBeVisible({ timeout: 15_000 })
 }
 
 /**

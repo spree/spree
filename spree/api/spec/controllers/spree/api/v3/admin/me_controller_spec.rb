@@ -66,6 +66,52 @@ RSpec.describe Spree::Api::V3::Admin::MeController, type: :controller do
       expect(manage_all_rule).to be_present
     end
 
+    it 'returns the full catalog as permission_keys for admin users' do
+      subject
+      expect(json_response['permission_keys']).to eq(Spree.permissions.catalog_keys)
+    end
+
+    context 'as a staffer with a limited role' do
+      let(:staffer) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          user.role_users.create!(role: create(:role, name: 'viewer', permissions: %w[write_orders]), resource: store)
+        end
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+
+      it 'returns the expanded role keys' do
+        subject
+        expect(json_response['permission_keys']).to eq(%w[read_orders write_orders])
+      end
+    end
+
+    context 'as a staffer with different roles on different stores' do
+      let(:store_b) { create(:store) }
+      let(:staffer) do
+        create(:admin_user, :without_admin_role).tap do |user|
+          user.role_users.create!(role: create(:role, name: 'a_orders', permissions: %w[write_orders]), resource: store)
+          user.role_users.create!(role: create(:role, name: 'b_products', permissions: %w[read_products]), resource: store_b)
+        end
+      end
+      let(:headers) do
+        { 'Authorization' => "Bearer #{Spree::Api::V3::TestingSupport.generate_jwt(staffer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN)}" }
+      end
+
+      it 'returns only the current store keys' do
+        subject
+        expect(json_response['permission_keys']).to eq(%w[read_orders write_orders])
+      end
+
+      it 'returns the other store keys under that store context' do
+        allow_any_instance_of(Spree::Api::V3::BaseController).to receive(:current_store).and_return(store_b)
+
+        subject
+        expect(json_response['permission_keys']).to eq(%w[read_products])
+      end
+    end
+
     it 'exposes the user avatar_url (null when no photo is attached)' do
       subject
       expect(json_response['user']).to have_key('avatar_url')

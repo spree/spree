@@ -1,7 +1,7 @@
 module Spree
   class <%= class_name.demodulize %> < <%= parent_class_name %>
-<% if metafields? -%>
-    include Spree::Metafields
+<% if custom_fields? -%>
+    include Spree::HasCustomFields
     include Spree::Metadata
 
 <% end -%>
@@ -18,8 +18,12 @@ module Spree
     belongs_to :<%= attribute.name %>, class_name: <%= belongs_to_class_name_expr(attribute) %>
 <% end -%>
 <% end -%>
+<% if attributes.any?(&:rich_text?) -%>
+    include Spree::SanitizableRichText
+
 <% attributes.select(&:rich_text?).each do |attribute| -%>
-    has_rich_text :<%= attribute.name %>
+    has_spree_rich_text :<%= attribute.name %>
+<% end -%>
 <% end -%>
 <% attributes.select(&:attachment?).each do |attribute| -%>
     has_one_attached :<%= attribute.name %>

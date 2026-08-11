@@ -24,7 +24,7 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns admin users with at least one role assignment on the current store.'
-      admin_scope :read, :settings
+      admin_scope :read, :staff
 
       admin_sdk_example 'admin-users/list'
 
@@ -50,7 +50,7 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
       tags 'Staff'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      admin_scope :read, :settings
+      admin_scope :read, :staff
 
       admin_sdk_example 'admin-users/get'
 
@@ -77,7 +77,7 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
       security [api_key: [], bearer_auth: []]
       description 'Updates name fields and reassigns roles for the current store. ' \
                   '`role_ids` is a complete replacement — roles not in the array are removed for this store.'
-      admin_scope :write, :settings
+      admin_scope :write, :staff
 
       admin_sdk_example 'admin-users/update'
 
@@ -109,7 +109,7 @@ RSpec.describe 'Admin Staff API', type: :request, swagger_doc: 'api-reference/ad
       tags 'Staff'
       security [api_key: [], bearer_auth: []]
       description "Removes the user's role assignments on the current store. The account is preserved — the user keeps access to any other stores."
-      admin_scope :write, :settings
+      admin_scope :write, :staff
 
       admin_sdk_example 'admin-users/delete'
 

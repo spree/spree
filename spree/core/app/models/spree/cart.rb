@@ -146,7 +146,6 @@ module Spree
       fees.for_fulfillments.delete_all
 
       fulfillment_ids = fulfillments.map(&:id)
-      StateChange.where(stateful_type: %w[Spree::Shipment Spree::Fulfillment], stateful_id: fulfillment_ids).delete_all
       DeliveryRate.where(fulfillment_id: fulfillment_ids).delete_all
       fulfillments.delete_all
       fulfillment_items.reset

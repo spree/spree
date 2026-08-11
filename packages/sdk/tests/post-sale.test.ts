@@ -54,7 +54,7 @@ describe('customer self-service returns and claims', () => {
       const result = await client.orders.claims.list('or_abc123', undefined, opts)
 
       expect(result.data).toHaveLength(1)
-      expect(result.data[0].claim_type).toBe('damaged')
+      expect(result.data[0].reason_id).toBe('clr_1')
     })
 
     it('fetches a single claim', async () => {
@@ -69,7 +69,7 @@ describe('customer self-service returns and claims', () => {
         'or_abc123',
         {
           items: [{ line_item_id: 'li_1', quantity: 1, description: 'Arrived cracked' }],
-          claim_type: 'damaged',
+          reason_id: 'clr_1',
         },
         opts,
       )

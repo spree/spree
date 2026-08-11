@@ -136,7 +136,7 @@ module Spree
 
           # GET /api/v3/admin/imports/template?type=Spree::Imports::Products
           #
-          # CSV header row for the type's schema (including the metafield
+          # CSV header row for the type's schema (including the custom_field
           # columns available for the model) — the "Download template" link
           # in the admin dashboard.
           def template

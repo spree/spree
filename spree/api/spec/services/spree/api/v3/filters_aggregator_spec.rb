@@ -3,23 +3,22 @@ require 'spec_helper'
 RSpec.describe Spree::Api::V3::FiltersAggregator do
   let(:store) { @default_store }
   let(:currency) { 'USD' }
-  let(:taxonomy) { create(:taxonomy, store: store) }
-  let(:taxon) { create(:taxon, taxonomy: taxonomy) }
-  let(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxon, name: 'Child') }
+  let(:category) { create(:category) }
+  let(:child_category) { create(:category, parent: category, name: 'Child') }
 
   let(:option_type) { create(:option_type, name: 'size', presentation: 'Size', filterable: true) }
   let(:option_value_s) { create(:option_value, option_type: option_type, name: 'small', presentation: 'S') }
   let(:option_value_m) { create(:option_value, option_type: option_type, name: 'medium', presentation: 'M') }
 
   let!(:product1) do
-    create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
+    create(:product, status: 'active', categories: [child_category]).tap do |p|
       p.option_types << option_type
       create(:variant, product: p, option_values: [option_value_s])
     end
   end
 
   let!(:product2) do
-    create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
+    create(:product, status: 'active', categories: [child_category]).tap do |p|
       p.option_types << option_type
       create(:variant, product: p, option_values: [option_value_m])
     end
@@ -27,7 +26,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
 
   let(:scope) { store.products.available(Time.current, currency) }
 
-  subject { described_class.new(scope: scope, currency: currency, category: taxon) }
+  subject { described_class.new(scope: scope, currency: currency, category: category) }
 
   describe '#call' do
     let(:result) { subject.call }
@@ -63,8 +62,8 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       end
 
       it "ignores the category's own sort_order (category does not drive default_sort in 6.0)" do
-        taxon.update!(sort_order: 'price asc')
-        aggregator = described_class.new(scope: scope, currency: currency, category: taxon)
+        category.update!(sort_order: 'price asc')
+        aggregator = described_class.new(scope: scope, currency: currency, category: category)
         expect(aggregator.call[:default_sort]).to eq('manual')
       end
     end
@@ -228,14 +227,14 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       let(:red) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red') }
 
       let!(:blue_product) do
-        create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
+        create(:product, status: 'active', categories: [child_category]).tap do |p|
           p.option_types << color_type << option_type
           create(:variant, product: p, option_values: [blue, option_value_s])
         end
       end
 
       let!(:red_product) do
-        create(:product, status: 'active', taxons: [child_taxon]).tap do |p|
+        create(:product, status: 'active', categories: [child_category]).tap do |p|
           p.option_types << color_type << option_type
           create(:variant, product: p, option_values: [red, option_value_m])
         end

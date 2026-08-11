@@ -1,3 +1,5 @@
+require 'spree/category_permalink_deduplicator'
+
 namespace :spree do
   # Migrates rule-based (automatic) categories to Spree::Collection and rewrites the
   # class-name strings that Phase 3 renamed. Idempotent (each automatic category is
@@ -133,20 +135,31 @@ namespace :spree do
     # categories are store-owned; Taxonomy + the taxonomy_id column drop in 6.1.
     puts 'Severing taxonomy links from surviving categories...'
 
-    # Backfill store_id from the taxonomy first so nulling taxonomy_id never orphans a
-    # category (belt-and-suspenders alongside spree:taxons:backfill_store_id).
-    Spree::Taxonomy.find_each do |taxonomy|
-      Spree::Category.unscoped.where(store_id: nil, taxonomy_id: taxonomy.id).
-        update_all(store_id: taxonomy.store_id)
-    end
-
     # Drop legacy taxonomy roots (parentless, taxonomy-backed containers) left with no
     # children after the automatic migration; non-empty roots stay as top-level categories.
+    # Runs BEFORE the store_id backfill so throwaway roots can't trip the store-scoped
+    # unique index on their way out.
     parent_ids = Spree::Category.unscoped.where.not(parent_id: nil).distinct.pluck(:parent_id)
     childless_root_ids = Spree::Category.unscoped.where.not(taxonomy_id: nil).
                          where(parent_id: nil).where.not(id: parent_ids).ids
     Spree::Category.unscoped.where(id: childless_root_ids).find_each(&:destroy!)
     puts "  dropped #{childless_root_ids.size} childless taxonomy roots."
+
+    # Normally a no-op: the migration deduplicates over this same row set (it too
+    # groups by the store a category belongs to *or resolves through its
+    # taxonomy*). It runs again because db:migrate is not part of the upgrade
+    # manifest — the deploy pipeline owns it — so this task can be invoked against
+    # a database whose migrations have not run, where the backfill below would
+    # otherwise trip over duplicates that nothing has resolved yet.
+    renamed = Spree::CategoryPermalinkDeduplicator.new.call
+    puts "  resolved #{renamed} duplicate category permalinks." if renamed.positive?
+
+    # Backfill store_id from the taxonomy so nulling taxonomy_id never orphans a
+    # category (belt-and-suspenders alongside spree:taxons:backfill_store_id).
+    Spree::Taxonomy.find_each do |taxonomy|
+      Spree::Category.unscoped.where(store_id: nil, taxonomy_id: taxonomy.id).
+        update_all(store_id: taxonomy.store_id)
+    end
 
     # Null the taxonomy link on everything that remains — categories are store-owned now.
     severed = Spree::Category.unscoped.where.not(taxonomy_id: nil).update_all(taxonomy_id: nil)

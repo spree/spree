@@ -115,12 +115,12 @@ module Spree
         many :categories,
              proc { |categories, params|
                store_id = params[:store].id
-               categories.select { |c| c.store_id == store_id || c.taxonomy&.store_id == store_id }
+               categories.select { |c| c.store_id == store_id }
              },
              resource: proc { Spree.api.category_serializer },
              if: proc { expand?('categories') }
 
-        many :public_metafields,
+        many :storefront_custom_fields,
              key: :custom_fields,
              resource: proc { Spree.api.custom_field_serializer },
              if: proc { expand?('custom_fields') }

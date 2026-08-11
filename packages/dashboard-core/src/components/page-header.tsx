@@ -15,6 +15,7 @@ import type { JsonPreviewDrawerProps } from '@spree/dashboard-ui/spree/json-prev
 import { BracesIcon, CheckIcon, CopyIcon, EllipsisVerticalIcon, TrashIcon } from 'lucide-react'
 import { lazy, type ReactNode, Suspense, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useRegisterPageHeader } from '../providers/sticky-header-provider'
 import { Slot } from './slot'
 
 // JSON drawer is a developer-only feature; pulling its tree (which includes
@@ -120,15 +121,26 @@ export function PageHeader({
     setJsonOpen(true)
   }
   const scrolled = useScrolled()
+  // Tells the TopBar there's a header here to take over the top of the
+  // viewport, so it may slide away once the user scrolls, and reports when
+  // that hand-over is happening.
+  const collapsed = useRegisterPageHeader()
 
   return (
-    // Sticky below the TopBar (which sticks at `top-0`, height
-    // `--spacing-header-height`) so the title, badges, and primary actions
-    // (notably Save on form pages) stay reachable as the user scrolls long
-    // detail pages. `bg-background` masks the content scrolling behind it;
+    // This parks at `top-header-height`, directly below the TopBar, so the
+    // title, badges, and primary actions (notably Save on form pages) stay
+    // reachable as the user scrolls long detail pages.
+    //
+    // On scroll the TopBar retreats and this header rises to take its place.
+    // That rise is a `translateY`, not a change of `top`: `top` is a layout
+    // property with no transition, so animating it would teleport this header
+    // 58px while the TopBar slid, visibly breaking the pair apart. Both now
+    // move by the same distance, over the same duration and curve, off one
+    // shared scroll flag.
+    //
+    // `bg-background` masks the content scrolling behind it;
     // `-mx-4 px-4 lg:-mx-6 lg:px-6` and `-mt-4 lg:-mt-6 pt-4 lg:pt-6` undo
-    // and re-apply the parent padding so the sticky band runs edge-to-edge
-    // and there's no transparent gap between the TopBar and the header.
+    // and re-apply the parent padding so the sticky band runs edge-to-edge.
     //
     // The `::after` pseudo-element is the bottom hairline — it fades in
     // once the user scrolls (so the header blends at rest, separates when
@@ -139,7 +151,17 @@ export function PageHeader({
     <header
       className={cn(
         'sticky top-header-height z-20 -mx-4 -mt-4 flex items-start gap-3 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75 px-4 pt-4 pb-3 lg:-mx-6 lg:-mt-6 lg:px-6 lg:pt-6',
-        'after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:opacity-0 after:transition-opacity after:duration-150 after:[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]',
+        // `translate` is listed explicitly: Tailwind v4 compiles
+        // `-translate-y-*` to the standalone `translate` property, so a
+        // `transform`-only transition never animates it and the header would
+        // jump to its raised position while the TopBar slid — the exact desync
+        // this pairing exists to avoid.
+        'transition-[transform,translate,box-shadow] duration-200 ease-out',
+        // Reduced motion: hold position rather than teleport. Suppressing only
+        // the transition would leave the 58px jump this pairing exists to avoid.
+        'motion-reduce:transition-none motion-reduce:translate-y-0',
+        'after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:opacity-0 after:transition-opacity after:duration-200 after:[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]',
+        collapsed && '-translate-y-header-height',
         scrolled && 'after:opacity-100 shadow-xs',
       )}
     >

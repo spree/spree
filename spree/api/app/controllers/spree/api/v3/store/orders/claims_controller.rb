@@ -14,7 +14,7 @@ module Spree
               result = Spree.claim_create_workflow.call(
                 order: @parent,
                 items: items_for_create,
-                claim_type: create_params[:claim_type] || 'other',
+                reason: reason_for_create,
                 memo: create_params[:memo]
               )
 
@@ -50,7 +50,6 @@ module Spree
                         else
                           order_scope.find_by_prefix_id!(params[:order_id])
                         end
-              authorize!(:show, @parent, order_token)
             end
 
             # Authorization is the parent order's — see the returns
@@ -60,19 +59,11 @@ module Spree
             end
 
             def order_scope
-              base = current_store.orders.complete
-
-              if current_user.present?
-                base.where(customer: current_user)
-              elsif order_token.present?
-                base.where(token: order_token)
-              else
-                base.none
-              end
+              storefront_access_policy.scope(current_store.orders.complete, token: order_token)
             end
 
             def create_params
-              @create_params ||= params.permit(:memo, :claim_type,
+              @create_params ||= params.permit(:memo, :reason_id,
                                                items: [:line_item_id, :quantity, :description])
             end
 
@@ -86,6 +77,14 @@ module Spree
                   description: item[:description]
                 }
               end
+            end
+
+            # Read through the store so a reason belonging to another store
+            # 404s rather than being silently attached.
+            def reason_for_create
+              return nil if create_params[:reason_id].blank?
+
+              current_store.claim_reasons.find_by_prefix_id!(create_params[:reason_id])
             end
           end
         end

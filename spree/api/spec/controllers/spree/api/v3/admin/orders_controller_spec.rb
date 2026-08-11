@@ -599,9 +599,13 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
     context 'with completed order' do
       let!(:order) { create(:completed_order_with_totals, store: store) }
 
-      it 'returns 403 (CanCan denies destroy on completed orders)' do
+      # Record-state eligibility lives on the model (Axis A/B split), so the
+      # caller is authorized but the resource's state blocks the operation:
+      # 422, matching every other `can_be_deleted?` guard.
+      it 'returns 422 (completed orders cannot be deleted)' do
         subject
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(Spree::Order.find_by(id: order.id)).to be_present
       end
     end
   end

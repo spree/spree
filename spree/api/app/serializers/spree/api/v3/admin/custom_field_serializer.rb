@@ -11,11 +11,11 @@ module Spree
           attributes created_at: :iso8601, updated_at: :iso8601
 
           attribute :storefront_visible do |custom_field|
-            custom_field.metafield_definition.available_on_front_end?
+            custom_field.custom_field_definition.storefront_visible
           end
 
           attribute :custom_field_definition_id do |custom_field|
-            custom_field.metafield_definition.prefixed_id
+            custom_field.custom_field_definition.prefixed_id
           end
         end
       end

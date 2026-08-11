@@ -6,8 +6,8 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
   let(:variant) { product.default_variant }
   let(:properties) { [] }
   let(:taxons) { [] }
-  let(:metafields) { [] }
-  let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store, metafields) }
+  let(:custom_fields) { [] }
+  let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store, custom_fields) }
   let(:default_publication) { product.product_publications.find_by(channel: store.default_channel) }
 
   let!(:variant_images) { create_list(:image, 3, viewable: variant) }
@@ -58,7 +58,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
     end
 
     context 'when index is not zero' do
-      let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, metafields) }
+      let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, custom_fields) }
 
       let!(:color_option) { create(:option_type, name: 'Color', presentation: 'Color', products: [product]) }
       let!(:size_option) { create(:option_type, name: 'Size', presentation: 'Size', products: [product]) }
@@ -147,12 +147,12 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
     end
   end
 
-  describe 'metafields' do
+  describe 'custom_fields' do
     context 'when index is zero' do
-      let(:metafields) { ['value1', 'value2'] }
-      let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store, metafields) }
+      let(:custom_fields) { ['value1', 'value2'] }
+      let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store, custom_fields) }
 
-      it 'includes metafields at the end of the array' do
+      it 'includes custom_fields at the end of the array' do
         result = presenter.call
         expect(result[-2]).to eq 'value1'
         expect(result[-1]).to eq 'value2'
@@ -160,10 +160,10 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
     end
 
     context 'when index is not zero' do
-      let(:metafields) { ['value1', 'value2'] }
-      let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, metafields) }
+      let(:custom_fields) { ['value1', 'value2'] }
+      let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, custom_fields) }
 
-      it 'does not include metafields' do
+      it 'does not include custom_fields' do
         result = presenter.call
         expect(result).not_to include('value1')
         expect(result).not_to include('value2')

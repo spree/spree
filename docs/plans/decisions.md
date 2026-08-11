@@ -1,3 +1,64 @@
+## 2026-08-09: Metadata consolidated to one column — `public_metadata` dropped, `private_metadata` renamed
+
+Implements the 2026-03-16 consolidation decision. All thirty metadata-carrying
+tables lose `public_metadata` and have `private_metadata` renamed to `metadata`,
+so the column, the accessor and the API field finally share one name.
+`Spree::Metadata` keeps its place but collapses to a single attribute plus the
+`HashSerializer` — the alias indirection that made `metadata` a method forwarding
+to another column is gone. `Spree::Collection`, which had been declaring its own
+consolidated column to sidestep the concern, now just includes it.
+
+**Three shape decisions.**
+
+*`public_metadata` data is preserved, not discarded.* The original note called the
+column unused, which holds for Spree's own code — nothing read it, and it was
+never exposed in the Store API — but is not provably true of host applications
+that had a writable JSON column sitting there for four years. A dropped column has
+no rollback, so `spree:upgrade:consolidate_metadata` merges it into
+`private_metadata` first, private winning on key collision since that is the side
+the accessor and the API always read.
+
+*The merge lives inside the migration, not in a manifest step.* The obvious home
+was a pre-migration upgrade task, but `spree:upgrade` runs manifests *after*
+`db:migrate` — both the rake runner and the CLI's upgrade command sequence it that
+way. A merge scheduled there would find `public_metadata` already dropped and
+silently do nothing, losing exactly the data it existed to protect. Documentation
+telling operators to run a step "before migrate" would have been asking them to
+fight their own tooling. `spree:upgrade:consolidate_metadata` stays in the manifest
+as a safety net for schemas changed out of band, not as the primary path.
+
+*The rename is `rename_column`, not add-and-backfill.* Instant on PostgreSQL and
+MySQL, data stays in place.
+
+*No hardcoded table lists, in either direction.* Legacy tables are discovered by
+column: the pair was added across a dozen migrations and several of those tables have
+since been renamed (`spree_shipping_methods`, `spree_prototypes`, `spree_taxons`), so
+a static list would already be wrong. Rollback needs the inverse answer, and shape
+cannot supply it — a table we renamed and one born with a single `metadata` column look
+identical afterwards. An early version hardcoded the exclusions and was doubly wrong:
+it missed `spree_customers`, and it would have swept up `active_storage_blobs`, whose
+unrelated `metadata` column a shape-based rollback would have renamed, breaking every
+attachment. `up` now records what it renames and `down` reverses exactly that.
+
+Both the migration and the task use raw SQL rather than Active Record. Beyond the
+models already pointing at the new name, PostgreSQL has no equality operator for
+`json`, so `where.not(public_metadata: [nil, {}])` raises `PG::UndefinedFunction` —
+green on SQLite, broken on the databases most production installs actually run.
+
+**No bridge for `public_metadata`** — a recorded exception to the "every 6.0 rename
+keeps the legacy name one release" convention. The column is being removed rather
+than renamed, and it already carried a deprecation warning through 5.x.
+`private_metadata` does get the usual one-release bridge with a warning.
+
+**What this does not change.** Metadata and metafields stay two systems. Metadata
+is the schemaless developer escape hatch — no definition, write-only from the
+Store API's perspective, for integration ids and sync state. Metafields (custom
+fields) stay merchant-defined structured data with types, definitions and
+storefront visibility. Customer-visible structured data belongs in a metafield,
+never in metadata.
+
+Plan: `docs/plans/6.0-consolidate-metadata-columns.md`.
+
 ## 2026-08-07: The tax plan builds the minimal Company tree; the B2B release keeps Catalog
 
 Exemption certificates need an entity to hang off, and `Spree::Company` does not
@@ -71,6 +132,32 @@ was also scope creep: the 6.0 data tasks are steps in the upgrade manifest, so
 behaviour for it adds a permanent branch to a hot path to cover a transient.
 Don't design for half-upgraded installs; make the task correct and say what it
 did.
+## 2026-08-07: `Claim#claim_type` dropped — the reason vocabulary is the only "what went wrong" axis
+
+Reverses the two-axis design in `6.0-returns-exchanges-claims.md`, which
+paired a fixed `claim_type` (damaged / missing / wrong_item / other) with
+the merchant-owned `Spree::ClaimReason`. The column, its
+`class_attribute` list, the validation, the API field and the dashboard
+"Problem" picker are all removed; `reason` stays, still optional.
+
+**Why.** The two fields asked the merchant the same question twice. The
+seeded claim reasons made it plain — "Arrived damaged" next to type
+`damaged`, "Wrong item sent" next to `wrong_item`. Worse, `claim_type`
+was required and unmodifiable while earning nothing: no code ever
+branched on it (the model comment conceded "pure labels with no per-type
+behaviour"), unlike `resolution`, which is closed precisely because each
+value drives `Claims::Resolve`. Return and Exchange already carry a
+reason and no type column, so dropping it makes all three consistent.
+
+The coarse-fixed-axis-for-reporting argument is real but unearned here:
+nothing reported on it. A future reporting need is better served by
+grouping reasons than by a second required field.
+
+**Migration.** `spree_claims.claim_type` is dropped in
+`20260807120001_remove_claim_type_from_spree_claims.rb`. The 6.0 tables
+are unreleased, but the creating migration already shipped to `6-0-dev`
+and `main`, so this is a follow-up drop rather than an edit in place.
+The Store API claims endpoint gains `reason_id`, which it never accepted.
 
 ## 2026-08-06: A product type's `required` custom field is advisory — no server-side enforcement
 
@@ -1085,6 +1172,13 @@ Matches OSS platform C (`public: boolean`) and OSS platform B (`visibleInStorefr
 Ships with the 6.0 model rename wave. See `5.4-6.0-custom-fields-rename.md`.
 
 ## 2026-03-16: Consolidate metadata — drop public_metadata, keep metadata JSON column
+
+> **Amended 2026-08-09 on one point:** `public_metadata` is **merged into
+> `metadata`, not discarded**. "Unused" holds for Spree's own code but is not
+> provably true of host applications, and a dropped column has no rollback. The
+> merge runs inside the migration. Everything else below stands — see the
+> 2026-08-09 entry at the top of this file.
+
 Drop `public_metadata` column (never exposed in Store API, unused). Rename
 `private_metadata` → `metadata` in the database. Simplify the `Spree::Metadata`
 concern to a single `metadata` JSON column with no alias indirection.
@@ -1703,3 +1797,147 @@ rates when a shipping zone is destroyed), and the column is left in
 place, unread. `spree_adjustments` already worked this way under
 `migrate_adjustments_to_typed_rows`, which keeps the legacy table as its
 rollback source; treat that as the pattern rather than the exception.
+
+## 2026-08-07 — StateChange and LogEntry removed; lifecycle events are the only audit
+
+**Decision:** Delete `Spree::StateChange` and `Spree::LogEntry` in 6.0 — models,
+associations, state-machine writers, `Payment::Processing#record_response`,
+`Refund#create_log_entry` and the `Order#log_state_changes` shell. This
+supersedes the cart/order-split note that payment/fulfillment machines keep
+their `StateChange` rows.
+
+**Why:** Both were write-only. Nothing in the 6.0 codebase — no serializer, no
+API endpoint, no dashboard page, no event payload — ever read them back; the
+legacy Rails admin screens that displayed them are gone. Lifecycle events
+(`payment.completed`/`voided`, `fulfillment.ready`/`fulfilled`/`canceled`/
+`resumed`, `order.*`) are the sanctioned audit, the same call already made for
+Order rows. Removing LogEntry also retires YAML-serialized gateway responses
+in the database (a historic deserialization CVE surface); gateway dashboards
+and `PaymentSession` own transaction forensics now.
+
+**Tables survive to 6.1:** `spree_state_changes` and `spree_log_entries` stay
+(same pattern as the returns-chain tables). The 5.6→6.0 upgrade tasks that
+touch legacy rows (`migrate_incomplete_orders_to_carts`,
+`migrate_shipping_to_delivery`) read the table through anonymous ActiveRecord
+classes. Both tables drop in 6.1 alongside `spree_adjustments`.
+
+**Kept:** `Spree::PaymentCaptureEvent` — functional money data, not audit:
+`Payment#captured_amount` sums it, partial capture and capture-on-dispatch
+depend on it, and the Admin API exposes `captured_amount`.
+
+## 2026-08-07 — Admin RBAC: one grant system, staff-only, catalog = scope vocabulary
+
+**Decision:** (from spree/spree#14164; plan `6.0-admin-rbac.md`) Role
+permissions become database-backed as flat `read_<resource>` /
+`write_<resource>` keys — the same vocabulary secret API keys use. One
+declarative catalog (resource → CanCanCan subjects → UI group) is the single
+source of truth: `Spree::ApiKey::SCOPES` derives from it, and the dashboard
+role editor and API-key scope picker share one `PermissionPicker` fed by
+`GET /api/v3/admin/permissions`. **Permission sets are deleted at 6.0 with NO
+compatibility bridge** — a deliberate exception to the one-release-bridge
+convention: this is a system removal, not a rename, and a shim would carry the
+runtime-union machinery the removal exists to kill. Old initializers fail
+loudly at boot (`NameError` on the deleted constants; `assign` raises with an
+upgrade-guide pointer). **Roles are pure data:** no `Spree.permissions.grant`,
+no runtime merge, no union — the editor is WYSIWYG; "roles as code" is seeds
+(plain ActiveRecord) or the Admin API; extensions register catalog resources,
+never roles (matching Saleor/Vendure/Shopify — roles are rows everywhere). A
+`mutable` column (NamedType pattern) covers locked roles: admin seeds
+`mutable: false`; hosts can lock compliance roles the same way. Record-level
+custom rules migrate to a `Spree::Dependencies.ability_class` swap — the one
+low-level escape hatch (`register_ability` was dropped with the sets, 6.0
+having no undocumented registration API to inherit).
+Upgrade is fail-closed: pre-existing custom role rows come up with empty
+permissions until filled in the editor. Enforcement unifies on
+the key gate: `ScopedAuthorization` generalizes so every admin request — JWT
+staff or secret key — checks its principal key set against
+`<read|write>_<scoped_resource>`; CanCanCan is demoted to internal plumbing
+behind it (still compiled from keys; nothing public configures it; dropping it
+from the admin path is a 6.1 option, not a goal). A new `staff` pair splits
+out of `settings`; admin-role protection moves onto the `Spree::Role` model
+(NamedType precedent — sk principals never consult CanCanCan). Resource
+granularity reaffirmed; full-page editor; client-side templates, no seeds.
+
+**The system is staff-only.** The storefront has no roles: `:default` /
+`DefaultCustomer` cease to be public concepts and the customer baseline
+(ownership conditions, guest tokens) becomes internal ability code, with
+scope-fetching the primary enforcement. Role resolution runs only for
+admin-user principals (aligns with the platform-auth Customer/Staff split, and
+drops a per-request `role_users` query for customers). B2B company-account
+roles (buyer/approver, hierarchies, spend limits — Enterprise) are explicitly
+a separate future system: the vocabulary must not be shared (`write_orders`
+means "manage the store's orders" to staff and "place my company's orders" to
+a purchaser), matching commercetools/Shopify B2B/Medusa, which all keep
+account roles apart from staff RBAC. Catalog/product visibility per customer
+group or company is data scoping, never a permission key.
+
+**Why:** the hard parts already shipped — the scope vocabulary and
+per-controller `scoped_resource` declarations (5.5), the `RoleGrantGuard`
+escalation check, store-scoped `RoleUser` assignments resolved per store by
+`Spree::Ability`, and the `/me` rules dump the SPA mirrors. Unifying on them
+turns "build an RBAC system" into "expose the one that exists". Two softer
+designs were drafted and rejected the same day: sets kept as bundles over the
+catalog, then a one-release `assign` bridge with an import task — each
+preserved grant-source duality (union semantics, locked "granted in code"
+rows, mixed escalation math) purely for back-compat comfort, in the release
+whose point is the breaking window, for a migration that is genuinely a
+five-minute UI task.
+
+**Reviewer constraints:** no new `PermissionSets::` classes or `assign` calls
+anywhere; every model a new admin controller authorizes must be covered by a
+catalog entry, or custom roles cannot reach the endpoint; new sensitive
+resources get their own catalog resource instead of riding `settings`;
+storefront code must never consult `Spree::Role` or the catalog.
+
+## 2026-08-08 — Store API drops CanCanCan; storefront access is a swappable policy
+
+**Decision:** The Store API (v3) no longer consults CanCanCan anywhere.
+`Spree::Ability` is staff-only — a customer principal's ability has no rules —
+and the generic `authorize_resource!`/`authorize_parent!` hooks plus the
+`accessible_by` collection filter moved from the shared v3 `ResourceController`
+down to the Admin branch. Storefront authorization is ownership: account
+controllers read through `current_user` (scope-fetching, unchanged), catalog
+endpoints have no per-record check (the old `accessible_by` calls sat on
+unconditional `can :read` grants — no-op filters), and the two checks a scope
+cannot express — cart/order access proven by JWT ownership OR a guest token,
+plus the guest-token order-listing scope — live in
+`Spree::Storefront::AccessPolicy`, swappable via
+`Spree::Dependencies.storefront_access_policy_class`. Denials raise
+`Spree::Storefront::AccessDenied`, rendered identically to CanCan's 403.
+
+**Why:** Two reasons converged. First, the storefront never needed a rule
+engine — its "rules" were ownership conditions and token blocks, and CanCanCan
+block rules can't power `accessible_by`, so controllers carried both a scope
+AND an `authorize!` for the same fact. Second, the Enterprise B2B module
+(`6.1-channels-catalogs-b2b.md`) must extend storefront authority without
+decorating controllers, and a policy object is the right seam: **access
+widening** (approver sees company-location purchases) = subclass the policy and
+override `scope`/`readable?`/`writable?`; **action vetoes** (approvals,
+spending limits) = checkout workflow `validate` hooks; **catalog visibility**
+(per-location catalogs) = the products-for-context data scoping. Enterprise
+implements, open source owns the seams. Competitors ship no storefront rule
+engine (Medusa/Saleor/Vendure); Shopify B2B contact permissions are fixed
+server-side roles.
+
+**Consequences:** Extensions must not add storefront `can` rules or call
+`authorize!` in Store API controllers — widen the access policy or hook a
+workflow instead. The admin side is untouched: staff JWT + CanCanCan, secret
+keys + scopes. `register_ability`/`remove_ability` are gone with the sets
+(`Spree::Dependencies.ability_class` is the admin-side escape hatch).
+
+**Alternative considered and rejected (2026-08-08):** a dedicated storefront
+ability class fed by permission sets — two abilities, staff (catalog keys) and
+storefront (sets/code). Rejected on three grounds: a storefront rule engine
+only means something if store controllers consult it, which restores the
+scope-plus-`authorize!` dual bookkeeping across the store surface; OSS
+customers are all identical, so a storefront set registry would hold exactly
+one configuration (the old `DefaultCustomer`) — code plus registry
+indirection; and the B2B requirement itself decides it — a company admin
+managing roles/employees in a UI needs **data** roles (Enterprise
+`CompanyRole` with capability keys, the commercetools associate-roles shape),
+which code-defined sets cannot provide. The policy protocol is generic
+(`readable?`/`writable?`/`scope` with an ownership default), so wishlists,
+newsletter subscriptions and any new resource route through the same seam
+with no wiring; `/customers/me/*` endpoints stay owner-scoped by definition.
+Full B2B architecture: `6.1-channels-catalogs-b2b.md` → "Company roles and
+approvals".

@@ -1092,6 +1092,7 @@
                     "pages": [
                       "v6/developer/customization/quickstart",
                       "v6/developer/customization/configuration",
+                      "v6/developer/customization/permissions",
                       "developer/customization/workflows",
                       "developer/customization/api",
                       "developer/customization/model-preferences",

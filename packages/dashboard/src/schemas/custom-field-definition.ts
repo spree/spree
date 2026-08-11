@@ -6,7 +6,7 @@ import { i18n } from '@spree/dashboard-core'
 import { requiredMessage } from '@spree/dashboard-ui'
 import { z } from 'zod/v4'
 
-// Mirrors `Spree::Metafield::FIELD_TYPE_TOKENS` on the backend. Keep in sync
+// Mirrors `Spree::CustomField::FIELD_TYPE_TOKENS` on the backend. Keep in sync
 // with the typelized `field_type` union on `CustomFieldDefinition`. Labels
 // come from i18n via `fieldTypeLabel()` below.
 export const FIELD_TYPES = [
@@ -41,7 +41,7 @@ export function fieldTypeLabel(value: string): string {
 }
 
 // Owner types that have a first-class admin UI. The server allows more (see
-// `Spree.metafields.enabled_resources`); these are the ones admins can pick
+// `Spree.custom_fields.enabled_resources`); these are the ones admins can pick
 // when defining a field. Extending this is a one-line add — the API already
 // accepts any resource type registered in core.
 export const DEFAULT_RESOURCE_TYPES = [
@@ -120,7 +120,7 @@ export function customFieldDefinitionValuesToUpdateParams(
   v: CustomFieldDefinitionFormValues,
 ): CustomFieldDefinitionUpdateParams {
   // `resource_type` and `field_type` are intentionally omitted — changing
-  // either would orphan or invalidate stored values. `Spree::Metafield` rows
+  // either would orphan or invalidate stored values. `Spree::CustomField` rows
   // serialize via their own STI subclass (set from the definition at write
   // time), so flipping `field_type` post-hoc would leave existing values
   // misinterpreted by the UI. The controller still accepts these fields;

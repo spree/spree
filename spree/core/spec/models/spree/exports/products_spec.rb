@@ -26,7 +26,7 @@ RSpec.describe Spree::Exports::Products, type: :model do
   end
 
   describe '#csv_headers' do
-    context 'when no metafields' do
+    context 'when no custom_fields' do
       it 'returns product variant headers without properties' do
         expected_headers = [
           'product_id',
@@ -74,10 +74,10 @@ RSpec.describe Spree::Exports::Products, type: :model do
       end
     end
 
-    context 'when metafields exist' do
-      let!(:metafield_definition) { create(:metafield_definition, resource_type: 'Spree::Product', namespace: 'custom', key: 'field1') }
+    context 'when custom_fields exist' do
+      let!(:custom_field_definition) { create(:custom_field_definition, resource_type: 'Spree::Product', namespace: 'custom', key: 'field1') }
 
-      it 'includes metafield headers' do
+      it 'includes custom_field headers' do
         expected_headers = [
           'product_id',
           'sku',
@@ -119,7 +119,7 @@ RSpec.describe Spree::Exports::Products, type: :model do
           'category1',
           'category2',
           'category3',
-          'metafield.custom.field1'
+          'custom_field.custom.field1'
         ]
         expect(export.csv_headers).to eq(expected_headers)
       end

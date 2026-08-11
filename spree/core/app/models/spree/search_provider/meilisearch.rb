@@ -6,7 +6,7 @@ module Spree
       PREFIXED_ID_PATTERN = /\A[a-z]+_[A-Za-z0-9]+\z/
       ALLOWED_STATUSES = %w[active draft archived paused].freeze
       BUILT_IN_FILTERABLE_ATTRIBUTES = %w[product_id status in_stock preorder store_ids channel_ids locale currency available_on discontinue_on price category_ids collection_ids grouping_id tags option_value_ids].freeze
-      METAFIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
+      CUSTOM_FIELD_RANGE_OPERATORS = { 'gt' => '>', 'gteq' => '>=', 'lt' => '<', 'lteq' => '<=' }.freeze
 
       def self.indexing_required?
         true
@@ -59,7 +59,7 @@ module Spree
         unless ms_result
           return FiltersResult.new(
             filters: [],
-            sort_options: built_in_and_metafield_sort_options,
+            sort_options: built_in_and_custom_field_sort_options,
             default_sort: default_sort,
             total_count: 0
           )
@@ -67,7 +67,7 @@ module Spree
 
         FiltersResult.new(
           filters: build_facet_response(facet_distribution),
-          sort_options: built_in_and_metafield_sort_options,
+          sort_options: built_in_and_custom_field_sort_options,
           default_sort: default_sort,
           total_count: ms_result['totalHits'] || 0
         )
@@ -103,7 +103,7 @@ module Spree
       def reindex(scope = nil)
         full_reindex = scope.nil?
         scope ||= store.products
-        @metafield_schema = MetafieldSchema.new
+        @custom_field_schema = CustomFieldSchema.new
         ensure_index_settings!
 
         # On a full reindex, clear first so stale docs (e.g. membership docs for
@@ -288,15 +288,15 @@ module Spree
       end
 
       def searchable_attributes
-        %w[name description sku option_values category_names tags] + metafield_schema.searchable_attribute_keys
+        %w[name description sku option_values category_names tags] + custom_field_schema.searchable_attribute_keys
       end
 
       def filterable_attributes
-        BUILT_IN_FILTERABLE_ATTRIBUTES + metafield_schema.filterable_attribute_keys
+        BUILT_IN_FILTERABLE_ATTRIBUTES + custom_field_schema.filterable_attribute_keys
       end
 
       def sortable_attributes
-        %w[name price created_at available_on units_sold_count position] + metafield_schema.sortable_attribute_keys
+        %w[name price created_at available_on units_sold_count position] + custom_field_schema.sortable_attribute_keys
       end
 
       # Facets stay built-in only — cf_* distributions aren't consumed by
@@ -315,7 +315,7 @@ module Spree
       # Sourced from Spree::Collection::SORT_ORDERS (matching FiltersAggregator) so
       # both providers advertise identical options — including 'manual'.
       def available_sort_options
-        Spree::Collection::SORT_ORDERS.map { |sort_order| to_api_sort(sort_order) } + metafield_schema.sort_ids
+        Spree::Collection::SORT_ORDERS.map { |sort_order| to_api_sort(sort_order) } + custom_field_schema.sort_ids
       end
 
       # Converts internal sort format ('price asc') to API format ('price', '-price').
@@ -326,9 +326,9 @@ module Spree
         direction == 'desc' ? "-#{field}" : field
       end
 
-      def built_in_and_metafield_sort_options
+      def built_in_and_custom_field_sort_options
         Spree::Collection::SORT_ORDERS.map { |sort_order| { id: to_api_sort(sort_order), label: nil } } +
-          metafield_schema.sort_options
+          custom_field_schema.sort_options
       end
 
       # Build Meilisearch filter conditions from API params.
@@ -408,7 +408,7 @@ module Spree
           # Handled by grouped option conditions in search_and_filter — skip here
           nil
         else
-          metafield_filter_condition(key, value)
+          custom_field_filter_condition(key, value)
         end
       end
 
@@ -416,8 +416,8 @@ module Spree
       # EXISTS — but no string contains/starts/ends (CONTAINS is still
       # experimental), so those predicates are ignored here. The Database
       # provider supports the full predicate set.
-      def metafield_filter_condition(key, value)
-        parsed = metafield_schema.parse_filter(key)
+      def custom_field_filter_condition(key, value)
+        parsed = custom_field_schema.parse_filter(key)
         return nil unless parsed
 
         attribute = parsed[:definition].filter_key
@@ -430,17 +430,17 @@ module Spree
           "#{attribute} NOT EXISTS"
         when 'eq', 'not_eq'
           operator = parsed[:predicate] == 'eq' ? '=' : '!='
-          formatted = format_metafield_filter_value(value, numeric)
+          formatted = format_custom_field_filter_value(value, numeric)
           formatted && "#{attribute} #{operator} #{formatted}"
-        when *METAFIELD_RANGE_OPERATORS.keys
+        when *CUSTOM_FIELD_RANGE_OPERATORS.keys
           return nil unless numeric
 
-          formatted = format_metafield_filter_value(value, numeric)
-          formatted && "#{attribute} #{METAFIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
+          formatted = format_custom_field_filter_value(value, numeric)
+          formatted && "#{attribute} #{CUSTOM_FIELD_RANGE_OPERATORS[parsed[:predicate]]} #{formatted}"
         end
       end
 
-      def format_metafield_filter_value(value, numeric)
+      def format_custom_field_filter_value(value, numeric)
         if numeric
           Float(value.to_s, exception: false)&.to_s
         else
@@ -500,7 +500,7 @@ module Spree
         when 'available_on'  then ['available_on:asc']
         when 'best_selling'  then ['units_sold_count:desc']
         else
-          parsed = metafield_schema.parse_sort(sort)
+          parsed = custom_field_schema.parse_sort(sort)
           parsed && ["#{parsed[:attribute]}:#{parsed[:direction]}"]
         end
       end

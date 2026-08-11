@@ -210,7 +210,7 @@ describe Spree::DeliveryMethod, type: :model do
       expect(visible_delivery_method.display_on).to eq('both')
       expect(admin_only_delivery_method.display_on).to eq('back_end')
 
-      method = build(:delivery_method, display_on: 'back_end')
+      method = build(:delivery_method, storefront_visible: false)
       expect(method.storefront_visible).to be false
 
       # front_end-only had no real workflow and folds into visible.

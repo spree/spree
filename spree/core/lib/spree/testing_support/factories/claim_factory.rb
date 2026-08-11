@@ -8,7 +8,6 @@ FactoryBot.define do
     association(:order, factory: :shipped_order)
     store { order.store }
     status { Spree::Claim.default_status }
-    claim_type { 'damaged' }
     memo { 'Arrived with a cracked screen' }
 
     after(:build) do |claim, evaluator|

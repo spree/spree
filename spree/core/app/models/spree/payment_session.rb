@@ -4,7 +4,7 @@ module Spree
 
     acts_as_paranoid
 
-    include Spree::Metafields
+    include Spree::HasCustomFields
 
     self.event_prefix = 'payment_session'
 

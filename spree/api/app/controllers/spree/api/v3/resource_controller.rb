@@ -123,10 +123,11 @@ module Spree
           scope.find_by_prefix_id!(params[:id])
         end
 
-        # Authorize resource with CanCanCan
-        def authorize_resource!(resource = @resource, action = action_name.to_sym)
-          authorize!(action, resource)
-        end
+        # Per-record authorization hook. A no-op in the shared base: the Store
+        # API's resources are reachable only through owner-scoped queries, so
+        # loading one already proves the caller may act on it. The Admin API
+        # overrides this with a CanCanCan check.
+        def authorize_resource!(resource = @resource, action = action_name.to_sym); end
 
         # Returns ransack-filtered, sorted and paginated collection
         # ar_lazy_preload handles automatic association preloading
@@ -251,15 +252,16 @@ module Spree
           }
         end
 
-        # Base scope with store and ability
-        # When @parent is set (nested resources), uses parent association instead
+        # Base scope, store-scoped (or parent-scoped for nested resources).
+        # Deliberately free of CanCanCan: the Store API authorizes by ownership
+        # — every account controller scopes through `current_user` — while the
+        # Admin API layers `accessible_by` on top in its own subclass.
         def scope
           base_scope = if @parent.present?
                          @parent.send(parent_association)
                        else
                          model_class.for_store(current_store)
                        end
-          base_scope = base_scope.accessible_by(current_ability, ability_action_for_request) unless @parent.present?
           base_scope = base_scope.includes(scope_includes) if scope_includes.any?
           base_scope = base_scope.preload_associations_lazily
           model_class.include?(Spree::TranslatableResource) ? base_scope.i18n : base_scope
@@ -300,12 +302,11 @@ module Spree
           read_actions.include?(action_name) ? :show : :update
         end
 
-        # Authorizes the parent resource for nested controllers: a role that
-        # can view a parent can't mutate its nested collection. Call from
-        # +set_parent+ after loading the parent.
-        def authorize_parent!(parent)
-          authorize!(parent_ability_action, parent)
-        end
+        # Parent authorization hook for nested controllers. A no-op in the
+        # shared base for the same reason as +authorize_resource!+; the Admin
+        # API overrides it so a role that can only view a parent cannot mutate
+        # its nested collection.
+        def authorize_parent!(parent); end
 
         # Override to specify the association name on @parent
         # Defaults to controller_name (e.g., 'wished_items' for WishlistItemsController)

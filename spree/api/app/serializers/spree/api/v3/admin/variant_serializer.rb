@@ -67,8 +67,7 @@ module Spree
                resource: proc { Spree.api.admin_price_serializer },
                if: proc { expand?('prices') }
 
-          many :metafields,
-               key: :custom_fields,
+          many :custom_fields,
                resource: proc { Spree.api.admin_custom_field_serializer },
                if: proc { expand?('custom_fields') }
 

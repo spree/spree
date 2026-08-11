@@ -5,12 +5,12 @@ module Spree
         [
           { bill_address: :state },
           { ship_address: :state },
-          { metafields: :metafield_definition }
+          { custom_fields: :custom_field_definition }
         ]
       end
 
       def csv_headers
-        Spree::CSV::CustomerPresenter::HEADERS + metafields_headers
+        Spree::CSV::CustomerPresenter::HEADERS + custom_fields_headers
       end
     end
   end

@@ -14,8 +14,8 @@ import {
 } from '@spree/dashboard-ui'
 import { Link, useRouterState } from '@tanstack/react-router'
 import type { LucideIcon } from 'lucide-react'
-import { type ComponentType, useState } from 'react'
-import type { SubjectName } from '../lib/permissions'
+import { type ComponentType, useCallback, useEffect, useRef, useState } from 'react'
+import type { ActionName, SubjectName } from '../lib/permissions'
 
 export type NavItem = {
   title: string
@@ -23,12 +23,15 @@ export type NavItem = {
   icon: LucideIcon
   /** CanCanCan subject required to see this item. If omitted, item is always visible. */
   subject?: SubjectName
+  /** Action checked against `subject`. Defaults to `'read'`. */
+  action?: ActionName
   /** Component rendered after the label (e.g. a count badge). May return null. */
   badge?: ComponentType
   items?: {
     title: string
     url: string
     subject?: SubjectName
+    action?: ActionName
     /** Component rendered after the label, same contract as the parent's. */
     badge?: ComponentType
   }[]
@@ -47,27 +50,122 @@ export function NavIcon({ icon: Icon, isActive }: { icon: NavItem['icon']; isAct
   )
 }
 
-function CollapsedDropdown({ item, children }: { item: NavItem; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
+/** Grace period between leaving the trigger/menu and the menu closing. */
+const HOVER_CLOSE_DELAY_MS = 150
+
+/**
+ * Which collapsed-nav menu is open, shared across the whole rail.
+ *
+ * One value rather than per-item state, so the menus are mutually exclusive by
+ * construction: hovering a neighbour replaces the open key instantly instead of
+ * leaving the previous menu on screen for the close delay, which read as two
+ * panels flickering over each other.
+ */
+interface HoverMenuController {
+  openKey: string | null
+  /** Opens `key` immediately, replacing whatever was open. */
+  open: (key: string) => void
+  /** Schedules a close, but only if `key` is still the open one. */
+  closeSoon: (key: string) => void
+  /** Closes right away — for explicit dismissals (Escape, selecting an item). */
+  closeNow: () => void
+  /** Cancels a pending close (pointer came back). */
+  cancelClose: () => void
+}
+
+function useHoverMenuController(): HoverMenuController {
+  const [openKey, setOpenKey] = useState<string | null>(null)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const cancelClose = useCallback(() => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current)
+      closeTimer.current = null
+    }
+  }, [])
+
+  const open = useCallback(
+    (key: string) => {
+      cancelClose()
+      setOpenKey(key)
+    },
+    [cancelClose],
+  )
+
+  const closeSoon = useCallback(
+    (key: string) => {
+      cancelClose()
+      closeTimer.current = setTimeout(() => {
+        // Guarded so a late timer from the menu the pointer just left can't
+        // close the one it has since moved to.
+        setOpenKey((current) => (current === key ? null : current))
+      }, HOVER_CLOSE_DELAY_MS)
+    },
+    [cancelClose],
+  )
+
+  const closeNow = useCallback(() => {
+    cancelClose()
+    setOpenKey(null)
+  }, [cancelClose])
+
+  useEffect(
+    () => () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current)
+    },
+    [],
+  )
+
+  return { openKey, open, closeSoon, closeNow, cancelClose }
+}
+
+function CollapsedDropdown({
+  item,
+  controller,
+  children,
+}: {
+  item: NavItem
+  controller: HoverMenuController
+  children: React.ReactNode
+}) {
+  const key = item.title
+  const open = controller.openKey === key
+  const openNow = () => controller.open(key)
+  const closeSoon = () => controller.closeSoon(key)
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu
+      open={open}
+      // Base UI's own open/close signals (Escape, outside click, selecting an
+      // item) are explicit dismissals, so they close immediately — the grace
+      // period exists only for the pointer leaving on its way somewhere.
+      onOpenChange={(next) => {
+        if (next) controller.open(key)
+        else controller.closeNow()
+      }}
+    >
       {/* `nativeButton={false}` because the trigger renders a `<div>` wrapping
           a `SidebarMenuButton` (whose inner element is a `<Link>` → `<a>`),
           not a `<button>`. The wrapper exists to attach `onMouseLeave` for
           the hover-out close, so we can't drop it; instead we tell Base UI
           we're rendering a non-button trigger and let it apply menu role +
           keyboard semantics. */}
-      <DropdownMenuTrigger asChild nativeButton={false} onMouseEnter={() => setOpen(true)}>
+      <DropdownMenuTrigger asChild nativeButton={false} onMouseEnter={openNow}>
         {/* biome-ignore lint/a11y/noStaticElementInteractions: hover trigger for collapsed nav */}
-        <div onMouseLeave={() => setOpen(false)}>{children}</div>
+        <div onMouseLeave={closeSoon}>{children}</div>
       </DropdownMenuTrigger>
+      {/* `sideOffset={0}` plus inline-start *padding* closes the dead zone the
+          pointer used to cross: an offset (or a margin) puts those pixels
+          outside both elements, so travelling to the menu reads as leaving
+          both. Padding keeps the gap inside the panel's own hover area, so the
+          visual inset costs nothing in reachability. */}
       <DropdownMenuContent
         side="right"
         align="start"
-        sideOffset={4}
-        onMouseLeave={() => setOpen(false)}
-        onMouseEnter={() => setOpen(true)}
+        sideOffset={0}
+        className="ps-1"
+        onMouseLeave={closeSoon}
+        onMouseEnter={openNow}
       >
         {item.items!.map((subItem) => (
           <DropdownMenuItem key={subItem.title} asChild>
@@ -85,10 +183,12 @@ function NavItemContent({
   item,
   currentPath,
   isCollapsed,
+  hoverMenu,
 }: {
   item: NavItem
   currentPath: string
   isCollapsed: boolean
+  hoverMenu: HoverMenuController
 }) {
   const isExactActive = currentPath === item.url || currentPath === `${item.url}/`
   // Only prefix-match for items with a sub-path after the storeId segment (e.g. /store_abc/orders)
@@ -106,14 +206,19 @@ function NavItemContent({
       asChild
       isActive={itemIsActive}
     >
-      <Link to={item.url}>
+      {/* `aria-label` because the visible label is hidden in collapsed icon
+          mode, which would otherwise leave the link with no accessible name —
+          an icon-only link is unusable to a screen reader. */}
+      <Link to={item.url} aria-label={isCollapsed ? item.title : undefined}>
         <NavIcon icon={item.icon} isActive={itemIsActive} />
         {/* Explicitly hide in collapsed icon mode: a trailing badge span would
             otherwise steal the `span:last-child` position the base button style
             relies on to hide the label, leaving the title visible. */}
         <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+        {/* `shrink-0` so the badge keeps its shape while the sidebar width
+            animates — a squeezed badge deforms before the label clips. */}
         {item.badge && (
-          <span className="ml-auto group-data-[collapsible=icon]:hidden">
+          <span className="ml-auto shrink-0 group-data-[collapsible=icon]:hidden">
             <item.badge />
           </span>
         )}
@@ -122,9 +227,14 @@ function NavItemContent({
   )
 
   return (
-    <SidebarMenuItem>
+    // Hovering an item with no submenu dismisses whatever menu is open: the
+    // pointer has clearly moved on, and leaving a neighbour's panel hanging
+    // over the rail reads as a stuck popup.
+    <SidebarMenuItem onMouseEnter={isCollapsed && !item.items ? hoverMenu.closeNow : undefined}>
       {isCollapsed && item.items ? (
-        <CollapsedDropdown item={item}>{button}</CollapsedDropdown>
+        <CollapsedDropdown item={item} controller={hoverMenu}>
+          {button}
+        </CollapsedDropdown>
       ) : (
         button
       )}
@@ -158,6 +268,15 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
   const currentPath = routerState.location.pathname
   const { state } = useSidebar()
   const isCollapsed = state === 'collapsed'
+  // One controller for the whole rail so only a single hover menu is ever open.
+  const hoverMenu = useHoverMenuController()
+
+  // Expanding the rail unmounts the dropdowns but leaves `openKey` set, so
+  // collapsing again would restore a menu the user never opened.
+  const { closeNow } = hoverMenu
+  useEffect(() => {
+    if (!isCollapsed) closeNow()
+  }, [isCollapsed, closeNow])
 
   return (
     <>
@@ -169,6 +288,7 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
               item={item}
               currentPath={currentPath}
               isCollapsed={isCollapsed}
+              hoverMenu={hoverMenu}
             />
           ))}
         </SidebarMenu>
@@ -184,7 +304,10 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
-                    <Link to={item.url}>
+                    {/* `aria-label` for the same reason as the main nav above:
+                        collapsed mode hides the label, and Settings lives here
+                        — the one place the rail is collapsed by default. */}
+                    <Link to={item.url} aria-label={isCollapsed ? item.title : undefined}>
                       <NavIcon icon={item.icon} isActive={isActive} />
                       <span>{item.title}</span>
                     </Link>

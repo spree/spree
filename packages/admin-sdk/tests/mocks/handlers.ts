@@ -7,7 +7,7 @@ export const fixtures = {
   customField: {
     id: 'cf_1',
     label: 'Fabric',
-    type: 'Spree::Metafields::ShortText',
+    type: 'Spree::CustomFields::ShortText',
     field_type: 'short_text',
     key: 'specs.fabric',
     value: 'wool',

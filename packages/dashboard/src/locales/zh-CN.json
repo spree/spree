@@ -65,30 +65,8 @@
         "full_access_label": "完全访问 (write_all)",
         "read_all_hint": "— 对每个资源的读取",
         "read_all_label": "全部读取 (read_all)",
-        "read_aria": "读取 {{resource}}",
-        "read_header": "读取",
-        "resource_header": "资源",
-        "resources": {
-          "api_keys": "API keys",
-          "categories": "分类",
-          "customers": "客户",
-          "dashboard": "仪表盘",
-          "fulfillments": "履约",
-          "gift_cards": "礼品卡",
-          "orders": "订单",
-          "payments": "支付",
-          "products": "商品",
-          "promotions": "优惠",
-          "refunds": "退款",
-          "settings": "设置",
-          "stock": "库存",
-          "store_credits": "店铺信用",
-          "webhooks": "Webhooks"
-        },
         "show_more_aria_one": "显示另外 {{count}} 个权限范围",
-        "show_more_aria_other": "显示另外 {{count}} 个权限范围",
-        "write_aria": "写入 {{resource}}",
-        "write_header": "写入"
+        "show_more_aria_other": "显示另外 {{count}} 个权限范围"
       },
       "scopes_immutable_help": "密钥创建后权限范围无法更改。如需更改，请使用所需的权限范围创建一个新密钥，并撤销此密钥。",
       "validation": {
@@ -725,8 +703,8 @@
           "label": "配送区域"
         },
         "fulfillment_provider": {
-          "label": "履约服务商",
-          "help": "此配送方式的履约如何发运与跟踪。"
+          "help": "此配送方式的履约如何发运与跟踪。",
+          "label": "履约服务商"
         },
         "fulfillment_type": {
           "label": "履约类型"
@@ -1092,6 +1070,16 @@
         "usage_limit": {
           "label": "使用次数限制",
           "placeholder": "不限"
+        }
+      },
+      "role": {
+        "description": {
+          "label": "描述",
+          "placeholder": "这个角色的用途是什么？"
+        },
+        "name": {
+          "label": "名称",
+          "placeholder": "例如：订单管理员"
         }
       },
       "role_id": {
@@ -1864,30 +1852,23 @@
           },
           "claims": {
             "actions": {
-              "resolve_refund": "以退款解决",
-              "resolve_replacement": "以换货解决",
-              "deny": "拒绝",
               "create": "新建索赔",
-              "resolve": "解决"
+              "deny": "拒绝",
+              "resolve": "解决",
+              "resolve_refund": "以退款解决",
+              "resolve_replacement": "以换货解决"
             },
-            "types": {
-              "damaged": "已损坏",
-              "missing": "缺失",
-              "wrong_item": "商品错误",
-              "other": "其他"
-            },
-            "empty": "此订单暂无索赔。",
             "create_title": "新建索赔",
-            "claim_type": "问题",
+            "empty": "此订单暂无索赔。",
             "refund_amount": "退款金额",
-            "resolve_title": "解决索赔",
-            "resolution": "解决方式",
             "replacement_items": "为以下商品发送替换",
+            "resolution": "解决方式",
             "resolutions": {
               "refund": "退款",
-              "replacement": "换货",
-              "refund_and_replacement": "退款并换货"
-            }
+              "refund_and_replacement": "退款并换货",
+              "replacement": "换货"
+            },
+            "resolve_title": "解决索赔"
           },
           "dialogs": {
             "approve_title": "批准订单？",
@@ -1899,42 +1880,43 @@
           "empty_shipments": "暂无发货。",
           "exchanges": {
             "actions": {
-              "fulfill": "寄出替换商品",
-              "create": "新建换货"
+              "create": "新建换货",
+              "fulfill": "寄出替换商品"
             },
-            "price_difference": "差价",
-            "empty": "此订单暂无换货。",
             "create_title": "新建换货",
+            "empty": "此订单暂无换货。",
+            "price_difference": "差价",
             "replacement_variant": "替换变体 ID"
           },
           "no_delivery_method": "未选择配送方式。",
           "returns": {
             "actions": {
               "approve": "批准",
+              "create": "新建退货",
               "receive": "接收商品",
-              "refund": "退款",
-              "create": "新建退货"
+              "refund": "退款"
             },
             "confirm": {
               "cancel": "取消此退货？不会恢复库存，也不会退款。"
             },
-            "refund_total": "退款总额",
-            "received_of": "已收到 {{received}} / {{requested}}",
+            "create_title": "新建退货",
+            "empty": "此订单暂无退货。",
+            "empty_no_units": "此订单没有可用于退货的履约记录。",
+            "memo": "备注",
             "not_resellable": "不可再销售",
+            "reason": "原因",
             "receive_title": "接收退回的商品",
+            "received_of": "已收到 {{received}} / {{requested}}",
             "received_quantity": "已收到",
-            "resellable": "可再销售",
-            "refund_title": "退货退款",
             "refund_amount": "金额",
             "refund_method": "退款至",
             "refund_methods": {
               "original_payment": "原支付方式",
               "store_credit": "商店积分"
             },
-            "empty": "此订单暂无退货。",
-            "memo": "备注",
-            "create_title": "新建退货",
-            "empty_no_units": "此订单没有可用于退货的履约记录。"
+            "refund_title": "退货退款",
+            "refund_total": "退款总额",
+            "resellable": "可再销售"
           },
           "section_billing_address": "账单地址",
           "section_claims": "索赔",
@@ -2255,6 +2237,20 @@
         "loading": "正在加载优惠活动…",
         "new_title": "新建优惠活动"
       },
+      "roles": {
+        "add_cta": "添加角色",
+        "edit_sheet_title": "编辑角色",
+        "empty": "暂无角色",
+        "empty_description": "创建角色，为团队成员授予相应的访问权限。",
+        "new_title": "新建角色",
+        "subtitle": "定义每个员工角色可以查看和执行的操作",
+        "table": {
+          "members": "成员",
+          "permissions": "权限",
+          "role": "角色"
+        },
+        "title": "角色"
+      },
       "settings": {
         "allowed_origins": {
           "add_sheet_title": "添加允许的来源",
@@ -2528,21 +2524,81 @@
       },
       "title": "支付方式"
     },
+    "permissions": {
+      "descriptions": {
+        "api_keys": "创建和吊销 API 凭据",
+        "categories": "分类树与分类体系",
+        "collections": "手动与规则驱动的商品集合",
+        "customers": "客户账户、地址、卡片与分组",
+        "dashboard": "销售与业绩分析",
+        "fulfillments": "打包、发货并跟踪订单履约",
+        "gift_cards": "礼品卡及其批次",
+        "orders": "订单、订单项、退货、换货与索赔",
+        "payments": "订单付款与扣款",
+        "products": "商品、变体、选项、价格与媒体",
+        "promotions": "促销、规则与优惠码",
+        "refunds": "发起和查看退款",
+        "settings": "店铺、支付、配送、税务与渠道配置",
+        "staff": "团队成员、邀请、角色及其权限",
+        "stock": "库存水平、仓库、变动与调拨",
+        "store_credits": "客户店铺余额",
+        "webhooks": "Webhook 端点与投递记录"
+      },
+      "grid": {
+        "read_aria": "查看{{resource}}",
+        "read_header": "查看",
+        "resource_header": "资源",
+        "write_aria": "管理{{resource}}",
+        "write_header": "管理"
+      },
+      "groups": {
+        "access": "访问",
+        "analytics": "分析",
+        "catalog": "商品目录",
+        "customers": "客户",
+        "marketing": "营销",
+        "orders": "订单",
+        "settings": "设置"
+      },
+      "labels": {
+        "read": "查看{{resource}}",
+        "write": "管理{{resource}}"
+      },
+      "resources": {
+        "api_keys": "API keys",
+        "categories": "分类",
+        "collections": "商品集合",
+        "customers": "客户",
+        "dashboard": "仪表盘",
+        "fulfillments": "履约",
+        "gift_cards": "礼品卡",
+        "orders": "订单",
+        "payments": "支付",
+        "products": "商品",
+        "promotions": "优惠",
+        "refunds": "退款",
+        "settings": "设置",
+        "staff": "团队与角色",
+        "stock": "库存",
+        "store_credits": "店铺信用",
+        "webhooks": "Webhooks"
+      }
+    },
     "post_sale": {
-      "search_placeholder": "按编号搜索…",
-      "returns_empty": "暂无退货。",
-      "exchanges_empty": "暂无换货。",
       "claims_empty": "暂无索赔。",
+      "exchanges_empty": "暂无换货。",
+      "returns_empty": "暂无退货。",
+      "search_placeholder": "按编号搜索…",
       "statuses": {
-        "requested": "已申请",
-        "open": "待处理",
         "approved": "已批准",
+        "canceled": "已取消",
+        "denied": "已拒绝",
+        "fulfilled": "已发货",
+        "open": "待处理",
         "received": "已收到",
         "refunded": "已退款",
-        "fulfilled": "已发货",
-        "resolved": "已解决",
-        "denied": "已拒绝",
-        "canceled": "已取消"
+        "requested": "已申请",
+        "resolved": "已解决"
       }
     },
     "preferences": {
@@ -3000,38 +3056,80 @@
       }
     },
     "reasons": {
-      "title": "退货与原因",
-      "description": "团队处理退货、理赔和退款时可选择的原因列表。",
+      "active_label": "可用于新记录",
       "add_cta": "添加原因",
       "add_sheet_title": "添加原因",
-      "edit_sheet_title": "编辑原因",
+      "claim": {
+        "help": "配送出现的问题——商品损坏、缺失或发错。",
+        "title": "理赔原因"
+      },
       "create_description": "员工创建退货、理赔或退款时，可从下拉列表中选择原因。",
-      "name_placeholder": "例如：尺码不合适",
-      "active_label": "可用于新记录",
+      "delete_confirm": {
+        "message": "将不再提供 {{name}}。已使用它的记录保持不变。",
+        "title": "删除原因？"
+      },
+      "description": "团队处理退货、理赔和退款时可选择的原因列表。",
+      "edit_sheet_title": "编辑原因",
       "empty": "暂无原因",
-      "inactive": "已停用",
       "in_use": "使用中",
       "in_use_help": "此原因已被现有记录使用，因此无法删除。",
-      "delete_confirm": {
-        "title": "删除原因？",
-        "message": "将不再提供 {{name}}。已使用它的记录保持不变。"
-      },
+      "inactive": "已停用",
       "messages": {
         "created": "原因已创建",
-        "updated": "原因已更新",
-        "deleted": "原因已删除"
+        "deleted": "原因已删除",
+        "updated": "原因已更新"
+      },
+      "name_placeholder": "例如：尺码不合适",
+      "refund": {
+        "help": "退款的原因。用于所有退款的统计分析。",
+        "title": "退款原因"
       },
       "return": {
-        "title": "退货原因",
-        "help": "客户退回商品的原因。退货和换货共用。"
+        "help": "客户退回商品的原因。退货和换货共用。",
+        "title": "退货原因"
       },
-      "claim": {
-        "title": "理赔原因",
-        "help": "配送出现的问题——商品损坏、缺失或发错。"
+      "title": "退货与原因"
+    },
+    "roles": {
+      "badges": {
+        "full_access": "完全访问",
+        "more": "+{{count}} 项",
+        "none": "无权限",
+        "protected": "受保护"
       },
-      "refund": {
-        "title": "退款原因",
-        "help": "退款的原因。用于所有退款的统计分析。"
+      "confirm": {
+        "delete_message": "确定删除角色“{{name}}”？此操作无法撤销。",
+        "delete_title": "删除角色"
+      },
+      "duplicate_name": "{{name}} 副本",
+      "errors": {
+        "failed_to_delete": "删除角色失败",
+        "failed_to_save": "保存角色失败"
+      },
+      "form": {
+        "description": "选择该角色可以查看和管理的内容。",
+        "locked_hint": "该角色受保护，无法编辑。",
+        "permissions_section": "权限"
+      },
+      "manage_roles_link": "管理角色",
+      "messages": {
+        "created": "角色已创建",
+        "deleted": "角色已删除",
+        "updated": "角色已更新"
+      },
+      "presets": {
+        "clear": "清空",
+        "full_access": "完全访问",
+        "read_only": "只读"
+      },
+      "templates": {
+        "merchandiser": "商品管理员",
+        "order_manager": "订单管理员",
+        "start_from": "从模板开始：",
+        "support": "客服"
+      },
+      "validation": {
+        "name_required": "名称为必填项"
       }
     },
     "settings": {
@@ -3068,6 +3166,7 @@
         "product_types": "商品类型",
         "profile": "个人资料",
         "reasons": "退货与原因",
+        "roles": "角色",
         "staff": "员工",
         "stock_locations": "库存地点",
         "store": "店铺",

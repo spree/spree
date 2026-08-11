@@ -15,7 +15,7 @@ RSpec.describe 'Taxon -> Category deprecation aliases' do
 
   describe Spree::Taxons::AddProducts do
     it 'warns and delegates to Spree::Categories::AddProducts (adds the products)' do
-      category = create(:taxon)
+      category = create(:category)
       product = create(:product)
 
       expect(Spree::Deprecation).to receive(:warn).with(/Spree::Categories::AddProducts/)
@@ -27,7 +27,7 @@ RSpec.describe 'Taxon -> Category deprecation aliases' do
 
   describe Spree::Taxons::RemoveProducts do
     it 'warns and delegates to Spree::Categories::RemoveProducts (removes the products)' do
-      category = create(:taxon)
+      category = create(:category)
       product = create(:product)
       create(:product_category, category: category, product: product)
 
@@ -73,7 +73,7 @@ RSpec.describe 'Taxon -> Category deprecation aliases' do
     it 'is a subclass of the renamed job and warns on perform' do
       expect(described_class.superclass).to eq(Spree::Products::TouchCategoriesJob)
 
-      category = create(:taxon)
+      category = create(:category)
       expect(Spree::Deprecation).to receive(:warn).with(/TouchCategoriesJob/)
 
       expect { described_class.new.perform([category.id], []) }.not_to raise_error
@@ -101,7 +101,7 @@ RSpec.describe 'Taxon -> Category deprecation aliases' do
     end
 
     it 'Spree::ProductCategory#taxon warns and returns #category' do
-      product_category = create(:classification)
+      product_category = create(:product_category)
       expect(Spree::Deprecation).to receive(:warn).with(/#category/)
       expect(product_category.taxon).to eq(product_category.category)
     end

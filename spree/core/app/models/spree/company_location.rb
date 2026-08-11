@@ -8,7 +8,7 @@ module Spree
   class CompanyLocation < Spree.base_class
     has_prefix_id :cloc
 
-    include Spree::Metafields
+    include Spree::HasCustomFields
 
     attribute :metadata, default: -> { {} }
 

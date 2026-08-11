@@ -71,9 +71,9 @@ module Spree
               :meta_title, :meta_description, :meta_keywords,
               :image, :square_image,
               # Inline custom field values keyed by definition id. The model
-              # setter (Spree::Metafields#custom_fields=) validates each entry
+              # setter (Spree::HasCustomFields#custom_fields=) validates each entry
               # against its definition. `value` is permitted as a scalar AND as
-              # `value: []` / `value: {}` so JSON metafields round-trip whether
+              # `value: []` / `value: {}` so JSON custom_fields round-trip whether
               # the parsed payload is an array or an object, while
               # text/number/boolean ship scalars.
               custom_fields: [:id, :custom_field_definition_id, :value, { value: [] }, { value: {} }]
@@ -110,10 +110,11 @@ module Spree
           end
 
           # Positions the node at +index+ among the store's root categories.
-          # awesome_nested_set's move_to_child_with_index(:root, ...) can't be
-          # used here: its +roots+ are global (every parentless taxon across all
-          # stores and taxonomies), whereas we order only this store's manual
-          # roots (the +scope+). So position relative to the target root sibling.
+          # Deliberately not move_to_child_with_index(:root, ...): that indexes
+          # into awesome_nested_set's class-level +roots+, which stays global
+          # across stores even though the set is scoped per store. Positioning
+          # relative to the target sibling keeps the index meaning what the
+          # caller computed it from — this store's roots.
           def move_to_root_at_index(node, index)
             others = scope.where(parent_id: nil).where.not(id: node.id).order(:lft).to_a
             target = others[index]

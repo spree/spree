@@ -29,7 +29,7 @@ RSpec.describe Spree::Exports::GiftCards, type: :model do
   end
 
   describe '#csv_headers' do
-    context 'when no metafields exist' do
+    context 'when no custom_fields exist' do
       it 'returns gift card headers' do
         expected_headers = [
           'Code',
@@ -49,15 +49,15 @@ RSpec.describe Spree::Exports::GiftCards, type: :model do
       end
     end
 
-    context 'when metafields exist' do
-      let!(:metafield_definition) do
-        create(:metafield_definition,
+    context 'when custom_fields exist' do
+      let!(:custom_field_definition) do
+        create(:custom_field_definition,
                resource_type: 'Spree::GiftCard',
                namespace: 'custom',
                key: 'purchase_location')
       end
 
-      it 'includes metafield headers' do
+      it 'includes custom_field headers' do
         expected_headers = [
           'Code',
           'Amount',
@@ -71,7 +71,7 @@ RSpec.describe Spree::Exports::GiftCards, type: :model do
           'Customer Last Name',
           'Created At',
           'Updated At',
-          'metafield.custom.purchase_location'
+          'custom_field.custom.purchase_location'
         ]
         expect(export.csv_headers).to eq(expected_headers)
       end

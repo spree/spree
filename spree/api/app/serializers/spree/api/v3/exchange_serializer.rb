@@ -50,6 +50,8 @@ module Spree
           exchange.canceled_at&.iso8601
         end
 
+        one :reason, resource: proc { Spree.api.return_reason_serializer }, if: proc { expand?('reason') }
+
         many :exchange_line_items,
              resource: proc { Spree.api.exchange_line_item_serializer },
              if: proc { expand?('exchange_line_items') }

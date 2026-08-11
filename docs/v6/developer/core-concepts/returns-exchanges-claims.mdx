@@ -31,7 +31,7 @@ erDiagram
     Claim {
         string number
         string status
-        string claim_type
+        string resolution
     }
 ```
 
@@ -62,7 +62,7 @@ const returnRequest = await client.orders.returns.create('or_xxx', {
 // Report a problem
 const claim = await client.orders.claims.create('or_xxx', {
   items: [{ line_item_id: 'li_xxx', quantity: 1, description: 'Arrived cracked' }],
-  claim_type: 'damaged',
+  reason_id: 'clr_xxx',
 })
 
 // Follow progress
@@ -152,9 +152,9 @@ Because each one is its own record, you can query them directly:
 // Everything awaiting action
 const pending = await adminClient.returns.list({ filter: { status_eq: 'approved' } })
 
-// Damage rate this month
+// Claims opened this month
 const claims = await adminClient.claims.list({
-  filter: { claim_type_eq: 'damaged', created_at_gt: '2026-08-01' },
+  filter: { created_at_gt: '2026-08-01' },
 })
 ```
 

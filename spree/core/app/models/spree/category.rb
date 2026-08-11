@@ -14,9 +14,10 @@ module Spree
 
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::MemoizedData
+    include Spree::SanitizableRichText
 
     MEMOIZED_METHODS = %w[cached_self_and_descendants_ids].freeze
 
@@ -25,18 +26,25 @@ module Spree
     #
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
-    acts_as_nested_set dependent: :destroy, counter_cache: :children_count
+    # scope: :store — each store owns an independent tree, so lft/rgt are
+    # numbered per store and a move in one store never renumbers another's.
+    # Safe because every category has a store_id: pre-5.6 rows are backfilled
+    # from their taxonomy by spree:taxons:backfill_store_id (5.5 -> 5.6), and
+    # from 5.6 on #ensure_store stamps one at creation.
+    acts_as_nested_set scope: :store, dependent: :destroy, counter_cache: :children_count
 
     #
     # Associations
     #
-    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
-    belongs_to :store, class_name: 'Spree::Store', optional: true
+    # @deprecated Read only by the 5.6 -> 6.0 upgrade task, which needs the
+    #   column to find the rows it migrates. Removed in 6.1 with Spree::Taxonomy.
+    belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons, deprecated: true
     has_many :product_categories, -> { order(:position) }, class_name: 'Spree::ProductCategory', dependent: :destroy_async, inverse_of: :category
     has_many :products, through: :product_categories
 
     # @deprecated Use #product_categories; removed in 6.1.
     def classifications
+      Spree::Deprecation.warn('Spree::Category#classifications is deprecated and will be removed in Spree 6.1. Use Spree::Category#product_categories instead.')
       product_categories
     end
 
@@ -56,16 +64,12 @@ module Spree
     # Validations
     #
     validates :name, presence: true
-    validates :taxonomy, presence: true, if: :requires_taxonomy?
-    # Taxonomy-backed categories are unique within their taxonomy; taxonomy-less
-    # categories (store-owned) are unique within their store, so two stores can
-    # each have a top-level "Shoes".
-    validates :name, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }, if: :requires_taxonomy?
-    validates :permalink, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }, if: :requires_taxonomy?
-    validates :name, uniqueness: { scope: %i[parent_id store_id], case_sensitive: false }, unless: :requires_taxonomy?
-    validates :permalink, uniqueness: { scope: %i[parent_id store_id], case_sensitive: false }, unless: :requires_taxonomy?
-    validate :check_for_root, on: :create
-    validate :parent_belongs_to_same_taxonomy
+    # The permalink is the category's full path ("men/clothing/shirts"), so it
+    # already encodes the hierarchy — it only has to be unique within its store.
+    # Names carry no such constraint: two categories may share a name as long as
+    # they sit in different branches, which their permalinks reflect.
+    validates :permalink, uniqueness: { scope: :store_id, case_sensitive: false }
+    validate :parent_belongs_to_same_store
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
       validates :meta_description
@@ -77,11 +81,9 @@ module Spree
     # Callbacks
     #
     before_validation :set_permalink, if: :name
-    before_validation :copy_taxonomy_from_parent
     before_save :set_pretty_name
-    after_save :touch_ancestors_and_taxonomy
-    after_update :sync_taxonomy_name
-    after_touch :touch_ancestors_and_taxonomy
+    after_save :touch_ancestors
+    after_touch :touch_ancestors
     after_commit :regenerate_pretty_name_and_permalink, on: :update, if: :should_regenerate_pretty_name_and_permalink?
     after_move :regenerate_pretty_name_and_permalink
     after_move :regenerate_translations_pretty_name_and_permalink
@@ -103,14 +105,8 @@ module Spree
     #
     # Scopes
     #
-    # Prefer the direct store_id column; fall back to the taxonomy join for rows
-    # not yet backfilled (store_id IS NULL) so legacy behaviour is preserved.
     scope :for_store, ->(store) { for_stores([store]) }
-    scope :for_stores, lambda { |stores|
-      store_ids = Array(stores).map(&:id)
-      taxonomy_ids = Spree::Taxonomy.where(store_id: store_ids).select(:id)
-      where(store_id: store_ids).or(where(store_id: nil, taxonomy_id: taxonomy_ids))
-    }
+    scope :for_stores, ->(stores) { where(store_id: Array(stores).map(&:id)) }
     #
     # Search
     #
@@ -131,7 +127,7 @@ module Spree
     #
     #  Ransack
     #
-    self.whitelisted_ransackable_associations = %w[taxonomy parent]
+    self.whitelisted_ransackable_associations = %w[parent]
     self.whitelisted_ransackable_attributes = %w[name permalink automatic depth is_root children_count
                                                  products_count pretty_name parent_id]
 
@@ -143,9 +139,9 @@ module Spree
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
     #
-    # Action Text
+    # Rich text
     #
-    translates :description, backend: :action_text
+    has_spree_rich_text :description
 
     # Categories are manual only in 6.0 — rule-based (automatic) membership lives on
     # Spree::Collection. The automatic/rules_match_policy/sort_order columns and the
@@ -157,19 +153,6 @@ module Spree
 
     def manual?
       !automatic?
-    end
-
-    # The owning store. Prefers the direct +store_id+; falls back to the
-    # taxonomy's store for legacy rows not yet backfilled.
-    def store
-      super || taxonomy&.store
-    end
-
-    # Categories are owned directly via +store_id+ and never require a taxonomy.
-    # (Legacy taxonomy-backed rows still carry their taxonomy until it is dropped
-    # in 6.1; they simply aren't validated as requiring one.)
-    def requires_taxonomy?
-      false
     end
 
     def active_products_with_descendants
@@ -212,6 +195,10 @@ module Spree
     end
 
     self::Translation.class_eval do
+      include Spree::SanitizableRichText
+
+      sanitizes_rich_text :description
+
       before_save :set_permalink
       before_save :set_pretty_name
       after_save :regenerate_pretty_name_and_permalink, if: :should_regenerate_pretty_name_and_permalink?
@@ -381,19 +368,9 @@ module Spree
       nil
     end
 
-    def sync_taxonomy_name
-      return unless taxonomy.present?
-      return unless saved_changes.key?(:name) && root?
-      return if taxonomy.name.to_s == name.to_s
-
-      taxonomy.update(name: name)
-    end
-
-    def touch_ancestors_and_taxonomy
-      # Touches all ancestors at once to avoid recursive taxonomy touch, and reduce queries.
+    # Touches all ancestors at once rather than recursively, to reduce queries.
+    def touch_ancestors
       ancestors.update_all(updated_at: Time.current)
-      # Have taxonomy touch happen in #touch_ancestors_and_taxonomy rather than association option in order for imports to override.
-      taxonomy.touch if taxonomy.present?
     end
 
     def capture_parent_before_move
@@ -422,30 +399,27 @@ module Spree
       end
     end
 
-    def check_for_root
-      return unless taxonomy.try(:root).present? && parent_id.nil?
+    # A category added under a legacy taxonomy-backed parent inherits its
+    # taxonomy, so #ensure_store and the .for_store fallback can still resolve a
+    # store for installs that have not yet run the 6.0 upgrade task. Removed in
+    # 6.1 with Spree::Taxonomy.
+    # A tree belongs to one store.
+    def parent_belongs_to_same_store
+      return if parent.blank?
 
-      errors.add(:root_conflict, 'this taxonomy already has a root category')
+      parent_store = parent.store
+      return if parent_store.blank? || store.blank? || parent_store.id == store.id
+
+      errors.add(:parent, :must_belong_to_same_store)
     end
 
-    def parent_belongs_to_same_taxonomy
-      return unless parent.present? && parent.taxonomy_id != taxonomy_id
-
-      errors.add(:parent, 'must belong to the same taxonomy')
-    end
-
-    def copy_taxonomy_from_parent
-      self.taxonomy = parent.taxonomy if parent.present? && taxonomy.blank?
-    end
-
-    # Every category is store-owned. Resolve the store from the taxonomy, then the
-    # parent, finally the current store — so the direct column is always
-    # populated for new records. Guards on the raw +store_id+ column rather than
-    # +#store+, whose reader masks an unset column with the taxonomy fallback.
+    # Every category is store-owned, so a new record always gets a store_id:
+    # from its parent, or the current store. This is what lets the rest of the
+    # model treat store_id as always present.
     def ensure_store
       return if store_id.present?
 
-      self.store = taxonomy&.store || parent&.store || Spree::Store.current
+      self.store = parent&.store || Spree::Store.current
     end
 
     def regenerate_translations_pretty_name_and_permalink

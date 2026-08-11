@@ -5,6 +5,7 @@ module Spree
       :allowed_origin_attributes,
       :api_key_attributes,
       :asset_attributes,
+      :category_attributes,
       :checkout_attributes,
       :classification_attributes,
       :cms_page_attributes,
@@ -26,8 +27,8 @@ module Spree
       :market_attributes,
       :menu_attributes,
       :menu_item_attributes,
-      :metafield_attributes,
-      :metafield_definition_attributes,
+      :custom_field_attributes,
+      :custom_field_definition_attributes,
       :option_type_attributes,
       :option_value_attributes,
       :page_attributes,
@@ -63,8 +64,6 @@ module Spree
       :store_credit_category_attributes,
       :tax_rate_attributes,
       :tax_category_attributes,
-      :taxon_attributes,
-      :taxonomy_attributes,
       :theme_attributes,
       :user_attributes,
       :variant_attributes,
@@ -141,10 +140,10 @@ module Spree
     @@menu_item_attributes = [:name, :subtitle, :destination, :new_window, :item_type,
                               :linked_resource_type, :linked_resource_id, :code, :menu_id]
 
-    @@metafield_attributes = [:id, :value, :type, :metafield_definition_id, :_destroy]
+    @@custom_field_attributes = [:id, :value, :type, :custom_field_definition_id, :_destroy]
 
-    @@metafield_definition_attributes = [
-      :key, :name, :namespace, :metafield_type, :resource_type, :display_on,
+    @@custom_field_definition_attributes = [
+      :key, :label, :namespace, :field_type, :resource_type, :storefront_visible,
       :searchable, :sortable
     ]
 
@@ -262,18 +261,14 @@ module Spree
 
     @@store_credit_category_attributes = [:name]
 
-    @@taxonomy_attributes = [:name, :position]
-
     @@tax_category_attributes = [:name, :tax_code,:description, :is_default]
 
     @@tax_rate_attributes = [:name, :amount, :amount_percentage, :zone_id, :tax_category_id, :included_in_price, :show_rate_in_label, :calculator_type, calculator_attributes: {}]
 
-    @@taxon_attributes = [
+    @@category_attributes = [
       :name, :parent_id, :position, :icon, :description, :permalink,
-      :taxonomy_id, :meta_description, :meta_keywords, :meta_title, :child_index,
-      :automatic, :rules_match_policy, :sort_order,
-      :image, :square_image, :description,
-      taxon_rules_attributes: [:id, :type, :value, :match_policy, :_destroy],
+      :meta_description, :meta_keywords, :meta_title, :child_index,
+      :image, :square_image
     ]
 
     @@theme_attributes = [:name, :type, :default]
@@ -281,7 +276,7 @@ module Spree
     @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :first_name, :last_name,
                          :password_confirmation, :selected_locale, :avatar, :accepts_email_marketing, :phone,
                          :internal_note,
-                         { public_metadata: {}, private_metadata: {}, tag_list: [], customer_group_ids: [] }]
+                         { metadata: {}, tag_list: [], customer_group_ids: [] }]
 
     @@variant_attributes = [
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,
@@ -305,5 +300,11 @@ module Spree
     @@wished_item_attributes = [:variant_id, :quantity]
 
     @@zone_attributes = [:name, :description, :default_tax, :kind, :states_country_id, country_ids: [], state_ids: []]
+
+    # @deprecated Renamed to .category_attributes in 6.0; removed in 6.1.
+    def self.taxon_attributes
+      Spree::Deprecation.warn('Spree::PermittedAttributes.taxon_attributes is deprecated and will be removed in Spree 6.1. Use .category_attributes instead.')
+      category_attributes
+    end
   end
 end

@@ -50,9 +50,15 @@ module Spree
           end
 
           # Per-parent scope check: reading a product's translations needs
-          # `read_products`, a category's `read_categories`, etc.
+          # `read_products`, a category's `read_categories`, etc. The parent
+          # class resolves to its owning catalog resource (an option type's
+          # translations ride the `products` permission), falling back to the
+          # pluralized route segment for classes outside the catalog.
           def scoped_resource_name
-            parent_lookup&.segment&.pluralize&.to_sym
+            return unless parent_lookup
+
+            Spree.permissions.resource_for_subject(parent_lookup.klass)&.name ||
+              parent_lookup.segment.pluralize.to_sym
           end
 
           # Translatable by class hierarchy, not strict equality, so a subclass

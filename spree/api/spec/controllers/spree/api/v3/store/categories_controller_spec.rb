@@ -4,14 +4,11 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
-
-  let(:taxonomy) { create(:taxonomy, store: store) }
-  let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
-  let!(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxon) }
-  let!(:grandchild_taxon) { create(:taxon, taxonomy: taxonomy, parent: child_taxon) }
+  let!(:category) { create(:category) }
+  let!(:child_category) { create(:category, parent: category) }
+  let!(:grandchild_category) { create(:category, parent: child_category) }
   let!(:other_store) { create(:store) }
-  let!(:other_taxonomy) { create(:taxonomy, store: other_store) }
-  let!(:other_store_taxon) { create(:taxon, taxonomy: other_taxonomy) }
+  let!(:other_store_category) { create(:category, store: other_store) }
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
@@ -26,8 +23,8 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
       get :index
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].pluck('id')).to include(taxon.prefixed_id, child_taxon.prefixed_id)
-      expect(json_response['data'].pluck('id')).not_to include(other_store_taxon.prefixed_id)
+      expect(json_response['data'].pluck('id')).to include(category.prefixed_id, child_category.prefixed_id)
+      expect(json_response['data'].pluck('id')).not_to include(other_store_category.prefixed_id)
     end
 
     it 'returns pagination metadata' do
@@ -39,42 +36,42 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
     it 'returns category attributes' do
       get :index
 
-      category_data = json_response['data'].find { |t| t['id'] == taxon.prefixed_id }
+      category_data = json_response['data'].find { |t| t['id'] == category.prefixed_id }
       expect(category_data).to include('name', 'permalink', 'position', 'depth')
       expect(category_data).to include('parent_id', 'children_count')
       expect(category_data).not_to include('lft', 'rgt')
     end
 
     context 'with images' do
-      let!(:taxon_with_image) { create(:taxon, :with_header_image, taxonomy: taxonomy) }
+      let!(:category_with_image) { create(:category, :with_header_image, store: store) }
 
       it 'returns image URLs' do
         get :index
 
-        category_data = json_response['data'].find { |t| t['id'] == taxon_with_image.prefixed_id }
+        category_data = json_response['data'].find { |t| t['id'] == category_with_image.prefixed_id }
         expect(category_data['image_url']).to be_present
       end
     end
 
     context 'filtering' do
       it 'filters by depth' do
-        get :index, params: { q: { depth_eq: grandchild_taxon.depth } }
+        get :index, params: { q: { depth_eq: grandchild_category.depth } }
 
         ids = json_response['data'].pluck('id')
-        expect(ids).to include(grandchild_taxon.prefixed_id)
+        expect(ids).to include(grandchild_category.prefixed_id)
       end
 
       it 'filters by parent_id' do
-        get :index, params: { q: { parent_id_eq: child_taxon.id } }
+        get :index, params: { q: { parent_id_eq: child_category.id } }
 
         ids = json_response['data'].pluck('id')
-        expect(ids).to include(grandchild_taxon.prefixed_id)
+        expect(ids).to include(grandchild_category.prefixed_id)
       end
     end
 
     context 'sorting' do
-      let!(:taxon_b) { create(:taxon, taxonomy: taxonomy, name: 'Bags') }
-      let!(:taxon_z) { create(:taxon, taxonomy: taxonomy, name: 'Zippers') }
+      let!(:taxon_b) { create(:category, name: 'Bags') }
+      let!(:taxon_z) { create(:category, name: 'Zippers') }
 
       it 'sorts by name ascending' do
         get :index, params: { sort: 'name' }
@@ -111,67 +108,65 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
   describe 'GET #show' do
     context 'finding by permalink' do
       it 'returns the category by permalink' do
-        get :show, params: { id: taxon.permalink }
+        get :show, params: { id: category.permalink }
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['id']).to eq(taxon.prefixed_id)
-        expect(json_response['name']).to eq(taxon.name)
-        expect(json_response['permalink']).to eq(taxon.permalink)
+        expect(json_response['id']).to eq(category.prefixed_id)
+        expect(json_response['name']).to eq(category.name)
+        expect(json_response['permalink']).to eq(category.permalink)
       end
 
       it 'returns nested category by full permalink path' do
-        get :show, params: { id: child_taxon.permalink }
+        get :show, params: { id: child_category.permalink }
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['id']).to eq(child_taxon.prefixed_id)
-        expect(json_response['name']).to eq(child_taxon.name)
+        expect(json_response['id']).to eq(child_category.prefixed_id)
+        expect(json_response['name']).to eq(child_category.name)
       end
     end
 
     context 'finding by prefix_id' do
       it 'returns the category by prefix_id' do
-        get :show, params: { id: taxon.prefixed_id }
+        get :show, params: { id: category.prefixed_id }
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['id']).to eq(taxon.prefixed_id)
-        expect(json_response['name']).to eq(taxon.name)
-        expect(json_response['permalink']).to eq(taxon.permalink)
+        expect(json_response['id']).to eq(category.prefixed_id)
+        expect(json_response['name']).to eq(category.name)
+        expect(json_response['permalink']).to eq(category.permalink)
       end
     end
 
     it 'returns category attributes' do
-      get :show, params: { id: taxon.permalink }
+      get :show, params: { id: category.permalink }
 
       expect(json_response).to include('id', 'name', 'permalink')
     end
 
     it 'includes parent information for child category' do
-      get :show, params: { id: child_taxon.permalink }
+      get :show, params: { id: child_category.permalink }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['parent_id']).to eq(taxon.prefixed_id)
+      expect(json_response['parent_id']).to eq(category.prefixed_id)
     end
 
     it 'does not include lft and rgt in store API' do
-      get :show, params: { id: taxon.prefixed_id }
+      get :show, params: { id: category.prefixed_id }
 
       expect(json_response).not_to include('lft', 'rgt')
     end
 
     context 'with expand=ancestors' do
       it 'returns ancestors for breadcrumbs' do
-        get :show, params: { id: grandchild_taxon.prefixed_id, expand: 'ancestors' }
+        get :show, params: { id: grandchild_category.prefixed_id, expand: 'ancestors' }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['ancestors']).to be_an(Array)
         ancestor_ids = json_response['ancestors'].pluck('id')
-        expect(ancestor_ids).to include(taxon.prefixed_id, child_taxon.prefixed_id)
+        expect(ancestor_ids).to include(category.prefixed_id, child_category.prefixed_id)
       end
 
-      it 'returns empty ancestors for root category' do
-        root_taxon = taxonomy.root
-
-        get :show, params: { id: root_taxon.prefixed_id, expand: 'ancestors' }
+      it 'returns empty ancestors for a top-level category' do
+        get :show, params: { id: category.prefixed_id, expand: 'ancestors' }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['ancestors']).to eq([])
@@ -180,17 +175,17 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
 
     context 'with expand=children' do
       it 'returns children' do
-        get :show, params: { id: taxon.prefixed_id, expand: 'children' }
+        get :show, params: { id: category.prefixed_id, expand: 'children' }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['children']).to be_an(Array)
-        expect(json_response['children'].pluck('id')).to include(child_taxon.prefixed_id)
+        expect(json_response['children'].pluck('id')).to include(child_category.prefixed_id)
       end
     end
 
     context 'with translations', if: Spree::Category.include?(Spree::TranslatableResource) do
       let!(:translated_taxon) do
-        create(:taxon, taxonomy: taxonomy, name: 'Clothing', permalink: 'clothing').tap do |t|
+        create(:category, name: 'Clothing', permalink: 'clothing').tap do |t|
           Mobility.with_locale(:fr) do
             t.name = 'Vêtements'
             t.permalink = 'vetements'
@@ -240,7 +235,7 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
 
       context 'locale fallback' do
         let!(:english_only_taxon) do
-          create(:taxon, taxonomy: taxonomy, name: 'Electronics')
+          create(:category, name: 'Electronics')
         end
 
         it 'falls back to default locale when category has no translation in requested locale' do
@@ -273,7 +268,7 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
       end
 
       it 'returns not found for category from another store' do
-        get :show, params: { id: other_store_taxon.permalink }
+        get :show, params: { id: other_store_category.permalink }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -291,7 +286,7 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
       before { request.headers['X-Spree-Api-Key'] = nil }
 
       it 'returns unauthorized' do
-        get :show, params: { id: taxon.permalink }
+        get :show, params: { id: category.permalink }
 
         expect(response).to have_http_status(:unauthorized)
         expect(json_response['error']['code']).to eq('invalid_token')
@@ -309,7 +304,7 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
 
       it 'sets locale from header' do
         request.headers['x-spree-locale'] = 'fr'
-        get :show, params: { id: taxon.prefixed_id }
+        get :show, params: { id: category.prefixed_id }
 
         expect(response).to have_http_status(:ok)
         expect(I18n.locale).to eq(:fr)
@@ -317,7 +312,7 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
 
       it 'falls back to default locale for unsupported locale' do
         request.headers['x-spree-locale'] = 'de'
-        get :show, params: { id: taxon.prefixed_id }
+        get :show, params: { id: category.prefixed_id }
 
         expect(response).to have_http_status(:ok)
         expect(I18n.locale).to eq(:en)
@@ -332,7 +327,7 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
 
       it 'sets currency from header' do
         request.headers['x-spree-currency'] = 'EUR'
-        get :show, params: { id: taxon.permalink }
+        get :show, params: { id: category.permalink }
 
         expect(response).to have_http_status(:ok)
         expect(controller.send(:current_currency)).to eq('EUR')
@@ -340,7 +335,7 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
 
       it 'falls back to default currency for unsupported currency' do
         request.headers['x-spree-currency'] = 'GBP'
-        get :show, params: { id: taxon.permalink }
+        get :show, params: { id: category.permalink }
 
         expect(response).to have_http_status(:ok)
         expect(controller.send(:current_currency)).to eq('USD')

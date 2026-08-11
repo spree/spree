@@ -6,7 +6,7 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'F', length: 11)
     include Spree::NumberIdentifier
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     if defined?(Spree::Security::Shipments)
       include Spree::Security::Shipments
@@ -28,7 +28,6 @@ module Spree
     with_options dependent: :delete_all do
       has_many :fulfillment_items, class_name: 'Spree::FulfillmentItem', inverse_of: :fulfillment
       has_many :delivery_rates, -> { order(:cost) }, class_name: 'Spree::DeliveryRate'
-      has_many :state_changes, as: :stateful
     end
     has_many :tax_lines, class_name: 'Spree::TaxLine', dependent: :destroy, inverse_of: :fulfillment
     has_many :discounts, class_name: 'Spree::Discount', dependent: :destroy, inverse_of: :fulfillment
@@ -128,14 +127,6 @@ module Spree
         transition from: :canceled, to: :pending
       end
       after_transition from: :canceled, to: %i(pending ready fulfilled), do: [:after_resume, :publish_fulfillment_resumed_event]
-
-      after_transition do |fulfillment, transition|
-        fulfillment.state_changes.create!(
-          previous_state: transition.from,
-          next_state: transition.to,
-          name: 'fulfillment'
-        )
-      end
     end
 
     # @deprecated Use {#fulfill}; removed in 6.1.

@@ -19,19 +19,10 @@ module Spree
           def find_order!
             cart_pk = Spree::Cart.decode_own_prefixed_id(params[:id])
             @order = cart_pk ? scope.find_by!(cart_id: cart_pk) : scope.find_by_prefix_id!(params[:id])
-            authorize!(:show, @order, order_token)
           end
 
           def scope
-            base = current_store.orders.complete
-
-            if current_user.present?
-              base.where(customer: current_user)
-            elsif order_token.present?
-              base.where(token: order_token)
-            else
-              base.none
-            end
+            storefront_access_policy.scope(current_store.orders.complete, token: order_token)
           end
 
           def serializer_class

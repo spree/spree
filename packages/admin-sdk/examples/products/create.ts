@@ -8,7 +8,9 @@ const client = createAdminClient({
 // region:example
 const product = await client.products.create({
   name: 'Premium T-Shirt',
-  description: 'Soft, organic cotton.',
+  // Rich text: send HTML. Reads return this as plain text, plus
+  // `description_html` with the markup.
+  description: '<p>Soft, organic cotton.</p>',
   status: 'active',
   variants: [
     {

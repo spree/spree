@@ -34,6 +34,7 @@ module Spree
                resource: proc { Spree.api.admin_return_line_item_serializer },
                if: proc { expand?('return_line_items') }
 
+          one :reason, resource: proc { Spree.api.admin_return_reason_serializer }, if: proc { expand?('reason') }
           one :order, resource: proc { Spree.api.admin_order_serializer }, if: proc { expand?('order') }
           one :stock_location, resource: proc { Spree.api.admin_stock_location_serializer }, if: proc { expand?('stock_location') }
           many :refunds, resource: proc { Spree.api.admin_refund_serializer }, if: proc { expand?('refunds') }

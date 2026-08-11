@@ -39,7 +39,14 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
 
       it 'includes description' do
-        expect(xml).to include("<g:description>#{product.description}</g:description>")
+        expect(xml).to include("<g:description>#{Spree::RichTextHelper.to_plain_text(product.description)}</g:description>")
+      end
+
+      it 'strips markup from the description, since Google expects plain text' do
+        product.update!(description: '<p>Soft cotton.</p><p>Machine <strong>washable</strong>.</p>')
+
+        expect(xml).to include('<g:description>Soft cotton.
+Machine washable.</g:description>')
       end
 
       it 'includes link' do
@@ -119,47 +126,47 @@ RSpec.describe Spree::DataFeeds::GooglePresenter do
       end
     end
 
-    context 'optional attributes from product metafields' do
+    context 'optional attributes from product custom_fields' do
       let(:product) { create(:product) }
-      let(:metafield_definition) { create(:metafield_definition, name: 'Brand', key: 'brand') }
-      let!(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'Nike') }
+      let(:custom_field_definition) { create(:custom_field_definition, label: 'Brand', key: 'brand') }
+      let!(:custom_field) { create(:custom_field, resource: product, custom_field_definition: custom_field_definition, value: 'Nike') }
 
-      it 'includes product metafields' do
-        expect(xml).to include("<g:brand>#{product.metafields.first.value}</g:brand>")
+      it 'includes product custom_fields' do
+        expect(xml).to include("<g:brand>#{product.custom_fields.first.value}</g:brand>")
       end
     end
 
-    context 'metafield with a key that is not a known Google attribute' do
+    context 'custom_field with a key that is not a known Google attribute' do
       let(:product) { create(:product) }
-      let(:metafield_definition) { create(:metafield_definition, name: 'Internal', key: 'internal_note') }
-      let!(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'secret') }
+      let(:custom_field_definition) { create(:custom_field_definition, label: 'Internal', key: 'internal_note') }
+      let!(:custom_field) { create(:custom_field, resource: product, custom_field_definition: custom_field_definition, value: 'secret') }
 
-      it 'omits the metafield from the feed' do
+      it 'omits the custom_field from the feed' do
         expect(xml).not_to include('internal_note')
         expect(xml).not_to include('secret')
       end
     end
 
-    context 'metafield whose key collides with a Ruby method name' do
+    context 'custom_field whose key collides with a Ruby method name' do
       let(:product) { create(:product) }
-      let(:metafield_definition) do
-        create(:metafield_definition, name: 'System', key: 'brand').tap do |definition|
+      let(:custom_field_definition) do
+        create(:custom_field_definition, label: 'System', key: 'brand').tap do |definition|
           definition.update_column(:key, 'system')
         end
       end
-      let!(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'id') }
+      let!(:custom_field) { create(:custom_field, resource: product, custom_field_definition: custom_field_definition, value: 'id') }
 
       it 'does not dispatch the key as a method and omits it from the feed' do
         expect(xml).not_to include('<g:system>')
       end
     end
 
-    context 'metafield whose key matches a required attribute' do
+    context 'custom_field whose key matches a required attribute' do
       let(:product) { create(:product) }
-      let(:metafield_definition) { create(:metafield_definition, name: 'Item Group', key: 'item_group_id') }
-      let!(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition, value: 'injected') }
+      let(:custom_field_definition) { create(:custom_field_definition, label: 'Item Group', key: 'item_group_id') }
+      let!(:custom_field) { create(:custom_field, resource: product, custom_field_definition: custom_field_definition, value: 'injected') }
 
-      it 'does not emit the metafield value, only the required item_group_id' do
+      it 'does not emit the custom_field value, only the required item_group_id' do
         expect(xml).to include("<g:item_group_id>#{product.id}</g:item_group_id>")
         expect(xml).not_to include('<g:item_group_id>injected</g:item_group_id>')
       end

@@ -64,10 +64,10 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
     end
 
     describe 'custom_fields' do
-      let(:public_definition) { create(:metafield_definition, resource_type: 'Spree::Product', display_on: 'both') }
-      let(:private_definition) { create(:metafield_definition, :back_end_only, resource_type: 'Spree::Product') }
-      let!(:public_metafield) { create(:metafield, resource: product, metafield_definition: public_definition, value: 'public') }
-      let!(:private_metafield) { create(:metafield, resource: product, metafield_definition: private_definition, value: 'private') }
+      let(:public_definition) { create(:custom_field_definition, resource_type: 'Spree::Product') }
+      let(:private_definition) { create(:custom_field_definition, :admin_only, resource_type: 'Spree::Product') }
+      let!(:public_custom_field) { create(:custom_field, resource: product, custom_field_definition: public_definition, value: 'public') }
+      let!(:private_custom_field) { create(:custom_field, resource: product, custom_field_definition: private_definition, value: 'private') }
 
       it 'does not include custom_fields without expand param' do
         expect(subject).not_to have_key('custom_fields')

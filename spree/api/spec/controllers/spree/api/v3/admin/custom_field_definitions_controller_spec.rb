@@ -6,9 +6,9 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
   include_context 'API v3 Admin authenticated'
 
   let!(:product_definition) do
-    create(:metafield_definition, :short_text_field, namespace: 'specs', key: 'fabric')
+    create(:custom_field_definition, :short_text_field, namespace: 'specs', key: 'fabric')
   end
-  let!(:order_definition) { create(:metafield_definition, :for_order) }
+  let!(:order_definition) { create(:custom_field_definition, :for_order) }
 
   before { request.headers.merge!(headers) }
 
@@ -83,14 +83,14 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
     end
 
     context 'with storefront_visible: false' do
-      it 'maps to display_on: back_end internally' do
+      it 'persists storefront_visible as false' do
         post :create, params: create_params.merge(storefront_visible: false), as: :json
 
         expect(response).to have_http_status(:created)
         expect(json_response['storefront_visible']).to eq(false)
 
         defn = Spree::CustomFieldDefinition.find_by_prefix_id(json_response['id'])
-        expect(defn.display_on).to eq('back_end')
+        expect(defn.storefront_visible).to be(false)
       end
     end
 
@@ -104,7 +104,7 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
 
     context 'when field_type is not a registered type' do
       it 'returns 422' do
-        post :create, params: create_params.merge(field_type: 'Spree::Metafields::FakeKind'), as: :json
+        post :create, params: create_params.merge(field_type: 'Spree::CustomFields::FakeKind'), as: :json
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -127,11 +127,11 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       end
     end
 
-    it 'silently drops `metafield_type` (no longer a permitted API param)' do
-      # 5.4 leaks no `metafield_type` API key; sending one is ignored. The
-      # `field_type` API param is the only way to set the column.
+    it 'silently drops the legacy `metafield_type` param' do
+      # `metafield_type` was never an API key and is not permitted; sending one
+      # is ignored, leaving the default type in place.
       post :create,
-           params: create_params.merge(metafield_type: 'Spree::Metafields::Number'),
+           params: create_params.merge(metafield_type: 'Spree::CustomFields::Number'),
            as: :json
 
       expect(response).to have_http_status(:created)
@@ -139,11 +139,11 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
     end
 
     it 'accepts the legacy class-name form on `field_type` writes' do
-      # Back-compat: external integrations that wrote `Spree::Metafields::*`
+      # Back-compat: external integrations that wrote `Spree::CustomFields::*`
       # under the old API contract keep working. Writes are translated; reads
       # always emit the token form.
       post :create,
-           params: create_params.merge(field_type: 'Spree::Metafields::Number', key: 'priority'),
+           params: create_params.merge(field_type: 'Spree::CustomFields::Number', key: 'priority'),
            as: :json
 
       expect(response).to have_http_status(:created)
@@ -164,14 +164,14 @@ RSpec.describe Spree::Api::V3::Admin::CustomFieldDefinitionsController, type: :c
       expect(response).to have_http_status(:ok)
       expect(json_response['label']).to eq('Fabric Composition')
       expect(json_response['storefront_visible']).to eq(false)
-      expect(product_definition.reload.display_on).to eq('back_end')
+      expect(product_definition.reload.storefront_visible).to be(false)
     end
   end
 
   describe 'DELETE #destroy' do
     it 'destroys the definition and cascades to its custom fields' do
       product = create(:product)
-      create(:metafield, resource: product, metafield_definition: product_definition, value: 'wool')
+      create(:custom_field, resource: product, custom_field_definition: product_definition, value: 'wool')
 
       delete :destroy, params: { id: product_definition.prefixed_id }, as: :json
 

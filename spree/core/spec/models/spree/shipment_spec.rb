@@ -1118,24 +1118,6 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  # Regression test for #4072 (kinda)
-  # The need for this was discovered in the research for #4702
-  context 'state changes' do
-    before do
-      # Must be stubbed so transition can succeed
-      allow(order).to receive_messages paid?: true
-    end
-
-    it 'are logged to the database' do
-      expect(shipment.state_changes).to be_empty
-      expect(shipment.ready!).to be true
-      expect(shipment.state_changes.count).to eq(1)
-      state_change = shipment.state_changes.first
-      expect(state_change.previous_state).to eq('pending')
-      expect(state_change.next_state).to eq('ready')
-    end
-  end
-
   describe '.ready_or_pending' do
     subject { described_class.ready_or_pending }
 

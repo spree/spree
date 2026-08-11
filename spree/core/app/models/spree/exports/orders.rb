@@ -9,7 +9,7 @@ module Spree
           { bill_address: [:state, :country] },
           { ship_address: [:state, :country] },
           { line_items: { variant: { product: [:categories] } } },
-          { metafields: :metafield_definition }
+          { custom_fields: :custom_field_definition }
         ]
       end
 
@@ -18,7 +18,7 @@ module Spree
       end
 
       def csv_headers
-        Spree::CSV::OrderLineItemPresenter::HEADERS + metafields_headers
+        Spree::CSV::OrderLineItemPresenter::HEADERS + custom_fields_headers
       end
     end
   end

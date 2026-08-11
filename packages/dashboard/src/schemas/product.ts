@@ -124,7 +124,7 @@ export const productFormSchema = z.object({
   variants: z.array(variantFormSchema).optional(),
 
   // Inline custom field values, keyed by definition id (upserted server-side
-  // via Spree::Metafields#custom_fields=). Partial updates: omitting a
+  // via Spree::HasCustomFields#custom_fields=). Partial updates: omitting a
   // definition leaves its value untouched.
   custom_fields: z.array(customFieldFormSchema).optional(),
 

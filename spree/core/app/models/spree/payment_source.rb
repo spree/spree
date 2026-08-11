@@ -3,7 +3,7 @@ module Spree
   class PaymentSource < Spree.base_class
     has_prefix_id :ps
 
-    include Spree::Metafields
+    include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::PaymentSourceConcern
 

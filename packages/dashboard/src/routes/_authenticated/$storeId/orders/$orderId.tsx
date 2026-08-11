@@ -44,6 +44,7 @@ import {
   MetadataCard,
   RelativeTime,
   ResourceLayout,
+  RichTextEditor,
   Select,
   SelectContent,
   SelectItem,
@@ -2634,17 +2635,26 @@ function InternalNoteCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
 
   const [editing, setEditing] = useState(false)
+  // Edit the HTML, not the plain-text projection: `internal_note` has its
+  // markup stripped, so round-tripping it through the `internal_note_html`
+  // write would flatten an existing note on a save that changed nothing.
+  const [note, setNote] = useState(order.internal_note_html ?? '')
+  const serverNote = order.internal_note_html ?? ''
+
+  // Track the server value only while the editor is closed. Any order mutation
+  // refetches this record, and adopting the incoming value mid-edit would throw
+  // away whatever the user is part-way through typing.
+  useEffect(() => {
+    if (!editing) setNote(serverNote)
+  }, [editing, serverNote])
+
   const mutation = useOrderMutation(orderId, (params: { internal_note: string }) =>
     adminClient.orders.update(orderId, params),
   )
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    mutation.mutate(
-      { internal_note: fd.get('internal_note') as string },
-      { onSuccess: () => setEditing(false) },
-    )
+    mutation.mutate({ internal_note: note }, { onSuccess: () => setEditing(false) })
   }
 
   return (
@@ -2660,9 +2670,21 @@ function InternalNoteCard({ order }: { order: Order }) {
       <CardContent>
         {editing ? (
           <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <Textarea name="internal_note" defaultValue={order.internal_note ?? ''} />
+            <RichTextEditor
+              ariaLabel={t('admin.orders.detail.section_internal_note')}
+              value={note}
+              onChange={setNote}
+            />
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => setEditing(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setNote(serverNote)
+                  setEditing(false)
+                }}
+              >
                 {t('admin.actions.cancel')}
               </Button>
               <Button type="submit" size="sm" disabled={mutation.isPending}>
@@ -2670,8 +2692,12 @@ function InternalNoteCard({ order }: { order: Order }) {
               </Button>
             </div>
           </form>
-        ) : order.internal_note ? (
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{order.internal_note}</p>
+        ) : order.internal_note_html ? (
+          <div
+            className="prose prose-sm max-w-none text-muted-foreground dark:prose-invert"
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: HTML is sanitized server-side via the rich-text pipeline
+            dangerouslySetInnerHTML={{ __html: order.internal_note_html }}
+          />
         ) : (
           <p className="text-sm text-muted-foreground">{t('admin.common.none')}</p>
         )}

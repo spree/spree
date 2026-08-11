@@ -13,6 +13,7 @@
 
 export * from './hooks/use-copy-to-clipboard'
 export { useIsMobile } from './hooks/use-mobile'
+export * from './hooks/use-prefers-reduced-motion'
 export * from './hooks/use-scrolled'
 // ---------------------------------------------------------------------------
 // Helpers + hooks
