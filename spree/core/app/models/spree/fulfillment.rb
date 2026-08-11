@@ -532,13 +532,18 @@ module Spree
       owner.set_fulfillments_cost
     end
 
-    def set_up_inventory(status, variant, order, line_item, quantity = 1)
+    # +owner+ is the cart or order the units belong to. The item's order_id is
+    # a completion-time denormalization (backorder processing joins through
+    # it): during checkout it stays nil — writing a cart's id into an order
+    # foreign key would silently link the item to whatever order shares that
+    # id. Carts::Complete stamps the real order onto the copied items.
+    def set_up_inventory(status, variant, owner, line_item, quantity = 1)
       return if quantity <= 0
 
       fulfillment_items.create(
         status: status,
         variant_id: variant.id,
-        order_id: order.id,
+        order_id: owner.is_a?(Spree::Order) ? owner.id : nil,
         line_item_id: line_item.id,
         quantity: quantity
       )

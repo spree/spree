@@ -1065,6 +1065,17 @@ describe Spree::Shipment, type: :model do
       expect(inventory_units).to receive(:create).with(params)
       shipment.set_up_inventory('on_hand', variant, order, line_item)
     end
+
+    # A cart's id written into order_id dereferences as whatever ORDER shares
+    # that id — during checkout the item silently linked itself to a stranger's
+    # order, whose ship address then stood in for the customer's at rating,
+    # and whose backorder queue could swallow the cart's units.
+    it 'leaves order_id nil when the owner is a cart' do
+      cart = create(:cart, store: @default_store)
+
+      expect(inventory_units).to receive(:create).with(params.merge(order_id: nil))
+      shipment.set_up_inventory('on_hand', variant, cart, line_item)
+    end
   end
 
   # Regression test for #3349
