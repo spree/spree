@@ -1913,8 +1913,15 @@
         "totals_title": "金额",
         "badges": {
           "pending": "未保存",
-          "removed": "待移除"
-        }
+          "removed": "待移除",
+          "fulfilled_count_one": "已履行 {{count}} 件",
+          "fulfilled_count_other": "已履行 {{count}} 件"
+        },
+        "validation": {
+          "below_fulfilled_one": "不能低于已履行的 {{count}} 件",
+          "below_fulfilled_other": "不能低于已履行的 {{count}} 件"
+        },
+        "fully_fulfilled": "此订单已全部履行，无法再编辑。"
       },
       "fulfill": {
         "action": "标记为已发货",

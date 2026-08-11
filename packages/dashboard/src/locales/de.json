@@ -1917,8 +1917,15 @@
         "totals_title": "Summen",
         "badges": {
           "pending": "Nicht gespeichert",
-          "removed": "Wird entfernt"
-        }
+          "removed": "Wird entfernt",
+          "fulfilled_count_one": "{{count}} abgewickelt",
+          "fulfilled_count_other": "{{count}} abgewickelt"
+        },
+        "validation": {
+          "below_fulfilled_one": "Darf {{count}} abgewickelte Einheit nicht unterschreiten",
+          "below_fulfilled_other": "Darf {{count}} abgewickelte Einheiten nicht unterschreiten"
+        },
+        "fully_fulfilled": "Diese Bestellung ist vollständig abgewickelt und kann nicht mehr bearbeitet werden."
       },
       "fulfill": {
         "action": "Als versendet markieren",

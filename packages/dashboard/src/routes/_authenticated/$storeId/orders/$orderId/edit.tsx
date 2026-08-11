@@ -2,6 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { type Order, SpreeError, type Variant } from '@spree/admin-sdk'
 import { adminClient, formatPrice, mapSpreeErrorsToForm, PageHeader } from '@spree/dashboard-core'
 import {
+  Alert,
+  AlertDescription,
   Button,
   Card,
   CardContent,
@@ -15,7 +17,7 @@ import {
   useFormSubmitShortcut,
 } from '@spree/dashboard-ui'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon } from 'lucide-react'
+import { InfoIcon, PlusIcon } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -125,7 +127,7 @@ function OrderEditPage() {
   // merchant has staged edits in flight.
   useEffect(() => {
     if (!order || form.formState.isDirty) return
-    form.reset(orderToEditForm(order.items ?? []))
+    form.reset(orderToEditForm(order.items ?? [], order.fulfillments ?? []))
   }, [order, form])
 
   const saveMutation = useOrderMutation(orderId, (items: OrderItemsPayload) =>
@@ -189,6 +191,7 @@ function OrderEditPage() {
       removed: false,
       added: true,
       saved_quantity: 0,
+      fulfilled_quantity: 0,
       name: variant.product_name,
       options_text: variant.options_text ?? '',
       thumbnail_url: variant.thumbnail_url,
@@ -206,6 +209,28 @@ function OrderEditPage() {
         description={t('admin.orders.detail.load_failed_message', { orderId })}
         error={error as Error | undefined}
         onRetry={() => refetch()}
+      />
+    )
+  }
+
+  // The header hides its edit link on fulfilled orders, but the URL stays
+  // reachable — and the per-row clamps below would still allow additions.
+  if (order.fulfillment_status === 'fulfilled') {
+    return (
+      <ResourceLayout
+        header={
+          <PageHeader
+            title={t('admin.orders.edit.title')}
+            subtitle={t('admin.orders.edit.subtitle', { number: order.number })}
+            backTo={`${storeId}/orders/${orderId}`}
+          />
+        }
+        main={
+          <Alert variant="warning">
+            <InfoIcon />
+            <AlertDescription>{t('admin.orders.edit.fully_fulfilled')}</AlertDescription>
+          </Alert>
+        }
       />
     )
   }
@@ -237,7 +262,9 @@ function OrderEditPage() {
                   </Button>
                   <FormActions
                     form={form}
-                    onDiscard={() => form.reset(orderToEditForm(order.items ?? []))}
+                    onDiscard={() =>
+                      form.reset(orderToEditForm(order.items ?? [], order.fulfillments ?? []))
+                    }
                   />
                 </>
               }

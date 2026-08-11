@@ -1927,8 +1927,15 @@
         "totals_title": "الإجماليات",
         "badges": {
           "pending": "غير محفوظ",
-          "removed": "قيد الإزالة"
-        }
+          "removed": "قيد الإزالة",
+          "fulfilled_count_one": "تم الوفاء بـ {{count}}",
+          "fulfilled_count_other": "تم الوفاء بـ {{count}}"
+        },
+        "validation": {
+          "below_fulfilled_one": "لا يمكن النزول تحت {{count}} وحدة تم الوفاء بها",
+          "below_fulfilled_other": "لا يمكن النزول تحت {{count}} وحدات تم الوفاء بها"
+        },
+        "fully_fulfilled": "تم الوفاء بهذا الطلب بالكامل ولم يعد من الممكن تعديله."
       },
       "fulfill": {
         "action": "وضع علامة كمشحون",

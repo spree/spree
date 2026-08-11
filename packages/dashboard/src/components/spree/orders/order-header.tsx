@@ -158,12 +158,16 @@ export function OrderHeader({ order }: { order: Order }) {
       badges={badges}
       actions={
         <>
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/$storeId/orders/$orderId/edit" params={{ storeId, orderId }}>
-              <PencilIcon className="size-4" />
-              {t('admin.orders.edit.action_label')}
-            </Link>
-          </Button>
+          {/* Fully fulfilled means every unit has shipped, so there is
+              nothing left an edit could lawfully change. */}
+          {order.fulfillment_status !== 'fulfilled' && (
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/$storeId/orders/$orderId/edit" params={{ storeId, orderId }}>
+                <PencilIcon className="size-4" />
+                {t('admin.orders.edit.action_label')}
+              </Link>
+            </Button>
+          )}
 
           {order.status === 'draft' && (
             <Button

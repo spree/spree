@@ -1935,8 +1935,19 @@
         "totals_title": "Sumy",
         "badges": {
           "pending": "Niezapisane",
-          "removed": "Do usunięcia"
-        }
+          "removed": "Do usunięcia",
+          "fulfilled_count_one": "{{count}} zrealizowana",
+          "fulfilled_count_few": "{{count}} zrealizowane",
+          "fulfilled_count_many": "{{count}} zrealizowanych",
+          "fulfilled_count_other": "{{count}} zrealizowanych"
+        },
+        "validation": {
+          "below_fulfilled_one": "Nie można zejść poniżej {{count}} zrealizowanej sztuki",
+          "below_fulfilled_few": "Nie można zejść poniżej {{count}} zrealizowanych sztuk",
+          "below_fulfilled_many": "Nie można zejść poniżej {{count}} zrealizowanych sztuk",
+          "below_fulfilled_other": "Nie można zejść poniżej {{count}} zrealizowanych sztuk"
+        },
+        "fully_fulfilled": "To zamówienie jest w pełni zrealizowane i nie można go już edytować."
       },
       "fulfill": {
         "action": "Oznacz jako wysłane",

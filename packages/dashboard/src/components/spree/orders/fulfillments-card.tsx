@@ -51,7 +51,6 @@ import { useStockLocations } from '../../../hooks/use-stock-locations'
 import {
   type FulfillmentItemRow,
   fulfillmentItemRows,
-  hasFulfillableUnits,
   unfulfilledItemRows,
 } from '../../../lib/fulfillment-items'
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
@@ -82,15 +81,15 @@ function unitsOf(fulfillment: Fulfillment): FulfillmentUnit[] {
 }
 
 /**
- * Line items still available to put into a new fulfillment. The backend moves
- * units out of their existing fulfillments, so everything on the order is
- * offered — it re-shapes the source rather than refusing.
+ * Units no fulfillment has claimed, shaped for the create dialog. Only the
+ * unclaimed remainder is offered: units already sitting in a fulfillment move
+ * via Split, and shipped ones do not move at all.
  */
 function orderUnits(order: Order): Array<{ itemId: string; label: string; quantity: number }> {
-  return (order.items ?? []).map((item) => ({
-    itemId: item.id,
-    label: [item.name, item.options_text].filter(Boolean).join(' — ') || item.id,
-    quantity: item.quantity,
+  return unfulfilledItemRows(order.items ?? [], order.fulfillments ?? []).map((row) => ({
+    itemId: row.key,
+    label: [row.name, row.optionsText].filter(Boolean).join(' — ') || row.key,
+    quantity: row.quantity,
   }))
 }
 
@@ -254,7 +253,7 @@ function SplitFulfillmentDialog({
   )
 }
 
-/** Creates a fulfillment, moving the chosen quantities out of the existing ones. */
+/** Creates a fulfillment for chosen quantities of the not-yet-claimed units. */
 function CreateFulfillmentDialog({
   order,
   open,
@@ -287,7 +286,9 @@ function CreateFulfillmentDialog({
     create.mutate(
       {
         stock_location_id: stockLocationId,
-        items: items.length > 0 ? items : undefined,
+        // Always explicit: the backend reads a missing list as "every
+        // not-yet-shipped unit", which would drain existing fulfillments.
+        items,
       },
       {
         onSuccess: () => {
@@ -370,7 +371,7 @@ function CreateFulfillmentDialog({
           </Button>
           <Button
             type="button"
-            disabled={!stockLocationId || create.isPending}
+            disabled={!stockLocationId || items.length === 0 || create.isPending}
             onClick={handleSubmit}
           >
             {create.isPending ? t('admin.actions.saving') : t('admin.actions.create')}
@@ -592,10 +593,10 @@ export function FulfillmentsCard({ order }: { order: Order }) {
 
   // Manual creation is a completed-order operation: Fulfillments::Create
   // rejects it otherwise ("Fulfillments can only be created manually on
-  // completed orders"). A draft's fulfillments come from the delivery step.
-  // It also needs units it can actually move — offering it on a fully shipped
-  // order would only ever produce an empty fulfillment.
-  const canCreate = !!order.completed_at && hasFulfillableUnits(lineItems, fulfillments)
+  // completed orders"). And it is only for units no fulfillment has claimed —
+  // once everything is allocated, rearranging lives on each fulfillment's
+  // Split action, not here.
+  const canCreate = !!order.completed_at && unfulfilled.length > 0
 
   const groupCount = fulfillments.length + (unfulfilled.length > 0 ? 1 : 0)
 

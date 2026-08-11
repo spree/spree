@@ -49,14 +49,6 @@ export interface FulfillmentItemRow {
 }
 
 /**
- * Statuses whose units `Spree::Fulfillments::Create` will still move into a
- * new fulfillment. Anything shipped or canceled is settled and its units are
- * no longer fulfillable — mirrors `fulfillable_units` in
- * `spree/core/app/workflows/spree/fulfillments/create.rb`.
- */
-const MOVABLE_STATUSES = ['pending', 'ready', 'ready_for_pickup']
-
-/**
  * Sums, per line item, how many units every fulfillment claims. Fulfillment
  * items that reference no line item are skipped — there is nothing to join
  * them to, and counting them would understate the remainder.
@@ -72,6 +64,27 @@ function claimedQuantities(fulfillments: GroupableFulfillment[]): Map<string, nu
   }
 
   return claimed
+}
+
+/**
+ * Sums, per line item, how many units sit in fulfilled fulfillments. Those
+ * units have left the building, so an edit can neither remove the row nor push
+ * its quantity below them. Canceled fulfillments restock their units and do
+ * not count.
+ */
+export function fulfilledQuantities(fulfillments: GroupableFulfillment[]): Map<string, number> {
+  const fulfilled = new Map<string, number>()
+
+  for (const fulfillment of fulfillments) {
+    if (fulfillment.status !== 'fulfilled') continue
+
+    for (const item of fulfillment.fulfillment_items ?? []) {
+      if (!item.line_item_id) continue
+      fulfilled.set(item.line_item_id, (fulfilled.get(item.line_item_id) ?? 0) + item.quantity)
+    }
+  }
+
+  return fulfilled
 }
 
 /** Builds a row, preferring the line item's own copy over the fulfillment item's. */
@@ -148,23 +161,4 @@ export function unfulfilledItemRows(
 
     return [buildRow(lineItem.id, lineItem, null, remainder)]
   })
-}
-
-/**
- * Whether anything is left to put into a new fulfillment: either units nobody
- * has claimed, or units sitting in a fulfillment that has not shipped yet and
- * can therefore still be moved. Without this the create workflow would happily
- * build an empty fulfillment on a fully shipped order.
- */
-export function hasFulfillableUnits(
-  lineItems: GroupableLineItem[],
-  fulfillments: GroupableFulfillment[],
-): boolean {
-  const movable = fulfillments.some(
-    (fulfillment) =>
-      MOVABLE_STATUSES.includes(fulfillment.status) &&
-      (fulfillment.fulfillment_items ?? []).some((item) => item.quantity > 0),
-  )
-
-  return movable || unfulfilledItemRows(lineItems, fulfillments).length > 0
 }

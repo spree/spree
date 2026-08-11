@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
+  fulfilledQuantities,
   fulfillmentItemRows,
   type GroupableFulfillment,
   type GroupableLineItem,
-  hasFulfillableUnits,
   unfulfilledItemRows,
 } from './fulfillment-items'
 
@@ -149,63 +149,51 @@ describe('unfulfilledItemRows', () => {
   })
 })
 
-describe('hasFulfillableUnits', () => {
-  it('is true while units remain unclaimed', () => {
-    expect(hasFulfillableUnits([lineItem({ quantity: 2 })], [])).toBe(true)
-  })
-
-  it('is true when a pending fulfillment still holds units to move', () => {
-    expect(
-      hasFulfillableUnits(
-        [lineItem({ quantity: 2 })],
-        [fulfillment({ fulfillment_items: [{ line_item_id: 'li_1', quantity: 2 }] })],
-      ),
-    ).toBe(true)
-  })
-
-  it('is false once every unit sits in a shipped fulfillment', () => {
-    expect(
-      hasFulfillableUnits(
-        [lineItem({ quantity: 2 })],
-        [
-          fulfillment({
-            status: 'shipped',
-            fulfillment_items: [{ line_item_id: 'li_1', quantity: 2 }],
-          }),
+describe('fulfilledQuantities', () => {
+  it('sums units per line item across fulfilled fulfillments', () => {
+    const quantities = fulfilledQuantities([
+      fulfillment({
+        status: 'fulfilled',
+        fulfillment_items: [
+          { line_item_id: 'li_1', variant_id: 'variant_1', quantity: 1 },
+          { line_item_id: 'li_2', variant_id: 'variant_2', quantity: 2 },
         ],
-      ),
-    ).toBe(false)
+      }),
+      fulfillment({
+        status: 'fulfilled',
+        fulfillment_items: [{ line_item_id: 'li_1', variant_id: 'variant_1', quantity: 2 }],
+      }),
+    ])
+
+    expect(quantities.get('li_1')).toBe(3)
+    expect(quantities.get('li_2')).toBe(2)
   })
 
-  it('is false when a canceled fulfillment holds the units', () => {
-    expect(
-      hasFulfillableUnits(
-        [lineItem({ quantity: 2 })],
-        [
-          fulfillment({
-            status: 'canceled',
-            fulfillment_items: [{ line_item_id: 'li_1', quantity: 2 }],
-          }),
-        ],
-      ),
-    ).toBe(false)
+  // Canceled fulfillments restock; pending ones have not shipped. Neither
+  // pins an edit.
+  it('ignores fulfillments that have not shipped', () => {
+    const quantities = fulfilledQuantities([
+      fulfillment({
+        status: 'pending',
+        fulfillment_items: [{ line_item_id: 'li_1', variant_id: 'variant_1', quantity: 2 }],
+      }),
+      fulfillment({
+        status: 'canceled',
+        fulfillment_items: [{ line_item_id: 'li_1', variant_id: 'variant_1', quantity: 1 }],
+      }),
+    ])
+
+    expect(quantities.size).toBe(0)
   })
 
-  it('is false on an order with no items at all', () => {
-    expect(hasFulfillableUnits([], [])).toBe(false)
-  })
+  it('skips fulfillment items that reference no line item', () => {
+    const quantities = fulfilledQuantities([
+      fulfillment({
+        status: 'fulfilled',
+        fulfillment_items: [{ line_item_id: null, variant_id: 'variant_1', quantity: 2 }],
+      }),
+    ])
 
-  it('counts a ready_for_pickup fulfillment as movable', () => {
-    expect(
-      hasFulfillableUnits(
-        [lineItem({ quantity: 1 })],
-        [
-          fulfillment({
-            status: 'ready_for_pickup',
-            fulfillment_items: [{ line_item_id: 'li_1', quantity: 1 }],
-          }),
-        ],
-      ),
-    ).toBe(true)
+    expect(quantities.size).toBe(0)
   })
 })

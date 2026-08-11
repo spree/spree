@@ -92,6 +92,13 @@ function OrderEditItemRow({
               {row.removed && (
                 <Badge variant="outline">{t('admin.orders.edit.badges.removed')}</Badge>
               )}
+              {row.fulfilled_quantity > 0 && (
+                <Badge variant="secondary">
+                  {t('admin.orders.edit.badges.fulfilled_count', {
+                    count: row.fulfilled_quantity,
+                  })}
+                </Badge>
+              )}
             </div>
             {row.options_text && (
               <div className="truncate text-xs text-muted-foreground">{row.options_text}</div>
@@ -109,7 +116,7 @@ function OrderEditItemRow({
           render={({ field }) => (
             <Input
               type="number"
-              min={1}
+              min={Math.max(1, row.fulfilled_quantity)}
               inputMode="numeric"
               className="ml-auto w-24 text-right"
               disabled={row.removed}
@@ -133,23 +140,27 @@ function OrderEditItemRow({
       </TableCell>
 
       <TableCell className="text-right">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={toggleRemoved}
-          aria-label={
-            row.removed
-              ? t('admin.orders.edit.actions.restore_item', { name: row.name })
-              : t('admin.orders.edit.actions.remove_item', { name: row.name })
-          }
-        >
-          {row.removed ? (
-            <RotateCcwIcon className="size-4" />
-          ) : (
-            <XIcon className="size-4 text-destructive" />
-          )}
-        </Button>
+        {/* A row with shipped units cannot be struck out — those units are
+            physically gone, so the only edit left is raising the quantity. */}
+        {row.fulfilled_quantity === 0 && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={toggleRemoved}
+            aria-label={
+              row.removed
+                ? t('admin.orders.edit.actions.restore_item', { name: row.name })
+                : t('admin.orders.edit.actions.remove_item', { name: row.name })
+            }
+          >
+            {row.removed ? (
+              <RotateCcwIcon className="size-4" />
+            ) : (
+              <XIcon className="size-4 text-destructive" />
+            )}
+          </Button>
+        )}
       </TableCell>
     </TableRow>
   )

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildOrderItemsPayload, type OrderEditItemValues } from './order'
+import { buildOrderItemsPayload, type OrderEditItemValues, orderEditItemSchema } from './order'
 
 function row(overrides: Partial<OrderEditItemValues>): OrderEditItemValues {
   return {
@@ -8,6 +8,7 @@ function row(overrides: Partial<OrderEditItemValues>): OrderEditItemValues {
     removed: false,
     added: false,
     saved_quantity: 1,
+    fulfilled_quantity: 0,
     name: 'Shirt',
     options_text: '',
     thumbnail_url: null,
@@ -50,5 +51,42 @@ describe('buildOrderItemsPayload', () => {
     expect(
       buildOrderItemsPayload([row({ removed: true, quantity: 9, saved_quantity: 3 })]),
     ).toEqual([{ variant_id: 'variant_1', quantity: 0 }])
+  })
+})
+
+// Shipped units are physical fact — the schema refuses edits that pretend
+// they can come back.
+describe('orderEditItemSchema fulfilled clamp', () => {
+  it('rejects a quantity below the fulfilled count', () => {
+    const result = orderEditItemSchema.safeParse(
+      row({ quantity: 1, saved_quantity: 3, fulfilled_quantity: 2 }),
+    )
+
+    expect(result.success).toBe(false)
+    expect(result.error?.issues[0]?.path).toEqual(['quantity'])
+  })
+
+  it('rejects removing a row with fulfilled units', () => {
+    const result = orderEditItemSchema.safeParse(
+      row({ removed: true, quantity: 3, saved_quantity: 3, fulfilled_quantity: 3 }),
+    )
+
+    expect(result.success).toBe(false)
+  })
+
+  it('accepts trimming down to exactly the fulfilled count', () => {
+    const result = orderEditItemSchema.safeParse(
+      row({ quantity: 2, saved_quantity: 3, fulfilled_quantity: 2 }),
+    )
+
+    expect(result.success).toBe(true)
+  })
+
+  it('accepts removing a row with nothing fulfilled', () => {
+    const result = orderEditItemSchema.safeParse(
+      row({ removed: true, quantity: 3, saved_quantity: 3 }),
+    )
+
+    expect(result.success).toBe(true)
   })
 })

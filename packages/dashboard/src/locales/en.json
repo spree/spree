@@ -1917,8 +1917,15 @@
         "totals_title": "Totals",
         "badges": {
           "pending": "Not saved",
-          "removed": "Removing"
-        }
+          "removed": "Removing",
+          "fulfilled_count_one": "{{count}} fulfilled",
+          "fulfilled_count_other": "{{count}} fulfilled"
+        },
+        "validation": {
+          "below_fulfilled_one": "Can't go below {{count}} fulfilled unit",
+          "below_fulfilled_other": "Can't go below {{count}} fulfilled units"
+        },
+        "fully_fulfilled": "This order is fully fulfilled and can no longer be edited."
       },
       "fulfill": {
         "action": "Mark as fulfilled",

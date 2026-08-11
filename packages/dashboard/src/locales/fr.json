@@ -1917,8 +1917,15 @@
         "totals_title": "Totaux",
         "badges": {
           "pending": "Non enregistré",
-          "removed": "À retirer"
-        }
+          "removed": "À retirer",
+          "fulfilled_count_one": "{{count}} traité",
+          "fulfilled_count_other": "{{count}} traités"
+        },
+        "validation": {
+          "below_fulfilled_one": "Impossible de descendre sous {{count}} unité traitée",
+          "below_fulfilled_other": "Impossible de descendre sous {{count}} unités traitées"
+        },
+        "fully_fulfilled": "Cette commande est entièrement traitée et ne peut plus être modifiée."
       },
       "fulfill": {
         "action": "Marquer comme expédié",

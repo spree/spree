@@ -1,6 +1,7 @@
 import type { LineItem, OrderUpdateParams } from '@spree/admin-sdk'
 import { i18n } from '@spree/dashboard-core'
 import { z } from 'zod/v4'
+import { fulfilledQuantities, type GroupableFulfillment } from '../lib/fulfillment-items'
 
 /**
  * New-order form schema. The "customer OR email" rule is enforced at the
@@ -51,28 +52,47 @@ export type FeeKind = (typeof FEE_KINDS)[number]
  * `removed` and `added` are staging flags — they say what the merchant has
  * asked for, not what the server holds. Nothing leaves the browser until Save.
  */
-export const orderEditItemSchema = z.object({
-  variant_id: z.string(),
-  quantity: z
-    .number()
-    .int()
-    .min(1, {
-      error: () =>
-        i18n.t('admin.validation.positive_number', {
-          field: i18n.t('admin.fields.quantity.label'),
+export const orderEditItemSchema = z
+  .object({
+    variant_id: z.string(),
+    quantity: z
+      .number()
+      .int()
+      .min(1, {
+        error: () =>
+          i18n.t('admin.validation.positive_number', {
+            field: i18n.t('admin.fields.quantity.label'),
+          }),
+      }),
+    removed: z.boolean(),
+    /** True for rows the picker staged that the order does not have yet. */
+    added: z.boolean(),
+    /** Quantity the server currently holds; 0 for staged additions. */
+    saved_quantity: z.number().int(),
+    /** Units already shipped in fulfilled fulfillments; 0 for staged additions. */
+    fulfilled_quantity: z.number().int(),
+    name: z.string(),
+    options_text: z.string(),
+    thumbnail_url: z.string().nullable(),
+    display_price: z.string(),
+    display_total: z.string(),
+  })
+  .superRefine((item, ctx) => {
+    // Shipped units are physical fact: a row can neither be struck out nor
+    // set below what already left the warehouse. Removal counts as zero, so
+    // one rule covers both edits.
+    const effectiveQuantity = item.removed ? 0 : item.quantity
+
+    if (effectiveQuantity < item.fulfilled_quantity) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['quantity'],
+        message: i18n.t('admin.orders.edit.validation.below_fulfilled', {
+          count: item.fulfilled_quantity,
         }),
-    }),
-  removed: z.boolean(),
-  /** True for rows the picker staged that the order does not have yet. */
-  added: z.boolean(),
-  /** Quantity the server currently holds; 0 for staged additions. */
-  saved_quantity: z.number().int(),
-  name: z.string(),
-  options_text: z.string(),
-  thumbnail_url: z.string().nullable(),
-  display_price: z.string(),
-  display_total: z.string(),
-})
+      })
+    }
+  })
 
 export type OrderEditItemValues = z.infer<typeof orderEditItemSchema>
 
@@ -83,13 +103,14 @@ export const orderEditFormSchema = z.object({
 export type OrderEditFormValues = z.infer<typeof orderEditFormSchema>
 
 /** Builds the staged row for a line item the order already carries. */
-export function lineItemToEditRow(item: LineItem): OrderEditItemValues {
+export function lineItemToEditRow(item: LineItem, fulfilledQuantity = 0): OrderEditItemValues {
   return {
     variant_id: item.variant_id,
     quantity: item.quantity,
     removed: false,
     added: false,
     saved_quantity: item.quantity,
+    fulfilled_quantity: fulfilledQuantity,
     name: item.name,
     options_text: item.options_text ?? '',
     thumbnail_url: item.thumbnail_url,
@@ -98,8 +119,13 @@ export function lineItemToEditRow(item: LineItem): OrderEditItemValues {
   }
 }
 
-export function orderToEditForm(items: LineItem[]): OrderEditFormValues {
-  return { items: items.map(lineItemToEditRow) }
+export function orderToEditForm(
+  items: LineItem[],
+  fulfillments: GroupableFulfillment[] = [],
+): OrderEditFormValues {
+  const fulfilled = fulfilledQuantities(fulfillments)
+
+  return { items: items.map((item) => lineItemToEditRow(item, fulfilled.get(item.id) ?? 0)) }
 }
 
 /**
