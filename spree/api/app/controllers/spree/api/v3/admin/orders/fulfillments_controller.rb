@@ -6,7 +6,7 @@ module Spree
           class FulfillmentsController < BaseController
             scoped_resource :fulfillments
 
-            before_action :set_resource, only: [:show, :update, :fulfill, :cancel, :resume, :split]
+            before_action :set_resource, only: [:show, :update, :fulfill, :mark_delivered, :cancel, :resume, :split]
 
             # POST /api/v3/admin/orders/:order_id/fulfillments
             #
@@ -66,7 +66,29 @@ module Spree
                   fulfillment: @resource,
                   items: items_for_fulfill,
                   tracking: fulfill_params[:tracking],
-                  notify_customer: notify_customer_for_fulfill
+                  notify_customer: notify_customer_for_fulfill,
+                  force: ActiveModel::Type::Boolean.new.cast(fulfill_params[:force]).present?
+                )
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
+              end
+            end
+
+            # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/mark_delivered
+            #
+            # Confirms the customer received the goods. Staff can record this
+            # by hand — a merchant with no carrier integration still needs a
+            # delivered state.
+            def mark_delivered
+              with_order_lock do
+                result = Spree.fulfillment_mark_delivered_workflow.call(
+                  fulfillment: @resource,
+                  delivered_at: mark_delivered_params[:delivered_at],
+                  notify_customer: notify_customer_for_mark_delivered
                 )
 
                 if result.success?
@@ -178,7 +200,15 @@ module Spree
             end
 
             def fulfill_params
-              @fulfill_params ||= params.permit(:tracking, :notify_customer, items: [:item_id, :quantity])
+              @fulfill_params ||= params.permit(:tracking, :notify_customer, :force, items: [:item_id, :quantity])
+            end
+
+            def mark_delivered_params
+              @mark_delivered_params ||= params.permit(:delivered_at, :notify_customer)
+            end
+
+            def notify_customer_for_mark_delivered
+              !ActiveModel::Type::Boolean.new.cast(mark_delivered_params[:notify_customer]).equal?(false)
             end
 
             # Only an explicit false suppresses the email — an omitted flag, and

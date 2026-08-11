@@ -155,6 +155,28 @@ export interface FulfillmentFulfillParams {
    * still applies on top.
    */
   notify_customer?: boolean
+  /**
+   * Hand the goods over even though the order is unpaid or holds backordered
+   * units. Shipping against an invoice is ordinary trade, so this is the
+   * merchant's call rather than something the API decides for them.
+   */
+  force?: boolean
+}
+
+/**
+ * Records that the customer received the goods — the end of the fulfillment
+ * lifecycle. Reached by a carrier reporting delivery, by staff who know the
+ * parcel arrived, or by a customer collecting a pickup order.
+ */
+export interface FulfillmentMarkDeliveredParams {
+  /**
+   * When it arrived, as an ISO 8601 string. Defaults to now. Carriers report a
+   * delivery time that is usually earlier than the webhook announcing it, and
+   * return windows run from the real one.
+   */
+  delivered_at?: string
+  /** Whether the customer gets a delivery notification. Defaults to true. */
+  notify_customer?: boolean
 }
 
 /**

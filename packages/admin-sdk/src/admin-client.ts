@@ -138,6 +138,7 @@ import type {
   ExportCreateParams,
   FulfillmentCreateParams,
   FulfillmentFulfillParams,
+  FulfillmentMarkDeliveredParams,
   FulfillmentSplitParams,
   FulfillmentUpdateParams,
   GiftCardApplyParams,
@@ -1066,6 +1067,20 @@ export class AdminClient {
         options?: RequestOptions,
       ): Promise<Fulfillment> =>
         this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/fulfill`, {
+          ...options,
+          body: params,
+        }),
+
+      // Confirms the customer received the goods. Staff can record this by
+      // hand — a merchant with no carrier integration still needs a delivered
+      // state — and carriers reach the same endpoint through their webhooks.
+      markDelivered: (
+        orderId: string,
+        id: string,
+        params?: FulfillmentMarkDeliveredParams,
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>('PATCH', `/orders/${orderId}/fulfillments/${id}/mark_delivered`, {
           ...options,
           body: params,
         }),

@@ -5,6 +5,9 @@ module Spree
         typelize number: :string, status: :string, fulfillment_type: :string,
                  tracking: [:string, nullable: true],
                  tracking_url: [:string, nullable: true], fulfilled_at: [:string, nullable: true],
+                 tracking_status: [:string, nullable: true],
+                 estimated_delivery_at: [:string, nullable: true],
+                 delivered_at: [:string, nullable: true],
                  cost: [:string, nullable: true], display_cost: [:string, nullable: true],
                  total: [:string, nullable: true], display_total: [:string, nullable: true],
                  discount_total: [:string, nullable: true], display_discount_total: [:string, nullable: true],
@@ -36,6 +39,18 @@ module Spree
 
         attribute :fulfilled_at do |fulfillment|
           fulfillment.fulfilled_at&.iso8601
+        end
+
+        # Where the parcel is, as the carrier last reported it — the customer's
+        # question, so it belongs on the public serializer alongside tracking.
+        attributes :tracking_status
+
+        attribute :estimated_delivery_at do |fulfillment|
+          fulfillment.estimated_delivery_at&.iso8601
+        end
+
+        attribute :delivered_at do |fulfillment|
+          fulfillment.delivered_at&.iso8601
         end
 
         # Which items (and how many) are in this fulfillment.

@@ -13,12 +13,15 @@ module Spree
                    tax_total: [:string, nullable: false], display_tax_total: [:string, nullable: false]
 
           typelize metadata: 'Record<string, unknown>',
+                   tracking_details: ['Record<string, unknown>', nullable: true],
                    order_id: [:string, nullable: true],
                    stock_location_id: [:string, nullable: true],
                    adjustment_total: :string,
                    pre_tax_amount: :string
 
-          attributes :metadata, :adjustment_total, :pre_tax_amount,
+          # The raw carrier payload — scan history, signature, failure reason.
+          # Operational detail, so admin-only.
+          attributes :metadata, :tracking_details, :adjustment_total, :pre_tax_amount,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :order_id do |fulfillment|

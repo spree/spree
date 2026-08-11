@@ -189,7 +189,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
   describe 'PATCH #fulfill' do
     it 'marks the fulfillment as shipped' do
-      shipment.ready! if shipment.can_ready?
+      shipment.update!(status: 'unfulfilled')
 
       patch :fulfill, params: {
         order_id: order.prefixed_id,
@@ -303,7 +303,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
   describe 'PATCH #resume' do
     it 'resumes a canceled fulfillment' do
-      shipment.cancel!
+      shipment.update!(status: 'canceled')
 
       patch :resume, params: {
         order_id: order.prefixed_id,
@@ -311,7 +311,48 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(%w[pending ready]).to include(json_response['status'])
+      expect(json_response['status']).to eq('unfulfilled')
+    end
+  end
+
+  describe 'PATCH #mark_delivered' do
+    before do
+      Spree.fulfillment_fulfill_workflow.call(fulfillment: shipment)
+      shipment.reload
+    end
+
+    it 'records confirmed receipt' do
+      patch :mark_delivered, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['status']).to eq('delivered')
+      expect(json_response['delivered_at']).to be_present
+    end
+
+    it 'accepts the time the carrier reported' do
+      arrived = 3.hours.ago
+
+      patch :mark_delivered, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        delivered_at: arrived.iso8601
+      }, as: :json
+
+      expect(Time.parse(json_response['delivered_at'])).to be_within(1.second).of(arrived)
+    end
+
+    it 'refuses a fulfillment that never shipped' do
+      shipment.update!(status: 'unfulfilled')
+
+      patch :mark_delivered, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 

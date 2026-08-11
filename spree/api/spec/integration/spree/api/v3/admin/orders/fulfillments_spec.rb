@@ -217,13 +217,72 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         let(:id) { shipment.prefixed_id }
 
         before do
-          shipment.ready! if shipment.can_ready?
+          shipment.update!(status: 'unfulfilled')
         end
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['status']).to eq('fulfilled')
         end
+      end
+    end
+  end
+
+  path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/mark_delivered' do
+    patch 'Mark a fulfillment delivered' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      consumes 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Records that the customer received the goods. Only a fulfilled shipment can be marked delivered.'
+      admin_scope :write, :fulfillments
+
+      admin_sdk_example 'order-fulfillments/mark-delivered'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :order_id, in: :path, type: :string, required: true,
+                description: 'Order ID'
+      parameter name: :id, in: :path, type: :string, required: true,
+                description: 'Fulfillment ID'
+      parameter name: :body, in: :body, required: false, schema: {
+        type: :object,
+        properties: {
+          delivered_at: {
+            type: :string,
+            format: 'date-time',
+            description: 'When the goods arrived. Defaults to now.'
+          },
+          notify_customer: {
+            type: :boolean,
+            description: 'Whether the customer gets a delivery notification. Defaults to true.'
+          }
+        }
+      }
+
+      response '200', 'fulfillment delivered' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { shipment.prefixed_id }
+        let(:body) { {} }
+
+        before { Spree.fulfillment_fulfill_workflow.call(fulfillment: shipment) }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['status']).to eq('delivered')
+          expect(data['delivered_at']).to be_present
+        end
+      end
+
+      response '422', 'fulfillment has not shipped' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { shipment.prefixed_id }
+        let(:body) { {} }
+
+        run_test!
       end
     end
   end
@@ -283,12 +342,12 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
         let(:id) { shipment.prefixed_id }
 
         before do
-          shipment.cancel!
+          shipment.update!(status: 'canceled')
         end
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(%w[pending ready]).to include(data['status'])
+          expect(data['status']).to eq('unfulfilled')
         end
       end
     end
