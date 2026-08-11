@@ -57,6 +57,7 @@ import {
 import { FulfillmentEditDialog } from './fulfillment-edit-dialog'
 import { FulfillmentFulfillForm } from './fulfillment-fulfill-form'
 import { FulfillmentItemList } from './fulfillment-item-list'
+import { FulfillmentTrackingDialog } from './fulfillment-tracking-dialog'
 
 /**
  * A unit sitting in one fulfillment. Splitting moves units per variant rather
@@ -399,11 +400,17 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
 
   const [editOpen, setEditOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
+  const [trackingOpen, setTrackingOpen] = useState(false)
   const [fulfilling, setFulfilling] = useState(false)
 
   const editable = CAN_EDIT.includes(fulfillment.status)
   const splittable = editable && unitsOf(fulfillment).length > 0
   const shippable = CAN_SHIP.includes(fulfillment.status)
+  // Confirming receipt is the merchant's next move on a parcel that has gone
+  // out, so it sits in the card rather than behind the menu. Adding tracking
+  // joins it as the primary action while the number is still missing.
+  const deliverable = CAN_MARK_DELIVERED.includes(fulfillment.status)
+  const trackable = deliverable && !fulfillment.tracking
 
   return (
     <div className="rounded-lg border flex flex-col">
@@ -448,10 +455,10 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               </DropdownMenuItem>
             )}
 
-            {CAN_MARK_DELIVERED.includes(fulfillment.status) && (
-              <DropdownMenuItem onClick={() => markDelivered.mutate(fulfillment.id)}>
-                <PackageCheckIcon className="size-4" />
-                {t('admin.orders.detail.fulfillments.mark_delivered')}
+            {deliverable && fulfillment.tracking && (
+              <DropdownMenuItem onClick={() => setTrackingOpen(true)}>
+                <TruckIcon className="size-4" />
+                {t('admin.orders.detail.fulfillments.edit_tracking_title')}
               </DropdownMenuItem>
             )}
 
@@ -535,6 +542,28 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               </Button>
             </div>
           )}
+
+          {deliverable && (
+            <div className="flex justify-end gap-2 p-3 border-t">
+              <Button
+                type="button"
+                size="sm"
+                variant={trackable ? 'outline' : 'default'}
+                disabled={markDelivered.isPending}
+                onClick={() => markDelivered.mutate(fulfillment.id)}
+              >
+                <PackageCheckIcon data-icon="inline-start" />
+                {t('admin.orders.detail.fulfillments.mark_delivered')}
+              </Button>
+
+              {trackable && (
+                <Button type="button" size="sm" onClick={() => setTrackingOpen(true)}>
+                  <PlusIcon data-icon="inline-start" />
+                  {t('admin.orders.detail.fulfillments.add_tracking')}
+                </Button>
+              )}
+            </div>
+          )}
         </>
       )}
 
@@ -553,6 +582,15 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           fulfillment={fulfillment}
           open={splitOpen}
           onOpenChange={setSplitOpen}
+        />
+      )}
+
+      {trackingOpen && (
+        <FulfillmentTrackingDialog
+          orderId={orderId}
+          fulfillment={fulfillment}
+          open={trackingOpen}
+          onOpenChange={setTrackingOpen}
         />
       )}
     </div>

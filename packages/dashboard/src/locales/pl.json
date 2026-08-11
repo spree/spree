@@ -1847,7 +1847,11 @@
           "unfulfilled_many": "Niezrealizowane ({{count}})",
           "unfulfilled_one": "Niezrealizowane ({{count}})",
           "unfulfilled_other": "Niezrealizowane ({{count}})",
-          "mark_delivered": "Oznacz jako dostarczone"
+          "mark_delivered": "Oznacz jako dostarczone",
+          "add_tracking": "Dodaj śledzenie",
+          "edit_tracking_title": "Edytuj śledzenie",
+          "add_tracking_title": "Dodaj śledzenie",
+          "tracking_description": "Numer przesyłki od przewoźnika lub pełny link do śledzenia."
         },
         "gift_card_section": {
           "applied_suffix": "zastosowano",

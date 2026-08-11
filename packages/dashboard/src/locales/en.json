@@ -1829,7 +1829,11 @@
           "split_would_empty": "Leave at least one unit behind, or change the origin of the whole fulfillment instead.",
           "unfulfilled_one": "Unfulfilled ({{count}})",
           "unfulfilled_other": "Unfulfilled ({{count}})",
-          "mark_delivered": "Mark as delivered"
+          "mark_delivered": "Mark as delivered",
+          "add_tracking": "Add tracking",
+          "edit_tracking_title": "Edit tracking",
+          "add_tracking_title": "Add tracking",
+          "tracking_description": "The carrier tracking number, or a full tracking link."
         },
         "gift_card_section": {
           "applied_suffix": "applied",

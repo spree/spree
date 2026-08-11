@@ -1829,7 +1829,11 @@
           "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung.",
           "unfulfilled_one": "Nicht versandt ({{count}})",
           "unfulfilled_other": "Nicht versandt ({{count}})",
-          "mark_delivered": "Als zugestellt markieren"
+          "mark_delivered": "Als zugestellt markieren",
+          "add_tracking": "Sendungsverfolgung hinzufügen",
+          "edit_tracking_title": "Sendungsverfolgung bearbeiten",
+          "add_tracking_title": "Sendungsverfolgung hinzufügen",
+          "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link."
         },
         "gift_card_section": {
           "applied_suffix": "angewendet",

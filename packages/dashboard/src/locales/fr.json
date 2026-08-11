@@ -1829,7 +1829,11 @@
           "split_would_empty": "Laissez au moins une unité, ou modifiez plutôt l'origine de toute l'expédition.",
           "unfulfilled_one": "Non expédié ({{count}})",
           "unfulfilled_other": "Non expédiés ({{count}})",
-          "mark_delivered": "Marquer comme livré"
+          "mark_delivered": "Marquer comme livré",
+          "add_tracking": "Ajouter un suivi",
+          "edit_tracking_title": "Modifier le suivi",
+          "add_tracking_title": "Ajouter un suivi",
+          "tracking_description": "Le numéro de suivi du transporteur, ou un lien de suivi complet."
         },
         "gift_card_section": {
           "applied_suffix": "appliqué",

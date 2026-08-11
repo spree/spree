@@ -1825,7 +1825,11 @@
           "split_title": "拆分发货单",
           "split_would_empty": "请至少保留一件，或改为修改整个发货单的发货地。",
           "unfulfilled_other": "未发货（{{count}}）",
-          "mark_delivered": "标记为已送达"
+          "mark_delivered": "标记为已送达",
+          "add_tracking": "添加物流跟踪",
+          "edit_tracking_title": "编辑物流跟踪",
+          "add_tracking_title": "添加物流跟踪",
+          "tracking_description": "承运商的物流单号，或完整的跟踪链接。"
         },
         "gift_card_section": {
           "applied_suffix": "已应用",
