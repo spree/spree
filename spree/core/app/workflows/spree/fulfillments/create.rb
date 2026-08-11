@@ -304,12 +304,13 @@ module Spree
       end
 
       # Registers an externally-completed fulfillment: backorders are filled
-      # (the external location evidently had the goods) and the paid-order
-      # readiness gate is bypassed deliberately — the goods already left.
+      # (the external location evidently had the goods) and the readiness gate
+      # is forced — the goods already left, so refusing on an unpaid order
+      # would just refuse to record history.
       def mark_shipped(fulfillment)
         fulfillment.fulfillment_items.backordered.each(&:fill_backorder!)
-        fulfillment.update_columns(status: 'ready') unless fulfillment.ready?
-        fulfillment.reload.fulfill!
+        fulfillment.reload
+        Spree.fulfillment_fulfill_workflow.call(fulfillment: fulfillment, force: true)
       end
     end
   end

@@ -51,10 +51,12 @@ module Spree
         end
       end
 
+      # Always back to unfulfilled. The old machine chose between pending and
+      # ready here by consulting the order's payment state; that question is
+      # asked at fulfill time now.
       def mark_resumed
-        fulfillment.resume!
-      rescue StateMachines::InvalidTransition => e
-        failure(fulfillment, e.message)
+        fulfillment.update!(status: 'unfulfilled')
+        fulfillment.publish_fulfillment_resumed_event
       end
     end
   end

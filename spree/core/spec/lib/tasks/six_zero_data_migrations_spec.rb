@@ -11,6 +11,7 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'products.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'order_market_backfill.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'store_binding_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
   end
 
   let(:store) { @default_store }
@@ -336,6 +337,63 @@ describe '6.0 data migration tasks' do
       run_task('spree:product_types:backfill')
 
       expect(product_type.reload.store_id).to eq(Spree::Store.default.id)
+    end
+  end
+
+  describe 'spree:migrate_fulfillment_statuses' do
+    let(:order) { create(:order_ready_to_ship, store: store) }
+
+    it 'moves pending and ready onto unfulfilled' do
+      pending_fulfillment = order.fulfillments.first
+      pending_fulfillment.update_column(:status, 'pending')
+      ready_fulfillment = create(:fulfillment, order: order)
+      ready_fulfillment.update_column(:status, 'ready')
+
+      run_task('spree:migrate_fulfillment_statuses')
+
+      expect(pending_fulfillment.reload.status).to eq('unfulfilled')
+      expect(ready_fulfillment.reload.status).to eq('unfulfilled')
+    end
+
+    it 'treats ready_for_pickup as handed over' do
+      fulfillment = order.fulfillments.first
+      fulfillment.update_column(:status, 'ready_for_pickup')
+
+      run_task('spree:migrate_fulfillment_statuses')
+
+      expect(fulfillment.reload.status).to eq('fulfilled')
+    end
+
+    # A shipping parcel marked fulfilled was never known to have arrived, so it
+    # must not be promoted to delivered.
+    it 'leaves shipped fulfillments fulfilled' do
+      fulfillment = order.fulfillments.first
+      fulfillment.update_columns(status: 'fulfilled', fulfilled_at: Time.current)
+
+      run_task('spree:migrate_fulfillment_statuses')
+
+      expect(fulfillment.reload.status).to eq('fulfilled')
+      expect(fulfillment.delivered_at).to be_nil
+    end
+
+    it 'recomputes the order rollup' do
+      order.fulfillments.each { |fulfillment| fulfillment.update_column(:status, 'pending') }
+      order.update_column(:fulfillment_status, 'ready')
+
+      run_task('spree:migrate_fulfillment_statuses')
+
+      expect(order.reload.fulfillment_status).to eq('unfulfilled')
+    end
+
+    it 'is idempotent' do
+      order.fulfillments.first.update_column(:status, 'pending')
+
+      run_task('spree:migrate_fulfillment_statuses')
+      first_pass = order.fulfillments.map { |fulfillment| fulfillment.reload.status }
+
+      run_task('spree:migrate_fulfillment_statuses')
+
+      expect(order.fulfillments.map { |fulfillment| fulfillment.reload.status }).to eq(first_pass)
     end
   end
 end

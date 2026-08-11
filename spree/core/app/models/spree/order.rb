@@ -9,7 +9,7 @@ module Spree
     self.ignored_columns += ['channel']
 
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
-    FULFILLMENT_STATUSES = %w(backorder canceled partial pending ready fulfilled shipped)
+    FULFILLMENT_STATUSES = %w(backorder canceled partial unfulfilled fulfilled delivered pending ready shipped)
     # @deprecated legacy name — remove in 6.1 together with the 'shipped' value
     SHIPMENT_STATES = FULFILLMENT_STATUSES
     # @deprecated legacy machine vocabulary — line-item removability is
@@ -240,10 +240,10 @@ module Spree
     scope :incomplete, -> { where(completed_at: nil) }
     scope :canceled, -> { where(status: 'canceled') }
     scope :not_canceled, -> { where.not(status: 'canceled') }
-    scope :ready_to_ship, -> { where(fulfillment_status: %w[ready pending]) }
+    scope :ready_to_ship, -> { where(fulfillment_status: %w[unfulfilled]) }
     scope :partially_shipped, -> { where(fulfillment_status: %w[partial]) }
-    scope :not_shipped, -> { where(fulfillment_status: %w[ready pending partial]) }
-    scope :shipped, -> { where(fulfillment_status: %w[fulfilled shipped]) }
+    scope :not_shipped, -> { where(fulfillment_status: %w[unfulfilled partial]) }
+    scope :shipped, -> { where(fulfillment_status: %w[fulfilled delivered shipped]) }
     scope :refunded, lambda {
       joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) = #{Spree::Order.table_name}.total")
     }
@@ -377,7 +377,7 @@ module Spree
 
     # Derived, not stored (Decision 8): some but not all fulfillments canceled.
     def partially_canceled?
-      !canceled? && fulfillments.canceled.any? && fulfillments.where.not(status: 'canceled').any?
+      !canceled? && fulfillments.canceled.any? && fulfillments.not_canceled.any?
     end
 
     # Checks if the order is fully refunded
@@ -472,7 +472,7 @@ module Spree
     def allow_cancel?
       return false if !completed? || canceled?
 
-      fulfillment_status.nil? || %w{ready backorder pending canceled}.include?(fulfillment_status)
+      fulfillment_status.nil? || %w{unfulfilled backorder canceled}.include?(fulfillment_status)
     end
     alias can_cancel? allow_cancel?
 
@@ -665,13 +665,20 @@ module Spree
     end
 
     def shipped?
-      %w(partial shipped fulfilled).include?(fulfillment_status)
+      %w(partial shipped fulfilled delivered).include?(fulfillment_status)
     end
 
-    # True when every fulfillment reached the fulfilled status — the signal
-    # order.fulfilled publishes on.
+    # True when every fulfillment has left the merchant's hands — the signal
+    # order.fulfilled publishes on. `delivered` counts: it is downstream of
+    # fulfilled, so a delivered order must not read as un-fulfilled.
     def fully_fulfilled?
-      fulfillments.fulfilled.size == fulfillments.size
+      fulfillments.fulfilled_or_delivered.size == fulfillments.size
+    end
+
+    # True when every fulfillment reached confirmed receipt — the signal
+    # order.delivered publishes on.
+    def fully_delivered?
+      fulfillments.any? && fulfillments.delivered.size == fulfillments.size
     end
 
     # @deprecated Use {#fully_fulfilled?}; removed in 6.1.

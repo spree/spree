@@ -33,10 +33,19 @@ module Spree
           subject
         end
 
+        # The cart is destroyed along with them, so the observable fact is that
+        # each one was canceled on its way out rather than deleted outright.
         it 'cancels unfulfilled fulfillments' do
-          expect_any_instance_of(Spree::Fulfillment).to receive(:cancel).exactly(cart.fulfillments.count).times
+          statuses = []
+          allow_any_instance_of(Spree::Fulfillment).to receive(:update!) do |fulfillment, attributes|
+            statuses << attributes[:status]
+            fulfillment.update_columns(attributes)
+          end
 
           subject
+
+          expect(statuses).to all(eq('canceled'))
+          expect(statuses.count).to eq(1)
         end
 
         it 'destroys the cart' do

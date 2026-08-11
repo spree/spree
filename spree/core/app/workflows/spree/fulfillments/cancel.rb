@@ -66,12 +66,9 @@ module Spree
         fulfillment.stock_location
       end
 
-      # The machine still owns the status column and its guard; what it no
-      # longer owns is the side effects, which is the point of the move.
       def mark_canceled
-        fulfillment.cancel!
-      rescue StateMachines::InvalidTransition => e
-        failure(fulfillment, e.message)
+        fulfillment.update!(status: 'canceled')
+        fulfillment.publish_fulfillment_canceled_event
       end
 
       def tell_provider_to_stand_down

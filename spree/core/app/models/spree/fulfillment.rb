@@ -48,18 +48,23 @@ module Spree
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :fulfillment_items
 
-    scope :pending, -> { with_state('pending') }
-    scope :ready,   -> { with_state('ready') }
-    scope :fulfilled, -> { with_state('fulfilled') }
-    # @deprecated legacy name — remove in 6.1
+    # unfulfilled/fulfilled/delivered/canceled scopes + predicates come from
+    # has_status below. These are the ones it cannot generate.
+    #
+    # @deprecated legacy names — removed in 6.1
     scope :shipped, -> { fulfilled }
-    scope :ready_or_pending, -> { where(status: %w(ready pending)) }
+    scope :pending, -> { unfulfilled }
+    scope :ready, -> { unfulfilled }
+    scope :ready_or_pending, -> { unfulfilled }
+    # Everything that has left the merchant's hands, whether or not the carrier
+    # has confirmed receipt — the natural set for reporting and for skipping
+    # work that only applies to packages still on the shelf.
+    scope :fulfilled_or_delivered, -> { where(status: %w(fulfilled delivered)) }
     scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
     scope :with_state, ->(*s) { where(status: s) }
     # sort by most recent fulfilled_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
     scope :reverse_chronological, -> { order(Arel.sql("coalesce(#{table_name}.fulfilled_at, #{table_name}.created_at) desc"), id: :desc) }
     scope :valid, -> { where.not(status: :canceled) }
-    scope :canceled, -> { with_state('canceled') }
     scope :not_canceled, -> { where.not(status: 'canceled') }
     scope :shipped_but_canceled, -> { canceled.where.not(fulfilled_at: nil) }
     # This scope will select the delivery_method_id from the fulfillments' selected delivery rate
@@ -93,58 +98,37 @@ module Spree
     end
     delegate :amount_in_cents, to: :display_cost
 
-    state_machine :status, initial: :pending, use_transactions: false do
-      event :ready do
-        transition from: :pending, to: :ready, if: lambda { |fulfillment|
-          # Fix for #2040
-          fulfillment.determine_state(fulfillment.owner) == 'ready'
-        }
-      end
+    # Statuses describe what the merchant did with the package — nothing else.
+    # Payment and stock readiness used to be encoded here as pending/ready and
+    # re-derived from the order on every recalculation, so a refund could move a
+    # fulfillment backwards with no physical change. That gate now lives in
+    # Spree::Fulfillments::Fulfill, where it can explain itself and be
+    # overridden. Transitions belong to the workflows in
+    # app/workflows/spree/fulfillments (docs/plans/6.0-fulfillment-and-delivery.md).
+    include Spree::HasStatus
+    has_status :unfulfilled, :fulfilled, :delivered, :canceled, default: :unfulfilled
 
-      event :pend do
-        transition from: :ready, to: :pending
-      end
+    # Unlike returns and claims, fulfillments are built directly — by the stock
+    # coordinator, by cart completion, by transfers — rather than always through
+    # a creating workflow, so the default is applied here instead of being left
+    # to each caller. This is what the machine's `initial:` used to do.
+    after_initialize :apply_default_status, if: :new_record?
 
-      event :mark_ready_for_pickup do
-        transition from: :ready, to: :ready_for_pickup
-      end
+    # What the carrier reports, kept apart from the merchant lifecycle: a bounced
+    # or damaged package changes this, never #status.
+    TRACKING_STATUSES = %w(
+      pre_transit in_transit out_for_delivery available_for_pickup
+      delivered return_to_sender failure unknown
+    ).freeze
 
-      event :fulfill do
-        transition from: %i(ready ready_for_pickup canceled), to: :fulfilled, if: ->(fulfillment) { fulfillment.provider.can_fulfill?(fulfillment) }
-      end
-      after_transition to: :ready, do: :publish_fulfillment_ready_event
-      after_transition to: :fulfilled, do: [:after_fulfill, :publish_fulfillment_fulfilled_event]
+    validates :tracking_status, inclusion: { in: TRACKING_STATUSES }, allow_blank: true
 
-      event :cancel do
-        transition to: :canceled, from: %i(pending ready ready_for_pickup)
-      end
-      # Restocking and the provider call live in Spree::Fulfillments::Cancel,
-      # not here: they are stock movements and network I/O, which have no
-      # business running inside the save transaction. Only the event publish
-      # stays, because it describes the status change itself.
-      after_transition to: :canceled, do: :publish_fulfillment_canceled_event
-
-      event :resume do
-        transition from: :canceled, to: :ready, if: lambda { |fulfillment|
-          fulfillment.determine_state(fulfillment.owner) == 'ready'
-        }
-        transition from: :canceled, to: :pending
-      end
-      # Re-unstocking lives in Spree::Fulfillments::Resume — see above.
-      after_transition from: :canceled, to: %i(pending ready fulfilled), do: :publish_fulfillment_resumed_event
-    end
-
-    # @deprecated Use {#fulfill}; removed in 6.1.
+    # @deprecated Use {Spree::Fulfillments::Fulfill}; removed in 6.1.
     def ship(*args)
-      Spree::Deprecation.warn('Spree::Fulfillment#ship is deprecated and will be removed in Spree 6.1. Use #fulfill instead.')
-      fulfill(*args)
+      Spree::Deprecation.warn('Spree::Fulfillment#ship is deprecated and will be removed in Spree 6.1. Use Spree::Fulfillments::Fulfill instead.')
+      Spree.fulfillment_fulfill_workflow.call(fulfillment: self, **args.first.to_h)
     end
-
-    # @deprecated Use {#fulfill!}; removed in 6.1.
-    def ship!(*args)
-      Spree::Deprecation.warn('Spree::Fulfillment#ship! is deprecated and will be removed in Spree 6.1. Use #fulfill! instead.')
-      fulfill!(*args)
-    end
+    alias ship! ship
 
     # @deprecated Use {#can_fulfill?}; removed in 6.1.
     def can_ship?
@@ -156,6 +140,39 @@ module Spree
     def shipped?
       Spree::Deprecation.warn('Spree::Fulfillment#shipped? is deprecated and will be removed in Spree 6.1. Use #fulfilled? instead.')
       fulfilled?
+    end
+
+    # Whether this fulfillment may still be handed over. Composes the status
+    # rule with the provider's own veto; the payment and stock side of the
+    # question belongs to Spree::Fulfillments::Fulfill, which can report why.
+    #
+    # @return [Boolean]
+    def can_fulfill?
+      (unfulfilled? || canceled?) && provider.can_fulfill?(self)
+    end
+
+    # @return [Boolean] whether the package can still be recalled
+    def can_cancel?
+      unfulfilled?
+    end
+
+    # @return [Boolean] whether a canceled fulfillment can be reinstated
+    def can_resume?
+      canceled?
+    end
+
+    # @return [Boolean] whether receipt can still be confirmed
+    def can_mark_delivered?
+      fulfilled?
+    end
+
+    # Everything that has left the merchant's hands. Reads better than
+    # `fulfilled? || delivered?` at call sites that only care that the package
+    # is gone.
+    #
+    # @return [Boolean]
+    def fulfilled_or_delivered?
+      fulfilled? || delivered?
     end
     # @deprecated the column is +status+ since 6.0
     alias_attribute :state, :status
@@ -263,24 +280,6 @@ module Spree
         line_item = manifest_item.line_item
         line_item.quantity > manifest_item.quantity
       end
-    end
-
-    # Determines the appropriate +state+ according to the following logic:
-    #
-    # pending    unless order is complete and +order.payment_state+ is +paid+
-    # shipped    if already shipped (ie. does not change the state)
-    # ready      all other cases
-    # @param [Spree::Cart, Spree::Order]
-    def determine_state(order_or_cart)
-      return 'pending' if order_or_cart.is_a?(Spree::Cart)
-
-      return 'canceled' if canceled? || order_or_cart.canceled?
-      # Fulfillment is a fact — payment coverage can never un-fulfill it.
-      return 'fulfilled' if fulfilled?
-      return 'pending' unless order_or_cart.can_ship?
-      return 'pending' if fulfillment_items.any?(&:backordered?)
-
-      order_or_cart.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
     end
 
     def discounted_cost
@@ -417,8 +416,25 @@ module Spree
       end
     end
 
+    # @deprecated Use {#unfulfilled?}; removed in 6.1.
     def ready_or_pending?
-      ready? || pending?
+      unfulfilled?
+    end
+
+    # @deprecated Use {#unfulfilled?}; removed in 6.1.
+    def pending?
+      unfulfilled?
+    end
+
+    # @deprecated Use {#unfulfilled?}; removed in 6.1.
+    def ready?
+      unfulfilled?
+    end
+
+    # @deprecated `ready_for_pickup` is not a status since 6.0 — for pickup
+    # fulfillments `fulfilled` means "waiting at the counter". Removed in 6.1.
+    def ready_for_pickup?
+      fulfilled? && provider.class.pickup?
     end
 
     # @param audience [Symbol] {Spree::DeliveryMethod::STOREFRONT} (default)
@@ -596,17 +612,20 @@ module Spree
       end
     end
 
-    # Updates various aspects of the Shipment while bypassing any callbacks.  Note that this method takes an explicit reference to the
-    # Order object.  This is necessary because the association actually has a stale (and unsaved) copy of the Order and so it will not
-    # yield the correct results.
-    def update!(order)
-      old_status = status
-      new_status = determine_state(order)
-      update_columns(
-        status: new_status,
-        updated_at: Time.current
-      )
-      after_fulfill if new_status == 'fulfilled' && old_status != 'fulfilled'
+    # @deprecated No-op since 6.0; removed in 6.1.
+    #
+    # This re-derived the status from the order's payment state on every order
+    # recalculation, which is what made a fulfillment move backwards when a
+    # refund landed. A fulfillment's status now only changes when a workflow
+    # changes it, so there is nothing left to refresh.
+    def update!(*args)
+      # Only the legacy `update!(order)` form is dead. Anything else is
+      # ActiveRecord's own update! — a Hash of attributes — which workflows
+      # rely on to write the status.
+      return super unless args.one? && (args.first.is_a?(Spree::Order) || args.first.is_a?(Spree::Cart))
+
+      Spree::Deprecation.warn('Spree::Fulfillment#update!(order) is a no-op since Spree 6.0 and will be removed in 6.1. Fulfillment statuses change through Spree::Fulfillments workflows.')
+      true
     end
 
     def transfer_to_location(variant, quantity, stock_location)
@@ -682,6 +701,10 @@ module Spree
 
     def set_cost_zero_when_nil
       self.cost = 0 unless cost
+    end
+
+    def apply_default_status
+      self.status ||= self.class.default_status
     end
 
     def exactly_one_owner

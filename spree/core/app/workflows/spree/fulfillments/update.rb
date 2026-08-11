@@ -87,11 +87,10 @@ module Spree
         @fulfillment.update_amounts
         order.recalculate_totals!
 
-        @fulfillment.update_columns(
-          status: @fulfillment.determine_state(order),
-          updated_at: Time.current
-        )
-
+        # A new rate changes what the delivery costs, never where the package
+        # is in its lifecycle — the old machine recomputed the status here from
+        # the order's payment state, which is precisely the coupling removed in
+        # 6.0. The rollup still runs because the order's totals moved.
         order.update_statuses!
       end
 

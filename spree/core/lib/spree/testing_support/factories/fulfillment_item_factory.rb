@@ -5,7 +5,7 @@ FactoryBot.define do
     line_item
     status { 'on_hand' }
 
-    association(:fulfillment, factory: :fulfillment, status: 'pending')
+    association(:fulfillment, factory: :fulfillment, status: 'unfulfilled')
 
     # this trait usage increases build speed ~ 2x
     trait :without_assoc do

@@ -94,11 +94,10 @@ module Spree
         expect(fulfillment.reload).not_to be_fulfilled
       end
 
-      # The state machine offers `fulfill` from ready, ready_for_pickup and
-      # canceled — shipping a canceled fulfillment is a deliberate transition
-      # (the goods went out anyway), so the workflow must not second-guess it.
-      it 'fulfills a canceled fulfillment, which the state machine allows' do
-        fulfillment.cancel!
+      # Shipping a canceled fulfillment is deliberate — the goods went out
+      # anyway — so the workflow must not second-guess it.
+      it 'fulfills a canceled fulfillment' do
+        fulfillment.update!(status: 'canceled')
 
         result = subject.call(fulfillment: fulfillment)
 
@@ -107,7 +106,7 @@ module Spree
       end
 
       it 'refuses a fulfillment already fulfilled' do
-        fulfillment.fulfill!
+        fulfillment.update!(status: 'fulfilled')
 
         result = subject.call(fulfillment: fulfillment)
 
@@ -118,11 +117,15 @@ module Spree
       # The split and the fulfillment share a transaction, so a fulfillment
       # that cannot ship must not leave a stray split behind.
       it 'creates no fulfillment when the split succeeds but shipping fails' do
-        allow_any_instance_of(Spree::Fulfillment).to receive(:fulfill!).
-          and_raise(StateMachines::InvalidTransition.new(fulfillment, fulfillment.class.state_machine, :fulfill))
+        allow_any_instance_of(Spree::Fulfillment).to receive(:publish_fulfillment_fulfilled_event).
+          and_raise(RuntimeError, 'carrier exploded')
 
         expect {
-          subject.call(fulfillment: fulfillment, items: [{ line_item: line_items.first, quantity: 1 }])
+          begin
+            subject.call(fulfillment: fulfillment, items: [{ line_item: line_items.first, quantity: 1 }])
+          rescue RuntimeError
+            nil
+          end
         }.not_to change { order.reload.fulfillments.count }
       end
     end
@@ -131,7 +134,7 @@ module Spree
     # directly has to take them off the shelf again. This used to ride on the
     # resume transition callback.
     describe 'fulfilling a canceled fulfillment' do
-      before { fulfillment.cancel! }
+      before { fulfillment.update!(status: 'canceled') }
 
       it 'takes the units back off the shelf' do
         variant = fulfillment.fulfillment_items.first.variant
@@ -145,7 +148,7 @@ module Spree
       end
 
       it 'does not unstock when the fulfillment was open' do
-        fulfillment.resume!
+        Spree.fulfillment_resume_workflow.call(fulfillment: fulfillment)
         variant = fulfillment.fulfillment_items.first.variant
         stock_item = fulfillment.stock_location.stock_item(variant)
 

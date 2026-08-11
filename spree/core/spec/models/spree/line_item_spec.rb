@@ -600,7 +600,7 @@ describe Spree::LineItem, type: :model do
 
     context 'when the shipment is canceled' do
       it 'returns 0' do
-        shipment.cancel!
+        shipment.update!(status: 'canceled')
         expect(line_item.delivery_cost).to eq(0)
       end
     end

@@ -159,6 +159,23 @@ steps:
       the work set. spree_shipping_method_categories survives to 6.1 as the
       source and rollback reference.
 
+  - id: migrate_fulfillment_statuses
+    name: "Remap fulfillment statuses"
+    task: "spree:migrate_fulfillment_statuses"
+    notes: |
+      Moves fulfillments onto the unfulfilled/fulfilled/delivered vocabulary.
+      'pending' and 'ready' both become 'unfulfilled' — the difference between
+      them was the order's payment state, which is no longer a property of a
+      fulfillment. 'ready_for_pickup' becomes 'fulfilled', which is what
+      "waiting at the counter" means now. Pickup fulfillments already marked
+      fulfilled become 'delivered' with delivered_at copied from fulfilled_at:
+      under the old machine a pickup reached that status only when the customer
+      collected it, so it records confirmed receipt. Shipping fulfillments stay
+      'fulfilled' — whether they arrived was never tracked before 6.0. Order
+      rollups are recomputed rather than mapped. Run after
+      migrate_delivery_profiles (it reads delivery-method providers to tell
+      pickup methods apart). Idempotent.
+
   - id: migrate_zones_to_delivery_zones
     name: "Convert delivery zones"
     task: "spree:migrate_zones_to_delivery_zones"

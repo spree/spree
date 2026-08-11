@@ -12,7 +12,7 @@ module Spree
 
       expect(result).to be_success
       expect(result.value.status).to eq('placed')
-      expect(order.reload.fulfillments.map(&:status)).to all(eq('pending'))
+      expect(order.reload.fulfillments.map(&:status)).to all(eq('unfulfilled'))
     end
 
     it 'publishes order.resumed after commit', :events do

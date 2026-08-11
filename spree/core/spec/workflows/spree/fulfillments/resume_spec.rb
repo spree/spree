@@ -10,7 +10,7 @@ module Spree
 
     let(:execute) { subject.call(fulfillment: fulfillment) }
 
-    before { fulfillment.cancel! }
+    before { fulfillment.update!(status: 'canceled') }
 
     it 'brings the fulfillment back' do
       expect(execute.success?).to eq(true)
@@ -27,7 +27,7 @@ module Spree
     end
 
     it 'refuses a fulfillment that is not canceled' do
-      fulfillment.resume!
+      described_class.call(fulfillment: fulfillment)
 
       result = subject.call(fulfillment: fulfillment)
 

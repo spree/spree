@@ -46,7 +46,7 @@ module Spree
       described_class.call(order: order)
     end
 
-    it 'marks the fulfillment ready when the order is paid' do
+    it 'leaves the fulfillment unfulfilled until someone hands it over' do
       Spree::Shipment.create(order: order, stock_location: create(:stock_location))
       order.shipments.reload
 
@@ -54,7 +54,7 @@ module Spree
       described_class.call(order: order)
       order.reload
 
-      expect(order.shipment_state).to eq('ready')
+      expect(order.shipment_state).to eq('unfulfilled')
     end
 
     it 'does not sell inventory units if track_inventory_levels is false' do

@@ -53,7 +53,7 @@ module Spree
     end
 
     it 'refuses a fulfillment that cannot cancel' do
-      fulfillment.fulfill!
+      fulfillment.update!(status: 'fulfilled')
 
       result = subject.call(fulfillment: fulfillment)
 

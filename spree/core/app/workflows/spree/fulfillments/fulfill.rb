@@ -17,8 +17,7 @@ module Spree
     # together or not at all: a split that succeeded while the fulfillment
     # failed would leave the order carrying a phantom fulfillment nobody asked
     # for. The state machine stays the low-level mechanic underneath — this
-    # workflow decides *what* ships, the machine still decides whether the
-    # transition is legal.
+    # workflow decides *what* ships and whether shipping it is allowed.
     class Fulfill < Spree::Workflow
       hooks :validate, :after_fulfill
 
@@ -34,8 +33,12 @@ module Spree
       #   stored on the fulfillment that ships
       # @param notify_customer [Boolean] whether the shipment email goes out;
       #   false suppresses it for this dispatch only
+      # @param force [Boolean] dispatch even when the order is unpaid or holds
+      #   backordered units. The merchant's call to make — staff shipping
+      #   against an invoice is ordinary trade, and the old pending/ready
+      #   statuses made it impossible to express.
       # @return [Spree::ServiceModule::Result] the fulfilled fulfillment on success
-      def perform(fulfillment:, items: nil, tracking: nil, notify_customer: true)
+      def perform(fulfillment:, items: nil, tracking: nil, notify_customer: true, force: false)
         super
 
         @source = fulfillment
@@ -52,7 +55,15 @@ module Spree
           step :unstock_if_resuming_from_canceled
           step :apply_tracking
           step :mark_fulfilled
+          step :capture_payment_if_configured
         end
+
+        # The provider books the courier or hands off to the 3PL — network I/O,
+        # so it runs after the status is committed rather than holding the
+        # transaction open on a carrier's latency.
+        external_step :tell_provider_it_shipped
+
+        step :roll_up_order_status
 
         run_hooks :after_fulfill
         success(@fulfillment.reload)
@@ -75,7 +86,29 @@ module Spree
       def ensure_fulfillable
         failure(@source, Spree.t('fulfillments.errors.cannot_fulfill')) unless @source.can_fulfill?
 
+        ensure_ready_to_hand_over
         ensure_requested_units_available
+      end
+
+      # What the pending/ready statuses used to encode, asked once at the
+      # moment it matters instead of being recomputed onto every fulfillment
+      # whenever the order changed. A validate hook can wave either rule
+      # through — staff dispatching against an unpaid invoice is a normal
+      # merchant decision, and it was impossible while the status itself was
+      # derived from payment.
+      def ensure_ready_to_hand_over
+        return if force
+
+        order = @source.order
+        return if order.nil?
+
+        if @source.fulfillment_items.any?(&:backordered?)
+          failure(@source, Spree.t('fulfillments.errors.backordered_units'))
+        end
+
+        return if order.paid? || Spree::Config[:auto_capture_on_dispatch]
+
+        failure(@source, Spree.t('fulfillments.errors.order_not_paid'))
       end
 
       # Each requested quantity has to exist in *this* fulfillment. Without
@@ -129,10 +162,8 @@ module Spree
       end
 
       # A canceled fulfillment already put its units back on the shelf, so
-      # shipping it directly has to take them off again — the state machine
-      # allows canceled -> fulfilled precisely so goods that went out anyway
-      # can be recorded. Previously the resume callback covered this; it is an
-      # explicit step now that the callbacks are gone.
+      # shipping it directly has to take them off again — canceled -> fulfilled
+      # is allowed precisely so goods that went out anyway can be recorded.
       def unstock_if_resuming_from_canceled
         return unless @source.canceled?
 
@@ -147,22 +178,43 @@ module Spree
       # (run_provider_create_fulfillment) sees an admin-entered number and
       # leaves it alone, and so the shipment email carries it.
       #
-      # update_columns, not update! — Fulfillment#update! is a legacy override
-      # taking the order and recomputing status, which would fire after_fulfill
-      # ahead of the transition.
       def apply_tracking
         return if tracking.blank?
 
         @fulfillment.update_columns(tracking: tracking.to_s.squish, updated_at: Time.current)
       end
 
-      # The suppression flag rides on the record because the event is published
-      # from an after_transition callback, which takes no arguments.
+      # The suppression flag rides on the record because the event publisher
+      # reads it when building the event metadata.
       def mark_fulfilled
         @fulfillment.notify_customer = notify_customer
-        @fulfillment.fulfill!
-      rescue StateMachines::InvalidTransition => e
-        failure(@fulfillment, e.message)
+        @fulfillment.fulfillment_items.each(&:ship!)
+        @fulfillment.update!(status: 'fulfilled', fulfilled_at: Time.current)
+        @fulfillment.publish_fulfillment_fulfilled_event
+      end
+
+      # Dispatch is the trigger for taking the money when the merchant has
+      # chosen to charge on dispatch rather than at checkout.
+      def capture_payment_if_configured
+        return unless Spree::Config[:auto_capture_on_dispatch]
+
+        @fulfillment.process_order_payments
+      end
+
+      # Tracking the provider discovers is kept unless an admin already typed
+      # one in — a human who entered a number meant it.
+      def tell_provider_it_shipped
+        result = @fulfillment.provider.create_fulfillment(@fulfillment)
+        return unless result.is_a?(Hash)
+
+        new_tracking = result[:tracking_number].presence
+        return if new_tracking.blank? || @fulfillment.tracking.present?
+
+        @fulfillment.update_column(:tracking, new_tracking)
+      end
+
+      def roll_up_order_status
+        @fulfillment.order&.update_statuses!
       end
     end
   end

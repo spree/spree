@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :fulfillment, aliases: [:shipment], class: Spree::Fulfillment do
     tracking { 'U10000' }
     cost     { 100.00 }
-    status   { 'pending' }
+    status   { 'unfulfilled' }
     order    { cart.present? ? nil : association(:order) }
     stock_location
 
