@@ -402,11 +402,26 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   const shippable = CAN_SHIP.includes(fulfillment.status)
 
   return (
-    <div className="rounded-lg border p-4 flex flex-col gap-3">
-      <div className="flex items-center justify-between">
+    <div className="rounded-lg border flex flex-col">
+      <div className="flex items-center justify-between border-b p-3">
         <div className="flex items-center gap-2">
           <StatusBadge status={fulfillment.status} />
-          <span className="text-sm font-medium">{fulfillment.number}</span>
+          {fulfillment.stock_location && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <MapPinIcon className="size-3" />
+              {fulfillment.stock_location.name}
+            </div>
+          )}
+
+          {fulfillment.fulfilled_at && (
+            <span className="text-xs text-muted-foreground">
+              <RelativeTime
+                iso={fulfillment.fulfilled_at}
+                prefix={t('admin.orders.detail.tracking.shipped_prefix')}
+                fallback=""
+              />
+            </span>
+          )}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -463,7 +478,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       </div>
 
       {(fulfillment.delivery_method || Number.parseFloat(fulfillment.cost) > 0) && (
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center justify-between text-sm p-3 border-b">
           <span className="text-muted-foreground">
             {fulfillment.delivery_method?.name ?? t('admin.pages.orders.detail.no_delivery_method')}
           </span>
@@ -471,15 +486,8 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         </div>
       )}
 
-      {fulfillment.stock_location && (
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <MapPinIcon className="size-3" />
-          {fulfillment.stock_location.name}
-        </div>
-      )}
-
       {fulfillment.tracking && !fulfilling && (
-        <div className="text-sm">
+        <div className="text-sm p-3 border-b">
           <span className="text-muted-foreground">
             {t('admin.orders.detail.tracking.prefix')}:{' '}
           </span>
@@ -498,16 +506,6 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
         </div>
       )}
 
-      {fulfillment.fulfilled_at && (
-        <span className="text-xs text-muted-foreground">
-          <RelativeTime
-            iso={fulfillment.fulfilled_at}
-            prefix={t('admin.orders.detail.tracking.shipped_prefix')}
-            fallback=""
-          />
-        </span>
-      )}
-
       {fulfilling ? (
         <FulfillmentFulfillForm
           order={order}
@@ -519,7 +517,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
           <FulfillmentItemList rows={fulfillmentItemRows(fulfillment, order.items ?? [])} />
 
           {shippable && (
-            <div className="flex justify-end">
+            <div className="flex justify-end p-3 border-t">
               <Button type="button" size="sm" onClick={() => setFulfilling(true)}>
                 <TruckIcon data-icon="inline-start" />
                 {t('admin.orders.fulfill.action')}

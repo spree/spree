@@ -171,10 +171,10 @@
   --color-background: var(--background);
 
   /* Spree status colors — for badges & alerts */
-  --color-success: var(--color-green-500);
+  --color-success: var(--color-lime-500);
   --color-warning: var(--color-yellow-500);
-  --color-info: var(--color-blue-500);
-  --color-danger: var(--color-red-500);
+  --color-info: var(--color-sky-500);
+  --color-danger: var(--color-rose-500);
 }
 
 @utility focus-ring {
