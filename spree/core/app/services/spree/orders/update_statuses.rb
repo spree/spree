@@ -8,7 +8,7 @@ module Spree
     class UpdateStatuses
       prepend Spree::ServiceModule::Base
 
-      PAYMENT_STATUSES = %w[none authorized partially_paid paid partially_refunded refunded overcharged voided].freeze
+      PAYMENT_STATUSES = Spree::Order::PAYMENT_STATUSES
 
       def call(order:)
         order.update_columns(

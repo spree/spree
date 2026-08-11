@@ -8,6 +8,10 @@ module Spree
     # 5.4-to-5.5 backfill rake can read it; AR ignores it everywhere else.
     self.ignored_columns += ['channel']
 
+    # What Orders::UpdateStatuses derives — the only writer of the column.
+    PAYMENT_STATUSES = %w(none authorized partially_paid paid partially_refunded refunded overcharged voided).freeze
+    # @deprecated legacy machine vocabulary; rows carrying it stay valid until
+    #   the status migration rewrites them. Removed in 6.1.
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
     FULFILLMENT_STATUSES = %w(backorder canceled partial unfulfilled fulfilled delivered pending ready shipped)
     # @deprecated legacy name — remove in 6.1 together with the 'shipped' value
@@ -222,7 +226,7 @@ module Spree
     # Shared money/quantity validations live in Spree::Purchase::Validations;
     # only order-specific rules stay here.
     validates :email, presence: true, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
-    validates :payment_status,     inclusion: { in: PAYMENT_STATES, allow_blank: true }
+    validates :payment_status,     inclusion: { in: PAYMENT_STATUSES | PAYMENT_STATES, allow_blank: true }
     validates :fulfillment_status, inclusion: { in: FULFILLMENT_STATUSES, allow_blank: true }
 
     # @deprecated Both warn and run the full recalculation; use

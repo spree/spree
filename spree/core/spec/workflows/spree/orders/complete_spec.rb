@@ -7,6 +7,19 @@ module Spree
 
     after { Spree::Config.set track_inventory_levels: true }
 
+    # Regression: the rollup writes its vocabulary (none/authorized/...) via
+    # update_columns, so the model's validation must accept it — otherwise the
+    # first derived value poisons the order and completion 422s forever.
+    it 'completes an order whose rollup already wrote a derived payment status' do
+      draft = create(:order_ready_to_ship, store: store)
+      draft.update_columns(status: 'draft', completed_at: nil, payment_status: 'authorized')
+
+      result = described_class.call(order: draft, payment_pending: true)
+
+      expect(result).to be_success
+      expect(draft.reload.status).to eq('placed')
+    end
+
     it 'is idempotent — an already placed order halts successfully with no side effects' do
       order.update_columns(completed_at: Time.current, status: 'placed')
 
