@@ -463,6 +463,7 @@ module Spree
         # survives Zeitwerk code reloads in development.
         Spree.subscribers.concat [
           Spree::OrderPlacedSubscriber,
+          Spree::OrderStatusSubscriber,
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
