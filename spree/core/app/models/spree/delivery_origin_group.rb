@@ -15,18 +15,21 @@ module Spree
     has_many :delivery_origin_group_locations, class_name: 'Spree::DeliveryOriginGroupLocation',
              dependent: :destroy, inverse_of: :delivery_origin_group
     has_many :stock_locations, through: :delivery_origin_group_locations, class_name: 'Spree::StockLocation'
-    has_many :delivery_zones, class_name: 'Spree::DeliveryZone', dependent: :restrict_with_error,
+    # The group contains its zones and methods — that is how the dashboard
+    # nests them and how a merchant reads it — so deleting the group takes
+    # them with it rather than asking for them to be emptied by hand first.
+    # (Destroying a zone cascades to its own methods in turn.)
+    has_many :delivery_zones, class_name: 'Spree::DeliveryZone', dependent: :destroy,
              inverse_of: :delivery_origin_group
-    has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: :restrict_with_error,
+    has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: :destroy,
              inverse_of: :delivery_origin_group
 
     delegate :store, to: :delivery_profile
 
-    # The last group is load-bearing (zones and methods must live somewhere);
-    # others go once nothing hangs off them.
+    # Only one rule survives: a profile needs somewhere for delivery to live,
+    # so its last group stays. Anything hanging off a group goes with it.
     def can_be_deleted?
-      delivery_zones.none? && delivery_methods.none? &&
-        delivery_profile.delivery_origin_groups.where.not(id: id).exists?
+      delivery_profile.delivery_origin_groups.where.not(id: id).exists?
     end
 
     # Whether packages originating from this stock location are served by
