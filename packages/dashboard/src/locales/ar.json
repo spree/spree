@@ -1838,7 +1838,8 @@
           "split_quantity": "الكمية المراد نقلها",
           "split_title": "تقسيم الشحنة",
           "split_would_empty": "اترك وحدة واحدة على الأقل، أو غيّر مصدر الشحنة بالكامل بدلاً من ذلك.",
-          "unfulfilled_other": "غير مُنفَّذ ({{count}})"
+          "unfulfilled_other": "غير مُنفَّذ ({{count}})",
+          "mark_delivered": "وضع علامة كمُسلَّم"
         },
         "gift_card_section": {
           "applied_suffix": "مُطبَّق",
@@ -1959,7 +1960,9 @@
         "fulfilled": "تم الوفاء به",
         "partial": "جزئي",
         "pending": "قيد الانتظار",
-        "ready": "مستعد"
+        "ready": "مستعد",
+        "unfulfilled": "لم يتم الوفاء به",
+        "delivered": "تم التسليم"
       },
       "item_count_one": "{{count}} البند",
       "item_count_other": "{{count}} العناصر",

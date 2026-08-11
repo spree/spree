@@ -1846,7 +1846,8 @@
           "unfulfilled_few": "Niezrealizowane ({{count}})",
           "unfulfilled_many": "Niezrealizowane ({{count}})",
           "unfulfilled_one": "Niezrealizowane ({{count}})",
-          "unfulfilled_other": "Niezrealizowane ({{count}})"
+          "unfulfilled_other": "Niezrealizowane ({{count}})",
+          "mark_delivered": "Oznacz jako dostarczone"
         },
         "gift_card_section": {
           "applied_suffix": "zastosowano",
@@ -1971,7 +1972,9 @@
         "fulfilled": "Zrealizowane",
         "partial": "Częściowa",
         "pending": "Oczekująca",
-        "ready": "Gotowe"
+        "ready": "Gotowe",
+        "unfulfilled": "Niezrealizowane",
+        "delivered": "Dostarczone"
       },
       "item_count_few": "{{count}} pozycje",
       "item_count_many": "{{count}} pozycji",

@@ -67,16 +67,18 @@ function claimedQuantities(fulfillments: GroupableFulfillment[]): Map<string, nu
 }
 
 /**
- * Sums, per line item, how many units sit in fulfilled fulfillments. Those
- * units have left the building, so an edit can neither remove the row nor push
- * its quantity below them. Canceled fulfillments restock their units and do
- * not count.
+ * Sums, per line item, how many units have left the merchant's hands. Those
+ * units are gone, so an edit can neither remove the row nor push its quantity
+ * below them. Delivered counts too — it is downstream of fulfilled. Canceled
+ * fulfillments restock their units and do not count.
  */
+const GONE_STATUSES = ['fulfilled', 'delivered']
+
 export function fulfilledQuantities(fulfillments: GroupableFulfillment[]): Map<string, number> {
   const fulfilled = new Map<string, number>()
 
   for (const fulfillment of fulfillments) {
-    if (fulfillment.status !== 'fulfilled') continue
+    if (!GONE_STATUSES.includes(fulfillment.status)) continue
 
     for (const item of fulfillment.fulfillment_items ?? []) {
       if (!item.line_item_id) continue

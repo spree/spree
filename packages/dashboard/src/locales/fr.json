@@ -1828,7 +1828,8 @@
           "split_title": "Diviser l'expédition",
           "split_would_empty": "Laissez au moins une unité, ou modifiez plutôt l'origine de toute l'expédition.",
           "unfulfilled_one": "Non expédié ({{count}})",
-          "unfulfilled_other": "Non expédiés ({{count}})"
+          "unfulfilled_other": "Non expédiés ({{count}})",
+          "mark_delivered": "Marquer comme livré"
         },
         "gift_card_section": {
           "applied_suffix": "appliqué",
@@ -1949,7 +1950,9 @@
         "fulfilled": "Traité",
         "partial": "Partiel",
         "pending": "En attente",
-        "ready": "Prêt"
+        "ready": "Prêt",
+        "unfulfilled": "Non traité",
+        "delivered": "Livré"
       },
       "item_count_one": "{{count}} article",
       "item_count_other": "{{count}} articles",

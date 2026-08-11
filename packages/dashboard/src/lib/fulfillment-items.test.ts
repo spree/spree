@@ -186,6 +186,20 @@ describe('fulfilledQuantities', () => {
     expect(quantities.size).toBe(0)
   })
 
+  // Delivered is downstream of fulfilled — those units are just as gone, and
+  // treating them as available would let an edit remove goods the customer
+  // already has.
+  it('counts units in delivered fulfillments', () => {
+    const quantities = fulfilledQuantities([
+      fulfillment({
+        status: 'delivered',
+        fulfillment_items: [{ line_item_id: 'li_1', variant_id: 'variant_1', quantity: 2 }],
+      }),
+    ])
+
+    expect(quantities.get('li_1')).toBe(2)
+  })
+
   it('skips fulfillment items that reference no line item', () => {
     const quantities = fulfilledQuantities([
       fulfillment({

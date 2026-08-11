@@ -1828,7 +1828,8 @@
           "split_title": "Split fulfillment",
           "split_would_empty": "Leave at least one unit behind, or change the origin of the whole fulfillment instead.",
           "unfulfilled_one": "Unfulfilled ({{count}})",
-          "unfulfilled_other": "Unfulfilled ({{count}})"
+          "unfulfilled_other": "Unfulfilled ({{count}})",
+          "mark_delivered": "Mark as delivered"
         },
         "gift_card_section": {
           "applied_suffix": "applied",
@@ -1949,7 +1950,9 @@
         "fulfilled": "Fulfilled",
         "partial": "Partial",
         "pending": "Pending",
-        "ready": "Ready"
+        "ready": "Ready",
+        "unfulfilled": "Unfulfilled",
+        "delivered": "Delivered"
       },
       "item_count_one": "{{count}} item",
       "item_count_other": "{{count}} items",

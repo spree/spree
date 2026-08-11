@@ -1824,7 +1824,8 @@
           "split_quantity": "移动数量",
           "split_title": "拆分发货单",
           "split_would_empty": "请至少保留一件，或改为修改整个发货单的发货地。",
-          "unfulfilled_other": "未发货（{{count}}）"
+          "unfulfilled_other": "未发货（{{count}}）",
+          "mark_delivered": "标记为已送达"
         },
         "gift_card_section": {
           "applied_suffix": "已应用",
@@ -1945,7 +1946,9 @@
         "fulfilled": "已履行",
         "partial": "部分完成",
         "pending": "待处理",
-        "ready": "已就绪"
+        "ready": "已就绪",
+        "unfulfilled": "未履行",
+        "delivered": "已送达"
       },
       "item_count_one": "{{count}} 件商品",
       "item_count_other": "{{count}} 件商品",

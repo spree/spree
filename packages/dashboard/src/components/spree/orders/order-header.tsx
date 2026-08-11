@@ -160,7 +160,7 @@ export function OrderHeader({ order }: { order: Order }) {
         <>
           {/* Fully fulfilled means every unit has shipped, so there is
               nothing left an edit could lawfully change. */}
-          {order.fulfillment_status !== 'fulfilled' && (
+          {!['fulfilled', 'delivered'].includes(order.fulfillment_status ?? '') && (
             <Button variant="outline" size="sm" asChild>
               <Link to="/$storeId/orders/$orderId/edit" params={{ storeId, orderId }}>
                 <PencilIcon className="size-4" />

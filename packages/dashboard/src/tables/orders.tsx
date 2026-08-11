@@ -104,9 +104,9 @@ defineTable('orders', {
         { value: 'backorder', label: i18n.t('admin.orders.fulfillment_statuses.backorder') },
         { value: 'canceled', label: i18n.t('admin.orders.fulfillment_statuses.canceled') },
         { value: 'partial', label: i18n.t('admin.orders.fulfillment_statuses.partial') },
-        { value: 'pending', label: i18n.t('admin.orders.fulfillment_statuses.pending') },
-        { value: 'ready', label: i18n.t('admin.orders.fulfillment_statuses.ready') },
+        { value: 'unfulfilled', label: i18n.t('admin.orders.fulfillment_statuses.unfulfilled') },
         { value: 'fulfilled', label: i18n.t('admin.orders.fulfillment_statuses.fulfilled') },
+        { value: 'delivered', label: i18n.t('admin.orders.fulfillment_statuses.delivered') },
       ],
       render: (order) =>
         order.fulfillment_status ? (

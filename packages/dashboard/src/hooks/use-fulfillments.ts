@@ -87,5 +87,9 @@ export function useFulfillmentActions(orderId: string) {
     adminClient.orders.fulfillments.resume(orderId, fulfillmentId),
   )
 
-  return { create, update, split, fulfill, cancel, resume }
+  const markDelivered = useFulfillmentMutation(orderId, (fulfillmentId: string) =>
+    adminClient.orders.fulfillments.markDelivered(orderId, fulfillmentId),
+  )
+
+  return { create, update, split, fulfill, cancel, resume, markDelivered }
 }

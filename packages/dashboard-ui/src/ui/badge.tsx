@@ -62,6 +62,8 @@ const statusVariantMap: Record<string, VariantProps<typeof badgeVariants>['varia
   completed: 'success',
   paid: 'success',
   fulfilled: 'success',
+  delivered: 'success',
+  unfulfilled: 'warning',
   published: 'success',
   approved: 'success',
   ready: 'warning',

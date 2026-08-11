@@ -36,6 +36,7 @@ import {
 import {
   EllipsisVerticalIcon,
   MapPinIcon,
+  PackageCheckIcon,
   PackageIcon,
   PencilIcon,
   PlusIcon,
@@ -382,17 +383,19 @@ function CreateFulfillmentDialog({
   )
 }
 
-// Which transitions the backend's state machine actually offers, so the card
-// does not present an action that can only 422.
-const CAN_SHIP = ['ready', 'ready_for_pickup']
-const CAN_CANCEL = ['pending', 'ready', 'ready_for_pickup']
-const CAN_EDIT = ['pending', 'ready', 'ready_for_pickup']
+// Which transitions the workflows actually accept, so the card does not
+// present an action that can only 422.
+const CAN_SHIP = ['unfulfilled']
+const CAN_CANCEL = ['unfulfilled']
+const CAN_EDIT = ['unfulfilled']
+// Receipt is confirmed after handover, never before.
+const CAN_MARK_DELIVERED = ['fulfilled']
 
 function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Fulfillment }) {
   const { t } = useTranslation()
   const confirm = useConfirm()
   const orderId = order.id
-  const { cancel, resume } = useFulfillmentActions(orderId)
+  const { cancel, resume, markDelivered } = useFulfillmentActions(orderId)
 
   const [editOpen, setEditOpen] = useState(false)
   const [splitOpen, setSplitOpen] = useState(false)
@@ -442,6 +445,13 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
               <DropdownMenuItem onClick={() => setSplitOpen(true)}>
                 <SplitIcon className="size-4" />
                 {t('admin.orders.detail.fulfillments.split')}
+              </DropdownMenuItem>
+            )}
+
+            {CAN_MARK_DELIVERED.includes(fulfillment.status) && (
+              <DropdownMenuItem onClick={() => markDelivered.mutate(fulfillment.id)}>
+                <PackageCheckIcon className="size-4" />
+                {t('admin.orders.detail.fulfillments.mark_delivered')}
               </DropdownMenuItem>
             )}
 

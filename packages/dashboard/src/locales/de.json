@@ -1828,7 +1828,8 @@
           "split_title": "Sendung aufteilen",
           "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung.",
           "unfulfilled_one": "Nicht versandt ({{count}})",
-          "unfulfilled_other": "Nicht versandt ({{count}})"
+          "unfulfilled_other": "Nicht versandt ({{count}})",
+          "mark_delivered": "Als zugestellt markieren"
         },
         "gift_card_section": {
           "applied_suffix": "angewendet",
@@ -1949,7 +1950,9 @@
         "fulfilled": "Abgewickelt",
         "partial": "Teilweise",
         "pending": "Ausstehend",
-        "ready": "Bereit"
+        "ready": "Bereit",
+        "unfulfilled": "Nicht abgewickelt",
+        "delivered": "Zugestellt"
       },
       "item_count_one": "{{count}} Artikel",
       "item_count_other": "{{count}} Artikel",

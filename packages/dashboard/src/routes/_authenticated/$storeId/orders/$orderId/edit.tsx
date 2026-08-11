@@ -215,7 +215,7 @@ function OrderEditPage() {
 
   // The header hides its edit link on fulfilled orders, but the URL stays
   // reachable — and the per-row clamps below would still allow additions.
-  if (order.fulfillment_status === 'fulfilled') {
+  if (['fulfilled', 'delivered'].includes(order.fulfillment_status ?? '')) {
     return (
       <ResourceLayout
         header={
