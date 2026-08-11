@@ -530,7 +530,7 @@
     },
     "delivery_origin_groups": {
       "delete_confirm": {
-        "message": "确定删除“{{name}}”？请先将其区域和配送方式移至其他分组。",
+        "message": "删除\"{{name}}\"？其区域和配送方式将一并删除。",
         "title": "删除发货地分组"
       },
       "edit_description": "重命名该分组，或更改其发货的库存地点。",
@@ -557,7 +557,7 @@
       "create_description": "将国家、省份或邮编组合为配送服务区域。",
       "create_label": "创建配送区域",
       "delete_confirm": {
-        "message": "删除“{{name}}”？使用该区域的配送方式将不再匹配这些地区。",
+        "message": "删除\"{{name}}\"？其配送方式将一并删除。",
         "title": "删除配送区域"
       },
       "edit_description": "保存时下方成员将替换该区域的全部成员。",

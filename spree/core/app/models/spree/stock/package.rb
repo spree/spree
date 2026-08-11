@@ -73,7 +73,7 @@ module Spree
       # so the tare applies everywhere without any of them knowing about it.
       def weight
         contents_weight = contents.sum(&:weight)
-        tare = order&.store&.preferred_default_package_weight.to_f
+        tare = owner&.store&.preferred_default_package_weight.to_f
 
         contents_weight + tare
       end
@@ -86,7 +86,7 @@ module Spree
       #
       # @return [Hash{Symbol => Float}, nil]
       def dimensions
-        store = order&.store
+        store = owner&.store
         return if store.nil?
 
         length = store.preferred_default_package_length.to_f
@@ -121,10 +121,8 @@ module Spree
         quantity.zero?
       end
 
-      # Pre-completion packages belong to a cart, where #order walks to nil —
-      # the line items carry the purchase currency either way.
       def currency
-        order&.currency ||
+        owner&.currency ||
           contents.filter_map { |item| item.try(:inventory_unit)&.line_item&.currency }.first ||
           Spree::Current.currency
       end

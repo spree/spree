@@ -65,6 +65,20 @@ describe Spree::DeliveryMethodRule, type: :model do
       expect(rule.eligible?(channel_package)).to be(false)
     end
 
+    # During checkout the package belongs to a Cart — reading the channel
+    # through package.order returned nil and hid every channel-restricted
+    # method from the very customers it was meant for.
+    it 'matches a cart-owned package by the cart channel' do
+      rule = described_class.new(delivery_method: delivery_method)
+      rule.preferred_channel_ids = [channel.id]
+
+      cart = create(:cart, store: store, channel: channel)
+      line_item = create(:line_item, cart: cart, order: nil)
+      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+
+      expect(rule.eligible?(fulfillment.to_package)).to be(true)
+    end
+
     it 'hides a channel-restricted method from carts with no channel' do
       rule = described_class.new(delivery_method: delivery_method)
       rule.preferred_channel_ids = [channel.id]

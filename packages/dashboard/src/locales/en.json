@@ -530,7 +530,7 @@
     },
     "delivery_origin_groups": {
       "delete_confirm": {
-        "message": "Delete \"{{name}}\"? Move its zones and methods to another group first.",
+        "message": "Delete \"{{name}}\"? Its zones and delivery methods go with it.",
         "title": "Delete origin group"
       },
       "edit_description": "Rename this group or change which locations it ships from.",
@@ -557,7 +557,7 @@
       "create_description": "Group countries, states or postal codes into an area served by delivery methods.",
       "create_label": "Create delivery zone",
       "delete_confirm": {
-        "message": "Delete \"{{name}}\"? Delivery methods using it will stop matching these areas.",
+        "message": "Delete \"{{name}}\"? Its delivery methods are deleted with it.",
         "title": "Delete delivery zone"
       },
       "edit_description": "Members below replace the zone’s full member list on save.",

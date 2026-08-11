@@ -20,7 +20,7 @@ module SpreeEasyPost
     initializer 'spree_easypost.http_logging' do
       next unless Rails.env.development? || ENV['SPREE_EASYPOST_HTTP_LOG'].present?
 
-      EasyPost::Hooks.subscribe(:response, :spree_rails_logger, lambda { |context|
+      logger_hook = lambda do |context|
         duration_ms = ((context.response_timestamp - context.request_timestamp) * 1000).round
         line = "[EasyPost] #{context.method.to_s.upcase} #{context.path} -> #{context.http_status} (#{duration_ms}ms)"
 
@@ -29,7 +29,13 @@ module SpreeEasyPost
         else
           Rails.logger.info(line)
         end
-      })
+      rescue StandardError => e
+        # The SDK invokes hooks inline in the request path with no rescue of
+        # its own — a logging hiccup must never take checkout down with it.
+        Rails.logger.warn("[EasyPost] logging hook failed: #{e.class}: #{e.message}")
+      end
+
+      EasyPost::Hooks.subscribe(:response, :spree_rails_logger, logger_hook)
     end
 
     config.after_initialize do

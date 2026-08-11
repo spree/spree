@@ -105,20 +105,27 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
     # (whose nil address then killed rating inside the provider's rescue).
     it 'quotes for a cart-owned package against the cart ship address' do
       cart = create(:cart, store: store, ship_address: create(:address))
-      line_item = create(:line_item, cart: cart, order: nil)
+      create(:line_item, cart: cart, order: nil)
       fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
-      fulfillment.set_up_inventory('on_hand', line_item.variant, cart, line_item)
+
+      sent_to_address = nil
+      allow(shipment_service).to receive(:create) do |params|
+        sent_to_address = params[:to_address]
+        easypost_shipment
+      end
 
       estimates = provider.estimates(fulfillment.to_package)
 
       expect(estimates.size).to eq(2)
+      # The destination must be the CART's address — the regression had it
+      # reading a stranger order's (nil) address instead.
+      expect(sent_to_address[:zip]).to eq(cart.ship_address.zipcode)
     end
 
     it 'declines to quote when the owner has no ship address yet' do
       cart = create(:cart, store: store, ship_address: nil)
-      line_item = create(:line_item, cart: cart, order: nil)
+      create(:line_item, cart: cart, order: nil)
       fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
-      fulfillment.set_up_inventory('on_hand', line_item.variant, cart, line_item)
 
       expect(provider.estimates(fulfillment.to_package)).to eq([])
     end

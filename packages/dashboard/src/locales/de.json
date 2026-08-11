@@ -530,7 +530,7 @@
     },
     "delivery_origin_groups": {
       "delete_confirm": {
-        "message": "\"{{name}}\" löschen? Verschieben Sie zuerst die Zonen und Methoden in eine andere Gruppe.",
+        "message": "\"{{name}}\" löschen? Zonen und Versandarten werden mit gelöscht.",
         "title": "Standortgruppe löschen"
       },
       "edit_description": "Benennen Sie diese Gruppe um oder ändern Sie, aus welchen Standorten sie versendet.",
@@ -557,7 +557,7 @@
       "create_description": "Gruppiere Länder, Bundesländer oder Postleitzahlen zu einem Liefergebiet.",
       "create_label": "Lieferzone erstellen",
       "delete_confirm": {
-        "message": "\"{{name}}\" löschen? Versandarten mit dieser Zone treffen diese Gebiete nicht mehr.",
+        "message": "\"{{name}}\" löschen? Die zugehörigen Versandarten werden mit gelöscht.",
         "title": "Lieferzone löschen"
       },
       "edit_description": "Die folgenden Mitglieder ersetzen beim Speichern die gesamte Liste.",

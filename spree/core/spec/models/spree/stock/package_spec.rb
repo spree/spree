@@ -37,6 +37,20 @@ module Spree
           expect(fulfillment.to_package.owner).to eq(cart)
         end
 
+        # The same failure shape as the provider bug: weight, dimensions and
+        # currency read the owner's store, and a cart-owned package must not
+        # lose them just because no order exists yet.
+        it 'applies the store tare to a cart-owned package' do
+          @default_store.update!(preferred_default_package_weight: 2.5)
+          cart = create(:cart, store: @default_store)
+          line_item = create(:line_item, cart: cart, order: nil, variant: variant)
+          fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+
+          expect(fulfillment.to_package.weight).to eq(27.5)
+        ensure
+          @default_store.update!(preferred_default_package_weight: 0)
+        end
+
         it 'falls back to the units for a package with no fulfillment' do
           package = Package.new(stock_location)
           package.add build_inventory_unit

@@ -30,7 +30,7 @@ module Spree
         # other rules' fail-open convention for half-configured rows.
         return true if preferred_channel_ids.empty?
 
-        channel = package.order&.channel
+        channel = package.owner&.channel
         return false if channel.nil?
 
         # Compare as strings to support both integer and UUID primary keys

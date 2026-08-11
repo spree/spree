@@ -340,6 +340,29 @@ describe '6.0 data migration tasks' do
     end
   end
 
+  describe 'spree:repair_cart_fulfillment_item_orders' do
+    it 'detaches cart-phase items from orders they never belonged to' do
+      stranger = create(:order, store: store)
+      cart = create(:cart, store: store)
+      create(:line_item, cart: cart, order: nil)
+      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment.fulfillment_items.update_all(order_id: stranger.id)
+
+      run_task('spree:repair_cart_fulfillment_item_orders')
+
+      expect(fulfillment.fulfillment_items.reload.pluck(:order_id)).to all(be_nil)
+    end
+
+    it 'leaves order-owned items alone' do
+      order = create(:order_ready_to_ship, store: store)
+      item_orders = order.fulfillments.flat_map { |f| f.fulfillment_items.pluck(:order_id) }
+
+      run_task('spree:repair_cart_fulfillment_item_orders')
+
+      expect(order.fulfillments.flat_map { |f| f.fulfillment_items.reload.pluck(:order_id) }).to eq(item_orders)
+    end
+  end
+
   describe 'spree:migrate_fulfillment_statuses' do
     let(:order) { create(:order_ready_to_ship, store: store) }
 

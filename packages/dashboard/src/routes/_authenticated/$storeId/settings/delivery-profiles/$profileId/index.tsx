@@ -621,8 +621,8 @@ function OriginGroupSection({
       confirmLabel: t('admin.actions.delete'),
     })
     if (!ok) return
-    // A group still holding zones or methods is refused with a 422 the
-    // mutation surfaces as a toast, which is the message the merchant needs.
+    // Deleting cascades to the group's zones and methods — the confirm says
+    // so. Only the profile's last group is refused (422, surfaced as a toast).
     await deleteMutation.mutateAsync(group.id).catch(() => undefined)
   }
 

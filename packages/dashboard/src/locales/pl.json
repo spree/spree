@@ -538,7 +538,7 @@
     },
     "delivery_origin_groups": {
       "delete_confirm": {
-        "message": "Usunąć „{{name}}”? Najpierw przenieś jej strefy i metody do innej grupy.",
+        "message": "Usunąć „{{name}}\"? Strefy i metody dostawy zostaną usunięte razem z nią.",
         "title": "Usuń grupę miejsc wysyłki"
       },
       "edit_description": "Zmień nazwę tej grupy lub to, z których lokalizacji wysyła.",
@@ -565,7 +565,7 @@
       "create_description": "Pogrupuj kraje, regiony lub kody pocztowe w obszar obsługiwany przez metody dostawy.",
       "create_label": "Utwórz strefę dostawy",
       "delete_confirm": {
-        "message": "Usunąć „{{name}}”? Metody dostawy korzystające z tej strefy przestaną pasować do tych obszarów.",
+        "message": "Usunąć „{{name}}\"? Powiązane metody dostawy zostaną usunięte razem z nią.",
         "title": "Usuń strefę dostawy"
       },
       "edit_description": "Poniżsi członkowie zastąpią przy zapisie pełną listę strefy.",

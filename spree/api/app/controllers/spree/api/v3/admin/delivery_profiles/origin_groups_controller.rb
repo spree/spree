@@ -5,8 +5,8 @@ module Spree
         module DeliveryProfiles
           # Origin groups of one delivery profile. `stock_location_ids`
           # replaces the group's full membership; empty means every store
-          # location. The last group cannot be deleted, nor can one that
-          # still holds zones or methods.
+          # location. Deleting a group cascades to its zones and methods;
+          # only the profile's last group refuses to go.
           class OriginGroupsController < ResourceController
             scoped_resource :settings
 

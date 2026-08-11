@@ -530,7 +530,7 @@
     },
     "delivery_origin_groups": {
       "delete_confirm": {
-        "message": "Supprimer « {{name}} » ? Déplacez d'abord ses zones et méthodes vers un autre groupe.",
+        "message": "Supprimer « {{name}} » ? Ses zones et modes de livraison seront supprimés avec lui.",
         "title": "Supprimer le groupe d'origine"
       },
       "edit_description": "Renommez ce groupe ou modifiez les emplacements depuis lesquels il expédie.",
@@ -557,7 +557,7 @@
       "create_description": "Regroupez pays, états ou codes postaux en une zone desservie.",
       "create_label": "Créer la zone",
       "delete_confirm": {
-        "message": "Supprimer « {{name}} » ? Les méthodes utilisant cette zone ne correspondront plus à ces régions.",
+        "message": "Supprimer « {{name}} » ? Ses modes de livraison seront supprimés avec elle.",
         "title": "Supprimer la zone"
       },
       "edit_description": "Les membres ci-dessous remplacent la liste complète à l’enregistrement.",
