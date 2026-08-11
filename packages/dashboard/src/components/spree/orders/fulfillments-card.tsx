@@ -507,7 +507,7 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       {fulfillment.tracking && !fulfilling && (
         <div className="text-sm p-3 border-b">
           <span className="text-muted-foreground">
-            {t('admin.orders.detail.tracking.prefix')}:{' '}
+            {fulfillment.tracking_carrier_name ?? t('admin.orders.detail.tracking.prefix')}:{' '}
           </span>
           {fulfillment.tracking_url ? (
             <a

@@ -209,6 +209,7 @@ import type {
   StoreUpdateParams,
   TaxCategoryCreateParams,
   TaxCategoryUpdateParams,
+  TrackingCarrierOption,
   VariantCreateParams,
   VariantUpdateParams,
   WebhookEndpointCreateParams,
@@ -1815,6 +1816,16 @@ export class AdminClient {
           options,
         ),
     },
+  }
+
+  readonly trackingCarriers = {
+    /**
+     * Registered tracking carriers (Spree.tracking_carriers) a tracking
+     * number can be pinned to — the source for carrier pickers. Extensions
+     * that register carriers appear here without a client change.
+     */
+    list: (options?: RequestOptions): Promise<{ data: TrackingCarrierOption[] }> =>
+      this.request<{ data: TrackingCarrierOption[] }>('GET', '/tracking_carriers', options),
   }
 
   readonly deliveryZones = {

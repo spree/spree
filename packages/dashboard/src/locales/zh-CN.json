@@ -1829,7 +1829,9 @@
           "add_tracking": "添加物流跟踪",
           "edit_tracking_title": "编辑物流跟踪",
           "add_tracking_title": "添加物流跟踪",
-          "tracking_description": "承运商的物流单号，或完整的跟踪链接。"
+          "tracking_description": "承运商的物流单号，或完整的跟踪链接。",
+          "carrier_label": "承运商",
+          "carrier_auto": "自动识别"
         },
         "gift_card_section": {
           "applied_suffix": "已应用",

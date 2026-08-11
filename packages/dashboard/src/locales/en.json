@@ -1833,7 +1833,9 @@
           "add_tracking": "Add tracking",
           "edit_tracking_title": "Edit tracking",
           "add_tracking_title": "Add tracking",
-          "tracking_description": "The carrier tracking number, or a full tracking link."
+          "tracking_description": "The carrier tracking number, or a full tracking link.",
+          "carrier_label": "Shipping carrier",
+          "carrier_auto": "Detect automatically"
         },
         "gift_card_section": {
           "applied_suffix": "applied",

@@ -9,6 +9,8 @@ export const FulfillmentSchema = z.object({
   number: z.string(),
   tracking: z.string().nullable(),
   tracking_url: z.string().nullable(),
+  tracking_carrier: z.string().nullable(),
+  tracking_carrier_name: z.string().nullable(),
   pickup_point_data: z.record(z.string(), z.unknown()).nullable(),
   selected_delivery_rate_id: z.string().nullable(),
   cost: z.string().nullable(),

@@ -39,6 +39,7 @@ module Spree
     after_save :update_adjustments
 
     before_validation :set_cost_zero_when_nil
+    before_save :detect_tracking_carrier, if: -> { will_save_change_to_tracking? && tracking_carrier.blank? }
 
     validates :stock_location, presence: true
     validate :exactly_one_owner
@@ -186,6 +187,7 @@ module Spree
     # @deprecated the column is +status+ since 6.0
     alias_attribute :state, :status
     alias_attribute :shipped_at, :fulfilled_at
+    after_save { @tracking_url = nil }
     # Legacy association names — removed in 6.1.
     has_many :inventory_units, class_name: 'Spree::FulfillmentItem', foreign_key: :fulfillment_id, inverse_of: :fulfillment, deprecated: true
     has_many :shipping_rates, -> { order(:cost) }, class_name: 'Spree::DeliveryRate', foreign_key: :fulfillment_id, deprecated: true
@@ -606,12 +608,38 @@ module Spree
     # instead of being templated into the delivery method's tracking URL.
     #
     # @return [String, nil]
+    # The public page where this parcel can be followed, best answer first:
+    #
+    # 1. The tracking value is already a link — pasted in whole.
+    # 2. The provider that bought the label knows its own tracker page.
+    # 3. The carrier pinned on this fulfillment (picked or detected) has a
+    #    registered tracking page.
+    # 4. The delivery method's configured format string, or detection from the
+    #    number's format — the legacy path, still right for single-carrier
+    #    methods.
+    #
+    # @return [String, nil]
     def tracking_url
-      @tracking_url ||= if tracking&.start_with?('https://')
+      return if tracking.blank?
+
+      @tracking_url ||= if tracking.start_with?('https://', 'http://')
                           tracking
                         else
-                          delivery_method&.build_tracking_url(tracking)
+                          provider.tracking_url(self).presence ||
+                            carrier_tracking_url.presence ||
+                            delivery_method&.build_tracking_url(tracking).presence ||
+                            detected_tracking_url
                         end
+    end
+
+    # The pinned carrier's display name, for storefronts and admin UIs
+    # showing "InPost: 421432" rather than a bare number.
+    #
+    # @return [String, nil]
+    def tracking_carrier_name
+      return if tracking_carrier.blank?
+
+      Spree.tracking_carriers.dig(tracking_carrier, :name) || tracking_carrier.titleize
     end
 
     def update_amounts
@@ -714,6 +742,27 @@ module Spree
 
     def apply_default_status
       self.status ||= self.class.default_status
+    end
+
+    def carrier_tracking_url
+      template = Spree.tracking_carriers.dig(tracking_carrier.to_s, :url)
+      template&.gsub(':tracking', ERB::Util.url_encode(tracking))
+    end
+
+    def detected_tracking_url
+      service = Spree.tracking_number_service.new(tracking.upcase)
+      service.tracking_url if service.valid?
+    end
+
+    # Numbers from the big carriers encode who they belong to; pinning the
+    # detected carrier means the badge and the URL survive even when the
+    # merchant only pasted a number. Only fills a blank — a merchant's
+    # explicit pick, or a provider's, is never second-guessed.
+    def detect_tracking_carrier
+      return if tracking.blank? || tracking.start_with?('https://', 'http://')
+
+      service = Spree.tracking_number_service.new(tracking.upcase)
+      self.tracking_carrier = service.tracking.courier_code.to_s if service.valid?
     end
 
     def exactly_one_owner

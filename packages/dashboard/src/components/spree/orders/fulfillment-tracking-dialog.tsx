@@ -14,13 +14,24 @@ import {
   FieldError,
   FieldLabel,
   Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@spree/dashboard-ui'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { useFulfillmentActions } from '../../../hooks/use-fulfillments'
+import { useTrackingCarriers } from '../../../hooks/use-tracking-carriers'
 
-const trackingSchema = z.object({ tracking: z.string() })
+const trackingSchema = z.object({
+  tracking: z.string(),
+  // '' means "detect from the number" — the backend pins the carrier itself
+  // when the format is recognisable.
+  tracking_carrier: z.string(),
+})
 
 type TrackingFormValues = z.infer<typeof trackingSchema>
 
@@ -42,10 +53,19 @@ export function FulfillmentTrackingDialog({
 }) {
   const { t } = useTranslation()
   const { update } = useFulfillmentActions(orderId)
+  const { data: carriersData } = useTrackingCarriers(open)
+
+  const carrierOptions = [
+    { value: '', label: t('admin.orders.detail.fulfillments.carrier_auto') },
+    ...(carriersData?.data ?? []).map((carrier) => ({ value: carrier.id, label: carrier.name })),
+  ]
 
   const form = useForm<TrackingFormValues>({
     resolver: zodResolver(trackingSchema),
-    defaultValues: { tracking: fulfillment.tracking ?? '' },
+    defaultValues: {
+      tracking: fulfillment.tracking ?? '',
+      tracking_carrier: fulfillment.tracking_carrier ?? '',
+    },
   })
 
   async function onSubmit(values: TrackingFormValues) {
@@ -53,6 +73,7 @@ export function FulfillmentTrackingDialog({
       await update.mutateAsync({
         fulfillmentId: fulfillment.id,
         tracking: values.tracking.trim(),
+        tracking_carrier: values.tracking_carrier,
       })
       onOpenChange(false)
     } catch (err) {
@@ -82,18 +103,48 @@ export function FulfillmentTrackingDialog({
               </p>
             )}
 
-            <Field>
-              <FieldLabel htmlFor="fulfillment-tracking">
-                {t('admin.orders.fulfill.tracking_label')}
-              </FieldLabel>
-              <Input
-                id="fulfillment-tracking"
-                placeholder={t('admin.orders.fulfill.tracking_placeholder')}
-                aria-invalid={!!form.formState.errors.tracking}
-                {...form.register('tracking')}
-              />
-              <FieldError errors={[form.formState.errors.tracking]} />
-            </Field>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field>
+                <FieldLabel htmlFor="fulfillment-tracking">
+                  {t('admin.orders.fulfill.tracking_label')}
+                </FieldLabel>
+                <Input
+                  id="fulfillment-tracking"
+                  placeholder={t('admin.orders.fulfill.tracking_placeholder')}
+                  aria-invalid={!!form.formState.errors.tracking}
+                  {...form.register('tracking')}
+                />
+                <FieldError errors={[form.formState.errors.tracking]} />
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="fulfillment-tracking-carrier">
+                  {t('admin.orders.detail.fulfillments.carrier_label')}
+                </FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="tracking_carrier"
+                  render={({ field }) => (
+                    <Select
+                      items={carrierOptions}
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value ?? '')}
+                    >
+                      <SelectTrigger id="fulfillment-tracking-carrier">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {carrierOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </Field>
+            </div>
           </DialogBody>
 
           <DialogFooter>

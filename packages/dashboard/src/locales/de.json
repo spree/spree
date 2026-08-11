@@ -1833,7 +1833,9 @@
           "add_tracking": "Sendungsverfolgung hinzufügen",
           "edit_tracking_title": "Sendungsverfolgung bearbeiten",
           "add_tracking_title": "Sendungsverfolgung hinzufügen",
-          "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link."
+          "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link.",
+          "carrier_label": "Versanddienstleister",
+          "carrier_auto": "Automatisch erkennen"
         },
         "gift_card_section": {
           "applied_suffix": "angewendet",

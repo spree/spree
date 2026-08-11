@@ -13,6 +13,7 @@ module Spree
                                :tax_provider,
                                :password_validator,
                                :fulfillment_providers,
+                               :tracking_carriers,
                                :stock_splitters,
                                :delivery_method_rules,
                                :delivery_rate_providers,
@@ -194,6 +195,32 @@ module Spree
           Spree::FulfillmentProvider::Pickup,
           Spree::FulfillmentProvider::PickupPoint
         ]
+
+        # Carriers a merchant can pin a tracking number to, with the public
+        # tracking page each one offers (`:tracking` is the placeholder).
+        # Hosts and extensions add their own:
+        #   Spree.tracking_carriers['my_courier'] = { name: '...', url: '...' }
+        # Slugs match the tracking_number gem's courier codes where both know
+        # the carrier, so a number auto-detected from its format lands on the
+        # same entry a merchant would have picked by hand.
+        Rails.application.config.spree.tracking_carriers = {
+          'ups' => { name: 'UPS', url: 'https://www.ups.com/track?tracknum=:tracking' },
+          'usps' => { name: 'USPS', url: 'https://tools.usps.com/go/TrackConfirmAction?tLabels=:tracking' },
+          'fedex' => { name: 'FedEx', url: 'https://www.fedex.com/fedextrack/?trknbr=:tracking' },
+          'dhl' => { name: 'DHL Express', url: 'https://www.dhl.com/global-en/home/tracking.html?tracking-id=:tracking' },
+          'dpd' => { name: 'DPD', url: 'https://tracking.dpd.de/status/en_US/parcel/:tracking' },
+          'gls' => { name: 'GLS', url: 'https://gls-group.eu/EU/en/parcel-tracking?match=:tracking' },
+          'inpost' => { name: 'InPost', url: 'https://inpost.pl/sledzenie-przesylek?number=:tracking' },
+          'royal_mail' => { name: 'Royal Mail', url: 'https://www.royalmail.com/track-your-item#/tracking-results/:tracking' },
+          'evri' => { name: 'Evri', url: 'https://www.evri.com/track/parcel/:tracking' },
+          'canada_post' => { name: 'Canada Post', url: 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=:tracking' },
+          'australia_post' => { name: 'Australia Post', url: 'https://auspost.com.au/mypost/track/#/details/:tracking' },
+          'postnl' => { name: 'PostNL', url: 'https://jouw.postnl.nl/track-and-trace/:tracking' },
+          'colissimo' => { name: 'Colissimo', url: 'https://www.laposte.fr/outils/suivre-vos-envois?code=:tracking' },
+          'chronopost' => { name: 'Chronopost', url: 'https://www.chronopost.fr/tracking-no-cms/suivi-page?listeNumerosLT=:tracking' },
+          'poczta_polska' => { name: 'Poczta Polska', url: 'https://emonitoring.poczta-polska.pl/?numer=:tracking' },
+          'deutsche_post' => { name: 'Deutsche Post DHL', url: 'https://www.dhl.de/de/privatkunden/pakete-empfangen/verfolgen.html?piececode=:tracking' }
+        }
 
 
         # Quoting strategies selectable on a delivery method. Internal prices

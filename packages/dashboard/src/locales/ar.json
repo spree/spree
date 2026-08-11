@@ -1843,7 +1843,9 @@
           "add_tracking": "إضافة تتبع",
           "edit_tracking_title": "تعديل التتبع",
           "add_tracking_title": "إضافة تتبع",
-          "tracking_description": "رقم تتبع شركة الشحن، أو رابط تتبع كامل."
+          "tracking_description": "رقم تتبع شركة الشحن، أو رابط تتبع كامل.",
+          "carrier_label": "شركة الشحن",
+          "carrier_auto": "اكتشاف تلقائي"
         },
         "gift_card_section": {
           "applied_suffix": "مُطبَّق",

@@ -313,6 +313,14 @@ module Spree
     Rails.application.config.spree.fulfillment_providers = value
   end
 
+  def self.tracking_carriers
+    Rails.application.config.spree.tracking_carriers
+  end
+
+  def self.tracking_carriers=(value)
+    Rails.application.config.spree.tracking_carriers = value
+  end
+
 
   def self.stock_splitters
     Rails.application.config.spree.stock_splitters

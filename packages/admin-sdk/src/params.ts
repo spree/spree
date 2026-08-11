@@ -129,9 +129,23 @@ export interface FulfillmentCreateParams {
   metadata?: Record<string, unknown>
 }
 
+/** One entry from `trackingCarriers.list()`. */
+export interface TrackingCarrierOption {
+  /** Registry slug — what `tracking_carrier` stores */
+  id: string
+  /** Carrier display name */
+  name: string
+}
+
 export interface FulfillmentUpdateParams {
   /** Carrier tracking number or a full `https://` tracking link; see {@link FulfillmentCreateParams.tracking} */
   tracking?: string
+  /**
+   * Which carrier the tracking number belongs to — a slug from
+   * `trackingCarriers.list()`. Left blank, Spree detects it from the number's
+   * format where it can.
+   */
+  tracking_carrier?: string
   selected_delivery_rate_id?: string
   /** Move the fulfillment to another origin (sloc_...); re-prices it against that location's rates. */
   stock_location_id?: string

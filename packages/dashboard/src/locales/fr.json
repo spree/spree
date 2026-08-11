@@ -1833,7 +1833,9 @@
           "add_tracking": "Ajouter un suivi",
           "edit_tracking_title": "Modifier le suivi",
           "add_tracking_title": "Ajouter un suivi",
-          "tracking_description": "Le numéro de suivi du transporteur, ou un lien de suivi complet."
+          "tracking_description": "Le numéro de suivi du transporteur, ou un lien de suivi complet.",
+          "carrier_label": "Transporteur",
+          "carrier_auto": "Détecter automatiquement"
         },
         "gift_card_section": {
           "applied_suffix": "appliqué",

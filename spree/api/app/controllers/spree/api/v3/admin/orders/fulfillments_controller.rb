@@ -167,7 +167,7 @@ module Spree
             # State changes go through the dedicated `fulfill`/`cancel`/`resume`
             # member actions, not mass assignment.
             def permitted_params
-              params.permit(:tracking, :selected_delivery_rate_id, :stock_location_id)
+              params.permit(:tracking, :tracking_carrier, :selected_delivery_rate_id, :stock_location_id)
             end
 
             def create_params

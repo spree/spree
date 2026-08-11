@@ -6,6 +6,8 @@ module Spree
                  tracking: [:string, nullable: true],
                  tracking_url: [:string, nullable: true], fulfilled_at: [:string, nullable: true],
                  tracking_status: [:string, nullable: true],
+                 tracking_carrier: [:string, nullable: true],
+                 tracking_carrier_name: [:string, nullable: true],
                  estimated_delivery_at: [:string, nullable: true],
                  delivered_at: [:string, nullable: true],
                  cost: [:string, nullable: true], display_cost: [:string, nullable: true],
@@ -18,7 +20,8 @@ module Spree
                  pickup_point_data: ['Record<string, unknown>', nullable: true],
                  selected_delivery_rate_id: [:string, nullable: true]
 
-        attributes :number, :tracking, :tracking_url, :pickup_point_data, :selected_delivery_rate_id
+        attributes :number, :tracking, :tracking_url, :tracking_carrier, :tracking_carrier_name,
+                   :pickup_point_data, :selected_delivery_rate_id
 
         # Nulled for gated (prices_hidden) guests so a fulfillment can't leak the
         # shipping/tax amounts the cart/order totals already withhold.
