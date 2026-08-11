@@ -62,6 +62,7 @@ export * from './spree/theme-toggle'
 // ---------------------------------------------------------------------------
 // UI primitives (shadcn) — see ./ui/*
 // ---------------------------------------------------------------------------
+export * from './ui/alert'
 export * from './ui/attachment'
 export * from './ui/avatar'
 export * from './ui/badge'
@@ -98,4 +99,5 @@ export * from './ui/slot'
 export * from './ui/sonner'
 export * from './ui/switch'
 export * from './ui/textarea'
+export * from './ui/thumbnail'
 export * from './ui/tooltip'

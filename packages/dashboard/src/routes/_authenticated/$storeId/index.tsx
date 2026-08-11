@@ -13,6 +13,7 @@ import {
   type DateRange,
   DateRangePicker,
   Skeleton,
+  Thumbnail,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -188,17 +189,7 @@ function TopProducts({ products }: { products: DashboardAnalytics['top_products'
                     })}
                     className="flex items-center gap-3 hover:underline"
                   >
-                    {product.image_url ? (
-                      <img
-                        src={product.image_url}
-                        alt={product.name}
-                        className="size-10 rounded-md border object-cover"
-                      />
-                    ) : (
-                      <div className="flex size-10 items-center justify-center rounded-md border bg-muted">
-                        <PackageIcon className="size-4 text-muted-foreground" />
-                      </div>
-                    )}
+                    <Thumbnail src={product.image_url} fallback={<PackageIcon />} />
                     <span className="font-medium">{product.name}</span>
                   </Link>
                 </td>

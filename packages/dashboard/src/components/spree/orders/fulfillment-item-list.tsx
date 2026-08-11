@@ -1,3 +1,4 @@
+import { Thumbnail } from '@spree/dashboard-ui'
 import { PackageIcon } from 'lucide-react'
 import type { FulfillmentItemRow } from '../../../lib/fulfillment-items'
 
@@ -8,18 +9,8 @@ import type { FulfillmentItemRow } from '../../../lib/fulfillment-items'
  */
 function ItemRow({ row }: { row: FulfillmentItemRow }) {
   return (
-    <div className="flex items-center gap-3 py-3">
-      {row.thumbnailUrl ? (
-        <img
-          src={row.thumbnailUrl}
-          alt={row.name}
-          className="size-10 shrink-0 rounded-lg border object-cover"
-        />
-      ) : (
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
-          <PackageIcon className="size-4 text-muted-foreground" />
-        </div>
-      )}
+    <div className="flex items-center gap-3 p-3">
+      <Thumbnail src={row.thumbnailUrl} fallback={<PackageIcon />} />
 
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium">{row.name}</div>

@@ -1,7 +1,4 @@
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Button,
   Checkbox,
   InputGroup,
@@ -13,9 +10,10 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Thumbnail,
 } from '@spree/dashboard-ui'
 import { useQuery } from '@tanstack/react-query'
-import { ImageIcon, Loader2Icon, SearchIcon, XIcon } from 'lucide-react'
+import { Loader2Icon, SearchIcon, XIcon } from 'lucide-react'
 import { useDeferredValue, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -188,16 +186,7 @@ export function ResourcePickerSheet<T extends PickerOption>({
                         disabled={inList}
                         className="pointer-events-none"
                       />
-                      {getOptionImageUrl && (
-                        <Avatar className="size-9 rounded-md">
-                          {imageUrl ? (
-                            <AvatarImage src={imageUrl} alt="" className="object-cover" />
-                          ) : null}
-                          <AvatarFallback className="rounded-md bg-muted">
-                            <ImageIcon className="size-4 text-muted-foreground" />
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
+                      {getOptionImageUrl && <Thumbnail src={imageUrl} size="sm" />}
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm">{getOptionLabel(option)}</span>
                         {subtitle && (

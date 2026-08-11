@@ -1,8 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { Fulfillment, Order } from '@spree/admin-sdk'
 import { mapSpreeErrorsToForm } from '@spree/dashboard-core'
-import { Button, Checkbox, Field, FieldLabel, Input } from '@spree/dashboard-ui'
-import { PackageIcon } from 'lucide-react'
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Checkbox,
+  cn,
+  Field,
+  FieldLabel,
+  Input,
+  Thumbnail,
+} from '@spree/dashboard-ui'
+import { PackageIcon, TriangleAlertIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { Controller, type UseFormReturn, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -43,7 +53,7 @@ function ItemQuantityRow({
   const checkboxId = `${idPrefix}-item-${index}`
 
   return (
-    <div className="flex items-center gap-3 py-3">
+    <div className={cn('flex items-center gap-3 p-3', selected && 'bg-accent')}>
       <Controller
         control={form.control}
         name={`items.${index}.selected`}
@@ -65,25 +75,12 @@ function ItemQuantityRow({
         )}
       />
 
-      {row.thumbnailUrl ? (
-        <img
-          src={row.thumbnailUrl}
-          alt={row.name}
-          className="size-12 shrink-0 rounded-lg border object-cover"
-        />
-      ) : (
-        <div className="flex size-12 shrink-0 items-center justify-center rounded-lg border bg-muted">
-          <PackageIcon className="size-5 text-muted-foreground" />
-        </div>
-      )}
+      <Thumbnail src={row.thumbnailUrl} fallback={<PackageIcon />} />
 
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium">{row.name}</div>
         {row.optionsText && (
           <div className="truncate text-xs text-muted-foreground">{row.optionsText}</div>
-        )}
-        {row.displayPrice && (
-          <div className="text-xs text-muted-foreground">{row.displayPrice}</div>
         )}
       </div>
 
@@ -211,7 +208,7 @@ export function FulfillmentFulfillForm({
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
       {errors.root?.message && (
         <p className="text-sm text-destructive" role="alert">
           {errors.root.message}
@@ -235,7 +232,7 @@ export function FulfillmentFulfillForm({
         </div>
       )}
 
-      <Field>
+      <Field className="p-3 border-t">
         <FieldLabel htmlFor={`${idPrefix}-tracking`}>
           {t('admin.orders.fulfill.tracking_label')}
         </FieldLabel>
@@ -252,7 +249,7 @@ export function FulfillmentFulfillForm({
         render={({ field }) => (
           <label
             htmlFor={`${idPrefix}-notify`}
-            className="flex cursor-pointer items-center gap-2 text-sm"
+            className="flex cursor-pointer items-center gap-2 text-sm p-3"
           >
             <Checkbox
               id={`${idPrefix}-notify`}
@@ -265,17 +262,22 @@ export function FulfillmentFulfillForm({
       />
 
       {!shipsEverything && totalSelected > 0 && (
-        <p className="text-xs text-muted-foreground">{t('admin.orders.fulfill.partial_hint')}</p>
+        <div className="px-3 pb-3">
+          <Alert variant="warning">
+            <TriangleAlertIcon />
+            <AlertDescription>{t('admin.orders.fulfill.partial_hint')}</AlertDescription>
+          </Alert>
+        </div>
       )}
 
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex items-center justify-end gap-2 p-3 border-t">
         <span className="mr-auto text-sm text-muted-foreground">
           {t('admin.orders.fulfill.units_selected')}: {totalSelected} / {totalAvailable}
         </span>
-        <Button type="button" variant="outline" onClick={onDone}>
+        <Button type="button" size="sm" variant="outline" onClick={onDone}>
           {t('admin.actions.cancel')}
         </Button>
-        <Button type="submit" disabled={totalSelected === 0 || fulfill.isPending}>
+        <Button type="submit" size="sm" disabled={totalSelected === 0 || fulfill.isPending}>
           {fulfill.isPending ? t('admin.actions.saving') : t('admin.orders.fulfill.submit')}
         </Button>
       </div>
