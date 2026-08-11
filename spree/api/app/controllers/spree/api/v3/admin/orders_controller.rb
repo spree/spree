@@ -64,7 +64,11 @@ module Spree
           # PATCH /api/v3/admin/orders/:id/cancel
           def cancel
             with_order_lock do
-              @resource.canceled_by(try_spree_current_user)
+              @resource.canceled_by(
+                try_spree_current_user,
+                nil,
+                ActiveModel::Type::Boolean.new.cast(params[:notify_customer]) || false
+              )
               render json: serialize_resource(@resource.reload)
             end
           end

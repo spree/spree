@@ -47,7 +47,7 @@ module Spree
 
       # PUT /admin/orders/:id/cancel
       def cancel
-        result = @order.canceled_by(try_spree_current_user)
+        result = @order.canceled_by(try_spree_current_user, nil, true)
         if result.success?
           flash[:success] = Spree.t(:order_canceled)
         else
