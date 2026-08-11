@@ -66,7 +66,7 @@ module Spree
                   fulfillment: @resource,
                   items: items_for_fulfill,
                   tracking: fulfill_params[:tracking],
-                  notify_customer: notify_customer_for_fulfill,
+                  notify_customer: notify_customer?(fulfill_params[:notify_customer]),
                   force: ActiveModel::Type::Boolean.new.cast(fulfill_params[:force]).present?
                 )
 
@@ -88,7 +88,7 @@ module Spree
                 result = Spree.fulfillment_mark_delivered_workflow.call(
                   fulfillment: @resource,
                   delivered_at: mark_delivered_params[:delivered_at],
-                  notify_customer: notify_customer_for_mark_delivered
+                  notify_customer: notify_customer?(mark_delivered_params[:notify_customer])
                 )
 
                 if result.success?
@@ -207,14 +207,10 @@ module Spree
               @mark_delivered_params ||= params.permit(:delivered_at, :notify_customer)
             end
 
-            def notify_customer_for_mark_delivered
-              !ActiveModel::Type::Boolean.new.cast(mark_delivered_params[:notify_customer]).equal?(false)
-            end
-
             # Only an explicit false suppresses the email — an omitted flag, and
             # anything unparseable, keeps the historic behavior of sending it.
-            def notify_customer_for_fulfill
-              !ActiveModel::Type::Boolean.new.cast(fulfill_params[:notify_customer]).equal?(false)
+            def notify_customer?(value)
+              !ActiveModel::Type::Boolean.new.cast(value).equal?(false)
             end
 
             def items_for_fulfill

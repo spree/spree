@@ -59,7 +59,15 @@ module Spree
         attributes[:estimated_delivery_at] = estimated_delivery_at unless estimated_delivery_at.nil?
         attributes[:tracking_details] = details unless details.nil?
 
-        fulfillment.update!(attributes) if attributes.any?
+        return if attributes.empty?
+
+        # update_columns, deliberately: carrier scans arrive many times per
+        # parcel, and a lifecycle event per scan would run the full order
+        # status rollup (via Spree::OrderStatusSubscriber) for writes that
+        # cannot change any status. The after_update_tracking hook and the
+        # fulfillment.delivered event are the notification surface for this
+        # axis. Values are already validated by ensure_known_status.
+        fulfillment.update_columns(attributes.merge(updated_at: Time.current))
       end
 
       # Delivery is the one carrier report that is also a merchant fact, so it

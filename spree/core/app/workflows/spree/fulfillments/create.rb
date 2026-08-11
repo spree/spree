@@ -116,12 +116,10 @@ module Spree
         attach_cost_and_rate(fulfillment, delivery_method, @requested_cost, inherited)
       end
 
+      # A new fulfillment simply keeps its unfulfilled default unless the
+      # caller registers it as already shipped.
       def apply_status
-        if status == 'shipped'
-          mark_shipped(fulfillment)
-        else
-          fulfillment.update!(order)
-        end
+        mark_shipped(fulfillment) if status == 'shipped'
       end
 
       def reprice_and_recalculate

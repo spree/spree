@@ -25,6 +25,7 @@ import { toast } from 'sonner'
 import { AddLineItemDialog } from '../../../../../components/spree/orders/line-item-dialogs'
 import { OrderEditItemsTable } from '../../../../../components/spree/orders/order-edit-items-table'
 import { useOrder, useOrderMutation } from '../../../../../hooks/use-order'
+import { GONE_STATUSES } from '../../../../../lib/fulfillment-items'
 import {
   buildOrderItemsPayload,
   type OrderEditFormValues,
@@ -215,7 +216,7 @@ function OrderEditPage() {
 
   // The header hides its edit link on fulfilled orders, but the URL stays
   // reachable — and the per-row clamps below would still allow additions.
-  if (['fulfilled', 'delivered'].includes(order.fulfillment_status ?? '')) {
+  if (GONE_STATUSES.includes(order.fulfillment_status ?? '')) {
     return (
       <ResourceLayout
         header={

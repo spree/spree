@@ -72,7 +72,12 @@ function claimedQuantities(fulfillments: GroupableFulfillment[]): Map<string, nu
  * below them. Delivered counts too — it is downstream of fulfilled. Canceled
  * fulfillments restock their units and do not count.
  */
-const GONE_STATUSES = ['fulfilled', 'delivered']
+/**
+ * Fulfillment statuses meaning the goods have left the merchant's hands.
+ * The order-level rollup uses the same two words for "everything has gone
+ * out", so the pages gating order editing share this list.
+ */
+export const GONE_STATUSES = ['fulfilled', 'delivered']
 
 export function fulfilledQuantities(fulfillments: GroupableFulfillment[]): Map<string, number> {
   const fulfilled = new Map<string, number>()

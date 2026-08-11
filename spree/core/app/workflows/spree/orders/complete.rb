@@ -58,10 +58,7 @@ module Spree
       # recalculation only re-sums them, never regenerates (see
       # Spree::Carts::RecalculateTotals) — so no per-row locking is needed.
       def finalize_fulfillments
-        order.fulfillments.each do |fulfillment|
-          fulfillment.update!(order)
-          fulfillment.finalize!
-        end
+        order.fulfillments.each(&:finalize!)
       end
 
       def place_order

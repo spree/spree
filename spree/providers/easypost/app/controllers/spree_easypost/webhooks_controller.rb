@@ -38,7 +38,7 @@ module SpreeEasyPost
     # practice. Scoped to fulfillments that actually shipped so a recycled code
     # cannot reopen an old parcel's tracking.
     def find_fulfillment(tracking_code)
-      Spree::Fulfillment.where(tracking: tracking_code).where.not(status: 'canceled').reverse_chronological.first
+      Spree::Fulfillment.where(tracking: tracking_code).not_canceled.reverse_chronological.first
     end
   end
 end

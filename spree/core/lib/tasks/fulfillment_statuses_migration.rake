@@ -29,9 +29,7 @@ namespace :spree do
     # the customer collected it — that is confirmed receipt, so those rows are
     # delivered rather than merely handed over. Shipping fulfillments stay
     # `fulfilled`: whether they arrived was never recorded.
-    pickup_method_ids = Spree::DeliveryMethod.
-                        select { |delivery_method| delivery_method.provider.class.pickup? }.
-                        map(&:id)
+    pickup_method_ids = Spree::DeliveryMethod.with_provider(:pickup?).ids
 
     if pickup_method_ids.any?
       pickup_fulfillment_ids = Spree::DeliveryRate.
@@ -49,7 +47,9 @@ namespace :spree do
     # Order rollups are derived, so they are recomputed rather than mapped —
     # this also picks up the new `delivered` value for orders whose parcels all
     # arrived.
-    orders = Spree::Order.where(fulfillment_status: %w(pending ready ready_for_pickup))
+    # 'fulfilled' is included because the pickup remap above can move an
+    # order's parcels to delivered, which its stored rollup cannot know yet.
+    orders = Spree::Order.where(fulfillment_status: %w(pending ready ready_for_pickup fulfilled))
     total = orders.count
     orders.find_each { |order| order.update_statuses! }
     say.call "spree_orders.fulfillment_status: #{total} orders recomputed"

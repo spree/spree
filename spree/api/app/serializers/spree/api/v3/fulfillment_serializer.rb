@@ -37,21 +37,12 @@ module Spree
           fulfillment.fulfillment_type.presence || (fulfillment.digital? ? 'digital' : 'shipping')
         end
 
-        attribute :fulfilled_at do |fulfillment|
-          fulfillment.fulfilled_at&.iso8601
-        end
+        attributes fulfilled_at: :iso8601
 
         # Where the parcel is, as the carrier last reported it — the customer's
         # question, so it belongs on the public serializer alongside tracking.
         attributes :tracking_status
-
-        attribute :estimated_delivery_at do |fulfillment|
-          fulfillment.estimated_delivery_at&.iso8601
-        end
-
-        attribute :delivered_at do |fulfillment|
-          fulfillment.delivered_at&.iso8601
-        end
+        attributes estimated_delivery_at: :iso8601, delivered_at: :iso8601
 
         # Which items (and how many) are in this fulfillment.
         # A line item can be split across fulfillments with different quantities.

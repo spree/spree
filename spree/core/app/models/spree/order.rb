@@ -678,7 +678,8 @@ module Spree
     # True when every fulfillment reached confirmed receipt — the signal
     # order.delivered publishes on.
     def fully_delivered?
-      fulfillments.any? && fulfillments.delivered.size == fulfillments.size
+      total = fulfillments.size
+      total.positive? && fulfillments.delivered.size == total
     end
 
     # @deprecated Use {#fully_fulfilled?}; removed in 6.1.
