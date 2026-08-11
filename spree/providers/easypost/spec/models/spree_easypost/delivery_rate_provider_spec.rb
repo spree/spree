@@ -100,6 +100,29 @@ RSpec.describe SpreeEasyPost::DeliveryRateProvider do
       expect(ground.metadata['easypost_shipment_id']).to eq('shp_1')
     end
 
+    # During checkout the package belongs to a Cart, not an Order — the
+    # regression this guards had the provider walking to a stranger's order
+    # (whose nil address then killed rating inside the provider's rescue).
+    it 'quotes for a cart-owned package against the cart ship address' do
+      cart = create(:cart, store: store, ship_address: create(:address))
+      line_item = create(:line_item, cart: cart, order: nil)
+      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment.set_up_inventory('on_hand', line_item.variant, cart, line_item)
+
+      estimates = provider.estimates(fulfillment.to_package)
+
+      expect(estimates.size).to eq(2)
+    end
+
+    it 'declines to quote when the owner has no ship address yet' do
+      cart = create(:cart, store: store, ship_address: nil)
+      line_item = create(:line_item, cart: cart, order: nil)
+      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+      fulfillment.set_up_inventory('on_hand', line_item.variant, cart, line_item)
+
+      expect(provider.estimates(fulfillment.to_package)).to eq([])
+    end
+
     # A carrier outage must degrade to "method not offered", never break
     # the rate refresh.
     it 'returns nothing and reports when the API call fails' do

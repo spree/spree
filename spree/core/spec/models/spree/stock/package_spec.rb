@@ -13,6 +13,38 @@ module Spree
         build(:inventory_unit, variant: variant, order: order)
       end
 
+      # The regression this guards: during checkout a fulfillment belongs to a
+      # Cart while its units carried an order_id from elsewhere (a cart id
+      # dereferenced as an order id). Walking unit → order handed the carrier
+      # provider a stranger's ship address; the fulfillment's own owner is the
+      # authoritative link.
+      describe '#owner' do
+        it 'prefers the owner the fulfillment supplied' do
+          cart = create(:cart, store: @default_store, ship_address: create(:address))
+          fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+
+          package = fulfillment.to_package
+
+          expect(package.owner).to eq(cart)
+        end
+
+        it 'never returns a stranger order reachable through a unit' do
+          stranger = create(:order)
+          cart = create(:cart, store: @default_store)
+          fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+          fulfillment.fulfillment_items.update_all(order_id: stranger.id)
+
+          expect(fulfillment.to_package.owner).to eq(cart)
+        end
+
+        it 'falls back to the units for a package with no fulfillment' do
+          package = Package.new(stock_location)
+          package.add build_inventory_unit
+
+          expect(package.owner).to eq(order)
+        end
+      end
+
       it 'calculates the weight of all the contents' do
         4.times { subject.add build_inventory_unit }
         expect(subject.weight).to eq(100.0)
