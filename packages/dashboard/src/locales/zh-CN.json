@@ -1796,10 +1796,6 @@
           "resend_confirmation": "重新发送确认",
           "void_payment": "作废付款"
         },
-        "edit_quantity": {
-          "description": "设置该订单行项目的数量。",
-          "title": "编辑数量"
-        },
         "errors": {
           "approve_failed": "批准订单失败",
           "cancel_failed": "取消订单失败",
@@ -1900,25 +1896,25 @@
         "action_label": "编辑订单",
         "actions": {
           "add_product": "添加商品",
-          "edit_quantity_for": "编辑 {{name}} 的数量",
-          "remove": "移除",
-          "remove_item": "移除 {{name}}"
+          "remove_item": "移除 {{name}}",
+          "quantity_for": "{{name}} 的数量",
+          "restore_item": "保留 {{name}}"
         },
         "columns": {
           "line_total": "小计",
           "product": "商品",
           "unit_price": "单价"
         },
-        "confirm": {
-          "remove_message": "要从此订单中移除“{{name}}”吗？此操作将立即生效，订单金额会重新计算。",
-          "remove_title": "移除订单行"
-        },
         "empty": "此订单没有商品。",
         "items_title": "商品",
         "subtitle": "订单 {{number}}",
         "title": "编辑订单",
-        "totals_hint": "每次更改后，服务器都会重新计算金额。",
-        "totals_title": "金额"
+        "totals_hint": "保存后，服务器会重新计算金额。",
+        "totals_title": "金额",
+        "badges": {
+          "pending": "未保存",
+          "removed": "待移除"
+        }
       },
       "fulfill": {
         "action": "标记为已发货",

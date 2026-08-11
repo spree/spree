@@ -1810,10 +1810,6 @@
           "resend_confirmation": "Resend Confirmation",
           "void_payment": "Void Payment"
         },
-        "edit_quantity": {
-          "description": "قم بتعيين الكمية لهذا البند.",
-          "title": "Edit Quantity"
-        },
         "errors": {
           "approve_failed": "فشلت الموافقة على الطلب",
           "cancel_failed": "فشل في إلغاء الطلب",
@@ -1914,25 +1910,25 @@
         "action_label": "تعديل الطلب",
         "actions": {
           "add_product": "إضافة منتج",
-          "edit_quantity_for": "تعديل كمية {{name}}",
-          "remove": "إزالة",
-          "remove_item": "إزالة {{name}}"
+          "remove_item": "إزالة {{name}}",
+          "quantity_for": "كمية {{name}}",
+          "restore_item": "الإبقاء على {{name}}"
         },
         "columns": {
           "line_total": "إجمالي السطر",
           "product": "المنتج",
           "unit_price": "سعر الوحدة"
         },
-        "confirm": {
-          "remove_message": "إزالة \"{{name}}\" من هذا الطلب؟ يسري هذا فوراً ويُعاد احتساب إجماليات الطلب.",
-          "remove_title": "إزالة السطر"
-        },
         "empty": "لا يحتوي هذا الطلب على أي عناصر.",
         "items_title": "العناصر",
         "subtitle": "الطلب {{number}}",
         "title": "تعديل الطلب",
-        "totals_hint": "يُعيد الخادم احتساب الإجماليات بعد كل تغيير.",
-        "totals_title": "الإجماليات"
+        "totals_hint": "يُعيد الخادم احتساب الإجماليات بعد الحفظ.",
+        "totals_title": "الإجماليات",
+        "badges": {
+          "pending": "غير محفوظ",
+          "removed": "قيد الإزالة"
+        }
       },
       "fulfill": {
         "action": "وضع علامة كمشحون",

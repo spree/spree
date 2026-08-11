@@ -73,24 +73,6 @@ export function OrderHeader({ order }: { order: Order }) {
 
   const dropdownItems = (
     <>
-      {order.status === 'draft' && (
-        <DropdownMenuItem
-          onClick={async () => {
-            if (
-              await confirm({
-                message: t('admin.orders.detail.confirm.complete_message'),
-                confirmLabel: t('admin.orders.detail.dropdown.complete_order'),
-              })
-            ) {
-              completeMutation.mutate(undefined)
-            }
-          }}
-          disabled={completeMutation.isPending}
-        >
-          <CheckCircleIcon className="size-4" />
-          {t('admin.orders.detail.dropdown.complete_order')}
-        </DropdownMenuItem>
-      )}
       {order.considered_risky && !order.approved_at && (
         <DropdownMenuItem
           onClick={async () => {
@@ -175,12 +157,34 @@ export function OrderHeader({ order }: { order: Order }) {
       backTo={backFallback}
       badges={badges}
       actions={
-        <Button asChild variant="outline">
-          <Link to="/$storeId/orders/$orderId/edit" params={{ storeId, orderId }}>
-            <PencilIcon className="size-4" />
-            {t('admin.orders.edit.action_label')}
-          </Link>
-        </Button>
+        <>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/$storeId/orders/$orderId/edit" params={{ storeId, orderId }}>
+              <PencilIcon className="size-4" />
+              {t('admin.orders.edit.action_label')}
+            </Link>
+          </Button>
+
+          {order.status === 'draft' && (
+            <Button
+              size="sm"
+              onClick={async () => {
+                if (
+                  await confirm({
+                    message: t('admin.orders.detail.confirm.complete_message'),
+                    confirmLabel: t('admin.orders.detail.dropdown.complete_order'),
+                  })
+                ) {
+                  completeMutation.mutate(undefined)
+                }
+              }}
+              disabled={completeMutation.isPending}
+            >
+              <CheckCircleIcon />
+              {t('admin.orders.detail.dropdown.complete_order')}
+            </Button>
+          )}
+        </>
       }
       dropdownItems={dropdownItems}
       resource={{ id: order.id, number: order.number }}

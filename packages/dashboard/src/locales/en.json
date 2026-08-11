@@ -1799,10 +1799,6 @@
           "resend_confirmation": "Resend Confirmation",
           "void_payment": "Void Payment"
         },
-        "edit_quantity": {
-          "description": "Set the quantity for this line item.",
-          "title": "Edit Quantity"
-        },
         "errors": {
           "approve_failed": "Failed to approve order",
           "cancel_failed": "Failed to cancel order",
@@ -1904,25 +1900,25 @@
         "action_label": "Edit order",
         "actions": {
           "add_product": "Add product",
-          "edit_quantity_for": "Edit quantity of {{name}}",
-          "remove": "Remove",
-          "remove_item": "Remove {{name}}"
+          "remove_item": "Remove {{name}}",
+          "quantity_for": "Quantity of {{name}}",
+          "restore_item": "Keep {{name}}"
         },
         "columns": {
           "line_total": "Line total",
           "product": "Product",
           "unit_price": "Unit price"
         },
-        "confirm": {
-          "remove_message": "Remove \"{{name}}\" from this order? This takes effect immediately and the order totals are recalculated.",
-          "remove_title": "Remove line item"
-        },
         "empty": "This order has no items.",
         "items_title": "Items",
         "subtitle": "Order {{number}}",
         "title": "Edit order",
-        "totals_hint": "Totals are recalculated by the server after each change.",
-        "totals_title": "Totals"
+        "totals_hint": "Totals are recalculated by the server after you save.",
+        "totals_title": "Totals",
+        "badges": {
+          "pending": "Not saved",
+          "removed": "Removing"
+        }
       },
       "fulfill": {
         "action": "Mark as fulfilled",

@@ -1,3 +1,43 @@
+## 2026-08-11: The order edit screen stages edits and saves in bulk (reverses 2026-08-10)
+
+The 6.0 admin order edit screen was specified to write immediately — one
+interaction, one request — and shipped that way: a dialog per quantity change, a
+confirm dialog per removal. That is the wrong shape for an order editor and the
+constraint behind it was wrong.
+
+It now works as a form. Quantities are inputs, a row's `x` marks it removed
+(struck through, reversible), Save applies the batch and Discard drops it.
+
+**Why the original constraint was wrong.** It existed to forbid a *persisted*
+per-domain draft: a shadow order in the database that
+`6.1-order-change-substrate.md` Phase 3 would have to migrate onto `OrderChange`.
+That reasoning holds. But it was extended to cover transient React form state,
+which is a different thing entirely — a form holding "quantity 2 -> 3, line 4
+removed" until submit persists nothing, so there is nothing to unpick later. It
+is the same dirty-tracked form pattern the dashboard uses everywhere else.
+
+**Staged edits fit the substrate better, not worse.** `OrderChange` is
+`begin -> request -> confirm -> cancel`: accumulate actions, then confirm. A
+screen that already batches behind Save maps onto that directly, and Phase 3
+becomes additive (a totals delta, `begin` on entry). The immediate-write version
+is the one that would have needed reshaping, having no confirm moment at all.
+
+**Immediate writes were also worse on their own terms.** Every keystroke in a
+quantity field fired a request and re-summed the order server-side, and removing
+a line was irreversible with only a confirm dialog in the way. Staging gives the
+merchant a Discard.
+
+**Accepted limitation.** There is no bulk line-item endpoint, so Save issues N
+calls against the existing per-item routes and a mid-batch failure leaves
+earlier writes applied. The screen reports what succeeded and keeps the rest
+staged. Deliberately not fixed with a new bulk endpoint: Phase 3's
+`OrderChanges::Confirm` applies every action in one transaction, so building one
+now would be work thrown away.
+
+**What stays forbidden:** persisting pending edits in any schema, and computing
+a projected total client-side to fake a preview — 6.0 cannot project totals, and
+an approximation would disagree with the server.
+
 ## 2026-08-10: Fulfillment side effects move to workflows; the state machine keeps the status column
 
 Answers "should Fulfillment follow Order and lose its state machine?" with

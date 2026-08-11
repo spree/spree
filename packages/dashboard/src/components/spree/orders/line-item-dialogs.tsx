@@ -2,13 +2,6 @@ import type { Variant } from '@spree/admin-sdk'
 import { adminClient, formatPrice } from '@spree/dashboard-core'
 import {
   Button,
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Field,
   FieldGroup,
   FieldLabel,
@@ -24,17 +17,20 @@ import { useQuery } from '@tanstack/react-query'
 import { XCircleIcon } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useOrderMutation } from '../../../hooks/use-order'
 
-/** Searches the catalog and adds the chosen variant to the order. */
+/**
+ * Catalog picker for the order edit screen. It writes nothing — the chosen
+ * variant and quantity are handed back to the caller, which stages them as a
+ * pending row until the merchant saves the order.
+ */
 export function AddLineItemDialog({
-  orderId,
   open,
   onOpenChange,
+  onSelect,
 }: {
-  orderId: string
   open: boolean
   onOpenChange: (open: boolean) => void
+  onSelect: (variant: Variant, quantity: number) => void
 }) {
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
@@ -50,24 +46,15 @@ export function AddLineItemDialog({
 
   const variants = variantsData?.data ?? []
 
-  const mutation = useOrderMutation(orderId, (params: { variant_id: string; quantity: number }) =>
-    adminClient.orders.items.create(orderId, params),
-  )
-
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    e.stopPropagation()
     if (!selectedVariant) return
-    mutation.mutate(
-      { variant_id: selectedVariant.id, quantity },
-      {
-        onSuccess: () => {
-          onOpenChange(false)
-          setSelectedVariant(null)
-          setSearch('')
-          setQuantity(1)
-        },
-      },
-    )
+    onSelect(selectedVariant, quantity)
+    onOpenChange(false)
+    setSelectedVariant(null)
+    setSearch('')
+    setQuantity(1)
   }
 
   return (
@@ -165,78 +152,12 @@ export function AddLineItemDialog({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {t('admin.actions.cancel')}
             </Button>
-            <Button type="submit" disabled={!selectedVariant || mutation.isPending}>
-              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.add')}
+            <Button type="submit" disabled={!selectedVariant}>
+              {t('admin.actions.add')}
             </Button>
           </SheetFooter>
         </form>
       </SheetContent>
     </Sheet>
-  )
-}
-
-/** Changes how many units of one line item the order carries. */
-export function EditQuantityDialog({
-  orderId,
-  lineItemId,
-  currentQuantity,
-  open,
-  onOpenChange,
-}: {
-  orderId: string
-  lineItemId: string
-  currentQuantity: number
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) {
-  const { t } = useTranslation()
-  const mutation = useOrderMutation(orderId, (params: { quantity: number }) =>
-    adminClient.orders.items.update(orderId, lineItemId, params),
-  )
-
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const fd = new FormData(e.currentTarget)
-    mutation.mutate(
-      { quantity: Number(fd.get('quantity')) || 1 },
-      { onSuccess: () => onOpenChange(false) },
-    )
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('admin.orders.detail.edit_quantity.title')}</DialogTitle>
-          <DialogDescription>
-            {t('admin.orders.detail.edit_quantity.description')}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <DialogBody>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="edit-quantity">{t('admin.fields.quantity.label')}</FieldLabel>
-                <Input
-                  id="edit-quantity"
-                  name="quantity"
-                  type="number"
-                  min={1}
-                  defaultValue={currentQuantity}
-                />
-              </Field>
-            </FieldGroup>
-          </DialogBody>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              {t('admin.actions.cancel')}
-            </Button>
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? t('admin.actions.saving') : t('admin.actions.save')}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
   )
 }

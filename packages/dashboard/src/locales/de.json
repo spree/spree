@@ -1799,10 +1799,6 @@
           "resend_confirmation": "Bestätigung erneut senden",
           "void_payment": "Zahlung stornieren"
         },
-        "edit_quantity": {
-          "description": "Legen Sie die Menge für diese Position fest.",
-          "title": "Menge bearbeiten"
-        },
         "errors": {
           "approve_failed": "Auftrag konnte nicht genehmigt werden",
           "cancel_failed": "Auftrag konnte nicht storniert werden",
@@ -1904,25 +1900,25 @@
         "action_label": "Bestellung bearbeiten",
         "actions": {
           "add_product": "Produkt hinzufügen",
-          "edit_quantity_for": "Menge von {{name}} bearbeiten",
-          "remove": "Entfernen",
-          "remove_item": "{{name}} entfernen"
+          "remove_item": "{{name}} entfernen",
+          "quantity_for": "Menge von {{name}}",
+          "restore_item": "{{name}} behalten"
         },
         "columns": {
           "line_total": "Positionssumme",
           "product": "Produkt",
           "unit_price": "Einzelpreis"
         },
-        "confirm": {
-          "remove_message": "„{{name}}“ aus dieser Bestellung entfernen? Dies wird sofort wirksam und die Bestellsummen werden neu berechnet.",
-          "remove_title": "Position entfernen"
-        },
         "empty": "Diese Bestellung enthält keine Artikel.",
         "items_title": "Artikel",
         "subtitle": "Bestellung {{number}}",
         "title": "Bestellung bearbeiten",
-        "totals_hint": "Die Summen werden nach jeder Änderung vom Server neu berechnet.",
-        "totals_title": "Summen"
+        "totals_hint": "Die Summen werden nach dem Speichern vom Server neu berechnet.",
+        "totals_title": "Summen",
+        "badges": {
+          "pending": "Nicht gespeichert",
+          "removed": "Wird entfernt"
+        }
       },
       "fulfill": {
         "action": "Als versendet markieren",

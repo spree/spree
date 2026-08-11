@@ -1815,10 +1815,6 @@
           "resend_confirmation": "Wyślij ponownie potwierdzenie",
           "void_payment": "Unieważnij płatność"
         },
-        "edit_quantity": {
-          "description": "Ustaw ilość dla tej pozycji.",
-          "title": "Edytuj ilość"
-        },
         "errors": {
           "approve_failed": "Nie udało się zatwierdzić zamówienia",
           "cancel_failed": "Nie udało się anulować zamówienia",
@@ -1922,25 +1918,25 @@
         "action_label": "Edytuj zamówienie",
         "actions": {
           "add_product": "Dodaj produkt",
-          "edit_quantity_for": "Edytuj ilość dla {{name}}",
-          "remove": "Usuń",
-          "remove_item": "Usuń {{name}}"
+          "remove_item": "Usuń {{name}}",
+          "quantity_for": "Ilość dla {{name}}",
+          "restore_item": "Zachowaj {{name}}"
         },
         "columns": {
           "line_total": "Wartość pozycji",
           "product": "Produkt",
           "unit_price": "Cena jednostkowa"
         },
-        "confirm": {
-          "remove_message": "Usunąć „{{name}}” z tego zamówienia? Zmiana zostanie zastosowana natychmiast, a sumy zamówienia zostaną przeliczone.",
-          "remove_title": "Usuń pozycję"
-        },
         "empty": "To zamówienie nie zawiera pozycji.",
         "items_title": "Pozycje",
         "subtitle": "Zamówienie {{number}}",
         "title": "Edytuj zamówienie",
-        "totals_hint": "Sumy są przeliczane przez serwer po każdej zmianie.",
-        "totals_title": "Sumy"
+        "totals_hint": "Sumy są przeliczane przez serwer po zapisaniu zmian.",
+        "totals_title": "Sumy",
+        "badges": {
+          "pending": "Niezapisane",
+          "removed": "Do usunięcia"
+        }
       },
       "fulfill": {
         "action": "Oznacz jako wysłane",

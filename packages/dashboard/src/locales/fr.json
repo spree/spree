@@ -1799,10 +1799,6 @@
           "resend_confirmation": "Renvoyer la confirmation",
           "void_payment": "Annuler le paiement"
         },
-        "edit_quantity": {
-          "description": "Définissez la quantité pour cette ligne d'article.",
-          "title": "Modifier la quantité"
-        },
         "errors": {
           "approve_failed": "Échec de l'approbation de la commande",
           "cancel_failed": "Échec de l'annulation de la commande",
@@ -1904,25 +1900,25 @@
         "action_label": "Modifier la commande",
         "actions": {
           "add_product": "Ajouter un produit",
-          "edit_quantity_for": "Modifier la quantité de {{name}}",
-          "remove": "Retirer",
-          "remove_item": "Retirer {{name}}"
+          "remove_item": "Retirer {{name}}",
+          "quantity_for": "Quantité de {{name}}",
+          "restore_item": "Conserver {{name}}"
         },
         "columns": {
           "line_total": "Total de la ligne",
           "product": "Produit",
           "unit_price": "Prix unitaire"
         },
-        "confirm": {
-          "remove_message": "Retirer « {{name}} » de cette commande ? Cela prend effet immédiatement et les totaux de la commande sont recalculés.",
-          "remove_title": "Retirer la ligne"
-        },
         "empty": "Cette commande ne contient aucun article.",
         "items_title": "Articles",
         "subtitle": "Commande {{number}}",
         "title": "Modifier la commande",
-        "totals_hint": "Les totaux sont recalculés par le serveur après chaque modification.",
-        "totals_title": "Totaux"
+        "totals_hint": "Les totaux sont recalculés par le serveur après l'enregistrement.",
+        "totals_title": "Totaux",
+        "badges": {
+          "pending": "Non enregistré",
+          "removed": "À retirer"
+        }
       },
       "fulfill": {
         "action": "Marquer comme expédié",
