@@ -88,6 +88,42 @@ RSpec.describe 'Store tax identifiers', type: :request do
       expect(JSON.parse(response.body)['kind']).to eq('eu_vat')
     end
 
+    # Tax depends on the buyer's registration, so writing one has to re-cost the
+    # cart and not merely store it. The rate below is configured after the cart
+    # was last costed, which leaves its tax stale on purpose: tax appearing on
+    # the cart is what proves the request re-estimated.
+    describe 'the re-costing it triggers' do
+      let(:line_item) { cart.line_items.first }
+      let!(:tax_rate) do
+        create(:tax_rate, store: store, country: cart.tax_country,
+                          tax_category: line_item.tax_category, amount: 0.1, included_in_price: false)
+      end
+
+      it 'happens when a registration is entered' do
+        expect(cart.tax_lines).to be_empty
+
+        put "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
+            params: { kind: 'eu_vat', value: 'DE555555555' },
+            headers: headers.merge('x-spree-token' => cart.token), as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(cart.reload.tax_lines.sole.amount).to eq(1.0)
+        expect(cart.additional_tax_total).to eq(1.0)
+        expect(cart.total).to eq(11.0)
+      end
+
+      it 'happens when the override is cleared' do
+        create(:tax_identifier, customer: nil, cart: cart, kind: 'eu_vat', value: 'DE999999999')
+
+        delete "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
+               headers: headers.merge('x-spree-token' => cart.token), as: :json
+
+        expect(response).to have_http_status(:no_content)
+        expect(cart.reload.tax_lines.sole.amount).to eq(1.0)
+        expect(cart.additional_tax_total).to eq(1.0)
+      end
+    end
+
     it 'rejects a malformed number when this installation can check the kind' do
       stub_const('SpecStoreValidator', Class.new(Spree::TaxIdentifiers::Validator::Base) do
         def self.valid_format?(value)
