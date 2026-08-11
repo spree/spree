@@ -17,7 +17,7 @@ RSpec.describe Spree::Api::V3::Admin::TaxProvidersController, type: :controller 
       expect(internal['available']).to be(true)
       expect(internal['default']).to be(true)
       expect(internal['unsupported_capabilities'].map { |capability| capability['key'] }).to(
-        contain_exactly('us_local_tax', 'reverse_charge', 'oss_thresholds')
+        contain_exactly('us_local_tax', 'reverse_charge', 'oss_thresholds', 'proportional_delivery_tax')
       )
     end
 

@@ -1517,6 +1517,9 @@ en:
       oss_thresholds:
         description: Crossing the EU-wide cross-border threshold does not switch to destination-country rates automatically, because it depends on annual turnover across every destination rather than on any single order.
         label: Distance-selling thresholds
+      proportional_delivery_tax:
+        description: Delivery is taxed at the single rate its delivery method names, not split across the rates of the goods being delivered. A basket mixing tax rates collects the wrong amount on delivery.
+        label: Proportional delivery tax
       reverse_charge:
         description: A VAT-registered business buyer is charged tax instead of receiving a zero-rated invoice. Their registration number is recorded but does not change the tax.
         label: EU reverse charge

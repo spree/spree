@@ -51,7 +51,7 @@ describe Spree::TaxProvider::Base, type: :model do
       expect(hash[:available]).to be(true)
       expect(hash[:default]).to be(true)
       expect(hash[:unsupported_capabilities].map { |capability| capability[:key] }).to eq(
-        %w[us_local_tax reverse_charge oss_thresholds]
+        %w[us_local_tax reverse_charge oss_thresholds proportional_delivery_tax]
       )
     end
 
@@ -111,7 +111,7 @@ describe Spree::TaxProvider::Base, type: :model do
   describe 'the internal provider' do
     it 'declares the domains rate configuration cannot express' do
       expect(Spree::TaxProvider::Internal.unsupported_capabilities).to(
-        contain_exactly(:us_local_tax, :reverse_charge, :oss_thresholds)
+        contain_exactly(:us_local_tax, :reverse_charge, :oss_thresholds, :proportional_delivery_tax)
       )
     end
 

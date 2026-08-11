@@ -7,11 +7,12 @@ module Spree
     # default tax category's rates.
     class Internal < Base
       # Rates are configured per country or state with no local-tax breakdown, no buyer
-      # registration handling and no distance-selling thresholds. Declared so a
-      # merchant pairing this with a market is told, rather than discovering it
-      # in a return.
+      # registration handling, no distance-selling thresholds, and delivery taxed
+      # at its own method's rate rather than apportioned across the rates of the
+      # goods it carries. Declared so a merchant pairing this with a market is
+      # told, rather than discovering it in a return.
       def self.unsupported_capabilities
-        %i[us_local_tax reverse_charge oss_thresholds]
+        %i[us_local_tax reverse_charge oss_thresholds proportional_delivery_tax]
       end
 
       # +tax_date+ is accepted and ignored: TaxRate rows carry no validity
