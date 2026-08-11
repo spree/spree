@@ -3,11 +3,28 @@ module Spree
     class Package
       attr_reader :stock_location, :contents
       attr_accessor :delivery_rates
+      # The cart or order this package is being quoted for. Set when a
+      # fulfillment builds the package; nil for proposed packages the
+      # coordinator builds before anything is persisted.
+      attr_writer :owner
 
       def initialize(stock_location, contents = [])
         @stock_location = stock_location
         @contents = contents
         @delivery_rates = []
+      end
+
+      # Who this package is for.
+      #
+      # Prefers the owner the fulfillment supplied over walking to
+      # `inventory_unit.order`: during checkout a fulfillment belongs to a
+      # Cart, while its units can still carry an order_id from elsewhere, and
+      # following that returns a stranger's order — whose ship address would
+      # then stand in for the customer's.
+      #
+      # @return [Spree::Cart, Spree::Order, nil]
+      def owner
+        @owner || order
       end
 
       # @deprecated Use {#delivery_rates}; removed in 6.1.

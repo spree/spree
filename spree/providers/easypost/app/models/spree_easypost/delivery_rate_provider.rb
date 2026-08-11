@@ -68,7 +68,7 @@ module SpreeEasyPost
     # @return [Array<Spree::DeliveryRateProvider::Estimate>]
     def estimates(package)
       return [] if integration.nil?
-      return [] if package.order.ship_address.nil?
+      return [] if package.owner&.ship_address.nil?
 
       rates = begin
         easypost_shipment(package).rates
@@ -94,10 +94,10 @@ module SpreeEasyPost
     # One shipment-create returns rates for every carrier and service, so all
     # delivery methods sharing this provider within a request reuse it.
     def easypost_shipment(package)
-      cache_key = [:easypost_shipment, store.id, package.stock_location.id, package.order.id]
+      cache_key = [:easypost_shipment, store.id, package.stock_location.id, package.owner.id]
       Spree::Current.provider_cache[cache_key] ||= integration.client.shipment.create(
         from_address: address_params(package.stock_location),
-        to_address: address_params(package.order.ship_address),
+        to_address: address_params(package.owner.ship_address),
         parcel: parcel_params(package)
       )
     end

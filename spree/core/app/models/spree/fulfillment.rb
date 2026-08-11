@@ -597,6 +597,7 @@ module Spree
 
     def to_package
       package = Stock::Package.new(stock_location)
+      package.owner = owner
       fulfillment_items.includes(:variant).joins(:variant).group_by(&:status).each do |status, units|
         package.add_multiple units, status.to_sym
       end
