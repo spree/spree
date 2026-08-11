@@ -3,6 +3,10 @@ module SpreeEasyPost
   # issues separate test and production keys, so there is no mode toggle.
   class Integration < Spree::Integration
     preference :api_key, :password
+    # The shared secret configured on the EasyPost webhook; signs every
+    # delivery. Without it webhooks are refused — an unauthenticated report
+    # could otherwise mark parcels delivered, which starts return windows.
+    preference :webhook_secret, :password
 
     # EasyPost's own documentation example address — used only to prove the
     # key authenticates.
@@ -16,6 +20,19 @@ module SpreeEasyPost
 
     def self.integration_group
       'shipping'
+    end
+
+    # Verifies the EasyPost HMAC signature and translates `tracker.updated`
+    # payloads into UpdateTracking arguments. Non-tracker events (batches,
+    # refund confirmations) return nil and are acknowledged without action.
+    def parse_webhook_event(raw_post, headers)
+      raise Spree::Integration::WebhookSignatureError, 'webhook secret not configured' if preferred_webhook_secret.blank?
+
+      payload = EasyPost::Util.validate_webhook(raw_post, headers, preferred_webhook_secret)
+
+      SpreeEasyPost::TrackerEvent.from_webhook(payload)&.to_update_tracking_arguments
+    rescue EasyPost::Errors::SignatureVerificationError => e
+      raise Spree::Integration::WebhookSignatureError, e.message
     end
 
     def self.integration_name

@@ -36,15 +36,12 @@ module SpreeEasyPost
     # @return [SpreeEasyPost::TrackerEvent, nil] nil when the payload is not a
     #   tracker update or carries no tracking code to match on
     def self.from_webhook(payload)
-      # A webhook body is untrusted input we only ever read, so it is converted
-      # wholesale rather than declared field by field — permitting it would
-      # imply the values reach a model, and they do not.
-      payload = payload.respond_to?(:to_unsafe_h) ? payload.to_unsafe_h : payload
+      # Always a plain Hash: the integration hands over what the SDK's
+      # signature validation parsed from the raw body.
       payload = payload.to_h.deep_stringify_keys
       return unless payload['description'].to_s.start_with?('tracker.')
 
       tracker = payload['result'] || {}
-      tracker = tracker.respond_to?(:to_unsafe_h) ? tracker.to_unsafe_h.deep_stringify_keys : tracker
       tracking_code = tracker['tracking_code']
       return if tracking_code.blank?
 
@@ -55,6 +52,20 @@ module SpreeEasyPost
         delivered_at: delivery_time(tracker),
         details: tracker.slice('status', 'status_detail', 'carrier', 'est_delivery_date', 'public_url')
       )
+    end
+
+    # The shape {Spree::Fulfillments::UpdateTracking} takes, plus the
+    # tracking code the endpoint matches the fulfillment on.
+    #
+    # @return [Hash]
+    def to_update_tracking_arguments
+      {
+        tracking_code: tracking_code,
+        tracking_status: status,
+        estimated_delivery_at: estimated_delivery_at,
+        delivered_at: delivered_at,
+        details: details
+      }
     end
 
     # The scan that actually recorded delivery, which is earlier than the

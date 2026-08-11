@@ -2,6 +2,12 @@ module Spree
   class Integration < Spree.base_class
     has_prefix_id :int
 
+    # Raised by {#parse_webhook_event} when a webhook's signature is missing
+    # or does not match this integration's secret. The webhook controller
+    # answers 401, so the sender knows its configuration is wrong rather than
+    # retrying forever.
+    WebhookSignatureError = Class.new(StandardError)
+
     include Spree::SingleStoreResource
     include Spree::PreferenceSchema
 
@@ -122,6 +128,25 @@ module Spree
 
     def name
       self.class.integration_name
+    end
+
+    # Verifies and parses a provider webhook addressed to this integration.
+    #
+    # The base implementation accepts nothing: an integration that takes
+    # webhooks overrides this, verifies the signature against its own secret
+    # (raising {WebhookSignatureError} when it is missing or wrong), and
+    # returns the event translated into vocabulary core understands. Carrier
+    # integrations return {Spree::Fulfillments::UpdateTracking} keyword
+    # arguments plus +tracking_code+; +nil+ means "not an event we act on",
+    # which the endpoint acknowledges without doing anything.
+    #
+    # @param _raw_post [String] the request body exactly as received — HMAC
+    #   signatures are computed over the raw bytes, so it must not be re-parsed
+    #   or re-encoded before verification
+    # @param _headers [#[]] the request headers
+    # @return [Hash, nil]
+    def parse_webhook_event(_raw_post, _headers)
+      nil
     end
 
     # Checks if the integration can establish a connection.

@@ -13,19 +13,6 @@ module SpreeEasyPost
       end
     end
 
-    # The gem ships one route (the tracker webhook), so it is appended rather
-    # than asking hosts to mount an engine for a single endpoint.
-    initializer 'spree_easypost.routes' do |app|
-      app.routes.append do
-        # Routed to the class rather than a 'spree_easypost/webhooks' string:
-        # Rails camelizes that to SpreeEasypost, which is not what the gem's
-        # module is called (see the inflection above).
-        post '/spree_easypost/webhooks',
-             to: SpreeEasyPost::WebhooksController.action(:create),
-             as: :spree_easypost_webhooks
-      end
-    end
-
     config.after_initialize do
       Spree.integrations << 'SpreeEasyPost::Integration'
       Spree.delivery_rate_providers << SpreeEasyPost::DeliveryRateProvider

@@ -168,29 +168,55 @@ Once a parcel is moving, most carriers will tell you where it is. Spree keeps
 that on a separate field from the fulfillment's own status, so a bounced parcel
 never un-ships itself — see [Fulfillments](/v6/developer/core-concepts/fulfillments#statuses).
 
-Translate the carrier's vocabulary into Spree's in your gem, then hand it over:
+Spree owns the endpoint: every integration gets one at
+`POST /api/v3/webhooks/fulfillments/:integration_id` — the merchant pastes
+that URL into the carrier's webhook settings. Your job is one method on the
+integration:
 
 ```ruby
-Spree.fulfillment_update_tracking_workflow.call(
-  fulfillment: fulfillment,
-  tracking_status: 'out_for_delivery',   # one of Spree::Fulfillment::TRACKING_STATUSES
-  estimated_delivery_at: Time.parse(payload['eta']),
-  details: payload.slice('status_detail', 'carrier')
-)
+class SpreeAcmeCarrier::Integration < Spree::Integration
+  preference :api_key, :password
+  preference :webhook_secret, :password
+
+  # Verify the signature against your secret, translate the payload, return
+  # UpdateTracking arguments plus the tracking code to match on — or nil for
+  # events you don't act on.
+  def parse_webhook_event(raw_post, headers)
+    raise Spree::Integration::WebhookSignatureError if preferred_webhook_secret.blank?
+
+    payload = AcmeCarrier.verify!(raw_post, headers, preferred_webhook_secret) # raises on a bad signature
+
+    return unless payload['type'] == 'shipment.status_changed'
+
+    {
+      tracking_code: payload['tracking_code'],
+      tracking_status: STATUS_MAP.fetch(payload['status'], 'unknown'),  # Spree::Fulfillment::TRACKING_STATUSES
+      estimated_delivery_at: payload['eta'],
+      delivered_at: payload['delivered_scan_at'],
+      details: payload.slice('status_detail', 'carrier')
+    }
+  rescue AcmeCarrier::SignatureError => e
+    raise Spree::Integration::WebhookSignatureError, e.message
+  end
+end
 ```
 
-Two things it does for you: reporting `delivered` also confirms receipt on the
-fulfillment (setting `delivered_at`, which return windows count from), and an
-update that only carries a scan leaves an earlier estimate alone.
+The endpoint does the rest: signature failures answer `401` so a misconfigured
+sender notices, unmatched tracking codes and `nil` events are acknowledged with
+`200` so the carrier never retries a payload that cannot succeed, and matched
+events run through `Fulfillments::UpdateTracking` — reporting `delivered` also
+confirms receipt on the fulfillment, and an update carrying only a scan leaves
+an earlier estimate alone.
 
-Pass `delivered_at` from the carrier's delivering scan rather than letting it
-default to now — a webhook usually lands well after the parcel arrives, and the
-customer's return window starts at the doorstep.
+Three rules worth keeping:
 
-Do the translation in your gem, never in core: `unknown` keeps an unrecognised
-report visible instead of dropping it. A webhook endpoint should answer `200`
-even for parcels it does not recognise, or the carrier will retry a payload
-that can never succeed.
+- **Verify or refuse.** Raise `WebhookSignatureError` when no secret is
+  configured rather than accepting unsigned reports — a forged `delivered`
+  starts the customer's return window and, in the EU, the withdrawal clock.
+- **Pass `delivered_at` from the carrier's delivering scan**, not the webhook's
+  arrival time. The webhook usually lands well after the parcel does.
+- **Translate in your gem, never in core.** Map unrecognised carrier statuses
+  to `unknown` so the report stays visible instead of being dropped.
 
 ## Testing
 

@@ -84,6 +84,15 @@ RSpec.describe SpreeEasyPost::TrackerEvent do
       end
     end
 
+    it 'translates into the update-tracking argument shape' do
+      arguments = described_class.from_webhook(webhook(status: 'in_transit')).to_update_tracking_arguments
+
+      expect(arguments).to include(tracking_code: 'EZ1000000001', tracking_status: 'in_transit')
+      expect(arguments.keys).to contain_exactly(
+        :tracking_code, :tracking_status, :estimated_delivery_at, :delivered_at, :details
+      )
+    end
+
     it 'keeps the carrier detail worth showing an admin' do
       event = described_class.from_webhook(
         webhook(status: 'failure', 'status_detail' => 'address_incorrect')
