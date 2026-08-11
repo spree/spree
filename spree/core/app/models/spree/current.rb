@@ -66,12 +66,13 @@ module Spree
       self.default_tax_zone = Spree::Zone.find_by(default_tax: true)
     end
 
-    # Returns the current price lists for the global pricing context.
+    # Returns the current price lists for the global pricing context, with rules
+    # preloaded once per request for applicable? checks (cart + volume tiers).
     # @return [ActiveRecord::Relation<Spree::PriceList>]
     def price_lists
       super || begin
         context = global_pricing_context
-        self.price_lists = Spree::PriceList.for_context(context)
+        self.price_lists = Spree::PriceList.for_context(context).includes(:price_rules).load
       end
     end
 

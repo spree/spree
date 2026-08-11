@@ -66,5 +66,6 @@ export { StockReservationSchema, type StockReservation } from './StockReservatio
 export { StoreCreditSchema, type StoreCredit } from './StoreCredit';
 export { TaxLineSchema, type TaxLine } from './TaxLine';
 export { VariantSchema, type Variant } from './Variant';
+export { VolumePriceSchema, type VolumePrice } from './VolumePrice';
 export { WishlistSchema, type Wishlist } from './Wishlist';
 export { WishlistItemSchema, type WishlistItem } from './WishlistItem';

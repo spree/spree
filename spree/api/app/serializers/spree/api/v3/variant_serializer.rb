@@ -103,6 +103,15 @@ module Spree
           record = price_in(variant)&.prior_price
           Spree.api.price_history_serializer.new(record, params: params).to_h if record
         end
+
+        typelize volume_prices: ['VolumePrice', multi: true]
+
+        attribute :volume_prices,
+                  if: proc { expand?('volume_prices') && !params[:hide_prices] } do |variant|
+          Spree::VolumePricesForVariant.call(variant: variant, user: current_user).map do |tier|
+            Spree.api.volume_price_serializer.new(tier, params: params).to_h
+          end
+        end
       end
     end
   end

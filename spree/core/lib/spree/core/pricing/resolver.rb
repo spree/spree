@@ -49,11 +49,7 @@ module Spree
       # Uses Spree::Current.price_lists if the context matches, otherwise fetches directly
       # @return [ActiveRecord::Relation<Spree::PriceList>]
       def price_lists_for_context
-        if context.store == Spree::Current.store && context.currency == Spree::Current.currency
-          Spree::Current.price_lists
-        else
-          Spree::PriceList.for_context(context)
-        end
+        Spree::Pricing.price_lists_for(context)
       end
 
       # Returns the price for a given price list

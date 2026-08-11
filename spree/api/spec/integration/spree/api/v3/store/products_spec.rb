@@ -55,7 +55,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       parameter name: 'q[in_stock]', in: :query, type: :boolean, required: false,
                 description: 'Filter to only in-stock products'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (variants, media, categories, option_types)'
+                description: 'Comma-separated associations to expand (variants, media, categories, option_types, prior_price, default_variant.volume_prices, variants.volume_prices)'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
@@ -103,7 +103,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Product slug (e.g., spree-tote) or prefix ID (e.g., product_abc123)'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand'
+                description: 'Comma-separated associations to expand (variants, media, categories, option_types, prior_price, default_variant.volume_prices, variants.volume_prices)'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
@@ -192,6 +192,36 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data).not_to have_key('prior_price')
+        end
+      end
+
+      response '200', 'product with variants.volume_prices expanded' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:id) { product.slug }
+        let(:expand) { 'variants.volume_prices' }
+
+        let!(:variant_volume_tier_setup) do
+          product.reload
+          product.variants_including_master.each do |variant|
+            list = create(:price_list, :active, store: product.store, name: "Volume for #{variant.id}")
+            create(:volume_price_rule, price_list: list, min_quantity: 2)
+            create(:price,
+                   variant: variant,
+                   currency: product.store.default_currency,
+                   amount: 7.50,
+                   price_list: list)
+          end
+        end
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['variants']).to be_present
+          data['variants'].each do |variant_data|
+            tiers = variant_data['volume_prices']
+            expect(tiers).to be_present
+            expect(tiers.first['min_quantity']).to eq(2)
+            expect(tiers.first['price']['amount']).to eq('7.5')
+          end
         end
       end
 

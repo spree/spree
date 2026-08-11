@@ -40,6 +40,37 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].first['price']).to be_present
     end
+
+    context 'with default_variant.volume_prices expand' do
+      let!(:volume_tier_setup) do
+        product.reload
+        list = create(:price_list, :active, store: product.store, name: 'Volume (3-10)')
+        create(:volume_price_rule, price_list: list, min_quantity: 3, max_quantity: 10)
+        create(:price,
+               variant: product.default_variant,
+               currency: product.store.default_currency,
+               amount: 8.00,
+               price_list: list)
+      end
+
+      it 'omits volume_prices on the default variant for a guest' do
+        get :show, params: { id: product.slug, expand: 'default_variant.volume_prices' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['default_variant']).to be_present
+        expect(json_response['default_variant']).not_to have_key('volume_prices')
+      end
+
+      it 'returns volume_prices on the default variant for an authenticated customer' do
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+
+        get :show, params: { id: product.slug, expand: 'default_variant.volume_prices' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['default_variant']['volume_prices']).to be_present
+        expect(json_response['default_variant']['volume_prices'].first['min_quantity']).to eq(3)
+      end
+    end
   end
 
   describe 'login_required storefront access' do

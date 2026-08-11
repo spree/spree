@@ -66,5 +66,15 @@ module Spree
         ].compact.join('/')
       end
     end
+
+    # @param context [Spree::Pricing::Context]
+    # @return [ActiveRecord::Relation<Spree::PriceList>]
+    def self.price_lists_for(context)
+      if context.store == Spree::Current.store && context.currency == Spree::Current.currency
+        Spree::Current.price_lists
+      else
+        Spree::PriceList.for_context(context).includes(:price_rules).load
+      end
+    end
   end
 end

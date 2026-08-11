@@ -315,6 +315,37 @@ module Spree
           end
         end
       end
+
+      describe '.price_lists_for' do
+        let(:context) { described_class.new(currency: currency, store: store) }
+
+        before do
+          Spree::Current.store = store
+          Spree::Current.currency = currency
+        end
+
+        after { Spree::Current.reset }
+
+        let!(:price_list) do
+          create(:price_list, :active, store: store).tap do |list|
+            create(:volume_price_rule, price_list: list, min_quantity: 2)
+          end
+        end
+
+        it 'preloads price rules via Current.price_lists' do
+          lists = Spree::Pricing.price_lists_for(context)
+
+          expect(lists).to include(price_list)
+          expect(lists.first.association(:price_rules)).to be_loaded
+        end
+
+        it 'memoizes the loaded relation via Current.price_lists' do
+          first = Spree::Pricing.price_lists_for(context)
+          second = Spree::Pricing.price_lists_for(context)
+
+          expect(first.object_id).to eq(second.object_id)
+        end
+      end
     end
   end
 end

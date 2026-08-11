@@ -7,8 +7,11 @@ const client = createClient({
 
 // region:example
 const product = await client.products.get('spree-tote', {
-  expand: ['variants', 'media'],
+  expand: ['variants', 'media', 'variants.volume_prices'],
 })
+
+const tiers = product.variants?.[0]?.volume_prices ?? []
+
 // endregion:example
 
-export { product }
+export { product, tiers }
