@@ -1,3 +1,30 @@
+## 2026-08-11: One tracking number per fulfillment; multiple trackings deferred to 6.1
+
+A fulfillment carries exactly one tracking number, one carrier and one carrier
+lifecycle. When a shipment physically diverges into parcels, the answer is the
+split flow the partial-fulfillment work already provides: each parcel becomes
+its own fulfillment with its own items, status, tracking and `delivered_at`.
+That is strictly more expressive than a list of tracking numbers on one
+record — a bare list cannot say which items are in the box that bounced, and
+delivery becomes all-or-nothing across the list.
+
+What a separate tracking model would add is the narrower case: one logical
+shipment in several boxes the merchant does not want to manage as separate
+fulfillments (furniture in three cartons, a pallet of mixed packages).
+Deferred to 6.1, deliberately after the carrier-axis work landed, because the
+cost is now clear: `tracking_status`, `estimated_delivery_at`, `delivered_at`
+and webhook matching all live on the fulfillment, and a
+`spree_fulfillment_trackings` row would have to absorb that whole axis —
+per-parcel carrier status, webhooks matched to a row, the fulfillment
+delivered only when every row is — plus deprecation bridges for the
+fulfillment-level columns that are public API since 6.0.
+
+Design constraint recorded for whoever builds it: the tracking row takes the
+entire carrier axis with it. Splitting the axis across fulfillment and
+tracking rows — status here, delivered_at there — recreates the two-sources
+problem the 6.0 status rework just removed.
+Plan: `6.0-fulfillment-and-delivery.md` (Phase 6, resolved question 15).
+
 ## 2026-08-11: Fulfillment status model — two axes, `delivered` first-class, machine removed (supersedes part of 2026-08-10)
 
 `Fulfillment#status` collapses to `unfulfilled → fulfilled → delivered` plus
