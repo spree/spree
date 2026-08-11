@@ -16,7 +16,12 @@ module Spree
     belongs_to :delivery_origin_group, class_name: 'Spree::DeliveryOriginGroup', inverse_of: :delivery_zones
 
     has_many :members, class_name: 'Spree::DeliveryZoneMember', dependent: :destroy, inverse_of: :delivery_zone
-    has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: :nullify, inverse_of: :delivery_zone
+    # Destroy, not nullify: a nil zone means "no destination restriction", so
+    # orphaning a zone's methods would silently promote them from serving one
+    # region to quoting worldwide. The method belongs to the zone structurally
+    # anyway — its zone must sit in its own origin group — so deleting the zone
+    # deletes what it carried.
+    has_many :delivery_methods, class_name: 'Spree::DeliveryMethod', dependent: :destroy, inverse_of: :delivery_zone
 
     validates :name, presence: true, uniqueness: { scope: [:store_id, *spree_base_uniqueness_scope] }
     validates :store, presence: true
