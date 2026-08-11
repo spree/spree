@@ -563,16 +563,14 @@ function ColumnSelector({
           </DropdownMenuCheckboxItem>
         ))}
         <DropdownMenuSeparator />
-        <div className="px-1 py-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-center"
-            onClick={() => onVisibleColumnsChange(defaults)}
-          >
-            {t('admin.components.table_toolbar.reset_to_default')}
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-center"
+          onClick={() => onVisibleColumnsChange(defaults)}
+        >
+          {t('admin.components.table_toolbar.reset_to_default')}
+        </Button>
       </DropdownMenuContent>
     </DropdownMenu>
   )

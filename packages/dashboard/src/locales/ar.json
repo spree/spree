@@ -2321,6 +2321,7 @@
         },
         "inventory": {
           "in_stock": "{{count}} في المخزون",
+          "in_stock_short": "في المخزون",
           "on_backorder": "على المؤجل",
           "out_of_stock": "إنتهى من المخزن"
         },

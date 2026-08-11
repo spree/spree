@@ -52,9 +52,12 @@
   --popover-foreground: oklch(0.2136 0.0555 255.9);
   --primary: oklch(0.2136 0.0555 255.9); /* near-black navy for primary CTAs */
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.9709 0.0045 78.3); /* #f7f5f2 — site raised surface */
+  /* Halfway from the site's #f7f5f2 to white — filled surfaces (table headers,
+     badges, secondary buttons) read as a whisper against the card rather than
+     a distinct band. */
+  --secondary: oklch(0.9854 0.0022 78.3);
   --secondary-foreground: oklch(0.2136 0.0555 255.9);
-  --muted: oklch(0.9709 0.0045 78.3); /* #f7f5f2 */
+  --muted: oklch(0.9854 0.0022 78.3);
   --muted-foreground: oklch(0.5232 0.0122 76.5); /* warm mid-grey on the same ramp */
   /* Hover/highlight for menu items and table rows. Deliberately a lighter step
      than the site's #e9e5dd: these sit on white surfaces, where that value is
@@ -65,8 +68,10 @@
   --accent-foreground: oklch(0.2136 0.0555 255.9);
   --destructive: oklch(0.58 0.22 27); /* red-600 */
   --destructive-foreground: oklch(1 0 0); /* #ffffff */
-  --border: oklch(0.904 0.01 87.5); /* #e2dfd8 — site border */
-  --input: oklch(0.904 0.01 87.5);
+  /* A quarter of the way from the site's #e2dfd8 to white — rules stay legible
+     but recede, so a dense table reads as rows of content rather than a grid. */
+  --border: oklch(0.928 0.0075 87.5);
+  --input: oklch(0.928 0.0075 87.5);
   --ring: var(--brand-blue);
   --chart-1: oklch(0.7663 0.1067 254.4);
   --chart-2: oklch(0.5967 0.2212 258); /* brand blue */
@@ -82,7 +87,7 @@
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.9228 0.0116 84.6); /* #e9e5dd — site nav hover */
   --sidebar-accent-foreground: oklch(0.2136 0.0555 255.9);
-  --sidebar-border: oklch(0.904 0.01 87.5);
+  --sidebar-border: oklch(0.928 0.0075 87.5);
   --sidebar-ring: var(--brand-blue);
 }
 
@@ -98,16 +103,16 @@
      so here the two swap rather than the button taking on its own colour. */
   --primary: oklch(0.95 0 0);
   --primary-foreground: oklch(0.2136 0.0555 255.9); /* #061932 — light theme's primary */
-  /* Above --card, not equal to or below it. These fill elements that sit *on*
-     a card (combobox chips, badges, secondary buttons, table header rows), so
-     a value at or under the card's lightness erases them. Dark mode raises
-     where light mode lowers, since a surface reads as raised by getting
-     lighter here. */
-  --secondary: oklch(0.235 0 0);
+  /* Above --card, but only just. These fill elements that sit *on* a card
+     (combobox chips, badges, secondary buttons, table header rows), so a value
+     at or under the card's lightness erases them — while too big a step reads
+     as a bright band across a full-width table header. Dark mode raises where
+     light mode lowers, since a surface reads as raised by getting lighter. */
+  --secondary: oklch(0.185 0 0);
   --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.235 0 0);
+  --muted: oklch(0.185 0 0);
   --muted-foreground: oklch(0.62 0 0); /* #888 */
-  --accent: oklch(0.27 0 0); /* hover surface */
+  --accent: oklch(0.225 0 0); /* hover surface, a step above --muted */
   --accent-foreground: oklch(0.95 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 12%);

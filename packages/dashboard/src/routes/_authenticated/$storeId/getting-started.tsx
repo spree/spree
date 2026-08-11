@@ -6,6 +6,8 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  Progress,
+  ProgressValue,
   Skeleton,
 } from '@spree/dashboard-ui'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -68,17 +70,16 @@ function GettingStartedPage() {
         subtitle={t('admin.pages.getting_started.description')}
       />
 
-      <div className="flex items-center gap-3">
-        <div className="h-2 grow overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full rounded-full bg-primary transition-all"
-            style={{ width: `${tasks.length ? (doneCount / tasks.length) * 100 : 0}%` }}
-          />
-        </div>
-        <span className="shrink-0 text-sm text-muted-foreground">
-          {t('admin.pages.getting_started.progress', { done: doneCount, total: tasks.length })}
-        </span>
-      </div>
+      {/* `flex-nowrap` overrides the component's default wrap: the caption is
+          short enough to sit beside the track at any width, and wrapping it
+          below leaves the bar looking orphaned. */}
+      <Progress value={doneCount} max={tasks.length || 1} className="flex-nowrap gap-3">
+        <ProgressValue className="order-last shrink-0">
+          {() =>
+            t('admin.pages.getting_started.progress', { done: doneCount, total: tasks.length })
+          }
+        </ProgressValue>
+      </Progress>
 
       <div className="flex flex-col gap-4">
         {tasks.map((task) => {

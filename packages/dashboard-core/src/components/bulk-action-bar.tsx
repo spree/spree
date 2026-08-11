@@ -306,7 +306,6 @@ function BulkActionBarLayout({
                 variant="ghost"
                 size="icon-sm"
                 aria-label={t('admin.actions.more_actions')}
-                className="hover:bg-foreground/8"
               >
                 <MoreHorizontalIcon className="size-4" />
               </Button>
@@ -380,13 +379,10 @@ function BulkActionButton({
       disabled={disabled}
       tabIndex={tabIndex}
       // `shrink-0` so the zero-width measuring layer can't squeeze these and
-      // report a width smaller than the button really renders at.
-      //
-      // The bar sits on the muted header, which the ghost variant's
-      // `bg-accent` hover is a fraction of a percent away from — invisible.
-      // Darken against the bar instead of lightening toward the card, which
-      // reads as a hole.
-      className="shrink-0 gap-1.5 whitespace-nowrap px-2 hover:bg-foreground/8"
+      // report a width smaller than the button really renders at. Hover is the
+      // ghost variant's own `bg-accent` — no override needed now that the bar's
+      // muted background sits well clear of it.
+      className="shrink-0 gap-1.5 whitespace-nowrap px-2"
     >
       {action.icon}
       {action.label}

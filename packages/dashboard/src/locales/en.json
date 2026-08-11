@@ -2311,6 +2311,7 @@
         },
         "inventory": {
           "in_stock": "{{count}} in stock",
+          "in_stock_short": "In stock",
           "on_backorder": "On backorder",
           "out_of_stock": "Out of stock"
         },

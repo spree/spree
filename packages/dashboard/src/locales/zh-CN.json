@@ -2307,6 +2307,7 @@
         },
         "inventory": {
           "in_stock": "库存 {{count}} 件",
+          "in_stock_short": "有库存",
           "on_backorder": "可延期交货",
           "out_of_stock": "缺货"
         },

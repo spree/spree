@@ -2335,6 +2335,7 @@
         },
         "inventory": {
           "in_stock": "{{count}} w magazynie",
+          "in_stock_short": "W magazynie",
           "on_backorder": "Na zamówienie",
           "out_of_stock": "Brak w magazynie"
         },

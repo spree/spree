@@ -2,6 +2,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
   SidebarGroup,
   SidebarMenu,
@@ -167,6 +168,16 @@ function CollapsedDropdown({
         onMouseLeave={closeSoon}
         onMouseEnter={openNow}
       >
+        {/* The section itself leads the list. Collapsed, the icon is the only
+            route to it, and hovering opens this panel instead — so without an
+            entry here "Products" is reachable by a click most people won't
+            guess at, and not at all by keyboard. */}
+        <DropdownMenuItem asChild>
+          <Link to={item.url} className="no-underline font-medium">
+            {item.title}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         {item.items!.map((subItem) => (
           <DropdownMenuItem key={subItem.title} asChild>
             <Link to={subItem.url} className="no-underline">
