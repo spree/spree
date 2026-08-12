@@ -128,7 +128,13 @@ module Spree
     #
     # @return [Boolean]
     def final_for_destination?
-      price_list&.price_rules&.any?(&:geographic?) || false
+      rules = price_list&.price_rules.to_a
+      return false unless rules.any?(&:geographic?)
+
+      # Under 'any' the list can win on a non-geographic rule alone, so a
+      # geographic rule being present does not mean this buyer's geography is why
+      # the price applied. Under 'all' every rule matched, so it does.
+      price_list.match_policy == 'all' || rules.all?(&:geographic?)
     end
 
     def price_including_vat_for(price_options)

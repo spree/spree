@@ -2,9 +2,14 @@ module Spree
   # Restates a VAT-inclusive price for a customer in another country: the
   # home-country VAT comes out, the destination's goes on.
   module VatPriceCalculation
+    # Cheapest test first: a domestic sale needs no restatement whatever the
+    # provider is, so the provider lookup (a constantize and an instantiation) is
+    # skipped for every home-country price — and a market pointing at a provider
+    # class that is no longer loadable keeps failing only where tax is computed,
+    # not on every price read.
     def gross_amount(amount, price_options)
-      return amount if amount.nil? || !restatement_available?(price_options)
-      return amount unless outside_default_vat_zone?(price_options)
+      return amount if amount.nil? || !outside_default_vat_zone?(price_options)
+      return amount unless restatement_available?(price_options)
 
       round_to_two_places(add_foreign_vat_for(amount, price_options))
     end

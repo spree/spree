@@ -26,8 +26,10 @@ module Spree
         preferred_country_ids.map(&:to_s).include?(context.country.id.to_s)
       end
 
+      # An empty country list matches every buyer (see #applicable?), so it names
+      # no geography.
       def geographic?
-        true
+        preferred_country_ids.present?
       end
 
       def self.description

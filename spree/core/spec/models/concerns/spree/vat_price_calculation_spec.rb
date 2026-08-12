@@ -72,6 +72,31 @@ describe Spree::VatPriceCalculation, type: :model do
     end
   end
 
+  # The provider estimates against tax_country, which falls back to the market's
+  # own country, so a cart with no address is still taxed for its destination. The
+  # price has to follow, or the merchant absorbs the rate difference silently.
+  describe 'a cart with no shipping address yet' do
+    let(:french_market) do
+      create(:market, store: store, name: "France #{Time.current.to_f}", currency: 'USD',
+                      default_locale: 'en', countries: [france])
+    end
+
+    before do
+      create(:tax_rate, name: 'FR 20% incl', amount: 0.20, tax_category: category,
+                        country: france, included_in_price: true, store: store)
+    end
+
+    it 'restates from the market country, keeping the net intact' do
+      cart = create(:cart, store: store, market: french_market, currency: 'USD')
+      Spree::Carts::AddItem.call(cart: cart, variant: variant, quantity: 1)
+
+      line_item = cart.line_items.reload.first
+      expect(cart.tax_address).to be_nil
+      expect(line_item.price).to eq(100.84)
+      expect(line_item.pre_tax_amount).to be_within(0.01).of(84.03)
+    end
+  end
+
   describe 'a price the merchant set for the destination' do
     let(:french_market) do
       create(:market, store: store, name: "France #{Time.current.to_f}", currency: 'USD',
@@ -107,6 +132,62 @@ describe Spree::VatPriceCalculation, type: :model do
                                    price_list: plain_list)
 
       expect(volume_price.price_including_vat_for(country: france, market: french_market)).to eq(99.83)
+    end
+  end
+  describe 'geographic rules that do not actually narrow' do
+    let(:french_market) do
+      create(:market, store: store, name: "France #{Time.current.to_f}", currency: 'USD',
+                      default_locale: 'en', countries: [france])
+    end
+
+    before do
+      create(:tax_rate, name: 'FR 20% incl', amount: 0.20, tax_category: category,
+                        country: france, included_in_price: true, store: store)
+    end
+
+    # A market rule with nothing selected matches everyone, which is the state the
+    # admin creates it in — it must not switch restatement off for the whole list.
+    it 'still restates when the market rule names no markets' do
+      list = create(:price_list, store: store)
+      list.price_rules.create!(type: 'Spree::PriceRules::MarketRule', preferences: { market_ids: [] })
+      price = create(:price, variant: variant, currency: 'USD', amount: 95, price_list: list)
+
+      expect(price.final_for_destination?).to be(false)
+      expect(price.price_including_vat_for(country: france, market: french_market)).to eq(95.80)
+    end
+
+    # Under 'any' the list can win on the volume rule alone, so the buyer's
+    # geography is not necessarily why this price applied.
+    it "still restates a mixed list under the 'any' match policy" do
+      list = create(:price_list, store: store, match_policy: 'any')
+      list.price_rules.create!(type: 'Spree::PriceRules::MarketRule',
+                               preferences: { market_ids: [french_market.id] })
+      list.price_rules.create!(type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 1 })
+      price = create(:price, variant: variant, currency: 'USD', amount: 90, price_list: list)
+
+      expect(price.final_for_destination?).to be(false)
+      expect(price.price_including_vat_for(country: france, market: french_market)).to eq(90.76)
+    end
+
+    it "treats a mixed list under 'all' as final, since every rule matched" do
+      list = create(:price_list, store: store, match_policy: 'all')
+      list.price_rules.create!(type: 'Spree::PriceRules::MarketRule',
+                               preferences: { market_ids: [french_market.id] })
+      list.price_rules.create!(type: 'Spree::PriceRules::VolumeRule', preferences: { min_quantity: 1 })
+      price = create(:price, variant: variant, currency: 'USD', amount: 90, price_list: list)
+
+      expect(price.final_for_destination?).to be(true)
+      expect(price.price_including_vat_for(country: france, market: french_market)).to eq(90.00)
+    end
+
+    it 'applies the same rule to the compare-at price' do
+      list = create(:price_list, store: store)
+      list.price_rules.create!(type: 'Spree::PriceRules::MarketRule',
+                               preferences: { market_ids: [french_market.id] })
+      price = create(:price, variant: variant, currency: 'USD', amount: 90,
+                            compare_at_amount: 120, price_list: list)
+
+      expect(price.compare_at_price_including_vat_for(country: france, market: french_market)).to eq(120.00)
     end
   end
 end

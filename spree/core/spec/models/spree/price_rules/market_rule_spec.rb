@@ -103,10 +103,18 @@ describe Spree::PriceRules::MarketRule, type: :model do
     end
   end
   describe '#geographic?' do
-    it 'is true' do
-      # A list narrowed by geography states its prices for that geography, so
-      # they are charged as entered rather than restated for the buyer's VAT.
-      expect(described_class.new.geographic?).to be(true)
+    # A list narrowed by geography states its prices for that geography, so they
+    # are charged as entered rather than restated for the buyer's VAT.
+    it 'is true once markets are named' do
+      rule = described_class.new(price_list: price_list)
+      rule.preferred_market_ids = [market.id]
+
+      expect(rule.geographic?).to be(true)
+    end
+
+    # An empty list matches every buyer, so it narrows nothing.
+    it 'is false while no market is named' do
+      expect(described_class.new(price_list: price_list).geographic?).to be(false)
     end
   end
 end
