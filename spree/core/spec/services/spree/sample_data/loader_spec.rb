@@ -94,6 +94,14 @@ RSpec.describe Spree::SampleData::Loader, type: :service, without_global_store: 
     expect(Spree::Variant.count).to be > 80
   end
 
+  it 'creates a fully digital product with a downloadable file' do
+    product = Spree::Product.find_by(slug: 'the-spree-commerce-handbook')
+
+    expect(product).to be_present
+    expect(product.delivery_profile).to be_digital
+    expect(product.default_variant.digital_assets.first&.attachment).to be_attached
+  end
+
   it 'creates customers' do
     expect(Spree.customer_class.where.not(email: 'spree@example.com').count).to be > 5
   end
