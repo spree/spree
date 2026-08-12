@@ -108,7 +108,7 @@
      at or under the card's lightness erases them — while too big a step reads
      as a bright band across a full-width table header. Dark mode raises where
      light mode lowers, since a surface reads as raised by getting lighter. */
-  --secondary: oklch(0.185 0 0);
+  --secondary: oklch(92.4% 0.012 79.8);
   --secondary-foreground: oklch(0.95 0 0);
   --muted: oklch(0.185 0 0);
   --muted-foreground: oklch(0.62 0 0); /* #888 */
