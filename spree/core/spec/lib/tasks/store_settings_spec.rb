@@ -60,4 +60,37 @@ describe 'spree:store_settings:backfill_from_config' do
       expect { run_task }.not_to change { store.reload.preferred_address_requires_phone }.from(false)
     end
   end
+
+  # Two settings were renamed on the way onto the store, so the task can't
+  # assume the global and the preference share a name.
+  context 'when a renamed global was changed' do
+    after do
+      Spree::Config.company = false
+      Spree::Config.default_stock_reservation_ttl_minutes = 10
+      store.update!(
+        preferred_company_field_enabled: false,
+        preferred_stock_reservation_ttl_minutes: 10,
+        metadata: (store.metadata || {}).except(marker)
+      )
+    end
+
+    it 'copies company onto company_field_enabled' do
+      Spree::Config.company = true
+
+      expect { run_task }.to change { store.reload.preferred_company_field_enabled }.from(false).to(true)
+    end
+
+    it 'copies the reservation TTL onto its renamed preference' do
+      Spree::Config.default_stock_reservation_ttl_minutes = 25
+
+      expect { run_task }.to change { store.reload.preferred_stock_reservation_ttl_minutes }.from(10).to(25)
+    end
+
+    it 'leaves a store that already customized the renamed preference alone' do
+      Spree::Config.company = true
+      store.update!(preferred_company_field_enabled: true)
+
+      expect { run_task }.not_to change { store.reload.preferred_company_field_enabled }.from(true)
+    end
+  end
 end

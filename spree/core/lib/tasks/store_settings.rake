@@ -1,17 +1,20 @@
 namespace :spree do
   namespace :store_settings do
-    # Settings that moved from Spree::Config to Spree::Store preferences in
-    # Spree 6.0, mapped to the default they carried as globals. A global still
-    # at its default says nothing about intent and is never copied.
+    # Settings that moved from Spree::Config onto Spree::Store, mapped to the
+    # default they carried as globals and — where the two differ — the name the
+    # store preference goes by. A global still at its default says nothing about
+    # intent and is never copied.
     MOVED_SETTINGS = {
-      address_requires_phone: false,
-      auto_capture: true,
-      auto_capture_on_dispatch: false,
-      disable_sku_validation: false,
-      show_products_without_price: false,
-      stock_reservations_enabled: true,
-      track_inventory_levels: true,
-      track_price_history: true
+      address_requires_phone: { default: false },
+      auto_capture: { default: true },
+      auto_capture_on_dispatch: { default: false },
+      company: { default: false, store_preference: :company_field_enabled },
+      default_stock_reservation_ttl_minutes: { default: 10, store_preference: :stock_reservation_ttl_minutes },
+      disable_sku_validation: { default: false },
+      show_products_without_price: { default: false },
+      stock_reservations_enabled: { default: true },
+      track_inventory_levels: { default: true },
+      track_price_history: { default: true }
     }.freeze
 
     # Marks a store the backfill has already visited. Preferences seed their
@@ -35,8 +38,8 @@ namespace :spree do
       afterwards — the globals are deprecated and are deleted in 6.1.
     DESC
     task backfill_from_config: :environment do
-      changed = MOVED_SETTINGS.reject do |name, global_default|
-        Spree::Config.send(name) == global_default
+      changed = MOVED_SETTINGS.reject do |name, config|
+        Spree::Config.send(name) == config[:default]
       end
 
       if changed.empty?
@@ -52,16 +55,18 @@ namespace :spree do
           next
         end
 
-        changed.each do |name, _global_default|
-          if store.get_preference(name) != store.preference_default(name)
-            puts "  #{store.name} (#{store.id}): #{name} already customized — skipped."
+        changed.each do |name, config|
+          preference = config[:store_preference] || name
+
+          if store.get_preference(preference) != store.preference_default(preference)
+            puts "  #{store.name} (#{store.id}): #{preference} already customized — skipped."
             next
           end
 
           value = Spree::Config.send(name)
-          store.set_preference(name, value)
+          store.set_preference(preference, value)
 
-          puts "  #{store.name} (#{store.id}): #{name} = #{value}"
+          puts "  #{store.name} (#{store.id}): #{preference} = #{value}"
         end
 
         store.metadata = metadata.merge(BACKFILL_MARKER => true)

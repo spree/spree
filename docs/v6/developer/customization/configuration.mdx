@@ -22,12 +22,13 @@ This page lists only settings Spree 6 actually reads. Settings that exist for ba
 
 Settings that shape how a shop sells — when cards are charged, whether stock is counted, which products appear without a price — are properties of a store, not of the installation, so they live on `Spree::Store` and are edited in the dashboard under **Settings → Store**:
 
-`auto_capture`, `auto_capture_on_dispatch`, `track_inventory_levels`, `stock_reservations_enabled`, `track_price_history`, `show_products_without_price`, `disable_sku_validation`, `address_requires_phone`, `company_field_enabled`.
+`auto_capture`, `auto_capture_on_dispatch`, `track_inventory_levels`, `stock_reservations_enabled`, `stock_reservation_ttl_minutes`, `track_price_history`, `show_products_without_price`, `disable_sku_validation`, `address_requires_phone`, `company_field_enabled`, plus `guest_checkout` and `storefront_access` — those last two are owned by the channel, and the store's value is what a channel falls back to.
 
 They were global before Spree 6. The global versions still exist for one release but are no longer read, so setting one in the initializer changes nothing — run `bin/rake spree:store_settings:backfill_from_config` during the upgrade to copy your values onto every store.
 
 ```ruby
-Spree::Current.store.preferred_auto_capture           # => true
+store = Spree::Current.store
+store.preferred_auto_capture                  # => true
 store.update!(preferred_track_inventory_levels: false)
 ```
 
