@@ -128,7 +128,8 @@ Spree::Api::Config.jwt_expiration = 1800
 | Setting | Default | What it does |
 |---|---|---|
 | `rate_limit_window` | `60` | Length of the rate-limit window, in seconds. |
-| `rate_limit_per_key` | `300` | Requests allowed per publishable API key per window. |
+| `rate_limit_per_key` | `300` | Requests allowed per window for each publishable API key + client IP pair (per visitor), and for keyless traffic per IP. Applies across the whole API, not per endpoint. |
+| `rate_limit_per_secret_key` | `600` | Requests allowed per secret API key per window, across the whole API. |
 | `rate_limit_login` | `5` | Sign-in attempts allowed per IP per window. |
 | `rate_limit_register` | `3` | Registration attempts per IP. |
 | `rate_limit_refresh` | `10` | Token refresh attempts per IP. |

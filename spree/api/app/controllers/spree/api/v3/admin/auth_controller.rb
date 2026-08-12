@@ -14,13 +14,13 @@ module Spree
           # not be refused because the login form was submitted a few times.
           RATE_LIMITED_CALLBACK_RESPONSE = -> { redirect_to_dashboard(error: 'rate_limit_exceeded') }
 
-          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
           # Each of these gets its own counter. The login page fetches providers on
           # every load, so sharing the login budget would let ordinary page views —
           # or an attacker hitting providers alone — lock staff out of signing in.
-          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :providers, with: RATE_LIMIT_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :providers, with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_refresh]) }
           rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :callback, with: RATE_LIMITED_CALLBACK_RESPONSE
-          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: [:refresh, :logout], with: RATE_LIMIT_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: [:refresh, :logout], with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_refresh]) }
 
           skip_before_action :authenticate_admin!, only: [:create, :refresh, :logout, :providers, :callback]
 
@@ -128,6 +128,15 @@ module Spree
           end
 
           private
+
+          # The callback answers a browser navigation, so even the API-wide
+          # throttle must return the person to the login page — a JSON 429
+          # would strand them on a raw error body.
+          def render_rate_limited(**)
+            return redirect_to_dashboard(error: 'rate_limit_exceeded') if action_name == 'callback'
+
+            super
+          end
 
           OAUTH_STATE_PURPOSE = 'spree/admin/oauth_state'.freeze
           OAUTH_STATE_EXPIRY = 15.minutes

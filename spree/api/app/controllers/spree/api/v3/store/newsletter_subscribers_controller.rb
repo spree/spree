@@ -8,7 +8,7 @@ module Spree
                      within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
                      only: [:create, :verify, :request_unsubscribe],
-                     with: RATE_LIMIT_RESPONSE
+                     with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_register]) }
 
           # POST /api/v3/store/newsletter_subscribers
           def create
