@@ -19,6 +19,8 @@
 module Spree
   module PermissionSets
     class Base
+      RESTRICTED_MODELS = [Spree::LineItem, Spree::Adjustment, Spree::OrderPromotion].freeze
+
       # @return [CanCan::Ability] the ability instance to add permissions to
       attr_reader :ability
 
@@ -42,8 +44,8 @@ module Spree
       #
       # @return [void]
       def restrict_cancelled_order_management!
-        [Spree::LineItem, Spree::Adjustment, Spree::OrderPromotion].each do |klass|
-          cannot [:create, :edit, :destroy], klass do |record|
+        RESTRICTED_MODELS.each do |klass|
+          cannot [:create, :edit, :update, :destroy], klass do |record|
             record.order.canceled?
           end
         end

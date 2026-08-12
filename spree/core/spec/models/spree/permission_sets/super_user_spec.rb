@@ -69,12 +69,14 @@ RSpec.describe Spree::PermissionSets::SuperUser do
           it 'prevents managing records on canceled orders' do
             expect(ability.can?(:create, record_on_canceled_order)).to be false
             expect(ability.can?(:edit, record_on_canceled_order)).to be false
+            expect(ability.can?(:update, record_on_canceled_order)).to be false
             expect(ability.can?(:destroy, record_on_canceled_order)).to be false
           end
 
           it 'allows managing records on non-canceled orders' do
             expect(ability.can?(:create, record_on_active_order)).to be true
             expect(ability.can?(:edit, record_on_active_order)).to be true
+            expect(ability.can?(:update, record_on_active_order)).to be true
             expect(ability.can?(:destroy, record_on_active_order)).to be true
           end
         end
