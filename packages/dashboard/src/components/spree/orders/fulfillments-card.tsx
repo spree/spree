@@ -411,6 +411,9 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
   // Confirming receipt is the merchant's next move on a parcel that has gone
   // out, so it sits in the card rather than behind the menu. Adding tracking
   // joins it as the primary action while the number is still missing.
+  const selectedRate = (fulfillment.delivery_rates ?? []).find(
+    (rate) => rate.id === fulfillment.selected_delivery_rate_id,
+  )
   const deliverable = CAN_MARK_DELIVERED.includes(fulfillment.status)
   const trackable = deliverable && !fulfillment.tracking
 
@@ -500,7 +503,13 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
       {(fulfillment.delivery_method || Number.parseFloat(fulfillment.cost) > 0) && (
         <div className="flex items-center justify-between text-sm p-3 border-b">
           <span className="text-muted-foreground">
-            {fulfillment.delivery_method?.name ?? t('admin.pages.orders.detail.no_delivery_method')}
+            {/* The selected rate names the carrier service that actually
+                carries this parcel ("USPS GroundAdvantage"); the method is
+                the account it was quoted through ("EasyPost"), which one
+                carrier method fans out into many services. */}
+            {selectedRate?.name ??
+              fulfillment.delivery_method?.name ??
+              t('admin.pages.orders.detail.no_delivery_method')}
           </span>
           <span>{fulfillment.display_cost}</span>
         </div>
