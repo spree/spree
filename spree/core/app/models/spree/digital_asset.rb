@@ -1,8 +1,16 @@
 module Spree
   class DigitalAsset < Spree.base_class
+    include Spree::Metadata
+
     has_prefix_id :dig
 
     publishes_lifecycle_events
+
+    # Provider config lives under one key in `metadata` so a provider owns its
+    # own namespace without colliding with other developer metadata. The values
+    # match the provider's `settings_schema`; the provider reads them in
+    # `deliver`.
+    PROVIDER_SETTINGS_KEY = 'provider'.freeze
 
     belongs_to :variant, class_name: 'Spree::Variant'
     has_many :digital_links, class_name: 'Spree::DigitalLink', dependent: :destroy
@@ -53,6 +61,19 @@ module Spree
     # @return [Class]
     def provider_class
       (provider_type.presence || DEFAULT_PROVIDER).safe_constantize || DEFAULT_PROVIDER.constantize
+    end
+
+    # The provider's per-asset configuration, as declared by its
+    # `settings_schema`. Stored under one key in `metadata`.
+    #
+    # @return [Hash]
+    def provider_settings
+      metadata.fetch(PROVIDER_SETTINGS_KEY, {}) || {}
+    end
+
+    # @param values [Hash]
+    def provider_settings=(values)
+      self.metadata = metadata.merge(PROVIDER_SETTINGS_KEY => (values || {}))
     end
 
     # Produces the deliverable for one authorized download — a redirect URL or

@@ -60,6 +60,18 @@ describe Spree::DigitalAsset, type: :model do
       expect(asset).not_to be_valid
       expect(asset.errors[:provider_type]).to be_present
     end
+
+    it 'stores provider settings under one key in metadata' do
+      asset = described_class.new
+      asset.provider_settings = { 'pool_name' => 'winter' }
+
+      expect(asset.provider_settings).to eq('pool_name' => 'winter')
+      expect(asset.metadata['provider']).to eq('pool_name' => 'winter')
+    end
+
+    it 'returns an empty hash when no provider settings are set' do
+      expect(described_class.new.provider_settings).to eq({})
+    end
   end
 
   # The legacy names are the one-release webhook bridge; dropping them silently

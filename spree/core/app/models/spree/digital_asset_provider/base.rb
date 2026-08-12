@@ -14,7 +14,45 @@ module Spree
     class Base
       attr_reader :digital_asset
 
+      SETTING_TYPES = %i[string number boolean select].freeze
+
       class << self
+        # Declares one per-asset configuration field the dashboard renders when
+        # a merchant adds an asset backed by this provider. Mirrors the
+        # `preference` shape used elsewhere, but the values live on the
+        # DigitalAsset (in `metadata`), not on the stateless provider instance.
+        #
+        # @param key [Symbol]
+        # @param type [Symbol] one of {SETTING_TYPES}
+        # @param default [Object]
+        # @param in [Array] allowed values for a `:select` field
+        def setting(key, type = :string, default: nil, in: nil)
+          raise ArgumentError, "unknown setting type #{type}" unless SETTING_TYPES.include?(type)
+
+          own_settings[key.to_sym] = {
+            key: key.to_sym,
+            type: type,
+            default: default,
+            in: binding.local_variable_get(:in)
+          }.compact
+        end
+
+        # `[{ key:, type:, default:, in? }]` for every setting declared on this
+        # provider and its ancestors. Same wire shape the admin form renders
+        # from, so no provider ships dashboard code.
+        #
+        # @return [Array<Hash>]
+        def settings_schema
+          ancestors.reverse.each_with_object({}) do |ancestor, merged|
+            merged.merge!(ancestor.own_settings) if ancestor.respond_to?(:own_settings)
+          end.values
+        end
+
+        # @api private
+        def own_settings
+          @own_settings ||= {}
+        end
+
         # Human-readable name for admin UIs. Provider gems following the
         # `SpreeAcme::LicenseProvider` convention get the outer module
         # ("Acme"); a bare in-app class gets its own titleized name.
