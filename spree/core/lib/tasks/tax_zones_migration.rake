@@ -38,20 +38,29 @@ namespace :spree do
       end
 
       first, *rest = jurisdictions
-      rate.update_columns(country_iso: first[:country_iso], state_code: first[:state_code], updated_at: Time.current)
-      converted += 1
 
-      rest.each do |jurisdiction|
-        Spree::TaxRate.insert(
-          rate.attributes.slice(*Spree::TaxRate.column_names).except('id', 'created_at', 'updated_at').merge(
-            'country_iso' => jurisdiction[:country_iso],
-            'state_code' => jurisdiction[:state_code],
-            'created_at' => Time.current,
-            'updated_at' => Time.current
+      # One rate's split is all-or-nothing. Stamping the source before the copies
+      # exist means an interrupted run leaves a converted rate whose other
+      # jurisdictions were never created — and the next run skips it, because it
+      # now carries a country. The merchant would be short a rate with nothing
+      # saying so.
+      ApplicationRecord.transaction do
+        rate.update_columns(country_iso: first[:country_iso], state_code: first[:state_code], updated_at: Time.current)
+
+        rest.each do |jurisdiction|
+          Spree::TaxRate.insert(
+            rate.attributes.slice(*Spree::TaxRate.column_names).except('id', 'created_at', 'updated_at').merge(
+              'country_iso' => jurisdiction[:country_iso],
+              'state_code' => jurisdiction[:state_code],
+              'created_at' => Time.current,
+              'updated_at' => Time.current
+            )
           )
-        )
-        duplicated += 1
+        end
       end
+
+      converted += 1
+      duplicated += rest.size
     end
 
     puts "  Converted #{converted} tax rates, split #{duplicated} extra rate(s) off multi-jurisdiction zones, " \
