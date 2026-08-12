@@ -677,12 +677,12 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product) }
 
     it 'is infinite if track_inventory_levels is false' do
-      set_store_preferences(track_inventory_levels: false)
+      stub_store_preferences(track_inventory_levels: false)
       expect(build(:product).total_on_hand).to eql(Float::INFINITY)
     end
 
     it 'is infinite if variant is on demand' do
-      set_store_preferences(track_inventory_levels: true)
+      stub_store_preferences(track_inventory_levels: true)
       expect(build(:product, track_inventory: false).total_on_hand).to eql(Float::INFINITY)
     end
 
@@ -1726,7 +1726,7 @@ describe Spree::Product, type: :model do
         subject(:available_products) { described_class.available(nil, 'USD') }
 
         before do
-          set_store_preferences(show_products_without_price: false)
+          stub_store_preferences(show_products_without_price: false)
         end
 
         let!(:active_product_2) { create(:product, status: 'active') }
@@ -1751,7 +1751,7 @@ describe Spree::Product, type: :model do
         subject(:available_products) { described_class.available(nil, 'USD') }
 
         before do
-          set_store_preferences(show_products_without_price: true)
+          stub_store_preferences(show_products_without_price: true)
         end
 
         let!(:active_product_2) { create(:product, status: 'active') }

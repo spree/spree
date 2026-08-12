@@ -86,7 +86,7 @@ describe Spree::PaymentMethod, type: :model do
     let(:gateway) { TestGateway.new(store: store) }
 
     context 'when auto_capture is nil' do
-      before { set_store_preferences(store, auto_capture: auto_capture) }
+      before { stub_store_preferences(store, auto_capture: auto_capture) }
 
       context "and when the store's auto_capture is false" do
         let(:auto_capture) { false }

@@ -5,7 +5,7 @@ describe Spree::StorePreferences do
 
   describe '.read' do
     it "returns the store's value" do
-      set_store_preferences(store, track_inventory_levels: false)
+      stub_store_preferences(store, track_inventory_levels: false)
 
       expect(described_class.read(store, :track_inventory_levels)).to be(false)
     end
@@ -20,7 +20,7 @@ describe Spree::StorePreferences do
 
   describe '.current' do
     it 'reads through the ambient store' do
-      set_store_preferences(store, show_products_without_price: true)
+      stub_store_preferences(store, show_products_without_price: true)
 
       expect(described_class.current(:show_products_without_price)).to be(true)
     end
@@ -29,7 +29,7 @@ describe Spree::StorePreferences do
   describe '#store_preference' do
     it 'reads through the store the record belongs to' do
       payment_method = create(:payment_method, store: store)
-      set_store_preferences(store, auto_capture: false)
+      stub_store_preferences(store, auto_capture: false)
 
       expect(payment_method.store_preference(:auto_capture)).to be(false)
     end
@@ -37,7 +37,7 @@ describe Spree::StorePreferences do
     it 'follows an overridden preference_store' do
       other_store = create(:store)
       product = create(:product, store: other_store)
-      set_store_preferences(other_store, track_inventory_levels: false)
+      stub_store_preferences(other_store, track_inventory_levels: false)
 
       expect(product.variants.first.store_preference(:track_inventory_levels)).to be(false)
     end

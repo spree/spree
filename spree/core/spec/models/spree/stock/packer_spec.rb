@@ -59,7 +59,7 @@ module Spree
         context "doesn't track inventory levels" do
           let(:inventory_units) { Array.new(2) { InventoryUnit.new(variant: create(:variant)) } }
 
-          before { set_store_preferences(track_inventory_levels: false) }
+          before { stub_store_preferences(track_inventory_levels: false) }
 
           it "doesn't bother stock items status in stock location" do
             expect(subject.stock_location).not_to receive(:fill_status)

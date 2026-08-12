@@ -6,7 +6,7 @@ describe Spree::StockReservations::Extend do
   let!(:reservation) { create(:stock_reservation, order: order, expires_at: 1.minute.from_now) }
 
   context 'when stock_reservations_enabled is true' do
-    before { set_store_preferences(store, stock_reservations_enabled: true) }
+    before { stub_store_preferences(store, stock_reservations_enabled: true) }
 
     it 'pushes expires_at out by the store TTL' do
       Timecop.freeze do
@@ -27,7 +27,7 @@ describe Spree::StockReservations::Extend do
   end
 
   context 'when stock_reservations_enabled is false' do
-    before { set_store_preferences(store, stock_reservations_enabled: false) }
+    before { stub_store_preferences(store, stock_reservations_enabled: false) }
 
     it 'leaves expires_at untouched' do
       original = reservation.expires_at

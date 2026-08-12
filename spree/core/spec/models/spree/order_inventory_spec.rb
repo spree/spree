@@ -44,7 +44,7 @@ describe Spree::OrderInventory, type: :model do
     context 'store doesnt track inventory' do
       let(:variant) { create(:variant) }
 
-      before { set_store_preferences(track_inventory_levels: false) }
+      before { stub_store_preferences(track_inventory_levels: false) }
 
       it 'creates only on hand inventory units' do
         variant.stock_items.delete_all

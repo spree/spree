@@ -23,35 +23,43 @@ module Spree
         Spree::Config[preference].should be false
       end
 
-      # Sets store-scoped commerce settings for the duration of one example.
+      # Stubs store-scoped commerce settings for the duration of one example.
       #
-      #   set_store_preferences(track_inventory_levels: false)
-      #   set_store_preferences(store, auto_capture: false)
+      #   stub_store_preferences(track_inventory_levels: false)
+      #   stub_store_preferences(other_store, auto_capture: false)
       #
-      # Defaults to the suite-wide +@default_store+, which every example shares.
-      # Records what it overwrote so the RSpec config's `after` hook can restore
-      # it — without that, a store setting leaks into whatever runs next.
-      def set_store_preferences(store = nil, **preferences)
+      # Stubs rather than writes: the suite-wide +@default_store+ is shared by
+      # every example, so persisting a setting here would leak into whatever
+      # runs next.
+      #
+      # Stubbing is keyed on the store's id rather than a single object, because
+      # code under test reaches its store through an association or a reload and
+      # so holds a different instance of the same row. Stores with another id —
+      # and preferences not listed here — keep their real values.
+      #
+      # Reads funnel through +get_preference+ and the generated
+      # +preferred_<name>+ accessor, so both are stubbed.
+      def stub_store_preferences(store = nil, **preferences)
         store ||= @default_store
-        @overridden_store_preferences ||= {}
-        recorded = (@overridden_store_preferences[store] ||= {})
+        store_id = store.id
 
         preferences.each do |name, value|
-          recorded[name] = store.get_preference(name) unless recorded.key?(name)
-          store.set_preference(name, value)
-        end
-        store.save!
-      end
+          allow_any_instance_of(Spree::Store).to receive(:get_preference).
+            with(name).and_wrap_original do |original, *args|
+              original.receiver.id == store_id ? value : original.call(*args)
+            end
 
-      # Puts back everything {#set_store_preferences} overwrote in this example.
-      def restore_store_preferences
-        return if @overridden_store_preferences.blank?
-
-        @overridden_store_preferences.each do |store, preferences|
-          preferences.each { |name, value| store.set_preference(name, value) }
-          store.save!
+          allow_any_instance_of(Spree::Store).to receive(:"preferred_#{name}").
+            and_wrap_original do |original, *args|
+              original.receiver.id == store_id ? value : original.call(*args)
+            end
         end
-        @overridden_store_preferences = nil
+
+        # Preferences this call doesn't name must still answer for themselves.
+        allow_any_instance_of(Spree::Store).to receive(:get_preference).
+          with(satisfy { |name| !preferences.key?(name) }).and_call_original
+
+        store
       end
     end
   end

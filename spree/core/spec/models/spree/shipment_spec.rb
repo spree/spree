@@ -625,7 +625,7 @@ describe Spree::Shipment, type: :model do
     end
 
     context 'with inventory tracking' do
-      before { set_store_preferences(track_inventory_levels: true) }
+      before { stub_store_preferences(track_inventory_levels: true) }
 
       it 'validates with inventory' do
         shipment.inventory_units = [create(:inventory_unit)]
@@ -634,7 +634,7 @@ describe Spree::Shipment, type: :model do
     end
 
     context 'without inventory tracking' do
-      before { set_store_preferences(track_inventory_levels: false) }
+      before { stub_store_preferences(track_inventory_levels: false) }
 
       it 'validates with no inventory' do
         expect(shipment.valid?).to be true

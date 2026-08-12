@@ -69,7 +69,7 @@ module Spree
     end
 
     it 'does not sell inventory units if track_inventory_levels is false' do
-      set_store_preferences(track_inventory_levels: false)
+      stub_store_preferences(track_inventory_levels: false)
       expect(Spree::InventoryUnit).not_to receive(:sell_units)
       described_class.call(order: order)
     end

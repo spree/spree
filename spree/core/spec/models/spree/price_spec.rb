@@ -433,7 +433,7 @@ describe Spree::Price, type: :model do
 
     context 'when track_price_history is disabled' do
       before do
-        set_store_preferences(price.preference_store, track_price_history: false)
+        stub_store_preferences(price.preference_store, track_price_history: false)
       end
 
       it 'does not create a price history record' do

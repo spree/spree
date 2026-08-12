@@ -299,7 +299,7 @@ module Spree
       end
 
       it 'captures the authorized payment when the store charges on dispatch' do
-        set_store_preferences(store, auto_capture_on_dispatch: true)
+        stub_store_preferences(store, auto_capture_on_dispatch: true)
 
         subject.call(fulfillment: fulfillment)
 
@@ -310,7 +310,7 @@ module Spree
       end
 
       it 'leaves the payment authorized when it does not' do
-        set_store_preferences(store, auto_capture_on_dispatch: false)
+        stub_store_preferences(store, auto_capture_on_dispatch: false)
 
         subject.call(fulfillment: fulfillment)
 

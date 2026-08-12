@@ -104,10 +104,6 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::Kernel
 
-  # The default store is shared across the whole suite, so a setting one example
-  # changes would otherwise still be set for the next one.
-  config.after { restore_store_preferences }
-
   config.order = :random
   Kernel.srand config.seed
 end
