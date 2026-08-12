@@ -39,7 +39,7 @@ module Spree
         {
           tax_date: Time.current,
           tax_identifier: resolved_tax_identifier,
-          exemptions: Spree.tax_resolve_exemptions_service.new.call(order: self).value
+          exemptions: usable_exemptions
         }
       end
 
@@ -80,6 +80,31 @@ module Spree
       end
 
       private
+
+      # The resolver is swappable, so what it returns is host code. An entry
+      # whose per-line overrides cannot name their line is not a narrower claim
+      # but a wider one — the provider would read it as the whole order being
+      # exempt — so it is dropped rather than trusted. Charging tax is the safe
+      # direction: under-exempting surfaces as a customer query, over-exempting
+      # is tax the merchant owes and never collected.
+      def usable_exemptions
+        resolved = Array(Spree.tax_resolve_exemptions_service.new.call(order: self).value)
+
+        resolved.select do |exemption|
+          next true unless exemption.respond_to?(:valid?)
+          next true if exemption.valid?
+
+          Rails.error.report(
+            Spree::Tax::UnusableExemptionError.new(
+              "Discarded an unusable tax exemption: #{exemption.errors.full_messages.to_sentence}"
+            ),
+            handled: true,
+            context: { order_id: id, reason_code: exemption.try(:reason_code) },
+            source: 'spree.core'
+          )
+          false
+        end
+      end
 
       def company_tax_identifier
         best_of(company&.tax_identifiers)

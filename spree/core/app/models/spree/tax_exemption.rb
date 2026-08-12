@@ -25,6 +25,7 @@ module Spree
     attribute :item_overrides, default: -> { [] }
 
     validates :reason_code, presence: true
+    validate :item_overrides_can_name_their_item
 
     # Whether this entry claims exemption for the given item.
     #
@@ -62,6 +63,16 @@ module Spree
     end
 
     private
+
+    # An override that cannot say which line it applies to does not narrow this
+    # entry — it widens it. #override_for never matches it, so #covers_item?
+    # falls through to true for every line and a per-line carve-out becomes an
+    # order-wide exemption.
+    def item_overrides_can_name_their_item
+      return if Array(item_overrides).all? { |override| override.try(:item_id).present? }
+
+      errors.add(:item_overrides, :invalid)
+    end
 
     def override_for(item)
       item_overrides.to_a.find { |override| override.item_id.to_s == item.prefixed_id.to_s }

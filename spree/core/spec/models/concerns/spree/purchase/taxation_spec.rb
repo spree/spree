@@ -103,6 +103,38 @@ RSpec.shared_examples 'a taxation host' do
       expect(inputs[:exemptions]).to eq([exemption])
     end
 
+    # The resolver is swappable, so a host's handler can hand core an entry the
+    # provider would read as "the whole order is exempt". Charging tax is the
+    # safe direction, so it is dropped and reported rather than passed on.
+    it 'drops an exemption whose overrides cannot name their line' do
+      unusable = Spree::TaxExemption.new(
+        reason_code: 'resale',
+        item_overrides: [Spree::TaxExemption::ItemOverride.new(exempt: false)]
+      )
+      allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+        and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                   call: Spree::ServiceModule::Result.new(true, [unusable], nil)))
+      allow(Rails.error).to receive(:report)
+
+      expect(record.tax_estimate_inputs[:exemptions]).to be_empty
+      expect(Rails.error).to have_received(:report).
+        with(instance_of(Spree::Tax::UnusableExemptionError), hash_including(handled: true))
+    end
+
+    it 'keeps a usable one alongside it' do
+      usable = Spree::TaxExemption.new(reason_code: 'resale')
+      unusable = Spree::TaxExemption.new(
+        reason_code: 'government',
+        item_overrides: [Spree::TaxExemption::ItemOverride.new(exempt: false)]
+      )
+      allow(Spree.tax_resolve_exemptions_service).to receive(:new).
+        and_return(instance_double(Spree::Tax::ResolveExemptions,
+                                   call: Spree::ServiceModule::Result.new(true, [usable, unusable], nil)))
+      allow(Rails.error).to receive(:report)
+
+      expect(record.tax_estimate_inputs[:exemptions]).to eq([usable])
+    end
+
     it 'is accepted whole by the provider contract' do
       expect { Spree::TaxProvider::Internal.new.estimate(record, [], **record.tax_estimate_inputs) }.
         not_to raise_error
