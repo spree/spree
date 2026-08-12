@@ -318,7 +318,11 @@ Spree::Core::Engine.add_routes do
           end
           resources :media, controller: 'media', only: [:index, :create, :update, :destroy]
           resources :digital_assets, controller: 'products/digital_assets',
-                                     only: [:index, :create, :show, :update, :destroy]
+                                     only: [:index, :create, :show, :update, :destroy] do
+            collection do
+              get :providers
+            end
+          end
         end
 
         # Digital download grants — read and reset only; they are created by

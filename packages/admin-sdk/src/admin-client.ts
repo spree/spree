@@ -138,6 +138,7 @@ import type {
   DeliveryProfileParams,
   DeliveryZoneParams,
   DigitalAssetCreateParams,
+  DigitalAssetProvider,
   DigitalAssetUpdateParams,
   DirectUploadCreateParams,
   ExchangeCreateParams,
@@ -942,6 +943,21 @@ export class AdminClient {
 
       delete: (productId: string, id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/products/${productId}/digital_assets/${id}`, options),
+
+      /**
+       * The sources a merchant can pick for a new asset: the uploaded-file
+       * default plus any host-registered provider. A host with only the default
+       * gets a single-entry list.
+       */
+      providers: (
+        productId: string,
+        options?: RequestOptions,
+      ): Promise<{ data: DigitalAssetProvider[] }> =>
+        this.request<{ data: DigitalAssetProvider[] }>(
+          'GET',
+          `/products/${productId}/digital_assets/providers`,
+          options,
+        ),
     },
 
     variants: {
