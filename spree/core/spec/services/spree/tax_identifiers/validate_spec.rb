@@ -101,4 +101,28 @@ describe Spree::TaxIdentifiers::Validate do
       expect(tax_identifier.validation_evidence['message']).to include('boom')
     end
   end
+
+  # The buyer can replace the number while a check is in flight. A verdict about
+  # the number they no longer hold must not land on the one they do — it would
+  # report a registration as verified when nothing verified it, and that is what
+  # decides reverse charge.
+  context 'when the number changes while the check runs' do
+    before do
+      register(Class.new(Spree::TaxIdentifiers::Validator::Base) do
+        def call(tax_identifier:)
+          # Stands in for the buyer editing the number mid-check.
+          tax_identifier.class.where(id: tax_identifier.id).update_all(value: 'DE222222222')
+          Spree::TaxIdentifiers::ValidationResult.new(status: 'verified', checked_at: Time.current)
+        end
+      end)
+    end
+
+    it 'discards the verdict rather than writing it onto the new number' do
+      described_class.call(tax_identifier: tax_identifier)
+
+      row = tax_identifier.reload
+      expect(row.value).to eq('DE222222222')
+      expect(row.validation_status).not_to eq('verified')
+    end
+  end
 end

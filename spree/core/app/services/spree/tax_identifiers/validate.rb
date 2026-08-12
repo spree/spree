@@ -10,6 +10,11 @@ module Spree
       # @param tax_identifier [Spree::TaxIdentifier]
       # @return [Spree::TaxIdentifier]
       def call(tax_identifier:)
+        # What this run is answering about. The buyer can change the number while
+        # a check is in flight, and a verdict about the old one must not be
+        # written over the new one — see #persist.
+        @checked = tax_identifier.slice(:kind, :value)
+
         validator = Spree.tax_identifier_validators[tax_identifier.kind]
 
         # Narrow race: the validator was deregistered between enqueue and run.
@@ -34,11 +39,20 @@ module Spree
 
       private
 
+      # Re-read before writing. A slower check for a number the buyer has since
+      # replaced would otherwise stamp its verdict onto the new one — reporting
+      # a registration as verified when nothing has verified it, which is what
+      # decides reverse charge. The row is already `pending` from the write that
+      # replaced it, and its own check is on the way.
       def persist(tax_identifier, result)
         return failure(tax_identifier, result.errors.full_messages.to_sentence) unless result.valid?
 
-        tax_identifier.update_columns(result.to_columns.merge(updated_at: Time.current))
-        success(tax_identifier)
+        current = tax_identifier.class.find_by(id: tax_identifier.id)
+        return success(tax_identifier) if current.nil?
+        return success(tax_identifier) if current.slice(:kind, :value) != @checked
+
+        current.update_columns(result.to_columns.merge(updated_at: Time.current))
+        success(current)
       end
 
       def unsupported_result
