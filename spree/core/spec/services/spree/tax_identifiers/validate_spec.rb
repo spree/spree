@@ -9,7 +9,9 @@ describe Spree::TaxIdentifiers::Validate do
     Spree.tax_identifier_validators['eu_vat'] = 'SpecRegistryValidator'
   end
 
-  after { Spree.tax_identifier_validators.delete('eu_vat') }
+  around do |example|
+    with_tax_identifier_validator('eu_vat', Spree.tax_identifier_validators['eu_vat']) { example.run }
+  end
 
   context 'when the registry answers' do
     before do
@@ -90,7 +92,10 @@ describe Spree::TaxIdentifiers::Validate do
 
     it 'reports the failure and records that nobody could answer' do
       expect(Rails.error).to receive(:report).with(
-        instance_of(Spree::TaxIdentifiers::ValidationError), hash_including(:context)
+        instance_of(Spree::TaxIdentifiers::ValidationError),
+        handled: false,
+        context: hash_including(:tax_identifier_id, :kind),
+        source: 'spree.core'
       )
 
       result = described_class.call(tax_identifier: tax_identifier)

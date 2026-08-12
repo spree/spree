@@ -217,8 +217,8 @@ describe '6.0 data migration tasks' do
     let(:france) { Spree::Country.find_by(iso: 'FR') || create(:country, iso: 'FR', name: 'France') }
 
     def zone_with(*zoneables)
-      zone = Spree::Zone.create!(name: "Tax Zone #{Time.current.to_f}#{rand(1000)}", kind: 'country')
-      zoneables.each { |zoneable| zone.zone_members.create!(zoneable: zoneable) }
+      zone = create(:zone, name: "Tax Zone #{Time.current.to_f}#{rand(1000)}", kind: 'country')
+      zoneables.each { |zoneable| create(:zone_member, zone: zone, zoneable: zoneable) }
       zone
     end
 
@@ -336,9 +336,9 @@ describe '6.0 data migration tasks' do
   describe 'spree:migrate_zones_to_delivery_zones' do
     let!(:country) { Spree::Country.find_by(iso: 'US') || create(:country_us) }
     let!(:zone) do
-      zone = Spree::Zone.create!(name: "Legacy Ship Zone #{Time.current.to_f}", kind: 'shipping')
-      zone.zone_members.create!(zoneable: country)
-      zone
+      create(:zone, name: "Legacy Ship Zone #{Time.current.to_f}", kind: 'shipping').tap do |zone|
+        create(:zone_member, zone: zone, zoneable: country)
+      end
     end
     let!(:delivery_method) { create(:shipping_method) }
 

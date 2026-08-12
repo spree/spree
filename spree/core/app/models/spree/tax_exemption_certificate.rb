@@ -28,6 +28,13 @@ module Spree
 
     validates :certificate_number, :reason_code, presence: true
 
+    # A certificate is a scanned form, not an archive. Bounded because the
+    # download action reads the whole blob into memory to serve it, so an
+    # unbounded upload would be an unbounded allocation per request.
+    MAX_DOCUMENT_SIZE = 10.megabytes
+
+    validates :document, size: { less_than_or_equal_to: MAX_DOCUMENT_SIZE }
+
     # Where the certificate holds, as codes: a blank country_iso claims every
     # country, and a country with no state_code claims all of its states.
     # Upcased on the way in, and unknown codes are kept as entered — a code

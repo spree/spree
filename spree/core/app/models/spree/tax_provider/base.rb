@@ -91,6 +91,12 @@ module Spree
       # Finalizes tax with the provider when the order is placed. No-op for a
       # provider without a remote ledger — the rows are already the record.
       #
+      # **Must be idempotent.** Completion is replayable: a crash between the
+      # order commit and the cart stamp leaves `Carts::Complete` to re-run its
+      # finalize phase, which calls this again for an order already committed.
+      # Key the filing on the order and treat a duplicate as success, rather
+      # than filing a second document for one sale.
+      #
       # @param order [Spree::Order]
       # @return [void]
       def commit(order); end

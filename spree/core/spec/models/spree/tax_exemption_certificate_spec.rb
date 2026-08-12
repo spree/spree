@@ -98,6 +98,34 @@ describe Spree::TaxExemptionCertificate, type: :model do
     end
   end
 
+  describe 'the attached document' do
+    let(:certificate) { build(:tax_exemption_certificate, company: company) }
+
+    it 'accepts one within the limit' do
+      certificate.document.attach(
+        io: StringIO.new('a' * 1.kilobyte), filename: 'resale.pdf', content_type: 'application/pdf'
+      )
+
+      expect(certificate).to be_valid
+    end
+
+    # Bounded because the download action reads the whole blob into memory.
+    it 'refuses one over the limit' do
+      certificate.document.attach(
+        io: StringIO.new('a' * (described_class::MAX_DOCUMENT_SIZE + 1)),
+        filename: 'huge.pdf', content_type: 'application/pdf'
+      )
+
+      expect(certificate).not_to be_valid
+      expect(certificate.errors[:document]).to be_present
+    end
+
+    it 'is valid with none — a certificate may be recorded before it is scanned' do
+      expect(certificate.document).not_to be_attached
+      expect(certificate).to be_valid
+    end
+  end
+
   describe '#can_be_deleted?' do
     it 'refuses once verified — revoke instead' do
       expect(create(:tax_exemption_certificate, :verified, company: company).can_be_deleted?).to be(false)

@@ -67,10 +67,7 @@ describe Spree::TaxIdentifier, type: :model do
     before { stub_const('SpecEuVatValidator', validator) }
 
     around do |example|
-      Spree.tax_identifier_validators['eu_vat'] = 'SpecEuVatValidator'
-      example.run
-    ensure
-      Spree.tax_identifier_validators.delete('eu_vat')
+      with_tax_identifier_validator('eu_vat', 'SpecEuVatValidator') { example.run }
     end
 
     it 'rejects a malformed number as a typo to fix' do
@@ -93,10 +90,7 @@ describe Spree::TaxIdentifier, type: :model do
   # need the event bus the suite disables by default.
   describe 'the registry check', events: true do
     around do |example|
-      Spree.tax_identifier_validators['eu_vat'] = 'Spree::TaxIdentifiers::Validator::Base'
-      example.run
-    ensure
-      Spree.tax_identifier_validators.delete('eu_vat')
+      with_tax_identifier_validator('eu_vat', 'Spree::TaxIdentifiers::Validator::Base') { example.run }
     end
 
     it 'is queued when a checkable number is entered, and marked pending' do
@@ -159,10 +153,9 @@ describe Spree::TaxIdentifier, type: :model do
       identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
       expect(identifier).not_to be_validatable
 
-      Spree.tax_identifier_validators['eu_vat'] = 'Spree::TaxIdentifiers::Validator::Base'
-      expect(identifier).to be_validatable
-    ensure
-      Spree.tax_identifier_validators.delete('eu_vat')
+      with_tax_identifier_validator('eu_vat', 'Spree::TaxIdentifiers::Validator::Base') do
+        expect(identifier).to be_validatable
+      end
     end
   end
 

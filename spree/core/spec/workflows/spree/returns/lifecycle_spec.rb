@@ -177,13 +177,12 @@ RSpec.describe 'Spree::Returns workflows' do
         line = return_record.return_line_items.first
         line.update!(quantity: 3, received_quantity: 2)
         # A second announced line the warehouse never received.
-        unreceived = return_record.return_line_items.create!(
-          fulfillment_item: line.fulfillment_item,
-          line_item: line.line_item,
-          variant: line.variant,
-          quantity: 1,
-          received_quantity: 0
-        )
+        unreceived = create(:return_line_item,
+                            return: return_record,
+                            fulfillment_item: line.fulfillment_item,
+                            line_item: line.line_item,
+                            variant: line.variant,
+                            quantity: 1)
 
         order = return_record.order
         provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)

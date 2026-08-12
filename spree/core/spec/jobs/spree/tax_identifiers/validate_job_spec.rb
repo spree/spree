@@ -10,10 +10,11 @@ describe Spree::TaxIdentifiers::ValidateJob do
         Spree::TaxIdentifiers::ValidationResult.new(status: 'verified', checked_at: Time.current)
       end
     end)
-    Spree.tax_identifier_validators['eu_vat'] = 'SpecJobValidator'
   end
 
-  after { Spree.tax_identifier_validators.delete('eu_vat') }
+  around do |example|
+    with_tax_identifier_validator('eu_vat', 'SpecJobValidator') { example.run }
+  end
 
   it 'records the registry verdict on the row' do
     described_class.perform_now(tax_identifier.id)
