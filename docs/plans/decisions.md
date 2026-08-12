@@ -181,10 +181,21 @@ A live pass against a running server found three defects in one seam — what a 
 when the destination's VAT rate differs from the home zone's. `6.0-tax-provider.md` gains Phase 8 to
 fix them (the 6.1 cleanup renumbers to Phase 9).
 
-**The rule, which is Shopify's:** a price from a price list whose rules include a geographic one
-(`MarketRule`, `ZoneRule`) is **final** — charged exactly as entered, never restated. Everything else
-**derives net-fixed**: home rate out, destination rate on, via `VatPriceCalculation`. The merchant's
-net is preserved and the gross moves.
+**The rule, which is Shopify's:** a price the merchant set for a geography is **final** — charged
+exactly as entered, never restated. Everything else **derives net-fixed**: home rate out, destination
+rate on, via `VatPriceCalculation`. The merchant's net is preserved and the gross moves.
+
+"Set for a geography" needs the `match_policy`, not just the presence of a geographic rule
+(`MarketRule`, `ZoneRule`), because a list can win without its geographic rule being the reason:
+
+- `match_policy: 'all'` — every rule matched, so the geography is why this price applied. **Final.**
+- `match_policy: 'any'` — the list may have won on a non-geographic rule alone (a volume break, a
+  customer group), so the price is not evidence of a decision about this destination. Final only
+  when *every* rule is geographic.
+
+Each rule kind answers `geographic?` for itself, always a boolean; the base `PriceRule` answers
+false, so a rule that names no geography — including an empty country or market list, which matches
+every buyer — never makes a price final.
 
 **Why this matters beyond tax.** Two of the three defects are pricing defects, not tax defects:
 
