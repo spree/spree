@@ -6,10 +6,13 @@ module Spree
           include Spree::Api::V3::AuthenticationStrategies
 
           allow_guest_storefront_access!
-          # Tighter rate limits for auth endpoints (per IP to prevent brute force)
-          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
-          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :refresh, with: RATE_LIMIT_RESPONSE
-          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :logout, with: RATE_LIMIT_RESPONSE
+          # Tighter rate limits for auth endpoints (per IP to prevent brute
+          # force). Distinct `name:` per declaration — without one, Rails keys
+          # every counter in this controller on the same (controller, client)
+          # cache entry, silently merging the budgets.
+          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, name: 'login', with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
+          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :refresh, name: 'refresh', with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_refresh]) }
+          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :logout, name: 'logout', with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_refresh]) }
 
           skip_before_action :authenticate_user, only: [:create, :refresh, :logout]
 

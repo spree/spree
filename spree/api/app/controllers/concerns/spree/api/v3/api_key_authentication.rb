@@ -70,6 +70,15 @@ module Spree
         def extract_api_key
           request.headers['X-Spree-Api-Key'].presence
         end
+
+        # True when the request presents a secret API key token (`sk_` prefix),
+        # regardless of whether authentication has resolved it into
+        # `current_api_key` yet. The token is unverified until
+        # `authenticate_secret_key!` resolves it, so consumers (the scope
+        # guard, rate limiting) must stay fail-closed on this signal alone.
+        def secret_key_request?
+          extract_api_key.to_s.start_with?(Spree::ApiKey::PREFIXES['secret'])
+        end
       end
     end
   end

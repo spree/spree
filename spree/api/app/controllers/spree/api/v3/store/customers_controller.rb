@@ -4,7 +4,7 @@ module Spree
       module Store
         class CustomersController < Store::BaseController
           allow_guest_storefront_access!
-          rate_limit to: Spree::Api::Config[:rate_limit_register], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_register], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_register]) }
 
           skip_before_action :authenticate_user, only: [:create]
           prepend_before_action :require_authentication!, only: [:show, :update]

@@ -165,15 +165,6 @@ module Spree
             self.class._scope_check_skipped_actions&.include?(action_name) || false
         end
 
-        # True when the request presents a secret API key token (`sk_` prefix),
-        # regardless of whether authentication has resolved it into
-        # `current_api_key` yet. Used to keep the scope guard fail-closed even if
-        # it runs before the API key is loaded: a secret-key request whose key is
-        # still nil must be denied, never waved through.
-        def secret_key_request?
-          extract_api_key.to_s.start_with?(Spree::ApiKey::PREFIXES['secret'])
-        end
-
         # Resolves the request's secret API key into `@current_api_key` if a
         # secret-key token is present and it hasn't been resolved yet, so the scope
         # check does not depend on `authenticate_admin!` having already run. Mirrors
