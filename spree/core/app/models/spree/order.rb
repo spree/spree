@@ -929,9 +929,10 @@ module Spree
     #
     # @param user [Spree.user_class, nil] the user who canceled the order
     # @param canceled_at [Time, nil] the time of cancellation (defaults to current time)
+    # @param notify_customer [Boolean] whether the customer should be notified about the cancellation
     # @return [Spree::ServiceModule::Result]
-    def canceled_by(user, canceled_at = nil)
-      Spree.order_cancel_service.call(order: self, canceler: user, canceled_at: canceled_at)
+    def canceled_by(user, canceled_at = nil, notify_customer = false)
+      Spree.order_cancel_service.call(order: self, canceler: user, canceled_at: canceled_at, notify_customer: notify_customer)
     end
 
     # Approves the order and records the approver.

@@ -356,12 +356,31 @@ describe Spree::Order, type: :model do
       end
     end
 
+    context 'when notify_customer is not given' do
+      it 'does not flag the cancellation for customer notification' do
+        subject
+        expect(order.cancellations.last.notify_customer).to be false
+      end
+    end
+
+    context 'when notify_customer is given' do
+      it 'flags the cancellation for customer notification' do
+        order.canceled_by(admin_user, nil, true)
+        expect(order.cancellations.last.notify_customer).to be true
+      end
+    end
+
     context 'events', :events do
       let(:order) { create(:completed_order_with_totals) }
 
       it 'publishes order.canceled event' do
         expect(order).to receive(:publish_event).with('order.canceled', hash_including(:notify_customer))
         order.canceled_by(admin_user)
+      end
+
+      it 'passes notify_customer through to the event payload' do
+        expect(order).to receive(:publish_event).with('order.canceled', hash_including(notify_customer: true))
+        order.canceled_by(admin_user, nil, true)
       end
     end
   end

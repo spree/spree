@@ -244,6 +244,11 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       expect(order.canceled?).to eq true
       expect(order.canceler).to eq admin_user
     end
+
+    it 'notifies the customer' do
+      cancel
+      expect(order.cancellations.last.notify_customer).to be true
+    end
   end
 
   describe '#resend' do
