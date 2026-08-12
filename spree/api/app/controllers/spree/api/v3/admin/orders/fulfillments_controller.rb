@@ -68,7 +68,7 @@ module Spree
                   tracking: fulfill_params[:tracking],
                   tracking_carrier: fulfill_params[:tracking_carrier],
                   notify_customer: notify_customer?(fulfill_params[:notify_customer]),
-                  force: ActiveModel::Type::Boolean.new.cast(fulfill_params[:force]).present?
+                  force: fulfill_params[:force].to_b
                 )
 
                 if result.success?

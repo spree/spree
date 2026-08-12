@@ -127,7 +127,7 @@ module Spree
                   line_item: @order.line_items.find_by_prefix_id!(item[:line_item_id]),
                   quantity: item[:quantity].to_i,
                   description: item[:description],
-                  send_replacement: ActiveModel::Type::Boolean.new.cast(item[:send_replacement]),
+                  send_replacement: item[:send_replacement].to_b,
                   replacement_variant: replacement_variant_for(item),
                   refund_amount: item[:refund_amount]
                 }
