@@ -53,12 +53,16 @@ module Spree
       # Only lines that actually arrived are credited, matching what
       # +received_total+ refunds: a customer who announced three items and sent
       # two must not have tax credited on the third.
+      #
+      # The refunded amount goes with them, because it can be less than those
+      # lines are worth — a restocking fee, or an agreed part-refund. Without it
+      # a provider would credit the tax on goods whose value the merchant kept.
       def refund_tax
         received = return_record.return_line_items.select { |line| line.received_quantity.to_i.positive? }
         return if received.empty?
 
         order = return_record.order
-        order.tax_provider.refund(order, received, tax_date: order.completed_at)
+        order.tax_provider.refund(order, received, amount: @amount_to_refund, tax_date: order.completed_at)
       end
 
       def internal_refund?

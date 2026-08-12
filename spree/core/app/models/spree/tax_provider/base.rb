@@ -104,11 +104,20 @@ module Spree
       # Reports a partial credit against the committed document, keyed to the
       # original transaction rather than voiding and re-committing it.
       #
+      # +amount+ is what the customer was actually refunded, which is not always
+      # the returned lines' worth: an admin may keep a restocking fee or refund
+      # a goodwill figure of their own. A provider must credit no more tax than
+      # that refund carries — crediting every returned line when only part of
+      # their value went back would reclaim tax the merchant never repaid, and a
+      # return is marked refunded once, so nothing later corrects it. Where the
+      # amount is short, allocate proportionally.
+      #
       # @param order [Spree::Order]
       # @param return_items [Array<Spree::ReturnLineItem>] the returned lines
+      # @param amount [BigDecimal, nil] the refund issued; nil = the lines' full worth
       # @param tax_date [Time, nil] the original supply date; nil = order.completed_at
       # @return [void]
-      def refund(order, return_items, tax_date: nil); end
+      def refund(order, return_items, amount: nil, tax_date: nil); end
     end
   end
 end

@@ -22,11 +22,17 @@ describe Spree::TaxProvider::Base, type: :model do
     it 'no-ops for a provider without a remote ledger' do
       expect(provider.commit(order)).to be_nil
       expect(provider.void(order)).to be_nil
-      expect(provider.refund(order, [], tax_date: order.completed_at)).to be_nil
+      expect(provider.refund(order, [], amount: 10, tax_date: order.completed_at)).to be_nil
     end
 
-    it 'takes the refunded items rather than an amount' do
-      expect(provider.method(:refund).parameters).to eq([[:req, :order], [:req, :return_items], [:key, :tax_date]])
+    # The items are what identifies the credit — a bare amount could not say
+    # which lines, at which rates, in which jurisdiction. The amount rides
+    # alongside because it can be less than those lines are worth, and a
+    # provider must not credit tax the merchant never repaid.
+    it 'takes the refunded items, and how much actually went back' do
+      expect(provider.method(:refund).parameters).to eq(
+        [[:req, :order], [:req, :return_items], [:key, :amount], [:key, :tax_date]]
+      )
     end
   end
 

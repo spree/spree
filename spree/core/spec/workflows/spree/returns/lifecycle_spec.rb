@@ -207,7 +207,27 @@ RSpec.describe 'Spree::Returns workflows' do
         Spree::Returns::Refund.call(return_record: return_record, refund_method: 'store_credit')
 
         expect(provider).to have_received(:refund).with(
-          order, return_record.return_line_items.to_a, tax_date: order.completed_at
+          order, return_record.return_line_items.to_a,
+          amount: return_record.refund_total, tax_date: order.completed_at
+        )
+      end
+
+      # A partial refund must not hand the provider the returned lines with no
+      # word of how little went back: crediting their full tax would reclaim tax
+      # the merchant kept, and a return is marked refunded only once.
+      it 'tells the provider how much was actually refunded' do
+        order = return_record.order
+        provider = instance_double(Spree::TaxProvider::Internal, refund: nil, estimate: nil)
+        allow(order).to receive(:tax_provider).and_return(provider)
+        allow_any_instance_of(Spree::Return).to receive(:order).and_return(order)
+
+        part = (return_record.refund_total / 2).round(2)
+
+        Spree::Returns::Refund.call(return_record: return_record, amount: part,
+                                    refund_method: 'store_credit')
+
+        expect(provider).to have_received(:refund).with(
+          order, anything, amount: part, tax_date: order.completed_at
         )
       end
 
