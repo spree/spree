@@ -20,6 +20,7 @@ module Spree
                                :delivery_method_rules,
                                :seller_requirements,
                                :delivery_rate_providers,
+                               :digital_asset_providers,
                                :delivery_profile_types,
                                :order_routing,
                                :promotions,
@@ -155,6 +156,10 @@ module Spree
         app.config.spree.tax_providers = []
       end
 
+      initializer 'spree.register.digital_asset_providers', before: :load_config_initializers do |app|
+        app.config.spree.digital_asset_providers = []
+      end
+
       initializer 'spree.register.delivery_profile_types', before: :load_config_initializers do |app|
         app.config.spree.delivery_profile_types = []
       end
@@ -274,6 +279,12 @@ module Spree
         # through the method's calculator; carrier gems append theirs.
         Rails.application.config.spree.delivery_rate_providers.concat [
           Spree::DeliveryRateProvider::Internal
+        ]
+
+        # Digital asset sources. Core ships the uploaded-file default; host
+        # apps append providers that resolve a deliverable elsewhere.
+        Rails.application.config.spree.digital_asset_providers.concat [
+          Spree::DigitalAssetProvider::File
         ]
 
         # Profile kinds selectable when creating a delivery profile;

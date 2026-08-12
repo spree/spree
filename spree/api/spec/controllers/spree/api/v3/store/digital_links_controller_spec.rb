@@ -97,9 +97,9 @@ RSpec.describe Spree::Api::V3::Store::DigitalLinksController, type: :controller 
       it 'clamps the signed URL to the link expiry' do
         digital_link.update_column(:created_at, (1.day - 30.seconds).ago)
 
-        expect_any_instance_of(Spree::DigitalAsset).to receive(:download_url) do |_asset, expires_in:|
+        expect_any_instance_of(Spree::DigitalAsset).to receive(:deliver) do |_asset, _link, expires_in:|
           expect(expires_in).to be <= 30.seconds
-          'https://storage.example.com/signed'
+          Spree::DigitalDelivery.new(redirect_url: 'https://storage.example.com/signed')
         end
 
         get :show, params: { token: digital_link.token }
@@ -120,6 +120,42 @@ RSpec.describe Spree::Api::V3::Store::DigitalLinksController, type: :controller 
       end
     end
 
+    context 'when the provider returns an inline value (a license key)' do
+      before do
+        allow_any_instance_of(Spree::DigitalAsset).to receive(:deliver).and_return(
+          Spree::DigitalDelivery.new(inline_value: 'KEY-ABC-123', content_type: 'text/plain')
+        )
+      end
+
+      it 'renders the value as the body, not a redirect' do
+        get :show, params: { token: digital_link.token }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to eq('KEY-ABC-123')
+        expect(response.media_type).to eq('text/plain')
+      end
+
+      it 'spends exactly one download' do
+        expect {
+          get :show, params: { token: digital_link.token }
+        }.to change { digital_link.reload.access_counter }.by(1)
+      end
+    end
+
+    context 'when the provider raises' do
+      before do
+        allow_any_instance_of(Spree::DigitalAsset).to receive(:deliver).and_raise(StandardError, 'upstream down')
+      end
+
+      it 'refuses cleanly without spending a download' do
+        expect {
+          get :show, params: { token: digital_link.token }
+        }.not_to change { digital_link.reload.access_counter }
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
     context 'with invalid token' do
       it 'returns not found' do
         get :show, params: { token: 'invalid_token' }
@@ -128,17 +164,21 @@ RSpec.describe Spree::Api::V3::Store::DigitalLinksController, type: :controller 
       end
     end
 
-    context 'with token from another store' do
+    # An emailed download link carries no publishable key, so the request has
+    # no store credential — the globally unique token is the credential, and the
+    # store is derived from the link's own order. A link therefore resolves
+    # regardless of which store the request would otherwise resolve to.
+    context 'with a token whose order belongs to another store' do
       let(:other_store) { create(:store) }
       let(:other_order) { create(:order_with_line_items, store: other_store) }
       let(:other_line_item) { other_order.line_items.first }
       let(:other_digital_asset) { create(:digital_asset, variant: other_line_item.variant) }
       let(:other_digital_link) { create(:digital_link, digital_asset: other_digital_asset, line_item: other_line_item) }
 
-      it 'returns not found' do
+      it 'resolves the link through its token and serves the download' do
         get :show, params: { token: other_digital_link.token }
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:found)
       end
     end
 

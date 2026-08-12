@@ -20,6 +20,48 @@ describe Spree::DigitalAsset, type: :model do
     expect(described_class.new(variant: variant, attachment: file_upload)).to be_valid
   end
 
+  describe 'providers' do
+    # A stand-in provider that resolves its deliverable elsewhere, so it needs
+    # no uploaded file. Registered for the duration of the examples.
+    let(:stub_provider) do
+      Class.new(Spree::DigitalAssetProvider::Base) do
+        def self.requires_attachment? = false
+        def deliver(_link, expires_in:) = Spree::DigitalDelivery.new(inline_value: 'STUB')
+      end
+    end
+
+    before do
+      stub_const('Spree::DigitalAssetProvider::Stub', stub_provider)
+      Spree.digital_asset_providers << stub_provider
+    end
+
+    after { Spree.digital_asset_providers.delete(stub_provider) }
+
+    it 'resolves a blank provider_type to the File default' do
+      expect(described_class.new.provider_class).to eq(Spree::DigitalAssetProvider::File)
+    end
+
+    it 'resolves a set provider_type to that class' do
+      asset = described_class.new(provider_type: 'Spree::DigitalAssetProvider::Stub')
+      expect(asset.provider_class).to eq(stub_provider)
+    end
+
+    it 'requires no attachment for a provider that declares so' do
+      asset = described_class.new(variant: variant, provider_type: 'Spree::DigitalAssetProvider::Stub')
+      expect(asset).to be_valid
+    end
+
+    it 'still requires an attachment for a File asset' do
+      expect(described_class.new(variant: variant)).not_to be_valid
+    end
+
+    it 'rejects an unregistered provider_type' do
+      asset = described_class.new(variant: variant, provider_type: 'Spree::DigitalAssetProvider::Gone')
+      expect(asset).not_to be_valid
+      expect(asset.errors[:provider_type]).to be_present
+    end
+  end
+
   # The legacy names are the one-release webhook bridge; dropping them silently
   # would break every subscriber written before the rename.
   describe 'legacy digital.* events', events: true do

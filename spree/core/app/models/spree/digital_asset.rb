@@ -9,8 +9,14 @@ module Spree
 
     has_one_attached :attachment, service: Spree.private_storage_service_name
 
-    validates :attachment, attached: true
+    # A blank provider_type is the uploaded-file default; the provider class
+    # says whether an attachment is required, so file assets keep today's rule
+    # and provider-backed assets (which carry no file) are exempt.
+    DEFAULT_PROVIDER = 'Spree::DigitalAssetProvider::File'.freeze
+
+    validates :attachment, attached: true, if: -> { provider_class.requires_attachment? }
     validates :variant, presence: true
+    validate :provider_type_is_registered, if: -> { provider_type.present? }
     validates :authorized_clicks, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
     validates :authorized_days, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
 
@@ -41,10 +47,26 @@ module Spree
       product.store
     end
 
-    # Where the customer is sent to fetch the file. Owning this here keeps
-    # callers out of the storage layer, so asset kinds that are not uploaded
-    # files can answer it differently.
+    # The strategy that produces this asset's deliverable. A blank provider_type
+    # resolves to the uploaded-file default, exactly as DeliveryMethod resolves
+    # its provider — so an unset column is a File asset, not an error.
     #
+    # @return [Class]
+    def provider_class
+      (provider_type.presence || DEFAULT_PROVIDER).safe_constantize || DEFAULT_PROVIDER.constantize
+    end
+
+    # Produces the deliverable for one authorized download — a redirect URL or
+    # an inline value — via the provider. Callers stay out of the storage layer
+    # so a provider-backed asset can answer without an attachment.
+    #
+    # @param digital_link [Spree::DigitalLink]
+    # @param expires_in [ActiveSupport::Duration]
+    # @return [Spree::DigitalDelivery, nil]
+    def deliver(digital_link, expires_in:)
+      provider_class.new(self).deliver(digital_link, expires_in: expires_in)
+    end
+
     # @return [Boolean] whether there is anything to hand to a customer
     def downloadable?
       attachment.attached?
@@ -59,6 +81,14 @@ module Spree
     end
 
     private
+
+    # A provider_type must name a registered provider — a stale class name from
+    # a removed gem, or a typo, is rejected rather than blowing up at download.
+    def provider_type_is_registered
+      return if Spree.digital_asset_providers.map(&:to_s).include?(provider_type)
+
+      errors.add(:provider_type, :not_registered)
+    end
 
     # The legacy digital.* events are dual-emitted for one release
     # (webhook contract bridge — removed in 6.1).

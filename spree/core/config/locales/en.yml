@@ -233,6 +233,7 @@ en:
       messages:
         blank: can't be blank
         must_apply_to_products: must be a custom field definition for products
+        not_registered: is not a registered provider
       models:
         spree/allowed_origin:
           attributes:
