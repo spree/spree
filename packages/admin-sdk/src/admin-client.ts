@@ -1072,6 +1072,21 @@ export class AdminClient {
           body: params,
         }),
 
+      // Buys the shipping label for a parcel that has not shipped yet, so the
+      // merchant prints it and packs before anything tells the customer it
+      // shipped. Only providers that produce labels accept this; failures are
+      // loud (422), unlike fulfill's degrade-to-no-label path.
+      purchaseLabel: (
+        orderId: string,
+        id: string,
+        options?: RequestOptions,
+      ): Promise<Fulfillment> =>
+        this.request<Fulfillment>(
+          'PATCH',
+          `/orders/${orderId}/fulfillments/${id}/purchase_label`,
+          options,
+        ),
+
       // Confirms the customer received the goods. Staff can record this by
       // hand — a merchant with no carrier integration still needs a delivered
       // state — and carriers reach the same endpoint through their webhooks.

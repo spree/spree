@@ -228,6 +228,64 @@ RSpec.describe 'Admin Order Fulfillments API', type: :request, swagger_doc: 'api
     end
   end
 
+  path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/purchase_label' do
+    patch 'Buy the shipping label' do
+      tags 'Fulfillments'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Buys the shipping label for a parcel that has not shipped yet — print it, pack the box, then mark the fulfillment fulfilled. Only delivery methods whose provider produces labels accept this.'
+      admin_scope :write, :fulfillments
+
+      admin_sdk_example 'order-fulfillments/purchase-label'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :Authorization, in: :header, type: :string, required: true,
+                description: 'Bearer token for admin authentication'
+      parameter name: :order_id, in: :path, type: :string, required: true,
+                description: 'Order ID'
+      parameter name: :id, in: :path, type: :string, required: true,
+                description: 'Fulfillment ID'
+
+      response '200', 'label purchased' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { shipment.prefixed_id }
+
+        before do
+          shipment.update_column(:tracking, nil)
+          label_provider = Class.new(Spree::FulfillmentProvider::Base) do
+            def self.generates_labels?
+              true
+            end
+
+            def create_fulfillment(_fulfillment)
+              { tracking_number: 'LBL-123' }
+            end
+
+            def documents(_fulfillment)
+              [{ kind: 'label', url: 'https://carrier.example/label.pdf' }]
+            end
+          end
+          allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(label_provider.new)
+        end
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['status']).to eq('unfulfilled')
+          expect(data['documents'].first['kind']).to eq('label')
+        end
+      end
+
+      response '422', 'provider does not produce labels' do
+        let(:'x-spree-api-key') { secret_api_key.plaintext_token }
+        let(:order_id) { order.prefixed_id }
+        let(:id) { shipment.prefixed_id }
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/admin/orders/{order_id}/fulfillments/{id}/mark_delivered' do
     patch 'Mark a fulfillment delivered' do
       tags 'Fulfillments'

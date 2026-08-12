@@ -6,7 +6,7 @@ module Spree
           class FulfillmentsController < BaseController
             scoped_resource :fulfillments
 
-            before_action :set_resource, only: [:show, :update, :fulfill, :mark_delivered, :cancel, :resume, :split]
+            before_action :set_resource, only: [:show, :update, :fulfill, :purchase_label, :mark_delivered, :cancel, :resume, :split]
 
             # POST /api/v3/admin/orders/:order_id/fulfillments
             #
@@ -70,6 +70,25 @@ module Spree
                   notify_customer: notify_customer?(fulfill_params[:notify_customer]),
                   force: ActiveModel::Type::Boolean.new.cast(fulfill_params[:force]).present?
                 )
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
+              end
+            end
+
+            # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/purchase_label
+            #
+            # Buys the shipping label for a parcel that has not shipped yet, so
+            # the merchant can print it, pack the box and hand it over before
+            # anything tells the customer it shipped. Only providers that
+            # produce labels accept this; failures are loud (422), unlike the
+            # one-click fulfill path which degrades to "no label yet".
+            def purchase_label
+              with_order_lock do
+                result = Spree.fulfillment_purchase_label_workflow.call(fulfillment: @resource)
 
                 if result.success?
                   render json: serialize_resource(result.value)
