@@ -1,15 +1,14 @@
 module Spree
-  module Payments
-    # Refunds a captured payment at the gateway.
+  module Refunds
+    # Creates a refund and credits it back at the gateway.
     #
-    # In the workflow tier because the refund is network I/O. Today
-    # `Spree::Refund` fires its gateway call from an `after_create` callback,
-    # so the request runs inside whatever transaction the caller happens to
-    # hold. Creating the refund through this workflow puts the call in an
-    # `external_step` instead, which refuses to run inside a workflow-opened
-    # transaction — the record is committed first, then the gateway is
-    # called, then the totals are refreshed.
-    class Refund < Spree::Workflow
+    # In the workflow tier because the credit is network I/O. The refund row
+    # commits first, then the gateway is called from an external_step — a row
+    # with no transaction_id is recoverable, a gateway credit with no record
+    # is not. On a clean gateway failure the uncredited row is destroyed
+    # (credit_allowed sums every refund row, so a dangling one would block the
+    # retry); a crash between the two leaves the row for reconciliation.
+    class Create < Spree::Workflow
       hooks :validate, :before_refund, :after_refund
 
       # The created refund — hook handlers read it (nil during :validate).
@@ -21,7 +20,9 @@ module Spree
       # @param reason [Spree::RefundReason, nil] defaults to the store's
       #   return-processing reason
       # @param refunder [Object, nil] the admin issuing the refund
-      def perform(payment:, amount: nil, reason: nil, refunder: nil)
+      # @param originator [Object, nil] what triggered the refund — a
+      #   Spree::Return, Exchange or Claim; nil for a manual refund
+      def perform(payment:, amount: nil, reason: nil, refunder: nil, originator: nil)
         super
 
         step :ensure_refundable
@@ -33,10 +34,8 @@ module Spree
         run_hooks :validate
         run_hooks :before_refund
 
-        # Committed before the gateway call: a refund row with no
-        # transaction_id is recoverable, a gateway credit with no record is
-        # not.
-        external_step :issue_refund
+        step :create_refund, on_flow_failure: :destroy_uncredited_refund
+        external_step :credit_at_gateway
 
         run_hooks :after_refund
         payment.publish_event('payment.refunded')
@@ -55,17 +54,26 @@ module Spree
         failure(payment, :refund_amount_exceeds_balance)
       end
 
-      # Spree::Refund performs the gateway credit in an after_create
-      # callback; creating it here keeps that call outside any transaction
-      # this workflow opened.
-      def issue_refund
+      def create_refund
         @refund = payment.refunds.create!(
           amount: @amount_to_refund,
           reason: reason || Spree::RefundReason.return_processing_reason(payment.order&.store),
-          refunder: refunder
+          refunder: refunder,
+          originator: originator
         )
+      end
+
+      def credit_at_gateway
+        refund.perform!
       rescue Spree::Core::GatewayError => error
-        failure(payment, error.message)
+        failure(refund, error.message)
+      end
+
+      # Runs when a step after create_refund fails. Only an uncredited row is
+      # destroyed — a present transaction_id means the money moved, and the
+      # record must survive whatever failed afterwards.
+      def destroy_uncredited_refund
+        refund.destroy! if refund&.transaction_id.blank?
       end
     end
   end

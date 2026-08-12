@@ -54,25 +54,25 @@ module Spree
             end
 
             # PATCH /api/v3/store/carts/:cart_id/payment_sessions/:id/complete
+            #
+            # Deliberately not wrapped in with_order_lock: the workflow verifies
+            # the session with the gateway from an external_step, and holding a
+            # row lock across that round trip is what the boundary exists to
+            # prevent. The race against the webhook is settled inside — both
+            # paths go through PaymentSession#settle_payment!, and a replay on
+            # a completed session is an idempotent success.
             def complete
-              with_order_lock do
-                @payment_session.reload
+              result = Spree.payment_session_complete_workflow.call(
+                payment_session: @payment_session.reload,
+                params: complete_params
+              )
 
-                if @payment_session.completed?
-                  render json: serialize_resource(@payment_session)
-                  return
-                end
-
-                @payment_session.payment_method.complete_payment_session(
-                  payment_session: @payment_session,
-                  params: complete_params
-                )
-
-                if @payment_session.errors.empty?
-                  render json: serialize_resource(@payment_session.reload)
-                else
-                  render_errors(@payment_session.errors)
-                end
+              if result.success? && @payment_session.errors.empty?
+                render json: serialize_resource(result.value)
+              elsif result.success?
+                render_errors(@payment_session.errors)
+              else
+                render_result_error(result)
               end
             end
 

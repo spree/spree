@@ -108,6 +108,13 @@ module SpreeStripe
             refunder_id: payment.order.canceler_id
           )
 
+          begin
+            refund.perform!
+          rescue Spree::Core::GatewayError
+            refund.destroy! if refund.transaction_id.blank?
+            raise
+          end
+
           # Spree::Refund#response holds the `credit` response. The authorization
           # must stay the payment intent id, or the refund id would overwrite it.
           success(payment.response_code, refund.response.params)

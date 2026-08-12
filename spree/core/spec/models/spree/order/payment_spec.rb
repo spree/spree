@@ -13,7 +13,9 @@ module Spree
       end
 
       it 'processes the checkout payment' do
-        payment = create(:payment, amount: 100, order: order)
+        # The creation flow stores the gateway profile while the card number is
+        # still in memory — row save alone no longer does.
+        payment = create(:payment, amount: 100, order: order).tap(&:create_payment_profile)
 
         order.process_payments!
         order.update_statuses!
@@ -40,7 +42,7 @@ module Spree
         end
 
         context 'with a store credit payment method captured manually' do
-          let!(:payment) { create(:payment, order: order, amount: payment_amount) }
+          let!(:payment) { create(:payment, order: order, amount: payment_amount).tap(&:create_payment_profile) }
           let!(:store_credit_payment) do
             create(
               :store_credit_payment,

@@ -330,6 +330,53 @@ ships in the OSS Admin API; first-run configures the one store.
 Consequences: Admin API code must never assume `current_store` is the default
 store, and store-touching cache keys must carry the store id by construction.
 Plan: `6.0-store-context-and-first-run-setup.md`.
+## 2026-08-12 — The payment lifecycle routes through its workflows; refund creation owns the credit
+
+An audit found the two payment workflows were dead code: `Payments::Capture`
+and `Payments::Refund` existed with hooks, but the admin API called
+`payment.capture!` and `Refund.create` directly — inside `with_order_lock`, a
+row lock held across gateway round trips — and `Refund#after_create :perform!`
+fired the gateway credit from a save callback, the exact shape the workflow
+doctrine prohibits. The boundary the plan says workflows own was owned by
+controllers.
+
+Five changes close the gap:
+
+- **`Refunds::Create`** (renamed from `Payments::Refund`, key
+  `refund_create_workflow`, before any release of the old key) owns refund
+  creation end to end. The `after_create` is gone: the row commits, then the
+  credit runs as an explicit `external_step` via a now-public
+  `Refund#perform!` (idempotent — a present transaction_id is a no-op). A
+  cleanly declined credit destroys the uncredited row, because
+  `credit_allowed` sums every refund row and a dangling one would block the
+  retry; a crash between commit and credit leaves the row for reconciliation.
+  Returns, exchanges, claims and Stripe's cancel verb call `perform!`
+  explicitly from their own external steps.
+- **`Payments::Void`** exists (mirror of Capture) and the admin void endpoint
+  routes through it; capture routes through `Payments::Capture`. Neither
+  wraps in `with_order_lock` — replays are idempotent successes.
+- **`PaymentSessions::Complete`** is the synchronous twin of `HandleWebhook`:
+  same settlement through `settle_payment!`, plus the one veto point the sync
+  path lacked (`validate` before money is recorded — the webhook path
+  deliberately has none, money that moved cannot be rejected).
+- **`create_payment_profile` left its save callback and became an explicit
+  call.** No subscriber replaced it — a first attempt proved why: the card
+  number never persists, so profile creation only works on the in-memory
+  instance the creation flow holds, and an observer that reloads the payment
+  can never do it. Creation flows that take raw card data call
+  `payment.create_payment_profile` after the commit; session gateways store
+  profile ids during source creation and never call it. Row save alone no
+  longer talks to a gateway.
+- **`process_payments!` dropped its `with_lock`** around the gateway loop;
+  re-entry is guarded by `started_processing!` and the per-payment gateway
+  idempotency key.
+
+**Consequences:** hook keys `refunds.create.*`, `payments.void.*` and
+`payment_sessions.complete.*` are public API from 6.0. Controllers never wrap
+gateway-calling workflows in `with_order_lock`. Anything creating a
+`Spree::Refund` row must either call `Refund#perform!` from an external step
+or accept an uncredited row — creation alone no longer moves money.
+
 ## 2026-08-12 — Providers never decorate core models; risk codes become a gateway interface
 
 The Stripe provider shipped with three decorators on core models, and all three

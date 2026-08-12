@@ -52,7 +52,6 @@ module Spree
     #
     # Callbacks
     before_create :assign_risk_codes_from_source
-    after_save :create_payment_profile, if: :profiles_supported?
     # update the order totals, etc.
     after_save :update_order, unless: -> { capture_on_dispatch }
     # invalidate previously entered payments
@@ -297,6 +296,29 @@ module Spree
       end
     end
 
+    def profiles_supported?
+      payment_method.respond_to?(:payment_profiles_supported?) && payment_method.payment_profiles_supported?
+    end
+
+    # Stores the payment source at the gateway for later off-session use.
+    # Gateway I/O — creation flows that take raw card data call this
+    # explicitly after the payment commits, on the same in-memory instance
+    # (the card number never persists, and some gateways need it). Session
+    # gateways store profile ids during source creation and never call this.
+    def create_payment_profile
+      # Don't attempt to create on bad payments.
+      return if has_invalid_state?
+      # Payment profile cannot be created without source
+      return unless source
+      # Imported payments shouldn't create a payment profile.
+      # Imported is only available on Spree::CreditCard, non-credit card payments should not have this attribute.
+      return if source.respond_to?(:imported) && source.imported
+
+      payment_method.create_profile(self)
+    rescue Spree::PaymentConnectionError => e
+      gateway_error e
+    end
+
     private
 
     # Session-created payments never pass through the gateway response path
@@ -362,23 +384,7 @@ module Spree
       errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{message}")
     end
 
-    def profiles_supported?
-      payment_method.respond_to?(:payment_profiles_supported?) && payment_method.payment_profiles_supported?
-    end
 
-    def create_payment_profile
-      # Don't attempt to create on bad payments.
-      return if has_invalid_state?
-      # Payment profile cannot be created without source
-      return unless source
-      # Imported payments shouldn't create a payment profile.
-      # Imported is only available on Spree::CreditCard, non-credit card payments should not have this attribute.
-      return if source.respond_to?(:imported) && source.imported
-
-      payment_method.create_profile(self)
-    rescue Spree::PaymentConnectionError => e
-      gateway_error e
-    end
 
     def split_uncaptured_amount
       if uncaptured_amount > 0

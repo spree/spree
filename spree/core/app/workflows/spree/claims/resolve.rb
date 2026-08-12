@@ -133,6 +133,7 @@ module Spree
 
       def refund_at_gateway
         remaining = @amount_to_refund
+        refund = nil
 
         claim.order.payments.completed.each do |payment|
           break unless remaining.positive?
@@ -140,17 +141,21 @@ module Spree
           creditable = [payment.credit_allowed.to_d, remaining].min
           next unless creditable.positive?
 
-          @refunds << payment.refunds.create!(
+          refund = payment.refunds.create!(
             amount: creditable,
             reason: Spree::RefundReason.return_processing_reason(claim.store),
             refunder: resolver,
             originator: claim
           )
+          refund.perform!
+          @refunds << refund
           remaining -= creditable
         end
 
         failure(claim, :no_refundable_payments) if @refunds.empty?
       rescue Spree::Core::GatewayError => error
+        # An uncredited row would eat into credit_allowed and block the retry.
+        refund.destroy! if refund&.transaction_id.blank?
         failure(claim, error.message)
       end
 

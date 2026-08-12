@@ -36,23 +36,32 @@ module Spree
             end
 
             # PATCH /api/v3/admin/orders/:order_id/payments/:id/capture
+            #
+            # Capture and void deliberately skip with_order_lock: the workflows
+            # call the gateway from an external_step, and holding a row lock
+            # across a network round trip is exactly what that boundary exists
+            # to prevent. Both flows are idempotent on replay — an
+            # already-captured or already-void payment returns success.
             def capture
-              with_order_lock do
-                amount = params[:amount] ? (params[:amount].to_f * 100).round : nil
-                @resource.capture!(amount)
-                render json: serialize_resource(@resource.reload)
-              rescue Spree::Core::GatewayError => e
-                render_service_error(e.message)
+              amount = params[:amount] ? (params[:amount].to_f * 100).round : nil
+
+              result = Spree.payment_capture_workflow.call(payment: @resource, amount: amount)
+
+              if result.success?
+                render json: serialize_resource(result.value)
+              else
+                render_result_error(result)
               end
             end
 
             # PATCH /api/v3/admin/orders/:order_id/payments/:id/void
             def void
-              with_order_lock do
-                @resource.void_transaction!
-                render json: serialize_resource(@resource.reload)
-              rescue Spree::Core::GatewayError => e
-                render_service_error(e.message)
+              result = Spree.payment_void_workflow.call(payment: @resource)
+
+              if result.success?
+                render json: serialize_resource(result.value)
+              else
+                render_result_error(result)
               end
             end
 

@@ -21,13 +21,11 @@ module Spree
 
     with_options presence: true do
       validates :payment, :reason
-      # can't require this on create because the perform! in after_create needs to run first
+      # not required on create — perform! sets it after the gateway credit
       validates :transaction_id, on: :update
       validates :amount, numericality: { greater_than: 0, allow_nil: true }
     end
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create, if: :amount
-
-    after_create :perform!
 
     attr_reader :response
 
@@ -62,10 +60,13 @@ module Spree
       !payment.order.canceled?
     end
 
-    private
-
-    # attempts to perform the refund.
-    # raises an error if the refund fails.
+    # Credits the refund back at the gateway — the money movement, called
+    # explicitly from a workflow's external_step, never from a callback. A
+    # blank transaction_id means the credit has not happened yet; a present
+    # one makes this a no-op, so replays are safe.
+    #
+    # @raise [Spree::Core::GatewayError] when the gateway declines or is down
+    # @return [true]
     def perform!
       return true if transaction_id.present?
 
@@ -76,7 +77,10 @@ module Spree
       self.transaction_id = @response.authorization
       update_columns(transaction_id: transaction_id)
       update_order
+      true
     end
+
+    private
 
     # return a payment response object if successful or else raise an error
     def process!(credit_cents)

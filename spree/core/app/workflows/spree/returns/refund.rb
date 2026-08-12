@@ -112,12 +112,13 @@ module Spree
         @refunds = [credit]
       end
 
-      # Spree::Refund performs the gateway credit in an after_create callback,
-      # so creating it here keeps that call out of any transaction this
-      # workflow opened. Payments are drained newest-first until the amount
-      # is covered — a split-tender order needs more than one refund.
+      # Each refund row commits, then Refund#perform! credits it at the
+      # gateway — explicitly, never from a callback. Payments are drained
+      # newest-first until the amount is covered — a split-tender order needs
+      # more than one refund.
       def refund_at_gateway
         remaining = @amount_to_refund
+        refund = nil
 
         return_record.order.payments.completed.each do |payment|
           break unless remaining.positive?
@@ -125,17 +126,21 @@ module Spree
           creditable = [payment.credit_allowed.to_d, remaining].min
           next unless creditable.positive?
 
-          @refunds << payment.refunds.create!(
+          refund = payment.refunds.create!(
             amount: creditable,
             reason: Spree::RefundReason.return_processing_reason(return_record.store),
             refunder: refunder,
             originator: return_record
           )
+          refund.perform!
+          @refunds << refund
           remaining -= creditable
         end
 
         failure(return_record, :no_refundable_payments) if @refunds.empty?
       rescue Spree::Core::GatewayError => error
+        # An uncredited row would eat into credit_allowed and block the retry.
+        refund.destroy! if refund&.transaction_id.blank?
         failure(return_record, error.message)
       end
 

@@ -229,10 +229,10 @@ describe Spree::Payment, type: :model do
       context 'when payment method supports profiles' do
         context 'when source is a credit card' do
           let(:source) { create(:credit_card) }
-          let(:payment) { build(:payment, source: source) }
+          let(:payment) { create(:payment, source: source) }
 
           it 'creates a payment profile' do
-            expect { payment.save! }.to change { source.gateway_customer_profile_id }.from(nil).to(/BGS-/)
+            expect { payment.create_payment_profile }.to change { source.gateway_customer_profile_id }.from(nil).to(/BGS-/)
           end
         end
 
@@ -241,10 +241,10 @@ describe Spree::Payment, type: :model do
           let(:order) { create(:order, customer: user, total: 100) }
           let(:gateway) { create(:custom_payment_method) }
           let(:source) { create(:payment_source, customer: user, payment_method: gateway) }
-          let(:payment) { build(:custom_payment, source: source, amount: 100, payment_method: gateway) }
+          let(:payment) { create(:custom_payment, source: source, amount: 100, payment_method: gateway) }
 
           it 'creates a payment profile' do
-            expect { payment.save! }.to change { source.gateway_customer_profile_id }.from(nil).to("CUSTOMER-#{user.id}")
+            expect { payment.create_payment_profile }.to change { source.gateway_customer_profile_id }.from(nil).to("CUSTOMER-#{user.id}")
           end
         end
       end
@@ -891,67 +891,59 @@ describe Spree::Payment, type: :model do
         allow(payment.source).to receive_messages has_payment_profile?: false
       end
 
-      context 'when there is an error connecting to the gateway' do
-        it 'calls gateway_error' do
-          message = 'gateway_error'
-          connection_error = Spree::PaymentConnectionError.new(message)
-          expect(gateway).to receive(:create_profile).and_raise(connection_error)
-          expect do
-            Spree::Payment.create(
-              amount: 100,
-              order: order,
-              source: card,
-              payment_method: gateway
-            )
-          end.to raise_error(Spree::Core::GatewayError)
-        end
-      end
+      it 'never creates the profile from the save itself' do
+        expect(gateway).not_to receive(:create_profile)
 
-      context 'with multiple payment attempts' do
-        let(:attributes) { attributes_for(:credit_card) }
-
-        it 'does not try to create profiles on old failed payment attempts' do
-          allow_any_instance_of(Spree::Payment).to receive(:payment_method) { gateway }
-
-          order.payments.create!(
-            source_attributes: attributes,
-            payment_method: gateway,
-            amount: 100
-          )
-          expect(gateway).to receive(:create_profile).exactly :once
-          expect(order.payments.count).to eq(1)
-          order.payments.create!(
-            source_attributes: attributes,
-            payment_method: gateway,
-            amount: 100
-          )
-        end
-      end
-
-      context 'when successfully connecting to the gateway' do
-        it 'creates a payment profile' do
-          expect(payment.payment_method).to receive :create_profile
-          Spree::Payment.create(
-            amount: 100,
-            order: order,
-            source: card,
-            payment_method: gateway
-          )
-        end
-      end
-    end
-
-    context 'when profiles are not supported' do
-      before { allow(gateway).to receive_messages payment_profiles_supported?: false }
-
-      it 'does not create a payment profile' do
-        expect(gateway).not_to receive :create_profile
         Spree::Payment.create(
           amount: 100,
           order: order,
           source: card,
           payment_method: gateway
         )
+      end
+
+      context 'when there is an error connecting to the gateway' do
+        it 'calls gateway_error' do
+          connection_error = Spree::PaymentConnectionError.new('gateway_error')
+          expect(gateway).to receive(:create_profile).and_raise(connection_error)
+
+          saved_payment = Spree::Payment.create(
+            amount: 100,
+            order: order,
+            source: card,
+            payment_method: gateway
+          )
+
+          expect { saved_payment.create_payment_profile }.to raise_error(Spree::Core::GatewayError)
+        end
+      end
+
+      context 'with an invalidated payment attempt' do
+        it 'does not try to create a profile' do
+          saved_payment = Spree::Payment.create!(
+            amount: 100,
+            order: order,
+            source: card,
+            payment_method: gateway
+          )
+          saved_payment.invalidate!
+
+          expect(gateway).not_to receive(:create_profile)
+          saved_payment.create_payment_profile
+        end
+      end
+
+      context 'when successfully connecting to the gateway' do
+        it 'creates a payment profile' do
+          expect(gateway).to receive :create_profile
+
+          Spree::Payment.create(
+            amount: 100,
+            order: order,
+            source: card,
+            payment_method: gateway
+          ).create_payment_profile
+        end
       end
     end
   end
