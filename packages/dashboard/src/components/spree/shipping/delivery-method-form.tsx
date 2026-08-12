@@ -112,7 +112,11 @@ function useSelectedFulfillmentProvider(form: UseFormReturn<DeliveryMethodFormVa
 /**
  * One block of the method form. The form lives in a sheet, which is already a
  * bordered surface — nesting cards inside it stacks three borders around every
- * field, so sections are separated by a rule and a heading instead.
+ * field, so a rule separates each block instead.
+ *
+ * Most blocks carry no heading: their fields are labelled already, and
+ * "Providers" above two selects both named "…provider" is a label for a label.
+ * A title is for a block whose fields do not announce themselves.
  */
 function FormSection({
   title,
@@ -120,20 +124,24 @@ function FormSection({
   action,
   children,
 }: {
-  title: string
+  title?: string
   description?: string
   action?: React.ReactNode
   children: React.ReactNode
 }) {
+  const heading = title || description || action
+
   return (
     <section className="flex flex-col gap-4 border-t pt-6 first:border-t-0 first:pt-0">
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex flex-col gap-0.5">
-          <h3 className="font-medium text-sm">{title}</h3>
-          {description && <p className="text-muted-foreground text-xs">{description}</p>}
+      {heading && (
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex flex-col gap-0.5">
+            {title && <h3 className="font-medium text-sm">{title}</h3>}
+            {description && <p className="text-muted-foreground text-xs">{description}</p>}
+          </div>
+          {action}
         </div>
-        {action}
-      </div>
+      )}
       {children}
     </section>
   )
@@ -179,20 +187,18 @@ export function DeliveryMethodFormCards({
 
 /**
  * What the customer is told about timing, and where a hand-entered tracking
- * number points. Both are the merchant's own estimates on a method they
- * price themselves; a carrier method gets these from the carrier, so they
- * sit apart from the method's identity.
+ * number points — both the merchant's own answers on a method they price
+ * themselves. A carrier supplies an estimate with every rate and resolves
+ * its own tracking links, so the whole section is hidden there.
  */
 function DeliveryEstimateSection({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
   const { t } = useTranslation()
   const selectedRateProvider = useSelectedRateProvider(form)
-  const carrierPriced = selectedRateProvider?.uses_calculator === false
+
+  if (selectedRateProvider?.uses_calculator === false) return null
 
   return (
-    <FormSection
-      title={t('admin.delivery_methods.cards.estimate')}
-      description={carrierPriced ? t('admin.delivery_methods.estimate.carrier_hint') : undefined}
-    >
+    <FormSection title={t('admin.delivery_methods.cards.estimate')}>
       <div className="grid grid-cols-2 gap-3">
         <Field>
           <FieldLabel htmlFor="estimated_transit_business_days_min">
@@ -218,20 +224,16 @@ function DeliveryEstimateSection({ form }: { form: UseFormReturn<DeliveryMethodF
         </Field>
       </div>
 
-      {/* A carrier provider resolves its own tracking links, so the template
-          would never be read on one of its fulfillments. */}
-      {!carrierPriced && (
-        <Field>
-          <FieldLabel htmlFor="tracking_url">
-            {t('admin.fields.delivery_method.tracking_url.label')}
-          </FieldLabel>
-          <Input
-            id="tracking_url"
-            placeholder="https://carrier.example/track?num=:tracking"
-            {...form.register('tracking_url')}
-          />
-        </Field>
-      )}
+      <Field>
+        <FieldLabel htmlFor="tracking_url">
+          {t('admin.fields.delivery_method.tracking_url.label')}
+        </FieldLabel>
+        <Input
+          id="tracking_url"
+          placeholder="https://carrier.example/track?num=:tracking"
+          {...form.register('tracking_url')}
+        />
+      </Field>
     </FormSection>
   )
 }
@@ -290,7 +292,7 @@ function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
   const { errors } = form.formState
 
   return (
-    <FormSection title={t('admin.delivery_methods.cards.general')}>
+    <FormSection>
       <>
         {errors.root?.message && (
           <p className="text-sm text-destructive" role="alert">
@@ -554,7 +556,7 @@ function ProvidersCard({
   }, [carrierName, nameDirty, form])
 
   return (
-    <FormSection title={t('admin.delivery_methods.cards.providers')}>
+    <FormSection>
       <ProviderSelectField
         form={form}
         name="fulfillment_provider"
@@ -1016,7 +1018,7 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
   ]
 
   return (
-    <FormSection title={t('admin.delivery_methods.cards.pricing')}>
+    <FormSection>
       {usesCalculator ? (
         <>
           <Field>
@@ -1149,7 +1151,7 @@ function ZoneCard({
   ]
 
   return (
-    <FormSection title={t('admin.delivery_methods.cards.zone')}>
+    <FormSection>
       <Field>
         <FieldLabel>{t('admin.fields.delivery_method.delivery_zone.label')}</FieldLabel>
         <Controller

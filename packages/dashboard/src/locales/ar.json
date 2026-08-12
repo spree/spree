@@ -470,14 +470,7 @@
     "delivery_methods": {
       "add_sheet_title": "طريقة توصيل جديدة",
       "cards": {
-        "general": "عام",
-        "pricing": "التسعير",
-        "estimate": "تقدير التسليم",
-        "providers": "المزوّدون",
-        "zone": "المنطقة"
-      },
-      "estimate": {
-        "carrier_hint": "توفّر شركة الشحن تقديرها الخاص لكل سعر؛ وتُستخدم هذه القيم عند عدم توفّره."
+        "estimate": "تقدير التسليم"
       },
       "carrier_services": {
         "add_service": "إضافة خدمة",
@@ -532,7 +525,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "أقل من {{max}} {{unit}}",
         "weight_min": "{{min}} {{unit}} فأكثر"
-      }
+      },
+      "carrier_rates_hint": "تأتي الأسعار من {{name}} عند الدفع، ويتم تسعيرها مباشرةً لكل طلب."
     },
     "delivery_origin_groups": {
       "delete_confirm": {

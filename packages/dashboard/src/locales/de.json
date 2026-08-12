@@ -470,14 +470,7 @@
     "delivery_methods": {
       "add_sheet_title": "Neue Versandart",
       "cards": {
-        "general": "Allgemein",
-        "pricing": "Preisgestaltung",
-        "estimate": "Lieferschätzung",
-        "providers": "Anbieter",
-        "zone": "Zone"
-      },
-      "estimate": {
-        "carrier_hint": "Der Versanddienstleister liefert für jeden Tarif eine eigene Schätzung; diese Werte gelten, wenn er keine liefert."
+        "estimate": "Lieferschätzung"
       },
       "carrier_services": {
         "add_service": "Service hinzufügen",
@@ -532,7 +525,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "Unter {{max}} {{unit}}",
         "weight_min": "Ab {{min}} {{unit}}"
-      }
+      },
+      "carrier_rates_hint": "Die Preise kommen beim Checkout von {{name}} und werden für jede Bestellung live ermittelt."
     },
     "delivery_origin_groups": {
       "delete_confirm": {

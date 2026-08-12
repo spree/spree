@@ -478,14 +478,7 @@
     "delivery_methods": {
       "add_sheet_title": "Nowa metoda dostawy",
       "cards": {
-        "general": "Ogólne",
-        "pricing": "Ceny",
-        "estimate": "Szacowana dostawa",
-        "providers": "Dostawcy",
-        "zone": "Strefa"
-      },
-      "estimate": {
-        "carrier_hint": "Przewoźnik podaje własne szacunki dla każdej stawki; te wartości obowiązują, gdy ich nie poda."
+        "estimate": "Szacowana dostawa"
       },
       "carrier_services": {
         "add_service": "Dodaj usługę",
@@ -540,7 +533,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "Poniżej {{max}} {{unit}}",
         "weight_min": "Od {{min}} {{unit}}"
-      }
+      },
+      "carrier_rates_hint": "Ceny pochodzą z {{name}} przy składaniu zamówienia i są wyliczane na żywo dla każdego zamówienia."
     },
     "delivery_origin_groups": {
       "delete_confirm": {

@@ -1050,9 +1050,10 @@ function MethodList({
         const rateProvider = (rateProviders?.data ?? []).find(
           (provider) => provider.type === method.rate_provider,
         )
-        // A carrier quotes each shipment live, so there is no one price to
-        // show — the carrier's name is the honest answer. Everything else is
-        // priced up front: an amount, or free when there is none.
+        // A carrier quotes each shipment live, so this column answers what the
+        // price IS rather than naming the provider — which the method is
+        // usually named after anyway. Everything else is priced up front: an
+        // amount, or free when there is none.
         //
         // A method carrying a rate provider absent from the registry (an
         // uninstalled gem, a disconnected integration) is still not
@@ -1062,7 +1063,7 @@ function MethodList({
           : !!method.rate_provider && method.rate_provider !== defaultRateProvider
         const amount = flatAmount(method.calculator_preferences)
         const price = carrierPriced
-          ? (rateProvider?.name ?? t('admin.delivery_methods.carrier_rates'))
+          ? t('admin.delivery_methods.carrier_rates')
           : amount === null || amount === 0
             ? t('admin.delivery_methods.free')
             : formatAmount(amount, defaultCurrency, i18n.language)
@@ -1092,7 +1093,24 @@ function MethodList({
             {!method.storefront_visible && (
               <Badge variant="outline">{t('admin.delivery_profiles.detail.hidden_badge')}</Badge>
             )}
-            <span className="shrink-0 text-sm tabular-nums">{price}</span>
+            {carrierPriced ? (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <span className="shrink-0 cursor-default text-sm underline decoration-dotted underline-offset-2">
+                      {price}
+                    </span>
+                  }
+                />
+                <TooltipContent className="max-w-xs">
+                  {t('admin.delivery_methods.carrier_rates_hint', {
+                    name: rateProvider?.name ?? method.name,
+                  })}
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <span className="shrink-0 text-sm tabular-nums">{price}</span>
+            )}
             <RowActions
               actions={[
                 {

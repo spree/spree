@@ -470,14 +470,7 @@
     "delivery_methods": {
       "add_sheet_title": "Nouvelle méthode de livraison",
       "cards": {
-        "general": "Général",
-        "pricing": "Tarification",
-        "estimate": "Estimation de livraison",
-        "providers": "Prestataires",
-        "zone": "Zone"
-      },
-      "estimate": {
-        "carrier_hint": "Le transporteur fournit sa propre estimation pour chaque tarif ; ces valeurs s'appliquent à défaut."
+        "estimate": "Estimation de livraison"
       },
       "carrier_services": {
         "add_service": "Ajouter un service",
@@ -532,7 +525,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "Moins de {{max}} {{unit}}",
         "weight_min": "À partir de {{min}} {{unit}}"
-      }
+      },
+      "carrier_rates_hint": "Les prix proviennent de {{name}} au paiement, calculés en direct pour chaque commande."
     },
     "delivery_origin_groups": {
       "delete_confirm": {

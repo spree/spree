@@ -470,14 +470,7 @@
     "delivery_methods": {
       "add_sheet_title": "新建配送方式",
       "cards": {
-        "general": "基本信息",
-        "pricing": "价格",
-        "estimate": "预计送达",
-        "providers": "服务商",
-        "zone": "区域"
-      },
-      "estimate": {
-        "carrier_hint": "承运商会为每个费率提供自己的预计时间;仅在其未提供时使用这些值。"
+        "estimate": "预计送达"
       },
       "carrier_services": {
         "add_service": "添加服务",
@@ -532,7 +525,8 @@
         "weight_between": "{{min}}–{{max}} {{unit}}",
         "weight_max": "低于 {{max}} {{unit}}",
         "weight_min": "{{min}} {{unit}} 及以上"
-      }
+      },
+      "carrier_rates_hint": "结账时由 {{name}} 提供价格,按每笔订单实时报价。"
     },
     "delivery_origin_groups": {
       "delete_confirm": {

@@ -470,14 +470,7 @@
     "delivery_methods": {
       "add_sheet_title": "New delivery method",
       "cards": {
-        "general": "General",
-        "pricing": "Pricing",
-        "estimate": "Delivery estimate",
-        "providers": "Providers",
-        "zone": "Zone"
-      },
-      "estimate": {
-        "carrier_hint": "The carrier supplies its own estimate for each rate; these apply when it does not."
+        "estimate": "Delivery estimate"
       },
       "carrier_services": {
         "add_service": "Add service",
@@ -532,7 +525,8 @@
         "weight_between": "{{min}}–{{max}}{{unit}}",
         "weight_max": "Under {{max}}{{unit}}",
         "weight_min": "{{min}}{{unit}} and up"
-      }
+      },
+      "carrier_rates_hint": "Prices come from {{name}} at checkout, quoted live for each order."
     },
     "delivery_origin_groups": {
       "delete_confirm": {
