@@ -51,6 +51,12 @@ module Spree
       # Takes the amount in cents to capture.
       # Can be used to capture partial amounts of a payment, and will create
       # a new pending payment record for the remaining amount to capture later.
+      #
+      # The gateway call runs outside any lock (capture is idempotent at the
+      # provider — an already-captured intent comes back as success); the
+      # bookkeeping runs under the owner's row lock with a recheck, so a
+      # concurrent capture — or the webhook settling the same payment —
+      # records the capture event exactly once.
       def capture!(amount = nil)
         return true if completed?
 
@@ -65,10 +71,29 @@ module Spree
               gateway_options
             )
           end
-          money = ::Money.new(amount, currency)
-          capture_events.create!(amount: money.to_f)
+
+          # A failed response writes no money records, so it needs no lock —
+          # and handle_response raises, which inside the lock's transaction
+          # would roll the failure state back.
+          handle_response(response, :complete, :failure) unless response.success?
+
+          already_captured = false
+          owner.with_lock do
+            # DB-state recheck, deliberately not a reload — reload would
+            # discard the in-memory source (card numbers never persist).
+            if self.class.where(id: id, state: 'completed').exists?
+              already_captured = true
+            else
+              capture_events.create!(amount: ::Money.new(amount, currency).to_f)
+              handle_response(response, :complete, :failure)
+            end
+          end
+          return true if already_captured
+
+          # Authorizes the remainder at the gateway — its own network call,
+          # so it stays outside the lock.
           split_uncaptured_amount
-          handle_response(response, :complete, :failure)
+          true
         end
       end
 

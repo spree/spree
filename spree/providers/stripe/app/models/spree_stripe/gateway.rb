@@ -102,11 +102,15 @@ module SpreeStripe
           return success(payment_intent_id, {}) if amount.zero?
           return success(payment_intent_id, {}) if payment.respond_to?(:for_shipment?) && payment.for_shipment?
 
-          refund = payment.refunds.create!(
-            amount: amount,
-            reason: Spree::RefundReason.order_canceled_reason,
-            refunder_id: payment.order.canceler_id
-          )
+          # Serialized on the payment row — the balance validation must see any
+          # concurrently created refund rows (credit_allowed sums them).
+          refund = payment.with_lock do
+            payment.refunds.create!(
+              amount: payment.credit_allowed,
+              reason: Spree::RefundReason.order_canceled_reason,
+              refunder_id: payment.order.canceler_id
+            )
+          end
 
           begin
             refund.perform!

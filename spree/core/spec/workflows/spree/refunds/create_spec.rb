@@ -58,6 +58,12 @@ RSpec.describe Spree::Refunds::Create do
       expect(described_class.call(payment: payment, amount: 0)).to be_failure
     end
 
+    it 'creates the refund row under the payment row lock' do
+      expect(payment).to receive(:with_lock).and_call_original
+
+      described_class.call(payment: payment)
+    end
+
     it 'destroys the uncredited refund when the gateway declines' do
       allow_any_instance_of(Spree::Refund).to receive(:perform!).
         and_raise(Spree::Core::GatewayError, 'declined')

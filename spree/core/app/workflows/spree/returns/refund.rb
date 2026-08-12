@@ -126,12 +126,16 @@ module Spree
           creditable = [payment.credit_allowed.to_d, remaining].min
           next unless creditable.positive?
 
-          refund = payment.refunds.create!(
-            amount: creditable,
-            reason: Spree::RefundReason.return_processing_reason(return_record.store),
-            refunder: refunder,
-            originator: return_record
-          )
+          # Serialized on the payment row — the balance validation must see any
+          # concurrently created refund rows (credit_allowed sums them).
+          refund = payment.with_lock do
+            payment.refunds.create!(
+              amount: creditable,
+              reason: Spree::RefundReason.return_processing_reason(return_record.store),
+              refunder: refunder,
+              originator: return_record
+            )
+          end
           refund.perform!
           @refunds << refund
           remaining -= creditable

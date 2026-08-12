@@ -330,6 +330,49 @@ ships in the OSS Admin API; first-run configures the one store.
 Consequences: Admin API code must never assume `current_store` is the default
 store, and store-touching cache keys must carry the store id by construction.
 Plan: `6.0-store-context-and-first-run-setup.md`.
+## 2026-08-12 — Payment lock audit: locks live where money is recorded, never around gateway I/O
+
+A sweep of every payment operation with the settle_payment! lens — check-then-act
+on money state without mutual exclusion — after the with_order_lock removals.
+The rule that came out: **the row lock wraps the money bookkeeping with an
+in-lock recheck; the gateway call runs before it, unlocked, relying on provider
+idempotency.**
+
+Two real bugs found and fixed:
+
+- **`Payment#capture!` wrote the capture event before `handle_response`.** A
+  concurrent second capture passed the completed? check, hit the gateway
+  (idempotent at Stripe), persisted a second capture event, then exploded on
+  `complete!` — doubled captured_amount plus an ungraceful error. Now: gateway
+  first, then bookkeeping under `owner.with_lock` with a DB-state recheck
+  (deliberately not a reload — card numbers never persist, and
+  `split_uncaptured_amount` authorizes the remainder at the gateway, so it
+  stays outside the lock). A declined response also no longer leaves a
+  phantom capture event, and its failure transition runs outside the lock so
+  the raise cannot roll it back.
+- **Refund balance validation was unserialized.** Two concurrent partial
+  refunds both validated against the pre-refund balance and both credited —
+  a double-clicked 50% refund refunded 100% (Stripe's credit carries no
+  idempotency key). The refund row is what reserves the balance
+  (credit_allowed sums rows), so creation now takes `payment.with_lock` at
+  all five sites — Refunds::Create, the returns/exchange/claim drain loops,
+  and Stripe's cancel verb — making the create-time validation trustworthy.
+  `perform!` stays outside the lock.
+
+Judged acceptable, with reasons on record:
+
+- **Double void** — no capture events involved; the second void gets the
+  gateway's "already canceled" as a clean failure.
+- **Concurrent `process_payments!`** — the gateway is deduped by the
+  per-payment idempotency key, and the loser's `complete!` raises before its
+  capture-event line, so money math survives; the error is ungraceful. An
+  atomic claim (compare-and-swap on the state column) would make replays
+  graceful — follow-up, not urgent.
+- **Session create/update endpoints still hold with_order_lock across Stripe
+  intent calls** — the same smell the confirm endpoint shed, but fixing it
+  means restructuring gateway-owned code (persist the session row under a
+  short lock after the intent call). Flagged as follow-up.
+
 ## 2026-08-12 — The payment lifecycle routes through its workflows; refund creation owns the credit
 
 An audit found the two payment workflows were dead code: `Payments::Capture`

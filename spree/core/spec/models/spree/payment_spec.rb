@@ -622,6 +622,22 @@ describe Spree::Payment, type: :model do
             end
           end
 
+          it 'records the capture under the owner row lock' do
+            expect(payment.payment_method).to receive(:capture).and_return(success_response)
+            expect(payment.owner).to receive(:with_lock).and_call_original
+
+            payment.capture!
+          end
+
+          it 'records nothing when another caller already completed the payment' do
+            expect(payment.payment_method).to receive(:capture).and_return(success_response)
+            # Simulates the concurrent winner committing between the gateway
+            # call and the bookkeeping lock.
+            allow(Spree::Payment).to receive_message_chain(:where, :exists?).and_return(true)
+
+            expect { payment.capture! }.not_to change { payment.capture_events.count }
+          end
+
           context 'for partial amount' do
             let(:original_amount) { payment.money.amount_in_cents }
             let(:capture_amount) { original_amount - 100 }

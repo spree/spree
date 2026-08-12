@@ -54,13 +54,19 @@ module Spree
         failure(payment, :refund_amount_exceeds_balance)
       end
 
+      # The row is what reserves the balance — credit_allowed sums refund rows —
+      # so creation serializes on the payment's row lock. Without it the
+      # balance validation is check-then-act, and two concurrent refunds would
+      # both validate against the pre-refund balance and both credit.
       def create_refund
-        @refund = payment.refunds.create!(
-          amount: @amount_to_refund,
-          reason: reason || Spree::RefundReason.return_processing_reason(payment.order&.store),
-          refunder: refunder,
-          originator: originator
-        )
+        payment.with_lock do
+          @refund = payment.refunds.create!(
+            amount: @amount_to_refund,
+            reason: reason || Spree::RefundReason.return_processing_reason(payment.order&.store),
+            refunder: refunder,
+            originator: originator
+          )
+        end
       end
 
       def credit_at_gateway
