@@ -14,13 +14,16 @@ module Spree
           # not be refused because the login form was submitted a few times.
           RATE_LIMITED_CALLBACK_RESPONSE = -> { redirect_to_dashboard(error: 'rate_limit_exceeded') }
 
-          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
-          # Each of these gets its own counter. The login page fetches providers on
-          # every load, so sharing the login budget would let ordinary page views —
-          # or an attacker hitting providers alone — lock staff out of signing in.
-          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :providers, with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_refresh]) }
-          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :callback, with: RATE_LIMITED_CALLBACK_RESPONSE
-          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: [:refresh, :logout], with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_refresh]) }
+          # Each declaration carries a distinct `name:` — without one, Rails
+          # keys every counter in this controller on the same
+          # (controller, client) cache entry, silently merging the budgets.
+          # The login page fetches providers on every load, so sharing the
+          # login budget would let ordinary page views — or an attacker
+          # hitting providers alone — lock staff out of signing in.
+          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, name: 'login', with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_login]) }
+          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :providers, name: 'providers', with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_refresh]) }
+          rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :callback, name: 'callback', with: RATE_LIMITED_CALLBACK_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: [:refresh, :logout], name: 'refresh', with: -> { render_rate_limited(limit: Spree::Api::Config[:rate_limit_refresh]) }
 
           skip_before_action :authenticate_admin!, only: [:create, :refresh, :logout, :providers, :callback]
 

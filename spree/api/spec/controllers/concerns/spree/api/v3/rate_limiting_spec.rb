@@ -90,6 +90,26 @@ RSpec.describe 'Rate Limiting', type: :controller do
     end
   end
 
+  describe 'keyless requests (admin JWT traffic)' do
+    describe Spree::Api::V3::Admin::CountriesController do
+      controller(Spree::Api::V3::Admin::CountriesController) {}
+
+      render_views
+
+      include_context 'API v3 Admin'
+
+      it 'counts against a per-IP bucket when no API key is present' do
+        request.headers['Authorization'] = "Bearer #{admin_jwt_token}"
+        allow(Rails.cache).to receive(:increment).and_return(1)
+
+        get :index
+
+        expect(Rails.cache).to have_received(:increment)
+          .with('rate-limit:api_v3:0.0.0.0', 1, expires_in: 60.seconds)
+      end
+    end
+  end
+
   describe 'rate limit configuration' do
     it 'exposes rate_limit_per_key as a configurable preference' do
       expect(Spree::Api::Config[:rate_limit_per_key]).to eq(300)
