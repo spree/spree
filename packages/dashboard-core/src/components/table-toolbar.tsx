@@ -183,7 +183,7 @@ export function TableToolbar({
         {title && <CardTitle>{title}</CardTitle>}
         <div className="flex gap-2 items-center flex-wrap ml-auto">
           {/* Search */}
-          <div className="flex items-center gap-2 border border-border bg-card rounded-lg shadow-xs px-2.5 h-[2.125rem] lg:w-[300px] focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)] transition-all duration-100 ease-in-out">
+          <div className="flex items-center gap-2 border border-border bg-card rounded-lg shadow-xs px-2.5 h-[2.125rem] lg:w-[300px] focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)] transition-all duration-100 ease-in-out">
             <SearchIcon className="size-4 text-muted-foreground shrink-0" />
             <input
               ref={searchRef}
@@ -216,7 +216,7 @@ export function TableToolbar({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-[2.125rem]">
+                    <Button variant="ghost" size="sm" className="h-[2.125rem]">
                       <FilterIcon className="size-4" />
                       {activeFilterCount > 0 && (
                         <Badge variant="outline" className="ml-1 px-1.5 py-0 text-xs">
@@ -469,7 +469,7 @@ function SortDropdown({
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="h-[2.125rem]">
+            <Button variant="ghost" size="sm" className="h-[2.125rem]">
               <ArrowUpDownIcon className="size-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -536,7 +536,7 @@ function ColumnSelector({
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="h-[2.125rem]">
+            <Button variant="ghost" size="sm" className="h-[2.125rem]">
               <Columns3Icon className="size-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -563,16 +563,14 @@ function ColumnSelector({
           </DropdownMenuCheckboxItem>
         ))}
         <DropdownMenuSeparator />
-        <div className="px-1 py-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-center"
-            onClick={() => onVisibleColumnsChange(defaults)}
-          >
-            {t('admin.components.table_toolbar.reset_to_default')}
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-center"
+          onClick={() => onVisibleColumnsChange(defaults)}
+        >
+          {t('admin.components.table_toolbar.reset_to_default')}
+        </Button>
       </DropdownMenuContent>
     </DropdownMenu>
   )

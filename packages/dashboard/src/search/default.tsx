@@ -1,6 +1,6 @@
 import type { Category, Collection, Customer, Order, Product, Promotion } from '@spree/admin-sdk'
 import { adminClient, defineSearchEntry, Subject, searchRegistry } from '@spree/dashboard-core'
-import { StatusBadge } from '@spree/dashboard-ui'
+import { cn, StatusBadge } from '@spree/dashboard-ui'
 import {
   FolderTreeIcon,
   LayersIcon,
@@ -10,6 +10,7 @@ import {
   UsersIcon,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
 // Each entry teaches the command palette how to search one resource: how to
 // fetch matches, render a result row, and where a row navigates. Resources are
@@ -26,11 +27,22 @@ searchRegistry.add(
     fetch: (search, limit) => adminClient.products.list({ search, limit }).then((r) => r.data),
     getKey: (p) => p.id,
     getRoute: (p, storeId) => ({ to: `/${storeId}/products/${p.id}` }),
+    // Two lines, as a product row is rarely identifiable by name alone: near
+    // duplicates ("… 18V" / "… 25V") differ only in stock and price.
     renderRow: (p) => (
       <>
-        <IconOrThumbnail thumbnailUrl={p.primary_media?.mini_url ?? null} icon={<TagIcon />} />
-        <span className="flex-1 truncate">{p.name}</span>
-        <StatusBadge status={p.status} />
+        <IconOrThumbnail
+          thumbnailUrl={p.primary_media?.mini_url ?? p.thumbnail_url ?? null}
+          icon={<TagIcon />}
+          size="lg"
+        />
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="flex items-center gap-2">
+            <span className="truncate">{p.name}</span>
+            <StatusBadge status={p.status} />
+          </span>
+          <ProductMeta product={p} />
+        </span>
       </>
     ),
   }),
@@ -159,14 +171,47 @@ searchRegistry.add(
  * glyph rather than an empty framed box, so a category or a page does not look
  * like a product whose photo failed to load.
  */
-function IconOrThumbnail({ thumbnailUrl, icon }: { thumbnailUrl: string | null; icon: ReactNode }) {
-  if (!thumbnailUrl) return icon
+function IconOrThumbnail({
+  thumbnailUrl,
+  icon,
+  size = 'sm',
+}: {
+  thumbnailUrl: string | null
+  icon: ReactNode
+  /** `lg` for the two-line product row, whose taller row a 20px image floats in. */
+  size?: 'sm' | 'lg'
+}) {
+  if (!thumbnailUrl) {
+    // Keep the icon on the first line rather than centred against two.
+    return size === 'lg' ? <span className="self-start pt-0.5">{icon}</span> : icon
+  }
   return (
     <img
       src={thumbnailUrl}
       alt=""
-      className="size-5 shrink-0 rounded object-cover"
+      className={cn(
+        'shrink-0 rounded object-cover',
+        size === 'lg' ? 'size-8 self-start' : 'size-5',
+      )}
       loading="lazy"
     />
+  )
+}
+
+/** Stock and price beneath a product's name — the pair that tells near-identical
+ *  variants apart. Renders nothing when neither is known. */
+function ProductMeta({ product }: { product: Product }) {
+  const { t } = useTranslation()
+  const stock = product.in_stock
+    ? t('admin.pages.products.inventory.in_stock_short')
+    : product.backorderable
+      ? t('admin.pages.products.inventory.on_backorder')
+      : t('admin.pages.products.inventory.out_of_stock')
+  const price = product.price?.display_amount
+
+  return (
+    <span className="truncate text-muted-foreground text-xs">
+      {price ? `${stock} • ${price}` : stock}
+    </span>
   )
 }

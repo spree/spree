@@ -169,7 +169,6 @@ defineTable('products', {
       // expands of visible columns into the list request.
       expand: 'product_type',
       default: false,
-      className: 'text-sm text-muted-foreground',
       render: (product) => product.product_type?.name ?? '—',
     },
   ],

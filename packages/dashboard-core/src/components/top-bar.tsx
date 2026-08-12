@@ -17,6 +17,7 @@ import {
 } from '@spree/dashboard-ui'
 import {
   BookOpenIcon,
+  CommandIcon,
   ExternalLinkIcon,
   LogOutIcon,
   MailIcon,
@@ -111,12 +112,18 @@ function SearchTrigger() {
     <button
       type="button"
       onClick={() => setOpen(true)}
-      className="flex w-full max-w-md items-center gap-2 rounded-lg border border-border bg-muted/40 px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted"
+      // Focus matches the form inputs — the soft blue glow from `--ring`,
+      // rather than a hard offset ring. It looks like a search field, so it
+      // should focus like one.
+      className="flex w-full max-w-md cursor-pointer items-center gap-1 rounded-xl border border-border px-2 py-1.5 text-sm text-muted-foreground outline-none transition-[color,background-color,border-color,box-shadow] duration-100 ease-out hover:bg-accent focus-visible:border-ring focus-visible:shadow-[0_0_0_3px_color-mix(in_srgb,var(--ring)_15%,transparent)]"
     >
       <SearchIcon className="size-4" />
       <span className="flex-1 text-left">{t('admin.components.command_palette.placeholder')}</span>
-      <kbd className="hidden rounded border bg-background px-1.5 py-0.5 font-mono text-xs sm:inline-flex">
-        {IS_MAC ? '⌘K' : 'Ctrl+K'}
+      <kbd className="hidden rounded-lg border bg-background px-2 py-1 font-mono text-xs sm:inline-flex shadow-xs h-full">
+        {IS_MAC ? <CommandIcon size={15} /> : 'Ctrl'}
+      </kbd>
+      <kbd className="hidden rounded-lg border bg-background px-2 py-1 font-mono text-xs sm:inline-flex shadow-xs">
+        K
       </kbd>
     </button>
   )
