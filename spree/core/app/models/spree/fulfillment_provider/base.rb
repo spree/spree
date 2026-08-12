@@ -21,6 +21,12 @@ module Spree
           false
         end
 
+        # Whether this provider produces shipping labels (and so supports the
+        # explicit buy-label step before fulfilling). Carrier gems override.
+        def generates_labels?
+          false
+        end
+
         # Human-readable name for admin UIs. Provider gems follow the
         # `SpreeEasyPost::DeliveryRateProvider` convention, where demodulizing
         # yields the useless class name ("Delivery Rate Provider") — so those

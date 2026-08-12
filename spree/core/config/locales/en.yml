@@ -962,6 +962,8 @@ en:
         cannot_cancel: This fulfillment cannot be canceled in its current status
         cannot_fulfill: This fulfillment cannot be fulfilled in its current status
         cannot_mark_delivered: Only a fulfilled shipment can be marked delivered
+        cannot_purchase_label: Labels can only be bought before the fulfillment ships
+        label_purchase_failed: The label could not be purchased — check the carrier connection and try again
         cannot_resume: This fulfillment cannot be resumed in its current status
         insufficient_quantity: Requested quantity (%{requested}) for item %{item} exceeds its unfulfilled quantity (%{available})
         invalid_cost: cost must be a non-negative number
@@ -973,6 +975,7 @@ en:
         order_draft: Draft orders cannot be fulfilled — complete the order first
         order_not_completed: Fulfillments can only be created manually on completed orders
         order_not_paid: This order is not paid for yet
+        provider_has_no_labels: This delivery method's provider does not produce labels
         unknown_tracking_status: "%{status} is not a known tracking status"
     gateway: Gateway
     gateway_error: Gateway Error

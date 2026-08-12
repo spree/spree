@@ -126,9 +126,12 @@ module Spree
         expect(result.error.to_s).to eq(Spree.t('fulfillments.errors.cannot_fulfill'))
       end
 
-      # The split and the fulfillment share a transaction, so a fulfillment
-      # that cannot ship must not leave a stray split behind.
-      it 'creates no fulfillment when the split succeeds but shipping fails' do
+      # Deliberately NOT rolled back: the label step sits between the split
+      # and the fulfilled write, so by the time fulfilling fails a label may
+      # already be bought for the split parcel — rolling the parcel away
+      # would orphan a paid label. The split survives, unfulfilled, and a
+      # retry picks it up.
+      it 'keeps the split parcel unfulfilled when fulfilling it fails' do
         allow_any_instance_of(Spree::Fulfillment).to receive(:publish_fulfillment_fulfilled_event).
           and_raise(RuntimeError, 'carrier exploded')
 
@@ -138,7 +141,9 @@ module Spree
           rescue RuntimeError
             nil
           end
-        }.not_to change { order.reload.fulfillments.count }
+        }.to change { order.reload.fulfillments.count }.by(1)
+
+        expect(order.fulfillments.reload.map(&:status)).to all(eq('unfulfilled'))
       end
     end
 
@@ -225,6 +230,46 @@ module Spree
 
         expect(Spree::Events).to have_received(:publish).
           with('shipment.shipped', anything, hash_including(notify_customer: false))
+      end
+    end
+
+    describe 'label-before-fulfilled ordering' do
+      let(:label_provider) do
+        Class.new(Spree::FulfillmentProvider::Base) do
+          def create_fulfillment(_fulfillment)
+            { tracking_number: 'CARRIER-XYZ' }
+          end
+        end.new
+      end
+
+      # The shipped email renders from the fulfilled event — it used to race
+      # the label purchase for the tracking number and sometimes lose.
+      it 'publishes the fulfilled event only after provider tracking is persisted' do
+        fulfillment.update_column(:tracking, nil)
+        allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(label_provider)
+
+        tracking_at_publish = :never_published
+        allow_any_instance_of(Spree::Fulfillment).to receive(:publish_fulfillment_fulfilled_event) do |record|
+          tracking_at_publish = record.reload.tracking
+        end
+
+        subject.call(fulfillment: fulfillment)
+
+        expect(tracking_at_publish).to eq('CARRIER-XYZ')
+      end
+
+      it 'still fulfills when the provider degrades to no label' do
+        broken = Class.new(Spree::FulfillmentProvider::Base) do
+          def create_fulfillment(_fulfillment)
+            {}
+          end
+        end.new
+        allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(broken)
+
+        result = subject.call(fulfillment: fulfillment)
+
+        expect(result).to be_success
+        expect(fulfillment.reload).to be_fulfilled
       end
     end
 

@@ -13,12 +13,25 @@ module SpreeEasyPost
       SpreeEasyPost::PROVIDER_NAME
     end
 
+    def self.generates_labels?
+      true
+    end
+
     # Buys the rate quoted at checkout when it is still valid; EasyPost
     # quotes expire, so a stale or missing quote is re-quoted from the
     # actual fulfillment and bought only when a rate for the exact
     # carrier/service the customer selected comes back — silently shipping a
     # different service than the customer paid for is worse than no label.
     def create_fulfillment(fulfillment)
+      # Idempotent: a label bought through the explicit buy-label step must
+      # not be bought again when the fulfillment is later marked fulfilled.
+      if fulfillment.metadata['easypost_purchased_shipment_id'].present?
+        return {
+          tracking_number: fulfillment.tracking,
+          tracking_url: fulfillment.metadata['easypost_tracker_url']
+        }
+      end
+
       integration = integration_for(fulfillment)
       return {} if integration.nil?
 

@@ -52,18 +52,31 @@ module Spree
 
         step :ensure_fulfillable
 
+        # The split has to land before the provider is involved: the label is
+        # for the actual parcel, and a partial shipment's parcel only exists
+        # after the split.
         ApplicationRecord.transaction do
           step :split_off_requested_units
-          step :unstock_if_resuming_from_canceled
           step :apply_tracking
+        end
+
+        # The label is bought BEFORE the fulfillment is declared fulfilled —
+        # the physical order of a warehouse (print the label, stick it on the
+        # box, hand it over), and the ordering that lets the shipped email
+        # carry the tracking number the provider discovered instead of racing
+        # it. No-op when a label was already bought through
+        # Spree::Fulfillments::PurchaseLabel (the flow where a failure is
+        # loud), or when the provider has no dispatch mechanics (Manual). A
+        # failure here still degrades to "no label yet" — a carrier outage
+        # must never stop a merchant recording a parcel that physically left.
+        # Network I/O, so never in a transaction.
+        external_step :tell_provider_it_shipped
+
+        ApplicationRecord.transaction do
+          step :unstock_if_resuming_from_canceled
           step :mark_fulfilled
           step :capture_payment_if_configured
         end
-
-        # The provider books the courier or hands off to the 3PL — network I/O,
-        # so it runs after the status is committed rather than holding the
-        # transaction open on a carrier's latency.
-        external_step :tell_provider_it_shipped
 
         step :roll_up_order_status
 

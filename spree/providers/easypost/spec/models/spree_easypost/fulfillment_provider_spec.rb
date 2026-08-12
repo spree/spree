@@ -44,6 +44,23 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
   end
 
   describe '#create_fulfillment' do
+    it 'does not buy twice — an already-purchased label is returned as-is' do
+      fulfillment.update_columns(
+        tracking: 'EXISTING-123',
+        metadata: fulfillment.metadata.merge(
+          'easypost_purchased_shipment_id' => 'shp_bought',
+          'easypost_tracker_url' => 'https://track.example/t/1'
+        )
+      )
+
+      expect(client).not_to receive(:shipment)
+
+      result = provider.create_fulfillment(fulfillment)
+
+      expect(result[:tracking_number]).to eq('EXISTING-123')
+      expect(result[:tracking_url]).to eq('https://track.example/t/1')
+    end
+
     let(:purchased_shipment) do
       double(
         id: 'shp_recorded1',
