@@ -86,11 +86,13 @@ describe 'spree:store_settings:backfill_from_config' do
       expect { run_task }.to change { store.reload.preferred_stock_reservation_ttl_minutes }.from(10).to(25)
     end
 
+    # Distinct values on both sides, so a run that wrongly copied would be
+    # visible — with a boolean the two would agree and the test prove nothing.
     it 'leaves a store that already customized the renamed preference alone' do
-      Spree::Config.company = true
-      store.update!(preferred_company_field_enabled: true)
+      Spree::Config.default_stock_reservation_ttl_minutes = 25
+      store.update!(preferred_stock_reservation_ttl_minutes: 40)
 
-      expect { run_task }.not_to change { store.reload.preferred_company_field_enabled }.from(true)
+      expect { run_task }.not_to change { store.reload.preferred_stock_reservation_ttl_minutes }.from(40)
     end
   end
 end
