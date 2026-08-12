@@ -844,6 +844,7 @@
       "toggle_states": "Pokaż regiony kraju {{country}}"
     },
     "digital_assets": {
+      "add": "Dodaj",
       "all_variants": "Wszystkie warianty",
       "columns": {
         "file": "Plik",
@@ -859,6 +860,9 @@
       "empty": "Brak plików",
       "limit_invalid": "Limity muszą być liczbami całkowitymi od 1 lub puste.",
       "limits_help": "Pozostaw limity pobrań i dni puste, aby użyć ustawień sklepu.",
+      "source": {
+        "upload": "Prześlij plik"
+      },
       "store_default": "{{count}} (domyślne sklepu)",
       "title": "Pliki cyfrowe",
       "untitled": "Plik bez nazwy",

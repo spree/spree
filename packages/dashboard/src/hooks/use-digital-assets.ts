@@ -14,6 +14,20 @@ export function useDigitalAssets(productId: string, page = 1, enabled = true) {
   })
 }
 
+// The selectable sources for a new asset. Almost always just the File default,
+// so a host with no extra provider gets a one-entry list and the card keeps its
+// plain "Add file" button.
+export function useDigitalAssetProviders(productId: string, enabled = true) {
+  const { storeId } = useStore()
+
+  return useQuery({
+    queryKey: [storeId, 'products', productId, 'digital-asset-providers'],
+    queryFn: () => adminClient.products.digitalAssets.providers(productId),
+    enabled: enabled && Boolean(productId),
+    staleTime: Number.POSITIVE_INFINITY, // the registry doesn't change at runtime
+  })
+}
+
 export function useCreateDigitalAsset(productId: string) {
   const { storeId } = useStore()
 

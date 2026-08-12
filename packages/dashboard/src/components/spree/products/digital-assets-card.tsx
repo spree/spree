@@ -7,6 +7,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
   FileTypeIcon,
   Pagination,
   RowActions,
@@ -19,12 +23,13 @@ import {
   TableRow,
   useConfirm,
 } from '@spree/dashboard-ui'
-import { DownloadIcon, FileIcon, UploadIcon } from 'lucide-react'
+import { ChevronDownIcon, DownloadIcon, FileIcon, PlusIcon, UploadIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   useCreateDigitalAsset,
   useDeleteDigitalAsset,
+  useDigitalAssetProviders,
   useDigitalAssets,
 } from '../../../hooks/use-digital-assets'
 import { DigitalAssetEditSheet } from './digital-asset-edit-sheet'
@@ -47,12 +52,18 @@ export function DigitalAssetsCard({
   // authorized, signed link, never from the public bucket.
   const directUpload = useDirectUpload({ private: true })
   const { data, isLoading } = useDigitalAssets(productId ?? '', page, Boolean(productId))
+  const { data: providersData } = useDigitalAssetProviders(productId ?? '', Boolean(productId))
   const createAsset = useCreateDigitalAsset(productId ?? '')
   const deleteAsset = useDeleteDigitalAsset(productId ?? '')
 
   const assets: DigitalAsset[] = data?.data ?? []
   const meta = data?.meta
   const hasVariants = (variants?.length ?? 0) > 1
+  const providers = providersData?.data ?? []
+  // Only providers that resolve their own deliverable go in the source menu;
+  // the file default is the plain upload button. With none of these, the card
+  // keeps its today behaviour — a single "Add file" button.
+  const sourceProviders = providers.filter((p) => !p.requires_attachment)
 
   async function handleFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
@@ -67,6 +78,11 @@ export function DigitalAssetsCard({
     } finally {
       setUploading(false)
     }
+  }
+
+  async function handleAddProvider(providerType: string) {
+    await createAsset.mutateAsync({ provider_type: providerType })
+    setPage(1)
   }
 
   async function handleDelete(asset: DigitalAsset) {
@@ -93,18 +109,46 @@ export function DigitalAssetsCard({
       <CardHeader>
         <CardTitle>{t('admin.digital_assets.title')}</CardTitle>
         <CardAction>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={uploading}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <UploadIcon className="mr-2 size-4" />
-            {uploading
-              ? t('admin.digital_assets.uploading_short')
-              : t('admin.digital_assets.upload')}
-          </Button>
+          {sourceProviders.length === 0 ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={uploading}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <UploadIcon className="mr-2 size-4" />
+              {uploading
+                ? t('admin.digital_assets.uploading_short')
+                : t('admin.digital_assets.upload')}
+            </Button>
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button type="button" variant="outline" size="sm" disabled={uploading}>
+                  <PlusIcon className="mr-2 size-4" />
+                  {uploading
+                    ? t('admin.digital_assets.uploading_short')
+                    : t('admin.digital_assets.add')}
+                  <ChevronDownIcon className="ml-2 size-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
+                  <UploadIcon className="mr-2 size-4" />
+                  {t('admin.digital_assets.source.upload')}
+                </DropdownMenuItem>
+                {sourceProviders.map((provider) => (
+                  <DropdownMenuItem
+                    key={provider.type}
+                    onClick={() => handleAddProvider(provider.type)}
+                  >
+                    {provider.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileSelected} />
         </CardAction>
       </CardHeader>

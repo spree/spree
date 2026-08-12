@@ -821,6 +821,7 @@
       "toggle_states": "显示 {{country}} 的省/州"
     },
     "digital_assets": {
+      "add": "添加",
       "all_variants": "所有变体",
       "columns": {
         "file": "文件",
@@ -836,6 +837,9 @@
       "empty": "暂无文件",
       "limit_invalid": "限制必须是不小于 1 的整数，或留空。",
       "limits_help": "将下载次数和天数限制留空即可使用商店设置。",
+      "source": {
+        "upload": "上传文件"
+      },
       "store_default": "{{count}}（商店默认）",
       "title": "数字文件",
       "untitled": "未命名文件",
