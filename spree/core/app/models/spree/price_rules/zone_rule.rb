@@ -11,25 +11,33 @@ module Spree
     # first-class country rule belongs to docs/plans/6.0-delivery-zones.md,
     # which owns the removal of Zone itself.
     class ZoneRule < Spree::PriceRule
-      # Stored as raw IDs. Accepts prefixed IDs from API callers and decodes
-      # them on write, so eligibility compares against raw country_id rows.
-      # Countries are global reference data, so unlike MarketRule there is no
-      # store scope to confine the existence check to.
-      preference :country_ids, :array, default: [],
-                 parse_on_set: normalize_id_preference(klass: Spree::Country)
+      # Held as ISO codes rather than country rows: Spree::Country is on its way
+      # out, and "DE" is what a merchant means. Comma-separated input is split
+      # and everything upcased, so a rule entered in lowercase still matches.
+      #
+      # Unlike MarketRule, an unknown code is not rejected — there is no country
+      # table to check it against, and an unmatched code narrows the price list
+      # to nothing rather than widening it.
+      preference :country_isos, :array, default: [],
+                 parse_on_set: lambda { |values, _owner = nil|
+                   Array(values).
+                     flat_map { |value| value.to_s.split(',') }.
+                     compact_blank.
+                     map { |iso| iso.strip.upcase }.
+                     uniq
+                 }
 
       def applicable?(context)
-        return false unless context.country
-        return true if preferred_country_ids.empty?
+        return false if context.country_iso.blank?
+        return true if preferred_country_isos.empty?
 
-        # Compare as strings to support both integer and UUID primary keys
-        preferred_country_ids.map(&:to_s).include?(context.country.id.to_s)
+        preferred_country_isos.include?(context.country_iso.to_s.upcase)
       end
 
       # An empty country list matches every buyer (see #applicable?), so it names
       # no geography.
       def geographic?
-        preferred_country_ids.present?
+        preferred_country_isos.present?
       end
 
       def self.description

@@ -26,7 +26,7 @@ describe Spree::Tax::ResolveExemptions do
     it 'turns an active certificate into a claim' do
       create(:tax_exemption_certificate, :verified, company: company,
                                                     reason_code: 'resale', certificate_number: 'DE-RESALE-1',
-                                                    country: germany, state: berlin)
+                                                    country_iso: germany&.iso, state_code: berlin&.abbr)
 
       exemption = described_class.call(order: order.reload).value.sole
 
@@ -57,7 +57,7 @@ describe Spree::Tax::ResolveExemptions do
     end
 
     it 'ignores one held for another jurisdiction' do
-      create(:tax_exemption_certificate, :verified, company: company, country: create(:country, iso: 'FR'))
+      create(:tax_exemption_certificate, :verified, company: company, country_iso: create(:country, iso: 'FR')&.iso)
 
       expect(described_class.call(order: order.reload).value).to eq([])
     end

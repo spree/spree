@@ -286,7 +286,7 @@ describe '6.0 data migration tasks' do
 
         run_task('spree:migrate_tax_zones')
 
-        expect(rule.reload.preferred_country_ids).to contain_exactly(germany.id.to_s, france.id.to_s)
+        expect(rule.reload.preferred_country_isos).to contain_exactly(germany.iso, france.iso)
       end
 
       # A state-level zone can only be expressed as its states' countries,
@@ -297,26 +297,26 @@ describe '6.0 data migration tasks' do
 
         run_task('spree:migrate_tax_zones')
 
-        expect(rule.reload.preferred_country_ids).to eq([germany.id.to_s])
+        expect(rule.reload.preferred_country_isos).to eq([germany.iso])
       end
 
       it 'is idempotent over a legacy row' do
         rule = legacy_rule(zone_with(germany))
         run_task('spree:migrate_tax_zones')
-        converted = rule.reload.preferred_country_ids
+        converted = rule.reload.preferred_country_isos
 
         run_task('spree:migrate_tax_zones')
 
-        expect(rule.reload.preferred_country_ids).to eq(converted)
+        expect(rule.reload.preferred_country_isos).to eq(converted)
         expect(rule.reload.preferences).not_to have_key(:zone_ids)
       end
 
       it 'leaves a rule the merchant already set countries on alone' do
-        rule = create(:zone_price_rule, price_list: price_list, country_ids: [france.id])
+        rule = create(:zone_price_rule, price_list: price_list, country_isos: [france.iso])
 
         run_task('spree:migrate_tax_zones')
 
-        expect(rule.reload.preferred_country_ids).to eq([france.id.to_s])
+        expect(rule.reload.preferred_country_isos).to eq([france.iso])
       end
 
       # A zone that was deleted and one that never had members both leave no
@@ -327,7 +327,7 @@ describe '6.0 data migration tasks' do
 
         run_task('spree:migrate_tax_zones')
 
-        expect(rule.reload.preferred_country_ids).to be_empty
+        expect(rule.reload.preferred_country_isos).to be_empty
         expect(rule.preferences).not_to have_key(:zone_ids)
       end
     end

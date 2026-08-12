@@ -1,4 +1,4 @@
-## 2026-08-12: A tax rate names its jurisdiction by code, not by foreign key
+## 2026-08-12: Jurisdiction is stored as a code, never as a country or state row
 
 Amends 2026-08-06 ("Converted-away columns outlive the release that converts
 them"), which had tax rates gaining `country_id`/`state_id`. They gain
@@ -20,6 +20,24 @@ meant in practice, minus the early warning.
 
 Because the columns had not shipped, the original migration was amended rather
 than followed by a second one.
+
+**Extended the same day to everything this work owns**, after a review pass found
+the same shape elsewhere. `Spree::TaxExemptionCertificate` held country and state
+references, and `Spree::PriceRules::ZoneRule` held a `country_ids` preference of
+`Spree::Country` primary keys; both now hold codes (`country_iso`/`state_code`,
+`country_isos`). The certificate case was a live defect rather than a tidy-up:
+an unrecognised ISO resolved to a nil country, and nil claims *every* country
+there, so a mistyped code silently turned one state's certificate into a
+worldwide exemption. A code that matches nothing narrows to nothing.
+
+`Spree::Pricing::Context` gained a `country_iso` reader so a price rule compares
+codes rather than reaching through `context.country`; when Country goes, the
+context is the only place that changes.
+
+**Where a Country object is still correct:** `Purchase::Taxation#tax_country` and
+`Spree::Current.tax_country` return one, and should. Those are lookups in request
+context, not stored jurisdiction, and addresses and markets still speak in
+countries. The rule this entry sets is about what a row *persists*.
 
 ## 2026-08-12: The label leads, fulfilled follows (amends the Phase 7 fulfill flow)
 

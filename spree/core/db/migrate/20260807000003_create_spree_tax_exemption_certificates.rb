@@ -2,8 +2,10 @@ class CreateSpreeTaxExemptionCertificates < ActiveRecord::Migration[8.1]
   def change
     create_table :spree_tax_exemption_certificates do |t|
       t.references :company, null: false
-      t.references :country                  # nil = every country
-      t.references :state                    # nil = the entire country
+      # Codes, not references: Country and State are being dropped, and a blank
+      # code is what "everywhere" means here. Same shape as spree_tax_rates.
+      t.string :country_iso                  # nil = every country
+      t.string :state_code                   # nil = the entire country
       t.string :certificate_number, null: false
       t.string :reason_code, null: false     # resale, government, … — becomes the
                                              # provider's entity use code
@@ -24,5 +26,6 @@ class CreateSpreeTaxExemptionCertificates < ActiveRecord::Migration[8.1]
     end
 
     add_index :spree_tax_exemption_certificates, [:company_id, :status]
+    add_index :spree_tax_exemption_certificates, [:country_iso, :state_code]
   end
 end

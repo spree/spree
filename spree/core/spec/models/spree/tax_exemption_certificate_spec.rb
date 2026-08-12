@@ -56,28 +56,45 @@ describe Spree::TaxExemptionCertificate, type: :model do
     end
 
     it 'matches one naming the country' do
-      certificate = create(:tax_exemption_certificate, company: company, country: germany)
+      certificate = create(:tax_exemption_certificate, company: company, country_iso: germany&.iso)
 
       expect(described_class.for_address(address)).to include(certificate)
     end
 
     it 'matches one naming the exact state' do
-      certificate = create(:tax_exemption_certificate, company: company, country: germany, state: berlin)
+      certificate = create(:tax_exemption_certificate, company: company, country_iso: germany&.iso, state_code: berlin&.abbr)
 
       expect(described_class.for_address(address)).to include(certificate)
     end
 
     it 'excludes one naming another state of the same country' do
       other = create(:state, country: germany, abbr: 'HH', name: 'Hamburg')
-      certificate = create(:tax_exemption_certificate, company: company, country: germany, state: other)
+      certificate = create(:tax_exemption_certificate, company: company, country_iso: germany&.iso, state_code: other&.abbr)
 
       expect(described_class.for_address(address)).not_to include(certificate)
     end
 
     it 'excludes one naming another country' do
-      certificate = create(:tax_exemption_certificate, company: company, country: create(:country, iso: 'FR'))
+      certificate = create(:tax_exemption_certificate, company: company, country_iso: create(:country, iso: 'FR')&.iso)
 
       expect(described_class.for_address(address)).not_to include(certificate)
+    end
+
+    # The reason the jurisdiction is a code rather than a country row: an
+    # unrecognised code used to resolve to nil, and nil claims every country
+    # here — so a typo turned one state's certificate into a worldwide
+    # exemption. It must narrow to nothing instead.
+    it 'never matches when the country code is one nothing recognises' do
+      certificate = create(:tax_exemption_certificate, company: company, country_iso: 'ZZ')
+
+      expect(described_class.for_address(address)).not_to include(certificate)
+    end
+
+    it 'stores the jurisdiction upcased however it was entered' do
+      certificate = create(:tax_exemption_certificate, company: company, country_iso: 'de', state_code: 'be')
+
+      expect(certificate.country_iso).to eq('DE')
+      expect(certificate.state_code).to eq('BE')
     end
   end
 

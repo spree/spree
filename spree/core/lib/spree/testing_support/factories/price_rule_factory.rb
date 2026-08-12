@@ -4,11 +4,11 @@ FactoryBot.define do
 
     factory :zone_price_rule, class: Spree::PriceRules::ZoneRule do
       after(:build) do |rule, evaluator|
-        rule.preferred_country_ids = evaluator.country_ids if evaluator.respond_to?(:country_ids)
+        rule.preferred_country_isos = evaluator.country_isos if evaluator.respond_to?(:country_isos)
       end
 
       transient do
-        country_ids { [] }
+        country_isos { [] }
       end
     end
 

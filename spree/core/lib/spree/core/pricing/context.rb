@@ -27,6 +27,14 @@ module Spree
         @order = order
       end
 
+      # The destination as a code. Rules compare against this rather than the
+      # country row, so eligibility keeps working once Spree::Country is gone.
+      #
+      # @return [String, nil]
+      def country_iso
+        country&.iso
+      end
+
       # Returns a new context from a variant and currency
       # @param variant [Spree::Variant]
       # @param currency [String]

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::PriceRules::ZoneRule, type: :model do
   let(:price_list) { create(:price_list) }
   let(:rule) { create(:zone_price_rule, price_list: price_list) }
-  let(:country) { create(:country) }
+  let(:country) { create(:country, iso: 'DE', name: 'Germany') }
   let(:variant) { create(:variant) }
 
   def context_for(country_record = nil)
@@ -11,23 +11,23 @@ describe Spree::PriceRules::ZoneRule, type: :model do
   end
 
   describe '#applicable?' do
-    context 'when country_ids preference is empty' do
-      before { rule.preferred_country_ids = [] }
+    context 'when no country is named' do
+      before { rule.preferred_country_isos = [] }
 
       it 'returns true for any country' do
         expect(rule.applicable?(context_for(country))).to be true
       end
     end
 
-    context 'when country_ids preference is set' do
-      before { rule.preferred_country_ids = [country.id] }
+    context 'when a country is named' do
+      before { rule.preferred_country_isos = [country.iso] }
 
       it 'returns true when the context country matches' do
         expect(rule.applicable?(context_for(country))).to be true
       end
 
       it 'returns false when the context country does not match' do
-        expect(rule.applicable?(context_for(create(:country)))).to be false
+        expect(rule.applicable?(context_for(create(:country, iso: 'FR', name: 'France')))).to be false
       end
 
       # A context built without a country falls back to the store's, so nil only
@@ -42,23 +42,33 @@ describe Spree::PriceRules::ZoneRule, type: :model do
       end
     end
 
-    # UUID primary keys mean an id may arrive as either type.
-    context 'when country_ids preference contains strings' do
-      before { rule.preferred_country_ids = [country.id.to_s] }
+    # Codes arrive from merchants, so case is not guaranteed either way.
+    context 'when the code was entered in lowercase' do
+      before { rule.preferred_country_isos = ['de'] }
 
       it 'returns true when the context country matches' do
         expect(rule.applicable?(context_for(country))).to be true
       end
 
       it 'returns false when the context country does not match' do
-        expect(rule.applicable?(context_for(create(:country)))).to be false
+        expect(rule.applicable?(context_for(create(:country, iso: 'FR', name: 'France')))).to be false
+      end
+    end
+
+    # There is no country table to check a code against, so an unknown one has
+    # to narrow the price list to nothing rather than widen it to everywhere.
+    context 'when the code is one nothing issued' do
+      before { rule.preferred_country_isos = ['ZZ'] }
+
+      it 'returns false for every country' do
+        expect(rule.applicable?(context_for(country))).to be false
       end
     end
   end
   describe '#geographic?' do
     it 'is true once countries are named' do
       rule = described_class.new(price_list: price_list)
-      rule.preferred_country_ids = [country.id]
+      rule.preferred_country_isos = [country.iso]
 
       expect(rule.geographic?).to be(true)
     end

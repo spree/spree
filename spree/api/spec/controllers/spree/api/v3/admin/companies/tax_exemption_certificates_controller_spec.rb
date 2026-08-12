@@ -23,7 +23,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
     it 'lists the company certificates with whether each counts' do
       create(:tax_exemption_certificate, :verified, company: company,
                                                     certificate_number: 'DE-1', reason_code: 'resale',
-                                                    country: germany)
+                                                    country_iso: germany&.iso)
 
       get :index, params: { company_id: company.prefixed_id }, as: :json
 

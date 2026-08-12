@@ -31,8 +31,8 @@ module Spree
             Spree::TaxExemption.new(
               reason_code: certificate.reason_code,
               certificate_number: certificate.certificate_number,
-              country_iso: certificate.country&.iso,
-              state_code: certificate.state&.abbr
+              country_iso: certificate.country_iso,
+              state_code: certificate.state_code
             )
           end
         )

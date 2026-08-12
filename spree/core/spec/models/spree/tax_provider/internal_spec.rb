@@ -168,7 +168,7 @@ describe Spree::TaxProvider::Internal, type: :model do
       it 'exempts the sale instead of taxing it' do
         create(:tax_exemption_certificate, :verified, company: company,
                                                       reason_code: 'resale', certificate_number: 'CERT-9',
-                                                      country: country)
+                                                      country_iso: country&.iso)
 
         provider.estimate(order, exemptions: resolved_exemptions)
 
@@ -179,7 +179,7 @@ describe Spree::TaxProvider::Internal, type: :model do
       end
 
       it 'taxes normally while the certificate is still awaiting verification' do
-        create(:tax_exemption_certificate, company: company, country: country)
+        create(:tax_exemption_certificate, company: company, country_iso: country&.iso)
 
         provider.estimate(order, exemptions: resolved_exemptions)
 

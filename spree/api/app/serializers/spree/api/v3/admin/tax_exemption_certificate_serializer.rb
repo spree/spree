@@ -25,13 +25,7 @@ module Spree
 
           # The jurisdiction the certificate holds in, in the same vocabulary the
           # tax lines use.
-          attribute :country_iso do |certificate|
-            certificate.country&.iso
-          end
-
-          attribute :state_code do |certificate|
-            certificate.state&.abbr
-          end
+          attributes :country_iso, :state_code
 
           # Whether it counts right now — the status alone can't say, since a
           # verified certificate stops counting once its date passes.
