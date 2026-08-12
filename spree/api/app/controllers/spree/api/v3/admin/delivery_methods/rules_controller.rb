@@ -70,7 +70,7 @@ module Spree
             end
 
             def active_param
-              params[:active].nil? ? true : ActiveModel::Type::Boolean.new.cast(params[:active])
+              params[:active].nil? ? true : params[:active].to_b
             end
 
             def assign_rule_preferences(rule)

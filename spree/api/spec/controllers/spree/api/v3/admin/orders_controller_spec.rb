@@ -689,8 +689,9 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
   describe 'PATCH #cancel' do
     let!(:order) { create(:completed_order_with_totals, store: store) }
+    let(:params) { { id: order.prefixed_id } }
 
-    subject { patch :cancel, params: { id: order.prefixed_id }, as: :json }
+    subject { patch :cancel, params: params, as: :json }
 
     before { request.headers.merge!(headers) }
 
@@ -699,6 +700,45 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(order.reload).to be_canceled
+    end
+
+    context 'when notify_customer is not passed' do
+      it 'does not flag the cancellation for customer notification' do
+        subject
+
+        expect(order.cancellations.last.notify_customer).to be false
+      end
+    end
+
+    context 'when notify_customer is truthy' do
+      let(:params) { { id: order.prefixed_id, notify_customer: 'true' } }
+
+      it 'flags the cancellation for customer notification' do
+        subject
+
+        expect(order.cancellations.last.notify_customer).to be true
+      end
+    end
+
+    context 'when notify_customer is falsy' do
+      let(:params) { { id: order.prefixed_id, notify_customer: 'false' } }
+
+      it 'does not flag the cancellation for customer notification' do
+        subject
+
+        expect(order.cancellations.last.notify_customer).to be false
+      end
+    end
+
+    context 'when the order cannot be canceled' do
+      before { allow_any_instance_of(Spree::Order).to receive(:allow_cancel?).and_return(false) }
+
+      it 'returns 422 and leaves the order untouched' do
+        subject
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(order.reload).not_to be_canceled
+      end
     end
   end
 
@@ -724,7 +764,7 @@ RSpec.describe Spree::Api::V3::Admin::OrdersController, type: :controller do
 
     before do
       request.headers.merge!(headers)
-      order.canceled_by(admin_user)
+      Spree.order_cancel_workflow.call(order: order, canceler: admin_user)
     end
 
     it 'resumes the canceled order' do

@@ -868,12 +868,16 @@ module Spree
     end
 
     # Cancels the order and records the canceler.
-    # Delegates to {Spree::Orders::Cancel} service.
+    # Delegates to {Spree::Orders::Cancel} workflow.
     #
+    # @deprecated Call {Spree.order_cancel_workflow} directly — it exposes the
+    #   full cancellation vocabulary (reason, note, restock_items,
+    #   refund_payments, notify_customer) this wrapper cannot pass through.
     # @param user [Spree.customer_class, nil] the user who canceled the order
     # @param canceled_at [Time, nil] the time of cancellation (defaults to current time)
     # @return [Spree::ServiceModule::Result]
     def canceled_by(user, canceled_at = nil)
+      Spree::Deprecation.warn('Spree::Order#canceled_by is deprecated and will be removed in Spree 6.1. Use Spree.order_cancel_workflow (Spree::Orders::Cancel) instead.')
       Spree.order_cancel_workflow.call(order: self, canceler: user, canceled_at: canceled_at)
     end
 

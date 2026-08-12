@@ -43,7 +43,7 @@ module Spree
       end
 
       def storefront_visible=(value)
-        self.display_on = ActiveModel::Type::Boolean.new.cast(value) ? 'both' : 'back_end'
+        self.display_on = value.to_b ? 'both' : 'back_end'
       end
     end
   end
