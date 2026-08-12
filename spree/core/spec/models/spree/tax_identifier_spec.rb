@@ -89,7 +89,9 @@ describe Spree::TaxIdentifier, type: :model do
     end
   end
 
-  describe 'the registry check' do
+  # The check now runs from Spree::TaxIdentifierValidationSubscriber, so these
+  # need the event bus the suite disables by default.
+  describe 'the registry check', events: true do
     around do |example|
       Spree.tax_identifier_validators['eu_vat'] = 'Spree::TaxIdentifiers::Validator::Base'
       example.run
@@ -116,6 +118,26 @@ describe Spree::TaxIdentifier, type: :model do
       identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
 
       expect { identifier.update!(value: 'DE987654321') }.to have_enqueued_job(Spree::TaxIdentifiers::ValidateJob)
+    end
+
+    # The stamp is part of the write, not the subscriber's doing: the response to
+    # the request that changed the number must not report a stale verdict, and it
+    # must hold even where the event bus is switched off.
+    it 'marks the row pending on the object that was saved, without reloading' do
+      identifier = Spree::Events.disable { create(:tax_identifier, customer: customer, kind: 'eu_vat') }
+
+      expect(identifier.validation_status).to eq('pending')
+      expect(identifier.validated_at).to be_nil
+    end
+
+    it 'clears an earlier verdict when the number changes' do
+      identifier = create(:tax_identifier, customer: customer, kind: 'eu_vat')
+      identifier.update_columns(validation_status: 'verified', validated_at: Time.current)
+
+      identifier.update!(value: 'DE987654321')
+
+      expect(identifier.validation_status).to eq('pending')
+      expect(identifier.validated_at).to be_nil
     end
 
     it 'is skipped for a kind nothing here can check' do

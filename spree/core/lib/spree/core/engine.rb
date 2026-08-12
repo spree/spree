@@ -472,7 +472,8 @@ module Spree
           Spree::ReportSubscriber,
           Spree::InvitationEmailSubscriber,
           Spree::AdminUserEmailSubscriber,
-          Spree::ProductMetricsSubscriber
+          Spree::ProductMetricsSubscriber,
+          Spree::TaxIdentifierValidationSubscriber
         ]
 
         # Pre-load authentication strategy classes to avoid reflection at request time

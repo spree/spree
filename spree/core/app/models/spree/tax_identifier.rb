@@ -44,8 +44,18 @@ module Spree
     belongs_to :cart, class_name: 'Spree::Cart', optional: true, inverse_of: :tax_identifier
     belongs_to :order, class_name: 'Spree::Order', optional: true, inverse_of: :tax_identifier
 
-    before_validation :normalize_value
-    after_commit :async_validate, on: %i[create update]
+    # Whitespace and case only. Punctuation is deliberately kept: for several
+    # kinds it is part of the canonical number (Switzerland's CHE-123.456.789
+    # MWST, Canada's PST-1234-5678), and the buyer's own spelling is what they
+    # will recognise on an invoice. A validator needing a different wire format
+    # produces it itself.
+    normalizes :value, with: ->(value) { value&.to_s&.gsub(/\s+/, '')&.upcase }
+
+    # The verdict resets as part of the write, not afterwards: the response to
+    # the request that changed the number has to say "we're checking this"
+    # rather than report a stale verdict or a blank one.
+    before_save :reset_validation_verdict, if: :number_changing?
+    after_commit :publish_number_changed, on: %i[create update]
 
     validates :kind, :value, presence: true
     # One per kind for a customer — what the storefront upsert assumes, and what
@@ -78,17 +88,6 @@ module Spree
       validation_status == 'verified'
     end
 
-    # Queues the registry check. Public for the same reason
-    # {Spree::Address#async_geocode} is: an admin re-validate action calls it.
-    def async_validate
-      return unless should_validate?
-
-      # update_columns, not update — this runs inside after_commit, and the
-      # verdict columns are never the buyer's input.
-      update_columns(validation_status: 'pending', validated_at: nil, updated_at: Time.current)
-      Spree::TaxIdentifiers::ValidateJob.perform_later(id)
-    end
-
     # Whether this installation can check a number of this kind at all. What
     # tells the admin apart the two reasons a row has no verdict: not attempted
     # yet, or nothing here knows how to ask.
@@ -99,15 +98,6 @@ module Spree
     end
 
     private
-
-    # Whitespace and case only. Punctuation is deliberately kept: for several
-    # kinds it is part of the canonical number (Switzerland's CHE-123.456.789
-    # MWST, Canada's PST-1234-5678), and the buyer's own spelling is what they
-    # will recognise on an invoice. A validator needing a different wire format
-    # produces it itself.
-    def normalize_value
-      self.value = value&.gsub(/\s+/, '')&.upcase
-    end
 
     # Format knowledge lives entirely in the registered validator. Core asserts
     # nothing about the shape of a number whose rules live in someone else's
@@ -122,11 +112,22 @@ module Spree
       errors.add(:value, :invalid)
     end
 
-    # Mirrors Address#should_geocode? — only when the number itself changed,
-    # never for an order snapshot, and only when a validator exists. A stock
-    # install registers none, so it never enqueues a job with nothing to do.
-    def should_validate?
-      validatable? && (saved_changes.key?('value') || saved_changes.key?('kind'))
+    def number_changing?
+      validatable? && (will_save_change_to_value? || will_save_change_to_kind?)
+    end
+
+    def reset_validation_verdict
+      self.validation_status = 'pending'
+      self.validated_at = nil
+    end
+
+    # Announces the fact; Spree::TaxIdentifierValidationSubscriber decides what
+    # to do about it. Published only when the number itself changed, so the
+    # verdict the check writes back cannot trigger another check.
+    def publish_number_changed
+      return unless saved_changes.key?('value') || saved_changes.key?('kind')
+
+      publish_event('tax_identifier.number_changed')
     end
 
     def exactly_one_owner
