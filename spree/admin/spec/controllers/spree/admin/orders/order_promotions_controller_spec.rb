@@ -72,6 +72,21 @@ RSpec.describe Spree::Admin::Orders::OrderPromotionsController do
         expect(flash[:error]).to be_present
       end
     end
+
+    context 'for a canceled order' do
+      subject { post :create, params: { order_id: order.to_param, coupon_code: coupon_code }, format: :turbo_stream }
+
+      let(:order) { create(:order_with_line_items, store: store, state: 'canceled') }
+      let(:promotion) { create(:promotion, :with_order_adjustment, code: 'TESTCODE') }
+      let(:coupon_code) { promotion.code }
+
+      it 'does not apply the promotion' do
+        expect { subject }.not_to change { order.order_promotions.count }
+
+        expect(flash[:error]).to eq Spree.t(:authorization_failure)
+        expect(response).to redirect_to spree.admin_forbidden_path
+      end
+    end
   end
 
   describe '#destroy' do
@@ -105,6 +120,28 @@ RSpec.describe Spree::Admin::Orders::OrderPromotionsController do
         subject
         expect(assigns(:handler)).to be_a(Spree::PromotionHandler::Coupon)
         expect(assigns(:handler)).to be_successful
+      end
+    end
+
+    context 'for a canceled order' do
+      subject { delete :destroy, params: { order_id: order.to_param, id: order_promotion.id }, format: :turbo_stream }
+
+      let(:order) { create(:order_with_line_items, store: store) }
+      let(:promotion) { create(:promotion, :with_order_adjustment, code: 'REMOVE') }
+      let(:order_promotion) { order.order_promotions.find_by(promotion: promotion) }
+
+      before do
+        order.coupon_code = promotion.code
+        Spree::PromotionHandler::Coupon.new(order).apply
+        order.update_column(:state, 'canceled')
+        order.reload
+      end
+
+      it 'does not remove the promotion' do
+        expect { subject }.not_to change { order.order_promotions.count }
+
+        expect(flash[:error]).to eq Spree.t(:authorization_failure)
+        expect(response).to redirect_to spree.admin_forbidden_path
       end
     end
   end
