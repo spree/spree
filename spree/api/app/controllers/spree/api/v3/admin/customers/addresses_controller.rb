@@ -75,11 +75,11 @@ module Spree
             end
 
             def default_billing_flag
-              ActiveModel::Type::Boolean.new.cast(params[:is_default_billing])
+              ActiveModel::Type::Boolean.new.cast(params[:is_default_billing]).to_b
             end
 
             def default_shipping_flag
-              ActiveModel::Type::Boolean.new.cast(params[:is_default_shipping])
+              ActiveModel::Type::Boolean.new.cast(params[:is_default_shipping]).to_b
             end
           end
         end

@@ -49,7 +49,7 @@ module Spree
             with_order_lock do
               result = Spree.order_complete_service.call(
                 order: @resource,
-                payment_pending: ActiveModel::Type::Boolean.new.cast(params[:payment_pending]) || false,
+                payment_pending: ActiveModel::Type::Boolean.new.cast(params[:payment_pending]).to_b,
                 notify_customer: ActiveModel::Type::Boolean.new.cast(params[:notify_customer])
               )
 
@@ -67,7 +67,7 @@ module Spree
               result = Spree.order_cancel_workflow.call(
                 order: @resource,
                 canceler: try_spree_current_user,
-                notify_customer: ActiveModel::Type::Boolean.new.cast(params[:notify_customer]) || false
+                notify_customer: ActiveModel::Type::Boolean.new.cast(params[:notify_customer]).to_b
               )
 
               if result.success?
