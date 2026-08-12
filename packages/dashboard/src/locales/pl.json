@@ -1255,10 +1255,6 @@
           "help": "Uczyń numer telefonu obowiązkowym w adresach klientów.",
           "label": "Wymagaj numeru telefonu"
         },
-        "allow_checkout_on_gateway_error": {
-          "help": "Pozwól klientom dokończyć zamówienie, nawet gdy operator płatności zwróci błąd.",
-          "label": "Pozwól dokończyć zamówienie po błędzie płatności"
-        },
         "auto_capture": {
           "help": "Pobieraj płatność od razu, zamiast tylko rezerwować kwotę. Metoda płatności może to nadpisać.",
           "label": "Obciążaj karty przy zamówieniu"

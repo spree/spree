@@ -98,8 +98,6 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
     preferred_auto_capture: store.preferred_auto_capture ?? true,
     preferred_auto_capture_on_dispatch: store.preferred_auto_capture_on_dispatch ?? false,
-    preferred_allow_checkout_on_gateway_error:
-      store.preferred_allow_checkout_on_gateway_error ?? false,
     preferred_track_inventory_levels: store.preferred_track_inventory_levels ?? true,
     preferred_stock_reservations_enabled: store.preferred_stock_reservations_enabled ?? true,
     preferred_track_price_history: store.preferred_track_price_history ?? true,
@@ -193,7 +191,6 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_address_requires_phone: values.preferred_address_requires_phone,
         preferred_auto_capture: values.preferred_auto_capture,
         preferred_auto_capture_on_dispatch: values.preferred_auto_capture_on_dispatch,
-        preferred_allow_checkout_on_gateway_error: values.preferred_allow_checkout_on_gateway_error,
         preferred_track_inventory_levels: values.preferred_track_inventory_levels,
         preferred_stock_reservations_enabled: values.preferred_stock_reservations_enabled,
         preferred_track_price_history: values.preferred_track_price_history,
@@ -498,13 +495,6 @@ function StoreSettingsForm({ store }: { store: Store }) {
                       label={t('admin.fields.store.auto_capture_on_dispatch.label')}
                       help={t('admin.fields.store.auto_capture_on_dispatch.help')}
                       name="preferred_auto_capture_on_dispatch"
-                      control={form.control}
-                    />
-                    <SwitchField
-                      id="store-allow-checkout-on-gateway-error"
-                      label={t('admin.fields.store.allow_checkout_on_gateway_error.label')}
-                      help={t('admin.fields.store.allow_checkout_on_gateway_error.help')}
-                      name="preferred_allow_checkout_on_gateway_error"
                       control={form.control}
                     />
                   </FieldGroup>

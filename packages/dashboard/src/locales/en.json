@@ -1241,10 +1241,6 @@
           "help": "Make a phone number mandatory on customer addresses.",
           "label": "Require phone number"
         },
-        "allow_checkout_on_gateway_error": {
-          "help": "Let shoppers finish checkout even when the payment provider returns an error.",
-          "label": "Allow checkout after a payment error"
-        },
         "auto_capture": {
           "help": "Take payment straight away instead of only reserving the amount. A payment method can override this.",
           "label": "Charge cards at checkout"

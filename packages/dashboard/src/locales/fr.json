@@ -1241,10 +1241,6 @@
           "help": "Rendre le numéro de téléphone obligatoire dans les adresses des clients.",
           "label": "Numéro de téléphone obligatoire"
         },
-        "allow_checkout_on_gateway_error": {
-          "help": "Laisser les clients finaliser leur commande même si le prestataire de paiement renvoie une erreur.",
-          "label": "Autoriser le paiement après une erreur"
-        },
         "auto_capture": {
           "help": "Encaisser immédiatement au lieu de simplement réserver le montant. Un moyen de paiement peut modifier ce réglage.",
           "label": "Débiter les cartes au paiement"

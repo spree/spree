@@ -1241,10 +1241,6 @@
           "help": "Eine Telefonnummer in Kundenadressen zur Pflicht machen.",
           "label": "Telefonnummer erforderlich"
         },
-        "allow_checkout_on_gateway_error": {
-          "help": "Kunden den Kauf abschließen lassen, auch wenn der Zahlungsanbieter einen Fehler meldet.",
-          "label": "Bezahlen nach Zahlungsfehler erlauben"
-        },
         "auto_capture": {
           "help": "Den Betrag sofort einziehen statt ihn nur zu reservieren. Eine Zahlungsart kann dies überschreiben.",
           "label": "Karten beim Bezahlen belasten"

@@ -33,7 +33,7 @@ module Spree
       # Where the SSO callback returns the browser after an identity provider
       # redirect. Distinct from `admin_url`, which points at the legacy admin.
       preference :dashboard_url, :string, default: nil
-      preference :allow_checkout_on_gateway_error, :boolean, default: false, deprecated: 'Set it on the store instead'
+      preference :allow_checkout_on_gateway_error, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6 — completion checks whether payments cover the total, so a failed gateway call never completes an order'
       preference :allow_empty_price_amount, :boolean, default: false
       preference :allow_guest_checkout, :boolean, default: true, deprecated: true # this is only used in the rails frontend, and is not implemented in API
       preference :alternative_shipping_phone, :boolean, default: false, deprecated: 'Nothing reads this in Spree 6'

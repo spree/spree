@@ -30,8 +30,6 @@ export interface StoreUpdateParams {
   preferred_auto_capture?: boolean
   /** Takes payment when goods are dispatched rather than at checkout. */
   preferred_auto_capture_on_dispatch?: boolean
-  /** Lets a customer finish checkout even when the payment gateway errors. */
-  preferred_allow_checkout_on_gateway_error?: boolean
   /** Counts on-hand quantities. Off means everything is treated as always available. */
   preferred_track_inventory_levels?: boolean
   /** Holds stock for shoppers while they check out, so the same item can't be sold twice. */

@@ -59,7 +59,6 @@ module Spree
               :preferred_address_requires_phone,
               :preferred_auto_capture,
               :preferred_auto_capture_on_dispatch,
-              :preferred_allow_checkout_on_gateway_error,
               :preferred_track_inventory_levels,
               :preferred_stock_reservations_enabled,
               :preferred_track_price_history,

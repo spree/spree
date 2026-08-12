@@ -33,7 +33,6 @@ export const storeSettingsFormSchema = z.object({
   preferred_address_requires_phone: z.boolean(),
   preferred_auto_capture: z.boolean(),
   preferred_auto_capture_on_dispatch: z.boolean(),
-  preferred_allow_checkout_on_gateway_error: z.boolean(),
   preferred_track_inventory_levels: z.boolean(),
   preferred_stock_reservations_enabled: z.boolean(),
   preferred_track_price_history: z.boolean(),

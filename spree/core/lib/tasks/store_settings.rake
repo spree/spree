@@ -5,7 +5,6 @@ namespace :spree do
     # at its default says nothing about intent and is never copied.
     MOVED_SETTINGS = {
       address_requires_phone: false,
-      allow_checkout_on_gateway_error: false,
       auto_capture: true,
       auto_capture_on_dispatch: false,
       disable_sku_validation: false,

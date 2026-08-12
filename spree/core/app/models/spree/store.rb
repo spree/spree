@@ -70,7 +70,6 @@ module Spree
     # authorizing them. A payment method's own auto_capture column wins when set.
     preference :auto_capture, :boolean, default: true
     preference :auto_capture_on_dispatch, :boolean, default: false
-    preference :allow_checkout_on_gateway_error, :boolean, default: false
     preference :stock_reservations_enabled, :boolean, default: true
     # Catalog preferences
     preference :track_inventory_levels, :boolean, default: true
