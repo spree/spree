@@ -7,7 +7,7 @@ module Spree
     context 'processing payments' do
       before do
         # So that Payment#purchase! is called during processing
-        Spree::Config[:auto_capture] = true
+        stub_store_preferences(auto_capture: true)
 
         allow(order).to receive_message_chain(:line_items, :empty?).and_return(false)
       end

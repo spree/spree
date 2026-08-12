@@ -116,7 +116,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
       before do
         allow(store).to receive(:supported_currencies_list).and_return([Money::Currency.find('USD'), Money::Currency.find('EUR')])
-        Spree::Config.show_products_without_price = false
+        stub_store_preferences(show_products_without_price: false)
       end
 
       it 'only returns products with prices in the current currency' do

@@ -9,6 +9,7 @@ module Spree
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::Searchable
+    include Spree::StorePreferences
 
     publishes_lifecycle_events
 
@@ -643,9 +644,15 @@ module Spree
     end
 
     # Shortcut method to determine if inventory tracking is enabled for this variant
-    # This considers both variant tracking flag and site-wide inventory tracking settings
+    # This considers both the variant tracking flag and the store's setting
     def should_track_inventory?
-      track_inventory? && Spree::Config.track_inventory_levels
+      track_inventory? && store_preference(:track_inventory_levels)
+    end
+
+    # Variants carry no store of their own; the product owns it.
+    # @return [Spree::Store, nil]
+    def preference_store
+      product&.store
     end
 
     def volume
@@ -730,7 +737,7 @@ module Spree
     end
 
     def disable_sku_validation?
-      Spree::Config[:disable_sku_validation]
+      store_preference(:disable_sku_validation)
     end
 
     def clear_line_items_cache

@@ -2,9 +2,9 @@ module Spree
   module Purchase
     # Payment processing shared by Spree::Cart and Spree::Order.
     module PaymentProcessing
-      # Processes any pending payments. Returns true when every pending
-      # payment processed successfully; a GatewayError converts to the
-      # allow_checkout_on_gateway_error preference.
+      # Processes any pending payments, recording a gateway failure on
+      # +errors+. The completion workflows check whether payments actually
+      # cover the total rather than trusting the return value.
       def process_payments!
         with_lock { process_payments_with(:process!) }
       end
@@ -64,8 +64,8 @@ module Spree
           payment.public_send(method)
         end
       rescue Spree::Core::GatewayError => e
-        result = !!Spree::Config[:allow_checkout_on_gateway_error]
-        errors.add(:base, e.message) && (return result)
+        errors.add(:base, e.message)
+        false
       end
     end
   end

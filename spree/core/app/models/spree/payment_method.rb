@@ -6,6 +6,7 @@ module Spree
     acts_as_list
 
     include Spree::SingleStoreResource
+    include Spree::StorePreferences
     include Spree::HasCustomFields
     include Spree::Metadata
     include Spree::DisplayOn
@@ -179,7 +180,7 @@ module Spree
     end
 
     def auto_capture?
-      auto_capture.nil? ? Spree::Config[:auto_capture] : auto_capture
+      auto_capture.nil? ? store_preference(:auto_capture) : auto_capture
     end
 
     def supports?(_source)

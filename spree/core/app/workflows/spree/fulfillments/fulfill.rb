@@ -131,7 +131,7 @@ module Spree
           failure(@source, Spree.t('fulfillments.errors.backordered_units'))
         end
 
-        return if order.paid? || Spree::Config[:auto_capture_on_dispatch]
+        return if order.paid? || @source.store_preference(:auto_capture_on_dispatch)
 
         failure(@source, Spree.t('fulfillments.errors.order_not_paid'))
       end
@@ -226,7 +226,7 @@ module Spree
       # Dispatch is the trigger for taking the money when the merchant has
       # chosen to charge on dispatch rather than at checkout.
       def capture_payment_if_configured
-        return unless Spree::Config[:auto_capture_on_dispatch]
+        return unless @fulfillment.store_preference(:auto_capture_on_dispatch)
 
         @fulfillment.process_order_payments
       end

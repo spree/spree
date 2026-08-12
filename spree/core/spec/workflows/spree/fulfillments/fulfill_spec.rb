@@ -288,6 +288,38 @@ module Spree
       end
     end
 
+    describe 'capturing payment on dispatch' do
+      # The factory captures at checkout; undo that so the payment is merely
+      # authorized, which is the state this setting exists to resolve.
+      before do
+        payment = order.payments.first
+        payment.capture_events.delete_all
+        payment.update_columns(state: 'pending')
+        order.update_columns(payment_total: 0, payment_state: 'balance_due')
+      end
+
+      it 'captures the authorized payment when the store charges on dispatch' do
+        stub_store_preferences(store, auto_capture_on_dispatch: true)
+
+        subject.call(fulfillment: fulfillment)
+
+        payment = order.payments.first.reload
+        expect(payment).to be_completed
+        expect(payment.captured_amount).to eq(payment.amount)
+        expect(order.reload.payment_state).to eq('paid')
+      end
+
+      it 'leaves the payment authorized when it does not' do
+        stub_store_preferences(store, auto_capture_on_dispatch: false)
+
+        subject.call(fulfillment: fulfillment)
+
+        payment = order.payments.first.reload
+        expect(payment).to be_pending
+        expect(payment.captured_amount).to eq(0)
+      end
+    end
+
     describe 'hooks' do
       before { Spree.hooks.clear! }
       after { Spree.hooks.clear! }

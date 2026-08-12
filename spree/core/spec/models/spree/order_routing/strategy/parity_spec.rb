@@ -289,12 +289,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
     # ---------------------------------------------------------------
 
     context 'with stock reservations enabled' do
-      around do |ex|
-        original = Spree::Config[:stock_reservations_enabled]
-        Spree::Config[:stock_reservations_enabled] = true
-        ex.run
-        Spree::Config[:stock_reservations_enabled] = original
-      end
+      before { stub_store_preferences(stock_reservations_enabled: true) }
 
       context 'another order holds a reservation at NYC' do
         let(:other_order) do
@@ -395,12 +390,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
     end
 
     context 'stock reservations globally disabled' do
-      around do |ex|
-        original = Spree::Config[:stock_reservations_enabled]
-        Spree::Config[:stock_reservations_enabled] = false
-        ex.run
-        Spree::Config[:stock_reservations_enabled] = original
-      end
+      before { stub_store_preferences(stock_reservations_enabled: false) }
 
       let(:order) do
         o = create(:order, store: store, ship_address: create(:ship_address))

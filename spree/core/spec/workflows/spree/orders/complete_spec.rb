@@ -5,8 +5,6 @@ module Spree
     let(:store) { @default_store }
     let(:order) { Spree::Order.create(email: 'test@example.com') }
 
-    after { Spree::Config.set track_inventory_levels: true }
-
     # Regression: the rollup writes its vocabulary (none/authorized/...) via
     # update_columns, so the model's validation must accept it — otherwise the
     # first derived value poisons the order and completion 422s forever.
@@ -71,7 +69,7 @@ module Spree
     end
 
     it 'does not sell inventory units if track_inventory_levels is false' do
-      Spree::Config.set track_inventory_levels: false
+      stub_store_preferences(track_inventory_levels: false)
       expect(Spree::InventoryUnit).not_to receive(:sell_units)
       described_class.call(order: order)
     end

@@ -82,7 +82,7 @@ RSpec.describe Spree::Carts::RemoveOutOfStockItems do
     let(:line_item) { cart.line_items.first }
 
     before do
-      Spree::Config[:stock_reservations_enabled] = true
+      stub_store_preferences(stock_reservations_enabled: true)
       variant.stock_items.update_all(count_on_hand: 1, backorderable: false)
       line_item.update!(quantity: 1)
       variant.stock_items.each do |stock_item|
@@ -96,8 +96,6 @@ RSpec.describe Spree::Carts::RemoveOutOfStockItems do
         )
       end
     end
-
-    after { Spree::Config[:stock_reservations_enabled] = true }
 
     it 'keeps the line item in the cart' do
       _cart, messages, warnings = execute.value

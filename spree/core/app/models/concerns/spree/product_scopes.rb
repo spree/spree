@@ -264,8 +264,11 @@ module Spree
                   end
         end
 
-        unless Spree::Config.show_products_without_price
-          currency ||= Spree::Store.default.default_currency
+        # Class-level scope, so there is no product to ask — the ambient store
+        # decides, and its currency is the fallback when none was passed.
+        store = Spree::Current.store
+        unless Spree::StorePreferences.read(store, :show_products_without_price)
+          currency ||= store&.default_currency
           scope = scope.with_currency(currency)
         end
 

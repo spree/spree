@@ -64,20 +64,20 @@ RSpec.shared_examples 'a payment processing host' do
     context 'when a payment raises a GatewayError' do
       before { expect(payment).to receive(:process!).and_raise(Spree::Core::GatewayError) }
 
-      it 'returns true when configured to allow checkout on gateway failures' do
-        Spree::Config.set allow_checkout_on_gateway_error: true
-        expect(record.process_payments!).to be true
+      it 'returns false' do
+        expect(record.process_payments!).to be false
       end
 
-      it 'returns false when not configured to allow checkout on gateway failures' do
-        Spree::Config.set allow_checkout_on_gateway_error: false
-        expect(record.process_payments!).to be false
+      it 'records the gateway message so completion can report it' do
+        record.process_payments!
+
+        expect(record.errors[:base]).to be_present
       end
     end
 
     # Regression spec for https://github.com/spree/spree/issues/8148
     it 'updates the record with correct payment total' do
-      Spree::Config[:auto_capture] = true
+      stub_store_preferences(auto_capture: true)
       record.process_payments!
 
       expect(payment).to be_completed
