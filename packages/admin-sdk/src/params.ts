@@ -606,6 +606,15 @@ export interface ProductMediaInput {
   variant_ids?: Array<string>
 }
 
+/** One per-asset configuration field a provider declares. */
+export interface DigitalAssetProviderSettingField {
+  key: string
+  type: 'string' | 'number' | 'boolean' | 'select'
+  default?: unknown
+  /** Allowed values for a `select` field. */
+  in?: string[]
+}
+
 /** A selectable digital-asset source, from the `providers` discovery endpoint. */
 export interface DigitalAssetProvider {
   /** Class name to send as `provider_type`. */
@@ -614,6 +623,8 @@ export interface DigitalAssetProvider {
   name: string
   /** Whether picking this source requires uploading a file. */
   requires_attachment: boolean
+  /** Per-asset fields to render as a form when this source is picked. */
+  settings_schema: DigitalAssetProviderSettingField[]
 }
 
 export interface DigitalAssetCreateParams {
@@ -622,6 +633,8 @@ export interface DigitalAssetCreateParams {
   signed_id?: string
   /** Provider class name. Omit for an uploaded file (the default source). */
   provider_type?: string
+  /** Values for the provider's `settings_schema`, keyed by field name. */
+  provider_settings?: Record<string, unknown>
   /** Defaults to the product's default variant when omitted. */
   variant_id?: string
   /** Null (or omitted) means the store's download settings apply. */
@@ -633,6 +646,7 @@ export interface DigitalAssetUpdateParams {
   /** Replaces the file for everyone who already bought it. */
   signed_id?: string
   provider_type?: string
+  provider_settings?: Record<string, unknown>
   variant_id?: string
   authorized_clicks?: number | null
   authorized_days?: number | null

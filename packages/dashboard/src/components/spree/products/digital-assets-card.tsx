@@ -1,4 +1,4 @@
-import type { DigitalAsset, Variant } from '@spree/admin-sdk'
+import type { DigitalAsset, DigitalAssetProvider, Variant } from '@spree/admin-sdk'
 import { formatFileSize, useDirectUpload } from '@spree/dashboard-core'
 import {
   Button,
@@ -33,6 +33,7 @@ import {
   useDigitalAssets,
 } from '../../../hooks/use-digital-assets'
 import { DigitalAssetEditSheet } from './digital-asset-edit-sheet'
+import { DigitalAssetProviderSheet } from './digital-asset-provider-sheet'
 
 export function DigitalAssetsCard({
   productId,
@@ -47,6 +48,8 @@ export function DigitalAssetsCard({
   const [uploading, setUploading] = useState(false)
   const [page, setPage] = useState(1)
   const [editing, setEditing] = useState<DigitalAsset | null>(null)
+  // The provider whose settings sheet is open, before its asset is created.
+  const [configuring, setConfiguring] = useState<DigitalAssetProvider | null>(null)
 
   // Digital files live on private storage: they are only ever served through an
   // authorized, signed link, never from the public bucket.
@@ -92,8 +95,14 @@ export function DigitalAssetsCard({
     if (event.dataTransfer.files.length > 0) void handleFiles(event.dataTransfer.files)
   }
 
-  async function handleAddProvider(providerType: string) {
-    await createAsset.mutateAsync({ provider_type: providerType })
+  // A provider with settings opens a sheet to collect them; one without
+  // creates its asset immediately, exactly like the file default.
+  async function handleAddProvider(provider: DigitalAssetProvider) {
+    if (provider.settings_schema.length > 0) {
+      setConfiguring(provider)
+      return
+    }
+    await createAsset.mutateAsync({ provider_type: provider.type })
     setPage(1)
   }
 
@@ -156,7 +165,7 @@ export function DigitalAssetsCard({
                   {sourceProviders.map((provider) => (
                     <DropdownMenuItem
                       key={provider.type}
-                      onClick={() => handleAddProvider(provider.type)}
+                      onClick={() => handleAddProvider(provider)}
                     >
                       {provider.name}
                     </DropdownMenuItem>
@@ -282,8 +291,18 @@ export function DigitalAssetsCard({
         productId={productId}
         asset={editing}
         variants={variants}
+        settingsSchema={
+          providers.find((p) => p.type === editing?.provider_type)?.settings_schema ?? []
+        }
         open={Boolean(editing)}
         onOpenChange={(open) => !open && setEditing(null)}
+      />
+
+      <DigitalAssetProviderSheet
+        productId={productId}
+        provider={configuring}
+        onOpenChange={(open) => !open && setConfiguring(null)}
+        onCreated={() => setPage(1)}
       />
     </Card>
   )
