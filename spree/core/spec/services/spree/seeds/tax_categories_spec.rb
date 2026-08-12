@@ -34,12 +34,25 @@ RSpec.describe Spree::Seeds::TaxCategories do
     context 'when TaxCategories already exist' do
       before do
         expected_categories.each do |category_attrs|
-          @default_store.tax_categories.create!(name: category_attrs[:name], is_default: category_attrs[:is_default])
+          create(:tax_category, store: @default_store, name: category_attrs[:name],
+                                is_default: category_attrs[:is_default])
         end
       end
 
       it "doesn't create new TaxCategories" do
         expect { subject }.not_to change(Spree::TaxCategory, :count)
+      end
+
+      # find_or_create_by! runs its block only on create, so seeding a store that
+      # already had a Default category left it without a default — and the
+      # default is what taxes an item carrying no category of its own.
+      it 'marks an existing Default category as the default' do
+        Spree::TaxCategory.where(store: @default_store, name: 'Default').
+          update_all(is_default: false)
+
+        subject
+
+        expect(Spree::TaxCategory.default(@default_store)&.name).to eq('Default')
       end
     end
   end
