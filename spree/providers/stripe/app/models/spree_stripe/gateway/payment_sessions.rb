@@ -10,6 +10,8 @@ module SpreeStripe
       DELAYED_NOTIFICATION_PAYMENT_METHOD_TYPES = %w[sepa_debit us_bank_account].freeze
       # Funds arrive out of band, leaving the intent in `requires_action`.
       BANK_PAYMENT_METHOD_TYPES = %w[customer_balance us_bank_account].freeze
+      # next_action.type Stripe sets while an ACH debit awaits verification.
+      MICRODEPOSIT_VERIFICATION_ACTION = 'verify_with_microdeposits'.freeze
       MANUAL_CAPTURE_METHOD = 'manual'.freeze
       SETUP_FUTURE_USAGE = 'off_session'.freeze
 
@@ -132,7 +134,8 @@ module SpreeStripe
         statuses = %w[succeeded]
         statuses << 'requires_capture' if payment_intent_manual_capture?(payment_intent)
         statuses << 'processing' if payment_intent_type_in?(payment_intent, DELAYED_NOTIFICATION_PAYMENT_METHOD_TYPES)
-        statuses << 'requires_action' if payment_intent_charge_not_required?(payment_intent)
+        statuses << 'requires_action' if payment_intent_charge_not_required?(payment_intent) &&
+                                         !payment_intent_awaiting_microdeposits?(payment_intent)
 
         payment_intent.status.in?(statuses)
       end
@@ -149,6 +152,16 @@ module SpreeStripe
       # to be built from the intent instead.
       def payment_intent_charge_not_required?(payment_intent)
         payment_intent_type_in?(payment_intent, BANK_PAYMENT_METHOD_TYPES)
+      end
+
+      # ACH debits sit in requires_action until the customer confirms the two
+      # microdeposit amounts. Funds are not on their way yet, so the session
+      # must not settle — Stripe reports the eventual outcome by webhook.
+      def payment_intent_awaiting_microdeposits?(payment_intent)
+        next_action = payment_intent.try(:next_action)
+        return false unless next_action.respond_to?(:type)
+
+        next_action.type.to_s == MICRODEPOSIT_VERIFICATION_ACTION
       end
 
       def payment_intent_manual_capture?(payment_intent)
@@ -211,10 +224,10 @@ module SpreeStripe
       def shipping_payload(ship_address)
         return if ship_address.blank?
 
-        if ship_address.invalid? || ship_address.address1.blank?
-          ship_address.errors.clear
-          return
-        end
+        # Validated on a duplicate: `invalid?` populates errors on the record,
+        # and clearing them afterwards would still stomp whatever the caller
+        # had collected on the live address.
+        return if ship_address.address1.blank? || ship_address.dup.invalid?
 
         {
           address: {

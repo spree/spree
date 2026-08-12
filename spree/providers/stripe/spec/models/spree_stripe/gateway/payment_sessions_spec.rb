@@ -369,6 +369,26 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
       end
     end
 
+    describe 'accepting a bank-transfer intent' do
+      def bank_intent(next_action)
+        Stripe::StripeObject.construct_from(
+          id: 'pi_bank_123',
+          status: 'requires_action',
+          payment_method: { type: 'us_bank_account' },
+          next_action: next_action
+        )
+      end
+
+      it 'accepts one that is only awaiting funds' do
+        expect(gateway.payment_intent_accepted?(bank_intent(type: 'display_bank_transfer_instructions'))).to be(true)
+      end
+
+      # Funds are not on their way until the customer confirms the amounts.
+      it 'refuses one still awaiting microdeposit verification' do
+        expect(gateway.payment_intent_accepted?(bank_intent(type: 'verify_with_microdeposits'))).to be(false)
+      end
+    end
+
     context 'when the payment intent is accepted but not succeeded (requires_action with charge_not_required)' do
       let(:stripe_pi) do
         Stripe::StripeObject.construct_from(

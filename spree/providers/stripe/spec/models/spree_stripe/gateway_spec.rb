@@ -277,6 +277,16 @@ RSpec.describe SpreeStripe::Gateway do
           expect(subject.params['shipping']).to be_nil
         end
       end
+
+      # Validating the live record would leave its errors populated for the
+      # caller, so the check runs against a duplicate.
+      it 'leaves the order address errors untouched' do
+        VCR.use_cassette('create_payment_intent_invalid_address') do
+          subject
+
+          expect(order.ship_address.errors).to be_empty
+        end
+      end
     end
 
     context 'when auto_capture is false on the gateway' do

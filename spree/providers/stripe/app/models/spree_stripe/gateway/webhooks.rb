@@ -76,10 +76,13 @@ module SpreeStripe
         raise Spree::PaymentMethod::WebhookSignatureError, 'Invalid webhook signature'
       end
 
-      # The ENV fallback supports local development against the Stripe CLI, whose
-      # secret is not the one registered for this endpoint.
+      # Development only: the Stripe CLI signs forwarded events with its own
+      # secret rather than the endpoint's. Accepting it anywhere else would
+      # make one leaked value a forgery key for every gateway in the install.
       def webhook_signing_secrets
-        [preferred_webhook_signing_secret, ENV['STRIPE_SIGNING_SECRET']].select(&:present?)
+        secrets = [preferred_webhook_signing_secret]
+        secrets << ENV['STRIPE_SIGNING_SECRET'] if Rails.env.development?
+        secrets.select(&:present?)
       end
 
       # Also the loop guard: registration writes the secret back through
