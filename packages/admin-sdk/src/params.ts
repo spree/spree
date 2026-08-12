@@ -606,9 +606,22 @@ export interface ProductMediaInput {
   variant_ids?: Array<string>
 }
 
+/** A selectable digital-asset source, from the `providers` discovery endpoint. */
+export interface DigitalAssetProvider {
+  /** Class name to send as `provider_type`. */
+  type: string
+  /** Human-readable label. */
+  name: string
+  /** Whether picking this source requires uploading a file. */
+  requires_attachment: boolean
+}
+
 export interface DigitalAssetCreateParams {
-  /** Signed blob id from a `private: true` direct upload. */
-  signed_id: string
+  /** Signed blob id from a `private: true` direct upload. Required for a file
+   *  asset (the default source); omitted for a provider-backed asset. */
+  signed_id?: string
+  /** Provider class name. Omit for an uploaded file (the default source). */
+  provider_type?: string
   /** Defaults to the product's default variant when omitted. */
   variant_id?: string
   /** Null (or omitted) means the store's download settings apply. */
@@ -619,6 +632,7 @@ export interface DigitalAssetCreateParams {
 export interface DigitalAssetUpdateParams {
   /** Replaces the file for everyone who already bought it. */
   signed_id?: string
+  provider_type?: string
   variant_id?: string
   authorized_clicks?: number | null
   authorized_days?: number | null

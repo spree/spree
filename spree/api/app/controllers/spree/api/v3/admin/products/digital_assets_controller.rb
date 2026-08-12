@@ -26,6 +26,25 @@ module Spree
               super
             end
 
+            # GET /api/v3/admin/products/:product_id/digital_assets/providers
+            #
+            # The sources a merchant can pick for a new asset: the uploaded-file
+            # default plus any host-registered provider. Drives the dashboard's
+            # source selector; a host with only the default sees just "upload".
+            def providers
+              authorize! :create, model_class
+
+              data = Spree.digital_asset_providers.map do |provider_class|
+                {
+                  type: provider_class.to_s,
+                  name: provider_class.provider_name,
+                  requires_attachment: provider_class.requires_attachment?
+                }
+              end
+
+              render json: { data: data }
+            end
+
             protected
 
             def model_class
@@ -63,8 +82,10 @@ module Spree
             # mass-assigning it would let a caller point an asset at a variant
             # of any product, in any store. signed_id likewise names a blob
             # rather than a column, so it is attached separately.
+            # provider_type is mass-assignable: the model validates it names a
+            # registered provider, so an unknown value is a 422, not a hazard.
             def permitted_params
-              params.permit(:authorized_clicks, :authorized_days)
+              params.permit(:authorized_clicks, :authorized_days, :provider_type)
             end
 
             private

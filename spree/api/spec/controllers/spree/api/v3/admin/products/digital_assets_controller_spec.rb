@@ -224,4 +224,51 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
       expect(json_response['variant_id']).to eq(variant.prefixed_id)
     end
   end
+
+  describe 'GET #providers' do
+    it 'lists the registered sources, including the File default' do
+      get :providers, params: { product_id: product.prefixed_id }
+
+      expect(response).to have_http_status(:ok)
+      types = json_response['data'].map { |p| p['type'] }
+      expect(types).to include('Spree::DigitalAssetProvider::File')
+      file = json_response['data'].find { |p| p['type'] == 'Spree::DigitalAssetProvider::File' }
+      expect(file['requires_attachment']).to be(true)
+    end
+  end
+
+  describe 'provider_type' do
+    let(:stub_provider) do
+      Class.new(Spree::DigitalAssetProvider::Base) do
+        def self.requires_attachment? = false
+        def deliver(_link, expires_in:) = Spree::DigitalDelivery.new(inline_value: 'X')
+      end
+    end
+
+    before do
+      stub_const('Spree::DigitalAssetProvider::Stub', stub_provider)
+      Spree.digital_asset_providers << stub_provider
+    end
+
+    after { Spree.digital_asset_providers.delete(stub_provider) }
+
+    it 'creates a provider-backed asset with no file' do
+      post :create, params: {
+        product_id: product.prefixed_id,
+        provider_type: 'Spree::DigitalAssetProvider::Stub'
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['provider_type']).to eq('Spree::DigitalAssetProvider::Stub')
+    end
+
+    it 'rejects an unregistered provider_type' do
+      post :create, params: {
+        product_id: product.prefixed_id,
+        provider_type: 'Spree::DigitalAssetProvider::Nope'
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
 end
