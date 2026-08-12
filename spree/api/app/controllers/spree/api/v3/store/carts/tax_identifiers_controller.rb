@@ -19,6 +19,12 @@ module Spree
 
             before_action :find_cart!
 
+            # Both fields, every time. A PUT carrying only `kind` used to reuse
+            # the number already on the cart, relabelling it under a regime it
+            # was never issued for — and that claim then drives tax and is
+            # frozen onto the order at completion.
+            before_action :require_kind_and_value!, only: :update
+
             # GET /api/v3/store/carts/:cart_id/tax_identifier
             #
             # The registration this cart will be taxed against — the override
@@ -68,6 +74,19 @@ module Spree
 
             def permitted_params
               params.permit(:kind, :value)
+            end
+
+            private
+
+            def require_kind_and_value!
+              missing = %i[kind value].select { |field| params[field].blank? }
+              return if missing.empty?
+
+              render_error(
+                code: ERROR_CODES[:parameter_missing],
+                message: "#{missing.join(' and ')} required — a registration is a kind and its number together",
+                status: :unprocessable_content
+              )
             end
           end
         end

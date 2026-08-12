@@ -12,6 +12,12 @@ module Spree
           class TaxIdentifiersController < Store::BaseController
             prepend_before_action :require_authentication!
 
+            # The singular endpoints address one registration, and a buyer can
+            # hold several. Without a kind, `first` picked whichever row the
+            # database happened to return — so a DELETE removed a registration
+            # the buyer never named and could not predict.
+            before_action :require_kind!, only: %i[show update destroy]
+
             # GET /api/v3/store/customers/me/tax_identifiers
             #
             # Everything the buyer could choose between at checkout. Small and
@@ -64,12 +70,18 @@ module Spree
 
             private
 
+            def require_kind!
+              return if params[:kind].present?
+
+              render_error(
+                code: ERROR_CODES[:parameter_missing],
+                message: 'kind is required — name the registration to read, replace or remove',
+                status: :unprocessable_content
+              )
+            end
+
             def tax_identifier
-              @tax_identifier ||= if params[:kind].present?
-                                    current_user.tax_identifiers.for_kind(params[:kind]).first
-                                  else
-                                    current_user.tax_identifiers.first
-                                  end
+              @tax_identifier ||= current_user.tax_identifiers.for_kind(params[:kind]).first
             end
           end
         end

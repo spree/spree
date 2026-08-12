@@ -19,14 +19,31 @@ RSpec.describe 'Store tax identifiers', type: :request do
       expect(response).to have_http_status(:ok)
       expect(user.tax_identifiers.count).to eq(1)
 
-      get '/api/v3/store/customers/me/tax_identifier', headers: headers, as: :json
+      get '/api/v3/store/customers/me/tax_identifier',
+          params: { kind: 'eu_vat' }, headers: headers, as: :json
       expect(JSON.parse(response.body)['value']).to eq('DE987654321')
 
-      delete '/api/v3/store/customers/me/tax_identifier', headers: headers, as: :json
+      delete '/api/v3/store/customers/me/tax_identifier',
+             params: { kind: 'eu_vat' }, headers: headers, as: :json
       expect(response).to have_http_status(:no_content)
 
-      get '/api/v3/store/customers/me/tax_identifier', headers: headers, as: :json
+      get '/api/v3/store/customers/me/tax_identifier',
+          params: { kind: 'eu_vat' }, headers: headers, as: :json
       expect(response).to have_http_status(:not_found)
+    end
+
+    # A buyer can hold several registrations, so the singular endpoints have to
+    # be told which one. Guessing meant a DELETE removed whichever row came back
+    # first — not the buyer's choice, and not predictable.
+    it 'refuses to guess which registration was meant' do
+      create(:tax_identifier, customer: user, kind: 'eu_vat', value: 'DE123456789')
+      create(:tax_identifier, customer: user, kind: 'gb_vat', value: 'GB123456789')
+
+      delete '/api/v3/store/customers/me/tax_identifier', headers: headers, as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(JSON.parse(response.body)['error']['code']).to eq('parameter_missing')
+      expect(user.tax_identifiers.count).to eq(2)
     end
   end
 
@@ -73,6 +90,25 @@ RSpec.describe 'Store tax identifiers', type: :request do
              headers: headers.merge('x-spree-token' => cart.token), as: :json
 
       expect(response).to have_http_status(:not_found)
+    end
+
+    # The claim this endpoint stores drives tax and is frozen onto the order at
+    # completion, so it must never be half-replaced: sending a new kind alone
+    # used to relabel the number already there under a regime it was not issued
+    # for.
+    it 'refuses to relabel the existing number under a new kind' do
+      create(:tax_identifier, customer: nil, cart: cart, kind: 'eu_vat', value: 'DE999999999')
+
+      put "/api/v3/store/carts/#{cart.prefixed_id}/tax_identifier",
+          params: { kind: 'gb_vat' },
+          headers: headers.merge('x-spree-token' => cart.token), as: :json
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(JSON.parse(response.body)['error']['code']).to eq('parameter_missing')
+
+      override = cart.reload.tax_identifier
+      expect(override.kind).to eq('eu_vat')
+      expect(override.value).to eq('DE999999999')
     end
 
     it 'is stored against the cart and read back' do
