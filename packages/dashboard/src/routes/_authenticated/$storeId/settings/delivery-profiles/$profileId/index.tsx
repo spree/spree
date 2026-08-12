@@ -552,7 +552,6 @@ function FlatZoneList({
   methods: DeliveryMethod[]
   onEditZone: (zoneId: string) => void
 }) {
-  const { t } = useTranslation()
   const unrestricted = methods.filter((method) => !method.delivery_zone_id)
 
   return (
@@ -566,15 +565,7 @@ function FlatZoneList({
         />
       ))}
 
-      {unrestricted.length > 0 && <UnrestrictedMethodsCard methods={unrestricted} />}
-
-      {zones.length === 0 && unrestricted.length === 0 && (
-        <Card>
-          <CardContent className="py-8 text-center text-muted-foreground text-sm">
-            {t('admin.delivery_profiles.detail.no_zones')}
-          </CardContent>
-        </Card>
-      )}
+      <UnrestrictedMethodsCard methods={unrestricted} />
     </>
   )
 }
@@ -680,13 +671,7 @@ function OriginGroupSection({
         />
       ))}
 
-      {unrestricted.length > 0 && <UnrestrictedMethodsCard methods={unrestricted} />}
-
-      {zones.length === 0 && unrestricted.length === 0 && (
-        <p className="py-4 text-center text-muted-foreground text-sm">
-          {t('admin.delivery_profiles.detail.no_zones')}
-        </p>
-      )}
+      <UnrestrictedMethodsCard methods={unrestricted} originGroupId={group.id} />
 
       {editing && (
         <DeliveryOriginGroupDialog
@@ -922,23 +907,50 @@ function ZoneCard({
   )
 }
 
-function UnrestrictedMethodsCard({ methods }: { methods: DeliveryMethod[] }) {
+/**
+ * Methods offered wherever the profile reaches. Always rendered, even empty:
+ * a profile with no zones would otherwise have nowhere to add a method from,
+ * and a carrier method that quotes worldwide never wants a zone at all.
+ */
+function UnrestrictedMethodsCard({
+  methods,
+  originGroupId,
+}: {
+  methods: DeliveryMethod[]
+  originGroupId?: string
+}) {
   const { t } = useTranslation()
+  const { openNewMethod } = useMethodSheetNavigation()
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <GlobeIcon className="size-4 text-muted-foreground" />
-          {t('admin.delivery_profiles.detail.no_zone_title')}
-        </CardTitle>
-        <span className="text-muted-foreground text-xs">
-          {t('admin.delivery_profiles.detail.no_zone_hint')}
-        </span>
+      <CardHeader className="flex flex-row items-start justify-between gap-2">
+        <div className="flex flex-col gap-1">
+          <CardTitle className="flex items-center gap-2">
+            <GlobeIcon className="size-4 text-muted-foreground" />
+            {t('admin.delivery_profiles.detail.no_zone_title')}
+          </CardTitle>
+          <span className="text-muted-foreground text-xs">
+            {t('admin.delivery_profiles.detail.no_zone_hint')}
+          </span>
+        </div>
+        <Can I="create" a={Subject.DeliveryMethod}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => openNewMethod({ group: originGroupId })}
+          >
+            <PlusIcon className="size-4" />
+            {t('admin.delivery_profiles.detail.add_method')}
+          </Button>
+        </Can>
       </CardHeader>
-      <CardContent>
-        <MethodList methods={methods} />
-      </CardContent>
+      {methods.length > 0 && (
+        <CardContent>
+          <MethodList methods={methods} />
+        </CardContent>
+      )}
     </Card>
   )
 }

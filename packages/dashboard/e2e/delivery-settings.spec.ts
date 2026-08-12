@@ -147,6 +147,40 @@ test.describe('delivery profiles', () => {
     await expect(sheet.getByText(/^zone$/i)).toHaveCount(0)
   })
 
+  // A profile with no zones still needs a way in: a method offered wherever
+  // the profile reaches, which is what a carrier quoting worldwide wants.
+  test('adds a method to a profile that has no zones', async ({ page }) => {
+    const creds = await login(page)
+    await gotoIndex(page, DELIVERY_PROFILES_PATH(creds.store_id), PROFILE_CTA)
+
+    const profileName = `E2E Zoneless Profile ${Date.now()}`
+    const methodName = `E2E Zoneless Method ${Date.now()}`
+
+    await page.getByRole('button', { name: PROFILE_CTA }).click()
+    await expect(page.getByRole('heading', { name: /new delivery profile/i })).toBeVisible()
+
+    await page.locator('#name').fill(profileName)
+    await page.getByRole('button', { name: /create profile/i }).click()
+
+    await expect(page.getByRole('heading', { name: profileName })).toBeVisible({ timeout: 15_000 })
+
+    await page
+      .getByRole('button', { name: /add method/i })
+      .first()
+      .click()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toBeVisible({
+      timeout: 15_000,
+    })
+
+    await page.getByRole('dialog').locator('#name').fill(methodName)
+    await page.getByRole('button', { name: /create delivery method/i }).click()
+
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0, {
+      timeout: 15_000,
+    })
+    await expect(page.getByText(methodName)).toBeVisible({ timeout: 15_000 })
+  })
+
   // The origin-group layer stays invisible until a profile is split, so this
   // covers both directions: splitting reveals the per-group sections, and
   // deleting the second group returns the page to its flat rendering.

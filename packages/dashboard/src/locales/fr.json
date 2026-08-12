@@ -472,8 +472,12 @@
       "cards": {
         "general": "Général",
         "pricing": "Tarification",
+        "estimate": "Estimation de livraison",
         "providers": "Prestataires",
         "zone": "Zone"
+      },
+      "estimate": {
+        "carrier_hint": "Le transporteur fournit sa propre estimation pour chaque tarif ; ces valeurs s'appliquent à défaut."
       },
       "carrier_services": {
         "add_service": "Ajouter un service",

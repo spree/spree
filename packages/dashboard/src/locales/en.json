@@ -472,8 +472,12 @@
       "cards": {
         "general": "General",
         "pricing": "Pricing",
+        "estimate": "Delivery estimate",
         "providers": "Providers",
         "zone": "Zone"
+      },
+      "estimate": {
+        "carrier_hint": "The carrier supplies its own estimate for each rate; these apply when it does not."
       },
       "carrier_services": {
         "add_service": "Add service",

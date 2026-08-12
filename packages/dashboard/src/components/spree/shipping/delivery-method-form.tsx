@@ -19,10 +19,6 @@ import {
 } from '@spree/dashboard-core'
 import {
   Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   Checkbox,
   DropdownMenu,
   DropdownMenuContent,
@@ -114,13 +110,44 @@ function useSelectedFulfillmentProvider(form: UseFormReturn<DeliveryMethodFormVa
 }
 
 /**
- * Every card of the delivery method page, in the order a merchant fills them:
- * what the method is, who fulfills and prices it, which services it offers,
- * what it costs, where it applies, and when it is eligible.
+ * One block of the method form. The form lives in a sheet, which is already a
+ * bordered surface — nesting cards inside it stacks three borders around every
+ * field, so sections are separated by a rule and a heading instead.
+ */
+function FormSection({
+  title,
+  description,
+  action,
+  children,
+}: {
+  title: string
+  description?: string
+  action?: React.ReactNode
+  children: React.ReactNode
+}) {
+  return (
+    <section className="flex flex-col gap-4 border-t pt-6 first:border-t-0 first:pt-0">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-col gap-0.5">
+          <h3 className="font-medium text-sm">{title}</h3>
+          {description && <p className="text-muted-foreground text-xs">{description}</p>}
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
+  )
+}
+
+/**
+ * Every section of the delivery method form, in the order a merchant answers
+ * them: who fulfills and prices it (which decides what the rest even asks),
+ * what it is called, which services it offers, what it costs, where it
+ * applies, how long it takes, and when it is eligible.
  *
  * Zones and carrier services are destination concerns, so a method collected
  * at a counter or delivered digitally shows neither — pickup gets the counters
- * it can be collected from instead. The zone card also disappears when the
+ * it can be collected from instead. The zone section also disappears when the
  * merchant started from a zone: it is answered already.
  */
 export function DeliveryMethodFormCards({
@@ -134,16 +161,78 @@ export function DeliveryMethodFormCards({
   const isDigital = !!selectedProvider?.digital
   const shipsToAddress = !isPickup && !isDigital
 
+  // The provider decides what kind of method this is — which sections even
+  // apply — so it is asked first and names the method on the way past.
   return (
     <>
-      <GeneralCard form={form} />
       <ProvidersCard form={form} profile={profile} />
+      <GeneralCard form={form} />
       {shipsToAddress && <CarrierServicesCard form={form} />}
       <PricingCard form={form} />
       {isPickup && <CollectionLocationsCard form={form} />}
       {shipsToAddress && !zonePreselected && <ZoneCard form={form} zones={zones} />}
+      <DeliveryEstimateSection form={form} />
       <ConditionsCard form={form} />
     </>
+  )
+}
+
+/**
+ * What the customer is told about timing, and where a hand-entered tracking
+ * number points. Both are the merchant's own estimates on a method they
+ * price themselves; a carrier method gets these from the carrier, so they
+ * sit apart from the method's identity.
+ */
+function DeliveryEstimateSection({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }) {
+  const { t } = useTranslation()
+  const selectedRateProvider = useSelectedRateProvider(form)
+  const carrierPriced = selectedRateProvider?.uses_calculator === false
+
+  return (
+    <FormSection
+      title={t('admin.delivery_methods.cards.estimate')}
+      description={carrierPriced ? t('admin.delivery_methods.estimate.carrier_hint') : undefined}
+    >
+      <div className="grid grid-cols-2 gap-3">
+        <Field>
+          <FieldLabel htmlFor="estimated_transit_business_days_min">
+            {t('admin.fields.delivery_method.transit_days_min.label')}
+          </FieldLabel>
+          <Input
+            id="estimated_transit_business_days_min"
+            type="number"
+            min="1"
+            {...form.register('estimated_transit_business_days_min')}
+          />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="estimated_transit_business_days_max">
+            {t('admin.fields.delivery_method.transit_days_max.label')}
+          </FieldLabel>
+          <Input
+            id="estimated_transit_business_days_max"
+            type="number"
+            min="1"
+            {...form.register('estimated_transit_business_days_max')}
+          />
+        </Field>
+      </div>
+
+      {/* A carrier provider resolves its own tracking links, so the template
+          would never be read on one of its fulfillments. */}
+      {!carrierPriced && (
+        <Field>
+          <FieldLabel htmlFor="tracking_url">
+            {t('admin.fields.delivery_method.tracking_url.label')}
+          </FieldLabel>
+          <Input
+            id="tracking_url"
+            placeholder="https://carrier.example/track?num=:tracking"
+            {...form.register('tracking_url')}
+          />
+        </Field>
+      )}
+    </FormSection>
   )
 }
 
@@ -171,33 +260,28 @@ function CollectionLocationsCard({ form }: { form: UseFormReturn<DeliveryMethodF
   }, [selectedIds.length])
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.delivery_methods.collection_locations.title')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <Controller
-          name="stock_location_ids"
-          control={form.control}
-          render={({ field }) => (
-            <StockLocationScopeField
-              idPrefix="collection"
-              scope={scope}
-              onScopeChange={(next) => {
-                setScope(next)
-                if (next === 'all') field.onChange([])
-              }}
-              locations={locations}
-              selectedIds={field.value ?? []}
-              onSelectedIdsChange={field.onChange}
-              allLabel={t('admin.delivery_methods.collection_locations.all')}
-              selectedLabel={t('admin.delivery_methods.collection_locations.specific')}
-              emptyLabel={t('admin.delivery_methods.collection_locations.none_enabled')}
-            />
-          )}
-        />
-      </CardContent>
-    </Card>
+    <FormSection title={t('admin.delivery_methods.collection_locations.title')}>
+      <Controller
+        name="stock_location_ids"
+        control={form.control}
+        render={({ field }) => (
+          <StockLocationScopeField
+            idPrefix="collection"
+            scope={scope}
+            onScopeChange={(next) => {
+              setScope(next)
+              if (next === 'all') field.onChange([])
+            }}
+            locations={locations}
+            selectedIds={field.value ?? []}
+            onSelectedIdsChange={field.onChange}
+            allLabel={t('admin.delivery_methods.collection_locations.all')}
+            selectedLabel={t('admin.delivery_methods.collection_locations.specific')}
+            emptyLabel={t('admin.delivery_methods.collection_locations.none_enabled')}
+          />
+        )}
+      />
+    </FormSection>
   )
 }
 
@@ -206,11 +290,8 @@ function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
   const { errors } = form.formState
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.delivery_methods.cards.general')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+    <FormSection title={t('admin.delivery_methods.cards.general')}>
+      <>
         {errors.root?.message && (
           <p className="text-sm text-destructive" role="alert">
             {errors.root.message}
@@ -240,42 +321,6 @@ function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
           </Field>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field>
-            <FieldLabel htmlFor="estimated_transit_business_days_min">
-              {t('admin.fields.delivery_method.transit_days_min.label')}
-            </FieldLabel>
-            <Input
-              id="estimated_transit_business_days_min"
-              type="number"
-              min="1"
-              {...form.register('estimated_transit_business_days_min')}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="estimated_transit_business_days_max">
-              {t('admin.fields.delivery_method.transit_days_max.label')}
-            </FieldLabel>
-            <Input
-              id="estimated_transit_business_days_max"
-              type="number"
-              min="1"
-              {...form.register('estimated_transit_business_days_max')}
-            />
-          </Field>
-        </div>
-
-        <Field>
-          <FieldLabel htmlFor="tracking_url">
-            {t('admin.fields.delivery_method.tracking_url.label')}
-          </FieldLabel>
-          <Input
-            id="tracking_url"
-            placeholder="https://carrier.example/track?num=:tracking"
-            {...form.register('tracking_url')}
-          />
-        </Field>
-
         <Field>
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col">
@@ -299,8 +344,8 @@ function GeneralCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
             />
           </div>
         </Field>
-      </CardContent>
-    </Card>
+      </>
+    </FormSection>
   )
 }
 
@@ -495,71 +540,79 @@ function ProvidersCard({
     form.setValue('rate_provider', defaultRateProvider)
   }, [defaultRateProvider, rateProvider, rateProviderDirty, form])
 
+  // Picking a carrier answers what to call the method — the merchant would
+  // type the carrier's name anyway. Only ever fills a blank name, so an
+  // existing method and a merchant who has typed one are left alone.
+  const nameDirty = !!form.formState.dirtyFields.name
+  const carrierName = (rateProviders?.data ?? []).find(
+    (provider) => provider.type === rateProvider && provider.uses_calculator === false,
+  )?.name
+  useEffect(() => {
+    if (!carrierName || nameDirty || form.getValues('name')) return
+
+    form.setValue('name', carrierName)
+  }, [carrierName, nameDirty, form])
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.delivery_methods.cards.providers')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+    <FormSection title={t('admin.delivery_methods.cards.providers')}>
+      <ProviderSelectField
+        form={form}
+        name="fulfillment_provider"
+        label={t('admin.fields.delivery_method.fulfillment_provider.label')}
+        help={t('admin.fields.delivery_method.fulfillment_provider.help')}
+        options={providerOptions}
+      />
+
+      {/* A carrier can only quote a shipment it can address, so a pickup or
+            digital method has no rate provider to choose between. */}
+      {shipsToAddress && (
         <ProviderSelectField
           form={form}
-          name="fulfillment_provider"
-          label={t('admin.fields.delivery_method.fulfillment_provider.label')}
-          help={t('admin.fields.delivery_method.fulfillment_provider.help')}
-          options={providerOptions}
+          name="rate_provider"
+          label={t('admin.fields.delivery_method.rate_provider.label')}
+          help={t('admin.fields.delivery_method.rate_provider.help')}
+          options={rateProviderOptions}
         />
+      )}
 
-        {/* A carrier can only quote a shipment it can address, so a pickup or
-            digital method has no rate provider to choose between. */}
-        {shipsToAddress && (
-          <ProviderSelectField
-            form={form}
-            name="rate_provider"
-            label={t('admin.fields.delivery_method.rate_provider.label')}
-            help={t('admin.fields.delivery_method.rate_provider.help')}
-            options={rateProviderOptions}
-          />
-        )}
+      {connectableIntegrations.map((integrationType) => (
+        <div
+          key={integrationType.type}
+          className="flex items-center justify-between gap-3 rounded-md border border-dashed p-3"
+        >
+          <span className="text-sm text-muted-foreground">
+            {t('admin.delivery_methods.connect_provider_hint', { name: integrationType.name })}
+          </span>
+          <Can I="create" a={Subject.Integration}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setConnectingType(integrationType)}
+            >
+              {t('admin.integrations.connect_cta')}
+            </Button>
+          </Can>
+        </div>
+      ))}
 
-        {connectableIntegrations.map((integrationType) => (
-          <div
-            key={integrationType.type}
-            className="flex items-center justify-between gap-3 rounded-md border border-dashed p-3"
-          >
-            <span className="text-sm text-muted-foreground">
-              {t('admin.delivery_methods.connect_provider_hint', { name: integrationType.name })}
-            </span>
-            <Can I="create" a={Subject.Integration}>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setConnectingType(integrationType)}
-              >
-                {t('admin.integrations.connect_cta')}
-              </Button>
-            </Can>
-          </div>
-        ))}
-
-        {connectingType && (
-          <ConfigureIntegrationSheet
-            type={connectingType}
-            open
-            onOpenChange={(next) => {
-              if (next) return
-              setJustConnected(connectingType.type)
-              setConnectingType(null)
-              // Provider lists are cached for half an hour — a fresh connect
-              // must surface the provider in both selects immediately.
-              queryClient.invalidateQueries({ queryKey: rateProvidersKey })
-              queryClient.invalidateQueries({ queryKey: fulfillmentProvidersKey })
-              queryClient.invalidateQueries({ queryKey: integrationsKey })
-            }}
-          />
-        )}
-      </CardContent>
-    </Card>
+      {connectingType && (
+        <ConfigureIntegrationSheet
+          type={connectingType}
+          open
+          onOpenChange={(next) => {
+            if (next) return
+            setJustConnected(connectingType.type)
+            setConnectingType(null)
+            // Provider lists are cached for half an hour — a fresh connect
+            // must surface the provider in both selects immediately.
+            queryClient.invalidateQueries({ queryKey: rateProvidersKey })
+            queryClient.invalidateQueries({ queryKey: fulfillmentProvidersKey })
+            queryClient.invalidateQueries({ queryKey: integrationsKey })
+          }}
+        />
+      )}
+    </FormSection>
   )
 }
 
@@ -631,146 +684,141 @@ function CarrierServicesCard({ form }: { form: UseFormReturn<DeliveryMethodFormV
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.delivery_methods.carrier_services.label')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {catalogError && (
-          <p className="rounded-md bg-muted p-2 text-xs text-muted-foreground">
-            {t('admin.delivery_methods.carrier_services.catalog_unavailable', {
-              message: catalogError,
-            })}
-          </p>
-        )}
+    <FormSection title={t('admin.delivery_methods.carrier_services.label')}>
+      {catalogError && (
+        <p className="rounded-md bg-muted p-2 text-xs text-muted-foreground">
+          {t('admin.delivery_methods.carrier_services.catalog_unavailable', {
+            message: catalogError,
+          })}
+        </p>
+      )}
 
-        <RadioGroup
-          value={scope}
-          onValueChange={(next) => {
-            const value = next as 'all' | 'selected'
-            setScope(value)
-            // Offering everything is the absence of rows, so switching back
-            // clears them rather than leaving a hidden narrowing behind.
-            if (value === 'all') form.setValue('services', [], { shouldDirty: true })
-          }}
-        >
-          <label htmlFor="services-all" className="flex items-center gap-2 text-sm">
-            <RadioGroupItem id="services-all" value="all" />
-            {t('admin.delivery_methods.carrier_services.offer_all')}
-          </label>
-          <label htmlFor="services-selected" className="flex items-center gap-2 text-sm">
-            <RadioGroupItem id="services-selected" value="selected" />
-            {t('admin.delivery_methods.carrier_services.choose_specific')}
-          </label>
-        </RadioGroup>
+      <RadioGroup
+        value={scope}
+        onValueChange={(next) => {
+          const value = next as 'all' | 'selected'
+          setScope(value)
+          // Offering everything is the absence of rows, so switching back
+          // clears them rather than leaving a hidden narrowing behind.
+          if (value === 'all') form.setValue('services', [], { shouldDirty: true })
+        }}
+      >
+        <label htmlFor="services-all" className="flex items-center gap-2 text-sm">
+          <RadioGroupItem id="services-all" value="all" />
+          {t('admin.delivery_methods.carrier_services.offer_all')}
+        </label>
+        <label htmlFor="services-selected" className="flex items-center gap-2 text-sm">
+          <RadioGroupItem id="services-selected" value="selected" />
+          {t('admin.delivery_methods.carrier_services.choose_specific')}
+        </label>
+      </RadioGroup>
 
-        <span className="text-muted-foreground text-xs">
-          {scope === 'all'
-            ? t('admin.delivery_methods.carrier_services.all_hint')
-            : t('admin.delivery_methods.carrier_services.narrowed_hint', { count: rows.length })}
-        </span>
+      <span className="text-muted-foreground text-xs">
+        {scope === 'all'
+          ? t('admin.delivery_methods.carrier_services.all_hint')
+          : t('admin.delivery_methods.carrier_services.narrowed_hint', { count: rows.length })}
+      </span>
 
-        {scope === 'selected' &&
-          (catalog.length > 0 ? (
-            <div className="flex flex-col gap-1">
-              {catalog.map((entry) => {
-                const index = rowIndex(entry)
-                const checked = index >= 0
-                const key = `${entry.carrier}/${entry.service}`
-                return (
-                  <div key={key} className="flex items-center justify-between gap-2 py-1">
-                    <label htmlFor={`service-${key}`} className="flex items-center gap-2 text-sm">
-                      <Checkbox
-                        id={`service-${key}`}
-                        checked={checked}
-                        onCheckedChange={(next) => toggleEntry(entry, !!next)}
-                      />
-                      {entry.label}
-                    </label>
-                    {checked && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={t('admin.delivery_methods.carrier_services.edit_service', {
-                          service: entry.label,
-                        })}
-                        onClick={() => setEditingIndex(index)}
-                      >
-                        <PencilIcon className="size-4" />
-                      </Button>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {servicesArray.fields.map((row, index) => (
-                <div key={row._key} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2">
-                  <Input
-                    aria-label={t('admin.delivery_methods.carrier_services.carrier')}
-                    placeholder={t('admin.delivery_methods.carrier_services.carrier')}
-                    {...form.register(`services.${index}.carrier`)}
-                  />
-                  <Input
-                    aria-label={t('admin.delivery_methods.carrier_services.service')}
-                    placeholder={t('admin.delivery_methods.carrier_services.service')}
-                    {...form.register(`services.${index}.service`)}
-                  />
-                  <Input
-                    aria-label={t('admin.fields.delivery_method.service_label.label')}
-                    placeholder={t('admin.fields.delivery_method.service_label.label')}
-                    {...form.register(`services.${index}.label`)}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={t('admin.actions.remove')}
-                    onClick={() => servicesArray.remove(index)}
-                  >
-                    <Trash2Icon className="size-4" />
-                  </Button>
+      {scope === 'selected' &&
+        (catalog.length > 0 ? (
+          <div className="flex flex-col gap-1">
+            {catalog.map((entry) => {
+              const index = rowIndex(entry)
+              const checked = index >= 0
+              const key = `${entry.carrier}/${entry.service}`
+              return (
+                <div key={key} className="flex items-center justify-between gap-2 py-1">
+                  <label htmlFor={`service-${key}`} className="flex items-center gap-2 text-sm">
+                    <Checkbox
+                      id={`service-${key}`}
+                      checked={checked}
+                      onCheckedChange={(next) => toggleEntry(entry, !!next)}
+                    />
+                    {entry.label}
+                  </label>
+                  {checked && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={t('admin.delivery_methods.carrier_services.edit_service', {
+                        service: entry.label,
+                      })}
+                      onClick={() => setEditingIndex(index)}
+                    >
+                      <PencilIcon className="size-4" />
+                    </Button>
+                  )}
                 </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="self-start"
-                onClick={() =>
-                  servicesArray.append({
-                    carrier: '',
-                    service: '',
-                    label: '',
-                    markup_flat: '',
-                    markup_percent: '',
-                  })
-                }
-              >
-                <PlusIcon className="size-4" />
-                {t('admin.delivery_methods.carrier_services.add_service')}
-              </Button>
-            </div>
-          ))}
+              )
+            })}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {servicesArray.fields.map((row, index) => (
+              <div key={row._key} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2">
+                <Input
+                  aria-label={t('admin.delivery_methods.carrier_services.carrier')}
+                  placeholder={t('admin.delivery_methods.carrier_services.carrier')}
+                  {...form.register(`services.${index}.carrier`)}
+                />
+                <Input
+                  aria-label={t('admin.delivery_methods.carrier_services.service')}
+                  placeholder={t('admin.delivery_methods.carrier_services.service')}
+                  {...form.register(`services.${index}.service`)}
+                />
+                <Input
+                  aria-label={t('admin.fields.delivery_method.service_label.label')}
+                  placeholder={t('admin.fields.delivery_method.service_label.label')}
+                  {...form.register(`services.${index}.label`)}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={t('admin.actions.remove')}
+                  onClick={() => servicesArray.remove(index)}
+                >
+                  <Trash2Icon className="size-4" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="self-start"
+              onClick={() =>
+                servicesArray.append({
+                  carrier: '',
+                  service: '',
+                  label: '',
+                  markup_flat: '',
+                  markup_percent: '',
+                })
+              }
+            >
+              <PlusIcon className="size-4" />
+              {t('admin.delivery_methods.carrier_services.add_service')}
+            </Button>
+          </div>
+        ))}
 
-        {editingIndex !== null && (
-          <ServiceOverridesSheet
-            form={form}
-            index={editingIndex}
-            label={
-              catalog.find(
-                (entry) =>
-                  entry.carrier === rows[editingIndex]?.carrier &&
-                  entry.service === rows[editingIndex]?.service,
-              )?.label ?? rows[editingIndex]?.service
-            }
-            onClose={() => setEditingIndex(null)}
-          />
-        )}
-      </CardContent>
-    </Card>
+      {editingIndex !== null && (
+        <ServiceOverridesSheet
+          form={form}
+          index={editingIndex}
+          label={
+            catalog.find(
+              (entry) =>
+                entry.carrier === rows[editingIndex]?.carrier &&
+                entry.service === rows[editingIndex]?.service,
+            )?.label ?? rows[editingIndex]?.service
+          }
+          onClose={() => setEditingIndex(null)}
+        />
+      )}
+    </FormSection>
   )
 }
 
@@ -968,122 +1016,117 @@ function PricingCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues> }
   ]
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.delivery_methods.cards.pricing')}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {usesCalculator ? (
-          <>
-            <Field>
-              <FieldLabel>{t('admin.fields.delivery_method.calculator.label')}</FieldLabel>
-              <Controller
-                name="calculator_type"
-                control={form.control}
-                render={({ field }) => (
-                  <Select
-                    items={calculatorOptions}
-                    value={field.value ?? ''}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {calculatorOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </Field>
-
+    <FormSection title={t('admin.delivery_methods.cards.pricing')}>
+      {usesCalculator ? (
+        <>
+          <Field>
+            <FieldLabel>{t('admin.fields.delivery_method.calculator.label')}</FieldLabel>
             <Controller
-              name="calculator_preferences"
+              name="calculator_type"
               control={form.control}
               render={({ field }) => (
-                <>
-                  {amountBased && (
-                    <CurrencyAmountsField
-                      values={(field.value ?? {}) as Record<string, unknown>}
-                      onChange={field.onChange}
-                    />
-                  )}
-                  <PreferencesForm
-                    schema={genericSchema}
+                <Select
+                  items={calculatorOptions}
+                  value={field.value ?? ''}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {calculatorOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </Field>
+
+          <Controller
+            name="calculator_preferences"
+            control={form.control}
+            render={({ field }) => (
+              <>
+                {amountBased && (
+                  <CurrencyAmountsField
                     values={(field.value ?? {}) as Record<string, unknown>}
                     onChange={field.onChange}
                   />
-                </>
-              )}
-            />
-          </>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 gap-3">
-              <Field>
-                <FieldLabel htmlFor="markup_percent">
-                  {t('admin.fields.delivery_method.markup_percent.label')}
-                </FieldLabel>
-                <Input
-                  id="markup_percent"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0"
-                  {...form.register('markup_percent')}
+                )}
+                <PreferencesForm
+                  schema={genericSchema}
+                  values={(field.value ?? {}) as Record<string, unknown>}
+                  onChange={field.onChange}
                 />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="markup_flat">
-                  {t('admin.fields.delivery_method.markup_flat.label')}
-                </FieldLabel>
-                <Input
-                  id="markup_flat"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0"
-                  {...form.register('markup_flat')}
-                />
-              </Field>
-            </div>
-            <span className="text-xs text-muted-foreground">
-              {t('admin.fields.delivery_method.markup_percent.help')}
-            </span>
-          </>
-        )}
-
-        <Field>
-          <FieldLabel>{t('admin.fields.delivery_method.tax_category.label')}</FieldLabel>
-          <Controller
-            name="tax_category_id"
-            control={form.control}
-            render={({ field }) => (
-              <Select
-                items={taxCategoryOptions}
-                value={field.value ?? ''}
-                onValueChange={field.onChange}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {taxCategoryOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              </>
             )}
           />
-        </Field>
-      </CardContent>
-    </Card>
+        </>
+      ) : (
+        <>
+          <div className="grid grid-cols-2 gap-3">
+            <Field>
+              <FieldLabel htmlFor="markup_percent">
+                {t('admin.fields.delivery_method.markup_percent.label')}
+              </FieldLabel>
+              <Input
+                id="markup_percent"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0"
+                {...form.register('markup_percent')}
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="markup_flat">
+                {t('admin.fields.delivery_method.markup_flat.label')}
+              </FieldLabel>
+              <Input
+                id="markup_flat"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0"
+                {...form.register('markup_flat')}
+              />
+            </Field>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            {t('admin.fields.delivery_method.markup_percent.help')}
+          </span>
+        </>
+      )}
+
+      <Field>
+        <FieldLabel>{t('admin.fields.delivery_method.tax_category.label')}</FieldLabel>
+        <Controller
+          name="tax_category_id"
+          control={form.control}
+          render={({ field }) => (
+            <Select
+              items={taxCategoryOptions}
+              value={field.value ?? ''}
+              onValueChange={field.onChange}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {taxCategoryOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+      </Field>
+    </FormSection>
   )
 }
 
@@ -1106,37 +1149,32 @@ function ZoneCard({
   ]
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('admin.delivery_methods.cards.zone')}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Field>
-          <FieldLabel>{t('admin.fields.delivery_method.delivery_zone.label')}</FieldLabel>
-          <Controller
-            name="delivery_zone_id"
-            control={form.control}
-            render={({ field }) => (
-              <Select items={zoneOptions} value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {zoneOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          <span className="text-muted-foreground text-xs">
-            {t('admin.fields.delivery_method.delivery_zone.help')}
-          </span>
-        </Field>
-      </CardContent>
-    </Card>
+    <FormSection title={t('admin.delivery_methods.cards.zone')}>
+      <Field>
+        <FieldLabel>{t('admin.fields.delivery_method.delivery_zone.label')}</FieldLabel>
+        <Controller
+          name="delivery_zone_id"
+          control={form.control}
+          render={({ field }) => (
+            <Select items={zoneOptions} value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {zoneOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        <span className="text-muted-foreground text-xs">
+          {t('admin.fields.delivery_method.delivery_zone.help')}
+        </span>
+      </Field>
+    </FormSection>
   )
 }
 
@@ -1153,10 +1191,10 @@ function ConditionsCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues
   const availableTypes = (ruleTypes?.data ?? []).filter((type) => !existingTypes.has(type.type))
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between gap-2">
-        <CardTitle>{t('admin.delivery_methods.conditions.title')}</CardTitle>
-        {availableTypes.length > 0 && (
+    <FormSection
+      title={t('admin.delivery_methods.conditions.title')}
+      action={
+        availableTypes.length > 0 && (
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
@@ -1184,9 +1222,10 @@ function ConditionsCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-        )}
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3">
+        )
+      }
+    >
+      <div className="flex flex-col gap-3">
         {rulesArray.fields.length === 0 && (
           <p className="text-muted-foreground text-sm">
             {t('admin.delivery_methods.conditions.empty')}
@@ -1203,8 +1242,8 @@ function ConditionsCard({ form }: { form: UseFormReturn<DeliveryMethodFormValues
             onRemove={() => rulesArray.remove(index)}
           />
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </FormSection>
   )
 }
 

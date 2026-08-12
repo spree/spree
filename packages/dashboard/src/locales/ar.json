@@ -472,8 +472,12 @@
       "cards": {
         "general": "عام",
         "pricing": "التسعير",
+        "estimate": "تقدير التسليم",
         "providers": "المزوّدون",
         "zone": "المنطقة"
+      },
+      "estimate": {
+        "carrier_hint": "توفّر شركة الشحن تقديرها الخاص لكل سعر؛ وتُستخدم هذه القيم عند عدم توفّره."
       },
       "carrier_services": {
         "add_service": "إضافة خدمة",

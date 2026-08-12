@@ -480,8 +480,12 @@
       "cards": {
         "general": "Ogólne",
         "pricing": "Ceny",
+        "estimate": "Szacowana dostawa",
         "providers": "Dostawcy",
         "zone": "Strefa"
+      },
+      "estimate": {
+        "carrier_hint": "Przewoźnik podaje własne szacunki dla każdej stawki; te wartości obowiązują, gdy ich nie poda."
       },
       "carrier_services": {
         "add_service": "Dodaj usługę",

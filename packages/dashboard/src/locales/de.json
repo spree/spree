@@ -472,8 +472,12 @@
       "cards": {
         "general": "Allgemein",
         "pricing": "Preisgestaltung",
+        "estimate": "Lieferschätzung",
         "providers": "Anbieter",
         "zone": "Zone"
+      },
+      "estimate": {
+        "carrier_hint": "Der Versanddienstleister liefert für jeden Tarif eine eigene Schätzung; diese Werte gelten, wenn er keine liefert."
       },
       "carrier_services": {
         "add_service": "Service hinzufügen",

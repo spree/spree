@@ -472,8 +472,12 @@
       "cards": {
         "general": "基本信息",
         "pricing": "价格",
+        "estimate": "预计送达",
         "providers": "服务商",
         "zone": "区域"
+      },
+      "estimate": {
+        "carrier_hint": "承运商会为每个费率提供自己的预计时间;仅在其未提供时使用这些值。"
       },
       "carrier_services": {
         "add_service": "添加服务",
