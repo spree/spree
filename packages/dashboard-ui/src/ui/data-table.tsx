@@ -131,19 +131,18 @@ function Table({ className, children, stickyHeader = false, ...props }: TablePro
           {cloneElement(headerElement, {
             // The sizer: reserves the header row and drives column widths. It
             // stays in the accessibility tree, because this is the table that
-            // holds the data rows — hiding it would leave every cell with no
-            // column header to resolve against. So rather than hiding the row,
-            // hide what it draws: `text-transparent` for the labels (which are
-            // bare text nodes on the cells) and `invisible` for any control
-            // inside a cell, which also takes those out of hit-testing and the
-            // tab order. The `th` cells keep announcing their names, and the
-            // pinned copy above is the one the user sees and clicks.
-            // `[&_th]:` so this beats the colour `TableHead` sets on the cell
-            // itself; a bare `text-transparent` here loses to it and the sizer
-            // labels show through under the pinned copy. `[&>tr]:!static`
-            // cancels the sticky positioning the header row carries for the
-            // plain table — here it would lift this row out of flow and let the
-            // first data row slide underneath the pinned header.
+            // holds the data rows — hiding it outright would leave every cell
+            // with no column header to resolve against. So hide what it draws
+            // rather than the row itself, one concern per utility:
+            //   `[&_th]:text-transparent` — the labels, which are bare text on
+            //     the cells, so this has to out-specify the colour `TableHead`
+            //     sets there.
+            //   `[&_th>*]:invisible` — any control in a cell, which also drops
+            //     it from hit-testing and the tab order.
+            //   `[&>tr]:!static` — the sticky positioning the header row
+            //     carries for the plain table, which here would lift this row
+            //     out of flow and let the first data row slide up under the
+            //     pinned copy.
             className: cn(
               headerElement.props.className,
               'select-none [&>tr]:!static [&_th]:text-transparent [&_th>*]:invisible',
