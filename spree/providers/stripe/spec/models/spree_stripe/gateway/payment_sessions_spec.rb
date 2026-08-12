@@ -80,7 +80,7 @@ RSpec.describe SpreeStripe::Gateway::PaymentSessions do
 
     it 'raises a GatewayError when amount is zero' do
       allow(order).to receive(:total_minus_store_credits).and_return(0)
-      expect { subject }.to raise_error(Spree::Core::GatewayError, I18n.t('spree.stripe.payment_session_errors.zero_amount'))
+      expect { subject }.to raise_error(Spree::Core::GatewayError, Spree.t('stripe.payment_session_errors.zero_amount'))
     end
 
     context 'when the owner is a cart' do
