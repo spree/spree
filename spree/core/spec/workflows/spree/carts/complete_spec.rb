@@ -127,6 +127,11 @@ module Spree
             line_item.reload.update!(tax_category: tax_category)
           end
           ready_cart.recalculate_totals!
+
+          # The factory sized the payment before this tax existed, so the cart is
+          # now a pound short and completion would stop at payment processing —
+          # which reads here as "the order has no tax rows".
+          ready_cart.payments.first.update!(amount: ready_cart.reload.total)
         end
 
         # Queried directly rather than through order.tax_lines: the association
@@ -138,16 +143,22 @@ module Spree
         it 'gives the order exactly one tax row per taxed line item' do
           expect(ready_cart.tax_lines.reload.where.not(line_item_id: nil).count).to eq(1)
 
-          order = described_class.call(cart: ready_cart).value
-          rows = order_rows(order).where.not(line_item_id: nil)
+          result = described_class.call(cart: ready_cart)
+          # Asserted explicitly: a failed completion returns the cart, and every
+          # row assertion below would then read zero for the wrong reason.
+          expect(result).to be_success
+
+          rows = order_rows(result.value).where.not(line_item_id: nil)
 
           expect(rows.count).to eq(1)
           expect(rows.pluck(:line_item_id).uniq.length).to eq(1)
         end
 
         it 'keeps the summed rows equal to the order additional tax total' do
-          order = described_class.call(cart: ready_cart).value
+          result = described_class.call(cart: ready_cart)
+          expect(result).to be_success
 
+          order = result.value
           expect(order_rows(order).sum(:amount)).to eq(order.additional_tax_total)
         end
       end
