@@ -739,6 +739,7 @@
       "toggle_states": "Afficher les régions de {{country}}"
     },
     "digital_assets": {
+      "add": "Ajouter",
       "all_variants": "Toutes les variantes",
       "columns": {
         "file": "Fichier",
@@ -754,6 +755,9 @@
       "empty": "Aucun fichier pour le moment",
       "limit_invalid": "Les limites doivent être des entiers supérieurs ou égaux à 1, ou vides.",
       "limits_help": "Laissez les limites de téléchargements et de jours vides pour utiliser les paramètres de la boutique.",
+      "source": {
+        "upload": "Téléverser un fichier"
+      },
       "store_default": "{{count}} (par défaut)",
       "title": "Fichiers numériques",
       "untitled": "Fichier sans nom",

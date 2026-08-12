@@ -739,6 +739,7 @@
       "toggle_states": "Bundesländer von {{country}} anzeigen"
     },
     "digital_assets": {
+      "add": "Hinzufügen",
       "all_variants": "Alle Varianten",
       "columns": {
         "file": "Datei",
@@ -754,6 +755,9 @@
       "empty": "Noch keine Dateien",
       "limit_invalid": "Limits müssen ganze Zahlen ab 1 sein oder leer bleiben.",
       "limits_help": "Lassen Sie die Download- und Tageslimits leer, um die Einstellungen des Shops zu verwenden.",
+      "source": {
+        "upload": "Datei hochladen"
+      },
       "store_default": "{{count}} (Shop-Standard)",
       "title": "Digitale Dateien",
       "untitled": "Unbenannte Datei",

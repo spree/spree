@@ -739,6 +739,7 @@
       "toggle_states": "Show states of {{country}}"
     },
     "digital_assets": {
+      "add": "Add",
       "all_variants": "All variants",
       "columns": {
         "file": "File",
@@ -754,6 +755,9 @@
       "empty": "No files yet",
       "limit_invalid": "Limits must be whole numbers of 1 or more, or blank.",
       "limits_help": "Leave the download and day limits blank to use the store's settings.",
+      "source": {
+        "upload": "Upload a file"
+      },
       "store_default": "{{count}} (store default)",
       "title": "Digital files",
       "untitled": "Untitled file",
