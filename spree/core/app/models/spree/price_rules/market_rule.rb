@@ -26,6 +26,10 @@ module Spree
         preferred_market_ids.map(&:to_s).include?(context.market.id.to_s)
       end
 
+      def geographic?
+        true
+      end
+
       def self.description
         'Apply pricing based on the market'
       end

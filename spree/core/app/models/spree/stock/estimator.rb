@@ -58,7 +58,8 @@ module Spree
         {
           tax_category: delivery_method.tax_category,
           address: @order.tax_address,
-          country: @order.tax_country
+          country: @order.tax_country,
+          market: @order.market
         }
       end
 

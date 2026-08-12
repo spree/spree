@@ -168,6 +168,19 @@ module Spree
           expect(subject.store).to eq(order.store)
         end
 
+        it "sets market from the order, not from Spree::Current" do
+          other_market = create(:market, store: order.store, name: "Elsewhere #{Time.current.to_f}",
+                                         currency: order.currency, default_locale: 'en')
+          Spree::Current.market = other_market
+
+          # Pricing a cart line must follow the cart's own market, or the same cart
+          # prices differently between requests depending on the country hint.
+          expect(subject.market).to eq(order.market)
+          expect(subject.market).not_to eq(other_market)
+        ensure
+          Spree::Current.market = nil
+        end
+
         it 'sets user from order' do
           expect(subject.user).to eq(order.user)
         end

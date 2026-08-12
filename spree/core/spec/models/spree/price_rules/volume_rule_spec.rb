@@ -55,4 +55,10 @@ describe Spree::PriceRules::VolumeRule, type: :model do
       expect(rule.applicable?(context)).to be false
     end
   end
+  describe '#geographic?' do
+    it 'is false' do
+      # Narrowed by quantity, not by a country — its prices still restate.
+      expect(described_class.new.geographic?).to be(false)
+    end
+  end
 end

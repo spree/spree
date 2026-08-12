@@ -3,12 +3,27 @@ module Spree
   # home-country VAT comes out, the destination's goes on.
   module VatPriceCalculation
     def gross_amount(amount, price_options)
-      return amount if amount.nil? || !outside_default_vat_zone?(price_options)
+      return amount if amount.nil? || !restatement_available?(price_options)
+      return amount unless outside_default_vat_zone?(price_options)
 
       round_to_two_places(add_foreign_vat_for(amount, price_options))
     end
 
     private
+
+    # Restatement reads nothing but TaxRate rows, for both halves of the sum, so
+    # it only means anything where those rows are the whole truth — the Internal
+    # provider. Elsewhere an absent row is ambiguous: it reads as "no tax is due
+    # here" and deducts the home VAT, when it may only mean "this market's tax is
+    # computed by an engine that keeps no rows here". A market on such an engine
+    # would see every foreign destination treated as a zero-rated export. It
+    # states its destination prices through a geo-scoped price list instead.
+    def restatement_available?(price_options)
+      market = price_options[:market] || Spree::Current.market
+      provider = market&.tax_provider_instance || Spree.default_tax_provider.new
+
+      provider.is_a?(Spree::TaxProvider::Internal)
+    end
 
     def add_foreign_vat_for(amount, price_options)
       amount = net_amount(amount, price_options[:tax_category])

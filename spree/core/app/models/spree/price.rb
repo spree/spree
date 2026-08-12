@@ -119,12 +119,28 @@ module Spree
     alias_attribute :compare_at_price, :compare_at_amount
     alias_method :compare_at_price=, :compare_at_amount=
 
+    # Whether this figure is the merchant's answer for the buyer's geography
+    # already. A price list narrowed by market or country states its prices for
+    # that geography, so they are charged exactly as entered — restating one would
+    # net it out with the *home* rate and destroy the price point the merchant
+    # chose. Lists narrowed by anything else (a quantity, a group) were not set
+    # for a country, so their prices restate like any other.
+    #
+    # @return [Boolean]
+    def final_for_destination?
+      price_list&.price_rules&.any?(&:geographic?) || false
+    end
+
     def price_including_vat_for(price_options)
+      return price if final_for_destination?
+
       options = price_options.merge(tax_category: variant.tax_category)
       gross_amount(price, options)
     end
 
     def compare_at_price_including_vat_for(price_options)
+      return compare_at_price if final_for_destination?
+
       options = price_options.merge(tax_category: variant.tax_category)
       gross_amount(compare_at_price, options)
     end

@@ -26,6 +26,10 @@ module Spree
         preferred_country_ids.map(&:to_s).include?(context.country.id.to_s)
       end
 
+      def geographic?
+        true
+      end
+
       def self.description
         'Apply pricing based on the destination country'
       end

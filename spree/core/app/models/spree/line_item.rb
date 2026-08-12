@@ -134,7 +134,7 @@ module Spree
       context = Spree::Pricing::Context.from_order(variant, owner, quantity: quantity)
       currency_price = variant.price_for(context)
 
-      self.price = currency_price.price_including_vat_for(address: owner&.tax_address) if currency_price.present?
+      self.price = currency_price.price_including_vat_for(address: owner&.tax_address, market: owner&.market) if currency_price.present?
       self.price_list_id = currency_price.price_list_id if currency_price.present?
     end
 
@@ -320,7 +320,7 @@ module Spree
 
       return unless currency_price.present?
 
-      new_price = currency_price.price_including_vat_for(address: owner&.tax_address)
+      new_price = currency_price.price_including_vat_for(address: owner&.tax_address, market: owner&.market)
 
       return unless new_price.present?
 

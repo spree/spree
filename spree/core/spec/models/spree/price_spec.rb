@@ -485,4 +485,36 @@ describe Spree::Price, type: :model do
       end
     end
   end
+  describe '#final_for_destination?' do
+    let(:store) { @default_store }
+    let(:variant) { create(:variant) }
+
+    it 'is true for a price on a list narrowed by market' do
+      market = create(:market, store: store, name: "M #{Time.current.to_f}", currency: 'USD',
+                               default_locale: 'en')
+      list = create(:price_list, store: store)
+      list.price_rules.create!(type: 'Spree::PriceRules::MarketRule',
+                               preferences: { market_ids: [market.id] })
+
+      price = create(:price, variant: variant, currency: 'USD', amount: 99, price_list: list)
+
+      expect(price.final_for_destination?).to be(true)
+    end
+
+    it 'is false for a price on a list narrowed by something other than geography' do
+      list = create(:price_list, store: store)
+      list.price_rules.create!(type: 'Spree::PriceRules::VolumeRule',
+                               preferences: { min_quantity: 1 })
+
+      price = create(:price, variant: variant, currency: 'USD', amount: 99, price_list: list)
+
+      expect(price.final_for_destination?).to be(false)
+    end
+
+    it 'is false for a base price' do
+      base = variant.prices.find_by(currency: 'USD', price_list_id: nil)
+
+      expect(base.final_for_destination?).to be(false)
+    end
+  end
 end

@@ -35,12 +35,18 @@ module Spree
         new(variant: variant, currency: currency)
       end
 
+      # The owner's own market, not Spree::Current's: a cart carries the market it
+      # was placed on, and pricing a line from the request context instead makes
+      # the same cart price differently between two requests depending on whether
+      # the client sent a country hint. Catalogue requests have no owner and keep
+      # the Spree::Current fallback.
       def self.from_order(variant, order, quantity: nil)
         new(
           variant: variant,
           currency: order.currency,
           store: order.store,
           country: order.tax_country,
+          market: order.market,
           channel: order.channel,
           user: order.user,
           quantity: quantity || order.line_items.find_by(variant: variant)&.quantity,

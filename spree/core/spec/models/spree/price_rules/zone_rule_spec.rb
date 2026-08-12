@@ -55,4 +55,11 @@ describe Spree::PriceRules::ZoneRule, type: :model do
       end
     end
   end
+  describe '#geographic?' do
+    it 'is true' do
+      # A list narrowed by geography states its prices for that geography, so
+      # they are charged as entered rather than restated for the buyer's VAT.
+      expect(described_class.new.geographic?).to be(true)
+    end
+  end
 end

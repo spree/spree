@@ -102,4 +102,11 @@ describe Spree::PriceRules::MarketRule, type: :model do
       expect(rule.markets).to be_empty
     end
   end
+  describe '#geographic?' do
+    it 'is true' do
+      # A list narrowed by geography states its prices for that geography, so
+      # they are charged as entered rather than restated for the buyer's VAT.
+      expect(described_class.new.geographic?).to be(true)
+    end
+  end
 end

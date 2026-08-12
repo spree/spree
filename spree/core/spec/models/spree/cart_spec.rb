@@ -403,6 +403,22 @@ describe Spree::Cart, type: :model do
         expect(cart.reload.delivery_total).to be > 0
         expect(cart.total).to eq(cart.item_total + cart.delivery_total + cart.adjustment_total)
       end
+
+      # The re-price used to be computed into memory and dropped: nothing here
+      # saves the line items, and the recalculation that follows resets the
+      # association cache. A destination change has to leave the new figure in the
+      # column, or the customer is charged the price quoted for the old country.
+      it 'persists the repriced line item, not just the in-memory attribute' do
+        line_item = cart.line_items.first
+        line_item.update_columns(price: 1)
+
+        cart.recalculate_for_address_change!
+
+        expect(cart.line_items.reload.first.price).not_to eq(1)
+        expect(line_item.reload.price).to eq(line_item.variant.price_for(
+          Spree::Pricing::Context.from_order(line_item.variant, cart)
+        ).amount)
+      end
     end
   end
 end

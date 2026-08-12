@@ -205,7 +205,11 @@ module Spree
     # recalculation-on-write replacement for transition-triggered rebuilds.
     # Called by Carts::Update after address/market changes.
     def recalculate_for_address_change!
-      line_items.reload.each(&:update_price)
+      # recalculate_price, not update_price: the latter only assigns, and nothing
+      # here saves the line items — rebuild_fulfillments! and recalculate_totals!
+      # reset the association cache and drop the new figures. Order#update_line_item_prices!
+      # gets away with update_price because it follows it with save!.
+      line_items.reload.each(&:recalculate_price)
       rebuild_fulfillments!
       set_fulfillments_cost
       recalculate_totals!
