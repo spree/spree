@@ -1,0 +1,580 @@
+require 'spec_helper'
+require 'meilisearch'
+
+RSpec.describe SpreeMeilisearch::SearchProvider do
+  let(:store) { @default_store }
+  let(:provider) { described_class.new(store) }
+  let(:mock_client) { instance_double(::Meilisearch::Client) }
+  let(:mock_index) { double('MeiliSearch::Index') }
+
+  let!(:product_1) { create(:product, name: 'Blue Shirt') }
+  let!(:product_2) { create(:product, name: 'Red Pants') }
+
+  before do
+    allow(::Meilisearch::Client).to receive(:new).and_return(mock_client)
+    allow(mock_client).to receive(:index).and_return(mock_index)
+    allow(mock_index).to receive(:update_filterable_attributes)
+    allow(mock_index).to receive(:update_sortable_attributes)
+    allow(mock_index).to receive(:update_searchable_attributes)
+    allow(mock_index).to receive(:update_distinct_attribute)
+    allow(mock_index).to receive(:delete_documents)
+  end
+
+  describe '#search_and_filter' do
+    let(:ms_response) do
+      {
+        'hits' => [
+          { 'product_id' => product_1.prefixed_id },
+          { 'product_id' => product_2.prefixed_id }
+        ],
+        'totalHits' => 2,
+        'facetDistribution' => {
+          'in_stock' => { 'true' => 2 },
+          'price' => { '19.99' => 1, '29.99' => 1 }
+        }
+      }
+    end
+
+    before do
+      allow(mock_index).to receive(:search).and_return(ms_response)
+    end
+
+    it 'returns a SearchResult' do
+      result = provider.search_and_filter(scope: store.products, query: 'shirt')
+      expect(result).to be_a(Spree::SearchProvider::SearchResult)
+    end
+
+    it 'queries Meilisearch with the search term' do
+      expect(mock_index).to receive(:search).with('shirt', hash_including(:page, :hitsPerPage))
+      provider.search_and_filter(scope: store.products, query: 'shirt')
+    end
+
+    it 'returns products from the AR scope matching Meilisearch IDs' do
+      result = provider.search_and_filter(scope: store.products, query: 'shirt')
+      expect(result.products).to include(product_1, product_2)
+    end
+
+    it 'returns total count from Meilisearch' do
+      result = provider.search_and_filter(scope: store.products, query: 'shirt')
+      expect(result.total_count).to eq(2)
+    end
+
+    it 'does not request facets from Meilisearch' do
+      expect(mock_index).to receive(:search).with(anything, satisfy { |params| !params.key?(:facets) })
+      provider.search_and_filter(scope: store.products, query: 'shirt')
+    end
+
+    context 'listing all products (no query, no filters)' do
+      it 'searches an empty query with only system conditions and no facets' do
+        expect(mock_index).to receive(:search).with('', satisfy { |p|
+          p[:filter].include?("status = 'active'") && !p.key?(:facets)
+        }).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products)
+      end
+
+      it 'returns the products and total' do
+        result = provider.search_and_filter(scope: store.products)
+
+        expect(result.products).to include(product_1, product_2)
+        expect(result.total_count).to eq(2)
+      end
+    end
+
+    context 'with no results' do
+      let(:ms_response) { { 'hits' => [], 'totalHits' => 0, 'facetDistribution' => {} } }
+
+      it 'returns empty relation' do
+        result = provider.search_and_filter(scope: store.products, query: 'nonexistent')
+        expect(result.products).to be_empty
+        expect(result.total_count).to eq(0)
+      end
+    end
+
+    context 'with price filter' do
+      it 'passes price filter to Meilisearch' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(
+          filter: include('price >= 10.0')
+        )).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, filters: { 'price_gte' => '10' })
+      end
+    end
+
+    context 'with in_stock filter' do
+      it 'passes stock filter to Meilisearch' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(
+          filter: include('in_stock = true')
+        )).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, filters: { 'in_stock' => '1' })
+      end
+    end
+
+    context 'with in_collection filter' do
+      let(:collection) { create(:collection) }
+
+      it 'passes the collection_ids filter to Meilisearch (non-manual sort)' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(
+          filter: include("collection_ids = '#{collection.prefixed_id}'")
+        )).and_return(ms_response)
+
+        # A non-manual sort keeps the collection_ids filter; a blank/manual sort
+        # instead routes to the grouping_id membership docs (covered below).
+        provider.search_and_filter(scope: store.products, sort: 'price', filters: { 'in_collection' => collection.prefixed_id })
+      end
+
+      it 'ignores a value that is not a prefixed id' do
+        expect(mock_index).to receive(:search).with(anything, satisfy { |params|
+          params[:filter].none? { |c| c.to_s.include?('collection_ids') }
+        }).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, filters: { 'in_collection' => '123' })
+      end
+    end
+
+    context 'with sort' do
+      it 'passes price sort to Meilisearch' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(
+          sort: ['price:asc']
+        )).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, sort: 'price')
+      end
+
+      it 'passes descending price sort' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(
+          sort: ['price:desc']
+        )).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, sort: '-price')
+      end
+    end
+
+    context 'with pagination' do
+      it 'passes page and hitsPerPage (exhaustive mode so distinct counts are exact)' do
+        expect(mock_index).to receive(:search).with(anything, hash_including(
+          page: 2, hitsPerPage: 25
+        )).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, page: 2, limit: 25)
+      end
+    end
+
+    context 'pagination result (pagy built from totalHits)' do
+      let(:ms_response) do
+        { 'hits' => [{ 'product_id' => product_1.prefixed_id }], 'totalHits' => 50, 'facetDistribution' => {} }
+      end
+
+      it 'builds a pagy spanning all pages with a next page' do
+        result = provider.search_and_filter(scope: store.products, page: 1, limit: 25)
+
+        expect(result.total_count).to eq(50)
+        expect(result.pagy.count).to eq(50)
+        expect(result.pagy.pages).to eq(2)
+        expect(result.pagy.page).to eq(1)
+        expect(result.pagy.next).to eq(2)
+      end
+    end
+
+    context 'with manual (position) sort on a grouping' do
+      it 'queries the grouping_id membership docs sorted by position (collection)' do
+        expect(mock_index).to receive(:search).with(anything, satisfy { |p|
+          p[:filter].include?("grouping_id = 'coll_Manual1'") &&
+            p[:filter].none? { |c| c.to_s.include?('collection_ids') } &&
+            p[:sort] == ['position:asc']
+        }).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, sort: 'manual', filters: { 'in_collection' => 'coll_Manual1' })
+      end
+
+      it 'defaults a grouping page with no sort param to manual' do
+        expect(mock_index).to receive(:search).with(anything, satisfy { |p|
+          p[:filter].include?("grouping_id = 'coll_Manual1'") && p[:sort] == ['position:asc']
+        }).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, filters: { 'in_collection' => 'coll_Manual1' })
+      end
+
+      it 'works for a category grouping' do
+        expect(mock_index).to receive(:search).with(anything, satisfy { |p|
+          p[:filter].include?("grouping_id = 'ctg_Manual1'") && p[:sort] == ['position:asc']
+        }).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, sort: 'manual', filters: { 'in_category' => 'ctg_Manual1' })
+      end
+
+      it 'ignores manual sort without a grouping (falls back to default ranking)' do
+        expect(mock_index).to receive(:search).with(anything, satisfy { |p| p[:sort].nil? }).and_return(ms_response)
+
+        provider.search_and_filter(scope: store.products, sort: 'manual')
+      end
+    end
+
+    context 'with sort order preservation' do
+      it 'returns products in the order Meilisearch returned them' do
+        reversed_response = {
+          'hits' => [
+            { 'product_id' => product_2.prefixed_id },
+            { 'product_id' => product_1.prefixed_id }
+          ],
+          'totalHits' => 2,
+          'facetDistribution' => {}
+        }
+        allow(mock_index).to receive(:search).and_return(reversed_response)
+
+        result = provider.search_and_filter(scope: store.products, query: 'shirt')
+        expect(result.products).to eq([product_2, product_1])
+      end
+    end
+
+    context 'with visibility scope' do
+      it 'intersects Meilisearch results with AR scope' do
+        restricted_scope = store.products.where(id: product_1.id)
+        result = provider.search_and_filter(scope: restricted_scope, query: 'shirt')
+        expect(result.products).to include(product_1)
+        expect(result.products).not_to include(product_2)
+      end
+    end
+
+    # A newly added filterable or sortable attribute referenced before the
+    # index settings were refreshed rejects the whole query on upgraded
+    # stores — the provider must push settings and retry instead of serving
+    # an empty listing until a reindex.
+    context 'when a filter attribute is not yet filterable' do
+      before do
+        error = ::Meilisearch::ApiError.new(
+          400, 'Bad Request',
+          { 'code' => 'invalid_search_filter', 'message' => 'Attribute `preorder` is not filterable.' }
+        )
+        calls = 0
+        allow(mock_index).to receive(:search) do
+          calls += 1
+          raise error if calls == 1
+
+          ms_response
+        end
+      end
+
+      it 'pushes index settings and retries the search once' do
+        expect(mock_index).to receive(:update_filterable_attributes)
+
+        result = provider.search_and_filter(scope: store.products, query: 'shirt')
+        expect(result.products).to include(product_1, product_2)
+      end
+    end
+
+    context 'when a sort attribute is not yet sortable' do
+      before do
+        error = ::Meilisearch::ApiError.new(
+          400, 'Bad Request',
+          { 'code' => 'invalid_search_sort', 'message' => 'Attribute `cf_custom_label` is not sortable.' }
+        )
+        calls = 0
+        allow(mock_index).to receive(:search) do
+          calls += 1
+          raise error if calls == 1
+
+          ms_response
+        end
+      end
+
+      it 'pushes index settings and retries the search once' do
+        expect(mock_index).to receive(:update_sortable_attributes)
+
+        result = provider.search_and_filter(scope: store.products, query: 'shirt', sort: 'cf_custom_label')
+        expect(result.products).to include(product_1, product_2)
+      end
+    end
+  end
+
+  describe '#filters' do
+    let(:ms_response) do
+      {
+        'hits' => [],
+        'totalHits' => 2,
+        'processingTimeMs' => 1,
+        'facetDistribution' => {
+          'in_stock' => { 'true' => 2 },
+          'price' => { '19.99' => 1, '29.99' => 1 }
+        }
+      }
+    end
+
+    before do
+      allow(mock_index).to receive(:search).and_return(ms_response)
+    end
+
+    it 'returns a FiltersResult' do
+      result = provider.filters(scope: store.products, query: 'shirt')
+      expect(result).to be_a(Spree::SearchProvider::FiltersResult)
+    end
+
+    it 'returns facets from Meilisearch' do
+      result = provider.filters(scope: store.products, query: 'shirt')
+      expect(result.filters).to be_an(Array)
+
+      price_filter = result.filters.find { |f| f[:type] == 'price_range' }
+      expect(price_filter).to be_present
+      expect(price_filter[:min]).to eq(19.99)
+      expect(price_filter[:max]).to eq(29.99)
+    end
+
+    it 'returns sort options as objects' do
+      result = provider.filters(scope: store.products, query: 'shirt')
+      ids = result.sort_options.map { |o| o[:id] }
+      expect(ids).to include('price', '-price')
+    end
+
+    it 'returns total count' do
+      result = provider.filters(scope: store.products, query: 'shirt')
+      expect(result.total_count).to eq(2)
+    end
+
+    it 'requests facets from Meilisearch' do
+      expect(mock_index).to receive(:search).with(anything, hash_including(:facets))
+      provider.filters(scope: store.products, query: 'shirt')
+    end
+
+    context 'with option type facets' do
+      let(:color_type) { create(:option_type, :color_swatch, filterable: true) }
+      let(:red_value) { create(:option_value, option_type: color_type, name: 'red', presentation: 'Red', color_code: '#FF0000') }
+      let(:blue_value) { create(:option_value, option_type: color_type, name: 'blue', presentation: 'Blue', color_code: '#0000FF') }
+
+      let(:ms_response) do
+        {
+          'hits' => [],
+          'totalHits' => 1,
+          'processingTimeMs' => 1,
+          'facetDistribution' => {
+            'option_value_ids' => {
+              red_value.prefixed_id => 3,
+              blue_value.prefixed_id => 1
+            }
+          }
+        }
+      end
+
+      it 'includes kind on option type filters' do
+        result = provider.filters(scope: store.products, query: '')
+        color_filter = result.filters.find { |f| f[:name] == 'color' }
+
+        expect(color_filter).to be_present
+        expect(color_filter[:kind]).to eq('color_swatch')
+      end
+
+      it 'includes color_code on option values' do
+        result = provider.filters(scope: store.products, query: '')
+        color_filter = result.filters.find { |f| f[:name] == 'color' }
+        red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+
+        expect(red_option[:color_code]).to eq('#FF0000')
+      end
+
+      it 'includes image_url as nil when no image attached' do
+        result = provider.filters(scope: store.products, query: '')
+        color_filter = result.filters.find { |f| f[:name] == 'color' }
+        red_option = color_filter[:options].find { |o| o[:name] == 'red' }
+
+        expect(red_option[:image_url]).to be_nil
+      end
+    end
+
+    context 'when Meilisearch API fails' do
+      before do
+        error = ::Meilisearch::ApiError.new(500, 'internal error', 'internal')
+        allow(mock_index).to receive(:search).and_raise(error)
+      end
+
+      it 'returns empty FiltersResult' do
+        result = provider.filters(scope: store.products, query: 'shirt')
+        expect(result.filters).to eq([])
+        expect(result.total_count).to eq(0)
+      end
+    end
+
+    # default_sort comes from the collection's sort_order (a collection PLP page),
+    # rendered in API format; it falls back to 'manual' with no collection.
+    context 'default_sort' do
+      it 'defaults to manual when no collection is provided' do
+        result = provider.filters(scope: store.products, query: 'shirt')
+        expect(result.default_sort).to eq('manual')
+      end
+
+      it "reflects the collection's sort_order (space format rendered as API format)" do
+        collection = create(:collection, sort_order: 'price asc')
+
+        result = provider.filters(scope: store.products, filters: { '_collection' => collection })
+        expect(result.default_sort).to eq('price')
+      end
+
+      it 'stays manual for a manual-sorted collection' do
+        collection = create(:collection, sort_order: 'manual')
+
+        result = provider.filters(scope: store.products, filters: { '_collection' => collection })
+        expect(result.default_sort).to eq('manual')
+      end
+    end
+
+    it 'advertises manual in the sort options (sourced from Collection::SORT_ORDERS)' do
+      result = provider.filters(scope: store.products, query: '')
+      expect(result.sort_options.map { |o| o[:id] }).to include('manual')
+    end
+  end
+
+  describe '#index' do
+    it 'adds documents to Meilisearch index with id as primary key' do
+      expect(mock_index).to receive(:add_documents).with(
+        array_including(hash_including(product_id: product_1.prefixed_id, name: 'Blue Shirt')),
+        'id'
+      )
+      provider.index(product_1)
+    end
+
+    it 'uses ProductPresenter to serialize' do
+      docs = [{ id: 'prod_abc_en_USD', product_id: 'prod_abc' }]
+      presenter = instance_double(SpreeMeilisearch::ProductPresenter, call: docs)
+      allow(SpreeMeilisearch::ProductPresenter).to receive(:new).with(product_1, store).and_return(presenter)
+      expect(mock_index).to receive(:add_documents).with(docs, 'id')
+      provider.index(product_1)
+    end
+
+    it 'deletes the product existing docs before adding (purges stale membership docs)' do
+      expect(mock_index).to receive(:delete_documents).with(filter: "product_id = '#{product_1.prefixed_id}'").ordered
+      expect(mock_index).to receive(:add_documents).ordered
+      provider.index(product_1)
+    end
+  end
+
+  describe '#remove' do
+    it 'deletes all locale/currency variants by product_id filter' do
+      expect(mock_index).to receive(:delete_documents).with(filter: "product_id = '#{product_1.prefixed_id}'")
+      provider.remove(product_1)
+    end
+  end
+
+  describe '#remove_by_id' do
+    it 'deletes all documents by product_id filter' do
+      expect(mock_index).to receive(:delete_documents).with(filter: "product_id = 'prod_abc'")
+      provider.remove_by_id('prod_abc')
+    end
+
+    it 'ignores 404 errors' do
+      error = ::Meilisearch::ApiError.new(404, 'not found', 'document_not_found')
+      allow(mock_index).to receive(:delete_documents).and_raise(error)
+      expect { provider.remove_by_id('prod_abc') }.not_to raise_error
+    end
+  end
+
+  describe '#reindex' do
+    it 'configures index settings' do
+      expect(mock_index).to receive(:update_filterable_attributes)
+      expect(mock_index).to receive(:update_sortable_attributes)
+      expect(mock_index).to receive(:update_searchable_attributes)
+      allow(mock_index).to receive(:add_documents)
+
+      provider.reindex(store.products)
+    end
+
+    it 'indexes all products in batches' do
+      expect(mock_index).to receive(:add_documents).at_least(:once)
+      provider.reindex(store.products)
+    end
+
+    it 'clears the index before a full (unscoped) reindex' do
+      expect(mock_index).to receive(:delete_all_documents)
+      allow(mock_index).to receive(:add_documents)
+      provider.reindex
+    end
+
+    it 'does not clear the index for a scoped reindex' do
+      expect(mock_index).not_to receive(:delete_all_documents)
+      allow(mock_index).to receive(:add_documents)
+      provider.reindex(store.products)
+    end
+  end
+
+  describe '#ensure_index_settings!' do
+    it 'declares grouping_id filterable, position sortable, and product_id distinct' do
+      expect(mock_index).to receive(:update_filterable_attributes).with(include('grouping_id'))
+      expect(mock_index).to receive(:update_sortable_attributes).with(include('position'))
+      expect(mock_index).to receive(:update_distinct_attribute).with('product_id')
+      allow(mock_index).to receive(:update_searchable_attributes)
+
+      provider.ensure_index_settings!
+    end
+  end
+
+  describe 'custom_field searchable / sortable settings' do
+    let!(:definition) do
+      create(:custom_field_definition, :short_text_field, :searchable, :sortable,
+             namespace: 'custom', key: 'label')
+    end
+
+    it 'includes cf_* in searchable and sortable attributes' do
+      expect(provider.send(:searchable_attributes)).to include('cf_custom_label')
+      expect(provider.send(:sortable_attributes)).to include('cf_custom_label')
+    end
+
+    it 'includes cf_* in filterable attributes but not in requested facets' do
+      expect(provider.send(:filterable_attributes)).to include('cf_custom_label')
+      expect(provider.send(:facet_attributes)).not_to include('cf_custom_label')
+    end
+
+    it 'maps cf_* sort params without namespace resolution' do
+      expect(provider.send(:sort_mapping, 'cf_custom_label')).to eq(['cf_custom_label:asc'])
+      expect(provider.send(:sort_mapping, '-cf_custom_label')).to eq(['cf_custom_label:desc'])
+    end
+  end
+
+  describe 'custom_field filter conditions' do
+    let!(:label) do
+      create(:custom_field_definition, :short_text_field, :searchable,
+             namespace: 'custom', key: 'label')
+    end
+    let!(:weight) do
+      create(:custom_field_definition, :number_field, :sortable,
+             namespace: 'custom', key: 'weight')
+    end
+
+    it 'builds equality conditions for text custom_fields' do
+      expect(provider.send(:build_filter_condition, 'cf_custom_label_eq', 'wool')).to eq("cf_custom_label = 'wool'")
+      expect(provider.send(:build_filter_condition, 'cf_custom_label_not_eq', 'wool')).to eq("cf_custom_label != 'wool'")
+    end
+
+    it 'escapes quotes and backslashes in text values' do
+      expect(provider.send(:build_filter_condition, 'cf_custom_label_eq', "o'brien\\x")).to eq("cf_custom_label = 'o\\'brien\\\\x'")
+    end
+
+    it 'builds range conditions for number custom_fields' do
+      expect(provider.send(:build_filter_condition, 'cf_custom_weight_gteq', '3.5')).to eq('cf_custom_weight >= 3.5')
+      expect(provider.send(:build_filter_condition, 'cf_custom_weight_lt', '10')).to eq('cf_custom_weight < 10.0')
+    end
+
+    it 'builds EXISTS conditions for present and blank' do
+      expect(provider.send(:build_filter_condition, 'cf_custom_label_present', '1')).to eq('cf_custom_label EXISTS')
+      expect(provider.send(:build_filter_condition, 'cf_custom_label_blank', '1')).to eq('cf_custom_label NOT EXISTS')
+    end
+
+    it 'ignores substring predicates Meilisearch cannot filter on' do
+      expect(provider.send(:build_filter_condition, 'cf_custom_label_cont', 'wool')).to be_nil
+    end
+
+    it 'ignores non-numeric values on number predicates' do
+      expect(provider.send(:build_filter_condition, 'cf_custom_weight_gteq', 'abc')).to be_nil
+    end
+
+    it 'ignores unknown cf_ keys' do
+      expect(provider.send(:build_filter_condition, 'cf_bogus_field_eq', 'x')).to be_nil
+    end
+
+    it 'passes custom_field conditions through to the Meilisearch query' do
+      ms_response = { 'hits' => [], 'estimatedTotalHits' => 0, 'facetDistribution' => {} }
+      expect(mock_index).to receive(:search).with(anything, hash_including(
+        filter: include('cf_custom_weight >= 3.5')
+      )).and_return(ms_response)
+
+      provider.search_and_filter(scope: store.products, filters: { 'cf_custom_weight_gteq' => '3.5' })
+    end
+  end
+end

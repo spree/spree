@@ -117,8 +117,8 @@ end
 # Spree.queues.api_keys = :default
 # Spree.queues.search = :default
 
-# Search provider
-# Spree.search_provider = 'Spree::SearchProvider::Meilisearch'
+# Search provider — requires the spree_meilisearch gem
+# Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
 
 Spree.customer_class = <%= (options[:user_class].blank? ? 'Spree::Customer' : options[:user_class]).inspect %>
 Spree.admin_user_class = <%= (options[:admin_user_class].blank? ? (options[:user_class].blank? ? 'Spree::AdminUser' : options[:user_class]) : options[:admin_user_class]).inspect %>

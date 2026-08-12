@@ -131,6 +131,9 @@ jobs:
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
           # easypost: 1 runner × 2 procs (tiny suite — provider gem)
           - { project: easypost, dir: providers/easypost, shard: 1, total_shards: 1, procs: 2 }
+          # meilisearch: 1 runner × 2 procs (tiny suite — provider gem; the only
+          # job with the Meilisearch service, so its integration spec runs here)
+          - { project: meilisearch, dir: providers/meilisearch, shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
           - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:

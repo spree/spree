@@ -438,6 +438,26 @@ Every rename keeps the legacy name working for one release with a deprecation wa
 | `.with_metafield_key`, `.with_metafield_key_value` | `.with_custom_field_key`, `.with_custom_field_key_value` |
 | `Spree.metafields` | `Spree.custom_fields` |
 | `CustomFieldDefinition#name`, `#metafield_type`, `#display_on` | `#label`, `#field_type`, `#storefront_visible` (columns renamed) |
+| `Spree::SearchProvider::Meilisearch` | `SpreeMeilisearch::SearchProvider` (moved to the `spree_meilisearch` gem) |
+| `Spree::SearchProvider::ProductPresenter` | `SpreeMeilisearch::ProductPresenter` (moved to the `spree_meilisearch` gem) |
+
+## Meilisearch moved to its own gem
+
+Meilisearch is no longer part of `spree_core`. Stores using the Database provider (the default) need to do nothing.
+
+If you set `Spree.search_provider` to the Meilisearch provider, add the gem and update the class name:
+
+```ruby
+# Gemfile
+gem 'spree_meilisearch'
+
+# config/initializers/spree.rb
+Spree.search_provider = 'SpreeMeilisearch::SearchProvider'
+```
+
+Your `MEILISEARCH_URL` and `MEILISEARCH_API_KEY` settings are unchanged, and **no reindex is needed** — the documents have the same shape. Applications that subclassed the document presenter should inherit from `SpreeMeilisearch::ProductPresenter` instead.
+
+The old class names keep working for one release, so an application that only names them in an initializer boots with a deprecation warning rather than an error — but the gem must be installed either way, since the classes now live there.
 
 ## Staff permissions: roles are data
 

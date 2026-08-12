@@ -29,7 +29,10 @@ module Spree
     #   => { id: 1, name: "Shirt", price_USD: 19.99, ... }
     def search_presentation(store = nil)
       store ||= Spree::Current.store
-      Spree::Dependencies.search_product_presenter_class.new(self, store).call
+      presenter_class = Spree::Dependencies.search_product_presenter_class
+      raise Spree::DependencyError, 'No search product presenter is configured. Install a search provider gem (e.g. spree_meilisearch) or set Spree::Dependencies.search_product_presenter.' if presenter_class.nil?
+
+      presenter_class.new(self, store).call
     end
 
     # Remove this record from search index synchronously (inline, no job).
