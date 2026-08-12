@@ -11,8 +11,8 @@ describe '6.0 data migration tasks' do
     load Spree::Core::Engine.root.join('lib', 'tasks', 'products.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'order_market_backfill.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'store_binding_migration.rake')
-    load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
     load Spree::Core::Engine.root.join('lib', 'tasks', 'fulfillment_statuses_migration.rake')
+    load Spree::Core::Engine.root.join('lib', 'tasks', 'tax_zones_migration.rake')
   end
 
   let(:store) { @default_store }
@@ -109,6 +109,78 @@ describe '6.0 data migration tasks' do
       expect(legacy_method.reload.store_id).to eq(@default_store.id)
       expect(legacy_location.reload.store_id).to eq(@default_store.id)
       expect(bound.reload.store_id).to eq(other_store.id)
+    end
+  end
+
+  describe 'spree:migrate_delivery_profiles' do
+    # 5.x rows arrive store-less and kind-less; the legacy method↔category
+    # m:n is read straight from the surviving table.
+    let(:method_categories) { Class.new(ActiveRecord::Base) { self.table_name = 'spree_shipping_method_categories' } }
+
+    def legacy_category!(name)
+      profile = Spree::DeliveryProfiles::Shipping.create!(store: store, name: name)
+      profile.update_columns(store_id: nil, type: nil)
+      profile
+    end
+
+    it 'folds a non-narrowing category into the store default profile' do
+      category = legacy_category!('Default Category')
+      method = create(:shipping_method, store: store)
+      method_categories.create!(shipping_method_id: method.id, shipping_category_id: category.id)
+      Spree::DeliveryMethod.unscoped.where(store: store).find_each do |delivery_method|
+        method_categories.find_or_create_by!(shipping_method_id: delivery_method.id, shipping_category_id: category.id)
+      end
+      product = create(:product, store: store)
+      product.update_columns(delivery_profile_id: category.id)
+
+      run_task('spree:migrate_delivery_profiles')
+
+      expect(product.reload.delivery_profile).to eq(store.default_delivery_profile)
+      expect(Spree::DeliveryProfile.exists?(category.id)).to be(false)
+    end
+
+    it 'keeps a narrowing category as a profile and moves its solely-linked method in' do
+      category = legacy_category!('Oversized')
+      oversized_method = create(:shipping_method, store: store, name: 'Freight')
+      create(:shipping_method, store: store, name: 'Regular')
+      method_categories.create!(shipping_method_id: oversized_method.id, shipping_category_id: category.id)
+      product = create(:product, store: store)
+      product.update_columns(delivery_profile_id: category.id)
+
+      run_task('spree:migrate_delivery_profiles')
+
+      profile = Spree::DeliveryProfile.find(category.id)
+      expect(profile.store).to eq(store)
+      expect(profile).to be_a(Spree::DeliveryProfiles::Shipping)
+      expect(oversized_method.reload.delivery_profile_id).to eq(profile.id)
+      expect(product.reload.delivery_profile_id).to eq(profile.id)
+    end
+
+    it 'detects a digital-only category as a Digital profile' do
+      category = legacy_category!('Digital Goods')
+      digital_method = create(:digital_delivery_method, store: store)
+      create(:shipping_method, store: store)
+      method_categories.create!(shipping_method_id: digital_method.id, shipping_category_id: category.id)
+      product = create(:product, store: store)
+      product.update_columns(delivery_profile_id: category.id)
+
+      run_task('spree:migrate_delivery_profiles')
+
+      profile = Spree::DeliveryProfile.find(category.id)
+      expect(profile).to be_a(Spree::DeliveryProfiles::Digital)
+      expect(product.reload.delivery_profile_id).to eq(profile.id)
+    end
+
+    it 'is idempotent' do
+      category = legacy_category!('Oversized')
+      method = create(:shipping_method, store: store, name: 'Freight')
+      create(:shipping_method, store: store, name: 'Regular')
+      method_categories.create!(shipping_method_id: method.id, shipping_category_id: category.id)
+      product = create(:product, store: store)
+      product.update_columns(delivery_profile_id: category.id)
+
+      run_task('spree:migrate_delivery_profiles')
+      expect { run_task('spree:migrate_delivery_profiles') }.not_to change(Spree::DeliveryProfile, :count)
     end
   end
 
@@ -258,75 +330,6 @@ describe '6.0 data migration tasks' do
         expect(rule.reload.preferred_country_ids).to be_empty
         expect(rule.preferences).not_to have_key(:zone_ids)
       end
-  describe 'spree:migrate_delivery_profiles' do
-    # 5.x rows arrive store-less and kind-less; the legacy method↔category
-    # m:n is read straight from the surviving table.
-    let(:method_categories) { Class.new(ActiveRecord::Base) { self.table_name = 'spree_shipping_method_categories' } }
-
-    def legacy_category!(name)
-      profile = Spree::DeliveryProfiles::Shipping.create!(store: store, name: name)
-      profile.update_columns(store_id: nil, type: nil)
-      profile
-    end
-
-    it 'folds a non-narrowing category into the store default profile' do
-      category = legacy_category!('Default Category')
-      method = create(:shipping_method, store: store)
-      method_categories.create!(shipping_method_id: method.id, shipping_category_id: category.id)
-      Spree::DeliveryMethod.unscoped.where(store: store).find_each do |delivery_method|
-        method_categories.find_or_create_by!(shipping_method_id: delivery_method.id, shipping_category_id: category.id)
-      end
-      product = create(:product, store: store)
-      product.update_columns(delivery_profile_id: category.id)
-
-      run_task('spree:migrate_delivery_profiles')
-
-      expect(product.reload.delivery_profile).to eq(store.default_delivery_profile)
-      expect(Spree::DeliveryProfile.exists?(category.id)).to be(false)
-    end
-
-    it 'keeps a narrowing category as a profile and moves its solely-linked method in' do
-      category = legacy_category!('Oversized')
-      oversized_method = create(:shipping_method, store: store, name: 'Freight')
-      create(:shipping_method, store: store, name: 'Regular')
-      method_categories.create!(shipping_method_id: oversized_method.id, shipping_category_id: category.id)
-      product = create(:product, store: store)
-      product.update_columns(delivery_profile_id: category.id)
-
-      run_task('spree:migrate_delivery_profiles')
-
-      profile = Spree::DeliveryProfile.find(category.id)
-      expect(profile.store).to eq(store)
-      expect(profile).to be_a(Spree::DeliveryProfiles::Shipping)
-      expect(oversized_method.reload.delivery_profile_id).to eq(profile.id)
-      expect(product.reload.delivery_profile_id).to eq(profile.id)
-    end
-
-    it 'detects a digital-only category as a Digital profile' do
-      category = legacy_category!('Digital Goods')
-      digital_method = create(:digital_delivery_method, store: store)
-      create(:shipping_method, store: store)
-      method_categories.create!(shipping_method_id: digital_method.id, shipping_category_id: category.id)
-      product = create(:product, store: store)
-      product.update_columns(delivery_profile_id: category.id)
-
-      run_task('spree:migrate_delivery_profiles')
-
-      profile = Spree::DeliveryProfile.find(category.id)
-      expect(profile).to be_a(Spree::DeliveryProfiles::Digital)
-      expect(product.reload.delivery_profile_id).to eq(profile.id)
-    end
-
-    it 'is idempotent' do
-      category = legacy_category!('Oversized')
-      method = create(:shipping_method, store: store, name: 'Freight')
-      create(:shipping_method, store: store, name: 'Regular')
-      method_categories.create!(shipping_method_id: method.id, shipping_category_id: category.id)
-      product = create(:product, store: store)
-      product.update_columns(delivery_profile_id: category.id)
-
-      run_task('spree:migrate_delivery_profiles')
-      expect { run_task('spree:migrate_delivery_profiles') }.not_to change(Spree::DeliveryProfile, :count)
     end
   end
 
