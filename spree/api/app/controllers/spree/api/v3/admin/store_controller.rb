@@ -55,6 +55,8 @@ module Spree
               :preferred_storefront_access,
               :preferred_storefront_url,
               :preferred_guest_checkout,
+              :preferred_company_field_enabled,
+              :preferred_address_requires_phone,
               :preferred_order_routing_strategy,
               :mail_from_address,
               :customer_support_email,

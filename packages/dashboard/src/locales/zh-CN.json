@@ -1234,6 +1234,14 @@
         }
       },
       "store": {
+        "address_requires_phone": {
+          "help": "将电话号码设为客户地址的必填项。",
+          "label": "要求填写电话号码"
+        },
+        "company_field_enabled": {
+          "help": "在结账时的地址表单中显示公司字段。",
+          "label": "公司字段"
+        },
         "customer_support_email": {
           "help": "在店面邮件中向客户显示的回复（Reply-to）地址。",
           "label": "客户支持邮箱",
@@ -2615,6 +2623,7 @@
         "store": {
           "default_package_description": "常用的发货纸箱。承运商费率提供方会将其重量加到每个包裹上,并使用其尺寸计算体积重量。",
           "subtitle": "通用配置与店铺级默认设置。",
+          "tab_addresses": "地址",
           "tab_default_package": "默认包裹",
           "tab_general": "通用",
           "tab_standards": "标准与格式",

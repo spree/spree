@@ -1251,6 +1251,14 @@
         }
       },
       "store": {
+        "address_requires_phone": {
+          "help": "Uczyń numer telefonu obowiązkowym w adresach klientów.",
+          "label": "Wymagaj numeru telefonu"
+        },
+        "company_field_enabled": {
+          "help": "Pokaż pole firmy w formularzach adresowych podczas składania zamówienia.",
+          "label": "Pole firmy"
+        },
         "customer_support_email": {
           "help": "Adres zwrotny pokazywany klientom w wiadomościach ze sklepu.",
           "label": "E-mail obsługi klienta",
@@ -2657,6 +2665,7 @@
         "store": {
           "default_package_description": "Karton, w którym zwykle wysyłasz. Dostawcy stawek przewoźników dodają jego wagę do każdej paczki i używają wymiarów do wyceny wagi wymiarowej.",
           "subtitle": "Ogólna konfiguracja i domyślne ustawienia dla całego sklepu.",
+          "tab_addresses": "Adresy",
           "tab_default_package": "Domyślna paczka",
           "tab_general": "Ogólne",
           "tab_standards": "Standardy i formaty",

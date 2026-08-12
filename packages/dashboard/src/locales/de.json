@@ -1237,6 +1237,14 @@
         }
       },
       "store": {
+        "address_requires_phone": {
+          "help": "Eine Telefonnummer in Kundenadressen zur Pflicht machen.",
+          "label": "Telefonnummer erforderlich"
+        },
+        "company_field_enabled": {
+          "help": "Ein Firmenfeld in den Adressformularen an der Kasse anzeigen.",
+          "label": "Firmenfeld"
+        },
         "customer_support_email": {
           "help": "Antwortadresse, die Kunden in Storefront-E-Mails angezeigt wird.",
           "label": "E-Mail des Kundensupports",
@@ -2619,6 +2627,7 @@
         "store": {
           "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
+          "tab_addresses": "Adressen",
           "tab_default_package": "Standardpaket",
           "tab_general": "Allgemein",
           "tab_standards": "Standards und Formate",

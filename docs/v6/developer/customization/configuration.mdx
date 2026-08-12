@@ -61,7 +61,6 @@ This page lists only settings Spree 6 actually reads. Settings that exist for ba
 
 | Setting | Default | What it does |
 |---|---|---|
-| `address_requires_phone` | `false` | Makes a phone number mandatory on customer addresses. |
 | `geocode_addresses` | `true` | Looks up latitude and longitude for saved addresses. |
 
 ## Media
@@ -165,6 +164,7 @@ These still exist so upgrades don't break, but Spree 6 either ignores them or re
 | `use_user_locale` | Locale comes from the `x-spree-locale` header or the `locale` parameter |
 | `allow_guest_checkout` | The `guest_checkout` setting on the store or channel |
 | `company` | The `company_field_enabled` setting on the store |
+| `address_requires_phone` | The `address_requires_phone` setting on the store |
 | `address_requires_state` | State requirements come from the country |
 | `checkout_zone` | [Delivery zones](/v6/developer/core-concepts/fulfillments#delivery-methods-and-zones) |
 | `currency` | Store and market currencies |

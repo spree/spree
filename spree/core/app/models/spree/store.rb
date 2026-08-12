@@ -68,6 +68,7 @@ module Spree
     preference :stock_reservation_ttl_minutes, :integer, default: 10
     # Address preferences
     preference :company_field_enabled, :boolean, default: false
+    preference :address_requires_phone, :boolean, default: false
     # digital assets preferences
     preference :limit_digital_download_count, :boolean, default: true
     preference :limit_digital_download_days, :boolean, default: true

@@ -25,6 +25,8 @@ module Spree
                    preferred_unit_system: :string,
                    preferred_storefront_access: :string,
                    preferred_guest_checkout: :boolean,
+                   preferred_company_field_enabled: :boolean,
+                   preferred_address_requires_phone: :boolean,
                    preferred_order_routing_strategy: :string,
                    metadata: 'Record<string, unknown>'
 
@@ -48,6 +50,8 @@ module Spree
                      :preferred_unit_system,
                      :preferred_storefront_access,
                      :preferred_guest_checkout,
+                     :preferred_company_field_enabled,
+                     :preferred_address_requires_phone,
                      :preferred_order_routing_strategy,
                      created_at: :iso8601, updated_at: :iso8601
 

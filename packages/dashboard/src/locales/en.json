@@ -1237,6 +1237,14 @@
         }
       },
       "store": {
+        "address_requires_phone": {
+          "help": "Make a phone number mandatory on customer addresses.",
+          "label": "Require phone number"
+        },
+        "company_field_enabled": {
+          "help": "Show a company field on address forms during checkout.",
+          "label": "Company field"
+        },
         "customer_support_email": {
           "help": "Reply-to address shown to customers in storefront emails.",
           "label": "Customer support email",
@@ -2619,6 +2627,7 @@
         "store": {
           "default_package_description": "The box you usually ship in. Carrier rate providers add its weight to every package and use its dimensions for dimensional-weight pricing.",
           "subtitle": "General configuration and store-wide defaults.",
+          "tab_addresses": "Addresses",
           "tab_default_package": "Default package",
           "tab_general": "General",
           "tab_standards": "Standards and formats",

@@ -290,6 +290,21 @@ steps:
       preferences so they aren't double-enforced. Run after
       migrate_shipping_to_delivery. Idempotent.
 
+  - id: store_settings_backfill_from_config
+    name: "Copy moved commerce settings onto every store"
+    task: "spree:store_settings:backfill_from_config"
+    notes: |
+      address_requires_phone moved from Spree::Config onto Spree::Store in 6.0.
+      Core reads the store preference with no fallback to the global, so an
+      install that set it in an initializer needs this step to keep requiring a
+      phone number. A global left at its default is skipped, as is any store
+      that already carries an explicit value.
+
+      Remove the setting from your initializer afterwards — the global is
+      deprecated and is deleted in 6.1.
+
+      Idempotent.
+
   - id: product_types_backfill
     name: "Backfill product type store ownership"
     task: "spree:product_types:backfill"

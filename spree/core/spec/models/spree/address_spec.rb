@@ -134,10 +134,6 @@ describe Spree::Address, type: :model do
 
     before do
       allow(Spree::State).to receive(:find_all_by_name_or_abbr) { [state] }
-
-      configure_spree_preferences do |config|
-        config.address_requires_state = true
-      end
     end
 
     it 'state_name is not nil and country does not have any states' do
@@ -190,21 +186,22 @@ describe Spree::Address, type: :model do
       expect(address.state_name).to be_nil
     end
 
-    it 'address_requires_state preference is false' do
-      Spree::Config.set address_requires_state: false
+    it 'does not require a state when the country does not require one' do
+      address.country = create(:country, states_required: false)
       address.state = nil
       address.state_name = nil
       expect(address).to be_valid
     end
 
     it 'does not require phone' do
-      Spree::Config.set address_requires_state: false
       address.phone = ''
       expect(address).to be_valid
     end
 
     context 'when phone is required' do
-      before { Spree::Config.set address_requires_phone: true }
+      before { @default_store.update!(preferred_address_requires_phone: true) }
+
+      after { @default_store.update!(preferred_address_requires_phone: false) }
 
       it 'validates presence of the phone' do
         address.phone = ''
@@ -759,22 +756,32 @@ describe Spree::Address, type: :model do
     context 'when quick_checkout is false' do
       let(:address) { build_stubbed(:address, quick_checkout: false) }
 
-      context 'and Spree::Config[:address_requires_phone] is true' do
-        before { Spree::Config[:address_requires_phone] = true }
+      context 'and the store requires a phone' do
+        before { @default_store.update!(preferred_address_requires_phone: true) }
 
-        after { Spree::Config[:address_requires_phone] = false }
+        after { @default_store.update!(preferred_address_requires_phone: false) }
 
         it 'returns true' do
           expect(address.require_phone?).to be(true)
         end
       end
 
-      context 'and Spree::Config[:address_requires_phone] is false' do
-        before { Spree::Config[:address_requires_phone] = false }
+      context 'and the store does not require a phone' do
+        before { @default_store.update!(preferred_address_requires_phone: false) }
 
         it 'returns false' do
           expect(address.require_phone?).to be(false)
         end
+      end
+    end
+
+    context 'when there is no current store' do
+      let(:address) { build_stubbed(:address, quick_checkout: false) }
+
+      before { allow(Spree::Current).to receive(:store).and_return(nil) }
+
+      it 'falls back to the preference default' do
+        expect(address.require_phone?).to be(false)
       end
     end
   end

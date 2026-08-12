@@ -1237,6 +1237,14 @@
         }
       },
       "store": {
+        "address_requires_phone": {
+          "help": "Rendre le numéro de téléphone obligatoire dans les adresses des clients.",
+          "label": "Numéro de téléphone obligatoire"
+        },
+        "company_field_enabled": {
+          "help": "Afficher un champ société dans les formulaires d’adresse lors du paiement.",
+          "label": "Champ société"
+        },
         "customer_support_email": {
           "help": "Adresse de réponse affichée aux clients dans les e-mails de la boutique.",
           "label": "E-mail du support client",
@@ -2619,6 +2627,7 @@
         "store": {
           "default_package_description": "Le carton habituel d'expédition. Les transporteurs ajoutent son poids à chaque colis et utilisent ses dimensions pour le poids volumétrique.",
           "subtitle": "Configuration générale et valeurs par défaut à l'échelle de la boutique.",
+          "tab_addresses": "Adresses",
           "tab_default_package": "Colis par défaut",
           "tab_general": "Général",
           "tab_standards": "Normes et formats",

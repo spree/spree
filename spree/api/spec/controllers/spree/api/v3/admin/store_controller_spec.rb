@@ -241,6 +241,18 @@ RSpec.describe Spree::Api::V3::Admin::StoreController, type: :controller do
       end
     end
 
+    context 'with address params' do
+      let(:params) { { preferred_company_field_enabled: true, preferred_address_requires_phone: true } }
+
+      it 'updates the address settings' do
+        subject
+        expect(response).to have_http_status(:ok)
+        store.reload
+        expect(store.preferred_company_field_enabled).to eq(true)
+        expect(store.preferred_address_requires_phone).to eq(true)
+      end
+    end
+
     context 'with an invalid storefront_access value' do
       let(:params) { { preferred_storefront_access: 'nonsense' } }
 

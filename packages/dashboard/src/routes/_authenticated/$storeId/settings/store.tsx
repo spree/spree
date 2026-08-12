@@ -94,6 +94,8 @@ function storeToFormValues(store: Store): StoreSettingsFormValues {
     preferred_storefront_access:
       (store.preferred_storefront_access as (typeof STOREFRONT_ACCESS_LEVELS)[number]) ?? 'public',
     preferred_guest_checkout: store.preferred_guest_checkout ?? true,
+    preferred_company_field_enabled: store.preferred_company_field_enabled ?? false,
+    preferred_address_requires_phone: store.preferred_address_requires_phone ?? false,
   }
 }
 
@@ -178,6 +180,8 @@ function StoreSettingsForm({ store }: { store: Store }) {
         preferred_default_package_height: values.preferred_default_package_height,
         preferred_storefront_access: values.preferred_storefront_access,
         preferred_guest_checkout: values.preferred_guest_checkout,
+        preferred_company_field_enabled: values.preferred_company_field_enabled,
+        preferred_address_requires_phone: values.preferred_address_requires_phone,
         ...extensionValues,
       })
       toast.success(t('admin.messages.store_settings_updated'))
@@ -426,6 +430,67 @@ function StoreSettingsForm({ store }: { store: Store }) {
                           render={({ field }) => (
                             <Switch
                               id="store-guest-checkout"
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          )}
+                        />
+                      </div>
+                    </Field>
+                  </FieldGroup>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('admin.pages.settings.store.tab_addresses')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FieldGroup>
+                    <Field>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col">
+                          <FieldLabel
+                            htmlFor="store-company-field-enabled"
+                            className="cursor-pointer"
+                          >
+                            {t('admin.fields.store.company_field_enabled.label')}
+                          </FieldLabel>
+                          <span className="text-xs text-muted-foreground">
+                            {t('admin.fields.store.company_field_enabled.help')}
+                          </span>
+                        </div>
+                        <Controller
+                          name="preferred_company_field_enabled"
+                          control={form.control}
+                          render={({ field }) => (
+                            <Switch
+                              id="store-company-field-enabled"
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          )}
+                        />
+                      </div>
+                    </Field>
+                    <Field>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex flex-col">
+                          <FieldLabel
+                            htmlFor="store-address-requires-phone"
+                            className="cursor-pointer"
+                          >
+                            {t('admin.fields.store.address_requires_phone.label')}
+                          </FieldLabel>
+                          <span className="text-xs text-muted-foreground">
+                            {t('admin.fields.store.address_requires_phone.help')}
+                          </span>
+                        </div>
+                        <Controller
+                          name="preferred_address_requires_phone"
+                          control={form.control}
+                          render={({ field }) => (
+                            <Switch
+                              id="store-address-requires-phone"
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
                             />

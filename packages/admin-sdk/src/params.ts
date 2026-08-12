@@ -22,6 +22,10 @@ export interface StoreUpdateParams {
   preferred_storefront_url?: string | null
   /** Store-wide default for guest checkout. Channels fall back to this. */
   preferred_guest_checkout?: boolean
+  /** Shows a company field on address forms. */
+  preferred_company_field_enabled?: boolean
+  /** Makes a phone number mandatory on customer addresses. */
+  preferred_address_requires_phone?: boolean
   /** Sender address used on all transactional emails (required by the model). */
   mail_from_address?: string
   /** Customer-facing reply-to address shown in the storefront/email footer. */

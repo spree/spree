@@ -11,7 +11,11 @@ describe Spree::Addresses::PhoneValidator do
   end
 
   before do
-    Spree::Config[:address_requires_phone] = true
+    @default_store.update!(preferred_address_requires_phone: true)
+  end
+
+  after do
+    @default_store.update!(preferred_address_requires_phone: false)
   end
 
   describe '#validate' do
@@ -19,7 +23,7 @@ describe Spree::Addresses::PhoneValidator do
       let(:address) { create(:address, phone: nil) }
 
       before do
-        Spree::Config[:address_requires_phone] = false
+        @default_store.update!(preferred_address_requires_phone: false)
       end
 
       it_behaves_like 'does not add a phone error'
@@ -29,7 +33,7 @@ describe Spree::Addresses::PhoneValidator do
       let(:address) { build_stubbed(:address, phone: '2025550123', country: nil) }
 
       before do
-        Spree::Config[:address_requires_phone] = false
+        @default_store.update!(preferred_address_requires_phone: false)
       end
 
       it_behaves_like 'does not add a phone error'
@@ -39,7 +43,7 @@ describe Spree::Addresses::PhoneValidator do
       let(:address) { build_stubbed(:address, phone: '2025550123') }
 
       before do
-        Spree::Config[:address_requires_phone] = false
+        @default_store.update!(preferred_address_requires_phone: false)
         address.country.iso = nil
       end
 

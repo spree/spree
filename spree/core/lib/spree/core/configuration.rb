@@ -23,8 +23,8 @@ module Spree
   module Core
     class Configuration < Preferences::RuntimeConfiguration
       # Alphabetized to more easily lookup particular preferences
-      preference :address_requires_state, :boolean, default: true, deprecated: true # should state/state_name be required
-      preference :address_requires_phone, :boolean, default: false # Determines whether we require phone in address
+      preference :address_requires_state, :boolean, default: true, deprecated: 'State requirements now come from the address country - see Spree::Country#states_required'
+      preference :address_requires_phone, :boolean, default: false, deprecated: 'Use the address_requires_phone preference in the Spree::Store model'
       # Origin where the admin SPA is hosted (e.g. `https://admin.shop.com`).
       # Used by admin mailers; falls back to `http://localhost:5173` in dev
       # and the store's storefront URL otherwise. Set this in production.

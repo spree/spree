@@ -29,6 +29,8 @@ export const storeSettingsFormSchema = z.object({
   preferred_default_package_height: z.coerce.number().min(0),
   preferred_storefront_access: z.enum(STOREFRONT_ACCESS_LEVELS),
   preferred_guest_checkout: z.boolean(),
+  preferred_company_field_enabled: z.boolean(),
+  preferred_address_requires_phone: z.boolean(),
 })
 
 export type StoreSettingsFormValues = z.infer<typeof storeSettingsFormSchema>
