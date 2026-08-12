@@ -1832,6 +1832,8 @@
           "tracking_description": "承运商的物流单号，或完整的跟踪链接。",
           "carrier_label": "承运商",
           "carrier_auto": "自动识别",
+          "buy_label_confirm": "为此包裹购买运输面单?面单签发后将立即从您的承运商账户扣费。",
+          "buy_label_confirm_rate": "以 {{cost}} 购买 {{rate}} 面单?面单签发后将立即从您的承运商账户扣费。",
           "buy_label": "购买面单",
           "print_label": "打印面单",
           "print_packing_slip": "打印装箱单",

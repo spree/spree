@@ -1836,6 +1836,8 @@
           "tracking_description": "Le numéro de suivi du transporteur, ou un lien de suivi complet.",
           "carrier_label": "Transporteur",
           "carrier_auto": "Détecter automatiquement",
+          "buy_label_confirm": "Acheter une étiquette d'expédition pour ce colis ? Votre compte transporteur est débité dès l'émission de l'étiquette.",
+          "buy_label_confirm_rate": "Acheter une étiquette {{rate}} pour {{cost}} ? Votre compte transporteur est débité dès l'émission de l'étiquette.",
           "buy_label": "Acheter l'étiquette",
           "print_label": "Imprimer l'étiquette",
           "print_packing_slip": "Imprimer le bordereau de colisage",

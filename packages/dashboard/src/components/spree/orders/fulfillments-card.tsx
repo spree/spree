@@ -565,7 +565,23 @@ function FulfillmentRow({ order, fulfillment }: { order: Order; fulfillment: Ful
                   size="sm"
                   variant="outline"
                   disabled={purchaseLabel.isPending}
-                  onClick={() => purchaseLabel.mutate(fulfillment.id)}
+                  onClick={async () => {
+                    // Buying a label charges the carrier account, so it gets
+                    // an explicit yes even though nothing is destroyed.
+                    if (
+                      await confirm({
+                        message: selectedRate
+                          ? t('admin.orders.detail.fulfillments.buy_label_confirm_rate', {
+                              rate: selectedRate.name,
+                              cost: selectedRate.display_cost,
+                            })
+                          : t('admin.orders.detail.fulfillments.buy_label_confirm'),
+                        confirmLabel: t('admin.orders.detail.fulfillments.buy_label'),
+                      })
+                    ) {
+                      purchaseLabel.mutate(fulfillment.id)
+                    }
+                  }}
                 >
                   <TagIcon data-icon="inline-start" />
                   {purchaseLabel.isPending

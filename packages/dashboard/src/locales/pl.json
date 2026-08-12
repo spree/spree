@@ -1854,6 +1854,8 @@
           "tracking_description": "Numer przesyłki od przewoźnika lub pełny link do śledzenia.",
           "carrier_label": "Przewoźnik",
           "carrier_auto": "Wykryj automatycznie",
+          "buy_label_confirm": "Kupić etykietę wysyłkową dla tej przesyłki? Twoje konto przewoźnika zostanie obciążone w momencie wystawienia etykiety.",
+          "buy_label_confirm_rate": "Kupić etykietę {{rate}} za {{cost}}? Twoje konto przewoźnika zostanie obciążone w momencie wystawienia etykiety.",
           "buy_label": "Kup etykietę",
           "print_label": "Drukuj etykietę",
           "print_packing_slip": "Drukuj list przewozowy",

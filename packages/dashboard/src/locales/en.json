@@ -1836,6 +1836,8 @@
           "tracking_description": "The carrier tracking number, or a full tracking link.",
           "carrier_label": "Shipping carrier",
           "carrier_auto": "Detect automatically",
+          "buy_label_confirm": "Buy a shipping label for this fulfillment? Your carrier account is charged as soon as the label is issued.",
+          "buy_label_confirm_rate": "Buy a {{rate}} label for {{cost}}? Your carrier account is charged as soon as the label is issued.",
           "buy_label": "Buy label",
           "print_label": "Print label",
           "print_packing_slip": "Print packing slip",

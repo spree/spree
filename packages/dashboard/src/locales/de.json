@@ -1836,6 +1836,8 @@
           "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link.",
           "carrier_label": "Versanddienstleister",
           "carrier_auto": "Automatisch erkennen",
+          "buy_label_confirm": "Versandlabel für diese Sendung kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
+          "buy_label_confirm_rate": "Label {{rate}} für {{cost}} kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
           "buy_label": "Label kaufen",
           "print_label": "Label drucken",
           "print_packing_slip": "Lieferschein drucken",
