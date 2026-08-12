@@ -112,6 +112,11 @@ test.describe('delivery profiles', () => {
     await page.getByRole('button', { name: /^cancel$/i }).click()
     await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0)
     await expect(page.getByRole('heading', { name: profileName })).toBeVisible()
+
+    // The sheet replaces its history entry rather than pushing one, so going
+    // back does not reopen what the merchant just dismissed.
+    await page.goBack()
+    await expect(page.getByRole('heading', { name: /new delivery method/i })).toHaveCount(0)
   })
 
   // Pickup is a separate card because it has no destination: the merchant
@@ -179,6 +184,11 @@ test.describe('delivery profiles', () => {
       timeout: 15_000,
     })
     await expect(page.getByText(methodName)).toBeVisible({ timeout: 15_000 })
+
+    // Opening and closing the sheet must not leave the header's back arrow
+    // walking through dismissed sheets — it goes to the profile list.
+    await page.getByRole('button', { name: /^back$/i }).click()
+    await expect(page.getByRole('button', { name: PROFILE_CTA })).toBeVisible({ timeout: 15_000 })
   })
 
   // The origin-group layer stays invisible until a profile is split, so this
