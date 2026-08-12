@@ -330,6 +330,39 @@ ships in the OSS Admin API; first-run configures the one store.
 Consequences: Admin API code must never assume `current_store` is the default
 store, and store-touching cache keys must carry the store id by construction.
 Plan: `6.0-store-context-and-first-run-setup.md`.
+## 2026-08-12 — Amount consistency during gateway operations: the completion claim, not a lock
+
+Raised as a challenge to the lock removals: shouldn't the order be locked for
+the whole gateway operation, so it cannot be mutated into a different total
+than the one sent to the gateway? The invariant is right; the mechanism cannot
+be. For session gateways the charge happens client-side before any server
+endpoint runs — no server lock reaches it. And a row lock spanning a gateway
+timeout pins a database connection per in-flight payment; a provider brownout
+turns that into pool exhaustion for the whole store, not one order.
+
+What actually enforces the invariant is Carts::Complete's three layers:
+totals recalculated **inside** the cart's row lock at PREPARE ("not trusted
+from earlier requests") and checked against the client's expected_total; the
+`completing` claim stamped before the lock releases; payment coverage
+re-verified at FINALIZE, with the Y3 undo popping payments back to the cart
+when it fails.
+
+The challenge found a real hole in layer two: the claim was only consulted by
+guard_concurrent_completion — it blocked a second *completion*, but nothing
+blocked a *mutation* during the unlocked gateway window. An AddItem landing
+there changed the cart under a completion whose totals were fixed at PREPARE.
+Now `with_order_lock` — the funnel every store cart mutation passes through —
+refuses mutations while a fresh claim holds the cart (409
+completion_in_progress), checked after acquiring the row lock so it cannot
+race the claim being written, with the same TTL as the completion guard so a
+crashed completion never bricks its cart.
+
+**Consequences:** third-party gateway authors rely on four guarantees, none of
+which is "the order is locked while you talk to your provider": the amount is
+fixed in the session/intent and synced on update; mutations are excluded
+during the completion window by the claim; completion re-verifies coverage
+and compensates; settlement and capture bookkeeping serialize on row locks.
+
 ## 2026-08-12 — Payment lock audit: locks live where money is recorded, never around gateway I/O
 
 A sweep of every payment operation with the settle_payment! lens — check-then-act

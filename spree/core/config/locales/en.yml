@@ -676,6 +676,7 @@ en:
     card_number: Card Number
     cart: Cart
     cart_already_updated: The cart has already been updated.
+    cart_completion_in_progress: The cart is being completed. Please retry in a moment.
     cart_line_item:
       currency_unavailable: "%{li_name} is not available in %{currency}"
       delivery_unavailable: "%{li_name} cannot be delivered to the selected address"
