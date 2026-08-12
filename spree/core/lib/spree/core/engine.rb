@@ -127,6 +127,12 @@ module Spree
         app.config.spree.delivery_rate_providers = []
       end
 
+      # Same reason again: a tax provider gem, or a host app, registers its
+      # engine from an initializer file. Core's Internal concatenates below.
+      initializer 'spree.register.tax_providers', before: :load_config_initializers do |app|
+        app.config.spree.tax_providers = []
+      end
+
       initializer 'spree.register.delivery_profile_types', before: :load_config_initializers do |app|
         app.config.spree.delivery_profile_types = []
       end
@@ -184,10 +190,13 @@ module Spree
         ]
 
         # The fallback engine when a market names none (see docs/plans/6.0-tax-provider.md).
-        Rails.application.config.spree.default_tax_provider = Spree::TaxProvider::Internal
+        # Assigned only if an initializer file has not already named one — an app
+        # that picks its own default must keep it.
+        Rails.application.config.spree.default_tax_provider ||= Spree::TaxProvider::Internal
 
-        # Engines a market can select. Provider gems append their own.
-        Rails.application.config.spree.tax_providers = [Spree::TaxProvider::Internal]
+        # Engines a market can select. Concatenated, not assigned: provider gems
+        # and host apps append theirs from initializer files, which run first.
+        Rails.application.config.spree.tax_providers.concat [Spree::TaxProvider::Internal]
 
         # Password policy for the default auth models. Swap for corporate rules,
         # breach-list lookups or entropy scoring.
