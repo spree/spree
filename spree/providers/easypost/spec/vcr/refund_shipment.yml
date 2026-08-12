@@ -2,24 +2,86 @@
 http_interactions:
 - request:
     method: post
-    uri: https://api.easypost.com/v2/shipments/shp_recorded1/refund
+    uri: https://api.easypost.com/v2/shipments/shp_cee0847ebff344afa39c7d106cc0c61f/refund
     body:
       encoding: UTF-8
-      string: '{}'
+      string: "{}"
     headers:
-      Authorization:
-      - "<FILTERED>"
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - EasyPost/v2 RubyClient/7.7.0 Ruby/4.0.1-p0 OS/Darwin OSVersion/23 OSArch/arm64
+      Host:
+      - api.easypost.com
       Content-Type:
       - application/json
+      Authorization:
+      - "<FILTERED>"
   response:
     status:
       code: 200
       message: OK
     headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Easypost-Api-Version:
+      - '2015-01-01'
+      Vary:
+      - EasyPost-Api-Version
+      X-Ep-Request-Uuid:
+      - d7dd9a7c6a7c0ccdff099472029b1f54
+      Cache-Control:
+      - private, no-cache, no-store
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
       Content-Type:
       - application/json; charset=utf-8
+      X-Runtime:
+      - '0.218185'
+      Transfer-Encoding:
+      - chunked
+      X-Node:
+      - bigweb57nuq
+      X-Version-Label:
+      - easypost-202608112128-93a53ffd35-main
+      X-Backend:
+      - easypost
+      X-Proxied:
+      - extlb2nuq 1318c68dc0
+      - intlb4nuq d4a20a271b
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
     body:
-      encoding: UTF-8
-      string: '{"id":"shp_recorded1","object":"Shipment","mode":"test","status":"purchased","refund_status":"submitted","rates":[]}'
-  recorded_at: Thu, 06 Aug 2026 20:06:00 GMT
-recorded_with: VCR 6.3.1
+      encoding: ASCII-8BIT
+      string: '{"id":"shp_cee0847ebff344afa39c7d106cc0c61f","created_at":"2026-08-12T06:03:08Z","is_return":false,"messages":[{"carrier":"DhlEcs","carrier_account_id":"ca_50b23cff99b0466cb2353f60ad06784f","type":"rate_error","message":"shipment.options.merchant_id
+        is required"},{"carrier":"USAExportPBA","carrier_account_id":"ca_7e87ab81fe1543e4a77ec08ad656f3e9","type":"rate_error","message":"shipment:
+        [''shipment.from_address.country: This carrier only support shipments from
+        US origins to international destinations.'']"},{"carrier":"CanadaPost","carrier_account_id":"ca_93986cf850124be29b73034d165ff3a1","type":"rate_error","message":"[''Unable
+        to get rates for shipments originating outside of Canada.'']"}],"mode":"test","options":{"currency":"USD","payment":{"type":"SENDER"},"date_advance":0},"reference":null,"status":"unknown","tracking_code":"9405500208303121182853","updated_at":"2026-08-12T06:03:57Z","batch_id":null,"batch_status":null,"batch_message":null,"customs_info":null,"from_address":{"id":"adr_7daf1806961311f19d94002248041e50","object":"Address","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z","name":"Eryn
+        Hermann","company":null,"street1":"1600 Pennsylvania Ave NW","street2":null,"city":"Washington","state":"NY","zip":"20500","country":"US","phone":"2024561111","email":null,"mode":"test","carrier_facility":null,"residential":null,"federal_tax_id":null,"state_tax_id":null,"verifications":{}},"insurance":"50.00","order_id":null,"parcel":{"id":"prcl_acf0a535cc644786b2cecbfea4972ef2","object":"Parcel","weight":0.1,"length":null,"width":null,"height":null,"predefined_package":null,"mode":"test","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z"},"postage_label":{"object":"PostageLabel","id":"pl_69113b2eea454fd7adb7a347e9c02a4e","created_at":"2026-08-12T06:03:12Z","updated_at":"2026-08-12T06:03:12Z","date_advance":0,"integrated_form":"none","label_date":"2026-08-12T06:03:12Z","label_resolution":300,"label_size":"4x6","label_type":"default","label_file_type":"image/png","label_url":"https://easypost-files.s3.us-west-2.amazonaws.com/files/postage_label/20260812/e8e75bce9899194c0f8828753f933f4423.png","label_pdf_url":null,"label_zpl_url":null,"label_epl2_url":null,"label_file":null},"rates":[{"id":"rate_56d4f605ab11469fb552c34d65e59995","object":"Rate","created_at":"2026-08-12T06:03:09Z","updated_at":"2026-08-12T06:03:09Z","mode":"test","service":"Express","carrier":"USPS","rate":"31.86","currency":"USD","retail_rate":"36.00","retail_currency":"USD","list_rate":"31.86","list_currency":"USD","billing_type":"easypost","delivery_days":1,"delivery_date":null,"delivery_date_guaranteed":false,"est_delivery_days":1,"shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier_account_id":"ca_f1a0e5c2799243bba037f8169b0c41de"},{"id":"rate_4f5c3b0240b34dbab6e5d5405ca26e39","object":"Rate","created_at":"2026-08-12T06:03:09Z","updated_at":"2026-08-12T06:03:09Z","mode":"test","service":"Priority","carrier":"USPS","rate":"8.60","currency":"USD","retail_rate":"11.65","retail_currency":"USD","list_rate":"9.71","list_currency":"USD","billing_type":"easypost","delivery_days":2,"delivery_date":null,"delivery_date_guaranteed":false,"est_delivery_days":2,"shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier_account_id":"ca_f1a0e5c2799243bba037f8169b0c41de"},{"id":"rate_3fd3f1f9457b49b595b3c86038c9ba40","object":"Rate","created_at":"2026-08-12T06:03:09Z","updated_at":"2026-08-12T06:03:09Z","mode":"test","service":"GroundAdvantage","carrier":"USPS","rate":"5.28","currency":"USD","retail_rate":"8.15","retail_currency":"USD","list_rate":"7.30","list_currency":"USD","billing_type":"easypost","delivery_days":2,"delivery_date":null,"delivery_date_guaranteed":false,"est_delivery_days":2,"shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier_account_id":"ca_f1a0e5c2799243bba037f8169b0c41de"},{"id":"rate_2f2b5a24a41c4cb7b5b12306538f0aef","object":"Rate","created_at":"2026-08-12T06:03:09Z","updated_at":"2026-08-12T06:03:09Z","mode":"test","service":"SMART_POST","carrier":"FedExDefault","rate":"10.31","currency":"USD","retail_rate":null,"retail_currency":null,"list_rate":"19.96","list_currency":"USD","billing_type":"easypost","delivery_days":2,"delivery_date":"2026-08-14T23:59:00Z","delivery_date_guaranteed":true,"est_delivery_days":2,"shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier_account_id":"ca_1787f888698d448bad8103e361f82d4a"}],"refund_status":"submitted","scan_form":null,"selected_rate":{"id":"rate_4f5c3b0240b34dbab6e5d5405ca26e39","object":"Rate","created_at":"2026-08-12T06:03:12Z","updated_at":"2026-08-12T06:03:12Z","mode":"test","service":"Priority","carrier":"USPS","rate":"8.60","currency":"USD","retail_rate":"11.65","retail_currency":"USD","list_rate":"9.71","list_currency":"USD","billing_type":"easypost","delivery_days":2,"delivery_date":null,"delivery_date_guaranteed":false,"est_delivery_days":2,"shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier_account_id":"ca_f1a0e5c2799243bba037f8169b0c41de"},"tracker":{"id":"trk_4fc05a35edd64cbd899a2be3d9f764b2","object":"Tracker","mode":"test","tracking_code":"9405500208303121182853","status":"pre_transit","status_detail":"status_update","created_at":"2026-08-12T06:03:12Z","updated_at":"2026-08-12T06:03:12Z","signed_by":null,"weight":null,"est_delivery_date":"2026-08-12T06:03:12Z","shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier":"USPS","tracking_details":[{"object":"TrackingDetail","message":"Pre-Shipment
+        Info Sent to USPS","description":"","status":"pre_transit","status_detail":"status_update","datetime":"2026-07-12T06:03:12Z","source":"USPS","carrier_code":"","tracking_location":{"object":"TrackingLocation","city":null,"state":null,"country":null,"zip":null},"est_delivery_date":null,"datetime_local":"2026-07-12T06:03:12+00:00","geocode_confidence":"LOW"},{"object":"TrackingDetail","message":"Shipping
+        Label Created","description":"","status":"pre_transit","status_detail":"status_update","datetime":"2026-07-12T18:40:12Z","source":"USPS","carrier_code":"","tracking_location":{"object":"TrackingLocation","city":"HOUSTON","state":"TX","country":null,"zip":"77063"},"est_delivery_date":null,"datetime_local":"2026-07-12T18:40:12+00:00","geocode_confidence":"LOW"}],"fees":[],"carrier_detail":{"object":"CarrierDetail","service":"First-Class
+        Package Service","container_type":null,"est_delivery_date_local":null,"est_delivery_time_local":null,"origin_location":"HOUSTON
+        TX, 77001","origin_tracking_location":{"object":"TrackingLocation","city":"HOUSTON","state":"TX","country":null,"zip":"77063"},"destination_location":"CHARLESTON
+        SC, 29401","destination_tracking_location":null,"guaranteed_delivery_date":null,"alternate_identifier":null,"initial_delivery_attempt":null},"delivery_evidence":[],"public_url":"https://track.easypost.com/djE6dHJrXzRmYzA1YTM1ZWRkNjRjYmQ4OTlhMmJlM2Q5Zjc2NGIy"},"to_address":{"id":"adr_7daf17b6961311f19d93002248041e50","object":"Address","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z","name":"John
+        Doe","company":"Company","street1":"15 Lovely Street","street2":"Northwest","city":"New
+        York","state":"NY","zip":"10118","country":"US","phone":"5555550199","email":null,"mode":"test","carrier_facility":null,"residential":null,"federal_tax_id":null,"state_tax_id":null,"verifications":{}},"usps_zone":3,"return_address":{"id":"adr_7daf1806961311f19d94002248041e50","object":"Address","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z","name":"Eryn
+        Hermann","company":null,"street1":"1600 Pennsylvania Ave NW","street2":null,"city":"Washington","state":"NY","zip":"20500","country":"US","phone":"2024561111","email":null,"mode":"test","carrier_facility":null,"residential":null,"federal_tax_id":null,"state_tax_id":null,"verifications":{}},"buyer_address":{"id":"adr_7daf17b6961311f19d93002248041e50","object":"Address","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z","name":"John
+        Doe","company":"Company","street1":"15 Lovely Street","street2":"Northwest","city":"New
+        York","state":"NY","zip":"10118","country":"US","phone":"5555550199","email":null,"mode":"test","carrier_facility":null,"residential":null,"federal_tax_id":null,"state_tax_id":null,"verifications":{}},"forms":[],"fees":[{"object":"Fee","type":"LabelFee","amount":"0.00000","charged":true,"refunded":false},{"object":"Fee","type":"PostageFee","amount":"8.60000","charged":true,"refunded":false},{"object":"Fee","type":"InsuranceFee","amount":"1.00000","charged":true,"refunded":false}],"object":"Shipment"}'
+  recorded_at: Wed, 12 Aug 2026 06:03:57 GMT
+recorded_with: VCR 6.4.0

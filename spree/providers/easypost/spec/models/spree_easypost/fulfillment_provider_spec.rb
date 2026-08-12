@@ -70,13 +70,20 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
       )
     end
     let(:shipment_service) { double }
-    let(:client) { instance_double(EasyPost::Client, shipment: shipment_service) }
+    let(:end_shipper_service) { double }
+    let(:client) do
+      instance_double(EasyPost::Client, shipment: shipment_service, end_shipper: end_shipper_service)
+    end
 
-    before { allow_any_instance_of(SpreeEasyPost::Integration).to receive(:client).and_return(client) }
+    before do
+      allow_any_instance_of(SpreeEasyPost::Integration).to receive(:client).and_return(client)
+      allow(end_shipper_service).to receive(:create).and_return(double(id: 'es_test1'))
+    end
 
     it 'buys the rate quoted at checkout and hands back tracking' do
       allow(shipment_service).to receive(:buy).
-        with('shp_recorded1', rate: { id: 'rate_recorded1' }).and_return(purchased_shipment)
+        with('shp_recorded1', rate: { id: 'rate_recorded1' }, end_shipper_id: 'es_test1').
+        and_return(purchased_shipment)
 
       result = provider.create_fulfillment(fulfillment)
 
@@ -97,7 +104,7 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
 
       before do
         allow(shipment_service).to receive(:buy).
-          with('shp_recorded1', rate: { id: 'rate_recorded1' }).
+          with('shp_recorded1', rate: { id: 'rate_recorded1' }, end_shipper_id: 'es_test1').
           and_raise(EasyPost::Errors::EasyPostError.new('rate expired'))
         allow(shipment_service).to receive(:create).and_return(fresh_shipment)
         # The selected rate carries the carrier service the customer chose —
@@ -107,7 +114,8 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
 
       it 'requotes and buys the matching service' do
         allow(shipment_service).to receive(:buy).
-          with('shp_fresh', rate: { id: 'rate_fresh' }).and_return(purchased_shipment)
+          with('shp_fresh', rate: { id: 'rate_fresh' }, end_shipper_id: 'es_test1').
+          and_return(purchased_shipment)
 
         result = provider.create_fulfillment(fulfillment)
 
@@ -119,6 +127,48 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
 
         expect(provider.create_fulfillment(fulfillment)).to eq({})
       end
+    end
+
+    # Labels on EasyPost's own carrier accounts refuse to buy without an
+    # EndShipper, and EasyPost mandates contact fields a stock location
+    # does not carry — the store's details fill the gap.
+    it 'registers an end shipper from the warehouse with store contact fallbacks' do
+      allow(shipment_service).to receive(:buy).and_return(purchased_shipment)
+
+      provider.create_fulfillment(fulfillment)
+
+      expect(end_shipper_service).to have_received(:create).with(
+        hash_including(
+          name: fulfillment.stock_location.name,
+          phone: fulfillment.stock_location.phone,
+          email: store.mail_from_address
+        )
+      )
+    end
+
+    it 'buys without an end shipper when the contact details cannot be assembled' do
+      fulfillment.stock_location.update_columns(phone: nil)
+      store.update_columns(contact_phone: nil)
+      allow(shipment_service).to receive(:buy).
+        with('shp_recorded1', rate: { id: 'rate_recorded1' }).and_return(purchased_shipment)
+
+      result = provider.create_fulfillment(fulfillment)
+
+      expect(result[:tracking_number]).to be_present
+      expect(end_shipper_service).not_to have_received(:create)
+    end
+
+    # An end-shipper hiccup must not lose the label — the buy proceeds bare
+    # and only carriers that insist on one reject it, with their message.
+    it 'degrades to a bare buy when the end shipper cannot be registered' do
+      allow(end_shipper_service).to receive(:create).
+        and_raise(EasyPost::Errors::EasyPostError.new('nope'))
+      allow(Rails.error).to receive(:report)
+      allow(shipment_service).to receive(:buy).
+        with('shp_recorded1', rate: { id: 'rate_recorded1' }).and_return(purchased_shipment)
+
+      expect(provider.create_fulfillment(fulfillment)[:tracking_number]).to be_present
+      expect(Rails.error).to have_received(:report)
     end
 
     # Runs inside the ship transition — a purchase failure must degrade to
@@ -171,9 +221,8 @@ RSpec.describe SpreeEasyPost::FulfillmentProvider do
   # calls against EasyPost's wire format. Ids come from the recorded rate
   # quote so a re-record against any account stays self-consistent.
   describe 'API contract (VCR)' do
-    # Priority specifically: USPS GroundAdvantage requires an EasyPost
-    # end-shipper record that test accounts do not have by default, so
-    # buying it fails for reasons unrelated to this gem.
+    # USPS purchases demand an EndShipper; the provider registers one from
+    # the warehouse before buying, so any recorded USPS service works.
     let(:recorded_rate) do
       rates = recorded_rates
       rates.find { |rate| rate['service'] == 'Priority' } || rates.first

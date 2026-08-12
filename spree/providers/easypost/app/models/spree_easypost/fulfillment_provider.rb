@@ -79,7 +79,7 @@ module SpreeEasyPost
       rate_id = quoted['easypost_rate_id']
       return if shipment_id.blank? || rate_id.blank?
 
-      integration.client.shipment.buy(shipment_id, rate: { id: rate_id })
+      buy(integration, fulfillment, shipment_id, rate_id)
     rescue EasyPost::Errors::EasyPostError
       nil
     end
@@ -101,7 +101,31 @@ module SpreeEasyPost
       end
       return if rate.nil?
 
-      integration.client.shipment.buy(shipment.id, rate: { id: rate.id })
+      buy(integration, fulfillment, shipment.id, rate.id)
+    end
+
+    # Labels bought on EasyPost's own carrier accounts (USPS) require an
+    # EndShipper — the legally responsible shipping party. Created fresh per
+    # purchase so it always matches the current warehouse address; label buys
+    # are rare enough that caching one would only buy staleness. When the
+    # mandatory contact fields cannot be assembled the purchase proceeds
+    # without one, and carriers that insist reject with their own message.
+    def buy(integration, fulfillment, shipment_id, rate_id)
+      buy_params = { rate: { id: rate_id } }
+      end_shipper_id = end_shipper_id(integration, fulfillment)
+      buy_params[:end_shipper_id] = end_shipper_id if end_shipper_id.present?
+
+      integration.client.shipment.buy(shipment_id, **buy_params)
+    end
+
+    def end_shipper_id(integration, fulfillment)
+      params = SpreeEasyPost.end_shipper_params(fulfillment.stock_location, fulfillment.order&.store)
+      return if params.nil?
+
+      integration.client.end_shipper.create(**params).id
+    rescue EasyPost::Errors::EasyPostError => e
+      report(e, fulfillment)
+      nil
     end
 
     def requote_parcel(fulfillment)
