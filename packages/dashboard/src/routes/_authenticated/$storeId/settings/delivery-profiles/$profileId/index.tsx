@@ -1011,6 +1011,7 @@ function MethodList({
   const deleteMutation = useDeleteDeliveryMethod()
   const { permissions } = usePermissions()
   const { data: rateProviders } = useDeliveryRateProviders()
+  const defaultRateProvider = rateProviders?.default ?? ''
 
   async function handleDelete(method: DeliveryMethod) {
     const ok = await confirm({
@@ -1040,10 +1041,16 @@ function MethodList({
         // A carrier quotes each shipment live, so there is no one price to
         // show — the carrier's name is the honest answer. Everything else is
         // priced up front: an amount, or free when there is none.
-        const carrierPriced = rateProvider?.uses_calculator === false
+        //
+        // A method carrying a rate provider absent from the registry (an
+        // uninstalled gem, a disconnected integration) is still not
+        // calculator-priced, and calling it free would be a lie about money.
+        const carrierPriced = rateProvider
+          ? rateProvider.uses_calculator === false
+          : !!method.rate_provider && method.rate_provider !== defaultRateProvider
         const amount = flatAmount(method.calculator_preferences)
         const price = carrierPriced
-          ? rateProvider.name
+          ? (rateProvider?.name ?? t('admin.delivery_methods.carrier_rates'))
           : amount === null || amount === 0
             ? t('admin.delivery_methods.free')
             : formatAmount(amount, defaultCurrency, i18n.language)

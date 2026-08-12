@@ -517,6 +517,8 @@
         "amount_in_currency": "{{currency}} 金额",
         "currency_amounts_help": "未填写金额的币种将不会提供该配送方式。"
       },
+      "carrier_rates": "承运商费率",
+      "provider_unavailable": "{{name}}(不可用)",
       "provider_needs_connection": "连接 {{name}} 后即可使用",
       "rule_summary": {
         "separator": " · ",

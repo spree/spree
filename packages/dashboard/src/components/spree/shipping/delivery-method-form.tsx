@@ -401,6 +401,19 @@ function ProvidersCard({
       disabled: !provider.available,
     }))
 
+  // A provider the registry no longer offers — an uninstalled gem, or a list
+  // fetched before its integration was connected — would otherwise render as
+  // its bare class name, since the trigger label comes from these options.
+  if (rateProvider && !rateProviderOptions.some((option) => option.value === rateProvider)) {
+    rateProviderOptions.push({
+      value: rateProvider,
+      label: t('admin.delivery_methods.provider_unavailable', {
+        name: rateProvider.split('::').pop() ?? rateProvider,
+      }),
+      disabled: true,
+    })
+  }
+
   // Every installed shipping integration that isn't connected yet, straight
   // from the integrations registry — a carrier gem is offered here even
   // before it registers a provider, so the merchant never has to discover
@@ -558,10 +571,13 @@ function useSelectedRateProvider(
   const rateProvider = form.watch('rate_provider')
   const defaultRateProvider = rateProviders?.default ?? ''
 
+  // Matched on type alone: a saved method keeps its provider even while the
+  // integration is disconnected, and reading that as "no provider" would show
+  // the method as calculator-priced and offer pricing that never applies.
   return useMemo(
     () =>
       (rateProviders?.data ?? []).find(
-        (provider) => provider.available && provider.type === (rateProvider || defaultRateProvider),
+        (provider) => provider.type === (rateProvider || defaultRateProvider),
       ),
     [rateProviders, rateProvider, defaultRateProvider],
   )

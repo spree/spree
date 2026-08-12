@@ -517,6 +517,8 @@
         "amount_in_currency": "Montant en {{currency}}",
         "currency_amounts_help": "Les devises laissées vides ne se voient pas proposer cette méthode de livraison."
       },
+      "carrier_rates": "Tarifs transporteur",
+      "provider_unavailable": "{{name}} (indisponible)",
       "provider_needs_connection": "Connectez {{name}} pour l’utiliser",
       "rule_summary": {
         "separator": " · ",

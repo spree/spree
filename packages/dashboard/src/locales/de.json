@@ -517,6 +517,8 @@
         "amount_in_currency": "Betrag in {{currency}}",
         "currency_amounts_help": "Währungen ohne Betrag wird diese Versandart nicht angeboten."
       },
+      "carrier_rates": "Carrier-Tarife",
+      "provider_unavailable": "{{name}} (nicht verfügbar)",
       "provider_needs_connection": "{{name}} verbinden, um es zu nutzen",
       "rule_summary": {
         "separator": " · ",

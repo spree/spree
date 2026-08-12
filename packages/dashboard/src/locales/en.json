@@ -517,6 +517,8 @@
         "amount_in_currency": "Amount in {{currency}}",
         "currency_amounts_help": "Currencies left blank are not offered this delivery method."
       },
+      "carrier_rates": "Carrier rates",
+      "provider_unavailable": "{{name}} (unavailable)",
       "provider_needs_connection": "Connect {{name}} to use it",
       "rule_summary": {
         "separator": " · ",

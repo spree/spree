@@ -24,11 +24,18 @@ export function useIntegrationTypes() {
   })
 }
 
-/** Connects an integration type to the store. Activating verifies the connection server-side. */
+/**
+ * Connects an integration type to the store. Activating verifies the
+ * connection server-side.
+ *
+ * Provider discovery is invalidated alongside: a carrier's rate and
+ * fulfillment providers only become selectable once its integration is
+ * connected, and those lists cache for half an hour.
+ */
 export function useCreateIntegration() {
   return useResourceMutation<Integration, Error, IntegrationCreateParams>({
     mutationFn: (params) => adminClient.integrations.create(params),
-    invalidate: [['integrations']],
+    invalidate: [['integrations'], ['delivery-methods']],
     successMessage: i18n.t('admin.integrations.messages.connected'),
     errorMessage: i18n.t('admin.errors.failed_to_create'),
   })
@@ -38,7 +45,7 @@ export function useCreateIntegration() {
 export function useUpdateIntegration(id: string) {
   return useResourceMutation<Integration, Error, IntegrationUpdateParams>({
     mutationFn: (params) => adminClient.integrations.update(id, params),
-    invalidate: [['integrations']],
+    invalidate: [['integrations'], ['delivery-methods']],
     successMessage: i18n.t('admin.integrations.messages.updated'),
     errorMessage: i18n.t('admin.errors.failed_to_update'),
   })
@@ -48,7 +55,7 @@ export function useUpdateIntegration(id: string) {
 export function useDeleteIntegration() {
   return useResourceMutation<void, Error, string>({
     mutationFn: (id) => adminClient.integrations.delete(id),
-    invalidate: [['integrations']],
+    invalidate: [['integrations'], ['delivery-methods']],
     successMessage: i18n.t('admin.integrations.messages.disconnected'),
     errorMessage: i18n.t('admin.errors.failed_to_delete'),
   })

@@ -525,6 +525,8 @@
         "amount_in_currency": "Kwota w {{currency}}",
         "currency_amounts_help": "Waluty bez kwoty nie mają oferowanej tej metody dostawy."
       },
+      "carrier_rates": "Stawki przewoźnika",
+      "provider_unavailable": "{{name}} (niedostępny)",
       "provider_needs_connection": "Połącz {{name}}, aby użyć",
       "rule_summary": {
         "separator": " · ",

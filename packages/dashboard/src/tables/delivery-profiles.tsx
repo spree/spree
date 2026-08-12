@@ -5,7 +5,7 @@ import i18n from 'i18next'
 import { TruckIcon } from 'lucide-react'
 
 defineTable<DeliveryProfile>('delivery-profiles', {
-  title: i18n.t('admin.settings_nav.items.shipping'),
+  title: i18n.t('admin.settings_nav.items.delivery_profiles'),
   searchParam: 'name_cont',
   searchPlaceholder: i18n.t('admin.delivery_profiles.search_placeholder'),
   defaultSort: { field: 'position', direction: 'asc' },

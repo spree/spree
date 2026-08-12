@@ -517,6 +517,8 @@
         "amount_in_currency": "المبلغ بعملة {{currency}}",
         "currency_amounts_help": "العملات المتروكة فارغة لا تُعرض لها طريقة التوصيل هذه."
       },
+      "carrier_rates": "أسعار شركة الشحن",
+      "provider_unavailable": "{{name}} (غير متاح)",
       "provider_needs_connection": "اربط {{name}} لاستخدامه",
       "rule_summary": {
         "separator": " · ",
