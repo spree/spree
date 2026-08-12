@@ -9,14 +9,36 @@ module Spree
     # characters of the original value — Stripe's "stored, here's the
     # last 4" pattern.
     module Masking
-      TOKEN = '••••'
+      TOKEN_CHARACTER = '•'.freeze
+      VISIBLE_CHARACTERS = 4
 
+      # Kept for the round-trip guard: any masked value starts with at least
+      # this run of dots, so `masked?` still recognizes what it sent.
+      TOKEN = TOKEN_CHARACTER * VISIBLE_CHARACTERS
+
+      # Upper bound on the dots, so a long key stays readable in a form
+      # field and the rendered length stops disclosing the exact size of
+      # anything longer than this.
+      MAX_MASK_LENGTH = 16
+
+      # Masks all but the last four characters, keeping one dot per hidden
+      # character so the field reads like the credential it stands for.
+      # Values of four characters or fewer are hidden entirely — showing
+      # "the last four" of a five-character secret would expose most of it.
+      #
       # @param value [Object] the preference value to mask
       # @return [String, nil] masked string, or nil if value is blank
       def self.mask(value)
         return nil if value.blank?
 
-        "#{TOKEN}#{value.to_s.last(4)}"
+        value = value.to_s
+        visible = value.length > VISIBLE_CHARACTERS ? value.last(VISIBLE_CHARACTERS) : ''
+        # Never fewer than VISIBLE_CHARACTERS dots: `masked?` recognizes a
+        # round-tripped value by that leading run, and a short secret must
+        # not produce a mask the guard fails to spot.
+        hidden = (value.length - visible.length).clamp(VISIBLE_CHARACTERS, MAX_MASK_LENGTH)
+
+        "#{TOKEN_CHARACTER * hidden}#{visible}"
       end
 
       # @param value [Object] a value previously returned by `mask`

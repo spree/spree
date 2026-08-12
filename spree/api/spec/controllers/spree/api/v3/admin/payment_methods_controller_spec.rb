@@ -77,7 +77,7 @@ RSpec.describe Spree::Api::V3::Admin::PaymentMethodsController, type: :controlle
 
         secret = json_response.dig('preferences', 'dummy_secret_key')
         expect(secret).to start_with(Spree::Preferences::Masking::TOKEN)
-        expect(secret).to eq("#{Spree::Preferences::Masking::TOKEN}alue")
+        expect(secret).to eq(Spree::Preferences::Masking.mask('sk_live_super_secret_value'))
         expect(response.body).not_to include('sk_live_super_secret_value')
       end
 

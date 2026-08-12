@@ -12,7 +12,7 @@ RSpec.describe Spree::MarketCountry, type: :model do
 
         before do
           zone.members.create!(member_type: 'country', country: country)
-          create(:shipping_method, delivery_zones: [zone])
+          create(:shipping_method, delivery_zone: zone)
         end
 
         it 'is valid' do
@@ -29,7 +29,7 @@ RSpec.describe Spree::MarketCountry, type: :model do
           # scope any worldwide methods (e.g. the market factory's) elsewhere
           elsewhere = create(:delivery_zone)
           elsewhere.members.create!(member_type: 'country', country: create(:country))
-          Spree::DeliveryMethod.find_each { |dm| dm.delivery_zones = [elsewhere] if dm.delivery_zones.empty? }
+          Spree::DeliveryMethod.find_each { |dm| dm.update!(delivery_zone: elsewhere) if dm.delivery_zone.nil? }
         end
 
         it 'is invalid' do
@@ -48,7 +48,7 @@ RSpec.describe Spree::MarketCountry, type: :model do
           zone.members.create!(member_type: 'country', country: country)
           elsewhere = create(:delivery_zone)
           elsewhere.members.create!(member_type: 'country', country: create(:country))
-          Spree::DeliveryMethod.find_each { |dm| dm.delivery_zones = [elsewhere] if dm.delivery_zones.empty? }
+          Spree::DeliveryMethod.find_each { |dm| dm.update!(delivery_zone: elsewhere) if dm.delivery_zone.nil? }
         end
 
         it 'is invalid' do
@@ -65,7 +65,7 @@ RSpec.describe Spree::MarketCountry, type: :model do
 
         before do
           zone.members.create!(member_type: 'state', state: state)
-          create(:shipping_method, delivery_zones: [zone])
+          create(:shipping_method, delivery_zone: zone)
         end
 
         it 'is valid' do

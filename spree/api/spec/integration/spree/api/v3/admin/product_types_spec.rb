@@ -72,11 +72,11 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
         type: :object,
         properties: {
           name: { type: :string, example: 'Hoodie' },
-          fulfillment_types: {
-            type: :array,
-            items: { type: :string },
-            example: ['shipping'],
-            description: 'How products of this type can be delivered.'
+          delivery_profile_id: {
+            type: :string,
+            nullable: true,
+            example: 'fp_86Rf07xd4z',
+            description: 'Fulfillment profile stamped onto products created with this type. Null leaves new products on the store default profile.'
           },
           option_type_ids: {
             type: :array,
@@ -105,14 +105,14 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
 
       response '201', 'product type created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
-        let(:body) { { name: 'Hoodie', fulfillment_types: ['shipping'] } }
+        let(:body) { { name: 'Hoodie' } }
 
         schema '$ref' => '#/components/schemas/ProductType'
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['name']).to eq('Hoodie')
-          expect(data['fulfillment_types']).to eq(['shipping'])
+          expect(data['delivery_profile_id']).to be_nil
         end
       end
 
@@ -183,7 +183,7 @@ RSpec.describe 'Admin Product Types API', type: :request, swagger_doc: 'api-refe
         type: :object,
         properties: {
           name: { type: :string, example: 'Premium T-Shirt' },
-          fulfillment_types: { type: :array, items: { type: :string } },
+          delivery_profile_id: { type: :string, nullable: true },
           option_type_ids: { type: :array, items: { type: :string } },
           category_ids: { type: :array, items: { type: :string } },
           custom_field_definitions: {

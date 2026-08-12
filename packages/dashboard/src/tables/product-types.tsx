@@ -27,20 +27,15 @@ defineTable<ProductType>('product-types', {
       ),
     },
     {
-      key: 'fulfillment_types',
-      label: i18n.t('admin.fields.product_type.fulfillment_types.label'),
+      key: 'delivery_profile_id',
+      label: i18n.t('admin.fields.product_type.delivery_profile_id.label'),
       default: true,
-      render: (productType) => (
-        <div className="flex flex-wrap gap-1">
-          {(productType.fulfillment_types ?? []).map((fulfillmentType) => (
-            <Badge key={fulfillmentType} variant="secondary">
-              {i18n.t(`admin.delivery_methods.fulfillment_types.${fulfillmentType}`, {
-                defaultValue: fulfillmentType,
-              })}
-            </Badge>
-          ))}
-        </div>
-      ),
+      render: (productType) =>
+        productType.delivery_profile_id ? (
+          <Badge variant="secondary">{i18n.t('admin.product_types.custom_delivery_profile')}</Badge>
+        ) : (
+          '—'
+        ),
     },
     {
       key: 'products_count',

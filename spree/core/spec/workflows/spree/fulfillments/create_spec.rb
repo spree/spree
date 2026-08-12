@@ -32,8 +32,10 @@ module Spree
           not_to change { order.reload.total }
       end
 
-      it 'sets the state from the order (paid order -> ready)' do
-        expect(fulfillment.state).to eq('ready')
+      # No longer derived from the order's payment state — a new fulfillment
+      # starts unfulfilled and stays there until someone hands it over.
+      it 'starts unfulfilled' do
+        expect(fulfillment.state).to eq('unfulfilled')
       end
 
       it 'assigns the order ship address' do

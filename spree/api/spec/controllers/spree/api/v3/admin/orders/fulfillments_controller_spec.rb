@@ -189,7 +189,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
   describe 'PATCH #fulfill' do
     it 'marks the fulfillment as shipped' do
-      shipment.ready! if shipment.can_ready?
+      shipment.update!(status: 'unfulfilled')
 
       patch :fulfill, params: {
         order_id: order.prefixed_id,
@@ -198,6 +198,94 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('fulfilled')
+    end
+
+    it 'stores the tracking number passed with the shipment' do
+      patch :fulfill, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        tracking: '1Z999'
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(shipment.reload.tracking).to eq('1Z999')
+    end
+
+    it 'passes the notification flag through to the workflow' do
+      expect(Spree.fulfillment_fulfill_workflow).to receive(:call).
+        with(hash_including(notify_customer: false)).
+        and_call_original
+
+      patch :fulfill, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        notify_customer: false
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'notifies by default when the flag is omitted' do
+      expect(Spree.fulfillment_fulfill_workflow).to receive(:call).
+        with(hash_including(notify_customer: true)).
+        and_call_original
+
+      patch :fulfill, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    context 'with a subset of items' do
+      let!(:order) do
+        create(:order_ready_to_ship, store: store, line_items_count: 2).tap do |placed|
+          placed.line_items.each { |line_item| line_item.update_columns(quantity: 2) }
+          placed.fulfillments.first.fulfillment_items.update_all(quantity: 2)
+          placed.reload
+        end
+      end
+
+      # The response is the newly split fulfillment, not the one addressed in
+      # the URL — that one keeps the remainder and stays open.
+      it 'ships only the requested quantity and returns the shipped fulfillment' do
+        patch :fulfill, params: {
+          order_id: order.prefixed_id,
+          id: shipment.prefixed_id,
+          items: [{ item_id: order.line_items.first.prefixed_id, quantity: 1 }]
+        }, as: :json
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['status']).to eq('fulfilled')
+        expect(json_response['id']).not_to eq(shipment.prefixed_id)
+
+        expect(shipment.reload).not_to be_fulfilled
+        expect(order.reload.fulfillment_status).to eq('partial')
+      end
+
+      it 'rejects a quantity the fulfillment does not hold' do
+        patch :fulfill, params: {
+          order_id: order.prefixed_id,
+          id: shipment.prefixed_id,
+          items: [{ item_id: order.line_items.first.prefixed_id, quantity: 99 }]
+        }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(shipment.reload).not_to be_fulfilled
+      end
+
+      it '404s on a line item belonging to another order' do
+        other_item = create(:order_with_line_items, store: store).line_items.first
+
+        patch :fulfill, params: {
+          order_id: order.prefixed_id,
+          id: shipment.prefixed_id,
+          items: [{ item_id: other_item.prefixed_id, quantity: 1 }]
+        }, as: :json
+
+        expect(response).to have_http_status(:not_found)
+      end
     end
   end
 
@@ -215,7 +303,7 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
 
   describe 'PATCH #resume' do
     it 'resumes a canceled fulfillment' do
-      shipment.cancel!
+      shipment.update!(status: 'canceled')
 
       patch :resume, params: {
         order_id: order.prefixed_id,
@@ -223,7 +311,88 @@ RSpec.describe Spree::Api::V3::Admin::Orders::FulfillmentsController, type: :con
       }, as: :json
 
       expect(response).to have_http_status(:ok)
-      expect(%w[pending ready]).to include(json_response['status'])
+      expect(json_response['status']).to eq('unfulfilled')
+    end
+  end
+
+  describe 'PATCH #purchase_label' do
+    let(:label_provider_class) do
+      Class.new(Spree::FulfillmentProvider::Base) do
+        def self.generates_labels?
+          true
+        end
+
+        def create_fulfillment(_fulfillment)
+          { tracking_number: 'LBL-123', tracking_url: 'https://carrier.example/t/1' }
+        end
+
+        def documents(_fulfillment)
+          [{ kind: 'label', url: 'https://carrier.example/label.pdf' }]
+        end
+      end
+    end
+
+    before do
+      shipment.update_column(:tracking, nil)
+      allow_any_instance_of(Spree::Fulfillment).to receive(:provider).and_return(label_provider_class.new)
+    end
+
+    it 'buys the label without fulfilling' do
+      patch :purchase_label, params: { order_id: order.prefixed_id, id: shipment.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['status']).to eq('unfulfilled')
+      expect(json_response['tracking']).to eq('LBL-123')
+      expect(json_response['documents']).to eq([{ 'kind' => 'label', 'url' => 'https://carrier.example/label.pdf' }])
+    end
+
+    it 'fails loudly when the provider cannot produce a label' do
+      allow_any_instance_of(label_provider_class).to receive(:create_fulfillment).and_return({})
+
+      patch :purchase_label, params: { order_id: order.prefixed_id, id: shipment.prefixed_id }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+  end
+
+  describe 'PATCH #mark_delivered' do
+    before do
+      Spree.fulfillment_fulfill_workflow.call(fulfillment: shipment)
+      shipment.reload
+    end
+
+    it 'records confirmed receipt' do
+      patch :mark_delivered, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['status']).to eq('delivered')
+      expect(json_response['delivered_at']).to be_present
+    end
+
+    it 'accepts the time the carrier reported' do
+      arrived = 3.hours.ago
+
+      patch :mark_delivered, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        delivered_at: arrived.iso8601
+      }, as: :json
+
+      expect(Time.parse(json_response['delivered_at'])).to be_within(1.second).of(arrived)
+    end
+
+    it 'refuses a fulfillment that never shipped' do
+      shipment.update!(status: 'unfulfilled')
+
+      patch :mark_delivered, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 

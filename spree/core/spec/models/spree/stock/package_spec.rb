@@ -13,9 +13,96 @@ module Spree
         build(:inventory_unit, variant: variant, order: order)
       end
 
+      # The regression this guards: during checkout a fulfillment belongs to a
+      # Cart while its units carried an order_id from elsewhere (a cart id
+      # dereferenced as an order id). Walking unit → order handed the carrier
+      # provider a stranger's ship address; the fulfillment's own owner is the
+      # authoritative link.
+      describe '#owner' do
+        it 'prefers the owner the fulfillment supplied' do
+          cart = create(:cart, store: @default_store, ship_address: create(:address))
+          fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+
+          package = fulfillment.to_package
+
+          expect(package.owner).to eq(cart)
+        end
+
+        it 'never returns a stranger order reachable through a unit' do
+          stranger = create(:order)
+          cart = create(:cart, store: @default_store)
+          fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+          fulfillment.fulfillment_items.update_all(order_id: stranger.id)
+
+          expect(fulfillment.to_package.owner).to eq(cart)
+        end
+
+        # The same failure shape as the provider bug: weight, dimensions and
+        # currency read the owner's store, and a cart-owned package must not
+        # lose them just because no order exists yet.
+        it 'applies the store tare to a cart-owned package' do
+          @default_store.update!(preferred_default_package_weight: 2.5)
+          cart = create(:cart, store: @default_store)
+          line_item = create(:line_item, cart: cart, order: nil, variant: variant)
+          fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+
+          expect(fulfillment.to_package.weight).to eq(27.5)
+        ensure
+          @default_store.update!(preferred_default_package_weight: 0)
+        end
+
+        it 'falls back to the units for a package with no fulfillment' do
+          package = Package.new(stock_location)
+          package.add build_inventory_unit
+
+          expect(package.owner).to eq(order)
+        end
+      end
+
       it 'calculates the weight of all the contents' do
         4.times { subject.add build_inventory_unit }
         expect(subject.weight).to eq(100.0)
+      end
+
+      # The tare applies at this single seam so every weight consumer —
+      # calculators, rate providers, weight rules, the weight splitter —
+      # inherits it without knowing the preference exists.
+      it 'adds the store default package weight on top of the contents' do
+        order.store.update!(preferred_default_package_weight: 2.5)
+
+        4.times { subject.add build_inventory_unit }
+
+        expect(subject.weight).to eq(102.5)
+      end
+
+      it 'applies the tare once per package, not per item' do
+        order.store.update!(preferred_default_package_weight: 2.5)
+
+        subject.add build_inventory_unit
+
+        expect(subject.weight).to eq(27.5)
+      end
+
+      describe '#dimensions' do
+        it 'is nil until the store configures a full default package' do
+          subject.add build_inventory_unit
+          expect(subject.dimensions).to be_nil
+
+          order.store.update!(preferred_default_package_length: 12, preferred_default_package_width: 9)
+          expect(subject.dimensions).to be_nil
+        end
+
+        it 'returns the configured box verbatim, never derived from items' do
+          order.store.update!(
+            preferred_default_package_length: 12,
+            preferred_default_package_width: 9,
+            preferred_default_package_height: 4
+          )
+
+          subject.add build_inventory_unit
+
+          expect(subject.dimensions).to eq(length: 12.0, width: 9.0, height: 4.0)
+        end
       end
 
       context 'currency' do
@@ -57,13 +144,13 @@ module Spree
         expect(item.quantity).to eq 1
       end
 
-      # Replaces the ShippingCategory intersection (#2804) with the 6.0
-      # fulfillment-type eligibility semantics.
+      # Candidate methods are exactly the package's delivery profile's —
+      # the profile splitter guarantees homogeneous packages.
       describe '#eligible_delivery_methods' do
         let!(:shipping_dm) { create(:delivery_method) }
         let!(:digital_dm) { create(:digital_delivery_method) }
 
-        it 'returns methods whose fulfillment type every item supports' do
+        it 'returns the methods of the items resolved profile' do
           variant1 = create(:product).default_variant
           variant2 = create(:product).default_variant
           contents = [ContentItem.new(build(:inventory_unit, variant_id: variant1.id)),
@@ -73,14 +160,12 @@ module Spree
           expect(package.eligible_delivery_methods).to eq([shipping_dm])
         end
 
-        it 'returns nothing when the items share no fulfillment type' do
-          physical = create(:product).default_variant
+        it 'returns the digital profile methods for a digital package' do
           digital = create(:digital_product).default_variant
-          contents = [ContentItem.new(build(:inventory_unit, variant_id: physical.id)),
-                      ContentItem.new(build(:inventory_unit, variant_id: digital.id))]
+          contents = [ContentItem.new(build(:inventory_unit, variant_id: digital.id))]
 
           package = Package.new(stock_location, contents)
-          expect(package.eligible_delivery_methods).to be_empty
+          expect(package.eligible_delivery_methods).to eq([digital_dm])
         end
 
         # Per-product exclusions moved to DeliveryMethodRules::ExcludedProductsRule,

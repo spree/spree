@@ -50,6 +50,7 @@ module Spree
           run_hooks :after_cancel
         end
 
+        external_step :notify_fulfillment_providers
         external_step :settle_payments
         step :recompute_totals, with: -> { Spree.order_recalculate_totals_workflow }
         step :update_statuses, with: -> { Spree.order_update_statuses_service }
@@ -84,11 +85,35 @@ module Spree
         order.update_columns(changes)
       end
 
-      # Canceling a fulfillment restocks its inventory (Spree::Fulfillment's
-      # own cancel semantics); allow_cancel? already excluded orders with
-      # shipped fulfillments.
+      # Restocks each fulfillment's units and cancels it. allow_cancel? already
+      # excluded orders with shipped fulfillments.
+      #
+      # Deliberately not delegated to Spree::Fulfillments::Cancel: that workflow
+      # ends with an external_step telling the carrier, which refuses to run
+      # inside a transaction — and this runs inside the order's. The carriers
+      # are notified in #notify_fulfillment_providers once the transaction has
+      # committed, which is the same ordering the fulfillment workflow uses.
       def cancel_fulfillments
-        order.fulfillments.each(&:cancel!)
+        order.fulfillments.each do |fulfillment|
+          result = Spree.fulfillment_cancel_workflow.call(
+            fulfillment: fulfillment,
+            # Carrier I/O cannot run inside this transaction; the providers are
+            # told in #notify_fulfillment_providers once it has committed.
+            notify_provider: false
+          )
+
+          failure(order, result.error) unless result.success?
+        end
+      end
+
+      # The provider half of cancelling each fulfillment — network I/O, so it
+      # runs after the transaction commits. A carrier that rejects the
+      # cancellation does not undo the order cancellation; the goods are not
+      # going out either way, and the failure surfaces through the provider.
+      def notify_fulfillment_providers
+        order.fulfillments.each do |fulfillment|
+          fulfillment.provider.cancel_fulfillment(fulfillment)
+        end
       end
 
       # Gateway I/O. Payments fully covered by a gift card are only voided,

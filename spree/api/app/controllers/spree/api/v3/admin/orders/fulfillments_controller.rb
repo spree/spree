@@ -6,7 +6,7 @@ module Spree
           class FulfillmentsController < BaseController
             scoped_resource :fulfillments
 
-            before_action :set_resource, only: [:show, :update, :fulfill, :cancel, :resume, :split]
+            before_action :set_resource, only: [:show, :update, :fulfill, :purchase_label, :mark_delivered, :cancel, :resume, :split]
 
             # POST /api/v3/admin/orders/:order_id/fulfillments
             #
@@ -42,7 +42,7 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id
             def update
               with_order_lock do
-                result = Spree.fulfillment_update_service.call(
+                result = Spree.fulfillment_update_workflow.call(
                   fulfillment: @resource,
                   fulfillment_attributes: permitted_params.to_h
                 )
@@ -56,32 +56,92 @@ module Spree
             end
 
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/fulfill
+            #
+            # Marks the fulfillment as fulfilled. Passing `items` ships only
+            # those quantities: they are split into a new fulfillment which is
+            # the one that ships and is returned, leaving the remainder open.
             def fulfill
               with_order_lock do
-                @resource.fulfill!
-                render json: serialize_resource(@resource.reload)
-              rescue StateMachines::InvalidTransition => e
-                render_service_error(e.message)
+                result = Spree.fulfillment_fulfill_workflow.call(
+                  fulfillment: @resource,
+                  items: items_for_fulfill,
+                  tracking: fulfill_params[:tracking],
+                  tracking_carrier: fulfill_params[:tracking_carrier],
+                  notify_customer: notify_customer?(fulfill_params[:notify_customer]),
+                  force: ActiveModel::Type::Boolean.new.cast(fulfill_params[:force]).present?
+                )
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
+              end
+            end
+
+            # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/purchase_label
+            #
+            # Buys the shipping label for a parcel that has not shipped yet, so
+            # the merchant can print it, pack the box and hand it over before
+            # anything tells the customer it shipped. Only providers that
+            # produce labels accept this; failures are loud (422), unlike the
+            # one-click fulfill path which degrades to "no label yet".
+            def purchase_label
+              with_order_lock do
+                result = Spree.fulfillment_purchase_label_workflow.call(fulfillment: @resource)
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
+              end
+            end
+
+            # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/mark_delivered
+            #
+            # Confirms the customer received the goods. Staff can record this
+            # by hand — a merchant with no carrier integration still needs a
+            # delivered state.
+            def mark_delivered
+              with_order_lock do
+                result = Spree.fulfillment_mark_delivered_workflow.call(
+                  fulfillment: @resource,
+                  delivered_at: mark_delivered_params[:delivered_at],
+                  notify_customer: notify_customer?(mark_delivered_params[:notify_customer])
+                )
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
               end
             end
 
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/cancel
             def cancel
               with_order_lock do
-                @resource.cancel!
-                render json: serialize_resource(@resource.reload)
-              rescue StateMachines::InvalidTransition => e
-                render_service_error(e.message)
+                result = Spree.fulfillment_cancel_workflow.call(fulfillment: @resource)
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
               end
             end
 
             # PATCH /api/v3/admin/orders/:order_id/fulfillments/:id/resume
             def resume
               with_order_lock do
-                @resource.resume!
-                render json: serialize_resource(@resource.reload)
-              rescue StateMachines::InvalidTransition => e
-                render_service_error(e.message)
+                result = Spree.fulfillment_resume_workflow.call(fulfillment: @resource)
+
+                if result.success?
+                  render json: serialize_resource(result.value)
+                else
+                  render_result_error(result)
+                end
               end
             end
 
@@ -127,7 +187,7 @@ module Spree
             # State changes go through the dedicated `fulfill`/`cancel`/`resume`
             # member actions, not mass assignment.
             def permitted_params
-              params.permit(:tracking, :selected_delivery_rate_id, :stock_location_id)
+              params.permit(:tracking, :tracking_carrier, :selected_delivery_rate_id, :stock_location_id)
             end
 
             def create_params
@@ -152,6 +212,31 @@ module Spree
               return if create_params[:items].nil?
 
               create_params[:items].map do |item|
+                {
+                  line_item: @order.line_items.find_by_prefix_id!(item[:item_id]),
+                  quantity: Integer(item[:quantity].to_s, exception: false)
+                }
+              end
+            end
+
+            def fulfill_params
+              @fulfill_params ||= params.permit(:tracking, :tracking_carrier, :notify_customer, :force, items: [:item_id, :quantity])
+            end
+
+            def mark_delivered_params
+              @mark_delivered_params ||= params.permit(:delivered_at, :notify_customer)
+            end
+
+            # Only an explicit false suppresses the email — an omitted flag, and
+            # anything unparseable, keeps the historic behavior of sending it.
+            def notify_customer?(value)
+              !ActiveModel::Type::Boolean.new.cast(value).equal?(false)
+            end
+
+            def items_for_fulfill
+              return if fulfill_params[:items].nil?
+
+              fulfill_params[:items].map do |item|
                 {
                   line_item: @order.line_items.find_by_prefix_id!(item[:item_id]),
                   quantity: Integer(item[:quantity].to_s, exception: false)

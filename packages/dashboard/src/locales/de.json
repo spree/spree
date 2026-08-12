@@ -468,70 +468,128 @@
       }
     },
     "delivery_methods": {
-      "add_cta": "Versandart hinzufügen",
       "add_sheet_title": "Neue Versandart",
+      "cards": {
+        "estimate": "Lieferschätzung"
+      },
+      "carrier_services": {
+        "add_service": "Service hinzufügen",
+        "all_hint": "Alle vom Carrier zurückgegebenen Services werden angeboten, benannt vom Carrier.",
+        "carrier": "Carrier",
+        "catalog_unavailable": "Die Services dieses Carriers konnten nicht geladen werden ({{message}}). Gib Carrier- und Service-Kennungen manuell ein oder lasse das Feld leer, um alle angebotenen Services zu nutzen.",
+        "choose_specific": "Bestimmte Services auswählen",
+        "edit_service": "{{service}} bearbeiten",
+        "label": "Carrier-Services",
+        "narrowed_hint": "Nur die {{count}} ausgewählten Services werden angeboten.",
+        "offer_all": "Alle Services anbieten",
+        "service": "Service"
+      },
+      "collection_locations": {
+        "all": "Alle Standorte mit Abholung",
+        "none_enabled": "Noch kein Standort erlaubt Abholung — aktivieren Sie einen im Lieferprofil.",
+        "specific": "Bestimmte Standorte",
+        "title": "Abholstandorte"
+      },
       "conditions": {
         "add": "Bedingung hinzufügen",
-        "empty": "Keine Bedingungen — die Methode wird angeboten, sobald ihre Zonen passen.",
+        "empty": "Keine Bedingungen — diese Methode wird überall angeboten, wo sie gilt.",
         "title": "Bedingungen"
       },
-      "create_description": "Konfiguriere, wie Bestellungen die Kundschaft erreichen: Versand, digital oder Abholung.",
+      "connect_provider_hint": "{{name}} kann Live-Carrier-Tarife anbieten — zum Aktivieren verbinden.",
       "create_label": "Versandart erstellen",
       "delete_confirm": {
         "message": "\"{{name}}\" löschen? Storefronts bieten sie sofort nicht mehr an.",
         "title": "Versandart löschen"
       },
-      "edit_description": "Konfiguration dieser Versandart aktualisieren.",
+      "detail": {},
       "edit_sheet_title": "Versandart bearbeiten",
-      "empty": "Noch keine Versandarten.",
-      "fulfillment_types": {
-        "digital": "Digital",
-        "local_delivery": "Lokale Lieferung",
-        "pickup": "Abholung",
-        "pickup_point": "Abholstation",
-        "shipping": "Versand"
-      },
+      "free": "Kostenlos",
       "messages": {
         "created": "Versandart erstellt",
         "deleted": "Versandart gelöscht",
         "updated": "Versandart aktualisiert"
       },
-      "no_zones_hint": "Noch keine Lieferzonen definiert — die Methode gilt überall.",
-      "pickup_locations_hint": "Ohne Auswahl werden alle abholfähigen Lagerorte angeboten.",
-      "search_placeholder": "Versandarten durchsuchen…"
+      "no_zone_restriction": "Keine Beschränkung",
+      "pricing": {
+        "amount_in_currency": "Betrag in {{currency}}",
+        "currency_amounts_help": "Währungen ohne Betrag wird diese Versandart nicht angeboten."
+      },
+      "carrier_rates": "Carrier-Tarife",
+      "provider_unavailable": "{{name}} (nicht verfügbar)",
+      "provider_needs_connection": "{{name}} verbinden, um es zu nutzen",
+      "rule_summary": {
+        "separator": " · ",
+        "total_between": "{{min}}–{{max}}",
+        "total_max": "Unter {{max}}",
+        "total_min": "Ab {{min}}",
+        "weight_between": "{{min}}–{{max}} {{unit}}",
+        "weight_max": "Unter {{max}} {{unit}}",
+        "weight_min": "Ab {{min}} {{unit}}"
+      },
+      "carrier_rates_hint": "Die Preise kommen beim Checkout von {{name}} und werden für jede Bestellung live ermittelt."
+    },
+    "delivery_origin_groups": {
+      "delete_confirm": {
+        "message": "\"{{name}}\" löschen? Zonen und Versandarten werden mit gelöscht.",
+        "title": "Standortgruppe löschen"
+      },
+      "edit_description": "Benennen Sie diese Gruppe um oder ändern Sie, aus welchen Standorten sie versendet.",
+      "edit_title": "Standortgruppe bearbeiten",
+      "messages": {
+        "created": "Standortgruppe erstellt",
+        "deleted": "Standortgruppe gelöscht",
+        "updated": "Standortgruppe aktualisiert"
+      },
+      "no_locations_hint": "Wählen Sie mindestens einen Standort oder alle Standorte aus.",
+      "ships_from": "Versand aus: {{locations}}",
+      "ships_from_all": "Versand aus allen Standorten",
+      "ships_from_label": "Versand aus",
+      "split_cta": "Versandstandorte aufteilen",
+      "split_description": "Versenden Sie dieselben Produkte aus einem zweiten Lager mit eigenen Zonen und Tarifen.",
+      "split_title": "Versandstandorte aufteilen"
     },
     "delivery_zones": {
+      "add_countries_in_markets": "Weitere Länder unter Märkte hinzufügen",
       "add_cta": "Lieferzone hinzufügen",
-      "add_member": "Mitglied hinzufügen",
+      "add_postal_rule": "Regel hinzufügen",
       "add_sheet_title": "Neue Lieferzone",
+      "all_states": "Alle Bundesländer",
       "create_description": "Gruppiere Länder, Bundesländer oder Postleitzahlen zu einem Liefergebiet.",
       "create_label": "Lieferzone erstellen",
       "delete_confirm": {
-        "message": "\"{{name}}\" löschen? Versandarten mit dieser Zone treffen diese Gebiete nicht mehr.",
+        "message": "\"{{name}}\" löschen? Die zugehörigen Versandarten werden mit gelöscht.",
         "title": "Lieferzone löschen"
       },
       "edit_description": "Die folgenden Mitglieder ersetzen beim Speichern die gesamte Liste.",
       "edit_sheet_title": "Lieferzone bearbeiten",
-      "empty": "Noch keine Lieferzonen.",
       "from_placeholder": "Von",
-      "member_types": {
-        "country": "Land",
-        "postal_code": "Postleitzahl",
-        "state": "Bundesland"
-      },
-      "members_column": "Mitglieder",
-      "members_count": "{{count}} Mitglieder",
+      "in_another_zone": "In einer anderen Zone",
+      "member_separator": ", ",
+      "members_more_one": "{{count}} weiterer",
+      "members_more_other": "{{count}} weitere",
       "messages": {
         "created": "Lieferzone erstellt",
         "deleted": "Lieferzone gelöscht",
         "updated": "Lieferzone aktualisiert"
       },
-      "no_members_hint": "Noch keine Mitglieder — füge Länder, Bundesländer oder PLZ-Regeln hinzu.",
+      "no_postal_rules_hint": "Noch keine Postleitzahlregeln.",
+      "no_regions_found": "Keine Länder entsprechen Ihrer Suche.",
+      "no_states": "Dieses Land hat keine Bundesländer.",
+      "not_in_any_market": "In keinem Markt",
+      "postal_rules_count_one": "{{count}} Regel",
+      "postal_rules_count_other": "{{count}} Regeln",
+      "postal_rules_title": "Postleitzahlregeln",
       "prefix_placeholder": "Präfix",
-      "search_placeholder": "Lieferzonen durchsuchen…",
+      "region_search_placeholder": "Länder und Regionen für den Versand suchen",
+      "regions_title": "Länder und Regionen",
+      "remove_postal_rule": "Regel entfernen",
       "select_country": "Land wählen",
-      "state_placeholder": "Bundesland-Kürzel oder Name",
-      "to_placeholder": "Bis"
+      "selection_summary": "{{countries}} Länder, {{states}} Bundesländer, {{rules}} Postleitzahlregeln",
+      "states_selected_one": "{{count}} Bundesland",
+      "states_selected_other": "{{count}} Bundesländer",
+      "states_summary": "{{selected}} von {{total}} Bundesländern",
+      "to_placeholder": "Bis",
+      "toggle_states": "Bundesländer von {{country}} anzeigen"
     },
     "errors": {
       "forbidden_description": "Sie haben keine Berechtigung, diese Seite anzuzeigen.",
@@ -579,6 +637,13 @@
         "default": {
           "help": "Pro Store ist genau ein Kanal der Standard. Wird als Fallback verwendet, wenn kein Kanal ausgewählt ist, und als Auto-Veröffentlichungsziel für neue Produkte.",
           "label": "Standardkanal"
+        },
+        "fulfillment_locations": {
+          "all": "Alle Standorte",
+          "help": "Welche Lager und Abholstationen Bestellungen aus diesem Verkaufskanal erfüllen.",
+          "label": "Erfüllungsstandorte",
+          "none_selected_hint": "Wählen Sie mindestens einen Standort oder „Alle Standorte“.",
+          "selected": "Ausgewählte Standorte"
         },
         "guest_checkout": {
           "help": "Ob Kunden in diesem Vertriebskanal ohne Konto zur Kasse gehen können. Leer lassen, um die Store-Einstellung zu übernehmen.",
@@ -699,18 +764,27 @@
         "code": {
           "label": "Code"
         },
-        "delivery_zones": {
-          "label": "Lieferzonen"
+        "delivery_zone": {
+          "help": "Wo diese Versandart angeboten wird. Ohne Zone gilt sie überall, wohin das Profil reicht.",
+          "label": "Versandzone"
         },
         "fulfillment_provider": {
           "help": "Wie Sendungen dieser Methode abgewickelt und verfolgt werden.",
           "label": "Fulfillment-Anbieter"
         },
-        "fulfillment_type": {
-          "label": "Fulfillment-Typ"
+        "markup_flat": {
+          "label": "Aufschlag (fix)"
         },
-        "pickup_locations": {
-          "label": "Abholorte"
+        "markup_percent": {
+          "help": "Bearbeitungsgebühr auf Carrier-Tarife. Werte pro Service überschreiben diese Vorgaben.",
+          "label": "Aufschlag %"
+        },
+        "rate_provider": {
+          "help": "Woher die Preise dieser Methode stammen. Der integrierte Anbieter rechnet mit dem Kalkulator unten; Carrier-Anbieter liefern Echtzeit-Tarife.",
+          "label": "Tarifanbieter"
+        },
+        "service_label": {
+          "label": "Eigene Bezeichnung"
         },
         "storefront_visible": {
           "help": "Kundschaft kann diese Methode im Checkout wählen."
@@ -726,6 +800,33 @@
         },
         "transit_days_min": {
           "label": "Laufzeit (min. Tage)"
+        }
+      },
+      "delivery_origin_group": {
+        "name": {
+          "help": "Leer lassen, um diese Gruppe „Alle Standorte“ zu nennen.",
+          "label": "Name"
+        }
+      },
+      "delivery_profile": {
+        "capabilities": {
+          "label": "Funktionen"
+        },
+        "kind": {
+          "help": "Bestimmt, welche Fulfillment-Anbieter die Versandarten dieses Profils nutzen können.",
+          "label": "Art"
+        },
+        "methods_count": {
+          "label": "Versandarten"
+        },
+        "origins": {
+          "label": "Versand ab"
+        },
+        "products_count": {
+          "label": "Produkte"
+        },
+        "zones_count": {
+          "label": "Zonen"
         }
       },
       "gift_card": {
@@ -958,6 +1059,10 @@
         "discontinue_on": {
           "label": "Einstellen am"
         },
+        "delivery_profile_id": {
+          "help": "Bestimmt, welche Zonen und Versandarten dieses Produkt erreichen.",
+          "label": "Versandprofil"
+        },
         "make_active_at": {
           "label": "Aktiv schalten am"
         },
@@ -995,9 +1100,9 @@
           "label": "Benutzerdefinierte Felder",
           "required": "Pflichtfeld"
         },
-        "fulfillment_types": {
-          "help": "Wie Produkte dieses Typs geliefert werden können — Versand, Abholung im Geschäft, Abholstation oder digital.",
-          "label": "Fulfillment-Arten"
+        "delivery_profile_id": {
+          "help": "Wird Produkten zugewiesen, die mit diesem Typ erstellt werden. Bestehende Produkte bleiben unverändert.",
+          "label": "Vorlage für Versandprofil"
         },
         "name": {
           "placeholder": "z. B. T-Shirt"
@@ -1162,6 +1267,17 @@
           "label": "Admin-Sprache",
           "placeholder": "Standardsprache verwenden"
         },
+        "preferred_default_package_dimensions": {
+          "height": "Höhe",
+          "help": "Der übliche Versandkarton, von Carrier-Tarifanbietern für Volumengewicht-Preise genutzt — Zoll bei imperial, Zentimeter bei metrisch. Wirksam nur mit allen drei Werten.",
+          "label": "Standard-Paketabmessungen",
+          "length": "Länge",
+          "width": "Breite"
+        },
+        "preferred_default_package_weight": {
+          "help": "Verpackungsgewicht (Karton und Füllmaterial), das bei der Berechnung von Versandtarifen zum Inhalt jedes Pakets addiert wird. 0 deaktiviert es.",
+          "label": "Standard-Paketgewicht"
+        },
         "preferred_send_consumer_transactional_emails": {
           "help": "Wenn deaktiviert, werden keine Bestellbestätigungen, Versand- oder Erstattungs-E-Mails gesendet.",
           "label": "Transaktionale E-Mails an Kunden senden"
@@ -1284,6 +1400,67 @@
         }
       }
     },
+    "delivery_profiles": {
+      "add_cta": "Profil hinzufügen",
+      "add_dialog_title": "Neues Lieferprofil",
+      "all_locations": "Alle Lagerorte",
+      "capabilities": {
+        "digital": "Digital",
+        "pickup": "Abholung",
+        "ships": "Versand"
+      },
+      "create_description": "Fassen Sie Produkte mit gleichem Versand zusammen — mit eigenen Lagerorten, Zonen und Versandarten.",
+      "create_label": "Profil erstellen",
+      "default_badge": "Standard",
+      "default_confirm": {
+        "message": "Produkte ohne eigenes Profil werden künftig über „{{name}}“ versendet.",
+        "title": "Als Standardprofil festlegen"
+      },
+      "delete_confirm": {
+        "message": "„{{name}}“ löschen? Die zugehörigen Zonen und Versandarten werden mitgelöscht.",
+        "title": "Versandprofil löschen"
+      },
+      "detail": {
+        "add_digital_method": "Digitale Methode hinzufügen",
+        "add_method": "Versandart hinzufügen",
+        "collect_from": "Abholen bei",
+        "collect_from_hint": "Standorte, an denen abgeholt werden kann. Änderungen gelten sofort.",
+        "delete_label": "Profil löschen",
+        "digital_empty": "Noch keine digitale Liefermethode.",
+        "digital_hint": "Wird ohne Versand oder Abholung geliefert.",
+        "digital_title": "Digitale Lieferung",
+        "general_title": "Allgemein",
+        "hidden_badge": "Ausgeblendet",
+        "load_failed_title": "Dieses Versandprofil konnte nicht geladen werden",
+        "no_methods": "Hier gibt es noch keine Versandarten.",
+        "no_stock_locations": "Noch keine Standorte — legen Sie einen unter Einstellungen → Standorte an.",
+        "no_zone_hint": "Diese Versandarten gelten überall, wohin dieses Profil reicht.",
+        "no_zone_title": "Keine Zonenbeschränkung",
+        "no_zones": "Noch keine Zonen — legen Sie eine an, um Versandarten anzubieten.",
+        "offer_pickup": "Abholung anbieten",
+        "origins_title": "Versand ab",
+        "pickup_empty": "Noch keine Abholmethode — auf diesem Profil ist keine Abholung möglich.",
+        "pickup_hint": "Kundinnen und Kunden holen diese Bestellungen persönlich ab. Abholung hat kein Ziel, daher gelten keine Zonen.",
+        "pickup_title": "Abholung",
+        "zones_title": "Zonen und Versandarten"
+      },
+      "empty": "Noch keine Lieferprofile.",
+      "is_default_hint": "Produkte ohne eigenes Profil werden über dieses Profil versendet.",
+      "kind_immutable_hint": "Die Art wird beim Erstellen des Profils festgelegt.",
+      "kinds": {
+        "digital": "Digital",
+        "shipping": "Versand"
+      },
+      "locations_count": "{{count}} Lagerorte",
+      "make_default": "Als Standard festlegen",
+      "messages": {
+        "created": "Versandprofil erstellt",
+        "deleted": "Versandprofil gelöscht",
+        "updated": "Versandprofil aktualisiert"
+      },
+      "search_placeholder": "Lieferprofile suchen…",
+      "selected_locations": "Ausgewählte Lagerorte"
+    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "Keine passenden Chargen",
@@ -1380,6 +1557,50 @@
         "products": "Produkte"
       },
       "wizard_title": "Import"
+    },
+    "integrations": {
+      "active_toggle": {
+        "help": "Die Aktivierung prüft die Verbindung und stellt die Integration den Anbietern zur Verfügung.",
+        "label": "Aktiv"
+      },
+      "configure_cta": "Konfigurieren",
+      "connect_cta": "Verbinden",
+      "connect_description": "Geben Sie die Zugangsdaten für diesen Anbieter ein. Speichern legt sie ab; das Aktivieren prüft die Verbindung.",
+      "description": "Verbinden Sie Anbieterdienste mit diesem Shop. Zugangsdaten werden pro Shop gespeichert und von Versand-, Steuer- und anderen Anbietern genutzt.",
+      "disconnect": "Trennen",
+      "disconnect_confirm": {
+        "message": "{{name}} trennen? Die gespeicherten Zugangsdaten werden gelöscht und Anbieter, die sie nutzen, funktionieren nicht mehr.",
+        "title": "Integration trennen"
+      },
+      "edit_description": "Zugangsdaten oder Aktivierung ändern. Geheime Werte sind maskiert; unverändert lassen, um das gespeicherte Geheimnis zu behalten.",
+      "empty": {
+        "description": "Integrationen werden mit Anbieter-Erweiterungen ausgeliefert. Installieren Sie ein Anbieter-Gem, und die Integrationen erscheinen hier.",
+        "title": "Keine Integrationen installiert"
+      },
+      "groups": {
+        "other": "Sonstige",
+        "shipping": "Versand",
+        "tax": "Steuern"
+      },
+      "messages": {
+        "connected": "Integration verbunden",
+        "disconnected": "Integration getrennt",
+        "updated": "Integration aktualisiert"
+      },
+      "status": {
+        "active": "Aktiv",
+        "connected_inactive": "Verbunden (inaktiv)",
+        "not_connected": "Nicht verbunden"
+      },
+      "test": {
+        "failure": "Verbindung fehlgeschlagen.",
+        "label": "Verbindung",
+        "run": "Verbindung testen",
+        "success": "Verbindung erfolgreich.",
+        "testing": "Wird getestet…"
+      },
+      "title": "Integrationen",
+      "view_cta": "Ansehen"
     },
     "invitation": {
       "accepting": "Wird angenommen…",
@@ -1578,16 +1799,50 @@
           "resend_confirmation": "Bestätigung erneut senden",
           "void_payment": "Zahlung stornieren"
         },
-        "edit_quantity": {
-          "description": "Legen Sie die Menge für diese Position fest.",
-          "title": "Menge bearbeiten"
-        },
         "errors": {
           "approve_failed": "Auftrag konnte nicht genehmigt werden",
           "cancel_failed": "Auftrag konnte nicht storniert werden",
           "complete_failed": "Auftrag konnte nicht abgeschlossen werden",
           "confirmation_send_failed": "Bestätigung konnte nicht gesendet werden",
           "resume_failed": "Auftrag konnte nicht wieder aufgenommen werden"
+        },
+        "fulfillments": {
+          "confirm_split": "Diese Einheiten in eine neue Sendung verschieben? Die Änderung wird sofort wirksam.",
+          "create_description": "Erstellt eine Sendung und verschiebt die gewählten Mengen hinein.",
+          "create_items": "Artikel",
+          "create_title": "Sendung hinzufügen",
+          "delivery_method": "Versandart",
+          "edit_description": "Ändern Sie, von wo diese Sendung versandt wird und welche Versandart sie befördert.",
+          "edit_title": "Sendung bearbeiten",
+          "empty": "Noch keine Sendungen für diese Bestellung.",
+          "free": "Kostenlos",
+          "move_and_requote": "Verschieben und neu berechnen",
+          "no_rates": "Für diese Sendung liegen keine Versandarten vor.",
+          "out_of_stock": "Nicht auf Lager",
+          "rates_pending_origin": "Speichern Sie den neuen Ursprung, um die dort verfügbaren Versandarten zu sehen.",
+          "ships_from": "Versand ab",
+          "split": "Aufteilen",
+          "split_description": "Verschieben Sie einzelne Einheiten in eine neue Sendung. Ein Produkt nach dem anderen.",
+          "split_item": "Produkt",
+          "split_quantity": "Zu verschiebende Menge",
+          "split_title": "Sendung aufteilen",
+          "split_would_empty": "Lassen Sie mindestens eine Einheit zurück oder ändern Sie stattdessen den Ursprung der gesamten Sendung.",
+          "unfulfilled_one": "Nicht versandt ({{count}})",
+          "unfulfilled_other": "Nicht versandt ({{count}})",
+          "mark_delivered": "Als zugestellt markieren",
+          "add_tracking": "Sendungsverfolgung hinzufügen",
+          "edit_tracking_title": "Sendungsverfolgung bearbeiten",
+          "add_tracking_title": "Sendungsverfolgung hinzufügen",
+          "tracking_description": "Die Sendungsnummer des Zustellers oder ein vollständiger Tracking-Link.",
+          "carrier_label": "Versanddienstleister",
+          "carrier_auto": "Automatisch erkennen",
+          "buy_label_confirm": "Versandlabel für diese Sendung kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
+          "buy_label_confirm_rate": "Label {{rate}} für {{cost}} kaufen? Ihr Versanddienstleister-Konto wird belastet, sobald das Label ausgestellt ist.",
+          "buy_label": "Label kaufen",
+          "print_label": "Label drucken",
+          "print_packing_slip": "Lieferschein drucken",
+          "packing_slip_title": "Lieferschein — Bestellung {{number}}",
+          "ship_to": "Lieferadresse"
         },
         "gift_card_section": {
           "applied_suffix": "angewendet",
@@ -1601,11 +1856,6 @@
           "store_credit_label": "Guthaben",
           "title": "Rabatte & Guthaben"
         },
-        "items_table": {
-          "item": "Artikel",
-          "price": "Preis",
-          "qty": "Anz."
-        },
         "load_failed_message": "Auftrag {{orderId}} konnte nicht geladen werden.",
         "messages": {
           "approved": "Auftrag genehmigt",
@@ -1618,7 +1868,6 @@
           "voided": "Zahlung storniert"
         },
         "no_customer": "Keine Kundeninformationen",
-        "no_line_items": "Keine Positionen",
         "payment_form": {
           "amount_help": "Leer lassen, um standardmäßig den offenen Saldo zu verwenden.",
           "capture_immediately": "Sofort einziehen",
@@ -1650,10 +1899,6 @@
           "tax_included": "Steuer (inklusive)"
         },
         "tracking": {
-          "add_title": "Sendungsverfolgung hinzufügen",
-          "description": "Aktualisieren Sie die Sendungsnummer für diese Lieferung.",
-          "edit_title": "Sendungsverfolgung bearbeiten",
-          "label": "Sendungsnummer",
           "prefix": "Tracking",
           "shipped_prefix": "Versendet"
         },
@@ -1665,13 +1910,62 @@
           "sku_prefix": "SKU"
         }
       },
+      "edit": {
+        "action_label": "Bestellung bearbeiten",
+        "actions": {
+          "add_product": "Produkt hinzufügen",
+          "remove_item": "{{name}} entfernen",
+          "quantity_for": "Menge von {{name}}",
+          "restore_item": "{{name}} behalten"
+        },
+        "columns": {
+          "line_total": "Positionssumme",
+          "product": "Produkt",
+          "unit_price": "Einzelpreis"
+        },
+        "empty": "Diese Bestellung enthält keine Artikel.",
+        "items_title": "Artikel",
+        "subtitle": "Bestellung {{number}}",
+        "title": "Bestellung bearbeiten",
+        "totals_hint": "Die Summen werden nach dem Speichern vom Server neu berechnet.",
+        "totals_title": "Summen",
+        "badges": {
+          "pending": "Nicht gespeichert",
+          "removed": "Wird entfernt",
+          "fulfilled_count_one": "{{count}} abgewickelt",
+          "fulfilled_count_other": "{{count}} abgewickelt"
+        },
+        "validation": {
+          "below_fulfilled_one": "Darf {{count}} abgewickelte Einheit nicht unterschreiten",
+          "below_fulfilled_other": "Darf {{count}} abgewickelte Einheiten nicht unterschreiten"
+        },
+        "fully_fulfilled": "Diese Bestellung ist vollständig abgewickelt und kann nicht mehr bearbeitet werden."
+      },
+      "fulfill": {
+        "action": "Als versendet markieren",
+        "empty": "Diese Sendung enthält keine versandfähigen Artikel.",
+        "include_item": "{{name}} versenden",
+        "notify_customer": "Versandbenachrichtigung an Kundin oder Kunden senden",
+        "of_units": "von {{count}}",
+        "partial_hint": "Die ausgewählten Einheiten wandern in eine neue Sendung, die jetzt versendet wird. Der Rest bleibt offen in dieser Sendung.",
+        "quantity_for": "Zu versendende Menge von {{name}}",
+        "submit": "Artikel versenden",
+        "tracking_label": "Sendungsnummer",
+        "tracking_placeholder": "Sendungsnummer oder Link",
+        "units_selected": "Zu versendende Einheiten",
+        "validation": {
+          "quantity_invalid": "Bitte eine ganze Zahl an Einheiten eingeben."
+        }
+      },
       "fulfillment_statuses": {
         "backorder": "Lieferrückstand",
         "canceled": "Storniert",
         "fulfilled": "Abgewickelt",
         "partial": "Teilweise",
         "pending": "Ausstehend",
-        "ready": "Bereit"
+        "ready": "Bereit",
+        "unfulfilled": "Nicht abgewickelt",
+        "delivered": "Zugestellt"
       },
       "item_count_one": "{{count}} Artikel",
       "item_count_other": "{{count}} Artikel",
@@ -1926,7 +2220,6 @@
           "section_fulfillments": "Fulfillments",
           "section_history": "Verlauf",
           "section_internal_note": "Interne Notiz",
-          "section_items": "Artikel",
           "section_payments": "Zahlungen",
           "section_returns": "Retouren",
           "section_shipping_address": "Lieferadresse",
@@ -2323,7 +2616,9 @@
           "search_placeholder": "Lagerstandorte suchen…"
         },
         "store": {
+          "default_package_description": "Der Karton, in dem Sie üblicherweise versenden. Carrier-Tarifanbieter addieren sein Gewicht zu jedem Paket und nutzen seine Abmessungen für Volumengewicht-Preise.",
           "subtitle": "Allgemeine Konfiguration und shopweite Standardwerte.",
+          "tab_default_package": "Standardpaket",
           "tab_general": "Allgemein",
           "tab_standards": "Standards und Formate",
           "tab_storefront_access": "Storefront-Zugriff",
@@ -2533,6 +2828,7 @@
         "dashboard": "Umsatz- und Leistungsanalysen",
         "fulfillments": "Bestellungen packen, versenden und verfolgen",
         "gift_cards": "Geschenkkarten und Geschenkkarten-Chargen",
+        "integrations": "Anbieter-Zugangsdaten und Verbindungen",
         "orders": "Bestellungen, Positionen, Retouren, Umtausch und Reklamationen",
         "payments": "Zahlungen und Zahlungserfassung",
         "products": "Produkte, Varianten, Optionen, Preise und Medien",
@@ -2572,6 +2868,7 @@
         "dashboard": "Dashboard",
         "fulfillments": "Fulfillments",
         "gift_cards": "Geschenkkarten",
+        "integrations": "Integrationen",
         "orders": "Bestellungen",
         "payments": "Zahlungen",
         "products": "Produkte",
@@ -2640,6 +2937,8 @@
       },
       "create_description": "Produkte gruppieren und festlegen, wie sie geliefert werden können.",
       "create_label": "Produkttyp erstellen",
+      "custom_delivery_profile": "Benutzerdefiniert",
+      "default_delivery_profile": "Standardprofil des Shops",
       "delete_confirm": {
         "message": "Möchten Sie „{{name}}“ wirklich löschen? Typen, die noch von Produkten verwendet werden, können nicht gelöscht werden.",
         "title": "Produkttyp löschen"
@@ -2782,6 +3081,11 @@
       },
       "variants": {
         "add_option": "Option hinzufügen",
+        "bulk_edit": {
+          "grid_aria": "Tabelle zur Massenbearbeitung der Varianten",
+          "title": "Varianten massenbearbeiten",
+          "trigger": "Massenbearbeitung"
+        },
         "create_option_type": "Neuen Optionstyp erstellen",
         "create_option_type_title": "Neuer Optionstyp",
         "create_value": "Neuer Wert",
@@ -3157,10 +3461,10 @@
         "api_keys": "API-Schlüssel",
         "channels": "Verkaufskanäle",
         "custom_field_definitions": "Benutzerdefinierte Felder",
-        "delivery_methods": "Versandarten",
-        "delivery_zones": "Lieferzonen",
+        "delivery_profiles": "Lieferprofile",
         "emails": "E-Mails",
         "imports": "Importe",
+        "integrations": "Integrationen",
         "markets": "Märkte",
         "payment_methods": "Zahlungsmethoden",
         "product_types": "Produkttypen",

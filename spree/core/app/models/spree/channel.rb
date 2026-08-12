@@ -23,6 +23,11 @@ module Spree
     has_many :publications, class_name: 'Spree::ProductPublication', dependent: :destroy
     has_many :products, through: :publications, class_name: 'Spree::Product'
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :nullify
+    # Optional fulfillment-origin allowlist: no rows means every store
+    # location serves this channel (docs/plans/6.0-channel-delivery.md).
+    has_many :channel_stock_locations, class_name: 'Spree::ChannelStockLocation',
+             dependent: :destroy, inverse_of: :channel
+    has_many :stock_locations, through: :channel_stock_locations, class_name: 'Spree::StockLocation'
 
     attribute :active, :boolean, default: true
 
@@ -121,6 +126,32 @@ module Spree
     # @return [Boolean]
     def can_be_deleted?
       !default? && !api_keys.active.exists?
+    end
+
+    # Whether packages originating from this stock location may serve this
+    # channel's carts. No linked locations means every store location.
+    #
+    # @param stock_location [Spree::StockLocation, nil]
+    # @return [Boolean]
+    def serves_location?(stock_location)
+      return false if stock_location.nil?
+      return true if served_stock_location_ids.empty?
+
+      served_stock_location_ids.include?(stock_location.id)
+    end
+
+    # @return [Array<Integer>] ids of the locations this channel is limited to
+    def served_stock_location_ids
+      @served_stock_location_ids ||= channel_stock_locations.map(&:stock_location_id)
+    end
+
+    # The locations allowed to fulfill this channel's traffic.
+    #
+    # @return [ActiveRecord::Relation<Spree::StockLocation>]
+    def served_stock_locations
+      return store.stock_locations if served_stock_location_ids.empty?
+
+      store.stock_locations.where(id: served_stock_location_ids)
     end
 
     private

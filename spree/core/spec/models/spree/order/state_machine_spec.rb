@@ -7,7 +7,7 @@ describe Spree::Order, type: :model do
   let(:order) { create(:order) }
 
   describe '#allow_cancel?' do
-    %w(pending backorder ready canceled).each do |fulfillment_status|
+    %w(unfulfilled backorder canceled).each do |fulfillment_status|
       it "is true when fulfillment_status is #{fulfillment_status}" do
         allow(order).to receive_messages completed?: true
         order.fulfillment_status = fulfillment_status
@@ -15,7 +15,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    %w(fulfilled partial ready_for_pickup).each do |fulfillment_status|
+    %w(fulfilled partial delivered).each do |fulfillment_status|
       it "is false when fulfillment_status is #{fulfillment_status}" do
         allow(order).to receive_messages completed?: true
         order.fulfillment_status = fulfillment_status
@@ -54,7 +54,7 @@ describe Spree::Order, type: :model do
 
       expect(order.resume).to be true
       expect(order.reload.status).to eq('placed')
-      expect(order.fulfillments.reload.map(&:status)).to all(be_in(%w[pending ready]))
+      expect(order.fulfillments.reload.map(&:status)).to all(eq('unfulfilled'))
     end
 
     it 'refuses to resume a non-canceled order' do

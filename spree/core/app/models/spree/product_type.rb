@@ -10,9 +10,12 @@ module Spree
     TRANSLATABLE_FIELDS = %i[name].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: Spree.mobility_column_fallback)
 
-    attribute :fulfillment_types, default: -> { ['shipping'] }
-
     belongs_to :store, class_name: 'Spree::Store'
+    # Creation-time template only: stamped onto the product when it is
+    # created with this type, never managed through it afterwards — the same
+    # doctrine as every other type-driven attribute. Nil means the store's
+    # default profile.
+    belongs_to :delivery_profile, class_name: 'Spree::DeliveryProfile', optional: true
 
     has_many :option_type_product_types, class_name: 'Spree::OptionTypeProductType', dependent: :destroy
     has_many :option_types, through: :option_type_product_types, class_name: 'Spree::OptionType'
@@ -33,8 +36,6 @@ module Spree
 
     validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :store_id }
     validates :store, presence: true
-    validates :fulfillment_types, presence: true
-    validate :fulfillment_types_must_be_registered, if: :fulfillment_types_changed?
 
     self.whitelisted_ransackable_attributes = %w[name]
     self.whitelisted_ransackable_associations = %w[option_types]
@@ -63,15 +64,6 @@ module Spree
       category_ids.map { |id| Spree::Category.prefixed_id_for(id) }
     end
 
-    # @return [Boolean] true when products of this type are delivered digitally only
-    def digital?
-      fulfillment_types == ['digital']
-    end
-
-    # @return [Boolean] true when products of this type require physical delivery
-    def requires_shipping?
-      fulfillment_types.include?('shipping')
-    end
 
     private
 
@@ -117,20 +109,5 @@ module Spree
       product_type_custom_field_definitions.reset
     end
 
-    # Strict vocabulary against Spree.fulfillment_types — an unregistered
-    # token silently removes the product from every delivery method's
-    # eligibility, so typos must fail loudly. Change-only, so rows migrated
-    # ahead of their initializer registration stay loadable and savable.
-    def fulfillment_types_must_be_registered
-      unregistered = Array(fulfillment_types).map(&:to_s) - Spree.fulfillment_types
-      return if unregistered.empty?
-
-      errors.add(
-        :fulfillment_types,
-        Spree.t(:unregistered_fulfillment_types, scope: [:errors, :messages],
-                types: unregistered.join(', '),
-                default: "contains unregistered fulfillment types: #{unregistered.join(', ')}")
-      )
-    end
   end
 end

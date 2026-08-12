@@ -39,8 +39,15 @@ module Spree
         order.update_columns(status: 'placed')
       end
 
+      # Takes the units back off the shelf and un-cancels each fulfillment.
+      # Resume has no external step, so it nests inside this transaction
+      # cleanly — unlike its cancel twin.
       def resume_fulfillments
-        order.fulfillments.each(&:resume!)
+        order.fulfillments.each do |fulfillment|
+          result = Spree.fulfillment_resume_workflow.call(fulfillment: fulfillment)
+
+          failure(order, result.error) unless result.success?
+        end
       end
     end
   end

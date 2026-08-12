@@ -8,8 +8,8 @@ RSpec.describe Spree::FulfillmentEmailSubscriber do
   let(:fulfillment) { order.fulfillments.first }
   let(:subscriber) { described_class.new }
 
-  def mock_event(fulfillment)
-    double('Event', payload: { 'id' => fulfillment.prefixed_id })
+  def mock_event(fulfillment, metadata = {})
+    double('Event', payload: { 'id' => fulfillment.prefixed_id }, metadata: metadata.stringify_keys)
   end
 
   before do
@@ -40,6 +40,24 @@ RSpec.describe Spree::FulfillmentEmailSubscriber do
         fulfillment.destroy
 
         expect { subscriber.handle(mock_event(fulfillment)) }.not_to raise_error
+      end
+    end
+
+    # An admin shipping from the backoffice can suppress the email for one
+    # dispatch — a correction, a re-ship, or goods handed over in person.
+    context 'when the event suppresses the notification' do
+      it 'does not send the fulfilled email' do
+        expect(Spree::FulfillmentMailer).not_to receive(:fulfilled_email)
+
+        subscriber.handle(mock_event(fulfillment, notify_customer: false))
+      end
+    end
+
+    context 'when the event asks for the notification' do
+      it 'sends the fulfilled email' do
+        expect(Spree::FulfillmentMailer).to receive(:fulfilled_email).with(fulfillment.id).and_return(double(deliver_later: true))
+
+        subscriber.handle(mock_event(fulfillment, notify_customer: true))
       end
     end
   end

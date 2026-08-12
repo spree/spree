@@ -56,7 +56,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails dashboard; do
+          for project in core api emails providers/easypost dashboard; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -101,7 +101,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api emails dashboard; do
+          for project in core api emails providers/easypost dashboard; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -129,6 +129,8 @@ jobs:
           - { project: api, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs (tiny suite)
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
+          # easypost: 1 runner × 2 procs (tiny suite — provider gem)
+          - { project: easypost, dir: providers/easypost, shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
           - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
@@ -195,12 +197,12 @@ jobs:
           cd spree
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
           bundle install
-          cd ${{ matrix.project }}
+          cd ${{ matrix.dir || matrix.project }}
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
           bundle install
 
       - name: Setup test app
-        working-directory: spree/${{ matrix.project }}
+        working-directory: spree/${{ matrix.dir || matrix.project }}
         run: |
           if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
             bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app
@@ -209,11 +211,11 @@ jobs:
           fi
 
       - name: Setup parallel databases
-        working-directory: spree/${{ matrix.project }}
+        working-directory: spree/${{ matrix.dir || matrix.project }}
         run: bundle exec rake parallel_setup[${{ matrix.procs }}]
 
       - name: Run tests
-        working-directory: spree/${{ matrix.project }}
+        working-directory: spree/${{ matrix.dir || matrix.project }}
         env:
           SHARD: ${{ matrix.shard }}
           TOTAL_SHARDS: ${{ matrix.total_shards }}
@@ -271,6 +273,8 @@ jobs:
           - { project: api, shard: 1, total_shards: 1, procs: 4 }
           # emails: 1 runner × 2 procs
           - { project: emails, shard: 1, total_shards: 1, procs: 2 }
+          # easypost: 1 runner × 2 procs (tiny suite — provider gem)
+          - { project: easypost, dir: providers/easypost, shard: 1, total_shards: 1, procs: 2 }
           # dashboard: 1 runner × 2 procs (tiny suite — SPA host)
           - { project: dashboard, shard: 1, total_shards: 1, procs: 2 }
     services:
@@ -320,12 +324,12 @@ jobs:
           cd spree
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
           bundle install
-          cd ${{ matrix.project }}
+          cd ${{ matrix.dir || matrix.project }}
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
           bundle install
 
       - name: Setup test app
-        working-directory: spree/${{ matrix.project }}
+        working-directory: spree/${{ matrix.dir || matrix.project }}
         run: |
           if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
             bundle exec --gemfile=${{ github.workspace }}/spree/Gemfile rake test_app
@@ -334,11 +338,11 @@ jobs:
           fi
 
       - name: Setup parallel databases
-        working-directory: spree/${{ matrix.project }}
+        working-directory: spree/${{ matrix.dir || matrix.project }}
         run: bundle exec rake parallel_setup[${{ matrix.procs }}]
 
       - name: Run tests
-        working-directory: spree/${{ matrix.project }}
+        working-directory: spree/${{ matrix.dir || matrix.project }}
         env:
           SHARD: ${{ matrix.shard }}
           TOTAL_SHARDS: ${{ matrix.total_shards }}

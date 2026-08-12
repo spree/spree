@@ -140,8 +140,9 @@ interface MoneyCellProps extends BaseCellProps {
    *  `"12,50"` are fine, the backend's `Spree::LocalizedNumber` does the
    *  parsing. `null` only when the user explicitly blanks the field. */
   onChange: (next: string | null) => void
-  /** Currency symbol rendered as a non-editable prefix (`$`, `€`, `kr`, …). */
-  symbol: string
+  /** Currency symbol rendered as a non-editable prefix (`$`, `€`, `kr`, …).
+   *  Omit for a plain decimal cell with no prefix. */
+  symbol?: string
   /**
    * Locale decimal separator used only for display (canonical `.` →
    * locale char). Whatever the user types is shipped as-is; the
@@ -252,12 +253,14 @@ export function MoneyCell({
         isEditing && 'bg-card ring-2 ring-blue-500 ring-inset',
       )}
     >
-      <span
-        className="pl-3 text-muted-foreground pointer-events-none select-none tabular-nums"
-        aria-hidden
-      >
-        {symbol}
-      </span>
+      {symbol != null && (
+        <span
+          className="pl-3 text-muted-foreground pointer-events-none select-none tabular-nums"
+          aria-hidden
+        >
+          {symbol}
+        </span>
+      )}
       <input
         ref={inputRef}
         type="text"
@@ -279,7 +282,125 @@ export function MoneyCell({
         }}
         aria-label={ariaLabel}
         className={cn(
-          'block h-9 w-full cursor-cell border-0 bg-transparent pl-1 pr-3 text-right tabular-nums outline-none',
+          'block h-9 w-full cursor-cell border-0 bg-transparent pr-3 text-right tabular-nums outline-none',
+          symbol != null ? 'pl-1' : 'pl-3',
+          isEditing && 'cursor-text',
+        )}
+      />
+    </div>
+  )
+}
+
+/** Editable decimal cell — `MoneyCell` without the currency prefix. Keeps
+ *  decimals (unlike `NumberCell`, which truncates to integers); for
+ *  measurements like weight and dimensions. */
+export function DecimalCell(props: Omit<MoneyCellProps, 'symbol'>) {
+  return <MoneyCell {...props} />
+}
+
+interface TextCellProps extends BaseCellProps {
+  value: string | null
+  /** Receives the user's raw input; `null` when the field is blanked. */
+  onChange: (next: string | null) => void
+}
+
+/** Editable free-text cell (SKU, barcode, …). Left-aligned; ships the raw
+ *  input on commit, `null` when blanked. */
+export function TextCell({ coords, value, onChange, ariaLabel }: TextCellProps) {
+  const ctx = useDataGridContext()
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const [draft, setDraft] = useState(value ?? '')
+  const isSelected = ctx.isSelected(coords)
+  const mode = modeFor(ctx.editing, coords)
+  const isEditing = mode === 'edit'
+  const isFocused = ctx.anchor?.row === coords.row && ctx.anchor?.col === coords.col
+
+  // Resync draft with external value when not editing.
+  useEffect(() => {
+    if (!isEditing) setDraft(value ?? '')
+  }, [value, isEditing])
+
+  // Auto-focus + select when entering edit mode.
+  useEffect(() => {
+    if (isEditing) {
+      const el = inputRef.current
+      if (el) {
+        el.focus()
+        el.select()
+      }
+    }
+  }, [isEditing])
+
+  const wrapRef = useRef<HTMLDivElement | null>(null)
+  useStableCellRegistration(coords, {
+    focus: () => inputRef.current?.focus(),
+    read: () => value ?? '',
+    write: (next) => onChange(next.trim() ? next : null),
+    canWrite: () => true,
+    getElement: () => wrapRef.current,
+  })
+
+  function commit() {
+    onChange(draft.trim() ? draft : null)
+  }
+
+  function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (!isEditing) return
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      commit()
+      ctx.setEditing(null)
+      const next = { row: coords.row + 1, col: coords.col }
+      ctx.setAnchor(next)
+      ctx.setExtent(next)
+      ctx.cells.get(`${next.row}.${next.col}`)?.focus()
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      setDraft(value ?? '')
+      ctx.setEditing(null)
+    } else if (event.key === 'Tab') {
+      event.preventDefault()
+      commit()
+      ctx.setEditing(null)
+      const dx = event.shiftKey ? -1 : 1
+      const next = { row: coords.row, col: coords.col + dx }
+      ctx.setAnchor(next)
+      ctx.setExtent(next)
+      ctx.cells.get(`${next.row}.${next.col}`)?.focus()
+    }
+  }
+
+  return (
+    <div
+      ref={wrapRef}
+      className={cn(
+        'flex h-9 w-full items-center transition-colors',
+        isSelected && 'bg-blue-500/10',
+        isFocused && !isEditing && 'ring-2 ring-blue-500 ring-inset',
+        isEditing && 'bg-card ring-2 ring-blue-500 ring-inset',
+      )}
+    >
+      <input
+        ref={inputRef}
+        type="text"
+        value={isEditing ? draft : (value ?? '')}
+        readOnly={!isEditing}
+        onChange={(e) => setDraft(e.target.value)}
+        onFocus={() => {
+          ctx.setAnchor(coords)
+          ctx.setExtent(coords)
+        }}
+        onDoubleClick={() => ctx.setEditing(coords)}
+        onKeyDown={onKeyDown}
+        onBlur={() => {
+          if (isEditing) {
+            commit()
+            ctx.setEditing(null)
+          }
+        }}
+        aria-label={ariaLabel}
+        className={cn(
+          'block h-9 w-full cursor-cell border-0 bg-transparent px-3 outline-none',
           isEditing && 'cursor-text',
         )}
       />
@@ -343,18 +464,23 @@ export function SwitchCell({ coords, value, onChange, ariaLabel }: SwitchCellPro
 }
 
 interface SelectCellProps<V extends string> extends BaseCellProps {
-  value: V
-  onChange: (next: V) => void
+  value: V | null
+  /** `null` when the cell is cleared (Delete key, or pasting a blank). */
+  onChange: (next: V | null) => void
   options: ReadonlyArray<{ value: V; label: string }>
+  /** Shown when value is null — e.g. "—" for "inherit the default". */
+  nullLabel?: string
 }
 
 /** Cell for fixed-option pickers. Enter opens the Select; arrow keys inside
- *  the open Select navigate options (Base UI default). Esc closes. */
+ *  the open Select navigate options (Base UI default). Esc closes. Pasted
+ *  values match by option value or label; blanks clear to null. */
 export function SelectCell<V extends string>({
   coords,
   value,
   onChange,
   options,
+  nullLabel,
   ariaLabel,
 }: SelectCellProps<V>) {
   const ctx = useDataGridContext()
@@ -363,17 +489,27 @@ export function SelectCell<V extends string>({
   const isFocused = ctx.anchor?.row === coords.row && ctx.anchor?.col === coords.col
   const id = useId()
 
+  const matchOption = (raw: string) => {
+    const needle = raw.trim()
+    return options.find((o) => o.value === needle || o.label === needle)
+  }
+
   useStableCellRegistration(coords, {
     focus: () => triggerRef.current?.focus(),
-    read: () => value,
+    read: () => value ?? '',
     write: (next) => {
-      if (options.some((o) => o.value === next)) onChange(next as V)
+      if (next.trim() === '') {
+        onChange(null)
+        return
+      }
+      const match = matchOption(next)
+      if (match) onChange(match.value)
     },
-    canWrite: (next) => options.some((o) => o.value === next) || next === '',
+    canWrite: (next) => next.trim() === '' || matchOption(next) !== undefined,
   })
 
   return (
-    <Select items={options} value={value} onValueChange={(v) => onChange(v as V)}>
+    <Select items={options} value={value ?? ''} onValueChange={(v) => onChange((v || null) as V)}>
       <SelectTrigger
         ref={triggerRef}
         id={id}
@@ -390,7 +526,9 @@ export function SelectCell<V extends string>({
           isFocused && 'ring-2 ring-blue-500',
         )}
       >
-        <SelectValue />
+        <SelectValue>
+          {(v) => options.find((o) => o.value === v)?.label ?? nullLabel ?? ''}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {options.map((opt) => (

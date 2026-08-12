@@ -468,70 +468,139 @@
       }
     },
     "delivery_methods": {
-      "add_cta": "إضافة طريقة توصيل",
       "add_sheet_title": "طريقة توصيل جديدة",
+      "cards": {
+        "estimate": "تقدير التسليم"
+      },
+      "carrier_services": {
+        "add_service": "إضافة خدمة",
+        "all_hint": "تُعرض كل الخدمات التي يعيدها الناقل بأسمائها من الناقل.",
+        "carrier": "الناقل",
+        "catalog_unavailable": "تعذّر جلب خدمات هذا الناقل ({{message}}). أدخل معرّفات الناقل والخدمة يدويًا، أو اتركها فارغة لعرض كل ما يسعّره الناقل.",
+        "choose_specific": "اختيار خدمات محددة",
+        "edit_service": "تعديل {{service}}",
+        "label": "خدمات الناقل",
+        "narrowed_hint": "تُعرض الخدمات المحددة فقط ({{count}}).",
+        "offer_all": "عرض جميع الخدمات",
+        "service": "الخدمة"
+      },
+      "collection_locations": {
+        "all": "جميع المواقع التي تتيح الاستلام",
+        "none_enabled": "لا يوجد موقع يتيح الاستلام بعد — فعّل موقعًا في ملف التسليم.",
+        "specific": "مواقع محددة",
+        "title": "مواقع الاستلام"
+      },
       "conditions": {
         "add": "إضافة شرط",
-        "empty": "لا توجد شروط — تُعرض الطريقة متى تطابقت مناطقها.",
+        "empty": "لا توجد شروط — تُعرض هذه الطريقة أينما كانت سارية.",
         "title": "الشروط"
       },
-      "create_description": "حدّد كيفية وصول الطلبات إلى العملاء: شحن أو تسليم رقمي أو استلام.",
+      "connect_provider_hint": "يمكن لـ {{name}} تقديم أسعار ناقل فورية — قم بالربط للتفعيل.",
       "create_label": "إنشاء طريقة التوصيل",
       "delete_confirm": {
         "message": "حذف \"{{name}}\"؟ ستتوقف الواجهات فورًا عن عرضها.",
         "title": "حذف طريقة التوصيل"
       },
-      "edit_description": "تحديث إعدادات طريقة التوصيل هذه.",
+      "detail": {},
       "edit_sheet_title": "تعديل طريقة التوصيل",
-      "empty": "لا توجد طرق توصيل بعد.",
-      "fulfillment_types": {
-        "digital": "رقمي",
-        "local_delivery": "توصيل محلي",
-        "pickup": "استلام",
-        "pickup_point": "نقطة استلام",
-        "shipping": "شحن"
-      },
+      "free": "مجاني",
       "messages": {
         "created": "تم إنشاء طريقة التوصيل",
         "deleted": "تم حذف طريقة التوصيل",
         "updated": "تم تحديث طريقة التوصيل"
       },
-      "no_zones_hint": "لا توجد مناطق توصيل بعد — تنطبق الطريقة في كل مكان.",
-      "pickup_locations_hint": "بدون اختيار، تُعرض جميع مواقع المخزون المفعّل فيها الاستلام.",
-      "search_placeholder": "البحث في طرق التوصيل…"
+      "no_zone_restriction": "بدون تقييد",
+      "pricing": {
+        "amount_in_currency": "المبلغ بعملة {{currency}}",
+        "currency_amounts_help": "العملات المتروكة فارغة لا تُعرض لها طريقة التوصيل هذه."
+      },
+      "carrier_rates": "أسعار شركة الشحن",
+      "provider_unavailable": "{{name}} (غير متاح)",
+      "provider_needs_connection": "اربط {{name}} لاستخدامه",
+      "rule_summary": {
+        "separator": " · ",
+        "total_between": "{{min}}–{{max}}",
+        "total_max": "أقل من {{max}}",
+        "total_min": "{{min}} فأكثر",
+        "weight_between": "{{min}}–{{max}} {{unit}}",
+        "weight_max": "أقل من {{max}} {{unit}}",
+        "weight_min": "{{min}} {{unit}} فأكثر"
+      },
+      "carrier_rates_hint": "تأتي الأسعار من {{name}} عند الدفع، ويتم تسعيرها مباشرةً لكل طلب."
+    },
+    "delivery_origin_groups": {
+      "delete_confirm": {
+        "message": "حذف \"{{name}}\"؟ سيتم حذف المناطق وطرق التوصيل معها.",
+        "title": "حذف مجموعة المصادر"
+      },
+      "edit_description": "أعد تسمية هذه المجموعة أو غيّر المواقع التي تشحن منها.",
+      "edit_title": "تعديل مجموعة المصادر",
+      "messages": {
+        "created": "تم إنشاء مجموعة المصادر",
+        "deleted": "تم حذف مجموعة المصادر",
+        "updated": "تم تحديث مجموعة المصادر"
+      },
+      "no_locations_hint": "اختر موقعًا واحدًا على الأقل، أو اختر جميع المواقع.",
+      "ships_from": "الشحن من: {{locations}}",
+      "ships_from_all": "الشحن من جميع المواقع",
+      "ships_from_label": "الشحن من",
+      "split_cta": "تقسيم مصادر الشحن",
+      "split_description": "اشحن المنتجات نفسها من مستودع ثانٍ له مناطقه وأسعاره الخاصة.",
+      "split_title": "تقسيم مصادر الشحن"
     },
     "delivery_zones": {
+      "add_countries_in_markets": "أضف المزيد من البلدان في الأسواق",
       "add_cta": "إضافة منطقة توصيل",
-      "add_member": "إضافة عضو",
+      "add_postal_rule": "إضافة قاعدة",
       "add_sheet_title": "منطقة توصيل جديدة",
+      "all_states": "كل المناطق",
       "create_description": "اجمع الدول أو الولايات أو الرموز البريدية في منطقة تخدمها طرق التوصيل.",
       "create_label": "إنشاء منطقة التوصيل",
       "delete_confirm": {
-        "message": "حذف \"{{name}}\"؟ لن تطابق طرق التوصيل المستخدمة لها هذه المناطق بعد الآن.",
+        "message": "حذف \"{{name}}\"؟ سيتم حذف طرق التوصيل المرتبطة بها معها.",
         "title": "حذف منطقة التوصيل"
       },
       "edit_description": "الأعضاء أدناه يستبدلون قائمة أعضاء المنطقة كاملة عند الحفظ.",
       "edit_sheet_title": "تعديل منطقة التوصيل",
-      "empty": "لا توجد مناطق توصيل بعد.",
       "from_placeholder": "من",
-      "member_types": {
-        "country": "دولة",
-        "postal_code": "رمز بريدي",
-        "state": "ولاية"
-      },
-      "members_column": "الأعضاء",
-      "members_count": "{{count}} أعضاء",
+      "in_another_zone": "ضمن منطقة أخرى",
+      "member_separator": "، ",
+      "members_more_few": "{{count}} أخرى",
+      "members_more_many": "{{count}} أخرى",
+      "members_more_one": "واحدة أخرى",
+      "members_more_other": "{{count}} أخرى",
+      "members_more_two": "اثنتان أخريان",
+      "members_more_zero": "{{count}} أخرى",
       "messages": {
         "created": "تم إنشاء منطقة التوصيل",
         "deleted": "تم حذف منطقة التوصيل",
         "updated": "تم تحديث منطقة التوصيل"
       },
-      "no_members_hint": "لا يوجد أعضاء بعد — أضف دولًا أو ولايات أو قواعد رموز بريدية.",
+      "no_postal_rules_hint": "لا توجد قواعد رمز بريدي بعد.",
+      "no_regions_found": "لا توجد بلدان مطابقة لبحثك.",
+      "no_states": "لا توجد مناطق لهذا البلد.",
+      "not_in_any_market": "ليست ضمن أي سوق",
+      "postal_rules_count_few": "{{count}} قواعد",
+      "postal_rules_count_many": "{{count}} قاعدة",
+      "postal_rules_count_one": "قاعدة واحدة",
+      "postal_rules_count_other": "{{count}} قاعدة",
+      "postal_rules_count_two": "قاعدتان",
+      "postal_rules_title": "قواعد الرمز البريدي",
       "prefix_placeholder": "بادئة",
-      "search_placeholder": "البحث في مناطق التوصيل…",
+      "region_search_placeholder": "ابحث عن البلدان والمناطق للشحن إليها",
+      "regions_title": "البلدان والمناطق",
+      "remove_postal_rule": "إزالة القاعدة",
       "select_country": "اختر الدولة",
-      "state_placeholder": "رمز الولاية أو اسمها",
-      "to_placeholder": "إلى"
+      "selection_summary": "{{countries}} بلدًا، {{states}} منطقة، {{rules}} قاعدة رمز بريدي",
+      "states_selected_few": "{{count}} مناطق",
+      "states_selected_many": "{{count}} منطقة",
+      "states_selected_one": "منطقة واحدة",
+      "states_selected_other": "{{count}} منطقة",
+      "states_selected_two": "منطقتان",
+      "states_selected_zero": "لا مناطق",
+      "states_summary": "{{selected}} من {{total}} منطقة",
+      "to_placeholder": "إلى",
+      "toggle_states": "عرض مناطق {{country}}"
     },
     "errors": {
       "forbidden_description": "ليس لديك إذن لعرض هذه الصفحة.",
@@ -579,6 +648,13 @@
         "default": {
           "help": "قناة واحدة فقط لكل متجر هي الافتراضية. تُستخدم كبديل عند عدم اختيار قناة وكهدف نشر تلقائي للمنتجات الجديدة.",
           "label": "القناة الافتراضية"
+        },
+        "fulfillment_locations": {
+          "all": "جميع المواقع",
+          "help": "المستودعات ونقاط الاستلام التي تنفّذ الطلبات الواردة من قناة البيع هذه.",
+          "label": "مواقع التنفيذ",
+          "none_selected_hint": "اختر موقعًا واحدًا على الأقل، أو اختر «جميع المواقع».",
+          "selected": "مواقع محددة"
         },
         "guest_checkout": {
           "help": "ما إذا كان بإمكان المتسوّقين إتمام الشراء دون حساب في هذه القناة. اتركه فارغًا للاستناد إلى إعداد المتجر.",
@@ -699,18 +775,27 @@
         "code": {
           "label": "الرمز"
         },
-        "delivery_zones": {
-          "label": "مناطق التوصيل"
+        "delivery_zone": {
+          "help": "أين تُعرض هذه الطريقة. بدون منطقة تنطبق في كل مكان يغطيه الملف.",
+          "label": "منطقة التوصيل"
         },
         "fulfillment_provider": {
           "help": "كيفية معالجة عمليات التنفيذ لهذه الطريقة وتتبعها.",
           "label": "مزود التنفيذ"
         },
-        "fulfillment_type": {
-          "label": "نوع التنفيذ"
+        "markup_flat": {
+          "label": "هامش (ثابت)"
         },
-        "pickup_locations": {
-          "label": "مواقع الاستلام"
+        "markup_percent": {
+          "help": "رسوم مناولة تُضاف إلى أسعار الناقل. القيم لكل خدمة تتجاوز هذه الافتراضات.",
+          "label": "هامش %"
+        },
+        "rate_provider": {
+          "help": "مصدر أسعار طريقة التوصيل هذه. المزوّد المدمج يحسب عبر الآلة الحاسبة أدناه؛ ومزوّدو شركات الشحن يوفّرون أسعارًا فورية.",
+          "label": "مزوّد الأسعار"
+        },
+        "service_label": {
+          "label": "تسمية مخصصة"
         },
         "storefront_visible": {
           "help": "يمكن للعملاء اختيار هذه الطريقة عند الدفع."
@@ -726,6 +811,33 @@
         },
         "transit_days_min": {
           "label": "أيام النقل (الأدنى)"
+        }
+      },
+      "delivery_origin_group": {
+        "name": {
+          "help": "اتركه فارغًا لتسمية هذه المجموعة \"جميع المواقع\".",
+          "label": "الاسم"
+        }
+      },
+      "delivery_profile": {
+        "capabilities": {
+          "label": "الإمكانات"
+        },
+        "kind": {
+          "help": "يحدد مزوّدي التنفيذ الذين يمكن لطرق هذا الملف استخدامهم.",
+          "label": "النوع"
+        },
+        "methods_count": {
+          "label": "الطرق"
+        },
+        "origins": {
+          "label": "الشحن من"
+        },
+        "products_count": {
+          "label": "المنتجات"
+        },
+        "zones_count": {
+          "label": "المناطق"
         }
       },
       "gift_card": {
@@ -958,6 +1070,10 @@
         "discontinue_on": {
           "label": "إيقاف في"
         },
+        "delivery_profile_id": {
+          "help": "يحدد المناطق وطرق التوصيل التي تصل إلى هذا المنتج.",
+          "label": "ملف الشحن"
+        },
         "make_active_at": {
           "label": "تفعيل في"
         },
@@ -995,9 +1111,9 @@
           "label": "الحقول المخصصة",
           "required": "مطلوب"
         },
-        "fulfillment_types": {
-          "help": "كيف يمكن تسليم منتجات هذا النوع — شحن، استلام من المتجر، نقطة استلام، أو رقمي.",
-          "label": "طرق التنفيذ"
+        "delivery_profile_id": {
+          "help": "يُطبَّق على المنتجات المنشأة بهذا النوع. لا يغيّر المنتجات الموجودة.",
+          "label": "قالب ملف الشحن"
         },
         "name": {
           "placeholder": "مثال: تي شيرت"
@@ -1162,6 +1278,17 @@
           "label": "لغة لوحة الإدارة",
           "placeholder": "استخدام اللغة الافتراضية"
         },
+        "preferred_default_package_dimensions": {
+          "height": "الارتفاع",
+          "help": "الصندوق المعتاد للشحن، تستخدمه شركات النقل لتسعير الوزن الحجمي — بوصات للنظام الإمبراطوري وسنتيمترات للمتري. تلزم القيم الثلاث ليصبح ساريًا.",
+          "label": "أبعاد الطرد الافتراضية",
+          "length": "الطول",
+          "width": "العرض"
+        },
+        "preferred_default_package_weight": {
+          "help": "وزن التغليف (الصندوق والحشو) الذي يُضاف إلى محتويات كل طرد عند حساب أسعار التوصيل. اضبطه على 0 للتعطيل.",
+          "label": "الوزن الافتراضي للطرد"
+        },
         "preferred_send_consumer_transactional_emails": {
           "help": "عند الإيقاف، لا تُرسل رسائل تأكيد الطلب أو الشحن أو الاسترداد.",
           "label": "إرسال رسائل المعاملات للعملاء"
@@ -1284,6 +1411,67 @@
         }
       }
     },
+    "delivery_profiles": {
+      "add_cta": "إضافة ملف",
+      "add_dialog_title": "ملف توصيل جديد",
+      "all_locations": "جميع المواقع",
+      "capabilities": {
+        "digital": "رقمي",
+        "pickup": "استلام",
+        "ships": "شحن"
+      },
+      "create_description": "اجمع المنتجات التي تُشحن بالطريقة نفسها، مع مواقع ومناطق وطرق توصيل خاصة بها.",
+      "create_label": "إنشاء الملف",
+      "default_badge": "افتراضي",
+      "default_confirm": {
+        "message": "ستُشحن المنتجات التي لا ملف خاص لها عبر «{{name}}».",
+        "title": "تعيينه ملفًا افتراضيًا"
+      },
+      "delete_confirm": {
+        "message": "هل تريد حذف «{{name}}»؟ ستُحذف معه مناطقه وطرق التوصيل الخاصة به.",
+        "title": "حذف ملف الشحن"
+      },
+      "detail": {
+        "add_digital_method": "إضافة طريقة رقمية",
+        "add_method": "إضافة طريقة",
+        "collect_from": "الاستلام من",
+        "collect_from_hint": "المواقع التي يمكن للعملاء الاستلام منها. تسري التغييرات فورًا.",
+        "delete_label": "حذف الملف",
+        "digital_empty": "لا توجد طريقة تسليم رقمي بعد.",
+        "digital_hint": "يُسلَّم دون شحن أو استلام.",
+        "digital_title": "التسليم الرقمي",
+        "general_title": "عام",
+        "hidden_badge": "مخفية",
+        "load_failed_title": "تعذّر تحميل ملف الشحن هذا",
+        "no_methods": "لا توجد طرق توصيل هنا بعد.",
+        "no_stock_locations": "لا توجد مواقع بعد — أضف موقعًا من الإعدادات ← المواقع.",
+        "no_zone_hint": "تُعرض هذه الطرق في كل مكان يغطيه هذا الملف.",
+        "no_zone_title": "بدون تقييد بمنطقة",
+        "no_zones": "لا توجد مناطق بعد — أضف واحدة لتبدأ بعرض طرق التوصيل.",
+        "offer_pickup": "إتاحة الاستلام",
+        "origins_title": "الشحن من",
+        "pickup_empty": "لا توجد طريقة استلام بعد — لا يمكن للعملاء استلام الطلبات في هذا الملف.",
+        "pickup_hint": "يستلم العملاء هذه الطلبات بأنفسهم. الاستلام ليس له وجهة، لذا لا تنطبق المناطق.",
+        "pickup_title": "الاستلام من المتجر",
+        "zones_title": "المناطق وطرق التوصيل"
+      },
+      "empty": "لا توجد ملفات توصيل بعد.",
+      "is_default_hint": "المنتجات التي لا ملف خاص لها تُشحن عبر هذا الملف.",
+      "kind_immutable_hint": "يُحدَّد النوع عند إنشاء الملف ولا يمكن تغييره.",
+      "kinds": {
+        "digital": "رقمي",
+        "shipping": "شحن"
+      },
+      "locations_count": "{{count}} مواقع",
+      "make_default": "تعيين كافتراضي",
+      "messages": {
+        "created": "تم إنشاء ملف الشحن",
+        "deleted": "تم حذف ملف الشحن",
+        "updated": "تم تحديث ملف الشحن"
+      },
+      "search_placeholder": "ابحث في ملفات التوصيل…",
+      "selected_locations": "المواقع المحددة"
+    },
     "gift_cards": {
       "batch_autocomplete": {
         "empty": "لا توجد دفعات مطابقة",
@@ -1380,6 +1568,50 @@
         "products": "المنتجات"
       },
       "wizard_title": "الاستيراد"
+    },
+    "integrations": {
+      "active_toggle": {
+        "help": "التفعيل يتحقق من الاتصال ويجعل التكامل متاحًا للمزوّدين.",
+        "label": "مفعّل"
+      },
+      "configure_cta": "إعداد",
+      "connect_cta": "اتصال",
+      "connect_description": "أدخل بيانات اعتماد هذا المزوّد. الحفظ يخزّنها؛ والتفعيل يتحقق من الاتصال.",
+      "description": "اربط خدمات المزوّدين بهذا المتجر. تُخزَّن بيانات الاعتماد لكل متجر ويستخدمها مزوّدو التوصيل والضرائب وغيرهم.",
+      "disconnect": "قطع الاتصال",
+      "disconnect_confirm": {
+        "message": "هل تريد قطع اتصال {{name}}؟ ستُحذف بيانات الاعتماد المخزّنة وسيتوقف المزوّدون الذين يستخدمونها عن العمل.",
+        "title": "قطع اتصال التكامل"
+      },
+      "edit_description": "حدّث بيانات الاعتماد أو التفعيل. القيم السرّية مقنّعة؛ اتركها دون تغيير للاحتفاظ بالسر المخزّن.",
+      "empty": {
+        "description": "تأتي التكاملات مع إضافات المزوّدين. ثبّت حزمة مزوّد وستظهر تكاملاتها هنا.",
+        "title": "لا توجد تكاملات مثبّتة"
+      },
+      "groups": {
+        "other": "أخرى",
+        "shipping": "الشحن",
+        "tax": "الضرائب"
+      },
+      "messages": {
+        "connected": "تم توصيل التكامل",
+        "disconnected": "تم قطع اتصال التكامل",
+        "updated": "تم تحديث التكامل"
+      },
+      "status": {
+        "active": "مفعّل",
+        "connected_inactive": "متصل (غير مفعّل)",
+        "not_connected": "غير متصل"
+      },
+      "test": {
+        "failure": "فشل الاتصال.",
+        "label": "الاتصال",
+        "run": "اختبار الاتصال",
+        "success": "نجح الاتصال.",
+        "testing": "جارٍ الاختبار…"
+      },
+      "title": "التكاملات",
+      "view_cta": "عرض"
     },
     "invitation": {
       "accepting": "قبول…",
@@ -1578,16 +1810,49 @@
           "resend_confirmation": "Resend Confirmation",
           "void_payment": "Void Payment"
         },
-        "edit_quantity": {
-          "description": "قم بتعيين الكمية لهذا البند.",
-          "title": "Edit Quantity"
-        },
         "errors": {
           "approve_failed": "فشلت الموافقة على الطلب",
           "cancel_failed": "فشل في إلغاء الطلب",
           "complete_failed": "فشل في إكمال الطلب",
           "confirmation_send_failed": "فشل في إرسال التأكيد",
           "resume_failed": "فشل في استئناف الطلب"
+        },
+        "fulfillments": {
+          "confirm_split": "نقل هذه الوحدات إلى شحنة جديدة؟ يسري هذا فوراً.",
+          "create_description": "تنشئ شحنة وتنقل إليها الكميات المختارة.",
+          "create_items": "العناصر",
+          "create_title": "إضافة شحنة",
+          "delivery_method": "طريقة التوصيل",
+          "edit_description": "غيّر مكان شحن هذه الشحنة وطريقة التوصيل التي تنقلها.",
+          "edit_title": "تعديل الشحنة",
+          "empty": "لا توجد شحنات لهذا الطلب بعد.",
+          "free": "مجاني",
+          "move_and_requote": "نقل وإعادة التسعير",
+          "no_rates": "لا توجد طرق توصيل متاحة لهذه الشحنة.",
+          "out_of_stock": "غير متوفر في المخزون",
+          "rates_pending_origin": "احفظ مصدر الشحن الجديد لعرض طرق التوصيل المتاحة منه.",
+          "ships_from": "الشحن من",
+          "split": "تقسيم",
+          "split_description": "انقل بعض الوحدات إلى شحنة جديدة. منتج واحد في كل مرة.",
+          "split_item": "المنتج",
+          "split_quantity": "الكمية المراد نقلها",
+          "split_title": "تقسيم الشحنة",
+          "split_would_empty": "اترك وحدة واحدة على الأقل، أو غيّر مصدر الشحنة بالكامل بدلاً من ذلك.",
+          "unfulfilled_other": "غير مُنفَّذ ({{count}})",
+          "mark_delivered": "وضع علامة كمُسلَّم",
+          "add_tracking": "إضافة تتبع",
+          "edit_tracking_title": "تعديل التتبع",
+          "add_tracking_title": "إضافة تتبع",
+          "tracking_description": "رقم تتبع شركة الشحن، أو رابط تتبع كامل.",
+          "carrier_label": "شركة الشحن",
+          "carrier_auto": "اكتشاف تلقائي",
+          "buy_label_confirm": "شراء ملصق شحن لهذه الشحنة؟ سيتم الخصم من حساب شركة الشحن الخاص بك فور إصدار الملصق.",
+          "buy_label_confirm_rate": "شراء ملصق {{rate}} مقابل {{cost}}؟ سيتم الخصم من حساب شركة الشحن الخاص بك فور إصدار الملصق.",
+          "buy_label": "شراء الملصق",
+          "print_label": "طباعة الملصق",
+          "print_packing_slip": "طباعة قائمة التعبئة",
+          "packing_slip_title": "قائمة التعبئة — الطلب {{number}}",
+          "ship_to": "الشحن إلى"
         },
         "gift_card_section": {
           "applied_suffix": "مُطبَّق",
@@ -1601,11 +1866,6 @@
           "store_credit_label": "Store credit",
           "title": "الخصومات والرصيد"
         },
-        "items_table": {
-          "item": "غرض",
-          "price": "سعر",
-          "qty": "الكمية"
-        },
         "load_failed_message": "لم نتمكن من تحميل الطلب {{orderId}}.",
         "messages": {
           "approved": "تمت الموافقة على الطلب",
@@ -1618,7 +1878,6 @@
           "voided": "تم إلغاء الدفع"
         },
         "no_customer": "لا توجد معلومات العميل",
-        "no_line_items": "لا توجد عناصر",
         "payment_form": {
           "amount_help": "اتركه فارغًا لتقصير الرصيد المستحق.",
           "capture_immediately": "التقط على الفور",
@@ -1650,10 +1909,6 @@
           "tax_included": "الضريبة (متضمنة)"
         },
         "tracking": {
-          "add_title": "Add Tracking",
-          "description": "قم بتحديث رقم التتبع لهذه الشحنة.",
-          "edit_title": "Edit Tracking",
-          "label": "Tracking الرقم",
           "prefix": "Tracking",
           "shipped_prefix": "تم الشحن"
         },
@@ -1665,13 +1920,62 @@
           "sku_prefix": "SKU"
         }
       },
+      "edit": {
+        "action_label": "تعديل الطلب",
+        "actions": {
+          "add_product": "إضافة منتج",
+          "remove_item": "إزالة {{name}}",
+          "quantity_for": "كمية {{name}}",
+          "restore_item": "الإبقاء على {{name}}"
+        },
+        "columns": {
+          "line_total": "إجمالي السطر",
+          "product": "المنتج",
+          "unit_price": "سعر الوحدة"
+        },
+        "empty": "لا يحتوي هذا الطلب على أي عناصر.",
+        "items_title": "العناصر",
+        "subtitle": "الطلب {{number}}",
+        "title": "تعديل الطلب",
+        "totals_hint": "يُعيد الخادم احتساب الإجماليات بعد الحفظ.",
+        "totals_title": "الإجماليات",
+        "badges": {
+          "pending": "غير محفوظ",
+          "removed": "قيد الإزالة",
+          "fulfilled_count_one": "تم الوفاء بـ {{count}}",
+          "fulfilled_count_other": "تم الوفاء بـ {{count}}"
+        },
+        "validation": {
+          "below_fulfilled_one": "لا يمكن النزول تحت {{count}} وحدة تم الوفاء بها",
+          "below_fulfilled_other": "لا يمكن النزول تحت {{count}} وحدات تم الوفاء بها"
+        },
+        "fully_fulfilled": "تم الوفاء بهذا الطلب بالكامل ولم يعد من الممكن تعديله."
+      },
+      "fulfill": {
+        "action": "وضع علامة كمشحون",
+        "empty": "لا تحتوي هذه الشحنة على عناصر قابلة للشحن.",
+        "include_item": "شحن {{name}}",
+        "notify_customer": "إرسال إشعار الشحن إلى العميل",
+        "of_units": "من {{count}}",
+        "partial_hint": "تنتقل الوحدات المختارة إلى شحنة جديدة تُشحن الآن، ويبقى الباقي في هذه الشحنة وهي ما زالت مفتوحة.",
+        "quantity_for": "الكمية المراد شحنها من {{name}}",
+        "submit": "شحن العناصر",
+        "tracking_label": "رقم التتبع",
+        "tracking_placeholder": "رقم التتبع أو الرابط",
+        "units_selected": "الوحدات المراد شحنها",
+        "validation": {
+          "quantity_invalid": "أدخل عددًا صحيحًا من الوحدات."
+        }
+      },
       "fulfillment_statuses": {
         "backorder": "طلب متأخر",
         "canceled": "تم الإلغاء",
         "fulfilled": "تم الوفاء به",
         "partial": "جزئي",
         "pending": "قيد الانتظار",
-        "ready": "مستعد"
+        "ready": "مستعد",
+        "unfulfilled": "لم يتم الوفاء به",
+        "delivered": "تم التسليم"
       },
       "item_count_one": "{{count}} البند",
       "item_count_other": "{{count}} العناصر",
@@ -1926,7 +2230,6 @@
           "section_fulfillments": "عمليات التنفيذ",
           "section_history": "تاريخ",
           "section_internal_note": "ملاحظة داخلية",
-          "section_items": "أغراض",
           "section_payments": "المدفوعات",
           "section_returns": "المرتجعات",
           "section_shipping_address": "عنوان الشحن",
@@ -2323,7 +2626,9 @@
           "search_placeholder": "البحث عن مواقع المخزون…"
         },
         "store": {
+          "default_package_description": "الصندوق المعتاد للشحن. يضيف مزوّدو أسعار النقل وزنه إلى كل طرد ويستخدمون أبعاده لتسعير الوزن الحجمي.",
           "subtitle": "التكوين العام والإعدادات الافتراضية على مستوى المتجر.",
+          "tab_default_package": "الطرد الافتراضي",
           "tab_general": "عام",
           "tab_standards": "المعايير والأشكال",
           "tab_storefront_access": "الوصول إلى المتجر",
@@ -2533,6 +2838,7 @@
         "dashboard": "تحليلات المبيعات والأداء",
         "fulfillments": "تجهيز الطلبات وشحنها وتتبعها",
         "gift_cards": "بطاقات الهدايا ودفعاتها",
+        "integrations": "بيانات اعتماد مزوّدي الخدمة واتصالاتهم",
         "orders": "الطلبات وبنودها والإرجاعات والاستبدالات والمطالبات",
         "payments": "مدفوعات الطلبات وتحصيلها",
         "products": "المنتجات والمتغيرات والخيارات والأسعار والوسائط",
@@ -2572,6 +2878,7 @@
         "dashboard": "Dashboard",
         "fulfillments": "Fulfillments",
         "gift_cards": "بطاقات الهدايا",
+        "integrations": "عمليات التكامل",
         "orders": "طلبات",
         "payments": "المدفوعات",
         "products": "منتجات",
@@ -2646,6 +2953,8 @@
       },
       "create_description": "جمّع المنتجات وحدد طرق تسليمها.",
       "create_label": "إنشاء نوع منتج",
+      "custom_delivery_profile": "مخصص",
+      "default_delivery_profile": "الملف الافتراضي للمتجر",
       "delete_confirm": {
         "message": "هل أنت متأكد من حذف “{{name}}”؟ لا يمكن حذف الأنواع التي لا تزال مستخدمة من قبل منتجات.",
         "title": "حذف نوع المنتج"
@@ -2788,6 +3097,11 @@
       },
       "variants": {
         "add_option": "إضافة خيار",
+        "bulk_edit": {
+          "grid_aria": "جدول التحرير الجماعي للمتغيرات",
+          "title": "تحرير المتغيرات جماعيًا",
+          "trigger": "تحرير جماعي"
+        },
         "create_option_type": "إنشاء نوع خيار جديد",
         "create_option_type_title": "نوع خيار جديد",
         "create_value": "قيمة جديدة",
@@ -3163,10 +3477,10 @@
         "api_keys": "مفاتيح API",
         "channels": "قنوات البيع",
         "custom_field_definitions": "الحقول المخصصة",
-        "delivery_methods": "طرق التوصيل",
-        "delivery_zones": "مناطق التوصيل",
+        "delivery_profiles": "ملفات التوصيل",
         "emails": "البريد الإلكتروني",
         "imports": "عمليات الاستيراد",
+        "integrations": "التكاملات",
         "markets": "الأسواق",
         "payment_methods": "طرق الدفع",
         "product_types": "أنواع المنتجات",

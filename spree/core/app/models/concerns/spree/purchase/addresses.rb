@@ -54,12 +54,14 @@ module Spree
 
         return false if preferred_stock_location_id.present?
 
-        address_requiring_types = store.delivery_methods.select(&:requires_address?).map(&:fulfillment_type).uniq
-        return false if address_requiring_types.empty?
+        # An address is needed when any item's profile ships to one —
+        # answered by the profile kind, resolved once per profile.
+        profile_requires_address = Hash.new do |cache, profile|
+          cache[profile] = profile.present? && profile.requires_shipping_address?
+        end
 
         line_items.includes(variant: :product).any? do |line_item|
-          fulfillment_types = line_item.variant&.product&.fulfillment_types || ['shipping']
-          (fulfillment_types & address_requiring_types).any?
+          profile_requires_address[line_item.variant&.product&.resolved_delivery_profile]
         end
       end
 

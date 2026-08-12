@@ -6,7 +6,9 @@ module Spree
 
     with_options inverse_of: :fulfillment_items do
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
-      belongs_to :order, class_name: 'Spree::Order'
+      # Optional because cart-phase items have no order yet — their owner is
+      # reached through the fulfillment; order_id arrives at completion.
+      belongs_to :order, class_name: 'Spree::Order', optional: true
       belongs_to :fulfillment, class_name: 'Spree::Fulfillment', touch: true, optional: true
       has_many :return_line_items, class_name: 'Spree::ReturnLineItem', inverse_of: :fulfillment_item
       has_many :returns, class_name: 'Spree::Return', through: :return_line_items

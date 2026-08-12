@@ -420,7 +420,7 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
     # Splitter chain: fulfillment-type split runs per-location
     # ---------------------------------------------------------------
 
-    context 'two variants with different fulfillment types at same location' do
+    context 'two variants in different delivery profiles at same location' do
       let(:variant_shipping) { create(:variant, product: create(:product)) }
       let(:variant_digital) { create(:variant, product: create(:digital_product, track_inventory: true)) }
 
@@ -436,16 +436,16 @@ RSpec.describe 'OrderRouting strategy parity', type: :model do
         nyc.stock_item_or_create(variant_digital).update!(count_on_hand: 10)
       end
 
-      # The FulfillmentType splitter is in the default Spree.stock_splitters
+      # The DeliveryProfile splitter is in the default Spree.stock_splitters
       # chain — Coordinator and Rules both pass it to the Packer, so each
-      # location's allocation gets fanned out into one package per
-      # fulfillment-type set. Both pipelines should produce 2 NYC packages here.
-      it 'produces two NYC packages, one per fulfillment-type set' do
+      # location's allocation gets fanned out into one package per profile.
+      # Both pipelines should produce 2 NYC packages here.
+      it 'produces two NYC packages, one per delivery profile' do
         packages = strategy.for_allocation
         nyc_packages = packages.select { |p| p.stock_location.id == nyc.id }
         expect(nyc_packages.size).to eq(2)
-        type_sets = nyc_packages.map { |p| p.fulfillment_types.sort }
-        expect(type_sets).to contain_exactly(['digital'], ['shipping'])
+        profiles = nyc_packages.map { |p| p.delivery_profile }
+        expect(profiles.map(&:digital?)).to contain_exactly(true, false)
         expect(total_on_hand(packages)).to eq(2)
         expect(total_backordered(packages)).to eq(0)
       end

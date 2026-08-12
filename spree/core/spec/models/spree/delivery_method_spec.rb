@@ -4,6 +4,51 @@ class DummyShippingCalculator < Spree::ShippingCalculator
 end
 
 describe Spree::DeliveryMethod, type: :model do
+
+  describe 'carrier services' do
+    let(:delivery_method) { create(:delivery_method) }
+
+    describe '#services=' do
+      it 'creates, updates by id, and destroys omitted rows from a flat payload' do
+        delivery_method.services = [
+          { carrier: 'UPS', service: 'Ground' },
+          { carrier: 'UPS', service: 'NextDayAir', label: 'UPS 1 day' }
+        ]
+        ground = delivery_method.services.find_by(service: 'Ground')
+
+        delivery_method.services = [
+          { id: ground.prefixed_id, carrier: 'UPS', service: 'Ground', markup_flat: 2.5 }
+        ]
+
+        expect(delivery_method.services.reload.map(&:service)).to eq(['Ground'])
+        expect(ground.reload.markup_flat).to eq(2.5)
+      end
+
+      it 'defers rows on a new record until the method is saved' do
+        method = build(:delivery_method)
+        method.services = [{ carrier: 'USPS', service: 'Priority' }]
+
+        expect(method.pending_services?).to be true
+        method.save!
+
+        expect(method.services.reload.map(&:service_key)).to eq(['USPS/Priority'])
+      end
+    end
+
+    describe '#offers_service?' do
+      let(:estimate) { Spree::DeliveryRateProvider::Estimate.new(carrier: 'UPS', service_level: 'Ground') }
+
+      it 'offers everything when no rows exist' do
+        expect(delivery_method.offers_service?(estimate)).to be true
+      end
+
+      it 'offers only listed services when rows exist' do
+        delivery_method.services.create!(carrier: 'USPS', service: 'Priority')
+
+        expect(delivery_method.offers_service?(estimate)).to be false
+      end
+    end
+  end
   let(:delivery_method) { create(:delivery_method) }
   let(:visible_delivery_method) { create :delivery_method, storefront_visible: true }
   let(:admin_only_delivery_method) { create :delivery_method, storefront_visible: false }
@@ -33,21 +78,15 @@ describe Spree::DeliveryMethod, type: :model do
       expect(delivery_method.requires_zone_check?).to be true
     end
 
-    it 'is decided by the fulfillment provider, not the fulfillment type' do
-      [
-        ['digital', 'Spree::FulfillmentProvider::Digital'],
-        ['pickup', 'Spree::FulfillmentProvider::Pickup'],
-        ['pickup_point', 'Spree::FulfillmentProvider::PickupPoint']
-      ].each do |fulfillment_type, provider|
-        method = create(:delivery_method, fulfillment_type: fulfillment_type, fulfillment_provider: provider)
-
+    it 'is decided by the fulfillment provider' do
+      [create(:digital_delivery_method), create(:pickup_delivery_method)].each do |method|
         expect(method.requires_address?).to be false
         expect(method.requires_zone_check?).to be false
       end
     end
 
-    it 'is true for the Manual provider whatever the fulfillment type' do
-      method = create(:delivery_method, fulfillment_type: 'pickup')
+    it 'is true for the Manual provider' do
+      method = create(:delivery_method)
 
       expect(method.fulfillment_provider).to eq('Spree::FulfillmentProvider::Manual')
       expect(method.requires_address?).to be true
@@ -133,29 +172,6 @@ describe Spree::DeliveryMethod, type: :model do
       expect(subject.errors.messages[:name].size).to eq(1)
     end
 
-    it 'rejects a fulfillment type outside the Spree.fulfillment_types registry' do
-      method = build(:delivery_method, fulfillment_type: 'pickpu')
-
-      expect(method).not_to be_valid
-      expect(method.errors[:fulfillment_type]).to be_present
-    end
-
-    it 'accepts a custom type once registered' do
-      Spree.fulfillment_types << 'same_day_courier'
-
-      expect(build(:delivery_method, fulfillment_type: 'same_day_courier')).to be_valid
-    ensure
-      Spree.fulfillment_types.delete('same_day_courier')
-    end
-
-    it 'leaves persisted rows with unregistered types loadable and savable' do
-      method = create(:delivery_method)
-      method.update_column(:fulfillment_type, 'legacy_freight')
-
-      method.reload.name = 'Renamed'
-      expect(method.save).to be true
-    end
-
     it 'defaults to storefront visible and rejects a blank value' do
       expect(subject.storefront_visible).to be true
 
@@ -172,6 +188,109 @@ describe Spree::DeliveryMethod, type: :model do
       it 'uses tracking number gem to build tracking url' do
         expect(subject.build_tracking_url(usps_tracking_number)).to eq('https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=1Z879E930346834440')
       end
+    end
+  end
+
+  describe '#rate_provider_instance' do
+    let(:delivery_method) { create(:delivery_method) }
+
+    it 'defaults to the Internal provider when unset' do
+      expect(delivery_method.rate_provider).to be_blank
+      expect(delivery_method.rate_provider_instance).to be_a(Spree::DeliveryRateProvider::Internal)
+    end
+
+    it 'constantizes the configured provider and passes itself to it' do
+      provider_class = Class.new(Spree::DeliveryRateProvider::Base)
+      stub_const('ConfiguredRateProvider', provider_class)
+      Spree.delivery_rate_providers << provider_class
+
+      delivery_method.update!(rate_provider: 'ConfiguredRateProvider')
+
+      expect(delivery_method.rate_provider_instance).to be_a(provider_class)
+      expect(delivery_method.rate_provider_instance.delivery_method).to eq(delivery_method)
+    ensure
+      Spree.delivery_rate_providers.delete(provider_class)
+    end
+
+    # An unregistered provider would otherwise raise at quote time, deep
+    # inside checkout.
+    it 'rejects a provider that is not registered' do
+      delivery_method.rate_provider = 'NotARegisteredProvider'
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:rate_provider]).to be_present
+    end
+
+    it 'keeps rows loadable when a registered provider is later removed' do
+      delivery_method.update_columns(rate_provider: 'GoneAwayProvider')
+
+      expect(delivery_method.reload).to be_valid
+    end
+
+    # Uninstalling a provider gem leaves its name on existing rows; quoting
+    # must fall back rather than raise inside checkout.
+    it 'falls back to the default when the stored provider no longer resolves' do
+      delivery_method.update_columns(rate_provider: 'GoneAwayProvider')
+
+      expect(delivery_method.reload.rate_provider_instance).to be_a(Spree::DeliveryRateProvider::Internal)
+    end
+
+    # The admin picker filters on availability, but a direct API write must
+    # not save a provider whose integration isn't connected.
+    it 'rejects a registered provider that is unavailable for the store' do
+      provider_class = Class.new(Spree::DeliveryRateProvider::Base) do
+        def self.integration_class = 'Spree::Integrations::Unconnected'
+      end
+      stub_const('UnconnectedRateProvider', provider_class)
+      Spree.delivery_rate_providers << provider_class
+
+      delivery_method.rate_provider = 'UnconnectedRateProvider'
+
+      expect(delivery_method).not_to be_valid
+      expect(delivery_method.errors[:rate_provider]).to be_present
+    ensure
+      Spree.delivery_rate_providers.delete(provider_class)
+    end
+  end
+
+  describe 'rate provider / fulfillment provider compatibility' do
+    let(:delivery_method) { create(:delivery_method) }
+    let(:carrier_provider) do
+      Class.new(Spree::DeliveryRateProvider::Base) do
+        def self.requires_address? = true
+        def self.provider_name = 'Carrier'
+      end
+    end
+
+    before do
+      stub_const('CarrierRateProvider', carrier_provider)
+      Spree.delivery_rate_providers << carrier_provider
+    end
+
+    after { Spree.delivery_rate_providers.delete(carrier_provider) }
+
+    # A carrier quotes parcels to an address, so it cannot price a method
+    # whose fulfillment provider never ships one — the mismatch would surface
+    # as missing rates at checkout, not at save time.
+    it 'rejects a shipment-quoting rate provider when the method does not ship to an address' do
+      profile = create(:digital_delivery_profile, store: delivery_method.store)
+      method = build(:digital_delivery_method, store: delivery_method.store,
+                     delivery_profile: profile, rate_provider: 'CarrierRateProvider')
+
+      expect(method).not_to be_valid
+      expect(method.errors[:rate_provider].join).to include('Carrier')
+    end
+
+    it 'accepts a shipment-quoting rate provider on a shipping method' do
+      delivery_method.rate_provider = 'CarrierRateProvider'
+
+      expect(delivery_method).to be_valid
+    end
+
+    # Internal prices anything — pickup and digital methods keep their
+    # calculators.
+    it 'accepts any fulfillment provider for rate providers that do not quote shipments' do
+      expect(build(:pickup_delivery_method, rate_provider: '')).to be_valid
     end
   end
 

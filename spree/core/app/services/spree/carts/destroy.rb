@@ -24,8 +24,11 @@ module Spree
         success(cart: cart)
       end
 
+      # Cart fulfillments are proposals, not commitments: nothing was picked or
+      # booked, so this marks them canceled rather than running the cancel
+      # workflow's restock and carrier stand-down.
       def cancel_shipments(cart:)
-        cart.fulfillments.each(&:cancel)
+        cart.fulfillments.each { |fulfillment| fulfillment.update!(status: 'canceled') }
 
         success(cart: cart)
       end

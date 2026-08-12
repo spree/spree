@@ -16,7 +16,7 @@ RSpec.describe 'Admin Markets API', type: :request, swagger_doc: 'api-reference/
   # other countries this spec assigns directly through the API.
   before do
     # Delivery methods are worldwide by default; one method covers all countries.
-    create(:shipping_method) unless Spree::DeliveryMethod.where.missing(:delivery_method_zones).exists?
+    create(:shipping_method) unless Spree::DeliveryMethod.where(delivery_zone_id: nil).exists?
   end
 
   path '/api/v3/admin/markets' do

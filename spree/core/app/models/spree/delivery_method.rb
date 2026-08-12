@@ -22,6 +22,12 @@ module Spree
     STOREFRONT = :storefront
     BACKOFFICE = :backoffice
 
+    # Quoting strategy used when +rate_provider+ is blank.
+    DEFAULT_RATE_PROVIDER = 'Spree::DeliveryRateProvider::Internal'.freeze
+
+    # Dispatch strategy used when +fulfillment_provider+ is blank.
+    DEFAULT_FULFILLMENT_PROVIDER = 'Spree::FulfillmentProvider::Manual'.freeze
+
     # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.1.
     DISPLAY_ON_FRONT_END = 1
     # @deprecated Use {STOREFRONT}/{BACKOFFICE}; removed in 6.1.
@@ -36,24 +42,41 @@ module Spree
              dependent: :destroy, inverse_of: :delivery_method
     has_many :delivery_method_rules, class_name: 'Spree::DeliveryMethodRule',
              dependent: :destroy, inverse_of: :delivery_method
+    has_many :services, -> { order(:position) }, class_name: 'Spree::DeliveryMethodService',
+             dependent: :destroy, inverse_of: :delivery_method
     has_many :pickup_locations, through: :delivery_method_stock_locations, source: :stock_location
 
-    has_many :delivery_method_zones, class_name: 'Spree::DeliveryMethodZone',
-                                     foreign_key: 'delivery_method_id'
-    has_many :delivery_zones, through: :delivery_method_zones, class_name: 'Spree::DeliveryZone'
+    # The profile this method belongs to — the sole path a product's package
+    # reaches it through. Within the profile the method sits in an origin
+    # group (which origins offer it); the optional zone narrows destinations
+    # and must share the method's group.
+    belongs_to :delivery_profile, class_name: 'Spree::DeliveryProfile', inverse_of: :delivery_methods
+    belongs_to :delivery_origin_group, class_name: 'Spree::DeliveryOriginGroup', inverse_of: :delivery_methods
+    belongs_to :delivery_zone, class_name: 'Spree::DeliveryZone', optional: true
 
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory', optional: true
 
     attribute :storefront_visible, :boolean, default: true
-    attribute :fulfillment_type, :string, default: 'shipping'
 
-    # Every method rates through a calculator; pickup/digital methods default
-    # to free so API/dashboard creation doesn't have to send one.
+    # Every method carries a calculator — the Estimator consults its
+    # `available?` even when a provider sets the price. Methods whose rate
+    # provider quotes live rates (and pickup/digital methods) default to a
+    # free rate, so neither the API nor the dashboard has to send one.
     before_validation :ensure_calculator, on: :create
+    # Mirrors product stamping: a method created without an explicit profile
+    # joins the store's default one, landing in the profile's default origin
+    # group unless one is named (a zone names one implicitly).
+    before_validation :assign_default_delivery_profile, on: :create
+    before_validation :assign_default_origin_group, on: :create
     after_save :apply_pending_rules, if: :pending_rules?
+    after_save :apply_pending_services, if: :pending_services?
     attribute :fulfillment_provider, :string, default: 'Spree::FulfillmentProvider::Manual'
 
-    scope :by_fulfillment_type, ->(type) { where(fulfillment_type: type) }
+    # Methods whose fulfillment provider satisfies the predicate — behavior
+    # queries route through provider classes, never string vocabularies.
+    scope :with_provider, ->(predicate) {
+      where(fulfillment_provider: Spree.fulfillment_providers.select(&predicate).map(&:to_s))
+    }
 
     # Customer-facing methods vs backoffice-only ones (manual courier entry,
     # internal freight). The backoffice always sees every method.
@@ -63,41 +86,51 @@ module Spree
     # Legacy association names — removed in 6.1.
     has_many :shipping_rates, class_name: 'Spree::DeliveryRate', foreign_key: :delivery_method_id, deprecated: true
     has_many :shipments, through: :delivery_rates, source: :fulfillment, deprecated: true
-    has_many :zones, through: :delivery_method_zones, source: :delivery_zone, deprecated: true
-
-    # ShippingCategory eligibility is superseded by fulfillment types
-    # (ProductType#fulfillment_types); both tables drop in 6.1.
-    has_many :shipping_method_categories, foreign_key: :shipping_method_id, dependent: :destroy, deprecated: true
-    has_many :shipping_categories, through: :shipping_method_categories, deprecated: true
 
     # Real column, so no ransacker is needed — only the allowlist entry the
     # Spree::DisplayOn concern used to contribute.
-    self.whitelisted_ransackable_attributes = %w[storefront_visible fulfillment_type]
+    self.whitelisted_ransackable_attributes = %w[storefront_visible]
 
-    validates :name, :fulfillment_type, presence: true
+    validates :name, presence: true
     validates :storefront_visible, inclusion: { in: [true, false] }
-    # Strict vocabulary: an unregistered type silently matches no product
-    # (empty intersection — no error, just missing rates), so typos must
-    # fail loudly. Validated on change only: rows migrated with tokens not
-    # yet registered in an initializer stay loadable and savable.
-    validates :fulfillment_type,
-              inclusion: { in: -> (_record) { Spree.fulfillment_types } },
-              if: :fulfillment_type_changed?
+    validate :delivery_zone_must_belong_to_profile,
+             if: -> { delivery_zone_id_changed? || delivery_profile_id_changed? }
+    validate :origin_group_must_match,
+             if: -> { delivery_origin_group_id_changed? || delivery_zone_id_changed? || delivery_profile_id_changed? }
     validates :estimated_transit_business_days_min, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
     validates :estimated_transit_business_days_max, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
+    # Same reasoning as fulfillment_type: an unregistered provider is a typo
+    # that would raise at quote time, deep inside checkout. Blank is valid —
+    # it means the Internal provider.
+    validates :rate_provider,
+              inclusion: { in: -> (_record) { Spree.delivery_rate_providers.map(&:to_s) } },
+              allow_blank: true,
+              if: :rate_provider_changed?
+    # The admin picker filters on availability, but a direct API write must
+    # not save a provider whose integration isn't connected — that breaks
+    # quoting at checkout, not at save time where the admin can see it.
+    validate :rate_provider_must_be_available, if: :rate_provider_changed?
+    # Providers declare the fulfillment types they handle; a mismatch would
+    # only surface at checkout (no rates) or at ship time (no dispatch),
+    # so reject it where the admin can still see why.
+    # The profile kind gates composition (a Digital profile only accepts
+    # digital-provider methods), and an address-requiring rate provider (a
+    # carrier) can only price methods that ship to an address.
+    validate :profile_must_accept_provider,
+             if: -> { fulfillment_provider_changed? || delivery_profile_id_changed? }
+    validate :rate_provider_must_ship,
+             if: -> { rate_provider_changed? || fulfillment_provider_changed? }
 
-    scope :digital, -> { by_fulfillment_type('digital') }
+    scope :digital, -> { with_provider(:digital?) }
 
     scope :search_by_name, ->(query) { where(arel_table[:name].lower.matches("%#{query}%")) }
 
     def include?(address)
       return true unless requires_zone_check?
       return false unless address
-      return true if delivery_zones.empty?
+      return true if delivery_zone.nil?
 
-      delivery_zones.includes(:members).any? do |zone|
-        zone.include?(address)
-      end
+      delivery_zone.include?(address)
     end
 
     # Zones describe the customer's destination address, so only methods
@@ -129,15 +162,38 @@ module Spree
     end
 
     def pickup?
-      fulfillment_type == 'pickup'
+      provider_class.pickup?
     end
 
     def ensure_calculator
       self.calculator ||= Spree::Calculator::Shipping::FlatRate.new(preferred_amount: 0)
     end
 
+    def assign_default_delivery_profile
+      self.delivery_profile ||= store&.default_delivery_profile
+    end
+
+    # The zone's group wins when a zone is set (they must agree anyway);
+    # zoneless methods fall back to the profile's default group.
+    def assign_default_origin_group
+      self.delivery_origin_group ||= delivery_zone&.delivery_origin_group || delivery_profile&.default_origin_group
+    end
+
+    def origin_group_must_match
+      if delivery_origin_group.present? && delivery_profile.present? &&
+          delivery_origin_group.delivery_profile_id != delivery_profile_id
+        errors.add(:delivery_origin_group, :invalid)
+      end
+
+      return if delivery_zone.nil? || delivery_origin_group.nil?
+      return if delivery_zone.delivery_origin_group_id == delivery_origin_group_id
+
+      errors.add(:delivery_zone, :does_not_belong_to_origin_group,
+                 message: Spree.t('errors.messages.delivery_zone_not_in_origin_group'))
+    end
+
     def pickup_point?
-      fulfillment_type == 'pickup_point'
+      provider_class.pickup_point?
     end
 
     # Whether this method delivers to a customer shipping address —
@@ -156,15 +212,82 @@ module Spree
 
     # The FulfillmentProvider strategy handling this method's fulfillments.
     # Falls back to Manual for rows created before the 6.0 backfill ran.
-    def provider
-      @provider ||= (fulfillment_provider.presence || 'Spree::FulfillmentProvider::Manual').constantize.new
+    # Falls back to Manual when the stored provider no longer resolves, for
+    # the same reason as {#rate_provider_class} — an uninstalled gem must not
+    # raise at ship time.
+    #
+    # @return [Class]
+    def provider_class
+      (fulfillment_provider.presence || DEFAULT_FULFILLMENT_PROVIDER).safe_constantize ||
+        DEFAULT_FULFILLMENT_PROVIDER.constantize
     end
+
+    def provider
+      @provider ||= provider_class.new
+    end
+
+    # The DeliveryRateProvider strategy quoting this method. Blank means the
+    # Internal (calculator-backed) provider, so untouched rows keep their
+    # existing pricing.
+    #
+    # @return [Spree::DeliveryRateProvider::Base]
+    def rate_provider_instance
+      @rate_provider_instance ||= rate_provider_class.new(self)
+    end
+
+    # Falls back to the default when the stored provider no longer resolves —
+    # a gem can be uninstalled while its rows remain, and raising here would
+    # surface as a checkout error rather than a missing carrier option.
+    #
+    # @return [Class]
+    def rate_provider_class
+      (rate_provider.presence || DEFAULT_RATE_PROVIDER).safe_constantize || DEFAULT_RATE_PROVIDER.constantize
+    end
+
 
     # Flat-payload writer for `rules`, so one PATCH saves the method and its
     # conditions together. See
     # {Spree::TypedAssociations#assign_typed_association}.
     def rules=(rows)
       assign_typed_association(:delivery_method_rules, rows)
+    end
+
+    # Flat-payload writer for carrier service rows, so one PATCH saves the
+    # method and its services together. Rows update by id, match by
+    # (carrier, service), or create; rows omitted from the payload are
+    # destroyed. Assigning model instances (or an empty array) falls through
+    # to the standard association writer.
+    def services=(rows)
+      first = Array(rows).first
+      return super if first.nil? || first.is_a?(Spree.base_class)
+
+      pending = Array(rows).map { |row| row.to_h.with_indifferent_access }
+      if new_record?
+        @pending_services = pending
+      else
+        reconcile_services(pending)
+      end
+    end
+
+    def pending_services?
+      @pending_services.present?
+    end
+
+    # The service row matching an estimate's carrier + service identity.
+    #
+    # @param estimate [Spree::DeliveryRateProvider::Estimate]
+    # @return [Spree::DeliveryMethodService, nil]
+    def service_for(estimate)
+      services.detect { |row| row.carrier == estimate.carrier && row.service == estimate.service_level }
+    end
+
+    # Whether the method offers this estimate: no service rows means every
+    # service the provider returns, rows mean exactly those.
+    #
+    # @param estimate [Spree::DeliveryRateProvider::Estimate]
+    # @return [Boolean]
+    def offers_service?(estimate)
+      services.empty? || service_for(estimate).present?
     end
 
     def pending_rules?
@@ -279,7 +402,7 @@ module Spree
     #
     # @return [Boolean]
     def digital?
-      fulfillment_type == 'digital'
+      provider_class.digital?
     end
 
     # @deprecated Use {#storefront_visible}; removed in 6.1.
@@ -298,6 +421,72 @@ module Spree
 
     def apply_pending_rules
       flush_pending_typed_association(:delivery_method_rules)
+    end
+
+    def apply_pending_services
+      pending = @pending_services
+      @pending_services = nil
+      reconcile_services(pending)
+    end
+
+    def reconcile_services(rows)
+      kept_ids = rows.filter_map do |row|
+        record =
+          if row[:id].present?
+            id = Spree::PrefixedId.prefixed_id?(row[:id]) ? Spree::PrefixedId.decode_prefixed_id(row[:id]) : row[:id]
+            services.find_by(id: id)
+          end
+        record ||= services.find_or_initialize_by(carrier: row[:carrier], service: row[:service])
+        record.assign_attributes(row.slice(:carrier, :service, :label, :markup_flat, :markup_percent, :position).to_h)
+        record.save!
+        record.id
+      end
+
+      services.where.not(id: kept_ids).destroy_all
+      services.reset
+    end
+
+    # Only meaningful for registered providers — the inclusion validation
+    # already rejects anything else, so an unresolvable name must not raise
+    # here as well.
+    def delivery_zone_must_belong_to_profile
+      return if delivery_zone.nil?
+      return if delivery_zone.delivery_profile_id == delivery_profile_id
+
+      errors.add(:delivery_zone, :does_not_belong_to_profile,
+                 message: Spree.t('errors.messages.delivery_zone_not_in_profile'))
+    end
+
+    def profile_must_accept_provider
+      return if delivery_profile.nil?
+      return if delivery_profile.accepts_provider?(provider_class)
+
+      errors.add(
+        :fulfillment_provider,
+        Spree.t('errors.messages.profile_does_not_accept_provider',
+                provider: provider_class.provider_name, profile: delivery_profile.name)
+      )
+    end
+
+    # A carrier quotes real shipments, so it can only price methods whose
+    # fulfillment provider ships to an address.
+    def rate_provider_must_ship
+      return unless rate_provider_class.requires_address?
+      return if provider_class.new.requires_address?
+
+      errors.add(
+        :rate_provider,
+        Spree.t('errors.messages.rate_provider_requires_shipping',
+                provider: rate_provider_class.provider_name)
+      )
+    end
+
+    def rate_provider_must_be_available
+      return if rate_provider.blank?
+      return unless Spree.delivery_rate_providers.map(&:to_s).include?(rate_provider)
+      return if rate_provider_class.available_for_store?(store)
+
+      errors.add(:rate_provider, Spree.t('errors.messages.rate_provider_unavailable'))
     end
   end
 end

@@ -1,6 +1,6 @@
 import type { Channel } from '@spree/admin-sdk'
 import { defineTable, formatPrice, Subject } from '@spree/dashboard-core'
-import { StatusBadge, TagList } from '@spree/dashboard-ui'
+import { StatusBadge, TagList, Thumbnail } from '@spree/dashboard-ui'
 import { Link } from '@tanstack/react-router'
 import i18n from 'i18next'
 import { PackageIcon } from 'lucide-react'
@@ -28,17 +28,7 @@ defineTable('products', {
           params={{ productId: product.id }}
           className="flex items-center gap-3 no-underline"
         >
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted overflow-hidden">
-            {product.thumbnail_url ? (
-              <img
-                src={product.thumbnail_url}
-                alt={product.name}
-                className="size-full object-cover"
-              />
-            ) : (
-              <PackageIcon className="size-4 text-muted-foreground" />
-            )}
-          </div>
+          <Thumbnail src={product.thumbnail_url} fallback={<PackageIcon />} />
           <div className="min-w-0">
             <div className="truncate font-medium text-foreground">{product.name}</div>
           </div>

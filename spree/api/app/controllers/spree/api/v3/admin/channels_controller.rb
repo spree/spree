@@ -29,6 +29,27 @@ module Spree
             render json: { product_count: removed }
           end
 
+          def create
+            @resource = model_class.new(assignable_params.merge(store: current_store))
+            authorize_resource!(@resource, :create)
+
+            if @resource.save
+              render json: serialize_resource(@resource), status: :created
+            else
+              render_validation_error(@resource.errors)
+            end
+          end
+
+          def update
+            @resource.assign_attributes(assignable_params)
+
+            if @resource.save
+              render json: serialize_resource(@resource)
+            else
+              render_validation_error(@resource.errors)
+            end
+          end
+
           protected
 
           def model_class
@@ -45,7 +66,23 @@ module Spree
 
           def permitted_params
             params.permit(:name, :code, :active, :default, :preferred_order_routing_strategy,
-                          :preferred_storefront_access, :preferred_guest_checkout)
+                          :preferred_storefront_access, :preferred_guest_checkout,
+                          stock_location_ids: [])
+          end
+
+          # `stock_location_ids` replaces the channel's fulfillment-origin
+          # allowlist; empty clears it (= every location). Store-scoped
+          # resolution: a foreign location 404s.
+          def assignable_params
+            attributes = permitted_params.except(:stock_location_ids)
+
+            if params.key?(:stock_location_ids)
+              attributes[:stock_locations] = Array(params[:stock_location_ids]).map do |id|
+                current_store.stock_locations.accessible_by(current_ability, :show).find_by_prefix_id!(id)
+              end
+            end
+
+            attributes
           end
 
           private

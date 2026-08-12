@@ -307,4 +307,27 @@ RSpec.describe Spree::Api::V3::Admin::ChannelsController, type: :controller do
       expect(json_response['error']['code']).to eq('validation_error')
     end
   end
+  describe 'fulfillment-origin allowlist' do
+    let!(:channel) { create(:channel, store: store) }
+    let!(:warehouse) { create(:stock_location, store: store, name: 'Channel Warehouse') }
+
+    it 'replaces the allowlist and serializes prefixed ids' do
+      patch :update, params: { id: channel.prefixed_id, stock_location_ids: [warehouse.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['stock_location_ids']).to eq([warehouse.prefixed_id])
+
+      patch :update, params: { id: channel.prefixed_id, stock_location_ids: [] }, as: :json
+      expect(json_response['stock_location_ids']).to eq([])
+    end
+
+    it 'rejects a cross-store location with 404' do
+      foreign = create(:stock_location, store: create(:store))
+
+      patch :update, params: { id: channel.prefixed_id, stock_location_ids: [foreign.prefixed_id] }, as: :json
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
 end

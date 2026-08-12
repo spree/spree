@@ -1137,6 +1137,13 @@
                     ]
                   },
                   {
+                    "group": "Delivery",
+                    "icon": "truck",
+                    "pages": [
+                      "v6/developer/how-to/custom-delivery-rate-provider"
+                    ]
+                  },
+                  {
                     "group": "Reports",
                     "icon": "chart-bar",
                     "pages": [

@@ -64,7 +64,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
             <DialogTitle>{options.title ?? t('admin.components.confirm_dialog.title')}</DialogTitle>
             <DialogDescription>{options.message}</DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className="border-0">
             <Button variant="outline" onClick={() => handleClose(false)}>
               {options.cancelLabel ?? t('admin.actions.cancel')}
             </Button>

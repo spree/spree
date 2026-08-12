@@ -56,6 +56,7 @@ import {
   SheetTitle,
   StatusBadge,
   Textarea,
+  Thumbnail,
   useConfirm,
 } from '@spree/dashboard-ui'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
@@ -650,9 +651,7 @@ function LastOrderCard({ order }: { order: Order }) {
         </div>
         {order.items?.slice(0, 5).map((item) => (
           <div key={item.id} className="border-t flex items-center gap-3 px-6 py-3 text-sm">
-            {item.thumbnail_url && (
-              <img src={item.thumbnail_url} alt="" className="size-10 rounded object-cover" />
-            )}
+            <Thumbnail src={item.thumbnail_url} />
             <div className="flex-1 min-w-0">
               <div className="truncate">{item.name}</div>
               {item.options_text && (

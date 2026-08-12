@@ -176,7 +176,7 @@ describe Spree::Order, type: :model do
         order.fulfillments.delete_all
 
         create(:shipment, order: order, state: 'canceled')
-        create(:shipment, order: order, state: 'ready')
+        create(:shipment, order: order, state: 'unfulfilled')
       end
 
       it 'returns true' do
@@ -1853,16 +1853,10 @@ describe Spree::Order, type: :model do
     end
     let(:order) { create(:order) }
 
-    before do
-      shipments[0].cancel
-      shipments[0].ship
-    end
+    before { shipments[0].update!(status: 'fulfilled') }
 
     context 'when all order shipments were shipped' do
-      before do
-        shipments[1].cancel
-        shipments[1].ship
-      end
+      before { shipments[1].update!(status: 'fulfilled') }
 
       it { expect(subject).to eq(true) }
     end

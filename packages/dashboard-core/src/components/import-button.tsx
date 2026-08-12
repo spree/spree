@@ -55,6 +55,10 @@ interface ImportButtonProps {
   onCreated: (imp: Import) => void
   /** Label shown on the button. Defaults to the translated "Import" action. */
   label?: string
+  /** Optional variant for the button. Defaults to "outline". */
+  variant?: 'default' | 'outline' | 'ghost'
+  /** Optional size for the button. Defaults to "sm". */
+  size?: 'sm' | 'default' | 'lg'
 }
 
 /**
@@ -63,7 +67,14 @@ interface ImportButtonProps {
  * `FileUploadField`; submitting creates the import from the signed blob id
  * and hands it to `onCreated`.
  */
-export function ImportButton({ type, subject, onCreated, label }: ImportButtonProps) {
+export function ImportButton({
+  type,
+  subject,
+  onCreated,
+  label,
+  variant,
+  size,
+}: ImportButtonProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [file, setFile] = useState<FileUploadValue>(EMPTY_FILE_UPLOAD_VALUE)
@@ -131,13 +142,13 @@ export function ImportButton({ type, subject, onCreated, label }: ImportButtonPr
   return (
     <Can I="create" a={subject}>
       <Button
-        size="sm"
-        variant="outline"
+        size={size ?? 'sm'}
+        variant={variant ?? 'outline'}
         className="h-[2.125rem]"
         onClick={() => setOpen(true)}
         disabled={createImport.isPending}
       >
-        <UploadIcon className="size-4" />
+        <UploadIcon />
         {label ?? t('admin.actions.import')}
       </Button>
 

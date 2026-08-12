@@ -109,8 +109,12 @@ export const productFormSchema = z.object({
   // Tax
   tax_category_id: z.string().nullable().optional(),
 
-  // Product type — drives fulfillment eligibility (shipping/pickup/digital)
+  // Product type — a creation-time template for the product's associations
   product_type_id: z.string().nullable().optional(),
+
+  // Fulfillment profile — decides which zones and delivery methods reach this
+  // product; null falls back to the store default profile.
+  delivery_profile_id: z.string().nullable().optional(),
 
   // SEO
   meta_title: z.string().optional(),
@@ -154,6 +158,7 @@ export function newProductFormDefaults(): ProductFormValues {
     tags: [],
     tax_category_id: null,
     product_type_id: null,
+    delivery_profile_id: null,
     meta_title: '',
     meta_description: '',
     slug: '',

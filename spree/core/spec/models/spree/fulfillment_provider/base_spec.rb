@@ -18,14 +18,17 @@ describe Spree::FulfillmentProvider::Base, type: :model do
   end
 
   describe 'registry' do
-    it 'exposes the built-in providers and fulfillment types' do
+    it 'exposes the built-in providers and their class predicates' do
       expect(Spree.fulfillment_providers).to include(
         Spree::FulfillmentProvider::Manual,
         Spree::FulfillmentProvider::Digital,
         Spree::FulfillmentProvider::Pickup,
         Spree::FulfillmentProvider::PickupPoint
       )
-      expect(Spree.fulfillment_types).to include('shipping', 'pickup', 'pickup_point', 'digital', 'local_delivery')
+      expect(Spree::FulfillmentProvider::Digital).to be_digital
+      expect(Spree::FulfillmentProvider::Pickup).to be_pickup
+      expect(Spree::FulfillmentProvider::PickupPoint).to be_pickup_point
+      expect(Spree::FulfillmentProvider::Manual).not_to be_digital
     end
   end
 

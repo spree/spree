@@ -1,0 +1,87 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.easypost.com/v2/shipments
+    body:
+      encoding: UTF-8
+      string: '{"shipment":{"from_address":{"name":"Eryn Hermann","street1":"1600
+        Pennsylvania Ave NW","city":"Washington","state":"NY","zip":"20500","country":"US","phone":"(202)
+        456-1111"},"to_address":{"name":"John Doe","company":"Company","street1":"15
+        Lovely Street","street2":"Northwest","city":"New York","state":"NY","zip":"10118","country":"US","phone":"555-555-0199"},"parcel":{"weight":0.1}}}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - EasyPost/v2 RubyClient/7.7.0 Ruby/4.0.1-p0 OS/Darwin OSVersion/23 OSArch/arm64
+      Host:
+      - api.easypost.com
+      Content-Type:
+      - application/json
+      Authorization:
+      - "<FILTERED>"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Content-Type-Options:
+      - nosniff
+      X-Download-Options:
+      - noopen
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      Easypost-Api-Version:
+      - '2015-01-01'
+      Vary:
+      - EasyPost-Api-Version
+      X-Ep-Request-Uuid:
+      - d7dd9a826a7c0c9cff099059029ab9eb
+      Cache-Control:
+      - private, no-cache, no-store
+      Pragma:
+      - no-cache
+      Expires:
+      - '0'
+      Location:
+      - "/api/v2/shipments/shp_cee0847ebff344afa39c7d106cc0c61f"
+      Content-Type:
+      - application/json; charset=utf-8
+      X-Runtime:
+      - '0.963787'
+      Transfer-Encoding:
+      - chunked
+      X-Node:
+      - bigweb58nuq
+      X-Version-Label:
+      - easypost-202608112128-93a53ffd35-main
+      X-Backend:
+      - easypost
+      X-Proxied:
+      - extlb2nuq 1318c68dc0
+      - intlb6nuq d4a20a271b
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"shp_cee0847ebff344afa39c7d106cc0c61f","created_at":"2026-08-12T06:03:08Z","is_return":false,"messages":[{"carrier":"DhlEcs","carrier_account_id":"ca_50b23cff99b0466cb2353f60ad06784f","type":"rate_error","message":"shipment.options.merchant_id
+        is required"},{"carrier":"USAExportPBA","carrier_account_id":"ca_7e87ab81fe1543e4a77ec08ad656f3e9","type":"rate_error","message":"shipment:
+        [''shipment.from_address.country: This carrier only support shipments from
+        US origins to international destinations.'']"},{"carrier":"CanadaPost","carrier_account_id":"ca_93986cf850124be29b73034d165ff3a1","type":"rate_error","message":"[''Unable
+        to get rates for shipments originating outside of Canada.'']"}],"mode":"test","options":{"currency":"USD","payment":{"type":"SENDER"},"date_advance":0},"reference":null,"status":"unknown","tracking_code":null,"updated_at":"2026-08-12T06:03:09Z","batch_id":null,"batch_status":null,"batch_message":null,"customs_info":null,"from_address":{"id":"adr_7daf1806961311f19d94002248041e50","object":"Address","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z","name":"Eryn
+        Hermann","company":null,"street1":"1600 Pennsylvania Ave NW","street2":null,"city":"Washington","state":"NY","zip":"20500","country":"US","phone":"2024561111","email":null,"mode":"test","carrier_facility":null,"residential":null,"federal_tax_id":null,"state_tax_id":null,"verifications":{}},"insurance":null,"order_id":null,"parcel":{"id":"prcl_acf0a535cc644786b2cecbfea4972ef2","object":"Parcel","weight":0.1,"length":null,"width":null,"height":null,"predefined_package":null,"mode":"test","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z"},"postage_label":null,"rates":[{"id":"rate_56d4f605ab11469fb552c34d65e59995","object":"Rate","created_at":"2026-08-12T06:03:09Z","updated_at":"2026-08-12T06:03:09Z","mode":"test","service":"Express","carrier":"USPS","rate":"31.86","currency":"USD","retail_rate":"36.00","retail_currency":"USD","list_rate":"31.86","list_currency":"USD","billing_type":"easypost","delivery_days":1,"delivery_date":null,"delivery_date_guaranteed":false,"est_delivery_days":1,"shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier_account_id":"ca_f1a0e5c2799243bba037f8169b0c41de"},{"id":"rate_4f5c3b0240b34dbab6e5d5405ca26e39","object":"Rate","created_at":"2026-08-12T06:03:09Z","updated_at":"2026-08-12T06:03:09Z","mode":"test","service":"Priority","carrier":"USPS","rate":"8.60","currency":"USD","retail_rate":"11.65","retail_currency":"USD","list_rate":"9.71","list_currency":"USD","billing_type":"easypost","delivery_days":2,"delivery_date":null,"delivery_date_guaranteed":false,"est_delivery_days":2,"shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier_account_id":"ca_f1a0e5c2799243bba037f8169b0c41de"},{"id":"rate_3fd3f1f9457b49b595b3c86038c9ba40","object":"Rate","created_at":"2026-08-12T06:03:09Z","updated_at":"2026-08-12T06:03:09Z","mode":"test","service":"GroundAdvantage","carrier":"USPS","rate":"5.28","currency":"USD","retail_rate":"8.15","retail_currency":"USD","list_rate":"7.30","list_currency":"USD","billing_type":"easypost","delivery_days":2,"delivery_date":null,"delivery_date_guaranteed":false,"est_delivery_days":2,"shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier_account_id":"ca_f1a0e5c2799243bba037f8169b0c41de"},{"id":"rate_2f2b5a24a41c4cb7b5b12306538f0aef","object":"Rate","created_at":"2026-08-12T06:03:09Z","updated_at":"2026-08-12T06:03:09Z","mode":"test","service":"SMART_POST","carrier":"FedExDefault","rate":"10.31","currency":"USD","retail_rate":null,"retail_currency":null,"list_rate":"19.96","list_currency":"USD","billing_type":"easypost","delivery_days":2,"delivery_date":"2026-08-14T23:59:00Z","delivery_date_guaranteed":true,"est_delivery_days":2,"shipment_id":"shp_cee0847ebff344afa39c7d106cc0c61f","carrier_account_id":"ca_1787f888698d448bad8103e361f82d4a"}],"refund_status":null,"scan_form":null,"selected_rate":null,"tracker":null,"to_address":{"id":"adr_7daf17b6961311f19d93002248041e50","object":"Address","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z","name":"John
+        Doe","company":"Company","street1":"15 Lovely Street","street2":"Northwest","city":"New
+        York","state":"NY","zip":"10118","country":"US","phone":"5555550199","email":null,"mode":"test","carrier_facility":null,"residential":null,"federal_tax_id":null,"state_tax_id":null,"verifications":{}},"usps_zone":3,"return_address":{"id":"adr_7daf1806961311f19d94002248041e50","object":"Address","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z","name":"Eryn
+        Hermann","company":null,"street1":"1600 Pennsylvania Ave NW","street2":null,"city":"Washington","state":"NY","zip":"20500","country":"US","phone":"2024561111","email":null,"mode":"test","carrier_facility":null,"residential":null,"federal_tax_id":null,"state_tax_id":null,"verifications":{}},"buyer_address":{"id":"adr_7daf17b6961311f19d93002248041e50","object":"Address","created_at":"2026-08-12T06:03:08Z","updated_at":"2026-08-12T06:03:08Z","name":"John
+        Doe","company":"Company","street1":"15 Lovely Street","street2":"Northwest","city":"New
+        York","state":"NY","zip":"10118","country":"US","phone":"5555550199","email":null,"mode":"test","carrier_facility":null,"residential":null,"federal_tax_id":null,"state_tax_id":null,"verifications":{}},"forms":[],"fees":[],"object":"Shipment"}'
+  recorded_at: Wed, 12 Aug 2026 06:03:09 GMT
+recorded_with: VCR 6.4.0

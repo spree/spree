@@ -39,6 +39,10 @@ flags:
     paths:
       - spree/dashboard/
     carryforward: true
+  easypost:
+    paths:
+      - spree/providers/easypost/
+    carryforward: true
 
 component_management:
   individual_components:
@@ -62,6 +66,11 @@ component_management:
       paths:
         - spree/dashboard/app/**
         - spree/dashboard/lib/**
+    - component_id: easypost
+      name: EasyPost
+      paths:
+        - spree/providers/easypost/app/**
+        - spree/providers/easypost/lib/**
 
 ignore:
   - "docs/**"

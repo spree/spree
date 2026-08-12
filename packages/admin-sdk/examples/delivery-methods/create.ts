@@ -8,7 +8,6 @@ const client = createAdminClient({
 // region:example
 const deliveryMethod = await client.deliveryMethods.create({
   name: 'Express',
-  fulfillment_type: 'shipping',
   storefront_visible: true,
   calculator_type: 'Spree::Calculator::Shipping::FlatRate',
   calculator_preferences: { amount: 12.5 },

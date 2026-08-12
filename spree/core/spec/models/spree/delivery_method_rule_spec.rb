@@ -44,6 +44,58 @@ describe Spree::DeliveryMethodRule, type: :model do
     end
   end
 
+  describe Spree::DeliveryMethodRules::ChannelRule do
+    let(:channel) { create(:channel, store: store) }
+    let(:other_channel) { create(:channel, store: store) }
+    let(:channel_package) do
+      order = create(:order_with_line_items, store: store, channel: channel)
+      Spree::Stock::Coordinator.new(order).packages.first
+    end
+
+    it 'offers the method only on the listed channels' do
+      rule = described_class.new(delivery_method: delivery_method)
+
+      # Unconfigured rules fail open, matching the other rule kinds.
+      expect(rule.eligible?(channel_package)).to be(true)
+
+      rule.preferred_channel_ids = [channel.id]
+      expect(rule.eligible?(channel_package)).to be(true)
+
+      rule.preferred_channel_ids = [other_channel.id]
+      expect(rule.eligible?(channel_package)).to be(false)
+    end
+
+    # During checkout the package belongs to a Cart — reading the channel
+    # through package.order returned nil and hid every channel-restricted
+    # method from the very customers it was meant for.
+    it 'matches a cart-owned package by the cart channel' do
+      rule = described_class.new(delivery_method: delivery_method)
+      rule.preferred_channel_ids = [channel.id]
+
+      cart = create(:cart, store: store, channel: channel)
+      line_item = create(:line_item, cart: cart, order: nil)
+      fulfillment = create(:shipment, cart: cart, order: nil, stock_location: create(:stock_location))
+
+      expect(rule.eligible?(fulfillment.to_package)).to be(true)
+    end
+
+    it 'hides a channel-restricted method from carts with no channel' do
+      rule = described_class.new(delivery_method: delivery_method)
+      rule.preferred_channel_ids = [channel.id]
+
+      expect(rule.eligible?(package)).to be(false)
+    end
+
+    it 'decodes prefixed ids and rejects channels of another store' do
+      rule = described_class.new(delivery_method: delivery_method)
+      rule.preferred_channel_ids = [channel.prefixed_id]
+      expect(rule.preferred_channel_ids.map(&:to_s)).to eq([channel.id.to_s])
+
+      foreign = create(:channel, store: create(:store))
+      expect { rule.preferred_channel_ids = [foreign.id] }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
   describe Spree::DeliveryMethodRules::WeightRule do
     it 'bounds by package weight' do
       rule = described_class.new(delivery_method: delivery_method)
@@ -74,7 +126,7 @@ describe Spree::DeliveryMethodRule, type: :model do
   # Promotion#rules= / PriceList#rules=.
   describe 'Spree::DeliveryMethod#rules=' do
     it 'creates rules alongside a new method in one save' do
-      method = Spree::DeliveryMethod.new(name: 'Express', store: store, fulfillment_type: 'shipping')
+      method = Spree::DeliveryMethod.new(name: 'Express', store: store)
       method.rules = [{ type: 'item_total_rule', preferences: { minimum_amount: 50 } }]
       method.save!
 
@@ -103,7 +155,7 @@ describe Spree::DeliveryMethodRule, type: :model do
 
     it 'assigns products on a brand-new association-backed rule' do
       product = create(:product)
-      method = Spree::DeliveryMethod.new(name: 'Express', store: store, fulfillment_type: 'shipping')
+      method = Spree::DeliveryMethod.new(name: 'Express', store: store)
       method.rules = [{ type: 'excluded_products_rule', product_ids: [product.id] }]
       method.save!
 
