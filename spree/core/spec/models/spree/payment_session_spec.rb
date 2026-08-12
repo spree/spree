@@ -192,6 +192,15 @@ RSpec.describe Spree::PaymentSession, type: :model do
           not_to change { first_settlement.reload.capture_events.count }
       end
     end
+
+    # The storefront confirm and the gateway webhook can race; the completed?
+    # guard alone is check-then-act, so settlement must hold the owner's row
+    # lock for the capture event to be recorded exactly once.
+    it 'settles under the owner row lock' do
+      expect(payment_session.owner).to receive(:with_lock).and_call_original
+
+      payment_session.settle_payment!(captured: true)
+    end
   end
 
   describe '#amount_in_cents' do

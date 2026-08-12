@@ -109,12 +109,22 @@ module Spree
     #   captured; false means authorized only, so the payment pends
     # @param metadata [Hash] gateway-specific metadata for payment creation
     # @return [Spree::Payment, nil]
+    # Serialized on the owner's row: the storefront confirm and the gateway
+    # webhook can race, and the completed? guard alone is check-then-act — two
+    # concurrent settlements would each record a capture event, doubling
+    # captured_amount. The lock wraps only the local settlement, never gateway
+    # I/O (callers fetch what they need from the provider first), and nests as
+    # a no-op inside HandleWebhook's own owner lock.
     def settle_payment!(captured:, metadata: {})
-      settled_payment = find_or_create_payment!(metadata)
-      return settled_payment if settled_payment.blank? || settled_payment.completed?
+      owner.with_lock do
+        settled_payment = find_or_create_payment!(metadata)
 
-      settled_payment.confirm!(captured: captured)
-      settled_payment
+        if settled_payment.present? && !settled_payment.completed?
+          settled_payment.confirm!(captured: captured)
+        end
+
+        settled_payment
+      end
     end
 
     # @return [Spree::Cart, Spree::Order, nil]

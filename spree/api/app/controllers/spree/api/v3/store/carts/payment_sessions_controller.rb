@@ -58,9 +58,11 @@ module Spree
             # Deliberately not wrapped in with_order_lock: the workflow verifies
             # the session with the gateway from an external_step, and holding a
             # row lock across that round trip is what the boundary exists to
-            # prevent. The race against the webhook is settled inside — both
-            # paths go through PaymentSession#settle_payment!, and a replay on
-            # a completed session is an idempotent success.
+            # prevent. Concurrency is enforced where the invariant lives —
+            # PaymentSession#settle_payment! takes the owner's row lock around
+            # the local settlement, so a confirm racing the webhook (or a
+            # double-submitted confirm) records the capture exactly once, and a
+            # replay on a completed session is an idempotent success.
             def complete
               result = Spree.payment_session_complete_workflow.call(
                 payment_session: @payment_session.reload,

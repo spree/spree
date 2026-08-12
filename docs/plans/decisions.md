@@ -359,6 +359,12 @@ Five changes close the gap:
   same settlement through `settle_payment!`, plus the one veto point the sync
   path lacked (`validate` before money is recorded — the webhook path
   deliberately has none, money that moved cannot be rejected).
+  `settle_payment!` itself takes the owner's row lock around the local
+  settlement — the completed? guard alone is check-then-act, and two
+  concurrent settlements would each record a capture event. The lock never
+  spans gateway I/O (Stripe memoizes the intent and charge before settling;
+  the webhook path's outer lock nests reentrantly), which is the difference
+  between this and the controller-level with_order_lock it replaced.
 - **`create_payment_profile` left its save callback and became an explicit
   call.** No subscriber replaced it — a first attempt proved why: the card
   number never persists, so profile creation only works on the in-memory
