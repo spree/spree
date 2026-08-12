@@ -9,8 +9,7 @@ module Spree
     has_prefix_id :cloc
 
     include Spree::HasCustomFields
-
-    attribute :metadata, default: -> { {} }
+    include Spree::Metadata
 
     belongs_to :company, class_name: 'Spree::Company', inverse_of: :company_locations
     belongs_to :billing_address, class_name: 'Spree::Address', optional: true, dependent: :destroy

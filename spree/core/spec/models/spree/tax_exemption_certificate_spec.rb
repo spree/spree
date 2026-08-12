@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::TaxExemptionCertificate, type: :model do
+  it_behaves_like 'metadata'
+
   let(:store) { @default_store }
   let(:company) { create(:company, store: store) }
 

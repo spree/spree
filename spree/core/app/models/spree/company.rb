@@ -12,12 +12,9 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::HasCustomFields
+    include Spree::Metadata
 
     publishes_lifecycle_events
-
-    # Single consolidated metadata JSON column (docs/plans/decisions.md
-    # 2026-03-16 "Consolidate metadata") — write-only developer escape hatch.
-    attribute :metadata, default: -> { {} }
 
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :companies
 

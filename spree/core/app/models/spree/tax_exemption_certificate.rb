@@ -13,8 +13,7 @@ module Spree
 
     include Spree::HasStatus
     include Spree::HasCustomFields
-
-    attribute :metadata, default: -> { {} }
+    include Spree::Metadata
 
     # A status column moved between values by a workflow — never a callback,
     # and never a state machine.

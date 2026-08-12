@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Company, type: :model do
+  it_behaves_like 'metadata'
+
   let(:store) { @default_store }
 
   describe 'store binding' do
