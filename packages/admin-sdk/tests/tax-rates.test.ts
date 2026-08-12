@@ -6,7 +6,10 @@ import { server } from './mocks/server'
 const sampleTaxRate = {
   id: 'txr_abc123',
   name: 'German VAT',
-  amount: 0.19,
+  // A string on the wire: the serializer emits amount as a decimal string, and
+  // the numeric form is the separate amount_percentage.
+  amount: '0.19',
+  amount_percentage: 19.0,
   country_iso: 'DE',
   state_code: null,
   included_in_price: true,
@@ -62,7 +65,7 @@ describe('taxRates', () => {
     let deleted = false
     server.use(
       http.patch(`${API_PREFIX}/tax_rates/txr_abc123`, () =>
-        HttpResponse.json({ ...sampleTaxRate, amount: 0.2 }),
+        HttpResponse.json({ ...sampleTaxRate, amount: '0.2', amount_percentage: 20.0 }),
       ),
       http.delete(`${API_PREFIX}/tax_rates/txr_abc123`, () => {
         deleted = true
@@ -74,7 +77,7 @@ describe('taxRates', () => {
     const updated = await client.taxRates.update('txr_abc123', { amount: 0.2 })
     await client.taxRates.delete('txr_abc123')
 
-    expect(updated.amount).toBe(0.2)
+    expect(updated.amount).toBe('0.2')
     expect(deleted).toBe(true)
   })
 })
