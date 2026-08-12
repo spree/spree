@@ -93,7 +93,7 @@ module Spree
             end
 
             def collection_includes
-              [:country, :state, { document_attachment: :blob }]
+              [{ document_attachment: :blob }]
             end
 
             # `document` is an ActiveStorage signed blob id from

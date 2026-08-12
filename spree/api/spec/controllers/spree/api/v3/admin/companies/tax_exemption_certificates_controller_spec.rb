@@ -69,7 +69,7 @@ RSpec.describe Spree::Api::V3::Admin::Companies::TaxExemptionCertificatesControl
       expect(response).to have_http_status(:created)
       expect(json_response['status']).to eq('pending')
       expect(json_response['country_iso']).to eq('DE')
-      expect(company.tax_exemption_certificates.sole.country).to eq(germany)
+      expect(company.tax_exemption_certificates.sole.country_iso).to eq(germany.iso)
     end
 
     it 'attaches a document from a direct upload' do
