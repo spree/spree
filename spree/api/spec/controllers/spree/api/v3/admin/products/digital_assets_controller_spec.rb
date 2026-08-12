@@ -234,6 +234,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
       expect(types).to include('Spree::DigitalAssetProvider::File')
       file = json_response['data'].find { |p| p['type'] == 'Spree::DigitalAssetProvider::File' }
       expect(file['requires_attachment']).to be(true)
+      expect(file['settings_schema']).to eq([])
     end
   end
 
@@ -241,6 +242,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
     let(:stub_provider) do
       Class.new(Spree::DigitalAssetProvider::Base) do
         def self.requires_attachment? = false
+        setting :pool_name, :string
         def deliver(_link, expires_in:) = Spree::DigitalDelivery.new(inline_value: 'X')
       end
     end
@@ -252,6 +254,13 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
 
     after { Spree.digital_asset_providers.delete(stub_provider) }
 
+    it 'advertises the provider settings schema for the source picker' do
+      get :providers, params: { product_id: product.prefixed_id }
+
+      stub = json_response['data'].find { |p| p['type'] == 'Spree::DigitalAssetProvider::Stub' }
+      expect(stub['settings_schema']).to eq([{ 'key' => 'pool_name', 'type' => 'string' }])
+    end
+
     it 'creates a provider-backed asset with no file' do
       post :create, params: {
         product_id: product.prefixed_id,
@@ -260,6 +269,18 @@ RSpec.describe Spree::Api::V3::Admin::Products::DigitalAssetsController, type: :
 
       expect(response).to have_http_status(:created)
       expect(json_response['provider_type']).to eq('Spree::DigitalAssetProvider::Stub')
+    end
+
+    it 'stores the provider settings on the asset' do
+      post :create, params: {
+        product_id: product.prefixed_id,
+        provider_type: 'Spree::DigitalAssetProvider::Stub',
+        provider_settings: { pool_name: 'winter-sale' }
+      }, as: :json
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['provider_settings']).to eq('pool_name' => 'winter-sale')
+      expect(Spree::DigitalAsset.last.provider_settings).to eq('pool_name' => 'winter-sale')
     end
 
     it 'rejects an unregistered provider_type' do

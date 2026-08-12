@@ -12,9 +12,10 @@ module Spree
                    effective_authorized_days: :number,
                    provider_type: [:string, nullable: true],
                    provider_name: :string,
+                   provider_settings: 'Record<string, unknown>',
                    download_url: [:string, nullable: true]
 
-          attributes :authorized_clicks, :authorized_days, :byte_size, :provider_type
+          attributes :authorized_clicks, :authorized_days, :byte_size, :provider_type, :provider_settings
           attributes created_at: :iso8601, updated_at: :iso8601
 
           # Human-readable source for the admin listing. Blank provider_type is

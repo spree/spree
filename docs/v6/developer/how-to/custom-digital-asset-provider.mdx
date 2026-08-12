@@ -36,10 +36,17 @@ module Spree
         false
       end
 
+      # Per-asset configuration the dashboard renders as a form when a
+      # merchant adds an asset backed by this provider. See "Per-asset
+      # settings" below.
+      setting :pool_name, :string
+      setting :region, :select, in: %w[us eu], default: 'us'
+
       def deliver(digital_link, expires_in:)
         key = LicenseServer.issue(
-          order_number: digital_link.line_item.order.number,
-          sku: digital_asset.variant.sku
+          pool: digital_asset.provider_settings['pool_name'],
+          region: digital_asset.provider_settings['region'],
+          order_number: digital_link.line_item.order.number
         )
         return if key.blank?
 
@@ -60,6 +67,24 @@ Return a blank delivery (or `nil`) to mean "nothing to hand over". The download 
 <Warning>
 `#deliver` must be safe to call before the download is charged. It runs while the grant is only *checked*, not yet *spent*, so a provider that raises or returns blank costs the customer nothing. Do any fallible work — the API call, the mint — inside `#deliver`, not after.
 </Warning>
+
+## Per-asset settings
+
+Some providers need a value that differs from one asset to the next — which license pool this asset draws from, which external product it maps to. Declare each as a `setting`, and the dashboard renders a small form when the merchant adds an asset backed by this provider:
+
+```ruby
+setting :pool_name, :string
+setting :region, :select, in: %w[us eu], default: 'us'
+setting :auto_revoke, :boolean, default: false
+```
+
+Field types are `:string`, `:number`, `:boolean`, and `:select` (pass `in:` for the choices). The merchant's answers are stored on the asset and read back through `digital_asset.provider_settings`, a plain hash keyed by the setting name:
+
+```ruby
+digital_asset.provider_settings['pool_name'] # => "winter-sale"
+```
+
+A provider that declares no settings skips the form entirely — adding it is a single click. Settings are for per-asset values only; a credential or endpoint shared across every asset belongs in the provider's own configuration (an environment variable, Rails credentials), not a setting.
 
 ## 2. Register the provider
 
@@ -89,6 +114,7 @@ The order is deliberate: the deliverable is produced *before* the click is spent
 |--------|----------|-------------|
 | `#deliver(digital_link, expires_in:)` | Yes | Produce the deliverable for one authorized download. Return a `Spree::DigitalDelivery`, or blank/`nil` for "nothing to hand over". |
 | `self.requires_attachment?` | No | Return `true` if an asset backed by this provider must carry an uploaded file. Defaults to `false`. Drives conditional validation and the admin create form. |
+| `self.setting(key, type, default:, in:)` | No | Declare a per-asset config field the dashboard renders as a form. Types: `:string`, `:number`, `:boolean`, `:select`. Read the merchant's answers via `digital_asset.provider_settings`. |
 | `self.provider_name` | No | Human-readable name for admin UIs. Defaults to a titleized class name, or the outer module for a `SpreeAcme::LicenseProvider`-style gem. |
 
 ### DigitalDelivery

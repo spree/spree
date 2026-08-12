@@ -38,7 +38,8 @@ module Spree
                 {
                   type: provider_class.to_s,
                   name: provider_class.provider_name,
-                  requires_attachment: provider_class.requires_attachment?
+                  requires_attachment: provider_class.requires_attachment?,
+                  settings_schema: provider_class.settings_schema
                 }
               end
 
@@ -84,8 +85,11 @@ module Spree
             # rather than a column, so it is attached separately.
             # provider_type is mass-assignable: the model validates it names a
             # registered provider, so an unknown value is a 422, not a hazard.
+            # provider_settings is an open hash — its keys are declared by the
+            # provider, not fixed here — so it is permitted as arbitrary scalars
+            # and lands verbatim under one key in the asset's metadata.
             def permitted_params
-              params.permit(:authorized_clicks, :authorized_days, :provider_type)
+              params.permit(:authorized_clicks, :authorized_days, :provider_type, provider_settings: {})
             end
 
             private
