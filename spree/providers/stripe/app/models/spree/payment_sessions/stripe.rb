@@ -37,6 +37,15 @@ module Spree
       payment_method.payment_intent_charge_not_required?(stripe_payment_intent)
     end
 
+    # Warms everything settlement reads from Stripe — the intent, its charge,
+    # and the gateway customer a card source needs — so the webhook path's
+    # locked settlement does no Stripe I/O.
+    def prepare_for_settlement!
+      stripe_charge
+      payment_method.fetch_or_create_customer(order: owner) if owner&.customer
+      self
+    end
+
     # Builds the payment together with a Stripe-specific source (card, Klarna,
     # SEPA, …), which core's generic implementation cannot do.
     def find_or_create_payment!(metadata = {})

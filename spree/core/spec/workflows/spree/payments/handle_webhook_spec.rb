@@ -14,6 +14,12 @@ RSpec.describe Spree::Payments::HandleWebhook do
 
   describe '#call' do
     context 'with :captured action' do
+      it 'fetches provider data before taking the order lock' do
+        expect(payment_session).to receive(:prepare_for_settlement!).and_call_original
+
+        subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)
+      end
+
       it 'creates a payment record' do
         expect {
           subject.call(payment_method: payment_method, action: :captured, payment_session: payment_session)

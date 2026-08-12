@@ -15,8 +15,10 @@ module Spree
             # double submit cannot credit twice.
             def create
               payment = @parent.payments.accessible_by(current_ability, :update).find_by_prefix_id!(params[:payment_id])
-              reason = Spree::RefundReason.accessible_by(current_ability, :show).find_by_prefix_id!(params[:refund_reason_id]) if params[:refund_reason_id].present?
-              reason ||= Spree::RefundReason.accessible_by(current_ability, :show).first
+              # Scoped to the store, not just the ability — a reason id from
+              # another store must 404, not attach.
+              reason = current_store.refund_reasons.accessible_by(current_ability, :show).find_by_prefix_id!(params[:refund_reason_id]) if params[:refund_reason_id].present?
+              reason ||= current_store.refund_reasons.accessible_by(current_ability, :show).first
 
               authorize_resource!(payment.refunds.build(amount: params[:amount], reason: reason), :create)
 

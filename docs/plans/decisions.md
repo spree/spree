@@ -330,6 +330,38 @@ ships in the OSS Admin API; first-run configures the one store.
 Consequences: Admin API code must never assume `current_store` is the default
 store, and store-touching cache keys must carry the store id by construction.
 Plan: `6.0-store-context-and-first-run-setup.md`.
+## 2026-08-12 — Code review findings on the payment surface, and what they corrected
+
+The review of the day's work surfaced ten findings; all ten held up. The ones
+that correct earlier entries in this log:
+
+- **Profile creation had become dead code.** The after_save removal documented
+  "creation flows call this explicitly" with no flow calling it. Now they do:
+  `Payments::Create` profiles after its transaction, the admin payment
+  endpoint after its lock (a source that cannot be profiled destroys the
+  half-created payment, matching the old rollback), and specs that create
+  payments programmatically call it themselves.
+- **The webhook path settled with cold provider caches** — up to three Stripe
+  round trips inside the order lock, contradicting settle_payment!'s own
+  comment. `PaymentSession#prepare_for_settlement!` (no-op default; Stripe
+  warms intent, charge and gateway customer) runs before HandleWebhook's
+  lock, making the comment true.
+- **capture! completed before splitting**, so a partial capture published
+  payment.completed at the full amount. The split's row work now happens
+  inside the lock before complete; only the remainder's authorize runs after.
+- **settle_payment!'s completed? guard read a stale cached payment** — the
+  same check-then-act shape one level down. Closed with a DB-state recheck
+  inside the lock, not a reload (reload discards skip_source_requirement, as
+  it discards card numbers in capture!).
+- **The completion fence broke reads**: GET /carts/:id runs Checkout::Advance
+  under with_order_lock and answered 409 for the claim window. The advance
+  now skips claimed carts (`Cart#completion_claimed?`, which owns the TTL).
+- Store scoping and correctness details: refund reasons resolve through
+  `current_store.refund_reasons`; Stripe's cancel passes the store to
+  order_canceled_reason; the customer payload sends ISO codes like the
+  shipping payload; setup_intent.succeeded left SUPPORTED_EVENTS until core's
+  webhook contract can route setup sessions.
+
 ## 2026-08-12 — Amount consistency during gateway operations: the completion claim, not a lock
 
 Raised as a challenge to the lock removals: shouldn't the order be locked for
@@ -387,10 +419,12 @@ Two real bugs found and fixed:
   refunds both validated against the pre-refund balance and both credited —
   a double-clicked 50% refund refunded 100% (Stripe's credit carries no
   idempotency key). The refund row is what reserves the balance
-  (credit_allowed sums rows), so creation now takes `payment.with_lock` at
-  all five sites — Refunds::Create, the returns/exchange/claim drain loops,
-  and Stripe's cancel verb — making the create-time validation trustworthy.
-  `perform!` stays outside the lock.
+  (credit_allowed sums rows), so creation takes `payment.with_lock` in one
+  place: `Refunds::Create`, which the returns/exchange/claim drain loops and
+  Stripe's cancel verb all route through (code review caught the first
+  version duplicating the lock/credit/compensation sequence at five sites —
+  which also meant refund hooks and payment.refunded fired only for admin
+  refunds). `perform!` stays outside the lock.
 
 Judged acceptable, with reasons on record:
 

@@ -19,14 +19,17 @@ module SpreeStripe
 
     attr_reader :email, :name, :address
 
+    # ISO codes, matching the intent's shipping payload — Stripe expects
+    # ISO 3166-1 alpha-2 for country, and full names degrade Stripe-side
+    # location resolution (tax, risk rules).
     def address_payload
       {
         city: address.city,
         line1: address.address1,
         line2: address.address2,
         postal_code: address.zipcode,
-        country: address.country_name,
-        state: address.state_name_text
+        country: address.country_iso,
+        state: address.state_abbr.presence || address.state_name_text
       }
     end
   end

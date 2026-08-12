@@ -44,6 +44,10 @@ module Spree
       # and the redelivery races the checkout request that created the
       # session.
       def settle_session
+        # Provider round trips happen here, before the lock — settlement
+        # inside it must be pure database work.
+        payment_session.prepare_for_settlement!
+
         order.with_lock do
           # Idempotency: the API endpoint or an earlier delivery may have
           # already settled this session. Not halt! — that is forbidden

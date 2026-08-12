@@ -102,26 +102,21 @@ module SpreeStripe
           return success(payment_intent_id, {}) if amount.zero?
           return success(payment_intent_id, {}) if payment.respond_to?(:for_shipment?) && payment.for_shipment?
 
-          # Serialized on the payment row — the balance validation must see any
-          # concurrently created refund rows (credit_allowed sums them).
-          refund = payment.with_lock do
-            payment.refunds.create!(
-              amount: payment.credit_allowed,
-              reason: Spree::RefundReason.order_canceled_reason,
-              refunder_id: payment.order.canceler_id
-            )
-          end
-
-          begin
-            refund.perform!
-          rescue Spree::Core::GatewayError
-            refund.destroy! if refund.transaction_id.blank?
-            raise
-          end
+          # One refund path for the whole system — Refunds::Create owns the
+          # balance check, the credit, the compensation and the hooks. Store
+          # passed explicitly: cancellation runs from jobs and webhooks where
+          # Spree::Current.store is nil, and the bare reason lookup would mint
+          # a storeless row.
+          result = Spree.refund_create_workflow.call(
+            payment: payment,
+            reason: Spree::RefundReason.order_canceled_reason(payment.owner.store),
+            refunder: payment.order.canceler
+          )
+          raise Spree::Core::GatewayError, result.error.value.to_s if result.failure?
 
           # Spree::Refund#response holds the `credit` response. The authorization
           # must stay the payment intent id, or the refund id would overwrite it.
-          success(payment.response_code, refund.response.params)
+          success(payment.response_code, result.value.response.params)
         else
           response = cancel_payment_intent(payment_intent_id)
           success(response.id, response)

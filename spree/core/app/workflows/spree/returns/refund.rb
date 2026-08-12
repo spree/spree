@@ -118,34 +118,29 @@ module Spree
       # more than one refund.
       def refund_at_gateway
         remaining = @amount_to_refund
-        refund = nil
-
         return_record.order.payments.completed.each do |payment|
           break unless remaining.positive?
 
           creditable = [payment.credit_allowed.to_d, remaining].min
           next unless creditable.positive?
 
-          # Serialized on the payment row — the balance validation must see any
-          # concurrently created refund rows (credit_allowed sums them).
-          refund = payment.with_lock do
-            payment.refunds.create!(
-              amount: creditable,
-              reason: Spree::RefundReason.return_processing_reason(return_record.store),
-              refunder: refunder,
-              originator: return_record
-            )
-          end
-          refund.perform!
-          @refunds << refund
+          # One refund path for the whole system: Refunds::Create owns the
+          # row-lock balance check, the gateway credit, the declined-row
+          # compensation, the refund hooks and the payment.refunded event.
+          result = Spree.refund_create_workflow.call(
+            payment: payment,
+            amount: creditable,
+            reason: Spree::RefundReason.return_processing_reason(return_record.store),
+            refunder: refunder,
+            originator: return_record
+          )
+          failure(return_record, result.error.value) if result.failure?
+
+          @refunds << result.value
           remaining -= creditable
         end
 
         failure(return_record, :no_refundable_payments) if @refunds.empty?
-      rescue Spree::Core::GatewayError => error
-        # An uncredited row would eat into credit_allowed and block the retry.
-        refund.destroy! if refund&.transaction_id.blank?
-        failure(return_record, error.message)
       end
 
       def mark_refunded

@@ -78,6 +78,7 @@ module Spree
           handle_response(response, :complete, :failure) unless response.success?
 
           already_captured = false
+          remainder = nil
           owner.with_lock do
             # DB-state recheck, deliberately not a reload — reload would
             # discard the in-memory source (card numbers never persist).
@@ -85,6 +86,9 @@ module Spree
               already_captured = true
             else
               capture_events.create!(amount: ::Money.new(amount, currency).to_f)
+              # Split before completing, so payment.completed publishes with
+              # the captured amount and the order recomputes from correct rows.
+              remainder = split_uncaptured_amount
               handle_response(response, :complete, :failure)
             end
           end
@@ -92,7 +96,7 @@ module Spree
 
           # Authorizes the remainder at the gateway — its own network call,
           # so it stays outside the lock.
-          split_uncaptured_amount
+          remainder&.authorize!
           true
         end
       end

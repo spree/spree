@@ -9,6 +9,9 @@ module Spree
           run :find_or_create_payment_source
           run :save_payment
         end
+        # Gateway I/O — after the transaction, on the in-memory graph (some
+        # gateways need the raw card number, which never persists).
+        run :store_gateway_profile
       end
 
       protected
@@ -56,10 +59,22 @@ module Spree
         payment = order.payments.new(payment_attributes)
 
         if payment.save
-          success(payment)
+          success(payment: payment)
         else
           failure(payment)
         end
+      end
+
+      # A payment that cannot be profiled must not linger half-created — the
+      # old after_save callback rolled the whole save back on gateway failure.
+      def store_gateway_profile(payment:)
+        return success(payment) unless payment.profiles_supported?
+
+        payment.create_payment_profile
+        success(payment)
+      rescue Spree::Core::GatewayError => e
+        payment.destroy
+        failure(payment, e.message)
       end
     end
   end

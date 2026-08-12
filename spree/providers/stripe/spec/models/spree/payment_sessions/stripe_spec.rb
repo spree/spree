@@ -82,6 +82,24 @@ RSpec.describe Spree::PaymentSessions::Stripe, type: :model do
     end
   end
 
+  describe '#prepare_for_settlement!' do
+    let(:stripe_payment_intent) do
+      Stripe::StripeObject.construct_from(id: 'pi_123', status: 'succeeded', latest_charge: 'ch_123')
+    end
+    let(:stripe_charge) { Stripe::StripeObject.construct_from(id: 'ch_123') }
+
+    it 'warms the intent, the charge and the gateway customer before settlement' do
+      expect(gateway).to receive(:retrieve_payment_intent).once.and_return(stripe_payment_intent)
+      expect(gateway).to receive(:retrieve_charge).once.and_return(stripe_charge)
+      expect(gateway).to receive(:fetch_or_create_customer).once
+
+      payment_session.prepare_for_settlement!
+
+      # Memoized — settlement reads hit no network.
+      expect(payment_session.stripe_charge).to eq(stripe_charge)
+    end
+  end
+
   describe '#stripe_charge' do
     let(:stripe_pi) { Stripe::StripeObject.construct_from(id: 'pi_test_abc123', status: 'succeeded', latest_charge: 'ch_123') }
     let(:stripe_charge) { Stripe::StripeObject.construct_from(id: 'ch_123') }

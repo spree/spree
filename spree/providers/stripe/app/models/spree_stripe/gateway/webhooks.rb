@@ -10,11 +10,15 @@ module SpreeStripe
     module Webhooks
       extend ActiveSupport::Concern
 
+      # Only events with a handler — subscribing to more would silently drop
+      # deliveries and bake phantom events into the endpoint's identity.
+      # setup_intent.succeeded is deliberately absent: healing an abandoned
+      # setup session by webhook needs core's webhook contract to learn about
+      # setup sessions first (it only routes payment sessions today).
       SUPPORTED_EVENTS = %w[
         payment_intent.amount_capturable_updated
         payment_intent.payment_failed
         payment_intent.succeeded
-        setup_intent.succeeded
       ].freeze
 
       WEBHOOK_EVENT_ACTIONS = {

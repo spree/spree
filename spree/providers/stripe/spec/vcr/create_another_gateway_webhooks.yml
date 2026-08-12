@@ -89,8 +89,7 @@ http_interactions:
               "enabled_events": [
                 "payment_intent.amount_capturable_updated",
                 "payment_intent.payment_failed",
-                "payment_intent.succeeded",
-                "setup_intent.succeeded"
+                "payment_intent.succeeded"
               ],
               "livemode": false,
               "metadata": {},
@@ -106,8 +105,7 @@ http_interactions:
               "description": null,
               "enabled_events": [
                 "payment_intent.payment_failed",
-                "payment_intent.succeeded",
-                "setup_intent.succeeded"
+                "payment_intent.succeeded"
               ],
               "livemode": false,
               "metadata": {},
@@ -123,8 +121,7 @@ http_interactions:
               "description": null,
               "enabled_events": [
                 "payment_intent.payment_failed",
-                "payment_intent.succeeded",
-                "setup_intent.succeeded"
+                "payment_intent.succeeded"
               ],
               "livemode": false,
               "metadata": {},
@@ -280,8 +277,7 @@ http_interactions:
           "enabled_events": [
             "payment_intent.amount_capturable_updated",
             "payment_intent.payment_failed",
-            "payment_intent.succeeded",
-            "setup_intent.succeeded"
+            "payment_intent.succeeded"
           ],
           "livemode": false,
           "metadata": {},
@@ -379,8 +375,7 @@ http_interactions:
               "enabled_events": [
                 "payment_intent.amount_capturable_updated",
                 "payment_intent.payment_failed",
-                "payment_intent.succeeded",
-                "setup_intent.succeeded"
+                "payment_intent.succeeded"
               ],
               "livemode": false,
               "metadata": {},
@@ -397,8 +392,7 @@ http_interactions:
               "enabled_events": [
                 "payment_intent.amount_capturable_updated",
                 "payment_intent.payment_failed",
-                "payment_intent.succeeded",
-                "setup_intent.succeeded"
+                "payment_intent.succeeded"
               ],
               "livemode": false,
               "metadata": {},
@@ -414,8 +408,7 @@ http_interactions:
               "description": null,
               "enabled_events": [
                 "payment_intent.payment_failed",
-                "payment_intent.succeeded",
-                "setup_intent.succeeded"
+                "payment_intent.succeeded"
               ],
               "livemode": false,
               "metadata": {},
@@ -431,8 +424,7 @@ http_interactions:
               "description": null,
               "enabled_events": [
                 "payment_intent.payment_failed",
-                "payment_intent.succeeded",
-                "setup_intent.succeeded"
+                "payment_intent.succeeded"
               ],
               "livemode": false,
               "metadata": {},

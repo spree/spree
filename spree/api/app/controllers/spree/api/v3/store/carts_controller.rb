@@ -17,7 +17,9 @@ module Spree
           def show
             @cart = find_cart
 
-            if @cart.ship_address_id.present? && @cart.fulfillments.empty?
+            # Never under a live completion claim — the advance mutates under
+            # with_order_lock, and a read must not 409 against the fence.
+            if @cart.ship_address_id.present? && @cart.fulfillments.empty? && !@cart.completion_claimed?
               ActiveRecord::Base.connected_to(role: :writing) do
                 with_order_lock { Spree::Checkout::Advance.call(order: @cart) }
               end

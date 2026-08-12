@@ -16,7 +16,7 @@ module Spree
     #                              cart.completed_at + UpdateStatuses;
     #                              events after commit
     class Complete < Spree::Workflow
-      COMPLETING_TTL = 5.minutes
+      COMPLETING_TTL = Spree::Cart::COMPLETING_CLAIM_TTL
 
       hooks :validate, :before_finalize, :after_finalize
 
@@ -90,7 +90,7 @@ module Spree
       end
 
       def guard_concurrent_completion
-        failure(cart, code: 'completion_in_progress') if cart.completing? && cart.completing_at > COMPLETING_TTL.ago
+        failure(cart, code: 'completion_in_progress') if cart.completion_claimed?
       end
 
       # In-lock recalculation — the totals about to be charged are computed

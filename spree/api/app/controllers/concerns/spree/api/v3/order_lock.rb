@@ -26,8 +26,7 @@ module Spree
             # checked after acquiring the lock so it cannot race the claim
             # being written. The TTL matches guard_concurrent_completion — a
             # crashed completion must not brick its cart.
-            if order.is_a?(Spree::Cart) && order.completing? &&
-                order.completing_at > Spree::Carts::Complete::COMPLETING_TTL.ago
+            if order.is_a?(Spree::Cart) && order.completion_claimed?
               next render_error(
                 code: 'completion_in_progress',
                 message: Spree.t(:cart_completion_in_progress),

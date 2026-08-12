@@ -27,12 +27,21 @@ module Spree
 
                 authorize_resource!(@resource, :create)
 
-                if @resource.save
-                  render json: serialize_resource(@resource), status: :created
-                else
-                  render_validation_error(@resource.errors)
-                end
+                render_validation_error(@resource.errors) unless @resource.save
               end
+              return if performed?
+
+              # Gateway I/O — outside the order lock. A source that cannot be
+              # profiled must not linger on a half-created payment; the old
+              # after_save callback rolled the whole save back.
+              begin
+                @resource.create_payment_profile if @resource.profiles_supported?
+              rescue Spree::Core::GatewayError => e
+                @resource.destroy
+                return render_service_error(e.message)
+              end
+
+              render json: serialize_resource(@resource), status: :created
             end
 
             # PATCH /api/v3/admin/orders/:order_id/payments/:id/capture

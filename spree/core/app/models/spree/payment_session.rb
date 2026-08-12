@@ -101,26 +101,44 @@ module Spree
       )
     end
 
+    # Fetches whatever settlement will need from the provider, so a caller
+    # that settles inside a lock (the webhook path) holds it across no
+    # provider I/O. Gateway session subclasses override; no-op by default.
+    #
+    # @return [Spree::PaymentSession] self
+    def prepare_for_settlement!
+      self
+    end
+
     # The one place a session settles its payment — used by both routes a
     # settled session is noticed on (the storefront confirm call and the
     # gateway webhook), so the two can never drift apart.
+    #
+    # Serialized on the owner's row: the two routes can race, and the
+    # completed? guard alone is check-then-act — two concurrent settlements
+    # would each record a capture event, doubling captured_amount. The lock
+    # wraps only the local settlement, never gateway I/O — callers fetch
+    # provider data first (the confirm path as it verifies the session, the
+    # webhook path via prepare_for_settlement!) — and nests as a no-op inside
+    # HandleWebhook's own owner lock.
     #
     # @param captured [Boolean] whether the gateway reports the funds as
     #   captured; false means authorized only, so the payment pends
     # @param metadata [Hash] gateway-specific metadata for payment creation
     # @return [Spree::Payment, nil]
-    # Serialized on the owner's row: the storefront confirm and the gateway
-    # webhook can race, and the completed? guard alone is check-then-act — two
-    # concurrent settlements would each record a capture event, doubling
-    # captured_amount. The lock wraps only the local settlement, never gateway
-    # I/O (callers fetch what they need from the provider first), and nests as
-    # a no-op inside HandleWebhook's own owner lock.
     def settle_payment!(captured:, metadata: {})
       owner.with_lock do
         settled_payment = find_or_create_payment!(metadata)
 
-        if settled_payment.present? && !settled_payment.completed?
-          settled_payment.confirm!(captured: captured)
+        if settled_payment.present?
+          # DB-state recheck, deliberately not a reload — the payment may have
+          # been cached on this instance before the lock (a concurrent
+          # settlement could have completed it), but reload would discard
+          # in-memory state like skip_source_requirement.
+          already_completed = settled_payment.completed? ||
+                              Spree::Payment.where(id: settled_payment.id, state: 'completed').exists?
+
+          settled_payment.confirm!(captured: captured) unless already_completed
         end
 
         settled_payment

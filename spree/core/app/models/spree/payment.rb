@@ -386,17 +386,23 @@ module Spree
 
 
 
+    # Row work only — moves the uncaptured remainder onto a new pending
+    # payment and shrinks this one to what was captured. The caller authorizes
+    # the returned remainder at the gateway afterwards, outside any lock.
+    #
+    # @return [Spree::Payment, nil] the remainder payment, or nil when fully captured
     def split_uncaptured_amount
-      if uncaptured_amount > 0
-        owner.payments.create!(
-          amount: uncaptured_amount,
-          payment_method: payment_method,
-          source: source,
-          state: 'pending',
-          capture_on_dispatch: true
-        ).authorize!
-        update(amount: captured_amount)
-      end
+      return if uncaptured_amount <= 0
+
+      remainder = owner.payments.create!(
+        amount: uncaptured_amount,
+        payment_method: payment_method,
+        source: source,
+        state: 'pending',
+        capture_on_dispatch: true
+      )
+      update(amount: captured_amount)
+      remainder
     end
 
     def update_order
