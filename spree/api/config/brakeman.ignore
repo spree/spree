@@ -18,6 +18,29 @@
         79
       ],
       "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "17068dd5ef916d4f3a1af654de9c2dc642b1c231e44b6b07ee72e7db1051c1e6",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/spree/api/v3/admin/company_locations/contacts_controller.rb",
+      "line": 52,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.permit(:customer_id, :role)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::Api::V3::Admin::CompanyLocations::ContactsController",
+        "method": "permitted_params"
+      },
+      "user_input": ":role",
+      "confidence": "Medium",
+      "cwe_id": [
+        915
+      ],
+      "note": "Spree::CompanyContact#role names the buyer's role at a company branch (buyer, approver) and grants nothing — permissions and purchase authority are not modelled in 6.0. Staff-only endpoint behind the write_customers permission, so it cannot be reached by the customer it describes."
     }
   ],
   "brakeman_version": "7.1.0"
