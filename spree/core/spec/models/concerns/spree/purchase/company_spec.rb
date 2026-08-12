@@ -33,6 +33,28 @@ RSpec.shared_examples 'a company host' do
 
         expect(record.resolved_company_location).to be_nil
       end
+
+      # Customers are global across stores, so a buyer can be a contact at a
+      # business this store does not trade as. Resolving to it would hand this
+      # sale that company's registration and exemption certificates.
+      it 'ignores a branch belonging to another store' do
+        elsewhere = create(:company_location, company: create(:company, store: create(:store)))
+        create(:company_contact, company_location: elsewhere, customer: record.customer)
+
+        expect(record.reload.resolved_company_location).to be_nil
+        expect(record.company).to be_nil
+      end
+
+      # The foreign branch must not count towards "acts for several" either —
+      # otherwise it would suppress a resolution that is genuinely unambiguous
+      # within this store.
+      it 'still resolves the one branch in this store when another store has one too' do
+        create(:company_contact, company_location: location, customer: record.customer)
+        elsewhere = create(:company_location, company: create(:company, store: create(:store)))
+        create(:company_contact, company_location: elsewhere, customer: record.customer)
+
+        expect(record.reload.resolved_company_location).to eq(location)
+      end
     end
   end
 

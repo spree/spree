@@ -73,9 +73,18 @@ module Spree
       # safely needs the reset-on-reload machinery; the repeated query is the
       # cheaper problem.
       def sole_customer_location
-        return nil if customer.nil?
+        return nil if customer.nil? || store_id.nil?
 
-        locations = customer.company_locations.to_a.uniq
+        # Scoped to this sale's store. Customers are global, so without this a
+        # buyer who is a contact at a company in another store would resolve to
+        # that business here — and its registration and exemption certificates
+        # would then decide this sale's tax. The explicit-assignment path is
+        # guarded by the validation above; this is the implicit one.
+        locations = customer.company_locations.
+                    joins(:company).
+                    merge(Spree::Company.where(store_id: store_id)).
+                    to_a.uniq
+
         locations.one? ? locations.first : nil
       end
     end
